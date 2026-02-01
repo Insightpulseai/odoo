@@ -272,12 +272,12 @@ mk_issue \
   "Point required subdomains to 178.128.112.214 and configure nginx host-based routing to containers.
 
 **Subdomains**:
-- erp.insightpulseai.net → Odoo (8069)
-- n8n.insightpulseai.net → n8n (5678)
-- superset.insightpulseai.net → Superset (8088)
-- mcp.insightpulseai.net → MCP Coordinator (placeholder)
-- ocr.insightpulseai.net → OCR Service (placeholder)
-- auth.insightpulseai.net → Keycloak (placeholder)
+- erp.insightpulseai.com → Odoo (8069)
+- n8n.insightpulseai.com → n8n (5678)
+- superset.insightpulseai.com → Superset (8088)
+- mcp.insightpulseai.com → MCP Coordinator (placeholder)
+- ocr.insightpulseai.com → OCR Service (placeholder)
+- auth.insightpulseai.com → Keycloak (placeholder)
 
 **Acceptance**:
 - [ ] All A records point to 178.128.112.214

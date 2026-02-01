@@ -32,8 +32,8 @@ The IPAI AI Platform provides Notion-style "Ask AI" capabilities for Odoo CE/OCA
 
 | Domain | Purpose |
 |--------|---------|
-| `erp.insightpulseai.net` | Odoo web application |
-| `n8n.insightpulseai.net` | n8n workflows |
+| `erp.insightpulseai.com` | Odoo web application |
+| `n8n.insightpulseai.com` | n8n workflows |
 
 ## Component Architecture
 
@@ -346,7 +346,7 @@ IPAI_EMBEDDINGS_API_KEY=<key>
 
 # Exporter
 IPAI_KB_EXPORT_LOOKBACK_HOURS=24
-IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.net
+IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.com
 ```
 
 ## Workspace Architecture

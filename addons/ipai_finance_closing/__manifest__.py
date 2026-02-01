@@ -40,7 +40,7 @@ This module contains only XML data files and can be installed
 without any custom Python development.
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "project",

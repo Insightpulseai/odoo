@@ -1,9 +1,9 @@
 # TBWA\SMP Mailgun Canonical Configuration
 
-**Domain**: `mg.insightpulseai.net`
+**Domain**: `mg.insightpulseai.com`
 **Primary Use**: Odoo CE 18.0 transactional email (expense approvals, alerts, notifications)
 **Region**: US (api.mailgun.net)
-**DNS Provider**: DigitalOcean (erp.insightpulseai.net domain)
+**DNS Provider**: DigitalOcean (erp.insightpulseai.com domain)
 
 ---
 
@@ -23,19 +23,19 @@ Mailgun requires 4 DNS records for full domain verification and email sending:
 
 ## Canonical DNS Records (TBWA\SMP)
 
-**Applied to**: `erp.insightpulseai.net` zone in DigitalOcean DNS
+**Applied to**: `erp.insightpulseai.com` zone in DigitalOcean DNS
 
 ### 1. SPF Record (Required for Sending)
 
 | Type | Host | Value | TTL |
 |------|------|-------|-----|
-| TXT | `mg.insightpulseai.net` | `v=spf1 include:mailgun.org ~all` | 3600 |
+| TXT | `mg.insightpulseai.com` | `v=spf1 include:mailgun.org ~all` | 3600 |
 
-**Purpose**: Authorizes Mailgun's servers to send email on behalf of `mg.insightpulseai.net`
+**Purpose**: Authorizes Mailgun's servers to send email on behalf of `mg.insightpulseai.com`
 
 **Verification Command**:
 ```bash
-dig TXT mg.insightpulseai.net +short | grep "v=spf1"
+dig TXT mg.insightpulseai.com +short | grep "v=spf1"
 # Expected: "v=spf1 include:mailgun.org ~all"
 ```
 
@@ -44,40 +44,40 @@ dig TXT mg.insightpulseai.net +short | grep "v=spf1"
 #### DKIM Signature #1
 | Type | Host | Value | TTL |
 |------|------|-------|-----|
-| TXT | `mailo._domainkey.mg.insightpulseai.net` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYi+WQoP6DEtjZIwC02BRwLKco3WnjQzXBmCr7pT4nMBLEk/WcLjTCE3PRBvNqtSyXzXdZKl65p4VvsmXFGJvGb4qBEQdXLBRZxLJMqfMWjpHqXK7bRxjsKvZCa1thgPyFoaDq+FfX6EcLlAjxLNNjpUE3KcIjmh6mH7HfEeGhIQIDAQAB` | 3600 |
+| TXT | `mailo._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYi+WQoP6DEtjZIwC02BRwLKco3WnjQzXBmCr7pT4nMBLEk/WcLjTCE3PRBvNqtSyXzXdZKl65p4VvsmXFGJvGb4qBEQdXLBRZxLJMqfMWjpHqXK7bRxjsKvZCa1thgPyFoaDq+FfX6EcLlAjxLNNjpUE3KcIjmh6mH7HfEeGhIQIDAQAB` | 3600 |
 
 **Verification Command**:
 ```bash
-dig TXT mailo._domainkey.mg.insightpulseai.net +short
+dig TXT mailo._domainkey.mg.insightpulseai.com +short
 # Expected: "k=rsa; p=MIGfMA0G..."
 ```
 
 #### DKIM Signature #2
 | Type | Host | Value | TTL |
 |------|------|-------|-----|
-| TXT | `mx._domainkey.mg.insightpulseai.net` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDXPPiPYQ5/96/UphEq3GhXR7RoB3vxm3KjDqHHCHTjV2FojKqZuCKkLMJzOPkz/4yV8k1xUB8VQp8R5z2L6TGhkEWVGCJzXJKXOTZqMYLh3vLVzIGPzhLjCMUMQKYvM7lINKOp8BZkRdqP0S1hTHzI6PG6MQMv5xJd+Qd8pD9xwQIDAQAB` | 3600 |
+| TXT | `mx._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDXPPiPYQ5/96/UphEq3GhXR7RoB3vxm3KjDqHHCHTjV2FojKqZuCKkLMJzOPkz/4yV8k1xUB8VQp8R5z2L6TGhkEWVGCJzXJKXOTZqMYLh3vLVzIGPzhLjCMUMQKYvM7lINKOp8BZkRdqP0S1hTHzI6PG6MQMv5xJd+Qd8pD9xwQIDAQAB` | 3600 |
 
 **Verification Command**:
 ```bash
-dig TXT mx._domainkey.mg.insightpulseai.net +short
+dig TXT mx._domainkey.mg.insightpulseai.com +short
 # Expected: "k=rsa; p=MIGfMA0G..."
 ```
 
 ### 3. MX Records (Optional - Only for Inbound Email)
 
-**Decision**: Not configuring MX records for `mg.insightpulseai.net`
+**Decision**: Not configuring MX records for `mg.insightpulseai.com`
 
 **Rationale**:
 - Odoo CE 18.0 ONLY sends transactional emails (expense approvals, alerts)
-- Odoo does NOT need to receive emails at `mg.insightpulseai.net`
-- Inbound email routing (if needed) should use primary domain `erp.insightpulseai.net`
+- Odoo does NOT need to receive emails at `mg.insightpulseai.com`
+- Inbound email routing (if needed) should use primary domain `erp.insightpulseai.com`
 - Mailgun MX records are only required if using Mailgun Routes for inbound processing
 
 **If inbound email is required later**:
 | Type | Host | Value | Priority | TTL |
 |------|------|-------|----------|-----|
-| MX | `mg.insightpulseai.net` | `mxa.mailgun.org` | 10 | 3600 |
-| MX | `mg.insightpulseai.net` | `mxb.mailgun.org` | 10 | 3600 |
+| MX | `mg.insightpulseai.com` | `mxa.mailgun.org` | 10 | 3600 |
+| MX | `mg.insightpulseai.com` | `mxb.mailgun.org` | 10 | 3600 |
 
 ---
 
@@ -86,22 +86,22 @@ dig TXT mx._domainkey.mg.insightpulseai.net +short
 ### Check All Records
 ```bash
 # SPF
-dig TXT mg.insightpulseai.net +short | grep "v=spf1"
+dig TXT mg.insightpulseai.com +short | grep "v=spf1"
 
 # DKIM #1
-dig TXT mailo._domainkey.mg.insightpulseai.net +short
+dig TXT mailo._domainkey.mg.insightpulseai.com +short
 
 # DKIM #2
-dig TXT mx._domainkey.mg.insightpulseai.net +short
+dig TXT mx._domainkey.mg.insightpulseai.com +short
 
 # MX (if configured)
-dig MX mg.insightpulseai.net +short
+dig MX mg.insightpulseai.com +short
 ```
 
 ### Automated Verification (Mailgun API)
 ```bash
 export MAILGUN_API_KEY="your-private-api-key"
-export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_DOMAIN="mg.insightpulseai.com"
 export MAILGUN_REGION="us"
 
 ./scripts/mailgun/verify_domain.sh
@@ -110,20 +110,20 @@ export MAILGUN_REGION="us"
 **Expected Output**:
 ```
 Domain Status:
-  Domain: mg.insightpulseai.net
+  Domain: mg.insightpulseai.com
   State: active
   Created: 2026-01-14
 
 Receiving DNS Records (MX):
-  ❌ MX mg.insightpulseai.net
+  ❌ MX mg.insightpulseai.com
      Value: mxa.mailgun.org (priority: 10)
 
 Sending DNS Records (SPF/DKIM):
-  ✅ TXT mg.insightpulseai.net
+  ✅ TXT mg.insightpulseai.com
      Value: v=spf1 include:mailgun.org ~all
-  ✅ TXT mailo._domainkey.mg.insightpulseai.net
+  ✅ TXT mailo._domainkey.mg.insightpulseai.com
      Value: k=rsa; p=MIGfMA0G...
-  ✅ TXT mx._domainkey.mg.insightpulseai.net
+  ✅ TXT mx._domainkey.mg.insightpulseai.com
      Value: k=rsa; p=MIGfMA0G...
 ```
 
@@ -133,8 +133,8 @@ Sending DNS Records (SPF/DKIM):
 
 ### API Endpoints (US Region)
 - **Base URL**: `https://api.mailgun.net/v3`
-- **Sending**: `POST /v3/mg.insightpulseai.net/messages`
-- **Domain Verification**: `GET /v3/domains/mg.insightpulseai.net`
+- **Sending**: `POST /v3/mg.insightpulseai.com/messages`
+- **Domain Verification**: `GET /v3/domains/mg.insightpulseai.com`
 
 ### Authentication
 - **Method**: HTTP Basic Auth
@@ -159,7 +159,7 @@ Sending DNS Records (SPF/DKIM):
 ```bash
 # Validate API key
 curl -s --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net | jq '.domain.state'
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com | jq '.domain.state'
 # Expected: "active"
 ```
 
@@ -184,12 +184,12 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 1. **Propagation delay**: Wait 15-60 minutes after DNS changes
 2. **Check exact values**: Copy-paste from Mailgun dashboard to avoid typos
 3. **Verify TTL**: Use 3600 seconds (1 hour) minimum
-4. **Check host syntax**: `mg.insightpulseai.net` vs `mg` (depends on DNS provider)
+4. **Check host syntax**: `mg.insightpulseai.com` vs `mg` (depends on DNS provider)
 
 ```bash
 # Force Mailgun re-verification
 curl -X PUT --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net/verify
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/verify
 ```
 
 ### Emails Marked as Spam
@@ -203,7 +203,7 @@ curl -X PUT --user "api:$MAILGUN_API_KEY" \
 1. Ensure all DNS records verified (✅ green in Mailgun dashboard)
 2. Add DMARC record (optional but recommended):
    ```
-   _dmarc.mg.insightpulseai.net TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.net"
+   _dmarc.mg.insightpulseai.com TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com"
    ```
 3. Wait for sender reputation to build (send gradually)
 4. Enable tracking (opens/clicks) for engagement metrics
@@ -233,6 +233,6 @@ curl -X PUT --user "api:$MAILGUN_API_KEY" \
 ---
 
 **Last Updated**: 2026-01-14
-**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.net`)
-**Mailgun Domain**: `mg.insightpulseai.net` (US region)
-**DNS Zone**: `erp.insightpulseai.net` (DigitalOcean)
+**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.com`)
+**Mailgun Domain**: `mg.insightpulseai.com` (US region)
+**DNS Zone**: `erp.insightpulseai.com` (DigitalOcean)

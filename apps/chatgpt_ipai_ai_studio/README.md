@@ -30,7 +30,7 @@ npm start
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `PORT` | Server port | `8787` |
-| `ODOO_BASE_URL` | Odoo instance URL | `https://erp.insightpulseai.net` |
+| `ODOO_BASE_URL` | Odoo instance URL | `https://erp.insightpulseai.com` |
 | `ODOO_DB` | Database name | `prod` |
 | `ODOO_LOGIN` | Admin user email | (required) |
 | `ODOO_PASSWORD` | Admin password | (required) |

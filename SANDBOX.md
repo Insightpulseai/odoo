@@ -57,7 +57,7 @@ cd /opt/odoo-ce/deploy
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-**Access**: https://erp.insightpulseai.net
+**Access**: https://erp.insightpulseai.com
 
 **Documentation**: See `deploy/PRODUCTION_SETUP.md`
 
@@ -80,7 +80,7 @@ docker compose -f docker-compose.prod.yml up -d
 |-------------|---------|-----|
 | **Local dev** | `cd sandbox/dev && docker compose up -d` | http://localhost:8069 |
 | **Prod-connection** | `cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .env.production up -d` | http://localhost:8069 |
-| **Production** | `cd deploy && docker compose -f docker-compose.prod.yml up -d` | https://erp.insightpulseai.net |
+| **Production** | `cd deploy && docker compose -f docker-compose.prod.yml up -d` | https://erp.insightpulseai.com |
 
 ---
 

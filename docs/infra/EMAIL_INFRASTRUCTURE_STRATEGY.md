@@ -1,6 +1,6 @@
-# Email Infrastructure Strategy - insightpulseai.net
+# Email Infrastructure Strategy - insightpulseai.com
 
-**Purpose**: Define email infrastructure strategy for `@insightpulseai.net` workspace email
+**Purpose**: Define email infrastructure strategy for `@insightpulseai.com` workspace email
 
 **Current State**: Mailgun configured for sending only
 **Decision Point**: Choose between self-hosted mailboxes vs. managed provider
@@ -13,13 +13,13 @@
 
 ### ✅ What's Working Now
 
-**Mailgun Subdomain (`mg.insightpulseai.net`)**:
+**Mailgun Subdomain (`mg.insightpulseai.com`)**:
 - MX → `10 mxa.mailgun.org`, `10 mxb.mailgun.org` ✅
 - SPF → `v=spf1 include:mailgun.org ~all` ✅
 - DKIM → Configured ✅
 - DMARC → Configured with reporting ✅
 
-**Root Domain (`insightpulseai.net`)**:
+**Root Domain (`insightpulseai.com`)**:
 - SPF → `v=spf1 include:mailgun.org ~all` ✅
 - DMARC → `v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org` ✅
 - MX → ❌ **NOT CONFIGURED**
@@ -28,10 +28,10 @@
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| **Send from** `*@mg.insightpulseai.net` | ✅ Works | Mailgun SMTP/API |
-| **Send from** `*@insightpulseai.net` | ✅ Works | Mailgun SMTP/API (SPF authorized) |
-| **Receive at** `*@mg.insightpulseai.net` | ✅ Works | Mailgun routes/webhooks |
-| **Receive at** `*@insightpulseai.net` | ❌ Not configured | No MX records |
+| **Send from** `*@mg.insightpulseai.com` | ✅ Works | Mailgun SMTP/API |
+| **Send from** `*@insightpulseai.com` | ✅ Works | Mailgun SMTP/API (SPF authorized) |
+| **Receive at** `*@mg.insightpulseai.com` | ✅ Works | Mailgun routes/webhooks |
+| **Receive at** `*@insightpulseai.com` | ❌ Not configured | No MX records |
 
 ---
 
@@ -46,8 +46,8 @@
 **Source**: [Mailgun IMAP Glossary](https://www.mailgun.com/glossary/imap/)
 
 **What this means**:
-- You **can** send email from `@insightpulseai.net` via Mailgun
-- You **cannot** have a "real mailbox" (like Gmail/Outlook) for `jake@insightpulseai.net` using only Mailgun
+- You **can** send email from `@insightpulseai.com` via Mailgun
+- You **cannot** have a "real mailbox" (like Gmail/Outlook) for `jake@insightpulseai.com` using only Mailgun
 - You **can** receive email via Mailgun routes and forward to webhooks (n8n, Odoo, Azure Boards)
 
 ---
@@ -57,7 +57,7 @@
 ### Option 1: Mailgun Only (Current State - Transactional Only)
 
 **What You Get**:
-- ✅ Send from `*@insightpulseai.net` via Mailgun SMTP/API
+- ✅ Send from `*@insightpulseai.com` via Mailgun SMTP/API
 - ✅ Receive at automation addresses → webhooks (boards@, odoo@)
 - ❌ No workspace inboxes (jake@, devops@, etc.)
 
@@ -82,7 +82,7 @@
 ### Option 2: Self-Hosted Mailserver (Docker Mailserver)
 
 **What You Get**:
-- ✅ Real workspace inboxes: `jake@insightpulseai.net`, `devops@insightpulseai.net`
+- ✅ Real workspace inboxes: `jake@insightpulseai.com`, `devops@insightpulseai.com`
 - ✅ IMAP/POP3 access (Thunderbird, Apple Mail, etc.)
 - ✅ Automation addresses → pipe to scripts (Azure Boards, Odoo)
 - ✅ Full control and ownership
@@ -98,14 +98,14 @@
 **Required DNS Changes**:
 ```dns
 # Add MX records for root domain
-MX    @                        10 mail.insightpulseai.net
-A     mail.insightpulseai.net  →  178.128.112.214
+MX    @                        10 mail.insightpulseai.com
+A     mail.insightpulseai.com  →  178.128.112.214
 
 # Update SPF to include your mail server
 TXT   @  v=spf1 ip4:178.128.112.214 include:mailgun.org ~all
 
 # PTR/Reverse DNS (via DigitalOcean dashboard)
-PTR   178.128.112.214  →  mail.insightpulseai.net
+PTR   178.128.112.214  →  mail.insightpulseai.com
 ```
 
 **Pros**:
@@ -173,7 +173,7 @@ TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
 
 **Setup**:
 - Root MX → Google/Microsoft (workspace email)
-- Mailgun subdomain (`mg.insightpulseai.net`) → automation/transactional
+- Mailgun subdomain (`mg.insightpulseai.com`) → automation/transactional
 
 **Cost**: $6/user/month + $0 Mailgun free tier
 
@@ -211,9 +211,9 @@ TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
 **Status**: Mailgun for transactional/automation only
 
 **Capabilities**:
-- ✅ Send transactional email from `*@insightpulseai.net`
-- ✅ Automation webhooks: `boards@mg.insightpulseai.net` → n8n → Azure Boards
-- ✅ Odoo notifications: `odoo@mg.insightpulseai.net` → n8n → Odoo tasks
+- ✅ Send transactional email from `*@insightpulseai.com`
+- ✅ Automation webhooks: `boards@mg.insightpulseai.com` → n8n → Azure Boards
+- ✅ Odoo notifications: `odoo@mg.insightpulseai.com` → n8n → Odoo tasks
 
 **No workspace email** - team uses personal emails or other provider
 
@@ -223,7 +223,7 @@ TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
 
 ### Phase 2: Add Workspace Email (When Needed)
 
-**Trigger**: When team needs professional `@insightpulseai.net` email addresses
+**Trigger**: When team needs professional `@insightpulseai.com` email addresses
 
 **Recommended Approach**: **Option 4 - Hybrid (Mailgun + Google Workspace)**
 
@@ -273,20 +273,20 @@ TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
 # Add these records to DigitalOcean DNS panel
 
 # MX record for root domain
-doctl compute domain records create insightpulseai.net \
+doctl compute domain records create insightpulseai.com \
   --record-type MX \
   --record-name @ \
-  --record-data "mail.insightpulseai.net" \
+  --record-data "mail.insightpulseai.com" \
   --record-priority 10
 
 # A record for mail server
-doctl compute domain records create insightpulseai.net \
+doctl compute domain records create insightpulseai.com \
   --record-type A \
   --record-name mail \
   --record-data 178.128.112.214
 
 # Update SPF (replace existing)
-doctl compute domain records update insightpulseai.net <RECORD_ID> \
+doctl compute domain records update insightpulseai.com <RECORD_ID> \
   --record-data "v=spf1 ip4:178.128.112.214 include:mailgun.org ~all"
 ```
 
@@ -306,7 +306,7 @@ services:
     image: docker.io/mailserver/docker-mailserver:latest
     container_name: mailserver
     hostname: mail
-    domainname: insightpulseai.net
+    domainname: insightpulseai.com
     env_file: .env
     ports:
       - "25:25"     # SMTP
@@ -345,11 +345,11 @@ ENABLE_OPENDKIM=1
 # Relay outbound through Mailgun (recommended for deliverability)
 RELAY_HOST=smtp.mailgun.org
 RELAY_PORT=587
-RELAY_USER=postmaster@mg.insightpulseai.net
+RELAY_USER=postmaster@mg.insightpulseai.com
 RELAY_PASSWORD=__MAILGUN_SMTP_PASSWORD__
 
 # Postmaster
-POSTMASTER_ADDRESS=postmaster@insightpulseai.net
+POSTMASTER_ADDRESS=postmaster@insightpulseai.com
 
 # Spam settings
 ENABLE_SPAMASSASSIN=1
@@ -374,9 +374,9 @@ ssh root@178.128.112.214 <<'REMOTE'
 cd /opt/mailserver
 
 # Create accounts
-docker exec mailserver setup email add jake@insightpulseai.net 'STRONG_PASSWORD'
-docker exec mailserver setup email add devops@insightpulseai.net 'STRONG_PASSWORD'
-docker exec mailserver setup email add business@insightpulseai.net 'STRONG_PASSWORD'
+docker exec mailserver setup email add jake@insightpulseai.com 'STRONG_PASSWORD'
+docker exec mailserver setup email add devops@insightpulseai.com 'STRONG_PASSWORD'
+docker exec mailserver setup email add business@insightpulseai.com 'STRONG_PASSWORD'
 
 # List accounts
 docker exec mailserver setup email list
@@ -417,8 +417,8 @@ chmod +x /opt/mailserver/data/scripts/boards-pipe.sh
 
 # Configure Postfix virtual aliases
 cat > /opt/mailserver/config/postfix-virtual.cf <<'ALIASES'
-boards@insightpulseai.net    boards_pipe
-odoo@insightpulseai.net      odoo_pipe
+boards@insightpulseai.com    boards_pipe
+odoo@insightpulseai.com      odoo_pipe
 ALIASES
 
 # Configure transport for pipes
@@ -443,10 +443,10 @@ REMOTE
 
 ```bash
 # Check MX records
-dig +short MX insightpulseai.net
+dig +short MX insightpulseai.com
 
 # Check SPF
-dig +short TXT insightpulseai.net | grep spf
+dig +short TXT insightpulseai.com | grep spf
 
 # Check PTR/Reverse DNS
 dig -x 178.128.112.214 +short
@@ -456,11 +456,11 @@ dig -x 178.128.112.214 +short
 
 ```bash
 # SMTP (port 25, 587)
-nc -vz mail.insightpulseai.net 25
-nc -vz mail.insightpulseai.net 587
+nc -vz mail.insightpulseai.com 25
+nc -vz mail.insightpulseai.com 587
 
 # IMAP (port 993)
-nc -vz mail.insightpulseai.net 993
+nc -vz mail.insightpulseai.com 993
 ```
 
 ### Send Test Email
@@ -468,14 +468,14 @@ nc -vz mail.insightpulseai.net 993
 ```bash
 # Via Mailgun API (current - already works)
 curl -s --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/mg.insightpulseai.net/messages \
-  -F from='Test <test@insightpulseai.net>' \
+  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+  -F from='Test <test@insightpulseai.com>' \
   -F to='recipient@example.com' \
-  -F subject='Test from insightpulseai.net' \
+  -F subject='Test from insightpulseai.com' \
   -F text='Testing Mailgun sending'
 
 # Via self-hosted mailserver (after Option 2 implementation)
-echo "Test body" | mail -s "Test subject" -a "From: jake@insightpulseai.net" recipient@example.com
+echo "Test body" | mail -s "Test subject" -a "From: jake@insightpulseai.com" recipient@example.com
 ```
 
 ---
@@ -495,7 +495,7 @@ echo "Test body" | mail -s "Test subject" -a "From: jake@insightpulseai.net" rec
 
 **Immediate** (No action required):
 - Current setup works for transactional/automation email
-- Continue using Mailgun for sending from `@insightpulseai.net`
+- Continue using Mailgun for sending from `@insightpulseai.com`
 
 **When workspace email needed**:
 1. Choose option (recommended: Hybrid with Google Workspace)

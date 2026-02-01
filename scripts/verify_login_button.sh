@@ -3,7 +3,7 @@
 
 set -e
 
-PRODUCTION_URL="https://erp.insightpulseai.net"
+PRODUCTION_URL="https://erp.insightpulseai.com"
 LOGIN_URL="${PRODUCTION_URL}/web/login"
 
 echo "==========================================="

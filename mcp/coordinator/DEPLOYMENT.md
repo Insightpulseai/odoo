@@ -97,8 +97,8 @@ curl -s -H "X-API-Key: YOUR_COORDINATOR_API_KEY" "$APP_URL/status" | jq
 
 3. **Add Domain in DO Dashboard**:
    - Go to: App → Settings → Domains
-   - Add domain: `mcp.insightpulseai.net`
-   - Verify DNS propagation: `dig mcp.insightpulseai.net`
+   - Add domain: `mcp.insightpulseai.com`
+   - Verify DNS propagation: `dig mcp.insightpulseai.com`
 
 4. **Enable HTTPS**:
    - DO automatically provisions Let's Encrypt SSL
@@ -113,7 +113,7 @@ cd /Users/tbwa/odoo-ce
 
 # Update odoo-erp.yaml with production URL
 vim mcp/servers/odoo-erp.yaml
-# Change: url: https://mcp.insightpulseai.net
+# Change: url: https://mcp.insightpulseai.com
 ```
 
 ## Testing Production Deployment
@@ -132,7 +132,7 @@ cat > /tmp/mcp-test.json << 'EOF'
 EOF
 
 # Test routing endpoint
-curl -s -X POST https://mcp.insightpulseai.net/route \
+curl -s -X POST https://mcp.insightpulseai.com/route \
   -H "X-API-Key: YOUR_COORDINATOR_API_KEY" \
   -H "Content-Type: application/json" \
   --data @/tmp/mcp-test.json | jq
@@ -160,7 +160,7 @@ cat > /tmp/mcp-aggregate.json << 'EOF'
 }
 EOF
 
-curl -s -X POST https://mcp.insightpulseai.net/aggregate \
+curl -s -X POST https://mcp.insightpulseai.com/aggregate \
   -H "X-API-Key: YOUR_COORDINATOR_API_KEY" \
   -H "Content-Type: application/json" \
   --data @/tmp/mcp-aggregate.json | jq
@@ -215,8 +215,8 @@ doctl apps logs $APP_ID | grep "/health"
 
 **Check DNS propagation:**
 ```bash
-dig mcp.insightpulseai.net
-nslookup mcp.insightpulseai.net
+dig mcp.insightpulseai.com
+nslookup mcp.insightpulseai.com
 ```
 
 **Wait time:**
@@ -225,7 +225,7 @@ nslookup mcp.insightpulseai.net
 
 **Verify with curl:**
 ```bash
-curl -v https://mcp.insightpulseai.net/health
+curl -v https://mcp.insightpulseai.com/health
 # Should return HTTP 200 + JSON response
 ```
 

@@ -1,4 +1,4 @@
-# Canonical DNS - insightpulseai.net
+# Canonical DNS - insightpulseai.com
 
 **Status**: PRODUCTION  
 **Stack**: Odoo CE, n8n, MCP Hub, Superset, Mailgun  
@@ -12,7 +12,7 @@
 | Host          | Type  | Value              | Purpose                  |
 |---------------|-------|--------------------|--------------------------|
 | @             | A     | 178.128.112.214    | Root site / default vhost|
-| www           | CNAME | insightpulseai.net | Canonical WWW alias      |
+| www           | CNAME | insightpulseai.com | Canonical WWW alias      |
 | erp           | A     | 178.128.112.214    | Odoo production          |
 | erp.staging   | A     | 178.128.112.214    | Odoo staging             |
 | n8n           | A     | 178.128.112.214    | n8n automation           |
@@ -27,7 +27,7 @@
 
 ---
 
-## 2. Mailgun - mg.insightpulseai.net
+## 2. Mailgun - mg.insightpulseai.com
 
 Mailgun is the canonical mail sending domain for transactional emails.
 
@@ -42,7 +42,7 @@ Mailgun is the canonical mail sending domain for transactional emails.
 
 | Host | Type | Value                             | Purpose                         |
 |------|------|-----------------------------------|---------------------------------|
-| mg   | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@mg.insightpulseai.net |
+| mg   | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@mg.insightpulseai.com |
 
 ### 2.3. DKIM
 
@@ -59,11 +59,11 @@ From Mailgun (selector `pic` already present):
 
 | Host       | Type | Value                                                                     | Purpose                         |
 |------------|------|---------------------------------------------------------------------------|---------------------------------|
-| _dmarc.mg  | TXT  | v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=...; ruf=...               | DMARC for mg.insightpulseai.net |
+| _dmarc.mg  | TXT  | v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=...; ruf=...               | DMARC for mg.insightpulseai.com |
 
 ---
 
-## 3. Root Domain Email (insightpulseai.net)
+## 3. Root Domain Email (insightpulseai.com)
 
 Root domain also authorized to send via Mailgun.
 
@@ -71,7 +71,7 @@ Root domain also authorized to send via Mailgun.
 
 | Host | Type | Value                             | Purpose                             |
 |------|------|-----------------------------------|-------------------------------------|
-| @    | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@insightpulseai.net        |
+| @    | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@insightpulseai.com        |
 
 ### 3.2. DMARC (Root)
 
@@ -97,20 +97,20 @@ Restricts certificate issuance to Let's Encrypt only:
 
 ## 5. Canonical Summary
 
-A canonical configuration for `insightpulseai.net` includes:
+A canonical configuration for `insightpulseai.com` includes:
 
 **Core Records**:
 - A records: @, erp, erp.staging, n8n, mcp, auth, superset
-- CNAME: www → insightpulseai.net
+- CNAME: www → insightpulseai.com
 
-**Mailgun (mg.insightpulseai.net)**:
+**Mailgun (mg.insightpulseai.com)**:
 - MX: mxa/mxb.mailgun.org
 - DKIM TXT
 - SPF TXT  
 - DMARC TXT
 
 **Root Domain Email**:
-- SPF + DMARC for *@insightpulseai.net
+- SPF + DMARC for *@insightpulseai.com
 
 **Security**:
 - CAA allowing only Let's Encrypt
@@ -123,25 +123,25 @@ A canonical configuration for `insightpulseai.net` includes:
 
 ```bash
 # A records
-dig +short insightpulseai.net A
-dig +short erp.insightpulseai.net A
-dig +short erp.staging.insightpulseai.net A
-dig +short n8n.insightpulseai.net A
-dig +short mcp.insightpulseai.net A
-dig +short superset.insightpulseai.net A
-dig +short auth.insightpulseai.net A
+dig +short insightpulseai.com A
+dig +short erp.insightpulseai.com A
+dig +short erp.staging.insightpulseai.com A
+dig +short n8n.insightpulseai.com A
+dig +short mcp.insightpulseai.com A
+dig +short superset.insightpulseai.com A
+dig +short auth.insightpulseai.com A
 
 # Mailgun records
-dig +short mg.insightpulseai.net MX
-dig +short mg.insightpulseai.net TXT
-dig +short _dmarc.mg.insightpulseai.net TXT
+dig +short mg.insightpulseai.com MX
+dig +short mg.insightpulseai.com TXT
+dig +short _dmarc.mg.insightpulseai.com TXT
 
 # Root domain email
-dig +short insightpulseai.net TXT
-dig +short _dmarc.insightpulseai.net TXT
+dig +short insightpulseai.com TXT
+dig +short _dmarc.insightpulseai.com TXT
 
 # CAA
-dig +short insightpulseai.net CAA
+dig +short insightpulseai.com CAA
 ```
 
 All results should match values documented above.

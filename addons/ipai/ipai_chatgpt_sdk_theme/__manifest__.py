@@ -35,7 +35,7 @@ After installing this theme, all IPAI widgets and components should
 reference var(--ipai-*) tokens instead of hardcoded values.
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "web",

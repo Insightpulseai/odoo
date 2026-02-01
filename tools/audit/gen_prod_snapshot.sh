@@ -17,7 +17,7 @@
 #   DB_NAME               - Database name (default: odoo)
 #   DB_USER               - Database user (default: odoo)
 #   ODOO_SERVICE          - Odoo service name (default: odoo)
-#   BASE_URL              - Public URL (default: https://erp.insightpulseai.net)
+#   BASE_URL              - Public URL (default: https://erp.insightpulseai.com)
 #   SKIP_HTTP_CRAWL       - Set to 1 to skip HTTP crawling
 #
 # Outputs:
@@ -44,7 +44,7 @@ export DB_SERVICE="${DB_SERVICE:-db}"
 export DB_NAME="${DB_NAME:-odoo}"
 export DB_USER="${DB_USER:-odoo}"
 export ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
-export BASE_URL="${BASE_URL:-https://erp.insightpulseai.net}"
+export BASE_URL="${BASE_URL:-https://erp.insightpulseai.com}"
 SKIP_HTTP_CRAWL="${SKIP_HTTP_CRAWL:-0}"
 
 echo "=============================================="
@@ -194,7 +194,7 @@ cd /opt/odoo-ce
 # Environment variables:
 export COMPOSE_FILE=deploy/docker-compose.prod.yml
 export DB_NAME=odoo
-export BASE_URL=https://erp.insightpulseai.net
+export BASE_URL=https://erp.insightpulseai.com
 \`\`\`
 EOF
 

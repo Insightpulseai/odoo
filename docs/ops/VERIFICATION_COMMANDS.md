@@ -83,7 +83,7 @@ curl -sS http://127.0.0.1:8069/web/health
 
 ```bash
 # Replace with your domain
-BASE_URL="https://erp.insightpulseai.net"
+BASE_URL="https://erp.insightpulseai.com"
 
 # Login page
 curl -sS -o /dev/null -w '%{http_code}\n' "$BASE_URL/web/login"

@@ -11,10 +11,10 @@
 
 | Service | URL | Status Page |
 |---------|-----|-------------|
-| Mattermost | https://chat.insightpulseai.net | /api/v4/system/ping |
-| Focalboard | https://boards.insightpulseai.net | /api/v2/ping |
-| n8n | https://n8n.insightpulseai.net | /healthz |
-| Superset | https://superset.insightpulseai.net | /health |
+| Mattermost | https://chat.insightpulseai.com | /api/v4/system/ping |
+| Focalboard | https://boards.insightpulseai.com | /api/v2/ping |
+| n8n | https://n8n.insightpulseai.com | /healthz |
+| Superset | https://superset.insightpulseai.com | /health |
 
 ## Infrastructure
 
@@ -51,9 +51,9 @@ Integration modules in this repository:
 System parameters to configure in Odoo:
 
 ```
-ipai_integrations.mattermost_url = https://chat.insightpulseai.net
-ipai_integrations.focalboard_url = https://boards.insightpulseai.net
-ipai_integrations.n8n_url = https://n8n.insightpulseai.net
+ipai_integrations.mattermost_url = https://chat.insightpulseai.com
+ipai_integrations.focalboard_url = https://boards.insightpulseai.com
+ipai_integrations.n8n_url = https://n8n.insightpulseai.com
 ```
 
 Authentication tokens should be stored in secure system parameters
@@ -61,5 +61,5 @@ Authentication tokens should be stored in secure system parameters
 
 ## Contacts
 
-- **Ops Channel:** #infrastructure on chat.insightpulseai.net
-- **Integration Channel:** #odoo-integrations on chat.insightpulseai.net
+- **Ops Channel:** #infrastructure on chat.insightpulseai.com
+- **Integration Channel:** #odoo-integrations on chat.insightpulseai.com

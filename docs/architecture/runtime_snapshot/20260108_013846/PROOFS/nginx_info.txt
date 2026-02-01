@@ -13,15 +13,15 @@
              └─3608326 "nginx: worker process" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
 
 Jan 04 22:55:31 odoo-erp-prod systemd[1]: Starting A high performance web server and a reverse proxy server...
-Jan 04 22:55:31 odoo-erp-prod nginx[3581915]: nginx: [warn] conflicting server name "erp.insightpulseai.net" on 0.0.0.0:80, ignored
-Jan 04 22:55:31 odoo-erp-prod nginx[3581918]: nginx: [warn] conflicting server name "erp.insightpulseai.net" on 0.0.0.0:80, ignored
+Jan 04 22:55:31 odoo-erp-prod nginx[3581915]: nginx: [warn] conflicting server name "erp.insightpulseai.com" on 0.0.0.0:80, ignored
+Jan 04 22:55:31 odoo-erp-prod nginx[3581918]: nginx: [warn] conflicting server name "erp.insightpulseai.com" on 0.0.0.0:80, ignored
 Jan 04 22:55:31 odoo-erp-prod systemd[1]: Started A high performance web server and a reverse proxy server.
 Jan 04 23:14:17 odoo-erp-prod systemd[1]: Reloading A high performance web server and a reverse proxy server...
-Jan 04 23:14:17 odoo-erp-prod nginx[3608319]: nginx: [warn] conflicting server name "erp.insightpulseai.net" on 0.0.0.0:80, ignored
+Jan 04 23:14:17 odoo-erp-prod nginx[3608319]: nginx: [warn] conflicting server name "erp.insightpulseai.com" on 0.0.0.0:80, ignored
 Jan 04 23:14:17 odoo-erp-prod systemd[1]: Reloaded A high performance web server and a reverse proxy server.
 
 === Nginx Config Check ===
-nginx: [warn] conflicting server name "erp.insightpulseai.net" on 0.0.0.0:80, ignored
+nginx: [warn] conflicting server name "erp.insightpulseai.com" on 0.0.0.0:80, ignored
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
 

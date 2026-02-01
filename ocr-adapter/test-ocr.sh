@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-OCR_URL="${OCR_URL:-https://ocr.insightpulseai.net}"
+OCR_URL="${OCR_URL:-https://ocr.insightpulseai.com}"
 API_KEY="${API_KEY:-dev-key-insecure}"
 TEST_IMAGE="${1:-sample-receipt.jpg}"
 

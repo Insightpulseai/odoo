@@ -48,7 +48,7 @@
 3. **Period Lock Reminder** - Day 5, 09:00 AM (cron: `0 9 5 * *`)
 4. **BIR Filing Alerts** - Day 10, 08:00 AM (cron: `0 8 10 * *`)
 
-**n8n Server**: https://ipa.insightpulseai.net
+**n8n Server**: https://ipa.insightpulseai.com
 
 ---
 
@@ -133,7 +133,7 @@
 
 **Prerequisites**:
 1. Create n8n API key:
-   - Login: https://ipa.insightpulseai.net
+   - Login: https://ipa.insightpulseai.com
    - Settings → n8n API → Create an API key
    - Copy API key
 
@@ -141,7 +141,7 @@
    ```bash
    # Add to ~/.zshrc
    export N8N_JWT="your-jwt-token-here"
-   export N8N_BASE_URL="https://n8n.insightpulseai.net"
+   export N8N_BASE_URL="https://n8n.insightpulseai.com"
 
    # Reload shell
    source ~/.zshrc

@@ -62,7 +62,7 @@ services:
     environment:
       MM_SQLSETTINGS_DRIVERNAME: postgres
       MM_SQLSETTINGS_DATASOURCE: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/mattermost?sslmode=disable
-      MM_SERVICESETTINGS_SITEURL: https://chat.insightpulseai.net
+      MM_SERVICESETTINGS_SITEURL: https://chat.insightpulseai.com
       MM_SERVICESETTINGS_LISTENADDRESS: :8065
     volumes:
       - mattermost_data:/mattermost/data
@@ -91,7 +91,7 @@ services:
       FOCALBOARD_PORT: 8000
       FOCALBOARD_DBTYPE: postgres
       FOCALBOARD_DBCONFIG: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/focalboard?sslmode=disable
-      FOCALBOARD_SERVERROOT: https://boards.insightpulseai.net
+      FOCALBOARD_SERVERROOT: https://boards.insightpulseai.com
     volumes:
       - focalboard_data:/opt/focalboard/data
     depends_on:
@@ -113,10 +113,10 @@ services:
     container_name: n8n
     restart: unless-stopped
     environment:
-      N8N_HOST: n8n.insightpulseai.net
+      N8N_HOST: n8n.insightpulseai.com
       N8N_PROTOCOL: https
       N8N_PORT: 5678
-      WEBHOOK_URL: https://n8n.insightpulseai.net/
+      WEBHOOK_URL: https://n8n.insightpulseai.com/
       GENERIC_TIMEZONE: ${TZ:-Asia/Manila}
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
     volumes:
@@ -192,7 +192,7 @@ services:
       (superset fab create-admin
         --username ${SUPERSET_ADMIN_USER:-admin}
         --firstname Admin --lastname User
-        --email ${SUPERSET_ADMIN_EMAIL:-admin@insightpulseai.net}
+        --email ${SUPERSET_ADMIN_EMAIL:-admin@insightpulseai.com}
         --password ${SUPERSET_ADMIN_PASSWORD} || true)
       "
     environment:

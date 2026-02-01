@@ -15,7 +15,7 @@ INDEX_FILE="$REPO_ROOT/workflows/index.yaml"
 
 # Override via env if needed
 N8N_CONTAINER="${N8N_CONTAINER:-odoo-ipa-1}"
-N8N_HOST="${N8N_HOST:-root@erp.insightpulseai.net}"
+N8N_HOST="${N8N_HOST:-root@erp.insightpulseai.com}"
 BACKUP_DIR="${BACKUP_DIR:-$REPO_ROOT/workflows/backups}"
 
 mkdir -p "$BACKUP_DIR"
@@ -207,7 +207,7 @@ Commands:
 
 Environment:
   N8N_CONTAINER   (default: odoo-ipa-1)
-  N8N_HOST        (default: root@erp.insightpulseai.net)
+  N8N_HOST        (default: root@erp.insightpulseai.com)
   BACKUP_DIR      (default: \$REPO_ROOT/workflows/backups)
 
 Examples:

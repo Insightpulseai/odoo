@@ -20,7 +20,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
@@ -42,7 +42,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
@@ -113,7 +113,7 @@
         "url": "={{$credentials.mattermostWebhook.webhookUrl}}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"⚠️ **Odoo View Healthcheck - Issues Detected**\\n\\nTimestamp: {{$json.timestamp}}\\nViews Checked: {{$json.total_views_checked}}\\nProblems Found: {{$json.total_problems}}\\n\\n**Summary**: {{$json.summary}}\\n\\n**Top Issues**:\\n{{$json.problems.map(p => `- **${p.model}** (${p.view_name}): Invalid field \\`${p.invalid_field}\\``).join('\\\\n')}}\\n\\n**Action Required**: Review and fix invalid field references in Odoo views.\\n[Odoo Settings → Technical → User Interface → Views](https://erp.insightpulseai.net/web#menu_id=XX&action=XX)\",\n  \"username\": \"View Healthcheck Bot\",\n  \"icon_emoji\": \":warning:\"\n}",
+        "jsonBody": "={\n  \"text\": \"⚠️ **Odoo View Healthcheck - Issues Detected**\\n\\nTimestamp: {{$json.timestamp}}\\nViews Checked: {{$json.total_views_checked}}\\nProblems Found: {{$json.total_problems}}\\n\\n**Summary**: {{$json.summary}}\\n\\n**Top Issues**:\\n{{$json.problems.map(p => `- **${p.model}** (${p.view_name}): Invalid field \\`${p.invalid_field}\\``).join('\\\\n')}}\\n\\n**Action Required**: Review and fix invalid field references in Odoo views.\\n[Odoo Settings → Technical → User Interface → Views](https://erp.insightpulseai.com/web#menu_id=XX&action=XX)\",\n  \"username\": \"View Healthcheck Bot\",\n  \"icon_emoji\": \":warning:\"\n}",
         "options": {}
       },
       "name": "Mattermost - Problems Alert",

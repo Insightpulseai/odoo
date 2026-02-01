@@ -16,7 +16,7 @@
     },
     {
       "parameters": {
-        "url": "https://erp.insightpulseai.net",
+        "url": "https://erp.insightpulseai.com",
         "database": "odoo",
         "username": "admin",
         "password": "={{$credentials.odooApi.password}}",
@@ -57,7 +57,7 @@
     {
       "parameters": {
         "channel": "equipment-alerts",
-        "text": "=📋 New Equipment Booking:\n\n**Equipment**: {{$json.equipment_name}}\n**User**: {{$json.user_name}}\n**Dates**: {{$json.start_date}} → {{$json.end_date}}\n\n[View in Odoo](https://erp.insightpulseai.net/web#id={{$json.id}}&model=equipment.booking)",
+        "text": "=📋 New Equipment Booking:\n\n**Equipment**: {{$json.equipment_name}}\n**User**: {{$json.user_name}}\n**Dates**: {{$json.start_date}} → {{$json.end_date}}\n\n[View in Odoo](https://erp.insightpulseai.com/web#id={{$json.id}}&model=equipment.booking)",
         "attachments": []
       },
       "name": "Mattermost - Send Notification",

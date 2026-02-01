@@ -9,7 +9,7 @@ set -euo pipefail
 DEPLOY_BRANCH="${DEPLOY_BRANCH:-claude/deploy-odoo-enterprise-bridge-RbvGm}"
 ODOO_DATABASE="${ODOO_DATABASE:-odoo_core}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-PRODUCTION_URL="${PRODUCTION_URL:-https://erp.insightpulseai.net}"
+PRODUCTION_URL="${PRODUCTION_URL:-https://erp.insightpulseai.com}"
 LOG_FILE="/var/log/mailgun_mailgate_deployment_$(date +%Y%m%d_%H%M%S).log"
 
 log() {
@@ -80,8 +80,8 @@ fi
 log "Phase 6: Testing webhook with sample payload"
 TEST_RESPONSE=$(curl -s -X POST "$PRODUCTION_URL/mailgate/mailgun" \
     -H "Content-Type: application/x-www-form-urlencoded" \
-    --data "sender=deploy-test@mg.insightpulseai.net" \
-    --data "recipient=test@insightpulseai.net" \
+    --data "sender=deploy-test@mg.insightpulseai.com" \
+    --data "recipient=test@insightpulseai.com" \
     --data "subject=Deployment Validation $(date -Iseconds)" \
     --data "body-plain=Automated deployment test message" \
     2>/dev/null || echo '{"status": "error", "message": "curl failed"}')

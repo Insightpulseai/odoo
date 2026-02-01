@@ -955,7 +955,7 @@ execution_rules:
 # ============================================================================
 stack:
   odoo:
-    url: "https://erp.insightpulseai.net"
+    url: "https://erp.insightpulseai.com"
     version: "18.0 CE"
     custom_modules:
       - ipai_expense
@@ -974,7 +974,7 @@ stack:
       - receipt-images
 
   ocr_service:
-    url: "https://ocr.insightpulseai.net"
+    url: "https://ocr.insightpulseai.com"
     backend: "PaddleOCR-VL-900M"
     llm: "OpenAI GPT-4o-mini"
 

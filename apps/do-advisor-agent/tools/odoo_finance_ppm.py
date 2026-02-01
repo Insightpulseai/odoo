@@ -29,7 +29,7 @@ class OdooFinancePPM:
         username: str = None,
         password: str = None,
     ):
-        self.url = url or os.getenv('ODOO_ENDPOINT', 'https://odoo.insightpulseai.net')
+        self.url = url or os.getenv('ODOO_ENDPOINT', 'https://odoo.insightpulseai.com')
         self.database = database or os.getenv('ODOO_DATABASE', 'odooprod')
         self.username = username or os.getenv('ODOO_USERNAME', 'admin')
         self.password = password or os.getenv('ODOO_PASSWORD', '')

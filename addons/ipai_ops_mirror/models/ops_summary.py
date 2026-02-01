@@ -23,7 +23,7 @@ class IpaiOpsSummary(models.Model):
     system = fields.Char(
         string="System",
         required=True,
-        default="erp.insightpulseai.net",
+        default="erp.insightpulseai.com",
         help="System identifier in the SSOT",
     )
     environment = fields.Char(
@@ -135,7 +135,7 @@ class IpaiOpsSummary(models.Model):
         if not recs:
             # Create default record if none exists
             recs = self.create([{
-                "system": "erp.insightpulseai.net",
+                "system": "erp.insightpulseai.com",
                 "environment": "prod"
             }])
 

@@ -1,7 +1,7 @@
 # WorkOS Deployment Verification Matrix
 
 **Purpose**: Comprehensive validation checklist for production deployment
-**Target**: erp.insightpulseai.net
+**Target**: erp.insightpulseai.com
 **Module**: WorkOS (Notion Clone for Odoo)
 
 ---
@@ -99,7 +99,7 @@
 
 | Metric | Measurement | Threshold | Status |
 |--------|-------------|-----------|--------|
-| Login page load time | `curl -w "%{time_total}" https://erp.insightpulseai.net/web/login` | < 2 seconds | ⬜ |
+| Login page load time | `curl -w "%{time_total}" https://erp.insightpulseai.com/web/login` | < 2 seconds | ⬜ |
 | Dashboard load time | Manual browser test | < 3 seconds | ⬜ |
 | Database query time | `EXPLAIN ANALYZE SELECT * FROM workos_* LIMIT 100;` | < 100ms | ⬜ |
 | Memory usage | `docker stats odoo-accounting --no-stream` | < 80% | ⬜ |
@@ -112,7 +112,7 @@
 | SQL injection test | Attempt SQL injection in search fields | Request blocked | ⬜ |
 | XSS test | Attempt XSS in text fields | Content escaped | ⬜ |
 | CSRF protection | Check CSRF tokens in forms | Tokens present | ⬜ |
-| HTTPS enforced | `curl -I http://erp.insightpulseai.net` | Redirect to HTTPS | ⬜ |
+| HTTPS enforced | `curl -I http://erp.insightpulseai.com` | Redirect to HTTPS | ⬜ |
 
 ### Log Verification
 

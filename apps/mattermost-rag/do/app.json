@@ -17,7 +17,7 @@
           "envs": [
             {
               "key": "MM_SITE_URL",
-              "value": "https://chat.insightpulseai.net",
+              "value": "https://chat.insightpulseai.com",
               "scope": "RUN_AND_BUILD_TIME"
             },
             {
@@ -115,7 +115,7 @@
             "envs": [
               {
                 "key": "MM_SITE_URL",
-                "value": "https://chat.insightpulseai.net",
+                "value": "https://chat.insightpulseai.com",
                 "scope": "RUN_AND_BUILD_TIME"
               },
               {

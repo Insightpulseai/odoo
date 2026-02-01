@@ -339,7 +339,7 @@ Following pattern from KNOWLEDGE_BASE_INDEX:
    docker logs odoo-odoo-1 --tail 100
 
    # OCR
-   ssh ocr.insightpulseai.net 'journalctl -u ai-inference-hub -n 100'
+   ssh ocr.insightpulseai.com 'journalctl -u ai-inference-hub -n 100'
 
    # n8n
    Check execution history in n8n UI
@@ -546,7 +546,7 @@ python odoo-bin -d test_concur \
 ```
 
 **Quick Validation**:
-- OCR health check: `curl https://ocr.insightpulseai.net/health`
+- OCR health check: `curl https://ocr.insightpulseai.com/health`
 - OCR success rate today: `SELECT COUNT(*) FILTER (WHERE ocr_status='processed') * 100.0 / COUNT(*) FROM ipai_expense WHERE create_date >= CURRENT_DATE;`
 - Vendor normalization count: `grep -c "VENDOR_NORMALIZATION\|PH_LOCAL_VENDORS" ocr-adapter/main.py`
 

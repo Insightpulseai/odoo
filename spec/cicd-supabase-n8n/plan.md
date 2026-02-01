@@ -91,9 +91,9 @@ Webhook → Validate Request → Check Production?
 SUPABASE_ACCESS_TOKEN    # From Supabase Dashboard → Settings → API
 SUPABASE_DB_PASSWORD     # From project settings
 SUPABASE_PROJECT_ID      # spdtwktxdalcfigzeqrz (production)
-N8N_API_URL              # https://n8n.insightpulseai.net
+N8N_API_URL              # https://n8n.insightpulseai.com
 N8N_API_KEY              # From n8n Settings → API
-N8N_WEBHOOK_URL          # https://n8n.insightpulseai.net/webhook/deployment
+N8N_WEBHOOK_URL          # https://n8n.insightpulseai.com/webhook/deployment
 SSH_PRIVATE_KEY          # For Odoo server access
 SSH_HOST                 # 178.128.112.214
 SSH_USER                 # deploy
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS deployment_requests (
 2. **n8n Webhook**:
    ```bash
    # Test webhook endpoint
-   curl -X POST "https://n8n.insightpulseai.net/webhook/deployment" \
+   curl -X POST "https://n8n.insightpulseai.com/webhook/deployment" \
      -H "Content-Type: application/json" \
      -d '{"event":"test","environment":"staging","commit":"abc123"}'
    ```

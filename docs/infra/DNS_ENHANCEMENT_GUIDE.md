@@ -1,4 +1,4 @@
-# DNS Enhancement Guide - insightpulseai.net
+# DNS Enhancement Guide - insightpulseai.com
 
 **Purpose**: Enhance DNS configuration for improved email authentication and staging environment support
 
@@ -13,7 +13,7 @@
 
 **Root & Web**:
 - `@` A → `178.128.112.214`
-- `www` CNAME → `insightpulseai.net`
+- `www` CNAME → `insightpulseai.com`
 
 **App Hosts**:
 - `erp` A → `178.128.112.214`
@@ -45,7 +45,7 @@
 
 ### 1. Staging ERP A Record
 
-**Purpose**: Enable `erp.staging.insightpulseai.net` for staging environment testing
+**Purpose**: Enable `erp.staging.insightpulseai.com` for staging environment testing
 
 | Host | Type | TTL | Data | Priority |
 |------|------|-----|------|----------|
@@ -55,20 +55,20 @@
 
 ### 2. Root SPF Record
 
-**Purpose**: Authorize Mailgun to send email from `*@insightpulseai.net` (not just `*@mg.insightpulseai.net`)
+**Purpose**: Authorize Mailgun to send email from `*@insightpulseai.com` (not just `*@mg.insightpulseai.com`)
 
 | Host | Type | TTL | Data | Priority |
 |------|------|-----|------|----------|
 | `@` | TXT | 3600 | `v=spf1 include:mailgun.org ~all` | Recommended |
 
 **Why**:
-- Currently SPF only covers `mg.insightpulseai.net`
-- If sending email as `business@insightpulseai.net` or `*@insightpulseai.net`, root SPF prevents spam classification
+- Currently SPF only covers `mg.insightpulseai.com`
+- If sending email as `business@insightpulseai.com` or `*@insightpulseai.com`, root SPF prevents spam classification
 - Without this, emails from root domain may fail SPF checks
 
 ### 3. Root DMARC Record
 
-**Purpose**: Provide DMARC policy and reporting for `*@insightpulseai.net` root domain
+**Purpose**: Provide DMARC policy and reporting for `*@insightpulseai.com` root domain
 
 | Host | Type | TTL | Data | Priority |
 |------|------|-----|------|----------|
@@ -90,7 +90,7 @@ v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,m
 
 ### Step-by-Step Instructions
 
-**Access**: DigitalOcean DNS Panel → `insightpulseai.net` → Manage Domain
+**Access**: DigitalOcean DNS Panel → `insightpulseai.com` → Manage Domain
 
 #### Record 1: Staging ERP (Optional)
 
@@ -134,25 +134,25 @@ Value: v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgu
 
 ```bash
 # 1. Verify Staging ERP DNS
-dig erp.staging.insightpulseai.net A +short
+dig erp.staging.insightpulseai.com A +short
 # Expected: 178.128.112.214
 
 # 2. Verify Root SPF
-dig insightpulseai.net TXT +short | grep spf
+dig insightpulseai.com TXT +short | grep spf
 # Expected: v=spf1 include:mailgun.org ~all
 
 # 3. Verify Root DMARC
-dig _dmarc.insightpulseai.net TXT +short
+dig _dmarc.insightpulseai.com TXT +short
 # Expected: v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org
 
 # 4. Sanity Check: Existing Mailgun mg Records
-dig mg.insightpulseai.net MX +short
+dig mg.insightpulseai.com MX +short
 # Expected: 10 mxa.mailgun.org, 10 mxb.mailgun.org
 
-dig mg.insightpulseai.net TXT +short | grep spf
+dig mg.insightpulseai.com TXT +short | grep spf
 # Expected: v=spf1 include:mailgun.org ~all
 
-dig _dmarc.mg.insightpulseai.net TXT +short
+dig _dmarc.mg.insightpulseai.com TXT +short
 # Expected: v=DMARC1; p=none; pct=100; fo=1; ri=3600; ...
 ```
 
@@ -168,23 +168,23 @@ echo "=== DNS Enhancement Verification ==="
 echo
 
 echo "1. Staging ERP DNS:"
-dig erp.staging.insightpulseai.net A +short || echo "❌ Not configured"
+dig erp.staging.insightpulseai.com A +short || echo "❌ Not configured"
 echo
 
 echo "2. Root SPF:"
-dig insightpulseai.net TXT +short | grep spf || echo "❌ Not configured"
+dig insightpulseai.com TXT +short | grep spf || echo "❌ Not configured"
 echo
 
 echo "3. Root DMARC:"
-dig _dmarc.insightpulseai.net TXT +short || echo "❌ Not configured"
+dig _dmarc.insightpulseai.com TXT +short || echo "❌ Not configured"
 echo
 
 echo "4. Existing Mailgun mg SPF (sanity check):"
-dig mg.insightpulseai.net TXT +short | grep spf
+dig mg.insightpulseai.com TXT +short | grep spf
 echo
 
 echo "5. Existing Mailgun mg DMARC (sanity check):"
-dig _dmarc.mg.insightpulseai.net TXT +short
+dig _dmarc.mg.insightpulseai.com TXT +short
 echo
 
 echo "=== Verification Complete ==="
@@ -204,7 +204,7 @@ echo "=== Verification Complete ==="
 ### What NOT to Change
 
 ❌ **DO NOT modify**:
-- Existing `mg.insightpulseai.net` MX/TXT/CNAME records
+- Existing `mg.insightpulseai.com` MX/TXT/CNAME records
 - Existing `pic._domainkey.mg` DKIM key
 - Existing `_dmarc.mg` DMARC policy
 - Any existing A records for production apps
@@ -224,16 +224,16 @@ If issues occur, simply **delete** the new TXT records:
 ## Email Sending Patterns
 
 ### Current State
-- ✅ `*@mg.insightpulseai.net` - Fully authenticated (SPF + DKIM + DMARC)
-- ⚠️ `*@insightpulseai.net` - No SPF/DMARC (may trigger spam filters)
+- ✅ `*@mg.insightpulseai.com` - Fully authenticated (SPF + DKIM + DMARC)
+- ⚠️ `*@insightpulseai.com` - No SPF/DMARC (may trigger spam filters)
 
 ### After Enhancement
-- ✅ `*@mg.insightpulseai.net` - Fully authenticated (unchanged)
-- ✅ `*@insightpulseai.net` - Fully authenticated (SPF + DMARC added)
+- ✅ `*@mg.insightpulseai.com` - Fully authenticated (unchanged)
+- ✅ `*@insightpulseai.com` - Fully authenticated (SPF + DMARC added)
 
 ### Recommendation
-- **If sending ONLY from** `*@mg.insightpulseai.net`: Root SPF/DMARC are "nice to have"
-- **If sending from** `business@insightpulseai.net` or other root domain addresses: Root SPF/DMARC are **required** for deliverability
+- **If sending ONLY from** `*@mg.insightpulseai.com`: Root SPF/DMARC are "nice to have"
+- **If sending from** `business@insightpulseai.com` or other root domain addresses: Root SPF/DMARC are **required** for deliverability
 
 ---
 

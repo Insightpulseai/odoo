@@ -78,11 +78,11 @@ This creates:
 - fin-ocr-dro-ocr-prod-sgp1
 
 **Domains:**
-- erp.insightpulseai.net
-- superset.insightpulseai.net
-- mcp.insightpulseai.net
-- ocr.insightpulseai.net
-- agents.insightpulseai.net
+- erp.insightpulseai.com
+- superset.insightpulseai.com
+- mcp.insightpulseai.com
+- ocr.insightpulseai.com
+- agents.insightpulseai.com
 
 ## Next Steps
 

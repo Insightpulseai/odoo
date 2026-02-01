@@ -3,7 +3,7 @@
 **Droplet**: `178.128.112.214` (odoo-erp-prod, 8GB RAM, SGP1)
 **Managed DB**: `odoo-db-sgp1` (DigitalOcean PostgreSQL 16, 1GB RAM)
 **Canonical Database**: `odoo` (enforced via `dbfilter = ^odoo$`)
-**Domains**: `erp.insightpulseai.net`, `superset.insightpulseai.net`, `mcp.insightpulseai.net`
+**Domains**: `erp.insightpulseai.com`, `superset.insightpulseai.com`, `mcp.insightpulseai.com`
 
 ---
 
@@ -81,7 +81,7 @@ ssh root@178.128.112.214 "docker stats odoo-prod --no-stream"
 
 ```bash
 # Check Odoo web login (via nginx proxy)
-curl -sf https://erp.insightpulseai.net/web/login | grep -q "Odoo"
+curl -sf https://erp.insightpulseai.com/web/login | grep -q "Odoo"
 echo $?  # Should return 0
 
 # Check direct container port (bypassing nginx)
@@ -89,7 +89,7 @@ curl -sf http://178.128.112.214:8069/web/login | grep -q "Odoo"
 echo $?  # Should return 0
 
 # Get HTTP response headers
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 # Expected: HTTP/2 200 OK
 ```
 
@@ -342,7 +342,7 @@ ssh root@178.128.112.214 "docker restart odoo-prod"
 | Container not starting | `docker logs odoo-prod` | Look for FATAL errors |
 | Database connection fails | `docker exec odoo-prod psql -h <HOST> -p 25060 -U doadmin -d odoo -c 'SELECT 1;'` | Returns `1` |
 | High memory usage | `docker stats odoo-prod --no-stream` | <80% of 3.8GiB limit |
-| Web interface slow | `curl -w '%{time_total}\n' -o /dev/null -s https://erp.insightpulseai.net/web/login` | <2 seconds |
+| Web interface slow | `curl -w '%{time_total}\n' -o /dev/null -s https://erp.insightpulseai.com/web/login` | <2 seconds |
 | Module upgrade failed | `docker logs odoo-prod | grep ERROR` | Identify error message |
 
 ---

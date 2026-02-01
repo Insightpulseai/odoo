@@ -205,7 +205,7 @@ When asked to "Document":
 | Target Image | `ghcr.io/jgtolentino/odoo-ce:latest` |
 | Supabase Project | `spdtwktxdalcfigzeqrz` |
 | GitHub Repo | `github.com/jgtolentino/odoo-ce` |
-| Production URL | `https://erp.insightpulseai.net` |
+| Production URL | `https://erp.insightpulseai.com` |
 | Documentation | `docs/` directory |
 
 ---

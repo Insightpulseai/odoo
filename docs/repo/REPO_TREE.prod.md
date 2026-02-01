@@ -197,7 +197,7 @@ SHA: f748a4d
 │   ├── postgres-service.yaml
 │   └── postgres-statefulset.yaml
 ├── nginx
-│   └── erp.insightpulseai.net.conf
+│   └── erp.insightpulseai.com.conf
 ├── README.md
 ├── docker-compose.prod.v0.10.0.yml
 ├── docker-compose.prod.v0.9.1.yml

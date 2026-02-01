@@ -69,9 +69,9 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 ### Current Setup (159.223.75.148)
 ```
 VPS: 4GB RAM, 80GB Disk
-├── Odoo (erp.insightpulseai.net)
-├── Auth (auth.insightpulseai.net)
-└── n8n (n8n.insightpulseai.net)
+├── Odoo (erp.insightpulseai.com)
+├── Auth (auth.insightpulseai.com)
+└── n8n (n8n.insightpulseai.com)
 ```
 
 **Problem:** Resource contention → Performance degradation
@@ -167,7 +167,7 @@ docker compose ps
 ### Verify Deployment
 ```bash
 curl -f http://127.0.0.1:8069/web/health
-curl -I https://erp.insightpulseai.net/web
+curl -I https://erp.insightpulseai.com/web
 docker compose logs odoo --tail 50
 ```
 

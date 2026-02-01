@@ -14,7 +14,7 @@ models:
   local:
     - name: nous-hermes-llama3
       provider: local
-      endpoint: "http://gpu.insightpulseai.net:7000/v1"
+      endpoint: "http://gpu.insightpulseai.com:7000/v1"
 
 model_routing:
   reasoning: claude-3.5-sonnet
@@ -33,16 +33,16 @@ knowledge_base:
 tools:
   - name: odoo
     type: mcp
-    endpoint: https://erp.insightpulseai.net/mcp
+    endpoint: https://erp.insightpulseai.com/mcp
   - name: supabase
     type: mcp
-    endpoint: https://mcp.insightpulseai.net/supabase
+    endpoint: https://mcp.insightpulseai.com/supabase
   - name: n8n
     type: webhook
-    endpoint: https://n8n.insightpulseai.net/webhook/
+    endpoint: https://n8n.insightpulseai.com/webhook/
   - name: ocr
     type: http
-    endpoint: https://ocr.insightpulseai.net/ocr
+    endpoint: https://ocr.insightpulseai.com/ocr
   - name: github
     type: mcp
     endpoint: https://api.github.com

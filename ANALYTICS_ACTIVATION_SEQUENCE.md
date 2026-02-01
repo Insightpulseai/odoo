@@ -17,7 +17,7 @@ postgresql://odoo:[ACTUAL_DB_PASSWORD]@159.223.75.148:5432/odoo?sslmode=disable
 ```
 
 #### Connection Configuration Steps
-1. **Log into Superset**: `superset.insightpulseai.net`
+1. **Log into Superset**: `superset.insightpulseai.com`
 2. **Navigate to**: Data → Databases → + Database
 3. **Select**: PostgreSQL
 4. **Configure Connection**:
@@ -40,7 +40,7 @@ postgresql://odoo:[ACTUAL_DB_PASSWORD]@159.223.75.148:5432/odoo?sslmode=disable
 ### 🧪 STEP 2: Validate Core Logic (WBS & RAG Status)
 
 #### Test WBS Auto-Numbering
-1. **Log into Odoo**: `erp.insightpulseai.net`
+1. **Log into Odoo**: `erp.insightpulseai.com`
 2. **Navigate to**: Finance PPM → Active Operations
 3. **Create Parent Task**:
    - Name: "Test Parent Task"
@@ -107,7 +107,7 @@ postgresql://odoo:[ACTUAL_DB_PASSWORD]@159.223.75.148:5432/odoo?sslmode=disable
 1. **Get Superset Dashboard URL**:
    - Click "Share" → "Copy Permalink"
    - Enable "Embedded/Standalone" mode
-   - URL format: `https://superset.insightpulseai.net/superset/dashboard/[DASHBOARD_ID]/?standalone=true`
+   - URL format: `https://superset.insightpulseai.com/superset/dashboard/[DASHBOARD_ID]/?standalone=true`
 
 2. **Update Odoo Action**:
    - Log into Odoo as Administrator

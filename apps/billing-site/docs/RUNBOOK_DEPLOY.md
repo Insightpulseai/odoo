@@ -177,7 +177,7 @@ curl -X POST https://your-domain.vercel.app/api/webhooks/paddle \
 
 ```bash
 # Run smoke test
-ODOO_BASE_URL=https://erp.insightpulseai.net \
+ODOO_BASE_URL=https://erp.insightpulseai.com \
 ODOO_DB=odoo_core \
 ODOO_USER=api@insightpulseai.com \
 ODOO_PASSWORD=your-password \

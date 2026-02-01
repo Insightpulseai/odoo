@@ -187,7 +187,7 @@ code_patterns:
           "version": "18.0.1.0.0",
           "category": "Category",
           "author": "InsightPulseAI",
-          "website": "https://insightpulseai.net",
+          "website": "https://insightpulseai.com",
           "license": "AGPL-3",
           "depends": ["base", "web"],
           "data": ["views/", "security/"],
@@ -250,7 +250,7 @@ code_patterns:
           {
             "type": "n8n-nodes-base.httpRequest",
             "parameters": {
-              "url": "https://erp.insightpulseai.net/jsonrpc",
+              "url": "https://erp.insightpulseai.com/jsonrpc",
               "method": "POST",
               "body": {
                 "jsonrpc": "2.0",

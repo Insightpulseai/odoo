@@ -72,7 +72,7 @@ Documentation:
 - Token Map: docs/ODOO_COPILOT_THEME_TOKEN_MAP.md
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "web",

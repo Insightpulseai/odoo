@@ -227,12 +227,12 @@ ssh root@178.128.112.214 "docker exec odoo-erp-prod bash -c \"\
 **Verification**:
 ```bash
 # DNS
-dig +short erp.insightpulseai.net  # Should return 178.128.112.214
+dig +short erp.insightpulseai.com  # Should return 178.128.112.214
 
 # Services
-curl -I https://erp.insightpulseai.net    # Should return 200
-curl -I https://n8n.insightpulseai.net    # Should return 200
-curl -I https://superset.insightpulseai.net  # Should return 200
+curl -I https://erp.insightpulseai.com    # Should return 200
+curl -I https://n8n.insightpulseai.com    # Should return 200
+curl -I https://superset.insightpulseai.com  # Should return 200
 ```
 
 ### Phase 2: Odoo Rationalization (P0)

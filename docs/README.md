@@ -265,7 +265,7 @@ grep "CHANGE_ME" deploy/.env.production
 ```
 
 **Browser Test:**
-1. Open: https://erp.insightpulseai.net
+1. Open: https://erp.insightpulseai.com
 2. Login with admin credentials
 3. Go to: Apps → Search "ipai"
 4. Verify all 5 custom modules visible
@@ -493,7 +493,7 @@ sleep 60
 **Infrastructure:**
 - DigitalOcean Support: https://cloud.digitalocean.com/support
 - VPS: 159.223.75.148 (odoo-erp-prod)
-- Domain: erp.insightpulseai.net
+- Domain: erp.insightpulseai.com
 
 ---
 
@@ -530,7 +530,7 @@ sleep 60
 - [ ] Run smoke tests: `./scripts/smoketest.sh`
 
 ### Verification Phase ☐
-- [ ] Test in browser: https://erp.insightpulseai.net
+- [ ] Test in browser: https://erp.insightpulseai.com
 - [ ] Verify login works
 - [ ] Check custom modules visible (5 ipai_*)
 - [ ] Create test record (verify writes work)
@@ -550,7 +550,7 @@ sleep 60
 **Your deployment is successful when:**
 
 ✅ All smoke tests pass (40+ tests)
-✅ Web interface loads at https://erp.insightpulseai.net
+✅ Web interface loads at https://erp.insightpulseai.com
 ✅ All 5 custom modules visible in Apps
 ✅ Health endpoint responds in <1 second
 ✅ Resource usage stable (MEM <80%, CPU <90%)

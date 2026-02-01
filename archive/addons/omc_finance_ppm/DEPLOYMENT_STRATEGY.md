@@ -231,7 +231,7 @@ docker compose up -d --force-recreate
 
 # 6. Verify deployment
 sleep 30
-curl -f https://erp.insightpulseai.net/web/health || exit 1
+curl -f https://erp.insightpulseai.com/web/health || exit 1
 
 # 7. Check module installation
 docker exec odoo-ce odoo -d production --list-modules | grep omc_finance_ppm
@@ -353,7 +353,7 @@ omc_finance_ppm/
    ```
 5. [ ] Deploy: `docker compose up -d --force-recreate`
 6. [ ] Monitor logs: `docker logs -f odoo-ce | grep -E 'omc_finance_ppm|Module loaded|ERROR'`
-7. [ ] Verify health: `curl -f https://erp.insightpulseai.net/web/health`
+7. [ ] Verify health: `curl -f https://erp.insightpulseai.com/web/health`
 8. [ ] Test dashboard: Navigate to `/web#action=omc_finance_ppm.dashboard_client_action`
 9. [ ] Validate data:
    ```bash

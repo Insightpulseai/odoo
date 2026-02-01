@@ -273,7 +273,7 @@ Convert the InsightPulse Odoo CE + Supabase + n8n stack into a **self-improving,
 - `integrate_mattermost_n8n`
 
 #### Success Criteria:
-- Mattermost accessible at chat.insightpulseai.net
+- Mattermost accessible at chat.insightpulseai.com
 - Chat agent responds to queries
 - n8n alerts appear in #alerts channel
 
@@ -313,7 +313,7 @@ Convert the InsightPulse Odoo CE + Supabase + n8n stack into a **self-improving,
 - `connect_superset_postgres`
 
 #### Success Criteria:
-- Superset accessible at superset.insightpulseai.net
+- Superset accessible at superset.insightpulseai.com
 - 4 dashboards live and updating
 - Read-only PostgreSQL connection secure
 

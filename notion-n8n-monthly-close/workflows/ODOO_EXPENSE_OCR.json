@@ -228,7 +228,7 @@
           "parameters": [
             {
               "name": "text",
-              "value": "=💰 **Expense OCR Processed**\n\n**Employee:** {{ $('Odoo: Get Expense Record').first().json.employee_id[1] }}\n**Amount:** ₱{{ $json.ocr_amount }}\n**Vendor:** {{ $json.ocr_vendor }}\n**Confidence:** {{ Math.round($json.ocr_confidence * 100) }}%\n**Status:** {{ $json.ocr_status === 'high_confidence' ? 'Auto-filled ✅' : 'Needs Review ⚠️' }}\n\n[View in Odoo](https://tbwa-main.insightpulseai.net/web#id={{ $json.expense_id }}&model=hr.expense)"
+              "value": "=💰 **Expense OCR Processed**\n\n**Employee:** {{ $('Odoo: Get Expense Record').first().json.employee_id[1] }}\n**Amount:** ₱{{ $json.ocr_amount }}\n**Vendor:** {{ $json.ocr_vendor }}\n**Confidence:** {{ Math.round($json.ocr_confidence * 100) }}%\n**Status:** {{ $json.ocr_status === 'high_confidence' ? 'Auto-filled ✅' : 'Needs Review ⚠️' }}\n\n[View in Odoo](https://tbwa-main.insightpulseai.com/web#id={{ $json.expense_id }}&model=hr.expense)"
             },
             {
               "name": "channel",

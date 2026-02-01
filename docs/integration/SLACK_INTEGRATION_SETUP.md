@@ -142,7 +142,7 @@ Explain the withholding tax treatment for professional fees under BIR rules
 
 ## Future Migration: Mattermost
 
-Mattermost is deployed at `https://chat.insightpulseai.net` as an eventual Slack replacement for:
+Mattermost is deployed at `https://chat.insightpulseai.com` as an eventual Slack replacement for:
 - Full data sovereignty (self-hosted)
 - Zero per-user licensing cost
 - Native playbook/workflow support

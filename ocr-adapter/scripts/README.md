@@ -54,7 +54,7 @@ crumpled_receipt.jpg,Unknown Store,2025-11-17,125.50,PHP
 python test-harness.py \
   --images ./test_receipts \
   --ground-truth ground_truth.csv \
-  --api-url https://ocr.insightpulseai.net/api/expense/ocr \
+  --api-url https://ocr.insightpulseai.com/api/expense/ocr \
   --api-key 282e6543652de3e969d43293e934f6f84557ab767132bcd2fd37c76289ff703e
 ```
 

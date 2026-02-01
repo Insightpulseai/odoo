@@ -19,7 +19,7 @@
 │   ├── deploy/
 │   │   ├── docker-compose.yml     # Production stack
 │   │   └── nginx/
-│   │       └── erp.insightpulseai.net.conf
+│   │       └── erp.insightpulseai.com.conf
 │   └── scripts/
 │       └── deploy/
 ├── data/                          # Runtime data (not tracked)
@@ -70,7 +70,7 @@ services:
     depends_on:
       - odoo
     volumes:
-      - ./deploy/nginx/erp.insightpulseai.net.conf:/etc/nginx/conf.d/default.conf
+      - ./deploy/nginx/erp.insightpulseai.com.conf:/etc/nginx/conf.d/default.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
@@ -85,7 +85,7 @@ volumes:
 
 ## 3. Nginx Virtual Host
 
-**File**: `deploy/nginx/erp.insightpulseai.net.conf`
+**File**: `deploy/nginx/erp.insightpulseai.com.conf`
 
 ```nginx
 upstream odoo {
@@ -98,16 +98,16 @@ upstream odoo_im {
 
 server {
     listen 80;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
 
     client_max_body_size 100M;
     proxy_read_timeout 720s;
@@ -195,14 +195,14 @@ list_db = False
 **Hot-reload**: Yes (watchdog on addons/)
 **Data**: Seeded with demo data
 
-### 5.2. Staging (erp.staging.insightpulseai.net)
+### 5.2. Staging (erp.staging.insightpulseai.com)
 
 **Host**: 178.128.112.214
 **Stack**: Same as production (separate containers)
 **Data**: Sanitized copy from production (weekly refresh)
 **Purpose**: Pre-production validation, BIR testing
 
-### 5.3. Production (erp.insightpulseai.net)
+### 5.3. Production (erp.insightpulseai.com)
 
 **Host**: 178.128.112.214
 **Stack**: docker-compose with nginx reverse proxy
@@ -233,7 +233,7 @@ docker compose exec odoo odoo -d odoo -u all --stop-after-init
 docker compose restart odoo
 
 # 7. Verify
-curl -f https://erp.insightpulseai.net/web/health || echo "Health check failed"
+curl -f https://erp.insightpulseai.com/web/health || echo "Health check failed"
 ```
 
 ---
@@ -257,7 +257,7 @@ curl -f https://erp.insightpulseai.net/web/health || echo "Health check failed"
 ## 8. Monitoring
 
 **Health Checks**:
-- **Endpoint**: `https://erp.insightpulseai.net/web/health`
+- **Endpoint**: `https://erp.insightpulseai.com/web/health`
 - **Frequency**: Every 5 minutes (n8n workflow)
 - **Alert**: Mattermost webhook on failure
 
@@ -285,7 +285,7 @@ ufw enable
 
 **TLS Certificates** (Let's Encrypt):
 ```bash
-certbot certonly --nginx -d erp.insightpulseai.net
+certbot certonly --nginx -d erp.insightpulseai.com
 ```
 
 **Secrets Management**:

@@ -10,7 +10,7 @@ Usage:
 
 Example:
     python scripts/audit_oca_modules.py \
-        --url https://erp.insightpulseai.net \
+        --url https://erp.insightpulseai.com \
         --db odoo_core \
         --user admin \
         --password your_password
@@ -277,7 +277,7 @@ def main():
         description="Audit OCA modules in Odoo via XML-RPC"
     )
     parser.add_argument(
-        "--url", required=True, help="Odoo URL (e.g., https://erp.insightpulseai.net)"
+        "--url", required=True, help="Odoo URL (e.g., https://erp.insightpulseai.com)"
     )
     parser.add_argument("--db", required=True, help="Database name")
     parser.add_argument("--user", required=True, help="Username (login)")

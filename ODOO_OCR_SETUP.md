@@ -23,7 +23,7 @@ Quality Monitoring & n8n Alerts
 ### Components
 
 - **Odoo Module**: `ipai_ocr_expense` (CE 18.0 compatible)
-- **OCR Adapter**: FastAPI service at `https://ocr.insightpulseai.net`
+- **OCR Adapter**: FastAPI service at `https://ocr.insightpulseai.com`
 - **OCR Backend**: PaddleOCR-VL-900M document understanding model
 - **LLM Enhancement**: OpenAI gpt-4o-mini for post-processing
 - **Observability**: `ocr.expense.log` model with UI dashboard
@@ -95,7 +95,7 @@ Measured against ground truth CSV with real PH receipts.
 **Uptime Target**: 99.0% (8.7 hours downtime/year)
 
 **Measurement**:
-- Health endpoint: `https://ocr.insightpulseai.net/health`
+- Health endpoint: `https://ocr.insightpulseai.com/health`
 - Monitor via external uptime service (e.g., UptimeRobot, Pingdom)
 - n8n can query health endpoint daily
 
@@ -141,7 +141,7 @@ cd /Users/tbwa/odoo-ce/ocr-adapter
 python3 scripts/test-harness.py \
   --images ./test_receipts \
   --ground-truth ./test_receipts/ground_truth.csv \
-  --api-url https://ocr.insightpulseai.net/api/expense/ocr \
+  --api-url https://ocr.insightpulseai.com/api/expense/ocr \
   --api-key 282e6543652de3e969d43293e934f6f84557ab767132bcd2fd37c76289ff703e
 ```
 
@@ -270,13 +270,13 @@ doctl apps logs <app-id> --follow
 **Deployment**:
 ```bash
 # Rsync updated files
-rsync -avz /Users/tbwa/odoo-ce/addons/ipai_ocr_expense/ root@erp.insightpulseai.net:/opt/odoo/custom-addons/ipai_ocr_expense/
+rsync -avz /Users/tbwa/odoo-ce/addons/ipai_ocr_expense/ root@erp.insightpulseai.com:/opt/odoo/custom-addons/ipai_ocr_expense/
 
 # Upgrade module
-ssh root@erp.insightpulseai.net "docker exec odoo-odoo-1 odoo -d odoo -u ipai_ocr_expense --workers=0 --stop-after-init"
+ssh root@erp.insightpulseai.com "docker exec odoo-odoo-1 odoo -d odoo -u ipai_ocr_expense --workers=0 --stop-after-init"
 
 # Restart Odoo
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
+ssh root@erp.insightpulseai.com "docker restart odoo-odoo-1"
 ```
 
 ---

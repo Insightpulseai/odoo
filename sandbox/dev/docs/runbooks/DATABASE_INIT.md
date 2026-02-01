@@ -17,7 +17,7 @@ cp .env.example .env
 # Edit .env and customize (optional):
 #   ODOO_DB_NAME=odoo_dev
 #   ODOO_ADMIN_PASSWORD=admin
-#   ODOO_ADMIN_EMAIL=admin@insightpulseai.net
+#   ODOO_ADMIN_EMAIL=admin@insightpulseai.com
 ```
 
 ### 2. Start Services
@@ -74,7 +74,7 @@ Odoo Dev Sandbox - Database Initialization
 
 Configuration:
   Database Name: odoo_dev
-  Admin Email: admin@insightpulseai.net
+  Admin Email: admin@insightpulseai.com
   Demo Data: False
   Container: odoo-dev
 

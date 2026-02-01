@@ -249,7 +249,7 @@ ORDER BY pt.date_deadline, pt.wbs_code;
 3. **Find "Finance Command Center" action**
 4. **Update target URL with your Superset dashboard link:**
    ```
-   https://superset.insightpulseai.net/superset/dashboard/[YOUR_DASHBOARD_ID]/?standalone=true
+   https://superset.insightpulseai.com/superset/dashboard/[YOUR_DASHBOARD_ID]/?standalone=true
    ```
 5. **Save changes**
 

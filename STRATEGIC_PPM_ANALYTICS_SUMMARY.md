@@ -75,7 +75,7 @@ Password: [Your Database Password]
 ## 🎯 Live System Testing
 
 ### Test WBS Auto-Numbering
-1. **Log in to** `erp.insightpulseai.net`
+1. **Log in to** `erp.insightpulseai.com`
 2. **Navigate to** Finance PPM or Project app
 3. **Create parent task** → Verify gets ID (e.g., "1")
 4. **Create child task** → Verify gets auto-numbered ID (e.g., "1.1")
@@ -93,7 +93,7 @@ Password: [Your Database Password]
 ## 🔗 Superset Integration Steps
 
 ### Phase 1: Database Connection (5 minutes)
-1. **Log in to Superset** at `superset.insightpulseai.net`
+1. **Log in to Superset** at `superset.insightpulseai.com`
 2. **Navigate to** Data → Databases → + Database
 3. **Configure PostgreSQL connection** with Odoo credentials
 4. **Test connection** and save

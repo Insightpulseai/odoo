@@ -2,7 +2,7 @@
 set -euo pipefail
 
 : "${ODOO_DB:=odoo_core}"
-: "${BASE_URL:=https://erp.insightpulseai.net}"
+: "${BASE_URL:=https://erp.insightpulseai.com}"
 : "${COMPOSE_FILE:=docker-compose.prod.yml}"
 
 echo "=== IPAI Ship Pack v1.1.0: Final Deployment (Odoo CE) ==="

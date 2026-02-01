@@ -16,21 +16,21 @@ echo "✅ Module found locally"
 
 # Create module directory on server
 echo "📁 Creating module directory on server..."
-ssh root@erp.insightpulseai.net "mkdir -p /opt/odoo-ce/addons/ipai_finance_ppm_dashboard"
+ssh root@erp.insightpulseai.com "mkdir -p /opt/odoo-ce/addons/ipai_finance_ppm_dashboard"
 
 # Copy module files
 echo "📤 Copying module files..."
-scp -r addons/ipai_finance_ppm_dashboard/* root@erp.insightpulseai.net:/opt/odoo-ce/addons/ipai_finance_ppm_dashboard/
+scp -r addons/ipai_finance_ppm_dashboard/* root@erp.insightpulseai.com:/opt/odoo-ce/addons/ipai_finance_ppm_dashboard/
 
 # Restart Odoo container
 echo "🔄 Restarting Odoo container..."
-ssh root@erp.insightpulseai.net "cd /opt/odoo-ce && docker compose restart odoo"
+ssh root@erp.insightpulseai.com "cd /opt/odoo-ce && docker compose restart odoo"
 
 echo ""
 echo "✅ Direct deployment complete!"
 echo ""
 echo "📋 Next steps:"
-echo "1. Navigate to: https://erp.insightpulseai.net"
+echo "1. Navigate to: https://erp.insightpulseai.com"
 echo "2. Login with admin credentials"
 echo "3. Go to Apps menu"
 echo "4. Click 'Update Apps List' (⟳ icon top-right)"

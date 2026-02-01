@@ -134,9 +134,9 @@ ID  Name                          Next Run            Interval
 ```
 Parameter                         Value
 --------------------------------- -----------------------------------------
-bir.reminder.n8n.webhook          https://ipa.insightpulseai.net/webhook/bir-reminder
-bir.overdue.n8n.webhook           https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
-bir.reminder.mattermost.webhook   https://mattermost.insightpulseai.net/hooks/bir-compliance-alerts
+bir.reminder.n8n.webhook          https://ipa.insightpulseai.com/webhook/bir-reminder
+bir.overdue.n8n.webhook           https://ipa.insightpulseai.com/webhook/bir-overdue-nudge
+bir.reminder.mattermost.webhook   https://mattermost.insightpulseai.com/hooks/bir-compliance-alerts
 ```
 
 ### Module: ipai_finance_ppm v18.0.1.0.0 ✓

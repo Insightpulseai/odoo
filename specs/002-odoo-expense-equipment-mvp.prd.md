@@ -16,7 +16,7 @@ InsightPulse wants a **self-hosted Odoo CE/OCA stack** that delivers:
 
 This stack **must not use any Odoo Enterprise or IAP features** and must **never upsell or deep-link to odoo.com**. All UX, help links, and call-to-actions must either:
 
-* Point to `*.insightpulseai.net` (docs, support, billing)
+* Point to `*.insightpulseai.com` (docs, support, billing)
 * Or to **OCA / CE documentation** for the underlying modules
 
 All visible menu items, app store tiles, and settings screens must reflect the **actual installed/activated state** of modules and services to avoid stale or misleading links.
@@ -68,7 +68,7 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
 
    * All environments accessible via:
 
-     * `https://erp.insightpulseai.net` (primary)
+     * `https://erp.insightpulseai.com` (primary)
      * Additional sub-domains if needed: `https://jgtolentino.github.io/odoo-ce/`, etc.
    * No outbound links that confuse users into thinking odoo.com is the provider.
 
@@ -281,11 +281,11 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
 
 1. **Domains**
 
-   * Production ERP: `https://erp.insightpulseai.net`
+   * Production ERP: `https://erp.insightpulseai.com`
    * Optional:
 
      * Docs: `https://jgtolentino.github.io/odoo-ce/`
-     * API: `https://api.insightpulseai.net/erp` (if exposed later).
+     * API: `https://api.insightpulseai.com/erp` (if exposed later).
 
 2. **Branding**
 
@@ -409,7 +409,7 @@ CI checks:
 
 1. **M1 – CE/OCA Base Stack**
 
-   * Odoo CE 18 running at `erp.insightpulseai.net`.
+   * Odoo CE 18 running at `erp.insightpulseai.com`.
    * OCA repos mounted.
    * Enterprise/IAP guardrails in place.
 
@@ -458,7 +458,7 @@ CI checks:
 4. Expense & travel workflows complete from creation → approval → posting.
 5. Equipment booking workflows complete from reservation → checkout → check-in.
 6. App launcher and settings show only real, functioning modules.
-7. Everything is reachable via `erp.insightpulseai.net` and branded as InsightPulse.
+7. Everything is reachable via `erp.insightpulseai.com` and branded as InsightPulse.
 
 ---
 

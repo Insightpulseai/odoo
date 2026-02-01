@@ -30,7 +30,7 @@ Key Features:
     "category": "Themes/Backend",
     "license": "LGPL-3",
     "author": "InsightPulse AI / TBWA Finance",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "depends": [
         "ipai_platform_theme",
     ],

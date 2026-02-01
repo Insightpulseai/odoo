@@ -13,7 +13,7 @@ All prerequisites are complete:
 - ✅ **Gmail SMTP**: App Password saved (`wcxufssnevbsmzcy`)
 - ✅ **Gmail Account**: jgtolentino@gmail.com
 - ✅ **Google OAuth**: Client ID configured
-- ✅ **Redirect URI**: `https://erp.insightpulseai.net/auth_oauth/signin` ✅
+- ✅ **Redirect URI**: `https://erp.insightpulseai.com/auth_oauth/signin` ✅
 - ✅ **Google Cloud Project**: "cba-ai"
 - ✅ **Nginx Fix**: X-Forwarded-Proto = https (ready)
 - ✅ **Database Fix**: OwlError cleanup script (ready)
@@ -96,7 +96,7 @@ Waiting for Odoo to restart ✓
 ✓ PASS: No views contain 'pay_invoices_online' field
 
 >>> [VALIDATION 2/5] Checking web.base.url...
-✓ PASS: web.base.url = https://erp.insightpulseai.net
+✓ PASS: web.base.url = https://erp.insightpulseai.com
 
 >>> [VALIDATION 3/5] Checking web.base.url.freeze...
 ✓ PASS: web.base.url.freeze = True
@@ -165,7 +165,7 @@ PHASE 4: COMPREHENSIVE VALIDATION
 ✓ PASS: No field validation errors in Odoo logs
 
 >>> [Criterion 3] OAuth/HTTPS Loop Test (System Parameters)
-✓ PASS: web.base.url = https://erp.insightpulseai.net
+✓ PASS: web.base.url = https://erp.insightpulseai.com
 ✓ PASS: web.base.url.freeze = True
 ✓ PASS: nginx X-Forwarded-Proto = https
 
@@ -215,7 +215,7 @@ Next Steps:
 ### Test 1: OAuth Login (1 minute)
 ```bash
 # Open Chrome Incognito
-https://erp.insightpulseai.net
+https://erp.insightpulseai.com
 
 # Expected:
 ✓ Login page shows "Sign in with Google" button

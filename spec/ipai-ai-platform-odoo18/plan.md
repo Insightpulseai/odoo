@@ -200,7 +200,7 @@ docker exec -it odoo-erp-prod odoo -d odoo -u ipai_ai_agents_ui --stop-after-ini
 ```bash
 # Supabase should have test chunks
 # Ask a question and verify citation appears
-curl -sS -X POST https://erp.insightpulseai.net/ipai_ai_agents/bootstrap \
+curl -sS -X POST https://erp.insightpulseai.com/ipai_ai_agents/bootstrap \
   -H 'Content-Type: application/json' \
   --data '{"jsonrpc":"2.0","method":"call","params":{},"id":1}'
 ```
@@ -220,7 +220,7 @@ curl -sS -X POST https://erp.insightpulseai.net/ipai_ai_agents/bootstrap \
 **Verification:**
 ```bash
 # Test connector
-curl -sS -X POST https://erp.insightpulseai.net/ipai_ai_connectors/event \
+curl -sS -X POST https://erp.insightpulseai.com/ipai_ai_connectors/event \
   -H 'Content-Type: application/json' \
   --data '{"jsonrpc":"2.0","method":"call","params":{"token":"test","source":"n8n","event_type":"ping"},"id":1}'
 
@@ -357,7 +357,7 @@ IPAI_LLM_TEMPERATURE=0.2
 IPAI_EMBEDDINGS_PROVIDER=openai
 IPAI_EMBEDDINGS_MODEL=text-embedding-3-small
 IPAI_KB_EXPORT_LOOKBACK_HOURS=24
-IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.net
+IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.com
 ```
 
 ## References

@@ -47,8 +47,8 @@ Mattermost Notification (optional)
 ### 2. n8n Odoo Credential (Already Created)
 
 Should already exist from previous webhooks:
-- **Name**: `Odoo Production (erp.insightpulseai.net)`
-- **URL**: `https://erp.insightpulseai.net`
+- **Name**: `Odoo Production (erp.insightpulseai.com)`
+- **URL**: `https://erp.insightpulseai.com`
 - **Database**: `production`
 
 ---
@@ -62,7 +62,7 @@ Should already exist from previous webhooks:
 scp workflows/n8n_enrichment_agent.json root@<n8n-server>:/tmp/
 
 # Or import via n8n UI:
-# 1. Open n8n (https://ipa.insightpulseai.net)
+# 1. Open n8n (https://ipa.insightpulseai.com)
 # 2. Click "Add Workflow" → "Import from File"
 # 3. Select n8n_enrichment_agent.json
 # 4. Update credentials:
@@ -76,7 +76,7 @@ scp workflows/n8n_enrichment_agent.json root@<n8n-server>:/tmp/
 
 **Via Odoo UI**:
 
-1. Open Odoo: `https://erp.insightpulseai.net/web`
+1. Open Odoo: `https://erp.insightpulseai.com/web`
 2. Enable Developer Mode (Settings → Activate Developer Mode)
 3. Navigate to: **Settings → Technical → Automation → Automated Actions**
 4. Click **Create**
@@ -96,7 +96,7 @@ Action To Do: Execute Python Code
 # SHADOW ENTERPRISE: AI ENRICHMENT PROTOCOL
 import requests
 
-webhook_url = "https://ipa.insightpulseai.net/webhook/enrich-contact"
+webhook_url = "https://ipa.insightpulseai.com/webhook/enrich-contact"
 
 payload = {
     "id": record.id,
@@ -145,7 +145,7 @@ with odoo.registry('production').cursor() as cr:
             'model_id': env.ref('base.model_res_partner').id,
             'state': 'code',
             'code': '''import requests
-webhook_url = \"https://ipa.insightpulseai.net/webhook/enrich-contact\"
+webhook_url = \"https://ipa.insightpulseai.com/webhook/enrich-contact\"
 payload = {\"id\": record.id, \"name\": record.name, \"email\": record.email or \"\", \"website\": record.website or \"\"}
 try:
     requests.post(webhook_url, json=payload, timeout=1)
@@ -188,7 +188,7 @@ except:
 ### Test 2: Test via n8n Directly
 
 ```bash
-curl -X POST https://ipa.insightpulseai.net/webhook/enrich-contact \
+curl -X POST https://ipa.insightpulseai.com/webhook/enrich-contact \
   -H "Content-Type: application/json" \
   -d '{
     "id": 999,

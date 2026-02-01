@@ -12,7 +12,7 @@ _Generated: 2026-01-26T09:39:03.523822Z_
 ### 1. [DNS / Infrastructure] Remediate 14 failing DNS record(s)
 **Why:** Missing or misconfigured DNS records affect service reachability and email deliverability.
 
-**Evidence:** `www.insightpulseai.net (CNAME), insightpulseai.net (A), mcp.insightpulseai.net (A), n8n.insightpulseai.net (A), erp.insightpulseai.net (A)`
+**Evidence:** `www.insightpulseai.com (CNAME), insightpulseai.com (A), mcp.insightpulseai.com (A), n8n.insightpulseai.com (A), erp.insightpulseai.com (A)`
 
 **Next steps (CLI):**
 - Review failing records in out/dns_audit.json

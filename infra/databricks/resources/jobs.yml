@@ -37,7 +37,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - platform-alerts@insightpulseai.net
+          - platform-alerts@insightpulseai.com
 
     azure_rg_ingest:
       name: "Azure Resource Graph Ingest"

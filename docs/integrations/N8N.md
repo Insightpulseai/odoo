@@ -4,7 +4,7 @@
 
 n8n is our workflow automation platform, enabling no-code/low-code automation between Odoo and external services.
 
-**Production URL:** https://n8n.insightpulseai.net
+**Production URL:** https://n8n.insightpulseai.com
 
 ## Architecture
 
@@ -50,7 +50,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 
 | Key | Description |
 |-----|-------------|
-| `ipai_integrations.n8n_url` | Base URL (default: https://n8n.insightpulseai.net) |
+| `ipai_integrations.n8n_url` | Base URL (default: https://n8n.insightpulseai.com) |
 | `ipai_n8n.api_key_{connector_id}` | n8n API key |
 
 ### 2. Create Connector
@@ -59,7 +59,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 2. Create new connector:
    - Name: n8n (InsightPulse AI)
    - Type: n8n
-   - Base URL: https://n8n.insightpulseai.net
+   - Base URL: https://n8n.insightpulseai.com
    - Auth Type: Token (API Key)
 3. Set the API key in System Parameters
 4. Click **Test Connection**
@@ -237,7 +237,7 @@ The `run_method` action only allows methods with these prefixes:
 
 ### Connection Failed
 
-1. Verify n8n is running: `curl https://n8n.insightpulseai.net/healthz`
+1. Verify n8n is running: `curl https://n8n.insightpulseai.com/healthz`
 2. Check API key is valid
 3. Review audit logs
 
@@ -276,4 +276,4 @@ Generate and email reports on schedule.
 - **Runtime Deployment:** `ipai-ops-stack` repository
 - **n8n Docs:** https://docs.n8n.io/
 - **Workflow Templates:** `ipai-ops-stack/n8n/workflows/`
-- **Channel:** #automations on chat.insightpulseai.net
+- **Channel:** #automations on chat.insightpulseai.com

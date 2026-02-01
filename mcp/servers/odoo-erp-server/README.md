@@ -36,7 +36,7 @@ npm run build
 ```bash
 cp .env.example .env
 # Edit .env with your Odoo credentials:
-# ODOO_URL=https://erp.insightpulseai.net
+# ODOO_URL=https://erp.insightpulseai.com
 # ODOO_DB=production
 # ODOO_USERNAME=admin
 # ODOO_PASSWORD=your_password
@@ -59,7 +59,7 @@ Add to `~/.claude/mcp-servers.json`:
       "command": "node",
       "args": ["/Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/odoo-erp-server/dist/index.js"],
       "env": {
-        "ODOO_URL": "https://erp.insightpulseai.net",
+        "ODOO_URL": "https://erp.insightpulseai.com",
         "ODOO_DB": "production",
         "ODOO_USERNAME": "admin",
         "ODOO_PASSWORD": "${ODOO_PASSWORD}"

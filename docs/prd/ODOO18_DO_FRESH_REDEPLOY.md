@@ -164,11 +164,11 @@ upstream odoo-longpolling {
 
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
     # SSL configuration
-    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
     ssl_protocols       TLSv1.2 TLSv1.3;
 
     # Proxy settings (CRITICAL for 502 prevention)

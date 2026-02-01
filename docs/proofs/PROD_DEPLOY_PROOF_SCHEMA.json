@@ -229,13 +229,13 @@
       },
       "health_checks": {
         "login_page": {
-          "url": "https://erp.insightpulseai.net/web/login",
+          "url": "https://erp.insightpulseai.com/web/login",
           "status_code": 200,
           "passed": true,
           "response_time_ms": 250
         },
         "health_endpoint": {
-          "url": "https://erp.insightpulseai.net/web/health",
+          "url": "https://erp.insightpulseai.com/web/health",
           "status_code": 200,
           "passed": true
         },
@@ -249,7 +249,7 @@
           "database_name": "odoo"
         },
         "longpolling": {
-          "url": "https://erp.insightpulseai.net/longpolling/poll",
+          "url": "https://erp.insightpulseai.com/longpolling/poll",
           "passed": true
         },
         "overall": true,

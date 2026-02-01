@@ -36,9 +36,9 @@
 
 ### ✅ DNS Configuration
 
-- [ ] **A Record**: `erp.insightpulseai.net` → Droplet IP
+- [ ] **A Record**: `erp.insightpulseai.com` → Droplet IP
   - [ ] TTL: 300 seconds (5 minutes)
-  - [ ] Propagation verified: `dig erp.insightpulseai.net +short`
+  - [ ] Propagation verified: `dig erp.insightpulseai.com +short`
 
 ### ✅ Local Machine Prerequisites
 
@@ -64,8 +64,8 @@ From your local machine:
 ssh root@<DROPLET_IP>
 
 # 2. Set environment variables (if using Managed DB)
-export DOMAIN="erp.insightpulseai.net"
-export EMAIL="admin@insightpulseai.net"
+export DOMAIN="erp.insightpulseai.com"
+export EMAIL="admin@insightpulseai.com"
 export DB_HOST="your-db.db.ondigitalocean.com"
 export DB_PORT="25060"
 export DB_USER="odoo"
@@ -85,8 +85,8 @@ git clone https://github.com/jgtolentino/odoo-ce.git /tmp/odoo-ce
 cd /tmp/odoo-ce
 
 # 2. Configure deployment
-export DOMAIN="erp.insightpulseai.net"
-export EMAIL="admin@insightpulseai.net"
+export DOMAIN="erp.insightpulseai.com"
+export EMAIL="admin@insightpulseai.com"
 export DB_HOST="localhost"  # Use local PostgreSQL
 export WORKERS="7"          # (4 CPU × 2) + 1 - 2 cron
 export GIT_REF="main"       # Or specific tag/branch
@@ -133,7 +133,7 @@ tail -f /var/log/odoo/odoo.log
 curl -I http://localhost:8069/web/health
 
 # Test Nginx reverse proxy (if SSL configured)
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 
 # Test websocket endpoint
 curl -I http://localhost:8072/websocket
@@ -167,12 +167,12 @@ PGPASSWORD="your-password" psql \
 certbot certificates
 
 # Test SSL configuration
-curl -vI https://erp.insightpulseai.net 2>&1 | grep -i "ssl"
+curl -vI https://erp.insightpulseai.com 2>&1 | grep -i "ssl"
 ```
 
 **Expected Output**:
 ```
-Certificate Name: erp.insightpulseai.net
+Certificate Name: erp.insightpulseai.com
   Valid: Yes
   Expiry Date: [90 days from now]
 ```
@@ -219,7 +219,7 @@ ls -lh /var/lib/odoo/backups/
 
 ### 1. Access Odoo
 
-Open browser: `https://erp.insightpulseai.net`
+Open browser: `https://erp.insightpulseai.com`
 
 **Expected**: Odoo database creation screen or login page
 
@@ -230,7 +230,7 @@ If using local PostgreSQL:
 1. Click **"Create Database"**
 2. Fill in form:
    - **Database Name**: `odoo_prod`
-   - **Email**: `admin@insightpulseai.net`
+   - **Email**: `admin@insightpulseai.com`
    - **Password**: (use Admin Password from `/root/odoo-credentials.txt`)
    - **Language**: English
    - **Country**: Philippines
@@ -253,7 +253,7 @@ From Apps menu:
 ### 4. Verify Health Endpoint
 
 ```bash
-curl https://erp.insightpulseai.net/web/health
+curl https://erp.insightpulseai.com/web/health
 ```
 
 **Expected Output**:
@@ -347,12 +347,12 @@ tail -f /var/log/odoo/odoo.log
 
 **Check DNS propagation**:
 ```bash
-dig erp.insightpulseai.net +short
+dig erp.insightpulseai.com +short
 ```
 
 **Manual certbot retry**:
 ```bash
-certbot --nginx -d erp.insightpulseai.net
+certbot --nginx -d erp.insightpulseai.com
 ```
 
 ### Issue: Database connection refused

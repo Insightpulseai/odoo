@@ -54,7 +54,7 @@ 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
 
 **Authorized Redirect URI** (CRITICAL):
 ```
-https://erp.insightpulseai.net/auth_oauth/signin
+https://erp.insightpulseai.com/auth_oauth/signin
 ```
 
 **OAuth Endpoints**:
@@ -73,8 +73,8 @@ openid email profile
 
 ## 🌐 Odoo Production URLs
 
-**Base URL**: https://erp.insightpulseai.net
-**OAuth Callback**: https://erp.insightpulseai.net/auth_oauth/signin
+**Base URL**: https://erp.insightpulseai.com
+**OAuth Callback**: https://erp.insightpulseai.com/auth_oauth/signin
 **Database**: `prod`
 
 **Server**: 159.223.75.148 (odoo-erp-prod Droplet)

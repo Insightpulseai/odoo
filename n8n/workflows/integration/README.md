@@ -87,9 +87,9 @@ In n8n Settings → Environments, add:
 
 ```bash
 SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
-N8N_WEBHOOK_BASE_URL=https://n8n.insightpulseai.net
+N8N_WEBHOOK_BASE_URL=https://n8n.insightpulseai.com
 MATTERMOST_WEBHOOK_URL=https://mattermost.example.com/hooks/xxx-your-webhook-id-xxx
-ODOO_BASE_URL=https://odoo.insightpulseai.net
+ODOO_BASE_URL=https://odoo.insightpulseai.com
 ```
 
 ### 2. Configure Supabase Credentials
@@ -129,7 +129,7 @@ Test that domain handler webhooks are accessible:
 
 ```bash
 # Test expense-handler
-curl -X POST https://n8n.insightpulseai.net/webhook/expense-handler \
+curl -X POST https://n8n.insightpulseai.com/webhook/expense-handler \
   -H "Content-Type: application/json" \
   -d '{"event_type":"expense.submitted","payload":{"employee_name":"Test","amount":100}}'
 

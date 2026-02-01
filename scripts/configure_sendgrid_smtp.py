@@ -23,7 +23,7 @@ SMTP_CONFIG = {
     "smtp_encryption": "starttls",  # TLS (STARTTLS)
     "smtp_user": "apikey",  # SendGrid uses literal "apikey" as username
     "smtp_pass": "",  # Your SendGrid API key - SET VIA ODOO UI
-    "from_filter": "@insightpulseai.net",  # Domain-based FROM filter
+    "from_filter": "@insightpulseai.com",  # Domain-based FROM filter
     "sequence": 10,
     "smtp_authentication": "login",
     "smtp_debug": False,
@@ -31,12 +31,12 @@ SMTP_CONFIG = {
 }
 
 SYSTEM_PARAMS = {
-    "mail.catchall.domain": "insightpulseai.net",
+    "mail.catchall.domain": "insightpulseai.com",
     "mail.default.from": "notifications",
     "mail.catchall.alias": "catchall",
     "mail.bounce.alias": "bounce",
     # Force all outgoing mail to use authorized sender
-    "mail.force.smtp.from": "notifications@insightpulseai.net",
+    "mail.force.smtp.from": "notifications@insightpulseai.com",
 }
 
 # ============================================

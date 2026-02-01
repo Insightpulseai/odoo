@@ -290,9 +290,9 @@ Configure these system parameters for proper email handling:
 ```bash
 docker exec -i odoo-core odoo shell -d odoo_core <<EOF
 ICP = env['ir.config_parameter'].sudo()
-ICP.set_param('mail.catchall.domain', 'insightpulseai.net')
+ICP.set_param('mail.catchall.domain', 'insightpulseai.com')
 ICP.set_param('mail.default.from', 'notifications')
-ICP.set_param('mail.force.smtp.from', 'notifications@insightpulseai.net')
+ICP.set_param('mail.force.smtp.from', 'notifications@insightpulseai.com')
 env.cr.commit()
 print("System parameters configured!")
 EOF
@@ -305,7 +305,7 @@ To prevent "Sender Mismatch" errors:
 ```bash
 docker exec -i odoo-core odoo shell -d odoo_core <<EOF
 ICP = env['ir.config_parameter'].sudo()
-ICP.set_param('mail.force.smtp.from', 'notifications@insightpulseai.net')
+ICP.set_param('mail.force.smtp.from', 'notifications@insightpulseai.com')
 env.cr.commit()
 print("mail.force.smtp.from configured!")
 EOF
@@ -501,9 +501,9 @@ SMTP_PASSWORD=your-api-key-here
 SMTP_ENCRYPTION=starttls
 
 # Email Addresses
-MAIL_CATCHALL_DOMAIN=insightpulseai.net
+MAIL_CATCHALL_DOMAIN=insightpulseai.com
 MAIL_DEFAULT_FROM=notifications
-MAIL_FORCE_FROM=notifications@insightpulseai.net
+MAIL_FORCE_FROM=notifications@insightpulseai.com
 ```
 
 ---

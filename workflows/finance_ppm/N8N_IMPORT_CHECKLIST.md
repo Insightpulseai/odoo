@@ -9,14 +9,14 @@
 ## Pre-Import Setup
 
 ### 1. Access n8n Instance
-- [ ] Navigate to: `https://n8n.insightpulseai.net/`
+- [ ] Navigate to: `https://n8n.insightpulseai.com/`
 - [ ] Login with your credentials
 - [ ] Verify you have admin/workflow creation permissions
 
 ### 2. Gather Required Credentials
 
 #### A. Odoo XML-RPC
-- [ ] Odoo URL: `https://erp.insightpulseai.net/`
+- [ ] Odoo URL: `https://erp.insightpulseai.com/`
 - [ ] Database name: `production`
 - [ ] Username: `admin` (or your Odoo username)
 - [ ] Password: `[Your Odoo password]`
@@ -29,7 +29,7 @@ Create webhooks for these channels:
 - [ ] `finance-reports` - Monthly reports
 
 **Steps to create webhooks**:
-1. Go to: `https://mattermost.insightpulseai.net/`
+1. Go to: `https://mattermost.insightpulseai.com/`
 2. Settings → Integrations → Incoming Webhooks
 3. Click "Add Incoming Webhook"
 4. Select channel
@@ -186,7 +186,7 @@ LIMIT 1;
 **Error**: "Authentication failed" or "Invalid credentials"
 
 **Solution**:
-1. Test Odoo login manually at `https://erp.insightpulseai.net/`
+1. Test Odoo login manually at `https://erp.insightpulseai.com/`
 2. Verify database name is exactly `production`
 3. Check user has access to Finance PPM module
 4. Update credential in n8n → Settings → Credentials
@@ -198,7 +198,7 @@ LIMIT 1;
 1. Verify webhook URL is correct (copy from Mattermost)
 2. Test webhook with curl:
    ```bash
-   curl -X POST "https://mattermost.insightpulseai.net/hooks/YOUR_WEBHOOK_ID" \
+   curl -X POST "https://mattermost.insightpulseai.com/hooks/YOUR_WEBHOOK_ID" \
      -H "Content-Type: application/json" \
      -d '{"text":"Test notification from n8n"}'
    ```

@@ -1,6 +1,6 @@
 # Odoo CE Deployment Status - Live Instance
 
-**Instance**: https://erp.insightpulseai.net
+**Instance**: https://erp.insightpulseai.com
 **Last Updated**: 2025-11-23 14:45 UTC
 **Odoo Version**: 18.0
 
@@ -12,16 +12,16 @@
 
 | Display Name | Technical Name | Source | URL | Notes |
 |-------------|----------------|--------|-----|-------|
-| **IPAI Equipment Management** | `ipai_equipment` | IPAI | https://insightpulseai.net | Cheqroom parity (Equipment) |
-| **IPAI Expense & Travel (PH)** | `ipai_expense` | IPAI | https://insightpulseai.net | Concur parity (Expense/Travel) |
-| **IPAI Finance PPM** | `ipai_finance_ppm` | IPAI | https://insightpulseai.net | Clarity-style Finance PPM |
-| **InsightPulse AI Finance SSC** | `ipai_finance_ssc` | IPAI | https://insightpulseai.net | Legacy SSC engine (to sunset) |
-| **IPAI Docs** | `ipai_docs` | IPAI | https://insightpulseai.net | Notion/Workspace parity |
-| **IPAI Docs Project** | `ipai_docs_project` | IPAI | https://insightpulseai.net | Project-linked docs |
-| **IPAI Cash Advance** | `ipai_cash_advance` | IPAI | https://insightpulseai.net | New cash advance workflow |
-| **IPAI OCR Expense** | `ipai_ocr_expense` | IPAI | https://insightpulseai.net | OCR + hr_expense bridge |
-| **IPAI Finance Monthly Closing** | `ipai_finance_monthly_closing` | IPAI | https://insightpulseai.net | PPM → Project monthly close |
-| **IPAI PPM Monthly Close** | `ipai_ppm_monthly_close` | IPAI | https://insightpulseai.net | Opinionated PPM close engine |
+| **IPAI Equipment Management** | `ipai_equipment` | IPAI | https://insightpulseai.com | Cheqroom parity (Equipment) |
+| **IPAI Expense & Travel (PH)** | `ipai_expense` | IPAI | https://insightpulseai.com | Concur parity (Expense/Travel) |
+| **IPAI Finance PPM** | `ipai_finance_ppm` | IPAI | https://insightpulseai.com | Clarity-style Finance PPM |
+| **InsightPulse AI Finance SSC** | `ipai_finance_ssc` | IPAI | https://insightpulseai.com | Legacy SSC engine (to sunset) |
+| **IPAI Docs** | `ipai_docs` | IPAI | https://insightpulseai.com | Notion/Workspace parity |
+| **IPAI Docs Project** | `ipai_docs_project` | IPAI | https://insightpulseai.com | Project-linked docs |
+| **IPAI Cash Advance** | `ipai_cash_advance` | IPAI | https://insightpulseai.com | New cash advance workflow |
+| **IPAI OCR Expense** | `ipai_ocr_expense` | IPAI | https://insightpulseai.com | OCR + hr_expense bridge |
+| **IPAI Finance Monthly Closing** | `ipai_finance_monthly_closing` | IPAI | https://insightpulseai.com | PPM → Project monthly close |
+| **IPAI PPM Monthly Close** | `ipai_ppm_monthly_close` | IPAI | https://insightpulseai.com | Opinionated PPM close engine |
 | **Cash Advance Management** | `x_cash_advance` | IPAI/TBWA | https://github.com/OCA/account-financial-tools | Legacy; replaced by ipai_* |
 | **Expense Policy Engine** | `x_expense_policy` | IPAI/TBWA | https://pulse-hub-web-an645.ondigitalocean.app | Legacy Spectra-era policy |
 
@@ -105,7 +105,7 @@
 ### ✅ Correct Links (InsightPulse Branded)
 
 All IPAI modules correctly point to InsightPulse infrastructure:
-- ✅ `https://insightpulseai.net` (all ipai_* modules)
+- ✅ `https://insightpulseai.com` (all ipai_* modules)
 - ✅ `https://pulse-hub-web-an645.ondigitalocean.app` (x_expense_policy)
 
 **No odoo.com upsell links detected in code** ✅
@@ -245,7 +245,7 @@ ed1df44 fix(odoo18): Equipment module compatibility + CI/CD automation
 ### Immediate (Manual Installation Required)
 
 1. **Navigate to Odoo**
-   - URL: http://localhost:8069 or https://erp.insightpulseai.net
+   - URL: http://localhost:8069 or https://erp.insightpulseai.com
    - Login with admin credentials
 
 2. **Update Apps List**
@@ -281,7 +281,7 @@ ed1df44 fix(odoo18): Equipment module compatibility + CI/CD automation
    ```
    Repository Settings > Secrets and variables > Actions
    Name: N8N_CI_WEBHOOK_URL
-   Value: https://n8n.insightpulseai.net/webhook/ci-telemetry
+   Value: https://n8n.insightpulseai.com/webhook/ci-telemetry
    ```
 
 2. **Create n8n Webhook Receiver**
@@ -306,7 +306,7 @@ ed1df44 fix(odoo18): Equipment module compatibility + CI/CD automation
 
 - [ ] IPAI Equipment module state = "installed" (pending UI installation)
 - [x] Module visible in Apps menu with correct branding
-- [x] All ipai_* modules link to insightpulseai.net (no odoo.com upsells)
+- [x] All ipai_* modules link to insightpulseai.com (no odoo.com upsells)
 - [x] Odoo 18 compatibility issues resolved
 - [x] CI/CD automation scripts deployed
 - [x] GitHub Actions workflows updated

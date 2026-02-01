@@ -1,6 +1,6 @@
 # Quick Reference: SSO & Permissions Setup
 
-**Target**: Odoo CE 18.0 @ https://erp.insightpulseai.net
+**Target**: Odoo CE 18.0 @ https://erp.insightpulseai.com
 **Module**: ipai_finance_ppm_tdi v1.0.0
 
 ---
@@ -21,14 +21,14 @@ Login: [Your Keycloak admin credentials]
 **Current State** (what you might see):
 ```
 http://159.223.75.148:8069/auth_oauth/signin
-https://erp.insightpulseai.net/auth_oauth/signin
-https://erp.insightpulseai.net/*
+https://erp.insightpulseai.com/auth_oauth/signin
+https://erp.insightpulseai.com/*
 ```
 
 **Target State** (what you should have):
 ```
-https://erp.insightpulseai.net/auth_oauth/signin
-https://erp.insightpulseai.net/*
+https://erp.insightpulseai.com/auth_oauth/signin
+https://erp.insightpulseai.com/*
 ```
 
 **Action**: Delete the `http://159.223.75.148...` line if present
@@ -36,7 +36,7 @@ https://erp.insightpulseai.net/*
 ### Check Web Origins
 **Should be**:
 ```
-https://erp.insightpulseai.net
+https://erp.insightpulseai.com
 ```
 
 ### Save Changes
@@ -48,7 +48,7 @@ Click **Save** at the bottom
 
 ### Login to Odoo
 ```
-URL: https://erp.insightpulseai.net
+URL: https://erp.insightpulseai.com
 Method: SSO (Keycloak button)
 Credentials: jake.tolentino@insightpulseai.com
 ```
@@ -74,7 +74,7 @@ Credentials: jake.tolentino@insightpulseai.com
 
 ### Test Full Flow
 1. Log out from Odoo
-2. Go to: https://erp.insightpulseai.net
+2. Go to: https://erp.insightpulseai.com
 3. Click **Log in with SSO** (or Keycloak button)
 4. Enter: `jake.tolentino@insightpulseai.com` / [password]
 5. **Expected**: Redirect to Odoo dashboard

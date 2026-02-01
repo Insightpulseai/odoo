@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-MAILGUN_DOMAIN="mg.insightpulseai.net"
+MAILGUN_DOMAIN="mg.insightpulseai.com"
 SMTP_HOST="smtp.mailgun.org"
 SMTP_PORT="2525"
 POSTGRES_URL_NON_POOLING="${POSTGRES_URL_NON_POOLING:-}"
@@ -191,7 +191,7 @@ else
             print_check "web.base.url is set to HTTPS: $BASE_URL"
         else
             print_fail "web.base.url is not HTTPS: $BASE_URL"
-            echo "  Expected: https://erp.insightpulseai.net"
+            echo "  Expected: https://erp.insightpulseai.com"
         fi
     else
         print_fail "web.base.url not set"

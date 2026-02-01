@@ -18,7 +18,7 @@ Slash Commands    Bot Responses    Async Notifications
 - ✅ Database connectivity established
 
 ### n8n Setup
-- n8n instance accessible at `n8n.insightpulseai.net`
+- n8n instance accessible at `n8n.insightpulseai.com`
 - Existing Odoo/Supabase credentials configured
 - Webhook endpoints enabled
 
@@ -42,7 +42,7 @@ Slash Commands    Bot Responses    Async Notifications
 **Configuration**:
 - **Title**: `Opex Command`
 - **Command Trigger Word**: `/opex`
-- **Request URL**: `https://n8n.insightpulseai.net/webhook/opex-command`
+- **Request URL**: `https://n8n.insightpulseai.com/webhook/opex-command`
 - **Request Method**: `POST`
 - **Response Username**: `opex-bot`
 - **Autocomplete**: Enabled
@@ -143,7 +143,7 @@ For long-running jobs:
 
 ### n8n Webhook Testing
 ```bash
-curl -X POST https://n8n.insightpulseai.net/webhook/opex-command \
+curl -X POST https://n8n.insightpulseai.com/webhook/opex-command \
   -H "Content-Type: application/json" \
   -d '{"token": "YOUR_TOKEN", "text": "status"}'
 ```
@@ -153,7 +153,7 @@ curl -X POST https://n8n.insightpulseai.net/webhook/opex-command \
 ### Common Issues
 
 1. **Mattermost connectivity**
-   - Verify Mattermost is accessible at `https://chat.insightpulseai.net:8065`
+   - Verify Mattermost is accessible at `https://chat.insightpulseai.com:8065`
    - Check database connectivity
 
 2. **n8n webhook issues**

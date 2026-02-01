@@ -1,6 +1,6 @@
 # Mailgun DNS Verification Checklist
 
-**Domain:** mg.insightpulseai.net
+**Domain:** mg.insightpulseai.com
 **Date:** 2026-01-20
 **Status:** PENDING_EXECUTION
 
@@ -10,12 +10,12 @@ Based on user-provided configuration (requires live verification):
 
 | Record | Type | Expected Value | Status |
 |--------|------|----------------|--------|
-| SPF | TXT @ mg.insightpulseai.net | `v=spf1 include:mailgun.org ~all` | ⏳ Pending verification |
-| DKIM | TXT @ pic._domainkey.mg.insightpulseai.net | Public key for DKIM signing | ⏳ Pending verification |
-| DMARC | TXT @ _dmarc.mg.insightpulseai.net | `v=DMARC1; p=none; pct=100; fo=1; ...` | ⏳ Pending verification |
-| MX Primary | MX @ mg.insightpulseai.net | `10 mxa.mailgun.org` | ⏳ Pending verification |
-| MX Secondary | MX @ mg.insightpulseai.net | `10 mxb.mailgun.org` | ⏳ Pending verification |
-| Tracking CNAME | CNAME @ email.mg.insightpulseai.net | `mailgun.org` | ⏳ Pending verification |
+| SPF | TXT @ mg.insightpulseai.com | `v=spf1 include:mailgun.org ~all` | ⏳ Pending verification |
+| DKIM | TXT @ pic._domainkey.mg.insightpulseai.com | Public key for DKIM signing | ⏳ Pending verification |
+| DMARC | TXT @ _dmarc.mg.insightpulseai.com | `v=DMARC1; p=none; pct=100; fo=1; ...` | ⏳ Pending verification |
+| MX Primary | MX @ mg.insightpulseai.com | `10 mxa.mailgun.org` | ⏳ Pending verification |
+| MX Secondary | MX @ mg.insightpulseai.com | `10 mxb.mailgun.org` | ⏳ Pending verification |
+| Tracking CNAME | CNAME @ email.mg.insightpulseai.com | `mailgun.org` | ⏳ Pending verification |
 
 ## Execution Instructions
 
@@ -53,13 +53,13 @@ Required environment variables for full integration:
 ```bash
 # Mailgun API
 MAILGUN_API_KEY=key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 MAILGUN_WEBHOOK_SIGNING_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # SMTP Settings (for Supabase/Odoo)
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=465
-SMTP_USER=postmaster@mg.insightpulseai.net
+SMTP_USER=postmaster@mg.insightpulseai.com
 SMTP_PASSWORD=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 SMTP_SENDER_EMAIL=business@insightpulseai.com
 ```

@@ -17,8 +17,8 @@ Complete guide for configuring email authentication with Mailgun, Supabase Auth,
 │       │                                    │                 │
 │       └──> Redirect URLs (configured)      │                 │
 │            • http://localhost:3000/*       │                 │
-│            • https://superset.insightpulseai.net/*          │
-│            • https://erp.insightpulseai.net/*               │
+│            • https://superset.insightpulseai.com/*          │
+│            • https://erp.insightpulseai.com/*               │
 │                                            │                 │
 │  Odoo (Transactional Email) ──────────────┘                 │
 │       • Approval notifications                              │
@@ -35,7 +35,7 @@ Complete guide for configuring email authentication with Mailgun, Supabase Auth,
 
 ## DNS Configuration for Mailgun
 
-**Domain:** `mg.insightpulseai.net`
+**Domain:** `mg.insightpulseai.com`
 **DNS Provider:** Entri (uses relative host names)
 
 ### Required DNS Records (Entri Format)
@@ -47,7 +47,7 @@ Complete guide for configuring email authentication with Mailgun, Supabase Auth,
 | `mg` | TXT | - | 3600 | `v=spf1 include:mailgun.org ~all` |
 | `pic._domainkey.mg` | TXT | - | 3600 | `v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB` |
 | `email.mg` | CNAME | - | 3600 | `mailgun.org` |
-| `_dmarc.mg` | TXT | - | 3600 | `v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.net; pct=100; fo=1` |
+| `_dmarc.mg` | TXT | - | 3600 | `v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1` |
 
 ### Record Details
 
@@ -69,7 +69,7 @@ Data: mxb.mailgun.org
 **Note:** Both MX records have priority 10 for round-robin load balancing.
 
 #### SPF Record (Sender Policy Framework)
-**Purpose:** Authorize Mailgun to send email on behalf of `mg.insightpulseai.net`
+**Purpose:** Authorize Mailgun to send email on behalf of `mg.insightpulseai.com`
 
 ```dns
 Host: mg
@@ -79,7 +79,7 @@ Data: v=spf1 include:mailgun.org ~all
 
 **Verification:**
 ```bash
-dig +short TXT mg.insightpulseai.net
+dig +short TXT mg.insightpulseai.com
 # Expected: "v=spf1 include:mailgun.org ~all"
 ```
 
@@ -99,7 +99,7 @@ Data: v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWa
 
 **Verification:**
 ```bash
-dig +short TXT pic._domainkey.mg.insightpulseai.net
+dig +short TXT pic._domainkey.mg.insightpulseai.com
 # Expected: "v=DKIM1; k=rsa; p=MIGf..."
 ```
 
@@ -116,7 +116,7 @@ Data: mailgun.org
 
 **Verification:**
 ```bash
-dig +short CNAME email.mg.insightpulseai.net
+dig +short CNAME email.mg.insightpulseai.com
 # Expected: mailgun.org.
 ```
 
@@ -126,20 +126,20 @@ dig +short CNAME email.mg.insightpulseai.net
 ```dns
 Host: _dmarc.mg
 Type: TXT
-Data: v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.net; pct=100; fo=1
+Data: v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1
 ```
 
 **Policy Breakdown:**
 - `v=DMARC1` - DMARC version
 - `p=quarantine` - Quarantine emails that fail authentication (safer than `reject` during initial setup)
-- `rua=mailto:postmaster@mg.insightpulseai.net` - Send aggregate reports here
+- `rua=mailto:postmaster@mg.insightpulseai.com` - Send aggregate reports here
 - `pct=100` - Apply policy to 100% of messages
 - `fo=1` - Generate forensic reports on any authentication failure
 
 **Verification:**
 ```bash
-dig +short TXT _dmarc.mg.insightpulseai.net
-# Expected: "v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.net; pct=100; fo=1"
+dig +short TXT _dmarc.mg.insightpulseai.com
+# Expected: "v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1"
 ```
 
 **Policy Progression:**
@@ -152,7 +152,7 @@ dig +short TXT _dmarc.mg.insightpulseai.net
 **Complete Verification Script:**
 ```bash
 #!/bin/bash
-DOMAIN="mg.insightpulseai.net"
+DOMAIN="mg.insightpulseai.com"
 
 echo "=== MX Records ==="
 dig +short MX $DOMAIN
@@ -186,7 +186,7 @@ dig +short TXT _dmarc.$DOMAIN
 mailgun.org.
 
 === DMARC Record ===
-"v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.net; pct=100; fo=1"
+"v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1"
 ```
 
 ---
@@ -202,9 +202,9 @@ mailgun.org.
 Enable Email Provider: ✓ Enabled
 SMTP Host: smtp.mailgun.org
 SMTP Port: 2525
-SMTP User: postmaster@mg.insightpulseai.net
+SMTP User: postmaster@mg.insightpulseai.com
 SMTP Password: [Mailgun SMTP password from dashboard]
-Sender Email: noreply@mg.insightpulseai.net
+Sender Email: noreply@mg.insightpulseai.com
 Sender Name: InsightPulse AI
 ```
 
@@ -217,15 +217,15 @@ DigitalOcean blocks standard SMTP ports (25, 465, 587) but allows 2525 as an alt
 
 **Site URL:**
 ```
-https://superset.insightpulseai.net
+https://superset.insightpulseai.com
 ```
 
 **Redirect URLs (whitelist):**
 ```
 http://localhost:3000/*
-https://superset.insightpulseai.net/*
-https://erp.insightpulseai.net/*
-https://auth.insightpulseai.net/*
+https://superset.insightpulseai.com/*
+https://erp.insightpulseai.com/*
+https://auth.insightpulseai.com/*
 ```
 
 **Wildcards Explained:**
@@ -288,15 +288,15 @@ SELECT public.custom_access_token_hook(
 # Mailgun SMTP Configuration
 MAIL_HOST=smtp.mailgun.org
 MAIL_PORT=2525
-MAIL_USER=postmaster@mg.insightpulseai.net
+MAIL_USER=postmaster@mg.insightpulseai.com
 MAIL_PASSWORD=your_mailgun_smtp_password_here
 MAIL_ENCRYPTION=none  # Port 2525 uses STARTTLS automatically
-MAIL_DEFAULT_FROM=noreply@mg.insightpulseai.net
-MAIL_CATCHALL_DOMAIN=mg.insightpulseai.net
+MAIL_DEFAULT_FROM=noreply@mg.insightpulseai.com
+MAIL_CATCHALL_DOMAIN=mg.insightpulseai.com
 MAIL_FORCE_SMTP_FROM=true
 
 # Odoo Base URL (for email links)
-ODOO_BASE_URL=https://erp.insightpulseai.net
+ODOO_BASE_URL=https://erp.insightpulseai.com
 ```
 
 ### Odoo Configuration Script
@@ -311,9 +311,9 @@ from odoo import api, SUPERUSER_ID
 
 MAIL_HOST = os.getenv('MAIL_HOST', 'smtp.mailgun.org')
 MAIL_PORT = int(os.getenv('MAIL_PORT', '2525'))
-MAIL_USER = os.getenv('MAIL_USER', 'postmaster@mg.insightpulseai.net')
+MAIL_USER = os.getenv('MAIL_USER', 'postmaster@mg.insightpulseai.com')
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-MAIL_DEFAULT_FROM = os.getenv('MAIL_DEFAULT_FROM', 'noreply@mg.insightpulseai.net')
+MAIL_DEFAULT_FROM = os.getenv('MAIL_DEFAULT_FROM', 'noreply@mg.insightpulseai.com')
 
 if not MAIL_PASSWORD:
     raise ValueError("MAIL_PASSWORD environment variable is required")
@@ -373,7 +373,7 @@ docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smt
 import os
 from odoo import api, SUPERUSER_ID
 
-BASE_URL = os.getenv('ODOO_BASE_URL', 'https://erp.insightpulseai.net')
+BASE_URL = os.getenv('ODOO_BASE_URL', 'https://erp.insightpulseai.com')
 
 with api.Environment.manage():
     env = api.Environment(cr, SUPERUSER_ID, {})
@@ -415,7 +415,7 @@ WHERE key IN ('web.base.url', 'web.base.url.freeze', 'mail.default.from');
 
 ```bash
 MAILGUN_API_KEY=your_mailgun_api_key_here
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 ```
 
@@ -426,7 +426,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
   "parameters": {
     "resource": "email",
     "operation": "send",
-    "fromEmail": "noreply@mg.insightpulseai.net",
+    "fromEmail": "noreply@mg.insightpulseai.com",
     "toEmail": "={{ $json.recipient_email }}",
     "subject": "={{ $json.subject }}",
     "text": "={{ $json.body_text }}",
@@ -453,7 +453,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 
 ### Email Content
 
-1. **SPF/DKIM Alignment:** Always send from `@mg.insightpulseai.net`
+1. **SPF/DKIM Alignment:** Always send from `@mg.insightpulseai.com`
 2. **Include Unsubscribe Link:** Required for transactional emails
 3. **Text + HTML Versions:** Provide both for compatibility
 4. **Avoid Spam Triggers:** No ALL CAPS, excessive exclamation marks, misleading subjects
@@ -468,7 +468,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 - Complaints: Should be <0.1%
 
 **DMARC Reports:**
-- Configure `rua=mailto:postmaster@mg.insightpulseai.net`
+- Configure `rua=mailto:postmaster@mg.insightpulseai.com`
 - Review daily for authentication failures
 - Investigate any SPF/DKIM failures immediately
 
@@ -481,7 +481,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 **1. "550 5.7.1 Unauthenticated email from domain not accepted"**
 
 **Cause:** SPF record missing or incorrect
-**Fix:** Verify SPF record with `dig +short TXT mg.insightpulseai.net`
+**Fix:** Verify SPF record with `dig +short TXT mg.insightpulseai.com`
 
 **2. "DKIM signature verification failed"**
 
@@ -513,7 +513,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 - [ ] SPF record contains `v=spf1 include:mailgun.org ~all`
 - [ ] DKIM record contains full value with `v=DKIM1;` prefix
 - [ ] Tracking CNAME resolves to `mailgun.org`
-- [ ] DMARC record exists at `_dmarc.mg.insightpulseai.net`
+- [ ] DMARC record exists at `_dmarc.mg.insightpulseai.com`
 
 **Supabase Auth:**
 - [ ] SMTP configured with port 2525
@@ -523,7 +523,7 @@ MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
 
 **Odoo Configuration:**
 - [ ] `ir.mail_server` record exists for Mailgun
-- [ ] `web.base.url` set to `https://erp.insightpulseai.net`
+- [ ] `web.base.url` set to `https://erp.insightpulseai.com`
 - [ ] `web.base.url.freeze` is `True`
 - [ ] Test email sends successfully
 

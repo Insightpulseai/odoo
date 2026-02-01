@@ -60,10 +60,10 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 ---------------------------------------------------
              name             |   state   | license |          website
 ------------------------------+-----------+---------+----------------------------
- ipai_branding_cleaner        | installed | LGPL-3  | https://insightpulseai.net
- ipai_ce_cleaner              | installed | AGPL-3  | https://insightpulseai.net
- ipai_finance_monthly_closing | installed | AGPL-3  | https://insightpulseai.net
- ipai_ocr_expense             | installed | AGPL-3  | https://insightpulseai.net
+ ipai_branding_cleaner        | installed | LGPL-3  | https://insightpulseai.com
+ ipai_ce_cleaner              | installed | AGPL-3  | https://insightpulseai.com
+ ipai_finance_monthly_closing | installed | AGPL-3  | https://insightpulseai.com
+ ipai_ocr_expense             | installed | AGPL-3  | https://insightpulseai.com
  ipai_ocr_webhook             | installed | LGPL-3  |
 (5 rows)
 

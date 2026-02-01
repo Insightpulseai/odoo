@@ -252,4 +252,4 @@ AGPL-3.0
 
 ## Support
 
-For issues or questions, contact: support@insightpulseai.net
+For issues or questions, contact: support@insightpulseai.com

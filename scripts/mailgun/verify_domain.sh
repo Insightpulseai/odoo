@@ -9,7 +9,7 @@ set -euo pipefail
 
 # Configuration from environment
 API_KEY="${MAILGUN_API_KEY:-}"
-DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
+DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
 REGION="${MAILGUN_REGION:-us}"
 
 # Validation

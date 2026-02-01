@@ -12,7 +12,7 @@ services:
       - ./mattermost-config:/mattermost/config:rw
       - ./mattermost-data:/mattermost/data:rw
     environment:
-      - MM_SERVICESETTINGS_SITEURL=https://chat.insightpulseai.net
+      - MM_SERVICESETTINGS_SITEURL=https://chat.insightpulseai.com
       - MM_SQLSETTINGS_DRIVERNAME=postgres
       - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mm_password@db:5432/mattermost?sslmode=disable&connect_timeout=10
       - MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS=false
@@ -22,7 +22,7 @@ services:
       - internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mattermost.rule=Host(`chat.insightpulseai.net`)"
+      - "traefik.http.routers.mattermost.rule=Host(`chat.insightpulseai.com`)"
       - "traefik.http.routers.mattermost.entrypoints=websecure"
       - "traefik.http.routers.mattermost.tls.certresolver=myresolver"
       - "traefik.http.services.mattermost.loadbalancer.server.port=8065"

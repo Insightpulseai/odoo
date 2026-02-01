@@ -5,7 +5,7 @@ set -euo pipefail
 # Prevents deployment loops by validating runtime health contracts
 
 COMPOSE_FILE="${COMPOSE_FILE:-deploy/docker-compose.prod.v0.10.0.yml}"
-BASE_URL="${BASE_URL:-https://erp.insightpulseai.net}"
+BASE_URL="${BASE_URL:-https://erp.insightpulseai.com}"
 DB_NAME="${DB_NAME:-odoo_core}"
 
 echo "=== Odoo Production Health Verification ==="

@@ -80,7 +80,7 @@ This is cloned on the production server and mounted into the Odoo Docker contain
 │                                                                 │
 │  Deployed here:                                                │
 │  - Mounted to Docker: /mnt/extra-addons                        │
-│  - Used by Odoo: https://erp.insightpulseai.net               │
+│  - Used by Odoo: https://erp.insightpulseai.com               │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```

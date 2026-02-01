@@ -26,12 +26,12 @@ This document describes the operational architecture, deployment model, and inte
 **Primary Droplet**: odoo-erp-prod (159.223.75.148)
 - **Specs**: SGP1 / 4GB RAM / 80GB Disk
 - **Services**: Odoo 18 CE, PostgreSQL 16, n8n
-- **DNS**: erp.insightpulseai.net
+- **DNS**: erp.insightpulseai.com
 
 **Secondary Droplet**: ocr-service-droplet (188.166.237.231)
 - **Specs**: SGP1 / 8GB RAM / 80GB Disk
 - **Services**: Agent Service (Claude 3.5 Sonnet), OCR Service (PaddleOCR-VL)
-- **DNS**: ocr.insightpulseai.net
+- **DNS**: ocr.insightpulseai.com
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

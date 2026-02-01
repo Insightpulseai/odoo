@@ -17,8 +17,8 @@ fi
 
 # Configuration
 MAILGUN_API_KEY="${MAILGUN_API_KEY:-}"
-MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
-WEBHOOK_BASE_URL="${WEB_BASE_URL:-https://erp.insightpulseai.net}"
+MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
+WEBHOOK_BASE_URL="${WEB_BASE_URL:-https://erp.insightpulseai.com}"
 
 echo "════════════════════════════════════════════════════════════════"
 echo "Configure Mailgun Inbound Routes"
@@ -39,12 +39,12 @@ fi
 
 echo "🔧 Creating catchall route..."
 
-# Create catchall route (all @insightpulseai.net)
+# Create catchall route (all @insightpulseai.com)
 ROUTE_RESPONSE=$(curl -s -u "api:${MAILGUN_API_KEY}" \
     https://api.mailgun.net/v3/routes \
     -F priority=1 \
-    -F description='Odoo catchall - all @insightpulseai.net' \
-    -F expression='match_recipient(".*@insightpulseai.net")' \
+    -F description='Odoo catchall - all @insightpulseai.com' \
+    -F expression='match_recipient(".*@insightpulseai.com")' \
     -F action="forward(\"${WEBHOOK_BASE_URL}/mailgun/inbound\")" \
     -F action='stop()')
 
@@ -78,5 +78,5 @@ echo ""
 echo "Verification:"
 echo "  1. Check routes: https://app.mailgun.com/mg/routes"
 echo "  2. Check webhooks: https://app.mailgun.com/mg/sending/domains/$MAILGUN_DOMAIN/webhooks"
-echo "  3. Test inbound: Send email to support@insightpulseai.net"
+echo "  3. Test inbound: Send email to support@insightpulseai.com"
 echo ""

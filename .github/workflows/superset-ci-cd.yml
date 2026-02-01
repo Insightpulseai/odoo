@@ -252,16 +252,16 @@ jobs:
         if: needs.deploy-superset.result == 'success'
         run: |
           echo "Checking Superset health..."
-          curl -f https://superset.insightpulseai.net/health || echo "Health check pending..."
+          curl -f https://superset.insightpulseai.com/health || echo "Health check pending..."
 
       - name: Check Embed API health
         if: needs.deploy-embed-api.result == 'success'
         run: |
           echo "Checking Embed API health..."
-          curl -f https://superset-embed-api.insightpulseai.net/health || echo "Health check pending..."
+          curl -f https://superset-embed-api.insightpulseai.com/health || echo "Health check pending..."
 
       - name: Summary
         run: |
           echo "### Deployment Complete" >> $GITHUB_STEP_SUMMARY
-          echo "- Superset: https://superset.insightpulseai.net" >> $GITHUB_STEP_SUMMARY
-          echo "- Embed API: https://superset-embed-api.insightpulseai.net" >> $GITHUB_STEP_SUMMARY
+          echo "- Superset: https://superset.insightpulseai.com" >> $GITHUB_STEP_SUMMARY
+          echo "- Embed API: https://superset-embed-api.insightpulseai.com" >> $GITHUB_STEP_SUMMARY

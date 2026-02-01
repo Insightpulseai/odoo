@@ -8,7 +8,7 @@ echo ""
 
 # Check if module exists on server
 echo "🔍 Checking module deployment status..."
-ssh root@erp.insightpulseai.net "cd /opt/odoo-ce && find . -name 'ipai_finance_ppm_dashboard' -type d" > /dev/null 2>&1
+ssh root@erp.insightpulseai.com "cd /opt/odoo-ce && find . -name 'ipai_finance_ppm_dashboard' -type d" > /dev/null 2>&1
 
 if [ $? -eq 0 ]; then
     echo "✅ Module files deployed to server: /opt/odoo-ce/addons/ipai_finance_ppm_dashboard/"
@@ -20,12 +20,12 @@ fi
 # Check module structure
 echo ""
 echo "📁 Verifying module structure..."
-ssh root@erp.insightpulseai.net "cd /opt/odoo-ce/addons/ipai_finance_ppm_dashboard && ls -la"
+ssh root@erp.insightpulseai.com "cd /opt/odoo-ce/addons/ipai_finance_ppm_dashboard && ls -la"
 
 # Check if Odoo is running
 echo ""
 echo "🔄 Checking Odoo status..."
-ssh root@erp.insightpulseai.net "docker ps | grep odoo"
+ssh root@erp.insightpulseai.com "docker ps | grep odoo"
 
 echo ""
 echo "🎯 INSTALLATION STATUS SUMMARY:"
@@ -37,7 +37,7 @@ echo ""
 
 echo "📋 MANUAL INSTALLATION REQUIRED:"
 echo "================================="
-echo "1. Navigate to: https://erp.insightpulseai.net"
+echo "1. Navigate to: https://erp.insightpulseai.com"
 echo "2. Login with admin credentials"
 echo "3. Go to Apps menu"
 echo "4. Click 'Update Apps List' (⟳ icon top-right)"
@@ -48,7 +48,7 @@ echo ""
 echo "🔍 VERIFICATION AFTER INSTALLATION:"
 echo "==================================="
 echo "After installation, verify by running:"
-echo "ssh root@erp.insightpulseai.net \"docker exec odoo-db-1 psql -U odoo -d odoo -c \\\"SELECT name, state FROM ir_module_module WHERE name = 'ipai_finance_ppm_dashboard';\\\"\""
+echo "ssh root@erp.insightpulseai.com \"docker exec odoo-db-1 psql -U odoo -d odoo -c \\\"SELECT name, state FROM ir_module_module WHERE name = 'ipai_finance_ppm_dashboard';\\\"\""
 echo ""
 echo "Expected output:"
 echo "           name            |  state"
@@ -60,7 +60,7 @@ echo "🎯 DASHBOARD ACCESS:"
 echo "===================="
 echo "After installation, access the dashboard via:"
 echo "- Top navigation menu: 'Finance PPM Dashboard'"
-echo "- URL: https://erp.insightpulseai.net/web#action=ipai_finance_ppm_dashboard.action_finance_ppm_dashboard"
+echo "- URL: https://erp.insightpulseai.com/web#action=ipai_finance_ppm_dashboard.action_finance_ppm_dashboard"
 echo ""
 
 echo "📊 FEATURES AVAILABLE:"

@@ -22,7 +22,7 @@
   - [ ] `ipai_expense` - PH travel/expense workflows (**IN PROGRESS**)
 
 ### OCR Infrastructure
-- [x] OCR adapter live at `https://ocr.insightpulseai.net/api/expense/ocr`
+- [x] OCR adapter live at `https://ocr.insightpulseai.com/api/expense/ocr`
 - [x] PaddleOCR-VL + OpenAI engine deployed on `ocr-service-droplet`
 - [x] Odoo OCR settings configured:
   - [x] OCR URL set in System Parameters

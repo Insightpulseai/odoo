@@ -17,7 +17,7 @@ With the Docker image-based CD pipeline architecture complete, this checklist va
 **Objective:** Verify recursive WBS logic works in production
 
 **Steps:**
-1. Log into `https://erp.insightpulseai.net`
+1. Log into `https://erp.insightpulseai.com`
 2. Navigate to "Month-End Close" project
 3. Locate a task with subtasks (e.g., Task 2 with children)
 4. **Drag Task 2 to become Task 5** (reorder in hierarchy)

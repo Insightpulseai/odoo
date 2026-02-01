@@ -107,10 +107,10 @@
 
 **Infra / Stateful (→ DigitalOcean / Supabase):**
 - [x] Odoo 18 CE (ERP) ✅ (DO droplet `odoo-erp-prod`)
-- [x] Superset ✅ (App Platform: `superset.insightpulseai.net`)
+- [x] Superset ✅ (App Platform: `superset.insightpulseai.com`)
 - [x] n8n ✅ (DO droplet `odoo-erp-prod`)
 - [x] OCR adapters ✅ (DO droplet `ocr-service-droplet`)
-- [x] MCP Hub ✅ (App Platform: `mcp.insightpulseai.net`)
+- [x] MCP Hub ✅ (App Platform: `mcp.insightpulseai.com`)
 - [ ] Cron/worker services, queues
 
 ### Frontend Standardization

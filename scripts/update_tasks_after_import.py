@@ -9,7 +9,7 @@ Updates tasks in Odoo after minimal CSV import:
 - Sets stages for tasks
 
 Usage:
-    export ODOO_URL="https://erp.insightpulseai.net"
+    export ODOO_URL="https://erp.insightpulseai.com"
     export ODOO_DB="odoo"
     export ODOO_LOGIN="admin@example.com"
     export ODOO_PASSWORD="your_password"
@@ -541,7 +541,7 @@ def main():
     parser = argparse.ArgumentParser(description="Update Odoo tasks after CSV import")
     parser.add_argument(
         "--url",
-        default=os.getenv("ODOO_URL", "https://erp.insightpulseai.net"),
+        default=os.getenv("ODOO_URL", "https://erp.insightpulseai.com"),
         help="Odoo URL",
     )
     parser.add_argument(

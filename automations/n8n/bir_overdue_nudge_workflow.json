@@ -91,7 +91,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "bir-alerts@insightpulseai.net",
+        "fromEmail": "bir-alerts@insightpulseai.com",
         "toEmail": "=khalil.veracruz@omc.com, {{ $json.responsible_email }}",
         "subject": "=URGENT: BIR Form {{ $json.bir_form }} Overdue - {{ $json.days_overdue }} Days",
         "emailType": "html",

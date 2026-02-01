@@ -24,20 +24,20 @@ Settings → Developer Tools → Click one of:
 
 ```bash
 # Standard debug mode
-https://erp.insightpulseai.net/odoo/web?debug=1
+https://erp.insightpulseai.com/odoo/web?debug=1
 
 # With unminified assets (for JS/CSS debugging)
-https://erp.insightpulseai.net/odoo/web?debug=assets
+https://erp.insightpulseai.com/odoo/web?debug=assets
 
 # With test bundles
-https://erp.insightpulseai.net/odoo/web?debug=tests
+https://erp.insightpulseai.com/odoo/web?debug=tests
 
 # Turn off
-https://erp.insightpulseai.net/odoo/web?debug=0
+https://erp.insightpulseai.com/odoo/web?debug=0
 ```
 
 > **Note**: Put `?debug=...` **before** the `#` in deep URLs:
-> `https://erp.insightpulseai.net/odoo/web?debug=assets#action=123`
+> `https://erp.insightpulseai.com/odoo/web?debug=assets#action=123`
 
 ## Debug Mode Comparison
 

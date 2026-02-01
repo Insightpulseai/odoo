@@ -21,7 +21,7 @@
 | Volume: `/var/lib/odoo` | Named volume: `odoo-data` | Filestore persistence |
 | Mount: `/mnt/extra-addons` | Bind mount: `/opt/odoo-ce/repo/addons:/mnt/extra-addons` | Custom IPAI modules |
 | Mount: `/etc/odoo/odoo.conf` | Bind mount: `/opt/odoo-ce/infra/odoo.conf:/etc/odoo/odoo.conf:ro` | Production config |
-| Exposed port: `8069:8069` | Behind nginx reverse proxy | `erp.insightpulseai.net`, `superset.insightpulseai.net`, `mcp.insightpulseai.net` |
+| Exposed port: `8069:8069` | Behind nginx reverse proxy | `erp.insightpulseai.com`, `superset.insightpulseai.com`, `mcp.insightpulseai.com` |
 
 ---
 
@@ -89,7 +89,7 @@ ssh root@178.128.112.214 "docker logs odoo-prod --tail 50"
 
 ```bash
 # Check Odoo web interface (via nginx proxy)
-curl -sf https://erp.insightpulseai.net/web/login | grep -q "Odoo"
+curl -sf https://erp.insightpulseai.com/web/login | grep -q "Odoo"
 echo $?  # Should return 0 (success)
 
 # Check direct container port (bypassing nginx)
@@ -267,7 +267,7 @@ services:
 **Official**: Direct port exposure `8069:8069`
 **TBWA\SMP**: Nginx proxy with SSL termination (ports 80/443) → Odoo (8069)
 
-**Rationale**: SSL/TLS for production, domain-based routing (`erp.insightpulseai.net`, `superset.insightpulseai.net`)
+**Rationale**: SSL/TLS for production, domain-based routing (`erp.insightpulseai.com`, `superset.insightpulseai.com`)
 
 ### 4. Production Tuning
 

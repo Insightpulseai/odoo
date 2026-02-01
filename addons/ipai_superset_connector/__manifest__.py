@@ -60,7 +60,7 @@ This module follows ipai_* patterns:
 - OCA-compatible, AGPL-3 licensed
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

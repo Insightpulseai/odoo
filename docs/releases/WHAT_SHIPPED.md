@@ -16,7 +16,7 @@
 | **Deploy Timestamp** | 2026-01-06T17:40:17Z |
 | **Previous Baseline** | `a42fc69f418ecb5744607749c5d544f88aae8a9d` |
 | **Previous Tag** | `prod-20260106-1643` |
-| **Environment** | production (erp.insightpulseai.net) |
+| **Environment** | production (erp.insightpulseai.com) |
 | **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:edge-standard` |
 
 ---

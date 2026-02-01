@@ -31,9 +31,9 @@ ssh root@159.223.75.148
 
 # Fix via SQL
 docker exec -it odoo-db psql -U odoo -d odoo -c "
-UPDATE ir_config_parameter SET value = 'insightpulseai.net' WHERE key = 'mail.catchall.domain';
-UPDATE ir_config_parameter SET value = 'no-reply@insightpulseai.net' WHERE key = 'mail.default.from';
-UPDATE ir_config_parameter SET value = 'https://erp.insightpulseai.net' WHERE key = 'web.base.url';
+UPDATE ir_config_parameter SET value = 'insightpulseai.com' WHERE key = 'mail.catchall.domain';
+UPDATE ir_config_parameter SET value = 'no-reply@insightpulseai.com' WHERE key = 'mail.default.from';
+UPDATE ir_config_parameter SET value = 'https://erp.insightpulseai.com' WHERE key = 'web.base.url';
 "
 
 # Restart Odoo
@@ -48,7 +48,7 @@ Add to DigitalOcean DNS:
 |------|------|----------|------|
 | `mg` | MX | 10 | mxa.mailgun.org |
 | `mg` | MX | 10 | mxb.mailgun.org |
-| `_dmarc` | TXT | - | `v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.net` |
+| `_dmarc` | TXT | - | `v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com` |
 
 ---
 
@@ -111,7 +111,7 @@ Telegram                    │  (RTX 4090)     │──────►  • ac
 
 ## Phase 3: Apache Superset Configuration (Week 2)
 
-**Status**: Deployed at `https://superset.insightpulseai.net`
+**Status**: Deployed at `https://superset.insightpulseai.com`
 
 ### 3.1 Data Source Connections
 
@@ -153,7 +153,7 @@ WHERE tax.type_tax_use = 'purchase'
 
 ## Phase 4: Mattermost Configuration (Week 2-3)
 
-**Status**: Deployed at `https://chat.insightpulseai.net`
+**Status**: Deployed at `https://chat.insightpulseai.com`
 
 ### 4.1 Channel Structure
 
@@ -325,15 +325,15 @@ git submodule add https://github.com/OCA/reporting-engine.git oca/reporting-engi
 
 | Service | URL | Server IP |
 |---------|-----|-----------|
-| Odoo ERP | https://erp.insightpulseai.net | 159.223.75.148 |
-| n8n | https://n8n.insightpulseai.net | 159.223.75.148 |
-| Mattermost | https://chat.insightpulseai.net | 159.223.75.148 |
-| Auth | https://auth.insightpulseai.net | 159.223.75.148 |
-| PaddleOCR | https://ocr.insightpulseai.net | 188.166.237.231 |
-| Affine | https://affine.insightpulseai.net | 188.166.237.231 |
-| Superset | https://superset.insightpulseai.net | DO App Platform |
-| MCP | https://mcp.insightpulseai.net | DO App Platform |
-| Agent | https://agent.insightpulseai.net | DO AI Platform |
+| Odoo ERP | https://erp.insightpulseai.com | 159.223.75.148 |
+| n8n | https://n8n.insightpulseai.com | 159.223.75.148 |
+| Mattermost | https://chat.insightpulseai.com | 159.223.75.148 |
+| Auth | https://auth.insightpulseai.com | 159.223.75.148 |
+| PaddleOCR | https://ocr.insightpulseai.com | 188.166.237.231 |
+| Affine | https://affine.insightpulseai.com | 188.166.237.231 |
+| Superset | https://superset.insightpulseai.com | DO App Platform |
+| MCP | https://mcp.insightpulseai.com | DO App Platform |
+| Agent | https://agent.insightpulseai.com | DO AI Platform |
 
 ---
 

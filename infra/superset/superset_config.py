@@ -66,7 +66,7 @@ GUEST_ROLE_NAME = _env_opt("SUPERSET_GUEST_ROLE_NAME", "Public")
 # Allowed domains for embedding (comma-separated in env)
 _allowed_domains_str = _env_opt(
     "SUPERSET_ALLOWED_EMBEDDED_DOMAINS",
-    "https://erp.insightpulseai.net,https://scout-mvp.vercel.app,http://localhost:8069,http://localhost:3000"
+    "https://erp.insightpulseai.com,https://scout-mvp.vercel.app,http://localhost:8069,http://localhost:3000"
 )
 ALLOWED_EMBEDDED_DOMAINS = [d.strip() for d in _allowed_domains_str.split(",") if d.strip()]
 

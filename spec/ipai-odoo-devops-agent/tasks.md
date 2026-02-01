@@ -277,7 +277,7 @@ echo "✅ Deployment complete"
 #!/bin/bash
 set -euo pipefail
 
-DOMAIN=${1:-erp.insightpulseai.net}
+DOMAIN=${1:-erp.insightpulseai.com}
 
 echo "🔒 Setting up SSL for $DOMAIN..."
 
@@ -310,7 +310,7 @@ echo "✅ SSL setup complete for $DOMAIN"
 set -euo pipefail
 
 PROD_URL="http://178.128.112.214:8069"
-N8N_URL="https://n8n.insightpulseai.net"
+N8N_URL="https://n8n.insightpulseai.com"
 
 echo "🏥 Running production health checks..."
 
@@ -472,9 +472,9 @@ echo "✅ Restored $BACKUP_FILE to $TARGET_DB"
 [options]
 smtp_server = smtp.mailgun.org
 smtp_port = 587
-smtp_user = postmaster@mg.insightpulseai.net
+smtp_user = postmaster@mg.insightpulseai.com
 smtp_password = ${MAILGUN_SMTP_PASSWORD}
-email_from = devtest@mg.insightpulseai.net
+email_from = devtest@mg.insightpulseai.com
 ```
 
 **Inspection Script**: `scripts/mail/inspect_caught_mail.sh`
@@ -482,7 +482,7 @@ email_from = devtest@mg.insightpulseai.net
 #!/bin/bash
 # Query Mailgun API for recent caught emails
 curl -s --user "api:$MAILGUN_API_KEY" \
-  "https://api.mailgun.net/v3/mg.insightpulseai.net/events" \
+  "https://api.mailgun.net/v3/mg.insightpulseai.com/events" \
   | jq '.items[] | {to, subject, timestamp}'
 ```
 

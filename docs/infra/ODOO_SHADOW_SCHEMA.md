@@ -97,7 +97,7 @@ Store Odoo credentials in Supabase Vault:
 
 ```sql
 -- In Supabase SQL Editor
-SELECT vault.create_secret('ODOO_URL', 'https://erp.insightpulseai.net');
+SELECT vault.create_secret('ODOO_URL', 'https://erp.insightpulseai.com');
 SELECT vault.create_secret('ODOO_DB', 'odoo_core');
 SELECT vault.create_secret('ODOO_USER', 'api-user@example.com');
 SELECT vault.create_secret('ODOO_PASSWORD', 'your-secure-password');
@@ -107,7 +107,7 @@ Or set environment variables for the Edge Function:
 
 ```bash
 # In Vercel/Supabase dashboard
-ODOO_URL=https://erp.insightpulseai.net
+ODOO_URL=https://erp.insightpulseai.com
 ODOO_DB=odoo_core
 ODOO_USER=api-user@example.com
 ODOO_PASSWORD=your-secure-password
@@ -124,7 +124,7 @@ supabase functions deploy ops-job-worker
 
 ```bash
 # Full sync all priority models
-export ODOO_URL="https://erp.insightpulseai.net"
+export ODOO_URL="https://erp.insightpulseai.com"
 export ODOO_DB="odoo_core"
 export ODOO_USER="api-user@example.com"
 export ODOO_PASSWORD="your-password"

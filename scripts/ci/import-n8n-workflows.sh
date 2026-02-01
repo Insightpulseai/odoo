@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Finance PPM n8n Workflow Import Script
 
-N8N_API_URL="${N8N_BASE_URL:-https://ipa.insightpulseai.net}/api/v1"
+N8N_API_URL="${N8N_BASE_URL:-https://ipa.insightpulseai.com}/api/v1"
 N8N_API_KEY="${N8N_API_KEY}"
 WORKFLOWS_DIR="/root/odoo-ce/workflows/finance_ppm"
 

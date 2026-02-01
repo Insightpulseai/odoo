@@ -163,13 +163,13 @@ Odoo data is mirrored to Supabase for analytics/RAG:
 ### XML-RPC (Native)
 ```python
 import xmlrpc.client
-common = xmlrpc.client.ServerProxy('https://erp.insightpulseai.net/xmlrpc/2/common')
+common = xmlrpc.client.ServerProxy('https://erp.insightpulseai.com/xmlrpc/2/common')
 uid = common.authenticate(db, username, password, {})
 ```
 
 ### JSON-RPC (Recommended)
 ```bash
-curl -X POST https://erp.insightpulseai.net/web/session/authenticate \
+curl -X POST https://erp.insightpulseai.com/web/session/authenticate \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"call","params":{"db":"odoo_core","login":"...","password":"..."}}'
 ```
@@ -190,7 +190,7 @@ Port: 8069
 ```
 Droplet: odoo-erp-prod
 Database: odoo_core (DO Managed)
-URL: https://erp.insightpulseai.net
+URL: https://erp.insightpulseai.com
 ```
 
 ---

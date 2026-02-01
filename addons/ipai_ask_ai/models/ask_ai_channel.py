@@ -92,7 +92,7 @@ class DiscussChannel(models.Model):
             ai_partner = (
                 self.env["res.partner"]
                 .sudo()
-                .search([("email", "=", "ai@insightpulseai.net")], limit=1)
+                .search([("email", "=", "ai@insightpulseai.com")], limit=1)
             )
 
         # Post AI response

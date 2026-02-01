@@ -218,10 +218,10 @@ GITHUB_APP_ID=2191216
 GITHUB_CLIENT_ID=Iv23liwGL7fnYySPPAjS
 GITHUB_CLIENT_SECRET=xxx
 GITHUB_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----..."
-GITHUB_CALLBACK_URL=https://mcp.insightpulseai.net/callback
+GITHUB_CALLBACK_URL=https://mcp.insightpulseai.com/callback
 
 # n8n
-N8N_WEBHOOK_URL=https://n8n.insightpulseai.net
+N8N_WEBHOOK_URL=https://n8n.insightpulseai.com
 
 # Mattermost
 MATTERMOST_WEBHOOK_URL=https://mattermost.example.com/hooks/xxx

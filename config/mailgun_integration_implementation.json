@@ -40,37 +40,37 @@
   ],
 
   "deployment_requirements": {
-    "server": "erp.insightpulseai.net (159.223.75.148)",
+    "server": "erp.insightpulseai.com (159.223.75.148)",
     "module_upgrade": "odoo -d production -u ipai_enterprise_bridge --stop-after-init",
     "service_restart": "Required after module upgrade",
-    "verification": "curl POST to https://erp.insightpulseai.net/mailgate/mailgun"
+    "verification": "curl POST to https://erp.insightpulseai.com/mailgate/mailgun"
   },
 
   "mailgun_configuration": {
-    "domain": "mg.insightpulseai.net",
+    "domain": "mg.insightpulseai.com",
     "api_key": "key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxx-xxxxxxxx",
     "routes": [
       {
-        "expression": "match_recipient(\"deploy@insightpulseai.net\")",
-        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "expression": "match_recipient(\"deploy@insightpulseai.com\")",
+        "forward_url": "https://erp.insightpulseai.com/mailgate/mailgun",
         "priority": 0,
         "status": "CONFIGURED"
       },
       {
-        "expression": "match_recipient(\"support@insightpulseai.net\")",
-        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "expression": "match_recipient(\"support@insightpulseai.com\")",
+        "forward_url": "https://erp.insightpulseai.com/mailgate/mailgun",
         "priority": 1,
         "status": "CONFIGURED"
       },
       {
-        "expression": "match_recipient(\"invoices@insightpulseai.net\")",
-        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "expression": "match_recipient(\"invoices@insightpulseai.com\")",
+        "forward_url": "https://erp.insightpulseai.com/mailgate/mailgun",
         "priority": 2,
         "status": "CONFIGURED"
       },
       {
-        "expression": "match_recipient(\".*@mg.insightpulseai.net\")",
-        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "expression": "match_recipient(\".*@mg.insightpulseai.com\")",
+        "forward_url": "https://erp.insightpulseai.com/mailgate/mailgun",
         "priority": 10,
         "status": "CONFIGURED"
       }
@@ -141,7 +141,7 @@
   },
 
   "next_steps": [
-    "Deploy code to production server (erp.insightpulseai.net)",
+    "Deploy code to production server (erp.insightpulseai.com)",
     "Run module upgrade: odoo -d production -u ipai_enterprise_bridge --stop-after-init",
     "Restart Odoo service",
     "Execute direct curl test to verify HTTP 200 response",

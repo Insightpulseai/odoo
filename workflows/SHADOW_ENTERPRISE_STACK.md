@@ -72,7 +72,7 @@
 **Code Pattern**:
 ```python
 import requests
-webhook_url = "https://ipa.insightpulseai.net/webhook/<endpoint>"
+webhook_url = "https://ipa.insightpulseai.com/webhook/<endpoint>"
 payload = {"id": record.id, "data": record.field}
 try:
     requests.post(webhook_url, json=payload, timeout=1)
@@ -114,12 +114,12 @@ except:
 ## Deployment Locations
 
 ### n8n Instance
-- **URL**: https://ipa.insightpulseai.net
+- **URL**: https://ipa.insightpulseai.com
 - **Workflows**: 4 active
 - **Credentials**: Odoo, Supabase, Mattermost, OpenAI
 
 ### Odoo CE 18
-- **URL**: https://erp.insightpulseai.net
+- **URL**: https://erp.insightpulseai.com
 - **Database**: production
 - **Automated Actions**: 1 (AI Enrichment trigger)
 
@@ -129,7 +129,7 @@ except:
 - **Functions**: Bronze → Silver data quality pipeline
 
 ### Mattermost
-- **URL**: https://ipa.insightpulseai.net
+- **URL**: https://ipa.insightpulseai.com
 - **Channels**: #finance-alerts, #finance-tasks, #finance-data, #crm-updates
 
 ---
@@ -140,14 +140,14 @@ except:
 
 ```bash
 # Inbound Webhooks (External → n8n → Odoo)
-OCR_EXPENSE_URL="https://ipa.insightpulseai.net/webhook/ocr-expense"
-BIR_DEADLINE_URL="https://ipa.insightpulseai.net/webhook/bir-deadline"
-SCOUT_SYNC_URL="https://ipa.insightpulseai.net/webhook/scout-sync"
-AI_ENRICHMENT_URL="https://ipa.insightpulseai.net/webhook/enrich-contact"
+OCR_EXPENSE_URL="https://ipa.insightpulseai.com/webhook/ocr-expense"
+BIR_DEADLINE_URL="https://ipa.insightpulseai.com/webhook/bir-deadline"
+SCOUT_SYNC_URL="https://ipa.insightpulseai.com/webhook/scout-sync"
+AI_ENRICHMENT_URL="https://ipa.insightpulseai.com/webhook/enrich-contact"
 
 # Outbound Webhooks (Odoo → n8n → External)
-EXPENSE_APPROVED_URL="https://ipa.insightpulseai.net/webhook/expense-approved"
-INVOICE_CREATED_URL="https://ipa.insightpulseai.net/webhook/invoice-created"
+EXPENSE_APPROVED_URL="https://ipa.insightpulseai.com/webhook/expense-approved"
+INVOICE_CREATED_URL="https://ipa.insightpulseai.com/webhook/invoice-created"
 ```
 
 ### Test Commands
@@ -282,7 +282,7 @@ CREATE TABLE webhook_metrics (
 **Diagnosis**:
 ```bash
 # Check if workflow is activated in n8n
-curl -I https://ipa.insightpulseai.net/webhook/ocr-expense
+curl -I https://ipa.insightpulseai.com/webhook/ocr-expense
 ```
 
 **Fix**:
@@ -452,10 +452,10 @@ odoo-ce/
 ## Support & Contact
 
 **Stack Owner**: Jake Tolentino (TBWA Finance SSC / InsightPulse AI)
-**Email**: jake.tolentino@insightpulseai.net
+**Email**: jake.tolentino@insightpulseai.com
 **Repository**: `/Users/tbwa/odoo-ce/`
-**n8n Instance**: https://ipa.insightpulseai.net
-**Odoo Instance**: https://erp.insightpulseai.net
+**n8n Instance**: https://ipa.insightpulseai.com
+**Odoo Instance**: https://erp.insightpulseai.com
 
 ---
 

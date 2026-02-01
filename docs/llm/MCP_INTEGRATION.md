@@ -79,7 +79,7 @@ Location: `~/.claude/mcp-servers.json` (also in `.claude/mcp-servers.json`)
       "command": "node",
       "args": ["./mcp/servers/odoo-erp-server/dist/index.js"],
       "env": {
-        "ODOO_URL": "https://erp.insightpulseai.net",
+        "ODOO_URL": "https://erp.insightpulseai.com",
         "ODOO_DB": "odoo_core",
         "ODOO_API_KEY": "${ODOO_API_KEY}"
       }

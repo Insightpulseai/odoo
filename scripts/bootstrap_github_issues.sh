@@ -202,27 +202,27 @@ create_issue_if_not_exists "$ISSUE_5_TITLE" "$ISSUE_5_BODY" "ui,ops"
 
 # Issue 6: DNS Consolidation
 ISSUE_6_TITLE="DNS: consolidate all subdomains to 178.128.112.214"
-ISSUE_6_BODY='**Goal**: All *.insightpulseai.net subdomains point to single droplet
+ISSUE_6_BODY='**Goal**: All *.insightpulseai.com subdomains point to single droplet
 
 **Tasks**:
 - [x] Update nginx config with host-based routing
 - [x] Install SSL certificates with Let'\''s Encrypt
-- [x] Configure erp.insightpulseai.net (Odoo)
-- [x] Configure n8n.insightpulseai.net (n8n)
-- [x] Configure superset.insightpulseai.net (Superset)
-- [ ] Deploy and configure mcp.insightpulseai.net
-- [ ] Deploy and configure ocr.insightpulseai.net
-- [ ] Deploy and configure auth.insightpulseai.net
-- [ ] Deploy and configure chat.insightpulseai.net (Mattermost)
-- [ ] Deploy and configure affine.insightpulseai.net
+- [x] Configure erp.insightpulseai.com (Odoo)
+- [x] Configure n8n.insightpulseai.com (n8n)
+- [x] Configure superset.insightpulseai.com (Superset)
+- [ ] Deploy and configure mcp.insightpulseai.com
+- [ ] Deploy and configure ocr.insightpulseai.com
+- [ ] Deploy and configure auth.insightpulseai.com
+- [ ] Deploy and configure chat.insightpulseai.com (Mattermost)
+- [ ] Deploy and configure affine.insightpulseai.com
 - [ ] Document DNS configuration in docs/email/Mailgun_DNS.md
 
 **Verification**:
 ```bash
 for subdomain in erp n8n superset mcp ocr auth chat affine; do
-  echo "$subdomain.insightpulseai.net:"
-  dig +short $subdomain.insightpulseai.net
-  curl -I https://$subdomain.insightpulseai.net 2>&1 | head -1
+  echo "$subdomain.insightpulseai.com:"
+  dig +short $subdomain.insightpulseai.com
+  curl -I https://$subdomain.insightpulseai.com 2>&1 | head -1
 done
 ```
 
@@ -262,8 +262,8 @@ ISSUE_8_BODY='**Goal**: Document DNS records and Mailgun email configuration
 
 **Tasks**:
 - [ ] Create docs/email/Mailgun_DNS.md
-- [ ] Document all DNS A records (*.insightpulseai.net)
-- [ ] Document Mailgun CNAME records (email.insightpulseai.net)
+- [ ] Document all DNS A records (*.insightpulseai.com)
+- [ ] Document Mailgun CNAME records (email.insightpulseai.com)
 - [ ] Document Mailgun TXT records (SPF, DKIM, DMARC)
 - [ ] Add verification steps (dig, nslookup, mail send test)
 - [ ] Document nginx host-based routing

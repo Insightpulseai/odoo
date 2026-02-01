@@ -132,7 +132,7 @@
       "run_url": null,
       "run_id": null,
       "environment": "production",
-      "target_url": "https://erp.insightpulseai.net",
+      "target_url": "https://erp.insightpulseai.com",
       "conclusion": null,
       "status": "UNVERIFIED"
     }
@@ -167,7 +167,7 @@
     {
       "item": "Production health check",
       "status": "UNVERIFIED",
-      "missing_evidence": "Cannot access erp.insightpulseai.net/web/health"
+      "missing_evidence": "Cannot access erp.insightpulseai.com/web/health"
     },
     {
       "item": "Odoo service restart",

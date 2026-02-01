@@ -32,12 +32,12 @@ Legend: ✅ Core for this product | ➖ Not used directly | ⚪ Optional / nice-
 
 | Service / Component                            | Layer          | SAP Concur Role                     | Cheqroom Role                       | Notion Role                                  | Notes                                                                 |
 |-----------------------------------------------|----------------|-------------------------------------|-------------------------------------|----------------------------------------------|-----------------------------------------------------------------------|
-| `ocr.insightpulseai.net` – OCR Adapter        | API Service    | ✅ Receipt OCR → `ipai_ocr_expense` | ➖                                   | ➖                                            | FastAPI adapter; maps OCR engine → Odoo JSON contract.               |
+| `ocr.insightpulseai.com` – OCR Adapter        | API Service    | ✅ Receipt OCR → `ipai_ocr_expense` | ➖                                   | ➖                                            | FastAPI adapter; maps OCR engine → Odoo JSON contract.               |
 | PaddleOCR-VL + OpenAI engine                  | ML Engine      | ✅ Text extraction from receipts     | ⚪ Asset label OCR (future)         | ➖                                            | Lives behind adapter; swappable without Odoo changes.                |
 | `odoo-erp-prod` droplet                       | Compute        | ✅ Main ERP                          | ✅ Main ERP                          | ✅ Main ERP                                   | Runs Odoo CE 18 + Postgres + nginx; single source of truth.          |
 | `ocr-service-droplet`                         | Compute        | ✅ OCR backend                       | ⚪ Future vision/asset OCR          | ➖                                            | Hosts OCR engine + adapter.                                          |
 | n8n (fin-workspace)                           | Automation     | ✅ Email → expense, reminders       | ✅ Booking → calendar sync          | ✅ Closing + BIR reminders / digests          | JSON-RPC into Odoo; runs CRON-style finance automation.              |
-| Superset (`superset.insightpulseai.net`)      | Analytics/BI   | ⚪ Expense analytics                 | ⚪ Utilization / incident dashboards | ⚪ Closing SLA / tax calendar performance     | Optional but plugs into Postgres/Supabase for reporting.             |
+| Superset (`superset.insightpulseai.com`)      | Analytics/BI   | ⚪ Expense analytics                 | ⚪ Utilization / incident dashboards | ⚪ Closing SLA / tax calendar performance     | Optional but plugs into Postgres/Supabase for reporting.             |
 | Mattermost / Chat agents (fin workspace)      | Agents / Chat  | ⚪ Expense Q&A, travel policies     | ⚪ Equipment policy Q&A             | ⚪ Closing/BIR assistant                       | Your Claude-based agents reading from Odoo & docs.                   |
 | Supabase (optional mirror)                    | Data Hub       | ⚪ Long-term analytics store         | ⚪ Asset history / usage             | ⚪ Task performance / SLA store                | Only if you want decoupled lake from Odoo DB.                        |
 
@@ -94,12 +94,12 @@ project_task_material
 
 ### Step 1: Database & Core ERP
 1. ✅ PostgreSQL 15 on `odoo-erp-prod`
-2. ✅ Odoo CE 18 on `erp.insightpulseai.net`
+2. ✅ Odoo CE 18 on `erp.insightpulseai.com`
 3. ✅ nginx reverse proxy with SSL
 
 ### Step 2: OCR Infrastructure
 1. ✅ OCR Service droplet (`ocr-service-droplet`)
-2. ✅ OCR Adapter at `ocr.insightpulseai.net`
+2. ✅ OCR Adapter at `ocr.insightpulseai.com`
 3. ✅ PaddleOCR-VL + OpenAI engine
 
 ### Step 3: Automation & Integration
@@ -110,7 +110,7 @@ project_task_material
 2. ⏳ Calendar sync (optional)
 
 ### Step 4: Analytics & BI (Optional)
-1. ⏳ Superset at `superset.insightpulseai.net`
+1. ⏳ Superset at `superset.insightpulseai.com`
 2. ⏳ Supabase mirror (if needed)
 3. ⏳ Mattermost / Chat agents
 
@@ -150,7 +150,7 @@ Superset → Direct PostgreSQL connection (read-only)
 - [x] Core Odoo CE 18 installation
 - [x] ipai_ce_cleaner (deployed, active)
 - [x] ipai_ocr_expense (deployed, tested with OCR adapter)
-- [x] OCR adapter at ocr.insightpulseai.net
+- [x] OCR adapter at ocr.insightpulseai.com
 - [x] PH normalization in OCR response
 - [x] Enhanced OCR log views in Odoo
 - [x] CE-only validation (169 modules, 0 Enterprise)

@@ -2,12 +2,12 @@
 # =============================================================================
 # WorkOS Production Deployment - Complete Workflow
 # =============================================================================
-# Target: erp.insightpulseai.net
+# Target: erp.insightpulseai.com
 # Branch: main (PR #89 already merged)
 # Execute this script ON THE PRODUCTION SERVER as deploy user
 #
 # Usage:
-#   ssh deploy@erp.insightpulseai.net
+#   ssh deploy@erp.insightpulseai.com
 #   cd /opt/odoo-ce
 #   bash PRODUCTION_DEPLOY_WORKOS.sh
 # =============================================================================
@@ -286,7 +286,7 @@ ERRORS=0
 
 # 1) HTTP check
 log_info "Checking HTTP endpoint..."
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I https://erp.insightpulseai.net/web/login 2>/dev/null || echo "000")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I https://erp.insightpulseai.com/web/login 2>/dev/null || echo "000")
 
 if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "303" ]; then
     log_ok "HTTP check passed ($HTTP_CODE)"

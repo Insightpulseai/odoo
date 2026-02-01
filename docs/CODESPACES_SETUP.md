@@ -104,13 +104,13 @@ This is the managed PostgreSQL cluster in Singapore:
 
 ## Mailgun Configuration
 
-**Domain**: `mg.insightpulseai.net`
+**Domain**: `mg.insightpulseai.com`
 
 **DNS Records** (already configured in DigitalOcean):
 - MX: `mxa.mailgun.org`, `mxb.mailgun.org` (priority 10)
 - SPF: `v=spf1 include:mailgun.org ~all`
 - DMARC: Policy `none`, reporting enabled
-- DKIM: `pic._domainkey.mg.insightpulseai.net`
+- DKIM: `pic._domainkey.mg.insightpulseai.com`
 
 **API Integration:**
 - Use Mailgun API for transactional emails
@@ -169,4 +169,4 @@ env | grep -E "SUPABASE|POSTGRES|VITE"
 - [GitHub Codespaces Docs](https://docs.github.com/en/codespaces)
 - [Supabase Dashboard](https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz)
 - [DigitalOcean Database Console](https://cloud.digitalocean.com/databases/odoo-db-sgp1)
-- [Mailgun Dashboard](https://app.mailgun.com/mg/insightpulseai.net)
+- [Mailgun Dashboard](https://app.mailgun.com/mg/insightpulseai.com)

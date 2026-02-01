@@ -6,9 +6,9 @@ This controller implements the /mailgate/mailgun endpoint to receive
 inbound emails from Mailgun webhooks and create mail.message records.
 
 Architecture:
-    Mailgun (mg.insightpulseai.net)
-        → Route: match_recipient(".*@insightpulseai.net")
-        → Forward to: https://erp.insightpulseai.net/mailgate/mailgun
+    Mailgun (mg.insightpulseai.com)
+        → Route: match_recipient(".*@insightpulseai.com")
+        → Forward to: https://erp.insightpulseai.com/mailgate/mailgun
         → This controller processes and creates mail.message
 
 Expected Mailgun POST payload (application/x-www-form-urlencoded):
@@ -141,7 +141,7 @@ class MailgunMailgateController(http.Controller):
 
         # Generate message_id if not provided
         if not message_id:
-            message_id = f"<mailgun-{int(time.time())}-{hash(sender + subject)}@mg.insightpulseai.net>"
+            message_id = f"<mailgun-{int(time.time())}-{hash(sender + subject)}@mg.insightpulseai.com>"
 
         # Create mail.message record
         try:

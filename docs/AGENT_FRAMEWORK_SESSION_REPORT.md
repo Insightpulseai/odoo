@@ -100,7 +100,7 @@ Transform InsightPulse Odoo CE stack into autonomous agent-driven platform using
 - Status: ✅ Pushed
 
 **Next Steps:**
-- Deploy adapter to ocr.insightpulseai.net
+- Deploy adapter to ocr.insightpulseai.com
 - Monitor ocr.expense.log for 24-48 hours
 - Run test harness to measure improvement
 - Add more variants based on real failures
@@ -181,7 +181,7 @@ Transform InsightPulse Odoo CE stack into autonomous agent-driven platform using
 - Status: ✅ Pushed
 
 **Next Steps:**
-- Configure SSH access to erp.insightpulseai.net
+- Configure SSH access to erp.insightpulseai.com
 - Deploy modules using automated script
 - Verify installations in Odoo UI
 - Update Apps list and install/upgrade
@@ -351,7 +351,7 @@ best_practices:
 
 1. **Deploy OCR Normalization Updates**
    ```bash
-   # Deploy adapter to ocr.insightpulseai.net
+   # Deploy adapter to ocr.insightpulseai.com
    cd /home/user/odoo-ce/ocr-adapter
    git push → DigitalOcean App Platform auto-deploy
 
@@ -362,7 +362,7 @@ best_practices:
 2. **Deploy Odoo Modules**
    ```bash
    # Configure SSH if needed
-   ssh-copy-id root@erp.insightpulseai.net
+   ssh-copy-id root@erp.insightpulseai.com
 
    # Deploy all modules
    ./scripts/deploy-odoo-modules.sh --all

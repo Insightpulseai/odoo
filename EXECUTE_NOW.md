@@ -18,7 +18,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 # 4. Verify deployment
 docker compose -f docker-compose.prod.yml ps
-curl -s -o /dev/null -w "%{http_code}\n" https://erp.insightpulseai.net
+curl -s -o /dev/null -w "%{http_code}\n" https://erp.insightpulseai.com
 ```
 
 ## ✅ EXPECTED OUTPUT
@@ -125,7 +125,7 @@ sudo systemctl status nginx
    docker compose -f docker-compose.prod.yml up -d
 
    docker compose -f docker-compose.prod.yml ps
-   curl -s -o /dev/null -w "%{http_code}\\n" https://erp.insightpulseai.net/web
+   curl -s -o /dev/null -w "%{http_code}\\n" https://erp.insightpulseai.com/web
    ```
 
 Only after **all three** are done is it honest to say:

@@ -145,8 +145,8 @@ ssh root@178.128.112.214 "docker exec postgres-prod psql -U odoo -c 'SELECT pg_d
 
 **Environments**:
 - **Dev**: `http://localhost:8069` (local developer machines)
-- **Staging**: `http://staging.insightpulseai.net` (DO droplet, port 8070)
-- **Production**: `http://erp.insightpulseai.net` (DO droplet, port 8069)
+- **Staging**: `http://staging.insightpulseai.com` (DO droplet, port 8070)
+- **Production**: `http://erp.insightpulseai.com` (DO droplet, port 8069)
 
 **Workflow**:
 1. Verify source branch tests passed
@@ -186,7 +186,7 @@ ssh root@178.128.112.214 "docker exec postgres-prod psql -U odoo -c 'SELECT pg_d
 **Purpose**: Intercept outgoing emails in dev/staging
 
 **Implementation**:
-- **Dev/Staging**: All emails routed to Mailgun catch-all (`devtest@mg.insightpulseai.net`)
+- **Dev/Staging**: All emails routed to Mailgun catch-all (`devtest@mg.insightpulseai.com`)
 - **Production**: Real delivery to recipients
 
 **API**:
@@ -275,11 +275,11 @@ tools:
     safety: templates-only, no-arbitrary-shell
 
   - id: mailgun_api
-    domain: mg.insightpulseai.net
+    domain: mg.insightpulseai.com
     endpoints: [events, logs, messages]
 
   - id: n8n_api
-    base_url: https://n8n.insightpulseai.net
+    base_url: https://n8n.insightpulseai.com
     endpoints: [workflows, executions, credentials]
 
   - id: filesystem_reader
@@ -313,8 +313,8 @@ tools:
 infrastructure:
   prod_droplet: 178.128.112.214
   prod_db_cluster: odoo-db-sgp1 (PostgreSQL 16, DO)
-  mail_domain: mg.insightpulseai.net
-  n8n_url: https://n8n.insightpulseai.net/
+  mail_domain: mg.insightpulseai.com
+  n8n_url: https://n8n.insightpulseai.com/
 
 repositories:
   odoo_dev: ~/Documents/GitHub/odoo-ce
@@ -391,7 +391,7 @@ databases:
 **Required for Implementation**:
 - [ ] GitHub Actions runner (self-hosted on DO droplet)
 - [ ] MCP server for agent communication
-- [ ] Mailgun API access (existing: `mg.insightpulseai.net`)
+- [ ] Mailgun API access (existing: `mg.insightpulseai.com`)
 - [ ] DigitalOcean API token (existing: `DO_ACCESS_TOKEN`)
 - [ ] PostgreSQL access (existing: DO managed cluster)
 - [ ] n8n API access (existing: `N8N_API_KEY`)

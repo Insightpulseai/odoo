@@ -246,7 +246,7 @@ def run():
         return
 
     # Connection
-    url = os.environ.get("ODOO_URL", "https://erp.insightpulseai.net").rstrip("/")
+    url = os.environ.get("ODOO_URL", "https://erp.insightpulseai.com").rstrip("/")
     db = os.environ.get("ODOO_DB", DEFAULT_DB)
 
     if args.dry_run:

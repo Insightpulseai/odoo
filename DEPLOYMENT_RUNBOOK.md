@@ -1,6 +1,6 @@
 # WorkOS Production Deployment Runbook
 
-**Target**: https://erp.insightpulseai.net
+**Target**: https://erp.insightpulseai.com
 **Source**: main branch (PR #89 already merged, commit c6800438)
 **Modules**: ipai_workos_affine (umbrella) + 13 dependencies
 
@@ -27,7 +27,7 @@ set -euo pipefail
 # ============================================================================
 # WorkOS Production Deployment - Main Branch
 # ============================================================================
-# Target: erp.insightpulseai.net
+# Target: erp.insightpulseai.com
 # Branch: main (PR #89 merged)
 # Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 # ============================================================================
@@ -200,7 +200,7 @@ ERRORS=0
 
 # HTTP check
 log_info "Checking HTTP endpoint..."
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web/login 2>/dev/null || echo "000")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web/login 2>/dev/null || echo "000")
 
 if [[ "$HTTP_CODE" == "200" ]] || [[ "$HTTP_CODE" == "303" ]]; then
     log_ok "HTTP check passed ($HTTP_CODE)"
@@ -345,7 +345,7 @@ exit $ERRORS
 
 After running the deployment block, verify:
 
-1. **HTTP Access**: https://erp.insightpulseai.net/web/login returns 200 or 303
+1. **HTTP Access**: https://erp.insightpulseai.com/web/login returns 200 or 303
 2. **Modules Installed**: Check `ir_module_module` for all WorkOS modules in 'installed' state
 3. **Models Registered**: Check `ir_model` for WorkOS models (workos.*, platform.*)
 4. **Logs Clean**: No critical errors in Odoo logs (last 200 lines)

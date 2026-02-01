@@ -16,7 +16,7 @@ Already done! The code is at: `github.com/jgtolentino/odoo-ce/apps/odoo-frontend
 ### Step 3: Configure Environment Variables
 
 In Vercel dashboard during import:
-- `NEXT_PUBLIC_ODOO_URL` = `https://erp.insightpulseai.net`
+- `NEXT_PUBLIC_ODOO_URL` = `https://erp.insightpulseai.com`
 - `NEXT_PUBLIC_ODOO_DB` = `odoo`
 
 ### Step 4: Deploy
@@ -61,7 +61,7 @@ Follow prompts:
 
 ```bash
 vercel env add NEXT_PUBLIC_ODOO_URL production
-# Paste: https://erp.insightpulseai.net
+# Paste: https://erp.insightpulseai.com
 
 vercel env add NEXT_PUBLIC_ODOO_DB production
 # Paste: odoo
@@ -91,7 +91,7 @@ vercel --prod
 2. Login with Odoo credentials:
    - Username: `admin`
    - Password: Your Odoo password
-3. Should connect to `https://erp.insightpulseai.net`
+3. Should connect to `https://erp.insightpulseai.com`
 
 ---
 

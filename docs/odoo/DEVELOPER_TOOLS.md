@@ -19,17 +19,17 @@
 #### A) `debug=1` (Standard Developer Mode)
 **Use when**: You need technical menus + model/view introspection.
 * **Unlocks**: Technical Menu, View/Field/Menu inspection, record rules debugging.
-* **URL**: `https://erp.insightpulseai.net/odoo/web?debug=1`
+* **URL**: `https://erp.insightpulseai.com/odoo/web?debug=1`
 
 #### B) `debug=assets` (Developer Mode with Assets)
 **Use when**: Debugging **frontend/OWL/JS/SCSS**.
 * **Behavior**: Serves assets unminified and unbundled. Crucial for tracing console errors to the exact file/line in custom modules (`ipai_platform_theme`, `chatgpt_ipai_ai_studio`, etc.).
-* **URL**: `https://erp.insightpulseai.net/odoo/web?debug=assets`
+* **URL**: `https://erp.insightpulseai.com/odoo/web?debug=assets`
 
 #### C) `debug=tests` (Developer Mode with Tests Assets)
 **Use when**: Loading test bundles for dev+test scenarios.
 * **Behavior**: Includes JS test assets (QUnit tests, test helpers).
-* **URL**: `https://erp.insightpulseai.net/odoo/web?debug=tests`
+* **URL**: `https://erp.insightpulseai.com/odoo/web?debug=tests`
 
 ## 3. IPAI Implementation Playbook
 

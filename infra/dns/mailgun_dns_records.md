@@ -1,4 +1,4 @@
-# Mailgun DNS Configuration for insightpulseai.net
+# Mailgun DNS Configuration for insightpulseai.com
 
 ## Current Records (Verified Working)
 
@@ -30,7 +30,7 @@ Data: mxb.mailgun.org
 Host: _dmarc
 Type: TXT
 Priority: -
-Data: v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.net
+Data: v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com
 ```
 
 ## DigitalOcean DNS API Commands
@@ -44,43 +44,43 @@ curl -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $DO_TOKEN" \
   -d '{"type":"MX","name":"mg","data":"mxa.mailgun.org.","priority":10,"ttl":3600}' \
-  "https://api.digitalocean.com/v2/domains/insightpulseai.net/records"
+  "https://api.digitalocean.com/v2/domains/insightpulseai.com/records"
 
 # Add MX record for mxb.mailgun.org
 curl -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $DO_TOKEN" \
   -d '{"type":"MX","name":"mg","data":"mxb.mailgun.org.","priority":10,"ttl":3600}' \
-  "https://api.digitalocean.com/v2/domains/insightpulseai.net/records"
+  "https://api.digitalocean.com/v2/domains/insightpulseai.com/records"
 
 # Add DMARC record
 curl -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $DO_TOKEN" \
-  -d '{"type":"TXT","name":"_dmarc","data":"v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.net","ttl":3600}' \
-  "https://api.digitalocean.com/v2/domains/insightpulseai.net/records"
+  -d '{"type":"TXT","name":"_dmarc","data":"v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com","ttl":3600}' \
+  "https://api.digitalocean.com/v2/domains/insightpulseai.com/records"
 ```
 
 ## Verification Commands
 
 ```bash
 # Verify MX records
-dig MX mg.insightpulseai.net +short
+dig MX mg.insightpulseai.com +short
 
 # Verify DMARC
-dig TXT _dmarc.insightpulseai.net +short
+dig TXT _dmarc.insightpulseai.com +short
 
 # Verify SPF
-dig TXT mg.insightpulseai.net +short
+dig TXT mg.insightpulseai.com +short
 
 # Verify DKIM
-dig TXT pic._domainkey.mg.insightpulseai.net +short
+dig TXT pic._domainkey.mg.insightpulseai.com +short
 ```
 
 ## Mailgun Verification
 
 After adding DNS records, verify in Mailgun dashboard:
-1. Go to https://app.mailgun.com/app/sending/domains/mg.insightpulseai.net
+1. Go to https://app.mailgun.com/app/sending/domains/mg.insightpulseai.com
 2. Click "Check DNS Records Now"
 3. All records should show green checkmarks
 

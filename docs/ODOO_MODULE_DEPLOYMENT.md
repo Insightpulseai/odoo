@@ -213,7 +213,7 @@ Traceback (most recent call last):
 
 ### Step 3: Check UI (Optional)
 
-1. Login to Odoo: `https://erp.insightpulseai.net`
+1. Login to Odoo: `https://erp.insightpulseai.com`
 2. Go to Apps menu
 3. Search for module by technical name (e.g., `ipai_platform_theme`)
 4. Should show green checkmark with "Installed" status
@@ -446,7 +446,7 @@ ODOO_MODULES=ipai_platform_theme ./scripts/deploy_odoo_smart.sh
 
 ```bash
 # Test on staging environment
-ssh root@staging.insightpulseai.net
+ssh root@staging.insightpulseai.com
 docker exec -i odoo-staging bash -lc "
   odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_platform_theme --stop-after-init
 "

@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-BASE_URL="${1:-https://erp.insightpulseai.net}"
+BASE_URL="${1:-https://erp.insightpulseai.com}"
 COMPOSE_FILE="deploy/docker-compose.prod.yml"
 SHIP_VERSION="1.1.0"
 

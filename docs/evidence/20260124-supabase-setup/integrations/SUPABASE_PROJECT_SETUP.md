@@ -79,11 +79,11 @@ major_version = 15
 
 [auth]
 enabled = true
-site_url = "https://app.insightpulseai.net"
+site_url = "https://app.insightpulseai.com"
 additional_redirect_urls = [
-  "https://erp.insightpulseai.net",
-  "https://n8n.insightpulseai.net",
-  "https://bi.insightpulseai.net",
+  "https://erp.insightpulseai.com",
+  "https://n8n.insightpulseai.com",
+  "https://bi.insightpulseai.com",
   "http://localhost:3000"
 ]
 ```

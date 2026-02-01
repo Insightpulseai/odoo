@@ -140,7 +140,7 @@ Example skeleton:
     "version": "18.0.1.0.0",
     "summary": "Finance PPM – BIR compliance & month-end automation",
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "category": "Accounting",
     "depends": [

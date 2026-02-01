@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SYSTEM: "erp.insightpulseai.net"
+      SYSTEM: "erp.insightpulseai.com"
       ENVIRONMENT: "prod"
-      RUNBOOK_REF: "repo@HEAD:artifacts/erp.insightpulseai.net/runbooks/incident_response.md"
-      ARTIFACT_REF: "repo@HEAD:artifacts/erp.insightpulseai.net"
+      RUNBOOK_REF: "repo@HEAD:artifacts/erp.insightpulseai.com/runbooks/incident_response.md"
+      ARTIFACT_REF: "repo@HEAD:artifacts/erp.insightpulseai.com"
 
     steps:
       - uses: actions/checkout@v4

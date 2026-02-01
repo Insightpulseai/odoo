@@ -2,11 +2,11 @@
 
 ## Overview
 
-This guide deploys the OCR adapter on `ocr.insightpulseai.net` (188.166.237.231) to bridge your existing OCR service with Odoo's expense integration.
+This guide deploys the OCR adapter on `ocr.insightpulseai.com` (188.166.237.231) to bridge your existing OCR service with Odoo's expense integration.
 
 **Current State:**
 - ✅ Odoo modules installed (`ipai_ce_cleaner`, `ipai_ocr_expense`)
-- ✅ OCR service running at `ocr.insightpulseai.net` with SSL
+- ✅ OCR service running at `ocr.insightpulseai.com` with SSL
 - ✅ Health endpoint working: `/health`
 - ⏳ Need to deploy adapter at `/api/expense/ocr`
 
@@ -20,7 +20,7 @@ First, find where your current OCR service is running:
 
 ```bash
 # SSH to OCR droplet
-ssh root@ocr.insightpulseai.net
+ssh root@ocr.insightpulseai.com
 
 # Check running services
 docker ps | grep -E "ocr|paddle"
@@ -92,14 +92,14 @@ def normalize_ocr_response(raw: dict) -> dict:
 ```bash
 # From local machine
 cd /Users/tbwa/odoo-ce
-rsync -avz --delete ocr-adapter/ root@ocr.insightpulseai.net:/opt/ocr-adapter/
+rsync -avz --delete ocr-adapter/ root@ocr.insightpulseai.com:/opt/ocr-adapter/
 ```
 
 ### Step 2: Deploy Adapter Container
 
 ```bash
 # SSH to OCR droplet
-ssh root@ocr.insightpulseai.net
+ssh root@ocr.insightpulseai.com
 
 # Navigate to deployment directory
 cd /opt/ocr-adapter
@@ -154,7 +154,7 @@ sudo systemctl reload nginx
 sudo apt install -y certbot python3-certbot-nginx
 
 # Obtain SSL certificate
-sudo certbot --nginx -d ocr.insightpulseai.net
+sudo certbot --nginx -d ocr.insightpulseai.com
 
 # Follow prompts to complete setup
 # Certbot will automatically configure nginx for SSL
@@ -169,7 +169,7 @@ curl -X POST http://localhost:8001/api/expense/ocr \
   -F "file=@sample-receipt.jpg"
 
 # Test through nginx (SSL)
-curl -X POST https://ocr.insightpulseai.net/api/expense/ocr \
+curl -X POST https://ocr.insightpulseai.com/api/expense/ocr \
   -H "X-API-Key: YOUR_API_KEY" \
   -F "file=@sample-receipt.jpg"
 
@@ -194,11 +194,11 @@ cd /opt/ocr-adapter
 
 ### Step 1: Enable OCR in Odoo Settings
 
-1. Login to Odoo: `https://erp.insightpulseai.net`
+1. Login to Odoo: `https://erp.insightpulseai.com`
 2. Navigate to: **Expenses → Configuration → InsightPulse OCR**
 3. Configure:
    - ☑ **Enable InsightPulse OCR**
-   - **OCR API URL**: `https://ocr.insightpulseai.net/api/expense/ocr`
+   - **OCR API URL**: `https://ocr.insightpulseai.com/api/expense/ocr`
    - **API Key**: `YOUR_SECURE_API_KEY` (same as in docker-compose.yml)
 4. Click **Save**
 
@@ -220,13 +220,13 @@ cd /opt/ocr-adapter
 
 ```bash
 # Adapter logs
-ssh root@ocr.insightpulseai.net "docker logs -f ocr-adapter"
+ssh root@ocr.insightpulseai.com "docker logs -f ocr-adapter"
 
 # Odoo logs (from ERP droplet)
-ssh root@erp.insightpulseai.net "docker logs -f odoo-odoo-1 | grep -i 'InsightPulse OCR'"
+ssh root@erp.insightpulseai.com "docker logs -f odoo-odoo-1 | grep -i 'InsightPulse OCR'"
 
 # Nginx access logs
-ssh root@ocr.insightpulseai.net "sudo tail -f /var/log/nginx/ocr-adapter.access.log"
+ssh root@ocr.insightpulseai.com "sudo tail -f /var/log/nginx/ocr-adapter.access.log"
 ```
 
 ---
@@ -296,7 +296,7 @@ ssh root@ocr.insightpulseai.net "sudo tail -f /var/log/nginx/ocr-adapter.access.
    ```bash
    curl -F "file=@receipt.jpg" \
      -H "X-API-Key: KEY" \
-     https://ocr.insightpulseai.net/api/expense/ocr | jq
+     https://ocr.insightpulseai.com/api/expense/ocr | jq
    ```
 2. Verify response includes required fields:
    - `merchant_name`
@@ -392,10 +392,10 @@ sudo nano /etc/logrotate.d/ocr-adapter
 
 ```bash
 # Adapter health
-curl https://ocr.insightpulseai.net/health
+curl https://ocr.insightpulseai.com/health
 
 # SSL certificate expiry
-echo | openssl s_client -connect ocr.insightpulseai.net:443 2>/dev/null | \
+echo | openssl s_client -connect ocr.insightpulseai.com:443 2>/dev/null | \
   openssl x509 -noout -dates
 ```
 
@@ -405,8 +405,8 @@ Create `/opt/ocr-adapter/monitor.sh`:
 
 ```bash
 #!/bin/bash
-HEALTH_URL="https://ocr.insightpulseai.net/health"
-ALERT_EMAIL="admin@insightpulseai.net"
+HEALTH_URL="https://ocr.insightpulseai.com/health"
+ALERT_EMAIL="admin@insightpulseai.com"
 
 if ! curl -sf "$HEALTH_URL" > /dev/null; then
     echo "OCR Adapter health check failed!" | \
@@ -433,7 +433,7 @@ async def startup():
     Instrumentator().instrument(app).expose(app)
 ```
 
-Metrics available at: `https://ocr.insightpulseai.net/metrics`
+Metrics available at: `https://ocr.insightpulseai.com/metrics`
 
 ---
 
@@ -461,8 +461,8 @@ sudo nginx -t && sudo systemctl reload nginx
 
 Deployment is successful when:
 
-- [ ] Health check responds: `curl https://ocr.insightpulseai.net/health`
-- [ ] OCR endpoint accessible: `curl -F "file=@receipt.jpg" -H "X-API-Key: KEY" https://ocr.insightpulseai.net/api/expense/ocr`
+- [ ] Health check responds: `curl https://ocr.insightpulseai.com/health`
+- [ ] OCR endpoint accessible: `curl -F "file=@receipt.jpg" -H "X-API-Key: KEY" https://ocr.insightpulseai.com/api/expense/ocr`
 - [ ] Response matches Odoo contract (merchant_name, invoice_date, total_amount)
 - [ ] SSL certificate valid and not expired
 - [ ] Odoo settings configured with correct URL and API key
@@ -474,7 +474,7 @@ Deployment is successful when:
 ## Support Contacts
 
 - **Adapter Issues**: Check logs at `/opt/ocr-adapter/`
-- **Odoo Issues**: Check logs on `erp.insightpulseai.net`
+- **Odoo Issues**: Check logs on `erp.insightpulseai.com`
 - **Nginx Issues**: Check `/var/log/nginx/ocr-adapter.*.log`
 
 ## Next Steps After Deployment
