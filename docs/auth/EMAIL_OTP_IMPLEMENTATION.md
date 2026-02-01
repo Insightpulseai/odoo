@@ -127,7 +127,7 @@ Located in: `packages/db/sql/auth/email_otp_schema.sql`
 
 **Environment Variables**:
 - `MAILGUN_API_KEY` - Mailgun API key
-- `MAILGUN_DOMAIN` - Mailgun domain (default: mg.insightpulseai.net)
+- `MAILGUN_DOMAIN` - Mailgun domain (default: mg.insightpulseai.com)
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key
 
@@ -211,15 +211,15 @@ supabase functions deploy auth-otp-verify \
 
 # Set secrets
 supabase secrets set MAILGUN_API_KEY="key-..." --project-ref spdtwktxdalcfigzeqrz
-supabase secrets set MAILGUN_DOMAIN="mg.insightpulseai.net" --project-ref spdtwktxdalcfigzeqrz
+supabase secrets set MAILGUN_DOMAIN="mg.insightpulseai.com" --project-ref spdtwktxdalcfigzeqrz
 ```
 
 ### 3. Configure Mailgun
 
 Mailgun is already configured (from previous work):
-- Domain: `mg.insightpulseai.net`
+- Domain: `mg.insightpulseai.com`
 - DNS: SPF, DKIM, MX, DMARC verified
-- API endpoint: `https://api.mailgun.net/v3/mg.insightpulseai.net/messages`
+- API endpoint: `https://api.mailgun.net/v3/mg.insightpulseai.com/messages`
 
 No additional configuration needed.
 
@@ -500,7 +500,7 @@ Set up alerts for:
 **Check Mailgun logs**:
 ```bash
 curl -s --user "api:$MAILGUN_API_KEY" \
-  "https://api.mailgun.net/v3/mg.insightpulseai.net/events?recipient=user@example.com&limit=10" | \
+  "https://api.mailgun.net/v3/mg.insightpulseai.com/events?recipient=user@example.com&limit=10" | \
   jq '.items[] | {event, recipient, "delivery-status": .["delivery-status"]}'
 ```
 

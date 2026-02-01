@@ -16,7 +16,7 @@ Features:
 * Settings UI integration
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": ["base", "web", "mail"],
     "data": [

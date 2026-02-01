@@ -19,9 +19,9 @@ SMTP_CONFIG = {
     "smtp_host": "smtp.mailgun.org",
     "smtp_port": 2525,  # Port 2525 bypasses DigitalOcean blocking!
     "smtp_encryption": "starttls",  # TLS (STARTTLS)
-    "smtp_user": "postmaster@mg.insightpulseai.net",  # Mailgun SMTP user
+    "smtp_user": "postmaster@mg.insightpulseai.com",  # Mailgun SMTP user
     "smtp_pass": "",  # SET VIA ODOO UI after running this script
-    "from_filter": "@mg.insightpulseai.net",  # Domain-based FROM filter
+    "from_filter": "@mg.insightpulseai.com",  # Domain-based FROM filter
     "sequence": 10,
     "smtp_authentication": "login",
     "smtp_debug": False,
@@ -29,12 +29,12 @@ SMTP_CONFIG = {
 }
 
 SYSTEM_PARAMS = {
-    "mail.catchall.domain": "mg.insightpulseai.net",
+    "mail.catchall.domain": "mg.insightpulseai.com",
     "mail.default.from": "notifications",
     "mail.catchall.alias": "catchall",
     "mail.bounce.alias": "bounce",
     # Force all outgoing mail to use authorized sender
-    "mail.force.smtp.from": "postmaster@mg.insightpulseai.net",
+    "mail.force.smtp.from": "postmaster@mg.insightpulseai.com",
 }
 
 # ============================================

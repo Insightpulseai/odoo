@@ -3,7 +3,7 @@
 ## ✅ DEPLOYMENT STATUS: SUCCESSFULLY DEPLOYED
 
 **Date**: November 24, 2025
-**System**: https://erp.insightpulseai.net
+**System**: https://erp.insightpulseai.com
 **Status**: ✅ **LIVE & ACCESSIBLE**
 
 ---
@@ -11,7 +11,7 @@
 ## 🎯 Deployment Confirmation
 
 ### ✅ System Accessibility
-- **URL**: https://erp.insightpulseai.net
+- **URL**: https://erp.insightpulseai.com
 - **HTTP Status**: 200 (Healthy)
 - **Deployment Method**: Direct deployment script executed successfully
 - **Last Deployment**: November 24, 2025, 6:32 PM

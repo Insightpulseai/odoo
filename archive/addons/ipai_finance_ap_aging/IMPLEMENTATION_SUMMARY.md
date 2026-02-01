@@ -63,7 +63,7 @@ ipai_finance_ap_aging/
 
 **Integration Points**:
 - Supabase task_queue table (`kind='AP_AGING_SNAPSHOT'`, `status='completed'`)
-- Mattermost webhook: `https://mattermost.insightpulseai.net/hooks/ap-aging-alert`
+- Mattermost webhook: `https://mattermost.insightpulseai.com/hooks/ap-aging-alert`
 - Escalation logic: Overdue (90+) amount >₱100,000 triggers @channel alert
 
 ---
@@ -233,10 +233,10 @@ docker-compose restart web
 
 ```bash
 # Copy workflow JSON to n8n instance
-scp /Users/tbwa/odoo-ce/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insightpulseai.net:/tmp/
+scp /Users/tbwa/odoo-ce/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insightpulseai.com:/tmp/
 
 # Import via n8n UI
-# 1. Navigate to: https://ipa.insightpulseai.net
+# 1. Navigate to: https://ipa.insightpulseai.com
 # 2. Click: Workflows → Import from File
 # 3. Select: W403_AP_AGING_HEATMAP.json
 # 4. Activate workflow
@@ -248,7 +248,7 @@ scp /Users/tbwa/odoo-ce/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insig
 # Set n8n webhook URL (Odoo UI)
 # Navigate to: Settings → Technical → Parameters → System Parameters
 # Key: ipai_finance_ap_aging.n8n_webhook_url
-# Value: https://ipa.insightpulseai.net/webhook/ap-aging-webhook
+# Value: https://ipa.insightpulseai.com/webhook/ap-aging-webhook
 
 # Verify cron job schedule (Odoo UI)
 # Navigate to: Settings → Technical → Automation → Scheduled Actions
@@ -263,7 +263,7 @@ scp /Users/tbwa/odoo-ce/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insig
 # Odoo UI: Accounting → Vendors → Vendor Bills → Actions → Generate AP Aging Heatmap Now
 
 # 2. Verify heatmap access
-curl -s "https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code=RIM" | grep -q "AP Aging Heatmap"
+curl -s "https://odoo.insightpulseai.com/ipai/finance/ap_aging/heatmap?employee_code=RIM" | grep -q "AP Aging Heatmap"
 
 # 3. Check task_queue
 psql "postgresql://postgres.xkxyvboeubffxxbebsll:$SUPABASE_DB_PASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres" \
@@ -319,7 +319,7 @@ npx playwright test tests/playwright/ap_aging_print_report.spec.js --headed
 
 **Manual Review**:
 1. CKVC receives Mattermost notification
-2. Click link: `https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code=RIM`
+2. Click link: `https://odoo.insightpulseai.com/ipai/finance/ap_aging/heatmap?employee_code=RIM`
 3. View interactive heatmap with KPI cards
 4. Identify vendors with high overdue amounts (red cells in 90+ column)
 5. Click "Print Report" for hard copy
@@ -403,7 +403,7 @@ npx playwright test tests/playwright/ap_aging_print_report.spec.js --headed
 
 ## 📞 Support
 
-**Module Author**: Jake Tolentino <jgtolentino@insightpulseai.net>
+**Module Author**: Jake Tolentino <jgtolentino@insightpulseai.com>
 **Organization**: InsightPulse AI
 **License**: AGPL-3
 **Repository**: https://github.com/jgtolentino/odoo-ce

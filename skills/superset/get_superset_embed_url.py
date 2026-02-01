@@ -27,7 +27,7 @@ def handle(dashboard_id: str) -> Dict[str, Any]:
     """
     base_url = os.getenv(
         "SUPERSET_TOKEN_API_URL",
-        "https://superset-embed-api.insightpulseai.net/api/superset-token",
+        "https://superset-embed-api.insightpulseai.com/api/superset-token",
     )
     if not base_url:
         raise RuntimeError("SUPERSET_TOKEN_API_URL is not configured")
@@ -58,7 +58,7 @@ def handle(dashboard_id: str) -> Dict[str, Any]:
         superset_domain = (
             data.get("embedDomain")
             or data.get("supersetDomain")
-            or os.getenv("SUPERSET_DOMAIN", "https://superset.insightpulseai.net")
+            or os.getenv("SUPERSET_DOMAIN", "https://superset.insightpulseai.com")
         )
         superset_domain = superset_domain.rstrip("/")
         embed_url = f"{superset_domain}/embedded/{dashboard_id}"

@@ -258,7 +258,7 @@ ODOO_DB_NAME=odoo_prod \
 ./scripts/dev/list-ee-parity-modules.sh
 
 # 4. Test critical workflows
-curl -f https://erp.insightpulseai.net/web/health
+curl -f https://erp.insightpulseai.com/web/health
 ```
 
 ---

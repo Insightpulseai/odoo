@@ -1,11 +1,11 @@
 #!/bin/bash
-# HTTPS Verification Script for erp.insightpulseai.net
+# HTTPS Verification Script for erp.insightpulseai.com
 # Tests if Odoo is correctly generating HTTPS URLs
 
 set -e
 
 SERVER="insightpulse-odoo"
-DOMAIN="erp.insightpulseai.net"
+DOMAIN="erp.insightpulseai.com"
 
 echo "==================================="
 echo "HTTPS Configuration Verification"

@@ -1,6 +1,6 @@
 # Odoo CE 18.0 - InsightPulse AI Module Sitemap
 
-**Production Instance**: https://erp.insightpulseai.net
+**Production Instance**: https://erp.insightpulseai.com
 **Database**: production
 **Last Updated**: 2025-12-17
 
@@ -32,41 +32,41 @@
 ## URL Structure
 
 ### Authentication
-- **Login**: https://erp.insightpulseai.net/web/login?db=production
-- **Database Selector**: https://erp.insightpulseai.net/web/database/selector
+- **Login**: https://erp.insightpulseai.com/web/login?db=production
+- **Database Selector**: https://erp.insightpulseai.com/web/database/selector
 
 ### Main Application
-- **Apps Dashboard**: https://erp.insightpulseai.net/odoo (default after login)
-- **Discuss**: https://erp.insightpulseai.net/odoo/discuss
-- **Calendar**: https://erp.insightpulseai.net/odoo/calendar
+- **Apps Dashboard**: https://erp.insightpulseai.com/odoo (default after login)
+- **Discuss**: https://erp.insightpulseai.com/odoo/discuss
+- **Calendar**: https://erp.insightpulseai.com/odoo/calendar
 
 ### Finance & Compliance
-- **Expenses**: https://erp.insightpulseai.net/odoo/hr_expense
-- **OCR Expense Logs**: https://erp.insightpulseai.net/odoo/ipai_ocr_expense.ocr_expense_log
-- **Cash Advances**: https://erp.insightpulseai.net/odoo/ipai_cash_advance.cash_advance
-- **BIR Schedule**: https://erp.insightpulseai.net/odoo/ipai_clarity_ppm_parity.finance_bir_schedule
-- **Finance PPM Dashboard**: https://erp.insightpulseai.net/ipai/finance/ppm
+- **Expenses**: https://erp.insightpulseai.com/odoo/hr_expense
+- **OCR Expense Logs**: https://erp.insightpulseai.com/odoo/ipai_ocr_expense.ocr_expense_log
+- **Cash Advances**: https://erp.insightpulseai.com/odoo/ipai_cash_advance.cash_advance
+- **BIR Schedule**: https://erp.insightpulseai.com/odoo/ipai_clarity_ppm_parity.finance_bir_schedule
+- **Finance PPM Dashboard**: https://erp.insightpulseai.com/ipai/finance/ppm
 
 ### Project Management
-- **Projects**: https://erp.insightpulseai.net/odoo/project
-- **Tasks**: https://erp.insightpulseai.net/odoo/project.task
-- **Milestones**: https://erp.insightpulseai.net/odoo/project.milestone
-- **Month-End Close**: https://erp.insightpulseai.net/odoo/ipai_ppm_monthly_close.ppm_monthly_close
+- **Projects**: https://erp.insightpulseai.com/odoo/project
+- **Tasks**: https://erp.insightpulseai.com/odoo/project.task
+- **Milestones**: https://erp.insightpulseai.com/odoo/project.milestone
+- **Month-End Close**: https://erp.insightpulseai.com/odoo/ipai_ppm_monthly_close.ppm_monthly_close
 
 ### Equipment & Assets
-- **Equipment**: https://erp.insightpulseai.net/odoo/ipai_equipment.equipment
-- **Bookings**: https://erp.insightpulseai.net/odoo/ipai_equipment.booking
-- **Incidents**: https://erp.insightpulseai.net/odoo/ipai_equipment.incident
+- **Equipment**: https://erp.insightpulseai.com/odoo/ipai_equipment.equipment
+- **Bookings**: https://erp.insightpulseai.com/odoo/ipai_equipment.booking
+- **Incidents**: https://erp.insightpulseai.com/odoo/ipai_equipment.incident
 
 ### Documentation
-- **Documents**: https://erp.insightpulseai.net/odoo/ipai_docs.doc
-- **Tags**: https://erp.insightpulseai.net/odoo/ipai_docs.doc_tag
-- **Workspaces**: https://erp.insightpulseai.net/odoo/ipai_workspace_core.workspace
+- **Documents**: https://erp.insightpulseai.com/odoo/ipai_docs.doc
+- **Tags**: https://erp.insightpulseai.com/odoo/ipai_docs.doc_tag
+- **Workspaces**: https://erp.insightpulseai.com/odoo/ipai_workspace_core.workspace
 
 ### Settings
-- **Users**: https://erp.insightpulseai.net/odoo/res.users
-- **Companies**: https://erp.insightpulseai.net/odoo/res.company
-- **Apps**: https://erp.insightpulseai.net/odoo/apps
+- **Users**: https://erp.insightpulseai.com/odoo/res.users
+- **Companies**: https://erp.insightpulseai.com/odoo/res.company
+- **Apps**: https://erp.insightpulseai.com/odoo/apps
 
 ---
 
@@ -207,8 +207,8 @@ addons/ipai_equipment/
 
 ### External Services
 - **PaddleOCR-VL**: https://ade-ocr-backend-*.ondigitalocean.app
-- **n8n Workflows**: https://ipa.insightpulseai.net
-- **Mattermost**: https://mattermost.insightpulseai.net
+- **n8n Workflows**: https://ipa.insightpulseai.com
+- **Mattermost**: https://mattermost.insightpulseai.com
 - **Supabase**: https://xkxyvboeubffxxbebsll.supabase.co
 
 ### Database Connections
@@ -216,9 +216,9 @@ addons/ipai_equipment/
 - **Supabase PostgreSQL**: aws-1-us-east-1.pooler.supabase.com:6543
 
 ### API Endpoints
-- **XML-RPC**: https://erp.insightpulseai.net/xmlrpc/2/common
-- **JSON-RPC**: https://erp.insightpulseai.net/jsonrpc
-- **Finance PPM API**: https://erp.insightpulseai.net/ipai/finance/ppm/api/*
+- **XML-RPC**: https://erp.insightpulseai.com/xmlrpc/2/common
+- **JSON-RPC**: https://erp.insightpulseai.com/jsonrpc
+- **Finance PPM API**: https://erp.insightpulseai.com/ipai/finance/ppm/api/*
 
 ---
 
@@ -378,7 +378,7 @@ addons/ipai_equipment/
 4. **BIR tasks not auto-created**: Check cron job `ipai_ppm_close_auto_tasks`
 
 ### Support Contacts
-- **Admin**: admin@insightpulseai.net
+- **Admin**: admin@insightpulseai.com
 - **Finance Director**: rita.quebral@omc.com
 - **System Issues**: Contact server admin
 
@@ -399,4 +399,4 @@ addons/ipai_equipment/
 
 ---
 
-**End of Sitemap** | Generated: 2025-12-17 | Production: https://erp.insightpulseai.net
+**End of Sitemap** | Generated: 2025-12-17 | Production: https://erp.insightpulseai.com

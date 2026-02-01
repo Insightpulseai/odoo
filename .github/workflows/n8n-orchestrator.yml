@@ -7,7 +7,7 @@
 #   - Triggers n8n workflows from GitHub events
 #
 # Required Secrets:
-#   - N8N_API_URL: n8n instance URL (e.g., https://n8n.insightpulseai.net)
+#   - N8N_API_URL: n8n instance URL (e.g., https://n8n.insightpulseai.com)
 #   - N8N_API_KEY: n8n API key for authentication
 #   - N8N_WEBHOOK_URL: Webhook URL for deployment notifications
 # =============================================================================

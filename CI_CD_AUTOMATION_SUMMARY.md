@@ -141,7 +141,7 @@ Impact:
 ```bash
 # Repository Settings > Secrets and variables > Actions
 
-N8N_CI_WEBHOOK_URL = https://n8n.insightpulseai.net/webhook/ci-telemetry
+N8N_CI_WEBHOOK_URL = https://n8n.insightpulseai.com/webhook/ci-telemetry
 ```
 
 **If not set**: Scripts gracefully skip telemetry (no failures)

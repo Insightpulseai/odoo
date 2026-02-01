@@ -238,7 +238,7 @@
           "parameters": [
             {
               "name": "from",
-              "value": "InsightPulse AI <noreply@insightpulseai.net>"
+              "value": "InsightPulse AI <noreply@insightpulseai.com>"
             },
             {
               "name": "to",
@@ -250,7 +250,7 @@
             },
             {
               "name": "html",
-              "value": "=<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n<h1 style=\"color: #1A56DB;\">Welcome to InsightPulse AI!</h1>\n<p>Hi there,</p>\n<p>Great news! Your tenant <strong>{{ $('Validate & Prepare').item.json.tenant.name }}</strong> has been successfully provisioned.</p>\n\n<h2>Your Tenant Details</h2>\n<ul>\n<li><strong>Tenant Code:</strong> {{ $('Validate & Prepare').item.json.tenant.code }}</li>\n<li><strong>Database:</strong> {{ $('Validate & Prepare').item.json.database.db_name }}</li>\n<li><strong>Plan:</strong> {{ $('Validate & Prepare').item.json.tenant.plan_code }}</li>\n<li><strong>Trial Ends:</strong> 14 days from now</li>\n</ul>\n\n<h2>Access Your Platforms</h2>\n<ul>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.odoo.insightpulseai.net\">Odoo ERP</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.superset.insightpulseai.net\">Superset Analytics</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.dashboard.insightpulseai.net\">Dashboard</a></li>\n</ul>\n\n<p>Need help getting started? Check out our <a href=\"https://docs.insightpulseai.net\">documentation</a> or reply to this email.</p>\n\n<p>Best regards,<br>The InsightPulse AI Team</p>\n</body>\n</html>"
+              "value": "=<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n<h1 style=\"color: #1A56DB;\">Welcome to InsightPulse AI!</h1>\n<p>Hi there,</p>\n<p>Great news! Your tenant <strong>{{ $('Validate & Prepare').item.json.tenant.name }}</strong> has been successfully provisioned.</p>\n\n<h2>Your Tenant Details</h2>\n<ul>\n<li><strong>Tenant Code:</strong> {{ $('Validate & Prepare').item.json.tenant.code }}</li>\n<li><strong>Database:</strong> {{ $('Validate & Prepare').item.json.database.db_name }}</li>\n<li><strong>Plan:</strong> {{ $('Validate & Prepare').item.json.tenant.plan_code }}</li>\n<li><strong>Trial Ends:</strong> 14 days from now</li>\n</ul>\n\n<h2>Access Your Platforms</h2>\n<ul>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.odoo.insightpulseai.com\">Odoo ERP</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.superset.insightpulseai.com\">Superset Analytics</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.dashboard.insightpulseai.com\">Dashboard</a></li>\n</ul>\n\n<p>Need help getting started? Check out our <a href=\"https://docs.insightpulseai.com\">documentation</a> or reply to this email.</p>\n\n<p>Best regards,<br>The InsightPulse AI Team</p>\n</body>\n</html>"
             },
             {
               "name": "o:tag",
@@ -292,7 +292,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Build success response\nconst tenant = $('Validate & Prepare').item.json.tenant;\nconst database = $('Validate & Prepare').item.json.database;\nconst activated = $('Activate Tenant').item.json;\n\nreturn [{\n  json: {\n    success: true,\n    message: 'Tenant provisioned successfully',\n    tenant: {\n      id: activated[0]?.id,\n      code: tenant.code,\n      name: tenant.name,\n      status: 'active',\n      database: database.db_name,\n      provisioned_at: activated[0]?.provisioned_at\n    },\n    access: {\n      odoo: `https://${tenant.code}.odoo.insightpulseai.net`,\n      superset: `https://${tenant.code}.superset.insightpulseai.net`,\n      dashboard: `https://${tenant.code}.dashboard.insightpulseai.net`\n    },\n    trial_ends: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()\n  }\n}];"
+        "jsCode": "// Build success response\nconst tenant = $('Validate & Prepare').item.json.tenant;\nconst database = $('Validate & Prepare').item.json.database;\nconst activated = $('Activate Tenant').item.json;\n\nreturn [{\n  json: {\n    success: true,\n    message: 'Tenant provisioned successfully',\n    tenant: {\n      id: activated[0]?.id,\n      code: tenant.code,\n      name: tenant.name,\n      status: 'active',\n      database: database.db_name,\n      provisioned_at: activated[0]?.provisioned_at\n    },\n    access: {\n      odoo: `https://${tenant.code}.odoo.insightpulseai.com`,\n      superset: `https://${tenant.code}.superset.insightpulseai.com`,\n      dashboard: `https://${tenant.code}.dashboard.insightpulseai.com`\n    },\n    trial_ends: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()\n  }\n}];"
       },
       "id": "build-response",
       "name": "Build Success Response",

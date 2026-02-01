@@ -38,12 +38,12 @@ WHERE schemaname = 'finance_ppm' AND tablename = 'monthly_reports';
 ```
 
 ### 2. n8n Instance
-- URL: `https://n8n.insightpulseai.net/`
+- URL: `https://n8n.insightpulseai.com/`
 - Status: ✅ Accessible
 - API Access: ⚠️ Requires configuration
 
 ### 3. Odoo Instance
-- URL: `https://odoo.insightpulseai.net/`
+- URL: `https://odoo.insightpulseai.com/`
 - Module: `ipai_finance_ppm` (v1.0.0)
 - Status: ✅ Deployed and running
 - Database: `production`
@@ -61,7 +61,7 @@ Required channels:
 
 **A. Odoo XML-RPC Credentials**
 
-1. Navigate to: `https://n8n.insightpulseai.net/` → Settings → Credentials
+1. Navigate to: `https://n8n.insightpulseai.com/` → Settings → Credentials
 2. Click "Add Credential" → Search for "HTTP Basic Auth"
 3. Create credential: **Odoo Production**
    - Username: `admin` (or your Odoo username)
@@ -99,7 +99,7 @@ Required channels:
 
 **Option A: Manual Import via UI** (Recommended)
 
-1. Navigate to: `https://n8n.insightpulseai.net/workflows`
+1. Navigate to: `https://n8n.insightpulseai.com/workflows`
 2. Click "+" → "Import from File"
 3. Upload each workflow JSON file:
    - `bir_deadline_alert.json`
@@ -118,7 +118,7 @@ export N8N_API_KEY="your_n8n_api_key"
 
 # Import workflows
 for workflow in bir_deadline_alert.json task_escalation.json monthly_report.json; do
-  curl -X POST "https://n8n.insightpulseai.net/api/v1/workflows" \
+  curl -X POST "https://n8n.insightpulseai.com/api/v1/workflows" \
     -H "X-N8N-API-KEY: $N8N_API_KEY" \
     -H "Content-Type: application/json" \
     -d @$workflow
@@ -220,7 +220,7 @@ Expected output:
 ### Execution Logs
 
 Monitor workflow executions:
-1. Navigate to: `https://n8n.insightpulseai.net/executions`
+1. Navigate to: `https://n8n.insightpulseai.com/executions`
 2. Filter by workflow name
 3. Check for errors or failures
 
@@ -267,7 +267,7 @@ ORDER BY period DESC;
 
 **Solution**:
 1. Verify Odoo credentials in n8n
-2. Test Odoo login manually at `https://odoo.insightpulseai.net/`
+2. Test Odoo login manually at `https://odoo.insightpulseai.com/`
 3. Check if user has access to `ipai_finance_ppm` module
 4. Update "Odoo Auth" node with correct credentials
 
@@ -280,7 +280,7 @@ ORDER BY period DESC;
 2. Check channel names match exactly
 3. Test webhook with curl:
 ```bash
-curl -X POST "https://mattermost.insightpulseai.net/hooks/YOUR_WEBHOOK_ID" \
+curl -X POST "https://mattermost.insightpulseai.com/hooks/YOUR_WEBHOOK_ID" \
   -H "Content-Type: application/json" \
   -d '{"text":"Test notification"}'
 ```
@@ -325,7 +325,7 @@ WHERE period = 'YYYY-MM' AND execution_id = 'problematic_id';
 
 For issues or questions:
 - Documentation: This file
-- Odoo Logs: `ssh root@odoo.insightpulseai.net "docker logs odoo-odoo-1 --tail 100"`
+- Odoo Logs: `ssh root@odoo.insightpulseai.com "docker logs odoo-odoo-1 --tail 100"`
 - n8n Logs: Check execution history in n8n UI
 - Supabase: Check table via psql or Supabase dashboard
 

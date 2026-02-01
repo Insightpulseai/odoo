@@ -10,7 +10,7 @@
 # Mail (Mailgun)
 MAILGUN_SMTP_LOGIN=
 MAILGUN_SMTP_PASSWORD=
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 
 # Supabase (canonical project: spdtwktxdalcfigzeqrz)
 SUPABASE_URL=

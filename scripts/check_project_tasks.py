@@ -11,7 +11,7 @@ UI-domain health check for finance projects.
 - Exits 0 on success, non-zero on failure
 
 Usage:
-    export ODOO_URL=https://erp.insightpulseai.net
+    export ODOO_URL=https://erp.insightpulseai.com
     export ODOO_DB=odoo
     export ODOO_LOGIN=jgtolentino_rn@yahoo.com
     export ODOO_PASSWORD=your_password
@@ -26,7 +26,7 @@ import requests
 from typing import Any, Dict, List
 
 # Configuration from environment
-ODOO_URL = os.getenv("ODOO_URL", "https://erp.insightpulseai.net")
+ODOO_URL = os.getenv("ODOO_URL", "https://erp.insightpulseai.com")
 ODOO_DB = os.getenv("ODOO_DB", "odoo")
 ODOO_LOGIN = os.getenv("ODOO_LOGIN", "jgtolentino_rn@yahoo.com")
 ODOO_PASSWORD = os.getenv("ODOO_PASSWORD")

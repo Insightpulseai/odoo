@@ -10,7 +10,7 @@ Uses incremental sync via write_date watermarks.
 
 Usage:
     # Set environment variables
-    export ODOO_URL="https://erp.insightpulseai.net"
+    export ODOO_URL="https://erp.insightpulseai.com"
     export ODOO_DB="odoo_core"
     export ODOO_USER="api-user@example.com"
     export ODOO_PASSWORD="your-password"

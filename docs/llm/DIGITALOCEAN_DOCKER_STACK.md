@@ -221,7 +221,7 @@ ODOO_DATA_DIR=/var/lib/odoo
 # SMTP (Mailgun)
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587
-SMTP_USER=postmaster@mg.insightpulseai.net
+SMTP_USER=postmaster@mg.insightpulseai.com
 ```
 
 ### Required for Integrations
@@ -233,7 +233,7 @@ SUPABASE_SERVICE_ROLE_KEY=<from-vault>
 
 # n8n
 N8N_ENCRYPTION_KEY=<from-vault>
-WEBHOOK_URL=https://n8n.insightpulseai.net
+WEBHOOK_URL=https://n8n.insightpulseai.com
 ```
 
 ---

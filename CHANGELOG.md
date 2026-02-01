@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Root Cause**: `web.base.url` not set to HTTPS in database, causing asset URLs to use HTTP
 - **Impact**: CRITICAL - Login page displayed without styling (white screen)
 - **Fix**:
-  - Set `web.base.url = https://erp.insightpulseai.net` in `ir_config_parameter` table
+  - Set `web.base.url = https://erp.insightpulseai.com` in `ir_config_parameter` table
   - Added `web.base.url.freeze = True` to prevent auto-updates
   - Cleared cached HTTP asset bundles via Odoo shell
 - **Verification**: Browser console shows no "Mixed Content" warnings, all assets load via HTTPS
@@ -192,7 +192,7 @@ cd ~/odoo-prod
 
 - **GitHub Repository**: https://github.com/jgtolentino/odoo-ce
 - **Container Registry**: ghcr.io/jgtolentino/odoo-ce:v0.9.1
-- **Production Domain**: https://erp.insightpulseai.net
+- **Production Domain**: https://erp.insightpulseai.com
 - **VPS**: 159.223.75.148 (odoo-erp-prod)
 
 ### 👥 Contributors
@@ -346,7 +346,7 @@ scripts/healthcheck_odoo.sh (executable)
 ```bash
 # Load testing
 docker run --rm -i loadimpact/k6 run - \
-  -e ODOO_BASE_URL="https://erp.insightpulseai.net" \
+  -e ODOO_BASE_URL="https://erp.insightpulseai.com" \
   -e ODOO_LOGIN="admin" \
   -e ODOO_PASSWORD="your_admin_password" \
   < tests/load/odoo_login_and_nav.js
@@ -361,7 +361,7 @@ docker run --rm -i loadimpact/k6 run - \
 ### Cron Configuration
 ```cron
 # Health check every 5 minutes
-*/5 * * * * ODOO_URL="https://erp.insightpulseai.net/web/login" MM_WEBHOOK_URL="..." SERVICE_NAME="odoo-ce-prod" /opt/odoo-ce/scripts/healthcheck_odoo.sh >> /var/log/odoo_healthcheck.log 2>&1
+*/5 * * * * ODOO_URL="https://erp.insightpulseai.com/web/login" MM_WEBHOOK_URL="..." SERVICE_NAME="odoo-ce-prod" /opt/odoo-ce/scripts/healthcheck_odoo.sh >> /var/log/odoo_healthcheck.log 2>&1
 
 # Backup verification daily at 3 AM
 0 3 * * * cd /opt/odoo-ce && DB_CONTAINER=db DB_USER=odoo SOURCE_DB=odoo_ce_prod BACKUP_DIR=/var/backups/odoo ./scripts/verify_backup.sh >> /var/log/odoo_backup_verify.log 2>&1
@@ -441,8 +441,8 @@ A  DEPLOYMENT_MVP.md
   - Enhanced views for workflow compatibility
 
 ### Technical Details
-- **Odoo Instance**: https://erp.insightpulseai.net/ (verified accessible)
-- **n8n Instance**: https://n8n.insightpulseai.net/ (verified accessible)
+- **Odoo Instance**: https://erp.insightpulseai.com/ (verified accessible)
+- **n8n Instance**: https://n8n.insightpulseai.com/ (verified accessible)
 - **Supabase Project**: ublqmilcjtpnflofprkr (verified connected)
 - **Database**: PostgreSQL 15 via connection pooler (port 6543)
 
@@ -469,7 +469,7 @@ migrations/
 - ❌ Failed: 0
 
 ### Pending Actions
-- [ ] Import workflows to n8n via UI (`https://n8n.insightpulseai.net/workflows`)
+- [ ] Import workflows to n8n via UI (`https://n8n.insightpulseai.com/workflows`)
 - [ ] Configure n8n credentials (Odoo, Mattermost, Supabase)
 - [ ] Test each workflow manually
 - [ ] Activate workflow schedules
@@ -541,7 +541,7 @@ addons/ipai_finance_ppm/
 - ✅ Access rules applied
 
 ### Access
-- **URL**: https://erp.insightpulseai.net/
+- **URL**: https://erp.insightpulseai.com/
 - **Menu**: Finance PPM (main navigation)
 - **Submenus**:
   - Logical Framework (list/form views)
@@ -568,8 +568,8 @@ addons/ipai_finance_ppm/
 - **Verification**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/verify_deployment.sh`
 
 ### Issues & Troubleshooting
-- Odoo Logs: `ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 100"`
-- n8n Logs: Check execution history at `https://n8n.insightpulseai.net/executions`
+- Odoo Logs: `ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 100"`
+- n8n Logs: Check execution history at `https://n8n.insightpulseai.com/executions`
 - Supabase: `psql "$POSTGRES_URL" -c "SELECT * FROM finance_ppm.monthly_reports ORDER BY generated_at DESC LIMIT 5;"`
 
 ### Contacts

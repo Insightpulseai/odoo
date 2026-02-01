@@ -227,7 +227,7 @@ Complete Notion/AFFiNE alternative built in Odoo.
   - Apache Superset integration
   - Dependencies: base, mail, sale, account, stock, hr, project
   - Status: ✅ Active
-  - **Endpoint**: superset.insightpulseai.net
+  - **Endpoint**: superset.insightpulseai.com
 
 ---
 

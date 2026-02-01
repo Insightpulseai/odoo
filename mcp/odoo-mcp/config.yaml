@@ -7,7 +7,7 @@ server:
   description: MCP server for Odoo 18 CE integration
 
 connection:
-  url: ${ODOO_URL:-https://erp.insightpulseai.net}
+  url: ${ODOO_URL:-https://erp.insightpulseai.com}
   database: ${ODOO_DB:-odoo}
   username: ${ODOO_USER:-admin}
   # Password should be set via environment variable ODOO_PASSWORD

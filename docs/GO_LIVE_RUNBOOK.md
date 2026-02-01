@@ -31,7 +31,7 @@ This runbook documents the complete go-live sequence for deploying Odoo CE 19 wi
 ├─────────────────────────────────────────────────────────────────────┤
 │   External Integrations                                              │
 │   ├── Supabase (spdtwktxdalcfigzeqrz) - Analytics/Task Bus          │
-│   ├── n8n (ipa.insightpulseai.net) - Workflow Automation            │
+│   ├── n8n (ipa.insightpulseai.com) - Workflow Automation            │
 │   ├── Slack - ChatOps/Notifications                                 │
 │   └── Apache Superset - BI Dashboards                               │
 └─────────────────────────────────────────────────────────────────────┘
@@ -147,10 +147,10 @@ docker compose ps
 # (Manual step in DNS provider or use doctl)
 
 # 2. Verify DNS propagation
-dig +short erp.insightpulseai.net
+dig +short erp.insightpulseai.com
 
 # 3. Test production URL
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 ```
 
 ---
@@ -161,13 +161,13 @@ curl -I https://erp.insightpulseai.net/web/login
 
 ```bash
 # 1. Verify SSL certificate
-openssl s_client -connect erp.insightpulseai.net:443 -servername erp.insightpulseai.net < /dev/null 2>/dev/null | openssl x509 -noout -dates
+openssl s_client -connect erp.insightpulseai.com:443 -servername erp.insightpulseai.com < /dev/null 2>/dev/null | openssl x509 -noout -dates
 
 # 2. Check Odoo logs for errors
 docker compose logs --tail=100 odoo-core | grep -i error
 
 # 3. Verify session handling
-curl -s -c cookies.txt -b cookies.txt https://erp.insightpulseai.net/web/login
+curl -s -c cookies.txt -b cookies.txt https://erp.insightpulseai.com/web/login
 
 # 4. Run post-deployment validation
 ./scripts/go_live.sh --validate-only

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Mailgun DNS Verification Script for InsightPulse AI
-# Domain: mg.insightpulseai.net
+# Domain: mg.insightpulseai.com
 #
 # Usage: ./scripts/mailgun/verify_dns.sh
 # Output: docs/evidence/YYYYMMDD-HHMM/mailgun/dns_verification.json
 
 set -euo pipefail
 
-DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
+DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
 TIMESTAMP=$(date +%Y%m%d-%H%M)
 EVIDENCE_DIR="docs/evidence/${TIMESTAMP}/mailgun"
 

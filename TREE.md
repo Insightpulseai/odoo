@@ -1828,7 +1828,7 @@
 │   │   ├── postgres-service.yaml
 │   │   └── postgres-statefulset.yaml
 │   ├── nginx
-│   │   └── erp.insightpulseai.net.conf
+│   │   └── erp.insightpulseai.com.conf
 │   ├── runtime
 │   │   ├── odoo-prod.docker_inspect.json
 │   │   └── odoo-prod.image_inspect.json

@@ -23,7 +23,7 @@
 From your **Directory** sheet, ensure columns:
 - `Code` (e.g., CKVC, RIM, BOM)
 - `Name` (e.g., CKVC, RIM, BOM)
-- `Email` (e.g., ckvc@insightpulseai.net)
+- `Email` (e.g., ckvc@insightpulseai.com)
 - `Role` (e.g., Finance Supervisor, Tax Specialist)
 
 ### Step 1.2 - Import Process

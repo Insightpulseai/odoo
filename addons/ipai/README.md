@@ -69,9 +69,9 @@ odoo-bin -d <database> -u ipai --stop-after-init
 - `master_control.events.purchase_large`: true
 - `master_control.expense_threshold`: 1000.0
 - `master_control.purchase_threshold`: 5000.0
-- `bir.reminder.mattermost.webhook`: https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
-- `bir.reminder.n8n.webhook`: https://ipa.insightpulseai.net/webhook/bir-reminder
-- `bir.overdue.n8n.webhook`: https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
+- `bir.reminder.mattermost.webhook`: https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
+- `bir.reminder.n8n.webhook`: https://ipa.insightpulseai.com/webhook/bir-reminder
+- `bir.overdue.n8n.webhook`: https://ipa.insightpulseai.com/webhook/bir-overdue-nudge
 - `web.base.url.redirect`: /odoo
 - `mail.default_template_header_color`: #111111
 - `mail.default_template_button_color`: #F9D000

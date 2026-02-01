@@ -31,7 +31,7 @@ Integration:
 - Shared ECharts patterns from ipai_finance_ap_aging
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

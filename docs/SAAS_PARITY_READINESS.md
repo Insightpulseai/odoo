@@ -169,8 +169,8 @@ Agent will execute procedures from `agents/AGENT_SKILLS_REGISTRY.yaml`.
 - [ ] All 3 regression tests passing locally
 - [ ] CI/CD workflow green on feature branch
 - [ ] Production database backup completed
-- [ ] OCR adapter reachable (https://ocr.insightpulseai.net/health)
-- [ ] n8n workflows operational (https://ipa.insightpulseai.net)
+- [ ] OCR adapter reachable (https://ocr.insightpulseai.com/health)
+- [ ] n8n workflows operational (https://ipa.insightpulseai.com)
 
 ### Deployment
 - [ ] Deploy modules via `scripts/deploy-odoo-modules.sh --all`

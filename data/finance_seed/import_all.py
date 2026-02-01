@@ -12,7 +12,7 @@ from pathlib import Path
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-ODOO_URL = "https://erp.insightpulseai.net"
+ODOO_URL = "https://erp.insightpulseai.com"
 DB_NAME = "odoo_core"
 
 # Get credentials from command line or prompt

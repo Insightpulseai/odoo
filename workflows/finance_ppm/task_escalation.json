@@ -21,7 +21,7 @@
     },
     {
       "parameters": {
-        "url": "https://odoo.insightpulseai.net/xmlrpc/2/common",
+        "url": "https://odoo.insightpulseai.com/xmlrpc/2/common",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "requestMethod": "POST",
@@ -46,7 +46,7 @@
     },
     {
       "parameters": {
-        "url": "https://odoo.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://odoo.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "requestMethod": "POST",
@@ -97,7 +97,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const task = $input.item.json;\n\nconst severityConfig = {\n  'critical': {\n    emoji: '🚨',\n    color: '#FF0000',\n    action: 'IMMEDIATE ACTION REQUIRED',\n    escalateTo: 'Finance Director'\n  },\n  'high': {\n    emoji: '⚠️',\n    color: '#FFA500',\n    action: 'Urgent Review Required',\n    escalateTo: 'Senior Finance Manager'\n  },\n  'medium': {\n    emoji: 'ℹ️',\n    color: '#0000FF',\n    action: 'Review Requested',\n    escalateTo: 'Finance Supervisor'\n  }\n};\n\nconst config = severityConfig[task.severity];\nconst overdueText = task.is_overdue ? `**OVERDUE by ${Math.abs(task.days_remaining)} days**` : `**${task.days_remaining} days remaining**`;\n\nconst message = `${config.emoji} **Task Escalation**\n\n${config.action}\n\n**Task:** ${task.name}\n**Deadline:** ${task.deadline}\n**Status:** ${overdueText}\n**Escalated to:** ${config.escalateTo}\n\n${task.assignee === 'unassigned' ? '⚠️ **Warning: Task is unassigned**\\n' : ''}\n\n**Actions Required:**\n1. Review task status immediately\n2. Update progress in Odoo\n3. Notify team if blockers exist\n\n[Open in Odoo](https://odoo.insightpulseai.net/web#model=project.task)`;\n\nreturn {\n  json: {\n    text: message,\n    channel: task.severity === 'critical' ? 'finance-urgent' : 'finance-escalations',\n    username: 'Task Escalation Bot',\n    icon_emoji: config.emoji,\n    attachments: [\n      {\n        color: config.color,\n        title: `${config.emoji} ${task.name}`,\n        text: `Escalated to ${config.escalateTo}`,\n        fields: [\n          {\n            title: 'Deadline',\n            value: task.deadline,\n            short: true\n          },\n          {\n            title: 'Days Remaining',\n            value: task.days_remaining,\n            short: true\n          }\n        ]\n      }\n    ]\n  }\n};"
+        "jsCode": "const task = $input.item.json;\n\nconst severityConfig = {\n  'critical': {\n    emoji: '🚨',\n    color: '#FF0000',\n    action: 'IMMEDIATE ACTION REQUIRED',\n    escalateTo: 'Finance Director'\n  },\n  'high': {\n    emoji: '⚠️',\n    color: '#FFA500',\n    action: 'Urgent Review Required',\n    escalateTo: 'Senior Finance Manager'\n  },\n  'medium': {\n    emoji: 'ℹ️',\n    color: '#0000FF',\n    action: 'Review Requested',\n    escalateTo: 'Finance Supervisor'\n  }\n};\n\nconst config = severityConfig[task.severity];\nconst overdueText = task.is_overdue ? `**OVERDUE by ${Math.abs(task.days_remaining)} days**` : `**${task.days_remaining} days remaining**`;\n\nconst message = `${config.emoji} **Task Escalation**\n\n${config.action}\n\n**Task:** ${task.name}\n**Deadline:** ${task.deadline}\n**Status:** ${overdueText}\n**Escalated to:** ${config.escalateTo}\n\n${task.assignee === 'unassigned' ? '⚠️ **Warning: Task is unassigned**\\n' : ''}\n\n**Actions Required:**\n1. Review task status immediately\n2. Update progress in Odoo\n3. Notify team if blockers exist\n\n[Open in Odoo](https://odoo.insightpulseai.com/web#model=project.task)`;\n\nreturn {\n  json: {\n    text: message,\n    channel: task.severity === 'critical' ? 'finance-urgent' : 'finance-escalations',\n    username: 'Task Escalation Bot',\n    icon_emoji: config.emoji,\n    attachments: [\n      {\n        color: config.color,\n        title: `${config.emoji} ${task.name}`,\n        text: `Escalated to ${config.escalateTo}`,\n        fields: [\n          {\n            title: 'Deadline',\n            value: task.deadline,\n            short: true\n          },\n          {\n            title: 'Days Remaining',\n            value: task.days_remaining,\n            short: true\n          }\n        ]\n      }\n    ]\n  }\n};"
       },
       "name": "Format Escalation Message",
       "type": "n8n-nodes-base.code",
@@ -120,7 +120,7 @@
     },
     {
       "parameters": {
-        "url": "https://odoo.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://odoo.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "requestMethod": "POST",
@@ -253,7 +253,7 @@
   "versionId": "1.0.0",
   "id": "task-escalation",
   "meta": {
-    "instanceId": "n8n.insightpulseai.net"
+    "instanceId": "n8n.insightpulseai.com"
   },
   "tags": [
     {

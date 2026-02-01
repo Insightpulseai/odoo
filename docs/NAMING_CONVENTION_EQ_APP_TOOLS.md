@@ -30,15 +30,15 @@
 - api, web, worker, scheduler, gateway, n8n, rag, odoo, superset, mcp
 
 ## Domains / hosts
-- {component}.{env}.insightpulseai.net   (preferred if you add env routing)
-- {component}.insightpulseai.net        (prod default, current)
+- {component}.{env}.insightpulseai.com   (preferred if you add env routing)
+- {component}.insightpulseai.com        (prod default, current)
 
 Examples:
-- erp.insightpulseai.net
-- superset.insightpulseai.net
-- mcp.insightpulseai.net
-- ocr.insightpulseai.net (recommended)
-- agents.insightpulseai.net (recommended)
+- erp.insightpulseai.com
+- superset.insightpulseai.com
+- mcp.insightpulseai.com
+- ocr.insightpulseai.com (recommended)
+- agents.insightpulseai.com (recommended)
 
 ## DO App Platform naming examples
 - fin-erp-odoo-saas-prod

@@ -108,7 +108,7 @@ systemctl restart odoo
 
 ### Visual Verification
 
-Visit: `https://erp.insightpulseai.net/web?debug=assets`
+Visit: `https://erp.insightpulseai.com/web?debug=assets`
 
 **Hard Refresh**: `Cmd+Shift+R` (Mac) or `Ctrl+Shift+R` (Windows)
 

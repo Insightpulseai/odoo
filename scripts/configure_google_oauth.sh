@@ -6,7 +6,7 @@
 #
 # Prerequisites:
 #   1. Google Cloud Project with OAuth 2.0 credentials
-#   2. Authorized redirect URI: https://erp.insightpulseai.net/auth_oauth/signin
+#   2. Authorized redirect URI: https://erp.insightpulseai.com/auth_oauth/signin
 #   3. Odoo module 'auth_oauth' installed
 #
 # Usage:
@@ -25,7 +25,7 @@ GOOGLE_CLIENT_SECRET="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"
 GOOGLE_PROJECT_ID="cba-ai"
 
 # Odoo configuration
-ODOO_BASE_URL="https://erp.insightpulseai.net"
+ODOO_BASE_URL="https://erp.insightpulseai.com"
 REDIRECT_URI="${ODOO_BASE_URL}/auth_oauth/signin"
 
 if [[ -z "$CONTAINER_NAME" ]]; then

@@ -225,7 +225,7 @@
     }
   },
   "nginx_config": {
-    "file": "deploy/nginx/erp.insightpulseai.net.conf",
+    "file": "deploy/nginx/erp.insightpulseai.com.conf",
     "required_settings": {
       "proxy_read_timeout": "720s",
       "proxy_connect_timeout": "60s",

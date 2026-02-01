@@ -5,8 +5,8 @@
   "app_id": "2191216",
   "client_id": "Iv23liwGL7fnYySPPAjS",
   "urls": {
-    "homepage": "https://mcp.insightpulseai.net",
-    "callback": "https://mcp.insightpulseai.net/callback",
+    "homepage": "https://mcp.insightpulseai.com",
+    "callback": "https://mcp.insightpulseai.com/callback",
     "webhook": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/github-app-auth/webhook",
     "setup": null
   },
@@ -42,11 +42,11 @@
       "routes_to": [
         {
           "event": "push",
-          "destination": "https://n8n.insightpulseai.net/webhook/github-push"
+          "destination": "https://n8n.insightpulseai.com/webhook/github-push"
         },
         {
           "event": "pull_request",
-          "destination": "https://n8n.insightpulseai.net/webhook/github-pr"
+          "destination": "https://n8n.insightpulseai.com/webhook/github-pr"
         },
         {
           "event": "installation",

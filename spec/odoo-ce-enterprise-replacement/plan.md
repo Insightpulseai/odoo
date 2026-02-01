@@ -176,7 +176,7 @@ class IotMqttBridge(models.AbstractModel):
 </record>
 <record id="company_ipai" model="res.company">
     <field name="name">InsightPulseAI</field>
-    <field name="email">info@insightpulseai.net</field>
+    <field name="email">info@insightpulseai.com</field>
     <field name="parent_id" ref="company_tbwa"/>
 </record>
 ```

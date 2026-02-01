@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="${BASE:-https://erp.insightpulseai.net}"
+BASE="${BASE:-https://erp.insightpulseai.com}"
 C="${C:-odoo-prod}"
 
 echo "== 1) Site reachable =="

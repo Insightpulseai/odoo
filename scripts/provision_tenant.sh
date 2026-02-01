@@ -134,7 +134,7 @@ provision_superset_workspace() {
     # This would call Superset API to create workspace/folder
     # For now, just log the intention
     log_warn "Superset workspace provisioning is manual for now"
-    log_info "Go to: https://superset.insightpulseai.net/superset/dashboard/"
+    log_info "Go to: https://superset.insightpulseai.com/superset/dashboard/"
     log_info "Create folder: '$TENANT_CODE'"
 
     log_info "Superset workspace provisioning noted ✓"
@@ -171,7 +171,7 @@ main() {
     log_info "✅ Tenant '$TENANT_CODE' provisioned successfully!"
     log_info "================================================"
     log_info "Next steps:"
-    log_info "1. Access Odoo: https://tbwa.erp.insightpulseai.net (or configured domain)"
+    log_info "1. Access Odoo: https://tbwa.erp.insightpulseai.com (or configured domain)"
     log_info "2. Login: admin / $ODOO_ADMIN_PASSWORD"
     log_info "3. Configure tenant-specific modules"
     log_info "4. Create Superset dashboards for tenant"

@@ -48,7 +48,7 @@ python3 scripts/audit/assess_opportunities.py
 Define expected DNS records:
 
 ```yaml
-domain: insightpulseai.net
+domain: insightpulseai.com
 records:
   - { name: "@", type: "A", value: "178.128.112.214" }
   - { name: "mg", type: "TXT", value_contains: "v=spf1 include:mailgun.org" }

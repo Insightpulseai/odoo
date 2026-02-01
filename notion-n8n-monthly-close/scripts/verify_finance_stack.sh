@@ -47,19 +47,19 @@ done
 # Environment configurations
 case "$ENV" in
   prod)
-    ODOO_HOST="erp.insightpulseai.net"
+    ODOO_HOST="erp.insightpulseai.com"
     ODOO_CONTAINER="odoo-odoo-1"
     ODOO_DB_CONTAINER="odoo-db-1"
     SUPABASE_PROJECT_REF="xkxyvboeubffxxbebsll"
     ;;
   dev)
-    ODOO_HOST="dev.insightpulseai.net"
+    ODOO_HOST="dev.insightpulseai.com"
     ODOO_CONTAINER="odoo-dev-ipa"
     ODOO_DB_CONTAINER="odoo-dev-db"
     SUPABASE_PROJECT_REF="xkxyvboeubffxxbebsll"
     ;;
   staging)
-    ODOO_HOST="staging.insightpulseai.net"
+    ODOO_HOST="staging.insightpulseai.com"
     ODOO_CONTAINER="odoo-staging-ipa"
     ODOO_DB_CONTAINER="odoo-staging-db"
     SUPABASE_PROJECT_REF="xkxyvboeubffxxbebsll"
@@ -333,7 +333,7 @@ validate_n8n_workflows() {
     return 0
   fi
 
-  local n8n_url="https://ipa.insightpulseai.net/api/v1/workflows"
+  local n8n_url="https://ipa.insightpulseai.com/api/v1/workflows"
   if curl -sf -H "X-N8N-API-KEY: $N8N_API_KEY" "$n8n_url" >/dev/null 2>&1; then
     local duration=$(($(date +%s%3N) - start_time))
     log_success "n8n API accessible"

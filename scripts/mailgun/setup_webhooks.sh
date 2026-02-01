@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Mailgun Webhook Setup Script for InsightPulse AI
-# Domain: mg.insightpulseai.net
+# Domain: mg.insightpulseai.com
 #
 # Usage:
 #   export MAILGUN_API_KEY=key-xxxxx
@@ -13,8 +13,8 @@
 set -euo pipefail
 
 MAILGUN_API_KEY="${MAILGUN_API_KEY:?Missing MAILGUN_API_KEY environment variable}"
-MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
-WEBHOOK_URL="${WEBHOOK_URL:-https://n8n.insightpulseai.net/webhook/mailgun-events}"
+MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
+WEBHOOK_URL="${WEBHOOK_URL:-https://n8n.insightpulseai.com/webhook/mailgun-events}"
 TIMESTAMP=$(date +%Y%m%d-%H%M)
 EVIDENCE_DIR="docs/evidence/${TIMESTAMP}/mailgun"
 

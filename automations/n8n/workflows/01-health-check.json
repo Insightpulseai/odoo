@@ -48,7 +48,7 @@
     },
     {
       "parameters": {
-        "url": "https://n8n.insightpulseai.net/healthz",
+        "url": "https://n8n.insightpulseai.com/healthz",
         "options": {
           "timeout": 10000
         }
@@ -76,7 +76,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Aggregate health check results\nconst odoo = $('Check Odoo').first();\nconst n8n = $('Check n8n').first();\nconst superset = $('Check Superset').first();\n\nconst results = {\n  timestamp: new Date().toISOString(),\n  services: {\n    odoo: {\n      status: odoo.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8069',\n      responseTime: odoo.json?.$responseTime || null,\n      error: odoo.error?.message || null\n    },\n    n8n: {\n      status: n8n.error ? 'DOWN' : 'UP',\n      url: 'https://n8n.insightpulseai.net',\n      responseTime: n8n.json?.$responseTime || null,\n      error: n8n.error?.message || null\n    },\n    superset: {\n      status: superset.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8088',\n      responseTime: superset.json?.$responseTime || null,\n      error: superset.error?.message || null\n    }\n  },\n  summary: {\n    total: 3,\n    healthy: 0,\n    unhealthy: 0\n  }\n};\n\n// Count healthy/unhealthy\nfor (const [name, service] of Object.entries(results.services)) {\n  if (service.status === 'UP') {\n    results.summary.healthy++;\n  } else {\n    results.summary.unhealthy++;\n  }\n}\n\nresults.overall = results.summary.unhealthy === 0 ? 'HEALTHY' : 'DEGRADED';\n\nreturn { json: results };"
+        "jsCode": "// Aggregate health check results\nconst odoo = $('Check Odoo').first();\nconst n8n = $('Check n8n').first();\nconst superset = $('Check Superset').first();\n\nconst results = {\n  timestamp: new Date().toISOString(),\n  services: {\n    odoo: {\n      status: odoo.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8069',\n      responseTime: odoo.json?.$responseTime || null,\n      error: odoo.error?.message || null\n    },\n    n8n: {\n      status: n8n.error ? 'DOWN' : 'UP',\n      url: 'https://n8n.insightpulseai.com',\n      responseTime: n8n.json?.$responseTime || null,\n      error: n8n.error?.message || null\n    },\n    superset: {\n      status: superset.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8088',\n      responseTime: superset.json?.$responseTime || null,\n      error: superset.error?.message || null\n    }\n  },\n  summary: {\n    total: 3,\n    healthy: 0,\n    unhealthy: 0\n  }\n};\n\n// Count healthy/unhealthy\nfor (const [name, service] of Object.entries(results.services)) {\n  if (service.status === 'UP') {\n    results.summary.healthy++;\n  } else {\n    results.summary.unhealthy++;\n  }\n}\n\nresults.overall = results.summary.unhealthy === 0 ? 'HEALTHY' : 'DEGRADED';\n\nreturn { json: results };"
       },
       "id": "aggregate-results",
       "name": "Aggregate Results",

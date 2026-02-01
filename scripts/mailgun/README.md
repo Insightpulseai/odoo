@@ -4,8 +4,8 @@ Automation scripts for Mailgun DNS verification and webhook configuration for In
 
 ## Domain
 
-- **Sending Domain:** mg.insightpulseai.net
-- **Webhook URL:** https://n8n.insightpulseai.net/webhook/mailgun-events
+- **Sending Domain:** mg.insightpulseai.com
+- **Webhook URL:** https://n8n.insightpulseai.com/webhook/mailgun-events
 
 ## Scripts
 
@@ -41,8 +41,8 @@ export MAILGUN_API_KEY=key-xxxxx
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `MAILGUN_API_KEY` | Yes* | - | Mailgun API key (for webhooks/email) |
-| `MAILGUN_DOMAIN` | No | mg.insightpulseai.net | Mailgun sending domain |
-| `WEBHOOK_URL` | No | https://n8n.insightpulseai.net/webhook/mailgun-events | Webhook endpoint URL |
+| `MAILGUN_DOMAIN` | No | mg.insightpulseai.com | Mailgun sending domain |
+| `WEBHOOK_URL` | No | https://n8n.insightpulseai.com/webhook/mailgun-events | Webhook endpoint URL |
 | `SMTP_HOST` | No | smtp.mailgun.org | SMTP server hostname |
 | `SMTP_PORT` | No | 465 | SMTP port (465=SSL, 587=STARTTLS) |
 
@@ -63,11 +63,11 @@ All scripts write evidence files to `docs/evidence/YYYYMMDD-HHMM/mailgun/`:
 
 | Record | Type | Name | Value |
 |--------|------|------|-------|
-| SPF | TXT | mg.insightpulseai.net | `v=spf1 include:mailgun.org ~all` |
-| DKIM | TXT | pic._domainkey.mg.insightpulseai.net | (Mailgun-provided public key) |
-| DMARC | TXT | _dmarc.mg.insightpulseai.net | `v=DMARC1; p=none; ...` |
-| MX | MX | mg.insightpulseai.net | `10 mxa.mailgun.org`, `10 mxb.mailgun.org` |
-| Tracking | CNAME | email.mg.insightpulseai.net | `mailgun.org` |
+| SPF | TXT | mg.insightpulseai.com | `v=spf1 include:mailgun.org ~all` |
+| DKIM | TXT | pic._domainkey.mg.insightpulseai.com | (Mailgun-provided public key) |
+| DMARC | TXT | _dmarc.mg.insightpulseai.com | `v=DMARC1; p=none; ...` |
+| MX | MX | mg.insightpulseai.com | `10 mxa.mailgun.org`, `10 mxb.mailgun.org` |
+| Tracking | CNAME | email.mg.insightpulseai.com | `mailgun.org` |
 
 ## Webhook Events
 

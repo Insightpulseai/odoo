@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "command": "ssh root@erp.insightpulseai.net \"cd /opt/odoo-ce/notion-n8n-monthly-close && SUPABASE_SERVICE_ROLE_KEY='{{ $env.SUPABASE_SERVICE_ROLE_KEY }}' N8N_API_KEY='{{ $env.N8N_API_KEY }}' ./scripts/verify_finance_stack.sh --env prod\"",
+        "command": "ssh root@erp.insightpulseai.com \"cd /opt/odoo-ce/notion-n8n-monthly-close && SUPABASE_SERVICE_ROLE_KEY='{{ $env.SUPABASE_SERVICE_ROLE_KEY }}' N8N_API_KEY='{{ $env.N8N_API_KEY }}' ./scripts/verify_finance_stack.sh --env prod\"",
         "options": {}
       },
       "id": "exec-verify-script",
@@ -37,7 +37,7 @@
     },
     {
       "parameters": {
-        "command": "ssh root@erp.insightpulseai.net \"cd /opt/odoo-ce/notion-n8n-monthly-close && ODOO_URL='https://erp.insightpulseai.net' ODOO_DB='odoo' ODOO_LOGIN='jgtolentino_rn@yahoo.com' ODOO_PASSWORD='{{ $env.ODOO_PASSWORD }}' python3 ../scripts/check_project_tasks.py\"",
+        "command": "ssh root@erp.insightpulseai.com \"cd /opt/odoo-ce/notion-n8n-monthly-close && ODOO_URL='https://erp.insightpulseai.com' ODOO_DB='odoo' ODOO_LOGIN='jgtolentino_rn@yahoo.com' ODOO_PASSWORD='{{ $env.ODOO_PASSWORD }}' python3 ../scripts/check_project_tasks.py\"",
         "options": {}
       },
       "id": "exec-check-tasks",

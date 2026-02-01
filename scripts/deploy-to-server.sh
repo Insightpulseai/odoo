@@ -1,12 +1,12 @@
 #!/bin/bash
 ###############################################################################
-# deploy-to-server.sh - Deploy health check scripts to erp.insightpulseai.net
+# deploy-to-server.sh - Deploy health check scripts to erp.insightpulseai.com
 #
 # Usage:
 #   ./scripts/deploy-to-server.sh [--env prod|staging|dev]
 #
 # Requirements:
-#   - SSH access to root@erp.insightpulseai.net
+#   - SSH access to root@erp.insightpulseai.com
 #   - Git repository cloned locally
 #
 # What this script does:
@@ -27,7 +27,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REMOTE_HOST="erp.insightpulseai.net"
+REMOTE_HOST="erp.insightpulseai.com"
 REMOTE_USER="root"
 REMOTE_BASE_DIR="/opt/odoo-ce"
 ENV="${1:-prod}"
@@ -175,13 +175,13 @@ display_next_steps() {
     echo "   ${BLUE}./scripts/apply-supabase-schema.sh${NC}"
     echo ""
     echo "2. Test Scripts Manually:"
-    echo "   ${BLUE}ssh root@erp.insightpulseai.net${NC}"
+    echo "   ${BLUE}ssh root@erp.insightpulseai.com${NC}"
     echo "   ${BLUE}cd ${REMOTE_BASE_DIR}${NC}"
     echo "   ${BLUE}python3 scripts/check_project_tasks.py${NC}"
     echo "   ${BLUE}cd notion-n8n-monthly-close && ./scripts/verify_finance_stack.sh --env ${ENV} --verbose${NC}"
     echo ""
     echo "3. Configure n8n Credentials:"
-    echo "   - Navigate to: https://ipa.insightpulseai.net"
+    echo "   - Navigate to: https://ipa.insightpulseai.com"
     echo "   - Settings → Credentials"
     echo "   - Add Odoo credentials (${ENV})"
     echo ""

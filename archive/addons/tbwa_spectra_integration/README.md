@@ -110,7 +110,7 @@ systemctl status odoo
 
 2. **Install via UI**
 ```
-1. Open browser: https://erp.insightpulseai.net
+1. Open browser: https://erp.insightpulseai.com
 2. Login as admin
 3. Apps → Update Apps List
 4. Search: "TBWA Spectra Integration"
@@ -146,7 +146,7 @@ You should see:
 **Create Okta App**:
 - Type: OIDC / OAuth 2.0
 - Grant Type: Authorization Code + Refresh Token
-- Redirect URI: `https://erp.insightpulseai.net/auth_oauth/signin`
+- Redirect URI: `https://erp.insightpulseai.com/auth_oauth/signin`
 
 **Security Policies**:
 | Policy | Setting |
@@ -373,7 +373,7 @@ Fields:
       "type": "n8n-nodes-base.httpRequest",
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "bodyParameters": {
@@ -403,7 +403,7 @@ Fields:
         "bodyParameters": {
           "channel": "#finance",
           "username": "Spectra Bot",
-          "text": "📊 **Monthly Spectra Export Ready**\\n\\nExport Batch: {{$json.name}}\\nRecords: {{$json.record_count}}\\nTotal: ₱{{$json.total_amount}}\\n\\nPlease review and approve: https://erp.insightpulseai.net/web#model=tbwa.spectra.export&id={{$json.id}}"
+          "text": "📊 **Monthly Spectra Export Ready**\\n\\nExport Batch: {{$json.name}}\\nRecords: {{$json.record_count}}\\nTotal: ₱{{$json.total_amount}}\\n\\nPlease review and approve: https://erp.insightpulseai.com/web#model=tbwa.spectra.export&id={{$json.id}}"
         }
       }
     }
@@ -438,7 +438,7 @@ Fields:
       "type": "n8n-nodes-base.httpRequest",
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "bodyParameters": {
           "params": {
             "args": ["hr.expense.advance", "cron_send_liquidation_reminders", []]
@@ -470,7 +470,7 @@ Fields:
       "type": "n8n-nodes-base.httpRequest",
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "bodyParameters": {
           "params": {
             "domain": [

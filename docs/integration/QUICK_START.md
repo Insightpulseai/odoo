@@ -7,7 +7,7 @@
 ## Prerequisites
 
 - Supabase CLI installed: `brew install supabase/tap/supabase`
-- n8n running: https://n8n.insightpulseai.net
+- n8n running: https://n8n.insightpulseai.com
 - Mattermost webhook URL configured
 - Odoo CE 18.0 running (local or production)
 
@@ -70,7 +70,7 @@ supabase db query "SELECT event_type, status FROM integration.outbox ORDER BY cr
 
 ## Step 4: Import n8n Event Router (1 minute)
 
-1. Open n8n: https://n8n.insightpulseai.net
+1. Open n8n: https://n8n.insightpulseai.com
 2. Workflows → Import from File
 3. Select: `n8n/workflows/integration/event-router.json`
 4. Configure Supabase credential:

@@ -14,7 +14,7 @@ OLD_COMPANY_NAME = os.getenv("ODOO_OLD_COMPANY_NAME", "YourCompany")
 NEW_COMPANY_NAME = os.getenv("ODOO_NEW_COMPANY_NAME", "InsightPulseAI")
 NEW_COMPANY_EMAIL = os.getenv("ODOO_NEW_COMPANY_EMAIL", "business@insightpulseai.com")
 NEW_COMPANY_WEBSITE = os.getenv(
-    "ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.net"
+    "ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.com"
 )
 TBWA_COMPANY_NAME = os.getenv("ODOO_TBWA_COMPANY_NAME", r"TBWA\SMP")
 TBWA_COMPANY_EMAIL = os.getenv("ODOO_TBWA_COMPANY_EMAIL", "business@insightpulseai.com")

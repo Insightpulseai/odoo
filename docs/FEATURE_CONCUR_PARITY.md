@@ -80,7 +80,7 @@ The **ipai_expense + ipai_cash_advance + ipai_ocr_expense + ipai_finance_monthly
 - Confidence scores displayed for manual verification
 - Retry mechanism for failed OCR attempts
 
-**OCR Adapter**: https://ocr.insightpulseai.net (PaddleOCR-VL + OpenAI gpt-4o-mini)
+**OCR Adapter**: https://ocr.insightpulseai.com (PaddleOCR-VL + OpenAI gpt-4o-mini)
 
 ### ipai_finance_monthly_closing Module
 **Purpose**: Integration with monthly financial closing and BIR compliance
@@ -179,7 +179,7 @@ Apps → Search each module → Upgrade
    - Journal entries generated for all expenses
 
 ### Test 5: n8n Workflow Integration
-1. Navigate to n8n instance: https://ipa.insightpulseai.net
+1. Navigate to n8n instance: https://ipa.insightpulseai.com
 2. Find workflow "Expense Import from Google Sheets"
 3. Add test expense to Google Sheet
 4. Trigger workflow manually
@@ -214,7 +214,7 @@ Apps → Search each module → Upgrade
 - `project` - Project/job linkage for expenses
 
 ### OCR Integration
-- **Endpoint**: https://ocr.insightpulseai.net/v1/parse
+- **Endpoint**: https://ocr.insightpulseai.com/v1/parse
 - **Method**: POST with multipart/form-data
 - **Models**: PaddleOCR-VL-900M + OpenAI gpt-4o-mini
 - **Processing Time**: P95 < 30 seconds
@@ -271,7 +271,7 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 
 **Issue**: OCR not processing receipts
 **Fix**:
-1. Check OCR adapter health: `curl https://ocr.insightpulseai.net/health`
+1. Check OCR adapter health: `curl https://ocr.insightpulseai.com/health`
 2. Verify expense form has "Upload Receipt" button
 3. Check Odoo logs for OCR API errors
 4. Verify ipai_ocr_expense module installed and upgraded
@@ -280,7 +280,7 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 **Fix**:
 1. Check OCR confidence score (should be ≥0.60)
 2. Add vendor to normalization list in `ocr-adapter/main.py`
-3. Redeploy OCR adapter: `ssh ocr.insightpulseai.net 'docker restart ocr-adapter'`
+3. Redeploy OCR adapter: `ssh ocr.insightpulseai.com 'docker restart ocr-adapter'`
 4. Create manual vendor mapping in Odoo
 
 **Issue**: Cash advance settlement incorrect
@@ -345,4 +345,4 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 - Philippine BIR: https://www.bir.gov.ph
 - PaddleOCR: https://github.com/PaddlePaddle/PaddleOCR
 - Agent Skills Architecture: `/Users/tbwa/odoo-ce/agents/AGENT_SKILLS_REGISTRY.yaml`
-- n8n Workflows: `https://ipa.insightpulseai.net`
+- n8n Workflows: `https://ipa.insightpulseai.com`

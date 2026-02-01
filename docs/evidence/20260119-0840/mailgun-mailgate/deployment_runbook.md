@@ -7,8 +7,8 @@ added to `ipai_enterprise_bridge` module.
 
 ## Prerequisites
 
-- Mailgun domain: `mg.insightpulseai.net` (configured with SPF, DKIM, DMARC, MX, CNAME)
-- Production host: `erp.insightpulseai.net`
+- Mailgun domain: `mg.insightpulseai.com` (configured with SPF, DKIM, DMARC, MX, CNAME)
+- Production host: `erp.insightpulseai.com`
 - SSH/CICD access to production server
 
 ## Deployment Steps
@@ -46,7 +46,7 @@ systemctl restart odoo.service
 
 ```bash
 # Health check (GET)
-curl -I https://erp.insightpulseai.net/mailgate/mailgun
+curl -I https://erp.insightpulseai.com/mailgate/mailgun
 
 # Expected: HTTP/2 200
 ```
@@ -54,10 +54,10 @@ curl -I https://erp.insightpulseai.net/mailgate/mailgun
 ### 5. Test Webhook
 
 ```bash
-curl -X POST https://erp.insightpulseai.net/mailgate/mailgun \
+curl -X POST https://erp.insightpulseai.com/mailgate/mailgun \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  --data "sender=test@mg.insightpulseai.net" \
-  --data "recipient=invoices@insightpulseai.net" \
+  --data "sender=test@mg.insightpulseai.com" \
+  --data "recipient=invoices@insightpulseai.com" \
   --data "subject=Mailgate Test $(date -Iseconds)" \
   --data "body-plain=Test message from deployment validation"
 
@@ -73,10 +73,10 @@ psql -d odoo_core -c \
 
 ## Mailgun Route Configuration
 
-Configure this route in Mailgun dashboard for mg.insightpulseai.net:
+Configure this route in Mailgun dashboard for mg.insightpulseai.com:
 
-- **Expression**: `match_recipient(".*@insightpulseai.net")`
-- **Action**: `forward("https://erp.insightpulseai.net/mailgate/mailgun")`
+- **Expression**: `match_recipient(".*@insightpulseai.com")`
+- **Action**: `forward("https://erp.insightpulseai.com/mailgate/mailgun")`
 - **Priority**: 0
 
 ## Rollback

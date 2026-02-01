@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Mailgun Test Email Script for InsightPulse AI
-# Domain: mg.insightpulseai.net
+# Domain: mg.insightpulseai.com
 #
 # Usage:
 #   export MAILGUN_API_KEY=key-xxxxx
@@ -13,7 +13,7 @@
 set -euo pipefail
 
 MAILGUN_API_KEY="${MAILGUN_API_KEY:?Missing MAILGUN_API_KEY environment variable}"
-MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
+MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
 RECIPIENT="${1:?Usage: $0 recipient@example.com}"
 TIMESTAMP=$(date +%Y%m%d-%H%M)
 EVIDENCE_DIR="docs/evidence/${TIMESTAMP}/mailgun"

@@ -5,7 +5,7 @@
     "category": "Tools",
     "summary": "Mailgun <-> Odoo integration for outbound + inbound + tracking",
     "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [
         "base",

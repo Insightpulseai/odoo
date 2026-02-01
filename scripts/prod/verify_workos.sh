@@ -18,7 +18,7 @@ DB_SERVICE="${DB_SERVICE:-db}"
 DB_NAME="${DB_NAME:-odoo}"
 DB_USER="${DB_USER:-odoo}"
 ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
-BASE_URL="${BASE_URL:-https://erp.insightpulseai.net}"
+BASE_URL="${BASE_URL:-https://erp.insightpulseai.com}"
 
 # Colors
 RED='\033[0;31m'

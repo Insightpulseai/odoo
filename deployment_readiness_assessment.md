@@ -115,7 +115,7 @@ The current Odoo CE implementation (`ipai_expense`, `ipai_equipment`) provides a
 
 ### C. Automation Layer (n8n/Supabase)
 
-- **Expense:** Auto-email receipts to `expenses@insightpulseai.net` -> n8n -> Odoo.
+- **Expense:** Auto-email receipts to `expenses@insightpulseai.com` -> n8n -> Odoo.
 - **Notion:** Sync "Closed" Projects in Odoo -> Archive in Notion.
 
 ---

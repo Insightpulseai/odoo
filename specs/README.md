@@ -131,7 +131,7 @@ This directory contains the complete technical specifications for the InsightPul
 - odoo.com link cleanup (0 links remaining)
 - `ipai_ce_cleaner` module (UI cleanup)
 - `ipai_ocr_expense` module (OCR integration)
-- OCR adapter at `ocr.insightpulseai.net`
+- OCR adapter at `ocr.insightpulseai.com`
 - PH normalization in OCR response
 - Enhanced OCR log views
 
@@ -161,10 +161,10 @@ This directory contains the complete technical specifications for the InsightPul
 - n8n Documentation: https://docs.n8n.io/
 
 ### InsightPulse Infrastructure
-- Production ERP: https://erp.insightpulseai.net
-- OCR Service: https://ocr.insightpulseai.net
-- n8n Automation: https://ipa.insightpulseai.net
-- Superset BI: https://superset.insightpulseai.net
+- Production ERP: https://erp.insightpulseai.com
+- OCR Service: https://ocr.insightpulseai.com
+- n8n Automation: https://ipa.insightpulseai.com
+- Superset BI: https://superset.insightpulseai.com
 
 ---
 

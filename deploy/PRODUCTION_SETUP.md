@@ -2,7 +2,7 @@
 
 **Canonical production deployment** to DigitalOcean droplet `178.128.112.214` with DO Managed PostgreSQL, Caddy reverse proxy, and automatic SSL.
 
-**Target:** `erp.insightpulseai.net` → Odoo 18 CE
+**Target:** `erp.insightpulseai.com` → Odoo 18 CE
 
 ---
 
@@ -10,7 +10,7 @@
 
 - [x] DigitalOcean droplet `178.128.112.214` (Ubuntu/Debian)
 - [x] DO Managed PostgreSQL `odoo-db-sgp1` (SGP1)
-- [x] DNS: `erp.insightpulseai.net` → `178.128.112.214`
+- [x] DNS: `erp.insightpulseai.com` → `178.128.112.214`
 - [x] Network Access: `178.128.112.214` allowlisted in DO database firewall
 - [x] Database user `odoo_app` with permissions on database `odoo`
 
@@ -132,7 +132,7 @@ DB_PASSWORD=REPLACE_WITH_PASSWORD
 ODOO_ADMIN_PASSWORD=REPLACE_WITH_MASTER_PASSWORD
 
 # --- public hostnames ---
-ODOO_DOMAIN=erp.insightpulseai.net
+ODOO_DOMAIN=erp.insightpulseai.com
 ENV
 
 # Edit with real credentials
@@ -324,7 +324,7 @@ Server: Werkzeug/x.x
 
 ```bash
 # Test public domain
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 ```
 
 **Expected output:**
@@ -335,7 +335,7 @@ server: Caddy
 
 **Browser test:**
 ```
-https://erp.insightpulseai.net
+https://erp.insightpulseai.com
 ```
 
 Should show Odoo login page with valid SSL certificate.
@@ -363,7 +363,7 @@ docker compose logs -n 200 --no-log-prefix odoo
 
 ## Step 12: Initialize Odoo Database
 
-Access `https://erp.insightpulseai.net` in browser.
+Access `https://erp.insightpulseai.com` in browser.
 
 **First-time setup:**
 1. Click "Create Database"
@@ -419,7 +419,7 @@ reboot
 
 # After reboot, check services
 docker compose -f /opt/odoo-ce/deploy/docker-compose.yml ps
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 ```
 
 ---
@@ -503,7 +503,7 @@ docker compose restart odoo
 **Check:**
 ```bash
 # Verify DNS resolves to droplet
-dig +short erp.insightpulseai.net
+dig +short erp.insightpulseai.com
 
 # Should return: 178.128.112.214
 ```
@@ -613,7 +613,7 @@ docker compose restart dbssl
 docker compose ps
 
 # Odoo health endpoint
-curl -sf https://erp.insightpulseai.net/web/health
+curl -sf https://erp.insightpulseai.com/web/health
 
 # Database connection
 docker compose exec odoo bash -c '
@@ -706,7 +706,7 @@ find "$BACKUP_DIR" -name "filestore_*.tar.gz" -mtime +7 -delete
 | Component | Value |
 |-----------|-------|
 | **Droplet IP** | 178.128.112.214 |
-| **Public URL** | https://erp.insightpulseai.net |
+| **Public URL** | https://erp.insightpulseai.com |
 | **Odoo Version** | 18 (official image) |
 | **Database** | odoo-db-sgp1 (DO Managed PostgreSQL 16) |
 | **Database Name** | `odoo` (canonical) |

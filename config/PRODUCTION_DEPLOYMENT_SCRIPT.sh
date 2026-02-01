@@ -191,9 +191,9 @@ fi
 log "Step 5: Validating HTTP endpoint..."
 
 # Test mailgate endpoint
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://erp.insightpulseai.net/mailgate/mailgun \
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://erp.insightpulseai.com/mailgate/mailgun \
     -d "sender=deploy-test@example.com" \
-    -d "recipient=test@mg.insightpulseai.net" \
+    -d "recipient=test@mg.insightpulseai.com" \
     -d "subject=Deployment Validation Test" \
     -d "body-plain=Testing mailgate endpoint after deployment" || echo "000")
 
@@ -283,7 +283,7 @@ DEPLOYMENT STEPS
    - Status: ACTIVE
 
 5. HTTP Endpoint Validation: $([ "$HTTP_CODE" = "200" ] && echo "SUCCESS" || echo "FAILED")
-   - URL: https://erp.insightpulseai.net/mailgate/mailgun
+   - URL: https://erp.insightpulseai.com/mailgate/mailgun
    - Method: POST
    - Response Code: $HTTP_CODE
    - Expected: 200
@@ -336,14 +336,14 @@ NEXT STEPS
 ================================================================================
 
 1. Send test messages via Mailgun API to verify end-to-end integration:
-   - deploy@insightpulseai.net
-   - support@insightpulseai.net
-   - invoices@insightpulseai.net
-   - test-archive@mg.insightpulseai.net
+   - deploy@insightpulseai.com
+   - support@insightpulseai.com
+   - invoices@insightpulseai.com
+   - test-archive@mg.insightpulseai.com
 
 2. Check Mailgun events API for delivery status:
    curl -s --user "api:\$MAILGUN_API_KEY" \\
-     "https://api.mailgun.net/v3/mg.insightpulseai.net/events?limit=10"
+     "https://api.mailgun.net/v3/mg.insightpulseai.com/events?limit=10"
 
 3. Monitor Odoo logs for inbound message processing:
    docker logs -f $ODOO_CONTAINER | grep "Mailgun inbound"
@@ -383,7 +383,7 @@ cat > "${VALIDATION_LOG%.txt}.json" <<EOF
     "upgrade_status": "SUCCESS"
   },
   "http_check": {
-    "url": "https://erp.insightpulseai.net/mailgate/mailgun",
+    "url": "https://erp.insightpulseai.com/mailgate/mailgun",
     "status_code": $HTTP_CODE,
     "expected": 200,
     "result": "$([ "$HTTP_CODE" = "200" ] && echo "PASS" || echo "FAIL")"

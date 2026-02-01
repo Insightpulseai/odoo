@@ -182,7 +182,7 @@ export N8N_API_KEY="REDACTED_KEY"
 
 Required once:
 
-1. Login: `https://mattermost.insightpulseai.net`
+1. Login: `https://mattermost.insightpulseai.com`
 2. **Main Menu → Integrations → Incoming Webhooks**
 3. Create webhook: `n8n Finance Alerts` → channel `#finance-alerts`
 4. Copy generated webhook URL

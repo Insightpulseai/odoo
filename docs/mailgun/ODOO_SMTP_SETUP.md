@@ -3,7 +3,7 @@
 **Purpose**: Configure Odoo to send transactional emails via Mailgun's SMTP service
 
 **Prerequisites**:
-- Mailgun domain `mg.insightpulseai.net` verified (all DNS records ✅)
+- Mailgun domain `mg.insightpulseai.com` verified (all DNS records ✅)
 - Mailgun SMTP credentials from dashboard
 - Admin access to Odoo CE 18.0
 
@@ -16,15 +16,15 @@
 | **SMTP Server** | `smtp.mailgun.org` | US region endpoint |
 | **Port** | `587` | TLS (recommended) |
 | **Port Alternative** | `465` | SSL (also supported) |
-| **Username** | `postmaster@mg.insightpulseai.net` | Mailgun-generated default |
+| **Username** | `postmaster@mg.insightpulseai.com` | Mailgun-generated default |
 | **Password** | `{MAILGUN_SMTP_PASSWORD}` | From Mailgun dashboard "Domain Settings" → "SMTP Credentials" |
 | **TLS** | ✅ Required | Must enable TLS/STARTTLS |
 
 **Retrieve SMTP Password**:
 1. Go to Mailgun dashboard: https://app.mailgun.com/mg/dashboard
-2. Navigate to "Sending" → "Domains" → `mg.insightpulseai.net`
+2. Navigate to "Sending" → "Domains" → `mg.insightpulseai.com`
 3. Click "Domain Settings" → "SMTP Credentials"
-4. Copy password for `postmaster@mg.insightpulseai.net`
+4. Copy password for `postmaster@mg.insightpulseai.com`
 
 ---
 
@@ -34,7 +34,7 @@
 
 **Path**: Settings → Technical → Email → Outgoing Mail Servers
 
-**URL**: `https://erp.insightpulseai.net/web#menu_id=183&cids=1&action=182`
+**URL**: `https://erp.insightpulseai.com/web#menu_id=183&cids=1&action=182`
 
 ### Step 2: Create New SMTP Server
 
@@ -42,11 +42,11 @@ Click **"Create"** button and fill in the form:
 
 | Field | Value | Required |
 |-------|-------|----------|
-| **Description** | `Mailgun Production (mg.insightpulseai.net)` | ✅ |
+| **Description** | `Mailgun Production (mg.insightpulseai.com)` | ✅ |
 | **SMTP Server** | `smtp.mailgun.org` | ✅ |
 | **SMTP Port** | `587` | ✅ |
 | **Connection Security** | `TLS (STARTTLS)` | ✅ |
-| **Username** | `postmaster@mg.insightpulseai.net` | ✅ |
+| **Username** | `postmaster@mg.insightpulseai.com` | ✅ |
 | **Password** | `{MAILGUN_SMTP_PASSWORD}` | ✅ |
 | **Priority** | `10` | ✅ (default) |
 
@@ -67,7 +67,7 @@ Click **"Create"** button and fill in the form:
 
 **Path**: Settings → Technical → Parameters → System Parameters
 
-**URL**: `https://erp.insightpulseai.net/web#menu_id=183&cids=1&action=174`
+**URL**: `https://erp.insightpulseai.com/web#menu_id=183&cids=1&action=174`
 
 ### Step 2: Update/Create Parameter
 
@@ -79,14 +79,14 @@ Click **"Create"** button and fill in the form:
 | Field | Value |
 |-------|-------|
 | **Key** | `mail.catchall.domain` |
-| **Value** | `mg.insightpulseai.net` |
+| **Value** | `mg.insightpulseai.com` |
 
-**Purpose**: Forces all outgoing emails to use `@mg.insightpulseai.net` as sender domain
+**Purpose**: Forces all outgoing emails to use `@mg.insightpulseai.com` as sender domain
 
 ### Step 3: Update Default From Email (Optional)
 
 **Parameter**: `mail.default.from`
-**Value**: `noreply@mg.insightpulseai.net`
+**Value**: `noreply@mg.insightpulseai.com`
 
 **Purpose**: Default sender address when no specific user email is provided
 
@@ -114,7 +114,7 @@ Click **"Create"** button and fill in the form:
 
 **Expected**:
 - Email delivers successfully
-- Sender shows: `noreply@mg.insightpulseai.net` (or configured default)
+- Sender shows: `noreply@mg.insightpulseai.com` (or configured default)
 - Email passes spam filters (check Gmail "View original" → SPF/DKIM PASS)
 
 ### Test 3: Trigger Transactional Email
@@ -151,11 +151,11 @@ Click **"Create"** button and fill in the form:
 
 | Field | Value |
 |-------|-------|
-| **Email** | `firstname.lastname@mg.insightpulseai.net` |
+| **Email** | `firstname.lastname@mg.insightpulseai.com` |
 
 **Effect**: Outgoing emails from that user will use their custom sender address
 
-**Requirement**: Sender address must be within `mg.insightpulseai.net` domain
+**Requirement**: Sender address must be within `mg.insightpulseai.com` domain
 
 ### Email Notification Preferences
 
@@ -181,7 +181,7 @@ Click **"Create"** button and fill in the form:
    - **Fix**: Verify SMTP server is `smtp.mailgun.org` (not `api.mailgun.net`)
 
 2. **`Authentication failed`**
-   - **Fix**: Verify SMTP username is `postmaster@mg.insightpulseai.net`
+   - **Fix**: Verify SMTP username is `postmaster@mg.insightpulseai.com`
    - **Fix**: Re-copy SMTP password from Mailgun dashboard
    - **Fix**: Ensure no leading/trailing spaces in credentials
 
@@ -230,21 +230,21 @@ PYTHON
 1. Verify DNS: `./scripts/mailgun/verify_domain.sh` → all ✅
 2. Add DMARC record:
    ```
-   _dmarc.mg.insightpulseai.net TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.net"
+   _dmarc.mg.insightpulseai.com TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com"
    ```
 3. Test email authentication: https://www.mail-tester.com
 4. Warm up sender reputation (send gradually, monitor engagement)
 
 ### Wrong Sender Domain
 
-**Symptom**: Emails send from `@erp.insightpulseai.net` instead of `@mg.insightpulseai.net`
+**Symptom**: Emails send from `@erp.insightpulseai.com` instead of `@mg.insightpulseai.com`
 
-**Fix**: Set system parameter `mail.catchall.domain` = `mg.insightpulseai.net`
+**Fix**: Set system parameter `mail.catchall.domain` = `mg.insightpulseai.com`
 
 **Verification**:
 1. Send test email
 2. Check "From" header in recipient's "View original" option
-3. Should show: `From: noreply@mg.insightpulseai.net`
+3. Should show: `From: noreply@mg.insightpulseai.com`
 
 ---
 
@@ -255,7 +255,7 @@ Before marking SMTP setup as complete:
 1. ✅ SMTP connection test passes
 2. ✅ Test email delivers to external inbox (Gmail/Outlook)
 3. ✅ Test email passes SPF/DKIM checks (mail-tester.com score ≥8/10)
-4. ✅ System parameter `mail.catchall.domain` = `mg.insightpulseai.net`
+4. ✅ System parameter `mail.catchall.domain` = `mg.insightpulseai.com`
 5. ✅ Mailgun logs show "delivered" status
 6. ✅ Transactional email triggers work (expense approval, etc.)
 7. ✅ No emails stuck in Odoo outgoing queue
@@ -283,6 +283,6 @@ Before marking SMTP setup as complete:
 ---
 
 **Last Updated**: 2026-01-14
-**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.net`)
-**Mailgun Domain**: `mg.insightpulseai.net`
+**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.com`)
+**Mailgun Domain**: `mg.insightpulseai.com`
 **SMTP Server**: `smtp.mailgun.org:587` (TLS)

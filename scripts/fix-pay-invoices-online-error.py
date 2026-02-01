@@ -3,7 +3,7 @@
 Fix OwlError: res.config.settings.pay_invoices_online field is undefined
 
 This script removes orphaned field references from Odoo views that cause
-the OWL lifecycle error on erp.insightpulseai.net.
+the OWL lifecycle error on erp.insightpulseai.com.
 
 Error context:
 - Field: res.config.settings.pay_invoices_online
@@ -28,7 +28,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Odoo connection details
-ODOO_URL = os.getenv("ODOO_URL", "https://erp.insightpulseai.net")
+ODOO_URL = os.getenv("ODOO_URL", "https://erp.insightpulseai.com")
 ODOO_DB = os.getenv("ODOO_DB", "production")
 ODOO_USERNAME = os.getenv("ODOO_USERNAME")
 ODOO_PASSWORD = os.getenv("ODOO_PASSWORD")
@@ -292,7 +292,7 @@ def main():
             logger.info("Recommendation:")
             logger.info("1. Restart Odoo service: docker compose restart odoo-ce")
             logger.info("2. Clear browser cache")
-            logger.info("3. Visit erp.insightpulseai.net and verify error is gone")
+            logger.info("3. Visit erp.insightpulseai.com and verify error is gone")
 
     except Exception as e:
         logger.error(f"Fatal error: {e}")

@@ -1,6 +1,6 @@
 # ODOO APPS CATALOG: CE/OCA 18 Substitutes
 
-> **What Gets Shipped at https://erp.insightpulseai.net/odoo/apps**
+> **What Gets Shipped at https://erp.insightpulseai.com/odoo/apps**
 
 This document maps which Odoo Enterprise/IAP apps are replaced by CE/OCA equivalents in the InsightPulse implementation.
 
@@ -220,7 +220,7 @@ These require Odoo Enterprise or IAP subscriptions and are intentionally exclude
 
 ## APPS AVAILABLE IN DASHBOARD
 
-When user navigates to `https://erp.insightpulseai.net/web/apps`:
+When user navigates to `https://erp.insightpulseai.com/web/apps`:
 
 ### Installation Status (Day 1 of Go-Live)
 

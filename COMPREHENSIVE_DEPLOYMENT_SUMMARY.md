@@ -73,8 +73,8 @@ docker compose exec db psql -U odoo -d odoo -f /docker-entrypoint-initdb.d/monit
 ```
 
 ### n8n Webhook Integration
-**Healthcheck Webhook**: `https://n8n.insightpulseai.net/webhook/odoo-health-metrics`
-**Backup Webhook**: `https://n8n.insightpulseai.net/webhook/backup-verify-metrics`
+**Healthcheck Webhook**: `https://n8n.insightpulseai.com/webhook/odoo-health-metrics`
+**Backup Webhook**: `https://n8n.insightpulseai.com/webhook/backup-verify-metrics`
 
 ### Superset Dashboards
 **Views Available**:

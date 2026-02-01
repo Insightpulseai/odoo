@@ -24,7 +24,7 @@
     "version": "19.0.1.0.0",
     "category": "Services/Helpdesk",
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

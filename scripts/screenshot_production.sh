@@ -3,7 +3,7 @@
 
 set -e
 
-PRODUCTION_URL="https://erp.insightpulseai.net/web/login"
+PRODUCTION_URL="https://erp.insightpulseai.com/web/login"
 SCREENSHOT_DIR="/Users/tbwa/odoo-ce/docs/screenshots"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 SCREENSHOT_FILE="$SCREENSHOT_DIR/login_${TIMESTAMP}.png"

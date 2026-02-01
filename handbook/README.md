@@ -27,15 +27,15 @@ Welcome to the Finance Shared Services Center handbook. This documentation cover
 
 | System | URL | Purpose |
 |--------|-----|---------|
-| Odoo ERP | [erp.insightpulseai.net](https://erp.insightpulseai.net) | Accounting, Expenses, HR |
-| Mattermost | [chat.insightpulseai.net](https://chat.insightpulseai.net) | Team Communication |
-| Superset | [superset.insightpulseai.net](https://superset.insightpulseai.net) | Dashboards & Reports |
-| n8n | [n8n.insightpulseai.net](https://n8n.insightpulseai.net) | Automation Workflows |
+| Odoo ERP | [erp.insightpulseai.com](https://erp.insightpulseai.com) | Accounting, Expenses, HR |
+| Mattermost | [chat.insightpulseai.com](https://chat.insightpulseai.com) | Team Communication |
+| Superset | [superset.insightpulseai.com](https://superset.insightpulseai.com) | Dashboards & Reports |
+| n8n | [n8n.insightpulseai.com](https://n8n.insightpulseai.com) | Automation Workflows |
 
 ## Support
 
 - **Slack/Mattermost**: #finance-general
-- **Email**: finance@insightpulseai.net
+- **Email**: finance@insightpulseai.com
 - **Urgent**: Contact CKVC directly
 
 ---

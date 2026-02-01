@@ -56,11 +56,11 @@
   },
 
   "systems": {
-    "erp.insightpulseai.net": {
+    "erp.insightpulseai.com": {
       "environments": ["prod", "stage", "dev"],
       "components": ["odoo", "mirror", "auth", "db", "etl", "edge", "general"],
-      "runbook_ref": "repo@HEAD:artifacts/erp.insightpulseai.net/runbooks/incident_response.md",
-      "artifact_ref": "repo@HEAD:artifacts/erp.insightpulseai.net"
+      "runbook_ref": "repo@HEAD:artifacts/erp.insightpulseai.com/runbooks/incident_response.md",
+      "artifact_ref": "repo@HEAD:artifacts/erp.insightpulseai.com"
     }
   }
 }

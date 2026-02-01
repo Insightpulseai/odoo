@@ -7,7 +7,7 @@ Usage:
 
 Environment variables:
     MAILGUN_API_KEY - Your Mailgun API key (required)
-    MAILGUN_DOMAIN  - Sending domain (default: mg.insightpulseai.net)
+    MAILGUN_DOMAIN  - Sending domain (default: mg.insightpulseai.com)
 
 Example:
     MAILGUN_API_KEY=key-xxx python scripts/test-mailgun.py you@example.com
@@ -29,7 +29,7 @@ def send_test_email(recipient: str) -> bool:
     """Send a test email via Mailgun API."""
 
     api_key = os.environ.get("MAILGUN_API_KEY")
-    domain = os.environ.get("MAILGUN_DOMAIN", "mg.insightpulseai.net")
+    domain = os.environ.get("MAILGUN_DOMAIN", "mg.insightpulseai.com")
 
     if not api_key:
         print("ERROR: MAILGUN_API_KEY environment variable is required")
@@ -60,7 +60,7 @@ If you received this email, your Mailgun configuration is working correctly.
 
 --
 InsightPulse AI Platform
-https://insightpulseai.net""",
+https://insightpulseai.com""",
     }
 
     print("Sending test email...")

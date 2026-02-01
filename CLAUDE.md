@@ -1597,7 +1597,7 @@ Stay on GitHub Team - it provides everything needed:
 ```
 App ID: 2191216
 Client ID: Iv23liwGL7fnYySPPAjS
-Webhook URL: https://n8n.insightpulseai.net/webhook/github-pulser
+Webhook URL: https://n8n.insightpulseai.com/webhook/github-pulser
 ```
 
 **Capabilities:**
@@ -1819,10 +1819,10 @@ class VercelConfig(models.Model):
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    n8n.insightpulseai.net                           │
+│                    n8n.insightpulseai.com                           │
 ├─────────────────────────────────────────────────────────────────────┤
 │  GitHub Webhooks (via pulser-hub app)                               │
-│  ├── Push to main → Deploy to erp.insightpulseai.net               │
+│  ├── Push to main → Deploy to erp.insightpulseai.com               │
 │  ├── PR opened → Odoo task + Slack notification                    │
 │  ├── Issue labeled "ai" → Claude Code agent workflow               │
 │  ├── @claude comment → Queue for AI processing                     │

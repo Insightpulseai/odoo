@@ -191,7 +191,7 @@ jobs:
 
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-      url: https://erp.insightpulseai.net
+      url: https://erp.insightpulseai.com
 
     steps:
       - name: Checkout

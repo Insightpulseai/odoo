@@ -117,7 +117,7 @@ Automated verification script (200+ lines):
 
 ### ❌ Failed (1 check)
 1. **Odoo instance**: Not accessible at time of verification
-   - **Action**: Verify Odoo is running: `https://odoo.insightpulseai.net/`
+   - **Action**: Verify Odoo is running: `https://odoo.insightpulseai.com/`
    - **Note**: May be temporary network issue
 
 ---
@@ -126,7 +126,7 @@ Automated verification script (200+ lines):
 
 ### Step 1: Import Workflows to n8n
 
-**URL**: `https://n8n.insightpulseai.net/workflows`
+**URL**: `https://n8n.insightpulseai.com/workflows`
 
 For each workflow file:
 1. Click "+" → "Import from File"
@@ -237,22 +237,22 @@ Once testing is successful:
 
 ### Odoo Instance Not Accessible
 
-**Symptom**: `curl -I https://odoo.insightpulseai.net/` fails
+**Symptom**: `curl -I https://odoo.insightpulseai.com/` fails
 
 **Diagnosis**:
 1. Check if Odoo container is running:
    ```bash
-   ssh root@odoo.insightpulseai.net "docker ps | grep odoo"
+   ssh root@odoo.insightpulseai.com "docker ps | grep odoo"
    ```
 
 2. Check Odoo logs:
    ```bash
-   ssh root@odoo.insightpulseai.net "docker logs odoo-odoo-1 --tail 100"
+   ssh root@odoo.insightpulseai.com "docker logs odoo-odoo-1 --tail 100"
    ```
 
 3. Restart Odoo if needed:
    ```bash
-   ssh root@odoo.insightpulseai.net "docker restart odoo-odoo-1"
+   ssh root@odoo.insightpulseai.com "docker restart odoo-odoo-1"
    ```
 
 ### n8n API Access
@@ -260,7 +260,7 @@ Once testing is successful:
 **Symptom**: API returns "unauthorized"
 
 **Solution**: Workflows must be imported manually via UI
-- URL: `https://n8n.insightpulseai.net/workflows`
+- URL: `https://n8n.insightpulseai.com/workflows`
 - Use "Import from File" option
 - See DEPLOYMENT.md for detailed instructions
 
@@ -306,4 +306,4 @@ Once testing is successful:
 
 **Estimated Time to Complete Import**: 15-30 minutes
 
-**Next Action**: Navigate to `https://n8n.insightpulseai.net/workflows` and follow DEPLOYMENT.md instructions.
+**Next Action**: Navigate to `https://n8n.insightpulseai.com/workflows` and follow DEPLOYMENT.md instructions.

@@ -68,15 +68,15 @@ git push origin main
 #    - Superset rebuilds with new view available
 
 # 3. Verify in Superset (30-60 seconds later)
-curl -sf https://superset.insightpulseai.net/api/v1/dataset/ | \
+curl -sf https://superset.insightpulseai.com/api/v1/dataset/ | \
   jq '.result[] | select(.table_name=="scout_performance_view")'
 ```
 
 ## Access Points
 
-**Platform Odoo**: https://erp.insightpulseai.net
-**TBWA Odoo**: https://tbwa.erp.insightpulseai.net (or filtered via `--db-filter`)
-**Superset**: https://superset.insightpulseai.net
+**Platform Odoo**: https://erp.insightpulseai.com
+**TBWA Odoo**: https://tbwa.erp.insightpulseai.com (or filtered via `--db-filter`)
+**Superset**: https://superset.insightpulseai.com
 **Supabase Dashboard**: https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz
 
 ## Tenant Onboarding (Any New Client)
@@ -89,7 +89,7 @@ curl -sf https://superset.insightpulseai.net/api/v1/dataset/ | \
 # 2. Provision tenant
 make provision-tenant CODE=afc
 
-# 3. Done! Tenant ready at https://afc.erp.insightpulseai.net
+# 3. Done! Tenant ready at https://afc.erp.insightpulseai.com
 ```
 
 ## Key Files

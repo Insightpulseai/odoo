@@ -13,11 +13,11 @@ This guide provides comprehensive configuration settings for the InsightPulse ER
 | Key | Value (Example) | Purpose |
 | :--- | :--- | :--- |
 | `ai.ocr.api.key` | `sk-proj-123...` | OpenAI Key for Receipt Scanning |
-| `ocr.service.endpoint` | `http://ocr.insightpulseai.net/predict` | URL of custom PaddleOCR droplet |
+| `ocr.service.endpoint` | `http://ocr.insightpulseai.com/predict` | URL of custom PaddleOCR droplet |
 | `ocr.service.token` | `my-secure-token` | Security token for OCR droplet |
-| `payout.n8n.webhook` | `https://n8n.insightpulseai.net/webhook/payout` | URL for Mass Payment triggering |
+| `payout.n8n.webhook` | `https://n8n.insightpulseai.com/webhook/payout` | URL for Mass Payment triggering |
 | `payout.n8n.secret` | `pulse-secret-888` | Security header for Odoo requests |
-| `web.base.url` | `https://erp.insightpulseai.net` | **Crucial** - Ensures email links work |
+| `web.base.url` | `https://erp.insightpulseai.com` | **Crucial** - Ensures email links work |
 
 ### B. Payment Providers (Incoming Money)
 **Location:** Invoicing → Configuration → Payment Providers
@@ -38,7 +38,7 @@ This guide provides comprehensive configuration settings for the InsightPulse ER
 | :--- | :--- |
 | **Provider Name** | Keycloak |
 | **Client ID** | `odoo` |
-| **Auth URL** | `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/auth` |
+| **Auth URL** | `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/auth` |
 | **Scope** | `openid profile email` |
 
 ---

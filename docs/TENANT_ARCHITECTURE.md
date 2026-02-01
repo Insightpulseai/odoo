@@ -66,7 +66,7 @@ Located in: `addons/ipai/ipai_tenant_core/`
 - `code` - Unique tenant identifier (e.g., "tbwa", lowercase alphanumeric)
 - `db_name` - Odoo database name (e.g., "odoo_tbwa")
 - `supabase_schema` - PostgreSQL schema in Supabase (e.g., "tbwa")
-- `primary_domain` - Tenant access URL (e.g., "tbwa.erp.insightpulseai.net")
+- `primary_domain` - Tenant access URL (e.g., "tbwa.erp.insightpulseai.com")
 - `superset_workspace` - Superset folder for tenant dashboards
 - `industry`, `country_id`, `admin_email` - Business metadata
 
@@ -113,12 +113,12 @@ make provision-tenant CODE=tbwa
    - Set up multi-agency workflows
 
 2. **Create Superset Dashboards**:
-   - Go to: https://superset.insightpulseai.net
+   - Go to: https://superset.insightpulseai.com
    - Create datasets pointing to `tbwa` schema
    - Build dashboards in `tbwa` workspace folder
 
 3. **Configure Domain Routing** (if using custom domain):
-   - Update DNS: `tbwa.erp.insightpulseai.net` → Odoo host IP
+   - Update DNS: `tbwa.erp.insightpulseai.com` → Odoo host IP
    - Configure Odoo `--db-filter` for tenant routing
 
 ## Data Flow Architecture
@@ -127,7 +127,7 @@ make provision-tenant CODE=tbwa
 
 ```
 TBWA User Request
-   ↓ (https://tbwa.erp.insightpulseai.net)
+   ↓ (https://tbwa.erp.insightpulseai.com)
 Odoo Platform (--db-filter=^odoo_tbwa$)
    ↓ (connects to odoo_tbwa DB)
 Odoo Business Logic
@@ -158,8 +158,8 @@ Tenant-Specific Data (tbwa schema)
 ```
 
 **Configuration** (in Odoo `ir.config_parameter`):
-- `superset.domain` → `https://superset.insightpulseai.net`
-- `superset.api_url` → `https://superset.insightpulseai.net/api/v1`
+- `superset.domain` → `https://superset.insightpulseai.com`
+- `superset.api_url` → `https://superset.insightpulseai.com/api/v1`
 - `superset.workspace` → `tbwa` (tenant-specific)
 
 ## Cross-Repo CI/CD Integration
@@ -274,7 +274,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 - [ ] Run `make provision-tenant CODE=tbwa`
 - [ ] Verify Supabase schema created: `SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'tbwa';`
 - [ ] Verify Odoo database created: `SELECT datname FROM pg_database WHERE datname = 'odoo_tbwa';`
-- [ ] Test admin login: `https://tbwa.erp.insightpulseai.net`
+- [ ] Test admin login: `https://tbwa.erp.insightpulseai.com`
 
 ### Post-Provisioning
 

@@ -167,7 +167,7 @@ This is a sample addon created by the OCA template bootstrap script.
 Replace this with your actual implementation.
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": ["base"],
     "data": [

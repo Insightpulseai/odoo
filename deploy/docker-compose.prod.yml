@@ -111,6 +111,7 @@ services:
     # Bind to localhost only - Nginx handles SSL termination
     ports:
       - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+      - "127.0.0.1:8072:8072"  # Longpolling (required when workers > 0)
 
     networks:
       - odoo_backend

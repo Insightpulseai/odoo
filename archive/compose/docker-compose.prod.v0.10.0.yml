@@ -3,7 +3,7 @@ version: "3.9"
 # Production Docker Compose for Odoo CE v0.10.0 with OCA Modules
 # Date: 2025-11-25
 # Target: VPS at 159.223.75.148 (8GB RAM)
-# Domain: erp.insightpulseai.net
+# Domain: erp.insightpulseai.com
 # Features: OCA modules baked into image (project, mis-builder, purchase-workflow, reporting-engine, server-ux)
 
 services:
@@ -104,7 +104,7 @@ services:
       KC_DB_SCHEMA: public
 
       # Hostname configuration
-      KC_HOSTNAME: auth.insightpulseai.net
+      KC_HOSTNAME: auth.insightpulseai.com
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "true"
 

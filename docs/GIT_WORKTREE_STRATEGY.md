@@ -147,7 +147,7 @@ ssh root@159.223.75.148 \
 cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
 # Query n8n API for active workflows
 curl -sf -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "https://ipa.insightpulseai.net/api/v1/workflows" | jq '.data | length'
+  "https://ipa.insightpulseai.com/api/v1/workflows" | jq '.data | length'
 ```
 
 ## Advanced Worktree Patterns

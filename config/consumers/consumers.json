@@ -9,8 +9,8 @@
       "environment": "prod",
       "description": "Main Odoo CE instance",
       "consumes": ["ipai-design-tokens", "ipai-odoo-config"],
-      "heartbeat_url": "https://erp.insightpulseai.net/api/heartbeat",
-      "health_endpoint": "https://erp.insightpulseai.net/web/health"
+      "heartbeat_url": "https://erp.insightpulseai.com/api/heartbeat",
+      "health_endpoint": "https://erp.insightpulseai.com/web/health"
     },
     {
       "consumer_type": "odoo",

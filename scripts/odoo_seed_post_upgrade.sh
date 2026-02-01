@@ -61,7 +61,7 @@ else:
 
     # Example: Ensure system parameters are set
     config_params = {
-        "ipai.ops.system": "erp.insightpulseai.net",
+        "ipai.ops.system": "erp.insightpulseai.com",
         "ipai.ops.environment": environment,
         "ipai.ops.ssot.enabled": "1",
     }
@@ -95,7 +95,7 @@ else:
             demo_partner = env['res.partner'].sudo().create({
                 'name': 'IPAI Demo Partner',
                 'company_type': 'company',
-                'email': 'demo@insightpulseai.net',
+                'email': 'demo@insightpulseai.com',
                 'comment': 'Created by post-upgrade seed script',
             })
             print(f"[odoo-seed] Created demo partner: {demo_partner.id}")

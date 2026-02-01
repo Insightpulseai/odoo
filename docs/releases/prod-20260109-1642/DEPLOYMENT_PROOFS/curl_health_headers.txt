@@ -1,4 +1,4 @@
 # Health check headers for prod-20260109-1642
-# Run: curl -sI https://erp.insightpulseai.net/web | head -10
+# Run: curl -sI https://erp.insightpulseai.com/web | head -10
 # Paste output below:
 HEADERS_PENDING

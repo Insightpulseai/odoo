@@ -12,7 +12,7 @@
   - Host: `178.128.112.214`
   - Repo: `/opt/odoo-ce`
   - Stack definition: `sandbox/staging/docker-compose.yml`
-  - Public URL: `https://staging.insightpulseai.net`
+  - Public URL: `https://staging.insightpulseai.com`
 
 - **Staging Docker is for:**
   - Odoo 18 CE staging app + PostgreSQL
@@ -132,14 +132,14 @@ docker compose -f sandbox/staging/docker-compose.yml up -d
 docker compose -f sandbox/staging/docker-compose.yml ps
 
 # Verify Odoo is accessible
-curl -sf https://staging.insightpulseai.net/web/health || echo "Health check failed"
+curl -sf https://staging.insightpulseai.com/web/health || echo "Health check failed"
 ```
 
 **Expected state:**
 
 - Containers: `odoo-staging`, `odoo-staging-db` (running)
 - Volumes: `odoo-staging-db-data`, `odoo-staging-filestore`
-- Health check: `https://staging.insightpulseai.net/web/health` returns 200
+- Health check: `https://staging.insightpulseai.com/web/health` returns 200
 
 ---
 
@@ -189,7 +189,7 @@ This runbook is **complete** when:
    - Writes audit log entry
 
 4. **Stack health confirmed:**
-   - `https://staging.insightpulseai.net/web/health` returns 200
+   - `https://staging.insightpulseai.com/web/health` returns 200
    - PostgreSQL `pg_isready` returns exit code 0
    - No unexpected containers running
 

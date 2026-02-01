@@ -1,8 +1,8 @@
 {
   "generated_at": "PLACEHOLDER - run on production",
-  "base_url": "https://erp.insightpulseai.net",
+  "base_url": "https://erp.insightpulseai.com",
   "note": "This file must be regenerated on the production server or from a host that can reach the URL",
-  "regenerate_command": "python3 tools/audit/http_crawler.py https://erp.insightpulseai.net docs/runtime/HTTP_SITEMAP.prod.json",
+  "regenerate_command": "python3 tools/audit/http_crawler.py https://erp.insightpulseai.com docs/runtime/HTTP_SITEMAP.prod.json",
   "expected_endpoints": [
     {"url": "/web", "status": "200 or 303"},
     {"url": "/web/login", "status": "200"},

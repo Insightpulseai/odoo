@@ -55,7 +55,7 @@ smtp_port = ${SMTP_PORT:-587}
 smtp_ssl = ${SMTP_SSL:-False}
 smtp_user = ${SMTP_USER}
 smtp_password = ${SMTP_PASSWORD}
-email_from = ${EMAIL_FROM:-noreply@insightpulseai.net}
+email_from = ${EMAIL_FROM:-noreply@insightpulseai.com}
 ```
 
 ### 1.2 .env Template
@@ -86,9 +86,9 @@ LIST_DB=False
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587
 SMTP_SSL=False
-SMTP_USER=postmaster@mg.insightpulseai.net
+SMTP_USER=postmaster@mg.insightpulseai.com
 SMTP_PASSWORD=__MAILGUN_SMTP_PASSWORD__
-EMAIL_FROM=noreply@insightpulseai.net
+EMAIL_FROM=noreply@insightpulseai.com
 
 # =============================================================================
 # OAUTH - Microsoft (Outlook 365)
@@ -335,7 +335,7 @@ echo "[DONE] Full stack installed successfully"
     </record>
     <record id="param_mail_domain" model="ir.config_parameter">
         <field name="key">mail.catchall.domain</field>
-        <field name="value">insightpulseai.net</field>
+        <field name="value">insightpulseai.com</field>
     </record>
 
     <!-- Geolocation Provider -->
@@ -385,9 +385,9 @@ echo "[DONE] Full stack installed successfully"
         <field name="smtp_host">smtp.mailgun.org</field>
         <field name="smtp_port">587</field>
         <field name="smtp_encryption">starttls</field>
-        <field name="smtp_user">postmaster@mg.insightpulseai.net</field>
+        <field name="smtp_user">postmaster@mg.insightpulseai.com</field>
         <field name="smtp_pass">__SMTP_PASSWORD__</field>
-        <field name="from_filter">insightpulseai.net</field>
+        <field name="from_filter">insightpulseai.com</field>
         <field name="sequence">1</field>
     </record>
 </odoo>

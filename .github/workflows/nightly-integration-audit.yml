@@ -1,0 +1,257 @@
+# =============================================================================
+# Nightly Integration Audit
+# =============================================================================
+# Runs comprehensive integration checks against all external services
+# and produces evidence packs for compliance and debugging.
+#
+# Triggers:
+#   - Daily at 02:00 UTC
+#   - Manual dispatch
+#   - Push to main (smoke check)
+# =============================================================================
+
+name: Nightly Integration Audit
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+    inputs:
+      integration:
+        description: 'Specific integration to audit (leave empty for all)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Dry run mode (no actual API calls)'
+        required: false
+        default: 'false'
+        type: boolean
+
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit/**'
+      - 'config/integrations/**'
+      - '.github/workflows/nightly-integration-audit.yml'
+
+env:
+  AUDIT_OUTPUT_DIR: artifacts/audit
+
+jobs:
+  integration-audit:
+    name: Run Integration Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests pyyaml
+
+      - name: Create output directory
+        run: |
+          TIMESTAMP=$(date -u '+%Y%m%d-%H%M%S')
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+          mkdir -p "artifacts/audit/$TIMESTAMP/raw"
+
+      - name: Run integration audit
+        id: audit
+        env:
+          # Supabase
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+          # Vercel
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+
+          # GitHub (automatically provided)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+          # Odoo
+          ODOO_BASE_URL: ${{ secrets.ODOO_BASE_URL }}
+
+          # DigitalOcean
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+
+          # Slack
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+          # Mailgun
+          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+          MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+
+          # n8n
+          N8N_BASE_URL: ${{ secrets.N8N_BASE_URL }}
+          N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+
+          # Superset
+          SUPERSET_BASE_URL: ${{ secrets.SUPERSET_BASE_URL }}
+          SUPERSET_TOKEN: ${{ secrets.SUPERSET_TOKEN }}
+
+          # Plane (optional)
+          PLANE_BASE_URL: ${{ secrets.PLANE_BASE_URL }}
+          PLANE_API_TOKEN: ${{ secrets.PLANE_API_TOKEN }}
+
+          # GCP (optional)
+          GCP_SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_SERVICE_ACCOUNT_JSON }}
+
+        run: |
+          chmod +x scripts/audit/run_integration_audit.sh
+
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          if [ -n "${{ github.event.inputs.integration }}" ]; then
+            ARGS="$ARGS --integration ${{ github.event.inputs.integration }}"
+          fi
+
+          # Run audit (continue on failure to capture results)
+          ./scripts/audit/run_integration_audit.sh $ARGS || echo "AUDIT_FAILED=true" >> $GITHUB_ENV
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-audit-${{ env.TIMESTAMP }}
+          path: artifacts/audit/${{ env.TIMESTAMP }}/
+          retention-days: 30
+
+      - name: Check for failures
+        if: env.AUDIT_FAILED == 'true'
+        run: |
+          echo "::error::Integration audit detected failures"
+          cat artifacts/audit/${{ env.TIMESTAMP }}/integration_results.md || true
+          exit 1
+
+      - name: Post summary
+        if: always()
+        run: |
+          if [ -f "artifacts/audit/${{ env.TIMESTAMP }}/integration_results.md" ]; then
+            echo "## Integration Audit Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat "artifacts/audit/${{ env.TIMESTAMP }}/integration_results.md" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Integration Audit" >> $GITHUB_STEP_SUMMARY
+            echo "No results file generated." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Optional: Create issues for failures
+  create-issues:
+    name: Create Issues for Failures
+    runs-on: ubuntu-latest
+    needs: integration-audit
+    if: failure() && github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download audit artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: integration-audit-*
+          path: artifacts/
+
+      - name: Create issues from failures
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the issues file
+          ISSUES_FILE=$(find artifacts -name "issues_to_create.json" | head -1)
+
+          if [ -z "$ISSUES_FILE" ] || [ ! -f "$ISSUES_FILE" ]; then
+            echo "No issues file found"
+            exit 0
+          fi
+
+          # Parse and create issues
+          python3 - <<'PYEOF' "$ISSUES_FILE"
+          import json
+          import os
+          import subprocess
+          import sys
+
+          issues_file = sys.argv[1]
+          with open(issues_file) as f:
+              issues = json.load(f)
+
+          if not issues:
+              print("No issues to create")
+              sys.exit(0)
+
+          for issue in issues[:5]:  # Limit to 5 issues per run
+              title = issue.get("title", "Integration Audit Failure")
+              body = issue.get("body", "No details available")
+              labels = ",".join(issue.get("labels", ["integration", "audit"]))
+
+              # Check if similar issue exists (open)
+              result = subprocess.run(
+                  ["gh", "issue", "list", "--state", "open", "--search", title[:50]],
+                  capture_output=True, text=True
+              )
+
+              if title[:30] in result.stdout:
+                  print(f"Similar issue already exists for: {title[:50]}")
+                  continue
+
+              # Create issue
+              subprocess.run([
+                  "gh", "issue", "create",
+                  "--title", title,
+                  "--body", body,
+                  "--label", labels
+              ])
+              print(f"Created issue: {title}")
+          PYEOF
+
+  # Optional: Slack notification
+  notify-slack:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    needs: integration-audit
+    if: always() && github.event_name == 'schedule'
+
+    steps:
+      - name: Send Slack notification
+        if: env.SLACK_WEBHOOK_URL != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          STATUS="${{ needs.integration-audit.result }}"
+          if [ "$STATUS" == "success" ]; then
+            EMOJI=":white_check_mark:"
+            COLOR="good"
+          else
+            EMOJI=":x:"
+            COLOR="danger"
+          fi
+
+          curl -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"attachments\": [{
+                \"color\": \"$COLOR\",
+                \"title\": \"$EMOJI Integration Audit - $STATUS\",
+                \"text\": \"Nightly integration audit completed.\",
+                \"fields\": [
+                  {\"title\": \"Repository\", \"value\": \"${{ github.repository }}\", \"short\": true},
+                  {\"title\": \"Run\", \"value\": \"<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\", \"short\": true}
+                ]
+              }]
+            }" || echo "Slack notification failed (non-critical)"

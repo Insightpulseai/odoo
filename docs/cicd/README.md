@@ -218,9 +218,9 @@ LIMIT 10;
 
 | Service | Endpoint | Expected |
 |---------|----------|----------|
-| Odoo | `https://erp.insightpulseai.net/web/health` | `200 OK` |
-| n8n | `https://n8n.insightpulseai.net/healthz` | `{"status": "ok"}` |
-| Superset | `https://bi.insightpulseai.net/health` | `{"status": "OK"}` |
+| Odoo | `https://erp.insightpulseai.com/web/health` | `200 OK` |
+| n8n | `https://n8n.insightpulseai.com/healthz` | `{"status": "ok"}` |
+| Superset | `https://bi.insightpulseai.com/health` | `{"status": "OK"}` |
 
 ### n8n Health Monitoring
 
@@ -268,7 +268,7 @@ docker logs n8n
 
 # Verify API connectivity
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  https://n8n.insightpulseai.net/api/v1/workflows
+  https://n8n.insightpulseai.com/api/v1/workflows
 
 # Validate workflow JSON
 python3 -c "import json; json.load(open('n8n/workflows/workflow.json'))"

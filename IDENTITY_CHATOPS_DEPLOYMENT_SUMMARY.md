@@ -68,8 +68,8 @@ docker compose -f docker-compose.prod.yml up -d keycloak mattermost
 ## 🔧 Pre-Deployment Checklist
 
 ### ✅ DNS Configuration
-- [ ] `auth.insightpulseai.net` → 159.223.75.148
-- [ ] `chat.insightpulseai.net` → 159.223.75.148
+- [ ] `auth.insightpulseai.com` → 159.223.75.148
+- [ ] `chat.insightpulseai.com` → 159.223.75.148
 
 ### ✅ Docker Compose Configuration
 - [ ] Add Keycloak service block to `docker-compose.prod.yml`
@@ -85,14 +85,14 @@ docker compose -f docker-compose.prod.yml up -d keycloak mattermost
 
 ## 🎯 Post-Deployment Configuration
 
-### Keycloak Setup (https://auth.insightpulseai.net)
+### Keycloak Setup (https://auth.insightpulseai.com)
 1. **Create Realm**: `insightpulse`
 2. **Add Users**: Team members (khalil.veracruz@omc.com, etc.)
 3. **Create Clients**:
    - `odoo` - For Odoo OAuth integration
    - `mattermost` - For Mattermost GitLab hack
 
-### Mattermost Setup (https://chat.insightpulseai.net)
+### Mattermost Setup (https://chat.insightpulseai.com)
 1. **Create Admin Account** on first access
 2. **Configure GitLab Authentication** using Keycloak
 3. **Create Channels**: Finance, Operations, Development
@@ -108,11 +108,11 @@ docker compose -f docker-compose.prod.yml up -d keycloak mattermost
 
 | Service | URL | Authentication | Purpose |
 |---------|-----|----------------|---------|
-| **Odoo ERP** | `erp.insightpulseai.net` | Keycloak OAuth | Core business operations |
-| **Keycloak** | `auth.insightpulseai.net` | Local admin | Identity provider |
-| **Mattermost** | `chat.insightpulseai.net` | Keycloak (GitLab) | Team collaboration |
-| **n8n** | `n8n.insightpulseai.net` | (Existing) | Automation workflows |
-| **OCR Service** | `ocr.insightpulseai.net` | (Existing) | Document processing |
+| **Odoo ERP** | `erp.insightpulseai.com` | Keycloak OAuth | Core business operations |
+| **Keycloak** | `auth.insightpulseai.com` | Local admin | Identity provider |
+| **Mattermost** | `chat.insightpulseai.com` | Keycloak (GitLab) | Team collaboration |
+| **n8n** | `n8n.insightpulseai.com` | (Existing) | Automation workflows |
+| **OCR Service** | `ocr.insightpulseai.com` | (Existing) | Document processing |
 
 ---
 
@@ -171,10 +171,10 @@ docker compose -f docker-compose.prod.yml logs mattermost
 docker compose -f docker-compose.prod.yml ps
 
 # Keycloak health
-curl -s https://auth.insightpulseai.net/realms/insightpulse/.well-known/openid-configuration | jq .
+curl -s https://auth.insightpulseai.com/realms/insightpulse/.well-known/openid-configuration | jq .
 
 # Mattermost health
-curl -s https://chat.insightpulseai.net/api/v4/system/ping | jq .
+curl -s https://chat.insightpulseai.com/api/v4/system/ping | jq .
 ```
 
 ---

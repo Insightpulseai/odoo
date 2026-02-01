@@ -70,7 +70,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "url": "https://chat.insightpulseai.com/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"{{ $json.channel }}\",\n  \"username\": \"BIR Compliance Bot\",\n  \"icon_emoji\": \":bir:\",\n  \"text\": {{ JSON.stringify($json.message) }}\n}",

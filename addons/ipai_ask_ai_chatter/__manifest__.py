@@ -29,7 +29,7 @@ Dependencies:
 - OCA queue_job for async processing (add OCA/queue submodule)
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [
         "base",

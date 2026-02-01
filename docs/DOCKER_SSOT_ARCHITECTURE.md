@@ -71,7 +71,7 @@ cd ~/Documents/GitHub/odoo-ce
 
 **Host:** 178.128.112.214 (DigitalOcean Droplet)
 **Purpose:** Pre-production validation for Odoo 18 CE
-**URL:** https://staging.insightpulseai.net
+**URL:** https://staging.insightpulseai.com
 
 ### Files
 
@@ -133,7 +133,7 @@ cd /opt/odoo-ce
 
 **Host:** 178.128.112.214 (same droplet as staging)
 **Purpose:** Production Odoo ERP, Superset, n8n, MCP
-**URL:** https://erp.insightpulseai.net
+**URL:** https://erp.insightpulseai.com
 
 ### Files (Future)
 

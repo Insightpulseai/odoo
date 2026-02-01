@@ -75,7 +75,7 @@ with registry.cursor() as cr:
         print("✓ Updated provider")
 
     # Set base URL
-    env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.net')
+    env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.com')
     env['ir.config_parameter'].set_param('web.base.url.freeze', 'True')
 
     cr.commit()
@@ -107,5 +107,5 @@ echo "=================================================="
 echo "✅ FIX COMPLETED"
 echo "=================================================="
 echo ""
-echo "Clear browser cache and refresh: https://erp.insightpulseai.net"
+echo "Clear browser cache and refresh: https://erp.insightpulseai.com"
 echo ""

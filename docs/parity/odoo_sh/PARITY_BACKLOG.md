@@ -12,13 +12,13 @@
 **Why**: Enable visual testing and stakeholder review before merge
 **Implementation**:
 - GitHub Actions workflow: `.github/workflows/preview-env-deploy.yml`
-- Docker Compose template with dynamic subdomain (`pr-123.dev.insightpulseai.net`)
+- Docker Compose template with dynamic subdomain (`pr-123.dev.insightpulseai.com`)
 - Automatic cleanup after PR merge/close (TTL: 3 days after merge)
 - nginx/Traefik routing configuration
 
 **Acceptance Criteria**:
 - [ ] PR opened → preview URL posted as comment within 5 minutes
-- [ ] Preview accessible at `https://pr-{number}.dev.insightpulseai.net`
+- [ ] Preview accessible at `https://pr-{number}.dev.insightpulseai.com`
 - [ ] Automatic teardown after PR merge
 - [ ] Smoke tests pass before URL is published
 
@@ -36,7 +36,7 @@
 **Acceptance Criteria**:
 - [ ] Weekly cron job: prod snapshot → scrub → staging restore
 - [ ] PII scrubbing validated (no real emails, names, phone numbers)
-- [ ] Staging accessible at `https://staging.erp.insightpulseai.net`
+- [ ] Staging accessible at `https://staging.erp.insightpulseai.com`
 - [ ] Smoke tests pass after restore
 - [ ] Scheduled actions disabled in staging (`--stop-after-init`)
 
@@ -82,7 +82,7 @@
 **Implementation**:
 - MailHog container in dev/staging stacks
 - Odoo config override: `smtp_host = mailhog`, `smtp_port = 1025`
-- Web UI: `http://localhost:8025` (dev), `https://mail.staging.erp.insightpulseai.net` (staging)
+- Web UI: `http://localhost:8025` (dev), `https://mail.staging.erp.insightpulseai.com` (staging)
 
 **Acceptance Criteria**:
 - [ ] All dev/staging emails captured in MailHog
@@ -150,7 +150,7 @@
 - Automatic TLS via Let's Encrypt + certbot
 
 **Acceptance Criteria**:
-- [ ] Preview env creation auto-creates `pr-{number}.dev.insightpulseai.net`
+- [ ] Preview env creation auto-creates `pr-{number}.dev.insightpulseai.com`
 - [ ] TLS certificate provisioned within 2 minutes
 - [ ] DNS cleanup after environment teardown
 

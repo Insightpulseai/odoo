@@ -21,7 +21,7 @@ Mailgun replaces Odoo IAP mail services with direct SMTP integration. This provi
 ### Mailgun Account Setup
 
 1. Create account at https://signup.mailgun.com
-2. Verify your domain (e.g., `mg.insightpulseai.net`)
+2. Verify your domain (e.g., `mg.insightpulseai.com`)
 3. Configure DNS records:
 
 ```
@@ -32,7 +32,7 @@ TXT  @  "v=spf1 include:mailgun.org ~all"
 TXT  smtp._domainkey  "k=rsa; p=MIG..."
 
 # DMARC Record
-TXT  _dmarc  "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.net"
+TXT  _dmarc  "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com"
 
 # MX Records (for receiving)
 MX  mg  mxa.mailgun.org (priority 10)
@@ -46,13 +46,13 @@ MX  mg  mxb.mailgun.org (priority 10)
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587
 SMTP_SSL=False
-SMTP_USER=postmaster@mg.insightpulseai.net
+SMTP_USER=postmaster@mg.insightpulseai.com
 SMTP_PASSWORD=__MAILGUN_SMTP_PASSWORD__
-EMAIL_FROM=noreply@insightpulseai.net
+EMAIL_FROM=noreply@insightpulseai.com
 
 # API (for webhooks/tracking)
 MAILGUN_API_KEY=key-...
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 MAILGUN_WEBHOOK_SIGNING_KEY=...
 ```
 
@@ -63,9 +63,9 @@ MAILGUN_WEBHOOK_SIGNING_KEY=...
 smtp_server = smtp.mailgun.org
 smtp_port = 587
 smtp_ssl = False
-smtp_user = postmaster@mg.insightpulseai.net
+smtp_user = postmaster@mg.insightpulseai.com
 smtp_password = ${SMTP_PASSWORD}
-email_from = noreply@insightpulseai.net
+email_from = noreply@insightpulseai.com
 ```
 
 ---
@@ -82,9 +82,9 @@ email_from = noreply@insightpulseai.net
         <field name="smtp_host">smtp.mailgun.org</field>
         <field name="smtp_port">587</field>
         <field name="smtp_encryption">starttls</field>
-        <field name="smtp_user">postmaster@mg.insightpulseai.net</field>
+        <field name="smtp_user">postmaster@mg.insightpulseai.com</field>
         <field name="smtp_pass">__SMTP_PASSWORD__</field>
-        <field name="from_filter">insightpulseai.net</field>
+        <field name="from_filter">insightpulseai.com</field>
         <field name="sequence">1</field>
     </record>
 </odoo>
@@ -96,7 +96,7 @@ email_from = noreply@insightpulseai.net
 <odoo noupdate="1">
     <record id="param_mail_from" model="ir.config_parameter">
         <field name="key">mail.default.from</field>
-        <field name="value">noreply@insightpulseai.net</field>
+        <field name="value">noreply@insightpulseai.com</field>
     </record>
     <record id="param_mail_catchall" model="ir.config_parameter">
         <field name="key">mail.catchall.alias</field>
@@ -108,7 +108,7 @@ email_from = noreply@insightpulseai.net
     </record>
     <record id="param_mail_domain" model="ir.config_parameter">
         <field name="key">mail.catchall.domain</field>
-        <field name="value">insightpulseai.net</field>
+        <field name="value">insightpulseai.com</field>
     </record>
 </odoo>
 ```
@@ -133,7 +133,7 @@ odoo-bin -d odoo_core -i mail_tracking,mail_tracking_mailgun --stop-after-init
 Configure webhooks in Mailgun dashboard to point to:
 
 ```
-https://erp.insightpulseai.net/mail/tracking/mailgun/all
+https://erp.insightpulseai.com/mail/tracking/mailgun/all
 ```
 
 Events to track:
@@ -293,8 +293,8 @@ class MailgunMixin(models.AbstractModel):
 In Mailgun dashboard, create route:
 
 ```
-Match recipient: catchall@insightpulseai.net
-Action: forward("https://erp.insightpulseai.net/mail/mailgate")
+Match recipient: catchall@insightpulseai.com
+Action: forward("https://erp.insightpulseai.com/mail/mailgate")
 ```
 
 ### Mailgate Controller

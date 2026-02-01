@@ -4,7 +4,7 @@
 
 Mattermost is our team chat platform, providing secure, self-hosted messaging for InsightPulse AI operations.
 
-**Production URL:** https://chat.insightpulseai.net
+**Production URL:** https://chat.insightpulseai.com
 
 ## Architecture
 
@@ -59,7 +59,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 
 | Key | Description |
 |-----|-------------|
-| `ipai_integrations.mattermost_url` | Base URL (default: https://chat.insightpulseai.net) |
+| `ipai_integrations.mattermost_url` | Base URL (default: https://chat.insightpulseai.com) |
 | `ipai_mattermost.token_{connector_id}` | Bot/Personal access token |
 
 ### 2. Create Connector
@@ -68,7 +68,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 2. Create new connector:
    - Name: Mattermost (InsightPulse AI)
    - Type: Mattermost
-   - Base URL: https://chat.insightpulseai.net
+   - Base URL: https://chat.insightpulseai.com
    - Auth Type: Personal Access Token
 3. Click **Test Connection**
 4. If successful, click **Activate**
@@ -168,7 +168,7 @@ Odoo sends this format to Mattermost:
 
 ### Connection Failed
 
-1. Verify Mattermost is running: `curl https://chat.insightpulseai.net/api/v4/system/ping`
+1. Verify Mattermost is running: `curl https://chat.insightpulseai.com/api/v4/system/ping`
 2. Check token is valid and has correct permissions
 3. Review audit logs in Odoo
 
@@ -188,4 +188,4 @@ Odoo sends this format to Mattermost:
 
 - **Runtime Deployment:** `ipai-ops-stack` repository
 - **Mattermost API Docs:** https://api.mattermost.com/
-- **Channel:** #odoo-integrations on chat.insightpulseai.net
+- **Channel:** #odoo-integrations on chat.insightpulseai.com

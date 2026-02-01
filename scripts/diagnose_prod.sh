@@ -2,7 +2,7 @@
 # =============================================================================
 # Production Diagnostics & Recovery Script
 # =============================================================================
-# Run on: erp.insightpulseai.net (178.128.112.214)
+# Run on: erp.insightpulseai.com (178.128.112.214)
 # Usage: ./scripts/diagnose_prod.sh
 # =============================================================================
 
@@ -161,7 +161,7 @@ fi
 # -----------------------------------------------------------------------------
 log_section "9. SSL Certificate"
 # -----------------------------------------------------------------------------
-CERT_PATH="/etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem"
+CERT_PATH="/etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem"
 if [ -f "$CERT_PATH" ]; then
     EXPIRY=$(openssl x509 -enddate -noout -in "$CERT_PATH" 2>/dev/null | cut -d= -f2)
     log_info "SSL Certificate expires: $EXPIRY"

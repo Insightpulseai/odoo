@@ -29,7 +29,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
@@ -67,7 +67,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parse XML-RPC response and build alert message\nconst xmlResponse = $input.first().json.body;\nconst tasks = parseXmlRpcTasks(xmlResponse);\n\nif (tasks.length === 0) {\n  return [];\n}\n\nlet message = '## 📅 BIR Filing Alerts (7 Days)\\n\\n';\nmessage += `**Alert Date**: ${new Date().toLocaleDateString('en-PH', {timeZone: 'Asia/Manila'})}\\n\\n`;\n\n// Group by BIR form\nconst grouped = {};\nfor (const task of tasks) {\n  const form = task.bir_form || 'Unknown';\n  if (!grouped[form]) {\n    grouped[form] = [];\n  }\n  grouped[form].push(task);\n}\n\nfor (const [form, formTasks] of Object.entries(grouped)) {\n  message += `### ${form}\\n`;\n  for (const task of formTasks) {\n    message += `- **${task.owner_code}** (${task.cluster})\\n`;\n    message += `  Deadline: ${task.bir_deadline}\\n`;\n    message += `  [View Task](https://erp.insightpulseai.net/web#id=${task.id}&model=project.task)\\n`;\n  }\n  message += '\\n';\n}\n\nmessage += '\\n---\\n';\nmessage += '**Action Required**: Please review and file before deadline.\\n';\nmessage += '@finance-team @ckvc @rim';\n\nreturn {json: {text: message, username: 'BIR Bot', icon_emoji: ':calendar:'}};\n\nfunction parseXmlRpcTasks(xml) {\n  // Simplified XML-RPC parser for demo\n  // In production, use proper XML parser like fast-xml-parser\n  return [];\n}"
+        "jsCode": "// Parse XML-RPC response and build alert message\nconst xmlResponse = $input.first().json.body;\nconst tasks = parseXmlRpcTasks(xmlResponse);\n\nif (tasks.length === 0) {\n  return [];\n}\n\nlet message = '## 📅 BIR Filing Alerts (7 Days)\\n\\n';\nmessage += `**Alert Date**: ${new Date().toLocaleDateString('en-PH', {timeZone: 'Asia/Manila'})}\\n\\n`;\n\n// Group by BIR form\nconst grouped = {};\nfor (const task of tasks) {\n  const form = task.bir_form || 'Unknown';\n  if (!grouped[form]) {\n    grouped[form] = [];\n  }\n  grouped[form].push(task);\n}\n\nfor (const [form, formTasks] of Object.entries(grouped)) {\n  message += `### ${form}\\n`;\n  for (const task of formTasks) {\n    message += `- **${task.owner_code}** (${task.cluster})\\n`;\n    message += `  Deadline: ${task.bir_deadline}\\n`;\n    message += `  [View Task](https://erp.insightpulseai.com/web#id=${task.id}&model=project.task)\\n`;\n  }\n  message += '\\n';\n}\n\nmessage += '\\n---\\n';\nmessage += '**Action Required**: Please review and file before deadline.\\n';\nmessage += '@finance-team @ckvc @rim';\n\nreturn {json: {text: message, username: 'BIR Bot', icon_emoji: ':calendar:'}};\n\nfunction parseXmlRpcTasks(xml) {\n  // Simplified XML-RPC parser for demo\n  // In production, use proper XML parser like fast-xml-parser\n  return [];\n}"
       },
       "name": "Function - Build BIR Alert",
       "type": "n8n-nodes-base.code",

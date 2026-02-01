@@ -7,7 +7,7 @@ version: '3.8'
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
-    command: start --optimized --proxy edge --hostname=auth.insightpulseai.net
+    command: start --optimized --proxy edge --hostname=auth.insightpulseai.com
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://db:5432/keycloak
@@ -25,7 +25,7 @@ services:
       - internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.keycloak.rule=Host(`auth.insightpulseai.net`)"
+      - "traefik.http.routers.keycloak.rule=Host(`auth.insightpulseai.com`)"
       - "traefik.http.routers.keycloak.entrypoints=websecure"
       - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"

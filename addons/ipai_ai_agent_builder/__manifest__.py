@@ -27,7 +27,7 @@ References:
 - Odoo 19 AI Agents: https://www.odoo.com/documentation/19.0/applications/productivity/ai/agents.html
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [
         "base",

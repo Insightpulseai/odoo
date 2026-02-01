@@ -54,7 +54,7 @@ Usage:
 4. Reference design tokens via CSS custom properties (var(--ipai-*))
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": ["web"],
     "data": [],

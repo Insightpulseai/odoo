@@ -41,7 +41,7 @@ class TestFinanceControllerKPI(TransactionCase):
         self.user = self.env["res.users"].create(
             {
                 "name": "Test User RIM",
-                "login": "test.rim@insightpulseai.net",
+                "login": "test.rim@insightpulseai.com",
                 "employee_ids": [(4, self.employee.id)],
             }
         )

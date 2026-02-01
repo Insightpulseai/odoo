@@ -237,7 +237,7 @@ deploy/
 ├── docker-compose.prod.yml  # Production stack (immutable image)
 ├── odoo.conf                # Odoo server configuration
 ├── nginx/
-│   └── erp.insightpulseai.net.conf  # Nginx reverse proxy config
+│   └── erp.insightpulseai.com.conf  # Nginx reverse proxy config
 └── README.md                # This file
 ```
 

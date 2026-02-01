@@ -390,8 +390,8 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
 # Service URLs (internal)
 ODOO_CORE_URL=http://odoo-core:8069
-SUPERSET_URL=https://superset.insightpulseai.net
-N8N_URL=https://n8n.insightpulseai.net
+SUPERSET_URL=https://superset.insightpulseai.com
+N8N_URL=https://n8n.insightpulseai.com
 
 # AI (optional)
 OPENAI_API_KEY=sk-...

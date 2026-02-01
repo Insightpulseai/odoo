@@ -23,7 +23,7 @@ CONTAINER_NAME="${ODOO_CONTAINER_NAME:-odoo-dev}"
 DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 ODOO_CONF="${ODOO_CONF:-/etc/odoo/odoo.conf}"
 TEST_EMAIL_TO="${TEST_EMAIL_TO:-jgtolentino.rn@gmail.com}"
-TEST_EMAIL_FROM="${ODOO_DEFAULT_FROM_EMAIL:-admin@insightpulseai.net}"
+TEST_EMAIL_FROM="${ODOO_DEFAULT_FROM_EMAIL:-admin@insightpulseai.com}"
 
 echo "════════════════════════════════════════════════════════════════"
 echo "Test Outbound Email via Mailgun SMTP"

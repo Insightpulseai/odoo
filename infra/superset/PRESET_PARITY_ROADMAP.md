@@ -264,7 +264,7 @@ class SupersetController(http.Controller):
 
 ```bash
 # .env.superset
-SUPERSET_URL=https://superset.insightpulseai.net
+SUPERSET_URL=https://superset.insightpulseai.com
 SUPERSET_SECRET_KEY=<generate with openssl rand -base64 42>
 SUPERSET_ADMIN_USER=admin
 SUPERSET_ADMIN_PASSWORD=<secure password>
@@ -279,7 +279,7 @@ REDIS_URL=redis://redis:6379/0
 OPENAI_API_KEY=<for embeddings>
 
 # Odoo Integration
-ODOO_URL=https://erp.insightpulseai.net
+ODOO_URL=https://erp.insightpulseai.com
 ODOO_API_KEY=<odoo api key>
 ```
 
@@ -316,7 +316,7 @@ GUEST_TOKEN_JWT_EXP_SECONDS = 300
 TALISMAN_ENABLED = True
 TALISMAN_CONFIG = {
     'content_security_policy': {
-        'frame-ancestors': ["'self'", "https://*.insightpulseai.net"],
+        'frame-ancestors': ["'self'", "https://*.insightpulseai.com"],
     }
 }
 ```
@@ -325,10 +325,10 @@ TALISMAN_CONFIG = {
 
 ```bash
 # Health check
-curl https://superset.insightpulseai.net/health
+curl https://superset.insightpulseai.com/health
 
 # API auth test
-curl -X POST https://superset.insightpulseai.net/api/v1/security/login \
+curl -X POST https://superset.insightpulseai.com/api/v1/security/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "<password>", "provider": "db"}'
 

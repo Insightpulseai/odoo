@@ -16,7 +16,7 @@ OUT_DIR="${1:-docs/llms/external}"
 mkdir -p "$OUT_DIR"
 
 # User agent for requests
-UA="${UA:-Mozilla/5.0 (compatible; IPAI-Bot/1.0; +https://insightpulseai.net)}"
+UA="${UA:-Mozilla/5.0 (compatible; IPAI-Bot/1.0; +https://insightpulseai.com)}"
 
 # Colors
 RED='\033[0;31m'

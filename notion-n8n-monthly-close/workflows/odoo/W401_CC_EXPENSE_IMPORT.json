@@ -16,7 +16,7 @@
     },
     {
       "parameters": {
-        "url": "https://ocr.insightpulseai.net/parse",
+        "url": "https://ocr.insightpulseai.com/parse",
         "method": "POST",
         "sendBody": true,
         "bodyParameters": {
@@ -36,7 +36,7 @@
     },
     {
       "parameters": {
-        "url": "https://erp.insightpulseai.net",
+        "url": "https://erp.insightpulseai.com",
         "database": "odoo",
         "username": "admin",
         "password": "={{$credentials.odooApi.password}}",

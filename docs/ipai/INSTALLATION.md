@@ -198,7 +198,7 @@ odoo -d production -i ipai_finance_month_end,ipai_finance_ppm_dashboard,ipai_fin
 **Verification**:
 ```bash
 # Check dashboard accessible
-curl -sf https://odoo.insightpulseai.net/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard"
+curl -sf https://odoo.insightpulseai.com/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard"
 echo $?  # Should return 0 (success)
 ```
 
@@ -466,7 +466,7 @@ echo "groups created"
 
 # 7. Test dashboard accessibility (if on production)
 echo -e "\n7. Dashboard Accessibility:"
-curl -sf https://odoo.insightpulseai.net/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard" && echo "✓ PPM Dashboard accessible" || echo "✗ PPM Dashboard not accessible"
+curl -sf https://odoo.insightpulseai.com/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard" && echo "✓ PPM Dashboard accessible" || echo "✗ PPM Dashboard not accessible"
 
 echo -e "\n=== Verification Complete ==="
 ```

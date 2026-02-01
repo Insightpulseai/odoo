@@ -67,7 +67,7 @@ finance-cli.sh import-n8n
 
 **Test webhook**:
 ```bash
-export MM_WEBHOOK_URL="https://mattermost.insightpulseai.net/hooks/YOUR_WEBHOOK_ID"
+export MM_WEBHOOK_URL="https://mattermost.insightpulseai.com/hooks/YOUR_WEBHOOK_ID"
 curl -X POST "$MM_WEBHOOK_URL" \
   -H 'Content-Type: application/json' \
   -d '{"text":"✅ TBWA Finance PPM alerts online"}'

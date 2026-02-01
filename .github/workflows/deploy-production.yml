@@ -6,7 +6,7 @@
 #   - Manual workflow dispatch
 #   - After successful image build
 #
-# Target: erp.insightpulseai.net
+# Target: erp.insightpulseai.com
 # =============================================================================
 
 name: Deploy to Production
@@ -87,7 +87,7 @@ jobs:
 
     environment:
       name: production
-      url: https://erp.insightpulseai.net
+      url: https://erp.insightpulseai.com
 
     steps:
       - name: Checkout
@@ -97,7 +97,7 @@ jobs:
         run: |
           echo "## Deployment Started" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Target:** production (erp.insightpulseai.net)" >> $GITHUB_STEP_SUMMARY
+          echo "**Target:** production (erp.insightpulseai.com)" >> $GITHUB_STEP_SUMMARY
           echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.preflight.outputs.image_tag }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "**Time:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
@@ -114,7 +114,7 @@ jobs:
             echo "::warning::SSH secrets not configured. Skipping remote deployment."
             echo "To enable auto-deployment, configure these repository secrets:"
             echo "  - SSH_PRIVATE_KEY: Private key for server access"
-            echo "  - SSH_HOST: erp.insightpulseai.net"
+            echo "  - SSH_HOST: erp.insightpulseai.com"
             echo "  - SSH_USER: deploy user"
             exit 0
           fi
@@ -153,8 +153,8 @@ jobs:
 
       - name: Verify deployment
         run: |
-          echo "Verifying deployment to erp.insightpulseai.net..."
-          # In production: curl -sf https://erp.insightpulseai.net/web/health
+          echo "Verifying deployment to erp.insightpulseai.com..."
+          # In production: curl -sf https://erp.insightpulseai.com/web/health
 
       - name: Deploy notification - Complete
         if: success()
@@ -187,7 +187,7 @@ jobs:
       - name: Health check
         run: |
           echo "Running production smoke tests..."
-          # curl -sf https://erp.insightpulseai.net/web/health
+          # curl -sf https://erp.insightpulseai.com/web/health
           echo "Smoke tests would run here"
 
       - name: Report status

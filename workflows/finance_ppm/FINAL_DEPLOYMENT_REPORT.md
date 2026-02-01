@@ -102,8 +102,8 @@ Owner: postgres
 **Detailed Results**:
 | Check | Status | Details |
 |-------|--------|---------|
-| n8n Instance | ✅ PASS | Accessible at https://n8n.insightpulseai.net |
-| Odoo Instance | ✅ PASS | Accessible at https://erp.insightpulseai.net |
+| n8n Instance | ✅ PASS | Accessible at https://n8n.insightpulseai.com |
+| Odoo Instance | ✅ PASS | Accessible at https://erp.insightpulseai.com |
 | Supabase Database | ✅ PASS | Connected successfully |
 | Table Exists | ✅ PASS | finance_ppm.monthly_reports |
 | Table Columns | ✅ PASS | 20 columns (expected: 20) |
@@ -132,10 +132,10 @@ Owner: postgres
 
 | Component | URL | Status | Notes |
 |-----------|-----|--------|-------|
-| Odoo ERP | https://erp.insightpulseai.net | ✅ Online | Module ipai_finance_ppm v1.0.0 |
-| n8n Automation | https://n8n.insightpulseai.net | ✅ Online | Ready for workflow import |
+| Odoo ERP | https://erp.insightpulseai.com | ✅ Online | Module ipai_finance_ppm v1.0.0 |
+| n8n Automation | https://n8n.insightpulseai.com | ✅ Online | Ready for workflow import |
 | Supabase DB | aws-1-us-east-1.pooler.supabase.com:6543 | ✅ Online | Schema finance_ppm created |
-| Mattermost | https://mattermost.insightpulseai.net | ⚠️ Optional | Webhooks to be configured |
+| Mattermost | https://mattermost.insightpulseai.com | ⚠️ Optional | Webhooks to be configured |
 
 ### Database Schema
 
@@ -192,7 +192,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 **Guide**: `N8N_IMPORT_CHECKLIST.md`
 
 **Actions**:
-1. Navigate to `https://n8n.insightpulseai.net/workflows`
+1. Navigate to `https://n8n.insightpulseai.com/workflows`
 2. Import 3 workflow files (use "Import from File" option)
 3. Configure credentials:
    - Odoo XML-RPC (username/password)
@@ -365,7 +365,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 - **Workflow Issues**: See DEPLOYMENT.md "Troubleshooting" section
 - **Database Issues**: See migration file `003_finance_ppm_reports.sql` comments
 - **Odoo Issues**: Check container logs: `docker logs odoo-odoo-1 --tail 100`
-- **n8n Issues**: Check execution history at `https://n8n.insightpulseai.net/executions`
+- **n8n Issues**: Check execution history at `https://n8n.insightpulseai.com/executions`
 
 ### Quick Commands
 ```bash
@@ -382,10 +382,10 @@ jq empty task_escalation.json && echo "Valid JSON"
 jq empty monthly_report.json && echo "Valid JSON"
 
 # Check Odoo module
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 
 # Check n8n instance
-curl -I https://n8n.insightpulseai.net/
+curl -I https://n8n.insightpulseai.com/
 ```
 
 ---

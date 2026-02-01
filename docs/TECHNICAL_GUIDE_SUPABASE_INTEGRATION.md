@@ -168,7 +168,7 @@ supabase db push
 
 ```bash
 # .env or export
-export ODOO_URL="https://erp.insightpulseai.net"
+export ODOO_URL="https://erp.insightpulseai.com"
 export ODOO_DB="odoo_core"
 export ODOO_USER="api-user@example.com"
 export ODOO_PASSWORD="your-password"
@@ -374,7 +374,7 @@ jobs:
 
 ```bash
 # Check Odoo stats
-curl -X POST https://erp.insightpulseai.net/xmlrpc/2/object \
+curl -X POST https://erp.insightpulseai.com/xmlrpc/2/object \
   -d '...' | jq '.result'
 
 # Check Supabase counts

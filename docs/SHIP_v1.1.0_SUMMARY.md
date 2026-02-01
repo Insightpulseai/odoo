@@ -323,7 +323,7 @@ sleep 120  # Wait for restart
    ```
 3. **Configure Production Secrets** (`deploy/.env`)
 4. **Setup Domain/DNS** for production access
-5. **Configure nginx** (see `deploy/nginx/erp.insightpulseai.net.conf`)
+5. **Configure nginx** (see `deploy/nginx/erp.insightpulseai.com.conf`)
 6. **Run Final Verifications**:
    - Module installation
    - Asset verification

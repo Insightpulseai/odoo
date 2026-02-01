@@ -1,0 +1,714 @@
+# =============================================================================
+# INTEGRATION MANIFEST - Single Source of Truth
+# =============================================================================
+# Last Updated: 2026-02-01
+# Purpose: Canonical inventory of all integration endpoints for audit + testing
+# Usage: scripts/audit/run_integration_audit.sh
+# =============================================================================
+
+version: "1.0"
+generated_at: "2026-02-01T00:00:00Z"
+
+# =============================================================================
+# DOMAIN POLICY (ENFORCED)
+# =============================================================================
+domain_policy:
+  canonical_domain: "insightpulseai.com"
+  forbidden_patterns:
+    - "insightpulseai.net"
+  enforcement: "strict"  # FAIL audit if any forbidden pattern found
+
+  canonical_subdomains:
+    erp: "erp.insightpulseai.com"
+    n8n: "n8n.insightpulseai.com"
+    superset: "superset.insightpulseai.com"
+    mcp: "mcp.insightpulseai.com"
+    mailgun: "mg.insightpulseai.com"
+    auth: "auth.insightpulseai.com"
+    ocr: "ocr.insightpulseai.com"
+
+# =============================================================================
+# INTEGRATION DEFINITIONS
+# =============================================================================
+integrations:
+
+  # ---------------------------------------------------------------------------
+  # DOMAIN POLICY (GATE CHECK)
+  # ---------------------------------------------------------------------------
+  policy:
+    name: "Domain Policy"
+    type: "policy/compliance"
+    enabled: true
+    risk_tier: "critical"
+    owner: "platform-team"
+
+    test_suite:
+      - name: "forbidden_domain"
+        description: "No insightpulseai.net references allowed"
+        expected_status: "PASS"
+      - name: "canonical_domains"
+        description: "Verify canonical .com domains are used"
+        expected_status: "PASS"
+
+  # ---------------------------------------------------------------------------
+  # SUPABASE
+  # ---------------------------------------------------------------------------
+  supabase:
+    name: "Supabase"
+    type: "database/auth/storage"
+    enabled: true
+    risk_tier: "critical"
+    owner: "platform-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      rest_api:
+        url: "${SUPABASE_URL}/rest/v1/"
+        auth_method: "apikey"
+        auth_header: "apikey"
+      auth_api:
+        url: "${SUPABASE_URL}/auth/v1/"
+        auth_method: "apikey"
+      storage_api:
+        url: "${SUPABASE_URL}/storage/v1/"
+        auth_method: "bearer"
+      realtime:
+        url: "${SUPABASE_URL}/realtime/v1/"
+        auth_method: "apikey"
+      management_api:
+        url: "https://api.supabase.com/v1/"
+        auth_method: "bearer"
+        auth_env: "SUPABASE_ACCESS_TOKEN"
+
+    env_vars:
+      required:
+        - SUPABASE_URL
+        - SUPABASE_ANON_KEY
+      optional:
+        - SUPABASE_SERVICE_ROLE_KEY
+        - SUPABASE_ACCESS_TOKEN
+        - SUPABASE_PROJECT_REF
+
+    test_suite:
+      - name: "health_check"
+        endpoint: "/rest/v1/"
+        method: "GET"
+        expected_status: [200, 401]
+        description: "Check REST API reachability"
+      - name: "anon_key_auth"
+        endpoint: "/rest/v1/"
+        method: "GET"
+        auth: "anon_key"
+        expected_status: [200]
+        description: "Validate anon key authentication"
+      - name: "service_role_auth"
+        endpoint: "/rest/v1/mcp_jobs.jobs?limit=1"
+        method: "GET"
+        auth: "service_role"
+        expected_status: [200]
+        description: "Validate service role key can read jobs"
+      - name: "storage_buckets"
+        endpoint: "/storage/v1/bucket"
+        method: "GET"
+        auth: "service_role"
+        expected_status: [200]
+        description: "List storage buckets"
+      - name: "edge_functions"
+        endpoint: "management:/v1/projects/${SUPABASE_PROJECT_REF}/functions"
+        method: "GET"
+        auth: "access_token"
+        expected_status: [200]
+        description: "List Edge Functions"
+
+    evidence_fields:
+      - "response_time_ms"
+      - "rate_limit_headers"
+      - "project_ref"
+      - "region"
+
+  # ---------------------------------------------------------------------------
+  # VERCEL
+  # ---------------------------------------------------------------------------
+  vercel:
+    name: "Vercel"
+    type: "hosting/deployments"
+    enabled: true
+    risk_tier: "high"
+    owner: "devops-team"
+    rotation_policy: "never"
+
+    endpoints:
+      api:
+        url: "https://api.vercel.com"
+        auth_method: "bearer"
+        auth_env: "VERCEL_TOKEN"
+
+    env_vars:
+      required:
+        - VERCEL_TOKEN
+      optional:
+        - VERCEL_TEAM_ID
+        - VERCEL_PROJECT_NAME
+
+    test_suite:
+      - name: "auth_test"
+        endpoint: "/v2/user"
+        method: "GET"
+        expected_status: [200]
+        description: "Validate token authentication"
+      - name: "list_projects"
+        endpoint: "/v9/projects?limit=10"
+        method: "GET"
+        expected_status: [200]
+        description: "List projects (token scope check)"
+      - name: "list_deployments"
+        endpoint: "/v6/deployments?limit=5"
+        method: "GET"
+        expected_status: [200]
+        description: "List recent deployments"
+      - name: "production_health"
+        endpoint: "https://erp.insightpulseai.com/web/health"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check production domain health"
+
+    evidence_fields:
+      - "user_id"
+      - "user_email"
+      - "team_id"
+      - "project_count"
+
+  # ---------------------------------------------------------------------------
+  # GITHUB
+  # ---------------------------------------------------------------------------
+  github:
+    name: "GitHub"
+    type: "vcs/ci"
+    enabled: true
+    risk_tier: "critical"
+    owner: "devops-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      api:
+        url: "https://api.github.com"
+        auth_method: "bearer"
+        auth_env: "GITHUB_TOKEN"
+
+    env_vars:
+      required:
+        - GITHUB_TOKEN
+      optional:
+        - GH_TOKEN
+        - GITHUB_REPOSITORY
+
+    test_suite:
+      - name: "auth_test"
+        endpoint: "/user"
+        method: "GET"
+        expected_status: [200]
+        description: "Validate token authentication"
+      - name: "rate_limit"
+        endpoint: "/rate_limit"
+        method: "GET"
+        expected_status: [200]
+        description: "Check rate limit status"
+      - name: "list_workflows"
+        endpoint: "/repos/jgtolentino/odoo-ce/actions/workflows"
+        method: "GET"
+        expected_status: [200]
+        description: "List repo workflows"
+      - name: "recent_runs"
+        endpoint: "/repos/jgtolentino/odoo-ce/actions/runs?per_page=5"
+        method: "GET"
+        expected_status: [200]
+        description: "List recent workflow runs"
+      - name: "repo_permissions"
+        endpoint: "/repos/jgtolentino/odoo-ce"
+        method: "GET"
+        expected_status: [200]
+        description: "Check repo access permissions"
+
+    evidence_fields:
+      - "rate_limit_remaining"
+      - "rate_limit_reset"
+      - "user_login"
+      - "user_scopes"
+
+  # ---------------------------------------------------------------------------
+  # ODOO
+  # ---------------------------------------------------------------------------
+  odoo:
+    name: "Odoo CE 19"
+    type: "erp"
+    enabled: true
+    risk_tier: "critical"
+    owner: "platform-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      web:
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}"
+        auth_method: "session"
+      jsonrpc:
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}/jsonrpc"
+        auth_method: "session"
+      health:
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}/web/health"
+        auth_method: "none"
+
+    env_vars:
+      required:
+        - ODOO_BASE_URL
+      optional:
+        - ODOO_ADMIN_USER
+        - ODOO_ADMIN_PASS
+        - ODOO_DB_NAME
+
+    test_suite:
+      - name: "health_check"
+        endpoint: "/web/health"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check Odoo health endpoint"
+      - name: "login_page"
+        endpoint: "/web/login"
+        method: "GET"
+        auth: "none"
+        expected_status: [200, 303]
+        description: "Check login page accessibility"
+      - name: "version_info"
+        endpoint: "/web/webclient/version_info"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Get Odoo version info"
+
+    evidence_fields:
+      - "version"
+      - "server_version_info"
+      - "database_name"
+
+  # ---------------------------------------------------------------------------
+  # DIGITALOCEAN
+  # ---------------------------------------------------------------------------
+  digitalocean:
+    name: "DigitalOcean"
+    type: "infrastructure"
+    enabled: true
+    risk_tier: "critical"
+    owner: "infra-team"
+    rotation_policy: "180 days"
+
+    endpoints:
+      api:
+        url: "https://api.digitalocean.com/v2"
+        auth_method: "bearer"
+        auth_env: "DO_API_TOKEN"
+
+    env_vars:
+      required:
+        - DO_API_TOKEN
+      optional:
+        - DO_DROPLET_ID
+        - DO_DATABASE_ID
+
+    test_suite:
+      - name: "auth_test"
+        endpoint: "/account"
+        method: "GET"
+        expected_status: [200]
+        description: "Validate API token"
+      - name: "list_droplets"
+        endpoint: "/droplets"
+        method: "GET"
+        expected_status: [200]
+        description: "List droplets"
+      - name: "list_databases"
+        endpoint: "/databases"
+        method: "GET"
+        expected_status: [200]
+        description: "List managed databases"
+      - name: "droplet_health"
+        endpoint: "https://178.128.112.214:443"
+        method: "HEAD"
+        auth: "none"
+        expected_status: [200, 301, 302, 400]
+        description: "Check droplet connectivity"
+
+    evidence_fields:
+      - "account_email"
+      - "droplet_count"
+      - "database_count"
+      - "droplet_ips"
+
+  # ---------------------------------------------------------------------------
+  # SLACK
+  # ---------------------------------------------------------------------------
+  slack:
+    name: "Slack"
+    type: "communication"
+    enabled: true
+    risk_tier: "medium"
+    owner: "platform-team"
+    rotation_policy: "never"
+
+    endpoints:
+      api:
+        url: "https://slack.com/api"
+        auth_method: "bearer"
+        auth_env: "SLACK_BOT_TOKEN"
+
+    env_vars:
+      required:
+        - SLACK_BOT_TOKEN
+      optional:
+        - SLACK_TEST_CHANNEL
+        - SLACK_SIGNING_SECRET
+
+    test_suite:
+      - name: "auth_test"
+        endpoint: "/auth.test"
+        method: "POST"
+        expected_status: [200]
+        description: "Validate bot token"
+      - name: "list_conversations"
+        endpoint: "/conversations.list?types=public_channel&limit=5"
+        method: "GET"
+        expected_status: [200]
+        description: "List accessible channels"
+      - name: "bot_info"
+        endpoint: "/bots.info"
+        method: "GET"
+        expected_status: [200]
+        description: "Get bot information"
+
+    evidence_fields:
+      - "team_id"
+      - "team_name"
+      - "bot_id"
+      - "scopes"
+
+  # ---------------------------------------------------------------------------
+  # MAILGUN
+  # ---------------------------------------------------------------------------
+  mailgun:
+    name: "Mailgun"
+    type: "email"
+    enabled: true
+    risk_tier: "high"
+    owner: "platform-team"
+    rotation_policy: "365 days"
+
+    # IMPORTANT: Zoho + Mailgun coexistence architecture
+    # - Root domain (insightpulseai.com): MX → Zoho (inbound mail)
+    # - Subdomain (mg.insightpulseai.com): Mailgun (outbound transactional)
+    coexistence:
+      root_domain: "insightpulseai.com"
+      mailgun_subdomain: "mg.insightpulseai.com"
+      inbound_provider: "zoho"
+      outbound_provider: "mailgun"
+
+    endpoints:
+      api:
+        url: "https://api.mailgun.net/v3"
+        auth_method: "basic"
+        auth_env: "MAILGUN_API_KEY"
+
+    env_vars:
+      required:
+        - MAILGUN_API_KEY
+        - MAILGUN_DOMAIN
+      optional:
+        - MAILGUN_WEBHOOK_SIGNING_KEY
+        - MAILGUN_TEST_TO
+        - ROOT_DOMAIN
+        - EXPECTED_MG_DOMAIN
+
+    test_suite:
+      # Coexistence DNS assertions
+      - name: "domain_policy"
+        description: "Verify MAILGUN_DOMAIN is mg.insightpulseai.com"
+        expected_status: "PASS"
+      - name: "root_mx_zoho"
+        description: "Verify root MX points to Zoho"
+        expected_status: "PASS"
+      - name: "root_spf_includes"
+        description: "Verify root SPF includes Zoho and Mailgun"
+        expected_status: "PASS"
+      - name: "dmarc_exists"
+        description: "Verify DMARC record exists"
+        expected_status: "PASS"
+      - name: "mg_subdomain_spf"
+        description: "Verify Mailgun subdomain has SPF"
+        expected_status: "PASS"
+      # Mailgun API checks
+      - name: "domain_info"
+        endpoint: "/domains/${MAILGUN_DOMAIN}"
+        method: "GET"
+        expected_status: [200]
+        description: "Get domain verification status"
+      - name: "domain_stats"
+        endpoint: "/${MAILGUN_DOMAIN}/stats/total?event=accepted&event=failed&duration=7d"
+        method: "GET"
+        expected_status: [200]
+        description: "Get 7-day email stats"
+      - name: "routes_list"
+        endpoint: "/routes"
+        method: "GET"
+        expected_status: [200]
+        description: "List email routes"
+      - name: "events_query"
+        endpoint: "/${MAILGUN_DOMAIN}/events?limit=10"
+        method: "GET"
+        expected_status: [200]
+        description: "Query recent events"
+
+    evidence_fields:
+      - "domain_state"
+      - "sending_dns_status"
+      - "receiving_dns_status"
+      - "accepted_count_7d"
+      - "failed_count_7d"
+      - "zoho_coexistence"
+
+  # ---------------------------------------------------------------------------
+  # PLANE CE
+  # ---------------------------------------------------------------------------
+  plane:
+    name: "Plane CE"
+    type: "project_management"
+    enabled: true
+    risk_tier: "medium"
+    owner: "platform-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      api:
+        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.com}/api/v1"
+        auth_method: "bearer"
+        auth_env: "PLANE_API_TOKEN"
+      web:
+        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.com}"
+        auth_method: "none"
+
+    env_vars:
+      required:
+        - PLANE_BASE_URL
+        - PLANE_API_TOKEN
+      optional:
+        - PLANE_WORKSPACE_SLUG
+
+    test_suite:
+      - name: "web_health"
+        endpoint: "/"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check web UI accessibility"
+      - name: "auth_test"
+        endpoint: "/users/me/"
+        method: "GET"
+        expected_status: [200]
+        description: "Validate API token"
+      - name: "list_workspaces"
+        endpoint: "/workspaces/"
+        method: "GET"
+        expected_status: [200]
+        description: "List workspaces"
+
+    evidence_fields:
+      - "user_id"
+      - "workspace_count"
+
+  # ---------------------------------------------------------------------------
+  # SUPERSET
+  # ---------------------------------------------------------------------------
+  superset:
+    name: "Apache Superset"
+    type: "bi/analytics"
+    enabled: true
+    risk_tier: "medium"
+    owner: "analytics-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      api:
+        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.com}/api/v1"
+        auth_method: "jwt"
+        auth_env: "SUPERSET_TOKEN"
+      web:
+        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.com}"
+        auth_method: "none"
+
+    env_vars:
+      required:
+        - SUPERSET_BASE_URL
+      optional:
+        - SUPERSET_TOKEN
+        - SUPERSET_USERNAME
+        - SUPERSET_PASSWORD
+
+    test_suite:
+      - name: "web_health"
+        endpoint: "/health"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check health endpoint"
+      - name: "login_page"
+        endpoint: "/login/"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check login accessibility"
+      - name: "databases_list"
+        endpoint: "/database/"
+        method: "GET"
+        expected_status: [200, 401]
+        description: "List database connections"
+
+    evidence_fields:
+      - "version"
+      - "database_count"
+
+  # ---------------------------------------------------------------------------
+  # N8N
+  # ---------------------------------------------------------------------------
+  n8n:
+    name: "n8n"
+    type: "automation"
+    enabled: true
+    risk_tier: "high"
+    owner: "automation-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      api:
+        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.com}/api/v1"
+        auth_method: "header"
+        auth_header: "X-N8N-API-KEY"
+        auth_env: "N8N_API_KEY"
+      web:
+        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.com}"
+        auth_method: "none"
+
+    env_vars:
+      required:
+        - N8N_BASE_URL
+      optional:
+        - N8N_API_KEY
+
+    test_suite:
+      - name: "web_health"
+        endpoint: "/healthz"
+        method: "GET"
+        auth: "none"
+        expected_status: [200]
+        description: "Check health endpoint"
+      - name: "workflows_list"
+        endpoint: "/workflows"
+        method: "GET"
+        expected_status: [200, 401]
+        description: "List workflows (if API enabled)"
+      - name: "executions_list"
+        endpoint: "/executions?limit=5"
+        method: "GET"
+        expected_status: [200, 401]
+        description: "List recent executions"
+
+    evidence_fields:
+      - "workflow_count"
+      - "execution_count"
+
+  # ---------------------------------------------------------------------------
+  # GOOGLE CLOUD (GCP)
+  # ---------------------------------------------------------------------------
+  gcp:
+    name: "Google Cloud Platform"
+    type: "cloud_infrastructure"
+    enabled: false  # Enable when GCP credentials available
+    risk_tier: "critical"
+    owner: "infra-team"
+    rotation_policy: "90 days"
+
+    endpoints:
+      resource_manager:
+        url: "https://cloudresourcemanager.googleapis.com/v1"
+        auth_method: "oauth2"
+      iam:
+        url: "https://iam.googleapis.com/v1"
+        auth_method: "oauth2"
+
+    env_vars:
+      required: []
+      optional:
+        - GCP_SERVICE_ACCOUNT_JSON
+        - GOOGLE_APPLICATION_CREDENTIALS
+        - GCP_PROJECT_ID
+
+    test_suite:
+      - name: "list_projects"
+        endpoint: "/projects"
+        method: "GET"
+        expected_status: [200]
+        description: "List accessible projects"
+      - name: "list_services"
+        endpoint: "/projects/${GCP_PROJECT_ID}/services"
+        method: "GET"
+        expected_status: [200]
+        description: "List enabled APIs"
+
+    evidence_fields:
+      - "project_count"
+      - "service_accounts"
+
+# =============================================================================
+# AUDIT CONFIGURATION
+# =============================================================================
+audit_config:
+  output_dir: "artifacts/audit"
+  retention_days: 30
+  parallel_checks: true
+  timeout_seconds: 30
+  retry_attempts: 3
+  retry_backoff_base: 2
+
+  # Thresholds for alerts
+  thresholds:
+    latency_warning_ms: 2000
+    latency_critical_ms: 5000
+    rate_limit_warning_pct: 70
+    rate_limit_critical_pct: 90
+
+  # Issue creation configuration
+  issues:
+    enabled: true
+    repo: "jgtolentino/odoo-ce"
+    labels:
+      critical: ["critical", "integration", "audit"]
+      warning: ["warning", "integration", "audit"]
+      info: ["info", "integration"]
+
+# =============================================================================
+# RISK TIER DEFINITIONS
+# =============================================================================
+risk_tiers:
+  critical:
+    description: "Core production systems - outage affects all users"
+    sla_minutes: 15
+    notification: "immediate"
+  high:
+    description: "Important systems - outage affects key workflows"
+    sla_minutes: 60
+    notification: "within_hour"
+  medium:
+    description: "Supporting systems - outage causes inconvenience"
+    sla_minutes: 240
+    notification: "daily"
+  low:
+    description: "Non-essential systems - outage is acceptable"
+    sla_minutes: 1440
+    notification: "weekly"

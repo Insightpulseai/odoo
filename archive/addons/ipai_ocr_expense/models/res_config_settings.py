@@ -30,7 +30,7 @@ class ResConfigSettings(models.TransientModel):
     ipai_ocr_enabled = fields.Boolean(string="Enable InsightPulse OCR")
     ipai_ocr_api_url = fields.Char(
         string="InsightPulse OCR API URL",
-        help="Base URL for the OCR endpoint, e.g. https://ocr.insightpulseai.net/api/expense/ocr",
+        help="Base URL for the OCR endpoint, e.g. https://ocr.insightpulseai.com/api/expense/ocr",
     )
     ipai_ocr_api_key = fields.Char(
         string="InsightPulse OCR API Key",

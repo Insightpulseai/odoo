@@ -17,7 +17,7 @@ All app subdomains terminate on the same droplet, demultiplexed by nginx virtual
 | Subdomain | Type | Target | Service |
 |-----------|------|--------|---------|
 | @ | A | 178.128.112.214 | Root site |
-| www | CNAME | insightpulseai.net | Canonical WWW alias |
+| www | CNAME | insightpulseai.com | Canonical WWW alias |
 | erp | A | 178.128.112.214 | Odoo production |
 | erp.staging | A | 178.128.112.214 | Odoo staging |
 | n8n | A | 178.128.112.214 | n8n automation |
@@ -25,7 +25,7 @@ All app subdomains terminate on the same droplet, demultiplexed by nginx virtual
 | auth | A | 178.128.112.214 | Auth/IdP/SSO |
 | superset | A | 178.128.112.214 | Apache Superset BI |
 
-### Mailgun DNS (mg.insightpulseai.net)
+### Mailgun DNS (mg.insightpulseai.com)
 
 **MX Records**:
 | Host | Priority | Value |
@@ -66,14 +66,14 @@ All app subdomains terminate on the same droplet, demultiplexed by nginx virtual
 **Certificates**:
 | Domain | Certificate Path | Expiry | SANs |
 |--------|------------------|--------|------|
-| erp.insightpulseai.net | `/etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem` | 2026-04-08 | erp, n8n, superset |
-| erp.staging.insightpulseai.net | `/etc/letsencrypt/live/erp.staging.insightpulseai.net/` | (Let's Encrypt managed) | staging |
+| erp.insightpulseai.com | `/etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem` | 2026-04-08 | erp, n8n, superset |
+| erp.staging.insightpulseai.com | `/etc/letsencrypt/live/erp.staging.insightpulseai.com/` | (Let's Encrypt managed) | staging |
 
 **Renewal**: Automated via certbot (systemd timer or cron)
 
 ### Virtual Hosts
 
-**Production** (`erp.insightpulseai.net`):
+**Production** (`erp.insightpulseai.com`):
 ```nginx
 upstream odoo {
     server odoo:8069;
@@ -85,10 +85,10 @@ upstream odoo_im {
 
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
 
     client_max_body_size 100M;
     proxy_read_timeout 720s;
@@ -108,7 +108,7 @@ server {
 }
 ```
 
-**Staging** (`erp.staging.insightpulseai.net`):
+**Staging** (`erp.staging.insightpulseai.com`):
 - Same structure as production
 - Upstream: `odoo-staging:8069`
 - Visual indicator: `X-Environment: STAGING` header
@@ -331,7 +331,7 @@ received_at     timestamptz not null default now()
 ```
 Odoo CE (ipai_mailgun_bridge)
     ↓ HTTP POST
-Mailgun API (mg.insightpulseai.net)
+Mailgun API (mg.insightpulseai.com)
     ↓ SMTP
 Recipient MX
     ↓ Events (delivered, opened, clicked)
@@ -377,7 +377,7 @@ cd /opt/odoo-ce/repo
 git pull origin main
 docker compose exec odoo-prod odoo -d odoo -u all --stop-after-init
 docker compose restart odoo-prod
-curl -f https://erp.insightpulseai.net/web/health || echo "Health check failed"
+curl -f https://erp.insightpulseai.com/web/health || echo "Health check failed"
 EOF
 ```
 
@@ -415,9 +415,9 @@ EOF
 
 | Service | Endpoint | Expected Response |
 |---------|----------|-------------------|
-| Odoo Production | `https://erp.insightpulseai.net/web/health` | HTTP 200 |
-| Odoo Staging | `https://erp.staging.insightpulseai.net/web/health` | HTTP 200 |
-| n8n | `https://n8n.insightpulseai.net/healthz` | HTTP 200 |
+| Odoo Production | `https://erp.insightpulseai.com/web/health` | HTTP 200 |
+| Odoo Staging | `https://erp.staging.insightpulseai.com/web/health` | HTTP 200 |
+| n8n | `https://n8n.insightpulseai.com/healthz` | HTTP 200 |
 | Supabase | `https://{project_ref}.supabase.co/rest/v1/` | HTTP 200 (with auth) |
 
 ### Monitoring Checks (n8n workflows)
@@ -438,8 +438,8 @@ EOF
 - Application logs: `/var/log/odoo/odoo.log` (inside container)
 
 **Nginx**:
-- Access logs: `/var/log/nginx/erp.insightpulseai.net.access.log`
-- Error logs: `/var/log/nginx/erp.insightpulseai.net.error.log`
+- Access logs: `/var/log/nginx/erp.insightpulseai.com.access.log`
+- Error logs: `/var/log/nginx/erp.insightpulseai.com.error.log`
 
 **PostgreSQL** (Managed):
 - DigitalOcean control panel metrics
@@ -482,7 +482,7 @@ MAILGUN_SIGNING_KEY=<mailgun_signing_key>
 
 **Verification Command**:
 ```bash
-openssl s_client -connect erp.insightpulseai.net:443 -servername erp.insightpulseai.net < /dev/null 2>/dev/null | openssl x509 -noout -dates
+openssl s_client -connect erp.insightpulseai.com:443 -servername erp.insightpulseai.com < /dev/null 2>/dev/null | openssl x509 -noout -dates
 ```
 
 ---
@@ -493,16 +493,16 @@ openssl s_client -connect erp.insightpulseai.net:443 -servername erp.insightpuls
 
 ### DNS Verification
 ```bash
-dig +short insightpulseai.net A
-dig +short erp.insightpulseai.net A
-dig +short mg.insightpulseai.net MX
-dig +short mg.insightpulseai.net TXT
+dig +short insightpulseai.com A
+dig +short erp.insightpulseai.com A
+dig +short mg.insightpulseai.com MX
+dig +short mg.insightpulseai.com TXT
 ```
 
 ### Service Health
 ```bash
-curl -f https://erp.insightpulseai.net/web/health
-curl -f https://erp.staging.insightpulseai.net/web/health
+curl -f https://erp.insightpulseai.com/web/health
+curl -f https://erp.staging.insightpulseai.com/web/health
 ```
 
 ### Docker Status (on 178.128.112.214)
@@ -512,7 +512,7 @@ ssh root@178.128.112.214 "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.
 
 ### Certificate Validity
 ```bash
-echo | openssl s_client -servername erp.insightpulseai.net -connect erp.insightpulseai.net:443 2>/dev/null | openssl x509 -noout -dates
+echo | openssl s_client -servername erp.insightpulseai.com -connect erp.insightpulseai.com:443 2>/dev/null | openssl x509 -noout -dates
 ```
 
 ### Supabase Schema
@@ -563,7 +563,7 @@ I checked the nginx config and I see it's configured for...
 
 - **DNS Details**: `docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md`
 - **Odoo Details**: `docs/infra/CANONICAL_ODOO_PACK.md`
-- **Nginx Config**: `deploy/nginx/erp.insightpulseai.net.conf`
+- **Nginx Config**: `deploy/nginx/erp.insightpulseai.com.conf`
 - **Email Events Runbook**: `docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md`
 - **Agent Skills**: `docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md`
 - **Odoo.sh Parity**: `docs/parity/odoo_sh/ODOO_SH_FEATURES_MAP.md`

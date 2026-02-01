@@ -9,7 +9,7 @@ import requests
 
 # URL of your n8n Webhook
 # IMPORTANT: Ensure this matches your n8n domain
-webhook_url = "https://ipa.insightpulseai.net/webhook/enrich-contact"
+webhook_url = "https://ipa.insightpulseai.com/webhook/enrich-contact"
 
 # Payload to send to AI
 payload = {

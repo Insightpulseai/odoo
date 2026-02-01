@@ -42,7 +42,7 @@ Infrastructure delta: +$50/month (parallel staging environment)
 ## 2. Problem Statement
 
 ### Current State
-- Odoo 18 CE deployed at erp.insightpulseai.net
+- Odoo 18 CE deployed at erp.insightpulseai.com
 - 80+ ipai_* custom modules
 - 15+ OCA dependencies
 - PostgreSQL 16 on DigitalOcean Managed DB

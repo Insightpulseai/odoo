@@ -81,9 +81,9 @@ Tasks prepended with original category names:
 
 | Key | Value | Status |
 |-----|-------|--------|
-| bir.reminder.n8n.webhook | https://ipa.insightpulseai.net/webhook/bir-reminder | ✓ |
-| bir.overdue.n8n.webhook | https://ipa.insightpulseai.net/webhook/bir-overdue-nudge | ✓ |
-| bir.reminder.mattermost.webhook | https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID | ⚠ Needs update |
+| bir.reminder.n8n.webhook | https://ipa.insightpulseai.com/webhook/bir-reminder | ✓ |
+| bir.overdue.n8n.webhook | https://ipa.insightpulseai.com/webhook/bir-overdue-nudge | ✓ |
+| bir.reminder.mattermost.webhook | https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID | ⚠ Needs update |
 
 ### 4. Finance PPM Module ✓
 
@@ -234,7 +234,7 @@ Original categories mapped to Odoo selection values:
 
 ### 1. Update Mattermost Webhook ⏳
 
-**Current Value**: `https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID`
+**Current Value**: `https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID`
 
 **Update via CLI**:
 ```python
@@ -254,7 +254,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
 # Update parameter
 models.execute_kw(db, uid, password, 'ir.config_parameter', 'set_param', [
     'bir.reminder.mattermost.webhook',
-    'https://mattermost.insightpulseai.net/hooks/YOUR_ACTUAL_WEBHOOK_ID'
+    'https://mattermost.insightpulseai.com/hooks/YOUR_ACTUAL_WEBHOOK_ID'
 ])
 
 print("✓ Mattermost webhook updated")
@@ -294,7 +294,7 @@ EOF
 - `/automations/n8n/bir_overdue_nudge_workflow.json`
 
 **Import via n8n UI**:
-1. Navigate to n8n: https://ipa.insightpulseai.net
+1. Navigate to n8n: https://ipa.insightpulseai.com
 2. Workflows → Import from File
 3. Upload JSON files
 4. Activate workflows

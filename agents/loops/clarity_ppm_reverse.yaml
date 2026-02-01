@@ -271,6 +271,6 @@ example_usage:
     "Map Clarity PPM portfolio management to ipai_ppm_* modules"
 
   n8n_workflow: |
-    POST https://ipa.insightpulseai.net/api/v1/workflows/<workflow_id>/execute
+    POST https://ipa.insightpulseai.com/api/v1/workflows/<workflow_id>/execute
     Headers: X-N8N-API-KEY: $N8N_API_KEY
     Body: {"saas_product": "clarity_ppm", "auto_deploy": true}

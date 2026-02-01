@@ -16,7 +16,7 @@ class PurchaseOrderMattermostIntegration(models.Model):
         """
         Send approval notification to Mattermost when PO state changes to 'to approve'
         """
-        webhook_url = "https://chat.insightpulseai.net/hooks/YOUR_WEBHOOK_ID"
+        webhook_url = "https://chat.insightpulseai.com/hooks/YOUR_WEBHOOK_ID"
 
         # Logic to determine approver based on amount
         if self.amount_total > 50000:
@@ -36,7 +36,7 @@ class PurchaseOrderMattermostIntegration(models.Model):
 
 {approver}, please check Odoo to approve this purchase order.
 
-[View in Odoo](https://erp.insightpulseai.net/web#id={self.id}&model=purchase.order&view_type=form)"""
+[View in Odoo](https://erp.insightpulseai.com/web#id={self.id}&model=purchase.order&view_type=form)"""
         }
 
         try:
@@ -61,7 +61,7 @@ class ExpenseMattermostIntegration(models.Model):
         """
         Send expense approval notification to Mattermost
         """
-        webhook_url = "https://chat.insightpulseai.net/hooks/YOUR_WEBHOOK_ID"
+        webhook_url = "https://chat.insightpulseai.com/hooks/YOUR_WEBHOOK_ID"
 
         message = {
             "text": f"""💰 **Expense Approval Needed**
@@ -73,7 +73,7 @@ class ExpenseMattermostIntegration(models.Model):
 
 @finance-team, please review this expense in Odoo.
 
-[View in Odoo](https://erp.insightpulseai.net/web#id={self.id}&model=hr.expense&view_type=form)"""
+[View in Odoo](https://erp.insightpulseai.com/web#id={self.id}&model=hr.expense&view_type=form)"""
         }
 
         try:

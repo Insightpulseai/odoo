@@ -24,7 +24,7 @@ Integration:
 - Health endpoint at /ipai/ocr/health
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

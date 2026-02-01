@@ -18,7 +18,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://ocr.insightpulseai.net/api/ocr/invoice",
+        "url": "https://ocr.insightpulseai.com/api/ocr/invoice",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -83,7 +83,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"res.partner\",\n      \"search_read\",\n      [[[\"vat\", \"=\", \"{{ $json.vendor.vat }}\"]]],\n      {\"fields\": [\"id\", \"name\"], \"limit\": 1}\n    ]\n  },\n  \"id\": 1\n}",
@@ -98,7 +98,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"account.move\",\n      \"create\",\n      [{{ JSON.stringify($json.invoice) }}]\n    ]\n  },\n  \"id\": 2\n}",
@@ -113,7 +113,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "url": "https://chat.insightpulseai.com/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"journal-entries\",\n  \"username\": \"Invoice Bot\",\n  \"icon_url\": \"https://odoo.com/favicon.ico\",\n  \"text\": \"#### New Vendor Invoice Created\\n| Field | Value |\\n|:--|:--|\\n| **Vendor** | {{ $json.vendor.name }} |\\n| **Invoice #** | {{ $json.raw.invoice_number }} |\\n| **Amount** | {{ $json.raw.currency }} {{ $json.raw.total_amount }} |\\n| **Due Date** | {{ $json.raw.due_date }} |\\n| **Odoo ID** | {{ $json.result }} |\"\n}",
