@@ -29,6 +29,14 @@ class Settings(BaseSettings):
     enable_aggregation: bool = True
     cache_ttl: int = 300  # 5 minutes
 
+    # GitHub App settings (pulser-hub)
+    github_app_id: Optional[str] = None
+    github_client_id: Optional[str] = None
+    github_client_secret: Optional[str] = None
+    github_webhook_secret: Optional[str] = None
+    github_app_private_key_b64: Optional[str] = None  # Base64 encoded PEM
+    public_base_url: Optional[str] = None  # For OAuth callbacks
+
     class Config:
         env_file = ".env"
 
