@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 27c6d61a5abbcab62d17dda4327b870b2158cceb
+> Commit: 128100a0442db4e92a15b4e76d79e6c5c2714736
 
 ```
 .
@@ -2883,6 +2883,31 @@
 │   │   └── collab-stack.md
 │   ├── mattermost
 │   │   └── channel_setup.json
+│   ├── platform-kit
+│   │   ├── docs
+│   │   │   └── .gitkeep
+│   │   ├── figma
+│   │   │   └── .gitkeep
+│   │   ├── github
+│   │   │   ├── workflows
+│   │   │   └── .gitkeep
+│   │   ├── mcp
+│   │   │   ├── servers
+│   │   │   ├── skills
+│   │   │   ├── tools
+│   │   │   └── .gitkeep
+│   │   ├── n8n
+│   │   │   ├── credentials-templates
+│   │   │   ├── workflows
+│   │   │   └── .gitkeep
+│   │   ├── slack
+│   │   │   └── .gitkeep
+│   │   ├── supabase
+│   │   │   ├── functions
+│   │   │   ├── migrations
+│   │   │   └── seed
+│   │   └── vercel
+│   │       └── .gitkeep
 │   ├── stack
 │   │   ├── .env.example
 │   │   └── compose.stack.yml
@@ -5287,15 +5312,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1467 directories, 3815 files
+1485 directories, 3822 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1715 |
-| Files | 5124 |
+| Directories | 1733 |
+| Files | 5140 |
 | Python files | 854 |
 | XML files | 305 |
 | Markdown files | 1298 |
