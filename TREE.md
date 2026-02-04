@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 128100a0442db4e92a15b4e76d79e6c5c2714736
+> Commit: 5ab83c261f9fde497bc7b18edb48eb7c55025ce1
 
 ```
 .
@@ -2097,15 +2097,19 @@
 │   │   ├── CANONICAL_ODOO_PACK.md
 │   │   ├── CANONICAL_ODOO_STACK_SNAPSHOT.md
 │   │   ├── DATABRICKS_TRAINING_GUIDELINES.md
+│   │   ├── DNS_DELEGATION_SQUARESPACE_TO_DO.md
 │   │   ├── DNS_ENHANCEMENT_GUIDE.md
 │   │   ├── EMAIL_INFRASTRUCTURE_STRATEGY.md
 │   │   ├── GIT_PREFLIGHT_DEPLOYMENT_REPORT.md
 │   │   ├── GIT_PREFLIGHT_INTEGRATION.md
 │   │   ├── GIT_PREFLIGHT_SUMMARY.md
+│   │   ├── GOOGLE_WORKSPACE_BRIDGE.md
 │   │   ├── IMPLEMENTATION_COMPLETE.md
+│   │   ├── IMPLEMENTATION_SUMMARY_DNS_NO_UI.md
 │   │   ├── MAILGUN_INTEGRATION.md
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
+│   │   ├── NO_UI_POLICY_QUICK_REFERENCE.md
 │   │   ├── ODOO_SHADOW_SCHEMA.md
 │   │   ├── ODOO_SUPABASE_MASTER_PATTERN.md
 │   │   ├── SECRETS_MANAGEMENT.md
@@ -3751,6 +3755,16 @@
 │   ├── dev
 │   │   ├── install-ee-parity-modules.sh
 │   │   └── list-ee-parity-modules.sh
+│   ├── dns
+│   │   ├── README.md
+│   │   ├── backup-dns-config.sh
+│   │   ├── cleanup-preview-dns.sh
+│   │   ├── create-preview-dns.sh
+│   │   ├── export-dns-to-terraform.sh
+│   │   ├── migrate-dns-to-do.sh
+│   │   ├── setup-do-domain.sh
+│   │   ├── verify-delegation-complete.sh
+│   │   └── verify-do-dns.sh
 │   ├── docs
 │   │   ├── build_llms_full.sh
 │   │   ├── fetch_external_llms_packs.sh
@@ -3863,6 +3877,9 @@
 │   ├── odoo_parity
 │   │   ├── build_oca_bundle.py
 │   │   └── check_ee_parity.py
+│   ├── ops
+│   │   ├── install-cli-tools.sh
+│   │   └── verify-cli-stack.sh
 │   ├── parity
 │   │   ├── audit_ee_parity.sh
 │   │   ├── check_ipai_foundation.sh
@@ -5312,15 +5329,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1485 directories, 3822 files
+1487 directories, 3837 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1733 |
-| Files | 5140 |
+| Directories | 1735 |
+| Files | 5155 |
 | Python files | 854 |
 | XML files | 305 |
-| Markdown files | 1298 |
+| Markdown files | 1303 |
