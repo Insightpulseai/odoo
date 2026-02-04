@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 128100a0442db4e92a15b4e76d79e6c5c2714736
+> Commit: 5ab83c261f9fde497bc7b18edb48eb7c55025ce1
 
 ## 📚 Documentation
 
@@ -519,15 +519,19 @@
 | [Canonical Odoo Pack - Architecture & Layout](docs/infra/CANONICAL_ODOO_PACK.md) | docs/infra |
 | [CANONICAL_ODOO_STACK_SNAPSHOT.md](docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md) | docs/infra |
 | [Databricks Training Guidelines for Agent Development](docs/infra/DATABRICKS_TRAINING_GUIDELINES.md) | docs/infra |
+| [DNS Delegation: Squarespace → DigitalOcean](docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md) | docs/infra |
 | [DNS Enhancement Guide - insightpulseai.com](docs/infra/DNS_ENHANCEMENT_GUIDE.md) | docs/infra |
 | [Email Infrastructure Strategy - insightpulseai.com](docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md) | docs/infra |
 | [Git Pre-Flight Integration - Deployment Report](docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md) | docs/infra |
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
+| [Google Workspace Integration Strategy - "The Bridge"](docs/infra/GOOGLE_WORKSPACE_BRIDGE.md) | docs/infra |
 | [Infra Memory Job - Implementation Complete ✅](docs/infra/IMPLEMENTATION_COMPLETE.md) | docs/infra |
+| [Implementation Summary: DNS Delegation & No-UI Policy](docs/infra/IMPLEMENTATION_SUMMARY_DNS_NO_UI.md) | docs/infra |
 | [Mailgun Integration](docs/infra/MAILGUN_INTEGRATION.md) | docs/infra |
 | [MCP Jobs System](docs/infra/MCP_JOBS_SYSTEM.md) | docs/infra |
 | [Memory Ingestion Edge Function](docs/infra/MEMORY_INGESTION.md) | docs/infra |
+| [No-UI Policy Quick Reference](docs/infra/NO_UI_POLICY_QUICK_REFERENCE.md) | docs/infra |
 | [Odoo Shadow Schema - Deployment Guide](docs/infra/ODOO_SHADOW_SCHEMA.md) | docs/infra |
 | [Odoo-Supabase Master Pattern](docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md) | docs/infra |
 | [Secrets Management for Odoo-Supabase Integration](docs/infra/SECRETS_MANAGEMENT.md) | docs/infra |
@@ -1038,6 +1042,7 @@
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Integration Audit Scripts](scripts/audit/README.md) | scripts/audit |
+| [DNS Automation Scripts](scripts/dns/README.md) | scripts/dns |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
 | [OCA/ipai Full Stack Installer](scripts/ocadev/README.md) | scripts/ocadev |
