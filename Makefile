@@ -10,7 +10,36 @@ help:
 	@echo "InsightPulse AI Platform - Make Targets"
 	@echo "========================================"
 	@echo ""
-	@echo "Dev Server (Cloud IDE):"
+	@echo "🚀 NO-UI POLICY: All operations via CLI (Autonomous Enterprise)"
+	@echo ""
+	@echo "📦 Setup & Verification:"
+	@echo "  make install-cli-tools      Install all CLI tools (gh, doctl, vercel, etc.)"
+	@echo "  make verify-cli-tools       Verify all tools are configured"
+	@echo ""
+	@echo "🌐 DNS Management (DigitalOcean):"
+	@echo "  make dns-list               List all DNS records"
+	@echo "  make dns-add                Add DNS record (SUB=api IP=1.2.3.4)"
+	@echo "  make dns-preview            Create preview DNS (BRANCH=feature/ui)"
+	@echo "  make dns-backup             Backup DNS configuration"
+	@echo "  make dns-delegate           Show nameserver delegation instructions"
+	@echo "  make dns-verify-delegation  Verify nameserver delegation"
+	@echo "  make dns-setup              Initial domain setup in DO"
+	@echo "  make dns-migrate            Migrate DNS records to DO"
+	@echo ""
+	@echo "🐙 GitHub Operations:"
+	@echo "  make gh-repos               List all repositories"
+	@echo "  make gh-issues              List open issues"
+	@echo "  make gh-prs                 List open pull requests"
+	@echo "  make gh-issue-create        Create issue (TITLE='...' BODY='...')"
+	@echo ""
+	@echo "☁️  Infrastructure (DigitalOcean):"
+	@echo "  make infra-list             List all DO resources"
+	@echo "  make infra-export           Export infrastructure state"
+	@echo ""
+	@echo "🎯 God Mode:"
+	@echo "  make provision-full-app     Provision app (NAME=app SUB=subdomain)"
+	@echo ""
+	@echo "💻 Dev Server (Cloud IDE):"
 	@echo "  make dev                    Start default dev server (Odoo Core)"
 	@echo "  make dev-minimal            Start minimal stack (Postgres + Odoo Core)"
 	@echo "  make dev-full               Start full stack (all services)"
@@ -20,24 +49,24 @@ help:
 	@echo "  make dev-status             Show running services"
 	@echo "  make dev-health             Run health checks on all services"
 	@echo ""
-	@echo "Tenant Provisioning:"
+	@echo "🏢 Tenant Provisioning:"
 	@echo "  make provision-tbwa         Provision TBWA tenant (shortcut)"
 	@echo "  make provision-tenant CODE=<code>  Provision arbitrary tenant"
 	@echo ""
-	@echo "Database:"
+	@echo "🗄️  Database:"
 	@echo "  make test-connection        Test Supabase connection"
 	@echo "  make migrate                Run Supabase migrations"
 	@echo ""
-	@echo "Odoo:"
+	@echo "🐳 Odoo:"
 	@echo "  make odoo-start             Start Odoo server"
 	@echo "  make odoo-stop              Stop Odoo server"
 	@echo "  make odoo-logs              View Odoo logs"
 	@echo ""
-	@echo "Superset:"
+	@echo "📊 Superset:"
 	@echo "  make superset-deploy        Deploy Superset to DO App Platform"
 	@echo "  make superset-logs          View Superset logs"
 	@echo ""
-	@echo "CI/CD:"
+	@echo "🔄 CI/CD:"
 	@echo "  make ci-notify-superset     Trigger Superset rebuild"
 	@echo ""
 
@@ -400,3 +429,180 @@ dev-health:
 	@echo ""
 	@echo "MCP Coordinator (8766):"
 	@curl -sf http://localhost:8766/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+
+# =============================================================================
+# DNS Management (DigitalOcean) - No-UI Policy Enforcement
+# =============================================================================
+.PHONY: dns-list dns-add dns-preview dns-backup dns-delegate dns-verify-delegation
+.PHONY: dns-setup dns-migrate dns-export-terraform
+
+DOMAIN := insightpulseai.com
+DROPLET_IP := 178.128.112.214
+
+# List all DNS records
+dns-list:
+	@echo "🌐 DNS Records for $(DOMAIN):"
+	@doctl compute domain records list $(DOMAIN) --format Type,Name,Data,TTL
+
+# Add DNS record (SUB=subdomain IP=ip_address)
+dns-add:
+	@if [ -z "$(SUB)" ] || [ -z "$(IP)" ]; then \
+		echo "Usage: make dns-add SUB=api IP=1.2.3.4"; \
+		exit 1; \
+	fi
+	@echo "🌐 Creating DNS record: $(SUB).$(DOMAIN) → $(IP)"
+	@doctl compute domain records create $(DOMAIN) \
+		--record-type A \
+		--record-name $(SUB) \
+		--record-data $(IP) \
+		--record-ttl 3600
+	@echo "✅ DNS record created"
+
+# Create preview DNS for branch (BRANCH=feature/name)
+dns-preview:
+	@if [ -z "$(BRANCH)" ]; then \
+		echo "Usage: make dns-preview BRANCH=feature/ui"; \
+		exit 1; \
+	fi
+	@echo "🌐 Creating preview DNS for branch: $(BRANCH)"
+	@./scripts/dns/create-preview-dns.sh "$(BRANCH)"
+
+# Backup DNS configuration
+dns-backup:
+	@echo "💾 Backing up DNS configuration..."
+	@./scripts/dns/backup-dns-config.sh
+
+# Show nameserver delegation instructions
+dns-delegate:
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "DNS Delegation Instructions"
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo ""
+	@echo "To delegate DNS from Squarespace to DigitalOcean:"
+	@echo ""
+	@echo "1. Log into Squarespace: https://account.squarespace.com"
+	@echo "2. Go to: Domains → $(DOMAIN) → DNS Settings"
+	@echo "3. Change nameservers to:"
+	@echo "   - ns1.digitalocean.com"
+	@echo "   - ns2.digitalocean.com"
+	@echo "   - ns3.digitalocean.com"
+	@echo ""
+	@echo "4. Wait 2-6 hours for propagation"
+	@echo "5. Verify: make dns-verify-delegation"
+	@echo ""
+	@echo "Full guide: docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md"
+
+# Verify nameserver delegation is complete
+dns-verify-delegation:
+	@./scripts/dns/verify-delegation-complete.sh
+
+# Initial domain setup in DigitalOcean
+dns-setup:
+	@echo "🌐 Setting up domain in DigitalOcean..."
+	@./scripts/dns/setup-do-domain.sh
+
+# Migrate existing DNS records to DigitalOcean
+dns-migrate:
+	@echo "🌐 Migrating DNS records to DigitalOcean..."
+	@./scripts/dns/migrate-dns-to-do.sh
+
+# Export DNS to Terraform format
+dns-export-terraform:
+	@echo "🌐 Exporting DNS to Terraform..."
+	@./scripts/dns/export-dns-to-terraform.sh
+
+# =============================================================================
+# CLI Tools Management - No-UI Policy Enforcement
+# =============================================================================
+.PHONY: install-cli-tools verify-cli-tools
+
+# Install all CLI tools (gh, doctl, vercel, supabase)
+install-cli-tools:
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "Installing CLI Tools..."
+	@echo "════════════════════════════════════════════════════════════════"
+	@./scripts/ops/install-cli-tools.sh
+
+# Verify all CLI tools are installed and configured
+verify-cli-tools:
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "Verifying CLI Stack..."
+	@echo "════════════════════════════════════════════════════════════════"
+	@./scripts/ops/verify-cli-stack.sh
+
+# =============================================================================
+# GitHub Operations (via gh CLI)
+# =============================================================================
+.PHONY: gh-repos gh-issues gh-prs
+
+ORG := jgtolentino
+
+# List repositories
+gh-repos:
+	@echo "🐙 Repositories in $(ORG):"
+	@gh repo list $(ORG) --limit 50
+
+# List issues
+gh-issues:
+	@echo "🐙 Open Issues:"
+	@gh issue list --state open
+
+# List pull requests
+gh-prs:
+	@echo "🐙 Open Pull Requests:"
+	@gh pr list --state open
+
+# Create issue (TITLE="..." BODY="...")
+gh-issue-create:
+	@if [ -z "$(TITLE)" ]; then \
+		echo "Usage: make gh-issue-create TITLE='Fix bug' BODY='Description'"; \
+		exit 1; \
+	fi
+	@echo "🐙 Creating issue: $(TITLE)"
+	@gh issue create --title "$(TITLE)" --body "$(BODY)"
+
+# =============================================================================
+# Infrastructure Operations (DigitalOcean)
+# =============================================================================
+.PHONY: infra-list infra-export
+
+# List DigitalOcean resources
+infra-list:
+	@echo "☁️  DigitalOcean Resources:"
+	@echo ""
+	@echo "Droplets:"
+	@doctl compute droplet list --format ID,Name,PublicIPv4,Status,Region
+	@echo ""
+	@echo "Databases:"
+	@doctl databases list --format ID,Name,Engine,Status,Region
+
+# Export infrastructure state
+infra-export:
+	@echo "☁️  Exporting infrastructure state..."
+	@./infra/doctl/export_state.sh
+
+# =============================================================================
+# God Mode - Full Stack Provisioning
+# =============================================================================
+.PHONY: provision-full-app
+
+# Provision complete application stack (NAME=app SUB=subdomain)
+provision-full-app:
+	@if [ -z "$(NAME)" ] || [ -z "$(SUB)" ]; then \
+		echo "Usage: make provision-full-app NAME=myapp SUB=api"; \
+		exit 1; \
+	fi
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "🎯 PROVISIONING: $(NAME)"
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo ""
+	@echo "Step 1/2: Creating DNS record..."
+	@$(MAKE) dns-add SUB=$(SUB) IP=$(DROPLET_IP)
+	@echo ""
+	@echo "Step 2/2: Application ready for deployment"
+	@echo ""
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "✅ PROVISIONING COMPLETE"
+	@echo "════════════════════════════════════════════════════════════════"
+	@echo "URL:        https://$(SUB).$(DOMAIN)"
+	@echo "Next:       Deploy your application to $(DROPLET_IP)"
