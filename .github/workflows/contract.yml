@@ -1,0 +1,13 @@
+name: contract
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/validate_repo_contract.sh

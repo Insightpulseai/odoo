@@ -1,0 +1,17 @@
+name: schema-drift
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+      - name: Odoo schema drift
+        run: ./scripts/odoo_db_schema_diff.sh
+      - name: Supabase schema drift
+        run: ./scripts/supabase_schema_diff.sh
