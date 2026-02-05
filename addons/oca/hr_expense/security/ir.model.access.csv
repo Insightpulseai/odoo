@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_expense_user,hr.expense.user,model_hr_expense,group_hr_expense_user,1,1,1,0
-access_hr_expense_manager,hr.expense.manager,model_hr_expense,group_hr_expense_manager,1,1,1,1
-access_hr_expense_sheet_user,hr.expense.sheet.user,model_hr_expense_sheet,group_hr_expense_user,1,1,1,0
-access_hr_expense_sheet_manager,hr.expense.sheet.manager,model_hr_expense_sheet,group_hr_expense_manager,1,1,1,1
