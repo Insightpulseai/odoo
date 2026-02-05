@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 662a05b1b07b4e103a402cb52557c624a70f4e1d
+> Commit: 380f7fa22d95a793a2dfd23b8da4d236ac74a08a
 
 ```
 .
@@ -89,6 +89,7 @@
 │   │   ├── codespaces-prebuild.yml
 │   │   ├── compose-topology-guard.yml
 │   │   ├── config-publish.yml
+│   │   ├── contract.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── curation-guardrail.yml
 │   │   ├── cursor-bugbot.yml
@@ -178,6 +179,7 @@
 │   │   ├── repo_layout.yml
 │   │   ├── reusable-pr-gate.yml
 │   │   ├── run-odoo-cli-job.yml
+│   │   ├── schema-drift.yml
 │   │   ├── secret-scan.yml
 │   │   ├── secrets-audit.yml
 │   │   ├── seed-odoo-finance.yml
@@ -2571,11 +2573,13 @@
 │   ├── REPO_TREE.contract.md
 │   ├── REPO_TREE.generated.md
 │   ├── SAAS_PARITY_READINESS.md
+│   ├── SCHEMA_NAMESPACE_POLICY.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEED_DATA_ASSESSMENT.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
 │   ├── SHIP_v1.1.0_SUMMARY.md
 │   ├── SITEMAP.md
+│   ├── SLUG_POLICY.md
 │   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── STAGING.md
@@ -4008,6 +4012,7 @@
 │   ├── oca-update.sh
 │   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
+│   ├── odoo_db_schema_diff.sh
 │   ├── odoo_ensure_modules_installed.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_install_from_manifests.sh
@@ -4046,6 +4051,7 @@
 │   ├── scaffold_ipai_parity.sh
 │   ├── scan_ipai_modules.py
 │   ├── scan_repos.sh
+│   ├── schema_drift_env_check.sh
 │   ├── score_repos.py
 │   ├── screenshot_production.sh
 │   ├── secret-scan.sh
@@ -4072,6 +4078,7 @@
 │   ├── start_local_odoo.sh
 │   ├── supabase_delete_user.sh
 │   ├── supabase_local.sh
+│   ├── supabase_schema_diff.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_agent_memory.py
@@ -4111,6 +4118,7 @@
 │   ├── validate_odoo_parity_plans.mjs
 │   ├── validate_production.sh
 │   ├── validate_registries.py
+│   ├── validate_repo_contract.sh
 │   ├── validate_repo_layout.sh
 │   ├── validate_spec_kit.py
 │   ├── validate_spec_kit.sh
@@ -5240,7 +5248,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1444 directories, 3791 files
+1444 directories, 3799 files
 ```
 
 ## 📊 Stats
@@ -5248,7 +5256,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1710 |
-| Files | 5103 |
+| Files | 5111 |
 | Python files | 826 |
 | XML files | 288 |
-| Markdown files | 1304 |
+| Markdown files | 1306 |
