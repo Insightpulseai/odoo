@@ -1,0 +1,12 @@
+name: repo-layout
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate layout
+        run: ./scripts/validate_repo_layout.sh
