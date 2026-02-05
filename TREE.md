@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 08aaf84388d0b2658d4b999d198f95ec9ab7ee77
+> Commit: 662a05b1b07b4e103a402cb52557c624a70f4e1d
 
 ```
 .
@@ -175,6 +175,7 @@
 │   │   ├── registry-validate.yml
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
+│   │   ├── repo_layout.yml
 │   │   ├── reusable-pr-gate.yml
 │   │   ├── run-odoo-cli-job.yml
 │   │   ├── secret-scan.yml
@@ -226,21 +227,6 @@
 │   ├── shortcuts.json
 │   └── tasks.json
 ├── addons
-│   ├── OCA
-│   │   ├── account-financial-reporting
-│   │   ├── account-financial-tools -> ../../external-src/account-financial-tools
-│   │   ├── automation
-│   │   ├── dms
-│   │   ├── helpdesk
-│   │   ├── partner-contact
-│   │   ├── queue
-│   │   ├── reporting-engine
-│   │   ├── sale-workflow
-│   │   ├── server-auth
-│   │   ├── server-brand
-│   │   ├── server-tools
-│   │   ├── server-ux
-│   │   └── web
 │   ├── ipai
 │   │   ├── ipai_ai_agent_builder
 │   │   │   ├── models
@@ -1029,62 +1015,19 @@
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
-│   ├── ipai_workos_views
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── view.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── static
-│   │   │   └── src
-│   │   ├── views
-│   │   │   └── view_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   └── oca
-│       ├── account_asset_management
-│       │   ├── data
-│       │   ├── models
-│       │   ├── security
-│       │   ├── views
-│       │   ├── wizard
+│   └── ipai_workos_views
+│       ├── models
 │       │   ├── __init__.py
-│       │   └── __manifest__.py
-│       ├── account_financial_report
-│       │   ├── data
-│       │   ├── models
-│       │   ├── report
-│       │   ├── security
-│       │   ├── views
-│       │   ├── __init__.py
-│       │   └── __manifest__.py
-│       ├── account_reconcile_oca
-│       │   ├── data
-│       │   ├── doc
-│       │   ├── models
-│       │   ├── security
-│       │   ├── views
-│       │   ├── wizard
-│       │   ├── __init__.py
-│       │   └── __manifest__.py
-│       ├── hr_expense
-│       │   ├── data
-│       │   ├── doc
-│       │   ├── models
-│       │   ├── security
-│       │   ├── views
-│       │   ├── wizard
-│       │   ├── __init__.py
-│       │   └── __manifest__.py
-│       ├── .gitkeep
-│       ├── OCA_PINS.yaml
-│       ├── ODOO_PIN.txt
+│       │   └── view.py
+│       ├── security
+│       │   └── ir.model.access.csv
+│       ├── static
+│       │   └── src
+│       ├── views
+│       │   └── view_views.xml
+│       ├── README.md
 │       ├── __init__.py
-│       ├── __manifest__.py
-│       ├── manifest.yaml
-│       ├── oca.lock.json
-│       └── requirements.txt
+│       └── __manifest__.py
 ├── agents
 │   ├── capabilities
 │   │   └── CAPABILITY_MATRIX.yaml
@@ -1662,9 +1605,6 @@
 │   ├── odoo_parity_plans.schema.json
 │   ├── odoo_parity_plans.yaml
 │   └── schema.json
-├── ci
-│   └── odoo
-│       └── docker-compose.ci.yml
 ├── claudedocs
 │   ├── 100_PERCENT_CLI_DEPLOYMENT.md
 │   ├── DEPLOYMENT_SUMMARY.md
@@ -1823,34 +1763,6 @@
 │   ├── dbt_project.yml
 │   ├── packages.yml
 │   └── profiles.yml.example
-├── deploy
-│   ├── k8s
-│   │   ├── namespace.yaml
-│   │   ├── odoo-configmap.yaml
-│   │   ├── odoo-deployment.yaml
-│   │   ├── odoo-ingress.yaml
-│   │   ├── odoo-secrets.yaml
-│   │   ├── odoo-service.yaml
-│   │   ├── postgres-service.yaml
-│   │   └── postgres-statefulset.yaml
-│   ├── nginx
-│   │   └── erp.insightpulseai.net.conf
-│   ├── runtime
-│   │   ├── odoo-prod.docker_inspect.json
-│   │   └── odoo-prod.image_inspect.json
-│   ├── .env.production.template
-│   ├── DROPLET_DEPLOYMENT.md
-│   ├── PRODUCTION_SETUP.md
-│   ├── README.md
-│   ├── docker-compose.ce19.yml
-│   ├── docker-compose.prod.yml
-│   ├── monitoring_schema.sql
-│   ├── monitoring_views.sql
-│   ├── nginx_correlation_id.conf
-│   ├── odoo-auto-heal.service
-│   ├── odoo.canonical.conf
-│   ├── odoo.conf
-│   └── odoo.conf.droplet
 ├── design
 │   ├── components
 │   │   └── .gitkeep
@@ -1870,22 +1782,6 @@
 │   │   └── 00-init.sql
 │   └── superset
 │       └── superset_config.py
-├── docker
-│   ├── analytics
-│   │   ├── trino
-│   │   │   ├── catalog
-│   │   │   └── config.properties
-│   │   └── docker-compose.yml
-│   ├── Dockerfile.ce19
-│   ├── Dockerfile.ci
-│   ├── Dockerfile.odoo
-│   ├── README-IMAGE-CE19.md
-│   ├── build-ce19.sh
-│   ├── docker-compose.ce19.yml
-│   ├── docker-compose.ci.yml
-│   ├── push-ce19.sh
-│   ├── run-local-ce19.sh
-│   └── test-ce19.sh
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
@@ -2803,6 +2699,8 @@
 │   │   ├── install-test.sh
 │   │   ├── structure-check.sh
 │   │   └── structure_check.py
+│   ├── ci-odoo
+│   │   └── docker-compose.ci.yml
 │   ├── databricks
 │   │   ├── agent_systems
 │   │   │   └── feedback_intel
@@ -2849,6 +2747,34 @@
 │   │   ├── README.md
 │   │   ├── databricks.yml
 │   │   └── pyproject.toml
+│   ├── deploy
+│   │   ├── k8s
+│   │   │   ├── namespace.yaml
+│   │   │   ├── odoo-configmap.yaml
+│   │   │   ├── odoo-deployment.yaml
+│   │   │   ├── odoo-ingress.yaml
+│   │   │   ├── odoo-secrets.yaml
+│   │   │   ├── odoo-service.yaml
+│   │   │   ├── postgres-service.yaml
+│   │   │   └── postgres-statefulset.yaml
+│   │   ├── nginx
+│   │   │   └── erp.insightpulseai.net.conf
+│   │   ├── runtime
+│   │   │   ├── odoo-prod.docker_inspect.json
+│   │   │   └── odoo-prod.image_inspect.json
+│   │   ├── .env.production.template
+│   │   ├── DROPLET_DEPLOYMENT.md
+│   │   ├── PRODUCTION_SETUP.md
+│   │   ├── README.md
+│   │   ├── docker-compose.ce19.yml
+│   │   ├── docker-compose.prod.yml
+│   │   ├── monitoring_schema.sql
+│   │   ├── monitoring_views.sql
+│   │   ├── nginx_correlation_id.conf
+│   │   ├── odoo-auto-heal.service
+│   │   ├── odoo.canonical.conf
+│   │   ├── odoo.conf
+│   │   └── odoo.conf.droplet
 │   ├── digitalocean
 │   │   └── pr-sandbox
 │   │       ├── README.md
@@ -2888,6 +2814,92 @@
 │   │   └── collab-stack.md
 │   ├── mattermost
 │   │   └── channel_setup.json
+│   ├── ops-control
+│   │   ├── apps
+│   │   │   └── mcp-server
+│   │   ├── docs
+│   │   │   ├── ADAPTER_GUIDE.md
+│   │   │   ├── DEMO_MODE.md
+│   │   │   ├── DEPLOYMENT_CHECKLIST.md
+│   │   │   ├── DEVELOPER_GUIDE.md
+│   │   │   ├── GITHUB_FIRST_PATTERN.md
+│   │   │   ├── INDEX.md
+│   │   │   └── QUICK_REFERENCE.md
+│   │   ├── guidelines
+│   │   │   └── Guidelines.md
+│   │   ├── odoo_modules
+│   │   │   ├── docs
+│   │   │   ├── ipai_ask_ai
+│   │   │   ├── ipai_ask_ai_chatter
+│   │   │   └── ipai_platform_theme
+│   │   ├── packages
+│   │   │   ├── core
+│   │   │   └── ui
+│   │   ├── scripts
+│   │   │   └── validate_spec_kit.py
+│   │   ├── spec
+│   │   │   ├── continue-orchestrator
+│   │   │   ├── ops-control-room
+│   │   │   └── README.md
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   ├── core
+│   │   │   ├── styles
+│   │   │   └── main.tsx
+│   │   ├── supabase
+│   │   │   ├── functions
+│   │   │   ├── migrations
+│   │   │   └── config.toml
+│   │   ├── utils
+│   │   │   └── supabase
+│   │   ├── workers
+│   │   │   ├── README.md
+│   │   │   ├── ocr-worker.ts
+│   │   │   └── package.json
+│   │   ├── workflows
+│   │   │   └── spec-kit-enforce.yml
+│   │   ├── ACTION_PLAN.md
+│   │   ├── ATTRIBUTIONS.md
+│   │   ├── COMMANDS.md
+│   │   ├── DATABASE_FIX_SUMMARY.md
+│   │   ├── DATABASE_SETUP_FIXED.md
+│   │   ├── DEPENDENCY_FIX.md
+│   │   ├── DEPLOY.md
+│   │   ├── DOCUMENTATION_INDEX.md
+│   │   ├── ENV_GRACEFUL_FIX.md
+│   │   ├── ENV_SETUP.md
+│   │   ├── FIGMA_MAKE_DEPLOY.md
+│   │   ├── FIXED.md
+│   │   ├── FIX_DATABASE_ERRORS.md
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── IMPLEMENTATION_SUMMARY_JAN7.md
+│   │   ├── MIGRATION_SETUP.md
+│   │   ├── MIGRATION_TO_PUBLIC_SCHEMA.md
+│   │   ├── NEXT_STEPS.md
+│   │   ├── OCR_IMPLEMENTATION.md
+│   │   ├── PACKAGE_JSON_FIX.md
+│   │   ├── PARALLEL_OCR_SETUP.md
+│   │   ├── PARALLEL_OCR_SUMMARY.md
+│   │   ├── PHASED_IMPLEMENTATION_PLAN.md
+│   │   ├── QUICKSTART.md
+│   │   ├── QUICKSTART_OCR.md
+│   │   ├── QUICK_FIX.md
+│   │   ├── QUICK_REFERENCE.md
+│   │   ├── README.md
+│   │   ├── README_OCR.md
+│   │   ├── SCHEMA_FIX_SUMMARY.md
+│   │   ├── SCHEMA_FIX_V2_SUMMARY.md
+│   │   ├── SECRETS_SETUP.md
+│   │   ├── SETUP.md
+│   │   ├── SPEC_KIT_CREATED.md
+│   │   ├── START_HERE.md
+│   │   ├── STATUS.md
+│   │   ├── STRUCTURE.md
+│   │   ├── SUPABASE_SETUP_GUIDE.md
+│   │   ├── index.html
+│   │   ├── package.json
+│   │   ├── postcss.config.mjs
+│   │   └── vite.config.ts
 │   ├── platform-kit
 │   │   ├── docs
 │   │   │   └── .gitkeep
@@ -3195,9 +3207,6 @@
 │   ├── DEPLOYMENT_SUMMARY.md
 │   ├── N8N_CLI_README.md
 │   └── WORKFLOW_CONVENTIONS.md
-├── oca
-│   ├── .gitkeep
-│   └── oca_modules.yaml
 ├── ocr-adapter
 │   ├── scripts
 │   │   ├── README.md
@@ -3283,139 +3292,6 @@
 │   │   └── sinch_setup.md
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
-├── ops-control
-│   ├── apps
-│   │   └── mcp-server
-│   │       ├── src
-│   │       ├── README.md
-│   │       ├── package.json
-│   │       └── tsconfig.json
-│   ├── docs
-│   │   ├── ADAPTER_GUIDE.md
-│   │   ├── DEMO_MODE.md
-│   │   ├── DEPLOYMENT_CHECKLIST.md
-│   │   ├── DEVELOPER_GUIDE.md
-│   │   ├── GITHUB_FIRST_PATTERN.md
-│   │   ├── INDEX.md
-│   │   └── QUICK_REFERENCE.md
-│   ├── guidelines
-│   │   └── Guidelines.md
-│   ├── odoo_modules
-│   │   ├── docs
-│   │   │   └── AI_RESPONSE_SCHEMA.md
-│   │   ├── ipai_ask_ai
-│   │   │   ├── controllers
-│   │   │   ├── data
-│   │   │   ├── models
-│   │   │   ├── security
-│   │   │   ├── static
-│   │   │   ├── views
-│   │   │   ├── wizards
-│   │   │   ├── __init__.py
-│   │   │   └── __manifest__.py
-│   │   ├── ipai_ask_ai_chatter
-│   │   │   ├── static
-│   │   │   ├── __init__.py
-│   │   │   └── __manifest__.py
-│   │   └── ipai_platform_theme
-│   │       ├── static
-│   │       ├── __init__.py
-│   │       └── __manifest__.py
-│   ├── packages
-│   │   ├── core
-│   │   │   ├── src
-│   │   │   └── package.json
-│   │   └── ui
-│   │       ├── src
-│   │       └── package.json
-│   ├── scripts
-│   │   └── validate_spec_kit.py
-│   ├── spec
-│   │   ├── continue-orchestrator
-│   │   │   ├── constitution.md
-│   │   │   ├── plan.md
-│   │   │   ├── prd.md
-│   │   │   └── tasks.md
-│   │   ├── ops-control-room
-│   │   │   ├── constitution.md
-│   │   │   ├── plan.md
-│   │   │   ├── prd.md
-│   │   │   └── tasks.md
-│   │   └── README.md
-│   ├── src
-│   │   ├── app
-│   │   │   ├── components
-│   │   │   └── App.tsx
-│   │   ├── core
-│   │   │   ├── execute.ts
-│   │   │   ├── index.ts
-│   │   │   ├── parse.ts
-│   │   │   ├── runbooks.ts
-│   │   │   └── types.ts
-│   │   ├── styles
-│   │   │   ├── fonts.css
-│   │   │   ├── index.css
-│   │   │   ├── tailwind.css
-│   │   │   └── theme.css
-│   │   └── main.tsx
-│   ├── supabase
-│   │   ├── functions
-│   │   │   ├── ops-executor
-│   │   │   └── server
-│   │   ├── migrations
-│   │   │   └── README.md
-│   │   └── config.toml
-│   ├── utils
-│   │   └── supabase
-│   │       └── info.tsx
-│   ├── workers
-│   │   ├── README.md
-│   │   ├── ocr-worker.ts
-│   │   └── package.json
-│   ├── workflows
-│   │   └── spec-kit-enforce.yml
-│   ├── ACTION_PLAN.md
-│   ├── ATTRIBUTIONS.md
-│   ├── COMMANDS.md
-│   ├── DATABASE_FIX_SUMMARY.md
-│   ├── DATABASE_SETUP_FIXED.md
-│   ├── DEPENDENCY_FIX.md
-│   ├── DEPLOY.md
-│   ├── DOCUMENTATION_INDEX.md
-│   ├── ENV_GRACEFUL_FIX.md
-│   ├── ENV_SETUP.md
-│   ├── FIGMA_MAKE_DEPLOY.md
-│   ├── FIXED.md
-│   ├── FIX_DATABASE_ERRORS.md
-│   ├── IMPLEMENTATION_SUMMARY.md
-│   ├── IMPLEMENTATION_SUMMARY_JAN7.md
-│   ├── MIGRATION_SETUP.md
-│   ├── MIGRATION_TO_PUBLIC_SCHEMA.md
-│   ├── NEXT_STEPS.md
-│   ├── OCR_IMPLEMENTATION.md
-│   ├── PACKAGE_JSON_FIX.md
-│   ├── PARALLEL_OCR_SETUP.md
-│   ├── PARALLEL_OCR_SUMMARY.md
-│   ├── PHASED_IMPLEMENTATION_PLAN.md
-│   ├── QUICKSTART.md
-│   ├── QUICKSTART_OCR.md
-│   ├── QUICK_FIX.md
-│   ├── QUICK_REFERENCE.md
-│   ├── README.md
-│   ├── README_OCR.md
-│   ├── SCHEMA_FIX_SUMMARY.md
-│   ├── SCHEMA_FIX_V2_SUMMARY.md
-│   ├── SECRETS_SETUP.md
-│   ├── SETUP.md
-│   ├── SPEC_KIT_CREATED.md
-│   ├── START_HERE.md
-│   ├── STATUS.md
-│   ├── STRUCTURE.md
-│   ├── SUPABASE_SETUP_GUIDE.md
-│   ├── index.html
-│   ├── package.json
-│   ├── postcss.config.mjs
-│   └── vite.config.ts
 ├── osi
 │   ├── osi_template.json
 │   └── osi_template.yaml
@@ -3596,6 +3472,22 @@
 │   └── parity
 │       ├── ee_parity_audit.json
 │       └── ee_parity_audit.md
+├── runtime
+│   ├── docker
+│   │   └── docker
+│   │       ├── analytics
+│   │       ├── Dockerfile.ce19
+│   │       ├── Dockerfile.ci
+│   │       ├── Dockerfile.odoo
+│   │       ├── README-IMAGE-CE19.md
+│   │       ├── build-ce19.sh
+│   │       ├── docker-compose.ce19.yml
+│   │       ├── docker-compose.ci.yml
+│   │       ├── push-ce19.sh
+│   │       ├── run-local-ce19.sh
+│   │       └── test-ce19.sh
+│   ├── down.sh
+│   └── up.sh
 ├── sandbox
 │   ├── dev
 │   │   ├── .github
@@ -4219,6 +4111,7 @@
 │   ├── validate_odoo_parity_plans.mjs
 │   ├── validate_production.sh
 │   ├── validate_registries.py
+│   ├── validate_repo_layout.sh
 │   ├── validate_spec_kit.py
 │   ├── validate_spec_kit.sh
 │   ├── vercel_promote_previous.sh
@@ -5131,8 +5024,25 @@
 │   └── seed_te_cheq.ts
 ├── vendor
 │   ├── oca
+│   │   ├── OCA
+│   │   │   ├── account-financial-reporting
+│   │   │   ├── automation
+│   │   │   ├── dms
+│   │   │   ├── helpdesk
+│   │   │   ├── partner-contact
+│   │   │   ├── queue
+│   │   │   ├── reporting-engine
+│   │   │   ├── sale-workflow
+│   │   │   ├── server-auth
+│   │   │   ├── server-brand
+│   │   │   ├── server-tools
+│   │   │   ├── server-ux
+│   │   │   ├── web
+│   │   │   └── account-financial-tools -> ../../external-src/account-financial-tools
 │   │   ├── account-financial-reporting
 │   │   ├── account-reconcile
+│   │   ├── oca
+│   │   │   └── oca_temp
 │   │   ├── project
 │   │   ├── server-tools
 │   │   └── web
@@ -5330,15 +5240,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1487 directories, 3838 files
+1444 directories, 3791 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1735 |
-| Files | 5156 |
-| Python files | 854 |
-| XML files | 305 |
+| Directories | 1710 |
+| Files | 5103 |
+| Python files | 826 |
+| XML files | 288 |
 | Markdown files | 1304 |
