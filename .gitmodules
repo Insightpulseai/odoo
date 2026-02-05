@@ -83,54 +83,54 @@
 	path = branding/fluentui-system-icons
 	url = https://github.com/microsoft/fluentui-system-icons.git
 [submodule "addons/OCA/queue"]
-	path = addons/OCA/queue
+	path = vendor/oca/OCA/queue
 	url = https://github.com/OCA/queue
 	branch = 18.0
 [submodule "addons/OCA/server-brand"]
-	path = addons/OCA/server-brand
+	path = vendor/oca/OCA/server-brand
 	url = https://github.com/OCA/server-brand
 	branch = 18.0
 [submodule "addons/OCA/server-auth"]
-	path = addons/OCA/server-auth
+	path = vendor/oca/OCA/server-auth
 	url = https://github.com/OCA/server-auth
 	branch = 18.0
 [submodule "addons/OCA/server-tools"]
-	path = addons/OCA/server-tools
+	path = vendor/oca/OCA/server-tools
 	url = https://github.com/OCA/server-tools
 	branch = 18.0
 [submodule "addons/OCA/web"]
-	path = addons/OCA/web
+	path = vendor/oca/OCA/web
 	url = https://github.com/OCA/web
 	branch = 18.0
 [submodule "addons/OCA/server-ux"]
-	path = addons/OCA/server-ux
+	path = vendor/oca/OCA/server-ux
 	url = https://github.com/OCA/server-ux
 	branch = 18.0
 [submodule "addons/OCA/reporting-engine"]
-	path = addons/OCA/reporting-engine
+	path = vendor/oca/OCA/reporting-engine
 	url = https://github.com/OCA/reporting-engine
 	branch = 18.0
 [submodule "addons/OCA/partner-contact"]
-	path = addons/OCA/partner-contact
+	path = vendor/oca/OCA/partner-contact
 	url = https://github.com/OCA/partner-contact
 	branch = 18.0
 [submodule "addons/OCA/automation"]
-	path = addons/OCA/automation
+	path = vendor/oca/OCA/automation
 	url = https://github.com/OCA/automation
 	branch = 18.0
 [submodule "addons/OCA/helpdesk"]
-	path = addons/OCA/helpdesk
+	path = vendor/oca/OCA/helpdesk
 	url = https://github.com/OCA/helpdesk
 	branch = 18.0
 [submodule "addons/OCA/dms"]
-	path = addons/OCA/dms
+	path = vendor/oca/OCA/dms
 	url = https://github.com/OCA/dms
 	branch = 18.0
 [submodule "addons/OCA/account-financial-reporting"]
-	path = addons/OCA/account-financial-reporting
+	path = vendor/oca/OCA/account-financial-reporting
 	url = https://github.com/OCA/account-financial-reporting
 	branch = 18.0
 [submodule "addons/OCA/sale-workflow"]
-	path = addons/OCA/sale-workflow
+	path = vendor/oca/OCA/sale-workflow
 	url = https://github.com/OCA/sale-workflow.git
 	branch = 18.0
