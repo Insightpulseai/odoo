@@ -8,6 +8,7 @@ This directory contains the authoritative architecture documentation for Insight
 |----------|-------------|
 | [INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md](INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | Master technical architecture specification |
 | [IPAI_TARGET_ARCHITECTURE.md](IPAI_TARGET_ARCHITECTURE.md) | Target architecture and roadmap |
+| [IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md](IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md) | Ideal organization and enterprise repository structure |
 | [AUTH_MODEL.md](AUTH_MODEL.md) | Authentication and authorization model |
 | [multi_tenant_architecture.md](multi_tenant_architecture.md) | Multi-tenancy design |
 
