@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5ab83c261f9fde497bc7b18edb48eb7c55025ce1
+> Commit: 08aaf84388d0b2658d4b999d198f95ec9ab7ee77
 
 ## 📚 Documentation
 
@@ -407,6 +407,7 @@
 | [CAPS Report — Cost / Accuracy / Privacy / Speed](docs/architecture/CAPS_REPORT.md) | docs/architecture |
 | [Cursor Ecosystem Capabilities (Bugbot + Composer + Codebase Indexing)](docs/architecture/CURSOR_ECOSYSTEM_CAPABILITIES.md) | docs/architecture |
 | [External Agent/Tool Capabilities (Stack Fit)](docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md) | docs/architecture |
+| [Ideal Organization & Enterprise Repository Structure](docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
