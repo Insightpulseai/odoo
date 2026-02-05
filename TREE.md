@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5ab83c261f9fde497bc7b18edb48eb7c55025ce1
+> Commit: 08aaf84388d0b2658d4b999d198f95ec9ab7ee77
 
 ```
 .
@@ -1912,6 +1912,7 @@
 │   │   ├── CAPS_REPORT.md
 │   │   ├── CURSOR_ECOSYSTEM_CAPABILITIES.md
 │   │   ├── EXT_AGENT_TOOL_CAPABILITIES.md
+│   │   ├── IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
@@ -5329,7 +5330,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1487 directories, 3837 files
+1487 directories, 3838 files
 ```
 
 ## 📊 Stats
@@ -5337,7 +5338,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1735 |
-| Files | 5155 |
+| Files | 5156 |
 | Python files | 854 |
 | XML files | 305 |
-| Markdown files | 1303 |
+| Markdown files | 1304 |
