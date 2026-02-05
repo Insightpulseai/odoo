@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 662a05b1b07b4e103a402cb52557c624a70f4e1d
+> Commit: 380f7fa22d95a793a2dfd23b8da4d236ac74a08a
 
 ## 📚 Documentation
 
@@ -370,11 +370,13 @@
 | [Repo Tree Contract (Authoritative)](docs/REPO_TREE.contract.md) | docs |
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
+| [Schema + Namespace Policy (SSOT)](docs/SCHEMA_NAMESPACE_POLICY.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
 | [Finance PPM Seed Data Assessment](docs/SEED_DATA_ASSESSMENT.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
 | [AIUX Ship v1.1.0 - Production Release Summary](docs/SHIP_v1.1.0_SUMMARY.md) | docs |
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
+| [Slug Policy (SSOT)](docs/SLUG_POLICY.md) | docs |
 | [SMTP Setup Summary - Complete Status](docs/SMTP_SETUP_SUMMARY.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
 | [Staging Environment Guide](docs/STAGING.md) | docs |
