@@ -1,0 +1,25 @@
+name: schema-drift-nightly
+on:
+  schedule:
+    - cron: "0 1 * * *" # 01:00 UTC daily
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    env:
+      ODOO_DB_HOST: ${{ secrets.ODOO_DB_HOST }}
+      ODOO_DB_PORT: ${{ secrets.ODOO_DB_PORT }}
+      ODOO_DB_USER: ${{ secrets.ODOO_DB_USER }}
+      ODOO_DB_PASSWORD: ${{ secrets.ODOO_DB_PASSWORD }}
+      ODOO_DB_NAME: ${{ secrets.ODOO_DB_NAME }}
+      SUPABASE_DB_HOST: ${{ secrets.SUPABASE_DB_HOST }}
+      SUPABASE_DB_PORT: ${{ secrets.SUPABASE_DB_PORT }}
+      SUPABASE_DB_USER: ${{ secrets.SUPABASE_DB_USER }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_DB_NAME: ${{ secrets.SUPABASE_DB_NAME }}
+      SUPABASE_DB_SSLMODE: ${{ secrets.SUPABASE_DB_SSLMODE }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: chmod +x scripts/*.sh
+      - run: ./scripts/schema_drift_env_check.sh
+      - run: ./scripts/odoo_db_schema_diff.sh
+      - run: ./scripts/supabase_schema_diff.sh
