@@ -375,6 +375,7 @@ Users → https://plane.insightpulseai.net → Nginx → Plane API (port 8002)
 - `tasks.md` — Task checklist
 - `docs/` — Architecture + deployment docs
 - `docs/data-model/` — Canonical schema outputs
+- `docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md` — Ideal repository structure guide
 - `docs/EMAIL_INTEGRATION.md` — Complete email integration guide
 
 ---
