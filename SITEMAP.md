@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 08aaf84388d0b2658d4b999d198f95ec9ab7ee77
+> Commit: 662a05b1b07b4e103a402cb52557c624a70f4e1d
 
 ## 📚 Documentation
 
@@ -233,12 +233,8 @@
 | [Extended Platform Import Templates](db/import-templates/extended-platform/README.md) | db/import-templates/extended-platform |
 | [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |
 | [Database Seeding Strategy](db/seeds/SEEDING_STRATEGY.md) | db/seeds |
-| [Droplet Deployment Guide](deploy/DROPLET_DEPLOYMENT.md) | deploy |
-| [Production Droplet Setup - Complete Runbook](deploy/PRODUCTION_SETUP.md) | deploy |
-| [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
 | [IPAI Design Extraction](design/README.md) | design |
-| [Odoo CE 19 + OCA + IPAI Enterprise Bridge - Consumer Guide](docker/README-IMAGE-CE19.md) | docker |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
@@ -866,11 +862,74 @@
 | [Agent Bricks: Feedback Intelligence](infra/databricks/agent_systems/feedback_intel/README.md) | infra/databricks/agent_systems/feedback_intel |
 | [Feedback Classifier Prompt Template](infra/databricks/agent_systems/feedback_intel/src/prompts/feedback_classifier.md) | infra/databricks/agent_systems/feedback_intel/src/prompts |
 | [Databricks Agent Training](infra/databricks/training/README.md) | infra/databricks/training |
+| [Droplet Deployment Guide](infra/deploy/DROPLET_DEPLOYMENT.md) | infra/deploy |
+| [Production Droplet Setup - Complete Runbook](infra/deploy/PRODUCTION_SETUP.md) | infra/deploy |
+| [Deployment Guide](infra/deploy/README.md) | infra/deploy |
 | [DigitalOcean PR Sandbox (Ephemeral)](infra/digitalocean/pr-sandbox/README.md) | infra/digitalocean/pr-sandbox |
 | [Mailgun DNS Configuration for insightpulseai.com](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
+| [✅ Action Plan - Deploy Your Ops Control Room](infra/ops-control/ACTION_PLAN.md) | infra/ops-control |
+| [](infra/ops-control/ATTRIBUTIONS.md) | infra/ops-control |
+| [Command Reference](infra/ops-control/COMMANDS.md) | infra/ops-control |
+| [✅ Database Error Fix - Summary](infra/ops-control/DATABASE_FIX_SUMMARY.md) | infra/ops-control |
+| [✅ Database Setup Fixed](infra/ops-control/DATABASE_SETUP_FIXED.md) | infra/ops-control |
+| [✅ Dependency Installation Fix](infra/ops-control/DEPENDENCY_FIX.md) | infra/ops-control |
+| [🚀 Deployment Guide - Ops Control Room](infra/ops-control/DEPLOY.md) | infra/ops-control |
+| [📚 Ops Control Room - Documentation Index](infra/ops-control/DOCUMENTATION_INDEX.md) | infra/ops-control |
+| [✅ Environment Variables - Graceful Degradation](infra/ops-control/ENV_GRACEFUL_FIX.md) | infra/ops-control |
+| [🔑 Environment Variables Setup Guide](infra/ops-control/ENV_SETUP.md) | infra/ops-control |
+| [🎨 Figma Make + Supabase Deployment Guide](infra/ops-control/FIGMA_MAKE_DEPLOY.md) | infra/ops-control |
+| [✅ Fixed: Deployment Configuration](infra/ops-control/FIXED.md) | infra/ops-control |
+| [🚨 URGENT: Fix Database Errors - 2 Minute Guide](infra/ops-control/FIX_DATABASE_ERRORS.md) | infra/ops-control |
+| [🎉 Ops Control Room - Implementation Complete!](infra/ops-control/IMPLEMENTATION_SUMMARY.md) | infra/ops-control |
+| [🎯 Ops Control Room - Implementation Summary](infra/ops-control/IMPLEMENTATION_SUMMARY_JAN7.md) | infra/ops-control |
+| [🔧 Database Migration Setup - Quick Fix](infra/ops-control/MIGRATION_SETUP.md) | infra/ops-control |
+| [Migration to Public Schema - Complete Summary](infra/ops-control/MIGRATION_TO_PUBLIC_SCHEMA.md) | infra/ops-control |
+| [🚀 Next Steps - Immediate Actions](infra/ops-control/NEXT_STEPS.md) | infra/ops-control |
+| [Ops Control Room - Implementation Summary](infra/ops-control/OCR_IMPLEMENTATION.md) | infra/ops-control |
+| [✅ Package.json Restoration](infra/ops-control/PACKAGE_JSON_FIX.md) | infra/ops-control |
+| [Parallel OCR Setup Guide](infra/ops-control/PARALLEL_OCR_SETUP.md) | infra/ops-control |
+| [Parallel OCR Implementation Summary](infra/ops-control/PARALLEL_OCR_SUMMARY.md) | infra/ops-control |
+| [🎯 Ops Control Room - Phased Implementation Plan](infra/ops-control/PHASED_IMPLEMENTATION_PLAN.md) | infra/ops-control |
+| [Ops Control Room - Quick Start](infra/ops-control/QUICKSTART.md) | infra/ops-control |
+| [Ops Control Room - Quick Start](infra/ops-control/QUICKSTART_OCR.md) | infra/ops-control |
+| [🚀 Quick Fix Guide - Database Errors](infra/ops-control/QUICK_FIX.md) | infra/ops-control |
+| [🚀 Ops Control Room - Quick Reference Card](infra/ops-control/QUICK_REFERENCE.md) | infra/ops-control |
+| [🎯 Ops Control Room - Production Architecture](infra/ops-control/README.md) | infra/ops-control |
+| [Ops Control Room - Implementation Guide](infra/ops-control/README_OCR.md) | infra/ops-control |
+| [Schema Fix Summary](infra/ops-control/SCHEMA_FIX_SUMMARY.md) | infra/ops-control |
+| [Schema Fix V2 Summary](infra/ops-control/SCHEMA_FIX_V2_SUMMARY.md) | infra/ops-control |
+| [🔐 Secrets Setup Guide (Figma Make)](infra/ops-control/SECRETS_SETUP.md) | infra/ops-control |
+| [Ops Control Room - Setup Guide](infra/ops-control/SETUP.md) | infra/ops-control |
+| [✅ Spec Kit Bundle Created for Ops Control Room](infra/ops-control/SPEC_KIT_CREATED.md) | infra/ops-control |
+| [🚀 START HERE - Ops Control Room](infra/ops-control/START_HERE.md) | infra/ops-control |
+| [✅ Ops Control Room - System Status](infra/ops-control/STATUS.md) | infra/ops-control |
+| [Final Working Structure](infra/ops-control/STRUCTURE.md) | infra/ops-control |
+| [Supabase Setup Guide for Ops Control Room](infra/ops-control/SUPABASE_SETUP_GUIDE.md) | infra/ops-control |
+| [Ops Control Room MCP Server](infra/ops-control/apps/mcp-server/README.md) | infra/ops-control/apps/mcp-server |
+| [API Adapter Implementation Guide](infra/ops-control/docs/ADAPTER_GUIDE.md) | infra/ops-control/docs |
+| [Demo Mode (No Supabase Required)](infra/ops-control/docs/DEMO_MODE.md) | infra/ops-control/docs |
+| [🚀 Deployment Checklist](infra/ops-control/docs/DEPLOYMENT_CHECKLIST.md) | infra/ops-control/docs |
+| [🔧 Developer Guide: Adding New Runbook Types](infra/ops-control/docs/DEVELOPER_GUIDE.md) | infra/ops-control/docs |
+| [🔄 GitHub-First Runbook Pattern](infra/ops-control/docs/GITHUB_FIRST_PATTERN.md) | infra/ops-control/docs |
+| [📚 Documentation Index](infra/ops-control/docs/INDEX.md) | infra/ops-control/docs |
+| [🎯 Ops Control Room - Quick Reference](infra/ops-control/docs/QUICK_REFERENCE.md) | infra/ops-control/docs |
+| [General guidelines](infra/ops-control/guidelines/Guidelines.md) | infra/ops-control/guidelines |
+| [IPAI Ask AI - Response Schema & Contracts](infra/ops-control/odoo_modules/docs/AI_RESPONSE_SCHEMA.md) | infra/ops-control/odoo_modules/docs |
+| [Spec Kit Bundles](infra/ops-control/spec/README.md) | infra/ops-control/spec |
+| [spec/continue-orchestrator/constitution.md](infra/ops-control/spec/continue-orchestrator/constitution.md) | infra/ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/plan.md](infra/ops-control/spec/continue-orchestrator/plan.md) | infra/ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/prd.md](infra/ops-control/spec/continue-orchestrator/prd.md) | infra/ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/tasks.md](infra/ops-control/spec/continue-orchestrator/tasks.md) | infra/ops-control/spec/continue-orchestrator |
+| [Constitution — Ops Control Room (Parallel Runbook Executor)](infra/ops-control/spec/ops-control-room/constitution.md) | infra/ops-control/spec/ops-control-room |
+| [Plan — Ops Control Room](infra/ops-control/spec/ops-control-room/plan.md) | infra/ops-control/spec/ops-control-room |
+| [PRD — Ops Control Room (Parallel Runbook Executor)](infra/ops-control/spec/ops-control-room/prd.md) | infra/ops-control/spec/ops-control-room |
+| [Tasks — Ops Control Room](infra/ops-control/spec/ops-control-room/tasks.md) | infra/ops-control/spec/ops-control-room |
+| [Supabase Edge Function: ops-executor](infra/ops-control/supabase/functions/ops-executor/README.md) | infra/ops-control/supabase/functions/ops-executor |
+| [Supabase Migrations](infra/ops-control/supabase/migrations/README.md) | infra/ops-control/supabase/migrations |
+| [OCR Parallel Workers](infra/ops-control/workers/README.md) | infra/ops-control/workers |
 | [Supabase Terraform Infrastructure](infra/supabase/README.md) | infra/supabase |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
@@ -916,66 +975,6 @@
 | [Migration from Old Stack to Canonical Odoo 19 Setup](odoo19/MIGRATION_FROM_OLD_STACK.md) | odoo19 |
 | [Odoo 19 Canonical Setup - Quick Reference](odoo19/QUICK_REFERENCE.md) | odoo19 |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
-| [✅ Action Plan - Deploy Your Ops Control Room](ops-control/ACTION_PLAN.md) | ops-control |
-| [](ops-control/ATTRIBUTIONS.md) | ops-control |
-| [Command Reference](ops-control/COMMANDS.md) | ops-control |
-| [✅ Database Error Fix - Summary](ops-control/DATABASE_FIX_SUMMARY.md) | ops-control |
-| [✅ Database Setup Fixed](ops-control/DATABASE_SETUP_FIXED.md) | ops-control |
-| [✅ Dependency Installation Fix](ops-control/DEPENDENCY_FIX.md) | ops-control |
-| [🚀 Deployment Guide - Ops Control Room](ops-control/DEPLOY.md) | ops-control |
-| [📚 Ops Control Room - Documentation Index](ops-control/DOCUMENTATION_INDEX.md) | ops-control |
-| [✅ Environment Variables - Graceful Degradation](ops-control/ENV_GRACEFUL_FIX.md) | ops-control |
-| [🔑 Environment Variables Setup Guide](ops-control/ENV_SETUP.md) | ops-control |
-| [🎨 Figma Make + Supabase Deployment Guide](ops-control/FIGMA_MAKE_DEPLOY.md) | ops-control |
-| [✅ Fixed: Deployment Configuration](ops-control/FIXED.md) | ops-control |
-| [🚨 URGENT: Fix Database Errors - 2 Minute Guide](ops-control/FIX_DATABASE_ERRORS.md) | ops-control |
-| [🎉 Ops Control Room - Implementation Complete!](ops-control/IMPLEMENTATION_SUMMARY.md) | ops-control |
-| [🎯 Ops Control Room - Implementation Summary](ops-control/IMPLEMENTATION_SUMMARY_JAN7.md) | ops-control |
-| [🔧 Database Migration Setup - Quick Fix](ops-control/MIGRATION_SETUP.md) | ops-control |
-| [Migration to Public Schema - Complete Summary](ops-control/MIGRATION_TO_PUBLIC_SCHEMA.md) | ops-control |
-| [🚀 Next Steps - Immediate Actions](ops-control/NEXT_STEPS.md) | ops-control |
-| [Ops Control Room - Implementation Summary](ops-control/OCR_IMPLEMENTATION.md) | ops-control |
-| [✅ Package.json Restoration](ops-control/PACKAGE_JSON_FIX.md) | ops-control |
-| [Parallel OCR Setup Guide](ops-control/PARALLEL_OCR_SETUP.md) | ops-control |
-| [Parallel OCR Implementation Summary](ops-control/PARALLEL_OCR_SUMMARY.md) | ops-control |
-| [🎯 Ops Control Room - Phased Implementation Plan](ops-control/PHASED_IMPLEMENTATION_PLAN.md) | ops-control |
-| [Ops Control Room - Quick Start](ops-control/QUICKSTART.md) | ops-control |
-| [Ops Control Room - Quick Start](ops-control/QUICKSTART_OCR.md) | ops-control |
-| [🚀 Quick Fix Guide - Database Errors](ops-control/QUICK_FIX.md) | ops-control |
-| [🚀 Ops Control Room - Quick Reference Card](ops-control/QUICK_REFERENCE.md) | ops-control |
-| [🎯 Ops Control Room - Production Architecture](ops-control/README.md) | ops-control |
-| [Ops Control Room - Implementation Guide](ops-control/README_OCR.md) | ops-control |
-| [Schema Fix Summary](ops-control/SCHEMA_FIX_SUMMARY.md) | ops-control |
-| [Schema Fix V2 Summary](ops-control/SCHEMA_FIX_V2_SUMMARY.md) | ops-control |
-| [🔐 Secrets Setup Guide (Figma Make)](ops-control/SECRETS_SETUP.md) | ops-control |
-| [Ops Control Room - Setup Guide](ops-control/SETUP.md) | ops-control |
-| [✅ Spec Kit Bundle Created for Ops Control Room](ops-control/SPEC_KIT_CREATED.md) | ops-control |
-| [🚀 START HERE - Ops Control Room](ops-control/START_HERE.md) | ops-control |
-| [✅ Ops Control Room - System Status](ops-control/STATUS.md) | ops-control |
-| [Final Working Structure](ops-control/STRUCTURE.md) | ops-control |
-| [Supabase Setup Guide for Ops Control Room](ops-control/SUPABASE_SETUP_GUIDE.md) | ops-control |
-| [Ops Control Room MCP Server](ops-control/apps/mcp-server/README.md) | ops-control/apps/mcp-server |
-| [API Adapter Implementation Guide](ops-control/docs/ADAPTER_GUIDE.md) | ops-control/docs |
-| [Demo Mode (No Supabase Required)](ops-control/docs/DEMO_MODE.md) | ops-control/docs |
-| [🚀 Deployment Checklist](ops-control/docs/DEPLOYMENT_CHECKLIST.md) | ops-control/docs |
-| [🔧 Developer Guide: Adding New Runbook Types](ops-control/docs/DEVELOPER_GUIDE.md) | ops-control/docs |
-| [🔄 GitHub-First Runbook Pattern](ops-control/docs/GITHUB_FIRST_PATTERN.md) | ops-control/docs |
-| [📚 Documentation Index](ops-control/docs/INDEX.md) | ops-control/docs |
-| [🎯 Ops Control Room - Quick Reference](ops-control/docs/QUICK_REFERENCE.md) | ops-control/docs |
-| [General guidelines](ops-control/guidelines/Guidelines.md) | ops-control/guidelines |
-| [IPAI Ask AI - Response Schema & Contracts](ops-control/odoo_modules/docs/AI_RESPONSE_SCHEMA.md) | ops-control/odoo_modules/docs |
-| [Spec Kit Bundles](ops-control/spec/README.md) | ops-control/spec |
-| [spec/continue-orchestrator/constitution.md](ops-control/spec/continue-orchestrator/constitution.md) | ops-control/spec/continue-orchestrator |
-| [spec/continue-orchestrator/plan.md](ops-control/spec/continue-orchestrator/plan.md) | ops-control/spec/continue-orchestrator |
-| [spec/continue-orchestrator/prd.md](ops-control/spec/continue-orchestrator/prd.md) | ops-control/spec/continue-orchestrator |
-| [spec/continue-orchestrator/tasks.md](ops-control/spec/continue-orchestrator/tasks.md) | ops-control/spec/continue-orchestrator |
-| [Constitution — Ops Control Room (Parallel Runbook Executor)](ops-control/spec/ops-control-room/constitution.md) | ops-control/spec/ops-control-room |
-| [Plan — Ops Control Room](ops-control/spec/ops-control-room/plan.md) | ops-control/spec/ops-control-room |
-| [PRD — Ops Control Room (Parallel Runbook Executor)](ops-control/spec/ops-control-room/prd.md) | ops-control/spec/ops-control-room |
-| [Tasks — Ops Control Room](ops-control/spec/ops-control-room/tasks.md) | ops-control/spec/ops-control-room |
-| [Supabase Edge Function: ops-executor](ops-control/supabase/functions/ops-executor/README.md) | ops-control/supabase/functions/ops-executor |
-| [Supabase Migrations](ops-control/supabase/migrations/README.md) | ops-control/supabase/migrations |
-| [OCR Parallel Workers](ops-control/workers/README.md) | ops-control/workers |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Design → Code Contract (Figma SSOT)](ops/design/README.md) | ops/design |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
@@ -1000,6 +999,7 @@
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
 | [EE Parity Audit](reports/parity/ee_parity_audit.md) | reports/parity |
+| [Odoo CE 19 + OCA + IPAI Enterprise Bridge - Consumer Guide](runtime/docker/docker/README-IMAGE-CE19.md) | runtime/docker/docker |
 | [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
 | [CLAUDE.md](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Disk Cleanup Report - Dev Sandbox](sandbox/dev/CLEANUP_REPORT.md) | sandbox/dev |
@@ -1415,9 +1415,9 @@
 | [ipai_ai](./config/ipai_ai) | ⚠️ | Missing manifest |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
-| [ipai_ask_ai](./ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
-| [ipai_ask_ai_chatter](./ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
-| [ipai_platform_theme](./ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
+| [ipai_ask_ai](./infra/ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
+| [ipai_ask_ai_chatter](./infra/ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
+| [ipai_platform_theme](./infra/ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
 | [ipai_aiux_chat](./prototypes/ipai_aiux_chat) | ✅ |  |
 | [ipai_fluent_web_365_copilot](./prototypes/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_theme_aiux](./prototypes/ipai_theme_aiux) | ✅ |  |
