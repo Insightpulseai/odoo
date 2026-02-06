@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 380f7fa22d95a793a2dfd23b8da4d236ac74a08a
+> Commit: 789895a7345179165f9ce7662cc593aa26d645b6
 
 ## 📚 Documentation
 
@@ -751,10 +751,12 @@
 | [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
+| [Bridge Platform Components (IPAI)](docs/parity/BRIDGE_PLATFORM_COMPONENTS.md) | docs/parity |
 | [Cleanup and Hardening Checklist](docs/parity/CLEANUP_AND_HARDENING_CHECKLIST.md) | docs/parity |
 | [Compliance and Licensing Report](docs/parity/COMPLIANCE_AND_LICENSING.md) | docs/parity |
 | [Odoo EE Parity Layering Analysis](docs/parity/EE_PARITY_LAYERING_ANALYSIS.md) | docs/parity |
 | [EE Parity – Minimal Installable Module Set](docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md) | docs/parity |
+| [EE → OCA → Bridge Matrix (SSOT)](docs/parity/EE_TO_OCA_BRIDGE_MATRIX.md) | docs/parity |
 | [Enterprise Stack Parity Assessment](docs/parity/ENTERPRISE_STACK_PARITY.md) | docs/parity |
 | [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
 | [Operational Positioning: IPAI Odoo Stack](docs/parity/OPERATIONAL_POSITIONING.md) | docs/parity |
@@ -767,6 +769,7 @@
 | [Odoo.sh Parity Backlog](docs/parity/odoo_sh/PARITY_BACKLOG.md) | docs/parity/odoo_sh |
 | [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
 | [Supabase UI Library - Block Catalog](docs/parity/supabase-ui-library_block_catalog.md) | docs/parity |
+| [Module Completeness Policy (CE + OCA Baseline)](docs/policy/MODULE_COMPLETENESS_POLICY.md) | docs/policy |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -816,6 +819,7 @@
 | [Configuration & Secrets Inventory](docs/security/CONFIG_INVENTORY.md) | docs/security |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [EE Parity Test Runner - Required Secrets](docs/setup/PARITY_TEST_RUNNER_SECRETS.md) | docs/setup |
+| [Baseline OCA Stack (CE 19)](docs/stack/BASELINE_OCA_STACK.md) | docs/stack |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
 | [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
@@ -1346,13 +1350,14 @@
 | [ipai_esg_social](./addons/ipai/ipai_esg_social) | ✅ |  |
 | [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
 | [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
-| [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ⚠️ | Missing manifest |
+| [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ✅ |  |
 | [ipai_finance_tax_return](./addons/ipai/ipai_finance_tax_return) | ✅ |  |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
 | [ipai_foundation](./addons/ipai/ipai_foundation) | ✅ |  |
 | [ipai_helpdesk](./addons/ipai/ipai_helpdesk) | ✅ |  |
 | [ipai_helpdesk_refund](./addons/ipai/ipai_helpdesk_refund) | ✅ |  |
 | [ipai_hr_payroll_ph](./addons/ipai/ipai_hr_payroll_ph) | ✅ |  |
+| [ipai_ops_connector](./addons/ipai/ipai_ops_connector) | ✅ |  |
 | [ipai_planning_attendance](./addons/ipai/ipai_planning_attendance) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_project_templates](./addons/ipai/ipai_project_templates) | ✅ |  |
