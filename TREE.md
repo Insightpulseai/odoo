@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 380f7fa22d95a793a2dfd23b8da4d236ac74a08a
+> Commit: 789895a7345179165f9ce7662cc593aa26d645b6
 
 ```
 .
@@ -203,6 +203,7 @@
 │   │   ├── superset-ci-cd.yml
 │   │   ├── terraform-supabase.yml
 │   │   ├── validate-addons-mounts.yml
+│   │   ├── validate-custom-modules.yml
 │   │   ├── vendor-app-deploy.yml
 │   │   ├── vendor-backlog-sync.yml
 │   │   ├── wiki-sync.yml
@@ -355,8 +356,13 @@
 │   │   ├── ipai_finance_close_seed
 │   │   │   └── data
 │   │   ├── ipai_finance_ppm
+│   │   │   ├── data
 │   │   │   ├── models
-│   │   │   └── __init__.py
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_tax_return
 │   │   │   ├── models
 │   │   │   ├── security
@@ -396,6 +402,13 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ops_connector
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_planning_attendance
@@ -2269,10 +2282,12 @@
 │   │   ├── odoo_sh
 │   │   │   ├── ODOO_SH_FEATURES_MAP.md
 │   │   │   └── PARITY_BACKLOG.md
+│   │   ├── BRIDGE_PLATFORM_COMPONENTS.md
 │   │   ├── CLEANUP_AND_HARDENING_CHECKLIST.md
 │   │   ├── COMPLIANCE_AND_LICENSING.md
 │   │   ├── EE_PARITY_LAYERING_ANALYSIS.md
 │   │   ├── EE_PARITY_MINIMAL_MODULE_SET.md
+│   │   ├── EE_TO_OCA_BRIDGE_MATRIX.md
 │   │   ├── ENTERPRISE_STACK_PARITY.md
 │   │   ├── IMPLEMENTATION_MAP.md
 │   │   ├── OPERATIONAL_POSITIONING.md
@@ -2283,6 +2298,8 @@
 │   │   ├── TECHNICAL_PARITY_REPORT.md
 │   │   ├── supabase-ui-library_backlog.md
 │   │   └── supabase-ui-library_block_catalog.md
+│   ├── policy
+│   │   └── MODULE_COMPLETENESS_POLICY.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -2387,6 +2404,8 @@
 │   │   └── EXPORT_TEMPLATES.md
 │   ├── setup
 │   │   └── PARITY_TEST_RUNNER_SECRETS.md
+│   ├── stack
+│   │   └── BASELINE_OCA_STACK.md
 │   ├── state_machines
 │   │   ├── odoo
 │   │   │   ├── ask_ai_chat.md
@@ -5248,15 +5267,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1444 directories, 3799 files
+1455 directories, 3807 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1710 |
-| Files | 5111 |
-| Python files | 826 |
-| XML files | 288 |
-| Markdown files | 1306 |
+| Directories | 1721 |
+| Files | 5134 |
+| Python files | 835 |
+| XML files | 295 |
+| Markdown files | 1310 |
