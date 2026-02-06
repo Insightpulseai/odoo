@@ -15,7 +15,7 @@
         "views/ipai_finance_ppm_menus.xml",
         "views/project_project_views.xml",
         "views/account_analytic_account_views.xml",
-        "wizards/ppm_import_wizard_views.xml",
+        "views/ppm_import_wizard_views.xml",
         "data/ir_cron_ppm_sync.xml",
     ],
     "installable": True,

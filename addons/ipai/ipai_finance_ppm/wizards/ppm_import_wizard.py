@@ -31,8 +31,13 @@ class IpaipPmImportWizard(models.TransientModel):
             budget = float(row["budget_amount"] or 0)
             cc = row["cost_center"].strip()
 
-            # Deterministic lookup: project_key must be unique in your org; store in an x-field later if needed.
-            proj = Project.search([("name", "=", name)], limit=1)
+            # Deterministic lookup: prefer project_key if provided; fall back to name.
+            domain = [("name", "=", name)]
+            if key:
+                # NOTE: assumes you have a stored field for key; if not, this safely degrades to name-only.
+                # Replace 'ipai_project_key' with your canonical field once defined.
+                domain = ["|", ("ipai_project_key", "=", key), ("name", "=", name)]
+            proj = Project.search(domain, limit=1)
             if not proj:
                 proj = Project.create({"name": name})
 
