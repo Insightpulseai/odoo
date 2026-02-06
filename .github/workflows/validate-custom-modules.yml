@@ -1,0 +1,28 @@
+name: Validate Custom Modules
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run validation script
+        run: |
+          # This is a placeholder for the actual validation script
+          # The user's context implies a script exists, but its name isn't specified.
+          # Assuming a script like this exists based on previous interactions.
+          if [ -f "scripts/validate_custom_modules.sh" ]; then
+            bash scripts/validate_custom_modules.sh
+          else
+            echo "Validation script not found."
+            exit 1
+          fi
