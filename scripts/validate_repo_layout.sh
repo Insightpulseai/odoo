@@ -8,7 +8,7 @@ if [ -d addons ]; then
   while IFS= read -r -d '' p; do
     b="$(basename "$p")"
     case "$b" in
-      ipai_*|_deprecated) : ;;
+      ipai|ipai_*|_deprecated) : ;;
       .gitkeep) : ;;
       *) fail "addons/ contains non-IPAI module '$b' (move to vendor/ or rename to ipai_*)." ;;
     esac
