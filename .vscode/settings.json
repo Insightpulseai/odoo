@@ -1,20 +1,57 @@
 {
+  // Ensure Copilot Chat reads .github/copilot-instructions.md
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "chat.instructionsFilesLocations": [
-    ".github/instructions"
+
+  "editor.rulers": [100],
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "ruff.enable": true,
+  "ruff.format.args": ["--config", "pyproject.toml"],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": [
+    "odoo",
+    "addons",
+    "addons/ipai",
+    "addons/OCA",
+    "addons/oca"
   ],
-  "chat.agentFilesLocations": [
-    ".github/agents"
-  ],
-  "chat.useAgentsMdFile": true,
-  "chat.useNestedAgentsMdFiles": false,
-  "chat.useAgentSkills": false,
-  "chat.includeApplyingInstructions": true,
-  "chat.includeReferencedInstructions": true,
-  "workbench.sideBar.location": "left",
-  "workbench.panel.defaultLocation": "bottom",
-  "workbench.panel.opensMaximized": "never",
-  "workbench.secondarySideBar.defaultVisibility": false,
-  "workbench.editor.enablePreview": false,
-  "workbench.editor.showTabs": "multiple"
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/artifacts": true,
+    "**/.odoo": true,
+    "**/.odoo-filestore": true,
+    "**/.pytest_cache": true
+  },
+  "files.associations": {
+    "*.xml": "xml",
+    "*.mjs": "javascript",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-action.json": ".github/action.yml"
+  }
 }

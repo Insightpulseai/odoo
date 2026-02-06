@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Google OAuth Provider -->
+        <record id="oauth_provider_google" model="auth.oauth.provider">
+            <field name="name">Google</field>
+            <field name="client_id"></field>
+            <field name="auth_endpoint">https://accounts.google.com/o/oauth2/v2/auth</field>
+            <field name="token_endpoint">https://oauth2.googleapis.com/token</field>
+            <field name="scope">email profile openid</field>
+            <field name="validation_endpoint">https://www.googleapis.com/oauth2/v1/userinfo</field>
+            <field name="data_endpoint">https://www.googleapis.com/oauth2/v1/userinfo</field>
+            <field name="css_class">fa fa-fw fa-google</field>
+            <field name="body">Sign in with Google</field>
+            <field name="enabled">False</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Microsoft Azure AD OAuth Provider -->
+        <record id="oauth_provider_azure" model="auth.oauth.provider">
+            <field name="name">Microsoft 365</field>
+            <field name="client_id"></field>
+            <field name="auth_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/authorize</field>
+            <field name="token_endpoint">https://login.microsoftonline.com/common/oauth2/v2.0/token</field>
+            <field name="scope">openid email profile User.Read</field>
+            <field name="validation_endpoint">https://graph.microsoft.com/v1.0/me</field>
+            <field name="data_endpoint">https://graph.microsoft.com/v1.0/me</field>
+            <field name="css_class">fa fa-fw fa-windows</field>
+            <field name="body">Sign in with Microsoft</field>
+            <field name="enabled">False</field>
+            <field name="sequence">2</field>
+        </record>
+    </data>
+</odoo>

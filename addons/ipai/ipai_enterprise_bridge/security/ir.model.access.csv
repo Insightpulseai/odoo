@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_iot_device_user,ipai.iot.device.user,model_ipai_iot_device,base.group_user,1,0,0,0
+access_iot_device_admin,ipai.iot.device.admin,model_ipai_iot_device,base.group_system,1,1,1,1
+access_ipai_policy_user,ipai.policy.user,model_ipai_policy,group_ipai_bridge_user,1,0,0,0
+access_ipai_policy_manager,ipai.policy.manager,model_ipai_policy,group_ipai_bridge_manager,1,1,1,1
+access_ipai_close_checklist_user,ipai.close.checklist.user,model_ipai_close_checklist,group_ipai_bridge_user,1,0,0,0
+access_ipai_close_checklist_manager,ipai.close.checklist.manager,model_ipai_close_checklist,group_ipai_bridge_manager,1,1,1,1
+access_ipai_close_checklist_item_user,ipai.close.checklist.item.user,model_ipai_close_checklist_item,group_ipai_bridge_user,1,1,0,0
+access_ipai_close_checklist_item_manager,ipai.close.checklist.item.manager,model_ipai_close_checklist_item,group_ipai_bridge_manager,1,1,1,1
+access_ipai_substitution_group_user,ipai.substitution.group.user,model_ipai_substitution_group,group_ipai_bridge_user,1,0,0,0
+access_ipai_substitution_group_manager,ipai.substitution.group.manager,model_ipai_substitution_group,group_ipai_bridge_manager,1,1,1,1
+access_ipai_job_user,ipai.job.user,model_ipai_job,group_ipai_bridge_user,1,0,0,0
+access_ipai_job_manager,ipai.job.manager,model_ipai_job,group_ipai_bridge_manager,1,1,1,1
+access_enterprise_bridge_config_user,ipai.enterprise.bridge.config.user,model_ipai_enterprise_bridge_config,group_ipai_bridge_user,1,0,0,0
+access_enterprise_bridge_config_admin,ipai.enterprise.bridge.config.admin,model_ipai_enterprise_bridge_config,group_ipai_bridge_manager,1,1,1,1

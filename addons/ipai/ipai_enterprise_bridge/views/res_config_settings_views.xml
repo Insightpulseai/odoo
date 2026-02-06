@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.bridge</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='general_settings']" position="inside">
+                <block title="IPAI Enterprise Bridge" name="ipai_bridge_settings">
+                    <setting string="Email Provider" help="Configure email delivery without IAP">
+                        <field name="ipai_mail_provider"/>
+                        <div class="content-group" invisible="ipai_mail_provider != 'mailgun'">
+                            <div class="row mt16">
+                                <label for="ipai_mailgun_domain" class="col-lg-3"/>
+                                <field name="ipai_mailgun_domain"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_mailgun_api_key" class="col-lg-3"/>
+                                <field name="ipai_mailgun_api_key" password="True"/>
+                            </div>
+                        </div>
+                        <div class="row mt16">
+                            <label for="ipai_mail_catchall_domain" class="col-lg-3"/>
+                            <field name="ipai_mail_catchall_domain" placeholder="mail.example.com"/>
+                        </div>
+                    </setting>
+                    <setting string="OAuth Providers" help="Enable social login without Enterprise">
+                        <div class="content-group">
+                            <div class="row">
+                                <field name="ipai_oauth_google_enabled"/>
+                                <span class="o_form_label">Google OAuth</span>
+                            </div>
+                            <div class="row">
+                                <field name="ipai_oauth_azure_enabled"/>
+                                <span class="o_form_label">Azure AD OAuth</span>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="IoT Bridge" help="Control IoT devices without IoT Box subscription">
+                        <field name="ipai_iot_enabled"/>
+                        <div class="content-group" invisible="not ipai_iot_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_iot_mqtt_broker" class="col-lg-3"/>
+                                <field name="ipai_iot_mqtt_broker"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_iot_mqtt_port" class="col-lg-3"/>
+                                <field name="ipai_iot_mqtt_port"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
