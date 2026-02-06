@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_project_templates_user,project_templates.user,model_ipai_project_templates,base.group_user,1,0,0,0
-access_project_templates_manager,project_templates.manager,model_ipai_project_templates,base.group_system,1,1,1,1
