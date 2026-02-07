@@ -2,75 +2,221 @@
 <odoo>
 
     <!--
-        Coming Soon page template.
-        Uses website.layout for proper asset loading and SEO support.
-        Header/footer are hidden via CSS :has() scoping (no global theme change).
+        InsightPulseAI production homepage.
+        Uses website.layout + Odoo-native Bootstrap 5 classes for styling.
+        Zero external CSS dependencies — renders correctly out of the box.
     -->
-    <template id="coming_soon" name="Coming Soon">
+    <template id="coming_soon" name="InsightPulseAI Homepage">
         <t t-call="website.layout">
-            <div id="wrap" class="ipai-cs-wrap">
-                <main class="ipai-cs-root">
-                    <div class="ipai-cs-container">
-                        <section class="ipai-cs-card" aria-label="Coming soon">
+            <div id="wrap">
 
-                            <!-- Header row -->
-                            <div class="ipai-cs-header">
-                                <div class="ipai-cs-brand">
-                                    <span class="ipai-cs-dot" aria-hidden="true"/>
-                                    <span>InsightPulseAI</span>
-                                </div>
-                                <span class="ipai-cs-kicker">Pulsating Soon</span>
+                <!-- ======= HERO SECTION ======= -->
+                <section class="pt-5 pb-5" style="background: linear-gradient(180deg, #0B1220 0%, #121D33 100%); min-height: 90vh;">
+                    <div class="container">
+
+                        <!-- Navigation -->
+                        <nav class="d-flex align-items-center justify-content-between py-3 mb-5" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div class="d-flex align-items-center gap-2">
+                                <span style="width:12px;height:12px;border-radius:50%;background:#32CD32;display:inline-block;box-shadow:0 0 8px rgba(50,205,50,0.5);"></span>
+                                <span class="fw-bold fs-5 text-white">IP InsightPulse</span>
                             </div>
-
-                            <!-- Headline -->
-                            <h1 class="ipai-cs-heading">
-                                Coming soon — a cleaner, faster, fully auditable homepage.
-                            </h1>
-
-                            <!-- Description -->
-                            <p class="ipai-cs-description">
-                                We are shipping an updated experience built on open
-                                foundations: ERP, automation, analytics, and
-                                integrations — designed to scale without vendor lock-in.
-                            </p>
-
-                            <!-- Capability pills -->
-                            <div class="ipai-cs-pills" role="list" aria-label="Platform capabilities">
-                                <span class="ipai-cs-pill" role="listitem">ERP Core</span>
-                                <span class="ipai-cs-pill" role="listitem">Automation</span>
-                                <span class="ipai-cs-pill" role="listitem">Analytics</span>
-                                <span class="ipai-cs-pill" role="listitem">Governance</span>
-                                <span class="ipai-cs-pill" role="listitem">Integrations</span>
+                            <div class="d-none d-md-flex align-items-center gap-4">
+                                <a href="/products" class="text-decoration-none small fw-semibold" style="color: rgba(255,255,255,0.55);">Products</a>
+                                <a href="/solutions" class="text-decoration-none small fw-semibold" style="color: rgba(255,255,255,0.55);">Solutions</a>
+                                <a href="/integrations" class="text-decoration-none small fw-semibold" style="color: rgba(255,255,255,0.55);">Integrations</a>
+                                <a href="/contactus" class="text-decoration-none small fw-semibold" style="color: rgba(255,255,255,0.55);">Contact</a>
                             </div>
-
-                            <!-- CTA buttons -->
-                            <div class="ipai-cs-cta" role="group" aria-label="Primary actions">
-                                <a class="ipai-cs-btn ipai-cs-btn-primary" href="/contactus">Request a Demo</a>
-                                <a class="ipai-cs-btn ipai-cs-btn-ghost" href="/products">Explore Products</a>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="/web/login" class="text-decoration-none small fw-semibold" style="color: rgba(255,255,255,0.55);">Sign in</a>
+                                <a href="/contactus" class="btn btn-sm text-white fw-bold rounded-pill px-3" style="background: linear-gradient(135deg, #7B68EE 0%, #00CED1 50%, #32CD32 100%); border: none;">Request Demo</a>
                             </div>
+                        </nav>
 
-                            <!-- Footer -->
-                            <div class="ipai-cs-footer">
-                                <span>&#169; <t t-esc="time.strftime('%Y')"/> InsightPulseAI</span>
-                                <span>Status: deploying UI refresh &#183; tokens preserved</span>
-                            </div>
+                        <!-- Category pills -->
+                        <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+                            <span class="rounded-pill fw-semibold" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.55);">All-in-one</span>
+                            <span style="color: rgba(255,255,255,0.35); padding: 0 4px;">&#8226;</span>
+                            <span class="rounded-pill fw-semibold" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.55);">ERP</span>
+                            <span style="color: rgba(255,255,255,0.35); padding: 0 4px;">&#8226;</span>
+                            <span class="rounded-pill fw-semibold" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.55);">Automation</span>
+                            <span style="color: rgba(255,255,255,0.35); padding: 0 4px;">&#8226;</span>
+                            <span class="rounded-pill fw-semibold" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.55);">Analytics</span>
+                        </div>
 
-                        </section>
+                        <!-- Hero heading -->
+                        <h1 class="fw-bold text-white mb-4" style="font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.08; letter-spacing: -0.03em; max-width: 800px;">
+                            Run operations end-to-end — faster, cleaner, and fully auditable.
+                        </h1>
+
+                        <!-- Hero description -->
+                        <p class="fs-5 mb-4" style="color: rgba(255,255,255,0.6); max-width: 640px; line-height: 1.6;">
+                            A modern business stack built on open foundations:
+                            finance, sales, inventory, projects, plus workflow
+                            automation and analytics — designed to scale without
+                            vendor lock-in.
+                        </p>
+
+                        <!-- CTA buttons -->
+                        <div class="d-flex flex-wrap gap-3 mb-5">
+                            <a href="/contactus" class="btn btn-lg text-white fw-bold rounded-pill px-4 py-2" style="background: linear-gradient(135deg, #7B68EE 0%, #00CED1 50%, #32CD32 100%); border: none;">Request a Demo</a>
+                            <a href="/products" class="btn btn-lg fw-bold rounded-pill px-4 py-2" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.85);">Explore Products</a>
+                        </div>
+
+                        <!-- Social proof -->
+                        <p class="small mb-0" style="color: rgba(255,255,255,0.4);">
+                            Trusted by teams that value speed, governance, and extensibility.
+                        </p>
+
                     </div>
-                </main>
+                </section>
+
+                <!-- ======= WHAT YOU GET ======= -->
+                <section class="py-5" style="background: #0E1829;">
+                    <div class="container">
+                        <p class="text-uppercase fw-bold small mb-3" style="color: rgba(255,255,255,0.4); letter-spacing: 0.1em;">What you get</p>
+
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-3">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">ERP Core</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.5);">Finance, CRM, Inventory</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Automation</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.5);">Workflows + Integrations</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Analytics</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.5);">Dashboards + Reporting</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Governance</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.5);">Audit Logs + Controls</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="mt-4 small" style="color: rgba(255,255,255,0.4);">
+                            Built for extensibility: add modules, connect systems, automate everything.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ======= PRODUCTS ======= -->
+                <section class="py-5" style="background: #0B1220;">
+                    <div class="container">
+                        <h2 class="fw-bold text-white mb-3" style="font-size: clamp(1.8rem, 4vw, 3rem);">Products</h2>
+                        <p class="fs-5 mb-5" style="color: rgba(255,255,255,0.5); max-width: 560px;">
+                            Pick what you need today, expand later without re-platforming.
+                        </p>
+
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Finance</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        Accounting, invoicing, tax compliance (BIR), budgets, and financial reporting — all in one ledger.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Sales + CRM</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        Pipeline management, quotations, e-signatures, and customer lifecycle from lead to close.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Inventory</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        Warehouse operations, stock moves, barcode scanning, and multi-location management.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Projects</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        Task management, timesheets, Kanban boards, and resource planning for delivery teams.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Automation</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        n8n workflows, scheduled actions, server actions, and event-driven integrations.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="p-4 rounded-3 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <h3 class="h5 text-white fw-bold mb-2">Analytics</h3>
+                                    <p class="small mb-0" style="color: rgba(255,255,255,0.45);">
+                                        Custom dashboards, KPI tracking, reporting engine, and data-driven decision support.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======= FOOTER CTA ======= -->
+                <section class="py-5 text-center" style="background: linear-gradient(180deg, #0B1220 0%, #0F1A2E 100%);">
+                    <div class="container">
+                        <h2 class="h3 text-white fw-bold mb-3">Ready to run operations your way?</h2>
+                        <p class="mb-4" style="color: rgba(255,255,255,0.5);">
+                            Open-source foundation. Enterprise-grade capability. No vendor lock-in.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 justify-content-center mb-5">
+                            <a href="/contactus" class="btn btn-lg text-white fw-bold rounded-pill px-4" style="background: linear-gradient(135deg, #7B68EE 0%, #00CED1 50%, #32CD32 100%); border: none;">Request a Demo</a>
+                            <a href="https://github.com/InsightPulseAI/odoo" class="btn btn-lg fw-bold rounded-pill px-4" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.85);">View on GitHub</a>
+                        </div>
+                        <div class="pt-4 d-flex justify-content-between flex-wrap gap-3 small" style="border-top: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.35);">
+                            <span>&#169; <t t-esc="time.strftime('%Y')"/> InsightPulseAI</span>
+                            <div class="d-flex gap-3">
+                                <a href="/privacy" class="text-decoration-none" style="color: rgba(255,255,255,0.35);">Privacy</a>
+                                <a href="/terms" class="text-decoration-none" style="color: rgba(255,255,255,0.35);">Terms</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </div>
         </t>
     </template>
 
-    <!-- SEO meta tags (conditional, only on coming-soon page) -->
+    <!-- Hide default website header/footer on homepage via t-attf scoping -->
+    <template id="homepage_hide_chrome"
+              inherit_id="website.layout"
+              name="Homepage Hide Header/Footer"
+              active="True"
+              priority="99">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-style">#{request.httprequest.path in ('/', '/coming-soon') and 'display:none !important' or ''}</attribute>
+        </xpath>
+        <xpath expr="//footer" position="attributes">
+            <attribute name="t-attf-style">#{request.httprequest.path in ('/', '/coming-soon') and 'display:none !important' or ''}</attribute>
+        </xpath>
+    </template>
+
+    <!-- SEO meta tags -->
     <template id="coming_soon_head"
               inherit_id="website.layout"
-              name="Coming Soon Meta Tags">
+              name="InsightPulseAI Homepage Meta">
         <xpath expr="//head" position="inside">
-            <t t-if="main_object and main_object._name == 'website.page' and main_object.url == '/coming-soon'">
-                <meta property="og:title" content="InsightPulseAI — Coming Soon"/>
+            <t t-if="request.httprequest.path in ('/', '/coming-soon')">
+                <meta property="og:title" content="InsightPulseAI — Run Operations End-to-End"/>
                 <meta property="og:description"
-                      content="We are shipping a rebuilt homepage. Faster, cleaner, fully auditable operations."/>
+                      content="A modern business stack built on open foundations: finance, sales, inventory, projects, plus workflow automation and analytics."/>
                 <meta property="og:type" content="website"/>
                 <meta name="theme-color" content="#0B1220"/>
             </t>
