@@ -79,7 +79,8 @@ explore -> plan -> implement -> verify -> commit
 - Prefer `addons/` modules + `scripts/odoo_*.sh` wrappers
 - No UI clickpath instructions. CLI/CI only.
 - Every Odoo task produces: (1) module changes, (2) install/update script, (3) health check
-- Canonical setup: `odoo19/` directory (single DB `odoo`, `list_db=False`)
+- Databases: `odoo` (prod), `odoo_dev` (local) — only 2, nothing else
+- Canonical setup: `odoo19/` directory (`list_db=False`)
 
 ---
 
