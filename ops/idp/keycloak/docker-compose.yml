@@ -1,0 +1,61 @@
+# =============================================================================
+# Keycloak SSO — Self-Hosted Identity Provider
+# =============================================================================
+# Provides OpenID Connect / SAML SSO + MFA for the IPAI stack.
+# Closes the Azure WAF Security pillar gap (no SSO/MFA).
+#
+# Usage:
+#   cd ops/idp/keycloak && docker compose up -d
+#   docker compose ps
+#
+# Verify:
+#   curl -fsS http://localhost:8080/health/ready
+#
+# Admin console:
+#   http://localhost:8080/admin (credentials from env)
+#
+# Production: Use start (not start-dev), add KC_HOSTNAME, enable TLS.
+# =============================================================================
+
+services:
+  kc_db:
+    image: postgres:16-alpine
+    container_name: keycloak_db
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=${KC_DB_PASSWORD:-keycloak}
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    container_name: keycloak
+    command: ["start-dev"]
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://kc_db:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD:-keycloak}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_HEALTH_ENABLED=true
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      kc_db:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  keycloak_db_data:

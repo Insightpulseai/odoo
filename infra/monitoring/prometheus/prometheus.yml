@@ -1,0 +1,65 @@
+# Prometheus Configuration — InsightPulse AI Stack
+# Scrape targets for Odoo CE + PostgreSQL + Host metrics
+
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  scrape_timeout: 10s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  # -----------------------------------------------
+  # Prometheus self-monitoring
+  # -----------------------------------------------
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
+
+  # -----------------------------------------------
+  # Odoo CE health endpoint
+  # -----------------------------------------------
+  - job_name: odoo
+    metrics_path: /web/health
+    scheme: http
+    static_configs:
+      - targets: ["odoo-core:8069"]
+        labels:
+          service: odoo-ce
+          workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
+    # Odoo /web/health returns plain text "OK", not Prometheus format.
+    # We use blackbox-style: if the probe succeeds, target is UP.
+    # For actual Prometheus metrics, use the cadvisor or custom exporter.
+
+  # -----------------------------------------------
+  # PostgreSQL metrics via postgres_exporter
+  # -----------------------------------------------
+  - job_name: postgresql
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+        labels:
+          service: postgresql
+          workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
+
+  # -----------------------------------------------
+  # Host/node metrics via node_exporter
+  # -----------------------------------------------
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: host
+          workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
+
+  # -----------------------------------------------
+  # Container metrics via cAdvisor
+  # -----------------------------------------------
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: containers
+          workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
