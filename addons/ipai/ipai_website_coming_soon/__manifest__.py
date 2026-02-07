@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "IPAI Website Coming Soon",
-    "version": "19.0.1.0.0",
+    "name": "IPAI Website Homepage",
+    "version": "19.0.2.0.0",
     "category": "Website",
-    "summary": "Token-driven Coming Soon landing page with Pulser-style pulse indicator",
+    "summary": "InsightPulseAI production homepage — Odoo-native Bootstrap, zero CSS deps",
     "description": """
-IPAI Website Coming Soon
-========================
+IPAI Website Homepage
+=====================
 
-Replaces the production homepage with a brand-consistent Coming Soon landing
-page while the full UI is being rebuilt.
+Production marketing homepage for insightpulseai.com / erp.insightpulseai.com.
 
-Features
---------
-- Token-driven CSS (references IPAI Design System SSOT variables)
-- Pulser-style pulsating green indicator (CSS-only, no JS)
-- Accessible: prefers-reduced-motion supported
-- SEO: title, description, og:* meta tags via QWeb
-- Mobile-first responsive layout
-- Glass-morphism card on dark gradient background
-- Does NOT modify global website theme; only overrides homepage route
+Uses Odoo's native website.layout + Bootstrap 5 classes exclusively.
+No custom SCSS, no external CSS variables — guaranteed to render correctly
+the moment the module is installed.
+
+Sections: Hero, What You Get, Products, Footer CTA.
+Hides Odoo's default header/footer on the homepage via scoped template.
 
 Install / Rollback
 ------------------
@@ -36,11 +32,6 @@ Rollback: ``scripts/odoo_coming_soon_rollback.sh``
         "views/coming_soon_templates.xml",
         "data/website_page.xml",
     ],
-    "assets": {
-        "web.assets_frontend": [
-            "ipai_website_coming_soon/static/src/scss/coming_soon.scss",
-        ],
-    },
     "post_init_hook": "_post_init_hook",
     "uninstall_hook": "_uninstall_hook",
     "installable": True,
