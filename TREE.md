@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b4539a7ef7bf9d06011ea3ed2b375343295f9227
+> Commit: 3d7ba10685398799519284c469622118f0a3260d
 
 ```
 .
@@ -500,6 +500,13 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_website_coming_soon
+│   │   │   ├── data
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
 │   │   ├── ipai_whatsapp_connector
 │   │   │   ├── models
 │   │   │   ├── security
@@ -4084,6 +4091,9 @@
 │   ├── oca-update.sh
 │   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
+│   ├── odoo_coming_soon_install.sh
+│   ├── odoo_coming_soon_rollback.sh
+│   ├── odoo_coming_soon_verify.sh
 │   ├── odoo_db_schema_diff.sh
 │   ├── odoo_ensure_modules_installed.sh
 │   ├── odoo_import_project_suite.py
@@ -5333,15 +5343,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1473 directories, 3855 files
+1477 directories, 3861 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1741 |
-| Files | 5186 |
-| Python files | 839 |
-| XML files | 296 |
+| Directories | 1748 |
+| Files | 5196 |
+| Python files | 842 |
+| XML files | 298 |
 | Markdown files | 1315 |
