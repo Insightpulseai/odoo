@@ -209,14 +209,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"deployments\",\n  \"username\": \"Hotfix Bot\",\n  \"icon_emoji\": \":ambulance:\",\n  \"text\": \"**Hotfix PR Created by {{ $('Validate Command').item.json.user }}**\\n\\n| Field | Value |\\n|-------|-------|\\n| Issue | #{{ $('Validate Command').item.json.issue_number }} |\\n| PR | {{ $('Create Draft PR').item.json.html_url }} |\\n| Branch | `hotfix/issue-{{ $('Validate Command').item.json.issue_number }}` |\\n| Status | :construction: Draft - Ready for fixes |\\n\\n:point_right: CI gates will run on push. Mark ready for review when done.\"\n}",
         "options": {}
       },
-      "id": "notify-mattermost",
-      "name": "Notify Mattermost",
+      "id": "notify-slack",
+      "name": "Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2230, 350]
@@ -327,7 +327,7 @@
             "index": 0
           },
           {
-            "node": "Notify Mattermost",
+            "node": "Notify Slack",
             "type": "main",
             "index": 0
           }

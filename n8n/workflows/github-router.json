@@ -145,14 +145,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"deployments\",\n  \"username\": \"GitHub Router\",\n  \"icon_emoji\": \":rocket:\",\n  \"text\": \"**Release Published**: {{ $('GitHub Webhook').item.json.body.release.tag_name }}\\n{{ $('GitHub Webhook').item.json.body.release.html_url }}\"\n}",
         "options": {}
       },
-      "id": "notify-mattermost",
-      "name": "Notify Mattermost",
+      "id": "notify-slack",
+      "name": "Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [920, 200]
@@ -274,7 +274,7 @@
       "main": [
         [
           {
-            "node": "Notify Mattermost",
+            "node": "Notify Slack",
             "type": "main",
             "index": 0
           }

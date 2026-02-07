@@ -15,7 +15,7 @@ const GITHUB_APP_ID = Deno.env.get('GITHUB_APP_ID') || '2191216'
 const GITHUB_CLIENT_ID = Deno.env.get('GITHUB_CLIENT_ID') || 'Iv23liwGL7fnYySPPAjS'
 const GITHUB_CLIENT_SECRET = Deno.env.get('GITHUB_CLIENT_SECRET')!
 const GITHUB_PRIVATE_KEY = Deno.env.get('GITHUB_PRIVATE_KEY')!
-const CALLBACK_URL = Deno.env.get('GITHUB_CALLBACK_URL') || 'https://mcp.insightpulseai.net/callback'
+const CALLBACK_URL = Deno.env.get('GITHUB_CALLBACK_URL') || 'https://mcp.insightpulseai.com/callback'
 
 interface InstallationToken {
   token: string
@@ -178,7 +178,7 @@ async function handleWebhook(req: Request) {
   })
 
   // Route events to n8n workflows
-  const n8nUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n.insightpulseai.net'
+  const n8nUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n.insightpulseai.com'
 
   switch (event) {
     case 'push':

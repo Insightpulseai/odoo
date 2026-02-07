@@ -18,8 +18,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Test configuration
-const ODOO_BASE_URL = process.env.ODOO_BASE_URL || 'https://odoo.insightpulseai.net';
-const ODOO_USERNAME = process.env.ODOO_USERNAME || 'finance.supervisor@insightpulseai.net';
+const ODOO_BASE_URL = process.env.ODOO_BASE_URL || 'https://odoo.insightpulseai.com';
+const ODOO_USERNAME = process.env.ODOO_USERNAME || 'finance.supervisor@insightpulseai.com';
 const ODOO_PASSWORD = process.env.ODOO_PASSWORD;
 const SCREENSHOTS_DIR = path.join(__dirname, '../screenshots');
 const BASELINE_DIR = path.join(SCREENSHOTS_DIR, 'baseline');

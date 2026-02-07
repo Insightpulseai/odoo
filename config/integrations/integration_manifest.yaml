@@ -15,7 +15,7 @@ generated_at: "2026-02-01T00:00:00Z"
 domain_policy:
   canonical_domain: "insightpulseai.com"
   forbidden_patterns:
-    - "insightpulseai.net"
+    - "insightpulseai.com"
   enforcement: "strict"  # FAIL audit if any forbidden pattern found
 
   canonical_subdomains:
@@ -44,7 +44,7 @@ integrations:
 
     test_suite:
       - name: "forbidden_domain"
-        description: "No insightpulseai.net references allowed"
+        description: "No insightpulseai.com references allowed"
         expected_status: "PASS"
       - name: "canonical_domains"
         description: "Verify canonical .com domains are used"

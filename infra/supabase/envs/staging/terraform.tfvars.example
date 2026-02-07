@@ -12,8 +12,8 @@ production_project_ref = "spdtwktxdalcfigzeqrz"  # TODO: Replace with staging pr
 api_max_rows = 1000
 
 # Auth Configuration (staging URLs)
-site_url = "https://staging.erp.insightpulseai.net"
+site_url = "https://staging.erp.insightpulseai.com"
 additional_redirect_urls = [
-  "https://staging.control.insightpulseai.net/**",
+  "https://staging.control.insightpulseai.com/**",
   "http://localhost:3000/**"
 ]

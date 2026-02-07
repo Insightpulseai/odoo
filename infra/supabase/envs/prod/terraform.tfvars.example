@@ -12,8 +12,8 @@ production_project_ref = "spdtwktxdalcfigzeqrz"
 api_max_rows = 1000
 
 # Auth Configuration (production URLs)
-site_url = "https://erp.insightpulseai.net"
+site_url = "https://erp.insightpulseai.com"
 additional_redirect_urls = [
-  "https://control.insightpulseai.net/**",
-  "https://app.insightpulseai.net/**"
+  "https://control.insightpulseai.com/**",
+  "https://app.insightpulseai.com/**"
 ]

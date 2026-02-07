@@ -56,14 +56,14 @@ variable "api_max_rows" {
 
 variable "site_url" {
   type        = string
-  default     = "https://erp.insightpulseai.net"
+  default     = "https://erp.insightpulseai.com"
   description = "Primary site URL for auth redirects"
 }
 
 variable "additional_redirect_urls" {
   type = list(string)
   default = [
-    "https://control.insightpulseai.net/**",
+    "https://control.insightpulseai.com/**",
     "http://localhost:3000/**",
     "http://localhost:5173/**"
   ]

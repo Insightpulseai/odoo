@@ -73,7 +73,7 @@ interface SyncResult {
 // -----------------------------------------------------------------------------
 
 const ODOO: OdooConfig = {
-  url: Deno.env.get("ODOO_URL") ?? "https://erp.insightpulseai.net",
+  url: Deno.env.get("ODOO_URL") ?? "https://erp.insightpulseai.com",
   db: Deno.env.get("ODOO_DB") ?? "production",
   user: Deno.env.get("ODOO_USER") ?? "",
   password: Deno.env.get("ODOO_PASSWORD") ?? "",

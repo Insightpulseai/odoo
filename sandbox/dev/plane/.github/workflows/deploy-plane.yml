@@ -16,7 +16,7 @@ on:
 
 env:
   DROPLET_IP: "188.166.237.231"
-  PLANE_DOMAIN: "plane.insightpulseai.net"
+  PLANE_DOMAIN: "plane.insightpulseai.com"
   DB_HOST: "odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
   DB_PORT: "25060"
   DB_USER: "doadmin"
@@ -129,16 +129,16 @@ jobs:
           chmod +x doctl
 
           # Check/create DNS record
-          EXISTING=$(./doctl compute domain records list insightpulseai.net --format ID,Name --no-header | grep "^[0-9]*.*plane$" | awk '{print $1}' || true)
+          EXISTING=$(./doctl compute domain records list insightpulseai.com --format ID,Name --no-header | grep "^[0-9]*.*plane$" | awk '{print $1}' || true)
 
           if [ -n "$EXISTING" ]; then
             echo "Updating existing DNS record: $EXISTING"
-            ./doctl compute domain records update insightpulseai.net \
+            ./doctl compute domain records update insightpulseai.com \
               --record-id "$EXISTING" \
               --record-data "${{ env.DROPLET_IP }}"
           else
             echo "Creating DNS A record"
-            ./doctl compute domain records create insightpulseai.net \
+            ./doctl compute domain records create insightpulseai.com \
               --record-type A \
               --record-name plane \
               --record-data "${{ env.DROPLET_IP }}" \

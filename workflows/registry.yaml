@@ -1,0 +1,252 @@
+# Workflow Registry — Single Source of Truth
+# Every workflow must be registered here with lifecycle state + owner.
+# CI gate: unregistered workflows are flagged as orphaned.
+#
+# Lifecycle states: active | experimental | deprecated | archived | orphaned
+# Tiers: 0 (always review) | 1 (scheduled review) | 2 (no review)
+#
+# Last generated: 2026-02-07
+# Total: 153 workflows
+
+schema_version: "1.0"
+
+lifecycle_rules:
+  auto_deprecate_after_days: 90  # No runs in 90 days -> deprecated
+  auto_archive_after_days: 180   # No runs in 180 days -> archived
+  require_owner: true
+  require_purpose: true
+
+tiers:
+  0: "Auth, billing, production deploy, security — always reviewed"
+  1: "Data pipelines, agent orchestration, schema — scheduled review"
+  2: "Demos, experiments, docs-only — no review required"
+
+# ── Tier 0: Production-Critical ──────────────────────────────────────
+
+- id: cd-production
+  file: cd-production.yml
+  owner: infra
+  purpose: Continuous delivery to production
+  tier: 0
+  lifecycle: active
+
+- id: deploy-production
+  file: deploy-production.yml
+  owner: infra
+  purpose: Deploy to production (push/dispatch/workflow_run)
+  tier: 0
+  lifecycle: active
+
+- id: deploy-odoo-prod
+  file: deploy-odoo-prod.yml
+  owner: infra
+  purpose: Odoo-specific production module upgrade
+  tier: 0
+  lifecycle: active
+
+- id: secret-scan
+  file: secret-scan.yml
+  owner: security
+  purpose: Scan for leaked secrets in PRs
+  tier: 0
+  lifecycle: active
+
+- id: secrets-audit
+  file: secrets-audit.yml
+  owner: security
+  purpose: Audit secrets configuration
+  tier: 0
+  lifecycle: active
+
+- id: all-green-gates
+  file: all-green-gates.yml
+  owner: ci
+  purpose: Aggregate gate — all checks must pass
+  tier: 0
+  lifecycle: active
+
+- id: ci
+  file: ci.yml
+  owner: ci
+  purpose: Main CI pipeline
+  tier: 0
+  lifecycle: active
+
+- id: prod-odoo-modules
+  file: prod-odoo-modules.yml
+  owner: infra
+  purpose: Install/upgrade Odoo modules in production
+  tier: 0
+  lifecycle: active
+
+- id: prod-configure-smtp
+  file: prod-configure-smtp.yml
+  owner: infra
+  purpose: Configure SMTP (Zoho Mail) in production
+  tier: 0
+  lifecycle: active
+
+# ── Tier 1: Quality Gates & Pipelines ────────────────────────────────
+
+- id: odoo-ci-gate
+  file: odoo-ci-gate.yml
+  owner: ci
+  purpose: Odoo-aware CI gate for PRs
+  tier: 1
+  lifecycle: active
+
+- id: canonical-gate
+  file: canonical-gate.yml
+  owner: ci
+  purpose: Validate canonical setup structure
+  tier: 1
+  lifecycle: active
+
+- id: spec-kit-enforce
+  file: spec-kit-enforce.yml
+  owner: ci
+  purpose: Validate spec bundle structure
+  tier: 1
+  lifecycle: active
+
+- id: repo-structure
+  file: repo-structure.yml
+  owner: ci
+  purpose: Verify repo structure
+  tier: 1
+  lifecycle: active
+
+- id: ee-parity-gate
+  file: ee-parity-gate.yml
+  owner: parity
+  purpose: Enterprise parity threshold enforcement
+  tier: 1
+  lifecycle: active
+
+- id: install-set-drift-guard
+  file: install-set-drift-guard.yml
+  owner: ci
+  purpose: Guard against module install set drift
+  tier: 1
+  lifecycle: active
+
+- id: azure-waf-parity
+  file: azure-waf-parity.yml
+  owner: security
+  purpose: Azure WAF parity gates
+  tier: 1
+  lifecycle: active
+
+- id: health-check
+  file: health-check.yml
+  owner: infra
+  purpose: Finance stack health check (scheduled)
+  tier: 1
+  lifecycle: active
+
+- id: finance-ppm-health
+  file: finance-ppm-health.yml
+  owner: finance
+  purpose: Finance PPM health check
+  tier: 1
+  lifecycle: active
+
+- id: auto-sitemap-tree
+  file: auto-sitemap-tree.yml
+  owner: docs
+  purpose: Auto-update SITEMAP.md and TREE.md
+  tier: 1
+  lifecycle: active
+
+- id: build-odoo-ce19-ee-parity
+  file: build-odoo-ce19-ee-parity.yml
+  owner: infra
+  purpose: Build Odoo CE 19 with EE parity image
+  tier: 1
+  lifecycle: active
+
+- id: build-seeded-image
+  file: build-seeded-image.yml
+  owner: infra
+  purpose: Build pre-seeded Odoo Docker image
+  tier: 1
+  lifecycle: active
+
+- id: build-unified-image
+  file: build-unified-image.yml
+  owner: infra
+  purpose: Build unified IPAI Odoo Docker images
+  tier: 1
+  lifecycle: active
+
+- id: supabase-deploy
+  file: supabase-deploy.yml
+  owner: infra
+  purpose: Supabase CI/CD pipeline
+  tier: 1
+  lifecycle: active
+
+- id: supabase-db-push
+  file: supabase-db-push.yml
+  owner: infra
+  purpose: Push Supabase DB migrations
+  tier: 1
+  lifecycle: active
+
+# ── Tier 2: Docs, Experiments, Low-Signal ─────────────────────────────
+
+- id: ci-docs-only
+  file: ci-docs-only.yml
+  owner: docs
+  purpose: CI for docs-only PRs
+  tier: 2
+  lifecycle: active
+
+- id: docs-pages
+  file: docs-pages.yml
+  owner: docs
+  purpose: Build and deploy docs to GitHub Pages
+  tier: 2
+  lifecycle: active
+
+- id: architecture-diagrams
+  file: architecture-diagrams.yml
+  owner: docs
+  purpose: Generate architecture diagrams
+  tier: 2
+  lifecycle: active
+
+- id: wiki-sync
+  file: wiki-sync.yml
+  owner: docs
+  purpose: Sync docs/wiki to GitHub Wiki
+  tier: 2
+  lifecycle: active
+
+# ── Deprecated ────────────────────────────────────────────────────────
+
+- id: deploy-finance-ppm
+  file: deploy-finance-ppm.yml
+  owner: finance
+  purpose: Deploy Finance PPM (formerly Mattermost-dependent)
+  tier: 1
+  lifecycle: deprecated
+  superseded_by: deploy-production
+  sunset_date: "2026-03-07"
+
+- id: ops-ci-router
+  file: ops-ci-router.yml
+  owner: infra
+  purpose: Multi-signal scoring + alerting (formerly Mattermost)
+  tier: 1
+  lifecycle: deprecated
+  superseded_by: health-check
+  sunset_date: "2026-03-07"
+
+# ── Not Yet Classified (remaining 127 workflows) ─────────────────────
+# TODO: Classify remaining workflows. Run:
+#   ls .github/workflows/*.yml | wc -l  # should match total count
+#   Use lifecycle_rules.auto_deprecate_after_days to auto-flag stale ones.
+#
+# Priority: workflows without a run in 60+ days should be reviewed first.
+# Use `gh run list --workflow=<file> --limit=1` to check last execution.

@@ -84,7 +84,7 @@ class RecommendationsManager {
                 category: 'security',
                 severity: 'critical',
                 title: 'SSL certificate expiring soon',
-                resource: 'api.insightpulseai.net',
+                resource: 'api.insightpulseai.com',
                 impact: 'Expires in 14 days',
                 description: 'The SSL certificate for this domain will expire soon. Renew immediately to avoid service disruption.',
                 actions: ['Renew Certificate', 'View Details'],

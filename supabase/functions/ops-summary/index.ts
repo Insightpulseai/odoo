@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
     return new Response("Invalid JSON", { status: 400 });
   }
 
-  const system = (body.system as string) || "erp.insightpulseai.net";
+  const system = (body.system as string) || "erp.insightpulseai.com";
   const environment = (body.environment as string) || "prod";
 
   const sb = createClient(

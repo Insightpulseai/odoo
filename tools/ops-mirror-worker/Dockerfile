@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-LABEL maintainer="InsightPulse AI <ops@insightpulseai.net>"
+LABEL maintainer="InsightPulse AI <ops@insightpulseai.com>"
 LABEL description="OPS Mirror Worker - Odoo outbox drainer to Supabase"
 
 WORKDIR /app

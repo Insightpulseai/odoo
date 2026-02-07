@@ -69,7 +69,7 @@ file_size_limit = "50MiB"
 [functions.copilot-chat]
 verify_jwt = false
 
-[functions.github-mattermost-bridge]
+[functions.github-slack-bridge]
 verify_jwt = false
 
 [functions.github-app-auth]
@@ -101,12 +101,12 @@ verify_jwt = false
 # Enable the auth service
 enabled = true
 # The base URL of the site
-site_url = "https://app.insightpulseai.net"
+site_url = "https://app.insightpulseai.com"
 # A list of allowed redirect URLs for OAuth
 additional_redirect_urls = [
-  "https://erp.insightpulseai.net",
-  "https://n8n.insightpulseai.net",
-  "https://bi.insightpulseai.net",
+  "https://erp.insightpulseai.com",
+  "https://n8n.insightpulseai.com",
+  "https://bi.insightpulseai.com",
   "http://localhost:3000"
 ]
 # How long tokens are valid for (in seconds)
