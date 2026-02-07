@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9124d791ee7a5087dda8f9abcf4e1c993c7bd304
+> Commit: 48f6e6026ab8a1e343c24da115e1ad0c21bbac71
 
 ```
 .
@@ -4871,6 +4871,7 @@
 │   │   ├── 20260126222743_platformkit_sql_rpc.sql
 │   │   ├── 20260126_000001_ee_parity_tracking.sql
 │   │   ├── 20260126_billing_schema.sql
+│   │   ├── 20260207_security_definer_views_rls_remediation.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -5310,7 +5311,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1471 directories, 3834 files
+1471 directories, 3835 files
 ```
 
 ## 📊 Stats
@@ -5318,7 +5319,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1739 |
-| Files | 5165 |
+| Files | 5166 |
 | Python files | 837 |
 | XML files | 296 |
 | Markdown files | 1315 |
