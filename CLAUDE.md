@@ -172,7 +172,7 @@ You MUST NOT ask users to paste:
 - `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ACCESS_TOKEN`
 - `GITHUB_TOKEN`, `GITHUB_PERSONAL_ACCESS_TOKEN`
-- `MAILGUN_API_KEY`, SMTP passwords
+- `ZOHO_MAIL_PASSWORD`, SMTP passwords
 - Any database passwords, connection strings, API keys, or client secrets
 
 You MUST NOT suggest putting secrets directly into `.py`, `.ts`, `.json`, `.yml` checked into git.
@@ -249,6 +249,9 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 | **Stack** | Odoo CE 19.0 (primary) + OCA + n8n + Slack + PostgreSQL 16 |
 | **Node** | >= 18.0.0 (pnpm workspaces) |
 | **Python** | 3.10+ (Odoo 18), 3.12+ (Odoo 19) |
+| **Domain** | `insightpulseai.com` (primary — all `.net` refs are deprecated) |
+| **DNS** | Cloudflare (delegated from Spacesquare registrar) |
+| **Mail** | Zoho Mail (replaces deprecated Mailgun) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
@@ -349,6 +352,8 @@ docker compose exec -T web odoo -d odoo -i base   # Install module
 **Self-hosted stack:**
 - **Hosting**: DigitalOcean droplets (~$50-100/mo vs $1000s cloud)
 - **Database**: PostgreSQL 16 (self-managed, not RDS)
+- **DNS**: Cloudflare (delegated from Spacesquare registrar)
+- **Mail**: Zoho Mail (replaces deprecated Mailgun)
 - **BI**: Apache Superset (free, self-hosted)
 - **SSO**: Keycloak (free, self-hosted)
 - **Automation**: n8n (self-hosted, not cloud)
@@ -670,7 +675,8 @@ python .claude/query_memory.py all          # Everything
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `ci-odoo-ce.yml` | Push/PR | Main Odoo CE tests |
+| `ci.yml` | Push/PR | Main CI tests |
+| `odoo-ci-gate.yml` | Push/PR | Odoo-specific CI gate |
 | `ci-odoo-oca.yml` | Push/PR | OCA module compliance |
 | `spec-kit-enforce.yml` | Push/PR | Validate spec bundle structure |
 | `repo-structure.yml` | Push/PR | Verify repo structure |
@@ -774,9 +780,16 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 - Supabase project `xkxyvboeubffxxbebsll`
 - Supabase project `ublqmilcjtpnflofprkr`
 - Any `odoo.com` Enterprise module references
-- **Mattermost** - Use Slack instead (2026-01-28)
-- `ipai_mattermost_connector` - Use `ipai_slack_connector` instead
+- **Mattermost** - Fully removed. Use Slack for all chat/notifications (2026-01-28)
+- `ipai_mattermost_connector` - Removed. Use `ipai_slack_connector` instead
+- `scripts/odoo_mattermost_integration.py` - Removed. Use Slack webhooks
+- `scripts/setup_mattermost_db.sh` - Removed
+- `supabase/functions/github-mattermost-bridge/` - Removed. Use Slack integration
+- **Appfine** - Fully removed. No Appfine services or references
 - **`odoo-ce` repo name** - Repo renamed to `odoo` (2026-02-03, PR #322). All references to `odoo-ce` should use `odoo` instead
+- **`insightpulseai.net` domain** - Migrated to `insightpulseai.com`. All `.net` references are stale
+- **Mailgun** - Replaced by Zoho Mail for all email/SMTP. Do not use `MAILGUN_API_KEY`
+- `ipai_mailgun_bridge` - Removed. Use Zoho Mail SMTP (`smtp.zoho.com:587`) instead
 
 ### Module Philosophy
 
@@ -1638,7 +1651,7 @@ docker compose logs postgres
 
 # Manual fix on server
 ssh root@178.128.112.214
-cd /opt/odoo-ce/repo/addons
+cd /opt/odoo/repo/addons
 chown -R 100:101 ipai ipai_theme_tbwa*
 chmod -R 755 ipai ipai_theme_tbwa*
 docker restart odoo-prod

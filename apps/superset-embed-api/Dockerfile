@@ -9,7 +9,7 @@
 # Run:
 #   docker run -p 3001:3001 \
 #     -e SUPERSET_GUEST_TOKEN_SECRET=... \
-#     -e SUPERSET_DOMAIN=https://superset.insightpulseai.net \
+#     -e SUPERSET_DOMAIN=https://superset.insightpulseai.com \
 #     ghcr.io/jgtolentino/superset-embed-api:latest
 # =============================================================================
 

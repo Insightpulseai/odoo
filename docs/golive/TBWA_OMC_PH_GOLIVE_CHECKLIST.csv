@@ -1,5 +1,5 @@
 Area,Step,Owner,Due Date,Gate,Evidence Link,Status
-0-Prerequisites,Prod URL correct (https://erp.insightpulseai.net),IT Admin,,System,URL returns 200,Pending
+0-Prerequisites,Prod URL correct (https://erp.insightpulseai.com),IT Admin,,System,URL returns 200,Pending
 0-Prerequisites,Mail queue cron enabled (so invites/reset works),IT Admin,,System,ir.cron active for Email Queue,Pending
 0-Prerequisites,Correct company + timezone + currency + fiscal year,Finance Lead,,System,Settings screenshot,Pending
 0-Prerequisites,Users created (no demo logins for real operations),IT Admin,,System,res.users list export,Pending

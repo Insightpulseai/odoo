@@ -16,7 +16,7 @@ trap 'error_handler $? $LINENO' ERR
 # Configuration Variables
 ################################################################################
 
-DOMAIN="erp.insightpulseai.net"
+DOMAIN="erp.insightpulseai.com"
 EMAIL="jgtolentino_rn@yahoo.com"
 REPO_URL="https://github.com/jgtolentino/odoo-ce.git"
 INSTALL_DIR="/opt/odoo-ce"

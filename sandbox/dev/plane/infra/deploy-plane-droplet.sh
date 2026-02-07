@@ -12,7 +12,7 @@ DROPLET_REGION="${PLANE_DROPLET_REGION:-sgp1}"
 DROPLET_IMAGE="${PLANE_DROPLET_IMAGE:-ubuntu-24-04-x64}"
 
 # Domain configuration
-PLANE_DOMAIN="${PLANE_DOMAIN:-plane.insightpulseai.net}"
+PLANE_DOMAIN="${PLANE_DOMAIN:-plane.insightpulseai.com}"
 
 # External PostgreSQL (odoo-db-sgp1)
 # Format: postgresql://user:password@host:port/database
@@ -56,7 +56,7 @@ doctl compute spaces create "${SPACES_BUCKET}" --region "${SPACES_REGION}" 2>/de
 cat > /tmp/cors.json << 'EOF'
 {
   "CORSRules": [{
-    "AllowedOrigins": ["https://plane.insightpulseai.net"],
+    "AllowedOrigins": ["https://plane.insightpulseai.com"],
     "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
     "AllowedHeaders": ["*"],
     "MaxAgeSeconds": 3600
@@ -154,16 +154,16 @@ ssh -o StrictHostKeyChecking=no "root@${DROPLET_IP}" "bash /tmp/plane-install.sh
 # Step 5: Configure DNS
 echo ">>> Step 5: Configuring DNS..."
 # Check if A record exists
-EXISTING_RECORD=$(doctl compute domain records list insightpulseai.net --format ID,Name,Type --no-header | grep -E "^[0-9]+\s+plane\s+A" | awk '{print $1}' || true)
+EXISTING_RECORD=$(doctl compute domain records list insightpulseai.com --format ID,Name,Type --no-header | grep -E "^[0-9]+\s+plane\s+A" | awk '{print $1}' || true)
 
 if [ -n "${EXISTING_RECORD}" ]; then
   echo "Updating existing DNS record..."
-  doctl compute domain records update insightpulseai.net \
+  doctl compute domain records update insightpulseai.com \
     --record-id "${EXISTING_RECORD}" \
     --record-data "${DROPLET_IP}"
 else
   echo "Creating DNS A record..."
-  doctl compute domain records create insightpulseai.net \
+  doctl compute domain records create insightpulseai.com \
     --record-type A \
     --record-name plane \
     --record-data "${DROPLET_IP}" \

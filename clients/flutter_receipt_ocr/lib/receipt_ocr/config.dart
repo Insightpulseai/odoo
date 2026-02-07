@@ -1,7 +1,7 @@
 /// Configuration for Receipt OCR module
 class OcrConfig {
   /// OCR Backend endpoint
-  static const String ocrEndpoint = 'https://ocr.insightpulseai.net/ocr';
+  static const String ocrEndpoint = 'https://ocr.insightpulseai.com/ocr';
 
   /// Mobile API key for OCR endpoint (X-API-KEY header)
   /// NOTE: This should be stored securely, preferably using flutter_secure_storage

@@ -138,7 +138,7 @@ class DOAdvisorApp {
                 category: 'security',
                 severity: 'critical',
                 title: 'SSL certificate expiring',
-                resource: 'api.insightpulseai.net',
+                resource: 'api.insightpulseai.com',
                 impact: 'Expires in 14 days',
                 description: 'SSL certificate will expire soon. Renew to avoid service disruption.',
             },

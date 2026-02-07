@@ -6,7 +6,7 @@
 FROM odoo:18.0
 
 # Metadata
-LABEL maintainer="Jake Tolentino <jgtolentino@insightpulseai.net>"
+LABEL maintainer="Jake Tolentino <jgtolentino@insightpulseai.com>"
 LABEL version="0.10.0"
 LABEL description="Odoo 18 CE with Finance PPM + OCA modules for TBWA Finance SSC"
 

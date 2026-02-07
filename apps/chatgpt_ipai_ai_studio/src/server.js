@@ -20,7 +20,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 
 // Configuration from environment
 const PORT = parseInt(process.env.PORT || "8787", 10);
-const ODOO_BASE_URL = process.env.ODOO_BASE_URL || "https://erp.insightpulseai.net";
+const ODOO_BASE_URL = process.env.ODOO_BASE_URL || "https://erp.insightpulseai.com";
 const ODOO_DB = process.env.ODOO_DB || "prod";
 const ODOO_LOGIN = process.env.ODOO_LOGIN || "";
 const ODOO_PASSWORD = process.env.ODOO_PASSWORD || "";

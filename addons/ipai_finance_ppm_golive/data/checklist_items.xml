@@ -27,7 +27,7 @@
     </record>
 
     <record id="item_n8n_accessible" model="ipai.finance.ppm.golive.item">
-        <field name="name">n8n accessible at https://ipa.insightpulseai.net</field>
+        <field name="name">n8n accessible at https://ipa.insightpulseai.com</field>
         <field name="section_id" ref="section_data_system"/>
         <field name="sequence">40</field>
         <field name="is_critical" eval="True"/>
