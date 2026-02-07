@@ -1,4 +1,4 @@
-# CLAUDE.md — Odoo CE Project
+# CLAUDE.md — Odoo Project
 
 ---
 
@@ -246,7 +246,7 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 18.0 → 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
+| **Stack** | Odoo CE 19.0 (primary) + OCA + n8n + Slack + PostgreSQL 16 |
 | **Node** | >= 18.0.0 (pnpm workspaces) |
 | **Python** | 3.10+ (Odoo 18), 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
@@ -406,45 +406,65 @@ Always run before committing:
 ## Directory Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (80+ modules)
-│   │   ├── ipai_dev_studio_base/
-│   │   ├── ipai_workspace_core/
-│   │   ├── ipai_finance_ppm/
-│   │   ├── ipai_master_control/
-│   │   ├── ipai_ai_agents/
-│   │   ├── ipai_approvals/
-│   │   └── ...
+│   ├── ipai/                  # IPAI custom modules (43 modules)
+│   │   ├── ipai_ai_agent_builder/   # AI agent builder
+│   │   ├── ipai_ai_tools/           # AI tool integrations
+│   │   ├── ipai_auth_oidc/          # OIDC authentication
+│   │   ├── ipai_design_system/      # Design system core
+│   │   ├── ipai_enterprise_bridge/  # EE parity bridge
+│   │   ├── ipai_finance_ppm/        # Finance PPM
+│   │   ├── ipai_helpdesk/           # Helpdesk module
+│   │   ├── ipai_hr_payroll_ph/      # PH payroll
+│   │   ├── ipai_ops_connector/      # Operations connector
+│   │   ├── ipai_sign/               # Digital signatures
+│   │   └── ...                      # 33 more modules
 │   ├── OCA/                   # OCA community modules (12 repos)
 │   └── oca/                   # OCA submodules
 │
-├── apps/                      # Applications (20 apps)
+├── apps/                      # Applications (28 apps)
 │   ├── pulser-runner/         # Automation runner
 │   ├── control-room/          # Control plane UI
 │   ├── control-room-api/      # Control plane API
 │   ├── bi-architect/          # BI analytics
 │   ├── mcp-coordinator/       # MCP coordination
 │   ├── web/                   # Web frontend
-│   └── ...
+│   ├── ai-control-plane/      # AI control plane
+│   ├── odoo-developer-agent/  # Odoo dev agent
+│   ├── superset-analytics/    # Superset BI integration
+│   └── ...                    # 19 more apps
 │
-├── packages/                  # Shared packages (3 packages)
+├── packages/                  # Shared packages (8 packages)
 │   ├── agent-core/            # Core agent framework
 │   ├── github-app/            # GitHub App integration
-│   └── ipai-design-tokens/    # Design system tokens
+│   ├── ipai-design-tokens/    # Design system tokens
+│   ├── agentic-codebase-crawler/ # Codebase analysis
+│   ├── config/                # Shared configuration
+│   ├── env-config/            # Environment config
+│   ├── saas-types/            # SaaS type definitions
+│   └── supabase/              # Supabase client
 │
-├── spec/                      # Spec bundles (32 feature specs)
+├── spec/                      # Spec bundles (62+ feature specs)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (160+ scripts)
+├── scripts/                   # Automation scripts (550+ files, 43 categories)
 │   ├── ci/                    # CI-specific scripts
-│   ├── deploy-odoo-modules.sh
-│   ├── repo_health.sh
-│   ├── spec_validate.sh
-│   └── ...
+│   ├── ci_gate/               # CI gate checks
+│   ├── audit/                 # Audit scripts
+│   ├── backup/                # Backup utilities
+│   ├── db/                    # Database management
+│   ├── deploy/                # Deployment scripts
+│   ├── health/                # Health checks
+│   ├── infra-discovery/       # Infrastructure discovery
+│   ├── odoo/                  # Odoo-specific scripts
+│   ├── parity/                # EE parity validation
+│   ├── seeds/                 # Seed data management
+│   ├── supabase/              # Supabase utilities
+│   └── ...                    # 31 more categories
 │
 ├── docker/                    # Docker configurations
 │   ├── Dockerfile.seeded
@@ -455,10 +475,11 @@ odoo-ce/
 │   ├── docker-compose.yml     # Production compose
 │   └── nginx/
 │
-├── infra/                     # Infrastructure templates (self-hosted)
+├── infra/                     # Infrastructure templates (26 subdirectories)
 │   ├── doctl/                 # DigitalOcean CLI templates
 │   ├── superset/              # Apache Superset configs
-│   └── terraform/             # Self-hosted infra IaC
+│   ├── terraform/             # Self-hosted infra IaC
+│   └── ...
 │
 ├── db/                        # Database management
 │   ├── schema/                # Schema definitions
@@ -466,20 +487,34 @@ odoo-ce/
 │   ├── seeds/                 # Seed data
 │   └── rls/                   # Row-level security
 │
-├── docs/                      # Documentation
+├── docs/                      # Documentation (67+ categories)
 │   ├── architecture/
 │   ├── data-model/            # DBML, ERD, ORM maps
+│   ├── ee_parity_map/         # Enterprise parity tracking
+│   ├── evidence/              # Deployment evidence packs
+│   ├── infra/                 # Infrastructure docs
+│   ├── parity/                # Parity analysis
+│   ├── security/              # Security documentation
 │   └── ...
 │
 ├── mcp/                       # Model Context Protocol
 │   ├── coordinator/           # MCP routing & aggregation
-│   └── servers/               # MCP server implementations
-│       ├── odoo-erp-server/   # Odoo ERP integration
+│   └── servers/               # MCP server implementations (11 servers)
+│       ├── odoo-erp-server/          # Odoo ERP integration
 │       ├── digitalocean-mcp-server/  # DO infrastructure
 │       ├── superset-mcp-server/      # BI platform
 │       ├── vercel-mcp-server/        # Deployments
 │       ├── pulser-mcp-server/        # Agent orchestration
-│       └── speckit-mcp-server/       # Spec enforcement
+│       ├── speckit-mcp-server/       # Spec enforcement
+│       ├── mcp-jobs/                 # Jobs & observability backend
+│       ├── agent-coordination-server/ # Agent coordination
+│       └── memory-mcp-server/        # Persistent memory
+│
+├── odoo19/                    # Canonical Odoo 19 setup (recommended)
+│   ├── compose.yaml           # Project-specific compose
+│   ├── config/                # Version-controlled Odoo config
+│   ├── scripts/               # Odoo19-specific scripts
+│   └── backups/               # Database backups
 │
 ├── n8n/                       # n8n workflow templates
 │
@@ -490,9 +525,11 @@ odoo-ce/
 │   ├── mcp-servers.json       # MCP server configuration
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (47 workflows)
+├── .github/workflows/         # CI/CD pipelines (153 workflows)
 │
 ├── docker-compose.yml         # Main compose file
+├── docker-compose.dev.yml     # Dev overrides
+├── docker-compose.shell.yml   # Shell access compose
 ├── package.json               # Node.js monorepo config
 ├── turbo.json                 # Turbo CI/CD config
 └── oca.lock.json             # OCA module lock
@@ -506,29 +543,41 @@ All custom modules use the `ipai_` prefix organized by domain:
 
 | Domain | Prefix Pattern | Examples |
 |--------|---------------|----------|
-| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
-| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
-| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
-| Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
-| Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
-| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
-| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
-| Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
-| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_slack_connector`, `ipai_superset_connector` |
-| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agent_builder`, `ipai_ai_tools`, `ipai_ai_automations`, `ipai_ai_fields`, `ipai_ai_rag`, `ipai_ai_livechat` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_close_seed`, `ipai_finance_tax_return`, `ipai_finance_workflow` |
+| Auth | `ipai_auth_*` | `ipai_auth_oidc` |
+| Design/Theme | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*`, `ipai_design_*` | `ipai_theme_tbwa`, `ipai_theme_fluent2`, `ipai_theme_copilot`, `ipai_ui_brand_tokens`, `ipai_design_system`, `ipai_web_fluent2`, `ipai_web_icons_fluent`, `ipai_web_theme_tbwa` |
+| Documents | `ipai_documents_*` | `ipai_documents_ai` |
+| Enterprise | `ipai_enterprise_*` | `ipai_enterprise_bridge` |
+| ESG | `ipai_esg_*` | `ipai_esg`, `ipai_esg_social` |
+| Helpdesk | `ipai_helpdesk*` | `ipai_helpdesk`, `ipai_helpdesk_refund` |
+| HR | `ipai_hr_*` | `ipai_hr_payroll_ph` |
+| Industry | `ipai_vertical_*` | `ipai_vertical_media`, `ipai_vertical_retail` |
+| Integrations | `ipai_*_connector` | `ipai_ops_connector`, `ipai_whatsapp_connector` |
+| Planning | `ipai_planning_*` | `ipai_planning_attendance` |
+| Platform | `ipai_platform_*` | `ipai_platform_theme` |
+| Sign | `ipai_sign` | `ipai_sign` |
+| Website | `ipai_website_*` | `ipai_website_coming_soon` |
 
 ### Key Module Hierarchy
 
 ```
-ipai_dev_studio_base           # Base dependencies (install first)
-    └── ipai_workspace_core    # Core workspace functionality
-        └── ipai_ce_branding   # CE branding layer
-            ├── ipai_ai_core   # AI core framework
-            │   ├── ipai_ai_agents     # Agent system
-            │   └── ipai_ai_prompts    # Prompt management
-            ├── ipai_finance_ppm       # Finance PPM
-            │   └── ipai_finance_month_end
-            └── [other modules]
+ipai_foundation                # Base dependencies (install first)
+    └── ipai_design_system     # Design system core
+        ├── ipai_ai_tools      # AI tool integrations
+        │   ├── ipai_ai_agent_builder  # Agent builder
+        │   ├── ipai_ai_automations    # AI automations
+        │   ├── ipai_ai_fields         # AI-powered fields
+        │   ├── ipai_ai_rag            # RAG pipeline
+        │   └── ipai_ai_livechat       # AI livechat
+        ├── ipai_finance_ppm           # Finance PPM
+        │   ├── ipai_finance_workflow  # Finance workflows
+        │   ├── ipai_finance_close_seed # Month-end seeds
+        │   └── ipai_finance_tax_return # Tax returns
+        ├── ipai_enterprise_bridge     # EE parity bridge
+        ├── ipai_helpdesk              # Helpdesk
+        │   └── ipai_helpdesk_refund   # Refund handling
+        └── [other modules]
 ```
 
 ---
@@ -545,21 +594,57 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (32)
+### Current Spec Bundles (62+)
 
+**Core Platform:**
 - `pulser-master-control` - Master control plane
+- `ipai-control-center` - Control center UI
+- `ipai-ai-platform` - AI platform core
+- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+- `ipai-ai-agent-builder` - Agent builder framework
+- `auto-claude-framework` - Auto Claude framework
+- `adk-control-room` - ADK control room
+
+**Finance & Compliance:**
 - `close-orchestration` - Month-end close workflows
 - `bir-tax-compliance` - BIR tax compliance
 - `expense-automation` - Expense automation
-- `hire-to-retire` - HR lifecycle management
-- `ipai-control-center` - Control center UI
+- `ipai-month-end` - Month-end close
+- `ipai-tbwa-finance` - TBWA finance integration
+- `notion-finance-ppm-control-room` - Finance PPM control
+
+**Odoo & EE Parity:**
 - `odoo-mcp-server` - MCP server integration
-- `adk-control-room` - ADK control room
-- `auto-claude-framework` - Auto Claude framework
-- `ipai-ai-platform` - AI platform core
-- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+- `odoo-ee-parity-matrix` - EE parity tracking
+- `odoo-ce-enterprise-replacement` - CE replacement strategy
+- `odoo-19-migration` - Odoo 19 migration plan
+- `odoo-ce-devops-master-plan` - DevOps master plan
+- `odoo-copilot-process-mining` - Process mining
+- `odoo-decoupled-platform` - Decoupled architecture
+- `upstream-parity` - Upstream parity tracking
+- `parity-agent` - Automated parity agent
+
+**Infrastructure & DevOps:**
+- `azure-reference-architecture` - Azure WAF parity
+- `platform-kit` - Platform kit scaffold
+- `lakehouse-control-room` - Lakehouse control
+- `supabase-platform-kit-observability` - Observability
+- `supabase-ssot-doctrine` - SSOT doctrine
+- `cicd-supabase-n8n` - CI/CD integration
+
+**Knowledge & Docs:**
 - `kapa-plus` - Kapa+ documentation AI
+- `knowledge-graph` - Knowledge graph
+- `knowledge-hub` - Knowledge hub
+- `insightpulse-docs-ai` - Docs AI
+
+**Other:**
+- `hire-to-retire` - HR lifecycle management
 - `workos-notion-clone` - WorkOS Notion clone
+- `erp-saas-clone-suite` - ERP SaaS clone
+- `auth` - Authentication
+- `schema` - Schema management
+- `seed-bundle` - Seed data bundles
 - See `spec/` directory for complete list
 
 ---
@@ -579,7 +664,7 @@ python .claude/query_memory.py all          # Everything
 
 ---
 
-## CI/CD Pipelines
+## CI/CD Pipelines (153 workflows)
 
 ### Core Pipelines
 
@@ -590,6 +675,9 @@ python .claude/query_memory.py all          # Everything
 | `spec-kit-enforce.yml` | Push/PR | Validate spec bundle structure |
 | `repo-structure.yml` | Push/PR | Verify repo structure |
 | `all-green-gates.yml` | Push/PR | All gates must pass |
+| `canonical-gate.yml` | Push/PR | Canonical setup validation |
+| `agent-preflight.yml` | Push/PR | Agent preflight checks |
+| `ai-naming-gate.yml` | Push/PR | AI naming convention enforcement |
 
 ### Build & Deploy
 
@@ -597,8 +685,11 @@ python .claude/query_memory.py all          # Everything
 |----------|---------|
 | `build-unified-image.yml` | Build unified Docker image |
 | `build-seeded-image.yml` | Build pre-seeded image |
+| `build-odoo-ce19-ee-parity.yml` | Build Odoo CE 19 with EE parity |
 | `deploy-production.yml` | Production deployment |
 | `deploy-odoo-prod.yml` | Odoo-specific deployment |
+| `cd-production.yml` | Continuous delivery to production |
+| `branch-promotion.yml` | Branch promotion workflow |
 
 ### Quality Gates
 
@@ -608,6 +699,16 @@ python .claude/query_memory.py all          # Everything
 | `spec-validate.yml` | Validate spec completeness |
 | `spec-and-parity.yml` | Enterprise parity checks |
 | `infra-validate.yml` | Infrastructure templates |
+| `azure-waf-parity.yml` | Azure WAF parity gates |
+| `auto-install-parity-modules.yml` | Auto-install parity modules |
+| `backlog-coverage.yml` | Backlog coverage tracking |
+
+### Security
+
+| Workflow | Purpose |
+|----------|---------|
+| `audit-contract.yml` | Security audit contract |
+| `auth-email-ai-gate.yml` | Auth/email AI gate |
 
 ### Monitoring
 
@@ -616,6 +717,8 @@ python .claude/query_memory.py all          # Everything
 | `health-check.yml` | Health check execution |
 | `finance-ppm-health.yml` | Finance PPM checks |
 | `ipai-prod-checks.yml` | IPAI production checks |
+
+> **Note:** 153 total workflows. Run `ls .github/workflows/ | wc -l` for current count. See `.github/workflows/` for the full list.
 
 ---
 
@@ -673,6 +776,7 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 - Any `odoo.com` Enterprise module references
 - **Mattermost** - Use Slack instead (2026-01-28)
 - `ipai_mattermost_connector` - Use `ipai_slack_connector` instead
+- **`odoo-ce` repo name** - Repo renamed to `odoo` (2026-02-03, PR #322). All references to `odoo-ce` should use `odoo` instead
 
 ### Module Philosophy
 
@@ -1091,7 +1195,7 @@ docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
 
 ---
 
-## Key Scripts Reference
+## Key Scripts Reference (550+ scripts in 43 categories)
 
 | Script | Purpose |
 |--------|---------|
@@ -1107,6 +1211,26 @@ docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
 | `scripts/gen_repo_tree.sh` | Auto-generate repo structure docs |
 | `scripts/web_sandbox_verify.sh` | Claude Code Web sandbox verification |
 | `scripts/db_verify.sh` | Database health verification script |
+
+### Script Categories
+
+| Category | Path | Purpose |
+|----------|------|---------|
+| `audit/` | `scripts/audit/` | Security and compliance audits |
+| `backup/` | `scripts/backup/` | Database and config backups |
+| `ci/` | `scripts/ci/` | CI pipeline scripts |
+| `ci_gate/` | `scripts/ci_gate/` | CI gate enforcement |
+| `db/` | `scripts/db/` | Database management |
+| `deploy/` | `scripts/deploy/` | Deployment automation |
+| `health/` | `scripts/health/` | Health check scripts |
+| `infra-discovery/` | `scripts/infra-discovery/` | Infrastructure discovery |
+| `odoo/` | `scripts/odoo/` | Odoo-specific operations |
+| `odoo-automation/` | `scripts/odoo-automation/` | Odoo automation scripts |
+| `parity/` | `scripts/parity/` | EE parity validation |
+| `seeds/` | `scripts/seeds/` | Seed data management |
+| `supabase/` | `scripts/supabase/` | Supabase utilities |
+
+> Run `ls scripts/` for the full list of 43 script categories.
 
 ---
 
@@ -1182,12 +1306,15 @@ External MCPs       Custom MCPs
 | `pulser-mcp-server` | Agent orchestration | `mcp/servers/pulser-mcp-server/` |
 | `speckit-mcp-server` | Spec bundle enforcement | `mcp/servers/speckit-mcp-server/` |
 | `mcp-jobs` | **Canonical Jobs & Observability Backend** | `mcp/servers/mcp-jobs/` |
+| `agent-coordination-server` | Multi-agent coordination | `mcp/servers/agent-coordination-server/` |
+| `memory-mcp-server` | Persistent agent memory | `mcp/servers/memory-mcp-server/` |
 
 **Server Groups:**
 - `core`: supabase, github, dbhub, odoo-erp
 - `design`: figma, notion
 - `infra`: digitalocean, vercel
 - `automation`: pulser, speckit
+- `agents`: agent-coordination, memory, mcp-jobs
 
 **Building Custom Servers:**
 ```bash
@@ -1240,7 +1367,7 @@ npx figma connect publish --token="$FIGMA_ACCESS_TOKEN"
 ## MCP Jobs System – Canonical Jobs & Observability Backend
 
 **Repository**: `git@github.com:jgtolentino/mcp-jobs.git` (standalone service)
-**Submodule**: `mcp/servers/mcp-jobs/` (integrated into odoo-ce)
+**Submodule**: `mcp/servers/mcp-jobs/` (integrated into odoo)
 **Deployed**: https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/
 **Purpose**: Shared job orchestration + observability service for all MCP-enabled apps (Odoo, n8n, Vercel apps, Supabase Edge Functions)
 
@@ -1645,7 +1772,7 @@ mkdir -p ~/actions-runner && cd ~/actions-runner
 curl -o actions-runner-linux-x64-2.321.0.tar.gz -L \
   https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
 tar xzf ./actions-runner-linux-x64-2.321.0.tar.gz
-./config.sh --url https://github.com/jgtolentino/odoo-ce --token YOUR_TOKEN
+./config.sh --url https://github.com/jgtolentino/odoo --token YOUR_TOKEN
 sudo ./svc.sh install && sudo ./svc.sh start
 ```
 
@@ -1896,5 +2023,24 @@ gh pr create --title "$(jq -r .title /tmp/issue.json)" \
 
 ---
 
+---
+
+## Recent Changes (since 2026-01-26)
+
+| PR | Scope | Description |
+|----|-------|-------------|
+| #327 | `feat(web)` | Replace broken homepage with Coming Soon landing + Pulser |
+| #325 | `feat(install-sets)` | Auto-generated module install sets with CI drift guard |
+| #324 | `fix(security)` | Remediate security definer views + RLS on 42 exposed tables |
+| #323 | `feat(auth)` | Azure WAF parity gates, monitoring stack, and auth module (`ipai_auth_oidc`) |
+| #322 | `chore(repo)` | Deterministic repo-wide purge of all `odoo-ce` references (now `odoo`) |
+| #321 | `feat(parity)` | Add `ipai_finance_ppm` + `ipai_ops_connector` and parity docs |
+| #320 | `chore(repo)` | Refactor to supabase-style monorepo layout |
+| #319 | `docs(architecture)` | Ideal org/enterprise repository structure guide |
+| #318 | `feat(infra)` | DNS delegation infrastructure and No-UI Policy control plane |
+| #317 | `feat(platform-kit)` | Scaffold infra layout and ops schema |
+
+---
+
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-26*
+*Last updated: 2026-02-07*
