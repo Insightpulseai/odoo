@@ -1,3 +1,7 @@
+# SOPS / age secrets (never commit private keys)
+ops/secrets/age-key.txt
+ops/secrets/*.key
+
 # Python
 __pycache__/
 *.py[cod]

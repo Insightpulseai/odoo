@@ -1,0 +1,74 @@
+# =============================================================================
+# Ops Observability Stack: Prometheus + Loki + Grafana
+# =============================================================================
+# Standalone compose for the observability baseline.
+# Can be deployed independently on any droplet.
+#
+# Usage:
+#   cd ops/observability && docker compose up -d
+#   docker compose ps
+#
+# Verify:
+#   curl -fsS http://localhost:9090/-/healthy   # Prometheus
+#   curl -fsS http://localhost:3100/ready        # Loki
+#   curl -fsS http://localhost:3000/api/health   # Grafana
+# =============================================================================
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  loki:
+    image: grafana/loki:2.9.6
+    container_name: loki
+    command: ["-config.file=/etc/loki/config.yml"]
+    volumes:
+      - ./loki/config.yml:/etc/loki/config.yml:ro
+      - loki_data:/loki
+    ports:
+      - "127.0.0.1:3100:3100"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  grafana:
+    image: grafana/grafana:10.4.3
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+volumes:
+  prometheus_data:
+  loki_data:
+  grafana_data:
