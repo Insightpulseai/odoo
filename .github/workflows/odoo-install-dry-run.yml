@@ -1,0 +1,71 @@
+name: odoo-install-dry-run
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'vendor/**'
+      - 'external-src/**'
+      - 'config/install_sets/**'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'vendor/**'
+      - 'external-src/**'
+      - 'config/install_sets/**'
+  workflow_dispatch:
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate install sets
+        shell: bash
+        run: |
+          set -euo pipefail
+          export OCA_ROOTS="vendor/oca vendor/oca/OCA external-src"
+          export CUSTOM_ROOT="addons/ipai addons"
+          ./scripts/regen_install_sets.sh
+
+      - name: Fail if install set drift detected
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --exit-code -- config/install_sets; then
+            echo "ERROR: install set drift detected. Commit regenerated files."
+            git --no-pager diff -- config/install_sets || true
+            exit 2
+          fi
+
+      - name: Run Odoo install dry-run (compose)
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose -f .github/ci/odoo-install-dry-run.compose.yml up \
+            --abort-on-container-exit --exit-code-from odoo
+
+      - name: Logs (on failure)
+        if: failure()
+        shell: bash
+        run: |
+          docker compose -f .github/ci/odoo-install-dry-run.compose.yml logs \
+            --no-color --tail=300 || true
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: |
+          docker compose -f .github/ci/odoo-install-dry-run.compose.yml down \
+            -v --remove-orphans || true
