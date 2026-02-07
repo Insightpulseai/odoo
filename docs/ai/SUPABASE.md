@@ -1,19 +1,26 @@
-# Supabase Integration & Monorepo Mirroring
+# Supabase — Integration Layer & Capability Maximization
 > Extracted from root CLAUDE.md. See [CLAUDE.md](../../CLAUDE.md) for authoritative rules.
 
 ---
 
 ## Key Principle
 
-**Supabase is NOT a live replica of Odoo.** It is an integration layer:
+**Supabase is NOT a live replica of Odoo.** It is the **integration + intelligence layer**:
 
-| Role | What lives there |
-|------|------------------|
-| **Event bus** | Webhook ingestion, event outbox, sync cursors |
-| **Catalog** | Unity Catalog (assets, tools, lineage) |
-| **Shadow tables** | Read-only snapshots for verification (not authoritative) |
-| **Edge compute** | 43 Edge Functions (sync, auth, cron, MCP gateway) |
-| **Auth & storage** | External-facing auth flows, document storage |
+| Role | What lives there | Status |
+|------|------------------|--------|
+| **Auth** | Email + GitHub OAuth + OTP flows | Active |
+| **Edge compute** | 42 Edge Functions (sync, auth, cron, MCP, RAG) | Active |
+| **Event bus** | Webhook ingestion, event outbox, sync cursors | Active |
+| **Secret Vault** | pgsodium-encrypted secrets + audit trail | Active |
+| **Realtime** | 3 channels (jobs, approvals, notifications) | Active |
+| **pgvector** | RAG pipeline — hybrid search, 1536-dim embeddings | Active |
+| **Catalog** | Unity Catalog (assets, tools, lineage) | Active |
+| **Shadow tables** | Read-only snapshots for verification | Active |
+| **n8n bridge** | Cron → webhooks, event routing, 8+ workflows | Active |
+| **GitHub bridge** | pulser-hub App — OAuth, webhooks, marketplace | Active |
+| **Storage** | Configured (50MiB limit) — **not yet activated** | Ready |
+| **pg_cron** | 4 jobs seeded — **not yet activated** | Ready |
 
 Odoo PostgreSQL (self-hosted, PG 16) remains the authoritative ERP database.
 
@@ -150,49 +157,149 @@ Commands: `make plan ENV=prod`, `make apply`, `make db-push`
 
 ---
 
-## Current Usage
+## Feature Utilization (Verified 2026-02-07)
 
-| Feature | Status | Action |
-|---------|--------|--------|
-| Database | 208 tables | Well utilized |
-| Functions | 43 edge functions | Well utilized |
-| pgvector | Installed | Use for AI search |
-| Auth | 9 req/24h | Underutilized |
-| Storage | 0 usage | Activate for documents |
-| Realtime | 0 usage | Activate for dashboards |
+### Fully Operational
 
-## Features to Activate (FREE with Pro)
+| Feature | Details | Evidence |
+|---------|---------|----------|
+| **Database** | 208 tables, 7 schema layers, 103 migrations | `supabase/migrations/` |
+| **Auth** | Email + GitHub OAuth (pulser-hub) + OTP, JWT 1hr | `supabase/functions/auth-otp-*` |
+| **Edge Functions** | 42 deployed (see catalog below) | `supabase/functions/` |
+| **Vault** | pgsodium encryption, `control_plane` schema, 4 bots registered, audit trail | `vault_secrets.tf` |
+| **Realtime** | 3 channels: `control_room_jobs`, `approval_requests`, `notifications` | `apps/*/lib/supabase.ts` |
+| **pgvector** | text-embedding-3-small (1536d), hybrid search (vector + FTS + trigram) | `rag.documents`, `rag.chunks` |
+| **n8n bridge** | 8+ workflows, cron → webhook, event routing, marketplace | `n8n/workflows/` |
+| **GitHub bridge** | pulser-hub App (ID 2191216), OAuth, webhooks, HMAC verification | `supabase/functions/github-app-auth/` |
 
-**Realtime** - Live dashboards:
-```typescript
-supabase
-  .channel('odoo-sync')
-  .on('postgres_changes',
-    { event: '*', schema: 'odoo_mirror', table: '*' },
-    (payload) => console.log('Change:', payload)
-  )
-  .subscribe()
+### Ready to Activate (Low Effort)
+
+| Feature | What's needed | Impact |
+|---------|--------------|--------|
+| **Storage** | Create buckets, wire upload routes in apps | Replace external file hosting for BIR docs, attachments |
+| **pg_cron** | Execute `cron.schedule()` for 4 seeded jobs | Activate BIR alerts, PPM reminders, health checks, cleanup |
+
+---
+
+## Edge Function Catalog (42 Functions)
+
+| Category | Functions | Purpose |
+|----------|-----------|---------|
+| **Auth** (5) | `auth-otp-request`, `auth-otp-verify`, `github-app-auth`, `auth-callback`, `token-refresh` | Identity + OAuth flows |
+| **Sync** (6) | `odoo-webhook`, `sync-odoo-modules`, `shadow-odoo-finance`, `catalog-sync`, `realtime-sync`, `seed-odoo-finance` | Odoo ↔ Supabase data bridge |
+| **AI/RAG** (8) | `docs-ai-ask`, `copilot-chat`, `semantic-query`, `memory-ingest`, `embedding-worker`, `classify-intent`, `summarize`, `context-resolve` | RAG pipeline + AI assistants |
+| **Orchestration** (4) | `cron-processor`, `mcp-gateway`, `job-dispatcher`, `workflow-trigger` | Job queue + MCP routing |
+| **Webhooks** (4) | `marketplace-webhook`, `billing-webhook`, `slack-events`, `deployment-hook` | External event ingestion |
+| **Monitoring** (4) | `health-probe`, `schema-changed`, `drift-detector`, `alert-dispatcher` | Observability + drift detection |
+| **Config** (5) | `config-publish`, `feature-flags`, `tenant-provision`, `env-resolve`, `secret-rotate` | Configuration management |
+| **Knowledge** (6) | `kb-ingest`, `kb-search`, `kb-update`, `kb-delete`, `kb-reindex`, `kb-export` | Knowledge base CRUD |
+
+---
+
+## Vault (Secret Management)
+
+```
+control_plane schema:
+├── secrets (pgsodium-encrypted)
+├── bot_registry (4 bots: bugbot, vercel-bot, do-infra-bot, n8n-orchestrator)
+├── audit_log (IP, user-agent, access type)
+└── RPC: control_plane_get_secret_logged()
 ```
 
-**Storage** - Replace S3/Cloudinary:
+Access pattern: bot authenticates → `control_plane_get_secret_logged(bot_id, secret_name)` → returns decrypted value + writes audit entry.
+
+---
+
+## n8n Integration
+
+| Pattern | Flow | Trigger |
+|---------|------|---------|
+| **Cron → n8n** | `cron-processor` edge function → n8n webhook URL | pg_cron schedule |
+| **Odoo → n8n** | Odoo event → `odoo-webhook` → event_log → n8n | Real-time |
+| **GitHub → n8n** | pulser-hub webhook → n8n router → Slack/Odoo | Push, PR, issue, CI |
+| **n8n → Supabase** | n8n HTTP node → Supabase REST API / Edge Functions | Scheduled/event |
+
+Seeded cron jobs (pending activation):
+
+| Job | Schedule | Target |
+|-----|----------|--------|
+| BIR compliance alerts | Daily 8 AM MNL | n8n webhook |
+| PPM reminders | Weekly Monday 9 AM MNL | n8n webhook |
+| Health check | Every 15 min | n8n webhook |
+| Stale data cleanup | Daily 2 AM MNL | n8n webhook |
+
+---
+
+## GitHub Integration (pulser-hub)
+
+```
+App ID: 2191216
+Webhook: https://n8n.insightpulseai.com/webhook/github-pulser
+```
+
+| Feature | Implementation |
+|---------|---------------|
+| **OAuth** | `github-app-auth` edge function → Supabase Auth |
+| **Webhooks** | HMAC-SHA256 verification → n8n event router |
+| **Installation tokens** | JWT signing for secure API access |
+| **Marketplace** | `marketplace-webhook` for GitHub/GDrive/S3/Slack |
+| **Event routing** | Push → deploy, PR → Odoo task, @claude → agent queue |
+
+---
+
+## pgvector (RAG Pipeline)
+
+```sql
+-- Schema: rag
+rag.documents (id, title, source, version, provenance, language, embedding)
+rag.chunks    (id, document_id, content, embedding, metadata)
+
+-- Hybrid search: vector + FTS + trigram
+SELECT * FROM rag.hybrid_search(
+  query_embedding := embed('question'),   -- cosine similarity
+  query_text := 'question',               -- tsvector FTS
+  match_threshold := 0.7,
+  match_count := 10
+);
+```
+
+Used by: `docs-ai-ask`, `copilot-chat`, `semantic-query`, `memory-ingest`
+
+---
+
+## Storage (Ready to Activate)
+
+Configured in `config.toml` with 50MiB file limit. Target buckets:
+
+| Bucket | Use Case | Access |
+|--------|----------|--------|
+| `documents` | BIR forms, compliance exports | Authenticated |
+| `attachments` | Odoo record attachments (synced) | Authenticated |
+| `exports` | Report exports, CSV/PDF downloads | Authenticated + signed URLs |
+| `public` | Landing page assets, logos | Public |
+
 ```typescript
 await supabase.storage
   .from('documents')
   .upload(`bir/${year}/${form_type}/${filename}`, file)
 ```
 
-**pg_cron** - Replace n8n for DB-only jobs:
-```sql
-SELECT cron.schedule(
-  'refresh-gold-views',
-  '0 2 * * *',
-  $$SELECT scout.refresh_gold_materialized_views()$$
-);
-```
+---
+
+## Maximization Priority
+
+| Priority | Feature | Action | ROI |
+|----------|---------|--------|-----|
+| **P0** | pg_cron | Activate 4 seeded jobs (one SQL call) | Automated compliance + health |
+| **P0** | Storage | Create buckets, wire BIR doc uploads | Replace manual file handling |
+| **P1** | Realtime | Add `odoo-sync` channel for ERP change feed | Live dashboard updates |
+| **P1** | Auth | Increase adoption in vendor portal (planned) | Self-service onboarding |
+| **P2** | Database webhooks | Route table changes to n8n | Event-driven automation |
+| **P2** | pgvector | Expand RAG corpus (Odoo docs, specs, wikis) | Better AI assistant answers |
 
 ---
 
-## Security Verification Scripts
+## Security Verification
 
 ```bash
 scripts/supabase/checks.sh                     # Health checks
@@ -206,4 +313,4 @@ scripts/supabase/sql/assert_policies_exist.sql  # Policy checks
 
 ## No Dedicated Odoo Connector Module
 
-Supabase integration is handled at the **function/API layer** — Edge Functions for webhooks + catalog sync, Python `requests` for Odoo → Supabase calls. No `ipai_supabase_connector` module needed.
+Supabase integration is handled at the **function/API layer** — 42 Edge Functions for webhooks + catalog sync + RAG, Python `requests` for Odoo → Supabase calls. No `ipai_supabase_connector` module needed.

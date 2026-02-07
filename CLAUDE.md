@@ -34,7 +34,7 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
 | **Python** | 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` (event-driven sync, not mirroring) |
+| **Supabase** | `spdtwktxdalcfigzeqrz` — 42 Edge Functions, Vault, Auth, Realtime, pgvector, n8n+GitHub bridge |
 | **Web/CMS** | Hybrid: Next.js on Vercel (public), Odoo website (internal) |
 | **EE Parity** | Target >= 80% via `CE + OCA + ipai_*` |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
