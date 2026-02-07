@@ -23,5 +23,6 @@ Extracted from root `CLAUDE.md` to keep it compact.
 | `TROUBLESHOOTING.md` | Common issues and fixes |
 | `SPEC_KIT.md` | Spec bundle format and current inventory |
 | `MEMORY.md` | External memory system (.claude/query_memory.py) |
-| `SUPABASE.md` | Supabase Pro plan optimization |
+| `SUPABASE.md` | Supabase integration, monorepo sync architecture, Pro plan |
+| `WEB_CMS.md` | Web presence strategy, Odoo CMS adoption, Next.js apps |
 | `GITHUB.md` | GitHub Team setup, security pipeline, pulser-hub |

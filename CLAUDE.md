@@ -34,7 +34,8 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
 | **Python** | 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
+| **Supabase** | `spdtwktxdalcfigzeqrz` (event-driven sync, not mirroring) |
+| **Web/CMS** | Hybrid: Next.js on Vercel (public), Odoo website (internal) |
 | **EE Parity** | Target >= 80% via `CE + OCA + ipai_*` |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
 
@@ -184,7 +185,8 @@ For full details on any topic, see these docs:
 | Troubleshooting | `docs/ai/TROUBLESHOOTING.md` |
 | Spec kit structure | `docs/ai/SPEC_KIT.md` |
 | External memory system | `docs/ai/MEMORY.md` |
-| Supabase optimization | `docs/ai/SUPABASE.md` |
+| Supabase sync & monorepo mirroring | `docs/ai/SUPABASE.md` |
+| Web presence & CMS strategy | `docs/ai/WEB_CMS.md` |
 | GitHub integration | `docs/ai/GITHUB.md` |
 | PostgreSQL compatibility | PG 15 (Supabase) <-> PG 16 (DO self-hosted): wire-compatible |
 
