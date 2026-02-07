@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 48f6e6026ab8a1e343c24da115e1ad0c21bbac71
+> Commit: d292025d913e562c82365f884b1e618f638d0153
 
 ```
 .
@@ -61,6 +61,8 @@
 │   │   └── spec.yml
 │   ├── agents
 │   │   └── odoo-oca-triage.agent.md
+│   ├── ci
+│   │   └── odoo-install-dry-run.compose.yml
 │   ├── workflows
 │   │   ├── add-to-project.yml
 │   │   ├── agent-preflight.yml
@@ -71,6 +73,7 @@
 │   │   ├── architecture-diagrams.yml
 │   │   ├── audit-contract.yml
 │   │   ├── auth-email-ai-gate.yml
+│   │   ├── auto-install-parity-modules.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── azure-waf-parity.yml
 │   │   ├── backlog-coverage.yml
@@ -138,6 +141,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── infra_memory_job.yml
 │   │   ├── insightpulse-cicd.yml
+│   │   ├── install-set-drift-guard.yml
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-determinism.yml
@@ -161,6 +165,7 @@
 │   │   ├── odoo-auto-upgrade.yml
 │   │   ├── odoo-ci-gate.yml
 │   │   ├── odoo-import-artifacts.yml
+│   │   ├── odoo-install-dry-run.yml
 │   │   ├── odoo-module-install-gate.yml
 │   │   ├── odoo-oca-lint.yml
 │   │   ├── odoo-overlay-install.yml
@@ -1657,6 +1662,17 @@
 │   │   └── 90-preflight.sh
 │   ├── finance
 │   │   └── Month-end Closing Task and Tax Filing (7).xlsx
+│   ├── install_sets
+│   │   ├── allow_modules_dms.txt
+│   │   ├── allow_modules_helpdesk.txt
+│   │   ├── allow_modules_ocr.txt
+│   │   ├── allow_modules_ppm.txt
+│   │   ├── deny_modules.txt
+│   │   ├── dms_parity_autogen.txt
+│   │   ├── helpdesk_parity_autogen.txt
+│   │   ├── mega_parity_autogen.txt
+│   │   ├── ocr_parity_autogen.txt
+│   │   └── ppm_parity_autogen.txt
 │   ├── integrations
 │   │   └── integration_manifest.yaml
 │   ├── ipai_ai
@@ -3913,6 +3929,7 @@
 │   ├── check-supabase-migrations.sh
 │   ├── check_addon_allowlist.py
 │   ├── check_go_live_manifest.py
+│   ├── check_install_set_drift.sh
 │   ├── check_module_status.sh
 │   ├── check_odoosh_parity.py
 │   ├── check_project_tasks.py
@@ -4003,6 +4020,7 @@
 │   ├── force_asset_regeneration.sh
 │   ├── full_deploy_sanity.sh
 │   ├── gen_addons_path.py
+│   ├── gen_install_set.py
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
 │   ├── generate_2026_finance_calendar.py
@@ -4070,8 +4088,10 @@
 │   ├── odoo_ensure_modules_installed.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_install_from_manifests.sh
+│   ├── odoo_install_modules.sh
 │   ├── odoo_install_oca_must_have.sh
 │   ├── odoo_mattermost_integration.py
+│   ├── odoo_modules_preflight.sh
 │   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_seed_post_upgrade.sh
@@ -4091,6 +4111,7 @@
 │   ├── promote_oauth_users.py
 │   ├── provision_tenant.sh
 │   ├── recreate_odoo_prod.sh
+│   ├── regen_install_sets.sh
 │   ├── release_gate.sh
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
@@ -4151,6 +4172,7 @@
 │   ├── test_ipai_install_upgrade.py
 │   ├── test_magic_link.sh
 │   ├── test_theme_locally.sh
+│   ├── union_prune_install_sets.py
 │   ├── update_diagram_manifest.py
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
@@ -5311,15 +5333,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1471 directories, 3835 files
+1473 directories, 3855 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1739 |
-| Files | 5166 |
-| Python files | 837 |
+| Directories | 1741 |
+| Files | 5186 |
+| Python files | 839 |
 | XML files | 296 |
 | Markdown files | 1315 |
