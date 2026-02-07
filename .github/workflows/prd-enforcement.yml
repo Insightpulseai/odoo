@@ -1,0 +1,57 @@
+name: PRD Enforcement
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  prd-linkage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PRD linkage for structural changes
+        run: |
+          chmod +x scripts/ci/check_prd_linkage.sh
+          ./scripts/ci/check_prd_linkage.sh "origin/${{ github.base_ref }}"
+
+      - name: Check PR body references PRD (for new systems)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+
+            // Check if PR adds new ipai module or new spec
+            const addsModule = files.some(f =>
+              f.status === 'added' && f.filename.match(/^addons\/ipai\/ipai_[^/]+\/__manifest__\.py$/)
+            );
+            const addsSpec = files.some(f =>
+              f.status === 'added' && f.filename.match(/^spec\/[^/]+\/prd\.md$/)
+            );
+
+            if (addsModule && !addsSpec) {
+              const body = pr.body || '';
+              const hasSpecRef = body.match(/spec\/[a-z0-9-]+\/prd\.md/);
+              if (!hasSpecRef) {
+                core.warning(
+                  'This PR adds a new ipai_* module but does not reference a spec PRD. ' +
+                  'Recommended: add `spec/<slug>/prd.md` or reference an existing one in the PR body.'
+                );
+              }
+            }
+
+            core.info(`Files changed: ${files.length}, Adds module: ${addsModule}, Adds spec: ${addsSpec}`);
