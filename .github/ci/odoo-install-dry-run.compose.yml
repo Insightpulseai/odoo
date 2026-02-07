@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  odoo:
+    image: odoo:19
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      PORT: "5432"
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      # Mount OCA addons (vendor layout)
+      - ../../vendor/oca:/mnt/vendor-oca:ro
+      - ../../external-src:/mnt/external-src:ro
+      # Mount custom addons
+      - ../../addons/ipai:/mnt/ipai:ro
+      - ../../addons:/mnt/custom:ro
+      # Mount install sets
+      - ../../config/install_sets:/mnt/install_sets:ro
+    command: >
+      bash -lc "
+      set -euo pipefail;
+      echo '[options]' > /tmp/odoo.conf;
+      echo 'addons_path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/vendor-oca,/mnt/external-src,/mnt/ipai,/mnt/custom' >> /tmp/odoo.conf;
+      MODULES=$$(grep -vE '^\s*#' /mnt/install_sets/mega_parity_autogen.txt | sed '/^\s*$$/d' | paste -sd, -);
+      echo \"Installing modules: $$(echo \"$$MODULES\" | tr ',' '\n' | wc -l)\";
+      odoo-bin -c /tmp/odoo.conf -d odoo --db_host=db --db_user=odoo --db_password=odoo --stop-after-init -u base --log-level=warn;
+      odoo-bin -c /tmp/odoo.conf -d odoo --db_host=db --db_user=odoo --db_password=odoo --stop-after-init -i \"$$MODULES\" --log-level=warn;
+      echo 'OK: dry-run install finished';
+      "
