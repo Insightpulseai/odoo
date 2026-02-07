@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3d7ba10685398799519284c469622118f0a3260d
+> Commit: 6f61512c9d7d7b54fac21a0cb2b201164443b3bf
 
 ## 📚 Documentation
 
@@ -40,7 +40,7 @@
 | [CI/CD Automation Infrastructure - Deployment Summary](CI_CD_AUTOMATION_SUMMARY.md) | . |
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
 | [CI Minimal Set - Workflow Reduction Plan](CI_MINIMAL_SET.md) | . |
-| [CLAUDE.md — Odoo CE Project](CLAUDE.md) | . |
+| [CLAUDE.md — Odoo Project (SSOT)](CLAUDE.md) | . |
 | [Claude Code Web (Cloud Sandbox) Execution Contract](CLAUDE_CODE_WEB.md) | . |
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
@@ -72,7 +72,6 @@
 | [InsightPulse ERP Configuration Guide](INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md) | . |
 | [Kapa.ai-style Self-Hosted Documentation Assistant](KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md) | . |
 | [Local Odoo Development Setup](LOCAL_SETUP.md) | . |
-| [Mattermost ↔ n8n ↔ Odoo/Supabase Integration Guide](MATTERMOST_OPEX_INTEGRATION.md) | . |
 | [MCP Quick Start Guide](MCP_QUICK_START.md) | . |
 | [November 2025 Close Timeline & Schedule](NOVEMBER_2025_CLOSE_TIMELINE.md) | . |
 | [November 2025 PPM Playbook - Go-Live Summary](NOVEMBER_2025_PPM_GO_LIVE_SUMMARY.md) | . |
@@ -182,7 +181,6 @@
 | [Delivery Plan — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/plan.md) | apps/ipai-control-center-docs/pages |
 | [Product Requirements Document — IPAI Control Center](apps/ipai-control-center-docs/pages/prd.md) | apps/ipai-control-center-docs/pages |
 | [Tasks — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/tasks.md) | apps/ipai-control-center-docs/pages |
-| [mattermost-rag](apps/mattermost-rag/APP.md) | apps/mattermost-rag |
 | [mcp-coordinator](apps/mcp-coordinator/APP.md) | apps/mcp-coordinator |
 | [InsightPulse Mobile](apps/mobile/README.md) | apps/mobile |
 | [multi-agent-orchestrator](apps/multi-agent-orchestrator/APP.md) | apps/multi-agent-orchestrator |
@@ -318,8 +316,6 @@
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
 | [Login Button Fix & Header Cleanup - Production Deployment](docs/LOGIN_BUTTON_FIX.md) | docs |
 | [Mailgun DNS Setup for mg.insightpulseai.com](docs/MAILGUN_DNS_SETUP.md) | docs |
-| [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
-| [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
 | [MCP + Supabase Integration Architecture](docs/MCP_SUPABASE_INTEGRATION.md) | docs |
 | [Mixed Content Fix - HTTPS Asset Loading](docs/MIXED_CONTENT_FIX.md) | docs |
@@ -396,6 +392,24 @@
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [Odoo Cloud DevOps Agent Skills](docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md) | docs/agents |
+| [Architecture Overview](docs/ai/ARCHITECTURE.md) | docs/ai |
+| [BIR Compliance (Philippines)](docs/ai/BIR_COMPLIANCE.md) | docs/ai |
+| [CI/CD Pipelines](docs/ai/CI_WORKFLOWS.md) | docs/ai |
+| [Docker Commands](docs/ai/DOCKER.md) | docs/ai |
+| [Enterprise Parity Strategy](docs/ai/EE_PARITY.md) | docs/ai |
+| [GitHub Integration](docs/ai/GITHUB.md) | docs/ai |
+| [Integrations](docs/ai/INTEGRATIONS.md) | docs/ai |
+| [IPAI Module Naming Convention](docs/ai/IPAI_MODULES.md) | docs/ai |
+| [MCP System](docs/ai/MCP_SYSTEM.md) | docs/ai |
+| [External Memory (Just-in-Time Retrieval)](docs/ai/MEMORY.md) | docs/ai |
+| [OCA-Style Workflow (Canonical)](docs/ai/OCA_WORKFLOW.md) | docs/ai |
+| [AI Context Index](docs/ai/README.md) | docs/ai |
+| [Directory Structure](docs/ai/REPO_STRUCTURE.md) | docs/ai |
+| [Spec Kit Structure](docs/ai/SPEC_KIT.md) | docs/ai |
+| [Supabase — Integration Layer & Capability Maximization](docs/ai/SUPABASE.md) | docs/ai |
+| [Testing](docs/ai/TESTING.md) | docs/ai |
+| [Troubleshooting](docs/ai/TROUBLESHOOTING.md) | docs/ai |
+| [Web Presence & CMS Strategy](docs/ai/WEB_CMS.md) | docs/ai |
 | [Lakehouse/Warehouse Plan for Odoo CE](docs/analytics/LAKEHOUSE_PLAN.md) | docs/analytics |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
 | [Architectural Convergence: Agentic AI, Headless ERP, and Cloud-Native Analytics](docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) | docs/architecture |
@@ -548,7 +562,6 @@
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
 | [Marketplace Integrations](docs/integrations/MARKETPLACE_INTEGRATIONS.md) | docs/integrations |
-| [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
 | [n8n Integration](docs/integrations/N8N.md) | docs/integrations |
 | [OCA Subtree Migration Plan](docs/integrations/OCA_SUBTREE_MIGRATION.md) | docs/integrations |
 | [Operations Stack Overview](docs/integrations/OPS_STACK.md) | docs/integrations |
@@ -562,6 +575,7 @@
 | [IPAI Install Profiles](docs/ipai/PROFILES.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [Domain Health Audit — 2026-02-07](docs/issues/2026-02-07-domain-health-audit.md) | docs/issues |
 | [Databricks Lakehouse Parity Matrix (Self-Hosted)](docs/lakehouse/DATABRICKS_PARITY_MATRIX.md) | docs/lakehouse |
 | [DigitalOcean & Docker Stack](docs/llm/DIGITALOCEAN_DOCKER_STACK.md) | docs/llm |
 | [Glossary](docs/llm/GLOSSARY.md) | docs/llm |
