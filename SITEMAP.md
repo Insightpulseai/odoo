@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6318418f02f749a3da2f8856684ba8b01bfcd6ff
+> Commit: 9124d791ee7a5087dda8f9abcf4e1c993c7bd304
 
 ## 📚 Documentation
 
@@ -510,6 +510,7 @@
 | [Odoo Frontend Asset Fix - Evidence Document](docs/evidence/20260129-odoo-asset-fix.md) | docs/evidence |
 | [Plane Production Deployment Evidence](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md) | docs/evidence/20260130-2014 |
 | [Incident Report: 502 Bad Gateway - erp.insightpulseai.com](docs/evidence/20260201-0400/502-gateway-fix/INCIDENT_REPORT.md) | docs/evidence/20260201-0400/502-gateway-fix |
+| [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
@@ -1078,6 +1079,10 @@
 | [Auto-Claude Framework Implementation Plan](spec/auto-claude-framework/plan.md) | spec/auto-claude-framework |
 | [Auto-Claude Framework PRD](spec/auto-claude-framework/prd.md) | spec/auto-claude-framework |
 | [Auto-Claude Framework Tasks](spec/auto-claude-framework/tasks.md) | spec/auto-claude-framework |
+| [Constitution: Azure Reference Architecture Parity](spec/azure-reference-architecture/constitution.md) | spec/azure-reference-architecture |
+| [Plan: Azure WAF Parity — 78 → 85+](spec/azure-reference-architecture/plan.md) | spec/azure-reference-architecture |
+| [PRD: Azure WAF Parity — 78 to 85+](spec/azure-reference-architecture/prd.md) | spec/azure-reference-architecture |
+| [Tasks: Azure WAF Parity](spec/azure-reference-architecture/tasks.md) | spec/azure-reference-architecture |
 | [BIR Tax Compliance - Constitution](spec/bir-tax-compliance/constitution.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Product Requirements](spec/bir-tax-compliance/prd.md) | spec/bir-tax-compliance |
@@ -1339,6 +1344,7 @@
 | [ipai_ai_livechat](./addons/ipai/ipai_ai_livechat) | ✅ |  |
 | [ipai_ai_rag](./addons/ipai/ipai_ai_rag) | ✅ |  |
 | [ipai_ai_tools](./addons/ipai/ipai_ai_tools) | ✅ |  |
+| [ipai_auth_oidc](./addons/ipai/ipai_auth_oidc) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
 | [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
 | [ipai_design_system](./addons/ipai/ipai_design_system) | ✅ | Unified design tokens for IPAI stack (Fluent UI v9 + Copilot) |
