@@ -373,5 +373,80 @@ LIMIT 10;
 ---
 
 **Remediation Status**: 🟡 IN PROGRESS
-**Next Review**: 2026-01-08
+**Next Review**: 2026-02-14
 **Owner**: Database Security Team
+
+---
+
+## Batch 2 Remediation (2026-02-07)
+
+### New Findings: 47 issues
+
+**Linter re-scan** on 2026-02-07 detected additional security issues not covered by Batch 1:
+
+#### SECURITY DEFINER Views (2 new)
+
+| Schema | View | Action |
+|--------|------|--------|
+| public | `view_system_health_hourly` | Converted to SECURITY INVOKER |
+| public | `AssetSearchView` | Converted to SECURITY INVOKER |
+
+#### RLS Disabled (42 new tables)
+
+**High Risk (sensitive columns)**:
+- `public.user` (password, token)
+- `public.api_secrets`
+- `public.project_member_invite` (token)
+- `public.workspace_member_invite` (token)
+- `public.social_login_connection`
+- `public.SsoDetails`
+- `public.UserOrganization`
+
+**Auth / Permissions**:
+- `public.auth_permission`, `public.auth_group`, `public.auth_group_permissions`
+- `public.user_groups`, `public.user_user_permissions`
+
+**Workspace / Team / Project hierarchy**:
+- `public.workspace`, `public.workspace_member`
+- `public.team`, `public.team_member`
+- `public.project`, `public.project_member`, `public.project_identifier`
+
+**Issue tracking**:
+- `public.issue`, `public.issue_timeline`, `public.issue_sequence`
+- `public.issue_property`, `public.issue_label`, `public.issue_blocker`
+- `public.issue_assignee`, `public.issue_activity`, `public.issue_comment`
+
+**Cycles / Modules / Misc**:
+- `public.state`, `public.cycle`, `public.cycle_issue`
+- `public.label`, `public.shortcut`, `public.file_asset`, `public.view`
+- `public.module`, `public.module_member`, `public.module_issues`
+
+**System / Migration tables**:
+- `public.django_migrations`, `public.django_content_type`
+- `public._prisma_migrations`, `public._AssetToTag`
+
+**OPS schema**:
+- `ops.model_repo_scans`
+
+#### Sensitive Columns Exposed (3 tables)
+
+| Table | Sensitive Columns | Policy |
+|-------|-------------------|--------|
+| `public.user` | password, token | service_role OR owner only |
+| `public.project_member_invite` | token | service_role OR accepted_by |
+| `public.workspace_member_invite` | token | service_role OR accepted_by |
+
+### Migration File
+
+`supabase/migrations/20260207_security_definer_views_rls_remediation.sql`
+
+### RLS Policy Strategy
+
+| Table Category | SELECT Policy | Write Policy |
+|----------------|---------------|--------------|
+| Sensitive (passwords/tokens) | service_role OR owner | service_role only |
+| Auth/Permissions | authenticated | service_role only |
+| Workspace/Team/Project | membership-based | service_role only |
+| Issue tracking | project membership | service_role only |
+| Reference data (state, label) | authenticated | service_role only |
+| System/Migration tables | service_role only | service_role only |
