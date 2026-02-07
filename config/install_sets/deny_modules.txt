@@ -1,0 +1,10 @@
+# Deny list: modules excluded from all install sets
+# These are either test-only, deprecated, or known-incompatible.
+
+# Test / demo modules
+test_queue_job
+test_base_rest
+test_base_rest_pydantic
+
+# Setup / scaffolding (not real modules)
+setup

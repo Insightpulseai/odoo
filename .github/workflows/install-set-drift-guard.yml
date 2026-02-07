@@ -1,0 +1,66 @@
+name: install-set-drift-guard
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'vendor/**'
+      - 'external-src/**'
+      - 'config/install_sets/**'
+      - 'scripts/gen_install_set.py'
+      - 'scripts/union_prune_install_sets.py'
+      - 'scripts/regen_install_sets.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'vendor/**'
+      - 'external-src/**'
+      - 'config/install_sets/**'
+      - 'scripts/gen_install_set.py'
+      - 'scripts/union_prune_install_sets.py'
+      - 'scripts/regen_install_sets.sh'
+  workflow_dispatch:
+
+jobs:
+  drift-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate all install sets
+        shell: bash
+        run: |
+          set -euo pipefail
+          export OCA_ROOTS="vendor/oca vendor/oca/OCA external-src"
+          export CUSTOM_ROOT="addons/ipai addons"
+          ./scripts/regen_install_sets.sh
+
+      - name: Fail if drift detected
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --exit-code -- config/install_sets; then
+            echo ""
+            echo "ERROR: install set drift detected."
+            echo "Run './scripts/regen_install_sets.sh' and commit changes."
+            echo ""
+            git --no-pager diff -- config/install_sets || true
+            exit 2
+          fi
+
+      - name: Upload drift artifacts (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-set-drift
+          path: config/install_sets
