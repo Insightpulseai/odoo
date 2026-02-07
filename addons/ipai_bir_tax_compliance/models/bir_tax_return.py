@@ -320,8 +320,63 @@ class BirTaxReturn(models.Model):
         self.ensure_one()
         if self.state not in ("draft", "computed"):
             raise UserError("Can only validate draft or computed returns")
-        # TODO: Add validation rules
+        errors = self._get_validation_errors()
+        if errors:
+            raise UserError("\n".join(errors))
         self.state = "validated"
+
+    def _get_validation_errors(self):
+        """Return list of validation error messages for this tax return.
+
+        Checks BIR filing requirements:
+        - Required fields (form type, filing period, company TIN)
+        - Period date coherence
+        - Non-negative tax amounts
+        - Line item consistency
+        """
+        self.ensure_one()
+        errors = []
+
+        # --- Required fields ---
+        if not self.form_type:
+            errors.append("Form type is required.")
+        if not self.period_start or not self.period_end:
+            errors.append("Filing period (start and end dates) is required.")
+
+        # --- Period coherence ---
+        if self.period_start and self.period_end:
+            if self.period_start > self.period_end:
+                errors.append(
+                    "Period start date cannot be after period end date."
+                )
+
+        # --- Company TIN (required for all BIR filings) ---
+        company_partner = self.company_id.partner_id
+        if not company_partner.tin:
+            errors.append(
+                f"Company '{self.company_id.name}' must have a TIN "
+                f"registered before filing BIR returns."
+            )
+
+        # --- Tax amount sanity ---
+        if self.tax_base < 0:
+            errors.append("Tax base cannot be negative.")
+        if self.tax_due < 0:
+            errors.append("Tax due cannot be negative.")
+
+        # --- Line item validation ---
+        for line in self.line_ids:
+            if line.partner_id and not line.partner_id.tin:
+                errors.append(
+                    f"Partner '{line.partner_id.name}' on line "
+                    f"'{line.description}' is missing a TIN."
+                )
+            if line.tax_amount < 0:
+                errors.append(
+                    f"Line '{line.description}' has a negative tax amount."
+                )
+
+        return errors
 
     def action_mark_filed(self):
         """Mark return as filed with BIR"""
