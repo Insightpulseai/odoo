@@ -1,0 +1,155 @@
+name: auto-install-parity-modules
+
+# Automatically install/upgrade enterprise parity modules on push to main.
+# Uses the mega install set as SSOT for which modules to activate.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/ipai_*/**'
+      - 'config/install_sets/**'
+      - 'vendor/oca/**'
+      - 'external-src/**'
+  workflow_dispatch:
+    inputs:
+      install_set:
+        description: 'Install set file to use'
+        required: false
+        default: 'config/install_sets/mega_parity_autogen.txt'
+      action:
+        description: 'Action: install or upgrade'
+        required: false
+        default: 'install'
+        type: choice
+        options:
+          - install
+          - upgrade
+
+env:
+  ODOO_CONTAINER: odoo-erp-prod
+  ODOO_CONF: /etc/odoo/odoo.conf
+
+jobs:
+  auto-install:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine install set and action
+        id: config
+        shell: bash
+        run: |
+          SET_FILE="${{ github.event.inputs.install_set || 'config/install_sets/mega_parity_autogen.txt' }}"
+          ACTION="${{ github.event.inputs.action || 'install' }}"
+
+          if [[ ! -f "$SET_FILE" ]]; then
+            echo "ERROR: install set not found: $SET_FILE"
+            exit 1
+          fi
+
+          MODULES="$(grep -vE '^\s*#' "$SET_FILE" | sed '/^\s*$/d' | paste -sd, -)"
+          COUNT="$(echo "$MODULES" | tr ',' '\n' | wc -l)"
+
+          echo "set_file=$SET_FILE" >> "$GITHUB_OUTPUT"
+          echo "action=$ACTION" >> "$GITHUB_OUTPUT"
+          echo "modules=$MODULES" >> "$GITHUB_OUTPUT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+          echo "Install set: $SET_FILE"
+          echo "Action: $ACTION"
+          echo "Module count: $COUNT"
+
+      - name: Deploy and install modules on production
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            echo "=== Auto-install parity modules ==="
+            echo "Action: ${{ steps.config.outputs.action }}"
+            echo "Modules: ${{ steps.config.outputs.count }}"
+
+            # Pull latest code
+            cd /opt/odoo-ce/repo || cd /opt/odoo/repo || {
+              echo "ERROR: repo directory not found"
+              exit 1
+            }
+            git pull origin main --ff-only
+
+            # Build module list
+            MODULES="${{ steps.config.outputs.modules }}"
+            ACTION="${{ steps.config.outputs.action }}"
+            DB="${{ secrets.ODOO_PROD_DB || 'odoo_core' }}"
+
+            if [[ "$ACTION" == "upgrade" ]]; then
+              FLAG="-u"
+            else
+              FLAG="-i"
+            fi
+
+            echo ">>> Running: odoo $FLAG $MODULES on DB=$DB"
+            docker exec ${{ env.ODOO_CONTAINER }} \
+              odoo -c ${{ env.ODOO_CONF }} -d "$DB" \
+              $FLAG "$MODULES" --stop-after-init \
+              --log-level=warn 2>&1 | tail -50
+
+            echo ">>> Restarting container..."
+            docker restart ${{ env.ODOO_CONTAINER }}
+            sleep 15
+
+            echo ">>> Health check..."
+            for i in 1 2 3 4 5; do
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8069/web/health || echo "000")
+              if [[ "$HTTP_CODE" == "200" ]]; then
+                echo "OK: health check passed (attempt $i)"
+                exit 0
+              fi
+              echo "Attempt $i: HTTP $HTTP_CODE, retrying..."
+              sleep 10
+            done
+
+            echo "ERROR: health check failed after 5 attempts"
+            docker logs --tail=100 ${{ env.ODOO_CONTAINER }}
+            exit 1
+
+      - name: Verify module installation
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            DB="${{ secrets.ODOO_PROD_DB || 'odoo_core' }}"
+
+            echo "=== Installed IPAI modules ==="
+            docker exec ${{ env.ODOO_CONTAINER }} \
+              psql -U odoo -d "$DB" -t -c \
+              "SELECT name, state FROM ir_module_module WHERE name LIKE 'ipai_%' AND state = 'installed' ORDER BY name;" \
+              2>/dev/null || echo "(psql not available in container, skipping verification)"
+
+            echo ""
+            echo "=== Health status ==="
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8069/web/health
+
+      - name: Create failure issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Auto-install parity modules failed (${new Date().toISOString().slice(0,10)})`,
+              body: `Workflow run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\nInstall set: ${{ steps.config.outputs.set_file }}\nModule count: ${{ steps.config.outputs.count }}`,
+              labels: ['bug', 'deploy']
+            });
