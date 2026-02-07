@@ -10,7 +10,7 @@ readme = "README.md"
 license = "AGPL-3.0-only"
 requires-python = ">=3.11"
 authors = [
-    { name = "InsightPulse AI", email = "dev@insightpulseai.net" }
+    { name = "InsightPulse AI", email = "dev@insightpulseai.com" }
 ]
 keywords = ["notion", "databricks", "ppm", "finance", "sync"]
 classifiers = [

@@ -8,7 +8,7 @@
  *
  * function App() {
  *   const { tokens, fluentTheme, loading, error } = useOdooTokens({
- *     baseUrl: 'https://erp.insightpulseai.net',
+ *     baseUrl: 'https://erp.insightpulseai.com',
  *     companyId: 1,
  *   });
  *

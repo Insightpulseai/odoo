@@ -10,19 +10,19 @@ window.DO_ADVISOR_CONFIG = {
 
     // Self-Hosted Stack Endpoints
     n8n: {
-        endpoint: 'https://n8n.insightpulseai.net',
+        endpoint: 'https://n8n.insightpulseai.com',
         apiKey: '',
     },
     mattermost: {
-        endpoint: 'https://mattermost.insightpulseai.net',
+        endpoint: 'https://mattermost.insightpulseai.com',
         apiKey: '',
     },
     superset: {
-        endpoint: 'https://superset.insightpulseai.net',
+        endpoint: 'https://superset.insightpulseai.com',
         apiKey: '',
     },
     odoo: {
-        endpoint: 'https://odoo.insightpulseai.net',
+        endpoint: 'https://odoo.insightpulseai.com',
         database: 'odooprod',
         username: '',
         password: '',

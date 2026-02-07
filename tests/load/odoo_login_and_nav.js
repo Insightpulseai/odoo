@@ -14,7 +14,7 @@ export let options = {
   },
 };
 
-const BASE_URL = __ENV.ODOO_BASE_URL || 'https://erp.insightpulseai.net';
+const BASE_URL = __ENV.ODOO_BASE_URL || 'https://erp.insightpulseai.com';
 const LOGIN = __ENV.ODOO_LOGIN || 'admin';
 const PASSWORD = __ENV.ODOO_PASSWORD || 'admin';
 

@@ -13,7 +13,7 @@ Odoo → Supabase Edge Function → integration.outbox table
                       ↓                 ↓                 ↓
               expense-handler   asset-handler   finance-handler
                       ↓                 ↓                 ↓
-                           Mattermost / Email
+                           Slack / Email
 ```
 
 ## Workflows
@@ -39,7 +39,7 @@ Odoo → Supabase Edge Function → integration.outbox table
 - Supabase API credential (service_role key)
 
 ### 2. expense-handler.json
-**Purpose**: Process expense lifecycle events and send Mattermost notifications
+**Purpose**: Process expense lifecycle events and send Slack notifications
 
 **Events Handled**:
 - `expense.submitted` 📝 - Expense submitted for approval
@@ -48,7 +48,7 @@ Odoo → Supabase Edge Function → integration.outbox table
 - `expense.paid` 💰 - Expense payment completed
 
 **Environment Variables**:
-- `MATTERMOST_WEBHOOK_URL` - Incoming webhook URL for Mattermost channel
+- `SLACK_WEBHOOK_URL` - Incoming webhook URL for Slack channel
 - `ODOO_BASE_URL` - Odoo instance URL for deep links
 
 ### 3. asset-handler.json
@@ -61,7 +61,7 @@ Odoo → Supabase Edge Function → integration.outbox table
 - `asset.overdue` ⚠️ - Asset not returned by deadline
 
 **Environment Variables**:
-- `MATTERMOST_WEBHOOK_URL` - Incoming webhook URL
+- `SLACK_WEBHOOK_URL` - Incoming webhook URL
 - `ODOO_BASE_URL` - Odoo instance URL
 
 ### 4. finance-handler.json
@@ -76,7 +76,7 @@ Odoo → Supabase Edge Function → integration.outbox table
 - `finance_task.overdue` 🚨 - Task past deadline (URGENT)
 
 **Environment Variables**:
-- `MATTERMOST_WEBHOOK_URL` - Incoming webhook URL
+- `SLACK_WEBHOOK_URL` - Incoming webhook URL
 - `ODOO_BASE_URL` - Odoo instance URL
 
 ## Import Instructions
@@ -88,7 +88,7 @@ In n8n Settings → Environments, add:
 ```bash
 SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 N8N_WEBHOOK_BASE_URL=https://n8n.insightpulseai.com
-MATTERMOST_WEBHOOK_URL=https://mattermost.example.com/hooks/xxx-your-webhook-id-xxx
+SLACK_WEBHOOK_URL=https://slack.example.com/hooks/xxx-your-webhook-id-xxx
 ODOO_BASE_URL=https://odoo.insightpulseai.com
 ```
 
@@ -224,17 +224,17 @@ WHERE status = 'processing'
   AND locked_at < NOW() - INTERVAL '10 minutes';
 ```
 
-### Mattermost Notifications Not Appearing
+### Slack Notifications Not Appearing
 
 **Causes**:
-1. `MATTERMOST_WEBHOOK_URL` incorrect or expired
-2. Webhook not enabled in Mattermost channel settings
+1. `SLACK_WEBHOOK_URL` incorrect or expired
+2. Webhook not enabled in Slack channel settings
 3. Message format invalid
 
 **Fix**:
 ```bash
 # Test webhook directly
-curl -X POST https://mattermost.example.com/hooks/xxx \
+curl -X POST https://slack.example.com/hooks/xxx \
   -H "Content-Type: application/json" \
   -d '{"text":"Test from n8n integration bus"}'
 

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: '%s | InsightPulse AI',
   },
   description: 'Secure, compliant collaboration for regulated industries. Self-hosted or single-tenant cloud deployment options.',
-  metadataBase: new URL('https://insightpulseai.net'),
+  metadataBase: new URL('https://insightpulseai.com'),
 };
 
 export default function RootLayout({

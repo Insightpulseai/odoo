@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Target droplet
 DROPLET_IP="188.166.237.231"
-PLANE_DOMAIN="plane.insightpulseai.net"
+PLANE_DOMAIN="plane.insightpulseai.com"
 
 # External PostgreSQL (odoo-db-sgp1) - from user's provided credentials
 DB_HOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
@@ -219,17 +219,17 @@ upstream plane_web {
 
 server {
     listen 80;
-    server_name plane.insightpulseai.net;
+    server_name plane.insightpulseai.com;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name plane.insightpulseai.net;
+    server_name plane.insightpulseai.com;
 
     # SSL configuration (use certbot for Let's Encrypt)
-    ssl_certificate /etc/letsencrypt/live/plane.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/plane.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/plane.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/plane.insightpulseai.com/privkey.pem;
 
     client_max_body_size 100M;
 
@@ -251,22 +251,22 @@ scp -o StrictHostKeyChecking=no /tmp/plane-nginx.conf "root@${DROPLET_IP}:/etc/n
 ssh -o StrictHostKeyChecking=no "root@${DROPLET_IP}" "
     ln -sf /etc/nginx/sites-available/plane /etc/nginx/sites-enabled/plane
     # Get SSL cert if not exists
-    certbot certonly --nginx -d plane.insightpulseai.net --non-interactive --agree-tos --email admin@insightpulseai.net || true
+    certbot certonly --nginx -d plane.insightpulseai.com --non-interactive --agree-tos --email admin@insightpulseai.com || true
     nginx -t && systemctl reload nginx
 "
 
 # Step 7: Configure DNS
 echo ">>> Step 7: Configuring DNS..."
-EXISTING_RECORD=$(doctl compute domain records list insightpulseai.net --format ID,Name,Type --no-header 2>/dev/null | grep -E "^[0-9]+\s+plane\s+A" | awk '{print $1}' || true)
+EXISTING_RECORD=$(doctl compute domain records list insightpulseai.com --format ID,Name,Type --no-header 2>/dev/null | grep -E "^[0-9]+\s+plane\s+A" | awk '{print $1}' || true)
 
 if [ -n "${EXISTING_RECORD}" ]; then
     echo "Updating existing DNS record..."
-    doctl compute domain records update insightpulseai.net \
+    doctl compute domain records update insightpulseai.com \
         --record-id "${EXISTING_RECORD}" \
         --record-data "${DROPLET_IP}"
 else
     echo "Creating DNS A record..."
-    doctl compute domain records create insightpulseai.net \
+    doctl compute domain records create insightpulseai.com \
         --record-type A \
         --record-name plane \
         --record-data "${DROPLET_IP}" \

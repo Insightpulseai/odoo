@@ -6,13 +6,13 @@
         <!-- Default from email -->
         <record id="param_ipai_mailgun_default_from" model="ir.config_parameter">
             <field name="key">ipai_mailgun.default_from</field>
-            <field name="value">admin@insightpulseai.net</field>
+            <field name="value">admin@insightpulseai.com</field>
         </record>
 
         <!-- Catchall domain -->
         <record id="param_mail_catchall_domain" model="ir.config_parameter">
             <field name="key">mail.catchall.domain</field>
-            <field name="value">insightpulseai.net</field>
+            <field name="value">insightpulseai.com</field>
         </record>
 
         <!-- Mailgun webhook signing key (set via CLI after installation) -->

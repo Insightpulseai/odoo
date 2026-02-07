@@ -1,7 +1,7 @@
 name: plane-ppm
 region: sgp
 domains:
-  - domain: plane.insightpulseai.net
+  - domain: plane.insightpulseai.com
     type: PRIMARY
 
 # Plane Community Edition on DigitalOcean App Platform
@@ -28,9 +28,9 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: plane.settings.production
       - key: WEB_URL
-        value: https://plane.insightpulseai.net
+        value: https://plane.insightpulseai.com
       - key: CORS_ALLOWED_ORIGINS
-        value: https://plane.insightpulseai.net
+        value: https://plane.insightpulseai.com
       - key: GUNICORN_WORKERS
         value: "2"
       - key: DATABASE_URL
@@ -76,9 +76,9 @@ services:
       - path: /
     envs:
       - key: NEXT_PUBLIC_API_BASE_URL
-        value: https://plane.insightpulseai.net
+        value: https://plane.insightpulseai.com
       - key: NEXT_PUBLIC_DEPLOY_URL
-        value: https://plane.insightpulseai.net
+        value: https://plane.insightpulseai.com
 
   # Space App (Public project sharing)
   - name: plane-space
@@ -94,7 +94,7 @@ services:
       - path: /spaces
     envs:
       - key: NEXT_PUBLIC_API_BASE_URL
-        value: https://plane.insightpulseai.net
+        value: https://plane.insightpulseai.com
 
 # Background Workers (separate from web-facing services)
 workers:

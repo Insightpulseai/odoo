@@ -94,7 +94,7 @@ jobs:
       - name: Run deployment verification
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} \
-            "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY MATTERMOST_WEBHOOK_URL=$MATTERMOST_WEBHOOK_URL bash -s" < scripts/ci/verify-deployment.sh
+            "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL bash -s" < scripts/ci/verify-deployment.sh

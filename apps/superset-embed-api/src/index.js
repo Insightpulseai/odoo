@@ -9,8 +9,8 @@
  * - SUPERSET_GUEST_TOKEN_AUDIENCE
  *
  * Production URLs:
- * - https://superset-embed-api.insightpulseai.net
- * - Superset: https://superset.insightpulseai.net
+ * - https://superset-embed-api.insightpulseai.com
+ * - Superset: https://superset.insightpulseai.com
  */
 import express from "express";
 import cors from "cors";
@@ -28,11 +28,11 @@ const config = {
   secret: process.env.SUPERSET_GUEST_TOKEN_SECRET,
   audience: process.env.SUPERSET_GUEST_TOKEN_AUDIENCE || "superset",
   supersetDomain:
-    process.env.SUPERSET_DOMAIN || "https://superset.insightpulseai.net",
+    process.env.SUPERSET_DOMAIN || "https://superset.insightpulseai.com",
   tokenExpirySeconds: parseInt(process.env.TOKEN_EXPIRY_SECONDS || "3600", 10),
   allowedOrigins: (
     process.env.ALLOWED_ORIGINS ||
-    "https://erp.insightpulseai.net,https://scout-mvp.vercel.app,http://localhost:8069,http://localhost:3000"
+    "https://erp.insightpulseai.com,https://scout-mvp.vercel.app,http://localhost:8069,http://localhost:3000"
   )
     .split(",")
     .map((o) => o.trim()),

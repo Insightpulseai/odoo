@@ -19,7 +19,7 @@
         "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'finance_task.created':\n    icon = '📋';\n    message = `**${icon} Finance Task Created**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Period:** ${payload.period_covered || 'N/A'}\\n**Employee:** ${payload.employee_code || 'N/A'}\\n**Prep Deadline:** ${payload.prep_deadline || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.in_progress':\n    icon = '🔄';\n    message = `**${icon} Finance Task In Progress**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Assigned to:** ${payload.assigned_to || 'Unknown'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.submitted':\n    icon = '✅';\n    message = `**${icon} Finance Task Submitted**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Status:** ${payload.status || 'Submitted'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.approved':\n    icon = '✅';\n    message = `**${icon} Finance Task Approved**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Status:** ${payload.status || 'Approved'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.filed':\n    icon = '📄';\n    message = `**${icon} Finance Task Filed**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Filing Deadline:** ${payload.filing_deadline || 'N/A'}\\n\\n✅ Task completed and filed with BIR.\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.overdue':\n    icon = '🚨';\n    message = `**${icon} Finance Task OVERDUE**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Days overdue:** ${payload.days_overdue || 0}\\n**Filing Deadline:** ${payload.filing_deadline || 'N/A'}\\n**Assigned to:** ${payload.assigned_to || 'Unknown'}\\n\\n**URGENT:** This task is past its deadline!\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Finance Task Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
       },
       "id": "format_message",
-      "name": "Format Mattermost Message",
+      "name": "Format Slack Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [450, 300]
@@ -27,14 +27,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ { \"text\": $json.message } }}",
         "options": {}
       },
-      "id": "send_mattermost",
-      "name": "Send to Mattermost",
+      "id": "send_slack",
+      "name": "Send to Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [650, 300]
@@ -56,25 +56,25 @@
       "main": [
         [
           {
-            "node": "Format Mattermost Message",
+            "node": "Format Slack Message",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Format Mattermost Message": {
+    "Format Slack Message": {
       "main": [
         [
           {
-            "node": "Send to Mattermost",
+            "node": "Send to Slack",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send to Mattermost": {
+    "Send to Slack": {
       "main": [
         [
           {
