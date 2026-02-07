@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (no Mattermost posts)'
+        description: 'Dry run (no Slack posts)'
         required: false
         default: 'false'
 
@@ -105,17 +105,17 @@ jobs:
 
           def post_mm(webhook, text):
               if DRY_RUN:
-                  print(f"DRY RUN - Would post to Mattermost: {text[:200]}...")
+                  print(f"DRY RUN - Would post to Slack: {text[:200]}...")
                   return
               if not webhook:
-                  print("WARNING: missing webhook; skipping Mattermost post")
+                  print("WARNING: missing webhook; skipping Slack post")
                   return
               body = json.dumps({"text": text}).encode()
               req = urllib.request.Request(
                   webhook, data=body, headers={"content-type": "application/json"}
               )
               with urllib.request.urlopen(req, timeout=30) as r:
-                  print("Mattermost:", r.status)
+                  print("Slack:", r.status)
 
           def norm_value(key, value):
               cap = float(NORM[key]["cap"])
@@ -252,7 +252,7 @@ jobs:
               print(f"Deduped by cooldown ({cooldown} min)")
               raise SystemExit(0)
 
-          # 6) Log alert event + post to Mattermost
+          # 6) Log alert event + post to Slack
           msg = (
               f"{severity.upper()}: Health score {score} (window={WINDOW_MINUTES}m)\n"
               f"Signals: {signals}\n"
@@ -351,7 +351,7 @@ jobs:
                   url, data=body, headers={"content-type": "application/json"}, method="POST"
               )
               with urllib.request.urlopen(r, timeout=30) as resp:
-                  print("Escalation Mattermost:", resp.status)
+                  print("Escalation Slack:", resp.status)
 
           # Pull active escalation states
           try:
