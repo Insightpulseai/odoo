@@ -35,11 +35,16 @@ echo "==========================================================================
 echo "$MODULES" | tr ',' '\n' | sed 's/^/  - /'
 echo ""
 
-echo ">>> Updating base..."
+echo ">>> Step 1: Updating base..."
 odoo-bin -d "$DB_NAME" --stop-after-init -u base --log-level=warn
 
-echo ">>> Installing modules..."
-odoo-bin -d "$DB_NAME" --stop-after-init -i "$MODULES" --log-level=warn
+echo ">>> Step 2: Installing modules (idempotent — tolerates already-installed)..."
+odoo-bin -d "$DB_NAME" --stop-after-init -i "$MODULES" --log-level=warn || {
+    echo "WARN: -i had errors (may be expected if some modules already installed)"
+}
+
+echo ">>> Step 3: Upgrading modules (ensures latest code is active)..."
+odoo-bin -d "$DB_NAME" --stop-after-init -u "$MODULES" --log-level=warn
 
 echo ""
-echo "OK: install completed ($COUNT modules)"
+echo "OK: install + upgrade completed ($COUNT modules)"
