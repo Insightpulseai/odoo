@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Coming Soon page template.
+        Uses website.layout for proper asset loading and SEO support.
+        Header/footer are hidden via CSS :has() scoping (no global theme change).
+    -->
+    <template id="coming_soon" name="Coming Soon">
+        <t t-call="website.layout">
+            <div id="wrap" class="ipai-cs-wrap">
+                <main class="ipai-cs-root">
+                    <div class="ipai-cs-container">
+                        <section class="ipai-cs-card" aria-label="Coming soon">
+
+                            <!-- Header row -->
+                            <div class="ipai-cs-header">
+                                <div class="ipai-cs-brand">
+                                    <span class="ipai-cs-dot" aria-hidden="true"/>
+                                    <span>InsightPulseAI</span>
+                                </div>
+                                <span class="ipai-cs-kicker">Pulsating Soon</span>
+                            </div>
+
+                            <!-- Headline -->
+                            <h1 class="ipai-cs-heading">
+                                Coming soon — a cleaner, faster, fully auditable homepage.
+                            </h1>
+
+                            <!-- Description -->
+                            <p class="ipai-cs-description">
+                                We are shipping an updated experience built on open
+                                foundations: ERP, automation, analytics, and
+                                integrations — designed to scale without vendor lock-in.
+                            </p>
+
+                            <!-- Capability pills -->
+                            <div class="ipai-cs-pills" role="list" aria-label="Platform capabilities">
+                                <span class="ipai-cs-pill" role="listitem">ERP Core</span>
+                                <span class="ipai-cs-pill" role="listitem">Automation</span>
+                                <span class="ipai-cs-pill" role="listitem">Analytics</span>
+                                <span class="ipai-cs-pill" role="listitem">Governance</span>
+                                <span class="ipai-cs-pill" role="listitem">Integrations</span>
+                            </div>
+
+                            <!-- CTA buttons -->
+                            <div class="ipai-cs-cta" role="group" aria-label="Primary actions">
+                                <a class="ipai-cs-btn ipai-cs-btn-primary" href="/contactus">Request a Demo</a>
+                                <a class="ipai-cs-btn ipai-cs-btn-ghost" href="/products">Explore Products</a>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="ipai-cs-footer">
+                                <span>&#169; <t t-esc="time.strftime('%Y')"/> InsightPulseAI</span>
+                                <span>Status: deploying UI refresh &#183; tokens preserved</span>
+                            </div>
+
+                        </section>
+                    </div>
+                </main>
+            </div>
+        </t>
+    </template>
+
+    <!-- SEO meta tags (conditional, only on coming-soon page) -->
+    <template id="coming_soon_head"
+              inherit_id="website.layout"
+              name="Coming Soon Meta Tags">
+        <xpath expr="//head" position="inside">
+            <t t-if="main_object and main_object._name == 'website.page' and main_object.url == '/coming-soon'">
+                <meta property="og:title" content="InsightPulseAI — Coming Soon"/>
+                <meta property="og:description"
+                      content="We are shipping a rebuilt homepage. Faster, cleaner, fully auditable operations."/>
+                <meta property="og:type" content="website"/>
+                <meta name="theme-color" content="#0B1220"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
