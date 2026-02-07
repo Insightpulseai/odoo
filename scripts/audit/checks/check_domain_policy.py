@@ -2,7 +2,7 @@
 """
 Domain Policy Audit Check
 
-Hard policy: No insightpulseai.net references allowed anywhere in the repo.
+Hard policy: No insightpulseai.com references allowed anywhere in the repo.
 All domains must use insightpulseai.com.
 
 This check FAILS the audit if any .net references are found.
@@ -78,11 +78,11 @@ def main():
 
 
 def run_forbidden_domain_check() -> CheckResult:
-    """Check that no insightpulseai.net references exist."""
+    """Check that no insightpulseai.com references exist."""
     check = CheckResult(
         name="forbidden_domain",
         integration="policy",
-        description="No insightpulseai.net references allowed",
+        description="No insightpulseai.com references allowed",
         status="FAIL"
     )
 
@@ -133,7 +133,7 @@ def run_forbidden_domain_check() -> CheckResult:
         ]
     else:
         check.status = "PASS"
-        check.evidence = {"match_count": 0, "policy": "no insightpulseai.net"}
+        check.evidence = {"match_count": 0, "policy": "no insightpulseai.com"}
 
     return check
 

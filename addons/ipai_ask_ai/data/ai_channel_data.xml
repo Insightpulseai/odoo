@@ -8,7 +8,7 @@
 
         <record id="partner_ask_ai" model="res.partner">
             <field name="name">Ask AI</field>
-            <field name="email">ai@insightpulseai.net</field>
+            <field name="email">ai@insightpulseai.com</field>
             <field name="is_company">False</field>
             <field name="type">contact</field>
             <field name="active">True</field>

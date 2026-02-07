@@ -226,7 +226,7 @@ resource "digitalocean_droplet" "sandbox" {
 
 # DNS record (optional - requires domain configured)
 # resource "digitalocean_record" "sandbox" {
-#   domain = "insightpulseai.net"
+#   domain = "insightpulseai.com"
 #   type   = "A"
 #   name   = "pr-${var.pr_number}"
 #   value  = digitalocean_droplet.sandbox.ipv4_address

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Mailgun SMTP Server (created only if not exists) -->
-        <record id="mailgun_smtp_server" model="ir.mail_server">
-            <field name="name">Mailgun SMTP</field>
-            <field name="smtp_host">smtp.mailgun.org</field>
+        <!-- Zoho Mail SMTP Server (primary) -->
+        <record id="zoho_smtp_server" model="ir.mail_server">
+            <field name="name">Zoho Mail SMTP</field>
+            <field name="smtp_host">smtp.zoho.com</field>
             <field name="smtp_port">587</field>
             <field name="smtp_encryption">starttls</field>
-            <field name="smtp_user">postmaster@mg.insightpulseai.net</field>
+            <field name="smtp_user">noreply@insightpulseai.com</field>
             <field name="smtp_pass"></field>
             <field name="sequence">10</field>
             <field name="active">False</field>

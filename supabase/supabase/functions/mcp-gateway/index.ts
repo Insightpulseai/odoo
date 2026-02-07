@@ -74,7 +74,7 @@ serve(async (req: Request) => {
     }
 
     // 3. ROUTING MIDDLEWARE
-    const n8nUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n.insightpulseai.net'
+    const n8nUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n.insightpulseai.com'
     let targetEndpoint: string
     let n8nPayload: Record<string, unknown>
 

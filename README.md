@@ -293,7 +293,7 @@ Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
 **Production Status**: ✅ **DEPLOYED** (2026-01-31)
 - Mail server ID: 2
 - SMTP host: smtp.mailgun.org:2525
-- Configuration: insightpulseai.net domain
+- Configuration: insightpulseai.com domain
 
 **Settings-as-Code Deployment:**
 
@@ -304,7 +304,7 @@ sudo mkdir -p /opt/odoo-ce/secrets
 sudo bash -c 'cat > /opt/odoo-ce/secrets/mailgun.env <<EOF
 MAILGUN_SMTP_HOST=smtp.mailgun.org
 MAILGUN_SMTP_PORT=2525
-MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
 MAILGUN_SMTP_PASS=__REPLACE__
 EOF'
 sudo chmod 600 /opt/odoo-ce/secrets/mailgun.env
@@ -323,7 +323,7 @@ python3 scripts/odoo/apply_settings_as_code.py
 psql "host=$PGHOST port=$PGPORT user=$PGUSER dbname=$ODOO_DB sslmode=require" -c "
 SELECT id, name, smtp_host, smtp_user, smtp_port
 FROM ir_mail_server
-WHERE name='Mailgun SMTP (mg.insightpulseai.net)';"
+WHERE name='Mailgun SMTP (mg.insightpulseai.com)';"
 ```
 
 **Documentation:**
@@ -339,12 +339,12 @@ WHERE name='Mailgun SMTP (mg.insightpulseai.net)';"
 **Production Architecture**:
 ```
 Plane Backend (Django/PostgreSQL) → Mailgun SMTP (port 2525) → Email delivery
-Users → https://plane.insightpulseai.net → Nginx → Plane API (port 8002)
+Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 ```
 
 **Production Status**: ✅ **DEPLOYED** (Backend Only, 2026-01-30)
 - **API**: http://178.128.112.214:8002 (verified with `{"status": "OK"}`)
-- **Domain**: plane.insightpulseai.net (DNS verified)
+- **Domain**: plane.insightpulseai.com (DNS verified)
 - **Database**: PostgreSQL 15.7-alpine (88 migrations applied)
 - **Workers**: Background tasks + scheduled tasks running
 - **SMTP**: Mailgun configured (smtp.mailgun.org:2525)

@@ -9,7 +9,7 @@
  * ```tsx
  * import { fetchOdooTokens, createFluentTheme } from '@ipai/design-tokens/odooTokens';
  *
- * const tokens = await fetchOdooTokens('https://erp.insightpulseai.net');
+ * const tokens = await fetchOdooTokens('https://erp.insightpulseai.com');
  * const theme = createFluentTheme(tokens);
  *
  * <FluentProvider theme={theme}>
@@ -314,7 +314,7 @@ export function applyTokensToDocument(tokens: OdooTokens): void {
  * React hook for using Odoo tokens
  *
  * ```tsx
- * const { tokens, loading, error } = useOdooTokens('https://erp.insightpulseai.net');
+ * const { tokens, loading, error } = useOdooTokens('https://erp.insightpulseai.com');
  * ```
  */
 export function createUseOdooTokensHook(React: {

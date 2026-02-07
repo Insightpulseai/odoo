@@ -159,15 +159,15 @@
     },
     {
       "parameters": {
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
         "method": "POST",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"alerts\",\n  \"username\": \"Deployment Bot\",\n  \"icon_emoji\": \":warning:\",\n  \"text\": \"### :x: Deployment Failed\\n\\n**Environment:** {{ $('Parse Event').item.json.environment }}\\n**Branch:** `{{ $('Parse Event').item.json.branch }}`\\n**Commit:** `{{ $('Parse Event').item.json.commitShort }}`\\n\\n**Failed Components:**\\n{{ $('Parse Event').item.json.componentStatus }}\\n\\n[View Workflow Run]({{ $('Parse Event').item.json.runUrl }})\"\n}",
         "options": {}
       },
-      "id": "alert-mattermost",
-      "name": "Alert Mattermost",
+      "id": "alert-slack",
+      "name": "Alert Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1560, 100],
@@ -266,7 +266,7 @@
       "main": [
         [
           {
-            "node": "Alert Mattermost",
+            "node": "Alert Slack",
             "type": "main",
             "index": 0
           }
@@ -280,7 +280,7 @@
         ]
       ]
     },
-    "Alert Mattermost": {
+    "Alert Slack": {
       "main": [
         [
           {

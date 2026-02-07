@@ -216,7 +216,7 @@ class ProjectTask(models.Model):
 ### Phase 5: Public Documentation Portal (Week 9-10)
 
 **Odoo Website Integration**:
-- Public-facing docs at `https://docs.insightpulseai.net`
+- Public-facing docs at `https://docs.insightpulseai.com`
 - Published from internal wiki (one-click publish)
 - ACL: Internal docs (private), public docs (published)
 - SEO-friendly URLs and sitemap
@@ -230,7 +230,7 @@ class KnowledgeArticle(models.Model):
     is_published = fields.Boolean(
         string='Published to Website',
         default=False,
-        help='Make this article public at docs.insightpulseai.net'
+        help='Make this article public at docs.insightpulseai.com'
     )
 
     website_url = fields.Char(

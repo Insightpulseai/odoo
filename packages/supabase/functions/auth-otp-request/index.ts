@@ -6,7 +6,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const MAILGUN_API_KEY = Deno.env.get('MAILGUN_API_KEY')!
-const MAILGUN_DOMAIN = Deno.env.get('MAILGUN_DOMAIN') || 'mg.insightpulseai.net'
+const MAILGUN_DOMAIN = Deno.env.get('MAILGUN_DOMAIN') || 'mg.insightpulseai.com'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -154,7 +154,7 @@ If you didn't request this code, please ignore this email.
 
 --
 InsightPulse AI
-https://insightpulseai.net
+https://insightpulseai.com
 `.trim()
 
     const formData = new FormData()

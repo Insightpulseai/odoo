@@ -11,7 +11,7 @@
  * function App() {
  *   return (
  *     <OdooTokensProvider
- *       baseUrl="https://erp.insightpulseai.net"
+ *       baseUrl="https://erp.insightpulseai.com"
  *       companyId={1}
  *     >
  *       <FluentIntegration />
