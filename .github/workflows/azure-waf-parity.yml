@@ -1,0 +1,139 @@
+name: Azure WAF Parity Gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/monitoring/**'
+      - 'infra/cloudflare/**'
+      - 'addons/ipai/ipai_auth_oidc/**'
+      - 'scripts/verify_*.sh'
+      - 'scripts/backup_verify.sh'
+      - 'ops/**'
+
+  pull_request:
+    paths:
+      - 'infra/monitoring/**'
+      - 'infra/cloudflare/**'
+      - 'addons/ipai/ipai_auth_oidc/**'
+      - 'scripts/verify_*.sh'
+      - 'scripts/backup_verify.sh'
+      - 'ops/**'
+
+  schedule:
+    # Weekly: Sunday 02:00 UTC
+    - cron: '0 2 * * 0'
+
+  workflow_dispatch:
+
+jobs:
+  # -----------------------------------------
+  # Static checks (no containers needed)
+  # -----------------------------------------
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify auth module structure
+        run: ./scripts/verify_auth.sh
+
+      - name: Python syntax check
+        run: |
+          python3 -m py_compile addons/ipai/ipai_auth_oidc/__manifest__.py
+          python3 -m py_compile addons/ipai/ipai_auth_oidc/__init__.py
+
+      - name: Validate Prometheus config YAML
+        run: python3 -c "import yaml; yaml.safe_load(open('infra/monitoring/prometheus/prometheus.yml'))"
+
+      - name: Validate alerting rules YAML
+        run: python3 -c "import yaml; yaml.safe_load(open('infra/monitoring/alerting/rules.yml'))"
+
+      - name: Validate Cloudflare cache rules JSON
+        run: python3 -c "import json; json.load(open('infra/cloudflare/cloudflare-cache-rules.json'))"
+
+      - name: Validate monitoring compose YAML
+        run: python3 -c "import yaml; yaml.safe_load(open('infra/monitoring/docker-compose.monitoring.yml'))"
+
+      - name: Validate Grafana datasource config
+        run: python3 -c "import yaml; yaml.safe_load(open('infra/monitoring/grafana/provisioning/datasources/prometheus.yml'))"
+
+      - name: Validate Grafana dashboard provider config
+        run: python3 -c "import yaml; yaml.safe_load(open('infra/monitoring/grafana/provisioning/dashboards/dashboard.yml'))"
+
+      - name: Validate Grafana dashboard JSON
+        run: python3 -c "import json; json.load(open('infra/monitoring/grafana/provisioning/dashboards/odoo-overview.json'))"
+
+      - name: Reject plaintext secrets
+        run: |
+          set -euo pipefail
+          FOUND=$(git ls-files | grep -E '(^|/)\.env$' | grep -v '.example' | grep -v '.enc' || true)
+          if [ -n "$FOUND" ]; then
+            echo "ERROR: Plaintext .env files committed: $FOUND"
+            exit 1
+          fi
+
+      - name: Check spec bundle completeness
+        run: |
+          set -euo pipefail
+          for f in constitution.md prd.md plan.md tasks.md; do
+            if [ ! -f "spec/azure-reference-architecture/$f" ]; then
+              echo "FAIL: Missing spec/azure-reference-architecture/$f"
+              exit 1
+            fi
+          done
+          echo "PASS: Spec bundle complete"
+
+  # -----------------------------------------
+  # Runtime checks (requires SSH to prod)
+  # -----------------------------------------
+  runtime-checks:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Run monitoring verification
+        continue-on-error: true
+        run: |
+          ssh root@erp.insightpulseai.com \
+            "cd /opt/odoo-ce/repo && ./scripts/verify_monitoring.sh" \
+            > verify-monitoring.txt 2>&1
+          cat verify-monitoring.txt
+
+      - name: Run CDN verification
+        continue-on-error: true
+        run: |
+          ./scripts/verify_cdn.sh > verify-cdn.txt 2>&1
+          cat verify-cdn.txt
+
+      - name: Run backup verification
+        continue-on-error: true
+        run: |
+          ssh root@erp.insightpulseai.com \
+            "cd /opt/odoo-ce/repo && ./scripts/backup_verify.sh" \
+            > verify-backup.txt 2>&1
+          cat verify-backup.txt
+
+      - name: Upload verification reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: waf-parity-reports-${{ github.run_id }}
+          path: verify-*.txt
+          retention-days: 30
