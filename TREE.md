@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3d7ba10685398799519284c469622118f0a3260d
+> Commit: 6f61512c9d7d7b54fac21a0cb2b201164443b3bf
 
 ```
 .
@@ -1232,11 +1232,6 @@
 │   ├── local-schema-server
 │   │   ├── package.json
 │   │   └── server.js
-│   ├── mattermost-rag
-│   │   ├── do
-│   │   │   └── app.json
-│   │   ├── APP.md
-│   │   └── spec.yaml
 │   ├── mcp-coordinator
 │   │   ├── do
 │   │   │   └── app.json
@@ -1832,6 +1827,25 @@
 │   │   └── ADR-0001-clone-not-integrate.md
 │   ├── agents
 │   │   └── ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md
+│   ├── ai
+│   │   ├── ARCHITECTURE.md
+│   │   ├── BIR_COMPLIANCE.md
+│   │   ├── CI_WORKFLOWS.md
+│   │   ├── DOCKER.md
+│   │   ├── EE_PARITY.md
+│   │   ├── GITHUB.md
+│   │   ├── INTEGRATIONS.md
+│   │   ├── IPAI_MODULES.md
+│   │   ├── MCP_SYSTEM.md
+│   │   ├── MEMORY.md
+│   │   ├── OCA_WORKFLOW.md
+│   │   ├── README.md
+│   │   ├── REPO_STRUCTURE.md
+│   │   ├── SPEC_KIT.md
+│   │   ├── SUPABASE.md
+│   │   ├── TESTING.md
+│   │   ├── TROUBLESHOOTING.md
+│   │   └── WEB_CMS.md
 │   ├── analytics
 │   │   └── LAKEHOUSE_PLAN.md
 │   ├── api
@@ -2071,7 +2085,6 @@
 │   ├── integrations
 │   │   ├── FOCALBOARD.md
 │   │   ├── MARKETPLACE_INTEGRATIONS.md
-│   │   ├── MATTERMOST.md
 │   │   ├── N8N.md
 │   │   ├── OCA_SUBTREE_MIGRATION.md
 │   │   └── OPS_STACK.md
@@ -2089,6 +2102,8 @@
 │   │   ├── README.md
 │   │   ├── SECURITY_MODEL.md
 │   │   └── module_scan.json
+│   ├── issues
+│   │   └── 2026-02-07-domain-health-audit.md
 │   ├── knowledge
 │   │   └── graph_seed.json
 │   ├── lakehouse
@@ -2570,8 +2585,6 @@
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
 │   ├── LOGIN_BUTTON_FIX.md
 │   ├── MAILGUN_DNS_SETUP.md
-│   ├── MATTERMOST_ALERTING_SETUP.md
-│   ├── MATTERMOST_CHATOPS_DEPLOYMENT.md
 │   ├── MCP_IMPLEMENTATION_STATUS.md
 │   ├── MCP_SUPABASE_INTEGRATION.md
 │   ├── MIXED_CONTENT_FIX.md
@@ -2814,7 +2827,7 @@
 │   │   │   ├── postgres-service.yaml
 │   │   │   └── postgres-statefulset.yaml
 │   │   ├── nginx
-│   │   │   └── erp.insightpulseai.com.conf
+│   │   │   └── erp.insightpulseai.net.conf
 │   │   ├── runtime
 │   │   │   ├── odoo-prod.docker_inspect.json
 │   │   │   └── odoo-prod.image_inspect.json
@@ -3525,7 +3538,6 @@
 │       ├── figma.json
 │       ├── github-projects-v2.json
 │       ├── keycloak.json
-│       ├── mattermost.json
 │       ├── n8n-workflow.json
 │       ├── odoo-erp.json
 │       ├── playwright-testing.json
@@ -4100,7 +4112,6 @@
 │   ├── odoo_install_from_manifests.sh
 │   ├── odoo_install_modules.sh
 │   ├── odoo_install_oca_must_have.sh
-│   ├── odoo_mattermost_integration.py
 │   ├── odoo_modules_preflight.sh
 │   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
@@ -4148,7 +4159,6 @@
 │   ├── setup_afc_rag.sh
 │   ├── setup_credentials.sh
 │   ├── setup_keycloak_db.sh
-│   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
 │   ├── skill_web_session_bridge.sh
 │   ├── smoke_github_app.sh
@@ -4749,8 +4759,6 @@
 │   │   │   └── index.ts
 │   │   ├── github-app-auth
 │   │   │   └── index.ts
-│   │   ├── github-mattermost-bridge
-│   │   │   └── index.ts
 │   │   ├── infra-memory-ingest
 │   │   │   └── index.ts
 │   │   ├── ipai-copilot
@@ -4957,7 +4965,6 @@
 │   │   │   ├── executor
 │   │   │   ├── expense-policy-check
 │   │   │   ├── github-app-auth
-│   │   │   ├── github-mattermost-bridge
 │   │   │   ├── infra-memory-ingest
 │   │   │   ├── ipai-copilot
 │   │   │   ├── marketplace-webhook
@@ -5180,7 +5187,8 @@
 │   ├── n8n_bir_deadline_webhook.json
 │   ├── n8n_enrichment_agent.json
 │   ├── n8n_ocr_expense_webhook.json
-│   └── n8n_scout_sync_webhook.json
+│   ├── n8n_scout_sync_webhook.json
+│   └── registry.yaml
 ├── .agentignore
 ├── .cursorignore
 ├── .env.example
@@ -5236,7 +5244,6 @@
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 ├── LOCAL_SETUP.md
-├── MATTERMOST_OPEX_INTEGRATION.md
 ├── MCP_QUICK_START.md
 ├── Makefile
 ├── Month-end Closing Task and Tax Filing ext.xlsx
@@ -5343,15 +5350,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1477 directories, 3861 files
+1475 directories, 3870 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1748 |
-| Files | 5196 |
-| Python files | 842 |
+| Directories | 1746 |
+| Files | 5204 |
+| Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1315 |
+| Markdown files | 1329 |
