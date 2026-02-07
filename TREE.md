@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6318418f02f749a3da2f8856684ba8b01bfcd6ff
+> Commit: 9124d791ee7a5087dda8f9abcf4e1c993c7bd304
 
 ```
 .
@@ -72,6 +72,7 @@
 │   │   ├── audit-contract.yml
 │   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
+│   │   ├── azure-waf-parity.yml
 │   │   ├── backlog-coverage.yml
 │   │   ├── branch-promotion.yml
 │   │   ├── build-odoo-ce19-ee-parity.yml
@@ -168,8 +169,10 @@
 │   │   ├── ops-ssot-verify.yml
 │   │   ├── parity.yml
 │   │   ├── patch-release.yml
+│   │   ├── platform-guardrails.yml
 │   │   ├── platform-kit-ci.yml
 │   │   ├── pr-installability-gate.yml
+│   │   ├── prd-enforcement.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
 │   │   ├── project-automation.yml
@@ -281,6 +284,10 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_auth_oidc
+│   │   │   ├── data
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_chatgpt_sdk_theme
@@ -1992,7 +1999,8 @@
 │   │   │   └── PLANE_PRODUCTION_DEPLOYMENT.md
 │   │   ├── 20260201-0400
 │   │   │   └── 502-gateway-fix
-│   │   └── 20260129-odoo-asset-fix.md
+│   │   ├── 20260129-odoo-asset-fix.md
+│   │   └── TEMPLATE_azure_waf_rescore.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -2724,6 +2732,8 @@
 │   │   └── structure_check.py
 │   ├── ci-odoo
 │   │   └── docker-compose.ci.yml
+│   ├── cloudflare
+│   │   └── cloudflare-cache-rules.json
 │   ├── databricks
 │   │   ├── agent_systems
 │   │   │   └── feedback_intel
@@ -2837,6 +2847,14 @@
 │   │   └── collab-stack.md
 │   ├── mattermost
 │   │   └── channel_setup.json
+│   ├── monitoring
+│   │   ├── alerting
+│   │   │   └── rules.yml
+│   │   ├── grafana
+│   │   │   └── provisioning
+│   │   ├── prometheus
+│   │   │   └── prometheus.yml
+│   │   └── docker-compose.monitoring.yml
 │   ├── ops-control
 │   │   ├── apps
 │   │   │   └── mcp-server
@@ -3283,6 +3301,10 @@
 │   │   └── scoring.json
 │   ├── backlog
 │   │   └── control-room-lakehouse-backlog.yaml
+│   ├── backup
+│   │   ├── install_cron.sh
+│   │   ├── pg_backup_to_s3.sh
+│   │   └── pg_restore_from_s3.sh
 │   ├── design
 │   │   ├── schemas
 │   │   │   └── figma_contract.schema.json
@@ -3296,11 +3318,20 @@
 │   │   │   └── teams.json
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
+│   ├── idp
+│   │   └── keycloak
+│   │       └── docker-compose.yml
 │   ├── jobs
 │   │   └── odoo
 │   │       ├── finance_stack_rollout.yaml
 │   │       ├── ipai_finance_ppm_install.yaml
 │   │       └── ipai_finance_ppm_upgrade.yaml
+│   ├── observability
+│   │   ├── loki
+│   │   │   └── config.yml
+│   │   ├── prometheus
+│   │   │   └── prometheus.yml
+│   │   └── docker-compose.yml
 │   ├── pipelines
 │   │   ├── schemas
 │   │   │   └── pipeline.schema.yaml
@@ -3313,6 +3344,8 @@
 │   │   ├── mailgun_domain_verification.md
 │   │   ├── ocr_service.md
 │   │   └── sinch_setup.md
+│   ├── secrets
+│   │   └── .sops.yaml
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
 ├── osi
@@ -3622,6 +3655,7 @@
 │   │   └── restore_test.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
+│   │   ├── check_prd_linkage.sh
 │   │   ├── check_supabase_preview_config.sh
 │   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
@@ -3863,6 +3897,7 @@
 │   ├── auto_error_handler.sh
 │   ├── backlog_scan.py
 │   ├── backup_odoo.sh
+│   ├── backup_verify.sh
 │   ├── baseline-validation.sh
 │   ├── bootstrap_apps_from_inventory.sh
 │   ├── bootstrap_execution_board.sh
@@ -4150,11 +4185,14 @@
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
+│   ├── verify_auth.sh
 │   ├── verify_auth_setup.sh
 │   ├── verify_backup.sh
+│   ├── verify_cdn.sh
 │   ├── verify_email_auth.sh
 │   ├── verify_local.sh
 │   ├── verify_login_button.sh
+│   ├── verify_monitoring.sh
 │   ├── verify_oca_ipai_layout.sh
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
@@ -4325,6 +4363,11 @@
 │   ├── auth
 │   │   └── roles.yaml
 │   ├── auto-claude-framework
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── azure-reference-architecture
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -5267,15 +5310,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1455 directories, 3807 files
+1471 directories, 3834 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1721 |
-| Files | 5134 |
-| Python files | 835 |
-| XML files | 295 |
-| Markdown files | 1310 |
+| Directories | 1739 |
+| Files | 5165 |
+| Python files | 837 |
+| XML files | 296 |
+| Markdown files | 1315 |
