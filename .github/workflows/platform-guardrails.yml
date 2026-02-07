@@ -1,0 +1,45 @@
+name: Platform Guardrails
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reject plaintext secrets
+        run: |
+          set -euo pipefail
+          # Block obvious secret files (allow .example, .enc, .sops templates)
+          FOUND=$(git ls-files | grep -E '(^|/)\.env$|(^|/).*secrets.*\.(yaml|yml|json|env)$' \
+            | grep -vE '\.enc\.|\.sops\.|\.example|ops/secrets/\.sops\.yaml' || true)
+          if [ -n "$FOUND" ]; then
+            echo "ERROR: Plaintext env/secrets detected in tracked files:"
+            echo "$FOUND"
+            echo ""
+            echo "Use sops encryption (see ops/secrets/.sops.yaml) or add to .gitignore."
+            exit 1
+          fi
+
+      - name: Ensure sops config exists
+        run: test -f ops/secrets/.sops.yaml
+
+      - name: Validate ops compose files
+        run: |
+          set -euo pipefail
+          python3 -c "import yaml; yaml.safe_load(open('ops/observability/docker-compose.yml'))"
+          python3 -c "import yaml; yaml.safe_load(open('ops/idp/keycloak/docker-compose.yml'))"
+
+      - name: Validate backup scripts are executable
+        run: |
+          set -euo pipefail
+          for f in ops/backup/pg_backup_to_s3.sh ops/backup/pg_restore_from_s3.sh ops/backup/install_cron.sh; do
+            if [ -f "$f" ]; then
+              head -1 "$f" | grep -q '#!/' || { echo "FAIL: $f missing shebang"; exit 1; }
+              echo "PASS: $f has shebang"
+            fi
+          done
