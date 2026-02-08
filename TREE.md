@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d55cc9dfc724f6de78c79c949a43262bd6006ab6
+> Commit: ab0877b14d28ee148d2aa33683a5aa043492f80a
 
 ```
 .
@@ -3101,6 +3101,22 @@
 │           ├── databases.list.json
 │           ├── droplets.list.json
 │           └── projects.list.json
+├── ipai-platform
+│   ├── nginx
+│   │   ├── conf.d
+│   │   │   ├── sites
+│   │   │   └── default.conf
+│   │   └── nginx.conf
+│   ├── odoo
+│   │   └── odoo.conf
+│   ├── scripts
+│   │   ├── health.sh
+│   │   └── setup-tls.sh
+│   ├── .env.example
+│   ├── README.md
+│   ├── compose.prod.override.external-db.yaml
+│   ├── compose.prod.yaml
+│   └── compose.yaml
 ├── kb
 │   ├── audit
 │   │   └── AGENT_AUDIT_RULES.md
@@ -4191,6 +4207,7 @@
 │   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── test_magic_link.sh
+│   ├── test_mcp_jobs.sh
 │   ├── test_theme_locally.sh
 │   ├── union_prune_install_sets.py
 │   ├── update_diagram_manifest.py
@@ -4787,6 +4804,8 @@
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
+│   │   ├── run-executor
+│   │   │   └── index.ts
 │   │   ├── schema-changed
 │   │   │   └── index.ts
 │   │   ├── seed-odoo-finance
@@ -4912,6 +4931,8 @@
 │   │   ├── 20260126_000001_ee_parity_tracking.sql
 │   │   ├── 20260126_billing_schema.sql
 │   │   ├── 20260207_security_definer_views_rls_remediation.sql
+│   │   ├── 20260208000001_mcp_jobs_extensions.sql
+│   │   ├── 20260208000002_mcp_jobs_cron.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -5350,15 +5371,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1475 directories, 3870 files
+1482 directories, 3884 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1746 |
-| Files | 5204 |
+| Directories | 1753 |
+| Files | 5219 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1329 |
+| Markdown files | 1330 |
