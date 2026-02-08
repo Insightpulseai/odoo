@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b5fbf1826537c009185e7d04aa34bc47d3f765f5
+> Commit: 642bb169da6b3ecbeccaa17360802a87c00ae3d6
 
 ## 📚 Documentation
 
@@ -526,6 +526,7 @@
 | [Incident Report: 502 Bad Gateway - erp.insightpulseai.com](docs/evidence/20260201-0400/502-gateway-fix/INCIDENT_REPORT.md) | docs/evidence/20260201-0400/502-gateway-fix |
 | [Odoo Launcher Fix - Complete](docs/evidence/20260209-0023/odoo-launcher/FIX_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Odoo Launcher - Hardening Complete](docs/evidence/20260209-0023/odoo-launcher/HARDENING_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
+| [Odoo Launcher - Runtime Validation](docs/evidence/20260209-0023/odoo-launcher/RUNTIME_VALIDATION.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
@@ -737,6 +738,7 @@
 | [Execution Board - GitHub Projects Setup](docs/ops/EXECUTION_BOARD.md) | docs/ops |
 | [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
 | [Go-Live & Production Checklist — Odoo CE + OCA + IPAI (Workbench)](docs/ops/GO_LIVE_PROD_CHECKLIST.md) | docs/ops |
+| [Odoo 3-Environment Hardening - Complete Implementation](docs/ops/HARDENING_COMPLETE.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
 | [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
 | [Quick Start - Execution Board](docs/ops/QUICK_START.md) | docs/ops |
@@ -1074,6 +1076,7 @@
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [Integration Provisioners](scripts/provisioners/README.md) | scripts/provisioners |
+| [Security Scripts](scripts/security/README.md) | scripts/security |
 | [Web Shell Threat Model](security/WEB_SHELL_THREAT_MODEL.md) | security |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
