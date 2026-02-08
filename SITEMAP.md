@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab0877b14d28ee148d2aa33683a5aa043492f80a
+> Commit: 4425b03488ae75a8b21cda3b2524901c4b524b25
 
 ## 📚 Documentation
 
@@ -1110,6 +1110,10 @@
 | [Close Orchestration Module - Implementation Plan](spec/close-orchestration/plan.md) | spec/close-orchestration |
 | [Close Orchestration Module - Product Requirements Document](spec/close-orchestration/prd.md) | spec/close-orchestration |
 | [Close Orchestration Module - Task Checklist](spec/close-orchestration/tasks.md) | spec/close-orchestration |
+| [Constitution: Cloudflare DNS IaC](spec/cloudflare-dns/constitution.md) | spec/cloudflare-dns |
+| [Plan](spec/cloudflare-dns/plan.md) | spec/cloudflare-dns |
+| [PRD: Cloudflare DNS IaC (insightpulseai.com)](spec/cloudflare-dns/prd.md) | spec/cloudflare-dns |
+| [Tasks](spec/cloudflare-dns/tasks.md) | spec/cloudflare-dns |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
 | [Continue+ "All Green" Acceptance Criteria](spec/continue-plus/ALL_GREEN_CRITERIA.md) | spec/continue-plus |
 | [Continue.dev Implementation Evaluation Report](spec/continue-plus/EVALUATION_REPORT.md) | spec/continue-plus |
