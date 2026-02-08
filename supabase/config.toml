@@ -23,16 +23,17 @@ project_id = "spdtwktxdalcfigzeqrz"
 # When branching is enabled, config.toml syncs to all preview branches.
 # Persistent branches remain active; preview branches auto-pause after inactivity.
 
-[branching]
+# [branching]
+# NOTE: Branching section temporarily disabled - requires Pro/Team plan with GitHub integration
 # Enable Supabase branching (requires GitHub integration)
-enabled = true
+# enabled = true
 
 # Default branch behavior
-[branching.preview]
+# [branching.preview]
 # Preview branches pause after 7 days of inactivity
-pause_after_inactive_days = 7
+# pause_after_inactive_days = 7
 # Seed data file for preview branches
-seed_file = "seed.sql"
+# seed_file = "seed.sql"
 
 [api]
 # Port to use for the API URL
