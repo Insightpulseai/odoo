@@ -95,38 +95,38 @@
     {
       "parameters": {
         "channel": "#finance-alerts",
-        "text": "={{ '✅ Expense created: ' + $json.name + ' ($' + $json.total_amount + ')' }}",
+        "text": "={{ ':white_check_mark: Expense created: ' + $json.name + ' ($' + $json.total_amount + ')' }}",
         "otherOptions": {
           "icon_emoji": ":receipt:"
         }
       },
-      "name": "Mattermost Notify (Success)",
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
+      "name": "Slack Notify (Success)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
       "position": [850, 200],
       "credentials": {
-        "mattermostApi": {
+        "slackApi": {
           "id": "1",
-          "name": "Mattermost (ipa.insightpulseai.com)"
+          "name": "Slack (InsightPulse AI Workspace)"
         }
       }
     },
     {
       "parameters": {
         "channel": "#finance-alerts",
-        "text": "={{ '⚠️ Low OCR confidence: ' + $json.vendor_name + ' (' + $json.confidence + '%). Review required.' }}",
+        "text": "={{ ':warning: Low OCR confidence: ' + $json.vendor_name + ' (' + $json.confidence + '%). Review required.' }}",
         "otherOptions": {
           "icon_emoji": ":warning:"
         }
       },
-      "name": "Mattermost Notify (Low Confidence)",
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
+      "name": "Slack Notify (Low Confidence)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
       "position": [1050, 400],
       "credentials": {
-        "mattermostApi": {
+        "slackApi": {
           "id": "1",
-          "name": "Mattermost"
+          "name": "Slack (InsightPulse AI Workspace)"
         }
       }
     },
@@ -162,18 +162,18 @@
       ]
     },
     "Create Odoo Expense": {
-      "main": [[{ "node": "Mattermost Notify (Success)", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Slack Notify (Success)", "type": "main", "index": 0 }]]
     },
     "Log Low Confidence": {
       "main": [[{ "node": "Create Review Task", "type": "main", "index": 0 }]]
     },
     "Create Review Task": {
-      "main": [[{ "node": "Mattermost Notify (Low Confidence)", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Slack Notify (Low Confidence)", "type": "main", "index": 0 }]]
     },
-    "Mattermost Notify (Success)": {
+    "Slack Notify (Success)": {
       "main": [[{ "node": "Response (Success)", "type": "main", "index": 0 }]]
     },
-    "Mattermost Notify (Low Confidence)": {
+    "Slack Notify (Low Confidence)": {
       "main": [[{ "node": "Response (Review Required)", "type": "main", "index": 0 }]]
     }
   },
