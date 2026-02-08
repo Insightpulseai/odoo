@@ -4,6 +4,10 @@
 
 set -euo pipefail
 
+# GitHub Actions annotation helpers
+notice() { echo "::notice::$*"; }
+warn() { echo "::warning::$*"; }
+
 echo "🔍 Smoke Test: Odoo Docker Container Health"
 echo "============================================="
 
@@ -19,15 +23,21 @@ fi
 echo "Detected services: APP=$APP_SVC, DB=$DB_SVC"
 echo ""
 
-# Check if docker compose is available
+# Check if docker command is available
 if ! command -v docker &> /dev/null; then
-    echo "⚠️  SKIP: Docker not available (CI environment may not support docker)"
+    notice "SKIPPED: docker command not available in this environment"
+    exit 0
+fi
+
+# Check if docker daemon is reachable
+if ! docker info >/dev/null 2>&1; then
+    notice "SKIPPED: docker daemon not reachable (may require docker service running)"
     exit 0
 fi
 
 # Check if compose file exists
 if [[ ! -f docker-compose.yml ]]; then
-    echo "⚠️  SKIP: No docker-compose.yml found"
+    notice "SKIPPED: docker-compose.yml not found in current directory"
     exit 0
 fi
 
