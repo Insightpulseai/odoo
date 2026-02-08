@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and fill in values
+# terraform.tfvars is gitignored
+
+cloudflare_api_token = "your-api-token-here"
+zone_id              = "73f587aee652fc24fd643aec00dcca81"
+origin_ipv4          = "178.128.112.214"
+proxied              = true
+zoho_dkim_value      = "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY_HERE"
