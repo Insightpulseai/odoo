@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d55cc9dfc724f6de78c79c949a43262bd6006ab6
+> Commit: ab0877b14d28ee148d2aa33683a5aa043492f80a
 
 ## 📚 Documentation
 
@@ -954,6 +954,7 @@
 | [Supabase Terraform Infrastructure](infra/supabase/README.md) | infra/supabase |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
+| [ipai-platform](ipai-platform/README.md) | ipai-platform |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
 | [Month-End Close SOP](kb/finance_close/sop.md) | kb/finance_close |
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
