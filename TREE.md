@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1a52ef768f8c5d04ec600aa4094eebdb50cbf2de
+> Commit: d92ff46d233bd65427364baa465c81502d38e38f
 
 ```
 .
@@ -4114,6 +4114,7 @@
 │   ├── ipai_install_upgrade_test.sh
 │   ├── ipai_quality_gate.sh
 │   ├── lint.sh
+│   ├── lint_odoo_entrypoint.sh
 │   ├── map_logframe.py
 │   ├── module_audit_agent.py
 │   ├── n8n-gitops.sh
@@ -5384,7 +5385,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1488 directories, 3891 files
+1488 directories, 3892 files
 ```
 
 ## 📊 Stats
@@ -5392,7 +5393,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1760 |
-| Files | 5235 |
+| Files | 5236 |
 | Python files | 841 |
 | XML files | 298 |
 | Markdown files | 1335 |
