@@ -43,6 +43,11 @@ jobs:
             echo "No oca_hydrate.sh found; skipping OCA hydration"
           fi
 
+      - name: Lint Odoo Entrypoint
+        run: |
+          echo "Checking for direct python odoo-bin invocations..."
+          ./scripts/lint_odoo_entrypoint.sh
+
       - name: Environment Info
         run: |
           echo "========================================"
