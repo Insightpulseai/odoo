@@ -1,0 +1,180 @@
+# =============================================================================
+# ipai-platform Docker Compose (Development Baseline)
+# =============================================================================
+# Usage:
+#   docker compose up -d                     # Start core stack
+#   docker compose --profile supabase up -d  # With local Supabase
+#   docker compose -f compose.yaml -f compose.prod.yaml up -d  # Production
+#
+# Networks:
+#   edge     - Nginx reverse proxy
+#   backend  - Odoo + PostgreSQL + Redis
+#   supabase - Local Supabase stack (optional)
+# =============================================================================
+
+networks:
+  edge:
+    driver: bridge
+  backend:
+    driver: bridge
+  supabase:
+    driver: bridge
+
+volumes:
+  odoo_data:
+  odoo_filestore:
+  postgres_data:
+  redis_data:
+  supabase_db_data:
+
+services:
+  # ---------------------------------------------------------------------------
+  # Nginx Reverse Proxy
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ipai-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - edge
+      - backend
+    depends_on:
+      odoo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Odoo ERP
+  # ---------------------------------------------------------------------------
+  odoo:
+    image: odoo:18.0
+    container_name: ipai-odoo
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    environment:
+      - HOST=odoo_db
+      - USER=odoo
+      - PASSWORD_FILE=/run/secrets/db_password
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - odoo_filestore:/var/lib/odoo/filestore
+      - ../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ../addons/OCA:/mnt/extra-addons/OCA:ro
+    networks:
+      - backend
+    depends_on:
+      odoo_db:
+        condition: service_healthy
+    secrets:
+      - db_password
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database
+  # ---------------------------------------------------------------------------
+  odoo_db:
+    image: postgres:16-alpine
+    container_name: ipai-odoo-db
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    secrets:
+      - db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Redis (Session Storage)
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: ipai-odoo-redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Supabase Local Stack (Optional Profile)
+  # ---------------------------------------------------------------------------
+  supabase_db:
+    image: supabase/postgres:15.1.0.147
+    container_name: ipai-supabase-db
+    profiles:
+      - supabase
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/supabase_db_password
+      - POSTGRES_DB=postgres
+    volumes:
+      - supabase_db_data:/var/lib/postgresql/data
+    networks:
+      - supabase
+    secrets:
+      - supabase_db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  supabase_postgrest:
+    image: postgrest/postgrest:v12.0.2
+    container_name: ipai-supabase-postgrest
+    profiles:
+      - supabase
+    ports:
+      - "3000:3000"
+    environment:
+      - PGRST_DB_URI=postgres://postgres:@supabase_db:5432/postgres
+      - PGRST_DB_SCHEMAS=public,graphql_public
+      - PGRST_DB_ANON_ROLE=anon
+      - PGRST_JWT_SECRET_FILE=/run/secrets/supabase_jwt_secret
+    networks:
+      - supabase
+      - edge
+    secrets:
+      - supabase_jwt_secret
+    depends_on:
+      supabase_db:
+        condition: service_healthy
+    restart: unless-stopped
+
+# ---------------------------------------------------------------------------
+# Secrets (file-based for security)
+# ---------------------------------------------------------------------------
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  supabase_db_password:
+    file: ./secrets/supabase_db_password.txt
+  supabase_jwt_secret:
+    file: ./secrets/supabase_jwt_secret.txt
