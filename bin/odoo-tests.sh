@@ -14,10 +14,10 @@ LOG_LEVEL="${LOG_LEVEL:-test}"
 
 # Auto-detect odoo-bin if not in PATH
 if ! command -v "$ODOO_BIN" &> /dev/null; then
-  if [ -f "/tmp/odoo/odoo-bin" ]; then
-    ODOO_BIN="python /tmp/odoo/odoo-bin"
-  elif [ -f "./odoo-bin" ]; then
-    ODOO_BIN="python ./odoo-bin"
+  if [ -f "/tmp/odoo/scripts/odoo.sh" ]; then
+    ODOO_BIN="/tmp/odoo/scripts/odoo.sh"
+  elif [ -f "./scripts/odoo.sh" ]; then
+    ODOO_BIN="./scripts/odoo.sh"
   else
     echo "Error: odoo-bin not found. Please set ODOO_BIN environment variable."
     exit 1

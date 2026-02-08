@@ -426,7 +426,7 @@ jobs:
           fi
 
           # Prepare test command
-          TEST_CMD="python /tmp/odoo/odoo-bin -d $DB_NAME -i $MODULES --stop-after-init --log-level=test --test-enable --addons-path=$ADDONS_PATH"
+          TEST_CMD="/tmp/odoo/scripts/odoo.sh -d $DB_NAME -i $MODULES --stop-after-init --log-level=test --test-enable --addons-path=$ADDONS_PATH"
 
           # Add test tags if specified
           if [ -n "${{ matrix.test-suite.tags }}" ]; then
@@ -436,7 +436,7 @@ jobs:
           # Run tests with coverage if this is the full test suite
           if [ "${{ matrix.test-suite.name }}" == "All Tests" ]; then
             echo "Running with coverage analysis..."
-            coverage run --source=addons/ipai --omit='*/tests/*' /tmp/odoo/odoo-bin \
+            coverage run --source=addons/ipai --omit='*/tests/*' /tmp/odoo/scripts/odoo.sh \
               -d "$DB_NAME" \
               -i "$MODULES" \
               --stop-after-init \
@@ -590,7 +590,7 @@ jobs:
           # Time the installation
           START_TIME=$(date +%s)
 
-          python /tmp/odoo/odoo-bin \
+          /tmp/odoo/scripts/odoo.sh \
             -d "$DB_NAME" \
             -i "$MODULES" \
             --stop-after-init \

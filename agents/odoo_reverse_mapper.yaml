@@ -152,7 +152,7 @@ capabilities:
   validation:
     - run_regression_tests:
         description: "Execute all ipai_* module regression tests"
-        command: "python odoo-bin -d test_<product> -i <module> --test-enable --stop-after-init --log-level=test"
+        command: "./scripts/odoo.sh -d test_<product> -i <module> --test-enable --stop-after-init --log-level=test"
         exit_code: "0 = success, non-zero = failure"
 
     - verify_module_installation:
@@ -296,7 +296,7 @@ workflow:
       - "git commit -m 'feat(parity): add ipai_<module>'"
       - "git push origin feature/saas-parity"
       - "./scripts/deploy-odoo-modules.sh ipai_<module>"
-      - "python odoo-bin -d test_<product> -i ipai_<module> --test-enable"
+      - "./scripts/odoo.sh -d test_<product> -i ipai_<module> --test-enable"
 
   step_6_track:
     action: "Update Supabase and create GitHub issues"
