@@ -148,7 +148,7 @@ steps:
 
       - action: run_regression_tests
         command: |
-          python odoo-bin -d test_clarity \
+          ./scripts/odoo.sh -d test_clarity \
             -i ipai_ppm_portfolio,ipai_ppm_gates,ipai_ppm_capacity \
             --test-enable --stop-after-init --log-level=test
         acceptance: "All tests pass (exit code 0)"
