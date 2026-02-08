@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b5fbf1826537c009185e7d04aa34bc47d3f765f5
+> Commit: 642bb169da6b3ecbeccaa17360802a87c00ae3d6
 
 ```
 .
@@ -2304,6 +2304,7 @@
 │   │   ├── EXECUTION_BOARD.md
 │   │   ├── GO_LIVE_CHECKLIST.md
 │   │   ├── GO_LIVE_PROD_CHECKLIST.md
+│   │   ├── HARDENING_COMPLETE.md
 │   │   ├── LOCAL_DEV.md
 │   │   ├── PREVENT_502.md
 │   │   ├── QUICK_START.md
@@ -3731,6 +3732,8 @@
 │   │   ├── run_all.sh
 │   │   ├── run_odoo_tests.sh
 │   │   ├── schema_drift_check.sh
+│   │   ├── smoke_import_odoo.sh
+│   │   ├── smoke_odoo_container.sh
 │   │   ├── supabase_preview.sh
 │   │   ├── validate_github_app.sh
 │   │   ├── verify-deployment.sh
@@ -3911,6 +3914,9 @@
 │   │   ├── start-codespace.sh
 │   │   ├── start-do-sandbox.sh
 │   │   └── start-local-sandbox.sh
+│   ├── security
+│   │   ├── README.md
+│   │   └── triage_dependabot_alerts.sh
 │   ├── seeds
 │   │   ├── convert_expense_template_to_odoo.py
 │   │   ├── generate_project_stack_csv.py
@@ -3987,6 +3993,7 @@
 │   ├── clean-branches.sh
 │   ├── cleanup-branches.sh
 │   ├── clone_missing_oca_repos.sh
+│   ├── compose_vars.sh
 │   ├── config_files_found.txt
 │   ├── configure_base_url.py
 │   ├── configure_gmail_smtp.py
@@ -4115,6 +4122,7 @@
 │   ├── ipai_quality_gate.sh
 │   ├── lint.sh
 │   ├── lint_odoo_entrypoint.sh
+│   ├── lock_stage.sh
 │   ├── map_logframe.py
 │   ├── module_audit_agent.py
 │   ├── n8n-gitops.sh
@@ -4154,6 +4162,7 @@
 │   ├── prod_access_check.py
 │   ├── prod_backup_dump.sh
 │   ├── prod_db_guess.py
+│   ├── promote.sh
 │   ├── promote_oauth_users.py
 │   ├── provision_tenant.sh
 │   ├── recreate_odoo_prod.sh
@@ -5385,15 +5394,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1488 directories, 3892 files
+1489 directories, 3900 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1760 |
-| Files | 5237 |
+| Directories | 1761 |
+| Files | 5246 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1336 |
+| Markdown files | 1339 |
