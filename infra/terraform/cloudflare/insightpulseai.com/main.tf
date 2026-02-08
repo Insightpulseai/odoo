@@ -77,7 +77,7 @@ resource "cloudflare_record" "spf" {
   zone_id = var.zone_id
   name    = "@"
   type    = "TXT"
-  content = "v=spf1 include:zoho.com ~all"
+  content = "v=spf1 include:zohomail.com ~all"
   ttl     = 3600
 }
 
@@ -85,7 +85,7 @@ resource "cloudflare_record" "dmarc" {
   zone_id = var.zone_id
   name    = "_dmarc"
   type    = "TXT"
-  content = "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com; ruf=mailto:dmarc@insightpulseai.com; fo=1"
+  content = "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@insightpulseai.com"
   ttl     = 3600
 }
 
