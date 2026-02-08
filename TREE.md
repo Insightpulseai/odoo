@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 55ca67022988a895edb7024c81a140f5ca94d090
+> Commit: 1a52ef768f8c5d04ec600aa4094eebdb50cbf2de
 
 ```
 .
@@ -2038,6 +2038,8 @@
 │   │   │   └── PLANE_PRODUCTION_DEPLOYMENT.md
 │   │   ├── 20260201-0400
 │   │   │   └── 502-gateway-fix
+│   │   ├── 20260209-0023
+│   │   │   └── odoo-launcher
 │   │   ├── 20260129-odoo-asset-fix.md
 │   │   └── TEMPLATE_azure_waf_rescore.md
 │   ├── finance-ppm
@@ -4124,6 +4126,7 @@
 │   ├── oca-update.sh
 │   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
+│   ├── odoo.sh
 │   ├── odoo_coming_soon_install.sh
 │   ├── odoo_coming_soon_rollback.sh
 │   ├── odoo_coming_soon_verify.sh
@@ -5381,15 +5384,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1486 directories, 3890 files
+1488 directories, 3891 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1758 |
-| Files | 5233 |
+| Directories | 1760 |
+| Files | 5235 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1334 |
+| Markdown files | 1335 |

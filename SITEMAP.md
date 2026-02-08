@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 55ca67022988a895edb7024c81a140f5ca94d090
+> Commit: 1a52ef768f8c5d04ec600aa4094eebdb50cbf2de
 
 ## 📚 Documentation
 
@@ -524,6 +524,7 @@
 | [Odoo Frontend Asset Fix - Evidence Document](docs/evidence/20260129-odoo-asset-fix.md) | docs/evidence |
 | [Plane Production Deployment Evidence](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md) | docs/evidence/20260130-2014 |
 | [Incident Report: 502 Bad Gateway - erp.insightpulseai.com](docs/evidence/20260201-0400/502-gateway-fix/INCIDENT_REPORT.md) | docs/evidence/20260201-0400/502-gateway-fix |
+| [Odoo Launcher Fix - Complete](docs/evidence/20260209-0023/odoo-launcher/FIX_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
