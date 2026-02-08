@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4425b03488ae75a8b21cda3b2524901c4b524b25
+> Commit: e6c4af8db555a8a402b6aeb0b2b8fa7ae7993af9
 
 ```
 .
@@ -152,6 +152,7 @@
 │   │   ├── lakehouse-control-room-gate.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── llms-txt-check.yml
+│   │   ├── mcp-jobs-executor.yml
 │   │   ├── memory-distill.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
@@ -5380,7 +5381,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1486 directories, 3889 files
+1486 directories, 3890 files
 ```
 
 ## 📊 Stats
@@ -5388,7 +5389,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1758 |
-| Files | 5232 |
+| Files | 5233 |
 | Python files | 841 |
 | XML files | 298 |
 | Markdown files | 1334 |
