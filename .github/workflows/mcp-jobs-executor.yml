@@ -1,0 +1,97 @@
+# =============================================================================
+# MCP Jobs Executor - GitHub Actions Cron Trigger
+# =============================================================================
+# Purpose: Trigger the run-executor Edge Function every minute to process jobs
+# Alternative to pg_cron → pg_net (which requires vault permissions)
+# =============================================================================
+
+name: MCP Jobs Executor
+
+on:
+  schedule:
+    # Run every 5 minutes (GitHub minimum is 5 minutes for scheduled workflows)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      max_jobs:
+        description: 'Maximum jobs to process per run'
+        required: false
+        default: '10'
+        type: string
+      source_filter:
+        description: 'Filter by source (optional)'
+        required: false
+        type: string
+
+env:
+  SUPABASE_URL: https://spdtwktxdalcfigzeqrz.supabase.co
+
+jobs:
+  execute-jobs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Run Executor
+        env:
+          CRON_SECRET: ${{ secrets.MCP_JOBS_CRON_SECRET }}
+        run: |
+          MAX_JOBS="${{ github.event.inputs.max_jobs || '10' }}"
+          SOURCE_FILTER="${{ github.event.inputs.source_filter || '' }}"
+
+          # Build request body
+          BODY="{\"max_jobs\": $MAX_JOBS, \"timeout_minutes\": 5"
+          if [ -n "$SOURCE_FILTER" ]; then
+            BODY="$BODY, \"source_filter\": \"$SOURCE_FILTER\""
+          fi
+          BODY="$BODY}"
+
+          # Trigger the executor
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${SUPABASE_URL}/functions/v1/run-executor" \
+            -H "Content-Type: application/json" \
+            -H "X-CRON-SECRET: $CRON_SECRET" \
+            -d "$BODY")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Executor returned non-200 status: $HTTP_CODE"
+            exit 1
+          fi
+
+          # Parse results
+          PROCESSED=$(echo "$BODY" | jq -r '.processed // 0')
+          REAPED=$(echo "$BODY" | jq -r '.reaped // 0')
+
+          echo "✅ Processed: $PROCESSED jobs"
+          echo "🔄 Reaped: $REAPED stuck jobs"
+
+          # Set output for summary
+          echo "### MCP Jobs Executor Run" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Jobs Processed | $PROCESSED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Stuck Jobs Reaped | $REAPED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | $(date -u +%Y-%m-%dT%H:%M:%SZ) |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Health Check
+        env:
+          CRON_SECRET: ${{ secrets.MCP_JOBS_CRON_SECRET }}
+        run: |
+          RESPONSE=$(curl -s -X GET \
+            "${SUPABASE_URL}/functions/v1/run-executor/health" \
+            -H "X-CRON-SECRET: $CRON_SECRET")
+
+          echo "Health Check: $RESPONSE"
+
+          QUEUED=$(echo "$RESPONSE" | jq -r '.queued_jobs // 0')
+          echo "📊 Queued jobs remaining: $QUEUED"
+
+          if [ "$QUEUED" -gt 50 ]; then
+            echo "::warning::High queue depth: $QUEUED jobs"
+          fi

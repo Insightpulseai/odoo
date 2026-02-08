@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d55cc9dfc724f6de78c79c949a43262bd6006ab6
+> Commit: e6c4af8db555a8a402b6aeb0b2b8fa7ae7993af9
 
 ```
 .
@@ -152,6 +152,7 @@
 │   │   ├── lakehouse-control-room-gate.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── llms-txt-check.yml
+│   │   ├── mcp-jobs-executor.yml
 │   │   ├── memory-distill.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
@@ -209,6 +210,7 @@
 │   │   ├── supabase-sql-rls-checks.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
+│   │   ├── terraform-cloudflare-dns.yml
 │   │   ├── terraform-supabase.yml
 │   │   ├── validate-addons-mounts.yml
 │   │   ├── validate-custom-modules.yml
@@ -3028,6 +3030,9 @@
 │   │   ├── manifest.json
 │   │   ├── superset_config.py
 │   │   └── virtual_datasets.sql
+│   ├── terraform
+│   │   └── cloudflare
+│   │       └── insightpulseai.com
 │   ├── .env.example
 │   ├── docker-compose.prod.yaml
 │   └── odoo.conf
@@ -3101,6 +3106,22 @@
 │           ├── databases.list.json
 │           ├── droplets.list.json
 │           └── projects.list.json
+├── ipai-platform
+│   ├── nginx
+│   │   ├── conf.d
+│   │   │   ├── sites
+│   │   │   └── default.conf
+│   │   └── nginx.conf
+│   ├── odoo
+│   │   └── odoo.conf
+│   ├── scripts
+│   │   ├── health.sh
+│   │   └── setup-tls.sh
+│   ├── .env.example
+│   ├── README.md
+│   ├── compose.prod.override.external-db.yaml
+│   ├── compose.prod.yaml
+│   └── compose.yaml
 ├── kb
 │   ├── audit
 │   │   └── AGENT_AUDIT_RULES.md
@@ -4191,6 +4212,7 @@
 │   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── test_magic_link.sh
+│   ├── test_mcp_jobs.sh
 │   ├── test_theme_locally.sh
 │   ├── union_prune_install_sets.py
 │   ├── update_diagram_manifest.py
@@ -4425,6 +4447,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── close-orchestration
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── cloudflare-dns
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4787,6 +4814,8 @@
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
+│   │   ├── run-executor
+│   │   │   └── index.ts
 │   │   ├── schema-changed
 │   │   │   └── index.ts
 │   │   ├── seed-odoo-finance
@@ -4912,6 +4941,8 @@
 │   │   ├── 20260126_000001_ee_parity_tracking.sql
 │   │   ├── 20260126_billing_schema.sql
 │   │   ├── 20260207_security_definer_views_rls_remediation.sql
+│   │   ├── 20260208000001_mcp_jobs_extensions.sql
+│   │   ├── 20260208000002_mcp_jobs_cron.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -5350,15 +5381,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1475 directories, 3870 files
+1486 directories, 3890 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1746 |
-| Files | 5204 |
+| Directories | 1758 |
+| Files | 5233 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1329 |
+| Markdown files | 1334 |

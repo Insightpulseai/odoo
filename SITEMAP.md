@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d55cc9dfc724f6de78c79c949a43262bd6006ab6
+> Commit: e6c4af8db555a8a402b6aeb0b2b8fa7ae7993af9
 
 ## 📚 Documentation
 
@@ -954,6 +954,7 @@
 | [Supabase Terraform Infrastructure](infra/supabase/README.md) | infra/supabase |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
+| [ipai-platform](ipai-platform/README.md) | ipai-platform |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
 | [Month-End Close SOP](kb/finance_close/sop.md) | kb/finance_close |
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
@@ -1109,6 +1110,10 @@
 | [Close Orchestration Module - Implementation Plan](spec/close-orchestration/plan.md) | spec/close-orchestration |
 | [Close Orchestration Module - Product Requirements Document](spec/close-orchestration/prd.md) | spec/close-orchestration |
 | [Close Orchestration Module - Task Checklist](spec/close-orchestration/tasks.md) | spec/close-orchestration |
+| [Constitution: Cloudflare DNS IaC](spec/cloudflare-dns/constitution.md) | spec/cloudflare-dns |
+| [Plan](spec/cloudflare-dns/plan.md) | spec/cloudflare-dns |
+| [PRD: Cloudflare DNS IaC (insightpulseai.com)](spec/cloudflare-dns/prd.md) | spec/cloudflare-dns |
+| [Tasks](spec/cloudflare-dns/tasks.md) | spec/cloudflare-dns |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
 | [Continue+ "All Green" Acceptance Criteria](spec/continue-plus/ALL_GREEN_CRITERIA.md) | spec/continue-plus |
 | [Continue.dev Implementation Evaluation Report](spec/continue-plus/EVALUATION_REPORT.md) | spec/continue-plus |

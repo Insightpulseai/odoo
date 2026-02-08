@@ -1,0 +1,59 @@
+# =============================================================================
+# Production Overlay: Use DO Managed PostgreSQL (External DB)
+# =============================================================================
+# Usage: docker compose -f compose.yaml -f compose.prod.override.external-db.yaml up -d
+#
+# This overlay:
+# - Disables the local db service (uses DO Managed Postgres instead)
+# - Configures Odoo to connect to external DO Postgres with SSL
+# - Preserves all other services (nginx, redis, odoo)
+#
+# Required environment variables:
+#   DO_PG_HOST     - DigitalOcean Postgres hostname (e.g., odoo-db-sgp1-do-user-xxx.b.db.ondigitalocean.com)
+#   DO_PG_PORT     - Port (default: 25060 for DO Managed)
+#   DO_PG_USER     - Database user
+#   DO_PG_PASSWORD - Database password
+#   DO_PG_DATABASE - Database name (e.g., odoo)
+# =============================================================================
+
+services:
+  # Disable local PostgreSQL - we use DO Managed Postgres
+  db:
+    profiles: ["local-only"]
+    deploy:
+      replicas: 0
+
+  # Odoo connects to external DO Managed Postgres
+  odoo:
+    environment:
+      # Database connection (DO Managed Postgres)
+      - DB_HOST=${DO_PG_HOST}
+      - DB_PORT=${DO_PG_PORT:-25060}
+      - DB_USER=${DO_PG_USER}
+      - DB_PASSWORD=${DO_PG_PASSWORD}
+      - DB_NAME=${DO_PG_DATABASE:-odoo}
+      - DB_SSLMODE=require
+      # Odoo-specific database settings
+      - PGHOST=${DO_PG_HOST}
+      - PGPORT=${DO_PG_PORT:-25060}
+      - PGUSER=${DO_PG_USER}
+      - PGPASSWORD=${DO_PG_PASSWORD}
+      - PGDATABASE=${DO_PG_DATABASE:-odoo}
+      - PGSSLMODE=require
+    depends_on: []  # Remove db dependency since we're using external
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s  # Longer start period for external DB connection
+
+  # Nginx doesn't change - still proxies to odoo:8069
+  nginx:
+    depends_on:
+      odoo:
+        condition: service_healthy
+
+  # Redis remains unchanged - still used for Odoo sessions
+  redis:
+    # No changes needed
