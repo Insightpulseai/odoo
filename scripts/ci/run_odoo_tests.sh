@@ -35,8 +35,8 @@ if [ -z "${ODOO_BIN:-}" ] || [ "${ODOO_BIN}" = "odoo-bin" ]; then
   # Try common locations
   if [ -f "$HOME/odoo-source-18/odoo-bin" ]; then
     ODOO_BIN="$HOME/odoo-source-18/odoo-bin"
-  elif [ -f "/tmp/odoo/odoo-bin" ]; then
-    ODOO_BIN="python /tmp/odoo/odoo-bin"
+  elif [ -f "/tmp/odoo/scripts/odoo.sh" ]; then
+    ODOO_BIN="/tmp/odoo/scripts/odoo.sh"
   elif command -v odoo-bin &> /dev/null; then
     ODOO_BIN="odoo-bin"
   elif command -v odoo &> /dev/null; then
