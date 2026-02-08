@@ -4,8 +4,18 @@
 
 set -euo pipefail
 
+# GitHub Actions annotation helpers
+notice() { echo "::notice::$*"; }
+warn() { echo "::warning::$*"; }
+
 echo "🔍 Smoke Test: Odoo Python Import"
 echo "===================================="
+
+# Check if python3 is available
+if ! command -v python3 >/dev/null 2>&1; then
+    notice "SKIPPED: python3 not available in this environment"
+    exit 0
+fi
 
 # Check if Odoo is available via pip/editable install
 if python3 -c "import odoo; print(f'Odoo version: {odoo.release.version}')" 2>/dev/null; then
