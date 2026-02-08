@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab0877b14d28ee148d2aa33683a5aa043492f80a
+> Commit: 4425b03488ae75a8b21cda3b2524901c4b524b25
 
 ```
 .
@@ -209,6 +209,7 @@
 │   │   ├── supabase-sql-rls-checks.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
+│   │   ├── terraform-cloudflare-dns.yml
 │   │   ├── terraform-supabase.yml
 │   │   ├── validate-addons-mounts.yml
 │   │   ├── validate-custom-modules.yml
@@ -3028,6 +3029,9 @@
 │   │   ├── manifest.json
 │   │   ├── superset_config.py
 │   │   └── virtual_datasets.sql
+│   ├── terraform
+│   │   └── cloudflare
+│   │       └── insightpulseai.com
 │   ├── .env.example
 │   ├── docker-compose.prod.yaml
 │   └── odoo.conf
@@ -4446,6 +4450,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── cloudflare-dns
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── continue-plus
 │   │   ├── ALL_GREEN_CRITERIA.md
 │   │   ├── EVALUATION_REPORT.md
@@ -5371,15 +5380,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1482 directories, 3884 files
+1486 directories, 3889 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1753 |
-| Files | 5219 |
+| Directories | 1758 |
+| Files | 5232 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1330 |
+| Markdown files | 1334 |
