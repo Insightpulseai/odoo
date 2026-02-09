@@ -35,6 +35,8 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
 | **Python** | 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` — 42 Edge Functions, Vault, Auth, Realtime, pgvector, n8n+GitHub bridge |
+| **MCP** | `mcp.insightpulseai.com` — 11 servers (n8n bridge, jobs system, AI orchestration) |
+| **BI/Analytics** | Apache Superset (`superset.insightpulseai.com`), Tableau Cloud |
 | **Web/CMS** | Hybrid: Next.js on Vercel (public), Odoo website (internal) |
 | **EE Parity** | Target >= 80% via `CE + OCA + ipai_*` |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
@@ -132,6 +134,7 @@ feat|fix|refactor|docs|test|chore(scope): description
 | `insightpulseai.net` | `insightpulseai.com` | 2026-02 |
 | `odoo-ce` repo name | `odoo` | 2026-02-03 |
 | Mattermost (all) | Slack | 2026-01-28 |
+| Affine (all) | Removed | 2026-02-09 |
 | Appfine (all) | Removed | 2026-02 |
 | Mailgun / `ipai_mailgun_bridge` | Zoho Mail SMTP | 2026-02 |
 | `ipai_mattermost_connector` | `ipai_slack_connector` | 2026-01-28 |
