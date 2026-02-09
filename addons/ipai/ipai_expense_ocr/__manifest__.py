@@ -5,7 +5,7 @@
     "category": "Human Resources/Expenses",
     "license": "AGPL-3",
     "author": "IPAI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/Insightpulseai/odoo",
     "depends": ["base", "mail", "hr_expense"],
     "data": [
         "security/ir.model.access.csv",

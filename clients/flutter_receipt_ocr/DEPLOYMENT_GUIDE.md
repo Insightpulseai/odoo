@@ -1,9 +1,9 @@
 # Flutter Receipt OCR Module - Deployment Guide
 
-**Repository**: odoo-ce
-**Location**: `/addons/flutter_receipt_ocr/`
+**Repository**: Insightpulseai/odoo
+**Location**: `/clients/flutter_receipt_ocr/`
 **Created**: 2025-11-22
-**Status**: Production Ready (except OpenAI key rotation)
+**Status**: Production Ready — Pending complex document testing (invoices, statements, expense reports)
 
 ---
 
@@ -97,7 +97,7 @@ flutter_receipt_ocr/
 
 ```bash
 # Clone flutter module
-git clone <odoo-ce-repo>
+git clone <odoo-repo>
 cd addons/flutter_receipt_ocr
 
 # Install dependencies
@@ -194,20 +194,24 @@ class OcrConfig {
 
 ### Test Document Types
 
-1. **Simple Receipt** (TESTED ✅)
+1. **Simple Receipt** (TESTED)
    - Example: CAFE MANILA test receipt
    - Result: 99.2% OCR confidence, perfect field extraction
    - Doc type: "receipt"
 
-2. **Complex Invoice** (PENDING)
+2. **Complex Invoice** (TODO — real-device testing required)
    - Example: SKY Fiber utility bill
    - Expected: Billing periods, account numbers, service plans
    - Doc type: "invoice" or "statement"
 
-3. **Expense Report** (PENDING)
+3. **Expense Report** (TODO — real-device testing required)
    - Example: Cash advance liquidation form
    - Expected: Monthly line items, category breakdown
    - Doc type: "expense_report"
+
+4. **Bank/Credit Card Statement** (TODO — real-device testing required)
+   - Expected: Multi-line transaction extraction, period-based grouping
+   - Doc type: "statement"
 
 ### Test Workflow
 
@@ -571,7 +575,7 @@ for (var batch in receipts.chunks(5)) {
 **Primary Contact**: jgtolentino_rn@yahoo.com
 **Backend Server**: ocr.insightpulseai.com (188.166.237.231)
 **Supabase Project**: spdtwktxdalcfigzeqrz
-**Repository**: odoo-ce/addons/flutter_receipt_ocr/
+**Repository**: odoo/clients/flutter_receipt_ocr/
 
 **Documentation**:
 - [OCR Enhancement Complete](../../OCR_ENHANCEMENT_COMPLETE.md)
