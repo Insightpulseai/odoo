@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2db567cde7e7a444d133f82e32ef5a7816dd813b
+> Commit: 1e679c27e8cb8184afbcdaecd3a458002c330f94
 
 ## 📚 Documentation
 
@@ -223,6 +223,42 @@
 | [EE Parity Complete Installation Manifest](config/ee_parity/INSTALL_MANIFEST.md) | config/ee_parity |
 | [IPAI Secrets Inventory (Names Only)](config/secrets_inventory.md) | config |
 | [Project Constitution](constitution.md) | . |
+| [contains-studio-agents](contains-studio-agents/README.md) | contains-studio-agents |
+| [Brand Guardian](contains-studio-agents/design/brand-guardian.md) | contains-studio-agents/design |
+| [UI Designer](contains-studio-agents/design/ui-designer.md) | contains-studio-agents/design |
+| [UX Researcher](contains-studio-agents/design/ux-researcher.md) | contains-studio-agents/design |
+| [Visual Storyteller](contains-studio-agents/design/visual-storyteller.md) | contains-studio-agents/design |
+| [Whimsy Injector](contains-studio-agents/design/whimsy-injector.md) | contains-studio-agents/design |
+| [AI Engineer](contains-studio-agents/engineering/ai-engineer.md) | contains-studio-agents/engineering |
+| [Backend Architect](contains-studio-agents/engineering/backend-architect.md) | contains-studio-agents/engineering |
+| [DevOps Automator](contains-studio-agents/engineering/devops-automator.md) | contains-studio-agents/engineering |
+| [Frontend Developer](contains-studio-agents/engineering/frontend-developer.md) | contains-studio-agents/engineering |
+| [Mobile App Builder](contains-studio-agents/engineering/mobile-app-builder.md) | contains-studio-agents/engineering |
+| [Rapid Prototyper](contains-studio-agents/engineering/rapid-prototyper.md) | contains-studio-agents/engineering |
+| [Test Writer/Fixer](contains-studio-agents/engineering/test-writer-fixer.md) | contains-studio-agents/engineering |
+| [App Store Optimizer](contains-studio-agents/marketing/app-store-optimizer.md) | contains-studio-agents/marketing |
+| [Content Creator](contains-studio-agents/marketing/content-creator.md) | contains-studio-agents/marketing |
+| [Growth Hacker](contains-studio-agents/marketing/growth-hacker.md) | contains-studio-agents/marketing |
+| [Instagram Curator](contains-studio-agents/marketing/instagram-curator.md) | contains-studio-agents/marketing |
+| [Reddit Community Builder](contains-studio-agents/marketing/reddit-community-builder.md) | contains-studio-agents/marketing |
+| [TikTok Strategist](contains-studio-agents/marketing/tiktok-strategist.md) | contains-studio-agents/marketing |
+| [Twitter Engager](contains-studio-agents/marketing/twitter-engager.md) | contains-studio-agents/marketing |
+| [Feedback Synthesizer](contains-studio-agents/product/feedback-synthesizer.md) | contains-studio-agents/product |
+| [Sprint Prioritizer](contains-studio-agents/product/sprint-prioritizer.md) | contains-studio-agents/product |
+| [Trend Researcher](contains-studio-agents/product/trend-researcher.md) | contains-studio-agents/product |
+| [Experiment Tracker](contains-studio-agents/project-management/experiment-tracker.md) | contains-studio-agents/project-management |
+| [Project Shipper](contains-studio-agents/project-management/project-shipper.md) | contains-studio-agents/project-management |
+| [Studio Producer](contains-studio-agents/project-management/studio-producer.md) | contains-studio-agents/project-management |
+| [Analytics Reporter](contains-studio-agents/studio-operations/analytics-reporter.md) | contains-studio-agents/studio-operations |
+| [Finance Tracker](contains-studio-agents/studio-operations/finance-tracker.md) | contains-studio-agents/studio-operations |
+| [Infrastructure Maintainer](contains-studio-agents/studio-operations/infrastructure-maintainer.md) | contains-studio-agents/studio-operations |
+| [Legal Compliance Checker](contains-studio-agents/studio-operations/legal-compliance-checker.md) | contains-studio-agents/studio-operations |
+| [Support Responder](contains-studio-agents/studio-operations/support-responder.md) | contains-studio-agents/studio-operations |
+| [API Tester](contains-studio-agents/testing/api-tester.md) | contains-studio-agents/testing |
+| [Performance Benchmarker](contains-studio-agents/testing/performance-benchmarker.md) | contains-studio-agents/testing |
+| [Test Results Analyzer](contains-studio-agents/testing/test-results-analyzer.md) | contains-studio-agents/testing |
+| [Tool Evaluator](contains-studio-agents/testing/tool-evaluator.md) | contains-studio-agents/testing |
+| [Workflow Optimizer](contains-studio-agents/testing/workflow-optimizer.md) | contains-studio-agents/testing |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Month-End Closing Tasks Import Guide](data/IMPORT_GUIDE.md) | data |
 | [Finance Seed Data](data/finance_seed/README.md) | data/finance_seed |

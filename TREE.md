@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2db567cde7e7a444d133f82e32ef5a7816dd813b
+> Commit: 1e679c27e8cb8184afbcdaecd3a458002c330f94
 
 ```
 .
@@ -1715,6 +1715,50 @@
 │   ├── routing_matrix.yml
 │   ├── secrets_inventory.md
 │   └── ship_set.txt
+├── contains-studio-agents
+│   ├── design
+│   │   ├── brand-guardian.md
+│   │   ├── ui-designer.md
+│   │   ├── ux-researcher.md
+│   │   ├── visual-storyteller.md
+│   │   └── whimsy-injector.md
+│   ├── engineering
+│   │   ├── ai-engineer.md
+│   │   ├── backend-architect.md
+│   │   ├── devops-automator.md
+│   │   ├── frontend-developer.md
+│   │   ├── mobile-app-builder.md
+│   │   ├── rapid-prototyper.md
+│   │   └── test-writer-fixer.md
+│   ├── marketing
+│   │   ├── app-store-optimizer.md
+│   │   ├── content-creator.md
+│   │   ├── growth-hacker.md
+│   │   ├── instagram-curator.md
+│   │   ├── reddit-community-builder.md
+│   │   ├── tiktok-strategist.md
+│   │   └── twitter-engager.md
+│   ├── product
+│   │   ├── feedback-synthesizer.md
+│   │   ├── sprint-prioritizer.md
+│   │   └── trend-researcher.md
+│   ├── project-management
+│   │   ├── experiment-tracker.md
+│   │   ├── project-shipper.md
+│   │   └── studio-producer.md
+│   ├── studio-operations
+│   │   ├── analytics-reporter.md
+│   │   ├── finance-tracker.md
+│   │   ├── infrastructure-maintainer.md
+│   │   ├── legal-compliance-checker.md
+│   │   └── support-responder.md
+│   ├── testing
+│   │   ├── api-tester.md
+│   │   ├── performance-benchmarker.md
+│   │   ├── test-results-analyzer.md
+│   │   ├── tool-evaluator.md
+│   │   └── workflow-optimizer.md
+│   └── README.md
 ├── contracts
 │   ├── delta
 │   │   ├── bronze_raw_pages.yaml
@@ -5396,15 +5440,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1489 directories, 3902 files
+1497 directories, 3938 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1761 |
-| Files | 5248 |
+| Directories | 1769 |
+| Files | 5284 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1339 |
+| Markdown files | 1375 |
