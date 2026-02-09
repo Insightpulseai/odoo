@@ -1,24 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env python3
 
-# ==============================================================================
-# odoo-bin - Bash Wrapper for Odoo Execution
-# ==============================================================================
-#
-# ⚠️  IMPORTANT: This is a BASH SCRIPT, not a Python file!
-#
-# ❌ WRONG:   python odoo-bin -d DATABASE
-#            (Results in: SyntaxError: invalid syntax)
-#
-# ✅ CORRECT: ./odoo-bin -d DATABASE
-#            ./scripts/odoo.sh -d DATABASE  (recommended - auto-detects environment)
-#            python -m odoo -d DATABASE     (if odoo package installed)
-#
-# If you see "SyntaxError: invalid syntax", you tried to run this bash script
-# with the Python interpreter. See docs/ODOO_EXECUTION.md for correct usage.
-# ==============================================================================
+import odoo.cli
 
-# Optional: allow overriding the Python executable
-PYTHON_BIN="${PYTHON_BIN:-python3}"
-
-exec "$PYTHON_BIN" -m odoo "$@"
+if __name__ == "__main__":
+    odoo.cli.main()
