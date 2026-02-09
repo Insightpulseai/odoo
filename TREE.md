@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 642bb169da6b3ecbeccaa17360802a87c00ae3d6
+> Commit: 2db567cde7e7a444d133f82e32ef5a7816dd813b
 
 ```
 .
@@ -4196,6 +4196,8 @@
 │   ├── simple_deploy.sh
 │   ├── skill_web_session_bridge.sh
 │   ├── smoke_github_app.sh
+│   ├── smoke_import_odoo.sh
+│   ├── smoke_odoo_container.sh
 │   ├── smoke_test_odoo.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
@@ -5394,7 +5396,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1489 directories, 3900 files
+1489 directories, 3902 files
 ```
 
 ## 📊 Stats
@@ -5402,7 +5404,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1761 |
-| Files | 5246 |
+| Files | 5248 |
 | Python files | 841 |
 | XML files | 298 |
 | Markdown files | 1339 |
