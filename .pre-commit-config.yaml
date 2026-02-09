@@ -22,6 +22,7 @@ repos:
           - --addons-dir=addons
           - --org-name=InsightPulseAI
           - --repo-name=odoo-ce
+          - --branch=main
 
       # Generate module icons from template
       - id: oca-gen-addon-icon
