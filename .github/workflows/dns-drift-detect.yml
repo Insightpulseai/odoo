@@ -1,0 +1,38 @@
+name: DNS Drift Detection
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  dns-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y dnsutils jq
+
+      - name: Run DNS verification
+        run: |
+          chmod +x scripts/verify-dns-baseline.sh
+          ./scripts/verify-dns-baseline.sh
+
+      - name: Run service health checks
+        run: |
+          chmod +x scripts/verify-service-health.sh
+          ./scripts/verify-service-health.sh || true
+
+      - name: Create drift issue if failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '[DNS Drift] Infrastructure mismatch detected',
+              body: 'DNS verification failed. Check workflow logs for details.',
+              labels: ['infrastructure', 'dns', 'drift']
+            })
