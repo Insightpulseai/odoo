@@ -163,7 +163,7 @@ Apps → Search "IPAI Equipment Management" → Upgrade
 cd /Users/tbwa/odoo-ce
 
 # Run ipai_equipment tests
-python odoo-bin -d <database> -i ipai_equipment --test-enable --stop-after-init --log-level=test
+./scripts/odoo.sh -d <database> -i ipai_equipment --test-enable --stop-after-init --log-level=test
 ```
 
 **Test Coverage**:

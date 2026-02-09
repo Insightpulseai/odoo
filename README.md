@@ -30,6 +30,21 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ---
 
+## Odoo Execution Patterns
+
+**⚠️ Important**: Use the correct execution pattern to avoid errors.
+
+| Command | Status | Notes |
+|---------|--------|-------|
+| `./scripts/odoo.sh` | ✅ **Recommended** | Auto-detects environment |
+| `./odoo-bin` | ✅ Correct | Direct bash execution |
+| `python -m odoo` | ✅ Correct | If `odoo` package installed |
+| `python odoo-bin` | ❌ **WRONG** | Results in `SyntaxError` (bash ≠ Python) |
+
+**📖 Full Guide**: See [docs/ODOO_EXECUTION.md](./docs/ODOO_EXECUTION.md) for examples, troubleshooting, and architecture notes.
+
+---
+
 ## Key Constraints (Non-negotiable)
 
 - ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
