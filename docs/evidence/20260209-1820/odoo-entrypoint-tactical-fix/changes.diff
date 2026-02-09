@@ -1,0 +1,239 @@
+diff --git a/.claude/settings.local.json b/.claude/settings.local.json
+index 0e7be144..21c12c26 100644
+--- a/.claude/settings.local.json
++++ b/.claude/settings.local.json
+@@ -29,7 +29,16 @@
+       "Bash(git config:*)",
+       "Bash(git pull:*)",
+       "Bash(git merge:*)",
+-      "Bash(env)"
++      "Bash(env)",
++      "Bash(grep:*)",
++      "Bash(test:*)",
++      "Bash(docker image inspect:*)",
++      "Bash(python3:*)",
++      "Bash(rg:*)",
++      "Bash(echo:*)",
++      "Bash(./scripts/lint_odoo_entrypoint.sh:*)",
++      "Bash(./odoo-bin:*)",
++      "Bash(./scripts/tests/odoo-entrypoint-post-fix.sh:*)"
+     ],
+     "deny": [],
+     "ask": []
+diff --git a/.devcontainer/devcontainer.json b/.devcontainer/devcontainer.json
+index 2dca851b..514b359b 100644
+--- a/.devcontainer/devcontainer.json
++++ b/.devcontainer/devcontainer.json
+@@ -1,5 +1,5 @@
+-{
+-  "name": "IPAI Odoo CE 18 Dev",
++
++  "name": "IPAI Odoo 18 Dev",
+   "image": "mcr.microsoft.com/devcontainers/python:3.11",
+   "remoteUser": "vscode",
+
+@@ -39,7 +39,7 @@
+
+   "portsAttributes": {
+     "8069": {
+-      "label": "Odoo CE Core",
++      "label": "Odoo Core",
+       "onAutoForward": "openBrowser"
+     },
+     "8070": {
+@@ -127,7 +127,7 @@
+         "README.md"
+       ],
+       "repositories": {
+-        "jgtolentino/odoo-ce": {
++        "jgtolentino/odoo": {
+           "permissions": {
+             "contents": "write",
+             "pull_requests": "write",
+diff --git a/README.md b/README.md
+index 8157402a..34cd5b05 100644
+--- a/README.md
++++ b/README.md
+@@ -30,6 +30,21 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
+
+ ---
+
++## Odoo Execution Patterns
++
++**⚠️ Important**: Use the correct execution pattern to avoid errors.
++
++| Command | Status | Notes |
++|---------|--------|-------|
++| `./scripts/odoo.sh` | ✅ **Recommended** | Auto-detects environment |
++| `./odoo-bin` | ✅ Correct | Direct bash execution |
++| `python -m odoo` | ✅ Correct | If `odoo` package installed |
++| `python odoo-bin` | ❌ **WRONG** | Results in `SyntaxError` (bash ≠ Python) |
++
++**📖 Full Guide**: See [docs/ODOO_EXECUTION.md](./docs/ODOO_EXECUTION.md) for examples, troubleshooting, and architecture notes.
++
++---
++
+ ## Key Constraints (Non-negotiable)
+
+ - ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
+diff --git a/agents/ORCHESTRATOR.md b/agents/ORCHESTRATOR.md
+index efef3571..ee91c44c 100644
+--- a/agents/ORCHESTRATOR.md
++++ b/agents/ORCHESTRATOR.md
+@@ -511,7 +511,7 @@ Three major SaaS replacements are encoded as agent capabilities with full test c
+
+ **Test Command**:
+ ```bash
+-python odoo-bin -d test_cheqroom \
++./scripts/odoo.sh -d test_cheqroom \
+   -i ipai_equipment \
+   --test-enable --stop-after-init --log-level=test
+ ```
+@@ -540,7 +540,7 @@ python odoo-bin -d test_cheqroom \
+
+ **Test Command**:
+ ```bash
+-python odoo-bin -d test_concur \
++./scripts/odoo.sh -d test_concur \
+   -i ipai_expense \
+   --test-enable --stop-after-init --log-level=test
+ ```
+@@ -569,7 +569,7 @@ python odoo-bin -d test_concur \
+
+ **Test Command**:
+ ```bash
+-python odoo-bin -d test_workspace \
++./scripts/odoo.sh -d test_workspace \
+   -i ipai_docs \
+   --test-enable --stop-after-init --log-level=test
+ ```
+diff --git a/docs/FEATURE_CHEQROOM_PARITY.md b/docs/FEATURE_CHEQROOM_PARITY.md
+index 1c633ea0..7469cd66 100644
+--- a/docs/FEATURE_CHEQROOM_PARITY.md
++++ b/docs/FEATURE_CHEQROOM_PARITY.md
+@@ -163,7 +163,7 @@ Apps → Search "IPAI Equipment Management" → Upgrade
+ cd /Users/tbwa/odoo-ce
+
+ # Run ipai_equipment tests
+-python odoo-bin -d <database> -i ipai_equipment --test-enable --stop-after-init --log-level=test
++./scripts/odoo.sh -d <database> -i ipai_equipment --test-enable --stop-after-init --log-level=test
+ ```
+
+ **Test Coverage**:
+diff --git a/docs/FEATURE_CONCUR_PARITY.md b/docs/FEATURE_CONCUR_PARITY.md
+index 092cfd71..13754196 100644
+--- a/docs/FEATURE_CONCUR_PARITY.md
++++ b/docs/FEATURE_CONCUR_PARITY.md
+@@ -240,7 +240,7 @@ Apps → Search each module → Upgrade
+ cd /Users/tbwa/odoo-ce
+
+ # Run ipai_expense tests
+-python odoo-bin -d <database> -i ipai_expense --test-enable --stop-after-init --log-level=test
++./scripts/odoo.sh -d <database> -i ipai_expense --test-enable --stop-after-init --log-level=test
+ ```
+
+ **Test Coverage**:
+diff --git a/docs/FEATURE_WORKSPACE_PARITY.md b/docs/FEATURE_WORKSPACE_PARITY.md
+index 7e8f153b..8462d4f5 100644
+--- a/docs/FEATURE_WORKSPACE_PARITY.md
++++ b/docs/FEATURE_WORKSPACE_PARITY.md
+@@ -250,7 +250,7 @@ ipai.docs.document (1) → (M) ipai.docs.project (M) → (1) project.project
+ cd /Users/tbwa/odoo-ce
+
+ # Run ipai_docs tests
+-python odoo-bin -d <database> -i ipai_docs --test-enable --stop-after-init --log-level=test
++./scripts/odoo.sh -d <database> -i ipai_docs --test-enable --stop-after-init --log-level=test
+ ```
+
+ **Test Coverage**:
+diff --git a/docs/SAAS_PARITY_READINESS.md b/docs/SAAS_PARITY_READINESS.md
+index 7f9498b0..480d9220 100644
+--- a/docs/SAAS_PARITY_READINESS.md
++++ b/docs/SAAS_PARITY_READINESS.md
+@@ -68,7 +68,7 @@ All three capabilities are **encoded in the Agent Skills Architecture framework*
+ **Cheqroom Parity**:
+ ```bash
+ cd ~/odoo-ce
+-python odoo-bin -d test_cheqroom \
++./scripts/odoo.sh -d test_cheqroom \
+   -i ipai_equipment \
+   --test-enable --stop-after-init --log-level=test
+ ```
+@@ -85,7 +85,7 @@ OK
+ **Concur Parity**:
+ ```bash
+ cd ~/odoo-ce
+-python odoo-bin -d test_concur \
++./scripts/odoo.sh -d test_concur \
+   -i ipai_expense \
+   --test-enable --stop-after-init --log-level=test
+ ```
+@@ -102,7 +102,7 @@ OK
+ **Workspace Parity**:
+ ```bash
+ cd ~/odoo-ce
+-python odoo-bin -d test_workspace \
++./scripts/odoo.sh -d test_workspace \
+   -i ipai_docs \
+   --test-enable --stop-after-init --log-level=test
+ ```
+diff --git a/odoo-bin b/odoo-bin
+index 4f843479..d9f07a6c 100755
+--- a/odoo-bin
++++ b/odoo-bin
+@@ -1,8 +1,22 @@
+ #!/usr/bin/env bash
+ set -euo pipefail
+
+-# odoo-bin shim for GitHub Actions and local development
+-# Ensures consistent odoo invocation regardless of installation method (pip, source, docker)
++# ==============================================================================
++# odoo-bin - Bash Wrapper for Odoo Execution
++# ==============================================================================
++#
++# ⚠️  IMPORTANT: This is a BASH SCRIPT, not a Python file!
++#
++# ❌ WRONG:   python odoo-bin -d DATABASE
++#            (Results in: SyntaxError: invalid syntax)
++#
++# ✅ CORRECT: ./odoo-bin -d DATABASE
++#            ./scripts/odoo.sh -d DATABASE  (recommended - auto-detects environment)
++#            python -m odoo -d DATABASE     (if odoo package installed)
++#
++# If you see "SyntaxError: invalid syntax", you tried to run this bash script
++# with the Python interpreter. See docs/ODOO_EXECUTION.md for correct usage.
++# ==============================================================================
+
+ # Optional: allow overriding the Python executable
+ PYTHON_BIN="${PYTHON_BIN:-python3}"
+diff --git a/scripts/lint_odoo_entrypoint.sh b/scripts/lint_odoo_entrypoint.sh
+index 966ed1b4..f7f7243c 100755
+--- a/scripts/lint_odoo_entrypoint.sh
++++ b/scripts/lint_odoo_entrypoint.sh
+@@ -2,15 +2,22 @@
+ set -euo pipefail
+
+ # Block calling odoo-bin with python directly anywhere in repo
+-# Exclude: docs (historical/explanatory), evidence (fix documentation), agent docs, log messages
++# Exclude: evidence (historical fix documentation), archives (deprecated content),
++#          ODOO_EXECUTION.md (educational guide), test scripts (validation),
++#          comments in odoo-bin and README (educational examples of wrong pattern)
++# NOTE: Active docs/ and agents/ ARE now checked (to prevent teaching wrong patterns)
+ bad=$(rg -n --hidden \
+   --glob '!.git/*' \
+   --glob '!**/node_modules/**' \
+-  --glob '!docs/**' \
+-  --glob '!**/evidence/**' \
+-  --glob '!agents/**/*.md' \
++  --glob '!docs/evidence/**' \
++  --glob '!**/archive/**' \
++  --glob '!**/*-archive.md' \
++  --glob '!docs/ODOO_EXECUTION.md' \
++  --glob '!scripts/tests/odoo-entrypoint-*.sh' \
+   'python(3)?\s+(\./)?odoo-bin\b' . \
+   | grep -v 'log_warn\|log_info\|echo' \
++  | grep -v '^./odoo-bin:.*#.*WRONG' \
++  | grep -v '^./README.md:.*❌.*WRONG' \
+   || true)
+
+ if [[ -n "$bad" ]]; then

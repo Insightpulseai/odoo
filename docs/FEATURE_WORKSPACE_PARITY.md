@@ -250,7 +250,7 @@ ipai.docs.document (1) → (M) ipai.docs.project (M) → (1) project.project
 cd /Users/tbwa/odoo-ce
 
 # Run ipai_docs tests
-python odoo-bin -d <database> -i ipai_docs --test-enable --stop-after-init --log-level=test
+./scripts/odoo.sh -d <database> -i ipai_docs --test-enable --stop-after-init --log-level=test
 ```
 
 **Test Coverage**:

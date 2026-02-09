@@ -240,7 +240,7 @@ Apps → Search each module → Upgrade
 cd /Users/tbwa/odoo-ce
 
 # Run ipai_expense tests
-python odoo-bin -d <database> -i ipai_expense --test-enable --stop-after-init --log-level=test
+./scripts/odoo.sh -d <database> -i ipai_expense --test-enable --stop-after-init --log-level=test
 ```
 
 **Test Coverage**:

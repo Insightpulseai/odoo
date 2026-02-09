@@ -511,7 +511,7 @@ Three major SaaS replacements are encoded as agent capabilities with full test c
 
 **Test Command**:
 ```bash
-python odoo-bin -d test_cheqroom \
+./scripts/odoo.sh -d test_cheqroom \
   -i ipai_equipment \
   --test-enable --stop-after-init --log-level=test
 ```
@@ -540,7 +540,7 @@ python odoo-bin -d test_cheqroom \
 
 **Test Command**:
 ```bash
-python odoo-bin -d test_concur \
+./scripts/odoo.sh -d test_concur \
   -i ipai_expense \
   --test-enable --stop-after-init --log-level=test
 ```
@@ -569,7 +569,7 @@ python odoo-bin -d test_concur \
 
 **Test Command**:
 ```bash
-python odoo-bin -d test_workspace \
+./scripts/odoo.sh -d test_workspace \
   -i ipai_docs \
   --test-enable --stop-after-init --log-level=test
 ```
