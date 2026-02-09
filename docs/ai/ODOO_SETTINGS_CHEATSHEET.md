@@ -522,9 +522,201 @@ psql "postgresql://odoo_app:OdooAppDev2026@localhost:5433/odoo_dev?sslmode=requi
 
 ---
 
+## AI Agents Quick Commands
+
+### List AI Agents
+
+```python
+# Get all active agents
+agents = env["ai.agent"].search([("active", "=", True)])
+for agent in agents:
+    print(f"{agent.id}: {agent.name} ({agent.technical_name})")
+    print(f"  Model: {agent.model_id.model}, Provider: {agent.provider}")
+
+# Get agents for specific Odoo model
+invoice_agents = env["ai.agent"].search([
+    ("model_id.model", "=", "account.move"),
+    ("active", "=", True)
+])
+```
+
+### Execute Agent
+
+```python
+# Simple agent execution
+agent = env["ai.agent"].browse(1)
+result = agent.execute_agent(
+    prompt="Analyze this invoice",
+    context={"invoice_id": 123}
+)
+print(f"Response: {result['response']}")
+print(f"Tokens: {result['usage']['total_tokens']}")
+
+# With conversation history
+result = agent.execute_agent(
+    prompt="What is the total amount?",
+    session_id="session-123"
+)
+```
+
+### Monitor AI Usage & Cost
+
+```python
+# Get usage stats
+usage = env["ai.usage"].search([
+    ("create_date", ">=", "2024-01-01")
+])
+total_cost = sum(u.cost for u in usage)
+total_tokens = sum(u.total_tokens for u in usage)
+print(f"Total Cost: ${total_cost:.2f}")
+print(f"Total Tokens: {total_tokens:,}")
+
+# Usage by agent
+agent = env["ai.agent"].browse(1)
+agent_usage = env["ai.usage"].search([("agent_id", "=", agent.id)])
+print(f"{agent.name}: ${sum(u.cost for u in agent_usage):.2f}")
+
+# Usage by provider
+openai_usage = env["ai.usage"].search([("provider", "=", "openai")])
+claude_usage = env["ai.usage"].search([("provider", "=", "claude")])
+print(f"OpenAI: ${sum(u.cost for u in openai_usage):.2f}")
+print(f"Claude: ${sum(u.cost for u in claude_usage):.2f}")
+```
+
+### Configure AI Provider
+
+```python
+# Set OpenAI as default
+env["ir.config_parameter"].sudo().set_param("ai.provider.default", "openai")
+env["ir.config_parameter"].sudo().set_param("ai.openai.api_key", "sk-proj-...")
+env["ir.config_parameter"].sudo().set_param("ai.model.default", "gpt-4o")
+
+# Configure rate limits
+env["ir.config_parameter"].sudo().set_param("ai.rate_limit.rpm", "60")
+env["ir.config_parameter"].sudo().set_param("ai.rate_limit.tpm", "150000")
+
+# Configure token budget
+env["ir.config_parameter"].sudo().set_param("ai.token_budget.default", "10000")
+```
+
+---
+
+## OCR Quick Commands
+
+### Test OCR Endpoint
+
+```bash
+# Test PaddleOCR microservice health
+curl http://ocr.insightpulseai.net/health
+
+# Test OCR with sample receipt
+curl -X POST http://ocr.insightpulseai.net/api/v1/ocr \
+  -F "file=@receipt.jpg" \
+  -F "document_type=receipt"
+```
+
+```python
+# Test from Odoo
+ocr_service = env["ocr.service"]
+result = ocr_service.test_provider(provider="paddleocr")
+print(f"Status: {result['status']}")
+print(f"Response Time: {result['response_time_ms']}ms")
+```
+
+### Process OCR Documents
+
+```python
+# Trigger OCR on existing document
+doc = env["documents.document"].browse(123)
+result = doc.extract_ocr_data()
+print(f"Confidence: {result['confidence']:.2%}")
+print(f"Data: {result['data']}")
+
+# Create expense from OCR result
+if result["success"]:
+    expense = env["hr.expense"].create({
+        "name": result["data"]["description"],
+        "total_amount": result["data"]["total_amount"],
+        "date": result["data"]["date"],
+        "employee_id": env.user.employee_id.id,
+        "ocr_confidence": result["confidence"]
+    })
+```
+
+### Batch OCR Processing
+
+```bash
+# Process all pending OCR jobs
+./odoo-bin shell -d odoo_dev <<'EOF'
+pending = env["ocr.job"].search([("state", "=", "pending")], limit=50)
+for job in pending:
+    job.process()
+    env.cr.commit()
+EOF
+```
+
+```python
+# Find documents without OCR
+pending_docs = env["documents.document"].search([
+    ("ocr_processed", "=", False),
+    ("mimetype", "in", ["image/png", "image/jpeg", "application/pdf"])
+])
+
+for doc in pending_docs:
+    result = doc.extract_ocr_data()
+    print(f"{'✅' if result['success'] else '❌'} {doc.name}")
+    env.cr.commit()
+```
+
+### Monitor OCR Accuracy
+
+```python
+# Get accuracy stats
+expenses = env["hr.expense"].search([
+    ("create_date", ">=", "2024-01-01"),
+    ("ocr_confidence", ">", 0)
+])
+
+# Average confidence
+avg = sum(e.ocr_confidence for e in expenses) / len(expenses)
+print(f"Average Confidence: {avg:.2%}")
+
+# Confidence distribution
+high = expenses.filtered(lambda e: e.ocr_confidence >= 0.85)
+medium = expenses.filtered(lambda e: 0.70 <= e.ocr_confidence < 0.85)
+low = expenses.filtered(lambda e: e.ocr_confidence < 0.70)
+print(f"High (≥85%): {len(high)} ({len(high)/len(expenses)*100:.1f}%)")
+print(f"Medium (70-85%): {len(medium)} ({len(medium)/len(expenses)*100:.1f}%)")
+print(f"Low (<70%): {len(low)} ({len(low)/len(expenses)*100:.1f}%)")
+
+# Manual correction rate
+corrected = expenses.filtered(lambda e: e.ocr_corrected)
+print(f"Correction Rate: {len(corrected)/len(expenses):.1%}")
+```
+
+### Configure OCR Settings
+
+```python
+# Configure PaddleOCR (primary)
+env["ir.config_parameter"].sudo().set_param("ocr.provider.default", "paddleocr")
+env["ir.config_parameter"].sudo().set_param("ocr.paddleocr.endpoint", "http://ocr.insightpulseai.net/api/v1/ocr")
+
+# Configure confidence thresholds
+env["ir.config_parameter"].sudo().set_param("ocr.confidence.threshold", "0.85")
+env["ir.config_parameter"].sudo().set_param("ocr.confidence.manual_review", "0.70")
+
+# Configure fallback providers
+env["ir.config_parameter"].sudo().set_param("ocr.fallback.enabled", "True")
+env["ir.config_parameter"].sudo().set_param("ocr.fallback.providers", "azure,google")
+```
+
+---
+
 ## Related Documentation
 
-- [ODOO_SETTINGS_REFERENCE.md](./ODOO_SETTINGS_REFERENCE.md) - Comprehensive reference
+- [ODOO_SETTINGS_REFERENCE.md](./ODOO_SETTINGS_REFERENCE.md) - General + Mail settings
+- [ODOO_SETTINGS_AI_AGENTS.md](./ODOO_SETTINGS_AI_AGENTS.md) - AI agents settings
+- [ODOO_SETTINGS_OCR_DIGITIZATION.md](./ODOO_SETTINGS_OCR_DIGITIZATION.md) - OCR settings
 - [CLAUDE.md](../CLAUDE.md) - Project operating contract
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
 - [DATABASE_SETUP.md](../DATABASE_SETUP.md) - Database configuration
