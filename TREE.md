@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6db1495ec14386ed83af9a4a6e69d326052dd151
+> Commit: 40bba4aa389e1651cd3111ac6a5d7ddac978f01a
 
 ```
 .
@@ -1885,6 +1885,11 @@
 │   │   ├── MCP_SYSTEM.md
 │   │   ├── MEMORY.md
 │   │   ├── OCA_WORKFLOW.md
+│   │   ├── ODOO_DEVELOPER_COMPLETE_REFERENCE.md
+│   │   ├── ODOO_DEVELOPER_SKILLS_GAP_ANALYSIS.md
+│   │   ├── ODOO_FRONTEND_ARCHITECTURE.md
+│   │   ├── ODOO_SETTINGS_CHEATSHEET.md
+│   │   ├── ODOO_SETTINGS_REFERENCE.md
 │   │   ├── README.md
 │   │   ├── REPO_STRUCTURE.md
 │   │   ├── SPEC_KIT.md
@@ -2084,6 +2089,8 @@
 │   │   │   └── 502-gateway-fix
 │   │   ├── 20260209-0023
 │   │   │   └── odoo-launcher
+│   │   ├── 20260209-1526
+│   │   │   └── landing-page
 │   │   ├── 20260209-1820
 │   │   │   └── odoo-entrypoint-tactical-fix
 │   │   ├── 20260129-odoo-asset-fix.md
@@ -3403,6 +3410,11 @@
 │   ├── MIGRATION_FROM_OLD_STACK.md
 │   ├── QUICK_REFERENCE.md
 │   └── compose.yaml
+├── odoo_local
+│   ├── compose
+│   │   └── docker-compose.platform.yml
+│   ├── ODOO_INTEGRATION_MAP.md
+│   └── ipai_finance_closing_seed.json
 ├── ops
 │   ├── alerting
 │   │   └── scoring.json
@@ -5294,6 +5306,7 @@
 ├── .gitignore
 ├── .gitmodules
 ├── .pre-commit-config.yaml
+├── .python-version
 ├── AGENTS.md
 ├── ANALYTICS_ACTIVATION_SEQUENCE.md
 ├── AUDIT_FIXES_APPLIED.md
@@ -5446,15 +5459,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1500 directories, 3941 files
+1504 directories, 3950 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1772 |
-| Files | 5290 |
+| Directories | 1776 |
+| Files | 5300 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1377 |
+| Markdown files | 1384 |

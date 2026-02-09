@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6db1495ec14386ed83af9a4a6e69d326052dd151
+> Commit: 40bba4aa389e1651cd3111ac6a5d7ddac978f01a
 
 ## 📚 Documentation
 
@@ -440,6 +440,11 @@
 | [MCP System](docs/ai/MCP_SYSTEM.md) | docs/ai |
 | [External Memory (Just-in-Time Retrieval)](docs/ai/MEMORY.md) | docs/ai |
 | [OCA-Style Workflow (Canonical)](docs/ai/OCA_WORKFLOW.md) | docs/ai |
+| [Odoo Developer Complete Reference](docs/ai/ODOO_DEVELOPER_COMPLETE_REFERENCE.md) | docs/ai |
+| [Odoo Developer Skills Gap Analysis](docs/ai/ODOO_DEVELOPER_SKILLS_GAP_ANALYSIS.md) | docs/ai |
+| [Odoo Frontend Architecture Reference](docs/ai/ODOO_FRONTEND_ARCHITECTURE.md) | docs/ai |
+| [Odoo Settings Quick Reference](docs/ai/ODOO_SETTINGS_CHEATSHEET.md) | docs/ai |
+| [Odoo Settings Reference](docs/ai/ODOO_SETTINGS_REFERENCE.md) | docs/ai |
 | [AI Context Index](docs/ai/README.md) | docs/ai |
 | [Directory Structure](docs/ai/REPO_STRUCTURE.md) | docs/ai |
 | [Spec Kit Structure](docs/ai/SPEC_KIT.md) | docs/ai |
@@ -564,6 +569,7 @@
 | [Odoo Launcher Fix - Complete](docs/evidence/20260209-0023/odoo-launcher/FIX_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Odoo Launcher - Hardening Complete](docs/evidence/20260209-0023/odoo-launcher/HARDENING_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Odoo Launcher - Runtime Validation](docs/evidence/20260209-0023/odoo-launcher/RUNTIME_VALIDATION.md) | docs/evidence/20260209-0023/odoo-launcher |
+| [Landing Page Implementation](docs/evidence/20260209-1526/landing-page/IMPLEMENTATION.md) | docs/evidence/20260209-1526/landing-page |
 | [Odoo Entrypoint Tactical Fix](docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/SUMMARY.md) | docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
@@ -1039,6 +1045,7 @@
 | [Migration from Old Stack to Canonical Odoo 19 Setup](odoo19/MIGRATION_FROM_OLD_STACK.md) | odoo19 |
 | [Odoo 19 Canonical Setup - Quick Reference](odoo19/QUICK_REFERENCE.md) | odoo19 |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
+| [Odoo 18 CE/OCA Integration Map](odoo_local/ODOO_INTEGRATION_MAP.md) | odoo_local |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Design → Code Contract (Figma SSOT)](ops/design/README.md) | ops/design |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
