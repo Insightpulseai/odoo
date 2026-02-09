@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1e679c27e8cb8184afbcdaecd3a458002c330f94
+> Commit: 6db1495ec14386ed83af9a4a6e69d326052dd151
 
 ## 📚 Documentation
 
@@ -377,6 +377,7 @@
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
 | [Odoo 18 CE + Fluent 2 Web Design System Token Mapping](docs/ODOO_COPILOT_THEME_TOKEN_MAP.md) | docs |
+| [Odoo Execution Patterns](docs/ODOO_EXECUTION.md) | docs |
 | [Odoo Go-Live Settings Inventory](docs/ODOO_GOLIVE_SETTINGS_INVENTORY.md) | docs |
 | [Odoo HTTPS OAuth Troubleshooting Guide](docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md) | docs |
 | [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
@@ -563,6 +564,7 @@
 | [Odoo Launcher Fix - Complete](docs/evidence/20260209-0023/odoo-launcher/FIX_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Odoo Launcher - Hardening Complete](docs/evidence/20260209-0023/odoo-launcher/HARDENING_COMPLETE.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Odoo Launcher - Runtime Validation](docs/evidence/20260209-0023/odoo-launcher/RUNTIME_VALIDATION.md) | docs/evidence/20260209-0023/odoo-launcher |
+| [Odoo Entrypoint Tactical Fix](docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/SUMMARY.md) | docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
