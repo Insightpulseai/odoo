@@ -1,7 +1,89 @@
 {
-  "schemas_exposed_by_api": [
-    "public",
-    "graphql_public"
-  ],
-  "source": "supabase/config.toml"
+  "domain": "insightpulseai.com",
+  "consolidation_date": "2026-02-09",
+  "nameservers": [],
+  "services": {
+    "erp": {
+      "fqdn": "erp.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 8069,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Odoo CE 19.0",
+      "health_check": "/web/login",
+      "status": "active"
+    },
+    "n8n": {
+      "fqdn": "n8n.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 5678,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "n8n automation",
+      "health_check": "/healthz",
+      "status": "active"
+    },
+    "ocr": {
+      "fqdn": "ocr.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 8080,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "PaddleOCR microservice",
+      "health_check": "/health",
+      "status": "active"
+    },
+    "auth": {
+      "fqdn": "auth.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 3000,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Authentication service",
+      "health_check": "/.well-known/openid-configuration",
+      "status": "active"
+    },
+    "mcp": {
+      "fqdn": "mcp.insightpulseai.com",
+      "record_type": "CNAME",
+      "target": "pulse-hub-web-an645.ondigitalocean.app",
+      "cloudflare_proxied": false,
+      "origin_port": null,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "DO App Platform",
+      "owner_system": "MCP coordination (11 servers)",
+      "health_check": "/healthz",
+      "status": "pending_verification"
+    },
+    "superset": {
+      "fqdn": "superset.insightpulseai.com",
+      "record_type": "CNAME",
+      "target": "superset-nlavf.ondigitalocean.app",
+      "cloudflare_proxied": false,
+      "origin_port": null,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "DO App Platform",
+      "owner_system": "Apache Superset BI",
+      "health_check": "/health",
+      "status": "pending_verification"
+    }
+  },
+  "deprecated": {
+    "affine": {
+      "fqdn": "affine.insightpulseai.com",
+      "deprecated_date": "2026-02-09",
+      "replacement": null,
+      "reason": "Service no longer needed",
+      "dns_removed": true,
+      "container_removed": true
+    }
+  }
 }
