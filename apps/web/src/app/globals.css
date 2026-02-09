@@ -35,17 +35,25 @@
   }
 
   .solution-subheading {
-    @apply text-lg md:text-xl text-ipai-muted max-w-3xl;
+    @apply text-lg md:text-xl max-w-3xl;
+    color: var(--ipai-text-muted);
   }
 
   /* Glass morphism card */
   .glass-card {
-    @apply bg-ipai-surface/50 backdrop-blur-xl border border-ipai-border rounded-ipai-lg shadow-ipai;
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--ipai-border);
+    border-radius: var(--ipai-radius-lg);
+    box-shadow: var(--ipai-shadow);
   }
 
   /* Gradient text */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-ipai-primary to-ipai-primary2;
+    background: linear-gradient(to right, var(--ipai-primary), var(--ipai-primary-2));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   /* Logo grid grayscale effect */
