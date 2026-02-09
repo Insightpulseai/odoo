@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 37ebd29a0918da8e9fe0dbad67f85d4f099c5463
+> Commit: 50aa2ffb80d9a2c014de49785396abb131a2fcf0
 
 ## 📚 Documentation
 
@@ -443,7 +443,9 @@
 | [Odoo Developer Complete Reference](docs/ai/ODOO_DEVELOPER_COMPLETE_REFERENCE.md) | docs/ai |
 | [Odoo Developer Skills Gap Analysis](docs/ai/ODOO_DEVELOPER_SKILLS_GAP_ANALYSIS.md) | docs/ai |
 | [Odoo Frontend Architecture Reference](docs/ai/ODOO_FRONTEND_ARCHITECTURE.md) | docs/ai |
+| [AI Agents Settings Reference](docs/ai/ODOO_SETTINGS_AI_AGENTS.md) | docs/ai |
 | [Odoo Settings Quick Reference](docs/ai/ODOO_SETTINGS_CHEATSHEET.md) | docs/ai |
+| [OCR & Document Digitization Settings Reference](docs/ai/ODOO_SETTINGS_OCR_DIGITIZATION.md) | docs/ai |
 | [Odoo Settings Reference](docs/ai/ODOO_SETTINGS_REFERENCE.md) | docs/ai |
 | [AI Context Index](docs/ai/README.md) | docs/ai |
 | [Directory Structure](docs/ai/REPO_STRUCTURE.md) | docs/ai |
@@ -470,7 +472,7 @@
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
 | [OCR / Document Understanding Routing Matrix](docs/architecture/OCR_ROUTING_MATRIX.md) | docs/architecture |
 | [Odoo Official Docker Image → TBWA\SMP Production Canonical Mapping](docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md) | docs/architecture |
-| [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
+| [Production Runtime Snapshot](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth – Architectural Doctrine](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |

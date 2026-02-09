@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 37ebd29a0918da8e9fe0dbad67f85d4f099c5463
+> Commit: 50aa2ffb80d9a2c014de49785396abb131a2fcf0
 
 ```
 .
@@ -114,6 +114,7 @@
 │   │   ├── diagrams-qa.yml
 │   │   ├── diagrams.yml
 │   │   ├── directional-sync.yml
+│   │   ├── dns-drift-detect.yml
 │   │   ├── do-pr-sandbox.yml
 │   │   ├── do-sandbox-janitor.yml
 │   │   ├── docs-architecture-sync.yml
@@ -1888,7 +1889,9 @@
 │   │   ├── ODOO_DEVELOPER_COMPLETE_REFERENCE.md
 │   │   ├── ODOO_DEVELOPER_SKILLS_GAP_ANALYSIS.md
 │   │   ├── ODOO_FRONTEND_ARCHITECTURE.md
+│   │   ├── ODOO_SETTINGS_AI_AGENTS.md
 │   │   ├── ODOO_SETTINGS_CHEATSHEET.md
+│   │   ├── ODOO_SETTINGS_OCR_DIGITIZATION.md
 │   │   ├── ODOO_SETTINGS_REFERENCE.md
 │   │   ├── README.md
 │   │   ├── REPO_STRUCTURE.md
@@ -4322,9 +4325,11 @@
 │   ├── verify-addons-mounts.sh
 │   ├── verify-codespaces-auth.sh
 │   ├── verify-control-plane.sh
+│   ├── verify-dns-baseline.sh
 │   ├── verify-dns-enhancements.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
+│   ├── verify-service-health.sh
 │   ├── verify.sh
 │   ├── verify_auth.sh
 │   ├── verify_auth_setup.sh
@@ -5459,7 +5464,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1504 directories, 3950 files
+1504 directories, 3955 files
 ```
 
 ## 📊 Stats
@@ -5467,7 +5472,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1776 |
-| Files | 5300 |
+| Files | 5305 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1384 |
+| Markdown files | 1386 |
