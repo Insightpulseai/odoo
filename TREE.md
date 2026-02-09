@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1e679c27e8cb8184afbcdaecd3a458002c330f94
+> Commit: 6db1495ec14386ed83af9a4a6e69d326052dd151
 
 ```
 .
@@ -2084,6 +2084,8 @@
 │   │   │   └── 502-gateway-fix
 │   │   ├── 20260209-0023
 │   │   │   └── odoo-launcher
+│   │   ├── 20260209-1820
+│   │   │   └── odoo-entrypoint-tactical-fix
 │   │   ├── 20260129-odoo-asset-fix.md
 │   │   └── TEMPLATE_azure_waf_rescore.md
 │   ├── finance-ppm
@@ -2659,6 +2661,7 @@
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
 │   ├── ODOO_COPILOT_THEME_TOKEN_MAP.md
+│   ├── ODOO_EXECUTION.md
 │   ├── ODOO_GOLIVE_SETTINGS_INVENTORY.md
 │   ├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 │   ├── ODOO_IMAGE_SPEC.md
@@ -3991,6 +3994,9 @@
 │   │   ├── spec-to-prisma.js
 │   │   ├── sync-all.js
 │   │   └── sync_odoo_fluent_design_system.sh
+│   ├── tests
+│   │   ├── odoo-entrypoint-post-fix.sh
+│   │   └── odoo-entrypoint-pre-fix.sh
 │   ├── .env.example
 │   ├── CONFIG_INVENTORY.txt
 │   ├── FIX_OWLERROR_GUIDE.md
@@ -5440,15 +5446,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1497 directories, 3938 files
+1500 directories, 3941 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1769 |
-| Files | 5284 |
+| Directories | 1772 |
+| Files | 5290 |
 | Python files | 841 |
 | XML files | 298 |
-| Markdown files | 1375 |
+| Markdown files | 1377 |
