@@ -43,6 +43,16 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 
 ---
 
+## Infrastructure SSOT
+
+**Canonical Source:** `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
+**Machine-Readable:** `docs/architecture/runtime_identifiers.json`
+**Verification:** `scripts/verify-dns-baseline.sh && scripts/verify-service-health.sh`
+
+See architecture docs for complete runtime service registry.
+
+---
+
 ## Secrets Policy (Non-Negotiable)
 
 - **Never** ask users to paste secrets/tokens/passwords
