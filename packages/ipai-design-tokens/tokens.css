@@ -23,6 +23,17 @@
   --ipai-primary-2: #F59E0B;
   --ipai-primary-dark: #D97706;
 
+  /* Accent colors (navy/teal/green palette) */
+  --ipai-accent-teal: #64B9CA;
+  --ipai-accent-green: #7BC043;
+  --ipai-accent-navy: #0F2A44;
+  --ipai-accent-navy-deep: #0A1E33;
+
+  /* Glass morphism */
+  --ipai-glass-bg: rgba(255, 255, 255, 0.1);
+  --ipai-glass-border: rgba(255, 255, 255, 0.2);
+  --ipai-glass-blur: blur(24px);
+
   /* Semantic colors */
   --ipai-danger: #EF4444;
   --ipai-success: #22C55E;

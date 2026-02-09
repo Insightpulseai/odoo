@@ -607,10 +607,10 @@ env["ir.config_parameter"].sudo().set_param("ai.token_budget.default", "10000")
 
 ```bash
 # Test PaddleOCR microservice health
-curl http://ocr.insightpulseai.net/health
+curl http://ocr.insightpulseai.com/health
 
 # Test OCR with sample receipt
-curl -X POST http://ocr.insightpulseai.net/api/v1/ocr \
+curl -X POST http://ocr.insightpulseai.com/api/v1/ocr \
   -F "file=@receipt.jpg" \
   -F "document_type=receipt"
 ```
@@ -699,7 +699,7 @@ print(f"Correction Rate: {len(corrected)/len(expenses):.1%}")
 ```python
 # Configure PaddleOCR (primary)
 env["ir.config_parameter"].sudo().set_param("ocr.provider.default", "paddleocr")
-env["ir.config_parameter"].sudo().set_param("ocr.paddleocr.endpoint", "http://ocr.insightpulseai.net/api/v1/ocr")
+env["ir.config_parameter"].sudo().set_param("ocr.paddleocr.endpoint", "http://ocr.insightpulseai.com/api/v1/ocr")
 
 # Configure confidence thresholds
 env["ir.config_parameter"].sudo().set_param("ocr.confidence.threshold", "0.85")

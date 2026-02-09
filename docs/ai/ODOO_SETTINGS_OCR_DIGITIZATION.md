@@ -4,7 +4,7 @@ Complete guide to configuring and managing OCR and document digitization in Odoo
 
 ## Overview
 
-The IPAI OCR system provides intelligent document digitization capabilities for receipts, invoices, and vendor bills. The system uses a custom PaddleOCR microservice (hosted at `ocr.insightpulseai.net`) with fallback support for Azure Vision and Google Vision APIs.
+The IPAI OCR system provides intelligent document digitization capabilities for receipts, invoices, and vendor bills. The system uses a custom PaddleOCR microservice (hosted at `ocr.insightpulseai.com`) with fallback support for Azure Vision and Google Vision APIs.
 
 **Key Features:**
 - **Custom PaddleOCR Microservice**: Self-hosted OCR service optimized for financial documents
@@ -74,7 +74,7 @@ if deprecated:
 | Parameter Key | Purpose | Example Value | Required |
 |---------------|---------|---------------|----------|
 | `ocr.provider.default` | Default OCR provider | `paddleocr`\|`azure`\|`google` | Yes |
-| `ocr.paddleocr.endpoint` | PaddleOCR microservice URL | `http://ocr.insightpulseai.net/api/v1/ocr` | Yes (primary) |
+| `ocr.paddleocr.endpoint` | PaddleOCR microservice URL | `http://ocr.insightpulseai.com/api/v1/ocr` | Yes (primary) |
 | `ocr.paddleocr.api_key` | PaddleOCR API key (if auth enabled) | `pk-...` | Optional |
 | `ocr.azure.endpoint` | Azure Vision endpoint | `https://<region>.cognitiveservices.azure.com` | If using Azure |
 | `ocr.azure.key` | Azure Vision API key | `...` | If using Azure |
@@ -94,7 +94,7 @@ if deprecated:
 ```python
 # Via Odoo Shell - Configure PaddleOCR (primary)
 env['ir.config_parameter'].sudo().set_param('ocr.provider.default', 'paddleocr')
-env['ir.config_parameter'].sudo().set_param('ocr.paddleocr.endpoint', 'http://ocr.insightpulseai.net/api/v1/ocr')
+env['ir.config_parameter'].sudo().set_param('ocr.paddleocr.endpoint', 'http://ocr.insightpulseai.com/api/v1/ocr')
 env['ir.config_parameter'].sudo().set_param('ocr.confidence.threshold', '0.85')
 env['ir.config_parameter'].sudo().set_param('ocr.confidence.manual_review', '0.70')
 env['ir.config_parameter'].sudo().set_param('ocr.batch.size', '10')
@@ -292,7 +292,7 @@ Expense Details:
 - Confidence: 89%
 
 Expense ID: EXP/2024/0123
-View: http://erp.insightpulseai.net/web#id=123&model=hr.expense
+View: http://erp.insightpulseai.com/web#id=123&model=hr.expense
 
 Please review and submit for approval.
 ```
@@ -399,10 +399,10 @@ for job in pending:
 
 ```bash
 # Test health endpoint
-curl http://ocr.insightpulseai.net/health
+curl http://ocr.insightpulseai.com/health
 
 # Test OCR endpoint with sample receipt
-curl -X POST http://ocr.insightpulseai.net/api/v1/ocr \
+curl -X POST http://ocr.insightpulseai.com/api/v1/ocr \
   -H "Content-Type: multipart/form-data" \
   -F "file=@receipt_sample.jpg" \
   -F "document_type=receipt"
@@ -529,7 +529,7 @@ else:
 
 ```bash
 # 1. Check PaddleOCR microservice health
-curl http://ocr.insightpulseai.net/health
+curl http://ocr.insightpulseai.com/health
 
 # 2. Check Odoo module installed
 ./odoo-bin shell -d odoo_dev <<'EOF'
@@ -702,13 +702,13 @@ if fetchmail:
 
 ```bash
 # 1. Test PaddleOCR microservice directly
-time curl -X POST http://ocr.insightpulseai.net/api/v1/ocr \
+time curl -X POST http://ocr.insightpulseai.com/api/v1/ocr \
   -F "file=@receipt.jpg" \
   -w "\nTime: %{time_total}s\n"
 
 # 2. Check firewall/network
-ping ocr.insightpulseai.net
-traceroute ocr.insightpulseai.net
+ping ocr.insightpulseai.com
+traceroute ocr.insightpulseai.com
 
 # 3. Check Odoo timeout settings
 ./odoo-bin shell -d odoo_dev <<'EOF'
@@ -740,7 +740,7 @@ EOF
 3. **Check Microservice Logs** (if self-hosted):
    ```bash
    # SSH to OCR microservice server
-   ssh root@ocr.insightpulseai.net
+   ssh root@ocr.insightpulseai.com
 
    # Check service status
    systemctl status paddleocr-service
@@ -844,9 +844,9 @@ for log in audit_logs:
 - `/docs/ai/ODOO_SETTINGS_AI_AGENTS.md` - AI agents settings
 
 **PaddleOCR Microservice:**
-- Service endpoint: `http://ocr.insightpulseai.net`
-- Health check: `http://ocr.insightpulseai.net/health`
-- API docs: `http://ocr.insightpulseai.net/docs`
+- Service endpoint: `http://ocr.insightpulseai.com`
+- Health check: `http://ocr.insightpulseai.com/health`
+- API docs: `http://ocr.insightpulseai.com/docs`
 
 ---
 
