@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { FeatureCard } from '@/components/ui/FeatureCard';
+import { BenefitBadge } from '@/components/ui/BenefitBadge';
 
 export const metadata: Metadata = {
   title: 'InsightPulse AI — Open ERP Platform for Modern Teams',
@@ -119,7 +122,7 @@ export default function HomePage() {
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
           Run Your Business
           <br />
-          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[var(--ipai-primary)] to-[var(--ipai-accent-teal)] bg-clip-text text-transparent">
             End-to-End
           </span>
         </h1>
@@ -130,18 +133,12 @@ export default function HomePage() {
         </p>
 
         <div className="flex flex-wrap gap-4 justify-center">
-          <a
-            href="mailto:hello@insightpulseai.com"
-            className="inline-flex items-center justify-center h-14 px-8 rounded-full font-extrabold bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg shadow-blue-500/20"
-          >
+          <Button variant="primary" size="md" href="mailto:hello@insightpulseai.com">
             Get Started
-          </a>
-          <a
-            href="https://github.com/InsightPulseAI/odoo"
-            className="inline-flex items-center justify-center h-14 px-8 rounded-full font-extrabold bg-white/5 text-white border border-white/20 hover:bg-white/10 transition-colors"
-          >
+          </Button>
+          <Button variant="secondary" size="md" href="https://github.com/InsightPulseAI/odoo">
             View on GitHub
-          </a>
+          </Button>
         </div>
       </section>
 
@@ -151,10 +148,11 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {BENEFITS.map((benefit) => (
               <div key={benefit.label} className="text-center">
-                <div className="text-sm font-bold text-white mb-1">
-                  {benefit.label}
-                </div>
-                <div className="text-xs text-white/60">
+                <BenefitBadge
+                  icon={<svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
+                  text={benefit.label}
+                />
+                <div className="text-xs text-white/60 mt-1">
                   {benefit.description}
                 </div>
               </div>
@@ -176,18 +174,12 @@ export default function HomePage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {PLATFORM_FEATURES.map((feature) => (
-            <div
+            <FeatureCard
               key={feature.title}
-              className="p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.04]"
-            >
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-white mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-white/70 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
+              icon={<span className="text-2xl">{feature.icon}</span>}
+              title={feature.title}
+              description={feature.description}
+            />
           ))}
         </div>
       </section>
@@ -225,18 +217,12 @@ export default function HomePage() {
             Join teams building on open foundations. Self-hosted or managed cloud deployment.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <a
-              href="mailto:hello@insightpulseai.com"
-              className="inline-flex items-center justify-center h-14 px-8 rounded-full font-extrabold bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg shadow-blue-500/20"
-            >
+            <Button variant="primary" size="md" href="mailto:hello@insightpulseai.com">
               Get in Touch
-            </a>
-            <a
-              href="https://github.com/InsightPulseAI/odoo/blob/main/README.md"
-              className="inline-flex items-center justify-center h-14 px-8 rounded-full font-extrabold bg-white/5 text-white border border-white/20 hover:bg-white/10 transition-colors"
-            >
+            </Button>
+            <Button variant="secondary" size="md" href="https://github.com/InsightPulseAI/odoo/blob/main/README.md">
               Read Documentation
-            </a>
+            </Button>
           </div>
         </div>
       </section>
