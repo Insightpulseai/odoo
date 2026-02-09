@@ -29,7 +29,9 @@
       "Bash(git config:*)",
       "Bash(git pull:*)",
       "Bash(git merge:*)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(git stash pop:*)",
+      "Bash(git stash drop:*)"
     ],
     "deny": [],
     "ask": []

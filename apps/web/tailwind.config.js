@@ -11,11 +11,18 @@ module.exports = {
       colors: {
         // Financial services specific accent colors
         finance: {
-          navy: '#0A1628',
+          navy: '#0F2A44',
+          navyDeep: '#0A1E33',
+          teal: '#64B9CA',
+          green: '#7BC043',
+          amber: '#F6C445',
           slate: '#1E293B',
           gold: '#D4AF37',
           trust: '#0066CC',
         },
+      },
+      backdropBlur: {
+        'glass': '24px',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
