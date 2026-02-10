@@ -9,11 +9,28 @@ CLI-free Vercel project management and deployment log retrieval using REST API.
 export VERCEL_TOKEN="your_vercel_personal_access_token"
 ```
 
-**Get Token:**
-1. Go to https://vercel.com/account/tokens
-2. Create new token: "CLI/API Access"
-3. Copy token value
-4. Add to `~/.zshrc`: `export VERCEL_TOKEN="vercel_xxx..."`
+**Get and Provision Token:**
+
+1. **Create Token** (manual, one-time):
+   - Go to https://vercel.com/account/tokens
+   - Click "Create Token"
+   - Name: "CLI/API Access"
+   - Scope: Full Account
+   - Copy token value
+
+2. **Provision Token** (automated):
+   ```bash
+   # Set in current shell
+   export VERCEL_TOKEN="vercel_xxx..."
+
+   # Persist to env file + GitHub Actions
+   ./scripts/vercel/provision_token.sh
+   ```
+
+   This script:
+   - Persists to `.env.platform.local`
+   - Sets GitHub Actions secret `VERCEL_TOKEN`
+   - Validates successful provisioning
 
 **Project Details:**
 - Team ID: `team_wphKJ7lHA3QiZu6VgcotQBQM`
