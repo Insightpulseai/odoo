@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 983c76f8de837a18aec844c48f91059ceaf2c7d1
+> Commit: 11c9430a35796d1309f71d2097697b7fb4380441
 
 ```
 .
@@ -1324,6 +1324,8 @@
 │   └── web
 │       ├── content
 │       │   └── solutions
+│       ├── docs
+│       │   └── evidence
 │       ├── public
 │       │   └── solutions
 │       ├── scripts
@@ -5598,15 +5600,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1538 directories, 4055 files
+1540 directories, 4055 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1818 |
-| Files | 5429 |
+| Directories | 1822 |
+| Files | 5430 |
 | Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1413 |
+| Markdown files | 1414 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 983c76f8de837a18aec844c48f91059ceaf2c7d1
+> Commit: 11c9430a35796d1309f71d2097697b7fb4380441
 
 ## 📚 Documentation
 
@@ -191,6 +191,7 @@
 | [Odoo Frontend Shell](apps/odoo-frontend-shell/README.md) | apps/odoo-frontend-shell |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
+| [Lockfile Synchronization Fix](apps/web/docs/evidence/20260210-1300/lockfile-fix/RESOLUTION.md) | apps/web/docs/evidence/20260210-1300/lockfile-fix |
 | [Architecture Review Kit](architecture-review/README.md) | architecture-review |
 | [Azure Architecture Review - Baseline Structure](architecture-review/baseline/azure_architecture_review_structure.md) | architecture-review/baseline |
 | [Architecture Review Report](architecture-review/templates/assessment_report.md) | architecture-review/templates |
