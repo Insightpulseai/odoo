@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8e0548f95975559f3bc345ea90e0fb076ccd25df
+> Commit: ad1af5a4a44bdb7dcedcc656762176a83a4d1ed2
 
 ```
 .
@@ -124,6 +124,7 @@
 │   │   ├── dns-drift-detect.yml
 │   │   ├── do-pr-sandbox.yml
 │   │   ├── do-sandbox-janitor.yml
+│   │   ├── docflow-smoke.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── docs-current-state-gate.yml
@@ -1883,6 +1884,47 @@
 │   │   └── 00-init.sql
 │   └── superset
 │       └── superset_config.py
+├── docflow-agentic-finance
+│   ├── agents
+│   │   ├── docflow
+│   │   │   ├── prompts
+│   │   │   └── agent.docflow.yaml
+│   │   └── odoo_ai_agents.yaml
+│   ├── scripts
+│   │   ├── run_folder.py
+│   │   └── viber_watch_daemon.py
+│   ├── spec
+│   │   ├── docflow-agentic-finance
+│   │   │   ├── constitution.md
+│   │   │   ├── plan.md
+│   │   │   ├── prd.md
+│   │   │   └── tasks.md
+│   │   └── docflow-v2
+│   │       ├── constitution.md
+│   │       ├── plan.md
+│   │       ├── prd.md
+│   │       └── tasks.md
+│   ├── src
+│   │   └── docflow
+│   │       ├── bank
+│   │       ├── __init__.py
+│   │       ├── config.py
+│   │       ├── dupe_check.py
+│   │       ├── llm_client.py
+│   │       ├── ocr.py
+│   │       ├── odoo_ingest.py
+│   │       ├── odoo_rpc.py
+│   │       ├── prompts.py
+│   │       ├── runner.py
+│   │       ├── schemas.py
+│   │       ├── utils.py
+│   │       ├── validators.py
+│   │       └── vendor_match.py
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── README.md
+│   ├── pyproject.toml
+│   └── verify_smoke.sh
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
@@ -5518,15 +5560,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1519 directories, 3994 files
+1530 directories, 4025 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1791 |
-| Files | 5355 |
-| Python files | 858 |
+| Directories | 1802 |
+| Files | 5389 |
+| Python files | 875 |
 | XML files | 299 |
-| Markdown files | 1395 |
+| Markdown files | 1404 |
