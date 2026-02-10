@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-import json, os, sys, time
+import json
+import os
+import sys
+import time
+import re
+import glob
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     import yaml  # pyyaml
@@ -10,41 +17,44 @@ except Exception:
     sys.exit(2)
 
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG_PATH = ROOT / "docs" / "parity" / "EE_SURFACE_CATALOG.yaml"
-GOALS_PATH = ROOT / "config" / "parity" / "PARITY_GOALS.yaml"
-TIER0_CFG_PATH = ROOT / "config" / "parity" / "TIER0_PROBES.yaml"
 
-EVID_LATEST = ROOT / "docs" / "evidence" / "latest" / "parity"
-EVID_LATEST.mkdir(parents=True, exist_ok=True)
-
-
-### TIER0_PROBES_LOCKED ###
-# Locked Tier-0 probes: deterministic, repo-verifiable checks driven by config/parity/TIER0_PROBES.yaml.
-
-import re
-import glob as glob_module
+# --- Helper Utilities for Probes ---
 
 
 def _read_text(path: Path) -> str:
     try:
+        if not path.exists():
+            return ""
         return path.read_text(encoding="utf-8", errors="ignore")
-    except Exception:
+    except (OSError, Exception):
         return ""
 
 
 def _glob_many(globs_list: list[str]) -> list[Path]:
     out: list[Path] = []
     for g in globs_list:
-        for m in glob_module.glob(str(ROOT / g), recursive=True):
-            out.append(Path(m))
+        # If the glob is absolute, use it; otherwise join with ROOT
+        search_pattern = g if os.path.isabs(g) else str(ROOT / g)
+        for m in glob.glob(search_pattern, recursive=True):
+            if "__pycache__" in m or m.endswith(".pyc"):
+                continue
+            try:
+                p = Path(m)
+                if p.exists():
+                    out.append(p)
+            except OSError:
+                continue
     # de-dupe
     uniq = []
     seen = set()
     for p in out:
-        rp = str(p.resolve())
-        if rp not in seen and p.exists():
-            seen.add(rp)
-            uniq.append(p)
+        try:
+            rp = str(p.resolve())
+            if rp not in seen:
+                seen.add(rp)
+                uniq.append(p)
+        except OSError:
+            continue
     return uniq
 
 
@@ -53,7 +63,7 @@ def _any_exists(paths: list[str]) -> bool:
 
 
 def _any_glob_matches(globs_list: list[str]) -> bool:
-    return len(_glob_many(globs_list)) > 0
+    return any(_glob_many([g]) for g in globs_list)
 
 
 def _any_file_contains_regex(paths: list[Path], patterns: list[str]) -> bool:
@@ -68,180 +78,192 @@ def _any_file_contains_regex(paths: list[Path], patterns: list[str]) -> bool:
     return False
 
 
+def _file_contains_all_regex(paths: list[Path], patterns: list[str]) -> bool:
+    # At least one file must satisfy ALL patterns (stronger signal).
+    if not patterns:
+        return True
+    rx = [re.compile(p) for p in patterns]
+    for fp in paths:
+        txt = _read_text(fp)
+        if all(r.search(txt) for r in rx):
+            return True
+    return False
+
+
 def _count_glob(globs_list: list[str]) -> int:
     return len(_glob_many(globs_list))
 
 
-def _load_tier0_cfg() -> dict:
-    if not TIER0_CFG_PATH.exists():
-        # No config => return empty config (probes will likely fail)
-        return {"version": "0.0", "strict_evidence": False, "probes": {}}
-    return yaml.safe_load(TIER0_CFG_PATH.read_text())
+def _load_tier0_cfg(cfg_path: Path) -> dict:
+    if not cfg_path.exists():
+        # No config => don't fail hard; return empty config
+        return {}
+    try:
+        return yaml.safe_load(cfg_path.read_text()) or {}
+    except Exception:
+        return {}
 
 
 def _tier0_strict(cfg: dict) -> bool:
-    return bool(cfg.get("strict_evidence", False))
+    return cfg.get("strict_evidence", False)
 
 
-def _probe_from_cfg(name: str) -> dict:
-    cfg = _load_tier0_cfg()
+def _probe_from_cfg(name: str, cfg: dict) -> dict:
     return cfg.get("probes", {}).get(name, {})
 
 
 def _must(pass_condition: bool, msg: str):
     if not pass_condition:
-        raise RuntimeError(msg)
+        raise ValueError(msg)
 
 
-# --- Probes (goal-based, not module-based) ---
-def probe_ci_build_pipeline() -> bool:
-    c = _probe_from_cfg("ci_build_pipeline")
-    wf = _glob_many(c.get("workflow_globs", [".github/workflows/*.yml", ".github/workflows/*.yaml"]))
-    _must(len(wf) > 0, "No GitHub Actions workflows found under .github/workflows/")
-    # Require a build-like signal in at least one workflow
-    patterns = c.get("any_workflow_must_contain_regex", [])
+# --- Probes (Locked Tier-0) ---
+
+
+def probe_ci_build_pipeline(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("ci_build_pipeline", cfg)
+    if not p:
+        return False
+    # Check for workflows
+    wfs = _glob_many(p.get("workflow_globs", []))
+    _must(wfs, "No build/CI workflows found")
+    # Check for build tool traces
     _must(
-        _any_file_contains_regex(wf, patterns),
-        "No workflow contains required build signals (pnpm/docker/odoo-bin/addons_path).",
+        _any_file_contains_regex(wfs, p.get("any_workflow_must_contain_regex", [])),
+        "CI workflows missing build/install commands",
     )
     return True
 
 
-def probe_env_separation() -> bool:
-    c = _probe_from_cfg("env_separation")
+def probe_env_separation(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("env_separation", cfg)
+    if not p:
+        return False
+    # Evidence files
+    _must(_any_exists(p.get("any_file_must_exist", [])), "Missing runtime identifiers or snapshots")
+    # Deploy scripts
     _must(
-        _any_exists(c.get("any_file_must_exist", [])),
-        "Missing required environment SSOT artifacts (e.g., PROD_RUNTIME_SNAPSHOT.md/runtime_identifiers.json).",
+        _any_glob_matches(p.get("any_path_must_match_glob", [])),
+        "No environment-specific deploy scripts",
     )
-    _must(
-        _any_glob_matches(c.get("any_path_must_match_glob", [])),
-        "No env separation/deploy scripts/workflows found (stage/prod/deploy).",
-    )
-    # Optional content regex across docs/scripts for stage/prod signals
-    globs_list = c.get("any_path_must_match_glob", []) + [
-        "docs/**/*.md",
-        "scripts/**/*.sh",
-        ".github/workflows/*.yml",
-        ".github/workflows/*.yaml",
+    # Content check
+    all_files = _glob_many(p.get("any_path_must_match_glob", [])) + [
+        ROOT / x for x in p.get("any_file_must_exist", [])
     ]
-    files = _glob_many(globs_list)
     _must(
-        _any_file_contains_regex(files, c.get("any_file_must_contain_regex", [])),
-        "No content evidence of stage/prod separation found (missing keywords: staging/prod/domains/db names).",
+        _any_file_contains_regex(all_files, p.get("any_file_must_contain_regex", [])),
+        "No mention of dev/stage/prod environments in deployments",
     )
     return True
 
 
-def probe_remote_shell_access() -> bool:
-    c = _probe_from_cfg("remote_shell_access")
-    files = _glob_many(c.get("any_path_must_match_glob", []))
+def probe_remote_shell_access(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("remote_shell_access", cfg)
+    if not p:
+        return False
+    paths = _glob_many(p.get("any_path_must_match_glob", []))
+    _must(paths, "No remote access/SSH scripts found")
     _must(
-        len(files) > 0,
-        "No scripted remote access tooling found (expected scripts/**/ssh*.sh or tunnel*.sh).",
-    )
-    _must(
-        _any_file_contains_regex(files, c.get("any_file_must_contain_regex", [])),
-        "Remote access scripts found but missing strong signals (ssh/docker exec/kubectl exec).",
-    )
-    return True
-
-
-def probe_upgrade_rehearsal() -> bool:
-    c = _probe_from_cfg("upgrade_rehearsal")
-    files = _glob_many(c.get("any_path_must_match_glob", []))
-    _must(
-        len(files) > 0,
-        "No upgrade/migration scripts or docs found (expected scripts/**/*upgrade* or docs/**/*upgrade*).",
-    )
-    if _tier0_strict(_load_tier0_cfg()):
-        ev = _glob_many(c.get("evidence_globs", []))
-        _must(
-            len(ev) > 0,
-            "STRICT: No upgrade rehearsal evidence found under docs/evidence/**/upgrade* or migration*.",
-        )
-    return True
-
-
-def probe_upgrade_report() -> bool:
-    c = _probe_from_cfg("upgrade_report")
-    reports = _glob_many(c.get("report_globs", []))
-    if _tier0_strict(_load_tier0_cfg()):
-        _must(
-            len(reports) > 0,
-            "STRICT: No upgrade/migration structured report artifacts found under docs/evidence/**.",
-        )
-    else:
-        # In non-strict mode, allow passing if there is any upgrade/migration doc/script
-        _must(
-            len(reports) > 0
-            or _any_glob_matches(
-                ["scripts/**/*upgrade*", "scripts/**/*migration*", "docs/**/*upgrade*", "docs/**/*migration*"]
-            ),
-            "No upgrade report artifacts found, and no upgrade/migration scripts/docs present.",
-        )
-    return True
-
-
-def probe_upgrade_rollback_plan() -> bool:
-    c = _probe_from_cfg("upgrade_rollback_plan")
-    files = _glob_many(c.get("any_path_must_match_glob", []))
-    _must(
-        len(files) > 0, "No rollback docs/scripts found (expected docs/**/*rollback* or scripts/**/*rollback*)."
-    )
-    _must(
-        _any_file_contains_regex(files, c.get("any_file_must_contain_regex", [])),
-        "Rollback docs/scripts found but missing strong signals (restore/snapshot/promote/rollback).",
+        _any_file_contains_regex(paths, p.get("any_file_must_contain_regex", [])),
+        "Scripts do not contain SSH or exec patterns",
     )
     return True
 
 
-def probe_support_workflow() -> bool:
-    c = _probe_from_cfg("support_workflow")
-    files = _glob_many(c.get("any_path_must_match_glob", []))
-    _must(len(files) > 0, "No support/runbook/incident/postmortem docs found.")
+def probe_upgrade_rehearsal(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("upgrade_rehearsal", cfg)
+    if not p:
+        return False
+    paths = _glob_many(p.get("any_path_must_match_glob", []))
+    evidence = _glob_many(p.get("evidence_globs", []))
+    _must(paths, "No upgrade or migration scripts/docs")
+    _must(evidence, "No recent upgrade rehearsal evidence found")
+    return True
+
+
+def probe_upgrade_report(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("upgrade_report", cfg)
+    if not p:
+        return False
+    reports = _glob_many(p.get("report_globs", []))
+    _must(reports, "No structured upgrade/migration reports found")
+    return True
+
+
+def probe_upgrade_rollback_plan(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("upgrade_rollback_plan", cfg)
+    if not p:
+        return False
+    paths = _glob_many(p.get("any_path_must_match_glob", []))
+    _must(paths, "No rollback documentation or scripts")
     _must(
-        _any_file_contains_regex(files, c.get("any_file_must_contain_regex", [])),
-        "Support docs found but missing workflow signals (intake/triage/severity/postmortem/rca).",
+        _any_file_contains_regex(paths, p.get("any_file_must_contain_regex", [])),
+        "Rollback plans missing recovery keywords",
     )
     return True
 
 
-def probe_runbooks_present() -> bool:
-    c = _probe_from_cfg("runbooks_present")
-    n = int(c.get("min_count", 2))
-    cnt = _count_glob(c.get("runbook_globs", []))
-    _must(cnt >= n, f"Found {cnt} runbook docs; need >= {n}.")
-    return True
-
-
-def probe_sla_monitoring() -> bool:
-    c = _probe_from_cfg("sla_monitoring")
-    files = _glob_many(c.get("any_path_must_match_glob", []))
-    _must(len(files) > 0, "No monitoring/health/smoke workflow/scripts found.")
+def probe_support_workflow(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("support_workflow", cfg)
+    if not p:
+        return False
+    paths = _glob_many(p.get("any_path_must_match_glob", []))
+    _must(paths, "No support/incident workflow documentation")
     _must(
-        _any_file_contains_regex(files, c.get("any_file_must_contain_regex", [])),
-        "Monitoring artifacts found but missing signals (curl health checks/healthz endpoints).",
+        _any_file_contains_regex(paths, p.get("any_file_must_contain_regex", [])),
+        "Support docs missing triage/RCA keywords",
     )
     return True
 
 
-def probe_ai_keys_configured() -> bool:
-    # TODO: implement by verifying non-secret presence of env var names or vault references.
+def probe_runbooks_present(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("runbooks_present", cfg)
+    if not p:
+        return False
+    count = _count_glob(p.get("runbook_globs", []))
+    min_c = p.get("min_count", 1)
+    _must(count >= min_c, f"Too few runbooks found (found {count}, need {min_c})")
     return True
 
 
-def probe_ai_guardrails() -> bool:
-    # TODO: implement by checking guardrails config exists (allowlist, logging, rate limits).
+def probe_sla_monitoring(cfg_path: Path):
+    cfg = _load_tier0_cfg(cfg_path)
+    p = _probe_from_cfg("sla_monitoring", cfg)
+    if not p:
+        return False
+    paths = _glob_many(p.get("any_path_must_match_glob", []))
+    _must(paths, "No health check/SLA monitoring scripts or workflows")
+    _must(
+        _any_file_contains_regex(paths, p.get("any_file_must_contain_regex", [])),
+        "Monitoring missing health/probe keywords",
+    )
     return True
 
 
-def probe_iap_visibility() -> bool:
-    # TODO: implement by asserting reporting path exists.
+# --- Dummy Probes for Tier-1 (Implementation pending) ---
+
+
+def probe_ai_keys_configured(cfg_path: Path):
     return True
 
 
-def probe_iap_audit_workflow() -> bool:
-    # TODO: implement by asserting finance workflow docs exist.
+def probe_ai_guardrails(cfg_path: Path):
+    return True
+
+
+def probe_iap_visibility(cfg_path: Path):
+    return True
+
+
+def probe_iap_audit_workflow(cfg_path: Path):
     return True
 
 
@@ -275,113 +297,138 @@ class CheckResult:
 
 def load_yaml(path: Path) -> dict:
     if not path.exists():
-        raise FileNotFoundError(str(path))
-    return yaml.safe_load(path.read_text())
+        return {}
+    return yaml.safe_load(path.read_text()) or {}
 
 
 def compute_score(results: list[CheckResult], goals: dict) -> dict:
-    tier_cfg = goals["scoring"]["tiers"]
-    by_tier = {}
-    for r in results:
-        by_tier.setdefault(r.tier, []).append(r)
-
+    tier_info = goals.get("scoring", {}).get("tiers", {})
     tier_scores = {}
-    total_weighted = 0.0
-    total_weights = 0.0
-    tier0_pass = True
 
-    # Safely handle empty tiers
-    if not by_tier:
-        return {"score": 0.0, "tier_scores": {}, "tier0_pass": False}
+    for t_str, meta in tier_info.items():
+        t = int(t_str)
+        t_results = [r for r in results if r.tier == t]
+        if not t_results:
+            tier_scores[t] = {"pct": 100.0, "pass": 0, "total": 0}
+            continue
 
-    for tier, checks in by_tier.items():
-        passed = sum(1 for c in checks if c.passed)
-        total = len(checks)
-        ratio = (passed / total) if total else 1.0
-        w = float(tier_cfg[str(tier)]["weight"]) if str(tier) in tier_cfg else 0.0
-        tier_scores[tier] = {"passed": passed, "total": total, "ratio": ratio, "weight": w}
-        total_weighted += ratio * w
-        total_weights += w
-        if int(tier) == 0 and passed != total:
-            tier0_pass = False
+        passed = len([r for r in t_results if r.passed])
+        total = len(t_results)
+        tier_scores[t] = {"pct": (passed / total) * 100, "pass": passed, "total": total}
 
-    score = (total_weighted / total_weights) if total_weights else 1.0
-    return {"score": score, "tier_scores": tier_scores, "tier0_pass": tier0_pass}
+    # Overall weighted score
+    weighted_sum = 0.0
+    weight_total = 0.0
+    for t, data in tier_scores.items():
+        w = float(tier_info.get(str(t), {}).get("weight", 1.0))
+        weighted_sum += data["pct"] * w
+        weight_total += 100.0 * w
+
+    score = weighted_sum / weight_total if weight_total > 0 else 0.0
+
+    # Hard gate: Tier-0 must be 100%
+    tier0 = tier_scores.get(0, {"pct": 0, "pass": 0, "total": 0})
+    tier0_pass = tier0["pct"] == 100.0
+
+    return {
+        "score": score,
+        "tier0_pass": tier0_pass,
+        "tier_scores": tier_scores,
+        "tier0": tier0,
+    }
 
 
-def write_markdown(report: dict, md_path: Path) -> None:
-    lines = []
-    lines.append(f"# Parity Report (Goal-Based)\n")
-    lines.append(f"- Timestamp: {report['timestamp']}")
-    lines.append(f"- Score: {report['score']:.3f}")
-    lines.append(f"- Tier-0 Pass: {report['tier0_pass']}\n")
-    lines.append("## Tier Scores")
-    for tier, ts in sorted(report["tier_scores"].items(), key=lambda x: int(x[0])):
+def write_markdown(report: dict, md_path: Path):
+    lines = [
+        "# Parity Report",
+        f"**Timestamp:** {report['timestamp']}",
+        f"**Overall Score:** {report['score']:.2f}%",
+        f"**Tier-0 Status:** {'✅ PASS' if report['tier0_pass'] else '❌ FAIL'}",
+        "",
+        "## Summary by Tier",
+        "| Tier | Pass/Total | Percentage | Status |",
+        "|------|------------|------------|--------|",
+    ]
+    for t, data in report["tier_scores"].items():
+        status = "✅" if data["pct"] == 100 else "⚠️" if data["pct"] > 0 else "❌"
         lines.append(
-            f"- Tier {tier}: {ts['passed']}/{ts['total']} = {ts['ratio']:.3f} (weight {ts['weight']})"
+            f"| Tier {t} | {data['pass']}/{data['total']} | {data['pct']:.1f}% | {status} |"
         )
-    lines.append("\n## Failures")
-    fails = [r for r in report["results"] if not r["passed"]]
-    if not fails:
-        lines.append("- None ✅")
-    else:
-        for r in fails:
-            lines.append(
-                f"- [{r['surface_id']}::{r['acceptance_id']}] {r['name']} (probe: {r['probe']}) — {r.get('error') or 'FAILED'}"
-            )
-    md_path.write_text("\n".join(lines) + "\n")
+
+    lines.extend(
+        [
+            "",
+            "## Detailed Results",
+            "| ID | Name | Tier | Probe | Status | Error |",
+            "|----|------|------|-------|--------|-------|",
+        ]
+    )
+    for r in report["results"]:
+        status = "✅" if r["passed"] else "❌"
+        lines.append(
+            f"| {r['surface_id']} | {r['name']} | {r['tier']} | `{r['probe']}` | {status} | {r['error'] or ''} |"
+        )
+
+    md_path.write_text("\n".join(lines))
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Clean, deterministic parity check.")
+    parser.add_argument(
+        "--catalog",
+        type=Path,
+        default=ROOT / "docs" / "parity" / "EE_SURFACE_CATALOG.yaml",
+        help="Path to the EE surface catalog",
+    )
+    parser.add_argument(
+        "--goals",
+        type=Path,
+        default=ROOT / "config" / "parity" / "PARITY_GOALS.yaml",
+        help="Path to parity goals",
+    )
+    parser.add_argument(
+        "--probes",
+        type=Path,
+        default=ROOT / "config" / "parity" / "TIER0_PROBES.yaml",
+        help="Path to Tier-0 probes config",
+    )
+    parser.add_argument("--out-json", type=Path, help="Output JSON report path")
+    parser.add_argument("--out-md", type=Path, help="Output Markdown report path")
+    parser.add_argument(
+        "--strict-tier0", action="store_true", help="Fail hard if Tier-0 is not 100%"
+    )
+
+    args = parser.parse_args()
+
     try:
-        catalog = load_yaml(CATALOG_PATH)
-        goals = load_yaml(GOALS_PATH)
-    except FileNotFoundError as e:
-        print(f"Configuration missing: {e}", file=sys.stderr)
+        catalog = load_yaml(args.catalog)
+        goals = load_yaml(args.goals)
+    except Exception as e:
+        print(f"Error loading config: {e}", file=sys.stderr)
         return 2
 
     results: list[CheckResult] = []
     for surf in catalog.get("catalog", []):
-        tier = int(surf.get("tier", 99))
+        tier = int(surf["tier"])
         for acc in surf.get("acceptance", []):
             probe_name = acc["probe"]
             fn = PROBES.get(probe_name)
             if not fn:
                 results.append(
                     CheckResult(
-                        surface_id=surf["id"],
-                        acceptance_id=acc["id"],
-                        name=acc["name"],
-                        tier=tier,
-                        probe=probe_name,
-                        passed=False,
-                        error=f"Unknown probe '{probe_name}'",
+                        surf["id"], acc["id"], acc["name"], tier, probe_name, False, "Unknown probe"
                     )
                 )
                 continue
             try:
-                passed = bool(fn())
+                # Pass probes config to functions that need it
+                passed = bool(fn(args.probes))
                 results.append(
-                    CheckResult(
-                        surface_id=surf["id"],
-                        acceptance_id=acc["id"],
-                        name=acc["name"],
-                        tier=tier,
-                        probe=probe_name,
-                        passed=passed,
-                    )
+                    CheckResult(surf["id"], acc["id"], acc["name"], tier, probe_name, passed)
                 )
             except Exception as e:
                 results.append(
-                    CheckResult(
-                        surface_id=surf["id"],
-                        acceptance_id=acc["id"],
-                        name=acc["name"],
-                        tier=tier,
-                        probe=probe_name,
-                        passed=False,
-                        error=str(e),
-                    )
+                    CheckResult(surf["id"], acc["id"], acc["name"], tier, probe_name, False, str(e))
                 )
 
     score_obj = compute_score(results, goals)
@@ -389,40 +436,52 @@ def main() -> int:
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "score": score_obj["score"],
         "tier0_pass": score_obj["tier0_pass"],
+        "tier0": score_obj["tier0"],
         "tier_scores": score_obj["tier_scores"],
         "results": [r.__dict__ for r in results],
-        "inputs": {
-            "catalog": str(CATALOG_PATH),
-            "goals": str(GOALS_PATH),
-        },
     }
 
-    json_path = Path(
-        goals["output"]["json"].replace("docs/evidence/latest/parity", str(EVID_LATEST))
-    )
-    md_path = Path(
-        goals["output"]["markdown"].replace("docs/evidence/latest/parity", str(EVID_LATEST))
-    )
-    json_path.parent.mkdir(parents=True, exist_ok=True)
-    md_path.parent.mkdir(parents=True, exist_ok=True)
+    report_json = json.dumps(report, indent=2)
+    print(report_json)
 
-    json_path.write_text(json.dumps(report, indent=2) + "\n")
-    write_markdown(report, md_path)
+    # Defaults for output if not provided
+    out_json = args.out_json or (ROOT / "oca-parity" / "evidence" / "latest" / "parity_report.json")
+    out_md = args.out_md or (ROOT / "oca-parity" / "evidence" / "latest" / "parity_report.md")
 
-    # Gates
-    threshold = float(goals["scoring"]["threshold"])
+    try:
+        out_json.parent.mkdir(parents=True, exist_ok=True)
+        out_json.write_text(report_json)
+        write_markdown(report, out_md)
+        print(f"Reports written to {out_json.parent}", file=sys.stderr)
+    except Exception as e:
+        print(f"WARNING: Could not write report: {e}", file=sys.stderr)
+
+    # Threshold checks
+    threshold = float(goals.get("scoring", {}).get("threshold", 0.8))
+
+    # Goal-based logic
+    if goals.get("scoring", {}).get("mode") == "goal_based":
+        tier0_req = goals.get("scoring", {}).get("pass_if", {}).get("tier0_pct_gte", 100)
+        if report["tier0"]["pct"] < tier0_req:
+            print(
+                f"FAIL: Tier-0 parity {report['tier0']['pct']}% below required {tier0_req}%",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"PASS: Tier-0 goal met ({report['tier0']['pct']}%)", file=sys.stderr)
+        return 0
+
     if not report["tier0_pass"]:
-        print("FAIL: Tier-0 gate failed", file=sys.stderr)
-        # return 1
-        return 0  # Override to allow workflow to continue for now until real probes are hooked up
+        print("FAIL: Tier-0 hard gate requirements not met.", file=sys.stderr)
     if report["score"] < threshold:
-        print(f"FAIL: score {report['score']:.3f} < threshold {threshold:.3f}", file=sys.stderr)
-        # return 1
-        return 0  # Override to allow workflow to continue
+        print(f"FAIL: Score {report['score']:.2f} below threshold {threshold:.2f}", file=sys.stderr)
 
-    print(f"PASS: score {report['score']:.3f} >= {threshold:.3f}")
-    return 0
+    if (report["tier0_pass"] or not args.strict_tier0) and report["score"] >= threshold:
+        print(f"PASS: Parity confirmed ({report['score']:.2f})", file=sys.stderr)
+        return 0
+
+    return 1
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())
