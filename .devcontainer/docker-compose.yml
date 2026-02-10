@@ -1,18 +1,64 @@
+version: '3.8'
+
 services:
-  dev:
-    image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
-    command: sleep infinity
-    volumes:
-      - ..:/workspaces/${LOCAL_WORKSPACE_FOLDER_BASENAME:-odoo-ce}:cached
-      - /var/run/docker.sock:/var/run/docker.sock
+  postgres:
+    image: postgres:16-alpine
+    container_name: odoo-postgres
+    restart: unless-stopped
     environment:
-      - DEV_COMPOSE_FILE=${DEV_COMPOSE_FILE:-docker-compose.yml}
-      - DEV_COMPOSE_PROJECT=${DEV_COMPOSE_PROJECT:-odoo-dev}
-      - SUPABASE_URL=${SUPABASE_URL:-}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
-    network_mode: host
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - odoo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    container_name: odoo-dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+      - PGHOST=postgres
+      - PGUSER=odoo
+      - PGPASSWORD=odoo
+    volumes:
+      - ..:/workspace:cached
+      - odoo-data:/var/lib/odoo
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspace
+    command: sleep infinity
+    networks:
+      - odoo-network
+    ports:
+      - "8069:8069"
+      - "8072:8072"
     cap_add:
       - SYS_PTRACE
     security_opt:
       - seccomp:unconfined
+
+volumes:
+  postgres-data:
+    name: odoo-postgres-data
+  odoo-data:
+    name: odoo-data
+
+networks:
+  odoo-network:
+    name: odoo-network
+    driver: bridge
