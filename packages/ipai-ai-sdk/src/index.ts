@@ -14,3 +14,4 @@ export type {
   HealthCheckResponse
 } from './types';
 export { AIError, AIErrorCode } from './types';
+export * from './agentLibrary';
