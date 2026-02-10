@@ -14,7 +14,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libsasl2-dev \
     libffi-dev \
     libssl-dev \
-    wkhtmltopdf \
     tesseract-ocr \
     poppler-utils \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+# Note: wkhtmltopdf removed (not available in Debian Trixie)
+# Install separately if needed: https://wkhtmltopdf.org/downloads.html
