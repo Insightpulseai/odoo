@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2e85ea2360654e07e2ad153da955499d2a54eb72
+> Commit: e44114ab39a59a5f9a23fac96333954f6b4298b6
 
 ## 📚 Documentation
 
