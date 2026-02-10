@@ -1,0 +1,1 @@
+# Hero images directory
