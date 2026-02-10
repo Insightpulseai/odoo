@@ -1,0 +1,83 @@
+name: health-smoke
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/web/src/app/api/auth/**'
+      - 'scripts/health/**'
+      - 'scripts/supabase/**'
+      - '.github/workflows/health-smoke.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show context
+        run: |
+          echo "Commit: $(git rev-parse --short HEAD)"
+          echo "Runner: $(uname -a)"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check production auth health
+        if: ${{ secrets.PROD_BASE_URL != '' }}
+        env:
+          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+        run: |
+          set -euo pipefail
+          echo "Testing: $PROD_BASE_URL/api/auth/health"
+          response=$(curl -fsS "$PROD_BASE_URL/api/auth/health")
+          echo "$response" | jq '.'
+
+          # Verify status is healthy
+          status=$(echo "$response" | jq -r '.status')
+          if [ "$status" != "healthy" ]; then
+            echo "❌ Auth health check failed: status=$status"
+            exit 1
+          fi
+          echo "✅ Auth health check passed"
+
+      - name: Invoke Supabase secret-smoke function
+        if: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' && secrets.SUPABASE_PROJECT_REF != '' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          set -euo pipefail
+          npm install -g supabase@latest
+
+          echo "Linking to project: $SUPABASE_PROJECT_REF"
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+          echo "Invoking secret-smoke function..."
+          response=$(supabase functions invoke secret-smoke)
+          echo "$response" | jq '.'
+
+          # Verify all secrets present
+          present=$(echo "$response" | jq -r '.present')
+          missing=$(echo "$response" | jq -r '.missing')
+          if [ "$missing" -ne 0 ]; then
+            echo "❌ Secret smoke check failed: $missing secrets missing"
+            exit 1
+          fi
+          echo "✅ Secret smoke check passed: $present/7 secrets present"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Health Smoke Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ All health checks passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Health checks failed" >> $GITHUB_STEP_SUMMARY
+          fi
