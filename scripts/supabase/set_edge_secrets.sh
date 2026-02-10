@@ -13,11 +13,11 @@ echo "🔐 Deploying Edge Secrets to Supabase..."
 : "${SUPABASE_PROJECT_REF:?Error: SUPABASE_PROJECT_REF not set}"
 : "${OPENAI_API_KEY:?Error: OPENAI_API_KEY not set}"
 : "${ANTHROPIC_API_KEY:?Error: ANTHROPIC_API_KEY not set}"
-: "${OCR_BASE_URL:?Error: OCR_BASE_URL not set}"
-: "${OCR_API_KEY:?Error: OCR_API_KEY not set}"
-: "${N8N_BASE_URL:?Error: N8N_BASE_URL not set}"
-: "${SUPERSET_BASE_URL:?Error: SUPERSET_BASE_URL not set}"
-: "${MCP_BASE_URL:?Error: MCP_BASE_URL not set}"
+
+# OCR variables - use OCR_HTTP_URL from .env.platform.local, make API key optional
+OCR_BASE_URL="${OCR_BASE_URL:-${OCR_HTTP_URL:-}}"
+OCR_API_KEY="${OCR_API_KEY:-none}"
+: "${OCR_BASE_URL:?Error: OCR_BASE_URL or OCR_HTTP_URL not set}"
 
 # Login and link (idempotent)
 echo "→ Linking to Supabase project ${SUPABASE_PROJECT_REF}..."
@@ -30,10 +30,7 @@ supabase secrets set \
   OPENAI_API_KEY="$OPENAI_API_KEY" \
   ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   OCR_BASE_URL="$OCR_BASE_URL" \
-  OCR_API_KEY="$OCR_API_KEY" \
-  N8N_BASE_URL="$N8N_BASE_URL" \
-  SUPERSET_BASE_URL="$SUPERSET_BASE_URL" \
-  MCP_BASE_URL="$MCP_BASE_URL"
+  OCR_API_KEY="$OCR_API_KEY"
 
 echo "✅ Edge Secrets deployed successfully"
 echo ""
