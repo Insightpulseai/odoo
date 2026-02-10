@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_client_user,ai.client user,model_ai_client,base.group_user,1,0,0,0
+access_ai_client_system,ai.client system,model_ai_client,base.group_system,1,1,1,1
