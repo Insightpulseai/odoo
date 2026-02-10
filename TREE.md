@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad1af5a4a44bdb7dcedcc656762176a83a4d1ed2
+> Commit: 3d74969483a63af89de2f9cd07d2808ccf942074
 
 ```
 .
@@ -2153,6 +2153,8 @@
 │   │   │   └── landing-page
 │   │   ├── 20260209-1820
 │   │   │   └── odoo-entrypoint-tactical-fix
+│   │   ├── 20260210-0709
+│   │   │   └── mail_and_auth_complete.md
 │   │   ├── 20260210-1147
 │   │   │   └── phase6-agent-library
 │   │   ├── 20260129-odoo-asset-fix.md
@@ -3851,7 +3853,10 @@
 │   │   ├── lib.py
 │   │   └── run_integration_audit.sh
 │   ├── auth
+│   │   ├── README.md
 │   │   ├── confirm_user.py
+│   │   ├── generate_service_tokens.sh
+│   │   ├── mint_token.py
 │   │   └── set_password.ts
 │   ├── backup
 │   │   ├── backup_test.sh
@@ -4292,6 +4297,7 @@
 │   ├── odoo_coming_soon_install.sh
 │   ├── odoo_coming_soon_rollback.sh
 │   ├── odoo_coming_soon_verify.sh
+│   ├── odoo_configure_mail.sh
 │   ├── odoo_db_schema_diff.sh
 │   ├── odoo_ensure_modules_installed.sh
 │   ├── odoo_import_project_suite.py
@@ -5560,15 +5566,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1530 directories, 4025 files
+1531 directories, 4030 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1802 |
-| Files | 5389 |
-| Python files | 875 |
+| Directories | 1803 |
+| Files | 5394 |
+| Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1404 |
+| Markdown files | 1406 |
