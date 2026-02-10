@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c2e4702c24c7e75c02f4da2b1d9564b88ac96283
+> Commit: 0113d53b35eb95a27295172571cfc1a6b4256ade
 
 ```
 .
@@ -4100,9 +4100,11 @@
 │   │   ├── configure_auth_smtp_and_urls.sh
 │   │   ├── env.example
 │   │   ├── exposed_schemas.py
+│   │   ├── gh_actions_secrets_apply.sh
 │   │   ├── set_edge_secrets.sh
 │   │   ├── test_email_otp.js
 │   │   ├── test_magic_link.js
+│   │   ├── test_secret_smoke.sh
 │   │   └── verify_auth_config.sh
 │   ├── sync
 │   │   ├── docs-to-kb.js
@@ -5580,7 +5582,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1534 directories, 4041 files
+1534 directories, 4043 files
 ```
 
 ## 📊 Stats
@@ -5588,7 +5590,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1806 |
-| Files | 5406 |
+| Files | 5409 |
 | Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1408 |
+| Markdown files | 1409 |
