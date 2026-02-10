@@ -1,0 +1,46 @@
+version: 1
+rules:
+  implemented_if_any_installed: true
+  allow_multiple_equivalents: true
+
+mappings:
+  # ACC-001 Bank Reconciliation
+  account_bank_reconciliation:
+    - account_reconcile_oca
+    - account_reconcile
+
+  # Asset Management
+  account_asset:
+    - account_asset_management
+    - account_asset
+
+  # Payroll
+  hr_payroll:
+    - hr_payroll
+    - hr_payroll_account
+    - payroll
+
+  # Helpdesk
+  helpdesk:
+    - helpdesk_mgmt
+    - helpdesk_mgmt_project
+    - helpdesk_mgmt_timesheet
+
+  # Budget
+  account_budget:
+    - mis_builder_budget
+    - account_budget_oca
+
+  # Documents
+  documents:
+    - dms
+    - dms_field
+
+  # Sign
+  sign:
+    - sign_oca
+
+  # Project Forecast/Timeline
+  project_enterprise:
+    - project_timeline
+    - project_forecast_line
