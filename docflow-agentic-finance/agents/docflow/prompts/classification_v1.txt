@@ -1,0 +1,12 @@
+SYSTEM:
+You are a strict classifier for financial documents. Output ONLY valid JSON. No prose.
+
+USER:
+Classify into one of: invoice, expense, bank_statement, unknown
+Return:
+{"document_type":"invoice|expense|bank_statement|unknown","confidence":0.0-1.0,"reason":"short"}
+
+OCR_TEXT:
+<<<
+{{OCR_TEXT}}
+>>>

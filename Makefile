@@ -1,6 +1,7 @@
 # InsightPulse AI Platform - Makefile
 # Multi-tenant Odoo + Supabase + Superset orchestration
 # Dev server orchestration for cloud IDEs (Claude Code Web, Codex, Figma Make)
+DB ?= odoo_dev
 
 .PHONY: help provision-tbwa provision-tenant test-connection
 .PHONY: dev dev-minimal dev-full dev-frontend dev-backend dev-stop dev-status dev-health
@@ -404,6 +405,20 @@ dev-status:
 			echo "  ⚪ Port $$port: closed"; \
 		fi; \
 	done
+
+# Update a module (MODULE=name DB=odoo_dev)
+dev-update:
+	@if [ -z "$(MODULE)" ]; then \
+		echo "Usage: make dev-update MODULE=ipai_docflow_review [DB=odoo_dev]"; \
+		exit 1; \
+	fi
+	@echo "🔄 Updating module: $(MODULE) on $(DB)"
+	@if [ -f "docker-compose.yml" ]; then \
+		docker compose exec odoo odoo-bin -u $(MODULE) -d $(DB) --stop-after-init; \
+	else \
+		odoo-bin -u $(MODULE) -d $(DB) --stop-after-init; \
+	fi
+	@echo "✅ Module updated"
 
 # Health checks for all services
 dev-health:
