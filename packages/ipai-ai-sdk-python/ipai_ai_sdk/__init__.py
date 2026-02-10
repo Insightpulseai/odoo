@@ -11,6 +11,7 @@ from .types import (
     AIError,
     AIErrorCode,
 )
+from .agent_library import AgentFlowName, AgentName
 
 __version__ = "0.1.0"
 __all__ = [
@@ -20,4 +21,6 @@ __all__ = [
     "HealthCheckResponse",
     "AIError",
     "AIErrorCode",
+    "AgentFlowName",
+    "AgentName",
 ]
