@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e07454d46bd0707a08a9b8d5cdd8c6738f033c63
+> Commit: 01cd37c3ada221b83c034171c9ea3be7e42b8c7c
 
 ```
 .
@@ -145,6 +145,7 @@
 │   │   ├── github-governance.yml
 │   │   ├── go-live-manifest-gate.yml
 │   │   ├── health-check.yml
+│   │   ├── health-smoke.yml
 │   │   ├── icons-drift.yml
 │   │   ├── image-diff.yml
 │   │   ├── infra-memory-job.yml
@@ -3968,6 +3969,7 @@
 │   │   └── validate_governance.sh
 │   ├── health
 │   │   ├── check_all.sh
+│   │   ├── load_env.sh
 │   │   └── odoo_local_9069.sh
 │   ├── import
 │   │   ├── import_activities.py
@@ -5595,7 +5597,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1538 directories, 4052 files
+1538 directories, 4054 files
 ```
 
 ## 📊 Stats
@@ -5603,7 +5605,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1818 |
-| Files | 5426 |
+| Files | 5428 |
 | Python files | 876 |
 | XML files | 299 |
 | Markdown files | 1413 |
