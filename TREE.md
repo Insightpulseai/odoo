@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3d74969483a63af89de2f9cd07d2808ccf942074
+> Commit: c2e4702c24c7e75c02f4da2b1d9564b88ac96283
 
 ```
 .
@@ -216,6 +216,7 @@
 │   │   ├── supabase-db-push.yml
 │   │   ├── supabase-deploy.yml
 │   │   ├── supabase-preview-ci.yml
+│   │   ├── supabase-secrets-deploy.yml
 │   │   ├── supabase-sql-rls-checks.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
@@ -2157,6 +2158,8 @@
 │   │   │   └── mail_and_auth_complete.md
 │   │   ├── 20260210-1147
 │   │   │   └── phase6-agent-library
+│   │   ├── 20260210-1300
+│   │   │   └── supabase-secrets-migration
 │   │   ├── 20260129-odoo-asset-fix.md
 │   │   └── TEMPLATE_azure_waf_rescore.md
 │   ├── finance-ppm
@@ -4089,9 +4092,18 @@
 │   │   │   ├── assert_exposed_schemas.sql
 │   │   │   ├── assert_policies_exist.sql
 │   │   │   └── assert_rls_enabled.sql
+│   │   ├── README.md
 │   │   ├── apply-email-events-pack.sh
+│   │   ├── apply_all.sh
 │   │   ├── checks.sh
-│   │   └── exposed_schemas.py
+│   │   ├── configure_auth_email_templates.sh
+│   │   ├── configure_auth_smtp_and_urls.sh
+│   │   ├── env.example
+│   │   ├── exposed_schemas.py
+│   │   ├── set_edge_secrets.sh
+│   │   ├── test_email_otp.js
+│   │   ├── test_magic_link.js
+│   │   └── verify_auth_config.sh
 │   ├── sync
 │   │   ├── docs-to-kb.js
 │   │   ├── generate-sitemap.js
@@ -4996,6 +5008,8 @@
 │   │   │   └── index.ts
 │   │   ├── schema-changed
 │   │   │   └── index.ts
+│   │   ├── secret-smoke
+│   │   │   └── index.ts
 │   │   ├── seed-odoo-finance
 │   │   │   └── index.ts
 │   │   ├── semantic-export-osi
@@ -5566,15 +5580,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1531 directories, 4030 files
+1534 directories, 4041 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1803 |
-| Files | 5394 |
+| Directories | 1806 |
+| Files | 5406 |
 | Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1406 |
+| Markdown files | 1408 |
