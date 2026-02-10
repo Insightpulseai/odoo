@@ -104,7 +104,7 @@ export default function AuthErrorPage() {
                 {
                   error,
                   timestamp: new Date().toISOString(),
-                  url: window.location.href,
+                  url: typeof window !== "undefined" ? window.location.href : "N/A (SSR)",
                 },
                 null,
                 2
