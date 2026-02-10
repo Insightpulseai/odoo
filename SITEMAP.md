@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 48b2f60f30c55ae2effd6c472c8eba1452257045
+> Commit: c89f2ce7a7409360aefb0319ba67fe8136bc1956
 
 ## 📚 Documentation
 
@@ -589,6 +589,7 @@
 | [Phase 6 Agent Library Wireup - VERIFICATION SUMMARY](docs/evidence/20260210-1147/phase6-agent-library/VERIFICATION_SUMMARY.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Supabase Secrets Deployment Results](docs/evidence/20260210-1300/supabase-secrets-migration/DEPLOYMENT_RESULTS.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
 | [Supabase Secrets Migration Implementation](docs/evidence/20260210-1300/supabase-secrets-migration/IMPLEMENTATION.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
+| [Supabase SSOT Secrets Migration - Verification Report](docs/evidence/20260210-1500/phase6-supabase-ssot-complete/VERIFICATION.md) | docs/evidence/20260210-1500/phase6-supabase-ssot-complete |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
