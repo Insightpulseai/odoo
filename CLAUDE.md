@@ -27,19 +27,11 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
-| **Domain** | `insightpulseai.com` (`.net` is deprecated) |
-| **DNS** | Cloudflare (delegated from Spacesquare) |
-| **Mail** | Zoho Mail (`smtp.zoho.com:587`) |
-| **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
-| **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
+| **Stack** | Odoo CE 19.0 + OCA + PostgreSQL 16 |
+| **Domain** | `insightpulseai.com` (`.net` deprecated) |
 | **Python** | 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` — 42 Edge Functions, Vault, Auth, Realtime, pgvector, n8n+GitHub bridge |
-| **MCP** | `mcp.insightpulseai.com` — 11 servers (n8n bridge, jobs system, AI orchestration) |
-| **BI/Analytics** | Apache Superset (`superset.insightpulseai.com`), Tableau Cloud |
-| **Web/CMS** | Hybrid: Next.js on Vercel (public), Odoo website (internal) |
-| **EE Parity** | Target >= 80% via `CE + OCA + ipai_*` |
-| **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
+| **Supabase** | `spdtwktxdalcfigzeqrz` |
+| **Repo** | `Insightpulseai/odoo` |
 
 ---
 
@@ -153,58 +145,10 @@ feat|fix|refactor|docs|test|chore(scope): description
 
 ---
 
-## Repo Stats (as of 2026-02-07)
+## Detailed Reference
 
-| Item | Count |
-|------|-------|
-| IPAI custom modules | 43 (`addons/ipai/`) |
-| Apps | 28 (`apps/`) |
-| Packages | 8 (`packages/`) |
-| Spec bundles | 62+ (`spec/`) |
-| MCP servers | 11 (`mcp/servers/`) |
-| GitHub workflows | 153 (`.github/workflows/`) |
-| Scripts | 550+ in 43 categories (`scripts/`) |
-| Docs categories | 67+ (`docs/`) |
-
----
-
-## Allowed Tools
-
-See `.claude/settings.json` for full list. Summary:
-- File ops: Edit, Read, Write, Glob, Grep
-- Git: status, diff, add, commit, push, log, branch
-- GitHub: `gh *`
-- Lint: npm/pnpm lint, typecheck, test, build; black, isort, flake8
-- Scripts: `repo_health.sh`, `spec_validate.sh`, `verify.sh`, `ci_local.sh`, `ci/*`
-
----
-
-## Detailed Reference (extracted)
-
-For full details on any topic, see these docs:
-
-| Topic | File |
-|-------|------|
-| Architecture & stack diagram | `docs/ai/ARCHITECTURE.md` |
-| Directory structure | `docs/ai/REPO_STRUCTURE.md` |
-| IPAI module naming & hierarchy | `docs/ai/IPAI_MODULES.md` |
-| Enterprise parity strategy | `docs/ai/EE_PARITY.md` |
-| CI/CD pipelines (153 workflows) | `docs/ai/CI_WORKFLOWS.md` |
-| MCP servers & jobs system | `docs/ai/MCP_SYSTEM.md` |
-| Integration points (n8n, Slack, etc) | `docs/ai/INTEGRATIONS.md` |
-| BIR compliance (Philippines) | `docs/ai/BIR_COMPLIANCE.md` |
-| OCA workflow & scaffolding | `docs/ai/OCA_WORKFLOW.md` |
-| Testing recipes | `docs/ai/TESTING.md` |
-| Docker commands | `docs/ai/DOCKER.md` |
-| Troubleshooting | `docs/ai/TROUBLESHOOTING.md` |
-| Spec kit structure | `docs/ai/SPEC_KIT.md` |
-| External memory system | `docs/ai/MEMORY.md` |
-| Supabase sync & monorepo mirroring | `docs/ai/SUPABASE.md` |
-| Web presence & CMS strategy | `docs/ai/WEB_CMS.md` |
-| GitHub integration | `docs/ai/GITHUB.md` |
-| PostgreSQL compatibility | PG 15 (Supabase) <-> PG 16 (DO self-hosted): wire-compatible |
+All topics documented in `docs/ai/` — architecture, workflows, integrations, testing, deployment, troubleshooting, etc.
 
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-02-07*
