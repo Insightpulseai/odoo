@@ -1,0 +1,23 @@
+version: 0.1
+scoring:
+  threshold: 0.80
+  tiers:
+    0:
+      weight: 1.0
+      hard_gate: true
+    1:
+      weight: 0.5
+      hard_gate: false
+    2:
+      weight: 0.25
+      hard_gate: false
+
+gates:
+  - name: "Tier-0 must be fully passing"
+    rule: "tier0_pass == true"
+  - name: "Overall score must meet threshold"
+    rule: "score >= scoring.threshold"
+
+output:
+  json: "docs/evidence/latest/parity/parity_report.json"
+  markdown: "docs/evidence/latest/parity/parity_report.md"

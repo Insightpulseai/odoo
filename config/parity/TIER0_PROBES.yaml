@@ -1,0 +1,98 @@
+version: 0.1
+
+# If true: evidence artifacts are REQUIRED (upgrade rehearsal logs/reports, etc).
+# If false: allows "script + runbook present" to pass (useful during rollout).
+strict_evidence: false
+
+probes:
+  ci_build_pipeline:
+    # Must find >=1 workflow with a "build-like" signal.
+    workflow_globs:
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
+    any_workflow_must_contain_regex:
+      - "(?i)pnpm\\s+install|yarn\\s+install|npm\\s+ci"
+      - "(?i)odoo-bin|odoo\\s+bin|addons_path"
+      - "(?i)docker\\s+build|docker-compose|buildx"
+    # Optional: allow a dedicated build workflow name if you standardize it later
+    preferred_workflow_name_regex:
+      - "(?i)build|ci|test|deploy|health|smoke"
+
+  env_separation:
+    # Prove there is an explicit separation concept in code/docs for dev/stage/prod.
+    any_file_must_exist:
+      - "docs/architecture/PROD_RUNTIME_SNAPSHOT.md"
+      - "docs/architecture/runtime_identifiers.json"
+    any_path_must_match_glob:
+      - "scripts/*stage*"
+      - "scripts/*prod*"
+      - "scripts/**/*deploy*"
+      - ".github/workflows/*deploy*"
+    any_file_must_contain_regex:
+      - "(?i)odoo_stage|stage\\.insightpulseai\\.com|staging"
+      - "(?i)prod|production|erp\\.insightpulseai\\.com"
+
+  remote_shell_access:
+    # Prove there is a scripted remote access pathway (ssh/tunnel/exec), CLI-only.
+    any_path_must_match_glob:
+      - "scripts/**/ssh*.sh"
+      - "scripts/**/tunnel*.sh"
+      - "scripts/**/remote*.sh"
+    any_file_must_contain_regex:
+      - "(?i)ssh\\s+.*@|ProxyJump|IdentityFile"
+      - "(?i)docker\\s+exec|kubectl\\s+exec"
+
+  upgrade_rehearsal:
+    # Prove there is a repeatable rehearsal pipeline (script + evidence optional/required).
+    any_path_must_match_glob:
+      - "scripts/**/*upgrade*"
+      - "scripts/**/*migration*"
+      - "docs/**/*upgrade*"
+      - "docs/**/*migration*"
+    evidence_globs:
+      - "docs/evidence/**/upgrade*/*"
+      - "docs/evidence/**/migration*/*"
+
+  upgrade_report:
+    # Prove there is a structured report artifact path you generate.
+    report_globs:
+      - "docs/evidence/**/upgrade*/**/*.json"
+      - "docs/evidence/**/migration*/**/*.json"
+      - "docs/evidence/**/upgrade*/**/*.md"
+      - "docs/evidence/**/migration*/**/*.md"
+
+  upgrade_rollback_plan:
+    # Prove rollback is documented + scriptable
+    any_path_must_match_glob:
+      - "docs/**/*rollback*"
+      - "scripts/**/*rollback*"
+    any_file_must_contain_regex:
+      - "(?i)restore|snapshot|promote|rollback"
+
+  support_workflow:
+    # Prove there is an operational workflow doc (intake->triage->resolve->postmortem)
+    any_path_must_match_glob:
+      - "docs/**/*runbook*"
+      - "docs/**/*support*"
+      - "docs/**/*incident*"
+      - "docs/**/*postmortem*"
+    any_file_must_contain_regex:
+      - "(?i)intake|triage|severity|sev|postmortem|rca"
+
+  runbooks_present:
+    # Require at least N distinct runbook-like docs
+    runbook_globs:
+      - "docs/**/*RUNBOOK*.md"
+      - "docs/**/*runbook*.md"
+      - "docs/**/*incident*.md"
+    min_count: 2
+
+  sla_monitoring:
+    # Prove there is monitoring/alerting defined in repo (CI smoke checks or monitoring configs)
+    any_path_must_match_glob:
+      - ".github/workflows/*health*"
+      - ".github/workflows/*smoke*"
+      - "scripts/**/*health*"
+      - "scripts/**/*smoke*"
+    any_file_must_contain_regex:
+      - "(?i)curl\\s+-sS|health|healthz|/api/.*health"
