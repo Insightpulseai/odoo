@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2e85ea2360654e07e2ad153da955499d2a54eb72
+> Commit: e44114ab39a59a5f9a23fac96333954f6b4298b6
 
 ```
 .
@@ -80,6 +80,7 @@
 │   │   ├── architecture-diagrams.yml
 │   │   ├── audit-contract.yml
 │   │   ├── auth-email-ai-gate.yml
+│   │   ├── auth-smoke-test.yml
 │   │   ├── auto-install-parity-modules.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── azure-waf-parity.yml
@@ -4107,6 +4108,7 @@
 │   │   ├── invoke_secret_smoke.sh
 │   │   ├── rotate_zoho_password.sh
 │   │   ├── set_edge_secrets.sh
+│   │   ├── test_auth_flows_safe.sh
 │   │   ├── test_email_otp.js
 │   │   ├── test_email_otp_curl.sh
 │   │   ├── test_magic_link.js
@@ -5589,15 +5591,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1536 directories, 4048 files
+1536 directories, 4050 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1808 |
-| Files | 5416 |
+| Directories | 1814 |
+| Files | 5421 |
 | Python files | 876 |
 | XML files | 299 |
 | Markdown files | 1411 |
