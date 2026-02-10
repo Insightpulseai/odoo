@@ -1,111 +1,17 @@
 {
-  "name": "IPAI Odoo CE 18 Dev",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "remoteUser": "vscode",
+  "name": "Odoo 19 Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "odoo",
+  "workspaceFolder": "/workspace",
 
   "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20"
-    },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/postgres:1": {
-      "version": "16",
-      "dbName": "odoo_dev",
-      "postgresUser": "odoo",
-      "postgresPassword": "odoo"
-    },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "version": "latest"
-    },
-    "ghcr.io/supabase/cli:1": {
-      "version": "latest"
     }
   },
-
-  "forwardPorts": [
-    8069,
-    8070,
-    8071,
-    3000,
-    5678,
-    8766,
-    8789,
-    5432,
-    54321,
-    54322
-  ],
-
-  "portsAttributes": {
-    "8069": {
-      "label": "Odoo CE Core",
-      "onAutoForward": "openBrowser"
-    },
-    "8070": {
-      "label": "Odoo Marketing",
-      "onAutoForward": "notify"
-    },
-    "8071": {
-      "label": "Odoo Accounting",
-      "onAutoForward": "notify"
-    },
-    "3000": {
-      "label": "Control Room Dashboard",
-      "onAutoForward": "openBrowser"
-    },
-    "5678": {
-      "label": "n8n Workflows",
-      "onAutoForward": "notify"
-    },
-    "8766": {
-      "label": "MCP Coordinator",
-      "onAutoForward": "silent"
-    },
-    "8789": {
-      "label": "Control Room API",
-      "onAutoForward": "silent"
-    },
-    "5432": {
-      "label": "PostgreSQL",
-      "onAutoForward": "silent"
-    },
-    "54321": {
-      "label": "Supabase API",
-      "onAutoForward": "silent"
-    },
-    "54322": {
-      "label": "Supabase Studio",
-      "onAutoForward": "notify"
-    }
-  },
-
-  "mounts": [
-    "source=${localWorkspaceFolder}/addons/oca/account-financial-tools,target=/workspace/odoo/addons/oca/account-financial-tools,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca/account-financial-reporting,target=/workspace/odoo/addons/oca/account-financial-reporting,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca/server-tools,target=/workspace/odoo/addons/oca/server-tools,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca/web,target=/workspace/odoo/addons/oca/web,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca/project-agile,target=/workspace/odoo/addons/oca/project-agile,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca/queue,target=/workspace/odoo/addons/oca/queue,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/ipai,target=/workspace/odoo/addons/ipai,type=bind,consistency=cached"
-  ],
-
-  "postCreateCommand": "bash scripts/codespaces/bootstrap.sh",
-  "postStartCommand": "bash scripts/codespaces/start.sh && [ -f .env.local ] && set -a && source .env.local && set +a || true",
 
   "customizations": {
     "vscode": {
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.languageServer": "Pylance",
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "editor.formatOnSave": true,
-        "editor.rulers": [88, 120],
-        "files.trimTrailingWhitespace": true,
-        "terminal.integrated.env.linux": {
-          "SUPABASE_PROJECT_REF": "spdtwktxdalcfigzeqrz"
-        }
-      },
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
@@ -114,56 +20,34 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "redhat.vscode-yaml",
-        "bradlc.vscode-tailwindcss",
-        "GitHub.copilot",
-        "ms-vscode-remote.remote-containers",
-        "supabase.supabase-cli",
-        "anthropic.claude-code"
-      ]
-    },
-    "codespaces": {
-      "openFiles": [
-        "CLAUDE.md",
-        "README.md"
+        "GitHub.copilot"
       ],
-      "repositories": {
-        "jgtolentino/odoo-ce": {
-          "permissions": {
-            "contents": "write",
-            "pull_requests": "write",
-            "issues": "write"
-          }
-        }
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Pylance",
+        "terminal.integrated.defaultProfile.linux": "bash"
       }
     }
   },
 
-  "containerEnv": {
-    "POSTGRES_USER": "odoo",
-    "POSTGRES_PASSWORD": "odoo",
-    "POSTGRES_DB": "odoo_dev",
-    "PGHOST": "localhost",
-    "PGUSER": "odoo",
-    "PGPASSWORD": "odoo",
-    "SUPABASE_PROJECT_REF": "spdtwktxdalcfigzeqrz",
-    "SUPABASE_URL": "https://spdtwktxdalcfigzeqrz.supabase.co"
-  },
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "postStartCommand": "bash .devcontainer/scripts/post-start.sh",
 
-  "secrets": {
-    "SUPABASE_SERVICE_ROLE_KEY": {
-      "description": "Supabase service role key for API access"
+  "forwardPorts": [8069, 8072, 5432],
+  "portsAttributes": {
+    "8069": {
+      "label": "Odoo Core",
+      "onAutoForward": "notify"
     },
-    "SUPABASE_ANON_KEY": {
-      "description": "Supabase anonymous key for public access"
+    "8072": {
+      "label": "Odoo Longpolling",
+      "onAutoForward": "silent"
     },
-    "ANTHROPIC_API_KEY": {
-      "description": "Anthropic API key for Claude Code"
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
     }
   },
 
-  "hostRequirements": {
-    "cpus": 4,
-    "memory": "8gb",
-    "storage": "32gb"
-  }
+  "remoteUser": "odoo"
 }
