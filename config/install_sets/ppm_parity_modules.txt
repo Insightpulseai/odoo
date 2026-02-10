@@ -1,0 +1,15 @@
+# --- Foundations (recommended) ---
+queue_job
+
+# --- PPM-like stack ---
+project
+hr_timesheet
+# OCA timesheet extensions (Missing in 19.0)
+# account_budget_oca
+# web_timeline
+# project_wbs
+# project_forecast_lines
+
+# --- Documents/OCR glue (your custom) ---
+ipai_doc_ocr_bridge
+ipai_enterprise_bridge

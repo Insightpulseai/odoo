@@ -24,7 +24,7 @@ documentation:
   # --- Project Documentation ---
   - id: project_readme
     title: "InsightPulse Odoo CE - Main README"
-    path: "/home/user/odoo-ce/README.md"
+    path: "/home/user/odoo/README.md"
     domain: odoo_development
     type: overview
     topics:
@@ -36,7 +36,7 @@ documentation:
 
   - id: project_spec
     title: "Project Specification"
-    path: "/home/user/odoo-ce/spec.md"
+    path: "/home/user/odoo/spec.md"
     domain: odoo_development
     type: specification
     topics:
@@ -48,7 +48,7 @@ documentation:
 
   - id: implementation_plan
     title: "Implementation Plan"
-    path: "/home/user/odoo-ce/plan.md"
+    path: "/home/user/odoo/plan.md"
     domain: odoo_development
     type: roadmap
     topics:
@@ -60,7 +60,7 @@ documentation:
 
   - id: module_service_matrix
     title: "Module & Service Matrix"
-    path: "/home/user/odoo-ce/specs/MODULE_SERVICE_MATRIX.md"
+    path: "/home/user/odoo/specs/MODULE_SERVICE_MATRIX.md"
     domain: odoo_development
     type: architecture
     topics:
@@ -73,7 +73,7 @@ documentation:
   # --- OCR Documentation ---
   - id: ocr_setup_guide
     title: "OCR Service Definition"
-    path: "/home/user/odoo-ce/ODOO_OCR_SETUP.md"
+    path: "/home/user/odoo/ODOO_OCR_SETUP.md"
     domain: ocr_quality
     type: runbook
     topics:
@@ -86,7 +86,7 @@ documentation:
 
   - id: ocr_project_complete
     title: "OCR Project Completion Report"
-    path: "/home/user/odoo-ce/OCR_PROJECT_COMPLETE.md"
+    path: "/home/user/odoo/OCR_PROJECT_COMPLETE.md"
     domain: ocr_quality
     type: project_report
     topics:
@@ -100,7 +100,7 @@ documentation:
   # --- n8n Automation Documentation ---
   - id: n8n_workflow_conventions
     title: "n8n Workflow Conventions"
-    path: "/home/user/odoo-ce/notion-n8n-monthly-close/WORKFLOW_CONVENTIONS.md"
+    path: "/home/user/odoo/notion-n8n-monthly-close/WORKFLOW_CONVENTIONS.md"
     domain: automation
     type: standards
     topics:
@@ -112,7 +112,7 @@ documentation:
 
   - id: n8n_cli_guide
     title: "n8n CLI Usage Guide"
-    path: "/home/user/odoo-ce/notion-n8n-monthly-close/N8N_CLI_README.md"
+    path: "/home/user/odoo/notion-n8n-monthly-close/N8N_CLI_README.md"
     domain: automation
     type: howto
     topics:
@@ -123,7 +123,7 @@ documentation:
 
   - id: n8n_deployment_status
     title: "n8n Deployment Status"
-    path: "/home/user/odoo-ce/notion-n8n-monthly-close/DEPLOYMENT_STATUS.md"
+    path: "/home/user/odoo/notion-n8n-monthly-close/DEPLOYMENT_STATUS.md"
     domain: automation
     type: status
     topics:
@@ -135,7 +135,7 @@ documentation:
   # --- Infrastructure Documentation ---
   - id: deployment_guide
     title: "Deployment Guide"
-    path: "/home/user/odoo-ce/docs/DEPLOYMENT_GUIDE.md"
+    path: "/home/user/odoo/docs/DEPLOYMENT_GUIDE.md"
     domain: infrastructure
     type: runbook
     topics:
@@ -147,7 +147,7 @@ documentation:
 
   - id: health_check_guide
     title: "Health Check Documentation"
-    path: "/home/user/odoo-ce/docs/HEALTH_CHECK.md"
+    path: "/home/user/odoo/docs/HEALTH_CHECK.md"
     domain: infrastructure
     type: monitoring
     topics:
@@ -159,7 +159,7 @@ documentation:
   # --- Finance Operations ---
   - id: finance_prd
     title: "Expense & Equipment MVP PRD"
-    path: "/home/user/odoo-ce/specs/002-odoo-expense-equipment-mvp.prd.md"
+    path: "/home/user/odoo/specs/002-odoo-expense-equipment-mvp.prd.md"
     domain: finance_operations
     type: requirements
     topics:

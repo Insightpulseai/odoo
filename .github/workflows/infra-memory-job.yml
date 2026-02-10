@@ -69,7 +69,7 @@ jobs:
           ODOO_USER: ${{ secrets.ODOO_USER }}
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
           ODOO_ADDONS_PATHS: 'addons/ipai,addons/oca'
-          GITHUB_REPOS: 'jgtolentino/odoo-ce'
+          GITHUB_REPOS: 'jgtolentino/odoo'
         run: |
           SOURCES="${{ steps.sources.outputs.sources }}"
           DRY_RUN="${{ steps.sources.outputs.dry_run }}"

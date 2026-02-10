@@ -20,7 +20,7 @@ serve(async (req) => {
             {
                 title: "IPAI Copilot Stub",
                 source: "supabase/functions/ipai-copilot/index.ts",
-                url: "https://github.com/jgtolentino/odoo-ce",
+                url: "https://github.com/jgtolentino/odoo",
                 section: "Backend"
             }
         ]

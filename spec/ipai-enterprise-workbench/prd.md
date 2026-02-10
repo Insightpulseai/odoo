@@ -20,7 +20,7 @@ Deliver a production-ready "Enterprise Workbench" stack that installs, configure
 3) **Superset** runs and connects to analytics sources (Odoo read-only and/or replicated schemas) and exposes Finance PPM dashboards.
 4) **Supabase + n8n + MCP** enable automation: reminders, escalations, approvals, data sync; with auditable run logs.
 5) **IPAI design system modules** provide theme/token parity across Odoo + web surfaces; future TBWA branding is token-driven.
-6) Documentation links and references are updated to the canonical base: `https://jgtolentino.github.io/odoo-ce/`.
+6) Documentation links and references are updated to the canonical base: `https://jgtolentino.github.io/odoo/`.
 
 ## 3) Non-Goals
 - Running Odoo's primary transactional database on Supabase.
@@ -83,7 +83,7 @@ Deliver a production-ready "Enterprise Workbench" stack that installs, configure
   - future Mattermost branding overlay adapter
 
 ### 5.5 Documentation
-- Must publish docs under: `https://jgtolentino.github.io/odoo-ce/`
+- Must publish docs under: `https://jgtolentino.github.io/odoo/`
 - Any internal references to alternative docs bases must be removed or redirected.
 
 ## 6) EE/IAP Upsell Replacement Scope

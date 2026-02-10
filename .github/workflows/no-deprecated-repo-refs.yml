@@ -16,6 +16,6 @@ jobs:
             --exclude-dir=archive \
             --exclude-dir=.git \
             --exclude="no-deprecated-repo-refs.yml"; then
-            echo "Found deprecated repo reference(s). Replace with https://github.com/jgtolentino/odoo-ce"
+            echo "Found deprecated repo reference(s). Replace with https://github.com/jgtolentino/odoo"
             exit 1
           fi

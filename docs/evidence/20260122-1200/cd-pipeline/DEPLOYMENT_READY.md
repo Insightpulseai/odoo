@@ -45,7 +45,7 @@
 | `DIGITALOCEAN_TOKEN` | `.env.local` line 45 |
 
 ### Add via GitHub UI
-1. Go to: https://github.com/jgtolentino/odoo-ce/settings/secrets/actions
+1. Go to: https://github.com/jgtolentino/odoo/settings/secrets/actions
 2. Click "New repository secret"
 3. Name: `DIGITALOCEAN_TOKEN`
 4. Value: Copy from `.env.local` line 45 (starts with `dop_v1_`)
@@ -92,7 +92,7 @@ curl -sf https://erp.insightpulseai.com/web/health
 curl -sf https://erp.insightpulseai.com/web/login
 
 # Check workflow status
-# https://github.com/jgtolentino/odoo-ce/actions/workflows/cd-production.yml
+# https://github.com/jgtolentino/odoo/actions/workflows/cd-production.yml
 ```
 
 ---

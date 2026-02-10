@@ -9,7 +9,7 @@
 ## 1. Context
 
 - Canonical Odoo dev sandbox:
-  - `~/Documents/GitHub/odoo-ce/sandbox/dev`
+  - `~/Documents/GitHub/odoo/sandbox/dev`
   - `docker-compose.yml` in that directory is the source of truth.
 - Local Docker is for:
   - Odoo 18 CE app + Postgres
@@ -42,7 +42,7 @@ infra/docker/DOCKER_DESKTOP_SSOT.yaml
 From the Odoo sandbox:
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 ./scripts/docker-desktop-audit.sh
 ```
 
@@ -104,7 +104,7 @@ docker volume ls --format '{{.Name}}' \
 From the sandbox directory:
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 
 # Bring up core services
 docker compose up -d

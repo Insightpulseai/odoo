@@ -30,7 +30,7 @@ Provide a **reproducible**, **upgrade-safe**, **OCA-compliant** Odoo 18 CE runti
 ### Repository
 
 ```
-ghcr.io/jgtolentino/odoo-ce
+ghcr.io/jgtolentino/odoo
 ```
 
 ### Tags
@@ -47,7 +47,7 @@ ghcr.io/jgtolentino/odoo-ce
 ### OCI Labels
 
 ```dockerfile
-org.opencontainers.image.source=https://github.com/jgtolentino/odoo-ce
+org.opencontainers.image.source=https://github.com/jgtolentino/odoo
 org.opencontainers.image.revision=<git-sha>
 org.opencontainers.image.created=<timestamp>
 org.opencontainers.image.version=<semver>
@@ -290,7 +290,7 @@ The `90-preflight.sh` script verifies:
 ```yaml
 services:
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:18.0
+    image: ghcr.io/jgtolentino/odoo:18.0
     ports:
       - "8069:8069"
     environment:
@@ -341,7 +341,7 @@ secrets:
 ### 11.2 Smoke Test
 
 ```bash
-./scripts/ci_smoke_test.sh ghcr.io/jgtolentino/odoo-ce:18.0-<sha>
+./scripts/ci_smoke_test.sh ghcr.io/jgtolentino/odoo:18.0-<sha>
 ```
 
 The smoke test:
@@ -353,7 +353,7 @@ The smoke test:
 ### 11.3 Audit Bundle
 
 ```bash
-./scripts/image_audit.sh ghcr.io/jgtolentino/odoo-ce:18.0 odoo:18.0
+./scripts/image_audit.sh ghcr.io/jgtolentino/odoo:18.0 odoo:18.0
 ```
 
 Generates:
@@ -459,7 +459,7 @@ A build is **releaseable** when:
 
 ## 17. Related Documentation
 
-- [003-odoo-ce-custom-image-spec.md](./003-odoo-ce-custom-image-spec.md) - Original image spec
+- [003-odoo-custom-image-spec.md](./003-odoo-custom-image-spec.md) - Original image spec
 - [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment guide
 - [OCA_MIGRATION.md](./OCA_MIGRATION.md) - OCA module migration notes
 - [SECRETS_NAMING_AND_STORAGE.md](./SECRETS_NAMING_AND_STORAGE.md) - Secret management

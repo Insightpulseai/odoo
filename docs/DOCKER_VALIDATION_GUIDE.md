@@ -67,7 +67,7 @@ docker push registry.digitalocean.com/<your-registry>/odoo:latest
 ### Step 3: Update Deployment Configuration
 ```bash
 # Update docker-compose.prod.yml to use DigitalOcean image
-sed -i 's|image: ghcr.io/jgtolentino/odoo-ce:latest|image: registry.digitalocean.com/<your-registry>/odoo:latest|g' deploy/docker-compose.prod.yml
+sed -i 's|image: ghcr.io/jgtolentino/odoo:latest|image: registry.digitalocean.com/<your-registry>/odoo:latest|g' deploy/docker-compose.prod.yml
 ```
 
 ## 🔧 GitHub Actions Automation
@@ -75,7 +75,7 @@ sed -i 's|image: ghcr.io/jgtolentino/odoo-ce:latest|image: registry.digitalocean
 ### Option A: GitHub Container Registry (Current)
 ```yaml
 # Current workflow uses GitHub Container Registry
-image: ghcr.io/jgtolentino/odoo-ce:latest
+image: ghcr.io/jgtolentino/odoo:latest
 ```
 
 ### Option B: DigitalOcean Container Registry (Enhanced)

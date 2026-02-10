@@ -20,7 +20,7 @@
 
 | Setting | Value |
 |---------|-------|
-| Repository | `jgtolentino/odoo-ce` |
+| Repository | `jgtolentino/odoo` |
 | Supabase Directory | `supabase` |
 | Production Branch | `main` |
 | Deploy on Push | Enabled |

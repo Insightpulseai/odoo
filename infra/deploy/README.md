@@ -32,8 +32,8 @@ echo $GHCR_TOKEN | docker login ghcr.io -u jgtolentino --password-stdin
 
 ```bash
 # Clone the repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce/deploy
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo/deploy
 
 # Create environment file
 cp ../.env.example .env
@@ -121,7 +121,7 @@ If the new image causes issues:
 ### Step 1: Identify Last Working Version
 
 Check GitHub Packages for available tags:
-https://github.com/jgtolentino/odoo-ce/pkgs/container/odoo-ce
+https://github.com/jgtolentino/odoo/pkgs/container/odoo
 
 ### Step 2: Edit docker-compose.prod.yml
 
@@ -129,7 +129,7 @@ https://github.com/jgtolentino/odoo-ce/pkgs/container/odoo-ce
 services:
   odoo:
     # Change from :latest to specific SHA
-    image: ghcr.io/jgtolentino/odoo-ce:sha-057bb3a
+    image: ghcr.io/jgtolentino/odoo:sha-057bb3a
 ```
 
 ### Step 3: Redeploy
@@ -154,7 +154,7 @@ docker compose -f docker-compose.prod.yml exec db \
   pg_dump -U odoo odoo | gzip > /opt/backups/odoo_$(date +%Y%m%d_%H%M%S).sql.gz
 
 # Backup filestore
-docker cp odoo-ce:/var/lib/odoo/filestore /opt/backups/filestore_$(date +%Y%m%d)
+docker cp odoo:/var/lib/odoo/filestore /opt/backups/filestore_$(date +%Y%m%d)
 ```
 
 ### Restore Database
@@ -193,7 +193,7 @@ docker compose -f docker-compose.prod.yml ps
 ### Check Resource Usage
 
 ```bash
-docker stats odoo-ce odoo-db
+docker stats odoo odoo-db
 ```
 
 ---
@@ -261,7 +261,7 @@ See `.env.example` for complete list.
 ## Support
 
 - **Documentation:** `docs/` directory
-- **Issues:** https://github.com/jgtolentino/odoo-ce/issues
+- **Issues:** https://github.com/jgtolentino/odoo/issues
 - **Mattermost:** #odoo-support channel
 
 ---

@@ -170,7 +170,7 @@ ODOO_BIN=/path/to/odoo-bin python scripts/test_ipai_install_upgrade.py
 ```
 
 ### GitHub Actions Workflow
-Add to `.github/workflows/ci-odoo-ce.yml`:
+Add to `.github/workflows/ci-odoo.yml`:
 
 ```yaml
 - name: Test IPAI Module Install/Upgrade

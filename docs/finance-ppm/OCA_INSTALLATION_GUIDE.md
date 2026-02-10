@@ -174,7 +174,7 @@ python3 /tmp/check_finance_ppm_modules.py
 
 ```bash
 # Copy Finance PPM module to addons
-cp -r /root/odoo-ce/addons/ipai_finance_ppm /mnt/extra-addons/
+cp -r /root/odoo/addons/ipai_finance_ppm /mnt/extra-addons/
 
 # Install module
 docker exec -i odoo-accounting odoo -d odoo_accounting -i ipai_finance_ppm --stop-after-init

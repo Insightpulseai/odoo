@@ -29,7 +29,7 @@ Embed using the raw GitHub URL in a Superset Markdown chart:
 ```markdown
 ## Database ERD
 
-![ERD](https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD.svg)
+![ERD](https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD.svg)
 ```
 
 Or for the IPAI-only view:
@@ -37,7 +37,7 @@ Or for the IPAI-only view:
 ```markdown
 ## IPAI Modules ERD
 
-![IPAI ERD](https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD_ipai.svg)
+![IPAI ERD](https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD_ipai.svg)
 ```
 
 ## Method 2: GitHub Pages
@@ -45,7 +45,7 @@ Or for the IPAI-only view:
 If GitHub Pages is enabled on the `gh-pages` branch:
 
 ```markdown
-<img src="https://jgtolentino.github.io/odoo-ce/erd/diagrams/summary/relationships.real.large.svg"
+<img src="https://jgtolentino.github.io/odoo/erd/diagrams/summary/relationships.real.large.svg"
      style="width:100%; max-width:2000px;" />
 ```
 
@@ -148,19 +148,19 @@ serve(async (req: Request) => {
 
 ## Full ERD
 
-<img src="https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD.svg"
+<img src="https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD.svg"
      alt="Full ERD"
      style="width:100%; max-height:800px; object-fit:contain;" />
 
 ## IPAI Modules Only
 
-<img src="https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD_ipai.svg"
+<img src="https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD_ipai.svg"
      alt="IPAI ERD"
      style="width:100%; max-height:600px; object-fit:contain;" />
 
 ---
 
-*Last generated: Check [ODOO_MODEL_INDEX.json](https://github.com/jgtolentino/odoo-ce/blob/main/docs/data-model/ODOO_MODEL_INDEX.json) for model count*
+*Last generated: Check [ODOO_MODEL_INDEX.json](https://github.com/jgtolentino/odoo/blob/main/docs/data-model/ODOO_MODEL_INDEX.json) for model count*
 ```
 
 4. Save and add to a dashboard named **"Database ERD"**

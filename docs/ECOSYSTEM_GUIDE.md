@@ -18,16 +18,16 @@
 → URL: `https://erp.insightpulseai.com/xmlrpc/2/common` (common) or `/xmlrpc/2/object` (object)
 
 **Q: I need to install/upgrade an Odoo module**
-→ Use: `ssh root@159.223.75.148 "docker exec odoo-ce /usr/bin/odoo -c /etc/odoo/odoo.conf -d production --init MODULE_NAME --stop-after-init --http-port=8070"`
+→ Use: `ssh root@159.223.75.148 "docker exec odoo /usr/bin/odoo -c /etc/odoo/odoo.conf -d production --init MODULE_NAME --stop-after-init --http-port=8070"`
 
 **Q: I need to check Odoo logs**
-→ Use: `ssh root@159.223.75.148 "docker logs odoo-ce --tail=50"`
+→ Use: `ssh root@159.223.75.148 "docker logs odoo --tail=50"`
 
 **Q: I need to restart Odoo**
-→ Use: `ssh root@159.223.75.148 "docker restart odoo-ce"`
+→ Use: `ssh root@159.223.75.148 "docker restart odoo"`
 
 **Q: Where are the module files?**
-→ Server: `/opt/odoo-ce/addons/ipai_*/`
+→ Server: `/opt/odoo/addons/ipai_*/`
 → Local: `addons/ipai_*/`
 
 ---
@@ -38,8 +38,8 @@
 
 | Container | Image | Role | Database | Ports | Network |
 |-----------|-------|------|----------|-------|---------|
-| `odoo-ce` | odoo:18.0 | Main Odoo ERP | `production` (primary), `odoo` (test) | 127.0.0.1:8069→8069 | odoo-ce_odoo_network |
-| `odoo-db` | postgres:16-alpine | Odoo PostgreSQL | `production`, `odoo` | 5432 (internal) | odoo-ce_odoo_network |
+| `odoo` | odoo:18.0 | Main Odoo ERP | `production` (primary), `odoo` (test) | 127.0.0.1:8069→8069 | odoo_odoo_network |
+| `odoo-db` | postgres:16-alpine | Odoo PostgreSQL | `production`, `odoo` | 5432 (internal) | odoo_odoo_network |
 
 ### Integration Services
 
@@ -137,7 +137,7 @@
 
 **Proxy Rules**:
 ```
-https://erp.insightpulseai.com/* → odoo-ce:8069 (Odoo CE 18.0)
+https://erp.insightpulseai.com/* → odoo:8069 (Odoo CE 18.0)
 ```
 
 ### Odoo URL Structure
@@ -200,10 +200,10 @@ https://erp.insightpulseai.com/odoo/apps/MODULE_ID/MODEL/RECORD_ID # Module deta
 
 ## 📂 Directory Structure (Simplified for AI Agents)
 
-### Repository Root (`/Users/tbwa/Documents/GitHub/odoo-ce`)
+### Repository Root (`/Users/tbwa/Documents/GitHub/odoo`)
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                          # Custom Odoo modules (MAIN WORK AREA)
 │   ├── ipai_cash_advance/          # Cash advance management
 │   ├── ipai_ce_branding/           # Custom branding
@@ -246,10 +246,10 @@ odoo-ce/
 └── README.md                        # Project overview
 ```
 
-### Server File Structure (`/opt/odoo-ce` on 159.223.75.148)
+### Server File Structure (`/opt/odoo` on 159.223.75.148)
 
 ```
-/opt/odoo-ce/
+/opt/odoo/
 ├── addons/                          # Same as repo (synced via git pull)
 │   ├── ipai_*/                     # All InsightPulse modules
 │   └── (mirrors local repo)
@@ -265,9 +265,9 @@ odoo-ce/
 
 ### Container File Structure
 
-**Odoo Container** (`odoo-ce`):
+**Odoo Container** (`odoo`):
 ```
-/opt/odoo-ce/addons/          # Custom modules
+/opt/odoo/addons/          # Custom modules
 /usr/lib/python3/dist-packages/odoo/  # Odoo core
 /etc/odoo/odoo.conf           # Configuration file
 /var/log/odoo/                # Log files
@@ -291,7 +291,7 @@ git commit -m "Description"
 git push origin BRANCH_NAME
 
 # Server: Pull and restart
-ssh root@159.223.75.148 "cd /opt/odoo-ce && git pull origin BRANCH_NAME && docker restart odoo-ce"
+ssh root@159.223.75.148 "cd /opt/odoo && git pull origin BRANCH_NAME && docker restart odoo"
 ```
 
 ### 2. Query Database
@@ -308,7 +308,7 @@ ssh root@159.223.75.148 "docker exec -it odoo-db psql -U odoo -d production"
 
 ```bash
 # Via CLI (preferred for automation)
-ssh root@159.223.75.148 "docker exec odoo-ce /usr/bin/odoo -c /etc/odoo/odoo.conf -d production --init ipai_MODULE_NAME --stop-after-init --http-port=8070"
+ssh root@159.223.75.148 "docker exec odoo /usr/bin/odoo -c /etc/odoo/odoo.conf -d production --init ipai_MODULE_NAME --stop-after-init --http-port=8070"
 
 # Via XML-RPC (Python script)
 python3 scripts/install_MODULE_NAME.py
@@ -318,10 +318,10 @@ python3 scripts/install_MODULE_NAME.py
 
 ```bash
 # Odoo application logs
-ssh root@159.223.75.148 "docker logs odoo-ce --tail=100"
+ssh root@159.223.75.148 "docker logs odoo --tail=100"
 
 # Follow logs in real-time
-ssh root@159.223.75.148 "docker logs odoo-ce -f"
+ssh root@159.223.75.148 "docker logs odoo -f"
 
 # PostgreSQL logs
 ssh root@159.223.75.148 "docker logs odoo-db --tail=50"
@@ -331,13 +331,13 @@ ssh root@159.223.75.148 "docker logs odoo-db --tail=50"
 
 ```bash
 # Restart Odoo only
-ssh root@159.223.75.148 "docker restart odoo-ce"
+ssh root@159.223.75.148 "docker restart odoo"
 
 # Restart database (USE WITH CAUTION)
 ssh root@159.223.75.148 "docker restart odoo-db"
 
 # Restart all Odoo-related containers
-ssh root@159.223.75.148 "docker restart odoo-ce odoo-db odoo-webhook-1"
+ssh root@159.223.75.148 "docker restart odoo odoo-db odoo-webhook-1"
 ```
 
 ### 6. Update Module List
@@ -360,13 +360,13 @@ print('Module list updated')
 
 ### DO ✅
 
-- **Always use absolute paths**: `/opt/odoo-ce/addons/ipai_MODULE/`
+- **Always use absolute paths**: `/opt/odoo/addons/ipai_MODULE/`
 - **Check database before SQL operations**: `docker exec -i odoo-db psql -U odoo -l`
-- **Verify container is running**: `docker ps | grep odoo-ce`
+- **Verify container is running**: `docker ps | grep odoo`
 - **Use production database**: `-d production` (not `odoo`)
 - **Commit and push changes**: Always deploy via git
-- **Restart Odoo after file changes**: `docker restart odoo-ce`
-- **Check logs after operations**: `docker logs odoo-ce --tail=50`
+- **Restart Odoo after file changes**: `docker restart odoo`
+- **Check logs after operations**: `docker logs odoo --tail=50`
 
 ### DON'T ❌
 
@@ -382,15 +382,15 @@ print('Module list updated')
 
 **If module doesn't appear in Apps list**:
 1. SSH into server
-2. Check module exists: `ls /opt/odoo-ce/addons/ipai_MODULE_NAME/`
+2. Check module exists: `ls /opt/odoo/addons/ipai_MODULE_NAME/`
 3. Update apps list (via UI or XML-RPC)
-4. Restart Odoo: `docker restart odoo-ce`
+4. Restart Odoo: `docker restart odoo`
 5. Clear browser cache and retry
 
 **If database connection fails**:
 1. Verify container running: `docker ps | grep odoo-db`
 2. Check database exists: `docker exec -i odoo-db psql -U odoo -l`
-3. Verify network: `docker network inspect odoo-ce_odoo_network`
+3. Verify network: `docker network inspect odoo_odoo_network`
 
 **If XML-RPC fails with 404**:
 1. Try alternative URL: `/odoo/xmlrpc/2/common` instead of `/xmlrpc/2/common`

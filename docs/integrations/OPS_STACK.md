@@ -88,7 +88,7 @@ ipai-ops-stack/
 
 ## Odoo Integration
 
-### What Lives in odoo-ce
+### What Lives in odoo
 
 - Connector configurations (URLs, settings)
 - Webhook endpoints (receive from ops services)
@@ -96,7 +96,7 @@ ipai-ops-stack/
 - Audit logs
 - Data models for sync tracking
 
-### What Does NOT Live in odoo-ce
+### What Does NOT Live in odoo
 
 - Mattermost source code
 - Focalboard source code

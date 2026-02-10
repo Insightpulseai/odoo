@@ -11,7 +11,7 @@ namespace: n8n
 env:
   N8N_WEBHOOK_BASE: "${N8N_WEBHOOK_URL:-http://localhost:5678/webhook}"
   SUPABASE_URL: "${SUPABASE_URL}"
-  GITHUB_REPO: "${GITHUB_REPOSITORY:-jgtolentino/odoo-ce}"
+  GITHUB_REPO: "${GITHUB_REPOSITORY:-jgtolentino/odoo}"
 
 tools:
   # === Deployment Tools ===

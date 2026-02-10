@@ -51,7 +51,7 @@ cp docker-compose.yml docker-compose.yml.backup
 
 # Update to use custom image
 # Replace the 'image: odoo:18.0' line with:
-# image: ghcr.io/jgtolentino/odoo-ce:latest
+# image: ghcr.io/jgtolentino/odoo:latest
 
 # Remove volume mounts for custom modules (commented out in template)
 ```
@@ -84,11 +84,11 @@ If issues occur, you can rollback to a previous image:
 
 ```bash
 # On VPS - check available images
-docker images | grep ghcr.io/jgtolentino/odoo-ce
+docker images | grep ghcr.io/jgtolentino/odoo
 
 # Rollback to specific commit SHA
 docker compose -f docker-compose.prod.yml stop odoo
-docker compose -f docker-compose.prod.yml up -d --image ghcr.io/jgtolentino/odoo-ce:COMMIT_SHA
+docker compose -f docker-compose.prod.yml up -d --image ghcr.io/jgtolentino/odoo:COMMIT_SHA
 ```
 
 ## Custom Modules Included

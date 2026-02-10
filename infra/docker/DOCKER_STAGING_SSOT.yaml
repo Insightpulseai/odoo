@@ -8,8 +8,8 @@ docker_staging_ssot:
   purpose: "Odoo 18 CE staging environment for pre-prod validation"
 
   odoo_staging:
-    repo_root: "/opt/odoo-ce"
-    working_directory: "/opt/odoo-ce"
+    repo_root: "/opt/odoo"
+    working_directory: "/opt/odoo"
     source_of_truth: "sandbox/staging/docker-compose.yml"
     http_url: "https://staging.insightpulseai.com"
 

@@ -10,7 +10,7 @@
 ```bash
 # Build and push image (simulated via GitHub Actions)
 doctl registry login && \
-doctl registry repository list | grep odoo-ce && \
+doctl registry repository list | grep odoo && \
 echo "✅ Registry access successful"
 
 # Expected: Exit code 0
@@ -22,11 +22,11 @@ echo "✅ Registry access successful"
 **Validation Commands:**
 ```bash
 # Check container registry status
-doctl registry repository list --format Name,LatestTag | grep odoo-ce
+doctl registry repository list --format Name,LatestTag | grep odoo
 
 # Expected JSON structure:
 # {
-#   "name": "odoo-ce",
+#   "name": "odoo",
 #   "latest_tag": "latest"
 # }
 ```
@@ -37,9 +37,9 @@ doctl registry repository list --format Name,LatestTag | grep odoo-ce
 **Validation Commands:**
 ```bash
 # Verify image exists in registry
-doctl registry repository list | grep odoo-ce
+doctl registry repository list | grep odoo
 
-# Expected: "odoo-ce" appears in list
+# Expected: "odoo" appears in list
 ```
 
 ## 🚀 Odoo.sh Deployment Pattern Validation
@@ -151,8 +151,8 @@ docker compose -f deploy/docker-compose.yml ps
 ```bash
 # Final validation sequence
 git push origin main && \
-curl -f https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs && \
-docker pull ghcr.io/jgtolentino/odoo-ce:latest && \
+curl -f https://api.github.com/repos/jgtolentino/odoo/actions/runs && \
+docker pull ghcr.io/jgtolentino/odoo:latest && \
 docker compose -f deploy/docker-compose.yml up -d && \
 curl -f http://localhost:8069/web/health
 

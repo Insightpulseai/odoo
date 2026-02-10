@@ -25,7 +25,7 @@ Usage:
 - React/Next.js: Use exported TypeScript definitions
     """,
     'author': 'InsightPulse AI',
-    'website': 'https://jgtolentino.github.io/odoo-ce/',
+    'website': 'https://jgtolentino.github.io/odoo/',
     'license': 'LGPL-3',
     'depends': ['web'],
     'data': [],

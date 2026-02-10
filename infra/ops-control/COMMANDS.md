@@ -14,7 +14,7 @@ Complete list of natural language commands → runbook mappings.
 
 **Inputs:**
 - Environment (prod/staging/dev)
-- Repo (default: jgtolentino/odoo-ce)
+- Repo (default: jgtolentino/odoo)
 - Target (vercel/full-stack/api-service)
 - Branch (default: main)
 - Run migrations (boolean, default: true)
@@ -74,7 +74,7 @@ Complete list of natural language commands → runbook mappings.
 | `spec for user settings` | Generate spec kit | 4 markdown files + PR | GitHub |
 
 **Inputs:**
-- Repo (default: jgtolentino/odoo-ce)
+- Repo (default: jgtolentino/odoo)
 - Target (default: spec/ops-control-room)
 - Notes (optional description)
 

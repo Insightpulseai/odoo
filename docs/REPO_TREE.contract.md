@@ -1,6 +1,6 @@
 # Repo Tree Contract (Authoritative)
 
-This file defines the **canonical, stable repo layout** for `jgtolentino/odoo-ce`.
+This file defines the **canonical, stable repo layout** for `jgtolentino/odoo`.
 CI must ensure required roots exist and deploy config uses these paths.
 
 > **Important**: This is the **flat structure** currently in use. Do NOT invent paths
@@ -9,7 +9,7 @@ CI must ensure required roots exist and deploy config uses these paths.
 ## Required Root Directories
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                     # ALL custom IPAI modules (flat, not under src/)
 │   ├── ipai/                   # IPAI namespace module
 │   ├── ipai_bir_tax_compliance/
@@ -69,7 +69,7 @@ odoo-ce/
 The `addons_path` in `deploy/odoo.conf` must include:
 
 ```ini
-addons_path = /opt/odoo/addons,/opt/odoo-ce/addons,/opt/odoo-ce/addons/oca
+addons_path = /opt/odoo/addons,/opt/odoo/addons,/opt/odoo/addons/oca
 ```
 
 **Note**: Odoo core addons come from the Odoo installation or a submodule.
@@ -113,7 +113,7 @@ If the team decides to adopt a `src/` structure in the future, the changes would
 ### Proposed Future Layout
 
 ```
-odoo-ce/
+odoo/
 ├── src/
 │   ├── apps/odoo_core/         # Odoo core as submodule (mock path)
 │   │   ├── addons/             # Built-in Odoo modules
@@ -137,7 +137,7 @@ odoo-ce/
 4. Update `deploy/odoo.conf` (HYPOTHETICAL EXAMPLE):
    ```ini
    # FORBIDDEN EXAMPLE - do not use these paths
-   addons_path = /opt/odoo-ce/src/apps/odoo_core/addons,/opt/odoo-ce/src/addons,/opt/odoo-ce/src/oca
+   addons_path = /opt/odoo/src/apps/odoo_core/addons,/opt/odoo/src/addons,/opt/odoo/src/oca
    ```
 5. Update all CI workflows
 6. Update this contract document

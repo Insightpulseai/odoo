@@ -87,7 +87,7 @@ Add to your documentation site:
   src="http://localhost/docs-assistant/docs-widget.js"
   data-api-url="http://localhost/api"
   data-api-key="YOUR_API_KEY_FROM_SETUP"
-  data-project-slug="odoo-ce"
+  data-project-slug="odoo"
   data-position="bottom-right"
   data-theme="light">
 </script>
@@ -104,7 +104,7 @@ Add to your Claude Code configuration:
       "env": {
         "DOCS_ASSISTANT_API_URL": "http://localhost/api",
         "DOCS_ASSISTANT_API_KEY": "YOUR_API_KEY",
-        "DOCS_ASSISTANT_PROJECT": "odoo-ce"
+        "DOCS_ASSISTANT_PROJECT": "odoo"
       }
     }
   }
@@ -118,7 +118,7 @@ curl -X POST "http://localhost/api/v1/chat" \
   -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "project_slug": "odoo-ce",
+    "project_slug": "odoo",
     "question": "How do I create a new Odoo module?"
   }'
 ```
@@ -201,8 +201,8 @@ curl -X POST "http://localhost/api/v1/ingest/github" \
   -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "project_slug": "odoo-ce",
-    "repo": "jgtolentino/odoo-ce",
+    "project_slug": "odoo",
+    "repo": "jgtolentino/odoo",
     "branch": "main",
     "paths": ["docs/", "README.md"]
   }'

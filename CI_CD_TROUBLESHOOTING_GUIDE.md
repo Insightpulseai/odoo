@@ -22,7 +22,7 @@ Even though the fix was merged, the **feature branch environment** might have:
 ### Solution 1: Manual Workflow Trigger (Recommended)
 ```bash
 # Go to GitHub Actions in your repository:
-# 1. Navigate to: https://github.com/jgtolentino/odoo-ce/actions
+# 1. Navigate to: https://github.com/jgtolentino/odoo/actions
 # 2. Select "Odoo 18 CE / OCA CI" workflow
 # 3. Click "Run workflow"
 # 4. Select branch: "feature/add-expense-equipment-prd"
@@ -53,7 +53,7 @@ Ensure these secrets are set in your repository:
 ### 1. Check Current Workflow Status
 ```bash
 # View recent workflow runs
-# Go to: https://github.com/jgtolentino/odoo-ce/actions
+# Go to: https://github.com/jgtolentino/odoo/actions
 
 # Look for:
 # - ✅ Green checkmarks = Success

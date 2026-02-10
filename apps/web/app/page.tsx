@@ -1,24 +1,23 @@
-import Pricing from '@/components/ui/Pricing/Pricing';
-import { createClient } from '@/utils/supabase/server';
-import {
-  getProducts,
-  getSubscription,
-  getUser
-} from '@/utils/supabase/queries';
+import { PortfolioNavbar } from "@/components/PortfolioNavbar"
+import { ProductTeaserCard } from "@/components/ProductTeaserCard"
+import { BankingScaleHero } from "@/components/BankingScaleHero"
+import { CaseStudiesCarousel } from "@/components/CaseStudiesCarousel"
+import { IntegrationCarousel } from "@/components/IntegrationCarousel"
+import { PricingSection } from "@/components/PricingSection"
+import { FAQSection } from "@/components/FAQSection"
+import { Footer } from "@/components/Footer"
 
-export default async function PricingPage() {
-  const supabase = createClient();
-  const [user, products, subscription] = await Promise.all([
-    getUser(supabase),
-    getProducts(supabase),
-    getSubscription(supabase)
-  ]);
-
+export default function Page() {
   return (
-    <Pricing
-      user={user}
-      products={products ?? []}
-      subscription={subscription}
-    />
-  );
+    <>
+      <PortfolioNavbar />
+      <ProductTeaserCard />
+      <BankingScaleHero />
+      <CaseStudiesCarousel />
+      <IntegrationCarousel />
+      <PricingSection />
+      <FAQSection />
+      <Footer />
+    </>
+  )
 }

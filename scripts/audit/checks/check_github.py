@@ -46,7 +46,7 @@ def main():
         return
 
     client = HTTPClient(timeout=30)
-    repo = os.environ.get("GITHUB_REPOSITORY", "jgtolentino/odoo-ce")
+    repo = os.environ.get("GITHUB_REPOSITORY", "jgtolentino/odoo")
 
     checks = []
     latencies = []

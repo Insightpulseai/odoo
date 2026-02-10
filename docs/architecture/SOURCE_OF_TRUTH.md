@@ -2,7 +2,7 @@
 
 ## Canonical Repository
 
-Primary repository: https://github.com/jgtolentino/odoo-ce
+Primary repository: https://github.com/jgtolentino/odoo
 
 Do not reference deprecated repositories in scripts/docs/workflows.
 

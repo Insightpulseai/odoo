@@ -1,7 +1,7 @@
-# Gemini Agent Operating Contract (ipai_workspace / odoo-ce)
+# Gemini Agent Operating Contract (ipai_workspace / odoo)
 
 **Workspace:** `ipai_workspace`  
-**Repo:** `jgtolentino/odoo-ce`  
+**Repo:** `jgtolentino/odoo`  
 **Rule-0:** Never leave the user hanging. Every response must end with a **Verification** section that proves outcomes (or marks them UNVERIFIED with why).
 
 ---
@@ -107,7 +107,7 @@ curl -I http://localhost:8069/web/assets/debug/web.assets_backend.js | head -n 1
 ```bash
 ssh insightpulse-odoo <<'SSH'
 set -euo pipefail
-cd odoo-ce
+cd odoo
 git fetch origin
 git rev-parse HEAD
 git log -1 --oneline

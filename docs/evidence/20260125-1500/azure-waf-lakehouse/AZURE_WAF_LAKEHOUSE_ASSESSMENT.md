@@ -1,7 +1,7 @@
 # Azure Well-Architected + Lakehouse Hybrid Assessment
 
 **Assessment Date**: 2026-01-25
-**Repository**: odoo-ce
+**Repository**: odoo
 **Branch**: claude/azure-assessment-implementation-ENFVJ
 **Assessed By**: Claude Code (Automated)
 
@@ -418,7 +418,7 @@ Target:  PostgreSQL → Delta Lake → Unity Catalog → BI
 ### Files Analyzed
 
 ```
-/home/user/odoo-ce/
+/home/user/odoo/
 ├── CLAUDE.md                           # Execution contract
 ├── infra/
 │   ├── azure/main.bicep               # Azure IaC

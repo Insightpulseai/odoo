@@ -10,7 +10,7 @@
 
 - **Canonical Odoo staging environment:**
   - Host: `178.128.112.214`
-  - Repo: `/opt/odoo-ce`
+  - Repo: `/opt/odoo`
   - Stack definition: `sandbox/staging/docker-compose.yml`
   - Public URL: `https://staging.insightpulseai.com`
 
@@ -50,7 +50,7 @@ infra/docker/DOCKER_STAGING_SSOT.yaml
 
 ```bash
 ssh root@178.128.112.214
-cd /opt/odoo-ce
+cd /opt/odoo
 ```
 
 **Run audit:**
@@ -123,7 +123,7 @@ docker volume ls --format '{{.Name}}' \
 From the staging host:
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Start staging stack
 docker compose -f sandbox/staging/docker-compose.yml up -d
@@ -215,7 +215,7 @@ When using Claude Code / Codex for automated staging cleanup:
 >
 > **Commands:**
 > 1. SSH to staging: `ssh root@178.128.112.214`
-> 2. Run audit: `cd /opt/odoo-ce && ./scripts/docker-staging-audit.sh`
+> 2. Run audit: `cd /opt/odoo && ./scripts/docker-staging-audit.sh`
 > 3. Show me the drift report with classifications
 > 4. Propose cleanup commands (DO NOT execute until I say APPLY CLEANUP)
 > 5. After cleanup, verify staging stack health
@@ -241,7 +241,7 @@ When using Claude Code / Codex for automated staging cleanup:
       "type": "n8n-nodes-base.ssh",
       "parameters": {
         "host": "178.128.112.214",
-        "command": "cd /opt/odoo-ce && ./scripts/docker-staging-audit.sh"
+        "command": "cd /opt/odoo && ./scripts/docker-staging-audit.sh"
       }
     },
     {
@@ -265,7 +265,7 @@ When using Claude Code / Codex for automated staging cleanup:
 **Ops Control Room action:**
 
 - Button: "Clean Staging Docker"
-- Action: SSH → `cd /opt/odoo-ce && ./scripts/docker-staging-audit.sh && ./scripts/docker-staging-cleanup.sh`
+- Action: SSH → `cd /opt/odoo && ./scripts/docker-staging-audit.sh && ./scripts/docker-staging-cleanup.sh`
 - Result: Post summary to control room dashboard
 
 ---
@@ -276,7 +276,7 @@ When using Claude Code / Codex for automated staging cleanup:
 
 ```bash
 # Fix script permissions
-chmod +x /opt/odoo-ce/scripts/docker-staging-audit.sh
+chmod +x /opt/odoo/scripts/docker-staging-audit.sh
 ```
 
 **Issue: Cannot connect to Docker daemon**

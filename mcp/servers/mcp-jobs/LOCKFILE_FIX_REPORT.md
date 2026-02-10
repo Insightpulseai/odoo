@@ -197,7 +197,7 @@ If new deployment fails:
 ### Git Rollback (If Needed)
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/mcp-jobs
+cd /Users/tbwa/Documents/GitHub/odoo/mcp/servers/mcp-jobs
 
 # Revert the lockfile fix commit
 git revert fa41cde --no-edit
@@ -306,8 +306,8 @@ Once deployment completes:
 2. **Workspace Confusion**:
    - mcp-jobs exists as both:
      - Standalone Git repository (for Vercel deployment)
-     - Workspace member in odoo-ce (for local development)
-   - Lockfile regeneration in odoo-ce workspace didn't update mcp-jobs standalone lockfile
+     - Workspace member in odoo (for local development)
+   - Lockfile regeneration in odoo workspace didn't update mcp-jobs standalone lockfile
 
 3. **Version Typos**:
    - `@types/node: ^1.7.4` was likely copy-paste error

@@ -7,10 +7,10 @@ description: >
 
 context:
   target_odoo_version: "18.0"
-  base_image: "ghcr.io/jgtolentino/odoo-ce:18.0"
+  base_image: "ghcr.io/jgtolentino/odoo:18.0"
   quality_standard: "OCA"
   primary_repos:
-    - "github.com/jgtolentino/odoo-ce"
+    - "github.com/jgtolentino/odoo"
     - "github.com/OCA/*"
   delta_prefix: "ipai_"
   examples:

@@ -280,8 +280,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ### v0.9.0 (Manual)
 ```bash
-docker build -t ghcr.io/jgtolentino/odoo-ce:v0.9.0 .
-docker push ghcr.io/jgtolentino/odoo-ce:v0.9.0
+docker build -t ghcr.io/jgtolentino/odoo:v0.9.0 .
+docker push ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 
 **Issues:**
@@ -342,7 +342,7 @@ docker compose up -d
 ### v0.9.0 (Manual)
 ```bash
 curl http://localhost:8069/web
-docker logs odoo-ce
+docker logs odoo
 ```
 
 **Issues:**

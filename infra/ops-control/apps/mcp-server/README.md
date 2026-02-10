@@ -141,7 +141,7 @@ This will open the MCP Inspector UI where you can:
   "summary": "Deploy prod environment (build, migrate, verify).",
   "inputs": [
     { "key": "env", "label": "Environment", "type": "select", "value": "prod" },
-    { "key": "repo", "label": "Repo", "type": "text", "value": "jgtolentino/odoo-ce" },
+    { "key": "repo", "label": "Repo", "type": "text", "value": "jgtolentino/odoo" },
     { "key": "target", "label": "Target", "type": "text", "value": "vercel" }
   ],
   "risks": [

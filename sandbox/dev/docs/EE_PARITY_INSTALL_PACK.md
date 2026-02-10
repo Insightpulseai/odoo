@@ -223,7 +223,7 @@ To add more modules to the EE-parity pack:
 ssh root@178.128.112.214
 
 # 2. Navigate to repo
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 
 # 3. Update .env with staging values
 cat >> .env.staging << 'EOF'

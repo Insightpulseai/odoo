@@ -317,7 +317,7 @@ infrastructure:
   n8n_url: https://n8n.insightpulseai.com/
 
 repositories:
-  odoo_dev: ~/Documents/GitHub/odoo-ce
+  odoo_dev: ~/Documents/GitHub/odoo
   prismaconsulting: /opt/Prismaconsulting  # on droplet
 
 databases:

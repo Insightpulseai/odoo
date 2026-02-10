@@ -40,7 +40,7 @@
 
 ### 1.6 Seed initial taxonomy structure
 - [ ] Create seed file `seed_taxonomy.sql`
-- [ ] Define root nodes: odoo-ce, oca, platform, integrations
+- [ ] Define root nodes: odoo, oca, platform, integrations
 - [ ] Define L2 nodes for major product areas
 - [ ] Define L3 nodes for specific topics
 - [ ] Insert with LTREE path computation

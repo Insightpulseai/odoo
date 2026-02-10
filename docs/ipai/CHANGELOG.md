@@ -535,7 +535,7 @@ grep -r "CKVC\|RIM\|BOM" addons/ipai/*/models/*.py
 
 **Primary Maintainer**: Jake Tolentino (Finance SSC Manager / Odoo Developer)
 **Organization**: InsightPulse AI (TBWA)
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Documentation**: `docs/ipai/` (this directory)
 
 **For Issues**:

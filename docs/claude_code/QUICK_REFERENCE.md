@@ -6,7 +6,7 @@
 
 ```bash
 curl -fsSL https://claude.ai/install.sh | bash
-cd ~/odoo-ce
+cd ~/odoo
 claude
 ```
 
@@ -74,7 +74,7 @@ claude -p "Fix CI job: [job-name]
 ## Project Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/ipai/              # Custom Odoo modules
 ├── apps/control-room/        # Next.js dashboard
 ├── scripts/                  # Automation

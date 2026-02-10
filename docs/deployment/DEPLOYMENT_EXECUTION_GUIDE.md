@@ -3,7 +3,7 @@
 **Target Environment**: erp.insightpulseai.com (Production)
 **Module**: WorkOS (Notion Clone for Odoo)
 **Branch**: claude/notion-clone-odoo-module-LSFan (PR #89)
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 
 ---
 
@@ -20,8 +20,8 @@
 
 ```bash
 # Clone or navigate to repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # Make deployment script executable
 chmod +x scripts/prod/deploy_workos_full.sh
@@ -51,7 +51,7 @@ bash scripts/prod/deploy_workos_full.sh
 
 ```bash
 # Navigate to repository
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 
 # Pull latest changes
 git fetch origin
@@ -73,13 +73,13 @@ cat docs/deployment/PRE_FLIGHT_CHECKLIST.md
 ssh deploy@erp.insightpulseai.com
 
 # Verify current state
-cd /opt/odoo-ce
+cd /opt/odoo
 git status
 git branch --show-current
 docker ps | grep odoo
 
 # Check disk space
-df -h /opt/odoo-ce
+df -h /opt/odoo
 
 # Check Odoo health
 curl -I https://erp.insightpulseai.com/web/login
@@ -114,7 +114,7 @@ echo "Backup OK"
 **Production Server:**
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Fetch remote changes
 git fetch origin
@@ -136,7 +136,7 @@ git rev-parse HEAD
 **Production Server:**
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Make deployment script executable
 chmod +x scripts/prod/deploy_workos.sh
@@ -160,7 +160,7 @@ docker logs -f odoo-accounting &
 **Production Server:**
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Run verification script
 chmod +x scripts/prod/verify_workos.sh
@@ -182,7 +182,7 @@ curl -I https://erp.insightpulseai.com/web/login
 **Production Server:**
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Generate production snapshot
 chmod +x tools/audit/gen_prod_snapshot.sh
@@ -199,7 +199,7 @@ ls -l docs/runtime/PROD_SNAPSHOT_MANIFEST.md
 **Production Server:**
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Stage runtime artifacts
 git add docs/repo docs/runtime docs/PROD_SNAPSHOT.prod.json
@@ -226,7 +226,7 @@ git push origin claude/notion-clone-odoo-module-LSFan
 ssh deploy@erp.insightpulseai.com
 
 # Execute rollback script
-cd /opt/odoo-ce
+cd /opt/odoo
 chmod +x scripts/prod/rollback_workos.sh
 bash scripts/prod/rollback_workos.sh
 ```
@@ -256,7 +256,7 @@ docker exec odoo-postgres psql -U odoo -c "CREATE DATABASE odoo_accounting OWNER
 gunzip < $BACKUP_FILE | docker exec -i odoo-postgres psql -U odoo -d odoo_accounting
 
 # Revert git
-cd /opt/odoo-ce
+cd /opt/odoo
 git reset --hard HEAD~1
 
 # Restart Odoo
@@ -341,7 +341,7 @@ df -h /var/backups/odoo
 
 **Diagnosis**:
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 git status
 git diff
 git log --oneline --graph --all
@@ -421,7 +421,7 @@ git merge --abort
 ### Local Repository
 
 ```
-odoo-ce/
+odoo/
 ├── scripts/prod/
 │   ├── deploy_workos_full.sh       # Full deployment automation
 │   ├── deploy_workos.sh            # Module deployment script
@@ -438,7 +438,7 @@ odoo-ce/
 ### Production Server
 
 ```
-/opt/odoo-ce/                       # Repository root
+/opt/odoo/                       # Repository root
 /var/backups/odoo/                  # Database backups
 /var/log/odoo-deployment/           # Deployment logs
 /var/log/nginx/                     # Web server logs

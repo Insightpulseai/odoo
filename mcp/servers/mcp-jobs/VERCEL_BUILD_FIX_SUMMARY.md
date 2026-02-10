@@ -70,7 +70,7 @@ feat(platform-kit): configure Supabase Platform Kit integration
 - Provide step-by-step installation and deployment guide
 ```
 
-**Commit 2** (odoo-ce repository - commit `e8a1548c`):
+**Commit 2** (odoo repository - commit `e8a1548c`):
 ```
 feat(mcp-jobs): configure Supabase Platform Kit integration
 
@@ -141,7 +141,7 @@ OPENAI_API_KEY=[from https://platform.openai.com/api-keys]
 
 **Method 1: Vercel CLI (if project is linked)**
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/mcp-jobs
+cd /Users/tbwa/Documents/GitHub/odoo/mcp/servers/mcp-jobs
 
 # Link project (may need to create project first)
 vercel link
@@ -203,7 +203,7 @@ printf '%s' "$SUPABASE_ANON_KEY" | \
 
 3. **Install Supabase Platform Kit**:
    ```bash
-   cd /Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/mcp-jobs
+   cd /Users/tbwa/Documents/GitHub/odoo/mcp/servers/mcp-jobs
    npx shadcn@latest add @supabase/platform-kit-nextjs
    ```
 
@@ -233,7 +233,7 @@ printf '%s' "$SUPABASE_ANON_KEY" | \
 ## Evidence
 
 **Commit SHA (mcp-jobs)**: `0604d73`
-**Commit SHA (odoo-ce)**: `e8a1548c`
+**Commit SHA (odoo)**: `e8a1548c`
 **Push Status**: ✅ Successfully pushed to GitHub main branch
 **Auto-Deploy Status**: ⏳ Triggered, awaiting Vercel build completion
 

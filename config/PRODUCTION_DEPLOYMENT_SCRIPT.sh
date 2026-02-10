@@ -16,7 +16,7 @@ set -u  # Exit on undefined variable
 ODOO_DATABASE="${ODOO_DATABASE:-production}"
 ODOO_USER="${ODOO_USER:-odoo}"
 ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
-REPO_PATH="${REPO_PATH:-/opt/odoo-ce}"
+REPO_PATH="${REPO_PATH:-/opt/odoo}"
 LOG_DIR="${LOG_DIR:-/var/log/odoo}"
 VALIDATION_LOG="${LOG_DIR}/mailgun_mailgate_validation_$(date +%Y%m%d_%H%M%S).txt"
 

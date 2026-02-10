@@ -33,11 +33,11 @@ Automatically generates and updates the repository structure tree in `spec.md`.
 ./scripts/gen_repo_tree.sh
 
 # Output:
-✅ Updated repo tree in /path/to/odoo-ce/spec.md
+✅ Updated repo tree in /path/to/odoo/spec.md
 ```
 
 **Auto-execution:**
-- CI enforces tree is up-to-date (see `.github/workflows/ci-odoo-ce.yml`)
+- CI enforces tree is up-to-date (see `.github/workflows/ci-odoo.yml`)
 - Pre-commit hook auto-regenerates (install with `./scripts/install-git-hooks.sh`)
 
 **See also:** `spec.md` for the auto-generated tree output
@@ -78,7 +78,7 @@ git commit -m "feat: add new module"
 
 # Output:
 🔄 Regenerating repo tree...
-✅ Updated repo tree in /path/to/odoo-ce/spec.md
+✅ Updated repo tree in /path/to/odoo/spec.md
 📝 Adding updated spec.md to commit
 [main abc1234] feat: add new module
  2 files changed, 100 insertions(+), 50 deletions(-)
@@ -355,7 +355,7 @@ python3 scripts/import_month_end_tasks.py \
    ssh root@erp.insightpulseai.com
 
    # Test scripts
-   cd /opt/odoo-ce
+   cd /opt/odoo
    python3 scripts/check_project_tasks.py
    cd notion-n8n-monthly-close
    ./scripts/verify_finance_stack.sh --env staging --verbose

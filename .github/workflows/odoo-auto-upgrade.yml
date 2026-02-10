@@ -105,7 +105,7 @@ jobs:
             echo "[deploy] Starting Odoo auto-upgrade..."
 
             # Navigate to repo (adjust path as needed)
-            REPO_PATH="${REPO_PATH:-/opt/odoo-ce/repo}"
+            REPO_PATH="${REPO_PATH:-/opt/odoo/repo}"
             if [[ -d "\$REPO_PATH" ]]; then
               cd "\$REPO_PATH"
             else

@@ -31,7 +31,7 @@ The Work OS suite consists of the following modules:
 ### 1. Pull Latest Changes
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 git fetch origin main
 git checkout main
 git pull origin main
@@ -43,7 +43,7 @@ Ensure `deploy/odoo.conf` includes the addons directory:
 
 ```ini
 [options]
-addons_path = /opt/odoo-ce/addons,/opt/odoo-ce/addons/oca,/opt/odoo/addons
+addons_path = /opt/odoo/addons,/opt/odoo/addons/oca,/opt/odoo/addons
 ```
 
 ### 3. Install/Update Modules
@@ -99,7 +99,7 @@ If issues are encountered:
 ### 1. Revert Code Changes
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 git log --oneline -5  # Find the previous commit
 git revert HEAD       # Or: git checkout <previous-commit>
 ```
@@ -128,7 +128,7 @@ docker compose restart
 ssh deploy@erp.insightpulseai.com
 
 # 2. Navigate to Odoo directory
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # 3. Pull latest changes
 git fetch origin main

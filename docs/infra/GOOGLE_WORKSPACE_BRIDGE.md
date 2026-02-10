@@ -295,8 +295,8 @@ echo "Add to plan.md: ![${DIAGRAM_NAME}](../images/${DIAGRAM_NAME}.png)"
 2. CREATE REPORT (Monthly/Weekly)
    ├── Create "Q1 Progress Report" Google Doc
    ├── Paste GitHub Issue/PR URLs:
-   │   https://github.com/jgtolentino/odoo-ce/issues/123
-   │   https://github.com/jgtolentino/odoo-ce/pull/456
+   │   https://github.com/jgtolentino/odoo/issues/123
+   │   https://github.com/jgtolentino/odoo/pull/456
    └── Smart Links auto-expands to:
        [#123] Fix BIR 1601-C generation
        Status: ✅ Closed | Assignee: @dev | Labels: bug, finance
@@ -313,16 +313,16 @@ echo "Add to plan.md: ![${DIAGRAM_NAME}](../images/${DIAGRAM_NAME}.png)"
 # Monthly Engineering Report - January 2026
 
 ## Completed This Month
-https://github.com/jgtolentino/odoo-ce/issues/123
-https://github.com/jgtolentino/odoo-ce/issues/124
-https://github.com/jgtolentino/odoo-ce/issues/125
+https://github.com/jgtolentino/odoo/issues/123
+https://github.com/jgtolentino/odoo/issues/124
+https://github.com/jgtolentino/odoo/issues/125
 
 ## In Progress
-https://github.com/jgtolentino/odoo-ce/issues/126
-https://github.com/jgtolentino/odoo-ce/issues/127
+https://github.com/jgtolentino/odoo/issues/126
+https://github.com/jgtolentino/odoo/issues/127
 
 ## Blocked
-https://github.com/jgtolentino/odoo-ce/issues/128
+https://github.com/jgtolentino/odoo/issues/128
 ```
 
 Smart Links automatically shows:

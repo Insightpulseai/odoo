@@ -83,7 +83,7 @@ docker exec odoo-accounting odoo-bin shell -d odoo_accounting
 
 ### Via GitHub Web UI
 
-1. Navigate to repository: https://github.com/[YOUR_ORG]/odoo-ce
+1. Navigate to repository: https://github.com/[YOUR_ORG]/odoo
 2. Go to: Settings → Secrets and variables → Actions
 3. Click "New repository secret"
 4. For each secret:
@@ -256,10 +256,10 @@ curl -sf -X POST \
 
 After configuring all 5 secrets:
 
-1. Trigger workflow manually: https://github.com/[YOUR_ORG]/odoo-ce/actions/workflows/deploy-finance-ppm.yml
+1. Trigger workflow manually: https://github.com/[YOUR_ORG]/odoo/actions/workflows/deploy-finance-ppm.yml
 2. Monitor deployment progress in GitHub Actions
 3. Verify deployment with verification script on droplet:
    ```bash
    ssh root@159.223.75.148
-   /root/odoo-ce/scripts/ci/verify-deployment.sh
+   /root/odoo/scripts/ci/verify-deployment.sh
    ```

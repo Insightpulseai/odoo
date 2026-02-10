@@ -55,8 +55,8 @@ Login fails with "redirect_uri_mismatch"
 # SSH into production server
 ssh root@159.223.75.148
 
-# Navigate to odoo-ce directory
-cd /root/odoo-ce
+# Navigate to odoo directory
+cd /root/odoo
 
 # Pull latest changes
 git pull origin main

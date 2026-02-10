@@ -31,7 +31,7 @@ doctl auth list  # Verify authentication
 ### 2. Create the App
 
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 doctl apps create --spec mcp/coordinator/infra/do/mcp-coordinator.yaml \
   --format ID,Spec.Name,DefaultIngress
 ```
@@ -109,7 +109,7 @@ curl -s -H "X-API-Key: YOUR_COORDINATOR_API_KEY" "$APP_URL/status" | jq
 After DNS is configured, update the production MCP server config:
 
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Update odoo-erp.yaml with production URL
 vim mcp/servers/odoo-erp.yaml

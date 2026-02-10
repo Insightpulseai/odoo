@@ -1,7 +1,7 @@
 # Gap Analysis: Azure WAF + Lakehouse Assessment
 
 **Assessment Date**: 2026-01-25
-**Repository**: odoo-ce
+**Repository**: odoo
 
 ---
 

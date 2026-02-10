@@ -39,7 +39,7 @@
       "parameters": {
         "authentication": "oAuth2",
         "owner": "jgtolentino",
-        "repository": "odoo-ce",
+        "repository": "odoo",
         "eventType": "={{ $json.event_type }}",
         "clientPayload": "={{ $json.payload }}"
       },

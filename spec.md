@@ -1,6 +1,6 @@
 # InsightPulse Odoo CE – Project Spec
 
-Repo: https://github.com/jgtolentino/odoo-ce
+Repo: https://github.com/jgtolentino/odoo
 Owner: InsightPulseAI – ERP Platform Team
 Status: Active
 
@@ -248,7 +248,7 @@ The system is designed to:
 |   |-- repo
 |   |-- runtime
 |   |-- workflows
-|   |-- 003-odoo-ce-custom-image-spec.md
+|   |-- 003-odoo-custom-image-spec.md
 |   |-- AGENTIC_CLOUD_PRD.md
 |   |-- AGENT_FRAMEWORK_SESSION_REPORT.md
 |   |-- APP_ICONS_README.md
@@ -626,7 +626,7 @@ The system is designed to:
 |   |-- knowledge-hub
 |   |-- notion-finance-ppm-control-room
 |   |-- odoo-apps-inventory
-|   |-- odoo-ce
+|   |-- odoo
 |   |-- odoo-mcp-server
 |   |-- parallel-control-planes
 |   |-- pulser-master-control
@@ -800,7 +800,7 @@ The system is designed to:
 |-- n8n_opex_cli.sh
 |-- oca.lock.json
 |-- odoo-bin
-|-- odoo-ce-target.zip
+|-- odoo-target.zip
 |-- odoo-v1.2.0-build.zip
 |-- odoo_ce_expert_prompt.md
 |-- package.json

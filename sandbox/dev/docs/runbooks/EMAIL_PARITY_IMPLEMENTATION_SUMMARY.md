@@ -253,7 +253,7 @@ export MAILGUN_DOMAIN="mg.insightpulseai.com"
 ssh root@178.128.112.214
 
 # 2. Pull latest code
-cd /opt/odoo-ce && git pull origin main
+cd /opt/odoo && git pull origin main
 
 # 3. Install addon
 docker exec -it odoo18-prod-app odoo \

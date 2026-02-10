@@ -22,7 +22,7 @@ This module targets feature parity with Salesforce Sales Cloud
 pipeline functionality while leveraging the IPAI design system.
     """,
     "author": "IPAI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": [
         "crm",

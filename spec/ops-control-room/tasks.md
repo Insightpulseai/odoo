@@ -448,7 +448,7 @@
   - name: worker
     dockerfile_path: Dockerfile
     github:
-      repo: <username>/odoo-ce
+      repo: <username>/odoo
       branch: main
       deploy_on_push: true
     instance_count: 3

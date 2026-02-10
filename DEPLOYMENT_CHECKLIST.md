@@ -11,7 +11,7 @@
 ### 1. SSH & Prepare (1 min)
 ```bash
 ssh root@159.223.75.148
-cd /root/odoo-ce
+cd /root/odoo
 git pull origin main
 ```
 

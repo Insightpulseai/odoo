@@ -26,7 +26,7 @@ sudo grep -RIn --color=always -E "proxy_pass|upstream|8069|8072|odoo" /etc/nginx
 ## 2. Docker: Confirm Stack Running
 
 ```bash
-cd /opt/odoo-ce || cd ~/odoo-ce
+cd /opt/odoo || cd ~/odoo
 
 # Check Container Status
 docker compose -f docker-compose.prod.yml ps
@@ -55,7 +55,7 @@ ss -lntp | grep -E ":8069|:8072|:80|:443" || true
 Most common fix for stuck containers.
 
 ```bash
-cd /opt/odoo-ce || cd ~/odoo-ce
+cd /opt/odoo || cd ~/odoo
 
 docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml restart odoo
@@ -109,7 +109,7 @@ docker compose -f docker-compose.prod.yml exec db psql -U odoo -d odoo -c \
 Clears the `ir.attachment` records and QWeb cache via Odoo shell.
 
 ```bash
-cd /opt/odoo-ce || cd ~/odoo-ce
+cd /opt/odoo || cd ~/odoo
 docker compose -f docker-compose.prod.yml exec odoo odoo -d odoo --no-http --stop-after-init shell << 'EOF'
 env['ir.attachment'].search([('name', 'like', 'web.assets_%'), ('res_model', '=', 'ir.ui.view')]).unlink()
 env['ir.qweb'].clear_caches()
@@ -128,7 +128,7 @@ docker run -d --name odoo-debug \
   -e DEV_MODE=assets \
   --volumes-from ipai-ce \
   --network container:ipai-db \
-  ghcr.io/jgtolentino/odoo-ce:v0.9.0
+  ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 *Note: This specific command depends on your exact container names/volumes.*
 

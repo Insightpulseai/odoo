@@ -339,6 +339,6 @@ See repository CONTRIBUTING.md for guidelines.
 
 ## Support
 
-- **Issues:** https://github.com/jgtolentino/odoo-ce/issues
+- **Issues:** https://github.com/jgtolentino/odoo/issues
 - **Documentation:** docs/auth/EMAIL_AUTH_SETUP.md
 - **Tests:** `pytest test_router.py -v`

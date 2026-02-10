@@ -1,7 +1,7 @@
 # Notion Clone Module Constitution (Odoo CE 18 + OCA 18)
 
 ## Purpose
-Deliver a **Notion-equivalent Work OS** inside `jgtolentino/odoo-ce` using **Odoo CE 18 + OCA 18** as the execution/runtime engine. The module suite must provide a credible clone of Notion's core "felt experience":
+Deliver a **Notion-equivalent Work OS** inside `jgtolentino/odoo` using **Odoo CE 18 + OCA 18** as the execution/runtime engine. The module suite must provide a credible clone of Notion's core "felt experience":
 - pages + nested pages
 - blocks
 - databases (typed properties)

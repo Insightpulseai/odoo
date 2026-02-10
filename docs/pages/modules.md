@@ -137,7 +137,7 @@ mrbob bobtemplates.odoo:addon
     'category': 'IPAI',
     'summary': 'My module description',
     'author': 'InsightPulse AI',
-    'website': 'https://github.com/jgtolentino/odoo-ce',
+    'website': 'https://github.com/jgtolentino/odoo',
     'license': 'LGPL-3',
     'depends': ['ipai_dev_studio_base'],
     'data': [

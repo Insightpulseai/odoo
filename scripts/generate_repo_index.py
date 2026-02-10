@@ -153,10 +153,10 @@ def generate_knowledge_graph_seed(
     # Add repo node
     nodes.append(
         {
-            "id": "repo:jgtolentino/odoo-ce",
+            "id": "repo:jgtolentino/odoo",
             "kind": "Repo",
-            "name": "odoo-ce",
-            "ref": {"github_url": "https://github.com/jgtolentino/odoo-ce"},
+            "name": "odoo",
+            "ref": {"github_url": "https://github.com/jgtolentino/odoo"},
             "props": {"language": "Python", "framework": "Odoo 18 CE"},
         }
     )
@@ -174,7 +174,7 @@ def generate_knowledge_graph_seed(
         )
         edges.append(
             {
-                "src": "repo:jgtolentino/odoo-ce",
+                "src": "repo:jgtolentino/odoo",
                 "rel": "HAS_SPEC",
                 "dst": bundle["id"],
                 "props": {},
@@ -197,7 +197,7 @@ def generate_knowledge_graph_seed(
         )
         edges.append(
             {
-                "src": "repo:jgtolentino/odoo-ce",
+                "src": "repo:jgtolentino/odoo",
                 "rel": "CONTAINS",
                 "dst": app["id"],
                 "props": {},
@@ -217,7 +217,7 @@ def generate_knowledge_graph_seed(
         )
         edges.append(
             {
-                "src": "repo:jgtolentino/odoo-ce",
+                "src": "repo:jgtolentino/odoo",
                 "rel": "CONTAINS",
                 "dst": module["id"],
                 "props": {},
@@ -237,7 +237,7 @@ def generate_knowledge_graph_seed(
         )
         edges.append(
             {
-                "src": "repo:jgtolentino/odoo-ce",
+                "src": "repo:jgtolentino/odoo",
                 "rel": "HAS_WORKFLOW",
                 "dst": workflow["id"],
                 "props": {},
@@ -257,7 +257,7 @@ def generate_knowledge_graph_seed(
         )
         edges.append(
             {
-                "src": "repo:jgtolentino/odoo-ce",
+                "src": "repo:jgtolentino/odoo",
                 "rel": "HAS_SCRIPT",
                 "dst": script["id"],
                 "props": {},

@@ -227,5 +227,5 @@ When making changes to the platform:
 **Target v1 Release**: TBD
 
 **Questions or Issues?**
-- Create GitHub issue in `jgtolentino/odoo-ce` repo
+- Create GitHub issue in `jgtolentino/odoo` repo
 - Tag with appropriate label: `documentation`, `installation`, `bug`, `enhancement`

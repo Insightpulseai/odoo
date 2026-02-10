@@ -114,7 +114,7 @@ docker compose -f docker-compose.production.yml --env-file .env.production up -d
 **Deploy:**
 ```bash
 # On droplet 178.128.112.214
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 docker compose up -d
 ```
 
@@ -129,7 +129,7 @@ docker compose up -d
 ## 📁 Repository Structure
 
 ```
-odoo-ce/
+odoo/
 ├── sandbox/dev/                        # Local development sandbox
 │   ├── docker-compose.yml              # Local sandbox (default)
 │   ├── docker-compose.production.yml   # Production connection (advanced)
@@ -184,7 +184,7 @@ odoo-ce/
 - No production secrets
 
 **Production:**
-- `/opt/odoo-ce/deploy/.env` (chmod 600)
+- `/opt/odoo/deploy/.env` (chmod 600)
 - NEVER committed to git
 - Managed by `.gitignore`
 
@@ -237,7 +237,7 @@ make stop
 ssh root@178.128.112.214
 
 # Navigate to deploy directory
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # Start services
 docker compose up -d
@@ -315,8 +315,8 @@ docker compose down
 
 1. **Clone repository:**
    ```bash
-   git clone https://github.com/jgtolentino/odoo-ce.git
-   cd odoo-ce
+   git clone https://github.com/jgtolentino/odoo.git
+   cd odoo
    ```
 
 2. **Start local sandbox:**
@@ -344,7 +344,7 @@ docker compose down
 
 2. **Configure environment:**
    ```bash
-   cd /opt/odoo-ce/deploy
+   cd /opt/odoo/deploy
    cp .env.example .env
    # Edit with real credentials
    ```
@@ -411,4 +411,4 @@ docker compose down
 **Last Updated:** 2026-01-14
 **Infrastructure Version:** Odoo 18 CE + PostgreSQL 16
 **Production URL:** https://erp.insightpulseai.com
-**Repository:** https://github.com/jgtolentino/odoo-ce
+**Repository:** https://github.com/jgtolentino/odoo

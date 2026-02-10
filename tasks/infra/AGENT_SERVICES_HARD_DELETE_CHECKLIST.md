@@ -50,7 +50,7 @@ ssh root@159.223.75.148 "curl -sf http://127.0.0.1:8000/health"
 ssh root@159.223.75.148 "curl -sf http://127.0.0.1:8003/health"
 
 # Check for errors mentioning removed services
-ssh root@159.223.75.148 "docker logs odoo-ce --since 24h | grep -iE 'agent-service|ocr-adapter|8001|8002' || echo 'No mentions found'"
+ssh root@159.223.75.148 "docker logs odoo --since 24h | grep -iE 'agent-service|ocr-adapter|8001|8002' || echo 'No mentions found'"
 ssh root@159.223.75.148 "docker logs n8n-n8n-1 --since 24h | grep -iE 'agent-service|ocr-adapter|8001|8002' || echo 'No mentions found'"
 ```
 

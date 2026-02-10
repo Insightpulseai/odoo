@@ -88,7 +88,7 @@ MEMORY RULES
 
 ```json
 {
-  "repo": "tbwa/odoo-ce",
+  "repo": "tbwa/odoo",
   "subject": "IPAI module naming",
   "fact": "All custom modules must use ipai_ prefix and be placed in addons/ipai/ directory",
   "citations": [
@@ -135,13 +135,13 @@ Track these metrics:
 
 Query stats:
 ```sql
-SELECT * FROM ipai.agent_memory_stats WHERE repo = 'tbwa/odoo-ce';
+SELECT * FROM ipai.agent_memory_stats WHERE repo = 'tbwa/odoo';
 ```
 
 Query logs:
 ```sql
 SELECT * FROM ipai.agent_memory_log
-WHERE repo = 'tbwa/odoo-ce'
+WHERE repo = 'tbwa/odoo'
 ORDER BY created_at DESC
 LIMIT 20;
 ```

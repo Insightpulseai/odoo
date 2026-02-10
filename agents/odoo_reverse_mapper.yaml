@@ -194,7 +194,7 @@ integrations:
 
   github:
     token: "$GITHUB_TOKEN"
-    repo: "jgtolentino/odoo-ce"
+    repo: "jgtolentino/odoo"
     cli: "gh"
     operations:
       - pr_create

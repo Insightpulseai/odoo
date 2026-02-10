@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
 # Configuration
-REPO_ROOT = Path("/home/user/odoo-ce")
+REPO_ROOT = Path("/home/user/odoo")
 ADDONS_ROOT = REPO_ROOT / "addons"
 IPAI_NESTED = ADDONS_ROOT / "ipai"
 EXTERNAL_SRC = REPO_ROOT / "external-src"

@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 
 # Adjusting default to point to deploy directory where docker-compose.yml lives
-ROOT_DIR="${ROOT_DIR:-$HOME/odoo-ce/deploy}"
+ROOT_DIR="${ROOT_DIR:-$HOME/odoo/deploy}"
 DB_NAME="${DB_NAME:-odoo}"
 ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
 DB_SERVICE="${DB_SERVICE:-db}"
@@ -128,7 +128,7 @@ Commands:
   full-verify     Run status + verify-ppm-2026 + check-ssl + tail-logs
 
 Environment (override as needed):
-  ROOT_DIR      (default: \$HOME/odoo-ce/deploy)
+  ROOT_DIR      (default: \$HOME/odoo/deploy)
   DB_NAME       (default: odoo)
   ODOO_SERVICE  (default: odoo)
   DB_SERVICE    (default: db)

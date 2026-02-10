@@ -58,7 +58,7 @@
   },
   "githubIntegration": {
     "org": "jgtolentino",
-    "repo": "odoo-ce",
+    "repo": "odoo",
     "branch": "main",
     "basePath": "docs/diagrams/architecture",
     "drawioUrlPattern": "https://app.diagrams.net/?mode=github#H{org}/{repo}/{branch}/{path}"

@@ -522,5 +522,5 @@ All of the following must pass for the sync system to be considered operational:
 ---
 
 **Maintainer**: InsightPulse AI Team
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Last Updated**: 2025-01-04

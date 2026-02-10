@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-24
 **Status**: Mixed - Multiple Systems Deployed with Varying Completion Levels
-**Repository**: `jgtolentino/odoo-ce`
+**Repository**: `jgtolentino/odoo`
 **Baseline**: Odoo 18 CE + Custom `ipai_*` Modules + Automation Stack
 
 ---
@@ -21,7 +21,7 @@ The Odoo CE deployment has successfully established a robust foundation for repl
 
 | Component            | Status | Details                                           |
 |----------------------|--------|---------------------------------------------------|
-| **Odoo CE 18.0**     | ✅     | Docker containers (`odoo-ce`, `odoo-db`) healthy |
+| **Odoo CE 18.0**     | ✅     | Docker containers (`odoo`, `odoo-db`) healthy |
 | **n8n Automation**   | ✅     | Port 5678, ready for workflow import              |
 | **PostgreSQL DB**    | ✅     | 128 BIR schedule records loaded                   |
 | **CLI Tool**         | ✅     | `bin/finance-cli.sh` with multiple commands       |
@@ -64,7 +64,7 @@ The Odoo CE deployment has successfully established a robust foundation for repl
 
 #### ✅ Infrastructure
 
-- Docker containers: `odoo-ce`, `odoo-db`, `n8n-n8n-1`, `n8n-postgres-1`
+- Docker containers: `odoo`, `odoo-db`, `n8n-n8n-1`, `n8n-postgres-1`
 - Health monitoring: auto-healing via systemd service
 - CI/CD pipeline: GitHub Actions with telemetry to n8n / Supabase
 
@@ -84,7 +84,7 @@ The Odoo CE deployment has successfully established a robust foundation for repl
 - `scripts/run_odoo_migrations.sh`: migration automation with module detection
 - `scripts/report_ci_telemetry.sh`: GitHub Actions → n8n telemetry bridge
 - Workflows updated:
-  - `.github/workflows/ci-odoo-ce.yml`
+  - `.github/workflows/ci-odoo.yml`
   - `.github/workflows/odoo-parity-tests.yml`
 
 ### 3. Auto-Healing System
@@ -108,7 +108,7 @@ The Odoo CE deployment has successfully established a robust foundation for repl
 ### Container Health
 
 ```text
-odoo-ce          ✅ Up 30+ minutes (healthy)
+odoo          ✅ Up 30+ minutes (healthy)
 odoo-db          ✅ Up 1+ hour (healthy)
 n8n-n8n-1        ✅ Up and ready (port 5678)
 n8n-postgres-1   ✅ Up 10+ hours (healthy)
@@ -127,8 +127,8 @@ Cron Jobs:        Not yet registered (for ipai_finance_ppm) ⚠️
 ```text
 Module:        /mnt/extra-addons/ipai_finance_ppm
 Workflow:      ~/n8n/workflows/finance_compliance_engine.json
-CLI Tool:      ~/odoo-ce/bin/finance-cli.sh
-BIR Import:    ~/odoo-ce/bin/import_bir_schedules.py
+CLI Tool:      ~/odoo/bin/finance-cli.sh
+BIR Import:    ~/odoo/bin/import_bir_schedules.py
 ```
 
 ---
@@ -139,7 +139,7 @@ BIR Import:    ~/odoo-ce/bin/import_bir_schedules.py
 
 ```bash
 # Restart stack cleanly
-docker restart odoo-ce odoo-db
+docker restart odoo odoo-db
 sleep 30  # wait for services to be fully healthy
 
 # Attempt single, isolated installation with full debug logs
@@ -152,7 +152,7 @@ sleep 30  # wait for services to be fully healthy
 If this still fails due to DB pool exhaustion:
 
 * Reduce concurrent workers / threads temporarily.
-* Inspect `docker logs odoo-ce` around the install window.
+* Inspect `docker logs odoo` around the install window.
 * Consider a one-off migration path (direct table creation + `state='installed'`) **only after** understanding failure mode.
 
 ---
@@ -204,7 +204,7 @@ Then:
 * Register MCP server in Claude Code config.
 * Add `docs-assistant` routes to your ORCHESTRATOR routing table for:
 
-  * `odoo-ce` docs
+  * `odoo` docs
   * `finance-ppm` runbooks
   * `n8n` workflows
 
@@ -266,7 +266,7 @@ curl -sf http://localhost:5678 && echo "n8n is responding" || echo "n8n not read
 ### Odoo Logs (Finance PPM)
 
 ```bash
-docker logs odoo-ce --tail 200 | grep -Ei "ipai_finance_ppm|ERROR|Traceback"
+docker logs odoo --tail 200 | grep -Ei "ipai_finance_ppm|ERROR|Traceback"
 ```
 
 ### Container Health Snapshot
@@ -281,7 +281,7 @@ docker ps --filter name=odoo --format "{{.Names}}: {{.Status}}"
 
 ### Module Installation
 
-* [ ] Restart `odoo-ce` and `odoo-db`
+* [ ] Restart `odoo` and `odoo-db`
 * [ ] Verify DB connections are stable
 * [ ] Single `ipai_finance_ppm` install attempt with debug logs
 * [ ] Capture failure trace if any

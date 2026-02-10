@@ -63,16 +63,16 @@ This runbook provides step-by-step procedures for disaster recovery of the Odoo 
 # /etc/cron.d/odoo-backup
 
 # Daily backup at 02:00 UTC
-0 2 * * * root /opt/odoo-ce/scripts/backup/full_backup.sh >> /var/log/odoo-backup.log 2>&1
+0 2 * * * root /opt/odoo/scripts/backup/full_backup.sh >> /var/log/odoo-backup.log 2>&1
 
 # Weekly backup on Sunday at 03:00 UTC
-0 3 * * 0 root /opt/odoo-ce/scripts/backup/full_backup.sh --retain 84 >> /var/log/odoo-backup.log 2>&1
+0 3 * * 0 root /opt/odoo/scripts/backup/full_backup.sh --retain 84 >> /var/log/odoo-backup.log 2>&1
 
 # Monthly backup on 1st at 04:00 UTC
-0 4 1 * * root /opt/odoo-ce/scripts/backup/full_backup.sh --retain 180 >> /var/log/odoo-backup.log 2>&1
+0 4 1 * * root /opt/odoo/scripts/backup/full_backup.sh --retain 180 >> /var/log/odoo-backup.log 2>&1
 
 # Restore test every Sunday at 05:00 UTC
-0 5 * * 0 root /opt/odoo-ce/scripts/backup/restore_test.sh --latest >> /var/log/odoo-restore-test.log 2>&1
+0 5 * * 0 root /opt/odoo/scripts/backup/restore_test.sh --latest >> /var/log/odoo-restore-test.log 2>&1
 ```
 
 ---
@@ -224,12 +224,12 @@ sudo -u postgres psql odoo_core -c \
 
 ```bash
 # Step 1: Restore configuration from git
-cd /opt/odoo-ce
+cd /opt/odoo
 git checkout -- .
 
 # Step 2: Restore secrets from backup
 # Secrets should be in a separate secure location
-cp /backup/secrets/.env.prod /opt/odoo-ce/.env.prod
+cp /backup/secrets/.env.prod /opt/odoo/.env.prod
 
 # Step 3: Restore from Supabase Vault (if available)
 supabase secrets list --project-ref $SUPABASE_PROJECT_REF

@@ -30,7 +30,7 @@
 ssh root@159.223.75.148
 
 # 2. Navigate to repo and pull changes
-cd /root/odoo-ce && git pull origin main
+cd /root/odoo && git pull origin main
 
 # 3. Update nginx config
 docker cp deploy/nginx/erp.insightpulseai.com.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf

@@ -195,13 +195,13 @@ Exit code must be `0`.
 * **Pass Criteria**
   * Odoo deployment spec uses:
     ```yaml
-    image: ghcr.io/jgtolentino/odoo-ce:latest
+    image: ghcr.io/jgtolentino/odoo:latest
     ```
   * From the cluster:
     ```bash
     kubectl get deploy odoo-deployment -n odoo-prod -o jsonpath='{.spec.template.spec.containers[0].image}'
     ```
-    * Returns `ghcr.io/jgtolentino/odoo-ce:latest` (or `:sha` tag)
+    * Returns `ghcr.io/jgtolentino/odoo:latest` (or `:sha` tag)
   * A new push of main triggers CI → new image → new pods with updated image digest (confirmed via `kubectl rollout status deployment/odoo-deployment -n odoo-prod` and image digest change)
 
 ---
@@ -218,10 +218,10 @@ Exit code must be `0`.
 
 ### 1️⃣ A → Registry (build + push)
 
-From your **odoo-ce repo root** (laptop or CI runner):
+From your **odoo repo root** (laptop or CI runner):
 ```bash
 # From repo root where Dockerfile lives
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:latest
+export IMAGE=ghcr.io/jgtolentino/odoo:latest
 
 # 1. Login to GHCR (GHCR_PAT = GitHub PAT with `read:packages, write:packages`)
 echo "$GHCR_PAT" | docker login ghcr.io -u jgtolentino --password-stdin
@@ -237,7 +237,7 @@ At this point **image A is in GHCR**.
 
 ### 2️⃣ Registry → B1 (DigitalOcean VPS with docker-compose.prod.yml)
 
-On the **VPS** (`159.223.75.148`), where `docker-compose.prod.yml` already references `ghcr.io/jgtolentino/odoo-ce:latest`:
+On the **VPS** (`159.223.75.148`), where `docker-compose.prod.yml` already references `ghcr.io/jgtolentino/odoo:latest`:
 ```bash
 ssh ubuntu@159.223.75.148
 
@@ -260,7 +260,7 @@ Assuming your **Odoo Deployment** in DOKS uses this image:
 # deploy/k8s/odoo-deployment.yaml (spec snippet)
 containers:
   - name: odoo
-    image: ghcr.io/jgtolentino/odoo-ce:latest
+    image: ghcr.io/jgtolentino/odoo:latest
 ```
 
 Apply or bump the image like this:
@@ -273,7 +273,7 @@ kubectl apply -f deploy/k8s/
 kubectl rollout status deployment/odoo-deployment -n odoo-prod
 
 # Option 2: Imperative image bump
-kubectl set image deployment/odoo-deployment -n odoo-prod odoo=ghcr.io/jgtolentino/odoo-ce:latest
+kubectl set image deployment/odoo-deployment -n odoo-prod odoo=ghcr.io/jgtolentino/odoo:latest
 kubectl rollout status deployment/odoo-deployment -n odoo-prod
 ```
 
@@ -283,5 +283,5 @@ Now **the same image A** is running in **B = DOKS cluster**.
 
 **Net-net:**
 
-> **Build → push to `ghcr.io/jgtolentino/odoo-ce:latest` → `docker compose pull/up` on VPS or `kubectl set image/apply` on DOKS.**
+> **Build → push to `ghcr.io/jgtolentino/odoo:latest` → `docker compose pull/up` on VPS or `kubectl set image/apply` on DOKS.**
 > That's the full path from custom image A to running state B.

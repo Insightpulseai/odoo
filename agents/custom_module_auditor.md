@@ -81,7 +81,7 @@ For **every custom module** (non-CE, non-OCA):
 
 ## Inputs & Context
 
-- Repo root: `odoo-ce` (OCA-style).
+- Repo root: `odoo` (OCA-style).
 - Module registry export: `Module (ir.module.module) (23).xlsx`.
 - Custom modules are:
   - `technical_name` starting with `ipai_` or other non-Odoo/non-OCA prefixes.

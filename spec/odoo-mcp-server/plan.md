@@ -858,7 +858,7 @@ services:
       repository: node
       tag: "20-alpine"
     github:
-      repo: jgtolentino/odoo-ce
+      repo: jgtolentino/odoo
       branch: main
       deploy_on_push: true
     envs:
@@ -927,7 +927,7 @@ jobs:
   "mcpServers": {
     "odoo-erp": {
       "command": "node",
-      "args": ["/Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/odoo-erp-server/dist/index.js"],
+      "args": ["/Users/tbwa/Documents/GitHub/odoo/mcp/servers/odoo-erp-server/dist/index.js"],
       "env": {
         "ODOO_URL": "http://localhost:8069",
         "ODOO_DB": "production",

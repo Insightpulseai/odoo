@@ -114,7 +114,7 @@ curl -X POST http://localhost:8765/conversations \
       {"role": "assistant", "content": "Here's how to create an Odoo module..."}
     ],
     "context": {
-      "workspace": "/Users/tbwa/odoo-ce",
+      "workspace": "/Users/tbwa/odoo",
       "files": ["addons/ipai_expense/__manifest__.py"]
     },
     "summary": "User asked about Odoo module creation"

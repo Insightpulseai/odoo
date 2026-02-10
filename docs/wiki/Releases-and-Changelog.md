@@ -102,6 +102,6 @@ Production deployments use the `Deploy to Production` workflow:
 
 ## Related Documentation
 
-- [WHAT_SHIPPED.md](https://github.com/jgtolentino/odoo-ce/blob/main/docs/releases/WHAT_SHIPPED.md) - Detailed release inventory
-- [GO_LIVE_MANIFEST.md](https://github.com/jgtolentino/odoo-ce/blob/main/docs/releases/GO_LIVE_MANIFEST.md) - Go-live checklist
-- [DEPLOYMENT_PROOFS/](https://github.com/jgtolentino/odoo-ce/tree/main/docs/releases/DEPLOYMENT_PROOFS) - Evidence artifacts
+- [WHAT_SHIPPED.md](https://github.com/jgtolentino/odoo/blob/main/docs/releases/WHAT_SHIPPED.md) - Detailed release inventory
+- [GO_LIVE_MANIFEST.md](https://github.com/jgtolentino/odoo/blob/main/docs/releases/GO_LIVE_MANIFEST.md) - Go-live checklist
+- [DEPLOYMENT_PROOFS/](https://github.com/jgtolentino/odoo/tree/main/docs/releases/DEPLOYMENT_PROOFS) - Evidence artifacts

@@ -32,7 +32,7 @@ set -euo pipefail
 # Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 # ============================================================================
 
-REPO_DIR="/opt/odoo-ce"
+REPO_DIR="/opt/odoo"
 COMPOSE_FILE="deploy/docker-compose.prod.yml"
 COMPOSE_OVERRIDE="deploy/docker-compose.workos-deploy.yml"
 DB_NAME="odoo"
@@ -356,7 +356,7 @@ After running the deployment block, verify:
 If deployment fails or needs rollback:
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 source .deploy_snapshot
 
 # Revert git
