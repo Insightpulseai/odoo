@@ -3,6 +3,7 @@
 ## Problem Statement
 
 InsightPulse AI currently has:
+
 - ✅ Multi-tenant authentication (Supabase Auth)
 - ✅ Organization structure (orgs, teams, users)
 - ✅ CMS foundation (pages, sections, use cases, artifacts)
@@ -11,6 +12,7 @@ InsightPulse AI currently has:
 - ✅ 40 Edge Functions live
 
 **Missing critical SaaS primitives:**
+
 - ❌ Billing integration (no subscription management, no usage metering)
 - ❌ Content workflows (no approval process, no version history)
 - ❌ Scheduled publishing (no automation)
@@ -24,12 +26,14 @@ InsightPulse AI currently has:
 ## Goals
 
 ### Business Goals
+
 1. **Monetize platform** — Enable Stripe subscriptions with usage-based pricing
 2. **Reduce manual operations** — Automate billing sync, content approval, publishing
 3. **Ensure compliance** — Audit trail, invoice history, usage transparency
 4. **Scale efficiently** — Multi-tenant RLS, automated resource enforcement
 
 ### Technical Goals
+
 1. **Stripe integration** — Webhook handler, subscription sync, usage metering
 2. **CMS workflows** — Approval process, version history, scheduled publishing
 3. **Odoo admin interface** — Billing dashboard, content editor, org settings
@@ -37,6 +41,7 @@ InsightPulse AI currently has:
 5. **Staging environment** — Validate workflows before production
 
 ### Success Metrics
+
 - **Billing:** First paying customer onboarded within 1 week of MVP launch
 - **CMS:** 90% of content goes through approval workflow (down from 0%)
 - **Performance:** Stripe webhook processing <500ms p99
@@ -47,9 +52,11 @@ InsightPulse AI currently has:
 ## Personas
 
 ### 1. Tenant Admin
+
 **Role:** Organization owner responsible for billing and team management
 
 **Goals:**
+
 - View current subscription plan and usage
 - Upgrade/downgrade plans
 - Manage team members (invite, remove, roles)
@@ -57,19 +64,23 @@ InsightPulse AI currently has:
 - Monitor usage against limits
 
 **Pain Points:**
+
 - No visibility into usage consumption
 - Cannot self-serve plan changes (requires manual SQL)
 - No invoice history or payment method management
 
 **Jobs to Be Done:**
+
 - "When usage approaches limits, I need alerts so I can upgrade before operations are blocked"
 - "When viewing invoices, I need itemized usage breakdown so I can audit billing"
 - "When adding team members, I need role-based permissions so I can control access"
 
 ### 2. Content Editor
+
 **Role:** Team member creating and managing CMS content
 
 **Goals:**
+
 - Create pages/posts/case studies
 - Request approval from admin
 - Schedule content for future publishing
@@ -77,20 +88,24 @@ InsightPulse AI currently has:
 - Receive notifications when content is approved/rejected
 
 **Pain Points:**
+
 - No approval workflow (everyone publishes directly)
 - No version history (cannot rollback changes)
 - No scheduled publishing (manual cron jobs)
 - No notifications on content status changes
 
 **Jobs to Be Done:**
+
 - "When I finish drafting content, I need to request approval so admins can review before publishing"
 - "When reviewing edits, I need side-by-side diff so I can see what changed"
 - "When scheduling content, I need reliability so launches happen on time"
 
 ### 3. Developer
+
 **Role:** Engineer integrating with platform APIs
 
 **Goals:**
+
 - Check entitlements before operations
 - Track usage events programmatically
 - Understand RLS policies
@@ -98,12 +113,14 @@ InsightPulse AI currently has:
 - Access TypeScript types for API contracts
 
 **Pain Points:**
+
 - No entitlement check function (manual queries)
 - No usage event SDK (raw SQL inserts)
 - Webhook testing requires production Stripe events
 - TypeScript types out of sync with database schema
 
 **Jobs to Be Done:**
+
 - "When executing AI runs, I need to check entitlements so users are blocked at limits"
 - "When logging usage, I need idempotent tracking so double-counting is prevented"
 - "When testing webhooks, I need local simulation so I don't rely on Stripe production events"
@@ -165,6 +182,7 @@ InsightPulse AI currently has:
 #### Billing Tables
 
 **billing_customers**
+
 ```sql
 CREATE TABLE billing_customers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -178,6 +196,7 @@ CREATE INDEX idx_billing_customers_org_id ON billing_customers(org_id);
 ```
 
 **subscriptions**
+
 ```sql
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -197,6 +216,7 @@ CREATE INDEX idx_subscriptions_status ON subscriptions(status);
 ```
 
 **usage_events**
+
 ```sql
 CREATE TABLE usage_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -211,6 +231,7 @@ CREATE INDEX idx_usage_events_type ON usage_events(event_type);
 ```
 
 **org_usage_current** (Materialized View)
+
 ```sql
 CREATE MATERIALIZED VIEW org_usage_current AS
 SELECT
@@ -229,6 +250,7 @@ CREATE UNIQUE INDEX idx_org_usage_current_org_id ON org_usage_current(org_id);
 #### CMS Workflow Tables
 
 **content_types**
+
 ```sql
 CREATE TABLE content_types (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -239,6 +261,7 @@ CREATE TABLE content_types (
 ```
 
 **cms_page_versions**
+
 ```sql
 CREATE TABLE cms_page_versions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -256,6 +279,7 @@ CREATE UNIQUE INDEX idx_cms_page_versions_unique ON cms_page_versions(page_id, v
 ```
 
 **cms_approvals**
+
 ```sql
 CREATE TABLE cms_approvals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -274,6 +298,7 @@ CREATE INDEX idx_cms_approvals_status ON cms_approvals(status);
 ```
 
 **cms_schedule**
+
 ```sql
 CREATE TABLE cms_schedule (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -295,6 +320,7 @@ CREATE INDEX idx_cms_schedule_org_id ON cms_schedule(org_id);
 **Principle:** Users can ONLY access data from their own organization.
 
 **Example: subscriptions table**
+
 ```sql
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
@@ -322,6 +348,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 **Endpoint:** `POST /functions/v1/stripe-webhook`
 
 **Request:**
+
 ```json
 {
   "type": "customer.subscription.updated",
@@ -343,6 +370,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "received": true,
@@ -351,6 +379,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Error (400 Bad Request):**
+
 ```json
 {
   "error": "Invalid signature"
@@ -358,6 +387,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Processing Logic:**
+
 1. Verify HMAC signature using Stripe webhook secret
 2. Check idempotency (event ID already processed?)
 3. Extract subscription data
@@ -370,6 +400,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 **Endpoint:** `POST /functions/v1/entitlement-check`
 
 **Request:**
+
 ```json
 {
   "org_id": "uuid-here",
@@ -378,6 +409,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Response (allowed):**
+
 ```json
 {
   "allowed": true,
@@ -388,6 +420,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Response (blocked):**
+
 ```json
 {
   "allowed": false,
@@ -399,6 +432,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 ```
 
 **Processing Logic:**
+
 1. Query `org_usage_current` materialized view
 2. Get org's current plan from `subscriptions`
 3. Compare usage against plan limits
@@ -409,6 +443,7 @@ CREATE POLICY "Service role can manage all subscriptions"
 **Trigger:** pg_cron (every 1 minute)
 
 **Processing Logic:**
+
 1. Query `cms_schedule` for pending actions where `scheduled_at <= NOW()`
 2. For each action:
    - Create version snapshot (if publish)
@@ -420,11 +455,13 @@ CREATE POLICY "Service role can manage all subscriptions"
 ### RPC Functions
 
 **refresh_org_usage()**
+
 ```sql
 REFRESH MATERIALIZED VIEW CONCURRENTLY org_usage_current;
 ```
 
 **check_entitlement(p_org_id UUID, p_limit_type TEXT)**
+
 ```sql
 RETURNS JSONB AS $$
   -- Returns { allowed: boolean, current: number, max: number, plan: string }
@@ -438,6 +475,7 @@ $$;
 ### MVP Launch Requirements (Week 6)
 
 **Billing:**
+
 - [ ] User can sign up and be assigned free plan
 - [ ] User can upgrade to Pro plan via Stripe Checkout
 - [ ] Stripe webhook syncs subscription status to Supabase
@@ -447,6 +485,7 @@ $$;
 - [ ] Pro plan users see itemized usage on invoices
 
 **CMS Workflows:**
+
 - [ ] Content Editor creates page (status: draft)
 - [ ] Content Editor requests approval
 - [ ] Tenant Admin sees approval in Odoo queue
@@ -459,28 +498,101 @@ $$;
 - [ ] Version history shows all changes with diffs
 
 **Security:**
+
 - [ ] RLS blocks cross-org access (automated test)
 - [ ] Webhook signature verification prevents replay attacks
 - [ ] Service role operations logged with justification
 - [ ] Secrets stored in Supabase Vault (not hardcoded)
 
 **Performance:**
+
 - [ ] Stripe webhook processing <500ms p99
 - [ ] Entitlement check <100ms p95
 - [ ] CMS approval workflow <5s end-to-end
 - [ ] Scheduled publish accuracy ±1min
 
 **Quality:**
+
 - [ ] 80% test coverage (unit + integration)
 - [ ] Zero P0/P1 bugs in staging
 - [ ] All E2E tests passing
 - [ ] Spec bundle complete and reviewed
+
+## Odoo.sh-Equivalent Delivery Model (This Platform Doubles as Odoo.sh)
+
+### Scope
+
+This platform must provide an Odoo.sh-like experience for:
+
+- Odoo CE + OCA repos (build, test, deploy, upgrade)
+- Marketing + Admin web apps (Next.js/Vercel)
+- Shared Supabase backend (DB/RLS/Edge/Realtime/Storage)
+
+### Environments
+
+- **dev**: ephemeral per-PR (preview) + local supabase (optional)
+- **stage**: long-lived staging (production-like)
+- **prod**: locked, audited, least-privilege
+
+### Branch → Environment Mapping (Deterministic)
+
+- `main` → **prod**
+- `release/*` → **stage**
+- `feature/*` / PRs → **preview** (ephemeral)
+
+### Build & Deploy Requirements (No UI steps)
+
+#### Odoo (CE/OCA)
+
+- Build must be reproducible (pinned Odoo + pinned OCA commits/tags).
+- Database migrations are deterministic:
+  - Odoo module upgrades are run via CLI in CI (no manual clicking).
+  - DB schema changes are tracked as SQL migrations (Supabase) where applicable for the SaaS backend.
+- Odoo runtime health checks:
+  - `/web/health` or equivalent controller ping
+  - login page HTML integrity check (CSS/JS served)
+  - module install/upgrade verification
+
+#### Web (Vercel)
+
+- Monorepo root directory must be set via automation where possible (Vercel API).
+- Preview deployments required per PR.
+- Production deployment must be gated by CI checks.
+
+#### Supabase (Backend)
+
+- All DB changes via `supabase/migrations/*`.
+- All Edge Functions under `supabase/functions/*`.
+- Secrets never committed; only via env/secret stores.
+- RLS must be enabled on workspace-scoped tables.
+- Required: automated policy lint + migration drift checks.
+
+### Operational Guarantees (Odoo.sh Parity)
+
+- **Backup/Restore**
+  - Managed Postgres PITR (Supabase/DO) + tested restore procedure.
+  - Odoo filestore backup strategy (if using Odoo attachments) OR externalize assets to Supabase Storage.
+- **Upgrade Pipeline**
+  - Staging upgrade runs first, with DB snapshot before upgrade.
+  - Automated module upgrade tests run in CI on a restored snapshot.
+- **Observability**
+  - Central logs for Edge Functions + app logs.
+  - Odoo logs collected (container logs) and searchable.
+  - Release notes generated from commits + migration summaries.
+
+### Release Gates (Must Pass)
+
+- Security: RLS checks + dependency scan
+- Data: migrations apply cleanly on empty DB + stage clone
+- App: admin UI smoke test + API health
+- Odoo: CSS/asset integrity + module upgrade smoke
 
 ---
 
 ## Implementation Phases
 
 ### Phase 1: Core SaaS Primitives (Weeks 1-2)
+
 - Stripe webhook handler Edge Function
 - Billing tables + RLS policies
 - Usage tracking tables + materialized view
@@ -489,6 +601,7 @@ $$;
 - Odoo `ipai_saas_billing` module (basic UI)
 
 ### Phase 2: CMS Workflows + Odoo Integration (Weeks 3-5)
+
 - CMS workflow tables + RLS policies
 - CMS publisher Edge Function
 - pg_cron jobs (usage refresh, scheduled publishing)
@@ -498,6 +611,7 @@ $$;
 - Realtime notification channels
 
 ### Phase 2.5: Testing & Documentation (Week 6)
+
 - Unit tests (webhook idempotency, entitlement logic)
 - Integration tests (billing cycle, approval workflow)
 - E2E tests (signup → subscription → content → publish)
@@ -507,4 +621,4 @@ $$;
 
 ---
 
-*Last updated: 2026-02-11*
+_Last updated: 2026-02-11_

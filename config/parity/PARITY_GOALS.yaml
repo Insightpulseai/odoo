@@ -1,6 +1,9 @@
 version: 0.1
 scoring:
+  mode: goal_based
   threshold: 0.80
+  pass_if:
+    tier0_pct_gte: 100
   tiers:
     0:
       weight: 1.0
