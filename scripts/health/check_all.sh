@@ -6,9 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 
 # Load environment
-set -a
-source .env.platform.local 2>/dev/null || true
-set +a
+./scripts/health/load_env.sh .env.platform.local 2>/dev/null || true
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║           COMPLETE SERVICE HEALTH CHECK                      ║"
