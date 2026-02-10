@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f4314abd1c46c977fc7cdcb56c716f9e6e742610
+> Commit: e07454d46bd0707a08a9b8d5cdd8c6738f033c63
 
 ## 📚 Documentation
 
@@ -587,6 +587,7 @@
 | [Mail Configuration & JWT Authentication - Complete](docs/evidence/20260210-0709/mail_and_auth_complete.md) | docs/evidence/20260210-0709 |
 | [Phase 6: Agent Library Wireup - Evidence](docs/evidence/20260210-1147/phase6-agent-library/EVIDENCE.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Phase 6 Agent Library Wireup - VERIFICATION SUMMARY](docs/evidence/20260210-1147/phase6-agent-library/VERIFICATION_SUMMARY.md) | docs/evidence/20260210-1147/phase6-agent-library |
+| [Complete Service Health Check](docs/evidence/20260210-1200/HEALTH_CHECK.md) | docs/evidence/20260210-1200 |
 | [Auth System Verification Report](docs/evidence/20260210-1200/auth-system/VERIFICATION.md) | docs/evidence/20260210-1200/auth-system |
 | [Supabase Secrets Deployment Results](docs/evidence/20260210-1300/supabase-secrets-migration/DEPLOYMENT_RESULTS.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
 | [Supabase Secrets Migration Implementation](docs/evidence/20260210-1300/supabase-secrets-migration/IMPLEMENTATION.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
