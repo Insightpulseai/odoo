@@ -1,0 +1,80 @@
+name: Auth Smoke Test
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *" # Every 6 hours
+  push:
+    paths:
+      - "apps/web/src/app/api/auth/**"
+      - "apps/web/src/lib/supabase.ts"
+      - "scripts/supabase/test_auth_flows_safe.sh"
+
+jobs:
+  smoke-test:
+    name: Auth Flow Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          cat > .env.platform.local <<EOF
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EOF
+
+      - name: Test Auth Health Endpoint
+        run: |
+          set -a
+          source .env.platform.local
+          set +a
+
+          echo "→ Testing Auth health endpoint..."
+          response=$(curl -s "${SUPABASE_URL}/auth/v1/health" \
+            -H "apikey: ${SUPABASE_ANON_KEY}")
+
+          echo "$response" | jq .
+
+          # Verify health endpoint returns 200
+          if ! echo "$response" | jq -e '.name == "GoTrue"' > /dev/null; then
+            echo "❌ Auth health check failed"
+            exit 1
+          fi
+
+          echo "✅ Auth health check passed"
+
+      - name: Test Magic Link Flow (Rate-Limit-Safe)
+        run: |
+          set -a
+          source .env.platform.local
+          set +a
+
+          bash scripts/supabase/test_auth_flows_safe.sh business@insightpulseai.com
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "⚠️ Auth smoke test failed!"
+          echo "Check logs above for details."
+          # TODO: Add Slack notification if SLACK_WEBHOOK_URL secret exists
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auth Smoke Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ All auth flows working correctly" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Auth smoke test failed - check logs" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tested:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Auth health endpoint" >> $GITHUB_STEP_SUMMARY
+          echo "- Magic Link flow" >> $GITHUB_STEP_SUMMARY
+          echo "- Email OTP flow" >> $GITHUB_STEP_SUMMARY
