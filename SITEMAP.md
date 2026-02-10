@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c80e5562530c511baaee318643cf3b8a90066a0b
+> Commit: 52d557e8e2c42f35af7b493440302505894fd299
 
 ## 📚 Documentation
 
@@ -576,6 +576,7 @@
 | [Landing Page Implementation](docs/evidence/20260209-1526/landing-page/IMPLEMENTATION.md) | docs/evidence/20260209-1526/landing-page |
 | [Odoo Entrypoint Tactical Fix](docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/SUMMARY.md) | docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix |
 | [Phase 6: Agent Library Wireup - Evidence](docs/evidence/20260210-1147/phase6-agent-library/EVIDENCE.md) | docs/evidence/20260210-1147/phase6-agent-library |
+| [Phase 6 Agent Library Wireup - VERIFICATION SUMMARY](docs/evidence/20260210-1147/phase6-agent-library/VERIFICATION_SUMMARY.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
@@ -886,6 +887,7 @@
 | [Runbook: superset](docs/runbooks/superset.md) | docs/runbooks |
 | [Runbook: vercel](docs/runbooks/vercel.md) | docs/runbooks |
 | [Configuration & Secrets Inventory](docs/security/CONFIG_INVENTORY.md) | docs/security |
+| [Dependabot advisory status](docs/security/DEPENDABOT_STATUS.md) | docs/security |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [EE Parity Test Runner - Required Secrets](docs/setup/PARITY_TEST_RUNNER_SECRETS.md) | docs/setup |
 | [Baseline OCA Stack (CE 19)](docs/stack/BASELINE_OCA_STACK.md) | docs/stack |
