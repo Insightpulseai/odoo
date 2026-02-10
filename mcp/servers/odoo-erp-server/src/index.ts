@@ -5,7 +5,7 @@
  * Model Context Protocol (MCP) server for Odoo CE 18.0 integration
  * Supports 50+ tools across accounting, BIR compliance, partners, and projects
  *
- * @see https://github.com/jgtolentino/odoo-ce/spec/odoo-mcp-server
+ * @see https://github.com/jgtolentino/odoo/spec/odoo-mcp-server
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

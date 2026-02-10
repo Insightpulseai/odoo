@@ -284,7 +284,7 @@
 | [PRD — DocFlow v2 (Bank Statements + Reconciliation + SLA)](docflow-agentic-finance/spec/docflow-v2/prd.md) | docflow-agentic-finance/spec/docflow-v2 |
 | [Tasks — DocFlow v2](docflow-agentic-finance/spec/docflow-v2/tasks.md) | docflow-agentic-finance/spec/docflow-v2 |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
-| [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
+| [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
 | [Agent Memory System Deployment](docs/AGENT_MEMORY_DEPLOYMENT.md) | docs |
@@ -413,7 +413,7 @@
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
 | [GO-LIVE RELEASE MANIFEST (Odoo 18 CE + IPAI)](docs/RELEASE_NOTES_GO_LIVE.md) | docs |
-| [Repository Structure - odoo-ce](docs/REPOSITORY_STRUCTURE.md) | docs |
+| [Repository Structure - odoo](docs/REPOSITORY_STRUCTURE.md) | docs |
 | [Repo Tree Contract (Authoritative)](docs/REPO_TREE.contract.md) | docs |
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
@@ -663,7 +663,7 @@
 | [Odoo CE 18.0 SMTP Setup with Mailgun](docs/mailgun/ODOO_SMTP_SETUP.md) | docs/mailgun |
 | [TBWA\SMP Mailgun Canonical Configuration](docs/mailgun/TBWA_MAILGUN_CANONICAL.md) | docs/mailgun |
 | [Mailgun Webhooks and Events](docs/mailgun/WEBHOOKS_AND_EVENTS.md) | docs/mailgun |
-| [CANONICAL_CONTEXT.md — jgtolentino/odoo-ce](docs/memory/CANONICAL_CONTEXT.md) | docs/memory |
+| [CANONICAL_CONTEXT.md — jgtolentino/odoo](docs/memory/CANONICAL_CONTEXT.md) | docs/memory |
 | [MEMORY_WRITE_INSTRUCTIONS.md](docs/memory/MEMORY_WRITE_INSTRUCTIONS.md) | docs/memory |
 | [Module Production Readiness Status](docs/module-health/MODULES_PROD_STATUS.md) | docs/module-health |
 | [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
@@ -837,7 +837,7 @@
 | [Architecture](docs/pages/architecture.md) | docs/pages |
 | [Developer Guide](docs/pages/developer-guide.md) | docs/pages |
 | [Getting Started](docs/pages/getting-started.md) | docs/pages |
-| [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
+| [odoo Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
 | [Bridge Platform Components (IPAI)](docs/parity/BRIDGE_PLATFORM_COMPONENTS.md) | docs/parity |
@@ -945,7 +945,7 @@
 | [Approval Workflows](docs/wiki/cap-approvals.md) | docs/wiki |
 | [Figma Design Sync](figma/README.md) | figma |
 | [Figma Community Toolkit for Data Engineering UI](figma/community/README.md) | figma/community |
-| [Gemini Agent Operating Contract (ipai_workspace / odoo-ce)](gemini.md) | . |
+| [Gemini Agent Operating Contract (ipai_workspace / odoo)](gemini.md) | . |
 | [TBWA Finance SSC Handbook](handbook/README.md) | handbook |
 | [Summary](handbook/SUMMARY.md) | handbook |
 | [BIR Tax Calendar](handbook/compliance/bir/calendar.md) | handbook/compliance/bir |
@@ -1120,7 +1120,7 @@
 | [EE-Parity Healthcheck + CI Gate - Ready for Testing](sandbox/dev/TESTING_READY.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
 | [EE Parity Installation Pack](sandbox/dev/docs/EE_PARITY_INSTALL_PACK.md) | sandbox/dev/docs |
-| [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
+| [Odoo 19 Migration Strategy for odoo](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
 | [Odoo-Fluent Design System (SSOT)](sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM.md) | sandbox/dev/docs |
 | [Odoo-Fluent Design System Reference](sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
@@ -1136,10 +1136,10 @@
 | [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
 | [Plane Deployment Guide](sandbox/dev/plane/DEPLOY.md) | sandbox/dev/plane |
 | [Azure Databricks API Acceleration Strategy — EE Parity + Data Platform](sandbox/dev/spec/databricks-integration/ACCELERATION_STRATEGY.md) | sandbox/dev/spec/databricks-integration |
-| [Databricks API Reference for odoo-ce Integration](sandbox/dev/spec/databricks-integration/API_REFERENCE.md) | sandbox/dev/spec/databricks-integration |
-| [Databricks Developer Workflow for odoo-ce](sandbox/dev/spec/databricks-integration/DEVELOPER_WORKFLOW.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks API Reference for odoo Integration](sandbox/dev/spec/databricks-integration/API_REFERENCE.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks Developer Workflow for odoo](sandbox/dev/spec/databricks-integration/DEVELOPER_WORKFLOW.md) | sandbox/dev/spec/databricks-integration |
 | [Enterprise SaaS ERP - Databricks Architecture Pattern](sandbox/dev/spec/databricks-integration/ENTERPRISE_ARCHITECTURE.md) | sandbox/dev/spec/databricks-integration |
-| [Databricks Implementation Guide for odoo-ce](sandbox/dev/spec/databricks-integration/IMPLEMENTATION_GUIDE.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks Implementation Guide for odoo](sandbox/dev/spec/databricks-integration/IMPLEMENTATION_GUIDE.md) | sandbox/dev/spec/databricks-integration |
 | [Azure Databricks Training Guidelines for Odoo-CE Team](sandbox/dev/spec/databricks-integration/TRAINING_GUIDELINES.md) | sandbox/dev/spec/databricks-integration |
 | [Azure Databricks Integration - Product Requirements Document](sandbox/dev/spec/databricks-integration/prd.md) | sandbox/dev/spec/databricks-integration |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
@@ -1318,18 +1318,18 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
-| [Constitution: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/constitution.md) | spec/odoo-ce-devops-master-plan |
-| [Implementation Plan: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/plan.md) | spec/odoo-ce-devops-master-plan |
-| [PRD: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/prd.md) | spec/odoo-ce-devops-master-plan |
-| [Tasks: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/tasks.md) | spec/odoo-ce-devops-master-plan |
-| [Constitution: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/constitution.md) | spec/odoo-ce-enterprise-replacement |
-| [Plan: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/plan.md) | spec/odoo-ce-enterprise-replacement |
-| [PRD: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/prd.md) | spec/odoo-ce-enterprise-replacement |
-| [Tasks: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/tasks.md) | spec/odoo-ce-enterprise-replacement |
-| [Odoo CE Platform Constitution](spec/odoo-ce/constitution.md) | spec/odoo-ce |
-| [Odoo CE Repository - Implementation Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
-| [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo-ce/prd.md) | spec/odoo-ce |
-| [Odoo CE Repository - Implementation Tasks](spec/odoo-ce/tasks.md) | spec/odoo-ce |
+| [Constitution: Odoo CE DevOps Master Plan](spec/odoo-devops-master-plan/constitution.md) | spec/odoo-devops-master-plan |
+| [Implementation Plan: Odoo CE DevOps Master Plan](spec/odoo-devops-master-plan/plan.md) | spec/odoo-devops-master-plan |
+| [PRD: Odoo CE DevOps Master Plan](spec/odoo-devops-master-plan/prd.md) | spec/odoo-devops-master-plan |
+| [Tasks: Odoo CE DevOps Master Plan](spec/odoo-devops-master-plan/tasks.md) | spec/odoo-devops-master-plan |
+| [Constitution: Odoo CE Enterprise Replacement](spec/odoo-enterprise-replacement/constitution.md) | spec/odoo-enterprise-replacement |
+| [Plan: Odoo CE Enterprise Replacement](spec/odoo-enterprise-replacement/plan.md) | spec/odoo-enterprise-replacement |
+| [PRD: Odoo CE Enterprise Replacement](spec/odoo-enterprise-replacement/prd.md) | spec/odoo-enterprise-replacement |
+| [Tasks: Odoo CE Enterprise Replacement](spec/odoo-enterprise-replacement/tasks.md) | spec/odoo-enterprise-replacement |
+| [Odoo CE Platform Constitution](spec/odoo/constitution.md) | spec/odoo |
+| [Odoo CE Repository - Implementation Plan](spec/odoo/plan.md) | spec/odoo |
+| [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo/prd.md) | spec/odoo |
+| [Odoo CE Repository - Implementation Tasks](spec/odoo/tasks.md) | spec/odoo |
 | [Constitution: Odoo Copilot – Process Mining (Local-First)](spec/odoo-copilot-process-mining/constitution.md) | spec/odoo-copilot-process-mining |
 | [Plan: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/plan.md) | spec/odoo-copilot-process-mining |
 | [PRD: Odoo Copilot – Process Mining & Process Intelligence (Mindzie-style, Local-First)](spec/odoo-copilot-process-mining/prd.md) | spec/odoo-copilot-process-mining |
@@ -1400,7 +1400,7 @@
 | [Upstream Parity – Task Checklist](spec/upstream-parity/tasks.md) | spec/upstream-parity |
 | [Notion Clone Module Constitution (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/constitution.md) | spec/workos-notion-clone |
 | [Plan — Notion Clone Module (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/plan.md) | spec/workos-notion-clone |
-| [PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo-ce`](spec/workos-notion-clone/prd.md) | spec/workos-notion-clone |
+| [PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo`](spec/workos-notion-clone/prd.md) | spec/workos-notion-clone |
 | [Tasks — Notion Clone Module (Executable Graph)](spec/workos-notion-clone/tasks.md) | spec/workos-notion-clone |
 | [InsightPulse ERP – Expense & Equipment MVP (SAP Concur + Cheqroom Parity)](specs/002-odoo-expense-equipment-mvp.prd.md) | specs |
 | [Spec 003: AI Enrichment Agent - Deployment Guide](specs/003-ai-enrichment/DEPLOYMENT.md) | specs/003-ai-enrichment |
@@ -1558,7 +1558,7 @@
 ## 🔗 Quick Links
 
 - **Production**: https://erp.insightpulseai.com
-- **Repository**: https://github.com/jgtolentino/odoo-ce
+- **Repository**: https://github.com/jgtolentino/odoo
 - **OCA Modules**: https://github.com/OCA
 
 ---

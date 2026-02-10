@@ -74,15 +74,15 @@ export DB_NAME="odoo_prod"
 export S3_BUCKET="insightpulse-backups"
 
 # 3. Download and execute bootstrap script
-curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/scripts/deploy/do-bootstrap-odoo-prod.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo/main/scripts/deploy/do-bootstrap-odoo-prod.sh | bash
 ```
 
 ### Option 2: Local Execution with Custom Config
 
 ```bash
 # 1. Clone repository on droplet
-git clone https://github.com/jgtolentino/odoo-ce.git /tmp/odoo-ce
-cd /tmp/odoo-ce
+git clone https://github.com/jgtolentino/odoo.git /tmp/odoo
+cd /tmp/odoo
 
 # 2. Configure deployment
 export DOMAIN="erp.insightpulseai.com"
@@ -438,4 +438,4 @@ All of the following must be true:
 **Document Version**: 1.0.0
 **Last Updated**: 2026-01-08
 **Maintainer**: Jake Tolentino
-**Support**: https://github.com/jgtolentino/odoo-ce/issues
+**Support**: https://github.com/jgtolentino/odoo/issues

@@ -18,7 +18,7 @@ export GH_PAT_SUPERSET="ghp_your_github_pat"
 ## Provision TBWA Tenant (One Command)
 
 ```bash
-cd /path/to/odoo-ce
+cd /path/to/odoo
 make provision-tbwa
 ```
 
@@ -33,7 +33,7 @@ make provision-tbwa
 
 ```
 Repos:
-- odoo-ce          → Platform + Tenant Engine
+- odoo          → Platform + Tenant Engine
 - tbwa-agency-databank → TBWA Data (Supabase migrations)
 - superset         → BI Shell (reads all tenants)
 
@@ -54,10 +54,10 @@ Superset Workspaces:
 
 ## Cross-Repo Integration
 
-**Schema changes in odoo-ce automatically trigger Superset rebuild**:
+**Schema changes in odoo automatically trigger Superset rebuild**:
 
 ```bash
-# 1. Push schema change to odoo-ce
+# 1. Push schema change to odoo
 git add supabase/migrations/V008__new_scout_view.sql
 git commit -m "Add new Scout performance view"
 git push origin main

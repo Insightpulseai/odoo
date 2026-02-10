@@ -2753,7 +2753,7 @@ Commit: 678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 │       ├── build-seeded-image.yml
 │       ├── build-unified-image.yml
 │       ├── checks-debug.yml
-│       ├── ci-odoo-ce.yml
+│       ├── ci-odoo.yml
 │       ├── ci-odoo-oca.yml
 │       ├── control-room-ci.yml
 │       ├── databricks-dab-ci.yml
@@ -3941,7 +3941,7 @@ Commit: 678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 ├── Dockerfile
 ├── Dockerfile.v0.10.0
 ├── docs
-│   ├── 003-odoo-ce-custom-image-spec.md
+│   ├── 003-odoo-custom-image-spec.md
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
@@ -4451,7 +4451,7 @@ Commit: 678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 ├── odoo_ce_expert_prompt.md
 ├── ODOO_OCR_SETUP.md
 ├── odoo-bin
-├── odoo-ce-target.zip
+├── odoo-target.zip
 ├── odoo-v1.2.0-build.zip
 ├── ops
 │   ├── backup-production.sh
@@ -4820,7 +4820,7 @@ Commit: 678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
-│   ├── odoo-ce
+│   ├── odoo
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md

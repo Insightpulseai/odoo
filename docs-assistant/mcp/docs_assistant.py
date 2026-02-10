@@ -18,7 +18,7 @@ class DocsAssistantMCP:
     def __init__(self, api_base_url: str = None, api_key: str = None):
         self.api_base_url = api_base_url or os.getenv("DOCS_ASSISTANT_API_URL", "http://localhost:8000")
         self.api_key = api_key or os.getenv("DOCS_ASSISTANT_API_KEY")
-        self.default_project = os.getenv("DOCS_ASSISTANT_PROJECT", "odoo-ce")
+        self.default_project = os.getenv("DOCS_ASSISTANT_PROJECT", "odoo")
 
         if not self.api_key:
             raise ValueError("DOCS_ASSISTANT_API_KEY environment variable is required")
@@ -151,8 +151,8 @@ async def main():
                         },
                         "project": {
                             "type": "string",
-                            "description": "Project slug (default: 'odoo-ce')",
-                            "default": "odoo-ce"
+                            "description": "Project slug (default: 'odoo')",
+                            "default": "odoo"
                         }
                     },
                     "required": ["question"]
@@ -170,8 +170,8 @@ async def main():
                         },
                         "project": {
                             "type": "string",
-                            "description": "Project slug (default: 'odoo-ce')",
-                            "default": "odoo-ce"
+                            "description": "Project slug (default: 'odoo')",
+                            "default": "odoo"
                         },
                         "limit": {
                             "type": "number",

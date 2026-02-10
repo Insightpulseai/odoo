@@ -70,7 +70,7 @@ docker compose -f sandbox/dev/docker-compose.yml restart odoo
 ## Known Limitations
 
 - ipai modules not mounted in dev container (`sandbox/dev/docker-compose.yml` mounts `./addons` relative to sandbox/dev/, not repo root)
-- Custom Docker image `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity` referenced but running container uses standard `odoo:18.0`
+- Custom Docker image `ghcr.io/jgtolentino/odoo:19.0-ee-parity` referenced but running container uses standard `odoo:18.0`
 
 ## Next Steps
 

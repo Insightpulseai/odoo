@@ -237,4 +237,4 @@
 
 ---
 
-*Generated for jgtolentino/odoo-ce Go-Live Project*
+*Generated for jgtolentino/odoo Go-Live Project*

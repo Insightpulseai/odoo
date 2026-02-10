@@ -67,7 +67,7 @@ All required DNS records are already configured:
 ### 1. Install Addon
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce/sandbox/dev
+cd /Users/tbwa/Documents/GitHub/odoo/sandbox/dev
 
 # Install via Odoo CLI
 export DOCKER_HOST="unix:///Users/tbwa/.colima/default/docker.sock"
@@ -319,7 +319,7 @@ Expected events: `delivered`, `opened`, `clicked` (if you interact with email)
 # SSH to production server
 ssh root@178.128.112.214
 
-cd /opt/odoo-ce
+cd /opt/odoo
 git pull origin main
 
 # Install addon

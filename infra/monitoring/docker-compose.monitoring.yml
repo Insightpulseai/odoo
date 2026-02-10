@@ -140,4 +140,4 @@ volumes:
 networks:
   odoo-net:
     external: true
-    name: odoo-ce-network
+    name: odoo-network

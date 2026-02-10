@@ -2,18 +2,18 @@
 
 ## Goal
 
-ipai-learn is a curated enterprise documentation hub. It is NOT a mirror of operational repos (e.g., odoo-ce).
+ipai-learn is a curated enterprise documentation hub. It is NOT a mirror of operational repos (e.g., odoo).
 
 ## Audience Distinction
 
 | Repository | Primary Audience | Content Type |
 |------------|------------------|--------------|
-| **odoo-ce** | Developers, Operators, DevOps | Technical docs, API refs, deployment guides, runbooks |
+| **odoo** | Developers, Operators, DevOps | Technical docs, API refs, deployment guides, runbooks |
 | **ipai-learn** | Enterprise stakeholders, Business users | Curated tutorials, executive summaries, onboarding guides |
 
 ## Rules
 
-1. **Prefer deep links** to canonical sources in odoo-ce over copying.
+1. **Prefer deep links** to canonical sources in odoo over copying.
 2. **Copy only when content is**:
    - Executive-facing, stable, and broadly reusable
    - Not tightly coupled to repo internals
@@ -23,16 +23,16 @@ ipai-learn is a curated enterprise documentation hub. It is NOT a mirror of oper
    - Reason for inclusion
    - Owner
    - Last sync date
-4. **Bulk migration of odoo-ce docs into ipai-learn is prohibited**.
+4. **Bulk migration of odoo docs into ipai-learn is prohibited**.
 
 ## Success Criteria
 
 ### SC-REL-01 — Clean hub integrity preserved
-- No bulk import of `odoo-ce/docs/**` into `ipai-learn`.
+- No bulk import of `odoo/docs/**` into `ipai-learn`.
 - Any copied docs must be **selective** and recorded in a curation manifest.
 
 ### SC-REL-02 — Cross-reference mechanism available and preferred
-- `ipai-learn` links to canonical sources in `odoo-ce` for deep technical docs.
+- `ipai-learn` links to canonical sources in `odoo` for deep technical docs.
 - No duplication unless explicitly curated.
 
 ### SC-REL-03 — CI prevents "migration creep"

@@ -39,8 +39,8 @@ Before deploying, verify:
 ssh root@insightpulse-odoo
 
 # Clone repo
-git clone https://github.com/jgtolentino/odoo-ce.git /opt/odoo-ce
-cd /opt/odoo-ce
+git clone https://github.com/jgtolentino/odoo.git /opt/odoo
+cd /opt/odoo
 
 # Create .env from template
 cp deploy/.env.production.template .env
@@ -114,7 +114,7 @@ curl -sS -o /dev/null -w '%{http_code}' https://erp.insightpulseai.com/web/healt
 ### 3.1 Pre-Upgrade
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Create backup
 docker compose -f deploy/docker-compose.prod.yml exec db \

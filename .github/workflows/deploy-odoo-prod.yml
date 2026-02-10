@@ -38,11 +38,11 @@ jobs:
           key: ${{ secrets.ODOO_PROD_SSH_KEY }}
           script: |
             set -euo pipefail
-            # Adjust path if your repo is elsewhere, e.g. /workspace/odoo-ce
+            # Adjust path if your repo is elsewhere, e.g. /workspace/odoo
             # Trying common locations or user provided path
-            TARGET_DIR="/workspace/odoo-ce" 
-            if [ -d "/opt/odoo-ce" ]; then TARGET_DIR="/opt/odoo-ce"; fi
-            if [ -d "/srv/odoo-ce" ]; then TARGET_DIR="/srv/odoo-ce"; fi
+            TARGET_DIR="/workspace/odoo" 
+            if [ -d "/opt/odoo" ]; then TARGET_DIR="/opt/odoo"; fi
+            if [ -d "/srv/odoo" ]; then TARGET_DIR="/srv/odoo"; fi
             
             # Allow override via secret if needed, otherwise fallback to detection
             TARGET_DIR="${{ secrets.ODOO_REPO_PATH || '/workspace' }}"

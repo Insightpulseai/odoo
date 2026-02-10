@@ -19,7 +19,7 @@ It's basically "coding agent + shell runner" with a CLI interface.
 curl -fsSL https://claude.ai/install.sh | bash
 
 # Navigate to project
-cd ~/odoo-ce
+cd ~/odoo
 
 # Start Claude Code
 claude

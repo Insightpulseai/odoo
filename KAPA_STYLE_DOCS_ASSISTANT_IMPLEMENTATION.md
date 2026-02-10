@@ -80,7 +80,7 @@ Successfully implemented a complete Kapa.ai-style self-hosted RAG system for tec
   src="/docs-assistant/web/docs-widget.js"
   data-api-url="https://docs-api.yourdomain.com"
   data-api-key="your-api-key"
-  data-project-slug="odoo-ce"
+  data-project-slug="odoo"
   data-position="bottom-right"
   data-theme="dark"
   data-debug
@@ -90,11 +90,11 @@ Successfully implemented a complete Kapa.ai-style self-hosted RAG system for tec
 ### 2. MCP Tool Usage (Claude Code)
 ```python
 # Ask about Odoo module creation
-result = await ask_docs("How do I create a new Odoo module?", "odoo-ce")
+result = await ask_docs("How do I create a new Odoo module?", "odoo")
 print(result["answer"])
 
 # Search for specific information
-search_result = await search_docs("Odoo cron configuration", "odoo-ce", 5)
+search_result = await search_docs("Odoo cron configuration", "odoo", 5)
 ```
 
 ### 3. API Integration
@@ -104,7 +104,7 @@ curl -X POST "https://docs-api.yourdomain.com/v1/chat" \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "project_slug": "odoo-ce",
+    "project_slug": "odoo",
     "question": "How do I configure Odoo cron jobs?"
   }'
 
@@ -113,7 +113,7 @@ curl -X POST "https://docs-api.yourdomain.com/v1/search" \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
-    "project_slug": "odoo-ce",
+    "project_slug": "odoo",
     "query": "Odoo security rules",
     "limit": 10
   }'
@@ -134,7 +134,7 @@ curl -X POST "https://docs-api.yourdomain.com/v1/search" \
 -- Example source configuration
 INSERT INTO docs_sources (project_id, name, kind, config) VALUES
   ('project-uuid', 'Odoo CE Docs', 'github', '{
-    "repo": "jgtolentino/odoo-ce",
+    "repo": "jgtolentino/odoo",
     "branch": "main",
     "paths": ["docs/", "README.md"]
   }'),
@@ -216,7 +216,7 @@ ON docs_questions(project_id, created_at);
 psql $DATABASE_URL -f docs-assistant/supabase/schema.sql
 
 # Create initial project and API key
-INSERT INTO docs_projects (name, slug) VALUES ('Odoo CE', 'odoo-ce');
+INSERT INTO docs_projects (name, slug) VALUES ('Odoo CE', 'odoo');
 ```
 
 ### 2. API Deployment

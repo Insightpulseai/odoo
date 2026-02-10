@@ -26,7 +26,7 @@ from typing import Dict, List, Optional, Set, Tuple, Any
 import hashlib
 
 # Configuration
-REPO_ROOT = Path("/home/user/odoo-ce")
+REPO_ROOT = Path("/home/user/odoo")
 ADDONS_ROOT = REPO_ROOT / "addons"
 IPAI_NESTED = ADDONS_ROOT / "ipai"
 DOCS_DIR = REPO_ROOT / "docs"

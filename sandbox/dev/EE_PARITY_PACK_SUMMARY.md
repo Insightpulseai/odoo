@@ -127,7 +127,7 @@ docker exec odoo-db pg_dump -U odoo -d odoo_prod > /backups/odoo_prod_pre_ee_pac
 
 ```bash
 # 2. Update .env on production with correct values
-cat >> /opt/odoo-ce/repo/.env << 'EOF'
+cat >> /opt/odoo/repo/.env << 'EOF'
 ODOO_CONTAINER=odoo-erp-prod
 ODOO_DB_NAME=odoo_prod
 ODOO_EE_PARITY_OCA_MODULES="..."
@@ -135,7 +135,7 @@ ODOO_EE_PARITY_IPAI_MODULES="..."
 EOF
 
 # 3. Run installer
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 ./scripts/dev/install-ee-parity-modules.sh
 
 # 4. Verify

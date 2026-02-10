@@ -29,7 +29,7 @@ All subdomains point to the single production droplet for host-based nginx routi
 
 ## Nginx Host-Based Routing
 
-**File**: `/opt/odoo-ce/repo/deploy/nginx-complete.conf`
+**File**: `/opt/odoo/repo/deploy/nginx-complete.conf`
 
 Nginx routes requests based on the `Host` header:
 
@@ -369,7 +369,7 @@ When adding new subdomains:
 
 1. Add A record in DigitalOcean DNS → `insightpulseai.com`
 2. Obtain SSL certificate: `certbot certonly --standalone -d newservice.insightpulseai.com`
-3. Add nginx server block in `/opt/odoo-ce/repo/deploy/nginx-complete.conf`
+3. Add nginx server block in `/opt/odoo/repo/deploy/nginx-complete.conf`
 4. Restart nginx: `systemctl restart nginx` or `docker-compose restart nginx`
 
 ### Mailgun Domain Health

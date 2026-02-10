@@ -164,13 +164,13 @@ def generate_evidence():
 
 **Goal**: Odoo.sh-like CI for PRs and pushes
 
-### T2.1 - Create odoo-ce CI Workflow
+### T2.1 - Create odoo CI Workflow
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
 **Description**: GitHub Actions for Odoo CE testing
 
-**Workflow**: `.github/workflows/odoo-ce-ci.yml`
+**Workflow**: `.github/workflows/odoo-ci.yml`
 **Steps**:
 1. Checkout code
 2. Run manifest verification
@@ -213,7 +213,7 @@ def generate_evidence():
 **Description**: GitHub branch protection requiring CI green
 
 **Settings**:
-- odoo-ce main branch: require `Odoo CE CI` check
+- odoo main branch: require `Odoo CE CI` check
 - Prismaconsulting main branch: require `Prismaconsulting CI` check
 
 **Acceptance**:

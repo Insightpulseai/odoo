@@ -739,6 +739,6 @@ odoo-bin shell -d odoo
 ## Support
 
 For security issues:
-1. Check [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues?q=label%3Asecurity)
+1. Check [GitHub Issues](https://github.com/jgtolentino/odoo/issues?q=label%3Asecurity)
 2. Review [CHANGELOG.md](./CHANGELOG.md) for recent security updates
 3. Contact: Jake Tolentino (Finance SSC Manager / Odoo Developer)

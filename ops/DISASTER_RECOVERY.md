@@ -34,7 +34,7 @@ This document provides step-by-step procedures for recovering InsightPulse ERP f
 ssh root@erp.insightpulseai.com
 
 # Check container status
-cd /opt/odoo-ce
+cd /opt/odoo
 docker compose ps
 
 # View recent logs
@@ -68,7 +68,7 @@ cp /backups/odoo/odoo_db_20240101_020000.sql.gz /tmp/
 #### Step 2: Stop Odoo
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 docker compose stop odoo
 ```
 
@@ -126,11 +126,11 @@ curl -s https://erp.insightpulseai.com/web/login | grep -q "Login"
 docker compose stop odoo
 
 # Backup current filestore
-mv /opt/odoo-ce/.local/share/Odoo/filestore /opt/odoo-ce/.local/share/Odoo/filestore.bak
+mv /opt/odoo/.local/share/Odoo/filestore /opt/odoo/.local/share/Odoo/filestore.bak
 
 # Restore from backup
 tar -xzf /tmp/odoo_filestore_20240101_020000.tar.gz \
-    -C /opt/odoo-ce/.local/share/Odoo/
+    -C /opt/odoo/.local/share/Odoo/
 
 # Start Odoo
 docker compose up -d odoo
@@ -169,8 +169,8 @@ apt-get install -y docker-compose-plugin
 
 ```bash
 cd /opt
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 git checkout main
 ```
 
@@ -204,7 +204,7 @@ gunzip < /tmp/backups/odoo_db_*.sql.gz | \
 
 # Restore filestore
 tar -xzf /tmp/backups/odoo_filestore_*.tar.gz \
-    -C /opt/odoo-ce/.local/share/Odoo/
+    -C /opt/odoo/.local/share/Odoo/
 ```
 
 #### Step 6: Start Services
@@ -246,7 +246,7 @@ docker compose down
 
 # 2. Take snapshot of current state
 tar -czf /tmp/incident_snapshot_$(date +%Y%m%d_%H%M%S).tar.gz \
-    /opt/odoo-ce \
+    /opt/odoo \
     /var/log/nginx \
     /var/log/auth.log
 

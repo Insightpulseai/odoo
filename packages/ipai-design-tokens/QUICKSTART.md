@@ -12,7 +12,7 @@ You now have **TWO OPTIONS** for using the InsightPulse AI design system:
 ```bash
 # Already running at http://localhost:5173/
 # Or start it:
-cd /Users/tbwa/Documents/GitHub/odoo-ce/packages/ipai-design-tokens
+cd /Users/tbwa/Documents/GitHub/odoo/packages/ipai-design-tokens
 pnpm dev
 ```
 
@@ -52,12 +52,12 @@ function App() {
 
 ### View Demo NOW
 ```bash
-open /Users/tbwa/Documents/GitHub/odoo-ce/packages/ipai-design-tokens/demo-vanilla.html
+open /Users/tbwa/Documents/GitHub/odoo/packages/ipai-design-tokens/demo-vanilla.html
 ```
 
 Or with Python:
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce/packages/ipai-design-tokens
+cd /Users/tbwa/Documents/GitHub/odoo/packages/ipai-design-tokens
 python3 -m http.server 8000
 # Open http://localhost:8000/demo-vanilla.html
 ```

@@ -160,7 +160,7 @@ Apps → Search "IPAI Equipment Management" → Upgrade
 ### Run Regression Tests
 ```bash
 # Navigate to Odoo directory
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Run ipai_equipment tests
 ./scripts/odoo.sh -d <database> -i ipai_equipment --test-enable --stop-after-init --log-level=test
@@ -246,4 +246,4 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 - Cheqroom Official: https://www.cheqroom.com
 - Odoo Stock Management: https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/inventory.html
 - Odoo Mail Integration: https://www.odoo.com/documentation/18.0/developer/reference/backend/mixins.html#mail-thread
-- Agent Skills Architecture: `/Users/tbwa/odoo-ce/agents/AGENT_SKILLS_REGISTRY.yaml`
+- Agent Skills Architecture: `/Users/tbwa/odoo/agents/AGENT_SKILLS_REGISTRY.yaml`

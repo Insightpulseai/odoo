@@ -56,7 +56,7 @@ certbot renew --nginx --non-interactive
 **Example Operations**:
 ```bash
 # Deploy latest changes
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 docker compose restart odoo
 
@@ -88,7 +88,7 @@ docker compose restart odoo
 **Example Operations**:
 ```bash
 # Backup production database
-docker compose exec postgres pg_dump -U odoo -d odoo > /opt/odoo-ce/backups/daily/odoo_$(date +%Y%m%d).sql
+docker compose exec postgres pg_dump -U odoo -d odoo > /opt/odoo/backups/daily/odoo_$(date +%Y%m%d).sql
 
 # Restore to staging (with PII scrubbing)
 ./scripts/deploy/scrub_pii.py < odoo_prod.sql > odoo_staging.sql
@@ -117,7 +117,7 @@ docker compose exec odoo odoo -d odoo -u ipai_finance_ppm --stop-after-init
 **Example Operations**:
 ```bash
 # Deploy new module
-cp -r addons/ipai/ipai_new_module /opt/odoo-ce/data/addons/
+cp -r addons/ipai/ipai_new_module /opt/odoo/data/addons/
 docker compose exec odoo odoo -d odoo -i ipai_new_module --stop-after-init
 docker compose restart odoo
 
@@ -153,7 +153,7 @@ docker compose logs -f --tail=100 odoo
 docker compose exec postgres psql -U odoo -c "SELECT count(*) FROM pg_stat_activity;"
 
 # Check disk usage
-df -h | grep /opt/odoo-ce
+df -h | grep /opt/odoo
 ```
 
 ---
@@ -265,7 +265,7 @@ def scrub_sql_dump(input_sql, output_sql):
 #!/bin/bash
 set -e
 
-BACKUP_FILE="/opt/odoo-ce/backups/daily/odoo_$(date +%Y%m%d).sql"
+BACKUP_FILE="/opt/odoo/backups/daily/odoo_$(date +%Y%m%d).sql"
 TEST_DB="odoo_restore_test_$(date +%s)"
 
 # Restore to temporary database

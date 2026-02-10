@@ -88,9 +88,9 @@ CREATE POLICY "Allow authenticated read"
 ssh root@erp.insightpulseai.com
 
 # Create directory structure
-mkdir -p /opt/odoo-ce/notion-n8n-monthly-close/scripts
-mkdir -p /opt/odoo-ce/scripts
-mkdir -p /opt/odoo-ce/packages/db/sql
+mkdir -p /opt/odoo/notion-n8n-monthly-close/scripts
+mkdir -p /opt/odoo/scripts
+mkdir -p /opt/odoo/packages/db/sql
 
 # Exit SSH for now
 exit
@@ -99,19 +99,19 @@ exit
 ### Step 2.2: Copy Files to Server
 
 ```bash
-# From your local odoo-ce repository
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+# From your local odoo repository
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # Copy scripts
-scp scripts/check_project_tasks.py root@erp.insightpulseai.com:/opt/odoo-ce/scripts/
-scp notion-n8n-monthly-close/scripts/verify_finance_stack.sh root@erp.insightpulseai.com:/opt/odoo-ce/notion-n8n-monthly-close/scripts/
+scp scripts/check_project_tasks.py root@erp.insightpulseai.com:/opt/odoo/scripts/
+scp notion-n8n-monthly-close/scripts/verify_finance_stack.sh root@erp.insightpulseai.com:/opt/odoo/notion-n8n-monthly-close/scripts/
 
 # Copy SQL schema
-scp packages/db/sql/02_health_check_table.sql root@erp.insightpulseai.com:/opt/odoo-ce/packages/db/sql/
+scp packages/db/sql/02_health_check_table.sql root@erp.insightpulseai.com:/opt/odoo/packages/db/sql/
 
 # Set permissions
-ssh root@erp.insightpulseai.com "chmod +x /opt/odoo-ce/scripts/check_project_tasks.py"
-ssh root@erp.insightpulseai.com "chmod +x /opt/odoo-ce/notion-n8n-monthly-close/scripts/verify_finance_stack.sh"
+ssh root@erp.insightpulseai.com "chmod +x /opt/odoo/scripts/check_project_tasks.py"
+ssh root@erp.insightpulseai.com "chmod +x /opt/odoo/notion-n8n-monthly-close/scripts/verify_finance_stack.sh"
 ```
 
 ### Step 2.3: Configure Environment Variables on Server
@@ -120,7 +120,7 @@ ssh root@erp.insightpulseai.com "chmod +x /opt/odoo-ce/notion-n8n-monthly-close/
 ssh root@erp.insightpulseai.com
 
 # Create .env file for health checks
-cat > /opt/odoo-ce/.env.health << 'EOF'
+cat > /opt/odoo/.env.health << 'EOF'
 ODOO_URL=https://erp.insightpulseai.com
 ODOO_DB=odoo
 ODOO_LOGIN=jgtolentino_rn@yahoo.com
@@ -132,21 +132,21 @@ SUPABASE_SERVICE_ROLE_KEY=<actual_key>
 N8N_API_KEY=<actual_key>
 EOF
 
-chmod 600 /opt/odoo-ce/.env.health
+chmod 600 /opt/odoo/.env.health
 ```
 
 ### Step 2.4: Test Scripts Manually
 
 ```bash
 # Source environment
-source /opt/odoo-ce/.env.health
+source /opt/odoo/.env.health
 
 # Test check_project_tasks.py
-cd /opt/odoo-ce
+cd /opt/odoo
 python3 scripts/check_project_tasks.py
 
 # Test verify_finance_stack.sh
-cd /opt/odoo-ce/notion-n8n-monthly-close
+cd /opt/odoo/notion-n8n-monthly-close
 ./scripts/verify_finance_stack.sh --env prod --verbose
 ```
 
@@ -248,7 +248,7 @@ For production:
 
 ### Step 4.1: Add Repository Secrets
 
-Navigate to: `https://github.com/jgtolentino/odoo-ce/settings/secrets/actions`
+Navigate to: `https://github.com/jgtolentino/odoo/settings/secrets/actions`
 
 Add secrets:
 ```
@@ -354,7 +354,7 @@ SELECT * FROM public.health_check_recent_failures LIMIT 20;
 
 - Supabase Health Checks: `https://supabase.com/dashboard/project/xkxyvboeubffxxbebsll/editor/29274?sort=created_at%3Adesc`
 - n8n Workflows: `https://ipa.insightpulseai.com/workflows`
-- GitHub Actions: `https://github.com/jgtolentino/odoo-ce/actions/workflows/health-check.yml`
+- GitHub Actions: `https://github.com/jgtolentino/odoo/actions/workflows/health-check.yml`
 - Mattermost Alerts: `https://mattermost.insightpulseai.com/finance-alerts`
 
 ## Verification Checklist

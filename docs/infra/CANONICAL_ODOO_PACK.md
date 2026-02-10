@@ -9,7 +9,7 @@
 ## 1. Directory Layout (Logical)
 
 ```
-/opt/odoo-ce/
+/opt/odoo/
 ├── repo/                          # Git-tracked repository
 │   ├── addons/
 │   │   ├── ipai/                  # Custom modules (80+ modules)
@@ -218,7 +218,7 @@ list_db = False
 ssh root@178.128.112.214
 
 # 2. Navigate to repo
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 
 # 3. Pull latest changes
 git pull origin main
@@ -241,12 +241,12 @@ curl -f https://erp.insightpulseai.com/web/health || echo "Health check failed"
 ## 7. Backup Strategy
 
 **Database**:
-- **Daily**: Full pg_dump to `/opt/odoo-ce/backups/daily/` (7-day retention)
+- **Daily**: Full pg_dump to `/opt/odoo/backups/daily/` (7-day retention)
 - **Weekly**: Full pg_dump to DigitalOcean Spaces (30-day retention)
 - **Monthly**: Full pg_dump to DigitalOcean Spaces (12-month retention)
 
 **Filestore**:
-- **Daily**: rsync to `/opt/odoo-ce/backups/daily/filestore/` (7-day retention)
+- **Daily**: rsync to `/opt/odoo/backups/daily/filestore/` (7-day retention)
 - **Weekly**: tar.gz to DigitalOcean Spaces (30-day retention)
 
 **Configuration**:

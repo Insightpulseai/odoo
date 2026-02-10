@@ -12,7 +12,7 @@
 
 ## Strategic Insight: Two Birds, One Platform
 
-**Key Realization**: Azure Databricks can simultaneously solve two major odoo-ce challenges:
+**Key Realization**: Azure Databricks can simultaneously solve two major odoo challenges:
 
 1. **Enterprise Edition Parity**: Backport Odoo EE analytics features to CE using Databricks
 2. **Data Platform Modernization**: Replace manual ETL with Databricks lakehouse

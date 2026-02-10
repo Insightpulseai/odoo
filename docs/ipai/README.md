@@ -4,7 +4,7 @@
 
 The **IPAI (InsightPulse AI)** module suite is a comprehensive collection of 30 OCA-compliant Odoo 18 CE modules designed for enterprise financial management, project portfolio management, workspace collaboration, and operational governance.
 
-**Repository**: `odoo-ce` (DigitalOcean deployment at erp.insightpulseai.com)
+**Repository**: `odoo` (DigitalOcean deployment at erp.insightpulseai.com)
 **Odoo Version**: 18.0 Community Edition
 **OCA Compliance**: Full AGPL-3 compliance with OCA standards
 **Total Modules**: 30 modules across 5 architectural layers
@@ -171,7 +171,7 @@ Each module has comprehensive technical documentation in `modules/<module_name>/
 
 **Primary Maintainer**: Jake Tolentino (Finance SSC Manager / Odoo Developer)
 **Organization**: InsightPulse AI (TBWA)
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Documentation Issues**: Open issue in GitHub repository
 
 ## License

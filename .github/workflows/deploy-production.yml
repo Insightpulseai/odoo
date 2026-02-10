@@ -35,7 +35,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
 
 jobs:
   # ===========================================================================
@@ -128,7 +128,7 @@ jobs:
           # Deploy commands
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" << 'DEPLOY_SCRIPT'
             set -e
-            cd /opt/odoo-ce
+            cd /opt/odoo
 
             # Pull latest code
             git fetch origin main

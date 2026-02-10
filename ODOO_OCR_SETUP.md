@@ -132,11 +132,11 @@ Measured against ground truth CSV with real PH receipts.
 
 ### Test Harness (External Validation)
 
-**Location**: `/Users/tbwa/odoo-ce/ocr-adapter/scripts/test-harness.py`
+**Location**: `/Users/tbwa/odoo/ocr-adapter/scripts/test-harness.py`
 
 **Usage**:
 ```bash
-cd /Users/tbwa/odoo-ce/ocr-adapter
+cd /Users/tbwa/odoo/ocr-adapter
 
 python3 scripts/test-harness.py \
   --images ./test_receipts \
@@ -270,7 +270,7 @@ doctl apps logs <app-id> --follow
 **Deployment**:
 ```bash
 # Rsync updated files
-rsync -avz /Users/tbwa/odoo-ce/addons/ipai_ocr_expense/ root@erp.insightpulseai.com:/opt/odoo/custom-addons/ipai_ocr_expense/
+rsync -avz /Users/tbwa/odoo/addons/ipai_ocr_expense/ root@erp.insightpulseai.com:/opt/odoo/custom-addons/ipai_ocr_expense/
 
 # Upgrade module
 ssh root@erp.insightpulseai.com "docker exec odoo-odoo-1 odoo -d odoo -u ipai_ocr_expense --workers=0 --stop-after-init"

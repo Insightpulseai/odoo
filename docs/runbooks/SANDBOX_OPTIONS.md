@@ -23,7 +23,7 @@ Launch a Codespace with the repository and branch:
 ```bash
 scripts/sandbox/start-codespace.sh
 # env:
-#   REPO=jgtolentino/odoo-ce
+#   REPO=jgtolentino/odoo
 #   BRANCH=main
 #   MACHINE=standardLinux32gb
 ```
@@ -36,7 +36,7 @@ Run CE19 build + test on the DigitalOcean host:
 scripts/sandbox/start-do-sandbox.sh
 # env:
 #   DO_HOST=178.128.112.214
-#   REMOTE_DIR=/opt/odoo-ce/repo
+#   REMOTE_DIR=/opt/odoo/repo
 #   BRANCH=claude/odoo-oca-enterprise-image-TLHuU
 ```
 

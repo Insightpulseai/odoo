@@ -93,7 +93,7 @@ terraform destroy -var="pr_number=123" -var="branch_name=feat/my-feature"
 |----------|---------|-------------|
 | `pr_number` | (required) | Pull request number |
 | `branch_name` | (required) | Git branch name |
-| `repo_name` | `odoo-ce` | Repository name |
+| `repo_name` | `odoo` | Repository name |
 | `ttl_hours` | `24` | Auto-destroy after N hours |
 | `droplet_size` | `s-2vcpu-4gb` | Droplet size slug |
 | `region` | `nyc3` | DigitalOcean region |

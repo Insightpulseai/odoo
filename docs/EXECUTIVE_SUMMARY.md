@@ -84,7 +84,7 @@ VPS: 4GB RAM, 80GB Disk
 
 ### Phase 1: Fix Image (2-4 hours)
 1. Apply 3 critical fixes to Dockerfile
-2. Build as v0.9.1: `ghcr.io/jgtolentino/odoo-ce:v0.9.1`
+2. Build as v0.9.1: `ghcr.io/jgtolentino/odoo:v0.9.1`
 3. Push to GHCR
 
 ### Phase 2: Upgrade VPS (1 hour)
@@ -130,7 +130,7 @@ VPS: 4GB RAM, 80GB Disk
    - Smoke tests & verification
    - Troubleshooting guide
 
-4. **003-odoo-ce-custom-image-spec.md** (Corrected)
+4. **003-odoo-custom-image-spec.md** (Corrected)
    - Merged specification
    - Compliance matrix
    - Best practices
@@ -141,9 +141,9 @@ VPS: 4GB RAM, 80GB Disk
 
 ### Build Fixed Image
 ```bash
-cd ~/odoo-ce
+cd ~/odoo
 cp /path/to/Dockerfile.v0.9.1 ./Dockerfile
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.1
+export IMAGE=ghcr.io/jgtolentino/odoo:v0.9.1
 echo "$GHCR_PAT" | docker login ghcr.io -u jgtolentino --password-stdin
 docker build -t "$IMAGE" .
 docker push "$IMAGE"
@@ -213,7 +213,7 @@ docker compose logs odoo --tail 50
 ## Contact
 
 **Owner:** Jake Tolentino
-**Repo:** https://github.com/jgtolentino/odoo-ce
+**Repo:** https://github.com/jgtolentino/odoo
 **Critical Issues:** Open GitHub issue with `security` label
 
 ---

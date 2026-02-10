@@ -76,7 +76,7 @@ ssh root@159.223.75.148 "cd /root/odoo-prod && docker exec -e PGHOST=odoo-db-1 o
 ## File Structure
 
 ```
-odoo-ce/
+odoo/
 ├── FINANCE_PPM_CANONICAL.md          # This file
 ├── addons/
 │   ├── ipai_finance_ppm/             # Base module (framework)
@@ -165,7 +165,7 @@ git checkout main
 - **Test Database:** odoo_ppm_test
 - **Odoo Container:** odoo-production
 - **DB Container:** odoo-db-1
-- **Git Repository:** github.com/jgtolentino/odoo-ce
+- **Git Repository:** github.com/jgtolentino/odoo
 
 ## Support Contacts
 

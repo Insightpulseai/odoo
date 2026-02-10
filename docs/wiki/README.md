@@ -1,7 +1,7 @@
 # Wiki Pages Source
 
 This directory contains the source files for the GitHub wiki at:
-https://github.com/jgtolentino/odoo-ce/wiki
+https://github.com/jgtolentino/odoo/wiki
 
 ## Files
 
@@ -17,20 +17,20 @@ https://github.com/jgtolentino/odoo-ce/wiki
 ### Option 1: Manual Copy
 
 Copy the content of each `.md` file to the corresponding wiki page via the GitHub UI:
-1. Go to https://github.com/jgtolentino/odoo-ce/wiki
+1. Go to https://github.com/jgtolentino/odoo/wiki
 2. Click "Edit" on each page
 3. Paste the content from the corresponding file
 
 ### Option 2: Clone Wiki Repo
 
 ```bash
-git clone git@github.com:jgtolentino/odoo-ce.wiki.git
-cd odoo-ce.wiki
+git clone git@github.com:jgtolentino/odoo.wiki.git
+cd odoo.wiki
 
 # Copy files (adjust filenames as needed)
-cp ../odoo-ce/docs/wiki/Home.md ./Home.md
-cp ../odoo-ce/docs/wiki/Releases-and-Changelog.md ./Releases-&-Changelog.md
-cp ../odoo-ce/docs/wiki/Modules-and-Features.md ./Modules-&-Features.md
+cp ../odoo/docs/wiki/Home.md ./Home.md
+cp ../odoo/docs/wiki/Releases-and-Changelog.md ./Releases-&-Changelog.md
+cp ../odoo/docs/wiki/Modules-and-Features.md ./Modules-&-Features.md
 
 git add -A
 git commit -m "docs(wiki): update wiki pages from docs/wiki/"

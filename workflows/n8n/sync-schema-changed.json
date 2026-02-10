@@ -28,7 +28,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && node scripts/sync/schema-to-openapi.js"
+        "command": "cd /workspace/odoo && node scripts/sync/schema-to-openapi.js"
       },
       "id": "generate-openapi",
       "name": "Generate OpenAPI",
@@ -38,7 +38,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && node scripts/sync/schema-to-docs.js"
+        "command": "cd /workspace/odoo && node scripts/sync/schema-to-docs.js"
       },
       "id": "generate-docs",
       "name": "Generate Data Dictionary",

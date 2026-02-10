@@ -1,6 +1,6 @@
 # Odoo Enterprise to CE+OCA Technical Mapping Guide
 
-**Repository**: `odoo-ce` (jgtolentino/odoo-ce)
+**Repository**: `odoo` (jgtolentino/odoo)
 **Odoo Series**: 18.0 CE + OCA baseline
 **Reference**: Odoo 19 EE introspection (Contacts, Knowledge, PoS, Studio, AI, IoT)
 **Last Updated**: 2026-01-20

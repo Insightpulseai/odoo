@@ -28,7 +28,7 @@ Per the minimal stack policy, this is one of 4 allowed IPAI modules:
     "version": "19.0.1.0.0",
     "category": "Theme/Backend",
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "AGPL-3",
     "depends": [
         "web",

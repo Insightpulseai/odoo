@@ -1,6 +1,6 @@
 # InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
 
-[![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
+[![odoo-ci](https://github.com/jgtolentino/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/jgtolentino/odoo/actions/workflows/ci-odoo.yml)
 
 Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
 - PH expense & travel management
@@ -9,7 +9,7 @@ Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI cu
 - Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
 
 **Production URL:** https://erp.insightpulseai.com
-**Documentation:** https://jgtolentino.github.io/odoo-ce/
+**Documentation:** https://jgtolentino.github.io/odoo/
 
 ---
 
@@ -89,7 +89,7 @@ docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-ini
 ## Repository Layout
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                    # Custom InsightPulse modules
 │   ├── ipai/                  # IPAI namespace (nested modules)
 │   │   ├── ipai_expense/      # PH expense & travel workflows
@@ -172,7 +172,7 @@ Modules that are no longer maintained should be moved to `addons/_deprecated/` a
 Recommended for fresh Ubuntu 22.04/24.04 droplet.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
 chmod +x deploy_m1.sh
 sudo ./deploy_m1.sh
 ```
@@ -182,7 +182,7 @@ Access:
 - Secrets:
 
 ```bash
-cat /opt/odoo-ce/deploy/.env
+cat /opt/odoo/deploy/.env
 tail -f /var/log/odoo_deploy.log
 ```
 
@@ -191,8 +191,8 @@ tail -f /var/log/odoo_deploy.log
 ## Quick Start (Local Dev)
 
 ```bash
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 cd deploy
 docker compose up -d
 docker compose logs -f odoo
@@ -283,7 +283,7 @@ CI enforces:
 
 | Workflow | Purpose |
 |----------|---------|
-| `ci-odoo-ce.yml` | Main guardrails + data-model drift |
+| `ci-odoo.yml` | Main guardrails + data-model drift |
 | `repo-structure.yml` | Repo tree consistency |
 | `spec-kit-enforce.yml` | Spec bundle validation |
 | `infra-validate.yml` | Infrastructure templates |
@@ -315,23 +315,23 @@ Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
 ```bash
 # 1. Create secrets file on production
 ssh root@178.128.112.214
-sudo mkdir -p /opt/odoo-ce/secrets
-sudo bash -c 'cat > /opt/odoo-ce/secrets/mailgun.env <<EOF
+sudo mkdir -p /opt/odoo/secrets
+sudo bash -c 'cat > /opt/odoo/secrets/mailgun.env <<EOF
 MAILGUN_SMTP_HOST=smtp.mailgun.org
 MAILGUN_SMTP_PORT=2525
 MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
 MAILGUN_SMTP_PASS=__REPLACE__
 EOF'
-sudo chmod 600 /opt/odoo-ce/secrets/mailgun.env
+sudo chmod 600 /opt/odoo/secrets/mailgun.env
 
 # 2. Apply settings to database
-set -a; source /opt/odoo-ce/secrets/mailgun.env; set +a
+set -a; source /opt/odoo/secrets/mailgun.env; set +a
 export ODOO_DB=odoo
 export PGHOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
 export PGPORT="25060"
 export PGUSER="doadmin"
 export PGPASSWORD="__REPLACE__"
-cd /opt/odoo-ce
+cd /opt/odoo
 python3 scripts/odoo/apply_settings_as_code.py
 
 # 3. Verify deployment
@@ -404,5 +404,5 @@ Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
-- Docs: https://jgtolentino.github.io/odoo-ce/
+- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo/issues)
+- Docs: https://jgtolentino.github.io/odoo/

@@ -24,7 +24,7 @@
 - Example workflows referenced
 
 ### 3. n8n Workflow Files
-**Directory**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/`
+**Directory**: `/Users/tbwa/odoo/workflows/finance_ppm/`
 
 Created 3 production-ready workflows:
 
@@ -45,7 +45,7 @@ Created 3 production-ready workflows:
 **Schema**: `finance_ppm`
 **Table**: `monthly_reports`
 
-**Migration**: `/Users/tbwa/odoo-ce/migrations/003_finance_ppm_reports.sql`
+**Migration**: `/Users/tbwa/odoo/migrations/003_finance_ppm_reports.sql`
 
 ✅ **APPLIED TO PRODUCTION** - 2025-11-23
 
@@ -70,7 +70,7 @@ WHERE schemaname = 'finance_ppm'
 ```
 
 ### 5. Deployment Documentation
-**File**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/DEPLOYMENT.md`
+**File**: `/Users/tbwa/odoo/workflows/finance_ppm/DEPLOYMENT.md`
 
 Complete deployment guide (400+ lines):
 - Prerequisites checklist
@@ -81,7 +81,7 @@ Complete deployment guide (400+ lines):
 - Rollback procedures
 
 ### 6. Verification Script
-**File**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/verify_deployment.sh`
+**File**: `/Users/tbwa/odoo/workflows/finance_ppm/verify_deployment.sh`
 
 Automated verification script (200+ lines):
 - Infrastructure accessibility checks
@@ -130,7 +130,7 @@ Automated verification script (200+ lines):
 
 For each workflow file:
 1. Click "+" → "Import from File"
-2. Upload JSON file from `/Users/tbwa/odoo-ce/workflows/finance_ppm/`
+2. Upload JSON file from `/Users/tbwa/odoo/workflows/finance_ppm/`
 3. Review nodes and connections
 4. Configure credentials (see Step 2)
 5. Save workflow
@@ -187,7 +187,7 @@ Once testing is successful:
 
 ### Workflows
 ```
-/Users/tbwa/odoo-ce/workflows/finance_ppm/
+/Users/tbwa/odoo/workflows/finance_ppm/
 ├── bir_deadline_alert.json (11.3 KB)
 ├── task_escalation.json (13.4 KB)
 ├── monthly_report.json (15.5 KB)
@@ -198,7 +198,7 @@ Once testing is successful:
 
 ### Database
 ```
-/Users/tbwa/odoo-ce/migrations/
+/Users/tbwa/odoo/migrations/
 └── 003_finance_ppm_reports.sql (✅ applied)
 ```
 

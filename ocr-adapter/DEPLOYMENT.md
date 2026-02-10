@@ -91,7 +91,7 @@ def normalize_ocr_response(raw: dict) -> dict:
 
 ```bash
 # From local machine
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 rsync -avz --delete ocr-adapter/ root@ocr.insightpulseai.com:/opt/ocr-adapter/
 ```
 

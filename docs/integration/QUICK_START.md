@@ -16,7 +16,7 @@
 ## Step 1: Deploy Supabase (2 minutes)
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # Link project
 supabase link --project-ref spdtwktxdalcfigzeqrz

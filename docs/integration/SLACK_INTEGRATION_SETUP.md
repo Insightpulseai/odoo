@@ -152,4 +152,4 @@ Mattermost is deployed at `https://chat.insightpulseai.com` as an eventual Slack
 
 - Slack: Reach out to Jake (jgtolentino)
 - Documentation: `/docs/integration/`
-- Issues: https://github.com/jgtolentino/odoo-ce/issues
+- Issues: https://github.com/jgtolentino/odoo/issues

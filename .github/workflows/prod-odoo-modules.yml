@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 env:
-  PROD_REPO_PATH: /root/odoo-ce
+  PROD_REPO_PATH: /root/odoo
 
 jobs:
   update_modules:

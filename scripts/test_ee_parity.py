@@ -22,6 +22,7 @@ from typing import Optional
 
 class Priority(Enum):
     """Feature priority levels."""
+
     P0 = "P0 - Critical"
     P1 = "P1 - High"
     P2 = "P2 - Medium"
@@ -30,6 +31,7 @@ class Priority(Enum):
 
 class Status(Enum):
     """Test result status."""
+
     PASS = "PASS"
     FAIL = "FAIL"
     SKIP = "SKIP"
@@ -39,6 +41,7 @@ class Status(Enum):
 @dataclass
 class FeatureTest:
     """Represents a single EE feature parity test."""
+
     id: str
     name: str
     ee_module: str
@@ -54,6 +57,7 @@ class FeatureTest:
 @dataclass
 class ParityReport:
     """Aggregated parity test results."""
+
     timestamp: str
     odoo_version: str
     total_tests: int
@@ -138,7 +142,7 @@ EE_PARITY_TESTS = [
         id="ACC-004",
         name="Budget Management",
         ee_module="account_budget",
-        ipai_module="ipai_finance_ppm",
+        ipai_module="mis_builder_budget",
         priority=Priority.P1,
         description="Budget planning, tracking, and variance reporting",
         test_steps=[
@@ -148,13 +152,12 @@ EE_PARITY_TESTS = [
             "Generate variance report",
         ],
     ),
-
     # HR & Payroll Module Parity
     FeatureTest(
         id="HR-001",
         name="Payroll Processing",
         ee_module="hr_payroll",
-        ipai_module="ipai_hr_payroll_ph",
+        ipai_module="payroll",
         priority=Priority.P0,
         description="Complete payroll computation with local compliance",
         test_steps=[
@@ -169,7 +172,7 @@ EE_PARITY_TESTS = [
         id="HR-002",
         name="Leave Management",
         ee_module="hr_holidays",
-        ipai_module="ipai_hr_leave",
+        ipai_module="hr_holidays_public",
         priority=Priority.P0,
         description="Leave request, approval, and balance tracking",
         test_steps=[
@@ -207,13 +210,12 @@ EE_PARITY_TESTS = [
             "Reimbursement payment",
         ],
     ),
-
     # Service Module Parity
     FeatureTest(
         id="SVC-001",
         name="Helpdesk Ticketing",
         ee_module="helpdesk",
-        ipai_module="ipai_helpdesk",
+        ipai_module="helpdesk_mgmt",
         priority=Priority.P1,
         description="Ticket management with SLA tracking",
         test_steps=[
@@ -265,7 +267,6 @@ EE_PARITY_TESTS = [
             "Manager validation",
         ],
     ),
-
     # BIR Compliance (Philippines-specific)
     FeatureTest(
         id="BIR-001",
@@ -323,7 +324,6 @@ EE_PARITY_TESTS = [
             "Export for filing",
         ],
     ),
-
     # Integration Module Parity
     FeatureTest(
         id="INT-001",
@@ -353,9 +353,7 @@ EE_PARITY_TESTS = [
             "Access control",
         ],
     ),
-
     # Odoo 19 New Features (2026-01-26)
-
     # AI Platform (P0 - Critical)
     FeatureTest(
         id="AI-001",
@@ -425,7 +423,6 @@ EE_PARITY_TESTS = [
             "Verify handoff to human",
         ],
     ),
-
     # ESG App (P2 - New in Odoo 19)
     FeatureTest(
         id="ESG-001",
@@ -455,7 +452,6 @@ EE_PARITY_TESTS = [
             "Generate ESG report",
         ],
     ),
-
     # Equity App (P3 - New in Odoo 19)
     FeatureTest(
         id="EQU-001",
@@ -471,7 +467,6 @@ EE_PARITY_TESTS = [
             "Generate cap table",
         ],
     ),
-
     # WhatsApp Integration (P1)
     FeatureTest(
         id="WA-001",
@@ -487,7 +482,6 @@ EE_PARITY_TESTS = [
             "Use in follow-up",
         ],
     ),
-
     # Tax Return (P0 - Odoo 19)
     FeatureTest(
         id="TAX-001",
@@ -503,7 +497,6 @@ EE_PARITY_TESTS = [
             "Track status",
         ],
     ),
-
     # Project Templates (P1 - Odoo 19)
     FeatureTest(
         id="PRJ-001",
@@ -519,7 +512,6 @@ EE_PARITY_TESTS = [
             "Create project from template",
         ],
     ),
-
     # Planning Analysis (P1 - Odoo 19)
     FeatureTest(
         id="PLN-001",
@@ -535,7 +527,6 @@ EE_PARITY_TESTS = [
             "Identify discrepancies",
         ],
     ),
-
     # Documents AI (P2 - Odoo 19)
     FeatureTest(
         id="DOC-001",
@@ -562,6 +553,7 @@ def run_feature_test(test: FeatureTest, odoo_url: str, db: str) -> FeatureTest:
     For now, we simulate based on module installation status.
     """
     import time
+
     start_time = time.time()
 
     # Simulate test execution
@@ -606,10 +598,7 @@ def calculate_parity_score(tests: list[FeatureTest]) -> float:
     }
 
     total_weight = sum(weights[t.priority] for t in tests)
-    passed_weight = sum(
-        weights[t.priority] for t in tests
-        if t.status == Status.PASS
-    )
+    passed_weight = sum(weights[t.priority] for t in tests if t.status == Status.PASS)
 
     if total_weight == 0:
         return 0.0
@@ -627,7 +616,7 @@ def generate_html_report(report: ParityReport, output_path: str) -> None:
         body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; }}
         h1 {{ color: #714B67; }}
         .summary {{ background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }}
-        .score {{ font-size: 48px; font-weight: bold; color: {'#4CAF50' if report.parity_score >= 80 else '#f44336'}; }}
+        .score {{ font-size: 48px; font-weight: bold; color: {"#4CAF50" if report.parity_score >= 80 else "#f44336"}; }}
         table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
         th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
         th {{ background: #714B67; color: white; }}
@@ -700,9 +689,7 @@ def generate_json_report(report: ParityReport, output_path: str) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Odoo Enterprise Edition Parity Test Suite"
-    )
+    parser = argparse.ArgumentParser(description="Odoo Enterprise Edition Parity Test Suite")
     parser.add_argument(
         "--odoo-url",
         default="http://localhost:8069",

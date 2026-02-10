@@ -11,7 +11,7 @@
 
 ```yaml
 # Line 46
-image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
 ```
 
 **Image Components**:
@@ -29,7 +29,7 @@ image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
 ```yaml
 services:
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo_ce19_ee_parity
 ```
 
@@ -40,7 +40,7 @@ services:
 ```yaml
 services:
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo-dev
 ```
 
@@ -52,7 +52,7 @@ The devcontainer uses a base Ubuntu image and connects to host Docker.
 Codespaces users should run the sandbox compose file directly:
 
 ```bash
-cd /workspaces/odoo-ce/sandbox/dev
+cd /workspaces/odoo/sandbox/dev
 docker compose up -d
 ```
 
@@ -64,24 +64,24 @@ docker compose up -d
 
 ### Check Canonical Image
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 grep -A2 'odoo:' docker/docker-compose.ce19.yml | grep 'image:'
 ```
 
 **Expected Output**:
 ```
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
 ```
 
 ### Check Sandbox Dev Image
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 grep -A2 'odoo:' docker-compose.yml | grep 'image:'
 ```
 
 **Expected Output**:
 ```
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
 ```
 
 ### Verify Running Container (when Docker is running)
@@ -91,7 +91,7 @@ docker ps --format "table {{.Names}}\t{{.Image}}" | grep odoo
 
 **Expected Output** (sandbox dev):
 ```
-odoo-dev    ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+odoo-dev    ghcr.io/jgtolentino/odoo:19.0-ee-parity
 ```
 
 ---
@@ -108,7 +108,7 @@ The CE19 EE parity image is built via GitHub Actions:
 
 **Pull Command**:
 ```bash
-docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity
 ```
 
 ---
@@ -133,7 +133,7 @@ ODOO_IMAGE_TAG=19.0-dev
 
 ## Differences from Official Odoo Image
 
-| Aspect | Official `odoo:18.0` | Our `odoo-ce:19.0-ee-parity` |
+| Aspect | Official `odoo:18.0` | Our `odoo:19.0-ee-parity` |
 |--------|---------------------|------------------------------|
 | **Version** | 18.0 | 19.0 |
 | **OCA Modules** | ❌ None | ✅ 24 modules (project, timesheet, helpdesk, etc.) |
@@ -157,7 +157,7 @@ odoo:
 ```yaml
 # sandbox/dev/docker-compose.yml
 odoo:
-  image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+  image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
 ```
 
 **Reason**: Align sandbox dev with production CE19 EE parity image for consistent development experience.
@@ -170,7 +170,7 @@ After starting containers:
 
 ```bash
 # Start sandbox dev
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 docker compose up -d
 
 # Wait for health check
@@ -193,10 +193,10 @@ docker compose exec odoo ls /mnt/extra-addons/ipai
 If you need to revert to official Odoo 18:
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 
 # Edit docker-compose.yml
-# Change: image: ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+# Change: image: ghcr.io/jgtolentino/odoo:19.0-ee-parity
 # To:     image: odoo:18.0
 
 docker compose down

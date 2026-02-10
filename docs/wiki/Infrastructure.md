@@ -12,7 +12,7 @@ Production infrastructure configuration for `erp.insightpulseai.com`.
 | **Server** | DigitalOcean Droplet (178.128.112.214) |
 | **Odoo Version** | 18.0 CE |
 | **Database** | PostgreSQL 15 |
-| **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:edge-standard` |
+| **Docker Image** | `ghcr.io/jgtolentino/odoo:edge-standard` |
 
 ---
 

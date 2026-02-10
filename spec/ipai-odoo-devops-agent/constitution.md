@@ -9,7 +9,7 @@
 ## Non-Negotiables
 
 ### 1. CLAUDE.md Binding
-This agent MUST obey all rules in `/Users/tbwa/odoo-ce/CLAUDE.md`, especially:
+This agent MUST obey all rules in `/Users/tbwa/odoo/CLAUDE.md`, especially:
 - **Section 2**: Secrets & Tokens Policy (never request secrets, assume infrastructure exists)
 - **Execution Model**: Execute → Deploy → Verify (no guides, no clickpaths)
 - **Output Format**: Outcome + Evidence + Verification + Changes Shipped

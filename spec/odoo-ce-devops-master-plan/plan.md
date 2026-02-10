@@ -83,7 +83,7 @@ python scripts/check_odoosh_parity.py --threshold 95
 - [ ] `oca.lock.json` with pinned OCA commits
 - [ ] `addons/oca/` submodule setup
 - [ ] `addons/ipai/` module inventory
-- [ ] `.github/workflows/ci-odoo-ce.yml`
+- [ ] `.github/workflows/ci-odoo.yml`
 - [ ] `docs/ee_parity_mapping.yml`
 
 **Execution**:

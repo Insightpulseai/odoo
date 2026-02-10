@@ -15,7 +15,7 @@ This bundle contains the complete Odoo CE 18.0 build with:
 ```bash
 # Extract the bundle
 unzip odoo-v1.2.0-build.zip
-cd odoo-ce
+cd odoo
 ```
 
 ### 2. Configure Environment
@@ -228,7 +228,7 @@ docker compose exec odoo psql -h db -U odoo -d production -c "SELECT 1;"
 ## File Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                    # Custom modules
 │   ├── ipai_ce_branding/     # Login branding module
 │   └── ipai_ce_cleaner/      # Cleaner module

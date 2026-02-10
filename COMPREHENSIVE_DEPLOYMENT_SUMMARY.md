@@ -119,8 +119,8 @@ git merge main
 
 # 2. Setup monitoring cron
 # Add to crontab:
-*/5 * * * * /opt/odoo-ce/scripts/healthcheck_odoo.sh
-0 3 * * * /opt/odoo-ce/scripts/verify_backup.sh
+*/5 * * * * /opt/odoo/scripts/healthcheck_odoo.sh
+0 3 * * * /opt/odoo/scripts/verify_backup.sh
 
 # 3. Test load capacity
 k6 run tests/load/odoo_login_and_nav.js
@@ -162,8 +162,8 @@ docker compose exec db psql -U odoo -d odoo -f /docker-entrypoint-initdb.d/monit
 
 ## 🔗 GitHub Links
 
-- **v1.0**: https://github.com/jgtolentino/odoo-ce/pull/new/chore/finalize-prod-readiness-v1
-- **v1.1/v1.2**: https://github.com/jgtolentino/odoo-ce/pull/new/chore/hardening-v1.1
+- **v1.0**: https://github.com/jgtolentino/odoo/pull/new/chore/finalize-prod-readiness-v1
+- **v1.1/v1.2**: https://github.com/jgtolentino/odoo/pull/new/chore/hardening-v1.1
 
 ---
 
@@ -229,7 +229,7 @@ The deployment has now moved from **~85% complete** to **production-ready** with
 
 ### 1. Custom Docker Image
 - **Base Image**: `odoo:18.0`
-- **Custom Image**: `ghcr.io/jgtolentino/odoo-ce:latest`
+- **Custom Image**: `ghcr.io/jgtolentino/odoo:latest`
 - **Features**:
   - System dependencies installed (build-essential, libpq-dev, git, libssl-dev)
   - Custom modules baked into `/mnt/extra-addons/`
@@ -263,8 +263,8 @@ docker compose up -d
 ### Production Deployment
 ```bash
 # Build and push custom image
-docker build -t ghcr.io/jgtolentino/odoo-ce:latest .
-docker push ghcr.io/jgtolentino/odoo-ce:latest
+docker build -t ghcr.io/jgtolentino/odoo:latest .
+docker push ghcr.io/jgtolentino/odoo:latest
 
 # Deploy on DigitalOcean VPS
 docker compose -f docker-compose.prod.yml pull odoo

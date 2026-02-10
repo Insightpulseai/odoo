@@ -15,7 +15,7 @@
 #   - Smoke Test: --stop-after-init validation
 #   - Audit: SBOM + vulnerability scan
 #
-# Registry: ghcr.io/jgtolentino/odoo-ce
+# Registry: ghcr.io/jgtolentino/odoo
 # Tag Format: 19.0-ee-parity, 19.0.1-ee-parity, edge-19-ee-parity
 # =============================================================================
 
@@ -34,7 +34,7 @@ on:
       - 'addons/ipai/ipai_helpdesk/**'
       - 'docker/Dockerfile.ce19'
       - 'vendor/oca.lock.ce19.json'
-      - '.github/workflows/build-odoo-ce19-ee-parity.yml'
+      - '.github/workflows/build-odoo19-ee-parity.yml'
   workflow_dispatch:
     inputs:
       push_image:
@@ -55,7 +55,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
   ODOO_VERSION: "19.0"
 
 jobs:
@@ -355,5 +355,5 @@ jobs:
           echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY

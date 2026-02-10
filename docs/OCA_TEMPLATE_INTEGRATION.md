@@ -1,6 +1,6 @@
 # OCA Template Integration Contract
 
-**Repository**: `odoo-ce` (jgtolentino/odoo-ce)
+**Repository**: `odoo` (jgtolentino/odoo)
 **Template Source**: https://github.com/OCA/oca-addons-repo-template
 **Supported Versions**: 18.0, 19.0
 **Last Updated**: 2026-01-21
@@ -47,7 +47,7 @@ For **standalone OCA-style repos** (e.g., `odoo-ipai-addons`):
 - Example: `src/ipai_enterprise_bridge`, `src/ipai_mail_integration`
 - No custom top-level layout; follow OCA decisions
 
-For **this monorepo** (`odoo-ce`):
+For **this monorepo** (`odoo`):
 - Addons go in `/addons/ipai/<module_name>/`
 - See [OCA_STYLE_CONTRACT.md](OCA_STYLE_CONTRACT.md) for detailed rules
 
@@ -117,7 +117,7 @@ mkdir -p src/ipai_mail_integration
 mkdir -p src/ipai_iot_bridge
 ```
 
-For this monorepo (`odoo-ce`):
+For this monorepo (`odoo`):
 ```bash
 # Create in the canonical location
 mkdir -p addons/ipai/ipai_enterprise_bridge
@@ -127,11 +127,11 @@ mkdir -p addons/ipai/ipai_iot_bridge
 
 ---
 
-## Integration with odoo-ce Monorepo
+## Integration with odoo Monorepo
 
 This monorepo uses a hybrid approach:
 
-| Aspect | OCA Template (standalone) | odoo-ce Monorepo |
+| Aspect | OCA Template (standalone) | odoo Monorepo |
 |--------|---------------------------|------------------|
 | Addons root | `src/` | `addons/ipai/` |
 | Pre-commit | Template-provided | Custom OCA-aligned |
@@ -171,7 +171,7 @@ cd /tmp
 mrbob bobtemplates.odoo:addon
 
 # Move to canonical location
-mv <generated_module> /path/to/odoo-ce/addons/ipai/
+mv <generated_module> /path/to/odoo/addons/ipai/
 ```
 
 ### Create Model
@@ -199,7 +199,7 @@ pre-commit run -a
 git commit -am "chore(oca): update from OCA template"
 ```
 
-**Note**: Never run `copier` in the odoo-ce monorepo root - it will overwrite the structure.
+**Note**: Never run `copier` in the odoo monorepo root - it will overwrite the structure.
 
 ---
 
@@ -267,7 +267,7 @@ Key features:
 
 ## Forbidden Patterns
 
-- Running `copier` in the odoo-ce repo root
+- Running `copier` in the odoo repo root
 - Overwriting repo layout with template defaults
 - Introducing a second "root" structure
 - Moving existing directories to match the template

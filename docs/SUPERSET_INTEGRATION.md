@@ -2,19 +2,19 @@
 
 ## Overview
 
-This document describes the **cross-repo integration** between `odoo-ce` (platform + database authority) and `superset` (BI application repo).
+This document describes the **cross-repo integration** between `odoo` (platform + database authority) and `superset` (BI application repo).
 
 ## Architecture Principles
 
-1. **Single Source of Truth**: `odoo-ce` owns all database schema, migrations, and views
+1. **Single Source of Truth**: `odoo` owns all database schema, migrations, and views
 2. **Superset as Consumer**: Superset repo only reads from Supabase PostgreSQL
-3. **Automated Coordination**: Schema changes in odoo-ce automatically trigger Superset rebuild
+3. **Automated Coordination**: Schema changes in odoo automatically trigger Superset rebuild
 4. **No Duplication**: Superset infra lives in `jgtolentino/superset`, not duplicated here
 
 ## Repository Separation
 
 ```
-odoo-ce (jgtolentino/odoo-ce)
+odoo (jgtolentino/odoo)
 ├── Database Authority
 │   ├── supabase/migrations/       ← All schema changes
 │   ├── db/                         ← SQL scripts
@@ -74,10 +74,10 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 
 ## Cross-Repo CI Workflow
 
-### Trigger Flow (odoo-ce → superset)
+### Trigger Flow (odoo → superset)
 
 ```
-1. Developer commits schema change to odoo-ce
+1. Developer commits schema change to odoo
    ↓ (push to main/master/develop)
 2. .github/workflows/notify-superset.yml detects changes in:
    - supabase/migrations/**
@@ -96,7 +96,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 
 ### Required Secrets
 
-**In odoo-ce repo** (GitHub Actions secrets):
+**In odoo repo** (GitHub Actions secrets):
 - `GH_PAT_SUPERSET` - Personal Access Token with `repo` scope for `jgtolentino/superset`
 
 **In superset repo** (GitHub Actions secrets):
@@ -155,8 +155,8 @@ class SupersetDashboard(models.Model):
 ### Schema Change Scenario
 
 ```bash
-# 1. Developer modifies Scout views in odoo-ce
-cd /path/to/odoo-ce
+# 1. Developer modifies Scout views in odoo
+cd /path/to/odoo
 git checkout -b feature/scout-new-metrics
 psql "$OPEX_POSTGRES_URL" -f sql/V007__create_scout_performance_view.sql
 
@@ -177,7 +177,7 @@ curl -sf https://superset.insightpulseai.com/api/v1/dataset/ | jq '.result[] | s
 
 ### Manual Superset Rebuild
 
-If auto-trigger fails, manually dispatch from odoo-ce:
+If auto-trigger fails, manually dispatch from odoo:
 
 ```bash
 curl -X POST \
@@ -189,7 +189,7 @@ curl -X POST \
 
 ## Acceptance Gates
 
-### Schema Changes (odoo-ce)
+### Schema Changes (odoo)
 
 - ✅ All migrations applied successfully to Supabase
 - ✅ Scout views created/updated (V00x__create_scout_retail_views.sql)
@@ -220,7 +220,7 @@ curl -X POST \
 **Fix**:
 ```bash
 # Generate new PAT at https://github.com/settings/tokens
-# Add to odoo-ce repo secrets:
+# Add to odoo repo secrets:
 gh secret set GH_PAT_SUPERSET --body="ghp_newtoken..."
 ```
 
@@ -259,8 +259,8 @@ doctl apps logs <SUPERSET_APP_ID> | grep "login"
 If Superset deployment fails after schema change:
 
 ```bash
-# 1. Rollback odoo-ce schema (if needed)
-cd /path/to/odoo-ce
+# 1. Rollback odoo schema (if needed)
+cd /path/to/odoo
 psql "$OPEX_POSTGRES_URL" < backups/schema_$(date -v-1d +%Y%m%d).sql
 
 # 2. Redeploy Superset to last known good deployment

@@ -25,12 +25,12 @@
 **Recommendation**: Use `chore/monitoring-bi-v1.2` for v1.2 features.
 
 ### 3. Path Inconsistencies
-**Issue**: Documentation uses `/opt/odoo-ce` but actual deployment path may vary
+**Issue**: Documentation uses `/opt/odoo` but actual deployment path may vary
 
 | Location | Documented Path | Actual Path | Status |
 |----------|-----------------|-------------|---------|
-| Crontab | `/opt/odoo-ce/scripts/` | Unknown | **To verify in production** |
-| Script references | `/opt/odoo-ce/` | Local repo path | **To verify in production** |
+| Crontab | `/opt/odoo/scripts/` | Unknown | **To verify in production** |
+| Script references | `/opt/odoo/` | Local repo path | **To verify in production** |
 
 **Recommendation**: Document that paths need verification in production environment.
 

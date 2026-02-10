@@ -32,7 +32,7 @@
    ✅ All parameters set to HTTPS
 
 4. **Infrastructure**:
-   - ✅ Single Odoo instance running (container: odoo-ce)
+   - ✅ Single Odoo instance running (container: odoo)
    - ✅ No CDN or load balancer caching
    - ✅ DNS points directly to 159.223.75.148
    - ✅ All caches flushed (Odoo + Nginx)
@@ -104,7 +104,7 @@ https://erp.insightpulseai.com
 If Keycloak fix doesn't work, update Odoo's OAuth provider configuration:
 
 ```bash
-ssh insightpulse-odoo 'docker exec -i odoo-ce odoo shell -d odoo --no-http' <<'PYTHON_SHELL'
+ssh insightpulse-odoo 'docker exec -i odoo odoo shell -d odoo --no-http' <<'PYTHON_SHELL'
 # Find Keycloak provider
 provider = env['auth.oauth.provider'].search([('name', 'ilike', 'keycloak')])[0]
 
@@ -128,18 +128,18 @@ If Keycloak fix doesn't resolve it, try full restart:
 ssh insightpulse-odoo 'bash -s' <<'REMOTE_SCRIPT'
 # 1. Stop services
 systemctl stop nginx
-docker stop odoo-ce
+docker stop odoo
 
 # 2. Wait for full shutdown
 sleep 5
 
 # 3. Start services
-docker start odoo-ce
+docker start odoo
 sleep 10
 systemctl start nginx
 
 # 4. Verify
-docker ps --filter name=odoo-ce
+docker ps --filter name=odoo
 systemctl status nginx --no-pager
 REMOTE_SCRIPT
 ```
@@ -150,10 +150,10 @@ REMOTE_SCRIPT
 
 ```bash
 # Verify proxy_mode
-docker exec odoo-ce grep proxy_mode /etc/odoo/odoo.conf
+docker exec odoo grep proxy_mode /etc/odoo/odoo.conf
 
 # Verify database parameters
-docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON'
+docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON'
 params = ['web.base.url', 'web.base.url.freeze', 'web.base.url.force_scheme']
 for key in params:
     value = env['ir.config_parameter'].get_param(key)

@@ -105,7 +105,7 @@ apps:
     backlog:
       github:
         owner: "jgtolentino"
-        repo: "odoo-ce"
+        repo: "odoo"
         include_prs: false
         state: "open"
         labels: "control-room,platform-kit"
@@ -142,7 +142,7 @@ apps:
     backlog:
       github:
         owner: "jgtolentino"
-        repo: "odoo-ce"
+        repo: "odoo"
         include_prs: false
         state: "open"
         labels: "config-registry,ops"

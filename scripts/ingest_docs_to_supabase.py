@@ -460,7 +460,7 @@ def main():
 
     # Find base directory
     script_path = Path(__file__).resolve()
-    base_dir = script_path.parent.parent  # odoo-ce/
+    base_dir = script_path.parent.parent  # odoo/
 
     if args.verbose:
         print(f"Base directory: {base_dir}")

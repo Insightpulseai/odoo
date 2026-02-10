@@ -16,7 +16,7 @@
 ssh root@178.128.112.214
 
 # Navigate to infra directory
-cd /opt/odoo-ce/infra
+cd /opt/odoo/infra
 
 # Start Odoo container (uses docker-compose.prod.yaml)
 docker compose -f docker-compose.prod.yaml up -d
@@ -32,7 +32,7 @@ docker ps | grep odoo-prod
 
 ```bash
 ssh root@178.128.112.214
-cd /opt/odoo-ce/infra
+cd /opt/odoo/infra
 docker compose -f docker-compose.prod.yaml stop
 
 # Verify container stopped
@@ -46,7 +46,7 @@ docker ps -a | grep odoo-prod
 
 ```bash
 ssh root@178.128.112.214
-cd /opt/odoo-ce/infra
+cd /opt/odoo/infra
 
 # Graceful restart (preserves connections)
 docker compose -f docker-compose.prod.yaml restart odoo

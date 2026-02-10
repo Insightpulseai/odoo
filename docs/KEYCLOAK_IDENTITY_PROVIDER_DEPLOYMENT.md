@@ -13,7 +13,7 @@
 1. **SSH to Production Droplet**
    ```bash
    ssh root@159.223.75.148
-   cd /opt/odoo-ce
+   cd /opt/odoo
    ```
 
 2. **Run Database Setup Script**

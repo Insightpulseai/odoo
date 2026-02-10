@@ -25,7 +25,7 @@ Technical Stack:
 - SCSS styling with CSS variables
     """,
     "author": "IPAI Team",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "AGPL-3",
     "depends": [
         "base",

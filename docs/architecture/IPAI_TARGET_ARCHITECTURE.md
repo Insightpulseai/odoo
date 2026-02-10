@@ -17,7 +17,7 @@
 ## Target Module Hierarchy
 
 ```
-odoo-ce/addons/
+odoo/addons/
 ├── oca/                           # OCA modules (submodules, not tracked)
 │   ├── account-closing/
 │   ├── account-financial-reporting/

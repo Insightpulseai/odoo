@@ -223,13 +223,13 @@ git push origin test/ee-parity-gate
 ssh root@178.128.112.214  # Or staging server IP
 
 # Copy healthcheck script
-scp scripts/dev/ee-parity-healthcheck.sh root@staging:/opt/odoo-ce/repo/scripts/dev/
+scp scripts/dev/ee-parity-healthcheck.sh root@staging:/opt/odoo/repo/scripts/dev/
 
 # Copy updated install script
-scp scripts/dev/install-ee-parity-modules.sh root@staging:/opt/odoo-ce/repo/scripts/dev/
+scp scripts/dev/install-ee-parity-modules.sh root@staging:/opt/odoo/repo/scripts/dev/
 
 # Run healthcheck on staging
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 ./scripts/dev/ee-parity-healthcheck.sh
 ```
 
@@ -241,7 +241,7 @@ cd /opt/odoo-ce/repo
 ssh root@178.128.112.214
 
 # Navigate to repo
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 
 # Pull latest changes (includes healthcheck + updated installer)
 git pull origin main
@@ -265,7 +265,7 @@ echo "Exit code: $?"  # Should be 0
 **GitHub Branch Protection**:
 ```bash
 # Via GitHub UI or gh CLI:
-gh api repos/jgtolentino/odoo-ce/branches/main/protection \
+gh api repos/jgtolentino/odoo/branches/main/protection \
   -X PUT \
   -F required_status_checks[strict]=true \
   -F required_status_checks[contexts][]=EE Parity Check
@@ -296,7 +296,7 @@ on:
 **Rollback**:
 ```bash
 # Option 1: Remove post-install healthcheck from installer
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git show HEAD~1:scripts/dev/install-ee-parity-modules.sh > scripts/dev/install-ee-parity-modules.sh
 
 # Option 2: Disable healthcheck script temporarily
@@ -318,7 +318,7 @@ chmod -x scripts/dev/ee-parity-healthcheck.sh
 # ☐ Uncheck "EE Parity Check" temporarily
 
 # Via gh CLI:
-gh api repos/jgtolentino/odoo-ce/branches/main/protection \
+gh api repos/jgtolentino/odoo/branches/main/protection \
   -X DELETE
 ```
 

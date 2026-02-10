@@ -82,7 +82,7 @@
 psql "$SPDTWKTX_POSTGRES_URL" -f supabase/migrations/202511210001_finance_closing_snapshots.sql
 
 # Option 2: Supabase CLI (if linked to project)
-cd /Users/tbwa/odoo-ce/notion-n8n-monthly-close
+cd /Users/tbwa/odoo/notion-n8n-monthly-close
 supabase link --project-ref spdtwktxdalcfigzeqrz
 supabase db push --include-all
 ```
@@ -146,7 +146,7 @@ supabase secrets set \
 
 **Commands**:
 ```bash
-cd /Users/tbwa/odoo-ce/notion-n8n-monthly-close
+cd /Users/tbwa/odoo/notion-n8n-monthly-close
 ./scripts/n8n-sync.sh restore
 ```
 

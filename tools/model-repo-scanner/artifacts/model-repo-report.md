@@ -20,7 +20,7 @@ integration and automation across the organization.
 
 | Rank | Repository | Total | CI/Gov | Integration | Automation | Recency |
 |------|------------|-------|--------|-------------|------------|---------|
-| 1 | odoo-ce | 87 | 28 | 33 | 19 | 7 |
+| 1 | odoo | 87 | 28 | 33 | 19 | 7 |
 | 2 | pulser-agent-framework | 72 | 22 | 28 | 15 | 7 |
 | 3 | tbwa-fin-ops | 45 | 15 | 12 | 10 | 8 |
 | 4 | landing.io | 38 | 12 | 10 | 8 | 8 |
@@ -28,7 +28,7 @@ integration and automation across the organization.
 
 ## Recommendation
 
-**Model Repository:** `odoo-ce` (Score: 87/100)
+**Model Repository:** `odoo` (Score: 87/100)
 
 ### Evidence Summary
 
@@ -64,7 +64,7 @@ integration and automation across the organization.
 
 For organizations with diverse needs, consider a **composite approach**:
 
-1. **Governance:** `odoo-ce` (or `.github` org repo) for:
+1. **Governance:** `odoo` (or `.github` org repo) for:
    - CI/CD patterns
    - Spec Kit enforcement
    - PR/Issue templates

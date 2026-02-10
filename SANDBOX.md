@@ -53,7 +53,7 @@ docker compose -f docker-compose.production.yml --env-file .env.production up -d
 
 ```bash
 # On production droplet
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 docker compose -f docker-compose.prod.yml up -d
 ```
 

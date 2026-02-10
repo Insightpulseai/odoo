@@ -32,7 +32,7 @@ Comprehensive design system context for Claude agents working on Odoo 18 CE with
 Once the PR is merged to main:
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 curl -o docs/ODOO_FLUENT_DESIGN_SYSTEM.md \
   https://raw.githubusercontent.com/Insightpulseai-net/.github/main/templates/odoo-fluent/AGENT_PROMPT.md
 ```
@@ -57,7 +57,7 @@ Add to `.claude/mcp-servers.json` or agent config:
 Fetch from feature branch before merge:
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 curl -o docs/ODOO_FLUENT_DESIGN_SYSTEM.md \
   "https://raw.githubusercontent.com/Insightpulseai-net/.github/claude/pulser-hub-continue-parity-SU3bC/templates/odoo-fluent/AGENT_PROMPT.md"
 ```
@@ -291,7 +291,7 @@ Before committing UI changes:
 
 ## Integration with ipai-workspace
 
-**Boundary rule**: Design tokens **defined in ipai-workspace** (`packages/tokens`), **consumed in odoo-ce** (as SCSS imports).
+**Boundary rule**: Design tokens **defined in ipai-workspace** (`packages/tokens`), **consumed in odoo** (as SCSS imports).
 
 ```bash
 # Export tokens from ipai-workspace
@@ -299,13 +299,13 @@ cd ~/Documents/GitHub/ipai-workspace
 node scripts/tokens-to-scss.js > tokens.scss
 
 # Copy to Odoo module
-cp tokens.scss ~/Documents/GitHub/odoo-ce/addons/ipai_website_shell/static/src/scss/_tokens.scss
+cp tokens.scss ~/Documents/GitHub/odoo/addons/ipai_website_shell/static/src/scss/_tokens.scss
 ```
 
 ## Next Steps
 
 1. **Fetch canonical file** once PR merges to main
-2. **Update CLAUDE.md** in odoo-ce to reference design system
+2. **Update CLAUDE.md** in odoo to reference design system
 3. **Create first Fluent-styled component** in ipai_website_shell
 4. **Validate with brand assets validator** (scripts/brand/validate_brand_assets.sh)
 

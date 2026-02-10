@@ -70,7 +70,7 @@
 | 3.1 | Generate oca.lock.json | 🔲 | Claude | |
 | 3.2 | Setup OCA submodules | 🔲 | Claude | |
 | 3.3 | Verify IPAI modules | 🔲 | Claude | |
-| 3.4 | Create ci-odoo-ce.yml | 🔲 | Claude | |
+| 3.4 | Create ci-odoo.yml | 🔲 | Claude | |
 | 3.5 | Create ee_parity_mapping.yml | 🔲 | Claude | |
 | 3.6 | Run module tests | 🔲 | CI | |
 | 3.7 | Run Phase 3 gate | 🔲 | Claude | |

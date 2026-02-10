@@ -42,7 +42,7 @@ cat docs/deployment/CLAUDE_CODE_CLI_PROMPT.md
 
 ```bash
 # Navigate to repository
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 
 # Execute full deployment
 chmod +x scripts/prod/deploy_workos_full.sh
@@ -162,7 +162,7 @@ Phase 7: Commit & Push
 ssh deploy@erp.insightpulseai.com
 
 # Execute rollback
-cd /opt/odoo-ce
+cd /opt/odoo
 bash scripts/prod/rollback_workos.sh
 ```
 
@@ -182,7 +182,7 @@ bash scripts/prod/rollback_workos.sh
 ### Deployment Team
 
 - **Primary**: Jake Tolentino (Finance SSC Manager / Odoo Developer)
-- **Repository**: https://github.com/jgtolentino/odoo-ce
+- **Repository**: https://github.com/jgtolentino/odoo
 - **Branch**: claude/notion-clone-odoo-module-LSFan (PR #89)
 
 ### Documentation

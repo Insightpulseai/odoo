@@ -19,7 +19,7 @@ This module serves as the foundation for approval workflows,
 status tracking, and process automation across all IPAI modules.
     """,
     "author": "IPAI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": ["base", "mail"],
     "data": [

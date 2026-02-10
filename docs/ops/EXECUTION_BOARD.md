@@ -1,7 +1,7 @@
 # Execution Board - GitHub Projects Setup
 
 **Organization**: `Insightpulseai-net`
-**Repository**: `jgtolentino/odoo-ce`
+**Repository**: `jgtolentino/odoo`
 **Milestone**: `Ops Control Room v1`
 
 ---
@@ -29,7 +29,7 @@ The **Execution Board** is an org-level GitHub Project (ProjectV2) that tracks a
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
-│                  GitHub Issues (jgtolentino/odoo-ce)             │
+│                  GitHub Issues (jgtolentino/odoo)             │
 ├─────────────────────────────────────────────────────────────────┤
 │  Milestone: Ops Control Room v1                                 │
 │                                                                   │
@@ -66,7 +66,7 @@ This script will:
 
 1. ✅ Create org-level Project: **Execution Board**
 2. ✅ Add custom fields (Area, Priority, Target)
-3. ✅ Create labels in `jgtolentino/odoo-ce`
+3. ✅ Create labels in `jgtolentino/odoo`
 4. ✅ Create milestone: **Ops Control Room v1**
 5. ✅ Create 9 tracking issues
 6. ✅ Add issues to project
@@ -317,8 +317,8 @@ This script will:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # 2. Run bootstrap script
 ./scripts/bootstrap_execution_board.sh
@@ -337,19 +337,19 @@ cd odoo-ce
 
 ```bash
 # List all issues in milestone
-gh issue list --repo jgtolentino/odoo-ce --milestone "Ops Control Room v1"
+gh issue list --repo jgtolentino/odoo --milestone "Ops Control Room v1"
 
 # Filter by label
-gh issue list --repo jgtolentino/odoo-ce --label "odoo:rationalization"
+gh issue list --repo jgtolentino/odoo --label "odoo:rationalization"
 
 # View specific issue
-gh issue view 123 --repo jgtolentino/odoo-ce
+gh issue view 123 --repo jgtolentino/odoo
 
 # Update issue
-gh issue edit 123 --repo jgtolentino/odoo-ce --add-label "P0" --add-assignee "@me"
+gh issue edit 123 --repo jgtolentino/odoo --add-label "P0" --add-assignee "@me"
 
 # Close issue
-gh issue close 123 --repo jgtolentino/odoo-ce --comment "Completed and verified"
+gh issue close 123 --repo jgtolentino/odoo --comment "Completed and verified"
 ```
 
 ### Project Management
@@ -388,11 +388,11 @@ query($login:String!,$title:String!){
 }' -F login="Insightpulseai-net" -F title="Execution Board"
 
 # 2. Verify issues exist
-gh issue list --repo jgtolentino/odoo-ce --milestone "Ops Control Room v1" | wc -l
+gh issue list --repo jgtolentino/odoo --milestone "Ops Control Room v1" | wc -l
 # Should return: 9
 
 # 3. Verify labels
-gh label list --repo jgtolentino/odoo-ce | grep -E "ops:|kg:|spec-kit:|supabase:|dns:|infra:|odoo:|ui:|ci:" | wc -l
+gh label list --repo jgtolentino/odoo | grep -E "ops:|kg:|spec-kit:|supabase:|dns:|infra:|odoo:|ui:|ci:" | wc -l
 # Should return: 18
 ```
 
@@ -523,7 +523,7 @@ gh api user/orgs --jq '.[].login' | grep "Insightpulseai-net"
 **Solution**:
 ```bash
 # Check repository access
-gh repo view jgtolentino/odoo-ce
+gh repo view jgtolentino/odoo
 
 # If not found, ensure you have write access
 ```
@@ -546,7 +546,7 @@ gh repo view jgtolentino/odoo-ce
 ```bash
 # Re-run label creation
 for label in ops:control-room kg:ingestion spec-kit:validation; do
-  gh label create "$label" -R jgtolentino/odoo-ce --force
+  gh label create "$label" -R jgtolentino/odoo --force
 done
 
 # Manually apply to issues
@@ -565,4 +565,4 @@ gh issue edit 123 --add-label "ops:control-room"
 
 **Last Updated**: 2026-01-08
 **Maintainer**: Jake Tolentino
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo

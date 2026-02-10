@@ -1,7 +1,7 @@
 # fin-workspace Automation Status
 
 **Last Updated**: 2025-12-31
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Status**: ✅ **FULLY AUTOMATED**
 
 ---
@@ -10,7 +10,7 @@
 
 ### ✅ Local Scripts (Verified Working)
 
-**Location**: `~/Documents/GitHub/odoo-ce`
+**Location**: `~/Documents/GitHub/odoo`
 
 ```bash
 # Export DigitalOcean inventory (apps, agents, droplets, projects, databases)
@@ -85,7 +85,7 @@
 **Scope**: Read-only access to DigitalOcean apps, agents, droplets, projects, databases
 
 **How to Add**:
-1. Navigate to: https://github.com/jgtolentino/odoo-ce/settings/secrets/actions
+1. Navigate to: https://github.com/jgtolentino/odoo/settings/secrets/actions
 2. Click "New repository secret"
 3. Name: `DIGITALOCEAN_ACCESS_TOKEN`
 4. Value: Your DigitalOcean API token
@@ -94,7 +94,7 @@
 **Verification**:
 ```bash
 # Manual test of weekly sync workflow
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 gh workflow run fin-workspace-weekly-sync.yml
 gh run list --workflow=fin-workspace-weekly-sync.yml
 ```
@@ -154,7 +154,7 @@ apps/superset-analytics/spec.yaml
 
 **Manual Override** (if needed):
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 ./infra/doctl/export_state.sh
 ./scripts/bootstrap_apps_from_inventory.sh
 ./scripts/new_conversation_entry.sh "Manual sync" "$(date +%Y-%m-%d)"
@@ -201,7 +201,7 @@ export DIGITALOCEAN_ACCESS_TOKEN="your-token"
 ### Conversation Index Corruption
 ```bash
 # Regenerate index from existing files
-cd ~/Documents/GitHub/odoo-ce/docs/ops/conversations
+cd ~/Documents/GitHub/odoo/docs/ops/conversations
 
 # Rebuild INDEX.md
 echo "" > INDEX.md
@@ -263,7 +263,7 @@ done
 
 **Next Action**: Add `DIGITALOCEAN_ACCESS_TOKEN` secret to GitHub repo settings to enable weekly automated syncs.
 
-**Monitoring**: Check https://github.com/jgtolentino/odoo-ce/actions every Monday to verify automated PR creation.
+**Monitoring**: Check https://github.com/jgtolentino/odoo/actions every Monday to verify automated PR creation.
 
 ---
 

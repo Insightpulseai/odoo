@@ -15,10 +15,10 @@
 - `docker --version` and related Docker commands fail because the Docker client is unavailable in this environment.
 
 ### Deployment infrastructure fully unified
-- The available compose file (`deploy/docker-compose.yml`) references `ghcr.io/jgtolentino/odoo-ce:latest`, but there is no Kubernetes stack or prod compose file to confirm unified infra across targets.
+- The available compose file (`deploy/docker-compose.yml`) references `ghcr.io/jgtolentino/odoo:latest`, but there is no Kubernetes stack or prod compose file to confirm unified infra across targets.
 
 ### Image build and push succeeded
-- Docker is not installed here, and `docker pull ghcr.io/jgtolentino/odoo-ce:latest` fails immediately, leaving the image build and push status unverified.
+- Docker is not installed here, and `docker pull ghcr.io/jgtolentino/odoo:latest` fails immediately, leaving the image build and push status unverified.
 
 ### Changes pushed to main
 - `git branch --show-current` reports the current branch as `work`, and there is no evidence in this workspace that changes have been pushed to `main`.

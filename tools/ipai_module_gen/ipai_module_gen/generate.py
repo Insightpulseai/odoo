@@ -218,7 +218,7 @@ def main():
         for p in sorted(diagrams_dir.glob("*.png")):
             images.append({
                 "title": p.stem.replace("_", " ").title(),
-                "url": f"https://raw.githubusercontent.com/{os.environ.get('GITHUB_REPOSITORY', 'jgtolentino/odoo-ce')}/main/docs/diagrams/{p.name}"
+                "url": f"https://raw.githubusercontent.com/{os.environ.get('GITHUB_REPOSITORY', 'jgtolentino/odoo')}/main/docs/diagrams/{p.name}"
             })
 
     diagrams_md = render(env, "wiki/Diagrams.md.j2", images=images)

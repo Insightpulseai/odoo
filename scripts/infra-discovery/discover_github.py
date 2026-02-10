@@ -23,7 +23,7 @@ def discover_github(orchestrator) -> Dict[str, Any]:
     Returns summary of discovered resources.
     """
     token = os.environ.get("GITHUB_TOKEN")
-    repos = os.environ.get("GITHUB_REPOS", "jgtolentino/odoo-ce").split(",")
+    repos = os.environ.get("GITHUB_REPOS", "jgtolentino/odoo").split(",")
 
     if not token:
         logger.warning("GITHUB_TOKEN not set, skipping GitHub discovery")

@@ -3,7 +3,7 @@
 ## Executive Summary
 - **Host**: odoo-erp-prod (`5.15.0-161-generic`)
 - **Time**: Thu Jan  8 01:38:54 UTC 2026
-- **Odoo Container**: `odoo-ce`
+- **Odoo Container**: `odoo`
 - **DB Container**: `odoo-db`
 
 ## Evidence Index

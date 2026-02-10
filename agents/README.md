@@ -158,7 +158,7 @@ agents/
 When running in Claude Code CLI:
 
 ```bash
-cd /home/user/odoo-ce
+cd /home/user/odoo
 
 # Start Claude Code
 claude

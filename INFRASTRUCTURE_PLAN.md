@@ -63,8 +63,8 @@
 
 | Container Name | Image | Version | Status | Health | Ports | Purpose | Product Link | Criticality |
 |----------------|-------|---------|--------|--------|-------|---------|--------------|-------------|
-| `odoo-ce-odoo-1` | odoo | 18.0 | Up 4d | ✅ Healthy | 0.0.0.0:8069→8069 | Odoo ERP v18 | erp.insightpulseai.com | **CRITICAL** |
-| `odoo-ce-db-1` | postgres | 16 | Up 4d | ✅ Healthy | 127.0.0.1:5432→5432 | Odoo PostgreSQL DB | (backend) | **CRITICAL** |
+| `odoo-odoo-1` | odoo | 18.0 | Up 4d | ✅ Healthy | 0.0.0.0:8069→8069 | Odoo ERP v18 | erp.insightpulseai.com | **CRITICAL** |
+| `odoo-db-1` | postgres | 16 | Up 4d | ✅ Healthy | 127.0.0.1:5432→5432 | Odoo PostgreSQL DB | (backend) | **CRITICAL** |
 | `n8n-n8n-1` | n8nio/n8n | latest | Up 4d | ✅ Healthy | 0.0.0.0:5678→5678 | Workflow Automation | n8n.insightpulseai.com | **HIGH** |
 | `n8n-postgres-1` | postgres | 16 | Up 4d | ✅ Healthy | - | n8n Database | (backend) | **HIGH** |
 | `n8n-redis-1` | redis | 7-alpine | Up 4d | ✅ Healthy | - | n8n Cache/Queue | (backend) | **MEDIUM** |
@@ -140,7 +140,7 @@ nginx (159.223.75.148:443)
   │    - proxy_read_timeout: 600s
   │    - Headers: Host, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host
   └─ Upstream Routes:
-       ├─ / → http://127.0.0.1:8069 (odoo-ce-odoo-1 container)
+       ├─ / → http://127.0.0.1:8069 (odoo-odoo-1 container)
        ├─ /n8n/ → http://127.0.0.1:5678/ (n8n-n8n-1 container, WebSocket enabled)
        └─ /mcp/ → http://127.0.0.1:8766/ (MCP Coordinator, if migrated)
 ```
@@ -304,7 +304,7 @@ DNS Query: ipa.insightpulseai.com
 
 | Hostname | Protocol | TLS Status | Reverse Proxy | Upstream Container | Port | Health | Issues |
 |----------|----------|------------|---------------|-------------------|------|--------|--------|
-| erp.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | odoo-ce-odoo-1 | 8069 | ✅ Healthy | None |
+| erp.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | odoo-odoo-1 | 8069 | ✅ Healthy | None |
 | erp.insightpulseai.com/n8n/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
 | erp.insightpulseai.com/mcp/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | (not verified) | 8766 | ⚠️ Unknown | MCP service existence unclear |
 | n8n.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
@@ -413,12 +413,12 @@ ssh root@159.223.75.148 "curl -v http://127.0.0.1:8200/health || echo 'Health ch
 # Step 4: Common fixes based on findings
 
 # Fix 4a: If containers are failing health checks but service responds
-ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose restart tax-rules-service ocr-adapter agent-service"
+ssh root@159.223.75.148 "cd /opt/odoo && docker compose restart tax-rules-service ocr-adapter agent-service"
 sleep 30
 ssh root@159.223.75.148 "docker ps | grep -E 'tax-rules|ocr-adapter|agent-service'"
 
 # Fix 4b: If environment variables missing
-ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose config | grep -A 5 'tax-rules-service'"
+ssh root@159.223.75.148 "cd /opt/odoo && docker compose config | grep -A 5 'tax-rules-service'"
 # Add missing env vars to docker-compose.yml if needed
 
 # Fix 4c: If ports/dependencies wrong
@@ -442,7 +442,7 @@ ssh root@159.223.75.148 "docker ps | grep -E 'tax-rules|ocr-adapter|agent-servic
 
 **Rollback**: If restart causes issues, rollback to previous container state:
 ```bash
-ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose stop <service-name>"
+ssh root@159.223.75.148 "cd /opt/odoo && docker compose stop <service-name>"
 # Investigate logs, fix issues, then start again
 ```
 
@@ -458,8 +458,8 @@ ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose stop <service-name>"
 
 ```bash
 # Step 1: Search codebase for references (5 min)
-grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo-ce/
-grep -r "ipa\.insightpulseai" /Users/tbwa/Documents/GitHub/odoo-ce/
+grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo/
+grep -r "ipa\.insightpulseai" /Users/tbwa/Documents/GitHub/odoo/
 
 # Step 2: Check environment variables (2 min)
 ssh root@159.223.75.148 "env | grep -i ipa"
@@ -541,7 +541,7 @@ curl -I https://ipa.insightpulseai.com  # Should return 200 OK
 echo "## Deprecated Domains
 
 - ipa.insightpulseai.com - Removed $(date +%Y-%m-%d), was never configured
-" >> /Users/tbwa/Documents/GitHub/odoo-ce/docs/INFRASTRUCTURE.md
+" >> /Users/tbwa/Documents/GitHub/odoo/docs/INFRASTRUCTURE.md
 
 # Step 3: No DNS cleanup needed (record never existed)
 ```
@@ -553,7 +553,7 @@ dig +short ipa.insightpulseai.com  # Should return IP
 curl -I https://ipa.insightpulseai.com  # Should return 200 OK or 404 (depending on service)
 
 # Option B verification:
-grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo-ce/  # Should return empty
+grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo/  # Should return empty
 ```
 
 **Success Criteria**: Domain either resolves correctly OR is documented as deprecated with no remaining references
@@ -1174,7 +1174,7 @@ curl -I https://erp.insightpulseai.com
    - Lifecycle rules: Archive checkpoints >30 days old to cheaper storage
 
 3. **Training Scripts Repository**:
-   - Location: `/Users/tbwa/Documents/GitHub/odoo-ce/ml/training/`
+   - Location: `/Users/tbwa/Documents/GitHub/odoo/ml/training/`
    - Scripts:
      - `train_ocr_lora.py` - Fine-tune PaddleOCR with LoRA adapters
      - `prepare_dataset.py` - Philippine receipts preprocessing
@@ -1322,7 +1322,7 @@ n8n workflow: deploy-ocr-model
 ### 4.5 Directory Structure
 
 ```
-/Users/tbwa/Documents/GitHub/odoo-ce/
+/Users/tbwa/Documents/GitHub/odoo/
 ├── ml/
 │   ├── training/
 │   │   ├── train_ocr_lora.py
@@ -1364,7 +1364,7 @@ n8n workflow: deploy-ocr-model
 ### 5.1 Terraform Project Structure
 
 ```
-/Users/tbwa/Documents/GitHub/odoo-ce/terraform/
+/Users/tbwa/Documents/GitHub/odoo/terraform/
 ├── main.tf                 # Main configuration
 ├── variables.tf            # Input variables
 ├── outputs.tf              # Output values
@@ -2035,7 +2035,7 @@ output "dns_records" {
 
 ```bash
 # Step 1: Initialize Terraform (first time only)
-cd /Users/tbwa/Documents/GitHub/odoo-ce/terraform
+cd /Users/tbwa/Documents/GitHub/odoo/terraform
 terraform init
 
 # Step 2: Create terraform.tfvars from template

@@ -158,8 +158,8 @@ tiers:
   tier: 1
   lifecycle: active
 
-- id: build-odoo-ce19-ee-parity
-  file: build-odoo-ce19-ee-parity.yml
+- id: build-odoo19-ee-parity
+  file: build-odoo19-ee-parity.yml
   owner: infra
   purpose: Build Odoo CE 19 with EE parity image
   tier: 1

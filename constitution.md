@@ -14,7 +14,7 @@ These rules are **absolute** and must never be violated by any human or AI contr
 ### 1.1 Immutable Image Principle
 All production deployments **MUST** use:
 ```
-ghcr.io/jgtolentino/odoo-ce:latest
+ghcr.io/jgtolentino/odoo:latest
 ```
 - We do **NOT** install modules manually on the server
 - We do **NOT** modify code inside running containers
@@ -45,7 +45,7 @@ This is a **Community Edition** project. The following are **FORBIDDEN**:
 The AI and all contributors must strictly adhere to this tree:
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                 # Custom business logic modules ONLY
 │   ├── ipai_*/            # InsightPulseAI modules (OCA-compliant)
 │   └── tbwa_*/            # TBWA-specific integrations
@@ -202,9 +202,9 @@ When asked to "Document":
 
 | Resource | Location |
 |----------|----------|
-| Target Image | `ghcr.io/jgtolentino/odoo-ce:latest` |
+| Target Image | `ghcr.io/jgtolentino/odoo:latest` |
 | Supabase Project | `spdtwktxdalcfigzeqrz` |
-| GitHub Repo | `github.com/jgtolentino/odoo-ce` |
+| GitHub Repo | `github.com/jgtolentino/odoo` |
 | Production URL | `https://erp.insightpulseai.com` |
 | Documentation | `docs/` directory |
 

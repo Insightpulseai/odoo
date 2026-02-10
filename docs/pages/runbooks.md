@@ -1,6 +1,6 @@
 # Runbooks
 
-Common operational procedures for the odoo-ce platform.
+Common operational procedures for the odoo platform.
 
 ## Deployment
 
@@ -8,13 +8,13 @@ Common operational procedures for the odoo-ce platform.
 
 ```bash
 # 1. Ensure all CI gates pass on main
-gh run list --workflow "ci-odoo-ce.yml" --repo jgtolentino/odoo-ce
+gh run list --workflow "ci-odoo.yml" --repo jgtolentino/odoo
 
 # 2. SSH to production server
 ssh root@<PRODUCTION_IP>
 
 # 3. Pull latest changes
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 
 # 4. Rebuild and restart containers
@@ -129,7 +129,7 @@ docker compose restart postgres
 
 # Or manually
 ssh root@<SERVER_IP>
-cd /opt/odoo-ce/repo/addons
+cd /opt/odoo/repo/addons
 chown -R 100:101 ipai ipai_theme_tbwa*
 chmod -R 755 ipai ipai_theme_tbwa*
 docker restart odoo-prod

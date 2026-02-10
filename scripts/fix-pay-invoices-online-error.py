@@ -290,7 +290,7 @@ def main():
         else:
             logger.info("\n=== CHANGES APPLIED ===")
             logger.info("Recommendation:")
-            logger.info("1. Restart Odoo service: docker compose restart odoo-ce")
+            logger.info("1. Restart Odoo service: docker compose restart odoo")
             logger.info("2. Clear browser cache")
             logger.info("3. Visit erp.insightpulseai.com and verify error is gone")
 

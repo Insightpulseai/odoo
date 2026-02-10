@@ -1,7 +1,7 @@
 # Configuration & Secrets Inventory
 
 **Last Updated**: $(date +%Y-%m-%d)
-**Repository**: odoo-ce
+**Repository**: odoo
 **Purpose**: Complete inventory of all configuration settings and secret keys WITHOUT exposing values
 
 ---

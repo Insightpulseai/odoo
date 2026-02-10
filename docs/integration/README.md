@@ -55,7 +55,7 @@ brew install supabase/tap/supabase  # macOS
 # OR: npm install -g supabase
 
 # Link to project
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 supabase link --project-ref spdtwktxdalcfigzeqrz
 
 # Deploy (migrations + Edge Function + secrets)

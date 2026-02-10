@@ -79,30 +79,30 @@ Execution Board (Org-Level ProjectV2)
 
 ```bash
 # All issues in milestone
-gh issue list --repo jgtolentino/odoo-ce --milestone "Ops Control Room v1"
+gh issue list --repo jgtolentino/odoo --milestone "Ops Control Room v1"
 
 # By label
-gh issue list --repo jgtolentino/odoo-ce --label "odoo:rationalization"
-gh issue list --repo jgtolentino/odoo-ce --label "ops:control-room"
+gh issue list --repo jgtolentino/odoo --label "odoo:rationalization"
+gh issue list --repo jgtolentino/odoo --label "ops:control-room"
 
 # Open issues only
-gh issue list --repo jgtolentino/odoo-ce --state open
+gh issue list --repo jgtolentino/odoo --state open
 ```
 
 ### Manage Issues
 
 ```bash
 # View details
-gh issue view 123 --repo jgtolentino/odoo-ce
+gh issue view 123 --repo jgtolentino/odoo
 
 # Edit
-gh issue edit 123 --repo jgtolentino/odoo-ce --add-label "P0" --add-assignee "@me"
+gh issue edit 123 --repo jgtolentino/odoo --add-label "P0" --add-assignee "@me"
 
 # Close with verification
-gh issue close 123 --repo jgtolentino/odoo-ce --comment "✅ Completed and verified"
+gh issue close 123 --repo jgtolentino/odoo --comment "✅ Completed and verified"
 
 # Reopen
-gh issue reopen 123 --repo jgtolentino/odoo-ce
+gh issue reopen 123 --repo jgtolentino/odoo
 ```
 
 ### Project Commands
@@ -325,4 +325,4 @@ mutation($project:ID!,$content:ID!){
 
 **Documentation**: [docs/ops/EXECUTION_BOARD.md](./EXECUTION_BOARD.md)
 **Scripts**: `scripts/bootstrap_execution_board.sh`
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo

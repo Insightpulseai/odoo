@@ -83,12 +83,12 @@ I've successfully:
    - All 3 critical fixes applied
    - Drop-in replacement for v0.9.0
 
-7. **003-odoo-ce-custom-image-spec.md** (19KB)
+7. **003-odoo-custom-image-spec.md** (19KB)
    - Corrected specification (git conflict resolved)
    - Merged from main and codex branches
    - Complete requirements matrix
 
-8. **odoo-ce-v0.9.1-production-ready.tar.gz** (14KB)
+8. **odoo-v0.9.1-production-ready.tar.gz** (14KB)
    - Complete deployment package
    - Fixed Dockerfile
    - Production docker-compose
@@ -120,10 +120,10 @@ cat DOCKERFILE_COMPARISON.md
 
 ```bash
 # Navigate to your Odoo CE repo
-cd ~/odoo-ce  # Or wherever your repo is
+cd ~/odoo  # Or wherever your repo is
 
 # Extract all fixed files
-tar -xzf /mnt/user-data/outputs/odoo-ce-v0.9.1-production-ready.tar.gz --strip-components=1
+tar -xzf /mnt/user-data/outputs/odoo-v0.9.1-production-ready.tar.gz --strip-components=1
 
 # Verify extraction
 ls -la Dockerfile scripts/*.sh deploy/*.yml
@@ -170,11 +170,11 @@ export GHCR_PAT=your_github_personal_access_token
 **Verification:**
 ```bash
 # Check image in registry
-echo "https://github.com/jgtolentino/odoo-ce/pkgs/container/odoo-ce"
+echo "https://github.com/jgtolentino/odoo/pkgs/container/odoo"
 
 # Verify image locally
-docker images | grep odoo-ce
-# Expected: ghcr.io/jgtolentino/odoo-ce  v0.9.1  [IMAGE_ID]  ~1.3-1.5GB
+docker images | grep odoo
+# Expected: ghcr.io/jgtolentino/odoo  v0.9.1  [IMAGE_ID]  ~1.3-1.5GB
 ```
 
 ---
@@ -393,10 +393,10 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ### For Deep Dive
 - **ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md** - 54 pages
-- **003-odoo-ce-custom-image-spec.md** - Full spec
+- **003-odoo-custom-image-spec.md** - Full spec
 
 ### For Production Use
-- **odoo-ce-v0.9.1-production-ready.tar.gz** - Everything you need
+- **odoo-v0.9.1-production-ready.tar.gz** - Everything you need
 
 ---
 
@@ -433,7 +433,7 @@ docker --version
 ls -la Dockerfile addons/ deploy/
 
 # Try manual build
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.1
+export IMAGE=ghcr.io/jgtolentino/odoo:v0.9.1
 DOCKER_BUILDKIT=1 docker build -t "$IMAGE" .
 
 # Check logs
@@ -468,7 +468,7 @@ docker compose ps
 curl -v http://127.0.0.1:8069/web/health
 
 # Check logs for errors
-docker logs odoo-ce --tail 50 | grep -i "error\|critical"
+docker logs odoo --tail 50 | grep -i "error\|critical"
 
 # Restart if needed
 docker compose restart odoo
@@ -486,7 +486,7 @@ sleep 60
 - GitHub: @jgtolentino
 
 **Emergency:**
-- GitHub Issues: https://github.com/jgtolentino/odoo-ce/issues
+- GitHub Issues: https://github.com/jgtolentino/odoo/issues
 - Tag: @jgtolentino with `security` or `deployment` label
 - Escalate to: Finance Director CKVC (Khalil Veracruz)
 
@@ -571,8 +571,8 @@ sleep 60
 | DOCKERFILE_COMPARISON.md | 9.5KB | Change analysis |
 | v0.9.1_DEPLOYMENT_GUIDE.md | 13KB | Deployment steps |
 | Dockerfile.v0.9.1 | 1.7KB | Fixed Dockerfile |
-| 003-odoo-ce-custom-image-spec.md | 19KB | Specification |
-| odoo-ce-v0.9.1-production-ready.tar.gz | 14KB | **Deployment package** |
+| 003-odoo-custom-image-spec.md | 19KB | Specification |
+| odoo-v0.9.1-production-ready.tar.gz | 14KB | **Deployment package** |
 
 **Total:** 8 files, ~109KB
 
