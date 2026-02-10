@@ -8,22 +8,22 @@ if [ -f .env.platform.local ]; then
   set +a
 fi
 
-TEST_EMAIL="${TEST_EMAIL:-test@insightpulseai.com}"
+: "${SUPABASE_URL:?set SUPABASE_URL}"
+: "${SUPABASE_ANON_KEY:?set SUPABASE_ANON_KEY (publishable/anon)}"
+
+TEST_EMAIL="${TEST_EMAIL:-business@insightpulseai.com}"
 
 echo "🔢 Testing Email OTP Flow (via curl)..."
 echo "→ Sending OTP to: $TEST_EMAIL"
 echo ""
 
 # Send OTP via Supabase Auth API
+# CRITICAL: Auth endpoints require BOTH apikey AND Authorization headers
 response=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "${SUPABASE_URL}/auth/v1/otp" \
   -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
-  -d "{
-    \"email\": \"${TEST_EMAIL}\",
-    \"create_user\": false,
-    \"data\": {},
-    \"gotrue_meta_security\": {}
-  }")
+  -d "{\"email\":\"${TEST_EMAIL}\",\"create_user\":false}")
 
 http_code=$(echo "$response" | grep "HTTP_CODE:" | cut -d: -f2)
 body=$(echo "$response" | grep -v "HTTP_CODE:")
@@ -43,6 +43,7 @@ if [ "$http_code" = "200" ]; then
   echo "To verify OTP (after receiving code):"
   echo "  curl -X POST '${SUPABASE_URL}/auth/v1/verify' \\"
   echo "    -H 'apikey: ${SUPABASE_ANON_KEY}' \\"
+  echo "    -H 'Authorization: Bearer ${SUPABASE_ANON_KEY}' \\"
   echo "    -H 'Content-Type: application/json' \\"
   echo "    -d '{\"type\": \"email\", \"email\": \"${TEST_EMAIL}\", \"token\": \"123456\"}'"
 else
@@ -52,5 +53,6 @@ else
   echo "  - Check SMTP configuration in Supabase Dashboard"
   echo "  - Verify user exists (create_user: false requires existing user)"
   echo "  - Check Supabase Auth logs for errors"
+  echo "  - Verify SUPABASE_ANON_KEY is correct (use fetch_project_api_keys.sh)"
   exit 1
 fi
