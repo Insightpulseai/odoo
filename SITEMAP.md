@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c2e4702c24c7e75c02f4da2b1d9564b88ac96283
+> Commit: 0113d53b35eb95a27295172571cfc1a6b4256ade
 
 ## 📚 Documentation
 
@@ -587,6 +587,7 @@
 | [Mail Configuration & JWT Authentication - Complete](docs/evidence/20260210-0709/mail_and_auth_complete.md) | docs/evidence/20260210-0709 |
 | [Phase 6: Agent Library Wireup - Evidence](docs/evidence/20260210-1147/phase6-agent-library/EVIDENCE.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Phase 6 Agent Library Wireup - VERIFICATION SUMMARY](docs/evidence/20260210-1147/phase6-agent-library/VERIFICATION_SUMMARY.md) | docs/evidence/20260210-1147/phase6-agent-library |
+| [Supabase Secrets Deployment Results](docs/evidence/20260210-1300/supabase-secrets-migration/DEPLOYMENT_RESULTS.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
 | [Supabase Secrets Migration Implementation](docs/evidence/20260210-1300/supabase-secrets-migration/IMPLEMENTATION.md) | docs/evidence/20260210-1300/supabase-secrets-migration |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
