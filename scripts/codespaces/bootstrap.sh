@@ -71,7 +71,19 @@ fi
 if [ -f "requirements-dev.txt" ]; then
   pip3 install --user -r requirements-dev.txt
 fi
+  pip3 install --user -r requirements-dev.txt
+fi
 
+# ============================================================================
+# DocFlow Agentic Finance (Editable Install)
+# ============================================================================
+
+if [ -d "docflow-agentic-finance" ]; then
+    echo "[codespaces] Installing DocFlow Agentic Finance..."
+    pip3 install --user -e docflow-agentic-finance
+    # Ensure deps are satisfied for 3.11
+    pip3 install --user -U pydantic python-dotenv requests tenacity pytesseract pdf2image python-dateutil rapidfuzz orjson watchdog
+fi
 # ============================================================================
 # Pre-commit Hooks
 # ============================================================================
@@ -111,7 +123,7 @@ fi
 # ============================================================================
 
 echo "[codespaces] Configuring Git..."
-git config --global --add safe.directory /workspaces/odoo-ce
+git config --global --add safe.directory /workspace
 git config --global pull.rebase false
 
 # Enable GPG commit signing (keys must be configured separately)
