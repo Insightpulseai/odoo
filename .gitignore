@@ -236,3 +236,6 @@ sandbox/dev/oca-addons/
 .ci_artifacts/
 scripts/audit/.env
 third_party/oca/
+
+# LIB (Local Intelligence Brain)
+.lib/
