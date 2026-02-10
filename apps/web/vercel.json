@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm build --filter=@ipai/web",
+  "installCommand": "echo 'Skipping install - handled in buildCommand'",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "devCommand": "pnpm dev",
+  "env": {
+    "NEXT_PUBLIC_SITE_URL": "https://insightpulseai.com"
+  }
+}
