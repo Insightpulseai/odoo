@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad1af5a4a44bdb7dcedcc656762176a83a4d1ed2
+> Commit: 3d74969483a63af89de2f9cd07d2808ccf942074
 
 ## 📚 Documentation
 
@@ -584,6 +584,7 @@
 | [Odoo Launcher - Runtime Validation](docs/evidence/20260209-0023/odoo-launcher/RUNTIME_VALIDATION.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Landing Page Implementation](docs/evidence/20260209-1526/landing-page/IMPLEMENTATION.md) | docs/evidence/20260209-1526/landing-page |
 | [Odoo Entrypoint Tactical Fix](docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/SUMMARY.md) | docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix |
+| [Mail Configuration & JWT Authentication - Complete](docs/evidence/20260210-0709/mail_and_auth_complete.md) | docs/evidence/20260210-0709 |
 | [Phase 6: Agent Library Wireup - Evidence](docs/evidence/20260210-1147/phase6-agent-library/EVIDENCE.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Phase 6 Agent Library Wireup - VERIFICATION SUMMARY](docs/evidence/20260210-1147/phase6-agent-library/VERIFICATION_SUMMARY.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
@@ -1134,6 +1135,7 @@
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Integration Audit Scripts](scripts/audit/README.md) | scripts/audit |
+| [InsightPulse AI Authentication System](scripts/auth/README.md) | scripts/auth |
 | [DNS Automation Scripts](scripts/dns/README.md) | scripts/dns |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
