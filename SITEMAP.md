@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1e33e06af3d37424fc6d160913f9075332072306
+> Commit: f15b47f4702b98be3be322873371656df13ab361
 
 ## 📚 Documentation
 
@@ -191,6 +191,7 @@
 | [Odoo Frontend Shell](apps/odoo-frontend-shell/README.md) | apps/odoo-frontend-shell |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
+| [Auth API Testing Guide](apps/web/apps/web/src/app/api/auth/TEST.md) | apps/web/apps/web/src/app/api/auth |
 | [Lockfile Synchronization Fix](apps/web/docs/evidence/20260210-1300/lockfile-fix/RESOLUTION.md) | apps/web/docs/evidence/20260210-1300/lockfile-fix |
 | [Deployment Status Update](apps/web/docs/evidence/20260210-1300/lockfile-fix/STATUS.md) | apps/web/docs/evidence/20260210-1300/lockfile-fix |
 | [Vercel API Scripts](apps/web/scripts/vercel/README.md) | apps/web/scripts/vercel |
