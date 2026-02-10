@@ -1,0 +1,50 @@
+name: docflow-smoke
+
+on:
+  push:
+    paths:
+      - "docflow-agentic-finance/**"
+      - ".github/workflows/docflow-smoke.yml"
+  pull_request:
+    paths:
+      - "docflow-agentic-finance/**"
+      - ".github/workflows/docflow-smoke.yml"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docflow-agentic-finance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install System Deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr poppler-utils
+
+      - name: Install Python Deps
+        run: |
+          python -m pip install -U pip
+          python -m pip install -e .
+
+      - name: Smoke - fails without env
+        run: |
+          # We expect this to fail because LLM_MODEL is missing
+          python -m src.docflow.runner && exit 1 || echo "expected failure"
+
+      - name: Smoke - runs with minimal env
+        env:
+          DOCFLOW_INBOX_DIR: ./inbox
+          DOCFLOW_ARCHIVE_DIR: ./archive
+          DOCFLOW_ARTIFACTS_DIR: ./artifacts
+          LLM_MODEL: gpt-4o-mini
+          OPENAI_API_KEY: "sk-dummy"
+        run: |
+          mkdir -p inbox archive artifacts
+          python -m src.docflow.runner

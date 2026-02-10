@@ -1,0 +1,24 @@
+[project]
+name = "docflow-agentic-finance"
+version = "0.1.0"
+description = "Local OCR + LLM reasoning -> Odoo draft expenses/vendor bills (no Document AI SaaS)"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.7",
+  "python-dotenv>=1.0",
+  "requests>=2.31",
+  "tenacity>=8.2",
+  "pytesseract>=0.3.10",
+  "Pillow>=10.0",
+  "pdf2image>=1.17.0",
+  "python-dateutil>=2.9",
+  "rapidfuzz>=3.6",
+  "orjson>=3.10",
+  "watchdog>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[tool.ruff]
+line-length = 110
