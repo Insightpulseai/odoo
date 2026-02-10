@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52d557e8e2c42f35af7b493440302505894fd299
+> Commit: 75637a484db4f93c24c2b7aed99fc13e4f1798a8
 
 ```
 .
@@ -45,6 +45,13 @@
 │   │   └── spec-kit.yaml
 │   └── config.json
 ├── .devcontainer
+│   ├── backup
+│   │   ├── devcontainer.json.backup
+│   │   └── docker-compose.yml.backup
+│   ├── scripts
+│   │   ├── post-create.sh
+│   │   └── post-start.sh
+│   ├── Dockerfile
 │   ├── devcontainer.json
 │   ├── docker-compose.yml
 │   └── postCreate.sh
@@ -5511,15 +5518,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1517 directories, 3989 files
+1519 directories, 3994 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1789 |
-| Files | 5350 |
+| Directories | 1791 |
+| Files | 5355 |
 | Python files | 858 |
 | XML files | 299 |
 | Markdown files | 1395 |
