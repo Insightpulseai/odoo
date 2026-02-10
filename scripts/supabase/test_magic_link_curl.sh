@@ -8,23 +8,22 @@ if [ -f .env.platform.local ]; then
   set +a
 fi
 
-TEST_EMAIL="${TEST_EMAIL:-test@insightpulseai.com}"
+: "${SUPABASE_URL:?set SUPABASE_URL}"
+: "${SUPABASE_ANON_KEY:?set SUPABASE_ANON_KEY (publishable/anon)}"
+
+TEST_EMAIL="${TEST_EMAIL:-business@insightpulseai.com}"
 
 echo "🔗 Testing Magic Link Flow (via curl)..."
 echo "→ Sending magic link to: $TEST_EMAIL"
 echo ""
 
-# Send magic link via Supabase Auth API (using service role key for testing)
+# Send magic link via Supabase Auth API
+# CRITICAL: Auth endpoints require BOTH apikey AND Authorization headers
 response=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "${SUPABASE_URL}/auth/v1/otp" \
-  -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
   -H "Content-Type: application/json" \
-  -d "{
-    \"email\": \"${TEST_EMAIL}\",
-    \"create_user\": true,
-    \"data\": {},
-    \"gotrue_meta_security\": {}
-  }")
+  -d "{\"email\":\"${TEST_EMAIL}\",\"create_user\":true}")
 
 http_code=$(echo "$response" | grep "HTTP_CODE:" | cut -d: -f2)
 body=$(echo "$response" | grep -v "HTTP_CODE:")
@@ -49,5 +48,6 @@ else
   echo "  - Check SMTP configuration in Supabase Dashboard"
   echo "  - Verify Zoho Mail credentials are correct"
   echo "  - Check Supabase Auth logs for errors"
+  echo "  - Verify SUPABASE_ANON_KEY is correct (use fetch_project_api_keys.sh)"
   exit 1
 fi
