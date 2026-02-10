@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8e0548f95975559f3bc345ea90e0fb076ccd25df
+> Commit: ad1af5a4a44bdb7dcedcc656762176a83a4d1ed2
 
 ## 📚 Documentation
 
@@ -270,6 +270,15 @@
 | [Database Seeding Strategy](db/seeds/SEEDING_STRATEGY.md) | db/seeds |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
 | [IPAI Design Extraction](design/README.md) | design |
+| [DocFlow Agentic Finance (Odoo 19)](docflow-agentic-finance/README.md) | docflow-agentic-finance |
+| [Constitution — DocFlow Agentic Finance](docflow-agentic-finance/spec/docflow-agentic-finance/constitution.md) | docflow-agentic-finance/spec/docflow-agentic-finance |
+| [Plan — DocFlow Agentic Finance](docflow-agentic-finance/spec/docflow-agentic-finance/plan.md) | docflow-agentic-finance/spec/docflow-agentic-finance |
+| [PRD — DocFlow Agentic Finance](docflow-agentic-finance/spec/docflow-agentic-finance/prd.md) | docflow-agentic-finance/spec/docflow-agentic-finance |
+| [Tasks — DocFlow Agentic Finance](docflow-agentic-finance/spec/docflow-agentic-finance/tasks.md) | docflow-agentic-finance/spec/docflow-agentic-finance |
+| [Constitution — DocFlow v2 (Odoo 19)](docflow-agentic-finance/spec/docflow-v2/constitution.md) | docflow-agentic-finance/spec/docflow-v2 |
+| [Plan — DocFlow v2](docflow-agentic-finance/spec/docflow-v2/plan.md) | docflow-agentic-finance/spec/docflow-v2 |
+| [PRD — DocFlow v2 (Bank Statements + Reconciliation + SLA)](docflow-agentic-finance/spec/docflow-v2/prd.md) | docflow-agentic-finance/spec/docflow-v2 |
+| [Tasks — DocFlow v2](docflow-agentic-finance/spec/docflow-v2/tasks.md) | docflow-agentic-finance/spec/docflow-v2 |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
