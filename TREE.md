@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c89f2ce7a7409360aefb0319ba67fe8136bc1956
+> Commit: 2e85ea2360654e07e2ad153da955499d2a54eb72
 
 ```
 .
@@ -4105,6 +4105,7 @@
 │   │   ├── fetch_project_api_keys.sh
 │   │   ├── gh_actions_secrets_apply.sh
 │   │   ├── invoke_secret_smoke.sh
+│   │   ├── rotate_zoho_password.sh
 │   │   ├── set_edge_secrets.sh
 │   │   ├── test_email_otp.js
 │   │   ├── test_email_otp_curl.sh
@@ -5588,7 +5589,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1536 directories, 4047 files
+1536 directories, 4048 files
 ```
 
 ## 📊 Stats
@@ -5596,7 +5597,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1808 |
-| Files | 5414 |
+| Files | 5416 |
 | Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1410 |
+| Markdown files | 1411 |
