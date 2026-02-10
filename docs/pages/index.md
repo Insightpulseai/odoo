@@ -1,6 +1,6 @@
-# odoo-ce Documentation
+# odoo Documentation
 
-Welcome to the documentation portal for the `odoo-ce` monorepo — the InsightPulse AI platform built on Odoo 18 CE.
+Welcome to the documentation portal for the `odoo` monorepo — the InsightPulse AI platform built on Odoo 18 CE.
 
 ## Quick Links
 
@@ -25,7 +25,7 @@ Welcome to the documentation portal for the `odoo-ce` monorepo — the InsightPu
 ## Repository Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/           # Odoo modules (ipai_*, OCA)
 ├── apps/             # Node.js applications
 ├── packages/         # Shared packages
@@ -39,5 +39,5 @@ odoo-ce/
 
 ## Getting Help
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/jgtolentino/odoo-ce/issues)
-- **Wiki**: [Internal runbooks and notes](https://github.com/jgtolentino/odoo-ce/wiki)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/jgtolentino/odoo/issues)
+- **Wiki**: [Internal runbooks and notes](https://github.com/jgtolentino/odoo/wiki)

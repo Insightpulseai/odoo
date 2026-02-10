@@ -19,7 +19,7 @@
 ### GitHub Integration
 
 - [ ] **Verify GitHub integration**
-  - [ ] Connected repo: `jgtolentino/odoo-ce` ✅ (known from git remote)
+  - [ ] Connected repo: `jgtolentino/odoo` ✅ (known from git remote)
   - [ ] Supabase directory: `supabase` ✅ (exists)
   - [ ] Production branch: `main` ✅ (current branch)
   - [ ] "Deploy to production on push" enabled ❓ (requires Supabase Dashboard verification)

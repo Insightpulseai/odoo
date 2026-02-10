@@ -11,7 +11,7 @@ All planned hardening improvements have been successfully deployed to production
 
 ### 1. Fail-Fast Token Validation ✅
 
-**Commit**: [323c345a](https://github.com/jgtolentino/odoo-ce/commit/323c345a)
+**Commit**: [323c345a](https://github.com/jgtolentino/odoo/commit/323c345a)
 **File**: `.github/workflows/fin-workspace-weekly-sync.yml`
 
 **Implementation**:
@@ -25,7 +25,7 @@ All planned hardening improvements have been successfully deployed to production
 
 ### 2. Unique PR Branch Naming ✅
 
-**Commit**: [323c345a](https://github.com/jgtolentino/odoo-ce/commit/323c345a)
+**Commit**: [323c345a](https://github.com/jgtolentino/odoo/commit/323c345a)
 **File**: `.github/workflows/fin-workspace-weekly-sync.yml`
 
 **Implementation**:
@@ -49,11 +49,11 @@ branch="chore/weekly-do-inventory-$(date -u +%Y%m%d)-${{ github.run_id }}"
 
 **Previous Issue**: doctl download/extraction failing with `gzip: stdin: not in gzip format`
 
-**Resolution** (Commit: [fe4a003e](https://github.com/jgtolentino/odoo-ce/commit/fe4a003e)):
+**Resolution** (Commit: [fe4a003e](https://github.com/jgtolentino/odoo/commit/fe4a003e)):
 - Replaced manual doctl download with official `digitalocean/action-doctl@v2`
 - Eliminates tarball corruption risk
 - Combines installation + authentication in single reliable step
-- Verified working in run: [20615933156](https://github.com/jgtolentino/odoo-ce/actions/runs/20615933156)
+- Verified working in run: [20615933156](https://github.com/jgtolentino/odoo/actions/runs/20615933156)
 
 **Current Behavior**: Workflow now correctly fails with clear message when `DIGITALOCEAN_ACCESS_TOKEN` secret is missing:
 ```
@@ -68,7 +68,7 @@ This is **expected and correct** behavior - demonstrating our fail-fast validati
 
 ### Add GitHub Secret
 
-**Location**: https://github.com/jgtolentino/odoo-ce/settings/secrets/actions
+**Location**: https://github.com/jgtolentino/odoo/settings/secrets/actions
 
 **Secret Name**: `DIGITALOCEAN_ACCESS_TOKEN`
 **Value**: Your DigitalOcean Personal Access Token
@@ -82,7 +82,7 @@ This is **expected and correct** behavior - demonstrating our fail-fast validati
 ### Local Testing (Proven Working)
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 
 # Export DO inventory (requires DIGITALOCEAN_ACCESS_TOKEN in environment)
 ./infra/doctl/export_state.sh
@@ -106,16 +106,16 @@ ls -lh docs/conversations/*.md
 unset GITHUB_TOKEN
 
 # List recent workflow runs
-gh run list -R jgtolentino/odoo-ce --workflow="fin-workspace weekly DO inventory sync" --limit 5
+gh run list -R jgtolentino/odoo --workflow="fin-workspace weekly DO inventory sync" --limit 5
 
 # Watch specific run (replace with actual run ID)
-gh run watch -R jgtolentino/odoo-ce 20615263594
+gh run watch -R jgtolentino/odoo 20615263594
 
 # View logs
-gh run view -R jgtolentino/odoo-ce 20615263594 --log
+gh run view -R jgtolentino/odoo 20615263594 --log
 
 # List PRs created by automation
-gh pr list -R jgtolentino/odoo-ce --author "github-actions[bot]" --limit 10
+gh pr list -R jgtolentino/odoo --author "github-actions[bot]" --limit 10
 ```
 
 ---

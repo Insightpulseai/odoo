@@ -1,7 +1,7 @@
 # Odoo CE Custom Modules Status Report
 
 **Generated**: 2026-01-04
-**Repository**: odoo-ce (https://github.com/jgtolentino/odoo-ce)
+**Repository**: odoo (https://github.com/jgtolentino/odoo)
 **Odoo Version**: 18.0 Community Edition (OCA Compliant)
 
 ---

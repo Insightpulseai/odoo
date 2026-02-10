@@ -220,8 +220,8 @@ The Knowledge Graph (KG) is a **unified organizational memory** that indexes inf
 | Node Type | Key Pattern | Example |
 |-----------|-------------|---------|
 | Org | `org:<name>` | `org:insightpulseai-net` |
-| Repo | `repo:<org>/<name>` | `repo:insightpulseai-net/odoo-ce` |
-| PR | `pr:<org>/<repo>#<num>` | `pr:insightpulseai-net/odoo-ce#183` |
+| Repo | `repo:<org>/<name>` | `repo:insightpulseai-net/odoo` |
+| PR | `pr:<org>/<repo>#<num>` | `pr:insightpulseai-net/odoo#183` |
 | Droplet | `droplet:<id>` | `droplet:123456789` |
 | Domain | `domain:<fqdn>` | `domain:odoo.insightpulse.ai` |
 | OdooModule | `odoo:module:<name>` | `odoo:module:ipai_workspace_core` |

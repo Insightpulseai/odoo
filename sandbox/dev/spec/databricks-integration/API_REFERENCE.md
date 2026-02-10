@@ -1,8 +1,8 @@
-# Databricks API Reference for odoo-ce Integration
+# Databricks API Reference for odoo Integration
 
 ---
 
-**Purpose**: Complete API reference for all Databricks integrations with odoo-ce stack.
+**Purpose**: Complete API reference for all Databricks integrations with odoo stack.
 
 **Status**: REFERENCE GUIDE
 **Created**: 2026-01-26
@@ -188,7 +188,7 @@ POST /clusters/create
 
 ```json
 {
-  "cluster_name": "odoo-ce-etl-cluster",
+  "cluster_name": "odoo-etl-cluster",
   "spark_version": "14.3.x-scala2.12",
   "node_type_id": "Standard_DS3_v2",
   "autoscale": {
@@ -212,7 +212,7 @@ POST /clusters/create
 from databricks.sdk.service.compute import ClusterSpec, AutoScale
 
 cluster = w.clusters.create(
-    cluster_name="odoo-ce-etl-cluster",
+    cluster_name="odoo-etl-cluster",
     spark_version="14.3.x-scala2.12",
     node_type_id="Standard_DS3_v2",
     autoscale=AutoScale(min_workers=2, max_workers=8),
@@ -864,7 +864,7 @@ PATCH /unity-catalog/permissions/{securable_type}/{full_name}
     {
       "add": [
         {
-          "principal": "odoo-ce-n8n",
+          "principal": "odoo-n8n",
           "privileges": ["SELECT"]
         }
       ]
@@ -877,7 +877,7 @@ PATCH /unity-catalog/permissions/{securable_type}/{full_name}
 # SQL
 spark.sql("""
     GRANT SELECT ON CATALOG gold
-    TO SERVICE_PRINCIPAL `odoo-ce-n8n`
+    TO SERVICE_PRINCIPAL `odoo-n8n`
 """)
 ```
 

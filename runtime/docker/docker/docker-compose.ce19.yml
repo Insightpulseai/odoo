@@ -15,7 +15,7 @@
 #   POSTGRES_PASSWORD: DB password (default: odoo)
 # =============================================================================
 
-name: odoo-ce19-ee-parity
+name: odoo19-ee-parity
 
 services:
   # ===========================================================================
@@ -37,13 +37,13 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - odoo-ce19-network
+      - odoo19-network
 
   # ===========================================================================
   # Odoo CE 19 + OCA + IPAI Enterprise Bridge
   # ===========================================================================
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo_ce19_ee_parity
     restart: unless-stopped
     depends_on:
@@ -75,13 +75,13 @@ services:
       start_period: 60s
       retries: 3
     networks:
-      - odoo-ce19-network
+      - odoo19-network
 
   # ===========================================================================
   # Module Initialization (profile: init)
   # ===========================================================================
   odoo-init:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo_ce19_init
     profiles:
       - init
@@ -99,13 +99,13 @@ services:
         --stop-after-init
         -i base,ipai_enterprise_bridge
     networks:
-      - odoo-ce19-network
+      - odoo19-network
 
   # ===========================================================================
   # Module Update (profile: update)
   # ===========================================================================
   odoo-update:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: ghcr.io/jgtolentino/odoo:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo_ce19_update
     profiles:
       - update
@@ -123,11 +123,11 @@ services:
         --stop-after-init
         -u ${UPDATE_MODULES:-all}
     networks:
-      - odoo-ce19-network
+      - odoo19-network
 
 networks:
-  odoo-ce19-network:
-    name: odoo-ce19-ee-net
+  odoo19-network:
+    name: odoo19-ee-net
     driver: bridge
 
 volumes:

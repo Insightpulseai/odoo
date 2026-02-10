@@ -2,7 +2,7 @@
 
 ## Canonical Workspace Name
 
-**`ipai_workspace`** - InsightPulseAI mono workspace (odoo-ce)
+**`ipai_workspace`** - InsightPulseAI mono workspace (odoo)
 
 ## Opening the Workspace
 
@@ -52,7 +52,7 @@ docker compose -f docker-compose.prod.yml up -d
 | Component | Name |
 |-----------|------|
 | Workspace | `ipai_workspace` |
-| Repo | `odoo-ce` |
+| Repo | `odoo` |
 | MCP Gateway | `mcp_docker` |
 | Environments | `local`, `staging`, `prod` |
 
@@ -93,8 +93,8 @@ docker compose -f docker-compose.prod.yml up -d
 ```bash
 # Run task: "odoo:rebuild assets (fix 500)"
 # or manually:
-docker compose -f deploy/docker-compose.prod.yml exec odoo-ce odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init
-docker compose -f deploy/docker-compose.prod.yml restart odoo-ce
+docker compose -f deploy/docker-compose.prod.yml exec odoo odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init
+docker compose -f deploy/docker-compose.prod.yml restart odoo
 ```
 
 ### 502 Bad Gateway
@@ -105,7 +105,7 @@ docker compose -f deploy/docker-compose.prod.yml restart odoo-ce
 # Run task: "odoo:502 triage (nginx upstream + odoo crash)"
 # or manually:
 docker compose -f deploy/docker-compose.prod.yml ps
-docker compose -f deploy/docker-compose.prod.yml logs --tail=200 odoo-ce
+docker compose -f deploy/docker-compose.prod.yml logs --tail=200 odoo
 ```
 
 **Common Causes**:
@@ -120,8 +120,8 @@ docker compose -f deploy/docker-compose.prod.yml logs --tail=200 odoo-ce
 
 **Solution**:
 ```bash
-docker compose -f deploy/docker-compose.prod.yml exec odoo-ce ls /mnt/extra-addons/ipai/
-docker compose -f deploy/docker-compose.prod.yml exec odoo-ce odoo -d odoo -u base --stop-after-init
+docker compose -f deploy/docker-compose.prod.yml exec odoo ls /mnt/extra-addons/ipai/
+docker compose -f deploy/docker-compose.prod.yml exec odoo odoo -d odoo -u base --stop-after-init
 ```
 
 ### Database Connection Issues

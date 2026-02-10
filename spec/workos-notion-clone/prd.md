@@ -1,4 +1,4 @@
-# PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo-ce`
+# PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo`
 
 ## 1) Summary
 Build a **Notion-style Work OS** as a set of Odoo modules under `addons/` that delivers:
@@ -102,7 +102,7 @@ This is a **clone**: Odoo is the backend and UI runtime; Notion is only a refere
 - Quick add row, quick add page
 - Minimal chrome (reduce ERP heaviness) using theme tokens + OWL widgets
 
-## 8) Architecture in `jgtolentino/odoo-ce`
+## 8) Architecture in `jgtolentino/odoo`
 
 ### 8.1 Module Set (recommended)
 Platform shared (if not already present):

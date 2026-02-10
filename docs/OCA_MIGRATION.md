@@ -207,12 +207,12 @@ external-src/                  # OCA modules (14 repositories)
 
 ```bash
 # Add to ~/.bash_aliases
-alias oshell="docker exec -it odoo-ce odoo shell -d odoo"
+alias oshell="docker exec -it odoo odoo shell -d odoo"
 alias ologs="docker compose logs -f odoo"
-alias orestart="docker restart odoo-ce && docker logs -f odoo"
+alias orestart="docker restart odoo && docker logs -f odoo"
 
 odoo-update() {
-    docker exec -it odoo-ce odoo -d odoo -u "$1" --stop-after-init
+    docker exec -it odoo odoo -d odoo -u "$1" --stop-after-init
 }
 alias oupdate=odoo-update
 ```

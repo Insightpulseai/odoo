@@ -63,7 +63,7 @@ sudo systemctl status nginx
 ## 📊 CURRENT STATUS
 
 - ⚠️ **v0.9.0 git tag** exists locally (remote push pending network access)
-- ⚠️ **Docker image** verification requires Docker daemon (Colima) running to pull `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+- ⚠️ **Docker image** verification requires Docker daemon (Colima) running to pull `ghcr.io/jgtolentino/odoo:v0.9.0`
 - ⚠️ **Sanity script** updated for `v0.9.0` but requires Docker daemon for optional build
 - ⚠️ **Git state**: commit and push outstanding changes before deployment
 
@@ -72,7 +72,7 @@ sudo systemctl status nginx
 **What is true right now**
 
 - ✅ `scripts/full_deploy_sanity.sh` **passes** end-to-end
-  - Uses `ghcr.io/jgtolentino/odoo-ce:${VERSION:-v0.9.0}`
+  - Uses `ghcr.io/jgtolentino/odoo:${VERSION:-v0.9.0}`
   - Skips the optional Docker build when no daemon is running
 - ✅ `Dockerfile` is aligned with the spec
   - Base image: `odoo:18.0`
@@ -80,8 +80,8 @@ sudo systemctl status nginx
   - Non-root `USER odoo`
   - Explicit `ENV ODOO_RC=/etc/odoo/odoo.conf` to match runtime expectations
 - ✅ All manifests now reference **v0.9.0**
-  - `docker-compose.prod.yml` → `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
-  - `deploy/k8s/odoo-deployment.yaml` → `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+  - `docker-compose.prod.yml` → `ghcr.io/jgtolentino/odoo:v0.9.0`
+  - `deploy/k8s/odoo-deployment.yaml` → `ghcr.io/jgtolentino/odoo:v0.9.0`
 - ✅ `docs/FINAL_DEPLOYMENT_GUIDE.md` documents a **manual v0.9.0** deployment flow
   - No GitHub Actions assumed
   - DigitalOcean console + SSH path is the canonical route
@@ -91,9 +91,9 @@ sudo systemctl status nginx
 - ⚠️ `v0.9.0` git tag push to GitHub is **not verified** from this environment
   - `git tag v0.9.0` exists locally
   - `git push origin v0.9.0` still needs a real networked run
-- ⚠️ `ghcr.io/jgtolentino/odoo-ce:v0.9.0` existence in GHCR is **not re-verified** here
+- ⚠️ `ghcr.io/jgtolentino/odoo:v0.9.0` existence in GHCR is **not re-verified** here
   - Docker/Colima is not running in this environment
-  - `docker pull ghcr.io/jgtolentino/odoo-ce:v0.9.0` must be run on a host with a working daemon
+  - `docker pull ghcr.io/jgtolentino/odoo:v0.9.0` must be run on a host with a working daemon
 - ⚠️ `main` is **ahead of origin**
   - Untracked files: `.github/copilot-instructions.md`, `EXECUTE_NOW.md`
   - Recent changes to `Dockerfile`, `scripts/full_deploy_sanity.sh`, and `docs/FINAL_DEPLOYMENT_GUIDE.md` are local-only until committed & pushed
@@ -103,7 +103,7 @@ sudo systemctl status nginx
 1. **On your dev machine (with Docker running)**
    ```bash
    # Verify image in GHCR
-   docker pull ghcr.io/jgtolentino/odoo-ce:v0.9.0
+   docker pull ghcr.io/jgtolentino/odoo:v0.9.0
    ```
 
 2. **Commit & push repo + tag**

@@ -26,12 +26,12 @@ on:
       live_image:
         description: 'Production/live image to compare'
         required: true
-        default: 'ghcr.io/jgtolentino/odoo-ce:latest'
+        default: 'ghcr.io/jgtolentino/odoo:latest'
         type: string
       target_image:
         description: 'Target/new image to compare against'
         required: true
-        default: 'ghcr.io/jgtolentino/odoo-ce:edge-standard'
+        default: 'ghcr.io/jgtolentino/odoo:edge-standard'
         type: string
       add_pr_comment:
         description: 'Add diff summary as PR comment'
@@ -52,7 +52,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
 
 jobs:
   # ===========================================================================

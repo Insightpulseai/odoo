@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: odoo
-        image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+        image: ghcr.io/jgtolentino/odoo:v0.9.0
         ports:
         - containerPort: 8069
         env:

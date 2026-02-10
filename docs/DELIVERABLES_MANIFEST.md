@@ -13,7 +13,7 @@ Once the Go-Live Checklist is cleared and all sign-offs obtained, here's the com
 #### Core Custom Modules (Ready-to-Use)
 
 ```
-odoo-ce/addons/
+odoo/addons/
 ├── ipai_expense/
 │   ├── __init__.py
 │   ├── __manifest__.py
@@ -86,7 +86,7 @@ odoo-ce/addons/
 #### OCA Modules (Git Submodules - Integrated)
 
 ```
-odoo-ce/oca/                           # All OCA dependencies as submodules
+odoo/oca/                           # All OCA dependencies as submodules
 ├── account-financial-tools/           # GL account tools
 ├── account-invoicing/                 # Advanced invoicing
 ├── account-reporting/                 # Financial reports
@@ -102,7 +102,7 @@ odoo-ce/oca/                           # All OCA dependencies as submodules
 #### Docker Setup (Complete & Tested)
 
 ```
-odoo-ce/deploy/
+odoo/deploy/
 ├── docker-compose.yml                 # Production-ready compose file
 │   ├── Odoo 18.0 CE image (built & tested)
 │   ├── PostgreSQL 15 database
@@ -163,7 +163,7 @@ PostgreSQL Production Database
 #### Secured Configuration Bundle
 
 ```
-odoo-ce/config/
+odoo/config/
 ├── .env.production (encrypted)
 │   ├── DB_PASSWORD (random, 32-char)
 │   ├── ADMIN_PASSWORD (random, 32-char)
@@ -174,7 +174,7 @@ odoo-ce/config/
 │   ├── ssl-certificate.pem
 │   ├── ssl-private-key.pem
 │   └── dhparam.pem (SSL hardening)
-├── odoo-ce-prod.conf              # Production odoo.conf
+├── odoo-prod.conf              # Production odoo.conf
 ├── nginx-prod.conf                # Production nginx config
 └── firewall-rules.ufw             # UFW firewall rules
 ```
@@ -472,7 +472,7 @@ observability/
 #### Git Repository (Production-Ready)
 
 ```
-odoo-ce/                               # Complete Git repository
+odoo/                               # Complete Git repository
 ├── main branch
 │   └── All code at production tag (e.g., v1.0.0)
 ├── Tags
@@ -762,8 +762,8 @@ Upon receiving this package, the operations team should verify:
 
 ```bash
 # Verify application
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 git checkout v1.0.0
 docker-compose config  # Validates docker-compose.yml
 

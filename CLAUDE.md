@@ -134,7 +134,7 @@ feat|fix|refactor|docs|test|chore(scope): description
 | Item | Replacement | Date |
 |------|-------------|------|
 | `insightpulseai.net` | `insightpulseai.com` | 2026-02 |
-| `odoo-ce` repo name | `odoo` | 2026-02-03 |
+| `odoo` repo name | `odoo` | 2026-02-03 |
 | Mattermost (all) | Slack | 2026-01-28 |
 | Affine (all) | Removed | 2026-02-09 |
 | Appfine (all) | Removed | 2026-02 |

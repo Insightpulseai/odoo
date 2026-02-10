@@ -1,10 +1,10 @@
-site_name: odoo-ce Documentation
-site_url: https://jgtolentino.github.io/odoo-ce
-site_description: Documentation for the odoo-ce monorepo — InsightPulse AI platform built on Odoo 18 CE
+site_name: odoo Documentation
+site_url: https://jgtolentino.github.io/odoo
+site_description: Documentation for the odoo monorepo — InsightPulse AI platform built on Odoo 18 CE
 site_author: InsightPulse AI Team
 
-repo_name: jgtolentino/odoo-ce
-repo_url: https://github.com/jgtolentino/odoo-ce
+repo_name: jgtolentino/odoo
+repo_url: https://github.com/jgtolentino/odoo
 edit_uri: edit/main/docs/pages/
 
 theme:
@@ -68,7 +68,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/jgtolentino/odoo-ce
+      link: https://github.com/jgtolentino/odoo
   generator: false
 
 copyright: Copyright &copy; 2024-2026 InsightPulse AI

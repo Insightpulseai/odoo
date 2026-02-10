@@ -1,6 +1,6 @@
 # OCA-Style Repository Contract (Canonical)
 
-**Repository**: `odoo-ce` (jgtolentino/odoo-ce)
+**Repository**: `odoo` (jgtolentino/odoo)
 **Odoo Series**: 18.0
 **Convention Source**: OCA repo template + Dixmit blog + runtime introspection
 **Last Updated**: 2026-01-11
@@ -17,7 +17,7 @@
 ### Canonical Directory Structure
 
 ```text
-odoo-ce/                                    # Repo root
+odoo/                                    # Repo root
 ├── addons/                                 # CANONICAL ADDONS ROOT (all tooling points here)
 │   ├── ipai/                              # Primary namespace (85 modules)
 │   │   ├── ipai_finance_ppm/
@@ -52,7 +52,7 @@ odoo-ce/                                    # Repo root
 | **Primary Namespace** | `/addons/ipai/` | New custom modules go here |
 | **Legacy Modules** | `/addons/ipai_*/` | 31 standalone modules (deprecate over time) |
 | **OCA Vendor** | `/addons/oca/` | Symlinks to external-src (read-only) |
-| **Production Mount** | `/opt/odoo-ce/repo/addons` → `/mnt/extra-addons` (container) |
+| **Production Mount** | `/opt/odoo/repo/addons` → `/mnt/extra-addons` (container) |
 
 ---
 
@@ -214,7 +214,7 @@ addons_path = /usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/18
 **Resolution Order**:
 1. `/usr/lib/python3/dist-packages/odoo/addons` - Odoo CE core (18.0)
 2. `/var/lib/odoo/addons/18.0` - Odoo data directory (empty in production)
-3. `/mnt/extra-addons` - Bind mount to `/opt/odoo-ce/repo/addons`
+3. `/mnt/extra-addons` - Bind mount to `/opt/odoo/repo/addons`
 
 **Module Discovery**:
 - Odoo scans `/mnt/extra-addons/` for folders with `__manifest__.py`
@@ -303,7 +303,7 @@ addons/ipai/ipai_new_module/
 
 ❌ **DO NOT** create modules at repo root:
 ```text
-odoo-ce/
+odoo/
 ├── ipai_new_module/          # WRONG - not OCA-style
 ```
 
@@ -358,12 +358,12 @@ done
 
 **Host**: 178.128.112.214
 **Container**: `odoo-prod`
-**Deploy Script**: `/opt/odoo-ce/repo/scripts/deploy-odoo-modules.sh`
+**Deploy Script**: `/opt/odoo/repo/scripts/deploy-odoo-modules.sh`
 
 ```bash
 # Deployment workflow:
-1. rsync /addons/ipai/* to /opt/odoo-ce/repo/addons/ipai/
-2. chown -R 100:101 /opt/odoo-ce/repo/addons/ipai/
+1. rsync /addons/ipai/* to /opt/odoo/repo/addons/ipai/
+2. chown -R 100:101 /opt/odoo/repo/addons/ipai/
 3. docker restart odoo-prod
 4. Verify: curl https://erp.insightpulseai.com/web/login
 ```

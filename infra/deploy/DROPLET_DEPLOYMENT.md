@@ -21,13 +21,13 @@ Production deployment to DigitalOcean Droplet `178.128.112.214` with DO Managed 
 ssh root@178.128.112.214
 
 # Create deployment directory
-sudo mkdir -p /opt/odoo-ce
-cd /opt/odoo-ce
+sudo mkdir -p /opt/odoo
+cd /opt/odoo
 
 # Clone repository (or rsync from local)
-git clone https://github.com/jgtolentino/odoo-ce.git .
+git clone https://github.com/jgtolentino/odoo.git .
 # OR
-# rsync -avz --exclude='.git' ./ root@178.128.112.214:/opt/odoo-ce/
+# rsync -avz --exclude='.git' ./ root@178.128.112.214:/opt/odoo/
 ```
 
 ---
@@ -35,7 +35,7 @@ git clone https://github.com/jgtolentino/odoo-ce.git .
 ### 2. Configure Environment
 
 ```bash
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # Copy environment template
 cp .env.droplet.example .env
@@ -88,7 +88,7 @@ GRANT ALL PRIVILEGES ON DATABASE odoo TO odoo_app;
 
 ```bash
 # Source environment
-source /opt/odoo-ce/deploy/.env
+source /opt/odoo/deploy/.env
 
 # Test connection (before starting containers)
 PGPASSWORD="$DB_PASSWORD" psql \
@@ -113,7 +113,7 @@ Expected output:
 ### 5. Start Services
 
 ```bash
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # Pull latest images
 docker compose -f docker-compose.droplet.yml pull
@@ -216,7 +216,7 @@ docker compose -f docker-compose.droplet.yml restart odoo
 
 ## Configuration Files
 
-### `/opt/odoo-ce/deploy/`
+### `/opt/odoo/deploy/`
 
 ```
 deploy/
@@ -233,7 +233,7 @@ deploy/
 ### Start/Stop/Restart
 
 ```bash
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # Start
 docker compose -f docker-compose.droplet.yml up -d
@@ -455,7 +455,7 @@ curl -sf http://localhost:8069/web/health
 
 ## Security Checklist
 
-- [ ] `.env` file is secured (`chmod 600 /opt/odoo-ce/deploy/.env`)
+- [ ] `.env` file is secured (`chmod 600 /opt/odoo/deploy/.env`)
 - [ ] DO database allowlist only includes `178.128.112.214`
 - [ ] `admin_passwd` is strong and unique
 - [ ] `odoo_app` user has minimal permissions

@@ -82,7 +82,7 @@ ls -d ipai_* tbwa_* 2>/dev/null | tr '\n' ','
 ```json
 {
   "status": "success|failure|cancelled",
-  "repo": "insightpulseai/odoo-ce",
+  "repo": "insightpulseai/odoo",
   "workflow": "Odoo SaaS Parity Tests",
   "job": "test-parity",
   "run_id": "1234567890",
@@ -121,7 +121,7 @@ Impact:
 - Ready for incremental migrations
 ```
 
-**B. `ci-odoo-ce.yml`** (2 jobs)
+**B. `ci-odoo.yml`** (2 jobs)
 ```yaml
 Changes:
 - Added telemetry to guardrails job

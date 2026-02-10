@@ -60,7 +60,7 @@ Operational procedures for deploying, monitoring, maintaining, and troubleshooti
 **Step 1: SSH to Production Server**
 ```bash
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 ```
 
 **Step 2: Pull Latest Code**
@@ -91,7 +91,7 @@ docker ps | grep odoo
 docker-compose -f docker/docker-compose.enterprise-parity.yml build odoo
 
 # Verify image built
-docker images | grep odoo-ce
+docker images | grep odoo
 # Expected: New image with today's timestamp
 ```
 
@@ -218,7 +218,7 @@ curl -X POST "$MATTERMOST_WEBHOOK_URL" \
 ```bash
 # 1. SSH to production
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # 2. Pull latest code
 git fetch origin
@@ -254,7 +254,7 @@ docker restart odoo-accounting odoo-core odoo-marketing
 
 ### Automated Health Check (Enhanced Script)
 
-**Location**: `/opt/odoo-ce/scripts/enhanced_health_check.sh`
+**Location**: `/opt/odoo/scripts/enhanced_health_check.sh`
 
 **Checks Performed**:
 1. **Odoo Process**: Verify `odoo-bin` process running
@@ -268,7 +268,7 @@ docker restart odoo-accounting odoo-core odoo-marketing
 **Run Manually**:
 ```bash
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 ./scripts/enhanced_health_check.sh
 ```
 
@@ -286,7 +286,7 @@ cd /opt/odoo-ce
 **Configure Cron for Continuous Monitoring**:
 ```bash
 # Add to /etc/crontab
-*/5 * * * * root /opt/odoo-ce/scripts/enhanced_health_check.sh >> /var/log/odoo_health_check.log 2>&1
+*/5 * * * * root /opt/odoo/scripts/enhanced_health_check.sh >> /var/log/odoo_health_check.log 2>&1
 ```
 
 ---
@@ -376,7 +376,7 @@ ls -lh /opt/backups/odoo/
 **Automated Backup (Cron)**:
 ```bash
 # Add to /etc/crontab
-0 2 * * * root /opt/odoo-ce/scripts/backup_database.sh >> /var/log/odoo_backup.log 2>&1
+0 2 * * * root /opt/odoo/scripts/backup_database.sh >> /var/log/odoo_backup.log 2>&1
 ```
 
 **Backup Script** (`scripts/backup_database.sh`):
@@ -467,7 +467,7 @@ docker exec odoo-db-1 pg_dump -U odoo odoo > /opt/backups/odoo/pre_upgrade_$(dat
 
 **Step 2: Pull Latest Code**
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 git pull origin main
 ```
 
@@ -530,7 +530,7 @@ docker stop odoo-accounting odoo-core
 #   image: odoo:18.0
 
 # 3. Run database migration scripts
-psql -U odoo -d odoo -f /opt/odoo-ce/migrations/17_to_18/01_jsonb_migration.sql
+psql -U odoo -d odoo -f /opt/odoo/migrations/17_to_18/01_jsonb_migration.sql
 
 # 4. Start Odoo 18 containers
 docker-compose -f docker/docker-compose.enterprise-parity.yml up -d
@@ -925,7 +925,7 @@ curl -X POST "$MATTERMOST_WEBHOOK_URL" \
 **Recovery Procedure**:
 1. ✅ Provision new DigitalOcean droplet (SGP1, 4GB RAM, 80GB disk)
 2. ✅ Install Docker + Docker Compose
-3. ✅ Clone `odoo-ce` repository
+3. ✅ Clone `odoo` repository
 4. ✅ Restore database from latest backup
 5. ✅ Deploy Docker Compose stack
 6. ✅ Update DNS (`erp.insightpulseai.com` → new IP)
@@ -978,6 +978,6 @@ curl -X POST "$MATTERMOST_WEBHOOK_URL" \
 ## Support
 
 For operational issues:
-1. Check [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues?q=label%3Aoperations)
+1. Check [GitHub Issues](https://github.com/jgtolentino/odoo/issues?q=label%3Aoperations)
 2. Review [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) (per-module)
 3. Contact: Jake Tolentino (Finance SSC Manager / Odoo Developer)

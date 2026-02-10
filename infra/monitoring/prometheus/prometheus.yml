@@ -28,7 +28,7 @@ scrape_configs:
     static_configs:
       - targets: ["odoo-core:8069"]
         labels:
-          service: odoo-ce
+          service: odoo
           workspace: "${IPAI_WORKSPACE:-insightpulseai-prod}"
     # Odoo /web/health returns plain text "OK", not Prometheus format.
     # We use blackbox-style: if the probe succeeds, target is UP.

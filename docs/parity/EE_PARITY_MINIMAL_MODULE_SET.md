@@ -11,7 +11,7 @@ present in the codebase and visible in Apps as installable/upgradable.
 ## 1. Folder Layout (Canonical)
 
 ```
-odoo-ce/
+odoo/
 ├── odoo/addons/              # Core Odoo addons (read-only)
 ├── addons/
 │   ├── oca/                  # OCA addons (cloned repos)

@@ -190,7 +190,7 @@ Sample OCA modules visible in Apps menu:
 | Workflow | Status | Telemetry | odoo-bin |
 |----------|--------|-----------|----------|
 | `odoo-parity-tests.yml` | ✅ Updated | ✅ Enabled | ✅ Enabled |
-| `ci-odoo-ce.yml` | ✅ Updated | ✅ Enabled | N/A (guardrails only) |
+| `ci-odoo.yml` | ✅ Updated | ✅ Enabled | N/A (guardrails only) |
 
 **Telemetry Configuration**:
 - Webhook: `${{ secrets.N8N_CI_WEBHOOK_URL }}` (optional)

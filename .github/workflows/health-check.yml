@@ -64,7 +64,7 @@ jobs:
           FIX_FLAG="${{ inputs.fix_mode == true && '--fix' || '' }}"
 
           ssh root@erp.insightpulseai.com \
-            "cd /opt/odoo-ce/notion-n8n-monthly-close && \
+            "cd /opt/odoo/notion-n8n-monthly-close && \
              SUPABASE_SERVICE_ROLE_KEY='$SUPABASE_SERVICE_ROLE_KEY' \
              N8N_API_KEY='$N8N_API_KEY' \
              ./scripts/verify_finance_stack.sh --env $ENV $FIX_FLAG" \
@@ -79,7 +79,7 @@ jobs:
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
         run: |
           ssh root@erp.insightpulseai.com \
-            "cd /opt/odoo-ce && \
+            "cd /opt/odoo && \
              ODOO_URL='https://erp.insightpulseai.com' \
              ODOO_DB='odoo' \
              ODOO_LOGIN='jgtolentino_rn@yahoo.com' \

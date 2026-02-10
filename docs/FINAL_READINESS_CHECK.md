@@ -407,4 +407,4 @@ STATUS: APPROVED FOR GO-LIVE
 - ✅ Readiness assessment complete
 - ✅ Production deployment authorized
 
-> The `jgtolentino/odoo-ce` repository is now **production-ready** with comprehensive go-live documentation and OCA-compliant procedures in place.
+> The `jgtolentino/odoo` repository is now **production-ready** with comprehensive go-live documentation and OCA-compliant procedures in place.

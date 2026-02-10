@@ -45,7 +45,7 @@ services:
   # -----------------------------------------
   odoo:
     image: odoo:18.0
-    container_name: odoo-ce
+    container_name: odoo
     restart: unless-stopped
     depends_on:
       db:

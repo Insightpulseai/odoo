@@ -8,7 +8,7 @@
       "Bash(gh api:*)",
       "Bash(psql:*)",
       "Bash(chmod:*)",
-      "Bash(/Users/tbwa/odoo-ce/scripts/verify_auth_setup.sh:*)",
+      "Bash(/Users/tbwa/odoo/scripts/verify_auth_setup.sh:*)",
       "Bash(export:*)",
       "Bash(supabase functions list:*)",
       "Bash(supabase functions deploy:*)",
@@ -47,10 +47,34 @@
       "Bash(npx create-next-app:*)",
       "Bash(PORT=3002 timeout 10 pnpm dev:*)",
       "Bash(pnpm install:*)",
-      "Bash(PORT=3002 timeout 15 pnpm dev:*)"
+      "Bash(PORT=3002 timeout 15 pnpm dev:*)",
+      "Bash(pnpm add:*)",
+      "Bash(docker compose config:*)",
+      "Bash(set -euo pipefail)",
+      "Bash(__NEW_LINE_8563b99a827cd277__ which docker)",
+      "Bash(docker context:*)",
+      "Bash(docker context show:*)",
+      "Bash(docker info:*)",
+      "Bash(echo:*)",
+      "Bash(alias:*)",
+      "Bash(open:*)",
+      "Bash(ssh root@178.128.112.214 \"docker exec odoo-erp-prod-odoo-1 cat /etc/odoo/odoo.conf | grep -A2 -B2 ''list_db''\")",
+      "Bash(ssh root@178.128.112.214 \"docker ps --format ''{{.Names}}'' | grep -i odoo\")",
+      "Bash(ssh root@178.128.112.214 \"docker exec odoo-prod cat /etc/odoo/odoo.conf | grep -A2 -B2 ''list_db''\")",
+      "Bash(ssh root@178.128.112.214 \"docker exec odoo-prod psql -U odoo -d postgres -c ''\\\\l'' | grep odoo\")",
+      "Bash(ssh root@178.128.112.214 \"docker ps --format ''{{.Names}}'' | grep postgres\")",
+      "Bash(ssh root@178.128.112.214 \"docker exec odoo-prod sed -i ''s/^dbfilter = \\\\^odoo19$/dbfilter = ^odoo_prod$/'' /etc/odoo/odoo.conf && docker exec odoo-prod cat /etc/odoo/odoo.conf | grep dbfilter\")",
+      "Bash(ssh root@178.128.112.214 \"docker inspect odoo-prod | grep -A10 Mounts | grep odoo.conf\")",
+      "Bash(ssh root@178.128.112.214 \"docker inspect odoo-prod --format ''{{json .Mounts}}'' | python3 -m json.tool | grep -B2 -A2 odoo.conf\")",
+      "Bash(ssh:*)",
+      "Bash(xargs:*)",
+      "Bash(/dev/null ! -path */docs/releases/* ! -path */docs/knowledge/* ! -path */archive/*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/tbwa/.zshrc.d"
+    ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [

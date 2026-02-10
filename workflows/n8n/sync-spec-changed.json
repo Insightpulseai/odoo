@@ -35,7 +35,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && node scripts/sync/spec-to-prisma.js"
+        "command": "cd /workspace/odoo && node scripts/sync/spec-to-prisma.js"
       },
       "id": "run-prisma-sync",
       "name": "Run spec-to-prisma",
@@ -45,7 +45,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && npx prisma validate"
+        "command": "cd /workspace/odoo && npx prisma validate"
       },
       "id": "validate-prisma",
       "name": "Validate Prisma Schema",

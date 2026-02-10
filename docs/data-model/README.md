@@ -399,7 +399,7 @@ curl https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/serve-erd?format=svg&
 
 ### GitHub Raw URLs
 ```markdown
-![ERD](https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD.svg)
+![ERD](https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD.svg)
 ```
 
 ---

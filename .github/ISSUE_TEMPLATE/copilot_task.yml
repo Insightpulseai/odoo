@@ -17,7 +17,7 @@ body:
       label: Area
       description: Which part of the codebase does this affect?
       options:
-        - odoo-ce (Odoo core)
+        - odoo (Odoo core)
         - oca (OCA modules)
         - ipai-addons (IPAI custom modules)
         - ci-cd (GitHub Actions/workflows)

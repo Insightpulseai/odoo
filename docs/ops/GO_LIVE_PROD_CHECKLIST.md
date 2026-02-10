@@ -1,6 +1,6 @@
 # Go-Live & Production Checklist — Odoo CE + OCA + IPAI (Workbench)
 
-Canonical docs base: https://jgtolentino.github.io/odoo-ce/
+Canonical docs base: https://jgtolentino.github.io/odoo/
 Production ERP: https://erp.insightpulseai.com
 
 ## 0) Scope (Authoritative)

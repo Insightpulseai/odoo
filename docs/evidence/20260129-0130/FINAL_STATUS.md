@@ -55,7 +55,7 @@
 ```bash
 $ ./scripts/verify_oca_ipai_layout.sh
 
-✅ Using manifest: /Users/tbwa/odoo-ce/config/addons_manifest.oca_ipai.json
+✅ Using manifest: /Users/tbwa/odoo/config/addons_manifest.oca_ipai.json
 ✅ addons/oca exists
 ✅ addons/ipai exists
 ✅ All 19 OCA repositories verified

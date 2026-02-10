@@ -5,7 +5,7 @@ Policy: Do not edit downstream copies; update upstream template then re-sync.
 -->
 # CLAUDE.md — Odoo CE E-Commerce (Fluent Design System)
 
-> **Repository:** `jgtolentino/odoo-ce`
+> **Repository:** `jgtolentino/odoo`
 > **Design System:** InsightPulse AI Fluent Theme (Microsoft Fluent UI v9)
 > **Target:** Odoo 18/19 Website + eCommerce
 

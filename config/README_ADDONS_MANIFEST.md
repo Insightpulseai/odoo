@@ -1,6 +1,6 @@
 # Addons Manifest System
 
-**Purpose**: Machine-readable, authoritative placement for OCA and ipai addons in the odoo-ce repository.
+**Purpose**: Machine-readable, authoritative placement for OCA and ipai addons in the odoo repository.
 
 ## Two-Tier Manifest System
 
@@ -148,7 +148,7 @@
 ## Filesystem Layout
 
 ```
-odoo-ce/
+odoo/
 ├── addons/
 │   ├── oca/                    # OCA repositories (19 repos)
 │   │   ├── ai/

@@ -38,7 +38,7 @@ Configuration:
 - Go to Settings > IPAI Theme to select theme variant
     """,
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": ["web"],
     "data": [

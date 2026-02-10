@@ -384,7 +384,7 @@ psql "$POSTGRES_URL" -c "SELECT * FROM ops.runs ORDER BY created_at DESC LIMIT 1
 ### Contact
 
 **Project Owner**: Jake Tolentino
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Organization**: https://github.com/Insightpulseai-net
 
 ---

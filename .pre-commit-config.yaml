@@ -21,7 +21,7 @@ repos:
         args:
           - --addons-dir=addons
           - --org-name=InsightPulseAI
-          - --repo-name=odoo-ce
+          - --repo-name=odoo
           - --branch=main
 
       # Generate module icons from template

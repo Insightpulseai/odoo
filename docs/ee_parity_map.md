@@ -30,12 +30,12 @@
 
 | Property | Value |
 |----------|-------|
-| **Image Name** | `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity` |
+| **Image Name** | `ghcr.io/jgtolentino/odoo:19.0-ee-parity` |
 | **Base Image** | `odoo:19.0` |
 | **Dockerfile** | `docker/Dockerfile.ce19` |
 | **Build Script** | `docker/build-ce19.sh` |
 | **Test Script** | `docker/test-ce19.sh` |
-| **CI Workflow** | `.github/workflows/build-odoo-ce19-ee-parity.yml` |
+| **CI Workflow** | `.github/workflows/build-odoo19-ee-parity.yml` |
 
 ## EE Feature Mapping Matrix
 
@@ -221,9 +221,9 @@ python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
 3. **Rollback command:**
    ```bash
    # Example: rollback to previous version
-   docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-prev
-   docker stop odoo-ce19 && docker rm odoo-ce19
-   docker run -d --name odoo-ce19 ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-prev
+   docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
+   docker stop odoo19 && docker rm odoo19
+   docker run -d --name odoo19 ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
    ```
 
 ## References

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2026 InsightPulseAI
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+    Incoming Mail Server Configuration for Zoho Mail
+    =================================================
+    IMAP: imap.zoho.com:993 (SSL/TLS)
+    User: catchall@insightpulseai.com
+
+    IMPORTANT: After installation, manually set the IMAP password in:
+    Settings → Technical → Email → Incoming Mail Servers → Zoho IMAP (Prod)
+
+    Password should be a Zoho App Password, NOT the account password.
+    Generate at: https://accounts.zoho.com/u/h#security/app_password
+
+    NOTE: This fetchmail server is OPTIONAL.
+    Only needed if you want Odoo to fetch and route incoming emails.
+    For basic outgoing email, only the SMTP server is required.
+-->
+<odoo>
+    <data noupdate="0">
+
+        <!-- Zoho IMAP Production Server -->
+        <record id="zoho_imap_prod" model="fetchmail.server">
+            <field name="name">Zoho IMAP (Prod)</field>
+            <field name="server_type">imap</field>
+            <field name="server">imap.zoho.com</field>
+            <field name="port">993</field>
+            <field name="is_ssl" eval="True"/>
+            <field name="user">catchall@insightpulseai.com</field>
+            <!-- Password must be set manually after installation -->
+            <field name="password"></field>
+            <field name="attach" eval="True"/>
+            <field name="original" eval="True"/>
+            <field name="state">draft</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -40,14 +40,14 @@ ALTER TABLE rag.document_versions ADD COLUMN successor_id UUID REFERENCES rag.do
 ### 1.3 Seed Initial Taxonomy
 
 **Root nodes:**
-- `odoo-ce` - Core Odoo CE documentation
+- `odoo` - Core Odoo CE documentation
 - `oca` - OCA addon documentation
 - `platform` - Platform/infrastructure docs
 - `integrations` - Third-party integrations
 
 **Sample hierarchy:**
 ```
-odoo-ce
+odoo
 ├── modules
 │   ├── sale
 │   ├── purchase
@@ -206,7 +206,7 @@ Provides learning journey context for `/docs journey` command.
 ### 4.3 Slash Command Updates
 
 **Updates to existing:**
-- `/docs <query>` - Add facet filter syntax: `/docs query product:odoo-ce type:guide`
+- `/docs <query>` - Add facet filter syntax: `/docs query product:odoo type:guide`
 - `/docs browse [node]` - Navigate taxonomy tree
 - `/docs journey <slug>` - Show learning journey with progress
 

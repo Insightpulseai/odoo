@@ -11,7 +11,7 @@ services:
 
     # Source configuration
     github:
-      repo: jgtolentino/odoo-ce
+      repo: jgtolentino/odoo
       branch: main
       deploy_on_push: true
 

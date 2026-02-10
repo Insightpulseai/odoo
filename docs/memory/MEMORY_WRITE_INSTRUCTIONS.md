@@ -12,12 +12,12 @@ If your environment supports a memory tool API call, use the following payload:
 {
   "operation": "upsert",
   "namespace": "projects",
-  "key": "jgtolentino/odoo-ce",
+  "key": "jgtolentino/odoo",
   "value": {
     "project": {
-      "name": "odoo-ce",
-      "repo_url": "https://github.com/jgtolentino/odoo-ce",
-      "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
+      "name": "odoo",
+      "repo_url": "https://github.com/jgtolentino/odoo",
+      "wiki_url": "https://github.com/jgtolentino/odoo/wiki",
       "owner": "jgtolentino",
       "production_url": "https://erp.insightpulseai.com"
     },
@@ -30,7 +30,7 @@ If your environment supports a memory tool API call, use the following payload:
     "conventions": {
       "docs": ["CLAUDE.md for agent instructions", "spec/ bundles with 4-file structure", "docs/data-model/ for DBML/ERD/ORM artifacts"],
       "commands": ["docker compose -f deploy/docker-compose.prod.yml up -d", "docker compose exec -T odoo odoo -d DB -i MODULE --stop-after-init", "./scripts/repo_health.sh", "./scripts/ci_local.sh"],
-      "ci_gates": ["ci-odoo-ce.yml", "all-green-gates.yml", "spec-kit-enforce.yml", "repo-structure.yml"]
+      "ci_gates": ["ci-odoo.yml", "all-green-gates.yml", "spec-kit-enforce.yml", "repo-structure.yml"]
     },
     "constraints": ["CE + OCA only", "No odoo.com upsells", "Self-hosted via Docker", "Deterministic docs + seeds with drift gates"]
   },
@@ -51,12 +51,12 @@ If using a SQL-based memory store, execute the following upsert:
 -- Assumes a `project_memory` table exists with: id (text PK), data (jsonb), updated_at (timestamptz)
 INSERT INTO project_memory (id, data, updated_at)
 VALUES (
-  'jgtolentino/odoo-ce',
+  'jgtolentino/odoo',
   '{
     "project": {
-      "name": "odoo-ce",
-      "repo_url": "https://github.com/jgtolentino/odoo-ce",
-      "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
+      "name": "odoo",
+      "repo_url": "https://github.com/jgtolentino/odoo",
+      "wiki_url": "https://github.com/jgtolentino/odoo/wiki",
       "owner": "jgtolentino",
       "production_url": "https://erp.insightpulseai.com"
     },
@@ -88,7 +88,7 @@ set -euo pipefail
 
 # Set your memory repo path
 MEM_REPO_DIR="${MEM_REPO_DIR:-/path/to/memory-repo}"
-SLUG="odoo-ce"
+SLUG="odoo"
 
 # Create target directory
 mkdir -p "$MEM_REPO_DIR/spec/$SLUG/"

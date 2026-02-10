@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | Project | InsightPulseAI Odoo CE Implementation |
-| Repository | jgtolentino/odoo-ce |
+| Repository | jgtolentino/odoo |
 | Status | MVP Phase 0-1 (CE/OCA Base Stack) |
 | Target Go-Live Date | [TO BE FILLED] |
 | Prepared | December 22, 2025 |
@@ -30,7 +30,7 @@
 
 #### CE/OCA Compliance Check
 
-- [ ] Run CI/CD pipeline: `ci-odoo-ce.yml` passes with 0 failures
+- [ ] Run CI/CD pipeline: `ci-odoo.yml` passes with 0 failures
 - [ ] No enterprise module references detected
 - [ ] No odoo.com marketing/upsell links in user-facing code
 - [ ] All odoo.com help links rewritten to InsightPulse docs

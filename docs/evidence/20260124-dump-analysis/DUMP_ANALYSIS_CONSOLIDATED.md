@@ -2,7 +2,7 @@
 
 **Date**: 2026-01-24
 **Analyst**: Claude Agent (Opus 4.5)
-**Target Stack**: odoo-ce (Supabase + Vercel + GitHub + MCP/Pulser agents)
+**Target Stack**: odoo (Supabase + Vercel + GitHub + MCP/Pulser agents)
 
 ---
 
@@ -154,7 +154,7 @@ MOCK_MODE=true npm run test:integration
 
 **1. Verify branch protection rules**
 ```bash
-gh api repos/jgtolentino/odoo-ce/branches/main/protection | jq '.required_status_checks, .required_pull_request_reviews'
+gh api repos/jgtolentino/odoo/branches/main/protection | jq '.required_status_checks, .required_pull_request_reviews'
 ```
 
 **Expected output:**
@@ -163,8 +163,8 @@ gh api repos/jgtolentino/odoo-ce/branches/main/protection | jq '.required_status
 
 **If missing, set:**
 ```bash
-gh api -X PUT repos/jgtolentino/odoo-ce/branches/main/protection \
-  -f required_status_checks='{"strict":true,"contexts":["ci-odoo-ce","spec-kit-enforce"]}' \
+gh api -X PUT repos/jgtolentino/odoo/branches/main/protection \
+  -f required_status_checks='{"strict":true,"contexts":["ci-odoo","spec-kit-enforce"]}' \
   -f required_pull_request_reviews='{"required_approving_review_count":1}'
 ```
 
@@ -456,7 +456,7 @@ GROUP BY 1, 2, 3;
 | 5 | **EndpointSlices over Endpoints** | Scalable backend | Future-proofing |
 
 ### Gaps / Risks
-- odoo-ce currently uses Docker Compose, not K8s
+- odoo currently uses Docker Compose, not K8s
 - K8s concepts don't directly translate to Supabase Edge Functions
 - Overengineering risk if K8s not actually needed
 - NetworkPolicy not relevant without K8s
@@ -557,7 +557,7 @@ chmod +x scripts/gen_service_graph.sh
 │   GitHub (PR + CI Gates)                                                 │
 │       │                                                                  │
 │       ├── Branch Protection (main)                                       │
-│       ├── Required Checks: [ci-odoo-ce, spec-kit-enforce, evals]        │
+│       ├── Required Checks: [ci-odoo, spec-kit-enforce, evals]        │
 │       └── Auto-tag on merge                                              │
 │                                                                          │
 │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                │
@@ -641,7 +641,7 @@ mkdir -p supabase/functions/_shared
 # Update mcp_jobs insert to include trace_id
 
 # Day 4: Branch protection
-gh api repos/jgtolentino/odoo-ce/branches/main/protection | jq .
+gh api repos/jgtolentino/odoo/branches/main/protection | jq .
 # Configure if missing
 
 # Day 5: Pre-push hook
@@ -663,7 +663,7 @@ cd supabase/functions && npx tsc --noEmit
 curl -sI https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/healthz | grep -i x-request-id
 
 # Branch protection active
-gh api repos/jgtolentino/odoo-ce/branches/main/protection | jq '.required_status_checks'
+gh api repos/jgtolentino/odoo/branches/main/protection | jq '.required_status_checks'
 
 # Pre-push works
 git stash && git stash pop  # No-op to test hook path

@@ -20,7 +20,7 @@ This module extends ipai_platform_workflow to add approval-specific
 functionality like approver resolution, delegation, and escalation.
     """,
     "author": "IPAI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": ["base", "mail", "ipai_platform_workflow"],
     "data": [

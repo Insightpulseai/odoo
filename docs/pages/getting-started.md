@@ -12,8 +12,8 @@ This guide covers how to clone, bootstrap, and run the Odoo development environm
 ## Clone the Repository
 
 ```bash
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 ```
 
 ## Environment Setup

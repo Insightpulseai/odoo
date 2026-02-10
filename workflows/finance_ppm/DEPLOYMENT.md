@@ -200,7 +200,7 @@ WHERE period = TO_CHAR(CURRENT_DATE, 'YYYY-MM');
 Run the verification script:
 
 ```bash
-cd /Users/tbwa/odoo-ce/workflows/finance_ppm
+cd /Users/tbwa/odoo/workflows/finance_ppm
 ./verify_deployment.sh
 ```
 
@@ -294,7 +294,7 @@ curl -X POST "https://mattermost.insightpulseai.com/hooks/YOUR_WEBHOOK_ID" \
 2. Check service role key is being used
 3. Run migration script again if table missing:
 ```bash
-psql "$POSTGRES_URL" -f /Users/tbwa/odoo-ce/migrations/003_finance_ppm_reports.sql
+psql "$POSTGRES_URL" -f /Users/tbwa/odoo/migrations/003_finance_ppm_reports.sql
 ```
 
 ## Rollback Procedure

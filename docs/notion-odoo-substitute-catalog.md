@@ -409,4 +409,4 @@ echo "✅ Notion Business substitute stack installed"
 
 ---
 
-*Generated: 2026-01-06 | Source: jgtolentino/odoo-ce*
+*Generated: 2026-01-06 | Source: jgtolentino/odoo*

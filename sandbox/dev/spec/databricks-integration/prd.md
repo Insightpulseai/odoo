@@ -11,7 +11,7 @@
 
 ## Overview
 
-Integrate Azure Databricks capabilities into odoo-ce stack to enable:
+Integrate Azure Databricks capabilities into odoo stack to enable:
 - Advanced ETL pipelines (replacing manual Scout data processing)
 - AI/ML-powered financial analytics
 - Real-time feature engineering for BIR compliance
@@ -21,7 +21,7 @@ Integrate Azure Databricks capabilities into odoo-ce stack to enable:
 
 ## Strategic Context
 
-### Current State (odoo-ce)
+### Current State (odoo)
 
 **Data Processing**:
 - Manual ETL: Google Drive exports → Supabase Bronze → Silver → Gold
@@ -104,7 +104,7 @@ Azure Databricks (Delta Lake)
 
 **Feature 3.1: Databricks Asset Bundles**
 - **Purpose**: IaC for pipeline management (like Terraform for Databricks)
-- **Repository**: `odoo-ce/infra/databricks/` with YAML configs
+- **Repository**: `odoo/infra/databricks/` with YAML configs
 - **Success Criteria**: CI/CD deploys Databricks jobs automatically
 
 **Feature 3.2: SQL Connectors**
@@ -123,7 +123,7 @@ Azure Databricks (Delta Lake)
 
 ### Component Integration
 
-**Existing Stack (odoo-ce)**:
+**Existing Stack (odoo)**:
 ```
 DigitalOcean App Platform (services)
     ↓

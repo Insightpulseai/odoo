@@ -12,7 +12,7 @@ InsightPulse AI platform uses **tenant-aware architecture** where:
 ### 1. Separation of Concerns
 
 ```
-odoo-ce (jgtolentino/odoo-ce)
+odoo (jgtolentino/odoo)
 ├── Platform Odoo Core
 │   ├── Odoo CE 18.0 + OCA modules
 │   ├── ipai_* custom modules
@@ -41,7 +41,7 @@ superset (jgtolentino/superset)
 
 ```
 Odoo Host (Droplet/App Platform)
-├── Odoo Container (ghcr.io/jgtolentino/odoo-ce:18)
+├── Odoo Container (ghcr.io/jgtolentino/odoo:18)
 │   └── Serves multiple databases
 ├── PostgreSQL (Supabase)
 │   ├── odoo_platform (internal operations)
@@ -84,7 +84,7 @@ Located in: `addons/ipai/ipai_tenant_core/`
 
 **Command**:
 ```bash
-cd /path/to/odoo-ce
+cd /path/to/odoo
 export ODOO_ADMIN_PASSWORD='secure_password'
 export POSTGRES_URL='postgres://...' # Supabase pooler URL
 export SUPABASE_SERVICE_ROLE_KEY='eyJ...'
@@ -164,7 +164,7 @@ Tenant-Specific Data (tbwa schema)
 
 ## Cross-Repo CI/CD Integration
 
-### Schema Change Trigger (odoo-ce → superset)
+### Schema Change Trigger (odoo → superset)
 
 **Workflow**: `.github/workflows/notify-superset.yml`
 
@@ -188,7 +188,7 @@ jobs:
             -d '{"event_type":"schema_changed"}'
 ```
 
-**Effect**: Schema changes in odoo-ce automatically rebuild Superset with updated datasets
+**Effect**: Schema changes in odoo automatically rebuild Superset with updated datasets
 
 ### Superset Rebuild (superset)
 
@@ -206,7 +206,7 @@ jobs:
       - name: Log schema change event
         if: github.event_name == 'repository_dispatch'
         run: |
-          echo "🔄 Triggered by odoo-ce schema change"
+          echo "🔄 Triggered by odoo schema change"
 ```
 
 **Effect**: Superset redeploys when schema changes are detected

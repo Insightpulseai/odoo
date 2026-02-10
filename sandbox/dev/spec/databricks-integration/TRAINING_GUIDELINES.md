@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document outlines the training strategy for onboarding the odoo-ce development team to Azure Databricks, following enterprise SaaS ERP patterns and aligning with the 16-week implementation roadmap.
+This document outlines the training strategy for onboarding the odoo development team to Azure Databricks, following enterprise SaaS ERP patterns and aligning with the 16-week implementation roadmap.
 
 ---
 
@@ -208,7 +208,7 @@ This document outlines the training strategy for onboarding the odoo-ce developm
 - Free tier: https://community.cloud.databricks.com/
 - Limited compute (15GB cluster RAM)
 - Sufficient for learning DLT, MLflow, Unity Catalog basics
-- Use odoo-ce Azure subscription for production-scale labs
+- Use odoo Azure subscription for production-scale labs
 
 ---
 

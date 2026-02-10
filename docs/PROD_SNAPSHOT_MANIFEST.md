@@ -6,7 +6,7 @@
 
 ```bash
 ssh deploy@erp.insightpulseai.com
-cd /opt/odoo-ce
+cd /opt/odoo
 git pull origin claude/notion-clone-odoo-module-LSFan
 ./tools/audit/gen_prod_snapshot.sh
 ```

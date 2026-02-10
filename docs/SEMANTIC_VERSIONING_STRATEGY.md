@@ -20,7 +20,7 @@ This document defines the semantic versioning strategy for the InsightPulse Odoo
 **v0.9.0 - Infrastructure Unification**
 - **Status**: Pre-production (Infrastructure Ready)
 - **Purpose**: Mark completion of deployment infrastructure unification
-- **Docker Image**: `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+- **Docker Image**: `ghcr.io/jgtolentino/odoo:v0.9.0`
 
 ## Docker Image Tagging
 
@@ -40,7 +40,7 @@ This document defines the semantic versioning strategy for the InsightPulse Odoo
 
 # Manual alternative
 export VERSION=v0.9.0
-export IMAGE_BASE=ghcr.io/jgtolentino/odoo-ce
+export IMAGE_BASE=ghcr.io/jgtolentino/odoo
 
 docker build -t "$IMAGE_BASE:$VERSION" -t "$IMAGE_BASE:latest" .
 docker push "$IMAGE_BASE:$VERSION"
@@ -56,13 +56,13 @@ Both deployment methods now use versioned tags:
 **Docker Compose (VPS)**
 ```yaml
 # docker-compose.prod.yml
-image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+image: ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 
 **Kubernetes (DOKS)**
 ```yaml
 # deploy/k8s/odoo-deployment.yaml
-image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+image: ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 
 ### Benefits
@@ -80,7 +80,7 @@ image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
 scripts/full_deploy_sanity.sh
 
 # Build and test locally
-docker build -t odoo-ce-test:latest .
+docker build -t odoo-test:latest .
 ```
 
 ### 2. Create Git Tag
@@ -166,7 +166,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 ```bash
 # Rollback to specific version
-kubectl set image deployment/odoo-deployment odoo=ghcr.io/jgtolentino/odoo-ce:v0.9.0
+kubectl set image deployment/odoo-deployment odoo=ghcr.io/jgtolentino/odoo:v0.9.0
 kubectl rollout status deployment/odoo-deployment -n odoo-prod
 ```
 

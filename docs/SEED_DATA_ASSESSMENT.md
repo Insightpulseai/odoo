@@ -196,7 +196,7 @@ oca_modules:
 
 3. **Import Seed Data**
    ```bash
-   cd /home/user/odoo-ce/data/finance_seed
+   cd /home/user/odoo/data/finance_seed
    python import_all.py
    python update_tasks_after_import.py
    ```

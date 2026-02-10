@@ -1,8 +1,8 @@
-# Odoo 19 Migration Strategy for odoo-ce
+# Odoo 19 Migration Strategy for odoo
 
 ---
 
-**Purpose**: Document the strategy for integrating Odoo 19 features into odoo-ce (currently Odoo 18 CE).
+**Purpose**: Document the strategy for integrating Odoo 19 features into odoo (currently Odoo 18 CE).
 
 **Last Updated**: 2026-01-26
 **Current Version**: Odoo 18 CE
@@ -12,7 +12,7 @@
 
 ## Current State (Odoo 18 CE)
 
-**Stack**: `~/Documents/GitHub/odoo-ce/`
+**Stack**: `~/Documents/GitHub/odoo/`
 - **Odoo Version**: 18.0 Community Edition
 - **Architecture**: Multi-edition (core, marketing, accounting)
 - **Custom Modules**: 80+ IPAI modules (`addons/ipai/`)
@@ -21,7 +21,7 @@
 
 **Key Components**:
 ```
-odoo-ce/
+odoo/
 ├── addons/
 │   ├── ipai/                  # 80+ custom modules (18.0)
 │   │   ├── ipai_enterprise_bridge/  # EE parity module
@@ -39,7 +39,7 @@ odoo-ce/
 
 ### Option 1: Direct Upgrade (Canonical Path)
 
-**Strategy**: Upgrade entire odoo-ce stack from 18.0 → 19.0 when Odoo 19 CE is released.
+**Strategy**: Upgrade entire odoo stack from 18.0 → 19.0 when Odoo 19 CE is released.
 
 **Process**:
 ```bash
@@ -67,7 +67,7 @@ FROM odoo:19.0
 ./scripts/migrate/odoo_18_to_19.sh
 
 # 6. Test in dev sandbox first
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev/
+cd ~/Documents/GitHub/odoo/sandbox/dev/
 docker compose down && docker compose up -d
 # Validate all modules install
 
@@ -189,7 +189,7 @@ services:
 **Migration Workflow**:
 ```bash
 # 1. Create new module in Odoo 19
-cd ~/Documents/GitHub/odoo-ce/addons/ipai/
+cd ~/Documents/GitHub/odoo/addons/ipai/
 cp -r ipai_new_module_18/ ipai_new_module_19/
 
 # Edit manifest

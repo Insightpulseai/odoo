@@ -1,7 +1,7 @@
 {
   "$schema": "https://insightpulse.ai/schemas/devserver.schema.json",
   "version": "1.0.0",
-  "name": "odoo-ce-stack",
+  "name": "odoo-stack",
   "description": "InsightPulse AI Odoo CE Development Stack",
   "services": {
     "odoo-core": {

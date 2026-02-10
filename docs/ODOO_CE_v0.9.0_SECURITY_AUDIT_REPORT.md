@@ -2,7 +2,7 @@
 title: Odoo CE v0.9.0 Image Security & Compliance Audit Report
 date: 2025-11-25
 auditor: InsightPulse AI Security Team
-image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+image: ghcr.io/jgtolentino/odoo:v0.9.0
 status: CONDITIONAL APPROVAL (See Critical Findings)
 ---
 
@@ -390,7 +390,7 @@ doctl compute droplet resize odoo-erp-prod --size s-2vcpu-8gb --wait
 
 **Phase 1: Fix Image (2-4 hours)**
 1. Apply remediation fixes (Section 8)
-2. Build fixed image: `ghcr.io/jgtolentino/odoo-ce:v0.9.1`
+2. Build fixed image: `ghcr.io/jgtolentino/odoo:v0.9.1`
 3. Push to GHCR
 
 **Phase 2: VPS Upgrade (1 hour)**
@@ -469,7 +469,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 ```bash
 # Navigate to repo
-cd ~/odoo-ce
+cd ~/odoo
 
 # Replace Dockerfile with fixed version
 cat > Dockerfile << 'EOF'
@@ -477,7 +477,7 @@ cat > Dockerfile << 'EOF'
 EOF
 
 # Build new version
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.1
+export IMAGE=ghcr.io/jgtolentino/odoo:v0.9.1
 
 # Login to GHCR
 echo "$GHCR_PAT" | docker login ghcr.io -u jgtolentino --password-stdin
@@ -489,8 +489,8 @@ DOCKER_BUILDKIT=1 docker build -t "$IMAGE" .
 docker push "$IMAGE"
 
 # Tag as latest (optional, not recommended for production)
-docker tag "$IMAGE" ghcr.io/jgtolentino/odoo-ce:latest
-docker push ghcr.io/jgtolentino/odoo-ce:latest
+docker tag "$IMAGE" ghcr.io/jgtolentino/odoo:latest
+docker push ghcr.io/jgtolentino/odoo:latest
 ```
 
 ### 8.3 Updated docker-compose.prod.yml
@@ -500,8 +500,8 @@ docker push ghcr.io/jgtolentino/odoo-ce:latest
 ```yaml
 services:
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:v0.9.1  # ← Update version
-    container_name: odoo-ce
+    image: ghcr.io/jgtolentino/odoo:v0.9.1  # ← Update version
+    container_name: odoo
     restart: unless-stopped
     depends_on:
       db:
@@ -541,25 +541,25 @@ volumes:
 
 - [ ] **Image Build Success**
   ```bash
-  docker build -t ghcr.io/jgtolentino/odoo-ce:v0.9.1 . && echo "✅ Build OK"
+  docker build -t ghcr.io/jgtolentino/odoo:v0.9.1 . && echo "✅ Build OK"
   ```
 
 - [ ] **Image Size Reasonable**
   ```bash
-  docker images ghcr.io/jgtolentino/odoo-ce:v0.9.1 --format "{{.Size}}"
+  docker images ghcr.io/jgtolentino/odoo:v0.9.1 --format "{{.Size}}"
   # Expected: <1.5GB (official odoo:18.0 is ~1.2GB)
   ```
 
 - [ ] **No Hardcoded Secrets**
   ```bash
-  docker run --rm ghcr.io/jgtolentino/odoo-ce:v0.9.1 \
+  docker run --rm ghcr.io/jgtolentino/odoo:v0.9.1 \
     cat /etc/odoo/odoo.conf | grep -E "CHANGE_ME|password.*=" | wc -l
   # Expected: 2 (only placeholder passwords)
   ```
 
 - [ ] **Health Check Present**
   ```bash
-  docker inspect ghcr.io/jgtolentino/odoo-ce:v0.9.1 --format='{{.Config.Healthcheck}}'
+  docker inspect ghcr.io/jgtolentino/odoo:v0.9.1 --format='{{.Config.Healthcheck}}'
   # Expected: HEALTHCHECK configuration output
   ```
 
@@ -581,7 +581,7 @@ docker compose ps
 
 # Expected output:
 # NAME      IMAGE                                  STATUS
-# odoo-ce   ghcr.io/jgtolentino/odoo-ce:v0.9.1    Up (healthy)
+# odoo   ghcr.io/jgtolentino/odoo:v0.9.1    Up (healthy)
 # db        postgres:15                            Up (healthy)
 ```
 
@@ -620,7 +620,7 @@ docker compose logs odoo --tail 50 | grep -i "error\|exception"
 
 **7. Resource Usage**
 ```bash
-docker stats --no-stream odoo-ce
+docker stats --no-stream odoo
 # Expected:
 # MEM USAGE < 2GB
 # CPU < 50% (under normal load)
@@ -645,7 +645,7 @@ NC='\033[0m' # No Color
 
 # Test 1: Container Running
 echo -n "1. Container running... "
-if docker ps | grep -q "odoo-ce"; then
+if docker ps | grep -q "odoo"; then
     echo -e "${GREEN}✅ PASS${NC}"
 else
     echo -e "${RED}❌ FAIL${NC}"
@@ -654,7 +654,7 @@ fi
 
 # Test 2: Health Check
 echo -n "2. Health check... "
-if docker inspect odoo-ce | grep -q '"Status": "healthy"'; then
+if docker inspect odoo | grep -q '"Status": "healthy"'; then
     echo -e "${GREEN}✅ PASS${NC}"
 else
     echo -e "${YELLOW}⚠️  WARN (may need time to start)${NC}"
@@ -953,10 +953,10 @@ doctl monitoring alert-policy create \
 ### Build & Deploy
 ```bash
 # Build fixed image
-docker build -t ghcr.io/jgtolentino/odoo-ce:v0.9.1 .
+docker build -t ghcr.io/jgtolentino/odoo:v0.9.1 .
 
 # Push to registry
-docker push ghcr.io/jgtolentino/odoo-ce:v0.9.1
+docker push ghcr.io/jgtolentino/odoo:v0.9.1
 
 # Deploy on VPS
 ssh root@159.223.75.148
@@ -969,7 +969,7 @@ docker compose ps
 ### Health Checks
 ```bash
 # Container status
-docker ps | grep odoo-ce
+docker ps | grep odoo
 
 # Health endpoint
 curl -f http://127.0.0.1:8069/web/health
@@ -994,7 +994,7 @@ docker compose up -d
 **Primary Contact:**
 - **Owner:** Jake Tolentino (Finance SSC Technical Lead)
 - **Email:** jgtolentino@tbwa-smp.ph
-- **Repo:** https://github.com/jgtolentino/odoo-ce
+- **Repo:** https://github.com/jgtolentino/odoo
 
 **Critical Issues:**
 - Open GitHub issue with label `security`
@@ -1003,7 +1003,7 @@ docker compose up -d
 
 **Infrastructure Access:**
 - **VPS:** 159.223.75.148 (SSH key required)
-- **GHCR:** ghcr.io/jgtolentino/odoo-ce
+- **GHCR:** ghcr.io/jgtolentino/odoo
 - **DigitalOcean:** Project dashboard
 
 ---

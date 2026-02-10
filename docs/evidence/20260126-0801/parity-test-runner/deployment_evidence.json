@@ -41,7 +41,7 @@
   ],
   "deployment_status": {
     "git_push": "SUCCESS",
-    "pr_url": "https://github.com/jgtolentino/odoo-ce/pull/new/claude/odoo-parity-test-runner-zeF1c",
+    "pr_url": "https://github.com/jgtolentino/odoo/pull/new/claude/odoo-parity-test-runner-zeF1c",
     "odoo_tests": "REQUIRES_ODOO_INSTANCE",
     "schema_deploy": "REQUIRES_SUPABASE_CREDENTIALS"
   },
@@ -54,7 +54,7 @@
     "SUPABASE_DB_PASSWORD"
   ],
   "manual_steps": [
-    "1. Create PR: https://github.com/jgtolentino/odoo-ce/pull/new/claude/odoo-parity-test-runner-zeF1c",
+    "1. Create PR: https://github.com/jgtolentino/odoo/pull/new/claude/odoo-parity-test-runner-zeF1c",
     "2. Set GitHub Secrets in repo settings",
     "3. Deploy schema: ./scripts/deploy_parity_schema.sh",
     "4. Run tests: ./tools/parity/run_ee_parity.sh"

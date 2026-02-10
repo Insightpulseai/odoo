@@ -26,7 +26,7 @@ component-level overrides.
     """,
     'category': 'Theme/Backend',
     'author': 'Coding Partner',
-    'website': 'https://github.com/jgtolentino/odoo-ce',
+    'website': 'https://github.com/jgtolentino/odoo',
     'depends': ['web'],
     'assets': {
         # Primary variables are loaded early in the asset pipeline

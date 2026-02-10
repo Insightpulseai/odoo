@@ -7,8 +7,8 @@
 #   - Pull requests (build only, no push)
 #
 # Outputs:
-#   - ghcr.io/insightpulseai/odoo-ce:v18.0-core-seeded
-#   - ghcr.io/insightpulseai/odoo-ce:latest-seeded
+#   - ghcr.io/insightpulseai/odoo:v18.0-core-seeded
+#   - ghcr.io/insightpulseai/odoo:latest-seeded
 # =============================================================================
 
 name: Build Seeded Odoo Image
@@ -34,7 +34,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/odoo-ce
+  IMAGE_NAME: ${{ github.repository_owner }}/odoo
 
 jobs:
   # ===========================================================================

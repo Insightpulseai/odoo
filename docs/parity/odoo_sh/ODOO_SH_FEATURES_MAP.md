@@ -133,5 +133,5 @@ Odoo.sh is a managed platform providing CI/CD, staging/prod environments, backup
 
 - [Odoo.sh Features](https://www.odoo.sh/features) - Official capability inventory
 - [Odoo.sh Staging/Dev Behavior](https://www.odoo.com/documentation/19.0/administration/odoo_sh/getting_started/branches.html) - Neutralization semantics
-- [odoo-ce/CLAUDE.md](../../CLAUDE.md) - Project execution model
-- [odoo-ce/.github/workflows/](../../.github/workflows/) - CI/CD implementation
+- [odoo/CLAUDE.md](../../CLAUDE.md) - Project execution model
+- [odoo/.github/workflows/](../../.github/workflows/) - CI/CD implementation

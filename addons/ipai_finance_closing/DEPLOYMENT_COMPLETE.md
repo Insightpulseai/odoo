@@ -307,7 +307,7 @@ Mattermost Alert (cc: @tax-specialist @finance-director)
 - This File: Deployment summary and user action guide
 
 **Technical Support**:
-- GitHub Issues: https://github.com/jgtolentino/odoo-ce/issues
+- GitHub Issues: https://github.com/jgtolentino/odoo/issues
 - Email: jgtolentino_rn@yahoo.com
 - Mattermost: @jake (IT Market Director)
 

@@ -32,9 +32,9 @@ A comprehensive **git pre-flight skill system** for the InsightPulse AI Ops Cont
 
 ---
 
-### Repository 2: odoo-ce
+### Repository 2: odoo
 
-**Location**: `/Users/tbwa/Documents/GitHub/odoo-ce/spec/ops-control-room/`
+**Location**: `/Users/tbwa/Documents/GitHub/odoo/spec/ops-control-room/`
 
 | File | Lines | Purpose |
 |------|-------|---------|
@@ -187,7 +187,7 @@ skills:
 
 ```
 ┌─────────────────────────────────────┐
-│    Ops Control Room (odoo-ce)       │
+│    Ops Control Room (odoo)       │
 │                                     │
 │  1. Load runbook YAML               │
 │  2. Resolve skill → implementation  │
@@ -205,7 +205,7 @@ skills:
 └─────────────────────────────────────┘
 ```
 
-**Key Insight**: Implementation lives where it's used (design-system-cli), registry lives in Ops Control Room (odoo-ce).
+**Key Insight**: Implementation lives where it's used (design-system-cli), registry lives in Ops Control Room (odoo).
 
 ---
 
@@ -239,10 +239,10 @@ git push origin main
 
 ---
 
-### Phase 2: odoo-ce
+### Phase 2: odoo
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # 1. Commit skill and runbook definitions
 git add \
@@ -428,9 +428,9 @@ git revert <commit-sha>
 git push origin main
 ```
 
-**odoo-ce**:
+**odoo**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 git revert <commit-sha>
 git push origin main
 ```
@@ -463,7 +463,7 @@ git push origin main
 3. ✅ Create skill registry (done)
 4. ✅ Document integration (done)
 5. 🔄 Deploy to design-system-cli (pending)
-6. 🔄 Deploy to odoo-ce (pending)
+6. 🔄 Deploy to odoo (pending)
 7. 🔄 Test end-to-end via Ops Control Room (pending)
 
 ---
@@ -512,8 +512,8 @@ git push origin main
 
 ### Specs
 
-- **Agent**: `odoo-ce/spec/ops-control-room/agents/figma-bridge.yaml`
-- **Runbook**: `odoo-ce/spec/ops-control-room/runbooks/figma_sync_design_tokens.yaml`
+- **Agent**: `odoo/spec/ops-control-room/agents/figma-bridge.yaml`
+- **Runbook**: `odoo/spec/ops-control-room/runbooks/figma_sync_design_tokens.yaml`
 
 ---
 

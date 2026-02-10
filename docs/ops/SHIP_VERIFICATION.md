@@ -11,7 +11,7 @@ If Docker steps are skipped, the verification is **INVALID**.
 Run on the droplet (`ssh insightpulse-odoo`):
 
 ```bash
-cd /opt/odoo-ce || cd ~/odoo-ce
+cd /opt/odoo || cd ~/odoo
 
 # 1. Check Stack Status
 docker compose -f docker-compose.prod.yml ps

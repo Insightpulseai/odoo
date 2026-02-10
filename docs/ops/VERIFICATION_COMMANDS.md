@@ -2,7 +2,7 @@
 
 ## Overview
 
-Copy/paste commands for verifying Odoo 18 CE deployments. All commands assume you're in the repo root (`/opt/odoo-ce` or equivalent).
+Copy/paste commands for verifying Odoo 18 CE deployments. All commands assume you're in the repo root (`/opt/odoo` or equivalent).
 
 ---
 
@@ -42,14 +42,14 @@ docker compose -f deploy/docker-compose.prod.yml logs odoo 2>&1 | grep -iE "erro
 docker stats --no-stream
 
 # Container details
-docker inspect odoo-ce --format='{{json .State}}' | jq
+docker inspect odoo --format='{{json .State}}' | jq
 ```
 
 ### Restart Counts
 
 ```bash
 # Check for crash loops
-docker inspect --format='{{.RestartCount}}' odoo-ce
+docker inspect --format='{{.RestartCount}}' odoo
 ```
 
 ---

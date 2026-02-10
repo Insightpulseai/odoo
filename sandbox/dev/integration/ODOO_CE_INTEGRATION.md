@@ -2,7 +2,7 @@
 
 ---
 
-**Purpose**: Document the integration strategy between `odoo-ce` (canonical production repo) and `ipai-learn` (learning management sandbox), ensuring clean separation of concerns while enabling seamless runtime coordination.
+**Purpose**: Document the integration strategy between `odoo` (canonical production repo) and `ipai-learn` (learning management sandbox), ensuring clean separation of concerns while enabling seamless runtime coordination.
 
 **Last Updated**: 2026-01-26
 **Version**: 1.0.0
@@ -16,7 +16,7 @@
 │                         Integration Strategy                         │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   odoo-ce (Production)          ◄─────►          ipai-learn (LMS)   │
+│   odoo (Production)          ◄─────►          ipai-learn (LMS)   │
 │   ├── addons/ipai/              │ Volume Mounts  ├── src/           │
 │   ├── CLAUDE.md                 │ References     ├── modules/       │
 │   └── specs/                    │ Parity Audits  └── docs/          │
@@ -33,9 +33,9 @@
 
 ## Strategic Separation (Why Two Repos)
 
-### odoo-ce: Canonical Production Repository
+### odoo: Canonical Production Repository
 
-**Location**: `~/Documents/GitHub/odoo-ce/`
+**Location**: `~/Documents/GitHub/odoo/`
 **Primary Purpose**: Production-ready Odoo CE 18 with enterprise parity
 **Scope**: Multi-edition (core, marketing, accounting), 80+ IPAI modules, OCA integration
 
@@ -91,14 +91,14 @@ services:
       # Mount ipai-learn modules
       - ./modules:/mnt/extra-addons/ipai-learn:ro
 
-      # Mount shared odoo-ce addons (read-only reference)
-      - ../odoo-ce/addons/ipai:/mnt/extra-addons/ipai:ro
-      - ../odoo-ce/addons/oca:/mnt/extra-addons/oca:ro
+      # Mount shared odoo addons (read-only reference)
+      - ../odoo/addons/ipai:/mnt/extra-addons/ipai:ro
+      - ../odoo/addons/oca:/mnt/extra-addons/oca:ro
 ```
 
 **Benefits**:
 - **Zero Code Duplication**: No need to copy modules between repos
-- **Instant Sync**: Changes in odoo-ce immediately visible in ipai-learn
+- **Instant Sync**: Changes in odoo immediately visible in ipai-learn
 - **Read-Only Safety**: ipai-learn can reference but not modify production code
 - **Selective Integration**: Choose which modules to mount
 
@@ -118,16 +118,16 @@ services:
 # Production Module References
 
 ## Infrastructure Modules (Read-Only)
-- `ipai_platform_workflow` → `../odoo-ce/addons/ipai/ipai_platform_workflow/`
-- `ipai_platform_approvals` → `../odoo-ce/addons/ipai/ipai_platform_approvals/`
+- `ipai_platform_workflow` → `../odoo/addons/ipai/ipai_platform_workflow/`
+- `ipai_platform_approvals` → `../odoo/addons/ipai/ipai_platform_approvals/`
 
 ## OCA Dependencies
-- `project_*` modules → `../odoo-ce/addons/oca/project/`
-- `hr_timesheet_*` modules → `../odoo-ce/addons/oca/hr-timesheet/`
+- `project_*` modules → `../odoo/addons/oca/project/`
+- `hr_timesheet_*` modules → `../odoo/addons/oca/hr-timesheet/`
 
 ## Documentation
-- Architecture guides → `../odoo-ce/docs/architecture/`
-- Data models → `../odoo-ce/docs/data-model/`
+- Architecture guides → `../odoo/docs/architecture/`
+- Data models → `../odoo/docs/data-model/`
 ```
 
 **Benefits**:
@@ -153,7 +153,7 @@ services:
 
 # Check module compatibility
 echo "Checking module version parity..."
-ODOO_CE_MODULES="../odoo-ce/addons/ipai"
+ODOO_CE_MODULES="../odoo/addons/ipai"
 IPAI_LEARN_MODULES="./modules"
 
 # Compare manifest versions
@@ -164,7 +164,7 @@ for module in "$IPAI_LEARN_MODULES"/*; do
     ipai_learn_version=$(grep "'version':" "$module/__manifest__.py" | cut -d"'" -f4)
 
     if [ "$odoo_ce_version" != "$ipai_learn_version" ]; then
-      echo "⚠️  Version mismatch: $module_name (odoo-ce: $odoo_ce_version, ipai-learn: $ipai_learn_version)"
+      echo "⚠️  Version mismatch: $module_name (odoo: $odoo_ce_version, ipai-learn: $ipai_learn_version)"
     fi
   fi
 done
@@ -206,7 +206,7 @@ echo "✅ Parity audit complete"
 
 **Implementation**:
 
-**Promotion Path** (ipai-learn → odoo-ce):
+**Promotion Path** (ipai-learn → odoo):
 ```
 1. Develop in ipai-learn (experimental)
    ├── Rapid iteration
@@ -219,12 +219,12 @@ echo "✅ Parity audit complete"
    └── Documentation updated
 
 3. Production readiness review
-   ├── Spec bundle created (odoo-ce/spec/)
+   ├── Spec bundle created (odoo/spec/)
    ├── CI gates pass
    ├── Security audit
    └── Performance validation
 
-4. Promote to odoo-ce
+4. Promote to odoo
    ├── Module copied with changelog
    ├── Tests added/updated
    ├── Deployment plan created
@@ -277,7 +277,7 @@ coordination_required:
 # modules/ipai_lms_core/__manifest__.py
 "depends": [
     "base",
-    "ipai_platform_approvals",  # From odoo-ce
+    "ipai_platform_approvals",  # From odoo
 ]
 
 # 3. Use in code
@@ -304,8 +304,8 @@ cd ~/Documents/GitHub/ipai-learn
 # 2. Run parity audit
 ./scripts/audit/odoo_ce_parity.sh
 
-# 3. Create spec bundle in odoo-ce
-cd ~/Documents/GitHub/odoo-ce
+# 3. Create spec bundle in odoo
+cd ~/Documents/GitHub/odoo
 mkdir -p spec/ipai-lms-integration
 cat > spec/ipai-lms-integration/prd.md << 'EOF'
 # Learning Management System Integration
@@ -331,12 +331,12 @@ git push origin feat/lms-integration
 
 ### Pattern 3: Sync OCA Dependencies
 
-**Scenario**: odoo-ce updates OCA modules, ipai-learn needs to stay in sync
+**Scenario**: odoo updates OCA modules, ipai-learn needs to stay in sync
 
 **Steps**:
 ```bash
-# 1. Update in odoo-ce (canonical)
-cd ~/Documents/GitHub/odoo-ce
+# 1. Update in odoo (canonical)
+cd ~/Documents/GitHub/odoo
 git submodule update --remote addons/oca/project
 
 # 2. Run parity audit in ipai-learn
@@ -360,11 +360,11 @@ docker compose exec odoo odoo -d ipai_learn -u ipai_lms_core --stop-after-init
 **Steps**:
 ```bash
 # 1. Identify module origin
-# If in odoo-ce/addons/ipai/* → fix in odoo-ce
+# If in odoo/addons/ipai/* → fix in odoo
 # If in ipai-learn/modules/* → fix in ipai-learn
 
 # 2. Fix in source repo
-cd ~/Documents/GitHub/odoo-ce  # or ipai-learn
+cd ~/Documents/GitHub/odoo  # or ipai-learn
 # ... apply fix ...
 git commit -m "fix(ipai_platform_workflow): resolve approval timeout"
 
@@ -407,15 +407,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Clone odoo-ce (for reference)
-        run: git clone --depth 1 https://github.com/jgtolentino/odoo-ce ../odoo-ce
+      - name: Clone odoo (for reference)
+        run: git clone --depth 1 https://github.com/jgtolentino/odoo ../odoo
       - name: Run parity audit
         run: ./scripts/audit/odoo_ce_parity.sh
 ```
 
 ### Deployment Validation
 ```bash
-# Before promoting from ipai-learn → odoo-ce
+# Before promoting from ipai-learn → odoo
 ./scripts/audit/production_readiness.sh
 
 # Checks:
@@ -435,10 +435,10 @@ jobs:
 <!-- Use canonical paths, not hardcoded absolute paths -->
 
 ✅ Correct:
-`../odoo-ce/addons/ipai/ipai_platform_workflow/`
+`../odoo/addons/ipai/ipai_platform_workflow/`
 
 ❌ Wrong:
-`/Users/tbwa/Documents/GitHub/odoo-ce/addons/ipai/ipai_platform_workflow/`
+`/Users/tbwa/Documents/GitHub/odoo/addons/ipai/ipai_platform_workflow/`
 ```
 
 ### Module Dependency Documentation
@@ -448,14 +448,14 @@ jobs:
     "name": "IPAI LMS Core",
     "depends": [
         "base",
-        "ipai_platform_workflow",  # Production module (odoo-ce)
+        "ipai_platform_workflow",  # Production module (odoo)
     ],
     # Document external dependencies in description
     "description": """
         Learning Management System Core
 
         External Dependencies:
-        - ipai_platform_workflow (odoo-ce): Approval workflows
+        - ipai_platform_workflow (odoo): Approval workflows
         - project (OCA): Project management integration
     """,
 }
@@ -468,7 +468,7 @@ jobs:
 # Common Integration Workflows
 
 ## Workflow 1: Add Production Module Reference
-**When**: Need to use odoo-ce infrastructure in ipai-learn
+**When**: Need to use odoo infrastructure in ipai-learn
 **Steps**: [detailed steps]
 **Time**: 5 minutes
 **Risk**: Low (read-only reference)
@@ -491,7 +491,7 @@ jobs:
 
 # Fix:
 docker compose down
-ls -la ../odoo-ce/addons/ipai/  # Verify path exists
+ls -la ../odoo/addons/ipai/  # Verify path exists
 docker compose up -d
 docker compose exec odoo ls /mnt/extra-addons/ipai/  # Verify mount
 ```
@@ -499,7 +499,7 @@ docker compose exec odoo ls /mnt/extra-addons/ipai/  # Verify mount
 ### Version Mismatch
 ```bash
 # Symptom: Parity audit reports version drift
-# Cause: odoo-ce updated module version, ipai-learn outdated
+# Cause: odoo updated module version, ipai-learn outdated
 
 # Fix:
 # Option 1: Update ipai-learn to match
@@ -509,7 +509,7 @@ docker compose exec odoo ls /mnt/extra-addons/ipai/  # Verify mount
 
 ### Circular Dependency
 ```bash
-# Symptom: Module A (odoo-ce) depends on Module B (ipai-learn) which depends on Module A
+# Symptom: Module A (odoo) depends on Module B (ipai-learn) which depends on Module A
 # Cause: Improper separation of concerns
 
 # Fix:
@@ -529,7 +529,7 @@ docker compose exec odoo ls /mnt/extra-addons/ipai/  # Verify mount
 **If Unified**:
 ```
 odoo-monorepo/
-├── production/           # Current odoo-ce
+├── production/           # Current odoo
 │   ├── addons/ipai/
 │   └── specs/
 ├── learning/             # Current ipai-learn
@@ -556,7 +556,7 @@ odoo-monorepo/
 
 ## Related Documentation
 
-**odoo-ce**:
+**odoo**:
 - `CLAUDE.md` - Production execution rules
 - `docs/architecture/` - System architecture
 - `docs/data-model/` - Database schema
@@ -574,7 +574,7 @@ odoo-monorepo/
 
 ---
 
-**Summary**: odoo-ce and ipai-learn are strategically separated but operationally integrated through volume mounts, cross-references, parity audits, and shared governance. This architecture preserves clean separation of concerns while enabling seamless runtime coordination.
+**Summary**: odoo and ipai-learn are strategically separated but operationally integrated through volume mounts, cross-references, parity audits, and shared governance. This architecture preserves clean separation of concerns while enabling seamless runtime coordination.
 
 ---
 

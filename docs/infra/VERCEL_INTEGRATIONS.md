@@ -68,7 +68,7 @@ Inngest provides event-driven background jobs for:
 import { Inngest } from 'inngest'
 
 export const inngest = new Inngest({
-  id: 'odoo-ce-stack',
+  id: 'odoo-stack',
   eventKey: process.env.INNGEST_EVENT_KEY,
 })
 ```

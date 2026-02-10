@@ -41,7 +41,7 @@ git --version
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd odoo-ce
+cd odoo
 
 # Make scripts executable
 chmod +x scripts/*.sh

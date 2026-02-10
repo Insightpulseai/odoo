@@ -186,7 +186,7 @@ def run_parity_checks() -> list[ParityCheck]:
             name="Module Testing",
             category="module_management",
             implemented=check_workflow_exists("ci-runbot") or
-                       check_workflow_exists("ci-odoo-ce"),
+                       check_workflow_exists("ci-odoo"),
             weight=1.5,
             evidence_path=".github/workflows/ci-runbot.yml",
             notes="GAP 2: Runbot-style CI testing"
@@ -292,7 +292,7 @@ def run_parity_checks() -> list[ParityCheck]:
             name="Automated Testing",
             category="cicd_pipeline",
             implemented=check_workflow_exists("ci-runbot") or
-                       check_workflow_exists("ci-odoo-ce"),
+                       check_workflow_exists("ci-odoo"),
             weight=1.5,
             evidence_path=".github/workflows/ci-runbot.yml",
             notes="Comprehensive test automation"

@@ -13,11 +13,11 @@
 **File**: `docs/prd/AIUX_SHIP_PRD_v1.1.0.md`
 
 **Key Improvements Over Previous Attempts**:
-- ❌ **Old Approach**: Hardcoded "odoo-ce", "odoo_core", "deploy/docker-compose.prod.yml"
+- ❌ **Old Approach**: Hardcoded "odoo", "odoo_core", "deploy/docker-compose.prod.yml"
 - ✅ **New Approach**: All values are `${VARIABLE_NAME}` runtime inputs
 
 **Why This Matters**:
-Service names drift (odoo → odoo-ce → odoo-app), DB names vary (odoo → odoo_prod), compose files move (deploy/ → infra/). Hardcoding these causes 502/500 errors when infrastructure changes.
+Service names drift (odoo → odoo → odoo-app), DB names vary (odoo → odoo_prod), compose files move (deploy/ → infra/). Hardcoding these causes 502/500 errors when infrastructure changes.
 
 **Documented Failure Modes**:
 1. **502 Bad Gateway** - upstream not reachable, health checks not waited for
@@ -58,7 +58,7 @@ Service names drift (odoo → odoo-ce → odoo-app), DB names vary (odoo → odo
 
 **Parameters** (All Configurable):
 ```bash
-REPO="${REPO:-https://github.com/jgtolentino/odoo-ce.git}"
+REPO="${REPO:-https://github.com/jgtolentino/odoo.git}"
 GIT_REF="${GIT_REF:-ship-aiux-v1.1.0}"
 COMPOSE_FILE="${COMPOSE_FILE:-deploy/docker-compose.prod.yml}"
 ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
@@ -70,7 +70,7 @@ SHIP_MODULES="${SHIP_MODULES:-ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_do
 **Usage**:
 ```bash
 # Default (uses all defaults from above)
-curl -fsSL https://github.com/jgtolentino/odoo-ce/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
+curl -fsSL https://github.com/jgtolentino/odoo/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
 
 # Custom (override any parameter)
 export GIT_REF=ship-aiux-v1.1.0
@@ -127,14 +127,14 @@ All three editors read the same `.vscode/` files. No editor-specific drift.
 
 **Service Names** (resolved at runtime):
 - DB service: `db` (container: `odoo-db`)
-- Odoo service: `odoo` (container: `odoo-ce`)
+- Odoo service: `odoo` (container: `odoo`)
 
 **Environment Variables Required**:
 ```bash
 DB_NAME=${DB_NAME:-odoo}
 DB_USER=${DB_USER:-odoo}
 DB_PASSWORD=${DB_PASSWORD:?required}  # Must be set!
-APP_IMAGE=${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}
+APP_IMAGE=${APP_IMAGE:-ghcr.io/jgtolentino/odoo}
 APP_IMAGE_VERSION=${APP_IMAGE_VERSION:-latest}
 ```
 
@@ -178,7 +178,7 @@ docker compose -f "${COMPOSE_FILE}" restart "${ODOO_SERVICE}"
 ### ❌ Don't Hardcode Container Names
 ```bash
 # BAD
-docker exec odoo-ce odoo -d odoo -i module
+docker exec odoo odoo -d odoo -i module
 
 # GOOD
 docker compose -f "${COMPOSE_FILE}" exec -T "${ODOO_SERVICE}" \
@@ -217,14 +217,14 @@ odoo -d "${ODOO_DB}" -i "${SHIP_MODULES}"
 
 **One-Command Bootstrap**:
 ```bash
-curl -fsSL https://github.com/jgtolentino/odoo-ce/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
+curl -fsSL https://github.com/jgtolentino/odoo/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
 ```
 
 **Manual Deployment** (if you want control):
 ```bash
-export REPO=https://github.com/jgtolentino/odoo-ce.git
+export REPO=https://github.com/jgtolentino/odoo.git
 export GIT_REF=ship-aiux-v1.1.0
-export APP_DIR=/opt/odoo-ce
+export APP_DIR=/opt/odoo
 export COMPOSE_FILE=deploy/docker-compose.prod.yml
 export ODOO_SERVICE=odoo
 export DB_SERVICE=db
@@ -319,7 +319,7 @@ sleep 120  # Wait for restart
 1. **Create DigitalOcean Droplet** (Ubuntu 22.04, 4GB+ RAM)
 2. **Run Bootstrap Script**:
    ```bash
-   curl -fsSL https://github.com/jgtolentino/odoo-ce/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
+   curl -fsSL https://github.com/jgtolentino/odoo/raw/ship-aiux-v1.1.0/scripts/deploy/bootstrap_from_tag.sh | bash
    ```
 3. **Configure Production Secrets** (`deploy/.env`)
 4. **Setup Domain/DNS** for production access
@@ -338,7 +338,7 @@ sleep 120  # Wait for restart
 
 | Before | After |
 |--------|-------|
-| Hardcoded "odoo-ce" container | `${ODOO_SERVICE}` variable |
+| Hardcoded "odoo" container | `${ODOO_SERVICE}` variable |
 | Hardcoded "odoo_core" database | `${ODOO_DB}` variable |
 | Assumed "deploy/docker-compose.prod.yml" | `${COMPOSE_FILE}` variable |
 | Guessed service ready times | Explicit 120s wait for Odoo health |
@@ -347,10 +347,10 @@ sleep 120  # Wait for restart
 ### Why Parameterization Matters
 
 **Infrastructure Changes**:
-- Service names: odoo → odoo-ce → odoo-app → odoo-18
+- Service names: odoo → odoo → odoo-app → odoo-18
 - DB names: odoo → odoo_core → odoo_prod → odoo_staging
 - Compose paths: root → deploy/ → infra/ → docker/
-- Container names: odoo-ce → odoo-erp-prod → custom
+- Container names: odoo → odoo-erp-prod → custom
 
 **With Hardcoding**: Each change breaks scripts → 502/500 errors → manual debugging
 

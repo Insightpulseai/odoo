@@ -275,7 +275,7 @@ docker compose exec -T db pg_isready -U odoo -d odoo
 
 # Gate 6: No crash loop (stable for 60s)
 sleep 60
-RESTARTS=$(docker inspect --format='{{.RestartCount}}' odoo-ce)
+RESTARTS=$(docker inspect --format='{{.RestartCount}}' odoo)
 if [ "$RESTARTS" -gt "0" ]; then
     echo "FAIL: Container restarted $RESTARTS times"
     exit 1

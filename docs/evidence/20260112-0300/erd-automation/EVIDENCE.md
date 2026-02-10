@@ -87,7 +87,7 @@ Implemented comprehensive ERD automation with multiple generation approaches and
 
 Embed in Superset Markdown chart:
 ```markdown
-<img src="https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/docs/data-model/ODOO_ERD.svg"
+<img src="https://raw.githubusercontent.com/jgtolentino/odoo/main/docs/data-model/ODOO_ERD.svg"
      style="width:100%; max-width:2000px;" />
 ```
 

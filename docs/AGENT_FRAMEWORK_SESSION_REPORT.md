@@ -298,7 +298,7 @@ code_patterns:
 documentation:
   - id: odoo_module_deployment_guide
     title: "Odoo Module Deployment Guide"
-    path: "/home/user/odoo-ce/docs/ODOO_MODULE_DEPLOYMENT.md"
+    path: "/home/user/odoo/docs/ODOO_MODULE_DEPLOYMENT.md"
     domain: deployment
     type: runbook
     topics:
@@ -352,7 +352,7 @@ best_practices:
 1. **Deploy OCR Normalization Updates**
    ```bash
    # Deploy adapter to ocr.insightpulseai.com
-   cd /home/user/odoo-ce/ocr-adapter
+   cd /home/user/odoo/ocr-adapter
    git push → DigitalOcean App Platform auto-deploy
 
    # Monitor for 24 hours

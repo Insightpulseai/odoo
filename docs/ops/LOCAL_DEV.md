@@ -2,7 +2,7 @@
 
 ## Bring up stack
 ```bash
-cd odoo-ce
+cd odoo
 docker compose -f docker-compose.prod.yml --env-file .env up -d
 docker compose -f docker-compose.prod.yml ps
 ```

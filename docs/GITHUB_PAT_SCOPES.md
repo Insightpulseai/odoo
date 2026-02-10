@@ -1,6 +1,6 @@
 # GitHub Personal Access Token (PAT) Scopes
 
-## Required Scopes for odoo-ce Repository Operations
+## Required Scopes for odoo Repository Operations
 
 ### Minimum Scopes (Read/Write Operations)
 
@@ -27,7 +27,7 @@
 
 **Token Name**: `GITHUB_TOKEN` (stored in `~/.zshrc`)
 **Organization**: tbwa-smp
-**Repository**: jgtolentino/odoo-ce
+**Repository**: jgtolentino/odoo
 
 ### Adding `codespace` Scope
 
@@ -55,7 +55,7 @@ gh auth status
 
 **Step 4: Run Setup Script**
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 ./scripts/setup-codespaces-secrets.sh
 ```
 
@@ -64,7 +64,7 @@ cd /Users/tbwa/odoo-ce
 GitHub now supports fine-grained tokens with repository-specific permissions:
 
 **Permissions Needed:**
-- **Repository access**: jgtolentino/odoo-ce
+- **Repository access**: jgtolentino/odoo
 - **Repository permissions**:
   - Codespaces: Read and write
   - Codespaces secrets: Read and write
@@ -84,18 +84,18 @@ GitHub now supports fine-grained tokens with repository-specific permissions:
 **Test Codespaces Secret Access:**
 ```bash
 # List existing secrets (should work now)
-gh secret list --repo jgtolentino/odoo-ce --app codespaces
+gh secret list --repo jgtolentino/odoo --app codespaces
 
 # Set test secret
-echo "test-value" | gh secret set TEST_SECRET --repo jgtolentino/odoo-ce --app codespaces
+echo "test-value" | gh secret set TEST_SECRET --repo jgtolentino/odoo --app codespaces
 
 # Delete test secret
-gh secret delete TEST_SECRET --repo jgtolentino/odoo-ce --app codespaces
+gh secret delete TEST_SECRET --repo jgtolentino/odoo --app codespaces
 ```
 
 **Expected Output:**
 ```
-✓ Set secret TEST_SECRET for jgtolentino/odoo-ce
+✓ Set secret TEST_SECRET for jgtolentino/odoo
 ```
 
 ### Troubleshooting

@@ -63,7 +63,7 @@ services:
     ports: ["5433:5432"]
 
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+    image: ghcr.io/jgtolentino/odoo:19.0-ee-parity
     ports: ["8069:8069", "8072:8072"]
     command: --dev=reload,qweb,werkzeug,xml
 ```
@@ -177,7 +177,7 @@ git push origin feature-branch
 
 # 5. Production deployment
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 git pull origin main
 docker compose restart odoo-core
 ```

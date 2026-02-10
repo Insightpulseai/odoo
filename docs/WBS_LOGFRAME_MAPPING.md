@@ -343,12 +343,12 @@ scp addons/ipai_finance_ppm_tdi/data/month_end_tasks_notion_import.xml root@159.
 
 3. **Upgrade Module**:
 ```bash
-ssh root@159.223.75.148 "docker exec odoo-ce odoo -d production -u ipai_finance_ppm_tdi --stop-after-init"
+ssh root@159.223.75.148 "docker exec odoo odoo -d production -u ipai_finance_ppm_tdi --stop-after-init"
 ```
 
 4. **Verify Installation**:
 ```bash
-ssh root@159.223.75.148 "docker exec odoo-ce psql -U odoo -d production -c \"SELECT COUNT(*) FROM project_task WHERE project_id IN (SELECT id FROM project_project WHERE name LIKE '%Notion%');\""
+ssh root@159.223.75.148 "docker exec odoo psql -U odoo -d production -c \"SELECT COUNT(*) FROM project_task WHERE project_id IN (SELECT id FROM project_project WHERE name LIKE '%Notion%');\""
 ```
 
 **Expected Output**: `36 rows` (36 tasks imported)

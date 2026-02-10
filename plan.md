@@ -7,7 +7,7 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
 
 ## Phase 0 – Repo & CI Skeleton
 
-**Goal:** Make `odoo-ce` safe to extend: clean structure + basic guardrails.
+**Goal:** Make `odoo` safe to extend: clean structure + basic guardrails.
 
 - Create base folder layout:
   - `addons/ipai_expense/`
@@ -101,7 +101,7 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
 - Implement additional CI checks:
   - Search for `odoo.com` and known Enterprise markers.
 - Wire help links to InsightPulse docs:
-  - `jgtolentino.github.io/odoo-ce/`
+  - `jgtolentino.github.io/odoo/`
 
 **Exit criteria:**
 

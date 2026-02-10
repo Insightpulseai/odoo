@@ -5,7 +5,7 @@ Get started with the local MCP server in 5 minutes.
 ## Step 1: Start the Local MCP Server
 
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Start Odoo and local MCP together
 docker-compose -f docker-compose.prod.yml -f docker-compose.mcp-local.yml up -d
@@ -113,7 +113,7 @@ curl -X POST http://localhost:8765/conversations \
       }
     ],
     "context": {
-      "workspace": "/Users/tbwa/odoo-ce",
+      "workspace": "/Users/tbwa/odoo",
       "active_files": ["addons/ipai_expense/__manifest__.py"],
       "odoo_instance": "odoo_lab"
     },

@@ -34,8 +34,8 @@
         "ExecIDs": null,
         "HostConfig": {
             "Binds": [
-                "/opt/odoo-ce/repo/addons:/mnt/extra-addons:rw",
-                "/opt/odoo-ce/repo/deploy/odoo.conf:/etc/odoo/odoo.conf:ro",
+                "/opt/odoo/repo/addons:/mnt/extra-addons:rw",
+                "/opt/odoo/repo/deploy/odoo.conf:/etc/odoo/odoo.conf:ro",
                 "deploy_odoo-web-data:/var/lib/odoo"
             ],
             "ContainerIDFile": "",
@@ -142,7 +142,7 @@
         "Mounts": [
             {
                 "Type": "bind",
-                "Source": "/opt/odoo-ce/repo/deploy/odoo.conf",
+                "Source": "/opt/odoo/repo/deploy/odoo.conf",
                 "Destination": "/etc/odoo/odoo.conf",
                 "Mode": "ro",
                 "RW": false,
@@ -160,7 +160,7 @@
             },
             {
                 "Type": "bind",
-                "Source": "/opt/odoo-ce/repo/addons",
+                "Source": "/opt/odoo/repo/addons",
                 "Destination": "/mnt/extra-addons",
                 "Mode": "rw",
                 "RW": true,

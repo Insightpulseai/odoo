@@ -24,7 +24,7 @@
 
 | Integration | Status |
 |-------------|--------|
-| GitHub | Connected (`jgtolentino/odoo-ce`) |
+| GitHub | Connected (`jgtolentino/odoo`) |
 | Vercel | Connected (`insightpulseai` team) |
 | AWS PrivateLink | Not configured |
 

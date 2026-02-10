@@ -27,7 +27,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && node scripts/sync/docs-to-kb.js"
+        "command": "cd /workspace/odoo && node scripts/sync/docs-to-kb.js"
       },
       "id": "sync-to-kb",
       "name": "Sync Docs to KB",
@@ -37,7 +37,7 @@
     },
     {
       "parameters": {
-        "command": "cd /workspace/odoo-ce && node scripts/sync/generate-sitemap.js"
+        "command": "cd /workspace/odoo && node scripts/sync/generate-sitemap.js"
       },
       "id": "update-sitemap",
       "name": "Update Sitemap",

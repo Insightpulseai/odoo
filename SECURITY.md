@@ -16,7 +16,7 @@ We provide security updates for the following versions:
 ### How to Report
 
 1. **Email**: Send details to the repository maintainers privately
-2. **GitHub Security Advisories**: Use [GitHub's security advisory feature](https://github.com/jgtolentino/odoo-ce/security/advisories/new)
+2. **GitHub Security Advisories**: Use [GitHub's security advisory feature](https://github.com/jgtolentino/odoo/security/advisories/new)
 
 ### What to Include
 

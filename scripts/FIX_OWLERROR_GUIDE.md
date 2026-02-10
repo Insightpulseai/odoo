@@ -26,7 +26,7 @@ python scripts/fix-pay-invoices-online-error.py --remove-field
 
 # 4. Restart Odoo to clear cache
 ssh root@159.223.75.148
-docker compose -f /opt/odoo/docker-compose.yml restart odoo-ce
+docker compose -f /opt/odoo/docker-compose.yml restart odoo
 
 # 5. Clear browser cache and test
 # Visit: https://erp.insightpulseai.com
@@ -60,7 +60,7 @@ WHERE arch_db LIKE '%pay_invoices_online%';
 \q
 
 # Restart Odoo
-docker compose -f /opt/odoo/docker-compose.yml restart odoo-ce
+docker compose -f /opt/odoo/docker-compose.yml restart odoo
 ```
 
 ### Option 3: Module Update (If field should exist)
@@ -68,13 +68,13 @@ docker compose -f /opt/odoo/docker-compose.yml restart odoo-ce
 ```bash
 # If the field is from a module that needs updating
 ssh root@159.223.75.148
-docker exec -it odoo-ce odoo-bin \
+docker exec -it odoo odoo-bin \
   -d production \
   -u account,account_payment \
   --stop-after-init
 
 # Restart
-docker compose -f /opt/odoo/docker-compose.yml restart odoo-ce
+docker compose -f /opt/odoo/docker-compose.yml restart odoo
 ```
 
 ## Verification Steps
@@ -229,7 +229,7 @@ If the automated fix doesn't work:
 2. **Check Odoo logs**:
    ```bash
    ssh root@159.223.75.148
-   docker logs odoo-ce --tail 100 | grep -i "pay_invoices_online"
+   docker logs odoo --tail 100 | grep -i "pay_invoices_online"
    ```
 
 3. **Create GitHub issue** with:

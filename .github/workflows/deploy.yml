@@ -53,7 +53,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  ODOO_IMAGE_NAME: ${{ github.repository_owner }}/odoo-ce
+  ODOO_IMAGE_NAME: ${{ github.repository_owner }}/odoo
   SUPABASE_PROJECT_ID: spdtwktxdalcfigzeqrz
 
 jobs:
@@ -282,7 +282,7 @@ jobs:
               -p 8069:8069 \
               -v odoo-data:/var/lib/odoo \
               -v odoo-config:/etc/odoo \
-              -v /opt/odoo-ce/repo/addons:/mnt/extra-addons \
+              -v /opt/odoo/repo/addons:/mnt/extra-addons \
               -e HOST=odoo-db \
               -e USER=odoo \
               -e PASSWORD=${{ secrets.ODOO_DB_PASSWORD }} \

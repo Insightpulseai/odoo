@@ -67,7 +67,7 @@ All three capabilities are **encoded in the Agent Skills Architecture framework*
 
 **Cheqroom Parity**:
 ```bash
-cd ~/odoo-ce
+cd ~/odoo
 ./scripts/odoo.sh -d test_cheqroom \
   -i ipai_equipment \
   --test-enable --stop-after-init --log-level=test
@@ -84,7 +84,7 @@ OK
 
 **Concur Parity**:
 ```bash
-cd ~/odoo-ce
+cd ~/odoo
 ./scripts/odoo.sh -d test_concur \
   -i ipai_expense \
   --test-enable --stop-after-init --log-level=test
@@ -101,7 +101,7 @@ OK
 
 **Workspace Parity**:
 ```bash
-cd ~/odoo-ce
+cd ~/odoo
 ./scripts/odoo.sh -d test_workspace \
   -i ipai_docs \
   --test-enable --stop-after-init --log-level=test

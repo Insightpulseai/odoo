@@ -90,7 +90,7 @@ openid email profile
 - ⚠️ `scripts/configure_google_oauth.sh` - OAuth client ID/secret (hardcoded, okay for private repo)
 
 ### Production Server (159.223.75.148)
-- `/root/odoo-ce/.env.smtp` - Will be created during deployment
+- `/root/odoo/.env.smtp` - Will be created during deployment
 - Odoo database `prod` table `ir.mail_server` - Gmail SMTP settings (encrypted)
 - Odoo database `prod` table `auth_oauth_provider` - OAuth settings (encrypted)
 - Odoo database `prod` table `ir.config_parameter` - System parameters
@@ -123,7 +123,7 @@ openid email profile
 3. **Redeploy**:
    ```bash
    ssh root@159.223.75.148
-   cd /root/odoo-ce
+   cd /root/odoo
    nano .env.smtp  # Update password
    ./scripts/deploy_with_credentials.sh
    ```
@@ -152,7 +152,7 @@ openid email profile
 ### Standard Deployment (Recommended)
 ```bash
 ssh root@159.223.75.148
-cd /root/odoo-ce && git pull origin main
+cd /root/odoo && git pull origin main
 ./scripts/deploy_with_credentials.sh
 ```
 

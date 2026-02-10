@@ -418,4 +418,4 @@ This enables queries like:
 
 ## License
 
-Part of the `odoo-ce-branding` repository. See top-level LICENSE for details.
+Part of the `odoo-branding` repository. See top-level LICENSE for details.

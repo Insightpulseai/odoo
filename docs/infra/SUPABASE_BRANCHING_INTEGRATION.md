@@ -20,7 +20,7 @@ Supabase Branching provides isolated database environments for testing schema ch
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Git Repository (odoo-ce)                     │
+│                    Git Repository (odoo)                     │
 │                                                                 │
 │  main branch ──────────────────────────────────────────────────►│
 │       │                                                         │
@@ -259,7 +259,7 @@ function classifySource(name: string, license: string): string {
 # supabase/config.toml
 
 [project]
-name = "odoo-ce-catalogs"
+name = "odoo-catalogs"
 
 [db]
 major_version = 15

@@ -233,4 +233,4 @@ The `edges.csv` output can be loaded into graph analysis tools (NetworkX, Gephi)
 
 ## License
 
-Part of the `odoo-ce-branding` repository. See top-level LICENSE for details.
+Part of the `odoo-branding` repository. See top-level LICENSE for details.

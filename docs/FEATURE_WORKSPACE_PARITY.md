@@ -247,7 +247,7 @@ ipai.docs.document (1) → (M) ipai.docs.project (M) → (1) project.project
 ### Run Regression Tests
 ```bash
 # Navigate to Odoo directory
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Run ipai_docs tests
 ./scripts/odoo.sh -d <database> -i ipai_docs --test-enable --stop-after-init --log-level=test
@@ -375,4 +375,4 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 - Odoo Project Management: https://www.odoo.com/documentation/18.0/applications/services/project.html
 - Odoo Documents: https://www.odoo.com/documentation/18.0/applications/productivity/documents.html
 - Odoo Mobile App: https://www.odoo.com/page/mobile-app
-- Agent Skills Architecture: `/Users/tbwa/odoo-ce/agents/AGENT_SKILLS_REGISTRY.yaml`
+- Agent Skills Architecture: `/Users/tbwa/odoo/agents/AGENT_SKILLS_REGISTRY.yaml`

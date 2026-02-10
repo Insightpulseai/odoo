@@ -2,7 +2,7 @@
 
 ## ⚠️ Critical: Repository Boundary Enforcement
 
-**This runbook is stored in `odoo-ce/sandbox/dev/docs/runbooks/` as documentation only.**
+**This runbook is stored in `odoo/sandbox/dev/docs/runbooks/` as documentation only.**
 
 **Do NOT execute these commands in an Odoo repository.** Design system belongs in a dedicated repo.
 
@@ -328,7 +328,7 @@ npm list storybook
 
 ### ❌ Prohibited
 
-- **No Node/React in Odoo repos**: Keep `odoo-ce` Python/XML only
+- **No Node/React in Odoo repos**: Keep `odoo` Python/XML only
 - **No Storybook in Odoo**: Design system lives separately
 - **No token imports in Odoo XML**: Use standard Odoo SCSS/CSS
 
@@ -343,7 +343,7 @@ npm list storybook
 2. **Shared design tokens** (manual sync)
    ```bash
    # Export tokens to Odoo-compatible SCSS variables
-   node scripts/tokens-to-scss.js > odoo-ce/addons/ipai_theme/static/src/scss/_tokens.scss
+   node scripts/tokens-to-scss.js > odoo/addons/ipai_theme/static/src/scss/_tokens.scss
    ```
 
 3. **Design review workflow**
@@ -391,7 +391,7 @@ git push
 ## Next Steps
 
 1. **Choose repository**: Create `ipai-ui` or use existing `ipai-workspace`
-2. **Run bootstrap**: Execute commands in design system repo (NOT in odoo-ce)
+2. **Run bootstrap**: Execute commands in design system repo (NOT in odoo)
 3. **Create first component**: Start with basic Button component + story
 4. **Set up CI**: Implement token build + Storybook artifact pipelines
 5. **Design governance**: Establish review process for new components

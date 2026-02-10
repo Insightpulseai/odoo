@@ -86,7 +86,7 @@
 │   │   ├── azure-waf-parity.yml
 │   │   ├── backlog-coverage.yml
 │   │   ├── branch-promotion.yml
-│   │   ├── build-odoo-ce19-ee-parity.yml
+│   │   ├── build-odoo19-ee-parity.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
 │   │   ├── canonical-gate.yml
@@ -2642,7 +2642,7 @@
 │   │   └── cap-approvals.md
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
-│   ├── 003-odoo-ce-custom-image-spec.md
+│   ├── 003-odoo-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
 │   ├── AGENT_MEMORY_DEPLOYMENT.md
@@ -3829,7 +3829,7 @@
 │   │   ├── TESTING_READY.md
 │   │   ├── docker-compose.production.yml
 │   │   ├── docker-compose.yml
-│   │   ├── oca-addons -> /Users/tbwa/Documents/GitHub/odoo-ce/addons/external/oca
+│   │   ├── oca-addons -> /Users/tbwa/Documents/GitHub/odoo/addons/external/oca
 │   │   ├── odoo.conf.production
 │   │   └── upgrade-to-odoo19.sh
 │   └── workbench
@@ -4825,17 +4825,17 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
-│   ├── odoo-ce
+│   ├── odoo
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
-│   ├── odoo-ce-devops-master-plan
+│   ├── odoo-devops-master-plan
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
-│   ├── odoo-ce-enterprise-replacement
+│   ├── odoo-enterprise-replacement
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -5574,7 +5574,7 @@
 ├── oca-aggregate.yml
 ├── oca.lock.json
 ├── odoo-bin
-├── odoo-ce-target.zip
+├── odoo-target.zip
 ├── odoo-v1.2.0-build.zip
 ├── odoo_ce_expert_prompt.md
 ├── package.json

@@ -210,7 +210,7 @@ server {
     },
     {
       "name": "clone_repo",
-      "command": "git clone https://github.com/jgtolentino/odoo-ce.git /opt/odoo",
+      "command": "git clone https://github.com/jgtolentino/odoo.git /opt/odoo",
       "timeout": 120
     },
     {
@@ -368,7 +368,7 @@ services:
 - name: worker
   dockerfile_path: workers/ops-executor/Dockerfile
   github:
-    repo: jgtolentino/odoo-ce
+    repo: jgtolentino/odoo
     branch: main
     deploy_on_push: true
   instance_count: 3
