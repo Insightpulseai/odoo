@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7929e7221742ddfae417bc3a0fb92c485b9015df
+> Commit: c80e5562530c511baaee318643cf3b8a90066a0b
 
 ```
 .
@@ -277,6 +277,13 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_platform
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1883,6 +1890,7 @@
 │   │   ├── GITHUB.md
 │   │   ├── INTEGRATIONS.md
 │   │   ├── IPAI_MODULES.md
+│   │   ├── LIB_IMPLEMENTATION.md
 │   │   ├── MCP_SYSTEM.md
 │   │   ├── MEMORY.md
 │   │   ├── OCA_WORKFLOW.md
@@ -2096,6 +2104,8 @@
 │   │   │   └── landing-page
 │   │   ├── 20260209-1820
 │   │   │   └── odoo-entrypoint-tactical-fix
+│   │   ├── 20260210-1147
+│   │   │   └── phase6-agent-library
 │   │   ├── 20260129-odoo-asset-fix.md
 │   │   └── TEMPLATE_azure_waf_rescore.md
 │   ├── finance-ppm
@@ -2405,6 +2415,8 @@
 │   │   ├── TECHNICAL_PARITY_REPORT.md
 │   │   ├── supabase-ui-library_backlog.md
 │   │   └── supabase-ui-library_block_catalog.md
+│   ├── platform
+│   │   └── ai.md
 │   ├── policy
 │   │   └── MODULE_COMPLETENESS_POLICY.md
 │   ├── ppm
@@ -3239,6 +3251,10 @@
 │   │   │   ├── src
 │   │   │   ├── package.json
 │   │   │   └── tsconfig.json
+│   │   ├── lib-mcp-server
+│   │   │   ├── src
+│   │   │   ├── README.md
+│   │   │   └── requirements.txt
 │   │   ├── mcp-jobs
 │   │   │   ├── app
 │   │   │   ├── components
@@ -3523,6 +3539,25 @@
 │   │   ├── GITHUB_APP_CONFIG.json
 │   │   ├── package.json
 │   │   └── tsconfig.json
+│   ├── ipai-ai-sdk
+│   │   ├── src
+│   │   │   ├── agentLibrary.ts
+│   │   │   ├── client.ts
+│   │   │   ├── errors.ts
+│   │   │   ├── index.ts
+│   │   │   └── types.ts
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   ├── ipai-ai-sdk-python
+│   │   ├── ipai_ai_sdk
+│   │   │   ├── __init__.py
+│   │   │   ├── agent_library.py
+│   │   │   ├── client.py
+│   │   │   └── types.py
+│   │   ├── README.md
+│   │   ├── pyproject.toml
+│   │   └── setup.py
 │   ├── ipai-design-tokens
 │   │   ├── demo
 │   │   │   ├── index.html
@@ -3906,6 +3941,9 @@
 │   │   ├── mirror_gold_to_supabase.py
 │   │   └── validate_contracts.py
 │   ├── lib
+│   │   ├── lib_db.py
+│   │   ├── lib_init.sh
+│   │   ├── lib_scan.py
 │   │   └── load_env.sh
 │   ├── mailgun
 │   │   ├── README.md
@@ -4341,6 +4379,7 @@
 │   ├── verify_monitoring.sh
 │   ├── verify_oca_ipai_layout.sh
 │   ├── verify_phase3.py
+│   ├── verify_phase5.sh
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
 │   ├── verify_supabase_full.sh
@@ -5030,6 +5069,7 @@
 │   │   ├── 20260210140200_saas_cms_org_migration.sql
 │   │   ├── 20260210150000_saas_billing_schema.sql
 │   │   ├── 20260210150100_saas_billing_rls.sql
+│   │   ├── 20260210_03_agent_library_seed.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -5469,15 +5509,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1504 directories, 3960 files
+1517 directories, 3987 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1776 |
-| Files | 5310 |
-| Python files | 841 |
-| XML files | 298 |
-| Markdown files | 1386 |
+| Directories | 1789 |
+| Files | 5347 |
+| Python files | 857 |
+| XML files | 299 |
+| Markdown files | 1393 |

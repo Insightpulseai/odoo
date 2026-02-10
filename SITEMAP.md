@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7929e7221742ddfae417bc3a0fb92c485b9015df
+> Commit: c80e5562530c511baaee318643cf3b8a90066a0b
 
 ## 📚 Documentation
 
@@ -105,6 +105,7 @@
 | [AI Automations](addons/ipai/ipai_ai_automations/README.md) | addons/ipai/ipai_ai_automations |
 | [AI Fields](addons/ipai/ipai_ai_fields/README.md) | addons/ipai/ipai_ai_fields |
 | [AI Livechat](addons/ipai/ipai_ai_livechat/README.md) | addons/ipai/ipai_ai_livechat |
+| [IPAI AI Platform Module](addons/ipai/ipai_ai_platform/README.md) | addons/ipai/ipai_ai_platform |
 | [AI RAG Pipeline](addons/ipai/ipai_ai_rag/README.md) | addons/ipai/ipai_ai_rag |
 | [AI Tool Registry](addons/ipai/ipai_ai_tools/README.md) | addons/ipai/ipai_ai_tools |
 | [IPAI Design System](addons/ipai/ipai_design_system/README.md) | addons/ipai/ipai_design_system |
@@ -437,6 +438,7 @@
 | [GitHub Integration](docs/ai/GITHUB.md) | docs/ai |
 | [Integrations](docs/ai/INTEGRATIONS.md) | docs/ai |
 | [IPAI Module Naming Convention](docs/ai/IPAI_MODULES.md) | docs/ai |
+| [LIB Implementation - Local Intelligence Brain](docs/ai/LIB_IMPLEMENTATION.md) | docs/ai |
 | [MCP System](docs/ai/MCP_SYSTEM.md) | docs/ai |
 | [External Memory (Just-in-Time Retrieval)](docs/ai/MEMORY.md) | docs/ai |
 | [OCA-Style Workflow (Canonical)](docs/ai/OCA_WORKFLOW.md) | docs/ai |
@@ -573,6 +575,7 @@
 | [Odoo Launcher - Runtime Validation](docs/evidence/20260209-0023/odoo-launcher/RUNTIME_VALIDATION.md) | docs/evidence/20260209-0023/odoo-launcher |
 | [Landing Page Implementation](docs/evidence/20260209-1526/landing-page/IMPLEMENTATION.md) | docs/evidence/20260209-1526/landing-page |
 | [Odoo Entrypoint Tactical Fix](docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/SUMMARY.md) | docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix |
+| [Phase 6: Agent Library Wireup - Evidence](docs/evidence/20260210-1147/phase6-agent-library/EVIDENCE.md) | docs/evidence/20260210-1147/phase6-agent-library |
 | [Azure WAF Re-Score — [DATE]](docs/evidence/TEMPLATE_azure_waf_rescore.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
@@ -834,6 +837,7 @@
 | [Odoo.sh Parity Backlog](docs/parity/odoo_sh/PARITY_BACKLOG.md) | docs/parity/odoo_sh |
 | [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
 | [Supabase UI Library - Block Catalog](docs/parity/supabase-ui-library_block_catalog.md) | docs/parity |
+| [InsightPulseAI AI Platform](docs/platform/ai.md) | docs/platform |
 | [Module Completeness Policy (CE + OCA Baseline)](docs/policy/MODULE_COMPLETENESS_POLICY.md) | docs/policy |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
@@ -1011,6 +1015,7 @@
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
 | [Agent Coordination MCP Server](mcp/servers/agent-coordination-server/README.md) | mcp/servers/agent-coordination-server |
+| [LIB MCP Server - Local Intelligence Brain](mcp/servers/lib-mcp-server/README.md) | mcp/servers/lib-mcp-server |
 | [MCP-Jobs Lockfile Fix - Deployment Report](mcp/servers/mcp-jobs/LOCKFILE_FIX_REPORT.md) | mcp/servers/mcp-jobs |
 | [MCP-Jobs: Supabase Platform Kit Integration](mcp/servers/mcp-jobs/PLATFORM_KIT_SETUP.md) | mcp/servers/mcp-jobs |
 | [Open in v0](mcp/servers/mcp-jobs/README.md) | mcp/servers/mcp-jobs |
@@ -1063,6 +1068,8 @@
 | [Odoo Enterprise → CE + OCA Parity Matrix](out/ee_parity_matrix.md) | out |
 | [OCA Module Inventory for EE→CE+OCA Migration](out/oca_inventory.md) | out |
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
+| [ipai-ai-sdk (Python)](packages/ipai-ai-sdk-python/README.md) | packages/ipai-ai-sdk-python |
+| [@ipai/ai-sdk](packages/ipai-ai-sdk/README.md) | packages/ipai-ai-sdk |
 | [InsightPulse AI Design System - Quick Start](packages/ipai-design-tokens/QUICKSTART.md) | packages/ipai-design-tokens |
 | [InsightPulse AI Chat Widget & Design System](packages/ipai-design-tokens/README-AICHAT.md) | packages/ipai-design-tokens |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
@@ -1413,6 +1420,7 @@
 | [ipai_ai_automations](./addons/ipai/ipai_ai_automations) | ✅ |  |
 | [ipai_ai_fields](./addons/ipai/ipai_ai_fields) | ✅ |  |
 | [ipai_ai_livechat](./addons/ipai/ipai_ai_livechat) | ✅ |  |
+| [ipai_ai_platform](./addons/ipai/ipai_ai_platform) | ✅ |  |
 | [ipai_ai_rag](./addons/ipai/ipai_ai_rag) | ✅ |  |
 | [ipai_ai_tools](./addons/ipai/ipai_ai_tools) | ✅ |  |
 | [ipai_auth_oidc](./addons/ipai/ipai_auth_oidc) | ✅ |  |
@@ -1503,6 +1511,7 @@
 | [ipai_ask_ai](./infra/ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
 | [ipai_ask_ai_chatter](./infra/ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
 | [ipai_platform_theme](./infra/ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
+| [ipai_ai_sdk](./packages/ipai-ai-sdk-python/ipai_ai_sdk) | ⚠️ | Missing manifest |
 | [ipai_aiux_chat](./prototypes/ipai_aiux_chat) | ✅ |  |
 | [ipai_fluent_web_365_copilot](./prototypes/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_theme_aiux](./prototypes/ipai_theme_aiux) | ✅ |  |
