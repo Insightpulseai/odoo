@@ -40,3 +40,20 @@ compare dashboard-chrome.png dashboard-shine.png diff.png
 - Chrome extension provides alternative manual validation workflow
 - Use for exploratory testing and visual verification
 - Playwright tests provide automated regression coverage
+
+---
+
+## Phase 3 (Universal / Tool-Agnostic)
+
+**Recommended**: Use Playwright for manual/exploratory work across any tool (Codex/Copilot/Claude/Gemini):
+
+See: `../../BROWSER_AUTOMATION_PHASE3_UNIVERSAL.md`
+
+**Key features**:
+- **Headed mode**: `pnpm test:e2e:headed` (see browser window)
+- **UI runner**: `pnpm test:e2e:ui` (interactive test explorer)
+- **Step debugger**: `pnpm test:e2e:debug` (pause and inspect)
+- **Codegen**: `pnpm test:e2e:codegen` (record actions → generate code)
+- **CDP attach**: `pnpm chrome:cdp:attach` (attach to existing Chrome)
+
+**Portable**: Works with any editor/tool, not just Claude Code.
