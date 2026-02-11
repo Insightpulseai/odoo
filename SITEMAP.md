@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c01b95bac1e320457ee2ddac2b8a38862ab6f67c
+> Commit: 3cf62cbe2d6e4e2c1ccf9732a6ed6ec3df55f9a1
 
 ## 📚 Documentation
 
@@ -215,6 +215,7 @@
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Vendor Backlog Exports](backlog/vendors/README.md) | backlog/vendors |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
+| [Sample PRD — Claude Code PM](ccpm/spec/prd.md) | ccpm/spec |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
 | [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
