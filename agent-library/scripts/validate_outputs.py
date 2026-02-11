@@ -19,6 +19,14 @@ def validate(doc, schema, name):
     print(f"[ok] {name}")
 
 
+def maybe_validate_yaml(dist: Path, schemas: Path, filename: str, schema_file: str):
+    p = dist / filename
+    if not p.exists():
+        print(f"[skip] {filename} not present")
+        return
+    validate(load_yaml(p), load_schema(schemas / schema_file), filename)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dist", required=True)
@@ -28,11 +36,17 @@ def main():
     dist = Path(args.dist)
     schemas = Path(args.schemas)
 
-    cap = load_yaml(dist / "capability_atoms.yaml")
-    ux = load_yaml(dist / "ux_patterns.yaml")
-
-    validate(cap, load_schema(schemas / "capability_atoms.schema.json"), "capability_atoms.yaml")
-    validate(ux, load_schema(schemas / "ux_patterns.schema.json"), "ux_patterns.yaml")
+    maybe_validate_yaml(dist, schemas, "capability_atoms.yaml", "capability_atoms.schema.json")
+    maybe_validate_yaml(dist, schemas, "ux_patterns.yaml", "ux_patterns.schema.json")
+    maybe_validate_yaml(
+        dist, schemas, "locale_overlays/philippines_tax.yaml", "locale_overlay.schema.json"
+    )
+    maybe_validate_yaml(
+        dist,
+        schemas,
+        "product_mappings/concur_to_odoo19_ce_oca_ipai.yaml",
+        "product_mapping.schema.json",
+    )
 
 
 if __name__ == "__main__":
