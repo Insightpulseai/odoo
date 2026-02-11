@@ -1,0 +1,64 @@
+name: SaaS Landing E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'templates/saas-landing/**'
+      - '.github/workflows/saas-landing-e2e.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'templates/saas-landing/**'
+
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: |
+          cd templates/saas-landing
+          pnpm playwright install ${{ matrix.browser }} --with-deps
+
+      - name: Run E2E tests
+        run: |
+          cd templates/saas-landing
+          pnpm test:e2e --project=${{ matrix.browser }}
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: templates/saas-landing/playwright-report/
+          retention-days: 30
+
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots-${{ matrix.browser }}
+          path: templates/saas-landing/test-results/
+          retention-days: 7
