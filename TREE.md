@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c01b95bac1e320457ee2ddac2b8a38862ab6f67c
+> Commit: 3cf62cbe2d6e4e2c1ccf9732a6ed6ec3df55f9a1
 
 ```
 .
@@ -1661,6 +1661,22 @@
 │   ├── odoo_parity_plans.schema.json
 │   ├── odoo_parity_plans.yaml
 │   └── schema.json
+├── ccpm
+│   ├── .github
+│   │   └── workflows
+│   │       └── ci.yml
+│   ├── bin
+│   │   └── ccpm.js
+│   ├── scripts
+│   │   ├── lint.mjs
+│   │   └── test.mjs
+│   ├── spec
+│   │   └── prd.md
+│   ├── src
+│   │   └── index.ts
+│   ├── .gitignore
+│   ├── package.json
+│   └── tsconfig.json
 ├── claudedocs
 │   ├── 100_PERCENT_CLI_DEPLOYMENT.md
 │   ├── DEPLOYMENT_SUMMARY.md
@@ -5603,15 +5619,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1543 directories, 4055 files
+1550 directories, 4064 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1833 |
-| Files | 5439 |
+| Directories | 1840 |
+| Files | 5448 |
 | Python files | 876 |
 | XML files | 299 |
-| Markdown files | 1417 |
+| Markdown files | 1418 |
