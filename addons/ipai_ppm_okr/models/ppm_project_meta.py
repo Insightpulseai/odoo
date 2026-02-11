@@ -6,7 +6,9 @@ class PpmProjectMeta(models.Model):
     _description = "PPM Project Meta"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    project_id = fields.Many2one("project.project", required=True, ondelete="cascade", index=True)
+    project_id = fields.Many2one(
+        "project.project", required=True, ondelete="cascade", index=True
+    )
     portfolio_id = fields.Many2one("ppm.portfolio", ondelete="set null", tracking=True)
     program_id = fields.Many2one("ppm.program", ondelete="set null", tracking=True)
 

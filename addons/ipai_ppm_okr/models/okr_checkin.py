@@ -16,7 +16,9 @@ class OkrCheckin(models.Model):
         [(str(i), str(i)) for i in range(1, 6)], default="4", tracking=True
     )
     comment = fields.Text()
-    user_id = fields.Many2one("res.users", required=True, default=lambda self: self.env.user)
+    user_id = fields.Many2one(
+        "res.users", required=True, default=lambda self: self.env.user
+    )
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -130,4 +130,3 @@ PORT=3000
 - ❌ Documentation files (.md)
 - ❌ Docker images (build-time secrets)
 - ❌ Client-side code (anything in apps/web)
-

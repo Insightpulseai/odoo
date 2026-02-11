@@ -1,17 +1,19 @@
-from . import ppm_portfolio
-from . import ppm_program
-from . import ppm_project_meta
-from . import ppm_workstream
-from . import ppm_epic
-from . import ppm_risk
-from . import ppm_issue
-from . import ppm_change_request
-from . import ppm_budget
-from . import ppm_resource
-from . import okr_cycle
-from . import okr_objective
-from . import okr_key_result
-from . import okr_checkin
-from . import okr_initiative
-from . import project_ext
-from . import task_ext
+from . import (
+    okr_checkin,
+    okr_cycle,
+    okr_initiative,
+    okr_key_result,
+    okr_objective,
+    ppm_budget,
+    ppm_change_request,
+    ppm_epic,
+    ppm_issue,
+    ppm_portfolio,
+    ppm_program,
+    ppm_project_meta,
+    ppm_resource,
+    ppm_risk,
+    ppm_workstream,
+    project_ext,
+    task_ext,
+)
