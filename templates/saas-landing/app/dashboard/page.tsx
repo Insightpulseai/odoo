@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ChartThemeSelector } from "@/components/theme/ChartThemeSelector"
 
 export default function Dashboard() {
   const [selectedBranch, setSelectedBranch] = useState("production")
@@ -60,6 +61,7 @@ export default function Dashboard() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
+            <ChartThemeSelector />
             <span className="text-sm">@insightpulse</span>
           </div>
         </div>
