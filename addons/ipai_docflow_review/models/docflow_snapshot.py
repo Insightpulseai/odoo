@@ -1,5 +1,6 @@
-from odoo import fields, models
 import json
+
+from odoo import fields, models
 
 
 class DocflowDocumentSnapshot(models.Model):
@@ -9,7 +10,8 @@ class DocflowDocumentSnapshot(models.Model):
 
     document_id = fields.Many2one("docflow.document", required=True, ondelete="cascade")
     source = fields.Selection(
-        [("daemon", "Daemon"), ("manual", "Manual"), ("rerun", "Re-run")], default="daemon"
+        [("daemon", "Daemon"), ("manual", "Manual"), ("rerun", "Re-run")],
+        default="daemon",
     )
     payload_json = fields.Text(required=True)
     diff_text = fields.Text()

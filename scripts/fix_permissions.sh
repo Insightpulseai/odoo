@@ -1,12 +1,19 @@
-#!/bin/bash
-# Fix permissions for Odoo addons directory
-# Usage: ./scripts/fix_permissions.sh
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Fixing permissions for addons directory..."
-sudo chown -R $(whoami) addons
-sudo chmod -R u+w addons
-sudo xattr -dr com.apple.quarantine addons 2>/dev/null || true
-mkdir -p addons/oca
+ROOT="${1:-$(pwd)}"
+echo "Fixing permissions under: $ROOT"
 
-echo "✓ Done. You can now run ./scripts/install_oca_parity.sh"
+# ensure you own the tree (ignore failures where sudo isn't allowed)
+( sudo chown -R "$(id -un)":"$(id -gn)" "$ROOT" ) 2>/dev/null || true
+
+# remove macOS quarantine bit (common when zips downloaded)
+xattr -dr com.apple.quarantine "$ROOT" 2>/dev/null || true
+
+# clear immutable flags if any (rare but fatal)
+chflags -R nouchg,noschg "$ROOT" 2>/dev/null || true
+
+# add user rw + execute on dirs
+chmod -R u+rwX "$ROOT" 2>/dev/null || true
+
+echo "Done."

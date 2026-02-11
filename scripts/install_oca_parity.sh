@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-OCA_DIR="${REPO_ROOT}/addons/oca"
+OCA_DIR="${REPO_ROOT}/oca-parity"
 ODOO_VERSION="${ODOO_VERSION:-19.0}"
 DB_NAME="${DB_NAME:-odoo_core}"
 
@@ -24,7 +24,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Format: "repo_name:module1,module2"
 # Bash 3.2 compatible array (standard indexed array)
 OCA_CONFIG=(
-    "account-financial-tools:account_asset_management"
+    "account-financial-tools:account_asset_management,account_reconcile_oca"
     "mis-builder:mis_builder,mis_builder_budget"
     "account-consolidation:account_consolidation"
     "account-analytic:analytic_tag_dimension"

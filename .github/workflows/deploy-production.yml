@@ -206,10 +206,10 @@ jobs:
     if: success()
     permissions:
       contents: write
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create Release Tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -217,9 +217,8 @@ jobs:
           TAG="prod-$(date -u +'%Y%m%d-%H%M')"
           git tag "$TAG"
           git push origin "$TAG"
-          
+
           gh release create "$TAG" \
             --title "$TAG" \
             --notes "Automated production deployment of image \`${{ needs.preflight.outputs.image_tag }}\`" \
             --generate-notes
-

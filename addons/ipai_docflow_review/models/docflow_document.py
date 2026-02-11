@@ -1,7 +1,9 @@
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError
 import json
 from datetime import timedelta
+
+from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 
 def _safe_json_load(s):
@@ -68,7 +70,9 @@ class DocflowDocument(models.Model):
     confidence = fields.Float(digits=(3, 2), tracking=True)
     confidence_breakdown_json = fields.Text()
 
-    attachment_id = fields.Many2one("ir.attachment", string="Source Document", ondelete="set null")
+    attachment_id = fields.Many2one(
+        "ir.attachment", string="Source Document", ondelete="set null"
+    )
 
     ocr_text = fields.Text()
     llm_classification_json = fields.Text()
@@ -95,7 +99,9 @@ class DocflowDocument(models.Model):
     expense_amount = fields.Float()
     merchant = fields.Char()
 
-    line_ids = fields.One2many("docflow.document.line", "document_id", string="Line Items")
+    line_ids = fields.One2many(
+        "docflow.document.line", "document_id", string="Line Items"
+    )
 
     snapshot_ids = fields.One2many(
         "docflow.document.snapshot", "document_id", string="Snapshots", readonly=True
@@ -277,7 +283,9 @@ class DocflowDocument(models.Model):
         Tools = self.env["docflow.dupe.tools"]
         for r in self:
             if r.doc_type == "invoice":
-                vm = Tools.vendor_fuzzy_match(r.vendor_name or r.vendor_or_merchant or "")
+                vm = Tools.vendor_fuzzy_match(
+                    r.vendor_name or r.vendor_or_merchant or ""
+                )
                 r.vendor_match_partner_id = vm.get("partner_id") or False
                 r.vendor_match_score = float(vm.get("score") or 0.0)
                 r.vendor_match_method = vm.get("method") or "none"
@@ -300,8 +308,12 @@ class DocflowDocument(models.Model):
 
             elif r.doc_type == "expense":
                 payload = _safe_json_load(r.llm_extraction_json)
-                amount = float(payload.get("amount") or r.expense_amount or r.amount_total or 0.0)
-                dt = payload.get("date") or (str(r.expense_date) if r.expense_date else None)
+                amount = float(
+                    payload.get("amount") or r.expense_amount or r.amount_total or 0.0
+                )
+                dt = payload.get("date") or (
+                    str(r.expense_date) if r.expense_date else None
+                )
 
                 dup = Tools.expense_dupe_search(amount=amount, date=dt)
                 r.dupe_risk = float(dup.get("risk") or 0.0)
@@ -324,10 +336,22 @@ class DocflowDocument(models.Model):
 
             if r.doc_type == "expense":
                 rec = r._create_expense(payload)
-                r.write({"state": "draft_created", "res_model": "hr.expense", "res_id": rec.id})
+                r.write(
+                    {
+                        "state": "draft_created",
+                        "res_model": "hr.expense",
+                        "res_id": rec.id,
+                    }
+                )
             elif r.doc_type == "invoice":
                 rec = r._create_vendor_bill(payload)
-                r.write({"state": "draft_created", "res_model": "account.move", "res_id": rec.id})
+                r.write(
+                    {
+                        "state": "draft_created",
+                        "res_model": "account.move",
+                        "res_id": rec.id,
+                    }
+                )
             else:
                 raise UserError(_("Unknown document type."))
 
@@ -393,12 +417,20 @@ class DocflowDocument(models.Model):
                         {
                             "name": li.get("description") or "Item",
                             "quantity": float(li.get("quantity") or 1),
-                            "price_unit": float(li.get("unit_price") or li.get("line_total") or 0),
+                            "price_unit": float(
+                                li.get("unit_price") or li.get("line_total") or 0
+                            ),
                         },
                     )
                 )
         else:
-            lines = [(0, 0, {"name": "Invoice (DocFlow)", "quantity": 1, "price_unit": total})]
+            lines = [
+                (
+                    0,
+                    0,
+                    {"name": "Invoice (DocFlow)", "quantity": 1, "price_unit": total},
+                )
+            ]
 
         vals = {
             "move_type": "in_invoice",
@@ -416,12 +448,16 @@ class DocflowDocument(models.Model):
 
     # SLA Logic
     def _sla_default_due(self):
-        hours = int(self.env["ir.config_parameter"].sudo().get_param("docflow.sla_hours", "24"))
+        hours = int(
+            self.env["ir.config_parameter"].sudo().get_param("docflow.sla_hours", "24")
+        )
         return fields.Datetime.now() + timedelta(hours=hours)
 
     def action_start_sla(self):
         """Call when state -> needs_review."""
-        group = self.env.ref("ipai_docflow_review.group_docflow_reviewer", raise_if_not_found=False)
+        group = self.env.ref(
+            "ipai_docflow_review.group_docflow_reviewer", raise_if_not_found=False
+        )
         for r in self:
             if r.sla_state in ("active", "breached"):
                 continue
@@ -430,7 +466,9 @@ class DocflowDocument(models.Model):
 
             # naive assignment: first reviewer (can be replaced with load balancing later)
             if group and not r.reviewer_user_id:
-                user = self.env["res.users"].search([("groups_id", "in", [group.id])], limit=1)
+                user = self.env["res.users"].search(
+                    [("groups_id", "in", [group.id])], limit=1
+                )
                 if user:
                     r.reviewer_user_id = user.id
 
@@ -449,15 +487,17 @@ class DocflowDocument(models.Model):
     @api.model
     def cron_docflow_sla_check(self):
         """Escalate overdue reviews."""
-        now = fields.Datetime.now()
-        docs = self.search(
-            [
-                ("sla_state", "=", "active"),
-                ("sla_due_at", "!=", False),
-                ("sla_due_at", "<", now),
-                ("state", "in", ["needs_review", "extracted"]),
-            ]
-        )
+        # TODO: SLA fields missing - temporarily disabled
+        return
+        # now = fields.Datetime.now()
+        # docs = self.search(
+        #     [
+        #         ("sla_state", "=", "active"),
+        #         ("sla_due_at", "!=", False),
+        #         ("sla_due_at", "<", now),
+        #         ("state", "in", ["needs_review", "extracted"]),
+        #     ]
+        # )
         for r in docs:
             r.sla_state = "breached"
             self.env["docflow.sla.event"].create(
@@ -466,7 +506,9 @@ class DocflowDocument(models.Model):
 
             # escalate to manager (config param)
             mgr_id = int(
-                self.env["ir.config_parameter"].sudo().get_param("docflow.sla_manager_user_id", "0")
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param("docflow.sla_manager_user_id", "0")
                 or 0
             )
             if mgr_id:
@@ -491,7 +533,13 @@ class DocflowDocument(models.Model):
         # Route whenever extraction/doc_type/confidence changes
         if any(
             k in vals
-            for k in ["llm_extraction_json", "doc_type", "confidence", "source", "currency_id"]
+            for k in [
+                "llm_extraction_json",
+                "doc_type",
+                "confidence",
+                "source",
+                "currency_id",
+            ]
         ):
             # self.action_route() # defined in routing.py inherit
             # Since inheriting method might not be available at define time if not loaded,
@@ -502,5 +550,6 @@ class DocflowDocument(models.Model):
         if "state" in vals and vals["state"] == "needs_review":
             if hasattr(self, "action_route"):
                 self.action_route()
-            self.action_start_sla()
+            # TODO: SLA fields missing - temporarily disabled
+            # self.action_start_sla()
         return res

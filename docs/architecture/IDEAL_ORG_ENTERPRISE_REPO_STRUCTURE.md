@@ -1,8 +1,8 @@
 # Ideal Organization & Enterprise Repository Structure
 
-**Version:** 1.0.0  
-**Status:** Authoritative  
-**Last Updated:** 2026-02-05  
+**Version:** 1.0.0
+**Status:** Authoritative
+**Last Updated:** 2026-02-05
 
 ---
 
@@ -487,12 +487,12 @@ docs/
 # Good: Docstrings for all public methods
 class IpaiFinanceTask(models.Model):
     """Finance PPM Task.
-    
+
     Extends project.task with finance-specific fields for
     budget tracking, billing, and month-end closing.
     """
     _inherit = "project.task"
-    
+
     finance_cluster_id = fields.Many2one(
         'ipai.finance.cluster',
         string='Finance Cluster',
@@ -561,8 +561,8 @@ Before creating a new module:
 
 ### 9.1 This Repository (odoo)
 
-**Pattern:** Selective Monorepo  
-**Team Size:** 5-20  
+**Pattern:** Selective Monorepo
+**Team Size:** 5-20
 **Structure:**
 ```
 odoo/
@@ -580,8 +580,8 @@ odoo/
 
 ### 9.2 Large Enterprise (Example: Microsoft Dynamics)
 
-**Pattern:** Hybrid (Monorepo core + Multi-repo satellites)  
-**Team Size:** 1000+  
+**Pattern:** Hybrid (Monorepo core + Multi-repo satellites)
+**Team Size:** 1000+
 **Structure:**
 ```
 microsoft/dynamics/
@@ -599,8 +599,8 @@ microsoft/dynamics/
 
 ### 9.3 Small Startup (Example: SaaS Product)
 
-**Pattern:** Full Monorepo  
-**Team Size:** 3-10  
+**Pattern:** Full Monorepo
+**Team Size:** 3-10
 **Structure:**
 ```
 startup/product/

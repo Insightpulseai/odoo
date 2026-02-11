@@ -9,7 +9,7 @@ serve(async (req) => {
         const { message, odoo } = await req.json()
 
         // Stub retrieval logic
-        // In real implementation: 
+        // In real implementation:
         // 1. Embed `message` using OpenAI
         // 2. RPC call `docs.search_chunks`
         // 3. Generative answer via LLM

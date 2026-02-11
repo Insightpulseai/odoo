@@ -100,7 +100,7 @@ sleep 15
 **Expected Output**:
 ```
 == 1) Site reachable ==
-HTTP/2 200 
+HTTP/2 200
 == 2) No style compilation banner in HTML (debug=assets) ==
 PASS
 == 3) No recent SCSS import errors in Odoo logs ==

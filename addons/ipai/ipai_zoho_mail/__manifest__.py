@@ -2,9 +2,9 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
 {
-    'name': 'IPAI Zoho Mail Integration',
-    'summary': 'Zoho Mail SMTP/IMAP configuration for insightpulseai.com',
-    'description': """
+    "name": "IPAI Zoho Mail Integration",
+    "summary": "Zoho Mail SMTP/IMAP configuration for insightpulseai.com",
+    "description": """
 IPAI Zoho Mail Integration
 ==========================
 
@@ -39,21 +39,21 @@ Post-Installation:
 5. Edit "Zoho IMAP (Prod)" and enter the IMAP password
 6. Click "Fetch Mail" to verify
     """,
-    'version': '19.0.1.0.0',
-    'category': 'Mail',
-    'author': 'InsightPulseAI',
-    'website': 'https://insightpulseai.com',
-    'license': 'LGPL-3',
-    'depends': [
-        'mail',
-        'fetchmail',
+    "version": "19.0.1.0.0",
+    "category": "Mail",
+    "author": "InsightPulseAI",
+    "website": "https://insightpulseai.com",
+    "license": "LGPL-3",
+    "depends": [
+        "mail",
+        "fetchmail",
     ],
-    'data': [
-        'data/config_params.xml',
-        'data/mail_server.xml',
-        'data/fetchmail_server.xml',
+    "data": [
+        "data/config_params.xml",
+        "data/mail_server.xml",
+        "data/fetchmail_server.xml",
     ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
+    "installable": True,
+    "auto_install": False,
+    "application": False,
 }
