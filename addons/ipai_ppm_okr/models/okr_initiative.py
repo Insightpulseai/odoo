@@ -10,10 +10,16 @@ class OkrInitiative(models.Model):
     objective_id = fields.Many2one("okr.objective", ondelete="cascade", index=True)
     key_result_id = fields.Many2one("okr.key.result", ondelete="cascade", index=True)
 
-    project_id = fields.Many2one("project.project", ondelete="set null", index=True, tracking=True)
-    task_id = fields.Many2one("project.task", ondelete="set null", index=True, tracking=True)
+    project_id = fields.Many2one(
+        "project.project", ondelete="set null", index=True, tracking=True
+    )
+    task_id = fields.Many2one(
+        "project.task", ondelete="set null", index=True, tracking=True
+    )
 
-    owner_user_id = fields.Many2one("res.users", default=lambda self: self.env.user, tracking=True)
+    owner_user_id = fields.Many2one(
+        "res.users", default=lambda self: self.env.user, tracking=True
+    )
     name = fields.Char(required=True, tracking=True)
     description = fields.Text()
 

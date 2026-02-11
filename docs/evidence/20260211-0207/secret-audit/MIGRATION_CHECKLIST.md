@@ -63,4 +63,3 @@
 - [ ] Create onboarding guide for new developers
 - [ ] Document secret rotation procedures
 - [ ] Update CLAUDE.md with secret management rules
-

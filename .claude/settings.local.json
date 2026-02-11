@@ -112,7 +112,11 @@
       "WebFetch(domain:www.tbwa-smp.com)",
       "Bash(wget:*)",
       "WebFetch(domain:mattermost.com)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git reset:*)",
+      "Bash(pkill:*)",
+      "WebFetch(domain:www.securitybank.com)",
+      "Bash(screencapture:*)"
     ],
     "deny": [],
     "ask": [],

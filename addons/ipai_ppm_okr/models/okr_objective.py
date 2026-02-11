@@ -7,7 +7,9 @@ class OkrObjective(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc"
 
-    cycle_id = fields.Many2one("okr.cycle", required=True, ondelete="cascade", tracking=True)
+    cycle_id = fields.Many2one(
+        "okr.cycle", required=True, ondelete="cascade", tracking=True
+    )
     parent_objective_id = fields.Many2one("okr.objective", ondelete="set null")
     child_objective_ids = fields.One2many("okr.objective", "parent_objective_id")
 
