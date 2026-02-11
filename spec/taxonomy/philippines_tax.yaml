@@ -1,0 +1,161 @@
+schema: ipai.taxonomy.locale_overlay.v1
+overlay_id: ph
+locale:
+  country: PH
+  language: en
+  currency: PHP
+extends:
+  - core_taxonomy@v1
+
+intent:
+  description: >
+    Locale overlay for Philippines tax + month-end/year-end close. Keeps core taxonomy reusable by
+    only adding PH-specific forms, agencies, deadlines, and common workflows.
+
+authoritative_sources:
+  - name: Bureau of Internal Revenue (BIR)
+    notes: "Do not hardcode deadlines; keep in config, as deadlines can vary by taxpayer type."
+  - name: Odoo Accounting docs / checklists (general close guidance)
+    reference: "Use as generic close workflow template; localize steps for PH tax specifics."
+
+entities:
+  agencies:
+    - id: bir
+      name: Bureau of Internal Revenue
+    - id: sss
+      name: Social Security System
+    - id: philhealth
+      name: PhilHealth
+    - id: pagibig
+      name: Pag-IBIG Fund
+
+tax_domains:
+  - id: vat
+    name: Value-Added Tax
+    common_rates_configurable: true
+  - id: withholding_compensation
+    name: Withholding Tax on Compensation
+  - id: withholding_ewt
+    name: Expanded Withholding Tax (EWT)
+  - id: withholding_fwt
+    name: Final Withholding Tax (FWT)
+  - id: percentage_tax
+    name: Percentage Tax
+  - id: dst
+    name: Documentary Stamp Tax (DST)
+  - id: income_tax
+    name: Income Tax (Corporate/Individual)
+
+forms:
+  # NOTE: Keep codes stable; deadlines + applicability are configurable.
+  bir:
+    - code: "2550M"
+      domain: vat
+      cadence: monthly
+      description: "VAT Declaration (monthly)"
+    - code: "2550Q"
+      domain: vat
+      cadence: quarterly
+      description: "VAT Return (quarterly)"
+    - code: "1601C"
+      domain: withholding_compensation
+      cadence: monthly
+      description: "Withholding Tax on Compensation"
+    - code: "1601EQ"
+      domain: withholding_ewt
+      cadence: quarterly
+      description: "Quarterly Remittance Return of EWT"
+    - code: "1604C"
+      domain: withholding_compensation
+      cadence: annual
+      description: "Annual Information Return of Income Taxes Withheld on Compensation"
+    - code: "1604E"
+      domain: withholding_ewt
+      cadence: annual
+      description: "Annual Information Return of Creditable Income Taxes Withheld (Expanded)"
+    - code: "1701"
+      domain: income_tax
+      cadence: annual
+      description: "Annual Income Tax Return (Individuals / mixed cases)"
+    - code: "1702"
+      domain: income_tax
+      cadence: annual
+      description: "Annual Income Tax Return (Corporations)"
+    - code: "1709"
+      domain: income_tax
+      cadence: annual
+      description: "Related Party Transactions / Transfer Pricing info return (when applicable)"
+    - code: "2307"
+      domain: withholding_ewt
+      cadence: per-transaction
+      description: "Creditable Withholding Tax Certificate"
+    - code: "2316"
+      domain: withholding_compensation
+      cadence: annual
+      description: "Certificate of Compensation Payment/Tax Withheld"
+
+workflows:
+  month_end_close:
+    id: ph_month_end_close
+    inherits: core.month_end_close
+    steps:
+      - id: close_cutoff
+        name: "Close period cutoff + freeze timesheets/expenses"
+      - id: ap_ar_reconcile
+        name: "AP/AR reconciliation + vendor/customer statements"
+      - id: bank_recon
+        name: "Bank/CC reconciliation"
+      - id: accruals
+        name: "Accruals/deferrals + recurring entries"
+      - id: tax_prep
+        name: "Tax prep pack (VAT/withholding schedules)"
+      - id: management_review
+        name: "Controller review + variance explanations"
+      - id: lock_period
+        name: "Lock period (post review)"
+    deliverables:
+      - "Trial Balance"
+      - "GL detail by account"
+      - "Bank reconciliation report"
+      - "VAT/Withholding schedules (configurable set)"
+      - "Audit trail bundle (JE approvals, attachments)"
+
+  vat_pack:
+    id: ph_vat_pack
+    triggers: ["period_end"]
+    inputs:
+      - "Sales invoices"
+      - "Purchase bills"
+      - "Credit/debit notes"
+    outputs:
+      - "VAT summary"
+      - "Input VAT vs Output VAT reconciliation"
+      - "Exceptions list (missing tax tags, invalid TIN, etc.)"
+
+controls:
+  segregation_of_duties:
+    required: true
+    patterns:
+      - "Maker/Checker for Journal Entries"
+      - "Approver cannot be the submitter for expenses"
+  audit_trail:
+    required: true
+    notes: "All tax schedules must be reproducible from source docs + posted entries."
+
+odoo_mapping:
+  target: "Odoo 19 CE + OCA + minimal IPAI glue"
+  modules:
+    # NOTE: technical module names may vary by edition/repo. Validate in your addons path.
+    odoo_ce_candidates:
+      - "account"
+      - "account_accountant"
+      - "hr_expense"
+      - "documents" # if available in your stack; otherwise use IPAI DocFlow + attachments
+    oca_candidates:
+      - "account_financial_report" # TODO: confirm repo/module availability for 19.0
+      - "bank_statement_import_*" # TODO: choose specific import modules
+  ipai_glue_candidates:
+    - id: ipai_tax_pack
+      description: "Generates PH tax schedules + validates tagging completeness."
+    - id: ipai_docflow_receipts
+      description: "Receipt/invoice OCR ingestion pipeline feeding attachments + expense/bill drafts."
