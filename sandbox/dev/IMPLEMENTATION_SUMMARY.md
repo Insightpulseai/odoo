@@ -245,7 +245,7 @@ No containers running (expected for fresh repo)
    ```bash
    # Option A: Symlink (recommended)
    ln -s ~/Documents/GitHub/odoo/addons/external/oca oca-addons
-   
+
    # Or clone manually (see docs/runbooks/DEV_SANDBOX.md)
    ```
 

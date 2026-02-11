@@ -1,0 +1,45 @@
+name: vercel-production
+on:
+  push:
+    branches: [main]
+
+jobs:
+  prod:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+      - name: Deploy Production to Vercel (prebuilt)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm i -g vercel
+          vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          vercel build --prod --token "$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN" > .vercel_prod_url.txt
+          cat .vercel_prod_url.txt
+
+      - name: Health gate (prod)
+        run: |
+          URL="$(cat .vercel_prod_url.txt)"
+          echo "Checking health at: $URL/api/health"
+          sleep 15  # Allow production deployment to stabilize
+          curl -fsS "$URL/api/health" | jq .
+          # Uncomment for DB health check:
+          # curl -fsS "$URL/api/health/db" | jq .

@@ -1,5 +1,6 @@
-from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 try:
     from rapidfuzz import fuzz
@@ -17,14 +18,22 @@ class DocflowRoutingRule(models.Model):
     sequence = fields.Integer(default=10)
 
     # Match conditions (OR within field, AND across fields)
-    source = fields.Selection([("viber", "Viber"), ("upload", "Upload"), ("other", "Other")])
+    source = fields.Selection(
+        [("viber", "Viber"), ("upload", "Upload"), ("other", "Other")]
+    )
     doc_type = fields.Selection(
-        [("invoice", "Invoice"), ("expense", "Expense"), ("bank_statement", "Bank Statement")],
+        [
+            ("invoice", "Invoice"),
+            ("expense", "Expense"),
+            ("bank_statement", "Bank Statement"),
+        ],
         required=True,
     )
 
     company_id = fields.Many2one("res.company", required=True)
-    journal_id = fields.Many2one("account.journal", domain=[("type", "in", ["bank", "purchase"])])
+    journal_id = fields.Many2one(
+        "account.journal", domain=[("type", "in", ["bank", "purchase"])]
+    )
     currency_id = fields.Many2one("res.currency")
 
     vendor_name_contains = fields.Char(
@@ -47,7 +56,11 @@ class DocflowRoutingRule(models.Model):
             return False
         if self.doc_type and docflow_doc.doc_type != self.doc_type:
             return False
-        if self.source and hasattr(docflow_doc, "source") and docflow_doc.source != self.source:
+        if (
+            self.source
+            and hasattr(docflow_doc, "source")
+            and docflow_doc.source != self.source
+        ):
             pass  # source might not be on docflow.document yet, ignore if missing or implement if needed.
             # Re-reading prompt: "source" is used in matches. DocflowDocument should have it or matches will fail if source is set on rule.
             # Checking previous artifacts... DocflowDocument definition in prev turn didn't explicitly show 'source' field but 'source' is in the agent yaml.
@@ -69,7 +82,10 @@ class DocflowRoutingRule(models.Model):
             and docflow_doc.currency_id.id != self.currency_id.id
         ):
             return False
-        if self.min_confidence and (docflow_doc.confidence or 0.0) < self.min_confidence:
+        if (
+            self.min_confidence
+            and (docflow_doc.confidence or 0.0) < self.min_confidence
+        ):
             return False
 
         # vendor/merchant match
@@ -134,7 +150,9 @@ class DocflowDocument(models.Model):
                 if rule.matches(r, extracted):
                     r.routing_rule_id = rule.id
                     r.routed_company_id = rule.company_id.id
-                    r.routed_journal_id = rule.journal_id.id if rule.journal_id else False
+                    r.routed_journal_id = (
+                        rule.journal_id.id if rule.journal_id else False
+                    )
 
                     # assignment: fixed user > group load-based > default reviewer group
                     user_id = False
@@ -160,7 +178,9 @@ class DocflowDocument(models.Model):
                 )
                 r.routed_company_id = company_id
                 r.routed_user_id = (
-                    r._pick_least_loaded_user(group_default.id, company_id=r.routed_company_id)
+                    r._pick_least_loaded_user(
+                        group_default.id, company_id=r.routed_company_id
+                    )
                     if group_default
                     else False
                 )
@@ -179,11 +199,13 @@ class DocflowDocument(models.Model):
                     payload = {}
         return payload or {}
 
-    def _pick_least_loaded_user(self, group_id: int, company_id: int | None = None) -> int | None:
+    def _pick_least_loaded_user(
+        self, group_id: int, company_id: int | None = None
+    ) -> int | None:
         """Pick least-loaded user by open DocFlow review count in last window."""
         Users = self.env["res.users"].sudo()
         group = self.env["res.groups"].sudo().browse(group_id)
-        candidates = group.users
+        candidates = group.user_ids
         if company_id:
             # filter users with access to company (simple heuristic)
             candidates = candidates.filtered(
@@ -201,7 +223,10 @@ class DocflowDocument(models.Model):
         best_uid, best_cnt = None, None
         for u in candidates:
             cnt = Doc.search_count(
-                [("state", "in", ["needs_review", "extracted"]), ("reviewer_user_id", "=", u.id)]
+                [
+                    ("state", "in", ["needs_review", "extracted"]),
+                    ("reviewer_user_id", "=", u.id),
+                ]
             )
             if best_cnt is None or cnt < best_cnt:
                 best_uid, best_cnt = u.id, cnt

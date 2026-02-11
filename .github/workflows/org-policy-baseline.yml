@@ -1,0 +1,32 @@
+name: org-policy-baseline
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+permissions:
+  contents: read
+jobs:
+  lint-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --upgrade pip yamllint
+      - run: |
+          cat > .yamllint <<'EOF'
+          extends: default
+          rules:
+            line-length: disable
+            truthy: disable
+          EOF
+          yamllint -s .
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: TruffleHog (baseline scan)
+        uses: trufflesecurity/trufflehog@v3.88.0
+        with:
+          path: .
+          base: ${{ github.event.pull_request.base.sha || 'HEAD~1' }}
+          head: ${{ github.sha }}
+          extra_args: --only-verified

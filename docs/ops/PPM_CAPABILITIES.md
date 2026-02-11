@@ -10,7 +10,7 @@ PPM capabilities in Odoo 19 CE + OCA provide enterprise-grade project portfolio 
 - Visual project timelines
 - Dependencies & milestones
 
-### 2. Project Forecast  
+### 2. Project Forecast
 - Resource allocation
 - Capacity planning
 - Workload balancing

@@ -1,5 +1,6 @@
-from odoo import fields, models, api, _
 from datetime import timedelta
+
+from odoo import _, api, fields, models
 
 
 class DocflowSlaEvent(models.Model):

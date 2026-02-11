@@ -1,0 +1,25 @@
+{
+  "vendor_name": "Ready Mat",
+  "invoice_number": "INV_1025",
+  "invoice_date": "2018-08-13",
+  "currency": "USD",
+  "subtotal": 30.0,
+  "vat": 4.5,
+  "total": 34.5,
+  "line_items": [
+    {
+      "description": "Office Design Software",
+      "quantity": 1.0,
+      "unit_price": 10.0,
+      "line_total": 10.0
+    },
+    {
+      "description": "Office Chair",
+      "quantity": 5.0,
+      "unit_price": 4.0,
+      "line_total": 20.0
+    }
+  ],
+  "confidence": 1.0,
+  "notes": "Dear Sir/Madam, Please find below a cost-breakdown for the delivered products. Please make payment at your earliest convenience, and do not hesitate to contact us with any questions. Many thanks, Ready Mat"
+}
