@@ -117,18 +117,41 @@ Current "CI-hosting" patterns often force manual UI steps, are hard to reproduce
 - Traces: request tracing across proxy → Odoo → Postgres
 - SLOs and alerting hooks (Slack/webhook)
 
-### 6.7 Security & Compliance
+### 6.7 Browser Automation & E2E Testing
+
+**Integration Point**: See [`spec/odooops-browser-automation/`](../odooops-browser-automation/) for complete spec.
+
+- **Playwright-first CI**: Every PR/branch triggers:
+  1. Environment creation (via control plane API)
+  2. E2E test suite against live environment
+  3. Artifact upload (traces/videos/screenshots)
+  4. Environment teardown (always)
+- **Promotion Gate**: Staging/production promotions require:
+  - Passing E2E suite for the same commit SHA
+  - Test evidence linkable in PR checks
+- **Extension Support (Phase 3)**: Optional Chrome extension runner mode
+  - Headful Chromium via Xvfb in CI
+  - Persistent context for extension pages
+  - Idempotent for CI/local development parity
+- **Evidence-First**:
+  - Videos: `retain-on-failure`
+  - Screenshots: `only-on-failure`
+  - Traces: `on-first-retry`
+  - All artifacts uploaded to GitHub Actions artifacts or platform storage
+
+### 6.8 Security & Compliance
 
 - RBAC with environment scopes
 - Just-in-time privileged access (time boxed "break glass")
 - Audit logs for:
   - exec/SSH sessions
   - restores, promotions, secret rotations
+  - E2E test runs and artifacts
 - Secret manager integration:
   - KMS-backed encryption
   - rotation workflows
 
-### 6.8 Portability (Self-host + SaaS)
+### 6.9 Portability (Self-host + SaaS)
 
 - Reference deployments:
   - K8s Helm chart
@@ -144,6 +167,8 @@ Current "CI-hosting" patterns often force manual UI steps, are hard to reproduce
 - Snapshots + restore (prod→staging/preview) with optional masking
 - CLI v1 + REST API v1
 - Logs + basic metrics dashboard
+- **E2E testing integration (Playwright)**: PR checks with environment lifecycle + artifacts
+- **Promotion gates**: Require passing E2E before staging/prod promotion
 
 ## 8) Success Metrics
 
