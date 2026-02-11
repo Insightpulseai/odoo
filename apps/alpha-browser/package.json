@@ -1,0 +1,52 @@
+{
+  "name": "@ipai/alpha-browser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Next-generation browser extension with vision-first grounding and multi-agent orchestration",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:vision": "vitest run --testPathPattern=vision",
+    "test:agents": "vitest run --testPathPattern=agents",
+    "test:llm": "vitest run --testPathPattern=llm",
+    "test:rag": "vitest run --testPathPattern=memory",
+    "test:identity": "vitest run --testPathPattern=identity",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@tanstack/react-query": "^5.0.0",
+    "dexie": "^4.0.0",
+    "dexie-react-hooks": "^1.1.0",
+    "onnxruntime-web": "^1.19.0",
+    "@webgpu/types": "^0.1.0",
+    "zod": "^3.22.0",
+    "nanoid": "^5.0.0",
+    "pixelmatch": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.275",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@playwright/test": "^1.58.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-web-extension": "^4.0.0",
+    "typescript": "^5.6.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "vitest": "^2.0.0",
+    "@vitest/ui": "^2.0.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0"
+  }
+}
