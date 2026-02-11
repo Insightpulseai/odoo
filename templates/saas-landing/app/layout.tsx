@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Figtree, Inter, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { ChartThemeProvider } from "@/components/theme/ChartThemeProvider"
 import "./globals.css"
 
 const figtree = Figtree({
@@ -38,7 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${figtree.variable} ${geistMono.variable} font-sans antialiased`}>
-        {children}
+        <ChartThemeProvider>
+          {children}
+        </ChartThemeProvider>
         <Analytics />
       </body>
     </html>
