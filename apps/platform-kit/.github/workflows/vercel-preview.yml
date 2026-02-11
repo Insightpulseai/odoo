@@ -1,0 +1,43 @@
+name: vercel-preview
+on:
+  pull_request:
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+      - name: Deploy Preview to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm i -g vercel
+          vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          vercel build --token "$VERCEL_TOKEN"
+          vercel deploy --prebuilt --token "$VERCEL_TOKEN" > .vercel_deploy_url.txt
+          cat .vercel_deploy_url.txt
+
+      - name: Health gate (preview)
+        run: |
+          URL="$(cat .vercel_deploy_url.txt)"
+          echo "Checking health at: $URL/api/health"
+          sleep 10  # Allow deployment to stabilize
+          curl -fsS "$URL/api/health" | jq .

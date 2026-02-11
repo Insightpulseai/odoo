@@ -111,12 +111,12 @@ This will open the MCP Inspector UI where you can:
 4. **Test in ChatGPT:**
    ```
    User: Deploy prod
-   
+
    ChatGPT calls plan_runbook("Deploy prod")
    → Shows inline runbook card
-   
+
    User clicks "Run"
-   
+
    ChatGPT calls execute_runbook(runbook_id)
    → Shows fullscreen log viewer
    ```
@@ -218,9 +218,9 @@ Use structured logging for production:
 ```typescript
 import { logger } from "./logger";
 
-logger.info("Runbook executed", { 
-  runbook_id: plan.id, 
-  duration_ms: elapsed 
+logger.info("Runbook executed", {
+  runbook_id: plan.id,
+  duration_ms: elapsed
 });
 ```
 

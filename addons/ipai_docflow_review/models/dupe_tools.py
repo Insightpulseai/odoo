@@ -1,12 +1,15 @@
-from odoo import models
 from rapidfuzz import fuzz, process
+
+from odoo import models
 
 
 class DocflowDupeTools(models.AbstractModel):
     _name = "docflow.dupe.tools"
     _description = "DocFlow Duplicate + Vendor Match Tools"
 
-    def vendor_fuzzy_match(self, vendor_name: str, min_score: float = 0.85, limit: int = 500):
+    def vendor_fuzzy_match(
+        self, vendor_name: str, min_score: float = 0.85, limit: int = 500
+    ):
         if not vendor_name:
             return {"partner_id": False, "score": 0.0, "method": "none"}
 
@@ -34,11 +37,20 @@ class DocflowDupeTools(models.AbstractModel):
         name, score, idx = m
         sf = score / 100.0
         if sf >= min_score:
-            return {"partner_id": partners[idx]["id"], "score": sf, "method": "fuzzy", "name": name}
+            return {
+                "partner_id": partners[idx]["id"],
+                "score": sf,
+                "method": "fuzzy",
+                "name": name,
+            }
         return {"partner_id": False, "score": sf, "method": "none"}
 
     def invoice_dupe_search(
-        self, partner_id: int, invoice_number: str, total: float, invoice_date: str | None
+        self,
+        partner_id: int,
+        invoice_number: str,
+        total: float,
+        invoice_date: str | None,
     ):
         domain = [("move_type", "=", "in_invoice")]
         if partner_id:
@@ -54,7 +66,14 @@ class DocflowDupeTools(models.AbstractModel):
                 order="id desc",
             )
             for r in rows:
-                hits.append({"id": r["id"], "score": 1.0, "reason": "partner+ref match", "row": r})
+                hits.append(
+                    {
+                        "id": r["id"],
+                        "score": 1.0,
+                        "reason": "partner+ref match",
+                        "row": r,
+                    }
+                )
 
         rows2 = self.env["account.move"].search_read(
             domain,

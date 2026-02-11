@@ -1,5 +1,6 @@
-from odoo import fields, models, api, _
 import json
+
+from odoo import _, api, fields, models
 
 try:
     from rapidfuzz import fuzz
@@ -13,11 +14,16 @@ class DocflowReconSession(models.Model):
     _order = "create_date desc"
 
     name = fields.Char(required=True)
-    statement_id = fields.Many2one("docflow.bank.statement", required=True, ondelete="cascade")
-    document_id = fields.Many2one(related="statement_id.document_id", store=True, readonly=True)
+    statement_id = fields.Many2one(
+        "docflow.bank.statement", required=True, ondelete="cascade"
+    )
+    document_id = fields.Many2one(
+        related="statement_id.document_id", store=True, readonly=True
+    )
 
     state = fields.Selection(
-        [("new", "New"), ("in_progress", "In Progress"), ("done", "Done")], default="new"
+        [("new", "New"), ("in_progress", "In Progress"), ("done", "Done")],
+        default="new",
     )
     candidate_ids = fields.One2many("docflow.recon.candidate", "session_id")
 
@@ -54,7 +60,12 @@ class DocflowReconSession(models.Model):
                     )
                     if score >= 0.60:
                         candidates.append(
-                            ("account.payment", p.id, score, f"payment ref={p.ref or p.name}")
+                            (
+                                "account.payment",
+                                p.id,
+                                score,
+                                f"payment ref={p.ref or p.name}",
+                            )
                         )
 
                 # 2) account.move (vendor/customer invoices) candidates
@@ -108,7 +119,12 @@ class DocflowReconSession(models.Model):
 
 
 def _score_match(
-    line, candidate_amount, candidate_date_str, candidate_ref, candidate_partner, date_window_days
+    line,
+    candidate_amount,
+    candidate_date_str,
+    candidate_ref,
+    candidate_partner,
+    date_window_days,
 ):
     # amount score (tight)
     tol = max(2.0, 0.01 * max(abs(line.amount), 1.0))
@@ -131,7 +147,10 @@ def _score_match(
         party_score = fuzz.token_set_ratio(line.counterparty, candidate_partner) / 100.0
 
     # weighted
-    return round(0.55 * amount_score + 0.20 * date_score + 0.15 * ref_score + 0.10 * party_score, 2)
+    return round(
+        0.55 * amount_score + 0.20 * date_score + 0.15 * ref_score + 0.10 * party_score,
+        2,
+    )
 
 
 class DocflowReconCandidate(models.Model):
@@ -139,7 +158,9 @@ class DocflowReconCandidate(models.Model):
     _description = "DocFlow Reconciliation Candidate"
     _order = "score desc, id desc"
 
-    session_id = fields.Many2one("docflow.recon.session", required=True, ondelete="cascade")
+    session_id = fields.Many2one(
+        "docflow.recon.session", required=True, ondelete="cascade"
+    )
     statement_line_id = fields.Many2one(
         "docflow.bank.statement.line", required=True, ondelete="cascade"
     )

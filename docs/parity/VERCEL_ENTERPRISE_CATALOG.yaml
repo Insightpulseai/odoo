@@ -1,0 +1,198 @@
+version: 1
+platform: "vercel-enterprise"
+definition:
+  # Based on actual Vercel Enterprise features from vercel.com/enterprise
+
+surfaces:
+  # ----------------------------
+  # TIER-0: CORE ENTERPRISE PLATFORM SURFACES
+  # ----------------------------
+
+  - id: T0-CONFORMANCE
+    tier: 0
+    label: "Conformance"
+    vercel_surface: "Unified environment for accelerated collaboration, streamlined workflows, and exceptional code quality"
+    canonical_expectation: "Policy-as-code enforcement + quality gates in CI/CD"
+    persona: "Platform Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-SECURE-COMPUTE
+    tier: 0
+    label: "Secure Compute"
+    vercel_surface: "Internal APIs and databases secure from public internet. Builds and runtime traffic through dedicated IP addresses"
+    canonical_expectation: "Private connectivity + dedicated egress IPs + VPC peering"
+    persona: "Security Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-ROLLING-RELEASE
+    tier: 0
+    label: "Rolling Release"
+    vercel_surface: "Ship to a fraction of users and monitor performance before completing rollout"
+    canonical_expectation: "Canary deployments + percentage-based rollout + auto-halt on regression"
+    persona: "DevOps Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-UPTIME-SLA
+    tier: 0
+    label: "99.99% Uptime SLA"
+    vercel_surface: "99.99% Uptime SLA guarantee"
+    canonical_expectation: "SLA documentation + uptime monitoring + error budget tracking"
+    persona: "SRE / Platform Reliability"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-FIREWALL-DDOS
+    tier: 0
+    label: "Vercel Firewall (DDoS Protection)"
+    vercel_surface: "Integrated DDoS protection and dedicated support"
+    canonical_expectation: "WAF rules + DDoS mitigation + rate limiting"
+    persona: "Security Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-SOC2-TYPE2
+    tier: 0
+    label: "SOC 2 Type 2 Compliance"
+    vercel_surface: "SOC 2 Type 2 certified"
+    canonical_expectation: "SOC 2 compliance + audit artifacts + control evidence"
+    persona: "Compliance / Security"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-RBAC-SSO
+    tier: 0
+    label: "RBAC + SSO"
+    vercel_surface: "Protect production, ensure correct access levels, collaborate securely with RBAC and SSO"
+    canonical_expectation: "Role-based access control + SAML/OIDC SSO + SCIM provisioning"
+    persona: "Security Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-GDPR-COMPLIANT
+    tier: 0
+    label: "GDPR Compliance"
+    vercel_surface: "GDPR Compliant"
+    canonical_expectation: "GDPR compliance + data residency controls + privacy policies"
+    persona: "Compliance / Legal"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-OBSERVABILITY
+    tier: 0
+    label: "Observability by Default"
+    vercel_surface: "Visualize usage, traffic, and more with built-in monitoring, audit, and runtime logs"
+    canonical_expectation: "Metrics + traces + logs + audit trail (OpenTelemetry export)"
+    persona: "SRE / DevOps"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-SUPPORT-24-7
+    tier: 0
+    label: "24/7 Enterprise Support"
+    vercel_surface: "24/7 support, 99.99% uptime SLA, and end-to-end monitoring"
+    canonical_expectation: "24/7 support SLA + incident escalation + dedicated support channel"
+    persona: "Operations"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  # ----------------------------
+  # TIER-0: COLLABORATION & WORKFLOW
+  # ----------------------------
+
+  - id: T0-COLLABORATION
+    tier: 0
+    label: "Collaboration (Faster Iteration)"
+    vercel_surface: "Faster iteration. More innovation."
+    canonical_expectation: "Preview deployments + comments + team workflows"
+    persona: "Development Teams"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-PREVIEWS
+    tier: 0
+    label: "Preview Deployments"
+    vercel_surface: "Automatic preview deployments for every branch/PR"
+    canonical_expectation: "Ephemeral preview URLs per commit/PR"
+    persona: "Developers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  # ----------------------------
+  # TIER-0: PERFORMANCE & SCALABILITY
+  # ----------------------------
+
+  - id: T0-INFINITE-SCALABILITY
+    tier: 0
+    label: "Infinite Scalability, Zero Config"
+    vercel_surface: "Traffic spikes should be exciting, not scary. Infinite scalability, zero config"
+    canonical_expectation: "Auto-scaling + serverless compute + edge distribution"
+    persona: "Platform Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-REALTIME-INSIGHTS
+    tier: 0
+    label: "Real-time Insights and Controls"
+    vercel_surface: "Real-time insights and controls"
+    canonical_expectation: "Live metrics dashboards + runtime controls"
+    persona: "SRE / DevOps"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T0-EFFICIENT-COMPUTE
+    tier: 0
+    label: "Efficient Compute (High-Demand Workloads)"
+    vercel_surface: "Efficient compute for high-demand workloads"
+    canonical_expectation: "Optimized serverless functions + edge compute + caching"
+    persona: "Performance Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  # ----------------------------
+  # TIER-1: ADVANCED ENTERPRISE FEATURES
+  # ----------------------------
+
+  - id: T1-NEXTJS-TEAM-SUPPORT
+    tier: 1
+    label: "Work with the Next.js Team"
+    vercel_surface: "Learn best practices for scaling Next.js from the team that built it"
+    canonical_expectation: "Direct access to Next.js core team + architecture reviews"
+    persona: "Engineering Leadership"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T1-MIGRATION-SUPPORT
+    tier: 1
+    label: "Migration Support (to Next.js)"
+    vercel_surface: "Migrate your frontend stack with confidence, including code audits and partnerships"
+    canonical_expectation: "Migration planning + code audits + vendor partnerships"
+    persona: "Engineering Leadership"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T1-AI-SDK
+    tier: 1
+    label: "AI SDK & Tooling"
+    vercel_surface: "AI SDK, Workflow DevKit, Flags SDK, Chat SDK, Streamdown AI"
+    canonical_expectation: "First-class AI tooling + feature flags + workflow automation"
+    persona: "AI/ML Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+  - id: T1-FLUID-COMPUTE
+    tier: 1
+    label: "Fluid Compute"
+    vercel_surface: "Advanced compute orchestration"
+    canonical_expectation: "Dynamic resource allocation + cost optimization"
+    persona: "Platform Engineers"
+    source_citations:
+      - "vercel.com/enterprise"
+
+notes:
+  - "This catalog is based on the actual Vercel Enterprise page (vercel.com/enterprise)"
+  - "Tier-0 surfaces are core platform capabilities required for enterprise delivery"
+  - "Tier-1 surfaces are advanced/premium features beyond baseline enterprise"
+  - "All surfaces are platform/service capabilities, not framework features"

@@ -1,7 +1,7 @@
 # Gemini Agent Operating Contract (ipai_workspace / odoo)
 
-**Workspace:** `ipai_workspace`  
-**Repo:** `jgtolentino/odoo`  
+**Workspace:** `ipai_workspace`
+**Repo:** `jgtolentino/odoo`
 **Rule-0:** Never leave the user hanging. Every response must end with a **Verification** section that proves outcomes (or marks them UNVERIFIED with why).
 
 ---
@@ -10,25 +10,25 @@
 
 Every reply MUST include these sections, in this exact order:
 
-1) **Outcome**  
+1) **Outcome**
    - One sentence: what is true *right now*.
 
-2) **What Changed** (only if changes were made)  
+2) **What Changed** (only if changes were made)
    - Bullet list of files/paths touched + short purpose.
 
-3) **Proof / Evidence** (MANDATORY)  
+3) **Proof / Evidence** (MANDATORY)
    - Provide **verifiable artifacts**: command output excerpts, file hashes, workflow/run links, or log lines.
    - If you cannot access the environment to prove it, write: **UNVERIFIED** and what would prove it.
 
-4) **Verification Commands** (MANDATORY)  
+4) **Verification Commands** (MANDATORY)
    - Copy/paste commands to validate the outcome (local + prod).
 
-5) **Next Action (Auto)**  
+5) **Next Action (Auto)**
    - The single next step the agent will do **immediately** (not “wait”, not “let me know”).
 
-**Banned phrases:**  
-- “I successfully pushed…” (unless you include proof: commit SHA on origin + `git ls-remote` evidence)  
-- “Waiting for output”, “should work”, “probably”, “let me know if…”  
+**Banned phrases:**
+- “I successfully pushed…” (unless you include proof: commit SHA on origin + `git ls-remote` evidence)
+- “Waiting for output”, “should work”, “probably”, “let me know if…”
 - Any open-ended ending without closure.
 
 ---

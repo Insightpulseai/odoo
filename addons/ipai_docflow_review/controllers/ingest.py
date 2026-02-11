@@ -1,9 +1,11 @@
-from odoo import http
-from odoo.http import request
 import base64
 import hashlib
 import json
 import mimetypes
+
+from odoo.http import request
+
+from odoo import http
 
 
 def _sha256_bytes(b: bytes) -> str:
@@ -11,11 +13,15 @@ def _sha256_bytes(b: bytes) -> str:
 
 
 class DocflowIngestController(http.Controller):
-    @http.route("/docflow/ingest", type="json", auth="none", csrf=False, methods=["POST"])
+    @http.route(
+        "/docflow/ingest", type="json", auth="none", csrf=False, methods=["POST"]
+    )
     def ingest(self, **payload):
         token = request.httprequest.headers.get("X-DocFlow-Token", "")
         expected = (
-            request.env["ir.config_parameter"].sudo().get_param("docflow.ingest_token", default="")
+            request.env["ir.config_parameter"]
+            .sudo()
+            .get_param("docflow.ingest_token", default="")
         )
         if not expected or token != expected:
             return {"ok": False, "error": "unauthorized"}
@@ -70,28 +76,38 @@ class DocflowIngestController(http.Controller):
             "doc_type": doc_type,
             "confidence": confidence,
             "ocr_text": payload.get("ocr_text") or None,
-            "llm_classification_json": json.dumps(classification_json, ensure_ascii=False)
-            if isinstance(classification_json, dict)
-            else classification_json,
-            "llm_extraction_json": json.dumps(extraction_json, ensure_ascii=False)
-            if isinstance(extraction_json, dict)
-            else extraction_json,
-            "validation_json": json.dumps(validation_json, ensure_ascii=False)
-            if isinstance(validation_json, dict)
-            else validation_json,
-            "confidence_breakdown_json": json.dumps(confidence_breakdown_json, ensure_ascii=False)
-            if isinstance(confidence_breakdown_json, dict)
-            else confidence_breakdown_json,
+            "llm_classification_json": (
+                json.dumps(classification_json, ensure_ascii=False)
+                if isinstance(classification_json, dict)
+                else classification_json
+            ),
+            "llm_extraction_json": (
+                json.dumps(extraction_json, ensure_ascii=False)
+                if isinstance(extraction_json, dict)
+                else extraction_json
+            ),
+            "validation_json": (
+                json.dumps(validation_json, ensure_ascii=False)
+                if isinstance(validation_json, dict)
+                else validation_json
+            ),
+            "confidence_breakdown_json": (
+                json.dumps(confidence_breakdown_json, ensure_ascii=False)
+                if isinstance(confidence_breakdown_json, dict)
+                else confidence_breakdown_json
+            ),
             "attachment_id": attachment.id,
-            "vendor_match_partner_id": int(vendor_match_partner_id)
-            if vendor_match_partner_id
-            else False,
+            "vendor_match_partner_id": (
+                int(vendor_match_partner_id) if vendor_match_partner_id else False
+            ),
             "vendor_match_method": vendor_match_method,
             "vendor_match_score": float(vendor_match_score or 0.0),
             "dupe_risk": float(dupe_risk or 0.0),
-            "dupe_hits_json": json.dumps(dupe_hits_json, ensure_ascii=False)
-            if isinstance(dupe_hits_json, (list, dict))
-            else dupe_hits_json,
+            "dupe_hits_json": (
+                json.dumps(dupe_hits_json, ensure_ascii=False)
+                if isinstance(dupe_hits_json, (list, dict))
+                else dupe_hits_json
+            ),
         }
 
         if existing:
@@ -108,20 +124,27 @@ class DocflowIngestController(http.Controller):
 
         # DocFlow v2: Bank Statement
         if doc.doc_type == "bank_statement":
-            payload = json.loads(doc.llm_extraction_json or "{}") if doc.llm_extraction_json else {}
+            payload = (
+                json.loads(doc.llm_extraction_json or "{}")
+                if doc.llm_extraction_json
+                else {}
+            )
             # expected schema: see prompts section
             stmt = (
                 request.env["docflow.bank.statement"]
                 .sudo()
                 .create(
                     {
-                        "name": payload.get("statement_name") or f"Statement {doc.document_id}",
+                        "name": payload.get("statement_name")
+                        or f"Statement {doc.document_id}",
                         "document_id": doc.id,
                         "journal_id": int(
                             payload.get("journal_id") or 0
                         ),  # daemon provides journal_id OR you map by IBAN/account
                         "currency_id": request.env["res.currency"]
-                        .search([("name", "=", payload.get("currency", "PHP"))], limit=1)
+                        .search(
+                            [("name", "=", payload.get("currency", "PHP"))], limit=1
+                        )
                         .id,
                         "date_from": payload.get("date_from"),
                         "date_to": payload.get("date_to"),
@@ -159,7 +182,8 @@ class DocflowIngestController(http.Controller):
 
         # Hardening: Activity Automation for High Risk
         if doc.state == "needs_review" and (
-            doc.dupe_risk >= 0.85 or (doc.vendor_match_score < 0.6 and doc.doc_type == "invoice")
+            doc.dupe_risk >= 0.85
+            or (doc.vendor_match_score < 0.6 and doc.doc_type == "invoice")
         ):
             # Try to find a suitable user (e.g., admin or current user)
             # In a real deployment, this might be configured via settings

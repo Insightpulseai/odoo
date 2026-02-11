@@ -1,9 +1,11 @@
-from . import docflow_document
-from . import docflow_lines
-from . import docflow_snapshot
-from . import dupe_tools
-from . import account_move
-from . import bank_statement
-from . import recon
-from . import sla
-from . import routing
+from . import (
+    account_move,
+    bank_statement,
+    docflow_document,
+    docflow_lines,
+    docflow_snapshot,
+    dupe_tools,
+    recon,
+    routing,
+    sla,
+)

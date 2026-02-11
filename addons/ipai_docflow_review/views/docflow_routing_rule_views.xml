@@ -12,10 +12,10 @@
         <field name="assign_user_id"/>
         <field name="assign_group_id"/>
         <filter string="Active" name="active" domain="[('active','=',True)]"/>
-        <group expand="0" string="Group By">
-          <filter string="Doc Type" context="{'group_by':'doc_type'}"/>
-          <filter string="Company" context="{'group_by':'company_id'}"/>
-          <filter string="Journal" context="{'group_by':'journal_id'}"/>
+        <group>
+          <filter string="Doc Type" name="group_by_doc_type" context="{'group_by':'doc_type'}"/>
+          <filter string="Company" name="group_by_company" context="{'group_by':'company_id'}"/>
+          <filter string="Journal" name="group_by_journal" context="{'group_by':'journal_id'}"/>
         </group>
       </search>
     </field>
@@ -86,7 +86,7 @@
           </group>
 
           <group string="Notes">
-            <label string="Rules match by AND across fields. vendor_name_contains/bank_account_contains are substring checks."/>
+            <div class="o_form_label">Rules match by AND across fields. vendor_name_contains/bank_account_contains are substring checks.</div>
           </group>
         </sheet>
       </form>

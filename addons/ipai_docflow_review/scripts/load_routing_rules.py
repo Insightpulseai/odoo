@@ -92,7 +92,9 @@ def load_rules(env, path):
 
         company = _find_company(env, r.get("company"))
         currency = _find_currency(env, r.get("currency"))
-        journal = _find_journal(env, r.get("journal"), company_id=company.id if company else None)
+        journal = _find_journal(
+            env, r.get("journal"), company_id=company.id if company else None
+        )
         user = _find_user(env, r.get("assign_user"))
         group = _find_group(env, r.get("assign_group"))
 

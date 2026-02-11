@@ -1,5 +1,6 @@
-from odoo import fields, models, api, _
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 
 class DocflowBankStatement(models.Model):
@@ -10,7 +11,9 @@ class DocflowBankStatement(models.Model):
     name = fields.Char(required=True)
     document_id = fields.Many2one("docflow.document", required=True, ondelete="cascade")
 
-    journal_id = fields.Many2one("account.journal", domain=[("type", "=", "bank")], required=True)
+    journal_id = fields.Many2one(
+        "account.journal", domain=[("type", "=", "bank")], required=True
+    )
     currency_id = fields.Many2one("res.currency", required=True)
 
     date_from = fields.Date(required=True)
@@ -29,13 +32,19 @@ class DocflowBankStatementLine(models.Model):
     _description = "DocFlow Bank Statement Line"
     _order = "date asc, id asc"
 
-    statement_id = fields.Many2one("docflow.bank.statement", required=True, ondelete="cascade")
+    statement_id = fields.Many2one(
+        "docflow.bank.statement", required=True, ondelete="cascade"
+    )
 
     date = fields.Date(required=True)
     amount = fields.Monetary(currency_field="currency_id", required=True)
-    currency_id = fields.Many2one(related="statement_id.currency_id", store=True, readonly=True)
+    currency_id = fields.Many2one(
+        related="statement_id.currency_id", store=True, readonly=True
+    )
 
-    direction = fields.Selection([("credit", "Credit"), ("debit", "Debit")], required=True)
+    direction = fields.Selection(
+        [("credit", "Credit"), ("debit", "Debit")], required=True
+    )
     reference = fields.Char()
     memo = fields.Char()
     counterparty = fields.Char()

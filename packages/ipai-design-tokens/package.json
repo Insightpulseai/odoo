@@ -1,6 +1,6 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive, Tableau (Odoo, Superset, Next.js, Vite)",
@@ -51,7 +51,13 @@
       "import": "./src/react/AIChatWidget.tsx",
       "types": "./src/react/AIChatWidget.tsx"
     },
-    "./insightpulse-ai.css": "./insightpulse-ai.css"
+    "./insightpulse-ai.css": "./insightpulse-ai.css",
+    "./ipai-brand/tokens.json": "./tokens.json",
+    "./ipai-brand/css": "./export/css-vars.css",
+    "./ipai-brand": {
+      "import": "./src/ipai-brand.ts",
+      "types": "./src/ipai-brand.ts"
+    }
   },
   "scripts": {
     "dev": "vite",

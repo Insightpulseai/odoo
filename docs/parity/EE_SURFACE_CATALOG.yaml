@@ -1,141 +1,257 @@
-version: 0.1
-odoo_major: 19
-catalog:
-  - id: EE-SURF-001
-    name: Hosting & Lifecycle (Odoo.sh-class)
-    tier: 0
-    vendor_surface:
-      description: "Official hosted platform with web shell, dependency handling, CI, SSH."
-      source: "Odoo 19 docs: Odoo.sh"
-    acceptance:
-      - id: EE-SURF-001-A1
-        name: "Has CI pipeline that builds Odoo + addons deterministically"
-        probe: "ci_build_pipeline"
-      - id: EE-SURF-001-A2
-        name: "Supports environment separation (dev/stage/prod) with promotion workflow"
-        probe: "env_separation"
-      - id: EE-SURF-001-A3
-        name: "Provides remote shell/SSH-equivalent access for diagnostics"
-        probe: "remote_shell_access"
-    strategy:
-      type: external_platform
-      components:
-        - "GitHub Actions CI"
-        - "Containerized Odoo deploys on DigitalOcean"
-        - "Artifacts + logs shipped to observability store (e.g., Supabase/Log drains)"
-    evidence:
-      - "CI logs + build artifact checksum"
-      - "Promotion run logs (stage->prod)"
-      - "Remote exec transcript (sanitized)"
-    citations:
-      - "turn22view0"
+version: 1
+odoo_version: "19"
+definition:
+  # IMPORTANT: We assume all EE "apps/modules" have OCA-equivalent coverage
+  # and therefore do NOT track them as parity goals. We track EE-only *service/platform* surfaces.
 
-  - id: EE-SURF-002
-    name: Upgrades Service (Odoo upgrade platform)
-    tier: 0
-    vendor_surface:
-      description: "Upgrade workflow integrated with Odoo.sh and upgrade modes."
-      source: "Odoo 19 docs: Upgrade"
-    acceptance:
-      - id: EE-SURF-002-A1
-        name: "Automated upgrade rehearsal on staging from prod snapshot"
-        probe: "upgrade_rehearsal"
-      - id: EE-SURF-002-A2
-        name: "Upgrade produces structured report + diff of breaking changes"
-        probe: "upgrade_report"
-      - id: EE-SURF-002-A3
-        name: "Rollback plan exists and is testable"
-        probe: "upgrade_rollback_plan"
-    strategy:
-      type: pipeline
-      components:
-        - "Snapshot/restore scripts"
-        - "Automated migration test suite"
-        - "Schema + module state validation"
-    evidence:
-      - "Upgrade rehearsal logs"
-      - "Migration report artifact"
-      - "Rollback drill logs"
-    citations:
-      - "turn21view0"
+surfaces:
+  # ----------------------------
+  # TIER-0: PLATFORM / SERVICE (Odoo.sh Features)
+  # ----------------------------
 
-  - id: EE-SURF-003
-    name: Support (Standard & Extended)
+  # FOR DEVELOPERS
+  - id: T0-DEV-GITHUB-INTEGRATION
     tier: 0
-    vendor_surface:
-      description: "Support levels with ticketing and response scope."
-      source: "Odoo 19 docs: Standard and extended support"
-    acceptance:
-      - id: EE-SURF-003-A1
-        name: "Ticket workflow exists (intake->triage->resolution->postmortem)"
-        probe: "support_workflow"
-      - id: EE-SURF-003-A2
-        name: "Runbooks exist for top incidents (db down, mail fail, upgrade fail)"
-        probe: "runbooks_present"
-      - id: EE-SURF-003-A3
-        name: "SLA targets declared and monitored"
-        probe: "sla_monitoring"
-    strategy:
-      type: process_plus_tooling
-      components:
-        - "GitHub Issues/Projects or equivalent queue"
-        - "Automated health checks + alerts"
-        - "Evidence capture under docs/evidence/"
-    evidence:
-      - "Support queue snapshot"
-      - "Runbook files list"
-      - "Alert test evidence"
-    citations:
-      - "turn20view0"
+    label: "GitHub Integration"
+    ee_surface: "Every commit, pull request, merge or fork is tested and deployed automatically"
+    canonical_expectation: "CI/CD pipeline with GitHub webhooks + automated deploy per commit"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
 
-  - id: EE-SURF-004
-    name: AI Agents Enablement
+  - id: T0-DEV-CLEAR-LOGS
+    tier: 0
+    label: "Clear Logs (Browser + Real-time)"
+    ee_surface: "Detailed and filtered logs available in browser, in real time"
+    canonical_expectation: "Log aggregation + filtering UI accessible via web"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-DEV-WEB-SHELL
+    tier: 0
+    label: "Web Shell Access"
+    ee_surface: "Shell access to production server or container in one click"
+    canonical_expectation: "Secure web-based shell (kubectl exec / SSH via web UI)"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-DEV-MODULE-DEPS
+    tier: 0
+    label: "Module Dependencies Management"
+    ee_surface: "Manage dependencies with third party modules; update when you want"
+    canonical_expectation: "Git submodules + requirements.txt + deterministic addon resolution"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-DEV-CI-RUNBOT
+    tier: 0
+    label: "Continuous Integration (Runbot)"
+    ee_surface: "Dedicated runbot for your project; dashboard of all tests"
+    canonical_expectation: "CI dashboard showing test results per commit/branch"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-DEV-SSH-ACCESS
+    tier: 0
+    label: "SSH Access"
+    ee_surface: "Register public key and connect to any container in a few clicks"
+    canonical_expectation: "SSH key management + container access via CLI/web"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-DEV-MAIL-CATCHER
+    tier: 0
+    label: "Mail Catcher (Dev/Staging)"
+    ee_surface: "Mails deactivated on staging & dev; mail catcher to read them"
+    canonical_expectation: "SMTP interceptor for non-prod envs (e.g., MailHog, Mailpit)"
+    persona: "Developers"
+    source_citations:
+      - "odoo.sh/features"
+
+  # FOR TESTERS
+  - id: T0-TEST-AUTOMATED-TESTS
+    tier: 0
+    label: "Automated Tests"
+    ee_surface: "Every commit goes through thousands of automated tests"
+    canonical_expectation: "Comprehensive test suite run in CI for every commit"
+    persona: "Testers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-TEST-STAGING-BRANCHES
+    tier: 0
+    label: "Staging Branches (Prod Data)"
+    ee_surface: "Staging branches built with production data, alive for weeks"
+    canonical_expectation: "Ephemeral staging envs with prod DB snapshots + TTL policy"
+    persona: "Testers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-TEST-TRACK-DEVELOPMENTS
+    tier: 0
+    label: "Track Developments (History + Logs)"
+    ee_surface: "Detailed history and logs on all dev branches in real time"
+    canonical_expectation: "Git history + build logs + deploy status per branch"
+    persona: "Testers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-TEST-MANUAL-TESTS
+    tier: 0
+    label: "Manual Tests (Instant Deploy)"
+    ee_surface: "Connect on any feature branch once pushed to GitHub"
+    canonical_expectation: "Preview URLs for every branch (Vercel-style)"
+    persona: "Testers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-TEST-COMMUNITY-MODULES
+    tier: 0
+    label: "Community Modules (Git Submodules)"
+    ee_surface: "Install community modules in a few clicks"
+    canonical_expectation: "OCA addon catalog + one-click install via Git submodules"
+    persona: "Testers"
+    source_citations:
+      - "odoo.sh/features"
+
+  # FOR PROJECT MANAGERS
+  - id: T0-PM-DRAG-DROP-STAGING
+    tier: 0
+    label: "Drag Dev → Staging"
+    ee_surface: "Drag development branches to staging to test with prod data"
+    canonical_expectation: "UI-driven branch promotion workflow (dev → staging)"
+    persona: "Project Managers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-PM-CONVENIENCE
+    tier: 0
+    label: "Convenience (3-Click Setup)"
+    ee_surface: "Kick off Odoo project with dev and hosting in three clicks"
+    canonical_expectation: "Onboarding wizard for instant project provisioning"
+    persona: "Project Managers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-PM-DRAG-DROP-PRODUCTION
+    tier: 0
+    label: "Drag Staging → Production"
+    ee_surface: "Deploy staging to production via drag & drop"
+    canonical_expectation: "UI-driven promotion workflow (staging → prod)"
+    persona: "Project Managers"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-PM-SHARE-BUILDS
+    tier: 0
+    label: "Share Test Builds (Public/Private URLs)"
+    ee_surface: "Share builds with customers (public or private URLs)"
+    canonical_expectation: "Shareable preview URLs with optional auth"
+    persona: "Project Managers"
+    source_citations:
+      - "odoo.sh/features"
+
+  # FOR SYSTEM ADMINISTRATORS
+  - id: T0-SYSADMIN-HIGH-AVAILABILITY
+    tier: 0
+    label: "High Availability (Managed Infra)"
+    ee_surface: "Manage all servers: monitoring, backups, emails, DNS, CI, staging, prod"
+    canonical_expectation: "Fully managed platform (no manual server ops)"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-INCREMENTAL-BACKUPS
+    tier: 0
+    label: "Incremental Backups (3 Data Centers)"
+    ee_surface: "Daily incremental backups on 3 different data centers"
+    canonical_expectation: "Automated backup with geo-redundancy + retention policy"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-MAIL-SERVERS
+    tier: 0
+    label: "Mail Servers (Auto Setup)"
+    ee_surface: "Production or development mail servers setup automatically"
+    canonical_expectation: "SMTP relay + SPF/DKIM config automated per env"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-PERFORMANCE
+    tier: 0
+    label: "Great Performance (Optimized Stack)"
+    ee_surface: "PostgreSQL and Odoo optimized for maximum performance"
+    canonical_expectation: "Tuned DB params + Odoo workers + caching layer"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-MONITORING
+    tier: 0
+    label: "Monitoring (Status + KPIs)"
+    ee_surface: "Status of all servers + KPIs on availability and performance"
+    canonical_expectation: "Prometheus/Grafana dashboards + uptime tracking"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-INSTANT-RECOVERY
+    tier: 0
+    label: "Instant Recovery (Backup Restore)"
+    ee_surface: "Recover any backup in a few clicks (prod or staging)"
+    canonical_expectation: "One-click restore from backup catalog"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-DNS
+    tier: 0
+    label: "DNS (Custom Domains + Subdomains)"
+    ee_surface: "Use your own domain for prod; DNS subdomains for dev branches"
+    canonical_expectation: "Wildcard DNS + custom domain mapping per env"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  - id: T0-SYSADMIN-SECURITY
+    tier: 0
+    label: "Top Notch Security"
+    ee_surface: "Visit odoo.com/page/security for details"
+    canonical_expectation: "SOC2/ISO compliance + security hardening baseline"
+    persona: "System Administrators"
+    source_citations:
+      - "odoo.sh/features"
+
+  # ----------------------------
+  # TIER-1: EE-ONLY PRODUCT SURFACES (Capabilities beyond Odoo.sh)
+  # ----------------------------
+  - id: T1-AI-AGENTS
     tier: 1
-    vendor_surface:
-      description: "AI Agents require AI app enabled and external AI API keys (OpenAI / Gemini)."
-      source: "Odoo 19 docs: AI agents"
-    acceptance:
-      - id: EE-SURF-004-A1
-        name: "AI app enabled and keys provisioned via secrets manager"
-        probe: "ai_keys_configured"
-      - id: EE-SURF-004-A2
-        name: "Policy guardrails exist (allowlist models, logging, rate limits)"
-        probe: "ai_guardrails"
-    strategy:
-      type: configuration_plus_glue
-      components:
-        - "Secrets vault (e.g., Supabase Vault)"
-        - "Audit logging"
-    evidence:
-      - "Key presence check (non-secret)"
-      - "AI guardrail config dump"
-    citations:
-      - "turn7view0"
+    label: "AI Agents (Productivity)"
+    ee_surface: "Odoo AI Agents capability surface"
+    canonical_expectation: "Policy + connectors + audit + inference in our stack"
+    persona: "All"
+    source_citations:
+      - "odoo.com/ai"
 
-  - id: EE-SURF-005
-    name: In-App Purchase (IAP) Credits Operations
+  - id: T1-IAP-PROCUREMENT
     tier: 1
-    vendor_surface:
-      description: "IAP credits are purchased/consumed by certain services; credits tied to DB."
-      source: "Odoo 19 docs: In-app purchase"
-    acceptance:
-      - id: EE-SURF-005-A1
-        name: "IAP usage visibility (credits remaining + consumption logs)"
-        probe: "iap_visibility"
-      - id: EE-SURF-005-A2
-        name: "Procurement & audit workflow exists"
-        probe: "iap_audit_workflow"
-    strategy:
-      type: ops_workflow
-      components:
-        - "Finance workflow integration"
-        - "Usage reporting"
-    evidence:
-      - "IAP metrics snapshot"
-      - "Audit trail artifacts"
-    citations:
-      - "turn11view0"
+    label: "IAP Procurement & Accounts"
+    ee_surface: "In-App Purchase accounts + credit-based services"
+    canonical_expectation: "Billing/credits + service enablement"
+    persona: "All"
+    source_citations:
+      - "odoo.com/iap"
 
 notes:
-  maintenance:
-    - "Catalog is living SSOT; extend Tier-2 after Tier-0 stability."
+  - "This catalog is based on the actual Odoo.sh feature page (odoo.sh/features)"
+  - "Tier-0 surfaces are organized by persona: Developers, Testers, PMs, SysAdmins"
+  - "All surfaces are platform/service capabilities, not app modules"
+  - "Tier-1 surfaces are EE-only product capabilities beyond Odoo.sh"

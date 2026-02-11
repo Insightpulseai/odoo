@@ -1,0 +1,264 @@
+# =============================================================================
+# Platform Kit Integration Manifest
+# =============================================================================
+# This manifest defines all external integrations and their health checks.
+# The nightly audit uses this to verify integration health.
+#
+# Canonical domain: insightpulseai.com
+# Mailgun subdomain: mg.insightpulseai.com (NOT root domain)
+# =============================================================================
+
+version: "1.0"
+
+# Global settings
+settings:
+  root_domain: insightpulseai.com
+  mailgun_domain: mg.insightpulseai.com
+
+  # Policy flags
+  policies:
+    enforce_com_domain: true  # Block any .net references
+    require_dmarc: true       # DMARC must exist
+    require_spf: true         # SPF must be valid
+
+# =============================================================================
+# Integration Definitions
+# =============================================================================
+
+integrations:
+  # ---------------------------------------------------------------------------
+  # Domain Policy (runs first, blocks if .net found)
+  # ---------------------------------------------------------------------------
+  policy:
+    name: Domain Policy Enforcement
+    description: Ensures no insightpulseai.net references exist
+    category: policy
+    priority: 0  # Runs first
+    check: scripts/audit/checks/check_domain_policy.py
+    blocking: true  # Fails CI if check fails
+    required_secrets: []
+
+  # ---------------------------------------------------------------------------
+  # Mailgun (transactional email via subdomain)
+  # ---------------------------------------------------------------------------
+  mailgun:
+    name: Mailgun Transactional Email
+    description: |
+      Transactional email via mg.insightpulseai.com subdomain.
+      Coexists with Zoho for inbox receiving on root domain.
+    category: email
+    priority: 10
+    check: scripts/audit/checks/check_mailgun.py
+    blocking: false  # DNS warnings don't block CI (yet)
+
+    required_secrets:
+      - MAILGUN_API_KEY
+      - MAILGUN_DOMAIN
+
+    expected_values:
+      MAILGUN_DOMAIN: mg.insightpulseai.com
+
+    dns_requirements:
+      # Root domain (insightpulseai.com)
+      root:
+        mx:
+          - mx.zoho.com
+          - mx2.zoho.com
+          - mx3.zoho.com
+        spf_includes:
+          - zohomail.com
+          - mailgun.org
+        dmarc: required
+
+      # Mailgun subdomain (mg.insightpulseai.com)
+      mailgun_subdomain:
+        spf_includes:
+          - mailgun.org
+        dkim: required
+
+    documentation:
+      setup: https://documentation.mailgun.com/en/latest/quickstart-sending.html
+      dns: https://documentation.mailgun.com/en/latest/user_manual.html#verifying-your-domain
+
+  # ---------------------------------------------------------------------------
+  # Zoho Mail (inbox receiving on root domain)
+  # ---------------------------------------------------------------------------
+  zoho:
+    name: Zoho Mail
+    description: |
+      Email receiving via Zoho Mail on root domain.
+      MX records point to Zoho, SPF includes zohomail.com.
+    category: email
+    priority: 11
+    check: scripts/audit/checks/check_zoho.py
+    blocking: false
+
+    required_secrets:
+      - ZOHO_CLIENT_ID
+      - ZOHO_CLIENT_SECRET
+
+    optional_secrets:
+      - ZOHO_REFRESH_TOKEN
+
+    dns_requirements:
+      root:
+        mx:
+          - mx.zoho.com
+          - mx2.zoho.com
+          - mx3.zoho.com
+        spf_includes:
+          - zohomail.com
+
+  # ---------------------------------------------------------------------------
+  # Supabase (database + auth + storage)
+  # ---------------------------------------------------------------------------
+  supabase:
+    name: Supabase
+    description: PostgreSQL database, auth, storage, and edge functions
+    category: infrastructure
+    priority: 1
+    check: scripts/audit/checks/check_supabase.py
+    blocking: true
+
+    required_secrets:
+      - SUPABASE_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+
+  # ---------------------------------------------------------------------------
+  # GitHub (CI/CD + webhooks)
+  # ---------------------------------------------------------------------------
+  github:
+    name: GitHub
+    description: Version control, CI/CD via Actions, webhooks
+    category: infrastructure
+    priority: 2
+    check: scripts/audit/checks/check_github.py
+    blocking: true
+
+    required_secrets:
+      - GITHUB_TOKEN
+
+    optional_secrets:
+      - GH_WEBHOOK_SECRET
+
+  # ---------------------------------------------------------------------------
+  # n8n (workflow automation)
+  # ---------------------------------------------------------------------------
+  n8n:
+    name: n8n Workflow Automation
+    description: Low-code workflow automation
+    category: automation
+    priority: 20
+    check: scripts/audit/checks/check_n8n.py
+    blocking: false
+
+    required_secrets:
+      - N8N_WEBHOOK_URL
+
+    optional_secrets:
+      - N8N_API_KEY
+
+  # ---------------------------------------------------------------------------
+  # Plane (project management)
+  # ---------------------------------------------------------------------------
+  plane:
+    name: Plane Project Management
+    description: Issue tracking and project management
+    category: operations
+    priority: 21
+    check: scripts/audit/checks/check_plane.py
+    blocking: false
+
+    required_secrets:
+      - PLANE_API_KEY
+      - PLANE_WORKSPACE_SLUG
+
+  # ---------------------------------------------------------------------------
+  # Slack (notifications)
+  # ---------------------------------------------------------------------------
+  slack:
+    name: Slack Notifications
+    description: Alerting and notifications
+    category: notifications
+    priority: 30
+    check: scripts/audit/checks/check_slack.py
+    blocking: false
+
+    required_secrets:
+      - SLACK_WEBHOOK_URL
+
+    optional_secrets:
+      - SLACK_BOT_TOKEN
+
+  # ---------------------------------------------------------------------------
+  # Odoo (ERP / System of Record)
+  # ---------------------------------------------------------------------------
+  odoo:
+    name: Odoo ERP
+    description: System of Record for PPM, CRM, and operations
+    category: operations
+    priority: 22
+    check: scripts/audit/checks/check_odoo.py
+    blocking: false
+
+    required_secrets:
+      - ODOO_URL
+      - ODOO_DB
+      - ODOO_USERNAME
+      - ODOO_API_KEY
+
+# =============================================================================
+# Check Categories
+# =============================================================================
+
+categories:
+  policy:
+    name: Policy Checks
+    description: Hard policy enforcement (blocks CI)
+    order: 0
+
+  infrastructure:
+    name: Infrastructure
+    description: Core infrastructure services
+    order: 1
+
+  email:
+    name: Email
+    description: Email sending and receiving
+    order: 2
+
+  automation:
+    name: Automation
+    description: Workflow and process automation
+    order: 3
+
+  operations:
+    name: Operations
+    description: Operational tools and systems
+    order: 4
+
+  notifications:
+    name: Notifications
+    description: Alerting and notification services
+    order: 5
+
+# =============================================================================
+# Audit Configuration
+# =============================================================================
+
+audit:
+  # How to handle missing checks
+  missing_check_behavior: warn  # 'fail', 'warn', 'skip'
+
+  # Timeout for each check (seconds)
+  check_timeout: 60
+
+  # Output format
+  output_format: json  # 'json', 'yaml', 'text'
+
+  # Where to store audit results
+  results_path: .audit/results
+
+  # Retention (days)
+  results_retention: 30
