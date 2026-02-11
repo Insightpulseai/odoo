@@ -21,7 +21,12 @@ export interface ChartTheme {
   bestFor: string[]
 }
 
-export const CHART_THEMES: Record<string, ChartTheme> = {
+// TypeScript types for theme IDs
+export type ChartThemeId = 'infographic' | 'vintage' | 'dark' | 'roma' | 'shine' | 'macarons'
+
+export const DEFAULT_CHART_THEME_ID: ChartThemeId = 'shine'
+
+export const CHART_THEMES = {
   infographic: {
     id: 'infographic',
     name: 'Infographic',
