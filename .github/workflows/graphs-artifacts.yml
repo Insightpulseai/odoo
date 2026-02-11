@@ -1,0 +1,106 @@
+name: Generate Graph Artifacts
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'docs/**'
+      - 'spec/**'
+      - 'tools/graphs/**'
+      - '.github/workflows/graphs-artifacts.yml'
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'addons/**'
+      - 'docs/**'
+      - 'spec/**'
+  workflow_dispatch:
+
+jobs:
+  build-graphs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          dot -V
+
+      - name: Generate graphs
+        run: |
+          set -euo pipefail
+          # Use IPAI filter for faster generation (full schema times out)
+          ./tools/graphs/generate_schema_erd.sh --filter ipai_ --no-open
+          ./tools/graphs/generate_knowledge_graph.sh --no-open
+
+      - name: Verify outputs
+        run: |
+          set -euo pipefail
+
+          # Check schema ERD files exist
+          test -s out/graphs/schema/index.html || { echo "ERD index.html missing"; exit 1; }
+          test -f out/graphs/schema/ODOO_ERD_ipai.svg || { echo "ERD SVG missing"; exit 1; }
+
+          # Check knowledge graph files exist
+          test -s out/graphs/knowledge/index.html || { echo "Knowledge index.html missing"; exit 1; }
+          test -f out/graphs/knowledge/knowledge_graph.svg || { echo "Knowledge SVG missing"; exit 1; }
+          test -f out/graphs/knowledge/knowledge_graph.dot || { echo "Knowledge DOT missing"; exit 1; }
+          test -f out/graphs/knowledge/knowledge_graph.png || { echo "Knowledge PNG missing"; exit 1; }
+
+          # Content sanity checks
+          echo "✅ All graph files generated successfully"
+
+          # Show file sizes
+          du -sh out/graphs/schema/*
+          du -sh out/graphs/knowledge/*
+
+      - name: Upload graph artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-graphs
+          path: out/graphs/
+          retention-days: 30
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Get file sizes
+            const schemaSize = fs.statSync('out/graphs/schema/ODOO_ERD_ipai.svg').size;
+            const knowledgeSize = fs.statSync('out/graphs/knowledge/knowledge_graph.svg').size;
+
+            const comment = `## 📊 Graph Generation Report
+
+            ✅ Graphs generated successfully!
+
+            **Schema ERD (IPAI modules):**
+            - Size: ${(schemaSize / 1024).toFixed(1)} KB
+            - File: \`ODOO_ERD_ipai.svg\`
+
+            **Knowledge Graph:**
+            - Size: ${(knowledgeSize / 1024).toFixed(1)} KB
+            - File: \`knowledge_graph.svg\`
+
+            📦 Download artifacts from the workflow run to view interactive HTML viewers.
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
