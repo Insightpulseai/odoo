@@ -25,7 +25,9 @@ class PpmIssue(models.Model):
         tracking=True,
     )
 
-    owner_user_id = fields.Many2one("res.users", default=lambda self: self.env.user, tracking=True)
+    owner_user_id = fields.Many2one(
+        "res.users", default=lambda self: self.env.user, tracking=True
+    )
     due_date = fields.Date()
     status = fields.Selection(
         [

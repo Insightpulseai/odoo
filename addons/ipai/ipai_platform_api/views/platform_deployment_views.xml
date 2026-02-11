@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Platform Deployment Tree View -->
+    <record id="view_platform_deployment_tree" model="ir.ui.view">
+        <field name="name">platform.deployment.tree</field>
+        <field name="model">platform.deployment</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="status=='success'" decoration-danger="status=='failed'">
+                <field name="name"/>
+                <field name="environment"/>
+                <field name="status" widget="badge"
+                       decoration-success="status=='success'"
+                       decoration-warning="status=='in_progress'"
+                       decoration-danger="status=='failed'"
+                       decoration-muted="status=='pending'"/>
+                <field name="commit_hash"/>
+                <field name="duration" widget="float_time"/>
+                <field name="started_at"/>
+                <field name="completed_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Platform Deployment Form View -->
+    <record id="view_platform_deployment_form" model="ir.ui.view">
+        <field name="name">platform.deployment.form</field>
+        <field name="model">platform.deployment</field>
+        <field name="arch" type="xml">
+            <form string="Deployment">
+                <header>
+                    <button name="action_trigger_deployment" string="Trigger Deployment"
+                            type="object" class="oe_highlight"
+                            invisible="status != 'pending'"/>
+                    <button name="action_mark_success" string="Mark Success"
+                            type="object"
+                            invisible="status != 'in_progress'"/>
+                    <button name="action_mark_failed" string="Mark Failed"
+                            type="object"
+                            invisible="status != 'in_progress'"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="pending,in_progress,success"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="branch"/>
+                            <field name="environment"/>
+                            <field name="commit_hash"/>
+                        </group>
+                        <group>
+                            <field name="started_at"/>
+                            <field name="completed_at"/>
+                            <field name="duration" widget="float_time"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Git Info">
+                            <group>
+                                <field name="commit_message" widget="text"/>
+                                <field name="commit_author"/>
+                            </group>
+                        </page>
+                        <page string="Build Log">
+                            <field name="build_log" widget="ace" options="{'mode': 'sh'}"/>
+                        </page>
+                        <page string="Error" invisible="not error_message">
+                            <field name="error_message" widget="text"/>
+                        </page>
+                        <page string="n8n">
+                            <group>
+                                <field name="n8n_execution_id"/>
+                                <field name="n8n_webhook_url"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Platform Deployment Action -->
+    <record id="action_platform_deployment" model="ir.actions.act_window">
+        <field name="name">Deployments</field>
+        <field name="res_model">platform.deployment</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_platform_deployments"
+              name="Deployments"
+              parent="menu_platform_root"
+              action="action_platform_deployment"
+              sequence="20"/>
+</odoo>

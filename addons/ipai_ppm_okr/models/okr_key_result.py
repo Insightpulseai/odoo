@@ -10,7 +10,9 @@ class OkrKeyResult(models.Model):
     objective_id = fields.Many2one(
         "okr.objective", required=True, ondelete="cascade", index=True, tracking=True
     )
-    owner_user_id = fields.Many2one("res.users", default=lambda self: self.env.user, tracking=True)
+    owner_user_id = fields.Many2one(
+        "res.users", default=lambda self: self.env.user, tracking=True
+    )
 
     title = fields.Char(required=True, tracking=True)
     metric_type = fields.Selection(
@@ -73,5 +75,8 @@ class OkrKeyResult(models.Model):
                 kr.progress = 0.0
             else:
                 kr.progress = max(
-                    0.0, min(100.0, ((kr.current_value - kr.baseline_value) / denom) * 100.0)
+                    0.0,
+                    min(
+                        100.0, ((kr.current_value - kr.baseline_value) / denom) * 100.0
+                    ),
                 )
