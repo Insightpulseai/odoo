@@ -4,11 +4,11 @@
 Build and operate a self-hosted enterprise workbench for Odoo CE (18 now, 19-ready) delivering enterprise-class workflow parity using **CE + OCA + IPAI**, integrated with **Superset BI**, **Supabase + n8n + MCP** automation, and a token-driven **IPAI design system**.
 
 ## 2. Non-Negotiable Constraints
-1) **No Odoo Enterprise modules**.  
-2) **No IAP dependencies** (no odoo.com upsells, no paid IAP services).  
-3) **OCA-first**: prefer upstream OCA modules; IPAI code only for glue/bridge or vertical workflows.  
-4) **Deterministic artifacts**: generated docs/seeds must be versioned and drift-gated in CI.  
-5) **CLI-first operations**: all setup, testing, and deployment must be fully automatable with scripts/CI.  
+1) **No Odoo Enterprise modules**.
+2) **No IAP dependencies** (no odoo.com upsells, no paid IAP services).
+3) **OCA-first**: prefer upstream OCA modules; IPAI code only for glue/bridge or vertical workflows.
+4) **Deterministic artifacts**: generated docs/seeds must be versioned and drift-gated in CI.
+5) **CLI-first operations**: all setup, testing, and deployment must be fully automatable with scripts/CI.
 6) **Docs canonical URL**: `https://jgtolentino.github.io/odoo/` is the authoritative docs base.
 
 ## 3. Core Principles
@@ -53,4 +53,3 @@ A release is "Done" when:
 - Superset connects to analytics sources and dashboards render without errors.
 - Supabase+n8n+MCP automation path functions end-to-end with audit trails.
 - Docs are updated and published under GitHub Pages base URL.
-

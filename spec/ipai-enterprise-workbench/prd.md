@@ -111,4 +111,3 @@ Deliver a production-ready "Enterprise Workbench" stack that installs, configure
 - M4: Supabase+n8n+MCP automation end-to-end
 - M5: Design system modules (tokens + adapters)
 - M6: Odoo 19 readiness (compat matrix + upgrade playbook + gates)
-
