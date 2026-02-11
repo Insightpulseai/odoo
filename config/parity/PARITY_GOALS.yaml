@@ -1,26 +1,30 @@
-version: 0.1
-scoring:
-  mode: goal_based
-  threshold: 0.80
-  pass_if:
-    tier0_pct_gte: 100
-  tiers:
-    0:
-      weight: 1.0
-      hard_gate: true
-    1:
-      weight: 0.5
-      hard_gate: false
-    2:
-      weight: 0.25
-      hard_gate: false
+version: 1
+odoo_version: "19"
+principles:
+  - "Assume EE apps/modules have OCA equivalents; do not score module presence."
+  - "Score only EE-only service/platform and capability surfaces."
+  - "All probes must be deterministic and repo-verifiable (no UI)."
 
-gates:
-  - name: "Tier-0 must be fully passing"
-    rule: "tier0_pass == true"
-  - name: "Overall score must meet threshold"
-    rule: "score >= scoring.threshold"
+tiers:
+  tier0:
+    name: "Platform/Service parity (Odoo.sh, Upgrades, Support)"
+    target_score: 1.0
+    required_surface_ids:
+      - T0-ODOOSH-CICD
+      - T0-ODOOSH-ENV-BRANCHES
+      - T0-ODOOSH-ACCESS-SHELL-SSH
+      - T0-ODOOSH-MONITORING
+      - T0-ODOOSH-BACKUPS
+      - T0-ODOOSH-LIFECYCLE-UPGRADES
+      - T0-EE-SUPPORT
+  tier1:
+    name: "EE capability surfaces (policy + infra + governance)"
+    target_score: 0.5
+    required_surface_ids:
+      - T1-AI-AGENTS
+      - T1-IAP-PROCUREMENT
 
 output:
-  json: "docs/evidence/latest/parity/parity_report.json"
-  markdown: "docs/evidence/latest/parity/parity_report.md"
+  evidence_dir: "oca-parity/evidence"
+  report_json: "oca-parity/evidence/parity_report.json"
+  report_md: "oca-parity/evidence/parity_report.md"
