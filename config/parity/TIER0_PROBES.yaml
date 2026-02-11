@@ -1,76 +1,95 @@
-version: 0.1
-strict_evidence: false
+version: 1
+tier: 0
+evidence_dir: "oca-parity/evidence"
+
 probes:
-  ci_build_pipeline:
-    workflow_globs:
-    - .github/workflows/*.yml
-    - .github/workflows/*.yaml
-    any_workflow_must_contain_regex:
-    - (?i)pnpm\s+install|yarn\s+install|npm\s+ci
-    - (?i)odoo-bin|odoo\s+bin|addons_path
-    - (?i)docker\s+build|docker-compose|buildx
-    preferred_workflow_name_regex:
-    - (?i)build|ci|test|deploy|health|smoke
-  env_separation:
-    any_file_must_exist:
-    - docs/architecture/PROD_RUNTIME_SNAPSHOT.md
-    - docs/architecture/runtime_identifiers.json
-    any_path_must_match_glob:
-    - scripts/*stage*
-    - scripts/*prod*
-    - scripts/**/*deploy*
-    - .github/workflows/*deploy*
-    any_file_must_contain_regex:
-    - (?i)odoo_stage|stage\.insightpulseai\.com|staging
-    - (?i)prod|production|erp\.insightpulseai\.com
-  remote_shell_access:
-    any_path_must_match_glob:
-    - scripts/**/ssh*.sh
-    - scripts/**/tunnel*.sh
-    - scripts/**/remote*.sh
-    any_file_must_contain_regex:
-    - (?i)ssh\s+.*@|ProxyJump|IdentityFile
-    - (?i)docker\s+exec|kubectl\s+exec
-  upgrade_rehearsal:
-    any_path_must_match_glob:
-    - scripts/**/*upgrade*
-    - scripts/**/*migration*
-    - docs/**/*upgrade*
-    - docs/**/*migration*
-    evidence_globs:
-    - docs/evidence/**/upgrade*/*
-    - docs/evidence/**/migration*/*
-  upgrade_report:
-    report_globs:
-    - docs/evidence/**/upgrade*/**/*.json
-    - docs/evidence/**/migration*/**/*.json
-    - docs/evidence/**/upgrade*/**/*.md
-    - docs/evidence/**/migration*/**/*.md
-  upgrade_rollback_plan:
-    any_path_must_match_glob:
-    - docs/**/*rollback*
-    - scripts/**/*rollback*
-    any_file_must_contain_regex:
-    - (?i)restore|snapshot|promote|rollback
-  support_workflow:
-    any_path_must_match_glob:
-    - docs/**/*runbook*
-    - docs/**/*support*
-    - docs/**/*incident*
-    - docs/**/*postmortem*
-    any_file_must_contain_regex:
-    - (?i)intake|triage|severity|sev|postmortem|rca
-  runbooks_present:
-    runbook_globs:
-    - docs/**/*RUNBOOK*.md
-    - docs/**/*runbook*.md
-    - docs/**/*incident*.md
-    min_count: 2
-  sla_monitoring:
-    any_path_must_match_glob:
-    - .github/workflows/*health*
-    - .github/workflows/*smoke*
-    - scripts/**/*health*
-    - scripts/**/*smoke*
-    any_file_must_contain_regex:
-    - (?i)curl\s+-sS|health|healthz|/api/.*health
+  - id: probe_ci_pipeline_exists
+    surface_id: T0-ODOOSH-CICD
+    kind: file_exists_any
+    params:
+      paths:
+        - ".github/workflows"
+        - ".gitlab-ci.yml"
+        - "azure-pipelines.yml"
+    pass_message: "CI pipeline definition found"
+    fail_message: "No CI pipeline definition found"
+
+  - id: probe_deploy_promotion_docs
+    surface_id: T0-ODOOSH-ENV-BRANCHES
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/DEPLOYMENT.md"
+        - "docs/ops/DEPLOYMENT.md"
+        - "README.md"
+      patterns:
+        - "staging"
+        - "production"
+        - "promotion"
+        - "rollback"
+    pass_message: "Deployment promotion/rollback documented"
+    fail_message: "No evidence of env promotion/rollback docs"
+
+  - id: probe_backup_script_or_runbook
+    surface_id: T0-ODOOSH-BACKUPS
+    kind: file_exists_any
+    params:
+      paths:
+        - "scripts/backup.sh"
+        - "scripts/odoo_backup.sh"
+        - "docs/ops/BACKUPS.md"
+        - "docs/architecture/backup"
+    pass_message: "Backup evidence present"
+    fail_message: "No backup script/runbook found"
+
+  - id: probe_healthcheck_endpoint_or_probe
+    surface_id: T0-ODOOSH-MONITORING
+    kind: file_contains_any
+    params:
+      files:
+        - "docker-compose.yml"
+        - "compose.yml"
+        - "k8s"
+        - "docs/ops/MONITORING.md"
+      patterns:
+        - "healthcheck"
+        - "/health"
+        - "liveness"
+        - "readiness"
+    pass_message: "Monitoring/healthcheck evidence found"
+    fail_message: "No healthcheck/monitoring evidence found"
+
+  - id: probe_upgrade_policy_doc
+    surface_id: T0-ODOOSH-LIFECYCLE-UPGRADES
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/ops/UPGRADES.md"
+        - "docs/UPGRADES.md"
+        - "docs/architecture/UPGRADE_POLICY.md"
+      patterns:
+        - "Odoo 19"
+        - "upgrade"
+        - "migration"
+        - "roll back"
+        - "downtime"
+    pass_message: "Upgrade policy evidence found"
+    fail_message: "No upgrade policy evidence found"
+
+  - id: probe_support_incident_process
+    surface_id: T0-EE-SUPPORT
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/ops/INCIDENTS.md"
+        - "docs/ops/RUNBOOK.md"
+        - "docs/ops/ONCALL.md"
+        - "README.md"
+      patterns:
+        - "incident"
+        - "SLA"
+        - "sev"
+        - "on-call"
+        - "runbook"
+    pass_message: "Support/incident process evidence found"
+    fail_message: "No support/incident evidence found"
