@@ -65,15 +65,16 @@
     },
     "superset": {
       "fqdn": "superset.insightpulseai.com",
-      "record_type": "CNAME",
-      "target": "superset-nlavf.ondigitalocean.app",
+      "record_type": "A",
+      "target": "178.128.112.214",
       "cloudflare_proxied": false,
-      "origin_port": null,
+      "origin_port": 8088,
       "tls_mode": "Full (strict)",
-      "runtime_host": "DO App Platform",
+      "runtime_host": "odoo-production (Docker: superset-prod)",
       "owner_system": "Apache Superset BI",
+      "database": "DO managed PostgreSQL: odoo-db-sgp1/superset",
       "health_check": "/health",
-      "status": "pending_verification"
+      "status": "active"
     }
   },
   "deprecated": {
