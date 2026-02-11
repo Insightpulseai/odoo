@@ -1,0 +1,344 @@
+schema_version: "1.0.0"
+taxonomy_id: "ui-ee-parity-minimum"
+scope:
+  product: "odoo"
+  target_version: "19.0"
+  edition: "community+oca+minimal_glue"
+  intent: "minimum UI surfaces required to feel enterprise-parity"
+definitions:
+  severities:
+    P0: "blocks core adoption; users immediately feel 'missing enterprise'"
+    P1: "high friction; frequent complaints; impacts key workflows"
+    P2: "nice-to-have; improves efficiency but not required for parity feel"
+  implementation_types:
+    CE: "core Odoo Community Edition"
+    OCA: "Odoo Community Association modules"
+    IPAI_GLUE: "minimal custom glue (views, wizards, small models) - avoid heavy ORM unless unavoidable"
+    EXTERNAL: "external service/UI embedded or integrated"
+  roles:
+    - id: "role.finance"
+      label: "Finance"
+    - id: "role.ops"
+      label: "Operations"
+    - id: "role.hr"
+      label: "HR"
+    - id: "role.sales"
+      label: "Sales"
+    - id: "role.pm"
+      label: "Project/Delivery"
+    - id: "role.admin"
+      label: "System Admin"
+    - id: "role.exec"
+      label: "Executive"
+surfaces:
+  - id: "ui.customization.studio_equivalent"
+    label: "Customization UI (Studio-equivalent)"
+    severity: "P0"
+    tier: "T1"
+    parity_goal: "end_users_can_configure_ui_without_code"
+    user_roles: ["role.admin", "role.ops", "role.pm"]
+    ux_minimum:
+      - "form_editor: reorder/hide/show fields"
+      - "list_editor: columns, sorting, optional fields"
+      - "kanban_editor: key fields + quick fields"
+      - "menu_action_editor: add menus, actions, reports"
+      - "conditional_rules: readonly/required/visible based on domain-like expressions"
+      - "defaults: per-company/per-group defaults"
+    acceptance_criteria:
+      - id: "AC-001"
+        statement: "Admin can change form layout and publish without server restart."
+        evidence:
+          - type: "screenshot"
+          - type: "config_export"
+      - id: "AC-002"
+        statement: "Conditional visibility works for at least: required/readonly/hidden."
+        evidence:
+          - type: "scenario_run"
+      - id: "AC-003"
+        statement: "Changes are tracked (who/when) and reversible."
+        evidence:
+          - type: "audit_log"
+          - type: "diff_export"
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use view inheritance + UI controls where available; avoid heavy custom ORM."
+      - type: "OCA"
+        notes: "Consider OCA UI/editor helpers if aligned with version 19."
+      - type: "IPAI_GLUE"
+        notes: "If missing: minimal 'view composer' layer storing overlays; apply via ir.ui.view inheritance."
+    parity_evidence_bundle:
+      required_artifacts:
+        [
+          "ui_walkthrough.md",
+          "before_after_views.json",
+          "audit_log_extract.json",
+        ]
+
+  - id: "ui.workflow.approvals_inbox"
+    label: "Workflow approvals + inbox + decision audit trail"
+    severity: "P0"
+    tier: "T1"
+    parity_goal: "configurable_approvals_are_first_class_ui"
+    user_roles: ["role.finance", "role.ops", "role.pm", "role.admin"]
+    ux_minimum:
+      - "approval_rules_ui: multi-step, threshold-based, role-based"
+      - "my_approvals_inbox: waiting_on_me, delegated, completed"
+      - "inline_decision_timeline: who/when/why"
+      - "escalation: reminders + reassignment"
+    acceptance_criteria:
+      - id: "AC-010"
+        statement: "Approvals can be configured per document type (e.g., expense, bill, PO) without code."
+        evidence: [{ type: "config_export" }]
+      - id: "AC-011"
+        statement: "Approver sees an inbox that lists pending approvals with filters and quick actions."
+        evidence: [{ type: "screenshot" }, { type: "scenario_run" }]
+      - id: "AC-012"
+        statement: "Every approval decision writes an immutable audit entry visible on the record."
+        evidence: [{ type: "audit_log" }]
+    implementation_candidates:
+      - type: "OCA"
+        notes: "Use OCA approval frameworks where available; ensure v19 compatibility."
+      - type: "IPAI_GLUE"
+        notes: "If needed: thin approval engine + UI, store decisions in a dedicated model with chatter integration."
+    parity_evidence_bundle:
+      required_artifacts:
+        [
+          "approval_rules.yaml",
+          "approval_flow_record.json",
+          "audit_log_extract.json",
+        ]
+
+  - id: "ui.documents.workspace_sharing"
+    label: "Document workspace + sharing + record linking"
+    severity: "P0"
+    tier: "T1"
+    parity_goal: "documents_are_first_class_and_shareable"
+    user_roles: ["role.ops", "role.finance", "role.pm", "role.admin"]
+    ux_minimum:
+      - "workspace: folders/tags/search/recent/trash"
+      - "record_linking: drag_drop_attachments + classification"
+      - "sharing: internal perms + external link/portal where applicable"
+      - "preview: pdf/image preview inline"
+    acceptance_criteria:
+      - id: "AC-020"
+        statement: "User can upload and link a document to a business record in < 10 seconds."
+        evidence: [{ type: "screen_recording" }]
+      - id: "AC-021"
+        statement: "Sharing respects access rights; unauthorized users cannot fetch the file."
+        evidence: [{ type: "security_test" }]
+      - id: "AC-022"
+        statement: "Search returns results across filename + tags + linked record metadata."
+        evidence: [{ type: "scenario_run" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use attachments + chatter; add minimal workspace UI if needed."
+      - type: "OCA"
+        notes: "Use DMS/document management modules where aligned."
+      - type: "EXTERNAL"
+        notes: "Optional: Supabase Storage + signed URLs + embedded manager; keep auth boundaries tight."
+    parity_evidence_bundle:
+      required_artifacts:
+        [
+          "doc_workspace_walkthrough.md",
+          "security_matrix.md",
+          "search_cases.json",
+        ]
+
+  - id: "ui.reporting.pivot_dashboards_export"
+    label: "Reporting UX: pivot/graph + dashboards + export + scheduling"
+    severity: "P1"
+    tier: "T1"
+    parity_goal: "decision_makers_have_modern_reporting_ui"
+    user_roles: ["role.exec", "role.finance", "role.ops", "role.admin"]
+    ux_minimum:
+      - "pivot_graph: interactive pivot + charts"
+      - "saved_views: favorites + share within roles"
+      - "dashboards: compose KPI + charts"
+      - "exports: csv/xlsx/pdf with consistent formatting"
+      - "schedules: email delivery scheduling UI"
+    acceptance_criteria:
+      - id: "AC-030"
+        statement: "User can save and re-open a pivot configuration with filters."
+        evidence: [{ type: "screenshot" }]
+      - id: "AC-031"
+        statement: "User can export pivot results to XLSX."
+        evidence: [{ type: "export_file" }]
+      - id: "AC-032"
+        statement: "Scheduled report runs reliably and logs outcomes."
+        evidence: [{ type: "job_log" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use native pivot/graph where available; ensure performance constraints are met."
+      - type: "OCA"
+        notes: "Use OCA reporting enhancements if available."
+      - type: "EXTERNAL"
+        notes: "Optional: Superset dashboards embedded; keep SSO + row-level security."
+    parity_evidence_bundle:
+      required_artifacts:
+        [
+          "dashboard_manifest.json",
+          "export_samples/",
+          "schedule_run_logs.jsonl",
+        ]
+
+  - id: "ui.spreadsheet.embedded"
+    label: "Spreadsheet-in-the-loop UI (Spreadsheet-equivalent)"
+    severity: "P1"
+    tier: "T2"
+    parity_goal: "users_operate_with_spreadsheets_grounded_in_erp_objects"
+    user_roles: ["role.finance", "role.ops", "role.exec"]
+    ux_minimum:
+      - "sheet_ui: create/edit/share spreadsheets"
+      - "object_refs: reference ERP objects + refresh"
+      - "permissions: share with roles/teams"
+    acceptance_criteria:
+      - id: "AC-040"
+        statement: "Spreadsheet can refresh data from ERP object queries without manual reimport."
+        evidence: [{ type: "scenario_run" }]
+    implementation_candidates:
+      - type: "EXTERNAL"
+        notes: "Embed a spreadsheet experience; ensure auth + RBAC and export trails."
+      - type: "IPAI_GLUE"
+        notes: "Minimal connectors + query templates + audit logging."
+    parity_evidence_bundle:
+      required_artifacts:
+        ["sheet_demo.md", "ref_query_examples.sql", "access_tests.md"]
+
+  - id: "ui.execution.chatter_activities"
+    label: "Chatter + activities (work execution layer)"
+    severity: "P1"
+    tier: "T1"
+    parity_goal: "records_have_collaboration_timeline_and_actionable_tasks"
+    user_roles:
+      ["role.finance", "role.ops", "role.sales", "role.pm", "role.admin"]
+    ux_minimum:
+      - "timeline: messages/notes/system_events/attachments"
+      - "activities: todo/call/email + due dates + reminders"
+      - "mentions_followers: @mentions + follow/unfollow notifications"
+    acceptance_criteria:
+      - id: "AC-050"
+        statement: "Activity reminders trigger notifications and are visible in a unified 'My Activities' UI."
+        evidence: [{ type: "screenshot" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Prefer native mail/activity; extend minimally."
+    parity_evidence_bundle:
+      required_artifacts: ["activity_flow.md", "notification_evidence.json"]
+
+  - id: "ui.nav.search_favorites_recents"
+    label: "Role-based navigation + global search + saved filters"
+    severity: "P1"
+    tier: "T1"
+    parity_goal: "users_find_anything_fast"
+    user_roles:
+      [
+        "role.finance",
+        "role.ops",
+        "role.sales",
+        "role.pm",
+        "role.admin",
+        "role.exec",
+      ]
+    ux_minimum:
+      - "global_search: records + docs"
+      - "saved_filters: favorites + shared filters"
+      - "recents: recently viewed items"
+      - "quick_switch: jump between apps/menus"
+    acceptance_criteria:
+      - id: "AC-060"
+        statement: "Global search finds record by name/reference and opens in <= 2 actions."
+        evidence: [{ type: "screen_recording" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use native search; add doc indexing if needed."
+      - type: "OCA"
+        notes: "Consider search UX enhancers only if stable."
+    parity_evidence_bundle:
+      required_artifacts: ["search_cases.json", "perf_notes.md"]
+
+  - id: "ui.security.admin_controls"
+    label: "Security UX (admin-grade RBAC + access explanations + audit viewer)"
+    severity: "P0"
+    tier: "T1"
+    parity_goal: "admins_manage_security_without_guesswork"
+    user_roles: ["role.admin", "role.finance"]
+    ux_minimum:
+      - "group_editor: groups, implied groups"
+      - "access_matrix: model access rights overview"
+      - "record_rule_visibility: show 'why access denied' safely"
+      - "audit_log_viewer: critical models"
+    acceptance_criteria:
+      - id: "AC-070"
+        statement: "Admin can determine why a user cannot see a record via UI-accessible explanation."
+        evidence: [{ type: "scenario_run" }]
+      - id: "AC-071"
+        statement: "Audit log viewer supports filtering by model, user, date range."
+        evidence: [{ type: "screenshot" }]
+    implementation_candidates:
+      - type: "OCA"
+        notes: "Audit log modules, security tooling."
+      - type: "IPAI_GLUE"
+        notes: "If missing: minimal 'access explain' utility and audit UI over ir.logging/audit tables."
+    parity_evidence_bundle:
+      required_artifacts: ["security_walkthrough.md", "audit_export.jsonl"]
+
+  - id: "ui.localization.period_close_tax_minimum"
+    label: "Localization & compliance UX: period close + tax config surfaces"
+    severity: "P0"
+    tier: "T1"
+    parity_goal: "finance_close_and_tax_controls_are_visible_and_operable"
+    user_roles: ["role.finance", "role.admin", "role.exec"]
+    ux_minimum:
+      - "period_controls: lock dates + reopen with permissions"
+      - "close_checklist: status panel + open items list"
+      - "tax_config: taxes/tags/fiscal positions"
+      - "withholding_support: if jurisdiction requires"
+    acceptance_criteria:
+      - id: "AC-080"
+        statement: "Finance can lock period and see what is still preventing close (open items panel)."
+        evidence: [{ type: "screenshot" }, { type: "scenario_run" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use accounting settings UI; extend with checklist overlay if needed."
+      - type: "OCA"
+        notes: "Use localization + compliance modules; avoid EE-only paths."
+      - type: "IPAI_GLUE"
+        notes: "Add a close checklist view that reads deterministic probes (open items, unposted entries, etc.)."
+    parity_evidence_bundle:
+      required_artifacts:
+        ["close_checklist_rules.yaml", "sample_period_close_run.json"]
+
+  - id: "ui.integrations.keys_webhooks_imports"
+    label: "Integration UX: API keys + webhooks + import wizard"
+    severity: "P1"
+    tier: "T2"
+    parity_goal: "integrations_are_self_service"
+    user_roles: ["role.admin", "role.ops"]
+    ux_minimum:
+      - "api_keys: create/revoke/rotate"
+      - "webhooks: manage endpoints + test"
+      - "imports: csv mapping + validation + retry"
+    acceptance_criteria:
+      - id: "AC-090"
+        statement: "Admin can create and revoke an API key and see last-used metadata."
+        evidence: [{ type: "screenshot" }]
+      - id: "AC-091"
+        statement: "Import wizard validates rows and produces a downloadable error file."
+        evidence: [{ type: "export_file" }]
+    implementation_candidates:
+      - type: "CE"
+        notes: "Use built-in import where possible; add retry UX if missing."
+      - type: "IPAI_GLUE"
+        notes: "Thin API key registry + webhook tester; enforce RBAC."
+    parity_evidence_bundle:
+      required_artifacts:
+        ["integration_walkthrough.md", "import_error_samples/"]
+scoring:
+  default_weights:
+    P0: 5
+    P1: 3
+    P2: 1
+  rollup:
+    by_severity: true
+    by_tier: true
+    by_role: true
