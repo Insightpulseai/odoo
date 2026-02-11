@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  transpilePackages: ['@ipai/echarts-themes', '@ipai/echarts-react'],
 }
 
 export default nextConfig
