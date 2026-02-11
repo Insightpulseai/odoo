@@ -1,0 +1,32 @@
+name: ipai-custom-modules-guard
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Optional: If you want robust YAML parsing, install PyYAML.
+      - name: Install deps (optional)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Validate ipai_* allowlist
+        env:
+          # Override if your repo uses a nonstandard addons dir
+          # IPAI_ADDONS_ROOT: "addons"
+          IPAI_ADDONS_ROOT: ""
+        run: |
+          python scripts/ci/validate_ipai_custom_modules.py
