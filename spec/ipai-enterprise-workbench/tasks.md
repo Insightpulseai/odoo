@@ -61,4 +61,3 @@
 - [ ] Replace docs base references to `https://docs.insightpulseai.com/erp` with `https://jgtolentino.github.io/odoo/`
 - [ ] Ensure README and docs index pages point to GitHub Pages canonical base
 - [ ] Add `DEPLOYMENT_STATE_CURRENT.md` update step into release process
-

@@ -518,7 +518,42 @@ $$;
 - [ ] All E2E tests passing
 - [ ] Spec bundle complete and reviewed
 
-## Odoo.sh-Equivalent Delivery Model (This Platform Doubles as Odoo.sh)
+## Odoo.sh-Equivalent Delivery Model
+
+The platform aims to provide an Odoo.sh-like experience, incorporating CI/CD, environment management, and operational guarantees.
+
+### Feature Parity Goals (by Persona)
+
+#### For Developers
+
+- **GitHub Integration**: Automated testing and deployment for every commit, PR, merge, or fork.
+- **Real-time Logs**: Filtered logs available directly in the browser.
+- **Web Shell**: One-click terminal access to production and build containers.
+- **Dependency Management**: Frictionless management of 3rd party modules via Git submodules.
+- **Continuous Integration**: Dedicated runbot/dashboard for all project tests.
+- **SSH Access**: Public key registration for direct container connection.
+- **Mail Catcher**: Isolated email testing in dev/staging environments.
+
+#### For Testers
+
+- **Automated Tests**: Battery of thousands of tests per commit.
+- **Staging Branches**: Production-data-backed environments for realistic testing.
+- **Manual Verification**: Instant deployment of feature branches for manual UAT.
+- **Community Module Sync**: Easy testing of OCA and community modules.
+
+#### For Project Managers
+
+- **Drag-and-Drop Deployment**: Visual promotion of branches (Dev → Staging → Production).
+- **Public/Private Test Builds**: Sharable URLs for customer feedback.
+- **Rapid Kickoff**: Three-click Odoo project initiation.
+
+#### For System Administrators
+
+- **Managed Operations**: Monitoring, backups, emails, DNS, and HA managed by the platform.
+- **Incremental Backups**: Daily backups across multiple data centers with instant recovery.
+- **Performance Optimization**: Tuned PostgreSQL and Odoo runtimes.
+- **High Availability**: Guaranteed uptime and monitoring KPIs.
+- **Odoo 19 Ready**: Architecture aligned with Odoo 19.0 developer standards (Python 3.12+, modern OWL patterns).
 
 ### Scope
 
