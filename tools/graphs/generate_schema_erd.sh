@@ -54,22 +54,31 @@ mkdir -p "$OUTPUT_DIR"
 
 echo "==> Generating Schema ERD..."
 
-# Run existing ERD generator
+# Run existing ERD generator (outputs to its own directory structure)
 if [[ -n "$FILTER" ]]; then
   echo "    Filter: $FILTER"
-  python3 "$SCRIPT" --format svg --output "$OUTPUT_DIR/erd_filtered.svg" --filter "$FILTER"
-  SVG_FILE="erd_filtered.svg"
+  python3 "$SCRIPT" --format svg --output-dir "$OUTPUT_DIR" --filter "$FILTER"
+  # Find the generated SVG file (e.g., ODOO_ERD_ipai.svg)
+  SVG_FILE=$(find "$OUTPUT_DIR" -name "ODOO_ERD_*.svg" -type f | head -1)
+  if [[ -z "$SVG_FILE" ]]; then
+    echo "ERROR: No SVG file found after generation"
+    exit 1
+  fi
+  SVG_FILE=$(basename "$SVG_FILE")
 else
-  echo "    Generating full schema (all tables)"
-  python3 "$SCRIPT" --format svg --output "$OUTPUT_DIR/erd_full.svg"
-  SVG_FILE="erd_full.svg"
+  echo "    Generating full schema (all tables) - this may take a while..."
+  echo "    TIP: Use --filter ipai_ for faster results"
+  python3 "$SCRIPT" --format svg --output-dir "$OUTPUT_DIR"
+  # Find the generated SVG file
+  SVG_FILE=$(find "$OUTPUT_DIR" -name "ODOO_ERD*.svg" -type f | head -1)
+  if [[ -z "$SVG_FILE" ]]; then
+    echo "ERROR: No SVG file found after generation"
+    exit 1
+  fi
+  SVG_FILE=$(basename "$SVG_FILE")
 fi
 
-# Check if SVG was generated
-if [[ ! -f "$OUTPUT_DIR/$SVG_FILE" ]]; then
-  echo "ERROR: SVG generation failed"
-  exit 1
-fi
+echo "    Generated: $SVG_FILE"
 
 echo "==> Generating HTML viewer..."
 
