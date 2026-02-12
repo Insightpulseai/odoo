@@ -1,8 +1,12 @@
 {
-  "name": "Odoo 19 CE Development",
-  "dockerComposeFile": "docker-compose.yml",
+  "name": "ipai-odoo (compose ssot)",
+  "dockerComposeFile": [
+    "../sandbox/dev/compose.yml"
+  ],
   "service": "odoo",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspaces/odoo",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
 
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {
@@ -30,24 +34,17 @@
     }
   },
 
-  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
-  "postStartCommand": "bash .devcontainer/scripts/post-start.sh",
+  "postCreateCommand": "python3 --version || true",
 
-  "forwardPorts": [8069, 8072, 5432],
+  "forwardPorts": [8069, 5432],
   "portsAttributes": {
     "8069": {
-      "label": "Odoo Core",
+      "label": "Odoo HTTP",
       "onAutoForward": "notify"
-    },
-    "8072": {
-      "label": "Odoo Longpolling",
-      "onAutoForward": "silent"
     },
     "5432": {
       "label": "PostgreSQL",
       "onAutoForward": "silent"
     }
-  },
-
-  "remoteUser": "odoo"
+  }
 }
