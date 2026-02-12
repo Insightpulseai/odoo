@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend BIR Filing Deadline Form View -->
+    <record id="view_bir_filing_deadline_form_plane" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.form.plane</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="inherit_id" ref="ipai_bir_tax_compliance.view_bir_filing_deadline_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Plane sync button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_sync_to_plane"
+                    type="object"
+                    string="Sync to Plane"
+                    class="btn-secondary"
+                    invisible="plane_sync_status == 'synced'"/>
+            </xpath>
+
+            <!-- Add Plane fields in a new notebook page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Plane Sync" name="plane_sync">
+                    <group>
+                        <group>
+                            <field name="plane_sync_status" readonly="1"/>
+                            <field name="plane_last_sync" readonly="1"/>
+                            <field name="plane_issue_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="plane_issue_url" widget="url" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Sync Error" invisible="plane_sync_status != 'error'">
+                        <field name="plane_sync_error" nolabel="1" readonly="1"/>
+                    </group>
+                    <group string="Configuration">
+                        <div class="text-muted">
+                            <p>Plane sync is configured via System Parameters:</p>
+                            <ul>
+                                <li>supabase.url</li>
+                                <li>supabase.service_role_key</li>
+                                <li>plane.workspace_slug</li>
+                                <li>plane.bir_project_id</li>
+                            </ul>
+                            <p>Deadlines are automatically synced to Plane on create/update.</p>
+                            <p>Plane issue updates trigger Odoo status changes via webhook.</p>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend BIR Filing Deadline List View -->
+    <record id="view_bir_filing_deadline_list_plane" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.list.plane</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="inherit_id" ref="ipai_bir_tax_compliance.view_bir_filing_deadline_list"/>
+        <field name="arch" type="xml">
+            <!-- Add Plane sync status column -->
+            <xpath expr="//field[@name='status']" position="after">
+                <field name="plane_sync_status" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend BIR Filing Deadline Search View -->
+    <record id="view_bir_filing_deadline_search_plane" model="ir.ui.view">
+        <field name="name">bir.filing.deadline.search.plane</field>
+        <field name="model">bir.filing.deadline</field>
+        <field name="inherit_id" ref="ipai_bir_tax_compliance.view_bir_filing_deadline_search"/>
+        <field name="arch" type="xml">
+            <!-- Add Plane sync filters -->
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="Synced to Plane" name="synced" domain="[('plane_sync_status', '=', 'synced')]"/>
+                <filter string="Not Synced" name="not_synced" domain="[('plane_sync_status', '=', 'not_synced')]"/>
+                <filter string="Sync Error" name="sync_error" domain="[('plane_sync_status', '=', 'error')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Plane Sync Status" name="group_plane_sync" context="{'group_by': 'plane_sync_status'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action for batch sync -->
+    <record id="action_batch_sync_to_plane" model="ir.actions.server">
+        <field name="name">Sync All to Plane</field>
+        <field name="model_id" ref="ipai_bir_tax_compliance.model_bir_filing_deadline"/>
+        <field name="binding_model_id" ref="ipai_bir_tax_compliance.model_bir_filing_deadline"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = records.action_sync_to_plane()
+        </field>
+    </record>
+</odoo>
