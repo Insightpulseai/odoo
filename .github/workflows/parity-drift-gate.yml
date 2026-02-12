@@ -1,0 +1,130 @@
+name: Parity Drift Gate
+
+# Validates that parity matrix artifacts are deterministically generated
+# and detect unauthorized manual edits or drift from canonical source.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'artifacts/parity/**'
+      - 'catalog/equivalence_matrix*.csv'
+      - 'scripts/parity/generate_ee_parity_matrix.py'
+      - 'scripts/parity/validate_parity_matrix.py'
+      - '.github/workflows/parity-drift-gate.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: parity-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift-detection:
+    name: Detect Parity Matrix Drift
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comparison
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Check for committed parity matrix
+        id: check-matrix
+        run: |
+          if [ -f "artifacts/parity/parity_matrix.json" ]; then
+            echo "matrix_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "matrix_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run drift validation
+        if: steps.check-matrix.outputs.matrix_exists == 'true'
+        id: validate
+        run: |
+          python3 scripts/parity/validate_parity_matrix.py --verbose
+        continue-on-error: true
+
+      - name: Upload drift report
+        if: steps.validate.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-drift-report-${{ github.run_number }}
+          path: artifacts/parity/drift_report.json
+          retention-days: 30
+
+      - name: Comment PR with drift details
+        if: steps.validate.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const driftReport = JSON.parse(fs.readFileSync('artifacts/parity/drift_report.json', 'utf8'));
+
+            const comment = `## ❌ Parity Matrix Drift Detected
+
+            The committed parity matrix differs from freshly generated version.
+            This indicates unauthorized manual edits or non-deterministic generation.
+
+            ### Diff Details
+
+            \`\`\`json
+            ${JSON.stringify(driftReport, null, 2)}
+            \`\`\`
+
+            ### Actions Required
+
+            1. Review git diff for parity matrix changes
+            2. Regenerate with: \`python scripts/parity/generate_ee_parity_matrix.py --deterministic --json\`
+            3. Commit regenerated artifacts
+
+            ### Workflow
+
+            - **Workflow Run**: ${{ github.run_id }}
+            - **Artifact**: [parity-drift-report-${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            See [Parity Drift Gate Documentation](docs/governance/PARITY_GATES.md) for details.
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail if drift detected
+        if: steps.validate.outcome == 'failure'
+        run: |
+          echo "::error::Parity matrix drift detected. See PR comment for details."
+          exit 1
+
+      - name: Success summary
+        if: steps.validate.outcome == 'success'
+        run: |
+          echo "## ✅ No Parity Matrix Drift" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Committed parity matrix matches freshly generated version." >> $GITHUB_STEP_SUMMARY
+          echo "Deterministic output policy enforced successfully." >> $GITHUB_STEP_SUMMARY
+
+      - name: Skip summary
+        if: steps.check-matrix.outputs.matrix_exists != 'true'
+        run: |
+          echo "## ℹ️  No Parity Matrix Found" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No committed parity matrix found at artifacts/parity/parity_matrix.json" >> $GITHUB_STEP_SUMMARY
+          echo "Skipping drift validation." >> $GITHUB_STEP_SUMMARY
