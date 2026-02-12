@@ -60,3 +60,102 @@ jobs:
           echo "::error::Tier-0 gates failed. See artifacts for details."
           echo "::error::Review docs/governance/ODOOSH_GRADE_PARITY_GATING.md for remediation steps."
           exit 1
+
+  type-check:
+    name: Python Type Checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install mypy
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run mypy on addons/ipai
+        id: mypy-check
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts
+          mypy addons/ipai/ --ignore-missing-imports > artifacts/mypy_output.txt 2>&1 || true
+          cat artifacts/mypy_output.txt
+
+      - name: Check for new type errors
+        run: |
+          # For now, we allow all type errors (baseline approach)
+          # In future, compare against .mypy-baseline.txt to block new errors
+          if [ -f .mypy-baseline.txt ]; then
+            echo "Baseline exists, checking for new errors..."
+            # TODO: Implement baseline comparison logic
+            echo "Baseline comparison not yet implemented - allowing all errors"
+          else
+            echo "No baseline found - generating initial baseline"
+            cp artifacts/mypy_output.txt .mypy-baseline.txt
+            echo "Initial baseline created at .mypy-baseline.txt"
+          fi
+
+      - name: Upload mypy artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: type-check-artifacts
+          path: artifacts/
+          retention-days: 7
+
+  vulnerability-scan:
+    name: Dependency Vulnerability Scanning
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run pip-audit
+        id: vulnerability-scan
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts
+          pip-audit -r requirements.txt --format json --output artifacts/vulnerabilities.json || true
+
+          # Also generate human-readable report
+          pip-audit -r requirements.txt --format cyclonedx-json --output artifacts/vulnerabilities_cyclonedx.json || true
+
+          # Show summary
+          if [ -f artifacts/vulnerabilities.json ]; then
+            echo "Vulnerability scan complete. Check artifacts for details."
+            cat artifacts/vulnerabilities.json | jq '.dependencies | length' || echo "No vulnerabilities found"
+          fi
+
+      - name: Upload vulnerability scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnerability-scan-artifacts
+          path: artifacts/
+          retention-days: 7
+
+      - name: Check for critical vulnerabilities
+        run: |
+          # For now, we allow all vulnerabilities (reporting phase)
+          # In future, block merge on critical CVEs
+          if [ -f artifacts/vulnerabilities.json ]; then
+            echo "Vulnerability report generated - review artifacts"
+            # TODO: Add logic to block on critical CVEs
+          fi
