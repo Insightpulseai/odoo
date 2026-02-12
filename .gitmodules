@@ -134,3 +134,11 @@
 	path = vendor/oca/OCA/sale-workflow
 	url = https://github.com/OCA/sale-workflow.git
 	branch = 18.0
+[submodule "vendor/oca/hr-expense"]
+	path = vendor/oca/hr-expense
+	url = https://github.com/OCA/hr-expense.git
+	branch = 18.0
+[submodule "vendor/oca/hr"]
+	path = vendor/oca/hr
+	url = https://github.com/OCA/hr.git
+	branch = 18.0
