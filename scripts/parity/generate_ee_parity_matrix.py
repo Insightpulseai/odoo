@@ -82,6 +82,14 @@ class ParityMapping:
     notes: str = ""
     scraped_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
+    def make_deterministic(self):
+        """Sort lists alphabetically and use fixed timestamp for deterministic output"""
+        self.ce_modules = sorted(self.ce_modules)
+        self.oca_modules = sorted(self.oca_modules)
+        self.ipai_modules = sorted(self.ipai_modules)
+        self.evidence_urls = sorted(self.evidence_urls)
+        self.scraped_at = "2026-01-01T00:00:00Z"
+
 
 class OdooAppsScraper:
     """Scraper for apps.odoo.com EE applications"""
@@ -382,6 +390,8 @@ def main():
     parser.add_argument("--output", default="parity_upserts.sql", help="Output SQL file")
     parser.add_argument("--json", action="store_true", help="Also output JSON file")
     parser.add_argument("--limit", type=int, help="Limit number of apps to process")
+    parser.add_argument("--deterministic", action="store_true",
+                       help="Generate deterministic output (fixed timestamp, sorted lists)")
 
     args = parser.parse_args()
 
@@ -408,15 +418,24 @@ def main():
     matcher = ParityMatcher(oca_modules)
     mappings = [matcher.match_app(app) for app in ee_apps]
 
+    # Step 3.5: Apply deterministic mode if requested
+    if args.deterministic:
+        logger.info("Applying deterministic mode (fixed timestamp, sorted lists)")
+        for mapping in mappings:
+            mapping.make_deterministic()
+        # Sort mappings alphabetically by ee_app_slug for deterministic ordering
+        mappings = sorted(mappings, key=lambda m: m.ee_app_slug)
+
     # Step 4: Generate SQL
     sql_generator = SQLGenerator()
     sql_statements = [sql_generator.generate_upsert(m) for m in mappings]
 
     # Write SQL output
     output_path = Path(args.output)
+    generated_timestamp = "2026-01-01T00:00:00Z" if args.deterministic else datetime.utcnow().isoformat()
     with output_path.open('w') as f:
         f.write("-- Odoo EE→CE+OCA Parity Matrix\n")
-        f.write(f"-- Generated: {datetime.utcnow().isoformat()}\n")
+        f.write(f"-- Generated: {generated_timestamp}\n")
         f.write(f"-- Version: {args.odoo_version}\n")
         f.write(f"-- Total mappings: {len(mappings)}\n\n")
         f.write("BEGIN;\n\n")
