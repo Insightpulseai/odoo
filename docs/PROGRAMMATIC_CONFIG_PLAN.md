@@ -951,7 +951,7 @@ jobs:
           [ "${{ inputs.action }}" = "upgrade" ] && FLAG="-u"
 
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << EOF
-            cd /opt/odoo-ce
+            cd /opt/odoo
             docker compose exec -T odoo-core odoo-bin \
               -d ${{ env.ODOO_DB }} \
               $FLAG ${{ inputs.modules }} \
@@ -1104,7 +1104,7 @@ jobs:
       - name: Deploy code
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
-            cd /opt/odoo-ce
+            cd /opt/odoo
             git fetch origin
             git checkout ${{ github.sha }}
             git submodule update --init --recursive
@@ -1119,7 +1119,7 @@ jobs:
       - name: Install full module stack
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
-            cd /opt/odoo-ce
+            cd /opt/odoo
             ./scripts/install_full_stack.sh
           EOF
 
@@ -1138,7 +1138,7 @@ jobs:
           S3_ENDPOINT_URL: ${{ secrets.S3_ENDPOINT_URL }}
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
-            cd /opt/odoo-ce
+            cd /opt/odoo
             docker compose exec -T odoo-core odoo-bin shell -d odoo_core < scripts/seeds/post_install.py
           EOF
 

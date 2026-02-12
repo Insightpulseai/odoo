@@ -145,7 +145,7 @@ After deploying module to VPS:
 ssh root@159.223.75.148
 
 # Check if module is in addons path
-docker exec odoo-ce ls -la /mnt/extra-addons/ | grep ipai_finance_ppm_tdi
+docker exec odoo ls -la /mnt/extra-addons/ | grep ipai_finance_ppm_tdi
 
 # Expected: Directory exists with all files
 ```

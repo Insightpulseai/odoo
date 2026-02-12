@@ -89,7 +89,7 @@ proxy_mode = True
 ```yaml
 services:
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:18.0
+    image: ghcr.io/jgtolentino/odoo:18.0
     volumes:
       - ./odoo.conf:/etc/odoo/odoo.conf:ro
       - ./addons/ipai:/mnt/ipai:ro
@@ -108,7 +108,7 @@ services:
 ### Recommended Repo Layout
 
 ```text
-odoo-ce/
+odoo/
   docker/
   odoo.conf
   addons/

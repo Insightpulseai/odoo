@@ -31,7 +31,7 @@
 | Pull request preview | ✅ Vercel Preview + DO Apps | Planned | Vercel + n8n trigger |
 | Three-click project setup | ✅ `docker-compose.odoo19.yml` | Verified | Single command setup |
 | Drag-drop branch promotion | ⚠️ Git merge + deploy script | Partial | `scripts/promote-branch.sh` |
-| Automated testing on commit | ✅ GitHub Actions test suite | Verified | `ci-odoo-ce.yml` |
+| Automated testing on commit | ✅ GitHub Actions test suite | Verified | `ci-odoo.yml` |
 | Test dashboard (Runbot) | ⚠️ GitHub Actions summary | Partial | Actions UI + Superset |
 | Module dependency management | ✅ `oca.lock.json` + pip | Verified | OCA tooling |
 | Community module support | ✅ Git submodules | Verified | `addons/oca/` |

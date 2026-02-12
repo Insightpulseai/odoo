@@ -24,7 +24,7 @@ This document describes the cross-repository integration pattern for git pre-fli
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Ops Control Room                             │
-│  (odoo-ce/spec/ops-control-room/)                               │
+│  (odoo/spec/ops-control-room/)                               │
 │                                                                  │
 │  ┌────────────────────┐         ┌───────────────────────┐       │
 │  │ Skill Registry     │         │ Runbook Executor      │       │
@@ -98,9 +98,9 @@ pnpm test:git-ops  # Run git-operations tests only
 
 ---
 
-### Repository 2: odoo-ce (Skill Registration & Runbooks)
+### Repository 2: odoo (Skill Registration & Runbooks)
 
-**Location**: `/Users/tbwa/Documents/GitHub/odoo-ce/spec/ops-control-room/`
+**Location**: `/Users/tbwa/Documents/GitHub/odoo/spec/ops-control-room/`
 
 **Files Created**:
 
@@ -119,7 +119,7 @@ pnpm test:git-ops  # Run git-operations tests only
 
 **Directory Structure**:
 ```
-odoo-ce/spec/ops-control-room/
+odoo/spec/ops-control-room/
 ├── agents/
 │   └── figma-bridge.yaml
 ├── runbooks/
@@ -136,12 +136,12 @@ odoo-ce/spec/ops-control-room/
 
 ### How It Works
 
-1. **Skill Definition** (odoo-ce)
+1. **Skill Definition** (odoo)
    - Ops Control Room reads agent YAML files
    - Extracts skill metadata: name, inputs, outputs, implementation location
    - Stores in skill registry (in-memory or database)
 
-2. **Runbook Execution** (odoo-ce)
+2. **Runbook Execution** (odoo)
    - User triggers runbook via API/CLI
    - Runbook references skill by agent + skill_id
    - Executor resolves skill to implementation module path
@@ -165,7 +165,7 @@ import { parse as parseYAML } from 'yaml';
 
 // 1. Load runbook
 const runbook = parseYAML(
-  readFileSync('/Users/tbwa/Documents/GitHub/odoo-ce/spec/ops-control-room/runbooks/figma_sync_design_tokens.yaml', 'utf-8')
+  readFileSync('/Users/tbwa/Documents/GitHub/odoo/spec/ops-control-room/runbooks/figma_sync_design_tokens.yaml', 'utf-8')
 );
 
 // 2. Execute step: git_preflight
@@ -173,7 +173,7 @@ const step = runbook.steps.find(s => s.id === 'git_preflight');
 
 // 3. Resolve skill implementation
 const agent = parseYAML(
-  readFileSync('/Users/tbwa/Documents/GitHub/odoo-ce/spec/ops-control-room/agents/figma-bridge.yaml', 'utf-8')
+  readFileSync('/Users/tbwa/Documents/GitHub/odoo/spec/ops-control-room/agents/figma-bridge.yaml', 'utf-8')
 );
 const skill = agent.skills.find(s => s.id === 'git_preflight');
 
@@ -386,10 +386,10 @@ git push origin main
 
 ---
 
-### Phase 2: odoo-ce
+### Phase 2: odoo
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # 1. Commit skill and runbook definitions
 git add \
@@ -432,7 +432,7 @@ git push origin main
 curl -X POST https://buildopscontrolroom.vercel.app/api/deploy \
   -H "Authorization: Bearer $OPS_API_KEY" \
   -d '{
-    "repo": "odoo-ce",
+    "repo": "odoo",
     "branch": "main",
     "component": "skill-registry"
   }'
@@ -480,7 +480,7 @@ steps:
 
 **Rollback**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # 1. Revert runbook YAML
 git revert <commit-sha>
@@ -679,7 +679,7 @@ steps:
     agent: odoo_theme_bridge
     skill: git_preflight  # REUSE
     inputs:
-      cwd: /Users/tbwa/Documents/GitHub/odoo-ce
+      cwd: /Users/tbwa/Documents/GitHub/odoo
       checkStatus: true
       pull: true
       requireClean: true  # Stricter for production
@@ -885,7 +885,7 @@ steps:
       repositories:
         - path: /Users/tbwa/Documents/GitHub/design-system-cli
           branch: main
-        - path: /Users/tbwa/Documents/GitHub/odoo-ce
+        - path: /Users/tbwa/Documents/GitHub/odoo
           branch: main
       require_all_clean: true
 ```
@@ -923,15 +923,15 @@ fi
 ### Success Criteria
 
 ✅ Git operations implemented with tests (design-system-cli)
-✅ Skill registered in Ops Control Room (odoo-ce)
-✅ Runbook created with git pre-flight gate (odoo-ce)
+✅ Skill registered in Ops Control Room (odoo)
+✅ Runbook created with git pre-flight gate (odoo)
 ✅ Cross-repo integration documented (this file)
 ✅ Telemetry events defined and captured (mcp-jobs)
 
 ### Next Steps
 
 1. **Deploy Phase 1**: Push design-system-cli changes
-2. **Deploy Phase 2**: Push odoo-ce skill + runbook definitions
+2. **Deploy Phase 2**: Push odoo skill + runbook definitions
 3. **Test Integration**: Dry-run figma_sync_design_tokens runbook
 4. **Monitor Metrics**: Track success rate, conflicts, duration
 5. **Extend Pattern**: Apply to Odoo theme sync, Superset dashboards

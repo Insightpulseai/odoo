@@ -1,0 +1,87 @@
+{
+  "$schema": "./odoo-plane-sync.schema.json",
+  "sync_config": {
+    "version": "1.0",
+    "odoo_base_url": "https://odoo.insightpulseai.com",
+    "plane_base_url": "https://plane.insightpulseai.com",
+    "plane_workspace_slug": "insightpulse",
+
+    "mappings": {
+      "project_to_project": {
+        "direction": "odoo_to_plane",
+        "odoo_fields": [
+          "id", "name", "wbs_code", "planned_date_begin",
+          "planned_date_end", "user_id", "health"
+        ],
+        "plane_fields": [
+          "id", "name", "identifier", "start_date",
+          "target_date", "lead_id", "description"
+        ],
+        "field_mapping": {
+          "name": "name",
+          "wbs_code": "identifier",
+          "planned_date_begin": "start_date",
+          "planned_date_end": "target_date",
+          "user_id": "lead_id"
+        }
+      },
+
+      "milestone_to_cycle": {
+        "direction": "odoo_to_plane",
+        "field_mapping": {
+          "name": "name",
+          "target_date": "end_date",
+          "project_id": "project_id"
+        }
+      },
+
+      "task_to_issue": {
+        "direction": "bidirectional",
+        "field_mapping": {
+          "name": "name",
+          "wbs_code": "description_prefix",
+          "planned_date_begin": "start_date",
+          "planned_date_end": "target_date",
+          "user_id": "assignee_ids[0]",
+          "milestone_id": "cycle_id",
+          "parent_id": "parent_id"
+        },
+        "state_mapping": {
+          "1": "backlog",
+          "2": "todo",
+          "3": "in_progress",
+          "4": "in_review",
+          "5": "done",
+          "6": "cancelled"
+        }
+      },
+
+      "dependency_to_relation": {
+        "odoo_field": "depend_on_ids",
+        "plane_relation_type": "blocked_by"
+      }
+    },
+
+    "user_mapping": {
+      "1": "usr_admin_001",
+      "2": "usr_dev_002",
+      "3": "usr_pm_003"
+    },
+
+    "hooks": {
+      "on_task_shipped": {
+        "add_plane_label": "shipped",
+        "update_plane_state": "done",
+        "notify_slack": true
+      },
+      "on_deployment_success": {
+        "auto_ship_tasks": true,
+        "add_plane_label": "deployed"
+      },
+      "on_plane_issue_completed": {
+        "trigger_ship_review": true,
+        "update_odoo_stage": true
+      }
+    }
+  }
+}

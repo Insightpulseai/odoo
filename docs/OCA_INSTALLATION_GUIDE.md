@@ -1,6 +1,6 @@
 # OCA Installation Guide (Canonical)
 
-**Repository**: `odoo-ce` (jgtolentino/odoo-ce)
+**Repository**: `odoo` (jgtolentino/odoo)
 **Odoo Series**: 18.0
 **Last Updated**: 2026-01-20
 **Status**: Canonical guide for OCA module management

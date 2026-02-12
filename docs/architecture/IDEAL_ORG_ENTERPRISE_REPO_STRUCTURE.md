@@ -1,8 +1,8 @@
 # Ideal Organization & Enterprise Repository Structure
 
-**Version:** 1.0.0  
-**Status:** Authoritative  
-**Last Updated:** 2026-02-05  
+**Version:** 1.0.0
+**Status:** Authoritative
+**Last Updated:** 2026-02-05
 
 ---
 
@@ -25,7 +25,7 @@ This document defines the **ideal organizational and enterprise repository struc
 | Pattern | When to Use | Pros | Cons | Example |
 |---------|-------------|------|------|---------|
 | **Full Monorepo** | Small teams (<20), unified stack | Single source of truth, atomic commits | Large clone size, coupled CI | Odoo CE core |
-| **Selective Monorepo** | Mid teams (20-100), Odoo + services | Core unified, services decoupled | Coordination needed | This repo (odoo-ce) |
+| **Selective Monorepo** | Mid teams (20-100), Odoo + services | Core unified, services decoupled | Coordination needed | This repo (odoo) |
 | **Multi-Repo** | Large teams (100+), microservices | Independent deployment, team autonomy | Versioning hell, integration complexity | Vercel + Supabase + Odoo |
 | **Hybrid** | Complex orgs, mixed ownership | Flexibility per domain | Steep learning curve | GitHub Enterprise |
 
@@ -33,7 +33,7 @@ This document defines the **ideal organizational and enterprise repository struc
 
 ```
 org/
-├── odoo-ce/                    # MONOREPO (Core ERP + custom modules)
+├── odoo/                    # MONOREPO (Core ERP + custom modules)
 │   ├── addons/ipai/            # Custom modules
 │   ├── addons/oca/             # OCA submodules
 │   ├── apps/                   # Node.js workspaces (control-room, pulser)
@@ -249,8 +249,8 @@ Rules:
 │                         MAIN BRANCH                              │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │  1. Build (Docker image)                                 │   │
-│  │  2. Push (GHCR: ghcr.io/org/odoo-ce:latest)             │   │
-│  │  3. Tag (ghcr.io/org/odoo-ce:v18.0.1.0.0)               │   │
+│  │  2. Push (GHCR: ghcr.io/org/odoo:latest)             │   │
+│  │  3. Tag (ghcr.io/org/odoo:v18.0.1.0.0)               │   │
 │  └──────────────────────────────────────────────────────────┘   │
 └─────────────────────────┬───────────────────────────────────────┘
                           │ Auto-deploy (or manual trigger)
@@ -382,10 +382,10 @@ git push origin v18.0.1.1.0
 GitHub Teams → Repository Permissions
 
 org/platform-leads        → Admin (all repos)
-org/core-odoo-team        → Write (odoo-ce)
-org/finance-team          → Write (odoo-ce, finance modules only via CODEOWNERS)
-org/ai-team               → Write (odoo-ce, AI modules only via CODEOWNERS)
-org/devops-team           → Write (odoo-ce, infrastructure)
+org/core-odoo-team        → Write (odoo)
+org/finance-team          → Write (odoo, finance modules only via CODEOWNERS)
+org/ai-team               → Write (odoo, AI modules only via CODEOWNERS)
+org/devops-team           → Write (odoo, infrastructure)
 org/external-contractors  → Read (selected repos only)
 org/security-team         → Admin (for audits)
 ```
@@ -424,7 +424,7 @@ Examples:
 
 main:
   required_status_checks:
-    - ci-odoo-ce
+    - ci-odoo
     - spec-validate
     - security-scan
   required_pull_request_reviews:
@@ -487,12 +487,12 @@ docs/
 # Good: Docstrings for all public methods
 class IpaiFinanceTask(models.Model):
     """Finance PPM Task.
-    
+
     Extends project.task with finance-specific fields for
     budget tracking, billing, and month-end closing.
     """
     _inherit = "project.task"
-    
+
     finance_cluster_id = fields.Many2one(
         'ipai.finance.cluster',
         string='Finance Cluster',
@@ -524,16 +524,16 @@ class IpaiFinanceTask(models.Model):
 Start
   │
   ├─ Is this Odoo-related?
-  │    ├─ Yes → Add to odoo-ce monorepo (addons/ipai/)
+  │    ├─ Yes → Add to odoo monorepo (addons/ipai/)
   │    └─ No → Continue
   │
   ├─ Does it deploy independently?
   │    ├─ Yes → New satellite repo
-  │    └─ No → Add to odoo-ce monorepo (apps/ or packages/)
+  │    └─ No → Add to odoo monorepo (apps/ or packages/)
   │
   ├─ Does it have different RBAC?
   │    ├─ Yes → New repo
-  │    └─ No → Add to odoo-ce monorepo
+  │    └─ No → Add to odoo monorepo
   │
   └─ Is team size >100?
        ├─ Yes → Consider multi-repo
@@ -559,13 +559,13 @@ Before creating a new module:
 
 ## 9. Real-World Examples
 
-### 9.1 This Repository (odoo-ce)
+### 9.1 This Repository (odoo)
 
-**Pattern:** Selective Monorepo  
-**Team Size:** 5-20  
+**Pattern:** Selective Monorepo
+**Team Size:** 5-20
 **Structure:**
 ```
-odoo-ce/
+odoo/
 ├── addons/ipai/        # 80+ custom modules (monorepo)
 ├── addons/oca/         # 12 OCA submodules (read-only)
 ├── apps/               # 20 Node.js apps (monorepo workspaces)
@@ -580,8 +580,8 @@ odoo-ce/
 
 ### 9.2 Large Enterprise (Example: Microsoft Dynamics)
 
-**Pattern:** Hybrid (Monorepo core + Multi-repo satellites)  
-**Team Size:** 1000+  
+**Pattern:** Hybrid (Monorepo core + Multi-repo satellites)
+**Team Size:** 1000+
 **Structure:**
 ```
 microsoft/dynamics/
@@ -599,8 +599,8 @@ microsoft/dynamics/
 
 ### 9.3 Small Startup (Example: SaaS Product)
 
-**Pattern:** Full Monorepo  
-**Team Size:** 3-10  
+**Pattern:** Full Monorepo
+**Team Size:** 3-10
 **Structure:**
 ```
 startup/product/
@@ -625,7 +625,7 @@ startup/product/
 
 ```bash
 # 1. Create monorepo structure
-mkdir -p odoo-ce/{addons,apps,packages}
+mkdir -p odoo/{addons,apps,packages}
 
 # 2. Import repos as subdirectories (preserving history)
 git subtree add --prefix=apps/control-room https://github.com/org/control-room.git main
@@ -828,7 +828,7 @@ When setting up a new Odoo-based organization:
 
 ## Appendix B: Contact
 
-**Questions?** Open an issue in [jgtolentino/odoo-ce](https://github.com/jgtolentino/odoo-ce/issues)
+**Questions?** Open an issue in [jgtolentino/odoo](https://github.com/jgtolentino/odoo/issues)
 
 **Authors:**
 - Platform Team (InsightPulseAI)

@@ -127,7 +127,7 @@ except Exception as e:
 
 ```bash
 # Create automated action via Odoo shell
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -207,7 +207,7 @@ curl -X POST https://ipa.insightpulseai.com/webhook/enrich-contact \
 
 ```bash
 # Check if contact was enriched
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -253,10 +253,10 @@ AI will automatically create these tags based on email domains:
 
 ```bash
 # View AI enrichment logs
-ssh root@159.223.75.148 "docker logs odoo-ce 2>&1 | grep -i 'AI Enrichment' | tail -20"
+ssh root@159.223.75.148 "docker logs odoo 2>&1 | grep -i 'AI Enrichment' | tail -20"
 
 # Check for errors
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -388,6 +388,6 @@ if record.email and not any(domain in record.email for domain in ['gmail.com', '
 
 ---
 
-**Documentation**: `/Users/tbwa/odoo-ce/specs/003-ai-enrichment/`
-**Workflow File**: `/Users/tbwa/odoo-ce/workflows/n8n_enrichment_agent.json`
+**Documentation**: `/Users/tbwa/odoo/specs/003-ai-enrichment/`
+**Workflow File**: `/Users/tbwa/odoo/workflows/n8n_enrichment_agent.json`
 **Contact**: Jake Tolentino (TBWA Finance SSC / InsightPulse AI)

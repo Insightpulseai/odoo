@@ -51,7 +51,7 @@ Successfully aligned all TBWA theme tokens with official brand specifications in
 ### Option 1: Automated Script (Recommended)
 
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Run deployment script
 ./scripts/deploy-tbwa-theme-tokens.sh
@@ -398,10 +398,10 @@ docker compose exec odoo-core odoo -d odoo_core -u base --stop-after-init
 
 ## References
 
-- **Alignment Report**: `/Users/tbwa/odoo-ce/docs/TBWA_THEME_ALIGNMENT_REPORT.md`
-- **Deployment Script**: `/Users/tbwa/odoo-ce/scripts/deploy-tbwa-theme-tokens.sh`
+- **Alignment Report**: `/Users/tbwa/odoo/docs/TBWA_THEME_ALIGNMENT_REPORT.md`
+- **Deployment Script**: `/Users/tbwa/odoo/scripts/deploy-tbwa-theme-tokens.sh`
 - **Git Branch**: `fix/tbwa-align-brand-tokens`
-- **GitHub PR**: https://github.com/jgtolentino/odoo-ce/pull/new/fix/tbwa-align-brand-tokens
+- **GitHub PR**: https://github.com/jgtolentino/odoo/pull/new/fix/tbwa-align-brand-tokens
 
 ---
 

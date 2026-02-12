@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/jgtolentino/odoo-ce/ops/design/schemas/figma_contract.schema.json",
+  "$id": "https://github.com/jgtolentino/odoo/ops/design/schemas/figma_contract.schema.json",
   "title": "Figma Design Contract",
   "description": "Machine-readable contract exported from Figma for AI-first SDLC enforcement",
   "type": "object",

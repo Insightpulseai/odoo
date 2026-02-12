@@ -282,7 +282,7 @@ SELECT public.custom_access_token_hook(
 
 ### Environment Variables
 
-**File:** `/Users/tbwa/odoo-ce/.env.local` (or deployed environment)
+**File:** `/Users/tbwa/odoo/.env.local` (or deployed environment)
 
 ```bash
 # Mailgun SMTP Configuration

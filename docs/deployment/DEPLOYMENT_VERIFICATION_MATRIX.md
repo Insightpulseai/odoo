@@ -226,7 +226,7 @@
 
 ```bash
 # Run full verification suite
-cd /opt/odoo-ce
+cd /opt/odoo
 bash scripts/prod/verify_workos.sh
 
 # Generate verification report

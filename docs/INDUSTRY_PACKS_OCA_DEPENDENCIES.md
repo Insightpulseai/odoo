@@ -140,7 +140,7 @@ For features without OCA equivalents:
 Create or update your `oca-addons` directory:
 
 ```bash
-cd /path/to/odoo-ce
+cd /path/to/odoo
 
 # Create OCA addons directory
 mkdir -p oca-addons
@@ -158,7 +158,7 @@ Add OCA paths to your `odoo.conf`:
 
 ```ini
 [options]
-addons_path = /path/to/odoo/addons,/path/to/odoo-ce/addons,/path/to/odoo-ce/oca-addons/dms,/path/to/odoo-ce/oca-addons/contract,/path/to/odoo-ce/oca-addons/timesheet,/path/to/odoo-ce/oca-addons/social
+addons_path = /path/to/odoo/addons,/path/to/odoo/addons,/path/to/odoo/oca-addons/dms,/path/to/odoo/oca-addons/contract,/path/to/odoo/oca-addons/timesheet,/path/to/odoo/oca-addons/social
 ```
 
 ### 3. Install Python Dependencies

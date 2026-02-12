@@ -1,0 +1,88 @@
+; =============================================================================
+; DNS Zone File for insightpulseai.com
+; =============================================================================
+; Purpose: Complete DNS configuration for email (Zoho + Mailgun) and services
+; Last Updated: 2026-02-01
+; =============================================================================
+
+$ORIGIN insightpulseai.com.
+$TTL 3600
+
+; =============================================================================
+; MX Records - Zoho Mail (Receiving)
+; =============================================================================
+@       IN  MX  10  mx.zoho.com.
+@       IN  MX  20  mx2.zoho.com.
+@       IN  MX  50  mx3.zoho.com.
+
+; =============================================================================
+; SPF Record - Combined Zoho + Mailgun
+; =============================================================================
+@       IN  TXT "v=spf1 include:zohomail.com include:mailgun.org ~all"
+
+; =============================================================================
+; DMARC Record
+; =============================================================================
+_dmarc  IN  TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@insightpulseai.com; ruf=mailto:dmarc@insightpulseai.com; pct=100; adkim=r; aspf=r"
+
+; =============================================================================
+; Zoho Domain Verification (if required)
+; =============================================================================
+; zb*******   IN  TXT "zoho-verification=zb*******"
+
+; =============================================================================
+; Mailgun Subdomain (mg.insightpulseai.com)
+; =============================================================================
+
+; SPF for Mailgun subdomain
+mg      IN  TXT "v=spf1 include:mailgun.org ~all"
+
+; MX records for Mailgun (for inbound routing/webhooks)
+mg      IN  MX  10  mxa.mailgun.org.
+mg      IN  MX  10  mxb.mailgun.org.
+
+; DKIM Records for Mailgun (replace with actual keys from Mailgun dashboard)
+; Note: These are placeholders - get actual values from Mailgun
+smtp._domainkey.mg      IN  TXT "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQ..."
+krs._domainkey.mg       IN  TXT "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQ..."
+
+; Tracking CNAME (optional - for click/open tracking)
+email.mg    IN  CNAME   mailgun.org.
+
+; =============================================================================
+; Application Services
+; =============================================================================
+
+; Odoo ERP
+erp         IN  A       159.223.75.148
+
+; Plane Project Management
+plane       IN  A       167.99.104.239
+
+; Superset BI
+superset    IN  CNAME   superset-nlavf.ondigitalocean.app.
+
+; MCP Coordinator
+mcp         IN  CNAME   pulse-hub-web-an645.ondigitalocean.app.
+
+; Chat (Mattermost)
+chat        IN  A       159.223.75.148
+
+; n8n Automation
+n8n         IN  A       159.223.75.148
+
+; OCR Service
+ocr         IN  A       188.166.237.231
+
+; Affine Notes
+affine      IN  A       188.166.237.231
+
+; Auth (Keycloak)
+auth        IN  A       159.223.75.148
+
+; Main App (Vercel)
+app         IN  CNAME   cname.vercel-dns.com.
+
+; =============================================================================
+; End of Zone File
+; =============================================================================

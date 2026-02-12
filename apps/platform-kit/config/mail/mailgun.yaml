@@ -1,0 +1,140 @@
+# =============================================================================
+# MAILGUN.YAML - Mailgun Configuration (SSOT)
+# =============================================================================
+# This file is the SINGLE SOURCE OF TRUTH for Mailgun configuration.
+# Mailgun dashboard is a VIEW, not a source of truth.
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-01"
+
+# -----------------------------------------------------------------------------
+# API Configuration
+# -----------------------------------------------------------------------------
+api:
+  region: us
+  base_url: https://api.mailgun.net
+  # Secret reference - actual value in secret store
+  api_key_ref: MAILGUN_API_KEY
+
+# -----------------------------------------------------------------------------
+# Domain Configuration
+# -----------------------------------------------------------------------------
+domain:
+  name: mg.insightpulseai.com
+  state: unverified  # Valid: unverified, active, disabled
+  created_at: "2026-02-01T13:23:19Z"
+  type: custom
+  wildcard: false
+  require_tls: false
+  spam_action: disabled
+
+# -----------------------------------------------------------------------------
+# SMTP Configuration
+# -----------------------------------------------------------------------------
+smtp:
+  server: smtp.mailgun.org
+  port: 587
+  encryption: starttls
+  # Alternative ports
+  alternative_ports:
+    ssl: 465
+    unencrypted: 25  # NOT RECOMMENDED
+
+# -----------------------------------------------------------------------------
+# SMTP Users (credentials in secret store)
+# -----------------------------------------------------------------------------
+smtp_users:
+  no_reply:
+    login: no-reply@mg.insightpulseai.com
+    password_ref: MAILGUN_SMTP_PASSWORD
+    purpose: System notifications, invoices, automated emails
+    from_name: InsightPulse AI
+
+  support:
+    login: support@mg.insightpulseai.com
+    password_ref: MAILGUN_SMTP_PASSWORD_SUPPORT
+    purpose: Helpdesk, customer support, ticket responses
+    from_name: InsightPulse AI Support
+
+# -----------------------------------------------------------------------------
+# DNS Records (fetched from Mailgun API)
+# -----------------------------------------------------------------------------
+dns_records:
+  sending:
+    spf:
+      type: TXT
+      host: mg
+      value: "v=spf1 include:mailgun.org ~all"
+
+    dkim:
+      type: TXT
+      host: mx._domainkey.mg
+      value: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
+
+    tracking:
+      type: CNAME
+      host: email.mg
+      value: mailgun.org
+
+  receiving:
+    mx_primary:
+      type: MX
+      host: mg
+      value: mxa.mailgun.org
+      priority: 10
+
+    mx_secondary:
+      type: MX
+      host: mg
+      value: mxb.mailgun.org
+      priority: 10
+
+# -----------------------------------------------------------------------------
+# Webhooks (optional)
+# -----------------------------------------------------------------------------
+webhooks:
+  base_url: https://erp.insightpulseai.com/mailgun/webhook
+  signing_key_ref: MAILGUN_WEBHOOK_SIGNING_KEY
+  events:
+    - name: delivered
+      endpoint: /delivered
+      enabled: false
+    - name: opened
+      endpoint: /opened
+      enabled: false
+    - name: clicked
+      endpoint: /clicked
+      enabled: false
+    - name: permanent_fail
+      endpoint: /bounced
+      enabled: false
+    - name: complained
+      endpoint: /complained
+      enabled: false
+    - name: unsubscribed
+      endpoint: /unsubscribed
+      enabled: false
+
+# -----------------------------------------------------------------------------
+# Tracking Settings
+# -----------------------------------------------------------------------------
+tracking:
+  open_tracking: true
+  click_tracking: true
+  unsubscribe_tracking: false  # Only for marketing emails
+
+# -----------------------------------------------------------------------------
+# Integration with Odoo
+# -----------------------------------------------------------------------------
+odoo_integration:
+  smtp_server_name: "Mailgun - insightpulseai.com"
+  from_filter: insightpulseai.com
+  sequence: 1  # Priority order
+
+  system_parameters:
+    mail.catchall.domain: insightpulseai.com
+    mail.catchall.alias: catchall
+    mail.default.from: notifications
+    mail.bounce.alias: bounce
+    web.base.url: https://erp.insightpulseai.com

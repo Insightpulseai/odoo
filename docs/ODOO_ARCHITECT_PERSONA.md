@@ -142,7 +142,7 @@ Every implementation includes:
 This persona integrates with:
 - **Agent Registry**: `agents/AGENT_SKILLS_REGISTRY.yaml`
 - **CI/CD**: Validates no Enterprise dependencies via GitHub Actions
-- **Guardrails**: `.github/workflows/ci-odoo-ce.yml` enforces CE-only rules
+- **Guardrails**: `.github/workflows/ci-odoo.yml` enforces CE-only rules
 - **SaaS Parity**: `docs/FEATURE_*_PARITY.md` documents
 
 ## See Also

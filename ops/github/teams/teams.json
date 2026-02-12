@@ -44,17 +44,17 @@
   "team_repo_mappings": [
     {
       "team": "erp",
-      "repos": ["odoo-ce"],
+      "repos": ["odoo"],
       "permission": "push"
     },
     {
       "team": "platform",
-      "repos": ["odoo-ce", "ipai-learn"],
+      "repos": ["odoo", "ipai-learn"],
       "permission": "admin"
     },
     {
       "team": "data",
-      "repos": ["odoo-ce"],
+      "repos": ["odoo"],
       "permission": "push"
     },
     {

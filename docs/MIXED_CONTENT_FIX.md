@@ -34,7 +34,7 @@ This request has been blocked; the content must be served over HTTPS.
 Used Odoo shell to set base URL and freeze it:
 
 ```bash
-docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
+docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON_SHELL'
 env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.com')
 env['ir.config_parameter'].set_param('web.base.url.freeze', 'True')
 env.cr.commit()
@@ -48,7 +48,7 @@ PYTHON_SHELL
 Deleted cached assets via Odoo shell:
 
 ```bash
-docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
+docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON_SHELL'
 attachments = env['ir.attachment'].search([('name', 'like', '/web.assets_%')])
 count = len(attachments)
 if count > 0:
@@ -62,14 +62,14 @@ PYTHON_SHELL
 ### Step 3: Restart Container
 
 ```bash
-docker restart odoo-ce
+docker restart odoo
 ```
 
 ## Verification
 
 ### Database Configuration
 ```bash
-docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
+docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON_SHELL'
 print(env['ir.config_parameter'].get_param('web.base.url'))
 # Output: https://erp.insightpulseai.com
 
@@ -156,7 +156,7 @@ If HTTPS assets break again:
 
 1. **Check database params**:
    ```bash
-   docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
+   docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON_SHELL'
    print(env['ir.config_parameter'].get_param('web.base.url'))
    print(env['ir.config_parameter'].get_param('web.base.url.freeze'))
    PYTHON_SHELL
@@ -164,12 +164,12 @@ If HTTPS assets break again:
 
 2. **Clear assets and restart**:
    ```bash
-   docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
+   docker exec -i odoo odoo shell -d odoo --no-http <<'PYTHON_SHELL'
    env['ir.attachment'].search([('name', 'like', '/web.assets_%')]).unlink()
    env.cr.commit()
    PYTHON_SHELL
 
-   docker restart odoo-ce
+   docker restart odoo
    ```
 
 3. **Verify Nginx headers**:

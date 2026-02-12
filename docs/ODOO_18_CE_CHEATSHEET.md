@@ -332,7 +332,7 @@ Other common directories:
   * Odoo 18 CE core.
   * OCA modules (e.g. via git submodules).
   * Custom InsightPulse delta modules.
-* Tag with semver and Odoo version, e.g. `ghcr.io/.../odoo-ce:18.0.0-ipai1`.
+* Tag with semver and Odoo version, e.g. `ghcr.io/.../odoo:18.0.0-ipai1`.
 
 ### 7.2 CI Steps (Typical)
 

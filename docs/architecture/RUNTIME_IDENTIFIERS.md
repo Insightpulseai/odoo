@@ -40,9 +40,9 @@ DB_FILTER="^odoo$"
 
 ```bash
 # Host paths
-REPO_ROOT="/opt/odoo-ce/repo"
-ADDONS_HOST="/opt/odoo-ce/repo/addons"
-ODOO_CONF_HOST="/opt/odoo-ce/repo/deploy/odoo.conf"
+REPO_ROOT="/opt/odoo/repo"
+ADDONS_HOST="/opt/odoo/repo/addons"
+ODOO_CONF_HOST="/opt/odoo/repo/deploy/odoo.conf"
 
 # Container paths
 ADDONS_CONTAINER="/mnt/extra-addons"
@@ -140,7 +140,7 @@ docker restart odoo-prod
 
 # Manual check
 ssh root@178.128.112.214
-ls -la /opt/odoo-ce/repo/addons/ipai_theme_*
+ls -la /opt/odoo/repo/addons/ipai_theme_*
 # Should show: drwxr-xr-x odoo odoo (or dhcpcd messagebus on host, same UID 100:101)
 ```
 
@@ -151,7 +151,7 @@ ls -la /opt/odoo-ce/repo/addons/ipai_theme_*
 ./scripts/deploy-odoo-modules.sh <module_name>
 
 # Manual rsync (discouraged, no permission fix)
-rsync -avz addons/ipai_module/ root@178.128.112.214:/opt/odoo-ce/repo/addons/ipai_module/
+rsync -avz addons/ipai_module/ root@178.128.112.214:/opt/odoo/repo/addons/ipai_module/
 ```
 
 ---

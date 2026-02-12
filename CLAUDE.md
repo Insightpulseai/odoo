@@ -55,6 +55,21 @@ See architecture docs for complete runtime service registry.
 
 ---
 
+## Agent Constitution & Execution Constraints
+
+**Canonical Reference**: `spec/agent/constitution.md`
+
+**Key Constraints for Claude Code Web**:
+- ❌ **Forbidden**: Docker/containers, apt/brew, systemctl, sudo (not available in Web environment)
+- ✅ **Allowed**: File edits, git operations, CI workflow generation, remote API calls
+- 📋 **Capabilities**: Only claim capabilities verified in `agents/capabilities/manifest.json`
+
+**Response Pattern**: If user requests forbidden operation (e.g., "run docker-compose"), acknowledge constraint and provide correct alternative (CI workflow, deployment docs, or remote execution).
+
+**See constitution for**: Complete constraint catalog, response patterns, capability verification, examples.
+
+---
+
 ## Agent Workflow
 
 ```
@@ -134,7 +149,7 @@ feat|fix|refactor|docs|test|chore(scope): description
 | Item | Replacement | Date |
 |------|-------------|------|
 | `insightpulseai.net` | `insightpulseai.com` | 2026-02 |
-| `odoo-ce` repo name | `odoo` | 2026-02-03 |
+| `odoo` repo name | `odoo` | 2026-02-03 |
 | Mattermost (all) | Slack | 2026-01-28 |
 | Affine (all) | Removed | 2026-02-09 |
 | Appfine (all) | Removed | 2026-02 |

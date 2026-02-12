@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "version": "1.0",
+  "policy": {
+    "no_unverified_claims": true,
+    "evidence_required": ["paths_must_exist", "grep_must_match"],
+    "fallback_on_missing": "refuse_claim"
+  },
+  "capabilities": [
+    {
+      "id": "odoo.qweb.reporting",
+      "domain": "odoo",
+      "claim": "Generate QWeb PDF reports",
+      "evidence": {
+        "paths_must_exist": [
+          "addons",
+          "odoo19"
+        ],
+        "grep_must_match": [
+          "ir.actions.report",
+          "qweb-pdf",
+          "report_type.*qweb"
+        ]
+      }
+    },
+    {
+      "id": "odoo.qweb.email_templates",
+      "domain": "odoo",
+      "claim": "Create mail templates using QWeb",
+      "evidence": {
+        "grep_must_match": [
+          "mail.template",
+          "t-field",
+          "t-esc"
+        ]
+      }
+    },
+    {
+      "id": "odoo.module.scaffold",
+      "domain": "odoo",
+      "claim": "Scaffold OCA-compliant Odoo modules with ipai_* naming",
+      "evidence": {
+        "paths_must_exist": [
+          "scripts"
+        ],
+        "grep_must_match": [
+          "ipai_.*module",
+          "__manifest__.*py"
+        ]
+      }
+    },
+    {
+      "id": "supabase.integration",
+      "domain": "integration",
+      "claim": "Integrate Odoo with Supabase PostgreSQL",
+      "evidence": {
+        "paths_must_exist": [
+          "supabase"
+        ],
+        "grep_must_match": [
+          "supabase",
+          "postgresql",
+          "spdtwktxdalcfigzeqrz"
+        ]
+      }
+    },
+    {
+      "id": "ocr.receipt.processing",
+      "domain": "automation",
+      "claim": "OCR-powered expense receipt processing",
+      "evidence": {
+        "paths_must_exist": [
+          "ocr-adapter"
+        ],
+        "grep_must_match": [
+          "ocr",
+          "receipt",
+          "expense"
+        ]
+      }
+    },
+    {
+      "id": "github.actions.ci",
+      "domain": "devops",
+      "claim": "GitHub Actions CI/CD workflows",
+      "evidence": {
+        "paths_must_exist": [
+          ".github/workflows"
+        ],
+        "grep_must_match": [
+          "on:.*push",
+          "jobs:"
+        ]
+      }
+    },
+    {
+      "id": "digitalocean.deployment",
+      "domain": "infrastructure",
+      "claim": "Deploy to DigitalOcean App Platform",
+      "evidence": {
+        "paths_must_exist": [
+          "scripts"
+        ],
+        "grep_must_match": [
+          "digitalocean",
+          "deploy"
+        ]
+      }
+    },
+    {
+      "id": "chrome.extension.mv3",
+      "domain": "browser",
+      "claim": "Chrome Extension Manifest V3 development",
+      "evidence": {
+        "paths_must_exist": [
+          "apps/alpha-browser"
+        ],
+        "grep_must_match": [
+          "manifest_version.*3",
+          "service_worker",
+          "content_scripts"
+        ]
+      }
+    }
+  ]
+}

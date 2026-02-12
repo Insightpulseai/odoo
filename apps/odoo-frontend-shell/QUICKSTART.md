@@ -3,13 +3,13 @@
 ## Option 1: Deploy via GitHub (Recommended)
 
 ### Step 1: Push to GitHub
-Already done! The code is at: `github.com/jgtolentino/odoo-ce/apps/odoo-frontend-shell`
+Already done! The code is at: `github.com/jgtolentino/odoo/apps/odoo-frontend-shell`
 
 ### Step 2: Import to Vercel
 
 1. Go to https://vercel.com/new
 2. Click "Import Git Repository"
-3. Select: `jgtolentino/odoo-ce`
+3. Select: `jgtolentino/odoo`
 4. **Root Directory**: `apps/odoo-frontend-shell`
 5. Click "Deploy"
 
@@ -40,7 +40,7 @@ vercel login
 ### Step 2: Navigate to Project
 
 ```bash
-cd /Users/tbwa/odoo-ce/apps/odoo-frontend-shell
+cd /Users/tbwa/odoo/apps/odoo-frontend-shell
 ```
 
 ### Step 3: Deploy

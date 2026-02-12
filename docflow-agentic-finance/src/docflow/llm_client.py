@@ -23,6 +23,10 @@ class LlmClient:
             return self._gemini(prompt)
         raise ValueError(f"Unsupported LLM_PROVIDER: {self.provider}")
 
+    def generate(self, prompt: str, response_schema=None) -> dict:
+        """Alias for complete_json with response_schema param (ignored)."""
+        return self.complete_json(prompt)
+
     def _openai(self, prompt: str) -> dict:
         # Uses Chat Completions compatible endpoint.
         key = os.getenv("OPENAI_API_KEY")
@@ -39,6 +43,8 @@ class LlmClient:
             "response_format": {"type": "json_object"},
         }
         r = requests.post(url, headers=headers, data=json.dumps(payload), timeout=self.timeout)
+        if r.status_code != 200:
+            print(f"[LLM Error] Status {r.status_code}: {r.text[:500]}")
         r.raise_for_status()
         content = r.json()["choices"][0]["message"]["content"]
         return json.loads(content)

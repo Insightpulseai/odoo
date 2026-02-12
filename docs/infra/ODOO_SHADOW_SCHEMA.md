@@ -83,7 +83,7 @@ The Odoo Shadow Schema mirrors data from Odoo CE (PostgreSQL on DigitalOcean) to
 
 ```bash
 # Option A: Using Supabase CLI
-cd /path/to/odoo-ce
+cd /path/to/odoo
 supabase db push
 
 # Option B: Using psql directly

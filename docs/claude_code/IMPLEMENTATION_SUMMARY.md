@@ -1,14 +1,14 @@
 # Claude Code Setup Implementation Summary
 
 **Date**: 2026-01-06
-**Branch**: `claude/odoo-ce-oca-mapping-eYzZc`
+**Branch**: `claude/odoo-oca-mapping-eYzZc`
 **Commits**: 2 (Finance Landing Page + Claude Code Setup)
 
 ## What Was Delivered
 
 ### 1. Comprehensive Setup Guide (`docs/CLAUDE_CODE_SETUP.md`)
 
-**Purpose**: Practical "use it tomorrow" guide for Claude Code with odoo-ce monorepo
+**Purpose**: Practical "use it tomorrow" guide for Claude Code with odoo monorepo
 
 **Contents**:
 - Complete installation instructions
@@ -321,12 +321,12 @@ claude -p "Update docs/claude_code/README.md project structure"
 
 ## Conclusion
 
-The Claude Code setup guide provides a comprehensive, practical foundation for AI-assisted development in the odoo-ce monorepo. By leveraging existing infrastructure and following established conventions, it enables immediate productivity gains without disrupting current workflows.
+The Claude Code setup guide provides a comprehensive, practical foundation for AI-assisted development in the odoo monorepo. By leveraging existing infrastructure and following established conventions, it enables immediate productivity gains without disrupting current workflows.
 
 **Key Achievement**: Zero-configuration AI assistance - works with what you already have.
 
 ---
 
 **Contributors**: Claude Sonnet 4.5
-**Branch**: claude/odoo-ce-oca-mapping-eYzZc
+**Branch**: claude/odoo-oca-mapping-eYzZc
 **Status**: ✅ Complete and ready for merge

@@ -263,7 +263,7 @@ monitoring:
 # ============================================================================
 example_usage:
   manual_trigger: |
-    cd /home/user/odoo-ce
+    cd /home/user/odoo
     ./scripts/run_clarity_ppm_reverse.sh
 
   agent_invocation: |

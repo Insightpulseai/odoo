@@ -62,7 +62,7 @@ columns:
   product:
     type: varchar
     nullable: true
-    description: Product context (odoo-ce, sap-concur, etc.)
+    description: Product context (odoo, sap-concur, etc.)
 
   version:
     type: varchar

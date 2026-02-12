@@ -2,7 +2,7 @@
 
 > **Purpose**: LLM-friendly documentation for AI agents working with this codebase.
 > **Last Updated**: 2026-01-20
-> **Source of Truth**: jgtolentino/odoo-ce repository
+> **Source of Truth**: jgtolentino/odoo repository
 
 ---
 
@@ -27,7 +27,7 @@ InsightPulse AI runs a **multi-layer stack** with clear boundaries:
 
 1. **Odoo Postgres** = Business data SSOT (invoices, partners, journals, projects)
 2. **Supabase** = Knowledge + Memory SSOT (KB, embeddings, agent runs, infra graph)
-3. **GitHub (odoo-ce)** = Code + Config SSOT (modules, migrations, specs, docs)
+3. **GitHub (odoo)** = Code + Config SSOT (modules, migrations, specs, docs)
 
 **Never**:
 - Write business data directly to Supabase (mirror only)
@@ -41,7 +41,7 @@ InsightPulse AI runs a **multi-layer stack** with clear boundaries:
 | System | Identifier | Current Value |
 |--------|-----------|---------------|
 | Supabase Project | `project_ref` | `spdtwktxdalcfigzeqrz` |
-| GitHub Repo | `repo` | `jgtolentino/odoo-ce` |
+| GitHub Repo | `repo` | `jgtolentino/odoo` |
 | Odoo Database | `db_name` | `odoo_core` (prod), `odoo_dev` (dev) |
 | DO Droplet | `droplet_name` | `odoo-erp-prod` |
 | DO Managed DB | `cluster_name` | `odoo-db-sgp1` |

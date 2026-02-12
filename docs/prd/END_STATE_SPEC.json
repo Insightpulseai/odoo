@@ -4,7 +4,7 @@
   "release": {
     "tag": "ship-aiux-v1.1.0",
     "tag_format": "prod-YYYYMMDD-HHMM",
-    "repo": "jgtolentino/odoo-ce",
+    "repo": "jgtolentino/odoo",
     "environment": "production"
   },
   "stack": {
@@ -164,7 +164,7 @@
         "purpose": "Ship bundle validation"
       },
       {
-        "name": "ci-odoo-ce",
+        "name": "ci-odoo",
         "file": ".github/workflows/ci.yml",
         "purpose": "Core Odoo tests"
       },

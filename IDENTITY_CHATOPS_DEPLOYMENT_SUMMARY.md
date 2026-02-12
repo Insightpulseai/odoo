@@ -44,7 +44,7 @@ You now have a complete enterprise-grade identity management and ChatOps solutio
 ### 1. SSH to Production Droplet
 ```bash
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 ```
 
 ### 2. Run Combined Deployment Script

@@ -45,7 +45,7 @@ open http://localhost:8069
 
 ```bash
 # Create codespace (from local machine)
-gh codespace create --repo jgtolentino/odoo-ce --branch main
+gh codespace create --repo jgtolentino/odoo --branch main
 
 # Inside codespace shell
 ./scripts/dev/start-dev.sh
@@ -128,9 +128,9 @@ git commit -m "feat: your changes"
 git push origin main
 
 # 2. Create or refresh codespace
-gh codespace create --repo jgtolentino/odoo-ce --branch main
+gh codespace create --repo jgtolentino/odoo --branch main
 # OR
-gh codespace code --repo jgtolentino/odoo-ce
+gh codespace code --repo jgtolentino/odoo
 
 # 3. Inside codespace
 git pull origin main
@@ -145,7 +145,7 @@ git commit -m "feat: your changes"
 git push origin main
 
 # 2. Pull to local
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 git pull origin main
 ./scripts/dev/start-dev.sh
 ```
@@ -206,8 +206,8 @@ The `ipai` module depends on 24 OCA modules. Choose one option:
 
 **Option A: Symlink to Canonical Location** (Recommended)
 ```bash
-# If you have odoo-ce/addons/external/oca
-ln -s ~/Documents/GitHub/odoo-ce/addons/external/oca oca-addons
+# If you have odoo/addons/external/oca
+ln -s ~/Documents/GitHub/odoo/addons/external/oca oca-addons
 
 # Verify symlink
 ls -la oca-addons/
@@ -617,7 +617,7 @@ The `ipai` module requires 24 OCA modules across 5 functional areas:
 
 ```bash
 # If using symlink (recommended)
-cd ~/Documents/GitHub/odoo-ce/addons/external/oca
+cd ~/Documents/GitHub/odoo/addons/external/oca
 git pull --all
 
 # If using git submodules

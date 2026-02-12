@@ -242,3 +242,9 @@ site/
 
 # LIB (Local Intelligence Brain)
 .lib/
+
+# Large brand mockup files (>1MB)
+docs/brand/mockups/
+
+# Graph generation output (ephemeral artifacts)
+out/graphs/

@@ -46,7 +46,7 @@ grep -R "enterprise\|web_studio\|documents\|iap" addons/ || echo "✅ Clean"
 
 ### CI Workflows
 
-#### ci-odoo-ce.yml (Guardrails)
+#### ci-odoo.yml (Guardrails)
 - Enterprise module blocking
 - odoo.com URL detection
 - Repository structure validation
@@ -91,12 +91,12 @@ grep -R "enterprise\|web_studio\|documents\|iap" addons/ || echo "✅ Clean"
 ## 📦 Repository Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                    # Custom InsightPulse modules
 ├── oca/                       # OCA community modules
 ├── .github/
 │   └── workflows/
-│       ├── ci-odoo-ce.yml    # Core guardrails
+│       ├── ci-odoo.yml    # Core guardrails
 │       └── ci-odoo-oca.yml   # OCA CI Guardian
 ├── agents/
 │   ├── odoo_oca_ci_fixer.yaml        # Agent spec

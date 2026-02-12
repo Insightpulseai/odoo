@@ -41,7 +41,7 @@ Trigger the GitHub Actions workflow:
 From local machine with doctl access:
 
 ```bash
-cd /path/to/odoo-ce/sandbox/dev/plane/infra
+cd /path/to/odoo/sandbox/dev/plane/infra
 
 # Set required environment variables from secure source
 export PLANE_DB_PASSWORD="..."  # From Keychain/Vault

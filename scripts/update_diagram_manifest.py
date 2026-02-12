@@ -49,7 +49,7 @@ def load_manifest():
         },
         "githubIntegration": {
             "org": "jgtolentino",
-            "repo": "odoo-ce",
+            "repo": "odoo",
             "branch": "main",
             "basePath": "docs/diagrams/architecture",
         },
@@ -195,7 +195,7 @@ This directory contains cloud architecture diagrams for the fin-workspace / mybr
 """
 
     github = manifest.get("githubIntegration", {})
-    base_url = f"https://app.diagrams.net/?mode=github#H{github.get('org', 'jgtolentino')}/{github.get('repo', 'odoo-ce')}/{github.get('branch', 'main')}/{github.get('basePath', 'docs/diagrams/architecture')}"
+    base_url = f"https://app.diagrams.net/?mode=github#H{github.get('org', 'jgtolentino')}/{github.get('repo', 'odoo')}/{github.get('branch', 'main')}/{github.get('basePath', 'docs/diagrams/architecture')}"
 
     for diag in manifest["diagrams"]:
         providers = ", ".join(diag.get("providers", ["generic"]))

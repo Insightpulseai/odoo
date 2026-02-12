@@ -34,14 +34,14 @@ git push origin main
 ```
 
 **GitHub Actions will execute:**
-- `build_and_push` job → Creates `ghcr.io/jgtolentino/odoo-ce:latest`
+- `build_and_push` job → Creates `ghcr.io/jgtolentino/odoo:latest`
 - `deploy_to_prod` job → Deploys to `erp.insightpulseai.com`
 
 ## 📋 Deployment Sequence (What Happens)
 
 | Step | Action | Outcome |
 |------|--------|---------|
-| **Build** | GitHub Actions builds custom image | `ghcr.io/jgtolentino/odoo-ce:latest` created |
+| **Build** | GitHub Actions builds custom image | `ghcr.io/jgtolentino/odoo:latest` created |
 | **Push** | Image pushed to GitHub Container Registry | Image available for deployment |
 | **Pull** | VPS pulls new image | Latest code ready |
 | **Restart** | Docker Compose restarts Odoo container | Zero-downtime deployment |
@@ -137,7 +137,7 @@ This will trigger the complete CD pipeline, creating your custom Odoo image and 
 
 | Metric | Value |
 |--------|-------|
-| **Image** | `ghcr.io/jgtolentino/odoo-ce:v0.9.1` |
+| **Image** | `ghcr.io/jgtolentino/odoo:v0.9.1` |
 | **Platform** | `linux/amd64` |
 | **Build Time** | 2025-11-25 09:19 UTC |
 | **Image Digest** | `sha256:c1031faa81ed610ccee641791240c96f769f3738255e4c7c1b9a6160f0c7e31d` |
@@ -160,8 +160,8 @@ This will trigger the complete CD pipeline, creating your custom Odoo image and 
 ```bash
 docker buildx build \
   --platform linux/amd64 \
-  -t ghcr.io/jgtolentino/odoo-ce:v0.9.1 \
-  -t ghcr.io/jgtolentino/odoo-ce:v0.9.1-amd64 \
+  -t ghcr.io/jgtolentino/odoo:v0.9.1 \
+  -t ghcr.io/jgtolentino/odoo:v0.9.1-amd64 \
   --push .
 ```
 
@@ -169,7 +169,7 @@ docker buildx build \
 
 ```bash
 # Platform check
-docker inspect odoo-ce --format '{{.Platform}}' # linux
+docker inspect odoo --format '{{.Platform}}' # linux
 
 # Health endpoint
 curl http://127.0.0.1:8069/web/health # {"status": "pass"}
@@ -178,7 +178,7 @@ curl http://127.0.0.1:8069/web/health # {"status": "pass"}
 curl -I http://127.0.0.1:8069/web # HTTP 303 (redirect OK)
 
 # Logs
-docker logs odoo-ce --tail 50 # No ERROR/CRITICAL messages
+docker logs odoo --tail 50 # No ERROR/CRITICAL messages
 ```
 
 ### CPU Limits Adjusted
@@ -188,13 +188,13 @@ docker logs odoo-ce --tail 50 # No ERROR/CRITICAL messages
 | Service | CPU Limit | CPU Reserve | Memory Limit |
 |---------|-----------|-------------|--------------|
 | odoo-db | 0.5 CPUs | 0.2 CPUs | 2GB |
-| odoo-ce | 1.5 CPUs | 0.5 CPUs | 3GB |
+| odoo | 1.5 CPUs | 0.5 CPUs | 3GB |
 | **Total** | **2.0 CPUs** | **0.7 CPUs** | **5GB** |
 
 ### Modules Migrated
 
 ```bash
-docker exec odoo-ce odoo -d odoo \
+docker exec odoo odoo -d odoo \
   -u ipai_ppm_advanced,ipai_internal_shop,ipai_payment_payout,ipai_finance_ppm \
   --stop-after-init
 ```
@@ -208,16 +208,16 @@ To deploy future updates:
 ```bash
 # 1. Build AMD64 image locally
 docker buildx build --platform linux/amd64 \
-  -t ghcr.io/jgtolentino/odoo-ce:v0.9.2 --push .
+  -t ghcr.io/jgtolentino/odoo:v0.9.2 --push .
 
 # 2. Deploy on VPS
 ssh root@159.223.75.148
-cd /root/odoo-ce
+cd /root/odoo
 docker compose -f deploy/docker-compose.prod.v0.9.1.yml pull
 docker compose -f deploy/docker-compose.prod.v0.9.1.yml up -d --force-recreate
 
 # 3. Verify
-docker logs odoo-ce --tail 50
+docker logs odoo --tail 50
 curl http://127.0.0.1:8069/web/health
 ```
 

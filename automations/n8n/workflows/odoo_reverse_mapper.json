@@ -370,7 +370,7 @@
         },
         "repository": {
           "__rl": true,
-          "value": "odoo-ce",
+          "value": "odoo",
           "mode": "name"
         },
         "title": "Deploy {{ $json.product_name }} parity modules ({{ $json.requires_ipai }})",

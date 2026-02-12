@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-OCA_DIR="${REPO_ROOT}/addons/oca"
+OCA_DIR="${REPO_ROOT}/oca-parity"
 ODOO_VERSION="${ODOO_VERSION:-19.0}"
 DB_NAME="${DB_NAME:-odoo_core}"
 
@@ -21,31 +21,40 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # OCA repositories and modules for EE parity
-declare -A OCA_REPOS=(
-    ["account-financial-tools"]="account_asset_management"
-    ["mis-builder"]="mis_builder,mis_builder_budget"
-    ["account-consolidation"]="account_consolidation"
-    ["account-analytic"]="analytic_tag_dimension"
-    ["dms"]="dms,dms_field"
-    ["hr"]="hr_appraisal_survey"
-    ["payroll"]="payroll,payroll_account"
-    ["web"]="web_timeline,web_widget_many2many_tags_multi_selection"
-    ["project"]="project_timeline,project_forecast_line"
-    ["manufacture"]="quality_control_oca"
-    ["social"]="sms_no_iap"
+# Format: "repo_name:module1,module2"
+# Bash 3.2 compatible array (standard indexed array)
+OCA_CONFIG=(
+    "account-financial-tools:account_asset_management,account_reconcile_oca"
+    "mis-builder:mis_builder,mis_builder_budget"
+    "account-consolidation:account_consolidation"
+    "account-analytic:analytic_tag_dimension"
+    "dms:dms,dms_field"
+    "hr:hr_appraisal_survey"
+    "payroll:payroll,payroll_account"
+    "web:web_timeline,web_widget_many2many_tags_multi_selection"
+    "project:project_timeline,project_forecast_line"
+    "manufacture:quality_control_oca"
+    "social:sms_no_iap"
+    "helpdesk:helpdesk_mgmt"
+    "hr-holidays:hr_holidays_public"
 )
 
 clone_oca_repos() {
     log_info "Cloning OCA repositories for Odoo ${ODOO_VERSION}..."
     mkdir -p "$OCA_DIR"
 
-    for repo in "${!OCA_REPOS[@]}"; do
+    for entry in "${OCA_CONFIG[@]}"; do
+        local repo="${entry%%:*}"
         local repo_path="${OCA_DIR}/${repo}"
         local repo_url="https://github.com/OCA/${repo}.git"
 
         if [[ -d "$repo_path" ]]; then
             log_info "Repository ${repo} already exists, pulling latest..."
-            (cd "$repo_path" && git fetch origin && git checkout "${ODOO_VERSION}" 2>/dev/null || git checkout -b "${ODOO_VERSION}" "origin/${ODOO_VERSION}" 2>/dev/null || log_warn "Branch ${ODOO_VERSION} not available for ${repo}")
+            # Try specified version, fallback to 18.0 if needed
+            (cd "$repo_path" && git fetch origin && \
+                (git checkout "${ODOO_VERSION}" 2>/dev/null || \
+                 git checkout -b "${ODOO_VERSION}" "origin/${ODOO_VERSION}" 2>/dev/null || \
+                 log_warn "Branch ${ODOO_VERSION} not available for ${repo}. Keeping current branch."))
         else
             log_info "Cloning ${repo}..."
             if git clone --branch "${ODOO_VERSION}" --depth 1 "$repo_url" "$repo_path" 2>/dev/null; then
@@ -62,12 +71,12 @@ clone_oca_repos() {
 
 collect_modules() {
     local modules=""
-    for repo in "${!OCA_REPOS[@]}"; do
-        local repo_modules="${OCA_REPOS[$repo]}"
+    for entry in "${OCA_CONFIG[@]}"; do
+        local mod_list="${entry#*:}"
         if [[ -n "$modules" ]]; then
-            modules="${modules},${repo_modules}"
+            modules="${modules},${mod_list}"
         else
-            modules="$repo_modules"
+            modules="$mod_list"
         fi
     done
     echo "$modules"
@@ -80,9 +89,13 @@ install_modules() {
 
     # Build addons path
     local addons_path="${REPO_ROOT}/addons"
-    for repo in "${!OCA_REPOS[@]}"; do
+    for entry in "${OCA_CONFIG[@]}"; do
+        local repo="${entry%%:*}"
         addons_path="${addons_path},${OCA_DIR}/${repo}"
     done
+
+    # Check for launcher script first (best practice)
+    local launcher="${REPO_ROOT}/scripts/odoo.sh"
 
     # Check if running in Docker
     if [[ -f /.dockerenv ]] || grep -q docker /proc/1/cgroup 2>/dev/null; then
@@ -90,13 +103,20 @@ install_modules() {
         odoo -d "${DB_NAME}" -i "${modules}" --stop-after-init --addons-path="${addons_path}"
     elif command -v docker &>/dev/null && docker ps -q --filter "name=odoo" 2>/dev/null | grep -q .; then
         log_info "Using Docker container"
-        docker exec -it odoo-core odoo -d "${DB_NAME}" -i "${modules}" --stop-after-init
+        local container_name=$(docker ps -q --filter "name=odoo" --format "{{.Names}}" | head -n 1)
+        docker exec -it "$container_name" odoo -d "${DB_NAME}" -i "${modules}" --stop-after-init
+    elif [[ -x "$launcher" ]]; then
+        log_info "Using Repo Launcher"
+        "$launcher" -d "${DB_NAME}" -i "${modules}" --stop-after-init --addons-path="${addons_path}"
     else
         log_info "Running locally"
         if command -v odoo &>/dev/null; then
             odoo -d "${DB_NAME}" -i "${modules}" --stop-after-init --addons-path="${addons_path}"
         elif command -v odoo-bin &>/dev/null; then
             odoo-bin -d "${DB_NAME}" -i "${modules}" --stop-after-init --addons-path="${addons_path}"
+        # Fallback for local odoo-bin if not in PATH
+        elif [[ -x "${REPO_ROOT}/odoo-bin" ]]; then
+             "${REPO_ROOT}/odoo-bin" -d "${DB_NAME}" -i "${modules}" --stop-after-init --addons-path="${addons_path}"
         else
             log_error "Odoo binary not found. Please install Odoo or run in Docker."
             exit 1
@@ -137,13 +157,16 @@ print_summary() {
     echo "OCA EE PARITY INSTALLATION SUMMARY"
     echo "=========================================="
     echo ""
-    echo "Repositories cloned: ${#OCA_REPOS[@]}"
+    echo "Repositories: ${#OCA_CONFIG[@]}"
     echo "Modules to install: $(collect_modules | tr ',' '\n' | wc -l)"
     echo ""
     echo "Modules:"
-    for repo in "${!OCA_REPOS[@]}"; do
+    for entry in "${OCA_CONFIG[@]}"; do
+        local repo="${entry%%:*}"
+        local mod_list="${entry#*:}"
+        # Bash 3.2 string replacement for newlines
         echo "  ${repo}:"
-        echo "    - ${OCA_REPOS[$repo]//,/$'\n    - '}"
+        echo "    - ${mod_list//,/$'\n    - '}"
     done
     echo ""
     echo "Run with --install-only to install modules"

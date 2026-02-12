@@ -17,7 +17,7 @@ ssh root@178.128.112.214 "docker exec odoo-erp-prod bash -c \"\
 \""
 
 # Addons backup
-ssh root@178.128.112.214 "tar -czf /backup/addons_ipai_\$(date +%Y%m%d).tar.gz /opt/odoo-ce/repo/addons/ipai/"
+ssh root@178.128.112.214 "tar -czf /backup/addons_ipai_\$(date +%Y%m%d).tar.gz /opt/odoo/repo/addons/ipai/"
 ```
 
 **Verification**: ✅ Backup files created
@@ -520,7 +520,7 @@ ssh root@178.128.112.214 "docker exec odoo-erp-prod bash -c \"\
 \""
 
 # 2. Restore addons from backup
-ssh root@178.128.112.214 "tar -xzf /backup/addons_ipai_YYYYMMDD.tar.gz -C /opt/odoo-ce/repo/addons/"
+ssh root@178.128.112.214 "tar -xzf /backup/addons_ipai_YYYYMMDD.tar.gz -C /opt/odoo/repo/addons/"
 
 # 3. Restart Odoo
 ssh root@178.128.112.214 "docker restart odoo-erp-prod"

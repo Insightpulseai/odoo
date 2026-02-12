@@ -484,8 +484,8 @@ services:
   odoo-accounting:
     image: odoo:18.0
     volumes:
-      - /opt/odoo-ce/addons/ipai:/mnt/addons/ipai
-      - /opt/odoo-ce/deploy/odoo.conf:/etc/odoo/odoo.conf
+      - /opt/odoo/addons/ipai:/mnt/addons/ipai
+      - /opt/odoo/deploy/odoo.conf:/etc/odoo/odoo.conf
     environment:
       - HOST=odoo-db-1
       - PORT=5432

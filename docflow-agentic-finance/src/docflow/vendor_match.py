@@ -88,23 +88,14 @@ def resolve_vendor_partner_id(
             method="fallback" if fallback else "none",
         )
 
-    # 2) Fuzzy over supplier-like partners first
+    # 2) Fuzzy over all active partners (supplier_rank field removed in Odoo 19)
     limit = int(os.getenv("VENDOR_MATCH_CANDIDATE_LIMIT", "500"))
     candidates = odoo.call_kw(
         "res.partner",
         "search_read",
-        [[["supplier_rank", ">", 0], ["active", "=", True]]],
+        [[["active", "=", True]]],
         {"fields": ["id", "name"], "limit": limit},
     )
-
-    # Fallback pool if none
-    if not candidates:
-        candidates = odoo.call_kw(
-            "res.partner",
-            "search_read",
-            [[["active", "=", True]]],
-            {"fields": ["id", "name"], "limit": limit},
-        )
 
     names: List[str] = [c["name"] for c in candidates if c.get("name")]
     if not names:

@@ -1,7 +1,7 @@
 # ===========================================
 # ODOO CE PRODUCTION STACK
 # ===========================================
-# Target Image: ghcr.io/jgtolentino/odoo-ce:latest
+# Target Image: ghcr.io/jgtolentino/odoo:latest
 # Database: PostgreSQL 16
 # Architecture: Immutable Image + Persistent Volumes
 #
@@ -78,8 +78,8 @@ services:
   # Odoo 18 CE Application (Immutable Image)
   # -----------------------------------------
   odoo:
-    image: ${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}:${APP_IMAGE_VERSION:-latest}
-    container_name: odoo-ce
+    image: ${APP_IMAGE:-ghcr.io/jgtolentino/odoo}:${APP_IMAGE_VERSION:-latest}
+    container_name: odoo
     restart: unless-stopped
 
     depends_on:

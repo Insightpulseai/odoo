@@ -105,14 +105,14 @@ OpenSSH                    ALLOW       Anywhere
 
 ```bash
 # Create canonical directories
-mkdir -p /opt/odoo-ce/{deploy,data,logs}
+mkdir -p /opt/odoo/{deploy,data,logs}
 
 # Secure deploy directory (secrets live here)
-chmod 700 /opt/odoo-ce/deploy
+chmod 700 /opt/odoo/deploy
 
 # Create environment file
-touch /opt/odoo-ce/deploy/.env
-chmod 600 /opt/odoo-ce/deploy/.env
+touch /opt/odoo/deploy/.env
+chmod 600 /opt/odoo/deploy/.env
 ```
 
 ---
@@ -120,7 +120,7 @@ chmod 600 /opt/odoo-ce/deploy/.env
 ## Step 4: Configure Environment Variables
 
 ```bash
-cat >/opt/odoo-ce/deploy/.env <<'ENV'
+cat >/opt/odoo/deploy/.env <<'ENV'
 # --- DigitalOcean Managed Postgres (canonical) ---
 DB_HOST=odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
 DB_PORT=25060
@@ -136,7 +136,7 @@ ODOO_DOMAIN=erp.insightpulseai.com
 ENV
 
 # Edit with real credentials
-nano /opt/odoo-ce/deploy/.env
+nano /opt/odoo/deploy/.env
 ```
 
 **Required replacements:**
@@ -148,7 +148,7 @@ nano /opt/odoo-ce/deploy/.env
 ## Step 5: Create Docker Compose Configuration
 
 ```bash
-cat >/opt/odoo-ce/deploy/docker-compose.yml <<'YAML'
+cat >/opt/odoo/deploy/docker-compose.yml <<'YAML'
 services:
   dbssl:
     image: alpine:3.20
@@ -178,9 +178,9 @@ services:
     ports:
       - "127.0.0.1:8069:8069"
     volumes:
-      - /opt/odoo-ce/data/odoo-web-data:/var/lib/odoo
-      - /opt/odoo-ce/deploy/odoo.conf:/etc/odoo/odoo.conf:ro
-      - /opt/odoo-ce/logs:/var/log/odoo
+      - /opt/odoo/data/odoo-web-data:/var/lib/odoo
+      - /opt/odoo/deploy/odoo.conf:/etc/odoo/odoo.conf:ro
+      - /opt/odoo/logs:/var/log/odoo
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8069/web/login >/dev/null 2>&1 || exit 1"]
       interval: 30s
@@ -195,9 +195,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /opt/odoo-ce/deploy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - /opt/odoo-ce/data/caddy:/data
-      - /opt/odoo-ce/data/caddy_config:/config
+      - /opt/odoo/deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/odoo/data/caddy:/data
+      - /opt/odoo/data/caddy_config:/config
 YAML
 ```
 
@@ -211,7 +211,7 @@ Internet → Caddy (80/443) → Odoo (127.0.0.1:8069) → stunnel (127.0.0.1:543
 ## Step 6: Create Odoo Configuration
 
 ```bash
-cat >/opt/odoo-ce/deploy/odoo.conf <<'CONF'
+cat >/opt/odoo/deploy/odoo.conf <<'CONF'
 [options]
 ; master password for db manager:
 admin_passwd = ${ODOO_ADMIN_PASSWORD}
@@ -248,7 +248,7 @@ CONF
 ## Step 7: Create Caddy Reverse Proxy Configuration
 
 ```bash
-cat >/opt/odoo-ce/deploy/Caddyfile <<'CADDY'
+cat >/opt/odoo/deploy/Caddyfile <<'CADDY'
 {$ODOO_DOMAIN} {
   encode zstd gzip
   reverse_proxy 127.0.0.1:8069
@@ -267,7 +267,7 @@ CADDY
 ## Step 8: Start Services
 
 ```bash
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # Pull images
 docker compose pull
@@ -348,7 +348,7 @@ To restrict Odoo to only use database `odoo`:
 
 ```bash
 # Uncomment dbfilter line
-sed -i 's/^; dbfilter/dbfilter/' /opt/odoo-ce/deploy/odoo.conf
+sed -i 's/^; dbfilter/dbfilter/' /opt/odoo/deploy/odoo.conf
 
 # Restart Odoo
 docker compose restart odoo
@@ -393,7 +393,7 @@ Requires=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/opt/odoo-ce/deploy
+WorkingDirectory=/opt/odoo/deploy
 ExecStart=/usr/bin/docker compose up -d
 ExecStop=/usr/bin/docker compose down
 TimeoutStartSec=0
@@ -418,7 +418,7 @@ systemctl status odoo-stack.service --no-pager
 reboot
 
 # After reboot, check services
-docker compose -f /opt/odoo-ce/deploy/docker-compose.yml ps
+docker compose -f /opt/odoo/deploy/docker-compose.yml ps
 curl -I https://erp.insightpulseai.com/web/login
 ```
 
@@ -429,7 +429,7 @@ curl -I https://erp.insightpulseai.com/web/login
 ### Service Management
 
 ```bash
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 
 # View logs (follow mode)
 docker compose logs -f odoo
@@ -626,7 +626,7 @@ docker compose exec odoo bash -c '
 '
 
 # Disk usage
-df -h /opt/odoo-ce
+df -h /opt/odoo
 
 # Memory usage
 docker stats --no-stream
@@ -638,13 +638,13 @@ docker stats --no-stream
 
 ```bash
 # Odoo logs
-tail -f /opt/odoo-ce/logs/odoo.log
+tail -f /opt/odoo/logs/odoo.log
 
 # Docker logs
 docker compose logs --tail 100
 
 # Clear old logs (keep last 7 days)
-find /opt/odoo-ce/logs -name "*.log" -mtime +7 -delete
+find /opt/odoo/logs -name "*.log" -mtime +7 -delete
 ```
 
 ---
@@ -655,9 +655,9 @@ find /opt/odoo-ce/logs -name "*.log" -mtime +7 -delete
 
 ```bash
 #!/bin/bash
-# /opt/odoo-ce/scripts/backup-db.sh
+# /opt/odoo/scripts/backup-db.sh
 
-source /opt/odoo-ce/deploy/.env
+source /opt/odoo/deploy/.env
 BACKUP_DIR="/opt/backups/odoo"
 DATE=$(date +%Y%m%d_%H%M%S)
 
@@ -678,7 +678,7 @@ find "$BACKUP_DIR" -name "odoo_*.sql.gz" -mtime +7 -delete
 **Cron job:**
 ```bash
 # Daily at 2 AM
-0 2 * * * /opt/odoo-ce/scripts/backup-db.sh >> /opt/odoo-ce/logs/backup.log 2>&1
+0 2 * * * /opt/odoo/scripts/backup-db.sh >> /opt/odoo/logs/backup.log 2>&1
 ```
 
 ---
@@ -687,13 +687,13 @@ find "$BACKUP_DIR" -name "odoo_*.sql.gz" -mtime +7 -delete
 
 ```bash
 #!/bin/bash
-# /opt/odoo-ce/scripts/backup-filestore.sh
+# /opt/odoo/scripts/backup-filestore.sh
 
 BACKUP_DIR="/opt/backups/odoo"
 DATE=$(date +%Y%m%d)
 
 tar czf "$BACKUP_DIR/filestore_${DATE}.tar.gz" \
-  /opt/odoo-ce/data/odoo-web-data
+  /opt/odoo/data/odoo-web-data
 
 # Keep last 7 days
 find "$BACKUP_DIR" -name "filestore_*.tar.gz" -mtime +7 -delete

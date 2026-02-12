@@ -1,6 +1,6 @@
 # Odoo CE 19 + OCA + IPAI Enterprise Bridge - Consumer Guide
 
-> **Image**: `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity`
+> **Image**: `ghcr.io/jgtolentino/odoo:19.0-ee-parity`
 > **License**: LGPL-3.0 (100% open source)
 > **NO** proprietary Odoo EE code is used.
 
@@ -10,10 +10,10 @@
 
 ```bash
 # Production tag
-docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity
 
 # Edge/development tag
-docker pull ghcr.io/jgtolentino/odoo-ce:edge-19-ee-parity
+docker pull ghcr.io/jgtolentino/odoo:edge-19-ee-parity
 ```
 
 ### 2. Run with Docker Compose (Recommended)
@@ -27,11 +27,11 @@ docker compose -f docker/docker-compose.ce19.yml up -d
 
 ```bash
 # Create network
-docker network create odoo-ce19-ee-net || true
+docker network create odoo19-ee-net || true
 
 # Start PostgreSQL
 docker run -d --name odoo_ce19_db \
-  --network odoo-ce19-ee-net \
+  --network odoo19-ee-net \
   -e POSTGRES_DB=odoo_ce19 \
   -e POSTGRES_USER=odoo \
   -e POSTGRES_PASSWORD=odoo \
@@ -40,13 +40,13 @@ docker run -d --name odoo_ce19_db \
 
 # Start Odoo CE 19 EE Parity
 docker run -d --name odoo_ce19_ee_parity \
-  --network odoo-ce19-ee-net \
+  --network odoo19-ee-net \
   -p 8069:8069 \
   -e HOST=odoo_ce19_db \
   -e PORT=5432 \
   -e USER=odoo \
   -e PASSWORD=odoo \
-  ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+  ghcr.io/jgtolentino/odoo:19.0-ee-parity
 ```
 
 ### 4. Verify
@@ -148,7 +148,7 @@ See `docs/ee_parity_map.md` for complete mapping.
 
 ```bash
 # Pull new image
-docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity
 
 # Stop and remove old container
 docker stop odoo_ce19_ee_parity
@@ -156,13 +156,13 @@ docker rm odoo_ce19_ee_parity
 
 # Start with new image
 docker run -d --name odoo_ce19_ee_parity \
-  --network odoo-ce19-ee-net \
+  --network odoo19-ee-net \
   -p 8069:8069 \
   -e HOST=odoo_ce19_db \
   -e PORT=5432 \
   -e USER=odoo \
   -e PASSWORD=odoo \
-  ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity
+  ghcr.io/jgtolentino/odoo:19.0-ee-parity
 
 # Update modules
 docker exec -it odoo_ce19_ee_parity \
@@ -173,12 +173,12 @@ docker exec -it odoo_ce19_ee_parity \
 
 ```bash
 # Pull specific SHA
-docker pull ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-sha-abc1234
+docker pull ghcr.io/jgtolentino/odoo:19.0-ee-parity-sha-abc1234
 
 # Deploy with exact tag
 docker run -d --name odoo_ce19_ee_parity \
   ... \
-  ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-sha-abc1234
+  ghcr.io/jgtolentino/odoo:19.0-ee-parity-sha-abc1234
 ```
 
 ## Rollback
@@ -187,18 +187,18 @@ docker run -d --name odoo_ce19_ee_parity \
 
 ```bash
 # Tag current as "prev" before upgrading
-docker tag ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity \
-           ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-prev
+docker tag ghcr.io/jgtolentino/odoo:19.0-ee-parity \
+           ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
 
 # If upgrade fails, rollback:
 docker rm -f odoo_ce19_ee_parity
 
 docker run -d --name odoo_ce19_ee_parity \
-  --network odoo-ce19-ee-net \
+  --network odoo19-ee-net \
   -p 8069:8069 \
   -e HOST=odoo_ce19_db \
   ... \
-  ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity-prev
+  ghcr.io/jgtolentino/odoo:19.0-ee-parity-prev
 ```
 
 ### DB Snapshot Rollback
@@ -222,7 +222,7 @@ docker exec -i odoo_ce19_db psql -U odoo odoo_ce19 < backup.sql
 
 ## CI/CD
 
-GitHub Actions workflow: `.github/workflows/build-odoo-ce19-ee-parity.yml`
+GitHub Actions workflow: `.github/workflows/build-odoo19-ee-parity.yml`
 
 **Triggers:**
 - Push to `main` branch (edge build)
@@ -278,7 +278,7 @@ cat vendor/oca.lock.ce19.json | jq '.repos[].modules[]' | sort | uniq -d
 
 ## Support
 
-- Issues: https://github.com/jgtolentino/odoo-ce/issues
+- Issues: https://github.com/jgtolentino/odoo/issues
 - Documentation: `docs/` directory
 - EE Parity Strategy: `docs/ee_parity_map.md`
 

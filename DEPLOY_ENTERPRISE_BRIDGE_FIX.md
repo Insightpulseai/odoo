@@ -32,7 +32,7 @@ All fields are non-functional stubs that prevent inheritance errors while mainta
 ### 1. Push to Repository
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 git push origin main
 ```
 
@@ -45,7 +45,7 @@ ssh root@159.223.75.148
 
 **Pull latest code**:
 ```bash
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 ```
 
@@ -124,7 +124,7 @@ If deployment causes issues:
 
 ```bash
 # On server
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git checkout 28d81730  # Previous commit before fix
 
 # Restart Odoo

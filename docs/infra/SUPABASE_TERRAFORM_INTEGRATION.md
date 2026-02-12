@@ -92,7 +92,7 @@ import {
 
 resource "supabase_project" "production" {
   organization_id   = var.supabase_org_id
-  name              = "odoo-ce-production"
+  name              = "odoo-production"
   database_password = var.db_password
   region            = "ap-southeast-1"
 
@@ -170,15 +170,15 @@ resource "supabase_settings" "database" {
 locals {
   environments = {
     development = {
-      name   = "odoo-ce-dev"
+      name   = "odoo-dev"
       region = "ap-southeast-1"
     }
     staging = {
-      name   = "odoo-ce-staging"
+      name   = "odoo-staging"
       region = "ap-southeast-1"
     }
     production = {
-      name   = "odoo-ce-production"
+      name   = "odoo-production"
       region = "ap-southeast-1"
     }
   }

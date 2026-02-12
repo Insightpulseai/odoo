@@ -1,0 +1,116 @@
+version: 1
+kind: capability_taxonomy
+id: consulting_delivery_v1
+title: "Consulting & Delivery Capability Taxonomy"
+domains:
+  - id: odoo
+    title: "Odoo"
+    capabilities:
+      - id: odoo_consultation
+        title: "Odoo Consultation"
+        outcomes:
+          [
+            "fit-gap analysis",
+            "module selection",
+            "process mapping",
+            "solution blueprint",
+          ]
+      - id: odoo_implementation
+        title: "Odoo Implementation"
+        outcomes:
+          [
+            "module install order",
+            "configuration plan",
+            "data migration",
+            "UAT-ready build",
+          ]
+      - id: odoo_customization
+        title: "Odoo Customization"
+        outcomes:
+          [
+            "custom module/inherit views",
+            "automation scripts",
+            "OCA integration",
+            "minimal glue code",
+          ]
+      - id: odoo_deployment
+        title: "Odoo Deployment"
+        outcomes:
+          [
+            "CI/CD pipeline",
+            "infra runbooks",
+            "zero-downtime deploy",
+            "monitoring/backup",
+          ]
+      - id: odoo_support_training
+        title: "Odoo Support & Training"
+        outcomes: ["playbooks", "SOPs", "training materials", "incident triage"]
+
+  - id: app
+    title: "App Development"
+    capabilities:
+      - id: app_strategy_consulting
+        title: "App Strategy & Consulting"
+        outcomes: ["PRD", "roadmap", "market positioning", "MVP scope"]
+      - id: custom_app_development
+        title: "Custom App Development"
+        outcomes: ["full-stack build", "API contracts", "auth", "db schema"]
+      - id: mobile_app_design
+        title: "Mobile App Design"
+        outcomes:
+          ["UX flows", "wireframes", "design tokens", "interaction specs"]
+      - id: app_maintenance_support
+        title: "App Maintenance & Support"
+        outcomes:
+          [
+            "SLA playbooks",
+            "bugfix cadence",
+            "observability",
+            "release process",
+          ]
+      - id: app_marketing_launch
+        title: "App Marketing & Launch"
+        outcomes:
+          [
+            "launch checklist",
+            "tracking plan",
+            "ASO/SEO basics",
+            "release comms",
+          ]
+
+  - id: web
+    title: "Web Development"
+    capabilities:
+      - id: custom_web_design
+        title: "Custom Web Design"
+        outcomes:
+          ["site IA", "layout system", "component spec", "design tokens"]
+      - id: website_backend_solutions
+        title: "Website Backend Solutions"
+        outcomes: ["CMS/API", "SSR/ISR", "db/storage", "auth/permissions"]
+      - id: ecommerce_solutions
+        title: "E-Commerce Solutions"
+        outcomes:
+          ["catalog/cart/checkout", "payments", "tax/shipping", "order ops"]
+      - id: website_maintenance_support
+        title: "Website Maintenance & Support"
+        outcomes:
+          [
+            "perf budgets",
+            "security patching",
+            "uptime monitors",
+            "incident playbooks",
+          ]
+
+  - id: uiux
+    title: "UI/UX Designing"
+    capabilities:
+      - id: uiux_design
+        title: "UI/UX Designing"
+        outcomes:
+          [
+            "journeys",
+            "wireframes",
+            "usability heuristics",
+            "design system alignment",
+          ]

@@ -57,7 +57,7 @@
 ## Installation Instructions
 
 ### Prerequisites
-- Odoo CE 18.0 running (Docker: `odoo-ce` container)
+- Odoo CE 18.0 running (Docker: `odoo` container)
 - PostgreSQL database: `odoo`
 - Web access: http://localhost:8069 or https://erp.insightpulseai.com
 
@@ -143,11 +143,11 @@ Expected output:
 ### Issue: Docker containers unhealthy
 ```bash
 # Restart containers
-docker restart odoo-ce odoo-db
+docker restart odoo odoo-db
 sleep 10
 
 # Check health
-docker ps | grep -E "(odoo-ce|odoo-db)"
+docker ps | grep -E "(odoo|odoo-db)"
 ```
 
 ## Files Changed

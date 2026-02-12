@@ -4,7 +4,7 @@
 
 This project uses **semantic versioning** for git tags and **profile-based Docker image tags** for deployment flexibility.
 
-**Registry**: `ghcr.io/jgtolentino/odoo-ce`
+**Registry**: `ghcr.io/jgtolentino/odoo`
 
 ---
 
@@ -15,9 +15,9 @@ This project uses **semantic versioning** for git tags and **profile-based Docke
 Created from git tags `v*.*.*` (e.g., `v1.2.0`):
 
 ```
-ghcr.io/jgtolentino/odoo-ce:1.2.0-standard
-ghcr.io/jgtolentino/odoo-ce:1.2.0-parity
-ghcr.io/jgtolentino/odoo-ce:1.2.0-dev
+ghcr.io/jgtolentino/odoo:1.2.0-standard
+ghcr.io/jgtolentino/odoo:1.2.0-parity
+ghcr.io/jgtolentino/odoo:1.2.0-dev
 ```
 
 **Guarantees**:
@@ -30,12 +30,12 @@ ghcr.io/jgtolentino/odoo-ce:1.2.0-dev
 
 ```
 # Minor version pointer (1.2.x → 1.2-standard)
-ghcr.io/jgtolentino/odoo-ce:1.2-standard
-ghcr.io/jgtolentino/odoo-ce:1.2-parity
+ghcr.io/jgtolentino/odoo:1.2-standard
+ghcr.io/jgtolentino/odoo:1.2-parity
 
 # Major version pointer (1.x.x → 1-standard)
-ghcr.io/jgtolentino/odoo-ce:1-standard
-ghcr.io/jgtolentino/odoo-ce:1-parity
+ghcr.io/jgtolentino/odoo:1-standard
+ghcr.io/jgtolentino/odoo:1-parity
 ```
 
 **Use case**: Pin to minor/major version, get patch updates automatically
@@ -44,8 +44,8 @@ ghcr.io/jgtolentino/odoo-ce:1-parity
 
 ```
 # Standard profile is canonical production
-ghcr.io/jgtolentino/odoo-ce:latest-standard  (DEFAULT)
-ghcr.io/jgtolentino/odoo-ce:latest-parity    (legacy compatibility)
+ghcr.io/jgtolentino/odoo:latest-standard  (DEFAULT)
+ghcr.io/jgtolentino/odoo:latest-parity    (legacy compatibility)
 ```
 
 **Use case**: Always get the latest stable release for a profile
@@ -54,12 +54,12 @@ ghcr.io/jgtolentino/odoo-ce:latest-parity    (legacy compatibility)
 
 ```
 # Built on every push to main (never called "latest")
-ghcr.io/jgtolentino/odoo-ce:edge-standard
-ghcr.io/jgtolentino/odoo-ce:edge-parity
+ghcr.io/jgtolentino/odoo:edge-standard
+ghcr.io/jgtolentino/odoo:edge-parity
 
 # SHA-specific edge builds
-ghcr.io/jgtolentino/odoo-ce:sha-abc1234-standard
-ghcr.io/jgtolentino/odoo-ce:sha-def5678-parity
+ghcr.io/jgtolentino/odoo:sha-abc1234-standard
+ghcr.io/jgtolentino/odoo:sha-def5678-parity
 ```
 
 **Use case**: Testing unreleased changes, CI/CD validation
@@ -115,10 +115,10 @@ ghcr.io/jgtolentino/odoo-ce:sha-def5678-parity
 
 ```bash
 # Pin to specific release (immutable)
-docker pull ghcr.io/jgtolentino/odoo-ce:1.2.0-standard
+docker pull ghcr.io/jgtolentino/odoo:1.2.0-standard
 
 # Or use latest stable (moving pointer)
-docker pull ghcr.io/jgtolentino/odoo-ce:latest-standard
+docker pull ghcr.io/jgtolentino/odoo:latest-standard
 ```
 
 ### Docker Compose
@@ -129,26 +129,26 @@ version: "3.9"
 services:
   odoo:
     # RECOMMENDED: Pin to specific release
-    image: ghcr.io/jgtolentino/odoo-ce:1.2.0-standard
+    image: ghcr.io/jgtolentino/odoo:1.2.0-standard
 
     # ALTERNATIVE: Use latest stable (auto-updates on restart)
-    # image: ghcr.io/jgtolentino/odoo-ce:latest-standard
+    # image: ghcr.io/jgtolentino/odoo:latest-standard
 
     # TESTING ONLY: Edge builds (main branch)
-    # image: ghcr.io/jgtolentino/odoo-ce:edge-standard
+    # image: ghcr.io/jgtolentino/odoo:edge-standard
 ```
 
 ### Development/Testing
 
 ```bash
 # Test latest main branch build
-docker pull ghcr.io/jgtolentino/odoo-ce:edge-standard
+docker pull ghcr.io/jgtolentino/odoo:edge-standard
 
 # Test specific commit
-docker pull ghcr.io/jgtolentino/odoo-ce:sha-abc1234-standard
+docker pull ghcr.io/jgtolentino/odoo:sha-abc1234-standard
 
 # Development environment
-docker pull ghcr.io/jgtolentino/odoo-ce:1.2.0-dev
+docker pull ghcr.io/jgtolentino/odoo:1.2.0-dev
 ```
 
 ---
@@ -188,8 +188,8 @@ git push origin v1.2.0
 
 ```bash
 # GitHub Actions will automatically:
-# 1. Build standard profile: ghcr.io/jgtolentino/odoo-ce:1.2.0-standard
-# 2. Build parity profile: ghcr.io/jgtolentino/odoo-ce:1.2.0-parity
+# 1. Build standard profile: ghcr.io/jgtolentino/odoo:1.2.0-standard
+# 2. Build parity profile: ghcr.io/jgtolentino/odoo:1.2.0-parity
 # 3. Create convenience aliases: 1.2-standard, 1-standard
 # 4. Update latest-standard pointer
 
@@ -215,8 +215,8 @@ gh release create v1.2.0 \
 ### View OCI Labels
 
 ```bash
-docker pull ghcr.io/jgtolentino/odoo-ce:1.2.0-standard
-docker inspect ghcr.io/jgtolentino/odoo-ce:1.2.0-standard --format '{{json .Config.Labels}}' | jq
+docker pull ghcr.io/jgtolentino/odoo:1.2.0-standard
+docker inspect ghcr.io/jgtolentino/odoo:1.2.0-standard --format '{{json .Config.Labels}}' | jq
 ```
 
 **Expected labels**:
@@ -236,7 +236,7 @@ docker inspect ghcr.io/jgtolentino/odoo-ce:1.2.0-standard --format '{{json .Conf
 ### Verify Image Size
 
 ```bash
-docker images ghcr.io/jgtolentino/odoo-ce --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
+docker images ghcr.io/jgtolentino/odoo --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
 ```
 
 ---
@@ -272,7 +272,7 @@ docker images ghcr.io/jgtolentino/odoo-ce --format "table {{.Repository}}:{{.Tag
 
 ```bash
 # Verify tag exists
-gh api /orgs/jgtolentino/packages/container/odoo-ce/versions | jq -r '.[] | .metadata.container.tags[]' | sort
+gh api /orgs/jgtolentino/packages/container/odoo/versions | jq -r '.[] | .metadata.container.tags[]' | sort
 
 # Check authentication
 echo $GITHUB_TOKEN | docker login ghcr.io -u jgtolentino --password-stdin

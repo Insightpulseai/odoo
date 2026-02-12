@@ -1,8 +1,8 @@
 {
   "project": {
-    "name": "odoo-ce",
-    "repo_url": "https://github.com/jgtolentino/odoo-ce",
-    "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
+    "name": "odoo",
+    "repo_url": "https://github.com/jgtolentino/odoo",
+    "wiki_url": "https://github.com/jgtolentino/odoo/wiki",
     "owner": "jgtolentino",
     "production_url": "https://erp.insightpulseai.com"
   },
@@ -40,7 +40,7 @@
       "./scripts/ci_local.sh"
     ],
     "ci_gates": [
-      "ci-odoo-ce.yml (main guardrails + data-model drift)",
+      "ci-odoo.yml (main guardrails + data-model drift)",
       "all-green-gates.yml (all gates aggregator)",
       "spec-kit-enforce.yml (spec bundle validation)",
       "repo-structure.yml (tree consistency)",

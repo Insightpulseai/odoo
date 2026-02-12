@@ -9,7 +9,7 @@ serve(async (req) => {
         const { message, odoo } = await req.json()
 
         // Stub retrieval logic
-        // In real implementation: 
+        // In real implementation:
         // 1. Embed `message` using OpenAI
         // 2. RPC call `docs.search_chunks`
         // 3. Generative answer via LLM
@@ -20,7 +20,7 @@ serve(async (req) => {
             {
                 title: "IPAI Copilot Stub",
                 source: "supabase/functions/ipai-copilot/index.ts",
-                url: "https://github.com/jgtolentino/odoo-ce",
+                url: "https://github.com/jgtolentino/odoo",
                 section: "Backend"
             }
         ]

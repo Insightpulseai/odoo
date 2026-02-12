@@ -11,7 +11,7 @@ finance-cli.sh status
 ```
 
 **Expected Output**:
-- ✅ Odoo containers: odoo-ce (Up), odoo-db (Up)
+- ✅ Odoo containers: odoo (Up), odoo-db (Up)
 - ✅ Module state: ipai_finance_ppm (installed)
 - ⚠️ BIR count: 1 (should be 129)
 

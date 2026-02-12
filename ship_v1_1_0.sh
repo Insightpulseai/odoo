@@ -8,7 +8,7 @@ set -euo pipefail
 echo "=== IPAI Ship Pack v1.1.0: Final Deployment (Odoo CE) ==="
 echo "Target DB: $ODOO_DB"
 
-# 1. Rebuild Image (Critical for odoo-ce structure changes)
+# 1. Rebuild Image (Critical for odoo structure changes)
 echo ""
 echo "[1/4] Rebuilding Docker image..."
 docker compose -f "$COMPOSE_FILE" build odoo

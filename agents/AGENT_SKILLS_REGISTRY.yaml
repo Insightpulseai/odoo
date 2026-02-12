@@ -810,17 +810,17 @@ knowledge_sources:
 
   - id: odoo_ce_18_docs
     type: documentation
-    location: "/home/user/odoo-ce/docs/"
+    location: "/home/user/odoo/docs/"
     description: "Odoo CE 18 internal documentation"
 
   - id: n8n_workflow_conventions
     type: specification
-    location: "/home/user/odoo-ce/notion-n8n-monthly-close/WORKFLOW_CONVENTIONS.md"
+    location: "/home/user/odoo/notion-n8n-monthly-close/WORKFLOW_CONVENTIONS.md"
     description: "n8n naming and structure conventions"
 
   - id: ocr_quality_standards
     type: specification
-    location: "/home/user/odoo-ce/ODOO_OCR_SETUP.md"
+    location: "/home/user/odoo/ODOO_OCR_SETUP.md"
     description: "OCR quality SLOs and normalization patterns"
 
   - id: ph_receipt_patterns
@@ -830,52 +830,52 @@ knowledge_sources:
 
   - id: finance_closing_playbook
     type: runbook
-    location: "/home/user/odoo-ce/specs/002-odoo-expense-equipment-mvp.prd.md"
+    location: "/home/user/odoo/specs/002-odoo-expense-equipment-mvp.prd.md"
     description: "Finance closing workflows and BIR requirements"
 
   - id: insightpulse_standards
     type: standards
-    location: "/home/user/odoo-ce/spec.md"
+    location: "/home/user/odoo/spec.md"
     description: "InsightPulse CE/OCA-only standards"
 
   - id: module_service_matrix
     type: architecture
-    location: "/home/user/odoo-ce/specs/MODULE_SERVICE_MATRIX.md"
+    location: "/home/user/odoo/specs/MODULE_SERVICE_MATRIX.md"
     description: "Complete platform integration map"
 
   - id: cheqroom_parity_documentation
     type: documentation
-    location: "/home/user/odoo-ce/docs/FEATURE_CHEQROOM_PARITY.md"
+    location: "/home/user/odoo/docs/FEATURE_CHEQROOM_PARITY.md"
     description: "Cheqroom parity feature documentation and UAT script"
 
   - id: ipai_equipment_tests
     type: tests
-    location: "/home/user/odoo-ce/addons/ipai_equipment/tests/"
+    location: "/home/user/odoo/addons/ipai_equipment/tests/"
     description: "ipai_equipment regression tests for booking lifecycle"
 
   - id: concur_parity_documentation
     type: documentation
-    location: "/home/user/odoo-ce/docs/FEATURE_CONCUR_PARITY.md"
+    location: "/home/user/odoo/docs/FEATURE_CONCUR_PARITY.md"
     description: "SAP Concur parity feature documentation and UAT script"
 
   - id: ipai_expense_tests
     type: tests
-    location: "/home/user/odoo-ce/addons/ipai_expense/tests/"
+    location: "/home/user/odoo/addons/ipai_expense/tests/"
     description: "ipai_expense regression tests for OCR and expense lifecycle"
 
   - id: workspace_parity_documentation
     type: documentation
-    location: "/home/user/odoo-ce/docs/FEATURE_WORKSPACE_PARITY.md"
+    location: "/home/user/odoo/docs/FEATURE_WORKSPACE_PARITY.md"
     description: "Notion workspace parity feature documentation and UAT script"
 
   - id: ipai_docs_tests
     type: tests
-    location: "/home/user/odoo-ce/addons/ipai_docs/tests/"
+    location: "/home/user/odoo/addons/ipai_docs/tests/"
     description: "ipai_docs regression tests for workspace visibility and linkage"
 
   - id: enterprise_feature_gap
     type: documentation
-    location: "/home/user/odoo-ce/docs/ENTERPRISE_FEATURE_GAP.yaml"
+    location: "/home/user/odoo/docs/ENTERPRISE_FEATURE_GAP.yaml"
     description: "Central specification mapping SaaS products to Enterprise equivalents without installing them"
 
   - id: saas_feature_matrix
@@ -885,7 +885,7 @@ knowledge_sources:
 
   - id: odoo_reverse_mapper_spec
     type: specification
-    location: "/home/user/odoo-ce/agents/odoo_reverse_mapper.yaml"
+    location: "/home/user/odoo/agents/odoo_reverse_mapper.yaml"
     description: "Complete reverse mapping agent specification with capabilities, workflows, and validation"
 
   - id: oca_maintainer_tools
@@ -895,12 +895,12 @@ knowledge_sources:
 
   - id: oca_ci_guardian_docs
     type: documentation
-    location: "/home/user/odoo-ce/docs/deployment/OCA_CI_GUARDIAN.md"
+    location: "/home/user/odoo/docs/deployment/OCA_CI_GUARDIAN.md"
     description: "OCA CI Guardian agent documentation with troubleshooting and examples"
 
   - id: control_room_api_docs
     type: documentation
-    location: "/home/user/odoo-ce/spec/control-room-api/"
+    location: "/home/user/odoo/spec/control-room-api/"
     description: "Control Room API specification, PRD, and implementation plan"
 
   - id: continue_cli_docs
@@ -910,7 +910,7 @@ knowledge_sources:
 
   - id: visio_drawio_export_docs
     type: documentation
-    location: "/home/user/odoo-ce/skills/visio-drawio-export/"
+    location: "/home/user/odoo/skills/visio-drawio-export/"
     description: "Visio-DrawIO export skill documentation and usage"
 
   - id: drawio_documentation

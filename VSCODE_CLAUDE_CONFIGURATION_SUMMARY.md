@@ -62,7 +62,7 @@ The complete VS Code and Claude CLI configuration pack for Odoo 18 "Delta" devel
 ### 1. VS Code Setup
 ```bash
 # Open project in VS Code
-code /Users/tbwa/odoo-ce
+code /Users/tbwa/odoo
 
 # Install recommended extensions:
 # - Python (Microsoft)
@@ -74,7 +74,7 @@ code /Users/tbwa/odoo-ce
 ### 2. Claude CLI Usage
 ```bash
 # Navigate to project
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Start Claude CLI
 claude

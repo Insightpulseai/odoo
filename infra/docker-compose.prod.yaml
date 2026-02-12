@@ -29,8 +29,8 @@ services:
       # Production configuration (read-only)
       - ./odoo.conf:/etc/odoo/odoo.conf:ro
 
-      # Custom IPAI addons (assumes repo at /opt/odoo-ce)
-      - /opt/odoo-ce/repo/addons:/mnt/extra-addons:ro
+      # Custom IPAI addons (assumes repo at /opt/odoo)
+      - /opt/odoo/repo/addons:/mnt/extra-addons:ro
 
     # Health check (optional but recommended)
     healthcheck:

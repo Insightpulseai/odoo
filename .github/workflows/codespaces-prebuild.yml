@@ -26,4 +26,4 @@ jobs:
         run: |
           devcontainer build \
             --workspace-folder . \
-            --image-name ghcr.io/jgtolentino/odoo-ce-devcontainer:latest
+            --image-name ghcr.io/jgtolentino/odoo-devcontainer:latest

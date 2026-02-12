@@ -15,7 +15,7 @@ This release marks the completion of deployment infrastructure unification for I
 - **Baked Addons**: `./addons` → `/mnt/extra-addons/`
 - **Configuration**: `./deploy/odoo.conf` → `/etc/odoo/odoo.conf`
 - **Security**: Non-root execution (`USER odoo`)
-- **Canonical Image**: `ghcr.io/jgtolentino/odoo-ce:latest`
+- **Canonical Image**: `ghcr.io/jgtolentino/odoo:latest`
 
 ### 🔧 Deployment Paths
 - **VPS (Docker Compose)**: Production-ready compose file
@@ -32,7 +32,7 @@ This release marks the completion of deployment infrastructure unification for I
 
 ### Build + Push Canonical Image
 ```bash
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:latest
+export IMAGE=ghcr.io/jgtolentino/odoo:latest
 echo "$GHCR_PAT" | docker login ghcr.io -u jgtolentino --password-stdin
 docker build -t "$IMAGE" .
 docker push "$IMAGE"
@@ -78,7 +78,7 @@ scripts/full_deploy_sanity.sh
 
 ### From Previous State
 - **No breaking changes** - this is the first tagged release
-- **New**: Canonical image reference `ghcr.io/jgtolentino/odoo-ce:latest`
+- **New**: Canonical image reference `ghcr.io/jgtolentino/odoo:latest`
 - **New**: Unified secrets naming (`ODOO_DB_PASSWORD`, etc.)
 - **New**: Complete K8S manifests for DOKS deployment
 

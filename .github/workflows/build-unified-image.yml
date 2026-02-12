@@ -16,7 +16,7 @@
 #   - Smoke Test: --stop-after-init validation
 #   - Audit: SBOM + vulnerability scan + image diff
 #
-# Registry: ghcr.io/jgtolentino/odoo-ce
+# Registry: ghcr.io/jgtolentino/odoo
 # =============================================================================
 
 name: Build IPAI Odoo Images
@@ -54,7 +54,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
 
 jobs:
   # ===========================================================================

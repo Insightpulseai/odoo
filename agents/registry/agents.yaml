@@ -1,0 +1,60 @@
+version: 1
+agents:
+  - id: odoo-sage
+    name: ODOO-SAGE
+    domain: erp
+    owners: ["@Insightpulseai-net/odooforge"]
+    scopes:
+      - odoo
+      - oca
+      - addons
+      - migration
+    entrypoint: ".agent/skills/oca-development-standards/SKILL.md"
+  - id: devops-prime
+    name: DEVOPS-PRIME
+    domain: devops
+    owners: ["@Insightpulseai-net/devops"]
+    scopes:
+      - ci
+      - cd
+      - infra
+      - security
+      - drift
+    entrypoint: ".agent/skills/odoo-ci-optimization/SKILL.md"
+  - id: data-forge
+    name: DATA-FORGE
+    domain: data
+    owners: ["@Insightpulseai-net/data"]
+    scopes:
+      - etl
+      - lakehouse
+      - medallion
+      - mlflow
+  - id: ui-craft
+    name: UI-CRAFT
+    domain: frontend
+    owners: ["@Insightpulseai-net/frontend"]
+    scopes:
+      - react
+      - tailwind
+      - design-tokens
+    entrypoint: ".agent/skills/oca-owl-standards/SKILL.md"
+  - id: supabase-ssot
+    name: SUPABASE-SSOT
+    domain: platform
+    owners: ["@Insightpulseai-net/platform"]
+    scopes:
+      - migrations
+      - rls
+      - edge-functions
+      - ssot
+  - id: slack-app
+    name: SLACK-APP
+    domain: integrations
+    owners: ["@Insightpulseai-net/integrations"]
+    scopes:
+      - slack
+      - webhooks
+      - alerts
+      - workflows
+YAML

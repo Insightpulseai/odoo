@@ -4,7 +4,7 @@
 
 **Philosophy**: Humans draft strategy in Docs → Automation converts to Markdown → Agents execute from code.
 
-**Status**: Active Integration Pattern  
+**Status**: Active Integration Pattern
 **Date**: 2026-02-04
 
 ---
@@ -126,19 +126,19 @@ spec/erp-q1-2026/constitution.md
 
 ```sql
 -- Low Stock Alert (Odoo inventory)
-SELECT 
+SELECT
     product_id,
     product_tmpl_id,
     location_id,
     inventory_quantity,
     available_quantity
-FROM stock_quant 
+FROM stock_quant
 WHERE inventory_quantity < 10
 ORDER BY inventory_quantity ASC
 LIMIT 50;
 
 -- Daily Sales Summary
-SELECT 
+SELECT
     date_trunc('day', date_order) as sale_date,
     COUNT(*) as order_count,
     SUM(amount_total) as total_revenue
@@ -148,7 +148,7 @@ GROUP BY date_trunc('day', date_order)
 ORDER BY sale_date DESC;
 
 -- Pending Approvals
-SELECT 
+SELECT
     id,
     name,
     state,
@@ -159,7 +159,7 @@ WHERE state = 'pending'
 ORDER BY create_date ASC;
 
 -- BIR Tax Filing Deadlines
-SELECT 
+SELECT
     form_type,
     filing_period,
     due_date,
@@ -295,8 +295,8 @@ echo "Add to plan.md: ![${DIAGRAM_NAME}](../images/${DIAGRAM_NAME}.png)"
 2. CREATE REPORT (Monthly/Weekly)
    ├── Create "Q1 Progress Report" Google Doc
    ├── Paste GitHub Issue/PR URLs:
-   │   https://github.com/jgtolentino/odoo-ce/issues/123
-   │   https://github.com/jgtolentino/odoo-ce/pull/456
+   │   https://github.com/jgtolentino/odoo/issues/123
+   │   https://github.com/jgtolentino/odoo/pull/456
    └── Smart Links auto-expands to:
        [#123] Fix BIR 1601-C generation
        Status: ✅ Closed | Assignee: @dev | Labels: bug, finance
@@ -313,16 +313,16 @@ echo "Add to plan.md: ![${DIAGRAM_NAME}](../images/${DIAGRAM_NAME}.png)"
 # Monthly Engineering Report - January 2026
 
 ## Completed This Month
-https://github.com/jgtolentino/odoo-ce/issues/123
-https://github.com/jgtolentino/odoo-ce/issues/124
-https://github.com/jgtolentino/odoo-ce/issues/125
+https://github.com/jgtolentino/odoo/issues/123
+https://github.com/jgtolentino/odoo/issues/124
+https://github.com/jgtolentino/odoo/issues/125
 
 ## In Progress
-https://github.com/jgtolentino/odoo-ce/issues/126
-https://github.com/jgtolentino/odoo-ce/issues/127
+https://github.com/jgtolentino/odoo/issues/126
+https://github.com/jgtolentino/odoo/issues/127
 
 ## Blocked
-https://github.com/jgtolentino/odoo-ce/issues/128
+https://github.com/jgtolentino/odoo/issues/128
 ```
 
 Smart Links automatically shows:
@@ -552,6 +552,6 @@ Response: "We use GitHub Issues for all task management.
 
 ---
 
-**Status**: Active Integration Pattern  
-**Last Updated**: 2026-02-04  
+**Status**: Active Integration Pattern
+**Last Updated**: 2026-02-04
 **Maintained By**: Platform Team

@@ -6,7 +6,7 @@
     "summary": "SAP Joule / Microsoft 365 Copilot–style AI assistant prototype for Odoo",
     "version": "18.0.1.0.0",
     "category": "Productivity",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "author": "InsightPulse AI, Odoo Community Association (OCA)",
     "maintainers": ["jgtolentino"],
     "license": "AGPL-3",

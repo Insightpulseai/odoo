@@ -1,6 +1,6 @@
 # Production Runtime Snapshot
 
-Last updated: 2026-02-09
+Last updated: 2026-02-11
 Source of truth: `runtime_identifiers.json`
 
 ## Infrastructure Overview
@@ -24,7 +24,7 @@ Source of truth: `runtime_identifiers.json`
 | OCR | ocr.insightpulseai.com | A | 178.128.112.214 | 8080 | /health | ✅ Active |
 | Auth | auth.insightpulseai.com | A | 178.128.112.214 | 3000 | /.well-known/openid-configuration | ✅ Active |
 | MCP | mcp.insightpulseai.com | CNAME | pulse-hub-web-an645.ondigitalocean.app | - | /healthz | ⏳ Pending |
-| Superset | superset.insightpulseai.com | CNAME | superset-nlavf.ondigitalocean.app | - | /health | ⏳ Pending |
+| Superset | superset.insightpulseai.com | A | 178.128.112.214 | 8088 | /health | ✅ Active |
 
 ## Deprecated Services
 

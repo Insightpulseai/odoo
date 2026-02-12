@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # Purpose: Isolated development environment for ipai_* custom modules
-# Image:   ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity (CE19 + OCA + IPAI Enterprise Bridge)
+# Image:   ghcr.io/jgtolentino/odoo:19.0-ee-parity (CE19 + OCA + IPAI Enterprise Bridge)
 # SSOT:    docker/docker-compose.ce19.yml (canonical image definition)
 # Usage:   docker compose up -d
 # Access:  http://localhost:8069

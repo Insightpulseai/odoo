@@ -2,7 +2,7 @@
 
 **Generated**: 2024-12-25T10:30:00Z
 **Target**: https://erp.insightpulseai.com
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Operator**: Claude Code (automated deployment assessment)
 
 ---
@@ -154,14 +154,14 @@ Platform Suite (5 modules):
 **Prerequisites**:
 - SSH access to production server: `deploy@erp.insightpulseai.com`
 - Server state: Odoo already running with database `odoo`
-- Repo location: `/opt/odoo-ce`
+- Repo location: `/opt/odoo`
 - Docker compose accessible
 - Sufficient disk space for database backup
 
 **Execution**:
 ```bash
 ssh deploy@erp.insightpulseai.com
-cd /opt/odoo-ce
+cd /opt/odoo
 # Paste entire "RUN ON PROD" block from DEPLOYMENT_RUNBOOK.md
 ```
 
@@ -230,7 +230,7 @@ Will include:
 
 **Rollback Commands**:
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 source .deploy_snapshot
 
 # Revert git
@@ -380,8 +380,8 @@ This ensures compatibility with different compose configurations.
 - `tools/audit/gen_prod_snapshot.sh` - Master orchestrator
 
 **GitHub**:
-- PR #89: https://github.com/jgtolentino/odoo-ce/pull/89 (MERGED)
-- Main branch: https://github.com/jgtolentino/odoo-ce/tree/main
+- PR #89: https://github.com/jgtolentino/odoo/pull/89 (MERGED)
+- Main branch: https://github.com/jgtolentino/odoo/tree/main
 - Latest commit: `196d95aa` (deployment runbook added)
 
 **Production**:

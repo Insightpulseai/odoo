@@ -67,15 +67,15 @@ fi
 
 ```bash
 # 1. On local machine
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 git add -A
 git commit -m "feat: your changes"
 git push origin main
 
 # 2. Create or connect to codespace
-gh codespace create --repo jgtolentino/odoo-ce --branch main
+gh codespace create --repo jgtolentino/odoo --branch main
 # OR
-gh codespace code --repo jgtolentino/odoo-ce
+gh codespace code --repo jgtolentino/odoo
 
 # 3. Inside codespace terminal
 git pull origin main
@@ -96,7 +96,7 @@ git commit -m "feat: your changes"
 git push origin main
 
 # 2. On local machine
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 git pull origin main
 ./scripts/dev/start-dev.sh
 
@@ -205,11 +205,11 @@ git push origin main
 **Optimization**:
 ```bash
 # Pre-build image (run locally, push to GHCR)
-docker build -t ghcr.io/jgtolentino/odoo-ce:dev -f .devcontainer/Dockerfile .
-docker push ghcr.io/jgtolentino/odoo-ce:dev
+docker build -t ghcr.io/jgtolentino/odoo:dev -f .devcontainer/Dockerfile .
+docker push ghcr.io/jgtolentino/odoo:dev
 
 # Update devcontainer.json to use pre-built image
-# "image": "ghcr.io/jgtolentino/odoo-ce:dev"
+# "image": "ghcr.io/jgtolentino/odoo:dev"
 ```
 
 ### Local Docker Not Running

@@ -233,7 +233,7 @@ docker-compose restart web
 
 ```bash
 # Copy workflow JSON to n8n instance
-scp /Users/tbwa/odoo-ce/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insightpulseai.com:/tmp/
+scp /Users/tbwa/odoo/workflows/odoo/W403_AP_AGING_HEATMAP.json root@ipa.insightpulseai.com:/tmp/
 
 # Import via n8n UI
 # 1. Navigate to: https://ipa.insightpulseai.com
@@ -270,7 +270,7 @@ psql "postgresql://postgres.xkxyvboeubffxxbebsll:$SUPABASE_DB_PASSWORD@aws-0-us-
   -c "SELECT * FROM task_queue WHERE kind='AP_AGING_SNAPSHOT' ORDER BY created_at DESC LIMIT 1;"
 
 # 4. Run Playwright tests
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 npx playwright test tests/playwright/ap_aging_print_report.spec.js
 ```
 
@@ -291,7 +291,7 @@ docker exec -it odoo-prod-web-1 odoo -d production -i ipai_finance_ap_aging --te
 
 ```bash
 # Run Playwright tests
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 npx playwright test tests/playwright/ap_aging_print_report.spec.js --headed
 
 # Expected output: 8 tests passed
@@ -406,10 +406,10 @@ npx playwright test tests/playwright/ap_aging_print_report.spec.js --headed
 **Module Author**: Jake Tolentino <jgtolentino@insightpulseai.com>
 **Organization**: InsightPulse AI
 **License**: AGPL-3
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 
 For issues or feature requests, create a GitHub issue at:
-https://github.com/jgtolentino/odoo-ce/issues
+https://github.com/jgtolentino/odoo/issues
 
 ---
 

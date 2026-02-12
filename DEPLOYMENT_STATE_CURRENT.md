@@ -96,7 +96,7 @@ From `artifacts/logs/` and verification scripts:
 
 | Category | Count | Key Workflows |
 |----------|-------|---------------|
-| Core CI | 8 | `ci-odoo-ce.yml`, `ci-odoo-oca.yml`, `all-green-gates.yml` |
+| Core CI | 8 | `ci-odoo.yml`, `ci-odoo-oca.yml`, `all-green-gates.yml` |
 | Quality Gates | 12 | `spec-kit-enforce.yml`, `repo-structure.yml`, `module-gating.yml` |
 | Build & Deploy | 10 | `build-unified-image.yml`, `deploy-production.yml` |
 | Monitoring | 6 | `health-check.yml`, `finance-ppm-health.yml` |

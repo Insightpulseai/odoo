@@ -297,7 +297,7 @@ curl -I https://ipa.insightpulseai.com/webhook/ocr-expense
 **Diagnosis**:
 ```bash
 # Check automated action exists
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -430,7 +430,7 @@ return { json: payload };
 ## Documentation Index
 
 ```
-odoo-ce/
+odoo/
 ├── workflows/
 │   ├── n8n_ocr_expense_webhook.json
 │   ├── n8n_bir_deadline_webhook.json
@@ -453,7 +453,7 @@ odoo-ce/
 
 **Stack Owner**: Jake Tolentino (TBWA Finance SSC / InsightPulse AI)
 **Email**: jake.tolentino@insightpulseai.com
-**Repository**: `/Users/tbwa/odoo-ce/`
+**Repository**: `/Users/tbwa/odoo/`
 **n8n Instance**: https://ipa.insightpulseai.com
 **Odoo Instance**: https://erp.insightpulseai.com
 
@@ -469,10 +469,10 @@ scp workflows/n8n_*.json root@<n8n-server>:/tmp/
 bash workflows/test_all_webhooks.sh
 
 # Check Odoo automation status
-ssh root@159.223.75.148 "docker exec odoo-ce python3 /tmp/check_automations.py"
+ssh root@159.223.75.148 "docker exec odoo python3 /tmp/check_automations.py"
 
 # View execution logs
-ssh root@159.223.75.148 "docker logs odoo-ce --tail 50 | grep -i webhook"
+ssh root@159.223.75.148 "docker logs odoo --tail 50 | grep -i webhook"
 ```
 
 ---

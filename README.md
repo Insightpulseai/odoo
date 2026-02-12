@@ -1,15 +1,15 @@
 # InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
 
-[![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
+[![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
-Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
 - PH expense & travel management
 - Equipment booking & inventory
 - Finance month-end close and PH BIR tax filing task automation (Finance PPM)
 - Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
 
 **Production URL:** https://erp.insightpulseai.com
-**Documentation:** https://jgtolentino.github.io/odoo-ce/
+**Documentation:** https://insightpulseai.github.io/odoo/
 
 ---
 
@@ -89,7 +89,7 @@ docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-ini
 ## Repository Layout
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                    # Custom InsightPulse modules
 │   ├── ipai/                  # IPAI namespace (nested modules)
 │   │   ├── ipai_expense/      # PH expense & travel workflows
@@ -172,7 +172,7 @@ Modules that are no longer maintained should be moved to `addons/_deprecated/` a
 Recommended for fresh Ubuntu 22.04/24.04 droplet.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
 chmod +x deploy_m1.sh
 sudo ./deploy_m1.sh
 ```
@@ -182,7 +182,7 @@ Access:
 - Secrets:
 
 ```bash
-cat /opt/odoo-ce/deploy/.env
+cat /opt/odoo/deploy/.env
 tail -f /var/log/odoo_deploy.log
 ```
 
@@ -191,8 +191,8 @@ tail -f /var/log/odoo_deploy.log
 ## Quick Start (Local Dev)
 
 ```bash
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 cd deploy
 docker compose up -d
 docker compose logs -f odoo
@@ -283,7 +283,7 @@ CI enforces:
 
 | Workflow | Purpose |
 |----------|---------|
-| `ci-odoo-ce.yml` | Main guardrails + data-model drift |
+| `ci-odoo.yml` | Main guardrails + data-model drift |
 | `repo-structure.yml` | Repo tree consistency |
 | `spec-kit-enforce.yml` | Spec bundle validation |
 | `infra-validate.yml` | Infrastructure templates |
@@ -295,65 +295,67 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 
 ## Email Integration
 
-Complete CLI-only email integration using **Mailgun** for SMTP delivery with settings-as-code deployment.
+Complete CLI-only email integration using **Zoho Mail SMTP** for enterprise-grade email delivery with settings-as-code deployment.
 
 **Production Architecture** (Direct Pattern):
 ```
-Odoo 19 CE → Mailgun SMTP (port 2525, STARTTLS) → Email delivery
-Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
+Odoo 19 CE → Zoho Mail SMTP (port 587, STARTTLS) → Email delivery
+Calendar invites, alerts, notifications → Compatible with Microsoft 365/Outlook recipients
 ```
 
-**DNS Status**: ✅ All records verified (MX, SPF, DKIM, DMARC)
+**DNS Status**: ✅ All records verified (SPF, DKIM, DMARC)
 
-**Production Status**: ✅ **DEPLOYED** (2026-01-31)
-- Mail server ID: 2
-- SMTP host: smtp.mailgun.org:2525
+**Production Status**: ✅ **DEPLOYED** (2026-02-12)
+- Mail server: Zoho Mail SMTP
+- SMTP host: smtp.zoho.com:587
 - Configuration: insightpulseai.com domain
+- External mail compatibility: Microsoft 365/Outlook (recipient-only, one-way notifications)
 
 **Settings-as-Code Deployment:**
 
 ```bash
 # 1. Create secrets file on production
 ssh root@178.128.112.214
-sudo mkdir -p /opt/odoo-ce/secrets
-sudo bash -c 'cat > /opt/odoo-ce/secrets/mailgun.env <<EOF
-MAILGUN_SMTP_HOST=smtp.mailgun.org
-MAILGUN_SMTP_PORT=2525
-MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
-MAILGUN_SMTP_PASS=__REPLACE__
+sudo mkdir -p /opt/odoo/secrets
+sudo bash -c 'cat > /opt/odoo/secrets/zoho-mail.env <<EOF
+ZOHO_SMTP_SERVER=smtp.zoho.com
+ZOHO_SMTP_PORT=587
+ZOHO_SMTP_USER=no-reply@insightpulseai.com
+ZOHO_SMTP_APP_PASSWORD=__REPLACE_WITH_APP_PASSWORD__
+ZOHO_SMTP_FROM=no-reply@insightpulseai.com
 EOF'
-sudo chmod 600 /opt/odoo-ce/secrets/mailgun.env
+sudo chmod 600 /opt/odoo/secrets/zoho-mail.env
 
 # 2. Apply settings to database
-set -a; source /opt/odoo-ce/secrets/mailgun.env; set +a
+set -a; source /opt/odoo/secrets/zoho-mail.env; set +a
 export ODOO_DB=odoo
 export PGHOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
 export PGPORT="25060"
 export PGUSER="doadmin"
 export PGPASSWORD="__REPLACE__"
-cd /opt/odoo-ce
+cd /opt/odoo
 python3 scripts/odoo/apply_settings_as_code.py
 
 # 3. Verify deployment
 psql "host=$PGHOST port=$PGPORT user=$PGUSER dbname=$ODOO_DB sslmode=require" -c "
 SELECT id, name, smtp_host, smtp_user, smtp_port
 FROM ir_mail_server
-WHERE name='Mailgun SMTP (mg.insightpulseai.com)';"
+WHERE name='Zoho Mail SMTP (insightpulseai.com)';"
 ```
 
 **Documentation:**
-- **Settings-as-Code Guide**: [docs/MAILGUN_DEPLOYMENT.md](docs/MAILGUN_DEPLOYMENT.md) (idempotent, zero-secret-in-git)
-- **Complete Integration Guide**: [docs/EMAIL_INTEGRATION.md](docs/EMAIL_INTEGRATION.md) (includes n8n relay pattern)
+- **Canonical Email Setup Guide**: [docs/guides/email/EMAIL_SETUP_ZOHO.md](docs/guides/email/EMAIL_SETUP_ZOHO.md) (settings-as-code, Odoo 19)
+- **Deprecated (Mailgun)**: [docs/deprecated/mailgun/](docs/deprecated/mailgun/) (historical reference only)
 
 ---
 
 ## Plane Project Management
 
-**Plane** is an open-source project management platform (Jira alternative) deployed to production with Mailgun email integration.
+**Plane** is an open-source project management platform (Jira alternative) deployed to production with email integration.
 
 **Production Architecture**:
 ```
-Plane Backend (Django/PostgreSQL) → Mailgun SMTP (port 2525) → Email delivery
+Plane Backend (Django/PostgreSQL) → SMTP Email Delivery
 Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 ```
 
@@ -362,7 +364,7 @@ Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 - **Domain**: plane.insightpulseai.com (DNS verified)
 - **Database**: PostgreSQL 15.7-alpine (88 migrations applied)
 - **Workers**: Background tasks + scheduled tasks running
-- **SMTP**: Mailgun configured (smtp.mailgun.org:2525)
+- **SMTP**: Configured for transactional email delivery
 - **Nginx**: Reverse proxy via nginx-prod-v2 container
 
 **Services Running**:
@@ -404,5 +406,5 @@ Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
-- Docs: https://jgtolentino.github.io/odoo-ce/
+- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo/issues)
+- Docs: https://jgtolentino.github.io/odoo/

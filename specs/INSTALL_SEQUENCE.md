@@ -143,10 +143,10 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_expense/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo/addons/ipai_expense/"
 
 # Verify __manifest__.py is valid
-ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo-ce/addons/ipai_expense/__manifest__.py"
+ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo/addons/ipai_expense/__manifest__.py"
 ```
 
 **Installation Command**:
@@ -189,10 +189,10 @@ ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 30"
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_equipment/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo/addons/ipai_equipment/"
 
 # Verify __manifest__.py is valid
-ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo-ce/addons/ipai_equipment/__manifest__.py"
+ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo/addons/ipai_equipment/__manifest__.py"
 ```
 
 **Installation Command**:
@@ -231,11 +231,11 @@ ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 30"
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_finance_monthly_closing/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo/addons/ipai_finance_monthly_closing/"
 
 # Verify __manifest__.py is valid
 ssh root@erp.insightpulseai.com \
-  "python3 -m py_compile /opt/odoo-ce/addons/ipai_finance_monthly_closing/__manifest__.py"
+  "python3 -m py_compile /opt/odoo/addons/ipai_finance_monthly_closing/__manifest__.py"
 ```
 
 **Installation Command**:

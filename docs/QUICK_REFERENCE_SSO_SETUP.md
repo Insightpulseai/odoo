@@ -165,7 +165,7 @@ Module Verification:
   - **A**: Module not installed yet. Go to Apps → Update Apps List → Search "Finance PPM TDI" → Install
 
 - **Q**: Import wizard shows "openpyxl not available"?
-  - **A**: Should not happen (included in Docker image). If occurs, check container: `docker exec odoo-ce pip list | grep openpyxl`
+  - **A**: Should not happen (included in Docker image). If occurs, check container: `docker exec odoo pip list | grep openpyxl`
 
 - **Q**: Can I test with a different user?
   - **A**: Yes, create another SSO user, but manually assign Finance PPM role first

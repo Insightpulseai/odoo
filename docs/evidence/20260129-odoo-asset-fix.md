@@ -1,8 +1,8 @@
 # Odoo Frontend Asset Fix - Evidence Document
 
-**Date**: 2026-01-28  
-**Scope**: Fix Odoo OWL template missing errors and JavaScript crashes  
-**Target DB**: odoo_dev  
+**Date**: 2026-01-28
+**Scope**: Fix Odoo OWL template missing errors and JavaScript crashes
+**Target DB**: odoo_dev
 **Status**: ✅ Complete
 
 ## Problem Statement
@@ -16,7 +16,7 @@ Browser console showed multiple errors blocking Odoo login:
 
 Classic Odoo OWL/asset bundle mismatch:
 - OWL templates not in active asset bundle
-- Theme override masking core templates  
+- Theme override masking core templates
 - Asset bundle cache stale after module changes
 - Node.js `process` global expected in browser context
 
@@ -70,7 +70,7 @@ docker compose -f sandbox/dev/docker-compose.yml restart odoo
 ## Known Limitations
 
 - ipai modules not mounted in dev container (`sandbox/dev/docker-compose.yml` mounts `./addons` relative to sandbox/dev/, not repo root)
-- Custom Docker image `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity` referenced but running container uses standard `odoo:18.0`
+- Custom Docker image `ghcr.io/jgtolentino/odoo:19.0-ee-parity` referenced but running container uses standard `odoo:18.0`
 
 ## Next Steps
 

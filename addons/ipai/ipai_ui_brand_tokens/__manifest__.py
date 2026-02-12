@@ -44,7 +44,7 @@ Settings
 Configure brand tokens at: Settings → Companies → Brand Tokens tab
     """,
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": [
         "web",

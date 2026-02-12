@@ -38,7 +38,7 @@
 ssh root@159.223.75.148
 
 # 2. Navigate to deployment directory
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # 3. Pull latest code
 git pull origin main
@@ -62,8 +62,8 @@ docker exec -it odoo-db-1 psql -U odoo -d odoo -c \
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # 2. Install Odoo if not already installed
 # (Assumes Odoo 18 installed via apt/pip/source)
@@ -71,7 +71,7 @@ cd odoo-ce
 # 3. Add IPAI modules to addons path
 # Edit odoo.conf:
 [options]
-addons_path = /path/to/odoo/addons,/path/to/odoo-ce/addons/ipai
+addons_path = /path/to/odoo/addons,/path/to/odoo/addons/ipai
 
 # 4. Restart Odoo and install via CLI
 odoo -c /etc/odoo/odoo.conf -d <database> -i ipai_module_name --stop-after-init
@@ -84,8 +84,8 @@ odoo -c /etc/odoo/odoo.conf -d <database> -i ipai_module_name --stop-after-init
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # 2. Use development compose file
 docker-compose -f deploy/docker-compose.dev.yml up -d
@@ -237,7 +237,7 @@ odoo -d production -i ipai_industry_accounting_firm,ipai_industry_marketing_agen
 docker exec odoo-db-1 pg_dump -U odoo odoo > backup_$(date +%Y%m%d).sql
 
 # 2. Pull latest code
-cd /opt/odoo-ce && git pull origin main
+cd /opt/odoo && git pull origin main
 
 # 3. Upgrade modules
 docker exec -it odoo-accounting odoo-bin \
@@ -484,6 +484,6 @@ After successful installation:
 ## Support
 
 For installation issues:
-1. Check [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
+1. Check [GitHub Issues](https://github.com/jgtolentino/odoo/issues)
 2. Review [CHANGELOG.md](./CHANGELOG.md) for known issues
 3. Contact: Jake Tolentino (Finance SSC Manager / Odoo Developer)

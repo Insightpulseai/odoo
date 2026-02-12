@@ -1,7 +1,7 @@
 # Branch Cleanup Analysis
 
 **Date:** 2025-12-04
-**Repository:** jgtolentino/odoo-ce
+**Repository:** jgtolentino/odoo
 
 ## Summary
 
@@ -76,7 +76,7 @@ git push origin --delete feat/odoo-18-oca-automation
 
 ### After PR Verification
 Before deleting the 17 candidate branches, verify no open PRs exist:
-1. Check https://github.com/jgtolentino/odoo-ce/pulls
+1. Check https://github.com/jgtolentino/odoo/pulls
 2. If no open PR for a branch, it's safe to delete
 
 ### For Archive (Optional)

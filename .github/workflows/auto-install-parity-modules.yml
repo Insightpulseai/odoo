@@ -87,7 +87,7 @@ jobs:
 
             # Find repo directory
             REPO_DIR=""
-            for d in /opt/odoo-ce/repo /opt/odoo/repo /opt/odoo-ce; do
+            for d in /opt/odoo/repo /opt/odoo/repo /opt/odoo; do
               if [[ -d "$d/.git" ]]; then REPO_DIR="$d"; break; fi
             done
             if [[ -z "$REPO_DIR" ]]; then

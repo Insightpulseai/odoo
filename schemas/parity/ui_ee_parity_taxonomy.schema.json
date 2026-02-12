@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/ui_ee_parity_taxonomy.schema.json",
+  "type": "object",
+  "required": ["schema_version", "taxonomy_id", "scope", "surfaces"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "taxonomy_id": { "type": "string" },
+    "scope": {
+      "type": "object",
+      "required": ["product", "target_version", "edition", "intent"],
+      "properties": {
+        "product": { "type": "string" },
+        "target_version": { "type": "string" },
+        "edition": { "type": "string" },
+        "intent": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "definitions": { "type": "object" },
+    "surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "severity",
+          "tier",
+          "parity_goal",
+          "ux_minimum",
+          "acceptance_criteria",
+          "implementation_candidates",
+          "parity_evidence_bundle"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "severity": { "type": "string", "enum": ["P0", "P1", "P2"] },
+          "tier": { "type": "string" },
+          "parity_goal": { "type": "string" },
+          "user_roles": { "type": "array", "items": { "type": "string" } },
+          "ux_minimum": { "type": "array", "items": { "type": "string" } },
+          "acceptance_criteria": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "statement", "evidence"],
+              "properties": {
+                "id": { "type": "string" },
+                "statement": { "type": "string" },
+                "evidence": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": ["type"],
+                    "properties": {
+                      "type": { "type": "string" }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "implementation_candidates": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["type", "notes"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["CE", "OCA", "IPAI_GLUE", "EXTERNAL"]
+                },
+                "notes": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "parity_evidence_bundle": {
+            "type": "object",
+            "required": ["required_artifacts"],
+            "properties": {
+              "required_artifacts": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "scoring": { "type": "object" }
+  },
+  "additionalProperties": true
+}

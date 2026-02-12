@@ -58,7 +58,7 @@ Import in this sequence (top-down for shared credentials):
 **File**: `monthly_report.json` (15.5 KB, 11 nodes)
 
 - [ ] Go to: n8n → Workflows → "+" → "Import from File"
-- [ ] Upload: `/Users/tbwa/odoo-ce/workflows/finance_ppm/monthly_report.json`
+- [ ] Upload: `/Users/tbwa/odoo/workflows/finance_ppm/monthly_report.json`
 - [ ] Review imported workflow:
   - [ ] 11 nodes visible
   - [ ] Connections intact
@@ -82,7 +82,7 @@ Import in this sequence (top-down for shared credentials):
 **File**: `bir_deadline_alert.json` (11.3 KB, 9 nodes)
 
 - [ ] Import: n8n → Workflows → "+" → "Import from File"
-- [ ] Upload: `/Users/tbwa/odoo-ce/workflows/finance_ppm/bir_deadline_alert.json`
+- [ ] Upload: `/Users/tbwa/odoo/workflows/finance_ppm/bir_deadline_alert.json`
 - [ ] Review imported workflow:
   - [ ] 9 nodes visible
   - [ ] Schedule trigger: `0 8 * * *` (daily 8 AM)
@@ -103,7 +103,7 @@ Import in this sequence (top-down for shared credentials):
 **File**: `task_escalation.json` (13.4 KB, 10 nodes)
 
 - [ ] Import: n8n → Workflows → "+" → "Import from File"
-- [ ] Upload: `/Users/tbwa/odoo-ce/workflows/finance_ppm/task_escalation.json`
+- [ ] Upload: `/Users/tbwa/odoo/workflows/finance_ppm/task_escalation.json`
 - [ ] Review imported workflow:
   - [ ] 10 nodes visible
   - [ ] Schedule trigger: `0 9,14 * * *` (9 AM and 2 PM daily)
@@ -177,7 +177,7 @@ LIMIT 1;
 **Solution**:
 1. Verify JSON file integrity:
    ```bash
-   jq empty /Users/tbwa/odoo-ce/workflows/finance_ppm/monthly_report.json
+   jq empty /Users/tbwa/odoo/workflows/finance_ppm/monthly_report.json
    ```
 2. Re-download workflow file from repository
 3. Try importing again
@@ -216,7 +216,7 @@ LIMIT 1;
 3. Verify service role key is being used (not anon key)
 4. Reapply migration if needed:
    ```bash
-   psql "$POSTGRES_URL" -f /Users/tbwa/odoo-ce/migrations/003_finance_ppm_reports.sql
+   psql "$POSTGRES_URL" -f /Users/tbwa/odoo/migrations/003_finance_ppm_reports.sql
    ```
 
 ### Workflow Executes But No Data
@@ -319,5 +319,5 @@ If workflows cause issues:
 ## Support Contacts
 
 - **Technical Support**: Jake Tolentino (Finance SSC Manager)
-- **Deployment Guide**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/DEPLOYMENT.md`
-- **Verification Script**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/verify_deployment.sh`
+- **Deployment Guide**: `/Users/tbwa/odoo/workflows/finance_ppm/DEPLOYMENT.md`
+- **Verification Script**: `/Users/tbwa/odoo/workflows/finance_ppm/verify_deployment.sh`

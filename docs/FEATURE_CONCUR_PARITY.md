@@ -237,7 +237,7 @@ Apps → Search each module → Upgrade
 ### Run Regression Tests
 ```bash
 # Navigate to Odoo directory
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 
 # Run ipai_expense tests
 ./scripts/odoo.sh -d <database> -i ipai_expense --test-enable --stop-after-init --log-level=test
@@ -344,5 +344,5 @@ This feature is registered in the Agent Skills Architecture framework as capabil
 - Odoo Expense Management: https://www.odoo.com/documentation/18.0/applications/hr/expenses.html
 - Philippine BIR: https://www.bir.gov.ph
 - PaddleOCR: https://github.com/PaddlePaddle/PaddleOCR
-- Agent Skills Architecture: `/Users/tbwa/odoo-ce/agents/AGENT_SKILLS_REGISTRY.yaml`
+- Agent Skills Architecture: `/Users/tbwa/odoo/agents/AGENT_SKILLS_REGISTRY.yaml`
 - n8n Workflows: `https://ipa.insightpulseai.com`

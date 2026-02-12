@@ -71,7 +71,7 @@ Deploy all fixes (OwlError + OAuth + Email + SSO) in one command:
 ssh root@159.223.75.148
 
 # Navigate to repo
-cd /root/odoo-ce
+cd /root/odoo
 
 # Pull latest changes
 git pull origin main

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2026 InsightPulseAI
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+    System Parameters for Email Configuration
+    =========================================
+    - Catchall domain: insightpulseai.com
+    - Catchall alias: catchall
+    - Bounce alias: bounce
+    - Default from: noreply@insightpulseai.com
+    - Base URL: https://erp.insightpulseai.com
+-->
+<odoo>
+    <data noupdate="0">
+
+        <!-- Email Catchall Domain -->
+        <record id="mail_catchall_domain" model="ir.config_parameter" forcecreate="True">
+            <field name="key">mail.catchall.domain</field>
+            <field name="value">insightpulseai.com</field>
+        </record>
+
+        <!-- Email Catchall Alias -->
+        <record id="mail_catchall_alias" model="ir.config_parameter" forcecreate="True">
+            <field name="key">mail.catchall.alias</field>
+            <field name="value">catchall</field>
+        </record>
+
+        <!-- Email Bounce Alias -->
+        <record id="mail_bounce_alias" model="ir.config_parameter" forcecreate="True">
+            <field name="key">mail.bounce.alias</field>
+            <field name="value">bounce</field>
+        </record>
+
+        <!-- Default From Email -->
+        <record id="mail_default_from" model="ir.config_parameter" forcecreate="True">
+            <field name="key">mail.default.from</field>
+            <field name="value">noreply@insightpulseai.com</field>
+        </record>
+
+        <!-- Base URL for Email Links -->
+        <record id="web_base_url" model="ir.config_parameter" forcecreate="True">
+            <field name="key">web.base.url</field>
+            <field name="value">https://erp.insightpulseai.com</field>
+        </record>
+
+        <!-- Freeze Base URL (prevent auto-detection override) -->
+        <record id="web_base_url_freeze" model="ir.config_parameter" forcecreate="True">
+            <field name="key">web.base.url.freeze</field>
+            <field name="value">True</field>
+        </record>
+
+    </data>
+</odoo>

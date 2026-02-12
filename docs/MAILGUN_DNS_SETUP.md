@@ -59,7 +59,7 @@ Or use external tools:
 Run on production:
 
 ```bash
-docker exec -i odoo-ce odoo shell -d odoo < scripts/configure_mailgun_smtp.py
+docker exec -i odoo odoo shell -d odoo < scripts/configure_mailgun_smtp.py
 ```
 
 Then set SMTP password in Odoo UI:

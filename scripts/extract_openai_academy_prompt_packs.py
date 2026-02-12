@@ -38,7 +38,7 @@ except ImportError:
 BASE_URL = "https://academy.openai.com"
 OUTPUT_DIR = Path("docs/prompts/openai-academy")
 CACHE_DIR = Path(".cache/openai-academy")
-USER_AGENT = "IPAI-PromptExtractor/1.0 (educational; github.com/jgtolentino/odoo-ce)"
+USER_AGENT = "IPAI-PromptExtractor/1.0 (educational; github.com/jgtolentino/odoo)"
 REQUEST_DELAY = 1.5  # seconds between requests
 
 

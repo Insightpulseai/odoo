@@ -10,7 +10,7 @@
 
 ```bash
 # 1. Clone and prepare
-git clone <repo-url> odoo-ce && cd odoo-ce
+git clone <repo-url> odoo && cd odoo
 
 # 2. Pin OCA repositories
 ./scripts/stack/pin_oca_repos.sh
@@ -61,8 +61,8 @@ python3 --version
 
 ```bash
 # Clone repository
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # Create required directories
 mkdir -p addons/oca out docs/evidence
@@ -518,5 +518,5 @@ docker compose start odoo-core
 ## Support
 
 - **Documentation:** `docs/` directory
-- **Issues:** https://github.com/jgtolentino/odoo-ce/issues
+- **Issues:** https://github.com/jgtolentino/odoo/issues
 - **OCA:** https://odoo-community.org/

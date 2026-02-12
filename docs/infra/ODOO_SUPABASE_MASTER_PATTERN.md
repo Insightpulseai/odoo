@@ -201,7 +201,7 @@ Returns:
 ✅ Hotfix PR Created
 
 Issue: #123
-PR: https://github.com/jgtolentino/odoo-ce/pull/456
+PR: https://github.com/jgtolentino/odoo/pull/456
 Branch: hotfix/issue-123
 
 → PR is in draft mode. Ready for fixes!
@@ -329,7 +329,7 @@ ls -1 supabase/migrations | sort | diff -u - <(ls -1 supabase/migrations)
 
 ```bash
 # Dispatch deploy workflow
-gh api repos/jgtolentino/odoo-ce/dispatches \
+gh api repos/jgtolentino/odoo/dispatches \
   -f event_type='deploy' \
   -f client_payload='{"ref":"main"}'
 
@@ -350,7 +350,7 @@ gh workflow run patch-release.yml -f version=v1.2.3 -f deploy_target=staging
 
 ```bash
 # Example: Rollback Odoo to previous version
-docker pull ghcr.io/jgtolentino/odoo-ce:v1.2.2
+docker pull ghcr.io/jgtolentino/odoo:v1.2.2
 docker compose -f deploy/docker-compose.prod.yml up -d
 ```
 

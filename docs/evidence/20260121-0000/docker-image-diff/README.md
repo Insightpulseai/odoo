@@ -29,14 +29,14 @@
 ```bash
 # Compare production vs edge
 ./scripts/ci/docker-image-diff.sh \
-  ghcr.io/jgtolentino/odoo-ce:latest \
-  ghcr.io/jgtolentino/odoo-ce:edge-standard \
+  ghcr.io/jgtolentino/odoo:latest \
+  ghcr.io/jgtolentino/odoo:edge-standard \
   /tmp/diff-output
 
 # Compare specific versions
 ./scripts/ci/docker-image-diff.sh \
-  ghcr.io/jgtolentino/odoo-ce:prod-20260121-2317 \
-  ghcr.io/jgtolentino/odoo-ce:custom-target \
+  ghcr.io/jgtolentino/odoo:prod-20260121-2317 \
+  ghcr.io/jgtolentino/odoo:custom-target \
   /tmp/diff-output
 ```
 
@@ -44,8 +44,8 @@
 ```bash
 # Trigger via GitHub CLI
 gh workflow run image-diff.yml \
-  -f live_image="ghcr.io/jgtolentino/odoo-ce:latest" \
-  -f target_image="ghcr.io/jgtolentino/odoo-ce:edge-standard"
+  -f live_image="ghcr.io/jgtolentino/odoo:latest" \
+  -f target_image="ghcr.io/jgtolentino/odoo:edge-standard"
 ```
 
 ## Evidence Placeholders
@@ -106,14 +106,14 @@ docker run --rm \
 3. Verify no unexpected changes
 4. Deploy target as new production:
    ```bash
-   docker tag <target_image> ghcr.io/jgtolentino/odoo-ce:prod
-   docker push ghcr.io/jgtolentino/odoo-ce:prod
+   docker tag <target_image> ghcr.io/jgtolentino/odoo:prod
+   docker push ghcr.io/jgtolentino/odoo:prod
    ```
 
 ## Rollback
 
 ```bash
 # Retag previous image as prod
-docker tag <previous_live_image> ghcr.io/jgtolentino/odoo-ce:prod
-docker push ghcr.io/jgtolentino/odoo-ce:prod
+docker tag <previous_live_image> ghcr.io/jgtolentino/odoo:prod
+docker push ghcr.io/jgtolentino/odoo:prod
 ```

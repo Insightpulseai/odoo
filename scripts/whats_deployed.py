@@ -12,7 +12,7 @@ Usage:
 Environment Variables:
     GITHUB_TOKEN (required): GitHub PAT or App token with repo + actions:read
     GITHUB_OWNER (default: jgtolentino): Repository owner
-    GITHUB_REPO (default: odoo-ce): Repository name
+    GITHUB_REPO (default: odoo): Repository name
     PROD_ENV (default: production): Deployment environment name
     RELEASE_TAG_PREFIX (default: prod-): Release tag prefix to match
     WORKFLOW_NAME_HINT (default: Deploy to Production): Workflow name pattern
@@ -31,7 +31,7 @@ from typing import Any, Optional
 # Configuration from environment
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_OWNER = os.environ.get("GITHUB_OWNER", "jgtolentino")
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "odoo-ce")
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "odoo")
 PROD_ENV = os.environ.get("PROD_ENV", "production")
 RELEASE_TAG_PREFIX = os.environ.get("RELEASE_TAG_PREFIX", "prod-")
 WORKFLOW_NAME_HINT = os.environ.get("WORKFLOW_NAME_HINT", "Deploy to Production")

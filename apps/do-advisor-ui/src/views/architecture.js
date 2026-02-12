@@ -10,7 +10,7 @@ class ArchitectureView {
         this.manifestUrl = '/docs/diagrams/architecture/manifest.json';
         this.githubConfig = {
             org: 'jgtolentino',
-            repo: 'odoo-ce',
+            repo: 'odoo',
             branch: 'main',
             basePath: 'docs/diagrams/architecture'
         };
