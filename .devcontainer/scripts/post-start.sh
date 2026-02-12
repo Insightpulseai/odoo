@@ -1,36 +1,46 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Odoo 19 Development - Post-Start"
+echo "[post-start] Odoo 19 Development - Post-Start"
 
 # Verify workspace mount
-if [ ! -d "/workspace/addons" ]; then
-    echo "Warning: /workspace/addons not found"
+if [ ! -d "/workspaces/odoo/addons" ]; then
+    echo "⚠️  Warning: /workspaces/odoo/addons not found"
 fi
 
-# Verify PostgreSQL connectivity
-if pg_isready -h postgres -U odoo -d odoo; then
-    echo "PostgreSQL connection verified"
+# Verify Docker socket access
+if docker version >/dev/null 2>&1; then
+    echo "✅ Docker socket accessible"
 else
-    echo "PostgreSQL connection failed"
+    echo "❌ Docker socket not accessible"
     exit 1
 fi
 
+# Verify PostgreSQL connectivity via Docker Compose
+if docker compose -f /workspaces/odoo/sandbox/dev/compose.yml exec -T db pg_isready -U odoo >/dev/null 2>&1; then
+    echo "✅ PostgreSQL connection verified"
+else
+    echo "⚠️  PostgreSQL connection failed (container may not be running)"
+fi
+
 # Load local environment if exists
-if [ -f /workspace/.env.local ]; then
+if [ -f /workspaces/odoo/.env.local ]; then
     set -a
-    source /workspace/.env.local
+    source /workspaces/odoo/.env.local
     set +a
-    echo "Loaded .env.local"
+    echo "✅ Loaded .env.local"
 fi
 
 echo ""
+echo "=== DevContainer Status ==="
 echo "Odoo URL:   http://localhost:8069"
-echo "Database:   odoo@postgres:5432"
+echo "Database:   odoo_dev@db:5432"
 echo "Python:     $(python3 --version)"
-echo "Workspace:  /workspace"
+echo "Docker:     $(docker --version | cut -d' ' -f3 | cut -d',' -f1)"
+echo "Workspace:  /workspaces/odoo"
 echo ""
-echo "Quick Start:"
-echo "  python odoo-bin -d odoo_dev --addons-path=addons"
-echo "  ./scripts/repo_health.sh"
+echo "📍 Quick Start:"
+echo "   cd sandbox/dev && docker compose up -d"
+echo "   docker compose exec odoo odoo -d odoo_dev -u all"
+echo "   ./scripts/repo_health.sh"
 echo ""
