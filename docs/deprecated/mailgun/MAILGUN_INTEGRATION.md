@@ -1,3 +1,17 @@
+# Mailgun Integration (DEPRECATED)
+
+**⚠️ DEPRECATION NOTICE**
+
+This document is **deprecated** as of 2026-02-12.
+
+**Reason**: Mailgun replaced by Zoho Mail SMTP
+
+**Replacement**: See [docs/guides/email/EMAIL_SETUP_ZOHO.md](../../guides/email/EMAIL_SETUP_ZOHO.md)
+
+**Last Valid Version**: Odoo 18.0 / 2026-02-11
+
+---
+
 # Mailgun Integration
 
 > **Generated:** 2026-01-21
