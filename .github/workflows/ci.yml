@@ -162,6 +162,7 @@ jobs:
           echo "✅ All module structures valid"
 
       - name: Validate Manifest Icons
+        # Uses ci/odoo_core_addons_allowlist.txt for core module recognition (no Odoo instance required)
         run: python3 scripts/validate_manifest.py
 
   lint:
