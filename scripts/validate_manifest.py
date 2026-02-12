@@ -4,50 +4,40 @@ import ast
 import sys
 import xmlrpc.client
 import ssl
+from pathlib import Path
 
 # --- CONFIGURATION ---
 ADDONS_DIR = "."
 
-# Fallback list if server is offline (Expanded Core for robust pre-commit/offline checks)
-# Includes standard Odoo 18 Core modules and common external deps to prevent false positives when offline.
-FALLBACK_CORE = {
-    "base",
-    "web",
-    "mail",
-    "account",
-    "sale",
-    "purchase",
-    "stock",
-    "crm",
-    "project",
-    "website",
-    "point_of_sale",
-    "hr",
-    "mrp",
-    "base_setup",
-    "bus",
-    "web_editor",
-    "web_tour",
-    "portal",
-    "digest",
-    "auth_signup",
-    "product",
-    "analytic",
-    "resource",
-    "utm",
-    "iap",
-    "http_routing",
-    "uom",
-    "contacts",
-    "calendar",
-    "spreadsheet",
-    "board",
-    # Common External/OCA dependencies
-    "server_mode",
-    "web_responsive",
-    "queue_job",
-    "sentry",
-}
+
+def load_core_modules_allowlist():
+    """Load core modules from allowlist file.
+
+    Returns a set of core module names from ci/odoo_core_addons_allowlist.txt.
+    Falls back to minimal set if file not found.
+    """
+    # Find allowlist relative to script location
+    script_dir = Path(__file__).parent
+    allowlist_path = script_dir.parent / "ci" / "odoo_core_addons_allowlist.txt"
+
+    if not allowlist_path.exists():
+        # Minimal fallback if file missing
+        print(f"⚠️  Allowlist not found at {allowlist_path}, using minimal fallback")
+        return {'base', 'web', 'mail', 'portal', 'account', 'sale', 'hr'}
+
+    modules = set()
+    with open(allowlist_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            # Skip comments and empty lines
+            if line and not line.startswith('#'):
+                modules.add(line)
+
+    return modules
+
+
+# Load core modules from allowlist file
+FALLBACK_CORE = load_core_modules_allowlist()
 
 
 def load_manifest(manifest_path):
@@ -104,7 +94,8 @@ def get_live_modules():
 
     except Exception as e:
         print(f"⚠️  Connection Error: {e}")
-        print("   (Using fallback core list. Validation may be less accurate.)")
+        print(f"   Using core module allowlist ({len(FALLBACK_CORE)} modules)")
+        print(f"   Allowlist source: ci/odoo_core_addons_allowlist.txt")
         return FALLBACK_CORE
 
 
