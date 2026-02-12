@@ -11,7 +11,7 @@
 
 | Capability | Ship? | Gate Status | Blockers |
 |-----------|-------|-------------|----------|
-| **Finance PPM (Clarity)** | **YES** | PASS | Seed data complete (8 employees, 22 BIR forms, 36 closing tasks, RACI) |
+| **Finance PPM (Clarity)** | **YES** | PASS | Seed data complete (9 employees, 144 BIR records, 36 closing tasks, 9 RACI) |
 | **OCR / Document Digitization** | **YES** | PASS | `ipai_ocr_gateway` 19.0 ready, multi-provider (Tesseract/GCV/Azure) |
 | **Supabase Integration** | **YES** | PASS | `ipai_ops_mirror` SSOT sync, n8n webhooks, Edge Functions |
 | **AI Agents** | **YES** | PASS | `ipai_ai_agent_builder` complete (8 models, multi-provider LLM, RAG, audit) |
@@ -70,7 +70,7 @@
 
 ```
 ipai_finance_ppm            (base: PPM logic, analytic integration, WBS)
-├── ipai_finance_ppm_umbrella (seed: 8 employees, 22 BIR forms, 36 tasks, RACI)
+├── ipai_finance_ppm_umbrella (seed: 9 employees, 144 BIR records, 36 tasks, 9 RACI)
 ├── ipai_finance_ppm_golive   (checklist: 60+ items, 9 sections, CFO sign-off)
 ├── ipai_finance_closing      (SAP AFC template: 25+ closing task definitions)
 ├── ipai_month_end            (automation: RACI workflow, PH holidays, cron)
@@ -83,7 +83,7 @@ ipai_finance_ppm            (base: PPM logic, analytic integration, WBS)
 |------|---------|---------|
 | `01_employees.xml` | 9 | BOM, JAP, JLI, JPAL, JRMO, LAS, RIM, RMQB, CKVC |
 | `02_logframe_complete.xml` | 12 | Goal → Outcome → IM1/IM2 → Outputs → Activities |
-| `03_bir_schedule.xml` | 22 | 1601-C (12mo), 2550Q (4q), 1601-EQ (4q), 1702-RT, 1702Q |
+| `03_bir_schedule.xml` | 144 | 1601-C (12mo), 2550Q (4q), 1601-EQ (4q), 1702-RT, 1702Q × assignees |
 | `04_closing_tasks.xml` | 36 | Payroll, Tax, Rent, Accruals, AR/AP, WIP |
 | `05_raci_assignments.xml` | 9 | Per-employee RACI role mapping with supervisor chain |
 
@@ -98,14 +98,29 @@ ipai_finance_ppm            (base: PPM logic, analytic integration, WBS)
 | 1702-RT/EX (Annual Income Tax) | Annual | 1 entry |
 | 1702Q (Quarterly Income Tax) | Quarterly | 1 entry |
 
-### 2.4 Verdict
+### 2.4 Locked Canonical Counts (from `scripts/finance_ppm_seed_audit.py`)
+
+These counts are enforced by CI gate `parity-gate-tier0`. Any change to seed data must update these thresholds.
+
+```json
+{
+  "employees_count": 9,
+  "employees_names": ["BOM", "CKVC", "JAP", "JLI", "JPAL", "JRMO", "LAS", "RIM", "RMQB"],
+  "logframe_count": 12,
+  "bir_count": 144,
+  "tasks_count": 36,
+  "raci_count": 9
+}
+```
+
+### 2.5 Verdict
 
 **PASS.** Finance PPM is fully seeded with:
-- 9 employees with login credentials
-- Complete logframe hierarchy (Goal → Activity)
-- 22 BIR filing entries for 2026 with prep/review/approval deadlines
+- 9 employees with login credentials (CKVC as Finance Director/Approver)
+- 12 logframe entries (Goal → Outcome → IM1/IM2 → Outputs → Activities)
+- 144 BIR filing records for 2026 (form types × assignees, with prep/review/approval deadlines)
 - 36 month-end closing tasks with project references
-- RACI matrix linking employees to supervisor/reviewer/approver chains
+- 9 RACI assignments linking employees to supervisor/reviewer/approver chains
 - Go-live checklist with CFO sign-off workflow
 
 ---
@@ -361,4 +376,4 @@ Odoo (System of Record)  ←→  n8n (workflow)  ←→  Supabase (SSOT for ops/
 
 ---
 
-*Generated: 2026-02-11 | Branch: claude/check-ee-parity-gate-b4QhJ*
+*Generated: 2026-02-12 | Branch: claude/check-ee-parity-gate-b4QhJ | Locked counts enforced by `parity-gate-tier0`*
