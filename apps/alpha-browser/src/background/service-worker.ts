@@ -123,7 +123,7 @@ chrome.runtime.onSuspend.addListener(async () => {
  * Message handler for cross-context communication
  */
 chrome.runtime.onMessage.addListener(
-  (message: AgentMessage, sender, sendResponse) => {
+  (message: AgentMessage, _sender, sendResponse) => {
     logger.debug('Message received:', message);
 
     // Handle different message types

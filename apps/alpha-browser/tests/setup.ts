@@ -1,4 +1,5 @@
 import { beforeAll, afterAll } from 'vitest';
+import 'fake-indexeddb/auto';
 
 // Setup fake IndexedDB for tests
 beforeAll(() => {

@@ -30,10 +30,12 @@ export async function saveCheckpoint(
 export async function getLatestCheckpoint(
   missionId: string
 ): Promise<Checkpoint | undefined> {
-  return db.checkpoints
+  const checkpoints = await db.checkpoints
     .where('missionId')
     .equals(missionId)
-    .last();
+    .sortBy('timestamp');
+
+  return checkpoints.length > 0 ? checkpoints[checkpoints.length - 1] : undefined;
 }
 
 /**
