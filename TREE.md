@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3cf62cbe2d6e4e2c1ccf9732a6ed6ec3df55f9a1
+> Commit: f9743164e8c437b602a57fd2949cc57a537ef71b
 
 ```
 .
@@ -127,6 +127,7 @@
 │   │   ├── do-sandbox-janitor.yml
 │   │   ├── docflow-smoke.yml
 │   │   ├── docs-architecture-sync.yml
+│   │   ├── docs-build.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── docs-current-state-gate.yml
 │   │   ├── docs-drift-gate.yml
@@ -184,6 +185,7 @@
 │   │   ├── odoo-schema-pipeline.yml
 │   │   ├── ops-ci-router.yml
 │   │   ├── ops-ssot-verify.yml
+│   │   ├── parity-gate-tier0.yml
 │   │   ├── parity.yml
 │   │   ├── patch-release.yml
 │   │   ├── platform-guardrails.yml
@@ -734,7 +736,8 @@
 │   │   │   ├── 01_employees.xml
 │   │   │   ├── 02_logframe_complete.xml
 │   │   │   ├── 03_bir_schedule.xml
-│   │   │   └── 04_closing_tasks.xml
+│   │   │   ├── 04_closing_tasks.xml
+│   │   │   └── 05_raci_assignments.xml
 │   │   ├── scripts
 │   │   │   └── generate_seed_from_excel.py
 │   │   ├── README.md
@@ -1606,6 +1609,7 @@
 │   │   └── report.json
 │   ├── ce_oca_equivalents_audit.csv
 │   ├── ce_oca_equivalents_audit.json
+│   ├── finance_ppm_seed_audit.json
 │   ├── ipai_install_upgrade_matrix.csv
 │   ├── ipai_install_upgrade_matrix.json
 │   ├── ipai_quality_gate.csv
@@ -2101,6 +2105,8 @@
 │   │   │   └── azure_to_do_supabase_odoo.yaml
 │   │   ├── .gitkeep
 │   │   └── ipai_platform_flow.mmd
+│   ├── ee-parity-gate
+│   │   └── EE_PARITY_GATE_REPORT.md
 │   ├── email
 │   │   └── Mailgun_DNS.md
 │   ├── evidence
@@ -2468,8 +2474,12 @@
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── pages
+│   │   ├── stylesheets
+│   │   │   └── primer.css
 │   │   ├── architecture.md
+│   │   ├── deployment-timeline.md
 │   │   ├── developer-guide.md
+│   │   ├── ee-parity-gate.md
 │   │   ├── getting-started.md
 │   │   ├── index.md
 │   │   ├── modules.md
@@ -4269,6 +4279,7 @@
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
 │   ├── finance_ppm_restore_golden.sh
+│   ├── finance_ppm_seed_audit.py
 │   ├── fix-finance-ppm-schema.sh
 │   ├── fix-pay-invoices-online-error.py
 │   ├── fix_oauth_button.sh
@@ -5619,15 +5630,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1550 directories, 4064 files
+1552 directories, 4073 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1840 |
-| Files | 5448 |
-| Python files | 876 |
-| XML files | 299 |
-| Markdown files | 1418 |
+| Directories | 1842 |
+| Files | 5457 |
+| Python files | 877 |
+| XML files | 300 |
+| Markdown files | 1421 |
