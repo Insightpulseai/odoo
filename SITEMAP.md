@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3cf62cbe2d6e4e2c1ccf9732a6ed6ec3df55f9a1
+> Commit: f9743164e8c437b602a57fd2949cc57a537ef71b
 
 ## 📚 Documentation
 
@@ -538,6 +538,7 @@
 | [CLAUDE.md — Odoo CE E-Commerce (Fluent Design System)](docs/design-system/ODOO_FLUENT_DESIGN_SYSTEM.md) | docs/design-system |
 | [shadcn/ui Design System - Complete Analysis & Certification Framework](docs/design-system/SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md) | docs/design-system |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
+| [EE Parity Gate Report — Ship Readiness Assessment](docs/ee-parity-gate/EE_PARITY_GATE_REPORT.md) | docs/ee-parity-gate |
 | [EE Parity Map - Odoo CE 19 + OCA + ipai_enterprise_bridge](docs/ee_parity_map.md) | docs |
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
@@ -836,9 +837,11 @@
 | [Production Redeploy Runbook](docs/ops/production_redeploy_runbook.md) | docs/ops |
 | [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
 | [Architecture](docs/pages/architecture.md) | docs/pages |
+| [Deployment Timeline — Odoo 19 CE](docs/pages/deployment-timeline.md) | docs/pages |
 | [Developer Guide](docs/pages/developer-guide.md) | docs/pages |
+| [EE Parity Gate](docs/pages/ee-parity-gate.md) | docs/pages |
 | [Getting Started](docs/pages/getting-started.md) | docs/pages |
-| [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
+| [InsightPulse AI — Odoo 19 CE Platform](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
 | [Bridge Platform Components (IPAI)](docs/parity/BRIDGE_PLATFORM_COMPONENTS.md) | docs/parity |
