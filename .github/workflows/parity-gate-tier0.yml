@@ -1,0 +1,118 @@
+name: parity-gate-tier0
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seed-audit:
+    name: Seed Audit (Finance PPM)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run seed audit
+        run: python3 scripts/finance_ppm_seed_audit.py
+
+      - name: Print canonical counts
+        run: cat artifacts/finance_ppm_seed_audit.json
+
+      - name: Assert canonical counts
+        run: |
+          python3 -c "
+          import json, sys
+          d = json.load(open('artifacts/finance_ppm_seed_audit.json'))
+          assert d['pass'], f'Seed audit failed: {d[\"errors\"]}'
+          assert d['employees_count'] >= 9, f'employees={d[\"employees_count\"]}'
+          assert d['bir_count'] >= 144, f'bir={d[\"bir_count\"]}'
+          assert d['tasks_count'] >= 36, f'tasks={d[\"tasks_count\"]}'
+          assert d['raci_count'] >= 9, f'raci={d[\"raci_count\"]}'
+          assert d['logframe_count'] >= 12, f'logframe={d[\"logframe_count\"]}'
+          print('Canonical counts locked: OK')
+          "
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parity-tier0-seed-audit
+          path: artifacts/
+          if-no-files-found: error
+
+  manifest-check:
+    name: Manifest Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate manifest data files exist
+        run: |
+          python3 -c "
+          import ast, sys
+          from pathlib import Path
+
+          modules = [
+              'addons/ipai_finance_ppm_umbrella',
+              'addons/ipai_ocr_gateway',
+              'addons/ipai_ai_agent_builder',
+          ]
+
+          errors = []
+          for mod_path in modules:
+              manifest = Path(mod_path) / '__manifest__.py'
+              if not manifest.exists():
+                  errors.append(f'{manifest}: not found')
+                  continue
+              data = ast.literal_eval(manifest.read_text())
+              for f in data.get('data', []):
+                  full = Path(mod_path) / f
+                  if not full.exists():
+                      errors.append(f'{full}: referenced in manifest but missing')
+
+          if errors:
+              for e in errors:
+                  print(f'FAIL: {e}', file=sys.stderr)
+              sys.exit(1)
+          print(f'All {len(modules)} module manifests validated OK')
+          "
+
+      - name: Check version is 19.0
+        run: |
+          python3 -c "
+          import ast, sys
+          from pathlib import Path
+
+          checks = {
+              'addons/ipai_finance_ppm_umbrella/__manifest__.py': '19.0',
+              'addons/ipai_ai_agent_builder/__manifest__.py': '19.0',
+              'addons/ipai_ocr_gateway/__manifest__.py': '19.0',
+          }
+
+          errors = []
+          for path, expected_prefix in checks.items():
+              data = ast.literal_eval(Path(path).read_text())
+              ver = data.get('version', '')
+              if not ver.startswith(expected_prefix):
+                  errors.append(f'{path}: version={ver}, expected {expected_prefix}.*')
+
+          if errors:
+              for e in errors:
+                  print(f'FAIL: {e}', file=sys.stderr)
+              sys.exit(1)
+          print(f'All {len(checks)} modules at 19.0: OK')
+          "
