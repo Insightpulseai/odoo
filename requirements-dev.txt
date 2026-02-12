@@ -1,0 +1,8 @@
+# Development and CI/CD tools
+# Used by GitHub Actions for type-checking and vulnerability scanning
+
+# Type checking
+mypy==1.8.0
+
+# Vulnerability scanning
+pip-audit==2.7.1
