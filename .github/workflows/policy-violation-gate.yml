@@ -1,0 +1,232 @@
+name: Policy Violation Gate
+
+# ============================================================================
+# DATAVERSE ENTERPRISE CONSOLE - POLICY VIOLATION CI GATE
+# ============================================================================
+# Portfolio Initiative: PORT-2026-012
+# Control: CTRL-POLICY-001 (CI-time Policy Enforcement)
+#
+# Purpose: Block PRs with policy violations:
+# - Unattested capability claims
+# - Blocked model usage
+# - Privacy mode violations
+#
+# Pattern: Follows NO_CLI_NO_DOCKER gate structure
+# ============================================================================
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/**'
+      - 'scripts/**'
+      - 'mcp/**'
+      - 'supabase/**'
+  push:
+    branches:
+      - main
+      - master
+      - feat/**
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+  issues: write
+
+jobs:
+  scan-policy-violations:
+    name: Scan for Policy Violations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Supabase CLI
+        run: |
+          curl -o- https://raw.githubusercontent.com/supabase/cli/main/install.sh | bash
+          echo "$HOME/.supabase/bin" >> $GITHUB_PATH
+
+      - name: Verify Supabase credentials
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "WARNING: SUPABASE_DB_URL not set - capability/model checks will be skipped"
+          else
+            echo "SUPABASE_DB_URL configured"
+          fi
+
+      - name: Run policy violation scanner
+        id: scan
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          bash scripts/gates/scan-policy-violations.sh
+        continue-on-error: true
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: docs/evidence/*/policy-violations/scan-results.sarif
+          category: policy-violations
+        continue-on-error: true
+
+      - name: Generate violation summary
+        if: failure()
+        id: summary
+        run: |
+          EVIDENCE_DIR=$(ls -td docs/evidence/*/policy-violations 2>/dev/null | head -1)
+          if [ -d "$EVIDENCE_DIR" ]; then
+            echo "## ❌ Policy Violation Gate Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Portfolio Initiative**: PORT-2026-012" >> $GITHUB_STEP_SUMMARY
+            echo "**Control**: CTRL-POLICY-001 (Policy Enforcement)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # Unattested capabilities
+            if [ -f "$EVIDENCE_DIR/unattested-capabilities.txt" ]; then
+              UNATTESTED_COUNT=$(wc -l < "$EVIDENCE_DIR/unattested-capabilities.txt")
+              echo "### 🚫 Unattested Capabilities ($UNATTESTED_COUNT)" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              head -10 "$EVIDENCE_DIR/unattested-capabilities.txt" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            # Blocked models
+            if [ -f "$EVIDENCE_DIR/blocked-models.txt" ]; then
+              BLOCKED_COUNT=$(wc -l < "$EVIDENCE_DIR/blocked-models.txt")
+              echo "### 🚫 Blocked Model Usage ($BLOCKED_COUNT)" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              head -10 "$EVIDENCE_DIR/blocked-models.txt" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            # Privacy mode disabled
+            if [ -f "$EVIDENCE_DIR/privacy-mode-disabled.txt" ]; then
+              PRIVACY_COUNT=$(wc -l < "$EVIDENCE_DIR/privacy-mode-disabled.txt")
+              echo "### ⚠️ Privacy Mode Disabled ($PRIVACY_COUNT)" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              head -10 "$EVIDENCE_DIR/privacy-mode-disabled.txt" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            echo "### Remediation" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "1. **Attest Capabilities**: Update \`ops.capability_attestations\` in Supabase" >> $GITHUB_STEP_SUMMARY
+            echo "2. **Update Model Policies**: Modify \`ops.model_policy\` or remove blocked models" >> $GITHUB_STEP_SUMMARY
+            echo "3. **Document Privacy Bypass**: Justify \`x-privacy-mode: false\` usage" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Re-run Gate" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```bash' >> $GITHUB_STEP_SUMMARY
+            echo 'bash scripts/gates/scan-policy-violations.sh' >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment on PR with violations
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Find evidence directory
+            const evidenceBase = 'docs/evidence';
+            const evidenceDirs = fs.readdirSync(evidenceBase, { withFileTypes: true })
+              .filter(dirent => dirent.isDirectory())
+              .map(dirent => path.join(evidenceBase, dirent.name, 'policy-violations'))
+              .filter(dir => fs.existsSync(dir))
+              .sort()
+              .reverse();
+
+            if (evidenceDirs.length === 0) {
+              console.log('No evidence directory found');
+              return;
+            }
+
+            const evidenceDir = evidenceDirs[0];
+            console.log(`Using evidence directory: ${evidenceDir}`);
+
+            // Count violations
+            let violations = [];
+
+            const unattestedFile = path.join(evidenceDir, 'unattested-capabilities.txt');
+            if (fs.existsSync(unattestedFile)) {
+              const lines = fs.readFileSync(unattestedFile, 'utf8').trim().split('\n').filter(l => l);
+              violations.push({ type: 'Unattested Capabilities', count: lines.length, file: 'unattested-capabilities.txt' });
+            }
+
+            const blockedFile = path.join(evidenceDir, 'blocked-models.txt');
+            if (fs.existsSync(blockedFile)) {
+              const lines = fs.readFileSync(blockedFile, 'utf8').trim().split('\n').filter(l => l);
+              violations.push({ type: 'Blocked Models', count: lines.length, file: 'blocked-models.txt' });
+            }
+
+            const privacyFile = path.join(evidenceDir, 'privacy-mode-disabled.txt');
+            if (fs.existsSync(privacyFile)) {
+              const lines = fs.readFileSync(privacyFile, 'utf8').trim().split('\n').filter(l => l);
+              violations.push({ type: 'Privacy Mode Disabled', count: lines.length, file: 'privacy-mode-disabled.txt' });
+            }
+
+            if (violations.length === 0) {
+              console.log('No violations found');
+              return;
+            }
+
+            const totalViolations = violations.reduce((sum, v) => sum + v.count, 0);
+
+            // Generate comment body
+            let body = `## ❌ Policy Violation Gate Failed\n\n`;
+            body += `**${totalViolations} violations detected.**\n\n`;
+            body += `**Portfolio Initiative**: PORT-2026-012\n`;
+            body += `**Control**: CTRL-POLICY-001 (Policy Enforcement)\n\n`;
+
+            violations.forEach(v => {
+              body += `### 🚫 ${v.type}: ${v.count}\n`;
+              body += `See [${v.file}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/blob/${context.sha}/${evidenceDir}/${v.file})\n\n`;
+            });
+
+            body += `### Remediation\n\n`;
+            body += `1. **Attest Capabilities**: Update \`ops.capability_attestations\` in Supabase\n`;
+            body += `2. **Update Model Policies**: Modify \`ops.model_policy\` or remove blocked models\n`;
+            body += `3. **Document Privacy Bypass**: Justify \`x-privacy-mode: false\` usage\n\n`;
+            body += `### Re-run Gate\n\n`;
+            body += `\`\`\`bash\n`;
+            body += `bash scripts/gates/scan-policy-violations.sh\n`;
+            body += `\`\`\`\n\n`;
+            body += `See [GitHub Security](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/security/code-scanning) for SARIF details.`;
+
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+
+      - name: Fail if violations found
+        if: steps.scan.outcome == 'failure'
+        run: |
+          echo "Policy violations detected - failing workflow"
+          exit 1
+
+      - name: Success summary
+        if: success()
+        run: |
+          echo "## ✅ Policy Violation Gate Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No policy violations detected." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Portfolio Initiative**: PORT-2026-012" >> $GITHUB_STEP_SUMMARY
+          echo "**Control**: CTRL-POLICY-001 (Policy Enforcement)" >> $GITHUB_STEP_SUMMARY
