@@ -1,15 +1,15 @@
 # InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
 
-[![odoo-ci](https://github.com/jgtolentino/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/jgtolentino/odoo/actions/workflows/ci-odoo.yml)
+[![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
-Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
 - PH expense & travel management
 - Equipment booking & inventory
 - Finance month-end close and PH BIR tax filing task automation (Finance PPM)
 - Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
 
 **Production URL:** https://erp.insightpulseai.com
-**Documentation:** https://jgtolentino.github.io/odoo/
+**Documentation:** https://insightpulseai.github.io/odoo/
 
 ---
 
