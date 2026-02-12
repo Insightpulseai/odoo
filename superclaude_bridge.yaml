@@ -1,0 +1,282 @@
+version: "1.0.0"
+
+meta:
+  name: "superclaude_bridge"
+  description: "Maps SuperClaude /sc:* commands + agents + modes into Pulser skill profiles, with Odoo.sh-aligned personas."
+  sources:
+    superclaude_commands_ref: "pypi:superclaude (Commands Reference)"
+    superclaude_modes_ref: "drlee.io article (7 behavioral modes)"
+    odoo_sh_personas_ref: "odoo.sh marketing personas/features (developers/testers/pm/sysadmin)"
+  notes:
+    - "Command list derived from SuperClaude Commands Reference on PyPI."
+    - "Behavioral modes derived from published description (Dr. Ernesto Lee, Dec 2025)."
+    - "Agent names: some are grounded in public descriptions; remaining are placeholders to be overwritten by your local extractor."
+
+superclaude:
+  # 30 /sc:* commands (command names are from the PyPI reference; prefix '/sc:' is implied)
+  commands:
+    - sc
+    - brainstorm
+    - design
+    - estimate
+    - spec-panel
+    - implement
+    - build
+    - improve
+    - cleanup
+    - explain
+    - test
+    - analyze
+    - troubleshoot
+    - reflect
+    - document
+    - help
+    - git
+    - pm
+    - task
+    - workflow
+    - research
+    - business-panel
+    - agent
+    - index-repo
+    - index
+    - recommend
+    - select-tool
+    - spawn
+    - load
+    - save
+
+  # 7 behavioral modes (names grounded in public description)
+  modes:
+    - brainstorming
+    - deep_research
+    - orchestration
+    - token_efficiency
+    - business_panel
+    - task_management
+    - introspection
+
+  # 16 agents/personas:
+  # - Grounded: those explicitly referenced in public descriptions of SuperClaude/SuperAgent ecosystem
+  # - Placeholder: remaining entries must be replaced by your extractor from the SuperClaude_Framework repo contents
+  agents:
+    grounded:
+      - id: agent-architect
+        role: "system design + API architecture"
+        source: "public descriptions (architect persona)"
+      - id: agent-analyzer
+        role: "deep debugging + root cause analysis"
+        source: "public descriptions (analyzer persona)"
+      - id: agent-frontend
+        role: "UI + UX + web app implementation"
+        source: "public descriptions (frontend persona)"
+      - id: agent-backend
+        role: "API endpoints + data model + reliability"
+        source: "public descriptions (backend sub-agent)"
+      - id: agent-security-engineer
+        role: "threat modeling + secure code review"
+        source: "public descriptions (security sub-agent/persona)"
+      - id: agent-qa
+        role: "test strategy + edge cases + coverage"
+        source: "public descriptions (QA sub-agent/persona)"
+      - id: agent-deploy
+        role: "deploy automation + env/secrets + release wiring"
+        source: "public descriptions (deploy sub-agent)"
+      - id: agent-performance-engineer
+        role: "perf profiling + bottleneck fixes"
+        source: "public descriptions (performance persona)"
+      - id: agent-code-restructuring-expert
+        role: "large refactors + mechanical transforms"
+        source: "public descriptions (code-restructuring expert)"
+      - id: agent-python-expert
+        role: "python-specific patterns + idioms"
+        source: "public descriptions (python-expert persona)"
+      - id: agent-deep-research
+        role: "multi-hop research + synthesis"
+        source: "public descriptions (deep research agent)"
+      - id: agent-pm
+        role: "project tracking + post-task documentation"
+        source: "public descriptions (PM agent)"
+    placeholders:
+      # These 4 must be overwritten by your extractor to match the actual 16 in your pinned SuperClaude revision.
+      - id: agent-database
+        role: "db schema + query tuning"
+        source: "PLACEHOLDER"
+      - id: agent-devops
+        role: "CI/CD + infra automation"
+        source: "PLACEHOLDER"
+      - id: agent-docs
+        role: "technical writing + ADRs + runbooks"
+        source: "PLACEHOLDER"
+      - id: agent-product
+        role: "product framing + acceptance criteria"
+        source: "PLACEHOLDER"
+
+pulser:
+  # Core Pulser skill profiles (generic)
+  skill_profiles:
+    - id: dev
+      label: "Developer"
+      skills:
+        - gitops
+        - codegen
+        - refactor
+        - dependency_mgmt
+        - docs
+    - id: tester
+      label: "Tester / QA"
+      skills:
+        - test_strategy
+        - automated_tests
+        - regression
+        - perf_test
+        - security_smoke
+    - id: pm
+      label: "Project Manager"
+      skills:
+        - planning
+        - estimation
+        - backlog_ops
+        - release_mgmt
+        - stakeholder_comms
+    - id: sre
+      label: "SRE / SysAdmin"
+      skills:
+        - observability
+        - incident_response
+        - backups_restore
+        - capacity_perf
+        - access_control
+
+  # Odoo.sh-aligned variants (Odoo-specific)
+  odoo_skill_profiles:
+    - id: odoo_dev
+      label: "Odoo Developer (Odoo.sh-style)"
+      extends: dev
+      skills:
+        - odoo_module_dev
+        - odoo_upgrade_mgmt
+        - odoo_ci_runbot
+        - odoo_shell_ops
+    - id: odoo_tester
+      label: "Odoo Tester (Odoo.sh-style)"
+      extends: tester
+      skills:
+        - odoo_test_runner
+        - odoo_staging_validation
+        - odoo_mail_catcher_checks
+    - id: odoo_pm
+      label: "Odoo Project Manager (Odoo.sh-style)"
+      extends: pm
+      skills:
+        - odoo_branch_promotion
+        - odoo_release_gates
+        - odoo_build_sharing
+    - id: odoo_sre
+      label: "Odoo System Administrator (Odoo.sh-style)"
+      extends: sre
+      skills:
+        - odoo_backup_restore
+        - odoo_monitoring_kpis
+        - odoo_dns_routing
+        - odoo_ha_posture
+
+bridge:
+  # Map /sc:* commands -> Pulser profiles (including Odoo-specific variants)
+  command_to_profiles:
+    "/sc:sc": [dev, tester, pm, sre, odoo_dev, odoo_tester, odoo_pm, odoo_sre]
+    "/sc:help": [dev, tester, pm, sre]
+    "/sc:git": [dev, pm, odoo_dev, odoo_pm]
+    "/sc:index-repo": [dev, tester, odoo_dev, odoo_tester]
+    "/sc:index": [dev, tester, odoo_dev, odoo_tester]
+    "/sc:load": [dev, tester, pm, sre]
+    "/sc:save": [dev, tester, pm, sre]
+
+    "/sc:brainstorm": [pm, dev, odoo_pm, odoo_dev]
+    "/sc:design": [dev, pm, sre, odoo_dev, odoo_pm, odoo_sre]
+    "/sc:estimate": [pm, odoo_pm]
+    "/sc:spec-panel": [pm, dev, tester, odoo_pm, odoo_dev, odoo_tester]
+    "/sc:implement": [dev, odoo_dev]
+    "/sc:build": [dev, tester, sre, odoo_dev, odoo_tester, odoo_sre]
+    "/sc:improve": [dev, tester, sre, odoo_dev, odoo_tester, odoo_sre]
+    "/sc:cleanup": [dev, odoo_dev]
+    "/sc:explain": [dev, tester, pm, sre]
+    "/sc:test": [tester, dev, odoo_tester, odoo_dev]
+    "/sc:analyze": [dev, tester, sre, odoo_dev, odoo_tester, odoo_sre]
+    "/sc:troubleshoot": [sre, dev, tester, odoo_sre, odoo_dev, odoo_tester]
+    "/sc:reflect": [pm, sre, odoo_pm, odoo_sre]
+    "/sc:document": [pm, dev, tester, sre, odoo_pm, odoo_dev, odoo_tester, odoo_sre]
+    "/sc:pm": [pm, odoo_pm]
+    "/sc:task": [pm, tester, odoo_pm, odoo_tester]
+    "/sc:workflow": [pm, dev, tester, sre, odoo_pm, odoo_dev, odoo_tester, odoo_sre]
+    "/sc:research": [pm, dev, sre, odoo_pm, odoo_dev, odoo_sre]
+    "/sc:business-panel": [pm, sre, odoo_pm, odoo_sre]
+    "/sc:agent": [dev, tester, pm, sre]
+    "/sc:recommend": [pm, dev, sre, odoo_pm, odoo_dev, odoo_sre]
+    "/sc:select-tool": [dev, sre, odoo_dev, odoo_sre]
+    "/sc:spawn": [pm, sre, odoo_pm, odoo_sre]
+
+  # Map SuperClaude agents -> Pulser profiles
+  agent_to_profiles:
+    agent-architect: [dev, sre, odoo_dev, odoo_sre]
+    agent-analyzer: [dev, tester, sre, odoo_dev, odoo_tester, odoo_sre]
+    agent-frontend: [dev]
+    agent-backend: [dev, odoo_dev]
+    agent-security-engineer: [sre, tester, odoo_sre, odoo_tester]
+    agent-qa: [tester, odoo_tester]
+    agent-deploy: [sre, odoo_sre]
+    agent-performance-engineer: [sre, dev, odoo_sre, odoo_dev]
+    agent-code-restructuring-expert: [dev, odoo_dev]
+    agent-python-expert: [dev]
+    agent-deep-research: [pm, dev, sre, odoo_pm, odoo_dev, odoo_sre]
+    agent-pm: [pm, odoo_pm]
+    agent-database: [dev, sre, odoo_dev, odoo_sre]
+    agent-devops: [sre, odoo_sre]
+    agent-docs: [pm, dev, tester, sre, odoo_pm, odoo_dev, odoo_tester, odoo_sre]
+    agent-product: [pm, odoo_pm]
+
+  # Map behavioral modes -> Pulser execution modifiers (behavioral overlays)
+  mode_to_overlays:
+    brainstorming:
+      overlays: [divergent_thinking, alternatives_first, defer_commitment]
+    deep_research:
+      overlays: [web_grounding, citation_required, multi_hop]
+    orchestration:
+      overlays: [tool_routing, parallelism, plan_then_execute]
+    token_efficiency:
+      overlays: [context_compaction, minimal_repetition, delta_updates]
+    business_panel:
+      overlays: [multi_stakeholder_lenses, risk_return, ops_finance_tech]
+    task_management:
+      overlays: [workbreakdown, dependency_graph, status_tracking]
+    introspection:
+      overlays: [self_critique, uncertainty_flags, assumption_register]
+
+odoo_sh_alignment:
+  # Odoo.sh-style feature mapping -> Pulser skills
+  features_to_skills:
+    github_integration: [gitops, codegen, odoo_ci_runbot]
+    clear_logs: [observability, incident_response, odoo_monitoring_kpis]
+    web_shell: [odoo_shell_ops, incident_response]
+    module_dependencies: [dependency_mgmt, odoo_module_dev]
+    continuous_integration: [automated_tests, odoo_ci_runbot]
+    ssh: [access_control, incident_response]
+    mail_catcher: [odoo_mail_catcher_checks, regression]
+    staging_branches: [odoo_branch_promotion, odoo_staging_validation]
+    drag_drop_promotion: [release_mgmt, odoo_release_gates, odoo_branch_promotion]
+    backups_incremental: [backups_restore, odoo_backup_restore]
+    monitoring_kpis: [observability, odoo_monitoring_kpis]
+    dns_custom_domains: [odoo_dns_routing]
+    ha_security: [capacity_perf, access_control, odoo_ha_posture]
+
+extractor_hooks:
+  # Optional: use these hooks in your repo tooling to overwrite `superclaude.agents.placeholders`
+  # with the authoritative list from a pinned SuperClaude_Framework checkout.
+  expected_counts:
+    commands: 30
+    agents: 16
+    modes: 7
+  replacement_strategy:
+    - target_path: "superclaude.agents"
+      overwrite: true
+      source_hint: "Parse SuperClaude_Framework agent definitions under SuperClaude/Agents/*.md (or equivalent) in your pinned revision."
