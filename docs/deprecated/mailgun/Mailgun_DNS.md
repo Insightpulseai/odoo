@@ -1,4 +1,16 @@
-# DNS Configuration and Mailgun Setup
+# DNS Configuration and Mailgun Setup (DEPRECATED)
+
+**⚠️ DEPRECATION NOTICE**
+
+This document is **deprecated** as of 2026-02-12.
+
+**Reason**: Mailgun replaced by Zoho Mail SMTP
+
+**Replacement**: See [docs/guides/email/EMAIL_SETUP_ZOHO.md](../../guides/email/EMAIL_SETUP_ZOHO.md)
+
+**Last Valid Version**: Odoo 18.0 / 2026-01-08
+
+---
 
 **Domain**: `insightpulseai.com`
 **Droplet IP**: `178.128.112.214`
