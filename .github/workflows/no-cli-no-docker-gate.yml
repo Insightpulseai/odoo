@@ -1,0 +1,120 @@
+name: NO_CLI_NO_DOCKER Gate
+
+on:
+  pull_request:
+    branches: [main, feat/*, fix/*]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  scan-forbidden-commands:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comprehensive scan
+
+      - name: Run NO_CLI_NO_DOCKER gate scan
+        id: scan
+        run: |
+          bash scripts/gates/scan-forbidden-commands.sh
+          echo "scan_exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Upload SARIF results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: docs/evidence/20260212-2000/no-cli-docker-gate/scan-results.sarif
+          category: no-cli-no-docker
+
+      - name: Upload gate logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-cli-docker-gate-${{ github.run_number }}
+          path: docs/evidence/20260212-2000/no-cli-docker-gate/
+          retention-days: 90
+
+      - name: Post PR comment on violations
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const sarifPath = 'docs/evidence/20260212-2000/no-cli-docker-gate/scan-results.sarif';
+
+            let sarif;
+            try {
+              sarif = JSON.parse(fs.readFileSync(sarifPath, 'utf8'));
+            } catch (error) {
+              console.error('Failed to read SARIF file:', error);
+              return;
+            }
+
+            const results = sarif.runs[0].results || [];
+            const violations = results.length;
+
+            if (violations === 0) return;
+
+            // Build violation details
+            let details = '';
+            results.forEach((result, idx) => {
+              const location = result.locations[0].physicalLocation;
+              const file = location.artifactLocation.uri;
+              const line = location.region.startLine;
+              const message = result.message.text;
+
+              details += `${idx + 1}. **${file}:${line}**\n   ${message}\n\n`;
+            });
+
+            const comment = `## ❌ NO_CLI_NO_DOCKER Gate Failed
+
+            **Policy Reference**: [docs/constitution/NO_CLI_NO_DOCKER.md](https://github.com/${{ github.repository }}/blob/main/docs/constitution/NO_CLI_NO_DOCKER.md)
+            **Portfolio Initiative**: PORT-2026-011
+            **Evidence**: EVID-20260212-006
+
+            **${violations} violation(s) detected:**
+
+            ${details}
+
+            ### Remediation Steps
+
+            1. **Move to Sanctioned Automation**
+               - Place direct CLI/Docker commands in \`scripts/docker/\` with proper error handling
+               - Use declarative config (\`docker-compose.yml\`) instead of imperative CLI
+
+            2. **Use Approved Patterns**
+               - Docker: Use \`docker-compose\` or sanctioned \`scripts/docker/\` automation
+               - Kubernetes: Use GitOps (ArgoCD/Flux) or sanctioned deployment scripts
+               - SSH: Use Ansible playbooks or sanctioned provisioning scripts
+               - Database: Use migrations, Supabase client, or sanctioned admin scripts
+
+            3. **Exception Handling**
+               - If this is legitimate infrastructure code, add to allowlist in \`scripts/gates/scan-forbidden-commands.sh\`
+               - Document exception rationale in PR description
+
+            **See SARIF output in GitHub Security tab for detailed findings.**
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail workflow on violations
+        if: steps.scan.outputs.scan_exit_code != '0'
+        run: |
+          echo "::error::NO_CLI_NO_DOCKER gate failed with violations"
+          exit 1
