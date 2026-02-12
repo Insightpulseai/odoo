@@ -1,0 +1,30 @@
+version: 1
+taxonomy:
+  domains:
+    - id: tax
+      name: Tax
+    - id: finance_close
+      name: Financial Close
+    - id: compliance
+      name: Compliance
+  evidence_types:
+    - id: official_return
+      name: Official Return / Filing
+    - id: workbook_schedule
+      name: Workbook / Schedule
+    - id: payment_proof
+      name: Proof of Payment
+    - id: journal_entry
+      name: Journal Entry / Posting
+    - id: reconciliation
+      name: Reconciliation
+    - id: approval
+      name: Approval / Sign-off
+  task_kinds:
+    - id: prepare
+    - id: review
+    - id: approve
+    - id: file
+    - id: pay
+    - id: reconcile
+    - id: archive

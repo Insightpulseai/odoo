@@ -57,7 +57,7 @@ Add to `~/.claude/mcp-servers.json`:
   "mcpServers": {
     "odoo-erp": {
       "command": "node",
-      "args": ["/Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/odoo-erp-server/dist/index.js"],
+      "args": ["/Users/tbwa/Documents/GitHub/odoo/mcp/servers/odoo-erp-server/dist/index.js"],
       "env": {
         "ODOO_URL": "https://erp.insightpulseai.com",
         "ODOO_DB": "production",
@@ -223,5 +223,5 @@ AGPL-3.0 (matching Odoo CE)
 ## Support
 
 - **Specification**: `spec/odoo-mcp-server/`
-- **Issues**: https://github.com/jgtolentino/odoo-ce/issues
+- **Issues**: https://github.com/jgtolentino/odoo/issues
 - **Contact**: Jake Tolentino (@jgtolentino)

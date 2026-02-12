@@ -50,7 +50,7 @@ gh workflow run superset-bump.yml -f tag=v1.2.0
 **From Superset Repo (webhook):**
 ```bash
 # In superset repo CI, after push:
-gh api repos/jgtolentino/odoo-ce/dispatches \
+gh api repos/jgtolentino/odoo/dispatches \
   -f event_type=superset-release \
   -f client_payload='{"tag":"v1.2.0","digest":"sha256:abc123..."}'
 ```
@@ -67,11 +67,11 @@ doctl apps update <app-id> --spec infra/superset/do-app-spec.yaml
 
 ## Artifact Contract
 
-The contract between `odoo-ce` and `superset` repos:
+The contract between `odoo` and `superset` repos:
 
 ```
 ┌──────────────────┐          ┌──────────────────┐
-│   superset repo  │          │    odoo-ce repo  │
+│   superset repo  │          │    odoo repo  │
 │                  │          │                  │
 │  Build → Push    │  image   │   manifest.json  │
 │  to GHCR         │ ───────▶ │   (pinned tag)   │
@@ -82,8 +82,8 @@ The contract between `odoo-ce` and `superset` repos:
 ```
 
 1. **superset repo** builds and pushes `ghcr.io/jgtolentino/ipai-superset:<tag>`
-2. **superset repo** (optionally) sends `repository_dispatch` to odoo-ce
-3. **odoo-ce** `superset-bump` workflow updates `manifest.json` and `do-app-spec.yaml`
+2. **superset repo** (optionally) sends `repository_dispatch` to odoo
+3. **odoo** `superset-bump` workflow updates `manifest.json` and `do-app-spec.yaml`
 4. **PR** is opened for review
 5. **After merge**, DO App auto-deploys new image
 

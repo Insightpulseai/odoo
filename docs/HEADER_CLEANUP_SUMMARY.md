@@ -172,7 +172,7 @@ button[type="submit"] {
 If any issues arise:
 ```bash
 ssh root@178.128.112.214
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git log --oneline -5  # Find last good commit
 git checkout <COMMIT_HASH>
 docker restart odoo-prod

@@ -11,7 +11,7 @@
 ### 1.1 Directory Structure Created
 
 ```
-odoo-ce/
+odoo/
 ├── mcp/
 │   ├── servers/              ✅ Created (empty, ready for YAML configs)
 │   ├── coordinator/          ✅ Created (empty, ready for FastAPI service)

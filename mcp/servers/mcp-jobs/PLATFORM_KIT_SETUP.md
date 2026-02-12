@@ -24,7 +24,7 @@ This document describes the Supabase Platform Kit integration for mcp-jobs, whic
 ### Step 1: Install Platform Kit
 
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce/mcp/servers/mcp-jobs
+cd /Users/tbwa/Documents/GitHub/odoo/mcp/servers/mcp-jobs
 
 # Install via shadcn (recommended)
 npx shadcn@latest add @supabase/platform-kit-nextjs

@@ -35,7 +35,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
 
 jobs:
   # ===========================================================================
@@ -128,7 +128,7 @@ jobs:
           # Deploy commands
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" << 'DEPLOY_SCRIPT'
             set -e
-            cd /opt/odoo-ce
+            cd /opt/odoo
 
             # Pull latest code
             git fetch origin main
@@ -206,10 +206,10 @@ jobs:
     if: success()
     permissions:
       contents: write
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create Release Tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -217,9 +217,8 @@ jobs:
           TAG="prod-$(date -u +'%Y%m%d-%H%M')"
           git tag "$TAG"
           git push origin "$TAG"
-          
+
           gh release create "$TAG" \
             --title "$TAG" \
             --notes "Automated production deployment of image \`${{ needs.preflight.outputs.image_tag }}\`" \
             --generate-notes
-

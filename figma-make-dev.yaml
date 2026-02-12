@@ -3,7 +3,7 @@
 # Compatible with Claude Code Web, Codex, and CI runners
 
 version: 1
-name: odoo-ce-dev-server
+name: odoo-dev-server
 description: Run Odoo CE dev stack with Supabase in a Figma Make–compatible environment.
 
 env:

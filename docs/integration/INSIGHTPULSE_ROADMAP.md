@@ -313,7 +313,7 @@ description: Automates month-end closing for TBWA Finance SSC
 ### 8.2 Installation
 
 ```bash
-cd /opt/odoo-ce
+cd /opt/odoo
 git submodule add https://github.com/OCA/account-financial-tools.git oca/account-financial-tools
 git submodule add https://github.com/OCA/account-financial-reporting.git oca/account-financial-reporting
 git submodule add https://github.com/OCA/reporting-engine.git oca/reporting-engine

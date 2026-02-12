@@ -257,7 +257,7 @@ docker exec -i odoo-erp-prod bash -lc "
 **Fix**:
 ```bash
 # Check if module folder exists
-ls -la /opt/odoo-ce/addons/ipai_platform_theme/
+ls -la /opt/odoo/addons/ipai_platform_theme/
 
 # Check addons_path in config
 docker exec -i odoo-erp-prod cat /etc/odoo/odoo.conf | grep addons_path
@@ -356,13 +356,13 @@ ERROR odoo odoo.modules.module: module ipai_finance_ppm_umbrella: __init__.py no
 **Fix**:
 ```bash
 # Check if __init__.py exists
-ls -la /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+ls -la /opt/odoo/addons/ipai_finance_ppm_umbrella/__init__.py
 
 # Create if missing (empty file is OK for umbrella modules)
-touch /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+touch /opt/odoo/addons/ipai_finance_ppm_umbrella/__init__.py
 
 # Or with minimal content
-echo "# -*- coding: utf-8 -*-" > /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+echo "# -*- coding: utf-8 -*-" > /opt/odoo/addons/ipai_finance_ppm_umbrella/__init__.py
 
 # Retry installation
 docker exec -i odoo-erp-prod bash -lc "
@@ -395,7 +395,7 @@ docker restart odoo-erp-prod
 ```bash
 # Git rollback on server
 ssh root@159.223.75.148
-cd /opt/odoo-ce
+cd /opt/odoo
 git log --oneline -5  # Find commit before deployment
 git checkout <commit-hash>
 

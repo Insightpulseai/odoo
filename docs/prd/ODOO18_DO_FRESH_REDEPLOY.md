@@ -7,7 +7,7 @@
 | PRD ID | `ODOO18_DO_FRESH_REDEPLOY` |
 | PRD Version | v0.1.0 |
 | Ship Bundle Ref | `IPAI_SHIP_PRD_ODOO18_AIUX` v1.1.0 |
-| Repo | `jgtolentino/odoo-ce` |
+| Repo | `jgtolentino/odoo` |
 | Target Platform | DigitalOcean |
 
 ---
@@ -54,7 +54,7 @@ A 502 from nginx means nginx is up but the upstream (Odoo) isn't responding. Com
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
 │   │  Docker Compose Stack                                    │  │
-│   │  ├── odoo (ghcr.io/jgtolentino/odoo-ce:TAG)            │  │
+│   │  ├── odoo (ghcr.io/jgtolentino/odoo:TAG)            │  │
 │   │  ├── db (postgres:16-alpine)                            │  │
 │   │  └── redis (optional, for sessions/queue)               │  │
 │   └─────────────────────────────────────────────────────────┘  │
@@ -125,7 +125,7 @@ preflight → build → deploy → install → verify → publish proofs
 
 ```yaml
 type: ghcr-image-tagged
-registry: ghcr.io/jgtolentino/odoo-ce
+registry: ghcr.io/jgtolentino/odoo
 tag_format: "{version}-{sha}"
 strategy: rolling
 ```
@@ -277,8 +277,8 @@ See: `docs/proofs/PROD_DEPLOY_PROOF_SCHEMA.json`
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/jgtolentino/odoo-ce.git /opt/odoo-ce
-cd /opt/odoo-ce
+git clone https://github.com/jgtolentino/odoo.git /opt/odoo
+cd /opt/odoo
 
 # 2. Copy environment template
 cp deploy/.env.production.template .env
@@ -360,7 +360,7 @@ tail -100 /var/log/nginx/error.log
 ```json
 {
   "spec_version": "2026-01-08",
-  "project": "odoo-ce",
+  "project": "odoo",
   "prd": {
     "ship_prd_id": "IPAI_SHIP_PRD_ODOO18_AIUX",
     "ship_prd_version": "1.1.0",

@@ -98,7 +98,7 @@ docker compose -f "${ODOO_COMPOSE_FILE}" up -d "${ODOO_SERVICE}"
 ### Test 1: Preflight Standalone
 
 ```bash
-$ cd ~/Documents/GitHub/odoo-ce
+$ cd ~/Documents/GitHub/odoo
 $ ./scripts/ocadev/preflight.sh
 OK
 ODOO_COMPOSE_FILE=docker/docker-compose.ce19.yml

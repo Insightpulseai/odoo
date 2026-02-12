@@ -11,7 +11,7 @@
 **Stack:**
 - **Mattermost:** `chat.insightpulseai.com` (self-hosted, no tier limits)
 - **n8n:** `n8n.insightpulseai.com` (self-hosted Community Edition)
-- **GitHub:** jgtolentino/odoo-ce
+- **GitHub:** jgtolentino/odoo
 - **Supabase:** spdtwktxdalcfigzeqrz
 
 **No Tier Blockers:**

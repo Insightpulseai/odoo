@@ -219,7 +219,7 @@ session_redis_port = 6379
 
 ### Directory Structure
 
-**Production** (`/opt/odoo-ce/`):
+**Production** (`/opt/odoo/`):
 ```
 repo/                          # Git-tracked
 ├── addons/
@@ -365,7 +365,7 @@ This setup replicates Odoo Enterprise Edition email tracking:
 
 ## 6. Deployment Scripts
 
-**Canonical Scripts** (in repo at `/opt/odoo-ce/repo/scripts/`):
+**Canonical Scripts** (in repo at `/opt/odoo/repo/scripts/`):
 
 ### Deploy Odoo Modules
 ```bash
@@ -373,7 +373,7 @@ This setup replicates Odoo Enterprise Edition email tracking:
 # scripts/deploy/deploy_odoo_modules.sh
 
 ssh root@178.128.112.214 << 'EOF'
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 docker compose exec odoo-prod odoo -d odoo -u all --stop-after-init
 docker compose restart odoo-prod
@@ -400,7 +400,7 @@ supabase functions deploy email-events --project-ref "${SUPABASE_PROJECT_REF}" -
 # scripts/deploy/backup_db.sh
 
 ssh root@178.128.112.214 << 'EOF'
-BACKUP_DIR="/opt/odoo-ce/backups/daily"
+BACKUP_DIR="/opt/odoo/backups/daily"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 docker compose exec postgres pg_dump -U odoo odoo > "$BACKUP_DIR/odoo_$TIMESTAMP.sql"
 find "$BACKUP_DIR" -name "odoo_*.sql" -mtime +7 -delete

@@ -21,7 +21,7 @@ Standardized status signals for org-wide coordination. Use these to communicate 
 ./scripts/status/set_status.sh launching
 
 # With PR reference
-./scripts/status/set_status.sh launching -r "odoo-ce#271"
+./scripts/status/set_status.sh launching -r "odoo#271"
 
 # With expiry (auto-clear after 4 hours)
 ./scripts/status/set_status.sh building -e 4h
@@ -103,7 +103,7 @@ Planning — design session active
 ## Best Practices
 
 1. **Keep it short** — Status should be skimmable
-2. **Add PR/Issue refs** — e.g., `odoo-ce#271` for context
+2. **Add PR/Issue refs** — e.g., `odoo#271` for context
 3. **Set expiry** — Use `-e` flag for time-bounded focus
 4. **Clear when done** — Run `./scripts/status/set_status.sh clear`
 

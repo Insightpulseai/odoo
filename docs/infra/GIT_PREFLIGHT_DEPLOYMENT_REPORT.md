@@ -49,9 +49,9 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 ---
 
-## Phase 2: odoo-ce (COMPLETE)
+## Phase 2: odoo (COMPLETE)
 
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 **Commit**: `5647896b` - feat(ops-control-room): register git_preflight skill + figma sync runbook
 **Status**: ✅ Pushed to main
 
@@ -86,7 +86,7 @@ RUNBOOK:
 DOCUMENTATION:
 - Add GIT_PREFLIGHT_INTEGRATION.md (1200+ lines) - complete implementation guide
 - Add GIT_PREFLIGHT_SUMMARY.md (100+ lines) - executive summary
-- Document cross-repository pattern (implementation in design-system-cli, registry in odoo-ce)
+- Document cross-repository pattern (implementation in design-system-cli, registry in odoo)
 - Provide deployment workflow (3 phases), rollback strategy, monitoring dashboard design
 - Include telemetry SQL queries, reusability patterns for future bridges
 
@@ -153,17 +153,17 @@ curl -X POST https://buildopscontrolroom.vercel.app/api/runs \
 - Files Changed: 6 files, 581 insertions(+)
 - URL: https://github.com/jgtolentino/design-system-cli/commit/65df4df
 
-**odoo-ce**:
+**odoo**:
 - Commit SHA: `5647896b`
 - Author: Jake Tolentino + Claude Sonnet 4.5
 - Files Changed: 4 files, 2007 insertions(+)
-- URL: https://github.com/jgtolentino/odoo-ce/commit/5647896b
+- URL: https://github.com/jgtolentino/odoo/commit/5647896b
 
 ### Cross-Repository Integration Pattern
 
 ```
 ┌─────────────────────────────────────┐
-│    Ops Control Room (odoo-ce)       │
+│    Ops Control Room (odoo)       │
 │                                     │
 │  1. Load runbook YAML               │
 │  2. Resolve skill → implementation  │
@@ -253,9 +253,9 @@ git revert 65df4df
 git push origin main
 ```
 
-**odoo-ce**:
+**odoo**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 git revert 5647896b
 git push origin main
 ```
@@ -281,7 +281,7 @@ git push origin main
 ### Code Repositories
 
 - **design-system-cli**: https://github.com/jgtolentino/design-system-cli
-- **odoo-ce**: https://github.com/jgtolentino/odoo-ce
+- **odoo**: https://github.com/jgtolentino/odoo
 
 ### Ops Control Room
 

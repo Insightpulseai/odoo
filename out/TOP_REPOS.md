@@ -2,7 +2,7 @@
 
 | Rank | Repo | Score | Gov | Auto | Docs | Delivery | Activity | Evidence |
 |---:|---|---:|---:|---:|---:|---:|---:|---|
-| 1 | `jgtolentino/odoo-ce` | 81 | 16 | 20 | 10 | 15 | 20 | pushedAt=2026-01-26T13:00:39Z workflows=True docs=True spec=True |
+| 1 | `jgtolentino/odoo` | 81 | 16 | 20 | 10 | 15 | 20 | pushedAt=2026-01-26T13:00:39Z workflows=True docs=True spec=True |
 | 2 | `jgtolentino/insightpulse-odoo` | 72 | 9 | 18 | 10 | 15 | 20 | pushedAt=2026-01-26T03:42:11Z workflows=True docs=True spec=True |
 | 3 | `jgtolentino/tbwa-lions-palette-forge` | 60 | 6 | 18 | 10 | 6 | 20 | pushedAt=2026-01-10T06:13:45Z workflows=True docs=True spec=True |
 | 4 | `jgtolentino/superset` | 54 | 6 | 18 | 10 | 0 | 20 | pushedAt=2026-01-13T02:31:41Z workflows=True docs=True spec=True |

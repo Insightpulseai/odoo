@@ -1,0 +1,441 @@
+{
+  "period": "H1 2026",
+  "status": "Active",
+  "created": "2026-02-12",
+  "objectives": [
+    {
+      "id": "OBJ-1",
+      "name": "Establish a verifiable, audit-grade enterprise operating model with zero hallucinated capabilities",
+      "description": "To ensure every architectural claim, AI capability, and platform feature is provable, enforceable, and auditable — not aspirational.",
+      "owner": "Enterprise Architecture",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 70,
+      "portfolio_links": ["PORT-2026-011"],
+      "key_results": [
+        {
+          "id": "KR-1.1",
+          "name": "100% of agent capabilities are backed by code evidence",
+          "target": 100,
+          "current": 85,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "scripts/validate_capabilities.sh",
+          "evidence": ["docs/evidence/20260212-2000/"]
+        },
+        {
+          "id": "KR-1.2",
+          "name": "0 unverified capability claims merged into default branch",
+          "target": 0,
+          "current": 0,
+          "unit": "violations",
+          "status": "completed",
+          "measurement": ".github/workflows/no-cli-no-docker-gate.yml",
+          "evidence": ["docs/evidence/20260212-2000/no-cli-docker-gate/"]
+        },
+        {
+          "id": "KR-1.3",
+          "name": "All governance artifacts stored as immutable evidence",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/evidence/ | wc -l",
+          "evidence": ["docs/evidence/"]
+        },
+        {
+          "id": "KR-1.4",
+          "name": "Policy enforcement blocks forbidden operations in CI",
+          "target": 100,
+          "current": 100,
+          "unit": "% block rate",
+          "status": "completed",
+          "measurement": "GitHub Actions logs",
+          "evidence": ["docs/constitution/NO_CLI_NO_DOCKER.md"]
+        },
+        {
+          "id": "KR-1.5",
+          "name": "Traceability index links strategy → portfolio → process → control → evidence",
+          "target": 100,
+          "current": 80,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "grep -E '(strategy|portfolio)' docs/TRACEABILITY_INDEX.yaml | wc -l",
+          "evidence": ["docs/TRACEABILITY_INDEX.yaml"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-2",
+      "name": "Reverse Odoo.sh safely using a CI-first, browser-safe control plane",
+      "description": "To achieve Odoo.sh–like capabilities (automation, upgrades, observability) without privileged infrastructure access or vendor lock-in.",
+      "owner": "DevOps & Platform Engineering",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 60,
+      "portfolio_links": ["PORT-2026-008"],
+      "key_results": [
+        {
+          "id": "KR-2.1",
+          "name": "Odoo operations executable without Docker or host CLI",
+          "target": 0,
+          "current": 3,
+          "unit": "operations",
+          "status": "in_progress",
+          "measurement": "grep -r 'docker\\|ssh' scripts/odoo/ | wc -l",
+          "evidence": ["scripts/odoo/"]
+        },
+        {
+          "id": "KR-2.2",
+          "name": "Policy-enforced separation of execution contexts",
+          "target": 100,
+          "current": 75,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "Execution context tags compliance",
+          "evidence": ["docs/constitution/NO_CLI_NO_DOCKER.md"]
+        },
+        {
+          "id": "KR-2.3",
+          "name": "Odoo dev + ops stacks classified and governed",
+          "target": 100,
+          "current": 90,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/architecture/stacks/ | wc -l",
+          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+        },
+        {
+          "id": "KR-2.4",
+          "name": "Automated backup and snapshot scripts exist and are executable",
+          "target": 100,
+          "current": 0,
+          "unit": "%",
+          "status": "not_started",
+          "measurement": "bash scripts/backup/*.sh",
+          "evidence": ["scripts/backup/"]
+        },
+        {
+          "id": "KR-2.5",
+          "name": "Evidence of OdooOps automation stored and indexed",
+          "target": 5,
+          "current": 2,
+          "unit": "workflows",
+          "status": "in_progress",
+          "measurement": "ls -1 docs/evidence/odoops/ | wc -l",
+          "evidence": ["docs/evidence/odoops/"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-3",
+      "name": "Position Odoo CE + OCA as the system-of-record, not the control plane",
+      "description": "To avoid ERP overreach and keep governance, PPM, and compliance in the right layers.",
+      "owner": "Enterprise Architecture",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 85,
+      "portfolio_links": ["PORT-2026-001"],
+      "key_results": [
+        {
+          "id": "KR-3.1",
+          "name": "Odoo CE + OCA covers ≥80% of functional ERP needs",
+          "target": 80,
+          "current": 85,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "Functional coverage calculation",
+          "evidence": ["catalog/best_of_breed.yaml"]
+        },
+        {
+          "id": "KR-3.2",
+          "name": "No heavy PPM or governance logic embedded in Odoo UI",
+          "target": 0,
+          "current": 0,
+          "unit": "KB",
+          "status": "completed",
+          "measurement": "grep -r 'Canvas\\|Clarity' addons/ipai/ | wc -l",
+          "evidence": ["addons/ipai/"]
+        },
+        {
+          "id": "KR-3.3",
+          "name": "Only one thin custom bridge module allowed",
+          "target": 0,
+          "current": 0,
+          "unit": "violations",
+          "status": "completed",
+          "measurement": "Module scope review",
+          "evidence": ["addons/ipai/"]
+        },
+        {
+          "id": "KR-3.4",
+          "name": "All enterprise controls live outside Odoo",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/control/ | wc -l",
+          "evidence": ["docs/control/", "docs/constitution/"]
+        },
+        {
+          "id": "KR-3.5",
+          "name": "ERP changes trace back to portfolio initiatives",
+          "target": 100,
+          "current": 90,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "grep -r 'PORT-2026-' addons/ipai/*/README.md | wc -l",
+          "evidence": ["docs/TRACEABILITY_INDEX.yaml"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-4",
+      "name": "Implement portfolio & execution governance without Enterprise bloat",
+      "description": "To replace Clarity / Signavio–style PPM with a lighter, API-first stack that still supports OKRs, traceability, and audit.",
+      "owner": "Portfolio Management Office",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 70,
+      "portfolio_links": ["PORT-2026-005"],
+      "key_results": [
+        {
+          "id": "KR-4.1",
+          "name": "Plane used as the execution system (projects, cycles, initiatives)",
+          "target": 100,
+          "current": 95,
+          "unit": "% uptime",
+          "status": "completed",
+          "measurement": "curl https://api.plane.so/api/v1/workspaces/...",
+          "evidence": ["scripts/plane/bootstrap-workspace.ts"]
+        },
+        {
+          "id": "KR-4.2",
+          "name": "OKRs explicitly defined and reviewable",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "grep -E '^###.*Key Result' docs/strategy/OKR-2026-H1.md | wc -l",
+          "evidence": ["docs/strategy/OKR-2026-H1.md"]
+        },
+        {
+          "id": "KR-4.3",
+          "name": "Each initiative maps to at least one evidence artifact",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/evidence/ | wc -l",
+          "evidence": ["docs/evidence/"]
+        },
+        {
+          "id": "KR-4.4",
+          "name": "Supabase acts as SSOT for ops & control data",
+          "target": 100,
+          "current": 90,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "psql '$SUPABASE_DB_URL' -c '\\dt plane.*' | wc -l",
+          "evidence": ["supabase/migrations/"]
+        },
+        {
+          "id": "KR-4.5",
+          "name": "GitHub remains the immutable source of truth",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/{portfolio,evidence,decisions}/ | wc -l",
+          "evidence": ["docs/portfolio/", "docs/evidence/"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-5",
+      "name": "Enforce a no-illusion AI operating policy across all agent interactions",
+      "description": "To ensure AI-assisted development is safe, predictable, and enterprise-acceptable.",
+      "owner": "AI Governance",
+      "priority": "critical",
+      "status": "in_progress",
+      "progress": 80,
+      "portfolio_links": ["PORT-2026-011"],
+      "key_results": [
+        {
+          "id": "KR-5.1",
+          "name": "Agents cannot claim capabilities without code paths",
+          "target": 100,
+          "current": 85,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "scripts/validate_capabilities.sh",
+          "evidence": ["Agent capability manifests"]
+        },
+        {
+          "id": "KR-5.2",
+          "name": "Unverified claims are automatically removed",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "CI gate blocks unverified capabilities",
+          "evidence": ["docs/evidence/20260212-2000/"]
+        },
+        {
+          "id": "KR-5.3",
+          "name": "Claude Code Web operates under hard constraints",
+          "target": 0,
+          "current": 0,
+          "unit": "violations",
+          "status": "completed",
+          "measurement": "bash scripts/gates/scan-forbidden-commands.sh",
+          "evidence": ["docs/constitution/NO_CLI_NO_DOCKER.md"]
+        },
+        {
+          "id": "KR-5.4",
+          "name": "All agent outputs are classifiable and reviewable",
+          "target": 100,
+          "current": 75,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "Execution context tags present",
+          "evidence": ["Execution context framework"]
+        },
+        {
+          "id": "KR-5.5",
+          "name": "Governance evidence generated per enforcement change",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/evidence/ | wc -l",
+          "evidence": ["docs/evidence/", "docs/constitution/"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-6",
+      "name": "Create a scalable path from single-repo execution to enterprise Dataverse platform",
+      "description": "To move fast now (single repo) without blocking future scale.",
+      "owner": "Platform Architecture",
+      "priority": "medium",
+      "status": "in_progress",
+      "progress": 60,
+      "portfolio_links": ["PORT-2026-003"],
+      "key_results": [
+        {
+          "id": "KR-6.1",
+          "name": "All work executable from a single Odoo-centric monorepo",
+          "target": 0,
+          "current": 0,
+          "unit": "external dependencies",
+          "status": "completed",
+          "measurement": "No external repos required",
+          "evidence": ["Insightpulseai/odoo"]
+        },
+        {
+          "id": "KR-6.2",
+          "name": "Clear boundaries defined for future repo split",
+          "target": 100,
+          "current": 80,
+          "unit": "%",
+          "status": "in_progress",
+          "measurement": "grep -E 'repo.*split' docs/architecture/*.md | wc -l",
+          "evidence": ["docs/architecture/"]
+        },
+        {
+          "id": "KR-6.3",
+          "name": "No architectural dead-ends introduced",
+          "target": 0,
+          "current": 0,
+          "unit": "dead-ends",
+          "status": "completed",
+          "measurement": "Architecture reviews",
+          "evidence": ["docs/strategy/SUPABASE_FEATURE_RUBRIC.md"]
+        },
+        {
+          "id": "KR-6.4",
+          "name": "URLs and deployment model standardized",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "URL pattern compliance",
+          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+        },
+        {
+          "id": "KR-6.5",
+          "name": "Enterprise expansion does not require re-architecture",
+          "target": 0,
+          "current": 0,
+          "unit": "re-architecture needs",
+          "status": "completed",
+          "measurement": "Re-architecture risk assessment",
+          "evidence": ["docs/strategy/SUPABASE_FEATURE_RUBRIC.md"]
+        }
+      ]
+    },
+    {
+      "id": "OBJ-7",
+      "name": "Maintain continuous governance health & compliance posture",
+      "description": "To ensure governance remains active, not just documented.",
+      "owner": "Governance Office",
+      "priority": "high",
+      "status": "in_progress",
+      "progress": 75,
+      "portfolio_links": ["PORT-2026-009"],
+      "key_results": [
+        {
+          "id": "KR-7.1",
+          "name": "All PRs pass policy + capability CI gates",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "GitHub Actions pass rate",
+          "evidence": [".github/workflows/no-cli-no-docker-gate.yml"]
+        },
+        {
+          "id": "KR-7.2",
+          "name": "Evidence index updated with every material change",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/evidence/ | wc -l",
+          "evidence": ["docs/evidence/"]
+        },
+        {
+          "id": "KR-7.3",
+          "name": "No undocumented operational stacks",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "ls -1 docs/architecture/stacks/ | wc -l",
+          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+        },
+        {
+          "id": "KR-7.4",
+          "name": "No manual production changes without evidence",
+          "target": 0,
+          "current": 0,
+          "unit": "manual changes",
+          "status": "completed",
+          "measurement": "All changes via CI/CD",
+          "evidence": [".github/workflows/", "docs/evidence/"]
+        },
+        {
+          "id": "KR-7.5",
+          "name": "Quarterly governance snapshot reproducible from repo",
+          "target": 100,
+          "current": 100,
+          "unit": "%",
+          "status": "completed",
+          "measurement": "Git history + evidence export",
+          "evidence": ["Git history", "docs/"]
+        }
+      ]
+    }
+  ]
+}

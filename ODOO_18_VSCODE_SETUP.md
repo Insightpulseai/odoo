@@ -263,7 +263,7 @@ state = fields.Selection([
 ## 📁 Project Structure Template
 
 ```
-odoo-ce/
+odoo/
 ├── .vscode/
 │   ├── launch.json          # Debug configurations
 │   └── settings.json        # Workspace settings

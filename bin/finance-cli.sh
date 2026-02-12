@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="${ROOT_DIR:-$HOME/odoo-ce}"
+ROOT_DIR="${ROOT_DIR:-$HOME/odoo}"
 N8N_URL="${N8N_URL:-http://localhost:5678}"
 N8N_API_KEY="${N8N_API_KEY:-CHANGE_ME}"   # set real key in your shell
 DB_NAME="${DB_NAME:-odoo}"
@@ -9,7 +9,7 @@ DB_NAME="${DB_NAME:-odoo}"
 cd "$ROOT_DIR"
 
 function odoo_shell() {
-  docker exec -i odoo-ce odoo shell -d "$DB_NAME"
+  docker exec -i odoo odoo shell -d "$DB_NAME"
 }
 
 case "${1:-}" in
@@ -116,7 +116,7 @@ Commands:
   test-cron          Manually trigger Finance PPM BIR Task Sync cron
 
 Environment:
-  ROOT_DIR   (default: \$HOME/odoo-ce)
+  ROOT_DIR   (default: \$HOME/odoo)
   DB_NAME    (default: odoo)
   N8N_URL    (default: http://localhost:5678)
   N8N_API_KEY  n8n API key from your user profile

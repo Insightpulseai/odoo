@@ -3,7 +3,7 @@
 **Generated**: 2025-12-25 16:52 UTC
 **Production SHA**: 74219604437336cd68131d79c232eb1578b5a7d1
 **Server**: root@159.223.75.148
-**Repository**: /opt/odoo-ce
+**Repository**: /opt/odoo
 
 ## Module Structure
 

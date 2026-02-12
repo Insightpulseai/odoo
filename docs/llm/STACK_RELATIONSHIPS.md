@@ -9,10 +9,10 @@
 
 ### Deployment Relationships
 ```
-repo.odoo-ce DEPLOYS_TO droplet.odoo-erp-prod
-repo.odoo-ce USES_DB cluster.odoo-db-sgp1
-repo.odoo-ce INTEGRATES_WITH supabase.spdtwktxdalcfigzeqrz
-vercel_project.shelf-nu DEPLOYS_FROM repo.odoo-ce
+repo.odoo DEPLOYS_TO droplet.odoo-erp-prod
+repo.odoo USES_DB cluster.odoo-db-sgp1
+repo.odoo INTEGRATES_WITH supabase.spdtwktxdalcfigzeqrz
+vercel_project.shelf-nu DEPLOYS_FROM repo.odoo
 vercel_project.shelf-nu USES_DB supabase.spdtwktxdalcfigzeqrz
 ```
 

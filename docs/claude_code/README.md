@@ -14,7 +14,7 @@
 ## Project Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/                  # Odoo modules
 │   ├── ipai/               # Custom IPAI modules
 │   │   ├── ipai_finance_ppm/      # Finance PPM umbrella

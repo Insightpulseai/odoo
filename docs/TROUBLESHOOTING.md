@@ -429,8 +429,8 @@ PermissionError: [Errno 13] Permission denied: '/mnt/extra-addons/ipai_theme_tbw
 **Fix**:
 ```bash
 ssh root@178.128.112.214
-chown -R 100:101 /opt/odoo-ce/repo/addons/ipai_theme_tbwa
-chmod -R 755 /opt/odoo-ce/repo/addons/ipai_theme_tbwa
+chown -R 100:101 /opt/odoo/repo/addons/ipai_theme_tbwa
+chmod -R 755 /opt/odoo/repo/addons/ipai_theme_tbwa
 docker restart odoo-prod
 ```
 
@@ -643,7 +643,7 @@ docker exec odoo-prod odoo -d odoo -u <module_name> --stop-after-init
 
 - **Odoo config**: `/etc/odoo/odoo.conf` (in container)
 - **Odoo logs**: `/var/lib/odoo/odoo.log` (in container)
-- **Addons path**: `/mnt/extra-addons` (in container) = `/opt/odoo-ce/repo/addons` (on host)
+- **Addons path**: `/mnt/extra-addons` (in container) = `/opt/odoo/repo/addons` (on host)
 - **nginx config**: `/etc/nginx/conf.d/default.conf` (in container)
 
 ### Key Identifiers

@@ -96,7 +96,7 @@ pip install okta pandas pytz
 1. **Install Module**
 ```bash
 # Navigate to Odoo addons
-cd /opt/odoo-ce/addons
+cd /opt/odoo/addons
 
 # Pull latest from Git
 git pull origin feature/tbwa-spectra-integration
@@ -622,7 +622,7 @@ Solution:
 **Support**:
 - Email: jgtolentino_rn@yahoo.com
 - Internal Wiki: https://tbwa.atlassian.net/wiki/finance
-- GitHub Issues: https://github.com/jgtolentino/odoo-ce/issues
+- GitHub Issues: https://github.com/jgtolentino/odoo/issues
 
 ---
 

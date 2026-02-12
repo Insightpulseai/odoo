@@ -164,7 +164,7 @@ Config → OCA → Delta (ipai_*)
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `ci-odoo-ce.yml` | Push/PR | Main Odoo CE tests |
+| `ci-odoo.yml` | Push/PR | Main Odoo CE tests |
 | `ci-odoo-oca.yml` | Push/PR | OCA compliance |
 | `spec-kit-enforce.yml` | Push/PR | Spec validation |
 

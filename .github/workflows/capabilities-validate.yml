@@ -1,0 +1,34 @@
+name: Capability Evidence Validation
+
+on:
+  pull_request:
+    paths:
+      - 'agents/capabilities/manifest.json'
+      - 'addons/**'
+      - 'skills/**'
+      - 'scripts/validate_capabilities.sh'
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-capabilities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq ripgrep
+
+      - name: Make validator executable
+        run: chmod +x scripts/validate_capabilities.sh
+
+      - name: Validate capability evidence
+        run: ./scripts/validate_capabilities.sh
+
+      - name: Report validation results
+        if: success()
+        run: |
+          echo "✅ All capability claims validated with code evidence"
+          echo "   Agents can confidently reference these capabilities"

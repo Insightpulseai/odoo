@@ -171,7 +171,7 @@ The seed generator now performs 5 comprehensive validation checks:
 
 ### 6.1 Agent Preflight Failure
 
-**URL:** https://github.com/jgtolentino/odoo-ce/actions/runs/21230996868
+**URL:** https://github.com/jgtolentino/odoo/actions/runs/21230996868
 
 **Status:** Needs investigation
 
@@ -179,7 +179,7 @@ The seed generator now performs 5 comprehensive validation checks:
 
 ### 6.2 Canonical Structure Gate Failure ✅ FIXED
 
-**URL:** https://github.com/jgtolentino/odoo-ce/actions/runs/21230996737
+**URL:** https://github.com/jgtolentino/odoo/actions/runs/21230996737
 
 **Problem:** 25 violations found by canonical audit:
 - 6 CRITICAL: SCSS files not registered in `__manifest__.py` assets dict
@@ -229,7 +229,7 @@ content = re.sub(r'</tree>', r'</list>', content)
 **Evidence:**
 - Commit: a0b1ef9d
 - Branch: claude/odoo-review-prompt-0lipY
-- PR: https://github.com/jgtolentino/odoo-ce/pull/new/claude/odoo-review-prompt-0lipY
+- PR: https://github.com/jgtolentino/odoo/pull/new/claude/odoo-review-prompt-0lipY
 
 ---
 

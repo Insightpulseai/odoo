@@ -51,7 +51,7 @@ from . import mailgun_mailgate
 
 ### Prerequisites
 - SSH access to erp.insightpulseai.com (159.223.75.148)
-- Odoo installed at `/opt/odoo-ce` (or known path)
+- Odoo installed at `/opt/odoo` (or known path)
 - Database name: `production` (or known database name)
 
 ### Step 1: Sync Code to Production
@@ -61,13 +61,13 @@ from . import mailgun_mailgate
 ssh root@159.223.75.148
 
 # Navigate to Odoo directory
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # Pull latest changes (if using Git)
 git pull origin main
 
 # OR manually copy files if not using Git
-# scp -r addons/ipai/ipai_enterprise_bridge/controllers root@159.223.75.148:/opt/odoo-ce/addons/ipai/ipai_enterprise_bridge/
+# scp -r addons/ipai/ipai_enterprise_bridge/controllers root@159.223.75.148:/opt/odoo/addons/ipai/ipai_enterprise_bridge/
 ```
 
 ### Step 2: Upgrade Module in Odoo
@@ -272,7 +272,7 @@ Mailgate will return 404 again (safe state).
 
 ```bash
 # Remove controller files
-cd /opt/odoo-ce/addons/ipai/ipai_enterprise_bridge
+cd /opt/odoo/addons/ipai/ipai_enterprise_bridge
 rm -rf controllers/mailgun_mailgate.py
 
 # Edit controllers/__init__.py and remove import line

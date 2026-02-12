@@ -1,6 +1,6 @@
 # Modules & Features
 
-High-level catalog of IPAI + OCA modules deployed in `odoo-ce`.
+High-level catalog of IPAI + OCA modules deployed in `odoo`.
 
 ## Module Statistics
 

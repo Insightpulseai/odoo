@@ -85,7 +85,7 @@ On the DigitalOcean droplet (178.128.112.214):
 
 ```bash
 # 1. Pull latest changes
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin claude/erp-odoo-implementation-M3RDD
 
 # 2. Copy updated nginx config
@@ -99,7 +99,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 
 # 5. Restart Odoo stack (if not already running)
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 docker compose -f docker-compose.prod.yml up -d
 
 # 6. Verify

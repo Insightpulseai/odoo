@@ -9,7 +9,7 @@
   "modules": {
     "ipai_advisor": {
       "name": "ipai_advisor",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_advisor",
+      "path": "/home/user/odoo/addons/ipai/ipai_advisor",
       "version": "18.0.1.0.0",
       "summary": "Azure Advisor-style recommendations engine for operational governance",
       "author": "InsightPulse AI",
@@ -39,7 +39,7 @@
     },
     "ipai_agent_core": {
       "name": "ipai_agent_core",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_agent_core",
+      "path": "/home/user/odoo/addons/ipai/ipai_agent_core",
       "version": "18.0.1.0.0",
       "summary": "Skill/tool/knowledge registry + run logs for IPAI agents",
       "author": "InsightPulse AI",
@@ -69,7 +69,7 @@
     },
     "ipai_ai_agents": {
       "name": "ipai_ai_agents",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_agents",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_agents",
       "version": "18.0.1.0.0",
       "summary": "Odoo 19-style Ask AI / AI agents UX for Odoo CE 18 (OCA-friendly custom addon)",
       "author": "InsightPulseAI",
@@ -102,7 +102,7 @@
     },
     "ipai_ai_agents_ui": {
       "name": "ipai_ai_agents_ui",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_agents_ui",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_agents_ui",
       "version": "18.0.1.0.0",
       "summary": "React + Fluent UI v9 panel for AI agents (Ask AI, citations, evidence)",
       "author": "InsightPulse AI",
@@ -134,7 +134,7 @@
     },
     "ipai_ai_audit": {
       "name": "ipai_ai_audit",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_audit",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_audit",
       "version": "18.0.1.0.1",
       "summary": "AI usage logging, redaction, and governance controls",
       "author": "InsightPulse AI",
@@ -165,7 +165,7 @@
     },
     "ipai_ai_connectors": {
       "name": "ipai_ai_connectors",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_connectors",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_connectors",
       "version": "18.0.1.0.0",
       "summary": "Inbound integration hub for AI platform (n8n, GitHub, Slack webhooks)",
       "author": "InsightPulse AI",
@@ -197,7 +197,7 @@
     },
     "ipai_ai_copilot": {
       "name": "ipai_ai_copilot",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_copilot",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_copilot",
       "version": "18.0.1.0.0",
       "summary": "Ask AI buttons and sidebar for forms",
       "author": "InsightPulse AI",
@@ -228,7 +228,7 @@
     },
     "ipai_ai_core": {
       "name": "ipai_ai_core",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_core",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_core",
       "version": "18.0.1.0.1",
       "summary": "Provider-based AI threads/messages/citations for Odoo CE 18 (works with OCA AI UI).",
       "author": "InsightPulse AI",
@@ -261,7 +261,7 @@
     },
     "ipai_ai_prompts": {
       "name": "ipai_ai_prompts",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_prompts",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_prompts",
       "version": "18.0.1.0.1",
       "summary": "Prompt templates and topic library for AI interactions",
       "author": "InsightPulse AI",
@@ -293,7 +293,7 @@
     },
     "ipai_ai_provider_kapa": {
       "name": "ipai_ai_provider_kapa",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_provider_kapa",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_provider_kapa",
       "version": "18.0.1.0.0",
       "summary": "Kapa-style RAG provider for IPAI AI Core.",
       "author": "InsightPulse AI",
@@ -324,7 +324,7 @@
     },
     "ipai_ai_provider_pulser": {
       "name": "ipai_ai_provider_pulser",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_provider_pulser",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_provider_pulser",
       "version": "18.0.1.0.1",
       "summary": "AI provider adapter for Pulser/self-hosted AI gateway",
       "author": "InsightPulse AI",
@@ -355,7 +355,7 @@
     },
     "ipai_ai_sources_odoo": {
       "name": "ipai_ai_sources_odoo",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_sources_odoo",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_sources_odoo",
       "version": "18.0.1.0.0",
       "summary": "Export Odoo data (tasks, KB articles) to Supabase KB for RAG retrieval",
       "author": "InsightPulse AI",
@@ -387,7 +387,7 @@
     },
     "ipai_ai_studio": {
       "name": "ipai_ai_studio",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_studio",
+      "path": "/home/user/odoo/addons/ipai/ipai_ai_studio",
       "version": "18.0.1.0.0",
       "summary": "AI-driven Studio-like module generator for Odoo CE (spec -> addon scaffold -> validate -> apply)",
       "author": "InsightPulse AI",
@@ -417,7 +417,7 @@
     },
     "ipai_aiux_chat": {
       "name": "ipai_aiux_chat",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_aiux_chat",
+      "path": "/home/user/odoo/addons/ipai/ipai_aiux_chat",
       "version": "18.0.0.1.0",
       "summary": "AIUX OWL chat widget scaffold (Ask AI integration)",
       "author": "InsightPulse AI",
@@ -449,7 +449,7 @@
     },
     "ipai_approvals": {
       "name": "ipai_approvals",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_approvals",
+      "path": "/home/user/odoo/addons/ipai/ipai_approvals",
       "version": "18.0.1.0.0",
       "summary": "Generic approval workflow system - Enterprise Approvals parity for Odoo CE",
       "author": "InsightPulseAI",
@@ -480,7 +480,7 @@
     },
     "ipai_ask_ai": {
       "name": "ipai_ask_ai",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai",
+      "path": "/home/user/odoo/addons/ipai/ipai_ask_ai",
       "version": "18.0.1.0.0",
       "summary": "ERP-aware RAG Engine for Finance and Month-End Close workflows",
       "author": "InsightPulse AI",
@@ -512,7 +512,7 @@
     },
     "ipai_ask_ai_bridge": {
       "name": "ipai_ask_ai_bridge",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai_bridge",
+      "path": "/home/user/odoo/addons/ipai/ipai_ask_ai_bridge",
       "version": "18.0.1.0.0",
       "summary": "Minimal launcher for external Ask AI / Copilot service.",
       "author": "InsightPulse AI",
@@ -542,7 +542,7 @@
     },
     "ipai_ask_ai_chatter": {
       "name": "ipai_ask_ai_chatter",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai_chatter",
+      "path": "/home/user/odoo/addons/ipai/ipai_ask_ai_chatter",
       "version": "18.0.1.0.0",
       "summary": "Integrate Ask AI into Odoo Chatter for contextual AI assistance",
       "author": "InsightPulse AI",
@@ -572,7 +572,7 @@
     },
     "ipai_assets": {
       "name": "ipai_assets",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_assets",
+      "path": "/home/user/odoo/addons/ipai/ipai_assets",
       "version": "18.0.1.1.0",
       "summary": "Equipment and asset checkout tracking (Cheqroom-style parity)",
       "author": "InsightPulse AI",
@@ -604,7 +604,7 @@
     },
     "ipai_auth_oauth_internal": {
       "name": "ipai_auth_oauth_internal",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_auth_oauth_internal",
+      "path": "/home/user/odoo/addons/ipai/ipai_auth_oauth_internal",
       "version": "18.0.1.0.0",
       "summary": "Makes OAuth users Internal Users instead of Portal users",
       "author": "InsightPulse AI",
@@ -635,7 +635,7 @@
     },
     "ipai_bi_superset": {
       "name": "ipai_bi_superset",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_bi_superset",
+      "path": "/home/user/odoo/addons/ipai/ipai_bi_superset",
       "version": "18.0.1.0.0",
       "summary": "Thin-layer Superset integration via guest token embedding",
       "author": "InsightPulse AI",
@@ -665,7 +665,7 @@
     },
     "ipai_bir_compliance": {
       "name": "ipai_bir_compliance",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_bir_compliance",
+      "path": "/home/user/odoo/addons/ipai/ipai_bir_compliance",
       "version": "18.0.1.0.0",
       "summary": "BIR 2307 Generator & Alphalist/RELIEF DAT File Engine",
       "author": "InsightPulse AI",
@@ -696,7 +696,7 @@
     },
     "ipai_bir_tax_compliance": {
       "name": "ipai_bir_tax_compliance",
-      "path": "/home/user/odoo-ce/addons/ipai_bir_tax_compliance",
+      "path": "/home/user/odoo/addons/ipai_bir_tax_compliance",
       "version": "18.0.1.0.0",
       "summary": "Philippine BIR tax compliance - 36 eBIRForms support",
       "author": "IPAI",
@@ -728,7 +728,7 @@
     },
     "ipai_catalog_bridge": {
       "name": "ipai_catalog_bridge",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_catalog_bridge",
+      "path": "/home/user/odoo/addons/ipai/ipai_catalog_bridge",
       "version": "18.0.1.0.0",
       "summary": "Unity Catalog-like asset registry bridge for Odoo ↔ Supabase sync",
       "author": "InsightPulse AI",
@@ -759,7 +759,7 @@
     },
     "ipai_ce_branding": {
       "name": "ipai_ce_branding",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ce_branding",
+      "path": "/home/user/odoo/addons/ipai/ipai_ce_branding",
       "version": "18.0.1.2.0",
       "summary": "Custom branding for Odoo CE login and backend",
       "author": "InsightPulse AI",
@@ -793,7 +793,7 @@
     },
     "ipai_ce_cleaner": {
       "name": "ipai_ce_cleaner",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ce_cleaner",
+      "path": "/home/user/odoo/addons/ipai/ipai_ce_cleaner",
       "version": "18.0.1.0.0",
       "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
       "author": "InsightPulse AI",
@@ -827,7 +827,7 @@
     },
     "ipai_ces_bundle": {
       "name": "ipai_ces_bundle",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ces_bundle",
+      "path": "/home/user/odoo/addons/ipai/ipai_ces_bundle",
       "version": "18.0.1.0.0",
       "summary": "One-click meta-installer for CES creative effectiveness vertical",
       "author": "InsightPulse AI",
@@ -866,7 +866,7 @@
     },
     "ipai_chatgpt_sdk_theme": {
       "name": "ipai_chatgpt_sdk_theme",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_chatgpt_sdk_theme",
+      "path": "/home/user/odoo/addons/ipai/ipai_chatgpt_sdk_theme",
       "version": "18.0.1.0.0",
       "summary": "Design tokens and theme aligned to ChatGPT App SDK design system",
       "author": "InsightPulse AI",
@@ -898,7 +898,7 @@
     },
     "ipai_clarity_ppm_parity": {
       "name": "ipai_clarity_ppm_parity",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity",
+      "path": "/home/user/odoo/addons/ipai/ipai_clarity_ppm_parity",
       "version": "18.0.1.1.0",
       "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
       "author": "InsightPulse AI",
@@ -927,7 +927,7 @@
     },
     "ipai_close_orchestration": {
       "name": "ipai_close_orchestration",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_close_orchestration",
+      "path": "/home/user/odoo/addons/ipai/ipai_close_orchestration",
       "version": "18.0.1.0.0",
       "summary": "Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Gates",
       "author": "InsightPulse AI",
@@ -958,7 +958,7 @@
     },
     "ipai_command_center": {
       "name": "ipai_command_center",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_command_center",
+      "path": "/home/user/odoo/addons/ipai/ipai_command_center",
       "version": "18.0.1.0.0",
       "summary": "Platform cockpit for runs, KPIs, alerts, and AI",
       "author": "InsightPulse AI",
@@ -989,7 +989,7 @@
     },
     "ipai_control_room": {
       "name": "ipai_control_room",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_control_room",
+      "path": "/home/user/odoo/addons/ipai/ipai_control_room",
       "version": "18.0.1.0.0",
       "summary": "Control Room for pipelines, data quality, and operational insights",
       "author": "InsightPulse AI",
@@ -1022,7 +1022,7 @@
     },
     "ipai_copilot_hub": {
       "name": "ipai_copilot_hub",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_copilot_hub",
+      "path": "/home/user/odoo/addons/ipai/ipai_copilot_hub",
       "version": "18.0.1.0.0",
       "summary": "Ops Control Room / AI Runbook Hub with Fluent UI shell",
       "author": "InsightPulse AI",
@@ -1053,7 +1053,7 @@
     },
     "ipai_copilot_ui": {
       "name": "ipai_copilot_ui",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_copilot_ui",
+      "path": "/home/user/odoo/addons/ipai/ipai_copilot_ui",
       "version": "18.0.1.0.0",
       "summary": "M365 Copilot-inspired Fluent UI for Odoo CE 18",
       "author": "InsightPulse AI",
@@ -1084,7 +1084,7 @@
     },
     "ipai_crm_pipeline": {
       "name": "ipai_crm_pipeline",
-      "path": "/home/user/odoo-ce/addons/ipai_crm_pipeline",
+      "path": "/home/user/odoo/addons/ipai_crm_pipeline",
       "version": "18.0.1.0.0",
       "summary": "Salesforce-like CRM pipeline experience",
       "author": "IPAI",
@@ -1116,7 +1116,7 @@
     },
     "ipai_custom_routes": {
       "name": "ipai_custom_routes",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_custom_routes",
+      "path": "/home/user/odoo/addons/ipai/ipai_custom_routes",
       "version": "18.0.1.0.0",
       "summary": "Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.)",
       "author": "InsightPulse AI",
@@ -1152,7 +1152,7 @@
     },
     "ipai_default_home": {
       "name": "ipai_default_home",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_default_home",
+      "path": "/home/user/odoo/addons/ipai/ipai_default_home",
       "version": "18.0.3.0.0",
       "summary": "Custom app grid home page with modern styling",
       "author": "InsightPulse AI",
@@ -1185,7 +1185,7 @@
     },
     "ipai_design_system_apps_sdk": {
       "name": "ipai_design_system_apps_sdk",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_design_system_apps_sdk",
+      "path": "/home/user/odoo/addons/ipai/ipai_design_system_apps_sdk",
       "version": "18.0.1.0.0",
       "summary": "ChatGPT Apps SDK UI design tokens for all IPAI apps",
       "author": "InsightPulse AI",
@@ -1216,7 +1216,7 @@
     },
     "ipai_dev_studio_base": {
       "name": "ipai_dev_studio_base",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base",
+      "path": "/home/user/odoo/addons/ipai/ipai_dev_studio_base",
       "version": "18.0.1.1.0",
       "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
       "author": "InsightPulse AI",
@@ -1251,7 +1251,7 @@
     },
     "ipai_document_ai": {
       "name": "ipai_document_ai",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_document_ai",
+      "path": "/home/user/odoo/addons/ipai/ipai_document_ai",
       "version": "18.0.1.0.0",
       "summary": "Self-hosted OCR and document intelligence for Odoo",
       "author": "InsightPulse AI",
@@ -1282,7 +1282,7 @@
     },
     "ipai_enterprise_bridge": {
       "name": "ipai_enterprise_bridge",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_enterprise_bridge",
+      "path": "/home/user/odoo/addons/ipai/ipai_enterprise_bridge",
       "version": "18.0.1.0.0",
       "summary": "Thin glue layer for CE+OCA parity: config, approvals, AI/infra integration",
       "author": "InsightPulse AI",
@@ -1327,7 +1327,7 @@
     },
     "ipai_equipment": {
       "name": "ipai_equipment",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_equipment",
+      "path": "/home/user/odoo/addons/ipai/ipai_equipment",
       "version": "18.0.1.0.0",
       "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
       "author": "InsightPulse AI",
@@ -1360,7 +1360,7 @@
     },
     "ipai_expense": {
       "name": "ipai_expense",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_expense",
+      "path": "/home/user/odoo/addons/ipai/ipai_expense",
       "version": "18.0.1.0.0",
       "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
       "author": "InsightPulse AI",
@@ -1394,7 +1394,7 @@
     },
     "ipai_expense_ocr": {
       "name": "ipai_expense_ocr",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_expense_ocr",
+      "path": "/home/user/odoo/addons/ipai/ipai_expense_ocr",
       "version": "18.0.1.0.0",
       "summary": "OCR-powered receipt scanning for expense management",
       "author": "InsightPulse AI",
@@ -1424,7 +1424,7 @@
     },
     "ipai_finance_bir_compliance": {
       "name": "ipai_finance_bir_compliance",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_bir_compliance",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_bir_compliance",
       "version": "18.0.1.0.0",
       "summary": "JSON-seeded BIR schedule that generates Prep/Review/Approval/Filing tasks into IM2",
       "author": "InsightPulse AI",
@@ -1457,7 +1457,7 @@
     },
     "ipai_finance_close_automation": {
       "name": "ipai_finance_close_automation",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_close_automation",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_close_automation",
       "version": "18.0.1.0.0",
       "summary": "Month-end close generator with working-day deadline offsets",
       "author": "InsightPulse AI",
@@ -1488,7 +1488,7 @@
     },
     "ipai_finance_close_seed": {
       "name": "ipai_finance_close_seed",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_close_seed",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_close_seed",
       "version": "18.0.1.0.0",
       "summary": "Seed data for Month-End Close + BIR Tax Filing + PH Holidays",
       "author": "InsightPulse AI",
@@ -1520,7 +1520,7 @@
     },
     "ipai_finance_closing": {
       "name": "ipai_finance_closing",
-      "path": "/home/user/odoo-ce/addons/ipai_finance_closing",
+      "path": "/home/user/odoo/addons/ipai_finance_closing",
       "version": "18.0.1.0.0",
       "summary": "Month-end financial closing task template based on SAP Advanced Financial Closing",
       "author": "InsightPulse AI",
@@ -1550,7 +1550,7 @@
     },
     "ipai_finance_month_end": {
       "name": "ipai_finance_month_end",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_month_end",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_month_end",
       "version": "18.0.1.0.0",
       "summary": "JSON-seeded month-end templates that generate Preparation/Review/Approval tasks into IM1",
       "author": "InsightPulse AI",
@@ -1583,7 +1583,7 @@
     },
     "ipai_finance_monthly_closing": {
       "name": "ipai_finance_monthly_closing",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_monthly_closing",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_monthly_closing",
       "version": "18.0.1.0.0",
       "summary": "Structured month-end closing and BIR filing on top of Projects (CE/OCA-only).",
       "author": "InsightPulse AI",
@@ -1612,7 +1612,7 @@
     },
     "ipai_finance_ppm": {
       "name": "ipai_finance_ppm",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_ppm",
       "version": "18.0.1.1.0",
       "summary": "Finance Project Portfolio Management (Notion Parity).",
       "author": "InsightPulse AI",
@@ -1645,7 +1645,7 @@
     },
     "ipai_finance_ppm_closing": {
       "name": "ipai_finance_ppm_closing",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_closing",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_ppm_closing",
       "version": "18.0.1.1.0",
       "summary": "Idempotent Month-End Close & BIR Task Generator with audit trail.",
       "author": "InsightPulse AI",
@@ -1678,7 +1678,7 @@
     },
     "ipai_finance_ppm_dashboard": {
       "name": "ipai_finance_ppm_dashboard",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_dashboard",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_ppm_dashboard",
       "version": "18.0.1.0.0",
       "summary": "Month-end & BIR calendar dashboard (Gantt + calendar graph)",
       "author": "InsightPulse AI",
@@ -1710,7 +1710,7 @@
     },
     "ipai_finance_ppm_golive": {
       "name": "ipai_finance_ppm_golive",
-      "path": "/home/user/odoo-ce/addons/ipai_finance_ppm_golive",
+      "path": "/home/user/odoo/addons/ipai_finance_ppm_golive",
       "version": "18.0.1.0.0",
       "summary": "Production go-live checklist for Finance PPM modules",
       "author": "InsightPulse AI",
@@ -1742,7 +1742,7 @@
     },
     "ipai_finance_ppm_tdi": {
       "name": "ipai_finance_ppm_tdi",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_tdi",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_ppm_tdi",
       "version": "18.0.1.0.0",
       "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
       "author": "InsightPulse AI",
@@ -1774,7 +1774,7 @@
     },
     "ipai_finance_ppm_umbrella": {
       "name": "ipai_finance_ppm_umbrella",
-      "path": "/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella",
+      "path": "/home/user/odoo/addons/ipai_finance_ppm_umbrella",
       "version": "18.0.1.0.0",
       "summary": "Complete seed data for 8-employee Finance SSC with BIR compliance and month-end closing tasks",
       "author": "InsightPulse AI",
@@ -1806,7 +1806,7 @@
     },
     "ipai_finance_project_hybrid": {
       "name": "ipai_finance_project_hybrid",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_project_hybrid",
+      "path": "/home/user/odoo/addons/ipai/ipai_finance_project_hybrid",
       "version": "18.0.1.0.0",
       "summary": "Turns finance phases into IM projects, seeds finance directory/BIR schedule, generates month-end + compliance tasks, and adds analytics dashboards.",
       "author": "InsightPulse AI",
@@ -1838,7 +1838,7 @@
     },
     "ipai_focalboard_connector": {
       "name": "ipai_focalboard_connector",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_focalboard_connector",
+      "path": "/home/user/odoo/addons/ipai/ipai_focalboard_connector",
       "version": "18.0.1.0.0",
       "summary": "API client and sync for Focalboard project boards",
       "author": "InsightPulse AI",
@@ -1869,7 +1869,7 @@
     },
     "ipai_grid_view": {
       "name": "ipai_grid_view",
-      "path": "/home/user/odoo-ce/addons/ipai_grid_view",
+      "path": "/home/user/odoo/addons/ipai_grid_view",
       "version": "18.0.1.0.0",
       "summary": "Advanced grid and list view with sorting, filtering, and bulk actions",
       "author": "IPAI Team",
@@ -1900,7 +1900,7 @@
     },
     "ipai_industry_accounting_firm": {
       "name": "ipai_industry_accounting_firm",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_industry_accounting_firm",
+      "path": "/home/user/odoo/addons/ipai/ipai_industry_accounting_firm",
       "version": "18.0.1.0.0",
       "summary": "Accounting firm vertical with month-end closing and compliance workflows",
       "author": "InsightPulse AI",
@@ -1929,7 +1929,7 @@
     },
     "ipai_industry_marketing_agency": {
       "name": "ipai_industry_marketing_agency",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_industry_marketing_agency",
+      "path": "/home/user/odoo/addons/ipai/ipai_industry_marketing_agency",
       "version": "18.0.1.0.0",
       "summary": "Marketing agency vertical with campaign-specific fields and workflows",
       "author": "InsightPulse AI",
@@ -1958,7 +1958,7 @@
     },
     "ipai_integrations": {
       "name": "ipai_integrations",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_integrations",
+      "path": "/home/user/odoo/addons/ipai/ipai_integrations",
       "version": "18.0.1.0.0",
       "summary": "Central integration hub for Mattermost, Focalboard, and n8n",
       "author": "InsightPulse AI",
@@ -1989,7 +1989,7 @@
     },
     "ipai_iot_bridge": {
       "name": "ipai_iot_bridge",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_iot_bridge",
+      "path": "/home/user/odoo/addons/ipai/ipai_iot_bridge",
       "version": "18.0.1.0.0",
       "summary": "IoT device bridge for CE+OCA without EE IoT dependencies",
       "author": "InsightPulse AI",
@@ -2022,7 +2022,7 @@
     },
     "ipai_mail_integration": {
       "name": "ipai_mail_integration",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_mail_integration",
+      "path": "/home/user/odoo/addons/ipai/ipai_mail_integration",
       "version": "18.0.1.0.0",
       "summary": "Mailgun/SMTP/OAuth mail integration without IAP dependencies",
       "author": "InsightPulse AI",
@@ -2055,7 +2055,7 @@
     },
     "ipai_marketing_ai": {
       "name": "ipai_marketing_ai",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_marketing_ai",
+      "path": "/home/user/odoo/addons/ipai/ipai_marketing_ai",
       "version": "18.0.1.0.0",
       "summary": "Umbrella module for AI-powered marketing automation workflows",
       "author": "InsightPulse AI",
@@ -2090,7 +2090,7 @@
     },
     "ipai_marketing_journey": {
       "name": "ipai_marketing_journey",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_marketing_journey",
+      "path": "/home/user/odoo/addons/ipai/ipai_marketing_journey",
       "version": "18.0.1.0.1",
       "summary": "Node-based marketing journey builder (Enterprise MA substitute)",
       "author": "InsightPulse AI",
@@ -2123,7 +2123,7 @@
     },
     "ipai_master_control": {
       "name": "ipai_master_control",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_master_control",
+      "path": "/home/user/odoo/addons/ipai/ipai_master_control",
       "version": "18.0.1.0.0",
       "summary": "Bridge Odoo events to Master Control work items",
       "author": "InsightPulse AI",
@@ -2157,7 +2157,7 @@
     },
     "ipai_mattermost_connector": {
       "name": "ipai_mattermost_connector",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_mattermost_connector",
+      "path": "/home/user/odoo/addons/ipai/ipai_mattermost_connector",
       "version": "18.0.1.0.0",
       "summary": "API client and sync for Mattermost chat platform",
       "author": "InsightPulse AI",
@@ -2188,7 +2188,7 @@
     },
     "ipai_mcp_hub": {
       "name": "ipai_mcp_hub",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_mcp_hub",
+      "path": "/home/user/odoo/addons/ipai/ipai_mcp_hub",
       "version": "18.0.1.0.0",
       "summary": "Model Context Protocol (MCP) server and tool registry",
       "author": "InsightPulse AI",
@@ -2217,7 +2217,7 @@
     },
     "ipai_module_gating": {
       "name": "ipai_module_gating",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_module_gating",
+      "path": "/home/user/odoo/addons/ipai/ipai_module_gating",
       "version": "18.0.1.0.0",
       "summary": "Automated production readiness assessment and install/upgrade gating for Odoo modules",
       "author": "InsightPulse AI",
@@ -2246,7 +2246,7 @@
     },
     "ipai_month_end": {
       "name": "ipai_month_end",
-      "path": "/home/user/odoo-ce/addons/ipai_month_end",
+      "path": "/home/user/odoo/addons/ipai_month_end",
       "version": "18.0.1.0.0",
       "summary": "SAP AFC replacement - Month-end closing automation",
       "author": "IPAI",
@@ -2277,7 +2277,7 @@
     },
     "ipai_month_end_closing": {
       "name": "ipai_month_end_closing",
-      "path": "/home/user/odoo-ce/addons/ipai_month_end_closing",
+      "path": "/home/user/odoo/addons/ipai_month_end_closing",
       "version": "18.0.1.0.0",
       "summary": "SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance",
       "author": "InsightPulse AI",
@@ -2307,7 +2307,7 @@
     },
     "ipai_n8n_connector": {
       "name": "ipai_n8n_connector",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_n8n_connector",
+      "path": "/home/user/odoo/addons/ipai/ipai_n8n_connector",
       "version": "18.0.1.0.0",
       "summary": "Workflow automation integration with n8n",
       "author": "InsightPulse AI",
@@ -2338,7 +2338,7 @@
     },
     "ipai_ocr_expense": {
       "name": "ipai_ocr_expense",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ocr_expense",
+      "path": "/home/user/odoo/addons/ipai/ipai_ocr_expense",
       "version": "18.0.1.0.0",
       "summary": "AI-powered receipt scanning and expense digitization",
       "author": "InsightPulse AI",
@@ -2368,7 +2368,7 @@
     },
     "ipai_ocr_gateway": {
       "name": "ipai_ocr_gateway",
-      "path": "/home/user/odoo-ce/addons/ipai_ocr_gateway",
+      "path": "/home/user/odoo/addons/ipai_ocr_gateway",
       "version": "18.0.1.0.0",
       "summary": "OCR processing gateway for document text extraction",
       "author": "InsightPulse AI",
@@ -2398,7 +2398,7 @@
     },
     "ipai_platform_approvals": {
       "name": "ipai_platform_approvals",
-      "path": "/home/user/odoo-ce/addons/ipai_platform_approvals",
+      "path": "/home/user/odoo/addons/ipai_platform_approvals",
       "version": "18.0.1.0.0",
       "summary": "Role-based approval chains for IPAI modules",
       "author": "IPAI",
@@ -2429,7 +2429,7 @@
     },
     "ipai_platform_audit": {
       "name": "ipai_platform_audit",
-      "path": "/home/user/odoo-ce/addons/ipai_platform_audit",
+      "path": "/home/user/odoo/addons/ipai_platform_audit",
       "version": "18.0.1.0.0",
       "summary": "Field-level audit trail for IPAI modules",
       "author": "InsightPulse AI",
@@ -2459,7 +2459,7 @@
     },
     "ipai_platform_permissions": {
       "name": "ipai_platform_permissions",
-      "path": "/home/user/odoo-ce/addons/ipai_platform_permissions",
+      "path": "/home/user/odoo/addons/ipai_platform_permissions",
       "version": "18.0.1.0.0",
       "summary": "Scope-based permission and role management for IPAI modules",
       "author": "InsightPulse AI",
@@ -2489,7 +2489,7 @@
     },
     "ipai_platform_theme": {
       "name": "ipai_platform_theme",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_platform_theme",
+      "path": "/home/user/odoo/addons/ipai/ipai_platform_theme",
       "version": "18.0.1.0.0",
       "summary": "Core design tokens and theme infrastructure for IPAI platform",
       "author": "InsightPulse AI",
@@ -2520,7 +2520,7 @@
     },
     "ipai_platform_workflow": {
       "name": "ipai_platform_workflow",
-      "path": "/home/user/odoo-ce/addons/ipai_platform_workflow",
+      "path": "/home/user/odoo/addons/ipai_platform_workflow",
       "version": "18.0.1.0.0",
       "summary": "Generic workflow state machine for IPAI modules",
       "author": "IPAI",
@@ -2550,7 +2550,7 @@
     },
     "ipai_portal_fix": {
       "name": "ipai_portal_fix",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_portal_fix",
+      "path": "/home/user/odoo/addons/ipai/ipai_portal_fix",
       "version": "18.0.1.0.1",
       "summary": "Fixes KeyError: website in portal.frontend_layout template",
       "author": "InsightPulse AI",
@@ -2581,7 +2581,7 @@
     },
     "ipai_ppm": {
       "name": "ipai_ppm",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm",
+      "path": "/home/user/odoo/addons/ipai/ipai_ppm",
       "version": "18.0.1.0.0",
       "summary": "Portfolio/Program governance layer with risk register, KPI snapshots, and resource allocation",
       "author": "InsightPulse AI",
@@ -2612,7 +2612,7 @@
     },
     "ipai_ppm_a1": {
       "name": "ipai_ppm_a1",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_a1",
+      "path": "/home/user/odoo/addons/ipai/ipai_ppm_a1",
       "version": "18.0.1.0.0",
       "summary": "A1 Control Center - Workstreams, Templates, Tasks, Checks + Seed Import/Export",
       "author": "InsightPulse AI",
@@ -2643,7 +2643,7 @@
     },
     "ipai_ppm_dashboard_canvas": {
       "name": "ipai_ppm_dashboard_canvas",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_dashboard_canvas",
+      "path": "/home/user/odoo/addons/ipai/ipai_ppm_dashboard_canvas",
       "version": "18.0.1.0.0",
       "summary": "Clarity Canvas-style Project Dashboard with phases, milestones, tasks, to-dos, and OKR views",
       "author": "InsightPulse AI",
@@ -2677,7 +2677,7 @@
     },
     "ipai_ppm_monthly_close": {
       "name": "ipai_ppm_monthly_close",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_monthly_close",
+      "path": "/home/user/odoo/addons/ipai/ipai_ppm_monthly_close",
       "version": "18.0.1.0.0",
       "summary": "Automated monthly financial close scheduling with PPM and Notion workspace parity",
       "author": "InsightPulse AI",
@@ -2711,7 +2711,7 @@
     },
     "ipai_project_gantt": {
       "name": "ipai_project_gantt",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_gantt",
+      "path": "/home/user/odoo/addons/ipai/ipai_project_gantt",
       "version": "18.0.1.0.0",
       "summary": "Community Gantt-like planning view for Project tasks (no Enterprise deps).",
       "author": "InsightPulse AI",
@@ -2741,7 +2741,7 @@
     },
     "ipai_project_profitability_bridge": {
       "name": "ipai_project_profitability_bridge",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_profitability_bridge",
+      "path": "/home/user/odoo/addons/ipai/ipai_project_profitability_bridge",
       "version": "18.0.1.0.1",
       "summary": "Lightweight profitability KPIs per project using analytic lines (CE-safe).",
       "author": "InsightPulse AI",
@@ -2772,7 +2772,7 @@
     },
     "ipai_project_program": {
       "name": "ipai_project_program",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_program",
+      "path": "/home/user/odoo/addons/ipai/ipai_project_program",
       "version": "18.0.1.0.0",
       "summary": "Program (parent project) + Implementation Modules (IM1/IM2) as child projects + Directory + seed loader",
       "author": "InsightPulse AI",
@@ -2804,7 +2804,7 @@
     },
     "ipai_project_suite": {
       "name": "ipai_project_suite",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_suite",
+      "path": "/home/user/odoo/addons/ipai/ipai_project_suite",
       "version": "18.0.1.0.0",
       "summary": "Toggleable enterprise-like project management features for Odoo CE",
       "author": "InsightPulse AI",
@@ -2834,7 +2834,7 @@
     },
     "ipai_saas_tenant": {
       "name": "ipai_saas_tenant",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_saas_tenant",
+      "path": "/home/user/odoo/addons/ipai/ipai_saas_tenant",
       "version": "18.0.1.0.0",
       "summary": "Multi-tenant provider model for SaaS platform",
       "author": "InsightPulse AI",
@@ -2864,7 +2864,7 @@
     },
     "ipai_sample_metrics": {
       "name": "ipai_sample_metrics",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_sample_metrics",
+      "path": "/home/user/odoo/addons/ipai/ipai_sample_metrics",
       "version": "18.0.1.0.0",
       "summary": "Minimal OCA-style example app: metrics with list/form views and API helpers",
       "author": "InsightPulseAI",
@@ -2895,7 +2895,7 @@
     },
     "ipai_scout_bundle": {
       "name": "ipai_scout_bundle",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_scout_bundle",
+      "path": "/home/user/odoo/addons/ipai/ipai_scout_bundle",
       "version": "18.0.1.0.0",
       "summary": "One-click meta-installer for Scout retail intelligence vertical",
       "author": "InsightPulse AI",
@@ -2935,7 +2935,7 @@
     },
     "ipai_settings_dashboard": {
       "name": "ipai_settings_dashboard",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_settings_dashboard",
+      "path": "/home/user/odoo/addons/ipai/ipai_settings_dashboard",
       "version": "18.0.1.0.0",
       "summary": "Unified AI provider settings with Kapa RAG, OpenAI, and Gemini support",
       "author": "InsightPulse AI / TBWA",
@@ -2968,7 +2968,7 @@
     },
     "ipai_skill_api": {
       "name": "ipai_skill_api",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_skill_api",
+      "path": "/home/user/odoo/addons/ipai/ipai_skill_api",
       "version": "18.0.1.0.0",
       "summary": "REST API endpoints for agent skill execution",
       "author": "InsightPulse AI",
@@ -3001,7 +3001,7 @@
     },
     "ipai_sms_gateway": {
       "name": "ipai_sms_gateway",
-      "path": "/home/user/odoo-ce/addons/ipai_sms_gateway",
+      "path": "/home/user/odoo/addons/ipai_sms_gateway",
       "version": "18.0.1.0.0",
       "summary": "SMS gateway for sending messages via HTTP providers",
       "author": "InsightPulse AI",
@@ -3031,7 +3031,7 @@
     },
     "ipai_srm": {
       "name": "ipai_srm",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_srm",
+      "path": "/home/user/odoo/addons/ipai/ipai_srm",
       "version": "18.0.1.0.0",
       "summary": "Supplier lifecycle and performance management (SAP SRM/Ariba-style parity)",
       "author": "InsightPulse AI",
@@ -3063,7 +3063,7 @@
     },
     "ipai_studio_ai": {
       "name": "ipai_studio_ai",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_studio_ai",
+      "path": "/home/user/odoo/addons/ipai/ipai_studio_ai",
       "version": "18.0.1.1.0",
       "summary": "Natural Language Customization Engine for Odoo",
       "author": "InsightPulse AI",
@@ -3093,7 +3093,7 @@
     },
     "ipai_superset_connector": {
       "name": "ipai_superset_connector",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_superset_connector",
+      "path": "/home/user/odoo/addons/ipai/ipai_superset_connector",
       "version": "18.0.1.0.0",
       "summary": "Embed Superset dashboards in Odoo with guest token authentication",
       "author": "InsightPulse AI",
@@ -3123,7 +3123,7 @@
     },
     "ipai_tbwa_finance": {
       "name": "ipai_tbwa_finance",
-      "path": "/home/user/odoo-ce/addons/ipai_tbwa_finance",
+      "path": "/home/user/odoo/addons/ipai_tbwa_finance",
       "version": "18.0.1.0.0",
       "summary": "Unified month-end closing + BIR tax compliance for TBWA Philippines",
       "author": "IPAI / TBWA",
@@ -3154,7 +3154,7 @@
     },
     "ipai_tenant_core": {
       "name": "ipai_tenant_core",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_tenant_core",
+      "path": "/home/user/odoo/addons/ipai/ipai_tenant_core",
       "version": "18.0.1.0.0",
       "summary": "Multi-tenant platform core for InsightPulse AI",
       "author": "InsightPulse AI",
@@ -3185,7 +3185,7 @@
     },
     "ipai_test_fixtures": {
       "name": "ipai_test_fixtures",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_test_fixtures",
+      "path": "/home/user/odoo/addons/ipai/ipai_test_fixtures",
       "version": "18.0.1.0.0",
       "summary": "Shared test fixtures and factory methods for IPAI modules",
       "author": "InsightPulse AI",
@@ -3219,7 +3219,7 @@
     },
     "ipai_theme_aiux": {
       "name": "ipai_theme_aiux",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_aiux",
+      "path": "/home/user/odoo/addons/ipai/ipai_theme_aiux",
       "version": "18.0.0.1.0",
       "summary": "AIUX backend theme scaffold (sidebar tokens + widget hooks)",
       "author": "InsightPulse AI",
@@ -3250,7 +3250,7 @@
     },
     "ipai_theme_copilot": {
       "name": "ipai_theme_copilot",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_copilot",
+      "path": "/home/user/odoo/addons/ipai/ipai_theme_copilot",
       "version": "18.0.1.0.0",
       "summary": "Fluent-style TBWA theme for Odoo 18 CE.",
       "author": "InsightPulse AI",
@@ -3281,7 +3281,7 @@
     },
     "ipai_theme_fluent2": {
       "name": "ipai_theme_fluent2",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_fluent2",
+      "path": "/home/user/odoo/addons/ipai/ipai_theme_fluent2",
       "version": "18.0.1.1.0",
       "summary": "Microsoft Fluent 2 / Microsoft 365 Copilot design tokens for Odoo backend",
       "author": "InsightPulse AI",
@@ -3312,7 +3312,7 @@
     },
     "ipai_theme_tbwa": {
       "name": "ipai_theme_tbwa",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_tbwa",
+      "path": "/home/user/odoo/addons/ipai/ipai_theme_tbwa",
       "version": "18.0.2.0.0",
       "summary": "TBWA brand skin for Odoo backend - overrides ipai_platform_theme tokens",
       "author": "InsightPulse AI / TBWA",
@@ -3344,7 +3344,7 @@
     },
     "ipai_theme_tbwa_backend": {
       "name": "ipai_theme_tbwa_backend",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_tbwa_backend",
+      "path": "/home/user/odoo/addons/ipai/ipai_theme_tbwa_backend",
       "version": "18.0.1.1.0",
       "summary": "DEPRECATED - Use ipai_theme_tbwa instead",
       "author": "InsightPulse AI / TBWA",
@@ -3376,7 +3376,7 @@
     },
     "ipai_ui_brand_tokens": {
       "name": "ipai_ui_brand_tokens",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_ui_brand_tokens",
+      "path": "/home/user/odoo/addons/ipai/ipai_ui_brand_tokens",
       "version": "18.0.1.0.0",
       "summary": "Single source of truth for brand tokens (Odoo + React)",
       "author": "InsightPulse AI",
@@ -3406,7 +3406,7 @@
     },
     "ipai_v18_compat": {
       "name": "ipai_v18_compat",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_v18_compat",
+      "path": "/home/user/odoo/addons/ipai/ipai_v18_compat",
       "version": "18.0.1.0.0",
       "summary": "Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues",
       "author": "InsightPulse AI",
@@ -3437,7 +3437,7 @@
     },
     "ipai_web_fluent2": {
       "name": "ipai_web_fluent2",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_fluent2",
+      "path": "/home/user/odoo/addons/ipai/ipai_web_fluent2",
       "version": "18.0.1.0.0",
       "summary": "Fluent 2 design tokens + UI styling for Odoo CE 18 backend (and optional frontend/login).",
       "author": "InsightPulse AI",
@@ -3469,7 +3469,7 @@
     },
     "ipai_web_icons_fluent": {
       "name": "ipai_web_icons_fluent",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_icons_fluent",
+      "path": "/home/user/odoo/addons/ipai/ipai_web_icons_fluent",
       "version": "18.0.1.0.0",
       "summary": "Microsoft Fluent System Icons for consistent Odoo + React UI",
       "author": "InsightPulse AI",
@@ -3500,7 +3500,7 @@
     },
     "ipai_web_theme_chatgpt": {
       "name": "ipai_web_theme_chatgpt",
-      "path": "/home/user/odoo-ce/addons/ipai_web_theme_chatgpt",
+      "path": "/home/user/odoo/addons/ipai_web_theme_chatgpt",
       "version": "18.0.1.0.0",
       "summary": "Brand tokens + UI polish for Odoo backend with ChatGPT-inspired design",
       "author": "IPAI",
@@ -3531,7 +3531,7 @@
     },
     "ipai_web_theme_tbwa": {
       "name": "ipai_web_theme_tbwa",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_theme_tbwa",
+      "path": "/home/user/odoo/addons/ipai/ipai_web_theme_tbwa",
       "version": "18.0.1.0.0",
       "summary": "TBWA brand styling for Odoo CE 18 backend (consumes brand tokens)",
       "author": "InsightPulse AI",
@@ -3564,7 +3564,7 @@
     },
     "ipai_workos_affine": {
       "name": "ipai_workos_affine",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_affine",
+      "path": "/home/user/odoo/addons/ipai_workos_affine",
       "version": "18.0.1.0.0",
       "summary": "Installs the full WorkOS AFFiNE-style suite",
       "author": "InsightPulse AI",
@@ -3604,7 +3604,7 @@
     },
     "ipai_workos_blocks": {
       "name": "ipai_workos_blocks",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_blocks",
+      "path": "/home/user/odoo/addons/ipai_workos_blocks",
       "version": "18.0.1.0.0",
       "summary": "Notion-style block editor for pages",
       "author": "InsightPulse AI",
@@ -3635,7 +3635,7 @@
     },
     "ipai_workos_canvas": {
       "name": "ipai_workos_canvas",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_canvas",
+      "path": "/home/user/odoo/addons/ipai_workos_canvas",
       "version": "18.0.1.0.0",
       "summary": "Edgeless canvas surface for WorkOS (AFFiNE-style)",
       "author": "InsightPulse AI",
@@ -3667,7 +3667,7 @@
     },
     "ipai_workos_collab": {
       "name": "ipai_workos_collab",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_collab",
+      "path": "/home/user/odoo/addons/ipai_workos_collab",
       "version": "18.0.1.0.0",
       "summary": "Comments, mentions, and notifications",
       "author": "InsightPulse AI",
@@ -3698,7 +3698,7 @@
     },
     "ipai_workos_core": {
       "name": "ipai_workos_core",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_core",
+      "path": "/home/user/odoo/addons/ipai_workos_core",
       "version": "18.0.1.0.0",
       "summary": "Notion-style Work OS - Core module with workspaces, spaces, and pages",
       "author": "InsightPulse AI",
@@ -3731,7 +3731,7 @@
     },
     "ipai_workos_db": {
       "name": "ipai_workos_db",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_db",
+      "path": "/home/user/odoo/addons/ipai_workos_db",
       "version": "18.0.1.0.0",
       "summary": "Notion-style databases with typed properties",
       "author": "InsightPulse AI",
@@ -3762,7 +3762,7 @@
     },
     "ipai_workos_search": {
       "name": "ipai_workos_search",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_search",
+      "path": "/home/user/odoo/addons/ipai_workos_search",
       "version": "18.0.1.0.0",
       "summary": "Global and scoped search for pages and databases",
       "author": "InsightPulse AI",
@@ -3795,7 +3795,7 @@
     },
     "ipai_workos_templates": {
       "name": "ipai_workos_templates",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_templates",
+      "path": "/home/user/odoo/addons/ipai_workos_templates",
       "version": "18.0.1.0.0",
       "summary": "Page and database templates",
       "author": "InsightPulse AI",
@@ -3828,7 +3828,7 @@
     },
     "ipai_workos_views": {
       "name": "ipai_workos_views",
-      "path": "/home/user/odoo-ce/addons/ipai_workos_views",
+      "path": "/home/user/odoo/addons/ipai_workos_views",
       "version": "18.0.1.0.0",
       "summary": "Table, Kanban, and Calendar views for databases",
       "author": "InsightPulse AI",
@@ -3860,7 +3860,7 @@
     },
     "ipai_workspace_core": {
       "name": "ipai_workspace_core",
-      "path": "/home/user/odoo-ce/addons/ipai/ipai_workspace_core",
+      "path": "/home/user/odoo/addons/ipai/ipai_workspace_core",
       "version": "18.0.1.0.1",
       "summary": "Unified workspace model for marketing agencies and accounting firms.",
       "author": "InsightPulse AI",

@@ -210,7 +210,7 @@ from .hooks import post_init_hook
 
 ```bash
 # On production server (erp.insightpulseai.com)
-cd /opt/odoo-ce
+cd /opt/odoo
 bash config/PRODUCTION_DEPLOYMENT_SCRIPT.sh
 ```
 
@@ -236,7 +236,7 @@ bash config/PRODUCTION_DEPLOYMENT_SCRIPT.sh
 **Step 1: Update Code**
 ```bash
 ssh root@erp.insightpulseai.com
-cd /opt/odoo-ce
+cd /opt/odoo
 git pull origin main
 ```
 
@@ -572,7 +572,7 @@ curl -I https://erp.insightpulseai.com/mailgate/mailgun
 
 **Implementation**: Claude Code (Anthropic)
 **Date**: 2026-01-19
-**Repository**: https://github.com/jgtolentino/odoo-ce.git
+**Repository**: https://github.com/jgtolentino/odoo.git
 **Module**: ipai_enterprise_bridge v18.0.1.1.0
 
 For issues or questions:

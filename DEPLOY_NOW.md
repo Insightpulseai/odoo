@@ -29,7 +29,7 @@ ssh root@159.223.75.148
 
 ### Step 2: Navigate to Repo and Pull Changes
 ```bash
-cd /root/odoo-ce
+cd /root/odoo
 git pull origin main
 ```
 
@@ -318,7 +318,7 @@ SendGrid is DigitalOcean's recommended SMTP relay partner.
 ```bash
 # SSH into server
 ssh root@159.223.75.148
-cd /root/odoo-ce
+cd /root/odoo
 
 # Edit deployment script to use SendGrid instead of Gmail
 nano scripts/configure_sendgrid_smtp.sh
@@ -410,7 +410,7 @@ All prerequisites verified:
 **Run the deployment now:**
 ```bash
 ssh root@159.223.75.148
-cd /root/odoo-ce && git pull origin main
+cd /root/odoo && git pull origin main
 ./scripts/deploy_with_credentials.sh
 ```
 

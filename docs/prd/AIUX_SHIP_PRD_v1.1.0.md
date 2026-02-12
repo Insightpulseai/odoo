@@ -4,7 +4,7 @@
 
 * **Release:** AIUX Ship
 * **Version:** **1.1.0**
-* **Repo:** `jgtolentino/odoo-ce`
+* **Repo:** `jgtolentino/odoo`
 * **Primary objective:** ship a **fresh-bootstrap deploy** from a known git ref that is **deterministic**, **CI-verifiable**, and **doesn't require manual debugging**.
 
 ## 1) What We Ship (Scope In)
@@ -215,7 +215,7 @@ Every deploy produces a folder containing:
 
 **Service Names (resolved from compose):**
 - Database service: `db` (container: `odoo-db`)
-- Odoo service: `odoo` (container: `odoo-ce`)
+- Odoo service: `odoo` (container: `odoo`)
 
 **Environment Variables Required:**
 ```bash
@@ -226,7 +226,7 @@ DB_PASSWORD=${DB_PASSWORD:?required}
 DB_HOST=${DB_HOST:-db}
 
 # Odoo
-APP_IMAGE=${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}
+APP_IMAGE=${APP_IMAGE:-ghcr.io/jgtolentino/odoo}
 APP_IMAGE_VERSION=${APP_IMAGE_VERSION:-latest}
 ODOO_PORT=${ODOO_PORT:-8069}
 
@@ -263,10 +263,10 @@ ODOO_PORT=${ODOO_PORT:-8069}
 ```
 
 **Why this matters:**
-- Service names can change (odoo → odoo-ce → odoo-app)
+- Service names can change (odoo → odoo → odoo-app)
 - DB names can vary per environment (odoo → odoo_prod → odoo_staging)
 - Compose files can move (deploy/ → infra/ → docker/)
-- Container names can change (odoo-ce → odoo-erp-prod → odoo-18-ce)
+- Container names can change (odoo → odoo-erp-prod → odoo-18-ce)
 
 **By parameterizing everything, scripts work regardless of these changes.**
 
@@ -303,7 +303,7 @@ docker compose -f "${COMPOSE_FILE}" restart "${ODOO_SERVICE}"
 ❌ **Don't assume container names**
 ```bash
 # BAD: Hardcoded container name
-docker exec odoo-ce odoo -d odoo -i ipai_theme_aiux
+docker exec odoo odoo -d odoo -i ipai_theme_aiux
 
 # GOOD: Resolve from compose
 docker compose -f "${COMPOSE_FILE}" exec -T "${ODOO_SERVICE}" \
@@ -348,7 +348,7 @@ sleep 120  # Match Odoo's start_period
 See: `docs/prd/end_state/AIUX_SHIP_v1.1.0_PARAMETERIZED.json`
 
 **Key difference from old spec:**
-- ❌ Old: Hardcoded `"container": "odoo-ce"`, `"db": "odoo_core"`
+- ❌ Old: Hardcoded `"container": "odoo"`, `"db": "odoo_core"`
 - ✅ New: `"container": "${ODOO_SERVICE}"`, `"db": "${ODOO_DB}"`
 
 ---

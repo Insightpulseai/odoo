@@ -14,14 +14,14 @@ repos:
   # OCA Maintainer Tools - README/Icon Generation
   # =============================================================================
   - repo: https://github.com/OCA/maintainer-tools
-    rev: master
+    rev: 71aa4caec15e8c1456b4da19e9f39aa0aa7377a9
     hooks:
       # Generate README.rst from readme/ folder fragments
       - id: oca-gen-addon-readme
         args:
           - --addons-dir=addons
           - --org-name=InsightPulseAI
-          - --repo-name=odoo-ce
+          - --repo-name=odoo
           - --branch=main
 
       # Generate module icons from template
@@ -33,7 +33,7 @@ repos:
   # OCA Official Hooks - Odoo-specific validation
   # =============================================================================
   - repo: https://github.com/OCA/odoo-pre-commit-hooks
-    rev: v0.0.35
+    rev: v0.2.20
     hooks:
       - id: oca-checks-odoo-module
         description: Multiple OCA checks for Odoo modules (manifest, CSV, XML)
@@ -42,7 +42,7 @@ repos:
 
   # Python Code Formatting (Black)
   - repo: https://github.com/psf/black
-    rev: 25.11.0
+    rev: 26.1.0
     hooks:
       - id: black
         args: [--line-length=88]
@@ -66,7 +66,7 @@ repos:
 
   # YAML Validation
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         args: [-d, relaxed]
@@ -103,7 +103,7 @@ repos:
   # Conventional Commits (commit message validation)
   # =============================================================================
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.1.0
+    rev: v4.3.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]

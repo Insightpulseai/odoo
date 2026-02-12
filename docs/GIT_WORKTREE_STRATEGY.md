@@ -21,22 +21,22 @@ Test GitHub Actions workflow changes without affecting main development.
 ## Worktree Structure
 
 ```
-odoo-ce/                          # Main worktree (development)
+odoo/                          # Main worktree (development)
 ├─ .github/workflows/
 ├─ addons/
 ├─ scripts/
 └─ ...
 
-../odoo-ce-deploy/                # Deployment worktree
+../odoo-deploy/                # Deployment worktree
 ├─ .github/workflows/
 ├─ scripts/ci/                    # CI deployment scripts
 └─ ...
 
-../odoo-ce-staging/               # Staging worktree
+../odoo-staging/               # Staging worktree
 ├─ addons/                        # Test module changes
 └─ ...
 
-../odoo-ce-hotfix/                # Hotfix worktree
+../odoo-hotfix/                # Hotfix worktree
 └─ scripts/                       # Emergency fixes
 ```
 
@@ -46,16 +46,16 @@ odoo-ce/                          # Main worktree (development)
 
 ```bash
 # Navigate to main repository
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 # Create deployment worktree from main branch
-git worktree add ../odoo-ce-deploy main
+git worktree add ../odoo-deploy main
 
 # Create feature branch for CI/CD work
-git worktree add ../odoo-ce-ci-pipeline feature/ci-pipeline
+git worktree add ../odoo-ci-pipeline feature/ci-pipeline
 
 # Create staging worktree for testing
-git worktree add ../odoo-ce-staging staging
+git worktree add ../odoo-staging staging
 ```
 
 ### Verify Worktrees
@@ -65,10 +65,10 @@ git worktree add ../odoo-ce-staging staging
 git worktree list
 
 # Expected output:
-# /Users/tbwa/Documents/GitHub/odoo-ce              main
-# /Users/tbwa/Documents/GitHub/odoo-ce-deploy       main
-# /Users/tbwa/Documents/GitHub/odoo-ce-ci-pipeline  feature/ci-pipeline
-# /Users/tbwa/Documents/GitHub/odoo-ce-staging      staging
+# /Users/tbwa/Documents/GitHub/odoo              main
+# /Users/tbwa/Documents/GitHub/odoo-deploy       main
+# /Users/tbwa/Documents/GitHub/odoo-ci-pipeline  feature/ci-pipeline
+# /Users/tbwa/Documents/GitHub/odoo-staging      staging
 ```
 
 ## Parallel Deployment Testing Workflow
@@ -77,14 +77,14 @@ git worktree list
 
 **Worktree 1** (main): Continue development
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 git checkout main
 # Continue normal development
 ```
 
 **Worktree 2** (deployment): Test OCA installation
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 git checkout feature/oca-deployment
 
 # Test OCA installation script locally
@@ -96,7 +96,7 @@ ssh root@159.223.75.148 'docker logs -f odoo-accounting'
 
 **Worktree 3** (verification): Run verification checks
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
+cd /Users/tbwa/Documents/GitHub/odoo-staging
 git checkout feature/verification
 
 # Test verification script
@@ -107,13 +107,13 @@ ssh root@159.223.75.148 'bash -s' < scripts/ci/verify-deployment.sh
 
 **Worktree 1** (main): Module development
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 # Edit addons/ipai_finance_ppm/models/finance_ppm.py
 ```
 
 **Worktree 2** (deployment): Test XML-RPC activation
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 # Test IPAI deployment script
 ssh root@159.223.75.148 \
   "ODOO_ADMIN_PASSWORD=$ODOO_ADMIN_PASSWORD bash -s" < scripts/ci/deploy-ipai-modules.sh
@@ -121,7 +121,7 @@ ssh root@159.223.75.148 \
 
 **Worktree 3** (verification): Validate module state
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
+cd /Users/tbwa/Documents/GitHub/odoo-staging
 # Check module installation status
 ssh root@159.223.75.148 'docker exec odoo-accounting odoo-bin shell -d odoo_accounting'
 ```
@@ -130,13 +130,13 @@ ssh root@159.223.75.148 'docker exec odoo-accounting odoo-bin shell -d odoo_acco
 
 **Worktree 1** (main): Workflow development
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 # Edit workflows/finance_ppm/bir_deadline_alert.json
 ```
 
 **Worktree 2** (deployment): Test workflow import
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 # Test n8n import script
 ssh root@159.223.75.148 \
   "N8N_API_KEY=$N8N_API_KEY bash -s" < scripts/ci/import-n8n-workflows.sh
@@ -144,7 +144,7 @@ ssh root@159.223.75.148 \
 
 **Worktree 3** (verification): Verify workflow activation
 ```bash
-cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
+cd /Users/tbwa/Documents/GitHub/odoo-staging
 # Query n8n API for active workflows
 curl -sf -H "X-N8N-API-KEY: $N8N_API_KEY" \
   "https://ipa.insightpulseai.com/api/v1/workflows" | jq '.data | length'
@@ -157,14 +157,14 @@ curl -sf -H "X-N8N-API-KEY: $N8N_API_KEY" \
 Keep production version in separate worktree:
 ```bash
 # Create production worktree
-git worktree add ../odoo-ce-production production
+git worktree add ../odoo-production production
 
 # Tag production version
-cd /Users/tbwa/Documents/GitHub/odoo-ce-production
+cd /Users/tbwa/Documents/GitHub/odoo-production
 git tag -a v1.0.0-production -m "Production release before Finance PPM deployment"
 
 # If deployment fails, rollback:
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 git checkout production
 ssh root@159.223.75.148 'bash -s' < scripts/ci/rollback-deployment.sh
 ```
@@ -174,9 +174,9 @@ ssh root@159.223.75.148 'bash -s' < scripts/ci/rollback-deployment.sh
 Test GitHub Actions changes without affecting main:
 ```bash
 # Create CI/CD worktree
-git worktree add ../odoo-ce-cicd feature/github-actions
+git worktree add ../odoo-cicd feature/github-actions
 
-cd /Users/tbwa/Documents/GitHub/odoo-ce-cicd
+cd /Users/tbwa/Documents/GitHub/odoo-cicd
 
 # Edit GitHub Actions workflow
 vim .github/workflows/deploy-finance-ppm.yml
@@ -186,7 +186,7 @@ git add .github/workflows/deploy-finance-ppm.yml
 git commit -m "test: validate deployment pipeline"
 git push origin feature/github-actions
 
-# Monitor workflow: https://github.com/[YOUR_ORG]/odoo-ce/actions
+# Monitor workflow: https://github.com/[YOUR_ORG]/odoo/actions
 ```
 
 ### Concurrent Debugging
@@ -194,12 +194,12 @@ git push origin feature/github-actions
 Debug deployment issues while main development continues:
 ```bash
 # Main worktree: Continue development
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 git checkout main
 # Normal development work
 
 # Debug worktree: Investigate deployment failure
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 git checkout feature/debug-deployment
 
 # Add debugging output to scripts
@@ -217,8 +217,8 @@ ssh root@159.223.75.148 'bash -xs' < scripts/ci/deploy-ipai-modules.sh 2>&1 | te
 All worktrees share the same `.git` directory, reducing disk usage:
 ```bash
 # Check disk usage
-du -sh /Users/tbwa/Documents/GitHub/odoo-ce/.git
-du -sh /Users/tbwa/Documents/GitHub/odoo-ce-deploy/.git
+du -sh /Users/tbwa/Documents/GitHub/odoo/.git
+du -sh /Users/tbwa/Documents/GitHub/odoo-deploy/.git
 
 # Only .git/worktrees/ is duplicated (minimal)
 ```
@@ -228,16 +228,16 @@ du -sh /Users/tbwa/Documents/GitHub/odoo-ce-deploy/.git
 Run deployment phases in parallel across worktrees:
 ```bash
 # Terminal 1: Install OCA modules
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 ssh root@159.223.75.148 'bash -s' < scripts/ci/install-oca-modules.sh &
 
 # Terminal 2: Prepare n8n workflows
-cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
-ssh root@159.223.75.148 'mkdir -p /root/odoo-ce/workflows/finance_ppm'
-scp workflows/finance_ppm/*.json root@159.223.75.148:/root/odoo-ce/workflows/finance_ppm/ &
+cd /Users/tbwa/Documents/GitHub/odoo-staging
+ssh root@159.223.75.148 'mkdir -p /root/odoo/workflows/finance_ppm'
+scp workflows/finance_ppm/*.json root@159.223.75.148:/root/odoo/workflows/finance_ppm/ &
 
 # Terminal 3: Monitor verification
-cd /Users/tbwa/Documents/GitHub/odoo-ce-verify
+cd /Users/tbwa/Documents/GitHub/odoo-verify
 watch -n 5 'ssh root@159.223.75.148 "docker ps && docker logs --tail 20 odoo-accounting"'
 
 # Wait for all background jobs
@@ -253,10 +253,10 @@ wait
 git worktree list
 
 # Remove specific worktree
-git worktree remove ../odoo-ce-deploy
+git worktree remove ../odoo-deploy
 
 # Or force remove (with uncommitted changes)
-git worktree remove --force ../odoo-ce-deploy
+git worktree remove --force ../odoo-deploy
 
 # Prune stale worktree references
 git worktree prune
@@ -266,7 +266,7 @@ git worktree prune
 
 ```bash
 # Remove all worktrees except main
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 
 for worktree in $(git worktree list --porcelain | grep worktree | awk '{print $2}' | grep -v "$(pwd)"); do
   git worktree remove --force "$worktree"
@@ -287,9 +287,9 @@ git branch -D feature/verification
 Use descriptive worktree directory names:
 ```bash
 # Good
-../odoo-ce-deploy
-../odoo-ce-staging
-../odoo-ce-production
+../odoo-deploy
+../odoo-staging
+../odoo-production
 
 # Bad
 ../temp
@@ -300,8 +300,8 @@ Use descriptive worktree directory names:
 ### 2. Branch Management
 Create dedicated branches for each worktree:
 ```bash
-git worktree add ../odoo-ce-deploy -b feature/deployment
-git worktree add ../odoo-ce-staging -b feature/staging
+git worktree add ../odoo-deploy -b feature/deployment
+git worktree add ../odoo-staging -b feature/staging
 ```
 
 ### 3. Isolation
@@ -314,7 +314,7 @@ Keep worktrees isolated for specific purposes:
 ### 4. Documentation
 Document worktree purpose in README:
 ```bash
-cd ../odoo-ce-deploy
+cd ../odoo-deploy
 echo "# Deployment Testing Worktree" > README_WORKTREE.md
 echo "Purpose: Test CI/CD deployment scripts" >> README_WORKTREE.md
 echo "Branch: feature/deployment" >> README_WORKTREE.md
@@ -329,9 +329,9 @@ set -euo pipefail
 
 echo "Setting up Finance PPM deployment worktrees..."
 
-git worktree add ../odoo-ce-deploy -b feature/deployment
-git worktree add ../odoo-ce-staging -b feature/staging
-git worktree add ../odoo-ce-production production
+git worktree add ../odoo-deploy -b feature/deployment
+git worktree add ../odoo-staging -b feature/staging
+git worktree add ../odoo-production production
 
 echo "✅ Worktrees created successfully"
 git worktree list
@@ -343,9 +343,9 @@ git worktree list
 
 ```bash
 # Create CI/CD testing worktree
-git worktree add ../odoo-ce-cicd feature/cicd-test
+git worktree add ../odoo-cicd feature/cicd-test
 
-cd ../odoo-ce-cicd
+cd ../odoo-cicd
 
 # Edit workflow
 vim .github/workflows/deploy-finance-ppm.yml
@@ -363,22 +363,22 @@ git push origin feature/cicd-test
 
 ```bash
 # Terminal 1: Main development
-cd /Users/tbwa/Documents/GitHub/odoo-ce
+cd /Users/tbwa/Documents/GitHub/odoo
 git checkout main
 # Continue development
 
 # Terminal 2: Deploy OCA modules
-cd /Users/tbwa/Documents/GitHub/odoo-ce-deploy
+cd /Users/tbwa/Documents/GitHub/odoo-deploy
 git checkout feature/oca-deployment
 ./scripts/ci/install-oca-modules.sh
 
 # Terminal 3: Deploy IPAI modules
-cd /Users/tbwa/Documents/GitHub/odoo-ce-staging
+cd /Users/tbwa/Documents/GitHub/odoo-staging
 git checkout feature/ipai-deployment
 ./scripts/ci/deploy-ipai-modules.sh
 
 # Terminal 4: Verify deployment
-cd /Users/tbwa/Documents/GitHub/odoo-ce-verify
+cd /Users/tbwa/Documents/GitHub/odoo-verify
 git checkout feature/verification
 ./scripts/ci/verify-deployment.sh
 ```
@@ -395,7 +395,7 @@ git checkout feature/verification
 rm .git/worktrees/<worktree-name>/locked
 
 # Or force remove worktree
-git worktree remove --force ../odoo-ce-deploy
+git worktree remove --force ../odoo-deploy
 ```
 
 ### Branch Conflicts
@@ -405,10 +405,10 @@ git worktree remove --force ../odoo-ce-deploy
 **Solution**:
 ```bash
 # Use detached HEAD
-git worktree add ../odoo-ce-deploy --detach
+git worktree add ../odoo-deploy --detach
 
 # Or create new branch
-git worktree add ../odoo-ce-deploy -b feature/deployment-new
+git worktree add ../odoo-deploy -b feature/deployment-new
 ```
 
 ### Disk Space Issues
@@ -419,7 +419,7 @@ git worktree add ../odoo-ce-deploy -b feature/deployment-new
 ```bash
 # Remove unused worktrees
 git worktree list
-git worktree remove ../odoo-ce-old-deploy
+git worktree remove ../odoo-old-deploy
 
 # Clean up branches
 git branch -D old-feature-branch
@@ -429,7 +429,7 @@ git branch -D old-feature-branch
 
 After setting up git worktrees:
 
-1. Create deployment worktree: `git worktree add ../odoo-ce-deploy feature/deployment`
+1. Create deployment worktree: `git worktree add ../odoo-deploy feature/deployment`
 2. Test OCA installation in deployment worktree
 3. Verify IPAI activation in staging worktree
 4. Run parallel verification across all worktrees

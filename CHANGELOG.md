@@ -183,15 +183,15 @@ cd ~/odoo-prod
   - Smoke test verification
   - Rollback procedures
 
-- **003-odoo-ce-custom-image-spec.md** (Updated)
+- **003-odoo-custom-image-spec.md** (Updated)
   - Merged specification from main/codex branches
   - Complete requirements matrix
   - Implementation best practices
 
 ### 🔗 References
 
-- **GitHub Repository**: https://github.com/jgtolentino/odoo-ce
-- **Container Registry**: ghcr.io/jgtolentino/odoo-ce:v0.9.1
+- **GitHub Repository**: https://github.com/jgtolentino/odoo
+- **Container Registry**: ghcr.io/jgtolentino/odoo:v0.9.1
 - **Production Domain**: https://erp.insightpulseai.com
 - **VPS**: 159.223.75.148 (odoo-erp-prod)
 
@@ -361,10 +361,10 @@ docker run --rm -i loadimpact/k6 run - \
 ### Cron Configuration
 ```cron
 # Health check every 5 minutes
-*/5 * * * * ODOO_URL="https://erp.insightpulseai.com/web/login" MM_WEBHOOK_URL="..." SERVICE_NAME="odoo-ce-prod" /opt/odoo-ce/scripts/healthcheck_odoo.sh >> /var/log/odoo_healthcheck.log 2>&1
+*/5 * * * * ODOO_URL="https://erp.insightpulseai.com/web/login" MM_WEBHOOK_URL="..." SERVICE_NAME="odoo-prod" /opt/odoo/scripts/healthcheck_odoo.sh >> /var/log/odoo_healthcheck.log 2>&1
 
 # Backup verification daily at 3 AM
-0 3 * * * cd /opt/odoo-ce && DB_CONTAINER=db DB_USER=odoo SOURCE_DB=odoo_ce_prod BACKUP_DIR=/var/backups/odoo ./scripts/verify_backup.sh >> /var/log/odoo_backup_verify.log 2>&1
+0 3 * * * cd /opt/odoo && DB_CONTAINER=db DB_USER=odoo SOURCE_DB=odoo_ce_prod BACKUP_DIR=/var/backups/odoo ./scripts/verify_backup.sh >> /var/log/odoo_backup_verify.log 2>&1
 ```
 
 ---
@@ -563,9 +563,9 @@ addons/ipai_finance_ppm/
 ## Support & Documentation
 
 ### Deployment Guides
-- **Finance PPM Module**: `/Users/tbwa/odoo-ce/verify_finance_ppm.py`
-- **n8n Workflows**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/DEPLOYMENT.md`
-- **Verification**: `/Users/tbwa/odoo-ce/workflows/finance_ppm/verify_deployment.sh`
+- **Finance PPM Module**: `/Users/tbwa/odoo/verify_finance_ppm.py`
+- **n8n Workflows**: `/Users/tbwa/odoo/workflows/finance_ppm/DEPLOYMENT.md`
+- **Verification**: `/Users/tbwa/odoo/workflows/finance_ppm/verify_deployment.sh`
 
 ### Issues & Troubleshooting
 - Odoo Logs: `ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 100"`
@@ -579,7 +579,7 @@ addons/ipai_finance_ppm/
 
 ## Support & Feedback
 
-**Issues**: https://github.com/jgtolentino/odoo-ce/issues
+**Issues**: https://github.com/jgtolentino/odoo/issues
 **Contact**: Jake Tolentino (jgtolentino@tbwa-smp.ph)
 **Documentation**: See `docs/` directory
 

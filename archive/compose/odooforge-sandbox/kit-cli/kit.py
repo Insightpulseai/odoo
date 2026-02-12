@@ -126,7 +126,7 @@ def init(module_name, template, author, description):
             "summary": description,
             "description": f"IPAI Custom Module: {description}",
             "author": author,
-            "website": "https://github.com/jgtolentino/odoo-ce",
+            "website": "https://github.com/jgtolentino/odoo",
             "license": "LGPL-3",
             "depends": ["base"],
             "data": [],

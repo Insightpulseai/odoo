@@ -83,7 +83,7 @@ addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
 
 **Container Check**:
 ```bash
-docker exec odoo-ce ls -la /mnt/extra-addons  # MUST exist
+docker exec odoo ls -la /mnt/extra-addons  # MUST exist
 ```
 
 **Why**: Non-existent paths → Odoo can't enumerate addons → asset serving crashes → 500
@@ -235,7 +235,7 @@ docker ps --filter name=odoo
 docker exec odoo-postgres psql -U odoo -d odoo_core -c "SELECT 1;"
 
 # 3. Check logs
-docker logs odoo-ce --tail 50 | grep -i error
+docker logs odoo --tail 50 | grep -i error
 
 # 4. Verify network
 docker network inspect odoo_backend | grep -A 5 postgres

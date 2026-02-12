@@ -214,4 +214,4 @@ curl https://<project>.functions.supabase.co/platformkit-introspect | jq '.ok,.g
 
 **Merge Performed By:** Claude Sonnet 4.5
 **Branch:** claude/standardize-ci-runner-7JkCW
-**PR:** https://github.com/jgtolentino/odoo-ce/pull/299
+**PR:** https://github.com/jgtolentino/odoo/pull/299

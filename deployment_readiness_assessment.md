@@ -2,7 +2,7 @@
 
 **Date:** 2025-11-22
 **Auditor:** Antigravity (Google Deepmind)
-**Target Repository:** `jgtolentino/odoo-ce`
+**Target Repository:** `jgtolentino/odoo`
 **Baseline:** Odoo 18 CE + OCA Modules + Custom `ipai_*` Modules
 
 ---

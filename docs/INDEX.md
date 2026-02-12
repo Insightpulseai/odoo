@@ -41,7 +41,7 @@ Feature specifications following Spec Kit structure.
 | knowledge-hub | `spec/knowledge-hub` | ✓ Complete |
 | notion-finance-ppm-control-room | `spec/notion-finance-ppm-control-room` | ✓ Complete |
 | odoo-apps-inventory | `spec/odoo-apps-inventory` | ✓ Complete |
-| odoo-ce | `spec/odoo-ce` | ✓ Complete |
+| odoo | `spec/odoo` | ✓ Complete |
 | odoo-mcp-server | `spec/odoo-mcp-server` | ⚠ Incomplete |
 | ops-control-room | `spec/ops-control-room` | ✓ Complete |
 | parallel-control-planes | `spec/parallel-control-planes` | ✓ Complete |

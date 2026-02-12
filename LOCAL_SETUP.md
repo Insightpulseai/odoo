@@ -11,7 +11,7 @@ Make sure Docker Desktop is running:
 ### 2. Start Odoo Locally
 
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 ./scripts/start_local_odoo.sh
 ```
 
@@ -30,7 +30,7 @@ docker compose -f docker-compose.dev.yml up -d postgres odoo-core
 
 ### Start Services
 ```bash
-cd /Users/tbwa/odoo-ce
+cd /Users/tbwa/odoo
 docker compose -f docker-compose.dev.yml up -d postgres odoo-core
 ```
 
@@ -166,14 +166,14 @@ git push origin main
 
 ```
 Local Development:
-  Your Mac (/Users/tbwa/odoo-ce)
+  Your Mac (/Users/tbwa/odoo)
     ↓ docker-compose.dev.yml
   Docker Containers:
     - postgres (port 5432)
     - odoo-core (port 8069)
 
   Volume Mounts:
-    /Users/tbwa/odoo-ce/addons → /mnt/extra-addons
+    /Users/tbwa/odoo/addons → /mnt/extra-addons
 
 Production:
   DigitalOcean Server (178.128.112.214)
@@ -182,7 +182,7 @@ Production:
     - odoo-prod (port 8069)
 
   Volume Mounts:
-    /opt/odoo-ce/repo/addons → /mnt/extra-addons
+    /opt/odoo/repo/addons → /mnt/extra-addons
 ```
 
 ## Next Steps

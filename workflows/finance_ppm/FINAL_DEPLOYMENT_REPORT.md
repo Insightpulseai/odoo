@@ -241,7 +241,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 
 ### Workflow Files
 ```
-/Users/tbwa/odoo-ce/workflows/finance_ppm/
+/Users/tbwa/odoo/workflows/finance_ppm/
 ├── bir_deadline_alert.json (11.3 KB)
 ├── task_escalation.json (13.4 KB)
 ├── monthly_report.json (15.5 KB)
@@ -254,7 +254,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 
 ### Database Migrations
 ```
-/Users/tbwa/odoo-ce/migrations/
+/Users/tbwa/odoo/migrations/
 └── 003_finance_ppm_reports.sql (✅ applied)
 ```
 
@@ -266,7 +266,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 
 ### Project Documentation
 ```
-/Users/tbwa/odoo-ce/
+/Users/tbwa/odoo/
 └── CHANGELOG.md (v1.1.0 entry added)
 
 /Users/tbwa/CLAUDE.md
@@ -370,7 +370,7 @@ CREATE TABLE finance_ppm.monthly_reports (
 ### Quick Commands
 ```bash
 # Verify deployment status
-cd /Users/tbwa/odoo-ce/workflows/finance_ppm
+cd /Users/tbwa/odoo/workflows/finance_ppm
 ./verify_deployment.sh
 
 # Check database

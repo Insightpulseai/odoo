@@ -6,7 +6,7 @@
   "stage": "ga",
   "availability": "all",
   "links": {
-    "docs": "https://github.com/jgtolentino/odoo-ce/blob/main/CLAUDE.md#enterprise-parity-strategy",
+    "docs": "https://github.com/jgtolentino/odoo/blob/main/CLAUDE.md#enterprise-parity-strategy",
     "runbook": "scripts/test_ee_parity.py"
   },
   "related_assets": ["finance-ppm", "bir-compliance", "approvals-workflow"],

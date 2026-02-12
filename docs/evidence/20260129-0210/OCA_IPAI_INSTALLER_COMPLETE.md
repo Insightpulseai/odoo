@@ -63,7 +63,7 @@
 # Linux: sudo systemctl start docker
 
 # 2. Run installer from repo root
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 ./scripts/ocadev/install_oca_ipai_full.sh
 
 # 3. Verify installation

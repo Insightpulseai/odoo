@@ -1,0 +1,81 @@
+version: 1
+id: ph
+name: Philippines (BIR) tax overlay
+applies_to:
+  country_iso2: PH
+  currency: PHP
+  odoo_versions:
+    - "19.0"
+goals:
+  - id: ph.month_close
+    title: Month-end close (PH)
+    outcomes:
+      - "All expense reimbursements posted + reconciled"
+      - "All vendor bills posted + paid/aged"
+      - "BIR schedules exported (VAT/WHT) for filing workflow"
+  - id: ph.withholding_taxes
+    title: Withholding tax workflows (PH)
+    outcomes:
+      - "Classify payees and apply correct WHT rates"
+      - "Produce WHT schedules per period for submission/archival"
+  - id: ph.vat
+    title: VAT workflows (PH)
+    outcomes:
+      - "VAT-able transactions tagged + summarized"
+      - "VAT schedules exported per period"
+tax_taxonomy:
+  filing_periods:
+    monthly: true
+    quarterly: true
+    annual: true
+  vat:
+    codes:
+      - id: ph.vat.standard
+        label: VAT (standard)
+        rate: 0.12
+  withholding:
+    codes:
+      - id: ph.wht.professional_fees
+        label: WHT - Professional fees
+        rate: 0.10
+      - id: ph.wht.rent
+        label: WHT - Rent
+        rate: 0.05
+      - id: ph.wht.contractors
+        label: WHT - Contractors
+        rate: 0.02
+artifacts:
+  exports:
+    - id: ph.export.vat_schedule_csv
+      format: csv
+      recommended_columns:
+        - period
+        - partner
+        - tin
+        - invoice_number
+        - invoice_date
+        - taxable_base
+        - vat_amount
+        - total
+    - id: ph.export.wht_schedule_csv
+      format: csv
+      recommended_columns:
+        - period
+        - partner
+        - tin
+        - reference
+        - gross_amount
+        - wht_code
+        - wht_rate
+        - wht_amount
+        - net_paid
+probes:
+  - id: ph.overlay.present
+    type: repo_file_exists
+    path: config/parity/locales/philippines_tax.yaml
+  - id: ph.export.templates.present
+    type: repo_glob_exists
+    glob: "templates/ph/*.csv"
+notes:
+  - "This overlay is intentionally tax-agnostic at the computation layer; it defines outputs + taxonomy so core capability mapping remains reusable."
+  - "Actual PH tax computation can live in: OCA localization modules + minimal IPAI export glue (reports/CSV)."

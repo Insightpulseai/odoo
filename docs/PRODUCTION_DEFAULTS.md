@@ -9,7 +9,7 @@
 ## Canonical Naming Standards
 
 ### Containers
-- **Odoo**: `odoo-erp-prod` (currently: `odoo-ce`)
+- **Odoo**: `odoo-erp-prod` (currently: `odoo`)
 - **Postgres**: `db` (currently: `odoo-postgres`)
 - **Reverse Proxy**: Host nginx (port 80/443)
 
@@ -40,12 +40,12 @@ erp.insightpulseai.com → 159.223.75.148 (TTL: 60)
 
 ### Container Stack
 ```
-nginx (host) :443 → odoo-ce :8069 → odoo-postgres :5432
+nginx (host) :443 → odoo :8069 → odoo-postgres :5432
 ```
 
 ### Key Files
-- **Config**: `/root/odoo-ce/deploy/odoo.conf`
-- **Compose**: `/root/odoo-ce/deploy/docker-compose.prod.v0.10.0.yml`
+- **Config**: `/root/odoo/deploy/odoo.conf`
+- **Compose**: `/root/odoo/deploy/docker-compose.prod.v0.10.0.yml`
 - **Nginx**: `/etc/nginx/sites-available/erp.insightpulseai.com.conf`
 
 ### Working odoo.conf
@@ -148,7 +148,7 @@ server {
 ### Phase 1: Rename Resources (Non-Breaking)
 ```bash
 # 1. Stop containers
-cd /root/odoo-ce/deploy
+cd /root/odoo/deploy
 docker compose -f docker-compose.prod.v0.10.0.yml stop odoo
 
 # 2. Create new database (copy from odoo_core)
@@ -216,7 +216,7 @@ services:
       retries: 5
 
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:v0.10.0
+    image: ghcr.io/jgtolentino/odoo:v0.10.0
     container_name: odoo-erp-prod
     restart: unless-stopped
     depends_on:

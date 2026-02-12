@@ -1,0 +1,59 @@
+name: Policy NO-CLI/NO-DOCKER Enforcement
+
+on:
+  pull_request:
+    paths:
+      - 'agents/**'
+      - 'skills/**'
+      - 'docs/**'
+      - 'spec/**'
+      - '.agent/**'
+  push:
+    branches: [ main ]
+
+jobs:
+  no-cli-no-docker-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: Scan for forbidden CLI/Docker instructions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TARGETS=(
+            "agents"
+            "skills"
+            "docs"
+            "spec"
+            ".agent"
+          )
+
+          # Forbidden patterns: docker, compose, apt/brew, systemctl, sudo
+          PATTERN='(^|\s)(docker(\s|$)|docker-compose|compose\s+up|apt(-get)?\s+install|brew\s+install|choco\s+install|systemctl|sudo\s|service\s|colima|kind\s|kubectl\s|minikube|helm\s)'
+
+          hits=0
+          for t in "${TARGETS[@]}"; do
+            if [ -e "$t" ]; then
+              echo "==> Scanning $t for policy violations"
+              if rg -n --hidden --no-ignore -S "$PATTERN" "$t" 2>/dev/null; then
+                hits=1
+              fi
+            fi
+          done
+
+          if [ "$hits" -eq 1 ]; then
+            echo ""
+            echo "❌ Policy violation: Found CLI/Docker/local-install instructions"
+            echo "   Context: NO-CLI/NO-DOCKER environment (Claude Code Web)"
+            echo "   Action: Move these steps into GitHub Actions workflows"
+            echo "   Policy: agents/policies/NO_CLI_NO_DOCKER.md"
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ NO-CLI/NO-DOCKER policy scan passed"

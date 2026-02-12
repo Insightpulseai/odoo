@@ -4,7 +4,7 @@ title: Odoo CE Custom Image – Production Artifact Spec
 owner: jgtolentino
 status: approved
 version: 1.0.0
-repo: odoo-ce
+repo: odoo
 tags:
   - odoo
   - docker
@@ -27,7 +27,7 @@ The image is the **single source of truth** for all runtime behavior in:
 
 **Canonical Image Reference:**
 ```text
-ghcr.io/jgtolentino/odoo-ce:v0.9.0
+ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 
 A `:latest` alias MAY exist but MUST NOT be relied upon as a stable version identifier.
@@ -75,7 +75,7 @@ A `:latest` alias MAY exist but MUST NOT be relied upon as a stable version iden
 ### 3.1 Image Structure
 
 ```
-Custom Odoo CE Image (ghcr.io/jgtolentino/odoo-ce:v0.9.0)
+Custom Odoo CE Image (ghcr.io/jgtolentino/odoo:v0.9.0)
 ├── Base: odoo:18.0 (official)
 ├── System Dependencies
 │   ├── build-essential
@@ -102,17 +102,17 @@ Custom Odoo CE Image (ghcr.io/jgtolentino/odoo-ce:v0.9.0)
 ### 3.2 Deployment Paths
 
 **Path 1: GitHub Actions CI/CD**
-- Build: `Dockerfile` → `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+- Build: `Dockerfile` → `ghcr.io/jgtolentino/odoo:v0.9.0`
 - Push: GitHub Container Registry
 - Deploy: VPS (Docker Compose) or DOKS (Kubernetes)
 
 **Path 2: Docker Compose (VPS)**
-- Image: `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+- Image: `ghcr.io/jgtolentino/odoo:v0.9.0`
 - Configuration: `docker-compose.prod.yml`
 - Secrets: `.env.production` + environment variables
 
 **Path 3: Kubernetes (DOKS)**
-- Image: `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+- Image: `ghcr.io/jgtolentino/odoo:v0.9.0`
 - Configuration: `deploy/k8s/` manifests
 - Secrets: Kubernetes Secrets
 
@@ -242,12 +242,12 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 | Component | Value | Purpose |
 |-----------|-------|---------|
 | Registry | GitHub Container Registry (GHCR) | Secure, integrated with GitHub |
-| Repository | `ghcr.io/jgtolentino/odoo-ce` | Canonical location |
+| Repository | `ghcr.io/jgtolentino/odoo` | Canonical location |
 | Tag (Production) | `v0.9.0`, `v1.0.0`, etc. | Semantic versioning |
 | Tag (CI) | `sha-{commit}` | CI builds tracking |
 | Tag (Alias) | `latest` | NOT for production use |
 
-**Canonical Reference:** `ghcr.io/jgtolentino/odoo-ce:v0.9.0`
+**Canonical Reference:** `ghcr.io/jgtolentino/odoo:v0.9.0`
 
 ### 5.3 Compose Integration (VPS)
 
@@ -273,8 +273,8 @@ services:
       retries: 5
 
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
-    container_name: odoo-ce
+    image: ghcr.io/jgtolentino/odoo:v0.9.0
+    container_name: odoo
     restart: unless-stopped
     depends_on:
       db:
@@ -328,7 +328,7 @@ volumes:
 **Manual Build + Push:**
 
 ```bash
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.0
+export IMAGE=ghcr.io/jgtolentino/odoo:v0.9.0
 
 # Login to GHCR
 echo "$GHCR_PAT" | docker login ghcr.io -u jgtolentino --password-stdin
@@ -367,7 +367,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/jgtolentino/odoo-ce
+          images: ghcr.io/jgtolentino/odoo
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -450,7 +450,7 @@ log_level = info
 
 **Test 1: Image Build**
 ```bash
-docker build -t ghcr.io/jgtolentino/odoo-ce:v0.9.0 .
+docker build -t ghcr.io/jgtolentino/odoo:v0.9.0 .
 ```
 ✅ Pass if: Exit code 0, no build errors
 
@@ -459,7 +459,7 @@ docker build -t ghcr.io/jgtolentino/odoo-ce:v0.9.0 .
 docker run --rm -p 8069:8069 \
   -e HOST=localhost \
   -e PASSWORD=test \
-  ghcr.io/jgtolentino/odoo-ce:v0.9.0
+  ghcr.io/jgtolentino/odoo:v0.9.0
 ```
 ✅ Pass if:
 - Container starts without crash
@@ -486,7 +486,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 **Test 4: K8S Deployment**
 ```bash
-kubectl set image deployment/odoo odoo=ghcr.io/jgtolentino/odoo-ce:v0.9.0
+kubectl set image deployment/odoo odoo=ghcr.io/jgtolentino/odoo:v0.9.0
 kubectl rollout status deployment/odoo
 ```
 

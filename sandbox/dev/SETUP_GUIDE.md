@@ -58,11 +58,11 @@
 
 ```bash
 # If starting fresh
-git clone git@github.com:jgtolentino/odoo-ce.git
-cd odoo-ce/sandbox/dev
+git clone git@github.com:jgtolentino/odoo.git
+cd odoo/sandbox/dev
 
 # If already cloned, navigate to sandbox
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 ```
 
 ### B. Environment Configuration
@@ -90,8 +90,8 @@ The `ipai` module depends on **24 OCA modules**. You have two options:
 
 **Option 1: Symlink to canonical OCA (Recommended)**
 ```bash
-# If you have the full odoo-ce repo
-ln -s ~/Documents/GitHub/odoo-ce/addons/external/oca oca-addons
+# If you have the full odoo repo
+ln -s ~/Documents/GitHub/odoo/addons/external/oca oca-addons
 ```
 
 **Option 2: Clone OCA repositories**
@@ -141,7 +141,7 @@ git clone https://github.com/OCA/project-timesheet.git --depth 1 --branch 18.0
 ### Basic Startup
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 
 # Start core services (Odoo + PostgreSQL)
 docker compose up -d
@@ -265,7 +265,7 @@ command: >
 
 ### Odoo CE 19 + EE Parity Image
 
-**Image**: `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity`
+**Image**: `ghcr.io/jgtolentino/odoo:19.0-ee-parity`
 
 **What's Included**:
 - Odoo Community Edition 19.0
@@ -275,7 +275,7 @@ command: >
 
 **Differences from Official Odoo**:
 
-| Aspect | Official `odoo:18.0` | Our `odoo-ce:19.0-ee-parity` |
+| Aspect | Official `odoo:18.0` | Our `odoo:19.0-ee-parity` |
 |--------|---------------------|------------------------------|
 | Version | 18.0 | **19.0** |
 | OCA Modules | ❌ None | ✅ 24 modules |
@@ -416,7 +416,7 @@ docker compose exec odoo cat /etc/odoo/odoo.conf | grep addons_path
 **CSS Error / Old Content**:
 ```bash
 # Run health check
-~/Documents/GitHub/odoo-ce/scripts/health/odoo_local_9069.sh
+~/Documents/GitHub/odoo/scripts/health/odoo_local_9069.sh
 
 # If healthy, it's browser cache - clear it:
 # Chrome: Command + Shift + R
@@ -426,7 +426,7 @@ docker compose exec odoo cat /etc/odoo/odoo.conf | grep addons_path
 
 **Canonical Health Check**:
 ```bash
-~/Documents/GitHub/odoo-ce/scripts/health/odoo_local_9069.sh
+~/Documents/GitHub/odoo/scripts/health/odoo_local_9069.sh
 ```
 
 Expected output:
@@ -439,7 +439,7 @@ Expected output:
 ### Reset Everything
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/odoo/sandbox/dev
 
 # Stop and remove containers
 docker compose down
@@ -458,13 +458,13 @@ docker compose up -d
 **If running Odoo 18**, use the upgrade script:
 
 ```bash
-~/Documents/GitHub/odoo-ce/sandbox/dev/upgrade-to-odoo19.sh
+~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo19.sh
 ```
 
 This will:
 1. Stop old Odoo 18 containers
 2. Remove old image
-3. Pull `ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity`
+3. Pull `ghcr.io/jgtolentino/odoo:19.0-ee-parity`
 4. Start Odoo 19.0 + OCA + IPAI Enterprise Bridge
 
 **After upgrade**: Clear browser cache (Command + Shift + R)
@@ -474,10 +474,10 @@ This will:
 ## 12. Reference Documentation
 
 - **Daily Operations**: `docs/runbooks/DEV_SANDBOX.md`
-- **Health Policy**: `~/Documents/GitHub/odoo-ce/docs/runbooks/ODOO_LOCAL_9069_HEALTH.md`
+- **Health Policy**: `~/Documents/GitHub/odoo/docs/runbooks/ODOO_LOCAL_9069_HEALTH.md`
 - **Image Alignment**: `IMAGE_ALIGNMENT.md`
 - **Sync Guide**: `SYNC_GUIDE.md`
-- **Main Project**: `~/Documents/GitHub/odoo-ce/CLAUDE.md`
+- **Main Project**: `~/Documents/GitHub/odoo/CLAUDE.md`
 
 ---
 
@@ -506,10 +506,10 @@ docker compose exec odoo odoo --help    # Show Odoo CLI help
 docker compose exec odoo odoo -d mydb -i module_name --stop-after-init
 
 # Health
-~/Documents/GitHub/odoo-ce/scripts/health/odoo_local_9069.sh
+~/Documents/GitHub/odoo/scripts/health/odoo_local_9069.sh
 
 # Upgrade
-~/Documents/GitHub/odoo-ce/sandbox/dev/upgrade-to-odoo19.sh
+~/Documents/GitHub/odoo/sandbox/dev/upgrade-to-odoo19.sh
 ```
 
 ---

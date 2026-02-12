@@ -50,7 +50,7 @@ BIR_TASK_TAG_ID=<tag_id>                    # "BIR Filing" tag ID
 To find these IDs:
 ```bash
 # Get Finance PPM project ID
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -61,7 +61,7 @@ with odoo.registry('production').cursor() as cr:
 \""
 
 # Get BOM user ID (Finance Supervisor)
-ssh root@159.223.75.148 "docker exec odoo-ce python3 -c \"
+ssh root@159.223.75.148 "docker exec odoo python3 -c \"
 import odoo
 odoo.tools.config['db_name'] = 'production'
 odoo.service.server.preload_registries(['production'])
@@ -394,6 +394,6 @@ In each workflow, add a **Set** node after critical steps:
 
 ## Support
 
-**Documentation**: `/Users/tbwa/odoo-ce/workflows/`
+**Documentation**: `/Users/tbwa/odoo/workflows/`
 **n8n Instance**: https://ipa.insightpulseai.com
 **Contact**: Jake Tolentino (TBWA Finance SSC / InsightPulse AI)

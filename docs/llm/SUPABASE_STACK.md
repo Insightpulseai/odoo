@@ -212,7 +212,7 @@ Connected via Supabase Vercel Integration:
 
 ### GitHub
 Connected via Supabase GitHub Integration:
-- Repository: `jgtolentino/odoo-ce`
+- Repository: `jgtolentino/odoo`
 - Supabase Directory: `/supabase`
 - Production Branch: `main`
 

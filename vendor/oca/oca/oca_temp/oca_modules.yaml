@@ -126,7 +126,7 @@ tier5_ai:
 #
 # Option 1: Git Submodules (Recommended for version control)
 #
-# cd /opt/odoo-ce
+# cd /opt/odoo
 # git submodule add -b 18.0 https://github.com/OCA/account-financial-tools.git oca/account-financial-tools
 # git submodule add -b 18.0 https://github.com/OCA/account-financial-reporting.git oca/account-financial-reporting
 # git submodule add -b 18.0 https://github.com/OCA/account-reconcile.git oca/account-reconcile
@@ -137,8 +137,8 @@ tier5_ai:
 #
 # Option 2: Direct Clone
 #
-# mkdir -p /opt/odoo-ce/oca
-# cd /opt/odoo-ce/oca
+# mkdir -p /opt/odoo/oca
+# cd /opt/odoo/oca
 # git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-tools.git
 # git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-reporting.git
 # ...
@@ -156,7 +156,7 @@ tier5_ai:
 # Update odoo.conf addons_path:
 #
 # [options]
-# addons_path = /opt/odoo/addons,/opt/odoo-ce/addons/ipai,/opt/odoo-ce/oca/account-financial-tools,/opt/odoo-ce/oca/account-financial-reporting,/opt/odoo-ce/oca/account-reconcile,/opt/odoo-ce/oca/reporting-engine,/opt/odoo-ce/oca/rest-framework
+# addons_path = /opt/odoo/addons,/opt/odoo/addons/ipai,/opt/odoo/oca/account-financial-tools,/opt/odoo/oca/account-financial-reporting,/opt/odoo/oca/account-reconcile,/opt/odoo/oca/reporting-engine,/opt/odoo/oca/rest-framework
 #
 # =============================================================================
 # DOCKER VOLUME MOUNT

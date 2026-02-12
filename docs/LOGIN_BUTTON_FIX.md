@@ -66,7 +66,7 @@ If needed, deploy manually:
 ssh root@178.128.112.214
 
 # 2. Update code
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 
 # 3. Restart Odoo
@@ -197,7 +197,7 @@ To apply this fix to production:
 
 - **Server**: 178.128.112.214
 - **Container**: odoo-prod
-- **Repo Path**: /opt/odoo-ce/repo
+- **Repo Path**: /opt/odoo/repo
 - **URL**: https://erp.insightpulseai.com
 
 ---

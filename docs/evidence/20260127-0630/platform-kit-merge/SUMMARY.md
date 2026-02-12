@@ -270,7 +270,7 @@ RLS Enabled → Tenant-Aware → Service-Role Auth → Fixed search_path
 
 ## Contact & Resources
 
-**GitHub PR:** https://github.com/jgtolentino/odoo-ce/pull/299
+**GitHub PR:** https://github.com/jgtolentino/odoo/pull/299
 **Supabase Project:** spdtwktxdalcfigzeqrz
 **n8n Instance:** https://n8n.insightpulseai.com
 **Mattermost:** https://chat.insightpulseai.com

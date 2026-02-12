@@ -6,8 +6,8 @@ This directory contains cloud architecture diagrams for the fin-workspace / mybr
 
 | Name | Providers | Updated | Draw.io |
 |------|-----------|---------|---------|
-| fin-workspace Platform Overview | digitalocean, generic | 2025-11-26 | [Open](https://app.diagrams.net/?mode=github#Hjgtolentino/odoo-ce/main/docs/diagrams/architecture/fin-workspace-overview.drawio) |
-| DO Advisor Agent Architecture | digitalocean, generic | 2025-11-26 | [Open](https://app.diagrams.net/?mode=github#Hjgtolentino/odoo-ce/main/docs/diagrams/architecture/do-advisor-architecture.drawio) |
+| fin-workspace Platform Overview | digitalocean, generic | 2025-11-26 | [Open](https://app.diagrams.net/?mode=github#Hjgtolentino/odoo/main/docs/diagrams/architecture/fin-workspace-overview.drawio) |
+| DO Advisor Agent Architecture | digitalocean, generic | 2025-11-26 | [Open](https://app.diagrams.net/?mode=github#Hjgtolentino/odoo/main/docs/diagrams/architecture/do-advisor-architecture.drawio) |
 
 ## Usage
 

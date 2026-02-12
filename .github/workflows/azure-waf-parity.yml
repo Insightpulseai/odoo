@@ -113,7 +113,7 @@ jobs:
         continue-on-error: true
         run: |
           ssh root@erp.insightpulseai.com \
-            "cd /opt/odoo-ce/repo && ./scripts/verify_monitoring.sh" \
+            "cd /opt/odoo/repo && ./scripts/verify_monitoring.sh" \
             > verify-monitoring.txt 2>&1
           cat verify-monitoring.txt
 
@@ -127,7 +127,7 @@ jobs:
         continue-on-error: true
         run: |
           ssh root@erp.insightpulseai.com \
-            "cd /opt/odoo-ce/repo && ./scripts/backup_verify.sh" \
+            "cd /opt/odoo/repo && ./scripts/backup_verify.sh" \
             > verify-backup.txt 2>&1
           cat verify-backup.txt
 

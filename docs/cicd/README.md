@@ -257,7 +257,7 @@ docker logs odoo-prod --tail 100
 curl http://localhost:8069/web/health
 
 # Rollback to previous image
-docker run -d --name odoo ghcr.io/jgtolentino/odoo-ce:previous-sha
+docker run -d --name odoo ghcr.io/jgtolentino/odoo:previous-sha
 ```
 
 ### n8n Workflow Import Failed

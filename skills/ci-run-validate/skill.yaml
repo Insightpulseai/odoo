@@ -61,7 +61,7 @@ input_schema:
       description: Git ref (branch, tag, or commit SHA)
     repo:
       type: string
-      default: jgtolentino/odoo-ce
+      default: jgtolentino/odoo
       description: Repository (owner/repo format)
     include_logs:
       type: boolean

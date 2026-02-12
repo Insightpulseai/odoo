@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# If committing from within templates/saas-landing, reject staging of parent repo paths.
+staged="$(git diff --cached --name-only 2>/dev/null || true)"
+
+deny_regex='^(apps/alpha-browser/|\.claude/|pnpm-lock\.yaml|pnpm-workspace\.yaml|scripts/cf_)'
+
+if echo "$staged" | grep -E "$deny_regex" >/dev/null 2>&1; then
+  echo "❌ Pre-commit blocked: parent-repo files are staged."
+  echo ""
+  echo "Staged files that shouldn't be committed from template:"
+  echo "$staged" | grep -E "$deny_regex" || true
+  echo ""
+  echo "Fix: unstage these files from repo root:"
+  echo "  git restore --staged .claude/ apps/alpha-browser/ pnpm-lock.yaml pnpm-workspace.yaml scripts/cf_*"
+  exit 1
+fi
+
+exit 0

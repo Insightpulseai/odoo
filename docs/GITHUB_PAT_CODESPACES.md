@@ -25,7 +25,7 @@ Generate a GitHub Personal Access Token (PAT) that enables non-interactive authe
 - **Name:** `codespaces_pat`
 - **Expiration:** `No expiration` (or preferred duration: 90 days recommended)
 - **Repository Access:**
-  - ✅ `jgtolentino/odoo-ce`
+  - ✅ `jgtolentino/odoo`
   - ✅ `jgtolentino/Prismaconsulting`
   - Or **All repositories** for universal use
 
@@ -87,7 +87,7 @@ github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxx  (fine-grained)
 
 ### Option A: Via GitHub UI (Easiest)
 
-1. Go to: https://github.com/jgtolentino/odoo-ce/settings/secrets/codespaces
+1. Go to: https://github.com/jgtolentino/odoo/settings/secrets/codespaces
 2. Click **New repository secret**
 3. Fill:
    - **Name:** `CODESPACES_PAT`
@@ -102,7 +102,7 @@ export CODESPACES_PAT="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # Add as Codespaces secret
 echo "$CODESPACES_PAT" | gh secret set CODESPACES_PAT \
-  --repo jgtolentino/odoo-ce \
+  --repo jgtolentino/odoo \
   --app codespaces
 ```
 
@@ -153,18 +153,18 @@ git push --dry-run
 
 ```bash
 # List existing secrets
-gh secret list --repo jgtolentino/odoo-ce --app codespaces
+gh secret list --repo jgtolentino/odoo --app codespaces
 
 # Set test secret
 echo "test-value" | gh secret set TEST_SECRET \
-  --repo jgtolentino/odoo-ce \
+  --repo jgtolentino/odoo \
   --app codespaces
 
 # Verify
-gh secret list --repo jgtolentino/odoo-ce --app codespaces | grep TEST_SECRET
+gh secret list --repo jgtolentino/odoo --app codespaces | grep TEST_SECRET
 
 # Clean up
-gh secret delete TEST_SECRET --repo jgtolentino/odoo-ce --app codespaces
+gh secret delete TEST_SECRET --repo jgtolentino/odoo --app codespaces
 ```
 
 ---
@@ -278,7 +278,7 @@ fi
 **Cause:** Secret not set or Codespace needs restart
 
 **Solution:**
-1. Verify secret exists: https://github.com/jgtolentino/odoo-ce/settings/secrets/codespaces
+1. Verify secret exists: https://github.com/jgtolentino/odoo/settings/secrets/codespaces
 2. Rebuild Codespace (Cmd+Shift+P → "Codespaces: Rebuild Container")
 3. Check devcontainer.json has correct secret reference
 
@@ -328,4 +328,4 @@ gh auth status
 
 **Last Updated:** 2026-01-29
 **Author:** Claude Code + Jake Tolentino
-**Repo:** https://github.com/jgtolentino/odoo-ce
+**Repo:** https://github.com/jgtolentino/odoo

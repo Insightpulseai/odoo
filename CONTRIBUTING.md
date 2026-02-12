@@ -39,8 +39,8 @@ By participating, you are expected to uphold this code.
 
 ```bash
 # Clone with submodules
-git clone --recurse-submodules https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone --recurse-submodules https://github.com/jgtolentino/odoo.git
+cd odoo
 
 # Install pre-commit hooks
 pip install pre-commit
@@ -238,7 +238,7 @@ my_module/
     'summary': 'Brief description',
     'description': '',  # Use readme/ folder instead
     'author': 'InsightPulseAI, Odoo Community Association (OCA)',
-    'website': 'https://github.com/jgtolentino/odoo-ce',
+    'website': 'https://github.com/jgtolentino/odoo',
     'license': 'AGPL-3',
     'depends': ['base', 'account'],
     'data': [
@@ -491,8 +491,8 @@ Spec: expense-automation
 
 ## Questions?
 
-- Open a [GitHub Issue](https://github.com/jgtolentino/odoo-ce/issues)
-- Check existing [Discussions](https://github.com/jgtolentino/odoo-ce/discussions)
+- Open a [GitHub Issue](https://github.com/jgtolentino/odoo/issues)
+- Check existing [Discussions](https://github.com/jgtolentino/odoo/discussions)
 - Review [OCA Guidelines](https://odoo-community.org/page/contributing)
 
 ---

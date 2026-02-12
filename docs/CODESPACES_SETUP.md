@@ -31,14 +31,14 @@ We use **three layers** for secrets management:
 **Step 3: Verify**
 ```bash
 # Check secrets were created
-gh secret list --repo jgtolentino/odoo-ce --app codespaces
+gh secret list --repo jgtolentino/odoo --app codespaces
 ```
 
-Visit: https://github.com/jgtolentino/odoo-ce/settings/secrets/codespaces
+Visit: https://github.com/jgtolentino/odoo/settings/secrets/codespaces
 
 ### Option 2: Manual UI Setup
 
-1. Go to https://github.com/jgtolentino/odoo-ce/settings/secrets/codespaces
+1. Go to https://github.com/jgtolentino/odoo/settings/secrets/codespaces
 2. Click **New repository secret**
 3. Add each secret from `.env.local`:
 

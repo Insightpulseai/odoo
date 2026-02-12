@@ -13,7 +13,7 @@
 SELECT status, COUNT(*) FROM marketplace.artifact_syncs GROUP BY status;
 
 # Check recent workflow runs
-gh run list -R Insightpulseai-net/odoo-ce --limit 5
+gh run list -R Insightpulseai-net/odoo --limit 5
 
 # Deploy IPAI modules
 ./scripts/deploy-odoo-modules.sh

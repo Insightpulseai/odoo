@@ -24,7 +24,7 @@ Adds unified CD pipeline for automated production deployment on merge to main.
 ### Required Secret
 
 Add `DIGITALOCEAN_TOKEN` to GitHub secrets before merging:
-https://github.com/jgtolentino/odoo-ce/settings/secrets/actions
+https://github.com/jgtolentino/odoo/settings/secrets/actions
 
 ## Test Plan
 

@@ -1,6 +1,6 @@
 # Odoo CE – Production Runbook
 
-This wiki is the human-readable front door for the `odoo-ce` monorepo.
+This wiki is the human-readable front door for the `odoo` monorepo.
 
 - **[Releases & Changelog](Releases-and-Changelog)** – what shipped, when, and how it was verified
 - **[Modules & Features](Modules-and-Features)** – IPAI + OCA module catalog and status
@@ -13,8 +13,8 @@ This wiki is the human-readable front door for the `odoo-ce` monorepo.
 
 ## Quick Links
 
-- Repo: https://github.com/jgtolentino/odoo-ce
+- Repo: https://github.com/jgtolentino/odoo
 - Production: https://erp.insightpulseai.com
-- Deployments: https://github.com/jgtolentino/odoo-ce/deployments
+- Deployments: https://github.com/jgtolentino/odoo/deployments
 
 See **Releases & Changelog** for the authoritative list of production cutovers.
