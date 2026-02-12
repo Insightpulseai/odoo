@@ -1,52 +1,86 @@
-You are the CONSTITUTION author for Spec Kit.
+---
+description: Create or update the constitution (governance principles) for a spec bundle.
+handoffs:
+  - label: Define Requirements
+    agent: speckit.specify
+    prompt: Define the product requirements for this feature
+  - label: Create Plan
+    agent: speckit.plan
+    prompt: Create an implementation plan for this feature
+scripts:
+  sh: .specify/scripts/check-prerequisites.sh --paths-only --json
+---
 
-Input: $ARGUMENTS
+## User Input
 
-## Purpose
+```text
+$ARGUMENTS
+```
 
-Create or refine the constitution (governance document) for a spec bundle. The constitution defines non-negotiable rules, constraints, and principles that ALL artifacts in the bundle must respect.
+You **MUST** consider the user input before proceeding (if not empty).
 
-## Workflow
+## Outline
+
+The text the user typed after `/speckit.constitution` is either a feature slug or a description of the principles to create.
 
 ### Step 1: Identify the spec bundle
 
-If the user specifies a feature slug, use `spec/<feature-slug>/`.
-If no slug is given, ask the user to name the feature.
+1. If the user provides a feature slug (e.g., `ipai-finance-ppm`), use `spec/<slug>/`.
+2. If the user describes principles without a slug, ask for the feature slug first.
+3. If `{SCRIPT}` was run, parse the JSON output for `FEATURE_DIR` and `FEATURE_SLUG`.
 
 ### Step 2: Load context
 
-Read these files in order:
-1. `CLAUDE.md` — Project-level rules (MUST be respected)
-2. `spec/agent/constitution.md` — Agent-level constraints
-3. `.specify/templates/constitution-template.md` — Template structure
-4. `spec/<feature-slug>/constitution.md` — Existing constitution (if any)
+Read these files in order (skip any that don't exist):
+1. `CLAUDE.md` — Project-level rules (**non-negotiable**, must be inherited)
+2. `spec/agent/constitution.md` — Agent-level execution constraints
+3. `.specify/templates/constitution-template.md` — Template scaffolding
+4. `spec/<slug>/constitution.md` — Existing constitution (if updating)
 
 ### Step 3: Author the constitution
 
 Using the template as scaffolding, produce a constitution that:
-- Inherits all project-level rules from `CLAUDE.md`
-- Adds feature-specific principles (technology choices, compliance, boundaries)
-- Defines concrete enforcement mechanisms (CI gates, tests, reviews)
-- Is concise — only include rules that WILL be enforced
+
+1. **Inherits project rules**: All rules from `CLAUDE.md` apply automatically. Do NOT duplicate them — reference them.
+2. **Adds feature-specific principles**: Technology choices, compliance requirements, scope boundaries, performance targets.
+3. **Defines enforcement mechanisms**: Every principle MUST have a concrete enforcement gate:
+   - CI check (GitHub Actions workflow)
+   - Test requirement (unit/integration)
+   - Review criteria (PR checklist item)
+   - Automated validation (linter, schema check)
+4. **Includes constraints table**: Technology stack, compliance, deployment, dependencies.
+5. **Defines amendment process**: How this constitution can be changed.
 
 ### Step 4: Write the file
 
-Write the constitution to `spec/<feature-slug>/constitution.md`.
-If the directory doesn't exist, create it.
+1. Create `spec/<slug>/` directory if it doesn't exist.
+2. Write the constitution to `spec/<slug>/constitution.md`.
+3. If this is a new bundle, also copy blank templates for `prd.md`, `plan.md`, `tasks.md` from `.specify/templates/`.
+
+### Step 5: Validate
+
+- Verify the constitution does NOT contradict `CLAUDE.md`.
+- Verify every principle has an enforcement mechanism.
+- Verify no aspirational statements exist without gates.
 
 ## Rules
 
-- NEVER contradict `CLAUDE.md` or `spec/agent/constitution.md`
-- Every principle MUST have an enforcement mechanism
+- **NEVER** contradict `CLAUDE.md` or `spec/agent/constitution.md`
+- Every principle MUST have a concrete enforcement mechanism
 - Do NOT include aspirational statements without enforcement
 - Keep it under 150 lines — brevity is a virtue
 - Use absolute file paths in all references
+- Reference `CLAUDE.md` by section, don't copy its rules
 
 ## Output
 
-Confirm the file was written and list the principles defined.
+Report:
+1. File path written
+2. Number of principles defined
+3. Any conflicts detected with `CLAUDE.md`
 
 ## Handoff
 
 After constitution is created:
-- **Next**: `/speckit.specify` to define requirements
+- **Next**: `/speckit.specify` to define product requirements
+- **Then**: `/speckit.plan` to create implementation plan

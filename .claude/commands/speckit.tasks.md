@@ -1,54 +1,98 @@
-You are the TASK GENERATOR for Spec Kit.
+---
+description: Generate an actionable task breakdown from the implementation plan.
+handoffs:
+  - label: Analyze Consistency
+    agent: speckit.analyze
+    prompt: Check cross-artifact consistency
+  - label: Execute Implementation
+    agent: speckit.implement
+    prompt: Execute all tasks to build the feature
+scripts:
+  sh: .specify/scripts/check-prerequisites.sh --json
+---
 
-Input: $ARGUMENTS
+## User Input
 
-## Purpose
+```text
+$ARGUMENTS
+```
 
-Break the implementation plan into actionable, trackable tasks. This produces the `tasks.md` artifact — the authoritative task breakdown with dependencies and phases.
+You **MUST** consider the user input before proceeding (if not empty).
 
-## Workflow
+## Outline
 
-### Step 1: Load context
+1. **Run `{SCRIPT}`** from repo root and parse `FEATURE_DIR` and `AVAILABLE_DOCS`.
 
-Read these files in order:
-1. `CLAUDE.md` — Project-level rules
-2. `spec/<feature-slug>/constitution.md` — Governance constraints
-3. `spec/<feature-slug>/prd.md` — Requirements (for traceability)
-4. `spec/<feature-slug>/plan.md` — Implementation plan
-5. `.specify/templates/tasks-template.md` — Template structure
-6. `spec/<feature-slug>/tasks.md` — Existing tasks (if any)
+2. **Load context** (read in order):
+   - `CLAUDE.md` — Project-level rules
+   - `spec/<slug>/constitution.md` — Governance constraints
+   - `spec/<slug>/prd.md` — Requirements (for traceability)
+   - `spec/<slug>/plan.md` — Implementation plan (**required**)
+   - `.specify/templates/tasks-template.md` — Template structure
+   - `spec/<slug>/tasks.md` — Existing tasks (if updating)
 
-### Step 2: Generate tasks
+3. **Parse the plan** and extract:
+   - Components to build
+   - File paths from source code layout
+   - Dependencies between components
+   - Complexity assessments
+   - Architecture decisions
 
-Using the template as scaffolding, produce a task list that:
-- Groups tasks by phase (Setup → Foundational → User Stories → Polish)
-- Tags parallelizable tasks with `[P]`
-- Links every task to a user story `[US#]`
-- Includes exact file paths for every task
-- Emphasizes test-first: write tests FIRST, ensure they FAIL before implementing
-- Defines checkpoints between phases
-- Includes a dependency graph
-- Tracks progress with a summary table
+4. **Generate task breakdown** using the template structure:
 
-### Step 3: Write the file
+   ### Task Format
+   ```
+   - [ ] T001 [P] [US1] Description — `path/to/file`
+   ```
+   - `T001` — Unique task ID
+   - `[P]` — Parallelizable (can run concurrently)
+   - `[US1]` — Linked user story from spec
+   - File path — Exact path from repo root
 
-Write the tasks to `spec/<feature-slug>/tasks.md`.
+   ### Phase Structure
+   ```
+   Phase 1: Setup          — Project scaffolding, config
+   Phase 2: Foundational   — Data models, base services (blocks all else)
+   Phase 3+: User Stories  — One phase per P1 story, then P2, then P3
+   Phase N: Polish         — Docs, CI, final verification
+   ```
+
+   ### Requirements per phase
+   - **Test-first**: Write tests FIRST, ensure they FAIL before implementing
+   - **Checkpoints**: Each phase ends with a validation checkpoint
+   - **Dependencies**: Define execution order explicitly
+   - **File paths**: Every task references at least one file
+
+5. **Write tasks** to `spec/<slug>/tasks.md`.
+
+6. **Build dependency graph** at the bottom of the file:
+   ```
+   T001, T002 (parallel) → T003 → T004
+   T004 → T005..T007 (US1)
+   ```
+
+7. **Build progress table**:
+   ```
+   | Phase | Total | Done | % |
+   ```
 
 ## Rules
 
 - Every task MUST have a unique ID (T001, T002, ...)
 - Every task MUST reference at least one file path
 - Every user story requirement MUST map to at least one task
-- Tasks should be small enough to complete in a single session
-- Do NOT include implementation code in tasks — just describe what to do
+- Tasks should be completable in a single focused session
+- Do NOT include implementation code — just describe what to do
 - Use absolute file paths from repo root
+- Respect constitution constraints in task ordering
 
 ## Output
 
-Confirm the file was written. Report:
+Report:
 1. Total task count by phase
 2. Parallelizable vs sequential ratio
 3. User story coverage (any unmapped requirements?)
+4. Estimated phase ordering
 
 ## Handoff
 

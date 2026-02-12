@@ -1,58 +1,82 @@
-You are the CLARIFIER for Spec Kit.
+---
+description: Resolve ambiguities and open questions in a specification before planning.
+handoffs:
+  - label: Build Technical Plan
+    agent: speckit.plan
+    prompt: Create a plan for the spec
+scripts:
+  sh: .specify/scripts/check-prerequisites.sh --paths-only --json
+---
 
-Input: $ARGUMENTS
+## User Input
 
-## Purpose
+```text
+$ARGUMENTS
+```
 
-Resolve ambiguities and open questions in a spec bundle BEFORE planning begins. This ensures the specification is precise enough for implementation.
+You **MUST** consider the user input before proceeding (if not empty).
 
-## Workflow
+## Outline
 
-### Step 1: Load context
+1. **Identify the spec bundle**:
+   - Parse `FEATURE_DIR` from `{SCRIPT}` output, or use user-provided slug
+   - Read `spec/<slug>/prd.md` (the specification to clarify)
+   - Read `spec/<slug>/constitution.md` (governance constraints)
 
-Read these files:
-1. `spec/<feature-slug>/constitution.md` — Governance
-2. `spec/<feature-slug>/prd.md` — Requirements
+2. **Scan for ambiguities** in the specification:
 
-### Step 2: Identify ambiguities
+   | Category | What to Look For |
+   |----------|-----------------|
+   | Vague terms | "fast", "secure", "scalable", "user-friendly", "efficient" |
+   | Missing boundaries | Ranges, limits, thresholds not defined |
+   | Undefined actors | Roles or personas not specified |
+   | Implicit assumptions | Dependencies or prerequisites not stated |
+   | Conflicting requirements | Items that contradict each other |
+   | Missing error handling | What happens when things go wrong |
+   | Untestable criteria | Acceptance criteria that can't be verified |
 
-Scan the spec for:
-- Vague terms: "fast", "secure", "scalable", "user-friendly", "efficient"
-- Missing boundaries: ranges, limits, thresholds not defined
-- Undefined actors: roles or personas not specified
-- Implicit assumptions: dependencies or prerequisites not stated
-- Conflicting requirements: items that contradict each other
-- Missing error handling: what happens when things go wrong?
+3. **Generate clarification questions** (maximum 10 per session):
 
-### Step 3: Generate clarification questions
+   For each ambiguity, produce:
 
-For each ambiguity, produce:
-- **Location**: File and section reference
-- **Issue**: What is ambiguous
-- **Options**: 2-3 concrete alternatives to choose from
-- **Default**: Recommended option if user doesn't respond
+   ```markdown
+   ## Question [N]: [Topic]
 
-### Step 4: Apply resolutions
+   **Location**: `spec/<slug>/prd.md` §[section]
+   **Issue**: [What is ambiguous]
 
-If the user provides answers:
-1. Update `spec/<feature-slug>/prd.md` with the clarified requirements
-2. Add a `## Clarifications` section at the bottom with Q&A log
+   | Option | Answer | Implications |
+   |--------|--------|--------------|
+   | A | [First option] | [Impact on feature] |
+   | B | [Second option] | [Impact on feature] |
+   | C | [Third option] | [Impact on feature] |
 
-If the user defers:
-1. Mark items as "NEEDS CLARIFICATION" in the spec
-2. The planner will flag these during `/speckit.plan`
+   **Recommended**: [Option letter] — [Why this is the default]
+   ```
+
+4. **Prioritize questions**: Blockers first, scope > security > UX > technical details.
+
+5. **Wait for user responses** before modifying any files.
+
+6. **Apply resolutions**:
+   - If user provides answers: update `spec/<slug>/prd.md` with clarified requirements
+   - Add a `## Clarifications` section at the bottom with Q&A log
+   - Replace all `[NEEDS CLARIFICATION]` markers with resolved text
+
+7. **If user defers**: Mark items as `[DEFERRED: reason]` in the spec.
 
 ## Rules
 
-- Ask specific questions with concrete options — never open-ended
+- Ask **specific** questions with **concrete options** — never open-ended
 - Group related questions together
-- Prioritize: blockers first, nice-to-knows last
-- Do NOT change the spec without user input
 - Maximum 10 questions per session
+- Do NOT change the spec without user input
+- Prioritize: blockers first, nice-to-knows last
+- Every question must reference a specific spec section
 
 ## Output
 
-List all clarification questions with options. Wait for user input before modifying any files.
+List all clarification questions with options. Wait for user input before modifying files.
 
 ## Handoff
 

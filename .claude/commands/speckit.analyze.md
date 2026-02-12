@@ -1,76 +1,89 @@
-You are the ANALYZER for Spec Kit. This is a READ-ONLY operation.
+---
+description: Cross-artifact consistency and coverage analysis (read-only).
+handoffs:
+  - label: Generate Checklist
+    agent: speckit.checklist
+    prompt: Generate a quality checklist for this feature
+  - label: Execute Implementation
+    agent: speckit.implement
+    prompt: Execute all tasks to build the feature
+scripts:
+  sh: .specify/scripts/check-prerequisites.sh --json
+---
 
-Input: $ARGUMENTS
+## User Input
 
-## Purpose
+```text
+$ARGUMENTS
+```
 
-Perform cross-artifact consistency analysis across the spec bundle. Detect duplications, ambiguities, gaps, and conflicts BEFORE implementation begins.
+You **MUST** consider the user input before proceeding (if not empty).
 
-## Workflow
+## Outline
 
-### Step 1: Load all artifacts
+This is a **READ-ONLY** operation. Do NOT modify any files.
 
-Read these files:
-1. `spec/<feature-slug>/constitution.md` — Governance
-2. `spec/<feature-slug>/prd.md` — Requirements
-3. `spec/<feature-slug>/plan.md` — Architecture
-4. `spec/<feature-slug>/tasks.md` — Task breakdown
+1. **Run `{SCRIPT}`** and parse `FEATURE_DIR`.
 
-If any artifact is missing, report which ones are absent and abort gracefully.
+2. **Load all artifacts**:
+   - `spec/<slug>/constitution.md` — Governance
+   - `spec/<slug>/prd.md` — Requirements
+   - `spec/<slug>/plan.md` — Architecture
+   - `spec/<slug>/tasks.md` — Task breakdown
 
-### Step 2: Analyze
+   If any artifact is missing, report which ones are absent and abort gracefully.
 
-Check for these categories:
+3. **Analyze for these categories**:
 
-| Category | What to Look For |
-|----------|-----------------|
-| **Duplications** | Redundant or near-duplicate requirements |
-| **Ambiguities** | Vague terms without measurable criteria ("fast", "secure", "scalable") |
-| **Underspecification** | Requirements/tasks missing acceptance criteria or file paths |
-| **Constitution conflicts** | Violations of non-negotiable principles |
-| **Coverage gaps** | Requirements with no tasks, or tasks with no requirements |
-| **Inconsistencies** | Terminology drift, conflicting directives |
+   | Category | What to Detect |
+   |----------|---------------|
+   | **Duplications** | Redundant or near-duplicate requirements across artifacts |
+   | **Ambiguities** | Vague terms without measurable criteria ("fast", "secure") |
+   | **Underspecification** | Requirements/tasks missing acceptance criteria or file paths |
+   | **Constitution conflicts** | Violations of non-negotiable principles |
+   | **Coverage gaps** | Requirements with no tasks, or tasks with no requirements |
+   | **Inconsistencies** | Terminology drift, conflicting directives, ordering issues |
 
-### Step 3: Report
+4. **Generate findings table** (max 50 rows):
 
-Generate a structured report:
+   | ID | Category | Severity | Location | Summary | Recommendation |
+   |----|----------|----------|----------|---------|----------------|
+   | F001 | [category] | CRITICAL/HIGH/MEDIUM/LOW | [file:section] | [issue] | [fix] |
 
-#### Findings Table (max 50 rows)
+5. **Generate coverage matrix**:
 
-| ID | Category | Severity | Location | Summary | Recommendation |
-|----|----------|----------|----------|---------|----------------|
-| F001 | [category] | CRITICAL/HIGH/MEDIUM/LOW | [file:section] | [issue] | [fix] |
+   | Requirement | Task IDs | Status |
+   |-------------|----------|--------|
+   | FR-001 | T005, T006 | Covered |
+   | FR-002 | — | **GAP** |
 
-#### Coverage Matrix
+6. **Severity definitions**:
+   - **CRITICAL**: Constitution MUST violation, missing core artifact, zero-coverage blocking requirement
+   - **HIGH**: Conflicting/duplicate requirement, untestable acceptance criterion
+   - **MEDIUM**: Terminology drift, missing NFR coverage
+   - **LOW**: Wording improvements, minor redundancy
 
-| Requirement | Task IDs | Status |
-|-------------|----------|--------|
-| FR-001 | T005, T006 | Covered |
-| FR-002 | — | GAP |
-
-#### Severity Levels
-
-- **CRITICAL**: Constitution MUST violation, missing core artifact, zero-coverage requirement
-- **HIGH**: Conflicting requirement, untestable acceptance criterion
-- **MEDIUM**: Terminology drift, missing NFR coverage
-- **LOW**: Wording improvements, minor redundancy
-
-#### Metrics
-
-- Total findings by severity
-- Coverage percentage
-- Constitution alignment score
+7. **Report metrics**:
+   - Total findings by severity
+   - Coverage percentage (requirements with tasks / total requirements)
+   - Constitution alignment score (PASS principles / total principles)
 
 ## Rules
 
-- NEVER modify any files
-- NEVER hallucinate missing sections
-- NEVER apply remediation edits without user approval
+- **NEVER** modify any files
+- **NEVER** hallucinate missing sections
+- **NEVER** apply remediation edits without explicit user approval
 - Prioritize constitution principles as non-negotiable
 - Report facts, not opinions
 
 ## Output
 
-Display the analysis report. Recommend next actions based on findings:
+Display the analysis report. Recommend next actions:
 - CRITICAL/HIGH findings → fix spec artifacts before implementing
 - MEDIUM/LOW findings → proceed with awareness
+
+## Handoff
+
+After analysis:
+- **If clean**: `/speckit.implement` to execute
+- **If issues found**: Fix artifacts, then re-run `/speckit.analyze`

@@ -1,52 +1,78 @@
-You are the CHECKLIST generator for Spec Kit.
+---
+description: Generate a quality validation checklist for a spec bundle.
+handoffs:
+  - label: Execute Implementation
+    agent: speckit.implement
+    prompt: Execute all tasks to build the feature
+scripts:
+  sh: .specify/scripts/check-prerequisites.sh --json
+---
 
-Input: $ARGUMENTS
+## User Input
 
-## Purpose
+```text
+$ARGUMENTS
+```
 
-Generate a quality validation checklist for a spec bundle. The checklist verifies that artifacts are complete, clear, consistent, and ready for implementation.
+You **MUST** consider the user input before proceeding (if not empty).
 
-## Workflow
+## Outline
 
-### Step 1: Load context
+1. **Run `{SCRIPT}`** and parse `FEATURE_DIR`.
 
-Read these files:
-1. `spec/<feature-slug>/prd.md` — Requirements
-2. `spec/<feature-slug>/plan.md` — Architecture
-3. `spec/<feature-slug>/tasks.md` — Task breakdown
-4. `.specify/templates/checklist-template.md` — Template structure
+2. **Load context**:
+   - `spec/<slug>/prd.md` — Requirements
+   - `spec/<slug>/plan.md` — Architecture
+   - `spec/<slug>/tasks.md` — Task breakdown
+   - `.specify/templates/checklist-template.md` — Template structure
 
-### Step 2: Generate checklist
+3. **Generate checklist** covering these dimensions:
 
-Using the template as scaffolding, create a checklist that covers:
+   | Dimension | Questions to Answer |
+   |-----------|-------------------|
+   | **Completeness** | Are all requirements addressed? Acceptance criteria defined? |
+   | **Clarity** | Are terms unambiguous? Can requirements be independently verified? |
+   | **Consistency** | Do artifacts agree? No terminology drift between spec/plan/tasks? |
+   | **Coverage** | Every requirement has tasks? Every task has a requirement? |
+   | **Measurability** | Are success criteria quantifiable? |
+   | **Edge Cases** | Are error scenarios covered? Boundary conditions defined? |
+   | **Constitutional Compliance** | Do all artifacts respect the constitution? |
 
-| Dimension | Questions |
-|-----------|-----------|
-| **Completeness** | Are all requirements addressed? Are acceptance criteria defined? |
-| **Clarity** | Are terms unambiguous? Can requirements be independently verified? |
-| **Consistency** | Do artifacts agree? No terminology drift? |
-| **Coverage** | Every requirement has tasks? Every task has a requirement? |
-| **Measurability** | Are success criteria quantifiable? |
-| **Edge Cases** | Are error scenarios covered? Boundary conditions defined? |
-| **Constitutional Compliance** | Do all artifacts respect the constitution? |
+4. **Each checklist item must**:
+   - Have a unique ID (CHK001, CHK002, ...)
+   - Reference the specific artifact section being validated
+   - Be answerable as pass/fail
+   - Be **specific to this feature** (no generic items)
 
-Each checklist item must:
-- Have a unique ID (CHK001, CHK002, ...)
-- Reference the specific section being validated
-- Be answerable as pass/fail
-- Be specific to this feature (no generic items)
+5. **Write the checklist** to `spec/<slug>/checklist.md`.
 
-### Step 3: Write the file
+6. **Run initial validation**: Review each item against the current artifacts.
+   - Mark items that pass: `- [x] CHK001 ...`
+   - Leave failing items unchecked: `- [ ] CHK002 ...`
 
-Write the checklist to `spec/<feature-slug>/checklist.md`.
+7. **Build summary table**:
+   ```
+   | Dimension | Items | Passed | % |
+   ```
 
 ## Rules
 
 - Items must be SPECIFIC to this feature's artifacts
-- Do NOT include generic items — every item must reference a real section
+- Do NOT include generic boilerplate items
+- Every item must reference a real section in a real artifact
 - Keep items concise and actionable
 - Include a summary table with pass percentages
 
 ## Output
 
-Confirm the file was written. Report total items by dimension.
+Report:
+1. File path written
+2. Total items by dimension
+3. Initial pass/fail counts
+4. Overall readiness assessment
+
+## Handoff
+
+After checklist is generated:
+- **If all pass**: `/speckit.implement` to execute
+- **If failures**: Fix artifacts, re-run `/speckit.checklist`
