@@ -1,42 +1,30 @@
 {
-  "name": "ipai-odoo (compose ssot)",
-  "dockerComposeFile": [
-    "../sandbox/dev/compose.yml"
-  ],
-  "service": "odoo",
-  "workspaceFolder": "/workspaces/odoo",
-  "shutdownAction": "stopCompose",
-  "overrideCommand": false,
-
+  "name": "InsightPulseAI-Odoo-DevContainer",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true,
+      "upgradePackages": true,
+      "username": "devcontainer",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
       "version": "latest"
-    }
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
-
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
-        "ms-azuretools.vscode-docker",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "redhat.vscode-yaml",
-        "GitHub.copilot"
-      ],
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.languageServer": "Pylance",
-        "terminal.integrated.defaultProfile.linux": "bash"
-      }
-    }
-  },
-
-  "postCreateCommand": "python3 --version || true",
-
-  "forwardPorts": [8069, 5432],
+  "forwardPorts": [
+    8069,
+    5432,
+    8080
+  ],
   "portsAttributes": {
     "8069": {
       "label": "Odoo HTTP",
@@ -45,6 +33,48 @@
     "5432": {
       "label": "PostgreSQL",
       "onAutoForward": "silent"
+    },
+    "8080": {
+      "label": "Additional Services",
+      "onAutoForward": "silent"
+    }
+  },
+  "containerUser": "devcontainer",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "chmod +x ./.devcontainer/scripts/post-create.sh && ./.devcontainer/scripts/post-create.sh",
+  "postStartCommand": "chmod +x ./.devcontainer/scripts/post-start.sh && ./.devcontainer/scripts/post-start.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mhutchie.git-graph",
+        "eamodio.gitlens",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "openai.chatgpt",
+        "anthropic.claude-code"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Pylance",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "debug.javascript.autoAttachFilter": "disabled",
+        "git.autofetch": true,
+        "chat.promptFilesRecommendations": {
+          "speckit.constitution": true,
+          "speckit.specify": true,
+          "speckit.plan": true,
+          "speckit.tasks": true,
+          "speckit.implement": true
+        },
+        "chat.tools.terminal.autoApprove": {
+          ".specify/scripts/bash/": true,
+          ".specify/scripts/powershell/": true
+        }
+      }
     }
   }
 }
