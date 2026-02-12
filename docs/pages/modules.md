@@ -1,102 +1,96 @@
 # Modules
 
-Overview of IPAI custom modules and OCA community addons.
+Overview of IPAI custom modules and OCA community addons for Odoo 19 CE.
 
-## Module Hierarchy
+## Module Philosophy
 
 ```
-ipai_dev_studio_base           # Base dependencies (install first)
-    └── ipai_workspace_core    # Core workspace functionality
-        └── ipai_ce_branding   # CE branding layer
-            ├── ipai_ai_core   # AI core framework
-            │   ├── ipai_ai_agents     # Agent system
-            │   └── ipai_ai_prompts    # Prompt management
-            ├── ipai_finance_ppm       # Finance PPM
-            │   └── ipai_finance_month_end
-            └── [other modules]
+Config -> OCA -> Delta (ipai_*)
 ```
+
+1. **Config**: Built-in Odoo CE configuration first
+2. **OCA**: Vetted community modules second
+3. **Delta**: Custom `ipai_*` only for truly custom needs
 
 ## IPAI Modules by Domain
 
+### Finance / PPM
+
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_finance_ppm` | 19.0 | Project Portfolio Management (Clarity parity) |
+| `ipai_finance_ppm_umbrella` | 19.0.1.1.0 | Full seed data: 9 employees, 22 BIR forms, 36 tasks, RACI |
+| `ipai_finance_ppm_golive` | 19.0 | Go-live checklist (60+ items, CFO sign-off) |
+| `ipai_finance_closing` | 19.0 | SAP AFC-style month-end closing templates |
+| `ipai_month_end` | 19.0 | Month-end automation with PH holiday awareness |
+| `ipai_bir_tax_compliance` | 19.0 | BIR tax compliance (36 eBIRForms) |
+
 ### AI / Agents
 
-| Module | Description |
-|--------|-------------|
-| `ipai_ai_core` | AI core framework |
-| `ipai_ai_agents` | Agent system |
-| `ipai_ai_prompts` | Prompt management |
-| `ipai_agent_core` | Core agent framework |
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_ai_agent_builder` | 19.0.1.0.0 | AI agents with topics, tools, RAG (Joule parity) |
+| `ipai_ai_rag` | 19.0 | RAG pipeline for knowledge retrieval |
+| `ipai_ai_tools` | 19.0 | AI tools integration |
+| `ipai_ask_ai` | 19.0 | ChatGPT/Gemini provider toggles |
+| `ipai_ask_ai_chatter` | 19.0 | Headless AI chatter integration |
 
-### Finance
+### OCR / Documents
 
-| Module | Description |
-|--------|-------------|
-| `ipai_finance_ppm` | Project Portfolio Management |
-| `ipai_finance_bir_compliance` | BIR tax compliance |
-| `ipai_finance_month_end` | Month-end close workflows |
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_ocr_gateway` | 19.0.1.0.0 | Multi-provider OCR (Tesseract, GCV, Azure) |
 
-### Platform
+### Platform / Workflow
 
-| Module | Description |
-|--------|-------------|
-| `ipai_platform_workflow` | Workflow automation |
-| `ipai_platform_audit` | Audit trail |
-| `ipai_platform_approvals` | Approval workflows |
-
-### Workspace
-
-| Module | Description |
-|--------|-------------|
-| `ipai_workspace_core` | Core workspace functionality |
-| `ipai_dev_studio_base` | Development studio base |
-
-### WorkOS
-
-| Module | Description |
-|--------|-------------|
-| `ipai_workos_core` | WorkOS core |
-| `ipai_workos_blocks` | Block-based UI |
-| `ipai_workos_canvas` | Canvas interface |
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_platform_approvals` | 19.0 | Approval workflow system |
+| `ipai_platform_audit` | 19.0 | Audit trail logging |
+| `ipai_platform_permissions` | 19.0 | Permission management |
+| `ipai_platform_workflow` | 19.0 | Workflow engine |
 
 ### Integrations
 
-| Module | Description |
-|--------|-------------|
-| `ipai_n8n_connector` | n8n workflow integration |
-| `ipai_mattermost_connector` | Mattermost integration |
-| `ipai_superset_connector` | Superset BI integration |
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_ops_mirror` | 19.0 | Supabase SSOT sync (read-only mirror) |
+| `ipai_superset_connector` | 19.0 | Apache Superset BI integration |
+| `ipai_sms_gateway` | 19.0 | SMS gateway |
 
 ### Theme / UI
 
-| Module | Description |
-|--------|-------------|
-| `ipai_theme_tbwa_backend` | TBWA backend theme |
-| `ipai_ui_brand_tokens` | Brand design tokens |
-| `ipai_ce_branding` | CE branding layer |
+| Module | Version | Description |
+|--------|---------|-------------|
+| `ipai_theme_tbwa` | 19.0 | TBWA backend theme |
+| `ipai_theme_tbwa_backend` | 19.0 | Consolidated backend theme |
 
-## OCA Modules
+## OCA Modules (19.0 Available)
 
-The repository includes OCA (Odoo Community Association) modules for standard functionality:
+| Module | Repository | Version |
+|--------|-----------|---------|
+| `account_financial_report` | OCA/account-financial-reporting | 19.0.0.0.2 |
+| `account_tax_balance` | OCA/account-financial-reporting | 19.0.1.0.2 |
+| `partner_statement` | OCA/account-financial-reporting | 19.0.1.0.0 |
 
-```
-addons/OCA/
-├── account-financial-reporting/
-├── account-reconcile/
-├── bank-payment/
-├── reporting-engine/
-├── server-tools/
-├── web/
-└── ...
-```
+## OCA Submodules (18.0 branch, tracked)
 
-### Key OCA Repositories
-
-| Repository | Purpose |
-|------------|---------|
-| `server-tools` | Server utilities |
-| `web` | Web UI enhancements |
-| `account-financial-reporting` | Financial reports |
-| `reporting-engine` | Report generation |
+| Repository | Path | Purpose |
+|-----------|------|---------|
+| `reporting-engine` | external-src/ | Report generation |
+| `account-closing` | external-src/ | Period closing |
+| `project` | external-src/ | Project extensions |
+| `hr-expense` | external-src/ | Expense extensions |
+| `purchase-workflow` | external-src/ | Purchase workflows |
+| `maintenance` | external-src/ | Maintenance management |
+| `dms` | external-src/ | Document management |
+| `calendar` | external-src/ | Calendar extensions |
+| `web` | external-src/ | Web UI enhancements |
+| `account-invoicing` | external-src/ | Invoice extensions |
+| `account-financial-reporting` | external-src/ | Financial reports |
+| `account-financial-tools` | external-src/ | Financial tools |
+| `contract` | external-src/ | Contract management |
+| `server-tools` | external-src/ | Server utilities |
 
 ## Installing Modules
 
@@ -104,10 +98,15 @@ addons/OCA/
 
 ```bash
 # Install specific module
-docker compose exec odoo-core odoo -d odoo_core -i ipai_finance_ppm --stop-after-init
+docker compose exec odoo-core odoo -d odoo -i ipai_finance_ppm --stop-after-init
 
 # Update module
-docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_ppm --stop-after-init
+docker compose exec odoo-core odoo -d odoo -u ipai_finance_ppm --stop-after-init
+
+# Install Finance PPM full stack
+docker compose exec odoo-core odoo -d odoo \
+  -i ipai_finance_ppm,ipai_finance_ppm_umbrella,ipai_finance_ppm_golive,ipai_month_end,ipai_bir_tax_compliance \
+  --stop-after-init
 ```
 
 ### Via Script
@@ -119,27 +118,26 @@ docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_ppm --stop-after
 
 ## Module Development
 
-### Create New Module
+### Naming Convention
 
-```bash
-# Use mrbob scaffolding
-mrbob bobtemplates.odoo:addon
-# Move to addons/ipai/
+```
+ipai_<domain>_<feature>
 ```
 
-### Module Manifest
+Examples: `ipai_finance_ppm`, `ipai_ai_tools`, `ipai_auth_oidc`
+
+### Module Manifest (19.0)
 
 ```python
-# __manifest__.py
 {
     'name': 'IPAI My Module',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'IPAI',
-    'summary': 'My module description',
+    'summary': 'Module description',
     'author': 'InsightPulse AI',
-    'website': 'https://github.com/jgtolentino/odoo',
+    'website': 'https://insightpulseai.com',
     'license': 'LGPL-3',
-    'depends': ['ipai_dev_studio_base'],
+    'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
         'views/my_views.xml',
@@ -154,8 +152,8 @@ mrbob bobtemplates.odoo:addon
 
 ```bash
 # Run module tests
-docker compose exec odoo-core odoo -d odoo_core --test-enable -i ipai_my_module --stop-after-init
+docker compose exec odoo-core odoo -d odoo --test-enable -i ipai_my_module --stop-after-init
 
 # Run specific test
-docker compose exec odoo-core odoo -d odoo_core --test-tags ipai_my_module --stop-after-init
+docker compose exec odoo-core odoo -d odoo --test-tags ipai_my_module --stop-after-init
 ```
