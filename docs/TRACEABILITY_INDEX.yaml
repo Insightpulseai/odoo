@@ -2,10 +2,10 @@
 # TRACEABILITY_INDEX.yaml
 # Cross-layer traceability mapping for enterprise operating model
 # Format: <LAYER>-<DOMAIN>-<NUMBER>
-# Layers: STRAT (strategy), PORT (portfolio), PROC (process), CTRL (control), EVID (evidence)
+# Layers: STRAT (strategy), OKR (objectives), PORT (portfolio), PROC (process), CTRL (control), EVID (evidence)
 
-version: "1.0.0"
-last_updated: "2026-02-12T19:00:00Z"
+version: "1.1.0"
+last_updated: "2026-02-12T20:30:00Z"
 
 # ============================================================================
 # Strategy Layer → Portfolio Initiatives
@@ -37,6 +37,130 @@ strategies:
     initiatives:
       - PORT-2026-004
       - PORT-2026-005
+
+# ============================================================================
+# OKRs (H1 2026) → Strategies & Portfolio Initiatives
+# ============================================================================
+
+okrs:
+  OBJ-1:
+    name: "Establish a verifiable, audit-grade enterprise operating model with zero hallucinated capabilities"
+    owner: enterprise_architecture
+    priority: high
+    status: in_progress
+    progress: 70
+    portfolio_initiatives:
+      - PORT-2026-011  # Integration Hardening & Compliance
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-1.1: "100% of agent capabilities are backed by code evidence (85% current)"
+      - KR-1.2: "0 unverified capability claims merged into default branch (✅ 100%)"
+      - KR-1.3: "All governance artifacts stored as immutable evidence (✅ 100%)"
+      - KR-1.4: "Policy enforcement blocks forbidden operations in CI (✅ 100%)"
+      - KR-1.5: "Traceability index links strategy → portfolio → evidence (80% current)"
+
+  OBJ-2:
+    name: "Reverse Odoo.sh safely using a CI-first, browser-safe control plane"
+    owner: devops_platform_engineering
+    priority: high
+    status: in_progress
+    progress: 60
+    portfolio_initiatives:
+      - PORT-2026-008  # OdooOps Automation
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-2.1: "Odoo operations executable without Docker or host CLI (3 ops pending)"
+      - KR-2.2: "Policy-enforced separation of execution contexts (75% current)"
+      - KR-2.3: "Odoo dev + ops stacks classified and governed (✅ 90%)"
+      - KR-2.4: "Automated backup and snapshot scripts exist and are executable (pending)"
+      - KR-2.5: "Evidence of OdooOps automation stored and indexed (2/5 workflows)"
+
+  OBJ-3:
+    name: "Position Odoo CE + OCA as the system-of-record, not the control plane"
+    owner: enterprise_architecture
+    priority: high
+    status: in_progress
+    progress: 85
+    portfolio_initiatives:
+      - PORT-2026-001  # Odoo CE Baseline
+    strategies:
+      - STRAT-PARITY-001
+    key_results:
+      - KR-3.1: "Odoo CE + OCA covers ≥80% of functional ERP needs (✅ 85%)"
+      - KR-3.2: "No heavy PPM or governance logic embedded in Odoo UI (✅ 0 KB)"
+      - KR-3.3: "Only one thin custom bridge module allowed (✅ 0 violations)"
+      - KR-3.4: "All enterprise controls live outside Odoo (✅ 100%)"
+      - KR-3.5: "ERP changes trace back to portfolio initiatives (90% current)"
+
+  OBJ-4:
+    name: "Implement portfolio & execution governance without Enterprise bloat"
+    owner: portfolio_management_office
+    priority: high
+    status: in_progress
+    progress: 70
+    portfolio_initiatives:
+      - PORT-2026-005  # Plane Integration
+    strategies:
+      - STRAT-INTEGRATION-001
+    key_results:
+      - KR-4.1: "Plane used as the execution system (✅ 95% uptime)"
+      - KR-4.2: "OKRs explicitly defined and reviewable (✅ 100%)"
+      - KR-4.3: "Each initiative maps to at least one evidence artifact (✅ 100%)"
+      - KR-4.4: "Supabase acts as SSOT for ops & control data (✅ 90%)"
+      - KR-4.5: "GitHub remains the immutable source of truth (✅ 100%)"
+
+  OBJ-5:
+    name: "Enforce a no-illusion AI operating policy across all agent interactions"
+    owner: ai_governance
+    priority: critical
+    status: in_progress
+    progress: 80
+    portfolio_initiatives:
+      - PORT-2026-011  # Integration Hardening & Compliance
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-5.1: "Agents cannot claim capabilities without code paths (85% current)"
+      - KR-5.2: "Unverified claims are automatically removed (✅ 100%)"
+      - KR-5.3: "Claude Code Web operates under hard constraints (✅ 0 violations)"
+      - KR-5.4: "All agent outputs are classifiable and reviewable (75% current)"
+      - KR-5.5: "Governance evidence generated per enforcement change (✅ 100%)"
+
+  OBJ-6:
+    name: "Create a scalable path from single-repo execution to enterprise Dataverse platform"
+    owner: platform_architecture
+    priority: medium
+    status: in_progress
+    progress: 60
+    portfolio_initiatives:
+      - PORT-2026-003  # Monorepo Architecture
+    strategies:
+      - STRAT-PARITY-001
+    key_results:
+      - KR-6.1: "All work executable from a single Odoo-centric monorepo (✅ 0 deps)"
+      - KR-6.2: "Clear boundaries defined for future repo split (80% current)"
+      - KR-6.3: "No architectural dead-ends introduced (✅ 0 dead-ends)"
+      - KR-6.4: "URLs and deployment model standardized (✅ 100%)"
+      - KR-6.5: "Enterprise expansion does not require re-architecture (✅ 0 needs)"
+
+  OBJ-7:
+    name: "Maintain continuous governance health & compliance posture"
+    owner: governance_office
+    priority: high
+    status: in_progress
+    progress: 75
+    portfolio_initiatives:
+      - PORT-2026-009  # Governance Framework
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-7.1: "All PRs pass policy + capability CI gates (✅ 100%)"
+      - KR-7.2: "Evidence index updated with every material change (✅ 100%)"
+      - KR-7.3: "No undocumented operational stacks (✅ 100%)"
+      - KR-7.4: "No manual production changes without evidence (✅ 0 changes)"
+      - KR-7.5: "Quarterly governance snapshot reproducible from repo (✅ 100%)"
 
 # ============================================================================
 # Portfolio Initiatives → Execution + Controls + Evidence
@@ -230,6 +354,43 @@ portfolio_initiatives:
 
     evidence:
       - EVID-20260212-005
+
+  PORT-2026-011:
+    name: "Integration Hardening & Compliance"
+    type: capability
+    status: in_progress
+    owner: integration_team
+    strategy: STRAT-OPS-001
+    description: "BIR forms registry, TBWA email integration, Plane OKR automation, NO_CLI_NO_DOCKER enforcement, Supabase feature rubric"
+
+    processes:
+      - PROC-COMPLY-001  # Compliance workflows
+      - PROC-INTEG-002   # Integration patterns
+      - PROC-GOVERN-001  # Governance framework
+
+    execution:
+      - path: scripts/bir/scrape-bir-forms.ts
+        type: script
+      - path: scripts/plane/bootstrap-workspace.ts
+        type: script
+      - path: scripts/gates/scan-forbidden-commands.sh
+        type: script
+      - path: .github/workflows/bir-forms-scraper.yml
+        type: workflow
+      - path: .github/workflows/no-cli-no-docker-gate.yml
+        type: workflow
+
+    controls:
+      - CTRL-DOC-002     # Documentation standards
+      - CTRL-GATE-003    # CI gate enforcement
+      - CTRL-SOP-004     # Policy compliance
+
+    evidence:
+      - EVID-20260212-006
+
+    okr_links:
+      - OBJ-1  # Verifiable enterprise operating model
+      - OBJ-5  # No-illusion AI operating policy
 
 # ============================================================================
 # Process Definitions (L4-L7 hierarchy)
@@ -523,6 +684,28 @@ evidence_records:
     status: in_progress
     verified_by: devops_team
 
+  EVID-20260212-006:
+    timestamp: "2026-02-12T20:00:00Z"
+    type: implementation
+    scope: integration-hardening-compliance
+    portfolio_initiative: PORT-2026-011
+    process_id: PROC-INTEG-002
+    controls: [CTRL-DOC-002, CTRL-GATE-003, CTRL-SOP-004]
+    artifacts:
+      - path: docs/evidence/20260212-2000/IMPLEMENTATION_SUMMARY.md
+      - path: docs/evidence/20260212-2000/bir-forms-registry/
+      - path: docs/evidence/20260212-2000/email-integration/
+      - path: docs/evidence/20260212-2000/plane-bootstrap/
+      - path: docs/evidence/20260212-2000/no-cli-docker-gate/
+      - path: docs/evidence/20260212-2000/supabase-rubric/
+      - path: docs/strategy/SUPABASE_FEATURE_RUBRIC.md
+      - path: docs/strategy/OKR-2026-H1.md
+      - path: docs/constitution/NO_CLI_NO_DOCKER.md
+      - path: docs/integration/email/TBWA_OUTLOOK_INTEGRATION.md
+      - path: docs/integration/okr/PLANE_OKR_MAPPING.md
+    status: complete
+    verified_by: integration_team
+
 # ============================================================================
 # Architecture Decision Records
 # ============================================================================
@@ -547,13 +730,15 @@ decisions:
 
 id_conventions:
   strategy: "STRAT-<DOMAIN>-<NUMBER>"
+  okr_objective: "OBJ-<NUMBER>"
+  okr_key_result: "KR-<OBJECTIVE>.<NUMBER>"
   portfolio: "PORT-<YEAR>-<NUMBER>"
   process: "PROC-<DOMAIN>-<NUMBER>"
   control: "CTRL-<TYPE>-<NUMBER>"
   evidence: "EVID-<YYYYMMDD>-<NUMBER>"
 
 layer_mapping:
-  1_strategy: "OKRs, value streams, capabilities"
+  1_strategy: "Strategies, OKRs, value streams, capabilities"
   2_portfolio: "Spec bundles, roadmaps, investment tracking"
   3_process: "Governance, BPMN models, controls (L4-L7)"
   4_execution: "Systems that act (modules, scripts, workflows)"
