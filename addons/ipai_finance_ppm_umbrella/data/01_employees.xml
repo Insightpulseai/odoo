@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <odoo>
   <data noupdate="1">
-    <!-- 8 Employees for TBWA Finance SSC -->
+    <!-- 9 Employees for TBWA Finance SSC -->
+    <record id="user_ckvc" model="res.users">
+      <field name="name">CKVC</field>
+      <field name="login">ckvc</field>
+    </record>
     <record id="user_bom" model="res.users">
       <field name="name">BOM</field>
       <field name="login">bom</field>

@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/pages/**'
+      - 'docs/ee-parity-gate/**'
       - 'mkdocs.yml'
       - 'requirements-docs.txt'
       - '.github/workflows/docs-pages.yml'

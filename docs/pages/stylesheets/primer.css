@@ -1,0 +1,245 @@
+/*
+ * Primer Design System Tokens for MkDocs Material
+ * Based on GitHub's Primer (https://primer.style)
+ * Applies Primer color primitives, spacing, and typography to Material theme
+ */
+
+/* === Primer Color Primitives === */
+:root {
+  /* Primer fg */
+  --primer-fg-default: #1f2328;
+  --primer-fg-muted: #656d76;
+  --primer-fg-subtle: #6e7781;
+  --primer-fg-on-emphasis: #ffffff;
+
+  /* Primer canvas (bg) */
+  --primer-canvas-default: #ffffff;
+  --primer-canvas-subtle: #f6f8fa;
+  --primer-canvas-inset: #f6f8fa;
+
+  /* Primer border */
+  --primer-border-default: #d0d7de;
+  --primer-border-muted: #d8dee4;
+  --primer-border-subtle: rgba(27, 31, 36, 0.15);
+
+  /* Primer accent (blue) */
+  --primer-accent-fg: #0969da;
+  --primer-accent-emphasis: #0550ae;
+  --primer-accent-muted: rgba(84, 174, 255, 0.4);
+  --primer-accent-subtle: #ddf4ff;
+
+  /* Primer success (green) */
+  --primer-success-fg: #1a7f37;
+  --primer-success-emphasis: #1f883d;
+  --primer-success-subtle: #dafbe1;
+
+  /* Primer danger (red) */
+  --primer-danger-fg: #d1242f;
+  --primer-danger-emphasis: #cf222e;
+  --primer-danger-subtle: #ffebe9;
+
+  /* Primer attention (yellow) */
+  --primer-attention-fg: #9a6700;
+  --primer-attention-emphasis: #bf8700;
+  --primer-attention-subtle: #fff8c5;
+
+  /* Primer spacing scale */
+  --primer-space-0: 0;
+  --primer-space-1: 4px;
+  --primer-space-2: 8px;
+  --primer-space-3: 16px;
+  --primer-space-4: 24px;
+  --primer-space-5: 32px;
+  --primer-space-6: 40px;
+
+  /* Primer type scale */
+  --primer-text-body-size: 14px;
+  --primer-text-body-lineHeight: 1.5;
+
+  /* Primer radii */
+  --primer-borderRadius-small: 3px;
+  --primer-borderRadius-medium: 6px;
+  --primer-borderRadius-large: 12px;
+}
+
+/* === Dark mode Primer tokens === */
+[data-md-color-scheme="slate"] {
+  --primer-fg-default: #e6edf3;
+  --primer-fg-muted: #8b949e;
+  --primer-fg-subtle: #6e7681;
+  --primer-fg-on-emphasis: #ffffff;
+
+  --primer-canvas-default: #0d1117;
+  --primer-canvas-subtle: #161b22;
+  --primer-canvas-inset: #010409;
+
+  --primer-border-default: #30363d;
+  --primer-border-muted: #21262d;
+  --primer-border-subtle: rgba(240, 246, 252, 0.1);
+
+  --primer-accent-fg: #58a6ff;
+  --primer-accent-emphasis: #1f6feb;
+  --primer-accent-muted: rgba(56, 139, 253, 0.4);
+  --primer-accent-subtle: rgba(56, 139, 253, 0.15);
+
+  --primer-success-fg: #3fb950;
+  --primer-success-emphasis: #238636;
+  --primer-success-subtle: rgba(46, 160, 67, 0.15);
+
+  --primer-danger-fg: #f85149;
+  --primer-danger-emphasis: #da3633;
+  --primer-danger-subtle: rgba(248, 81, 73, 0.15);
+
+  --primer-attention-fg: #d29922;
+  --primer-attention-emphasis: #bb8009;
+  --primer-attention-subtle: rgba(187, 128, 9, 0.15);
+}
+
+/* === Apply Primer to Material theme === */
+
+/* Primary/accent color override */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--primer-accent-emphasis);
+  --md-primary-fg-color--light: var(--primer-accent-muted);
+  --md-primary-fg-color--dark: var(--primer-accent-fg);
+  --md-primary-bg-color: var(--primer-fg-on-emphasis);
+  --md-accent-fg-color: var(--primer-accent-fg);
+  --md-default-fg-color: var(--primer-fg-default);
+  --md-default-fg-color--light: var(--primer-fg-muted);
+  --md-default-fg-color--lighter: var(--primer-fg-subtle);
+  --md-default-bg-color: var(--primer-canvas-default);
+  --md-default-bg-color--light: var(--primer-canvas-subtle);
+  --md-code-bg-color: var(--primer-canvas-subtle);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--primer-accent-emphasis);
+  --md-primary-fg-color--light: var(--primer-accent-muted);
+  --md-primary-fg-color--dark: var(--primer-accent-fg);
+  --md-primary-bg-color: var(--primer-fg-on-emphasis);
+  --md-accent-fg-color: var(--primer-accent-fg);
+  --md-default-fg-color: var(--primer-fg-default);
+  --md-default-fg-color--light: var(--primer-fg-muted);
+  --md-default-fg-color--lighter: var(--primer-fg-subtle);
+  --md-default-bg-color: var(--primer-canvas-default);
+  --md-default-bg-color--light: var(--primer-canvas-subtle);
+  --md-code-bg-color: var(--primer-canvas-subtle);
+}
+
+/* Typography — Primer system font stack */
+body,
+.md-typeset {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: var(--primer-text-body-size);
+  line-height: var(--primer-text-body-lineHeight);
+  color: var(--primer-fg-default);
+}
+
+.md-typeset code,
+.md-typeset pre {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 85%;
+}
+
+/* Primer-style code blocks */
+.md-typeset pre {
+  border: 1px solid var(--primer-border-default);
+  border-radius: var(--primer-borderRadius-medium);
+}
+
+.md-typeset code {
+  border-radius: var(--primer-borderRadius-small);
+  padding: 0.2em 0.4em;
+}
+
+/* Primer-style tables */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--primer-border-default);
+  border-radius: var(--primer-borderRadius-medium);
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--primer-canvas-subtle);
+  border-bottom: 1px solid var(--primer-border-default);
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid var(--primer-border-muted);
+}
+
+/* Primer-style admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--primer-borderRadius-medium);
+  border: 1px solid var(--primer-border-default);
+  box-shadow: none;
+}
+
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-left: 3px solid var(--primer-accent-fg);
+}
+
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-left: 3px solid var(--primer-attention-fg);
+}
+
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  border-left: 3px solid var(--primer-danger-fg);
+}
+
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-left: 3px solid var(--primer-success-fg);
+}
+
+/* Primer-style links */
+.md-typeset a {
+  color: var(--primer-accent-fg);
+  text-decoration: none;
+}
+
+.md-typeset a:hover {
+  text-decoration: underline;
+}
+
+/* Primer-style header */
+.md-header {
+  background-color: #24292f;
+  box-shadow: inset 0 -1px 0 var(--primer-border-subtle);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background-color: #161b22;
+}
+
+/* Primer-style nav tabs */
+.md-tabs {
+  background-color: #24292f;
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #161b22;
+}
+
+/* Primer-style task lists */
+.md-typeset .task-list-control input[type="checkbox"] {
+  accent-color: var(--primer-success-emphasis);
+}
+
+/* Primer-style blockquotes */
+.md-typeset blockquote {
+  border-left: 3px solid var(--primer-border-default);
+  color: var(--primer-fg-muted);
+  padding: var(--primer-space-2) var(--primer-space-3);
+}
+
+/* Status badges */
+.status-ship { color: var(--primer-success-fg); font-weight: 600; }
+.status-block { color: var(--primer-danger-fg); font-weight: 600; }
+.status-future { color: var(--primer-attention-fg); font-weight: 600; }
