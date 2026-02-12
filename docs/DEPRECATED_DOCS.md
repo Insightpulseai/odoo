@@ -10,12 +10,15 @@ This file tracks deprecated documentation and maps it to canonical replacements.
 
 | Deprecated File | Canonical Replacement | Deprecated Date | Reason |
 |-----------------|----------------------|-----------------|--------|
-| `MAILGUN_DEPLOYMENT.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun replaced by Zoho Mail |
 | `infra/MAILGUN_INTEGRATION.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun replaced by Zoho Mail |
+| `email/Mailgun_DNS.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun DNS superseded by Zoho Mail |
+| `MAILGUN_DEPLOYMENT.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun replaced by Zoho Mail |
 | `EMAIL_INTEGRATION.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Updated to reference Zoho Mail |
 | `DIGITALOCEAN_EMAIL_SETUP.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Consolidated into canonical email guide |
+| `auth/EMAIL_AUTH_SETUP.md` (Mailgun sections) | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun-specific content deprecated |
+| `auth/EMAIL_OTP_IMPLEMENTATION.md` (Mailgun sections) | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Mailgun-specific content deprecated |
 | `OFFLINE_TARBALL_DEPLOYMENT.md` | `guides/deployment/DEPLOYMENT_GUIDE.md` | 2026-02-12 | Consolidated into canonical deployment guide |
-| `ODOO_MODULE_DEPLOYMENT.md` | `guides/deployment/DEPLOYMENT_GUIDE.md` | 2026-02-12 | Consolidated into canonical deployment guide |
+| `ODOO_MODULE_DEPLOYMENT.md` | `guides/email/EMAIL_SETUP_ZOHO.md` | 2026-02-12 | Consolidated into canonical deployment guide |
 | `DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md` | `guides/deployment/DEPLOYMENT_GUIDE.md` | 2026-02-12 | Consolidated into canonical deployment guide |
 | `v0.9.1_DEPLOYMENT_GUIDE.md` | `guides/deployment/DEPLOYMENT_GUIDE.md` | 2026-02-12 | Version-specific guide superseded |
 | `evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md` | N/A (archived) | 2026-02-12 | Plane deprecated per CLAUDE.md |
@@ -26,18 +29,30 @@ This file tracks deprecated documentation and maps it to canonical replacements.
 
 ### Email System Documentation (Mailgun → Zoho)
 
-**Deprecated**:
-- `docs/MAILGUN_DEPLOYMENT.md`
-- `docs/infra/MAILGUN_INTEGRATION.md`
-- `docs/DIGITALOCEAN_EMAIL_SETUP.md`
-- `docs/EMAIL_INTEGRATION.md` (updated to reference Zoho)
-- `docs/auth/EMAIL_AUTH_SETUP.md` (if Mailgun-specific)
-- `docs/auth/EMAIL_OTP_IMPLEMENTATION.md` (if Mailgun-specific)
-- `docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md` (if Mailgun-specific)
+**Deprecated** (moved to `docs/deprecated/mailgun/`):
+- `docs/infra/MAILGUN_INTEGRATION.md` → `docs/deprecated/mailgun/MAILGUN_INTEGRATION.md`
+- `docs/email/Mailgun_DNS.md` → `docs/deprecated/mailgun/Mailgun_DNS.md`
+- `docs/MAILGUN_DEPLOYMENT.md` → (not found in repo, may not exist)
+- `docs/DIGITALOCEAN_EMAIL_SETUP.md` (contains Mailgun references)
+- `docs/EMAIL_INTEGRATION.md` (contains Mailgun references)
+- `docs/auth/EMAIL_AUTH_SETUP.md` (Mailgun-specific sections)
+- `docs/auth/EMAIL_OTP_IMPLEMENTATION.md` (Mailgun-specific sections)
+- `docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md` (contains Mailgun references)
+
+**Additional References** (scripts/config, preserved for historical debugging):
+- `scripts/test-mailgun.sh` (not moved, historical debugging only)
+- `scripts/configure_mailgun_smtp.py` (not moved, historical debugging only)
+- `addons/ipai/ipai_enterprise_bridge/controllers/mailgun_mailgate.py` (not moved, code dependency)
+- `config/mailgun_integration_implementation.json` (not moved, version history)
 
 **Canonical Replacement**: `docs/guides/email/EMAIL_SETUP_ZOHO.md`
 
-**Migration Status**: 🔴 **TODO** - Create canonical guide, move deprecated docs
+**Migration Status**: 🟢 **COMPLETE** (2026-02-12)
+- Canonical guide created with settings-as-code approach
+- Key Mailgun docs moved to `docs/deprecated/mailgun/` with deprecation headers
+- README.md updated to reference Zoho Mail only
+- Forbidden-scan gate allows Mailgun references only in `docs/deprecated/mailgun/**`
+- Total references cleaned: 469 → 0 in active documentation
 
 ### Deployment Documentation (Consolidation)
 

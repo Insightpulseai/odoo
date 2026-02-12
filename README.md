@@ -295,20 +295,21 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 
 ## Email Integration
 
-Complete CLI-only email integration using **Mailgun** for SMTP delivery with settings-as-code deployment.
+Complete CLI-only email integration using **Zoho Mail SMTP** for enterprise-grade email delivery with settings-as-code deployment.
 
 **Production Architecture** (Direct Pattern):
 ```
-Odoo 19 CE → Mailgun SMTP (port 2525, STARTTLS) → Email delivery
-Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
+Odoo 19 CE → Zoho Mail SMTP (port 587, STARTTLS) → Email delivery
+Calendar invites, alerts, notifications → Compatible with Microsoft 365/Outlook recipients
 ```
 
-**DNS Status**: ✅ All records verified (MX, SPF, DKIM, DMARC)
+**DNS Status**: ✅ All records verified (SPF, DKIM, DMARC)
 
-**Production Status**: ✅ **DEPLOYED** (2026-01-31)
-- Mail server ID: 2
-- SMTP host: smtp.mailgun.org:2525
+**Production Status**: ✅ **DEPLOYED** (2026-02-12)
+- Mail server: Zoho Mail SMTP
+- SMTP host: smtp.zoho.com:587
 - Configuration: insightpulseai.com domain
+- External mail compatibility: Microsoft 365/Outlook (recipient-only, one-way notifications)
 
 **Settings-as-Code Deployment:**
 
@@ -316,16 +317,17 @@ Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
 # 1. Create secrets file on production
 ssh root@178.128.112.214
 sudo mkdir -p /opt/odoo/secrets
-sudo bash -c 'cat > /opt/odoo/secrets/mailgun.env <<EOF
-MAILGUN_SMTP_HOST=smtp.mailgun.org
-MAILGUN_SMTP_PORT=2525
-MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
-MAILGUN_SMTP_PASS=__REPLACE__
+sudo bash -c 'cat > /opt/odoo/secrets/zoho-mail.env <<EOF
+ZOHO_SMTP_SERVER=smtp.zoho.com
+ZOHO_SMTP_PORT=587
+ZOHO_SMTP_USER=no-reply@insightpulseai.com
+ZOHO_SMTP_APP_PASSWORD=__REPLACE_WITH_APP_PASSWORD__
+ZOHO_SMTP_FROM=no-reply@insightpulseai.com
 EOF'
-sudo chmod 600 /opt/odoo/secrets/mailgun.env
+sudo chmod 600 /opt/odoo/secrets/zoho-mail.env
 
 # 2. Apply settings to database
-set -a; source /opt/odoo/secrets/mailgun.env; set +a
+set -a; source /opt/odoo/secrets/zoho-mail.env; set +a
 export ODOO_DB=odoo
 export PGHOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
 export PGPORT="25060"
@@ -338,22 +340,22 @@ python3 scripts/odoo/apply_settings_as_code.py
 psql "host=$PGHOST port=$PGPORT user=$PGUSER dbname=$ODOO_DB sslmode=require" -c "
 SELECT id, name, smtp_host, smtp_user, smtp_port
 FROM ir_mail_server
-WHERE name='Mailgun SMTP (mg.insightpulseai.com)';"
+WHERE name='Zoho Mail SMTP (insightpulseai.com)';"
 ```
 
 **Documentation:**
-- **Settings-as-Code Guide**: [docs/MAILGUN_DEPLOYMENT.md](docs/MAILGUN_DEPLOYMENT.md) (idempotent, zero-secret-in-git)
-- **Complete Integration Guide**: [docs/EMAIL_INTEGRATION.md](docs/EMAIL_INTEGRATION.md) (includes n8n relay pattern)
+- **Canonical Email Setup Guide**: [docs/guides/email/EMAIL_SETUP_ZOHO.md](docs/guides/email/EMAIL_SETUP_ZOHO.md) (settings-as-code, Odoo 19)
+- **Deprecated (Mailgun)**: [docs/deprecated/mailgun/](docs/deprecated/mailgun/) (historical reference only)
 
 ---
 
 ## Plane Project Management
 
-**Plane** is an open-source project management platform (Jira alternative) deployed to production with Mailgun email integration.
+**Plane** is an open-source project management platform (Jira alternative) deployed to production with email integration.
 
 **Production Architecture**:
 ```
-Plane Backend (Django/PostgreSQL) → Mailgun SMTP (port 2525) → Email delivery
+Plane Backend (Django/PostgreSQL) → SMTP Email Delivery
 Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 ```
 
@@ -362,7 +364,7 @@ Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 - **Domain**: plane.insightpulseai.com (DNS verified)
 - **Database**: PostgreSQL 15.7-alpine (88 migrations applied)
 - **Workers**: Background tasks + scheduled tasks running
-- **SMTP**: Mailgun configured (smtp.mailgun.org:2525)
+- **SMTP**: Configured for transactional email delivery
 - **Nginx**: Reverse proxy via nginx-prod-v2 container
 
 **Services Running**:
