@@ -1,37 +1,44 @@
-site_name: odoo-ce Documentation
-site_url: https://jgtolentino.github.io/odoo-ce
-site_description: Documentation for the odoo-ce monorepo — InsightPulse AI platform built on Odoo 18 CE
+site_name: InsightPulse AI — Odoo 19 CE Platform
+site_url: https://insightpulseai.github.io/odoo
+site_description: Documentation for the Odoo 19 CE + OCA platform — InsightPulse AI ERP
 site_author: InsightPulse AI Team
 
-repo_name: jgtolentino/odoo-ce
-repo_url: https://github.com/jgtolentino/odoo-ce
+repo_name: Insightpulseai/odoo
+repo_url: https://github.com/Insightpulseai/odoo
 edit_uri: edit/main/docs/pages/
 
 theme:
   name: material
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
   features:
     - navigation.instant
     - navigation.tracking
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.tabs
+    - navigation.indexes
     - search.highlight
     - search.share
     - content.code.copy
+    - content.code.annotate
     - content.action.edit
+    - toc.follow
 
 nav:
   - Home: index.md
@@ -39,6 +46,8 @@ nav:
   - Architecture: architecture.md
   - Developer Guide: developer-guide.md
   - Modules: modules.md
+  - Deployment Timeline: deployment-timeline.md
+  - EE Parity Gate: ee-parity-gate.md
   - Runbooks: runbooks.md
 
 docs_dir: docs/pages
@@ -60,15 +69,21 @@ markdown_extensions:
   - tables
   - attr_list
   - md_in_html
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 plugins:
   - search
   - offline
 
+extra_css:
+  - stylesheets/primer.css
+
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/jgtolentino/odoo-ce
+      link: https://github.com/Insightpulseai/odoo
   generator: false
 
 copyright: Copyright &copy; 2024-2026 InsightPulse AI
