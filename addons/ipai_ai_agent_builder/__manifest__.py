@@ -2,7 +2,7 @@
 # Part of IPAI. See LICENSE file for full copyright and licensing details.
 {
     "name": "IPAI AI Agent Builder",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Productivity/AI",
     "summary": "Build AI agents with topics, tools, and RAG capabilities",
     "description": """

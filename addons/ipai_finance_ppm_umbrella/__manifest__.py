@@ -1,7 +1,7 @@
 {
     "name": "IPAI Finance PPM – TBWA Complete Configuration",
-    "summary": "Complete seed data for 8-employee Finance SSC with BIR compliance and month-end closing tasks",
-    "version": "18.0.1.0.0",
+    "summary": "Complete seed data for 9-employee Finance SSC with BIR compliance, month-end closing tasks, and RACI matrix",
+    "version": "19.0.1.1.0",
     "category": "Accounting/Finance",
     "website": "https://insightpulse.ai",
     "author": "InsightPulse AI",
@@ -11,7 +11,7 @@
         "security/ir.model.access.csv",
         "data/01_employees.xml",
         "data/02_logframe_complete.xml",
-        "data/03_bir_schedule_2026.xml",
+        "data/03_bir_schedule.xml",
         "data/04_closing_tasks.xml",
         "data/05_raci_assignments.xml",
     ],
@@ -24,8 +24,8 @@ TBWA Finance PPM Umbrella Configuration
 
 Complete seed data for Finance SSC operations:
 
-**8 Employees:**
-- RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB
+**9 Employees:**
+- CKVC, RIM, BOM, JPAL, JLI, JAP, JRMO, LAS, RMQB
 
 **BIR Tax Forms (22 entries for 2026):**
 - 1601-C / 0619-E (Monthly - 12 months)
