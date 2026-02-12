@@ -1,20 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import webExtension from 'vite-plugin-web-extension';
 import { resolve } from 'path';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    webExtension({
-      manifest: './public/manifest.json',
-      additionalInputs: [
-        'src/popup/popup.html',
-        'src/offscreen/offscreen.html'
-      ],
-      disableAutoLaunch: false
-    })
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
@@ -22,6 +11,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         'service-worker': resolve(__dirname, 'src/background/service-worker.ts'),
@@ -31,13 +21,24 @@ export default defineConfig({
       },
       output: {
         entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'service-worker') {
-            return 'service-worker.js';
+          // Service worker and content script in root
+          if (chunkInfo.name === 'service-worker' || chunkInfo.name === 'content-main') {
+            return '[name].js';
           }
-          if (chunkInfo.name === 'content-main') {
-            return 'content-main.js';
-          }
+          // Other assets in assets/
           return 'assets/[name]-[hash].js';
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          // CSS in root
+          if (assetInfo.name?.endsWith('.css')) {
+            return '[name][extname]';
+          }
+          // HTML files preserve structure
+          if (assetInfo.name?.endsWith('.html')) {
+            return 'src/[name][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
         }
       }
     }

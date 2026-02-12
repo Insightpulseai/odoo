@@ -13,7 +13,7 @@ logger.info('Offscreen document loaded');
 /**
  * Message handler for vision processing requests
  */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   logger.debug('Message received:', message.type);
 
   switch (message.type) {
@@ -45,7 +45,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * Process screenshot for visual grounding
  * Phase 2: Will use ONNX Runtime Web for DeepSeek-OCR inference
  */
-async function processScreenshot(payload: { dataUrl: string }): Promise<unknown> {
+async function processScreenshot(_payload: { dataUrl: string }): Promise<unknown> {
   logger.info('Processing screenshot for visual grounding');
 
   // TODO: Phase 2 - Implement ONNX inference
@@ -64,7 +64,7 @@ async function processScreenshot(payload: { dataUrl: string }): Promise<unknown>
  * Run OCR on screenshot
  * Phase 2: Will extract text and bounding boxes
  */
-async function runOCR(payload: { dataUrl: string }): Promise<unknown> {
+async function runOCR(_payload: { dataUrl: string }): Promise<unknown> {
   logger.info('Running OCR on screenshot');
 
   // TODO: Phase 2 - Implement OCR
@@ -80,7 +80,7 @@ async function runOCR(payload: { dataUrl: string }): Promise<unknown> {
  * Verify visual changes (before/after comparison)
  * Phase 2: Will use pixelmatch + SSIM
  */
-async function verifyVisual(payload: { before: string; after: string }): Promise<unknown> {
+async function verifyVisual(_payload: { before: string; after: string }): Promise<unknown> {
   logger.info('Verifying visual changes');
 
   // TODO: Phase 2 - Implement visual verification

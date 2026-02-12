@@ -14,7 +14,7 @@ logger.info('Content script injected');
  * Message handler from service worker
  */
 chrome.runtime.onMessage.addListener(
-  (message: AgentMessage, sender, sendResponse) => {
+  (message: AgentMessage, _sender, sendResponse) => {
     logger.debug('Message received from service worker:', message);
 
     switch (message.type) {
