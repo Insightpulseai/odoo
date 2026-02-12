@@ -1,0 +1,1315 @@
+Forbidden Patterns Scan - Thu Feb 12 18:33:31 PST 2026
+=================================
+
+1. Scanning for Mailgun references...
+README.md:348:- **Deprecated (Mailgun)**: [docs/deprecated/mailgun/](docs/deprecated/mailgun/) (historical reference only)
+docs/deprecated/mailgun/Mailgun_DNS.md:150:| CNAME | `email.insightpulseai.com` | `mailgun.org` | 3600 | Mailgun routing |
+docs/deprecated/mailgun/Mailgun_DNS.md:151:| TXT | `insightpulseai.com` | `v=spf1 include:mailgun.org ~all` | 3600 | SPF (Sender Policy Framework) |
+docs/deprecated/mailgun/Mailgun_DNS.md:154:| MX | `insightpulseai.com` | `mxa.mailgun.org` (priority 10) | 3600 | Inbound mail |
+docs/deprecated/mailgun/Mailgun_DNS.md:155:| MX | `insightpulseai.com` | `mxb.mailgun.org` (priority 10) | 3600 | Inbound mail backup |
+docs/deprecated/mailgun/Mailgun_DNS.md:167:MAILGUN_API_BASE_URL="https://api.mailgun.net/v3"
+docs/deprecated/mailgun/Mailgun_DNS.md:170:EMAIL_HOST="smtp.mailgun.org"
+docs/deprecated/mailgun/Mailgun_DNS.md:184:smtp_server = smtp.mailgun.org
+docs/deprecated/mailgun/Mailgun_DNS.md:247:    https://api.mailgun.net/v3/email.insightpulseai.com/messages \
+docs/deprecated/mailgun/Mailgun_DNS.md:343:    https://api.mailgun.net/v3/domains/email.insightpulseai.com | jq .
+docs/deprecated/mailgun/Mailgun_DNS.md:392:    https://api.mailgun.net/v3/domains/email.insightpulseai.com/verify \
+docs/deprecated/mailgun/Mailgun_DNS.md:402:- **Mailgun Documentation**: https://documentation.mailgun.com/
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:6:- Mailgun domain `mg.insightpulseai.com` verified (all DNS records ✅)
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:16:| **SMTP Server** | `smtp.mailgun.org` | US region endpoint |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:19:| **Username** | `postmaster@mg.insightpulseai.com` | Mailgun-generated default |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:24:1. Go to Mailgun dashboard: https://app.mailgun.com/mg/dashboard
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:25:2. Navigate to "Sending" → "Domains" → `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:27:4. Copy password for `postmaster@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:45:| **Description** | `Mailgun Production (mg.insightpulseai.com)` | ✅ |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:46:| **SMTP Server** | `smtp.mailgun.org` | ✅ |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:49:| **Username** | `postmaster@mg.insightpulseai.com` | ✅ |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:82:| **Value** | `mg.insightpulseai.com` |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:84:**Purpose**: Forces all outgoing emails to use `@mg.insightpulseai.com` as sender domain
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:89:**Value**: `noreply@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:117:- Sender shows: `noreply@mg.insightpulseai.com` (or configured default)
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:131:1. Go to Mailgun dashboard: https://app.mailgun.com/mg/logs
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:154:| **Email** | `firstname.lastname@mg.insightpulseai.com` |
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:158:**Requirement**: Sender address must be within `mg.insightpulseai.com` domain
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:181:   - **Fix**: Verify SMTP server is `smtp.mailgun.org` (not `api.mailgun.net`)
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:184:   - **Fix**: Verify SMTP username is `postmaster@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:230:1. Verify DNS: `./scripts/mailgun/verify_domain.sh` → all ✅
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:233:   _dmarc.mg.insightpulseai.com TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com"
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:240:**Symptom**: Emails send from `@erp.insightpulseai.com` instead of `@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:242:**Fix**: Set system parameter `mail.catchall.domain` = `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:247:3. Should show: `From: noreply@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:258:4. ✅ System parameter `mail.catchall.domain` = `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:287:**Mailgun Domain**: `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/ODOO_SMTP_SETUP.md:288:**SMTP Server**: `smtp.mailgun.org:587` (TLS)
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:15:**Source**: https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:54:1. Go to: https://app.mailgun.com/mg/sending/domains/mg.insightpulseai.com/webhooks
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:64:| **URL** | `https://ipa.insightpulseai.com/webhooks/mailgun/delivered` |
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:94:        "message-id": "20260114120000.1.ABCD1234@mg.insightpulseai.com",
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:95:        "from": "noreply@mg.insightpulseai.com",
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:153:**Official Documentation**: https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/#securing-webhooks
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:170:def verify_mailgun_webhook(signature_data):
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:244:**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/delivery-status`
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:256:**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/bounces`
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:269:**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/complaints`
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:283:**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/engagement`
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:293:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks \
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:295:  -F "url=https://ipa.insightpulseai.com/webhooks/mailgun/delivered"
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:302:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:309:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks/delivered \
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:310:  -F "url=https://ipa.insightpulseai.com/webhooks/mailgun/delivery-status"
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:317:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks/delivered
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:336:  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+docs/deprecated/mailgun/core/WEBHOOKS_AND_EVENTS.md:337:  -F "from=test@mg.insightpulseai.com" \
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:3:**Domain**: `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:5:**Region**: US (api.mailgun.net)
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:12:**Source**: https://documentation.mailgun.com/docs/mailgun/quickstart-sending/verifying-your-domain/
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:32:| TXT | `mg.insightpulseai.com` | `v=spf1 include:mailgun.org ~all` | 3600 |
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:34:**Purpose**: Authorizes Mailgun's servers to send email on behalf of `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:38:dig TXT mg.insightpulseai.com +short | grep "v=spf1"
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:39:# Expected: "v=spf1 include:mailgun.org ~all"
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:47:| TXT | `mailo._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYi+WQoP6DEtjZIwC02BRwLKco3WnjQzXBmCr7pT4nMBLEk/WcLjTCE3PRBvNqtSyXzXdZKl65p4VvsmXFGJvGb4qBEQdXLBRZxLJMqfMWjpHqXK7bRxjsKvZCa1thgPyFoaDq+FfX6EcLlAjxLNNjpUE3KcIjmh6mH7HfEeGhIQIDAQAB` | 3600 |
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:51:dig TXT mailo._domainkey.mg.insightpulseai.com +short
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:58:| TXT | `mx._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDXPPiPYQ5/96/UphEq3GhXR7RoB3vxm3KjDqHHCHTjV2FojKqZuCKkLMJzOPkz/4yV8k1xUB8VQp8R5z2L6TGhkEWVGCJzXJKXOTZqMYLh3vLVzIGPzhLjCMUMQKYvM7lINKOp8BZkRdqP0S1hTHzI6PG6MQMv5xJd+Qd8pD9xwQIDAQAB` | 3600 |
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:62:dig TXT mx._domainkey.mg.insightpulseai.com +short
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:68:**Decision**: Not configuring MX records for `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:72:- Odoo does NOT need to receive emails at `mg.insightpulseai.com`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:79:| MX | `mg.insightpulseai.com` | `mxa.mailgun.org` | 10 | 3600 |
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:80:| MX | `mg.insightpulseai.com` | `mxb.mailgun.org` | 10 | 3600 |
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:89:dig TXT mg.insightpulseai.com +short | grep "v=spf1"
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:92:dig TXT mailo._domainkey.mg.insightpulseai.com +short
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:95:dig TXT mx._domainkey.mg.insightpulseai.com +short
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:98:dig MX mg.insightpulseai.com +short
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:104:export MAILGUN_DOMAIN="mg.insightpulseai.com"
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:107:./scripts/mailgun/verify_domain.sh
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:113:  Domain: mg.insightpulseai.com
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:118:  ❌ MX mg.insightpulseai.com
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:119:     Value: mxa.mailgun.org (priority: 10)
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:122:  ✅ TXT mg.insightpulseai.com
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:123:     Value: v=spf1 include:mailgun.org ~all
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:124:  ✅ TXT mailo._domainkey.mg.insightpulseai.com
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:126:  ✅ TXT mx._domainkey.mg.insightpulseai.com
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:135:- **Base URL**: `https://api.mailgun.net/v3`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:136:- **Sending**: `POST /v3/mg.insightpulseai.com/messages`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:137:- **Domain Verification**: `GET /v3/domains/mg.insightpulseai.com`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:162:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com | jq '.domain.state'
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:167:- **Syntax**: `v=spf1 include:mailgun.org ~all`
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:187:4. **Check host syntax**: `mg.insightpulseai.com` vs `mg` (depends on DNS provider)
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:192:  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/verify
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:206:   _dmarc.mg.insightpulseai.com TXT "v=DMARC1; p=none; rua=mailto:dmarc@insightpulseai.com"
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:227:2. ✅ `./scripts/mailgun/verify_domain.sh` shows ✅ for all sending records
+docs/deprecated/mailgun/core/TBWA_MAILGUN_CANONICAL.md:237:**Mailgun Domain**: `mg.insightpulseai.com` (US region)
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:7:**When to use**: If TBWA\SMP needs to receive emails at `@mg.insightpulseai.com` and process them automatically
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:13:**Source**: https://documentation.mailgun.com/docs/mailgun/user-manual/get-started/#routes
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:30:| `match_recipient("support@.*")` | Match specific mailbox | `support@mg.insightpulseai.com` |
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:31:| `match_recipient(".*@mg.insightpulseai.com")` | Match domain | All `@mg.insightpulseai.com` emails |
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:56:forward("https://your-server.com/webhooks/mailgun")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:65:  "To": "support@mg.insightpulseai.com",
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:111:match_recipient("expenses@mg.insightpulseai.com") and match_header("subject", ".*receipt.*")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:116:forward("https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:132:match_recipient("support@mg.insightpulseai.com")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:137:forward("https://ipa.insightpulseai.com/webhooks/mailgun/support-ticket")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:146:match_recipient("finance@mg.insightpulseai.com")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:160:match_recipient(".*@mg.insightpulseai.com")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:167:store(notify="https://ipa.insightpulseai.com/webhooks/mailgun/catchall")
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:178:1. Go to: https://app.mailgun.com/mg/routes
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:186:| **Recipient** | `expenses@mg.insightpulseai.com` |
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:188:| **Destination** | `https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt` |
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:195:2. Send test email to `expenses@mg.insightpulseai.com`
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:207:  https://api.mailgun.net/v3/routes \
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:210:  -F "expression=match_recipient('expenses@mg.insightpulseai.com')" \
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:211:  -F "action=forward('https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt')"
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:218:  https://api.mailgun.net/v3/routes
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:225:  https://api.mailgun.net/v3/routes/{ROUTE_ID}
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:251:**Official Documentation**: https://documentation.mailgun.com/docs/mailgun/user-manual/webhooks/#securing-webhooks
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:258:def verify_mailgun_signature(token, timestamp, signature):
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:306:  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:307:  -F "from=test@mg.insightpulseai.com" \
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:308:  -F "to=expenses@mg.insightpulseai.com" \
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:315:1. Go to: https://app.mailgun.com/mg/logs
+docs/deprecated/mailgun/core/INBOUND_EMAIL_ROUTES.md:316:2. Filter by recipient: `expenses@mg.insightpulseai.com`
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:37:1. Create account at https://signup.mailgun.com
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:38:2. Verify your domain (e.g., `mg.insightpulseai.com`)
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:43:TXT  @  "v=spf1 include:mailgun.org ~all"
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:52:MX  mg  mxa.mailgun.org (priority 10)
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:53:MX  mg  mxb.mailgun.org (priority 10)
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:60:SMTP_HOST=smtp.mailgun.org
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:63:SMTP_USER=postmaster@mg.insightpulseai.com
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:69:MAILGUN_DOMAIN=mg.insightpulseai.com
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:77:smtp_server = smtp.mailgun.org
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:80:smtp_user = postmaster@mg.insightpulseai.com
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:94:    <record id="mailgun_smtp_server" model="ir.mail_server">
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:96:        <field name="smtp_host">smtp.mailgun.org</field>
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:99:        <field name="smtp_user">postmaster@mg.insightpulseai.com</field>
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:139:pip install odoo-addon-mail_tracking_mailgun
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:142:odoo-bin -d odoo_core -i mail_tracking,mail_tracking_mailgun --stop-after-init
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:150:https://erp.insightpulseai.com/mail/tracking/mailgun/all
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:165:# ipai_mail_integration/controllers/mailgun_webhook.py
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:174:    @http.route('/mail/tracking/mailgun/all', type='json', auth='none', csrf=False)
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:175:    def mailgun_webhook(self, **post):
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:179:            'mailgun.webhook_signing_key', ''
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:225:    ('mailgun', 'Mailgun API'),
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:232:ipai_mailgun_api_key = fields.Char(
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:234:    config_parameter="ipai_mail.mailgun_api_key",
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:236:ipai_mailgun_domain = fields.Char(
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:238:    config_parameter="ipai_mail.mailgun_domain",
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:245:# models/mail_mailgun.py
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:251:    _name = 'mail.mailgun.mixin'
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:255:    def _mailgun_send(self, to, subject, html, from_email=None):
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:258:        api_key = ICP.get_param('ipai_mail.mailgun_api_key')
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:259:        domain = ICP.get_param('ipai_mail.mailgun_domain')
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:267:            f"https://api.mailgun.net/v3/{domain}/messages",
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:280:    def _mailgun_validate_email(self, email):
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:283:        api_key = ICP.get_param('ipai_mail.mailgun_api_key')
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:286:            "https://api.mailgun.net/v4/address/validate",
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:340:    "https://api.mailgun.net/v3/domains/$MAILGUN_DOMAIN"
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:344:    "https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages" \
+docs/integration/INSIGHTPULSE_ROADMAP.md:49:| `mg` | MX | 10 | mxa.mailgun.org |
+docs/integration/INSIGHTPULSE_ROADMAP.md:50:| `mg` | MX | 10 | mxb.mailgun.org |
+docs/auth/EMAIL_OTP_IMPLEMENTATION.md:130:- `MAILGUN_DOMAIN` - Mailgun domain (default: mg.insightpulseai.com)
+docs/auth/EMAIL_OTP_IMPLEMENTATION.md:214:supabase secrets set MAILGUN_DOMAIN="mg.insightpulseai.com" --project-ref spdtwktxdalcfigzeqrz
+docs/auth/EMAIL_OTP_IMPLEMENTATION.md:220:- Domain: `mg.insightpulseai.com`
+docs/auth/EMAIL_OTP_IMPLEMENTATION.md:222:- API endpoint: `https://api.mailgun.net/v3/mg.insightpulseai.com/messages`
+docs/auth/EMAIL_OTP_IMPLEMENTATION.md:503:  "https://api.mailgun.net/v3/mg.insightpulseai.com/events?recipient=user@example.com&limit=10" | \
+docs/DEPRECATED_DOCS.md:32:**Deprecated** (moved to `docs/deprecated/mailgun/`):
+docs/DEPRECATED_DOCS.md:33:- `docs/infra/MAILGUN_INTEGRATION.md` → `docs/deprecated/mailgun/MAILGUN_INTEGRATION.md`
+docs/DEPRECATED_DOCS.md:34:- `docs/email/Mailgun_DNS.md` → `docs/deprecated/mailgun/Mailgun_DNS.md`
+docs/DEPRECATED_DOCS.md:43:- `scripts/test-mailgun.sh` (not moved, historical debugging only)
+docs/DEPRECATED_DOCS.md:44:- `scripts/configure_mailgun_smtp.py` (not moved, historical debugging only)
+docs/DEPRECATED_DOCS.md:45:- `addons/ipai/ipai_enterprise_bridge/controllers/mailgun_mailgate.py` (not moved, code dependency)
+docs/DEPRECATED_DOCS.md:46:- `config/mailgun_integration_implementation.json` (not moved, version history)
+docs/DEPRECATED_DOCS.md:52:- Key Mailgun docs moved to `docs/deprecated/mailgun/` with deprecation headers
+docs/DEPRECATED_DOCS.md:54:- Forbidden-scan gate allows Mailgun references only in `docs/deprecated/mailgun/**`
+docs/DEPRECATED_DOCS.md:106:- `mg.insightpulseai.com` → `mail.insightpulseai.com` (Mailgun → Zoho)
+docs/auth/EMAIL_AUTH_SETUP.md:38:**Domain:** `mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:45:| `mg` | MX | 10 | 3600 | `mxa.mailgun.org` |
+docs/auth/EMAIL_AUTH_SETUP.md:46:| `mg` | MX | 10 | 3600 | `mxb.mailgun.org` |
+docs/auth/EMAIL_AUTH_SETUP.md:47:| `mg` | TXT | - | 3600 | `v=spf1 include:mailgun.org ~all` |
+docs/auth/EMAIL_AUTH_SETUP.md:49:| `email.mg` | CNAME | - | 3600 | `mailgun.org` |
+docs/auth/EMAIL_AUTH_SETUP.md:50:| `_dmarc.mg` | TXT | - | 3600 | `v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1` |
+docs/auth/EMAIL_AUTH_SETUP.md:61:Data: mxa.mailgun.org
+docs/auth/EMAIL_AUTH_SETUP.md:66:Data: mxb.mailgun.org
+docs/auth/EMAIL_AUTH_SETUP.md:72:**Purpose:** Authorize Mailgun to send email on behalf of `mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:77:Data: v=spf1 include:mailgun.org ~all
+docs/auth/EMAIL_AUTH_SETUP.md:82:dig +short TXT mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:83:# Expected: "v=spf1 include:mailgun.org ~all"
+docs/auth/EMAIL_AUTH_SETUP.md:102:dig +short TXT pic._domainkey.mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:114:Data: mailgun.org
+docs/auth/EMAIL_AUTH_SETUP.md:119:dig +short CNAME email.mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:120:# Expected: mailgun.org.
+docs/auth/EMAIL_AUTH_SETUP.md:129:Data: v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1
+docs/auth/EMAIL_AUTH_SETUP.md:135:- `rua=mailto:postmaster@mg.insightpulseai.com` - Send aggregate reports here
+docs/auth/EMAIL_AUTH_SETUP.md:141:dig +short TXT _dmarc.mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:142:# Expected: "v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1"
+docs/auth/EMAIL_AUTH_SETUP.md:155:DOMAIN="mg.insightpulseai.com"
+docs/auth/EMAIL_AUTH_SETUP.md:176:10 mxa.mailgun.org.
+docs/auth/EMAIL_AUTH_SETUP.md:177:10 mxb.mailgun.org.
+docs/auth/EMAIL_AUTH_SETUP.md:180:"v=spf1 include:mailgun.org ~all"
+docs/auth/EMAIL_AUTH_SETUP.md:186:mailgun.org.
+docs/auth/EMAIL_AUTH_SETUP.md:189:"v=DMARC1; p=quarantine; rua=mailto:postmaster@mg.insightpulseai.com; pct=100; fo=1"
+docs/auth/EMAIL_AUTH_SETUP.md:203:SMTP Host: smtp.mailgun.org
+docs/auth/EMAIL_AUTH_SETUP.md:205:SMTP User: postmaster@mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:207:Sender Email: noreply@mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:289:MAIL_HOST=smtp.mailgun.org
+docs/auth/EMAIL_AUTH_SETUP.md:291:MAIL_USER=postmaster@mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:292:MAIL_PASSWORD=your_mailgun_smtp_password_here
+docs/auth/EMAIL_AUTH_SETUP.md:294:MAIL_DEFAULT_FROM=noreply@mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:295:MAIL_CATCHALL_DOMAIN=mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:304:**Script:** `scripts/configure_mailgun_smtp.py`
+docs/auth/EMAIL_AUTH_SETUP.md:312:MAIL_HOST = os.getenv('MAIL_HOST', 'smtp.mailgun.org')
+docs/auth/EMAIL_AUTH_SETUP.md:314:MAIL_USER = os.getenv('MAIL_USER', 'postmaster@mg.insightpulseai.com')
+docs/auth/EMAIL_AUTH_SETUP.md:316:MAIL_DEFAULT_FROM = os.getenv('MAIL_DEFAULT_FROM', 'noreply@mg.insightpulseai.com')
+docs/auth/EMAIL_AUTH_SETUP.md:363:docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py
+docs/auth/EMAIL_AUTH_SETUP.md:417:MAILGUN_API_KEY=your_mailgun_api_key_here
+docs/auth/EMAIL_AUTH_SETUP.md:418:MAILGUN_DOMAIN=mg.insightpulseai.com
+docs/auth/EMAIL_AUTH_SETUP.md:419:MAILGUN_API_BASE_URL=https://api.mailgun.net/v3
+docs/auth/EMAIL_AUTH_SETUP.md:429:    "fromEmail": "noreply@mg.insightpulseai.com",
+docs/auth/EMAIL_AUTH_SETUP.md:438:  "type": "n8n-nodes-base.mailgun",
+docs/auth/EMAIL_AUTH_SETUP.md:456:1. **SPF/DKIM Alignment:** Always send from `@mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:471:- Configure `rua=mailto:postmaster@mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:484:**Fix:** Verify SPF record with `dig +short TXT mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:507:- Test with `scripts/configure_mailgun_smtp.py`
+docs/auth/EMAIL_AUTH_SETUP.md:512:- [ ] MX records resolve to `mxa.mailgun.org` and `mxb.mailgun.org`
+docs/auth/EMAIL_AUTH_SETUP.md:513:- [ ] SPF record contains `v=spf1 include:mailgun.org ~all`
+docs/auth/EMAIL_AUTH_SETUP.md:515:- [ ] Tracking CNAME resolves to `mailgun.org`
+docs/auth/EMAIL_AUTH_SETUP.md:516:- [ ] DMARC record exists at `_dmarc.mg.insightpulseai.com`
+docs/auth/EMAIL_AUTH_SETUP.md:571:- [Mailgun Documentation](https://documentation.mailgun.com/)
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:133:  --record-data "mxa.mailgun.org." \
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:140:  --record-data "mxb.mailgun.org." \
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:207:dig mg.insightpulseai.com MX +short
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:247:  --record-data "v=spf1 include:mailgun.org ~all" \
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:400:resource "digitalocean_record" "mailgun_mx_a" {
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:405:  value    = "mxa.mailgun.org."
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:409:resource "digitalocean_record" "mailgun_mx_b" {
+docs/infra/DNS_DELEGATION_SQUARESPACE_TO_DO.md:414:  value    = "mxb.mailgun.org."
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:16:**Mailgun Subdomain (`mg.insightpulseai.com`)**:
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:17:- MX → `10 mxa.mailgun.org`, `10 mxb.mailgun.org` ✅
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:18:- SPF → `v=spf1 include:mailgun.org ~all` ✅
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:23:- SPF → `v=spf1 include:mailgun.org ~all` ✅
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:24:- DMARC → `v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org` ✅
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:31:| **Send from** `*@mg.insightpulseai.com` | ✅ Works | Mailgun SMTP/API |
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:33:| **Receive at** `*@mg.insightpulseai.com` | ✅ Works | Mailgun routes/webhooks |
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:46:**Source**: [Mailgun IMAP Glossary](https://www.mailgun.com/glossary/imap/)
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:105:TXT   @  v=spf1 ip4:178.128.112.214 include:mailgun.org ~all
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:149:TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:176:- Mailgun subdomain (`mg.insightpulseai.com`) → automation/transactional
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:186:MX    mg  10 mxa.mailgun.org
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:190:TXT   @  v=spf1 include:_spf.google.com include:mailgun.org ~all
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:215:- ✅ Automation webhooks: `boards@mg.insightpulseai.com` → n8n → Azure Boards
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:216:- ✅ Odoo notifications: `odoo@mg.insightpulseai.com` → n8n → Odoo tasks
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:290:  --record-data "v=spf1 ip4:178.128.112.214 include:mailgun.org ~all"
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:346:RELAY_HOST=smtp.mailgun.org
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:348:RELAY_USER=postmaster@mg.insightpulseai.com
+docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md:471:  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:26:- `mg` MX → `10 mxa.mailgun.org`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:27:- `mg` MX → `10 mxb.mailgun.org`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:28:- `mg` TXT → `v=spf1 include:mailgun.org ~all`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:29:- `email.mg` CNAME → `mailgun.org`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:31:- `_dmarc.mg` TXT → `v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:58:**Purpose**: Authorize Mailgun to send email from `*@insightpulseai.com` (not just `*@mg.insightpulseai.com`)
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:62:| `@` | TXT | 3600 | `v=spf1 include:mailgun.org ~all` | Recommended |
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:65:- Currently SPF only covers `mg.insightpulseai.com`
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:75:| `_dmarc` | TXT | 3600 | `v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org` | Recommended |
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:79:v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:109:Value: v=spf1 include:mailgun.org ~all
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:120:Value: v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:126:Value: v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:142:# Expected: v=spf1 include:mailgun.org ~all
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:146:# Expected: v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:149:dig mg.insightpulseai.com MX +short
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:150:# Expected: 10 mxa.mailgun.org, 10 mxb.mailgun.org
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:152:dig mg.insightpulseai.com TXT +short | grep spf
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:153:# Expected: v=spf1 include:mailgun.org ~all
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:155:dig _dmarc.mg.insightpulseai.com TXT +short
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:183:dig mg.insightpulseai.com TXT +short | grep spf
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:187:dig _dmarc.mg.insightpulseai.com TXT +short
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:207:- Existing `mg.insightpulseai.com` MX/TXT/CNAME records
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:227:- ✅ `*@mg.insightpulseai.com` - Fully authenticated (SPF + DKIM + DMARC)
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:231:- ✅ `*@mg.insightpulseai.com` - Fully authenticated (unchanged)
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:235:- **If sending ONLY from** `*@mg.insightpulseai.com`: Root SPF/DMARC are "nice to have"
+docs/infra/DNS_ENHANCEMENT_GUIDE.md:242:- **Mailgun SPF Documentation**: https://documentation.mailgun.com/docs/mailgun/user-manual/get-started/sending-email-best-practices/#spf-dkim-dmarc
+docs/security/config_files.txt:469:/Users/tbwa/Documents/GitHub/odoo-ce/sandbox/dev/.env.mailgun
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:30:## 2. Mailgun - mg.insightpulseai.com
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:38:| mg   | MX   | 10       | mxa.mailgun.org| Primary Mailgun MX     |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:39:| mg   | MX   | 10       | mxb.mailgun.org| Secondary Mailgun MX   |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:45:| mg   | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@mg.insightpulseai.com |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:53:| email.mg            | CNAME| mailgun.org       | Mailgun CNAME helper |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:62:| _dmarc.mg  | TXT  | v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=...; ruf=...               | DMARC for mg.insightpulseai.com |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:74:| @    | TXT  | v=spf1 include:mailgun.org ~all   | SPF for *@insightpulseai.com        |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:80:| _dmarc  | TXT  | v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org | DMARC for root domain |
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:106:**Mailgun (mg.insightpulseai.com)**:
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:107:- MX: mxa/mxb.mailgun.org
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:135:dig +short mg.insightpulseai.com MX
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:136:dig +short mg.insightpulseai.com TXT
+docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md:137:dig +short _dmarc.mg.insightpulseai.com TXT
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:28:### Mailgun DNS (mg.insightpulseai.com)
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:33:| mg | 10 | mxa.mailgun.org |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:34:| mg | 10 | mxb.mailgun.org |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:39:| SPF | mg | `v=spf1 include:mailgun.org ~all` |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:46:| SPF | @ | `v=spf1 include:mailgun.org ~all` |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:47:| DMARC | _dmarc | `v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org` |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:176:- `ipai_mailgun_bridge` - Email observability integration
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:271:provider            text not null default 'mailgun'
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:332:Odoo CE (ipai_mailgun_bridge)
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:334:Mailgun API (mg.insightpulseai.com)
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:347:**Module**: `ipai_mailgun_bridge` (custom Odoo module)
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:475:MAILGUN_SIGNING_KEY=<mailgun_signing_key>
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:498:dig +short mg.insightpulseai.com MX
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:499:dig +short mg.insightpulseai.com TXT
+docs/wiki/Infrastructure.md:25:| **Mail Domain** | `mg.insightpulseai.com` |
+docs/wiki/Infrastructure.md:26:| **SMTP Server** | `smtp.mailgun.org` |
+docs/wiki/Infrastructure.md:28:| **SMTP Login** | `postmaster@mg.insightpulseai.com` |
+docs/wiki/Infrastructure.md:36:| TXT | `mg.insightpulseai.com` | `v=spf1 include:mailgun.org ~all` |
+docs/wiki/Infrastructure.md:37:| TXT | `pic._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB` |
+docs/wiki/Infrastructure.md:43:| MX | `mg.insightpulseai.com` | `mxa.mailgun.org` | 10 |
+docs/wiki/Infrastructure.md:44:| MX | `mg.insightpulseai.com` | `mxb.mailgun.org` | 10 |
+docs/wiki/Infrastructure.md:50:| CNAME | `email.mg.insightpulseai.com` | `mailgun.org` |
+docs/wiki/Infrastructure.md:56:| TXT | `_dmarc.mg.insightpulseai.com` | `v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;` |
+docs/wiki/Infrastructure.md:81:| SMTP Server | `smtp.mailgun.org` |
+docs/wiki/Infrastructure.md:84:| Username | `postmaster@mg.insightpulseai.com` |
+docs/wiki/Infrastructure.md:90:mail.smtp.host = smtp.mailgun.org
+docs/wiki/Infrastructure.md:92:mail.smtp.user = postmaster@mg.insightpulseai.com
+docs/wiki/Infrastructure.md:110:- [ ] SPF record (`v=spf1 include:mailgun.org ~all`)
+docs/wiki/Infrastructure.md:121:- [Mailgun Domain Settings](https://app.mailgun.com/app/sending/domains/mg.insightpulseai.com)
+docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md:27:│       ├── ipai_mailgun_bridge/
+docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md:96:| `ipai_mailgun_bridge` | Mailgun webhook + email observability | Required |
+docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md:129:ODOO_EE_PARITY_IPAI_MODULES="ipai_mailgun_bridge,ipai_website_shell"
+docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md:161:    'ipai_mailgun_bridge',
+docs/ops/GO_LIVE_CHECKLIST.md:151:| Mailgun | `ops/runbooks/mailgun_domain_verification.md` | [ ] | SMTP test |
+docs/ops/GO_LIVE_CHECKLIST.md:299:| Mailgun domain verification | `ops/runbooks/mailgun_domain_verification.md` | [ ] |
+docs/DIGITALOCEAN_EMAIL_SETUP.md:33:| **Mailgun** | smtp.mailgun.org | 2525 | 5,000 emails/month (3 months) |
+docs/DIGITALOCEAN_EMAIL_SETUP.md:53:| **Mailgun** | api.mailgun.net/v3 | 5,000 emails/month |
+docs/DIGITALOCEAN_EMAIL_SETUP.md:162:1. Sign up at: https://www.mailgun.com/
+docs/DIGITALOCEAN_EMAIL_SETUP.md:181:Value: v=spf1 include:mailgun.org ~all
+docs/DIGITALOCEAN_EMAIL_SETUP.md:195:Value: mailgun.org
+docs/DIGITALOCEAN_EMAIL_SETUP.md:210:docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py
+docs/DIGITALOCEAN_EMAIL_SETUP.md:214:- **SMTP Server**: smtp.mailgun.org
+docs/DIGITALOCEAN_EMAIL_SETUP.md:235:v=spf1 include:mailgun.org ~all
+docs/DIGITALOCEAN_EMAIL_SETUP.md:238:v=spf1 include:sendgrid.net include:mailgun.org ~all
+docs/DIGITALOCEAN_EMAIL_SETUP.md:431:| `mail_tracking_mailgun` | Mailgun | OCA/social |
+docs/DIGITALOCEAN_EMAIL_SETUP.md:443:    "modules": ["mail_tracking_mailgun"]
+docs/DIGITALOCEAN_EMAIL_SETUP.md:450:docker exec odoo-core odoo -d odoo_core -i mail_tracking_mailgun --stop-after-init
+docs/DIGITALOCEAN_EMAIL_SETUP.md:464:| `configure_mailgun_smtp.py` | Configure Mailgun with port 2525 |
+docs/DIGITALOCEAN_EMAIL_SETUP.md:477:docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py
+docs/DIGITALOCEAN_EMAIL_SETUP.md:493:# Email Provider (sendgrid, mailgun, gmail, zoho)
+docs/DIGITALOCEAN_EMAIL_SETUP.md:520:   - Sign up: https://www.mailgun.com/
+docs/DIGITALOCEAN_EMAIL_SETUP.md:521:   - Run: `docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py`
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:10:- Mailgun domain: `mg.insightpulseai.com` (configured with SPF, DKIM, DMARC, MX, CNAME)
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:49:curl -I https://erp.insightpulseai.com/mailgate/mailgun
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:57:curl -X POST https://erp.insightpulseai.com/mailgate/mailgun \
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:59:  --data "sender=test@mg.insightpulseai.com" \
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:76:Configure this route in Mailgun dashboard for mg.insightpulseai.com:
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:79:- **Action**: `forward("https://erp.insightpulseai.com/mailgate/mailgun")`
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:95:  1. Set `ipai_enterprise_bridge.mailgun_api_key` system parameter
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:96:  2. Uncomment verification block in mailgun_mailgate.py
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:100:- [ ] HTTP 200 on GET /mailgate/mailgun
+docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md:101:- [ ] HTTP 200 on POST /mailgate/mailgun with valid payload
+docs/evidence/20260119-0840/mailgun-mailgate/git_state.txt:9:- addons/ipai/ipai_enterprise_bridge/controllers/mailgun_mailgate.py (created)
+docs/evidence/20260119-0840/mailgun-mailgate/git_state.txt:15:Endpoint: /mailgate/mailgun
+docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md:7:- Outbound email is already wired through Mailgun via `ipai_mailgun_bridge`.
+docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md:58:   - `provider` (text)             – 'mailgun'
+docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md:141:Odoo `ipai_mailgun_bridge` emits:
+docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md:185:4. Update `ipai_mailgun_bridge` to include:
+docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md:293:- **Mailgun Bridge**: `sandbox/dev/addons/ipai_mailgun_bridge/`
+docs/EE_IAP_TO_OCA_IPAI_MAPPING.md:155:| OCA | `mail_tracking_mailgun` | Mailgun webhook integration |
+docs/EE_IAP_TO_OCA_IPAI_MAPPING.md:373:    ('mailgun', 'Mailgun API'),
+docs/ops/VERIFICATION_COMMANDS.md:276:    s = smtplib.SMTP('smtp.mailgun.org', 587, timeout=10)
+docs/PROGRAMMATIC_CONFIG_PLAN.md:53:smtp_server = ${SMTP_HOST:-smtp.mailgun.org}
+docs/PROGRAMMATIC_CONFIG_PLAN.md:86:SMTP_HOST=smtp.mailgun.org
+docs/PROGRAMMATIC_CONFIG_PLAN.md:89:SMTP_USER=postmaster@mg.insightpulseai.com
+docs/PROGRAMMATIC_CONFIG_PLAN.md:231:  mail_tracking_mailgun
+docs/PROGRAMMATIC_CONFIG_PLAN.md:383:    <record id="mailgun_smtp_server" model="ir.mail_server">
+docs/PROGRAMMATIC_CONFIG_PLAN.md:385:        <field name="smtp_host">smtp.mailgun.org</field>
+docs/PROGRAMMATIC_CONFIG_PLAN.md:388:        <field name="smtp_user">postmaster@mg.insightpulseai.com</field>
+docs/PROGRAMMATIC_CONFIG_PLAN.md:509:    smtp_host = os.environ.get('SMTP_HOST', 'smtp.mailgun.org')
+docs/architecture/multi_tenant_architecture.md:252:MAILGUN_API_URL=https://api.mailgun.net
+docs/architecture/multi_tenant_architecture.md:253:MAILGUN_DOMAIN=mg.insightpulseai.com
+docs/ai/ODOO_SETTINGS_REFERENCE.md:206:- **Mailgun**: `smtp.mailgun.org:587` (SMTP credentials)
+docs/issues/2026-02-07-domain-health-audit.md:141:| `infra/deploy/odoo.conf` (line 29-38) | `smtp.mailgun.org:2525` |
+docs/issues/2026-02-07-domain-health-audit.md:143:| `config/integrations/integration_manifest.yaml` | `mg.insightpulseai.com` references |
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:360:| mg.insightpulseai.com | mail.insightpulseai.com | Zoho Mail domain |
+docs/guides/email/EMAIL_SETUP_ZOHO.md:704:- ✅ Legacy Mailgun docs moved to `docs/deprecated/mailgun/`
+docs/guides/email/EMAIL_SETUP_ZOHO.md:708:- Legacy configuration documented in `docs/deprecated/mailgun/`
+docs/guides/email/EMAIL_SETUP_ZOHO.md:738:- Deprecated: `docs/deprecated/mailgun/` (historical reference only)
+docs/MAILGUN_DNS_SETUP.md:1:# Mailgun DNS Setup for mg.insightpulseai.com
+docs/MAILGUN_DNS_SETUP.md:3:**Domain**: `mg.insightpulseai.com`
+docs/MAILGUN_DNS_SETUP.md:15:| TXT | `mg.insightpulseai.com` | `v=spf1 include:mailgun.org ~all` |
+docs/MAILGUN_DNS_SETUP.md:16:| TXT | `pic._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB` |
+docs/MAILGUN_DNS_SETUP.md:24:| MX | `mg.insightpulseai.com` | `mxa.mailgun.org` | 10 |
+docs/MAILGUN_DNS_SETUP.md:25:| MX | `mg.insightpulseai.com` | `mxb.mailgun.org` | 10 |
+docs/MAILGUN_DNS_SETUP.md:33:| CNAME | `email.mg.insightpulseai.com` | `mailgun.org` |
+docs/MAILGUN_DNS_SETUP.md:41:| TXT | `_dmarc.mg.insightpulseai.com` | `v=DMARC1; p=none` |
+docs/MAILGUN_DNS_SETUP.md:48:- Go to: **Sending > Domain Settings > mg.insightpulseai.com**
+docs/MAILGUN_DNS_SETUP.md:62:docker exec -i odoo odoo shell -d odoo < scripts/configure_mailgun_smtp.py
+docs/MAILGUN_DNS_SETUP.md:77:| Server | `smtp.mailgun.org` |
+docs/MAILGUN_DNS_SETUP.md:80:| Username | `postmaster@mg.insightpulseai.com` |
+docs/DNS_SETTINGS.md:5:> **Email Provider:** Mailgun (mg.insightpulseai.com subdomain)
+docs/DNS_SETTINGS.md:34:| `email.mg` | 1 hr | mailgun.org | Mailgun tracking |
+docs/DNS_SETTINGS.md:42:| `mg` | 10 | 1 hr | mxa.mailgun.org |
+docs/DNS_SETTINGS.md:43:| `mg` | 10 | 1 hr | mxb.mailgun.org |
+docs/DNS_SETTINGS.md:55:| `mg` | 5 mins | `v=spf1 include:mailgun.org ~all` |
+docs/DNS_SETTINGS.md:67:| `_dmarc.mg` | 4 hrs | `v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;` |
+docs/DNS_SETTINGS.md:85:- **Sending Domain:** `mg.insightpulseai.com`
+docs/DNS_SETTINGS.md:86:- **Postmaster:** `postmaster@mg.insightpulseai.com`
+docs/DNS_SETTINGS.md:93:| **Server** | smtp.mailgun.org |
+docs/DNS_SETTINGS.md:95:| **Username** | `<user>@mg.insightpulseai.com` |
+docs/DNS_SETTINGS.md:111:> Used to verify webhook payloads from Mailgun. See [Mailgun webhook documentation](https://documentation.mailgun.com/docs/mailgun/api-reference/openapi-final/tag/Webhooks/).
+docs/DNS_SETTINGS.md:141:https://n8n.insightpulseai.com/webhook/mailgun
+docs/DNS_SETTINGS.md:146:Use the HTTP Webhook Signing Key to verify payload authenticity. See [Mailgun Webhooks API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/webhooks).
+docs/DNS_SETTINGS.md:155:dig TXT mg.insightpulseai.com +short
+docs/DNS_SETTINGS.md:161:dig TXT pic._domainkey.mg.insightpulseai.com +short
+docs/DNS_SETTINGS.md:167:dig MX mg.insightpulseai.com +short
+docs/DNS_SETTINGS.md:173:dig TXT _dmarc.mg.insightpulseai.com +short
+docs/DNS_SETTINGS.md:223:MAILGUN_DOMAIN=mg.insightpulseai.com
+docs/DNS_SETTINGS.md:224:MAILGUN_SMTP_SERVER=smtp.mailgun.org
+docs/DNS_SETTINGS.md:226:MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
+docs/DNS_SETTINGS.md:235:| SMTP Server | smtp.mailgun.org |
+docs/DNS_SETTINGS.md:238:| Username | postmaster@mg.insightpulseai.com |
+docs/DNS_SETTINGS.md:247:- [Mailgun Documentation](https://documentation.mailgun.com/)
+docs/DNS_SETTINGS.md:248:- [Mailgun API Reference](https://documentation.mailgun.com/docs/mailgun/api-reference/openapi-final/tag/Domains/)
+docs/DNS_SETTINGS.md:249:- [Webhooks API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/webhooks)
+docs/DNS_SETTINGS.md:250:- [Webhook Signing Key API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/account-management/post-v5-accounts-http_signing_key)
+docs/DNS_SETTINGS.md:251:- [Webhooks Help Center](https://help.mailgun.com/hc/en-us/articles/202236504-Webhooks)
+docs/DNS_SETTINGS.md:252:- [Webhooks Guide](https://www.mailgun.com/blog/product/a-guide-to-using-mailguns-webhooks/)
+docs/CODESPACES_SETUP.md:107:**Domain**: `mg.insightpulseai.com`
+docs/CODESPACES_SETUP.md:110:- MX: `mxa.mailgun.org`, `mxb.mailgun.org` (priority 10)
+docs/CODESPACES_SETUP.md:111:- SPF: `v=spf1 include:mailgun.org ~all`
+docs/CODESPACES_SETUP.md:113:- DKIM: `pic._domainkey.mg.insightpulseai.com`
+docs/CODESPACES_SETUP.md:172:- [Mailgun Dashboard](https://app.mailgun.com/mg/insightpulseai.com)
+docs/knowledge/graph_seed.json:3050:      "id": "script:configure_mailgun_smtp",
+docs/knowledge/graph_seed.json:3052:      "name": "configure_mailgun_smtp.py",
+docs/knowledge/graph_seed.json:3054:        "path": "scripts/configure_mailgun_smtp.py"
+docs/knowledge/graph_seed.json:5196:      "dst": "script:configure_mailgun_smtp",
+docs/prd/end_state/AIUX_SHIP_v1.1.0_PARAMETERIZED.json:106:    "mailgun": {
+docs/prd/end_state/AIUX_SHIP_v1.1.0_PARAMETERIZED.json:108:      "runbook_path": "ops/runbooks/mailgun_domain_verification.md",
+docs/prd/end_state/AIUX_SHIP_v1.1.0.json:21:      "provider": "mailgun",
+docs/prd/end_state/AIUX_SHIP_v1.1.0.json:22:      "runbook": "ops/runbooks/mailgun_domain_verification.md"
+docs/prd/END_STATE_SPEC.json:119:      "provider": "mailgun",
+docs/prd/END_STATE_SPEC.json:120:      "runbook": "ops/runbooks/mailgun_domain_verification.md",
+docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md:70:| Mailgun Domain Verification | `ops/runbooks/mailgun_domain_verification.md` | Domain verification operational steps |
+docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md:198:- **Runbook**: `ops/runbooks/mailgun_domain_verification.md`
+docs/prd/aiux_ship_end_state.v1.1.0.json:46:    "ops/runbooks/mailgun_domain_verification.md",
+docs/prd/aiux_ship_end_state.v1.1.0.json:59:    "mailgun": {
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:161:rg -n "mailgun|mg\.insightpulseai" README.md docs/ || EXIT_CODE=$?
+docs/AGENT_MEMORY_DEPLOYMENT.md:88:| `odoo_mailgate` | integration | odoo, mailgun | odoo_developer |
+docs/AGENT_MEMORY_DEPLOYMENT.md:89:| `mailgun_send` | integration | mailgun | (none) |
+docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md:65:| Mailgun (mg.insightpulseai.com) | Configured |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:3:**Domain:** mg.insightpulseai.com
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:13:| SPF | TXT @ mg.insightpulseai.com | `v=spf1 include:mailgun.org ~all` | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:14:| DKIM | TXT @ pic._domainkey.mg.insightpulseai.com | Public key for DKIM signing | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:15:| DMARC | TXT @ _dmarc.mg.insightpulseai.com | `v=DMARC1; p=none; pct=100; fo=1; ...` | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:16:| MX Primary | MX @ mg.insightpulseai.com | `10 mxa.mailgun.org` | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:17:| MX Secondary | MX @ mg.insightpulseai.com | `10 mxb.mailgun.org` | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:18:| Tracking CNAME | CNAME @ email.mg.insightpulseai.com | `mailgun.org` | ⏳ Pending verification |
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:26:./scripts/mailgun/verify_dns.sh
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:29:./scripts/mailgun/test_smtp.sh
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:33:./scripts/mailgun/setup_webhooks.sh
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:36:./scripts/mailgun/send_test_email.sh your-email@example.com
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:56:MAILGUN_DOMAIN=mg.insightpulseai.com
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:60:SMTP_HOST=smtp.mailgun.org
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:62:SMTP_USER=postmaster@mg.insightpulseai.com
+docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md:85:*Generated by claude/verify-mailgun-dns-3p1fN*
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:116:SMTP_HOST=smtp.mailgun.org
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:118:SMTP_USERNAME=postmaster@mg.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:122:EMAIL_HOST=smtp.mailgun.org
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:124:EMAIL_HOST_USER=postmaster@mg.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:285:- Email sending via smtp.mailgun.org:2525
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:322:   - SMTP host: smtp.mailgun.org:2525 (DigitalOcean compatible)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:323:   - Credentials: postmaster@mg.insightpulseai.net
+docs/llm/SUPABASE_STACK.md:122:| `mailgate-mailgun` | Inbound email handler |
+docs/llm/DIGITALOCEAN_DOCKER_STACK.md:222:SMTP_HOST=smtp.mailgun.org
+docs/llm/DIGITALOCEAN_DOCKER_STACK.md:224:SMTP_USER=postmaster@mg.insightpulseai.com
+docs/llm/STACK_RELATIONSHIPS.md:46:service.odoo-core USES_SMTP provider.mailgun
+
+2. Scanning for .net domain references...
+docs/issues/2026-02-07-domain-health-audit.md:187:`infra/deploy/nginx/erp.insightpulseai.net.conf` — filename uses old `.net` domain, but all content inside references `.com`. Also:
+docs/issues/2026-02-07-domain-health-audit.md:194:1. Rename: `erp.insightpulseai.net.conf` → `erp.insightpulseai.com.conf`
+docs/DEPRECATED_DOCS.md:105:- `insightpulseai.net` → `insightpulseai.com`
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:5:**Domain**: plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:118:SMTP_USERNAME=postmaster@mg.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:120:SMTP_FROM_EMAIL=no-reply@plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:124:EMAIL_HOST_USER=postmaster@mg.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:126:DEFAULT_FROM_EMAIL=no-reply@plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:132:WEB_URL=https://plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:141:- User needs to complete initial registration at https://plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:198:- [x] DNS record verified (plane.insightpulseai.net → 178.128.112.214)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:233:dig +short plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:237:curl -I http://plane.insightpulseai.net/
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:244:2. **SSL Certificate**: Configure Let's Encrypt/Certbot for HTTPS on plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:245:3. **Admin Registration**: Register admin user at https://plane.insightpulseai.net and promote
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:286:- From address: no-reply@plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:323:   - Credentials: postmaster@mg.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:324:   - From address: no-reply@plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:328:   - Domain: plane.insightpulseai.net
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:345:   - Action: User must register at https://plane.insightpulseai.net first
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:357:curl http://plane.insightpulseai.net/
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:386:7. ✅ DNS verification (plane.insightpulseai.net → 178.128.112.214)
+docs/evidence/20260211-0930/superset-db-init/verification.md:162:SUPERSET_ALLOWED_EMBEDDED_DOMAINS=https://erp.insightpulseai.net,https://scout-mvp.vercel.app,http://localhost:8069,http://localhost:3000
+docs/architecture/PROD_RUNTIME_SNAPSHOT.md:15:- Deprecated: `insightpulseai.net` (all services migrated)
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:180:2. **insightpulseai.net**: Replace with `insightpulseai.com`
+docs/templates/ipai-ops-stack/caddy/Caddyfile:5:chat.insightpulseai.net {
+docs/templates/ipai-ops-stack/caddy/Caddyfile:11:boards.insightpulseai.net {
+docs/templates/ipai-ops-stack/caddy/Caddyfile:17:n8n.insightpulseai.net {
+docs/templates/ipai-ops-stack/caddy/Caddyfile:23:superset.insightpulseai.net {
+
+3. Scanning for Odoo 18 references...
+README.md:274:- **Odoo 18 CE / OCA CI** — Lint, static checks, and unit tests
+docs/deprecated/mailgun/Mailgun_DNS.md:11:**Last Valid Version**: Odoo 18.0 / 2026-01-08
+docs/deprecated/mailgun/MAILGUN_INTEGRATION.md:11:**Last Valid Version**: Odoo 18.0 / 2026-02-11
+docs/INFRASTRUCTURE_CHECKLIST.md:109:- [x] Odoo 18 CE (ERP) ✅ (DO droplet `odoo-erp-prod`)
+docs/module-health/modules_status.json:3:  "odoo_version": 18,
+docs/module-health/modules_status.json:361:      "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+docs/module-health/modules_status.json:1169:      "display_name": "IPAI Odoo 18 Compatibility Fixes",
+docs/module-health/modules_status.json:1170:      "summary": "Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues",
+docs/003-odoo-ce-custom-image-spec.md:22:This specification defines the **canonical custom Docker image** for Odoo CE 18, built from the upstream `odoo:18.0` base and extended with InsightPulse-specific configuration and addons. The custom image implements the "Smart Customization" pattern where all custom modules and dependencies are baked into the image for immutable, consistent deployments.
+docs/003-odoo-ce-custom-image-spec.md:49:   - Secure base image (official `odoo:18.0`)
+docs/003-odoo-ce-custom-image-spec.md:79:├── Base: odoo:18.0 (official)
+docs/003-odoo-ce-custom-image-spec.md:124:- MUST use `odoo:18.0` as base
+docs/003-odoo-ce-custom-image-spec.md:193:# Base: Official Odoo 18.0 CE
+docs/003-odoo-ce-custom-image-spec.md:194:FROM odoo:18.0
+docs/003-odoo-ce-custom-image-spec.md:235:- Delta architecture: upstream `odoo:18.0` + InsightPulse deltas only
+docs/003-odoo-ce-custom-image-spec.md:430:- Use official `odoo:18.0` image only
+docs/memory/MEMORY_WRITE_INSTRUCTIONS.md:24:    "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
+docs/memory/MEMORY_WRITE_INSTRUCTIONS.md:26:      "runtime": ["Odoo 18 CE", "Python 3.10+", "Node.js >= 18.0.0"],
+docs/memory/MEMORY_WRITE_INSTRUCTIONS.md:63:    "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
+docs/memory/MEMORY_WRITE_INSTRUCTIONS.md:65:      "runtime": ["Odoo 18 CE", "Python 3.10+", "Node.js >= 18.0.0"],
+docs/memory/MEMORY_WRITE_INSTRUCTIONS.md:137:1. Major version changes (e.g., Odoo 18 → 19)
+docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md:62:| **Base Image: odoo:18.0** | ✅ PASS | Line 2: `FROM odoo:18.0` | Correct base |
+docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md:416:# Custom Odoo 18 Image for InsightPulse ERP
+docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md:417:FROM odoo:18.0
+docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md:550:  # Expected: <1.5GB (official odoo:18.0 is ~1.2GB)
+docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md:909:- ✅ Strong base image (official odoo:18.0)
+docs/FEATURE_CONCUR_PARITY.md:344:- Odoo Expense Management: https://www.odoo.com/documentation/18.0/applications/hr/expenses.html
+docs/SAAS_PARITY_READINESS.md:353:- Odoo CE Documentation: https://www.odoo.com/documentation/18.0
+docs/memory/MEMORY_DISTILLATION.json:9:  "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
+docs/memory/MEMORY_DISTILLATION.json:12:      "Odoo 18 CE",
+docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md:1:# Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)
+docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md:4:**Target Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules
+docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md:9:- What Odoo 18 offers in **Community Edition (CE)**
+docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md:50:These are **shipped in Odoo 18 CE** and should be used before anything else.
+docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md:392:This document is the **source of truth** for all Odoo 18 CE/OCA design decisions in InsightPulse ERP.
+docs/RELEASE_NOTES_GO_LIVE.md:1:# GO-LIVE RELEASE MANIFEST (Odoo 18 CE + IPAI)
+docs/memory/CANONICAL_CONTEXT.md:20:Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulse AI (IPAI) custom modules for:
+docs/memory/CANONICAL_CONTEXT.md:66:| **Python** | 3.10+ (Odoo 18 requirement) |
+docs/memory/CANONICAL_CONTEXT.md:146:- **Odoo 18 CE / OCA CI** — Lint, static checks, unit tests
+docs/BACKLOG_COVERAGE_REPORT.md:81:| P2 | Config | Create `spec/ipai-ai-platform-odoo18/constitution.md` | spec/ipai-ai-platform-odoo18 | spec/ipai-ai-platform-odoo18/tasks.md |
+docs/BACKLOG_COVERAGE_REPORT.md:82:| P2 | Config | Create `spec/ipai-ai-platform-odoo18/prd.md` | spec/ipai-ai-platform-odoo18 | spec/ipai-ai-platform-odoo18/tasks.md |
+docs/BACKLOG_COVERAGE_REPORT.md:83:| P2 | Config | Create `spec/ipai-ai-platform-odoo18/plan.md` | spec/ipai-ai-platform-odoo18 | spec/ipai-ai-platform-odoo18/tasks.md |
+docs/BACKLOG_COVERAGE_REPORT.md:84:| P2 | Config | Create `spec/ipai-ai-platform-odoo18/tasks.md` | spec/ipai-ai-platform-odoo18 | spec/ipai-ai-platform-odoo18/tasks.md |
+docs/PRODUCTION_DEFAULTS.md:1:# Odoo 18 CE Production Defaults - Canonical Configuration
+docs/SEED_DATA_ASSESSMENT.md:5:**Odoo Equivalent:** Odoo 18 CE + OCA Module Documentation
+docs/SEED_DATA_ASSESSMENT.md:31:| Closing Template | `finance.task.template` | - | [Project Management](https://www.odoo.com/documentation/18.0/applications/services/project/project_management.html) |
+docs/SEED_DATA_ASSESSMENT.md:32:| Closing Task List | `project.task` + stages | - | [Project Tasks](https://www.odoo.com/documentation/18.0/applications/services/project.html) |
+docs/SEED_DATA_ASSESSMENT.md:34:| Period Lock | Lock Dates | `account_fiscal_year_closing` | [Year-End Closing](https://www.odoo.com/documentation/18.0/applications/finance/accounting/reporting/year_end.html) |
+docs/SEED_DATA_ASSESSMENT.md:36:| Task Monitoring | Kanban + Dashboard | `project_dashboard` | [Project Views](https://www.odoo.com/documentation/18.0/applications/services/project.html) |
+docs/SEED_DATA_ASSESSMENT.md:46:| Audit Trail | Chatter + `mail.tracking` | - | [Odoo Discuss](https://www.odoo.com/documentation/18.0/applications/productivity/discuss.html) |
+docs/SEED_DATA_ASSESSMENT.md:113:| **Fiscal Year 2026 not seeded** | Cannot lock periods | Manual: Accounting → Settings → Fiscal Year | [Fiscal Year](https://www.odoo.com/documentation/18.0/applications/finance/accounting/get_started.html) |
+docs/SEED_DATA_ASSESSMENT.md:114:| **Chart of Accounts not seeded** | Journal entries fail | Use default COA or import CSV | [Chart of Accounts](https://www.odoo.com/documentation/18.0/applications/finance/accounting/get_started/chart_of_accounts.html) |
+docs/SEED_DATA_ASSESSMENT.md:115:| **VAT 12% tax not configured** | Tax calculations fail | Accounting → Configuration → Taxes | [Tax Configuration](https://www.odoo.com/documentation/18.0/applications/finance/accounting/taxes.html) |
+docs/SEED_DATA_ASSESSMENT.md:116:| **Users not fully seeded** | Task assignments fail | Run `update_tasks_after_import.py` | [User Management](https://www.odoo.com/documentation/18.0/applications/general/users.html) |
+docs/SEED_DATA_ASSESSMENT.md:246:- [Odoo 18 Year-End Closing](https://www.odoo.com/documentation/18.0/applications/finance/accounting/reporting/year_end.html)
+docs/SEED_DATA_ASSESSMENT.md:247:- [Odoo 18 Project Management](https://www.odoo.com/documentation/18.0/applications/services/project/project_management.html)
+docs/SEED_DATA_ASSESSMENT.md:248:- [Odoo 18 Tax Configuration](https://www.odoo.com/documentation/18.0/applications/finance/accounting/taxes.html)
+docs/IMAGE_GUIDE.md:4:**Base System:** Odoo 18.0 (Debian Bookworm)
+docs/IMAGE_GUIDE.md:16:| **Base** | `/usr/lib/python3/dist-packages/odoo` | Official Odoo 18.0 core source code |
+docs/IMAGE_GUIDE.md:117:    image: odoo:18.0
+docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md:156:   # Or use OCA auth_oidc if available for Odoo 18
+docs/DOCKER_SIMPLE_EXPLANATION.md:35:│ Image: odoo:18                  │
+docs/DOCKER_SIMPLE_EXPLANATION.md:167:    image: odoo:18
+docs/BACKLOG_COVERAGE_REPORT.json:802:      "title": "Create `spec/ipai-ai-platform-odoo18/constitution.md`",
+docs/BACKLOG_COVERAGE_REPORT.json:804:      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+docs/BACKLOG_COVERAGE_REPORT.json:805:      "target_component": "spec/ipai-ai-platform-odoo18",
+docs/BACKLOG_COVERAGE_REPORT.json:809:        "spec/ipai-ai-platform-odoo18/tasks.md"
+docs/BACKLOG_COVERAGE_REPORT.json:816:      "title": "Create `spec/ipai-ai-platform-odoo18/prd.md`",
+docs/BACKLOG_COVERAGE_REPORT.json:818:      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+docs/BACKLOG_COVERAGE_REPORT.json:819:      "target_component": "spec/ipai-ai-platform-odoo18",
+docs/BACKLOG_COVERAGE_REPORT.json:823:        "spec/ipai-ai-platform-odoo18/tasks.md"
+docs/BACKLOG_COVERAGE_REPORT.json:830:      "title": "Create `spec/ipai-ai-platform-odoo18/plan.md`",
+docs/BACKLOG_COVERAGE_REPORT.json:832:      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+docs/BACKLOG_COVERAGE_REPORT.json:833:      "target_component": "spec/ipai-ai-platform-odoo18",
+docs/BACKLOG_COVERAGE_REPORT.json:837:        "spec/ipai-ai-platform-odoo18/tasks.md"
+docs/BACKLOG_COVERAGE_REPORT.json:844:      "title": "Create `spec/ipai-ai-platform-odoo18/tasks.md`",
+docs/BACKLOG_COVERAGE_REPORT.json:846:      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+docs/BACKLOG_COVERAGE_REPORT.json:847:      "target_component": "spec/ipai-ai-platform-odoo18",
+docs/BACKLOG_COVERAGE_REPORT.json:851:        "spec/ipai-ai-platform-odoo18/tasks.md"
+docs/SHIP_v1.1.0_SUMMARY.md:350:- Service names: odoo → odoo → odoo-app → odoo-18
+docs/auth/EMAIL_AUTH_SETUP.md:573:- [Odoo Email Configuration](https://www.odoo.com/documentation/18.0/applications/general/email_communication.html)
+docs/TROUBLESHOOTING.md:211:1. Fix XML syntax (common: `<list>` not `<tree>` in Odoo 18)
+docs/TROUBLESHOOTING.md:338:   - Follow Odoo 18 conventions
+docs/TROUBLESHOOTING.md:458:### Class: XML View Parse Error (Odoo 18 Migration)
+docs/TROUBLESHOOTING.md:466:**Root Cause**: Odoo 18 changed `<tree>` to `<list>` for list views
+docs/TROUBLESHOOTING.md:479:<!-- After (Odoo 18) -->
+docs/TROUBLESHOOTING.md:585:node scripts/ssim.js --routes="/expenses,/tasks" --odoo-version="18.0"
+docs/CE_OCA_PROJECT_STACK.md:1:# CE + OCA Project Stack Mapping (Odoo 18)
+docs/CE_OCA_PROJECT_STACK.md:5:**Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules
+docs/CE_OCA_PROJECT_STACK.md:336:**Source:** Odoo 18 Apps Catalog (odoo.com/apps, filtered: Project category, CE only)
+docs/EE_TO_CE_OCA_MAPPING.md:17:| **CE-Native** | Features already present in Odoo 18 CE core or trivial OCA equivalents |
+docs/adr/ADR-0001-clone-not-integrate.md:99:- Odoo 18 Development Documentation
+docs/TENANT_ARCHITECTURE.md:44:├── Odoo Container (ghcr.io/jgtolentino/odoo:18)
+docs/security/config_files.txt:329:/Users/tbwa/Documents/GitHub/odoo-ce/spec/ipai-odoo18-enterprise-patch/capability_map.yaml
+docs/PRODUCTION_DEPLOYMENT_CHECKLIST.md:5:**Stack**: Odoo 18 CE + PostgreSQL 16 + Nginx + Let's Encrypt
+docs/PRODUCTION_DEPLOYMENT_CHECKLIST.md:122:● odoo.service - Odoo 18 CE
+docs/CANONICAL_LINT.md:40:## 2. View Syntax Rules (Odoo 18)
+docs/CANONICAL_LINT.md:43:**Rule**: All list views MUST use `<list>` tag (Odoo 18 syntax)
+docs/CANONICAL_LINT.md:44:**Why**: `<tree>` is deprecated in Odoo 18, will break in future versions
+docs/CANONICAL_LINT.md:64:**Why**: Matches Odoo 18 terminology, prevents confusion
+docs/PRD_ipai_ppm_portfolio.md:491:- **Odoo Project Module**: https://www.odoo.com/documentation/18.0/applications/services/project.html
+docs/repo/GIT_STATE.prod.txt:23:dd3fc65 fix(workos): migrate tree views to list views for Odoo 18 compatibility
+docs/llm/STACK_OVERVIEW.md:15:| **ERP Core** | Odoo 18 CE + OCA | Business logic, accounting, HR, projects |
+docs/repo/REPO_TREE.prod.md:425:├── odoo-18-handbook
+docs/CANONICAL_MAP.md:37:    'version': '18.0.1.0.0',  # Odoo 18 compatible
+docs/CANONICAL_MAP.md:51:## 2. View Conventions (Odoo 18)
+docs/CANONICAL_MAP.md:55:**Odoo 18 Canonical Syntax**:
+docs/CANONICAL_MAP.md:192:  image: odoo:18
+docs/IMPLEMENTATION_SUMMARY.md:379:| Base Image: odoo:18.0 | ✅ PASS | Line 2 |
+docs/IMPLEMENTATION_SUMMARY.md:398:| Base Image: odoo:18.0 | ✅ PASS | Line 6 |
+docs/audits/ipai_modules/inventory.json:12:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_industry_marketing_agency",
+docs/audits/ipai_modules/inventory.json:53:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm_monthly_close",
+docs/audits/ipai_modules/inventory.json:102:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_dev_studio_base",
+docs/audits/ipai_modules/inventory.json:144:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_test_fixtures",
+docs/audits/ipai_modules/inventory.json:184:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ask_ai",
+docs/audits/ipai_modules/inventory.json:236:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm_closing",
+docs/audits/ipai_modules/inventory.json:279:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_expense",
+docs/audits/ipai_modules/inventory.json:326:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_advisor",
+docs/audits/ipai_modules/inventory.json:375:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_superset_connector",
+docs/audits/ipai_modules/inventory.json:427:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm_tdi",
+docs/audits/ipai_modules/inventory.json:479:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_clarity_ppm_parity",
+docs/audits/ipai_modules/inventory.json:482:      "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+docs/audits/ipai_modules/inventory.json:526:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ce_branding",
+docs/audits/ipai_modules/inventory.json:568:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm_a1",
+docs/audits/ipai_modules/inventory.json:618:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_custom_routes",
+docs/audits/ipai_modules/inventory.json:663:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_month_end",
+docs/audits/ipai_modules/inventory.json:709:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_equipment",
+docs/audits/ipai_modules/inventory.json:753:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_master_control",
+docs/audits/ipai_modules/inventory.json:797:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_srm",
+docs/audits/ipai_modules/inventory.json:847:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_default_home",
+docs/audits/ipai_modules/inventory.json:896:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ask_ai_chatter",
+docs/audits/ipai_modules/inventory.json:944:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ocr_expense",
+docs/audits/ipai_modules/inventory.json:988:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_close_orchestration",
+docs/audits/ipai_modules/inventory.json:1037:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_close_automation",
+docs/audits/ipai_modules/inventory.json:1089:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_project_program",
+docs/audits/ipai_modules/inventory.json:1135:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_bir_compliance",
+docs/audits/ipai_modules/inventory.json:1177:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_agent_core",
+docs/audits/ipai_modules/inventory.json:1225:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_project_hybrid",
+docs/audits/ipai_modules/inventory.json:1276:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_studio_ai",
+docs/audits/ipai_modules/inventory.json:1328:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_bir_compliance",
+docs/audits/ipai_modules/inventory.json:1374:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm",
+docs/audits/ipai_modules/inventory.json:1424:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_workspace_core",
+docs/audits/ipai_modules/inventory.json:1466:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ai_studio",
+docs/audits/ipai_modules/inventory.json:1510:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ce_cleaner",
+docs/audits/ipai_modules/inventory.json:1558:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm",
+docs/audits/ipai_modules/inventory.json:1617:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm_dashboard",
+docs/audits/ipai_modules/inventory.json:1664:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_industry_accounting_firm",
+docs/audits/ipai_modules/inventory.json:1705:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_monthly_closing",
+docs/audits/ipai_modules/inventory.json:1747:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_assets",
+docs/audits/ipai_modules/inventory.json:1797:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_project_suite",
+docs/audits/ipai_modules/inventory.json:1845:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_close_seed",
+docs/audits/ipai_modules/inventory.json:1891:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_portal_fix",
+docs/audits/ipai_modules/inventory.json:1931:      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai",
+docs/design-system/ODOO_FLUENT_DESIGN_SYSTEM.md:10:> **Target:** Odoo 18/19 Website + eCommerce
+docs/design-system/ODOO_FLUENT_DESIGN_SYSTEM.md:364:- [Odoo Website Docs](https://www.odoo.com/documentation/18.0/developer/tutorials/website.html)
+docs/audits/ipai_modules/oca_overlap_map.yaml:183:    notes: "Bug fix - keep until Odoo 18 fixes upstream"
+docs/DEVELOPER_TOOLS.md:10:| Developer docs hub | https://www.odoo.com/documentation/18.0/developer.html |
+docs/DEVELOPER_TOOLS.md:11:| Frontend Assets (JS/CSS/SCSS) | https://www.odoo.com/documentation/18.0/developer/reference/frontend/assets.html |
+docs/DEVELOPER_TOOLS.md:13:| Unit Tests | https://www.odoo.com/documentation/18.0/developer/tutorials/unit_tests.html |
+docs/llm/ODOO_PLATFORM.md:4:> **Version**: Odoo 18.0 Community Edition
+docs/llm/ODOO_PLATFORM.md:12:Odoo 18 CE (Core)
+docs/evidence/20260119-0840/mailgun-mailgate/git_state.txt:12:Implements Mailgun Mailgate Controller for Odoo 18 CE as part of ipai_enterprise_bridge module.
+docs/OFFICIAL_ALIGNMENT.md:15:| **Odoo image** | `odoo:17.0` | `odoo:18` | ⚠️ Newer version |
+docs/OFFICIAL_ALIGNMENT.md:72:    image: odoo:18
+docs/OFFICIAL_ALIGNMENT.md:125:image: odoo:18          # ⚠️ Newer - Released Jan 2024
+docs/OFFICIAL_ALIGNMENT.md:129:**Why newer is OK**: Odoo 18 and PostgreSQL 16 are stable and backward-compatible.
+docs/CLAUDE_CODE_SETUP.md:69:Implement an Odoo 18 CE module under addons/ipai/ipai_chat_ui that mounts a React chat surface as a web client action.
+docs/CLAUDE_CODE_SETUP.md:132:Scaffold new Odoo 18 CE module: ipai_<module_name>
+docs/TESTING_ODOO_18.md:1:# Testing Odoo 18 - Official Patterns
+docs/TESTING_ODOO_18.md:3:**Documentation Reference:** [Odoo 18 Testing Docs](https://www.odoo.com/documentation/18.0/developer/reference/backend/testing.html)
+docs/TESTING_ODOO_18.md:25:## Test Structure (Odoo 18 Standard)
+docs/TESTING_ODOO_18.md:119:## Test Tags (Odoo 18)
+docs/TESTING_ODOO_18.md:251:- name: Run Odoo 18 tests
+docs/TESTING_ODOO_18.md:335:## JavaScript Tests (Odoo 18 HOOT)
+docs/TESTING_ODOO_18.md:427:- [Odoo 18 Testing Documentation](https://www.odoo.com/documentation/18.0/developer/reference/backend/testing.html)
+docs/TESTING_ODOO_18.md:428:- [Odoo 18 JS Testing (HOOT)](https://www.odoo.com/documentation/18.0/developer/reference/frontend/unit_testing.html)
+docs/evidence/20260129-odoo-asset-fix.md:73:- Custom Docker image `ghcr.io/jgtolentino/odoo:19.0-ee-parity` referenced but running container uses standard `odoo:18.0`
+docs/llm/DIGITALOCEAN_DOCKER_STACK.md:21:- Odoo 18 CE (port 8069)
+docs/llm/DIGITALOCEAN_DOCKER_STACK.md:69:| `odoo-core` | `odoo:18.0` | 8069 | Main ERP |
+docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md:1:# TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)
+docs/OCA_MIGRATION.md:48:| Knowledge/Wiki | `knowledge` | ✅ Native Odoo 18 |
+docs/OCA_MIGRATION.md:134:| `ipai_docs` | **DEPRECATED** | Native Odoo 18 Knowledge |
+docs/ODOO_APPS_CATALOG.md:111:These are included by default when Odoo 18 CE is installed:
+docs/evidence/20260129-0110/oca-ipai-manifest/COMPREHENSIVE_MANIFEST_COMPLETE.md:165:- Clones using branch 18.0 (Odoo 18 compatibility)
+docs/DEPRECATED_DOCS.md:85:### Outdated Version References (Odoo 18 → 19)
+docs/DEPRECATED_DOCS.md:88:- "Odoo 18" → "Odoo 19"
+docs/DEPRECATED_DOCS.md:89:- "odoo.*18" → "odoo.*19"
+docs/DEPRECATED_DOCS.md:90:- Version-specific docs for Odoo 18
+docs/DEPRECATED_DOCS.md:135:**Last Valid Version**: [Odoo 18.0 / 2025-01-15]
+docs/DEPRECATED_DOCS.md:150:3. README.md Odoo 18 → 19 updates
+docs/DEPRECATED_DOCS.md:174:| Odoo 18 Refs | 715 instances | N/A | 0% |
+docs/DEPRECATED_DOCS.md:200:   sed -i 's/Odoo 18/Odoo 19/g' README.md
+docs/WBS_LOGFRAME_MAPPING.md:6:**Deployment**: Odoo 18 CE + ipai_finance_ppm_tdi module
+docs/WBS_LOGFRAME_MAPPING.md:325:- Odoo 18 CE installed with `ipai_finance_ppm_tdi` module
+docs/evidence/20260129-0110/mount-validation/IMPLEMENTATION_COMPLETE.md:49:  "odoo_version": "18.0",
+docs/infra/SUPABASE_ODOO_SEED_PATTERN.md:17:│  │  odoo_seed.*    │ ─── Edge Function ──▶│  Odoo CE 18     │          │
+docs/infra/CANONICAL_ODOO_PACK.md:4:**Target**: Odoo 18 CE + OCA + ipai_* (InsightPulse AI)
+docs/infra/CANONICAL_ODOO_PACK.md:54:    image: odoo:18.0
+docs/infra/CANONICAL_ODOO_PACK.md:337:- **Odoo 18 Docs**: https://www.odoo.com/documentation/18.0/
+docs/evidence/20260126-parity-analysis/EVIDENCE.md:41:**Before (Odoo 18 baseline):** 18 tests
+docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md:322:docker run --rm odoo:18.0 --version
+docs/evidence/20260129-0210/OCA_IPAI_INSTALLER_COMPLETE.md:24:| `spec/ipai-odoo-devops-agent/constitution.md` | 180 | 5.4K | Agent contract and rules |
+docs/evidence/20260129-0210/OCA_IPAI_INSTALLER_COMPLETE.md:27:| `spec/ipai-odoo-devops-agent/tasks.md` | 746 | 18K | 32 tracked tasks |
+docs/evidence/20260129-0210/OCA_IPAI_INSTALLER_COMPLETE.md:39:| **CE Core Modules** | ~40 | ✅ Odoo 18 standard |
+docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md:123:- Image: `odoo:18.0` or custom build
+docs/runtime/ODOO_MENU_SITEMAP.prod.json:1:{"generated_at" : "2025-12-25T17:14:51Z", "database" : "odoo_accounting", "menus" : [{"id" : 75, "name" : "Discuss", "parent_id" : null, "sequence" : 5, "action" : "ir.actions.client,116"}, {"id" : 129, "name" : "Work OS", "parent_id" : null, "sequence" : 5, "action" : null}, {"id" : 111, "name" : "Project", "parent_id" : null, "sequence" : 70, "action" : null}, {"id" : 15, "name" : "Apps", "parent_id" : null, "sequence" : 500, "action" : null}, {"id" : 1, "name" : "Settings", "parent_id" : null, "sequence" : 550, "action" : null}, {"id" : 16, "name" : "Tests", "parent_id" : null, "sequence" : 1000, "action" : null}, {"id" : 67, "name" : "General Settings", "parent_id" : 1, "sequence" : 0, "action" : "ir.actions.act_window,85"}, {"id" : 3, "name" : "Users & Companies", "parent_id" : 1, "sequence" : 1, "action" : null}, {"id" : 4, "name" : "Translations", "parent_id" : 1, "sequence" : 2, "action" : null}, {"id" : 7, "name" : "General Settings", "parent_id" : 1, "sequence" : 3, "action" : null}, {"id" : 2, "name" : "Custom Shortcuts", "parent_id" : 1, "sequence" : 50, "action" : null}, {"id" : 8, "name" : "Technical", "parent_id" : 1, "sequence" : 110, "action" : null}, {"id" : 61, "name" : "Users", "parent_id" : 3, "sequence" : 0, "action" : "ir.actions.act_window,70"}, {"id" : 60, "name" : "Groups", "parent_id" : 3, "sequence" : 3, "action" : "ir.actions.act_window,69"}, {"id" : 58, "name" : "Companies", "parent_id" : 3, "sequence" : 10, "action" : "ir.actions.act_window,53"}, {"id" : 59, "name" : "Languages", "parent_id" : 4, "sequence" : 1, "action" : "ir.actions.act_window,54"}, {"id" : 6, "name" : "Import / Export", "parent_id" : 4, "sequence" : 3, "action" : null}, {"id" : 5, "name" : "Application Terms", "parent_id" : 4, "sequence" : 4, "action" : null}, {"id" : 54, "name" : "Import Translation", "parent_id" : 6, "sequence" : 10, "action" : "ir.actions.act_window,45"}, {"id" : 56, "name" : "Export Translation", "parent_id" : 6, "sequence" : 10, "action" : "ir.actions.act_window,48"}, {"id" : 88, "name" : "Discuss", "parent_id" : 8, "sequence" : 1, "action" : null}, {"id" : 103, "name" : "Activities", "parent_id" : 8, "sequence" : 2, "action" : null}, {"id" : 10, "name" : "Email", "parent_id" : 8, "sequence" : 3, "action" : null}, {"id" : 18, "name" : "Actions", "parent_id" : 8, "sequence" : 5, "action" : null}, {"id" : 69, "name" : "IAP", "parent_id" : 8, "sequence" : 5, "action" : null}, {"id" : 9, "name" : "User Interface", "parent_id" : 8, "sequence" : 10, "action" : null}, {"id" : 11, "name" : "Database Structure", "parent_id" : 8, "sequence" : 10, "action" : null}, {"id" : 12, "name" : "Automation", "parent_id" : 8, "sequence" : 10, "action" : null}, {"id" : 63, "name" : "Reporting", "parent_id" : 8, "sequence" : 15, "action" : null}, {"id" : 35, "name" : "Sequences & Identifiers", "parent_id" : 8, "sequence" : 21, "action" : null}, {"id" : 14, "name" : "Parameters", "parent_id" : 8, "sequence" : 24, "action" : null}, {"id" : 13, "name" : "Security", "parent_id" : 8, "sequence" : 25, "action" : null}, {"id" : 71, "name" : "Resource", "parent_id" : 8, "sequence" : 30, "action" : null}, {"id" : 43, "name" : "Menu Items", "parent_id" : 9, "sequence" : 1, "action" : "ir.actions.act_window,30"}, {"id" : 44, "name" : "Views", "parent_id" : 9, "sequence" : 2, "action" : "ir.actions.act_window,31"}, {"id" : 45, "name" : "Customized Views", "parent_id" : 9, "sequence" : 3, "action" : "ir.actions.act_window,33"}, {"id" : 30, "name" : "User-defined Filters", "parent_id" : 9, "sequence" : 5, "action" : "ir.actions.act_window,17"}, {"id" : 68, "name" : "Tours", "parent_id" : 9, "sequence" : 5, "action" : "ir.actions.act_window,86"}, {"id" : 80, "name" : "Emails", "parent_id" : 10, "sequence" : 1, "action" : "ir.actions.act_window,107"}, {"id" : 31, "name" : "Outgoing Mail Servers", "parent_id" : 10, "sequence" : 5, "action" : "ir.actions.act_window,18"}, {"id" : 83, "name" : "Incoming Mail Servers", "parent_id" : 10, "sequence" : 6, "action" : "ir.actions.act_window,101"}, {"id" : 84, "name" : "Email Templates", "parent_id" : 10, "sequence" : 10, "action" : "ir.actions.act_window,140"}, {"id" : 81, "name" : "Aliases", "parent_id" : 10, "sequence" : 11, "action" : "ir.actions.act_window,135"}, {"id" : 82, "name" : "Alias Domains", "parent_id" : 10, "sequence" : 12, "action" : "ir.actions.act_window,134"}, {"id" : 85, "name" : "Channels", "parent_id" : 10, "sequence" : 20, "action" : "ir.actions.act_window,115"}, {"id" : 86, "name" : "Channels/Members", "parent_id" : 10, "sequence" : 21, "action" : "ir.actions.act_window,111"}, {"id" : 87, "name" : "Mail Gateway Allowed", "parent_id" : 10, "sequence" : 22, "action" : "ir.actions.act_window,136"}, {"id" : 109, "name" : "Digest Emails", "parent_id" : 10, "sequence" : 80, "action" : "ir.actions.act_window,158"}, {"id" : 110, "name" : "Digest Tips", "parent_id" : 10, "sequence" : 81, "action" : "ir.actions.act_window,159"}, {"id" : 17, "name" : "Decimal Accuracy", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,4"}, {"id" : 26, "name" : "Assets", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,13"}, {"id" : 32, "name" : "Models", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,20"}, {"id" : 33, "name" : "Fields", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,21"}, {"id" : 34, "name" : "Fields Selection", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,22"}, {"id" : 37, "name" : "Model Constraints", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,24"}, {"id" : 38, "name" : "ManyToMany Relations", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,25"}, {"id" : 40, "name" : "Attachments", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,27"}, {"id" : 47, "name" : "Logging", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,38"}, {"id" : 57, "name" : "Profiling", "parent_id" : 11, "sequence" : 10, "action" : "ir.actions.act_window,52"}, {"id" : 28, "name" : "Scheduled Actions", "parent_id" : 12, "sequence" : 2, "action" : "ir.actions.act_window,15"}, {"id" : 29, "name" : "Scheduled Actions Triggers", "parent_id" : 12, "sequence" : 3, "action" : "ir.actions.act_window,16"}, {"id" : 41, "name" : "Record Rules", "parent_id" : 13, "sequence" : 3, "action" : "ir.actions.act_window,28"}, {"id" : 39, "name" : "Access Rights", "parent_id" : 13, "sequence" : 10, "action" : "ir.actions.act_window,26"}, {"id" : 62, "name" : "User Devices", "parent_id" : 13, "sequence" : 10, "action" : "ir.actions.act_window,74"}, {"id" : 27, "name" : "System Parameters", "parent_id" : 14, "sequence" : 10, "action" : "ir.actions.act_window,14"}, {"id" : 48, "name" : "Apps", "parent_id" : 15, "sequence" : 5, "action" : null}, {"id" : 53, "name" : "Update Apps List", "parent_id" : 15, "sequence" : 40, "action" : "ir.actions.act_window,43"}, {"id" : 55, "name" : "Apply Scheduled Upgrades", "parent_id" : 15, "sequence" : 50, "action" : "ir.actions.act_window,46"}, {"id" : 66, "name" : "Import Module", "parent_id" : 15, "sequence" : 100, "action" : "ir.actions.act_window,84"}, {"id" : 19, "name" : "Actions", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,5"}, {"id" : 20, "name" : "Reports", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,6"}, {"id" : 21, "name" : "Window Actions", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,7"}, {"id" : 22, "name" : "Client Actions", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,8"}, {"id" : 23, "name" : "Server Actions", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,9"}, {"id" : 24, "name" : "Embedded Actions", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,10"}, {"id" : 25, "name" : "Configuration Wizards", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,11"}, {"id" : 46, "name" : "User-defined Defaults", "parent_id" : 18, "sequence" : 10, "action" : "ir.actions.act_window,34"}, {"id" : 36, "name" : "External Identifiers", "parent_id" : 35, "sequence" : 10, "action" : "ir.actions.act_window,23"}, {"id" : 42, "name" : "Sequences", "parent_id" : 35, "sequence" : 10, "action" : "ir.actions.act_window,29"}, {"id" : 49, "name" : "Main Apps", "parent_id" : 48, "sequence" : 5, "action" : "ir.actions.act_window,39"}, {"id" : 52, "name" : "Theme Store", "parent_id" : 48, "sequence" : 10, "action" : "ir.actions.act_url,41"}, {"id" : 50, "name" : "Theme Store", "parent_id" : 48, "sequence" : 15, "action" : null}, {"id" : 51, "name" : "Third-Party Apps", "parent_id" : 48, "sequence" : 20, "action" : "ir.actions.act_url,40"}, {"id" : 64, "name" : "Paper Format", "parent_id" : 63, "sequence" : 2, "action" : "ir.actions.act_window,76"}, {"id" : 65, "name" : "Reports", "parent_id" : 63, "sequence" : 3, "action" : "ir.actions.act_window,77"}, {"id" : 70, "name" : "IAP Accounts", "parent_id" : 69, "sequence" : 10, "action" : "ir.actions.act_window,88"}, {"id" : 72, "name" : "Working Schedules", "parent_id" : 71, "sequence" : 1, "action" : "ir.actions.act_window,95"}, {"id" : 73, "name" : "Resource Time Off", "parent_id" : 71, "sequence" : 2, "action" : "ir.actions.act_window,91"}, {"id" : 74, "name" : "Resources", "parent_id" : 71, "sequence" : 3, "action" : "ir.actions.act_window,89"}, {"id" : 76, "name" : "Configuration", "parent_id" : 75, "sequence" : 1, "action" : null}, {"id" : 107, "name" : "Integrations", "parent_id" : 75, "sequence" : 10, "action" : null}, {"id" : 77, "name" : "Notifications", "parent_id" : 76, "sequence" : 1, "action" : "ir.actions.client,132"}, {"id" : 78, "name" : "Voice & Video", "parent_id" : 76, "sequence" : 5, "action" : "ir.actions.client,133"}, {"id" : 79, "name" : "Canned Responses", "parent_id" : 76, "sequence" : 15, "action" : "ir.actions.act_window,117"}, {"id" : 89, "name" : "Messages", "parent_id" : 88, "sequence" : 1, "action" : "ir.actions.act_window,105"}, {"id" : 90, "name" : "Scheduled Messages", "parent_id" : 88, "sequence" : 2, "action" : "ir.actions.act_window,106"}, {"id" : 91, "name" : "Subtypes", "parent_id" : 88, "sequence" : 4, "action" : "ir.actions.act_window,102"}, {"id" : 92, "name" : "Tracking Values", "parent_id" : 88, "sequence" : 5, "action" : "ir.actions.act_window,103"}, {"id" : 93, "name" : "Notifications", "parent_id" : 88, "sequence" : 20, "action" : "ir.actions.act_window,104"}, {"id" : 94, "name" : "Followers", "parent_id" : 88, "sequence" : 21, "action" : "ir.actions.act_window,109"}, {"id" : 95, "name" : "Email Blacklist", "parent_id" : 88, "sequence" : 22, "action" : "ir.actions.act_window,142"}, {"id" : 108, "name" : "Ratings", "parent_id" : 88, "sequence" : 30, "action" : "ir.actions.act_window,143"}, {"id" : 96, "name" : "User Settings", "parent_id" : 88, "sequence" : 50, "action" : "ir.actions.act_window,139"}, {"id" : 97, "name" : "Guests", "parent_id" : 88, "sequence" : 51, "action" : "ir.actions.act_window,137"}, {"id" : 98, "name" : "RTC sessions", "parent_id" : 88, "sequence" : 52, "action" : "ir.actions.act_window,112"}, {"id" : 99, "name" : "ICE servers", "parent_id" : 88, "sequence" : 53, "action" : "ir.actions.act_window,110"}, {"id" : 100, "name" : "Message Reactions", "parent_id" : 88, "sequence" : 54, "action" : "ir.actions.act_window,138"}, {"id" : 101, "name" : "Link Previews", "parent_id" : 88, "sequence" : 55, "action" : "ir.actions.act_window,113"}, {"id" : 102, "name" : "GIF favorite", "parent_id" : 88, "sequence" : 56, "action" : "ir.actions.act_window,114"}, {"id" : 104, "name" : "Activity Overview", "parent_id" : 103, "sequence" : 10, "action" : "ir.actions.act_window,119"}, {"id" : 105, "name" : "Activity Types", "parent_id" : 103, "sequence" : 20, "action" : "ir.actions.act_window,118"}, {"id" : 106, "name" : "Activity Plans", "parent_id" : 103, "sequence" : 30, "action" : "ir.actions.act_window,122"}, {"id" : 112, "name" : "Projects", "parent_id" : 111, "sequence" : 1, "action" : "ir.actions.act_window,173"}, {"id" : 113, "name" : "Projects", "parent_id" : 111, "sequence" : 1, "action" : "ir.actions.act_window,174"}, {"id" : 114, "name" : "Tasks", "parent_id" : 111, "sequence" : 2, "action" : null}, {"id" : 117, "name" : "Reporting", "parent_id" : 111, "sequence" : 99, "action" : null}, {"id" : 120, "name" : "Configuration", "parent_id" : 111, "sequence" : 100, "action" : null}, {"id" : 115, "name" : "My Tasks", "parent_id" : 114, "sequence" : 1, "action" : "ir.actions.server,184"}, {"id" : 116, "name" : "All Tasks", "parent_id" : 114, "sequence" : 2, "action" : "ir.actions.act_window,183"}, {"id" : 118, "name" : "Tasks Analysis", "parent_id" : 117, "sequence" : 10, "action" : "ir.actions.act_window,198"}, {"id" : 119, "name" : "Customer Ratings", "parent_id" : 117, "sequence" : 51, "action" : "ir.actions.act_window,163"}, {"id" : 121, "name" : "Settings", "parent_id" : 120, "sequence" : 0, "action" : "ir.actions.act_window,191"}, {"id" : 122, "name" : "Projects", "parent_id" : 120, "sequence" : 5, "action" : "ir.actions.act_window,176"}, {"id" : 123, "name" : "Projects", "parent_id" : 120, "sequence" : 5, "action" : "ir.actions.act_window,175"}, {"id" : 124, "name" : "Project Stages", "parent_id" : 120, "sequence" : 9, "action" : "ir.actions.act_window,165"}, {"id" : 125, "name" : "Task Stages", "parent_id" : 120, "sequence" : 10, "action" : "ir.actions.act_window,168"}, {"id" : 126, "name" : "Tags", "parent_id" : 120, "sequence" : 10, "action" : "ir.actions.act_window,190"}, {"id" : 127, "name" : "Activity Types", "parent_id" : 120, "sequence" : 10, "action" : "ir.actions.act_window,193"}, {"id" : 128, "name" : "Activity Plans", "parent_id" : 120, "sequence" : 10, "action" : "ir.actions.act_window,192"}, {"id" : 130, "name" : "Workspaces", "parent_id" : 129, "sequence" : 10, "action" : "ir.actions.act_window,204"}, {"id" : 131, "name" : "Spaces", "parent_id" : 129, "sequence" : 20, "action" : "ir.actions.act_window,205"}, {"id" : 132, "name" : "Pages", "parent_id" : 129, "sequence" : 30, "action" : "ir.actions.act_window,206"}, {"id" : 135, "name" : "Databases", "parent_id" : 129, "sequence" : 40, "action" : "ir.actions.act_window,208"}, {"id" : 136, "name" : "Canvas", "parent_id" : 129, "sequence" : 50, "action" : "ir.actions.act_window,209"}, {"id" : 133, "name" : "Configuration", "parent_id" : 129, "sequence" : 100, "action" : null}, {"id" : 134, "name" : "Blocks", "parent_id" : 133, "sequence" : 10, "action" : "ir.actions.act_window,207"}, {"id" : 140, "name" : "Saved Views", "parent_id" : 133, "sequence" : 20, "action" : "ir.actions.act_window,213"}, {"id" : 139, "name" : "Templates", "parent_id" : 133, "sequence" : 30, "action" : "ir.actions.act_window,212"}, {"id" : 137, "name" : "Comments", "parent_id" : 133, "sequence" : 40, "action" : "ir.actions.act_window,210"}, {"id" : 138, "name" : "Search History", "parent_id" : 133, "sequence" : 50, "action" : "ir.actions.act_window,211"}], "workos_menus" : [{"id" : 130, "name" : "Workspaces", "parent_id" : 129, "action" : "ir.actions.act_window,204"}]}
+docs/pages/index.md:3:Welcome to the documentation portal for the `odoo` monorepo — the InsightPulse AI platform built on Odoo 18 CE.
+docs/pages/index.md:17:| **ERP** | Odoo 18 CE + OCA |
+docs/evidence/20260209-0023/odoo-launcher/FIX_COMPLETE.md:21:1. **bin/odoo-tests.sh** - Updated lines 18, 20 to use `./scripts/odoo.sh`
+docs/issues/2026-02-07-domain-health-audit.md:18:**1. Filestore lost during Odoo 18→19 migration (most likely)**
+docs/issues/2026-02-07-domain-health-audit.md:20:Odoo stores compiled SCSS→CSS bundles in `/var/lib/odoo/filestore/<db>/`. If the filestore volume was recreated or the database name changed during the v18→v19 upgrade, all compiled asset bundles are gone.
+docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md:60:2. **Odoo 18 proxy_mode bug** - May require additional headers or different syntax
+docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md:193:  * The DOKS workload actually runs your custom image with the baked-in modules, not `odoo:18.0`
+docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md:229:# 2. Build the custom Odoo 18 image with your addons baked in
+docs/odoo-18-handbook/pages/01-finance-accounting.md:12:The Finance workspace in InsightPulseAI provides comprehensive accounting and expense management capabilities built on Odoo 18 CE with OCA enhancements. This module handles:
+docs/odoo-18-handbook/pages/01-finance-accounting.md:387:- [Odoo 18 Accounting Documentation](https://www.odoo.com/documentation/18.0/applications/finance/accounting.html)
+docs/odoo-18-handbook/pages/02-projects-ppm.md:12:The Projects & PPM workspace provides Clarity PPM-style project portfolio management capabilities on Odoo 18 CE. This module handles:
+docs/odoo-18-handbook/pages/02-projects-ppm.md:193:│  │  │ "Odoo 18 Impl" │  │     │  │ "RAG Pipeline" │  │                  │
+docs/odoo-18-handbook/pages/02-projects-ppm.md:225:PROJECT: Odoo 18 Implementation
+docs/odoo-18-handbook/pages/02-projects-ppm.md:508:- [Odoo 18 Project Documentation](https://www.odoo.com/documentation/18.0/applications/services/project.html)
+docs/odoo-18-handbook/pages/03-retail-scout-integration.md:12:The Retail & Scout workspace bridges Odoo 18 CE Point of Sale with the InsightPulseAI analytics platform. This integration handles:
+docs/odoo-18-handbook/pages/03-retail-scout-integration.md:695:- [Odoo 18 POS Documentation](https://www.odoo.com/documentation/18.0/applications/sales/point_of_sale.html)
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:1:# InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:4:**Stack:** Odoo 18 CE + OCA + Supabase + n8n + AI Agents
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:12:This handbook provides a **stack-specific documentation set** for the InsightPulseAI Odoo 18 CE/OCA implementation. It adapts the official Odoo 18 documentation to our environment:
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:14:- **Core ERP**: Odoo 18 Community Edition + OCA modules (no Enterprise/IAP)
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:25:1. [Odoo 18 Documentation Classification](#1-odoo-18-documentation-classification)
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:34:## 1. Odoo 18 Documentation Classification
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:38:The official Odoo 18.0 documentation at [https://www.odoo.com/documentation/18.0/](https://www.odoo.com/documentation/18.0/) is organized into:
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:102:| `CE_NATIVE` | Available in Odoo 18 Community Edition out-of-box |
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:116:InsightPulseAI Odoo 18 CE/OCA Handbook
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:342:│   Odoo 18 CE/OCA │ n8n Workflows │ Edge Functions │ MCP Server          │
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:456:1. STOCK_ODOO_DOCS – Is it already covered by official Odoo 18 docs?
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:488:- Documentation lives in `docs/odoo-18-handbook/`
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:527:- [Odoo 18.0 Documentation](https://www.odoo.com/documentation/18.0/)
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:528:- [Odoo Applications](https://www.odoo.com/documentation/18.0/applications.html)
+docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md:529:- [Odoo Developer Guide](https://www.odoo.com/documentation/18.0/developer.html)
+docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md:1:# Odoo 18 CE Module Install Order
+docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md:11:## Phase 1: Odoo 18 CE Core Modules
+docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md:189:All modules in this repository are designed for **Odoo 18.0**.
+docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md:201:- [Odoo CE Documentation](https://www.odoo.com/documentation/18.0/)
+docs/OCA_TEMPLATE_INTEGRATION.md:35:- `18.0` - Odoo 18 series
+docs/odoo/DEVELOPER_TOOLS.md:6:* **[Developer Docs Hub](https://www.odoo.com/documentation/18.0/th/developer.html)**: Top-level index for backend/frontend/reference/tutorials.
+docs/odoo/DEVELOPER_TOOLS.md:7:* **[Frontend Assets](https://www.odoo.com/documentation/18.0/th/developer/reference/frontend/assets.html)**: What `debug=assets` actually does (no minify/concat).
+docs/odoo/DEVELOPER_TOOLS.md:9:* **[Unit Tests](https://www.odoo.com/documentation/18.0/th/developer/tutorials/unit_tests.html)**: Modular testing structure.
+docs/OCA_STYLE_CONTRACT.md:144:  18.0.1.0.0  - Initial release for Odoo 18.0
+docs/OCA_STYLE_CONTRACT.md:211:addons_path = /usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/18.0,/mnt/extra-addons
+docs/OCA_STYLE_CONTRACT.md:215:1. `/usr/lib/python3/dist-packages/odoo/addons` - Odoo CE core (18.0)
+docs/OCA_STYLE_CONTRACT.md:216:2. `/var/lib/odoo/addons/18.0` - Odoo data directory (empty in production)
+docs/OCA_STYLE_CONTRACT.md:234:/var/lib/odoo/addons/18.0,\
+docs/odoo-18-handbook/README.md:1:# InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/README.md:3:This directory contains the stack-specific documentation for implementing and operating Odoo 18 Community Edition with OCA modules in the InsightPulseAI environment.
+docs/odoo-18-handbook/README.md:14:docs/odoo-18-handbook/
+docs/odoo-18-handbook/README.md:30:### Odoo 18 Documentation Classification
+docs/odoo-18-handbook/README.md:32:Classifies official Odoo 18.0 documentation into:
+docs/odoo-18-handbook/spec/plan.md:1:# Plan – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/spec/plan.md:184:- [ ] Code examples tested on Odoo 18 CE
+docs/odoo-18-handbook/spec/tasks.md:1:# Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/spec/tasks.md:260:4. **Code Tested**: Examples run on Odoo 18 CE
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:1:# Odoo 18 CE + OCA + IPAI Go-Live Checklist (InsightPulseAI)
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:4:**Stack**: Dockerized Odoo 18 CE on DO droplet + nginx reverse proxy + OCA modules + IPAI custom suite
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:40:## 1) Critical Odoo 18 Compatibility Gate (prevents UI hard-stops)
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:42:> **CRITICAL**: Odoo 18 renamed `tree` view mode to `list`. Kanban views now require `t-name="card"` template. These breaking changes will crash the UI if not fixed.
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:48:  docker exec -it odoo-erp-prod odoo -d odoo -u ipai_v18_compat --stop-after-init
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:53:  docker exec -it odoo-erp-prod python /mnt/extra-addons/ipai/scripts/fix_odoo18_views.py
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:89:Odoo 17+ renamed the `<tree>` XML tag to `<list>`. While Odoo 18 supports both for backward compatibility, Odoo 19 may break.
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:95:| Odoo 18 | ⚠️ warnings | ✅ |
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:366:docker exec -it odoo-erp-prod odoo -d odoo -i ipai_v18_compat --stop-after-init
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:373:docker exec -it odoo-erp-prod odoo -d odoo -u ipai_v18_compat --stop-after-init
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:389:## Appendix A: Common Odoo 18 Breaking Changes
+docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md:409:*This checklist extends the original GO_LIVE_CHECKLIST.md with Odoo 18-specific compatibility fixes and AI/OCR readiness sections.*
+docs/odoo-18-handbook/spec/prd.md:1:# PRD – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/spec/prd.md:43:The **InsightPulseAI Odoo 18 CE/OCA Implementation Handbook** is a documentation product that:
+docs/odoo-18-handbook/spec/prd.md:45:- Adapts official Odoo 18 documentation for the InsightPulseAI stack
+docs/odoo-18-handbook/spec/prd.md:366:| [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/) | Official reference |
+docs/DOCKER_SSOT_ARCHITECTURE.md:26:**Purpose:** Odoo 18 CE dev sandbox only
+docs/DOCKER_SSOT_ARCHITECTURE.md:73:**Purpose:** Pre-production validation for Odoo 18 CE
+docs/DOCKER_SSOT_ARCHITECTURE.md:92:- `odoo:18.0-*`
+docs/DOCKER_SSOT_ARCHITECTURE.md:237:  "images_expected": ["odoo:18.0", "postgres:16-alpine"],
+docs/evidence/20260209-0048/odoo-launcher/FIX_COMPLETE.md:21:1. **bin/odoo-tests.sh** - Updated lines 18, 20 to use `./scripts/odoo.sh`
+docs/evidence/20260209-1820/odoo-entrypoint-tactical-fix/changes.diff:31:+  "name": "IPAI Odoo 18 Dev",
+docs/DIGITALOCEAN_EMAIL_SETUP.md:5:**Stack**: Odoo 18 CE on DigitalOcean Droplet
+docs/evidence/20260119-1121/digitalocean-postgresql/POSTGRESQL_16_FEATURES.md:169:2. Validate Odoo 18 compatibility
+docs/v0.9.1_DEPLOYMENT_GUIDE.md:113:- **Large image size:** Expected ~1.3-1.5GB (base odoo:18.0 is ~1.2GB)
+docs/odoo-18-handbook/spec/constitution.md:1:# Constitution – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook
+docs/odoo-18-handbook/spec/constitution.md:3:**Product:** Documentation product for Odoo 18 CE/OCA implementation
+docs/odoo-18-handbook/spec/constitution.md:12:This handbook serves as the **single source of truth** for implementing and operating Odoo 18 Community Edition with OCA modules in the InsightPulseAI stack. It provides:
+docs/odoo-18-handbook/spec/constitution.md:75:- [ ] Code examples tested on Odoo 18 CE
+docs/odoo-18-handbook/spec/constitution.md:115:1. Changes via Pull Request to `docs/odoo-18-handbook/`
+docs/odoo-18-handbook/spec/constitution.md:132:| Odoo 18 CE/OCA Mapping | `docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md` |
+docs/odoo-18-handbook/spec/constitution.md:139:**This constitution governs all documentation in the InsightPulseAI Odoo 18 CE/OCA Implementation Handbook.**
+docs/CANONICAL_ENFORCEMENT_REPORT.md:10:Implemented comprehensive canonical structure enforcement across the entire Odoo CE codebase to eliminate namespace mismatches, deprecated syntax, and scattered architectural concerns. All code now follows deterministic naming conventions and Odoo 18 best practices.
+docs/CANONICAL_ENFORCEMENT_REPORT.md:33:- ✅ Fixed 31 XML files with deprecated `<tree>` tags → `<list>` (Odoo 18 syntax)
+docs/CANONICAL_ENFORCEMENT_REPORT.md:43:**Impact**: Assets won't be compiled/served by Odoo 18 asset system
+docs/CANONICAL_ENFORCEMENT_REPORT.md:65:**Impact**: Inconsistent terminology with Odoo 18
+docs/CANONICAL_ENFORCEMENT_REPORT.md:271:- ✅ View syntax: Odoo 18 `<list>` tags, `view_mode="list"`
+docs/llms-full.txt:199:| **Python** | 3.10+ (Odoo 18 requirement) |
+docs/llms-full.txt:458:- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+docs/llms-full.txt:1176:Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+docs/llms-full.txt:1430:- **Odoo 18 CE / OCA CI** — Lint, static checks, and unit tests
+docs/llms-full.txt:1495:- **Refactor assistant**: mechanical migrations (tree→list for Odoo 18+, view_mode changes, lint passes).
+docs/llms-full.txt:1757:  - odoo_docs_18
+docs/integration/INSIGHTPULSE_ROADMAP.md:99:Google Drive         ──────►│  PaddleOCR      │         Odoo 18 CE
+docs/integration/INSIGHTPULSE_ROADMAP.md:273:- Access to Odoo 18 CE via MCP
+docs/integration/INSIGHTPULSE_ROADMAP.md:345:| Odoo 18 Docs | https://www.odoo.com/documentation/18.0/ |
+docs/evidence/20260128-odoo-docs-review/ODOO_19_DOCS_REVIEW.md:135:# DEPRECATED (Odoo 18 and earlier)
+docs/releases/GO_LIVE_CHECKLIST_TEMPLATE.md:312:- [Odoo Deployment](https://www.odoo.com/documentation/18.0/administration/on_premise/deploy.html)
+docs/DB_TUNING.md:4:Scope: `erp.insightpulseai.com` – single-instance Odoo 18 CE + `ipai_*` modules
+docs/releases/WHAT_SHIPPED.json:234:      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756751844"
+docs/releases/WHAT_SHIPPED.json:250:      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756751847"
+docs/README.md:10:| [Odoo Integration Map](../odoo/ODOO_INTEGRATION_MAP.md) | Odoo 18 CE sync mappings |
+docs/ODOO_COPILOT_THEME_TOKEN_MAP.md:1:# Odoo 18 CE + Fluent 2 Web Design System Token Mapping
+docs/ODOO_COPILOT_THEME_TOKEN_MAP.md:5:This document maps Microsoft Fluent 2 Web design tokens to Odoo 18 CE UI components and CSS variables. The implementation follows a token-first approach with CSS custom properties (variables) and minimal custom code.
+docs/ODOO_COPILOT_THEME_TOKEN_MAP.md:8:**Target**: Odoo 18 CE (OWL web client)
+docs/ODOO_COPILOT_THEME_TOKEN_MAP.md:591:- **Odoo 18 CE Docs**: https://www.odoo.com/documentation/18.0
+docs/ipai/INSTALLATION.md:69:# (Assumes Odoo 18 installed via apt/pip/source)
+docs/ipai/INSTALLATION.md:255:**Critical Changes in Odoo 18**:
+docs/ipai/INSTALLATION.md:258:3. **Python 3.11+ required**: Odoo 18 drops Python 3.10 support
+docs/ipai/INSTALLATION.md:266:# 2. Create Odoo 18 environment (DO NOT UPGRADE IN-PLACE)
+docs/ipai/INSTALLATION.md:269:# 3. Install Odoo 18 base
+docs/ipai/INSTALLATION.md:270:# (Follow official Odoo 18 installation guide)
+docs/ipai/INSTALLATION.md:272:# 4. Restore database to new Odoo 18 instance
+docs/ipai/INSTALLATION.md:273:psql -U odoo -d odoo18_test < odoo17_backup_$(date +%Y%m%d).sql
+docs/ipai/INSTALLATION.md:275:# 5. Run Odoo 18 migration scripts
+docs/ipai/INSTALLATION.md:276:odoo -c /etc/odoo/odoo.conf -d odoo18_test --update=all --stop-after-init
+docs/ipai/INSTALLATION.md:279:odoo -c /etc/odoo/odoo.conf -d odoo18_test -i ipai_ce_cleaner --stop-after-init
+docs/ipai/INSTALLATION.md:283:psql -U odoo -d odoo18_test -c "SELECT COUNT(*) FROM account_move;"
+docs/ipai/INSTALLATION.md:292:# 9. Switch production to Odoo 18 (only after full testing)
+docs/ipai/INSTALLATION.md:322:-- Odoo 18 JSONB migration for ir_ui_menu.name
+docs/ipai/INSTALLATION.md:323:-- Run this BEFORE upgrading to Odoo 18:
+docs/ipai/INSTALLATION.md:342:### Issue 3: View Validation Error (Odoo 18)
+docs/ipai/INSTALLATION.md:358:<!-- NEW (Odoo 18) -->
+docs/releases/TBWA_FINOPS_INVITE_EMAIL.md:11:- **Odoo 18 CE + ipai_finance_ppm** (month-end project & checklist)
+docs/ODOO_18_EE_TO_CE_OCA_PARITY.md:1:# Odoo 18 Enterprise → CE/OCA Complete Parity Guide
+docs/ODOO_18_EE_TO_CE_OCA_PARITY.md:5:This document provides a comprehensive mapping of **ALL** Odoo 18 Enterprise Edition features to their Community Edition (CE) + OCA module equivalents, identifying gaps that require custom `ipai_*` delta modules.
+docs/ODOO_18_EE_TO_CE_OCA_PARITY.md:520:- [Odoo 18 Features](https://www.odoo.com/forum/help-1/new-features-of-odoo-18-roadmap-249773)
+docs/ODOO_18_EE_TO_CE_OCA_PARITY.md:523:- [Dixmit - Accounting on CE](https://www.dixmit.com/en/blog/our-blog-1/accounting-management-on-odoo-community-18)
+docs/evidence/20260212-1630/repo-refactor-odoosh-grade/IMPLEMENTATION.md:23:**Next Steps**: Phase 2 cleanup (469 Mailgun refs, 715 Odoo 18 refs, 38 deployment docs consolidation)
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:77:        "html_url": "https://github.com/jgtolentino/odoo-ce/commit/98165acfbe9ecb98c21d3d486fb99a94ca2ed18d",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:79:        "url": "https://api.github.com/repos/jgtolentino/odoo-ce/commits/98165acfbe9ecb98c21d3d486fb99a94ca2ed18d"
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:109:      "comments_url": "https://api.github.com/repos/jgtolentino/odoo-ce/commits/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177/comments",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:125:          "url": "https://api.github.com/repos/jgtolentino/odoo-ce/git/trees/9d0c712c18e5b2ab5bc464199fab21df1503044c"
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:127:        "url": "https://api.github.com/repos/jgtolentino/odoo-ce/git/commits/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:157:      "html_url": "https://github.com/jgtolentino/odoo-ce/commit/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:167:      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/commits/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177"
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:243:          "html_url": "https://github.com/jgtolentino/odoo-ce/commit/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:245:          "url": "https://api.github.com/repos/jgtolentino/odoo-ce/commits/5b4a06b6fcce5518b6ec0f9a101571abb1a1e177"
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:261:      "patch": "@@ -1,7 +1,7 @@\n # \ud83d\uddfa\ufe0f Sitemap - InsightPulse ERP\n \n > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')\n-> Commit: 6bbe81e9413c8036e1a826b80e3864d63c616c73\n+> Commit: 32ce14e3fbf0868cf1bfed86465bf3a371208811\n \n ## \ud83d\udcda Documentation\n \n@@ -267,6 +267,7 @@\n | [Odoo CE MVP Go-Live Checklist](docs/MVP_GO_LIVE_CHECKLIST.md) | docs |\n | [n8n Credentials Bootstrap \u2013 Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |\n | [Naming Convention - Equivalent APP TOOLS](docs/NAMING_CONVENTION_EQ_APP_TOOLS.md) | docs |\n+| [OCA-style \"chore\" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |\n | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |\n | [Odoo 18 Enterprise \u2192 CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |\n | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:402:        "html_url": "https://github.com/jgtolentino/odoo-ce/commit/98165acfbe9ecb98c21d3d486fb99a94ca2ed18d",
+docs/releases/DEPLOYMENT_PROOFS/api_compare.json:404:        "url": "https://api.github.com/repos/jgtolentino/odoo-ce/commits/98165acfbe9ecb98c21d3d486fb99a94ca2ed18d"
+docs/evidence/20260110-0927/odooforge-sandbox/git-state.txt:7: odooforge-sandbox/README.md              | 118 +++++++
+docs/evidence/20260110-0927/odooforge-sandbox/git-state.txt:9: odooforge-sandbox/config/odoo.conf       |  18 +
+docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md:61:1. **Odoo 18 View Syntax**: `<list>` not `<tree>`, `view_mode="list,form"`
+docs/releases/DEPLOYMENT_PROOFS/api_deployments.json:6346:    "statuses_url": "https://api.github.com/repos/jgtolentino/odoo-ce/deployments/3581853871/statuses",
+docs/releases/DEPLOYMENT_PROOFS/api_deployments.json:6350:    "url": "https://api.github.com/repos/jgtolentino/odoo-ce/deployments/3581853871"
+docs/ipai/ARCHITECTURE.md:5:The IPAI module suite implements a **five-layer architecture** designed for enterprise financial management, project portfolio management, and operational governance on Odoo 18 CE.
+docs/ipai/ARCHITECTURE.md:485:    image: odoo:18.0
+docs/ipai/module_scan.json:589:        "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+docs/ipai/module_scan.json:1804:      "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+docs/ipai/CHANGELOG.md:54:- `ipai_portal_fix` - Portal fixes for Odoo 18
+docs/ipai/CHANGELOG.md:70:- Initial stable release for Odoo 18.0
+docs/ipai/CHANGELOG.md:87:### Odoo 17 → Odoo 18 Migration
+docs/ipai/CHANGELOG.md:99:-- Odoo 18 JSONB migration for ir_ui_menu.name
+docs/ipai/CHANGELOG.md:141:<!-- NEW (Odoo 18) -->
+docs/ipai/CHANGELOG.md:160:**Issue**: `ir.cron.numbercall` field removed in Odoo 18
+docs/ipai/CHANGELOG.md:187:git commit -m "fix(tbwa_finance): drop ir.cron numbercall for Odoo 18"
+docs/ipai/CHANGELOG.md:203:**Issue**: Odoo 18 drops Python 3.10 support, requires Python 3.11+
+docs/ipai/CHANGELOG.md:229:# Should show Odoo 18.0 with Python 3.11+
+docs/ipai/CHANGELOG.md:248:<!-- NEW (Odoo 18) -->
+docs/ipai/CHANGELOG.md:267:**Odoo 18 Performance Enhancements**:
+docs/ipai/CHANGELOG.md:283:**Odoo 18 Security Features**:
+docs/ipai/CHANGELOG.md:296:**Odoo 18 Frontend Updates**:
+docs/ipai/CHANGELOG.md:314:**Critical Steps** (MUST complete before Odoo 18 upgrade):
+docs/ipai/CHANGELOG.md:339:   # Install all IPAI modules in fresh Odoo 18 database
+docs/ipai/CHANGELOG.md:340:   odoo -d odoo18_test -i ipai_ce_cleaner --stop-after-init
+docs/ipai/CHANGELOG.md:355:**Required Verification Steps** (After Odoo 18 upgrade):
+docs/ipai/CHANGELOG.md:410:1. **Stop Odoo 18 Instance**:
+docs/ipai/CHANGELOG.md:423:   # Change image: odoo:18.0 → odoo:17.0
+docs/ipai/CHANGELOG.md:455:git commit -m "fix(tbwa_finance): drop ir.cron numbercall for Odoo 18"
+docs/ipai/CHANGELOG.md:470:### Issue 2: Visual Parity SSIM Drops After Odoo 18 Upgrade
+docs/ipai/CHANGELOG.md:476:**Issue**: UI layout changes in Odoo 18 may cause SSIM score drops >0.02
+docs/ipai/CHANGELOG.md:482:# 1. Capture new baselines after Odoo 18 upgrade
+docs/ipai/CHANGELOG.md:486:node scripts/update_baselines.js --odoo-version="18.0"
+docs/ipai/CHANGELOG.md:554:4. Keep Odoo 17 backups until Odoo 18 verified stable
+docs/ipai/README.md:5:The **IPAI (InsightPulse AI)** module suite is a comprehensive collection of 30 OCA-compliant Odoo 18 CE modules designed for enterprise financial management, project portfolio management, workspace collaboration, and operational governance.
+docs/ipai/README.md:62:- **ipai_portal_fix** - Portal fixes for Odoo 18
+docs/ipai/OPERATIONS_RUNBOOK.md:5:Operational procedures for deploying, monitoring, maintaining, and troubleshooting the IPAI module suite on Odoo 18 CE.
+docs/ipai/OPERATIONS_RUNBOOK.md:499:### Major Version Upgrade (Odoo 17 → odoo 18)
+docs/ipai/OPERATIONS_RUNBOOK.md:505:2. ✅ Create Odoo 18 staging environment
+docs/ipai/OPERATIONS_RUNBOOK.md:508:5. ✅ Update all OCA modules to Odoo 18 versions
+docs/ipai/OPERATIONS_RUNBOOK.md:528:# 2. Update docker-compose.yml to use Odoo 18 image
+docs/ipai/OPERATIONS_RUNBOOK.md:530:#   image: odoo:18.0
+docs/ipai/OPERATIONS_RUNBOOK.md:533:psql -U odoo -d odoo -f /opt/odoo/migrations/17_to_18/01_jsonb_migration.sql
+docs/ipai/OPERATIONS_RUNBOOK.md:535:# 4. Start Odoo 18 containers
+docs/ODOO_18_CE_CHEATSHEET.md:1:# Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)
+docs/ODOO_18_CE_CHEATSHEET.md:3:This cheat sheet captures core Odoo 18 CE conventions + Smart Delta / OCA-first rules for autonomous module development.
+docs/ODOO_18_CE_CHEATSHEET.md:232:> **Goal:** Build custom "delta" modules for Odoo 18 CE that are:
+docs/ODOO_18_CE_CHEATSHEET.md:235:> * Version-aware (Odoo 18 specific)
+docs/ODOO_18_CE_CHEATSHEET.md:266:   * Generates Python (ORM) + XML using Odoo 18 rules.
+docs/ODOO_18_CE_CHEATSHEET.md:267:   * Uses **RAG over Odoo 18 docs/changelog** to stay version-aware:
+docs/ODOO_18_CE_CHEATSHEET.md:332:  * Odoo 18 CE core.
+docs/ODOO_18_CE_CHEATSHEET.md:335:* Tag with semver and Odoo version, e.g. `ghcr.io/.../odoo:18.0.0-ipai1`.
+docs/ODOO_18_CE_CHEATSHEET.md:341:   * Dockerfile using official Odoo 18 image as base or custom base.
+docs/ODOO_18_CE_CHEATSHEET.md:366:Use this cheat sheet as the **canonical reference** for agents and humans when designing or reviewing Odoo 18 CE / OCA customizations, especially in your Smart Delta autonomous workflows.
+docs/claude_code/QUICK_REFERENCE.md:28:claude -p "Scaffold OCA-compliant Odoo 18 CE module: ipai_<name>
+docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md:450:- Odoo 18 module structure
+docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md:593:- **Odoo 18 Docs**: https://www.odoo.com/documentation/18.0/
+docs/claude_code/README.md:52:claude -p "Scaffold OCA-compliant Odoo 18 CE module: ipai_<name>"
+docs/claude_code/README.md:234:- **Odoo 18 Docs**: https://www.odoo.com/documentation/18.0/
+docs/claude_code/IMPLEMENTATION_SUMMARY.md:111:claude -p "Scaffold OCA-compliant Odoo 18 CE module: ipai_inventory_tracking
+docs/runbooks/PROD_RUNBOOK_ODOO.md:28:# abc123...  odoo:18  Up 5 seconds  0.0.0.0:8069->8069/tcp  odoo-prod
+docs/runbooks/PROD_RUNBOOK_ODOO.md:42:# abc123...  odoo:18  Exited (0) 2 seconds ago  odoo-prod
+docs/ODOO_MODULE_DEPLOYMENT.md:3:**Purpose**: Comprehensive guide for deploying Odoo 18.0 CE modules with proper install vs upgrade detection
+docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md:67:| odoo | odoo:18.0 | 8069 | /web/health |
+docs/wiki/Infrastructure.md:122:- [Odoo Email Configuration](https://www.odoo.com/documentation/18.0/applications/general/email_communication.html)
+docs/modules/INDEX.md:18:| [ipai_ai_sources_odoo](./ipai_ai_sources_odoo.md) | ⚠️ | 18.0.1.0.0 | 2 | 3 |
+docs/ODOO_IMAGE_SPEC.md:1:# IPAI Odoo 18 Custom Image Specification
+docs/ODOO_IMAGE_SPEC.md:12:Provide a **reproducible**, **upgrade-safe**, **OCA-compliant** Odoo 18 CE runtime image that:
+docs/ODOO_IMAGE_SPEC.md:14:- Boots Odoo 18 reliably in multi-worker mode
+docs/ODOO_IMAGE_SPEC.md:56:com.insightpulseai.odoo.version=18.0
+docs/ODOO_IMAGE_SPEC.md:66:| OS | Debian Bookworm | Inherited from `odoo:18.0` |
+docs/ODOO_IMAGE_SPEC.md:115:  "odoo_version": "18.0",
+docs/ODOO_IMAGE_SPEC.md:233:FROM odoo:18.0 AS runtime
+docs/ODOO_IMAGE_SPEC.md:251:docker build -f docker/Dockerfile.unified -t ipai-odoo:18.0 .
+docs/ODOO_IMAGE_SPEC.md:256:  -t ipai-odoo:18.0-parity .
+docs/ODOO_IMAGE_SPEC.md:293:    image: ghcr.io/jgtolentino/odoo:18.0
+docs/ODOO_IMAGE_SPEC.md:344:./scripts/ci_smoke_test.sh ghcr.io/jgtolentino/odoo:18.0-<sha>
+docs/ODOO_IMAGE_SPEC.md:356:./scripts/image_audit.sh ghcr.io/jgtolentino/odoo:18.0 odoo:18.0
+docs/runbooks/DOCKER_DESKTOP_CLEANUP.md:15:  - Odoo 18 CE app + Postgres
+docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md:4:> Odoo 18 CE data to Supabase for Fluent-based dashboards and external analytics.
+docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md:8:Mirror Odoo 18 CE custom metrics (`ipai.sample.metric`) into Supabase
+docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md:26:│   Odoo 18 CE                     Supabase                        │
+docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md:47:### 1. Odoo 18 CE / OCA (Source of Truth)
+docs/runbooks/DOCKER_STAGING_CLEANUP.md:18:  - Odoo 18 CE staging app + PostgreSQL
+docs/ODOO_ARCHITECT_PERSONA.md:1:# Odoo 18 CE & OCA Architect Persona
+docs/ODOO_ARCHITECT_PERSONA.md:5:The **Odoo 18 CE & OCA Architect** is a specialized AI persona designed for this repository, enforcing strict Odoo Community Edition and OCA-only development practices.
+docs/ODOO_ARCHITECT_PERSONA.md:45:### 4. Odoo 18 Technical Standards
+docs/ODOO_ARCHITECT_PERSONA.md:49:- Official Odoo 18 ORM patterns (`@api.depends`, `@api.constrains`)
+docs/ODOO_ARCHITECT_PERSONA.md:57:- Odoo 18 syntax (`<list>` instead of `<tree>`)
+docs/ODOO_ARCHITECT_PERSONA.md:82:- "odoo", "odoo 18", "oca"
+docs/ODOO_ARCHITECT_PERSONA.md:91:> "I need Enterprise 'Kiosk Mode' for Attendance in Odoo 18."
+docs/parity/TECHNICAL_PARITY_REPORT.md:1:# Technical Parity Report: Odoo 18 CE + OCA + IPAI
+docs/parity/TECHNICAL_PARITY_REPORT.md:4:**Stack Version**: Odoo 18 CE with Enterprise-grade extensions
+docs/parity/TECHNICAL_PARITY_REPORT.md:24:Branch: https://github.com/odoo/odoo/tree/18.0
+docs/parity/TECHNICAL_PARITY_REPORT.md:129:│                    Odoo 18 CE Core                          │
+docs/parity/TECHNICAL_PARITY_REPORT.md:207:### Enterprise vs Our Stack (Odoo 18 CE + OCA + IPAI)
+docs/parity/TECHNICAL_PARITY_REPORT.md:247:**Current**: Odoo 18 CE + OCA 18 + IPAI 18
+docs/parity/PARITY_MATRIX.yaml:8:odoo_version: "18.0"
+docs/parity/EE_PARITY_SSOT.dbml:74:  name text [not null] // "Odoo 18 CE + OCA parity baseline"
+docs/parity/EE_PARITY_SSOT.dbml:75:  odoo_major text [not null] // "18.0"
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:898:      "workflow_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/workflows/218146582"
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4506:      "artifacts_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918/artifacts",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4507:      "cancel_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918/cancel",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4599:      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20867713918",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4601:      "jobs_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918/jobs",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4602:      "logs_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918/logs",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4677:      "rerun_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918/rerun",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:4704:      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20867713918",
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:6722:      "workflow_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/workflows/218146582"
+docs/releases/DEPLOYMENT_PROOFS/api_workflow_runs.json:7198:      "check_suite_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-suites/53996937181",
+docs/parity/STACK_POSITIONING.md:42:> "Odoo 18 Community-based ERP with Enterprise-grade extensions and AI automation"
+docs/parity/STACK_POSITIONING.md:45:> "Enterprise-equivalent feature stack built on Odoo 18 CE, OCA 18.0, and InsightPulseAI bridge modules"
+docs/parity/STACK_POSITIONING.md:86:**Why**: Factually incorrect. We run **Odoo 18 CE**, not 19, and not Enterprise Edition.
+docs/parity/STACK_POSITIONING.md:95:**Clarification**: "19.0" in deprecated module manifests was forward-compatibility planning, but the stack actually runs on **Odoo 18 CE core**.
+docs/parity/STACK_POSITIONING.md:125:**Current State**: Odoo 18 CE + OCA + IPAI (production-ready today)
+docs/parity/STACK_POSITIONING.md:142:> **ERP Stack**: Odoo 18 Community Edition with Enterprise-grade extensions
+docs/parity/STACK_POSITIONING.md:144:> - **Base**: Open source Odoo 18 CE (LGPL-3.0)
+docs/parity/STACK_POSITIONING.md:179:# Confirm Odoo 18 CE core (not 19, not EE)
+docs/parity/STACK_POSITIONING.md:212:- [Odoo Community Edition GitHub](https://github.com/odoo/odoo/tree/18.0)
+docs/parity/STACK_POSITIONING.md:232:- ✅ "Odoo 18 CE-based" is accurate and transparent
+docs/parity/COMPLIANCE_AND_LICENSING.md:4:**Stack**: Odoo 18 CE + OCA + IPAI Bridge
+docs/parity/COMPLIANCE_AND_LICENSING.md:26:**Source**: https://github.com/odoo/odoo/tree/18.0
+docs/parity/COMPLIANCE_AND_LICENSING.md:217:- "Built on Odoo 18 Community Edition"
+docs/parity/COMPLIANCE_AND_LICENSING.md:219:- "Compatible with Odoo 18 data models"
+docs/parity/COMPLIANCE_AND_LICENSING.md:359:- [Odoo Community License](https://github.com/odoo/odoo/blob/18.0/LICENSE)
+docs/parity/OPERATIONAL_POSITIONING.md:4:**Stack**: Odoo 18 CE + OCA + IPAI Enterprise Bridge
+docs/parity/OPERATIONAL_POSITIONING.md:28:- **Services**: Odoo 18 CE, PostgreSQL 16, n8n
+docs/parity/OPERATIONAL_POSITIONING.md:55:**Services**: Odoo 18 CE + PostgreSQL 16 (Docker Compose)
+docs/parity/OPERATIONAL_POSITIONING.md:75:### Core ERP (Odoo 18 CE)
+docs/parity/odoo19/EE_PARITY_NOTES_19.md:26:- "Built on **Odoo 18 Community** with **Enterprise-grade extensions**."
+docs/parity/odoo19/odoo_19_release_notes.html:88:            odoo.__session_info__ = {"is_admin": false, "is_system": false, "is_public": true, "is_internal_user": false, "is_website_user": true, "uid": null, "registry_hash": "c8cd4d746eb4f4a6545754099c4be6d2dc88849d62515b453e0bc16995f6e94b", "is_frontend": true, "profile_session": null, "profile_collectors": null, "profile_params": null, "show_effect": true, "currencies": {"137": {"name": "AED", "symbol": "AED", "position": "after", "digits": [69, 2]}, "19": {"name": "ARS", "symbol": "ARS", "position": "after", "digits": [69, 2]}, "21": {"name": "AUD", "symbol": "AUD", "position": "after", "digits": [69, 2]}, "59": {"name": "BDT", "symbol": "\u09f3", "position": "after", "digits": [69, 2]}, "27": {"name": "BGN", "symbol": "\u043b\u0432", "position": "after", "digits": [69, 2]}, "6": {"name": "BRL", "symbol": "R$", "position": "before", "digits": [69, 2]}, "4": {"name": "CAD", "symbol": "CAD", "position": "after", "digits": [69, 2]}, "5": {"name": "CHF", "symbol": "CHF", "position": "after", "digits": [69, 2]}, "7": {"name": "CNY", "symbol": "CNY", "position": "after", "digits": [69, 2]}, "194": {"name": "CZK", "symbol": "K\u010d", "position": "after", "digits": [69, 2]}, "10": {"name": "DKK", "symbol": "kr", "position": "after", "digits": [69, 2]}, "80": {"name": "EGP", "symbol": "E\u00a3", "position": "after", "digits": [69, 2]}, "1": {"name": "EUR", "symbol": "\u20ac", "position": "after", "digits": [69, 2]}, "18": {"name": "GBP", "symbol": "GBP", "position": "after", "digits": [69, 2]}, "25": {"name": "HKD", "symbol": "HK$", "position": "after", "digits": [69, 2]}, "11": {"name": "HUF", "symbol": "HUF", "position": "after", "digits": [69, 2]}, "193": {"name": "IDR", "symbol": "Rp", "position": "before", "digits": [69, 2]}, "20": {"name": "INR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "26": {"name": "JPY", "symbol": "\u00a5", "position": "after", "digits": [69, 2]}, "100": {"name": "KES", "symbol": "KSh", "position": "after", "digits": [69, 2]}, "34": {"name": "KRW", "symbol": "\u20a9", "position": "after", "digits": [69, 2]}, "151": {"name": "LKR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "116": {"name": "MAD", "symbol": " \u062f.\u0645", "position": "after", "digits": [69, 2]}, "115": {"name": "MNT", "symbol": "\u20ae", "position": "after", "digits": [69, 2]}, "44": {"name": "MUR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "35": {"name": "MXN", "symbol": "Mex$", "position": "before", "digits": [69, 2]}, "36": {"name": "MYR", "symbol": "RM", "position": "after", "digits": [69, 2]}, "183": {"name": "NOK", "symbol": "kr", "position": "before", "digits": [69, 2]}, "37": {"name": "NZD", "symbol": "$", "position": "after", "digits": [69, 2]}, "38": {"name": "PHP", "symbol": "Php", "position": "after", "digits": [69, 2]}, "171": {"name": "PKR", "symbol": "Rs.", "position": "after", "digits": [69, 2]}, "16": {"name": "PLN", "symbol": "z\u0142", "position": "after", "digits": [69, 2]}, "166": {"name": "QAR", "symbol": "QR", "position": "after", "digits": [69, 2]}, "30": {"name": "RON", "symbol": "kr", "position": "after", "digits": [69, 2]}, "158": {"name": "SAR", "symbol": "SR", "position": "after", "digits": [69, 2]}, "178": {"name": "SEK", "symbol": "kr", "position": "after", "digits": [69, 2]}, "39": {"name": "SGD", "symbol": "$", "position": "after", "digits": [69, 2]}, "40": {"name": "THB", "symbol": "\u0e3f", "position": "after", "digits": [69, 2]}, "141": {"name": "TND", "symbol": "DT", "position": "after", "digits": [69, 2]}, "146": {"name": "TWD", "symbol": "NT$", "position": "after", "digits": [69, 2]}, "2": {"name": "USD", "symbol": "US$", "position": "before", "digits": [69, 2]}, "24": {"name": "VND", "symbol": "\u20ab", "position": "after", "digits": [69, 2]}, "41": {"name": "ZAR", "symbol": "R", "position": "after", "digits": [69, 2]}}, "quick_login": true, "bundle_params": {"lang": "en_US", "website_id": 1}, "test_mode": false, "websocket_worker_version": "19.0-2", "translationURL": "/website/translations", "geoip_country_code": "PH", "geoip_phone_code": 63, "lang_url_code": "en_US", "turnstile_site_key": "0x4AAAAAAADwqVOUIWCeR_H8", "add_to_cart_action": "stay"};
+docs/parity/EE_PARITY_LAYERING_ANALYSIS.md:83:Features added in Odoo 18.0/19.0 that are **in CE** (not EE-only):
+docs/parity/EE_PARITY_LAYERING_ANALYSIS.md:93:**Action**: Review Odoo 18/19 release notes and enable all CE-available features before adding OCA.
+docs/parity/odoo19/odoo_editions_comparison.html:88:            odoo.__session_info__ = {"is_admin": false, "is_system": false, "is_public": true, "is_internal_user": false, "is_website_user": true, "uid": null, "registry_hash": "c8cd4d746eb4f4a6545754099c4be6d2dc88849d62515b453e0bc16995f6e94b", "is_frontend": true, "profile_session": null, "profile_collectors": null, "profile_params": null, "show_effect": true, "currencies": {"137": {"name": "AED", "symbol": "AED", "position": "after", "digits": [69, 2]}, "19": {"name": "ARS", "symbol": "ARS", "position": "after", "digits": [69, 2]}, "21": {"name": "AUD", "symbol": "AUD", "position": "after", "digits": [69, 2]}, "59": {"name": "BDT", "symbol": "\u09f3", "position": "after", "digits": [69, 2]}, "27": {"name": "BGN", "symbol": "\u043b\u0432", "position": "after", "digits": [69, 2]}, "6": {"name": "BRL", "symbol": "R$", "position": "before", "digits": [69, 2]}, "4": {"name": "CAD", "symbol": "CAD", "position": "after", "digits": [69, 2]}, "5": {"name": "CHF", "symbol": "CHF", "position": "after", "digits": [69, 2]}, "7": {"name": "CNY", "symbol": "CNY", "position": "after", "digits": [69, 2]}, "194": {"name": "CZK", "symbol": "K\u010d", "position": "after", "digits": [69, 2]}, "10": {"name": "DKK", "symbol": "kr", "position": "after", "digits": [69, 2]}, "80": {"name": "EGP", "symbol": "E\u00a3", "position": "after", "digits": [69, 2]}, "1": {"name": "EUR", "symbol": "\u20ac", "position": "after", "digits": [69, 2]}, "18": {"name": "GBP", "symbol": "GBP", "position": "after", "digits": [69, 2]}, "25": {"name": "HKD", "symbol": "HK$", "position": "after", "digits": [69, 2]}, "11": {"name": "HUF", "symbol": "HUF", "position": "after", "digits": [69, 2]}, "193": {"name": "IDR", "symbol": "Rp", "position": "before", "digits": [69, 2]}, "20": {"name": "INR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "26": {"name": "JPY", "symbol": "\u00a5", "position": "after", "digits": [69, 2]}, "100": {"name": "KES", "symbol": "KSh", "position": "after", "digits": [69, 2]}, "34": {"name": "KRW", "symbol": "\u20a9", "position": "after", "digits": [69, 2]}, "151": {"name": "LKR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "116": {"name": "MAD", "symbol": " \u062f.\u0645", "position": "after", "digits": [69, 2]}, "115": {"name": "MNT", "symbol": "\u20ae", "position": "after", "digits": [69, 2]}, "44": {"name": "MUR", "symbol": "Rs", "position": "after", "digits": [69, 2]}, "35": {"name": "MXN", "symbol": "Mex$", "position": "before", "digits": [69, 2]}, "36": {"name": "MYR", "symbol": "RM", "position": "after", "digits": [69, 2]}, "183": {"name": "NOK", "symbol": "kr", "position": "before", "digits": [69, 2]}, "37": {"name": "NZD", "symbol": "$", "position": "after", "digits": [69, 2]}, "38": {"name": "PHP", "symbol": "Php", "position": "after", "digits": [69, 2]}, "171": {"name": "PKR", "symbol": "Rs.", "position": "after", "digits": [69, 2]}, "16": {"name": "PLN", "symbol": "z\u0142", "position": "after", "digits": [69, 2]}, "166": {"name": "QAR", "symbol": "QR", "position": "after", "digits": [69, 2]}, "30": {"name": "RON", "symbol": "kr", "position": "after", "digits": [69, 2]}, "158": {"name": "SAR", "symbol": "SR", "position": "after", "digits": [69, 2]}, "178": {"name": "SEK", "symbol": "kr", "position": "after", "digits": [69, 2]}, "39": {"name": "SGD", "symbol": "$", "position": "after", "digits": [69, 2]}, "40": {"name": "THB", "symbol": "\u0e3f", "position": "after", "digits": [69, 2]}, "141": {"name": "TND", "symbol": "DT", "position": "after", "digits": [69, 2]}, "146": {"name": "TWD", "symbol": "NT$", "position": "after", "digits": [69, 2]}, "2": {"name": "USD", "symbol": "US$", "position": "before", "digits": [69, 2]}, "24": {"name": "VND", "symbol": "\u20ab", "position": "after", "digits": [69, 2]}, "41": {"name": "ZAR", "symbol": "R", "position": "after", "digits": [69, 2]}}, "quick_login": true, "bundle_params": {"lang": "en_US", "website_id": 1}, "test_mode": false, "websocket_worker_version": "19.0-2", "translationURL": "/website/translations", "geoip_country_code": "DE", "geoip_phone_code": 49, "lang_url_code": "en_US", "turnstile_site_key": "0x4AAAAAAADwqVOUIWCeR_H8", "add_to_cart_action": "stay"};
+docs/wiki/Modules-and-Features.md:37:| `ipai_copilot_ui` | M365 Copilot-inspired assistant UI for Odoo 18 |
+docs/troubleshooting/DBFILTER_FIX.md:116:# INFO ? odoo: Odoo version 18.0
+docs/DR_RUNBOOK.md:72:0 4 1 * * root /opt/odoo/scripts/backup/full_backup.sh --retain 180 >> /var/log/odoo-backup.log 2>&1
+docs/EMAIL_AND_OAUTH_SETUP.md:5:**Stack**: Odoo 18 CE + Gmail SMTP + Google OAuth SSO
+docs/EMAIL_AND_OAUTH_SETUP.md:156:- Odoo 18 CE + Gmail works more reliably with SSL
+docs/modules/ipai_clarity_ppm_parity.md:9:Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy
+docs/ODOO_CE_DEPLOYMENT_SUMMARY.md:6:**Baseline**: Odoo 18 CE + Custom `ipai_*` Modules + Automation Stack
+docs/ODOO_CE_DEPLOYMENT_SUMMARY.md:75:### 1. Odoo 18 Compatibility
+docs/ODOO_CE_DEPLOYMENT_SUMMARY.md:78:- Updated `ipai_equipment` cron XML for Odoo 18
+docs/GANTT_TO_ODOO_CE_MAPPING.md:4:**Target**: Odoo 18 CE + OCA/project modules
+docs/GANTT_TO_ODOO_CE_MAPPING.md:345:**Summary**: Your screenshot maps directly to Odoo 18 CE + OCA using `project_timeline`, `project_task_dependency`, and a custom `progress` field. The OCA modules are already in your `oca.lock.json`.
+docs/DOCKERFILE_COMPARISON.md:8:# Custom Odoo 18 Image for InsightPulse ERP
+docs/DOCKERFILE_COMPARISON.md:9:FROM odoo:18.0
+docs/DOCKERFILE_COMPARISON.md:51:# Custom Odoo 18 Image for InsightPulse ERP
+docs/DOCKERFILE_COMPARISON.md:56:FROM odoo:18.0
+docs/DOCKERFILE_COMPARISON.md:121:# Custom Odoo 18 Image for InsightPulse ERP
+docs/DOCKERFILE_COMPARISON.md:373:| Base Image: odoo:18.0 | ✅ | ✅ |
+docs/knowledge/graph_seed.json:14:        "framework": "Odoo 18 CE"
+docs/knowledge/graph_seed.json:226:      "id": "spec:ipai-ai-platform-odoo18",
+docs/knowledge/graph_seed.json:228:      "name": "ipai-ai-platform-odoo18",
+docs/knowledge/graph_seed.json:230:        "path": "spec/ipai-ai-platform-odoo18"
+docs/knowledge/graph_seed.json:3160:      "id": "script:fix_odoo18_views",
+docs/knowledge/graph_seed.json:3162:      "name": "fix_odoo18_views.py",
+docs/knowledge/graph_seed.json:3164:        "path": "scripts/fix_odoo18_views.py"
+docs/knowledge/graph_seed.json:3660:      "dst": "spec:ipai-ai-platform-odoo18",
+docs/knowledge/graph_seed.json:5256:      "dst": "script:fix_odoo18_views",
+docs/INDEX.md:34:| ipai-ai-platform-odoo18 | `spec/ipai-ai-platform-odoo18` | ✓ Complete |
+docs/INDEX.md:74:Custom Odoo 18 CE modules (IPAI namespace).
+docs/DEPLOYMENT.md:109:   - Pull Docker images (PostgreSQL 16, Odoo 18)
+docs/DOCKER_CANONICAL_DIFF.md:15:| **Odoo Image** | `odoo:17.0` | `odoo:18` | ✅ OK | Using latest stable |
+docs/DOCKER_CANONICAL_DIFF.md:117:    image: odoo:18
+docs/DOCKER_CANONICAL_DIFF.md:246:    image: odoo:18
+docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md:253:│  │  3. Tag (ghcr.io/org/odoo:v18.0.1.0.0)               │   │
+docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md:309:18.0.1.0.0  →  Odoo 18.0, Major 1, Minor 0, Patch 0
+docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md:317:18.0.1.0.0  → Initial release on Odoo 18
+docs/ECOSYSTEM_GUIDE.md:41:| `odoo` | odoo:18.0 | Main Odoo ERP | `production` (primary), `odoo` (test) | 127.0.0.1:8069→8069 | odoo_odoo_network |
+docs/ECOSYSTEM_GUIDE.md:140:https://erp.insightpulseai.com/* → odoo:8069 (Odoo CE 18.0)
+docs/ECOSYSTEM_GUIDE.md:171:- `https://erp.insightpulseai.com/odoo/apps/118/ir.module.module/118` - ipai_custom_routes module detail
+docs/ECOSYSTEM_GUIDE.md:378:- **Don't use `tree` view mode**: Use `list` in Odoo 18 CE
+docs/ECOSYSTEM_GUIDE.md:409:| ipai_custom_routes | 🆕 Deployed | production | /odoo/apps/118 |
+docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md:14:- **Odoo 18 CE/OCA** — ERP backbone for finance, HR, projects
+docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md:201:### Odoo 18 CE/OCA Integration
+docs/deployment/OCA_CI_GUARDIAN.md:11:The Odoo CE/OCA CI Guardian is an autonomous agent that ensures all Odoo 18 CE code complies with OCA (Odoo Community Association) best practices and prevents Enterprise module contamination.
+docs/deployment/OCA_CI_GUARDIAN.md:73:- Module installation on Odoo 18 CE
+docs/deployment/OCA_CI_GUARDIAN.md:108:   - Odoo 18 CE installation
+docs/deployment/OCA_CI_GUARDIAN.md:187:- [Odoo 18.0 Documentation](https://www.odoo.com/documentation/18.0/)
+docs/ops/GO_LIVE_CHECKLIST.md:5:This checklist provides a **deterministic, automation-first** path from project kickoff to production go-live for Odoo 18 CE + OCA + IPAI implementations. Every step is designed to be CI-verifiable.
+docs/ops/GO_LIVE_CHECKLIST.md:8:- Odoo 18 CE
+docs/AI_MODULE_NAMING_CONVENTION.md:381:You are implementing the canonical OCA-style "Ask AI Copilot" stack for Odoo 18 CE + OCA.
+docs/releases/DEPLOYMENT_PROOFS/deploy_run_166.json:72:  "check_suite_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-suites/53672183601",
+docs/deployment/README.md:3:This directory contains documentation for deploying and maintaining the Odoo 18 CE instance with OCA modules.
+docs/deployment/README.md:8:- **[../TESTING_ODOO_18.md](../TESTING_ODOO_18.md)** - Odoo 18 Testing Guide ⭐
+docs/deployment/README.md:9:  - Official Odoo 18 testing patterns
+docs/deployment/README.md:37:# Run Odoo 18 tests (recommended)
+docs/releases/prod-20260109-1642/WHAT_SHIPPED.json:95:    "subject": "Odoo 18 Community Edition core modules (#181)",
+docs/modules/ipai_theme_copilot.md:9:Fluent-style TBWA theme for Odoo 18 CE.
+docs/modules/ipai_v18_compat.md:9:Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues
+docs/modules/ipai_v18_compat.md:43:odoo -c /etc/odoo/odoo.conf -d YOUR_DB -i ipai_v18_compat --stop-after-init
+docs/modules/ipai_v18_compat.md:46:odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_v18_compat --stop-after-init
+docs/wiki/Releases-and-Changelog.md:36:| `e82cd10` | `feat(ipai_copilot_ui): add M365 Copilot-inspired UI module for Odoo 18` | #209 |
+docs/wiki/Releases-and-Changelog.md:65:- `feat(ipai_copilot_ui): add M365 Copilot-inspired UI module for Odoo 18`
+docs/db/DB_TARGET_ARCHITECTURE.md:1:# DB Target Architecture — Odoo 18 EE/CE + OCA-equivalent on Supabase Postgres
+docs/db/DB_TARGET_ARCHITECTURE.md:16:All business domains (finance, expense, inventory, maintenance, projects, rates, etc.) must follow **Odoo 18 CE + OCA data models and naming** as the baseline.
+docs/prd/ODOO18_DO_FRESH_REDEPLOY.md:1:# Odoo 18 CE Fresh Redeploy PRD
+docs/prd/ODOO18_DO_FRESH_REDEPLOY.md:17:Establish a **deterministic, one-click bootstrap** deployment system for Odoo 18 CE on DigitalOcean that:
+docs/ops/README.md:382:- **Odoo CE 18**: https://www.odoo.com/documentation/18.0/
+docs/db/DB_ODOO_MAPPING.md:3:This document maps Odoo 18 CE + OCA modules to our Supabase domain schemas.
+docs/db/DB_ODOO_MAPPING.md:111:## Odoo 18 CE / OCA Parity Checklist
+docs/prd/END_STATE_SPEC.json:11:    "odoo_version": "18.0-ce",
+docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md:16:Ship a production-ready Odoo 18 CE + OCA + IPAI bundle that delivers:
+docs/ai/SPEC_KIT.md:23:- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+docs/prd/AIUX_SHIP_PRD_v1.1.0.md:269:- Container names can change (odoo → odoo-erp-prod → odoo-18-ce)
+docs/ops/VERIFICATION_COMMANDS.md:5:Copy/paste commands for verifying Odoo 18 CE deployments. All commands assume you're in the repo root (`/opt/odoo` or equivalent).
+docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md:20:| Image: `odoo:17.0` | Image: `odoo:18` | Latest stable version |
+docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md:80:# abc123...      odoo:18     Up 2 hours      0.0.0.0:8069->8069/tcp   odoo-prod
+docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md:248:    image: odoo:18
+docs/releases/prod-20260109-1642/WHAT_SHIPPED.md:31:7676ffd Odoo 18 Community Edition core modules (#181)
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:33:| **Forbidden Patterns** | `forbidden-patterns-gate.yml` | Block outdated references (Mailgun, .net domains, Odoo 18, Plane) | `artifacts/forbidden_scan.txt` |
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:163:rg -n "Odoo 18|odoo.*18" README.md docs/ mkdocs.yml || EXIT_CODE=$?
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:181:3. **Odoo 18**: Replace with "Odoo 19 CE"
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:188:**Last Valid Version**: [Odoo 18.0 / 2025-01-15]
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:220:- Version-specific docs for EOL versions (e.g., Odoo 18 after migrating to 19)
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:254:site_description: Documentation for the Odoo platform — InsightPulse AI platform built on Odoo 19 CE  # Updated from Odoo 18
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:357:| Odoo 18 Community Edition | Odoo 19 Community Edition | `CLAUDE.md` line "Stack: Odoo CE 19.0" |
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:366:1. Title/Description (line 1-5): Change "Odoo 18" → "Odoo 19"
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:384:- [ ] Update README.md Odoo 18 → Odoo 19 references (715 instances!)
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:410:| 715 Odoo 18 references | Inventory script output | Line "Odoo 18 references: 715" |
+docs/AIUX_SHIP_PRD.md:4:**Target:** Odoo 18 CE (self-hosted)
+docs/AIUX_SHIP_PRD.md:11:This document defines the canonical shipping bundle for the IPAI AIUX (AI User Experience) stack on Odoo 18 Community Edition. The bundle includes design tokens, React widget components, and Odoo theme integration with an AI chat assistant.
+docs/AIUX_SHIP_PRD.md:65:│   ├── ipai_theme_aiux/        → Odoo 18 theme                   │
+docs/architecture/ASK_AI_CONTRACT.md:98:| Odoo Handbook | `docs/odoo-18-handbook/` | Technical guides |
+docs/db/DB_CONVENTIONS_AND_NAMING.md:9:All business domains (finance, expense, inventory, maintenance, projects, rates, etc.) must follow **Odoo 18 CE + OCA data models and naming** as the baseline.
+docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md:17:- **Refactor assistant**: mechanical migrations (tree→list for Odoo 18+, view_mode changes, lint passes).
+docs/DELIVERABLES_MANIFEST.md:107:│   ├── Odoo 18.0 CE image (built & tested)
+docs/ODOO_PROGRAMMATIC_CONFIG.md:1:# Odoo 18 Programmatic Settings Configuration Guide
+docs/ODOO_PROGRAMMATIC_CONFIG.md:6:**Target:** Odoo 18 CE + Docker
+docs/ops/production_redeploy_runbook.md:5:This runbook provides step-by-step procedures for deploying Odoo 18 CE to production on DigitalOcean, with specific focus on preventing 502 errors and ensuring reliable deployments.
+docs/OCA_INSTALLATION_GUIDE.md:184:    image: odoo:18
+docs/PRODUCTION_HOTFIX.md:22:- Odoo 18 CE has stricter validation causing UI crash
+docs/PRODUCTION_HOTFIX.md:252:- **Odoo 18 CE Migration**: `docs/MIGRATION_18.md`
+docs/WORKOS_DEPLOYMENT_MANIFEST.md:78:- **Odoo 18 compatibility**: ✅ All views migrated
+docs/WORKOS_DEPLOYMENT_MANIFEST.md:83:**Issue**: tree view types deprecated in Odoo 18
+docs/branch-cleanup-analysis.md:23:| `feat/odoo-18-oca-automation` | 0 | 4 days | **Fully merged into main** |
+docs/branch-cleanup-analysis.md:74:git push origin --delete feat/odoo-18-oca-automation
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:338:                "description": "Odoo 18 CE with Finance PPM + OCA modules for TBWA Finance SSC",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:436:            "Error": "failed to set up container networking: driver failed programming external connectivity on endpoint odoo-keycloak (1ac971e4cd49bf2cb4c0f9ce8a7b8b21234f1851f6bd58c9f8a70b5a40a75230): Bind for 0.0.0.0:8080 failed: port is already allocated",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1176:            "Image": "odoo:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1240:                "org.opencontainers.image.source": "https://github.com/odoo/docker.git#fa9d68a03f140c162e5acdb7f8e81d22ed3ccb9f:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1448:            "Image": "odoo:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1525:                "org.opencontainers.image.source": "https://github.com/odoo/docker.git#fa9d68a03f140c162e5acdb7f8e81d22ed3ccb9f:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1733:            "Image": "odoo:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:1810:                "org.opencontainers.image.source": "https://github.com/odoo/docker.git#fa9d68a03f140c162e5acdb7f8e81d22ed3ccb9f:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:2325:            "Image": "odoo:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:2365:                "org.opencontainers.image.source": "https://github.com/odoo/docker.git#fa9d68a03f140c162e5acdb7f8e81d22ed3ccb9f:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:2568:            "Image": "odoo:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:2616:                "org.opencontainers.image.source": "https://github.com/odoo/docker.git#fa9d68a03f140c162e5acdb7f8e81d22ed3ccb9f:18.0",
+docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json:3454:            "Error": "failed to set up container networking: driver failed programming external connectivity on endpoint odoo-caddy-1 (45e3dac786a0e392503ffcf899921b96e534298b45182bc64653da2ca8515182): failed to bind host port 0.0.0.0:80/tcp: address already in use",
+docs/DOCKER_VALIDATION_GUIDE.md:12:| Base image: `odoo:18.0` | ✅ `FROM odoo:18.0` |
+docs/GO_LIVE_PRODUCTION_CHECKLIST.md:1:# Go-Live & Production Checklist (Odoo 18 CE + OCA + IPAI)
+docs/GO_LIVE_PRODUCTION_CHECKLIST.md:4:- Self-hosted Odoo 18 Community + OCA, with IPAI modules
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/host_info.txt:80:Jan 08 01:36:01 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:01.784603187Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/host_info.txt:88:Jan 08 01:38:03 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:38:03.918913300Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/FINANCE_PPM_IMPLEMENTATION.md:7:This document maps the Clarity PPM / Notion workspace architecture to Odoo 18 CE models and views.
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/nginx_info.txt:17:Jan 04 22:55:31 odoo-erp-prod nginx[3581918]: nginx: [warn] conflicting server name "erp.insightpulseai.com" on 0.0.0.0:80, ignored
+docs/api/EXTENDED_PLATFORM_API.md:3:REST API endpoints for Odoo 18 CE Extended Platform using OCA `base_rest`.
+docs/api/EXTENDED_PLATFORM_API.md:680:*Generated: 2026-01-06 | Odoo 18 CE Extended Platform*
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:22:ghcr.io/jgtolentino/odoo-18-ce        1.0.0-amd64                    sha256:c8e9dbdc33915d480b97354532c2d02e06464084e18269670b6013f92114d156   c8e9dbdc3391   8 weeks ago     5.96GB
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:23:ghcr.io/jgtolentino/odoo-18-ce        1.0.202511130505-amd64         sha256:5a5d96f8692750cc4b11f899a84d0cb989e0581569ad15978b4b7dff549e8ccb   5a5d96f86927   8 weeks ago     5.96GB
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:24:ghcr.io/jgtolentino/odoo-18-ce        1.0.0                          <none>                                                                    902020d59af9   8 weeks ago     5.29GB
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:25:localhost/odoo-18-ce                  1.0.0-amd64                    sha256:902020d59af9830024db8829aee7e84e32748f5a43a2ede99b05717b55af9c5a   902020d59af9   8 weeks ago     5.29GB
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:36:odoo                                  18                             <none>                                                                    9e270038249e   56 years ago    650MB
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt:37:odoo                                  18.0                           <none>                                                                    9e270038249e   56 years ago    650MB
+docs/tutorials/jinja2-basics/examples/04_odoo_module_example.py:104:    odoo_series="18.0",
+docs/ODOO_ADDONS_PATH_CONFIGURATION.md:92:    image: ghcr.io/jgtolentino/odoo:18.0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt:5:6040f8dee24fdf180414c52ba86a5dbb46eb2cf52b2cdbde4769bb6d03d136a9   odoo:18.0                                                                 "/entrypoint.sh odoo -d odoo_core --proxy-mode"                 3 days ago          Exited (0) 5 hours ago                                                                                    odoo-core
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt:6:d035a0c092d8d44cc0bd10663ba93630038f8ed02cc2669806eb586597de4e74   odoo:18.0                                                                 "/entrypoint.sh odoo -d odoo_marketing"                         9 days ago          Up 5 hours                         8071-8072/tcp, 0.0.0.0:8070->8069/tcp, [::]:8070->8069/tcp             odoo-marketing
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt:7:7215bbac87b0b0f988c78dc04a717d6018ec365c1c5c8feb8c3dc294f4cfe28a   odoo:18.0                                                                 "/entrypoint.sh odoo -d odoo_accounting"                        9 days ago          Up 5 hours                         8071-8072/tcp, 0.0.0.0:8071->8069/tcp, [::]:8071->8069/tcp             odoo-accounting
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt:9:d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e   odoo:18.0                                                                 "/entrypoint.sh odoo"                                           11 days ago         Up 14 seconds (health: starting)                                                                          odoo-production
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt:10:46198187fca392f5f61cfce92fffb6761f510a192e16bd853234b5ca12bccc28   odoo:18.0                                                                 "/entrypoint.sh -- --database production"                       12 days ago         Created                                                                                                   odoo-production-new
+docs/tutorials/jinja2-basics/README.md:111:    "odoo_series": "18.0",
+docs/tutorials/jinja2-basics/README.md:197:    odoo_series="18.0",
+docs/FEATURE_WORKSPACE_PARITY.md:375:- Odoo Project Management: https://www.odoo.com/documentation/18.0/applications/services/project.html
+docs/FEATURE_WORKSPACE_PARITY.md:376:- Odoo Documents: https://www.odoo.com/documentation/18.0/applications/productivity/documents.html
+docs/ai/ODOO_DEVELOPER_SKILLS_GAP_ANALYSIS.md:386:8. `odoo-translations` - i18n/l10n workflow
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:2:Jan 08 00:36:46 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:36:46.445055124Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:3:Jan 08 00:36:46 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:36:46.468526274Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=1m40.853495179s exitStatus="{0 2026-01-08 00:36:46.411293144 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:4:Jan 08 00:36:47 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:36:47.380617189Z" level=info msg="sbJoin: gwep4 ''->'02acab2db34f', gwep6 ''->''" eid=02acab2db34f ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=7b65a37e5c262ab2 traceID=c2adf91c1f38709d1750498cbaccdffc
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:8:Jan 08 00:37:44 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:37:44.555801866Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:9:Jan 08 00:37:44 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:37:44.591519797Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=57.528951714s exitStatus="{0 2026-01-08 00:37:44.525616517 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:13:Jan 08 00:38:44 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:38:44.291850216Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:23:Jan 08 00:42:18 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:42:18.683752468Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:26:Jan 08 00:43:50 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:43:50.061836891Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:31:Jan 08 00:46:22 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:46:22.376181030Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:33:Jan 08 00:47:21 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:47:21.819591073Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:34:Jan 08 00:47:21 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:47:21.844440321Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=6m17.904479912s exitStatus="{0 2026-01-08 00:47:21.777261313 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:39:Jan 08 00:48:34 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:48:34.354004765Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:40:Jan 08 00:48:34 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:48:34.377168105Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=52.731898558s exitStatus="{0 2026-01-08 00:48:34.333591528 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:43:Jan 08 00:48:55 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:48:55.105344180Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:50:Jan 08 00:49:49 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:49:49.081756529Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:51:Jan 08 00:49:49 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:49:49.099754193Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=28.869676867s exitStatus="{0 2026-01-08 00:49:49.062126817 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:52:Jan 08 00:49:52 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:49:52.563643854Z" level=info msg="sbJoin: gwep4 ''->'d6f1fef5a02a', gwep6 ''->''" eid=d6f1fef5a02a ep=deploy-odoo-run-47a6b18c679e net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=e3249dcbc23e4605 traceID=8ad8b31a9223223e2ebfb32bbfa660b8
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:53:Jan 08 00:49:52 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:49:52.613788845Z" level=info msg="sbJoin: gwep4 'd6f1fef5a02a'->'9d39a23b3f16', gwep6 ''->''" eid=9d39a23b3f16 ep=deploy-odoo-run-47a6b18c679e net=deploy_odoo_backend nid=fa28528193ce spanID=e3249dcbc23e4605 traceID=8ad8b31a9223223e2ebfb32bbfa660b8
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:55:Jan 08 00:50:27 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:50:27.385718513Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:58:Jan 08 00:51:35 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:51:35.156164374Z" level=error msg="copy stream failed" error="read /proc/self/fd/187: file already closed" stream=stdout
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:72:Jan 08 00:54:54 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:54:54.190756256Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:73:Jan 08 00:54:54 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:54:54.220798718Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=1m14.154581617s exitStatus="{0 2026-01-08 00:54:54.145192868 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:79:Jan 08 00:56:04 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:56:04.691800398Z" level=error msg="copy stream failed" error="reading from a closed fifo" stream=stderr
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:81:Jan 08 00:56:04 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:56:04.715341824Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:85:Jan 08 00:57:41 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:57:41.334729619Z" level=info msg="ignoring event" container=c0ef30b700f417b31d7a3f16faa4db262ac4fc2d967182124c39885eaf97d03a module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:86:Jan 08 00:57:51 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:57:51.320446045Z" level=info msg="sbJoin: gwep4 ''->'ffdfca6e0a80', gwep6 ''->''" eid=ffdfca6e0a80 ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=51e7ead4d5823499 traceID=7ae6b3c618acf6162cbb64f5f322fe08
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:87:Jan 08 00:57:51 odoo-erp-prod dockerd[640445]: time="2026-01-08T00:57:51.428139694Z" level=info msg="sbJoin: gwep4 'ffdfca6e0a80'->'4e3f6e9344de', gwep6 ''->''" eid=4e3f6e9344de ep=odoo-ce net=deploy_odoo_backend nid=fa28528193ce spanID=51e7ead4d5823499 traceID=7ae6b3c618acf6162cbb64f5f322fe08
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:95:Jan 08 01:01:40 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:01:40.765086618Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:96:Jan 08 01:02:11 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:02:11.119495958Z" level=info msg="ignoring event" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:97:Jan 08 01:02:11 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:02:11.149351816Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=74434688efbafc1dc09965949778524935e992be8243907921809ad807c1698f daemonShuttingDown=false error="restart canceled" execDuration=4m20.066924917s exitStatus="{0 2026-01-08 01:02:11.097854571 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:99:Jan 08 01:02:14 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:02:14.468189899Z" level=info msg="sbJoin: gwep4 ''->'d2e8c253ccfa', gwep6 ''->''" eid=d2e8c253ccfa ep=odoo-ce net=deploy_odoo_backend nid=fa28528193ce spanID=f53f98e9f28159f0 traceID=11b6d184801fa9793bde8102def99bad
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:100:Jan 08 01:02:14 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:02:14.572093298Z" level=info msg="sbJoin: gwep4 'd2e8c253ccfa'->'d2e8c253ccfa', gwep6 ''->''" eid=145514a974a7 ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=f53f98e9f28159f0 traceID=11b6d184801fa9793bde8102def99bad
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:117:Jan 08 01:11:04 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:11:04.018456527Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:123:Jan 08 01:12:11 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:12:11.479431857Z" level=info msg="sbJoin: gwep4 '192ef0ec5433'->'f5b45feb718a', gwep6 ''->''" eid=f5b45feb718a ep=deploy-odoo-run-6c3dd6c6484e net=deploy_odoo_backend nid=fa28528193ce spanID=eacfd35c73b5d12e traceID=a7fa4a2e388a9e886a750ffb46156b8b
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:141:Jan 08 01:17:20 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:17:20.184545647Z" level=info msg="ignoring event" container=8ec8b44657b34de6ef7c4ae86ddbe79891cd8b24fbf624b6f639b587ace7936a module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:143:Jan 08 01:17:50 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:17:50.961172013Z" level=info msg="sbJoin: gwep4 ''->'81c5970fb42f', gwep6 ''->''" eid=81c5970fb42f ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=413867cd4d245c0b traceID=0d3249182aa248c7bbc9fffe301c52a5
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:144:Jan 08 01:17:51 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:17:51.060329817Z" level=info msg="sbJoin: gwep4 '81c5970fb42f'->'847d7215ba69', gwep6 ''->''" eid=847d7215ba69 ep=odoo-ce net=deploy_odoo_backend nid=fa28528193ce spanID=413867cd4d245c0b traceID=0d3249182aa248c7bbc9fffe301c52a5
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:145:Jan 08 01:18:12 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:18:12.432453368Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:146:Jan 08 01:18:42 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:18:42.909671472Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:154:Jan 08 01:23:18 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:23:18.198271217Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:160:Jan 08 01:26:01 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:26:01.569618450Z" level=info msg="ignoring event" container=decdd9b28a5d57210f48d788c10c8e4e87271d85426ccff60298b51f6a122236 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:162:Jan 08 01:26:02 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:26:02.430394618Z" level=info msg="sbJoin: gwep4 ''->'748eaab802f0', gwep6 ''->''" eid=748eaab802f0 ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=bfa88b7e62f7adda traceID=5239008eaafa2e05d547926a59b179e9
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:173:Jan 08 01:28:25 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:28:25.892822243Z" level=error msg="copy stream failed" error="read /proc/self/fd/186: file already closed" stream=stdout
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:174:Jan 08 01:28:25 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:28:25.892944569Z" level=error msg="copy stream failed" error="read /proc/self/fd/187: file already closed" stream=stderr
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:186:Jan 08 01:32:58 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:32:58.723081805Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:192:Jan 08 01:36:01 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:01.784603187Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt:200:Jan 08 01:38:03 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:38:03.918913300Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+docs/architecture/IPAI_AI_PLATFORM_ARCH.md:475:- Odoo CE 18 docs: https://www.odoo.com/documentation/18.0
+docs/architecture/RUNTIME_IDENTIFIERS.md:164:2. `/var/lib/odoo/addons/18.0` (User-installed from Apps menu)
+docs/architecture/RUNTIME_IDENTIFIERS.md:308:- **Python**: 3.x (bundled with odoo:18.0 image)
+docs/DOCKER_CD_MIGRATION_GUIDE.md:53:# Replace the 'image: odoo:18.0' line with:
+docs/architecture/README.md:66:| [odoo/ODOO_INTEGRATION_MAP.md](../../odoo/ODOO_INTEGRATION_MAP.md) | Odoo 18 CE integration mapping |
+docs/architecture/multi_tenant_architecture.md:29:│  │ Odoo 18 CE      │  │ │  │ Odoo 18 CE      │  │ │  │ Odoo 18 CE      │  │
+docs/architecture/multi_tenant_architecture.md:322:2. Create template database with Odoo 18 CE + ipai_* modules
+docs/REPO_TREE.generated.md:4079:│   ├── odoo-18-handbook
+docs/REPO_TREE.generated.md:4518:│   │   ├── install_odoo_18.sh
+docs/architecture/OCR_PIPELINE.md:10:The OCR Pipeline provides self-hosted document intelligence capabilities for Odoo 18 CE, replacing Enterprise "Documents AI" features without using Odoo SA proprietary modules or IAP billing.
+docs/architecture/OCR_PIPELINE.md:21:│   │   Odoo 18   │────▶│ OCR Service │────▶│   Storage   │           │
+docs/OFFICIAL_TYPOLOGY.md:73:    image: odoo:18
+docs/OFFICIAL_TYPOLOGY.md:113:  odoo:18
+docs/OFFICIAL_TYPOLOGY.md:215:| **Odoo image** | `odoo:17.0` | `odoo:18` | ⚠️ Newer |
+docs/OFFICIAL_TYPOLOGY.md:254:**Yours**: `odoo:18`, `postgres:15`
+docs/OFFICIAL_TYPOLOGY.md:256:**Why**: Odoo 18 is latest stable, backward compatible.
+docs/ai/ODOO_DEVELOPER_COMPLETE_REFERENCE.md:498:python3 odoo-bin --i18n-export=my_addon.pot -d database --modules=my_addon
+docs/ai/ODOO_DEVELOPER_COMPLETE_REFERENCE.md:505:python3 odoo-bin --i18n-import=fr_FR.po -l fr_FR -d database --modules=my_addon
+docs/FEATURE_CHEQROOM_PARITY.md:247:- Odoo Stock Management: https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/inventory.html
+docs/FEATURE_CHEQROOM_PARITY.md:248:- Odoo Mail Integration: https://www.odoo.com/documentation/18.0/developer/reference/backend/mixins.html#mail-thread
+docs/INDUSTRY_PARITY_ANALYSIS.md:366:- [Dixmit - Accounting on Odoo Community 18](https://www.dixmit.com/en/blog/our-blog-1/accounting-management-on-odoo-community-18)
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:101:## 2. Odoo 18 CE Documentation Catalog
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:106:📚 Odoo 18.0 Documentation (https://www.odoo.com/documentation/18.0/)
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:179:| Feature | SAP Help Portal | Odoo 18 Docs | Gap Level |
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:235:| `odoo_docs_18` | https://www.odoo.com/documentation/18.0/ | Daily 2 AM |
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:464:2. **Week 1:** Deploy n8n pipelines for Odoo 18 docs crawl
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:570:| `docs_ingest_odoo18` | Cron (daily 2 AM) | Crawl → Normalize → Chunk → Embed → Publish |
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:804:- [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/)
+docs/ee_parity_map.md:232:- **docs/odoo-apps-parity.md** - Existing parity matrix for Odoo 18
+docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md:49:      "description": "Odoo 18 removed numbercall field from ir.cron model"
+docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md:66:### 1. Cron Field Deprecation (Odoo 18)
+docs/data-model/EXTENDED_PLATFORM_ERD.mmd:2:title: Extended Platform ERD - Odoo 18 CE + OCA
+docs/data-model/EXTENDED_PLATFORM_ORM_MAP.md:3:Odoo 18 CE + OCA Extended Platform - Complete ORM Field Reference
+docs/data-model/EXTENDED_PLATFORM_ORM_MAP.md:454:*Generated: 2026-01-06 | Odoo 18 CE Extended Platform*
+docs/data-model/EXTENDED_PLATFORM_SCHEMA.dbml:4:// Odoo 18 CE + OCA Extended Platform Data Model
+docs/data-model/EXTENDED_PLATFORM_SCHEMA.dbml:11:  Note: 'Odoo 18 CE Extended Platform - OCA Modules Data Model'
+docs/llms/external/odoo_docs_18__FETCH_FAILED.txt:1:FAILED: https://www.odoo.com/documentation/18.0
+docs/llms/external/odoo_docs_18__FETCH_FAILED.txt:3:  - https://www.odoo.com/documentation/18.0/llms-full.txt
+docs/llms/external/odoo_docs_18__FETCH_FAILED.txt:4:  - https://www.odoo.com/documentation/18.0/llms.txt
+docs/llms/external/odoo_docs_18__FETCH_FAILED.txt:5:  - https://www.odoo.com/documentation/18.0/docs/llms-full.txt
+docs/llms/external/odoo_docs_18__FETCH_FAILED.txt:6:  - https://www.odoo.com/documentation/18.0/docs/llms.txt
+docs/data-model/ODOO_SHADOW_SCHEMA.sql:6160:    ('odoo_shadow_fetchmail_server_folder', 'fetchmail.server.folder', 'fetchmail_attach_from_folder', 18),
+docs/data-model/ODOO_SHADOW_SCHEMA.sql:6169:    ('odoo_shadow_finance_task_template', 'finance.task.template', 'ipai_tbwa_finance', 18),
+docs/data-model/ODOO_SHADOW_SCHEMA.sql:6234:    ('odoo_shadow_ipai_sms_message', 'ipai.sms.message', 'ipai_sms_gateway', 18),
+docs/data-model/ODOO_SHADOW_SCHEMA.sql:6237:    ('odoo_shadow_ipai_studio_ai_wizard', 'ipai.studio.ai.wizard', 'ipai', 18),
+docs/data-model/ODOO_SHADOW_SCHEMA.sql:6286:    ('odoo_shadow_ppm_kpi_snapshot', 'ppm.kpi.snapshot', 'ipai', 18),
+docs/data-model/SCOUT_CES_ANALYTICS_SCHEMA.dbml:4:// Platform: Supabase + Odoo 18 CE + Superset
+docs/data-model/SCOUT_CES_ANALYTICS_SCHEMA.dbml:20:    - Odoo 18 CE (ipai_* modules)
+docs/data-model/insightpulse_canonical.dbml:342:  odoo_version varchar(10) [note: 'e.g., 18.0']
+docs/data-model/insightpulse_canonical.dbml:466:    Integrates with Odoo 18 CE tables (not shown here).
+docs/MIXED_CONTENT_FIX.md:182:- **Odoo Documentation**: [Using Odoo behind a web server](https://www.odoo.com/documentation/18.0/administration/on_premise/deploy.html#https)
+docs/wiki/Installation.md:92:ipai-gen --spec spec/ipai-odoo18-enterprise-patch/capability_map.yaml
+docs/modules/ipai_superset_connector_technical_guide.md:3:> Complete technical documentation for embedding Apache Superset dashboards in Odoo 18 CE.
+docs/modules/ipai_superset_connector_technical_guide.md:27:The `ipai_superset_connector` module integrates Apache Superset BI dashboards into Odoo 18 CE using the official Superset Embedded SDK pattern with guest token authentication.
+docs/modules/ipai_superset_connector_technical_guide.md:36:- **OWL Components**: Modern Odoo 18 frontend integration
+docs/modules/ipai_superset_connector_technical_guide.md:623:- [Odoo 18 OWL Documentation](https://www.odoo.com/documentation/18.0/developer/reference/frontend/owl.html)
+docs/ai/INTEGRATIONS.md:170:Repository: Odoo 18 CE, ipai_* conventions, OCA style."
+docs/TAGGING_STRATEGY.md:226:  "org.opencontainers.image.description": "Odoo 18 CE + OCA + IPAI Modules",
+docs/TAGGING_STRATEGY.md:231:  "com.insightpulseai.odoo.version": "18.0",
+
+4. Scanning for Plane references...
+README.md:352:## Plane Project Management
+README.md:354:**Plane** is an open-source project management platform (Jira alternative) deployed to production with email integration.
+README.md:358:Plane Backend (Django/PostgreSQL) → SMTP Email Delivery
+README.md:359:Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
+docs/infra/SUPABASE_TERRAFORM_INTEGRATION.md:441:## Supabase as Control Plane
+docs/infra/SUPABASE_TERRAFORM_INTEGRATION.md:447:│                   Supabase Control Plane                    │
+docs/AGENTIC_CLOUD_PRD.md:13:| Plane | Role | Components |
+docs/AGENTIC_CLOUD_PRD.md:15:| **Control Plane** | Coordination & agent runtime | Claude Code CLI, Codex runtime, MCP Hub, Pulser registry |
+docs/AGENTIC_CLOUD_PRD.md:16:| **Model Plane** | Execution targets (LLMs/Modalities) | OpenAI/Anthropic/DeepSeek APIs + local inference (vLLM/Ollama on GPU droplet) |
+docs/AGENTIC_CLOUD_PRD.md:17:| **Knowledge Plane** | Persistent indexed memory and embeddings | Supabase pgvector, n8n ingestion workflows, OCR pipelines |
+docs/AGENTIC_CLOUD_PRD.md:18:| **Execution Plane** | Tools and Services invoked by agents | Odoo CE/Edge Functions/n8n/Mattermost automation/Atlas Crawler |
+docs/AGENTIC_CLOUD_PRD.md:19:| **Observability Plane** | Monitoring, auditing, telemetry | Superset dashboards, Mattermost alerts, service logs, cron heartbeats |
+docs/DEPRECATED_DOCS.md:24:| `evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md` | N/A (archived) | 2026-02-12 | Plane deprecated per CLAUDE.md |
+docs/DEPRECATED_DOCS.md:74:### Plane Documentation (Deprecated System)
+docs/DEPRECATED_DOCS.md:78:- References to Plane in README.md (lines 352-394)
+docs/DEPRECATED_DOCS.md:79:- Any Plane runbooks or guides
+docs/DEPRECATED_DOCS.md:157:4. Move Plane docs to `docs/deprecated/`
+docs/DEPRECATED_DOCS.md:173:| Plane | ~5 | N/A | 0% |
+docs/DEPRECATED_DOCS.md:203:   # Manual: Update email section, remove Plane section
+docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md:3:> **GitHub as Control Plane** | **Supabase as State/Event Bus** | **n8n as Orchestrator + MCP Host** | **Odoo as ERP** | **Docker as Runtime** | **Vercel as UI Surface**
+docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md:40:### A) GitHub = Control Plane
+docs/research/figma-design-automation/integration_stack.md:399:| **PlanetScale** | MySQL-based | Manual |
+docs/operations/IMPLEMENTATION_STATUS.md:185:### Supabase (Control Plane)
+docs/operations/MONTH_END_CLOSE_MAPPING.md:7:- **Supabase** (Control Plane - status, SLA, audit, rollups)
+docs/operations/MONTH_END_CLOSE_MAPPING.md:29:### 2. Supabase = Control Plane (Status, SLA, Audit, Rollups)
+docs/parity/PARITY_MATRIX.yaml:16:  # PHASE 1: FOUNDATION (Control Plane)
+docs/parity/PARITY_MATRIX.yaml:19:    name: Control Plane - Workspaces
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:219:- Feature/system no longer supported (e.g., Plane)
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:363:| Plane integration | Deprecated (remove section) | `CLAUDE.md` line "Deprecated: Plane (all)" |
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:370:5. Plane section (lines 352-394): Move to `docs/deprecated/PLANE_INTEGRATION_DEPRECATED.md`
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:381:- [ ] Move Plane docs to `docs/deprecated/`
+docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md:387:- [ ] Remove or archive Plane section
+docs/architecture/multi_tenant_architecture.md:66:### Control Plane Tables
+docs/architecture/multi_tenant_architecture.md:233:# Control Plane Database
+docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md:38:#### VS Code Extension: The Control Plane
+docs/integrations/MARKETPLACE_INTEGRATIONS.md:9:│                    Marketplace Integrations Control Plane                │
+docs/ops/README.md:77:│  Control Plane (Supabase)                                       │
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:33:| **Forbidden Patterns** | `forbidden-patterns-gate.yml` | Block outdated references (Mailgun, .net domains, Odoo 18, Plane) | `artifacts/forbidden_scan.txt` |
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:164:rg -n "Plane" README.md docs/ || EXIT_CODE=$?
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:182:4. **Plane**: Remove or move to `docs/deprecated/PLANE_ARCHIVE.md` with clear deprecation notice
+docs/governance/ODOOSH_GRADE_PARITY_GATING.md:358:| Plane deprecated | `CLAUDE.md` | "Deprecated: Plane (all)" |
+docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md:695:│  → Agent Brain + Automation Control Plane                       │
+docs/data-model/insightpulse_canonical.dbml:17:Project InsightPulse_ControlPlane {
+docs/data-model/insightpulse_canonical.dbml:20:    # InsightPulse AI Control Plane
+docs/data-model/insightpulse_canonical.dbml:834:// Control Plane Relationships
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:1:# AI Control Plane Implementation Evidence
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:4:**Scope:** AI Control Plane with Vercel AI Gateway + Supabase Vault
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:8:Implemented the AI Control Plane infrastructure with:
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:104:│                         AI Control Plane                                 │
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:109:│  │    BugBot     │  │  Vercel Bot   │  │ Control Plane │                │
+docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md:124:│  Supabase (Control Plane DB)                                            │
+docs/evidence/20260212-1530/odooops-console-complete/COMPLETION_SUMMARY.md:177:### Supabase (Control Plane)
+docs/evidence/20260127-0630/platform-kit-merge/SUMMARY.md:152:**Control Plane Schema:**
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:1:# Plane Production Deployment Evidence
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:10:Deployed Plane project management platform to production with Mailgun SMTP integration.
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:35:# Changed Plane API port mapping to 8002
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:40:- Plane API: 8002 → 8000 (container)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:41:- Plane DB: 5433 → 5432 (container)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:42:- Plane Web: 3001 → 3000 (container)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:219:- `/api/*` → Plane API backend (port 8002)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:221:- `/` → Plane API (temporary, until web frontend built)
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:284:- Same SMTP credentials used for Plane notifications
+docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md:312:   - Plane API (port 8002) - verified with `{"status": "OK"}` response
+
+=================================
+Result: Forbidden patterns detected (see output above)
