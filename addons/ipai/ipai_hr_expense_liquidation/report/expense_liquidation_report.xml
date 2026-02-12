@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Action -->
+    <record id="action_report_expense_liquidation" model="ir.actions.report">
+        <field name="name">Expense Liquidation Report</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ipai_hr_expense_liquidation.report_expense_liquidation_document</field>
+        <field name="report_file">ipai_hr_expense_liquidation.report_expense_liquidation_document</field>
+        <field name="binding_model_id" ref="model_hr_expense_liquidation"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_expense_liquidation_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-12">
+                                <h2 class="text-center">
+                                    <strong>EXPENSE LIQUIDATION REPORT</strong>
+                                </h2>
+                            </div>
+                        </div>
+
+                        <!-- Header Info -->
+                        <div class="row mt32 mb32">
+                            <div class="col-6">
+                                <strong>Reference:</strong> <span t-field="o.name"/><br/>
+                                <strong>Liquidation Type:</strong> <span t-field="o.liquidation_type"/><br/>
+                                <strong>Date:</strong> <span t-field="o.date"/><br/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Employee:</strong> <span t-field="o.employee_id.name"/><br/>
+                                <strong>Department:</strong> <span t-field="o.department_id.name"/><br/>
+                                <strong>Status:</strong> <span t-field="o.state"/><br/>
+                            </div>
+                        </div>
+
+                        <!-- Cash Advance Details (if applicable) -->
+                        <div t-if="o.liquidation_type == 'cash_advance'" class="row mb16">
+                            <div class="col-12">
+                                <table class="table table-sm table-bordered">
+                                    <tr class="bg-light">
+                                        <th colspan="2" class="text-center">Cash Advance Details</th>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Advance Amount</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.advance_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.advance_reference">
+                                        <td><strong>Advance Reference</strong></td>
+                                        <td><span t-field="o.advance_reference"/></td>
+                                    </tr>
+                                    <tr t-if="o.advance_date">
+                                        <td><strong>Advance Date</strong></td>
+                                        <td><span t-field="o.advance_date"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Expense Lines -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4>Itemized Expenses</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr class="bg-primary text-white">
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Category</th>
+                                            <th>Reference</th>
+                                            <th class="text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.line_ids" t-as="line">
+                                            <tr>
+                                                <td><span t-field="line.date"/></td>
+                                                <td><span t-field="line.description"/></td>
+                                                <td>
+                                                    <span t-if="line.bucket == 'meals'">Meals & Entertainment</span>
+                                                    <span t-elif="line.bucket == 'transportation'">Transportation & Travel</span>
+                                                    <span t-else="">Miscellaneous</span>
+                                                </td>
+                                                <td><span t-field="line.reference"/></td>
+                                                <td class="text-right">
+                                                    <span t-field="line.amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Bucket Totals -->
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h4>Bucket Totals</h4>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td><strong>Meals & Entertainment</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_meals" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Transportation & Travel</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_transportation" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Miscellaneous</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_miscellaneous" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-light">
+                                        <td><strong>Total Expenses</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                <span t-field="o.total_expenses" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Settlement (for cash advance) -->
+                        <div t-if="o.liquidation_type == 'cash_advance'" class="row mt16">
+                            <div class="col-12">
+                                <h4>Settlement Calculation</h4>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td><strong>Cash Advance Received</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.advance_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Less: Total Expenses</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_expenses" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-warning" t-if="o.settlement_status == 'return'">
+                                        <td><strong>Amount to Return to Company</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                <span t-field="o.settlement_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-info" t-if="o.settlement_status == 'reimburse'">
+                                        <td><strong>Additional Reimbursement to Employee</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                <span t-esc="abs(o.settlement_amount)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-success" t-if="o.settlement_status == 'balanced'">
+                                        <td colspan="2" class="text-center"><strong>BALANCED - No Settlement Required</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Purpose/Description -->
+                        <div t-if="o.description" class="row mt16">
+                            <div class="col-12">
+                                <h5>Purpose/Description:</h5>
+                                <p t-field="o.description"/>
+                            </div>
+                        </div>
+
+                        <!-- Signatures -->
+                        <div class="row mt64">
+                            <div class="col-6 text-center">
+                                <p>_________________________<br/>
+                                <strong>Employee Signature</strong><br/>
+                                <span t-field="o.employee_id.name"/><br/>
+                                Date: <span t-field="o.date"/>
+                                </p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p>_________________________<br/>
+                                <strong>Approver Signature</strong><br/>
+                                <span t-if="o.approver_id" t-field="o.approver_id.name"/><br/>
+                                <span t-if="o.approval_date">Date: <span t-field="o.approval_date"/></span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div t-if="o.notes" class="row mt16">
+                            <div class="col-12">
+                                <p class="text-muted"><strong>Notes:</strong> <span t-field="o.notes"/></p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

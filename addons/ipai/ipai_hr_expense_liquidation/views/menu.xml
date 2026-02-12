@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_expense_liquidation_root"
+        name="Expense Liquidation"
+        sequence="80"
+        web_icon="ipai_hr_expense_liquidation,static/description/icon.png"
+        groups="group_expense_liquidation_user"/>
+
+    <!-- My Liquidations -->
+    <menuitem id="menu_expense_liquidation_my"
+        name="My Liquidations"
+        parent="menu_expense_liquidation_root"
+        action="action_expense_liquidation_my"
+        sequence="10"/>
+
+    <!-- All Liquidations -->
+    <menuitem id="menu_expense_liquidation_all"
+        name="All Liquidations"
+        parent="menu_expense_liquidation_root"
+        action="action_expense_liquidation"
+        sequence="20"
+        groups="group_expense_liquidation_approver"/>
+
+    <!-- To Approve -->
+    <menuitem id="menu_expense_liquidation_approve"
+        name="To Approve"
+        parent="menu_expense_liquidation_root"
+        action="action_expense_liquidation_to_approve"
+        sequence="30"
+        groups="group_expense_liquidation_approver"/>
+
+</odoo>
