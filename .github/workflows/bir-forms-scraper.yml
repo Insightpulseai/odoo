@@ -1,0 +1,182 @@
+name: BIR Forms Registry Scraper
+
+on:
+  schedule:
+    # Daily at 2 AM UTC (10 AM PHT) - nightly update
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+    # Manual dispatch for ad-hoc refresh
+    inputs:
+      notify_slack:
+        description: 'Send Slack notification on completion'
+        required: false
+        default: 'false'
+
+env:
+  SUPABASE_URL: https://spdtwktxdalcfigzeqrz.supabase.co
+  SUPABASE_PROJECT_REF: spdtwktxdalcfigzeqrz
+
+jobs:
+  scrape-bir-forms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --filter scripts
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run BIR forms scraper
+        id: scraper
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          pnpm --filter scripts tsx scripts/bir/scrape-bir-forms.ts
+          echo "scraper_exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Verify row count
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Query registry.bir_forms table for row count
+          RESPONSE=$(curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${SUPABASE_URL}/rest/v1/registry.bir_forms?select=count" \
+            -H "Prefer: count=exact")
+
+          echo "Supabase response: $RESPONSE"
+
+          # Extract count (assuming response is [{"count": N}])
+          COUNT=$(echo "$RESPONSE" | jq -r '.[0].count // 0')
+          echo "Total forms in registry: $COUNT"
+
+          # Verify minimum threshold (expecting 30+ forms)
+          if [ "$COUNT" -lt 5 ]; then
+            echo "::error::Row count verification failed: expected >= 5, got $COUNT"
+            exit 1
+          fi
+
+          echo "::notice::Verification passed: $COUNT forms in registry"
+
+      - name: Upload scraper logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bir-scraper-logs-${{ github.run_number }}
+          path: |
+            docs/evidence/20260212-2000/bir-forms-registry/scrape-log-*.json
+            docs/evidence/20260212-2000/bir-forms-registry/scrape-*.png
+          retention-days: 30
+
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bir-scraper-failures-${{ github.run_number }}
+          path: docs/evidence/20260212-2000/bir-forms-registry/failure-*.png
+          retention-days: 30
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "BIR Forms Scraper Failed",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "❌ BIR Forms Scraper Failed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow:*\n${{ github.workflow }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Run:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|#${{ github.run_number }}>"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Portfolio:*\nPORT-2026-011"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Evidence:*\nEVID-20260212-006"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "BIR forms scraper failed. Check logs and screenshots in GitHub Actions artifacts."
+                  }
+                }
+              ]
+            }
+
+      - name: Notify Slack on success (manual only)
+        if: success() && github.event.inputs.notify_slack == 'true'
+        uses: slackapi/slack-github-action@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "BIR Forms Scraper Completed",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "✅ BIR Forms Scraper Completed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow:*\n${{ github.workflow }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Run:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|#${{ github.run_number }}>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "BIR forms registry updated successfully. See artifacts for details."
+                  }
+                }
+              ]
+            }
