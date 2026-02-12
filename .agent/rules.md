@@ -48,6 +48,40 @@ When given a request (e.g., "I need Odoo to do X which is an Enterprise feature"
 
 ---
 
+# Agent Execution Constraints (Claude Code Web)
+
+**Canonical Reference**: `spec/agent/constitution.md`
+
+Before proposing operations, verify execution environment constraints:
+
+## Forbidden Operations (No Docker/CLI in Web)
+```
+❌ docker / docker-compose / devcontainer
+❌ apt-get / brew / yum install
+❌ systemctl / service / sudo
+```
+
+## Allowed Operations
+```
+✅ Edit/Write/Read files
+✅ Git operations
+✅ CI workflow generation (.github/workflows/*.yml)
+✅ Remote API calls
+```
+
+## Capability Verification
+- Only claim capabilities verified in `agents/capabilities/manifest.json`
+- Current verified: odoo.qweb.reporting, odoo.module.scaffold, supabase.integration, github.actions.ci, chrome.extension.mv3, etc. (8 total)
+
+## Response Pattern
+**User**: "Run docker-compose up"
+
+**CORRECT**: "I cannot run docker-compose in Claude Code Web (no Docker daemon). Instead, I can: (1) Verify docker-compose.yml, (2) Generate CI workflow, (3) Create deployment docs. Which would you prefer?"
+
+**See `spec/agent/constitution.md` for complete specification.**
+
+---
+
 # TBWA / InsightPulseAI Custom Module Standard
 
 This document defines the strict engineering standards for all custom Odoo modules developed for TBWA/InsightPulseAI.
