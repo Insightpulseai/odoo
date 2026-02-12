@@ -1,0 +1,199 @@
+name: Bugbot Required
+
+# Mandatory pre-merge AI review gate for Odoo monorepo
+# Posts Bugbot invocation on PR creation/sync, sets pending status
+# Blocks merge on P0 findings (Phase 3: Week 5+)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'addons/**/*.py'
+      - 'addons/**/*.js'
+      - 'addons/**/*.xml'
+      - 'templates/**/*.tsx'
+      - 'templates/**/*.ts'
+
+permissions:
+  pull-requests: write
+  statuses: write
+  contents: read
+
+concurrency:
+  group: bugbot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-override:
+    name: Check Override
+    runs-on: ubuntu-latest
+    outputs:
+      skip_bugbot: ${{ steps.check.outputs.skip_bugbot }}
+    steps:
+      - name: Check for skip-bugbot label
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            const skipLabel = labels.includes('skip-bugbot');
+            console.log(`Skip label present: ${skipLabel}`);
+            core.setOutput('skip_bugbot', skipLabel);
+
+  bugbot-review:
+    name: Bugbot AI Review
+    needs: check-override
+    if: needs.check-override.outputs.skip_bugbot != 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for accurate diff
+
+      - name: Get changed files
+        id: diff
+        run: |
+          # Get files changed in this PR
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(py|js|ts|tsx|xml)$' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "No reviewable files changed"
+            echo "changed_files=[]" >> $GITHUB_OUTPUT
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            # Convert to JSON array
+            CHANGED_JSON=$(echo "$CHANGED" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "changed_files=$CHANGED_JSON" >> $GITHUB_OUTPUT
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+
+            # Display for debugging
+            echo "Changed files:"
+            echo "$CHANGED"
+          fi
+
+      - name: Post Bugbot invocation comment
+        if: steps.diff.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Read changed files
+          CHANGED_FILES='${{ steps.diff.outputs.changed_files }}'
+          FILES_LIST=$(echo "$CHANGED_FILES" | jq -r 'join(", ")' | head -c 200)
+
+          # Construct Bugbot invocation
+          BODY='@cursor run bugbot
+
+          ## Mandatory Pre-Merge AI Review
+
+          Review focus areas configured in `.ai/bugbot-rules.yml`:
+
+          ### **P0 (Blocks Merge) - Critical Issues**
+          - Logic errors and edge cases
+          - SQL injection (Odoo `cr.execute()` with unsanitized input)
+          - Authentication/authorization gaps
+          - Hardcoded secrets
+
+          ### **P1 (Warning) - Important Issues**
+          - N+1 queries (Odoo ORM `.search()` in loops)
+          - Missing database indexes
+          - Improper transaction boundaries
+          - Heavy operations in compute methods
+          - Blocking calls in async contexts
+
+          ### **P2 (Advisory) - Maintainability**
+          - Missing test coverage
+          - Code duplication
+          - Complex functions (>50 lines, cyclomatic complexity >10)
+
+          ---
+
+          **Stack Context**: Odoo CE 19.0 + OCA, PostgreSQL 16, Next.js 14, TypeScript
+
+          **Changed Files** ('"${FILES_LIST}"'):
+          ```
+          '"${FILES_LIST}"'
+          ```
+
+          **Instructions**:
+          - Return prioritized findings (P0/P1/P2) with `file:line` numbers
+          - Provide suggested patches for each issue
+          - Focus on Odoo-specific anti-patterns (see `.ai/bugbot-rules.yml`)
+
+          **Override**: Add label `skip-bugbot` to bypass this check (maintainers only)'
+
+          # Post comment
+          gh api "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" \
+            -f body="$BODY" \
+            --silent || echo "Failed to post comment (may not be critical)"
+
+      - name: Set pending status
+        if: steps.diff.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }}" \
+            -f state=pending \
+            -f context="Bugbot Required" \
+            -f description="AI review in progress..." \
+            --silent || echo "Status update failed"
+
+      - name: Generate artifact
+        run: |
+          mkdir -p artifacts/bugbot
+          cat > artifacts/bugbot/review_summary.json << EOF
+          {
+            "pr_number": ${{ github.event.pull_request.number }},
+            "pr_title": "${{ github.event.pull_request.title }}",
+            "reviewed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "changed_files": ${{ steps.diff.outputs.changed_files }},
+            "has_changes": ${{ steps.diff.outputs.has_changes }},
+            "status": "pending",
+            "workflow_run": "${{ github.run_id }}"
+          }
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bugbot-review-${{ github.event.pull_request.number }}
+          path: artifacts/bugbot/
+          retention-days: 7
+
+      - name: Job summary
+        run: |
+          echo "## Bugbot Review Requested" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.diff.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Bugbot invocation posted to PR #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Status**: Waiting for Cursor Bugbot response..." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Changed files**: ${{ steps.diff.outputs.changed_files }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  No reviewable files changed (Python/JS/TS/XML)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "**Configuration**: [.ai/bugbot-rules.yml](.ai/bugbot-rules.yml)" >> $GITHUB_STEP_SUMMARY
+          echo "**Documentation**: [docs/governance/BUGBOT_REVIEW.md](docs/governance/BUGBOT_REVIEW.md)" >> $GITHUB_STEP_SUMMARY
+
+  skip-notice:
+    name: Bugbot Skipped
+    needs: check-override
+    if: needs.check-override.outputs.skip_bugbot == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notice
+        run: |
+          echo "## Bugbot Review Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️  Bugbot review bypassed via \`skip-bugbot\` label" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason**: Maintainer override" >> $GITHUB_STEP_SUMMARY
+          echo "**Risk**: P0 issues may not be detected" >> $GITHUB_STEP_SUMMARY
