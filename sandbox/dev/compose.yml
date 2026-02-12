@@ -1,0 +1,71 @@
+name: ipai-odoo-dev
+
+x-odoo-env: &odoo_env
+  DB_HOST: ${DB_HOST:-db}
+  DB_PORT: ${DB_PORT:-5432}
+  DB_USER: ${DB_USER:-odoo}
+  DB_PASSWORD: ${DB_PASSWORD:-odoo}
+  DB_NAME: ${DB_NAME:-odoo_dev}
+  ODOO_DB_FILTER: ${ODOO_DB_FILTER:-.*}
+  ODOO_ADMIN_PASSWD: ${ODOO_ADMIN_PASSWD:-admin}
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-odoo_dev}
+      POSTGRES_USER: ${DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
+    ports:
+      - "${DB_PORT_HOST:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-odoo}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  odoo:
+    image: ${ODOO_IMAGE:-odoo:19.0}
+    environment:
+      <<: *odoo_env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${ODOO_HTTP_PORT:-8069}:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ../..:/workspaces/odoo
+    command: >
+      bash -lc '
+        exec odoo
+        --http-port=8069
+        --db_host="${DB_HOST}"
+        --db_port="${DB_PORT}"
+        --db_user="${DB_USER}"
+        --db_password="${DB_PASSWORD}"
+        --db-filter="${ODOO_DB_FILTER}"
+        --addons-path="/usr/lib/python3/dist-packages/odoo/addons,/workspaces/odoo/addons,/workspaces/odoo/addons/ipai,/workspaces/odoo/oca-parity"
+      '
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8069/web/login >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["redis"]
+    ports:
+      - "${REDIS_PORT_HOST:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db-data:
+  odoo-web-data:
