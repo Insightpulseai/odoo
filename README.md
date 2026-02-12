@@ -118,6 +118,22 @@ odoo/
 
 ---
 
+## Strategic Architecture & Decision Frameworks
+
+**Recent Strategic Work** (February 2026):
+
+| Document | Purpose | Key Outcomes |
+|----------|---------|--------------|
+| [Supabase Prioritization Framework](docs/architecture/SUPABASE_PRIMITIVES.md) | 5-criterion rubric for Supabase feature adoption | ✅ High priority (≥4.0): PostgreSQL, RLS, Auth, Vault, Storage, Edge Functions<br>⚠️ Medium (3.0-4.0): Realtime, PostgREST, Monitoring<br>❌ Low (<3.0): Studio UI → use Superset/Plane |
+| [Agent Constitution](spec/agent/constitution.md) | Agent execution constraints + governance | ✅ 8 verified capabilities, hard constraints (container/package ops forbidden) |
+
+**Integration Patterns**:
+- **Email Notifications (Zoho SMTP)**: Daily digest (08:00 PH) + urgent alerts (<24h); compatible with Microsoft 365/Outlook recipients
+- **Plane OKR Tracking**: Bidirectional sync (Odoo ↔ Plane) for BIR compliance management
+- **Supabase Decision Rubric**: SoR fit (35%), security (25%), leverage (20%), portability (10%), latency/cost (10%)
+
+---
+
 ## Module Architecture
 
 ### Canonical Stack (Install These)
@@ -160,6 +176,8 @@ Feature modules are **not part of the canonical surface**. They must be:
 | Equipment | `ipai_equipment` | Cheqroom-style booking |
 | AI | `ipai_ai_core`, `ipai_ai_agents` | AI platform integrations |
 | Branding | `ipai_ce_cleaner`, `ipai_ce_branding` | Remove Enterprise upsells |
+| BIR Notifications | `ipai_bir_notifications` | Email alerts (daily digest + urgent) for BIR filing deadlines |
+| Plane Integration | `ipai_bir_plane_sync` | Bidirectional OKR sync for BIR compliance tracking |
 
 ### Deprecated Modules
 
@@ -295,22 +313,21 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 
 ## Email Integration
 
-Complete CLI-only email integration using **Zoho Mail SMTP** for enterprise-grade email delivery with settings-as-code deployment.
-
-**Production Architecture** (Direct Pattern):
+**Production Architecture** (Zoho Mail SMTP):
 ```
-Odoo 19 CE → Zoho Mail SMTP (port 587, STARTTLS) → Email delivery
-Calendar invites, alerts, notifications → Compatible with Microsoft 365/Outlook recipients
+Odoo 19 CE → Zoho Mail SMTP (smtp.zoho.com:587, STARTTLS) → Email delivery
+├─ Outbound: ${SMTP_FROM} (configurable via .env)
+├─ BIR Notifications: Daily digest (08:00 PH) + urgent alerts (<24h deadline)
+└─ External recipients: Microsoft 365/Outlook compatible (one-way notifications)
 ```
 
-**DNS Status**: ✅ All records verified (SPF, DKIM, DMARC)
+**DNS Status**: ✅ SPF, DKIM, DMARC verified
+**Deployment Status**: ✅ DEPLOYED (2026-02-12)
 
-**Production Status**: ✅ **DEPLOYED** (2026-02-12)
-- Mail server: Zoho Mail SMTP
-- SMTP host: smtp.zoho.com:587
-- Configuration: insightpulseai.com domain
-- External mail compatibility: Microsoft 365/Outlook (recipient-only, one-way notifications)
-
+**BIR Email Notifications** (`ipai_bir_notifications` module):
+- **Daily Digest** (08:00 PH): Summary of due/overdue/upcoming filings
+- **Urgent Alerts** (<24h): Deadline escalations with 4-hour cooldown (idempotency)
+- **Configuration**: System parameters + cron jobs
 **Settings-as-Code Deployment:**
 
 ```bash
@@ -320,9 +337,9 @@ sudo mkdir -p /opt/odoo/secrets
 sudo bash -c 'cat > /opt/odoo/secrets/zoho-mail.env <<EOF
 ZOHO_SMTP_SERVER=smtp.zoho.com
 ZOHO_SMTP_PORT=587
-ZOHO_SMTP_USER=no-reply@insightpulseai.com
+ZOHO_SMTP_USER=${SMTP_USER}
 ZOHO_SMTP_APP_PASSWORD=__REPLACE_WITH_APP_PASSWORD__
-ZOHO_SMTP_FROM=no-reply@insightpulseai.com
+ZOHO_SMTP_FROM=${SMTP_FROM}
 EOF'
 sudo chmod 600 /opt/odoo/secrets/zoho-mail.env
 
@@ -343,45 +360,36 @@ FROM ir_mail_server
 WHERE name='Zoho Mail SMTP (insightpulseai.com)';"
 ```
 
-**Documentation:**
-- **Canonical Email Setup Guide**: [docs/guides/email/EMAIL_SETUP_ZOHO.md](docs/guides/email/EMAIL_SETUP_ZOHO.md) (settings-as-code, Odoo 19)
-- **Deprecated (Mailgun)**: [docs/deprecated/mailgun/](docs/deprecated/mailgun/) (historical reference only)
+**Documentation**: [docs/guides/email/EMAIL_SETUP_ZOHO.md](docs/guides/email/EMAIL_SETUP_ZOHO.md)
 
 ---
 
 ## Plane Project Management
 
-**Plane** is an open-source project management platform (Jira alternative) deployed to production with email integration.
-
 **Production Architecture**:
 ```
 Plane Backend (Django/PostgreSQL) → SMTP Email Delivery
 Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
+Odoo BIR Module ↔ Supabase Edge Function (plane-sync/) ↔ Plane API
 ```
 
-**Production Status**: ✅ **DEPLOYED** (Backend Only, 2026-01-30)
-- **API**: http://178.128.112.214:8002 (verified with `{"status": "OK"}`)
-- **Domain**: plane.insightpulseai.com (DNS verified)
-- **Database**: PostgreSQL 15.7-alpine (88 migrations applied)
-- **Workers**: Background tasks + scheduled tasks running
-- **SMTP**: Configured for transactional email delivery
-- **Nginx**: Reverse proxy via nginx-prod-v2 container
+**Production Status**: ✅ DEPLOYED (Backend: 2026-01-30, BIR Sync: 2026-02-12)
+- **API**: http://178.128.112.214:8002
+- **Database**: PostgreSQL 15.7-alpine (88 migrations)
+- **Workers**: Background + scheduled tasks running
+- **BIR Integration**: Bidirectional sync for OKR tracking (`ipai_bir_plane_sync` module)
 
-**Services Running**:
-- `plane-api-1` - Django REST API (port 8002)
-- `plane-worker-1` - Background task processor
-- `plane-beat-worker-1` - Scheduled task processor
-- `plane-plane-db-1` - PostgreSQL database (port 5433)
-- `plane-plane-redis-1` - Valkey/Redis cache (port 6379)
-- `plane-plane-mq-1` - RabbitMQ message broker
-- `plane-plane-minio-1` - MinIO object storage
+**BIR Compliance in Plane** (`ipai_bir_plane_sync` module):
+- **Sync Strategy**: Odoo `bir.filing.deadline` ↔ Plane tasks via Edge Function
+- **Sync Triggers**: Manual button + batch action + automatic updates
+- **Field Mapping**: Status, priority, date, labels (OKR hierarchy)
+- **Setup**: Bootstrap script at `scripts/plane_bir_bootstrap.sql`
 
-**Pending Items**:
-- Web frontend build (pnpm error, needs Dockerfile fix)
-- SSL certificate (HTTPS via Let's Encrypt)
-- Admin user registration and promotion
+**Plane Integration**: BIR compliance tracking via `ipai_bir_plane_sync` module. See [implementation docs](docs/evidence/20260212-2045/plane-integration/IMPLEMENTATION.md) for project structure details.
 
-**Documentation**: [docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md)
+**Documentation**:
+- [Deployment](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md)
+- [BIR Sync](docs/evidence/20260212-2045/plane-integration/IMPLEMENTATION.md)
 
 ---
 
@@ -392,6 +400,8 @@ Users → https://plane.insightpulseai.com → Nginx → Plane API (port 8002)
 - `tasks.md` — Task checklist
 - `docs/` — Architecture + deployment docs
 - `docs/data-model/` — Canonical schema outputs
+- `docs/architecture/SUPABASE_PRIMITIVES.md` — **Supabase prioritization framework (5-criterion rubric)**
+- `spec/agent/constitution.md` — **Agent execution constraints (NO-CLI/NO-DOCKER)**
 - `docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md` — Ideal repository structure guide
 - `docs/EMAIL_INTEGRATION.md` — Complete email integration guide
 
