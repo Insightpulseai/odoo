@@ -106,7 +106,7 @@ ci_governance:
 ```json
 [
   {
-    "repo": "odoo-ce",
+    "repo": "odoo",
     "total_score": 85,
     "scores": {
       "ci_governance": 28,
@@ -176,7 +176,7 @@ model-repo-scanner/
 Often the best approach is a **composite model**:
 
 - **Governance repo** (e.g., `.github`) for org-wide policies
-- **Platform repo** (e.g., `odoo-ce`, `pulser-agent-framework`) for integration patterns
+- **Platform repo** (e.g., `odoo`, `pulser-agent-framework`) for integration patterns
 
 The scanner identifies both and recommends based on total score.
 

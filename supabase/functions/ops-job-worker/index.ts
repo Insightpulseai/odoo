@@ -286,7 +286,7 @@ async function handleInfraScanGithub(
   try {
     await logEvent(supabase, runId, "log", "Fetching GitHub repository...");
 
-    const resp = await fetch("https://api.github.com/repos/jgtolentino/odoo-ce", {
+    const resp = await fetch("https://api.github.com/repos/jgtolentino/odoo", {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github+json",

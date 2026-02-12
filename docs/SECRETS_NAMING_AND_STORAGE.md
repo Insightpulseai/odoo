@@ -51,7 +51,7 @@ This document defines the canonical naming scheme for all secrets and environmen
 - Secrets stored here: `GHCR_PAT`, `DO_API_TOKEN`, `DO_SPACES_KEY`, `DO_SPACES_SECRET`
 
 ### Environment Files (`.env.production`)
-- Location: `/opt/odoo-ce/.env.production` (on VPS)
+- Location: `/opt/odoo/.env.production` (on VPS)
 - Used for: Docker Compose deployments
 - Secrets stored here: `ODOO_DB_NAME`, `ODOO_DB_USER`, `ODOO_DB_PASSWORD`, `ODOO_ADMIN_LOGIN`, `ODOO_ADMIN_PASSWORD`, `ODOO_MASTER_PASSWORD`
 

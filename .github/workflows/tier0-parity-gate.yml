@@ -1,0 +1,62 @@
+name: Tier-0 Parity Gate
+
+# Consolidated Tier-0 quality gates for Odoo.sh-grade parity
+# See: docs/governance/ODOOSH_GRADE_PARITY_GATING.md
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  tier0-gates:
+    name: Run Tier-0 Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-docs.txt
+
+      - name: Install ripgrep (for forbidden-scan)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: Run Tier-0 Gate Runner
+        run: |
+          chmod +x scripts/gates/run_parity_gates.sh
+          chmod +x scripts/generate_seed_audit_artifact.py
+          bash scripts/gates/run_parity_gates.sh all
+
+      - name: Upload Gate Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier0-gate-artifacts
+          path: artifacts/
+          retention-days: 7
+
+      - name: Display Gate Summary
+        if: always()
+        run: |
+          if [ -f artifacts/gate_run_summary.json ]; then
+            cat artifacts/gate_run_summary.json
+          fi
+
+      - name: Fail if gates failed
+        if: failure()
+        run: |
+          echo "::error::Tier-0 gates failed. See artifacts for details."
+          echo "::error::Review docs/governance/ODOOSH_GRADE_PARITY_GATING.md for remediation steps."
+          exit 1

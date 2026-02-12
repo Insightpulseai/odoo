@@ -38,7 +38,7 @@ Author: InsightPulse AI
 License: LGPL-3
     """,
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": [
         "web",

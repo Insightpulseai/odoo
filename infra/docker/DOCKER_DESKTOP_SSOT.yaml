@@ -7,8 +7,8 @@ docker_desktop_ssot:
   purpose: "Odoo 18 CE dev sandbox only"
 
   odoo_sandbox:
-    repo_root: "~/Documents/GitHub/odoo-ce"
-    sandbox_path: "~/Documents/GitHub/odoo-ce/sandbox/dev"
+    repo_root: "~/Documents/GitHub/odoo"
+    sandbox_path: "~/Documents/GitHub/odoo/sandbox/dev"
     source_of_truth: "docker-compose.yml"
     http_url: "http://localhost:8069"
 

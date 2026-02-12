@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2026 InsightPulseAI
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+    Outgoing Mail Server Configuration for Zoho Mail
+    ================================================
+    SMTP: smtp.zoho.com:587 (STARTTLS)
+    From: noreply@insightpulseai.com
+
+    IMPORTANT: After installation, manually set the SMTP password in:
+    Settings → Technical → Email → Outgoing Mail Servers → Zoho SMTP (Prod)
+
+    Password should be a Zoho App Password, NOT the account password.
+    Generate at: https://accounts.zoho.com/u/h#security/app_password
+-->
+<odoo>
+    <data noupdate="0">
+
+        <!-- Deactivate any existing mail servers to avoid conflicts -->
+        <function model="ir.mail_server" name="search">
+            <value eval="[[('active', '=', True)]]"/>
+        </function>
+
+        <!-- Zoho SMTP Production Server -->
+        <record id="zoho_smtp_prod" model="ir.mail_server">
+            <field name="name">Zoho SMTP (Prod)</field>
+            <field name="smtp_host">smtp.zoho.com</field>
+            <field name="smtp_port">587</field>
+            <field name="smtp_encryption">starttls</field>
+            <field name="smtp_user">noreply@insightpulseai.com</field>
+            <!-- Password must be set manually after installation -->
+            <field name="smtp_pass"></field>
+            <field name="from_filter">@insightpulseai.com</field>
+            <field name="active" eval="True"/>
+            <field name="sequence">1</field>
+        </record>
+
+        <!-- Fallback: Generic SMTP (disabled by default) -->
+        <record id="generic_smtp_fallback" model="ir.mail_server">
+            <field name="name">Generic SMTP (Fallback)</field>
+            <field name="smtp_host">localhost</field>
+            <field name="smtp_port">25</field>
+            <field name="smtp_encryption">none</field>
+            <field name="active" eval="False"/>
+            <field name="sequence">99</field>
+        </record>
+
+    </data>
+</odoo>

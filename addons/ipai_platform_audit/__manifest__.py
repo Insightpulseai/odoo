@@ -21,7 +21,7 @@ This module enables compliance-grade audit logging for
 sensitive data and operations across all IPAI modules.
     """,
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "LGPL-3",
     "depends": ["base", "mail"],
     "data": [

@@ -54,7 +54,7 @@ export function makePlan(kind: RunbookKind, { env }: { env: Env }): RunbookPlan 
       summary: `Deploy ${env} environment (build, migrate, verify).`,
       inputs: [
         { key: "env", label: "Environment", type: "select", options: ["prod", "staging", "dev"], value: env },
-        { key: "repo", label: "Repo", type: "text", value: "jgtolentino/odoo-ce" },
+        { key: "repo", label: "Repo", type: "text", value: "jgtolentino/odoo" },
         { key: "target", label: "Target", type: "text", value: "vercel" },
         { key: "branch", label: "Branch", type: "text", value: "main" },
         { key: "runMigrations", label: "Run migrations", type: "boolean", value: true },
@@ -79,7 +79,7 @@ export function makePlan(kind: RunbookKind, { env }: { env: Env }): RunbookPlan 
       title: "Generate spec for dashboard",
       summary: "Generate Spec Kit bundle (constitution/prd/plan/tasks).",
       inputs: [
-        { key: "repo", label: "Repo", type: "text", value: "jgtolentino/odoo-ce" },
+        { key: "repo", label: "Repo", type: "text", value: "jgtolentino/odoo" },
         { key: "target", label: "Target", type: "text", value: "spec/ops-control-room" },
         { key: "notes", label: "Notes", type: "text", value: "Ops Control Room v1" },
       ],

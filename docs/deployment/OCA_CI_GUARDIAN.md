@@ -53,12 +53,12 @@ from odoo import models, fields
 
 **Enforced structure:**
 ```
-odoo-ce/
+odoo/
 ├── addons/           # Custom modules
 ├── oca/              # OCA modules
 ├── .github/
 │   └── workflows/
-│       ├── ci-odoo-ce.yml       # Existing checks
+│       ├── ci-odoo.yml       # Existing checks
 │       └── ci-odoo-oca.yml      # OCA CI Guardian
 ├── scripts/
 │   └── ci/

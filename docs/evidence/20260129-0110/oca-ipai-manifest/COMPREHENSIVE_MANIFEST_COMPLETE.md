@@ -107,7 +107,7 @@
 ```bash
 $ ./scripts/verify_oca_ipai_layout.sh
 
-✅ Using manifest: /Users/tbwa/odoo-ce/config/addons_manifest.oca_ipai.json
+✅ Using manifest: /Users/tbwa/odoo/config/addons_manifest.oca_ipai.json
 
 == Checking root directories ==
   ✅ addons/oca exists
@@ -184,7 +184,7 @@ purchase-workflow: purchase_tier_validation, purchase_order_line_sequence, purch
 ### 7. Filesystem Layout
 
 ```
-odoo-ce/
+odoo/
 ├── addons/
 │   ├── oca/                    # 19 OCA repositories (10 cloned, 9 pending)
 │   │   ├── ai/                 # ❌ To be cloned

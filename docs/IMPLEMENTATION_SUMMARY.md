@@ -151,10 +151,10 @@ grep -A3 "requirements.txt" Dockerfile
 **Changes from Original:**
 ```yaml
 # Before
-image: ghcr.io/jgtolentino/odoo-ce:latest  # ❌ Not production-safe
+image: ghcr.io/jgtolentino/odoo:latest  # ❌ Not production-safe
 
 # After
-image: ghcr.io/jgtolentino/odoo-ce:v0.9.1  # ✅ Versioned
+image: ghcr.io/jgtolentino/odoo:v0.9.1  # ✅ Versioned
 ```
 
 **Resource Limits (Optimized for 8GB VPS):**
@@ -437,13 +437,13 @@ System Status: OPERATIONAL
 
 ### Production-Ready Package
 
-**File:** `odoo-ce-v0.9.1-production-ready.tar.gz`
+**File:** `odoo-v0.9.1-production-ready.tar.gz`
 **Size:** 14KB
 **Location:** `/mnt/user-data/outputs/`
 
 **Contents:**
 ```
-odoo-ce-v0.9.1/
+odoo-v0.9.1/
 ├── Dockerfile                           # Fixed v0.9.1 with all 3 critical fixes
 ├── CHANGELOG.md                         # Complete version history
 ├── DEPLOYMENT_WORKFLOW.md               # Step-by-step deployment guide
@@ -477,7 +477,7 @@ All in `/mnt/user-data/outputs/`:
    - Smoke tests & verification
    - Rollback procedures
 
-4. **003-odoo-ce-custom-image-spec.md** (Corrected)
+4. **003-odoo-custom-image-spec.md** (Corrected)
    - Merged specification (resolved git conflict)
    - Complete requirements matrix
    - Implementation best practices
@@ -493,10 +493,10 @@ All in `/mnt/user-data/outputs/`:
 ### Step 1: Extract Production Package
 
 ```bash
-cd ~/odoo-ce  # Your repo directory
+cd ~/odoo  # Your repo directory
 
 # Extract fixed files
-tar -xzf /path/to/odoo-ce-v0.9.1-production-ready.tar.gz --strip-components=1
+tar -xzf /path/to/odoo-v0.9.1-production-ready.tar.gz --strip-components=1
 
 # Verify extraction
 ls -la Dockerfile scripts/*.sh deploy/*.yml
@@ -673,7 +673,7 @@ Print this checklist and mark off as you complete each step:
 - [ ] Extract production package to repo
 - [ ] Set GHCR_PAT environment variable
 - [ ] Run build script: `./scripts/build_v0.9.1.sh`
-- [ ] Verify image in GHCR: ghcr.io/jgtolentino/odoo-ce:v0.9.1
+- [ ] Verify image in GHCR: ghcr.io/jgtolentino/odoo:v0.9.1
 - [ ] Upgrade VPS to 8GB RAM (cost: +$24/month)
 - [ ] Backup current deployment and database
 - [ ] Copy .env.production.template to .env.production

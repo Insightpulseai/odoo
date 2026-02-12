@@ -389,7 +389,7 @@ Notify Next Assignee
 
 ## Support
 
-**Issues**: https://github.com/jgtolentino/odoo-ce/issues
+**Issues**: https://github.com/jgtolentino/odoo/issues
 **n8n Docs**: https://docs.n8n.io
 **Maintainer**: Finance Director + IT Market Director
 

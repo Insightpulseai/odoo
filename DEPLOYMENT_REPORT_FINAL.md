@@ -123,7 +123,7 @@ Result: 14 WorkOS models created
 - odoo-marketing (Odoo 18.0) - Port 8070 ✅ Running
 - odoo-postgres (PostgreSQL 15) ✅ Running
 
-**Addons Path**: `/mnt/extra-addons` (mounted from /opt/odoo-ce/addons)
+**Addons Path**: `/mnt/extra-addons` (mounted from /opt/odoo/addons)
 
 **Configuration**: `/etc/odoo/odoo.conf`
 
@@ -143,7 +143,7 @@ If rollback is needed:
 
 ```bash
 # 1. Revert git
-cd /opt/odoo-ce
+cd /opt/odoo
 git checkout 273a60ff86a40b7457603d4ad9dac902f7836
 
 # 2. Restore database (optional)
@@ -155,7 +155,7 @@ docker compose restart odoo-accounting
 
 ## Deployment Metadata
 
-**Snapshot File**: `/opt/odoo-ce/.deploy_snapshot`
+**Snapshot File**: `/opt/odoo/.deploy_snapshot`
 ```bash
 PREV_SHA=273a60ff86a40b7457603d4ad9dac902f7836
 PREV_BRANCH=main

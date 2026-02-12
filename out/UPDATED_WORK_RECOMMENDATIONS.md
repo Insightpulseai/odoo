@@ -77,7 +77,7 @@
 **Status**: 20% deployed
 **Effort**: 4-6 hours
 **Current State**: odoo-dev-sandbox exists but not canonical
-**Recommendation**: Merge into main odoo-ce repository structure
+**Recommendation**: Merge into main odoo repository structure
 
 ### Priority 5: IPAI Module Audit (No Change)
 **Status**: 0% started

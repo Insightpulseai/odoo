@@ -121,7 +121,7 @@ Documentation: [PPM Playbook Link]
 - **No notifications**: Check cron jobs in Settings → Technical → Scheduled Actions
 
 ### Contact:
-- **Issues**: https://github.com/jgtolentino/odoo-ce/issues
+- **Issues**: https://github.com/jgtolentino/odoo/issues
 - **Email**: jgtolentino_rn@yahoo.com
 
 ---

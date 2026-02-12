@@ -47,7 +47,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo-ce
+  IMAGE_NAME: jgtolentino/odoo
   DEPLOY_TAG: prod-${{ github.run_id }}
 
 jobs:
@@ -227,7 +227,7 @@ jobs:
           echo "=== Starting deployment ==="
 
           # Navigate to repo
-          cd /opt/odoo-ce || cd /workspace/odoo-ce || cd ~/odoo-ce
+          cd /opt/odoo || cd /workspace/odoo || cd ~/odoo
 
           # Pull latest code
           echo "Pulling latest code..."
@@ -244,8 +244,8 @@ jobs:
 
           # Pull new image
           echo "Pulling image..."
-          docker pull "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}"
-          docker tag "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}" "ghcr.io/jgtolentino/odoo-ce:latest"
+          docker pull "ghcr.io/jgtolentino/odoo:${IMAGE_TAG}"
+          docker tag "ghcr.io/jgtolentino/odoo:${IMAGE_TAG}" "ghcr.io/jgtolentino/odoo:latest"
 
           # Recreate containers
           echo "Recreating containers..."
@@ -268,7 +268,7 @@ jobs:
           done
 
           echo "Health check failed"
-          docker logs odoo-ce --tail 50
+          docker logs odoo --tail 50
           exit 1
           SCRIPT
           )

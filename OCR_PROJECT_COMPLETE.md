@@ -1,8 +1,8 @@
 # InsightPulse AI OCR Enhancement - Project Complete
 
 **Project**: Receipt OCR Enhancement with Flutter Mobile Client
-**Repository**: odoo-ce
-**Location**: `/opt/odoo-ce/addons/flutter_receipt_ocr/`
+**Repository**: odoo
+**Location**: `/opt/odoo/addons/flutter_receipt_ocr/`
 **Created**: 2025-11-22
 **Status**: ✅ Production Ready (Testing Phase Pending)
 
@@ -31,7 +31,7 @@ Successfully completed a comprehensive 3-phase OCR enhancement project that tran
    - Standalone test harness for development
 
 4. **Repository Integration** (Phase 3D) ✅
-   - Deployed to odoo-ce repository
+   - Deployed to odoo repository
    - Comprehensive documentation
    - Git commit with detailed summary
 
@@ -229,8 +229,8 @@ addons/flutter_receipt_ocr/
 ### Option 1: Standalone Flutter App
 
 ```bash
-# Clone from odoo-ce repository
-cd /opt/odoo-ce/addons/flutter_receipt_ocr
+# Clone from odoo repository
+cd /opt/odoo/addons/flutter_receipt_ocr
 
 # Install dependencies
 flutter pub get
@@ -247,7 +247,7 @@ flutter build ios --release
 
 ```bash
 # Copy module into your Flutter project
-cp -r /opt/odoo-ce/addons/flutter_receipt_ocr/lib/receipt_ocr /path/to/your/app/lib/
+cp -r /opt/odoo/addons/flutter_receipt_ocr/lib/receipt_ocr /path/to/your/app/lib/
 
 # Add dependencies to pubspec.yaml
 dependencies:
@@ -399,7 +399,7 @@ Flutter App → Supabase (parsed_receipts)
 
 ### Git Commit Details
 
-**Repository**: /opt/odoo-ce
+**Repository**: /opt/odoo
 **Branch**: main
 **Commit**: f425c1b
 **Message**: "feat: Add Flutter Receipt OCR module with Supabase integration"
@@ -438,7 +438,7 @@ Flutter App → Supabase (parsed_receipts)
 **Backend Server**: ocr.insightpulseai.com (188.166.237.231)
 **Odoo Server**: erp.insightpulseai.com (159.223.75.148)
 **Supabase Project**: spdtwktxdalcfigzeqrz
-**Repository**: /opt/odoo-ce/addons/flutter_receipt_ocr/
+**Repository**: /opt/odoo/addons/flutter_receipt_ocr/
 
 ---
 

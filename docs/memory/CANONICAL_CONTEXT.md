@@ -1,4 +1,4 @@
-# CANONICAL_CONTEXT.md — jgtolentino/odoo-ce
+# CANONICAL_CONTEXT.md — jgtolentino/odoo
 
 > Generated: 2026-01-21 | HEAD: 76c23e3b822fbe5e9ed9854ba8107f24af2bca11 | Branch: claude/memory-bundle-dual-repos-Jj5W5
 
@@ -8,8 +8,8 @@
 
 | Property | Value |
 |----------|-------|
-| **Repo URL** | https://github.com/jgtolentino/odoo-ce |
-| **Wiki URL** | https://github.com/jgtolentino/odoo-ce/wiki |
+| **Repo URL** | https://github.com/jgtolentino/odoo |
+| **Wiki URL** | https://github.com/jgtolentino/odoo/wiki |
 | **Default Branch** | main |
 | **HEAD Commit** | 76c23e3b822fbe5e9ed9854ba8107f24af2bca11 (provenance only) |
 
@@ -50,7 +50,7 @@ cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .en
 ### Production Runtime
 
 - **Platform**: DigitalOcean Droplet (Ubuntu 22.04/24.04)
-- **Container Image**: `ghcr.io/jgtolentino/odoo-ce:latest`
+- **Container Image**: `ghcr.io/jgtolentino/odoo:latest`
 - **Database**: PostgreSQL 16 (local container or DO Managed)
 - **Reverse Proxy**: Nginx (SSL termination)
 
@@ -129,7 +129,7 @@ ipai_enterprise_bridge     # Base layer: config, approvals, AI/infra glue
 
 | Workflow | Purpose |
 |----------|---------|
-| `ci-odoo-ce.yml` | Main guardrails + data-model drift |
+| `ci-odoo.yml` | Main guardrails + data-model drift |
 | `ci.yml` | General CI checks |
 | `all-green-gates.yml` | All gates must pass |
 | `spec-kit-enforce.yml` | Spec bundle 4-file structure validation |
@@ -170,7 +170,7 @@ ipai_enterprise_bridge     # Base layer: config, approvals, AI/infra glue
 - `LOG_LEVEL`, `DEV_MODE`, `PROXY_MODE`
 
 **Docker**:
-- `APP_IMAGE` — Container image (default: `ghcr.io/jgtolentino/odoo-ce`)
+- `APP_IMAGE` — Container image (default: `ghcr.io/jgtolentino/odoo`)
 - `APP_IMAGE_VERSION` — Image tag (default: `latest`)
 - `ODOO_PORT` — Port binding (default: 8069)
 

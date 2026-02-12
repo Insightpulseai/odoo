@@ -122,7 +122,7 @@ class LLMDocsGenerator:
 | Supabase Project | `spdtwktxdalcfigzeqrz` |
 | DO Database Cluster | `odoo-db-sgp1` |
 | DO Droplet | `odoo-erp-prod` |
-| GitHub Repo | `jgtolentino/odoo-ce` |
+| GitHub Repo | `jgtolentino/odoo` |
 
 ### SSOT Rules
 | Data Type | Source of Truth |

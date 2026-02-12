@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Mail template for manual testing (optional) -->
+    <record id="mail_template_bir_digest" model="mail.template">
+        <field name="name">BIR Daily Digest</field>
+        <field name="model_id" ref="model_bir_alert"/>
+        <field name="subject">BIR Tax Filing Digest - {{ object.sent_date.strftime('%Y-%m-%d') }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: monospace; white-space: pre-wrap;">
+                <t t-out="object.body_text"/>
+            </div>
+        </field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="mail_template_bir_urgent" model="mail.template">
+        <field name="name">BIR Urgent Alert</field>
+        <field name="model_id" ref="model_bir_alert"/>
+        <field name="subject">{{ object.subject }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: monospace; white-space: pre-wrap; color: #c00;">
+                <t t-out="object.body_text"/>
+            </div>
+        </field>
+        <field name="email_from">{{ object.env.company.email }}</field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+</odoo>

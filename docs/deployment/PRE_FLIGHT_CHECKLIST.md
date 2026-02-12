@@ -11,7 +11,7 @@
 ### Infrastructure Readiness
 
 - [ ] SSH access to production server verified (`ssh deploy@erp.insightpulseai.com`)
-- [ ] Sufficient disk space (>10% free on /opt/odoo-ce)
+- [ ] Sufficient disk space (>10% free on /opt/odoo)
 - [ ] Database backup directory exists (`/var/backups/odoo`)
 - [ ] Log directory exists (`/var/log/odoo-deployment`)
 - [ ] Docker containers running (`docker ps | grep odoo`)

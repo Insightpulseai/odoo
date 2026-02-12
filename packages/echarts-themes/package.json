@@ -1,0 +1,64 @@
+{
+  "name": "@ipai/echarts-themes",
+  "version": "1.0.0",
+  "description": "Unified ECharts theme system for InsightPulse AI - SSOT for Superset, Odoo, React apps, and dev tools",
+  "license": "Apache-2.0",
+  "author": "InsightPulse AI",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/loaders/browser.d.ts",
+      "import": "./dist/loaders/browser.mjs",
+      "require": "./dist/loaders/browser.js"
+    },
+    "./node": {
+      "types": "./dist/loaders/node.d.ts",
+      "import": "./dist/loaders/node.mjs",
+      "require": "./dist/loaders/node.js"
+    },
+    "./cdn": {
+      "types": "./dist/loaders/cdn.d.ts",
+      "import": "./dist/loaders/cdn.mjs",
+      "require": "./dist/loaders/cdn.js"
+    },
+    "./themes/*": {
+      "types": "./dist/themes/*.d.ts",
+      "import": "./dist/themes/*.mjs",
+      "require": "./dist/themes/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "echarts": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "echarts": "^5.5.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "echarts",
+    "themes",
+    "visualization",
+    "charts",
+    "apache-echarts"
+  ]
+}

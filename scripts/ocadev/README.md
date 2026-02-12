@@ -116,7 +116,7 @@ sudo systemctl start docker
 ### Permission errors
 ```bash
 # Run from repo root
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 ./scripts/ocadev/install_oca_ipai_full.sh
 ```
 

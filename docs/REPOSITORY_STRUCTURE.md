@@ -1,20 +1,20 @@
-# Repository Structure - odoo-ce
+# Repository Structure - odoo
 
 ## Repository Locations
 
 ### 1. Local Repository (Your Mac)
 ```
-Location: /Users/tbwa/odoo-ce
+Location: /Users/tbwa/odoo
 Branch: main
 Current Commit: e8c4ef7c
-Remote: git@github.com:jgtolentino/odoo-ce.git
+Remote: git@github.com:jgtolentino/odoo.git
 ```
 
 This is where you make changes and push to GitHub.
 
 ### 2. Remote Repository (GitHub)
 ```
-URL: https://github.com/jgtolentino/odoo-ce
+URL: https://github.com/jgtolentino/odoo
 Branch: main
 Latest Commit: e8c4ef7c (synced)
 ```
@@ -24,10 +24,10 @@ This is the central repository on GitHub that both local and production sync wit
 ### 3. Production Repository (DigitalOcean Server)
 ```
 Server: root@178.128.112.214
-Location: /opt/odoo-ce/repo
+Location: /opt/odoo/repo
 Branch: main
 Current Commit: 89fed573
-Remote: https://github.com/jgtolentino/odoo-ce.git
+Remote: https://github.com/jgtolentino/odoo.git
 ```
 
 This is cloned on the production server and mounted into the Odoo Docker container.
@@ -37,7 +37,7 @@ This is cloned on the production server and mounted into the Odoo Docker contain
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                  │
-│  LOCAL REPO (/Users/tbwa/odoo-ce)                              │
+│  LOCAL REPO (/Users/tbwa/odoo)                              │
 │  ════════════════════════════════════                           │
 │  Branch: main                                                   │
 │  Commit: e8c4ef7c                                              │
@@ -56,7 +56,7 @@ This is cloned on the production server and mounted into the Odoo Docker contain
 │                                                                  │
 │  REMOTE REPO (GitHub)                                           │
 │  ═══════════════════════                                        │
-│  URL: github.com:jgtolentino/odoo-ce                           │
+│  URL: github.com:jgtolentino/odoo                           │
 │  Branch: main                                                   │
 │  Commit: e8c4ef7c                                              │
 │                                                                 │
@@ -74,7 +74,7 @@ This is cloned on the production server and mounted into the Odoo Docker contain
 │  PRODUCTION REPO (DigitalOcean)                                │
 │  ═══════════════════════════════                               │
 │  Server: root@178.128.112.214                                  │
-│  Location: /opt/odoo-ce/repo                                   │
+│  Location: /opt/odoo/repo                                   │
 │  Branch: main                                                   │
 │  Commit: 89fed573 (BEHIND by 2 commits)                       │
 │                                                                 │
@@ -91,7 +91,7 @@ This is cloned on the production server and mounted into the Odoo Docker contain
 
 | Aspect | Local | Production |
 |--------|-------|------------|
-| **Location** | `/Users/tbwa/odoo-ce` | `/opt/odoo-ce/repo` |
+| **Location** | `/Users/tbwa/odoo` | `/opt/odoo/repo` |
 | **Server** | Your Mac | `178.128.112.214` |
 | **Commit** | `e8c4ef7c` | `89fed573` |
 | **Status** | ✅ Up to date | ⚠️ Behind by 2 commits |
@@ -105,7 +105,7 @@ Production needs to pull the latest changes:
 ssh root@178.128.112.214
 
 # Update production repo
-cd /opt/odoo-ce/repo
+cd /opt/odoo/repo
 git pull origin main
 
 # Restart Odoo
@@ -121,7 +121,7 @@ Or use the deployment script:
 
 ```
 Production Server Filesystem:
-  /opt/odoo-ce/repo/addons/
+  /opt/odoo/repo/addons/
       └── ipai/
           └── ipai_web_theme_tbwa/
               ├── __manifest__.py
@@ -143,7 +143,7 @@ Docker Container Filesystem:
 
 1. **Make changes locally**:
    ```bash
-   cd /Users/tbwa/odoo-ce
+   cd /Users/tbwa/odoo
    # Edit files
    git add .
    git commit -m "fix: my changes"
@@ -157,7 +157,7 @@ Docker Container Filesystem:
 
 3. **What the script does**:
    - SSH to production server
-   - `cd /opt/odoo-ce/repo`
+   - `cd /opt/odoo/repo`
    - `git pull origin main`
    - `docker restart odoo-prod`
    - Wait for health check
@@ -168,9 +168,9 @@ Docker Container Filesystem:
 
 ## Summary
 
-- **Local**: Where you develop (`/Users/tbwa/odoo-ce`)
-- **Remote**: GitHub central repo (`github.com:jgtolentino/odoo-ce`)
-- **Production**: Live server (`178.128.112.214:/opt/odoo-ce/repo`)
+- **Local**: Where you develop (`/Users/tbwa/odoo`)
+- **Remote**: GitHub central repo (`github.com:jgtolentino/odoo`)
+- **Production**: Live server (`178.128.112.214:/opt/odoo/repo`)
 
 **Current issue**: Production is 2 commits behind. Run deployment script to update!
 

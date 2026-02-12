@@ -8,7 +8,7 @@ class DocsAssistantWidget {
         this.config = {
             apiUrl: config.apiUrl || 'http://localhost:8000',
             apiKey: config.apiKey,
-            projectSlug: config.projectSlug || 'odoo-ce',
+            projectSlug: config.projectSlug || 'odoo',
             position: config.position || 'bottom-right',
             theme: config.theme || 'light',
             ...config

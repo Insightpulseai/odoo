@@ -30,7 +30,7 @@ curl -fsS "https://erp.insightpulseai.com/web?debug=assets" | grep -i "style com
 
 **Step 2.1**: Run verification gate
 ```bash
-/opt/odoo-ce/repo/scripts/verify_web_assets.sh
+/opt/odoo/repo/scripts/verify_web_assets.sh
 ```
 
 **Step 2.2**: Extract SCSS/asset errors from logs
@@ -66,7 +66,7 @@ Is the missing file in /usr/lib/python3/.../odoo/addons/... (core Odoo)?
 #### Fix Path A: Image/Spec Drift
 ```bash
 # Recreate container from pinned digest
-/opt/odoo-ce/repo/scripts/recreate_odoo_prod.sh
+/opt/odoo/repo/scripts/recreate_odoo_prod.sh
 
 # Verification automatically runs at end of script
 ```
@@ -74,8 +74,8 @@ Is the missing file in /usr/lib/python3/.../odoo/addons/... (core Odoo)?
 #### Fix Path B: Permissions/Ownership
 ```bash
 # Fix ownership for custom addons
-ssh root@178.128.112.214 "chown -R 100:101 /opt/odoo-ce/repo/addons/ipai*"
-ssh root@178.128.112.214 "chmod -R 755 /opt/odoo-ce/repo/addons/ipai*"
+ssh root@178.128.112.214 "chown -R 100:101 /opt/odoo/repo/addons/ipai*"
+ssh root@178.128.112.214 "chmod -R 755 /opt/odoo/repo/addons/ipai*"
 
 # Clear asset cache
 docker exec odoo-prod bash -c 'rm -rf /var/lib/odoo/.local/share/Odoo/filestore/*/assets/*'
@@ -87,20 +87,20 @@ docker restart odoo-prod
 sleep 15
 
 # Verify
-/opt/odoo-ce/repo/scripts/verify_web_assets.sh
+/opt/odoo/repo/scripts/verify_web_assets.sh
 ```
 
 ### Phase 5: Verification (Must PASS)
 
 **Step 5.1**: Run verification gate
 ```bash
-/opt/odoo-ce/repo/scripts/verify_web_assets.sh
+/opt/odoo/repo/scripts/verify_web_assets.sh
 ```
 
 **Expected Output**:
 ```
 == 1) Site reachable ==
-HTTP/2 200 
+HTTP/2 200
 == 2) No style compilation banner in HTML (debug=assets) ==
 PASS
 == 3) No recent SCSS import errors in Odoo logs ==
@@ -124,14 +124,14 @@ PASS
 ```
 ERROR: Can't import /usr/lib/python3/.../bootstrap/scss/tokens
 CLASSIFICATION: Image/Spec Drift
-FIX: /opt/odoo-ce/repo/scripts/recreate_odoo_prod.sh
+FIX: /opt/odoo/repo/scripts/recreate_odoo_prod.sh
 ```
 
 ### Pattern 2: "PermissionError: [Errno 13] Permission denied"
 ```
 ERROR: Permission denied: /mnt/extra-addons/ipai_theme_*/...
 CLASSIFICATION: Permissions/Ownership
-FIX: chown -R 100:101 /opt/odoo-ce/repo/addons/ipai*
+FIX: chown -R 100:101 /opt/odoo/repo/addons/ipai*
 ```
 
 ### Pattern 3: "Undefined variable $o-brand-primary"

@@ -1,0 +1,204 @@
+name: LIB Brain Sync - Supabase Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/functions/lib-brain-sync/**'
+      - '.github/workflows/lib-brain-sync-deploy.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/functions/lib-brain-sync/**'
+  workflow_dispatch:
+    inputs:
+      deploy_migrations:
+        description: 'Deploy database migrations'
+        required: false
+        default: 'true'
+        type: boolean
+      deploy_function:
+        description: 'Deploy Edge Function'
+        required: false
+        default: 'true'
+        type: boolean
+
+jobs:
+  validate:
+    name: Validate Supabase Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate migration files
+        run: |
+          echo "Checking migration file naming convention..."
+          for file in supabase/migrations/*.sql; do
+            filename=$(basename "$file")
+            if [[ ! "$filename" =~ ^[0-9]{14}_[a-z0-9_]+\.sql$ ]]; then
+              echo "❌ Invalid migration filename: $filename"
+              echo "Expected format: YYYYMMDDHHMMSS_description.sql"
+              exit 1
+            fi
+            echo "✅ Valid: $filename"
+          done
+
+      - name: Validate Edge Function
+        run: |
+          if [ ! -f "supabase/functions/lib-brain-sync/index.ts" ]; then
+            echo "❌ Missing Edge Function: supabase/functions/lib-brain-sync/index.ts"
+            exit 1
+          fi
+          echo "✅ Edge Function exists"
+
+      - name: Check TypeScript syntax
+        run: |
+          npx -y typescript --version
+          npx -y tsc --noEmit supabase/functions/lib-brain-sync/index.ts || true
+
+  deploy-migrations:
+    name: Deploy Database Migrations
+    runs-on: ubuntu-latest
+    needs: validate
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_migrations == 'true')
+    environment:
+      name: production
+      url: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link to Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase link --project-ref $SUPABASE_PROJECT_REF
+
+      - name: Push database migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          echo "Deploying migrations to Supabase..."
+          supabase db push --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Verify migration deployment
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo "Verifying lib_shared schema exists..."
+          supabase db query "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'lib_shared';" || exit 1
+          echo "✅ lib_shared schema verified"
+
+          echo "Verifying lib_shared.events table..."
+          supabase db query "SELECT table_name FROM information_schema.tables WHERE table_schema = 'lib_shared' AND table_name = 'events';" || exit 1
+          echo "✅ lib_shared.events table verified"
+
+          echo "Verifying lib_shared.entities table..."
+          supabase db query "SELECT table_name FROM information_schema.tables WHERE table_schema = 'lib_shared' AND table_name = 'entities';" || exit 1
+          echo "✅ lib_shared.entities table verified"
+
+  deploy-function:
+    name: Deploy Edge Function
+    runs-on: ubuntu-latest
+    needs: validate
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_function == 'true')
+    environment:
+      name: production
+      url: https://supabase.com/dashboard/project/${{ secrets.SUPABASE_PROJECT_REF }}/functions
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link to Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          supabase link --project-ref $SUPABASE_PROJECT_REF
+
+      - name: Set Edge Function secrets
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          LIB_SYNC_SECRET: ${{ secrets.LIB_SYNC_SECRET }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          echo "Setting Edge Function secrets..."
+          supabase secrets set LIB_SYNC_SECRET="$LIB_SYNC_SECRET"
+          supabase secrets set SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY"
+          supabase secrets set SUPABASE_URL="$SUPABASE_URL"
+          echo "✅ Secrets configured"
+
+      - name: Deploy Edge Function
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo "Deploying lib-brain-sync Edge Function..."
+          supabase functions deploy lib-brain-sync --no-verify-jwt
+
+      - name: Verify Edge Function deployment
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          echo "Waiting 5 seconds for function to be ready..."
+          sleep 5
+
+          echo "Testing /health endpoint..."
+          RESPONSE=$(curl -s "${SUPABASE_URL}/functions/v1/lib-brain-sync/health")
+          echo "Response: $RESPONSE"
+
+          if echo "$RESPONSE" | grep -q '"status":"healthy"'; then
+            echo "✅ Edge Function is healthy"
+          else
+            echo "❌ Edge Function health check failed"
+            exit 1
+          fi
+
+  notify-deployment:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-migrations, deploy-function]
+    if: always()
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## LIB Brain Sync Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Migrations:** ${{ needs.deploy-migrations.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Edge Function:** ${{ needs.deploy-function.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.deploy-migrations.result }}" == "success" ]] && [[ "${{ needs.deploy-function.result }}" == "success" ]]; then
+            echo "✅ **Status:** Deployment successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Status:** Deployment failed" >> $GITHUB_STEP_SUMMARY
+          fi

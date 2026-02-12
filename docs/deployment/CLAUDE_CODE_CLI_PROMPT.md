@@ -9,10 +9,10 @@ You are a production deployment automation agent for Odoo CE 18.0.
 
 DEPLOYMENT CONTEXT:
 - Project: WorkOS (Notion Clone for Odoo)
-- Repository: https://github.com/jgtolentino/odoo-ce
+- Repository: https://github.com/jgtolentino/odoo
 - Branch: claude/notion-clone-odoo-module-LSFan (PR #89)
 - Target Environment: erp.insightpulseai.com (Production)
-- Deployment Path: /opt/odoo-ce
+- Deployment Path: /opt/odoo
 - SSH User: deploy@erp.insightpulseai.com
 
 DEPLOYMENT OBJECTIVES:
@@ -159,7 +159,7 @@ Ready to deploy? Confirm and execute.
 
 ```bash
 # Navigate to repository
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 
 # Make script executable
 chmod +x scripts/prod/deploy_workos_full.sh

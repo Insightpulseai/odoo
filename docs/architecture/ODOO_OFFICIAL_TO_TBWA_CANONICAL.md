@@ -19,8 +19,8 @@
 | Service name: `web` | Container name: `odoo-prod` | Single-container deployment |
 | Image: `odoo:17.0` | Image: `odoo:18` | Latest stable version |
 | Volume: `/var/lib/odoo` | Named volume: `odoo-data` | Filestore persistence |
-| Mount: `/mnt/extra-addons` | Bind mount: `/opt/odoo-ce/repo/addons:/mnt/extra-addons` | Custom IPAI modules |
-| Mount: `/etc/odoo/odoo.conf` | Bind mount: `/opt/odoo-ce/infra/odoo.conf:/etc/odoo/odoo.conf:ro` | Production config |
+| Mount: `/mnt/extra-addons` | Bind mount: `/opt/odoo/repo/addons:/mnt/extra-addons` | Custom IPAI modules |
+| Mount: `/etc/odoo/odoo.conf` | Bind mount: `/opt/odoo/infra/odoo.conf:/etc/odoo/odoo.conf:ro` | Production config |
 | Exposed port: `8069:8069` | Behind nginx reverse proxy | `erp.insightpulseai.com`, `superset.insightpulseai.com`, `mcp.insightpulseai.com` |
 
 ---
@@ -169,12 +169,12 @@ doctl databases firewalls list <DATABASE_ID>
 **Fixes:**
 ```bash
 # 1. Verify odoo.conf dbfilter setting
-ssh root@178.128.112.214 "grep dbfilter /opt/odoo-ce/infra/odoo.conf"
+ssh root@178.128.112.214 "grep dbfilter /opt/odoo/infra/odoo.conf"
 
 # Expected: dbfilter = ^odoo$
 
 # 2. If incorrect, update and restart
-ssh root@178.128.112.214 "sed -i 's/^dbfilter =.*/dbfilter = ^odoo$/' /opt/odoo-ce/infra/odoo.conf && docker restart odoo-prod"
+ssh root@178.128.112.214 "sed -i 's/^dbfilter =.*/dbfilter = ^odoo$/' /opt/odoo/infra/odoo.conf && docker restart odoo-prod"
 ```
 
 ### "Access Denied" from RLS/ACL (Odoo-side)
@@ -216,9 +216,9 @@ ssh root@178.128.112.214 "docker volume ls | grep odoo"
 ssh root@178.128.112.214 "docker inspect odoo-prod --format '{{json .Mounts}}' | jq"
 
 # 2. If volume missing, recreate container with proper mount
-ssh root@178.128.112.214 "cd /opt/odoo-ce && docker compose -f infra/docker-compose.prod.yaml down"
+ssh root@178.128.112.214 "cd /opt/odoo && docker compose -f infra/docker-compose.prod.yaml down"
 ssh root@178.128.112.214 "docker volume create odoo-data"
-ssh root@178.128.112.214 "cd /opt/odoo-ce && docker compose -f infra/docker-compose.prod.yaml up -d"
+ssh root@178.128.112.214 "cd /opt/odoo && docker compose -f infra/docker-compose.prod.yaml up -d"
 ```
 
 ---

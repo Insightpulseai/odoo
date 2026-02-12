@@ -140,7 +140,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -euo pipefail
-            cd /opt/odoo-ce/repo
+            cd /opt/odoo/repo
 
             # Pull latest changes
             git pull origin main

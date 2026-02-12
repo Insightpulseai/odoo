@@ -21,7 +21,7 @@
 #   deploy/docker-compose.prod.yml - Production configuration
 # =============================================================================
 
-name: odoo-ce
+name: odoo
 
 services:
   # ===========================================================================
@@ -29,7 +29,7 @@ services:
   # ===========================================================================
   postgres:
     image: postgres:16-alpine
-    container_name: odoo-ce-db
+    container_name: odoo-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-odoo}
@@ -54,7 +54,7 @@ services:
   # ===========================================================================
   odoo-core:
     image: odoo:19
-    container_name: odoo-ce-core
+    container_name: odoo-core
     restart: unless-stopped
     depends_on:
       postgres:
@@ -98,7 +98,7 @@ services:
   # ===========================================================================
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: odoo-ce-pgadmin
+    container_name: odoo-pgadmin
     profiles: ["tools"]
     restart: unless-stopped
     depends_on:
@@ -120,7 +120,7 @@ services:
   # ===========================================================================
   mailpit:
     image: axllent/mailpit:latest
-    container_name: odoo-ce-mailpit
+    container_name: odoo-mailpit
     profiles: ["tools"]
     restart: unless-stopped
     ports:
@@ -134,7 +134,7 @@ services:
   # ===========================================================================
   odoo-init:
     image: odoo:19
-    container_name: odoo-ce-init
+    container_name: odoo-init
     profiles: ["init"]
     depends_on:
       postgres:
@@ -164,15 +164,15 @@ services:
 
 volumes:
   postgres_data:
-    name: odoo-ce-postgres-data
+    name: odoo-postgres-data
   odoo_data:
-    name: odoo-ce-odoo-data
+    name: odoo-odoo-data
   odoo_config:
-    name: odoo-ce-odoo-config
+    name: odoo-odoo-config
   pgadmin_data:
-    name: odoo-ce-pgadmin-data
+    name: odoo-pgadmin-data
 
 networks:
   odoo-net:
-    name: odoo-ce-network
+    name: odoo-network
     driver: bridge

@@ -1,6 +1,6 @@
 # Flagship Repo Recommendation
 
-## Recommended: `jgtolentino/odoo-ce`
+## Recommended: `jgtolentino/odoo`
 
 Why:
 - Highest overall completeness score (81)

@@ -12,14 +12,14 @@ This patch bundle contains:
 
 ```bash
 # Copy the branding module to your Odoo addons directory
-cp -r addons/ipai_ce_branding /path/to/odoo-ce/addons/
+cp -r addons/ipai_ce_branding /path/to/odoo/addons/
 ```
 
 ### 2. Apply xmlid Fix Patch
 
 ```bash
 # Navigate to your Odoo CE root directory
-cd /path/to/odoo-ce
+cd /path/to/odoo
 
 # Apply the patch
 git apply patches/ipai_ce_cleaner_xmlid_fix.diff

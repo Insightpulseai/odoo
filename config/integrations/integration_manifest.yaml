@@ -215,17 +215,17 @@ integrations:
         expected_status: [200]
         description: "Check rate limit status"
       - name: "list_workflows"
-        endpoint: "/repos/jgtolentino/odoo-ce/actions/workflows"
+        endpoint: "/repos/jgtolentino/odoo/actions/workflows"
         method: "GET"
         expected_status: [200]
         description: "List repo workflows"
       - name: "recent_runs"
-        endpoint: "/repos/jgtolentino/odoo-ce/actions/runs?per_page=5"
+        endpoint: "/repos/jgtolentino/odoo/actions/runs?per_page=5"
         method: "GET"
         expected_status: [200]
         description: "List recent workflow runs"
       - name: "repo_permissions"
-        endpoint: "/repos/jgtolentino/odoo-ce"
+        endpoint: "/repos/jgtolentino/odoo"
         method: "GET"
         expected_status: [200]
         description: "Check repo access permissions"
@@ -686,7 +686,7 @@ audit_config:
   # Issue creation configuration
   issues:
     enabled: true
-    repo: "jgtolentino/odoo-ce"
+    repo: "jgtolentino/odoo"
     labels:
       critical: ["critical", "integration", "audit"]
       warning: ["warning", "integration", "audit"]

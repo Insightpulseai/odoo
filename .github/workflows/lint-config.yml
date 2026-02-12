@@ -1,0 +1,97 @@
+name: Configuration Validation (SSOT)
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'docker-compose.yml'
+      - 'ops/compose/**'
+      - 'scripts/*.sh'
+      - '.github/workflows/lint-config.yml'
+  pull_request:
+    paths:
+      - 'docker-compose.yml'
+      - 'ops/compose/**'
+      - 'scripts/*.sh'
+      - '.github/workflows/lint-config.yml'
+
+jobs:
+  validate-config:
+    name: Validate Environment Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run SSOT configuration validation
+        run: |
+          chmod +x scripts/validate_repo_config.sh
+          ./scripts/validate_repo_config.sh
+
+      - name: Validate docker-compose.yml syntax
+        run: |
+          docker compose config > /dev/null
+          echo "✅ docker-compose.yml syntax is valid"
+
+      - name: Check for environment variable consistency
+        run: |
+          echo "🔍 Checking environment variable usage..."
+
+          # Ensure ODOO_DB is used consistently
+          if ! grep -q "\${ODOO_DB" docker-compose.yml; then
+            echo "❌ ODOO_DB environment variable not found in docker-compose.yml"
+            exit 1
+          fi
+
+          # Ensure POSTGRES_DB is used consistently
+          if ! grep -q "\${POSTGRES_DB" docker-compose.yml; then
+            echo "❌ POSTGRES_DB environment variable not found in docker-compose.yml"
+            exit 1
+          fi
+
+          echo "✅ Environment variables are used correctly"
+
+      - name: Verify canonical naming convention
+        run: |
+          echo "🔍 Verifying SSOT naming convention..."
+
+          # Check that compose project name is 'odoo'
+          if ! grep -q "^name: odoo$" docker-compose.yml; then
+            echo "❌ Project name in docker-compose.yml should be 'odoo'"
+            exit 1
+          fi
+
+          # Check volume naming
+          if ! grep -q "name: odoo-data" docker-compose.yml; then
+            echo "❌ Volume should be named 'odoo-data'"
+            exit 1
+          fi
+
+          if ! grep -q "name: odoo-db-data" docker-compose.yml; then
+            echo "❌ Volume should be named 'odoo-db-data'"
+            exit 1
+          fi
+
+          # Check network naming
+          if ! grep -q "name: odoo-net" docker-compose.yml; then
+            echo "❌ Network should be named 'odoo-net'"
+            exit 1
+          fi
+
+          echo "✅ Canonical naming convention verified"
+
+      - name: Environment files summary
+        if: always()
+        run: |
+          echo "📋 Environment Configuration Summary"
+          echo ""
+          for ENV in dev stage; do
+            if [[ -f "ops/compose/${ENV}.env" ]]; then
+              echo "Environment: $ENV"
+              echo "  Database: $(grep ODOO_DB ops/compose/${ENV}.env | cut -d= -f2)"
+              echo "  Odoo Port: $(grep ODOO_PORT ops/compose/${ENV}.env | cut -d= -f2)"
+              echo "  PostgreSQL Port: $(grep POSTGRES_PORT ops/compose/${ENV}.env | cut -d= -f2)"
+              echo ""
+            fi
+          done

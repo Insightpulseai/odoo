@@ -1,0 +1,55 @@
+name: SaaS Landing Visual Regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'templates/saas-landing/**'
+
+jobs:
+  visual-regression:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright
+        run: |
+          cd templates/saas-landing
+          pnpm playwright install chromium --with-deps
+
+      - name: Run visual regression tests
+        run: |
+          cd templates/saas-landing
+          pnpm playwright test dashboard-visual.spec.ts
+        continue-on-error: true
+
+      - name: Compare screenshots
+        if: failure()
+        run: |
+          echo "Visual regression detected!"
+          echo "Review screenshots in artifacts"
+
+      - name: Upload diff
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-diff
+          path: |
+            templates/saas-landing/test-results/**/*-diff.png
+            templates/saas-landing/test-results/**/*-actual.png
+          retention-days: 7

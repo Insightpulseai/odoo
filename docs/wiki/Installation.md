@@ -12,8 +12,8 @@
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/jgtolentino/odoo-ce.git
-cd odoo-ce
+git clone https://github.com/jgtolentino/odoo.git
+cd odoo
 ```
 
 ### 2. Start Stack

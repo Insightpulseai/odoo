@@ -1,0 +1,95 @@
+version: 1
+tier: 0
+evidence_dir: "oca-parity/evidence"
+
+probes:
+  - id: probe_ci_pipeline_exists
+    surface_id: T0-ODOOSH-CICD
+    kind: file_exists_any
+    params:
+      paths:
+        - ".github/workflows"
+        - ".gitlab-ci.yml"
+        - "azure-pipelines.yml"
+    pass_message: "CI pipeline definition found"
+    fail_message: "No CI pipeline definition found"
+
+  - id: probe_deploy_promotion_docs
+    surface_id: T0-ODOOSH-ENV-BRANCHES
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/DEPLOYMENT.md"
+        - "docs/ops/DEPLOYMENT.md"
+        - "README.md"
+      patterns:
+        - "staging"
+        - "production"
+        - "promotion"
+        - "rollback"
+    pass_message: "Deployment promotion/rollback documented"
+    fail_message: "No evidence of env promotion/rollback docs"
+
+  - id: probe_backup_script_or_runbook
+    surface_id: T0-ODOOSH-BACKUPS
+    kind: file_exists_any
+    params:
+      paths:
+        - "scripts/backup.sh"
+        - "scripts/odoo_backup.sh"
+        - "docs/ops/BACKUPS.md"
+        - "docs/architecture/backup"
+    pass_message: "Backup evidence present"
+    fail_message: "No backup script/runbook found"
+
+  - id: probe_healthcheck_endpoint_or_probe
+    surface_id: T0-ODOOSH-MONITORING
+    kind: file_contains_any
+    params:
+      files:
+        - "docker-compose.yml"
+        - "compose.yml"
+        - "k8s"
+        - "docs/ops/MONITORING.md"
+      patterns:
+        - "healthcheck"
+        - "/health"
+        - "liveness"
+        - "readiness"
+    pass_message: "Monitoring/healthcheck evidence found"
+    fail_message: "No healthcheck/monitoring evidence found"
+
+  - id: probe_upgrade_policy_doc
+    surface_id: T0-ODOOSH-LIFECYCLE-UPGRADES
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/ops/UPGRADES.md"
+        - "docs/UPGRADES.md"
+        - "docs/architecture/UPGRADE_POLICY.md"
+      patterns:
+        - "Odoo 19"
+        - "upgrade"
+        - "migration"
+        - "roll back"
+        - "downtime"
+    pass_message: "Upgrade policy evidence found"
+    fail_message: "No upgrade policy evidence found"
+
+  - id: probe_support_incident_process
+    surface_id: T0-EE-SUPPORT
+    kind: file_contains_any
+    params:
+      files:
+        - "docs/ops/INCIDENTS.md"
+        - "docs/ops/RUNBOOK.md"
+        - "docs/ops/ONCALL.md"
+        - "README.md"
+      patterns:
+        - "incident"
+        - "SLA"
+        - "sev"
+        - "on-call"
+        - "runbook"
+    pass_message: "Support/incident process evidence found"
+    fail_message: "No support/incident evidence found"

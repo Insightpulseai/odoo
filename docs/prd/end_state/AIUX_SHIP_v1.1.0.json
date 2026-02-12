@@ -1,7 +1,7 @@
 {
   "prd_version": "1.1.0",
   "ship_scope": "aiux",
-  "repo": "jgtolentino/odoo-ce",
+  "repo": "jgtolentino/odoo",
   "modules": {
     "ipai": [
       "ipai_theme_aiux",
@@ -49,14 +49,14 @@
   },
   "deployment": {
     "docker_compose_file": "deploy/docker-compose.prod.yml",
-    "container_name": "odoo-ce",
+    "container_name": "odoo",
     "db_container_name": "odoo-db",
     "db_name": "odoo",
     "port": 8069,
     "health_endpoints": [
       "http://localhost:8069/web/login"
     ],
-    "asset_rebuild_command": "docker compose -f deploy/docker-compose.prod.yml exec odoo-ce odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init"
+    "asset_rebuild_command": "docker compose -f deploy/docker-compose.prod.yml exec odoo odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init"
   },
   "failure_modes": {
     "502_bad_gateway": {
@@ -90,7 +90,7 @@
   },
   "workspace": {
     "name": "ipai_workspace",
-    "description": "InsightPulseAI mono workspace (odoo-ce)",
+    "description": "InsightPulseAI mono workspace (odoo)",
     "vscode_workspace_file": ".vscode/ipai_workspace.code-workspace",
     "tasks": [
       "odoo:compose up (prod file)",

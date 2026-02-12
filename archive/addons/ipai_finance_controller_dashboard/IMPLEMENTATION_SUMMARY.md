@@ -454,8 +454,8 @@ docker exec -it odoo-prod-web-1 odoo -d production -i ipai_finance_controller_da
 ### E2E Tests (Optional - Playwright)
 
 ```bash
-# Run Playwright tests (after installing Playwright in odoo-ce repo)
-cd /Users/tbwa/odoo-ce
+# Run Playwright tests (after installing Playwright in odoo repo)
+cd /Users/tbwa/odoo
 npx playwright test tests/playwright/controller_dashboard.spec.js --headed
 
 # Expected tests:
@@ -581,10 +581,10 @@ npx playwright test tests/playwright/controller_dashboard.spec.js --headed
 **Module Author**: Jake Tolentino <jgtolentino@insightpulseai.com>
 **Organization**: InsightPulse AI
 **License**: AGPL-3
-**Repository**: https://github.com/jgtolentino/odoo-ce
+**Repository**: https://github.com/jgtolentino/odoo
 
 For issues or feature requests, create a GitHub issue at:
-https://github.com/jgtolentino/odoo-ce/issues
+https://github.com/jgtolentino/odoo/issues
 
 ---
 

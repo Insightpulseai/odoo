@@ -51,7 +51,7 @@ If DNS not resolving, wait for propagation (can take up to 48 hours, typically 5
 
 ```bash
 # Download deployment script
-curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
 
 # Make executable
 chmod +x deploy_m1.sh
@@ -131,7 +131,7 @@ Master Password: AbC123XyZ...32chars...
 
 Database Password: DeF456UvW...32chars...
 
-Secrets saved to: /opt/odoo-ce/deploy/.env
+Secrets saved to: /opt/odoo/deploy/.env
 Logs: /var/log/odoo_deploy.log
 Backups: /opt/odoo-backups (daily at 2 AM)
 =========================================
@@ -174,7 +174,7 @@ After installation, verify no Enterprise/IAP references:
 ssh root@your-droplet-ip
 
 # Check for Enterprise modules
-docker exec odoo-ce odoo shell -d insightpulse << EOF
+docker exec odoo odoo shell -d insightpulse << EOF
 import odoo
 for module in odoo.modules.registry.Registry.new('insightpulse')['ir.module.module'].search([]):
     if 'enterprise' in module.name.lower():
@@ -186,7 +186,7 @@ Should return no output.
 
 ## Existing Deployment Handling
 
-If deployment script detects existing installation at `/opt/odoo-ce`, it will prompt:
+If deployment script detects existing installation at `/opt/odoo`, it will prompt:
 
 ```
 Existing deployment found. What would you like to do?
@@ -249,7 +249,7 @@ Backup includes:
 
 ```bash
 # Stop Odoo stack
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 docker compose down
 
 # Restore database
@@ -257,7 +257,7 @@ gunzip < /opt/odoo-backups/odoo-db-20250115_020000.sql.gz | \
   docker exec -i odoo-db psql -U odoo
 
 # Restore filestore
-docker exec -i odoo-ce tar xzf - -C / < \
+docker exec -i odoo tar xzf - -C / < \
   /opt/odoo-backups/odoo-filestore-20250115_020000.tar.gz
 
 # Start stack
@@ -286,7 +286,7 @@ docker exec odoo-db pg_isready -U odoo
 tail -f /var/log/odoo_deploy.log
 
 # Odoo application logs
-docker logs -f odoo-ce
+docker logs -f odoo
 
 # PostgreSQL logs
 docker logs -f odoo-db
@@ -302,11 +302,11 @@ tail -f /var/log/nginx/error.log
 
 ```bash
 # Docker container stats
-docker stats odoo-ce odoo-db
+docker stats odoo odoo-db
 
 # Disk usage
 df -h
-du -sh /opt/odoo-ce
+du -sh /opt/odoo
 du -sh /opt/odoo-backups
 
 # Memory usage
@@ -346,12 +346,12 @@ tail -50 /var/log/odoo_deploy.log
 
 ```bash
 # Check container logs
-docker logs odoo-ce
+docker logs odoo
 
 # Common issues:
 # 1. Database connection failed → Check db_password in odoo.conf
 # 2. Addons path error → Check volume mounts in docker-compose.yml
-# 3. Permission issues → Check file ownership: chown -R 101:101 /opt/odoo-ce/addons
+# 3. Permission issues → Check file ownership: chown -R 101:101 /opt/odoo/addons
 ```
 
 ### Health Check Failing
@@ -412,7 +412,7 @@ Manual rollback:
 
 ```bash
 # Stop containers
-cd /opt/odoo-ce/deploy
+cd /opt/odoo/deploy
 docker compose down
 
 # Restore from backup (see Restore section)
@@ -440,8 +440,8 @@ Before going live:
 
 ## Support
 
-- **Documentation**: [GitHub Repository](https://github.com/jgtolentino/odoo-ce)
-- **Issues**: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
+- **Documentation**: [GitHub Repository](https://github.com/jgtolentino/odoo)
+- **Issues**: [GitHub Issues](https://github.com/jgtolentino/odoo/issues)
 - **Owner**: InsightPulseAI – ERP Platform Team
 
 ---

@@ -104,7 +104,7 @@ Successfully deployed dual-memory architecture for AI agent coordination:
 
 ### 3. Sync Script
 
-**Location**: `/Users/tbwa/Documents/GitHub/odoo-ce/scripts/sync_agent_memory.py`
+**Location**: `/Users/tbwa/Documents/GitHub/odoo/scripts/sync_agent_memory.py`
 
 **Purpose**: Periodically sync agent memory from local SQLite to Supabase
 
@@ -350,7 +350,7 @@ Option C: launchd (macOS):
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/python3</string>
-        <string>/Users/tbwa/Documents/GitHub/odoo-ce/scripts/sync_agent_memory.py</string>
+        <string>/Users/tbwa/Documents/GitHub/odoo/scripts/sync_agent_memory.py</string>
         <string>--daemon</string>
         <string>--interval</string>
         <string>300</string>
@@ -535,9 +535,9 @@ GRANT ALL ON agent_mem.sessions TO service_role;
 
 | File | Purpose |
 |------|---------|
-| `/Users/tbwa/Documents/GitHub/odoo-ce/db/migrations/20260119_agent_memory_schema.sql` | Database migration script |
-| `/Users/tbwa/Documents/GitHub/odoo-ce/scripts/sync_agent_memory.py` | SQLite → Supabase sync orchestration |
-| `/Users/tbwa/Documents/GitHub/odoo-ce/docs/AGENT_MEMORY_DEPLOYMENT.md` | This documentation file |
+| `/Users/tbwa/Documents/GitHub/odoo/db/migrations/20260119_agent_memory_schema.sql` | Database migration script |
+| `/Users/tbwa/Documents/GitHub/odoo/scripts/sync_agent_memory.py` | SQLite → Supabase sync orchestration |
+| `/Users/tbwa/Documents/GitHub/odoo/docs/AGENT_MEMORY_DEPLOYMENT.md` | This documentation file |
 
 ---
 

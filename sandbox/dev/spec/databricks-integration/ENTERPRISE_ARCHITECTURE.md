@@ -2,7 +2,7 @@
 
 ---
 
-**Purpose**: Analyze how enterprise SaaS ERP platforms structure Databricks projects and GitHub repositories, with recommendations for odoo-ce.
+**Purpose**: Analyze how enterprise SaaS ERP platforms structure Databricks projects and GitHub repositories, with recommendations for odoo.
 
 **Status**: ARCHITECTURE GUIDE
 **Created**: 2026-01-26
@@ -190,15 +190,15 @@ Repositories:
 
 ---
 
-## Recommended Architecture for odoo-ce
+## Recommended Architecture for odoo
 
 ### Hybrid Approach (Monorepo with Domain Separation)
 
-**Rationale**: odoo-ce already has monorepo structure, extend with Databricks as subdirectory.
+**Rationale**: odoo already has monorepo structure, extend with Databricks as subdirectory.
 
 **Repository Structure**:
 ```
-odoo-ce/                                  # Main repository
+odoo/                                  # Main repository
 ├── addons/                               # Odoo modules (existing)
 │   └── ipai/
 │       ├── ipai_finance_ppm/
@@ -426,25 +426,25 @@ Unity Catalog Metastore
 **Service Principals** (Application Access):
 ```sql
 -- n8n automation service
-CREATE SERVICE PRINCIPAL 'odoo-ce-n8n';
-GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
-GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
+CREATE SERVICE PRINCIPAL 'odoo-n8n';
+GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-n8n`;
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-n8n`;
+GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-n8n`;
 
 -- Odoo application
-CREATE SERVICE PRINCIPAL 'odoo-ce-app';
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-app`;
-GRANT EXECUTE ON FUNCTION gold.ml_features.get_bir_forecast TO SERVICE_PRINCIPAL `odoo-ce-app`;
+CREATE SERVICE PRINCIPAL 'odoo-app';
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-app`;
+GRANT EXECUTE ON FUNCTION gold.ml_features.get_bir_forecast TO SERVICE_PRINCIPAL `odoo-app`;
 
 -- CI/CD pipeline
-CREATE SERVICE PRINCIPAL 'odoo-ce-cicd';
-GRANT ALL PRIVILEGES ON CATALOG sandbox TO SERVICE_PRINCIPAL `odoo-ce-cicd`;
-GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-ce-cicd`;
+CREATE SERVICE PRINCIPAL 'odoo-cicd';
+GRANT ALL PRIVILEGES ON CATALOG sandbox TO SERVICE_PRINCIPAL `odoo-cicd`;
+GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-cicd`;
 
 -- MCP Server (Claude Code)
-CREATE SERVICE PRINCIPAL 'odoo-ce-mcp';
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-mcp`;
-GRANT EXECUTE ON FUNCTION gold.ml_features.get_bir_forecast TO SERVICE_PRINCIPAL `odoo-ce-mcp`;
+CREATE SERVICE PRINCIPAL 'odoo-mcp';
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-mcp`;
+GRANT EXECUTE ON FUNCTION gold.ml_features.get_bir_forecast TO SERVICE_PRINCIPAL `odoo-mcp`;
 ```
 
 **User Groups** (Human Access):
@@ -613,7 +613,7 @@ jobs:
 ```yaml
 # databricks/bundles/databricks.yml
 bundle:
-  name: odoo-ce-databricks
+  name: odoo-databricks
 
 include:
   - resources/*.yml
@@ -630,7 +630,7 @@ targets:
   dev:
     mode: development
     workspace:
-      host: https://odoo-ce-dev.azuredatabricks.net
+      host: https://odoo-dev.azuredatabricks.net
     variables:
       catalog: sandbox
       warehouse_id: ${var.dev_warehouse_id}
@@ -639,7 +639,7 @@ targets:
   staging:
     mode: production
     workspace:
-      host: https://odoo-ce-staging.azuredatabricks.net
+      host: https://odoo-staging.azuredatabricks.net
     variables:
       catalog: silver
       warehouse_id: ${var.staging_warehouse_id}
@@ -648,7 +648,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: https://odoo-ce-prod.azuredatabricks.net
+      host: https://odoo-prod.azuredatabricks.net
     variables:
       catalog: gold
       warehouse_id: ${var.prod_warehouse_id}
@@ -929,7 +929,7 @@ metrics.publish()
 
 ```bash
 # 1. Create Databricks directory structure
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 mkdir -p databricks/{bundles,notebooks,src,tests,config,migrations,docs}
 mkdir -p databricks/notebooks/{etl,ml,analytics}
 mkdir -p databricks/src/odoo_databricks/{common,connectors,data_quality,feature_engineering,ml}
@@ -956,7 +956,7 @@ EOF
 # 3. Create bundle config
 cat > databricks/bundles/databricks.yml << 'EOF'
 bundle:
-  name: odoo-ce-databricks
+  name: odoo-databricks
 
 include:
   - resources/*.yml
@@ -1003,13 +1003,13 @@ cp spec/databricks-integration/ENTERPRISE_ARCHITECTURE.md .github/workflows/data
 
 ```sql
 -- Service principals
-CREATE SERVICE PRINCIPAL 'odoo-ce-n8n';
-CREATE SERVICE PRINCIPAL 'odoo-ce-app';
-CREATE SERVICE PRINCIPAL 'odoo-ce-cicd';
+CREATE SERVICE PRINCIPAL 'odoo-n8n';
+CREATE SERVICE PRINCIPAL 'odoo-app';
+CREATE SERVICE PRINCIPAL 'odoo-cicd';
 
 -- Grant permissions
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-app`;
-GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-app`;
+GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-n8n`;
 ```
 
 ---

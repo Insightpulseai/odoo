@@ -1,0 +1,481 @@
+---
+# Process Hierarchy
+# SAP Signavio-style process hierarchy (L4-L7)
+# L4: Core Business Processes | L5: Operations | L6: Controls | L7: Support
+
+version: "1.0.0"
+last_updated: "2026-02-12T19:00:00Z"
+
+# ============================================================================
+# Process Hierarchy Structure
+# ============================================================================
+
+hierarchy:
+  L4_core_business:
+    description: "Core business processes that directly deliver value"
+    examples: [order-to-cash, procure-to-pay, hire-to-retire]
+    sipoc_required: true
+    bpmn_required: true
+
+  L5_operations:
+    description: "Operational processes that support core business"
+    examples: [deployment, monitoring, backup, email-service]
+    sipoc_required: false
+    bpmn_optional: true
+
+  L6_controls:
+    description: "Control processes for governance and compliance"
+    examples: [audit, governance, risk-management]
+    sipoc_required: false
+    raci_required: true
+
+  L7_support:
+    description: "Support processes (IT, HR, facilities)"
+    examples: [helpdesk, training, asset-management]
+    sipoc_required: false
+    raci_optional: true
+
+# ============================================================================
+# L4: Core Business Processes
+# ============================================================================
+
+L4_processes:
+  PROC-AR-001:
+    id: PROC-AR-001
+    name: "Order to Cash (O2C)"
+    level: L4
+    owner: finance_team
+    type: core_business
+    description: "Complete order processing from quote to payment"
+    stages:
+      - quote_generation
+      - order_confirmation
+      - fulfillment
+      - invoicing
+      - payment_collection
+      - cash_application
+    odoo_modules:
+      - sale
+      - account
+      - payment
+    oca_modules:
+      - account_payment_mode
+      - sale_automatic_workflow
+    ipai_modules:
+      - ipai_finance_ppm
+    controls:
+      - CTRL-FINANCE-001
+      - CTRL-AUDIT-001
+    sipoc: docs/process/sipoc/order-to-cash.md
+    bpmn: docs/process/l4-core/order-to-cash.bpmn
+
+  PROC-AP-001:
+    id: PROC-AP-001
+    name: "Procure to Pay (P2P)"
+    level: L4
+    owner: finance_team
+    type: core_business
+    description: "Procurement from vendor selection to payment"
+    stages:
+      - vendor_qualification
+      - purchase_requisition
+      - purchase_order
+      - goods_receipt
+      - invoice_receipt
+      - payment_processing
+    odoo_modules:
+      - purchase
+      - account
+      - stock
+    oca_modules:
+      - purchase_order_approval
+      - stock_available_unreserved
+    ipai_modules:
+      - ipai_vendor_portal
+    controls:
+      - CTRL-FINANCE-001
+      - CTRL-AUDIT-001
+    sipoc: docs/process/sipoc/procure-to-pay.md
+    bpmn: docs/process/l4-core/procure-to-pay.bpmn
+
+  PROC-TAX-001:
+    id: PROC-TAX-001
+    name: "Tax Filing Process"
+    level: L4
+    owner: finance_team
+    type: core_business
+    description: "BIR tax form generation and submission"
+    stages:
+      - transaction_aggregation
+      - tax_calculation
+      - form_generation
+      - review_approval
+      - submission
+    odoo_modules:
+      - account
+    oca_modules:
+      - account_tax_balance
+    ipai_modules:
+      - ipai_bir_compliance
+    controls:
+      - CTRL-FINANCE-001
+      - CTRL-AUDIT-001
+    sipoc: docs/process/sipoc/tax-filing.md
+    bpmn: docs/process/l4-core/tax-filing.bpmn
+
+  PROC-FINANCE-001:
+    id: PROC-FINANCE-001
+    name: "Financial Close Process"
+    level: L4
+    owner: finance_team
+    type: core_business
+    description: "Month-end and year-end financial close"
+    stages:
+      - transaction_cutoff
+      - reconciliation
+      - accruals_deferrals
+      - financial_statements
+      - review_approval
+      - reporting
+    odoo_modules:
+      - account
+      - analytic
+    oca_modules:
+      - mis_builder
+      - account_financial_report
+    ipai_modules:
+      - ipai_finance_ppm
+    controls:
+      - CTRL-FINANCE-001
+      - CTRL-AUDIT-001
+    sipoc: docs/process/sipoc/financial-close.md
+    bpmn: docs/process/l4-core/financial-close.bpmn
+
+# ============================================================================
+# L5: Operational Processes
+# ============================================================================
+
+L5_processes:
+  PROC-DEPLOY-001:
+    id: PROC-DEPLOY-001
+    name: "Deployment Automation Process"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Automated deployment with gates and rollback"
+    stages:
+      - build_validation
+      - test_execution
+      - gate_approval
+      - deployment
+      - health_check
+      - rollback_if_failed
+    controls:
+      - CTRL-GATE-001
+      - CTRL-DEPLOY-001
+    documentation: docs/process/runbooks/PROD_RUNBOOK_ODOO.md
+    automation:
+      - .github/workflows/deploy-production.yml
+      - scripts/deploy/prod-deploy.sh
+
+  PROC-EMAIL-001:
+    id: PROC-EMAIL-001
+    name: "Email Service Management"
+    level: L5
+    owner: integration_team
+    type: operational
+    description: "Email provider configuration and monitoring"
+    stages:
+      - smtp_configuration
+      - deliverability_monitoring
+      - bounce_handling
+      - rate_limit_management
+    controls:
+      - CTRL-DOC-001
+    documentation: docs/integration/README.md
+    automation:
+      - addons/ipai/ipai_email_bridge/
+
+  PROC-MIGRATE-001:
+    id: PROC-MIGRATE-001
+    name: "Service Migration Process"
+    level: L5
+    owner: integration_team
+    type: operational
+    description: "Systematic service migration with rollback"
+    stages:
+      - migration_planning
+      - parallel_run
+      - cutover
+      - validation
+      - deprecation
+    controls:
+      - CTRL-DOC-001
+      - CTRL-TEST-001
+    documentation: docs/process/operations/
+
+  PROC-BACKUP-001:
+    id: PROC-BACKUP-001
+    name: "Backup Procedures"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Automated backup and recovery for critical systems"
+    stages:
+      - backup_execution
+      - verification
+      - retention_enforcement
+      - restore_testing
+    controls:
+      - CTRL-BACKUP-001
+    documentation: docs/process/runbooks/
+    automation:
+      - scripts/docker/backup-plane.sh
+
+  PROC-INFRA-001:
+    id: PROC-INFRA-001
+    name: "Infrastructure Management"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Docker container orchestration and lifecycle"
+    stages:
+      - container_provisioning
+      - network_isolation
+      - resource_management
+      - health_monitoring
+      - lifecycle_management
+    controls:
+      - CTRL-SOP-003
+      - CTRL-BACKUP-001
+    documentation: docs/integration/docker-infrastructure.md
+    automation:
+      - scripts/docker/
+
+  PROC-QA-002:
+    id: PROC-QA-002
+    name: "Quality Gates Process"
+    level: L5
+    owner: qa_team
+    type: operational
+    description: "Automated quality validation at key checkpoints"
+    stages:
+      - lint_validation
+      - test_execution
+      - coverage_check
+      - security_scan
+      - gate_enforcement
+    controls:
+      - CTRL-TEST-001
+      - CTRL-SEC-004
+    documentation: docs/process/governance/
+    automation:
+      - .github/workflows/tier-0-gates.yml
+      - scripts/gates/run_parity_gates.sh
+
+  PROC-COMM-001:
+    id: PROC-COMM-001
+    name: "Communication Platform Management"
+    level: L5
+    owner: integration_team
+    type: operational
+    description: "Internal communication system administration"
+    stages:
+      - platform_configuration
+      - user_provisioning
+      - integration_setup
+      - monitoring
+    controls:
+      - CTRL-DEPR-001
+    documentation: docs/integration/
+
+# ============================================================================
+# L6: Control Processes
+# ============================================================================
+
+L6_processes:
+  PROC-GOVERN-001:
+    id: PROC-GOVERN-001
+    name: "Governance Framework"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Enterprise operating model governance"
+    stages:
+      - policy_definition
+      - control_implementation
+      - monitoring
+      - audit
+      - continuous_improvement
+    controls:
+      - CTRL-TRACE-001
+      - CTRL-DOC-002
+    documentation: docs/process/governance/
+    raci: docs/process/raci/governance.yaml
+
+  PROC-AUDIT-001:
+    id: PROC-AUDIT-001
+    name: "Audit Process"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Evidence collection and audit reporting"
+    stages:
+      - scope_definition
+      - evidence_collection
+      - analysis
+      - findings_documentation
+      - recommendation
+    controls:
+      - CTRL-AUDIT-001
+      - CTRL-IMMUTABLE-001
+    documentation: docs/process/governance/
+    automation:
+      - scripts/governance/audit-report.sh
+    raci: docs/process/raci/audit.yaml
+
+  PROC-EVIDENCE-001:
+    id: PROC-EVIDENCE-001
+    name: "Evidence Collection Process"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Timestamped evidence artifacts with cross-references"
+    stages:
+      - event_detection
+      - artifact_capture
+      - timestamp_immutability
+      - cross_reference_indexing
+      - validation
+    controls:
+      - CTRL-IMMUTABLE-001
+    documentation: docs/evidence/README.md
+    automation:
+      - .github/workflows/evidence-snapshot.yml
+
+  PROC-RISK-001:
+    id: PROC-RISK-001
+    name: "Risk Management Process"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Risk identification, assessment, and mitigation"
+    stages:
+      - risk_identification
+      - impact_assessment
+      - mitigation_planning
+      - monitoring
+      - review
+    controls:
+      - CTRL-RISK-001
+    documentation: docs/control/risk/
+    raci: docs/process/raci/risk-management.yaml
+
+# ============================================================================
+# L7: Support Processes (Future)
+# ============================================================================
+
+L7_processes:
+  PROC-SUPPORT-001:
+    id: PROC-SUPPORT-001
+    name: "IT Support Process"
+    level: L7
+    owner: it_team
+    type: support
+    description: "Internal IT helpdesk and support"
+    status: planned
+
+  PROC-TRAINING-001:
+    id: PROC-TRAINING-001
+    name: "Training and Onboarding"
+    level: L7
+    owner: hr_team
+    type: support
+    description: "Employee onboarding and continuous training"
+    status: planned
+
+# ============================================================================
+# Process Metrics
+# ============================================================================
+
+metrics:
+  total_processes: 20
+  by_level:
+    L4_core_business: 4
+    L5_operations: 7
+    L6_controls: 4
+    L7_support: 2
+  by_status:
+    active: 18
+    planned: 2
+  automation_coverage:
+    automated: 12
+    manual: 6
+    hybrid: 2
+
+# ============================================================================
+# Cross-Reference to Portfolio Initiatives
+# ============================================================================
+
+portfolio_mapping:
+  PORT-2026-001:
+    processes: [PROC-DEPLOY-001, PROC-QA-002]
+  PORT-2026-004:
+    processes: [PROC-EMAIL-001, PROC-MIGRATE-001]
+  PORT-2026-005:
+    processes: [PROC-COMM-001]
+  PORT-2026-007:
+    processes: [PROC-TAX-001, PROC-FINANCE-001]
+  PORT-2026-008:
+    processes: [PROC-GOVERN-001, PROC-AUDIT-001]
+  PORT-2026-009:
+    processes: [PROC-AUDIT-001, PROC-EVIDENCE-001]
+  PORT-2026-010:
+    processes: [PROC-INFRA-001, PROC-BACKUP-001]
+
+# ============================================================================
+# Metadata
+# ============================================================================
+
+process_levels:
+  L4: "Core business processes that deliver value"
+  L5: "Operational processes that support core business"
+  L6: "Control processes for governance and compliance"
+  L7: "Support processes (IT, HR, facilities)"
+
+artifact_requirements:
+  L4:
+    required: [sipoc, bpmn]
+    optional: [raci]
+  L5:
+    required: [documentation]
+    optional: [sipoc, automation]
+  L6:
+    required: [documentation, raci]
+    optional: [automation]
+  L7:
+    required: [documentation]
+    optional: [raci]
+
+naming_convention:
+  format: "PROC-<DOMAIN>-<NUMBER>"
+  domains:
+    AR: "Accounts Receivable / Order to Cash"
+    AP: "Accounts Payable / Procure to Pay"
+    TAX: "Tax compliance"
+    FINANCE: "Financial processes"
+    DEPLOY: "Deployment operations"
+    EMAIL: "Email services"
+    MIGRATE: "Service migrations"
+    BACKUP: "Backup procedures"
+    INFRA: "Infrastructure management"
+    QA: "Quality assurance"
+    COMM: "Communication platforms"
+    GOVERN: "Governance"
+    AUDIT: "Audit processes"
+    EVIDENCE: "Evidence collection"
+    RISK: "Risk management"
+    SUPPORT: "IT support"
+    TRAINING: "Training and onboarding"
+
+# vim: set ft=yaml:

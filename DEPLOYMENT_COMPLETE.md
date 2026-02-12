@@ -20,9 +20,9 @@
    - Categories: Finance, Project, WorkOS, Platform, AI, CRM, Integrations, Themes
 
 3. **✅ All Changes Deployed**
-   - Local repository: `/Users/tbwa/odoo-ce-fix`
-   - Production server: `root@159.223.75.148:/opt/odoo-ce`
-   - GitHub repository: https://github.com/jgtolentino/odoo-ce
+   - Local repository: `/Users/tbwa/odoo-fix`
+   - Production server: `root@159.223.75.148:/opt/odoo`
+   - GitHub repository: https://github.com/jgtolentino/odoo
 
 ---
 
@@ -30,7 +30,7 @@
 
 ### Local Environment (Mac)
 
-**Location**: `/Users/tbwa/odoo-ce-fix`
+**Location**: `/Users/tbwa/odoo-fix`
 
 **Odoo Instances**:
 - ✅ **Odoo Core** - http://localhost:8069 (Database: `odoo_core`)
@@ -42,10 +42,10 @@
 ### Production Environment
 
 **Server**: `root@159.223.75.148`
-**Location**: `/opt/odoo-ce`
+**Location**: `/opt/odoo`
 
 **Odoo Instance**:
-- ✅ **Odoo CE** - Container: `odoo-ce` (Database: `odoo`)
+- ✅ **Odoo CE** - Container: `odoo` (Database: `odoo`)
 
 **Status**: Latest commit `e5811d82` deployed
 

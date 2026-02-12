@@ -6,7 +6,7 @@
 |-------|-------|
 | PRD Version | v1.1.0 |
 | Ship Tag | `ship-aiux-v1.1.0` |
-| Repo | `jgtolentino/odoo-ce` |
+| Repo | `jgtolentino/odoo` |
 | Status | Ready to Ship |
 
 ---

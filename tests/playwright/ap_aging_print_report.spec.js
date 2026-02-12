@@ -171,7 +171,7 @@ test.describe('AP Aging Heatmap - Print Report & Visual Validation', () => {
     try {
       const ssimOutput = execSync(
         `node scripts/ssim.js --baseline "${baselinePath}" --current "${currentPath}"`,
-        { cwd: '/Users/tbwa/odoo-ce' }
+        { cwd: '/Users/tbwa/odoo' }
       ).toString();
 
       const ssimMatch = ssimOutput.match(/SSIM: ([\d.]+)/);
@@ -220,7 +220,7 @@ test.describe('AP Aging Heatmap - Print Report & Visual Validation', () => {
     try {
       const ssimOutput = execSync(
         `node scripts/ssim.js --baseline "${baselinePath}" --current "${currentPath}"`,
-        { cwd: '/Users/tbwa/odoo-ce' }
+        { cwd: '/Users/tbwa/odoo' }
       ).toString();
 
       const ssimMatch = ssimOutput.match(/SSIM: ([\d.]+)/);

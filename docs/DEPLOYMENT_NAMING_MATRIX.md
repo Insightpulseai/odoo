@@ -7,10 +7,10 @@ This document defines the canonical naming scheme for all resources across the I
 
 | Logical Component | Docker / Compose Name | Kubernetes Name(s) | DNS Record(s) | Image/Tag |
 |-------------------|----------------------|-------------------|---------------|-----------|
-| **Odoo Application** | `ipai-ce` | `odoo-deployment`, `odoo-service`, `odoo-ingress` | `erp.insightpulseai.com` | `ghcr.io/jgtolentino/odoo-ce:latest` |
+| **Odoo Application** | `ipai-ce` | `odoo-deployment`, `odoo-service`, `odoo-ingress` | `erp.insightpulseai.com` | `ghcr.io/jgtolentino/odoo:latest` |
 | **PostgreSQL Database** | `ipai-db` | `postgres-statefulset`, `postgres-service` | - | `postgres:16` |
 | **Keycloak (SSO)** | `keycloak` | `keycloak-deployment`, `keycloak-service`, `keycloak-ingress` | `auth.insightpulseai.com` | `quay.io/keycloak/keycloak:latest` |
-| **Network** | `odoo-ce_ipai_backend` | `odoo-prod` (namespace) | - | - |
+| **Network** | `odoo_ipai_backend` | `odoo-prod` (namespace) | - | - |
 
 ## Detailed Resource Specifications
 
@@ -19,7 +19,7 @@ This document defines the canonical naming scheme for all resources across the I
 #### Services
 - **Odoo**: `ipai-ce`
   - Container name: `ipai-ce`
-  - Image: `ghcr.io/jgtolentino/odoo-ce:latest`
+  - Image: `ghcr.io/jgtolentino/odoo:latest`
   - Port: `8069`
 
 - **PostgreSQL**: `ipai-db`
@@ -33,7 +33,7 @@ This document defines the canonical naming scheme for all resources across the I
   - Port: `8080`
 
 #### Networks
-- **Backend Network**: `odoo-ce_ipai_backend`
+- **Backend Network**: `odoo_ipai_backend`
   - Driver: `bridge`
   - Scope: `local`
 
@@ -114,7 +114,7 @@ This document defines the canonical naming scheme for all resources across the I
 ### Docker Compose
 ```bash
 # Production deployment
-cd /opt/odoo-ce
+cd /opt/odoo
 docker compose -f docker-compose.prod.yml up -d
 
 # Check status
@@ -138,7 +138,7 @@ kubectl get ingress -n odoo-prod
 - Database user `ipai` → `odoo`
 - Database name `ipai` → `odoo`
 - Container names remain `ipai-*` for backward compatibility
-- Network name remains `odoo-ce_ipai_backend` for compatibility
+- Network name remains `odoo_ipai_backend` for compatibility
 
 ## Compliance
 

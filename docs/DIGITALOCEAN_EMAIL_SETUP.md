@@ -119,7 +119,7 @@ SendGrid is a DigitalOcean partner and the easiest to set up.
 ssh root@your-droplet-ip
 
 # Navigate to project
-cd /root/odoo-ce
+cd /root/odoo
 
 # Run configuration script
 docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_sendgrid_smtp.py

@@ -57,7 +57,7 @@ INSERT INTO ipai_finance_bir_schedule (
     return sql_statements
 
 def main():
-    xml_file = '/Users/tbwa/odoo-ce/addons/ipai_finance_ppm/data/finance_bir_schedule_2026_full.xml'
+    xml_file = '/Users/tbwa/odoo/addons/ipai_finance_ppm/data/finance_bir_schedule_2026_full.xml'
 
     print("Parsing BIR schedule XML...", file=sys.stderr)
     records = parse_bir_xml(xml_file)

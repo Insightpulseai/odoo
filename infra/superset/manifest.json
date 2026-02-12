@@ -40,7 +40,7 @@
   },
 
   "_notes": {
-    "usage": "This manifest is the artifact contract between odoo-ce and superset repos",
+    "usage": "This manifest is the artifact contract between odoo and superset repos",
     "update": "Run the superset-bump workflow or manually update tag/digest",
     "no_submodule": "Superset is NOT a git submodule - it's a pinned container artifact"
   }

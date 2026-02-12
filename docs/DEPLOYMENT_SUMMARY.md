@@ -5,8 +5,8 @@
 
 ## Pull Requests
 
-### odoo-ce
-**PR**: https://github.com/jgtolentino/odoo-ce/pull/211
+### odoo
+**PR**: https://github.com/jgtolentino/odoo/pull/211
 **Branch**: `feat/deterministic-scss-verification`
 **Changes**: 16 files, 2,310 lines added
 
@@ -66,7 +66,7 @@ make provision-tbwa
 
 ### 4. Cross-Repo CI Integration
 
-**Workflow**: `.github/workflows/notify-superset.yml` (odoo-ce)
+**Workflow**: `.github/workflows/notify-superset.yml` (odoo)
 
 **Trigger**:
 - Schema changes in `supabase/migrations/`, `db/`, `sql/`
@@ -107,7 +107,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ```bash
 # Review and merge both PRs:
-# - odoo-ce PR #211
+# - odoo PR #211
 # - superset PR #13
 ```
 
@@ -130,7 +130,7 @@ psql "$POSTGRES_URL" -c "SELECT code, name, db_name, supabase_schema FROM ipai_t
 ### Step 3: Provision TBWA Tenant
 
 ```bash
-cd /path/to/odoo-ce
+cd /path/to/odoo
 
 # Set environment variables
 export ODOO_ADMIN_PASSWORD='secure_password'
@@ -164,14 +164,14 @@ make test-connection
 
 **Test Cross-Repo Trigger**:
 ```bash
-# 1. Create test schema change in odoo-ce
+# 1. Create test schema change in odoo
 echo "-- Test migration" > supabase/migrations/V999__test.sql
 git add supabase/migrations/V999__test.sql
 git commit -m "test: trigger Superset rebuild"
 git push origin main
 
-# 2. Check GitHub Actions in odoo-ce
-# https://github.com/jgtolentino/odoo-ce/actions
+# 2. Check GitHub Actions in odoo
+# https://github.com/jgtolentino/odoo/actions
 
 # 3. Check GitHub Actions in superset (should trigger within 30 seconds)
 # https://github.com/jgtolentino/superset/actions
@@ -258,7 +258,7 @@ psql "$POSTGRES_URL" -c "DELETE FROM ipai_tenant WHERE code = 'tbwa';"
 ### Rollback Code Changes
 
 ```bash
-# odoo-ce
+# odoo
 git revert ebf98906  # Revert multi-tenant architecture commit
 git push origin feat/deterministic-scss-verification
 

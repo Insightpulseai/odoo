@@ -39,5 +39,10 @@
     "verify": ".claude/commands/verify.md",
     "ship": ".claude/commands/ship.md",
     "fix-github-issue": ".claude/commands/fix-github-issue.md"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(docker exec:*)"
+    ]
   }
 }

@@ -27,7 +27,7 @@
     "version": "18.0.1.0.0",
     "category": "Accounting",
     "author": "IPAI / TBWA",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://github.com/jgtolentino/odoo",
     "license": "AGPL-3",
     "depends": [
         "base",

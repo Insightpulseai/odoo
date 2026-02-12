@@ -1,7 +1,7 @@
 {
   "$schema": "https://ipai.dev/schemas/odoo-addons-manifest-v1.json",
   "version": "1.0.0",
-  "project": "odoo-ce",
+  "project": "odoo",
   "odoo_version": "18.0",
   "source": {
     "oca": "./addons/oca",

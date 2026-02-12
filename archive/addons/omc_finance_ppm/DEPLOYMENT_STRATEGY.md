@@ -104,7 +104,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/odoo-ce-ppm
+  IMAGE_NAME: ${{ github.repository_owner }}/odoo-ppm
 
 jobs:
   smart-delta-check:
@@ -197,12 +197,12 @@ jobs:
 **Purpose**: Immutable, versioned artifact storage
 
 **Registry**: GitHub Container Registry (ghcr.io)
-**Image Naming**: `ghcr.io/jgtolentino/odoo-ce-ppm:v1.1.0`
+**Image Naming**: `ghcr.io/jgtolentino/odoo-ppm:v1.1.0`
 
 **Tagging Strategy**:
-- `main` → `ghcr.io/jgtolentino/odoo-ce-ppm:main`
-- `v1.1.0` → `ghcr.io/jgtolentino/odoo-ce-ppm:v1.1.0`
-- `sha-abc123` → `ghcr.io/jgtolentino/odoo-ce-ppm:sha-abc123`
+- `main` → `ghcr.io/jgtolentino/odoo-ppm:main`
+- `v1.1.0` → `ghcr.io/jgtolentino/odoo-ppm:v1.1.0`
+- `sha-abc123` → `ghcr.io/jgtolentino/odoo-ppm:sha-abc123`
 
 ### Stage 4: The Activation (Production Deployment)
 
@@ -218,7 +218,7 @@ jobs:
 ssh root@159.223.75.148
 
 # 2. Navigate to Odoo deployment directory
-cd /opt/odoo-ce
+cd /opt/odoo
 
 # 3. Pull latest image from GHCR
 docker compose pull
@@ -234,7 +234,7 @@ sleep 30
 curl -f https://erp.insightpulseai.com/web/health || exit 1
 
 # 7. Check module installation
-docker exec odoo-ce odoo -d production --list-modules | grep omc_finance_ppm
+docker exec odoo odoo -d production --list-modules | grep omc_finance_ppm
 ```
 
 ## Module Structure Analysis
@@ -316,8 +316,8 @@ omc_finance_ppm/
 - [ ] Create `Dockerfile.prod` with omc_finance_ppm baked in
 - [ ] Create `deploy/entrypoint.sh` with AUTO_UPGRADE logic
 - [ ] Create `deploy/odoo.conf` with production settings
-- [ ] Build image: `docker build -t ghcr.io/jgtolentino/odoo-ce-ppm:v1.1.0 .`
-- [ ] Test image locally: `docker run -p 8069:8069 ghcr.io/jgtolentino/odoo-ce-ppm:v1.1.0`
+- [ ] Build image: `docker build -t ghcr.io/jgtolentino/odoo-ppm:v1.1.0 .`
+- [ ] Test image locally: `docker run -p 8069:8069 ghcr.io/jgtolentino/odoo-ppm:v1.1.0`
 
 ### Phase 3: GitHub Actions CI/CD
 
@@ -344,7 +344,7 @@ omc_finance_ppm/
 **Deployment Steps**:
 1. [ ] SSH to production: `ssh root@159.223.75.148`
 2. [ ] Backup current database: `docker exec odoo-db pg_dump -U odoo -Fc production > backup_pre_omc_ppm.dump`
-3. [ ] Pull new image: `cd /opt/odoo-ce && docker compose pull`
+3. [ ] Pull new image: `cd /opt/odoo && docker compose pull`
 4. [ ] Update `docker-compose.yml`:
    ```yaml
    environment:
@@ -352,7 +352,7 @@ omc_finance_ppm/
      - UPGRADE_MODULES=omc_finance_ppm
    ```
 5. [ ] Deploy: `docker compose up -d --force-recreate`
-6. [ ] Monitor logs: `docker logs -f odoo-ce | grep -E 'omc_finance_ppm|Module loaded|ERROR'`
+6. [ ] Monitor logs: `docker logs -f odoo | grep -E 'omc_finance_ppm|Module loaded|ERROR'`
 7. [ ] Verify health: `curl -f https://erp.insightpulseai.com/web/health`
 8. [ ] Test dashboard: Navigate to `/web#action=omc_finance_ppm.dashboard_client_action`
 9. [ ] Validate data:

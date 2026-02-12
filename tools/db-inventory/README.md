@@ -227,4 +227,4 @@ python3 tools/db-inventory/inventory.py --verbose
 
 ## License
 
-Part of the odoo-ce project.
+Part of the odoo project.

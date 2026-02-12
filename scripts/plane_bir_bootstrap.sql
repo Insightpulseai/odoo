@@ -1,0 +1,277 @@
+-- Plane BIR Compliance Project Bootstrap
+-- Purpose: Create BIR compliance tracking structure in Plane with OKR labels
+-- Usage: Execute via Plane API or import manually in Plane UI
+
+-- ============================================================================
+-- PROJECT: bir-compliance-automation
+-- ============================================================================
+-- Description: Track all statutory BIR filing requirements with OKR structure
+-- Owner: Finance team
+-- Target: 100% on-time filings with audit-ready evidence
+
+-- Manual creation via Plane UI (recommended):
+-- 1. Create project "bir-compliance-automation" in workspace
+-- 2. Add modules (sub-projects):
+--    - bir-eservices-integration
+--    - bir-form-generation
+--    - bir-audit-trail
+-- 3. Create labels (see below)
+-- 4. Create OKR issues (see templates below)
+
+-- ============================================================================
+-- LABELS STRUCTURE
+-- ============================================================================
+-- Create these labels in Plane project settings
+
+-- OKR Labels
+-- okr:objective    - Top-level business objective
+-- okr:key-result   - Measurable key result
+-- okr:initiative   - Tactical initiative
+
+-- Area Labels
+-- area:compliance  - Statutory compliance requirement
+-- area:automation  - Process automation
+-- area:integration - System integration
+-- area:audit       - Audit trail and evidence
+
+-- Risk Labels
+-- risk:deliverability  - Delivery risk (late filing penalties)
+-- risk:accuracy        - Accuracy risk (incorrect computation)
+-- risk:evidence        - Evidence risk (audit trail gaps)
+
+-- Form Type Labels (36 BIR forms)
+-- form:1601c   - Withholding Tax Return (Monthly)
+-- form:2550m   - Monthly VAT Declaration
+-- form:2550q   - Quarterly VAT Declaration
+-- form:1604c   - Quarterly Expanded Withholding Tax Return
+-- form:1604e   - Annual Expanded Withholding Tax Return
+-- form:2307    - Certificate of Creditable Tax Withheld at Source
+-- form:0605    - Payment Form
+-- form:1700    - Annual Income Tax Return (Corporate)
+-- form:1701    - Annual Income Tax Return (Individual)
+-- form:1702    - Annual Income Tax Return (Partnership)
+-- form:2000    - Documentary Stamp Tax Return
+-- form:2000ow  - Documentary Stamp Tax Declaration (One-Time)
+
+-- Status Labels
+-- status:not-started
+-- status:in-progress
+-- status:filed
+-- status:acknowledged
+-- status:overdue
+
+-- ============================================================================
+-- OKR STRUCTURE (Create as Plane Issues)
+-- ============================================================================
+
+-- OBJECTIVE 1: All statutory filings on-time with audit-ready evidence
+-- Labels: okr:objective, area:compliance
+-- Priority: urgent
+-- Description:
+-- Achieve 100% on-time filing rate for all 36 BIR forms with complete
+-- audit trail and acknowledgement receipts for 10-year retention.
+--
+-- Success Criteria:
+-- - Zero late filings (0 penalties assessed)
+-- - 100% filing acknowledgements received and stored
+-- - 10-year audit trail operational with immutable evidence
+
+-- KEY RESULT 1.1: 100% filings submitted by deadline (0 late)
+-- Labels: okr:key-result, area:compliance, risk:deliverability
+-- Priority: urgent
+-- Parent: [Objective 1 issue ID]
+-- Description:
+-- Metric: (On-time filings / Total filings) * 100 = 100%
+-- Target: 0 late filings for 2026 calendar year
+-- Measurement: Weekly tracking via bir.filing.deadline status
+--
+-- Success Criteria:
+-- - All 1601-C filed by 10th of following month
+-- - All 2550M filed by 20th of following month
+-- - All 2550Q filed by 25th of month following quarter
+-- - Automated alerts 24h before deadline
+
+-- KEY RESULT 1.2: 100% filings have BIR acknowledgement receipts
+-- Labels: okr:key-result, area:audit, risk:evidence
+-- Priority: high
+-- Parent: [Objective 1 issue ID]
+-- Description:
+-- Metric: (Filings with acknowledgement / Total filings) * 100 = 100%
+-- Target: All filings have PDF acknowledgement receipt stored
+-- Measurement: bir.tax.return.acknowledgement_file field populated
+--
+-- Success Criteria:
+-- - eBIRForms submission receipts downloaded automatically
+-- - eFPS payment receipts linked to filing records
+-- - 10-year retention policy enforced
+-- - Receipts accessible via Odoo document management
+
+-- KEY RESULT 1.3: 10-year audit trail operational
+-- Labels: okr:key-result, area:audit, risk:evidence
+-- Priority: high
+-- Parent: [Objective 1 issue ID]
+-- Description:
+-- Metric: (Filings with complete audit trail / Total filings) * 100 = 100%
+-- Target: All filings have immutable audit trail for 10 years
+-- Measurement: bir.filing.audit_trail table completeness
+--
+-- Success Criteria:
+-- - All computation steps logged
+-- - All data sources tracked
+-- - All user actions recorded with timestamp
+-- - Audit trail immutable (no delete/edit after filing)
+
+-- INITIATIVE 1.1.1: eBIRForms API integration
+-- Labels: okr:initiative, area:integration, form:1601c, form:2550m
+-- Priority: urgent
+-- Parent: [Key Result 1.1 issue ID]
+-- Module: bir-eservices-integration
+-- Description:
+-- Automate submission to BIR eBIRForms portal for:
+-- - 1601-C (Monthly Withholding)
+-- - 2550M (Monthly VAT)
+-- - 2550Q (Quarterly VAT)
+--
+-- Tasks:
+-- - [ ] Reverse-engineer eBIRForms API endpoints
+-- - [ ] Implement authentication (BIR TIN + credentials)
+-- - [ ] Create submission payload formatters
+-- - [ ] Handle submission response and acknowledgement download
+-- - [ ] Implement error handling and retry logic
+-- - [ ] Store submission receipts in Odoo
+
+-- INITIATIVE 1.1.2: eFPS API integration
+-- Labels: okr:initiative, area:integration, form:0605
+-- Priority: urgent
+-- Parent: [Key Result 1.1 issue ID]
+-- Module: bir-eservices-integration
+-- Description:
+-- Automate tax payment via BIR eFPS (Electronic Filing and Payment System)
+--
+-- Tasks:
+-- - [ ] Reverse-engineer eFPS API endpoints
+-- - [ ] Implement payment submission workflow
+-- - [ ] Link payments to tax returns (form cross-reference)
+-- - [ ] Download payment receipts automatically
+-- - [ ] Reconcile payments with bank transactions
+
+-- INITIATIVE 1.2.1: 36 BIR form computation engines
+-- Labels: okr:initiative, area:automation
+-- Priority: high
+-- Parent: [Key Result 1.2 issue ID]
+-- Module: bir-form-generation
+-- Description:
+-- Implement automated computation for all 36 BIR forms
+-- Current status: Only 1601-C implemented
+-- Remaining: 35 forms
+--
+-- Tasks:
+-- - [ ] 2550M - Monthly VAT Declaration
+-- - [ ] 2550Q - Quarterly VAT Declaration
+-- - [ ] 1604-CF - Quarterly Expanded Withholding
+-- - [ ] 1604-E - Annual Expanded Withholding
+-- - [ ] 2307 - Certificate of Creditable Tax Withheld
+-- - [ ] 0605 - Payment Form
+-- - [ ] 1700 - Annual Income Tax Return (Corporate)
+-- - [ ] ... (31 more forms)
+
+-- INITIATIVE 1.3.1: Immutable audit trail system
+-- Labels: okr:initiative, area:audit, risk:evidence
+-- Priority: high
+-- Parent: [Key Result 1.3 issue ID]
+-- Module: bir-audit-trail
+-- Description:
+-- Implement 10-year immutable audit trail for all BIR filings
+--
+-- Tasks:
+-- - [ ] Create bir.filing.audit_trail model
+-- - [ ] Log all computation steps (source data, formulas, results)
+-- - [ ] Log all user actions (create, edit, file, void)
+-- - [ ] Implement immutability (no delete/edit after filing)
+-- - [ ] Create audit trail export (CSV, PDF)
+-- - [ ] Implement 10-year retention policy
+-- - [ ] Create audit trail search and report UI
+
+-- ============================================================================
+-- SYNC CONFIGURATION
+-- ============================================================================
+-- Supabase Edge Function: plane-sync
+-- Tables required:
+-- - plane.sync_mappings (bir.filing.deadline <-> Plane issue)
+-- - plane.sync_queue (pending sync operations)
+-- - plane.sync_log (sync history)
+
+-- Field mapping (bir.filing.deadline -> Plane issue):
+-- - form_type -> issue.name
+-- - description -> issue.description
+-- - deadline_date -> issue.due_date
+-- - status -> issue.state (pending=backlog, in_progress=started, filed=completed)
+-- - priority -> issue.priority (urgent=urgent, normal=medium)
+-- - labels -> issue.labels (form:1601c, area:compliance, etc.)
+
+-- Bidirectional sync:
+-- 1. Odoo bir.filing.deadline created -> Create Plane issue
+-- 2. Odoo deadline status changed -> Update Plane issue state
+-- 3. Plane issue state changed -> Update Odoo status
+-- 4. Plane issue assigned -> Update Odoo responsible_user_id
+
+-- ============================================================================
+-- MANUAL CREATION STEPS
+-- ============================================================================
+-- Since Plane API may have rate limits or auth complexity, recommend:
+--
+-- 1. Create project manually in Plane UI:
+--    - Name: "bir-compliance-automation"
+--    - Description: "Track all statutory BIR filing requirements"
+--    - Identifier: BIR
+--
+-- 2. Create 3 modules (sub-projects):
+--    - bir-eservices-integration (eBIRForms/eFPS API)
+--    - bir-form-generation (36 form computation engines)
+--    - bir-audit-trail (10-year immutable evidence)
+--
+-- 3. Create labels in project settings (copy from LABELS STRUCTURE above)
+--
+-- 4. Create OKR hierarchy manually:
+--    - Create Objective issue (parent)
+--    - Create 3 Key Result issues (children of Objective)
+--    - Create Initiative issues (children of Key Results)
+--    - Assign to modules and set priorities
+--
+-- 5. Configure Plane webhook in project settings:
+--    - Webhook URL: https://[supabase-project].functions.supabase.co/plane-sync?source=plane
+--    - Events: issue.created, issue.updated, issue.deleted
+--    - Secret: Store in Supabase Vault as PLANE_WEBHOOK_SECRET
+--
+-- 6. Configure Odoo module (ipai_bir_plane_sync):
+--    - Install module
+--    - Set system parameters:
+--      - plane.workspace_slug
+--      - plane.bir_project_id
+--    - Map existing deadlines to Plane issues (one-time sync)
+
+-- ============================================================================
+-- VERIFICATION QUERIES
+-- ============================================================================
+-- After setup, verify sync is working:
+
+-- Check Plane mapping table:
+-- SELECT * FROM plane.sync_mappings WHERE odoo_model = 'bir.filing.deadline';
+
+-- Check recent sync activity:
+-- SELECT * FROM plane.sync_log ORDER BY created_at DESC LIMIT 20;
+
+-- Check pending sync operations:
+-- SELECT * FROM plane.sync_queue WHERE status = 'pending';
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- This script documents the manual setup process since Plane API
+-- project/module creation may require UI interaction or admin privileges.
+--
+-- The Odoo module (ipai_bir_plane_sync) will handle automatic issue sync
+-- once the project structure is in place.
+--
+-- All 36 BIR forms will sync to Plane as issues with appropriate labels
+-- for filtering and OKR tracking.

@@ -1,8 +1,8 @@
-# Databricks Developer Workflow for odoo-ce
+# Databricks Developer Workflow for odoo
 
 ---
 
-**Purpose**: Define the complete developer workflow for integrating Azure Databricks with odoo-ce using modern developer tools, SDKs, and CI/CD patterns.
+**Purpose**: Define the complete developer workflow for integrating Azure Databricks with odoo using modern developer tools, SDKs, and CI/CD patterns.
 
 **Status**: IMPLEMENTATION READY
 **Created**: 2026-01-26
@@ -29,7 +29,7 @@
 │   ├── MLflow (ML lifecycle)                                     │
 │   └── SQL Warehouse (analytics)                                 │
 │       ↓                                     ↓                    │
-│   odoo-ce Integration                                           │
+│   odoo Integration                                           │
 │   ├── MCP Server (Claude Code)                                  │
 │   ├── n8n Workflows (automation)                                │
 │   ├── Odoo Modules (UI/business logic)                          │
@@ -60,7 +60,7 @@ code --install-extension databricks.databricks
   "databricks.workspace.profile": "DEFAULT",
   "databricks.python.envFile": "${workspaceFolder}/.env",
   "databricks.sync.enabled": true,
-  "databricks.sync.path": "/Shared/odoo-ce-integration"
+  "databricks.sync.path": "/Shared/odoo-integration"
 }
 ```
 
@@ -330,7 +330,7 @@ databricks fs cp dbfs:/delta/gold_transactions/_delta_log/00000000000000000000.j
 
 **Repository Layout**:
 ```
-odoo-ce/
+odoo/
 ├── databricks/                    # Databricks Asset Bundles
 │   ├── databricks.yml             # Bundle configuration
 │   ├── resources/
@@ -353,7 +353,7 @@ odoo-ce/
 **Bundle Configuration** (`databricks/databricks.yml`):
 ```yaml
 bundle:
-  name: odoo-ce-databricks
+  name: odoo-databricks
 
 resources:
   jobs:
@@ -469,7 +469,7 @@ jobs:
 
 **Step 1: Clone Repository**
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 git checkout -b feat/databricks-bir-etl
 ```
 
@@ -543,7 +543,7 @@ git commit -m "feat(databricks): add BIR ETL bronze ingestion"
 git push origin feat/databricks-bir-etl
 
 # GitHub Actions automatically deploys to Databricks
-# Check workflow: https://github.com/jgtolentino/odoo-ce/actions
+# Check workflow: https://github.com/jgtolentino/odoo/actions
 ```
 
 ---
@@ -636,7 +636,7 @@ resources:
 
 ---
 
-## Integration with odoo-ce
+## Integration with odoo
 
 ### MCP Server Development
 

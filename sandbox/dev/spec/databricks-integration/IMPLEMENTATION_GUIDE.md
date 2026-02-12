@@ -1,4 +1,4 @@
-# Databricks Implementation Guide for odoo-ce
+# Databricks Implementation Guide for odoo
 
 ---
 
@@ -52,13 +52,13 @@ Phase 4: Production (Weeks 13-16)
 ```bash
 # Prerequisites
 # - Azure subscription
-# - Resource group: odoo-ce-databricks
+# - Resource group: odoo-databricks
 # - Location: Southeast Asia (Singapore)
 
 # Create workspace via Azure CLI
 az databricks workspace create \
-  --resource-group odoo-ce-databricks \
-  --name odoo-ce-databricks-prod \
+  --resource-group odoo-databricks \
+  --name odoo-databricks-prod \
   --location southeastasia \
   --sku premium
 ```
@@ -266,7 +266,7 @@ credential = w.storage_credentials.create(
         application_id="<azure-app-id>",
         client_secret="<azure-client-secret>"
     ),
-    comment="Credential for odoo-ce Azure Storage"
+    comment="Credential for odoo Azure Storage"
 )
 
 print(f"Storage credential created: {credential.name}")
@@ -1037,7 +1037,7 @@ resources:
 targets:
   dev:
     workspace:
-      host: "https://odoo-ce-dev.azuredatabricks.net"
+      host: "https://odoo-dev.azuredatabricks.net"
     resources:
       jobs:
         bir_monthly_orchestration:
@@ -1046,7 +1046,7 @@ targets:
 
   prod:
     workspace:
-      host: "https://odoo-ce-prod.azuredatabricks.net"
+      host: "https://odoo-prod.azuredatabricks.net"
     resources:
       jobs:
         bir_monthly_orchestration:
@@ -1072,13 +1072,13 @@ targets:
 ```python
 # Service principal for n8n workflows
 w.service_principals.create(
-    display_name="odoo-ce-n8n",
+    display_name="odoo-n8n",
     application_id="<azure-app-id>"
 )
 
 # Service principal for Odoo
 w.service_principals.create(
-    display_name="odoo-ce-app",
+    display_name="odoo-app",
     application_id="<azure-app-id>"
 )
 ```
@@ -1086,12 +1086,12 @@ w.service_principals.create(
 **15.2 Grant Permissions**
 ```sql
 -- n8n: Can read silver/gold, write to bronze
-GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
-GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-ce-n8n`;
+GRANT SELECT ON CATALOG silver TO SERVICE_PRINCIPAL `odoo-n8n`;
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-n8n`;
+GRANT ALL PRIVILEGES ON CATALOG bronze TO SERVICE_PRINCIPAL `odoo-n8n`;
 
 -- Odoo: Read-only on gold
-GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-ce-app`;
+GRANT SELECT ON CATALOG gold TO SERVICE_PRINCIPAL `odoo-app`;
 
 -- Data Scientists: Full access to dev, read-only on prod
 GRANT ALL PRIVILEGES ON CATALOG dev TO GROUP `data_scientists`;

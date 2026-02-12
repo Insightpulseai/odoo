@@ -59,4 +59,10 @@ def ingest_docflow_review_record(
         timeout=int(os.getenv("ODOO_INGEST_TIMEOUT", "60")),
     )
     r.raise_for_status()
-    return r.json()
+    response = r.json()
+    # Unwrap JSON-RPC response
+    if "result" in response:
+        return response["result"]
+    elif "error" in response:
+        raise RuntimeError(f"Odoo ingestion error: {response['error']}")
+    return response

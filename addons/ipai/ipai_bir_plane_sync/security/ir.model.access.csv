@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bir_filing_deadline_plane_user,bir.filing.deadline.plane.user,ipai_bir_tax_compliance.model_bir_filing_deadline,base.group_user,1,0,0,0
+access_bir_filing_deadline_plane_manager,bir.filing.deadline.plane.manager,ipai_bir_tax_compliance.model_bir_filing_deadline,account.group_account_manager,1,1,1,0

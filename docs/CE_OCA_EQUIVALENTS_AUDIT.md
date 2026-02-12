@@ -5,9 +5,9 @@
 **Generated:** Sun Jan  4 09:02:24 UTC 2026
 
 **Addons Paths:**
-- Custom: `/home/user/odoo-ce/addons`
-- Custom (nested): `/home/user/odoo-ce/addons/ipai`
-- OCA: `/home/user/odoo-ce/external-src`
+- Custom: `/home/user/odoo/addons`
+- Custom (nested): `/home/user/odoo/addons/ipai`
+- OCA: `/home/user/odoo/external-src`
 - CE Core: `/usr/lib/python3/dist-packages/odoo/addons` (Docker image)
 
 ## Module Classification Summary
@@ -27,7 +27,7 @@
 | sale_management | sale_management | CE | `...-packages/odoo/addons/sale_management` | Y | Unknown | - | Odoo CE core module |
 | pos_restaurant | pos_restaurant | CE | `...t-packages/odoo/addons/pos_restaurant` | Y | Unknown | - | Odoo CE core module |
 | account | account | CE | `...on3/dist-packages/odoo/addons/account` | Y | Unknown | - | Odoo CE core module |
-| ipai_workos_core | IPAI Work OS Core | custom | `.../user/odoo-ce/addons/ipai_workos_core` | Y | Unknown | - | Custom IPAI module |
+| ipai_workos_core | IPAI Work OS Core | custom | `.../user/odoo/addons/ipai_workos_core` | Y | Unknown | - | Custom IPAI module |
 | crm | crm | CE | `...python3/dist-packages/odoo/addons/crm` | Y | Unknown | - | Odoo CE core module |
 | mrp_workorder | mrp_workorder | enterprise-only | `-` | Unknown | Unknown | mrp_multi_level, mrp_multi_level_estimate, mrp_production_request | Enterprise-only module (not available in CE). OCA:... |
 | website | website | CE | `...on3/dist-packages/odoo/addons/website` | Y | Unknown | - | Odoo CE core module |
@@ -50,12 +50,12 @@
 | data_recycle | data_recycle | enterprise-only | `-` | Unknown | Unknown | auto_backup, database_cleanup | Enterprise-only module (not available in CE). OCA:... |
 | ipai_bir_tax_compliance | IPAI BIR Tax Compliance | custom | `...doo-ce/addons/ipai_bir_tax_compliance` | Y | Unknown | - | Custom IPAI module |
 | ipai_close_orchestration | IPAI Close Cycle Orchestration | custom | `.../addons/ipai/ipai_close_orchestration` | Y | Unknown | - | Custom IPAI module |
-| ipai_finance_ppm | IPAI Finance PPM | custom | `.../odoo-ce/addons/ipai/ipai_finance_ppm` | Y | Unknown | - | Custom IPAI module |
+| ipai_finance_ppm | IPAI Finance PPM | custom | `.../odoo/addons/ipai/ipai_finance_ppm` | Y | Unknown | - | Custom IPAI module |
 | ipai_finance_ppm_golive | Finance PPM Go-Live Checklist | custom | `...doo-ce/addons/ipai_finance_ppm_golive` | Y | Unknown | - | Custom IPAI module |
-| ipai_month_end | IPAI Month-End Closing | custom | `/home/user/odoo-ce/addons/ipai_month_end` | Y | Unknown | - | Custom IPAI module |
-| ipai_ppm_a1 | IPAI PPM A1 Control Center | custom | `.../user/odoo-ce/addons/ipai/ipai_ppm_a1` | Y | Unknown | - | Custom IPAI module |
+| ipai_month_end | IPAI Month-End Closing | custom | `/home/user/odoo/addons/ipai_month_end` | Y | Unknown | - | Custom IPAI module |
+| ipai_ppm_a1 | IPAI PPM A1 Control Center | custom | `.../user/odoo/addons/ipai/ipai_ppm_a1` | Y | Unknown | - | Custom IPAI module |
 | ipai_superset_connector | IPAI Superset Connector | custom | `...doo-ce/addons/ipai_superset_connector` | Y | Unknown | - | Custom IPAI module |
-| ipai_tbwa_finance | IPAI TBWA Finance | custom | `...user/odoo-ce/addons/ipai_tbwa_finance` | Y | Unknown | - | Custom IPAI module |
+| ipai_tbwa_finance | IPAI TBWA Finance | custom | `...user/odoo/addons/ipai_tbwa_finance` | Y | Unknown | - | Custom IPAI module |
 | maintenance | maintenance | CE | `...dist-packages/odoo/addons/maintenance` | Y | Unknown | - | Odoo CE core module |
 | marketing_card | marketing_card | enterprise-only | `-` | Unknown | Unknown | - | Enterprise-only module (not available in CE). OCA:... |
 | sign | sign | enterprise-only | `-` | Unknown | Unknown | - | Enterprise-only module (not available in CE). OCA:... |
@@ -87,7 +87,7 @@
 | website_hr_recruitment | website_hr_recruitment | CE | `...es/odoo/addons/website_hr_recruitment` | Y | Unknown | - | Odoo CE core module |
 | sale_amazon | sale_amazon | enterprise-only | `-` | Unknown | Unknown | - | Enterprise-only module (not available in CE). OCA:... |
 | hr_contract | hr_contract | CE | `...dist-packages/odoo/addons/hr_contract` | Y | Unknown | - | Odoo CE core module |
-| ipai_workos_affine | IPAI WorkOS - AFFiNE Clone (Umbrella) | custom | `...ser/odoo-ce/addons/ipai_workos_affine` | Y | Unknown | - | Custom IPAI module |
+| ipai_workos_affine | IPAI WorkOS - AFFiNE Clone (Umbrella) | custom | `...ser/odoo/addons/ipai_workos_affine` | Y | Unknown | - | Custom IPAI module |
 
 ## Enterprise-Only Modules (Compliance Risk)
 

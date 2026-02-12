@@ -5,4 +5,4 @@ metadata:
   labels:
     name: odoo-prod
     environment: production
-    app: odoo-ce
+    app: odoo

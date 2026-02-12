@@ -75,7 +75,7 @@ conn = psycopg2.connect(
 
 3. **Test Import Script:**
    ```bash
-   ssh ubuntu@159.223.75.148 "cd /opt/odoo-ce && docker exec odoo-odoo-1 python3 /tmp/import_november_wbs.py"
+   ssh ubuntu@159.223.75.148 "cd /opt/odoo && docker exec odoo-odoo-1 python3 /tmp/import_november_wbs.py"
    ```
 
 ## Additional Recommendations

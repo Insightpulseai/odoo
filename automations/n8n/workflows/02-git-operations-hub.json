@@ -20,7 +20,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Normalize input - handle both direct and nested body from MCP\nconst input = $input.first().json;\n\n// MCP sends data nested in body, direct webhook sends at root\nconst data = input.body || input;\n\nreturn {\n  json: {\n    operation: data.operation || 'list-commits',\n    owner: data.owner || 'jgtolentino',\n    repo: data.repo || 'odoo-ce',\n    branch: data.branch || 'main',\n    title: data.title || '',\n    body: data.body_text || data.description || '',\n    labels: data.labels || [],\n    workflow_id: data.workflow_id || 'deploy.yml',\n    ref: data.ref || 'main'\n  }\n};"
+        "jsCode": "// Normalize input - handle both direct and nested body from MCP\nconst input = $input.first().json;\n\n// MCP sends data nested in body, direct webhook sends at root\nconst data = input.body || input;\n\nreturn {\n  json: {\n    operation: data.operation || 'list-commits',\n    owner: data.owner || 'jgtolentino',\n    repo: data.repo || 'odoo',\n    branch: data.branch || 'main',\n    title: data.title || '',\n    body: data.body_text || data.description || '',\n    labels: data.labels || [],\n    workflow_id: data.workflow_id || 'deploy.yml',\n    ref: data.ref || 'main'\n  }\n};"
       },
       "id": "normalize-input",
       "name": "Normalize Input",

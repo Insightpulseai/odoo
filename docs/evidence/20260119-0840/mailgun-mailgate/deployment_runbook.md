@@ -16,7 +16,7 @@ added to `ipai_enterprise_bridge` module.
 ### 1. Pull Latest Code
 
 ```bash
-cd /opt/odoo-ce/repo  # or appropriate path
+cd /opt/odoo/repo  # or appropriate path
 git fetch origin claude/deploy-odoo-enterprise-bridge-RbvGm
 git checkout claude/deploy-odoo-enterprise-bridge-RbvGm
 git pull origin claude/deploy-odoo-enterprise-bridge-RbvGm

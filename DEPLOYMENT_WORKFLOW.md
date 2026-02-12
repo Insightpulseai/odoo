@@ -97,7 +97,7 @@ ls -lh backups/pre-v0.9.1-$(date +%Y%m%d_%H%M%S)/
 **On your local machine or CI runner:**
 
 ```bash
-cd ~/odoo-ce  # Your repo directory
+cd ~/odoo  # Your repo directory
 
 # Copy fixed Dockerfile
 # Option A: If you have the audit outputs
@@ -121,10 +121,10 @@ cat Dockerfile
 ### ☐ Step 2.2: Build Image
 
 ```bash
-cd ~/odoo-ce
+cd ~/odoo
 
 # Set image tag
-export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.1
+export IMAGE=ghcr.io/jgtolentino/odoo:v0.9.1
 
 # Build with automated script
 ./scripts/build_v0.9.1.sh
@@ -148,15 +148,15 @@ export IMAGE=ghcr.io/jgtolentino/odoo-ce:v0.9.1
 **Verification:**
 ```bash
 # Check image size
-docker images | grep odoo-ce
+docker images | grep odoo
 # Expected: ~1.3-1.5GB
 
 # Verify health check
-docker inspect ghcr.io/jgtolentino/odoo-ce:v0.9.1 --format='{{.Config.Healthcheck}}'
+docker inspect ghcr.io/jgtolentino/odoo:v0.9.1 --format='{{.Config.Healthcheck}}'
 # Expected: HEALTHCHECK configuration
 
 # Verify ENV vars
-docker inspect ghcr.io/jgtolentino/odoo-ce:v0.9.1 --format='{{range .Config.Env}}{{println .}}{{end}}' | grep "HOST\|PORT\|USER"
+docker inspect ghcr.io/jgtolentino/odoo:v0.9.1 --format='{{range .Config.Env}}{{println .}}{{end}}' | grep "HOST\|PORT\|USER"
 # Expected: HOST=db, PORT=5432, USER=odoo, etc.
 ```
 
@@ -179,7 +179,7 @@ cd ~/odoo-prod
 cp /path/to/deploy/docker-compose.prod.yml ./
 
 # Option B: Update existing file
-sed -i 's|image: ghcr.io/jgtolentino/odoo-ce:.*|image: ghcr.io/jgtolentino/odoo-ce:v0.9.1|g' docker-compose.yml
+sed -i 's|image: ghcr.io/jgtolentino/odoo:.*|image: ghcr.io/jgtolentino/odoo:v0.9.1|g' docker-compose.yml
 
 # Create .env.production from template
 cp /path/to/deploy/.env.production.template .env.production
@@ -221,7 +221,7 @@ docker compose ps
 **Expected Output:**
 ```
 NAME      IMAGE                                  STATUS
-odoo-ce   ghcr.io/jgtolentino/odoo-ce:v0.9.1    Up (healthy)
+odoo   ghcr.io/jgtolentino/odoo:v0.9.1    Up (healthy)
 odoo-db   postgres:16                            Up (healthy)
 ```
 
@@ -255,15 +255,15 @@ curl -I http://127.0.0.1:8069/web
 # Expected: HTTP 200 or 302
 
 # 3. Container health
-docker inspect odoo-ce --format='{{.State.Health.Status}}'
+docker inspect odoo --format='{{.State.Health.Status}}'
 # Expected: healthy
 
 # 4. Logs clean
-docker logs odoo-ce --tail 50 | grep -i "error\|critical"
+docker logs odoo --tail 50 | grep -i "error\|critical"
 # Expected: No critical errors
 
 # 5. Resource usage
-docker stats odoo-ce --no-stream
+docker stats odoo --no-stream
 # Expected: MEM < 2GB, CPU < 50%
 ```
 
@@ -302,7 +302,7 @@ docker stats odoo-ce --no-stream
 
 ```bash
 # Install/Update custom modules
-docker exec odoo-ce odoo-bin -c /etc/odoo/odoo.conf \
+docker exec odoo odoo-bin -c /etc/odoo/odoo.conf \
   -d odoo \
   -u ipai_expense,ipai_ocr_expense,ipai_finance_monthly_closing \
   --stop-after-init
@@ -399,10 +399,10 @@ ssh root@159.223.75.148
 docker compose ps
 
 # 2. Resource usage
-docker stats odoo-ce --no-stream
+docker stats odoo --no-stream
 
 # 3. Error count
-docker logs odoo-ce --since 6h 2>&1 | grep -c "ERROR\|CRITICAL"
+docker logs odoo --since 6h 2>&1 | grep -c "ERROR\|CRITICAL"
 
 # 4. Response time
 time curl -sf http://127.0.0.1:8069/web/health
@@ -412,7 +412,7 @@ df -h /
 ```
 
 **Action if issues found:**
-- Review logs: `docker logs odoo-ce --tail 200`
+- Review logs: `docker logs odoo --tail 200`
 - Check resources: `htop` or `docker stats`
 - Escalate if needed to Jake Tolentino
 

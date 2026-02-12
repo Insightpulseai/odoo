@@ -25,7 +25,7 @@ supabase link --project-ref spdtwktxdalcfigzeqrz
 **Migration**: `202511210001_finance_closing_snapshots.sql`
 
 ```bash
-cd /Users/tbwa/odoo-ce/notion-n8n-monthly-close/supabase
+cd /Users/tbwa/odoo/notion-n8n-monthly-close/supabase
 
 # Apply migration to production
 supabase db push --include-all
@@ -69,7 +69,7 @@ supabase secrets list
 ### 2.2 Deploy Function
 
 ```bash
-cd /Users/tbwa/odoo-ce/notion-n8n-monthly-close/supabase
+cd /Users/tbwa/odoo/notion-n8n-monthly-close/supabase
 
 # Deploy function
 supabase functions deploy closing-snapshot

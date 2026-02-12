@@ -1,0 +1,757 @@
+---
+# TRACEABILITY_INDEX.yaml
+# Cross-layer traceability mapping for enterprise operating model
+# Format: <LAYER>-<DOMAIN>-<NUMBER>
+# Layers: STRAT (strategy), OKR (objectives), PORT (portfolio), PROC (process), CTRL (control), EVID (evidence)
+
+version: "1.1.0"
+last_updated: "2026-02-12T20:30:00Z"
+
+# ============================================================================
+# Strategy Layer → Portfolio Initiatives
+# ============================================================================
+
+strategies:
+  STRAT-PARITY-001:
+    name: "Odoo EE Parity via CE + OCA + IPAI"
+    objective: "Achieve >=80% enterprise parity without proprietary dependencies"
+    owner: platform_team
+    initiatives:
+      - PORT-2026-001
+      - PORT-2026-007
+      - PORT-2026-010
+
+  STRAT-OPS-001:
+    name: "Infrastructure Reliability and Governance"
+    objective: "Establish enterprise-grade operational controls and evidence"
+    owner: devops_team
+    initiatives:
+      - PORT-2026-008
+      - PORT-2026-009
+      - PORT-2026-010
+
+  STRAT-INTEGRATION-001:
+    name: "Best-of-Breed Integration Architecture"
+    objective: "Replace monolithic EE with composable integration layer"
+    owner: integration_team
+    initiatives:
+      - PORT-2026-004
+      - PORT-2026-005
+
+# ============================================================================
+# OKRs (H1 2026) → Strategies & Portfolio Initiatives
+# ============================================================================
+
+okrs:
+  OBJ-1:
+    name: "Establish a verifiable, audit-grade enterprise operating model with zero hallucinated capabilities"
+    owner: enterprise_architecture
+    priority: high
+    status: in_progress
+    progress: 70
+    portfolio_initiatives:
+      - PORT-2026-011  # Integration Hardening & Compliance
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-1.1: "100% of agent capabilities are backed by code evidence (85% current)"
+      - KR-1.2: "0 unverified capability claims merged into default branch (✅ 100%)"
+      - KR-1.3: "All governance artifacts stored as immutable evidence (✅ 100%)"
+      - KR-1.4: "Policy enforcement blocks forbidden operations in CI (✅ 100%)"
+      - KR-1.5: "Traceability index links strategy → portfolio → evidence (80% current)"
+
+  OBJ-2:
+    name: "Reverse Odoo.sh safely using a CI-first, browser-safe control plane"
+    owner: devops_platform_engineering
+    priority: high
+    status: in_progress
+    progress: 60
+    portfolio_initiatives:
+      - PORT-2026-008  # OdooOps Automation
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-2.1: "Odoo operations executable without Docker or host CLI (3 ops pending)"
+      - KR-2.2: "Policy-enforced separation of execution contexts (75% current)"
+      - KR-2.3: "Odoo dev + ops stacks classified and governed (✅ 90%)"
+      - KR-2.4: "Automated backup and snapshot scripts exist and are executable (pending)"
+      - KR-2.5: "Evidence of OdooOps automation stored and indexed (2/5 workflows)"
+
+  OBJ-3:
+    name: "Position Odoo CE + OCA as the system-of-record, not the control plane"
+    owner: enterprise_architecture
+    priority: high
+    status: in_progress
+    progress: 85
+    portfolio_initiatives:
+      - PORT-2026-001  # Odoo CE Baseline
+    strategies:
+      - STRAT-PARITY-001
+    key_results:
+      - KR-3.1: "Odoo CE + OCA covers ≥80% of functional ERP needs (✅ 85%)"
+      - KR-3.2: "No heavy PPM or governance logic embedded in Odoo UI (✅ 0 KB)"
+      - KR-3.3: "Only one thin custom bridge module allowed (✅ 0 violations)"
+      - KR-3.4: "All enterprise controls live outside Odoo (✅ 100%)"
+      - KR-3.5: "ERP changes trace back to portfolio initiatives (90% current)"
+
+  OBJ-4:
+    name: "Implement portfolio & execution governance without Enterprise bloat"
+    owner: portfolio_management_office
+    priority: high
+    status: in_progress
+    progress: 70
+    portfolio_initiatives:
+      - PORT-2026-005  # Plane Integration
+    strategies:
+      - STRAT-INTEGRATION-001
+    key_results:
+      - KR-4.1: "Plane used as the execution system (✅ 95% uptime)"
+      - KR-4.2: "OKRs explicitly defined and reviewable (✅ 100%)"
+      - KR-4.3: "Each initiative maps to at least one evidence artifact (✅ 100%)"
+      - KR-4.4: "Supabase acts as SSOT for ops & control data (✅ 90%)"
+      - KR-4.5: "GitHub remains the immutable source of truth (✅ 100%)"
+
+  OBJ-5:
+    name: "Enforce a no-illusion AI operating policy across all agent interactions"
+    owner: ai_governance
+    priority: critical
+    status: in_progress
+    progress: 80
+    portfolio_initiatives:
+      - PORT-2026-011  # Integration Hardening & Compliance
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-5.1: "Agents cannot claim capabilities without code paths (85% current)"
+      - KR-5.2: "Unverified claims are automatically removed (✅ 100%)"
+      - KR-5.3: "Claude Code Web operates under hard constraints (✅ 0 violations)"
+      - KR-5.4: "All agent outputs are classifiable and reviewable (75% current)"
+      - KR-5.5: "Governance evidence generated per enforcement change (✅ 100%)"
+
+  OBJ-6:
+    name: "Create a scalable path from single-repo execution to enterprise Dataverse platform"
+    owner: platform_architecture
+    priority: medium
+    status: in_progress
+    progress: 60
+    portfolio_initiatives:
+      - PORT-2026-003  # Monorepo Architecture
+    strategies:
+      - STRAT-PARITY-001
+    key_results:
+      - KR-6.1: "All work executable from a single Odoo-centric monorepo (✅ 0 deps)"
+      - KR-6.2: "Clear boundaries defined for future repo split (80% current)"
+      - KR-6.3: "No architectural dead-ends introduced (✅ 0 dead-ends)"
+      - KR-6.4: "URLs and deployment model standardized (✅ 100%)"
+      - KR-6.5: "Enterprise expansion does not require re-architecture (✅ 0 needs)"
+
+  OBJ-7:
+    name: "Maintain continuous governance health & compliance posture"
+    owner: governance_office
+    priority: high
+    status: in_progress
+    progress: 75
+    portfolio_initiatives:
+      - PORT-2026-009  # Governance Framework
+    strategies:
+      - STRAT-OPS-001
+    key_results:
+      - KR-7.1: "All PRs pass policy + capability CI gates (✅ 100%)"
+      - KR-7.2: "Evidence index updated with every material change (✅ 100%)"
+      - KR-7.3: "No undocumented operational stacks (✅ 100%)"
+      - KR-7.4: "No manual production changes without evidence (✅ 0 changes)"
+      - KR-7.5: "Quarterly governance snapshot reproducible from repo (✅ 100%)"
+
+# ============================================================================
+# Portfolio Initiatives → Execution + Controls + Evidence
+# ============================================================================
+
+portfolio_initiatives:
+  PORT-2026-001:
+    name: "Odoo.sh-Grade Deployment Infrastructure"
+    type: capability
+    status: in_progress
+    owner: platform_team
+    strategy: STRAT-PARITY-001
+    description: "Deploy CE with OCA modules matching Odoo.sh reliability"
+
+    processes:
+      - PROC-DEPLOY-001  # Deployment automation
+      - PROC-QA-002      # Quality gates
+
+    execution:
+      - path: scripts/gates/run_parity_gates.sh
+        type: script
+      - path: .github/workflows/tier-0-gates.yml
+        type: workflow
+      - path: scripts/deploy/prod-deploy.sh
+        type: script
+
+    controls:
+      - CTRL-GATE-001    # Architecture review gate
+      - CTRL-SEC-004     # Security approval gate
+      - CTRL-DEPLOY-001  # Deployment checklist
+
+    evidence:
+      - EVID-20260212-001
+      - EVID-20260212-002
+
+  PORT-2026-004:
+    name: "Email Infrastructure Modernization"
+    type: capability
+    status: complete
+    owner: integration_team
+    strategy: STRAT-INTEGRATION-001
+    description: "Migrate from Mailgun to Zoho Mail SMTP"
+
+    processes:
+      - PROC-EMAIL-001   # Email service management
+      - PROC-MIGRATE-001 # Service migration
+
+    execution:
+      - path: scripts/migrate/mailgun-cleanup.sh
+        type: script
+      - path: addons/ipai/ipai_email_bridge/
+        type: module
+
+    controls:
+      - CTRL-DOC-001     # Documentation requirement
+      - CTRL-TEST-001    # Testing validation
+
+    evidence:
+      - EVID-20260212-003
+
+    decisions:
+      - ADR-001-zoho-mail
+
+  PORT-2026-005:
+    name: "Communication Platform Consolidation"
+    type: capability
+    status: complete
+    owner: integration_team
+    strategy: STRAT-INTEGRATION-001
+    description: "Consolidate from Mattermost to Slack"
+
+    processes:
+      - PROC-COMM-001    # Communication platform management
+
+    execution:
+      - path: addons/ipai/ipai_slack_connector/
+        type: module
+
+    controls:
+      - CTRL-DEPR-001    # Deprecation policy
+
+    evidence:
+      - EVID-20260128-001
+
+  PORT-2026-007:
+    name: "BIR Tax Compliance Automation"
+    type: feature
+    status: in_progress
+    owner: finance_team
+    strategy: STRAT-PARITY-001
+    description: "Philippine BIR 1601-C and 2550Q automation"
+
+    processes:
+      - PROC-TAX-001     # Tax filing process
+      - PROC-FINANCE-001 # Financial close process
+
+    execution:
+      - path: addons/ipai/ipai_bir_compliance/
+        type: module
+      - path: specs/bir-tax-compliance/
+        type: spec_bundle
+
+    controls:
+      - CTRL-FINANCE-001 # Financial approval
+      - CTRL-AUDIT-001   # Audit trail requirement
+
+    evidence:
+      - docs/evidence/bir-compliance/
+
+  PORT-2026-008:
+    name: "GitHub Organization Restructuring"
+    type: governance
+    status: in_progress
+    owner: devops_team
+    strategy: STRAT-OPS-001
+    description: "Implement 7-layer enterprise operating model (Signavio + Master Control + PPM)"
+
+    processes:
+      - PROC-GOVERN-001  # Governance framework
+      - PROC-AUDIT-001   # Audit process
+
+    execution:
+      - path: docs/strategy/
+        type: documentation
+      - path: docs/portfolio/
+        type: documentation
+      - path: docs/process/
+        type: documentation
+      - path: docs/control/
+        type: documentation
+      - path: docs/evidence/
+        type: documentation
+      - path: docs/integration/
+        type: documentation
+
+    controls:
+      - CTRL-TRACE-001   # Traceability requirement
+      - CTRL-DOC-002     # Documentation standards
+
+    evidence:
+      - EVID-20260212-004
+
+  PORT-2026-009:
+    name: "Evidence Indexing and Audit Trail"
+    type: governance
+    status: in_progress
+    owner: compliance_team
+    strategy: STRAT-OPS-001
+    description: "Formalize evidence layer with cross-reference indexing"
+
+    processes:
+      - PROC-AUDIT-001   # Audit process
+      - PROC-EVIDENCE-001 # Evidence collection
+
+    execution:
+      - path: docs/evidence/index.yaml
+        type: index
+      - path: scripts/governance/audit-report.sh
+        type: script
+
+    controls:
+      - CTRL-AUDIT-001   # Audit trail requirement
+      - CTRL-IMMUTABLE-001 # Immutable evidence
+
+    evidence:
+      - docs/evidence/*/  # All timestamped evidence
+
+  PORT-2026-010:
+    name: "Docker Infrastructure Formalization"
+    type: infrastructure
+    status: in_progress
+    owner: devops_team
+    strategy: STRAT-OPS-001
+    description: "Document and harden Docker container orchestration"
+
+    processes:
+      - PROC-INFRA-001   # Infrastructure management
+      - PROC-BACKUP-001  # Backup procedures
+
+    execution:
+      - path: docs/integration/docker-infrastructure.md
+        type: documentation
+      - path: scripts/docker/backup-plane.sh
+        type: script
+      - path: docs/integration/plane-compose-hardening.patch.yml
+        type: configuration
+
+    controls:
+      - CTRL-SOP-003     # Docker container management SOP
+      - CTRL-BACKUP-001  # Backup validation
+
+    evidence:
+      - EVID-20260212-005
+
+  PORT-2026-011:
+    name: "Integration Hardening & Compliance"
+    type: capability
+    status: in_progress
+    owner: integration_team
+    strategy: STRAT-OPS-001
+    description: "BIR forms registry, TBWA email integration, Plane OKR automation, NO_CLI_NO_DOCKER enforcement, Supabase feature rubric"
+
+    processes:
+      - PROC-COMPLY-001  # Compliance workflows
+      - PROC-INTEG-002   # Integration patterns
+      - PROC-GOVERN-001  # Governance framework
+
+    execution:
+      - path: scripts/bir/scrape-bir-forms.ts
+        type: script
+      - path: scripts/plane/bootstrap-workspace.ts
+        type: script
+      - path: scripts/gates/scan-forbidden-commands.sh
+        type: script
+      - path: .github/workflows/bir-forms-scraper.yml
+        type: workflow
+      - path: .github/workflows/no-cli-no-docker-gate.yml
+        type: workflow
+
+    controls:
+      - CTRL-DOC-002     # Documentation standards
+      - CTRL-GATE-003    # CI gate enforcement
+      - CTRL-SOP-004     # Policy compliance
+
+    evidence:
+      - EVID-20260212-006
+
+    okr_links:
+      - OBJ-1  # Verifiable enterprise operating model
+      - OBJ-5  # No-illusion AI operating policy
+
+# ============================================================================
+# Process Definitions (L4-L7 hierarchy)
+# ============================================================================
+
+processes:
+  PROC-DEPLOY-001:
+    name: "Deployment Automation Process"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Automated deployment with gates and rollback"
+    controls: [CTRL-GATE-001, CTRL-DEPLOY-001]
+
+  PROC-EMAIL-001:
+    name: "Email Service Management"
+    level: L5
+    owner: integration_team
+    type: operational
+    description: "Email provider configuration and monitoring"
+    controls: [CTRL-DOC-001]
+
+  PROC-TAX-001:
+    name: "Tax Filing Process"
+    level: L4
+    owner: finance_team
+    type: core_business
+    description: "BIR tax form generation and submission"
+    controls: [CTRL-FINANCE-001, CTRL-AUDIT-001]
+
+  PROC-GOVERN-001:
+    name: "Governance Framework"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Enterprise operating model governance"
+    controls: [CTRL-TRACE-001, CTRL-DOC-002]
+
+  PROC-INFRA-001:
+    name: "Infrastructure Management"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Docker container orchestration and lifecycle"
+    controls: [CTRL-SOP-003, CTRL-BACKUP-001]
+
+  PROC-AUDIT-001:
+    name: "Audit Process"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Evidence collection and audit reporting"
+    controls: [CTRL-AUDIT-001, CTRL-IMMUTABLE-001]
+
+  PROC-EVIDENCE-001:
+    name: "Evidence Collection Process"
+    level: L6
+    owner: compliance_team
+    type: control
+    description: "Timestamped evidence artifacts with cross-references"
+    controls: [CTRL-IMMUTABLE-001]
+
+  PROC-BACKUP-001:
+    name: "Backup Procedures"
+    level: L5
+    owner: devops_team
+    type: operational
+    description: "Automated backup and recovery for critical systems"
+    controls: [CTRL-BACKUP-001]
+
+# ============================================================================
+# Control Definitions
+# ============================================================================
+
+controls:
+  CTRL-GATE-001:
+    name: "Architecture Review Gate"
+    type: approval
+    trigger: portfolio_initiative_phase == "design"
+    approvers: [architect_role]
+    criteria:
+      - scalability_assessed
+      - security_reviewed
+      - cost_estimated
+    enforced_by: .github/workflows/architecture-gate.yml
+
+  CTRL-SEC-004:
+    name: "Security Approval Gate"
+    type: approval
+    trigger: deployment_to_production
+    approvers: [security_role]
+    criteria:
+      - vulnerability_scan_passed
+      - secrets_audit_clean
+      - access_controls_verified
+    enforced_by: .github/workflows/security-gate.yml
+
+  CTRL-DEPLOY-001:
+    name: "Deployment Checklist"
+    type: validation
+    trigger: pre_deployment
+    criteria:
+      - all_tests_passed
+      - documentation_updated
+      - rollback_plan_defined
+    enforced_by: scripts/gates/run_parity_gates.sh
+
+  CTRL-DOC-001:
+    name: "Documentation Requirement"
+    type: validation
+    trigger: code_change
+    criteria:
+      - readme_updated
+      - api_docs_current
+      - examples_provided
+    enforced_by: .github/workflows/doc-gate.yml
+
+  CTRL-FINANCE-001:
+    name: "Financial Approval"
+    type: approval
+    trigger: financial_transaction
+    approvers: [finance_director_role]
+    criteria:
+      - budget_approved
+      - accounting_validated
+    enforced_by: addons/ipai/ipai_finance_approval/
+
+  CTRL-AUDIT-001:
+    name: "Audit Trail Requirement"
+    type: validation
+    trigger: critical_operation
+    criteria:
+      - action_logged
+      - evidence_captured
+      - timestamp_immutable
+    enforced_by: scripts/governance/audit-report.sh
+
+  CTRL-TRACE-001:
+    name: "Traceability Requirement"
+    type: validation
+    trigger: pr_creation
+    criteria:
+      - frontmatter_present
+      - ids_valid
+      - cross_references_exist
+    enforced_by: .github/workflows/traceability-bot.yml
+
+  CTRL-DOC-002:
+    name: "Documentation Standards"
+    type: validation
+    trigger: documentation_change
+    criteria:
+      - layer_readme_complete
+      - id_conventions_followed
+      - cross_links_valid
+    enforced_by: .github/workflows/doc-standards.yml
+
+  CTRL-SOP-003:
+    name: "Docker Container Management SOP"
+    type: policy
+    trigger: container_operation
+    criteria:
+      - resource_limits_defined
+      - network_isolation_enabled
+      - backup_configured
+    enforced_by: docs/control/policies/SOP-003-docker-container-management.md
+
+  CTRL-BACKUP-001:
+    name: "Backup Validation"
+    type: validation
+    trigger: daily
+    criteria:
+      - backup_completed
+      - retention_enforced
+      - restore_tested
+    enforced_by: scripts/docker/backup-plane.sh
+
+  CTRL-IMMUTABLE-001:
+    name: "Immutable Evidence"
+    type: policy
+    trigger: evidence_creation
+    criteria:
+      - timestamp_present
+      - write_once_read_many
+      - no_modification_allowed
+    enforced_by: docs/control/policies/SOP-004-evidence-immutability.md
+
+  CTRL-DEPR-001:
+    name: "Deprecation Policy"
+    type: policy
+    trigger: service_removal
+    criteria:
+      - deprecation_notice_period
+      - migration_guide_provided
+      - sunset_date_defined
+    enforced_by: docs/control/policies/SOP-005-deprecation.md
+
+  CTRL-TEST-001:
+    name: "Testing Validation"
+    type: validation
+    trigger: code_change
+    criteria:
+      - unit_tests_passed
+      - integration_tests_passed
+      - coverage_threshold_met
+    enforced_by: .github/workflows/test-gate.yml
+
+# ============================================================================
+# Evidence Records
+# ============================================================================
+
+evidence_records:
+  EVID-20260212-001:
+    timestamp: "2026-02-12T18:44:00Z"
+    type: migration
+    scope: mailgun-cleanup
+    portfolio_initiative: PORT-2026-004
+    process_id: PROC-EMAIL-001
+    controls: [CTRL-DOC-001]
+    artifacts:
+      - path: docs/evidence/20260212-1844/mailgun-cleanup/
+        files: [verification.md, deprecation-notice.md]
+    status: complete
+    verified_by: integration_team
+
+  EVID-20260212-002:
+    timestamp: "2026-02-12T16:27:00Z"
+    type: infrastructure_snapshot
+    scope: prod-runtime-baseline
+    portfolio_initiative: PORT-2026-001
+    process_id: PROC-DEPLOY-001
+    controls: [CTRL-DEPLOY-001]
+    artifacts:
+      - path: docs/architecture/PROD_RUNTIME_SNAPSHOT.md
+      - path: docs/architecture/runtime_identifiers.json
+    status: complete
+    verified_by: devops_team
+
+  EVID-20260212-003:
+    timestamp: "2026-02-12T18:44:00Z"
+    type: decision
+    scope: email-provider-selection
+    portfolio_initiative: PORT-2026-004
+    process_id: PROC-EMAIL-001
+    controls: [CTRL-DOC-001]
+    artifacts:
+      - path: docs/evidence/decisions/ADR-001-zoho-mail.md
+    status: complete
+    verified_by: integration_team
+
+  EVID-20260128-001:
+    timestamp: "2026-01-28T00:00:00Z"
+    type: migration
+    scope: mattermost-to-slack
+    portfolio_initiative: PORT-2026-005
+    process_id: PROC-COMM-001
+    controls: [CTRL-DEPR-001]
+    artifacts:
+      - path: docs/deprecated/mattermost/
+    status: complete
+    verified_by: integration_team
+
+  EVID-20260212-004:
+    timestamp: "2026-02-12T19:00:00Z"
+    type: governance_implementation
+    scope: 7-layer-operating-model
+    portfolio_initiative: PORT-2026-008
+    process_id: PROC-GOVERN-001
+    controls: [CTRL-TRACE-001, CTRL-DOC-002]
+    artifacts:
+      - path: docs/TRACEABILITY_INDEX.yaml
+      - path: docs/strategy/README.md
+      - path: docs/portfolio/README.md
+      - path: docs/process/README.md
+      - path: docs/control/README.md
+      - path: docs/evidence/README.md
+      - path: docs/integration/README.md
+    status: in_progress
+    verified_by: compliance_team
+
+  EVID-20260212-005:
+    timestamp: "2026-02-12T19:00:00Z"
+    type: infrastructure_snapshot
+    scope: docker-baseline
+    portfolio_initiative: PORT-2026-010
+    process_id: PROC-INFRA-001
+    controls: [CTRL-SOP-003]
+    artifacts:
+      - path: docs/integration/docker-infrastructure.md
+      - path: docs/control/policies/SOP-003-docker-container-management.md
+    status: in_progress
+    verified_by: devops_team
+
+  EVID-20260212-006:
+    timestamp: "2026-02-12T20:00:00Z"
+    type: implementation
+    scope: integration-hardening-compliance
+    portfolio_initiative: PORT-2026-011
+    process_id: PROC-INTEG-002
+    controls: [CTRL-DOC-002, CTRL-GATE-003, CTRL-SOP-004]
+    artifacts:
+      - path: docs/evidence/20260212-2000/IMPLEMENTATION_SUMMARY.md
+      - path: docs/evidence/20260212-2000/bir-forms-registry/
+      - path: docs/evidence/20260212-2000/email-integration/
+      - path: docs/evidence/20260212-2000/plane-bootstrap/
+      - path: docs/evidence/20260212-2000/no-cli-docker-gate/
+      - path: docs/evidence/20260212-2000/supabase-rubric/
+      - path: docs/strategy/SUPABASE_FEATURE_RUBRIC.md
+      - path: docs/strategy/OKR-2026-H1.md
+      - path: docs/constitution/NO_CLI_NO_DOCKER.md
+      - path: docs/integration/email/TBWA_OUTLOOK_INTEGRATION.md
+      - path: docs/integration/okr/PLANE_OKR_MAPPING.md
+    status: complete
+    verified_by: integration_team
+
+# ============================================================================
+# Architecture Decision Records
+# ============================================================================
+
+decisions:
+  ADR-001-zoho-mail:
+    title: "Adopt Zoho Mail SMTP for Outbound Email"
+    date: "2026-02-12"
+    status: accepted
+    context: "Need reliable email delivery without Mailgun costs"
+    decision: "Use Zoho Mail SMTP via smtp.zoho.com:587"
+    consequences:
+      - "Reduced costs from Mailgun usage-based pricing"
+      - "Simplified infrastructure (no separate email service)"
+      - "Aligned with existing Google Workspace migration"
+    portfolio_initiative: PORT-2026-004
+    evidence: EVID-20260212-003
+
+# ============================================================================
+# Metadata
+# ============================================================================
+
+id_conventions:
+  strategy: "STRAT-<DOMAIN>-<NUMBER>"
+  okr_objective: "OBJ-<NUMBER>"
+  okr_key_result: "KR-<OBJECTIVE>.<NUMBER>"
+  portfolio: "PORT-<YEAR>-<NUMBER>"
+  process: "PROC-<DOMAIN>-<NUMBER>"
+  control: "CTRL-<TYPE>-<NUMBER>"
+  evidence: "EVID-<YYYYMMDD>-<NUMBER>"
+
+layer_mapping:
+  1_strategy: "Strategies, OKRs, value streams, capabilities"
+  2_portfolio: "Spec bundles, roadmaps, investment tracking"
+  3_process: "Governance, BPMN models, controls (L4-L7)"
+  4_execution: "Systems that act (modules, scripts, workflows)"
+  5_control: "Policies, gates, risk registers"
+  6_evidence: "Audit-grade immutable artifacts"
+  7_integration: "Cross-system bridges (MCP, agents, Docker)"
+
+owners:
+  platform_team: "Odoo platform and infrastructure"
+  devops_team: "Deployment, CI/CD, infrastructure"
+  integration_team: "External system integrations"
+  finance_team: "Financial processes and compliance"
+  compliance_team: "Governance, audit, evidence"
+  security_team: "Security controls and reviews"
+
+# vim: set ft=yaml:

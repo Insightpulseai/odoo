@@ -61,7 +61,7 @@ Each environment has:
 ### Usage
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 ./scripts/docker-desktop-audit.sh
 ```
 
@@ -120,7 +120,7 @@ cd ~/Documents/GitHub/odoo-ce
 ssh root@178.128.112.214
 
 # Run audit
-cd /opt/odoo-ce
+cd /opt/odoo
 ./scripts/docker-staging-audit.sh
 
 # Review output before any cleanup
@@ -248,7 +248,7 @@ All audit scripts write JSONL logs with this schema:
 ## File Structure
 
 ```
-odoo-ce/
+odoo/
 ├── infra/docker/
 │   ├── DOCKER_DESKTOP_SSOT.yaml     ✅ Desktop canonical state
 │   ├── DOCKER_STAGING_SSOT.yaml     ✅ Staging canonical state
@@ -272,7 +272,7 @@ odoo-ce/
 ### Desktop Audit (Local)
 
 ```bash
-cd ~/Documents/GitHub/odoo-ce
+cd ~/Documents/GitHub/odoo
 ./scripts/docker-desktop-audit.sh
 ```
 
@@ -290,9 +290,9 @@ ssh root@178.128.112.214
 
 # 2. Clone/pull repo
 cd /opt
-git clone https://github.com/jgtolentino/odoo-ce.git  # if first time
+git clone https://github.com/jgtolentino/odoo.git  # if first time
 # OR
-cd /opt/odoo-ce && git pull origin main
+cd /opt/odoo && git pull origin main
 
 # 3. Run audit
 ./scripts/docker-staging-audit.sh
@@ -340,8 +340,8 @@ Expected output:
 1. **Test staging audit on droplet:**
    ```bash
    ssh root@178.128.112.214
-   cd /opt && git clone https://github.com/jgtolentino/odoo-ce.git
-   cd odoo-ce && ./scripts/docker-staging-audit.sh
+   cd /opt && git clone https://github.com/jgtolentino/odoo.git
+   cd odoo && ./scripts/docker-staging-audit.sh
    ```
 
 2. **Wire up n8n staging audit workflow:**

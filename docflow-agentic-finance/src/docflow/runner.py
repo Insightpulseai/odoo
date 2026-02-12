@@ -32,6 +32,7 @@ class DocFlowRunner:
         # but good practice would be passing them.
         # For now, load_dotenv() in config.py handles env var setting for LlmClient.
         self.odoo = OdooRpc()
+        self.odoo.authenticate()
 
         self.inbox_dir = self.cfg.inbox_dir
         self.archive_dir = self.cfg.archive_dir
@@ -56,10 +57,19 @@ class DocFlowRunner:
 
         # 2. OCR
         try:
-            ocr_text = ocr_file(file_path)
+            ocr_output = ocr_file(file_path)
+            ocr_text = ocr_output.text
+            ocr_hash = sha256_file(file_path)  # Hash for OCR text SHA256
         except Exception as e:
             logger.error(f"OCR failed: {e}")
-            return ProcessResult(file_path=str(file_path), success=False, error=f"OCR error: {e}")
+            return ProcessResult(
+                document_id=file_hash[:16],
+                source_path=str(file_path),
+                ocr_text_sha256=file_hash,
+                classification=Classification(document_type="unknown", confidence=0.0, reason="OCR failed"),
+                status="failed",
+                error=f"OCR error: {e}"
+            )
 
         # 3. Classify
         try:
@@ -70,7 +80,12 @@ class DocFlowRunner:
         except Exception as e:
             logger.error(f"Classification failed: {e}")
             return ProcessResult(
-                file_path=str(file_path), success=False, error=f"Classification error: {e}"
+                document_id=file_hash[:16],
+                source_path=str(file_path),
+                ocr_text_sha256=file_hash,
+                classification=Classification(document_type="unknown", confidence=0.0, reason="OCR failed"),
+                status="failed",
+                error=f"Classification error: {e}"
             )
 
         # 4. Extract & Validate & Intelligence
@@ -78,7 +93,7 @@ class DocFlowRunner:
         validation_res = None
         vendor_match = None
         dupe_result = None
-        doc_type = classification.doc_type
+        doc_type = classification.document_type
 
         # Default state
         final_state = "extracted"
@@ -106,7 +121,12 @@ class DocFlowRunner:
             except Exception as e:
                 logger.error(f"Invoice extraction/check failed: {e}")
                 return ProcessResult(
-                    file_path=str(file_path), success=False, error=f"Extraction error: {e}"
+                    document_id=file_hash[:16],
+                    source_path=str(file_path),
+                    ocr_text_sha256=file_hash,
+                    classification=classification,
+                    status="failed",
+                    error=f"Extraction error: {e}"
                 )
 
         elif doc_type == "expense":
@@ -128,7 +148,12 @@ class DocFlowRunner:
             except Exception as e:
                 logger.error(f"Expense extraction/check failed: {e}")
                 return ProcessResult(
-                    file_path=str(file_path), success=False, error=f"Extraction error: {e}"
+                    document_id=file_hash[:16],
+                    source_path=str(file_path),
+                    ocr_text_sha256=file_hash,
+                    classification=classification,
+                    status="failed",
+                    error=f"Extraction error: {e}"
                 )
         else:
             logger.warning(f"Unknown document type: {doc_type}")
@@ -171,7 +196,7 @@ class DocFlowRunner:
                 filename=file_path.name,
                 file_path=file_path,
                 document_id=file_hash[:16],
-                source="runner",
+                source="other",
                 state=final_state,
                 doc_type=doc_type,
                 confidence=validation_res.confidence if validation_res else 0.0,
@@ -190,6 +215,7 @@ class DocFlowRunner:
                 if dupe_result
                 else None,
             )
+            logger.info(f"[DEBUG] Full ingest response: {ingest_res}")
             docflow_id = ingest_res.get("docflow_id")
             logger.info(f"Ingested DocFlow ID: {docflow_id}, State: {final_state}")
 
@@ -204,14 +230,33 @@ class DocFlowRunner:
         except Exception as e:
             logger.error(f"Ingestion/Auto-draft failed: {e}")
             return ProcessResult(
-                file_path=str(file_path), success=False, error=f"Ingest/Odoo error: {e}"
+                document_id=file_hash[:16],
+                source_path=str(file_path),
+                ocr_text_sha256=file_hash,
+                classification=classification,
+                invoice=InvoiceExtraction(**extraction_data) if doc_type == "invoice" and extraction_data else None,
+                expense=ExpenseExtraction(**extraction_data) if doc_type == "expense" and extraction_data else None,
+                status="failed",
+                error=f"Ingest/Odoo error: {e}"
             )
 
         # 8. Archive & Artifacts
         self._save_artifacts(file_hash, ocr_text, classification, extraction_data)
         shutil.move(str(file_path), str(self.archive_dir / file_path.name))
 
-        return ProcessResult(file_path=str(file_path), success=True, doc_type=doc_type)
+        # Build success result
+        result_status = "auto_drafted" if final_state == "approved" and docflow_id else "needs_review"
+        return ProcessResult(
+            document_id=file_hash[:16],
+            source_path=str(file_path),
+            ocr_text_sha256=file_hash,
+            classification=classification,
+            invoice=InvoiceExtraction(**extraction_data) if doc_type == "invoice" and extraction_data else None,
+            expense=ExpenseExtraction(**extraction_data) if doc_type == "expense" and extraction_data else None,
+            odoo_model="docflow.document" if docflow_id else None,
+            odoo_id=docflow_id,
+            status=result_status
+        )
 
     def _save_artifacts(self, file_hash, ocr_text, classification, extraction):
         base = self.artifacts_dir / file_hash

@@ -1,6 +1,6 @@
 # EE Parity Audit
 
-- Repo: `jgtolentino/odoo-ce`
+- Repo: `jgtolentino/odoo`
 - Commit: `1d63f114a331ffbe8459e67abd40a5a6dc08ccf0`
 - Branch: `claude/github-odoo-governance-H3zwb`
 - Generated: 2026-01-26 04:56:50 UTC

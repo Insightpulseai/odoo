@@ -5,7 +5,7 @@ SHA: f748a4d
 
 ## addons/
 ```
-/opt/odoo-ce/addons
+/opt/odoo/addons
 ├── ipai
 │   ├── ipai_advisor
 │   ├── ipai_assets
@@ -186,7 +186,7 @@ SHA: f748a4d
 
 ## deploy/
 ```
-/opt/odoo-ce/deploy
+/opt/odoo/deploy
 ├── k8s
 │   ├── namespace.yaml
 │   ├── odoo-configmap.yaml
@@ -214,7 +214,7 @@ SHA: f748a4d
 
 ## tools/
 ```
-/opt/odoo-ce/tools
+/opt/odoo/tools
 ├── audit
 │   ├── db_truth.sql
 │   ├── gen_prod_snapshot.sh
@@ -257,7 +257,7 @@ SHA: f748a4d
 
 ## catalog/
 ```
-/opt/odoo-ce/catalog
+/opt/odoo/catalog
 ├── best_of_breed.yaml
 ├── equivalence_matrix.csv
 └── equivalence_matrix_workos_notion.csv
@@ -265,7 +265,7 @@ SHA: f748a4d
 
 ## spec/
 ```
-/opt/odoo-ce/spec
+/opt/odoo/spec
 ├── adk-control-room
 │   ├── constitution.md
 │   ├── plan.md
@@ -379,7 +379,7 @@ SHA: f748a4d
 
 ## kb/
 ```
-/opt/odoo-ce/kb
+/opt/odoo/kb
 ├── audit
 │   └── AGENT_AUDIT_RULES.md
 ├── design_system
@@ -391,7 +391,7 @@ SHA: f748a4d
 
 ## docs/
 ```
-/opt/odoo-ce/docs
+/opt/odoo/docs
 ├── adr
 │   └── ADR-0001-clone-not-integrate.md
 ├── architecture
@@ -447,7 +447,7 @@ SHA: f748a4d
 │   └── WORKOS_MODULES.prod.csv
 ├── workflows
 │   └── hire-to-retire-bpmn.html
-├── 003-odoo-ce-custom-image-spec.md
+├── 003-odoo-custom-image-spec.md
 ├── AGENTIC_CLOUD_PRD.md
 ├── AGENT_FRAMEWORK_SESSION_REPORT.md
 ├── APP_ICONS_README.md
@@ -530,7 +530,7 @@ SHA: f748a4d
 
 ## .github/
 ```
-/opt/odoo-ce/.github
+/opt/odoo/.github
 ├── workflows
 │   ├── agent-preflight.yml
 │   ├── all-green-gates.yml
@@ -538,7 +538,7 @@ SHA: f748a4d
 │   ├── auto-sitemap-tree.yml
 │   ├── build-seeded-image.yml
 │   ├── build-unified-image.yml
-│   ├── ci-odoo-ce.yml
+│   ├── ci-odoo.yml
 │   ├── ci-odoo-oca.yml
 │   ├── control-room-ci.yml
 │   ├── databricks-dab-ci.yml

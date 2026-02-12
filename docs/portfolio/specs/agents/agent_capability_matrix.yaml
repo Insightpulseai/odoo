@@ -1,0 +1,58 @@
+version: 1
+kind: agent_capability_matrix
+id: agent_capability_matrix_v1
+title: "Agent ↔ Capability Mapping (Deterministic Routing)"
+
+routing:
+  # ---- Odoo ----
+  - capability: odoo_consultation
+    primary_agents: ["odoo_solution_architect", "odoo_business_analyst"]
+    support_agents: ["security_rbac_auditor", "data_migration_planner"]
+  - capability: odoo_implementation
+    primary_agents: ["odoo_implementation_lead", "odoo_module_installer"]
+    support_agents: ["qa_test_engineer", "devops_automator"]
+  - capability: odoo_customization
+    primary_agents: ["odoo_backend_engineer", "odoo_ui_view_engineer"]
+    support_agents: ["oca_module_curator", "perf_profiler"]
+  - capability: odoo_deployment
+    primary_agents: ["odoo_release_engineer", "devops_automator"]
+    support_agents: ["observability_engineer", "backup_dr_engineer"]
+  - capability: odoo_support_training
+    primary_agents: ["odoo_support_lead", "enablement_trainer"]
+    support_agents: ["incident_commander", "knowledge_base_curator"]
+
+  # ---- App ----
+  - capability: app_strategy_consulting
+    primary_agents: ["product_strategist", "business_analyst"]
+    support_agents: ["market_researcher", "pricing_packager"]
+  - capability: custom_app_development
+    primary_agents: ["fullstack_engineer", "backend_architect"]
+    support_agents: ["frontend_engineer", "qa_test_engineer"]
+  - capability: mobile_app_design
+    primary_agents: ["mobile_ux_designer", "ui_designer"]
+    support_agents: ["design_system_librarian"]
+  - capability: app_maintenance_support
+    primary_agents: ["sre_support_engineer", "qa_test_engineer"]
+    support_agents: ["devops_automator", "incident_commander"]
+  - capability: app_marketing_launch
+    primary_agents: ["growth_marketer", "launch_manager"]
+    support_agents: ["content_strategist", "analytics_instrumentation_engineer"]
+
+  # ---- Web ----
+  - capability: custom_web_design
+    primary_agents: ["ui_designer", "ux_researcher"]
+    support_agents: ["brand_guardian"]
+  - capability: website_backend_solutions
+    primary_agents: ["backend_architect", "platform_engineer"]
+    support_agents: ["security_rbac_auditor", "devops_automator"]
+  - capability: ecommerce_solutions
+    primary_agents: ["ecommerce_solution_architect", "backend_architect"]
+    support_agents: ["payments_integrator", "qa_test_engineer"]
+  - capability: website_maintenance_support
+    primary_agents: ["sre_support_engineer", "devops_automator"]
+    support_agents: ["perf_profiler", "security_rbac_auditor"]
+
+  # ---- UI/UX ----
+  - capability: uiux_design
+    primary_agents: ["ux_researcher", "ui_designer"]
+    support_agents: ["design_system_librarian", "accessibility_auditor"]

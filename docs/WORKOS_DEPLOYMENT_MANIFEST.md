@@ -127,7 +127,7 @@ If rollback is needed:
 
 ```bash
 # 1. Restore Git
-cd /opt/odoo-ce
+cd /opt/odoo
 git checkout 273a60ff86a40b7457603d4ad9dac902f7836
 
 # 2. Restart Odoo

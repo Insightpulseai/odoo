@@ -15,7 +15,7 @@
 - ⚠️ Empty config directory (`config/odoo.conf/` is an empty dir, not a file)
 - ⚠️ Git in uncommitted state (staged files from design extraction)
 
-**Canonical SSOT Location**: `~/Documents/GitHub/odoo-ce/sandbox/dev/`
+**Canonical SSOT Location**: `~/Documents/GitHub/odoo/sandbox/dev/`
 - ✅ Has working `docker-compose.yml` (Odoo 18 CE + PostgreSQL 16)
 - ✅ Properly configured volumes and hot-reload
 - ✅ Clear separation: `./addons` (custom), `../../addons/external/oca` (OCA modules)
@@ -54,7 +54,7 @@ odoo-dev-sandbox/
 ## What's Running (Expected vs Actual)
 
 ### Expected (per DOCKER_DESKTOP_SSOT.yaml)
-**Location**: `~/Documents/GitHub/odoo-ce/sandbox/dev/`
+**Location**: `~/Documents/GitHub/odoo/sandbox/dev/`
 
 | Component | Container Name | Port | Status |
 |-----------|----------------|------|--------|
@@ -163,7 +163,7 @@ grep -r "view_mode.*=.*tree" addons/ipai/models/
 
 ### Priority 1: Establish Working Dev Stack
 
-1. **Copy canonical docker-compose.yml** from `~/Documents/GitHub/odoo-ce/sandbox/dev/`
+1. **Copy canonical docker-compose.yml** from `~/Documents/GitHub/odoo/sandbox/dev/`
    - Adjust paths for this repo structure
    - Update volume mounts to reference local `./addons`, `./oca-addons`
 
@@ -181,7 +181,7 @@ grep -r "view_mode.*=.*tree" addons/ipai/models/
 
 3. **Populate oca-addons/** with dependencies
    - Option A: Git submodules for each OCA repo
-   - Option B: Symlink to canonical `~/Documents/GitHub/odoo-ce/addons/external/oca`
+   - Option B: Symlink to canonical `~/Documents/GitHub/odoo/addons/external/oca`
    - Option C: Document that users must clone separately
 
 ### Priority 2: Add Dev Scripts
@@ -236,7 +236,7 @@ Create `docs/runbooks/DEV_SANDBOX.md` with:
 
 ## Comparison to Canonical SSOT
 
-| Aspect | Canonical (`odoo-ce/sandbox/dev`) | This Repo (`odoo-dev-sandbox`) |
+| Aspect | Canonical (`odoo/sandbox/dev`) | This Repo (`odoo-dev-sandbox`) |
 |--------|-----------------------------------|--------------------------------|
 | docker-compose.yml | ✅ Present, working | ❌ Missing |
 | Odoo config | ✅ Valid file | ❌ Empty directory |
@@ -321,7 +321,7 @@ docker compose exec odoo odoo shell -d odoo_dev --no-http <<< "env['ir.module.mo
 ## Conclusion
 
 **Current State**: Incomplete, non-functional dev workspace
-**Canonical Reference**: `~/Documents/GitHub/odoo-ce/sandbox/dev/` (working)
+**Canonical Reference**: `~/Documents/GitHub/odoo/sandbox/dev/` (working)
 **Gap**: Missing docker-compose, invalid config, empty OCA addons, no scripts
 
 **Recommended Path**:

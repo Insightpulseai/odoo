@@ -85,7 +85,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 - ✅ **`docs/EXECUTIVE_SUMMARY.md`** - 2-page executive briefing
 - ✅ **`docs/v0.9.1_DEPLOYMENT_GUIDE.md`** - Production deployment guide
 - ✅ **`docs/DOCKERFILE_COMPARISON.md`** - Before/after analysis
-- ✅ **`docs/003-odoo-ce-custom-image-spec.md`** - Updated specification
+- ✅ **`docs/003-odoo-custom-image-spec.md`** - Updated specification
 
 ### New Automation Scripts (3 files)
 - ✅ **`scripts/build_v0.9.1.sh`** - Automated build with validation (179 lines)
@@ -232,7 +232,7 @@ Deployment succeeds when ALL criteria pass:
 4. **`docs/IMPLEMENTATION_SUMMARY.md`** - Complete implementation details
 5. **`docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md`** - Full 54-page audit
 6. **`docs/DOCKERFILE_COMPARISON.md`** - Before/after analysis
-7. **`docs/003-odoo-ce-custom-image-spec.md`** - Updated specification
+7. **`docs/003-odoo-custom-image-spec.md`** - Updated specification
 
 ### Operations
 8. **`docs/v0.9.1_DEPLOYMENT_GUIDE.md`** - Production deployment guide
@@ -306,9 +306,9 @@ Deployment succeeds when ALL criteria pass:
    ```
 
 6. **Monitor (24 Hours)**
-   - Check logs: `docker logs odoo-ce --tail 100 -f`
+   - Check logs: `docker logs odoo --tail 100 -f`
    - Verify health: `curl https://erp.insightpulseai.com/web/health`
-   - Monitor resources: `docker stats odoo-ce`
+   - Monitor resources: `docker stats odoo`
 
 ---
 
@@ -358,7 +358,7 @@ Run this command to verify specification compliance:
 
 ```bash
 # Check all 10 specification requirements
-cat docs/003-odoo-ce-custom-image-spec.md | grep "SPEC-" | wc -l
+cat docs/003-odoo-custom-image-spec.md | grep "SPEC-" | wc -l
 # Expected: 10
 
 # Verify Dockerfile has all fixes

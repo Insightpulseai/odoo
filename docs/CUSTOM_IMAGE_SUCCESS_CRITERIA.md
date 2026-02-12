@@ -16,7 +16,7 @@
 - [x] `ipai_ce_cleaner` - Community Edition cleanup utilities
 
 ### 3. Deployment Configuration ✅ COMPLETE
-- [x] **docker-compose.yml updated** to use custom image: `ghcr.io/jgtolentino/odoo-ce:latest`
+- [x] **docker-compose.yml updated** to use custom image: `ghcr.io/jgtolentino/odoo:latest`
 - [x] **Volume mounts optimized** - addons removed (baked into image)
 - [x] **Configuration maintained** - filestore and config volumes preserved
 
@@ -56,7 +56,7 @@
 
 ### Post-Deployment Validation
 - [ ] Custom image builds successfully in GitHub Actions
-- [ ] Image pushed to `ghcr.io/jgtolentino/odoo-ce:latest`
+- [ ] Image pushed to `ghcr.io/jgtolentino/odoo:latest`
 - [ ] Production VPS pulls new image
 - [ ] Odoo starts successfully with custom modules
 - [ ] Database migrations applied

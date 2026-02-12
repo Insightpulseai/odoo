@@ -107,7 +107,7 @@ sources:
   # InsightPulse Odoo CE (Internal)
   - type: github_repo
     name: ipai_odoo_ce
-    repo: "jgtolentino/odoo-ce"
+    repo: "jgtolentino/odoo"
     branch: "main"
     include_globs:
       - "addons/ipai/**"
@@ -123,7 +123,7 @@ sources:
   # InsightPulse Finance PPM Module
   - type: github_repo
     name: ipai_finance_ppm
-    repo: "jgtolentino/odoo-ce"
+    repo: "jgtolentino/odoo"
     branch: "main"
     include_globs:
       - "addons/ipai/ipai_finance_ppm/**"

@@ -1,0 +1,99 @@
+name: e2e-playwright
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # Required: provide via GitHub Actions secrets
+      ODOOOPS_API_BASE: ${{ secrets.ODOOOPS_API_BASE }}
+      ODOOOPS_TOKEN: ${{ secrets.ODOOOPS_TOKEN }}
+      ODOOOPS_PROJECT_ID: ${{ secrets.ODOOOPS_PROJECT_ID }}
+      STAGE: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set variables
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}" >> "$GITHUB_OUTPUT"
+          echo "sha=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Create preview env (OdooOps)
+        id: env
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH_NAME="${{ steps.vars.outputs.branch }}" \
+          COMMIT_SHA="${{ steps.vars.outputs.sha }}" \
+          STAGE="${STAGE}" \
+          ENV_ID="$(./scripts/odooops/env_create.sh)"
+          echo "env_id=${ENV_ID}" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for env ready and get URL
+        id: url
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENV_ID="${{ steps.env.outputs.env_id }}" \
+          BASE_URL="$(./scripts/odooops/env_wait_ready.sh)"
+          echo "base_url=${BASE_URL}" >> "$GITHUB_OUTPUT"
+          echo "Preview URL: ${BASE_URL}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install E2E deps
+        working-directory: tests/e2e
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci || npm install
+          npx playwright install --with-deps
+
+      - name: Run Playwright (default mode)
+        working-directory: tests/e2e
+        shell: bash
+        env:
+          BASE_URL: ${{ steps.url.outputs.base_url }}
+        run: |
+          set -euo pipefail
+          npm run test
+
+      # Optional: extension mode (Phase 3) - disabled by default
+      # Enable by adding secrets/vars and providing an extension directory artifact.
+      # - name: Run Playwright (extension mode)
+      #   working-directory: tests/e2e
+      #   shell: bash
+      #   env:
+      #     BASE_URL: ${{ steps.url.outputs.base_url }}
+      #     PLAYWRIGHT_USE_CHROME_EXTENSION: "1"
+      #     # CHROME_EXTENSION_DIR: "/path/to/extension"  # TODO: supply via checkout or artifact
+      #   run: |
+      #     set -euo pipefail
+      #     sudo apt-get update && sudo apt-get install -y xvfb
+      #     xvfb-run -a npm run test:chrome-ext
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            tests/e2e/playwright-report
+            tests/e2e/test-results
+
+      - name: Destroy preview env (always)
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ENV_ID="${{ steps.env.outputs.env_id }}" ./scripts/odooops/env_destroy.sh

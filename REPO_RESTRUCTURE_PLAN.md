@@ -62,7 +62,7 @@ addons/
 ## Target Structure
 
 ```
-odoo-ce/
+odoo/
 ├── addons/
 │   ├── ipai/                        # Custom modules (namespaced)
 │   │   ├── ipai_workspace_core/     # NEW: shared base (mixins, groups, utils)

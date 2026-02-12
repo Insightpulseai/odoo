@@ -51,7 +51,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 // Example: Start a run and track with ops schema
 const runId = await supabase.rpc('start_run', {
   p_actor: 'ci-agent',
-  p_repo: 'jgtolentino/odoo-ce',
+  p_repo: 'jgtolentino/odoo',
   p_ref: 'main',
   p_pack_id: 'supabase-enterprise-parity-baseline',
   p_input: { trigger: 'push' }
