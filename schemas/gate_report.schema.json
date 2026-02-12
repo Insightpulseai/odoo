@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/gate_report.schema.json",
+  "title": "Quality Gate Report",
+  "description": "Unified quality gate report format for Odoo repository",
+  "type": "object",
+  "required": ["version", "timestamp", "environment", "gates", "summary"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "const": "2.0"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Report generation timestamp in ISO 8601 format"
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["local", "ci"],
+      "description": "Execution environment"
+    },
+    "gates": {
+      "type": "array",
+      "description": "Array of individual gate results",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/gateResult"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate statistics across all gates",
+      "required": ["total", "passed", "failed", "warnings"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of gates executed"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of gates that passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of gates that failed"
+        },
+        "warnings": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of gates with warnings"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata about the gate execution",
+      "properties": {
+        "commit_sha": {
+          "type": "string",
+          "description": "Git commit SHA being tested"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Git branch name"
+        },
+        "workflow_run_id": {
+          "type": "string",
+          "description": "GitHub Actions workflow run ID"
+        },
+        "executor": {
+          "type": "string",
+          "description": "Username or system that executed gates"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "gateResult": {
+      "type": "object",
+      "description": "Result from a single quality gate",
+      "required": ["name", "status", "duration_seconds", "findings", "metrics"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Gate identifier (snake_case)",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "warn"],
+          "description": "Gate execution status"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Gate execution duration in seconds"
+        },
+        "findings": {
+          "type": "array",
+          "description": "Issues found by the gate",
+          "items": {
+            "$ref": "#/definitions/finding"
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Gate-specific metrics (flexible schema)",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Gate-specific metadata",
+          "properties": {
+            "script": {
+              "type": "string",
+              "description": "Path to gate script"
+            },
+            "version": {
+              "type": "string",
+              "description": "Gate script version"
+            },
+            "config_file": {
+              "type": "string",
+              "description": "Path to gate configuration file"
+            }
+          }
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "description": "Individual issue found by a gate",
+      "required": ["level", "message"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "description": "Severity level"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable description of the issue"
+        },
+        "file": {
+          "type": "string",
+          "description": "Path to file where issue was found"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Line number where issue was found"
+        },
+        "column": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Column number where issue was found"
+        },
+        "rule": {
+          "type": "string",
+          "description": "Gate-specific rule identifier"
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Suggested fix or remediation"
+        },
+        "code_snippet": {
+          "type": "string",
+          "description": "Code snippet showing the issue"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "version": "2.0",
+      "timestamp": "2026-02-13T10:30:00Z",
+      "environment": "ci",
+      "gates": [
+        {
+          "name": "seed_data_consistency",
+          "status": "pass",
+          "duration_seconds": 1.234,
+          "findings": [],
+          "metrics": {
+            "employees_count": 9,
+            "bir_records_count": 144,
+            "tasks_count": 36,
+            "raci_count": 9
+          },
+          "metadata": {
+            "script": "scripts/finance_ppm_seed_audit.py",
+            "version": "1.0.0"
+          }
+        },
+        {
+          "name": "enterprise_code_scan",
+          "status": "fail",
+          "duration_seconds": 0.532,
+          "findings": [
+            {
+              "level": "error",
+              "message": "Enterprise-only import detected: from odoo.addons.enterprise_module import Feature",
+              "file": "addons/ipai/ipai_custom_module/models/custom_model.py",
+              "line": 5,
+              "column": 1,
+              "rule": "no-enterprise-imports",
+              "suggestion": "Use OCA or custom implementation instead of Enterprise modules"
+            }
+          ],
+          "metrics": {
+            "files_scanned": 450,
+            "violations_found": 1
+          }
+        }
+      ],
+      "summary": {
+        "total": 2,
+        "passed": 1,
+        "failed": 1,
+        "warnings": 0
+      },
+      "metadata": {
+        "commit_sha": "abc123def456",
+        "branch": "feat/finance-ppm",
+        "workflow_run_id": "12345678",
+        "executor": "github-actions"
+      }
+    }
+  ]
+}
