@@ -237,6 +237,9 @@ sandbox/dev/oca-addons/
 scripts/audit/.env
 third_party/oca/
 
+# MkDocs build output
+site/
+
 # LIB (Local Intelligence Brain)
 .lib/
 
