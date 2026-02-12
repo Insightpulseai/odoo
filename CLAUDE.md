@@ -93,6 +93,55 @@ explore -> plan -> implement -> verify -> commit
 
 ---
 
+## Spec Kit (Spec-Driven Development)
+
+> Integrated from [github/spec-kit](https://github.com/github/spec-kit).
+> Specs are executable — they generate implementations, not just describe them.
+
+### Spec Bundle Structure
+
+```
+spec/<feature-slug>/
+├── constitution.md   # Non-negotiable rules and constraints
+├── prd.md            # Product requirements (the WHAT)
+├── plan.md           # Implementation plan (the HOW)
+├── tasks.md          # Task breakdown (the WORK)
+├── checklist.md      # Quality validation (optional)
+└── research.md       # Unknowns resolved (optional)
+```
+
+### Slash Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/speckit.constitution` | Create governance principles for a feature |
+| `/speckit.specify` | Define product requirements (PRD) |
+| `/speckit.clarify` | Resolve ambiguities before planning |
+| `/speckit.plan` | Create implementation plan from spec |
+| `/speckit.tasks` | Generate task breakdown from plan |
+| `/speckit.analyze` | Cross-artifact consistency check (read-only) |
+| `/speckit.checklist` | Generate quality validation checklist |
+| `/speckit.implement` | Execute implementation following tasks |
+
+### Workflow
+
+```
+/speckit.constitution → /speckit.specify → /speckit.clarify (optional)
+    → /speckit.plan → /speckit.tasks → /speckit.analyze
+    → /speckit.checklist → /speckit.implement
+```
+
+### Key Files
+
+| Path | Purpose |
+|------|---------|
+| `.specify/templates/` | Scaffolding templates for spec artifacts |
+| `.specify/memory/` | Spec-kit state and context |
+| `scripts/speckit-scaffold.sh` | Create new spec bundles from CLI |
+| `scripts/check-spec-kit.sh` | Validate spec bundle completeness |
+
+---
+
 ## Odoo Rules
 
 - Prefer `addons/` modules + `scripts/odoo_*.sh` wrappers

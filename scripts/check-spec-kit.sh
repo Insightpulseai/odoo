@@ -43,9 +43,14 @@ for d in "$SPEC_DIR"/*/; do
 
   echo "[spec-kit] Checking bundle: $bundle_name"
 
-  # Check for required files
+  # Check for required files (prd.md or spec.md accepted)
   for f in $REQUIRED_FILES; do
     filepath="$d$f"
+    # Accept spec.md as alternative to prd.md (spec-kit compat)
+    if [ "$f" = "prd.md" ] && [ ! -f "$filepath" ] && [ -f "$d/spec.md" ]; then
+      filepath="$d/spec.md"
+      f="spec.md (alias for prd.md)"
+    fi
     if [ ! -f "$filepath" ]; then
       echo "  - Missing: $f"
       missing_count=$((missing_count + 1))
@@ -59,6 +64,7 @@ for d in "$SPEC_DIR"/*/; do
 
   # Validate PRD structure (optional but recommended)
   prd_file="$d/prd.md"
+  [ -f "$prd_file" ] || prd_file="$d/spec.md"
   if [ -f "$prd_file" ] && [ -s "$prd_file" ]; then
     # Check for recommended sections (warn if missing, don't fail)
     if ! grep -qE '^##\s+(Problem|Overview|Problem Alignment)' "$prd_file" 2>/dev/null; then
