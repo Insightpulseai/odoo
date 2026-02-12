@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1">
+    <!-- RACI Matrix: Per-Employee Supervisor/Reviewer/Approver Assignments -->
+
+    <!-- CKVC - Finance Director / Senior Supervisor -->
+    <record id="raci_ckvc" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_ckvc"/>
+      <field name="role">approver</field>
+      <field name="scope">Finance Director — final approval authority for all BIR filings, month-end closing, and go-live sign-off</field>
+      <field name="supervisor_id" ref="user_ckvc"/>
+      <field name="reviewer_id" ref="user_ckvc"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- RIM - Senior Finance Manager -->
+    <record id="raci_rim" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_rim"/>
+      <field name="role">responsible</field>
+      <field name="scope">Senior Finance Manager — payroll, tax provisions, accruals, cash advances, prior period review, depreciation</field>
+      <field name="supervisor_id" ref="user_ckvc"/>
+      <field name="reviewer_id" ref="user_ckvc"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- BOM - Finance Supervisor -->
+    <record id="raci_bom" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_bom"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Supervisor — BIR monthly compensation (1601-C), filing coordination, team oversight</field>
+      <field name="supervisor_id" ref="user_rim"/>
+      <field name="reviewer_id" ref="user_rim"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- JPAL - Finance Analyst -->
+    <record id="raci_jpal" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_jpal"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Analyst — client billings, WIP/OOP management, AR aging analysis</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_ckvc"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- JLI - Finance Associate -->
+    <record id="raci_jli" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_jli"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Associate — AP aging, vendor reconciliation, expense processing</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_rim"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- JAP - Finance Associate -->
+    <record id="raci_jap" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_jap"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Associate — general accruals, reclassifications, intercompany entries</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_rim"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- LAS - Finance Associate -->
+    <record id="raci_las" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_las"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Associate — bank reconciliation, treasury, fund management</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_ckvc"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- RMQB - Finance Associate -->
+    <record id="raci_rmqb" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_rmqb"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Associate — fixed assets, depreciation schedules, capital expenditure tracking</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_rim"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+
+    <!-- JRMO - Finance Associate -->
+    <record id="raci_jrmo" model="ipai.finance.raci_assignment">
+      <field name="employee_id" ref="user_jrmo"/>
+      <field name="role">responsible</field>
+      <field name="scope">Finance Associate — VAT computation, withholding tax, quarterly BIR filings</field>
+      <field name="supervisor_id" ref="user_bom"/>
+      <field name="reviewer_id" ref="user_rim"/>
+      <field name="approver_id" ref="user_ckvc"/>
+    </record>
+  </data>
+</odoo>
