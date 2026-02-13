@@ -1,0 +1,204 @@
+{
+  "description": "GitHub App installation manifest for Insightpulseai org. GitHub does not support batch API installation — each app must be installed via its install URL. This manifest provides quick-access URLs and tracks install status.",
+  "snapshot_date": "2026-02-12",
+  "organization": "Insightpulseai",
+  "already_installed": [
+    {
+      "name": "Azure Boards",
+      "slug": "azure-boards",
+      "install_url": "https://github.com/apps/azure-boards/installations/new",
+      "installed": true,
+      "category": "project-management"
+    },
+    {
+      "name": "ChatGPT Codex Connector",
+      "slug": "chatgpt-codex-connector",
+      "install_url": "https://github.com/apps/chatgpt-codex-connector/installations/new",
+      "installed": true,
+      "category": "ai-coding"
+    },
+    {
+      "name": "Claude",
+      "slug": "claude",
+      "install_url": "https://github.com/apps/claude/installations/new",
+      "installed": true,
+      "category": "ai-coding"
+    },
+    {
+      "name": "Cloudflare Workers and Pages",
+      "slug": "cloudflare-workers-and-pages",
+      "install_url": "https://github.com/apps/cloudflare-workers-and-pages/installations/new",
+      "installed": true,
+      "category": "deployment"
+    },
+    {
+      "name": "Cursor",
+      "slug": "cursor",
+      "install_url": "https://github.com/apps/cursor/installations/new",
+      "installed": true,
+      "category": "ai-coding"
+    },
+    {
+      "name": "Databricks",
+      "slug": "databricks",
+      "install_url": "https://github.com/apps/databricks/installations/new",
+      "installed": true,
+      "category": "data-platform"
+    },
+    {
+      "name": "Figma",
+      "slug": "figma",
+      "install_url": "https://github.com/apps/figma/installations/new",
+      "installed": true,
+      "category": "design"
+    },
+    {
+      "name": "Slack",
+      "slug": "slack",
+      "install_url": "https://github.com/apps/slack/installations/new",
+      "installed": true,
+      "category": "communication"
+    },
+    {
+      "name": "Vercel",
+      "slug": "vercel",
+      "install_url": "https://github.com/apps/vercel/installations/new",
+      "installed": true,
+      "category": "deployment"
+    }
+  ],
+  "recommended_additions": [
+    {
+      "name": "Supabase",
+      "slug": "supabase",
+      "install_url": "https://github.com/apps/supabase/installations/new",
+      "installed": false,
+      "reason": "Active in personal account (~3 weeks ago), used for task bus and n8n workflows",
+      "priority": "high",
+      "category": "data-platform"
+    },
+    {
+      "name": "DigitalOcean",
+      "slug": "digitalocean",
+      "install_url": "https://github.com/apps/digitalocean/installations/new",
+      "installed": false,
+      "reason": "Active in personal account (~2 months ago), hosts production infrastructure",
+      "priority": "high",
+      "category": "infrastructure"
+    },
+    {
+      "name": "Renovate",
+      "slug": "renovate",
+      "install_url": "https://github.com/apps/renovate/installations/new",
+      "installed": false,
+      "reason": "Automated dependency updates across org repos",
+      "priority": "high",
+      "category": "dependency-management"
+    },
+    {
+      "name": "Sentry",
+      "slug": "sentry",
+      "install_url": "https://github.com/apps/sentry-io/installations/new",
+      "installed": false,
+      "reason": "Error monitoring integration with commit tracking",
+      "priority": "medium",
+      "category": "monitoring"
+    },
+    {
+      "name": "Mermaid Chart",
+      "slug": "mermaid-chart",
+      "install_url": "https://github.com/apps/mermaid-chart/installations/new",
+      "installed": false,
+      "reason": "Diagram rendering in PRs and issues — already authorized personally",
+      "priority": "low",
+      "category": "design"
+    },
+    {
+      "name": "draw.io App",
+      "slug": "draw-io-app",
+      "install_url": "https://github.com/apps/draw-io-app/installations/new",
+      "installed": false,
+      "reason": "Architecture diagram editing in-repo — already authorized personally",
+      "priority": "low",
+      "category": "design"
+    }
+  ],
+  "not_recommended_for_org": [
+    {
+      "name": "Continue",
+      "reason": "Personal IDE tool, not org-level"
+    },
+    {
+      "name": "Google Labs Jules",
+      "reason": "Experimental, personal use only"
+    },
+    {
+      "name": "lovable.dev",
+      "reason": "Prototype tool, not production workflow"
+    },
+    {
+      "name": "Replit",
+      "reason": "Personal IDE, not org-level"
+    },
+    {
+      "name": "Rork-Agent",
+      "reason": "Personal tool, not org-level"
+    },
+    {
+      "name": "Builder.io Integration",
+      "reason": "Not part of current stack"
+    },
+    {
+      "name": "Netlify",
+      "reason": "Vercel is the canonical frontend host"
+    },
+    {
+      "name": "Railway App",
+      "reason": "DigitalOcean is the canonical infra host"
+    },
+    {
+      "name": "Render",
+      "reason": "DigitalOcean is the canonical infra host"
+    },
+    {
+      "name": "Neon Postgres",
+      "reason": "DO managed PostgreSQL is the canonical DB host"
+    },
+    {
+      "name": "Linear",
+      "reason": "Azure Boards/GitHub Projects for project management"
+    },
+    {
+      "name": "monday.com + GitHub",
+      "reason": "Azure Boards/GitHub Projects for project management"
+    },
+    {
+      "name": "Notion AI Connector",
+      "reason": "Not part of current toolchain"
+    },
+    {
+      "name": "Notion Workspace",
+      "reason": "Not part of current toolchain"
+    },
+    {
+      "name": "Percy",
+      "reason": "No visual testing in current workflow"
+    },
+    {
+      "name": "Velo App",
+      "reason": "Not part of current stack"
+    },
+    {
+      "name": "docker",
+      "reason": "Docker Hub integration not needed at org level"
+    },
+    {
+      "name": "Google AI Studio",
+      "reason": "Personal AI tool, Claude is canonical AI agent"
+    },
+    {
+      "name": "Prisma",
+      "reason": "Not part of current ORM stack"
+    }
+  ]
+}

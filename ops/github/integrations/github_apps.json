@@ -1,0 +1,95 @@
+{
+  "snapshot_date": "2026-02-12",
+  "organization": "Insightpulseai",
+  "installed_github_apps": [
+    {
+      "name": "Azure Boards",
+      "slug": "azure-boards",
+      "owner": "microsoft",
+      "category": "project-management",
+      "scope": "org",
+      "purpose": "Azure DevOps work item linking with commits and PRs",
+      "status": "active"
+    },
+    {
+      "name": "ChatGPT Codex Connector",
+      "slug": "chatgpt-codex-connector",
+      "owner": "openai",
+      "category": "ai-coding",
+      "scope": "org",
+      "purpose": "OpenAI Codex integration for code generation",
+      "status": "active"
+    },
+    {
+      "name": "Claude",
+      "slug": "claude",
+      "owner": "anthropics",
+      "category": "ai-coding",
+      "scope": "org",
+      "purpose": "Claude AI agent for code review, PRs, and autonomous coding",
+      "status": "active"
+    },
+    {
+      "name": "Cloudflare Workers and Pages",
+      "slug": "cloudflare-workers-and-pages",
+      "owner": "cloudflare",
+      "category": "deployment",
+      "scope": "org",
+      "purpose": "Edge deployment and CDN integration via Cloudflare",
+      "status": "active"
+    },
+    {
+      "name": "Cursor",
+      "slug": "cursor",
+      "owner": "cursor",
+      "category": "ai-coding",
+      "scope": "org",
+      "purpose": "AI-powered IDE integration for code navigation and editing",
+      "status": "active"
+    },
+    {
+      "name": "Databricks",
+      "slug": "databricks",
+      "owner": "databricks",
+      "category": "data-platform",
+      "scope": "org",
+      "purpose": "Lakehouse and data engineering platform integration",
+      "status": "active"
+    },
+    {
+      "name": "Figma",
+      "slug": "figma",
+      "owner": "figma",
+      "category": "design",
+      "scope": "org",
+      "purpose": "Design file linking and branch previews in PRs",
+      "status": "active"
+    },
+    {
+      "name": "Slack",
+      "slug": "slack",
+      "owner": "github",
+      "category": "communication",
+      "scope": "org",
+      "purpose": "GitHub notifications and actions in Slack channels",
+      "status": "active"
+    },
+    {
+      "name": "Vercel",
+      "slug": "vercel",
+      "owner": "vercel",
+      "category": "deployment",
+      "scope": "org",
+      "purpose": "Frontend deployment previews and production hosting",
+      "status": "active"
+    }
+  ],
+  "categories": {
+    "ai-coding": ["Claude", "ChatGPT Codex Connector", "Cursor"],
+    "deployment": ["Cloudflare Workers and Pages", "Vercel"],
+    "data-platform": ["Databricks"],
+    "project-management": ["Azure Boards"],
+    "design": ["Figma"],
+    "communication": ["Slack"]
+  }
+}
