@@ -1,0 +1,31 @@
+name: odoo-generated-artifacts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'external-src/**'
+      - 'addons/ipai/**'
+      - 'scripts/gen_addons_path.sh'
+      - 'infra/odoo/addons-path.*'
+  push:
+    branches: [main]
+    paths:
+      - 'external-src/**'
+      - 'addons/ipai/**'
+      - 'scripts/gen_addons_path.sh'
+      - 'infra/odoo/addons-path.*'
+  workflow_dispatch: {}
+
+jobs:
+  regen-check:
+    name: Verify generated artifacts are reproducible
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify addons-path artifacts
+        run: ./scripts/verify_generated_odoo_artifacts.sh

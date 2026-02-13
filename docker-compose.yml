@@ -1,83 +1,125 @@
 # =============================================================================
-# Docker Compose: Odoo CE - Canonical Development Environment
+# Docker Compose: Odoo CE 19 — Canonical SSOT
 # =============================================================================
-# This is the ROOT entry point for local development.
+# Single source of truth for the Odoo development stack.
+# All other compose files are overlays or deprecated.
 #
 # Usage:
-#   docker compose up -d                    # Start Odoo + PostgreSQL
-#   docker compose logs -f odoo-core        # View Odoo logs
-#   docker compose exec odoo-core odoo --version  # Check version
-#   docker compose down                     # Stop services
-#   docker compose down -v                  # Stop and remove volumes
+#   docker compose up -d                      # Odoo + PG + Redis
+#   docker compose logs -f odoo               # Tail Odoo logs
+#   docker compose exec odoo odoo --version   # Check version
+#   docker compose down                       # Stop
+#   docker compose down -v                    # Stop + remove volumes
 #
 # Profiles:
-#   docker compose --profile tools up -d    # Include pgAdmin + Mailpit
-#   docker compose --profile init up        # Run module initialization
+#   docker compose --profile tools up -d      # + pgAdmin + Mailpit
+#   docker compose --profile init up          # One-shot module install
+#   docker compose --profile update up        # One-shot module update
 #
-# Other compose files:
-#   docker-compose.dev.yml     - Full dev stack (Superset, n8n, MCP)
-#   docker-compose.odoo19.yml  - Minimal Odoo 19 only
-#   docker-compose.shell.yml   - Browser web shell (GAP 4)
-#   deploy/docker-compose.prod.yml - Production configuration
+# Overlays:
+#   docker-compose.dev.yml    - Full stack (Superset, n8n, MCP)
+#   docker-compose.shell.yml  - Browser web shell
+#
+# Production:
+#   infra/deploy/docker-compose.prod.yml      - Immutable image, Caddy, caps
+#   infra/do-oca-stack/docker-compose.yml     - OCA reference stack
 # =============================================================================
 
 name: odoo
 
 services:
   # ===========================================================================
-  # PostgreSQL 16 - Database Backend
+  # PostgreSQL 16 — Database Backend (tuned for Odoo)
   # ===========================================================================
-  postgres:
+  db:
     image: postgres:16-alpine
     container_name: odoo-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-odoo}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=${POSTGRES_MAX_CONNECTIONS:-100}"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "effective_io_concurrency=200"
+      - "-c"
+      - "log_min_duration_statement=1000"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d:ro
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo} -d ${POSTGRES_DB:-odoo}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
       start_period: 10s
     networks:
       - odoo-net
 
   # ===========================================================================
-  # Odoo CE 19 - Core ERP System
+  # Redis 7 — Session Store / Cache / Bus Backend
   # ===========================================================================
-  odoo-core:
+  redis:
+    image: redis:7-alpine
+    container_name: odoo-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - odoo-net
+
+  # ===========================================================================
+  # Odoo CE 19 — Core ERP (System of Record)
+  # ===========================================================================
+  odoo:
     image: odoo:19
     container_name: odoo-core
     restart: unless-stopped
     depends_on:
-      postgres:
+      db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     environment:
-      - HOST=postgres
-      - PORT=5432
-      - USER=${POSTGRES_USER:-odoo}
-      - PASSWORD=${POSTGRES_PASSWORD:-odoo}
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
     volumes:
-      # Odoo data persistence
-      - odoo_data:/var/lib/odoo
-      - odoo_config:/etc/odoo
-      # Custom addons (IPAI modules)
+      # Odoo data persistence (filestore + sessions)
+      - odoo-web-data:/var/lib/odoo
+      # Custom addons — IPAI modules (read-only mount)
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
-      # OCA modules (if available)
+      # OCA modules (read-only mount)
       - ./addons/OCA:/mnt/extra-addons/OCA:ro
     ports:
       - "${ODOO_PORT:-8069}:8069"
       - "${ODOO_LONGPOLL_PORT:-8072}:8072"
     command: >
       odoo
-      --db_host=postgres
+      --db_host=db
       --db_port=5432
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
@@ -94,15 +136,15 @@ services:
       - odoo-net
 
   # ===========================================================================
-  # pgAdmin 4 - Database Administration (optional, via --profile tools)
+  # pgAdmin 4 — Database Admin (profile: tools)
   # ===========================================================================
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:8.14
     container_name: odoo-pgadmin
     profiles: ["tools"]
     restart: unless-stopped
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@localhost}
@@ -116,10 +158,10 @@ services:
       - odoo-net
 
   # ===========================================================================
-  # Mailpit - Local Email Testing (optional, via --profile tools)
+  # Mailpit — Local Email Testing (profile: tools)
   # ===========================================================================
   mailpit:
-    image: axllent/mailpit:latest
+    image: axllent/mailpit:v1.21
     container_name: odoo-mailpit
     profiles: ["tools"]
     restart: unless-stopped
@@ -130,27 +172,27 @@ services:
       - odoo-net
 
   # ===========================================================================
-  # Module Initialization (one-time, via --profile init)
+  # Module Initialization — one-shot (profile: init)
   # ===========================================================================
   odoo-init:
     image: odoo:19
     container_name: odoo-init
     profiles: ["init"]
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     environment:
-      - HOST=postgres
-      - PORT=5432
-      - USER=${POSTGRES_USER:-odoo}
-      - PASSWORD=${POSTGRES_PASSWORD:-odoo}
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
     volumes:
-      - odoo_data:/var/lib/odoo
+      - odoo-web-data:/var/lib/odoo
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
       - ./addons/OCA:/mnt/extra-addons/OCA:ro
     command: >
       odoo
-      --db_host=postgres
+      --db_host=db
       --db_port=5432
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
@@ -162,13 +204,45 @@ services:
     networks:
       - odoo-net
 
+  # ===========================================================================
+  # Module Update — one-shot (profile: update)
+  # ===========================================================================
+  odoo-update:
+    image: odoo:19
+    container_name: odoo-update
+    profiles: ["update"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+    command: >
+      odoo
+      --db_host=db
+      --db_port=5432
+      --db_user=${POSTGRES_USER:-odoo}
+      --db_password=${POSTGRES_PASSWORD:-odoo}
+      --database=${ODOO_DB:-odoo_dev}
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      -u ${UPDATE_MODULES:-all}
+      --stop-after-init
+    networks:
+      - odoo-net
+
 volumes:
-  postgres_data:
-    name: odoo-postgres-data
-  odoo_data:
-    name: odoo-odoo-data
-  odoo_config:
-    name: odoo-odoo-config
+  pgdata:
+    name: odoo-pgdata
+  redisdata:
+    name: odoo-redisdata
+  odoo-web-data:
+    name: odoo-web-data
   pgadmin_data:
     name: odoo-pgadmin-data
 
