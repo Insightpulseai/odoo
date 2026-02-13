@@ -1,0 +1,777 @@
+parity_seed:
+  source:
+    url: https://www.odoo.com/page/editions
+    fetched_at: '2026-02-13T00:04:20.490912+00:00'
+    notes: Seed extracted from editions comparison page; enrich with OCA mapping + evidence URLs per row.
+  schema_version: v1
+  rows:
+  - area: General
+    app: Unlimited Functional support
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: General
+    app: Version Upgrades
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: General
+    app: Hosting
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: User interface
+    app: Desktop • Web Browser
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: User interface
+    app: Mobile • Android and iOS
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Accounting
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Accounting
+    feature: Comprehensive AccountingGeneral Ledger, Bank Statement Reconciliation, Analytic Accounting, Vendor Bill OCR,
+      Budgets, Check Writing, Consolidation,Localizations, Reports, ...
+    evidence_text: Comprehensive AccountingGeneral Ledger, Bank Statement Reconciliation, Analytic Accounting, Vendor Bill
+      OCR, Budgets, Check Writing, Consolidation,Localizations, Reports, ...
+    assumed_ee_only: true
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Invoicing
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Invoicing
+    feature: Payments
+    evidence_text: Payments
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Invoicing
+    feature: AI
+    evidence_text: AI
+    assumed_ee_only: true
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Expenses
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Payroll
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Payroll
+    feature: Expense Digitalization (OCR)
+    evidence_text: Expense Digitalization (OCR)
+    assumed_ee_only: true
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Payroll
+    feature: Reimbursement in Payslip
+    evidence_text: Reimbursement in Payslip
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Documents
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: Documents
+    feature: Spreadsheet
+    evidence_text: Spreadsheet
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Finance
+    app: Sign
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Finance
+    app: ESG
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: CRM
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: Sales
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: Point of Sale
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: Subscriptions
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: Rental
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Sales
+    app: Amazon Connector
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: Website Builder
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: eCommerce
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: Blog
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: Forum
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: Live Chat
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Websites
+    app: eLearning
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Inventory
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Inventory
+    feature: Barcode
+    evidence_text: Barcode
+    assumed_ee_only: true
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Supply Chain
+    app: Manufacturing (MRP)
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Manufacturing (MRP)
+    feature: Shopfloor, Control Panel, Scheduling
+    evidence_text: Shopfloor, Control Panel, Scheduling
+    assumed_ee_only: true
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Supply Chain
+    app: PLM
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Purchase
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Maintenance
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Supply Chain
+    app: Quality
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Employees
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Recruitment
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Time Off
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Referrals
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Appraisals
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Human Resources
+    app: Fleet
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: Social Marketing
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: Email Marketing
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: SMS Marketing
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: Events
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: Marketing Automation
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Marketing
+    app: Surveys
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Project
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Timesheet
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Timesheet
+    feature: Grid view, timer, reminders, timesheet validation
+    evidence_text: Grid view, timer, reminders, timesheet validation
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (feature-level) from editions page
+  - area: Services
+    app: Field Service
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Helpdesk
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Planning
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Services
+    app: Appointments
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: Discuss
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: Approvals
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: To-Do
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: Calendar
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: VoIP
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Productivity
+    app: IoT
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
+  - area: Customization
+    app: Studio
+    feature: null
+    evidence_text: null
+    assumed_ee_only: false
+    source_url: https://www.odoo.com/page/editions
+    mapping:
+      oca_repo: null
+      oca_module: null
+      ipai_module: null
+    confidence: 0.0
+    notes: seed row (app-level) from editions page
