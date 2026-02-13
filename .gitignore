@@ -250,3 +250,10 @@ docs/brand/mockups/
 
 # Graph generation output (ephemeral artifacts)
 out/graphs/
+
+# Terraform (Cloudflare SSOT)
+infra/cloudflare/**/.terraform/
+infra/cloudflare/**/.terraform.lock.hcl
+infra/cloudflare/**/terraform.tfstate*
+infra/cloudflare/**/tfplan
+infra/cloudflare/**/terraform.tfvars

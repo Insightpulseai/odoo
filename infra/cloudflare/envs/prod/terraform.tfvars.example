@@ -1,0 +1,8 @@
+# Cloudflare API token with DNS edit permissions for the zone
+cloudflare_api_token = "PASTE_IN_ENV_OR_TFVARS_NOT_COMMITTED"
+
+# Canonical domain (no .net)
+zone_name = "insightpulseai.com"
+
+# Your canonical origin (droplet/LB)
+origin_ipv4 = "178.128.112.214"
