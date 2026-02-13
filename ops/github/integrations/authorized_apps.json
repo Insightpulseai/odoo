@@ -1,0 +1,481 @@
+{
+  "snapshot_date": "2026-02-12",
+  "account": "jgtolentino",
+  "authorized_github_apps": [
+    {
+      "name": "Azure Boards",
+      "owner": "microsoft",
+      "category": "project-management",
+      "last_used_recency": "4 months",
+      "status": "active"
+    },
+    {
+      "name": "Builder.io Integration",
+      "owner": "BuilderIO",
+      "category": "design",
+      "last_used_recency": "3 months",
+      "status": "active",
+      "notes": "Permission updates requested"
+    },
+    {
+      "name": "ChatGPT Codex Connector",
+      "owner": "openai",
+      "category": "ai-coding",
+      "last_used_recency": "1 week",
+      "status": "active"
+    },
+    {
+      "name": "Claude",
+      "owner": "anthropics",
+      "category": "ai-coding",
+      "last_used_recency": "1 week",
+      "status": "active"
+    },
+    {
+      "name": "Continue",
+      "owner": "continuedev",
+      "category": "ai-coding",
+      "last_used_recency": "unknown",
+      "status": "active",
+      "notes": "Permission updates requested"
+    },
+    {
+      "name": "Cursor",
+      "owner": "cursor",
+      "category": "ai-coding",
+      "last_used_recency": "1 week",
+      "status": "active"
+    },
+    {
+      "name": "Databricks",
+      "owner": "databricks",
+      "category": "data-platform",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "DigitalOcean",
+      "owner": "digitalocean",
+      "category": "infrastructure",
+      "last_used_recency": "2 months",
+      "status": "active"
+    },
+    {
+      "name": "docker",
+      "owner": "docker",
+      "category": "infrastructure",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "draw.io App",
+      "owner": "jgraph",
+      "category": "design",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Figma",
+      "owner": "figma",
+      "category": "design",
+      "last_used_recency": "2 weeks",
+      "status": "active"
+    },
+    {
+      "name": "Google AI Studio",
+      "owner": "google-gemini",
+      "category": "ai-coding",
+      "last_used_recency": "2 months",
+      "status": "active"
+    },
+    {
+      "name": "Google Integrations",
+      "owner": "google",
+      "category": "productivity",
+      "last_used_recency": "3 months",
+      "status": "active"
+    },
+    {
+      "name": "Google Labs Jules",
+      "owner": "google-labs-code",
+      "category": "ai-coding",
+      "last_used_recency": "unknown",
+      "status": "active",
+      "notes": "Permission updates requested"
+    },
+    {
+      "name": "Linear",
+      "owner": "linear",
+      "category": "project-management",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "lovable.dev",
+      "owner": "GPT-Engineer-App",
+      "category": "ai-coding",
+      "last_used_recency": "3 months",
+      "status": "active"
+    },
+    {
+      "name": "Mermaid Chart",
+      "owner": "mermaid-js",
+      "category": "design",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "monday.com + GitHub",
+      "owner": "mondaycom",
+      "category": "project-management",
+      "last_used_recency": "never",
+      "status": "active",
+      "notes": "Permission updates requested"
+    },
+    {
+      "name": "Neon Postgres",
+      "owner": "neondatabase",
+      "category": "data-platform",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "Netlify",
+      "owner": "netlify",
+      "category": "deployment",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Notion AI Connector",
+      "owner": "notion",
+      "category": "productivity",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Notion Workspace",
+      "owner": "notion",
+      "category": "productivity",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Percy",
+      "owner": "percy",
+      "category": "testing",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "pulser-hub",
+      "owner": "jgtolentino",
+      "category": "custom",
+      "last_used_recency": "2 weeks",
+      "status": "active",
+      "notes": "Custom GitHub App (App ID: 2191216)"
+    },
+    {
+      "name": "Railway App",
+      "owner": "railwayapp",
+      "category": "deployment",
+      "last_used_recency": "never",
+      "status": "active"
+    },
+    {
+      "name": "Render",
+      "owner": "renderinc",
+      "category": "deployment",
+      "last_used_recency": "5 months",
+      "status": "active",
+      "notes": "Permission updates requested"
+    },
+    {
+      "name": "Renovate",
+      "owner": "renovatebot",
+      "category": "dependency-management",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Replit",
+      "owner": "replit",
+      "category": "ai-coding",
+      "last_used_recency": "8 months",
+      "status": "active"
+    },
+    {
+      "name": "Rork-Agent",
+      "owner": "rorkai",
+      "category": "ai-coding",
+      "last_used_recency": "5 months",
+      "status": "active"
+    },
+    {
+      "name": "Supabase",
+      "owner": "supabase",
+      "category": "data-platform",
+      "last_used_recency": "3 weeks",
+      "status": "active"
+    },
+    {
+      "name": "Velo App",
+      "owner": "velo",
+      "category": "deployment",
+      "last_used_recency": "unknown",
+      "status": "active"
+    },
+    {
+      "name": "Vercel",
+      "owner": "vercel",
+      "category": "deployment",
+      "last_used_recency": "1 week",
+      "status": "active"
+    },
+    {
+      "name": "Vercel Toolbar",
+      "owner": "vercel",
+      "category": "deployment",
+      "last_used_recency": "never",
+      "status": "active"
+    }
+  ],
+  "authorized_oauth_apps": [
+    {
+      "name": "Azure Boards",
+      "owner": "microsoft",
+      "category": "project-management",
+      "last_used_recency": "4 months"
+    },
+    {
+      "name": "Builder.io Integration",
+      "owner": "BuilderIO",
+      "category": "design",
+      "last_used_recency": "3 months"
+    },
+    {
+      "name": "ChatGPT Codex Connector",
+      "owner": "openai",
+      "category": "ai-coding",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Claude",
+      "owner": "anthropics",
+      "category": "ai-coding",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Claude for GitHub",
+      "owner": "anthropics",
+      "category": "ai-coding",
+      "last_used_recency": "6 months"
+    },
+    {
+      "name": "Cloudflare Workers and Pages",
+      "owner": "cloudflare",
+      "category": "deployment",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Copilot Chat App",
+      "owner": "github",
+      "category": "ai-coding",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Copilot Pull Request Reviewer",
+      "owner": "github",
+      "category": "ai-coding",
+      "last_used_recency": "2 weeks"
+    },
+    {
+      "name": "Copilot Spark",
+      "owner": "github",
+      "category": "ai-coding",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Copilot SWE Agent",
+      "owner": "github",
+      "category": "ai-coding",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Cursor",
+      "owner": "cursor",
+      "category": "ai-coding",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Databricks",
+      "owner": "databricks",
+      "category": "data-platform",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "DigitalOcean",
+      "owner": "digitalocean",
+      "category": "infrastructure",
+      "last_used_recency": "2 months"
+    },
+    {
+      "name": "docker",
+      "owner": "docker",
+      "category": "infrastructure",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Docker Inc",
+      "owner": "docker",
+      "category": "infrastructure",
+      "last_used_recency": "4 months"
+    },
+    {
+      "name": "Figma",
+      "owner": "figma",
+      "category": "design",
+      "last_used_recency": "2 weeks"
+    },
+    {
+      "name": "GitHub Codespaces",
+      "owner": "github",
+      "category": "development",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "GitHub Copilot Plugin",
+      "owner": "github",
+      "category": "ai-coding",
+      "last_used_recency": "3 months"
+    },
+    {
+      "name": "Google AI Studio",
+      "owner": "google-gemini",
+      "category": "ai-coding",
+      "last_used_recency": "2 months"
+    },
+    {
+      "name": "Google Integrations",
+      "owner": "google",
+      "category": "productivity",
+      "last_used_recency": "3 months"
+    },
+    {
+      "name": "Google Labs Jules",
+      "owner": "google-labs-code",
+      "category": "ai-coding",
+      "last_used_recency": "7 months"
+    },
+    {
+      "name": "Linear",
+      "owner": "linear",
+      "category": "project-management",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "lovable.dev",
+      "owner": "GPT-Engineer-App",
+      "category": "ai-coding",
+      "last_used_recency": "3 months"
+    },
+    {
+      "name": "monday.com + GitHub",
+      "owner": "mondaycom",
+      "category": "project-management",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Neon Postgres",
+      "owner": "neondatabase",
+      "category": "data-platform",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Percy",
+      "owner": "percy",
+      "category": "testing",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Pieces for Developers",
+      "owner": "pieces-app",
+      "category": "productivity",
+      "last_used_recency": "5 months"
+    },
+    {
+      "name": "Prisma",
+      "owner": "prisma",
+      "category": "data-platform",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "pulser-hub",
+      "owner": "jgtolentino",
+      "category": "custom",
+      "last_used_recency": "2 weeks"
+    },
+    {
+      "name": "Railway App",
+      "owner": "railwayapp",
+      "category": "deployment",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Render",
+      "owner": "renderinc",
+      "category": "deployment",
+      "last_used_recency": "5 months"
+    },
+    {
+      "name": "Replit",
+      "owner": "replit",
+      "category": "ai-coding",
+      "last_used_recency": "8 months"
+    },
+    {
+      "name": "Rork-Agent",
+      "owner": "rorkai",
+      "category": "ai-coding",
+      "last_used_recency": "5 months"
+    },
+    {
+      "name": "Sentry",
+      "owner": "getsentry",
+      "category": "monitoring",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Slack",
+      "owner": "github",
+      "category": "communication",
+      "last_used_recency": "never"
+    },
+    {
+      "name": "Smithery",
+      "owner": "smithery-ai",
+      "category": "ai-coding",
+      "last_used_recency": "5 months"
+    },
+    {
+      "name": "Supabase",
+      "owner": "supabase",
+      "category": "data-platform",
+      "last_used_recency": "3 weeks"
+    },
+    {
+      "name": "Vercel",
+      "owner": "vercel",
+      "category": "deployment",
+      "last_used_recency": "1 week"
+    },
+    {
+      "name": "Vercel Toolbar",
+      "owner": "vercel",
+      "category": "deployment",
+      "last_used_recency": "never"
+    }
+  ],
+  "total_authorized_github_apps": 33,
+  "total_authorized_oauth_apps": 39
+}
