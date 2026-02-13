@@ -257,3 +257,10 @@ infra/cloudflare/**/.terraform.lock.hcl
 infra/cloudflare/**/terraform.tfstate*
 infra/cloudflare/**/tfplan
 infra/cloudflare/**/terraform.tfvars
+
+# Environment files (only .env is gitignored, templates are committed)
+.env
+!.env.example
+!.env.dev
+!.env.stage
+!.env.prod
