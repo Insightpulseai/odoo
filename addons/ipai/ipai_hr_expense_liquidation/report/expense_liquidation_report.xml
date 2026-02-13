@@ -85,8 +85,8 @@
                                                 <td><span t-field="line.date"/></td>
                                                 <td><span t-field="line.description"/></td>
                                                 <td>
-                                                    <span t-if="line.bucket == 'meals'">Meals & Entertainment</span>
-                                                    <span t-elif="line.bucket == 'transportation'">Transportation & Travel</span>
+                                                    <span t-if="line.bucket == 'meals'">Meals &amp; Entertainment</span>
+                                                    <span t-elif="line.bucket == 'transportation'">Transportation &amp; Travel</span>
                                                     <span t-else="">Miscellaneous</span>
                                                 </td>
                                                 <td><span t-field="line.reference"/></td>
@@ -106,13 +106,13 @@
                                 <h4>Bucket Totals</h4>
                                 <table class="table table-sm table-bordered">
                                     <tr>
-                                        <td><strong>Meals & Entertainment</strong></td>
+                                        <td><strong>Meals &amp; Entertainment</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.total_meals" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Transportation & Travel</strong></td>
+                                        <td><strong>Transportation &amp; Travel</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.total_transportation" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </td>

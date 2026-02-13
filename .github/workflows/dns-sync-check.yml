@@ -1,0 +1,129 @@
+# =============================================================================
+# DNS Sync Check — Infrastructure SSOT Enforcement
+# =============================================================================
+# Validates that generated DNS artifacts are in sync with subdomain-registry.yaml
+# Runs on push to infra/dns/ to catch manual edits to generated files
+#
+# Purpose:
+#   Enforce SSOT doctrine: subdomain-registry.yaml is the single source of truth
+#   Generated files (Terraform vars, runtime JSON) must never be manually edited
+#
+# Failure Modes:
+#   - Manual edits to generated files → fail
+#   - Generator script produces different output → fail
+#   - Committed files differ from generated → fail
+# =============================================================================
+
+name: DNS Sync Check
+
+on:
+  push:
+    paths:
+      - 'infra/dns/**'
+      - 'infra/cloudflare/envs/prod/subdomains.auto.tfvars'
+      - 'docs/architecture/runtime_identifiers.json'
+      - 'scripts/generate-dns-artifacts.sh'
+  pull_request:
+    paths:
+      - 'infra/dns/**'
+      - 'infra/cloudflare/envs/prod/subdomains.auto.tfvars'
+      - 'docs/architecture/runtime_identifiers.json'
+      - 'scripts/generate-dns-artifacts.sh'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-dns-sync:
+    name: Validate DNS SSOT Sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Verify generator script exists
+        run: |
+          if [ ! -f "scripts/generate-dns-artifacts.sh" ]; then
+            echo "❌ Generator script not found: scripts/generate-dns-artifacts.sh"
+            exit 1
+          fi
+
+      - name: Backup existing generated files
+        run: |
+          mkdir -p /tmp/dns-backup
+          cp infra/cloudflare/envs/prod/subdomains.auto.tfvars /tmp/dns-backup/ || true
+          cp docs/architecture/runtime_identifiers.json /tmp/dns-backup/ || true
+          cp infra/dns/dns-validation-spec.json /tmp/dns-backup/ || true
+
+      - name: Run generator
+        run: |
+          chmod +x scripts/generate-dns-artifacts.sh
+          ./scripts/generate-dns-artifacts.sh
+
+      - name: Check for uncommitted changes (Terraform)
+        run: |
+          if ! diff -q infra/cloudflare/envs/prod/subdomains.auto.tfvars /tmp/dns-backup/subdomains.auto.tfvars; then
+            echo "❌ Terraform variables differ from committed version"
+            echo ""
+            echo "Expected (committed):"
+            cat /tmp/dns-backup/subdomains.auto.tfvars || echo "(file does not exist)"
+            echo ""
+            echo "Actual (generated):"
+            cat infra/cloudflare/envs/prod/subdomains.auto.tfvars
+            echo ""
+            echo "Fix: Run ./scripts/generate-dns-artifacts.sh and commit the changes"
+            exit 1
+          fi
+
+      - name: Check for uncommitted changes (Runtime JSON)
+        run: |
+          if ! diff -q docs/architecture/runtime_identifiers.json /tmp/dns-backup/runtime_identifiers.json; then
+            echo "❌ Runtime identifiers JSON differs from committed version"
+            echo ""
+            echo "Fix: Run ./scripts/generate-dns-artifacts.sh and commit the changes"
+            exit 1
+          fi
+
+      - name: Check for uncommitted changes (Validation Spec)
+        run: |
+          if ! diff -q infra/dns/dns-validation-spec.json /tmp/dns-backup/dns-validation-spec.json; then
+            echo "❌ Validation spec differs from committed version"
+            echo ""
+            echo "Fix: Run ./scripts/generate-dns-artifacts.sh and commit the changes"
+            exit 1
+          fi
+
+      - name: Validate subdomain count
+        run: |
+          EXPECTED_COUNT=$(yq eval '.subdomains | length' infra/dns/subdomain-registry.yaml)
+          ACTUAL_COUNT=$(jq '.services | length' docs/architecture/runtime_identifiers.json)
+
+          if [ "$EXPECTED_COUNT" -ne "$ACTUAL_COUNT" ]; then
+            echo "❌ Subdomain count mismatch"
+            echo "   Expected (YAML): $EXPECTED_COUNT"
+            echo "   Actual (JSON): $ACTUAL_COUNT"
+            exit 1
+          fi
+
+      - name: Success summary
+        run: |
+          echo "✅ DNS SSOT validation passed"
+          echo ""
+          echo "Verified:"
+          echo "  ✅ Terraform variables in sync"
+          echo "  ✅ Runtime identifiers JSON in sync"
+          echo "  ✅ Validation spec in sync"
+          echo "  ✅ Subdomain count matches"
+          echo ""
+          echo "SSOT source: infra/dns/subdomain-registry.yaml"

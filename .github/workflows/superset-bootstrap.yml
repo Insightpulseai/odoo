@@ -1,0 +1,53 @@
+name: superset-bootstrap
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "scripts/superset/**"
+      - "assets/superset/**"
+      - ".github/workflows/superset-bootstrap.yml"
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    env:
+      SUPERSET_BASE_URL: ${{ secrets.SUPERSET_BASE_URL }}
+      SUPERSET_USERNAME: ${{ secrets.SUPERSET_USERNAME }}
+      SUPERSET_PASSWORD: ${{ secrets.SUPERSET_PASSWORD }}
+
+      # Primary analytics DB (example: DO Postgres or Supabase Postgres)
+      DB_NAME: ${{ secrets.SUPERSET_DB_NAME }}
+      DB_URI:  ${{ secrets.SUPERSET_DB_URI }}
+
+      # Optional assets zip
+      SUPERSET_ASSET_ZIP_PATH: assets/superset/export.zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Add/update Superset database
+        id: db
+        run: |
+          set -euo pipefail
+          out="$(./scripts/superset/add_or_update_database.sh)"
+          echo "$out"
+          echo "$out" | sed -n 's/^DB_ID=//p' > /tmp/db_id
+          echo "db_id=$(cat /tmp/db_id)" >> "$GITHUB_OUTPUT"
+
+      - name: Test database connection
+        run: |
+          set -euo pipefail
+          export DB_ID="${{ steps.db.outputs.db_id }}"
+          ./scripts/superset/test_database_connection.sh
+
+      - name: Import Superset assets (optional)
+        if: ${{ hashFiles('assets/superset/export.zip') != '' }}
+        run: |
+          set -euo pipefail
+          ./scripts/superset/import_assets.sh
