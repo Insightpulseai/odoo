@@ -28,14 +28,12 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
 # Odoo
 *.pyc
 .odoo-bin
 filestore/
 sessions/
 *.log
-
 # Odoo addons - layered architecture: CE → OCA → IPAI
 # Legacy flat structure (ipai_* and tbwa_* in addons root)
 addons/*
@@ -43,11 +41,9 @@ addons/*
 !addons/ipai_*/**
 !addons/tbwa_*/
 !addons/tbwa_*/**
-
 # --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
-
 # --- OCA meta layer (tracked) ---
 # Only track manifests + lockfile, NOT cloned repos
 !addons/oca/
@@ -61,7 +57,6 @@ addons/oca/*/
 !addons/oca/README.md
 !addons/oca/OCA_PINS.yaml
 !addons/oca/ODOO_PIN.txt
-
 # --- OCA Bridge Modules (custom-built for EE parity) ---
 # These are NOT cloned OCA repos; they are IPAI-built bridges
 !addons/oca/account_reconcile_oca/
@@ -72,18 +67,14 @@ addons/oca/*/
 !addons/oca/account_asset_management/**
 !addons/oca/hr_expense/
 !addons/oca/hr_expense/**
-
 # Common ignores
 addons/**/__pycache__/
 addons/**/*.pyc
-
 # Node.js
 node_modules/
-
 # Docker
 .env
 docker-compose.override.yml
-
 # IDE
 # .vscode/
 !/.vscode/extensions.json
@@ -97,36 +88,29 @@ docker-compose.override.yml
 *.swo
 *~
 .DS_Store
-
 # Secrets
 *.key
 *.pem
 *.crt
 secrets/
 .secrets
-
 # Deployment
 deploy/.env
 deploy/*.local
 deploy_m1.sh
 deploy/*.log
 deploy/*.backup.*
-
 # OCA submodules (tracked separately)
 oca/*
 !oca/.gitkeep
-
 # Logs
 logs/
-*.log
-
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.bak
 *.orig
-
 # Database
 *.sql
 !infra/platform-kit/**/*.sql
@@ -147,7 +131,6 @@ temp/
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
 !tests/sql/*.sql
-
 # Parity audit generated files
 parity_report.json
 *.db
@@ -155,7 +138,6 @@ parity_report.json
 # Exception: Claude external memory
 !.claude/project_memory.db
 .claude/settings.local.json
-
 # DB Inventory tool output
 tools/db-inventory/output/
 .env.smtp
@@ -164,58 +146,44 @@ tools/db-inventory/output/
 !docker-compose.local.yml
 !config/odoo.conf.local
 *.code-workspace
-
+!odoo.code-workspace
 # Odoo import exports (generated, may contain sensitive data)
 **/odoo_import_*.csv
 **/odoo_import_*.xlsx
 **/*_mapped.xlsx
 **/*_PassA_*.csv
 **/*_PassB_*.csv
-
 # Raw source workbooks (sensitive data)
 **/Month-end Closing Task and Tax Filing*.xlsx
 data/source.xlsx
-
 # Keep templates and sample files
 !templates/odoo/import/*.csv
 !data/user_map.csv
-
 # --- local env / secrets ---
-.env
 .env.*
 !.env.example
 !**/.env.example
+.devcontainer/devcontainer.env
 config/odoo.conf.local
 .mcp.json
-.claude/settings.local.json
-
 # --- local compose overrides ---
 docker-compose.local.yml
 docker-compose.*.local.yml
-
 # --- node / next build ---
 **/.next/
 **/node_modules/
 *.tsbuildinfo
 .cursor/
-
 # --- python ---
 .venv/
-__pycache__/
-*.pyc
-
 # --- misc ---
-.DS_Store
-
 # Incident snapshots (track only templates)
 docs/incidents/*
 !docs/incidents/templates/
-
 # OCA local clones (dev-only, not committed)
 sandbox/dev/oca-addons/
 .env.local
 !scripts/lib/
-
 # ---- Large/derived artifacts (indexer-noise reduction) ----
 # These bloat semantic search indexes with low-value content
 **/.turbo/
@@ -236,15 +204,26 @@ sandbox/dev/oca-addons/
 .ci_artifacts/
 scripts/audit/.env
 third_party/oca/
-
 # MkDocs build output
 site/
-
 # LIB (Local Intelligence Brain)
 .lib/
-
 # Large brand mockup files (>1MB)
 docs/brand/mockups/
-
 # Graph generation output (ephemeral artifacts)
 out/graphs/
+# Terraform (Cloudflare SSOT)
+infra/cloudflare/**/.terraform/
+infra/cloudflare/**/.terraform.lock.hcl
+infra/cloudflare/**/terraform.tfstate*
+infra/cloudflare/**/tfplan
+infra/cloudflare/**/terraform.tfvars
+# Environment files (only .env is gitignored, templates are committed)
+!.env.dev
+!.env.stage
+!.env.prod
+ echo === CRITICAL: .env.production contains secrets and is tracked in git === echo  echo Adding to .gitignore now... echo .env.production echo Removing from git (keeping local file)... git rm --cached .env.production
+*.local.json
+# secrets (local only) - never commit
+*.secrets.local
+*.secrets.yaml

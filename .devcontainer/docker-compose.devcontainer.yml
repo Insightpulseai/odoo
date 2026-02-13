@@ -1,0 +1,67 @@
+# ==============================================================================
+# Docker Compose Dev Container Override
+# ==============================================================================
+# Dev-specific overrides for VS Code Dev Containers
+# This file extends the main docker-compose.yml with dev-friendly settings
+#
+# Used by: .devcontainer/devcontainer.json
+# Extends: ../docker-compose.yml
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # Odoo — Dev Container Overrides
+  # ===========================================================================
+  odoo:
+    # Override to enable full dev mode
+    environment:
+      - ODOO_DEV_MODE=all
+      - ODOO_LOG_LEVEL=debug
+
+    # Dev-specific command with all debugging enabled
+    command: >
+      odoo
+      --db_host=db
+      --db_port=5432
+      --db_user=${POSTGRES_USER:-odoo}
+      --db_password=${POSTGRES_PASSWORD:-odoo}
+      --database=${ODOO_DB:-odoo_dev}
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --log-level=debug
+      --dev=all
+      --log-handler=:DEBUG
+
+    # Mount workspace for Dev Container
+    volumes:
+      - ../:/workspace:cached
+      - odoo-web-data:/var/lib/odoo
+      - ../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ../addons/oca:/mnt/extra-addons/OCA:ro
+
+  # ===========================================================================
+  # PostgreSQL — Dev Container Overrides
+  # ===========================================================================
+  db:
+    # Expose port for direct database access from host
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+
+    # Dev-friendly PostgreSQL settings
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+
+  # ===========================================================================
+  # Redis — Dev Container Overrides
+  # ===========================================================================
+  redis:
+    # Expose port for inspection tools
+    ports:
+      - "6379:6379"
+
+volumes:
+  odoo-web-data:
+    name: odoo-devcontainer-data

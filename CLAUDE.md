@@ -32,16 +32,28 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 | **Python** | 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` |
 | **Repo** | `Insightpulseai/odoo` |
+| **Workspace** | `ipai` (Docker, DevContainer, all dev tools) |
+
+**Workspace Naming**: "ipai" is the canonical identifier across all platforms (Docker project, network, volumes, DevContainer). See `docs/ai/WORKSPACE_NAMING.md` for complete convention.
 
 ---
 
 ## Infrastructure SSOT
 
-**Canonical Source:** `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
-**Machine-Readable:** `docs/architecture/runtime_identifiers.json`
+**DNS Single Source of Truth:**
+- **SSOT File**: `infra/dns/subdomain-registry.yaml` (edit this, never edit generated files)
+- **Generator**: `scripts/generate-dns-artifacts.sh` (generates Terraform + JSON)
+- **CI Enforcement**: `.github/workflows/dns-sync-check.yml` (validates sync)
+- **Generated Artifacts**:
+  - `infra/cloudflare/envs/prod/subdomains.auto.tfvars` (Terraform input)
+  - `docs/architecture/runtime_identifiers.json` (runtime reference)
+  - `infra/dns/dns-validation-spec.json` (CI validation)
+
+**Workflow**: Edit YAML → Run generator → Commit all → CI validates → Terraform apply
+
 **Verification:** `scripts/verify-dns-baseline.sh && scripts/verify-service-health.sh`
 
-See architecture docs for complete runtime service registry.
+See `infra/dns/README.md` for complete DNS SSOT workflow.
 
 ---
 
