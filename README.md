@@ -15,7 +15,44 @@ Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI cu
 
 ## Quick Start
 
-**Three canonical environments. See [SANDBOX.md](./SANDBOX.md) for complete documentation.**
+### Option 1: Dev Container (Recommended for Development)
+
+**Fastest way to get started with a fully configured environment:**
+
+1. **Prerequisites**:
+   - [VS Code](https://code.visualstudio.com/) + [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   - [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+2. **Open in Container**:
+   ```bash
+   # Open workspace
+   code odoo.code-workspace
+
+   # Command Palette (Cmd+Shift+P / Ctrl+Shift+P)
+   # Select: "Dev Containers: Reopen in Container"
+
+   # Wait for setup (~3-5 minutes first time)
+   ```
+
+3. **Verify**:
+   - Odoo: http://localhost:8069
+   - PostgreSQL: `psql -U odoo -d odoo_dev`
+   - Docker access: `docker ps`
+
+**📖 Full Guide**: See [docs/development/DEV_CONTAINER_GUIDE.md](./docs/development/DEV_CONTAINER_GUIDE.md) for features, troubleshooting, and advanced usage.
+
+**What You Get**:
+- ✅ **Python 3.12** + dev tools (black, flake8, pytest, pre-commit)
+- ✅ **Node.js LTS** + pnpm
+- ✅ **Docker-outside-of-Docker** (manage host containers)
+- ✅ **3 databases** pre-created (odoo_dev, odoo_stage, odoo_prod)
+- ✅ **VS Code extensions** (Python, Docker, Git, AI tools)
+- ✅ **Spec Kit** integration
+- ✅ **Auto-reload** on code changes
+
+### Option 2: Local Docker Compose
+
+**Manual setup for direct Docker Compose control:**
 
 ```bash
 # Local dev sandbox (default)
@@ -27,6 +64,8 @@ cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .en
 # Production deploy (droplet only)
 cd deploy && docker compose -f docker-compose.prod.yml up -d
 ```
+
+**📖 Full Guide**: See [SANDBOX.md](./SANDBOX.md) for complete documentation.
 
 ---
 

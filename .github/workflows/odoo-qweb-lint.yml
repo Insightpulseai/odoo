@@ -1,0 +1,38 @@
+name: odoo-qweb-lint
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  xml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: XML lint (Odoo/QWeb)
+        run: ./scripts/ci/lint_odoo_xml.py
+
+  qweb-test:
+    runs-on: ubuntu-latest
+    # This job requires Odoo/Docker environment.
+    # Defined here as a template/placeholder for full implementation
+    # when the repo has a standardized docker-based test runner.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start services (Postgres + Redis)
+        run: |
+          # Ideally reuse the repo's composed stack if available
+          # docker compose up -d db redis
+          echo "Skipping docker startup in this lightweight workflow"
+      - name: Run Odoo QWeb tests (Placeholder)
+        # env:
+        #   PGHOST: localhost
+        #   PGPORT: "5432"
+        #   PGUSER: odoo
+        #   PGPASSWORD: odoo
+        run: |
+          echo "To run tests: ./odoo-bin -d odoo_test -i ipai_hr_expense_liquidation --test-enable --stop-after-init"

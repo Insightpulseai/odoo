@@ -1,0 +1,33 @@
+name: infra-cloudflare-dns
+
+on:
+  pull_request:
+    paths:
+      - "infra/cloudflare/**"
+      - ".github/workflows/infra-cloudflare-dns.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "infra/cloudflare/**"
+      - ".github/workflows/infra-cloudflare-dns.yml"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+      - name: Terraform fmt/validate/plan
+        run: |
+          cd infra/cloudflare/envs/prod
+          terraform fmt -recursive -check
+          terraform init -upgrade
+          terraform validate
+          terraform plan

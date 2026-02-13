@@ -1,6 +1,18 @@
 {
-  "name": "InsightPulseAI-Odoo-DevContainer",
-  "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
+  "name": "ipai-devcontainer",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "odoo",
+  "runServices": [
+    "db",
+    "redis",
+    "odoo"
+  ],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
@@ -16,28 +28,43 @@
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
+      "version": "lts",
+      "nodeGypDependencies": true
     },
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    }
   },
   "forwardPorts": [
     8069,
     5432,
-    8080
+    8072,
+    6379
   ],
   "portsAttributes": {
     "8069": {
       "label": "Odoo HTTP",
       "onAutoForward": "notify"
     },
+    "8072": {
+      "label": "Odoo Longpoll",
+      "onAutoForward": "silent"
+    },
     "5432": {
       "label": "PostgreSQL",
       "onAutoForward": "silent"
     },
-    "8080": {
-      "label": "Additional Services",
+    "6379": {
+      "label": "Redis",
       "onAutoForward": "silent"
     }
+  },
+  "containerEnv": {
+    "ODOO_DB": "${localEnv:ODOO_DB:odoo_dev}",
+    "ODOO_LOG_LEVEL": "${localEnv:ODOO_LOG_LEVEL:debug}",
+    "POSTGRES_USER": "${localEnv:POSTGRES_USER:odoo}",
+    "POSTGRES_PASSWORD": "${localEnv:POSTGRES_PASSWORD:odoo}"
   },
   "containerUser": "devcontainer",
   "updateRemoteUserUID": true,
