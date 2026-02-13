@@ -1,0 +1,132 @@
+# =============================================================================
+# DNS Subdomain Registry — Single Source of Truth
+# =============================================================================
+# This file is the CANONICAL source for all subdomains under insightpulseai.com.
+# All DNS configuration (Terraform, runtime JSON, monitoring) is generated from this file.
+#
+# Generation: ./scripts/generate-dns-artifacts.sh
+# Validation: .github/workflows/dns-sync-check.yml (CI enforces sync)
+#
+# DO NOT manually edit generated files:
+#   - infra/cloudflare/envs/prod/subdomains.auto.tfvars
+#   - docs/architecture/runtime_identifiers.json
+#   - infra/dns/dns-validation-spec.json
+# =============================================================================
+
+version: "1.0"
+domain: insightpulseai.com
+environment: production
+origin_ip: 178.128.112.214
+
+# =============================================================================
+# Subdomain Definitions
+# =============================================================================
+# Each subdomain entry must specify:
+#   - name: subdomain (e.g., "erp" for erp.insightpulseai.com)
+#   - type: DNS record type (A, CNAME, TXT)
+#   - service: human-readable service identifier
+#   - For A records: origin_port, health_check
+#   - For CNAME records: target (full FQDN)
+# =============================================================================
+
+subdomains:
+  # ---------------------------------------------------------------------------
+  # Core Business Systems (A Records → 178.128.112.214)
+  # ---------------------------------------------------------------------------
+  - name: erp
+    type: A
+    service: odoo_ce_19
+    port: 8069
+    health_check: /web/login
+    owner_system: "Odoo CE 19.0"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+
+  - name: n8n
+    type: A
+    service: n8n_workflow_automation
+    port: 5678
+    health_check: /healthz
+    owner_system: "n8n automation"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+
+  - name: ocr
+    type: A
+    service: paddleocr_microservice
+    port: 8080
+    health_check: /health
+    owner_system: "PaddleOCR microservice"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+
+  - name: auth
+    type: A
+    service: authentication_service
+    port: 3000
+    health_check: /.well-known/openid-configuration
+    owner_system: "Authentication service"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+
+  - name: superset
+    type: A
+    service: apache_superset_bi
+    port: 8088
+    health_check: /health
+    owner_system: "Apache Superset BI"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # App Platform Services (CNAME Records → DO App Platform)
+  # ---------------------------------------------------------------------------
+  - name: mcp
+    type: CNAME
+    service: mcp_gateway
+    target: pulse-hub-web-an645.ondigitalocean.app
+    health_check: /healthz
+    owner_system: "MCP coordination (11 servers)"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    status: pending_verification
+
+  # ---------------------------------------------------------------------------
+  # Additional Subdomains (for www, api, etc.)
+  # ---------------------------------------------------------------------------
+  - name: www
+    type: A
+    service: website_redirect
+    port: 80
+    health_check: /
+    owner_system: "Redirect to apex"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+
+  - name: api
+    type: A
+    service: api_gateway
+    port: 8000
+    health_check: /api/health
+    owner_system: "API Gateway"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: planned
+
+# =============================================================================
+# Deprecated Services (Archived for Reference)
+# =============================================================================
+deprecated:
+  - name: affine
+    deprecated_date: "2026-02-09"
+    replacement: null
+    reason: "Service no longer needed"
+    dns_removed: true
+    container_removed: true

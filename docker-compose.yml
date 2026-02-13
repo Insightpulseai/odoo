@@ -25,7 +25,7 @@
 #   infra/do-oca-stack/docker-compose.yml     - OCA reference stack
 # =============================================================================
 
-name: odoo
+name: ipai
 
 services:
   # ===========================================================================
@@ -70,7 +70,7 @@ services:
       retries: 20
       start_period: 10s
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # Redis 7 — Session Store / Cache / Bus Backend
@@ -88,7 +88,7 @@ services:
       timeout: 3s
       retries: 20
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # Odoo CE 19 — Core ERP (System of Record)
@@ -133,7 +133,7 @@ services:
       retries: 5
       start_period: 90s
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # pgAdmin 4 — Database Admin (profile: tools)
@@ -155,7 +155,7 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # Mailpit — Local Email Testing (profile: tools)
@@ -169,7 +169,7 @@ services:
       - "${MAILPIT_WEB_PORT:-8025}:8025"
       - "${MAILPIT_SMTP_PORT:-1025}:1025"
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # Module Initialization — one-shot (profile: init)
@@ -202,7 +202,7 @@ services:
       --stop-after-init
       --without-demo=all
     networks:
-      - odoo-net
+      - ipai-net
 
   # ===========================================================================
   # Module Update — one-shot (profile: update)
@@ -234,19 +234,19 @@ services:
       -u ${UPDATE_MODULES:-all}
       --stop-after-init
     networks:
-      - odoo-net
+      - ipai-net
 
 volumes:
   pgdata:
-    name: odoo-pgdata
+    name: ipai-pgdata
   redisdata:
-    name: odoo-redisdata
+    name: ipai-redisdata
   odoo-web-data:
-    name: odoo-web-data
+    name: ipai-web-data
   pgadmin_data:
-    name: odoo-pgadmin-data
+    name: ipai-pgadmin-data
 
 networks:
-  odoo-net:
-    name: odoo-network
+  ipai-net:
+    name: ipai-network
     driver: bridge
