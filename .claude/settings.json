@@ -50,7 +50,7 @@
   },
   "permissions": {
     "allow": [
-      "Bash(docker exec:*)"
+      "Bash(docker exec *)"
     ]
   }
 }
