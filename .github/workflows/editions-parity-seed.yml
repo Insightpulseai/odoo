@@ -1,0 +1,54 @@
+name: Odoo Editions Parity Seed
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Sundays at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  generate-seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests pyyaml
+
+      - name: Generate seed
+        run: |
+          PARITY_SEED_DETERMINISTIC=1 python scripts/gen_odoo_editions_parity_seed.py
+
+      - name: Syntax validation
+        run: |
+          python -c "
+          import yaml, pathlib
+          p = pathlib.Path('spec/parity/odoo_editions_parity_seed.yaml')
+          d = yaml.safe_load(p.read_text())
+          rows = d['parity_seed']['rows']
+          assert len(rows) >= 20, f'Expected ≥20 rows, got {len(rows)}'
+          print(f'✅ Validated {len(rows)} rows')
+          "
+
+      - name: Detect drift
+        id: drift
+        run: |
+          if ! git diff --exit-code -- spec/parity/odoo_editions_parity_seed.yaml; then
+            echo "drift=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Editions page has changed - seed update needed"
+          else
+            echo "drift=false" >> $GITHUB_OUTPUT
+            echo "✅ Seed is up-to-date"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-seed-artifact
+          path: spec/parity/odoo_editions_parity_seed.yaml
