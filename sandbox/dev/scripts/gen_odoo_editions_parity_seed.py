@@ -15,6 +15,7 @@ Features:
 - Deterministic deduplication while preserving order
 """
 
+import os
 import re
 import sys
 import yaml
@@ -185,11 +186,15 @@ def build_yaml_output(rows: List[Dict[str, Any]], source_url: str) -> Dict[str, 
             f"from editions page"
         )
 
+    # Support deterministic mode for CI drift detection
+    det = os.getenv("PARITY_SEED_DETERMINISTIC", "").lower() in ("1", "true", "yes")
+    fetched_ts = "1970-01-01T00:00:00Z" if det else datetime.now(timezone.utc).isoformat()
+
     return {
         "parity_seed": {
             "source": {
                 "url": source_url,
-                "fetched_at": datetime.now(timezone.utc).isoformat(),
+                "fetched_at": fetched_ts,
                 "notes": "Seed extracted from editions comparison page; enrich with OCA mapping + evidence URLs per row.",
             },
             "schema_version": "v1",
