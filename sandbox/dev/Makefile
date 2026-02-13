@@ -179,6 +179,21 @@ test-connection: ## Test Odoo HTTP connection
 	@echo "Testing Odoo connection..."
 	@curl -sf http://localhost:8069/web/health > /dev/null && echo "✓ Odoo is responding" || echo "✗ Odoo is not responding"
 
+##@ Parity Seed Generation
+
+.PHONY: parity-seed
+parity-seed: ## Generate Odoo Editions parity seed YAML
+	@echo "Generating parity seed from Odoo Editions page..."
+	python3 scripts/gen_odoo_editions_parity_seed.py
+	@echo "✓ Parity seed generated: spec/parity/odoo_editions_parity_seed.yaml"
+
+.PHONY: parity-seed-check
+parity-seed-check: parity-seed ## Generate parity seed and verify no drift
+	@echo "Checking for drift..."
+	git diff --exit-code -- spec/parity/odoo_editions_parity_seed.yaml && \
+		echo "✓ No drift detected" || \
+		(echo "⚠️  Parity seed has changed - Odoo Editions page may have updates" && exit 1)
+
 ##@ Quick Workflows
 
 .PHONY: clean-start
