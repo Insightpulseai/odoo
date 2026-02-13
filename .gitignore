@@ -164,6 +164,7 @@ tools/db-inventory/output/
 !docker-compose.local.yml
 !config/odoo.conf.local
 *.code-workspace
+!odoo.code-workspace
 
 # Odoo import exports (generated, may contain sensitive data)
 **/odoo_import_*.csv
@@ -185,6 +186,7 @@ data/source.xlsx
 .env.*
 !.env.example
 !**/.env.example
+.devcontainer/devcontainer.env
 config/odoo.conf.local
 .mcp.json
 .claude/settings.local.json
