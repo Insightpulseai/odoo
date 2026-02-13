@@ -79,7 +79,7 @@ subdomains:
     port: 8088
     health_check: /health
     owner_system: "Apache Superset BI"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
     status: active
@@ -93,9 +93,9 @@ subdomains:
     target: pulse-hub-web-an645.ondigitalocean.app
     health_check: /healthz
     owner_system: "MCP coordination (11 servers)"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: pending_verification
+    status: active
 
   # ---------------------------------------------------------------------------
   # Additional Subdomains (for www, api, etc.)
@@ -162,7 +162,7 @@ subdomains:
     port: 3000
     health_check: /healthz
     owner_system: "MCP coordination (staging)"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: active
     environment: staging
@@ -173,7 +173,7 @@ subdomains:
     port: 5678
     health_check: /healthz
     owner_system: "n8n automation (staging)"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: active
     environment: staging
@@ -184,7 +184,7 @@ subdomains:
     port: 8088
     health_check: /health
     owner_system: "Apache Superset BI (staging)"
-    cloudflare_proxied: false
+    cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: active
     environment: staging
