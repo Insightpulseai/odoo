@@ -264,3 +264,4 @@ infra/cloudflare/**/terraform.tfvars
 !.env.dev
 !.env.stage
 !.env.prod
+ echo === CRITICAL: .env.production contains secrets and is tracked in git === echo  echo Adding to .gitignore now... echo .env.production echo Removing from git (keeping local file)... git rm --cached .env.production
