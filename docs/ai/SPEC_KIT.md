@@ -1,17 +1,77 @@
 # Spec Kit Structure
-> Extracted from root CLAUDE.md. See [CLAUDE.md](../../CLAUDE.md) for authoritative rules.
+
+> Integrated from [github/spec-kit](https://github.com/github/spec-kit).
+> See [CLAUDE.md](../../CLAUDE.md) for authoritative rules.
 
 ---
 
-All significant features require a spec bundle:
+## Overview
+
+Spec Kit enables **spec-driven development** — specifications are executable and generate implementations, not just describe them. Every significant feature requires a spec bundle.
+
+## Bundle Structure
 
 ```
 spec/<feature-slug>/
 ├── constitution.md   # Non-negotiable rules and constraints
-├── prd.md            # Product requirements document
-├── plan.md           # Implementation plan
-└── tasks.md          # Task checklist with status
+├── prd.md            # Product requirements document (the WHAT)
+├── plan.md           # Implementation plan (the HOW)
+├── tasks.md          # Task breakdown (the WORK)
+├── checklist.md      # Quality validation (optional)
+└── research.md       # Unknowns resolved (optional)
 ```
+
+## Slash Commands
+
+| Command | Purpose | Phase |
+|---------|---------|-------|
+| `/speckit.constitution` | Create governance principles | 1. Govern |
+| `/speckit.specify` | Define product requirements (PRD) | 2. Specify |
+| `/speckit.clarify` | Resolve ambiguities | 3. Clarify (optional) |
+| `/speckit.plan` | Create implementation plan | 4. Plan |
+| `/speckit.tasks` | Generate task breakdown | 5. Tasks |
+| `/speckit.analyze` | Cross-artifact consistency check | 6. Analyze |
+| `/speckit.checklist` | Generate quality validation | 7. Validate |
+| `/speckit.implement` | Execute implementation | 8. Build |
+
+### Workflow
+
+```
+/speckit.constitution → /speckit.specify → /speckit.clarify (optional)
+    → /speckit.plan → /speckit.tasks → /speckit.analyze
+    → /speckit.checklist → /speckit.implement
+```
+
+## CLI Tools
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/speckit-scaffold.sh <slug>` | Create new bundle from templates |
+| `scripts/check-spec-kit.sh` | Validate bundle completeness |
+
+### Create a New Bundle
+
+```bash
+./scripts/speckit-scaffold.sh my-feature-slug
+```
+
+### Validate All Bundles
+
+```bash
+./scripts/check-spec-kit.sh
+```
+
+## Templates
+
+Templates live in `.specify/templates/`:
+
+| Template | Generates |
+|----------|-----------|
+| `constitution-template.md` | `spec/<slug>/constitution.md` |
+| `spec-template.md` | `spec/<slug>/prd.md` |
+| `plan-template.md` | `spec/<slug>/plan.md` |
+| `tasks-template.md` | `spec/<slug>/tasks.md` |
+| `checklist-template.md` | `spec/<slug>/checklist.md` |
 
 ## Current Spec Bundles (62+)
 

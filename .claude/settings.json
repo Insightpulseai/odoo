@@ -38,7 +38,15 @@
     "implement": ".claude/commands/implement.md",
     "verify": ".claude/commands/verify.md",
     "ship": ".claude/commands/ship.md",
-    "fix-github-issue": ".claude/commands/fix-github-issue.md"
+    "fix-github-issue": ".claude/commands/fix-github-issue.md",
+    "speckit.constitution": ".claude/commands/speckit.constitution.md",
+    "speckit.specify": ".claude/commands/speckit.specify.md",
+    "speckit.clarify": ".claude/commands/speckit.clarify.md",
+    "speckit.plan": ".claude/commands/speckit.plan.md",
+    "speckit.tasks": ".claude/commands/speckit.tasks.md",
+    "speckit.analyze": ".claude/commands/speckit.analyze.md",
+    "speckit.checklist": ".claude/commands/speckit.checklist.md",
+    "speckit.implement": ".claude/commands/speckit.implement.md"
   },
   "permissions": {
     "allow": [
