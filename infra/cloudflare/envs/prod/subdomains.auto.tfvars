@@ -17,7 +17,14 @@ app_subdomains = [
 "auth",
 "superset",
 "www",
-"api"
+"api",
+"stage-erp",
+"stage-api",
+"stage-auth",
+"stage-mcp",
+"stage-n8n",
+"stage-superset",
+"stage-ocr"
 ]
 
 # Additional A record subdomains (e.g., www)
