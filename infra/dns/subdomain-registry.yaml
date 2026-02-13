@@ -120,6 +120,86 @@ subdomains:
     tls_mode: "Full (strict)"
     status: planned
 
+  # ---------------------------------------------------------------------------
+  # Staging Environment (A Records → 178.128.112.214)
+  # ---------------------------------------------------------------------------
+  - name: stage-erp
+    type: A
+    service: odoo_ce_19_staging
+    port: 8069
+    health_check: /web/login
+    owner_system: "Odoo CE 19.0 (staging)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-api
+    type: A
+    service: api_gateway_staging
+    port: 8000
+    health_check: /api/health
+    owner_system: "API Gateway (staging)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-auth
+    type: A
+    service: authentication_service_staging
+    port: 3000
+    health_check: /.well-known/openid-configuration
+    owner_system: "Authentication service (staging)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-mcp
+    type: A
+    service: mcp_gateway_staging
+    port: 3000
+    health_check: /healthz
+    owner_system: "MCP coordination (staging)"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-n8n
+    type: A
+    service: n8n_workflow_automation_staging
+    port: 5678
+    health_check: /healthz
+    owner_system: "n8n automation (staging)"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-superset
+    type: A
+    service: apache_superset_bi_staging
+    port: 8088
+    health_check: /health
+    owner_system: "Apache Superset BI (staging)"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
+  - name: stage-ocr
+    type: A
+    service: paddleocr_microservice_staging
+    port: 8080
+    health_check: /health
+    owner_system: "PaddleOCR microservice (staging)"
+    cloudflare_proxied: false
+    tls_mode: "Full (strict)"
+    status: active
+    environment: staging
+
 # =============================================================================
 # Deprecated Services (Archived for Reference)
 # =============================================================================
