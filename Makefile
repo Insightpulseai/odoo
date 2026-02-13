@@ -12,7 +12,8 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 .PHONY: help up down ps logs health init update restart config \
         db-shell db-health redis-health odoo-shell \
-        tools ipai-guard parity-seed parity-seed-check
+        tools ipai-guard parity-seed parity-seed-check \
+        gen-addons-path render-odoo-conf addons-path-check
 
 # ---------------------------------------------------------------------------
 # Stack lifecycle
@@ -93,3 +94,19 @@ parity-seed: ## Generate Odoo Editions parity seed (deterministic)
 parity-seed-check: ## Generate parity seed and check for drift
 	PARITY_SEED_DETERMINISTIC=1 python3 scripts/gen_odoo_editions_parity_seed.py
 	git diff --exit-code -- spec/parity/odoo_editions_parity_seed.yaml
+
+# ---------------------------------------------------------------------------
+# Addons path (OCA-canonical deterministic enumeration)
+# ---------------------------------------------------------------------------
+
+gen-addons-path: ## Regenerate addons-path from external-src/<repo>
+	./scripts/gen_addons_path.sh
+
+render-odoo-conf: ## Render odoo.conf from template + generated addons-path
+	@source infra/odoo/addons-path.env && export ODOO_ADDONS_PATH && \
+		envsubst < infra/odoo/odoo.conf.template > infra/odoo/odoo.conf && \
+		echo "OK: infra/odoo/odoo.conf rendered"
+
+addons-path-check: ## CI gate: fail if addons-path is stale
+	./scripts/gen_addons_path.sh
+	git diff --exit-code -- infra/odoo/addons-path.txt infra/odoo/addons-path.env
