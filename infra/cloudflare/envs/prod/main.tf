@@ -3,14 +3,14 @@ data "cloudflare_zone" "zone" {
 }
 
 module "dns_records" {
-  source    = "../../modules/dns-records"
-  zone_id   = data.cloudflare_zone.zone.id
-  zone_name = var.zone_name
+  source      = "../../modules/dns-records"
+  zone_id     = data.cloudflare_zone.zone.id
+  zone_name   = var.zone_name
   origin_ipv4 = var.origin_ipv4
 
   # Zoho Mail (active system)
   zoho_mx = [
-    { priority = 10, host = "mx.zoho.com"  },
+    { priority = 10, host = "mx.zoho.com" },
     { priority = 20, host = "mx2.zoho.com" },
     { priority = 50, host = "mx3.zoho.com" },
   ]
@@ -44,7 +44,7 @@ module "dns_records" {
 
   # DKIM: Zoho provides a selector + value; keep as TODO until you paste the real selector/value
   dkim = {
-    enabled = false
+    enabled  = false
     selector = "zoho"
     value    = "TODO_FROM_ZOHO_ADMIN"
   }
