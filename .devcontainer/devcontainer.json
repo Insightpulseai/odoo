@@ -1,5 +1,5 @@
 {
-  "name": "InsightPulseAI-Odoo-DevContainer",
+  "name": "ipai-devcontainer",
   "dockerComposeFile": [
     "../docker-compose.yml",
     "docker-compose.devcontainer.yml"

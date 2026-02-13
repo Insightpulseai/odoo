@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-02-13T06:24:04Z",
+  "source": "infra/dns/subdomain-registry.yaml",
+  "validation_rules": {
+    "terraform_file": "infra/cloudflare/envs/prod/subdomains.auto.tfvars",
+    "runtime_file": "docs/architecture/runtime_identifiers.json",
+    "expected_subdomain_count": 8,
+    "expected_active_count": 6,
+    "expected_deprecated_count": 1
+  },
+  "checksums": {
+    "ssot_file": "52623fab5e7eb2525ded6755d80bed3b3c6b5e79760c9efe59ed66abf2e6bcab",
+    "terraform_file": "c1d32a32490bca1a10ca220a0f462ec91d101bece97f35bdc1b521dbf1994b7b",
+    "runtime_file": "bd206f0584574658fd5996a4c990f7b982a6adef0a411c28b4869333b88ecec1"
+  }
+}

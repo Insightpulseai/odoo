@@ -1,6 +1,9 @@
 {
   "domain": "insightpulseai.com",
-  "consolidation_date": "2026-02-09",
+  "consolidation_date": "2026-02-13",
+  "generated_at": "2026-02-13T06:24:04Z",
+  "generator": "scripts/generate-dns-artifacts.sh",
+  "source": "infra/dns/subdomain-registry.yaml",
   "nameservers": [],
   "services": {
     "erp": {
@@ -14,7 +17,8 @@
       "owner_system": "Odoo CE 19.0",
       "health_check": "/web/login",
       "status": "active"
-    },
+    }
+,
     "n8n": {
       "fqdn": "n8n.insightpulseai.com",
       "record_type": "A",
@@ -26,7 +30,8 @@
       "owner_system": "n8n automation",
       "health_check": "/healthz",
       "status": "active"
-    },
+    }
+,
     "ocr": {
       "fqdn": "ocr.insightpulseai.com",
       "record_type": "A",
@@ -38,7 +43,8 @@
       "owner_system": "PaddleOCR microservice",
       "health_check": "/health",
       "status": "active"
-    },
+    }
+,
     "auth": {
       "fqdn": "auth.insightpulseai.com",
       "record_type": "A",
@@ -50,7 +56,21 @@
       "owner_system": "Authentication service",
       "health_check": "/.well-known/openid-configuration",
       "status": "active"
-    },
+    }
+,
+    "superset": {
+      "fqdn": "superset.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": false,
+      "origin_port": 8088,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Apache Superset BI",
+      "health_check": "/health",
+      "status": "active"
+    }
+,
     "mcp": {
       "fqdn": "mcp.insightpulseai.com",
       "record_type": "CNAME",
@@ -62,18 +82,18 @@
       "owner_system": "MCP coordination (11 servers)",
       "health_check": "/healthz",
       "status": "pending_verification"
-    },
-    "superset": {
-      "fqdn": "superset.insightpulseai.com",
+    }
+,
+    "www": {
+      "fqdn": "www.insightpulseai.com",
       "record_type": "A",
       "target": "178.128.112.214",
-      "cloudflare_proxied": false,
-      "origin_port": 8088,
+      "cloudflare_proxied": true,
+      "origin_port": 80,
       "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production (Docker: superset-prod)",
-      "owner_system": "Apache Superset BI",
-      "database": "DO managed PostgreSQL: odoo-db-sgp1/superset",
-      "health_check": "/health",
+      "runtime_host": "odoo-production",
+      "owner_system": "Redirect to apex",
+      "health_check": "/",
       "status": "active"
     }
   },
