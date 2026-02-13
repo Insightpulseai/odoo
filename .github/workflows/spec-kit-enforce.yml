@@ -49,6 +49,10 @@ jobs:
 
             for f in constitution.md prd.md plan.md tasks.md; do
               path="$slug_dir/$f"
+              # Accept spec.md as alternative to prd.md (spec-kit upstream compat)
+              if [ "$f" = "prd.md" ] && [ ! -f "$path" ] && [ -f "$slug_dir/spec.md" ]; then
+                path="$slug_dir/spec.md"
+              fi
               if [ ! -f "$path" ]; then
                 echo "::error file=$path::Missing required Spec Kit file: $path"
                 fail=1
