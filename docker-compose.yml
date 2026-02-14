@@ -69,8 +69,6 @@ services:
       timeout: 3s
       retries: 20
       start_period: 10s
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # Redis 7 — Session Store / Cache / Bus Backend
@@ -87,8 +85,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # Odoo CE 19 — Core ERP (System of Record)
@@ -132,8 +128,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 90s
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # pgAdmin 4 — Database Admin (profile: tools)
@@ -154,8 +148,6 @@ services:
       - "${PGADMIN_PORT:-5050}:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # Mailpit — Local Email Testing (profile: tools)
@@ -168,8 +160,6 @@ services:
     ports:
       - "${MAILPIT_WEB_PORT:-8025}:8025"
       - "${MAILPIT_SMTP_PORT:-1025}:1025"
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # Module Initialization — one-shot (profile: init)
@@ -201,8 +191,6 @@ services:
       -i base
       --stop-after-init
       --without-demo=all
-    networks:
-      - ipai-net
 
   # ===========================================================================
   # Module Update — one-shot (profile: update)
@@ -233,8 +221,6 @@ services:
       --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
       -u ${UPDATE_MODULES:-all}
       --stop-after-init
-    networks:
-      - ipai-net
 
 volumes:
   pgdata:
@@ -247,6 +233,6 @@ volumes:
     name: ipai-pgadmin-data
 
 networks:
-  ipai-net:
-    name: ipai-network
+  default:
+    name: ${IPAI_NETWORK_NAME:-ipai-network}
     driver: bridge

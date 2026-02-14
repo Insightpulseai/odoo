@@ -232,4 +232,5 @@ volumes:
 
 networks:
   default:
-    name: ipai-dev-network
+    name: ipai-network
+    external: true
