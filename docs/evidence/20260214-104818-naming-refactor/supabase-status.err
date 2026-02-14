@@ -1,0 +1,3 @@
+Using workdir db
+failed to inspect container health: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+Try rerunning the command with --debug to troubleshoot the error.

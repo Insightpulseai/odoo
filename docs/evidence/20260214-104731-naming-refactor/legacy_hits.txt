@@ -1,0 +1,5 @@
+./docs/NAMING.md:13:- `web/` over `apps/` - Avoids collision with Odoo "Apps" terminology (which means installable modules)
+./docs/NAMING.md:19:- `packages/` (use `pkgs/`)
+./docs/NAMING.md:20:- `apps/` (use `web/`)
+./docs/NAMING.md:21:- `docs/architecture/` (use `docs/arch/`)
+./scripts/refactor/naming.env:22:LEGACY_PATTERNS="(^|[^a-zA-Z0-9_])packages/|(^|[^a-zA-Z0-9_])apps/|docs/architecture/"

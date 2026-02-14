@@ -8,12 +8,7 @@
     "esbenp.prettier-vscode",
     "editorconfig.editorconfig",
     "eamodio.gitlens",
-    "github.vscode-github-actions",
-    "dbaeumer.vscode-eslint",
-    "github.copilot",
-    "github.copilot-chat",
-    "github.vscode-pull-request-github",
-    "odoo.odoo-language-server"
+    "github.vscode-github-actions"
   ],
   "unwantedRecommendations": [
     "ms-python.black-formatter",

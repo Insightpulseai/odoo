@@ -77,8 +77,12 @@
         "eamodio.gitlens",
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
+        "charliermarsh.ruff",
         "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "github.vscode-github-actions",
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "openai.chatgpt",
@@ -87,6 +91,14 @@
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.languageServer": "Pylance",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "ruff.enable": true,
+        "editor.formatOnSave": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "files.eol": "\n",
         "terminal.integrated.defaultProfile.linux": "bash",
         "debug.javascript.autoAttachFilter": "disabled",
         "git.autofetch": true,

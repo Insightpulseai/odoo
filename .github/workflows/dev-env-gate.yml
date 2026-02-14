@@ -1,0 +1,32 @@
+name: Dev Environment Standards Gate
+
+on:
+  pull_request:
+    paths:
+      - '.vscode/**'
+      - '.devcontainer/**'
+      - 'docker-compose*.yml'
+      - '.editorconfig'
+      - 'pyproject.toml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check .editorconfig exists
+        run: test -f .editorconfig
+
+      - name: Check Black not in DevContainer
+        run: |
+          ! grep -q "ms-python.black-formatter" .devcontainer/devcontainer.json
+
+      - name: Check Ruff is primary formatter
+        run: |
+          grep -q "charliermarsh.ruff" .vscode/extensions.json
+          grep -q "charliermarsh.ruff" .devcontainer/devcontainer.json
+
+      - name: Validate Docker Compose
+        run: |
+          docker compose config >/dev/null

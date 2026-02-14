@@ -1,0 +1,1249 @@
+ M .claude/commands/ssot-doctrine.md
+ M .claude/commands/verify.md
+ M .continue/rules/notion-ppm.yaml
+ M .cursorignore
+ M .devcontainer/docker-compose.devcontainer.yml
+ M .github/CODEOWNERS
+ M .github/ci/odoo-install-dry-run.compose.yml
+ M .github/workflows/agentic-codebase-crawler.yml
+ M .github/workflows/architecture-diagrams.yml
+ M .github/workflows/audit-contract.yml
+ M .github/workflows/auth-smoke-test.yml
+ M .github/workflows/backlog-coverage.yml
+ M .github/workflows/ci-billing-site.yml
+ M .github/workflows/ci-platform-gates.yml
+ M .github/workflows/ci-web.yml
+ M .github/workflows/control-room-ci.yml
+ M .github/workflows/deploy-ipai-control-center-docs.yml
+ M .github/workflows/diagrams-drawio-enforce.yml
+ M .github/workflows/dns-sync-check.yml
+ M .github/workflows/health-smoke.yml
+ M .github/workflows/ipai-ai-platform-ci.yml
+ M .github/workflows/ipai-ai-studio-smoke.yml
+ M .github/workflows/ipai-prod-checks.yml
+ M .github/workflows/lakehouse-control-room-gate.yml
+ M .github/workflows/notify-superset.yml
+ M .github/workflows/patch-release.yml
+ M .github/workflows/policy-violation-gate.yml
+ M .github/workflows/spec-gate.yml
+ M .github/workflows/superset-ci-cd.yml
+ M .github/workflows/vendor-app-deploy.yml
+ M .github/workflows/workbench-deploy.yml
+ M .gitignore
+ M .insightpulse/sync-config.yaml
+ M AUTO_REVIEW_AND_FIX_SUMMARY.md
+ M CLAUDE.md
+ M CLAUDE_CODE_WEB.md
+ M Dockerfile
+ M Dockerfile.v0.10.0
+ M HYBRID_SETUP.md
+ M PENDING_TASKS_AUTO_AUDIT.md
+ M PROD_DEPLOY.md
+ M README.md
+ M VERIFY.md
+ M VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
+ M addons/ipai/ipai_ai_platform/README.md
+ M addons/ipai/ipai_theme_copilot/static/src/scss/_tokens.scss
+ M agent-library/templates/sources.yaml
+ M agents/capabilities/manifest.json
+ M architecture-review/framework/evidence_index.yaml
+ M archive/addons/ipai_idp/README.md
+ M archive/compose/dev-docker/Dockerfile
+ M archive/compose/dev-docker/config/odoo.conf
+ M archive/compose/docker-compose.workos-deploy.yml
+ M archive/compose/docker/Dockerfile.enterprise-parity
+ M archive/compose/docker/Dockerfile.seeded
+ M archive/compose/docker/Dockerfile.unified
+ M archive/compose/docker/Dockerfile.v1.1.0-enterprise-parity
+ M archive/compose/docker/odoo.seeded.conf
+ M artifacts/audit/20260213-055041/infra-assessment-results.json
+ M artifacts/ce_oca_equivalents_audit.csv
+ M artifacts/ce_oca_equivalents_audit.json
+ M artifacts/docs_site/index.html
+ M artifacts/docs_site/search/search_index.js
+ M artifacts/docs_site/search/search_index.json
+ M artifacts/forbidden_scan.txt
+ M config/odoo-core.conf
+ M config/odoo.conf.template
+ M config/parity/PARITY_GOALS.yaml
+ M config/parity/TIER0_PROBES.yaml
+ M config/sources/odoo_docs.yaml
+ M db/rls/RLS_ROLES.md
+ M docker-compose.dev.yml
+ M docker-compose.yml
+ M docs/AIUX_SHIP_PRD.md
+ M docs/BACKLOG_COVERAGE_REPORT.json
+ M docs/BACKLOG_COVERAGE_REPORT.md
+ M docs/CE_OCA_EQUIVALENTS_AUDIT.md
+ M docs/CLAUDE_CODE_SETUP.md
+ M docs/DEPLOYMENT_GUIDE.md
+ M docs/DEPLOYMENT_INVARIANTS.md
+ M docs/DEPLOY_NOTION_WORKOS.md
+ M docs/ECOSYSTEM_GUIDE.md
+ M docs/FIN_WORKSPACE_AUTOMATION_STATUS.md
+ M docs/FIN_WORKSPACE_HARDENING_STATUS.md
+ M docs/FIN_WORKSPACE_SETUP.md
+ M docs/IMAGE_GUIDE.md
+ M docs/INFRASTRUCTURE_CHECKLIST.md
+ M docs/MCP_IMPLEMENTATION_STATUS.md
+ M docs/MONOREPO_STRUCTURE.md
+ M docs/OCA_INSTALLATION_GUIDE.md
+ M docs/OCA_STYLE_CONTRACT.md
+ M docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md
+ M docs/ODOO_ADDONS_PATH_CONFIGURATION.md
+ M docs/ODOO_COPILOT_THEME_TOKEN_MAP.md
+ M docs/ODOO_IMAGE_SPEC.md
+ M docs/ODOO_PROGRAMMATIC_CONFIG.md
+ M docs/OFFICIAL_ALIGNMENT.md
+ M docs/PRODUCTION_DEFAULTS.md
+ M docs/PROGRAMMATIC_CONFIG_PLAN.md
+ M docs/REPO_TREE.contract.md
+ M docs/SCHEMA_NAMESPACE_POLICY.md
+ M docs/SUPERSET_INTEGRATION.md
+ M docs/TAGGING_STRATEGY.md
+ M docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md
+ M docs/TRACEABILITY_INDEX.yaml
+ M docs/TROUBLESHOOTING.md
+ M docs/ai/ODOO_SETTINGS_AI_AGENTS.md
+ M docs/ai/ODOO_SETTINGS_OCR_DIGITIZATION.md
+ M docs/ai/REPO_STRUCTURE.md
+ M docs/ai/SUPABASE.md
+ M docs/ai/WEB_CMS.md
+R  docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md -> docs/arch/AGENTIC_AI_ERP_ANALYTICS.md
+RM docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md -> docs/arch/AI_MODULE_DEPRECATION_MANIFEST.md
+R  docs/architecture/ASK_AI_CONTRACT.md -> docs/arch/ASK_AI_CONTRACT.md
+R  docs/architecture/AUTH_MODEL.md -> docs/arch/AUTH_MODEL.md
+R  docs/architecture/CAPS_REPORT.md -> docs/arch/CAPS_REPORT.md
+R  docs/architecture/CURSOR_ECOSYSTEM_CAPABILITIES.md -> docs/arch/CURSOR_ECOSYSTEM_CAPABILITIES.md
+RM docs/architecture/DOCS_INFORMATION_ARCHITECTURE.md -> docs/arch/DOCS_INFORMATION_ARCHITECTURE.md
+R  docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md -> docs/arch/EXT_AGENT_TOOL_CAPABILITIES.md
+R  docs/architecture/GITHUB_INTEGRATIONS_INVENTORY.md -> docs/arch/GITHUB_INTEGRATIONS_INVENTORY.md
+RM docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md -> docs/arch/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md
+R  docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md -> docs/arch/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+RM docs/architecture/IPAI_AI_PLATFORM_ARCH.md -> docs/arch/IPAI_AI_PLATFORM_ARCH.md
+R  docs/architecture/IPAI_AI_PLATFORM_ERD.dbml -> docs/arch/IPAI_AI_PLATFORM_ERD.dbml
+R  docs/architecture/IPAI_AI_PLATFORM_ORD.md -> docs/arch/IPAI_AI_PLATFORM_ORD.md
+R  docs/architecture/IPAI_MODULE_REDUCTION_PLAN.md -> docs/arch/IPAI_MODULE_REDUCTION_PLAN.md
+R  docs/architecture/IPAI_TARGET_ARCHITECTURE.md -> docs/arch/IPAI_TARGET_ARCHITECTURE.md
+R  docs/architecture/OCR_PIPELINE.md -> docs/arch/OCR_PIPELINE.md
+R  docs/architecture/OCR_ROUTING_MATRIX.md -> docs/arch/OCR_ROUTING_MATRIX.md
+R  docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md -> docs/arch/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md
+R  docs/architecture/ODOO_SUPABASE_MONOREPO_LAYOUT.md -> docs/arch/ODOO_SUPABASE_MONOREPO_LAYOUT.md
+RM docs/architecture/PROD_RUNTIME_SNAPSHOT.md -> docs/arch/PROD_RUNTIME_SNAPSHOT.md
+RM docs/architecture/README.md -> docs/arch/README.md
+RM docs/architecture/RUNTIME_IDENTIFIERS.md -> docs/arch/RUNTIME_IDENTIFIERS.md
+R  docs/architecture/SOURCE_OF_TRUTH.md -> docs/arch/SOURCE_OF_TRUTH.md
+R  docs/architecture/SUPABASE_PRIMITIVES.md -> docs/arch/SUPABASE_PRIMITIVES.md
+RM docs/architecture/TABLES_BROWSER.md -> docs/arch/TABLES_BROWSER.md
+R  docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md -> docs/arch/catalog/COPILOT_TOOLS_SCHEMA.md
+R  docs/architecture/catalog/copilot_tools.openapi.json -> docs/arch/catalog/copilot_tools.openapi.json
+R  docs/architecture/exports/README.md -> docs/arch/exports/README.md
+R  docs/architecture/gate-contract-v2.md -> docs/arch/gate-contract-v2.md
+R  docs/architecture/github-waf-assessment-template.md -> docs/arch/github-waf-assessment-template.md
+R  docs/architecture/github-waf-model.yaml -> docs/arch/github-waf-model.yaml
+R  docs/architecture/infra-waf-assessment-template.md -> docs/arch/infra-waf-assessment-template.md
+R  docs/architecture/infra-waf-model.yaml -> docs/arch/infra-waf-model.yaml
+R  docs/architecture/ipai_idp_architecture.drawio -> docs/arch/ipai_idp_architecture.drawio
+R  docs/architecture/ipai_idp_build_deploy_custom_models.drawio -> docs/arch/ipai_idp_build_deploy_custom_models.drawio
+R  docs/architecture/ipai_idp_multi_agent_workflow.drawio -> docs/arch/ipai_idp_multi_agent_workflow.drawio
+R  docs/architecture/ipai_idp_pdf_processing.drawio -> docs/arch/ipai_idp_pdf_processing.drawio
+R  docs/architecture/multi_tenant_architecture.md -> docs/arch/multi_tenant_architecture.md
+R  docs/architecture/runtime_identifiers.json -> docs/arch/runtime_identifiers.json
+R  docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md -> docs/arch/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/curl_localhost.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/curl_localhost.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_compose_config.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_compose_config.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_images.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_info.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_info.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_journal.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_networks.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_networks.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_ps.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/docker_volumes.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/docker_volumes.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/env_keys.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/env_keys.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/host_info.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/host_info.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/host_ports.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/host_ports.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/nginx_info.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/nginx_info.txt
+RM docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_conf.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_conf.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_logs_tail.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_logs_tail.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_modules_installed.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_modules_installed.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/pg_activity.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/pg_activity.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/pg_databases.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/pg_databases.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/pg_extensions.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/pg_extensions.txt
+R  docs/architecture/runtime_snapshot/20260108_013846/PROOFS/pg_version.txt -> docs/arch/runtime_snapshot/20260108_013846/PROOFS/pg_version.txt
+RM docs/architecture/runtime_snapshot/20260108_013846/container_inspects/all_containers.json -> docs/arch/runtime_snapshot/20260108_013846/container_inspects/all_containers.json
+R  docs/architecture/runtime_snapshot/20260108_013846/runtime_identifiers.json -> docs/arch/runtime_snapshot/20260108_013846/runtime_identifiers.json
+R  docs/architecture/runtime_snapshot/README.md -> docs/arch/runtime_snapshot/README.md
+ M docs/auth/EMAIL_OTP_IMPLEMENTATION.md
+ M docs/brand/IPAI_BRAND_GUIDELINES.md
+ M docs/brand/README.md
+ M docs/claude_code/IMPLEMENTATION_SUMMARY.md
+ M docs/claude_code/QUICK_REFERENCE.md
+ M docs/claude_code/README.md
+ M docs/constitution/NO_CLI_NO_DOCKER.md
+ M docs/curation/CURATED_DOCS.yaml
+ M docs/implementation/platform-kit-saas-integration-summary.md
+ M docs/infra/CANONICAL_ODOO_PACK.md
+ M docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md
+ M docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md
+ M docs/infra/GIT_PREFLIGHT_INTEGRATION.md
+ M docs/infra/GIT_PREFLIGHT_SUMMARY.md
+ M docs/infra/GOOGLE_WORKSPACE_BRIDGE.md
+ M docs/infra/IMPLEMENTATION_COMPLETE.md
+ M docs/infra/VERCEL_INTEGRATIONS.md
+ M docs/ipai/ARCHITECTURE.md
+ M docs/issues/2026-02-07-domain-health-audit.md
+ M docs/knowledge/graph_seed.json
+ M docs/llm/VERCEL_STACK.md
+ M docs/llms-full.txt
+ M docs/llms.txt
+ M docs/memory/CANONICAL_CONTEXT.md
+ M docs/migration/glass-card-fix.md
+ M docs/modules/ipai_superset_connector_technical_guide.md
+ M docs/odoo-18-handbook/spec/constitution.md
+ M docs/okr/OKR_URL_INVENTORY.md
+ M docs/pages/index.md
+ M docs/platform/ai.md
+ M docs/portfolio/ppm/core/runbook.md
+ M docs/portfolio/ppm/finance-ppm/OCA_INSTALLATION_GUIDE.md
+ M docs/portfolio/specs/continue-plus/EVALUATION_REPORT.md
+ M docs/portfolio/specs/control-room-api/plan.md
+ M docs/portfolio/specs/ipai-ai-platform-odoo18/constitution.md
+ M docs/portfolio/specs/ipai-ai-platform-odoo18/plan.md
+ M docs/portfolio/specs/ipai-ai-platform-odoo18/tasks.md
+ M docs/portfolio/specs/ipai-ai-platform/tasks.md
+ M docs/portfolio/specs/ipai-odoo-devops-agent/plan.md
+ M docs/portfolio/specs/ipai-odoo-saas-platform/tasks.md
+ M docs/portfolio/specs/ipai-saas-platform-kit/IMPLEMENTATION_STATUS.md
+ M docs/portfolio/specs/ipai-saas-platform-kit/README.md
+ M docs/portfolio/specs/ipai-saas-platform-kit/plan.md
+ M docs/portfolio/specs/ipai-saas-platform-kit/tasks.md
+ M docs/portfolio/specs/knowledge-graph/create-issues.sh
+ M docs/portfolio/specs/knowledge-graph/tasks.md
+ M docs/portfolio/specs/mobile/ipai_mobile_app_spec.md
+ M docs/portfolio/specs/notion-finance-ppm-control-room/plan.md
+ M docs/portfolio/specs/notion-finance-ppm-control-room/tasks.md
+ M docs/portfolio/specs/odoo-apps-inventory/plan.md
+ M docs/portfolio/specs/odoo-decoupled-platform/plan.md
+ M docs/portfolio/specs/odoo-decoupled-platform/tasks.md
+ M docs/portfolio/specs/odooops-platform/constitution.md
+ M docs/portfolio/specs/odooops-platform/prd.md
+ M docs/portfolio/specs/odooops-platform/spec/odooops-observability-enterprise-pack/constitution.md
+ M docs/portfolio/specs/ops-control-room/agents/figma-bridge.yaml
+ M docs/portfolio/specs/parity/UI_EE_PARITY_TAXONOMY.yaml
+ M docs/portfolio/specs/platform-kit/constitution.md
+ M docs/portfolio/specs/platform-kit/plan.md
+ M docs/portfolio/specs/platform-kit/prd.md
+ M docs/portfolio/specs/platform-kit/tasks.md
+ M docs/portfolio/specs/reverse-cursor-sovereign/plan.md
+ M docs/portfolio/specs/supabase-platform-kit-observability/plan.md
+ M docs/portfolio/specs/supabase-ssot-doctrine/plan.md
+ M docs/portfolio/specs/supabase-ssot-doctrine/tasks.md
+ M docs/process/operations/MONTH_END_CLOSE_MAPPING.md
+ M docs/process/operations/legacy/EXECUTION_BOARD.md
+ M docs/process/operations/legacy/README.md
+ M docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md
+ M docs/releases/DEPLOYMENT_PROOFS/api_compare.json
+ M docs/releases/DEPLOYMENT_PROOFS/api_deployments.json
+ M docs/releases/DEPLOYMENT_PROOFS/api_release_latest.json
+ M docs/releases/DEPLOYMENT_PROOFS/release_tag_prod-20260106-1741.json
+ M docs/releases/WHAT_SHIPPED.json
+ M docs/releases/WHAT_SHIPPED.md
+ M docs/releases/prod-20260109-1642/WHAT_SHIPPED.json
+ M docs/runtime/ADDONS_PATH.prod.txt
+ M docs/security/config_files.txt
+ M docs/state_machines/README.md
+ M docs/state_machines/scout/auth_session.md
+ M docs/state_machines/scout/copilot_session.md
+ M docs/state_machines/scout/offline_queue.md
+ M docs/state_machines/scout/realtime_subscription.md
+ M docs/strategy/OKR-2026-H1.md
+ M docs/strategy/okr-2026-h1.json
+ M docs/strategy/parity/EE_SURFACE_CATALOG.yaml
+ M docs/strategy/parity/STACK_POSITIONING.md
+ M docs/strategy/parity/TECHNICAL_PARITY_REPORT.md
+ M docs/strategy/parity/odoo19/odoo_19_release_notes.html
+ M docs/strategy/parity/odoo19/odoo_editions_comparison.html
+ M docs/supabase-docs-patterns/docs_ui_spec.md
+ M docs/supabase-integration.md
+ M docs/superset/README.md
+ M docs/troubleshooting/DBFILTER_FIX.md
+ M figma-make-dev.yaml
+ M figma.config.json
+ M infra/ci-odoo/docker-compose.ci.yml
+ M infra/deploy/k8s/odoo-configmap.yaml
+ M infra/deploy/k8s/odoo-deployment.yaml
+ M infra/deploy/k8s/postgres-statefulset.yaml
+ M infra/deploy/odoo.canonical.conf
+ M infra/deploy/odoo.conf
+ M infra/deploy/odoo.conf.droplet
+ M infra/dns/README.md
+ M infra/dns/dns-validation-spec.json
+ M infra/dns/subdomain-registry.yaml
+ M infra/dns/subdomain-registry.yaml.bak.20260213-145901
+ M infra/do-oca-stack/config/odoo.conf
+ M infra/docker/odoo.conf
+ M infra/ops-control/DEPENDENCY_FIX.md
+ M infra/ops-control/PARALLEL_OCR_SUMMARY.md
+ M infra/ops-control/PHASED_IMPLEMENTATION_PLAN.md
+ M infra/ops-control/STRUCTURE.md
+ M infra/ops-control/workers/README.md
+ M infra/superset/PRESET_PARITY_ROADMAP.md
+ M integrations/apps.yml
+ M "inventory/runs/20251231T015431Z/apps.\"a962affc-f005-4b25-9c01-3c6b63dce52c\".json"
+ M inventory/runs/20251231T015431Z/apps.list.json
+ M "inventory/runs/20251231T015708Z/apps.\"a962affc-f005-4b25-9c01-3c6b63dce52c\".json"
+ M inventory/runs/20251231T015708Z/apps.list.json
+ M inventory/runs/20251231T015728Z/agents.list.json
+ M inventory/runs/20251231T015728Z/apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+ M inventory/runs/20251231T015728Z/apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+ M inventory/runs/20251231T015728Z/apps.list.json
+ M inventory/runs/20251231T015829Z/agents.list.json
+ M inventory/runs/20251231T015829Z/apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+ M inventory/runs/20251231T015829Z/apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+ M inventory/runs/20251231T015829Z/apps.list.json
+ M inventory/runs/20251231T015909Z/agents.list.json
+ M inventory/runs/20251231T015909Z/apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+ M inventory/runs/20251231T015909Z/apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+ M inventory/runs/20251231T015909Z/apps.list.json
+ M inventory/runs/20251231T020517Z/agents.list.json
+ M inventory/runs/20251231T020517Z/apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+ M inventory/runs/20251231T020517Z/apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+ M inventory/runs/20251231T020517Z/apps.list.json
+ M ipai-platform/odoo/odoo.conf
+ M llms-full.txt
+ M mcp/coordinator/DEPLOYMENT.md
+ M mcp/servers/digitalocean-mcp-server/src/do-client.ts
+ M memory/packs/common/10_repo_map.md
+ M odoo/ODOO_INTEGRATION_MAP.md
+ M odoo/compose/docker-compose.platform.yml
+ M odoo19/CANONICAL_SETUP.md
+ M odoo19/config/odoo.conf
+ M odoo_local/ODOO_INTEGRATION_MAP.md
+ M odoo_local/compose/docker-compose.platform.yml
+ M ops/github/integrations/install_manifest.json
+ M package.json
+ M pkgs/agentic-codebase-crawler/README.md
+ M pkgs/agentic-codebase-crawler/src/index.ts
+ M pkgs/agentic-codebase-crawler/templates/parity-controls.yml
+ M pkgs/github-app/.env.example
+ M pkgs/github-app/GITHUB_APP_CONFIG.json
+ M pkgs/ipai-ai-sdk-python/README.md
+ M pkgs/ipai-ai-sdk-python/setup.py
+ M pkgs/ipai-ai-sdk/README.md
+ M pkgs/ipai-ai-sdk/package.json
+ M pkgs/ipai-design-tokens/QUICKSTART.md
+ M pkgs/ipai-design-tokens/README-AICHAT.md
+ M pkgs/ipai-design-tokens/README.md
+ M pkgs/ipai-design-tokens/export/css-vars.css
+ M pkgs/ipai-design-tokens/src/ipai-brand.ts
+ M pnpm-lock.yaml
+ M pnpm-workspace.yaml
+ M releasekit/README.md
+ M releasekit/fastlane/Fastfile
+ M releasekit/scripts/audit_android.sh
+ M releasekit/scripts/audit_ios.sh
+ M releasekit/scripts/build_android.sh
+ M releasekit/scripts/build_ios.sh
+ M runtime/docker/docker/Dockerfile.ce19
+ M runtime/docker/docker/Dockerfile.ci
+ M runtime/docker/docker/Dockerfile.odoo
+ M runtime/docker/docker/README-IMAGE-CE19.md
+ M sandbox/dev/SETUP_GUIDE.md
+ M sandbox/dev/compose.yml
+ M sandbox/dev/config/odoo.conf
+ M sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md
+ M sandbox/dev/docs/runbooks/DESIGN_SYSTEM_FLUENT_STORYBOOK.md
+ M sandbox/dev/integration/ODOO_CE_INTEGRATION.md
+ M sandbox/dev/odoo.conf.production
+ M sandbox/dev/spec/databricks-integration/prd.md
+ M scripts/CONFIG_INVENTORY.txt
+ M scripts/README.md
+ M scripts/apply-supabase-schema.sh
+ M scripts/audit/check_github_waf.py
+ M scripts/audit/check_infra_waf.py
+ M scripts/backlog_scan.py
+ M scripts/bootstrap_apps_from_inventory.sh
+ M scripts/bootstrap_execution_board.sh
+ M scripts/bootstrap_github_issues.sh
+ M scripts/bootstrap_ssot_dns_odoo_supabase.sh
+ M scripts/ce_oca_audit.py
+ M scripts/check_odoosh_parity.py
+ M scripts/ci/docker-image-diff.sh
+ M scripts/ci/validate_github_app.sh
+ M scripts/ci_odoo_run_install_upgrade.sh
+ M scripts/config_files_found.txt
+ M scripts/deploy-to-server.sh
+ M scripts/docs/build_llms_full.sh
+ M scripts/export_architecture_diagrams.sh
+ M scripts/fix_oauth_button.sh
+ M scripts/gates/scan-policy-violations.sh
+ M scripts/gen_addons_path.sh
+ M scripts/generate-dns-artifacts.sh
+ M scripts/generate_repo_index.py
+ M scripts/ingest_docs_to_supabase.py
+ M scripts/integrations/affected_apps.py
+ M scripts/ipai_install_upgrade_test.sh
+ M scripts/ipai_quality_gate.sh
+ M scripts/odoo/verify-ce-apps.sh
+ M scripts/odoo/verify-full-parity.sh
+ M scripts/odoo_modules_preflight.sh
+ M scripts/odoo_runtime_snapshot.sh
+ M scripts/ops/install-cli-tools.sh
+ M scripts/parity/generate_ee_parity_matrix.py
+ M scripts/ppm/setup-control-room.sh
+ M scripts/ppm/verify-all.sh
+ M scripts/refactor/lib.sh
+ M scripts/refactor/naming.env.example
+ M scripts/refactor/run_naming_refactor.sh
+ M scripts/repo_health.sh
+ M scripts/security/audit-secrets.sh
+ M scripts/supabase/exposed_schemas.py
+ M scripts/sync-fluent-tokens.sh
+ M scripts/sync-tokens.sh
+ M scripts/sync/generate-sitemap.js
+ M scripts/sync/generate-tree.js
+ M scripts/verify-dataverse-console.sh
+ M scripts/verify-workspace-dns.sh
+ M scripts/verify.sh
+ M scripts/verify_phase5.sh
+ M skills/user/figma-agent/config/code-connect.json
+ M spec/github-well-architected/plan.md
+ M spec/github-well-architected/tasks.md
+ M spec/odoo-supabase-deployment/AGENT_PROMPT.md
+ M spec/odoo-supabase-deployment/research.md
+ M spec/odooops-sh/tasks.md
+ M specs/docs/readme-enhancement-v2.md
+ M specs/gates/seed-data-consistency-gate.md
+ M supabase/migrations/20260120_infra_schema.sql
+ M supabase/migrations/20260212_001500_ops_ee_parity_map.sql
+ M templates/saas-landing/.githooks/pre-commit
+ M templates/saas-landing/DEPLOY.md
+ M templates/saas-landing/INTEGRATION.md
+ M templates/saas-landing/docs/evidence/20260212-0711/DEPLOYMENT.md
+ M tools/docs-crawler/README.md
+ M tools/model-repo-scanner/config/scoring.yaml
+ M tools/model-repo-scanner/scripts/find_model_repo.sh
+ M vercel.json
+R  apps/ai-control-plane/.env.example -> web/ai-control-plane/.env.example
+R  apps/ai-control-plane/app/api/bugbot/route.ts -> web/ai-control-plane/app/api/bugbot/route.ts
+R  apps/ai-control-plane/app/api/control-plane/route.ts -> web/ai-control-plane/app/api/control-plane/route.ts
+R  apps/ai-control-plane/app/api/vercel-bot/route.ts -> web/ai-control-plane/app/api/vercel-bot/route.ts
+R  apps/ai-control-plane/app/layout.tsx -> web/ai-control-plane/app/layout.tsx
+R  apps/ai-control-plane/app/page.tsx -> web/ai-control-plane/app/page.tsx
+R  apps/ai-control-plane/lib/supabase.ts -> web/ai-control-plane/lib/supabase.ts
+R  apps/ai-control-plane/lib/types.ts -> web/ai-control-plane/lib/types.ts
+R  apps/ai-control-plane/next.config.js -> web/ai-control-plane/next.config.js
+R  apps/ai-control-plane/package.json -> web/ai-control-plane/package.json
+R  apps/ai-control-plane/tsconfig.json -> web/ai-control-plane/tsconfig.json
+R  apps/alpha-browser/.eslintrc.json -> web/alpha-browser/.eslintrc.json
+R  apps/alpha-browser/.gitignore -> web/alpha-browser/.gitignore
+RM apps/alpha-browser/PHASE1_COMPLETE.md -> web/alpha-browser/PHASE1_COMPLETE.md
+RM apps/alpha-browser/README.md -> web/alpha-browser/README.md
+RM apps/alpha-browser/docs/IMPLEMENTATION_STATUS.md -> web/alpha-browser/docs/IMPLEMENTATION_STATUS.md
+R  apps/alpha-browser/docs/architecture.md -> web/alpha-browser/docs/architecture.md
+R  apps/alpha-browser/package.json -> web/alpha-browser/package.json
+R  apps/alpha-browser/playwright.config.ts -> web/alpha-browser/playwright.config.ts
+R  apps/alpha-browser/postcss.config.js -> web/alpha-browser/postcss.config.js
+R  apps/alpha-browser/public/manifest.json -> web/alpha-browser/public/manifest.json
+R  apps/alpha-browser/scripts/post-build.js -> web/alpha-browser/scripts/post-build.js
+RM apps/alpha-browser/scripts/verify-phase1.sh -> web/alpha-browser/scripts/verify-phase1.sh
+R  apps/alpha-browser/src/background/service-worker.ts -> web/alpha-browser/src/background/service-worker.ts
+R  apps/alpha-browser/src/content/content-main.ts -> web/alpha-browser/src/content/content-main.ts
+R  apps/alpha-browser/src/offscreen/offscreen-main.ts -> web/alpha-browser/src/offscreen/offscreen-main.ts
+R  apps/alpha-browser/src/offscreen/offscreen.html -> web/alpha-browser/src/offscreen/offscreen.html
+R  apps/alpha-browser/src/popup/App.tsx -> web/alpha-browser/src/popup/App.tsx
+R  apps/alpha-browser/src/popup/popup.css -> web/alpha-browser/src/popup/popup.css
+R  apps/alpha-browser/src/popup/popup.html -> web/alpha-browser/src/popup/popup.html
+R  apps/alpha-browser/src/popup/popup.tsx -> web/alpha-browser/src/popup/popup.tsx
+R  apps/alpha-browser/src/shared/logger.ts -> web/alpha-browser/src/shared/logger.ts
+R  apps/alpha-browser/src/shared/types.ts -> web/alpha-browser/src/shared/types.ts
+R  apps/alpha-browser/src/shared/utils.ts -> web/alpha-browser/src/shared/utils.ts
+R  apps/alpha-browser/src/storage/checkpoints.ts -> web/alpha-browser/src/storage/checkpoints.ts
+R  apps/alpha-browser/src/storage/db.ts -> web/alpha-browser/src/storage/db.ts
+R  apps/alpha-browser/src/storage/memory.ts -> web/alpha-browser/src/storage/memory.ts
+R  apps/alpha-browser/src/storage/missions.ts -> web/alpha-browser/src/storage/missions.ts
+R  apps/alpha-browser/tailwind.config.js -> web/alpha-browser/tailwind.config.js
+R  apps/alpha-browser/test-results/.last-run.json -> web/alpha-browser/test-results/.last-run.json
+R  apps/alpha-browser/tests/e2e/extension-load.spec.ts -> web/alpha-browser/tests/e2e/extension-load.spec.ts
+R  apps/alpha-browser/tests/setup.ts -> web/alpha-browser/tests/setup.ts
+R  apps/alpha-browser/tests/unit/storage.test.ts -> web/alpha-browser/tests/unit/storage.test.ts
+R  apps/alpha-browser/tsconfig.json -> web/alpha-browser/tsconfig.json
+R  apps/alpha-browser/tsconfig.node.json -> web/alpha-browser/tsconfig.node.json
+R  apps/alpha-browser/vite.config.ts -> web/alpha-browser/vite.config.ts
+R  apps/alpha-browser/vitest.config.ts -> web/alpha-browser/vitest.config.ts
+RM apps/bi-architect/APP.md -> web/bi-architect/APP.md
+R  apps/bi-architect/do/app.json -> web/bi-architect/do/app.json
+R  apps/bi-architect/spec.yaml -> web/bi-architect/spec.yaml
+R  apps/billing-site/.env.example -> web/billing-site/.env.example
+R  apps/billing-site/.eslintrc.json -> web/billing-site/.eslintrc.json
+R  apps/billing-site/.gitignore -> web/billing-site/.gitignore
+R  apps/billing-site/docs/ARCHITECTURE.md -> web/billing-site/docs/ARCHITECTURE.md
+R  apps/billing-site/docs/RUNBOOK_DEPLOY.md -> web/billing-site/docs/RUNBOOK_DEPLOY.md
+R  apps/billing-site/docs/RUNBOOK_WEBHOOKS.md -> web/billing-site/docs/RUNBOOK_WEBHOOKS.md
+R  apps/billing-site/next-env.d.ts -> web/billing-site/next-env.d.ts
+R  apps/billing-site/next.config.js -> web/billing-site/next.config.js
+R  apps/billing-site/package.json -> web/billing-site/package.json
+R  apps/billing-site/postcss.config.js -> web/billing-site/postcss.config.js
+R  apps/billing-site/scripts/smoke_odoo_partner_create.mjs -> web/billing-site/scripts/smoke_odoo_partner_create.mjs
+R  apps/billing-site/src/app/account/page.tsx -> web/billing-site/src/app/account/page.tsx
+R  apps/billing-site/src/app/api/provision/odoo/route.ts -> web/billing-site/src/app/api/provision/odoo/route.ts
+R  apps/billing-site/src/app/api/webhooks/paddle/route.ts -> web/billing-site/src/app/api/webhooks/paddle/route.ts
+R  apps/billing-site/src/app/auth/callback/route.ts -> web/billing-site/src/app/auth/callback/route.ts
+R  apps/billing-site/src/app/auth/reset-password/page.tsx -> web/billing-site/src/app/auth/reset-password/page.tsx
+R  apps/billing-site/src/app/auth/signin/page.tsx -> web/billing-site/src/app/auth/signin/page.tsx
+R  apps/billing-site/src/app/auth/signout/route.ts -> web/billing-site/src/app/auth/signout/route.ts
+R  apps/billing-site/src/app/auth/signup/page.tsx -> web/billing-site/src/app/auth/signup/page.tsx
+R  apps/billing-site/src/app/billing/success/page.tsx -> web/billing-site/src/app/billing/success/page.tsx
+R  apps/billing-site/src/app/globals.css -> web/billing-site/src/app/globals.css
+R  apps/billing-site/src/app/layout.tsx -> web/billing-site/src/app/layout.tsx
+R  apps/billing-site/src/app/page.tsx -> web/billing-site/src/app/page.tsx
+R  apps/billing-site/src/app/pricing/page.tsx -> web/billing-site/src/app/pricing/page.tsx
+R  apps/billing-site/src/components/Footer.tsx -> web/billing-site/src/components/Footer.tsx
+R  apps/billing-site/src/components/Header.tsx -> web/billing-site/src/components/Header.tsx
+R  apps/billing-site/src/components/PaddleCheckout.tsx -> web/billing-site/src/components/PaddleCheckout.tsx
+R  apps/billing-site/src/components/PricingCard.tsx -> web/billing-site/src/components/PricingCard.tsx
+R  apps/billing-site/src/components/PricingToggle.tsx -> web/billing-site/src/components/PricingToggle.tsx
+R  apps/billing-site/src/lib/__tests__/odoo.test.ts -> web/billing-site/src/lib/__tests__/odoo.test.ts
+R  apps/billing-site/src/lib/__tests__/paddle.test.ts -> web/billing-site/src/lib/__tests__/paddle.test.ts
+R  apps/billing-site/src/lib/odoo.ts -> web/billing-site/src/lib/odoo.ts
+R  apps/billing-site/src/lib/paddle.ts -> web/billing-site/src/lib/paddle.ts
+R  apps/billing-site/src/lib/supabase/client.ts -> web/billing-site/src/lib/supabase/client.ts
+R  apps/billing-site/src/lib/supabase/server.ts -> web/billing-site/src/lib/supabase/server.ts
+R  apps/billing-site/src/test/setup.ts -> web/billing-site/src/test/setup.ts
+R  apps/billing-site/src/types/database.ts -> web/billing-site/src/types/database.ts
+R  apps/billing-site/tailwind.config.js -> web/billing-site/tailwind.config.js
+R  apps/billing-site/tsconfig.json -> web/billing-site/tsconfig.json
+R  apps/billing-site/vercel.json -> web/billing-site/vercel.json
+R  apps/billing-site/vitest.config.ts -> web/billing-site/vitest.config.ts
+R  apps/chatgpt_ipai_ai_studio/README.md -> web/chatgpt_ipai_ai_studio/README.md
+R  apps/chatgpt_ipai_ai_studio/package.json -> web/chatgpt_ipai_ai_studio/package.json
+R  apps/chatgpt_ipai_ai_studio/public/widget.html -> web/chatgpt_ipai_ai_studio/public/widget.html
+R  apps/chatgpt_ipai_ai_studio/src/server.js -> web/chatgpt_ipai_ai_studio/src/server.js
+RM apps/control-plane/README.md -> web/control-plane/README.md
+R  apps/control-room-api/.env.example -> web/control-room-api/.env.example
+R  apps/control-room-api/Dockerfile -> web/control-room-api/Dockerfile
+R  apps/control-room-api/app.py -> web/control-room-api/app.py
+R  apps/control-room-api/requirements.txt -> web/control-room-api/requirements.txt
+R  apps/control-room/.env.example -> web/control-room/.env.example
+R  apps/control-room/FINANCE_LANDING_CHECKLIST.md -> web/control-room/FINANCE_LANDING_CHECKLIST.md
+RM apps/control-room/PLATFORM_KIT_SPEC.md -> web/control-room/PLATFORM_KIT_SPEC.md
+R  apps/control-room/app/api/ai/sql/route.ts -> web/control-room/app/api/ai/sql/route.ts
+R  apps/control-room/app/api/observability/agents/[id]/heartbeat/route.ts -> web/control-room/app/api/observability/agents/[id]/heartbeat/route.ts
+R  apps/control-room/app/api/observability/agents/route.ts -> web/control-room/app/api/observability/agents/route.ts
+R  apps/control-room/app/api/observability/health/route.ts -> web/control-room/app/api/observability/health/route.ts
+R  apps/control-room/app/api/observability/jobs/[id]/retry/route.ts -> web/control-room/app/api/observability/jobs/[id]/retry/route.ts
+R  apps/control-room/app/api/observability/jobs/[id]/route.ts -> web/control-room/app/api/observability/jobs/[id]/route.ts
+R  apps/control-room/app/api/observability/jobs/route.ts -> web/control-room/app/api/observability/jobs/route.ts
+R  apps/control-room/app/api/observability/topology/route.ts -> web/control-room/app/api/observability/topology/route.ts
+R  apps/control-room/next-env.d.ts -> web/control-room/next-env.d.ts
+R  apps/control-room/next.config.js -> web/control-room/next.config.js
+R  apps/control-room/package.json -> web/control-room/package.json
+R  apps/control-room/postcss.config.js -> web/control-room/postcss.config.js
+R  apps/control-room/public/assets/finance/badge_secure.svg -> web/control-room/public/assets/finance/badge_secure.svg
+R  apps/control-room/public/assets/finance/bg_grid.svg -> web/control-room/public/assets/finance/bg_grid.svg
+R  apps/control-room/public/assets/finance/cta_arrow.svg -> web/control-room/public/assets/finance/cta_arrow.svg
+R  apps/control-room/public/assets/finance/divider_wave.svg -> web/control-room/public/assets/finance/divider_wave.svg
+R  apps/control-room/public/assets/finance/hero_finance_workspace.svg -> web/control-room/public/assets/finance/hero_finance_workspace.svg
+R  apps/control-room/public/assets/finance/icon_analytics.svg -> web/control-room/public/assets/finance/icon_analytics.svg
+R  apps/control-room/public/assets/finance/icon_audit.svg -> web/control-room/public/assets/finance/icon_audit.svg
+R  apps/control-room/public/assets/finance/icon_chat.svg -> web/control-room/public/assets/finance/icon_chat.svg
+R  apps/control-room/public/assets/finance/icon_erp.svg -> web/control-room/public/assets/finance/icon_erp.svg
+R  apps/control-room/public/assets/finance/icon_security.svg -> web/control-room/public/assets/finance/icon_security.svg
+R  apps/control-room/public/assets/finance/icon_workflow.svg -> web/control-room/public/assets/finance/icon_workflow.svg
+R  apps/control-room/public/assets/finance/manifest.json -> web/control-room/public/assets/finance/manifest.json
+R  apps/control-room/public/assets/finance/og_banner.svg -> web/control-room/public/assets/finance/og_banner.svg
+R  apps/control-room/public/assets/finance/tbwa_mark.svg -> web/control-room/public/assets/finance/tbwa_mark.svg
+R  apps/control-room/public/assets/finance/tbwa_wordmark.svg -> web/control-room/public/assets/finance/tbwa_wordmark.svg
+R  apps/control-room/src/app/api/copilot/chat/route.ts -> web/control-room/src/app/api/copilot/chat/route.ts
+R  apps/control-room/src/app/api/health/route.ts -> web/control-room/src/app/api/health/route.ts
+R  apps/control-room/src/app/api/mcp-jobs/route.ts -> web/control-room/src/app/api/mcp-jobs/route.ts
+R  apps/control-room/src/app/api/mcp-jobs/stats/route.ts -> web/control-room/src/app/api/mcp-jobs/stats/route.ts
+R  apps/control-room/src/app/api/mobile/auth/login/route.ts -> web/control-room/src/app/api/mobile/auth/login/route.ts
+R  apps/control-room/src/app/api/mobile/sync/delta/route.ts -> web/control-room/src/app/api/mobile/sync/delta/route.ts
+R  apps/control-room/src/app/api/tables/[schema]/[table]/route.ts -> web/control-room/src/app/api/tables/[schema]/[table]/route.ts
+R  apps/control-room/src/app/api/tables/route.ts -> web/control-room/src/app/api/tables/route.ts
+R  apps/control-room/src/app/api/tables/schemas/route.ts -> web/control-room/src/app/api/tables/schemas/route.ts
+R  apps/control-room/src/app/barcode/page.tsx -> web/control-room/src/app/barcode/page.tsx
+R  apps/control-room/src/app/booking/page.tsx -> web/control-room/src/app/booking/page.tsx
+R  apps/control-room/src/app/copilot-demo/page.tsx -> web/control-room/src/app/copilot-demo/page.tsx
+R  apps/control-room/src/app/finance/page.tsx -> web/control-room/src/app/finance/page.tsx
+R  apps/control-room/src/app/globals.css -> web/control-room/src/app/globals.css
+R  apps/control-room/src/app/layout.backup.tsx -> web/control-room/src/app/layout.backup.tsx
+R  apps/control-room/src/app/layout.tsx -> web/control-room/src/app/layout.tsx
+R  apps/control-room/src/app/overview/page.tsx -> web/control-room/src/app/overview/page.tsx
+R  apps/control-room/src/app/page.tsx -> web/control-room/src/app/page.tsx
+R  apps/control-room/src/app/pipelines/page.tsx -> web/control-room/src/app/pipelines/page.tsx
+R  apps/control-room/src/app/projects/page.tsx -> web/control-room/src/app/projects/page.tsx
+R  apps/control-room/src/app/providers.tsx -> web/control-room/src/app/providers.tsx
+R  apps/control-room/src/app/realm/page.tsx -> web/control-room/src/app/realm/page.tsx
+R  apps/control-room/src/app/settings/database/tables/[schema]/[table]/page.tsx -> web/control-room/src/app/settings/database/tables/[schema]/[table]/page.tsx
+R  apps/control-room/src/app/settings/database/tables/page.tsx -> web/control-room/src/app/settings/database/tables/page.tsx
+R  apps/control-room/src/app/theme/tbwaFluentTheme.ts -> web/control-room/src/app/theme/tbwaFluentTheme.ts
+R  apps/control-room/src/assets/financeAssets.ts -> web/control-room/src/assets/financeAssets.ts
+R  apps/control-room/src/components/charts/BudgetChart.tsx -> web/control-room/src/components/charts/BudgetChart.tsx
+R  apps/control-room/src/components/common/Badge.tsx -> web/control-room/src/components/common/Badge.tsx
+R  apps/control-room/src/components/common/Button.tsx -> web/control-room/src/components/common/Button.tsx
+R  apps/control-room/src/components/common/Card.tsx -> web/control-room/src/components/common/Card.tsx
+R  apps/control-room/src/components/common/ThemeSwitcher.tsx -> web/control-room/src/components/common/ThemeSwitcher.tsx
+R  apps/control-room/src/components/copilot/CopilotActionsBar.tsx -> web/control-room/src/components/copilot/CopilotActionsBar.tsx
+R  apps/control-room/src/components/copilot/CopilotComposer.tsx -> web/control-room/src/components/copilot/CopilotComposer.tsx
+R  apps/control-room/src/components/copilot/CopilotContextChips.tsx -> web/control-room/src/components/copilot/CopilotContextChips.tsx
+R  apps/control-room/src/components/copilot/CopilotMessage.tsx -> web/control-room/src/components/copilot/CopilotMessage.tsx
+R  apps/control-room/src/components/copilot/CopilotPanel.tsx -> web/control-room/src/components/copilot/CopilotPanel.tsx
+R  apps/control-room/src/components/copilot/CopilotThread.tsx -> web/control-room/src/components/copilot/CopilotThread.tsx
+R  apps/control-room/src/components/copilot/hooks/useCopilotSession.ts -> web/control-room/src/components/copilot/hooks/useCopilotSession.ts
+R  apps/control-room/src/components/copilot/index.ts -> web/control-room/src/components/copilot/index.ts
+R  apps/control-room/src/components/copilot/types.ts -> web/control-room/src/components/copilot/types.ts
+R  apps/control-room/src/components/dashboard/ActivityFeed.tsx -> web/control-room/src/components/dashboard/ActivityFeed.tsx
+R  apps/control-room/src/components/dashboard/HealthBadge.tsx -> web/control-room/src/components/dashboard/HealthBadge.tsx
+R  apps/control-room/src/components/dashboard/KPICard.tsx -> web/control-room/src/components/dashboard/KPICard.tsx
+R  apps/control-room/src/components/health/ServiceHealthGrid.tsx -> web/control-room/src/components/health/ServiceHealthGrid.tsx
+R  apps/control-room/src/components/health/index.ts -> web/control-room/src/components/health/index.ts
+R  apps/control-room/src/components/layout/Header.tsx -> web/control-room/src/components/layout/Header.tsx
+R  apps/control-room/src/components/layout/PageContainer.tsx -> web/control-room/src/components/layout/PageContainer.tsx
+R  apps/control-room/src/components/layout/Sidebar.tsx -> web/control-room/src/components/layout/Sidebar.tsx
+R  apps/control-room/src/components/observability/AgentsTab.tsx -> web/control-room/src/components/observability/AgentsTab.tsx
+R  apps/control-room/src/components/observability/HealthTab.tsx -> web/control-room/src/components/observability/HealthTab.tsx
+R  apps/control-room/src/components/observability/JobQueueCard.tsx -> web/control-room/src/components/observability/JobQueueCard.tsx
+R  apps/control-room/src/components/observability/JobsTab.tsx -> web/control-room/src/components/observability/JobsTab.tsx
+R  apps/control-room/src/components/observability/ObservabilityManager.tsx -> web/control-room/src/components/observability/ObservabilityManager.tsx
+R  apps/control-room/src/components/observability/TopologyTab.tsx -> web/control-room/src/components/observability/TopologyTab.tsx
+R  apps/control-room/src/components/observability/index.ts -> web/control-room/src/components/observability/index.ts
+R  apps/control-room/src/components/tables-browser/SchemaFilter.tsx -> web/control-room/src/components/tables-browser/SchemaFilter.tsx
+R  apps/control-room/src/components/tables-browser/TableCard.tsx -> web/control-room/src/components/tables-browser/TableCard.tsx
+R  apps/control-room/src/components/tables-browser/TablesBrowser.tsx -> web/control-room/src/components/tables-browser/TablesBrowser.tsx
+R  apps/control-room/src/components/tables-browser/index.ts -> web/control-room/src/components/tables-browser/index.ts
+R  apps/control-room/src/components/tables/DataTable.tsx -> web/control-room/src/components/tables/DataTable.tsx
+R  apps/control-room/src/components/tables/JobsTable.tsx -> web/control-room/src/components/tables/JobsTable.tsx
+R  apps/control-room/src/components/tables/ProjectsTable.tsx -> web/control-room/src/components/tables/ProjectsTable.tsx
+R  apps/control-room/src/hooks/index.ts -> web/control-room/src/hooks/index.ts
+R  apps/control-room/src/hooks/useMCPJobs.ts -> web/control-room/src/hooks/useMCPJobs.ts
+R  apps/control-room/src/hooks/useServiceHealth.ts -> web/control-room/src/hooks/useServiceHealth.ts
+R  apps/control-room/src/hooks/useTables.ts -> web/control-room/src/hooks/useTables.ts
+R  apps/control-room/src/hooks/useTheme.ts -> web/control-room/src/hooks/useTheme.ts
+R  apps/control-room/src/lib/supabase.ts -> web/control-room/src/lib/supabase.ts
+R  apps/control-room/src/lib/supabase/observability.ts -> web/control-room/src/lib/supabase/observability.ts
+R  apps/control-room/src/theme/fluentThemes.ts -> web/control-room/src/theme/fluentThemes.ts
+R  apps/control-room/src/theme/index.ts -> web/control-room/src/theme/index.ts
+R  apps/control-room/src/theme/tokens.css -> web/control-room/src/theme/tokens.css
+R  apps/control-room/src/types/api.ts -> web/control-room/src/types/api.ts
+R  apps/control-room/src/types/models.ts -> web/control-room/src/types/models.ts
+R  apps/control-room/src/types/observability.ts -> web/control-room/src/types/observability.ts
+R  apps/control-room/tailwind.config.js -> web/control-room/tailwind.config.js
+R  apps/control-room/tsconfig.json -> web/control-room/tsconfig.json
+RM apps/devops-engineer/APP.md -> web/devops-engineer/APP.md
+R  apps/devops-engineer/do/app.json -> web/devops-engineer/do/app.json
+R  apps/devops-engineer/spec.yaml -> web/devops-engineer/spec.yaml
+RM apps/do-advisor-agent/README.md -> web/do-advisor-agent/README.md
+R  apps/do-advisor-agent/config/mcp-config.json -> web/do-advisor-agent/config/mcp-config.json
+R  apps/do-advisor-agent/prompts/unified_advisor.md -> web/do-advisor-agent/prompts/unified_advisor.md
+R  apps/do-advisor-agent/tools/odoo_finance_ppm.py -> web/do-advisor-agent/tools/odoo_finance_ppm.py
+R  apps/do-advisor-ui/Dockerfile -> web/do-advisor-ui/Dockerfile
+R  apps/do-advisor-ui/README.md -> web/do-advisor-ui/README.md
+RM apps/do-advisor-ui/app-spec.yaml -> web/do-advisor-ui/app-spec.yaml
+R  apps/do-advisor-ui/nginx.conf -> web/do-advisor-ui/nginx.conf
+R  apps/do-advisor-ui/public/config.js -> web/do-advisor-ui/public/config.js
+R  apps/do-advisor-ui/public/index.html -> web/do-advisor-ui/public/index.html
+R  apps/do-advisor-ui/src/app.js -> web/do-advisor-ui/src/app.js
+R  apps/do-advisor-ui/src/assets/styles/azure-dark.css -> web/do-advisor-ui/src/assets/styles/azure-dark.css
+R  apps/do-advisor-ui/src/assets/styles/components.css -> web/do-advisor-ui/src/assets/styles/components.css
+R  apps/do-advisor-ui/src/components/jobs-monitor.js -> web/do-advisor-ui/src/components/jobs-monitor.js
+R  apps/do-advisor-ui/src/components/metrics-charts.js -> web/do-advisor-ui/src/components/metrics-charts.js
+R  apps/do-advisor-ui/src/components/recommendations.js -> web/do-advisor-ui/src/components/recommendations.js
+R  apps/do-advisor-ui/src/views/architecture.js -> web/do-advisor-ui/src/views/architecture.js
+R  apps/do-advisor-ui/src/views/superset-copilot.js -> web/do-advisor-ui/src/views/superset-copilot.js
+R  apps/docs-ai-widget/package.json -> web/docs-ai-widget/package.json
+R  apps/docs-ai-widget/src/components/DocsAiWidget.tsx -> web/docs-ai-widget/src/components/DocsAiWidget.tsx
+R  apps/docs-ai-widget/src/embed.ts -> web/docs-ai-widget/src/embed.ts
+R  apps/docs-ai-widget/src/index.ts -> web/docs-ai-widget/src/index.ts
+R  apps/docs/.gitignore -> web/docs/.gitignore
+R  apps/docs/README.md -> web/docs/README.md
+R  apps/docs/app/getting-started/page.tsx -> web/docs/app/getting-started/page.tsx
+R  apps/docs/app/globals.css -> web/docs/app/globals.css
+R  apps/docs/app/layout.tsx -> web/docs/app/layout.tsx
+R  apps/docs/app/page.tsx -> web/docs/app/page.tsx
+R  apps/docs/components/DocLayout.tsx -> web/docs/components/DocLayout.tsx
+R  apps/docs/components/DocNavigation.tsx -> web/docs/components/DocNavigation.tsx
+R  apps/docs/content/getting-started.mdx -> web/docs/content/getting-started.mdx
+R  apps/docs/next.config.mjs -> web/docs/next.config.mjs
+R  apps/docs/package.json -> web/docs/package.json
+R  apps/docs/tsconfig.json -> web/docs/tsconfig.json
+RM apps/finance-ssc-expert/APP.md -> web/finance-ssc-expert/APP.md
+R  apps/finance-ssc-expert/do/app.json -> web/finance-ssc-expert/do/app.json
+R  apps/finance-ssc-expert/spec.yaml -> web/finance-ssc-expert/spec.yaml
+R  apps/ipai-chatgpt-app/server/package.json -> web/ipai-chatgpt-app/server/package.json
+RM apps/ipai-chatgpt-app/server/server.js -> web/ipai-chatgpt-app/server/server.js
+R  apps/ipai-chatgpt-app/web/index.html -> web/ipai-chatgpt-app/web/index.html
+R  apps/ipai-chatgpt-app/web/package.json -> web/ipai-chatgpt-app/web/package.json
+R  apps/ipai-chatgpt-app/web/postcss.config.js -> web/ipai-chatgpt-app/web/postcss.config.js
+R  apps/ipai-chatgpt-app/web/src/main.css -> web/ipai-chatgpt-app/web/src/main.css
+R  apps/ipai-chatgpt-app/web/src/main.tsx -> web/ipai-chatgpt-app/web/src/main.tsx
+R  apps/ipai-chatgpt-app/web/src/widget/App.tsx -> web/ipai-chatgpt-app/web/src/widget/App.tsx
+R  apps/ipai-chatgpt-app/web/src/widget/openai.d.ts -> web/ipai-chatgpt-app/web/src/widget/openai.d.ts
+R  apps/ipai-chatgpt-app/web/tailwind.config.js -> web/ipai-chatgpt-app/web/tailwind.config.js
+R  apps/ipai-chatgpt-app/web/tsconfig.json -> web/ipai-chatgpt-app/web/tsconfig.json
+R  apps/ipai-chatgpt-app/web/vite.config.ts -> web/ipai-chatgpt-app/web/vite.config.ts
+R  apps/ipai-control-center-docs/.vercel/README.txt -> web/ipai-control-center-docs/.vercel/README.txt
+R  apps/ipai-control-center-docs/.vercel/project.json -> web/ipai-control-center-docs/.vercel/project.json
+RM apps/ipai-control-center-docs/DEPLOYMENT.md -> web/ipai-control-center-docs/DEPLOYMENT.md
+R  apps/ipai-control-center-docs/next.config.mjs -> web/ipai-control-center-docs/next.config.mjs
+R  apps/ipai-control-center-docs/package.json -> web/ipai-control-center-docs/package.json
+R  apps/ipai-control-center-docs/pages/_app.jsx -> web/ipai-control-center-docs/pages/_app.jsx
+R  apps/ipai-control-center-docs/pages/_meta.js -> web/ipai-control-center-docs/pages/_meta.js
+R  apps/ipai-control-center-docs/pages/constitution.md -> web/ipai-control-center-docs/pages/constitution.md
+R  apps/ipai-control-center-docs/pages/index.mdx -> web/ipai-control-center-docs/pages/index.mdx
+R  apps/ipai-control-center-docs/pages/plan.md -> web/ipai-control-center-docs/pages/plan.md
+R  apps/ipai-control-center-docs/pages/prd.md -> web/ipai-control-center-docs/pages/prd.md
+R  apps/ipai-control-center-docs/pages/strategy/notion-vs-odoo.mdx -> web/ipai-control-center-docs/pages/strategy/notion-vs-odoo.mdx
+R  apps/ipai-control-center-docs/pages/tasks.md -> web/ipai-control-center-docs/pages/tasks.md
+R  apps/ipai-control-center-docs/theme.config.jsx -> web/ipai-control-center-docs/theme.config.jsx
+R  apps/local-schema-server/package.json -> web/local-schema-server/package.json
+R  apps/local-schema-server/server.js -> web/local-schema-server/server.js
+RM apps/mcp-coordinator/APP.md -> web/mcp-coordinator/APP.md
+R  apps/mcp-coordinator/do/app.json -> web/mcp-coordinator/do/app.json
+R  apps/mcp-coordinator/spec.yaml -> web/mcp-coordinator/spec.yaml
+R  apps/mobile/App.tsx -> web/mobile/App.tsx
+R  apps/mobile/README.md -> web/mobile/README.md
+R  apps/mobile/app.json -> web/mobile/app.json
+R  apps/mobile/eas.json -> web/mobile/eas.json
+R  apps/mobile/package.json -> web/mobile/package.json
+R  apps/mobile/src/hooks/useRealtime.ts -> web/mobile/src/hooks/useRealtime.ts
+R  apps/mobile/src/lib/supabase.ts -> web/mobile/src/lib/supabase.ts
+R  apps/mobile/src/screens/ApprovalsScreen.tsx -> web/mobile/src/screens/ApprovalsScreen.tsx
+R  apps/mobile/src/screens/DashboardScreen.tsx -> web/mobile/src/screens/DashboardScreen.tsx
+R  apps/mobile/src/screens/KBSearchScreen.tsx -> web/mobile/src/screens/KBSearchScreen.tsx
+R  apps/mobile/src/store/app.ts -> web/mobile/src/store/app.ts
+R  apps/mobile/src/types/database.ts -> web/mobile/src/types/database.ts
+R  apps/mobile/tsconfig.json -> web/mobile/tsconfig.json
+RM apps/multi-agent-orchestrator/APP.md -> web/multi-agent-orchestrator/APP.md
+R  apps/multi-agent-orchestrator/do/app.json -> web/multi-agent-orchestrator/do/app.json
+R  apps/multi-agent-orchestrator/spec.yaml -> web/multi-agent-orchestrator/spec.yaml
+RM apps/odoo-developer-agent/APP.md -> web/odoo-developer-agent/APP.md
+R  apps/odoo-developer-agent/do/app.json -> web/odoo-developer-agent/do/app.json
+R  apps/odoo-developer-agent/spec.yaml -> web/odoo-developer-agent/spec.yaml
+R  apps/odoo-frontend-shell/.env.example -> web/odoo-frontend-shell/.env.example
+R  apps/odoo-frontend-shell/.gitignore -> web/odoo-frontend-shell/.gitignore
+R  apps/odoo-frontend-shell/.vercelignore -> web/odoo-frontend-shell/.vercelignore
+RM apps/odoo-frontend-shell/DEPLOY.md -> web/odoo-frontend-shell/DEPLOY.md
+RM apps/odoo-frontend-shell/QUICKSTART.md -> web/odoo-frontend-shell/QUICKSTART.md
+RM apps/odoo-frontend-shell/README.md -> web/odoo-frontend-shell/README.md
+R  apps/odoo-frontend-shell/next.config.ts -> web/odoo-frontend-shell/next.config.ts
+R  apps/odoo-frontend-shell/package.json -> web/odoo-frontend-shell/package.json
+R  apps/odoo-frontend-shell/postcss.config.mjs -> web/odoo-frontend-shell/postcss.config.mjs
+R  apps/odoo-frontend-shell/sandbox.config.json -> web/odoo-frontend-shell/sandbox.config.json
+R  apps/odoo-frontend-shell/src/app/globals.css -> web/odoo-frontend-shell/src/app/globals.css
+R  apps/odoo-frontend-shell/src/app/layout.tsx -> web/odoo-frontend-shell/src/app/layout.tsx
+R  apps/odoo-frontend-shell/src/app/page.tsx -> web/odoo-frontend-shell/src/app/page.tsx
+R  apps/odoo-frontend-shell/src/components/LoginForm.tsx -> web/odoo-frontend-shell/src/components/LoginForm.tsx
+R  apps/odoo-frontend-shell/src/lib/auth-store.ts -> web/odoo-frontend-shell/src/lib/auth-store.ts
+R  apps/odoo-frontend-shell/src/lib/odoo-client.ts -> web/odoo-frontend-shell/src/lib/odoo-client.ts
+R  apps/odoo-frontend-shell/tailwind.config.ts -> web/odoo-frontend-shell/tailwind.config.ts
+R  apps/odoo-frontend-shell/tsconfig.json -> web/odoo-frontend-shell/tsconfig.json
+R  apps/odoo-frontend-shell/vercel.json -> web/odoo-frontend-shell/vercel.json
+RM apps/odoo-saas-platform/APP.md -> web/odoo-saas-platform/APP.md
+RM apps/odoo-saas-platform/do/app.json -> web/odoo-saas-platform/do/app.json
+R  apps/odoo-saas-platform/spec.yaml -> web/odoo-saas-platform/spec.yaml
+R  apps/odooops-dashboard/.gitignore -> web/odooops-dashboard/.gitignore
+RM apps/odooops-dashboard/README.md -> web/odooops-dashboard/README.md
+R  apps/odooops-dashboard/app/globals.css -> web/odooops-dashboard/app/globals.css
+R  apps/odooops-dashboard/app/layout.tsx -> web/odooops-dashboard/app/layout.tsx
+R  apps/odooops-dashboard/app/page.tsx -> web/odooops-dashboard/app/page.tsx
+R  apps/odooops-dashboard/components/MetricCard.tsx -> web/odooops-dashboard/components/MetricCard.tsx
+R  apps/odooops-dashboard/components/ProjectCard.tsx -> web/odooops-dashboard/components/ProjectCard.tsx
+R  apps/odooops-dashboard/next.config.mjs -> web/odooops-dashboard/next.config.mjs
+R  apps/odooops-dashboard/package.json -> web/odooops-dashboard/package.json
+R  apps/odooops-dashboard/postcss.config.mjs -> web/odooops-dashboard/postcss.config.mjs
+R  apps/odooops-dashboard/tailwind.config.ts -> web/odooops-dashboard/tailwind.config.ts
+R  apps/odooops-dashboard/tsconfig.json -> web/odooops-dashboard/tsconfig.json
+R  apps/platform-kit/.github/dependabot.yml -> web/platform-kit/.github/dependabot.yml
+R  apps/platform-kit/.github/workflows/ci.yml -> web/platform-kit/.github/workflows/ci.yml
+R  apps/platform-kit/.github/workflows/deploy.yml -> web/platform-kit/.github/workflows/deploy.yml
+R  apps/platform-kit/.github/workflows/docker-publish.yml -> web/platform-kit/.github/workflows/docker-publish.yml
+R  apps/platform-kit/.github/workflows/governance-enroll-repo.yml -> web/platform-kit/.github/workflows/governance-enroll-repo.yml
+R  apps/platform-kit/.github/workflows/nightly-maintenance.yml -> web/platform-kit/.github/workflows/nightly-maintenance.yml
+R  apps/platform-kit/.github/workflows/pnpm-lockfile-check.yml -> web/platform-kit/.github/workflows/pnpm-lockfile-check.yml
+R  apps/platform-kit/.github/workflows/preview.yml -> web/platform-kit/.github/workflows/preview.yml
+R  apps/platform-kit/.github/workflows/security.yml -> web/platform-kit/.github/workflows/security.yml
+R  apps/platform-kit/.github/workflows/supabase-deploy.yml -> web/platform-kit/.github/workflows/supabase-deploy.yml
+R  apps/platform-kit/.github/workflows/supabase-pr-checks.yml -> web/platform-kit/.github/workflows/supabase-pr-checks.yml
+R  apps/platform-kit/.github/workflows/vercel-preview.yml -> web/platform-kit/.github/workflows/vercel-preview.yml
+R  apps/platform-kit/.github/workflows/vercel-production.yml -> web/platform-kit/.github/workflows/vercel-production.yml
+R  apps/platform-kit/.gitignore -> web/platform-kit/.gitignore
+R  apps/platform-kit/.gitleaks.toml -> web/platform-kit/.gitleaks.toml
+R  apps/platform-kit/.nvmrc -> web/platform-kit/.nvmrc
+RM apps/platform-kit/NOBLE_FINANCES_BUILD.md -> web/platform-kit/NOBLE_FINANCES_BUILD.md
+RM apps/platform-kit/README.md -> web/platform-kit/README.md
+RM apps/platform-kit/SUPABASE_CMS_SETUP.md -> web/platform-kit/SUPABASE_CMS_SETUP.md
+R  apps/platform-kit/agents/prompts/odoo-plane-sync-agent.md -> web/platform-kit/agents/prompts/odoo-plane-sync-agent.md
+R  apps/platform-kit/agents/prompts/ppm-governance-agent.md -> web/platform-kit/agents/prompts/ppm-governance-agent.md
+R  apps/platform-kit/app/ClientBodyDataset.tsx -> web/platform-kit/app/ClientBodyDataset.tsx
+R  apps/platform-kit/app/accounting/layout.tsx -> web/platform-kit/app/accounting/layout.tsx
+R  apps/platform-kit/app/accounting/page.tsx -> web/platform-kit/app/accounting/page.tsx
+R  apps/platform-kit/app/api/ai/sql/route.ts -> web/platform-kit/app/api/ai/sql/route.ts
+R  apps/platform-kit/app/api/cms/route.ts -> web/platform-kit/app/api/cms/route.ts
+R  apps/platform-kit/app/api/health/db/route.ts -> web/platform-kit/app/api/health/db/route.ts
+R  apps/platform-kit/app/api/health/route.ts -> web/platform-kit/app/api/health/route.ts
+R  apps/platform-kit/app/api/supabase-proxy/[...path]/route.ts -> web/platform-kit/app/api/supabase-proxy/[...path]/route.ts
+R  apps/platform-kit/app/globals.css -> web/platform-kit/app/globals.css
+R  apps/platform-kit/app/layout.tsx -> web/platform-kit/app/layout.tsx
+R  apps/platform-kit/app/login/page.tsx -> web/platform-kit/app/login/page.tsx
+R  apps/platform-kit/app/page.tsx -> web/platform-kit/app/page.tsx
+R  apps/platform-kit/app/providers.tsx -> web/platform-kit/app/providers.tsx
+R  apps/platform-kit/app/tbwa-template/page.tsx -> web/platform-kit/app/tbwa-template/page.tsx
+R  apps/platform-kit/components.json -> web/platform-kit/components.json
+R  apps/platform-kit/components/OdooStyleLanding.tsx -> web/platform-kit/components/OdooStyleLanding.tsx
+R  apps/platform-kit/components/accounting/CookieConsent.tsx -> web/platform-kit/components/accounting/CookieConsent.tsx
+R  apps/platform-kit/components/accounting/FinalCTA.tsx -> web/platform-kit/components/accounting/FinalCTA.tsx
+R  apps/platform-kit/components/accounting/Footer.tsx -> web/platform-kit/components/accounting/Footer.tsx
+R  apps/platform-kit/components/accounting/Header.tsx -> web/platform-kit/components/accounting/Header.tsx
+R  apps/platform-kit/components/accounting/Hero.tsx -> web/platform-kit/components/accounting/Hero.tsx
+R  apps/platform-kit/components/accounting/ServiceCard.tsx -> web/platform-kit/components/accounting/ServiceCard.tsx
+R  apps/platform-kit/components/accounting/Services.tsx -> web/platform-kit/components/accounting/Services.tsx
+R  apps/platform-kit/components/accounting/TargetSegments.tsx -> web/platform-kit/components/accounting/TargetSegments.tsx
+R  apps/platform-kit/components/accounting/Testimonials.tsx -> web/platform-kit/components/accounting/Testimonials.tsx
+R  apps/platform-kit/components/accounting/ValueProp.tsx -> web/platform-kit/components/accounting/ValueProp.tsx
+R  apps/platform-kit/components/cms-example.tsx -> web/platform-kit/components/cms-example.tsx
+R  apps/platform-kit/components/dynamic-form.tsx -> web/platform-kit/components/dynamic-form.tsx
+R  apps/platform-kit/components/logo-supabase.tsx -> web/platform-kit/components/logo-supabase.tsx
+R  apps/platform-kit/components/results-table.tsx -> web/platform-kit/components/results-table.tsx
+R  apps/platform-kit/components/sql-editor.tsx -> web/platform-kit/components/sql-editor.tsx
+R  apps/platform-kit/components/supabase-manager/auth.tsx -> web/platform-kit/components/supabase-manager/auth.tsx
+R  apps/platform-kit/components/supabase-manager/database.tsx -> web/platform-kit/components/supabase-manager/database.tsx
+R  apps/platform-kit/components/supabase-manager/index.tsx -> web/platform-kit/components/supabase-manager/index.tsx
+R  apps/platform-kit/components/supabase-manager/logs.tsx -> web/platform-kit/components/supabase-manager/logs.tsx
+R  apps/platform-kit/components/supabase-manager/secrets.tsx -> web/platform-kit/components/supabase-manager/secrets.tsx
+R  apps/platform-kit/components/supabase-manager/storage.tsx -> web/platform-kit/components/supabase-manager/storage.tsx
+R  apps/platform-kit/components/supabase-manager/suggestions.tsx -> web/platform-kit/components/supabase-manager/suggestions.tsx
+R  apps/platform-kit/components/supabase-manager/users.tsx -> web/platform-kit/components/supabase-manager/users.tsx
+R  apps/platform-kit/components/tbwa-template/ClientLogos.tsx -> web/platform-kit/components/tbwa-template/ClientLogos.tsx
+R  apps/platform-kit/components/tbwa-template/CookieConsent.tsx -> web/platform-kit/components/tbwa-template/CookieConsent.tsx
+R  apps/platform-kit/components/tbwa-template/FinancialServicesBlock.tsx -> web/platform-kit/components/tbwa-template/FinancialServicesBlock.tsx
+R  apps/platform-kit/components/tbwa-template/Footer.tsx -> web/platform-kit/components/tbwa-template/Footer.tsx
+R  apps/platform-kit/components/tbwa-template/Header.tsx -> web/platform-kit/components/tbwa-template/Header.tsx
+R  apps/platform-kit/components/tbwa-template/MattermostHero.tsx -> web/platform-kit/components/tbwa-template/MattermostHero.tsx
+R  apps/platform-kit/components/theme-provider.tsx -> web/platform-kit/components/theme-provider.tsx
+R  apps/platform-kit/components/ui/alert.tsx -> web/platform-kit/components/ui/alert.tsx
+R  apps/platform-kit/components/ui/badge.tsx -> web/platform-kit/components/ui/badge.tsx
+R  apps/platform-kit/components/ui/button.tsx -> web/platform-kit/components/ui/button.tsx
+R  apps/platform-kit/components/ui/card.tsx -> web/platform-kit/components/ui/card.tsx
+R  apps/platform-kit/components/ui/chart.tsx -> web/platform-kit/components/ui/chart.tsx
+R  apps/platform-kit/components/ui/command.tsx -> web/platform-kit/components/ui/command.tsx
+R  apps/platform-kit/components/ui/dialog.tsx -> web/platform-kit/components/ui/dialog.tsx
+R  apps/platform-kit/components/ui/drawer.tsx -> web/platform-kit/components/ui/drawer.tsx
+R  apps/platform-kit/components/ui/form.tsx -> web/platform-kit/components/ui/form.tsx
+R  apps/platform-kit/components/ui/hover-card.tsx -> web/platform-kit/components/ui/hover-card.tsx
+R  apps/platform-kit/components/ui/input.tsx -> web/platform-kit/components/ui/input.tsx
+R  apps/platform-kit/components/ui/label.tsx -> web/platform-kit/components/ui/label.tsx
+R  apps/platform-kit/components/ui/popover.tsx -> web/platform-kit/components/ui/popover.tsx
+R  apps/platform-kit/components/ui/select.tsx -> web/platform-kit/components/ui/select.tsx
+R  apps/platform-kit/components/ui/skeleton.tsx -> web/platform-kit/components/ui/skeleton.tsx
+R  apps/platform-kit/components/ui/sonner.tsx -> web/platform-kit/components/ui/sonner.tsx
+R  apps/platform-kit/components/ui/switch.tsx -> web/platform-kit/components/ui/switch.tsx
+R  apps/platform-kit/components/ui/table.tsx -> web/platform-kit/components/ui/table.tsx
+R  apps/platform-kit/components/ui/toggle-group.tsx -> web/platform-kit/components/ui/toggle-group.tsx
+R  apps/platform-kit/components/ui/toggle.tsx -> web/platform-kit/components/ui/toggle.tsx
+R  apps/platform-kit/components/ui/tooltip.tsx -> web/platform-kit/components/ui/tooltip.tsx
+R  apps/platform-kit/components/users-growth-chart.tsx -> web/platform-kit/components/users-growth-chart.tsx
+R  apps/platform-kit/config/dns/insightpulseai.com.zone -> web/platform-kit/config/dns/insightpulseai.com.zone
+R  apps/platform-kit/config/domains.yaml -> web/platform-kit/config/domains.yaml
+R  apps/platform-kit/config/integrations/integration_manifest.yaml -> web/platform-kit/config/integrations/integration_manifest.yaml
+R  apps/platform-kit/config/mail/mail-stack.yaml -> web/platform-kit/config/mail/mail-stack.yaml
+R  apps/platform-kit/config/mail/mailgun.yaml -> web/platform-kit/config/mail/mailgun.yaml
+R  apps/platform-kit/config/odoo/email_settings.xml -> web/platform-kit/config/odoo/email_settings.xml
+R  apps/platform-kit/config/spaces/ocr-artifacts.yaml -> web/platform-kit/config/spaces/ocr-artifacts.yaml
+R  apps/platform-kit/contexts/SheetNavigationContext.tsx -> web/platform-kit/contexts/SheetNavigationContext.tsx
+R  apps/platform-kit/docs/CANONICAL_ARCHITECTURE.md -> web/platform-kit/docs/CANONICAL_ARCHITECTURE.md
+R  apps/platform-kit/docs/CI_SUPABASE_SECRETS.md -> web/platform-kit/docs/CI_SUPABASE_SECRETS.md
+R  apps/platform-kit/docs/COPILOT_RULES.md -> web/platform-kit/docs/COPILOT_RULES.md
+R  apps/platform-kit/docs/GOVERNANCE.md -> web/platform-kit/docs/GOVERNANCE.md
+R  apps/platform-kit/docs/PHASE1_CHECKLIST.md -> web/platform-kit/docs/PHASE1_CHECKLIST.md
+R  apps/platform-kit/docs/PLANE_ODOO_INTEGRATION.md -> web/platform-kit/docs/PLANE_ODOO_INTEGRATION.md
+R  apps/platform-kit/docs/SUPABASE_PLATFORM_REVIEW.md -> web/platform-kit/docs/SUPABASE_PLATFORM_REVIEW.md
+RM apps/platform-kit/docs/architecture/EMAIL_ARCHITECTURE.md -> web/platform-kit/docs/architecture/EMAIL_ARCHITECTURE.md
+R  apps/platform-kit/docs/architecture/ppm-data-model.md -> web/platform-kit/docs/architecture/ppm-data-model.md
+R  apps/platform-kit/docs/email/ODOO_EMAIL_SETUP.md -> web/platform-kit/docs/email/ODOO_EMAIL_SETUP.md
+R  apps/platform-kit/docs/governance/BRANCHING.md -> web/platform-kit/docs/governance/BRANCHING.md
+R  apps/platform-kit/docs/infra/COST_OPTIMIZATION.md -> web/platform-kit/docs/infra/COST_OPTIMIZATION.md
+R  apps/platform-kit/eslint.config.mjs -> web/platform-kit/eslint.config.mjs
+R  apps/platform-kit/hooks/use-auth.ts -> web/platform-kit/hooks/use-auth.ts
+R  apps/platform-kit/hooks/use-functions.ts -> web/platform-kit/hooks/use-functions.ts
+R  apps/platform-kit/hooks/use-logs.ts -> web/platform-kit/hooks/use-logs.ts
+R  apps/platform-kit/hooks/use-mobile.ts -> web/platform-kit/hooks/use-mobile.ts
+R  apps/platform-kit/hooks/use-run-query.ts -> web/platform-kit/hooks/use-run-query.ts
+R  apps/platform-kit/hooks/use-secrets.ts -> web/platform-kit/hooks/use-secrets.ts
+R  apps/platform-kit/hooks/use-storage.ts -> web/platform-kit/hooks/use-storage.ts
+R  apps/platform-kit/hooks/use-suggestions.ts -> web/platform-kit/hooks/use-suggestions.ts
+R  apps/platform-kit/hooks/use-tables.ts -> web/platform-kit/hooks/use-tables.ts
+R  apps/platform-kit/hooks/use-user-counts.ts -> web/platform-kit/hooks/use-user-counts.ts
+R  apps/platform-kit/infra/dns/mailgun/WIX_DNS_INSTRUCTIONS.md -> web/platform-kit/infra/dns/mailgun/WIX_DNS_INSTRUCTIONS.md
+R  apps/platform-kit/infra/dns/mailgun/mg_insightpulseai_com.json -> web/platform-kit/infra/dns/mailgun/mg_insightpulseai_com.json
+R  apps/platform-kit/infra/dns/zoho_root_insightpulseai_com.json -> web/platform-kit/infra/dns/zoho_root_insightpulseai_com.json
+R  apps/platform-kit/infra/n8n/plane-odoo-sync.workflow.json -> web/platform-kit/infra/n8n/plane-odoo-sync.workflow.json
+R  apps/platform-kit/infra/terraform/envs/dev/main.tf -> web/platform-kit/infra/terraform/envs/dev/main.tf
+R  apps/platform-kit/infra/terraform/envs/prod/main.tf -> web/platform-kit/infra/terraform/envs/prod/main.tf
+R  apps/platform-kit/infra/terraform/modules/platform_kit/main.tf -> web/platform-kit/infra/terraform/modules/platform_kit/main.tf
+R  apps/platform-kit/lib/accounting/design-tokens.ts -> web/platform-kit/lib/accounting/design-tokens.ts
+R  apps/platform-kit/lib/logs.ts -> web/platform-kit/lib/logs.ts
+R  apps/platform-kit/lib/management-api-schema.d.ts -> web/platform-kit/lib/management-api-schema.d.ts
+R  apps/platform-kit/lib/management-api.ts -> web/platform-kit/lib/management-api.ts
+R  apps/platform-kit/lib/pg-meta/index.ts -> web/platform-kit/lib/pg-meta/index.ts
+R  apps/platform-kit/lib/pg-meta/sql.ts -> web/platform-kit/lib/pg-meta/sql.ts
+R  apps/platform-kit/lib/pg-meta/types.ts -> web/platform-kit/lib/pg-meta/types.ts
+R  apps/platform-kit/lib/schemas/auth.ts -> web/platform-kit/lib/schemas/auth.ts
+R  apps/platform-kit/lib/schemas/secrets.ts -> web/platform-kit/lib/schemas/secrets.ts
+R  apps/platform-kit/lib/supabase-cms.ts -> web/platform-kit/lib/supabase-cms.ts
+R  apps/platform-kit/lib/supabase-config.ts -> web/platform-kit/lib/supabase-config.ts
+R  apps/platform-kit/lib/supabase/browser.ts -> web/platform-kit/lib/supabase/browser.ts
+R  apps/platform-kit/lib/supabase_project_ref_resolver.ts -> web/platform-kit/lib/supabase_project_ref_resolver.ts
+R  apps/platform-kit/lib/utils.ts -> web/platform-kit/lib/utils.ts
+R  apps/platform-kit/next.config.mjs -> web/platform-kit/next.config.mjs
+R  apps/platform-kit/package.json -> web/platform-kit/package.json
+R  apps/platform-kit/postcss.config.mjs -> web/platform-kit/postcss.config.mjs
+R  apps/platform-kit/public/apple-icon.png -> web/platform-kit/public/apple-icon.png
+R  apps/platform-kit/public/icon-dark-32x32.png -> web/platform-kit/public/icon-dark-32x32.png
+R  apps/platform-kit/public/icon-light-32x32.png -> web/platform-kit/public/icon-light-32x32.png
+R  apps/platform-kit/public/icon.svg -> web/platform-kit/public/icon.svg
+R  apps/platform-kit/public/placeholder-logo.png -> web/platform-kit/public/placeholder-logo.png
+R  apps/platform-kit/public/placeholder-logo.svg -> web/platform-kit/public/placeholder-logo.svg
+R  apps/platform-kit/public/placeholder-user.jpg -> web/platform-kit/public/placeholder-user.jpg
+R  apps/platform-kit/public/placeholder.jpg -> web/platform-kit/public/placeholder.jpg
+R  apps/platform-kit/public/placeholder.svg -> web/platform-kit/public/placeholder.svg
+R  apps/platform-kit/public/tbwa-smp-logo.png -> web/platform-kit/public/tbwa-smp-logo.png
+R  apps/platform-kit/sandbox/dev/.github/workflows/governance-enroll-repo.yml -> web/platform-kit/sandbox/dev/.github/workflows/governance-enroll-repo.yml
+R  apps/platform-kit/sandbox/dev/scripts/github/dispatch-enroll-repo.sh -> web/platform-kit/sandbox/dev/scripts/github/dispatch-enroll-repo.sh
+R  apps/platform-kit/sandbox/dev/scripts/github/mint-ghapp-token.sh -> web/platform-kit/sandbox/dev/scripts/github/mint-ghapp-token.sh
+R  apps/platform-kit/sandbox/dev/scripts/github/sync-github-inventory.mjs -> web/platform-kit/sandbox/dev/scripts/github/sync-github-inventory.mjs
+R  apps/platform-kit/schemas/sync/odoo-plane-sync.schema.json -> web/platform-kit/schemas/sync/odoo-plane-sync.schema.json
+R  apps/platform-kit/schemas/sync/sync-config.example.json -> web/platform-kit/schemas/sync/sync-config.example.json
+R  apps/platform-kit/scripts/audit/__init__.py -> web/platform-kit/scripts/audit/__init__.py
+R  apps/platform-kit/scripts/audit/checks/__init__.py -> web/platform-kit/scripts/audit/checks/__init__.py
+R  apps/platform-kit/scripts/audit/checks/check_domain_policy.py -> web/platform-kit/scripts/audit/checks/check_domain_policy.py
+R  apps/platform-kit/scripts/audit/checks/check_mailgun.py -> web/platform-kit/scripts/audit/checks/check_mailgun.py
+R  apps/platform-kit/scripts/audit/lib.py -> web/platform-kit/scripts/audit/lib.py
+R  apps/platform-kit/scripts/audit/run_integration_audit.sh -> web/platform-kit/scripts/audit/run_integration_audit.sh
+R  apps/platform-kit/scripts/ci/preview_smoke.sh -> web/platform-kit/scripts/ci/preview_smoke.sh
+R  apps/platform-kit/scripts/deploy-cms.sh -> web/platform-kit/scripts/deploy-cms.sh
+R  apps/platform-kit/scripts/email/test_mailgun_send.sh -> web/platform-kit/scripts/email/test_mailgun_send.sh
+R  apps/platform-kit/scripts/email/verify_email_config.sh -> web/platform-kit/scripts/email/verify_email_config.sh
+R  apps/platform-kit/scripts/infra/do_disk_cleanup.sh -> web/platform-kit/scripts/infra/do_disk_cleanup.sh
+R  apps/platform-kit/scripts/infra/do_prune_empty_vpcs.sh -> web/platform-kit/scripts/infra/do_prune_empty_vpcs.sh
+R  apps/platform-kit/scripts/infra/do_prune_snapshots.sh -> web/platform-kit/scripts/infra/do_prune_snapshots.sh
+R  apps/platform-kit/scripts/infra/do_resource_check.sh -> web/platform-kit/scripts/infra/do_resource_check.sh
+R  apps/platform-kit/scripts/mailgun/mailgun-domain-setup.sh -> web/platform-kit/scripts/mailgun/mailgun-domain-setup.sh
+R  apps/platform-kit/scripts/prompts/mailgun-setup-browser-agent.md -> web/platform-kit/scripts/prompts/mailgun-setup-browser-agent.md
+R  apps/platform-kit/scripts/smoke.mjs -> web/platform-kit/scripts/smoke.mjs
+R  apps/platform-kit/scripts/vercel/apply_project_settings.sh -> web/platform-kit/scripts/vercel/apply_project_settings.sh
+R  apps/platform-kit/scripts/vercel/domain_add.sh -> web/platform-kit/scripts/vercel/domain_add.sh
+R  apps/platform-kit/styles/globals.css -> web/platform-kit/styles/globals.css
+R  apps/platform-kit/supabase/functions/posts-api/index.ts -> web/platform-kit/supabase/functions/posts-api/index.ts
+R  apps/platform-kit/tbwa-smp.html -> web/platform-kit/tbwa-smp.html
+R  apps/platform-kit/tsconfig.json -> web/platform-kit/tsconfig.json
+R  apps/platform-kit/vercel.json -> web/platform-kit/vercel.json
+R  apps/policy-gateway/.env.example -> web/policy-gateway/.env.example
+RM apps/policy-gateway/README.md -> web/policy-gateway/README.md
+R  apps/policy-gateway/package.json -> web/policy-gateway/package.json
+R  apps/policy-gateway/src/audit.ts -> web/policy-gateway/src/audit.ts
+R  apps/policy-gateway/src/capabilities.ts -> web/policy-gateway/src/capabilities.ts
+R  apps/policy-gateway/src/enforcement.ts -> web/policy-gateway/src/enforcement.ts
+R  apps/policy-gateway/src/index.ts -> web/policy-gateway/src/index.ts
+R  apps/policy-gateway/src/models.ts -> web/policy-gateway/src/models.ts
+R  apps/policy-gateway/src/privacy.ts -> web/policy-gateway/src/privacy.ts
+R  apps/policy-gateway/src/types.ts -> web/policy-gateway/src/types.ts
+R  apps/policy-gateway/tsconfig.json -> web/policy-gateway/tsconfig.json
+R  apps/pulser-runner/.env.example -> web/pulser-runner/.env.example
+R  apps/pulser-runner/app.py -> web/pulser-runner/app.py
+R  apps/pulser-runner/package.json -> web/pulser-runner/package.json
+R  apps/pulser-runner/requirements.txt -> web/pulser-runner/requirements.txt
+RM apps/superset-analytics/APP.md -> web/superset-analytics/APP.md
+R  apps/superset-analytics/do/app.json -> web/superset-analytics/do/app.json
+R  apps/superset-analytics/spec.yaml -> web/superset-analytics/spec.yaml
+R  apps/superset-embed-api/.env.example -> web/superset-embed-api/.env.example
+R  apps/superset-embed-api/Dockerfile -> web/superset-embed-api/Dockerfile
+RM apps/superset-embed-api/do-app-spec.yaml -> web/superset-embed-api/do-app-spec.yaml
+R  apps/superset-embed-api/package.json -> web/superset-embed-api/package.json
+R  apps/superset-embed-api/src/index.js -> web/superset-embed-api/src/index.js
+R  apps/web-backup-subscription-starter/.!65219!types_db.ts -> web/web-backup-subscription-starter/.!65219!types_db.ts
+R  apps/web-backup-subscription-starter/.env.example -> web/web-backup-subscription-starter/.env.example
+R  apps/web-backup-subscription-starter/.gitignore -> web/web-backup-subscription-starter/.gitignore
+R  apps/web-backup-subscription-starter/.prettierignore -> web/web-backup-subscription-starter/.prettierignore
+R  apps/web-backup-subscription-starter/.prettierrc.json -> web/web-backup-subscription-starter/.prettierrc.json
+R  apps/web-backup-subscription-starter/LICENSE -> web/web-backup-subscription-starter/LICENSE
+R  apps/web-backup-subscription-starter/README.md -> web/web-backup-subscription-starter/README.md
+R  apps/web-backup-subscription-starter/app/account/page.tsx -> web/web-backup-subscription-starter/app/account/page.tsx
+R  apps/web-backup-subscription-starter/app/api/webhooks/route.ts -> web/web-backup-subscription-starter/app/api/webhooks/route.ts
+R  apps/web-backup-subscription-starter/app/auth/callback/route.ts -> web/web-backup-subscription-starter/app/auth/callback/route.ts
+R  apps/web-backup-subscription-starter/app/auth/reset_password/route.ts -> web/web-backup-subscription-starter/app/auth/reset_password/route.ts
+R  apps/web-backup-subscription-starter/app/layout.tsx -> web/web-backup-subscription-starter/app/layout.tsx
+R  apps/web-backup-subscription-starter/app/opengraph-image.png -> web/web-backup-subscription-starter/app/opengraph-image.png
+R  apps/web-backup-subscription-starter/app/page.tsx -> web/web-backup-subscription-starter/app/page.tsx
+R  apps/web-backup-subscription-starter/app/signin/[id]/page.tsx -> web/web-backup-subscription-starter/app/signin/[id]/page.tsx
+R  apps/web-backup-subscription-starter/app/signin/page.tsx -> web/web-backup-subscription-starter/app/signin/page.tsx
+R  apps/web-backup-subscription-starter/app/solutions/financial-services/page.tsx -> web/web-backup-subscription-starter/app/solutions/financial-services/page.tsx
+R  apps/web-backup-subscription-starter/components.json -> web/web-backup-subscription-starter/components.json
+R  apps/web-backup-subscription-starter/components/solutions/DeploymentOptions.tsx -> web/web-backup-subscription-starter/components/solutions/DeploymentOptions.tsx
+R  apps/web-backup-subscription-starter/components/solutions/FinalCta.tsx -> web/web-backup-subscription-starter/components/solutions/FinalCta.tsx
+R  apps/web-backup-subscription-starter/components/solutions/LogoStrip.tsx -> web/web-backup-subscription-starter/components/solutions/LogoStrip.tsx
+R  apps/web-backup-subscription-starter/components/solutions/PartnerStrip.tsx -> web/web-backup-subscription-starter/components/solutions/PartnerStrip.tsx
+R  apps/web-backup-subscription-starter/components/solutions/Pillars.tsx -> web/web-backup-subscription-starter/components/solutions/Pillars.tsx
+R  apps/web-backup-subscription-starter/components/solutions/ResourceGrid.tsx -> web/web-backup-subscription-starter/components/solutions/ResourceGrid.tsx
+R  apps/web-backup-subscription-starter/components/solutions/SolutionHero.tsx -> web/web-backup-subscription-starter/components/solutions/SolutionHero.tsx
+R  apps/web-backup-subscription-starter/components/solutions/UseCases.tsx -> web/web-backup-subscription-starter/components/solutions/UseCases.tsx
+R  apps/web-backup-subscription-starter/components/solutions/index.ts -> web/web-backup-subscription-starter/components/solutions/index.ts
+R  apps/web-backup-subscription-starter/components/ui/AccountForms/CustomerPortalForm.tsx -> web/web-backup-subscription-starter/components/ui/AccountForms/CustomerPortalForm.tsx
+R  apps/web-backup-subscription-starter/components/ui/AccountForms/EmailForm.tsx -> web/web-backup-subscription-starter/components/ui/AccountForms/EmailForm.tsx
+R  apps/web-backup-subscription-starter/components/ui/AccountForms/NameForm.tsx -> web/web-backup-subscription-starter/components/ui/AccountForms/NameForm.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/EmailSignIn.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/EmailSignIn.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/ForgotPassword.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/ForgotPassword.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/OauthSignIn.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/OauthSignIn.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/PasswordSignIn.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/PasswordSignIn.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/Separator.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/Separator.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/Signup.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/Signup.tsx
+R  apps/web-backup-subscription-starter/components/ui/AuthForms/UpdatePassword.tsx -> web/web-backup-subscription-starter/components/ui/AuthForms/UpdatePassword.tsx
+R  apps/web-backup-subscription-starter/components/ui/Button/Button.module.css -> web/web-backup-subscription-starter/components/ui/Button/Button.module.css
+R  apps/web-backup-subscription-starter/components/ui/Button/Button.tsx -> web/web-backup-subscription-starter/components/ui/Button/Button.tsx
+R  apps/web-backup-subscription-starter/components/ui/Button/index.ts -> web/web-backup-subscription-starter/components/ui/Button/index.ts
+R  apps/web-backup-subscription-starter/components/ui/Card/Card.tsx -> web/web-backup-subscription-starter/components/ui/Card/Card.tsx
+R  apps/web-backup-subscription-starter/components/ui/Card/index.ts -> web/web-backup-subscription-starter/components/ui/Card/index.ts
+R  apps/web-backup-subscription-starter/components/ui/Footer/Footer.tsx -> web/web-backup-subscription-starter/components/ui/Footer/Footer.tsx
+R  apps/web-backup-subscription-starter/components/ui/Footer/index.ts -> web/web-backup-subscription-starter/components/ui/Footer/index.ts
+R  apps/web-backup-subscription-starter/components/ui/Input/Input.module.css -> web/web-backup-subscription-starter/components/ui/Input/Input.module.css
+R  apps/web-backup-subscription-starter/components/ui/Input/Input.tsx -> web/web-backup-subscription-starter/components/ui/Input/Input.tsx
+R  apps/web-backup-subscription-starter/components/ui/Input/index.ts -> web/web-backup-subscription-starter/components/ui/Input/index.ts
+R  apps/web-backup-subscription-starter/components/ui/LoadingDots/LoadingDots.module.css -> web/web-backup-subscription-starter/components/ui/LoadingDots/LoadingDots.module.css
+R  apps/web-backup-subscription-starter/components/ui/LoadingDots/LoadingDots.tsx -> web/web-backup-subscription-starter/components/ui/LoadingDots/LoadingDots.tsx
+R  apps/web-backup-subscription-starter/components/ui/LoadingDots/index.ts -> web/web-backup-subscription-starter/components/ui/LoadingDots/index.ts
+R  apps/web-backup-subscription-starter/components/ui/LogoCloud/LogoCloud.tsx -> web/web-backup-subscription-starter/components/ui/LogoCloud/LogoCloud.tsx
+R  apps/web-backup-subscription-starter/components/ui/LogoCloud/index.ts -> web/web-backup-subscription-starter/components/ui/LogoCloud/index.ts
+R  apps/web-backup-subscription-starter/components/ui/Navbar/Navbar.module.css -> web/web-backup-subscription-starter/components/ui/Navbar/Navbar.module.css
+R  apps/web-backup-subscription-starter/components/ui/Navbar/Navbar.tsx -> web/web-backup-subscription-starter/components/ui/Navbar/Navbar.tsx
+R  apps/web-backup-subscription-starter/components/ui/Navbar/Navlinks.tsx -> web/web-backup-subscription-starter/components/ui/Navbar/Navlinks.tsx
+R  apps/web-backup-subscription-starter/components/ui/Navbar/index.ts -> web/web-backup-subscription-starter/components/ui/Navbar/index.ts
+R  apps/web-backup-subscription-starter/components/ui/Pricing/Pricing.tsx -> web/web-backup-subscription-starter/components/ui/Pricing/Pricing.tsx
+R  apps/web-backup-subscription-starter/components/ui/Toasts/toast.tsx -> web/web-backup-subscription-starter/components/ui/Toasts/toast.tsx
+R  apps/web-backup-subscription-starter/components/ui/Toasts/toaster.tsx -> web/web-backup-subscription-starter/components/ui/Toasts/toaster.tsx
+R  apps/web-backup-subscription-starter/components/ui/Toasts/use-toast.ts -> web/web-backup-subscription-starter/components/ui/Toasts/use-toast.ts
+R  apps/web-backup-subscription-starter/content/solutions/financial-services.yaml -> web/web-backup-subscription-starter/content/solutions/financial-services.yaml
+R  apps/web-backup-subscription-starter/fixtures/stripe-fixtures.json -> web/web-backup-subscription-starter/fixtures/stripe-fixtures.json
+R  apps/web-backup-subscription-starter/lib/content.ts -> web/web-backup-subscription-starter/lib/content.ts
+R  apps/web-backup-subscription-starter/middleware.ts -> web/web-backup-subscription-starter/middleware.ts
+R  apps/web-backup-subscription-starter/next-env.d.ts -> web/web-backup-subscription-starter/next-env.d.ts
+R  apps/web-backup-subscription-starter/package.json -> web/web-backup-subscription-starter/package.json
+R  apps/web-backup-subscription-starter/pnpm-lock.yaml -> web/web-backup-subscription-starter/pnpm-lock.yaml
+R  apps/web-backup-subscription-starter/postcss.config.js -> web/web-backup-subscription-starter/postcss.config.js
+R  apps/web-backup-subscription-starter/public/architecture_diagram.png -> web/web-backup-subscription-starter/public/architecture_diagram.png
+R  apps/web-backup-subscription-starter/public/architecture_diagram.svg -> web/web-backup-subscription-starter/public/architecture_diagram.svg
+R  apps/web-backup-subscription-starter/public/demo.png -> web/web-backup-subscription-starter/public/demo.png
+R  apps/web-backup-subscription-starter/public/favicon.ico -> web/web-backup-subscription-starter/public/favicon.ico
+R  apps/web-backup-subscription-starter/public/github.svg -> web/web-backup-subscription-starter/public/github.svg
+R  apps/web-backup-subscription-starter/public/nextjs.svg -> web/web-backup-subscription-starter/public/nextjs.svg
+R  apps/web-backup-subscription-starter/public/stripe.svg -> web/web-backup-subscription-starter/public/stripe.svg
+R  apps/web-backup-subscription-starter/public/supabase.svg -> web/web-backup-subscription-starter/public/supabase.svg
+R  apps/web-backup-subscription-starter/public/vercel-deploy.png -> web/web-backup-subscription-starter/public/vercel-deploy.png
+R  apps/web-backup-subscription-starter/public/vercel.svg -> web/web-backup-subscription-starter/public/vercel.svg
+R  apps/web-backup-subscription-starter/styles/main.css -> web/web-backup-subscription-starter/styles/main.css
+R  apps/web-backup-subscription-starter/supabase/.gitignore -> web/web-backup-subscription-starter/supabase/.gitignore
+R  apps/web-backup-subscription-starter/supabase/config.toml -> web/web-backup-subscription-starter/supabase/config.toml
+R  apps/web-backup-subscription-starter/tailwind.config.js -> web/web-backup-subscription-starter/tailwind.config.js
+R  apps/web-backup-subscription-starter/tsconfig.json -> web/web-backup-subscription-starter/tsconfig.json
+R  apps/web-backup-subscription-starter/types_db.ts -> web/web-backup-subscription-starter/types_db.ts
+R  apps/web-backup-subscription-starter/utils/auth-helpers/client.ts -> web/web-backup-subscription-starter/utils/auth-helpers/client.ts
+R  apps/web-backup-subscription-starter/utils/auth-helpers/server.ts -> web/web-backup-subscription-starter/utils/auth-helpers/server.ts
+R  apps/web-backup-subscription-starter/utils/auth-helpers/settings.ts -> web/web-backup-subscription-starter/utils/auth-helpers/settings.ts
+R  apps/web-backup-subscription-starter/utils/cn.ts -> web/web-backup-subscription-starter/utils/cn.ts
+R  apps/web-backup-subscription-starter/utils/helpers.ts -> web/web-backup-subscription-starter/utils/helpers.ts
+R  apps/web-backup-subscription-starter/utils/stripe/client.ts -> web/web-backup-subscription-starter/utils/stripe/client.ts
+R  apps/web-backup-subscription-starter/utils/stripe/config.ts -> web/web-backup-subscription-starter/utils/stripe/config.ts
+R  apps/web-backup-subscription-starter/utils/stripe/server.ts -> web/web-backup-subscription-starter/utils/stripe/server.ts
+R  apps/web-backup-subscription-starter/utils/supabase/admin.ts -> web/web-backup-subscription-starter/utils/supabase/admin.ts
+R  apps/web-backup-subscription-starter/utils/supabase/client.ts -> web/web-backup-subscription-starter/utils/supabase/client.ts
+R  apps/web-backup-subscription-starter/utils/supabase/middleware.ts -> web/web-backup-subscription-starter/utils/supabase/middleware.ts
+R  apps/web-backup-subscription-starter/utils/supabase/queries.ts -> web/web-backup-subscription-starter/utils/supabase/queries.ts
+R  apps/web-backup-subscription-starter/utils/supabase/server.ts -> web/web-backup-subscription-starter/utils/supabase/server.ts
+R  apps/web-legacy-backup/.env.example -> web/web-legacy-backup/.env.example
+R  apps/web-legacy-backup/.eslintrc.json -> web/web-legacy-backup/.eslintrc.json
+RM apps/web-legacy-backup/.github/workflows/token-validation.yml -> web/web-legacy-backup/.github/workflows/token-validation.yml
+R  apps/web-legacy-backup/.gitignore -> web/web-legacy-backup/.gitignore
+R  apps/web-legacy-backup/.vercelignore -> web/web-legacy-backup/.vercelignore
+RM apps/web-legacy-backup/DEPLOYMENT.md -> web/web-legacy-backup/DEPLOYMENT.md
+RM apps/web-legacy-backup/apps/web/src/app/api/auth/TEST.md -> web/web-legacy-backup/apps/web/src/app/api/auth/TEST.md
+R  apps/web-legacy-backup/apps/web/src/app/api/auth/magic-link/route.ts -> web/web-legacy-backup/apps/web/src/app/api/auth/magic-link/route.ts
+R  apps/web-legacy-backup/apps/web/src/app/api/auth/otp/start/route.ts -> web/web-legacy-backup/apps/web/src/app/api/auth/otp/start/route.ts
+R  apps/web-legacy-backup/apps/web/src/app/api/auth/otp/verify/route.ts -> web/web-legacy-backup/apps/web/src/app/api/auth/otp/verify/route.ts
+R  apps/web-legacy-backup/content/solutions/financial-services.yaml -> web/web-legacy-backup/content/solutions/financial-services.yaml
+RM apps/web-legacy-backup/docs/evidence/20260210-1300/lockfile-fix/RESOLUTION.md -> web/web-legacy-backup/docs/evidence/20260210-1300/lockfile-fix/RESOLUTION.md
+RM apps/web-legacy-backup/docs/evidence/20260210-1300/lockfile-fix/STATUS.md -> web/web-legacy-backup/docs/evidence/20260210-1300/lockfile-fix/STATUS.md
+R  apps/web-legacy-backup/e2e/auth.spec.ts -> web/web-legacy-backup/e2e/auth.spec.ts
+R  apps/web-legacy-backup/jest.config.js -> web/web-legacy-backup/jest.config.js
+R  apps/web-legacy-backup/jest.setup.js -> web/web-legacy-backup/jest.setup.js
+R  apps/web-legacy-backup/next-env.d.ts -> web/web-legacy-backup/next-env.d.ts
+R  apps/web-legacy-backup/next.config.js -> web/web-legacy-backup/next.config.js
+R  apps/web-legacy-backup/package.json -> web/web-legacy-backup/package.json
+R  apps/web-legacy-backup/playwright.config.ts -> web/web-legacy-backup/playwright.config.ts
+R  apps/web-legacy-backup/postcss.config.js -> web/web-legacy-backup/postcss.config.js
+R  apps/web-legacy-backup/public/solutions/financial-services/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/bg/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/bg/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/hero/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/hero/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/logos/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/logos/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/partners/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/partners/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/resources/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/resources/.gitkeep
+R  apps/web-legacy-backup/public/solutions/financial-services/use-cases/.gitkeep -> web/web-legacy-backup/public/solutions/financial-services/use-cases/.gitkeep
+R  apps/web-legacy-backup/scripts/check-assets.mjs -> web/web-legacy-backup/scripts/check-assets.mjs
+RM apps/web-legacy-backup/scripts/vercel/README.md -> web/web-legacy-backup/scripts/vercel/README.md
+RM apps/web-legacy-backup/scripts/vercel/fix_root_directory.sh -> web/web-legacy-backup/scripts/vercel/fix_root_directory.sh
+R  apps/web-legacy-backup/scripts/vercel/latest_deploy_logs.sh -> web/web-legacy-backup/scripts/vercel/latest_deploy_logs.sh
+R  apps/web-legacy-backup/scripts/vercel/provision_token.sh -> web/web-legacy-backup/scripts/vercel/provision_token.sh
+R  apps/web-legacy-backup/src/app/api/auth/callback/route.ts -> web/web-legacy-backup/src/app/api/auth/callback/route.ts
+R  apps/web-legacy-backup/src/app/api/auth/health/route.ts -> web/web-legacy-backup/src/app/api/auth/health/route.ts
+R  apps/web-legacy-backup/src/app/api/auth/signout/route.ts -> web/web-legacy-backup/src/app/api/auth/signout/route.ts
+R  apps/web-legacy-backup/src/app/api/auth/user/route.ts -> web/web-legacy-backup/src/app/api/auth/user/route.ts
+R  apps/web-legacy-backup/src/app/api/billing/subscription/route.ts -> web/web-legacy-backup/src/app/api/billing/subscription/route.ts
+R  apps/web-legacy-backup/src/app/auth/error/page.tsx -> web/web-legacy-backup/src/app/auth/error/page.tsx
+R  apps/web-legacy-backup/src/app/demo/page.tsx -> web/web-legacy-backup/src/app/demo/page.tsx
+R  apps/web-legacy-backup/src/app/globals.css -> web/web-legacy-backup/src/app/globals.css
+R  apps/web-legacy-backup/src/app/layout.tsx -> web/web-legacy-backup/src/app/layout.tsx
+R  apps/web-legacy-backup/src/app/page.tsx -> web/web-legacy-backup/src/app/page.tsx
+R  apps/web-legacy-backup/src/app/solutions/financial-services/page.tsx -> web/web-legacy-backup/src/app/solutions/financial-services/page.tsx
+R  apps/web-legacy-backup/src/components/Navigation.tsx -> web/web-legacy-backup/src/components/Navigation.tsx
+R  apps/web-legacy-backup/src/components/docs/DocsFooter.tsx -> web/web-legacy-backup/src/components/docs/DocsFooter.tsx
+R  apps/web-legacy-backup/src/components/docs/DocsHeader.tsx -> web/web-legacy-backup/src/components/docs/DocsHeader.tsx
+R  apps/web-legacy-backup/src/components/docs/DocsShell.tsx -> web/web-legacy-backup/src/components/docs/DocsShell.tsx
+R  apps/web-legacy-backup/src/components/docs/DocsSidebar.tsx -> web/web-legacy-backup/src/components/docs/DocsSidebar.tsx
+R  apps/web-legacy-backup/src/components/docs/DocsToc.tsx -> web/web-legacy-backup/src/components/docs/DocsToc.tsx
+R  apps/web-legacy-backup/src/components/docs/index.ts -> web/web-legacy-backup/src/components/docs/index.ts
+R  apps/web-legacy-backup/src/components/solutions/DeploymentOptions.tsx -> web/web-legacy-backup/src/components/solutions/DeploymentOptions.tsx
+R  apps/web-legacy-backup/src/components/solutions/FinalCta.tsx -> web/web-legacy-backup/src/components/solutions/FinalCta.tsx
+R  apps/web-legacy-backup/src/components/solutions/LogoStrip.tsx -> web/web-legacy-backup/src/components/solutions/LogoStrip.tsx
+R  apps/web-legacy-backup/src/components/solutions/PartnerStrip.tsx -> web/web-legacy-backup/src/components/solutions/PartnerStrip.tsx
+R  apps/web-legacy-backup/src/components/solutions/Pillars.tsx -> web/web-legacy-backup/src/components/solutions/Pillars.tsx
+R  apps/web-legacy-backup/src/components/solutions/ResourceGrid.tsx -> web/web-legacy-backup/src/components/solutions/ResourceGrid.tsx
+R  apps/web-legacy-backup/src/components/solutions/SolutionHero.tsx -> web/web-legacy-backup/src/components/solutions/SolutionHero.tsx
+R  apps/web-legacy-backup/src/components/solutions/UseCases.tsx -> web/web-legacy-backup/src/components/solutions/UseCases.tsx
+R  apps/web-legacy-backup/src/components/solutions/index.ts -> web/web-legacy-backup/src/components/solutions/index.ts
+R  apps/web-legacy-backup/src/components/ui/BenefitBadge.tsx -> web/web-legacy-backup/src/components/ui/BenefitBadge.tsx
+R  apps/web-legacy-backup/src/components/ui/Button.tsx -> web/web-legacy-backup/src/components/ui/Button.tsx
+R  apps/web-legacy-backup/src/components/ui/FeatureCard.tsx -> web/web-legacy-backup/src/components/ui/FeatureCard.tsx
+R  apps/web-legacy-backup/src/features/auth/OTPLoginModal.tsx -> web/web-legacy-backup/src/features/auth/OTPLoginModal.tsx
+R  apps/web-legacy-backup/src/features/auth/index.ts -> web/web-legacy-backup/src/features/auth/index.ts
+R  apps/web-legacy-backup/src/features/billing/BillingDashboard.tsx -> web/web-legacy-backup/src/features/billing/BillingDashboard.tsx
+R  apps/web-legacy-backup/src/features/billing/index.ts -> web/web-legacy-backup/src/features/billing/index.ts
+R  apps/web-legacy-backup/src/lib/content.ts -> web/web-legacy-backup/src/lib/content.ts
+R  apps/web-legacy-backup/src/lib/docs/index.ts -> web/web-legacy-backup/src/lib/docs/index.ts
+RM apps/web-legacy-backup/src/lib/docs/nav.ts -> web/web-legacy-backup/src/lib/docs/nav.ts
+R  apps/web-legacy-backup/src/lib/docs/toc.ts -> web/web-legacy-backup/src/lib/docs/toc.ts
+R  apps/web-legacy-backup/src/lib/supabase.ts -> web/web-legacy-backup/src/lib/supabase.ts
+R  apps/web-legacy-backup/src/lib/utils.ts -> web/web-legacy-backup/src/lib/utils.ts
+R  apps/web-legacy-backup/src/ui/ipai/Button.tsx -> web/web-legacy-backup/src/ui/ipai/Button.tsx
+R  apps/web-legacy-backup/src/ui/ipai/Card.tsx -> web/web-legacy-backup/src/ui/ipai/Card.tsx
+R  apps/web-legacy-backup/src/ui/ipai/Chip.tsx -> web/web-legacy-backup/src/ui/ipai/Chip.tsx
+R  apps/web-legacy-backup/src/ui/ipai/Dropdown.tsx -> web/web-legacy-backup/src/ui/ipai/Dropdown.tsx
+R  apps/web-legacy-backup/src/ui/ipai/Form.tsx -> web/web-legacy-backup/src/ui/ipai/Form.tsx
+R  apps/web-legacy-backup/src/ui/ipai/Modal.tsx -> web/web-legacy-backup/src/ui/ipai/Modal.tsx
+R  apps/web-legacy-backup/src/ui/ipai/README.md -> web/web-legacy-backup/src/ui/ipai/README.md
+R  apps/web-legacy-backup/src/ui/ipai/__tests__/Button.test.tsx -> web/web-legacy-backup/src/ui/ipai/__tests__/Button.test.tsx
+R  apps/web-legacy-backup/src/ui/ipai/__tests__/Card.test.tsx -> web/web-legacy-backup/src/ui/ipai/__tests__/Card.test.tsx
+R  apps/web-legacy-backup/src/ui/ipai/__tests__/Chip.test.tsx -> web/web-legacy-backup/src/ui/ipai/__tests__/Chip.test.tsx
+R  apps/web-legacy-backup/src/ui/ipai/index.ts -> web/web-legacy-backup/src/ui/ipai/index.ts
+R  apps/web-legacy-backup/tailwind.config.js -> web/web-legacy-backup/tailwind.config.js
+R  apps/web-legacy-backup/tsconfig.json -> web/web-legacy-backup/tsconfig.json
+R  apps/web-legacy-backup/vercel.json -> web/web-legacy-backup/vercel.json
+R  apps/web/.gitignore -> web/web/.gitignore
+R  apps/web/app/globals.css -> web/web/app/globals.css
+R  apps/web/app/layout.tsx -> web/web/app/layout.tsx
+R  apps/web/app/page.tsx -> web/web/app/page.tsx
+R  apps/web/components.json -> web/web/components.json
+R  apps/web/components/BankingScaleHero.tsx -> web/web/components/BankingScaleHero.tsx
+R  apps/web/components/CaseStudiesCarousel.tsx -> web/web/components/CaseStudiesCarousel.tsx
+R  apps/web/components/FAQSection.tsx -> web/web/components/FAQSection.tsx
+R  apps/web/components/Footer.tsx -> web/web/components/Footer.tsx
+R  apps/web/components/IntegrationCarousel.tsx -> web/web/components/IntegrationCarousel.tsx
+R  apps/web/components/PortfolioNavbar.tsx -> web/web/components/PortfolioNavbar.tsx
+R  apps/web/components/PricingSection.tsx -> web/web/components/PricingSection.tsx
+R  apps/web/components/ProductTeaserCard.tsx -> web/web/components/ProductTeaserCard.tsx
+R  apps/web/components/theme-provider.tsx -> web/web/components/theme-provider.tsx
+R  apps/web/components/ui/accordion.tsx -> web/web/components/ui/accordion.tsx
+R  apps/web/components/ui/alert-dialog.tsx -> web/web/components/ui/alert-dialog.tsx
+R  apps/web/components/ui/alert.tsx -> web/web/components/ui/alert.tsx
+R  apps/web/components/ui/aspect-ratio.tsx -> web/web/components/ui/aspect-ratio.tsx
+R  apps/web/components/ui/avatar.tsx -> web/web/components/ui/avatar.tsx
+R  apps/web/components/ui/badge.tsx -> web/web/components/ui/badge.tsx
+R  apps/web/components/ui/breadcrumb.tsx -> web/web/components/ui/breadcrumb.tsx
+R  apps/web/components/ui/button-group.tsx -> web/web/components/ui/button-group.tsx
+R  apps/web/components/ui/button.tsx -> web/web/components/ui/button.tsx
+R  apps/web/components/ui/calendar.tsx -> web/web/components/ui/calendar.tsx
+R  apps/web/components/ui/card.tsx -> web/web/components/ui/card.tsx
+R  apps/web/components/ui/carousel.tsx -> web/web/components/ui/carousel.tsx
+R  apps/web/components/ui/chart.tsx -> web/web/components/ui/chart.tsx
+R  apps/web/components/ui/checkbox.tsx -> web/web/components/ui/checkbox.tsx
+R  apps/web/components/ui/collapsible.tsx -> web/web/components/ui/collapsible.tsx
+R  apps/web/components/ui/command.tsx -> web/web/components/ui/command.tsx
+R  apps/web/components/ui/context-menu.tsx -> web/web/components/ui/context-menu.tsx
+R  apps/web/components/ui/dialog.tsx -> web/web/components/ui/dialog.tsx
+R  apps/web/components/ui/drawer.tsx -> web/web/components/ui/drawer.tsx
+R  apps/web/components/ui/dropdown-menu.tsx -> web/web/components/ui/dropdown-menu.tsx
+R  apps/web/components/ui/empty.tsx -> web/web/components/ui/empty.tsx
+R  apps/web/components/ui/field.tsx -> web/web/components/ui/field.tsx
+R  apps/web/components/ui/form.tsx -> web/web/components/ui/form.tsx
+R  apps/web/components/ui/hover-card.tsx -> web/web/components/ui/hover-card.tsx
+R  apps/web/components/ui/input-group.tsx -> web/web/components/ui/input-group.tsx
+R  apps/web/components/ui/input-otp.tsx -> web/web/components/ui/input-otp.tsx
+R  apps/web/components/ui/input.tsx -> web/web/components/ui/input.tsx
+R  apps/web/components/ui/item.tsx -> web/web/components/ui/item.tsx
+R  apps/web/components/ui/kbd.tsx -> web/web/components/ui/kbd.tsx
+R  apps/web/components/ui/label.tsx -> web/web/components/ui/label.tsx
+R  apps/web/components/ui/menubar.tsx -> web/web/components/ui/menubar.tsx
+R  apps/web/components/ui/navigation-menu.tsx -> web/web/components/ui/navigation-menu.tsx
+R  apps/web/components/ui/pagination.tsx -> web/web/components/ui/pagination.tsx
+R  apps/web/components/ui/popover.tsx -> web/web/components/ui/popover.tsx
+R  apps/web/components/ui/progress.tsx -> web/web/components/ui/progress.tsx
+R  apps/web/components/ui/radio-group.tsx -> web/web/components/ui/radio-group.tsx
+R  apps/web/components/ui/resizable.tsx -> web/web/components/ui/resizable.tsx
+R  apps/web/components/ui/scroll-area.tsx -> web/web/components/ui/scroll-area.tsx
+R  apps/web/components/ui/select.tsx -> web/web/components/ui/select.tsx
+R  apps/web/components/ui/separator.tsx -> web/web/components/ui/separator.tsx
+R  apps/web/components/ui/sheet.tsx -> web/web/components/ui/sheet.tsx
+R  apps/web/components/ui/sidebar.tsx -> web/web/components/ui/sidebar.tsx
+R  apps/web/components/ui/skeleton.tsx -> web/web/components/ui/skeleton.tsx
+R  apps/web/components/ui/slider.tsx -> web/web/components/ui/slider.tsx
+R  apps/web/components/ui/sonner.tsx -> web/web/components/ui/sonner.tsx
+R  apps/web/components/ui/spinner.tsx -> web/web/components/ui/spinner.tsx
+R  apps/web/components/ui/switch.tsx -> web/web/components/ui/switch.tsx
+R  apps/web/components/ui/table.tsx -> web/web/components/ui/table.tsx
+R  apps/web/components/ui/tabs.tsx -> web/web/components/ui/tabs.tsx
+R  apps/web/components/ui/textarea.tsx -> web/web/components/ui/textarea.tsx
+R  apps/web/components/ui/toast.tsx -> web/web/components/ui/toast.tsx
+R  apps/web/components/ui/toaster.tsx -> web/web/components/ui/toaster.tsx
+R  apps/web/components/ui/toggle-group.tsx -> web/web/components/ui/toggle-group.tsx
+R  apps/web/components/ui/toggle.tsx -> web/web/components/ui/toggle.tsx
+R  apps/web/components/ui/tooltip.tsx -> web/web/components/ui/tooltip.tsx
+R  apps/web/components/ui/use-mobile.tsx -> web/web/components/ui/use-mobile.tsx
+R  apps/web/components/ui/use-toast.ts -> web/web/components/ui/use-toast.ts
+R  apps/web/hooks/use-mobile.ts -> web/web/hooks/use-mobile.ts
+R  apps/web/hooks/use-toast.ts -> web/web/hooks/use-toast.ts
+R  apps/web/lib/utils.ts -> web/web/lib/utils.ts
+R  apps/web/next-env.d.ts -> web/web/next-env.d.ts
+R  apps/web/next.config.mjs -> web/web/next.config.mjs
+R  apps/web/package.json -> web/web/package.json
+R  apps/web/postcss.config.mjs -> web/web/postcss.config.mjs
+R  apps/web/public/apple-icon.png -> web/web/public/apple-icon.png
+R  apps/web/public/icon-dark-32x32.png -> web/web/public/icon-dark-32x32.png
+R  apps/web/public/icon-light-32x32.png -> web/web/public/icon-light-32x32.png
+R  apps/web/public/icon.svg -> web/web/public/icon.svg
+R  apps/web/public/images/design-mode/9ad78a5534a46e77bafe116ce1c38172c60dc21a-1069x1068.png -> web/web/public/images/design-mode/9ad78a5534a46e77bafe116ce1c38172c60dc21a-1069x1068.png
+R  apps/web/public/odoo-copilot-cards-final.html -> web/web/public/odoo-copilot-cards-final.html
+R  apps/web/public/odoo-copilot-cards-hyperrealistic.html -> web/web/public/odoo-copilot-cards-hyperrealistic.html
+R  apps/web/public/odoo-copilot-cards-v2.html -> web/web/public/odoo-copilot-cards-v2.html
+R  apps/web/public/odoo-copilot-cards.html -> web/web/public/odoo-copilot-cards.html
+R  apps/web/public/placeholder-logo.png -> web/web/public/placeholder-logo.png
+R  apps/web/public/placeholder-logo.svg -> web/web/public/placeholder-logo.svg
+R  apps/web/public/placeholder-user.jpg -> web/web/public/placeholder-user.jpg
+R  apps/web/public/placeholder.jpg -> web/web/public/placeholder.jpg
+R  apps/web/public/placeholder.svg -> web/web/public/placeholder.svg
+R  apps/web/public/use-case-svgs.html -> web/web/public/use-case-svgs.html
+R  apps/web/scripts/generate-card-images.js -> web/web/scripts/generate-card-images.js
+R  apps/web/scripts/screenshot.mjs -> web/web/scripts/screenshot.mjs
+R  apps/web/styles/globals.css -> web/web/styles/globals.css
+R  apps/web/tsconfig.json -> web/web/tsconfig.json
+R  apps/web/vercel.json -> web/web/vercel.json
+?? .github/workflows/naming-gate.yml
+?? docs/NAMING.md
+?? scripts/refactor/ci_naming_gate.sh
