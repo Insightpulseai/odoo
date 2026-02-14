@@ -1,0 +1,23 @@
+name: odoo-dbname-gate
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  dbname:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block non-canonical Odoo DB names
+        run: |
+          set -euo pipefail
+          # Disallow any odoo_*_vN or other variants
+          ! rg -n "\bodoo_[a-z0-9]+_v[0-9]+\b" . || {
+            echo "ERROR: Found versioned DB names like odoo_*_v2"
+            exit 1
+          }
+          # Allow only canonical names (dev, staging, prod) or generic "odoo"
+          ! rg -n "\bodoo_(?!dev\b|staging\b|prod\b)[a-z0-9_]+\b" . || {
+            echo "ERROR: Found non-canonical DB names - only odoo_dev, odoo_staging, odoo_prod allowed"
+            exit 1
+          }
