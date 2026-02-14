@@ -46,7 +46,7 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 - **CI Enforcement**: `.github/workflows/dns-sync-check.yml` (validates sync)
 - **Generated Artifacts**:
   - `infra/cloudflare/envs/prod/subdomains.auto.tfvars` (Terraform input)
-  - `docs/arch/runtime_identifiers.json` (runtime reference)
+  - `docs/architecture/runtime_identifiers.json` (runtime reference)
   - `infra/dns/dns-validation-spec.json` (CI validation)
 
 **Workflow**: Edit YAML → Run generator → Commit all → CI validates → Terraform apply

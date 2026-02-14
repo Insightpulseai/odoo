@@ -21,13 +21,13 @@ on:
     paths:
       - 'infra/dns/**'
       - 'infra/cloudflare/envs/prod/subdomains.auto.tfvars'
-      - 'docs/arch/runtime_identifiers.json'
+      - 'docs/architecture/runtime_identifiers.json'
       - 'scripts/generate-dns-artifacts.sh'
   pull_request:
     paths:
       - 'infra/dns/**'
       - 'infra/cloudflare/envs/prod/subdomains.auto.tfvars'
-      - 'docs/arch/runtime_identifiers.json'
+      - 'docs/architecture/runtime_identifiers.json'
       - 'scripts/generate-dns-artifacts.sh'
   workflow_dispatch:
 
@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir -p /tmp/dns-backup
           cp infra/cloudflare/envs/prod/subdomains.auto.tfvars /tmp/dns-backup/ || true
-          cp docs/arch/runtime_identifiers.json /tmp/dns-backup/ || true
+          cp docs/architecture/runtime_identifiers.json /tmp/dns-backup/ || true
           cp infra/dns/dns-validation-spec.json /tmp/dns-backup/ || true
 
       - name: Run generator
@@ -88,7 +88,7 @@ jobs:
 
       - name: Check for uncommitted changes (Runtime JSON)
         run: |
-          if ! diff -q docs/arch/runtime_identifiers.json /tmp/dns-backup/runtime_identifiers.json; then
+          if ! diff -q docs/architecture/runtime_identifiers.json /tmp/dns-backup/runtime_identifiers.json; then
             echo "❌ Runtime identifiers JSON differs from committed version"
             echo ""
             echo "Fix: Run ./scripts/generate-dns-artifacts.sh and commit the changes"
@@ -107,7 +107,7 @@ jobs:
       - name: Validate subdomain count
         run: |
           EXPECTED_COUNT=$(yq eval '.subdomains | length' infra/dns/subdomain-registry.yaml)
-          ACTUAL_COUNT=$(jq '.services | length' docs/arch/runtime_identifiers.json)
+          ACTUAL_COUNT=$(jq '.services | length' docs/architecture/runtime_identifiers.json)
 
           if [ "$EXPECTED_COUNT" -ne "$ACTUAL_COUNT" ]; then
             echo "❌ Subdomain count mismatch"

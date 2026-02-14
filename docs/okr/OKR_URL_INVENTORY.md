@@ -25,7 +25,7 @@
 - /spec/<okr-slug>/prd.md
 - /spec/<okr-slug>/plan.md
 - /spec/<okr-slug>/tasks.md
-- /docs/arch/PROD_RUNTIME_SNAPSHOT.md
-- /docs/arch/runtime_identifiers.json
+- /docs/architecture/PROD_RUNTIME_SNAPSHOT.md
+- /docs/architecture/runtime_identifiers.json
 - /infra/dns/subdomain-registry.yaml
 - /.github/workflows/*

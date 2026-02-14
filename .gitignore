@@ -16,7 +16,7 @@ eggs/
 .eggs/
 lib/
 !clients/**/lib/
-!web/**/lib/
+!apps/**/lib/
 lib64/
 parts/
 sdist/
@@ -227,4 +227,3 @@ infra/cloudflare/**/terraform.tfvars
 # secrets (local only) - never commit
 *.secrets.local
 *.secrets.yaml
-docs/evidence/*-naming-refactor/
