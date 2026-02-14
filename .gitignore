@@ -41,6 +41,9 @@ addons/*
 !addons/ipai_*/**
 !addons/tbwa_*/
 !addons/tbwa_*/**
+# --- Deprecated addons quarantine (tracked) ---
+!addons/_deprecated/
+!addons/_deprecated/**
 # --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
@@ -119,6 +122,7 @@ temp/
 !supabase/seeds/*.sql
 !supabase/seed/**/*.sql
 !scripts/lakehouse/*.sql
+!platform/db/migrations/*.sql
 !scripts/supabase/sql/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
