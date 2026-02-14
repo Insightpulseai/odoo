@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-: "${ODOOOPS_API_BASE:?missing ODOOOPS_API_BASE}"
-: "${ODOOOPS_TOKEN:?missing ODOOOPS_TOKEN}"
-: "${ODOOOPS_PROJECT_ID:?missing ODOOOPS_PROJECT_ID}"
+# Legacy API config (deprecated, kept for backward compatibility)
+: "${ODOOOPS_API_BASE:=}"
+: "${ODOOOPS_TOKEN:=}"
+: "${ODOOOPS_PROJECT_ID:=}"
 
-hdr_auth() { printf "Authorization: Bearer %s" "$ODOOOPS_TOKEN"; }
-json() { python - <<'PY' "$@"
+# Supabase config (new primary method)
+: "${SUPABASE_URL:?missing SUPABASE_URL}"
+: "${SUPABASE_ANON_KEY:?missing SUPABASE_ANON_KEY}"
+: "${SUPABASE_SERVICE_ROLE_KEY:?missing SUPABASE_SERVICE_ROLE_KEY}"
+
+# Legacy helper (deprecated)
+hdr_auth() {
+  if [[ -n "${ODOOOPS_TOKEN}" ]]; then
+    printf "Authorization: Bearer %s" "$ODOOOPS_TOKEN"
+  else
+    echo "Warning: ODOOOPS_TOKEN not set, legacy API calls will fail" >&2
+    printf "Authorization: Bearer invalid"
+  fi
+}
+
+# JSON helper
+json() {
+  python - <<'PY' "$@"
 import json,sys
 print(json.dumps(sys.argv[1:]))
 PY

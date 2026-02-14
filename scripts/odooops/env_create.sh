@@ -2,38 +2,62 @@
 set -euo pipefail
 source "$(dirname "$0")/_common.sh"
 
-: "${BRANCH_NAME:?missing BRANCH_NAME}"
-: "${COMMIT_SHA:?missing COMMIT_SHA}"
-: "${STAGE:=dev}"  # dev|staging|prod (policy-driven)
+# Parse arguments
+PROJECT_ID="${1:?missing PROJECT_ID}"
+WORKFLOW_TYPE="${2:-build}"  # build|deploy|test
+GIT_REF="${3:?missing GIT_REF}"
+COMMIT_SHA="${4:?missing COMMIT_SHA}"
+ENV_ID="${5:-dev}"  # dev|staging|prod
 
-# TODO: align payload and endpoint to your actual OdooOps implementation
+# Generate run_id with timestamp for uniqueness
+RUN_ID="run-$(date +%Y%m%d-%H%M%S)-${COMMIT_SHA:0:7}"
+
+# Insert queued run into ops.runs
 payload=$(cat <<JSON
 {
-  "branch": "${BRANCH_NAME}",
-  "commit_sha": "${COMMIT_SHA}",
-  "stage": "${STAGE}"
+  "run_id": "${RUN_ID}",
+  "project_id": "${PROJECT_ID}",
+  "env_id": "${ENV_ID}",
+  "git_sha": "${COMMIT_SHA}",
+  "git_ref": "${GIT_REF}",
+  "status": "queued",
+  "metadata": {
+    "workflow_type": "${WORKFLOW_TYPE}",
+    "created_by": "env_create.sh",
+    "git_ref": "${GIT_REF}"
+  }
 }
 JSON
 )
 
+# Insert into Supabase ops.runs table
 resp=$(curl -fsS -X POST \
-  -H "$(hdr_auth)" \
+  "${SUPABASE_URL}/rest/v1/ops.runs" \
+  -H "apikey: ${SUPABASE_ANON_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
   -H "Content-Type: application/json" \
-  "${ODOOOPS_API_BASE}/projects/${ODOOOPS_PROJECT_ID}/envs" \
+  -H "Prefer: return=representation" \
   -d "${payload}")
 
-# Expecting {"env_id":"..."}; adjust if your schema differs.
-env_id=$(python - <<'PY' <<<"$resp"
+# Verify run was created
+created_run_id=$(python - <<'PY' <<<"$resp"
 import json,sys
-d=json.load(sys.stdin)
-print(d.get("env_id",""))
+try:
+  d=json.load(sys.stdin)
+  if isinstance(d, list) and len(d) > 0:
+    print(d[0].get("run_id",""))
+  else:
+    print(d.get("run_id",""))
+except:
+  print("")
 PY
 )
 
-if [[ -z "$env_id" ]]; then
-  echo "env_create: could not parse env_id from response:" >&2
-  echo "$resp" >&2
+if [[ -z "$created_run_id" ]]; then
+  echo "env_create: failed to create run in ops.runs" >&2
+  echo "Response: $resp" >&2
   exit 1
 fi
 
-echo "$env_id"
+# Return run_id for caller to poll
+echo "$created_run_id"
