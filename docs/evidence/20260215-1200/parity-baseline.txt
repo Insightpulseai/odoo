@@ -1,0 +1,174 @@
+==============================================================================
+Odoo.sh Parity Coverage Verification
+==============================================================================
+
+[1/9] Infrastructure Layer
+✅ Git branch → environment mapping (build workflows)
+✅ Automatic builds on push (       3 workflows)
+✅ Codespaces devcontainer
+✅ DNS SSOT registry
+✅ Runtime Docker Compose stack
+
+[2/9] Control Plane Layer
+✅ Supabase ops schema migrations (      28 files)
+✅ ops-runner Edge Function
+⚠️  Missing: scripts/clone-prod-to-staging.sh (Week 2 deliverable)
+⚠️  Missing: scripts/backup-scheduler.sh (Week 3 deliverable)
+⚠️  Missing: scripts/restore-backup.sh (Week 3 deliverable)
+⚠️  Missing: scripts/upgrade-preview.sh (Week 4 deliverable)
+
+[3/9] Security & Access Control
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:ALTER TABLE ops.project_members ENABLE ROW LEVEL SECURITY;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:    FROM ops.project_members
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:        FROM ops.project_members
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:CREATE POLICY project_members_select ON ops.project_members
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:CREATE TABLE IF NOT EXISTS ops.project_members (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:COMMENT ON TABLE ops.project_members IS 'Project membership and role assignments';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:COMMENT ON COLUMN ops.project_members.user_id IS 'User identifier (Supabase auth.users.id or external ID)';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:CREATE INDEX idx_project_members_user ON ops.project_members(user_id);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:CREATE INDEX idx_project_members_role ON ops.project_members(role_id);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000003_ops_schema_rbac.sql:    FROM ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:-- - project membership table MAY exist as ops.project_members(user_id uuid, project_id uuid)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:-- RLS: enable + policies if ops.project_members exists
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:  if to_regclass('ops.project_members') is not null then
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:  if to_regclass('ops.project_members') is not null then
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:  if to_regclass('ops.project_members') is not null then
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260212_001400_ops_ui_rpcs.sql:        select 1 from ops.project_members pm
+✅ RBAC schema (ops.project_members, ops.roles)
+✅ ipai_auth_oidc module (SSO)
+⚠️  Missing: infra/cloudflare/waf-rules.tf (Week 1 deliverable)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:ALTER TABLE ops.run_events ENABLE ROW LEVEL SECURITY;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:CREATE POLICY run_events_select ON ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:            WHERE r.run_id = ops.run_events.run_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:CREATE POLICY run_events_insert ON ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:            WHERE r.run_id = ops.run_events.run_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:GRANT INSERT ON ops.projects, ops.environments, ops.runs, ops.run_events, ops.artifacts TO authenticated;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000002_ops_hardening.sql:  delete from ops.run_events where created_at < now() - make_interval(days => p_days);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000002_ops_hardening.sql:from ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000004_ops_multisignal_scoring.sql:  from ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create index if not exists idx_ops_run_events_event_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:  on ops.run_events(event_id, created_at desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create index if not exists idx_ops_run_events_level_time
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:  on ops.run_events(level, created_at desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE TABLE IF NOT EXISTS ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:COMMENT ON TABLE ops.run_events IS 'Structured event log for runs';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:COMMENT ON COLUMN ops.run_events.level IS 'Log level: debug, info, warn, error';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE INDEX idx_run_events_run_id ON ops.run_events(run_id, created_at DESC);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE INDEX idx_run_events_level ON ops.run_events(level) WHERE level IN ('warn', 'error');
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:-- Rationale: ops.runs and ops.run_events will be used for OdooOps workflow
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER TABLE ops.run_events RENAME TO agent_events;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER INDEX IF EXISTS ops.run_events_pkey RENAME TO agent_events_pkey;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER INDEX IF EXISTS ops.run_events_run_id_idx RENAME TO agent_events_run_id_idx;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:COMMENT ON TABLE ops.agent_events IS 'Agent event logs (renamed from ops.run_events for OdooOps Sh compatibility)';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:comment on table ops.run_events is 'Append-only event stream for run lifecycle';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create index if not exists run_events_run_id_ts_idx on ops.run_events(run_id, ts desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create index if not exists run_events_level_idx on ops.run_events(level) where level in ('warn', 'error');
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:  insert into ops.run_events(run_id, level, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:create index if not exists idx_ops_run_events_run_id on ops.run_events(run_id);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:comment on table ops.run_events is 'Detailed event log for each run';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000003_ops_rls.sql:alter table ops.run_events enable row level security;
+✅ Audit trail schema
+
+[4/9] Monitoring & Observability
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:ALTER TABLE ops.run_events ENABLE ROW LEVEL SECURITY;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:CREATE POLICY run_events_select ON ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:            WHERE r.run_id = ops.run_events.run_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:CREATE POLICY run_events_insert ON ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:            WHERE r.run_id = ops.run_events.run_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000005_ops_rls.sql:GRANT INSERT ON ops.projects, ops.environments, ops.runs, ops.run_events, ops.artifacts TO authenticated;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000002_ops_hardening.sql:  delete from ops.run_events where created_at < now() - make_interval(days => p_days);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000002_ops_hardening.sql:from ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000004_ops_multisignal_scoring.sql:  from ops.run_events
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000006_ops_rpcs.sql:    INSERT INTO ops.run_events (run_id, level, message, payload)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create index if not exists idx_ops_run_events_event_id
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:  on ops.run_events(event_id, created_at desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:create index if not exists idx_ops_run_events_level_time
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000001_ops_ssot_base.sql:  on ops.run_events(level, created_at desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE TABLE IF NOT EXISTS ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:COMMENT ON TABLE ops.run_events IS 'Structured event log for runs';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:COMMENT ON COLUMN ops.run_events.level IS 'Log level: debug, info, warn, error';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE INDEX idx_run_events_run_id ON ops.run_events(run_id, created_at DESC);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260214_000001_ops_schema_core.sql:CREATE INDEX idx_run_events_level ON ops.run_events(level) WHERE level IN ('warn', 'error');
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:-- Rationale: ops.runs and ops.run_events will be used for OdooOps workflow
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER TABLE ops.run_events RENAME TO agent_events;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER INDEX IF EXISTS ops.run_events_pkey RENAME TO agent_events_pkey;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:ALTER INDEX IF EXISTS ops.run_events_run_id_idx RENAME TO agent_events_run_id_idx;
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260213_000001_ops_rename_agent_tables.sql:COMMENT ON TABLE ops.agent_events IS 'Agent event logs (renamed from ops.run_events for OdooOps Sh compatibility)';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:comment on table ops.run_events is 'Append-only event stream for run lifecycle';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create index if not exists run_events_run_id_ts_idx on ops.run_events(run_id, ts desc);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:create index if not exists run_events_level_idx on ops.run_events(level) where level in ('warn', 'error');
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124_1000_ops_lakehouse_control_plane.sql:    insert into ops.run_events(run_id, level, phase, message)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:create table if not exists ops.run_events (
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:  insert into ops.run_events(run_id, level, message, data)
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:create index if not exists idx_ops_run_events_run_id on ops.run_events(run_id);
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260125_000002_ops_run_system.sql:comment on table ops.run_events is 'Detailed event log for each run';
+/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/supabase/migrations/20260124000003_ops_rls.sql:alter table ops.run_events enable row level security;
+✅ ops.run_events schema
+⚠️  No n8n monitoring workflows (Week 4 deliverable)
+⚠️  Superset dashboards missing (Week 5 deliverable)
+⚠️  Missing: docs/runbooks/monitoring.md (Week 5 deliverable)
+
+[5/9] Developer Tools
+⚠️  Missing: scripts/ops-shell.sh (Week 2 deliverable)
+⚠️  ipai_module_manager missing (Week 6 deliverable)
+
+[6/9] Upgrades & Migrations
+⚠️  Missing: scripts/upgrade-smoke-tests.sh (Week 4 deliverable)
+
+[7/9] Performance & Scaling
+⚠️  Missing: infra/nginx/odoo.conf (Week 1 deliverable)
+⚠️  Missing: infra/cloudflare/load-balancer.tf (Week 1 deliverable)
+✅ Redis caching in Docker Compose
+⚠️  PgBouncer not in Docker Compose (Week 1 deliverable)
+
+[8/9] Integrations & Extensions
+✅ IPAI custom modules (      51 modules)
+✅ MCP servers (      11 servers)
+
+[9/9] Advanced Features (P2/P3 - Optional)
+ℹ️  Advanced analytics: Superset/Tableau (P2 enhancement)
+ℹ️  Mobile app: PWA only (P3, not required)
+ℹ️  Marketplace: Manual OCA install (P3 automation)
+
+==============================================================================
+Verification Summary
+==============================================================================
+Total Odoo.sh Features:    60
+Verified Implementations:  14
+Missing (In Progress):     14
+Critical Failures:         0
+
+Parity Coverage:           23.3%
+
+✅ Parity verification passed!
+No critical infrastructure components missing.
+
+⚠️  14 components pending (expected for current phase)
+Refer to implementation timeline in docs/architecture/odoo-sh-parity.md
