@@ -114,8 +114,8 @@ services:
       - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
       # Custom addons — IPAI modules (read-only mount)
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
-      # OCA modules (read-only mount)
-      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # OCA modules (read-only mount) - mounted from third_party/oca
+      - ./third_party/oca:/mnt/extra-addons/third_party/oca:ro
     ports:
       - "${ODOO_PORT:-8069}:8069"
       - "${ODOO_LONGPOLL_PORT:-8072}:8072"

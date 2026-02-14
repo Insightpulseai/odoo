@@ -1,0 +1,190 @@
+name: OCA Parallel Installation
+
+on:
+  workflow_dispatch:
+    inputs:
+      database:
+        description: 'Target database name'
+        required: true
+        default: 'odoo_dev'
+      skip_backup:
+        description: 'Skip database backup (not recommended)'
+        required: false
+        default: 'false'
+
+jobs:
+  install-oca-modules:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: ${{ inputs.database }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libpq-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libsasl2-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libwebp-dev \
+            libtiff5-dev \
+            libopenjp2-7-dev
+
+      - name: Install Odoo 19 dependencies
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install odoo==19.0
+
+      - name: Install yq for YAML processing
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+
+      - name: Fetch OCA 19.0 modules
+        run: |
+          ./scripts/oca/fetch_and_pin.sh --force
+
+      - name: Verify OCA modules fetched
+        run: |
+          MODULE_COUNT=$(find third_party/oca -name "__manifest__.py" 2>/dev/null | wc -l)
+          echo "✅ Fetched $MODULE_COUNT OCA modules"
+          if [ "$MODULE_COUNT" -lt 65 ]; then
+            echo "❌ Expected 65+ modules, got $MODULE_COUNT"
+            exit 1
+          fi
+
+      - name: Initialize Odoo database
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+          PGDATABASE: ${{ inputs.database }}
+        run: |
+          # Initialize database with base module
+          odoo-bin -d ${{ inputs.database }} \
+            --addons-path=/usr/lib/python3/dist-packages/odoo/addons,${GITHUB_WORKSPACE}/addons/ipai,${GITHUB_WORKSPACE}/third_party/oca/* \
+            -i base \
+            --stop-after-init \
+            --without-demo=all
+
+      - name: Backup database (optional)
+        if: inputs.skip_backup != 'true'
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          mkdir -p backups
+          pg_dump -d ${{ inputs.database }} > backups/pre_oca_install_$(date +%Y%m%d_%H%M).dump
+          echo "✅ Backup created: $(ls -lh backups/pre_oca_install_*.dump | tail -1)"
+
+      - name: Execute parallel OCA installation
+        env:
+          ODOO_DB: ${{ inputs.database }}
+          ODOO_ADDONS_PATH: /usr/lib/python3/dist-packages/odoo/addons,${GITHUB_WORKSPACE}/addons/ipai,${GITHUB_WORKSPACE}/third_party/oca/*
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          # Override ODOO_BIN to use direct odoo-bin
+          export ODOO_BIN="odoo-bin"
+
+          # Execute parallel installation
+          ./scripts/oca/install_oca_parallel.sh
+
+      - name: Validate installation
+        env:
+          ODOO_DB: ${{ inputs.database }}
+        run: |
+          mkdir -p docs/evidence/$(date +%Y%m%d-%H%M)
+
+          python3 scripts/oca/validate_installation.py \
+            --db ${{ inputs.database }} \
+            --url http://localhost:8069 \
+            --output docs/evidence/$(date +%Y%m%d-%H%M)/oca_validation.json \
+            --verbose
+
+      - name: Generate EE parity report
+        if: always()
+        env:
+          ODOO_DB: ${{ inputs.database }}
+        run: |
+          # Check if test_ee_parity.py exists
+          if [ -f "scripts/test_ee_parity.py" ]; then
+            python scripts/test_ee_parity.py \
+              --odoo-url http://localhost:8069 \
+              --db ${{ inputs.database }} \
+              --report html \
+              --output docs/evidence/$(date +%Y%m%d-%H%M)/oca_parity_report.html || true
+          else
+            echo "⚠️  test_ee_parity.py not found, skipping parity report"
+          fi
+
+      - name: Upload validation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oca-installation-results
+          path: |
+            docs/evidence/**/oca_validation.json
+            docs/evidence/**/oca_parity_report.html
+            logs/oca_install/*.log
+          retention-days: 30
+
+      - name: Check installation success
+        run: |
+          if [ -f "docs/evidence/$(date +%Y%m%d-*)//oca_validation.json" ]; then
+            SUCCESS_RATE=$(jq -r '.summary.success_rate' docs/evidence/$(date +%Y%m%d-*)/oca_validation.json)
+            echo "Installation Success Rate: $SUCCESS_RATE%"
+
+            if (( $(echo "$SUCCESS_RATE < 95" | bc -l) )); then
+              echo "❌ Success rate $SUCCESS_RATE% < 95%"
+              exit 1
+            fi
+
+            echo "✅ Installation successful ($SUCCESS_RATE%)"
+          else
+            echo "⚠️  Validation results not found"
+          fi
