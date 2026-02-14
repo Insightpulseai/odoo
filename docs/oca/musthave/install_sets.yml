@@ -1,0 +1,264 @@
+# OCA Must-Have Install Sets
+# Generated from spec/oca-musthave-no-ce19-overlap/
+# Excludes modules absorbed into Odoo CE17+ core
+
+meta:
+  odoo_version: "19.0"
+  generator: "oca_musthave_pipeline_v1"
+  generated_date: "2026-02-15"
+  total_candidates: 69
+  total_included: 67
+  total_excluded: 2
+  excluded_modules:
+    - web_advanced_search  # CE17+ core search
+    - mail_activity_plan   # CE17+ core activity planning
+
+# Install Set 1: Base Modules (26 modules)
+sets:
+  musthave_base:
+    description: "Foundational OCA modules for server, web, and queue management"
+    category: "Base"
+    module_count: 26
+    excluded_count: 2
+    modules:
+      # Server Tools
+      - base_technical_features
+      - base_search_fuzzy
+      - base_exception
+      - base_tier_validation
+      - base_user_role
+      - base_jsonify
+      - base_sparse_field
+      - base_suspend_security
+      - base_custom_info
+      - base_menu_visibility_restriction
+      - base_technical_user
+      - base_fontawesome
+      - base_import_async
+
+      # Queue
+      - queue_job
+
+      # Web Widgets & Tools
+      - web_widget_x2many_2d_matrix
+      # web_advanced_search EXCLUDED (CE17+ core search)
+      # mail_activity_plan EXCLUDED (CE17+ core activity planning)
+      - web_refresher
+      - web_domain_field
+      - web_pwa_oca
+      - web_notify
+      - web_m2x_options
+      - web_responsive
+      - web_timeline
+      - web_widget_digitized_signature
+      - web_dialog_size
+      - web_search_with_and
+      - web_ir_actions_act_multi
+
+    excluded:
+      - module: web_advanced_search
+        rationale: "Absorbed into CE17+ core search functionality"
+        evidence: "[odoo/odoo CE17 release notes]"
+
+      - module: mail_activity_plan
+        rationale: "Absorbed into CE17+ core activity planning"
+        evidence: "[odoo/odoo CE17 release notes]"
+
+  # Install Set 2: Accounting Modules (18 modules)
+  musthave_accounting:
+    description: "Essential OCA accounting and financial management modules"
+    category: "Accounting"
+    module_count: 18
+    excluded_count: 0
+    modules:
+      - account_fiscal_year
+      - account_move_line_purchase_info
+      - account_move_line_sale_info
+      - account_invoice_refund_link
+      - account_usability
+      - account_payment_partner
+      - account_tag_menu
+      - account_type_menu
+      - account_move_tier_validation
+      - account_statement_import
+      - account_lock_to_date
+      - account_invoice_constraint_chronology
+      - account_cost_center
+      - account_journal_lock_date
+      - account_reconcile_oca
+      - account_invoice_view_payment
+      - account_chart_update
+      - account_financial_report
+
+    excluded: []
+
+  # Install Set 3: Sales Modules (11 modules)
+  musthave_sales:
+    description: "Essential OCA sales workflow and management modules"
+    category: "Sales"
+    module_count: 11
+    excluded_count: 0
+    modules:
+      - sale_automatic_workflow
+      - sale_exception
+      - sale_tier_validation
+      - sale_order_type
+      - sale_order_invoicing_grouping_criteria
+      - sale_order_line_date
+      - sale_delivery_state
+      - sale_stock_mto_as_mts_orderpoint
+      - sale_order_priority
+      - sale_force_invoiced
+      - sale_validity
+
+    excluded: []
+
+  # Install Set 4: Purchases Modules (12 modules)
+  musthave_purchases:
+    description: "Essential OCA purchase workflow and management modules"
+    category: "Purchases"
+    module_count: 12
+    excluded_count: 0
+    modules:
+      - purchase_exception
+      - purchase_tier_validation
+      - purchase_order_type
+      - purchase_order_line_price_history
+      - purchase_order_secondary_unit
+      - purchase_last_price_info
+      - purchase_work_acceptance
+      - purchase_landed_cost
+      - purchase_discount
+      - purchase_order_analytic
+      - purchase_order_approved
+      - purchase_security
+
+    excluded: []
+
+  # Install Set 5: All Modules (67 modules total)
+  musthave_all:
+    description: "Complete OCA Must-Have module set (all categories combined)"
+    category: "All"
+    module_count: 67
+    excluded_count: 2
+    modules:
+      # Base (26 modules)
+      - base_technical_features
+      - base_search_fuzzy
+      - base_exception
+      - base_tier_validation
+      - base_user_role
+      - base_jsonify
+      - base_sparse_field
+      - base_suspend_security
+      - base_custom_info
+      - base_menu_visibility_restriction
+      - base_technical_user
+      - base_fontawesome
+      - base_import_async
+      - queue_job
+      - web_widget_x2many_2d_matrix
+      # web_advanced_search EXCLUDED
+      # mail_activity_plan EXCLUDED
+      - web_refresher
+      - web_domain_field
+      - web_pwa_oca
+      - web_notify
+      - web_m2x_options
+      - web_responsive
+      - web_timeline
+      - web_widget_digitized_signature
+      - web_dialog_size
+      - web_search_with_and
+      - web_ir_actions_act_multi
+
+      # Accounting (18 modules)
+      - account_fiscal_year
+      - account_move_line_purchase_info
+      - account_move_line_sale_info
+      - account_invoice_refund_link
+      - account_usability
+      - account_payment_partner
+      - account_tag_menu
+      - account_type_menu
+      - account_move_tier_validation
+      - account_statement_import
+      - account_lock_to_date
+      - account_invoice_constraint_chronology
+      - account_cost_center
+      - account_journal_lock_date
+      - account_reconcile_oca
+      - account_invoice_view_payment
+      - account_chart_update
+      - account_financial_report
+
+      # Sales (11 modules)
+      - sale_automatic_workflow
+      - sale_exception
+      - sale_tier_validation
+      - sale_order_type
+      - sale_order_invoicing_grouping_criteria
+      - sale_order_line_date
+      - sale_delivery_state
+      - sale_stock_mto_as_mts_orderpoint
+      - sale_order_priority
+      - sale_force_invoiced
+      - sale_validity
+
+      # Purchases (12 modules)
+      - purchase_exception
+      - purchase_tier_validation
+      - purchase_order_type
+      - purchase_order_line_price_history
+      - purchase_order_secondary_unit
+      - purchase_last_price_info
+      - purchase_work_acceptance
+      - purchase_landed_cost
+      - purchase_discount
+      - purchase_order_analytic
+      - purchase_order_approved
+      - purchase_security
+
+    excluded:
+      - module: web_advanced_search
+        rationale: "Absorbed into CE17+ core search functionality"
+        evidence: "[odoo/odoo CE17 release notes]"
+
+      - module: mail_activity_plan
+        rationale: "Absorbed into CE17+ core activity planning"
+        evidence: "[odoo/odoo CE17 release notes]"
+
+# Usage Examples
+usage:
+  single_category:
+    command: "odoo-bin -i $(yq '.sets.musthave_base.modules | join(\",\")' install_sets.yml)"
+    description: "Install base modules only"
+
+  all_modules:
+    command: "odoo-bin -i $(yq '.sets.musthave_all.modules | join(\",\")' install_sets.yml)"
+    description: "Install all 67 modules at once"
+
+  meta_module:
+    command: "odoo-bin -i ipai_oca_musthave_meta"
+    description: "Use meta-module for one-command installation"
+
+# Validation
+validation:
+  total_modules: 67
+  expected_exclusions: 2
+  verification_command: |
+    python3 -c "
+    import yaml
+    with open('install_sets.yml') as f:
+        data = yaml.safe_load(f)
+        assert len(data['sets']['musthave_all']['modules']) == 67
+        assert len(data['sets']['musthave_all']['excluded']) == 2
+        print('✅ Install sets validated')
+    "
+
+# References
+references:
+  constitution: "../../../spec/oca-musthave-no-ce19-overlap/constitution.md"
+  prd: "../../../spec/oca-musthave-no-ce19-overlap/prd.md"
+  decision_matrix: "./decision_matrix.md"
+  filter_script: "../../../scripts/oca_musthave/check_overlap.py"
