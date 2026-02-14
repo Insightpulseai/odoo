@@ -17,7 +17,7 @@ DB_PASSWORD="${DB_PASSWORD:-postgres}"
 DB_NAME="${DB_NAME:-ipai_qg}"
 
 # Odoo core addons path in official images is typically:
-ODOO_CORE="/usr/lib/python3/dist-packages/odoo/addons"
+ODOO_CORE="/usr/lib/python3/dist-pkgs/odoo/addons"
 
 # Build addons-path list (only include dirs that exist)
 ADDONS_PATHS=()

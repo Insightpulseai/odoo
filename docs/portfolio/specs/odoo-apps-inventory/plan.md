@@ -126,11 +126,11 @@ odoo-addon-helpdesk-mgmt-timesheet==18.0.1.0.0
 
 ```
 Files to create:
-├── apps/control-room/src/app/kb/
+├── web/control-room/src/app/kb/
 │   ├── page.tsx                 # KB home
 │   ├── [spaceId]/page.tsx       # Space view
 │   └── [spaceId]/[artifactId]/page.tsx
-├── apps/control-room/src/app/api/kb/
+├── web/control-room/src/app/api/kb/
 │   ├── spaces/route.ts
 │   ├── artifacts/route.ts
 │   └── artifacts/[id]/lineage/route.ts
@@ -142,11 +142,11 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/studio/
+├── web/control-room/src/app/studio/
 │   ├── page.tsx                 # Form list
 │   ├── [formId]/page.tsx        # Form designer
 │   └── [formId]/preview/page.tsx
-├── apps/control-room/src/components/studio/
+├── web/control-room/src/components/studio/
 │   ├── FormCanvas.tsx
 │   ├── FieldPalette.tsx
 │   └── PropertyPanel.tsx
@@ -158,11 +158,11 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/sign/
+├── web/control-room/src/app/sign/
 │   ├── page.tsx                 # Document list
 │   ├── [docId]/page.tsx         # Signing view
 │   └── [docId]/complete/page.tsx
-├── apps/control-room/src/lib/
+├── web/control-room/src/lib/
 │   └── docusign.ts              # DocuSign integration
 └── supabase/migrations/
     └── 20240101000003_sign_schema.sql
@@ -172,11 +172,11 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/booking/
+├── web/control-room/src/app/booking/
 │   ├── page.tsx                 # Calendar overview
 │   ├── [calendarId]/page.tsx    # Availability editor
 │   └── book/[calendarId]/page.tsx  # Public booking
-├── apps/control-room/src/components/booking/
+├── web/control-room/src/components/booking/
 │   ├── AvailabilityGrid.tsx
 │   └── BookingForm.tsx
 └── supabase/migrations/
@@ -187,12 +187,12 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/fsm/
+├── web/control-room/src/app/fsm/
 │   ├── page.tsx                 # Dispatch board
 │   ├── jobs/page.tsx            # Job list
 │   ├── jobs/[jobId]/page.tsx    # Job detail
 │   └── technicians/page.tsx     # Technician roster
-├── apps/control-room/src/components/fsm/
+├── web/control-room/src/components/fsm/
 │   ├── DispatchMap.tsx
 │   └── JobCard.tsx
 └── supabase/migrations/
@@ -203,12 +203,12 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/barcode/
+├── web/control-room/src/app/barcode/
 │   ├── page.tsx                 # Scan home
 │   ├── receive/page.tsx         # Receive goods
 │   ├── pick/page.tsx            # Pick orders
 │   └── transfer/page.tsx        # Internal transfer
-├── apps/control-room/src/components/barcode/
+├── web/control-room/src/components/barcode/
 │   ├── BarcodeScanner.tsx       # Camera component
 │   └── OperationQueue.tsx
 └── supabase/migrations/
@@ -219,12 +219,12 @@ Files to create:
 
 ```
 Files to create:
-├── apps/control-room/src/app/api/mobile/
+├── web/control-room/src/app/api/mobile/
 │   ├── auth/login/route.ts
 │   ├── auth/refresh/route.ts
 │   ├── sync/delta/route.ts
 │   └── sync/push/route.ts
-└── apps/control-room/src/lib/
+└── web/control-room/src/lib/
     └── push-notifications.ts
 ```
 
@@ -245,7 +245,7 @@ k6 run scripts/load-tests/control-room-api.js
 
 ```
 docs/
-├── odoo-apps/
+├── odoo-web/
 │   ├── installation-guide.md
 │   ├── oca-modules.md
 │   └── control-room-modules.md

@@ -96,7 +96,7 @@ apps:
       package_manager: "pnpm"
     deploy:
       provider: "vercel"
-      path: "apps/control-room"
+      path: "web/control-room"
       project_name: "ipai-control-room"
       production_branch: "main"
     supabase:

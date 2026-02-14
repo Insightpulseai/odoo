@@ -5,7 +5,7 @@
     "parser": "react",
     "include": [
       "src/components/**/*",
-      "packages/*/src/components/**/*"
+      "pkgs/*/src/components/**/*"
     ],
     "exclude": [
       "test/**",
@@ -18,7 +18,7 @@
     ],
     "importPaths": {
       "src/components/*": "@/components",
-      "packages/ui/src/components/*": "@ui/components"
+      "pkgs/ui/src/components/*": "@ui/components"
     }
   },
   "componentMappings": {

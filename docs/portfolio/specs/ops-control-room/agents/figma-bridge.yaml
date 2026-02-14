@@ -12,7 +12,7 @@ description: |
 owner: InsightPulse AI
 maintainer: Jake Tolentino (@jgtolentino)
 repository: github.com/jgtolentino/design-system-cli
-package: packages/figma-bridge
+package: pkgs/figma-bridge
 
 dependencies:
   - name: design-system-cli
@@ -39,7 +39,7 @@ skills:
       Prevents token desync issues by enforcing repository consistency.
 
     implementation:
-      module: packages/figma-bridge/src/git-operations.ts
+      module: pkgs/figma-bridge/src/git-operations.ts
       entrypoint: runGitWorkflow
       type: pre-operation-gate
 
@@ -114,7 +114,7 @@ skills:
             duration_ms: number
 
     tests:
-      location: packages/figma-bridge/src/git-operations.test.ts
+      location: pkgs/figma-bridge/src/git-operations.test.ts
       framework: vitest
       coverage_target: 80
       scenarios:
@@ -140,7 +140,7 @@ skills:
       Must run after git_preflight to ensure token synchronization.
 
     implementation:
-      module: packages/figma-bridge/src/figma.ts
+      module: pkgs/figma-bridge/src/figma.ts
       entrypoint: figma
       type: operation
 

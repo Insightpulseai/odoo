@@ -124,7 +124,7 @@ services:
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
       --log-level=${ODOO_LOG_LEVEL:-info}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
@@ -197,7 +197,7 @@ services:
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
       -i base
       --stop-after-init
       --without-demo=all
@@ -230,7 +230,7 @@ services:
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
       -u ${UPDATE_MODULES:-all}
       --stop-after-init
     networks:

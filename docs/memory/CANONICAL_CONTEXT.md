@@ -100,8 +100,8 @@ cd deploy && docker compose -f docker-compose.prod.yml --env-file ../.env up -d
 |-----------|------|
 | `addons/ipai/` | IPAI custom Odoo modules (96 modules) |
 | `addons/oca/` | OCA community modules (submodules, not tracked) |
-| `apps/` | Node.js applications (pulser-runner, control-room, etc.) |
-| `packages/` | Shared Node.js packages (agent-core, github-app, design-tokens) |
+| `web/` | Node.js applications (pulser-runner, control-room, etc.) |
+| `pkgs/` | Shared Node.js packages (agent-core, github-app, design-tokens) |
 | `spec/` | Spec bundles (constitution, PRD, plan, tasks per feature) |
 | `scripts/` | Automation scripts (160+ scripts) |
 | `deploy/` | Production deployment configs |

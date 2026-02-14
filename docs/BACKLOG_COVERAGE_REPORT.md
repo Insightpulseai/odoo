@@ -37,7 +37,7 @@
 | P1 | DB | Config rollouts table (ops.config_rollouts) | supabase/migrations | spec/supabase-platform-kit-observability/tasks.md:46, supabase/migrations/20260124100001_ops_config_registry.sql:97, scripts/backlog_scan.py:128 |
 | P1 | DB | Drift detection function (ops.detect_config_drift) | supabase/migrations | supabase/migrations/20260124100001_ops_config_registry.sql:431, supabase/migrations/20260124100001_ops_config_registry.sql:118, scripts/backlog_scan.py:143 |
 | P1 | DB | Config rollback RPC function | supabase/migrations | spec/supabase-platform-kit-observability/tasks.md:53, supabase/migrations/20260124100001_ops_config_registry.sql:466, scripts/backlog_scan.py:198 |
-| P1 | UI | Control Room Platform Kit UI | apps/control-room | apps/control-room/PLATFORM_KIT_SPEC.md, spec/supabase-platform-kit-observability/plan.md:44, apps/control-room/src/components/observability/ObservabilityManager.tsx:32 |
+| P1 | UI | Control Room Platform Kit UI | web/control-room | web/control-room/PLATFORM_KIT_SPEC.md, spec/supabase-platform-kit-observability/plan.md:44, web/control-room/src/components/observability/ObservabilityManager.tsx:32 |
 | P2 | CI | Backlog coverage CI gate | .github/workflows | .github/workflows/backlog-coverage.yml, .github/workflows/backlog-coverage.yml:10, scripts/backlog_scan.py:3 |
 | P2 | Config | Create `addons/ipai_platform_workflow/` scaffold | spec/erp-saas-clone-suite | spec/erp-saas-clone-suite/tasks.md |
 | P2 | Config | Create `addons/ipai_platform_approvals/` scaffold | spec/erp-saas-clone-suite | spec/erp-saas-clone-suite/tasks.md |

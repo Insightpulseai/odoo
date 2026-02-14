@@ -13,7 +13,7 @@ This image is **immutable**. It bundles the core application code, dependencies,
 
 | Layer | Path | Description |
 |:------|:-----|:------------|
-| **Base** | `/usr/lib/python3/dist-packages/odoo` | Official Odoo 18.0 core source code |
+| **Base** | `/usr/lib/python3/dist-pkgs/odoo` | Official Odoo 18.0 core source code |
 | **Config** | `/etc/odoo/odoo.conf` | Production-optimized configuration (Workers, Limits) |
 | **Addons** | `/mnt/extra-addons` | **Your Custom Code.** Contains `ipai_*` and `tbwa_*` modules |
 | **Deps** | `/usr/local/lib/python3.10/site-packages` | Python libs from `requirements.txt` |

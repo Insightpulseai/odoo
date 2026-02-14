@@ -163,7 +163,7 @@ ISSUE_4_TITLE="Worker: reference implementation (Node.js/Deno)"
 ISSUE_4_BODY='**Goal**: Long-running worker that claims and executes runs
 
 **Tasks**:
-- [ ] Create worker implementation: `packages/worker/src/index.ts`
+- [ ] Create worker implementation: `pkgs/worker/src/index.ts`
 - [ ] Implement claim loop with claim_run() RPC
 - [ ] Execute step_dsl with timeout enforcement
 - [ ] Send heartbeats during execution
@@ -184,7 +184,7 @@ ISSUE_5_TITLE="UI: Runboard dashboard + realtime updates"
 ISSUE_5_BODY='**Goal**: Dashboard showing active/completed runs with realtime updates
 
 **Tasks**:
-- [ ] Create Runboard component: `apps/control-room/src/app/runboard/page.tsx`
+- [ ] Create Runboard component: `web/control-room/src/app/runboard/page.tsx`
 - [ ] Query ops.runs with Supabase client
 - [ ] Display run status with color coding (pending=gray, processing=blue, completed=green, failed=red)
 - [ ] Subscribe to realtime updates on ops.runs table

@@ -246,9 +246,9 @@ jobs:
         run: |
           # Detect if PR includes UI-related changes
           ui_changes=$(git diff --name-only origin/main...HEAD -- \
-            'apps/control-room/**' \
-            'apps/web/**' \
-            'packages/ipai-design-tokens/**' \
+            'web/control-room/**' \
+            'web/web/**' \
+            'pkgs/ipai-design-tokens/**' \
             '*.tsx' '*.jsx' '*.css' '*.scss' \
             'tokens.json' \
             2>/dev/null || echo "")

@@ -29,7 +29,7 @@ COPY addons/ipai_* /mnt/extra-addons/ipai/ 2>/dev/null || true
 # Configure for testing
 RUN cat > /etc/odoo/odoo.conf <<'EOF'
 [options]
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
 admin_passwd = admin
 list_db = True
 log_level = warn

@@ -41,7 +41,7 @@ rules:
   - id: use-server-components
     description: Prefer React Server Components for data fetching
     paths:
-      - "apps/control-room/src/app/**/*.tsx"
+      - "web/control-room/src/app/**/*.tsx"
     severity: info
     patterns:
       - "useEffect.*fetch"
@@ -54,7 +54,7 @@ rules:
   - id: validate-api-responses
     description: Always validate external API responses with Zod
     paths:
-      - "apps/control-room/src/app/api/**/*.ts"
+      - "web/control-room/src/app/api/**/*.ts"
     severity: warning
     patterns:
       - "await\\s+fetch\\("
@@ -68,7 +68,7 @@ rules:
   - id: handle-api-errors
     description: API routes must have proper error handling
     paths:
-      - "apps/control-room/src/app/api/**/*.ts"
+      - "web/control-room/src/app/api/**/*.ts"
     severity: error
     patterns:
       - "export\\s+(async\\s+)?function\\s+(GET|POST|PUT|DELETE)"
@@ -82,7 +82,7 @@ rules:
   - id: use-config-constants
     description: Use centralized config for table names and endpoints
     paths:
-      - "apps/control-room/**/*.ts"
+      - "web/control-room/**/*.ts"
     severity: warning
     patterns:
       - "[\"']ppm_gold\\."

@@ -13,12 +13,12 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 1: Token System Foundation (Tasks #1, #2)
 
 **Completed Files:**
-- `packages/ipai-design-tokens/tokens/source/tokens.json` - Master token source (37 tokens)
-- `packages/ipai-design-tokens/scripts/tokens/generate-tokens.mjs` - Token generator script
-- `packages/ipai-design-tokens/css-vars.css` - Generated CSS variables
-- `packages/ipai-design-tokens/tailwind.preset.cjs` - Generated Tailwind preset
-- `packages/ipai-design-tokens/src/index.ts` - Generated TypeScript exports
-- `packages/ipai-design-tokens/package.json` - Added "generate:tokens" script
+- `pkgs/ipai-design-tokens/tokens/source/tokens.json` - Master token source (37 tokens)
+- `pkgs/ipai-design-tokens/scripts/tokens/generate-tokens.mjs` - Token generator script
+- `pkgs/ipai-design-tokens/css-vars.css` - Generated CSS variables
+- `pkgs/ipai-design-tokens/tailwind.preset.cjs` - Generated Tailwind preset
+- `pkgs/ipai-design-tokens/src/index.ts` - Generated TypeScript exports
+- `pkgs/ipai-design-tokens/package.json` - Added "generate:tokens" script
 
 **Key Features:**
 - Single source of truth (tokens.json)
@@ -29,13 +29,13 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 2: Token-Driven React Components (Task #3)
 
 **Completed Files:**
-- `apps/web/src/ui/ipai/Button.tsx` - Button with 3 variants (primary, secondary, ghost)
-- `apps/web/src/ui/ipai/Card.tsx` - Card with glass variant (resolves "glass-card" issue)
-- `apps/web/src/ui/ipai/Chip.tsx` - Badge component with 3 variants
-- `apps/web/src/ui/ipai/Form.tsx` - Form primitives (Form, FormField, FormLabel, FormInput, FormMessage)
-- `apps/web/src/ui/ipai/Modal.tsx` - Modal with overlay and body scroll lock
-- `apps/web/src/ui/ipai/Dropdown.tsx` - Dropdown menu with click-outside-to-close
-- `apps/web/src/ui/ipai/index.ts` - Barrel export for all components
+- `web/web/src/ui/ipai/Button.tsx` - Button with 3 variants (primary, secondary, ghost)
+- `web/web/src/ui/ipai/Card.tsx` - Card with glass variant (resolves "glass-card" issue)
+- `web/web/src/ui/ipai/Chip.tsx` - Badge component with 3 variants
+- `web/web/src/ui/ipai/Form.tsx` - Form primitives (Form, FormField, FormLabel, FormInput, FormMessage)
+- `web/web/src/ui/ipai/Modal.tsx` - Modal with overlay and body scroll lock
+- `web/web/src/ui/ipai/Dropdown.tsx` - Dropdown menu with click-outside-to-close
+- `web/web/src/ui/ipai/index.ts` - Barrel export for all components
 
 **Key Features:**
 - class-variance-authority for variant management
@@ -46,12 +46,12 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 3: Authentication UI (Task #4)
 
 **Completed Files:**
-- `apps/web/src/features/auth/OTPLoginModal.tsx` - OTP authentication modal
-- `apps/web/src/features/auth/index.ts` - Auth feature barrel export
-- `apps/web/src/lib/supabase.ts` - Supabase client configuration
-- `apps/web/src/app/api/auth/user/route.ts` - Get authenticated user API
-- `apps/web/src/app/api/auth/signout/route.ts` - Sign out API
-- `apps/web/.env.example` - Added Supabase environment variables
+- `web/web/src/features/auth/OTPLoginModal.tsx` - OTP authentication modal
+- `web/web/src/features/auth/index.ts` - Auth feature barrel export
+- `web/web/src/lib/supabase.ts` - Supabase client configuration
+- `web/web/src/app/api/auth/user/route.ts` - Get authenticated user API
+- `web/web/src/app/api/auth/signout/route.ts` - Sign out API
+- `web/web/.env.example` - Added Supabase environment variables
 
 **Key Features:**
 - Two-step OTP flow (email → verification)
@@ -62,9 +62,9 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 4: Billing Integration UI (Task #5)
 
 **Completed Files:**
-- `apps/web/src/features/billing/BillingDashboard.tsx` - Billing dashboard component
-- `apps/web/src/features/billing/index.ts` - Billing feature barrel export
-- `apps/web/src/app/api/billing/subscription/route.ts` - Subscription API route
+- `web/web/src/features/billing/BillingDashboard.tsx` - Billing dashboard component
+- `web/web/src/features/billing/index.ts` - Billing feature barrel export
+- `web/web/src/app/api/billing/subscription/route.ts` - Subscription API route
 
 **Key Features:**
 - Subscription status display
@@ -75,7 +75,7 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 5: Navigation with Auth State (Task #6)
 
 **Completed Files:**
-- `apps/web/src/components/Navigation.tsx` - Main navigation component
+- `web/web/src/components/Navigation.tsx` - Main navigation component
 
 **Key Features:**
 - Authentication state management
@@ -87,8 +87,8 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 6: CI Guardrails (Task #7)
 
 **Completed Files:**
-- `apps/web/.github/workflows/token-validation.yml` - Token validation workflow
-- `apps/web/.eslintrc.json` - ESLint configuration with token usage rule
+- `web/web/.github/workflows/token-validation.yml` - Token validation workflow
+- `web/web/.eslintrc.json` - ESLint configuration with token usage rule
 
 **Key Features:**
 - Automated token drift detection
@@ -99,13 +99,13 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 7: Testing (Tasks #8, #9)
 
 **Completed Files:**
-- `apps/web/src/ui/ipai/__tests__/Button.test.tsx` - Button component tests
-- `apps/web/src/ui/ipai/__tests__/Card.test.tsx` - Card component tests
-- `apps/web/src/ui/ipai/__tests__/Chip.test.tsx` - Chip component tests
-- `apps/web/jest.config.js` - Jest configuration
-- `apps/web/jest.setup.js` - Jest setup file
-- `apps/web/e2e/auth.spec.ts` - E2E authentication flow test
-- `apps/web/playwright.config.ts` - Playwright configuration
+- `web/web/src/ui/ipai/__tests__/Button.test.tsx` - Button component tests
+- `web/web/src/ui/ipai/__tests__/Card.test.tsx` - Card component tests
+- `web/web/src/ui/ipai/__tests__/Chip.test.tsx` - Chip component tests
+- `web/web/jest.config.js` - Jest configuration
+- `web/web/jest.setup.js` - Jest setup file
+- `web/web/e2e/auth.spec.ts` - E2E authentication flow test
+- `web/web/playwright.config.ts` - Playwright configuration
 
 **Key Features:**
 - Unit tests for all core components
@@ -116,8 +116,8 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 ### ✅ Phase 8: Documentation (Task #10)
 
 **Completed Files:**
-- `packages/ipai-design-tokens/README.md` - Token system documentation
-- `apps/web/src/ui/ipai/README.md` - Component library documentation
+- `pkgs/ipai-design-tokens/README.md` - Token system documentation
+- `web/web/src/ui/ipai/README.md` - Component library documentation
 - `docs/migration/glass-card-fix.md` - Glass-card migration guide
 
 **Key Features:**
@@ -145,11 +145,11 @@ Successfully implemented Platform Kit UI components and SaaS features (authentic
 
 ```bash
 # Verify token generation
-cd packages/ipai-design-tokens
+cd pkgs/ipai-design-tokens
 pnpm generate:tokens
 
 # Run tests
-cd apps/web
+cd web/web
 pnpm test              # Unit tests
 pnpm test:e2e          # E2E tests
 pnpm lint              # ESLint validation
@@ -233,7 +233,7 @@ pnpm build             # Next.js build
 - **Mitigation**: Automated migration script, clear migration guide
 
 **Decision: Coordinate with Existing Paddle Billing (NOT Rebuild)**
-- **Why**: Production-ready billing system already exists at `/apps/billing-site`
+- **Why**: Production-ready billing system already exists at `/web/billing-site`
 - **Trade-off**: UI-only integration vs full billing rebuild
 - **Mitigation**: API routes bridge main app to billing backend, no logic duplication
 

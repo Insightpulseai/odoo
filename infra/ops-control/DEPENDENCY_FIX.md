@@ -13,8 +13,8 @@ The project had a `pnpm-workspace.yaml` file that referenced non-existent worksp
 
 ```yaml
 packages:
-  - "packages/*"  # ❌ These folders don't exist
-  - "apps/*"      # ❌ These folders don't exist
+  - "pkgs/*"  # ❌ These folders don't exist
+  - "web/*"      # ❌ These folders don't exist
 ```
 
 **Action:** Deleted `/pnpm-workspace.yaml`
@@ -89,9 +89,9 @@ The Deploy button should now work without the workspace error. The app will auto
 ## Why This Happened
 
 The project was initially set up as a **monorepo** (multi-package workspace) with:
-- `/packages/core/` - Core logic package
-- `/packages/ui/` - UI components package
-- `/apps/mcp-server/` - MCP server package
+- `/pkgs/core/` - Core logic package
+- `/pkgs/ui/` - UI components package
+- `/web/mcp-server/` - MCP server package
 
 But in **Figma Make**, we don't need the monorepo structure. Everything should be in a single package with direct dependencies.
 

@@ -160,7 +160,7 @@ Update `odoo.conf` to include OCA repos:
 ; Custom IPAI addons (second)
 ; OCA addons (third)
 addons_path =
-    /usr/lib/python3/dist-packages/odoo/addons,
+    /usr/lib/python3/dist-pkgs/odoo/addons,
     /mnt/extra-addons/ipai,
     /mnt/extra-addons/oca/server-tools,
     /mnt/extra-addons/oca/server-ux,

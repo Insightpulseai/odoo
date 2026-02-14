@@ -187,7 +187,7 @@ CMD ["python", "main.py"]
 
 **k8s/deployment.yml** (Kubernetes manifests):
 ```yaml
-apiVersion: apps/v1
+apiVersion: web/v1
 kind: Deployment
 metadata:
   name: odoo-web

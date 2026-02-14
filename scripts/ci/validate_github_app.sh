@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CONFIG_FILE="$REPO_ROOT/packages/github-app/GITHUB_APP_CONFIG.json"
+CONFIG_FILE="$REPO_ROOT/pkgs/github-app/GITHUB_APP_CONFIG.json"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -136,7 +136,7 @@ echo ""
 
 if $JQ_AVAILABLE; then
     echo "To configure the GitHub App correctly, update these settings"
-    echo "at https://github.com/settings/apps/pulser-hub:"
+    echo "at https://github.com/settings/web/pulser-hub:"
     echo ""
     echo "  Homepage URL:  $HOMEPAGE_URL"
     echo "  Callback URL:  $CALLBACK_URL"

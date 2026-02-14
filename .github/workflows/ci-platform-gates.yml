@@ -53,8 +53,8 @@ jobs:
               - 'deploy/**'
               - '.github/workflows/**'
             apps:
-              - 'apps/**'
-              - 'packages/**'
+              - 'web/**'
+              - 'pkgs/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
 

@@ -215,7 +215,7 @@ docker compose exec db psql -U odoo -d postgres
 ```ini
 [options]
 # Addon search paths (order matters)
-addons_path = /mnt/extra-addons,/mnt/oca,/usr/lib/python3/dist-packages/odoo/addons
+addons_path = /mnt/extra-addons,/mnt/oca,/usr/lib/python3/dist-pkgs/odoo/addons
 
 # Database connection
 db_host = db                    # Container name

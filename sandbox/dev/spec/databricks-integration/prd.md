@@ -341,7 +341,7 @@ Azure Databricks (analytical workloads)
 
 ## Related Documentation
 
-- **Architecture**: `docs/architecture/DATABRICKS_INTEGRATION.md` (to be created)
+- **Architecture**: `docs/arch/DATABRICKS_INTEGRATION.md` (to be created)
 - **MCP Server**: `mcp/servers/databricks-mcp-server/README.md` (to be created)
 - **IaC**: `infra/databricks/README.md` (to be created)
 - **Runbooks**: `docs/runbooks/DATABRICKS_OPERATIONS.md` (to be created)

@@ -143,7 +143,7 @@ ENV ODOO_RC=/etc/odoo/odoo.conf
 
 # OCA Monorepo Addon Path (Aggregated)
 # Format: Odoo core → IPAI modules (enterprise bridge first) → OCA modules
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
 
 # =============================================================================
 # Health Check
@@ -168,6 +168,6 @@ LABEL org.opencontainers.image.title="Odoo CE 19 + OCA + IPAI Enterprise Bridge 
 # Production Ready
 # =============================================================================
 # Default command: run Odoo with extra-addons path
-CMD ["odoo", "-c", "/etc/odoo/odoo.conf", "--addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca"]
+CMD ["odoo", "-c", "/etc/odoo/odoo.conf", "--addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca"]
 
 EXPOSE 8069 8071 8072

@@ -1,0 +1,149 @@
+name: Refactor Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'addons/**/*.py'
+      - 'scripts/**/*.py'
+      - '.refactor/**'
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  analyze:
+    name: Analyze Code Quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for diff analysis
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install analysis tools
+        run: |
+          pip install --upgrade pip
+          pip install radon pylint mypy coverage jinja2 pyyaml requests
+
+      - name: Get changed Python files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            addons/**/*.py
+            scripts/**/*.py
+
+      - name: Run refactor analysis
+        id: analyze
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          # Create output directory
+          mkdir -p .refactor/output
+
+          # Run analysis on changed files
+          python scripts/refactor/analyze.py \
+            --files "${{ steps.changed-files.outputs.all_changed_files }}" \
+            --output .refactor/output/findings.json \
+            --config .refactor/config.yaml
+
+          # Store findings path
+          echo "findings_path=.refactor/output/findings.json" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Auto-create GitHub issues
+        id: triage
+        if: steps.analyze.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Run triage and create issues
+          python scripts/refactor/triage.py \
+            --findings .refactor/output/findings.json \
+            --config .refactor/config.yaml \
+            --pr ${{ github.event.pull_request.number }} \
+            --auto-issue \
+            --dry-run false
+        continue-on-error: true
+
+      - name: Comment on PR
+        if: steps.analyze.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const findings = JSON.parse(fs.readFileSync('.refactor/output/findings.json', 'utf8'));
+
+            // Count findings by priority
+            const counts = findings.findings.reduce((acc, f) => {
+              acc[f.priority] = (acc[f.priority] || 0) + 1;
+              return acc;
+            }, {});
+
+            // Build comment
+            const body = `## 🔍 Refactor Analysis Results
+
+            | Priority | Count |
+            |----------|-------|
+            | 🚨 Critical | ${counts.critical || 0} |
+            | ⚠️ High | ${counts.high || 0} |
+            | 📋 Medium | ${counts.medium || 0} |
+            | ℹ️ Low | ${counts.low || 0} |
+
+            ${counts.critical > 0 ? '❌ **Merge blocked** due to critical findings.' : '✅ No critical findings.'}
+
+            See auto-created issues for details: [refactor label](https://github.com/${{ github.repository }}/labels/refactor)
+
+            <details>
+            <summary>View findings summary</summary>
+
+            ${findings.findings.slice(0, 5).map(f =>
+              `- **${f.type}** in \`${f.file}:${f.line}\` (${f.priority}): ${f.message}`
+            ).join('\n')}
+
+            ${findings.findings.length > 5 ? `\n_...and ${findings.findings.length - 5} more_` : ''}
+
+            </details>
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Check quality gates
+        if: steps.analyze.outcome == 'success'
+        run: |
+          # Load findings
+          CRITICAL_COUNT=$(jq '.findings | map(select(.priority == "critical")) | length' .refactor/output/findings.json)
+
+          echo "Critical findings: $CRITICAL_COUNT"
+
+          # Block merge if critical findings exist
+          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "❌ Merge blocked: $CRITICAL_COUNT critical findings detected"
+            exit 1
+          fi
+
+          echo "✅ Quality gates passed"
+
+      - name: Upload findings artifact
+        if: always() && steps.analyze.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: refactor-findings
+          path: .refactor/output/
+          retention-days: 30

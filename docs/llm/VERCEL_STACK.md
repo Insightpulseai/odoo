@@ -230,7 +230,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/web/**'
+      - 'web/web/**'
 
 jobs:
   deploy:

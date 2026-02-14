@@ -363,6 +363,6 @@ IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.com
 ## References
 
 - Existing modules: `addons/ipai/ipai_ai_core/`, `addons/ipai/ipai_agent_core/`
-- Design tokens: `packages/ipai-design-tokens/`
+- Design tokens: `pkgs/ipai-design-tokens/`
 - Supabase project: `spdtwktxdalcfigzeqrz`
 - Container names: See `/deploy/docker-compose.yml`

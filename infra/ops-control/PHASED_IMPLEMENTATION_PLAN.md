@@ -893,7 +893,7 @@ npm run dev
 ## 📞 Support & Resources
 
 ### Internal Documentation
-- **Architecture Docs:** `/docs/architecture/`
+- **Architecture Docs:** `/docs/arch/`
 - **API Reference:** `/docs/api/`
 - **Guides:** `/docs/guides/`
 

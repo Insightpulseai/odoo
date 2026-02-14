@@ -531,7 +531,7 @@
       "kind": "App",
       "name": "chatgpt_ipai_ai_studio",
       "ref": {
-        "path": "apps/chatgpt_ipai_ai_studio"
+        "path": "web/chatgpt_ipai_ai_studio"
       },
       "props": {
         "version": "1.0.0",
@@ -543,7 +543,7 @@
       "kind": "App",
       "name": "control-room",
       "ref": {
-        "path": "apps/control-room"
+        "path": "web/control-room"
       },
       "props": {
         "version": "1.0.0",
@@ -555,7 +555,7 @@
       "kind": "App",
       "name": "docs-ai-widget",
       "ref": {
-        "path": "apps/docs-ai-widget"
+        "path": "web/docs-ai-widget"
       },
       "props": {
         "version": "0.1.0",
@@ -567,7 +567,7 @@
       "kind": "App",
       "name": "ipai-control-center-docs",
       "ref": {
-        "path": "apps/ipai-control-center-docs"
+        "path": "web/ipai-control-center-docs"
       },
       "props": {
         "version": "unknown",
@@ -579,7 +579,7 @@
       "kind": "App",
       "name": "mobile",
       "ref": {
-        "path": "apps/mobile"
+        "path": "web/mobile"
       },
       "props": {
         "version": "1.0.0",
@@ -591,7 +591,7 @@
       "kind": "App",
       "name": "pulser-runner",
       "ref": {
-        "path": "apps/pulser-runner"
+        "path": "web/pulser-runner"
       },
       "props": {
         "version": "0.1.0",
@@ -603,7 +603,7 @@
       "kind": "App",
       "name": "web",
       "ref": {
-        "path": "apps/web"
+        "path": "web/web"
       },
       "props": {
         "version": "0.1.0",

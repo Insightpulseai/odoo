@@ -10,15 +10,15 @@
 ```
 Customer-Facing (Vercel)           Admin (Self-Hosted)
 +----------------------------+     +---------------------------+
-| apps/web (Next.js 14)     |     | Odoo CE 19 backend        |
+| web/web (Next.js 14)     |     | Odoo CE 19 backend        |
 |  - Marketing / solutions   |     |  - ERP operations          |
 |  - insightpulseai.com      |     |  - erp.insightpulseai.com  |
 +----------------------------+     +---------------------------+
-| apps/billing-site (Next.js)|     | Odoo website module        |
+| web/billing-site (Next.js)|     | Odoo website module        |
 |  - Paddle billing          |     |  - Coming soon page only   |
 |  - SaaS onboarding         |     |  - ipai_website_coming_soon|
 +----------------------------+     +---------------------------+
-| apps/odoo-frontend-shell   |
+| web/odoo-frontend-shell   |
 |  - Odoo UI extension       |
 |  - sin1 region             |
 +----------------------------+
@@ -28,9 +28,9 @@ Customer-Facing (Vercel)           Admin (Self-Hosted)
 
 | Layer | Technology | Status |
 |-------|-----------|--------|
-| Marketing site | Next.js + Vercel (`apps/web/`) | Active |
-| Billing portal | Next.js + Paddle + Supabase Auth (`apps/billing-site/`) | Active |
-| Odoo frontend shell | Next.js + Odoo XML-RPC (`apps/odoo-frontend-shell/`) | Active |
+| Marketing site | Next.js + Vercel (`web/web/`) | Active |
+| Billing portal | Next.js + Paddle + Supabase Auth (`web/billing-site/`) | Active |
+| Odoo frontend shell | Next.js + Odoo XML-RPC (`web/odoo-frontend-shell/`) | Active |
 | Odoo CMS (website module) | `ipai_website_coming_soon` | Minimal — coming soon page only |
 | Blog | None | Not implemented |
 | E-commerce / Shop | None | Not planned |
@@ -99,7 +99,7 @@ Customer-Facing (Vercel)           Admin (Self-Hosted)
 ## Recommended Adoption Path
 
 ### Phase 1: Current (Done)
-- Marketing site on Vercel (`apps/web/`)
+- Marketing site on Vercel (`web/web/`)
 - Coming soon page via `ipai_website_coming_soon`
 - Backend themes deployed
 
@@ -121,9 +121,9 @@ Customer-Facing (Vercel)           Admin (Self-Hosted)
 
 ```
 vercel.json (root):
-  ipai-web              → apps/web
-  ipai-control-center   → apps/ipai-control-center-docs
-  ipai-control-room     → apps/control-room
+  ipai-web              → web/web
+  ipai-control-center   → web/ipai-control-center-docs
+  ipai-control-room     → web/control-room
 ```
 
 ### Odoo Website Module

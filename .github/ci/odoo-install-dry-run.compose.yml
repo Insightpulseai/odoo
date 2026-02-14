@@ -34,7 +34,7 @@ services:
       bash -lc "
       set -euo pipefail;
       echo '[options]' > /tmp/odoo.conf;
-      echo 'addons_path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/vendor-oca,/mnt/external-src,/mnt/ipai,/mnt/custom' >> /tmp/odoo.conf;
+      echo 'addons_path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/vendor-oca,/mnt/external-src,/mnt/ipai,/mnt/custom' >> /tmp/odoo.conf;
       MODULES=$$(grep -vE '^\s*#' /mnt/install_sets/mega_parity_autogen.txt | sed '/^\s*$$/d' | paste -sd, -);
       echo \"Installing modules: $$(echo \"$$MODULES\" | tr ',' '\n' | wc -l)\";
       odoo-bin -c /tmp/odoo.conf -d odoo --db_host=db --db_user=odoo --db_password=odoo --stop-after-init -u base --log-level=warn;

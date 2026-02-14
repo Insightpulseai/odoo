@@ -22,7 +22,7 @@ This document clarifies the **accurate, legally defensible** positioning of the 
 ### Runtime Proof
 ```
 Odoo Server 18.0-20251121
-Source: docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
+Source: docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
 ```
 
 ### Licensing
@@ -181,7 +181,7 @@ cat addons/oca/ODOO_PIN.txt
 # Output: 18.0
 
 # Runtime proof
-grep "Odoo Server" docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
+grep "Odoo Server" docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
 # Output: Odoo Server 18.0-20251121
 
 # No Enterprise dependencies

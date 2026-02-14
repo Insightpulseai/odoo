@@ -5,8 +5,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - "docs/architecture/**/*.drawio"
-      - "docs/architecture/**/*.png"
+      - "docs/arch/**/*.drawio"
+      - "docs/arch/**/*.png"
       - "scripts/export_drawio.sh"
       - ".github/workflows/diagrams-drawio-enforce.yml"
   workflow_dispatch:

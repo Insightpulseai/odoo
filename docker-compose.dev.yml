@@ -78,7 +78,7 @@ services:
       odoo
       --db_host=postgres --db_port=5432 --db_user=dev --db_password=dev
       --database=odoo_dev
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/mnt/extra-addons/custom
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/mnt/extra-addons/custom
       --dev=reload,qweb,werkzeug,xml
       --log-level=info
     healthcheck:

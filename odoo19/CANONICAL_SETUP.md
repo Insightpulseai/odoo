@@ -47,7 +47,7 @@ db_name = odoo                # Single target database
 ; Disable DB listing/manager endpoints for production safety + agent determinism
 list_db = False
 
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons
 
 log_level = info
 ```

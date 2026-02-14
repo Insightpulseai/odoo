@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-apps/flutter_app}"
+APP_DIR="${APP_DIR:-web/flutter_app}"
 GRADLE_FILE="${GRADLE_FILE:-$APP_DIR/android/app/build.gradle}"
 MIN_TARGET_SDK="${MIN_TARGET_SDK:-35}"
 
@@ -32,7 +32,7 @@ fi
 
 echo "Target SDK: $TARGET_SDK (minimum required: $MIN_TARGET_SDK)"
 
-# Play Store requirement: API 35 for new apps/updates (as of Aug 2025)
+# Play Store requirement: API 35 for new web/updates (as of Aug 2025)
 if (( TARGET_SDK < MIN_TARGET_SDK )); then
     echo "FAIL: targetSdk=$TARGET_SDK < $MIN_TARGET_SDK"
     echo ""

@@ -45,7 +45,7 @@ One or more of:
 - Migration SQL (`db/migrations/*.sql`)
 - Workflow YAML (`.github/workflows/*.yml`)
 - Audit scripts (`scripts/audit/*`)
-- Architecture docs (`docs/architecture/*`)
+- Architecture docs (`docs/arch/*`)
 - Evidence generator (`docs/evidence/*`)
 - n8n workflow JSON (`n8n/workflows/*.json`)
 
@@ -118,7 +118,7 @@ For each section:
 |-----------|------|-----------|
 | Odoo CE + OCA | ERP runtime | `addons/ipai/**`, `docker-compose.yml` |
 | Supabase | Observability SSOT | `db/migrations/*.sql` |
-| Vercel | Frontend + deploys | `apps/web/**`, deploy hooks |
+| Vercel | Frontend + deploys | `web/web/**`, deploy hooks |
 | n8n | Automation fabric | `n8n/workflows/**/*.json` |
 | GitHub | CI + Spec Kit | `.github/workflows/**`, `spec/**` |
 | DigitalOcean | Infrastructure | `infra/do-oca-stack/**` |

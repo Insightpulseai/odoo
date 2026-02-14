@@ -43,14 +43,14 @@ Type these commands:
 ## 📦 Monorepo Structure (Reference)
 
 The `/packages` and `/apps` directories contain the **production monorepo structure** for when you want to:
-1. Deploy as a ChatGPT App (MCP server in `/apps/mcp-server`)
+1. Deploy as a ChatGPT App (MCP server in `/web/mcp-server`)
 2. Share code between web demo and ChatGPT widget
 3. Wire real integrations (Vercel, Supabase, GitHub examples included)
 
 **To use the monorepo:**
 1. Copy `/packages` and `/apps` to a separate repo
 2. Run `pnpm install` from root
-3. Build MCP server: `cd apps/mcp-server && pnpm build`
+3. Build MCP server: `cd web/mcp-server && pnpm build`
 4. Deploy to Railway/Fly.io/Vercel
 5. Connect to ChatGPT
 
@@ -59,11 +59,11 @@ The `/packages` and `/apps` directories contain the **production monorepo struct
 - `/README.md` — Full architecture overview
 - `/QUICKSTART.md` — 2-minute demo → 10-minute deploy guide
 - `/COMMANDS.md` — All natural language commands
-- `/apps/mcp-server/README.md` — Deployment guide
+- `/web/mcp-server/README.md` — Deployment guide
 - Integration examples:
-  - `/apps/mcp-server/src/integrations/vercel.example.ts`
-  - `/apps/mcp-server/src/integrations/supabase.example.ts`
-  - `/apps/mcp-server/src/integrations/github.example.ts`
+  - `/web/mcp-server/src/integrations/vercel.example.ts`
+  - `/web/mcp-server/src/integrations/supabase.example.ts`
+  - `/web/mcp-server/src/integrations/github.example.ts`
 
 ## 🔧 How to Extend
 
@@ -97,7 +97,7 @@ The `/packages` and `/apps` directories contain the **production monorepo struct
 
 Replace mock execution in `/src/core/execute.ts` with real API calls.
 
-See examples in `/apps/mcp-server/src/integrations/`:
+See examples in `/web/mcp-server/src/integrations/`:
 - `vercel.example.ts` — Real Vercel deployments
 - `supabase.example.ts` — Health checks + migrations
 - `github.example.ts` — PR creation + Actions

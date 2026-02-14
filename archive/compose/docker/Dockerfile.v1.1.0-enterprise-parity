@@ -198,7 +198,7 @@ USER odoo
 # -----------------------------------------------------------------------------
 # Extended Addons Path
 # -----------------------------------------------------------------------------
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,\
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,\
 /mnt/extra-addons,\
 /oca-modules/oca-server-auth,\
 /oca-modules/oca-server-tools,\

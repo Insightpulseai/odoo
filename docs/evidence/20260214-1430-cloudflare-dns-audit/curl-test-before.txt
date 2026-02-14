@@ -1,0 +1,20 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     2    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/2 200 
+server: nginx/1.24.0 (Ubuntu)
+date: Sat, 14 Feb 2026 11:06:32 GMT
+content-type: text/html; charset=utf-8
+content-length: 2
+permissions-policy: browsing-topics=()
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+content-security-policy: frame-ancestors https://erp.insightpulseai.net https://scout-mvp.vercel.app http://localhost:8069 http://localhost:3000
+strict-transport-security: max-age=31556926; includeSubDomains
+referrer-policy: strict-origin-when-cross-origin
+vary: Accept-Encoding
+access-control-allow-origin: http://localhost:3000
+access-control-expose-headers: *
+access-control-allow-credentials: true
+vary: Origin
+strict-transport-security: max-age=31536000; includeSubDomains

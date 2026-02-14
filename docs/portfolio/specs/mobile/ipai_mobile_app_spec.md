@@ -566,6 +566,6 @@ git push origin mobile-v1.0.0
 
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [Fastlane Documentation](https://docs.fastlane.tools/)
-- [Supabase Flutter](https://pub.dev/packages/supabase_flutter)
+- [Supabase Flutter](https://pub.dev/pkgs/supabase_flutter)
 - [Google Play Console](https://play.google.com/console)
 - [App Store Connect](https://appstoreconnect.apple.com/)

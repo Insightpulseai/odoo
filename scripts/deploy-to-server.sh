@@ -72,7 +72,7 @@ create_remote_directories() {
     ssh "${REMOTE_USER}@${REMOTE_HOST}" "
         mkdir -p ${REMOTE_BASE_DIR}/scripts
         mkdir -p ${REMOTE_BASE_DIR}/notion-n8n-monthly-close/scripts
-        mkdir -p ${REMOTE_BASE_DIR}/packages/db/sql
+        mkdir -p ${REMOTE_BASE_DIR}/pkgs/db/sql
     " || {
         log_error "Failed to create remote directories"
         exit 1
@@ -102,9 +102,9 @@ copy_files_to_server() {
     }
 
     # Copy SQL schema
-    log_info "  → Copying packages/db/sql/02_health_check_table.sql"
-    scp packages/db/sql/02_health_check_table.sql \
-        "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BASE_DIR}/packages/db/sql/" || {
+    log_info "  → Copying pkgs/db/sql/02_health_check_table.sql"
+    scp pkgs/db/sql/02_health_check_table.sql \
+        "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BASE_DIR}/pkgs/db/sql/" || {
         log_error "Failed to copy SQL schema"
         exit 1
     }
@@ -138,7 +138,7 @@ validate_deployment() {
     ssh "${REMOTE_USER}@${REMOTE_HOST}" "
         test -f ${REMOTE_BASE_DIR}/scripts/check_project_tasks.py && \
         test -f ${REMOTE_BASE_DIR}/notion-n8n-monthly-close/scripts/verify_finance_stack.sh && \
-        test -f ${REMOTE_BASE_DIR}/packages/db/sql/02_health_check_table.sql
+        test -f ${REMOTE_BASE_DIR}/pkgs/db/sql/02_health_check_table.sql
     " || {
         log_error "Some files are missing on server"
         validation_failed=1

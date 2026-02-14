@@ -11,7 +11,7 @@ on:
       - "supabase/migrations/**"
       - "db/**"
       - "sql/**"
-      - "packages/db/**"
+      - "pkgs/db/**"
 
 jobs:
   notify:
@@ -23,7 +23,7 @@ jobs:
       - name: Extract changed files
         id: changes
         run: |
-          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E 'supabase/migrations/|db/|sql/|packages/db/' | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
+          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E 'supabase/migrations/|db/|sql/|pkgs/db/' | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
 
       - name: Trigger Superset pipeline
         if: steps.changes.outputs.files != ''

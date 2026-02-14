@@ -7,7 +7,7 @@ sources:
   - id: vercel_enterprise
     base_url: "https://vercel.com/enterprise"
   - id: supabase_flutter
-    base_url: "https://pub.dev/packages/supabase_flutter"
+    base_url: "https://pub.dev/pkgs/supabase_flutter"
   # Add SAP Joule pages you want to capture. Some pages may be JS-heavy; still crawl what is fetchable.
   - id: sap_joule_root
     base_url: "https://www.sap.com/products/artificial-intelligence.html"

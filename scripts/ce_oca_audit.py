@@ -439,7 +439,7 @@ def classify_module(module_name: str) -> ModuleInfo:
     # Check if it's a CE core module
     if module_name in CE_CORE_MODULES:
         info.classification = "CE"
-        info.found_path = f"/usr/lib/python3/dist-packages/odoo/addons/{module_name}"
+        info.found_path = f"/usr/lib/python3/dist-pkgs/odoo/addons/{module_name}"
         info.installable = "Y"
         info.notes = "Odoo CE core module"
         return info
@@ -750,7 +750,7 @@ def generate_markdown_report(
         f.write(f"- Custom (nested): `{IPAI_NESTED}`\n")
         f.write(f"- OCA: `{EXTERNAL_SRC}`\n")
         f.write(
-            f"- CE Core: `/usr/lib/python3/dist-packages/odoo/addons` (Docker image)\n\n"
+            f"- CE Core: `/usr/lib/python3/dist-pkgs/odoo/addons` (Docker image)\n\n"
         )
 
         f.write("## Module Classification Summary\n\n")
@@ -925,7 +925,7 @@ def generate_json(
                 "custom": str(ADDONS_ROOT),
                 "custom_nested": str(IPAI_NESTED),
                 "oca": str(EXTERNAL_SRC),
-                "ce_core": "/usr/lib/python3/dist-packages/odoo/addons",
+                "ce_core": "/usr/lib/python3/dist-pkgs/odoo/addons",
             },
         },
         "modules": [],

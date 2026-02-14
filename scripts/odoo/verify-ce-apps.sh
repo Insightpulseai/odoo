@@ -80,7 +80,7 @@ for app in "${CE_APPS[@]}"; do
     # For now, check if addon directory exists
     if [[ -d "/home/user/odoo-ce/addons/$app" ]] || \
        [[ -d "/opt/odoo/addons/$app" ]] || \
-       [[ -d "/usr/lib/python3/dist-packages/odoo/addons/$app" ]]; then
+       [[ -d "/usr/lib/python3/dist-pkgs/odoo/addons/$app" ]]; then
         echo -e "  ${GREEN}✓${NC} $app"
         INSTALLED=$((INSTALLED + 1))
     else

@@ -319,7 +319,7 @@ Conduct exhaustive research into proven, battle-tested practices for deploying a
 | **CI/CD Pipeline** | `.github/workflows/cd-production-v2.yml` | Consolidated deployment workflow |
 | **Monitoring Stack Config** | `infra/monitoring/` | Prometheus + Grafana or lightweight alternative |
 | **Backup Automation** | `scripts/backup/` | Automated backup with verification and rotation |
-| **Cost Model** | `docs/architecture/COST_MODEL.md` | Monthly cost breakdown with optimization plan |
+| **Cost Model** | `docs/arch/COST_MODEL.md` | Monthly cost breakdown with optimization plan |
 
 ---
 

@@ -175,7 +175,7 @@ RUN chown -R odoo:odoo /etc/odoo /mnt/odoo
 # -----------------------------------------------------------------------------
 ENV PROFILE=${PROFILE} \
     ODOO_RC=/etc/odoo/odoo.conf \
-    ODOO_ADDONS_PATH=/mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-packages/odoo/addons
+    ODOO_ADDONS_PATH=/mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-pkgs/odoo/addons
 
 # Switch to non-root user
 USER odoo

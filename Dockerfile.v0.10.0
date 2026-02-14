@@ -39,7 +39,7 @@ USER odoo
 
 # Set addons_path to include OCA modules
 # Note: Custom modules will be volume-mounted at /mnt/extra-addons/custom in docker-compose
-ENV ODOO_ADDONS_PATH="/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/purchase-workflow,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-ux"
+ENV ODOO_ADDONS_PATH="/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/purchase-workflow,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-ux"
 
 # Health check endpoint
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=60s \

@@ -160,7 +160,7 @@ This script will:
 **Summary**: Ingestion pipeline for repos/specs/issues → kg.*
 
 **Sources**:
-1. Local filesystem (spec/, addons/, apps/, workflows/, scripts/)
+1. Local filesystem (spec/, addons/, web/, workflows/, scripts/)
 2. GitHub GraphQL API (issues, PRs, repos)
 3. Supabase metadata (schemas, functions, policies)
 
@@ -195,7 +195,7 @@ This script will:
 - Dead worker detection (last_heartbeat > timeout)
 - Auto-restart stale runs
 
-**Files**: `apps/pulser-runner/src/worker.ts`, `apps/pulser-runner/src/executor.ts`
+**Files**: `web/pulser-runner/src/worker.ts`, `web/pulser-runner/src/executor.ts`
 
 #### 5. Ops UI Runboard
 **Labels**: `ui:runboard`, `ui:dashboard`, `ops:control-room`
@@ -212,7 +212,7 @@ This script will:
 - Event timeline per run
 - Worker health status
 
-**Files**: `apps/control-room/src/app/runboard/page.tsx`, `apps/control-room/src/components/RunLane.tsx`
+**Files**: `web/control-room/src/app/runboard/page.tsx`, `web/control-room/src/components/RunLane.tsx`
 
 ---
 

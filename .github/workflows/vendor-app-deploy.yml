@@ -6,7 +6,7 @@ on:
     paths:
       - "integrations/**"
       - "supabase/functions/**"
-      - "apps/**"
+      - "web/**"
       - ".github/workflows/vendor-app-deploy.yml"
       - "scripts/integrations/**"
 

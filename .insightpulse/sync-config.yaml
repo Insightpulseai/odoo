@@ -26,7 +26,7 @@ hierarchy:
     description: "SQL migrations are authoritative for database structure"
 
   code:
-    source: "apps/control-room/src/**/*.ts"
+    source: "web/control-room/src/**/*.ts"
     targets:
       - docs/api-reference.md
     description: "TypeScript code is authoritative for API behavior"
@@ -63,7 +63,7 @@ sync_rules:
 
   # TypeScript → API Docs
   code_to_api_docs:
-    trigger: "apps/control-room/src/app/api/**/*.ts"
+    trigger: "web/control-room/src/app/api/**/*.ts"
     action: "scripts/sync/code-to-api-docs.js"
     output: "docs/api-reference.md"
 

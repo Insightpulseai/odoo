@@ -34,8 +34,8 @@ odoo/                                    # Repo root
 │       ├── server-tools/
 │       └── ...                            # (14 OCA repos total)
 ├── external-src/                          # OCA module source (git submodules/aggregator)
-├── apps/                                  # Node.js applications (19 apps)
-├── packages/                              # Shared packages (3 packages)
+├── web/                                  # Node.js applications (19 apps)
+├── pkgs/                              # Shared packages (3 packages)
 ├── scripts/                               # Automation scripts (90+ scripts)
 ├── deploy/                                # Deployment configurations
 ├── docs/                                  # Documentation
@@ -208,11 +208,11 @@ ipai_finance_ppm/
 
 ```ini
 # /etc/odoo/odoo.conf (inside container)
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/18.0,/mnt/extra-addons
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/var/lib/odoo/addons/18.0,/mnt/extra-addons
 ```
 
 **Resolution Order**:
-1. `/usr/lib/python3/dist-packages/odoo/addons` - Odoo CE core (18.0)
+1. `/usr/lib/python3/dist-pkgs/odoo/addons` - Odoo CE core (18.0)
 2. `/var/lib/odoo/addons/18.0` - Odoo data directory (empty in production)
 3. `/mnt/extra-addons` - Bind mount to `/opt/odoo/repo/addons`
 
@@ -230,7 +230,7 @@ addons_path = /usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/18
 python3 scripts/gen_addons_path.py
 
 # Output (example):
-/usr/lib/python3/dist-packages/odoo/addons,\
+/usr/lib/python3/dist-pkgs/odoo/addons,\
 /var/lib/odoo/addons/18.0,\
 /path/to/repo/addons/ipai,\
 /path/to/repo/addons/oca/account-financial-reporting,\

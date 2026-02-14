@@ -16,7 +16,7 @@ TABLE OF CONTENTS
 
 1. CLAUDE.md
 2. README.md
-3. docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md
+3. docs/arch/EXT_AGENT_TOOL_CAPABILITIES.md
 4. docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md
 5. External LLMs Pack Index (docs/llms/external/)
 
@@ -316,7 +316,7 @@ odoo-ce/
 │   ├── OCA/                   # OCA community modules (12 repos)
 │   └── oca/                   # OCA submodules
 │
-├── apps/                      # Applications (20 apps)
+├── web/                      # Applications (20 apps)
 │   ├── pulser-runner/         # Automation runner
 │   ├── control-room/          # Control plane UI
 │   ├── control-room-api/      # Control plane API
@@ -325,7 +325,7 @@ odoo-ce/
 │   ├── web/                   # Web frontend
 │   └── ...
 │
-├── packages/                  # Shared packages (3 packages)
+├── pkgs/                  # Shared packages (3 packages)
 │   ├── agent-core/            # Core agent framework
 │   ├── github-app/            # GitHub App integration
 │   └── ipai-design-tokens/    # Design system tokens
@@ -1473,7 +1473,7 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 
 
 ================================================================================
-FILE: docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md
+FILE: docs/arch/EXT_AGENT_TOOL_CAPABILITIES.md
 ================================================================================
 
 # External Agent/Tool Capabilities (Stack Fit)
@@ -1657,7 +1657,7 @@ One or more of:
 - Migration SQL (`db/migrations/*.sql`)
 - Workflow YAML (`.github/workflows/*.yml`)
 - Audit scripts (`scripts/audit/*`)
-- Architecture docs (`docs/architecture/*`)
+- Architecture docs (`docs/arch/*`)
 - Evidence generator (`docs/evidence/*`)
 - n8n workflow JSON (`n8n/workflows/*.json`)
 
@@ -1730,7 +1730,7 @@ For each section:
 |-----------|------|-----------|
 | Odoo CE + OCA | ERP runtime | `addons/ipai/**`, `docker-compose.yml` |
 | Supabase | Observability SSOT | `db/migrations/*.sql` |
-| Vercel | Frontend + deploys | `apps/web/**`, deploy hooks |
+| Vercel | Frontend + deploys | `web/web/**`, deploy hooks |
 | n8n | Automation fabric | `n8n/workflows/**/*.json` |
 | GitHub | CI + Spec Kit | `.github/workflows/**`, `spec/**` |
 | DigitalOcean | Infrastructure | `infra/do-oca-stack/**` |

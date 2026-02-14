@@ -1,7 +1,7 @@
 version: 1
 odoo_version: "19"
 definition:
-  # IMPORTANT: We assume all EE "apps/modules" have OCA-equivalent coverage
+  # IMPORTANT: We assume all EE "web/modules" have OCA-equivalent coverage
   # and therefore do NOT track them as parity goals. We track EE-only *service/platform* surfaces.
 
 surfaces:

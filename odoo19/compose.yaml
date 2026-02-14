@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: odoo_dev
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD_FILE: /run/secrets/postgresql_password
       PGDATA: /var/lib/postgresql/data/pgdata

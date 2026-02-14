@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-IOS_DIR="${IOS_DIR:-apps/flutter_app/ios}"
+IOS_DIR="${IOS_DIR:-web/flutter_app/ios}"
 PBXPROJ="${PBXPROJ:-$IOS_DIR/Runner.xcodeproj/project.pbxproj}"
 INFO_PLIST="${INFO_PLIST:-$IOS_DIR/Runner/Info.plist}"
 

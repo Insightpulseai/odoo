@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/ipai-design-tokens/**'
-      - 'apps/ipai-chatgpt-app/**'
+      - 'pkgs/ipai-design-tokens/**'
+      - 'web/ipai-chatgpt-app/**'
       - 'addons/ipai_ask_ai_chatter/**'
       - 'addons/ipai_web_theme_chatgpt/**'
       - 'scripts/sync-tokens.sh'
@@ -23,17 +23,17 @@ jobs:
       - name: Check token files exist
         run: |
           echo "Checking design tokens package..."
-          test -f packages/ipai-design-tokens/tokens.css || exit 1
-          test -f packages/ipai-design-tokens/tokens.scss || exit 1
-          test -f packages/ipai-design-tokens/tailwind.preset.js || exit 1
-          test -f packages/ipai-design-tokens/package.json || exit 1
+          test -f pkgs/ipai-design-tokens/tokens.css || exit 1
+          test -f pkgs/ipai-design-tokens/tokens.scss || exit 1
+          test -f pkgs/ipai-design-tokens/tailwind.preset.js || exit 1
+          test -f pkgs/ipai-design-tokens/package.json || exit 1
           echo "✓ All token files present"
 
       - name: Validate tokens.css syntax
         run: |
           # Basic CSS validation - check for balanced braces
-          OPEN=$(grep -o '{' packages/ipai-design-tokens/tokens.css | wc -l)
-          CLOSE=$(grep -o '}' packages/ipai-design-tokens/tokens.css | wc -l)
+          OPEN=$(grep -o '{' pkgs/ipai-design-tokens/tokens.css | wc -l)
+          CLOSE=$(grep -o '}' pkgs/ipai-design-tokens/tokens.css | wc -l)
           if [ "$OPEN" -ne "$CLOSE" ]; then
             echo "ERROR: Unbalanced braces in tokens.css"
             exit 1
@@ -102,20 +102,20 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: apps/ipai-chatgpt-app/web/pnpm-lock.yaml
+          cache-dependency-path: web/ipai-chatgpt-app/web/pnpm-lock.yaml
 
       - name: Install web dependencies
-        working-directory: apps/ipai-chatgpt-app/web
+        working-directory: web/ipai-chatgpt-app/web
         run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Build widget
-        working-directory: apps/ipai-chatgpt-app/web
+        working-directory: web/ipai-chatgpt-app/web
         run: pnpm build
 
       - name: Check dist output
         run: |
-          test -f apps/ipai-chatgpt-app/web/dist/index.html || exit 1
-          SIZE=$(wc -c < apps/ipai-chatgpt-app/web/dist/index.html)
+          test -f web/ipai-chatgpt-app/web/dist/index.html || exit 1
+          SIZE=$(wc -c < web/ipai-chatgpt-app/web/dist/index.html)
           echo "Widget size: $SIZE bytes"
           # Warn if over 500KB
           if [ "$SIZE" -gt 512000 ]; then
@@ -135,9 +135,9 @@ jobs:
           node-version: '20'
 
       - name: Check server.js syntax
-        run: node --check apps/ipai-chatgpt-app/server/server.js
+        run: node --check web/ipai-chatgpt-app/server/server.js
 
       - name: Check package.json valid
         run: |
-          node -e "JSON.parse(require('fs').readFileSync('apps/ipai-chatgpt-app/server/package.json'))"
+          node -e "JSON.parse(require('fs').readFileSync('web/ipai-chatgpt-app/server/package.json'))"
           echo "✓ Server package.json valid"

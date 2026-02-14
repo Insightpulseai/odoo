@@ -55,10 +55,10 @@
 **Duration**: 2 days
 
 **Tasks**:
-- [ ] Create agent directory: `apps/devops-agent/`
+- [ ] Create agent directory: `web/devops-agent/`
 - [ ] Setup Python project structure:
   ```
-  apps/devops-agent/
+  web/devops-agent/
   ├── src/
   │   ├── skills/          # 10 skill implementations
   │   ├── tools/           # Tool wrappers
@@ -573,7 +573,7 @@ def get_logs(service: str, filter: str = None):
 ## File Structure
 
 ```
-apps/devops-agent/
+web/devops-agent/
 ├── src/
 │   ├── skills/
 │   │   ├── __init__.py

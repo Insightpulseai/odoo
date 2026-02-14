@@ -831,8 +831,8 @@ for log in audit_logs:
 ## Further Reading
 
 **Architecture Documentation:**
-- `/docs/architecture/OCR_PIPELINE.md` - OCR pipeline flow
-- `/docs/architecture/OCR_ROUTING_MATRIX.md` - OCR routing logic
+- `/docs/arch/OCR_PIPELINE.md` - OCR pipeline flow
+- `/docs/arch/OCR_ROUTING_MATRIX.md` - OCR routing logic
 
 **Module Documentation:**
 - `/addons/ipai/ipai_expense_ocr/README.md` - Expense OCR module

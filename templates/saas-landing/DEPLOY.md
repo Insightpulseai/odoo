@@ -82,7 +82,7 @@ ZOHO_SMTP_PASSWORD=ka8EnXL4ttS9
 ### Hard Guardrail
 
 Pre-commit hook (`.githooks/pre-commit`) blocks commits with:
-- `apps/alpha-browser/`
+- `web/alpha-browser/`
 - `.claude/`
 - `pnpm-lock.yaml`
 - `pnpm-workspace.yaml`
@@ -91,7 +91,7 @@ Pre-commit hook (`.githooks/pre-commit`) blocks commits with:
 **Test it**:
 ```bash
 # Try to stage parent repo file (should fail)
-git add ../../apps/alpha-browser/package.json
+git add ../../web/alpha-browser/package.json
 git commit -m "test"
 # Expected: ❌ Pre-commit blocked
 ```

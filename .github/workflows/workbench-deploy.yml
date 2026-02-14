@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "apps/control-room/**"
-      - "apps/control-room-api/**"
+      - "web/control-room/**"
+      - "web/control-room-api/**"
       - "supabase/**"
       - "scripts/**"
       - ".github/workflows/workbench-deploy.yml"
