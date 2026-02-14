@@ -13,7 +13,8 @@ SHELL := /bin/bash
 .PHONY: help up down ps logs health init update restart config \
         db-shell db-health redis-health odoo-shell \
         tools ipai-guard parity-seed parity-seed-check \
-        gen-addons-path render-odoo-conf addons-path-check
+        gen-addons-path render-odoo-conf addons-path-check \
+        chore lint
 
 # ---------------------------------------------------------------------------
 # Stack lifecycle
@@ -110,3 +111,13 @@ render-odoo-conf: ## Render odoo.conf from template + generated addons-path
 addons-path-check: ## CI gate: fail if addons-path is stale
 	./scripts/gen_addons_path.sh
 	git diff --exit-code -- infra/odoo/addons-path.txt infra/odoo/addons-path.env
+
+# ---------------------------------------------------------------------------
+# Repo chores (hygiene + drift gates)
+# ---------------------------------------------------------------------------
+
+chore: ## Run all repo chores (regen + lint + deprecated check)
+	./scripts/chore_repo.sh
+
+lint: ## Run unified lint (python + yaml + markdown)
+	./scripts/lint_all.sh
