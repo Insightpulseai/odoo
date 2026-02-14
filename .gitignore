@@ -228,3 +228,8 @@ infra/cloudflare/**/terraform.tfvars
 *.secrets.local
 *.secrets.yaml
 docs/evidence/**/*.txt
+
+# Scratch directory (temporary/work files not for CI)
+scratch/
+*.log
+*.pid

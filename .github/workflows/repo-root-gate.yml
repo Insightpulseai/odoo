@@ -1,0 +1,41 @@
+name: Repo Root Gate
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+  push:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+jobs:
+  root-gate:
+    name: Enforce Root Allowlist
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run repo root gate
+        run: |
+          python scripts/repo_root_gate.py
+
+      - name: Fail if violations found
+        if: failure()
+        run: |
+          echo "❌ Repo root gate failed"
+          echo ""
+          echo "Root directory contains files/folders that should be moved:"
+          echo "  - Deployment docs → docs/runbooks/deploy/"
+          echo "  - Scripts → scripts/deploy/ or scripts/verify/"
+          echo "  - Reports → reports/parity/"
+          echo "  - Data files → data/"
+          echo "  - Artifacts → artifacts/"
+          echo ""
+          echo "See scripts/repo_root_gate.py for the full allowlist"
+          exit 1
