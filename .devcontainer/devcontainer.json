@@ -89,6 +89,7 @@
         "anthropic.claude-code"
       ],
       "settings": {
+        "containers.composeCommand": "docker compose",
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.languageServer": "Pylance",
         "[python]": {

@@ -1,3 +1,23 @@
+# =============================================================================
+# Sandbox Development Stack - Alternative Quick Start
+# =============================================================================
+# Purpose: Lightweight Odoo development stack for sandbox testing and quick
+#          experiments without the full extended stack.
+#
+# When to use:
+#   - Quick Odoo module testing
+#   - Isolated OCA module experiments
+#   - Lightweight development without Superset/n8n/MCP
+#
+# Primary SSOT: ../../docker-compose.yml (use that for production-like dev)
+#
+# Usage:
+#   cd sandbox/dev
+#   docker compose up -d
+#
+# Network: ipai-net (shared with root compose files)
+# =============================================================================
+
 name: ipai-odoo-dev
 
 x-odoo-env: &odoo_env
@@ -47,7 +67,7 @@ services:
         --db_user="${DB_USER}"
         --db_password="${DB_PASSWORD}"
         --db-filter="${ODOO_DB_FILTER}"
-        --addons-path="/usr/lib/python3/dist-pkgs/odoo/addons,/workspaces/odoo/addons/ipai,/workspaces/odoo/oca-parity/account-analytic,/workspaces/odoo/oca-parity/account-budgeting,/workspaces/odoo/oca-parity/account-consolidation,/workspaces/odoo/oca-parity/account-financial-reporting,/workspaces/odoo/oca-parity/account-financial-tools,/workspaces/odoo/oca-parity/account-reconcile,/workspaces/odoo/oca-parity/currency,/workspaces/odoo/oca-parity/dms,/workspaces/odoo/oca-parity/helpdesk,/workspaces/odoo/oca-parity/hr,/workspaces/odoo/oca-parity/hr-holidays,/workspaces/odoo/oca-parity/manufacture,/workspaces/odoo/oca-parity/mis-builder,/workspaces/odoo/oca-parity/payroll,/workspaces/odoo/oca-parity/project,/workspaces/odoo/oca-parity/project-reporting,/workspaces/odoo/oca-parity/queue,/workspaces/odoo/oca-parity/sale-workflow,/workspaces/odoo/oca-parity/server-env,/workspaces/odoo/oca-parity/server-tools,/workspaces/odoo/oca-parity/server-ux,/workspaces/odoo/oca-parity/social,/workspaces/odoo/oca-parity/timesheet,/workspaces/odoo/oca-parity/web"
+        --addons-path="/usr/lib/python3/dist-pkgs/odoo/addons,/workspaces/odoo/addons/ipai,/workspaces/odoo/third_party/oca"
       '
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:8069/web/login >/dev/null || exit 1"]
@@ -69,3 +89,8 @@ services:
 volumes:
   db-data:
   odoo-web-data:
+
+networks:
+  default:
+    name: ipai-network
+    external: true  # Use shared network from root docker-compose.yml (ipai-net)

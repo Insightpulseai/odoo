@@ -1,36 +1,37 @@
-# IPAI Dev Workspace
+# IPAI Dev Workspace - Extended Stack
 # Unified development stack: Odoo + Superset + n8n + MCP Gateway
 #
-# Usage:
-#   docker compose -f docker-compose.dev.yml up -d
-#   docker compose -f docker-compose.dev.yml logs -f odoo
+# IMPORTANT: This file extends docker-compose.yml (root SSOT)
+#            Use together: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 #
 # Endpoints:
 #   - Odoo:     http://localhost:8069
 #   - Superset: http://localhost:8088 (admin/admin)
 #   - n8n:      http://localhost:5678
 #   - MCP:      http://localhost:3333 (placeholder)
-#   - Postgres: localhost:5432 (dev/dev)
+#   - Postgres: localhost:5432 (uses env vars from .env)
 #   - Redis:    localhost:6379
+#
+# Network: All services on ipai-net (shared with docker-compose.yml)
 
 services:
   # ===========================================
   # DATABASE LAYER
   # ===========================================
-  postgres:
+  db:
     image: postgres:16
     container_name: ipai-postgres-dev
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
-      POSTGRES_DB: dev
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      POSTGRES_DB: ${POSTGRES_DB:-odoo_dev}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./dev/postgres-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dev"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo}"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -57,13 +58,13 @@ services:
     image: odoo:18
     container_name: ipai-odoo-dev
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     environment:
-      HOST: postgres
+      HOST: db
       PORT: 5432
-      USER: dev
-      PASSWORD: dev
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
     ports:
       - "8069:8069"
       - "8072:8072"  # Longpolling
@@ -76,8 +77,8 @@ services:
       - odoo_addons:/mnt/extra-addons/custom
     command: >
       odoo
-      --db_host=postgres --db_port=5432 --db_user=dev --db_password=dev
-      --database=odoo_dev
+      --db_host=db --db_port=5432 --db_user=${POSTGRES_USER:-odoo} --db_password=${POSTGRES_PASSWORD:-odoo}
+      --database=${POSTGRES_DB:-odoo_dev}
       --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/mnt/extra-addons/custom
       --dev=reload,qweb,werkzeug,xml
       --log-level=info
@@ -96,15 +97,15 @@ services:
     image: apache/superset:latest
     container_name: ipai-superset-dev
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
       SUPERSET_ENV: development
       SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
-      SUPERSET_SECRET_KEY: dev-secret-key-change-in-prod
-      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://dev:dev@postgres:5432/superset
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-dev-secret-key-change-in-prod}
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://${POSTGRES_USER:-odoo}:${POSTGRES_PASSWORD:-odoo}@db:5432/superset
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
@@ -134,7 +135,7 @@ services:
     image: n8nio/n8n:latest
     container_name: ipai-n8n-dev
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
     environment:
       - N8N_HOST=localhost
@@ -145,16 +146,16 @@ services:
       - GENERIC_TIMEZONE=Asia/Manila
       # Database
       - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_HOST=db
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=dev
-      - DB_POSTGRESDB_USER=dev
-      - DB_POSTGRESDB_PASSWORD=dev
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-odoo_dev}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-odoo}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-odoo}
       - DB_POSTGRESDB_SCHEMA=n8n
       # Security
       - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-admin}
     ports:
       - "5678:5678"
     volumes:
@@ -184,7 +185,7 @@ services:
       - ODOO_URL=http://odoo:8069
       - SUPERSET_URL=http://superset:8088
       - N8N_URL=http://n8n:5678
-      - POSTGRES_URL=postgresql://dev:dev@postgres:5432/odoo_dev
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-odoo}:${POSTGRES_PASSWORD:-odoo}@db:5432/${POSTGRES_DB:-odoo_dev}
     ports:
       - "3333:3333"
     command: >
@@ -232,4 +233,5 @@ volumes:
 
 networks:
   default:
-    name: ipai-dev-network
+    name: ipai-network
+    external: true  # Use network created by docker-compose.yml (ipai-net)
