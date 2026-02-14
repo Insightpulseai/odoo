@@ -1,0 +1,108 @@
+name: Service Health Check (All Services)
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Probe mode'
+        required: true
+        default: 'edge'
+        type: choice
+        options:
+          - edge
+          - all
+      scope:
+        description: 'Which services to check'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+          - all
+
+jobs:
+  edge-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run health checks
+        id: health
+        continue-on-error: true
+        env:
+          MODE: ${{ inputs.mode || 'edge' }}
+          SCOPE: ${{ inputs.scope || 'production' }}
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          HEALTHCHECK_UA: healthcheck/github-actions
+        run: |
+          chmod +x scripts/verify-service-health.sh
+          scripts/verify-service-health.sh \
+            --mode "$MODE" \
+            --"$SCOPE" \
+            2>&1 | tee health-report.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate JSON report
+        if: always()
+        env:
+          MODE: ${{ inputs.mode || 'edge' }}
+          SCOPE: ${{ inputs.scope || 'production' }}
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          HEALTHCHECK_UA: healthcheck/github-actions
+        run: |
+          scripts/verify-service-health.sh \
+            --mode "$MODE" \
+            --"$SCOPE" \
+            --json > health-report.json 2>/dev/null || true
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-health-${{ github.run_id }}
+          path: |
+            health-report.txt
+            health-report.json
+          retention-days: 30
+
+      - name: Post summary
+        if: always()
+        run: |
+          {
+            echo "## Service Health Check"
+            echo ""
+            echo "**Mode:** ${{ inputs.mode || 'edge' }} | **Scope:** ${{ inputs.scope || 'production' }}"
+            echo "**Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            echo '```'
+            cat health-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Notify on failure
+        if: steps.health.outputs.exit_code != '0'
+        env:
+          N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+        run: |
+          if [ -n "${N8N_WEBHOOK_URL:-}" ]; then
+            curl -sS -X POST "$N8N_WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"source\": \"github_actions\",
+                \"workflow\": \"service-health-check\",
+                \"mode\": \"${{ inputs.mode || 'edge' }}\",
+                \"scope\": \"${{ inputs.scope || 'production' }}\",
+                \"status\": \"DEGRADED\",
+                \"run_url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\",
+                \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"
+              }"
+          fi
+
+      - name: Fail if checks failed
+        if: steps.health.outputs.exit_code != '0'
+        run: exit 1

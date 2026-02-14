@@ -49,3 +49,12 @@ module "dns_records" {
     value    = "TODO_FROM_ZOHO_ADMIN"
   }
 }
+
+# ─── Health check WAF bypass ─────────────────────────────────────────────────
+# Allows CI and monitoring to probe /healthz, /health, /web/health, /api/health
+# through Cloudflare WAF when both UA and token match.
+module "healthcheck_waf_bypass" {
+  source            = "../../modules/healthcheck-waf-bypass"
+  zone_id           = data.cloudflare_zone.zone.id
+  healthcheck_token = var.healthcheck_token
+}
