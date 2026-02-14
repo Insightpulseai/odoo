@@ -6,3 +6,7 @@ zone_name = "insightpulseai.com"
 
 # Your canonical origin (droplet/LB)
 origin_ipv4 = "178.128.112.214"
+
+# Shared secret for health check WAF bypass
+# Must match HEALTHCHECK_TOKEN in GitHub Actions secrets
+healthcheck_token = "GENERATE_WITH_openssl_rand_hex_32"

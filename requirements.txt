@@ -9,7 +9,7 @@
 
 # ----- Pre-commit & Quality Tools -----
 pre-commit==3.7.1
-black==24.4.2
+black==26.1.0
 isort==5.13.2
 flake8==7.0.0
 yamllint==1.35.1
@@ -47,13 +47,13 @@ sphinx-rtd-theme==2.0.0
 # ----- Core Scripting -----
 python-dotenv==1.0.1
 pydantic==2.9.2
-pydantic-settings==2.5.2
+pydantic-settings==2.12.0
 requests==2.32.3
 httpx==0.27.2
 tenacity==9.0.0
 rich==13.9.4
 pyyaml==6.0.2
-jinja2==3.1.5
+jinja2==3.1.6
 
 # ----- Postgres / Supabase DB Ops -----
 psycopg[binary]==3.2.3

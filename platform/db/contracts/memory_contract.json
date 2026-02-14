@@ -1,0 +1,20 @@
+{
+  "name": "memory",
+  "supported_versions": ["v1"],
+  "schema": "memory",
+  "description": "Agent long-term + semantic memory primitives. All agents must use memory.* tables; no external persistence.",
+  "tables": [
+    "memory.items",
+    "memory.sessions",
+    "memory.semantic_cache"
+  ],
+  "functions": [
+    "memory.search_items"
+  ],
+  "notes": [
+    "Requires pgvector extension",
+    "Vector dimension: 1536 (OpenAI-compatible, adjust if embedder differs)",
+    "RLS enabled on all tables; wire policies to tenant/user claims",
+    "Migration: platform/db/migrations/20260215_000001_memory_v1.sql"
+  ]
+}
