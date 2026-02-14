@@ -72,8 +72,8 @@ rg_replace() {
 
   if "${rg_args[@]}" -l "$from" >/dev/null 2>&1; then
     "${rg_args[@]}" -l "$from" | while IFS= read -r f; do
-      # portable sed (macOS/BSD): use perl instead
-      perl -0777 -i -pe "s/\Q${from}\E/${to}/g" "$f"
+      # portable sed (macOS/BSD): use perl with # delimiter to avoid / conflicts
+      perl -0777 -i -pe "s#\Q${from}\E#${to}#g" "$f"
     done
   else
     log "no matches for '${from}'"
