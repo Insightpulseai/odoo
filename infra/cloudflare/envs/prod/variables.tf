@@ -13,3 +13,9 @@ variable "origin_ipv4" {
   type        = string
   description = "IPv4 address for A records (e.g. 178.128.112.214)"
 }
+
+variable "healthcheck_token" {
+  type        = string
+  sensitive   = true
+  description = "Shared secret for health check WAF bypass (X-Healthcheck-Token header)"
+}

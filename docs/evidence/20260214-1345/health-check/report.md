@@ -1,65 +1,87 @@
 # Service Health Check Report
 
-**Date:** 2026-02-14 13:45 UTC
-**Environment:** Claude Code Web (sandboxed — no outbound network)
+**Date:** 2026-02-14
 **Script:** `scripts/verify-service-health.sh`
 
-## Result
+## Architecture
 
-Health checks could not be executed from this environment. Claude Code Web blocks all outbound HTTP/HTTPS connections. This is a platform constraint, not a service issue.
+```
+┌─────────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Claude Web      │     │  GitHub CI   │     │  DO Droplet  │
+│  (authors IaC)   │     │  (edge probe)│     │  (origin)    │
+│                  │     │              │     │              │
+│  - Terraform     │     │  --mode edge │     │  --mode      │
+│  - Scripts       │────▶│  + UA header │────▶│    origin    │
+│  - Workflows     │     │  + Token hdr │     │  127.0.0.1:* │
+└─────────────────┘     └──────────────┘     └──────────────┘
+                               │
+                        Cloudflare WAF
+                        (bypass rule:
+                         UA + token +
+                         health paths)
+```
 
-## Services Registered (from `infra/dns/subdomain-registry.yaml`)
+## Execution Surfaces
 
-### Production (7 active)
+| Surface | Purpose | Mode |
+|---------|---------|------|
+| DO Droplet (178.128.112.214) | Origin health — authoritative | `--mode origin` |
+| GitHub Actions CI | Edge health — through Cloudflare | `--mode edge` |
+| Claude Code Web | Authors the system, never executes probes | N/A |
 
-| # | Service | FQDN | Port | Health Endpoint | Status |
-|---|---------|------|------|-----------------|--------|
-| 1 | Odoo CE 19.0 | erp.insightpulseai.com | 8069 | /web/login | Unknown |
-| 2 | n8n Automation | n8n.insightpulseai.com | 5678 | /healthz | Unknown |
-| 3 | PaddleOCR | ocr.insightpulseai.com | 8080 | /health | Unknown |
-| 4 | Auth Service | auth.insightpulseai.com | 3000 | /.well-known/openid-configuration | Unknown |
-| 5 | MCP Gateway | mcp.insightpulseai.com | CNAME | /healthz | Unknown |
-| 6 | Apache Superset | superset.insightpulseai.com | 8088 | /health | Unknown |
-| 7 | WWW Redirect | www.insightpulseai.com | 80 | / | Unknown |
+## Services (from `infra/dns/subdomain-registry.yaml`)
 
-### Staging (7 active)
+### Production (6 probed)
 
-| # | Service | FQDN | Health Endpoint |
-|---|---------|------|-----------------|
-| 1 | stage-erp | stage-erp.insightpulseai.com | /web/login |
-| 2 | stage-n8n | stage-n8n.insightpulseai.com | /healthz |
-| 3 | stage-ocr | stage-ocr.insightpulseai.com | /health |
-| 4 | stage-auth | stage-auth.insightpulseai.com | /.well-known/openid-configuration |
-| 5 | stage-mcp | stage-mcp.insightpulseai.com | /healthz |
-| 6 | stage-superset | stage-superset.insightpulseai.com | /health |
-| 7 | stage-api | stage-api.insightpulseai.com | /api/health |
+| Service | Origin Port | Health Path | Edge FQDN |
+|---------|-------------|-------------|-----------|
+| erp | 8069 | /web/health | erp.insightpulseai.com |
+| n8n | 5678 | /healthz | n8n.insightpulseai.com |
+| ocr | 8080 | /health | ocr.insightpulseai.com |
+| auth | 3000 | /.well-known/openid-configuration | auth.insightpulseai.com |
+| superset | 8088 | /health | superset.insightpulseai.com |
+| mcp | CNAME (edge only) | /healthz | mcp.insightpulseai.com |
 
-### Planned (not yet deployed)
+### Staging (7 probed)
 
-| Service | FQDN | Port |
-|---------|------|------|
-| API Gateway | api.insightpulseai.com | 8000 |
+| Service | Origin Port | Health Path | Edge FQDN |
+|---------|-------------|-------------|-----------|
+| stage-erp | 8069 | /web/health | stage-erp.insightpulseai.com |
+| stage-n8n | 5678 | /healthz | stage-n8n.insightpulseai.com |
+| stage-ocr | 8080 | /health | stage-ocr.insightpulseai.com |
+| stage-auth | 3000 | /.well-known/openid-configuration | stage-auth.insightpulseai.com |
+| stage-superset | 8088 | /health | stage-superset.insightpulseai.com |
+| stage-mcp | CNAME (edge only) | /healthz | stage-mcp.insightpulseai.com |
+| stage-api | 8000 | /api/health | stage-api.insightpulseai.com |
 
-### Deprecated
+## WAF Bypass Design
 
-| Service | Removed |
-|---------|---------|
-| Affine | 2026-02-09 |
+Cloudflare WAF bypass rule (Terraform, narrowly scoped):
+
+- **Condition 1:** `User-Agent` contains `healthcheck/`
+- **Condition 2:** `X-Healthcheck-Token` equals shared secret
+- **Condition 3:** Path is one of: `/healthz`, `/health`, `/web/health`, `/api/health`, `/.well-known/openid-configuration`
+- **Action:** Skip current WAF ruleset (no blanket IP bypass)
 
 ## Changes Shipped
 
-1. **`scripts/verify-service-health.sh`** — Rewritten to cover all 14 active subdomains (was only 6). Added `--staging`, `--all`, `--json`, `--quiet` flags. Added DNS resolution checks and deprecated domain verification.
-2. **`.github/workflows/service-health-check.yml`** — New CI workflow running every 4 hours with manual dispatch, JSON artifact output, n8n webhook alerting on failures.
+1. **`scripts/verify-service-health.sh`** — Full rewrite with `--mode origin|edge|all`, declarative SERVICES array, token-authenticated edge probes.
+2. **`.github/workflows/service-health-check.yml`** — CI runs edge checks every 15min with `HEALTHCHECK_TOKEN` + `HEALTHCHECK_UA`.
+3. **`infra/cloudflare/modules/healthcheck-waf-bypass/`** — Terraform module for narrowly-scoped WAF skip rule.
+4. **`infra/cloudflare/envs/prod/main.tf`** — Wired WAF bypass module.
+5. **`infra/cloudflare/envs/prod/variables.tf`** — Added `healthcheck_token` variable.
 
-## How to Run
+## Setup Required
 
-```bash
-# From the DO droplet or any host with network access:
-./scripts/verify-service-health.sh              # production only (default)
-./scripts/verify-service-health.sh --all        # production + staging
-./scripts/verify-service-health.sh --staging    # staging only
-./scripts/verify-service-health.sh --json       # JSON output for automation
-./scripts/verify-service-health.sh --all --json # everything, machine-readable
-```
+1. Generate token: `openssl rand -hex 32`
+2. Set in Terraform: `healthcheck_token` in `terraform.tfvars`
+3. Set in GitHub: `HEALTHCHECK_TOKEN` secret
+4. Apply Terraform: `cd infra/cloudflare/envs/prod && terraform apply`
 
-Or trigger via GitHub Actions: **Actions → Service Health Check (All Services) → Run workflow**
+## Verification Checklist
+
+- [ ] From droplet: `--mode origin` returns pass for all services
+- [ ] From GitHub Actions: `--mode edge` returns pass (no 403)
+- [ ] WAF bypass scoped to health paths + token only
+- [ ] No other endpoints become reachable as a side effect
+- [ ] Failures produce actionable output (service, URL, status)

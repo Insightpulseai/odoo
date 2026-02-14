@@ -2,14 +2,21 @@ name: Service Health Check (All Services)
 
 on:
   schedule:
-    # Every 4 hours
-    - cron: '0 */4 * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
+      mode:
+        description: 'Probe mode'
+        required: true
+        default: 'edge'
+        type: choice
+        options:
+          - edge
+          - all
       scope:
         description: 'Which services to check'
         required: true
-        default: 'all'
+        default: 'production'
         type: choice
         options:
           - production
@@ -17,29 +24,43 @@ on:
           - all
 
 jobs:
-  health-check:
+  edge-health:
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run service health checks
+      - name: Run health checks
         id: health
         continue-on-error: true
+        env:
+          MODE: ${{ inputs.mode || 'edge' }}
+          SCOPE: ${{ inputs.scope || 'production' }}
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          HEALTHCHECK_UA: healthcheck/github-actions
         run: |
           chmod +x scripts/verify-service-health.sh
-          SCOPE="${{ inputs.scope || 'all' }}"
-          scripts/verify-service-health.sh --${SCOPE} 2>&1 | tee health-report.txt
+          scripts/verify-service-health.sh \
+            --mode "$MODE" \
+            --"$SCOPE" \
+            2>&1 | tee health-report.txt
           echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Generate JSON report
         if: always()
+        env:
+          MODE: ${{ inputs.mode || 'edge' }}
+          SCOPE: ${{ inputs.scope || 'production' }}
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          HEALTHCHECK_UA: healthcheck/github-actions
         run: |
-          SCOPE="${{ inputs.scope || 'all' }}"
-          scripts/verify-service-health.sh --${SCOPE} --json > health-report.json 2>/dev/null || true
+          scripts/verify-service-health.sh \
+            --mode "$MODE" \
+            --"$SCOPE" \
+            --json > health-report.json 2>/dev/null || true
 
-      - name: Upload health report
+      - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -52,14 +73,16 @@ jobs:
       - name: Post summary
         if: always()
         run: |
-          echo "## Service Health Check" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Scope:** ${{ inputs.scope || 'all' }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "**Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          cat health-report.txt >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Service Health Check"
+            echo ""
+            echo "**Mode:** ${{ inputs.mode || 'edge' }} | **Scope:** ${{ inputs.scope || 'production' }}"
+            echo "**Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            echo '```'
+            cat health-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Notify on failure
         if: steps.health.outputs.exit_code != '0'
@@ -72,8 +95,9 @@ jobs:
               -d "{
                 \"source\": \"github_actions\",
                 \"workflow\": \"service-health-check\",
+                \"mode\": \"${{ inputs.mode || 'edge' }}\",
+                \"scope\": \"${{ inputs.scope || 'production' }}\",
                 \"status\": \"DEGRADED\",
-                \"scope\": \"${{ inputs.scope || 'all' }}\",
                 \"run_url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\",
                 \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"
               }"
