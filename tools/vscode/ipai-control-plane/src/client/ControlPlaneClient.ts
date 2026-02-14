@@ -46,6 +46,7 @@ export interface QuickFix {
 }
 
 export interface EvidenceBundle {
+  bundle_id: string;
   timestamp: string;
   operation: string;
   target_env: string;

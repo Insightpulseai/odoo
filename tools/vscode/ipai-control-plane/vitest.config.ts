@@ -4,6 +4,8 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    exclude: ["src/test/**", "node_modules/**"],
+    setupFiles: ["src/test/setup.ts"],
     reporters: ["default", "junit"],
     outputFile: {
       junit: "./test-results/junit.xml"
@@ -13,6 +15,7 @@ export default defineConfig({
       exclude: [
         "node_modules/**",
         "dist/**",
+        "src/test/**",
         "**/*.test.ts",
         "**/*.config.ts"
       ]

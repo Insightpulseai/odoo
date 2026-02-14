@@ -17,6 +17,9 @@
   "exclude": [
     "node_modules",
     ".vscode-test",
-    "dist"
+    "dist",
+    "**/*.config.ts",
+    "**/*.config.mjs",
+    "**/*.config.js"
   ]
 }
