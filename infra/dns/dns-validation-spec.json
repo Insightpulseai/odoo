@@ -4,7 +4,7 @@
   "source": "infra/dns/subdomain-registry.yaml",
   "validation_rules": {
     "terraform_file": "infra/cloudflare/envs/prod/subdomains.auto.tfvars",
-    "runtime_file": "docs/arch/runtime_identifiers.json",
+    "runtime_file": "docs/architecture/runtime_identifiers.json",
     "expected_subdomain_count": 15,
     "expected_active_count": 14,
     "expected_deprecated_count": 1

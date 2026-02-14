@@ -9,7 +9,7 @@
 #
 # Outputs:
 #   1. infra/cloudflare/envs/prod/subdomains.auto.tfvars (Terraform input)
-#   2. docs/arch/runtime_identifiers.json (Runtime reference)
+#   2. docs/architecture/runtime_identifiers.json (Runtime reference)
 #   3. infra/dns/dns-validation-spec.json (CI validation spec)
 #
 # CI Integration:
@@ -24,7 +24,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 SSOT_FILE="$REPO_ROOT/infra/dns/subdomain-registry.yaml"
 TF_OUTPUT="$REPO_ROOT/infra/cloudflare/envs/prod/subdomains.auto.tfvars"
-JSON_OUTPUT="$REPO_ROOT/docs/arch/runtime_identifiers.json"
+JSON_OUTPUT="$REPO_ROOT/docs/architecture/runtime_identifiers.json"
 VALIDATION_OUTPUT="$REPO_ROOT/infra/dns/dns-validation-spec.json"
 
 # Ensure yq is installed
@@ -192,7 +192,7 @@ cat > "$VALIDATION_OUTPUT" << EOF
   "source": "infra/dns/subdomain-registry.yaml",
   "validation_rules": {
     "terraform_file": "infra/cloudflare/envs/prod/subdomains.auto.tfvars",
-    "runtime_file": "docs/arch/runtime_identifiers.json",
+    "runtime_file": "docs/architecture/runtime_identifiers.json",
     "expected_subdomain_count": $(yq eval '.subdomains | length' "$SSOT_FILE"),
     "expected_active_count": $(yq eval '[.subdomains[] | select(.status == "active")] | length' "$SSOT_FILE"),
     "expected_deprecated_count": $(yq eval '.deprecated | length' "$SSOT_FILE")
@@ -220,7 +220,7 @@ echo "  3. $VALIDATION_OUTPUT"
 echo ""
 echo "Next steps:"
 echo "  1. Review generated files"
-echo "  2. git add infra/dns/ infra/cloudflare/ docs/arch/"
+echo "  2. git add infra/dns/ infra/cloudflare/ docs/architecture/"
 echo "  3. git commit -m 'chore(infra): update DNS SSOT'"
 echo "  4. git push (CI will validate sync)"
 echo ""
