@@ -227,3 +227,4 @@ infra/cloudflare/**/terraform.tfvars
 # secrets (local only) - never commit
 *.secrets.local
 *.secrets.yaml
+docs/evidence/*-naming-refactor/
