@@ -156,7 +156,7 @@ feat(alpha-browser): implement Phase 1 Foundation - Chrome Extension scaffold
 ### Immediate Actions
 1. **Install dependencies**:
    ```bash
-   cd apps/alpha-browser
+   cd web/alpha-browser
    pnpm install
    ```
 
@@ -281,7 +281,7 @@ feat(alpha-browser): implement Phase 1 Foundation - Chrome Extension scaffold
 ## Team Handoff Notes
 
 ### Repository Context
-- **Location**: `apps/alpha-browser/` in Odoo monorepo
+- **Location**: `web/alpha-browser/` in Odoo monorepo
 - **Branch**: `feat/odooops-browser-automation-integration`
 - **Integration**: Standalone app, no dependencies on other monorepo apps
 

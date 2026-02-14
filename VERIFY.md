@@ -8,7 +8,7 @@ Copy/paste verification commands for production deployment.
 
 ```bash
 # Check tokens files exist
-ls -la packages/ipai-design-tokens/
+ls -la pkgs/ipai-design-tokens/
 
 # Expected output:
 # tokens.css
@@ -126,10 +126,10 @@ PY
 
 ```bash
 # Check dist exists
-ls -la apps/ipai-chatgpt-app/web/dist/
+ls -la web/ipai-chatgpt-app/web/dist/
 
 # Check single-file size (should be < 500KB)
-wc -c apps/ipai-chatgpt-app/web/dist/index.html
+wc -c web/ipai-chatgpt-app/web/dist/index.html
 ```
 
 ---
@@ -161,7 +161,7 @@ npx @modelcontextprotocol/inspector --server-url http://localhost:8787/mcp --tra
 echo "=== IPAI Stack Verification ==="
 
 # Tokens
-[ -f "packages/ipai-design-tokens/tokens.css" ] && echo "✓ Design tokens" || echo "✗ Design tokens missing"
+[ -f "pkgs/ipai-design-tokens/tokens.css" ] && echo "✓ Design tokens" || echo "✗ Design tokens missing"
 
 # Theme
 [ -f "addons/ipai_web_theme_chatgpt/__manifest__.py" ] && echo "✓ Theme addon" || echo "✗ Theme addon missing"
@@ -173,10 +173,10 @@ echo "=== IPAI Stack Verification ==="
 [ -d "addons/oca/queue" ] && echo "✓ OCA queue" || echo "✗ OCA queue missing"
 
 # Widget
-[ -f "apps/ipai-chatgpt-app/web/package.json" ] && echo "✓ ChatGPT widget" || echo "✗ ChatGPT widget missing"
+[ -f "web/ipai-chatgpt-app/web/package.json" ] && echo "✓ ChatGPT widget" || echo "✗ ChatGPT widget missing"
 
 # MCP Server
-[ -f "apps/ipai-chatgpt-app/server/server.js" ] && echo "✓ MCP server" || echo "✗ MCP server missing"
+[ -f "web/ipai-chatgpt-app/server/server.js" ] && echo "✓ MCP server" || echo "✗ MCP server missing"
 
 echo ""
 echo "=== Container Status ==="

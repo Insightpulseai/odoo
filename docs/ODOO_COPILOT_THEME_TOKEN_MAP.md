@@ -586,7 +586,7 @@ All tokens follow the naming convention:
 ## References
 
 - **Figma File**: Microsoft Fluent 2 Web (Community)
-- **Fluent 2 Docs**: https://learn.microsoft.com/en-us/windows/apps/design/fluent2
+- **Fluent 2 Docs**: https://learn.microsoft.com/en-us/windows/web/design/fluent2
 - **CSS Variables MDN**: https://developer.mozilla.org/en-US/docs/Web/CSS/var()
 - **Odoo 18 CE Docs**: https://www.odoo.com/documentation/18.0
 

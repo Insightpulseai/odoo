@@ -204,8 +204,8 @@ function generateMarkdown() {
   lines.push('');
   lines.push('| Directory | Purpose |');
   lines.push('|-----------|---------|');
-  lines.push('| `apps/` | Applications (control-room, web) |');
-  lines.push('| `packages/` | Shared packages (agent-core, github-app) |');
+  lines.push('| `web/` | Applications (control-room, web) |');
+  lines.push('| `pkgs/` | Shared packages (agent-core, github-app) |');
   lines.push('| `spec/` | Spec bundles for features |');
   lines.push('| `docs/` | Documentation |');
   lines.push('| `scripts/` | Automation scripts |');

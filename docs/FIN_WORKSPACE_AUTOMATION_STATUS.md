@@ -20,7 +20,7 @@
 
 # Generate normalized app specs
 ./scripts/bootstrap_apps_from_inventory.sh
-✅ Creates: apps/*/spec.yaml, apps/*/APP.md, apps/*/do/app.json
+✅ Creates: web/*/spec.yaml, web/*/APP.md, web/*/do/app.json
 
 # Create conversation entry
 ./scripts/new_conversation_entry.sh "title" "YYYY-MM-DD"
@@ -51,7 +51,7 @@
 - `infra/doctl/export_state.sh`
 - `scripts/bootstrap_apps_from_inventory.sh`
 - `scripts/new_conversation_entry.sh`
-- `apps/**/spec.yaml`
+- `web/**/spec.yaml`
 
 ---
 
@@ -115,15 +115,15 @@ inventory/runs/20251231T020517Z/ ← LATEST
 
 **App Specs**: 9 apps
 ```
-apps/bi-architect/spec.yaml
-apps/devops-engineer/spec.yaml
-apps/finance-ssc-expert/spec.yaml
-apps/mattermost-rag/spec.yaml
-apps/mcp-coordinator/spec.yaml
-apps/multi-agent-orchestrator/spec.yaml
-apps/odoo-developer-agent/spec.yaml
-apps/odoo-saas-platform/spec.yaml
-apps/superset-analytics/spec.yaml
+web/bi-architect/spec.yaml
+web/devops-engineer/spec.yaml
+web/finance-ssc-expert/spec.yaml
+web/mattermost-rag/spec.yaml
+web/mcp-coordinator/spec.yaml
+web/multi-agent-orchestrator/spec.yaml
+web/odoo-developer-agent/spec.yaml
+web/odoo-saas-platform/spec.yaml
+web/superset-analytics/spec.yaml
 ```
 
 **Conversation Index**: 2 entries
@@ -177,7 +177,7 @@ shellcheck scripts/new_conversation_entry.sh
 shfmt -w -i 2 -ci infra/doctl/export_state.sh scripts/*.sh
 
 # Fix YAML formatting
-yamllint apps/**/spec.yaml
+yamllint web/**/spec.yaml
 ```
 
 ### Weekly Sync Failures

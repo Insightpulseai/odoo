@@ -107,7 +107,7 @@ docker exec -it odoo_ce19_ee_parity \
 
 ### Addons Path
 ```
-/usr/lib/python3/dist-packages/odoo/addons  # CE core
+/usr/lib/python3/dist-pkgs/odoo/addons  # CE core
 /mnt/addons/ipai                            # IPAI enterprise bridge
 /mnt/addons/oca                             # OCA modules (flattened)
 ```

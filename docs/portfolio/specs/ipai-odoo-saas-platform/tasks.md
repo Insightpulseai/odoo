@@ -10,7 +10,7 @@
 
 - [ ] Create Supabase schema for Tenant management.
 - [ ] Implement `create-tenant` Edge Function.
-- [ ] Build landing page and customer login in `apps/platform-kit`.
+- [ ] Build landing page and customer login in `web/platform-kit`.
 
 ## Milestone 3: Odoo.sh Parity
 

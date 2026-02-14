@@ -360,7 +360,7 @@ font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Co
 
 ### Design Tokens JSON
 
-**Location:** `packages/ipai-design-tokens/tokens.json`
+**Location:** `pkgs/ipai-design-tokens/tokens.json`
 
 ```json
 {
@@ -417,9 +417,9 @@ font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Co
 
 ### Export Formats
 
-**CSS Variables:** `packages/ipai-design-tokens/export/css-vars.css`
+**CSS Variables:** `pkgs/ipai-design-tokens/export/css-vars.css`
 **SCSS Variables:** `addons/ipai/ipai_theme_copilot/static/src/scss/_tokens.scss`
-**TypeScript:** `packages/ipai-design-tokens/src/tokens.ts`
+**TypeScript:** `pkgs/ipai-design-tokens/src/tokens.ts`
 
 ---
 

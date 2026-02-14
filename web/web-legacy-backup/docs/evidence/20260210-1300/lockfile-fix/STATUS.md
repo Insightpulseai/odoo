@@ -40,22 +40,22 @@ export VERCEL_TOKEN="vercel_xxx..." # From https://vercel.com/account/tokens
 # 2. Fix rootDirectory
 TEAM_ID=team_wphKJ7lHA3QiZu6VgcotQBQM \
 PROJECT_ID=prj_PFdFRARO9YQ0CRBkuwp5jAbfKYwe \
-ROOT_DIR=apps/web \
+ROOT_DIR=web/web \
 ./scripts/vercel/fix_root_directory.sh
 ```
 
 **Why This Is Critical:**
 - Vercel detects framework from repository root by default
 - In monorepos, this causes wrong build context
-- Setting `rootDirectory: apps/web` tells Vercel to build from app directory
+- Setting `rootDirectory: web/web` tells Vercel to build from app directory
 - Fixes pnpm workspace detection and Next.js framework detection
 
 **Expected Result:**
 ```
-[1/2] PATCH project rootDirectory -> apps/web
+[1/2] PATCH project rootDirectory -> web/web
 [2/2] GET project to confirm
 project: web
-rootDirectory: apps/web
+rootDirectory: web/web
 OK
 ```
 
@@ -106,7 +106,7 @@ OK
 
 **Files Modified:**
 - `pnpm-lock.yaml` (2,635 insertions, 222 deletions)
-- `apps/web/vercel.json` (correct monorepo install command)
+- `web/web/vercel.json` (correct monorepo install command)
 - `scripts/vercel/*` (API automation scripts)
 
 **Commits:**
@@ -122,7 +122,7 @@ If VERCEL_TOKEN cannot be obtained, use Vercel Dashboard:
 
 1. Navigate to: https://vercel.com/tbwa/web/settings
 2. Go to "General" → "Root Directory"
-3. Set to: `apps/web`
+3. Set to: `web/web`
 4. Click "Save"
 5. Trigger new deployment via git push
 

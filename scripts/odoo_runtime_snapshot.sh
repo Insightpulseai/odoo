@@ -6,7 +6,7 @@
 set -u
 
 # --- Configuration ---
-SNAPSHOT_ROOT="docs/architecture/runtime_snapshot"
+SNAPSHOT_ROOT="docs/arch/runtime_snapshot"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUT_DIR="${SNAPSHOT_ROOT}/${TIMESTAMP}"
 PROOFS_DIR="${OUT_DIR}/PROOFS"

@@ -160,7 +160,7 @@ WHERE created_at > NOW() - INTERVAL '1 hour';
 
 **Install Superset SDK:**
 ```bash
-cd apps/odooops-dashboard
+cd web/odooops-dashboard
 npm install @superset-ui/embedded-sdk
 ```
 

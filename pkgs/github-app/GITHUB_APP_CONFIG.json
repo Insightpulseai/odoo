@@ -59,7 +59,7 @@
       ]
     },
     "probot_server": {
-      "handler": "packages/github-app",
+      "handler": "pkgs/github-app",
       "port": 3009,
       "endpoint": "/api/github/webhooks",
       "purpose": "Handle /pulser commands, CI failures, merge conflicts",
@@ -88,6 +88,6 @@
   ],
   "_meta": {
     "updated": "2026-01-24",
-    "source": "packages/github-app/GITHUB_APP_CONFIG.json"
+    "source": "pkgs/github-app/GITHUB_APP_CONFIG.json"
   }
 }

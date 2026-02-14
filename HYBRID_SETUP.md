@@ -32,7 +32,7 @@ addons/ipai/ipai_odooops_shell/
 
 ### 2. Next.js Dashboard App (`odooops-dashboard`)
 
-**Location:** `apps/odooops-dashboard/`
+**Location:** `web/odooops-dashboard/`
 
 **Features:**
 - ✅ Next.js 14 App Router
@@ -43,7 +43,7 @@ addons/ipai/ipai_odooops_shell/
 
 **Files Created:**
 ```
-apps/odooops-dashboard/
+web/odooops-dashboard/
 ├── package.json
 ├── tsconfig.json
 ├── next.config.mjs
@@ -94,7 +94,7 @@ cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
 
 ```bash
 # Navigate to dashboard
-cd apps/odooops-dashboard
+cd web/odooops-dashboard
 
 # Install dependencies
 npm install
@@ -141,7 +141,7 @@ curl -I http://localhost:3000
 ### Deploy Next.js to Vercel
 
 ```bash
-cd apps/odooops-dashboard
+cd web/odooops-dashboard
 vercel --prod
 # Note the deployment URL
 ```
@@ -180,7 +180,7 @@ Edit `design-tokens/tokens.json`:
 }
 ```
 
-**Next.js:** Update `apps/odooops-dashboard/tailwind.config.ts`:
+**Next.js:** Update `web/odooops-dashboard/tailwind.config.ts`:
 ```typescript
 colors: {
   primary: "#3b82f6",  // Sync from tokens.json
@@ -219,7 +219,7 @@ colors: {
 Create new routes in Next.js:
 ```bash
 # Example: Observability page
-mkdir apps/odooops-dashboard/app/observability
+mkdir web/odooops-dashboard/app/observability
 # Add page.tsx there
 ```
 
@@ -271,7 +271,7 @@ async headers() {
 cat addons/ipai/ipai_odooops_shell/static/src/css/shell.css | grep "odooops-primary"
 
 # Check Tailwind config
-cat apps/odooops-dashboard/tailwind.config.ts | grep "primary"
+cat web/odooops-dashboard/tailwind.config.ts | grep "primary"
 
 # Check tokens source
 cat design-tokens/tokens.json | grep "primary"
@@ -291,5 +291,5 @@ cat design-tokens/tokens.json | grep "primary"
 
 **For questions or issues, see:**
 - Odoo module: `addons/ipai/ipai_odooops_shell/`
-- Next.js app: `apps/odooops-dashboard/README.md`
+- Next.js app: `web/odooops-dashboard/README.md`
 - Design tokens: `design-tokens/tokens.json`

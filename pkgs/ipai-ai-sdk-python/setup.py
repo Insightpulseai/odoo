@@ -20,7 +20,7 @@ setup(
     project_urls={
         "Bug Tracker": "https://github.com/Insightpulseai/odoo/issues",
         "Documentation": "https://insightpulseai.com/docs/platform/ai",
-        "Source Code": "https://github.com/Insightpulseai/odoo/tree/main/packages/ipai-ai-sdk-python",
+        "Source Code": "https://github.com/Insightpulseai/odoo/tree/main/pkgs/ipai-ai-sdk-python",
     },
     packages=find_packages(exclude=["tests", "examples"]),
     classifiers=[

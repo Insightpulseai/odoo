@@ -75,9 +75,9 @@ jobs:
       - name: Check for path hallucinations
         run: |
           echo "=== Checking for invalid path references ==="
-          # Fail if any code references non-existent src/apps/odoo or src/addons
-          if grep -r "src/apps/odoo" addons/ docs/ spec/ 2>/dev/null; then
-            echo "::error::Found references to non-existent 'src/apps/odoo' path"
+          # Fail if any code references non-existent src/web/odoo or src/addons
+          if grep -r "src/web/odoo" addons/ docs/ spec/ 2>/dev/null; then
+            echo "::error::Found references to non-existent 'src/web/odoo' path"
             exit 1
           fi
           if grep -r "src/addons/" addons/ docs/ spec/ 2>/dev/null | grep -v "Optional Future Refactor"; then

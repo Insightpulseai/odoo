@@ -43,14 +43,14 @@ else
         # Linux
         if command -v apt-get &> /dev/null; then
             # Debian/Ubuntu
-            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            curl -fsSL https://cli.github.com/pkgs/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
             sudo apt-get update
             sudo apt-get install -y gh
         elif command -v yum &> /dev/null; then
             # RHEL/CentOS
             sudo yum install -y 'dnf-command(config-manager)'
-            sudo yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+            sudo yum-config-manager --add-repo https://cli.github.com/pkgs/rpm/gh-cli.repo
             sudo yum install -y gh
         else
             echo "⚠️  Unknown package manager. Install manually: https://github.com/cli/cli#installation"

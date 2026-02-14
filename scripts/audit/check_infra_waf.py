@@ -20,7 +20,7 @@ from lib import CheckResult, save_json, create_evidence_dir
 
 ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = ROOT / "infra/docker-compose.prod.yaml"
-MODEL_PATH = ROOT / "docs/architecture/infra-waf-model.yaml"
+MODEL_PATH = ROOT / "docs/arch/infra-waf-model.yaml"
 
 
 def load_model():
@@ -394,7 +394,7 @@ def assess_integration(model):
     )
 
     # Check 2: Vercel
-    # Logically should be at root or apps/*/vercel.json
+    # Logically should be at root or web/*/vercel.json
     vercel_files = list(ROOT.glob("**/vercel.json"))
     # Exclude node_modules
     vercel_files = [f for f in vercel_files if "node_modules" not in str(f)]

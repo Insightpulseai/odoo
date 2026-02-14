@@ -87,7 +87,7 @@ The Infra Memory Job is a fully operational automated system that discovers infr
 
 ### ✅ Phase 3: Supabase Schema Migrations
 **Status**: Complete
-**Schema**: `packages/db/sql/infra_schema.sql`
+**Schema**: `pkgs/db/sql/infra_schema.sql`
 **Tables**:
 - `infra.sources` - Discovery source metadata
 - `infra.nodes` - Infrastructure components (25+ columns)
@@ -428,7 +428,7 @@ services = client.table("nodes") \
 
 **Primary Documentation**:
 - [Infra Memory Job Guide](./INFRA_MEMORY_JOB.md) - Complete system documentation
-- [Database Schema](../../packages/db/sql/infra_schema.sql) - Supabase schema definition
+- [Database Schema](../../pkgs/db/sql/infra_schema.sql) - Supabase schema definition
 - [CI/CD Workflow](../../.github/workflows/infra_memory_job.yml) - GitHub Actions workflow
 
 **Discovery Scripts**:

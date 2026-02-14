@@ -115,8 +115,8 @@ Tasks pending:
 
 | Document | Status |
 |----------|--------|
-| `docs/architecture/IPAI_AI_PLATFORM_ARCH.md` | Missing |
-| `docs/architecture/IPAI_AI_PLATFORM_ERD.mmd` | Missing |
+| `docs/arch/IPAI_AI_PLATFORM_ARCH.md` | Missing |
+| `docs/arch/IPAI_AI_PLATFORM_ERD.mmd` | Missing |
 | `docs/api/openapi.ipai_ai_platform.yaml` | Missing |
 | Data flow diagrams | Missing |
 | Security boundary documentation | Missing |

@@ -61,7 +61,7 @@ When this command is invoked:
 ## Reference
 
 Full specification: `spec/supabase-ssot-doctrine/`
-Architecture doc: `docs/architecture/SOURCE_OF_TRUTH.md`
+Architecture doc: `docs/arch/SOURCE_OF_TRUTH.md`
 Agent prompt: `spec/supabase-ssot-doctrine/agent-prompt.md`
 
 ## Violation Protocol

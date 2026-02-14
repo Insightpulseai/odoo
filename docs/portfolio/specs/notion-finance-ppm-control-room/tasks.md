@@ -10,7 +10,7 @@
 
 ### 1.1 Repository Structure
 - [x] Create spec bundle (constitution, prd, plan, tasks)
-- [x] Create apps/control-room directory structure
+- [x] Create web/control-room directory structure
 - [x] Create services/notion-sync directory structure
 - [x] Create infra/databricks directory structure
 - [x] Create infra/azure directory structure

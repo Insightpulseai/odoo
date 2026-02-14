@@ -174,14 +174,14 @@
       "title": "Control Room Platform Kit UI",
       "category": "UI",
       "source_file": "scripts/backlog_scan.py",
-      "target_component": "apps/control-room",
+      "target_component": "web/control-room",
       "status": "implemented",
       "priority": "P1",
       "evidence": [
-        "apps/control-room/PLATFORM_KIT_SPEC.md",
+        "web/control-room/PLATFORM_KIT_SPEC.md",
         "spec/supabase-platform-kit-observability/plan.md:44",
-        "apps/control-room/src/components/observability/ObservabilityManager.tsx:32",
-        "apps/control-room/src/components/observability/index.ts:7",
+        "web/control-room/src/components/observability/ObservabilityManager.tsx:32",
+        "web/control-room/src/components/observability/index.ts:7",
         "spec/supabase-platform-kit-observability/prd.md:100",
         "spec/supabase-platform-kit-observability/tasks.md:20",
         "scripts/backlog_scan.py:180"

@@ -14,7 +14,7 @@ CLI tool that scans repositories for missing Supabase Enterprise parity controls
 ## Installation
 
 ```bash
-cd packages/agentic-codebase-crawler
+cd pkgs/agentic-codebase-crawler
 pnpm install
 pnpm run build
 ```
@@ -68,7 +68,7 @@ node dist/index.js \
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--repo-root <path>` | `.` | Repository root path |
-| `--config <path>` | `packages/.../parity-controls.yml` | Parity controls config |
+| `--config <path>` | `pkgs/.../parity-controls.yml` | Parity controls config |
 | `--out <path>` | `ops/.../out` | Output directory |
 | `--apply` | `false` | Apply generated patches |
 | `--verify-cmd <cmd>` | `echo 'No verify...'` | Verification command |
@@ -142,7 +142,7 @@ Required functions:
 
 The crawler runs automatically on PRs touching:
 - `supabase/**`
-- `packages/**`
+- `pkgs/**`
 - `config/**`
 - `AGENTS.md`, `CLAUDE.md`
 - `.github/workflows/**`

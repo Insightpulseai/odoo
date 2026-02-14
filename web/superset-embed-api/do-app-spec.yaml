@@ -4,8 +4,8 @@
 # Self-signed JWT guest token service for Superset dashboard embedding
 #
 # Usage:
-#   doctl apps create --spec apps/superset-embed-api/do-app-spec.yaml
-#   doctl apps update <app-id> --spec apps/superset-embed-api/do-app-spec.yaml
+#   doctl apps create --spec web/superset-embed-api/do-app-spec.yaml
+#   doctl apps update <app-id> --spec web/superset-embed-api/do-app-spec.yaml
 # =============================================================================
 
 name: superset-embed-api

@@ -50,14 +50,14 @@ domains:
         command: "psql -c \"SELECT schemaname, tablename, policyname FROM pg_policies;\""
       - type: code
         name: Tenant context middleware
-        path: "apps/**/middleware.ts"
+        path: "web/**/middleware.ts"
       - type: config
         name: Tenant isolation config
         path: "supabase/config.toml"
     recommended:
       - type: document
         name: Tenancy architecture diagram
-        path: "docs/architecture/tenancy.md"
+        path: "docs/arch/tenancy.md"
 
   identity_authz:
     required:
@@ -104,7 +104,7 @@ domains:
         path: "package.json, requirements.txt"
       - type: code
         name: API route definitions
-        path: "apps/**/api/**/*.ts"
+        path: "web/**/api/**/*.ts"
     recommended:
       - type: document
         name: API documentation
@@ -130,7 +130,7 @@ domains:
     required:
       - type: document
         name: RPO/RTO targets
-        path: "docs/architecture/reliability.md"
+        path: "docs/arch/reliability.md"
       - type: document
         name: Backup restore drill log
         path: "docs/evidence/*/backup-restore-drill.md"

@@ -131,7 +131,7 @@ This handbook does **NOT**:
 |-----------|----------|
 | Odoo 18 CE/OCA Mapping | `docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md` |
 | Project Constitution | `constitution.md` |
-| Technical Architecture | `docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md` |
+| Technical Architecture | `docs/arch/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md` |
 | Enterprise Feature Gap | `docs/ENTERPRISE_FEATURE_GAP.yaml` |
 
 ---

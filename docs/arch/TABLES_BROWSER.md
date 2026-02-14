@@ -219,12 +219,12 @@ await toggleMutation.mutateAsync({ schemaName: 'analytics', exposed: true });
 | File | Description |
 |------|-------------|
 | `supabase/migrations/20260124200001_ops_tables_browser.sql` | Database migration |
-| `apps/control-room/src/hooks/useTables.ts` | React Query hooks |
-| `apps/control-room/src/lib/supabase.ts` | Types (DatabaseRelation, etc.) |
-| `apps/control-room/src/components/tables-browser/` | UI components |
-| `apps/control-room/src/app/settings/database/tables/page.tsx` | Tables list page |
-| `apps/control-room/src/app/settings/database/tables/[schema]/[table]/page.tsx` | Table detail page |
-| `apps/control-room/src/app/api/tables/` | API routes |
+| `web/control-room/src/hooks/useTables.ts` | React Query hooks |
+| `web/control-room/src/lib/supabase.ts` | Types (DatabaseRelation, etc.) |
+| `web/control-room/src/components/tables-browser/` | UI components |
+| `web/control-room/src/app/settings/database/tables/page.tsx` | Tables list page |
+| `web/control-room/src/app/settings/database/tables/[schema]/[table]/page.tsx` | Table detail page |
+| `web/control-room/src/app/api/tables/` | API routes |
 
 ## Usage
 

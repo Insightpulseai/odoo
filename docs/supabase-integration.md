@@ -243,7 +243,7 @@ Preview branches are billed per hour of compute usage:
 - [Environment Management Quick Reference](./infra/SUPABASE_ENVIRONMENTS.md) - Quick start guide
 - [Branching Integration Details](./infra/SUPABASE_BRANCHING_INTEGRATION.md) - Catalog sync, Edge Functions
 - [Migrations](../supabase/migrations/)
-- [Control Room API](../apps/control-room/)
+- [Control Room API](../web/control-room/)
 - [n8n Workflows](../workflows/n8n/)
 
 **Official Supabase Docs:**

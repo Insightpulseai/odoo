@@ -475,7 +475,7 @@ EOF
 # -------------------------
 # Supabase skeleton (kept minimal; no assumptions about project refs)
 # -------------------------
-cat > "$root/docs/architecture/ODOO_SUPABASE_MONOREPO_LAYOUT.md" <<'EOF'
+cat > "$root/docs/arch/ODOO_SUPABASE_MONOREPO_LAYOUT.md" <<'EOF'
 # Odoo + Supabase Monorepo (OCA-style) — SSOT Layout
 
 This repo is structured so **Odoo + OCA add-ons** and **Supabase (migrations/functions)** can ship together,

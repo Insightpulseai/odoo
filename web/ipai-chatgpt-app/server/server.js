@@ -31,7 +31,7 @@ function getWidgetHtml() {
 <head><title>IPAI Widget</title></head>
 <body>
 <div style="padding:20px;font-family:system-ui;color:#888;">
-Widget not built. Run: pnpm -C apps/ipai-chatgpt-app/web build
+Widget not built. Run: pnpm -C web/ipai-chatgpt-app/web build
 </div>
 </body>
 </html>`;

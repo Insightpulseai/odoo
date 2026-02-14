@@ -37,7 +37,7 @@ This document describes the cross-repository integration pattern for git pre-fli
                                 ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              design-system-cli Repository                        │
-│  (packages/figma-bridge/)                                        │
+│  (pkgs/figma-bridge/)                                        │
 │                                                                  │
 │  ┌────────────────────┐         ┌───────────────────────┐       │
 │  │ git-operations.ts  │         │ figma.ts              │       │
@@ -59,7 +59,7 @@ This document describes the cross-repository integration pattern for git pre-fli
 
 ### Repository 1: design-system-cli (Implementation)
 
-**Location**: `/Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge/`
+**Location**: `/Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge/`
 
 **Files Created**:
 
@@ -90,7 +90,7 @@ This document describes the cross-repository integration pattern for git pre-fli
 
 **Installation**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge
+cd /Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge
 pnpm install  # Installs vitest, @vitest/coverage-v8
 pnpm test     # Run all tests
 pnpm test:git-ops  # Run git-operations tests only
@@ -148,7 +148,7 @@ odoo/spec/ops-control-room/
 
 3. **Dynamic Import** (runtime)
    - Executor uses Node.js `require()` or `import()` to load module
-   - Module path is absolute: `/Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge/src/git-operations.ts`
+   - Module path is absolute: `/Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge/src/git-operations.ts`
    - Calls exported function with inputs from runbook
 
 4. **Telemetry Capture** (mcp-jobs)
@@ -222,7 +222,7 @@ try {
 
 ### Unit Tests (design-system-cli)
 
-**Location**: `packages/figma-bridge/src/git-operations.test.ts`
+**Location**: `pkgs/figma-bridge/src/git-operations.test.ts`
 
 **Coverage**: 8 test suites, 15+ test cases
 
@@ -235,7 +235,7 @@ try {
 
 **Running Tests**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge
+cd /Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge
 pnpm test:git-ops           # Targeted tests
 pnpm test:coverage          # With coverage report
 pnpm test:watch             # Watch mode for development
@@ -243,7 +243,7 @@ pnpm test:watch             # Watch mode for development
 
 **Expected Output**:
 ```
- ✓ packages/figma-bridge/src/git-operations.test.ts (15)
+ ✓ pkgs/figma-bridge/src/git-operations.test.ts (15)
    ✓ git-operations (15)
      ✓ isGitRepo (2)
        ✓ returns true when in a git repository
@@ -363,12 +363,12 @@ pnpm build
 
 # 4. Commit changes
 git add \
-  packages/figma-bridge/src/git-operations.ts \
-  packages/figma-bridge/src/git-operations.test.ts \
-  packages/figma-bridge/src/figma.ts \
-  packages/figma-bridge/src/index.ts \
-  packages/figma-bridge/vitest.config.ts \
-  packages/figma-bridge/package.json
+  pkgs/figma-bridge/src/git-operations.ts \
+  pkgs/figma-bridge/src/git-operations.test.ts \
+  pkgs/figma-bridge/src/figma.ts \
+  pkgs/figma-bridge/src/index.ts \
+  pkgs/figma-bridge/vitest.config.ts \
+  pkgs/figma-bridge/package.json
 
 git commit -m "feat(figma-bridge): add git pre-flight checks with tests
 
@@ -404,7 +404,7 @@ git commit -m "feat(ops-control-room): register git_preflight skill + figma sync
 - Create figma_sync_design_tokens runbook with 3 steps
 - Document cross-repo integration pattern
 
-Refs: design-system-cli/packages/figma-bridge"
+Refs: design-system-cli/pkgs/figma-bridge"
 
 # 2. Push to GitHub
 git push origin main
@@ -660,7 +660,7 @@ skills:
   - id: git_preflight
     name: Git Pre-Flight Checks
     implementation:
-      module: packages/figma-bridge/src/git-operations.ts  # REUSE
+      module: pkgs/figma-bridge/src/git-operations.ts  # REUSE
       entrypoint: runGitWorkflow
     # ... same config as figma-bridge
 

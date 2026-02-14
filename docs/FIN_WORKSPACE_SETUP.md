@@ -18,9 +18,9 @@ This creates:
 ```
 
 This creates normalized specs for each DO app:
-- `apps/<slug>/do/app.json` (raw DO spec)
-- `apps/<slug>/spec.yaml` (normalized metadata)
-- `apps/<slug>/APP.md` (human-readable summary)
+- `web/<slug>/do/app.json` (raw DO spec)
+- `web/<slug>/spec.yaml` (normalized metadata)
+- `web/<slug>/APP.md` (human-readable summary)
 
 ### 3. Create Conversation Entry (Optional)
 ```bash
@@ -95,7 +95,7 @@ This creates:
 2. **Bootstrap Apps**
    ```bash
    ./scripts/bootstrap_apps_from_inventory.sh
-   ls -la apps/
+   ls -la web/
    ```
 
 3. **Create First Conversation Entry**
@@ -105,7 +105,7 @@ This creates:
 
 4. **Commit Changes**
    ```bash
-   git add docs/ infra/ scripts/ apps/
+   git add docs/ infra/ scripts/ web/
    git commit -m "chore(fin-workspace): add Equivalent APP TOOLS naming + DO inventory tooling + conversation index"
    ```
 

@@ -74,7 +74,7 @@ Complete functional CMS built on Supabase with:
 ### Quick Deploy
 
 ```bash
-cd apps/platform-kit
+cd web/platform-kit
 ./scripts/deploy-cms.sh
 ```
 
@@ -212,7 +212,7 @@ SUPABASE_CMS_API_KEY=${SUPABASE_SERVICE_ROLE_KEY}
 ## Files Created
 
 ```
-apps/platform-kit/
+web/platform-kit/
 ├── lib/
 │   └── supabase-cms.ts              # TypeScript client (138 lines)
 ├── app/api/cms/

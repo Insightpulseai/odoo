@@ -5,7 +5,7 @@ set -euo pipefail
 
 TEAM_ID="${TEAM_ID:-team_wphKJ7lHA3QiZu6VgcotQBQM}"
 PROJECT_ID="${PROJECT_ID:-prj_PFdFRARO9YQ0CRBkuwp5jAbfKYwe}"
-ROOT_DIR="${ROOT_DIR:-apps/web}"
+ROOT_DIR="${ROOT_DIR:-web/web}"
 
 api() {
   curl -fsS \

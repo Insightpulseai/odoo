@@ -98,7 +98,7 @@ pnpm test
 ### Project Structure
 
 ```
-apps/alpha-browser/
+web/alpha-browser/
 ├── src/
 │   ├── background/          # Service worker (Governor)
 │   ├── content/             # Content scripts (page interaction)

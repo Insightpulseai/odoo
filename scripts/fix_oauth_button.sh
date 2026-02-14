@@ -56,7 +56,7 @@ PYTHON_EOF
 if [[ "$MODULE_EXISTS" == "NOT_FOUND" ]]; then
     echo "❌ CRITICAL: auth_oauth module not found in Odoo"
     echo "   This module should be part of Odoo CE standard distribution"
-    echo "   Check: /usr/lib/python3/dist-packages/odoo/addons/auth_oauth"
+    echo "   Check: /usr/lib/python3/dist-pkgs/odoo/addons/auth_oauth"
     exit 1
 fi
 

@@ -6,8 +6,8 @@ on:
     - cron: "0 */6 * * *" # Every 6 hours
   push:
     paths:
-      - "apps/web/src/app/api/auth/**"
-      - "apps/web/src/lib/supabase.ts"
+      - "web/web/src/app/api/auth/**"
+      - "web/web/src/lib/supabase.ts"
       - "scripts/supabase/test_auth_flows_safe.sh"
 
 jobs:

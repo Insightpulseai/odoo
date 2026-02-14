@@ -192,7 +192,7 @@ db_maxconn = 64
 
 **Addons**:
 ```ini
-addons_path = /mnt/extra-addons/ipai,/mnt/extra-addons/external/oca,/usr/lib/python3/dist-packages/odoo/addons
+addons_path = /mnt/extra-addons/ipai,/mnt/extra-addons/external/oca,/usr/lib/python3/dist-pkgs/odoo/addons
 ```
 
 **Performance**:

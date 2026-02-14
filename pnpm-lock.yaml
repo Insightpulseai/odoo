@@ -31,7 +31,7 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
-  apps/ai-control-plane:
+  web/ai-control-plane:
     dependencies:
       '@ai-sdk/openai':
         specifier: ^0.0.66
@@ -74,7 +74,7 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
-  apps/alpha-browser:
+  web/alpha-browser:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.0.0
@@ -159,7 +159,7 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@25.0.7)(@vitest/ui@2.1.9)(jsdom@24.1.3)(lightningcss@1.30.2)(terser@5.44.1)
 
-  apps/billing-site:
+  web/billing-site:
     dependencies:
       '@paddle/paddle-js':
         specifier: ^1.1.0
@@ -229,7 +229,7 @@ importers:
         specifier: ^1.2.0
         version: 1.6.1(@types/node@20.19.27)(jsdom@24.1.3)(lightningcss@1.30.2)(terser@5.44.1)
 
-  apps/chatgpt_ipai_ai_studio:
+  web/chatgpt_ipai_ai_studio:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.25.1
@@ -238,7 +238,7 @@ importers:
         specifier: ^3.25.0
         version: 3.25.76
 
-  apps/control-room:
+  web/control-room:
     dependencies:
       '@fluentui/react-components':
         specifier: 9.72.9
@@ -305,7 +305,7 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
-  apps/docs:
+  web/docs:
     dependencies:
       '@mdx-js/loader':
         specifier: ^3.0.0
@@ -363,7 +363,7 @@ importers:
         specifier: ^5
         version: 5.7.3
 
-  apps/docs-ai-widget:
+  web/docs-ai-widget:
     dependencies:
       react:
         specifier: ^18.2.0
@@ -394,7 +394,7 @@ importers:
         specifier: ^5.0.0
         version: 5.4.21(@types/node@25.0.7)(lightningcss@1.30.2)(terser@5.44.1)
 
-  apps/ipai-control-center-docs:
+  web/ipai-control-center-docs:
     dependencies:
       next:
         specifier: ^14.2.5
@@ -412,7 +412,7 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
 
-  apps/local-schema-server:
+  web/local-schema-server:
     dependencies:
       cors:
         specifier: ^2.8.5
@@ -421,7 +421,7 @@ importers:
         specifier: ^4.18.2
         version: 4.22.1
 
-  apps/mobile:
+  web/mobile:
     dependencies:
       '@expo/vector-icons':
         specifier: ^14.0.0
@@ -527,7 +527,7 @@ importers:
         specifier: ^5.1.3
         version: 5.9.3
 
-  apps/odoo-frontend-shell:
+  web/odoo-frontend-shell:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.62.11
@@ -579,7 +579,7 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  apps/platform-kit:
+  web/platform-kit:
     dependencies:
       '@hookform/resolvers':
         specifier: ^3.10.0
@@ -808,9 +808,9 @@ importers:
         specifier: ^3.1.0
         version: 3.2.4(@types/debug@4.1.12)(@types/node@25.0.7)(jsdom@24.1.3)(lightningcss@1.30.2)(terser@5.44.1)
 
-  apps/pulser-runner: {}
+  web/pulser-runner: {}
 
-  apps/superset-embed-api:
+  web/superset-embed-api:
     dependencies:
       cors:
         specifier: ^2.8.5
@@ -844,7 +844,7 @@ importers:
         specifier: ^5.3.2
         version: 5.9.3
 
-  apps/web:
+  web/web:
     dependencies:
       '@dnd-kit/core':
         specifier: ^6.3.1
@@ -1004,7 +1004,7 @@ importers:
         specifier: ^8.24.1
         version: 8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.7.3)
 
-  apps/web-backup-subscription-starter:
+  web/web-backup-subscription-starter:
     dependencies:
       '@radix-ui/react-toast':
         specifier: ^1.1.5
@@ -1101,11 +1101,11 @@ importers:
         specifier: ^5.4.5
         version: 5.7.3
 
-  apps/web-legacy-backup:
+  web/web-legacy-backup:
     dependencies:
       '@ipai/design-tokens':
         specifier: workspace:*
-        version: link:../../packages/ipai-design-tokens
+        version: link:../../pkgs/ipai-design-tokens
       clsx:
         specifier: ^2.1.0
         version: 2.1.1
@@ -1153,9 +1153,9 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
-  packages/agent-core: {}
+  pkgs/agent-core: {}
 
-  packages/agentic-codebase-crawler:
+  pkgs/agentic-codebase-crawler:
     dependencies:
       '@supabase/supabase-js':
         specifier: ^2.49.1
@@ -1183,7 +1183,7 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
-  packages/echarts-react:
+  pkgs/echarts-react:
     dependencies:
       '@ipai/echarts-themes':
         specifier: workspace:*
@@ -1214,7 +1214,7 @@ importers:
         specifier: ^5.0.0
         version: 5.7.3
 
-  packages/echarts-themes:
+  pkgs/echarts-themes:
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -1229,13 +1229,13 @@ importers:
         specifier: ^5.0.0
         version: 5.7.3
 
-  packages/env-config:
+  pkgs/env-config:
     devDependencies:
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
 
-  packages/github-app:
+  pkgs/github-app:
     dependencies:
       '@octokit/rest':
         specifier: ^21.0.0
@@ -1266,7 +1266,7 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
-  packages/ipai-ai-sdk:
+  pkgs/ipai-ai-sdk:
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -1281,7 +1281,7 @@ importers:
         specifier: ^1.2.0
         version: 1.6.1(@types/node@20.19.27)(jsdom@24.1.3)(lightningcss@1.30.2)(terser@5.44.1)
 
-  packages/ipai-design-tokens:
+  pkgs/ipai-design-tokens:
     dependencies:
       '@fluentui/tokens':
         specifier: ^1.0.0-alpha.17
@@ -1312,7 +1312,7 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@25.0.7)(lightningcss@1.30.2)(terser@5.44.1)
 
-  packages/saas-types:
+  pkgs/saas-types:
     dependencies:
       '@prisma/client':
         specifier: ^5.0.0
@@ -1438,10 +1438,10 @@ importers:
         version: 5.2.2(react-hook-form@7.71.1(react@19.2.0))
       '@ipai/echarts-react':
         specifier: workspace:*
-        version: link:../../packages/echarts-react
+        version: link:../../pkgs/echarts-react
       '@ipai/echarts-themes':
         specifier: workspace:*
-        version: link:../../packages/echarts-themes
+        version: link:../../pkgs/echarts-themes
       '@radix-ui/react-icons':
         specifier: 1.3.2
         version: 1.3.2(react@19.2.0)

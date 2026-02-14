@@ -76,7 +76,7 @@ claude -p "Fix CI job: [job-name]
 ```
 odoo/
 ├── addons/ipai/              # Custom Odoo modules
-├── apps/control-room/        # Next.js dashboard
+├── web/control-room/        # Next.js dashboard
 ├── scripts/                  # Automation
 │   └── verify.sh            # Main verification
 ├── docs/                    # Documentation
@@ -103,7 +103,7 @@ odoo/
 | What | Where |
 |------|-------|
 | **Odoo modules** | `addons/ipai/<module>/` |
-| **UI components** | `apps/control-room/src/components/` |
+| **UI components** | `web/control-room/src/components/` |
 | **Finance PPM** | `addons/ipai/ipai_finance_ppm/` |
 | **n8n workflows** | `automations/n8n/workflows/` |
 | **Spec bundles** | `spec/<feature-slug>/` |

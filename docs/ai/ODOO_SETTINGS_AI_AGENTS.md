@@ -702,8 +702,8 @@ print(f"User can access agent: {can_access}")
 ## Further Reading
 
 **Architecture Documentation:**
-- `/docs/architecture/IPAI_AI_PLATFORM_ARCH.md` - AI platform architecture
-- `/docs/architecture/ASK_AI_CONTRACT.md` - Ask AI feature contract
+- `/docs/arch/IPAI_AI_PLATFORM_ARCH.md` - AI platform architecture
+- `/docs/arch/ASK_AI_CONTRACT.md` - Ask AI feature contract
 
 **Module Documentation:**
 - `/addons/ipai/ipai_ai_agent_builder/README.md` - Agent builder module

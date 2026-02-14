@@ -271,7 +271,7 @@ score_integration() {
 
     # Ops platform (max 5)
     local ops_score=0
-    [[ -d "$repo_path/apps/control-room" ]] && { ops_score=$((ops_score + 3)); evidence+="  - Control room: present\n"; }
+    [[ -d "$repo_path/web/control-room" ]] && { ops_score=$((ops_score + 3)); evidence+="  - Control room: present\n"; }
     [[ -d "$repo_path/ops" ]] && { ops_score=$((ops_score + 2)); evidence+="  - Ops directory: present\n"; }
     [[ $ops_score -gt 5 ]] && ops_score=5
     score=$((score + ops_score))

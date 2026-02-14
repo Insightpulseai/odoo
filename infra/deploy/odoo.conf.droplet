@@ -11,7 +11,7 @@ db_name = odoo
 db_maxconn = 64
 
 # Addons path (OCA-style: core + oca + ipai)
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/oca,/mnt/addons/ipai
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/oca,/mnt/addons/ipai
 
 # Server settings
 http_port = 8069

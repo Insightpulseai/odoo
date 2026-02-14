@@ -624,8 +624,8 @@ evidence_records:
     process_id: PROC-DEPLOY-001
     controls: [CTRL-DEPLOY-001]
     artifacts:
-      - path: docs/architecture/PROD_RUNTIME_SNAPSHOT.md
-      - path: docs/architecture/runtime_identifiers.json
+      - path: docs/arch/PROD_RUNTIME_SNAPSHOT.md
+      - path: docs/arch/runtime_identifiers.json
     status: complete
     verified_by: devops_team
 

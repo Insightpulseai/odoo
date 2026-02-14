@@ -24,7 +24,7 @@ vercel login
 
 ### 3. Deploy to Sandbox
 
-From `apps/odoo-frontend-shell/`:
+From `web/odoo-frontend-shell/`:
 
 ```bash
 vercel deploy --sandbox
@@ -190,7 +190,7 @@ on:
   push:
     branches: [feature/*, sandbox/*]
     paths:
-      - 'apps/odoo-frontend-shell/**'
+      - 'web/odoo-frontend-shell/**'
 
 jobs:
   deploy:
@@ -203,15 +203,15 @@ jobs:
 
       - name: Pull Vercel Environment
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/odoo-frontend-shell
+        working-directory: web/odoo-frontend-shell
 
       - name: Build Project
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/odoo-frontend-shell
+        working-directory: web/odoo-frontend-shell
 
       - name: Deploy to Vercel Sandbox
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/odoo-frontend-shell
+        working-directory: web/odoo-frontend-shell
 ```
 
 **Required Secrets:**

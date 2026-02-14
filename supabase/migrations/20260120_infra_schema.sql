@@ -2,7 +2,7 @@
 -- Infra Memory Job - Knowledge Graph Schema
 -- =====================================================
 -- Purpose: Store infrastructure discovery data as knowledge graph
--- Usage: psql "$POSTGRES_URL" -f packages/db/sql/infra_schema.sql
+-- Usage: psql "$POSTGRES_URL" -f pkgs/db/sql/infra_schema.sql
 -- =====================================================
 
 -- Create infra schema

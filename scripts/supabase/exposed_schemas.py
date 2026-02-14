@@ -28,8 +28,8 @@ out = {
   "source": str(CFG),
 }
 
-Path("docs/architecture/runtime_identifiers.json").parent.mkdir(parents=True, exist_ok=True)
-Path("docs/architecture/runtime_identifiers.json").write_text(
+Path("docs/arch/runtime_identifiers.json").parent.mkdir(parents=True, exist_ok=True)
+Path("docs/arch/runtime_identifiers.json").write_text(
   json.dumps(out, indent=2, sort_keys=True),
   encoding="utf-8"
 )

@@ -20,7 +20,7 @@ if [[ ! -f "$SET_FILE" ]]; then
 fi
 
 # Default: container paths. Override with ADDONS_PATHS env var.
-DEFAULT_PATHS="/usr/lib/python3/dist-packages/odoo/addons /mnt/extra-addons/oca /mnt/extra-addons/ipai /mnt/extra-addons"
+DEFAULT_PATHS="/usr/lib/python3/dist-pkgs/odoo/addons /mnt/extra-addons/oca /mnt/extra-addons/ipai /mnt/extra-addons"
 ADDONS_PATHS="${ADDONS_PATHS:-$DEFAULT_PATHS}"
 
 missing=0

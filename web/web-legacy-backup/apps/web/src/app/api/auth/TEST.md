@@ -22,7 +22,7 @@ Production-grade authentication routes for Magic Link and Email OTP flows.
 
 ```bash
 # Local dev server
-cd ~/Documents/GitHub/Insightpulseai/odoo/apps/web
+cd ~/Documents/GitHub/Insightpulseai/odoo/web/web
 pnpm dev
 
 # Or use production URL after deployment
@@ -192,7 +192,7 @@ curl -sS "${PROD_URL}/api/auth/health" | jq .
 
 ### Production 404 on Auth Routes
 - **Cause:** Vercel build from wrong directory
-- **Fix:** Set `rootDirectory: apps/web` via `./scripts/vercel/fix_root_directory.sh`
+- **Fix:** Set `rootDirectory: web/web` via `./scripts/vercel/fix_root_directory.sh`
 
 ---
 

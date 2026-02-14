@@ -47,22 +47,22 @@ export VERCEL_TOKEN="your_vercel_personal_access_token"
 
 **Usage:**
 ```bash
-# Set rootDirectory to apps/web (fixes pnpm workspace detection)
+# Set rootDirectory to web/web (fixes pnpm workspace detection)
 TEAM_ID=team_wphKJ7lHA3QiZu6VgcotQBQM \
 PROJECT_ID=prj_PFdFRARO9YQ0CRBkuwp5jAbfKYwe \
-ROOT_DIR=apps/web \
+ROOT_DIR=web/web \
 ./scripts/vercel/fix_root_directory.sh
 ```
 
 **What It Does:**
-1. PATCH `/v9/projects/{projectId}` with `{"rootDirectory":"apps/web"}`
+1. PATCH `/v9/projects/{projectId}` with `{"rootDirectory":"web/web"}`
 2. GET project to confirm setting
 3. Display project name and rootDirectory
 
 **Why This Matters:**
 - Vercel auto-detects framework from repository root by default
 - In monorepos, this causes wrong directory for `pnpm install`
-- Setting `rootDirectory` tells Vercel: "build context is `apps/web`"
+- Setting `rootDirectory` tells Vercel: "build context is `web/web`"
 - Fixes: "No Next.js version detected", pnpm workspace issues
 
 **Rollback:**
@@ -181,7 +181,7 @@ curl -sS https://insightpulseai.com/api/auth/health | jq '.'
 
 **Issue**: Deployments failing with lockfile drift error
 **Fix Applied**: Lockfile regenerated and pushed (commit `983c76f8`)
-**Remaining**: Need to set `rootDirectory: apps/web` via API
+**Remaining**: Need to set `rootDirectory: web/web` via API
 **Blocker**: VERCEL_TOKEN is placeholder value
 
 **Next Steps:**

@@ -5,14 +5,14 @@
       "custom": "/home/user/odoo/addons",
       "custom_nested": "/home/user/odoo/addons/ipai",
       "oca": "/home/user/odoo/external-src",
-      "ce_core": "/usr/lib/python3/dist-packages/odoo/addons"
+      "ce_core": "/usr/lib/python3/dist-pkgs/odoo/addons"
     }
   },
   "modules": [
     {
       "name": "sale_management",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/sale_management",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/sale_management",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -27,7 +27,7 @@
     {
       "name": "pos_restaurant",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/pos_restaurant",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/pos_restaurant",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -42,7 +42,7 @@
     {
       "name": "account",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/account",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/account",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -78,7 +78,7 @@
     {
       "name": "crm",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/crm",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/crm",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -115,7 +115,7 @@
     {
       "name": "website",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/website",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -130,7 +130,7 @@
     {
       "name": "stock",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/stock",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/stock",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -189,7 +189,7 @@
     {
       "name": "purchase",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/purchase",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/purchase",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -204,7 +204,7 @@
     {
       "name": "point_of_sale",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/point_of_sale",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/point_of_sale",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -219,7 +219,7 @@
     {
       "name": "project",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/project",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/project",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -234,7 +234,7 @@
     {
       "name": "website_sale",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_sale",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/website_sale",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -249,7 +249,7 @@
     {
       "name": "mrp",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mrp",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/mrp",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -264,7 +264,7 @@
     {
       "name": "mass_mailing",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mass_mailing",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/mass_mailing",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -301,7 +301,7 @@
     {
       "name": "hr_expense",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_expense",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_expense",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -331,7 +331,7 @@
     {
       "name": "hr_holidays",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_holidays",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_holidays",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -346,7 +346,7 @@
     {
       "name": "hr_recruitment",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_recruitment",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_recruitment",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -381,7 +381,7 @@
     {
       "name": "hr",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -570,7 +570,7 @@
     {
       "name": "maintenance",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/maintenance",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/maintenance",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -675,7 +675,7 @@
     {
       "name": "website_slides",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_slides",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/website_slides",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -711,7 +711,7 @@
     {
       "name": "website_event",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_event",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/website_event",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -726,7 +726,7 @@
     {
       "name": "mail",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mail",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/mail",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -741,7 +741,7 @@
     {
       "name": "contacts",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/contacts",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/contacts",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -756,7 +756,7 @@
     {
       "name": "calendar",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/calendar",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/calendar",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -805,7 +805,7 @@
     {
       "name": "fleet",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/fleet",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/fleet",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -839,7 +839,7 @@
     {
       "name": "im_livechat",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/im_livechat",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/im_livechat",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -873,7 +873,7 @@
     {
       "name": "survey",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/survey",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/survey",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -907,7 +907,7 @@
     {
       "name": "repair",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/repair",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/repair",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -922,7 +922,7 @@
     {
       "name": "hr_attendance",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_attendance",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_attendance",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -937,7 +937,7 @@
     {
       "name": "mass_mailing_sms",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mass_mailing_sms",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/mass_mailing_sms",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -971,7 +971,7 @@
     {
       "name": "project_todo",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/project_todo",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/project_todo",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -986,7 +986,7 @@
     {
       "name": "hr_skills",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_skills",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_skills",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -1016,7 +1016,7 @@
     {
       "name": "lunch",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/lunch",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/lunch",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -1031,7 +1031,7 @@
     {
       "name": "website_hr_recruitment",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_hr_recruitment",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/website_hr_recruitment",
       "manifest_name": null,
       "version": null,
       "depends": [],
@@ -1061,7 +1061,7 @@
     {
       "name": "hr_contract",
       "classification": "CE",
-      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_contract",
+      "found_path": "/usr/lib/python3/dist-pkgs/odoo/addons/hr_contract",
       "manifest_name": null,
       "version": null,
       "depends": [],

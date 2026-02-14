@@ -76,7 +76,7 @@ controls:
     checks:
       - type: any_file_exists
         paths:
-          - "packages/config/template-packs.json"
+          - "pkgs/config/template-packs.json"
           - "config/template-packs.json"
 
   - id: agents-contract

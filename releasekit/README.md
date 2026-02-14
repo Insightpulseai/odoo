@@ -63,7 +63,7 @@ export ASC_PRIVATE_KEY_P8="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KE
 
 # App Config
 export IOS_BUNDLE_ID="com.company.app"
-export IOS_WORKSPACE="apps/flutter_app/ios/Runner.xcworkspace"
+export IOS_WORKSPACE="web/flutter_app/ios/Runner.xcworkspace"
 export IOS_SCHEME="Runner"
 ```
 
@@ -75,7 +75,7 @@ export SUPPLY_JSON_KEY_DATA='{"type": "service_account", ...}'
 
 # App Config
 export ANDROID_PACKAGE_NAME="com.company.app"
-export ANDROID_AAB_PATH="apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+export ANDROID_AAB_PATH="web/flutter_app/build/app/outputs/bundle/release/app-release.aab"
 ```
 
 ## Fastlane Lanes

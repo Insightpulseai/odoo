@@ -128,7 +128,7 @@ grant select on ops.ee_parity_gaps to authenticated;
 --   evidence_urls, confidence_score, notes
 -- ) VALUES (
 --   'Documents', 'documents', 'Productivity', 'Document Management System with OCR',
---   'https://apps.odoo.com/apps/modules/19.0/documents/',
+--   'https://apps.odoo.com/web/modules/19.0/documents/',
 --   'full',
 --   ARRAY[]::text[],
 --   ARRAY['document-management/dms', 'document-management/dms_field'],

@@ -532,7 +532,7 @@ Before enabling this gate in CI:
 
 ## References
 
-- Gate Contract: `docs/architecture/gate-contract-v2.md`
+- Gate Contract: `docs/arch/gate-contract-v2.md`
 - JSON Schema: `schemas/gate_report.schema.json`
 - Existing Audit Script: `scripts/finance_ppm_seed_audit.py`
 - Finance PPM Module: `addons/ipai_finance_ppm_umbrella/`

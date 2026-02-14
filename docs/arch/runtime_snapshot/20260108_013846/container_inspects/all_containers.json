@@ -298,7 +298,7 @@
                 "LANG=en_US.UTF-8",
                 "ODOO_VERSION=18.0",
                 "ODOO_RC=/etc/odoo/odoo.conf",
-                "ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/purchase-workflow,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-ux"
+                "ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/purchase-workflow,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-ux"
             ],
             "Cmd": [
                 "--",

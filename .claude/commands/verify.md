@@ -17,8 +17,8 @@ Run these commands in order:
 find addons -name "*.py" -exec python3 -m py_compile {} \;
 
 # 4. Formatting (if available)
-black --check addons/ packages/ apps/ 2>/dev/null || true
-isort --check addons/ packages/ apps/ 2>/dev/null || true
+black --check addons/ pkgs/ web/ 2>/dev/null || true
+isort --check addons/ pkgs/ web/ 2>/dev/null || true
 
 # 5. Project-specific verification
 ./scripts/ci_local.sh 2>/dev/null || true

@@ -5,7 +5,7 @@
 | Repo | Purpose | Key Paths |
 |------|---------|-----------|
 | `odoo` | Odoo CE + OCA + IPAI modules | `addons/ipai/`, `spec/`, `mcp/` |
-| `pulser-agent-framework` | Agent runtime + memory | `packages/`, `apps/` |
+| `pulser-agent-framework` | Agent runtime + memory | `pkgs/`, `web/` |
 | `pulser-mcp` | MCP surfaces + tool routers | `servers/`, `coordinator/` |
 | `.github` | Org-wide workflows + templates | `workflows/`, `ISSUE_TEMPLATE/` |
 
@@ -14,8 +14,8 @@
 ```
 odoo/
 ├── addons/ipai/              # 80+ IPAI custom modules
-├── apps/                     # 20 applications
-├── packages/                 # Shared packages
+├── web/                     # 20 applications
+├── pkgs/                 # Shared packages
 ├── spec/                     # 32 feature spec bundles
 ├── mcp/servers/              # MCP server implementations
 ├── supabase/                 # Migrations + Edge Functions

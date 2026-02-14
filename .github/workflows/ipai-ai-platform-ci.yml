@@ -11,7 +11,7 @@ on:
       - 'addons/ipai/ipai_workspace_core/**'
       - 'spec/ipai-ai-platform/**'
       - 'db/migrations/*_IPAI_KB*.sql'
-      - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/arch/IPAI_AI_PLATFORM*'
       - 'docs/data-model/IPAI_AI_PLATFORM*'
       - 'docs/api/openapi.ipai_ai_platform.yaml'
       - '.github/workflows/ipai-ai-platform-ci.yml'
@@ -24,7 +24,7 @@ on:
       - 'addons/ipai/ipai_workspace_core/**'
       - 'spec/ipai-ai-platform/**'
       - 'db/migrations/*_IPAI_KB*.sql'
-      - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/arch/IPAI_AI_PLATFORM*'
       - 'docs/data-model/IPAI_AI_PLATFORM*'
       - 'docs/api/openapi.ipai_ai_platform.yaml'
       - '.github/workflows/ipai-ai-platform-ci.yml'
@@ -130,10 +130,10 @@ jobs:
       - name: Check documentation exists
         run: |
           echo "Checking documentation..."
-          test -f docs/architecture/IPAI_AI_PLATFORM_ARCH.md || exit 1
+          test -f docs/arch/IPAI_AI_PLATFORM_ARCH.md || exit 1
           test -f docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml || exit 1
           test -f docs/data-model/IPAI_AI_PLATFORM_ERD.mmd || exit 1
-          test -f docs/architecture/IPAI_AI_PLATFORM_ORD.md || exit 1
+          test -f docs/arch/IPAI_AI_PLATFORM_ORD.md || exit 1
           test -f docs/api/openapi.ipai_ai_platform.yaml || exit 1
           echo "All documentation files present"
 

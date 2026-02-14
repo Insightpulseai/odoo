@@ -108,7 +108,7 @@ docs/knowledge/
 │  └── kg.sources (hash, fetched_at, url, content)                │
 │                                                                   │
 │  Ingestion (Python scripts)                                      │
-│  ├── Local filesystem scan (spec/, addons/, apps/)              │
+│  ├── Local filesystem scan (spec/, addons/, web/)              │
 │  ├── GitHub GraphQL (repos, issues, PRs, workflows)             │
 │  └── Supabase metadata (schemas, functions, policies)           │
 │                                                                   │

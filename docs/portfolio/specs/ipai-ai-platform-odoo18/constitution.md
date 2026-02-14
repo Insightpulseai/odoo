@@ -49,7 +49,7 @@ Config → OCA → Delta (ipai_*)
 
 - Fluent UI tokens drive React shell
 - Odoo SCSS theme only for minimal bridging
-- Use `packages/ipai-design-tokens` for shared tokens
+- Use `pkgs/ipai-design-tokens` for shared tokens
 
 ### 7. Auditability
 

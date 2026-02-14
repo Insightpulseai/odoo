@@ -78,7 +78,7 @@ gate: CI checks paths exist in Docker image
 
 **Config**: `deploy/odoo.conf`
 ```ini
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons
 ```
 
 **Container Check**:

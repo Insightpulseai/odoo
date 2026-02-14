@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'apps/web/src/app/api/auth/**'
+      - 'web/web/src/app/api/auth/**'
       - 'scripts/health/**'
       - 'scripts/supabase/**'
       - '.github/workflows/health-smoke.yml'

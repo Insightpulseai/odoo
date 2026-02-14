@@ -201,7 +201,7 @@ psql -U postgres -d postgres -c "SELECT * FROM org_usage_current LIMIT 5;"
 - Estimate: 4 hours
 
 **3. TypeScript Types Package**
-- File: `packages/saas-types/src/billing.ts`
+- File: `pkgs/saas-types/src/billing.ts`
 - Types: StripeCustomer, Subscription, UsageEvent, EntitlementCheck, Plan
 - Estimate: 2 hours
 

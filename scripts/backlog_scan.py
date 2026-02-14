@@ -174,9 +174,9 @@ PLATFORM_KIT_FEATURES = [
         "title": "Control Room Platform Kit UI",
         "category": Category.UI.value,
         "priority": Priority.P1.value,
-        "target_component": "apps/control-room",
+        "target_component": "web/control-room",
         "evidence_patterns": [
-            "apps/control-room/PLATFORM_KIT_SPEC.md",
+            "web/control-room/PLATFORM_KIT_SPEC.md",
             "ObservabilityManager",
         ],
     },
@@ -357,7 +357,7 @@ def scan_spec_tasks(repo_root: Path) -> list[BacklogItem]:
 def scan_todo_comments(repo_root: Path) -> list[BacklogItem]:
     """Scan for TODO/FIXME comments related to Platform Kit."""
     items = []
-    search_dirs = ["supabase", "apps/control-room", "scripts"]
+    search_dirs = ["supabase", "web/control-room", "scripts"]
 
     for search_dir in search_dirs:
         dir_path = repo_root / search_dir

@@ -17,7 +17,7 @@ platform :android do
   lane :validate do
     gradle(
       task: "assembleRelease",
-      project_dir: ENV.fetch("ANDROID_PROJECT_DIR", "../apps/flutter_app/android")
+      project_dir: ENV.fetch("ANDROID_PROJECT_DIR", "../web/flutter_app/android")
     )
     UI.success("Android build validated successfully")
   end
@@ -25,7 +25,7 @@ platform :android do
   desc "Upload AAB to Play Store internal track"
   lane :internal do
     aab_path = ENV.fetch("ANDROID_AAB_PATH") do
-      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+      "../web/flutter_app/build/app/outputs/bundle/release/app-release.aab"
     end
 
     unless File.exist?(aab_path)
@@ -47,7 +47,7 @@ platform :android do
   desc "Upload AAB to Play Store alpha track"
   lane :alpha do
     aab_path = ENV.fetch("ANDROID_AAB_PATH") do
-      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+      "../web/flutter_app/build/app/outputs/bundle/release/app-release.aab"
     end
 
     supply(
@@ -62,7 +62,7 @@ platform :android do
   desc "Submit to Play Store production"
   lane :production do
     aab_path = ENV.fetch("ANDROID_AAB_PATH") do
-      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+      "../web/flutter_app/build/app/outputs/bundle/release/app-release.aab"
     end
 
     supply(
@@ -93,7 +93,7 @@ platform :ios do
   desc "Validate iOS build configuration"
   lane :validate do
     build_app(
-      workspace: ENV.fetch("IOS_WORKSPACE", "../apps/flutter_app/ios/Runner.xcworkspace"),
+      workspace: ENV.fetch("IOS_WORKSPACE", "../web/flutter_app/ios/Runner.xcworkspace"),
       scheme: ENV.fetch("IOS_SCHEME", "Runner"),
       skip_archive: true,
       skip_codesigning: true
@@ -116,7 +116,7 @@ platform :ios do
       ipa_path = ENV["IOS_IPA_PATH"]
     else
       build_app(
-        workspace: ENV.fetch("IOS_WORKSPACE", "../apps/flutter_app/ios/Runner.xcworkspace"),
+        workspace: ENV.fetch("IOS_WORKSPACE", "../web/flutter_app/ios/Runner.xcworkspace"),
         scheme: ENV.fetch("IOS_SCHEME", "Runner"),
         export_method: "app-store"
       )
@@ -204,7 +204,7 @@ lane :bump_version do |options|
   bump_type = options[:type] || "patch"
 
   # Read current version from pubspec.yaml (Flutter)
-  pubspec = "../apps/flutter_app/pubspec.yaml"
+  pubspec = "../web/flutter_app/pubspec.yaml"
   if File.exist?(pubspec)
     content = File.read(pubspec)
     version_match = content.match(/version:\s*(\d+\.\d+\.\d+)\+(\d+)/)

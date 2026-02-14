@@ -7,4 +7,4 @@
 - public ingress (if any): 
 
 ## Notes
-- Source of truth: apps/<slug>/do/app.json
+- Source of truth: web/<slug>/do/app.json

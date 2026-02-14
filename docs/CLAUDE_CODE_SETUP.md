@@ -106,7 +106,7 @@ Keep diffs minimal and maintain OCA compliance.
 
 ```bash
 claude -p "
-Refactor apps/control-room/src/app into organized component library:
+Refactor web/control-room/src/app into organized component library:
 
 Structure:
 - src/components/
@@ -485,4 +485,4 @@ make docs                           # Generate docs
 - **Verification**: `scripts/verify.sh` (quality gates)
 - **Workflows**: `.github/workflows/` (CI automation)
 - **Module Docs**: `docs/modules/` (per-module guides)
-- **Architecture**: `docs/architecture/` (system design)
+- **Architecture**: `docs/arch/` (system design)

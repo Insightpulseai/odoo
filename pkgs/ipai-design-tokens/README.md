@@ -75,7 +75,7 @@ GitHub Actions validates:
 pnpm add @ipai/design-tokens
 
 # Generate tokens
-cd packages/ipai-design-tokens
+cd pkgs/ipai-design-tokens
 pnpm generate:tokens
 ```
 

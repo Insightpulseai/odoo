@@ -11,7 +11,7 @@
 ### ✅ Completed
 
 **1. Git Workspace Cleanup**
-- Unstaged all parent repo files (apps/alpha-browser, .claude/settings.local.json, etc.)
+- Unstaged all parent repo files (web/alpha-browser, .claude/settings.local.json, etc.)
 - Template workspace is clean (no cross-contamination)
 
 **2. Supabase CLI Fix**

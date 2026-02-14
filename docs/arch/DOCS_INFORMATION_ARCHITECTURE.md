@@ -76,7 +76,7 @@ docs/
 - `DEPRECATION_POLICY.md` - How to deprecate features/docs
 
 ### 2. Architecture & Design
-**Location**: `docs/architecture/`
+**Location**: `docs/arch/`
 **Purpose**: System architecture, ADRs, deployment topology
 **Naming**: `<COMPONENT>_<TYPE>.md` or `<TOPIC>.md`
 
@@ -87,8 +87,8 @@ docs/
 - `ODOO_ARCHITECTURE.md` - Platform architecture overview
 
 **Deprecated Locations**:
-- ❌ `docs/ARCHITECTURE.md` → Use `docs/architecture/ODOO_ARCHITECTURE.md`
-- ❌ Scattered diagrams → Use `docs/architecture/diagrams/`
+- ❌ `docs/ARCHITECTURE.md` → Use `docs/arch/ODOO_ARCHITECTURE.md`
+- ❌ Scattered diagrams → Use `docs/arch/diagrams/`
 
 ### 3. Deployment Documentation
 **Location**: `docs/guides/deployment/`
@@ -206,7 +206,7 @@ This document is **deprecated** as of YYYY-MM-DD.
 ### Directory Naming Rules
 1. **Use lowercase** for category directories: `docs/guides/`, `docs/runbooks/`
 2. **Use UPPERCASE** for timestamped directories: `docs/evidence/20260212-1830/`
-3. **No plural** for single-file categories: `docs/architecture/` (not `architectures/`)
+3. **No plural** for single-file categories: `docs/arch/` (not `architectures/`)
 4. **Use plural** for collections: `docs/guides/`, `docs/runbooks/`
 
 ---

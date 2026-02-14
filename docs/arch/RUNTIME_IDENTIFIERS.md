@@ -64,7 +64,7 @@ OCA_REPOS_DIR="/mnt/extra-addons/OCA"
 STANDALONE_DIR="/mnt/extra-addons"
 
 # Core Odoo addons
-CORE_ADDONS="/usr/lib/python3/dist-packages/odoo/addons"
+CORE_ADDONS="/usr/lib/python3/dist-pkgs/odoo/addons"
 ```
 
 ### System Users
@@ -160,7 +160,7 @@ rsync -avz addons/ipai_module/ root@178.128.112.214:/opt/odoo/repo/addons/ipai_m
 
 Odoo searches for modules in this order:
 
-1. `/usr/lib/python3/dist-packages/odoo/addons` (Core Odoo)
+1. `/usr/lib/python3/dist-pkgs/odoo/addons` (Core Odoo)
 2. `/var/lib/odoo/addons/18.0` (User-installed from Apps menu)
 3. `/mnt/extra-addons` (Custom addons mount)
    - `/mnt/extra-addons/ipai/` (Main ipai namespace - 85 modules)
@@ -322,9 +322,9 @@ No cron jobs or systemd timers found that modify addon filesystem ownership.
 
 ## References
 
-- **JSON Schema**: `docs/architecture/runtime_identifiers.json`
-- **Raw Probe Log**: `docs/architecture/odoo_runtime_probe.log`
-- **Production Snapshot**: `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
+- **JSON Schema**: `docs/arch/runtime_identifiers.json`
+- **Raw Probe Log**: `docs/arch/odoo_runtime_probe.log`
+- **Production Snapshot**: `docs/arch/PROD_RUNTIME_SNAPSHOT.md`
 - **Deployment Scripts**: `scripts/deploy-odoo-modules.sh`, `scripts/verify-addon-permissions.sh`
 
 ---

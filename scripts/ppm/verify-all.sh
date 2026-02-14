@@ -58,19 +58,19 @@ check_component "Spec Bundle" "spec/notion-finance-ppm-control-room" \
 # 2. Control Room App
 # ============================================================================
 echo -e "${BLUE}━━━ 2. Control Room App ━━━${NC}"
-check_component "Control Room" "apps/control-room" \
+check_component "Control Room" "web/control-room" \
     "package.json" "next.config.js" "tailwind.config.js" "tsconfig.json" ".env.example"
 
-check_component "Control Room Types" "apps/control-room/src/types" \
+check_component "Control Room Types" "web/control-room/src/types" \
     "api.ts" "models.ts"
 
-check_component "Control Room Lib" "apps/control-room/src/lib" \
+check_component "Control Room Lib" "web/control-room/src/lib" \
     "config.ts" "databricks.ts" "notion.ts" "schemas.ts"
 
-check_component "Control Room API Routes" "apps/control-room/src/app/api" \
+check_component "Control Room API Routes" "web/control-room/src/app/api" \
     "health/route.ts" "kpis/route.ts" "jobs/route.ts" "dq/issues/route.ts"
 
-check_component "Control Room Pages" "apps/control-room/src/app" \
+check_component "Control Room Pages" "web/control-room/src/app" \
     "layout.tsx" "page.tsx" "overview/page.tsx" "pipelines/page.tsx" "data-quality/page.tsx"
 
 # ============================================================================

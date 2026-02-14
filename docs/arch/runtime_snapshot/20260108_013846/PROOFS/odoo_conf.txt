@@ -13,7 +13,7 @@ db_sslmode = disable
 ; ----- Addons (CE + OCA + ipai_*) -----
 ; Base CE addons inside the image + OCA monorepo structure (aggregated)
 ; All OCA modules flattened into /mnt/addons/oca during Docker build
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons
 
 ; ----- HTTP -----
 http_port = 8069

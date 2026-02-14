@@ -63,7 +63,7 @@ git clone -b 18.0 --depth=1 https://github.com/OCA/project.git
 # Find current addons path
 docker exec -i odoo-accounting grep -E "^addons_path" /etc/odoo/odoo.conf
 
-# Expected output: addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+# Expected output: addons_path = /mnt/extra-addons,/usr/lib/python3/dist-pkgs/odoo/addons
 
 # Copy modules to extra-addons
 cp -r /root/oca-modules/account-financial-reporting/account_financial_report /mnt/extra-addons/

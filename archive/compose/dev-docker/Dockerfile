@@ -112,7 +112,7 @@ COPY ./theme_tbwa_backend /mnt/extra-addons/custom/theme_tbwa_backend
 # ----------------------------------------------------------------------------------------
 
 # Define the core addons path for easier reference
-ENV ODOO_CORE_ADDONS=/usr/lib/python3/dist-packages/odoo/addons
+ENV ODOO_CORE_ADDONS=/usr/lib/python3/dist-pkgs/odoo/addons
 
 # A. Remove "My Odoo.com Account" and "Support" from user dropdown menu
 #    These are defined in web/static/src/webclient/user_menu/user_menu_items.js
@@ -170,7 +170,7 @@ RUN chown -R odoo:odoo /mnt/extra-addons
 # Configure the ODOO_ADDONS_PATH environment variable.
 # This tells Odoo where to look for modules during the boot process.
 # Order matters: Custom > OCA > Core.
-ENV ODOO_ADDONS_PATH=/mnt/extra-addons/custom,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/account-financial-reporting,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/web,/mnt/extra-addons/oca/server-tools,/usr/lib/python3/dist-packages/odoo/addons
+ENV ODOO_ADDONS_PATH=/mnt/extra-addons/custom,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/account-financial-reporting,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/web,/mnt/extra-addons/oca/server-tools,/usr/lib/python3/dist-pkgs/odoo/addons
 
 # HEALTHCHECK: The Heartbeat of Activation
 # This instruction tells Docker/Kubernetes how to check if Odoo is actually responsive.

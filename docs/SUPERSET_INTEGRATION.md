@@ -83,7 +83,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
    - supabase/migrations/**
    - db/**
    - sql/**
-   - packages/db/**
+   - pkgs/db/**
    ↓
 3. Workflow triggers GitHub API repository_dispatch:
    POST /repos/jgtolentino/superset/dispatches

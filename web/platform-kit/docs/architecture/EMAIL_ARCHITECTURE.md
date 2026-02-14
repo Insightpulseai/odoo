@@ -165,7 +165,7 @@ INTENT / POLICY (Git)
     ├── config/domains.yaml          # Domain policy
     ├── config/mail/mailgun.yaml     # Mailgun config
     ├── infra/dns/*.json             # DNS records
-    └── docs/architecture/           # This documentation
+    └── docs/arch/           # This documentation
 
 SECRETS (Never in Git)
 └── Secret Store (Supabase / Vercel / .env)

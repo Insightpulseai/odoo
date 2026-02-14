@@ -28,7 +28,7 @@ services:
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
       --log-level=debug
       --dev=all
       --log-handler=:DEBUG

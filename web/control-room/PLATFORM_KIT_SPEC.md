@@ -200,7 +200,7 @@ export async function GET() {
 ## Component Structure
 
 ```
-apps/control-room/
+web/control-room/
 ├── src/
 │   ├── app/
 │   │   ├── api/

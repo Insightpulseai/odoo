@@ -167,7 +167,7 @@ export function generateEditUrl(
     org = 'supabase',
     repo = 'supabase',
     branch = 'master',
-    contentPath = 'apps/docs/content',
+    contentPath = 'web/docs/content',
   } = options;
 
   // Remove leading /docs from pathname

@@ -17,7 +17,7 @@ A comprehensive **git pre-flight skill system** for the InsightPulse AI Ops Cont
 
 ### Repository 1: design-system-cli
 
-**Location**: `/Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge/`
+**Location**: `/Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge/`
 
 | File | Lines | Purpose |
 |------|-------|---------|
@@ -84,7 +84,7 @@ A comprehensive **git pre-flight skill system** for the InsightPulse AI Ops Cont
 
 **Running Tests**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge
+cd /Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge
 pnpm install
 pnpm test:git-ops
 ```
@@ -130,7 +130,7 @@ export async function figma(options: FigmaOptions): Promise<void> {
 skills:
   - id: git_preflight
     implementation:
-      module: packages/figma-bridge/src/git-operations.ts
+      module: pkgs/figma-bridge/src/git-operations.ts
       entrypoint: runGitWorkflow
     inputs:
       - cwd (string, optional)
@@ -224,12 +224,12 @@ pnpm test
 
 # 3. Commit changes
 git add \
-  packages/figma-bridge/src/git-operations.ts \
-  packages/figma-bridge/src/git-operations.test.ts \
-  packages/figma-bridge/src/figma.ts \
-  packages/figma-bridge/src/index.ts \
-  packages/figma-bridge/vitest.config.ts \
-  packages/figma-bridge/package.json
+  pkgs/figma-bridge/src/git-operations.ts \
+  pkgs/figma-bridge/src/git-operations.test.ts \
+  pkgs/figma-bridge/src/figma.ts \
+  pkgs/figma-bridge/src/index.ts \
+  pkgs/figma-bridge/vitest.config.ts \
+  pkgs/figma-bridge/package.json
 
 git commit -m "feat(figma-bridge): add git pre-flight checks with tests"
 
@@ -263,13 +263,13 @@ git push origin main
 
 **Test Locally**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge
+cd /Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge
 pnpm test:git-ops
 ```
 
 **Expected Output**:
 ```
-✓ packages/figma-bridge/src/git-operations.test.ts (15)
+✓ pkgs/figma-bridge/src/git-operations.test.ts (15)
 Test Files  1 passed (1)
      Tests  15 passed (15)
 ```
@@ -350,7 +350,7 @@ GROUP BY repository;
 skills:
   - id: git_preflight
     implementation:
-      module: packages/figma-bridge/src/git-operations.ts  # REUSE
+      module: pkgs/figma-bridge/src/git-operations.ts  # REUSE
       entrypoint: runGitWorkflow
 
   - id: sync_odoo_theme
@@ -365,7 +365,7 @@ skills:
 skills:
   - id: git_preflight
     implementation:
-      module: packages/figma-bridge/src/git-operations.ts  # REUSE
+      module: pkgs/figma-bridge/src/git-operations.ts  # REUSE
       entrypoint: runGitWorkflow
 
   - id: deploy_dashboard
@@ -506,9 +506,9 @@ git push origin main
 
 ### Code
 
-- **Implementation**: `design-system-cli/packages/figma-bridge/src/git-operations.ts`
-- **Tests**: `design-system-cli/packages/figma-bridge/src/git-operations.test.ts`
-- **Integration**: `design-system-cli/packages/figma-bridge/src/figma.ts`
+- **Implementation**: `design-system-cli/pkgs/figma-bridge/src/git-operations.ts`
+- **Tests**: `design-system-cli/pkgs/figma-bridge/src/git-operations.test.ts`
+- **Integration**: `design-system-cli/pkgs/figma-bridge/src/figma.ts`
 
 ### Specs
 

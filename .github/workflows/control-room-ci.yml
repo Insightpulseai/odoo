@@ -5,13 +5,13 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/control-room/**'
+      - 'web/control-room/**'
       - '.github/workflows/control-room-ci.yml'
   workflow_dispatch:
 
 defaults:
   run:
-    working-directory: apps/control-room
+    working-directory: web/control-room
 
 env:
   NODE_VERSION: '20'
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: apps/control-room/package-lock.json
+          cache-dependency-path: web/control-room/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -52,7 +52,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: apps/control-room/package-lock.json
+          cache-dependency-path: web/control-room/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -64,7 +64,7 @@ jobs:
         uses: codecov/codecov-action@v4
         if: always()
         with:
-          files: apps/control-room/coverage/lcov.info
+          files: web/control-room/coverage/lcov.info
           flags: control-room
           fail_ci_if_error: false
 
@@ -81,7 +81,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: apps/control-room/package-lock.json
+          cache-dependency-path: web/control-room/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -97,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: control-room-build
-          path: apps/control-room/.next
+          path: web/control-room/.next
           retention-days: 7
 
   docker:
@@ -115,7 +115,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          context: apps/control-room
+          context: web/control-room
           push: false
           tags: control-room:${{ github.sha }}
           cache-from: type=gha

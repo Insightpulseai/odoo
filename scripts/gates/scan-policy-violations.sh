@@ -45,7 +45,7 @@ mkdir -p "$EVIDENCE_DIR"
 echo "[1/3] Scanning for unattested capability claims..."
 
 # Scan for capability: declarations in code
-if grep -rn "capability:" apps/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
+if grep -rn "capability:" web/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
     CAPABILITY=$(echo "$line" | sed -n "s/.*capability:\s*['\"]\\([^'\"]*\\)['\"].*/\\1/p")
 
     if [ -n "$CAPABILITY" ]; then
@@ -74,7 +74,7 @@ fi
 echo "[2/3] Scanning for blocked model usage..."
 
 # Scan for model: declarations in code
-if grep -rn "model:" apps/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
+if grep -rn "model:" web/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
     MODEL=$(echo "$line" | sed -n "s/.*model:\s*['\"]\\([^'\"]*\\)['\"].*/\\1/p")
 
     if [ -n "$MODEL" ]; then
@@ -102,7 +102,7 @@ fi
 echo "[3/3] Scanning for privacy mode bypass attempts..."
 
 # Scan for x-privacy-mode: false headers (suspicious)
-if grep -rn "x-privacy-mode.*false" apps/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
+if grep -rn "x-privacy-mode.*false" web/ scripts/ --include="*.ts" --include="*.py" --include="*.js" 2>/dev/null | while read -r line; do
     echo -e "${YELLOW}WARNING:${NC} Privacy mode explicitly disabled: $line"
     echo "$line" >> "${EVIDENCE_DIR}/privacy-mode-disabled.txt"
 done; then

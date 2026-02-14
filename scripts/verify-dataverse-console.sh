@@ -24,13 +24,13 @@ echo "[1/5] Verifying file structure..."
 
 FILES=(
     "supabase/migrations/20260213_001000_ops_policy_extensions.sql"
-    "apps/policy-gateway/package.json"
-    "apps/policy-gateway/src/index.ts"
-    "apps/policy-gateway/src/enforcement.ts"
-    "apps/policy-gateway/src/privacy.ts"
-    "apps/policy-gateway/src/models.ts"
-    "apps/policy-gateway/src/capabilities.ts"
-    "apps/policy-gateway/src/audit.ts"
+    "web/policy-gateway/package.json"
+    "web/policy-gateway/src/index.ts"
+    "web/policy-gateway/src/enforcement.ts"
+    "web/policy-gateway/src/privacy.ts"
+    "web/policy-gateway/src/models.ts"
+    "web/policy-gateway/src/capabilities.ts"
+    "web/policy-gateway/src/audit.ts"
     "scripts/gates/scan-policy-violations.sh"
     ".github/workflows/policy-violation-gate.yml"
     "docs/evidence/20260213-0000/dataverse-console/IMPLEMENTATION_SUMMARY.md"
@@ -69,8 +69,8 @@ fi
 
 echo "[3/5] Checking TypeScript compilation..."
 
-if [ -d "apps/policy-gateway" ]; then
-    cd apps/policy-gateway
+if [ -d "web/policy-gateway" ]; then
+    cd web/policy-gateway
     if command -v pnpm >/dev/null 2>&1; then
         if pnpm typecheck 2>/dev/null; then
             echo "✅ TypeScript compilation successful"
@@ -123,12 +123,12 @@ if [ $ERRORS -eq 0 ]; then
     echo ""
     echo "Phase 1+2+4 implementation complete:"
     echo "  - Schema extensions (ops.model_policy, ops.policy_decisions, etc.)"
-    echo "  - Policy Gateway application (apps/policy-gateway/)"
+    echo "  - Policy Gateway application (web/policy-gateway/)"
     echo "  - CI gate (scripts/gates/scan-policy-violations.sh)"
     echo ""
     echo "Next steps:"
     echo "  1. Apply migration: supabase db push"
-    echo "  2. Install dependencies: cd apps/policy-gateway && pnpm install"
+    echo "  2. Install dependencies: cd web/policy-gateway && pnpm install"
     echo "  3. Test gateway: pnpm dev"
     echo "  4. Test scanner: bash scripts/gates/scan-policy-violations.sh"
 else

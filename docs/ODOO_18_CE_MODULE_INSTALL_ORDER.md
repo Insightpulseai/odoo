@@ -416,7 +416,7 @@ EOF
 From `config/odoo-core.conf`:
 
 ```ini
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,\
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,\
 /mnt/extra-addons/oca/server-tools,\
 /mnt/extra-addons/oca/server-ux,\
 /mnt/extra-addons/oca/server-backend,\

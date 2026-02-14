@@ -23,8 +23,8 @@ observability.edges         -- Topology graph
 ### Phase 2: API Layer
 
 **Deliverables:**
-- `apps/control-room/app/api/observability/` - API routes
-- `apps/control-room/app/api/ai/sql/route.ts` - AI SQL generation
+- `web/control-room/app/api/observability/` - API routes
+- `web/control-room/app/api/ai/sql/route.ts` - AI SQL generation
 
 **Endpoints:**
 ```
@@ -41,7 +41,7 @@ POST /api/ai/sql
 ### Phase 3: Platform Kit Integration
 
 **Deliverables:**
-- `apps/control-room/src/components/observability/ObservabilityManager.tsx`
+- `web/control-room/src/components/observability/ObservabilityManager.tsx`
 - Custom tabs: Jobs, Agents, Health, Topology
 
 **Component Structure:**
@@ -69,7 +69,7 @@ ObservabilityManager (Dialog/Drawer)
 ### Phase 4: Topology Visualization
 
 **Deliverables:**
-- `apps/control-room/src/components/observability/TopologyGraph.tsx`
+- `web/control-room/src/components/observability/TopologyGraph.tsx`
 - D3.js/React Flow based graph rendering
 
 **Node Types:**
@@ -93,7 +93,7 @@ ObservabilityManager (Dialog/Drawer)
 ## File Structure
 
 ```
-apps/control-room/
+web/control-room/
 ├── app/
 │   └── api/
 │       ├── observability/

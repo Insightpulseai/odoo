@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - "spec/ipai-control-center/**"
-      - "apps/ipai-control-center-docs/**"
+      - "web/ipai-control-center-docs/**"
       - "vercel.json"
   workflow_dispatch: {}
 
@@ -25,11 +25,11 @@ jobs:
           node-version: "20"
 
       - name: Install deps
-        working-directory: apps/ipai-control-center-docs
+        working-directory: web/ipai-control-center-docs
         run: npm ci || npm install
 
       - name: Build
-        working-directory: apps/ipai-control-center-docs
+        working-directory: web/ipai-control-center-docs
         run: npm run build
 
       - name: Deploy to Vercel (prod)
@@ -39,7 +39,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           npm i -g vercel@latest
-          cd apps/ipai-control-center-docs
+          cd web/ipai-control-center-docs
           vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
           vercel build --prod --token="$VERCEL_TOKEN"
           vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

@@ -62,7 +62,7 @@ KNOWN_SOURCES = {
     "supabase-docs": {
         "kind": "docs",
         "base_url": "https://supabase.com/docs",
-        "paths": ["docs/supabase/", "docs/architecture/supabase/"],
+        "paths": ["docs/supabase/", "docs/arch/supabase/"],
     },
     "odoo-oca-18": {
         "kind": "docs",
@@ -87,7 +87,7 @@ KNOWN_SOURCES = {
     "ipai-internal": {
         "kind": "internal",
         "base_url": None,
-        "paths": ["CLAUDE.md", "docs/architecture/"],
+        "paths": ["CLAUDE.md", "docs/arch/"],
     },
 }
 

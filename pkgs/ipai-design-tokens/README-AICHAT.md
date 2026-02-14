@@ -157,7 +157,7 @@ All tokens are available as CSS custom properties:
 ### React Component Demo
 
 ```bash
-cd packages/ipai-design-tokens
+cd pkgs/ipai-design-tokens
 pnpm install
 pnpm dev
 ```
@@ -167,7 +167,7 @@ Open http://localhost:5173/ to see the React demo.
 ### Vanilla CSS Demo
 
 ```bash
-cd packages/ipai-design-tokens
+cd pkgs/ipai-design-tokens
 open demo-vanilla.html
 ```
 
@@ -314,7 +314,7 @@ Uses modern CSS features:
 ## File Structure
 
 ```
-packages/ipai-design-tokens/
+pkgs/ipai-design-tokens/
 ├── src/
 │   └── react/
 │       └── AIChatWidget.tsx      # React component

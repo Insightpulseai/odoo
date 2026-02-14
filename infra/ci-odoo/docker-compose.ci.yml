@@ -41,7 +41,7 @@ services:
       -d odoo_ci
       --without-demo=all
       --stop-after-init
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/repo/addons,/mnt/repo/oca
+      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/repo/addons,/mnt/repo/oca
 
 volumes:
   odoo_ci_data:

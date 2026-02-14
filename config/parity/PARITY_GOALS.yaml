@@ -1,7 +1,7 @@
 version: 1
 odoo_version: "19"
 principles:
-  - "Assume EE apps/modules have OCA equivalents; do not score module presence."
+  - "Assume EE web/modules have OCA equivalents; do not score module presence."
   - "Score only EE-only service/platform and capability surfaces."
   - "All probes must be deterministic and repo-verifiable (no UI)."
 

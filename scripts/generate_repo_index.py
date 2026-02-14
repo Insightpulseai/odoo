@@ -48,7 +48,7 @@ def scan_spec_bundles(spec_dir: Path) -> List[Dict[str, Any]]:
 
 
 def scan_apps(apps_dir: Path) -> List[Dict[str, Any]]:
-    """Scan apps/ directory for applications"""
+    """Scan web/ directory for applications"""
     apps = []
     if not apps_dir.exists():
         return apps

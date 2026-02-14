@@ -1,6 +1,6 @@
 # Auth Session FSM
 
-**Source**: `apps/mobile/src/lib/supabase.ts`, `apps/mobile/src/store/app.ts`, `apps/control-room/src/app/api/mobile/auth/login/route.ts`
+**Source**: `web/mobile/src/lib/supabase.ts`, `web/mobile/src/store/app.ts`, `web/control-room/src/app/api/mobile/auth/login/route.ts`
 
 ## Overview
 

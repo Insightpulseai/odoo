@@ -6,63 +6,63 @@
     {
       "name": "Azure Boards",
       "slug": "azure-boards",
-      "install_url": "https://github.com/apps/azure-boards/installations/new",
+      "install_url": "https://github.com/web/azure-boards/installations/new",
       "installed": true,
       "category": "project-management"
     },
     {
       "name": "ChatGPT Codex Connector",
       "slug": "chatgpt-codex-connector",
-      "install_url": "https://github.com/apps/chatgpt-codex-connector/installations/new",
+      "install_url": "https://github.com/web/chatgpt-codex-connector/installations/new",
       "installed": true,
       "category": "ai-coding"
     },
     {
       "name": "Claude",
       "slug": "claude",
-      "install_url": "https://github.com/apps/claude/installations/new",
+      "install_url": "https://github.com/web/claude/installations/new",
       "installed": true,
       "category": "ai-coding"
     },
     {
       "name": "Cloudflare Workers and Pages",
       "slug": "cloudflare-workers-and-pages",
-      "install_url": "https://github.com/apps/cloudflare-workers-and-pages/installations/new",
+      "install_url": "https://github.com/web/cloudflare-workers-and-pages/installations/new",
       "installed": true,
       "category": "deployment"
     },
     {
       "name": "Cursor",
       "slug": "cursor",
-      "install_url": "https://github.com/apps/cursor/installations/new",
+      "install_url": "https://github.com/web/cursor/installations/new",
       "installed": true,
       "category": "ai-coding"
     },
     {
       "name": "Databricks",
       "slug": "databricks",
-      "install_url": "https://github.com/apps/databricks/installations/new",
+      "install_url": "https://github.com/web/databricks/installations/new",
       "installed": true,
       "category": "data-platform"
     },
     {
       "name": "Figma",
       "slug": "figma",
-      "install_url": "https://github.com/apps/figma/installations/new",
+      "install_url": "https://github.com/web/figma/installations/new",
       "installed": true,
       "category": "design"
     },
     {
       "name": "Slack",
       "slug": "slack",
-      "install_url": "https://github.com/apps/slack/installations/new",
+      "install_url": "https://github.com/web/slack/installations/new",
       "installed": true,
       "category": "communication"
     },
     {
       "name": "Vercel",
       "slug": "vercel",
-      "install_url": "https://github.com/apps/vercel/installations/new",
+      "install_url": "https://github.com/web/vercel/installations/new",
       "installed": true,
       "category": "deployment"
     }
@@ -71,7 +71,7 @@
     {
       "name": "Supabase",
       "slug": "supabase",
-      "install_url": "https://github.com/apps/supabase/installations/new",
+      "install_url": "https://github.com/web/supabase/installations/new",
       "installed": false,
       "reason": "Active in personal account (~3 weeks ago), used for task bus and n8n workflows",
       "priority": "high",
@@ -80,7 +80,7 @@
     {
       "name": "DigitalOcean",
       "slug": "digitalocean",
-      "install_url": "https://github.com/apps/digitalocean/installations/new",
+      "install_url": "https://github.com/web/digitalocean/installations/new",
       "installed": false,
       "reason": "Active in personal account (~2 months ago), hosts production infrastructure",
       "priority": "high",
@@ -89,7 +89,7 @@
     {
       "name": "Renovate",
       "slug": "renovate",
-      "install_url": "https://github.com/apps/renovate/installations/new",
+      "install_url": "https://github.com/web/renovate/installations/new",
       "installed": false,
       "reason": "Automated dependency updates across org repos",
       "priority": "high",
@@ -98,7 +98,7 @@
     {
       "name": "Sentry",
       "slug": "sentry",
-      "install_url": "https://github.com/apps/sentry-io/installations/new",
+      "install_url": "https://github.com/web/sentry-io/installations/new",
       "installed": false,
       "reason": "Error monitoring integration with commit tracking",
       "priority": "medium",
@@ -107,7 +107,7 @@
     {
       "name": "Mermaid Chart",
       "slug": "mermaid-chart",
-      "install_url": "https://github.com/apps/mermaid-chart/installations/new",
+      "install_url": "https://github.com/web/mermaid-chart/installations/new",
       "installed": false,
       "reason": "Diagram rendering in PRs and issues — already authorized personally",
       "priority": "low",
@@ -116,7 +116,7 @@
     {
       "name": "draw.io App",
       "slug": "draw-io-app",
-      "install_url": "https://github.com/apps/draw-io-app/installations/new",
+      "install_url": "https://github.com/web/draw-io-app/installations/new",
       "installed": false,
       "reason": "Architecture diagram editing in-repo — already authorized personally",
       "priority": "low",

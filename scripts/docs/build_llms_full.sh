@@ -17,7 +17,7 @@ OUT="${1:-docs/llms-full.txt}"
 INTERNAL_FILES=(
   "CLAUDE.md"
   "README.md"
-  "docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md"
+  "docs/arch/EXT_AGENT_TOOL_CAPABILITIES.md"
   "docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md"
 )
 

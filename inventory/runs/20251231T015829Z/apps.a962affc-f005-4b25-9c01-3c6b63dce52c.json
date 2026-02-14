@@ -16,7 +16,7 @@
           "envs": [
             {
               "key": "ODOO_ADDONS_PATH",
-              "value": "/usr/lib/python3/dist-packages/odoo/addons",
+              "value": "/usr/lib/python3/dist-pkgs/odoo/addons",
               "scope": "RUN_TIME"
             }
           ],
@@ -69,7 +69,7 @@
             "envs": [
               {
                 "key": "ODOO_ADDONS_PATH",
-                "value": "/usr/lib/python3/dist-packages/odoo/addons",
+                "value": "/usr/lib/python3/dist-pkgs/odoo/addons",
                 "scope": "RUN_TIME"
               }
             ],

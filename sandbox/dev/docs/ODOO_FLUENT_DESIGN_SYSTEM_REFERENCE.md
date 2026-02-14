@@ -291,7 +291,7 @@ Before committing UI changes:
 
 ## Integration with ipai-workspace
 
-**Boundary rule**: Design tokens **defined in ipai-workspace** (`packages/tokens`), **consumed in odoo** (as SCSS imports).
+**Boundary rule**: Design tokens **defined in ipai-workspace** (`pkgs/tokens`), **consumed in odoo** (as SCSS imports).
 
 ```bash
 # Export tokens from ipai-workspace
