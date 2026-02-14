@@ -16,6 +16,7 @@ app_subdomains = [
 "ocr",
 "auth",
 "superset",
+"mcp",
 "www",
 "api",
 "stage-erp",

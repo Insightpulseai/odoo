@@ -61,7 +61,8 @@ subdomains:
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: auth
     type: A
@@ -71,7 +72,8 @@ subdomains:
     owner_system: "Authentication service"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: superset
     type: A
@@ -85,17 +87,18 @@ subdomains:
     status: active
 
   # ---------------------------------------------------------------------------
-  # App Platform Services (CNAME Records → DO App Platform)
+  # MCP Gateway (A Record → Self-hosted on 178.128.112.214)
   # ---------------------------------------------------------------------------
   - name: mcp
-    type: CNAME
+    type: A
     service: mcp_gateway
-    target: pulse-hub-web-an645.ondigitalocean.app
+    port: 3000
     health_check: /healthz
     owner_system: "MCP coordination (11 servers)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: active
+    notes: "Self-hosted MCP gateway on DO droplet"
 
   # ---------------------------------------------------------------------------
   # Additional Subdomains (for www, api, etc.)
@@ -131,8 +134,9 @@ subdomains:
     owner_system: "Odoo CE 19.0 (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-api
     type: A
@@ -142,8 +146,9 @@ subdomains:
     owner_system: "API Gateway (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-auth
     type: A
@@ -153,8 +158,9 @@ subdomains:
     owner_system: "Authentication service (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-mcp
     type: A
@@ -164,8 +170,9 @@ subdomains:
     owner_system: "MCP coordination (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-n8n
     type: A
@@ -175,8 +182,9 @@ subdomains:
     owner_system: "n8n automation (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-superset
     type: A
@@ -186,8 +194,9 @@ subdomains:
     owner_system: "Apache Superset BI (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
   - name: stage-ocr
     type: A
@@ -197,8 +206,9 @@ subdomains:
     owner_system: "PaddleOCR microservice (staging)"
     cloudflare_proxied: false
     tls_mode: "Full (strict)"
-    status: active
+    status: planned
     environment: staging
+    notes: "Not currently deployed in Cloudflare DNS"
 
 # =============================================================================
 # Deprecated Services (Archived for Reference)
@@ -210,3 +220,19 @@ deprecated:
     reason: "Service no longer needed"
     dns_removed: true
     container_removed: true
+
+  - name: chat
+    deprecated_date: "2026-01-28"
+    replacement: "Slack (external)"
+    reason: "Mattermost deprecated in favor of Slack"
+    dns_removed: true
+    container_removed: true
+    original_service: "Mattermost chat server"
+
+  - name: agent
+    deprecated_date: "2026-02-14"
+    replacement: null
+    reason: "Service not needed - functionality integrated into mcp subdomain"
+    dns_removed: true
+    container_removed: false
+    original_service: "AI agent CNAME to DO App Platform"

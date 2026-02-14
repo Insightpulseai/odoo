@@ -9,7 +9,7 @@
 #
 # Outputs:
 #   1. infra/cloudflare/envs/prod/subdomains.auto.tfvars (Terraform input)
-#   2. docs/architecture/runtime_identifiers.json (Runtime reference)
+#   2. docs/arch/runtime_identifiers.json (Runtime reference)
 #   3. infra/dns/dns-validation-spec.json (CI validation spec)
 #
 # CI Integration:
@@ -24,7 +24,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 SSOT_FILE="$REPO_ROOT/infra/dns/subdomain-registry.yaml"
 TF_OUTPUT="$REPO_ROOT/infra/cloudflare/envs/prod/subdomains.auto.tfvars"
-JSON_OUTPUT="$REPO_ROOT/docs/architecture/runtime_identifiers.json"
+JSON_OUTPUT="$REPO_ROOT/docs/arch/runtime_identifiers.json"
 VALIDATION_OUTPUT="$REPO_ROOT/infra/dns/dns-validation-spec.json"
 
 # Ensure yq is installed
