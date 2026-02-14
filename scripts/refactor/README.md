@@ -1,6 +1,12 @@
 # Refactor Subagents
 
-4-track parallel codebase analysis system for systematic refactoring.
+4-track parallel codebase analysis system for systematic refactoring with automated fixes.
+
+## Quick Start
+
+**Want to get started immediately?** See [`QUICKSTART.md`](./QUICKSTART.md) for a 5-minute end-to-end workflow from analysis to PR.
+
+**New to the system?** Continue reading for complete documentation.
 
 ## Overview
 

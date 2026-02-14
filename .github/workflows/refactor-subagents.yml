@@ -14,6 +14,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: ./scripts/refactor/run_refactor_subagents.sh
+      - name: Security gate (fail on critical/high)
+        run: node scripts/refactor/ci_security_gate.js
       - uses: actions/upload-artifact@v4
         with:
           name: refactor-report

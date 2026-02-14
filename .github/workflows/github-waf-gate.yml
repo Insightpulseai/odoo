@@ -1,0 +1,32 @@
+name: github-waf-gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  assess-waf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml requests
+
+      - name: Run WAF Assessment (Local Checks)
+        run: python3 scripts/audit/check_github_waf.py
+
+      - name: Upload Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: waf-evidence-pr
+          path: artifacts/audit/
