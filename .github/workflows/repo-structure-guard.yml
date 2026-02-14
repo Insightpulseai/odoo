@@ -1,0 +1,64 @@
+name: repo-structure-guard
+
+# Enforce SSOT: This canonical odoo/ repository is the single source of truth
+# No nested odoo-ce or duplicate odoo roots should exist within this repo
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  no_duplicate_odoo_roots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fail if duplicate Odoo roots exist
+        run: |
+          set -euo pipefail
+
+          echo "🔍 Checking for duplicate Odoo roots within canonical repository..."
+
+          # Check for forbidden nested directory patterns
+          # Exclude the canonical addons/, apps/, and .git directories
+          DUPLICATE_ROOTS=$(find . -type d \( -name "odoo-ce" -o -name "odoo-ce-*" -o -name "odoo" -o -name "odoo19" \) \
+            -not -path "./.git/*" \
+            -not -path "./node_modules/*" \
+            -not -path "./.venv/*" \
+            -not -path "./archive/*" \
+            2>/dev/null || true)
+
+          if [ -n "$DUPLICATE_ROOTS" ]; then
+            echo "::error::❌ Duplicate Odoo root detected within canonical repository."
+            echo "::error::Found:"
+            echo "$DUPLICATE_ROOTS" | sed 's/^/  /'
+            echo ""
+            echo "::error::This repository IS the canonical Odoo root."
+            echo "::error::No nested odoo/ or odoo-ce/ directories should exist."
+            exit 1
+          fi
+
+          echo "✅ No duplicate Odoo roots found. Repository structure verified."
+
+  verify_ssot_declaration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify SSOT documentation exists
+        run: |
+          set -euo pipefail
+
+          echo "🔍 Verifying SSOT documentation..."
+
+          # Check for CLAUDE.md SSOT declaration
+          if ! grep -q "SSOT\|Single Source of Truth\|canonical" CLAUDE.md 2>/dev/null; then
+            echo "::warning::CLAUDE.md should explicitly declare this as the SSOT repository"
+          fi
+
+          # Check for README.md SSOT section
+          if ! grep -q "SSOT\|Single Source of Truth" README.md 2>/dev/null; then
+            echo "::warning::README.md should contain an SSOT section"
+          fi
+
+          echo "✅ SSOT documentation check complete"
