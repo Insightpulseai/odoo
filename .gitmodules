@@ -80,7 +80,7 @@
 	branch = 18.0
 	shallow = true
 [submodule "branding/fluentui-system-icons"]
-	path = branding/fluentui-system-icons
+	path = design/branding/fluentui-system-icons
 	url = https://github.com/microsoft/fluentui-system-icons.git
 [submodule "addons/OCA/queue"]
 	path = vendor/oca/OCA/queue
