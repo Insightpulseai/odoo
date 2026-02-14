@@ -57,7 +57,7 @@ jinja2==3.1.6
 
 # ----- Postgres / Supabase DB Ops -----
 psycopg[binary]==3.2.3
-sqlalchemy==2.0.36
+sqlalchemy==2.0.46
 
 # ----- Schema / ERD / Docs Generation -----
 dbml-to-sqlalchemy==0.9.0
