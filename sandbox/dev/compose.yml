@@ -69,3 +69,8 @@ services:
 volumes:
   db-data:
   odoo-web-data:
+
+networks:
+  default:
+    name: ipai-network
+    external: true
