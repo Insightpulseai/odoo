@@ -11,6 +11,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 .PHONY: help up down ps logs health init update restart config \
+        colima-up colima-down colima-reset colima-status \
         db-shell db-health redis-health odoo-shell \
         tools ipai-guard parity-seed parity-seed-check \
         gen-addons-path render-odoo-conf addons-path-check
@@ -40,6 +41,22 @@ restart: ## Restart Odoo (keep PG + Redis)
 
 config: ## Validate compose syntax
 	@docker compose config >/dev/null && echo "OK: compose config valid"
+
+# ---------------------------------------------------------------------------
+# Colima (Docker daemon for macOS)
+# ---------------------------------------------------------------------------
+
+colima-up: ## Start Colima with odoo profile
+	./scripts/colima-up.sh
+
+colima-down: ## Stop Colima gracefully
+	./scripts/colima-down.sh
+
+colima-reset: ## Reset Colima (DELETES all Docker data)
+	./scripts/colima-reset.sh
+
+colima-status: ## Show Colima status
+	@colima status -p odoo || echo "Colima 'odoo' not running"
 
 # ---------------------------------------------------------------------------
 # Health checks

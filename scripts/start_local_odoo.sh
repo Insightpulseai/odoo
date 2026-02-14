@@ -8,21 +8,26 @@ echo "Starting Local Odoo Development"
 echo "==========================================="
 echo ""
 
-# Check if Docker is running
-echo "1. Checking Docker..."
+# Check if Docker daemon is running
+echo "1. Checking Docker daemon..."
 if ! docker ps &> /dev/null; then
-    echo "⚠️  Docker is not running. Starting Docker Desktop..."
-    open -a Docker
-    echo "⏳ Waiting for Docker to start (30 seconds)..."
-    sleep 30
+    echo "⚠️  Docker daemon is not running"
+    echo "💡 Start with: make colima-up"
+    echo ""
+    echo "Attempting to start Colima automatically..."
 
-    # Check again
-    if ! docker ps &> /dev/null; then
-        echo "❌ Docker failed to start. Please start Docker Desktop manually."
+    # Try to start Colima
+    if command -v colima &> /dev/null; then
+        ./scripts/colima-up.sh || {
+            echo "❌ Failed to start Colima. Please run: make colima-up"
+            exit 1
+        }
+    else
+        echo "❌ Colima not installed. Install with: brew install colima docker docker-compose"
         exit 1
     fi
 fi
-echo "✅ Docker is running"
+echo "✅ Docker daemon is running"
 echo ""
 
 # Start Odoo services

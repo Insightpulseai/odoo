@@ -20,6 +20,7 @@ Extracted from root `CLAUDE.md` to keep it compact.
 | `OCA_WORKFLOW.md` | OCA template, pre-commit, mrbob scaffolding |
 | `TESTING.md` | Test command recipes (Odoo, Python, Node.js) |
 | `DOCKER.md` | Docker compose commands, database access |
+| `COLIMA.md` | Colima setup (Docker Desktop alternative for macOS) |
 | `TROUBLESHOOTING.md` | Common issues and fixes |
 | `SPEC_KIT.md` | Spec bundle format and current inventory |
 | `MEMORY.md` | External memory system (.claude/query_memory.py) |

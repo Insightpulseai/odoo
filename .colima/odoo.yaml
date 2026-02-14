@@ -1,0 +1,52 @@
+# Colima profile for Odoo development
+# Fast mounts, deterministic resources, optimized for Odoo CE 19.0 + PostgreSQL 16
+
+# VM Configuration
+cpu: 4
+memory: 8
+disk: 60
+
+# Docker runtime
+runtime: docker
+
+# Filesystem performance (fastest for macOS development)
+# virtiofs is 2-3x faster than sshfs/9p for large projects
+mount:
+  type: virtiofs
+
+# Network configuration
+network:
+  address: true  # Assign reachable IP address
+
+# DNS resolution
+dns:
+  - 1.1.1.1
+  - 8.8.8.8
+
+# Docker daemon configuration
+docker:
+  # Features for development
+  features:
+    buildkit: true
+
+  # Daemon config
+  config:
+    # Logging (matches docker-compose.yml standards)
+    log-driver: json-file
+    log-opts:
+      max-size: "10m"
+      max-file: "5"
+
+    # Performance
+    storage-driver: overlay2
+
+    # Registry mirrors for faster pulls (optional)
+    # registry-mirrors:
+    #   - https://mirror.gcr.io
+
+# Kubernetes disabled for Docker-only workflow
+kubernetes:
+  enabled: false
+
+# Auto-start on login (optional - uncomment if desired)
+# autoStart: true
