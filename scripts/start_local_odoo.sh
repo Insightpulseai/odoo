@@ -8,6 +8,14 @@ echo "Starting Local Odoo Development"
 echo "==========================================="
 echo ""
 
+# Set Docker environment for Colima
+COLIMA_PROFILE="odoo"
+if [ -S "$HOME/.colima/${COLIMA_PROFILE}/docker.sock" ]; then
+    export DOCKER_HOST="unix://$HOME/.colima/${COLIMA_PROFILE}/docker.sock"
+    echo "🔧 Using Colima Docker socket: $DOCKER_HOST"
+    echo ""
+fi
+
 # Check if Docker daemon is running
 echo "1. Checking Docker daemon..."
 if ! docker ps &> /dev/null; then
@@ -32,40 +40,22 @@ echo ""
 
 # Start Odoo services
 echo "2. Starting Odoo services..."
-cd /Users/tbwa/odoo-ce
 
-if [ -f "docker-compose.dev.yml" ]; then
-    echo "Using docker-compose.dev.yml"
-    docker compose -f docker-compose.dev.yml up -d postgres odoo-core
-else
-    echo "❌ docker-compose.dev.yml not found"
-    exit 1
-fi
+# Use canonical docker-compose.yml from repo root
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+echo "Using docker-compose.yml (ipai workspace)"
+docker compose up -d
 echo ""
 
 # Wait for services to be ready
-echo "3. Waiting for Odoo to start..."
+echo "3. Waiting for services to start..."
 sleep 10
 
-# Check if services are running
-POSTGRES_STATUS=$(docker compose -f docker-compose.dev.yml ps postgres | grep -c "Up" || echo "0")
-ODOO_STATUS=$(docker compose -f docker-compose.dev.yml ps odoo-core | grep -c "Up" || echo "0")
-
-if [ "$POSTGRES_STATUS" -gt "0" ]; then
-    echo "✅ PostgreSQL is running"
-else
-    echo "❌ PostgreSQL failed to start"
-fi
-
-if [ "$ODOO_STATUS" -gt "0" ]; then
-    echo "✅ Odoo is running"
-else
-    echo "❌ Odoo failed to start"
-    echo ""
-    echo "Checking logs..."
-    docker compose -f docker-compose.dev.yml logs --tail 50 odoo-core
-    exit 1
-fi
+# Check service status
+echo "📊 Service status:"
+docker compose ps
 echo ""
 
 # Show access information

@@ -34,6 +34,23 @@ else
   fi
 fi
 
+# Set Docker environment for Colima
+echo ""
+echo "🔧 Configuring Docker for Colima..."
+
+# Export DOCKER_HOST (critical for docker commands to work)
+export DOCKER_HOST="unix://$HOME/.colima/${PROFILE}/docker.sock"
+echo "✅ DOCKER_HOST set to: $DOCKER_HOST"
+
+# Also set Docker context (optional, but good practice)
+if docker context use "colima-${PROFILE}" &>/dev/null; then
+  echo "✅ Docker context set to colima-${PROFILE}"
+else
+  echo "ℹ️  Creating Docker context for Colima..."
+  docker context create "colima-${PROFILE}" --docker "host=unix://${HOME}/.colima/${PROFILE}/docker.sock" || true
+  docker context use "colima-${PROFILE}" || true
+fi
+
 # Verify Docker connection
 echo ""
 echo "🔍 Verifying Docker connection..."
@@ -59,4 +76,8 @@ echo ""
 echo "✨ Ready for development!"
 echo "   - Colima profile: ${PROFILE}"
 echo "   - Docker context: colima-${PROFILE}"
+echo "   - Docker socket: $DOCKER_HOST"
 echo "   - VM resources: $(colima list -p "${PROFILE}" 2>/dev/null | tail -1 | awk '{print $3" CPU, "$4" RAM, "$5" disk"}' || echo "4 CPU, 8GiB RAM, 60GiB disk")"
+echo ""
+echo "💡 To persist DOCKER_HOST in your shell, add to ~/.zshrc or ~/.bashrc:"
+echo "   export DOCKER_HOST=\"unix://\$HOME/.colima/odoo/docker.sock\""

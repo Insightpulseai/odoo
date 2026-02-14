@@ -35,9 +35,22 @@ make colima-up
 
 **What happens:**
 - Starts Colima VM with `odoo` profile (4 CPU, 8GB RAM, 60GB disk)
+- Sets `DOCKER_HOST` to Colima socket (`unix://$HOME/.colima/odoo/docker.sock`)
 - Configures Docker context to point to Colima
 - Verifies Docker daemon is responding
 - Shows current Docker Compose status
+
+**Important:** The script sets `DOCKER_HOST` for the current shell session. To persist this across shell sessions, add to your shell profile:
+
+```bash
+# Add to ~/.zshrc (macOS default) or ~/.bashrc (Linux)
+echo 'export DOCKER_HOST="unix://$HOME/.colima/odoo/docker.sock"' >> ~/.zshrc
+
+# Then reload your shell
+source ~/.zshrc
+```
+
+Or run the colima-up script in each new shell before using docker commands.
 
 ### 3. Start Odoo Services
 
@@ -191,24 +204,46 @@ colima logs -p odoo
 make colima-reset
 ```
 
-### Issue: Docker context wrong
+### Issue: Docker context wrong or daemon not reachable
 
 **Symptoms:**
 ```
 Cannot connect to the Docker daemon at unix:///var/run/docker.sock
+error connecting to daemon: dial unix /var/run/docker.sock: no such file or directory
 ```
 
-**Solution:**
+**Root Cause:** `DOCKER_HOST` environment variable not set or pointing to wrong socket.
+
+**Solution 1:** Set DOCKER_HOST (recommended)
+```bash
+# Set for current shell
+export DOCKER_HOST="unix://$HOME/.colima/odoo/docker.sock"
+
+# Verify
+docker info
+# Should connect successfully
+
+# To persist, add to ~/.zshrc (macOS) or ~/.bashrc (Linux)
+echo 'export DOCKER_HOST="unix://$HOME/.colima/odoo/docker.sock"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**Solution 2:** Switch Docker context
 ```bash
 # Check current context
 docker context ls
 
 # Switch to Colima
-docker context use colima
+docker context use colima-odoo
 
 # Verify
 docker info
-# Should show "Context: colima"
+```
+
+**Verify socket exists:**
+```bash
+ls -la ~/.colima/odoo/docker.sock
+# Should show: srw------- ... docker.sock
 ```
 
 ### Issue: Out of disk space
