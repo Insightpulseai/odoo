@@ -28,7 +28,7 @@ odoo/
 │       │   └── main.py       ✅ FastAPI app with endpoints
 │       └── data/
 │           └── sqlite/       ✅ Created (gitignored)
-├── apps/
+├── web/
 │   ├── do-advisor-agent/     ✅ Created (pending implementation)
 │   └── do-advisor-ui/        ✅ Created (pending implementation)
 ├── docs/
@@ -303,11 +303,11 @@ use_cases:
 
 ### 3.1 DO Advisor Agent (NOT STARTED)
 
-**Location**: `apps/do-advisor-agent/`
+**Location**: `web/do-advisor-agent/`
 
 **Structure:**
 ```
-apps/do-advisor-agent/
+web/do-advisor-agent/
 ├── Dockerfile
 ├── requirements.txt
 ├── advisor/
@@ -330,11 +330,11 @@ apps/do-advisor-agent/
 
 ### 3.2 DO Advisor UI (NOT STARTED)
 
-**Location**: `apps/do-advisor-ui/`
+**Location**: `web/do-advisor-ui/`
 
 **Structure:**
 ```
-apps/do-advisor-ui/
+web/do-advisor-ui/
 ├── package.json
 ├── vite.config.ts
 ├── index.html
@@ -427,8 +427,8 @@ apps/do-advisor-ui/
 
 ### Week 3 (DO Advisor):
 
-1. Implement `apps/do-advisor-agent/`
-2. Implement `apps/do-advisor-ui/`
+1. Implement `web/do-advisor-agent/`
+2. Implement `web/do-advisor-ui/`
 3. Deploy both to DO App Platform
 4. Create MCP server config (`mcp/servers/do-advisor.yaml`)
 5. Test with devops-engineer agent

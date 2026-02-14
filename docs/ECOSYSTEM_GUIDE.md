@@ -161,14 +161,14 @@ https://erp.insightpulseai.com/* → odoo:8069 (Odoo CE 18.0)
 ```
 https://erp.insightpulseai.com/odoo/MODEL_NAME                    # List view
 https://erp.insightpulseai.com/odoo/MODEL_NAME/RECORD_ID          # Form view
-https://erp.insightpulseai.com/odoo/apps/MODULE_ID/MODEL/RECORD_ID # Module detail
+https://erp.insightpulseai.com/odoo/web/MODULE_ID/MODEL/RECORD_ID # Module detail
 ```
 
 **Examples**:
 - `https://erp.insightpulseai.com/odoo/res.users` - Users list
 - `https://erp.insightpulseai.com/odoo/project.task` - Tasks list
 - `https://erp.insightpulseai.com/odoo/hr.expense` - Expenses list
-- `https://erp.insightpulseai.com/odoo/apps/118/ir.module.module/118` - ipai_custom_routes module detail
+- `https://erp.insightpulseai.com/odoo/web/118/ir.module.module/118` - ipai_custom_routes module detail
 
 **API Endpoints**:
 - `https://erp.insightpulseai.com/xmlrpc/2/common` - XML-RPC authentication
@@ -268,7 +268,7 @@ odoo/
 **Odoo Container** (`odoo`):
 ```
 /opt/odoo/addons/          # Custom modules
-/usr/lib/python3/dist-packages/odoo/  # Odoo core
+/usr/lib/python3/dist-pkgs/odoo/  # Odoo core
 /etc/odoo/odoo.conf           # Configuration file
 /var/log/odoo/                # Log files
 ```
@@ -406,7 +406,7 @@ print('Module list updated')
 | ipai_clarity_ppm_parity | ✅ Installed | production | /odoo/project.project |
 | ipai_ppm_monthly_close | ✅ Installed | production | /odoo/ipai_ppm_monthly_close.ppm_monthly_close |
 | ipai_ocr_expense | ✅ Installed | production | /odoo/ipai_ocr_expense.ocr_expense_log |
-| ipai_custom_routes | 🆕 Deployed | production | /odoo/apps/118 |
+| ipai_custom_routes | 🆕 Deployed | production | /odoo/web/118 |
 | ipai_default_home | ⚠️ Deprecated | production | (replaced by ipai_custom_routes) |
 | ipai_finance_ppm | 🚧 In Progress | production | /ipai/finance/ppm |
 

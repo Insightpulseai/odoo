@@ -29,7 +29,7 @@ PostgreSQL Database
 
 ```bash
 # From project root
-cd apps/odoo-frontend-shell
+cd web/odoo-frontend-shell
 vercel deploy --sandbox
 ```
 
@@ -46,7 +46,7 @@ vercel deploy --sandbox
 #### 1. Install Dependencies
 
 ```bash
-cd apps/odoo-frontend-shell
+cd web/odoo-frontend-shell
 pnpm install
 ```
 
@@ -85,7 +85,7 @@ Use your Odoo backend credentials:
 ## Project Structure
 
 ```
-apps/odoo-frontend-shell/
+web/odoo-frontend-shell/
 ├── src/
 │   ├── app/               # Next.js App Router
 │   │   ├── page.tsx       # Login page

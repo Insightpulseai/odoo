@@ -37,7 +37,7 @@ This project includes a functional [Supabase CMS](https://www.supabase-cms.com) 
 
 **Automatic deployment** (recommended):
 ```bash
-cd apps/platform-kit
+cd web/platform-kit
 ./scripts/deploy-cms.sh
 ```
 

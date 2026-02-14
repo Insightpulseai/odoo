@@ -95,14 +95,14 @@ def compute_affected(
         if len(parts) >= 2 and parts[0] == "vendors":
             affected.add(parts[1])
 
-        # Internal apps in apps/ directory
+        # Internal apps in web/ directory
         if len(parts) >= 2 and parts[0] == "apps":
             app_dir = parts[1]
             # Find app by deploy path
             for app in apps:
                 deploy = app.get("deploy", {})
                 deploy_path = deploy.get("path", "")
-                if deploy_path and deploy_path.startswith(f"apps/{app_dir}"):
+                if deploy_path and deploy_path.startswith(f"web/{app_dir}"):
                     affected.add(app["slug"])
 
         # Supabase migrations affect shared-supabase apps

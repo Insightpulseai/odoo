@@ -23,7 +23,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from lib import CheckResult, IntegrationResult, save_json, create_evidence_dir, HTTPClient, get_env
 
 ROOT = Path(__file__).resolve().parents[2]
-MODEL_PATH = ROOT / "docs/architecture/github-waf-model.yaml"
+MODEL_PATH = ROOT / "docs/arch/github-waf-model.yaml"
 
 
 def load_model():

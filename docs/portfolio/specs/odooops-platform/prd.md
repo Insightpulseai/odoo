@@ -794,7 +794,7 @@ odooops policy check staging
 - **Features**: Audit logs via `control_plane` schema, realtime notifications, encrypted secrets vault
 - **Integration**: OdooOps API can optionally use Supabase as control plane DB
 
-**n8n** (per `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`):
+**n8n** (per `docs/arch/PROD_RUNTIME_SNAPSHOT.md`):
 - **Domain**: `n8n.insightpulseai.com`
 - **Usage**: Webhook routing for alerts, notifications, integrations
 - **Workflows**: GitHub webhook → n8n → Slack notification
@@ -956,7 +956,7 @@ See `plan.md` for detailed phased implementation.
 - **`spec/odoo-sh-next/`**: Original platform spec (foundation for this PRD)
 - **`spec/platform-kit/`**: Generic platform patterns
 - **`spec/odooops-observability-enterprise-pack/`**: Observability layer extending this platform
-- **`docs/architecture/PROD_RUNTIME_SNAPSHOT.md`**: Current deployment architecture
+- **`docs/arch/PROD_RUNTIME_SNAPSHOT.md`**: Current deployment architecture
 - **`docs/ai/SUPABASE.md`**: Supabase integration capabilities
 - **`.github/workflows/cd-production.yml`**: Current CI/CD pipeline
 

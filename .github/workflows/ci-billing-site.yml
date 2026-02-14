@@ -4,19 +4,19 @@ on:
   push:
     branches: [main, 'claude/**']
     paths:
-      - 'apps/billing-site/**'
+      - 'web/billing-site/**'
       - 'supabase/migrations/**'
       - '.github/workflows/ci-billing-site.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'apps/billing-site/**'
+      - 'web/billing-site/**'
       - 'supabase/migrations/**'
       - '.github/workflows/ci-billing-site.yml'
 
 defaults:
   run:
-    working-directory: apps/billing-site
+    working-directory: web/billing-site
 
 jobs:
   lint:
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'apps/billing-site/pnpm-lock.yaml'
+          cache-dependency-path: 'web/billing-site/pnpm-lock.yaml'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -62,7 +62,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'apps/billing-site/pnpm-lock.yaml'
+          cache-dependency-path: 'web/billing-site/pnpm-lock.yaml'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -87,7 +87,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'apps/billing-site/pnpm-lock.yaml'
+          cache-dependency-path: 'web/billing-site/pnpm-lock.yaml'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

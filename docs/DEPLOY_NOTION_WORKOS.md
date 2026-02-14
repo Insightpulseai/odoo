@@ -220,4 +220,4 @@ addons/
 └── oca/
 ```
 
-Do **NOT** restructure repository (forbidden layouts include paths like `src/apps/odoo/addons/`).
+Do **NOT** restructure repository (forbidden layouts include paths like `src/web/odoo/addons/`).

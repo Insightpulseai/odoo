@@ -113,7 +113,7 @@
       "claim": "Chrome Extension Manifest V3 development",
       "evidence": {
         "paths_must_exist": [
-          "apps/alpha-browser"
+          "web/alpha-browser"
         ],
         "grep_must_match": [
           "manifest_version.*3",

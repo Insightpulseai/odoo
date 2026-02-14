@@ -64,13 +64,13 @@ docker compose logs web 2>&1 | grep -i "scss\|asset\|style\|compile"
 
 ### Problem
 
-`insightpulseai.com` (main domain) is serving Odoo website content instead of the Next.js marketing site (`apps/web/`). Both `insightpulseai.com` and `erp.insightpulseai.com` show identical Odoo content.
+`insightpulseai.com` (main domain) is serving Odoo website content instead of the Next.js marketing site (`web/web/`). Both `insightpulseai.com` and `erp.insightpulseai.com` show identical Odoo content.
 
 ### Expected Architecture
 
 | Domain | Should Serve | Technology |
 |--------|-------------|-----------|
-| `insightpulseai.com` | Marketing site | Next.js on Vercel (`apps/web/`) |
+| `insightpulseai.com` | Marketing site | Next.js on Vercel (`web/web/`) |
 | `erp.insightpulseai.com` | Odoo ERP backend | Odoo CE 19 (self-hosted DO) |
 
 ### Fix

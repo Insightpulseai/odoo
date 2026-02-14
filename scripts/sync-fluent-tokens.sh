@@ -13,7 +13,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
-TOKENS_PKG="$ROOT_DIR/packages/ipai-design-tokens"
+TOKENS_PKG="$ROOT_DIR/pkgs/ipai-design-tokens"
 ODOO_MODULE="$ROOT_DIR/addons/ipai/ipai_theme_fluent2/static/src/css"
 
 # Colors for output

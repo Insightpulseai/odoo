@@ -194,15 +194,15 @@ jobs:
             done
           fi
 
-      - name: Deploy to Vercel (apps/web)
+      - name: Deploy to Vercel (web/web)
         if: ${{ vars.VERCEL_PROJECT_ID != '' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
-          if [ -d "apps/web" ]; then
-            cd apps/web
+          if [ -d "web/web" ]; then
+            cd web/web
             if [ "${{ inputs.deploy_target }}" = "production" ]; then
               npx vercel --prod --token=$VERCEL_TOKEN
             else

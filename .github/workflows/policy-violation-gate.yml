@@ -18,7 +18,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'apps/**'
+      - 'web/**'
       - 'scripts/**'
       - 'mcp/**'
       - 'supabase/**'

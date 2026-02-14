@@ -126,7 +126,7 @@ ENV ODOO_RC=/etc/odoo/odoo.conf
 # OCA Monorepo Addon Path (Aggregated)
 # Format: Odoo core → IPAI modules → OCA modules (flattened)
 # All OCA modules flattened into /mnt/addons/oca during build
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
 
 # =============================================================================
 # Health Check

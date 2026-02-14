@@ -206,7 +206,7 @@
   - Status: ⏳ Backlog
   - Assignee: Platform Engineer
   - Dependencies: None
-  - Files: `packages/governance/templates/app-repo/`
+  - Files: `pkgs/governance/templates/app-repo/`
   - Acceptance Criteria:
     - [ ] Includes spec bundle placeholder
     - [ ] Includes CI workflow (lint, test, build)
@@ -217,7 +217,7 @@
   - Status: ⏳ Backlog
   - Assignee: Platform Engineer
   - Dependencies: None
-  - Files: `packages/governance/templates/service-repo/`
+  - Files: `pkgs/governance/templates/service-repo/`
   - Acceptance Criteria:
     - [ ] Includes Dockerfile
     - [ ] Includes CI workflow (lint, test, build, deploy)
@@ -227,7 +227,7 @@
   - Status: ⏳ Backlog
   - Assignee: Platform Engineer
   - Dependencies: None
-  - Files: `packages/governance/templates/lib-repo/`
+  - Files: `pkgs/governance/templates/lib-repo/`
   - Acceptance Criteria:
     - [ ] Includes package.json with exports
     - [ ] Includes CI workflow (lint, test, publish)
@@ -291,7 +291,7 @@
   - Status: ⏳ Backlog
   - Assignee: Backend Engineer
   - Dependencies: None
-  - Files: `packages/connector-sdk/src/index.ts`
+  - Files: `pkgs/connector-sdk/src/index.ts`
   - Acceptance Criteria:
     - [ ] Exports ConnectorBase abstract class
     - [ ] Defines inventory(), health(), capabilities(), contract_tests() interface
@@ -302,7 +302,7 @@
   - Status: ⏳ Backlog
   - Assignee: QA Engineer
   - Dependencies: M3.1.1
-  - Files: `packages/connector-sdk/src/test_harness.ts`
+  - Files: `pkgs/connector-sdk/src/test_harness.ts`
   - Acceptance Criteria:
     - [ ] Runs contract_tests() for any connector
     - [ ] Validates interface compliance
@@ -393,7 +393,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: None
-  - Files: `packages/platform-console/`
+  - Files: `pkgs/platform-console/`
   - Acceptance Criteria:
     - [ ] Next.js 14 app with App Router
     - [ ] Supabase Auth integration
@@ -404,7 +404,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: M4.1.1, M1.1.1
-  - Files: `packages/platform-console/app/inventory/page.tsx`
+  - Files: `pkgs/platform-console/app/inventory/page.tsx`
   - Acceptance Criteria:
     - [ ] Displays projects list
     - [ ] Drill-down to project → schemas → tables → functions
@@ -417,7 +417,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: M4.1.1, M1.1.1
-  - Files: `packages/platform-console/app/parity/page.tsx`
+  - Files: `pkgs/platform-console/app/parity/page.tsx`
   - Acceptance Criteria:
     - [ ] Displays capability matrix (pass/fail/partial)
     - [ ] Color-coded by severity
@@ -428,7 +428,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: M4.2.1, M1.3.3
-  - Files: `packages/platform-console/app/remediation/page.tsx`
+  - Files: `pkgs/platform-console/app/remediation/page.tsx`
   - Acceptance Criteria:
     - [ ] Lists recommended patches grouped by severity
     - [ ] Preview SQL patch
@@ -441,7 +441,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: M4.1.1
-  - Files: `packages/platform-console/app/jobs/page.tsx`
+  - Files: `pkgs/platform-console/app/jobs/page.tsx`
   - Acceptance Criteria:
     - [ ] Lists all jobs from `ops.job_queue`
     - [ ] Filter by status (pending/running/completed/failed)
@@ -452,7 +452,7 @@
   - Status: ⏳ Backlog
   - Assignee: Frontend Engineer
   - Dependencies: M4.3.1
-  - Files: `packages/platform-console/app/jobs/[id]/page.tsx`
+  - Files: `pkgs/platform-console/app/jobs/[id]/page.tsx`
   - Acceptance Criteria:
     - [ ] Displays job payload
     - [ ] Displays run history (all attempts)
@@ -470,9 +470,9 @@
   - Assignee: QA Team
   - Dependencies: All implementation tasks
   - Acceptance Criteria:
-    - [ ] packages/connector-sdk: >80%
+    - [ ] pkgs/connector-sdk: >80%
     - [ ] supabase/functions/*: >80%
-    - [ ] packages/platform-console: >80%
+    - [ ] pkgs/platform-console: >80%
 
 - [ ] **T2**: Create integration test suite
   - Status: ⏳ Backlog

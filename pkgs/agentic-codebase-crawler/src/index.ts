@@ -45,7 +45,7 @@ program
   .name("agentic-codebase-crawler")
   .description("Repo scan → detect missing parity controls → generate patch set → verify → emit artifacts into ops.*")
   .option("--repo-root <path>", "Repository root", process.cwd())
-  .option("--config <path>", "Parity config YAML", "packages/agentic-codebase-crawler/templates/parity-controls.yml")
+  .option("--config <path>", "Parity config YAML", "pkgs/agentic-codebase-crawler/templates/parity-controls.yml")
   .option("--out <path>", "Output dir", "ops/agentic-codebase-crawler/out")
   .option("--apply", "Apply generated patches", false)
   .option("--verify-cmd <cmd>", "Verification command (quoted)", "echo 'No verify command specified'")

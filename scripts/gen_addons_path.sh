@@ -29,7 +29,7 @@ DOCKER_MODE="${1:-}"
 # ---------------------------------------------------------------------------
 if [[ "$DOCKER_MODE" == "--docker" ]]; then
   # Paths inside the Docker container
-  CORE="/usr/lib/python3/dist-packages/odoo/addons"
+  CORE="/usr/lib/python3/dist-pkgs/odoo/addons"
   IPAI="/mnt/extra-addons/ipai"
   OCA_PREFIX="/mnt/extra-addons/OCA"
 else

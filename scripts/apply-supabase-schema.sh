@@ -29,7 +29,7 @@ NC='\033[0m' # No Color
 # Configuration
 PROJECT_REF="${SUPABASE_PROJECT_REF:-}"
 SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
-SQL_FILE="packages/db/sql/02_health_check_table.sql"
+SQL_FILE="pkgs/db/sql/02_health_check_table.sql"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do

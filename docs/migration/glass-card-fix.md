@@ -2,9 +2,9 @@
 
 ## Problem
 3+ components reference undefined "glass-card" CSS class:
-- `apps/web/src/components/FeatureCard.tsx`
-- `apps/web/src/components/Hero.tsx`
-- `apps/web/src/components/ValueProps.tsx`
+- `web/web/src/components/FeatureCard.tsx`
+- `web/web/src/components/Hero.tsx`
+- `web/web/src/components/ValueProps.tsx`
 
 ## Solution
 Use new `<Card variant="glass">` component from token-driven system.
@@ -38,7 +38,7 @@ node scripts/migrate-glass-card.mjs
 ## Verification
 ```bash
 # Search for remaining usage
-grep -r "glass-card" apps/web/src/
+grep -r "glass-card" web/web/src/
 # Should return no results
 ```
 

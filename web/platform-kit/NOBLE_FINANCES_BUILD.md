@@ -12,7 +12,7 @@ Complete responsive accounting services website built from design mockups for "N
 ## Architecture
 
 ```
-apps/platform-kit/
+web/platform-kit/
 ├── app/accounting/
 │   ├── page.tsx                    # Main landing page
 │   └── layout.tsx                  # Layout wrapper

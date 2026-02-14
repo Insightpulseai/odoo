@@ -80,7 +80,7 @@ TBD - Actual container listing will be added after SSH access verification
 
 ### JSON Validation
 ```bash
-jq . docs/architecture/runtime_identifiers.json
+jq . docs/arch/runtime_identifiers.json
 ```
 
 ### No Secrets Check
@@ -90,7 +90,7 @@ git grep -nE "CF_API_TOKEN|Authorization: Bearer|password|api_key.*sk-|BEGIN PRI
 
 ## Related Documentation
 
-- Machine-readable registry: `docs/architecture/runtime_identifiers.json`
+- Machine-readable registry: `docs/arch/runtime_identifiers.json`
 - DNS baseline script: `scripts/verify-dns-baseline.sh`
 - Health check script: `scripts/verify-service-health.sh`
 - Drift detection CI: `.github/workflows/dns-drift-detect.yml`

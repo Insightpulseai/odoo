@@ -128,8 +128,8 @@ Request → Try Edge Function (docs-ai-ask)
 ## Next Steps
 
 ### Phase 5B: SDK Creation
-- TypeScript SDK (`packages/ipai-ai-sdk/`)
-- Python SDK (`packages/ipai-ai-sdk-python/`)
+- TypeScript SDK (`pkgs/ipai-ai-sdk/`)
+- Python SDK (`pkgs/ipai-ai-sdk-python/`)
 - Platform documentation (`docs/platform/ai.md`)
 
 ### Future Enhancements

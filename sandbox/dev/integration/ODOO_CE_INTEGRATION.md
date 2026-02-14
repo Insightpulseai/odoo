@@ -126,7 +126,7 @@ services:
 - `hr_timesheet_*` modules → `../odoo/addons/oca/hr-timesheet/`
 
 ## Documentation
-- Architecture guides → `../odoo/docs/architecture/`
+- Architecture guides → `../odoo/docs/arch/`
 - Data models → `../odoo/docs/data-model/`
 ```
 
@@ -558,7 +558,7 @@ odoo-monorepo/
 
 **odoo**:
 - `CLAUDE.md` - Production execution rules
-- `docs/architecture/` - System architecture
+- `docs/arch/` - System architecture
 - `docs/data-model/` - Database schema
 - `spec/` - Feature specifications
 

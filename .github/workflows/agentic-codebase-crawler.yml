@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'supabase/**'
-      - 'packages/**'
+      - 'pkgs/**'
       - 'config/**'
       - 'AGENTS.md'
       - 'CLAUDE.md'
@@ -43,7 +43,7 @@ jobs:
 
       - name: Build crawler
         run: |
-          cd packages/agentic-codebase-crawler
+          cd pkgs/agentic-codebase-crawler
           pnpm install
           pnpm run build
 
@@ -72,9 +72,9 @@ jobs:
             done
           fi
 
-          node packages/agentic-codebase-crawler/dist/index.js \
+          node pkgs/agentic-codebase-crawler/dist/index.js \
             --repo-root . \
-            --config packages/agentic-codebase-crawler/templates/parity-controls.yml \
+            --config pkgs/agentic-codebase-crawler/templates/parity-controls.yml \
             --out ops/agentic-codebase-crawler/out \
             --skip-verify \
             $APPLY_FLAG \

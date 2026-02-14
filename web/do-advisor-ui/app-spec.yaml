@@ -7,7 +7,7 @@ region: tor  # Toronto (same as fin-workspace)
 
 services:
   - name: web
-    source_dir: /apps/do-advisor-ui
+    source_dir: /web/do-advisor-ui
     dockerfile_path: Dockerfile
     http_port: 80
 

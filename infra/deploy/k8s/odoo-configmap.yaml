@@ -22,7 +22,7 @@ data:
 
     ; ----- Addons (CE + OCA + ipai_*) -----
     ; Base CE addons inside the image + our mounted CE/OCA paths
-    addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/oca-addons
+    addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons,/mnt/oca-addons
 
     ; ----- HTTP -----
     http_port = 8069

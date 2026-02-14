@@ -163,7 +163,7 @@ odoo/
 
 | Document | Purpose | Key Outcomes |
 |----------|---------|--------------|
-| [Supabase Prioritization Framework](docs/architecture/SUPABASE_PRIMITIVES.md) | 5-criterion rubric for Supabase feature adoption | ✅ High priority (≥4.0): PostgreSQL, RLS, Auth, Vault, Storage, Edge Functions<br>⚠️ Medium (3.0-4.0): Realtime, PostgREST, Monitoring<br>❌ Low (<3.0): Studio UI → use Superset/Plane |
+| [Supabase Prioritization Framework](docs/arch/SUPABASE_PRIMITIVES.md) | 5-criterion rubric for Supabase feature adoption | ✅ High priority (≥4.0): PostgreSQL, RLS, Auth, Vault, Storage, Edge Functions<br>⚠️ Medium (3.0-4.0): Realtime, PostgREST, Monitoring<br>❌ Low (<3.0): Studio UI → use Superset/Plane |
 | [Agent Constitution](spec/agent/constitution.md) | Agent execution constraints + governance | ✅ 8 verified capabilities, hard constraints (container/package ops forbidden) |
 
 **Integration Patterns**:
@@ -439,9 +439,9 @@ Odoo BIR Module ↔ Supabase Edge Function (plane-sync/) ↔ Plane API
 - `tasks.md` — Task checklist
 - `docs/` — Architecture + deployment docs
 - `docs/data-model/` — Canonical schema outputs
-- `docs/architecture/SUPABASE_PRIMITIVES.md` — **Supabase prioritization framework (5-criterion rubric)**
+- `docs/arch/SUPABASE_PRIMITIVES.md` — **Supabase prioritization framework (5-criterion rubric)**
 - `spec/agent/constitution.md` — **Agent execution constraints (NO-CLI/NO-DOCKER)**
-- `docs/architecture/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md` — Ideal repository structure guide
+- `docs/arch/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md` — Ideal repository structure guide
 - `docs/EMAIL_INTEGRATION.md` — Complete email integration guide
 
 ---

@@ -186,7 +186,7 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 
 **Tasks:**
 1. Workflow: `diagrams-ci.yml`
-   - Trigger: On PR with `docs/architecture/*.drawio` changes
+   - Trigger: On PR with `docs/arch/*.drawio` changes
    - Steps:
      1. Install draw.io CLI (`@hediet/node-drawio`)
      2. Export all `.drawio` files to `.png`
@@ -294,8 +294,8 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Utilities tested (outbox, retry, idempotency)
 
 **Outputs:**
-- `packages/connector-sdk/` package
-- `packages/connector-sdk/examples/` sample connector
+- `pkgs/connector-sdk/` package
+- `pkgs/connector-sdk/examples/` sample connector
 
 ### Phase 3.2: n8n Connector (Week 3-4)
 
@@ -395,7 +395,7 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 ### Phase 4.1: Console Foundation (Week 1-2)
 
 **Tasks:**
-1. Next.js app: `packages/platform-console/`
+1. Next.js app: `pkgs/platform-console/`
    - Framework: Next.js 15 + TypeScript + Tailwind + shadcn/ui
    - Auth: Supabase Auth (service role for admin, user accounts for read-only)
    - Layout: Databricks-style sidebar (Projects, Jobs, Catalogs, Runs, Artifacts)
@@ -414,7 +414,7 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Layout renders with sidebar navigation
 
 **Outputs:**
-- `packages/platform-console/` Next.js app
+- `pkgs/platform-console/` Next.js app
 
 ### Phase 4.2: Inventory Browser (Week 2-3)
 
@@ -435,8 +435,8 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Risk badges visible and correct
 
 **Outputs:**
-- `packages/platform-console/app/inventory/page.tsx`
-- `packages/platform-console/components/inventory-tree.tsx`
+- `pkgs/platform-console/app/inventory/page.tsx`
+- `pkgs/platform-console/components/inventory-tree.tsx`
 
 ### Phase 4.3: Remediation Viewer (Week 3-4)
 
@@ -463,8 +463,8 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Audit log updated after apply
 
 **Outputs:**
-- `packages/platform-console/app/remediation/page.tsx`
-- `packages/platform-console/components/patch-preview.tsx`
+- `pkgs/platform-console/app/remediation/page.tsx`
+- `pkgs/platform-console/components/patch-preview.tsx`
 
 ### Phase 4.4: Jobs & Runs Viewer (Week 4-5)
 
@@ -486,8 +486,8 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Real-time updates work (trigger scan, see it appear)
 
 **Outputs:**
-- `packages/platform-console/app/jobs/page.tsx`
-- `packages/platform-console/components/job-timeline.tsx`
+- `pkgs/platform-console/app/jobs/page.tsx`
+- `pkgs/platform-console/components/job-timeline.tsx`
 
 ### Phase 4.5: Connector Status (Week 5-6)
 
@@ -512,8 +512,8 @@ Foundation    Supabase Kit    Governance     Connectors     UI Console
 - [ ] Health indicators accurate
 
 **Outputs:**
-- `packages/platform-console/app/connectors/page.tsx`
-- `packages/platform-console/components/connector-card.tsx`
+- `pkgs/platform-console/app/connectors/page.tsx`
+- `pkgs/platform-console/components/connector-card.tsx`
 
 ---
 

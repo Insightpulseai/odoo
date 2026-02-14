@@ -105,14 +105,14 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 **Run unit tests**:
 ```bash
-cd /Users/tbwa/Documents/GitHub/design-system-cli/packages/figma-bridge
+cd /Users/tbwa/Documents/GitHub/design-system-cli/pkgs/figma-bridge
 pnpm install
 pnpm test:git-ops
 ```
 
 **Expected Output**:
 ```
-✓ packages/figma-bridge/src/git-operations.test.ts (15)
+✓ pkgs/figma-bridge/src/git-operations.test.ts (15)
 Test Files  1 passed (1)
      Tests  15 passed (15)
 ```

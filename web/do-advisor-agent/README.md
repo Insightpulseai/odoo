@@ -68,4 +68,4 @@ The companion `do-advisor-ui` provides an Azure Advisor-style dashboard with:
 - Real-time metrics with ECharts
 - Dark theme (Azure aesthetics)
 
-See `/apps/do-advisor-ui/README.md` for setup.
+See `/web/do-advisor-ui/README.md` for setup.

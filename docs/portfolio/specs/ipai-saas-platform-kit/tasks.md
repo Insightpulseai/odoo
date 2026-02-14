@@ -101,7 +101,7 @@
 - **Estimate:** 2 hours
 
 **Task 1.8: Create saas-types TypeScript package**
-- **File:** `packages/saas-types/src/billing.ts`
+- **File:** `pkgs/saas-types/src/billing.ts`
 - **Deliverables:**
   - StripeCustomer interface
   - Subscription interface (matches subscriptions table)
@@ -635,7 +635,7 @@
 #### E2E Tests (Day 28)
 
 **Task 3.5: Write E2E test: Billing flow**
-- **File:** `apps/web/tests/e2e/billing.spec.ts` (Playwright)
+- **File:** `web/web/tests/e2e/billing.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login → Navigate to billing dashboard
   - Test: Dashboard displays current plan, usage meters
@@ -647,7 +647,7 @@
 - **Estimate:** 4 hours
 
 **Task 3.6: Write E2E test: CMS workflow**
-- **File:** `apps/web/tests/e2e/cms_workflow.spec.ts` (Playwright)
+- **File:** `web/web/tests/e2e/cms_workflow.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login as Editor → Create new page (status = draft)
   - Test: Click "Request Approval" → Approval created
@@ -659,7 +659,7 @@
 - **Estimate:** 5 hours
 
 **Task 3.7: Write E2E test: Scheduled publishing**
-- **File:** `apps/web/tests/e2e/scheduled_publishing.spec.ts` (Playwright)
+- **File:** `web/web/tests/e2e/scheduled_publishing.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login as Editor → Create page → Request approval
   - Test: Login as Admin → Approve page

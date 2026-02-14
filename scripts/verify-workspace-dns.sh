@@ -153,7 +153,7 @@ fi
 # Check generated files exist
 GENERATED_FILES=(
     "infra/cloudflare/envs/prod/subdomains.auto.tfvars"
-    "docs/architecture/runtime_identifiers.json"
+    "docs/arch/runtime_identifiers.json"
     "infra/dns/dns-validation-spec.json"
 )
 
@@ -170,7 +170,7 @@ done
 # Check subdomain count consistency (requires yq and jq)
 if command -v yq &> /dev/null && command -v jq &> /dev/null; then
     YAML_COUNT=$(yq eval '.subdomains | length' "$REPO_ROOT/infra/dns/subdomain-registry.yaml")
-    JSON_COUNT=$(jq '.services | length' "$REPO_ROOT/docs/architecture/runtime_identifiers.json")
+    JSON_COUNT=$(jq '.services | length' "$REPO_ROOT/docs/arch/runtime_identifiers.json")
 
     if [ "$YAML_COUNT" -ge "$JSON_COUNT" ]; then
         echo -e "${GREEN}✅${NC} Subdomain count: YAML=$YAML_COUNT, JSON=$JSON_COUNT (consistent)"

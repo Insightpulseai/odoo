@@ -2,7 +2,7 @@
  * IPAI Brand Design Tokens - TypeScript/JavaScript Export
  *
  * Version: 1.0.0
- * Generated from: packages/ipai-design-tokens/tokens.json
+ * Generated from: pkgs/ipai-design-tokens/tokens.json
  *
  * Usage:
  *   import { colors, radius, space } from '@ipai/design-tokens/ipai-brand';

@@ -463,7 +463,7 @@ For the Odoo + Supabase + Superset + Next.js stack:
 | **Codespaces** | Needs quota, Docker-in-Docker must be enabled, network egress policies apply |
 | **Remote Tunnels** | Requires tunnel daemon running, security hardening on remote host |
 
-> **See also**: [docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md](./docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) for the full architectural convergence document.
+> **See also**: [docs/arch/AGENTIC_AI_ERP_ANALYTICS.md](./docs/arch/AGENTIC_AI_ERP_ANALYTICS.md) for the full architectural convergence document.
 
 ---
 

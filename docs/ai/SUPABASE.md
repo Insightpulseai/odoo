@@ -167,7 +167,7 @@ Commands: `make plan ENV=prod`, `make apply`, `make db-push`
 | **Auth** | Email + GitHub OAuth (pulser-hub) + OTP, JWT 1hr | `supabase/functions/auth-otp-*` |
 | **Edge Functions** | 42 deployed (see catalog below) | `supabase/functions/` |
 | **Vault** | pgsodium encryption, `control_plane` schema, 4 bots registered, audit trail | `vault_secrets.tf` |
-| **Realtime** | 3 channels: `control_room_jobs`, `approval_requests`, `notifications` | `apps/*/lib/supabase.ts` |
+| **Realtime** | 3 channels: `control_room_jobs`, `approval_requests`, `notifications` | `web/*/lib/supabase.ts` |
 | **pgvector** | text-embedding-3-small (1536d), hybrid search (vector + FTS + trigram) | `rag.documents`, `rag.chunks` |
 | **n8n bridge** | 8+ workflows, cron → webhook, event routing, marketplace | `n8n/workflows/` |
 | **GitHub bridge** | pulser-hub App (ID 2191216), OAuth, webhooks, HMAC verification | `supabase/functions/github-app-auth/` |

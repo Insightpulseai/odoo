@@ -72,8 +72,8 @@ echo "Monorepo Structure:"
 mono_files=(
   "pnpm-workspace.yaml"
   "turbo.json"
-  "apps/"
-  "packages/"
+  "web/"
+  "pkgs/"
 )
 
 for f in "${mono_files[@]}"; do

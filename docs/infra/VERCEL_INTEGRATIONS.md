@@ -272,10 +272,10 @@ export async function notifyDeployment(status: 'success' | 'failure', message: s
 {
   "version": 2,
   "builds": [
-    { "src": "apps/control-room/**", "use": "@vercel/next" }
+    { "src": "web/control-room/**", "use": "@vercel/next" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "apps/control-room/api/$1" }
+    { "src": "/api/(.*)", "dest": "web/control-room/api/$1" }
   ],
   "env": {
     "ODOO_URL": "@odoo_url",
@@ -295,7 +295,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/control-room/**'
+      - 'web/control-room/**'
 
 jobs:
   deploy:
@@ -309,7 +309,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: apps/control-room
+          working-directory: web/control-room
 ```
 
 ---

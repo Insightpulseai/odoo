@@ -97,7 +97,7 @@ await supabase.rpc('complete_run', {
 
 ## Related Files
 
-- `packages/config/template-packs.json` - Template pack registry
+- `pkgs/config/template-packs.json` - Template pack registry
 - `supabase/migrations/20260125_000002_ops_run_system.sql` - Ops schema
 - `supabase/migrations/20260125_000001_secret_registry.sql` - Secret tracking
 - `AGENTS.md` - Agent operating contract

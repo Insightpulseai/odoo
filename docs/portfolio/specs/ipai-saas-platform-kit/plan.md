@@ -43,7 +43,7 @@
   - Seed "free" plan (default for new orgs)
   - Seed "pro" plan ($99/mo + $0.10/AI run)
   - Plan entitlements table
-- [ ] Create TypeScript package: `packages/saas-types/src/billing.ts`
+- [ ] Create TypeScript package: `pkgs/saas-types/src/billing.ts`
   - Stripe customer types
   - Subscription types
   - Usage event types

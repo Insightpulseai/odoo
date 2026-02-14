@@ -42,7 +42,7 @@ MATTERMOST_WEBHOOK_URL=<from_mattermost_integrations>
 # Navigate to Supabase SQL Editor
 # https://supabase.com/dashboard/project/xkxyvboeubffxxbebsll/sql/new
 
-# Copy and execute: packages/db/sql/02_health_check_table.sql
+# Copy and execute: pkgs/db/sql/02_health_check_table.sql
 ```
 
 **Verification:**
@@ -90,7 +90,7 @@ ssh root@erp.insightpulseai.com
 # Create directory structure
 mkdir -p /opt/odoo/notion-n8n-monthly-close/scripts
 mkdir -p /opt/odoo/scripts
-mkdir -p /opt/odoo/packages/db/sql
+mkdir -p /opt/odoo/pkgs/db/sql
 
 # Exit SSH for now
 exit
@@ -107,7 +107,7 @@ scp scripts/check_project_tasks.py root@erp.insightpulseai.com:/opt/odoo/scripts
 scp notion-n8n-monthly-close/scripts/verify_finance_stack.sh root@erp.insightpulseai.com:/opt/odoo/notion-n8n-monthly-close/scripts/
 
 # Copy SQL schema
-scp packages/db/sql/02_health_check_table.sql root@erp.insightpulseai.com:/opt/odoo/packages/db/sql/
+scp pkgs/db/sql/02_health_check_table.sql root@erp.insightpulseai.com:/opt/odoo/pkgs/db/sql/
 
 # Set permissions
 ssh root@erp.insightpulseai.com "chmod +x /opt/odoo/scripts/check_project_tasks.py"

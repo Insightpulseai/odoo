@@ -130,14 +130,14 @@ PY
 
 ```bash
 # Install dependencies
-pnpm -C apps/ipai-chatgpt-app/web install
-pnpm -C apps/ipai-chatgpt-app/server install
+pnpm -C web/ipai-chatgpt-app/web install
+pnpm -C web/ipai-chatgpt-app/server install
 
 # Build widget
-pnpm -C apps/ipai-chatgpt-app/web build
+pnpm -C web/ipai-chatgpt-app/web build
 
 # Start MCP server
-PORT=8787 pnpm -C apps/ipai-chatgpt-app/server start
+PORT=8787 pnpm -C web/ipai-chatgpt-app/server start
 ```
 
 ---

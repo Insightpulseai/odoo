@@ -204,7 +204,7 @@ PORT=3000
 - ❌ Configuration files committed to git (.yml, .json, .toml)
 - ❌ Documentation files (.md)
 - ❌ Docker images (build-time secrets)
-- ❌ Client-side code (anything in apps/web)
+- ❌ Client-side code (anything in web/web)
 
 EOF
 

@@ -14,7 +14,7 @@ pip install ipai-ai-sdk
 poetry add ipai-ai-sdk
 
 # Internal development (from monorepo)
-pip install -e ./packages/ipai-ai-sdk-python
+pip install -e ./pkgs/ipai-ai-sdk-python
 ```
 
 ## Quick Start

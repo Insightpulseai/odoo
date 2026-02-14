@@ -5,7 +5,7 @@ Hybrid dashboard that embeds into Odoo QWeb shell (`ipai_odooops_shell`).
 ## Setup
 
 ```bash
-cd apps/odooops-dashboard
+cd web/odooops-dashboard
 npm install
 ```
 

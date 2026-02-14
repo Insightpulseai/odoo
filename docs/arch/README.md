@@ -52,7 +52,7 @@ The `architecture-diagrams.yml` workflow:
 To update exports after editing a diagram:
 ```bash
 ./scripts/export_architecture_diagrams.sh
-git add docs/architecture/exports/
+git add docs/arch/exports/
 git commit -m "chore(docs): update architecture diagram exports"
 ```
 

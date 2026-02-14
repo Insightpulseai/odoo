@@ -47,7 +47,7 @@ import glob
 paths = []
 # Common addon roots (adjust if yours differ)
 roots = [
-  "/usr/lib/python3/dist-packages/odoo/addons",
+  "/usr/lib/python3/dist-pkgs/odoo/addons",
   "/opt/odoo/addons",
   "/mnt/extra-addons",
   "/mnt/oca",
@@ -200,11 +200,11 @@ docker exec -it odoo-erp-prod bash -lc '
 As captured in `docs/runtime/ADDONS_PATH.prod.txt`:
 
 ```ini
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
 ```
 
 This configuration provides:
-- **CE Core:** `/usr/lib/python3/dist-packages/odoo/addons`
+- **CE Core:** `/usr/lib/python3/dist-pkgs/odoo/addons`
 - **IPAI Custom:** `/mnt/addons/ipai`
 - **OCA Modules:** `/mnt/addons/oca`
 

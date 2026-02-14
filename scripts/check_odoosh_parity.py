@@ -341,7 +341,7 @@ def run_parity_checks() -> list[ParityCheck]:
         ParityCheck(
             name="Architecture Docs",
             category="documentation",
-            implemented=check_file_exists("docs/architecture/") or
+            implemented=check_file_exists("docs/arch/") or
                        check_file_exists("docs/"),
             weight=0.5,
             evidence_path="docs/",

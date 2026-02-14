@@ -112,7 +112,7 @@ def migrate(cr, version):
     _logger.warning(
         "Module ipai_xxx is deprecated. "
         "AI functionality moved to external service. "
-        "See docs/architecture/ASK_AI_CONTRACT.md"
+        "See docs/arch/ASK_AI_CONTRACT.md"
     )
 ```
 

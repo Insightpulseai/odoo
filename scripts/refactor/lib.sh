@@ -32,7 +32,7 @@ load_config() {
   : "${PHASE5_ENFORCE:=1}"
   : "${CREATE_SUPABASE_SYMLINK:=1}"
   : "${CREATE_IPAI_SYMLINK:=0}"
-  : "${LEGACY_PATTERNS:=packages/|apps/|docs/architecture/|supabase/|addons/ipai/}"
+  : "${LEGACY_PATTERNS:=pkgs/|web/|docs/arch/|supabase/|addons/ipai/}"
   : "${IGNORE_GLOBS:=docs/evidence/** node_modules/** .git/** **/*.lock}"
 }
 

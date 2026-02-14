@@ -200,7 +200,7 @@ mkdir -p "$OUTPUT_DIR/filesystem/live" "$OUTPUT_DIR/filesystem/target"
 DIFF_PATHS=(
   "/mnt/extra-addons"
   "/etc/odoo"
-  "/usr/lib/python3/dist-packages/odoo"
+  "/usr/lib/python3/dist-pkgs/odoo"
 )
 
 for path in "${DIFF_PATHS[@]}"; do

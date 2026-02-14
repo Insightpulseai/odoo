@@ -122,7 +122,7 @@ steps:
         pnpm install --filter control-room
         pnpm --filter control-room dev &
       elif command -v npm >/dev/null 2>&1; then
-        cd apps/control-room && npm install && npm run dev &
+        cd web/control-room && npm install && npm run dev &
       else
         echo "⚠️  No JS package manager found, skipping Control Room"
       fi

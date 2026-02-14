@@ -324,7 +324,7 @@ python3 scripts/import_month_end_tasks.py \
 [INFO] ===============================================================================
 ```
 
-**See also:** `packages/db/sql/03_month_end_tasks.sql` for database schema
+**See also:** `pkgs/db/sql/03_month_end_tasks.sql` for database schema
 
 ---
 
@@ -407,7 +407,7 @@ ls -la scripts/*.sh
 
 - **`docs/DEPLOYMENT_GUIDE.md`** - Complete step-by-step deployment guide
 - **`docs/HEALTH_CHECK.md`** - Health check system documentation
-- **`packages/db/sql/02_health_check_table.sql`** - Supabase schema
+- **`pkgs/db/sql/02_health_check_table.sql`** - Supabase schema
 
 ---
 

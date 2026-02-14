@@ -71,7 +71,7 @@ Successfully implemented the core foundation for Alpha Browser Chrome Extension 
 ### File Structure Created
 
 ```
-apps/alpha-browser/
+web/alpha-browser/
 ├── src/
 │   ├── background/
 │   │   └── service-worker.ts           ✅ 200 lines
@@ -132,7 +132,7 @@ Total: ~1,000 lines of documentation
 
 1. **Install Dependencies**
    ```bash
-   cd apps/alpha-browser
+   cd web/alpha-browser
    pnpm install
    ```
 
@@ -267,13 +267,13 @@ Total: ~1,000 lines of documentation
 ## Team Notes
 
 ### Repository Context
-- **Location**: `apps/alpha-browser/` in Odoo monorepo
+- **Location**: `web/alpha-browser/` in Odoo monorepo
 - **pnpm workspace**: Integrated with existing monorepo structure
 - **Build system**: Vite (consistent with other apps)
 
 ### Integration Points
 - ❌ No dependencies on other monorepo apps (standalone)
-- ✅ Can share UI components in future (packages/)
+- ✅ Can share UI components in future (pkgs/)
 - ✅ Can integrate with Supabase for sync (Phase 4)
 
 ### Development Environment

@@ -6,7 +6,7 @@
 - `runtime/`: compose + env templates + ops scripts
 - `infra/`: deployment/ops automation
 - `docs/`: contracts + runbooks
-- `apps/`, `packages/`: reserved
+- `web/`, `pkgs/`: reserved
 
 ## Postgres schema namespaces (Supabase-first)
 Core platform schemas:

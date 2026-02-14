@@ -42,7 +42,7 @@ The GitHub Actions workflow (`.github/workflows/deploy-ipai-control-center-docs.
 
 1. **Push to main** affecting:
    - `spec/ipai-control-center/**`
-   - `apps/ipai-control-center-docs/**`
+   - `web/ipai-control-center-docs/**`
    - `vercel.json`
 
 2. **Manual trigger** via GitHub Actions UI
@@ -51,7 +51,7 @@ The GitHub Actions workflow (`.github/workflows/deploy-ipai-control-center-docs.
 
 ```bash
 # Navigate to docs directory
-cd apps/ipai-control-center-docs
+cd web/ipai-control-center-docs
 
 # Install dependencies
 npm install
@@ -80,7 +80,7 @@ vercel ls
 ### Local Development
 
 ```bash
-cd apps/ipai-control-center-docs
+cd web/ipai-control-center-docs
 npm install
 npm run dev
 # Visit http://localhost:3007
@@ -91,7 +91,7 @@ npm run dev
 ## Project Structure
 
 ```
-apps/ipai-control-center-docs/
+web/ipai-control-center-docs/
 ├── pages/
 │   ├── index.mdx           # Overview page
 │   ├── constitution.md     # Constitution spec
@@ -135,10 +135,10 @@ Common issues:
 1. Spec files are copied, not symlinked
 2. After updating `spec/ipai-control-center/*.md`, copy to `pages/`:
    ```bash
-   cp spec/ipai-control-center/constitution.md apps/ipai-control-center-docs/pages/
-   cp spec/ipai-control-center/prd.md apps/ipai-control-center-docs/pages/
-   cp spec/ipai-control-center/plan.md apps/ipai-control-center-docs/pages/
-   cp spec/ipai-control-center/tasks.md apps/ipai-control-center-docs/pages/
+   cp spec/ipai-control-center/constitution.md web/ipai-control-center-docs/pages/
+   cp spec/ipai-control-center/prd.md web/ipai-control-center-docs/pages/
+   cp spec/ipai-control-center/plan.md web/ipai-control-center-docs/pages/
+   cp spec/ipai-control-center/tasks.md web/ipai-control-center-docs/pages/
    ```
 
 ---

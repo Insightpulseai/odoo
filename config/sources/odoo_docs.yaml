@@ -23,82 +23,82 @@ roots:
     description: "Getting started and essential concepts"
 
   # User Documentation - Apps (Finance)
-  - space: user_docs/apps/accounting
+  - space: user_docs/web/accounting
     url: "https://www.odoo.com/documentation/18.0/applications/finance/accounting.html"
     depth: 5
     description: "Accounting and Invoicing"
 
-  - space: user_docs/apps/expenses
+  - space: user_docs/web/expenses
     url: "https://www.odoo.com/documentation/18.0/applications/finance/expenses.html"
     depth: 4
     description: "Expense Management"
 
   # User Documentation - Apps (Sales)
-  - space: user_docs/apps/sales
+  - space: user_docs/web/sales
     url: "https://www.odoo.com/documentation/18.0/applications/sales/sales.html"
     depth: 5
     description: "Sales and CRM"
 
-  - space: user_docs/apps/crm
+  - space: user_docs/web/crm
     url: "https://www.odoo.com/documentation/18.0/applications/sales/crm.html"
     depth: 5
     description: "Customer Relationship Management"
 
-  - space: user_docs/apps/pos
+  - space: user_docs/web/pos
     url: "https://www.odoo.com/documentation/18.0/applications/sales/point_of_sale.html"
     depth: 4
     description: "Point of Sale"
 
   # User Documentation - Apps (Supply Chain)
-  - space: user_docs/apps/inventory
+  - space: user_docs/web/inventory
     url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/inventory.html"
     depth: 6
     description: "Inventory and Warehousing"
 
-  - space: user_docs/apps/manufacturing
+  - space: user_docs/web/manufacturing
     url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/manufacturing.html"
     depth: 5
     description: "Manufacturing and MRP"
 
-  - space: user_docs/apps/purchase
+  - space: user_docs/web/purchase
     url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/purchase.html"
     depth: 4
     description: "Purchase Management"
 
   # User Documentation - Apps (HR)
-  - space: user_docs/apps/employees
+  - space: user_docs/web/employees
     url: "https://www.odoo.com/documentation/18.0/applications/hr/employees.html"
     depth: 4
     description: "Employee Management"
 
-  - space: user_docs/apps/recruitment
+  - space: user_docs/web/recruitment
     url: "https://www.odoo.com/documentation/18.0/applications/hr/recruitment.html"
     depth: 4
     description: "Recruitment"
 
-  - space: user_docs/apps/time_off
+  - space: user_docs/web/time_off
     url: "https://www.odoo.com/documentation/18.0/applications/hr/time_off.html"
     depth: 4
     description: "Time Off Management"
 
   # User Documentation - Apps (Websites)
-  - space: user_docs/apps/website
+  - space: user_docs/web/website
     url: "https://www.odoo.com/documentation/18.0/applications/websites/website.html"
     depth: 5
     description: "Website Builder"
 
-  - space: user_docs/apps/ecommerce
+  - space: user_docs/web/ecommerce
     url: "https://www.odoo.com/documentation/18.0/applications/websites/ecommerce.html"
     depth: 5
     description: "eCommerce"
 
   # User Documentation - Apps (Productivity)
-  - space: user_docs/apps/project
+  - space: user_docs/web/project
     url: "https://www.odoo.com/documentation/18.0/applications/productivity/project.html"
     depth: 4
     description: "Project Management"
 
-  - space: user_docs/apps/knowledge
+  - space: user_docs/web/knowledge
     url: "https://www.odoo.com/documentation/18.0/applications/productivity/knowledge.html"
     depth: 4
     description: "Knowledge Base"

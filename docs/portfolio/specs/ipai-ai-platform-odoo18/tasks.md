@@ -18,13 +18,13 @@
 - [x] Create `spec/ipai-ai-platform-odoo18/tasks.md`
 
 ### 1.2 Architecture Documentation
-- [ ] Create `docs/architecture/IPAI_AI_PLATFORM_ARCH.md`
+- [ ] Create `docs/arch/IPAI_AI_PLATFORM_ARCH.md`
 - [ ] Create runtime snapshot with container/DB names
 - [ ] Create data flow diagrams
 - [ ] Document security boundaries
 
 ### 1.3 Data Model Documentation
-- [ ] Create `docs/architecture/IPAI_AI_PLATFORM_ERD.dbml`
+- [ ] Create `docs/arch/IPAI_AI_PLATFORM_ERD.dbml`
 - [ ] Document all new tables and relationships
 - [ ] Include Supabase KB schema
 - [ ] Generate Mermaid ERD

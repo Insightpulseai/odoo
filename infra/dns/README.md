@@ -12,7 +12,7 @@ Single source of truth for all DNS configuration under `insightpulseai.com`.
 
 **Generated Artifacts**:
 1. `infra/cloudflare/envs/prod/subdomains.auto.tfvars` (Terraform input)
-2. `docs/architecture/runtime_identifiers.json` (Runtime reference)
+2. `docs/arch/runtime_identifiers.json` (Runtime reference)
 3. `infra/dns/dns-validation-spec.json` (CI validation)
 
 **Generator**: `scripts/generate-dns-artifacts.sh`
@@ -90,7 +90,7 @@ subdomains:
 📝 Generating Terraform variables...
 ✅ Generated: infra/cloudflare/envs/prod/subdomains.auto.tfvars
 📝 Generating runtime identifiers JSON...
-✅ Generated: docs/architecture/runtime_identifiers.json
+✅ Generated: docs/arch/runtime_identifiers.json
 📝 Generating validation spec...
 ✅ Generated: infra/dns/dns-validation-spec.json
 
@@ -100,7 +100,7 @@ subdomains:
 ### 3. Commit and Push
 
 ```bash
-git add infra/dns/ infra/cloudflare/ docs/architecture/
+git add infra/dns/ infra/cloudflare/ docs/arch/
 git commit -m "feat(infra): add api-v2 subdomain"
 git push
 ```
@@ -180,7 +180,7 @@ app_subdomains = [
   "source": "infra/dns/subdomain-registry.yaml",
   "validation_rules": {
     "terraform_file": "infra/cloudflare/envs/prod/subdomains.auto.tfvars",
-    "runtime_file": "docs/architecture/runtime_identifiers.json",
+    "runtime_file": "docs/arch/runtime_identifiers.json",
     "expected_subdomain_count": 9,
     "expected_active_count": 8,
     "expected_deprecated_count": 1
@@ -282,7 +282,7 @@ sudo chmod +x /usr/local/bin/yq
 **Fix**:
 ```bash
 ./scripts/generate-dns-artifacts.sh
-git add infra/cloudflare/ docs/architecture/ infra/dns/
+git add infra/cloudflare/ docs/arch/ infra/dns/
 git commit --amend --no-edit
 git push --force-with-lease
 ```
@@ -301,4 +301,4 @@ git push --force-with-lease
 - **Generator**: `scripts/generate-dns-artifacts.sh`
 - **CI Workflow**: `.github/workflows/dns-sync-check.yml`
 - **Terraform Module**: `infra/cloudflare/modules/dns-records/`
-- **Runtime JSON**: `docs/architecture/runtime_identifiers.json`
+- **Runtime JSON**: `docs/arch/runtime_identifiers.json`

@@ -23,7 +23,7 @@
 ./scripts/ppm/run-dq-checks.sh
 
 # Start Control Room locally
-cd apps/control-room && npm run dev
+cd web/control-room && npm run dev
 ```
 
 ## Incident Response

@@ -54,16 +54,16 @@ fi
 # Step 4: Formatting checks (if tools available)
 echo "[4/5] Formatting checks..."
 if command -v black >/dev/null 2>&1; then
-  black --check addons/ packages/ apps/ 2>/dev/null || {
-    echo "  WARN: Some files need formatting (run: black addons/ packages/ apps/)"
+  black --check addons/ pkgs/ web/ 2>/dev/null || {
+    echo "  WARN: Some files need formatting (run: black addons/ pkgs/ web/)"
   }
 else
   echo "  black not installed, skipping"
 fi
 
 if command -v isort >/dev/null 2>&1; then
-  isort --check addons/ packages/ apps/ 2>/dev/null || {
-    echo "  WARN: Some imports need sorting (run: isort addons/ packages/ apps/)"
+  isort --check addons/ pkgs/ web/ 2>/dev/null || {
+    echo "  WARN: Some imports need sorting (run: isort addons/ pkgs/ web/)"
   }
 else
   echo "  isort not installed, skipping"

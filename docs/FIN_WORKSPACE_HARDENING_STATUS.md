@@ -95,7 +95,7 @@ cd ~/Documents/GitHub/odoo
 
 # Verify outputs
 ls -lh infra/doctl/inventory/*.json
-ls -lh infra/do/apps/*.yaml
+ls -lh infra/do/web/*.yaml
 ls -lh docs/conversations/*.md
 ```
 
@@ -127,7 +127,7 @@ Once the doctl download issue is resolved, a successful run should:
 1. ✅ **Token Validation**: Pass `Ensure DO token exists` step
 2. ✅ **doctl Authentication**: Authenticate with DO API
 3. ✅ **Inventory Export**: Generate 6 JSON files in `infra/doctl/inventory/`
-4. ✅ **Spec Bootstrap**: Generate 9 app YAML specs in `infra/do/apps/`
+4. ✅ **Spec Bootstrap**: Generate 9 app YAML specs in `infra/do/web/`
 5. ✅ **Conversation Entry**: Create timestamped entry in `docs/conversations/`
 6. ✅ **PR Creation**: Open PR with unique branch name (format: `chore/weekly-do-inventory-YYYYMMDD-RUN_ID`)
 7. ✅ **Main Branch Protection**: No direct commits to main (all changes via PR)

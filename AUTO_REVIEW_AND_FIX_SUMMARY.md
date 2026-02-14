@@ -28,17 +28,17 @@
 
 ### 2.1 Path Hallucination Check ✅
 
-**Problem:** CI audit-contract workflow failing on references to `src/apps/odoo` paths
+**Problem:** CI audit-contract workflow failing on references to `src/web/odoo` paths
 
 **Root Cause:** Documentation files (`DEPLOY_NOTION_WORKOS.md`, `REPO_TREE.contract.md`) contained forbidden path examples without clear "FORBIDDEN" markers
 
 **Fix Applied:**
 ```markdown
 # Before:
-Do **NOT** restructure to `src/apps/odoo/addons/` layout.
+Do **NOT** restructure to `src/web/odoo/addons/` layout.
 
 # After:
-Do **NOT** restructure repository (forbidden layouts include paths like `src/apps/odoo/addons/`).
+Do **NOT** restructure repository (forbidden layouts include paths like `src/web/odoo/addons/`).
 ```
 
 **Evidence:**

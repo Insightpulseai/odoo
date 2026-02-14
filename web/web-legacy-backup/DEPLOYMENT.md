@@ -24,12 +24,12 @@ erp.insightpulseai.com → DigitalOcean (Odoo ERP) ✅
 2. **Import Git Repository**:
    - Repository: `Insightpulseai/odoo`
    - Framework Preset: **Next.js**
-   - Root Directory: **`apps/web`**
+   - Root Directory: **`web/web`**
 
 3. **Build & Development Settings**:
    ```
    Framework: Next.js
-   Root Directory: apps/web
+   Root Directory: web/web
    Build Command: cd ../.. && pnpm install && pnpm build --filter=@ipai/web
    Output Directory: .next
    Install Command: pnpm install --frozen-lockfile
@@ -154,7 +154,7 @@ cd ../.. && pnpm install && pnpm build --filter=@ipai/web
 **Solutions**:
 1. Verify deployment completed successfully in Vercel
 2. Check build logs for errors
-3. Ensure root directory is set to `apps/web`
+3. Ensure root directory is set to `web/web`
 4. Verify production deployment is active (not just preview)
 
 ---
@@ -195,7 +195,7 @@ Or via Odoo UI:
 ## Deployment Checklist
 
 ### Before Deployment
-- [x] Next.js app exists at `apps/web`
+- [x] Next.js app exists at `web/web`
 - [x] Build command configured for monorepo
 - [x] Vercel project created
 - [ ] Custom domain added in Vercel

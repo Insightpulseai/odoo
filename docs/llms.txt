@@ -9,7 +9,7 @@
 
 ## Architecture
 
-- docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+- docs/arch/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 - docs/data-model/ODOO_CANONICAL_SCHEMA.dbml
 - docs/db/DB_TARGET_ARCHITECTURE.md
 
@@ -50,9 +50,9 @@
 
 ## Control Room UI
 
-- apps/control-room/src/app/theme/tbwaFluentTheme.ts
-- apps/control-room/src/app/finance/page.tsx
-- apps/control-room/FINANCE_LANDING_CHECKLIST.md
+- web/control-room/src/app/theme/tbwaFluentTheme.ts
+- web/control-room/src/app/finance/page.tsx
+- web/control-room/FINANCE_LANDING_CHECKLIST.md
 
 ## Automation
 
@@ -87,9 +87,9 @@ OCA Standards: docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 Module Structure: docs/ipai/ARCHITECTURE.md
 
 ### For Control Room UI
-Start: apps/control-room/README.md
-Theme: apps/control-room/src/app/theme/tbwaFluentTheme.ts
-Assets: apps/control-room/public/assets/finance/
+Start: web/control-room/README.md
+Theme: web/control-room/src/app/theme/tbwaFluentTheme.ts
+Assets: web/control-room/public/assets/finance/
 
 ### For Finance PPM
 Start: docs/ppm/architecture.md

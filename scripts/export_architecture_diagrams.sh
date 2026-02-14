@@ -11,8 +11,8 @@
 #   - OR: drawio CLI installed locally
 #
 # Output:
-#   docs/architecture/exports/*.svg
-#   docs/architecture/exports/*.png
+#   docs/arch/exports/*.svg
+#   docs/arch/exports/*.png
 
 set -euo pipefail
 
@@ -20,7 +20,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SOURCE_DIR="$REPO_ROOT/docs/architecture"
-EXPORT_DIR="$REPO_ROOT/docs/architecture/exports"
+EXPORT_DIR="$REPO_ROOT/docs/arch/exports"
 DRAWIO_IMAGE="rlespinasse/drawio-export:latest"
 PNG_SCALE=2  # Export at 2x resolution
 

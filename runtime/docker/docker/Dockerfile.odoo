@@ -42,7 +42,7 @@ ENV ODOO_EXTRA_ADDONS="/mnt/extra-addons/ipai,/mnt/extra-addons/oca"
 # Create odoo.conf with overlay paths
 RUN cat > /etc/odoo/odoo.conf <<'EOF'
 [options]
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
 admin_passwd = $pbkdf2-sha512$600000$admin
 db_host = False
 db_port = False

@@ -30,7 +30,7 @@ supabase functions serve  # Start Edge Functions locally
 # 4. Run tests
 cd supabase/functions/stripe-webhook && deno test
 cd addons/ipai/ipai_saas_billing && python -m pytest
-cd apps/web && pnpm test:e2e
+cd web/web && pnpm test:e2e
 ```
 
 ### For Stakeholders
@@ -203,11 +203,11 @@ cd apps/web && pnpm test:e2e
 
 | File | Purpose |
 |------|---------|
-| `packages/saas-types/src/billing.ts` | TypeScript types for billing domain |
+| `pkgs/saas-types/src/billing.ts` | TypeScript types for billing domain |
 | `infra/do/staging-droplet.tf` | Terraform config for staging environment |
 | `supabase/tests/rls_security.test.sql` | Automated RLS cross-org tests |
-| `apps/web/tests/e2e/billing.spec.ts` | E2E billing flow tests |
-| `apps/web/tests/e2e/cms_workflow.spec.ts` | E2E CMS workflow tests |
+| `web/web/tests/e2e/billing.spec.ts` | E2E billing flow tests |
+| `web/web/tests/e2e/cms_workflow.spec.ts` | E2E CMS workflow tests |
 
 ---
 

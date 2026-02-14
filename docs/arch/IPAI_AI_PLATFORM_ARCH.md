@@ -478,7 +478,7 @@ ORDER BY hour;
 - OpenAI API: https://platform.openai.com/docs
 - IPAI AI Platform Spec: [/spec/ipai-ai-platform](/spec/ipai-ai-platform)
 - IPAI AI Platform DBML: [/docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml](/docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml)
-- IPAI AI Platform ORD: [/docs/architecture/IPAI_AI_PLATFORM_ORD.md](/docs/architecture/IPAI_AI_PLATFORM_ORD.md)
+- IPAI AI Platform ORD: [/docs/arch/IPAI_AI_PLATFORM_ORD.md](/docs/arch/IPAI_AI_PLATFORM_ORD.md)
 - IPAI AI Platform API: [/docs/api/openapi.ipai_ai_platform.yaml](/docs/api/openapi.ipai_ai_platform.yaml)
 
 ---

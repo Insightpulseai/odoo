@@ -21,10 +21,10 @@ This directory contains the comprehensive IPAI brand guidelines and token-driven
 - **[IPAI_BRAND_GUIDELINES.md](./IPAI_BRAND_GUIDELINES.md)** - Complete brand guidelines (15,000+ words)
 
 ### Implementation Files
-- **Design Tokens:** `packages/ipai-design-tokens/tokens.json`
-- **CSS Variables:** `packages/ipai-design-tokens/export/css-vars.css`
+- **Design Tokens:** `pkgs/ipai-design-tokens/tokens.json`
+- **CSS Variables:** `pkgs/ipai-design-tokens/export/css-vars.css`
 - **SCSS Variables:** `addons/ipai/ipai_theme_copilot/static/src/scss/_tokens.scss`
-- **TypeScript:** `packages/ipai-design-tokens/src/ipai-brand.ts`
+- **TypeScript:** `pkgs/ipai-design-tokens/src/ipai-brand.ts`
 
 ---
 
@@ -326,15 +326,15 @@ const AdminCard = styled.div`
 - `docs/brand/README.md` - This file
 
 ### Design Tokens
-- `packages/ipai-design-tokens/tokens.json` - Canonical token definitions
-- `packages/ipai-design-tokens/export/css-vars.css` - CSS custom properties
-- `packages/ipai-design-tokens/src/ipai-brand.ts` - TypeScript exports
+- `pkgs/ipai-design-tokens/tokens.json` - Canonical token definitions
+- `pkgs/ipai-design-tokens/export/css-vars.css` - CSS custom properties
+- `pkgs/ipai-design-tokens/src/ipai-brand.ts` - TypeScript exports
 
 ### Odoo Integration
 - `addons/ipai/ipai_theme_copilot/static/src/scss/_tokens.scss` - SCSS variables + mixins
 
 ### Package Configuration
-- `packages/ipai-design-tokens/package.json` - Updated to v1.0.0 with IPAI brand exports
+- `pkgs/ipai-design-tokens/package.json` - Updated to v1.0.0 with IPAI brand exports
 
 ---
 

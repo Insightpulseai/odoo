@@ -27,7 +27,7 @@ Last Updated: 2026-01-26
 
 ### Runtime Proof
 ```
-Source: docs/architecture/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
+Source: docs/arch/runtime_snapshot/20260108_013846/PROOFS/odoo_version.txt
 Output: Odoo Server 18.0-20251121
 ```
 

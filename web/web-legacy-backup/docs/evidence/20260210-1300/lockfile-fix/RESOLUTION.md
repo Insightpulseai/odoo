@@ -47,7 +47,7 @@ pnpm install
 
 ### Phase 3: Validation ✅
 ```bash
-rm -rf node_modules apps/*/node_modules packages/*/node_modules
+rm -rf node_modules web/*/node_modules pkgs/*/node_modules
 pnpm install --frozen-lockfile
 # Result: "Lockfile is up to date, resolution step is skipped" ✅
 # Installed 2,248 packages successfully
@@ -55,7 +55,7 @@ pnpm install --frozen-lockfile
 
 ### Phase 4: Deployment ✅
 ```bash
-git add pnpm-lock.yaml apps/web/vercel.json
+git add pnpm-lock.yaml web/web/vercel.json
 git commit -m "chore(deps): sync pnpm-lock.yaml with package.json manifests"
 git push origin main
 # Commit: 983c76f8
@@ -68,7 +68,7 @@ git push origin main
 
 **Local Validation:**
 - ✅ Frozen-lockfile install succeeds
-- ✅ Build test passes (`pnpm build` in apps/web)
+- ✅ Build test passes (`pnpm build` in web/web)
 - ✅ Pre-commit hooks pass
 - ✅ Dependencies resolved correctly
 
@@ -93,7 +93,7 @@ git push origin main
 
 ## Vercel Configuration
 
-**vercel.json (apps/web):**
+**vercel.json (web/web):**
 ```json
 {
   "version": 2,
@@ -106,7 +106,7 @@ git push origin main
 
 **Workspace Structure:**
 - Root: pnpm workspace with monorepo setup
-- App: `apps/web` (Next.js 14.0.4)
+- App: `web/web` (Next.js 14.0.4)
 - Package manager: pnpm 10.28.0
 - Filter: `--filter=@ipai/web...` (includes dependencies)
 
@@ -155,6 +155,6 @@ Recent deployments (as of 13:00 UTC):
 | File | Changes | Purpose |
 |------|---------|---------|
 | `pnpm-lock.yaml` | 2,635 insertions, 222 deletions | Synchronized with package.json |
-| `apps/web/vercel.json` | Reverted to correct monorepo config | Fixed install command |
+| `web/web/vercel.json` | Reverted to correct monorepo config | Fixed install command |
 
 **Commit:** `983c76f8` - "chore(deps): sync pnpm-lock.yaml with package.json manifests"

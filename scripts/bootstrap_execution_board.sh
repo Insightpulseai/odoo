@@ -333,7 +333,7 @@ mk_issue \
 - HAS_SPEC, DEPLOYS, RUNS_ON, DEPENDS_ON, IMPLEMENTS, TESTS
 
 **Ingestion sources**:
-1. Local filesystem (spec/, addons/, apps/, workflows/, scripts/)
+1. Local filesystem (spec/, addons/, web/, workflows/, scripts/)
 2. GitHub GraphQL API (issues, PRs, repos)
 3. Supabase metadata (schemas, functions, policies)
 
@@ -378,8 +378,8 @@ mk_issue \
 - [ ] Stale run recovery works
 
 **Files**:
-- \`apps/pulser-runner/src/worker.ts\`
-- \`apps/pulser-runner/src/executor.ts\`
+- \`web/pulser-runner/src/worker.ts\`
+- \`web/pulser-runner/src/executor.ts\`
 " \
   "ops:workers,ops:control-room"
 
@@ -404,8 +404,8 @@ mk_issue \
 - [ ] Mobile responsive
 
 **Files**:
-- \`apps/control-room/src/app/runboard/page.tsx\`
-- \`apps/control-room/src/components/RunLane.tsx\`
+- \`web/control-room/src/app/runboard/page.tsx\`
+- \`web/control-room/src/components/RunLane.tsx\`
 " \
   "ui:runboard,ui:dashboard,ops:control-room"
 

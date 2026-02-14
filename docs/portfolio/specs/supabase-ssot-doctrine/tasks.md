@@ -7,7 +7,7 @@
 - [x] Create spec/supabase-ssot-doctrine/plan.md
 - [x] Create spec/supabase-ssot-doctrine/tasks.md
 - [x] Create spec/supabase-ssot-doctrine/agent-prompt.md
-- [x] Update docs/architecture/SOURCE_OF_TRUTH.md
+- [x] Update docs/arch/SOURCE_OF_TRUTH.md
 - [x] Create .claude/commands/ssot-doctrine.md
 - [ ] Update CLAUDE.md with SSOT section reference
 

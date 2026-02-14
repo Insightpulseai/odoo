@@ -409,7 +409,7 @@ Before considering feature-complete:
 
 ### Documentation
 
-- **Architecture**: `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
+- **Architecture**: `docs/arch/PROD_RUNTIME_SNAPSHOT.md`
 - **Monitoring**: `infra/monitoring/` (existing Prometheus/Grafana configs)
 - **Supabase**: `docs/ai/SUPABASE.md` (audit log integration)
 

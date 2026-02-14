@@ -17,7 +17,7 @@ npm install @ipai/ai-sdk
 yarn add @ipai/ai-sdk
 
 # Internal development (from monorepo)
-pnpm add file:./packages/ipai-ai-sdk
+pnpm add file:./pkgs/ipai-ai-sdk
 ```
 
 ## Quick Start

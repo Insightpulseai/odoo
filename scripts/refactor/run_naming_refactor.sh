@@ -34,14 +34,14 @@ capture pre-git-status git status --porcelain=v1
 
 # ---------------- Phase 1: packages -> pkgs ----------------
 if [[ "$PHASE1_PKGS" == "1" ]]; then
-  log "Phase 1: packages/ -> pkgs/"
+  log "Phase 1: pkgs/ -> pkgs/"
   if [[ "$DRY_RUN" == "0" ]]; then
     git_mv_dir "packages" "pkgs"
-    rg_replace "packages/" "pkgs/"
+    rg_replace "pkgs/" "pkgs/"
     # common workspace patterns
     if [[ -f "${REPO_ROOT}/pnpm-workspace.yaml" ]]; then
-      rg_replace "packages/*" "pkgs/*"
-      rg_replace "packages/**" "pkgs/**"
+      rg_replace "pkgs/*" "pkgs/*"
+      rg_replace "pkgs/**" "pkgs/**"
     fi
   else
     warn "dry-run: would move packages -> pkgs and replace refs"
@@ -50,13 +50,13 @@ fi
 
 # ---------------- Phase 2: apps -> web; docs/architecture -> docs/arch ----------------
 if [[ "$PHASE2_WEB" == "1" ]]; then
-  log "Phase 2A: apps/ -> web/"
+  log "Phase 2A: web/ -> web/"
   if [[ "$DRY_RUN" == "0" ]]; then
     git_mv_dir "apps" "web"
-    rg_replace "apps/" "web/"
+    rg_replace "web/" "web/"
     if [[ -f "${REPO_ROOT}/pnpm-workspace.yaml" ]]; then
-      rg_replace "apps/*" "web/*"
-      rg_replace "apps/**" "web/**"
+      rg_replace "web/*" "web/*"
+      rg_replace "web/**" "web/**"
     fi
   else
     warn "dry-run: would move apps -> web and replace refs"
@@ -64,10 +64,10 @@ if [[ "$PHASE2_WEB" == "1" ]]; then
 fi
 
 if [[ "$PHASE2_DOCS_ARCH" == "1" ]]; then
-  log "Phase 2B: docs/architecture/ -> docs/arch/"
+  log "Phase 2B: docs/arch/ -> docs/arch/"
   if [[ "$DRY_RUN" == "0" ]]; then
     git_mv_dir "docs/architecture" "docs/arch"
-    rg_replace "docs/architecture/" "docs/arch/"
+    rg_replace "docs/arch/" "docs/arch/"
   else
     warn "dry-run: would move docs/architecture -> docs/arch and replace refs"
   fi
@@ -145,7 +145,7 @@ This repo uses deterministic folder names to avoid collisions with Odoo terminol
 ## Compatibility notes
 - If present, `supabase` may be a symlink to `db` for tooling compatibility.
 - Avoid textual references to legacy paths. CI blocks PRs that reintroduce:
-  - `packages/`, `apps/`, `docs/architecture/`, `supabase/`, `addons/ipai/`
+  - `pkgs/`, `web/`, `docs/arch/`, `supabase/`, `addons/ipai/`
 
 ## How to run the refactor
 - Install config: copy `scripts/refactor/naming.env.example` → `scripts/refactor/naming.env`

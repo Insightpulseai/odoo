@@ -116,7 +116,7 @@ CREATE INDEX idx_cr_lineage_target ON runtime.cr_lineage_edges(target_entity);
 ### 3.1 Project Structure
 
 ```
-apps/control-room-api/
+web/control-room-api/
 ├── app.py                 # FastAPI application
 ├── requirements.txt       # Dependencies
 ├── .env.example           # Environment template
@@ -248,7 +248,7 @@ visio-drawio-export \
 
 ```yaml
 control-room-api:
-  build: ./apps/control-room-api
+  build: ./web/control-room-api
   ports:
     - "8789:8789"
   environment:

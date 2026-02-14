@@ -3,9 +3,9 @@ name: Token Validation
 on:
   pull_request:
     paths:
-      - 'packages/ipai-design-tokens/**'
-      - 'apps/*/src/**/*.tsx'
-      - 'apps/*/src/**/*.ts'
+      - 'pkgs/ipai-design-tokens/**'
+      - 'web/*/src/**/*.tsx'
+      - 'web/*/src/**/*.ts'
 
 jobs:
   validate:
@@ -25,13 +25,13 @@ jobs:
         run: pnpm install
 
       - name: Generate tokens
-        run: cd packages/ipai-design-tokens && pnpm generate:tokens
+        run: cd pkgs/ipai-design-tokens && pnpm generate:tokens
 
       - name: Check for uncommitted changes
         run: |
           if [[ -n $(git status --porcelain) ]]; then
             echo "❌ Generated token files differ from committed versions"
-            echo "Run 'pnpm generate:tokens' in packages/ipai-design-tokens and commit the changes"
+            echo "Run 'pnpm generate:tokens' in pkgs/ipai-design-tokens and commit the changes"
             git diff
             exit 1
           fi
@@ -40,7 +40,7 @@ jobs:
       - name: Validate token usage
         run: |
           # Check for hardcoded colors in components
-          HARDCODED=$(grep -r "bg-\[#" apps/web/src/ || true)
+          HARDCODED=$(grep -r "bg-\[#" web/web/src/ || true)
           if [[ -n "$HARDCODED" ]]; then
             echo "❌ Hardcoded colors found:"
             echo "$HARDCODED"
@@ -51,7 +51,7 @@ jobs:
       - name: Validate hex color usage
         run: |
           # Check for hardcoded hex colors in style attributes
-          HARDCODED_HEX=$(grep -rE '(backgroundColor|color|borderColor):\s*["\']#[0-9a-fA-F]{3,8}["\']' apps/web/src/ || true)
+          HARDCODED_HEX=$(grep -rE '(backgroundColor|color|borderColor):\s*["\']#[0-9a-fA-F]{3,8}["\']' web/web/src/ || true)
           if [[ -n "$HARDCODED_HEX" ]]; then
             echo "⚠️ Warning: Direct hex colors found (should use tokens):"
             echo "$HARDCODED_HEX"

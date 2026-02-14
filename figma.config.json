@@ -3,9 +3,9 @@
   "codeConnect": {
     "parser": "react",
     "include": [
-      "apps/*/src/components/**/*",
-      "packages/*/src/components/**/*",
-      "packages/ipai-design-tokens/src/**/*"
+      "web/*/src/components/**/*",
+      "pkgs/*/src/components/**/*",
+      "pkgs/ipai-design-tokens/src/**/*"
     ],
     "exclude": [
       "**/*.test.*",
@@ -19,9 +19,9 @@
       "**/*.stories.*"
     ],
     "importPaths": {
-      "apps/control-room/src/components/*": "@control-room/components",
-      "apps/web/src/components/*": "@web/components",
-      "packages/ipai-design-tokens/src/*": "@ipai/design-tokens"
+      "web/control-room/src/components/*": "@control-room/components",
+      "web/web/src/components/*": "@web/components",
+      "pkgs/ipai-design-tokens/src/*": "@ipai/design-tokens"
     }
   },
   "documentUrlSubstitutions": {},

@@ -415,7 +415,7 @@ Before considering feature-complete:
 
 ### Documentation
 
-- **Architecture**: `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
+- **Architecture**: `docs/arch/PROD_RUNTIME_SNAPSHOT.md`
 - **CI/CD**: `.github/workflows/cd-production.yml`
 - **Monitoring**: `infra/monitoring/docker-compose.monitoring.yml`
 - **Supabase**: `docs/ai/SUPABASE.md`

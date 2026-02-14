@@ -48,7 +48,7 @@ done
 
 # Define common Odoo args
 ODOO_ARGS="--db_host=db --db_port=5432 --db_user=odoo --db_password=odoo -d ${DB} --without-demo=all --stop-after-init"
-ADDONS_PATH="--addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/repo/addons,/mnt/repo/oca"
+ADDONS_PATH="--addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/repo/addons,/mnt/repo/oca"
 
 # 1) INSTALL changed modules (fresh database)
 log "Step 1: Installing modules on fresh database..."

@@ -2,7 +2,7 @@
 
 - [ ] Phase 1: Foundation
   - [x] Create spec directory and files
-  - [ ] Create `docs/architecture/github-waf-model.yaml`
+  - [ ] Create `docs/arch/github-waf-model.yaml`
   - [ ] Create `scripts/audit/check_github_waf.py` skeleton
   - [ ] Implement P1 Productivity checks
 - [ ] Phase 2: Complete Assessment

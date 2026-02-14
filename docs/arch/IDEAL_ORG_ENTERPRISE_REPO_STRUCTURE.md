@@ -36,8 +36,8 @@ org/
 ├── odoo/                    # MONOREPO (Core ERP + custom modules)
 │   ├── addons/ipai/            # Custom modules
 │   ├── addons/oca/             # OCA submodules
-│   ├── apps/                   # Node.js workspaces (control-room, pulser)
-│   ├── packages/               # Shared libraries
+│   ├── web/                   # Node.js workspaces (control-room, pulser)
+│   ├── pkgs/               # Shared libraries
 │   ├── scripts/                # Automation
 │   └── docs/                   # Unified documentation
 │
@@ -159,7 +159,7 @@ CEO / CTO
     └── Platform Team
             ├── Core Odoo Team       → Write: addons/ipai/ipai_dev_studio_*, ipai_platform_*
             ├── Finance Team         → Write: addons/ipai/ipai_finance_*, addons/ipai/ipai_bir_*
-            ├── AI/Agents Team       → Write: addons/ipai/ipai_ai_*, apps/pulser-*
+            ├── AI/Agents Team       → Write: addons/ipai/ipai_ai_*, web/pulser-*
             ├── WorkOS Team          → Write: addons/ipai/ipai_workos_*
             ├── DevOps Team          → Write: scripts/, deploy/, .github/workflows/
             └── Data Team            → Write: db/, supabase/, dbt/
@@ -529,7 +529,7 @@ Start
   │
   ├─ Does it deploy independently?
   │    ├─ Yes → New satellite repo
-  │    └─ No → Add to odoo monorepo (apps/ or packages/)
+  │    └─ No → Add to odoo monorepo (web/ or pkgs/)
   │
   ├─ Does it have different RBAC?
   │    ├─ Yes → New repo
@@ -568,8 +568,8 @@ Before creating a new module:
 odoo/
 ├── addons/ipai/        # 80+ custom modules (monorepo)
 ├── addons/oca/         # 12 OCA submodules (read-only)
-├── apps/               # 20 Node.js apps (monorepo workspaces)
-├── packages/           # 3 shared libraries
+├── web/               # 20 Node.js apps (monorepo workspaces)
+├── pkgs/           # 3 shared libraries
 └── scripts/            # 160+ automation scripts
 ```
 
@@ -628,8 +628,8 @@ startup/product/
 mkdir -p odoo/{addons,apps,packages}
 
 # 2. Import repos as subdirectories (preserving history)
-git subtree add --prefix=apps/control-room https://github.com/org/control-room.git main
-git subtree add --prefix=apps/pulser-runner https://github.com/org/pulser-runner.git main
+git subtree add --prefix=web/control-room https://github.com/org/control-room.git main
+git subtree add --prefix=web/pulser-runner https://github.com/org/pulser-runner.git main
 
 # 3. Update CI/CD to single pipeline
 # 4. Archive old repos (mark as deprecated)
@@ -642,14 +642,14 @@ git subtree add --prefix=apps/pulser-runner https://github.com/org/pulser-runner
 
 ```bash
 # 1. Extract subdirectory to new repo (preserving history)
-git subtree split --prefix=apps/control-room -b control-room-split
+git subtree split --prefix=web/control-room -b control-room-split
 git push https://github.com/org/control-room.git control-room-split:main
 
 # 2. Remove from monorepo
-git rm -rf apps/control-room
+git rm -rf web/control-room
 
 # 3. Add as submodule (if still needed)
-git submodule add https://github.com/org/control-room.git apps/control-room
+git submodule add https://github.com/org/control-room.git web/control-room
 
 # 4. Update CI/CD pipelines
 # 5. Update documentation
@@ -765,7 +765,7 @@ When setting up a new Odoo-based organization:
 - [ ] Set up team structure (core, domain teams)
 - [ ] Configure CODEOWNERS
 - [ ] Set up branch protection rules
-- [ ] Create base repository structure (`addons/`, `apps/`, `docs/`, `scripts/`)
+- [ ] Create base repository structure (`addons/`, `web/`, `docs/`, `scripts/`)
 - [ ] Add OCA submodules (`oca.lock.json`)
 
 ### Phase 2: Development (Weeks 2-4)

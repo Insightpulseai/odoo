@@ -34,7 +34,7 @@ Policy enforcement middleware for the Dataverse Enterprise Console, implementing
 ## Installation
 
 ```bash
-cd apps/policy-gateway
+cd web/policy-gateway
 pnpm install
 ```
 

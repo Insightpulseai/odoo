@@ -13,8 +13,8 @@
 
 - [ ] Create `docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml`
 - [ ] Create `docs/data-model/IPAI_AI_PLATFORM_ERD.mmd` (Mermaid)
-- [ ] Create `docs/architecture/IPAI_AI_PLATFORM_ORD.md` (Object Relationship Document)
-- [ ] Create `docs/architecture/IPAI_AI_PLATFORM_ARCH.md` (Architecture overview)
+- [ ] Create `docs/arch/IPAI_AI_PLATFORM_ORD.md` (Object Relationship Document)
+- [ ] Create `docs/arch/IPAI_AI_PLATFORM_ARCH.md` (Architecture overview)
 - [ ] Create `docs/api/openapi.ipai_ai_platform.yaml`
 
 ### CI Infrastructure

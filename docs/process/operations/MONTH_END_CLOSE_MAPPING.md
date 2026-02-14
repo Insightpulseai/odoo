@@ -307,4 +307,4 @@ const { data, error } = await supabase.rpc("analytics.ui_kpi_series", {
 
 - [Odoo Project Management](https://www.odoo.com/documentation/19.0/applications/services/project.html)
 - [Supabase RPC Functions](https://supabase.com/docs/guides/database/functions)
-- [Analytics KPI Schema](/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/docs/architecture/ANALYTICS_SCHEMA.md)
+- [Analytics KPI Schema](/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/docs/arch/ANALYTICS_SCHEMA.md)

@@ -8,7 +8,7 @@ Intended Outcome: Unified assessment system for 5 pillars with CI gates.
 
 ## Architecture
 
-- **Model**: `docs/architecture/github-waf-model.yaml`
+- **Model**: `docs/arch/github-waf-model.yaml`
 - **Script**: `scripts/audit/check_github_waf.py`
 - **Workflows**: `github-waf-gate.yml` (PR), `github-waf-assessment.yml` (Scheduled)
 

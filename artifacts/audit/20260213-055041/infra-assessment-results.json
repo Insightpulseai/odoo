@@ -141,11 +141,11 @@
           "scripts/odoo-kit-temp/vercel.json",
           "scripts/odoo-kit-temp/start/vercel.json",
           "templates/saas-landing/vercel.json",
-          "apps/web-legacy-backup/vercel.json",
-          "apps/odoo-frontend-shell/vercel.json",
-          "apps/web/vercel.json",
-          "apps/billing-site/vercel.json",
-          "apps/platform-kit/vercel.json"
+          "web/web-legacy-backup/vercel.json",
+          "web/odoo-frontend-shell/vercel.json",
+          "web/web/vercel.json",
+          "web/billing-site/vercel.json",
+          "web/platform-kit/vercel.json"
         ]
       },
       "recommendations": []

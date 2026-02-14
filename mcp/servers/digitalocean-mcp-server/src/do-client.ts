@@ -53,7 +53,7 @@ export class DigitalOceanClient {
   }
 
   async getApp(id: string): Promise<unknown> {
-    return this.request(`/apps/${id}`);
+    return this.request(`/web/${id}`);
   }
 
   async getAppLogs(
@@ -63,7 +63,7 @@ export class DigitalOceanClient {
     lines: number = 100
   ): Promise<unknown> {
     const deplId = deploymentId || "active";
-    let endpoint = `/apps/${appId}/deployments/${deplId}/logs`;
+    let endpoint = `/web/${appId}/deployments/${deplId}/logs`;
     const params = new URLSearchParams();
     if (component) params.set("component_name", component);
     params.set("type", "RUN");
@@ -72,7 +72,7 @@ export class DigitalOceanClient {
   }
 
   async deployApp(id: string, forceBuild: boolean = false): Promise<unknown> {
-    return this.request(`/apps/${id}/deployments`, "POST", {
+    return this.request(`/web/${id}/deployments`, "POST", {
       force_build: forceBuild,
     });
   }

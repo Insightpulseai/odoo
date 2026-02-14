@@ -6,7 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CONTROL_ROOM_DIR="$ROOT_DIR/apps/control-room"
+CONTROL_ROOM_DIR="$ROOT_DIR/web/control-room"
 
 # Colors
 GREEN='\033[0;32m'
@@ -67,8 +67,8 @@ echo -e "${GREEN}  Control Room setup complete!${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo ""
 echo "  To start development server:"
-echo "    cd apps/control-room && npm run dev"
+echo "    cd web/control-room && npm run dev"
 echo ""
 echo "  To run production build:"
-echo "    cd apps/control-room && npm start"
+echo "    cd web/control-room && npm start"
 echo ""

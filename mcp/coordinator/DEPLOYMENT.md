@@ -44,7 +44,7 @@ xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  mcp-coordinator   https://mcp-coordinator-
 
 ### 3. Configure Secrets (via Dashboard)
 
-1. Go to: https://cloud.digitalocean.com/apps/[APP_ID]/settings
+1. Go to: https://cloud.digitalocean.com/web/[APP_ID]/settings
 2. Navigate to: App-Level Environment Variables
 3. Add/Update secrets:
    - `COORDINATOR_API_KEY`: Generate with `openssl rand -hex 32`
@@ -250,7 +250,7 @@ doctl apps create-deployment $APP_ID --deployment-id $PREVIOUS_DEPLOYMENT_ID
 
 ```bash
 # App metrics (via dashboard)
-open "https://cloud.digitalocean.com/apps/$APP_ID/metrics"
+open "https://cloud.digitalocean.com/web/$APP_ID/metrics"
 ```
 
 **Key Metrics:**

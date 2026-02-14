@@ -93,7 +93,7 @@
 ## P3 Tasks (Future Enhancements)
 
 ### Console UI (Future)
-- [ ] Create apps/odooops-console/ Next.js app
+- [ ] Create web/odooops-console/ Next.js app
 - [ ] Build project dashboard page
 - [ ] Build run history viewer
 - [ ] Build log streaming UI

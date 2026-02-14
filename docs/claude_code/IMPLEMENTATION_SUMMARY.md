@@ -127,7 +127,7 @@ Run: ./scripts/verify.sh"
 ```bash
 # Add new dashboard widget
 claude -p "Add KPI widget to Control Room dashboard:
-- Component: apps/control-room/src/components/dashboard/KpiWidget.tsx
+- Component: web/control-room/src/components/dashboard/KpiWidget.tsx
 - Use Fluent UI Card component
 - TBWA branding (#F1C100, #000000)
 - Props: title, value, trend, icon

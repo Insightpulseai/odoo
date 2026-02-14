@@ -324,12 +324,12 @@ All components support dark mode via CSS variables:
 
 **URL Pattern:**
 ```
-https://github.com/{org}/{repo}/edit/{branch}/apps/docs/content/{path}.mdx
+https://github.com/{org}/{repo}/edit/{branch}/web/docs/content/{path}.mdx
 ```
 
 **Example:**
 ```
-https://github.com/supabase/supabase/edit/master/apps/docs/content/guides/platform/integrations.mdx
+https://github.com/supabase/supabase/edit/master/web/docs/content/guides/platform/integrations.mdx
 ```
 
 ---
