@@ -18,6 +18,10 @@ jobs:
 
           # Allowed compose files (canonical set)
           allowed=(
+            # Root SSOT (base development stack)
+            "docker-compose.yml"
+            "docker-compose.dev.yml"
+            ".devcontainer/docker-compose.devcontainer.yml"
             # Production deployments
             "deploy/docker-compose.prod.yml"
             "deploy/docker-compose.ce19.yml"
@@ -25,8 +29,8 @@ jobs:
             # Development sandboxes
             "sandbox/dev/docker-compose.yml"
             "sandbox/dev/docker-compose.production.yml"
+            "sandbox/dev/compose.yml"
             "sandbox/workbench/docker-compose.workbench.yml"
-            "docker-compose.dev.yml"
             # Infrastructure stacks
             "infra/do-oca-stack/docker-compose.yml"
             "infra/do-oca-stack/docker-compose.caddy.yml"
