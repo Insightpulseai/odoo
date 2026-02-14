@@ -1,0 +1,22 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#2D2D2D"/>
+
+  <!-- Control plane layers (3 horizontal bars) -->
+  <rect x="24" y="32" width="80" height="12" rx="2" fill="#61AFEF"/>
+  <rect x="24" y="58" width="80" height="12" rx="2" fill="#98C379"/>
+  <rect x="24" y="84" width="80" height="12" rx="2" fill="#E5C07B"/>
+
+  <!-- Connection dots (left side) -->
+  <circle cx="30" cy="38" r="3" fill="#FFFFFF"/>
+  <circle cx="30" cy="64" r="3" fill="#FFFFFF"/>
+  <circle cx="30" cy="90" r="3" fill="#FFFFFF"/>
+
+  <!-- Status indicators (right side) -->
+  <circle cx="98" cy="38" r="4" fill="#56B6C2"/>
+  <circle cx="98" cy="64" r="4" fill="#C678DD"/>
+  <circle cx="98" cy="90" r="4" fill="#E06C75"/>
+
+  <!-- Center control icon -->
+  <path d="M64 48 L70 54 L64 60 L58 54 Z" fill="#FFFFFF" opacity="0.8"/>
+</svg>

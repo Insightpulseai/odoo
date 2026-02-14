@@ -1,0 +1,9 @@
+src/**
+.vscode/**
+.vscode-test/**
+node_modules/**
+*.ts
+tsconfig.json
+.eslintrc.cjs
+vitest.config.ts
+!dist/**

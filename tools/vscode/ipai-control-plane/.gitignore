@@ -1,0 +1,31 @@
+# Build outputs
+dist/
+out/
+*.vsix
+
+# Dependencies
+node_modules/
+
+# Test artifacts
+coverage/
+test-results/
+.vscode-test/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+htmlcov/
+.coverage
+junit.xml

@@ -1,0 +1,110 @@
+name: ipai-vscode-control-plane-gate
+
+on:
+  pull_request:
+    paths:
+      - "tools/vscode/ipai-control-plane/**"
+      - "control-plane/**"
+      - "spec/ipai-vscode-control-plane/**"
+      - ".github/workflows/ipai-vscode-control-plane-gate.yml"
+  push:
+    branches: [main]
+
+jobs:
+  extension_unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/vscode/ipai-control-plane
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tools/vscode/ipai-control-plane/package-lock.json
+      - run: npm ci
+      - run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-unit-coverage
+          path: tools/vscode/ipai-control-plane/coverage/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-unit-results
+          path: tools/vscode/ipai-control-plane/test-results/
+          retention-days: 30
+
+  extension_integration:
+    runs-on: ubuntu-latest
+    needs: [extension_unit]
+    defaults:
+      run:
+        working-directory: tools/vscode/ipai-control-plane
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tools/vscode/ipai-control-plane/package-lock.json
+      - run: npm ci
+      - run: npm run test:integration
+        env:
+          DISPLAY: ':99.0'
+
+      - name: Upload integration test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-integration-results
+          path: tools/vscode/ipai-control-plane/.vscode-test/
+          retention-days: 30
+
+      - name: Upload integration logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-integration-logs
+          path: |
+            tools/vscode/ipai-control-plane/*.log
+            tools/vscode/ipai-control-plane/logs/
+          retention-days: 30
+
+  control_plane_pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/vscode/ipai-control-plane/control-plane
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: tools/vscode/ipai-control-plane/control-plane/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -v --cov=. --cov-report=html --cov-report=term --junit-xml=junit.xml
+
+      - name: Upload pytest coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: control-plane-coverage
+          path: tools/vscode/ipai-control-plane/control-plane/htmlcov/
+          retention-days: 30
+
+      - name: Upload pytest results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: control-plane-test-results
+          path: tools/vscode/ipai-control-plane/control-plane/junit.xml
+          retention-days: 30

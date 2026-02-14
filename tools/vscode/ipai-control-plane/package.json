@@ -1,0 +1,228 @@
+{
+  "name": "ipai-control-plane",
+  "displayName": "IPAI Control Plane",
+  "description": "SaaS-grade developer control plane for Odoo CE + OCA + IPAI. Treats Odoo as a managed runtime with deterministic deploys, environment visibility, and governed AI assistance.",
+  "version": "0.1.0",
+  "publisher": "InsightpulseAI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Insightpulseai/odoo"
+  },
+  "license": "AGPL-3.0-or-later",
+  "icon": "resources/icon.png",
+  "homepage": "https://github.com/Insightpulseai/odoo/tree/main/tools/vscode/ipai-control-plane",
+  "bugs": {
+    "url": "https://github.com/Insightpulseai/odoo/issues"
+  },
+  "keywords": [
+    "odoo",
+    "erp",
+    "oca",
+    "control-plane",
+    "devops",
+    "deployment",
+    "saas",
+    "evidence",
+    "diff-preview"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:ipaiProjects",
+    "onView:ipaiValidation",
+    "onView:ipaiEvidence"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ipai.projects.refresh",
+        "title": "IPAI: Refresh Projects",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "ipai.projects.select",
+        "title": "IPAI: Select Project"
+      },
+      {
+        "command": "ipai.env.deploy",
+        "title": "IPAI: Deploy to Environment"
+      },
+      {
+        "command": "ipai.env.rollback",
+        "title": "IPAI: Rollback Environment"
+      },
+      {
+        "command": "ipai.env.shell",
+        "title": "IPAI: Open Odoo Shell"
+      },
+      {
+        "command": "ipai.env.logs",
+        "title": "IPAI: Tail Logs"
+      },
+      {
+        "command": "ipai.validate.manifest",
+        "title": "IPAI: Validate Manifest"
+      },
+      {
+        "command": "ipai.validate.xml",
+        "title": "IPAI: Validate XML"
+      },
+      {
+        "command": "ipai.validate.security",
+        "title": "IPAI: Validate Security"
+      },
+      {
+        "command": "ipai.validate.all",
+        "title": "IPAI: Validate All"
+      },
+      {
+        "command": "ipai.ops.install",
+        "title": "IPAI: Install Modules"
+      },
+      {
+        "command": "ipai.ops.migrate",
+        "title": "IPAI: Run Migration"
+      },
+      {
+        "command": "ipai.ops.upgrade",
+        "title": "IPAI: Upgrade Odoo"
+      },
+      {
+        "command": "ipai.ai.generatePatch",
+        "title": "IPAI AI: Generate Patch"
+      },
+      {
+        "command": "ipai.ai.explainDrift",
+        "title": "IPAI AI: Explain Schema Drift"
+      },
+      {
+        "command": "ipai.ai.planUpgrade",
+        "title": "IPAI AI: Plan Upgrade"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ipai-control-plane",
+          "title": "IPAI Control Plane",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "ipai-control-plane": [
+        {
+          "id": "ipaiProjects",
+          "name": "Projects & Environments"
+        },
+        {
+          "id": "ipaiValidation",
+          "name": "Validation Status"
+        },
+        {
+          "id": "ipaiEvidence",
+          "name": "Evidence Bundles"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "ipai.ops.install",
+          "when": "view == ipaiProjects && viewItem == environment",
+          "group": "operations@1"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "IPAI Control Plane",
+      "properties": {
+        "ipai.controlPlane.port": {
+          "type": "number",
+          "default": 9876,
+          "description": "Port for local control plane server"
+        },
+        "ipai.projects.repoRoot": {
+          "type": "string",
+          "description": "Path to Odoo repo root (auto-detected if omitted)"
+        },
+        "ipai.projects.defaultEnvironment": {
+          "type": "string",
+          "default": "dev",
+          "enum": [
+            "dev",
+            "stage",
+            "prod"
+          ],
+          "description": "Default target environment"
+        },
+        "ipai.validation.autoRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run validators on file save"
+        },
+        "ipai.evidence.autoGenerate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically generate evidence bundles for operations"
+        },
+        "ipai.ai.provider": {
+          "type": "string",
+          "default": "claude",
+          "enum": [
+            "claude",
+            "codex",
+            "gemini",
+            "none"
+          ],
+          "description": "AI provider for patch generation"
+        },
+        "ipai.ai.apiKey": {
+          "type": "string",
+          "description": "API key for AI provider (optional, uses env var if omitted)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "lint": "eslint . --ext .ts",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "node ./dist/test/runTest.js",
+    "pretest:integration": "npm run build",
+    "compile-tests": "tsc -p . --outDir dist",
+    "package": "vsce package --no-dependencies",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@types/mocha": "10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vscode/test-electron": "2.5.2",
+    "@vscode/vsce": "^2.26.0",
+    "eslint": "^9.0.0",
+    "glob": "13.0.2",
+    "mocha": "11.7.5",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}

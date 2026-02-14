@@ -1,0 +1,58 @@
+name: VS Code Extension - IPAI Control Plane
+
+on:
+  pull_request:
+    paths:
+      - "tools/vscode/ipai-control-plane/**"
+      - "spec/ipai-vscode-control-plane/**"
+      - ".github/workflows/vscode-ipai-control-plane.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/vscode/ipai-control-plane/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/vscode/ipai-control-plane
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: tools/vscode/ipai-control-plane/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Package extension
+        run: npm run package
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-control-plane-vsix
+          path: tools/vscode/ipai-control-plane/*.vsix
+          retention-days: 30
+
+      - name: Verify artifact
+        run: |
+          VSIX_FILE=$(ls *.vsix)
+          echo "✅ Generated VSIX: $VSIX_FILE"
+          ls -lh $VSIX_FILE
