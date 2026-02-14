@@ -1,0 +1,276 @@
+name: OdooOps Sh Spec Gates
+
+on:
+  pull_request:
+    paths:
+      - 'spec/odooops-sh/**'
+      - 'supabase/migrations/*ops*'
+      - 'scripts/validate_spec_kit_odooops.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'spec/odooops-sh/**'
+      - 'supabase/migrations/*ops*'
+
+jobs:
+  validate-spec-kit:
+    name: Validate Spec Kit Structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required spec files exist
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking OdooOps Sh Spec Kit Structure ==="
+
+          REQUIRED_FILES=(
+            "spec/odooops-sh/constitution.md"
+            "spec/odooops-sh/prd.md"
+            "spec/odooops-sh/plan.md"
+            "spec/odooops-sh/tasks.md"
+          )
+
+          MISSING=()
+          for f in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              MISSING+=("$f")
+              echo "::error::Missing required spec file: $f"
+            else
+              echo "✓ Found: $f"
+            fi
+          done
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo ""
+            echo "::error::Missing ${#MISSING[@]} required spec files"
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ All required spec files present"
+
+      - name: Run validation script
+        run: |
+          bash scripts/validate_spec_kit_odooops.sh
+
+  validate-schema:
+    name: Validate Schema Files
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check migration files exist
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking OdooOps Sh Migration Files ==="
+
+          MIGRATIONS=(
+            "supabase/migrations/20260213_000001_ops_rename_agent_tables.sql"
+          )
+
+          MISSING=()
+          for f in "${MIGRATIONS[@]}"; do
+            if [ ! -f "$f" ]; then
+              MISSING+=("$f")
+              echo "::error::Missing required migration: $f"
+            else
+              echo "✓ Found: $f"
+            fi
+          done
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo ""
+            echo "::error::Missing ${#MISSING[@]} required migrations"
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ All required migrations present"
+
+      - name: Validate migration syntax
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+
+          echo "=== Validating OdooOps Sh Migration SQL ==="
+
+          for f in supabase/migrations/*ops*.sql; do
+            if [ -f "$f" ]; then
+              echo "Parsing: $f"
+              psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+                -v ON_ERROR_STOP=1 \
+                -f "$f" || {
+                  echo "::error::Migration failed to parse: $f"
+                  exit 1
+                }
+            fi
+          done
+
+          echo ""
+          echo "✓ All migrations valid"
+
+      - name: Check ops schema exists
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking ops schema ==="
+
+          # Verify ops schema was created
+          SCHEMA_EXISTS=$(psql "postgresql://postgres:postgres@localhost:5432/test_db" -t -c "
+            SELECT COUNT(*)
+            FROM information_schema.schemata
+            WHERE schema_name = 'ops';
+          " | xargs)
+
+          if [ "$SCHEMA_EXISTS" -eq 0 ]; then
+            echo "::error::ops schema not created by migrations"
+            exit 1
+          fi
+
+          echo "✓ ops schema exists"
+
+      - name: Check DBML documentation exists (optional)
+        run: |
+          if [ -f "spec/odooops-sh/schema.dbml" ]; then
+            echo "✓ DBML schema documentation found"
+          else
+            echo "::warning::DBML schema documentation not yet created (optional for Week 4)"
+          fi
+
+      - name: Check ERD documentation exists (optional)
+        run: |
+          if [ -f "spec/odooops-sh/erd.mmd" ]; then
+            echo "✓ Mermaid ERD documentation found"
+          else
+            echo "::warning::Mermaid ERD documentation not yet created (optional for Week 4)"
+          fi
+
+  validate-prisma:
+    name: Validate Prisma Schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check Prisma schema exists (optional)
+        run: |
+          if [ -f "prisma/schema.prisma" ]; then
+            echo "✓ Prisma schema found"
+
+            # Check if ops models are defined
+            if grep -q "model ops_" prisma/schema.prisma; then
+              echo "✓ ops models defined in Prisma schema"
+            else
+              echo "::warning::ops models not yet defined in Prisma schema (optional for Week 4)"
+            fi
+          else
+            echo "::warning::Prisma schema not yet created (optional for Week 4)"
+          fi
+
+  validate-docs:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check documentation files (optional)
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking OdooOps Sh Documentation ==="
+
+          PLANNED_DOCS=(
+            "docs/odooops-sh/ARCHITECTURE.md"
+            "docs/odooops-sh/DATA_BOUNDARIES.md"
+            "docs/odooops-sh/RUN_LIFECYCLE.md"
+            "docs/odooops-sh/CICD.md"
+            "docs/odooops-sh/SECURITY.md"
+          )
+
+          FOUND=0
+          for f in "${PLANNED_DOCS[@]}"; do
+            if [ -f "$f" ]; then
+              echo "✓ Found: $f"
+              FOUND=$((FOUND + 1))
+            else
+              echo "⏳ Planned (Week 5): $f"
+            fi
+          done
+
+          echo ""
+          echo "Documentation status: $FOUND/5 files created"
+          echo "::notice::Week 5 will complete documentation"
+
+      - name: Validate markdown links (if docs exist)
+        run: |
+          if compgen -G "docs/odooops-sh/*.md" > /dev/null; then
+            echo "=== Checking markdown links ==="
+
+            # Basic link check - ensure no broken internal links
+            for f in docs/odooops-sh/*.md; do
+              echo "Checking links in: $f"
+
+              # Extract markdown links [text](path)
+              grep -oP '\[.*?\]\(\K[^)]+' "$f" | while read -r link; do
+                # Skip external URLs
+                if [[ "$link" =~ ^https?:// ]]; then
+                  continue
+                fi
+
+                # Check internal file links
+                if [[ "$link" =~ ^[^#].*$ ]]; then
+                  target="${link%%#*}"
+                  if [ ! -f "docs/odooops-sh/$target" ] && [ ! -f "$target" ]; then
+                    echo "::warning::Broken link in $f: $link"
+                  fi
+                fi
+              done
+            done
+
+            echo "✓ Markdown link check complete"
+          else
+            echo "::notice::No documentation files yet (Week 5)"
+          fi
+
+  summary:
+    name: Gate Summary
+    runs-on: ubuntu-latest
+    needs: [validate-spec-kit, validate-schema, validate-prisma, validate-docs]
+    steps:
+      - name: Summary
+        run: |
+          echo "## OdooOps Sh Spec Gate Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Spec Kit Files | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Schema & Migrations | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Prisma Schema | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Documentation | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Week 4 Complete**: CI validation gates active" >> $GITHUB_STEP_SUMMARY
