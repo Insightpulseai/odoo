@@ -10,24 +10,103 @@ on:
     paths:
       - "infra/cloudflare/**"
       - ".github/workflows/infra-cloudflare-dns.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: infra-cloudflare-dns-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
     env:
       TF_IN_AUTOMATION: "true"
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_zone_name: "insightpulseai.com"
+      TF_VAR_origin_ipv4: "178.128.112.214"
+      TF_VAR_healthcheck_token: ${{ secrets.HEALTHCHECK_TOKEN }}
+    defaults:
+      run:
+        working-directory: infra/cloudflare/envs/prod
     steps:
       - uses: actions/checkout@v4
+
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.5"
-      - name: Terraform fmt/validate/plan
+
+      - name: Terraform Init
+        run: terraform init -upgrade -input=false
+
+      - name: Terraform Format Check
+        run: terraform fmt -recursive -check
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
         run: |
-          cd infra/cloudflare/envs/prod
-          terraform fmt -recursive -check
-          terraform init -upgrade
-          terraform validate
-          terraform plan
+          terraform plan -input=false -no-color -out=tfplan 2>&1 | tee plan.txt
+
+      - name: Post Plan to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync(
+              'infra/cloudflare/envs/prod/plan.txt', 'utf8'
+            );
+            const body = `#### Terraform Plan (Cloudflare DNS + WAF)\n\n\`\`\`\n${plan.slice(0, 65000)}\n\`\`\`\n\n*Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    environment: production
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_zone_name: "insightpulseai.com"
+      TF_VAR_origin_ipv4: "178.128.112.214"
+      TF_VAR_healthcheck_token: ${{ secrets.HEALTHCHECK_TOKEN }}
+    defaults:
+      run:
+        working-directory: infra/cloudflare/envs/prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+
+      - name: Terraform Init
+        run: terraform init -upgrade -input=false
+
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve
+
+      - name: Smoke test — edge health checks
+        env:
+          HEALTHCHECK_TOKEN: ${{ secrets.HEALTHCHECK_TOKEN }}
+          HEALTHCHECK_UA: healthcheck/github-actions
+          MODE: edge
+          SCOPE: production
+        run: |
+          cd "${{ github.workspace }}"
+          chmod +x scripts/verify-service-health.sh
+          scripts/verify-service-health.sh --mode edge --production || true
