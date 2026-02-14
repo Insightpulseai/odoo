@@ -110,6 +110,8 @@ services:
     volumes:
       # Odoo data persistence (filestore + sessions)
       - odoo-web-data:/var/lib/odoo
+      # Odoo configuration
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
       # Custom addons — IPAI modules (read-only mount)
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
       # OCA modules (read-only mount)
@@ -119,13 +121,8 @@ services:
       - "${ODOO_LONGPOLL_PORT:-8072}:8072"
     command: >
       odoo
-      --db_host=db
-      --db_port=5432
-      --db_user=${POSTGRES_USER:-odoo}
-      --db_password=${POSTGRES_PASSWORD:-odoo}
+      --config=/etc/odoo/odoo.conf
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
-      --log-level=${ODOO_LOG_LEVEL:-info}
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
       interval: 30s
