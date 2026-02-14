@@ -259,7 +259,7 @@ Use this scoring system to classify new Supabase features:
 - PORT-2026-009: `ipai_supabase_admin` Odoo Module
 
 **Related Specs**:
-- `docs/portfolio/specs/ipai-supabase-parity/` (if exists)
+- `spec/portfolio/ipai-supabase-parity/` (if exists)
 - `spec/IPAI-SUPABASE-001/` - Supabase admin module spec
 
 **Current Supabase Usage Summary**:
