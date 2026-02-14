@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-02-13T05:34:41.328635+00:00",
+  "score": {
+    "score": 4.0,
+    "passed": 8,
+    "total": 8
+  },
+  "checks": [
+    {
+      "name": "generator_scripts_exist",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 1/2 generator scripts",
+      "timestamp": "2026-02-13T05:34:41.322276+00:00",
+      "evidence": {
+        "found": [
+          "gen_addons_path.sh"
+        ],
+        "missing": [
+          "gen_dns_manifest.sh"
+        ]
+      },
+      "recommendations": [
+        "Ensure all critical generators exist in scripts/"
+      ]
+    },
+    {
+      "name": "makefile_automation",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Makefile exists with 21 targets",
+      "timestamp": "2026-02-13T05:34:41.326723+00:00",
+      "evidence": {
+        "targets": [
+          "help",
+          "up",
+          "down",
+          "ps",
+          "logs",
+          "restart",
+          "config",
+          "health",
+          "db-health",
+          "redis-health",
+          "db-shell",
+          "odoo-shell",
+          "init",
+          "update",
+          "tools",
+          "ipai-guard",
+          "parity-seed",
+          "parity-seed-check",
+          "gen-addons-path",
+          "render-odoo-conf",
+          "addons-path-check"
+        ]
+      },
+      "recommendations": [
+        "Add standard targets: install, test, deploy"
+      ]
+    },
+    {
+      "name": "ci_workflow_coverage",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 187 workflows",
+      "timestamp": "2026-02-13T05:34:41.327332+00:00",
+      "evidence": {
+        "count": 187
+      },
+      "recommendations": []
+    },
+    {
+      "name": "generator_output_deterministic",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Generators assumed deterministic (static check)",
+      "timestamp": "2026-02-13T05:34:41.327337+00:00",
+      "evidence": {},
+      "recommendations": []
+    },
+    {
+      "name": "readme_current",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "README.md is 0 days old",
+      "timestamp": "2026-02-13T05:34:41.327543+00:00",
+      "evidence": {
+        "age_days": 0
+      },
+      "recommendations": []
+    },
+    {
+      "name": "claude_md_current",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "CLAUDE.md exists",
+      "timestamp": "2026-02-13T05:34:41.327682+00:00",
+      "evidence": {
+        "exists": true
+      },
+      "recommendations": []
+    },
+    {
+      "name": "pr_template_exists",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "PR template exists",
+      "timestamp": "2026-02-13T05:34:41.327911+00:00",
+      "evidence": {
+        "path": "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/.github/PULL_REQUEST_TEMPLATE.md"
+      },
+      "recommendations": []
+    },
+    {
+      "name": "codeowners_exists",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "CODEOWNERS exists",
+      "timestamp": "2026-02-13T05:34:41.328049+00:00",
+      "evidence": {
+        "path": "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/.github/CODEOWNERS"
+      },
+      "recommendations": []
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+name: infra-waf-assessment
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Monday at 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  assess-infra-full:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Run Infra WAF Assessment (Full API)
+        env:
+          # DO/CF tokens would be injected here for API checks
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: python3 scripts/audit/check_infra_waf.py --api
+
+      - name: Create Issue on Failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "[WAF] Weekly Infra Assessment Failed" \
+            --body "The weekly Infrastructure Well-Architected Framework assessment has failed. Please check the workflow logs for details." \
+            --label "audit,infra-waf"
+
+      - name: Upload Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infra-waf-evidence-full
+          path: artifacts/audit/
