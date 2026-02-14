@@ -1,0 +1,64 @@
+# =============================================================================
+# Repo Tree Drift Gate
+# =============================================================================
+# Ensures spec.md repo tree section is deterministic and up-to-date.
+# Runs gen_repo_tree.sh and fails if output differs from committed state.
+# =============================================================================
+
+name: Repo Tree Drift Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'scripts/**'
+      - 'spec/**'
+      - 'docs/**'
+      - 'infra/**'
+      - '.github/**'
+      - 'spec.md'
+      - 'scripts/gen_repo_tree.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'spec.md'
+      - 'scripts/gen_repo_tree.sh'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tree-drift-check:
+    name: Check spec.md tree drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tree command
+        run: sudo apt-get install -y tree
+
+      - name: Regenerate repo tree
+        run: |
+          chmod +x scripts/gen_repo_tree.sh
+          ./scripts/gen_repo_tree.sh
+
+      - name: Check for drift
+        run: |
+          if ! git diff --exit-code spec.md; then
+            echo ""
+            echo "============================================"
+            echo "ERROR: spec.md repo tree is out of date!"
+            echo "============================================"
+            echo ""
+            echo "Run locally:"
+            echo "  ./scripts/gen_repo_tree.sh"
+            echo "  git add spec.md && git commit -m 'chore(repo): regen spec.md tree'"
+            echo ""
+            exit 1
+          fi
+          echo "spec.md tree is up to date."

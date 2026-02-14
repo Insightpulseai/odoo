@@ -1,0 +1,59 @@
+{
+  "agents": [
+    {
+      "id": "odoo-sage",
+      "name": "ODOO-SAGE",
+      "owner": "platform",
+      "status": "prod",
+      "persona_ref": "personas/odoo_architect.md",
+      "loop_ref": "loops/standard.md",
+      "policies_ref": "policies/default.json",
+      "memory_contract": { "schema": "memory", "version": "v1" },
+      "skills": ["odoo.module.scaffold", "odoo.qweb.reporting", "odoo.qweb.email_templates"]
+    },
+    {
+      "id": "devops-prime",
+      "name": "DEVOPS-PRIME",
+      "owner": "platform",
+      "status": "prod",
+      "persona_ref": "personas/devops_prime.md",
+      "loop_ref": "loops/standard.md",
+      "policies_ref": "policies/default.json",
+      "memory_contract": { "schema": "memory", "version": "v1" },
+      "skills": ["github.actions.ci", "digitalocean.deployment"]
+    },
+    {
+      "id": "data-forge",
+      "name": "DATA-FORGE",
+      "owner": "platform",
+      "status": "prod",
+      "persona_ref": "personas/data_forge.md",
+      "loop_ref": "loops/standard.md",
+      "policies_ref": "policies/default.json",
+      "memory_contract": { "schema": "memory", "version": "v1" },
+      "skills": ["supabase.integration"]
+    },
+    {
+      "id": "ui-craft",
+      "name": "UI-CRAFT",
+      "owner": "platform",
+      "status": "prod",
+      "persona_ref": "personas/ui_craft.md",
+      "loop_ref": "loops/standard.md",
+      "policies_ref": "policies/default.json",
+      "memory_contract": { "schema": "memory", "version": "v1" },
+      "skills": ["chrome.extension.mv3"]
+    },
+    {
+      "id": "supabase-ssot",
+      "name": "SUPABASE-SSOT",
+      "owner": "platform",
+      "status": "prod",
+      "persona_ref": "personas/supabase_ssot.md",
+      "loop_ref": "loops/standard.md",
+      "policies_ref": "policies/default.json",
+      "memory_contract": { "schema": "memory", "version": "v1" },
+      "skills": ["supabase.integration"]
+    }
+  ]
+}
