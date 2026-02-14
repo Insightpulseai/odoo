@@ -84,7 +84,7 @@ async function loadAgentPrompt(
   promptsDir: string,
   agentName: string,
 ): Promise<{ path: string; md: string } | null> {
-  // Convention: agent-library/**/<agentName>.md
+  // Convention: agents/library/**/<agentName>.md
   // Deterministic search order (fixed set) to avoid costly recursion.
   // If you want true recursive discovery, add a precomputed index file later.
   const candidates = [

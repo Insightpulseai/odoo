@@ -19,12 +19,12 @@ jobs:
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r agent-library/ci/requirements.txt
+          python -m pip install -r agents/library/ci/requirements.txt
 
       - name: Validate dist outputs if present
         run: |
-          if [ -f agent-library/dist/capability_atoms.yaml ] && [ -f agent-library/dist/ux_patterns.yaml ]; then
-            python agent-library/scripts/validate_outputs.py --dist agent-library/dist --schemas agent-library/schemas
+          if [ -f agents/library/dist/capability_atoms.yaml ] && [ -f agents/library/dist/ux_patterns.yaml ]; then
+            python agents/library/scripts/validate_outputs.py --dist agents/library/dist --schemas agents/library/schemas
           else
             echo "No dist outputs committed yet; skipping schema validation."
           fi

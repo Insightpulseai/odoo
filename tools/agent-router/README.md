@@ -25,7 +25,7 @@ Defaults assume you have:
 
 - spec/taxonomy/capabilities_consulting_delivery.yaml
 - spec/agents/agent_capability_matrix.yaml
-- agent-library/ (prompt pack directory)
+- agents/library/ (prompt pack directory)
 
 Override with env:
 
