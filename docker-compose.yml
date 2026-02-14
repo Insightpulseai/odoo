@@ -231,5 +231,5 @@ volumes:
 
 networks:
   default:
-    name: ipai-network
+    name: ${IPAI_NETWORK_NAME:-ipai-network}
     driver: bridge
