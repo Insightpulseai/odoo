@@ -1,0 +1,65 @@
+# =============================================================================
+# Agentic Maturity Gates
+# =============================================================================
+# Validates agent registry completeness and memory contract compatibility.
+# Ensures no "prompt-only" agents: every agent must have persona, loop,
+# policies, and a memory contract referencing real files.
+# =============================================================================
+
+name: Agentic Maturity Gates
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'agents/**'
+      - 'platform/db/contracts/**'
+      - 'scripts/agentic/**'
+      - '.github/workflows/agentic-maturity.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'agents/**'
+      - 'platform/db/contracts/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agentic-maturity:
+    name: Validate Agent Maturity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate agent registry + maturity
+        run: |
+          python scripts/agentic/validate_agent_registry.py
+
+      - name: Validate memory schema compatibility
+        run: |
+          python scripts/agentic/validate_memory_contracts.py
+
+      - name: Summary
+        if: always()
+        run: |
+          echo ""
+          echo "==================================="
+          echo "Agentic Maturity Gate Complete"
+          echo "==================================="
+          echo ""
+          echo "Checks performed:"
+          echo "  1. Agent registry: required fields, file refs, no duplicates"
+          echo "  2. Memory contracts: schema version compatibility with platform"
+          echo ""
