@@ -243,7 +243,7 @@ surfaces:
       - "global_search: records + docs"
       - "saved_filters: favorites + shared filters"
       - "recents: recently viewed items"
-      - "quick_switch: jump between apps/menus"
+      - "quick_switch: jump between web/menus"
     acceptance_criteria:
       - id: "AC-060"
         statement: "Global search finds record by name/reference and opens in <= 2 actions."

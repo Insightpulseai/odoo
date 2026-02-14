@@ -272,7 +272,7 @@ docker images ghcr.io/jgtolentino/odoo --format "table {{.Repository}}:{{.Tag}}\
 
 ```bash
 # Verify tag exists
-gh api /orgs/jgtolentino/packages/container/odoo/versions | jq -r '.[] | .metadata.container.tags[]' | sort
+gh api /orgs/jgtolentino/pkgs/container/odoo/versions | jq -r '.[] | .metadata.container.tags[]' | sort
 
 # Check authentication
 echo $GITHUB_TOKEN | docker login ghcr.io -u jgtolentino --password-stdin

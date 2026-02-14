@@ -154,7 +154,7 @@ db_maxconn = 64
 db_template = template0
 
 # Addons
-addons_path = /mnt/extra-addons/ipai,/mnt/extra-addons/external/oca,/usr/lib/python3/dist-packages/odoo/addons
+addons_path = /mnt/extra-addons/ipai,/mnt/extra-addons/external/oca,/usr/lib/python3/dist-pkgs/odoo/addons
 
 # Performance
 workers = 12              # 2 × CPU cores

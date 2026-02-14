@@ -51,7 +51,7 @@ type Mode = 'minimize' | 'popup' | 'sidepanel';
 │                        AIUX Stack                                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│   packages/                                                      │
+│   pkgs/                                                      │
 │   ├── ipai-design-tokens/     → CSS/SCSS/Tailwind tokens        │
 │   │   ├── tokens.css          → CSS custom properties           │
 │   │   ├── tokens.scss         → SCSS variables                  │
@@ -79,7 +79,7 @@ type Mode = 'minimize' | 'popup' | 'sidepanel';
 ### 3.1 Design Tokens
 
 **Package:** `@ipai/design-tokens`
-**Location:** `packages/ipai-design-tokens/`
+**Location:** `pkgs/ipai-design-tokens/`
 
 **Outputs:**
 - `tokens.css` - CSS custom properties with `--aiux-` prefix

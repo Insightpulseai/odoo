@@ -25,7 +25,7 @@ jq -c '.[]' "${LATEST}" | while read -r row; do
   [[ -n "${name}" && "${name}" != "null" ]] || name="do-app-${id}"
 
   slug="$(slugify "${name}")"
-  dir="apps/${slug}"
+  dir="web/${slug}"
 
   mkdir -p "${dir}/do"
 
@@ -42,7 +42,7 @@ jq -c '.[]' "${LATEST}" | while read -r row; do
 - public ingress (if any): $(jq -r '.default_ingress // empty' "${dir}/do/app.json" | sed 's/^$/n\/a/')
 
 ## Notes
-- Source of truth: apps/<slug>/do/app.json
+- Source of truth: web/<slug>/do/app.json
 MD
 
   cat > "${dir}/spec.yaml" <<YAML
@@ -61,4 +61,4 @@ YAML
   echo "✓ ${dir}"
 done
 
-echo "✅ bootstrapped apps/* from inventory/latest"
+echo "✅ bootstrapped web/* from inventory/latest"

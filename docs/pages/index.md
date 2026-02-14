@@ -34,8 +34,8 @@ Documentation portal for the `odoo` monorepo — the InsightPulse AI ERP platfor
 ```
 odoo/
 ├── addons/           # Odoo modules (ipai_*, OCA)
-├── apps/             # Node.js applications
-├── packages/         # Shared packages
+├── web/             # Node.js applications
+├── pkgs/         # Shared packages
 ├── spec/             # Spec bundles (PRD, plans)
 ├── scripts/          # Automation scripts
 ├── docker/           # Docker configurations

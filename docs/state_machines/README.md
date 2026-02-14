@@ -117,4 +117,4 @@ npx @mermaid-js/mermaid-cli mmdc -i docs/state_machines/odoo/ask_ai_chat.md -o /
 ---
 
 *Generated: 2026-01-14*
-*Sources: addons/ipai/*, apps/*, infra/superset/*
+*Sources: addons/ipai/*, web/*, infra/superset/*

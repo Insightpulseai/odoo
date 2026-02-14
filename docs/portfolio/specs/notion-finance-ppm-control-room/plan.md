@@ -26,7 +26,7 @@ Create the following directory structure:
 
 ```
 /
-├── apps/
+├── web/
 │   └── control-room/              # Next.js Control Room app
 │       ├── src/
 │       │   ├── app/               # App Router pages
@@ -430,7 +430,7 @@ push to main
 **dev_up.sh**:
 ```bash
 # Start local development
-cd apps/control-room && npm run dev &
+cd web/control-room && npm run dev &
 cd services/notion-sync && python -m notion_sync.main --dry-run
 ```
 
@@ -479,7 +479,7 @@ cd infra/databricks
 databricks bundle deploy -t prod
 
 # 4. Deploy Control Room
-cd apps/control-room
+cd web/control-room
 npm run build
 az webapp deploy --name $APP_NAME --src-path .next
 

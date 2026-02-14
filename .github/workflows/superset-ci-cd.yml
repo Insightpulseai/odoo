@@ -10,7 +10,7 @@
 #   4. Deploy to DigitalOcean via App Platform spec update
 #
 # Triggers:
-#   - Push to main (infra/superset/** or apps/superset-embed-api/**)
+#   - Push to main (infra/superset/** or web/superset-embed-api/**)
 #   - Manual workflow dispatch
 #
 # Required secrets:
@@ -27,7 +27,7 @@ on:
     branches: [main]
     paths:
       - "infra/superset/**"
-      - "apps/superset-embed-api/**"
+      - "web/superset-embed-api/**"
       - ".github/workflows/superset-ci-cd.yml"
   workflow_dispatch:
     inputs:
@@ -144,8 +144,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/superset-embed-api
-          file: ./apps/superset-embed-api/Dockerfile
+          context: ./web/superset-embed-api
+          file: ./web/superset-embed-api/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -223,10 +223,10 @@ jobs:
           APP_ID="${{ secrets.DO_SUPERSET_EMBED_API_APP_ID }}"
           if [ -z "$APP_ID" ]; then
             echo "Creating new Embed API app..."
-            doctl apps create --spec apps/superset-embed-api/do-app-spec.yaml --format ID --no-header
+            doctl apps create --spec web/superset-embed-api/do-app-spec.yaml --format ID --no-header
           else
             echo "Updating existing Embed API app: $APP_ID"
-            doctl apps update "$APP_ID" --spec apps/superset-embed-api/do-app-spec.yaml
+            doctl apps update "$APP_ID" --spec web/superset-embed-api/do-app-spec.yaml
           fi
 
       - name: Verify deployment

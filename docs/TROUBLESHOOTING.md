@@ -239,7 +239,7 @@ Response: {"error": {"data": {...}, "message": "..."}}
 ```
 ERROR odoo.modules.registry: Failed to load registry for db odoo
 Traceback (most recent call last):
-  File "/usr/lib/python3/dist-packages/odoo/modules/registry.py", line 89, in new
+  File "/usr/lib/python3/dist-pkgs/odoo/modules/registry.py", line 89, in new
     odoo.modules.load_modules(registry._db, force_demo, status, update_module)
   File "/mnt/extra-addons/ipai/ipai_workspace_core/__init__.py", line 5, in <module>
     from . import models
@@ -659,6 +659,6 @@ docker exec odoo-prod odoo -d odoo -u <module_name> --stop-after-init
 **Last Updated**: 2026-01-11
 **Maintained By**: Odoo DevOps Team
 **Related Docs**:
-- `docs/architecture/PROD_RUNTIME_SNAPSHOT.md` - Production runtime identifiers
-- `docs/architecture/RUNTIME_IDENTIFIERS.md` - Quick reference for canonical names
+- `docs/arch/PROD_RUNTIME_SNAPSHOT.md` - Production runtime identifiers
+- `docs/arch/RUNTIME_IDENTIFIERS.md` - Quick reference for canonical names
 - `CLAUDE.md` - AI agent operating procedures

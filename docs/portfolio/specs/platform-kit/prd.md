@@ -113,7 +113,7 @@ Platform Kit's foundation is **introspection**: continuous discovery + verificat
 
 **Includes:**
 * required spec bundle enforcement (constitution/prd/plan/tasks)
-* repo templates (apps/services/libs/connectors)
+* repo templates (web/services/libs/connectors)
 * CI baselines: lint, tests, security, schema checks, migrations gates
 * deterministic diagrams policy (drawio → PNG CI drift fail)
 * doc tri-sync (claude.md/gemini.md/codex.md) drift checks
@@ -377,7 +377,7 @@ platform-kit/
     seed.sql
     config.toml
 
-  packages/
+  pkgs/
     platform-console/          # UI app
     platform-sdk/              # TS/JS SDK for connectors + contracts
     contract-tests/            # test suites (api/data/event/behavior)

@@ -7,7 +7,7 @@ Single monorepo for all DigitalOcean fin-workspace infrastructure, services, and
 
 ```text
 fin-workspace/
-├─ apps/                          # DO App Platform normalized specs (generated)
+├─ web/                          # DO App Platform normalized specs (generated)
 │  ├─ superset-analytics/         # example
 │  │  ├─ do/app.json
 │  │  ├─ spec.yaml
@@ -66,7 +66,7 @@ fin-workspace/
 ./scripts/bootstrap_apps_from_inventory.sh
 ```
 - Generates normalized app specs from inventory
-- Creates `apps/<slug>/` directories
+- Creates `web/<slug>/` directories
 - Produces `spec.yaml`, `APP.md`, `do/app.json`
 
 ### Create Conversation Entry

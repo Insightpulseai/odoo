@@ -536,7 +536,7 @@ docker compose logs odoo-core 2>&1 | grep -i superset
 
 ### Environment Variables
 
-**Token API** (`apps/superset-embed-api`):
+**Token API** (`web/superset-embed-api`):
 ```env
 SUPERSET_GUEST_TOKEN_SECRET=your-shared-secret-here
 SUPERSET_GUEST_TOKEN_AUDIENCE=superset
@@ -619,7 +619,7 @@ addons/ipai/ipai_superset_connector/
 ## Related Documentation
 
 - [Apache Superset Embedding Docs](https://superset.apache.org/docs/security/#embedded-dashboards)
-- [Superset Embedded SDK](https://github.com/apache/superset/tree/master/superset-frontend/packages/superset-ui-embedded-sdk)
+- [Superset Embedded SDK](https://github.com/apache/superset/tree/master/superset-frontend/pkgs/superset-ui-embedded-sdk)
 - [Odoo 18 OWL Documentation](https://www.odoo.com/documentation/18.0/developer/reference/frontend/owl.html)
 
 ---

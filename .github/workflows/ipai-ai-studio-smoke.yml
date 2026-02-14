@@ -54,7 +54,7 @@ jobs:
               odoo --version
 
               # Build addons-path: core + repo addons + nested ipai
-              CORE="/usr/lib/python3/dist-packages/odoo/addons"
+              CORE="/usr/lib/python3/dist-pkgs/odoo/addons"
               ADDONS=""
               [ -d "$CORE" ] && ADDONS="$CORE"
               [ -d "/workspace/addons" ] && ADDONS="${ADDONS},/workspace/addons"

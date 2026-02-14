@@ -139,7 +139,7 @@ This document defines the **non-negotiable rules** for Platform Kit: architectur
 
 **Rule:** All architectural diagrams MUST be version-controlled and reproducible.
 
-* Source: `.drawio` files in `docs/architecture/`
+* Source: `.drawio` files in `docs/arch/`
 * Output: `.png` files auto-generated via CI
 * Drift detection: CI fails if manual PNG edits detected
 

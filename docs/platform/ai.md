@@ -100,7 +100,7 @@ Comprehensive guide to InsightPulseAI's AI capabilities for Odoo backend, fronte
 pnpm add @ipai/ai-sdk
 
 # Or from monorepo
-pnpm add file:./packages/ipai-ai-sdk
+pnpm add file:./pkgs/ipai-ai-sdk
 ```
 
 ```typescript
@@ -125,7 +125,7 @@ console.log(result.answer);
 pip install ipai-ai-sdk
 
 # Or from monorepo
-pip install -e ./packages/ipai-ai-sdk-python
+pip install -e ./pkgs/ipai-ai-sdk-python
 ```
 
 ```python

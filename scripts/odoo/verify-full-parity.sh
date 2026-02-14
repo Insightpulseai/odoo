@@ -84,13 +84,13 @@ echo ""
 echo -e "${BLUE}━━━ Tier 3: Control Room Modules ━━━${NC}"
 
 declare -A CR_MODULES=(
-    ["knowledge"]="apps/control-room/src/app/kb"
-    ["web_studio"]="apps/control-room/src/app/studio"
-    ["sign"]="apps/control-room/src/app/sign"
-    ["appointment"]="apps/control-room/src/app/booking"
-    ["industry_fsm"]="apps/control-room/src/app/fsm"
-    ["stock_barcode"]="apps/control-room/src/app/barcode"
-    ["web_mobile"]="apps/control-room/src/app/api/mobile"
+    ["knowledge"]="web/control-room/src/app/kb"
+    ["web_studio"]="web/control-room/src/app/studio"
+    ["sign"]="web/control-room/src/app/sign"
+    ["appointment"]="web/control-room/src/app/booking"
+    ["industry_fsm"]="web/control-room/src/app/fsm"
+    ["stock_barcode"]="web/control-room/src/app/barcode"
+    ["web_mobile"]="web/control-room/src/app/api/mobile"
 )
 
 for enterprise in "${!CR_MODULES[@]}"; do

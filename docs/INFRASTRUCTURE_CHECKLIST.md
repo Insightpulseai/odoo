@@ -159,7 +159,7 @@
 ### Migration Files
 
 - [x] **Create migrations under repo**
-  - [x] `supabase/migrations/20260120_infra_schema.sql` ✅ (created as `packages/db/sql/infra_schema.sql`)
+  - [x] `supabase/migrations/20260120_infra_schema.sql` ✅ (created as `pkgs/db/sql/infra_schema.sql`)
   - [x] Verified via `supabase db push` and `psql` ✅ (per Infra Memory Job completion)
   - [ ] Additional migration for `kb` schema
   - [ ] Additional migration for `ai` schema (if separate)

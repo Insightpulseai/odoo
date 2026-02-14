@@ -61,7 +61,7 @@ db_name = odoo_core
 db_sslmode = disable
 
 ; ----- Addons -----
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
 
 ; ----- HTTP -----
 http_port = 8069
@@ -179,7 +179,7 @@ db_user = odoo
 db_password = odoo
 db_name = odoo
 
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/oca,/mnt/addons/ipai
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/oca,/mnt/addons/ipai
 
 workers = 4
 max_cron_threads = 2
@@ -338,6 +338,6 @@ curl -I https://erp.insightpulseai.com/
 
 1. **Standardize Naming** - Migrate to canonical container/volume names
 2. **Simplify Configuration** - Remove deprecated settings, use minimal config
-3. **Document Runtime** - Update `docs/architecture/runtime_identifiers.json`
+3. **Document Runtime** - Update `docs/arch/runtime_identifiers.json`
 4. **Automate Health Checks** - Add monitoring for DNS/containers/nginx/odoo
 5. **SMTP Configuration** - Set up Mailgun SMTP (see `docs/SMTP_FIX_SUMMARY.md`)

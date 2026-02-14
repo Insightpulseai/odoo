@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-apps/flutter_app}"
+APP_DIR="${APP_DIR:-web/flutter_app}"
 
 echo "=== Building iOS Release ==="
 echo ""

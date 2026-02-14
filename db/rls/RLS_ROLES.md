@@ -368,7 +368,7 @@ AND role_id = (SELECT id FROM core.roles WHERE name = 'teq_approver');
 
 - [RLS_BASE_TEMPLATE.sql](RLS_BASE_TEMPLATE.sql) — SQL templates for RLS
 - [DB_TARGET_ARCHITECTURE.md](../DB_TARGET_ARCHITECTURE.md) — Schema definitions
-- [INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md](../../docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) — Full architecture
+- [INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md](../../docs/arch/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) — Full architecture
 
 ---
 

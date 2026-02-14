@@ -401,8 +401,8 @@ Structure:
 ├── addons/ipai/              # 49 namespaced custom modules
 ├── addons/ipai_*             # 43 standalone custom modules
 ├── external-src/             # 14 OCA git repos (submodules)
-├── apps/                     # 28 applications
-├── packages/                 # 8 shared packages
+├── web/                     # 28 applications
+├── pkgs/                 # 8 shared packages
 ├── supabase/                 # Supabase config, migrations, functions
 │   ├── config.toml
 │   ├── migrations/           # 103 migration files
@@ -418,7 +418,7 @@ Structure:
 │   ├── supabase/             # 40+ Supabase utilities
 │   ├── deploy/               # Deployment scripts
 │   └── ci/                   # CI utilities
-├── docs/architecture/        # Infrastructure SSOT
+├── docs/arch/        # Infrastructure SSOT
 │   ├── PROD_RUNTIME_SNAPSHOT.md
 │   ├── runtime_identifiers.json
 │   └── RUNTIME_IDENTIFIERS.md

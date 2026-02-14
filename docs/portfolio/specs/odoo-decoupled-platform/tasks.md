@@ -81,7 +81,7 @@
 ### Type Generation
 - [ ] Add codegen script for TypeScript types
 - [ ] Add codegen script for OpenAPI spec
-- [ ] Add to packages/contracts
+- [ ] Add to pkgs/contracts
 
 ### SDK
 - [ ] Create app client wrapper

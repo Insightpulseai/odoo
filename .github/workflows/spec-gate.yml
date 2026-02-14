@@ -5,8 +5,8 @@ on:
     paths:
       - 'spec/**'
       - 'supabase/migrations/**'
-      - 'packages/**'
-      - 'apps/**'
+      - 'pkgs/**'
+      - 'web/**'
   push:
     branches: [main]
     paths:

@@ -270,7 +270,7 @@ on:
     branches: [ main ]
     paths:
       - "spec/ipai-control-center/**"
-      - "apps/ipai-control-center-docs/**"
+      - "web/ipai-control-center-docs/**"
 ```
 
 ---

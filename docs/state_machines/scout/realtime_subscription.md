@@ -1,6 +1,6 @@
 # Realtime Subscription FSM
 
-**Source**: `apps/mobile/src/hooks/useRealtime.ts`, `apps/mobile/src/lib/supabase.ts`
+**Source**: `web/mobile/src/hooks/useRealtime.ts`, `web/mobile/src/lib/supabase.ts`
 
 ## Overview
 

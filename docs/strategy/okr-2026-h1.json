@@ -102,8 +102,8 @@
           "current": 90,
           "unit": "%",
           "status": "completed",
-          "measurement": "ls -1 docs/architecture/stacks/ | wc -l",
-          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+          "measurement": "ls -1 docs/arch/stacks/ | wc -l",
+          "evidence": ["docs/arch/PROD_RUNTIME_SNAPSHOT.md"]
         },
         {
           "id": "KR-2.4",
@@ -340,8 +340,8 @@
           "current": 80,
           "unit": "%",
           "status": "in_progress",
-          "measurement": "grep -E 'repo.*split' docs/architecture/*.md | wc -l",
-          "evidence": ["docs/architecture/"]
+          "measurement": "grep -E 'repo.*split' docs/arch/*.md | wc -l",
+          "evidence": ["docs/arch/"]
         },
         {
           "id": "KR-6.3",
@@ -361,7 +361,7 @@
           "unit": "%",
           "status": "completed",
           "measurement": "URL pattern compliance",
-          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+          "evidence": ["docs/arch/PROD_RUNTIME_SNAPSHOT.md"]
         },
         {
           "id": "KR-6.5",
@@ -412,8 +412,8 @@
           "current": 100,
           "unit": "%",
           "status": "completed",
-          "measurement": "ls -1 docs/architecture/stacks/ | wc -l",
-          "evidence": ["docs/architecture/PROD_RUNTIME_SNAPSHOT.md"]
+          "measurement": "ls -1 docs/arch/stacks/ | wc -l",
+          "evidence": ["docs/arch/PROD_RUNTIME_SNAPSHOT.md"]
         },
         {
           "id": "KR-7.4",

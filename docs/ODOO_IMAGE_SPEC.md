@@ -157,7 +157,7 @@ In `odoo.conf`:
 
 ```ini
 [options]
-addons_path = /mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-packages/odoo/addons
+addons_path = /mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-pkgs/odoo/addons
 ```
 
 Search order:

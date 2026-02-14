@@ -5,7 +5,7 @@
 ### 1.1 Create Doctrine Documentation
 - [x] Create spec bundle with constitution, prd, plan, tasks
 - [x] Create copy-paste agent prompt
-- [x] Update docs/architecture/SOURCE_OF_TRUTH.md
+- [x] Update docs/arch/SOURCE_OF_TRUTH.md
 - [x] Add .claude/commands/ssot-doctrine.md
 
 ### 1.2 Update CLAUDE.md

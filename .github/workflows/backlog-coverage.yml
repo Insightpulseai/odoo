@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "supabase/**"
-      - "apps/control-room/**"
+      - "web/control-room/**"
       - "config/**"
       - "spec/supabase-platform-kit-observability/**"
       - "scripts/backlog_scan.py"
@@ -14,7 +14,7 @@ on:
     branches: [main]
     paths:
       - "supabase/**"
-      - "apps/control-room/**"
+      - "web/control-room/**"
       - "config/**"
       - "spec/supabase-platform-kit-observability/**"
 

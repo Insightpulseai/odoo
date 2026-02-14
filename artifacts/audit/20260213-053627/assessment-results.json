@@ -1,0 +1,304 @@
+{
+  "timestamp": "2026-02-13T05:36:27.858401+00:00",
+  "metrics": {
+    "total_score": 3.0,
+    "pillars": {
+      "productivity": {
+        "score": 4.0,
+        "passed": 4,
+        "total": 4,
+        "weight": 0.25
+      },
+      "collaboration": {
+        "score": 4.0,
+        "passed": 4,
+        "total": 4,
+        "weight": 0.2
+      },
+      "security": {
+        "score": 0.0,
+        "passed": 0,
+        "total": 4,
+        "weight": 0.25
+      },
+      "governance": {
+        "score": 4.0,
+        "passed": 3,
+        "total": 3,
+        "weight": 0.15
+      },
+      "architecture": {
+        "score": 4.0,
+        "passed": 4,
+        "total": 4,
+        "weight": 0.15
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "generator_scripts_exist",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 1/2 generator scripts",
+      "timestamp": "2026-02-13T05:36:27.837189+00:00",
+      "evidence": {
+        "found": [
+          "gen_addons_path.sh"
+        ],
+        "missing": [
+          "gen_dns_manifest.sh"
+        ]
+      },
+      "recommendations": [
+        "Ensure all critical generators exist in scripts/"
+      ]
+    },
+    {
+      "name": "makefile_automation",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Makefile exists with 21 targets",
+      "timestamp": "2026-02-13T05:36:27.842932+00:00",
+      "evidence": {
+        "targets": [
+          "help",
+          "up",
+          "down",
+          "ps",
+          "logs",
+          "restart",
+          "config",
+          "health",
+          "db-health",
+          "redis-health",
+          "db-shell",
+          "odoo-shell",
+          "init",
+          "update",
+          "tools",
+          "ipai-guard",
+          "parity-seed",
+          "parity-seed-check",
+          "gen-addons-path",
+          "render-odoo-conf",
+          "addons-path-check"
+        ]
+      },
+      "recommendations": [
+        "Add standard targets: install, test, deploy"
+      ]
+    },
+    {
+      "name": "ci_workflow_coverage",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 187 workflows",
+      "timestamp": "2026-02-13T05:36:27.843589+00:00",
+      "evidence": {
+        "count": 187
+      },
+      "recommendations": []
+    },
+    {
+      "name": "generator_output_deterministic",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Generators assumed deterministic (static check)",
+      "timestamp": "2026-02-13T05:36:27.843596+00:00",
+      "evidence": {},
+      "recommendations": []
+    },
+    {
+      "name": "readme_current",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "README.md is 0 days old",
+      "timestamp": "2026-02-13T05:36:27.843701+00:00",
+      "evidence": {
+        "age_days": 0
+      },
+      "recommendations": []
+    },
+    {
+      "name": "claude_md_current",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "CLAUDE.md exists",
+      "timestamp": "2026-02-13T05:36:27.843920+00:00",
+      "evidence": {
+        "exists": true
+      },
+      "recommendations": []
+    },
+    {
+      "name": "pr_template_exists",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "PR template exists",
+      "timestamp": "2026-02-13T05:36:27.844167+00:00",
+      "evidence": {
+        "path": "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/.github/PULL_REQUEST_TEMPLATE.md"
+      },
+      "recommendations": []
+    },
+    {
+      "name": "codeowners_exists",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "CODEOWNERS exists",
+      "timestamp": "2026-02-13T05:36:27.844316+00:00",
+      "evidence": {
+        "path": "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/.github/CODEOWNERS"
+      },
+      "recommendations": []
+    },
+    {
+      "name": "github_secrets_scanning_enabled",
+      "integration": "github-waf",
+      "status": "SKIP",
+      "description": "Skipped (requires --api)",
+      "timestamp": "2026-02-13T05:36:27.844331+00:00",
+      "evidence": {},
+      "recommendations": [
+        "Enable GitHub Secret Scanning"
+      ]
+    },
+    {
+      "name": "branch_protection_enabled",
+      "integration": "github-waf",
+      "status": "SKIP",
+      "description": "Skipped (requires --api)",
+      "timestamp": "2026-02-13T05:36:27.844333+00:00",
+      "evidence": {},
+      "recommendations": [
+        "Enable Branch Protection for main"
+      ]
+    },
+    {
+      "name": "dependabot_enabled",
+      "integration": "github-waf",
+      "status": "FAIL",
+      "description": "Missing dependabot.yml",
+      "timestamp": "2026-02-13T05:36:27.844351+00:00",
+      "evidence": {
+        "path": "/Users/tbwa/Documents/GitHub/Insightpulseai/odoo/.github/dependabot.yml"
+      },
+      "recommendations": [
+        "Create .github/dependabot.yml"
+      ]
+    },
+    {
+      "name": "supabase_rls_enabled",
+      "integration": "github-waf",
+      "status": "FAIL",
+      "description": "No migrations found",
+      "timestamp": "2026-02-13T05:36:27.855098+00:00",
+      "evidence": {},
+      "recommendations": [
+        "Enable RLS on all tables"
+      ]
+    },
+    {
+      "name": "drift_gates_exist",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 9 drift detection workflows",
+      "timestamp": "2026-02-13T05:36:27.855671+00:00",
+      "evidence": {
+        "workflows": [
+          "module-catalog-drift.yml",
+          "ipai-doc-drift-gate.yml",
+          "schema-drift.yml",
+          "dns-drift-detect.yml",
+          "install-set-drift-guard.yml",
+          "parity-drift-gate.yml",
+          "docs-drift-gate.yml",
+          "icons-drift.yml",
+          "modules-audit-drift.yml"
+        ]
+      },
+      "recommendations": []
+    },
+    {
+      "name": "spec_bundles_exist",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 7 spec bundles",
+      "timestamp": "2026-02-13T05:36:27.856116+00:00",
+      "evidence": {
+        "bundles": [
+          "parity",
+          "agent",
+          "odooops-sh",
+          "odoo-supabase-deployment",
+          "composer-bugbot",
+          "odoo-ee-parity-seed",
+          "github-well-architected"
+        ]
+      },
+      "recommendations": []
+    },
+    {
+      "name": "spec_bundle_quality",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "4/7 bundles complete",
+      "timestamp": "2026-02-13T05:36:27.857426+00:00",
+      "evidence": {
+        "complete_bundles": 4,
+        "total_bundles": 7
+      },
+      "recommendations": [
+        "Ensure spec bundles have constitution, prd, and plan"
+      ]
+    },
+    {
+      "name": "ssot_generators_exist",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "SSOT generators exist",
+      "timestamp": "2026-02-13T05:36:27.857507+00:00",
+      "evidence": {},
+      "recommendations": []
+    },
+    {
+      "name": "dependency_pinning",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 2 lock files",
+      "timestamp": "2026-02-13T05:36:27.857618+00:00",
+      "evidence": {
+        "found": [
+          "pnpm-lock.yaml",
+          "requirements.txt"
+        ]
+      },
+      "recommendations": []
+    },
+    {
+      "name": "layer_separation",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Found 3/3 architectural layers",
+      "timestamp": "2026-02-13T05:36:27.857773+00:00",
+      "evidence": {
+        "found": [
+          "odoo",
+          "supabase",
+          "infra"
+        ]
+      },
+      "recommendations": []
+    },
+    {
+      "name": "no_hardcoded_configs",
+      "integration": "github-waf",
+      "status": "PASS",
+      "description": "Static check (assume clean for now)",
+      "timestamp": "2026-02-13T05:36:27.857778+00:00",
+      "evidence": {},
+      "recommendations": []
+    }
+  ]
+}

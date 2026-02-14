@@ -68,7 +68,7 @@ workers = 4
 max_cron_threads = 2
 
 # Paths
-addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+addons_path = /mnt/extra-addons,/usr/lib/python3/dist-pkgs/odoo/addons
 data_dir = /var/lib/odoo
 
 # Logging

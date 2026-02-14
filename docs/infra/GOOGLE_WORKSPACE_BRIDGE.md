@@ -228,10 +228,10 @@ Phase 4 (Month 3): Deprecate Sheets dashboards
    └── Save both formats locally
 
 3. COMMIT (GitHub)
-   ├── Move files to repo: docs/architecture/images/
+   ├── Move files to repo: docs/arch/images/
    ├── PNG for viewing: spatres-flow.png
    ├── XML for source: spatres-flow.drawio
-   ├── git add docs/architecture/images/*
+   ├── git add docs/arch/images/*
    └── git commit -m "docs: Add SPATRES flow diagram"
 
 4. REFERENCE (Markdown)
@@ -265,7 +265,7 @@ Phase 4 (Month 3): Deprecate Sheets dashboards
 PNG_PATH="$1"
 DIAGRAM_NAME="$2"
 
-TARGET_DIR="docs/architecture/images"
+TARGET_DIR="docs/arch/images"
 mkdir -p "$TARGET_DIR"
 
 cp "$PNG_PATH" "$TARGET_DIR/${DIAGRAM_NAME}.png"
@@ -514,7 +514,7 @@ Response: "We use GitHub Issues for all task management.
   - [ ] System errors → #dev-alerts
 
 - [ ] Establish diagram workflow
-  - [ ] Create docs/architecture/images/ directory
+  - [ ] Create docs/arch/images/ directory
   - [ ] Document export process
   - [ ] Add script for importing diagrams
 

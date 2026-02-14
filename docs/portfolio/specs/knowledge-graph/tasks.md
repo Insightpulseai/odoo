@@ -200,7 +200,7 @@
 | #TBD | KG MVP: Create kg_nodes/kg_edges/kg_docs schema + indexes | Pending |
 | #TBD | KG Ingest: GitHub webhook → Edge Function upsert nodes/edges/docs | Pending |
 | #TBD | KG Ingest: nightly GitHub GraphQL backfill | Pending |
-| #TBD | KG Ingest: DigitalOcean sync (droplets/domains/apps/certs) | Pending |
+| #TBD | KG Ingest: DigitalOcean sync (droplets/domains/web/certs) | Pending |
 | #TBD | KG Ingest: Odoo exporter (installed modules, models, views) | Pending |
 | #TBD | KG Model: DNSRecord node type + CONFIGURES edges | Pending |
 | #TBD | KG Docs: ingest ChatGPT thread + extract mentions | Pending |

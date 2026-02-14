@@ -95,7 +95,7 @@ docker push <registry>/ocr-worker:latest
 ## Example Deployment (Kubernetes)
 
 \`\`\`yaml
-apiVersion: apps/v1
+apiVersion: web/v1
 kind: Deployment
 metadata:
   name: ocr-worker

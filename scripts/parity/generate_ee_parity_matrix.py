@@ -108,7 +108,7 @@ class OdooAppsScraper:
         apps = []
 
         # Start with apps listing page
-        url = f"{self.BASE_URL}/apps/modules/{self.version}/"
+        url = f"{self.BASE_URL}/web/modules/{self.version}/"
         logger.info(f"Scraping Odoo apps from {url}")
 
         try:
@@ -121,7 +121,7 @@ class OdooAppsScraper:
 
             if not app_cards:
                 # Fallback: try alternative selectors
-                app_cards = soup.find_all('a', href=re.compile(r'/apps/modules/\d+\.\d+/'))
+                app_cards = soup.find_all('a', href=re.compile(r'/web/modules/\d+\.\d+/'))
 
             for card in app_cards:
                 try:

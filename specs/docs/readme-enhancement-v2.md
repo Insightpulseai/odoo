@@ -313,7 +313,7 @@ PYEOF
 
 ## Production Endpoints Canonical Documentation
 
-**New File:** `docs/architecture/production-endpoints.md`
+**New File:** `docs/arch/production-endpoints.md`
 
 ```markdown
 # Production Endpoints Registry
@@ -499,8 +499,8 @@ certbot certificates
 
 ## References
 
-- Infrastructure SSOT: `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
-- Machine-readable: `docs/architecture/runtime_identifiers.json`
+- Infrastructure SSOT: `docs/arch/PROD_RUNTIME_SNAPSHOT.md`
+- Machine-readable: `docs/arch/runtime_identifiers.json`
 - Deployment timeline: `docs/pages/deployment-timeline.md`
 - Runbooks: `docs/pages/runbooks.md`
 ```
@@ -569,7 +569,7 @@ docker exec odoo-prod /usr/bin/odoo \
 
 ### References
 
-- **Production Endpoints:** [docs/architecture/production-endpoints.md](docs/architecture/production-endpoints.md)
+- **Production Endpoints:** [docs/arch/production-endpoints.md](docs/arch/production-endpoints.md)
 - **Runbooks:** [docs/pages/runbooks.md](docs/pages/runbooks.md)
 - **Validation Checklist:** [docs/pages/production-validation.md](docs/pages/production-validation.md)
 ```
@@ -582,7 +582,7 @@ docker exec odoo-prod /usr/bin/odoo \
 
 **Files to Update:**
 - [ ] `docs/pages/runbooks.md` - Replace `<PRODUCTION_IP>` with `178.128.112.214`
-- [ ] Create `docs/architecture/production-endpoints.md` (canonical registry)
+- [ ] Create `docs/arch/production-endpoints.md` (canonical registry)
 
 **Validation:**
 ```bash
@@ -628,7 +628,7 @@ grep -r "jgtolentino/odoo" docs/ README.md | grep -v ".git"
 ### Phase 4: Production Endpoints Documentation (NEW CONTENT)
 
 **Files to Create:**
-- [ ] `docs/architecture/production-endpoints.md` - Canonical SSOT
+- [ ] `docs/arch/production-endpoints.md` - Canonical SSOT
 
 ---
 
@@ -649,7 +649,7 @@ find docs/ -name "*.md" -exec grep -oP '\[.*?\]\(\K[^)]+' {} \; | \
 **Placeholder Detection:**
 ```bash
 # Ensure no TODOs/placeholders in production docs
-grep -r "TODO\|FIXME\|PLACEHOLDER" docs/pages/ docs/architecture/
+grep -r "TODO\|FIXME\|PLACEHOLDER" docs/pages/ docs/arch/
 ```
 
 **Command Validation:**
@@ -666,7 +666,7 @@ shellcheck docs/pages/runbooks.md || true
 ```bash
 # Revert documentation changes
 git checkout HEAD -- docs/pages/runbooks.md
-git checkout HEAD -- docs/architecture/production-endpoints.md
+git checkout HEAD -- docs/arch/production-endpoints.md
 git checkout HEAD -- README.md
 ```
 
@@ -702,10 +702,10 @@ git checkout HEAD -- README.md
 
 ## References
 
-- Gate Contract: `docs/architecture/gate-contract-v2.md`
+- Gate Contract: `docs/arch/gate-contract-v2.md`
 - Existing Runbooks: `docs/pages/runbooks.md`
 - Deployment Timeline: `docs/pages/deployment-timeline.md`
-- Production Runtime: `docs/architecture/PROD_RUNTIME_SNAPSHOT.md`
+- Production Runtime: `docs/arch/PROD_RUNTIME_SNAPSHOT.md`
 
 ---
 

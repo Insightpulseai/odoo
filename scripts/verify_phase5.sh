@@ -69,7 +69,7 @@ echo "Part B: TypeScript SDK"
 echo "─────────────────────────────────────"
 
 echo -n "✓ SDK directory exists: "
-if [ -d "$REPO_ROOT/packages/ipai-ai-sdk" ]; then
+if [ -d "$REPO_ROOT/pkgs/ipai-ai-sdk" ]; then
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -77,8 +77,8 @@ else
 fi
 
 echo -n "✓ package.json valid: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk/package.json" ]; then
-    jq empty "$REPO_ROOT/packages/ipai-ai-sdk/package.json" 2>/dev/null
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk/package.json" ]; then
+    jq empty "$REPO_ROOT/pkgs/ipai-ai-sdk/package.json" 2>/dev/null
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -94,7 +94,7 @@ TS_FILES=(
 )
 all_exist=true
 for file in "${TS_FILES[@]}"; do
-    if [ ! -f "$REPO_ROOT/packages/ipai-ai-sdk/$file" ]; then
+    if [ ! -f "$REPO_ROOT/pkgs/ipai-ai-sdk/$file" ]; then
         all_exist=false
         break
     fi
@@ -107,8 +107,8 @@ else
 fi
 
 echo -n "✓ tsconfig.json valid: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk/tsconfig.json" ]; then
-    jq empty "$REPO_ROOT/packages/ipai-ai-sdk/tsconfig.json" 2>/dev/null
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk/tsconfig.json" ]; then
+    jq empty "$REPO_ROOT/pkgs/ipai-ai-sdk/tsconfig.json" 2>/dev/null
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -122,7 +122,7 @@ echo "Part C: Python SDK"
 echo "─────────────────────────────────────"
 
 echo -n "✓ SDK directory exists: "
-if [ -d "$REPO_ROOT/packages/ipai-ai-sdk-python" ]; then
+if [ -d "$REPO_ROOT/pkgs/ipai-ai-sdk-python" ]; then
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -130,8 +130,8 @@ else
 fi
 
 echo -n "✓ setup.py valid: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk-python/setup.py" ]; then
-    python3 -c "import ast; ast.parse(open('$REPO_ROOT/packages/ipai-ai-sdk-python/setup.py').read())"
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk-python/setup.py" ]; then
+    python3 -c "import ast; ast.parse(open('$REPO_ROOT/pkgs/ipai-ai-sdk-python/setup.py').read())"
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -146,7 +146,7 @@ PY_FILES=(
 )
 all_exist=true
 for file in "${PY_FILES[@]}"; do
-    if [ ! -f "$REPO_ROOT/packages/ipai-ai-sdk-python/$file" ]; then
+    if [ ! -f "$REPO_ROOT/pkgs/ipai-ai-sdk-python/$file" ]; then
         all_exist=false
         break
     fi
@@ -159,9 +159,9 @@ else
 fi
 
 echo -n "✓ pyproject.toml valid: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk-python/pyproject.toml" ]; then
-    python3 -c "import tomllib; tomllib.load(open('$REPO_ROOT/packages/ipai-ai-sdk-python/pyproject.toml', 'rb'))" 2>/dev/null || \
-    python3 -c "import toml; toml.load(open('$REPO_ROOT/packages/ipai-ai-sdk-python/pyproject.toml'))" 2>/dev/null
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk-python/pyproject.toml" ]; then
+    python3 -c "import tomllib; tomllib.load(open('$REPO_ROOT/pkgs/ipai-ai-sdk-python/pyproject.toml', 'rb'))" 2>/dev/null || \
+    python3 -c "import toml; toml.load(open('$REPO_ROOT/pkgs/ipai-ai-sdk-python/pyproject.toml'))" 2>/dev/null
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -183,7 +183,7 @@ else
 fi
 
 echo -n "✓ TypeScript SDK README: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk/README.md" ]; then
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk/README.md" ]; then
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -191,7 +191,7 @@ else
 fi
 
 echo -n "✓ Python SDK README: "
-if [ -f "$REPO_ROOT/packages/ipai-ai-sdk-python/README.md" ]; then
+if [ -f "$REPO_ROOT/pkgs/ipai-ai-sdk-python/README.md" ]; then
     echo -e "${GREEN}YES${NC}"
 else
     echo -e "${RED}NO${NC}"
@@ -212,8 +212,8 @@ echo ""
 echo "File Count Summary"
 echo "─────────────────────────────────────"
 echo "Odoo module files:      $(find "$REPO_ROOT/addons/ipai/ipai_ai_platform" -type f | wc -l | tr -d ' ')"
-echo "TypeScript SDK files:   $(find "$REPO_ROOT/packages/ipai-ai-sdk" -type f | wc -l | tr -d ' ')"
-echo "Python SDK files:       $(find "$REPO_ROOT/packages/ipai-ai-sdk-python" -type f | wc -l | tr -d ' ')"
+echo "TypeScript SDK files:   $(find "$REPO_ROOT/pkgs/ipai-ai-sdk" -type f | wc -l | tr -d ' ')"
+echo "Python SDK files:       $(find "$REPO_ROOT/pkgs/ipai-ai-sdk-python" -type f | wc -l | tr -d ' ')"
 echo "Documentation files:    $(find "$REPO_ROOT/docs/platform" -type f -name '*.md' | wc -l | tr -d ' ')"
 
 echo ""
@@ -221,7 +221,7 @@ echo -e "${GREEN}✅ Phase 5 verification PASSED${NC}"
 echo ""
 echo "Next Steps:"
 echo "1. Odoo: Install module + configure system parameters"
-echo "2. TypeScript: pnpm install && pnpm build (in packages/ipai-ai-sdk)"
-echo "3. Python: pip install -e . (in packages/ipai-ai-sdk-python)"
+echo "2. TypeScript: pnpm install && pnpm build (in pkgs/ipai-ai-sdk)"
+echo "3. Python: pip install -e . (in pkgs/ipai-ai-sdk-python)"
 echo "4. Test: Run health checks and sample queries"
 echo ""

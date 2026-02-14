@@ -201,7 +201,7 @@ CMD ["node", "ocr-worker.js"]
 
 **Kubernetes:**
 ```yaml
-apiVersion: apps/v1
+apiVersion: web/v1
 kind: Deployment
 metadata:
   name: ocr-worker

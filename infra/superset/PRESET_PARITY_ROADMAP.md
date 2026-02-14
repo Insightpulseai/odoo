@@ -89,7 +89,7 @@ mcp/servers/superset-mcp-server/
 │       └── charts.ts      # Chart operations
 └── package.json
 
-packages/ipai-design-tokens/
+pkgs/ipai-design-tokens/
 ├── src/tableauTokens.ts   # TypeScript module
 ├── src/tableauTokens.json # Canonical tokens
 ├── tableau.css            # CSS custom properties

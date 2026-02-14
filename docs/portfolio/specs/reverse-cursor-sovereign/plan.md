@@ -4,7 +4,7 @@
 - Add Spec Kit bundle
 - Add scaffolding directories:
   - `services/prompt-builder/`
-  - `packages/context-snapshot/`
+  - `pkgs/context-snapshot/`
   - `gates/` (catalog + gate runner)
 - Add CI workflow skeleton for gates
 

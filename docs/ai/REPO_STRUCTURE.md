@@ -21,7 +21,7 @@ odoo/
 │   ├── OCA/                   # OCA community modules (12 repos)
 │   └── oca/                   # OCA submodules
 │
-├── apps/                      # Applications (28 apps)
+├── web/                      # Applications (28 apps)
 │   ├── pulser-runner/         # Automation runner
 │   ├── control-room/          # Control plane UI
 │   ├── control-room-api/      # Control plane API
@@ -33,7 +33,7 @@ odoo/
 │   ├── superset-analytics/    # Superset BI integration
 │   └── ...                    # 19 more apps
 │
-├── packages/                  # Shared packages (8 packages)
+├── pkgs/                  # Shared packages (8 packages)
 │   ├── agent-core/            # Core agent framework
 │   ├── github-app/            # GitHub App integration
 │   ├── ipai-design-tokens/    # Design system tokens

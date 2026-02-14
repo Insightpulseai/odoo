@@ -4,14 +4,14 @@ on:
   push:
     branches: [main, claude/**]
     paths:
-      - 'apps/web/**'
-      - 'packages/ipai-design-tokens/**'
+      - 'web/web/**'
+      - 'pkgs/ipai-design-tokens/**'
       - '.github/workflows/ci-web.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'apps/web/**'
-      - 'packages/ipai-design-tokens/**'
+      - 'web/web/**'
+      - 'pkgs/ipai-design-tokens/**'
 
 jobs:
   build:
@@ -63,12 +63,12 @@ jobs:
         run: |
           echo "Checking required asset directories..."
           dirs=(
-            "apps/web/public/solutions/financial-services/bg"
-            "apps/web/public/solutions/financial-services/hero"
-            "apps/web/public/solutions/financial-services/logos"
-            "apps/web/public/solutions/financial-services/use-cases"
-            "apps/web/public/solutions/financial-services/resources"
-            "apps/web/public/solutions/financial-services/partners"
+            "web/web/public/solutions/financial-services/bg"
+            "web/web/public/solutions/financial-services/hero"
+            "web/web/public/solutions/financial-services/logos"
+            "web/web/public/solutions/financial-services/use-cases"
+            "web/web/public/solutions/financial-services/resources"
+            "web/web/public/solutions/financial-services/partners"
           )
           for dir in "${dirs[@]}"; do
             if [ -d "$dir" ]; then

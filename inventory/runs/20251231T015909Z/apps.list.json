@@ -16,7 +16,7 @@
           "envs": [
             {
               "key": "ODOO_ADDONS_PATH",
-              "value": "/usr/lib/python3/dist-packages/odoo/addons",
+              "value": "/usr/lib/python3/dist-pkgs/odoo/addons",
               "scope": "RUN_TIME"
             }
           ],
@@ -69,7 +69,7 @@
             "envs": [
               {
                 "key": "ODOO_ADDONS_PATH",
-                "value": "/usr/lib/python3/dist-packages/odoo/addons",
+                "value": "/usr/lib/python3/dist-pkgs/odoo/addons",
                 "scope": "RUN_TIME"
               }
             ],
@@ -287,8 +287,8 @@
             "branch": "main",
             "deploy_on_push": true
           },
-          "dockerfile_path": "/packages/mattermost-rag/rag-service/Dockerfile",
-          "source_dir": "/packages/mattermost-rag/rag-service",
+          "dockerfile_path": "/pkgs/mattermost-rag/rag-service/Dockerfile",
+          "source_dir": "/pkgs/mattermost-rag/rag-service",
           "envs": [
             {
               "key": "MM_SITE_URL",
@@ -385,8 +385,8 @@
               "branch": "main",
               "deploy_on_push": true
             },
-            "dockerfile_path": "/packages/mattermost-rag/rag-service/Dockerfile",
-            "source_dir": "/packages/mattermost-rag/rag-service",
+            "dockerfile_path": "/pkgs/mattermost-rag/rag-service/Dockerfile",
+            "source_dir": "/pkgs/mattermost-rag/rag-service",
             "envs": [
               {
                 "key": "MM_SITE_URL",

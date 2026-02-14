@@ -108,7 +108,7 @@ ENV HOST=db \
     ODOO_RC=/etc/odoo/odoo.conf
 
 # Addons path for module discovery
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/oca-addons
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons,/mnt/oca-addons
 
 # =============================================================================
 # 11. Health Check

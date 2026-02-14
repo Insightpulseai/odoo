@@ -1,0 +1,107 @@
+# Refactor Automation Configuration
+
+# Triage policies
+triage:
+  auto_issue_threshold: high  # Create issues for high+ priority findings
+  block_merge_on: critical    # Block PR merge on critical findings
+  require_evidence: true      # Require before/after metrics
+  max_issues_per_pr: 10       # Limit issues created per PR
+
+# Analyzers
+analyzers:
+  complexity:
+    enabled: true
+    threshold: 10  # McCabe complexity threshold
+    exclude_patterns:
+      - "*/tests/*"
+      - "*/migrations/*"
+
+  duplication:
+    enabled: true
+    min_lines: 15  # Minimum duplicate block size
+    exclude_patterns:
+      - "*/tests/*"
+
+  types:
+    enabled: true
+    target_coverage: 70  # Target type hint coverage %
+
+  coverage:
+    enabled: true
+    min_coverage: 80  # Minimum test coverage %
+    exclude_patterns:
+      - "*/migrations/*"
+
+  oca:
+    enabled: true
+    enforce_structure: true
+    enforce_manifest: true
+
+# Scoring weights
+scoring:
+  complexity: 0.3
+  duplication: 0.2
+  types: 0.15
+  coverage: 0.25
+  oca: 0.1
+
+# Priority thresholds (0-100 scale)
+priority:
+  critical: 90  # >= 90 score
+  high: 70      # 70-89 score
+  medium: 40    # 40-69 score
+  low: 0        # < 40 score
+
+# Quality gates
+gates:
+  block_merge:
+    - critical_findings_count > 0
+    - coverage_decrease > 5  # Block if coverage drops >5%
+
+  require_approval:
+    - high_findings_count >= 3
+    - complexity_increase > 20
+
+# Evidence
+evidence:
+  store_local: true
+  local_path: "docs/evidence"
+  upload_supabase: false  # Enable when Supabase schema ready
+  generate_charts: true
+  formats:
+    - json
+    - markdown
+    - html
+
+# GitHub integration
+github:
+  create_issues: true
+  add_labels: true
+  auto_assign: true
+  comment_on_pr: true
+  link_related: true
+
+# Module-specific overrides
+modules:
+  ipai_test:
+    analyzers:
+      complexity:
+        threshold: 15  # Higher threshold for test module
+      coverage:
+        min_coverage: 60  # Lower requirement for experimental module
+
+  ipai_finance:
+    priority:
+      critical: 80  # More lenient for stable module
+    gates:
+      block_merge:
+        - critical_findings_count > 2  # Allow up to 2 critical
+
+# Notifications
+notifications:
+  slack:
+    enabled: false
+    webhook_url: ""  # Set via env var SLACK_WEBHOOK_URL
+    on_events:
+      - critical_findings
+      - daily_summary

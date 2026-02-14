@@ -40,11 +40,11 @@
 
 ```
 ipai-ui/  (or chosen repo)
-├── packages/
+├── pkgs/
 │   ├── tokens/          # Design tokens (@insightpulseai/tokens)
 │   ├── ui/              # Fluent-wrapped components (@insightpulseai/ui)
 │   └── telemetry/       # (future) Usage analytics
-├── apps/
+├── web/
 │   └── storybook/       # Living component spec
 ├── infra/
 │   └── ci/              # CI workflows for token build + Storybook publish
@@ -86,7 +86,7 @@ npm i -D turbo
 set -euo pipefail
 
 # Create directory structure
-mkdir -p packages/{tokens,ui} apps/storybook
+mkdir -p pkgs/{tokens,ui} web/storybook
 
 # Initialize root package.json if not exists
 if [ ! -f package.json ]; then
@@ -101,7 +101,7 @@ npm i -D turbo
 ### 2. Initialize Storybook
 
 ```bash
-cd apps/storybook
+cd web/storybook
 npm init -y
 npx storybook@latest init --disable-telemetry
 cd ../..
@@ -109,7 +109,7 @@ cd ../..
 
 ### 3. Create Provider Wrapper
 
-**File**: `packages/ui/src/Providers.tsx`
+**File**: `pkgs/ui/src/Providers.tsx`
 
 ```tsx
 import * as React from "react";
@@ -122,7 +122,7 @@ export function IpaProvider(props: { children: React.ReactNode }) {
 
 ### 4. Wire Storybook Preview
 
-**File**: `apps/storybook/.storybook/preview.tsx`
+**File**: `web/storybook/.storybook/preview.tsx`
 
 ```tsx
 import * as React from "react";
@@ -221,7 +221,7 @@ name: storybook-build
 
 on:
   pull_request:
-    paths: ['packages/ui/**', 'apps/storybook/**']
+    paths: ['pkgs/ui/**', 'web/storybook/**']
   push:
     branches: [main]
 
@@ -232,11 +232,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
       - run: npm ci
-      - run: npm run build-storybook --workspace=apps/storybook
+      - run: npm run build-storybook --workspace=web/storybook
       - uses: actions/upload-artifact@v4
         with:
           name: storybook-static
-          path: apps/storybook/storybook-static/
+          path: web/storybook/storybook-static/
 ```
 
 ### Accessibility & Visual Regression
@@ -246,7 +246,7 @@ name: a11y-visual-regression
 
 on:
   pull_request:
-    paths: ['packages/ui/**']
+    paths: ['pkgs/ui/**']
 
 jobs:
   a11y:
@@ -254,14 +254,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npm run test:a11y --workspace=packages/ui
+      - run: npm run test:a11y --workspace=pkgs/ui
 
   visual:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npm run test:visual --workspace=packages/ui
+      - run: npm run test:visual --workspace=pkgs/ui
 ```
 
 ---
@@ -272,7 +272,7 @@ jobs:
 
 ```bash
 # Start Storybook dev server
-cd apps/storybook
+cd web/storybook
 npm run storybook
 
 # Build for production
@@ -314,7 +314,7 @@ npm list storybook
 2. **Vercel** (Recommended for private/commercial)
    ```bash
    vercel --prod
-   # Points to apps/storybook
+   # Points to web/storybook
    ```
 
 3. **Chromatic** (Visual regression hosting)

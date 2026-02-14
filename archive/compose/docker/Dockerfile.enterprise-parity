@@ -260,7 +260,7 @@ ENV HOST=db \
 ENV ODOO_RC=/etc/odoo/odoo.conf
 
 # Build addons path dynamically
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,\
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,\
 /mnt/ipai-addons,\
 /mnt/oca-addons/account-reconcile,\
 /mnt/oca-addons/account-financial-tools,\

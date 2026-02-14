@@ -49,7 +49,7 @@ services:
       - odoo_data:/var/lib/odoo
     command: >
       odoo
-        --addons-path=/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/usr/lib/python3/dist-packages/odoo/addons
+        --addons-path=/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/usr/lib/python3/dist-pkgs/odoo/addons
         --db_host=db
         --db_port=5432
         --db_user=odoo

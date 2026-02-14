@@ -112,7 +112,7 @@ export async function triggerDeployment(branch: string, environment: string) {
 // lib/mcp-client.ts
 export async function queueBuildJob(projectId: string, commitHash: string) {
   // Use MCP to queue build jobs
-  // Integrates with apps/mcp-coordinator
+  // Integrates with web/mcp-coordinator
 }
 ```
 

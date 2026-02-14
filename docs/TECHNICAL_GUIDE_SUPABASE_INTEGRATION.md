@@ -96,7 +96,7 @@ This pattern is designed to:
 
 ### 4. React + Fluent 2 (Dashboard)
 
-**Location**: `apps/scout-dashboard/` (or similar)
+**Location**: `web/scout-dashboard/` (or similar)
 
 - Uses `@supabase/supabase-js` client
 - Reads from `ipai_sample_metrics` for KPIs, charts
@@ -402,7 +402,7 @@ Set up alerts for:
 | `addons/ipai/ipai_sample_metrics/` | Odoo module (source of truth) |
 | `supabase/migrations/202601130001_IPAI_SAMPLE_METRICS.sql` | Supabase table schema |
 | `scripts/sync_ipai_sample_metrics_to_supabase.py` | Sync script |
-| `apps/scout-dashboard/src/hooks/useSampleMetrics.ts` | React data hook |
+| `web/scout-dashboard/src/hooks/useSampleMetrics.ts` | React data hook |
 | `agents/custom_module_auditor.md` | Module audit spec |
 
 ---

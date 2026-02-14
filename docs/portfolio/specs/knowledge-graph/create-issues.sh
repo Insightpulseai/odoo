@@ -153,7 +153,7 @@ EOF
 
 # Issue 4: DigitalOcean sync
 create_issue \
-    "KG Ingest: DigitalOcean sync (droplets/domains/apps/certs)" \
+    "KG Ingest: DigitalOcean sync (droplets/domains/web/certs)" \
     "$(cat <<'EOF'
 ## Summary
 Create function to sync DigitalOcean infrastructure into the knowledge graph.

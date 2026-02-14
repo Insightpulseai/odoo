@@ -675,8 +675,8 @@ odoo-ce/
 │   ├── OCA/              # OCA repositories
 │   ├── ipai/             # IPAI modules (nested)
 │   └── ipai_*/           # IPAI modules (flat)
-├── apps/                 # Applications
-├── packages/             # Shared packages
+├── web/                 # Applications
+├── pkgs/             # Shared packages
 ├── spec/                 # Spec bundles
 ├── scripts/              # Automation scripts
 ├── docs/                 # Documentation

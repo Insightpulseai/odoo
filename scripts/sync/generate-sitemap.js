@@ -15,8 +15,8 @@ const OUTPUT_FILE = path.join(ROOT_DIR, 'SITEMAP.md');
 const SITEMAP_DIRS = [
   'docs',
   'spec',
-  'apps/*/README.md',
-  'packages/*/README.md'
+  'web/*/README.md',
+  'pkgs/*/README.md'
 ];
 
 // Extract title from markdown

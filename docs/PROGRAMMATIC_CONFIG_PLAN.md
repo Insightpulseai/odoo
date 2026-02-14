@@ -30,7 +30,7 @@ workers = ${ODOO_WORKERS:-4}
 max_cron_threads = 2
 
 # Addons paths (CE + OCA + IPAI)
-addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/oca,/mnt/extra-addons/ipai
+addons_path = /usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/oca,/mnt/extra-addons/ipai
 
 # Logging
 log_level = ${LOG_LEVEL:-info}

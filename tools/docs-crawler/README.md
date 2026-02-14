@@ -58,7 +58,7 @@ pip install requests beautifulsoup4 pyyaml openai
 ### Database Setup
 ```bash
 # Deploy hybrid search schema
-psql "$POSTGRES_URL" < packages/db/sql/08_rag_hybrid_search.sql
+psql "$POSTGRES_URL" < pkgs/db/sql/08_rag_hybrid_search.sql
 
 # Verify indexes
 psql "$POSTGRES_URL" -c "

@@ -200,7 +200,7 @@ run_odoo_command() {
     fi
 
     # Build addons path - include both top-level and nested ipai modules
-    local addons_path="/mnt/extra-addons:/mnt/extra-addons/ipai:/usr/lib/python3/dist-packages/odoo/addons"
+    local addons_path="/mnt/extra-addons:/mnt/extra-addons/ipai:/usr/lib/python3/dist-pkgs/odoo/addons"
 
     log_info "  Running: odoo ${flag} ${module} --stop-after-init"
 

@@ -1,6 +1,6 @@
 # Offline Queue FSM
 
-**Source**: `apps/mobile/src/store/app.ts`
+**Source**: `web/mobile/src/store/app.ts`
 
 ## Overview
 

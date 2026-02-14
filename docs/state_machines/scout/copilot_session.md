@@ -1,6 +1,6 @@
 # Copilot Session FSM
 
-**Source**: `apps/control-room/src/components/copilot/hooks/useCopilotSession.ts`
+**Source**: `web/control-room/src/components/copilot/hooks/useCopilotSession.ts`
 
 ## Overview
 

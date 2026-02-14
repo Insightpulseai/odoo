@@ -22,7 +22,7 @@ odoo/
 │   │   ├── ipai_workos_*/         # Notion parity modules
 │   │   └── [50+ more modules]
 │   └── oca/                # OCA community modules
-├── apps/                    # Node.js applications
+├── web/                    # Node.js applications
 │   ├── control-room/       # Next.js 14 + Fluent UI dashboard
 │   ├── pulser-runner/      # Agent orchestration
 │   └── [10+ more apps]
@@ -55,9 +55,9 @@ claude -p "Scaffold OCA-compliant Odoo 18 CE module: ipai_<name>"
 ### 2. Control Room UI Development
 
 **Files to know**:
-- `apps/control-room/src/app/` - Next.js 14 App Router pages
-- `apps/control-room/src/components/` - Reusable components
-- `apps/control-room/src/app/theme/tbwaFluentTheme.ts` - Branding tokens
+- `web/control-room/src/app/` - Next.js 14 App Router pages
+- `web/control-room/src/components/` - Reusable components
+- `web/control-room/src/app/theme/tbwaFluentTheme.ts` - Branding tokens
 
 **Prompt**:
 ```bash
@@ -176,7 +176,7 @@ Agents auto-activate based on context:
 
 ### Architecture
 
-- `docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md`
+- `docs/arch/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md`
 - `docs/data-model/ODOO_CANONICAL_SCHEMA.dbml`
 - `docs/db/DB_TARGET_ARCHITECTURE.md`
 

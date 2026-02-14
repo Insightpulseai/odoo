@@ -1,0 +1,38 @@
+name: infra-waf-gate
+
+on:
+  pull_request:
+    paths:
+      - "infra/**"
+      - "scripts/audit/check_infra_waf.py"
+  push:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - "scripts/audit/check_infra_waf.py"
+
+jobs:
+  assess-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Run Infra WAF Assessment (Local Checks)
+        run: python3 scripts/audit/check_infra_waf.py
+
+      - name: Upload Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infra-waf-evidence-pr
+          path: artifacts/audit/

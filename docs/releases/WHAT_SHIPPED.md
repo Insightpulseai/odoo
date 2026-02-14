@@ -102,8 +102,8 @@ Production-ready React Fluent UI AI workspace with:
 |------|------|-------------|
 | `docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml` | **New** | DBML schema for AI Platform |
 | `docs/data-model/IPAI_AI_PLATFORM_ERD.mmd` | **New** | Mermaid ERD diagram |
-| `docs/architecture/IPAI_AI_PLATFORM_ARCH.md` | Updated | Workspace design and deployment checklist |
-| `docs/architecture/IPAI_AI_PLATFORM_ORD.md` | **New** | Object Relationship Document with attribute definitions |
+| `docs/arch/IPAI_AI_PLATFORM_ARCH.md` | Updated | Workspace design and deployment checklist |
+| `docs/arch/IPAI_AI_PLATFORM_ORD.md` | **New** | Object Relationship Document with attribute definitions |
 | `spec/ipai-ai-platform/constitution.md` | **New** | Non-negotiable rules and constraints |
 | `spec/ipai-ai-platform/prd.md` | **New** | Product requirements document |
 | `spec/ipai-ai-platform/plan.md` | **New** | Implementation plan |
@@ -123,8 +123,8 @@ Production-ready React Fluent UI AI workspace with:
  addons/ipai/ipai_ai_core/tests/test_service.py     | 173 ++++++++
  addons/ipai/ipai_ai_core/tests/test_thread.py      | 326 +++++++++++++++
  docs/api/openapi.ipai_ai_platform.yaml             | 194 +++++++++
- docs/architecture/IPAI_AI_PLATFORM_ARCH.md         | 129 ++++++
- docs/architecture/IPAI_AI_PLATFORM_ORD.md          | 450 +++++++++++++++++++++
+ docs/arch/IPAI_AI_PLATFORM_ARCH.md         | 129 ++++++
+ docs/arch/IPAI_AI_PLATFORM_ORD.md          | 450 +++++++++++++++++++++
  docs/data-model/IPAI_AI_PLATFORM_ERD.mmd           | 228 +++++++++++
  docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml       | 374 +++++++++++++++++
  docs/diagrams/ipai_platform_flow.mmd               |  46 +++

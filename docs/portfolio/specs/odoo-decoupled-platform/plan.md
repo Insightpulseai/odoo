@@ -71,7 +71,7 @@
 ### 4.2 Type Generation
 - [ ] Generate TypeScript types from schema
 - [ ] Generate Zod schemas for validation
-- [ ] Add to packages/contracts
+- [ ] Add to pkgs/contracts
 
 ### 4.3 SDK
 - [ ] Create client SDK wrapper

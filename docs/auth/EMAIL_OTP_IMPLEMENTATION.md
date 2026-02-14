@@ -45,7 +45,7 @@ Client receives: { success: true, access_token, user }
 
 ## Database Schema
 
-Located in: `packages/db/sql/auth/email_otp_schema.sql`
+Located in: `pkgs/db/sql/auth/email_otp_schema.sql`
 
 ### Tables
 
@@ -187,7 +187,7 @@ Located in: `packages/db/sql/auth/email_otp_schema.sql`
 
 ```bash
 # Connect to Supabase PostgreSQL
-psql "$POSTGRES_URL" -f packages/db/sql/auth/email_otp_schema.sql
+psql "$POSTGRES_URL" -f pkgs/db/sql/auth/email_otp_schema.sql
 
 # Verify tables created
 psql "$POSTGRES_URL" -c "\dt auth_otp.*"
@@ -591,7 +591,7 @@ WHERE email = 'user@example.com';
 
 ### Integration with Apps
 
-- **Scout Dashboard**: Add OTP login flow to `apps/scout-dashboard`
+- **Scout Dashboard**: Add OTP login flow to `web/scout-dashboard`
 - **Shelf.nu**: Replace magic links with OTP in Vercel deployment
 - **TBWA Agency Apps**: Standardize on OTP across all frontends
 - **Odoo Portal**: Add OTP login for vendor/customer portal users
