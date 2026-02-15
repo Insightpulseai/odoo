@@ -1,6 +1,8 @@
 ---
-name: bir-compliance-automation
-description: Philippine BIR tax compliance automation for 36 eBIRForms types with multi-employee batch processing, deadline monitoring, and Odoo CE 18.0 integration
+name: ipai-bir-compliance-automation
+description: BIR compliance automation playbooks and output mapping for PH tax workflows (eBIRForms-ready artifacts). 36 form types, multi-employee batch processing, deadline monitoring, Odoo CE integration.
+version: "1.0.0"
+tags: [philippines, tax, bir, compliance, finance, odoo]
 license: AGPL-3.0
 allowed-tools: [Read, Write, Bash, Grep, Glob]
 ---
