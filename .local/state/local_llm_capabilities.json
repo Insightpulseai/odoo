@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "system": {
+    "os": "Darwin 25.2.0",
+    "arch": "arm64",
+    "cpu_cores": 8,
+    "ram_gb": 16,
+    "gpu": {
+      "present": true,
+      "type": "Apple Silicon (Integrated)"
+    }
+  },
+  "runtimes": [
+    {
+      "name": "ollama",
+      "status": "available",
+      "endpoint": "http://127.0.0.1:11434",
+      "models": [
+        {
+          "id": "llama3.2:1b",
+          "params": "1.2B",
+          "quantization": "Q8_0",
+          "context_tokens": null,
+          "capability": "tiny"
+        }
+      ],
+      "inference_test": null
+    }
+  ],
+  "provenance": {
+    "captured_at": "2026-02-15T10:09:52.496955+08:00",
+    "collector": "scripts/local_llm_probe.py",
+    "methods": [
+      "sysctl",
+      "urllib",
+      "ollama list",
+      "curl /api/tags"
+    ]
+  },
+  "integrity": {
+    "inference_test": "skipped",
+    "no_inference_flag": true
+  },
+  "policy": {
+    "default_model": "ollama:llama3.2:1b",
+    "max_input_chars": 12000,
+    "max_output_tokens": 512,
+    "task_classes_local": [
+      "lint",
+      "classify",
+      "route",
+      "summarize_small",
+      "extract_structured"
+    ],
+    "task_classes_remote": [
+      "codegen_large",
+      "architecture",
+      "deep_debug",
+      "long_context",
+      "ambiguous"
+    ]
+  }
+}

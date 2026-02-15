@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "dist-main",
+    "types": ["node"]
+  },
+  "include": ["src/main/**/*", "src/shared/**/*"],
+  "exclude": ["src/renderer"]
+}

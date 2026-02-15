@@ -1,0 +1,14 @@
+{
+  "tier": "local",
+  "model": "ollama:llama3.2:1b",
+  "reason_codes": [
+    "TASK_CLASS_LOCAL",
+    "UNDER_CHAR_LIMIT",
+    "RUNTIME_AVAILABLE"
+  ],
+  "limits": {
+    "max_input_chars": 12000,
+    "max_output_tokens": 512
+  },
+  "policy_version": "1.0.0"
+}

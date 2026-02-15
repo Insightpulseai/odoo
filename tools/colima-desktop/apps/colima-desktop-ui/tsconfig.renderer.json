@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "outDir": "dist-renderer",
+    "types": ["vite/client"]
+  },
+  "include": ["src/renderer/**/*", "src/shared/**/*"],
+  "exclude": ["src/main"]
+}

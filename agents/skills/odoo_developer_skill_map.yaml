@@ -1,0 +1,111 @@
+version: 1.0.0
+domain: odoo
+track: odoo19
+
+kb_root: docs/kb/odoo19
+
+skills:
+  - id: odoo.orm
+    name: Odoo ORM (models/fields/env)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/orm.md
+    tags: [python, orm, models, fields, env]
+
+  - id: odoo.security.backend
+    name: Backend security (ACLs, record rules)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/security.md
+    tags: [security, acl, record_rules, access]
+
+  - id: odoo.api.external
+    name: External API (JSON-RPC / XML-RPC)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/external_api.md
+    tags: [api, jsonrpc, xmlrpc, integration]
+
+  - id: odoo.testing
+    name: Testing (TransactionCase/HttpCase/Tours)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/testing.md
+    tags: [tests, transactioncase, httpcase, tours]
+
+  - id: odoo.ui.qweb
+    name: QWeb templates
+    type: knowledge
+    kb: docs/kb/odoo19/dev/qweb.md
+    tags: [qweb, templates, website]
+
+  - id: odoo.ui.views
+    name: Backend views (form/list/kanban/search)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/views.md
+    tags: [views, xml, form, list, kanban, search]
+
+  - id: odoo.ui.actions
+    name: Backend actions (window/server/automated)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/actions.md
+    tags: [actions, server_actions, automated_actions]
+
+  - id: odoo.module.structure
+    name: Module structure (manifest/hooks/deps)
+    type: knowledge
+    kb: docs/kb/odoo19/dev/module_structure.md
+    tags: [manifest, hooks, dependencies, addons]
+
+  - id: odoo.js.owl
+    name: OWL + assets + registry
+    type: knowledge
+    kb: docs/kb/odoo19/dev/owl.md
+    tags: [owl, javascript, assets, registry]
+
+  - id: odoo.performance.cli
+    name: Performance & CLI / deployment context
+    type: knowledge
+    kb: docs/kb/odoo19/dev/performance_cli.md
+    tags: [performance, cli, deployment]
+
+  - id: odoo.contrib.workflow
+    name: Contributing workflow (PR/Git)
+    type: knowledge
+    kb: docs/kb/odoo19/contrib/workflow.md
+    tags: [git, prs, workflow]
+
+  - id: odoo.admin.odoo_sh
+    name: Odoo.sh platform overview
+    type: knowledge
+    kb: docs/kb/odoo19/admin/odoo_sh.md
+    tags: [odoo_sh, admin, deployment]
+
+  - id: odoo.services.apps
+    name: Services apps (Project/Timesheets/FS/Helpdesk/Planning/Appointments)
+    type: knowledge
+    kb: docs/kb/odoo19/services/project_timesheets_field_service.md
+    tags:
+      [
+        services,
+        project,
+        timesheets,
+        field_service,
+        helpdesk,
+        planning,
+        appointments,
+      ]
+
+  - id: odoo.sh.workflow
+    name: Odoo.sh-like workflow (procedural)
+    type: procedural
+    path: agents/skills/odoo_sh_workflow/SKILL.md
+    tags: [odoo_sh, workflow, ci, promotion]
+
+  - id: drawio.diagramming
+    name: Draw.io Diagramming
+    type: procedural
+    path: agents/skills/drawio_diagramming/SKILL.md
+    tags: [drawio, diagrams, xml]
+
+  - id: dbml.schema
+    name: DBML Schema Generation
+    type: procedural
+    path: agents/skills/dbml_schema/SKILL.md
+    tags: [dbml, schema, erd, database]

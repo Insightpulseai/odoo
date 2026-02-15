@@ -1,0 +1,12 @@
+{
+  "tier": "remote",
+  "model": "remote-default",
+  "reason_codes": [
+    "TASK_CLASS_REMOTE"
+  ],
+  "limits": {
+    "max_input_chars": 12000,
+    "max_output_tokens": 512
+  },
+  "policy_version": "1.0.0"
+}

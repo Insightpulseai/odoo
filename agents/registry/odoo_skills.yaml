@@ -1,0 +1,20 @@
+version: 1.0.0
+registry: odoo_skills
+
+includes:
+  - agents/skills/odoo_developer_skill_map.yaml
+
+resolvers:
+  kb:
+    root: docs/kb/odoo19
+  evidence:
+    root: docs/evidence
+
+policies:
+  authoritative_sources:
+    - docs/kb/odoo19
+  prefer_low_cost_models_for:
+    - classify
+    - summarize_small
+    - extract_structured
+  require_router_for_model_selection: true
