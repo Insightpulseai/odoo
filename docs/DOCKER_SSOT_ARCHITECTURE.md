@@ -29,7 +29,7 @@ Each environment has:
 
 | File | Purpose |
 |------|---------|
-| `infra/docker/DOCKER_DESKTOP_SSOT.yaml` | Canonical desktop Docker state |
+| `archive/root/infra-docker/DOCKER_DESKTOP_SSOT.yaml` | Canonical desktop Docker state (archived) |
 | `scripts/docker-desktop-audit.sh` | Non-destructive audit script |
 | `docs/runbooks/DOCKER_DESKTOP_CLEANUP.md` | Cleanup procedures |
 
@@ -77,7 +77,7 @@ cd ~/Documents/GitHub/odoo
 
 | File | Purpose |
 |------|---------|
-| `infra/docker/DOCKER_STAGING_SSOT.yaml` | Canonical staging Docker state |
+| `archive/root/infra-docker/DOCKER_STAGING_SSOT.yaml` | Canonical staging Docker state (archived) |
 | `scripts/docker-staging-audit.sh` | Non-destructive audit with production protection |
 | `docs/runbooks/DOCKER_STAGING_CLEANUP.md` | Cleanup procedures for staging |
 
@@ -139,7 +139,7 @@ cd /opt/odoo
 
 | File | Purpose |
 |------|---------|
-| `infra/docker/DOCKER_PROD_SSOT.yaml` | Canonical production Docker state (TBD) |
+| `archive/root/infra-docker/DOCKER_PROD_SSOT.yaml` | Canonical production Docker state (archived, TBD) |
 | `scripts/docker-prod-audit.sh` | Read-only audit (no cleanup allowed) |
 | `docs/runbooks/DOCKER_PROD_AUDIT.md` | Production audit procedures |
 
@@ -249,10 +249,10 @@ All audit scripts write JSONL logs with this schema:
 
 ```
 odoo/
-├── infra/docker/
-│   ├── DOCKER_DESKTOP_SSOT.yaml     ✅ Desktop canonical state
-│   ├── DOCKER_STAGING_SSOT.yaml     ✅ Staging canonical state
-│   └── DOCKER_PROD_SSOT.yaml        🚧 Future: Production state
+├── archive/root/infra-docker/
+│   ├── DOCKER_DESKTOP_SSOT.yaml     ✅ Desktop canonical state (archived)
+│   ├── DOCKER_STAGING_SSOT.yaml     ✅ Staging canonical state (archived)
+│   └── DOCKER_PROD_SSOT.yaml        🚧 Future: Production state (archived)
 │
 ├── scripts/
 │   ├── docker-desktop-audit.sh      ✅ Desktop audit (executable)

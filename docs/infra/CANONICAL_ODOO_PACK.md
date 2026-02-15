@@ -333,6 +333,6 @@ git submodule foreach git pull origin 18.0
 
 - **DNS**: `docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md`
 - **Parity**: `docs/parity/odoo_sh/ODOO_SH_FEATURES_MAP.md`
-- **Docker SSOT**: `infra/docker/DOCKER_DESKTOP_SSOT.yaml`
+- **Docker SSOT**: `archive/root/infra-docker/DOCKER_DESKTOP_SSOT.yaml` (archived)
 - **Odoo 18 Docs**: https://www.odoo.com/documentation/18.0/
 - **OCA Guidelines**: https://github.com/OCA/odoo-community.org

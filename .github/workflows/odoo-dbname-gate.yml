@@ -16,8 +16,8 @@ jobs:
             echo "ERROR: Found versioned DB names like odoo_*_v2"
             exit 1
           }
-          # Allow only canonical names (dev, staging, prod) or generic "odoo"
-          ! rg -n "\bodoo_(?!dev\b|staging\b|prod\b)[a-z0-9_]+\b" . || {
-            echo "ERROR: Found non-canonical DB names - only odoo_dev, odoo_staging, odoo_prod allowed"
+          # Allow only canonical names (dev, stage, prod) or generic "odoo"
+          ! rg -n "\bodoo_(?!dev\b|stage\b|prod\b)[a-z0-9_]+\b" . || {
+            echo "ERROR: Found non-canonical DB names - only odoo_dev, odoo_stage, odoo_prod allowed"
             exit 1
           }

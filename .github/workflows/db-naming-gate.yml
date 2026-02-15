@@ -1,0 +1,48 @@
+name: db-naming-gate
+
+on:
+  pull_request:
+    paths:
+      - 'docker-compose*.yml'
+      - 'config/**/*.conf'
+      - '.env*'
+      - '!.env.example'
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'docker-compose*.yml'
+      - 'config/**/*.conf'
+      - '.env*'
+      - '!.env.example'
+  workflow_dispatch:
+
+jobs:
+  enforce-db-naming:
+    runs-on: ubuntu-latest
+    name: Enforce Database Naming Allowlist
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run database naming gate
+        run: |
+          python scripts/ci/db_naming_gate.py
+        shell: bash
+
+      - name: Report results
+        if: failure()
+        run: |
+          echo "::error::Database naming allowlist violation detected."
+          echo "::error::Only the following database names are allowed:"
+          echo "::error::  - odoo_dev"
+          echo "::error::  - odoo_stage"
+          echo "::error::  - odoo_prod"
+          echo "::error::See job logs for details."
+        shell: bash

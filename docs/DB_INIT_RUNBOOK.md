@@ -37,7 +37,7 @@ ls deploy/docker-compose.prod.yml                 # Must exist
 | Environment | Database Name | Purpose |
 |-------------|---------------|---------|
 | Development | `odoo_dev` | Local development |
-| Staging | `odoo_staging` | Pre-production testing |
+| Staging | `odoo_stage` | Pre-production testing |
 | Production | `odoo_prod` | Live system |
 
 ### Environment Variables
@@ -49,7 +49,7 @@ export POSTGRES_PORT=5432
 export POSTGRES_USER=odoo
 export POSTGRES_PASSWORD=$(openssl rand -base64 32)
 export POSTGRES_DB_DEV=odoo_dev
-export POSTGRES_DB_STAGING=odoo_staging
+export POSTGRES_DB_STAGING=odoo_stage
 export POSTGRES_DB_PROD=odoo_prod
 ```
 
@@ -86,7 +86,7 @@ docker compose exec postgres psql -U odoo -c "\l" | grep odoo_
 Expected output:
 ```
  odoo_dev      | odoo | UTF8     | ...
- odoo_staging  | odoo | UTF8     | ...
+ odoo_stage  | odoo | UTF8     | ...
  odoo_prod     | odoo | UTF8     | ...
 ```
 
@@ -310,7 +310,7 @@ echo "=== Verification Complete ==="
 git add docs/evidence/
 git commit -m "docs(evidence): database initialization baseline - Phase 2
 
-- Created databases: odoo_dev, odoo_staging
+- Created databases: odoo_dev, odoo_stage
 - Initialized Odoo 19.0 schema
 - Created roles: odoo_app (rw), odoo_reporting (ro)
 - Captured baseline evidence pack

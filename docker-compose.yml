@@ -110,18 +110,14 @@ services:
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
       # OCA modules (read-only mount)
       - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # Environment-specific configuration (SSOT)
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     ports:
       - "${ODOO_PORT:-8069}:8069"
       - "${ODOO_LONGPOLL_PORT:-8072}:8072"
     command: >
       odoo
-      --db_host=db
-      --db_port=5432
-      --db_user=${POSTGRES_USER:-odoo}
-      --db_password=${POSTGRES_PASSWORD:-odoo}
-      --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
-      --log-level=${ODOO_LOG_LEVEL:-info}
+      --config=/etc/odoo/odoo.conf
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
       interval: 30s
@@ -180,14 +176,11 @@ services:
       - odoo-web-data:/var/lib/odoo
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
       - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # Environment-specific configuration (SSOT)
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
       odoo
-      --db_host=db
-      --db_port=5432
-      --db_user=${POSTGRES_USER:-odoo}
-      --db_password=${POSTGRES_PASSWORD:-odoo}
-      --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --config=/etc/odoo/odoo.conf
       -i base
       --stop-after-init
       --without-demo=all
@@ -211,14 +204,11 @@ services:
       - odoo-web-data:/var/lib/odoo
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
       - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # Environment-specific configuration (SSOT)
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
       odoo
-      --db_host=db
-      --db_port=5432
-      --db_user=${POSTGRES_USER:-odoo}
-      --db_password=${POSTGRES_PASSWORD:-odoo}
-      --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --config=/etc/odoo/odoo.conf
       -u ${UPDATE_MODULES:-all}
       --stop-after-init
 
