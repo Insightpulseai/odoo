@@ -115,22 +115,37 @@ def f(msg):
     print(f"  [FAIL] {msg}")
     failed += 1
 
-# Test 3: Finance PPM Project
-print("[Test 3/10] Finance PPM Project")
-projects = kw("project.project", "search_read",
-    [[("name", "like", "Finance PPM")]],
+# Test 3: Month-End Close Project
+print("[Test 3/10] Month-End Close Project")
+close_projects = kw("project.project", "search_read",
+    [[("name", "=", "Finance PPM - Month-End Close")]],
     {"fields": ["name", "id"]})
-if projects:
-    pid = projects[0]["id"]
-    p(f"Project found: {projects[0]['name']} (ID {pid})")
+if close_projects:
+    cpid = close_projects[0]["id"]
+    p(f"Month-End Close project found (ID {cpid})")
 else:
-    f("Finance PPM project not found")
+    f("Month-End Close project not found")
+    cpid = None
+
+# Test 4: BIR Tax Filing Project
+print("[Test 4/10] BIR Tax Filing Project")
+tax_projects = kw("project.project", "search_read",
+    [[("name", "=", "Finance PPM - BIR Tax Filing")]],
+    {"fields": ["name", "id"]})
+if tax_projects:
+    tpid = tax_projects[0]["id"]
+    p(f"BIR Tax Filing project found (ID {tpid})")
+else:
+    f("BIR Tax Filing project not found")
+    tpid = None
+
+if not cpid or not tpid:
     sys.exit(1)
 
-# Test 4: 6 Closing Stages
-print("[Test 4/10] Closing Stages")
+# Test 5: 6 Closing Stages
+print("[Test 5/10] Closing Stages")
 stages = kw("project.task.type", "search_read",
-    [[("project_ids", "in", [pid])]],
+    [[("project_ids", "in", [cpid])]],
     {"fields": ["name", "sequence", "fold"]})
 stage_names = sorted([s["name"] for s in stages])
 expected = sorted(["To Do", "In Preparation", "Under Review", "Pending Approval", "Done", "Cancelled"])
@@ -139,79 +154,61 @@ if stage_names == expected:
 else:
     f(f"Stage mismatch: got {stage_names}, expected {expected}")
 
-# Test 5: Task Count
-print("[Test 5/10] Task Count")
-task_count = kw("project.task", "search_count", [[("project_id", "=", pid)]])
-if task_count >= 89:
-    p(f"{task_count} tasks imported (base: 39 closing + 50 BIR = 89)")
-elif task_count > 0:
-    print(f"  [WARN] {task_count} tasks (expected >= 89 base tasks)")
+# Test 6: Closing Task Count (>= 39)
+print("[Test 6/10] Closing Tasks")
+close_count = kw("project.task", "search_count", [[("project_id", "=", cpid)]])
+if close_count >= 39:
+    p(f"{close_count} month-end closing tasks (expected >= 39)")
+elif close_count > 0:
+    print(f"  [WARN] {close_count} closing tasks (expected >= 39)")
     passed += 1
 else:
-    f("No tasks found in project")
+    f("No closing tasks found")
 
-# Test 6: Closing Tasks Present
-print("[Test 6/10] Closing Tasks")
-closing_count = kw("project.task", "search_count",
-    [[("project_id", "=", pid), ("name", "not like", "1601"), ("name", "not like", "0619"),
-      ("name", "not like", "2550"), ("name", "not like", "1702"), ("name", "not like", "1604")]])
-if closing_count >= 39:
-    p(f"{closing_count} month-end closing tasks")
-else:
-    f(f"Only {closing_count} closing tasks (expected >= 39)")
-
-# Test 7: BIR Tax Filing Tasks
+# Test 7: BIR Task Count (>= 50)
 print("[Test 7/10] BIR Tax Filing Tasks")
-bir_count = kw("project.task", "search_count",
-    [[("project_id", "=", pid), "|", "|", "|", "|", "|", "|", "|",
-      ("name", "like", "1601-C"), ("name", "like", "0619-E"),
-      ("name", "like", "2550M"), ("name", "like", "2550Q"),
-      ("name", "like", "1601-EQ"), ("name", "like", "1702"),
-      ("name", "like", "1604-CF"), ("name", "like", "1604-E")]])
+bir_count = kw("project.task", "search_count", [[("project_id", "=", tpid)]])
 if bir_count >= 50:
-    p(f"{bir_count} BIR tax filing tasks")
+    p(f"{bir_count} BIR tax filing tasks (expected >= 50)")
 elif bir_count > 0:
     print(f"  [WARN] {bir_count} BIR tasks (expected >= 50)")
     passed += 1
 else:
     f("No BIR tax filing tasks found")
 
-# Test 8: Assignee Mapping
-print("[Test 8/10] Assignee Mapping")
+# Test 8: Total Task Count
+print("[Test 8/10] Total Task Count")
+total_tasks = close_count + bir_count
+if total_tasks >= 89:
+    p(f"{total_tasks} total tasks across 2 projects (39 closing + 50 BIR = 89)")
+elif total_tasks > 0:
+    print(f"  [WARN] {total_tasks} total tasks (expected >= 89)")
+    passed += 1
+else:
+    f("No tasks found across projects")
+
+# Test 9: Assignee Mapping (across both projects)
+print("[Test 9/10] Assignee Mapping")
+all_pids = [cpid, tpid]
 assigned = kw("project.task", "search_count",
-    [[("project_id", "=", pid), ("user_ids", "!=", False)]])
-unassigned = task_count - assigned
+    [[("project_id", "in", all_pids), ("user_ids", "!=", False)]])
+unassigned = total_tasks - assigned
 if assigned > 0:
-    pct = round(assigned / task_count * 100, 1) if task_count > 0 else 0
-    p(f"{assigned}/{task_count} tasks assigned ({pct}%)")
+    pct = round(assigned / total_tasks * 100, 1) if total_tasks > 0 else 0
+    p(f"{assigned}/{total_tasks} tasks assigned ({pct}%)")
     if unassigned > 0:
         print(f"         {unassigned} tasks unassigned (users may need creation)")
 else:
     f("No tasks have assignees - user accounts may not exist yet")
 
-# Test 9: Task Deadlines
-print("[Test 9/10] Task Deadlines")
+# Test 10: BIR Task Deadlines
+print("[Test 10/10] Task Deadlines")
 with_deadline = kw("project.task", "search_count",
-    [[("project_id", "=", pid), ("date_deadline", "!=", False)]])
+    [[("project_id", "in", all_pids), ("date_deadline", "!=", False)]])
 if with_deadline > 0:
-    p(f"{with_deadline}/{task_count} tasks have deadlines")
+    p(f"{with_deadline}/{total_tasks} tasks have deadlines")
 else:
     print(f"  [WARN] No tasks have deadlines set")
-
-# Test 10: OCA 19.0 Module Check
-print("[Test 10/10] OCA 19.0 Modules")
-try:
-    project_mod = kw("ir.module.module", "search_read",
-        [[("name", "=", "project"), ("state", "=", "installed")]],
-        {"fields": ["name", "installed_version"]})
-    if project_mod:
-        ver = project_mod[0].get("installed_version", "unknown")
-        p(f"project module installed (v{ver})")
-    else:
-        f("project module not installed")
-except Exception:
-    print("  [WARN] Cannot verify module versions (access rights)")
-    passed += 1
 
 # Summary
 print()

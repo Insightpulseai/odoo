@@ -3,7 +3,8 @@
 """
 Finance PPM Stage + Project Seeder for Odoo 19 CE (XML-RPC)
 ============================================================
-Seeds canonical 6-stage workflow and Finance PPM project.
+Seeds canonical 6-stage workflow and 2 Finance PPM projects
+(Month-End Close + BIR Tax Filing).
 Idempotent - safe to run multiple times.
 
 Usage:
@@ -74,7 +75,8 @@ STAGES = [
     },
 ]
 
-PROJECT_NAME = "Finance PPM - Month-End Close & Tax Filing"
+PROJECT_CLOSE = "Finance PPM - Month-End Close"
+PROJECT_TAX = "Finance PPM - BIR Tax Filing"
 
 # ---------------------------------------------------------------------------
 # Connect
@@ -138,39 +140,51 @@ for stage_def in STAGES:
     stage_ids.append(sid)
 
 # ---------------------------------------------------------------------------
-# Seed project
+# Seed projects (2 projects: Monthly Close + BIR Tax Filing)
 # ---------------------------------------------------------------------------
 print()
-print("Seeding Finance PPM Project...")
-existing_project = _kw(
-    "project.project", "search",
-    [[("name", "=", PROJECT_NAME)]],
-    {"limit": 1},
-)
+print("Seeding Finance PPM Projects...")
 
-if existing_project:
-    project_id = existing_project[0]
-    print(f"  Project exists: {PROJECT_NAME} (ID {project_id})")
-else:
-    project_id = _kw("project.project", "create", [{
-        "name": PROJECT_NAME,
-        "allow_timesheets": True,
-        "allow_subtasks": True,
-        "allow_recurring_tasks": True,
-        "allow_task_dependencies": True,
-        "allow_milestones": True,
-        "description": (
-            "Month-End Close & BIR Tax Filing - Finance SSC\n"
-            "9 employees | 36 closing tasks | 33 BIR filings\n"
-            "Odoo 19 CE + OCA 19.0"
-        ),
-    }])
-    print(f"  Created Project: {PROJECT_NAME} (ID {project_id})")
+project_ids_map = {}
+for proj_name, proj_desc in [
+    (PROJECT_CLOSE, (
+        "Month-End Close - Finance SSC\n"
+        "9 employees | 39 closing tasks across 5 phases\n"
+        "Odoo 19 CE + OCA 19.0"
+    )),
+    (PROJECT_TAX, (
+        "BIR Tax Filing - Finance SSC\n"
+        "9 employees | 50 BIR tax filing tasks\n"
+        "1601-C, 0619-E, 2550M, 2550Q, 1601-EQ, 1702Q, 1702-RT, 1604-CF, 1604-E\n"
+        "Odoo 19 CE + OCA 19.0"
+    )),
+]:
+    existing_project = _kw(
+        "project.project", "search",
+        [[("name", "=", proj_name)]],
+        {"limit": 1},
+    )
 
-# Link stages to project
-for sid in stage_ids:
-    _kw("project.task.type", "write", [[sid], {"project_ids": [(4, project_id)]}])
-print(f"  Linked {len(stage_ids)} stages to project {project_id}")
+    if existing_project:
+        pid = existing_project[0]
+        print(f"  Project exists: {proj_name} (ID {pid})")
+    else:
+        pid = _kw("project.project", "create", [{
+            "name": proj_name,
+            "allow_timesheets": True,
+            "allow_subtasks": True,
+            "allow_recurring_tasks": True,
+            "allow_task_dependencies": True,
+            "allow_milestones": True,
+            "description": proj_desc,
+        }])
+        print(f"  Created Project: {proj_name} (ID {pid})")
+
+    # Link stages to project
+    for sid in stage_ids:
+        _kw("project.task.type", "write", [[sid], {"project_ids": [(4, pid)]}])
+    print(f"  Linked {len(stage_ids)} stages to project {pid}")
+    project_ids_map[proj_name] = pid
 
 # ---------------------------------------------------------------------------
 # Summary
@@ -178,6 +192,7 @@ print(f"  Linked {len(stage_ids)} stages to project {project_id}")
 print()
 print("=" * 60)
 print("Odoo 19 Seeding Complete!")
-print(f"  Project: {PROJECT_NAME} (ID {project_id})")
-print(f"  Stages:  {len(stage_ids)} stages linked")
+for pname, pid in project_ids_map.items():
+    print(f"  Project: {pname} (ID {pid})")
+print(f"  Stages:  {len(stage_ids)} stages linked to both projects")
 print("=" * 60)

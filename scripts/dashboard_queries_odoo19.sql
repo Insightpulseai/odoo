@@ -34,11 +34,11 @@ SELECT
             THEN 'Overdue'
         ELSE 'In Progress'
     END                             AS status,
+    pp.name                         AS project_name_raw,
     CASE
-        WHEN pt.name LIKE '%BIR%' OR pt.name LIKE '%1601%' OR pt.name LIKE '%0619%'
-            OR pt.name LIKE '%2550%' OR pt.name LIKE '%1702%' OR pt.name LIKE '%1601-EQ%'
-            THEN 'BIR Tax Filing'
-        ELSE 'Month-End Close'
+        WHEN pp.name LIKE '%BIR%' THEN 'BIR Tax Filing'
+        WHEN pp.name LIKE '%Month-End%' THEN 'Month-End Close'
+        ELSE 'Other'
     END                             AS task_type
 FROM
     project_task pt
@@ -166,9 +166,13 @@ SELECT
     CASE
         WHEN pt.name LIKE '%1601-C%'  THEN '1601-C'
         WHEN pt.name LIKE '%0619-E%'  THEN '0619-E'
+        WHEN pt.name LIKE '%2550M%'   THEN '2550M'
         WHEN pt.name LIKE '%2550Q%'   THEN '2550Q'
         WHEN pt.name LIKE '%1601-EQ%' THEN '1601-EQ'
-        WHEN pt.name LIKE '%1702%'    THEN '1702-RT'
+        WHEN pt.name LIKE '%1702Q%'   THEN '1702Q'
+        WHEN pt.name LIKE '%1702-RT%' THEN '1702-RT'
+        WHEN pt.name LIKE '%1604-CF%' THEN '1604-CF'
+        WHEN pt.name LIKE '%1604-E%'  THEN '1604-E'
         ELSE 'Other'
     END                             AS bir_form
 FROM
@@ -179,11 +183,7 @@ FROM
     LEFT JOIN res_users ru ON ptu.user_id = ru.id
     LEFT JOIN res_partner rp ON ru.partner_id = rp.id
 WHERE
-    pp.name LIKE '%Finance PPM%'
-    AND (
-        pt.name LIKE '%BIR%' OR pt.name LIKE '%1601%' OR pt.name LIKE '%0619%'
-        OR pt.name LIKE '%2550%' OR pt.name LIKE '%1702%'
-    )
+    pp.name LIKE '%BIR Tax Filing%'
 ORDER BY
     pt.date_deadline;
 

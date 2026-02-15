@@ -3,9 +3,10 @@
 """
 Bulk Import Finance PPM Tasks for Odoo 19 CE (XML-RPC)
 ======================================================
-Imports 39 month-end closing tasks + 50 BIR tax filing tasks = 89 base tasks.
-Creates recurring monthly instances (39 tasks x 12 months = 468 closing task-months)
-but seeds only the base templates by default.
+Imports tasks into 2 separate projects:
+  - "Finance PPM - Month-End Close": 39 closing tasks (5 phases)
+  - "Finance PPM - BIR Tax Filing": 50 BIR tax filing tasks (9 form types)
+Total: 89 base tasks across 2 projects.
 
 Employee Reference:
     CKVC - Khalil Veracruz  (Finance Director / Approver)
@@ -47,7 +48,8 @@ if "--months" in sys.argv:
     if idx + 1 < len(sys.argv):
         GENERATE_MONTHS = int(sys.argv[idx + 1])
 
-PROJECT_NAME = "Finance PPM - Month-End Close & Tax Filing"
+PROJECT_CLOSE = "Finance PPM - Month-End Close"
+PROJECT_TAX = "Finance PPM - BIR Tax Filing"
 
 # ---------------------------------------------------------------------------
 # Employee directory
@@ -577,21 +579,28 @@ def _kw(model, method, *args, **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# Resolve project
+# Resolve projects (2 projects: Month-End Close + BIR Tax Filing)
 # ---------------------------------------------------------------------------
-project_ids = _kw("project.project", "search", [[("name", "=", PROJECT_NAME)]], {"limit": 1})
-if not project_ids:
-    sys.stderr.write(f"ERROR: Project '{PROJECT_NAME}' not found. Run seed_finance_ppm_stages_odoo19.py first.\n")
+close_ids = _kw("project.project", "search", [[("name", "=", PROJECT_CLOSE)]], {"limit": 1})
+if not close_ids:
+    sys.stderr.write(f"ERROR: Project '{PROJECT_CLOSE}' not found. Run seed_finance_ppm_stages_odoo19.py first.\n")
     sys.exit(1)
-project_id = project_ids[0]
-print(f"Project: {PROJECT_NAME} (ID {project_id})")
+close_project_id = close_ids[0]
+print(f"Project (Close): {PROJECT_CLOSE} (ID {close_project_id})")
+
+tax_ids = _kw("project.project", "search", [[("name", "=", PROJECT_TAX)]], {"limit": 1})
+if not tax_ids:
+    sys.stderr.write(f"ERROR: Project '{PROJECT_TAX}' not found. Run seed_finance_ppm_stages_odoo19.py first.\n")
+    sys.exit(1)
+tax_project_id = tax_ids[0]
+print(f"Project (Tax):   {PROJECT_TAX} (ID {tax_project_id})")
 
 # ---------------------------------------------------------------------------
-# Resolve stage IDs
+# Resolve stage IDs (shared across both projects)
 # ---------------------------------------------------------------------------
 stage_map = {}
 for stage_data in _kw("project.task.type", "search_read",
-                       [[("project_ids", "in", [project_id])]],
+                       [[("project_ids", "in", [close_project_id])]],
                        {"fields": ["name", "id"]}):
     stage_map[stage_data["name"]] = stage_data["id"]
 print(f"Stages: {list(stage_map.keys())}")
@@ -630,7 +639,7 @@ for task in CLOSING_TASKS:
 
     # Check if task already exists (idempotent)
     existing = _kw("project.task", "search",
-                    [[("project_id", "=", project_id), ("name", "=", task_name)]],
+                    [[("project_id", "=", close_project_id), ("name", "=", task_name)]],
                     {"limit": 1})
     if existing:
         skipped += 1
@@ -651,7 +660,7 @@ for task in CLOSING_TASKS:
 
     vals = {
         "name": task_name,
-        "project_id": project_id,
+        "project_id": close_project_id,
         "sequence": task["seq"],
         "description": "\n".join(description_parts),
         "planned_hours": 16,  # 1 day prep + 0.5 day review + 0.5 day approval = 2 days = 16h
@@ -687,7 +696,7 @@ for task in bir_tasks:
     task_name = task["name"]
 
     existing = _kw("project.task", "search",
-                    [[("project_id", "=", project_id), ("name", "=", task_name)]],
+                    [[("project_id", "=", tax_project_id), ("name", "=", task_name)]],
                     {"limit": 1})
     if existing:
         bir_skipped += 1
@@ -695,7 +704,7 @@ for task in bir_tasks:
 
     vals = {
         "name": task_name,
-        "project_id": project_id,
+        "project_id": tax_project_id,
         "sequence": task["seq"],
         "description": task["description"],
         "planned_hours": task["planned_hours"],
@@ -735,14 +744,14 @@ if GENERATE_MONTHS > 0:
             task_name = f"[{task['code']}] {task['category']}: {task['name']} - {month_label}"
 
             existing = _kw("project.task", "search",
-                            [[("project_id", "=", project_id), ("name", "=", task_name)]],
+                            [[("project_id", "=", close_project_id), ("name", "=", task_name)]],
                             {"limit": 1})
             if existing:
                 continue
 
             vals = {
                 "name": task_name,
-                "project_id": project_id,
+                "project_id": close_project_id,
                 "sequence": task["seq"],
                 "description": f"Month: {month_label}\n" + "\n".join([
                     f"Employee: {task['code']} ({EMPLOYEES[task['assignee']]['name']})",
@@ -769,11 +778,14 @@ if GENERATE_MONTHS > 0:
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
-total_tasks = _kw("project.task", "search_count", [[("project_id", "=", project_id)]])
+close_total = _kw("project.task", "search_count", [[("project_id", "=", close_project_id)]])
+tax_total = _kw("project.task", "search_count", [[("project_id", "=", tax_project_id)]])
 print()
 print("=" * 60)
 print("Odoo 19 Import Complete!")
 print(f"  Closing Tasks:  Created={created} Skipped={skipped} Failed={failed}")
 print(f"  BIR Tasks:      Created={bir_created} Skipped={bir_skipped} Failed={bir_failed}")
-print(f"  Total in project: {total_tasks}")
+print(f"  Month-End Close project: {close_total} tasks")
+print(f"  BIR Tax Filing project:  {tax_total} tasks")
+print(f"  Total across both:       {close_total + tax_total}")
 print("=" * 60)

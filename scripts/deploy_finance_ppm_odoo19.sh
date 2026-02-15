@@ -3,8 +3,8 @@
 # Finance PPM Deployment Orchestrator - Odoo 19 CE
 # =============================================================================
 # Deploys the complete Finance PPM system:
-#   1. Seeds 6 canonical stages + project
-#   2. Imports 36 closing tasks + 33 BIR tax filing tasks
+#   1. Seeds 6 canonical stages + 2 projects (Month-End Close + BIR Tax Filing)
+#   2. Imports 39 closing tasks + 50 BIR tax filing tasks
 #   3. Verifies deployment
 #
 # Usage:
@@ -68,8 +68,8 @@ except Exception as e:
 echo "  Pre-flight: PASS"
 echo ""
 
-# ---- Step 1: Seed stages + project ----
-echo "[2/4] Seeding stages and project..."
+# ---- Step 1: Seed stages + 2 projects ----
+echo "[2/4] Seeding stages and 2 projects..."
 python3 "${SCRIPT_DIR}/seed_finance_ppm_stages_odoo19.py" "$ADMIN_PASSWORD"
 echo ""
 
@@ -98,22 +98,35 @@ def kw(model, method, *args, **kwargs):
 checks_passed = 0
 checks_failed = 0
 
-# Check 1: Project exists
-project_ids = kw('project.project', 'search',
-    [[('name', '=', 'Finance PPM - Month-End Close & Tax Filing')]])
-if project_ids:
-    print(f'  [PASS] Finance PPM project found (ID {project_ids[0]})')
+# Check 1: Month-End Close project
+close_ids = kw('project.project', 'search',
+    [[('name', '=', 'Finance PPM - Month-End Close')]])
+if close_ids:
+    print(f'  [PASS] Month-End Close project (ID {close_ids[0]})')
     checks_passed += 1
 else:
-    print('  [FAIL] Finance PPM project NOT found')
+    print('  [FAIL] Month-End Close project NOT found')
     checks_failed += 1
+
+# Check 2: BIR Tax Filing project
+tax_ids = kw('project.project', 'search',
+    [[('name', '=', 'Finance PPM - BIR Tax Filing')]])
+if tax_ids:
+    print(f'  [PASS] BIR Tax Filing project (ID {tax_ids[0]})')
+    checks_passed += 1
+else:
+    print('  [FAIL] BIR Tax Filing project NOT found')
+    checks_failed += 1
+
+if not close_ids or not tax_ids:
     sys.exit(1)
 
-pid = project_ids[0]
+cpid = close_ids[0]
+tpid = tax_ids[0]
 
-# Check 2: 6 stages
+# Check 3: 6 stages
 stages = kw('project.task.type', 'search_read',
-    [[('project_ids', 'in', [pid])]],
+    [[('project_ids', 'in', [cpid])]],
     {'fields': ['name']})
 stage_names = [s['name'] for s in stages]
 expected = ['To Do', 'In Preparation', 'Under Review', 'Pending Approval', 'Done', 'Cancelled']
@@ -125,25 +138,32 @@ else:
     print(f'  [FAIL] Missing stages: {missing}')
     checks_failed += 1
 
-# Check 3: Task count
-task_count = kw('project.task', 'search_count', [[('project_id', '=', pid)]])
-if task_count >= 69:
-    print(f'  [PASS] {task_count} tasks in project (expected >= 69)')
+# Check 4: Closing task count (>= 39)
+close_count = kw('project.task', 'search_count', [[('project_id', '=', cpid)]])
+if close_count >= 39:
+    print(f'  [PASS] {close_count} closing tasks (expected >= 39)')
     checks_passed += 1
-elif task_count > 0:
-    print(f'  [WARN] {task_count} tasks (expected >= 69 base tasks)')
+elif close_count > 0:
+    print(f'  [WARN] {close_count} closing tasks (expected >= 39)')
     checks_passed += 1
 else:
-    print(f'  [FAIL] No tasks found')
+    print(f'  [FAIL] No closing tasks found')
     checks_failed += 1
 
-# Check 4: Tasks by assignee
-print('  Task distribution by assignee:')
-users = kw('project.task', 'read_group',
-    [[('project_id', '=', pid)]],
-    {'fields': ['user_ids'], 'groupby': ['user_ids']})
-for u in users:
-    print(f'    {u.get(\"user_ids\", [\"Unassigned\"])} : {u[\"user_ids_count\"]} tasks')
+# Check 5: BIR task count (>= 50)
+tax_count = kw('project.task', 'search_count', [[('project_id', '=', tpid)]])
+if tax_count >= 50:
+    print(f'  [PASS] {tax_count} BIR tasks (expected >= 50)')
+    checks_passed += 1
+elif tax_count > 0:
+    print(f'  [WARN] {tax_count} BIR tasks (expected >= 50)')
+    checks_passed += 1
+else:
+    print(f'  [FAIL] No BIR tasks found')
+    checks_failed += 1
+
+total = close_count + tax_count
+print(f'  Total: {total} tasks across 2 projects')
 
 print()
 print(f'  Checks: {checks_passed} passed, {checks_failed} failed')
