@@ -19,6 +19,9 @@ $$;
 
 COMMENT ON FUNCTION public.list_projects IS 'List all OdooOps projects (public wrapper for ops.projects)';
 
+-- Hard guard: refuse anon even if someone accidentally grants later
+REVOKE EXECUTE ON FUNCTION public.list_projects() FROM anon;
+
 -- Grant execute to authenticated users and service role
 -- Explicitly NOT granting to anon (control plane requires authentication)
 GRANT EXECUTE ON FUNCTION public.list_projects() TO authenticated, service_role;
@@ -39,6 +42,9 @@ AS $$
 $$;
 
 COMMENT ON FUNCTION public.list_environments IS 'List environments, optionally filtered by project_id';
+
+-- Hard guard: refuse anon even if someone accidentally grants later
+REVOKE EXECUTE ON FUNCTION public.list_environments(TEXT) FROM anon;
 
 GRANT EXECUTE ON FUNCTION public.list_environments(TEXT) TO authenticated, service_role;
 
@@ -62,6 +68,9 @@ AS $$
 $$;
 
 COMMENT ON FUNCTION public.list_runs IS 'List recent runs, optionally filtered by project_id';
+
+-- Hard guard: refuse anon even if someone accidentally grants later
+REVOKE EXECUTE ON FUNCTION public.list_runs(TEXT, INT) FROM anon;
 
 GRANT EXECUTE ON FUNCTION public.list_runs(TEXT, INT) TO authenticated, service_role;
 

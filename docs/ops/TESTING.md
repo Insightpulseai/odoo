@@ -23,6 +23,28 @@ PostgreSQL Schema:         PostgREST API Access:
 
 **Key Design Decision:** Keep `ops.*` schema internal, expose curated API surface via `public.*` wrapper functions.
 
+## Security Model
+
+These RPC endpoints are exposed via `public.*` wrappers using `SECURITY DEFINER`.
+
+**Access Control:**
+
+- Controlled by `GRANT EXECUTE` to `authenticated` and `service_role` only
+- Explicitly blocked from `anon` role via `REVOKE EXECUTE ... FROM anon`
+- RLS on `ops.*` tables is NOT the primary enforcement boundary for RPC reads
+
+**Why SECURITY DEFINER:**
+
+- Allows cross-schema access (public wrapper → ops.* tables)
+- Runs with definer privileges, bypassing caller's RLS
+- Requires `SET search_path = ops, public` to prevent injection attacks
+
+**Belt-and-Suspenders Guards:**
+
+1. Functions created with `SET search_path = ops, public` (prevents search_path injection)
+2. Explicit `REVOKE EXECUTE ... FROM anon` (hardens against accidental grants)
+3. Grant only to `authenticated` + `service_role` (control plane requires auth)
+
 ## PostgREST RPC Endpoint Format
 
 **Correct format:**
