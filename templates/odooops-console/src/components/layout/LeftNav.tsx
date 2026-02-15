@@ -27,10 +27,16 @@ const navItems: NavItem[] = [
   { name: "Audit", href: "/app/audit", icon: FileText },
 ];
 
-export function LeftNav() {
+interface LeftNavProps {
+  logoUrl?: string;
+  orgName?: string;
+}
+
+export function LeftNav({ logoUrl, orgName = "OdooOps Console" }: LeftNavProps = {}) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const logoSrc = logoUrl || "/assets/logo-placeholder.svg";
 
   const NavContent = () => (
     <div className="flex flex-col h-full">
@@ -39,18 +45,24 @@ export function LeftNav() {
         <div className="flex items-center justify-between">
           {!collapsed && (
             <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-sm">
-                OO
-              </div>
+              <img
+                src={logoSrc}
+                alt={orgName}
+                className="h-8 object-contain"
+                loading="lazy"
+              />
               <span className="font-semibold text-gray-900 dark:text-white">
-                OdooOps Console
+                {orgName}
               </span>
             </div>
           )}
           {collapsed && (
-            <div className="h-8 w-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-sm mx-auto">
-              OO
-            </div>
+            <img
+              src={logoSrc}
+              alt={orgName}
+              className="h-8 w-8 object-contain mx-auto"
+              loading="lazy"
+            />
           )}
         </div>
       </div>

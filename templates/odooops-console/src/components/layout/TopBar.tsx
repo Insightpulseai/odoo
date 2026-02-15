@@ -20,9 +20,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
 
 interface TopBarProps {
   userEmail?: string;
+  userAvatarUrl?: string;
   currentOrg?: string;
   currentProject?: string;
   onSignOut?: () => Promise<void>;
@@ -30,6 +32,7 @@ interface TopBarProps {
 
 export function TopBar({
   userEmail = "user@example.com",
+  userAvatarUrl,
   currentOrg = "InsightPulse AI",
   currentProject = "Select Project",
   onSignOut,
@@ -136,9 +139,11 @@ export function TopBar({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                <User className="h-4 w-4" />
-              </div>
+              <Avatar
+                src={userAvatarUrl}
+                alt={userEmail || "User avatar"}
+                className="h-8 w-8"
+              />
               <span className="hidden md:inline text-sm">{userEmail}</span>
               <ChevronDown className="h-4 w-4" />
             </Button>
