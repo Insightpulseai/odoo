@@ -1,0 +1,19 @@
+name: repo-root-allowlist
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce root directory allowlist
+        run: |
+          echo "🔍 Checking root directory against allowlist..."
+          chmod +x scripts/ci/check_root_allowlist.py
+          python3 scripts/ci/check_root_allowlist.py

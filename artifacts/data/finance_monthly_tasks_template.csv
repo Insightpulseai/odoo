@@ -1,0 +1,13 @@
+Employee Code,Category,Name,prep_duration,review_duration,approval_duration
+CKVC,Foundation & Corp,Review corporate financial statements,2,1,1
+CKVC,Foundation & Corp,Approve month-end journal entries,1,0.5,0.5
+RIM,Revenue/WIP,Review revenue recognition schedules,3,2,1
+RIM,Revenue/WIP,Validate WIP calculations,2,1,1
+BOM,VAT & Tax Reporting,Prepare VAT returns,2,1,1
+BOM,VAT & Tax Reporting,Review tax provisions,1,1,0.5
+JPAL,VAT & Tax Reporting,File BIR forms 1601-C/1601-EQ,1,0.5,0.5
+LAS,Working Capital,Review AR aging reports,2,1,1
+LAS,Working Capital,Monitor cash flow projections,1,0.5,0.5
+RMQB,Working Capital,Analyze inventory levels,1,0.5,0.5
+JAP,Compliance,Review regulatory compliance,1,0.5,0.5
+JRMO,Administrative,Prepare meeting minutes,0.5,0.5,0.5

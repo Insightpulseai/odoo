@@ -69,6 +69,22 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ---
 
+## SSOT (Single Source of Truth)
+
+**This repository is the canonical Odoo development root.**
+
+- ✅ **Canonical Odoo source:** All Odoo development happens in this repository
+- ❌ **No shadow roots:** `work/` is scratch-only and must NOT contain `odoo-ce*`, `odoo/`, or `odoo19/` directories
+- ✅ **CI enforcement:** [`repo-structure-guard.yml`](.github/workflows/repo-structure-guard.yml) prevents duplicate odoo roots
+- 📖 **Architecture map:** See [`docs/architecture/REPO_SSOT_MAP.md`](./docs/architecture/REPO_SSOT_MAP.md) for canonical locations
+
+**Repository Relationships:**
+- `../` — Parent workspace repository
+- `./` (this repo) — **Canonical Odoo SSOT**
+- `../work/` — Scratch repository (must NOT contain odoo roots)
+
+---
+
 ## Odoo Execution Patterns
 
 **⚠️ Important**: Use the correct execution pattern to avoid errors.
