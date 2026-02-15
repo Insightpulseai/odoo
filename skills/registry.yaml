@@ -1,9 +1,11 @@
 # =============================================================================
-# Agent Skills Registry
+# Agent Skills Registry — DEPRECATED
 # =============================================================================
-# Centralized registry of all available agent skills for SAP Joule-style
-# Copilot capabilities.
+# STATUS: deprecated (no runtime loader; python:// handlers are not executed)
+# KEPT FOR: reference only
+# IF REACTIVATED: bind these skills to an agent in agents/registry/agents.yaml
 #
+# Original purpose: SAP Joule-style Copilot capabilities
 # Skill Categories:
 # - superset: BI analytics and dashboard embedding
 # - odoo: ERP operations and configuration

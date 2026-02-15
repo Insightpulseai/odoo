@@ -1,0 +1,8 @@
+{
+  "agents_json_path": "agents/registry/agents.json",
+  "do_not_edit_agents_json_by_hand": true,
+  "format": "list",
+  "generated_from": "agents/registry/agents.yaml",
+  "generator": "scripts/agents/generate_agents_json.py",
+  "yaml_sha256": "a9dc7ab5ec84e2f58832acdcbaba90651dc57fffe40e480144e7f76f4dfaac52"
+}

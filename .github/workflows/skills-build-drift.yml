@@ -1,0 +1,31 @@
+name: skills-build-drift
+
+on:
+  pull_request:
+    paths:
+      - ".claude/skills/**"
+      - ".claude/superclaude/skills/**"
+      - "scripts/skills/build_skills.py"
+  push:
+    branches: [main]
+    paths:
+      - ".claude/skills/**"
+      - ".claude/superclaude/skills/**"
+      - "scripts/skills/build_skills.py"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyYAML
+        run: python -m pip install --upgrade pip pyyaml
+
+      - name: Check skills build is up to date
+        run: python scripts/skills/build_skills.py --check

@@ -1,6 +1,8 @@
 ---
-name: bir-compliance-automation
-description: Philippine BIR tax compliance automation for 36 eBIRForms types with multi-employee batch processing, deadline monitoring, and Odoo CE 18.0 integration
+name: ipai-bir-compliance-automation
+description: BIR compliance automation playbooks and output mapping for PH tax workflows (eBIRForms-ready artifacts). 36 form types, multi-employee batch processing, deadline monitoring, Odoo CE integration.
+version: "1.0.0"
+tags: [philippines, tax, bir, compliance, finance, odoo]
 license: AGPL-3.0
 allowed-tools: [Read, Write, Bash, Grep, Glob]
 ---
@@ -53,7 +55,7 @@ This skill is designed to work seamlessly with the Odoo MCP Server (`@tbwa/odoo-
 2. **Aggregate by ATC**: Automatically group withholding transactions by Alphanumeric Tax Code
 3. **Generate eBIRForms JSON**: Create compliant JSON structure for BIR portal upload
 4. **Store in Odoo**: Save generated form to `bir.tax_return` model with audit trail
-5. **Notify via Mattermost**: Alert Finance Director when forms ready for review
+5. **Notify via Slack**: Alert Finance Director when forms ready for review
 
 ### Example Usage with MCP
 ```typescript
@@ -223,8 +225,8 @@ return_id = odoo.create('bir.tax_return', {
       }
     },
     {
-      "name": "Mattermost Notify",
-      "type": "n8n-nodes-base.mattermost",
+      "name": "Slack Notify",
+      "type": "n8n-nodes-base.slack",
       "parameters": {
         "channel": "finance-alerts",
         "message": "⚠️ BIR Deadline Alert: {{ $json.form_type }} due {{ $json.filing_deadline }}"
@@ -386,7 +388,7 @@ Claude: I'll use the bir-compliance-automation skill to check upcoming BIR filin
 ### Integration Patterns
 - **Odoo MCP Server**: Primary integration for all BIR operations
 - **n8n Workflows**: Automated scheduling and notifications
-- **Mattermost**: Real-time alerts and approval workflows
+- **Slack**: Real-time alerts and approval workflows
 - **Supabase**: Optional analytics and audit log storage
 
 ## Related Skills

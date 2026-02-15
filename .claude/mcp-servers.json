@@ -11,7 +11,8 @@
         "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}",
         "SUPABASE_PROJECT_REF": "${SUPABASE_PROJECT_REF:-spdtwktxdalcfigzeqrz}"
       },
-      "description": "Supabase MCP - schema introspection, SQL execution, functions management"
+      "description": "Supabase MCP - schema introspection, SQL execution, functions management",
+      "status": "built"
     },
 
     "github": {
@@ -20,7 +21,8 @@
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       },
-      "description": "GitHub MCP - repos, issues, PRs, workflows"
+      "description": "GitHub MCP - repos, issues, PRs, workflows",
+      "status": "built"
     },
 
     "dbhub": {
@@ -30,7 +32,8 @@
         "POSTGRES_URL": "${POSTGRES_URL}",
         "ODOO_POSTGRES_URL": "${ODOO_POSTGRES_URL:-postgresql://odoo:odoo@localhost:5432/odoo_core}"
       },
-      "description": "DBHub MCP - direct PostgreSQL access for Odoo DB, Superset metadata"
+      "description": "DBHub MCP - direct PostgreSQL access for Odoo DB, Superset metadata",
+      "status": "built"
     },
 
     "figma": {
@@ -39,7 +42,8 @@
       "env": {
         "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
       },
-      "description": "Figma MCP - design context, tokens sync, component generation"
+      "description": "Figma MCP - design context, tokens sync, component generation",
+      "status": "built"
     },
 
     "notion": {
@@ -48,7 +52,8 @@
       "env": {
         "NOTION_API_KEY": "${NOTION_API_KEY}"
       },
-      "description": "Notion MCP - workspace docs, PRDs, roadmaps"
+      "description": "Notion MCP - workspace docs, PRDs, roadmaps",
+      "status": "built"
     },
 
     "firecrawl": {
@@ -57,7 +62,8 @@
       "env": {
         "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
       },
-      "description": "Firecrawl MCP - web scraping, ETL agent data extraction"
+      "description": "Firecrawl MCP - web scraping, ETL agent data extraction",
+      "status": "built"
     },
 
     "huggingface": {
@@ -66,20 +72,23 @@
       "env": {
         "HF_TOKEN": "${HF_TOKEN}"
       },
-      "description": "Hugging Face MCP - models, datasets, Spaces"
+      "description": "Hugging Face MCP - models, datasets, Spaces",
+      "status": "built"
     },
 
     "microsoft-learn": {
       "type": "http",
       "url": "https://learn.microsoft.com/api/mcp",
       "tools": ["*"],
-      "description": "Microsoft Learn MCP (official hosted endpoint) - Azure, .NET, VS, DevOps docs with code samples"
+      "description": "Microsoft Learn MCP (official hosted endpoint) - Azure, .NET, VS, DevOps docs with code samples",
+      "status": "built"
     },
 
     "playwright": {
       "command": "npx",
       "args": ["-y", "@anthropic/playwright-mcp-server"],
-      "description": "Playwright MCP - browser automation, UI testing"
+      "description": "Playwright MCP - browser automation, UI testing",
+      "status": "built"
     },
 
     "zapier": {
@@ -88,7 +97,8 @@
       "env": {
         "ZAPIER_NLA_KEY": "${ZAPIER_NLA_KEY}"
       },
-      "description": "Zapier MCP - 8,000+ app integrations"
+      "description": "Zapier MCP - 8,000+ app integrations",
+      "status": "built"
     },
 
     "odoo-erp": {
@@ -100,7 +110,8 @@
         "ODOO_USERNAME": "${ODOO_USERNAME}",
         "ODOO_PASSWORD": "${ODOO_PASSWORD}"
       },
-      "description": "Custom Odoo ERP MCP - accounting, BIR compliance, HR"
+      "description": "Custom Odoo ERP MCP - accounting, BIR compliance, HR",
+      "status": "source_only"
     },
 
     "digitalocean": {
@@ -109,7 +120,8 @@
       "env": {
         "DIGITALOCEAN_TOKEN": "${DIGITALOCEAN_TOKEN}"
       },
-      "description": "Custom DigitalOcean MCP - droplets, apps, deployments"
+      "description": "Custom DigitalOcean MCP - droplets, apps, deployments",
+      "status": "source_only"
     },
 
     "superset": {
@@ -120,7 +132,8 @@
         "SUPERSET_USERNAME": "${SUPERSET_USERNAME}",
         "SUPERSET_PASSWORD": "${SUPERSET_PASSWORD}"
       },
-      "description": "Custom Superset MCP - dashboards, datasets, charts"
+      "description": "Custom Superset MCP - dashboards, datasets, charts",
+      "status": "source_only"
     },
 
     "vercel": {
@@ -129,7 +142,8 @@
       "env": {
         "VERCEL_TOKEN": "${VERCEL_TOKEN}"
       },
-      "description": "Custom Vercel MCP - projects, deployments, logs"
+      "description": "Custom Vercel MCP - projects, deployments, logs",
+      "status": "source_only"
     },
 
     "pulser": {
@@ -138,13 +152,15 @@
       "env": {
         "PULSER_API_URL": "${PULSER_API_URL:-http://localhost:3000}"
       },
-      "description": "Custom Pulser MCP - agent orchestration, run management"
+      "description": "Custom Pulser MCP - agent orchestration, run management",
+      "status": "source_only"
     },
 
     "speckit": {
       "command": "node",
       "args": ["mcp/servers/speckit-mcp-server/dist/index.js"],
-      "description": "Custom SpecKit MCP - spec bundle enforcement, validation"
+      "description": "Custom SpecKit MCP - spec bundle enforcement, validation",
+      "status": "source_only"
     },
 
     "memory": {
@@ -154,7 +170,8 @@
         "SUPABASE_URL": "${SUPABASE_URL}",
         "SUPABASE_SERVICE_KEY": "${SUPABASE_SERVICE_KEY}"
       },
-      "description": "Verified memory system - repository-scoped, cross-agent learning with citation verification"
+      "description": "Verified memory system - repository-scoped, cross-agent learning with citation verification",
+      "status": "source_only"
     },
 
     "agent-coordination": {
@@ -164,7 +181,8 @@
         "SUPABASE_URL": "${SUPABASE_URL}",
         "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}"
       },
-      "description": "A2A coordination - agent registry, discovery, inter-agent invocation following Microsoft's MCP pattern"
+      "description": "A2A coordination - agent registry, discovery, inter-agent invocation following Microsoft's MCP pattern",
+      "status": "source_only"
     }
   },
 
@@ -185,7 +203,7 @@
       "xkxyvboeubffxxbebsll",
       "ublqmilcjtpnflofprkr"
     ],
-    "custom_servers": "digitalocean, superset, vercel, pulser, speckit, memory require build before use",
+    "custom_servers": "Servers with status=source_only require 'npm run build' before use",
     "memory_docs": "See docs/VERIFIED_MEMORY.md for memory system usage"
   }
 }
