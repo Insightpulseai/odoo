@@ -111,8 +111,8 @@ services:
       - odoo-web-data:/var/lib/odoo
       # Custom addons — IPAI modules (read-only mount)
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
-      # OCA modules (read-only mount)
-      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # OCA modules (writable mount for git-aggregator)
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
       - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     ports:
@@ -178,7 +178,7 @@ services:
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
-      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
       - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
@@ -206,7 +206,7 @@ services:
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./addons/ipai:/mnt/extra-addons/ipai:ro
-      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
       - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
