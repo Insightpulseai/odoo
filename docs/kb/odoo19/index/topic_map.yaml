@@ -1,0 +1,34 @@
+version: 1
+topics:
+  - id: odoo19.dev.orm
+    label: ORM (Models, Fields, Environment)
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.dev.security
+    label: Backend Security (ACL, Record Rules)
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.dev.testing
+    label: Testing (TransactionCase, Tours)
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.dev.qweb
+    label: QWeb Templates
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.dev.views_actions
+    label: Views + Actions (Form/List/Kanban/Search, Server Actions, Automated Actions)
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.dev.js_owl
+    label: Javascript / OWL (Assets, Registry, Components)
+    include_paths:
+      - "content/developer/**"
+  - id: odoo19.admin.odoo_sh
+    label: Odoo.sh Administration
+    include_paths:
+      - "content/administration/**"
+  - id: odoo19.apps.services
+    label: Services Apps (Project/Timesheets/Field Service/Helpdesk/Planning/Appointments)
+    include_paths:
+      - "content/applications/services/**"

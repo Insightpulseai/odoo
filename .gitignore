@@ -235,3 +235,6 @@ infra/cloudflare/**/terraform.tfvars
 # Large evidence files (>100MB)
 docs/evidence/**/*.txt
 docs/evidence/**/*.log
+
+# Archived compose files (rely on git history for restoration)
+archive/compose/

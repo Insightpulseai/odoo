@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "skills": [
+    {
+      "dependencies": [
+        {
+          "required": true,
+          "topic_has_files": true,
+          "topic_id": "odoo19.admin.odoo_sh",
+          "topic_present": true
+        }
+      ],
+      "kb_sources_path": "agents/skills/deploy-odoo-modules-git/KB_SOURCES.yaml",
+      "ok": true,
+      "skill_id": "deploy-odoo-modules-git"
+    }
+  ]
+}
