@@ -12,7 +12,7 @@ Employee Reference:
     CKVC - Khalil Veracruz  (Finance Director / Approver)
     RIM  - Rey Meran         (Senior Finance Manager / Reviewer)
     BOM  - Beng Manalo       (Finance Manager)
-    JPAL - Jinky Paladin     (Finance Supervisor)
+    JPAL - Jinky Paladin     (Finance Analyst)
     LAS  - Amor Lasaga       (Finance Analyst)
     JLI  - Jerald Loterte    (Finance Analyst)
     RMQB - Sally Brillantes  (Finance Analyst)
@@ -58,7 +58,7 @@ EMPLOYEES = {
     "CKVC": {"name": "Khalil Veracruz", "email": "khalil.veracruz@omc.com", "role": "Finance Director"},
     "RIM":  {"name": "Rey Meran", "email": "rey.meran@omc.com", "role": "Senior Finance Manager"},
     "BOM":  {"name": "Beng Manalo", "email": "beng.manalo@omc.com", "role": "Finance Manager"},
-    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Supervisor"},
+    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Analyst"},
     "LAS":  {"name": "Amor Lasaga", "email": "amor.lasaga@omc.com", "role": "Finance Analyst"},
     "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst"},
     "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst"},
