@@ -99,6 +99,7 @@ temp/
 *.orig
 # Database
 *.sql
+!db/**/*.sql
 !infra/platform-kit/**/*.sql
 !supabase/migrations/*.sql
 !supabase/seed.sql
