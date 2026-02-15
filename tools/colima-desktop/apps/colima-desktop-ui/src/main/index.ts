@@ -5,6 +5,26 @@ import { setupIPCHandlers, cleanupIPCHandlers } from './ipc-handlers';
 
 let mainWindow: BrowserWindow | null = null;
 
+/**
+ * Get the renderer entry point based on environment.
+ * In development: Vite dev server URL
+ * In production: Path to packaged renderer HTML
+ */
+function getRendererEntry(): { kind: 'url' | 'file'; value: string } {
+  // Dev mode: use Vite dev server
+  if (process.env.NODE_ENV === 'development') {
+    return { kind: 'url', value: 'http://localhost:5173' };
+  }
+
+  // Production mode: resolve renderer path from app root
+  // app.getAppPath() returns the app root (where app.asar or Resources is)
+  // dist-main and dist-renderer are siblings at the app root level
+  const appPath = app.getAppPath();
+  const rendererPath = path.join(appPath, 'dist-renderer', 'index.html');
+
+  return { kind: 'file', value: rendererPath };
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
@@ -19,10 +39,11 @@ function createWindow() {
   });
 
   // Load renderer
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173');
+  const entry = getRendererEntry();
+  if (entry.kind === 'url') {
+    mainWindow.loadURL(entry.value);
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist-renderer/index.html'));
+    mainWindow.loadFile(entry.value);
   }
 
   // Show when ready
