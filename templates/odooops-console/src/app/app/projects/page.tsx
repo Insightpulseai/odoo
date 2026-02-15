@@ -34,7 +34,7 @@ function getStatusBadge(lastBuildStatus: string | null) {
 export default async function ProjectsPage() {
   const supabase = createSupabaseServerClient();
 
-  const { data: projects, error } = await supabase.rpc("ops.list_projects");
+  const { data: projects, error } = await supabase.rpc("list_projects");
 
   if (error) {
     return (

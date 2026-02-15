@@ -1,0 +1,21 @@
+appId: com.insightpulseai.colima-desktop
+productName: Colima Desktop
+directories:
+  output: dist
+  buildResources: resources
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: resources/icon.icns
+files:
+  - dist-renderer/**/*
+  - dist-main/**/*
+  - package.json
+  - node_modules/**/*
+dmg:
+  title: ${productName} ${version}
+  icon: resources/icon.icns
