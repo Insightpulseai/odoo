@@ -8,13 +8,8 @@
         "content/developer/**"
       ],
       "label": "ORM (Models, Fields, Environment)",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.dev.security",
@@ -22,13 +17,8 @@
         "content/developer/**"
       ],
       "label": "Backend Security (ACL, Record Rules)",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.dev.testing",
@@ -36,13 +26,8 @@
         "content/developer/**"
       ],
       "label": "Testing (TransactionCase, Tours)",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.dev.qweb",
@@ -50,13 +35,8 @@
         "content/developer/**"
       ],
       "label": "QWeb Templates",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.dev.views_actions",
@@ -64,13 +44,8 @@
         "content/developer/**"
       ],
       "label": "Views + Actions (Form/List/Kanban/Search, Server Actions, Automated Actions)",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.dev.js_owl",
@@ -78,13 +53,8 @@
         "content/developer/**"
       ],
       "label": "Javascript / OWL (Assets, Registry, Components)",
-      "matched_count": 4,
-      "matched_files": [
-        "content/developer/glossary.rst",
-        "content/developer/howtos.rst",
-        "content/developer/reference.rst",
-        "content/developer/tutorials.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.admin.odoo_sh",
@@ -92,18 +62,8 @@
         "content/administration/**"
       ],
       "label": "Odoo.sh Administration",
-      "matched_count": 9,
-      "matched_files": [
-        "content/administration/hosting.rst",
-        "content/administration/mobile.rst",
-        "content/administration/neutralized_database.rst",
-        "content/administration/odoo_accounts.rst",
-        "content/administration/odoo_online.rst",
-        "content/administration/odoo_sh.rst",
-        "content/administration/on_premise.rst",
-        "content/administration/standard_extended_support.rst",
-        "content/administration/upgrade.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     },
     {
       "id": "odoo19.apps.services",
@@ -111,14 +71,8 @@
         "content/applications/services/**"
       ],
       "label": "Services Apps (Project/Timesheets/Field Service/Helpdesk/Planning/Appointments)",
-      "matched_count": 5,
-      "matched_files": [
-        "content/applications/services/field_service.rst",
-        "content/applications/services/helpdesk.rst",
-        "content/applications/services/planning.rst",
-        "content/applications/services/project.rst",
-        "content/applications/services/timesheets.rst"
-      ]
+      "matched_count": 0,
+      "matched_files": []
     }
   ]
 }

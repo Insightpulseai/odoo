@@ -5,13 +5,13 @@
       "dependencies": [
         {
           "required": true,
-          "topic_has_files": true,
+          "topic_has_files": false,
           "topic_id": "odoo19.admin.odoo_sh",
           "topic_present": true
         }
       ],
       "kb_sources_path": "agents/skills/deploy-odoo-modules-git/KB_SOURCES.yaml",
-      "ok": true,
+      "ok": false,
       "skill_id": "deploy-odoo-modules-git"
     }
   ]

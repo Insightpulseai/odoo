@@ -35,19 +35,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check Index Existence
-        run: |
-          REQUIRED_FILES="manifest.json sections.json topics.json skills_coverage.json nav.json index.json"
-          MISSING=0
-          for f in $REQUIRED_FILES; do
-            if [ ! -s "docs/kb/odoo19/index/$f" ]; then
-              echo "::error::Missing or empty index artifact: docs/kb/odoo19/index/$f"
-              MISSING=1
-            else
-              echo "✅ Found $f"
-            fi
-          done
-          exit $MISSING
+      - name: Verify Index Integrity
+        run: python3 scripts/kb/verify_kb_index.py --kb-root docs/kb/odoo19
 
   resolver-tests:
     name: Docs Resolver Tests

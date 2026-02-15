@@ -24,7 +24,7 @@
 1. **Container Network Health**:
    - Odoo HTTP responds on container network: `docker exec odoo-core curl -f http://localhost:8069/web/health` → 200 OK
    - DB reachable from Odoo: `docker exec odoo-core pg_isready -h db -p 5432 -U odoo` → "accepting connections"
-   - Redis reachable from Odoo: `docker exec odoo-core redis-cli -h redis ping` → "PONG"
+   - Redis reachable from Odoo: `docker exec odoo-core python3 -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('redis', 6379)); s.close()"` → success
 
 2. **Container Status**:
    - All 3 containers running: `docker ps --filter name=odoo` shows 3 containers
@@ -51,7 +51,7 @@ Manual verification:
 # Container network checks
 docker exec odoo-core curl -f http://localhost:8069/web/health
 docker exec odoo-core pg_isready -h db -p 5432 -U odoo
-docker exec odoo-core redis-cli -h redis ping
+docker exec odoo-core python3 -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('redis', 6379)); s.close()" && echo "Redis: PASS"
 
 # Container status
 docker ps --filter name=odoo

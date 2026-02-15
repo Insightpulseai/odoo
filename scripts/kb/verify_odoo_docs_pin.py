@@ -49,10 +49,20 @@ def main() -> None:
         raise SystemExit(f"Missing upstream snapshot dir: {upstream}")
 
     pin = _read_json(pin_path)
-    pinned = (pin.get("pinned_commit") or "").strip()
-    if not pinned or pinned == "REPLACE_WITH_SHA":
+
+    # 1. Schema Validation
+    required_keys = ["upstream", "branch", "pinned_commit"]
+    missing = [k for k in required_keys if not pin.get(k)]
+    if missing:
+        raise SystemExit(f"UPSTREAM_PIN.json missing required keys: {missing}")
+
+    pinned = pin["pinned_commit"].strip()
+    if pinned == "REPLACE_WITH_SHA":
         raise SystemExit("UPSTREAM_PIN.json pinned_commit is not set (placeholder).")
 
+    print(f"Verifying pin: {pin['upstream']} @ {pin['branch']} ({pinned})")
+
+    # 2. Content/Commit Verification
     # Mode 1: git checkout
     if (upstream / ".git").exists():
         head = _run_git(["rev-parse", "HEAD"], upstream)
@@ -60,6 +70,18 @@ def main() -> None:
             raise SystemExit(
                 f"UPSTREAM_PIN mismatch: upstream HEAD={head} != pinned_commit={pinned}"
             )
+
+        # Verify remote URL matches if possible (optional, but good for anti-drift)
+        try:
+            remote = _run_git(["remote", "get-url", "origin"], upstream)
+            # Normalize to avoid https://github.com/odoo/documentation vs .git differences
+            if pin["upstream"].rstrip(".git") not in remote:
+                print(
+                    f"WARNING: upstream remote {remote} does not match pinned upstream {pin['upstream']}"
+                )
+        except Exception:
+            pass
+
         print(f"OK: upstream git HEAD matches pinned_commit {pinned}")
         return
 

@@ -78,7 +78,8 @@ fi
 
 # Check 3: Redis reachable from Odoo container
 log_info "Checking Redis from Odoo container..."
-if docker exec odoo-core redis-cli -h redis ping 2>&1 | grep -q "PONG"; then
+# Use Python to test Redis connection (redis-cli may not be available in Odoo container)
+if docker exec odoo-core python3 -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('redis', 6379)); s.close()" 2>/dev/null; then
   log_pass "Redis reachable from Odoo container (redis:6379)"
 else
   log_fail "Redis unreachable from Odoo container (redis:6379)"
@@ -147,19 +148,25 @@ echo "====================="
 
 # Check 8: Host HTTP response (tolerant of "Empty reply" quirk)
 log_info "Checking host HTTP response (curl from macOS host)..."
-HTTP_RESPONSE=$(curl -sf -m 5 http://localhost:8069/web/health 2>&1 || true)
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 5 http://localhost:8069/web/health 2>&1 || echo "ERROR")
 
-if echo "${HTTP_RESPONSE}" | grep -q "200"; then
-  log_pass "Host HTTP responds correctly (http://localhost:8069/web/health)"
-elif echo "${HTTP_RESPONSE}" | grep -qi "empty reply"; then
-  # If container-network health passed, this is acceptable
-  if [[ "${CRITICAL_FAILURES}" -eq 0 ]]; then
-    log_warn "Host curl shows 'Empty reply' (SSH tunnel quirk, non-blocking if container health passes)"
+if [[ "${HTTP_STATUS}" == "200" ]]; then
+  log_pass "Host HTTP responds correctly (http://localhost:8069/web/health → HTTP ${HTTP_STATUS})"
+elif [[ "${HTTP_STATUS}" == "ERROR" ]]; then
+  # Check if it's the "Empty reply" quirk
+  HTTP_ERROR=$(curl -sf -m 5 http://localhost:8069/web/health 2>&1 || true)
+  if echo "${HTTP_ERROR}" | grep -qi "empty reply"; then
+    # If container-network health passed, this is acceptable
+    if [[ "${CRITICAL_FAILURES}" -eq 0 ]]; then
+      log_warn "Host curl shows 'Empty reply' (SSH tunnel quirk, non-blocking if container health passes)"
+    else
+      log_fail "Host curl shows 'Empty reply' AND container health failed"
+    fi
   else
-    log_fail "Host curl shows 'Empty reply' AND container health failed"
+    log_warn "Host HTTP curl failed: ${HTTP_ERROR:-Connection failed}"
   fi
 else
-  log_warn "Host HTTP curl failed: ${HTTP_RESPONSE:-No response}"
+  log_warn "Host HTTP returned unexpected status: ${HTTP_STATUS}"
 fi
 
 # ============================================================================

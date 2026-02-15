@@ -381,6 +381,68 @@ def build_skills_coverage(
     # we might need to be careful.
     # Actually, the manifest is mostly for integrity.
 
+    # Build Info (Provenance)
+    import datetime
+
+    build_info = {
+        "generated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
+        "upstream_pin": pin,
+        "layers": {
+            "upstream": str(_rel(upstream_dir, repo_root)),
+            "stack": str(_rel(stack_dir, repo_root)),
+            "override": str(_rel(overrides_dir, repo_root)),
+        },
+        "indexer_version": "2.0.0",
+    }
+
+    # Let's build a "Global Manifest" listing inputs from all layers
+    full_manifest_entries = []
+    for layer, root in [
+        ("upstream", upstream_dir),
+        ("stack", stack_dir),
+        ("override", overrides_dir),
+    ]:
+        if not root.exists():
+            continue
+        # List all files present, whether resolved or not (for audit)
+        layer_files = _iter_upstream_files(root)
+        for p in layer_files:
+            b = p.read_bytes()
+            st = p.stat()
+            # Calculate canonical_id (same logic as loader.ts)
+            rel = p.relative_to(root)
+            slug = rel.with_suffix("").as_posix()
+            if layer == "upstream" and slug.startswith("content/"):
+                slug = slug[len("content/") :]
+            canonical_id = f"kb://odoo19/{slug}"
+
+            full_manifest_entries.append(
+                {
+                    "path": _rel(p, root),  # Relative to its own root
+                    "layer": layer,
+                    "sha256": _sha256_bytes(b),
+                    "bytes": st.st_size,
+                    "mtime": int(st.st_mtime),
+                    "is_active": p in resolved_files,
+                    "canonical_id": canonical_id,
+                }
+            )
+
+    manifest = {
+        "schema_version": "2.1.0",
+        "entries": full_manifest_entries,
+        "build_info": build_info,
+    }
+
+    # Re-implement build_sections to handle mixed paths (absolute)
+    # The original `build_sections` took `upstream` root to calculate rel path.
+    # Now we have mixed roots. We need a new manifest structure or adapt.
+    # User asked for "single index".
+    # Let's adjust build_manifest to support mixed sources.
+    # But for backward compatibility with existing viewing tools (if any),
+    # we might need to be careful.
+    # Actually, the manifest is mostly for integrity.
+
     # Let's build a "Global Manifest" listing inputs from all layers
     full_manifest_entries = []
     for layer, root in [
@@ -410,19 +472,12 @@ def build_skills_coverage(
 
     # Re-implement build_sections to handle mixed paths (absolute)
     # The original `build_sections` took `upstream` root to calculate rel path.
-    # Now we use the Slug (derived) or the Path as key?
-    # `sections.json` uses `relp` as key.
-    # We should use the SLUG as key for the frontend?
-    # Or keep file path?
-    # If we use file path, the frontend needs to map slug -> file path -> sections.
-    # The current `loader.ts` loads file content. It doesn't use `sections.json`.
-    # `sections.json` is for Search/Nav.
-    # So `sections.json` should key by `slug` (the URL path), OR the search index should use it.
-    # The previous `build_search_index` iterated `files_sections`.
-    # Let's verify `build_sections` output format.
-    # It returns `{"files": { "rel/path.md": [...] }}`.
-    # And `build_search_index` generated href as `/docs/{file_slug}`.
-    # So if we change `rel/path.md` to be the "Active File Identifier", it should work.
+    # Now we have mixed roots. We need a new manifest structure or adapt.
+    # User asked for "single index".
+    # Let's adjust build_manifest to support mixed sources.
+    # But for backward compatibility with existing viewing tools (if any),
+    # we might need to be careful.
+    # Actually, the manifest is mostly for integrity.
 
     # We will compute sections for RESOLVED files only.
     files_sections: Dict[str, Any] = {}
@@ -622,9 +677,10 @@ def main() -> None:
     if not pin_path.exists():
         raise SystemExit(f"Missing {pin_path}")
     if not topic_map_path.exists():
-        raise SystemExit(f"Missing {topic_map_path}")
+        raise SystemExit(f"Missing topic map: {topic_map_path}")
 
-    _validate_pin(_read_json(pin_path))
+    pin = _read_json(pin_path)
+    _validate_pin(pin)
 
     # 1. Collect
     slug_map = {}
@@ -662,6 +718,19 @@ def main() -> None:
     resolved_files.sort()
 
     # 3. Manifest (Full)
+    import datetime
+
+    build_info = {
+        "generated_at_utc": datetime.datetime.utcnow().isoformat() + "Z",
+        "upstream_pin": pin,
+        "layers": {
+            "upstream": str(_rel(upstream_dir, repo_root)),
+            "stack": str(_rel(stack_dir, repo_root)),
+            "override": str(_rel(overrides_dir, repo_root)),
+        },
+        "indexer_version": "2.0.0",
+    }
+
     entries = []
     for layer, root in [
         ("upstream", upstream_dir),
@@ -671,16 +740,26 @@ def main() -> None:
         if not root.exists():
             continue
         for p in _iter_upstream_files(root):
+            b = p.read_bytes()
+            st = p.stat()
+            # Calculate canonical_id (same logic as loader.ts)
+            rel = p.relative_to(root)
+            slug = rel.with_suffix("").as_posix()
+            if layer == "upstream" and slug.startswith("content/"):
+                slug = slug[len("content/") :]
+            canonical_id = f"kb://odoo19/{slug}"
+
             entries.append(
                 {
                     "path": _rel(p, root),
                     "layer": layer,
-                    "sha256": _sha256_bytes(p.read_bytes()),
-                    "bytes": p.stat().st_size,
+                    "sha256": _sha256_bytes(b),
+                    "bytes": st.st_size,
                     "is_active": p in resolved_files,
+                    "canonical_id": canonical_id,
                 }
             )
-    manifest = {"schema_version": "2.0.0", "entries": entries}
+    manifest = {"schema_version": "2.1.0", "entries": entries, "build_info": build_info}
 
     # 4. Sections (Active only)
     files_sections = {}
@@ -714,6 +793,20 @@ def main() -> None:
     # 6. Nav & Search
     nav = build_nav(topics, sections)
     search_index = build_search_index(sections)
+
+    # Inject canonical_id into search index
+    # validation: vpath -> canonical_id
+    for item in search_index:
+        vpath = item.get("path")
+        if vpath:
+            # reverse engineer logic: vpath = layer:rel
+            if ":" in vpath:
+                l, r = vpath.split(":", 1)
+                # replicate slug logic
+                s = str(Path(r).with_suffix(""))
+                if l == "upstream" and s.startswith("content/"):
+                    s = s[len("content/") :]
+                item["canonical_id"] = f"kb://odoo19/{s}"
 
     # Coverage
     skills_coverage = build_skills_coverage(repo_root, kb_root, topics)
