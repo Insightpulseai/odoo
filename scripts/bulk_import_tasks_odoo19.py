@@ -3,8 +3,8 @@
 """
 Bulk Import Finance PPM Tasks for Odoo 19 CE (XML-RPC)
 ======================================================
-Imports 36 month-end closing tasks + 35 BIR tax filing tasks = 71 base tasks.
-Creates recurring monthly instances (36 tasks x 12 months = 432 closing task-months)
+Imports 39 month-end closing tasks + 50 BIR tax filing tasks = 89 base tasks.
+Creates recurring monthly instances (39 tasks x 12 months = 468 closing task-months)
 but seeds only the base templates by default.
 
 Employee Reference:
@@ -16,8 +16,7 @@ Employee Reference:
     JLI  - Jerald Loterte    (Finance Analyst)
     RMQB - Sally Brillantes  (Finance Analyst)
     JAP  - Jasmin Ignacio    (Finance Analyst)
-    JRMO - Joana Maravillas  (Finance Analyst)
-    JOL  - Jhoee Oliva       (Finance Analyst)
+    JRMO - Jhoee Oliva       (Finance Analyst)
 
 Usage:
     python3 scripts/bulk_import_tasks_odoo19.py <admin_password>
@@ -62,8 +61,7 @@ EMPLOYEES = {
     "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst"},
     "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst"},
     "JAP":  {"name": "Jasmin Ignacio", "email": "jasmin.ignacio@omc.com", "role": "Finance Analyst"},
-    "JRMO": {"name": "Joana Maravillas", "email": "joana.maravillas@omc.com", "role": "Finance Analyst"},
-    "JOL":  {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst"},
+    "JRMO": {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst"},
 }
 
 # Company reference
@@ -301,19 +299,37 @@ CLOSING_TASKS = [
         "reviewer": "JPAL", "approver": "CKVC",
         "assignee": "JAP", "prep_days": 1, "review_days": 0.5, "approval_days": 0.5,
     },
-    # JOL task
+    # JRMO tasks
     {
-        "code": "JOL", "seq": 350, "category": "Accruals",
+        "code": "JRMO", "seq": 350, "category": "Accruals",
         "name": "Compile documents for the attachment of the revenue accruals",
         "reviewer": "JPAL", "approver": "CKVC",
-        "assignee": "JOL", "prep_days": 1, "review_days": 0.5, "approval_days": 0.5,
+        "assignee": "JRMO", "prep_days": 1, "review_days": 0.5, "approval_days": 0.5,
     },
-    # JRMO task
     {
         "code": "JRMO", "seq": 360, "category": "WIP",
         "name": "Prepare WIP schedule summary per Job#",
         "reviewer": "JPAL", "approver": "CKVC",
         "assignee": "JRMO", "prep_days": 1, "review_days": 0.5, "approval_days": 0.5,
+    },
+    # Phase V: Sign-off
+    {
+        "code": "RIM", "seq": 370, "category": "Sign-off",
+        "name": "Final Trial Balance Review (SFM)",
+        "reviewer": "—", "approver": "—",
+        "assignee": "RIM", "prep_days": 1, "review_days": 0, "approval_days": 0,
+    },
+    {
+        "code": "CKVC", "seq": 380, "category": "Sign-off",
+        "name": "Final Trial Balance Sign-off (FD)",
+        "reviewer": "—", "approver": "—",
+        "assignee": "CKVC", "prep_days": 1, "review_days": 0, "approval_days": 0,
+    },
+    {
+        "code": "BOM", "seq": 390, "category": "Sign-off",
+        "name": "Regional Submission",
+        "reviewer": "RIM", "approver": "CKVC",
+        "assignee": "BOM", "prep_days": 1, "review_days": 0.5, "approval_days": 0.5,
     },
 ]
 
@@ -342,7 +358,7 @@ QUARTERS_2026 = [
 
 
 def build_bir_tasks():
-    """Generate 35 BIR tax filing tasks for 2026."""
+    """Generate 50 BIR tax filing tasks for 2026."""
     tasks = []
     seq = 1000
 
@@ -366,12 +382,31 @@ def build_bir_tasks():
         })
         seq += 10
 
-        # Monthly 0619-E (12 filings)
+        # Monthly 0619-E (12 filings) — same deadline as 1601-C (10th of following month)
         tasks.append({
-            "name": f"0619-E (VAT Declaration) - {month_name} 2026",
+            "name": f"0619-E (Expanded Withholding Tax) - {month_name} 2026",
             "category": "BIR 0619-E",
             "description": (
-                f"BIR Form: 0619-E (Monthly VAT Declaration)\n"
+                f"BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)\n"
+                f"Period: {month_name} 2026\n"
+                f"Deadline: {deadline_1601c}\n"
+                f"Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+            ),
+            "deadline": deadline_1601c,
+            "assignee": "BOM",
+            "reviewer": "RIM",
+            "approver": "CKVC",
+            "planned_hours": 8,
+            "seq": seq,
+        })
+        seq += 10
+
+        # Monthly 2550M (12 filings) — 20th of following month
+        tasks.append({
+            "name": f"2550M (Monthly VAT) - {month_name} 2026",
+            "category": "BIR 2550M",
+            "description": (
+                f"BIR Form: 2550M (Monthly Value-Added Tax Declaration)\n"
                 f"Period: {month_name} 2026\n"
                 f"Deadline: {deadline_0619e}\n"
                 f"Preparer: BOM | Reviewer: RIM | Approver: CKVC"
@@ -424,10 +459,12 @@ def build_bir_tasks():
         })
         seq += 10
 
-    # Quarterly 1702Q (Quarterly Income Tax) - Q2 and Q3 2026
+    # Quarterly 1702Q (Quarterly Income Tax) - Q1, Q2, Q3 2026
+    # (Q4 covered by annual 1702-RT/EX; filed within 60 days of quarter end)
     quarterly_1702q = [
-        ("Q2", "Apr-Jun", "2026-05-30"),
-        ("Q3", "Jul-Sep", "2026-08-29"),
+        ("Q1", "Jan-Mar", "2026-05-30"),
+        ("Q2", "Apr-Jun", "2026-08-29"),
+        ("Q3", "Jul-Sep", "2026-11-29"),
     ]
     for qtr, months, deadline_1702q in quarterly_1702q:
         tasks.append({
@@ -467,6 +504,44 @@ def build_bir_tasks():
         "reviewer": "RIM",
         "approver": "CKVC",
         "planned_hours": 24,
+        "seq": seq,
+    })
+    seq += 10
+
+    # Annual 1604-CF (1 filing) — Annual Information Return (Compensation)
+    tasks.append({
+        "name": "1604-CF (Annual Info Return - Compensation) - CY 2025",
+        "category": "BIR 1604-CF",
+        "description": (
+            "BIR Form: 1604-CF (Annual Information Return of Income Taxes Withheld on Compensation)\n"
+            "Period: Calendar Year 2025\n"
+            "Deadline: 2026-01-31\n"
+            "Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+        ),
+        "deadline": "2026-01-31",
+        "assignee": "BOM",
+        "reviewer": "RIM",
+        "approver": "CKVC",
+        "planned_hours": 16,
+        "seq": seq,
+    })
+    seq += 10
+
+    # Annual 1604-E (1 filing) — Annual Information Return (Expanded)
+    tasks.append({
+        "name": "1604-E (Annual Info Return - Expanded) - CY 2025",
+        "category": "BIR 1604-E",
+        "description": (
+            "BIR Form: 1604-E (Annual Information Return of Creditable Income Taxes Withheld - Expanded)\n"
+            "Period: Calendar Year 2025\n"
+            "Deadline: 2026-03-01\n"
+            "Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+        ),
+        "deadline": "2026-03-01",
+        "assignee": "BOM",
+        "reviewer": "RIM",
+        "approver": "CKVC",
+        "planned_hours": 16,
         "seq": seq,
     })
 
@@ -545,7 +620,7 @@ for code, emp in EMPLOYEES.items():
 # Import closing tasks
 # ---------------------------------------------------------------------------
 print()
-print("Importing 36 Month-End Closing Tasks...")
+print("Importing 39 Month-End Closing Tasks...")
 created = 0
 skipped = 0
 failed = 0

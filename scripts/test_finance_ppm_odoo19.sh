@@ -142,10 +142,10 @@ else:
 # Test 5: Task Count
 print("[Test 5/10] Task Count")
 task_count = kw("project.task", "search_count", [[("project_id", "=", pid)]])
-if task_count >= 71:
-    p(f"{task_count} tasks imported (base: 36 closing + 35 BIR = 71)")
+if task_count >= 89:
+    p(f"{task_count} tasks imported (base: 39 closing + 50 BIR = 89)")
 elif task_count > 0:
-    print(f"  [WARN] {task_count} tasks (expected >= 71 base tasks)")
+    print(f"  [WARN] {task_count} tasks (expected >= 89 base tasks)")
     passed += 1
 else:
     f("No tasks found in project")
@@ -154,23 +154,24 @@ else:
 print("[Test 6/10] Closing Tasks")
 closing_count = kw("project.task", "search_count",
     [[("project_id", "=", pid), ("name", "not like", "1601"), ("name", "not like", "0619"),
-      ("name", "not like", "2550"), ("name", "not like", "1702")]])
-if closing_count >= 36:
+      ("name", "not like", "2550"), ("name", "not like", "1702"), ("name", "not like", "1604")]])
+if closing_count >= 39:
     p(f"{closing_count} month-end closing tasks")
 else:
-    f(f"Only {closing_count} closing tasks (expected >= 36)")
+    f(f"Only {closing_count} closing tasks (expected >= 39)")
 
 # Test 7: BIR Tax Filing Tasks
 print("[Test 7/10] BIR Tax Filing Tasks")
 bir_count = kw("project.task", "search_count",
-    [[("project_id", "=", pid), "|", "|", "|", "|",
+    [[("project_id", "=", pid), "|", "|", "|", "|", "|", "|", "|",
       ("name", "like", "1601-C"), ("name", "like", "0619-E"),
-      ("name", "like", "2550Q"), ("name", "like", "1601-EQ"),
-      ("name", "like", "1702")]])
-if bir_count >= 35:
+      ("name", "like", "2550M"), ("name", "like", "2550Q"),
+      ("name", "like", "1601-EQ"), ("name", "like", "1702"),
+      ("name", "like", "1604-CF"), ("name", "like", "1604-E")]])
+if bir_count >= 50:
     p(f"{bir_count} BIR tax filing tasks")
 elif bir_count > 0:
-    print(f"  [WARN] {bir_count} BIR tasks (expected >= 35)")
+    print(f"  [WARN] {bir_count} BIR tasks (expected >= 50)")
     passed += 1
 else:
     f("No BIR tax filing tasks found")
