@@ -37,8 +37,24 @@ def load_aggregate_conf(path):
         return yaml.safe_load(f)
 
 
+def _fail(msg: str, code: int = 2) -> int:
+    """Fail with clear error message and exit code."""
+    print(f"❌ {msg}")
+    return code
+
+
 def main():
     print(f"🔍 Validating OCA alignment...")
+
+    # 0. Security: never allow embedded PATs in remote URLs
+    if AGGREGATE_FILE.exists():
+        agg_text = AGGREGATE_FILE.read_text(encoding="utf-8", errors="replace")
+        if "https://ghp_" in agg_text or ("https://github.com/" in agg_text and "@github.com" in agg_text):
+            return _fail(
+                "oca-aggregate.yml appears to contain embedded credentials in remote URLs.\n"
+                "   Replace with plain https://github.com/OCA/<repo>.git"
+            )
+        print("✅ No embedded credentials detected in oca-aggregate.yml")
 
     # 1. Check casing agreement
     agg_conf = load_aggregate_conf(AGGREGATE_FILE)
@@ -79,17 +95,22 @@ def main():
     # 3. Verify existence (with permission error handling)
     try:
         if not ADDONS_DIR.exists():
-            print(f"❌ '{ADDONS_DIR}' does not exist.")
-            print("Remediation:")
-            print(f"  - Run: python3 scripts/oca/ensure_dir.py")
-            print(f"  - Then: gitaggregate -c oca-aggregate.yml")
-            return 2
+            return _fail(
+                f"Expected generated dir missing: {ADDONS_DIR}\n"
+                "   Remediation:\n"
+                "   - Run: python3 scripts/oca/reset_generated_dir.py\n"
+                "   - Then: gitaggregate -c oca-aggregate.yml"
+            )
 
-        if not any(ADDONS_DIR.iterdir()):
-            print(f"❌ '{ADDONS_DIR}' is empty.")
-            print("Remediation:")
-            print(f"  - Run: gitaggregate -c oca-aggregate.yml")
-            return 2
+        # Check if directory has actual module directories (not just metadata)
+        entries = [p for p in ADDONS_DIR.iterdir() if p.is_dir() and not p.name.startswith(".")]
+        if not entries:
+            return _fail(
+                f"{ADDONS_DIR} is empty (no OCA modules).\n"
+                "   Remediation:\n"
+                "   - Ensure parent repo has no uncommitted changes (gitaggregate checks this)\n"
+                "   - Run: gitaggregate -c oca-aggregate.yml"
+            )
 
         missing = []
         for repo in expected_repos:
