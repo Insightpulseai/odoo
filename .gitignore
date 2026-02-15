@@ -231,3 +231,7 @@ infra/cloudflare/**/terraform.tfvars
 # secrets (local only) - never commit
 *.secrets.local
 *.secrets.yaml
+
+# Large evidence files (>100MB)
+docs/evidence/**/*.txt
+docs/evidence/**/*.log

@@ -1,0 +1,1029 @@
+ .gitmodules                                                 |   2 +-
+ {frontend-fluent => apps/fluent}/.env.example               |   0
+ {ipai-platform => apps/platform}/.env.example               |   0
+ {ipai-platform => apps/platform}/README.md                  |   0
+ .../platform}/compose.prod.override.external-db.yaml        |   0
+ {ipai-platform => apps/platform}/compose.prod.yaml          |   0
+ {ipai-platform => apps/platform}/compose.yaml               |   0
+ {ipai-platform => apps/platform}/nginx/conf.d/default.conf  |   0
+ .../platform}/nginx/conf.d/sites/odoo-prod.conf             |   0
+ {ipai-platform => apps/platform}/nginx/nginx.conf           |   0
+ {ipai-platform => apps/platform}/odoo/odoo.conf             |   0
+ {ipai-platform => apps/platform}/scripts/health.sh          |   0
+ {ipai-platform => apps/platform}/scripts/setup-tls.sh       |   0
+ {web => apps/web}/ai-control-plane/.env.example             |   0
+ {web => apps/web}/ai-control-plane/app/api/bugbot/route.ts  |   0
+ .../web}/ai-control-plane/app/api/control-plane/route.ts    |   0
+ .../web}/ai-control-plane/app/api/vercel-bot/route.ts       |   0
+ {web => apps/web}/ai-control-plane/app/layout.tsx           |   0
+ {web => apps/web}/ai-control-plane/app/page.tsx             |   0
+ {web => apps/web}/ai-control-plane/lib/supabase.ts          |   0
+ {web => apps/web}/ai-control-plane/lib/types.ts             |   0
+ {web => apps/web}/ai-control-plane/next.config.js           |   0
+ {web => apps/web}/ai-control-plane/package.json             |   0
+ {web => apps/web}/ai-control-plane/tsconfig.json            |   0
+ {web => apps/web}/alpha-browser/.eslintrc.json              |   0
+ {web => apps/web}/alpha-browser/.gitignore                  |   0
+ {web => apps/web}/alpha-browser/PHASE1_COMPLETE.md          |   0
+ {web => apps/web}/alpha-browser/README.md                   |   0
+ .../web}/alpha-browser/docs/IMPLEMENTATION_STATUS.md        |   0
+ {web => apps/web}/alpha-browser/docs/architecture.md        |   0
+ {web => apps/web}/alpha-browser/package.json                |   0
+ {web => apps/web}/alpha-browser/playwright.config.ts        |   0
+ {web => apps/web}/alpha-browser/postcss.config.js           |   0
+ {web => apps/web}/alpha-browser/public/manifest.json        |   0
+ {web => apps/web}/alpha-browser/scripts/post-build.js       |   0
+ {web => apps/web}/alpha-browser/scripts/verify-phase1.sh    |   0
+ .../web}/alpha-browser/src/background/service-worker.ts     |   0
+ {web => apps/web}/alpha-browser/src/content/content-main.ts |   0
+ .../web}/alpha-browser/src/offscreen/offscreen-main.ts      |   0
+ .../web}/alpha-browser/src/offscreen/offscreen.html         |   0
+ {web => apps/web}/alpha-browser/src/popup/App.tsx           |   0
+ {web => apps/web}/alpha-browser/src/popup/popup.css         |   0
+ {web => apps/web}/alpha-browser/src/popup/popup.html        |   0
+ {web => apps/web}/alpha-browser/src/popup/popup.tsx         |   0
+ {web => apps/web}/alpha-browser/src/shared/logger.ts        |   0
+ {web => apps/web}/alpha-browser/src/shared/types.ts         |   0
+ {web => apps/web}/alpha-browser/src/shared/utils.ts         |   0
+ {web => apps/web}/alpha-browser/src/storage/checkpoints.ts  |   0
+ {web => apps/web}/alpha-browser/src/storage/db.ts           |   0
+ {web => apps/web}/alpha-browser/src/storage/memory.ts       |   0
+ {web => apps/web}/alpha-browser/src/storage/missions.ts     |   0
+ {web => apps/web}/alpha-browser/tailwind.config.js          |   0
+ {web => apps/web}/alpha-browser/test-results/.last-run.json |   0
+ .../web}/alpha-browser/tests/e2e/extension-load.spec.ts     |   0
+ {web => apps/web}/alpha-browser/tests/setup.ts              |   0
+ {web => apps/web}/alpha-browser/tests/unit/storage.test.ts  |   0
+ {web => apps/web}/alpha-browser/tsconfig.json               |   0
+ {web => apps/web}/alpha-browser/tsconfig.node.json          |   0
+ {web => apps/web}/alpha-browser/vite.config.ts              |   0
+ {web => apps/web}/alpha-browser/vitest.config.ts            |   0
+ {web => apps/web}/bi-architect/APP.md                       |   0
+ {web => apps/web}/bi-architect/do/app.json                  |   0
+ {web => apps/web}/bi-architect/spec.yaml                    |   0
+ {web => apps/web}/billing-site/.env.example                 |   0
+ {web => apps/web}/billing-site/.eslintrc.json               |   0
+ {web => apps/web}/billing-site/.gitignore                   |   0
+ {web => apps/web}/billing-site/docs/ARCHITECTURE.md         |   0
+ {web => apps/web}/billing-site/docs/RUNBOOK_DEPLOY.md       |   0
+ {web => apps/web}/billing-site/docs/RUNBOOK_WEBHOOKS.md     |   0
+ {web => apps/web}/billing-site/next-env.d.ts                |   0
+ {web => apps/web}/billing-site/next.config.js               |   0
+ {web => apps/web}/billing-site/package.json                 |   0
+ {web => apps/web}/billing-site/postcss.config.js            |   0
+ .../web}/billing-site/scripts/smoke_odoo_partner_create.mjs |   0
+ {web => apps/web}/billing-site/src/app/account/page.tsx     |   0
+ .../web}/billing-site/src/app/api/provision/odoo/route.ts   |   0
+ .../web}/billing-site/src/app/api/webhooks/paddle/route.ts  |   0
+ .../web}/billing-site/src/app/auth/callback/route.ts        |   0
+ .../web}/billing-site/src/app/auth/reset-password/page.tsx  |   0
+ {web => apps/web}/billing-site/src/app/auth/signin/page.tsx |   0
+ .../web}/billing-site/src/app/auth/signout/route.ts         |   0
+ {web => apps/web}/billing-site/src/app/auth/signup/page.tsx |   0
+ .../web}/billing-site/src/app/billing/success/page.tsx      |   0
+ {web => apps/web}/billing-site/src/app/globals.css          |   0
+ {web => apps/web}/billing-site/src/app/layout.tsx           |   0
+ {web => apps/web}/billing-site/src/app/page.tsx             |   0
+ {web => apps/web}/billing-site/src/app/pricing/page.tsx     |   0
+ {web => apps/web}/billing-site/src/components/Footer.tsx    |   0
+ {web => apps/web}/billing-site/src/components/Header.tsx    |   0
+ .../web}/billing-site/src/components/PaddleCheckout.tsx     |   0
+ .../web}/billing-site/src/components/PricingCard.tsx        |   0
+ .../web}/billing-site/src/components/PricingToggle.tsx      |   0
+ .../web}/billing-site/src/lib/__tests__/odoo.test.ts        |   0
+ .../web}/billing-site/src/lib/__tests__/paddle.test.ts      |   0
+ {web => apps/web}/billing-site/src/lib/odoo.ts              |   0
+ {web => apps/web}/billing-site/src/lib/paddle.ts            |   0
+ {web => apps/web}/billing-site/src/lib/supabase/client.ts   |   0
+ {web => apps/web}/billing-site/src/lib/supabase/server.ts   |   0
+ {web => apps/web}/billing-site/src/test/setup.ts            |   0
+ {web => apps/web}/billing-site/src/types/database.ts        |   0
+ {web => apps/web}/billing-site/tailwind.config.js           |   0
+ {web => apps/web}/billing-site/tsconfig.json                |   0
+ {web => apps/web}/billing-site/vercel.json                  |   0
+ {web => apps/web}/billing-site/vitest.config.ts             |   0
+ {web => apps/web}/chatgpt_ipai_ai_studio/README.md          |   0
+ {web => apps/web}/chatgpt_ipai_ai_studio/package.json       |   0
+ {web => apps/web}/chatgpt_ipai_ai_studio/public/widget.html |   0
+ {web => apps/web}/chatgpt_ipai_ai_studio/src/server.js      |   0
+ {web => apps/web}/control-plane/README.md                   |   0
+ {web => apps/web}/control-room-api/.env.example             |   0
+ {web => apps/web}/control-room-api/Dockerfile               |   0
+ {web => apps/web}/control-room-api/app.py                   |   0
+ {web => apps/web}/control-room-api/requirements.txt         |   0
+ {web => apps/web}/control-room/.env.example                 |   0
+ {web => apps/web}/control-room/FINANCE_LANDING_CHECKLIST.md |   0
+ {web => apps/web}/control-room/PLATFORM_KIT_SPEC.md         |   0
+ {web => apps/web}/control-room/app/api/ai/sql/route.ts      |   0
+ .../app/api/observability/agents/[id]/heartbeat/route.ts    |   0
+ .../web}/control-room/app/api/observability/agents/route.ts |   0
+ .../web}/control-room/app/api/observability/health/route.ts |   0
+ .../app/api/observability/jobs/[id]/retry/route.ts          |   0
+ .../control-room/app/api/observability/jobs/[id]/route.ts   |   0
+ .../web}/control-room/app/api/observability/jobs/route.ts   |   0
+ .../control-room/app/api/observability/topology/route.ts    |   0
+ {web => apps/web}/control-room/next-env.d.ts                |   0
+ {web => apps/web}/control-room/next.config.js               |   0
+ {web => apps/web}/control-room/package.json                 |   0
+ {web => apps/web}/control-room/postcss.config.js            |   0
+ .../control-room/public/assets/finance/badge_secure.svg     |   0
+ .../web}/control-room/public/assets/finance/bg_grid.svg     |   0
+ .../web}/control-room/public/assets/finance/cta_arrow.svg   |   0
+ .../control-room/public/assets/finance/divider_wave.svg     |   0
+ .../public/assets/finance/hero_finance_workspace.svg        |   0
+ .../control-room/public/assets/finance/icon_analytics.svg   |   0
+ .../web}/control-room/public/assets/finance/icon_audit.svg  |   0
+ .../web}/control-room/public/assets/finance/icon_chat.svg   |   0
+ .../web}/control-room/public/assets/finance/icon_erp.svg    |   0
+ .../control-room/public/assets/finance/icon_security.svg    |   0
+ .../control-room/public/assets/finance/icon_workflow.svg    |   0
+ .../web}/control-room/public/assets/finance/manifest.json   |   0
+ .../web}/control-room/public/assets/finance/og_banner.svg   |   0
+ .../web}/control-room/public/assets/finance/tbwa_mark.svg   |   0
+ .../control-room/public/assets/finance/tbwa_wordmark.svg    |   0
+ .../web}/control-room/src/app/api/copilot/chat/route.ts     |   0
+ {web => apps/web}/control-room/src/app/api/health/route.ts  |   0
+ .../web}/control-room/src/app/api/mcp-jobs/route.ts         |   0
+ .../web}/control-room/src/app/api/mcp-jobs/stats/route.ts   |   0
+ .../control-room/src/app/api/mobile/auth/login/route.ts     |   0
+ .../control-room/src/app/api/mobile/sync/delta/route.ts     |   0
+ .../src/app/api/tables/[schema]/[table]/route.ts            |   0
+ {web => apps/web}/control-room/src/app/api/tables/route.ts  |   0
+ .../web}/control-room/src/app/api/tables/schemas/route.ts   |   0
+ {web => apps/web}/control-room/src/app/barcode/page.tsx     |   0
+ {web => apps/web}/control-room/src/app/booking/page.tsx     |   0
+ .../web}/control-room/src/app/copilot-demo/page.tsx         |   0
+ {web => apps/web}/control-room/src/app/finance/page.tsx     |   0
+ {web => apps/web}/control-room/src/app/globals.css          |   0
+ {web => apps/web}/control-room/src/app/layout.backup.tsx    |   0
+ {web => apps/web}/control-room/src/app/layout.tsx           |   0
+ {web => apps/web}/control-room/src/app/overview/page.tsx    |   0
+ {web => apps/web}/control-room/src/app/page.tsx             |   0
+ {web => apps/web}/control-room/src/app/pipelines/page.tsx   |   0
+ {web => apps/web}/control-room/src/app/projects/page.tsx    |   0
+ {web => apps/web}/control-room/src/app/providers.tsx        |   0
+ {web => apps/web}/control-room/src/app/realm/page.tsx       |   0
+ .../app/settings/database/tables/[schema]/[table]/page.tsx  |   0
+ .../control-room/src/app/settings/database/tables/page.tsx  |   0
+ .../web}/control-room/src/app/theme/tbwaFluentTheme.ts      |   0
+ {web => apps/web}/control-room/src/assets/financeAssets.ts  |   0
+ .../web}/control-room/src/components/charts/BudgetChart.tsx |   0
+ .../web}/control-room/src/components/common/Badge.tsx       |   0
+ .../web}/control-room/src/components/common/Button.tsx      |   0
+ .../web}/control-room/src/components/common/Card.tsx        |   0
+ .../control-room/src/components/common/ThemeSwitcher.tsx    |   0
+ .../src/components/copilot/CopilotActionsBar.tsx            |   0
+ .../control-room/src/components/copilot/CopilotComposer.tsx |   0
+ .../src/components/copilot/CopilotContextChips.tsx          |   0
+ .../control-room/src/components/copilot/CopilotMessage.tsx  |   0
+ .../control-room/src/components/copilot/CopilotPanel.tsx    |   0
+ .../control-room/src/components/copilot/CopilotThread.tsx   |   0
+ .../src/components/copilot/hooks/useCopilotSession.ts       |   0
+ .../web}/control-room/src/components/copilot/index.ts       |   0
+ .../web}/control-room/src/components/copilot/types.ts       |   0
+ .../control-room/src/components/dashboard/ActivityFeed.tsx  |   0
+ .../control-room/src/components/dashboard/HealthBadge.tsx   |   0
+ .../web}/control-room/src/components/dashboard/KPICard.tsx  |   0
+ .../src/components/health/ServiceHealthGrid.tsx             |   0
+ .../web}/control-room/src/components/health/index.ts        |   0
+ .../web}/control-room/src/components/layout/Header.tsx      |   0
+ .../control-room/src/components/layout/PageContainer.tsx    |   0
+ .../web}/control-room/src/components/layout/Sidebar.tsx     |   0
+ .../control-room/src/components/observability/AgentsTab.tsx |   0
+ .../control-room/src/components/observability/HealthTab.tsx |   0
+ .../src/components/observability/JobQueueCard.tsx           |   0
+ .../control-room/src/components/observability/JobsTab.tsx   |   0
+ .../src/components/observability/ObservabilityManager.tsx   |   0
+ .../src/components/observability/TopologyTab.tsx            |   0
+ .../web}/control-room/src/components/observability/index.ts |   0
+ .../src/components/tables-browser/SchemaFilter.tsx          |   0
+ .../src/components/tables-browser/TableCard.tsx             |   0
+ .../src/components/tables-browser/TablesBrowser.tsx         |   0
+ .../control-room/src/components/tables-browser/index.ts     |   0
+ .../web}/control-room/src/components/tables/DataTable.tsx   |   0
+ .../web}/control-room/src/components/tables/JobsTable.tsx   |   0
+ .../control-room/src/components/tables/ProjectsTable.tsx    |   0
+ {web => apps/web}/control-room/src/hooks/index.ts           |   0
+ {web => apps/web}/control-room/src/hooks/useMCPJobs.ts      |   0
+ .../web}/control-room/src/hooks/useServiceHealth.ts         |   0
+ {web => apps/web}/control-room/src/hooks/useTables.ts       |   0
+ {web => apps/web}/control-room/src/hooks/useTheme.ts        |   0
+ {web => apps/web}/control-room/src/lib/supabase.ts          |   0
+ .../web}/control-room/src/lib/supabase/observability.ts     |   0
+ {web => apps/web}/control-room/src/theme/fluentThemes.ts    |   0
+ {web => apps/web}/control-room/src/theme/index.ts           |   0
+ {web => apps/web}/control-room/src/theme/tokens.css         |   0
+ {web => apps/web}/control-room/src/types/api.ts             |   0
+ {web => apps/web}/control-room/src/types/models.ts          |   0
+ {web => apps/web}/control-room/src/types/observability.ts   |   0
+ {web => apps/web}/control-room/tailwind.config.js           |   0
+ {web => apps/web}/control-room/tsconfig.json                |   0
+ {web => apps/web}/devops-engineer/APP.md                    |   0
+ {web => apps/web}/devops-engineer/do/app.json               |   0
+ {web => apps/web}/devops-engineer/spec.yaml                 |   0
+ {web => apps/web}/do-advisor-agent/README.md                |   0
+ {web => apps/web}/do-advisor-agent/config/mcp-config.json   |   0
+ .../web}/do-advisor-agent/prompts/unified_advisor.md        |   0
+ .../web}/do-advisor-agent/tools/odoo_finance_ppm.py         |   0
+ {web => apps/web}/do-advisor-ui/Dockerfile                  |   0
+ {web => apps/web}/do-advisor-ui/README.md                   |   0
+ {web => apps/web}/do-advisor-ui/app-spec.yaml               |   0
+ {web => apps/web}/do-advisor-ui/nginx.conf                  |   0
+ {web => apps/web}/do-advisor-ui/public/config.js            |   0
+ {web => apps/web}/do-advisor-ui/public/index.html           |   0
+ {web => apps/web}/do-advisor-ui/src/app.js                  |   0
+ .../web}/do-advisor-ui/src/assets/styles/azure-dark.css     |   0
+ .../web}/do-advisor-ui/src/assets/styles/components.css     |   0
+ .../web}/do-advisor-ui/src/components/jobs-monitor.js       |   0
+ .../web}/do-advisor-ui/src/components/metrics-charts.js     |   0
+ .../web}/do-advisor-ui/src/components/recommendations.js    |   0
+ {web => apps/web}/do-advisor-ui/src/views/architecture.js   |   0
+ .../web}/do-advisor-ui/src/views/superset-copilot.js        |   0
+ {web => apps/web}/docs-ai-widget/package.json               |   0
+ .../web}/docs-ai-widget/src/components/DocsAiWidget.tsx     |   0
+ {web => apps/web}/docs-ai-widget/src/embed.ts               |   0
+ {web => apps/web}/docs-ai-widget/src/index.ts               |   0
+ {web => apps/web}/docs/.gitignore                           |   0
+ {web => apps/web}/docs/README.md                            |   0
+ {web => apps/web}/docs/app/getting-started/page.tsx         |   0
+ {web => apps/web}/docs/app/globals.css                      |   0
+ {web => apps/web}/docs/app/layout.tsx                       |   0
+ {web => apps/web}/docs/app/page.tsx                         |   0
+ {web => apps/web}/docs/components/DocLayout.tsx             |   0
+ {web => apps/web}/docs/components/DocNavigation.tsx         |   0
+ {web => apps/web}/docs/content/getting-started.mdx          |   0
+ {web => apps/web}/docs/next.config.mjs                      |   0
+ {web => apps/web}/docs/package.json                         |   0
+ {web => apps/web}/docs/tsconfig.json                        |   0
+ {web => apps/web}/finance-ssc-expert/APP.md                 |   0
+ {web => apps/web}/finance-ssc-expert/do/app.json            |   0
+ {web => apps/web}/finance-ssc-expert/spec.yaml              |   0
+ {web => apps/web}/ipai-chatgpt-app/server/package.json      |   0
+ {web => apps/web}/ipai-chatgpt-app/server/server.js         |   0
+ {web => apps/web}/ipai-chatgpt-app/web/index.html           |   0
+ {web => apps/web}/ipai-chatgpt-app/web/package.json         |   0
+ {web => apps/web}/ipai-chatgpt-app/web/postcss.config.js    |   0
+ {web => apps/web}/ipai-chatgpt-app/web/src/main.css         |   0
+ {web => apps/web}/ipai-chatgpt-app/web/src/main.tsx         |   0
+ {web => apps/web}/ipai-chatgpt-app/web/src/widget/App.tsx   |   0
+ .../web}/ipai-chatgpt-app/web/src/widget/openai.d.ts        |   0
+ {web => apps/web}/ipai-chatgpt-app/web/tailwind.config.js   |   0
+ {web => apps/web}/ipai-chatgpt-app/web/tsconfig.json        |   0
+ {web => apps/web}/ipai-chatgpt-app/web/vite.config.ts       |   0
+ .../web}/ipai-control-center-docs/.vercel/README.txt        |   0
+ .../web}/ipai-control-center-docs/.vercel/project.json      |   0
+ {web => apps/web}/ipai-control-center-docs/DEPLOYMENT.md    |   0
+ {web => apps/web}/ipai-control-center-docs/next.config.mjs  |   0
+ {web => apps/web}/ipai-control-center-docs/package.json     |   0
+ {web => apps/web}/ipai-control-center-docs/pages/_app.jsx   |   0
+ {web => apps/web}/ipai-control-center-docs/pages/_meta.js   |   0
+ .../web}/ipai-control-center-docs/pages/constitution.md     |   0
+ {web => apps/web}/ipai-control-center-docs/pages/index.mdx  |   0
+ {web => apps/web}/ipai-control-center-docs/pages/plan.md    |   0
+ {web => apps/web}/ipai-control-center-docs/pages/prd.md     |   0
+ .../pages/strategy/notion-vs-odoo.mdx                       |   0
+ {web => apps/web}/ipai-control-center-docs/pages/tasks.md   |   0
+ {web => apps/web}/ipai-control-center-docs/theme.config.jsx |   0
+ {web => apps/web}/local-schema-server/package.json          |   0
+ {web => apps/web}/local-schema-server/server.js             |   0
+ {web => apps/web}/mcp-coordinator/APP.md                    |   0
+ {web => apps/web}/mcp-coordinator/do/app.json               |   0
+ {web => apps/web}/mcp-coordinator/spec.yaml                 |   0
+ {web => apps/web}/mobile/App.tsx                            |   0
+ {web => apps/web}/mobile/README.md                          |   0
+ {web => apps/web}/mobile/app.json                           |   0
+ {web => apps/web}/mobile/eas.json                           |   0
+ {web => apps/web}/mobile/package.json                       |   0
+ {web => apps/web}/mobile/src/hooks/useRealtime.ts           |   0
+ {web => apps/web}/mobile/src/lib/supabase.ts                |   0
+ {web => apps/web}/mobile/src/screens/ApprovalsScreen.tsx    |   0
+ {web => apps/web}/mobile/src/screens/DashboardScreen.tsx    |   0
+ {web => apps/web}/mobile/src/screens/KBSearchScreen.tsx     |   0
+ {web => apps/web}/mobile/src/store/app.ts                   |   0
+ {web => apps/web}/mobile/src/types/database.ts              |   0
+ {web => apps/web}/mobile/tsconfig.json                      |   0
+ {web => apps/web}/multi-agent-orchestrator/APP.md           |   0
+ {web => apps/web}/multi-agent-orchestrator/do/app.json      |   0
+ {web => apps/web}/multi-agent-orchestrator/spec.yaml        |   0
+ {web => apps/web}/odoo-developer-agent/APP.md               |   0
+ {web => apps/web}/odoo-developer-agent/do/app.json          |   0
+ {web => apps/web}/odoo-developer-agent/spec.yaml            |   0
+ {web => apps/web}/odoo-frontend-shell/.env.example          |   0
+ {web => apps/web}/odoo-frontend-shell/.gitignore            |   0
+ {web => apps/web}/odoo-frontend-shell/.vercelignore         |   0
+ {web => apps/web}/odoo-frontend-shell/DEPLOY.md             |   0
+ {web => apps/web}/odoo-frontend-shell/QUICKSTART.md         |   0
+ {web => apps/web}/odoo-frontend-shell/README.md             |   0
+ {web => apps/web}/odoo-frontend-shell/next.config.ts        |   0
+ {web => apps/web}/odoo-frontend-shell/package.json          |   0
+ {web => apps/web}/odoo-frontend-shell/postcss.config.mjs    |   0
+ {web => apps/web}/odoo-frontend-shell/sandbox.config.json   |   0
+ {web => apps/web}/odoo-frontend-shell/src/app/globals.css   |   0
+ {web => apps/web}/odoo-frontend-shell/src/app/layout.tsx    |   0
+ {web => apps/web}/odoo-frontend-shell/src/app/page.tsx      |   0
+ .../web}/odoo-frontend-shell/src/components/LoginForm.tsx   |   0
+ {web => apps/web}/odoo-frontend-shell/src/lib/auth-store.ts |   0
+ .../web}/odoo-frontend-shell/src/lib/odoo-client.ts         |   0
+ {web => apps/web}/odoo-frontend-shell/tailwind.config.ts    |   0
+ {web => apps/web}/odoo-frontend-shell/tsconfig.json         |   0
+ {web => apps/web}/odoo-frontend-shell/vercel.json           |   0
+ {web => apps/web}/odoo-saas-platform/APP.md                 |   0
+ {web => apps/web}/odoo-saas-platform/do/app.json            |   0
+ {web => apps/web}/odoo-saas-platform/spec.yaml              |   0
+ {web => apps/web}/odooops-dashboard/.gitignore              |   0
+ {web => apps/web}/odooops-dashboard/README.md               |   0
+ {web => apps/web}/odooops-dashboard/app/globals.css         |   0
+ {web => apps/web}/odooops-dashboard/app/layout.tsx          |   0
+ {web => apps/web}/odooops-dashboard/app/page.tsx            |   0
+ .../web}/odooops-dashboard/components/MetricCard.tsx        |   0
+ .../web}/odooops-dashboard/components/ProjectCard.tsx       |   0
+ {web => apps/web}/odooops-dashboard/next.config.mjs         |   0
+ {web => apps/web}/odooops-dashboard/package.json            |   0
+ {web => apps/web}/odooops-dashboard/postcss.config.mjs      |   0
+ {web => apps/web}/odooops-dashboard/tailwind.config.ts      |   0
+ {web => apps/web}/odooops-dashboard/tsconfig.json           |   0
+ {web => apps/web}/platform-kit/.github/dependabot.yml       |   0
+ {web => apps/web}/platform-kit/.github/workflows/ci.yml     |   0
+ {web => apps/web}/platform-kit/.github/workflows/deploy.yml |   0
+ .../web}/platform-kit/.github/workflows/docker-publish.yml  |   0
+ .../.github/workflows/governance-enroll-repo.yml            |   0
+ .../platform-kit/.github/workflows/nightly-maintenance.yml  |   0
+ .../platform-kit/.github/workflows/pnpm-lockfile-check.yml  |   0
+ .../web}/platform-kit/.github/workflows/preview.yml         |   0
+ .../web}/platform-kit/.github/workflows/security.yml        |   0
+ .../web}/platform-kit/.github/workflows/supabase-deploy.yml |   0
+ .../platform-kit/.github/workflows/supabase-pr-checks.yml   |   0
+ .../web}/platform-kit/.github/workflows/vercel-preview.yml  |   0
+ .../platform-kit/.github/workflows/vercel-production.yml    |   0
+ {web => apps/web}/platform-kit/.gitignore                   |   0
+ {web => apps/web}/platform-kit/.gitleaks.toml               |   0
+ {web => apps/web}/platform-kit/.nvmrc                       |   0
+ {web => apps/web}/platform-kit/NOBLE_FINANCES_BUILD.md      |   0
+ {web => apps/web}/platform-kit/README.md                    |   0
+ {web => apps/web}/platform-kit/SUPABASE_CMS_SETUP.md        |   0
+ .../platform-kit/agents/prompts/odoo-plane-sync-agent.md    |   0
+ .../platform-kit/agents/prompts/ppm-governance-agent.md     |   0
+ {web => apps/web}/platform-kit/app/ClientBodyDataset.tsx    |   0
+ {web => apps/web}/platform-kit/app/accounting/layout.tsx    |   0
+ {web => apps/web}/platform-kit/app/accounting/page.tsx      |   0
+ {web => apps/web}/platform-kit/app/api/ai/sql/route.ts      |   0
+ {web => apps/web}/platform-kit/app/api/cms/route.ts         |   0
+ {web => apps/web}/platform-kit/app/api/health/db/route.ts   |   0
+ {web => apps/web}/platform-kit/app/api/health/route.ts      |   0
+ .../platform-kit/app/api/supabase-proxy/[...path]/route.ts  |   0
+ {web => apps/web}/platform-kit/app/globals.css              |   0
+ {web => apps/web}/platform-kit/app/layout.tsx               |   0
+ {web => apps/web}/platform-kit/app/login/page.tsx           |   0
+ {web => apps/web}/platform-kit/app/page.tsx                 |   0
+ {web => apps/web}/platform-kit/app/providers.tsx            |   0
+ {web => apps/web}/platform-kit/app/tbwa-template/page.tsx   |   0
+ {web => apps/web}/platform-kit/components.json              |   0
+ .../web}/platform-kit/components/OdooStyleLanding.tsx       |   0
+ .../platform-kit/components/accounting/CookieConsent.tsx    |   0
+ .../web}/platform-kit/components/accounting/FinalCTA.tsx    |   0
+ .../web}/platform-kit/components/accounting/Footer.tsx      |   0
+ .../web}/platform-kit/components/accounting/Header.tsx      |   0
+ .../web}/platform-kit/components/accounting/Hero.tsx        |   0
+ .../web}/platform-kit/components/accounting/ServiceCard.tsx |   0
+ .../web}/platform-kit/components/accounting/Services.tsx    |   0
+ .../platform-kit/components/accounting/TargetSegments.tsx   |   0
+ .../platform-kit/components/accounting/Testimonials.tsx     |   0
+ .../web}/platform-kit/components/accounting/ValueProp.tsx   |   0
+ {web => apps/web}/platform-kit/components/cms-example.tsx   |   0
+ {web => apps/web}/platform-kit/components/dynamic-form.tsx  |   0
+ {web => apps/web}/platform-kit/components/logo-supabase.tsx |   0
+ {web => apps/web}/platform-kit/components/results-table.tsx |   0
+ {web => apps/web}/platform-kit/components/sql-editor.tsx    |   0
+ .../web}/platform-kit/components/supabase-manager/auth.tsx  |   0
+ .../platform-kit/components/supabase-manager/database.tsx   |   0
+ .../web}/platform-kit/components/supabase-manager/index.tsx |   0
+ .../web}/platform-kit/components/supabase-manager/logs.tsx  |   0
+ .../platform-kit/components/supabase-manager/secrets.tsx    |   0
+ .../platform-kit/components/supabase-manager/storage.tsx    |   0
+ .../components/supabase-manager/suggestions.tsx             |   0
+ .../web}/platform-kit/components/supabase-manager/users.tsx |   0
+ .../platform-kit/components/tbwa-template/ClientLogos.tsx   |   0
+ .../platform-kit/components/tbwa-template/CookieConsent.tsx |   0
+ .../components/tbwa-template/FinancialServicesBlock.tsx     |   0
+ .../web}/platform-kit/components/tbwa-template/Footer.tsx   |   0
+ .../web}/platform-kit/components/tbwa-template/Header.tsx   |   0
+ .../components/tbwa-template/MattermostHero.tsx             |   0
+ .../web}/platform-kit/components/theme-provider.tsx         |   0
+ {web => apps/web}/platform-kit/components/ui/alert.tsx      |   0
+ {web => apps/web}/platform-kit/components/ui/badge.tsx      |   0
+ {web => apps/web}/platform-kit/components/ui/button.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/card.tsx       |   0
+ {web => apps/web}/platform-kit/components/ui/chart.tsx      |   0
+ {web => apps/web}/platform-kit/components/ui/command.tsx    |   0
+ {web => apps/web}/platform-kit/components/ui/dialog.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/drawer.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/form.tsx       |   0
+ {web => apps/web}/platform-kit/components/ui/hover-card.tsx |   0
+ {web => apps/web}/platform-kit/components/ui/input.tsx      |   0
+ {web => apps/web}/platform-kit/components/ui/label.tsx      |   0
+ {web => apps/web}/platform-kit/components/ui/popover.tsx    |   0
+ {web => apps/web}/platform-kit/components/ui/select.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/skeleton.tsx   |   0
+ {web => apps/web}/platform-kit/components/ui/sonner.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/switch.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/table.tsx      |   0
+ .../web}/platform-kit/components/ui/toggle-group.tsx        |   0
+ {web => apps/web}/platform-kit/components/ui/toggle.tsx     |   0
+ {web => apps/web}/platform-kit/components/ui/tooltip.tsx    |   0
+ .../web}/platform-kit/components/users-growth-chart.tsx     |   0
+ .../web}/platform-kit/config/dns/insightpulseai.com.zone    |   0
+ {web => apps/web}/platform-kit/config/domains.yaml          |   0
+ .../config/integrations/integration_manifest.yaml           |   0
+ {web => apps/web}/platform-kit/config/mail/mail-stack.yaml  |   0
+ {web => apps/web}/platform-kit/config/mail/mailgun.yaml     |   0
+ .../web}/platform-kit/config/odoo/email_settings.xml        |   0
+ .../web}/platform-kit/config/spaces/ocr-artifacts.yaml      |   0
+ .../web}/platform-kit/contexts/SheetNavigationContext.tsx   |   0
+ .../web}/platform-kit/docs/CANONICAL_ARCHITECTURE.md        |   0
+ {web => apps/web}/platform-kit/docs/CI_SUPABASE_SECRETS.md  |   0
+ {web => apps/web}/platform-kit/docs/COPILOT_RULES.md        |   0
+ {web => apps/web}/platform-kit/docs/GOVERNANCE.md           |   0
+ {web => apps/web}/platform-kit/docs/PHASE1_CHECKLIST.md     |   0
+ .../web}/platform-kit/docs/PLANE_ODOO_INTEGRATION.md        |   0
+ .../web}/platform-kit/docs/SUPABASE_PLATFORM_REVIEW.md      |   0
+ .../platform-kit/docs/architecture/EMAIL_ARCHITECTURE.md    |   0
+ .../web}/platform-kit/docs/architecture/ppm-data-model.md   |   0
+ .../web}/platform-kit/docs/email/ODOO_EMAIL_SETUP.md        |   0
+ {web => apps/web}/platform-kit/docs/governance/BRANCHING.md |   0
+ .../web}/platform-kit/docs/infra/COST_OPTIMIZATION.md       |   0
+ {web => apps/web}/platform-kit/eslint.config.mjs            |   0
+ {web => apps/web}/platform-kit/hooks/use-auth.ts            |   0
+ {web => apps/web}/platform-kit/hooks/use-functions.ts       |   0
+ {web => apps/web}/platform-kit/hooks/use-logs.ts            |   0
+ {web => apps/web}/platform-kit/hooks/use-mobile.ts          |   0
+ {web => apps/web}/platform-kit/hooks/use-run-query.ts       |   0
+ {web => apps/web}/platform-kit/hooks/use-secrets.ts         |   0
+ {web => apps/web}/platform-kit/hooks/use-storage.ts         |   0
+ {web => apps/web}/platform-kit/hooks/use-suggestions.ts     |   0
+ {web => apps/web}/platform-kit/hooks/use-tables.ts          |   0
+ {web => apps/web}/platform-kit/hooks/use-user-counts.ts     |   0
+ .../platform-kit/infra/dns/mailgun/WIX_DNS_INSTRUCTIONS.md  |   0
+ .../infra/dns/mailgun/mg_insightpulseai_com.json            |   0
+ .../infra/dns/zoho_root_insightpulseai_com.json             |   0
+ .../platform-kit/infra/n8n/plane-odoo-sync.workflow.json    |   0
+ .../web}/platform-kit/infra/terraform/envs/dev/main.tf      |   0
+ .../web}/platform-kit/infra/terraform/envs/prod/main.tf     |   0
+ .../infra/terraform/modules/platform_kit/main.tf            |   0
+ .../web}/platform-kit/lib/accounting/design-tokens.ts       |   0
+ {web => apps/web}/platform-kit/lib/logs.ts                  |   0
+ .../web}/platform-kit/lib/management-api-schema.d.ts        |   0
+ {web => apps/web}/platform-kit/lib/management-api.ts        |   0
+ {web => apps/web}/platform-kit/lib/pg-meta/index.ts         |   0
+ {web => apps/web}/platform-kit/lib/pg-meta/sql.ts           |   0
+ {web => apps/web}/platform-kit/lib/pg-meta/types.ts         |   0
+ {web => apps/web}/platform-kit/lib/schemas/auth.ts          |   0
+ {web => apps/web}/platform-kit/lib/schemas/secrets.ts       |   0
+ {web => apps/web}/platform-kit/lib/supabase-cms.ts          |   0
+ {web => apps/web}/platform-kit/lib/supabase-config.ts       |   0
+ {web => apps/web}/platform-kit/lib/supabase/browser.ts      |   0
+ .../web}/platform-kit/lib/supabase_project_ref_resolver.ts  |   0
+ {web => apps/web}/platform-kit/lib/utils.ts                 |   0
+ {web => apps/web}/platform-kit/next.config.mjs              |   0
+ {web => apps/web}/platform-kit/package.json                 |   0
+ {web => apps/web}/platform-kit/postcss.config.mjs           |   0
+ {web => apps/web}/platform-kit/public/apple-icon.png        | Bin
+ {web => apps/web}/platform-kit/public/icon-dark-32x32.png   | Bin
+ {web => apps/web}/platform-kit/public/icon-light-32x32.png  | Bin
+ {web => apps/web}/platform-kit/public/icon.svg              |   0
+ {web => apps/web}/platform-kit/public/placeholder-logo.png  | Bin
+ {web => apps/web}/platform-kit/public/placeholder-logo.svg  |   0
+ {web => apps/web}/platform-kit/public/placeholder-user.jpg  | Bin
+ {web => apps/web}/platform-kit/public/placeholder.jpg       | Bin
+ {web => apps/web}/platform-kit/public/placeholder.svg       |   0
+ {web => apps/web}/platform-kit/public/tbwa-smp-logo.png     | Bin
+ .../dev/.github/workflows/governance-enroll-repo.yml        |   0
+ .../sandbox/dev/scripts/github/dispatch-enroll-repo.sh      |   0
+ .../sandbox/dev/scripts/github/mint-ghapp-token.sh          |   0
+ .../sandbox/dev/scripts/github/sync-github-inventory.mjs    |   0
+ .../platform-kit/schemas/sync/odoo-plane-sync.schema.json   |   0
+ .../web}/platform-kit/schemas/sync/sync-config.example.json |   0
+ {web => apps/web}/platform-kit/scripts/audit/__init__.py    |   0
+ .../web}/platform-kit/scripts/audit/checks/__init__.py      |   0
+ .../scripts/audit/checks/check_domain_policy.py             |   0
+ .../web}/platform-kit/scripts/audit/checks/check_mailgun.py |   0
+ {web => apps/web}/platform-kit/scripts/audit/lib.py         |   0
+ .../platform-kit/scripts/audit/run_integration_audit.sh     |   0
+ {web => apps/web}/platform-kit/scripts/ci/preview_smoke.sh  |   0
+ {web => apps/web}/platform-kit/scripts/deploy-cms.sh        |   0
+ .../web}/platform-kit/scripts/email/test_mailgun_send.sh    |   0
+ .../web}/platform-kit/scripts/email/verify_email_config.sh  |   0
+ .../web}/platform-kit/scripts/infra/do_disk_cleanup.sh      |   0
+ .../web}/platform-kit/scripts/infra/do_prune_empty_vpcs.sh  |   0
+ .../web}/platform-kit/scripts/infra/do_prune_snapshots.sh   |   0
+ .../web}/platform-kit/scripts/infra/do_resource_check.sh    |   0
+ .../platform-kit/scripts/mailgun/mailgun-domain-setup.sh    |   0
+ .../scripts/prompts/mailgun-setup-browser-agent.md          |   0
+ {web => apps/web}/platform-kit/scripts/smoke.mjs            |   0
+ .../platform-kit/scripts/vercel/apply_project_settings.sh   |   0
+ {web => apps/web}/platform-kit/scripts/vercel/domain_add.sh |   0
+ {web => apps/web}/platform-kit/styles/globals.css           |   0
+ .../web}/platform-kit/supabase/functions/posts-api/index.ts |   0
+ {web => apps/web}/platform-kit/tbwa-smp.html                |   0
+ {web => apps/web}/platform-kit/tsconfig.json                |   0
+ {web => apps/web}/platform-kit/vercel.json                  |   0
+ {web => apps/web}/policy-gateway/.env.example               |   0
+ {web => apps/web}/policy-gateway/README.md                  |   0
+ {web => apps/web}/policy-gateway/package.json               |   0
+ {web => apps/web}/policy-gateway/src/audit.ts               |   0
+ {web => apps/web}/policy-gateway/src/capabilities.ts        |   0
+ {web => apps/web}/policy-gateway/src/enforcement.ts         |   0
+ {web => apps/web}/policy-gateway/src/index.ts               |   0
+ {web => apps/web}/policy-gateway/src/models.ts              |   0
+ {web => apps/web}/policy-gateway/src/privacy.ts             |   0
+ {web => apps/web}/policy-gateway/src/types.ts               |   0
+ {web => apps/web}/policy-gateway/tsconfig.json              |   0
+ {web => apps/web}/pulser-runner/.env.example                |   0
+ {web => apps/web}/pulser-runner/app.py                      |   0
+ {web => apps/web}/pulser-runner/package.json                |   0
+ {web => apps/web}/pulser-runner/requirements.txt            |   0
+ {web => apps/web}/superset-analytics/APP.md                 |   0
+ {web => apps/web}/superset-analytics/do/app.json            |   0
+ {web => apps/web}/superset-analytics/spec.yaml              |   0
+ {web => apps/web}/superset-embed-api/.env.example           |   0
+ {web => apps/web}/superset-embed-api/Dockerfile             |   0
+ {web => apps/web}/superset-embed-api/do-app-spec.yaml       |   0
+ {web => apps/web}/superset-embed-api/package.json           |   0
+ {web => apps/web}/superset-embed-api/src/index.js           |   0
+ .../web-backup-subscription-starter/.!65219!types_db.ts     |   0
+ .../web}/web-backup-subscription-starter/.env.example       |   0
+ .../web}/web-backup-subscription-starter/.gitignore         |   0
+ .../web}/web-backup-subscription-starter/.prettierignore    |   0
+ .../web}/web-backup-subscription-starter/.prettierrc.json   |   0
+ {web => apps/web}/web-backup-subscription-starter/LICENSE   |   0
+ {web => apps/web}/web-backup-subscription-starter/README.md |   0
+ .../web-backup-subscription-starter/app/account/page.tsx    |   0
+ .../app/api/webhooks/route.ts                               |   0
+ .../app/auth/callback/route.ts                              |   0
+ .../app/auth/reset_password/route.ts                        |   0
+ .../web}/web-backup-subscription-starter/app/layout.tsx     |   0
+ .../web-backup-subscription-starter/app/opengraph-image.png | Bin
+ .../web}/web-backup-subscription-starter/app/page.tsx       |   0
+ .../app/signin/[id]/page.tsx                                |   0
+ .../web-backup-subscription-starter/app/signin/page.tsx     |   0
+ .../app/solutions/financial-services/page.tsx               |   0
+ .../web}/web-backup-subscription-starter/components.json    |   0
+ .../components/solutions/DeploymentOptions.tsx              |   0
+ .../components/solutions/FinalCta.tsx                       |   0
+ .../components/solutions/LogoStrip.tsx                      |   0
+ .../components/solutions/PartnerStrip.tsx                   |   0
+ .../components/solutions/Pillars.tsx                        |   0
+ .../components/solutions/ResourceGrid.tsx                   |   0
+ .../components/solutions/SolutionHero.tsx                   |   0
+ .../components/solutions/UseCases.tsx                       |   0
+ .../components/solutions/index.ts                           |   0
+ .../components/ui/AccountForms/CustomerPortalForm.tsx       |   0
+ .../components/ui/AccountForms/EmailForm.tsx                |   0
+ .../components/ui/AccountForms/NameForm.tsx                 |   0
+ .../components/ui/AuthForms/EmailSignIn.tsx                 |   0
+ .../components/ui/AuthForms/ForgotPassword.tsx              |   0
+ .../components/ui/AuthForms/OauthSignIn.tsx                 |   0
+ .../components/ui/AuthForms/PasswordSignIn.tsx              |   0
+ .../components/ui/AuthForms/Separator.tsx                   |   0
+ .../components/ui/AuthForms/Signup.tsx                      |   0
+ .../components/ui/AuthForms/UpdatePassword.tsx              |   0
+ .../components/ui/Button/Button.module.css                  |   0
+ .../components/ui/Button/Button.tsx                         |   0
+ .../components/ui/Button/index.ts                           |   0
+ .../components/ui/Card/Card.tsx                             |   0
+ .../components/ui/Card/index.ts                             |   0
+ .../components/ui/Footer/Footer.tsx                         |   0
+ .../components/ui/Footer/index.ts                           |   0
+ .../components/ui/Input/Input.module.css                    |   0
+ .../components/ui/Input/Input.tsx                           |   0
+ .../components/ui/Input/index.ts                            |   0
+ .../components/ui/LoadingDots/LoadingDots.module.css        |   0
+ .../components/ui/LoadingDots/LoadingDots.tsx               |   0
+ .../components/ui/LoadingDots/index.ts                      |   0
+ .../components/ui/LogoCloud/LogoCloud.tsx                   |   0
+ .../components/ui/LogoCloud/index.ts                        |   0
+ .../components/ui/Navbar/Navbar.module.css                  |   0
+ .../components/ui/Navbar/Navbar.tsx                         |   0
+ .../components/ui/Navbar/Navlinks.tsx                       |   0
+ .../components/ui/Navbar/index.ts                           |   0
+ .../components/ui/Pricing/Pricing.tsx                       |   0
+ .../components/ui/Toasts/toast.tsx                          |   0
+ .../components/ui/Toasts/toaster.tsx                        |   0
+ .../components/ui/Toasts/use-toast.ts                       |   0
+ .../content/solutions/financial-services.yaml               |   0
+ .../fixtures/stripe-fixtures.json                           |   0
+ .../web}/web-backup-subscription-starter/lib/content.ts     |   0
+ .../web}/web-backup-subscription-starter/middleware.ts      |   0
+ .../web}/web-backup-subscription-starter/next-env.d.ts      |   0
+ .../web}/web-backup-subscription-starter/package.json       |   0
+ .../web}/web-backup-subscription-starter/pnpm-lock.yaml     |   0
+ .../web}/web-backup-subscription-starter/postcss.config.js  |   0
+ .../public/architecture_diagram.png                         | Bin
+ .../public/architecture_diagram.svg                         |   0
+ .../web}/web-backup-subscription-starter/public/demo.png    | Bin
+ .../web}/web-backup-subscription-starter/public/favicon.ico | Bin
+ .../web}/web-backup-subscription-starter/public/github.svg  |   0
+ .../web}/web-backup-subscription-starter/public/nextjs.svg  |   0
+ .../web}/web-backup-subscription-starter/public/stripe.svg  |   0
+ .../web-backup-subscription-starter/public/supabase.svg     |   0
+ .../public/vercel-deploy.png                                | Bin
+ .../web}/web-backup-subscription-starter/public/vercel.svg  |   0
+ .../web}/web-backup-subscription-starter/styles/main.css    |   0
+ .../web-backup-subscription-starter/supabase/.gitignore     |   0
+ .../web-backup-subscription-starter/supabase/config.toml    |   0
+ .../web}/web-backup-subscription-starter/tailwind.config.js |   0
+ .../web}/web-backup-subscription-starter/tsconfig.json      |   0
+ .../web}/web-backup-subscription-starter/types_db.ts        | Bin
+ .../utils/auth-helpers/client.ts                            |   0
+ .../utils/auth-helpers/server.ts                            |   0
+ .../utils/auth-helpers/settings.ts                          |   0
+ .../web}/web-backup-subscription-starter/utils/cn.ts        |   0
+ .../web}/web-backup-subscription-starter/utils/helpers.ts   |   0
+ .../web-backup-subscription-starter/utils/stripe/client.ts  |   0
+ .../web-backup-subscription-starter/utils/stripe/config.ts  |   0
+ .../web-backup-subscription-starter/utils/stripe/server.ts  |   0
+ .../web-backup-subscription-starter/utils/supabase/admin.ts |   0
+ .../utils/supabase/client.ts                                |   0
+ .../utils/supabase/middleware.ts                            |   0
+ .../utils/supabase/queries.ts                               |   0
+ .../utils/supabase/server.ts                                |   0
+ {web => apps/web}/web-legacy-backup/.env.example            |   0
+ {web => apps/web}/web-legacy-backup/.eslintrc.json          |   0
+ .../.github/workflows/token-validation.yml                  |   0
+ {web => apps/web}/web-legacy-backup/.gitignore              |   0
+ {web => apps/web}/web-legacy-backup/.vercelignore           |   0
+ {web => apps/web}/web-legacy-backup/DEPLOYMENT.md           |   0
+ .../web-legacy-backup/apps/web/src/app/api/auth/TEST.md     |   0
+ .../apps/web/src/app/api/auth/magic-link/route.ts           |   0
+ .../apps/web/src/app/api/auth/otp/start/route.ts            |   0
+ .../apps/web/src/app/api/auth/otp/verify/route.ts           |   0
+ .../content/solutions/financial-services.yaml               |   0
+ .../docs/evidence/20260210-1300/lockfile-fix/RESOLUTION.md  |   0
+ .../docs/evidence/20260210-1300/lockfile-fix/STATUS.md      |   0
+ {web => apps/web}/web-legacy-backup/e2e/auth.spec.ts        |   0
+ {web => apps/web}/web-legacy-backup/jest.config.js          |   0
+ {web => apps/web}/web-legacy-backup/jest.setup.js           |   0
+ {web => apps/web}/web-legacy-backup/next-env.d.ts           |   0
+ {web => apps/web}/web-legacy-backup/next.config.js          |   0
+ {web => apps/web}/web-legacy-backup/package.json            |   0
+ {web => apps/web}/web-legacy-backup/playwright.config.ts    |   0
+ {web => apps/web}/web-legacy-backup/postcss.config.js       |   0
+ .../public/solutions/financial-services/.gitkeep            |   0
+ .../public/solutions/financial-services/bg/.gitkeep         |   0
+ .../public/solutions/financial-services/hero/.gitkeep       |   0
+ .../public/solutions/financial-services/logos/.gitkeep      |   0
+ .../public/solutions/financial-services/partners/.gitkeep   |   0
+ .../public/solutions/financial-services/resources/.gitkeep  |   0
+ .../public/solutions/financial-services/use-cases/.gitkeep  |   0
+ .../web}/web-legacy-backup/scripts/check-assets.mjs         |   0
+ .../web}/web-legacy-backup/scripts/vercel/README.md         |   0
+ .../web-legacy-backup/scripts/vercel/fix_root_directory.sh  |   0
+ .../web-legacy-backup/scripts/vercel/latest_deploy_logs.sh  |   0
+ .../web-legacy-backup/scripts/vercel/provision_token.sh     |   0
+ .../web-legacy-backup/src/app/api/auth/callback/route.ts    |   0
+ .../web}/web-legacy-backup/src/app/api/auth/health/route.ts |   0
+ .../web-legacy-backup/src/app/api/auth/signout/route.ts     |   0
+ .../web}/web-legacy-backup/src/app/api/auth/user/route.ts   |   0
+ .../src/app/api/billing/subscription/route.ts               |   0
+ .../web}/web-legacy-backup/src/app/auth/error/page.tsx      |   0
+ {web => apps/web}/web-legacy-backup/src/app/demo/page.tsx   |   0
+ {web => apps/web}/web-legacy-backup/src/app/globals.css     |   0
+ {web => apps/web}/web-legacy-backup/src/app/layout.tsx      |   0
+ {web => apps/web}/web-legacy-backup/src/app/page.tsx        |   0
+ .../src/app/solutions/financial-services/page.tsx           |   0
+ .../web}/web-legacy-backup/src/components/Navigation.tsx    |   0
+ .../web-legacy-backup/src/components/docs/DocsFooter.tsx    |   0
+ .../web-legacy-backup/src/components/docs/DocsHeader.tsx    |   0
+ .../web-legacy-backup/src/components/docs/DocsShell.tsx     |   0
+ .../web-legacy-backup/src/components/docs/DocsSidebar.tsx   |   0
+ .../web}/web-legacy-backup/src/components/docs/DocsToc.tsx  |   0
+ .../web}/web-legacy-backup/src/components/docs/index.ts     |   0
+ .../src/components/solutions/DeploymentOptions.tsx          |   0
+ .../web-legacy-backup/src/components/solutions/FinalCta.tsx |   0
+ .../src/components/solutions/LogoStrip.tsx                  |   0
+ .../src/components/solutions/PartnerStrip.tsx               |   0
+ .../web-legacy-backup/src/components/solutions/Pillars.tsx  |   0
+ .../src/components/solutions/ResourceGrid.tsx               |   0
+ .../src/components/solutions/SolutionHero.tsx               |   0
+ .../web-legacy-backup/src/components/solutions/UseCases.tsx |   0
+ .../web-legacy-backup/src/components/solutions/index.ts     |   0
+ .../web-legacy-backup/src/components/ui/BenefitBadge.tsx    |   0
+ .../web}/web-legacy-backup/src/components/ui/Button.tsx     |   0
+ .../web-legacy-backup/src/components/ui/FeatureCard.tsx     |   0
+ .../web-legacy-backup/src/features/auth/OTPLoginModal.tsx   |   0
+ .../web}/web-legacy-backup/src/features/auth/index.ts       |   0
+ .../src/features/billing/BillingDashboard.tsx               |   0
+ .../web}/web-legacy-backup/src/features/billing/index.ts    |   0
+ {web => apps/web}/web-legacy-backup/src/lib/content.ts      |   0
+ {web => apps/web}/web-legacy-backup/src/lib/docs/index.ts   |   0
+ {web => apps/web}/web-legacy-backup/src/lib/docs/nav.ts     |   0
+ {web => apps/web}/web-legacy-backup/src/lib/docs/toc.ts     |   0
+ {web => apps/web}/web-legacy-backup/src/lib/supabase.ts     |   0
+ {web => apps/web}/web-legacy-backup/src/lib/utils.ts        |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/Button.tsx  |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/Card.tsx    |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/Chip.tsx    |   0
+ .../web}/web-legacy-backup/src/ui/ipai/Dropdown.tsx         |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/Form.tsx    |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/Modal.tsx   |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/README.md   |   0
+ .../web-legacy-backup/src/ui/ipai/__tests__/Button.test.tsx |   0
+ .../web-legacy-backup/src/ui/ipai/__tests__/Card.test.tsx   |   0
+ .../web-legacy-backup/src/ui/ipai/__tests__/Chip.test.tsx   |   0
+ {web => apps/web}/web-legacy-backup/src/ui/ipai/index.ts    |   0
+ {web => apps/web}/web-legacy-backup/tailwind.config.js      |   0
+ {web => apps/web}/web-legacy-backup/tsconfig.json           |   0
+ {web => apps/web}/web-legacy-backup/vercel.json             |   0
+ {web => apps/web}/web/.gitignore                            |   0
+ {web => apps/web}/web/app/globals.css                       |   0
+ {web => apps/web}/web/app/layout.tsx                        |   0
+ {web => apps/web}/web/app/page.tsx                          |   0
+ {web => apps/web}/web/components.json                       |   0
+ {web => apps/web}/web/components/BankingScaleHero.tsx       |   0
+ {web => apps/web}/web/components/CaseStudiesCarousel.tsx    |   0
+ {web => apps/web}/web/components/FAQSection.tsx             |   0
+ {web => apps/web}/web/components/Footer.tsx                 |   0
+ {web => apps/web}/web/components/IntegrationCarousel.tsx    |   0
+ {web => apps/web}/web/components/PortfolioNavbar.tsx        |   0
+ {web => apps/web}/web/components/PricingSection.tsx         |   0
+ {web => apps/web}/web/components/ProductTeaserCard.tsx      |   0
+ {web => apps/web}/web/components/theme-provider.tsx         |   0
+ {web => apps/web}/web/components/ui/accordion.tsx           |   0
+ {web => apps/web}/web/components/ui/alert-dialog.tsx        |   0
+ {web => apps/web}/web/components/ui/alert.tsx               |   0
+ {web => apps/web}/web/components/ui/aspect-ratio.tsx        |   0
+ {web => apps/web}/web/components/ui/avatar.tsx              |   0
+ {web => apps/web}/web/components/ui/badge.tsx               |   0
+ {web => apps/web}/web/components/ui/breadcrumb.tsx          |   0
+ {web => apps/web}/web/components/ui/button-group.tsx        |   0
+ {web => apps/web}/web/components/ui/button.tsx              |   0
+ {web => apps/web}/web/components/ui/calendar.tsx            |   0
+ {web => apps/web}/web/components/ui/card.tsx                |   0
+ {web => apps/web}/web/components/ui/carousel.tsx            |   0
+ {web => apps/web}/web/components/ui/chart.tsx               |   0
+ {web => apps/web}/web/components/ui/checkbox.tsx            |   0
+ {web => apps/web}/web/components/ui/collapsible.tsx         |   0
+ {web => apps/web}/web/components/ui/command.tsx             |   0
+ {web => apps/web}/web/components/ui/context-menu.tsx        |   0
+ {web => apps/web}/web/components/ui/dialog.tsx              |   0
+ {web => apps/web}/web/components/ui/drawer.tsx              |   0
+ {web => apps/web}/web/components/ui/dropdown-menu.tsx       |   0
+ {web => apps/web}/web/components/ui/empty.tsx               |   0
+ {web => apps/web}/web/components/ui/field.tsx               |   0
+ {web => apps/web}/web/components/ui/form.tsx                |   0
+ {web => apps/web}/web/components/ui/hover-card.tsx          |   0
+ {web => apps/web}/web/components/ui/input-group.tsx         |   0
+ {web => apps/web}/web/components/ui/input-otp.tsx           |   0
+ {web => apps/web}/web/components/ui/input.tsx               |   0
+ {web => apps/web}/web/components/ui/item.tsx                |   0
+ {web => apps/web}/web/components/ui/kbd.tsx                 |   0
+ {web => apps/web}/web/components/ui/label.tsx               |   0
+ {web => apps/web}/web/components/ui/menubar.tsx             |   0
+ {web => apps/web}/web/components/ui/navigation-menu.tsx     |   0
+ {web => apps/web}/web/components/ui/pagination.tsx          |   0
+ {web => apps/web}/web/components/ui/popover.tsx             |   0
+ {web => apps/web}/web/components/ui/progress.tsx            |   0
+ {web => apps/web}/web/components/ui/radio-group.tsx         |   0
+ {web => apps/web}/web/components/ui/resizable.tsx           |   0
+ {web => apps/web}/web/components/ui/scroll-area.tsx         |   0
+ {web => apps/web}/web/components/ui/select.tsx              |   0
+ {web => apps/web}/web/components/ui/separator.tsx           |   0
+ {web => apps/web}/web/components/ui/sheet.tsx               |   0
+ {web => apps/web}/web/components/ui/sidebar.tsx             |   0
+ {web => apps/web}/web/components/ui/skeleton.tsx            |   0
+ {web => apps/web}/web/components/ui/slider.tsx              |   0
+ {web => apps/web}/web/components/ui/sonner.tsx              |   0
+ {web => apps/web}/web/components/ui/spinner.tsx             |   0
+ {web => apps/web}/web/components/ui/switch.tsx              |   0
+ {web => apps/web}/web/components/ui/table.tsx               |   0
+ {web => apps/web}/web/components/ui/tabs.tsx                |   0
+ {web => apps/web}/web/components/ui/textarea.tsx            |   0
+ {web => apps/web}/web/components/ui/toast.tsx               |   0
+ {web => apps/web}/web/components/ui/toaster.tsx             |   0
+ {web => apps/web}/web/components/ui/toggle-group.tsx        |   0
+ {web => apps/web}/web/components/ui/toggle.tsx              |   0
+ {web => apps/web}/web/components/ui/tooltip.tsx             |   0
+ {web => apps/web}/web/components/ui/use-mobile.tsx          |   0
+ {web => apps/web}/web/components/ui/use-toast.ts            |   0
+ {web => apps/web}/web/hooks/use-mobile.ts                   |   0
+ {web => apps/web}/web/hooks/use-toast.ts                    |   0
+ {web => apps/web}/web/lib/utils.ts                          |   0
+ {web => apps/web}/web/next-env.d.ts                         |   0
+ {web => apps/web}/web/next.config.mjs                       |   0
+ {web => apps/web}/web/package.json                          |   0
+ {web => apps/web}/web/postcss.config.mjs                    |   0
+ {web => apps/web}/web/public/apple-icon.png                 |   0
+ {web => apps/web}/web/public/icon-dark-32x32.png            |   0
+ {web => apps/web}/web/public/icon-light-32x32.png           |   0
+ {web => apps/web}/web/public/icon.svg                       |   0
+ .../9ad78a5534a46e77bafe116ce1c38172c60dc21a-1069x1068.png  |   0
+ {web => apps/web}/web/public/odoo-copilot-cards-final.html  |   0
+ .../web}/web/public/odoo-copilot-cards-hyperrealistic.html  |   0
+ {web => apps/web}/web/public/odoo-copilot-cards-v2.html     |   0
+ {web => apps/web}/web/public/odoo-copilot-cards.html        |   0
+ {web => apps/web}/web/public/placeholder-logo.png           |   0
+ {web => apps/web}/web/public/placeholder-logo.svg           |   0
+ {web => apps/web}/web/public/placeholder-user.jpg           |   0
+ {web => apps/web}/web/public/placeholder.jpg                |   0
+ {web => apps/web}/web/public/placeholder.svg                |   0
+ {web => apps/web}/web/public/use-case-svgs.html             |   0
+ {web => apps/web}/web/scripts/generate-card-images.js       |   0
+ {web => apps/web}/web/scripts/screenshot.mjs                |   0
+ {web => apps/web}/web/styles/globals.css                    |   0
+ {web => apps/web}/web/tsconfig.json                         |   0
+ {web => apps/web}/web/vercel.json                           |   0
+ {dbt => data/dbt}/dbt_project.yml                           |   0
+ {dbt => data/dbt}/packages.yml                              |   0
+ {dbt => data/dbt}/profiles.yml.example                      |   0
+ {inventory => data/inventory}/latest                        |   0
+ .../apps.\"a962affc-f005-4b25-9c01-3c6b63dce52c\".json"     |   0
+ .../inventory}/runs/20251231T015431Z/apps.list.json         |   0
+ .../apps.\"a962affc-f005-4b25-9c01-3c6b63dce52c\".json"     |   0
+ .../inventory}/runs/20251231T015708Z/apps.list.json         |   0
+ .../inventory}/runs/20251231T015728Z/agents.list.json       |   0
+ .../apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json          |   0
+ .../apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json          |   0
+ .../apps.73af11cb-dab2-4cb1-9770-291c536531e6.json          |   0
+ .../apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json          |   0
+ .../apps.844b0bb2-0208-4694-bf86-12e750b7f790.json          |   0
+ .../apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json          |   0
+ .../apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json          |   0
+ .../apps.d77ba558-e72f-494e-a439-b27a563aeb42.json          |   0
+ .../apps.de36bfbc-86a3-4293-836b-78b236bca899.json          |   0
+ .../inventory}/runs/20251231T015728Z/apps.list.json         |   0
+ .../inventory}/runs/20251231T015728Z/domains.list.json      |   0
+ .../inventory}/runs/20251231T015728Z/droplets.list.json     |   0
+ .../inventory}/runs/20251231T015829Z/agents.list.json       |   0
+ .../apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json          |   0
+ .../apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json          |   0
+ .../apps.73af11cb-dab2-4cb1-9770-291c536531e6.json          |   0
+ .../apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json          |   0
+ .../apps.844b0bb2-0208-4694-bf86-12e750b7f790.json          |   0
+ .../apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json          |   0
+ .../apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json          |   0
+ .../apps.d77ba558-e72f-494e-a439-b27a563aeb42.json          |   0
+ .../apps.de36bfbc-86a3-4293-836b-78b236bca899.json          |   0
+ .../inventory}/runs/20251231T015829Z/apps.list.json         |   0
+ .../inventory}/runs/20251231T015829Z/databases.list.json    |   0
+ .../inventory}/runs/20251231T015829Z/droplets.list.json     |   0
+ .../inventory}/runs/20251231T015829Z/projects.list.json     |   0
+ .../inventory}/runs/20251231T015909Z/agents.list.json       |   0
+ .../apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json          |   0
+ .../apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json          |   0
+ .../apps.73af11cb-dab2-4cb1-9770-291c536531e6.json          |   0
+ .../apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json          |   0
+ .../apps.844b0bb2-0208-4694-bf86-12e750b7f790.json          |   0
+ .../apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json          |   0
+ .../apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json          |   0
+ .../apps.d77ba558-e72f-494e-a439-b27a563aeb42.json          |   0
+ .../apps.de36bfbc-86a3-4293-836b-78b236bca899.json          |   0
+ .../inventory}/runs/20251231T015909Z/apps.list.json         |   0
+ .../inventory}/runs/20251231T015909Z/databases.list.json    |   0
+ .../inventory}/runs/20251231T015909Z/droplets.list.json     |   0
+ .../inventory}/runs/20251231T015909Z/projects.list.json     |   0
+ .../inventory}/runs/20251231T020517Z/agents.list.json       |   0
+ .../apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json          |   0
+ .../apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json          |   0
+ .../apps.73af11cb-dab2-4cb1-9770-291c536531e6.json          |   0
+ .../apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json          |   0
+ .../apps.844b0bb2-0208-4694-bf86-12e750b7f790.json          |   0
+ .../apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json          |   0
+ .../apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json          |   0
+ .../apps.d77ba558-e72f-494e-a439-b27a563aeb42.json          |   0
+ .../apps.de36bfbc-86a3-4293-836b-78b236bca899.json          |   0
+ .../inventory}/runs/20251231T020517Z/apps.list.json         |   0
+ .../inventory}/runs/20251231T020517Z/databases.list.json    |   0
+ .../inventory}/runs/20251231T020517Z/droplets.list.json     |   0
+ .../inventory}/runs/20251231T020517Z/projects.list.json     |   0
+ {seed_export => data/seeds}/projects.csv                    |   0
+ {seed_export => data/seeds}/stages.csv                      |   0
+ {seed_export => data/seeds}/tags.csv                        |   0
+ {seed_export => data/seeds}/tasks.csv                       |   0
+ {seed_export => data/seeds}/users.csv                       |   0
+ {branding => design/branding}/fluentui-system-icons         |   0
+ {figma => design/figma}/README.md                           |   0
+ {figma => design/figma}/community/README.md                 |   0
+ {figma => design/figma}/community/manifest.json             |   0
+ {figma => design/figma}/community/shortlist.csv             |   0
+ {figma => design/figma}/connect/.gitkeep                    |   0
+ {figma => design/figma}/tokens/.gitkeep                     |   0
+ {design-tokens => design/tokens}/tokens.json                |   0
+ {pkgs => packages}/agent-core/package.json                  |   0
+ {pkgs => packages}/agent-core/src/index.ts                  |   0
+ {pkgs => packages}/agentic-codebase-crawler/README.md       |   0
+ {pkgs => packages}/agentic-codebase-crawler/package.json    |   0
+ {pkgs => packages}/agentic-codebase-crawler/src/index.ts    |   0
+ .../agentic-codebase-crawler/templates/parity-controls.yml  |   0
+ {pkgs => packages}/agentic-codebase-crawler/tsconfig.json   |   0
+ {pkgs => packages}/config/template-packs.json               |   0
+ {pkgs => packages}/echarts-react/package.json               |   0
+ .../echarts-react/src/components/ChartThemeProvider.tsx     |   0
+ .../echarts-react/src/components/ChartThemeSelector.tsx     |   0
+ {pkgs => packages}/echarts-react/src/components/EChart.tsx  |   0
+ {pkgs => packages}/echarts-react/src/hooks/useChartTheme.ts |   0
+ {pkgs => packages}/echarts-react/src/index.ts               |   0
+ {pkgs => packages}/echarts-react/src/types/index.ts         |   0
+ {pkgs => packages}/echarts-react/tsconfig.json              |   0
+ {pkgs => packages}/echarts-react/tsup.config.ts             |   0
+ {pkgs => packages}/echarts-themes/README.md                 |   0
+ {pkgs => packages}/echarts-themes/package.json              |   0
+ {pkgs => packages}/echarts-themes/src/index.ts              |   0
+ {pkgs => packages}/echarts-themes/src/loaders/browser.ts    |   0
+ {pkgs => packages}/echarts-themes/src/loaders/cdn.ts        |   0
+ {pkgs => packages}/echarts-themes/src/loaders/node.ts       |   0
+ {pkgs => packages}/echarts-themes/src/themes.json           |   0
+ {pkgs => packages}/echarts-themes/src/themes/dark.ts        |   0
+ {pkgs => packages}/echarts-themes/src/themes/infographic.ts |   0
+ {pkgs => packages}/echarts-themes/src/themes/macarons.ts    |   0
+ {pkgs => packages}/echarts-themes/src/themes/roma.ts        |   0
+ {pkgs => packages}/echarts-themes/src/themes/shine.ts       |   0
+ {pkgs => packages}/echarts-themes/src/themes/vintage.ts     |   0
+ {pkgs => packages}/echarts-themes/src/types.ts              |   0
+ {pkgs => packages}/echarts-themes/tsconfig.json             |   0
+ {pkgs => packages}/echarts-themes/tsup.config.ts            |   0
+ {pkgs => packages}/env-config/package.json                  |   0
+ {pkgs => packages}/env-config/src/index.ts                  |   0
+ {pkgs => packages}/env-config/tsconfig.json                 |   0
+ {pkgs => packages}/github-app/.env.example                  |   0
+ {pkgs => packages}/github-app/GITHUB_APP_CONFIG.json        |   0
+ {pkgs => packages}/github-app/package.json                  |   0
+ {pkgs => packages}/github-app/src/server.ts                 |   0
+ {pkgs => packages}/github-app/tsconfig.json                 |   0
+ {pkgs => packages}/ipai-ai-sdk-python/README.md             |   0
+ .../ipai-ai-sdk-python/ipai_ai_sdk/__init__.py              |   0
+ .../ipai-ai-sdk-python/ipai_ai_sdk/agent_library.py         |   0
+ {pkgs => packages}/ipai-ai-sdk-python/ipai_ai_sdk/client.py |   0
+ {pkgs => packages}/ipai-ai-sdk-python/ipai_ai_sdk/types.py  |   0
+ {pkgs => packages}/ipai-ai-sdk-python/pyproject.toml        |   0
+ {pkgs => packages}/ipai-ai-sdk-python/setup.py              |   0
+ {pkgs => packages}/ipai-ai-sdk/README.md                    |   0
+ {pkgs => packages}/ipai-ai-sdk/package.json                 |   0
+ {pkgs => packages}/ipai-ai-sdk/src/agentLibrary.ts          |   0
+ {pkgs => packages}/ipai-ai-sdk/src/client.ts                |   0
+ {pkgs => packages}/ipai-ai-sdk/src/errors.ts                |   0
+ {pkgs => packages}/ipai-ai-sdk/src/index.ts                 |   0
+ {pkgs => packages}/ipai-ai-sdk/src/types.ts                 |   0
+ {pkgs => packages}/ipai-ai-sdk/tsconfig.json                |   0
+ {pkgs => packages}/ipai-design-tokens/QUICKSTART.md         |   0
+ {pkgs => packages}/ipai-design-tokens/README-AICHAT.md      |   0
+ {pkgs => packages}/ipai-design-tokens/README.md             |   0
+ {pkgs => packages}/ipai-design-tokens/css-vars.css          |   0
+ {pkgs => packages}/ipai-design-tokens/demo-vanilla.html     |   0
+ {pkgs => packages}/ipai-design-tokens/demo/index.html       |   0
+ {pkgs => packages}/ipai-design-tokens/demo/main.tsx         |   0
+ {pkgs => packages}/ipai-design-tokens/export/css-vars.css   |   0
+ {pkgs => packages}/ipai-design-tokens/insightpulse-ai.css   |   0
+ .../ipai-design-tokens/material3-expressive.css             |   0
+ {pkgs => packages}/ipai-design-tokens/package.json          |   0
+ .../ipai-design-tokens/scripts/tokens/generate-tokens.mjs   |   0
+ {pkgs => packages}/ipai-design-tokens/src/build.ts          |   0
+ {pkgs => packages}/ipai-design-tokens/src/index.ts          |   0
+ {pkgs => packages}/ipai-design-tokens/src/ipai-brand.ts     |   0
+ {pkgs => packages}/ipai-design-tokens/src/material3Theme.ts |   0
+ {pkgs => packages}/ipai-design-tokens/src/odooTokens.ts     |   0
+ .../ipai-design-tokens/src/react/AIChatWidget.tsx           |   0
+ .../ipai-design-tokens/src/react/Material3Components.tsx    |   0
+ .../ipai-design-tokens/src/react/OdooTokensProvider.tsx     |   0
+ .../ipai-design-tokens/src/react/ThemeProvider.tsx          |   0
+ {pkgs => packages}/ipai-design-tokens/src/react/index.ts    |   0
+ .../ipai-design-tokens/src/react/useOdooTokens.ts           |   0
+ .../ipai-design-tokens/src/tableauTokens.json               |   0
+ {pkgs => packages}/ipai-design-tokens/src/tableauTokens.ts  |   0
+ {pkgs => packages}/ipai-design-tokens/tableau.css           |   0
+ .../ipai-design-tokens/tailwind-material3.preset.js         |   0
+ .../ipai-design-tokens/tailwind-tableau.preset.js           |   0
+ {pkgs => packages}/ipai-design-tokens/tailwind.preset.cjs   |   0
+ {pkgs => packages}/ipai-design-tokens/tailwind.preset.js    |   0
+ {pkgs => packages}/ipai-design-tokens/tokens.css            |   0
+ {pkgs => packages}/ipai-design-tokens/tokens.json           |   0
+ {pkgs => packages}/ipai-design-tokens/tokens.scss           |   0
+ .../ipai-design-tokens/tokens/source/tokens.json            |   0
+ {pkgs => packages}/ipai-design-tokens/vite.config.ts        |   0
+ .../platform-kit}/cli/package-lock.json                     |   0
+ {platform-kit => packages/platform-kit}/cli/package.json    |   0
+ {platform-kit => packages/platform-kit}/cli/src/index.ts    |   0
+ {platform-kit => packages/platform-kit}/cli/tsconfig.json   |   0
+ .../platform-kit}/docs/KICKOFF_COMPLETE.md                  |   0
+ .../platform-kit}/reports/inventory.json                    |   0
+ {pkgs => packages}/saas-types/package.json                  |   0
+ {pkgs => packages}/saas-types/prisma/schema.prisma          |   0
+ {pkgs => packages}/saas-types/src/index.ts                  |   0
+ {pkgs => packages}/saas-types/tsconfig.json                 |   0
+ .../supabase/functions/auth-otp-request/index.ts            |   0
+ .../supabase/functions/auth-otp-verify/index.ts             |   0
+ {api => services/api}/oca-docs-brain-openapi.yaml           |   0
+ {ocr-adapter => services/ocr-adapter}/.gitignore            |   0
+ {ocr-adapter => services/ocr-adapter}/DEPLOYMENT.md         |   0
+ {ocr-adapter => services/ocr-adapter}/Dockerfile            |   0
+ {ocr-adapter => services/ocr-adapter}/README.md             |   0
+ {ocr-adapter => services/ocr-adapter}/main.py               |   0
+ {ocr-adapter => services/ocr-adapter}/nginx-site.conf       |   0
+ {ocr-adapter => services/ocr-adapter}/requirements.txt      |   0
+ {ocr-adapter => services/ocr-adapter}/scripts/README.md     |   0
+ .../ocr-adapter}/scripts/ground_truth_example.csv           |   0
+ .../ocr-adapter}/scripts/test-harness.py                    |   0
+ {ocr-adapter => services/ocr-adapter}/test-ocr.sh           |   0
+ .../test_receipts/receipt_CXE000000040236295.jpg            | Bin
+ .../ocr-adapter}/test_receipts/sample_ph_receipt.png        | Bin
+ {ocr_service => services/ocr_service}/ocr.pid               |   0
+ {ocr_service => services/ocr_service}/server.py             |   0
+ 1028 files changed, 1 insertion(+), 1 deletion(-)

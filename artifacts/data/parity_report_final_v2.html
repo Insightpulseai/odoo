@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Odoo EE Parity Report - 2026-02-11T01:12:13.493575</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; }
+        h1 { color: #714B67; }
+        .summary { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .score { font-size: 48px; font-weight: bold; color: #4CAF50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #714B67; color: white; }
+        .pass { color: #4CAF50; font-weight: bold; }
+        .fail { color: #f44336; font-weight: bold; }
+        .skip { color: #ff9800; font-weight: bold; }
+        .not-impl { color: #9e9e9e; }
+        .p0 { background: #ffebee; }
+        .p1 { background: #fff3e0; }
+    </style>
+</head>
+<body>
+    <h1>Odoo Enterprise Edition Parity Report</h1>
+
+    <div class="summary">
+        <div class="score">87.8%</div>
+        <p>Parity Score (Target: ≥80%)</p>
+        <p><strong>Odoo Version:</strong> 19.0</p>
+        <p><strong>Generated:</strong> 2026-02-11T01:12:13.493575</p>
+        <p>
+            <strong>Results:</strong>
+            28 passed,
+            0 failed,
+            0 skipped,
+            3 not implemented
+            / 31 total
+        </p>
+    </div>
+
+    <h2>Feature Parity Details</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Feature</th>
+            <th>EE Module</th>
+            <th>IPAI Module</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Notes</th>
+        </tr>
+        <tr class="p0">
+            <td>ACC-001</td>
+            <td>Bank Reconciliation</td>
+            <td>account_accountant</td>
+            <td>account_reconcile_oca</td>
+            <td>P0 - Critical</td>
+            <td class="not-implemented">NOT_IMPLEMENTED</td>
+            <td>Missing equivalent for account_accountant</td>
+        </tr>
+        <tr class="p0">
+            <td>ACC-002</td>
+            <td>Financial Reports</td>
+            <td>account_reports</td>
+            <td>account_financial_report</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module account_financial_report or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>ACC-003</td>
+            <td>Asset Management</td>
+            <td>account_asset</td>
+            <td>account_asset_management</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td> Covered by account_asset_management</td>
+        </tr>
+        <tr class="p1">
+            <td>ACC-004</td>
+            <td>Budget Management</td>
+            <td>account_budget</td>
+            <td>mis_builder_budget</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module mis_builder_budget or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>HR-001</td>
+            <td>Payroll Processing</td>
+            <td>hr_payroll</td>
+            <td>payroll</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module payroll or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>HR-002</td>
+            <td>Leave Management</td>
+            <td>hr_holidays</td>
+            <td>hr_holidays_public</td>
+            <td>P0 - Critical</td>
+            <td class="not-implemented">NOT_IMPLEMENTED</td>
+            <td>Missing equivalent for hr_holidays</td>
+        </tr>
+        <tr class="p1">
+            <td>HR-003</td>
+            <td>Attendance Tracking</td>
+            <td>hr_attendance</td>
+            <td>ipai_hr_attendance</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_hr_attendance or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>HR-004</td>
+            <td>Expense Management</td>
+            <td>hr_expense</td>
+            <td>hr_expense</td>
+            <td>P1 - High</td>
+            <td class="not-implemented">NOT_IMPLEMENTED</td>
+            <td>Missing equivalent for hr_expense</td>
+        </tr>
+        <tr class="p1">
+            <td>SVC-001</td>
+            <td>Helpdesk Ticketing</td>
+            <td>helpdesk</td>
+            <td>helpdesk_mgmt</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td> Covered by helpdesk_mgmt</td>
+        </tr>
+        <tr class="p0">
+            <td>SVC-002</td>
+            <td>Approval Workflows</td>
+            <td>approvals</td>
+            <td>ipai_approvals</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_approvals or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>SVC-003</td>
+            <td>Resource Planning</td>
+            <td>planning</td>
+            <td>ipai_planning</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_planning or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>SVC-004</td>
+            <td>Timesheet Entry</td>
+            <td>timesheet_grid</td>
+            <td>ipai_timesheet</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_timesheet or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>BIR-001</td>
+            <td>BIR 1601-C Generation</td>
+            <td>N/A</td>
+            <td>ipai_bir_1601c</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_bir_1601c or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>BIR-002</td>
+            <td>BIR 2316 Certificate</td>
+            <td>N/A</td>
+            <td>ipai_bir_2316</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_bir_2316 or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>BIR-003</td>
+            <td>BIR Alphalist Export</td>
+            <td>N/A</td>
+            <td>ipai_bir_alphalist</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_bir_alphalist or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>BIR-004</td>
+            <td>VAT Reports (2550M/Q)</td>
+            <td>N/A</td>
+            <td>ipai_bir_vat</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_bir_vat or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>INT-001</td>
+            <td>Workflow Automation</td>
+            <td>studio</td>
+            <td>ipai_connector_n8n</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_connector_n8n or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>INT-002</td>
+            <td>Document Storage</td>
+            <td>documents</td>
+            <td>ipai_connector_supabase</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_connector_supabase or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>AI-001</td>
+            <td>AI Agents</td>
+            <td>ai</td>
+            <td>ipai_ai_agent_builder</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_ai_agent_builder or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>AI-002</td>
+            <td>AI RAG Sources</td>
+            <td>ai</td>
+            <td>ipai_ai_rag</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_ai_rag or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>AI-003</td>
+            <td>AI Tools</td>
+            <td>ai</td>
+            <td>ipai_ai_tools</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_ai_tools or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>AI-004</td>
+            <td>AI Fields</td>
+            <td>ai</td>
+            <td>ipai_ai_fields</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_ai_fields or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>AI-005</td>
+            <td>AI Livechat</td>
+            <td>ai</td>
+            <td>ipai_ai_livechat</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_ai_livechat or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>ESG-001</td>
+            <td>Carbon Analytics</td>
+            <td>esg</td>
+            <td>ipai_esg</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_esg or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>ESG-002</td>
+            <td>Social Metrics</td>
+            <td>esg</td>
+            <td>ipai_esg_social</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_esg_social or valid equivalent available</td>
+        </tr>
+        <tr class="p3">
+            <td>EQU-001</td>
+            <td>Share Tracking</td>
+            <td>equity</td>
+            <td>ipai_equity</td>
+            <td>P3 - Low</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_equity or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>WA-001</td>
+            <td>WhatsApp Integration</td>
+            <td>whatsapp</td>
+            <td>ipai_whatsapp_connector</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_whatsapp_connector or valid equivalent available</td>
+        </tr>
+        <tr class="p0">
+            <td>TAX-001</td>
+            <td>Tax Return Workflow</td>
+            <td>account</td>
+            <td>ipai_finance_tax_return</td>
+            <td>P0 - Critical</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_finance_tax_return or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>PRJ-001</td>
+            <td>Project Templates</td>
+            <td>project</td>
+            <td>ipai_project_templates</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_project_templates or valid equivalent available</td>
+        </tr>
+        <tr class="p1">
+            <td>PLN-001</td>
+            <td>Planning/Attendance Analysis</td>
+            <td>planning</td>
+            <td>ipai_planning_attendance</td>
+            <td>P1 - High</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_planning_attendance or valid equivalent available</td>
+        </tr>
+        <tr class="p2">
+            <td>DOC-001</td>
+            <td>Documents AI Management</td>
+            <td>documents</td>
+            <td>ipai_documents_ai</td>
+            <td>P2 - Medium</td>
+            <td class="pass">PASS</td>
+            <td>Module ipai_documents_ai or valid equivalent available</td>
+        </tr>
+    </table>
+</body>
+</html>

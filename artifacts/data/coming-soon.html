@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | InsightPulse AI</title>
+    <style>
+        :root {
+            /* InsightPulse AI Brand Palette — v1.0.0 (Enterprise Grade) */
+
+            /* Foundation: Deep Navy (Banking Authority) */
+            --brand-navy: #0F2440;
+            --brand-navy-deep: #0A1A2E;
+            --brand-navy-slate: #1E3148;
+
+            /* Accent: System Signal Green (Restrained) */
+            --accent-green: #2D8542;
+            --accent-lime: #9AAA35;
+            --accent-green-soft: #4A9B5C;
+
+            /* Accent: Trust Blue (Secondary) */
+            --accent-blue: #2563EB;
+            --accent-blue-soft: #3B82F6;
+
+            /* Surfaces */
+            --surface-bg: #F8FAFC;
+            --surface-bg2: #E8EFF6;
+            --surface-card: #FFFFFF;
+            --surface-hero: #0F2440;
+
+            /* Text (WCAG AA+ Compliant) */
+            --text-primary: #0A1628;
+            --text-secondary: #4A5568;
+            --text-muted: #64748B;
+            --text-light: #FFFFFF;
+
+            /* Semantic Tokens */
+            --accent-signal: #2D8542;
+            --glow-signal: rgba(45, 133, 66, 0.5);
+            --border-subtle: #CBD5E1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--surface-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                linear-gradient(180deg, var(--brand-navy) 0%, var(--brand-navy-deep) 35%, var(--surface-bg) 35.1%, var(--surface-bg) 100%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Pulsating Indicator */
+        .pulser-container {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pulser {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .pulser-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px solid var(--accent-signal);
+            opacity: 0;
+            animation: pulseRing 3s ease-out infinite;
+        }
+
+        .ring-1 { animation-delay: 0s; }
+        .ring-2 { animation-delay: 1s; }
+        .ring-3 { animation-delay: 2s; }
+
+        @keyframes pulseRing {
+            0% {
+                width: 60px;
+                height: 60px;
+                opacity: 0.6;
+                border-color: var(--accent-signal);
+            }
+            100% {
+                width: 140px;
+                height: 140px;
+                opacity: 0;
+                border-color: var(--accent-green-soft);
+            }
+        }
+
+        .pulser-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 56px;
+            height: 56px;
+            background: var(--accent-signal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px var(--glow-signal);
+            animation: coreGlow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes coreGlow {
+            0% {
+                box-shadow: 0 0 20px var(--glow-signal);
+            }
+            100% {
+                box-shadow: 0 0 32px var(--glow-signal);
+            }
+        }
+
+        .pulser-core svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        /* Brand Name */
+        .brand {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            color: var(--text-light);
+        }
+
+        .brand-insight {
+            color: var(--text-light);
+        }
+
+        .brand-pulse {
+            color: var(--text-light);
+        }
+
+        .brand-ai {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            font-size: 0.9em;
+        }
+
+        .platform-label {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-signal);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.25rem;
+            padding: 0.4rem 0.875rem;
+            background: rgba(45, 133, 66, 0.15);
+            border: 1px solid rgba(45, 133, 66, 0.3);
+            border-radius: 4px;
+        }
+
+        .headline {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .subhead {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 2rem;
+            max-width: 460px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Status Telemetry - Instrument Grade */
+        .status-header {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.875rem;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0.375rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            padding: 0.875rem 1.125rem;
+            min-width: 68px;
+            backdrop-filter: blur(8px);
+        }
+
+        .countdown-value {
+            display: block;
+            font-size: 1.625rem;
+            font-weight: 600;
+            color: var(--text-light);
+            line-height: 1;
+            font-family: "SF Mono", "Roboto Mono", "Consolas", monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .countdown-label {
+            display: block;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.375rem;
+            font-weight: 500;
+        }
+
+        .countdown-separator {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
+            align-self: center;
+        }
+
+        /* Notification Form - Enterprise CTA */
+        .subscribe {
+            margin-bottom: 2.5rem;
+        }
+
+        .subscribe-text {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.875rem;
+            font-size: 0.85rem;
+        }
+
+        .subscribe-form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .email-input {
+            flex: 1;
+            min-width: 220px;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-light);
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .email-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: var(--accent-signal);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--accent-signal);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-green-soft);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Footer */
+        .footer {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+        }
+
+        .social {
+            display: flex;
+            justify-content: center;
+            gap: 0.625rem;
+            margin-top: 0.625rem;
+        }
+
+        .social-link {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.2s ease, background 0.2s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Fade-in animation */
+        .container {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .brand { font-size: 1.75rem; }
+            .headline { font-size: 1.15rem; }
+            .subhead { font-size: 0.875rem; }
+            .countdown-value { font-size: 1.375rem; }
+            .countdown-item { padding: 0.75rem 0.875rem; min-width: 54px; }
+            .pulser { width: 80px; height: 80px; }
+            .pulser-core { width: 44px; height: 44px; }
+            .pulser-core svg { width: 28px; height: 28px; }
+            .platform-label { font-size: 0.6rem; padding: 0.35rem 0.7rem; }
+            .bg-overlay {
+                background: linear-gradient(180deg, var(--brand-navy) 0%, var(--brand-navy-deep) 40%, var(--surface-bg) 40.1%, var(--surface-bg) 100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div class="container">
+        <!-- Pulsating Logo/Indicator -->
+        <div class="pulser-container">
+            <div class="pulser">
+                <div class="pulser-ring ring-1"></div>
+                <div class="pulser-ring ring-2"></div>
+                <div class="pulser-ring ring-3"></div>
+                <div class="pulser-core">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M50 25 L50 75 M35 50 L65 50" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Label -->
+        <div class="platform-label">Enterprise Platform</div>
+
+        <!-- Brand Name -->
+        <h1 class="brand">
+            <span class="brand-insight">Insight</span><span class="brand-pulse">Pulse</span> <span class="brand-ai">AI</span>
+        </h1>
+
+        <!-- Operational Status Text -->
+        <h2 class="headline">Systems are being prepared for launch</h2>
+        <p class="subhead">Our enterprise resource platform is completing final configuration and security validation. Production deployment is scheduled.</p>
+
+        <!-- Status Telemetry -->
+        <div class="status-header">Estimated time to deployment</div>
+        <div class="countdown" id="countdown">
+            <div class="countdown-item">
+                <span class="countdown-value" id="days">00</span>
+                <span class="countdown-label">Days</span>
+            </div>
+            <div class="countdown-separator">:</div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="hours">00</span>
+                <span class="countdown-label">Hours</span>
+            </div>
+            <div class="countdown-separator">:</div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="minutes">00</span>
+                <span class="countdown-label">Min</span>
+            </div>
+            <div class="countdown-separator">:</div>
+            <div class="countdown-item">
+                <span class="countdown-value" id="seconds">00</span>
+                <span class="countdown-label">Sec</span>
+            </div>
+        </div>
+
+        <!-- Notification Form -->
+        <div class="subscribe">
+            <p class="subscribe-text">Receive deployment notification</p>
+            <form class="subscribe-form" action="#" method="post" onsubmit="handleSubscribe(event)">
+                <input type="email" name="email" placeholder="Enter your email" class="email-input" required>
+                <button type="submit" class="submit-btn">
+                    <span>Get notified</span>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 InsightPulse AI. All rights reserved.</p>
+            <div class="social">
+                <a href="https://insightpulseai.com" class="social-link" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="currentColor"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Countdown Timer - Launch in 30 days
+        const launchDate = new Date();
+        launchDate.setDate(launchDate.getDate() + 30);
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = launchDate.getTime() - now;
+
+            if (distance < 0) {
+                document.getElementById("days").textContent = "00";
+                document.getElementById("hours").textContent = "00";
+                document.getElementById("minutes").textContent = "00";
+                document.getElementById("seconds").textContent = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").textContent = String(days).padStart(2, "0");
+            document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+            document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+            document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Handle form submission
+        function handleSubscribe(e) {
+            e.preventDefault();
+            const email = e.target.email.value;
+            alert("Thank you! We will notify you at " + email + " when we launch.");
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
