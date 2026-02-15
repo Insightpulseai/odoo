@@ -29,7 +29,6 @@ jobs:
             # Development sandboxes
             "sandbox/dev/docker-compose.yml"
             "sandbox/dev/docker-compose.production.yml"
-            "sandbox/dev/compose.yml"
             "sandbox/workbench/docker-compose.workbench.yml"
             # Infrastructure stacks
             "infra/do-oca-stack/docker-compose.yml"
