@@ -1,0 +1,87 @@
+ {agent-library => agents/library}/Makefile                                | 0
+ {agent-library => agents/library}/README.md                               | 0
+ {agent-library => agents/library}/_shared/agent_prompt_template.md        | 0
+ {agent-library => agents/library}/app/fullstack_engineer.md               | 0
+ {agent-library => agents/library}/ci/requirements.txt                     | 0
+ {agent-library => agents/library}/odoo/odoo_backend_engineer.md           | 0
+ {agent-library => agents/library}/odoo/odoo_implementation_lead.md        | 0
+ {agent-library => agents/library}/odoo/odoo_solution_architect.md         | 0
+ {agent-library-pack => agents/library/packs}/README.md                    | 0
+ .../library/packs}/prompts/agents/app_mobile_engineer.md                  | 0
+ .../library/packs}/prompts/agents/app_strategy_consulting.md              | 0
+ .../library/packs}/prompts/agents/doc_portal_uiux_auditor_19_steps.md     | 0
+ .../library/packs}/prompts/agents/evidence_architect.md                   | 0
+ .../library/packs}/prompts/agents/finance_close_specialist.md             | 0
+ .../library/packs}/prompts/agents/odoo_consultation.md                    | 0
+ .../library/packs}/prompts/agents/odoo_customization.md                   | 0
+ .../library/packs}/prompts/agents/odoo_implementation.md                  | 0
+ .../packs}/prompts/agents/product_feature_uiux_auditor_22_steps.md        | 0
+ .../library/packs}/prompts/agents/uiux_designer.md                        | 0
+ .../library/packs}/prompts/agents/web_fullstack_engineer.md               | 0
+ {agent-library-pack => agents/library/packs}/prompts/router/router.md     | 0
+ {agent-library-pack => agents/library/packs}/router/agent_router.yaml     | 0
+ {agent-library-pack => agents/library/packs}/router/router.ts             | 0
+ .../library/packs}/schemas/evidence/form_evidence_bundle.schema.json      | 0
+ .../library/packs}/schemas/mapping/concur_to_odoo19_ce_oca_ipai.yaml      | 0
+ .../library/packs}/schemas/taxonomy/accounting_competency_framework.yaml  | 0
+ .../library/packs}/schemas/taxonomy/core_taxonomy.yaml                    | 0
+ .../library/packs}/schemas/taxonomy/philippines_tax.yaml                  | 0
+ {agent-library-pack => agents/library/packs}/scripts/verify.sh            | 0
+ {agent-library => agents/library}/prompts/erp/concur-to-odoo-mapper.md    | 0
+ {agent-library => agents/library}/prompts/erp/oca-ai-repo-auditor.md      | 0
+ {agent-library => agents/library}/prompts/finance/ph-close-tax-pack.md    | 0
+ .../library}/prompts/mobile/supabase-flutter-starter.md                   | 0
+ .../library}/prompts/platform/odoo-sh-constraints-guard.md                | 0
+ {agent-library => agents/library}/schemas/capability_atoms.schema.json    | 0
+ {agent-library => agents/library}/schemas/locale_overlay.schema.json      | 0
+ {agent-library => agents/library}/schemas/product_mapping.schema.json     | 0
+ {agent-library => agents/library}/schemas/ux_patterns.schema.json         | 0
+ {agent-library => agents/library}/scripts/distill.py                      | 0
+ {agent-library => agents/library}/scripts/run_catalog.py                  | 0
+ {agent-library => agents/library}/scripts/run_crawl.py                    | 0
+ {agent-library => agents/library}/scripts/validate_outputs.py             | 0
+ {agent-library => agents/library}/templates/sources.yaml                  | 0
+ {agent-library => agents/library}/uiux/ui_designer.md                     | 0
+ {agent-library => agents/library}/web/backend_architect.md                | 0
+ {contains-studio-agents => agents/studio}/README.md                       | 0
+ {contains-studio-agents => agents/studio}/design/brand-guardian.md        | 0
+ {contains-studio-agents => agents/studio}/design/ui-designer.md           | 0
+ {contains-studio-agents => agents/studio}/design/ux-researcher.md         | 0
+ {contains-studio-agents => agents/studio}/design/visual-storyteller.md    | 0
+ {contains-studio-agents => agents/studio}/design/whimsy-injector.md       | 0
+ {contains-studio-agents => agents/studio}/engineering/ai-engineer.md      | 0
+ .../studio}/engineering/backend-architect.md                              | 0
+ {contains-studio-agents => agents/studio}/engineering/devops-automator.md | 0
+ .../studio}/engineering/frontend-developer.md                             | 0
+ .../studio}/engineering/mobile-app-builder.md                             | 0
+ {contains-studio-agents => agents/studio}/engineering/rapid-prototyper.md | 0
+ .../studio}/engineering/test-writer-fixer.md                              | 0
+ .../studio}/marketing/app-store-optimizer.md                              | 0
+ {contains-studio-agents => agents/studio}/marketing/content-creator.md    | 0
+ {contains-studio-agents => agents/studio}/marketing/growth-hacker.md      | 0
+ {contains-studio-agents => agents/studio}/marketing/instagram-curator.md  | 0
+ .../studio}/marketing/reddit-community-builder.md                         | 0
+ {contains-studio-agents => agents/studio}/marketing/tiktok-strategist.md  | 0
+ {contains-studio-agents => agents/studio}/marketing/twitter-engager.md    | 0
+ {contains-studio-agents => agents/studio}/product/feedback-synthesizer.md | 0
+ {contains-studio-agents => agents/studio}/product/sprint-prioritizer.md   | 0
+ {contains-studio-agents => agents/studio}/product/trend-researcher.md     | 0
+ .../studio}/project-management/experiment-tracker.md                      | 0
+ .../studio}/project-management/project-shipper.md                         | 0
+ .../studio}/project-management/studio-producer.md                         | 0
+ .../studio}/studio-operations/analytics-reporter.md                       | 0
+ .../studio}/studio-operations/finance-tracker.md                          | 0
+ .../studio}/studio-operations/infrastructure-maintainer.md                | 0
+ .../studio}/studio-operations/legal-compliance-checker.md                 | 0
+ .../studio}/studio-operations/support-responder.md                        | 0
+ {contains-studio-agents => agents/studio}/testing/api-tester.md           | 0
+ .../studio}/testing/performance-benchmarker.md                            | 0
+ .../studio}/testing/test-results-analyzer.md                              | 0
+ {contains-studio-agents => agents/studio}/testing/tool-evaluator.md       | 0
+ {contains-studio-agents => agents/studio}/testing/workflow-optimizer.md   | 0
+ {catalogs => catalog}/locales/philippines_tax.yaml                        | 0
+ {catalogs => catalog}/sap_concur_surface_catalog.yaml                     | 0
+ {dev => sandbox/dev}/odoo-addons/.gitkeep                                 | 0
+ {dev => sandbox/dev}/postgres-init/00-init.sql                            | 0
+ {dev => sandbox/dev}/superset/superset_config.py                          | 0
+ 86 files changed, 0 insertions(+), 0 deletions(-)
