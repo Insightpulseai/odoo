@@ -94,7 +94,10 @@ services:
   # Odoo CE 19 — Core ERP (System of Record)
   # ===========================================================================
   odoo:
-    image: odoo:19
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    image: odoo-dev:19
     container_name: odoo-core
     restart: unless-stopped
     depends_on:
