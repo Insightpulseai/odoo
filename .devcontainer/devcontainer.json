@@ -1,16 +1,21 @@
 {
   "name": "ipai-devcontainer",
+  // Compose SSOT + overlay(s). Later files override earlier ones.
   "dockerComposeFile": [
     "../docker-compose.yml",
     "docker-compose.devcontainer.yml"
   ],
+  // Must match the *service name* in docker-compose.yml, not the container_name.
   "service": "odoo",
+  // Optional but recommended: explicitly start only what you need.
   "runServices": [
+    "odoo",
     "db",
-    "redis",
-    "odoo"
+    "redis"
   ],
-  "workspaceFolder": "/workspace",
+  // Set the folder VS Code opens inside the container.
+  "workspaceFolder": "/workspaces/odoo",
+  // For compose, tools default to stopping the compose set on close.
   "shutdownAction": "stopCompose",
   "overrideCommand": false,
   "features": {
@@ -36,11 +41,11 @@
       "dockerDashComposeVersion": "v2"
     }
   },
+  // Always-forward ports (can also forward another service via "db:5432").
   "forwardPorts": [
     8069,
-    5432,
     8072,
-    6379
+    "db:5432"
   ],
   "portsAttributes": {
     "8069": {
