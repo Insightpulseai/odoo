@@ -1,0 +1,11 @@
+# Web UX baseline (adjust to your enabled OCA repos)
+web_responsive
+web_environment_ribbon
+web_dialog_size
+
+# REST framework baseline (OCA/rest-framework)
+base_rest
+base_rest_datamodel
+# Optional auth add-ons (uncomment if present in your repo)
+# base_rest_auth_api_key
+# base_rest_auth_jwt
