@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://insightpulseai.com/schemas/colima-desktop/config.schema.json",
+  "title": "Colima Desktop Configuration",
+  "description": "Configuration schema for Colima Desktop daemon, VM settings, and logging",
+  "type": "object",
+  "required": ["daemon", "colima", "logs"],
+  "properties": {
+    "daemon": {
+      "type": "object",
+      "description": "Daemon configuration",
+      "required": ["port", "host", "autostart"],
+      "properties": {
+        "port": {
+          "type": "integer",
+          "description": "REST API port",
+          "minimum": 1024,
+          "maximum": 65535,
+          "default": 35100
+        },
+        "host": {
+          "type": "string",
+          "description": "Bind address (localhost only for security)",
+          "enum": ["localhost", "127.0.0.1"],
+          "default": "localhost"
+        },
+        "autostart": {
+          "type": "boolean",
+          "description": "Launch daemon on login (macOS launchd)",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "colima": {
+      "type": "object",
+      "description": "Colima VM configuration",
+      "required": ["cpu", "memory", "disk", "kubernetes", "runtime"],
+      "properties": {
+        "cpu": {
+          "type": "integer",
+          "description": "CPU cores",
+          "minimum": 1,
+          "maximum": 16,
+          "default": 4
+        },
+        "memory": {
+          "type": "integer",
+          "description": "RAM in GB",
+          "minimum": 1,
+          "maximum": 32,
+          "default": 8
+        },
+        "disk": {
+          "type": "integer",
+          "description": "Disk in GB",
+          "minimum": 20,
+          "maximum": 200,
+          "default": 60
+        },
+        "kubernetes": {
+          "type": "boolean",
+          "description": "Enable/disable K8s",
+          "default": false
+        },
+        "runtime": {
+          "type": "string",
+          "description": "Container runtime",
+          "enum": ["docker", "containerd"],
+          "default": "docker"
+        }
+      },
+      "additionalProperties": false
+    },
+    "logs": {
+      "type": "object",
+      "description": "Logging configuration",
+      "required": ["retention_days", "max_lines", "level"],
+      "properties": {
+        "retention_days": {
+          "type": "integer",
+          "description": "Auto-cleanup after N days",
+          "minimum": 1,
+          "maximum": 365,
+          "default": 7
+        },
+        "max_lines": {
+          "type": "integer",
+          "description": "Max lines per log file before rotation",
+          "minimum": 100,
+          "maximum": 10000,
+          "default": 1000
+        },
+        "level": {
+          "type": "string",
+          "description": "Log level",
+          "enum": ["debug", "info", "warn", "error"],
+          "default": "info"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

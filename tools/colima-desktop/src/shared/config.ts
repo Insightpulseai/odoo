@@ -20,8 +20,9 @@ import type {
   ColimaVMConfig,
   LogsConfig,
   Paths,
-} from './types.js';
-import { DEFAULT_CONFIG, CONSTRAINTS, STATE_DIR, CONFIG_FILE } from './types.js';
+} from './contracts/index.js';
+import { DEFAULT_CONFIG, CONSTRAINTS, STATE_DIR, CONFIG_FILE } from './contracts/index.js';
+import { restartRequired as checkRestartRequired, getConfigChanges as getChanges } from './restartPolicy.js';
 
 // ============================================================================
 // Path Resolution
@@ -338,83 +339,31 @@ export async function saveConfig(config: ColimaConfig): Promise<void> {
 }
 
 // ============================================================================
-// Config Change Detection
+// Config Change Detection (Re-exported from restartPolicy)
 // ============================================================================
 
 /**
  * Check if config changes require VM restart
+ *
+ * Re-exported from restartPolicy.ts for backward compatibility.
+ * Use restartPolicy.ts directly for new code.
  */
 export function requiresRestart(
   current: ColimaConfig,
   updated: ColimaConfig
 ): boolean {
-  // Changes that require restart
-  return (
-    current.colima.cpu !== updated.colima.cpu ||
-    current.colima.memory !== updated.colima.memory ||
-    current.colima.disk !== updated.colima.disk ||
-    current.colima.kubernetes !== updated.colima.kubernetes ||
-    current.colima.runtime !== updated.colima.runtime
-  );
+  return checkRestartRequired(current, updated).required;
 }
 
 /**
  * Get list of changes between two configs
+ *
+ * Re-exported from restartPolicy.ts for backward compatibility.
+ * Use restartPolicy.ts directly for new code.
  */
 export function getConfigChanges(
   current: ColimaConfig,
   updated: ColimaConfig
 ): string[] {
-  const changes: string[] = [];
-
-  // Daemon changes
-  if (current.daemon.port !== updated.daemon.port) {
-    changes.push(`daemon.port: ${current.daemon.port} → ${updated.daemon.port}`);
-  }
-  if (current.daemon.host !== updated.daemon.host) {
-    changes.push(`daemon.host: ${current.daemon.host} → ${updated.daemon.host}`);
-  }
-  if (current.daemon.autostart !== updated.daemon.autostart) {
-    changes.push(
-      `daemon.autostart: ${current.daemon.autostart} → ${updated.daemon.autostart}`
-    );
-  }
-
-  // Colima VM changes
-  if (current.colima.cpu !== updated.colima.cpu) {
-    changes.push(`cpu: ${current.colima.cpu} → ${updated.colima.cpu}`);
-  }
-  if (current.colima.memory !== updated.colima.memory) {
-    changes.push(`memory: ${current.colima.memory}GB → ${updated.colima.memory}GB`);
-  }
-  if (current.colima.disk !== updated.colima.disk) {
-    changes.push(`disk: ${current.colima.disk}GB → ${updated.colima.disk}GB`);
-  }
-  if (current.colima.kubernetes !== updated.colima.kubernetes) {
-    changes.push(
-      `kubernetes: ${current.colima.kubernetes} → ${updated.colima.kubernetes}`
-    );
-  }
-  if (current.colima.runtime !== updated.colima.runtime) {
-    changes.push(
-      `runtime: ${current.colima.runtime} → ${updated.colima.runtime}`
-    );
-  }
-
-  // Logs changes
-  if (current.logs.retention_days !== updated.logs.retention_days) {
-    changes.push(
-      `logs.retention_days: ${current.logs.retention_days} → ${updated.logs.retention_days}`
-    );
-  }
-  if (current.logs.max_lines !== updated.logs.max_lines) {
-    changes.push(
-      `logs.max_lines: ${current.logs.max_lines} → ${updated.logs.max_lines}`
-    );
-  }
-  if (current.logs.level !== updated.logs.level) {
-    changes.push(`logs.level: ${current.logs.level} → ${updated.logs.level}`);
-  }
-
-  return changes;
+  return getChanges(current, updated);
 }

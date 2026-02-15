@@ -7,117 +7,32 @@
  * CRITICAL FILE - See spec/colima-desktop/plan.md
  *
  * Responsibilities:
- * - Spawn colima commands (start, stop, status, list, version)
+ * - Compose colima commands (start, stop, status, list, version)
  * - Parse stdout/stderr into typed interfaces
  * - Handle errors (command not found, non-zero exit, timeout)
  * - Provide typed API for all Colima operations
+ *
+ * NOTE: All command execution delegated to exec.run() wrapper
  */
 
-import { spawn } from 'node:child_process';
+import { run, isExecError, getErrorMessage } from './exec.js';
 import type {
   ColimaStatus,
   ColimaVersionInfo,
   VMState,
   LifecycleRequest,
-  ColimaCliError,
-} from '../../shared/types.js';
-
-// ============================================================================
-// Types
-// ============================================================================
-
-interface SpawnOptions {
-  timeout?: number;
-  cwd?: string;
-  env?: NodeJS.ProcessEnv;
-}
-
-interface SpawnResult {
-  stdout: string;
-  stderr: string;
-  exitCode: number;
-}
+} from '../../shared/contracts/index.js';
 
 // ============================================================================
 // Constants
 // ============================================================================
 
 const COLIMA_BINARY = 'colima';
-const DEFAULT_TIMEOUT = 30000; // 30 seconds
 const START_TIMEOUT = 120000; // 2 minutes (VM start can be slow)
 
 // ============================================================================
 // Utility Functions
 // ============================================================================
-
-/**
- * Spawn a command and capture output
- */
-async function spawnCommand(
-  command: string,
-  args: string[],
-  options: SpawnOptions = {}
-): Promise<SpawnResult> {
-  return new Promise((resolve, reject) => {
-    const timeout = options.timeout ?? DEFAULT_TIMEOUT;
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
-
-    const proc = spawn(command, args, {
-      cwd: options.cwd,
-      env: options.env ?? process.env,
-    });
-
-    const timer = setTimeout(() => {
-      timedOut = true;
-      proc.kill('SIGTERM');
-      reject(
-        new Error(
-          `Command timed out after ${timeout}ms: ${command} ${args.join(' ')}`
-        )
-      );
-    }, timeout);
-
-    proc.stdout?.on('data', (data) => {
-      stdout += data.toString();
-    });
-
-    proc.stderr?.on('data', (data) => {
-      stderr += data.toString();
-    });
-
-    proc.on('error', (err) => {
-      clearTimeout(timer);
-      if (!timedOut) {
-        reject(err);
-      }
-    });
-
-    proc.on('close', (code) => {
-      clearTimeout(timer);
-      if (!timedOut) {
-        resolve({
-          stdout: stdout.trim(),
-          stderr: stderr.trim(),
-          exitCode: code ?? 0,
-        });
-      }
-    });
-  });
-}
-
-/**
- * Parse VM state from colima status output
- */
-function parseVMState(statusLine: string): VMState {
-  const lower = statusLine.toLowerCase();
-  if (lower.includes('running')) return 'running';
-  if (lower.includes('stopped')) return 'stopped';
-  if (lower.includes('starting')) return 'starting';
-  if (lower.includes('stopping')) return 'stopping';
-  return 'error';
-}
 
 /**
  * Parse resource value from status output
@@ -150,7 +65,7 @@ export class ColimaService {
    */
   async version(): Promise<ColimaVersionInfo> {
     try {
-      const result = await spawnCommand(COLIMA_BINARY, ['version'], {
+      const result = await run(COLIMA_BINARY, ['version'], {
         timeout: 5000,
       });
 
@@ -174,7 +89,7 @@ export class ColimaService {
    */
   async status(): Promise<ColimaStatus> {
     try {
-      const result = await spawnCommand(COLIMA_BINARY, ['status'], {
+      const result = await run(COLIMA_BINARY, ['status'], {
         timeout: 10000,
       });
 
@@ -210,7 +125,7 @@ export class ColimaService {
       };
     } catch (err) {
       // If colima status fails, VM is likely stopped
-      if (this.isColimaError(err)) {
+      if (isExecError(err)) {
         return {
           state: 'stopped',
           cpu: 0,
@@ -236,15 +151,9 @@ export class ColimaService {
       if (opts.memory) args.push('--memory', opts.memory.toString());
       if (opts.disk) args.push('--disk', opts.disk.toString());
 
-      const result = await spawnCommand(COLIMA_BINARY, args, {
+      await run(COLIMA_BINARY, args, {
         timeout: START_TIMEOUT,
       });
-
-      if (result.exitCode !== 0) {
-        throw new Error(
-          `Colima start failed (exit ${result.exitCode}): ${result.stderr}`
-        );
-      }
     } catch (err) {
       throw this.wrapError('start', err);
     }
@@ -255,15 +164,9 @@ export class ColimaService {
    */
   async stop(): Promise<void> {
     try {
-      const result = await spawnCommand(COLIMA_BINARY, ['stop'], {
+      await run(COLIMA_BINARY, ['stop'], {
         timeout: 60000, // 1 minute
       });
-
-      if (result.exitCode !== 0) {
-        throw new Error(
-          `Colima stop failed (exit ${result.exitCode}): ${result.stderr}`
-        );
-      }
     } catch (err) {
       throw this.wrapError('stop', err);
     }
@@ -281,15 +184,9 @@ export class ColimaService {
       if (opts.memory) args.push('--memory', opts.memory.toString());
       if (opts.disk) args.push('--disk', opts.disk.toString());
 
-      const result = await spawnCommand(COLIMA_BINARY, args, {
+      await run(COLIMA_BINARY, args, {
         timeout: START_TIMEOUT,
       });
-
-      if (result.exitCode !== 0) {
-        throw new Error(
-          `Colima restart failed (exit ${result.exitCode}): ${result.stderr}`
-        );
-      }
     } catch (err) {
       throw this.wrapError('restart', err);
     }
@@ -300,15 +197,9 @@ export class ColimaService {
    */
   async delete(): Promise<void> {
     try {
-      const result = await spawnCommand(COLIMA_BINARY, ['delete', '-f'], {
+      await run(COLIMA_BINARY, ['delete', '-f'], {
         timeout: 60000,
       });
-
-      if (result.exitCode !== 0) {
-        throw new Error(
-          `Colima delete failed (exit ${result.exitCode}): ${result.stderr}`
-        );
-      }
     } catch (err) {
       throw this.wrapError('delete', err);
     }
@@ -319,7 +210,7 @@ export class ColimaService {
    */
   async isKubernetesEnabled(): Promise<boolean> {
     try {
-      const result = await spawnCommand(COLIMA_BINARY, ['kubernetes'], {
+      const result = await run(COLIMA_BINARY, ['kubernetes'], {
         timeout: 5000,
       });
 
@@ -342,15 +233,9 @@ export class ColimaService {
         args.push('stop');
       }
 
-      const result = await spawnCommand(COLIMA_BINARY, args, {
+      await run(COLIMA_BINARY, args, {
         timeout: 60000,
       });
-
-      if (result.exitCode !== 0) {
-        throw new Error(
-          `Kubernetes ${enabled ? 'start' : 'stop'} failed: ${result.stderr}`
-        );
-      }
     } catch (err) {
       throw this.wrapError(
         `kubernetes ${enabled ? 'start' : 'stop'}`,
@@ -379,30 +264,18 @@ export class ColimaService {
   }
 
   /**
-   * Check if error is from Colima CLI
-   */
-  private isColimaError(err: unknown): err is ColimaCliError {
-    return (
-      typeof err === 'object' &&
-      err !== null &&
-      'exitCode' in err &&
-      'stdout' in err &&
-      'stderr' in err
-    );
-  }
-
-  /**
    * Wrap errors with context
    */
   private wrapError(command: string, err: unknown): Error {
+    if (isExecError(err)) {
+      const msg = getErrorMessage(err);
+      return new Error(`Colima ${command} failed: ${msg}`);
+    }
+
     if (err instanceof Error) {
-      if (err.message.includes('ENOENT')) {
-        return new Error(
-          'Colima not found. Install it with: brew install colima'
-        );
-      }
       return new Error(`Colima ${command} failed: ${err.message}`);
     }
+
     return new Error(`Colima ${command} failed: ${String(err)}`);
   }
 }
