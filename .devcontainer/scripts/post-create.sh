@@ -46,12 +46,11 @@ retry_count=0
 
 # Start Docker Compose services first
 echo "[post-create] Starting Docker Compose services..."
-cd /workspaces/odoo/sandbox/dev
-docker compose up -d || true
 cd /workspaces/odoo
+docker compose up -d || true
 
 # Wait for db service to be ready
-while ! docker compose -f /workspaces/odoo/sandbox/dev/compose.yml exec -T db pg_isready -U odoo >/dev/null 2>&1; do
+while ! docker compose -f /workspaces/odoo/docker-compose.yml exec -T db pg_isready -U odoo >/dev/null 2>&1; do
     retry_count=$((retry_count + 1))
     if [ $retry_count -ge $max_retries ]; then
         echo "❌ PostgreSQL is not available after $max_retries attempts"
@@ -66,10 +65,10 @@ echo "✅ PostgreSQL is ready"
 # Create databases (dev, stage, prod)
 echo "📦 Creating databases..."
 for db_name in odoo_dev odoo_stage odoo_prod; do
-    if docker compose -f /workspaces/odoo/sandbox/dev/compose.yml exec -T db psql -U odoo -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then
+    if docker compose -f /workspaces/odoo/docker-compose.yml exec -T db psql -U odoo -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then
         echo "   Database $db_name already exists"
     else
-        docker compose -f /workspaces/odoo/sandbox/dev/compose.yml exec -T db createdb -U odoo "$db_name" || true
+        docker compose -f /workspaces/odoo/docker-compose.yml exec -T db createdb -U odoo "$db_name" || true
         echo "   ✅ Created database: $db_name"
     fi
 done
@@ -111,6 +110,6 @@ echo "📍 Odoo:      http://localhost:8069"
 echo "📍 Database:  odoo_dev (default)"
 echo ""
 echo "🚀 Quick Start:"
-echo "   cd sandbox/dev && docker compose up -d"
+echo "   docker compose up -d"
 echo "   docker compose exec odoo odoo -d odoo_dev -u all"
 echo ""

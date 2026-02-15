@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DC="${ROOT}/.devcontainer/devcontainer.json"
-SSOT="../sandbox/dev/compose.yml"
+SSOT="../docker-compose.yml"
 
 test -f "$DC" || { echo "ERROR: missing $DC" >&2; exit 1; }
 

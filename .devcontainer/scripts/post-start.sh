@@ -17,7 +17,7 @@ else
 fi
 
 # Verify PostgreSQL connectivity via Docker Compose
-if docker compose -f /workspaces/odoo/sandbox/dev/compose.yml exec -T db pg_isready -U odoo >/dev/null 2>&1; then
+if docker compose -f /workspaces/odoo/docker-compose.yml exec -T db pg_isready -U odoo >/dev/null 2>&1; then
     echo "✅ PostgreSQL connection verified"
 else
     echo "⚠️  PostgreSQL connection failed (container may not be running)"

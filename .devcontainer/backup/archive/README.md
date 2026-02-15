@@ -15,6 +15,6 @@ The devcontainer has been migrated to:
 - Spec Kit base image pattern (Python 3.12-bookworm)
 - Docker-outside-of-docker feature for Docker socket access
 - Tool bootstrap integration (uv, specify-cli, pnpm)
-- Direct reference to SSOT compose file: `sandbox/dev/compose.yml`
+- Direct reference to SSOT compose file: `docker-compose.yml`
 
 See parent `.devcontainer/devcontainer.json` for current configuration.
