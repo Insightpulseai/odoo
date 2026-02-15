@@ -1,0 +1,184 @@
+{
+  "name": "Finance PPM - Month-End Close & Tax Filing (Odoo 19)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule (Every 6h)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/common",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>version</methodName>\n  <params/>\n</methodCall>"
+      },
+      "id": "odoo-health",
+      "name": "Odoo Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/common",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>authenticate</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_USER}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><struct/></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "odoo-auth",
+      "name": "Authenticate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check overdue tasks and upcoming BIR deadlines\nconst today = new Date();\nconst weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);\n\nreturn [{\n  json: {\n    check_type: 'overdue_and_upcoming',\n    today: today.toISOString().split('T')[0],\n    week_ahead: weekFromNow.toISOString().split('T')[0],\n    timestamp: today.toISOString()\n  }\n}];"
+      },
+      "id": "check-deadlines",
+      "name": "Check Deadlines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&lt;</string></value>\n            <value><string>={{$json.today}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>not in</string></value>\n            <value><array><data>\n              <value><string>Done</string></value>\n              <value><string>Cancelled</string></value>\n            </data></array></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>50</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-overdue",
+      "name": "Fetch Overdue Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1140, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&lt;=</string></value>\n            <value><string>={{$json.week_ahead}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>date_deadline</string></value>\n            <value><string>&gt;=</string></value>\n            <value><string>={{$json.today}}</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>not in</string></value>\n            <value><array><data>\n              <value><string>Done</string></value>\n              <value><string>Cancelled</string></value>\n            </data></array></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>50</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-upcoming",
+      "name": "Fetch Upcoming (7 days)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1140, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Slack notification message\nconst overdue = $input.all().filter(i => i.json.source === 'overdue');\nconst upcoming = $input.all().filter(i => i.json.source === 'upcoming');\n\nlet blocks = [];\n\n// Header\nblocks.push({\n  type: 'header',\n  text: { type: 'plain_text', text: 'Finance PPM Daily Status' }\n});\n\nblocks.push({\n  type: 'section',\n  text: { type: 'mrkdwn', text: `*Date:* ${new Date().toISOString().split('T')[0]}` }\n});\n\n// Overdue section\nif (overdue.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:rotating_light: *${overdue.length} Overdue Tasks*\\n` +\n        overdue.slice(0, 10).map(t =>\n          `- ${t.json.name} (due: ${t.json.date_deadline})`\n        ).join('\\n')\n    }\n  });\n}\n\n// Upcoming section\nif (upcoming.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:calendar: *${upcoming.length} Due This Week*\\n` +\n        upcoming.slice(0, 10).map(t =>\n          `- ${t.json.name} (due: ${t.json.date_deadline})`\n        ).join('\\n')\n    }\n  });\n}\n\nif (overdue.length === 0 && upcoming.length === 0) {\n  blocks.push({\n    type: 'section',\n    text: { type: 'mrkdwn', text: ':white_check_mark: No overdue or upcoming tasks this week.' }\n  });\n}\n\nreturn [{ json: { blocks: JSON.stringify(blocks), has_alerts: overdue.length > 0 } }];"
+      },
+      "id": "build-message",
+      "name": "Build Slack Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "={{$env.N8N_SLACK_CHANNEL_ID}}"
+            },
+            {
+              "name": "blocks",
+              "value": "={{$json.blocks}}"
+            },
+            {
+              "name": "text",
+              "value": "Finance PPM Daily Status Update"
+            }
+          ]
+        }
+      },
+      "id": "slack-notify",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1580, 400]
+    }
+  ],
+  "connections": {
+    "Schedule (Every 6h)": {
+      "main": [[{ "node": "Odoo Health Check", "type": "main", "index": 0 }]]
+    },
+    "Manual Trigger": {
+      "main": [[{ "node": "Odoo Health Check", "type": "main", "index": 0 }]]
+    },
+    "Odoo Health Check": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Authenticate": {
+      "main": [[{ "node": "Check Deadlines", "type": "main", "index": 0 }]]
+    },
+    "Check Deadlines": {
+      "main": [[
+        { "node": "Fetch Overdue Tasks", "type": "main", "index": 0 },
+        { "node": "Fetch Upcoming (7 days)", "type": "main", "index": 0 }
+      ]]
+    },
+    "Fetch Overdue Tasks": {
+      "main": [[{ "node": "Build Slack Message", "type": "main", "index": 0 }]]
+    },
+    "Fetch Upcoming (7 days)": {
+      "main": [[{ "node": "Build Slack Message", "type": "main", "index": 0 }]]
+    },
+    "Build Slack Message": {
+      "main": [[{ "node": "Slack Notification", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "finance" },
+    { "name": "ppm" },
+    { "name": "odoo19" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "finance-ppm-odoo19"
+  }
+}
