@@ -1,31 +1,23 @@
 # =============================================================================
-# ipai-platform Docker Compose (Development Baseline)
+# ipai-platform Docker Compose — SSOT Delegator
 # =============================================================================
-# Usage:
-#   docker compose up -d                     # Start core stack
-#   docker compose --profile supabase up -d  # With local Supabase
-#   docker compose -f compose.yaml -f compose.prod.yaml up -d  # Production
+# Delegates to canonical ../docker-compose.yml for core services (db, redis, odoo).
+# Adds only platform-specific services: Nginx reverse proxy, optional Supabase.
 #
-# Networks:
-#   edge     - Nginx reverse proxy
-#   backend  - Odoo + PostgreSQL + Redis
-#   supabase - Local Supabase stack (optional)
+# Usage:
+#   docker compose up -d                     # Core stack (from SSOT) + Nginx
+#   docker compose --profile supabase up -d  # With local Supabase
+#
+# Endpoints:
+#   - Nginx:    http://localhost:80        (reverse proxy)
+#   - Odoo:     http://localhost:8069      (from SSOT)
+#   - Supabase: http://localhost:3000      (optional, PostgREST)
 # =============================================================================
 
-networks:
-  edge:
-    driver: bridge
-  backend:
-    driver: bridge
-  supabase:
-    driver: bridge
+include:
+  - path: ../docker-compose.yml
 
-volumes:
-  odoo_data:
-  odoo_filestore:
-  postgres_data:
-  redis_data:
-  supabase_db_data:
+name: ipai_platform
 
 services:
   # ---------------------------------------------------------------------------
@@ -39,87 +31,9 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-    networks:
-      - edge
-      - backend
     depends_on:
       odoo:
         condition: service_healthy
-    restart: unless-stopped
-
-  # ---------------------------------------------------------------------------
-  # Odoo ERP
-  # ---------------------------------------------------------------------------
-  odoo:
-    image: odoo:18.0
-    container_name: ipai-odoo
-    ports:
-      - "8069:8069"
-      - "8072:8072"
-    environment:
-      - HOST=odoo_db
-      - USER=odoo
-      - PASSWORD_FILE=/run/secrets/db_password
-    volumes:
-      - odoo_data:/var/lib/odoo
-      - odoo_filestore:/var/lib/odoo/filestore
-      - ../addons/ipai:/mnt/extra-addons/ipai:ro
-      - ../addons/OCA:/mnt/extra-addons/OCA:ro
-    networks:
-      - backend
-    depends_on:
-      odoo_db:
-        condition: service_healthy
-    secrets:
-      - db_password
-    healthcheck:
-      test: ["CMD", "curl", "-fs", "http://localhost:8069/web/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    restart: unless-stopped
-
-  # ---------------------------------------------------------------------------
-  # PostgreSQL Database
-  # ---------------------------------------------------------------------------
-  odoo_db:
-    image: postgres:16-alpine
-    container_name: ipai-odoo-db
-    environment:
-      - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
-      - POSTGRES_DB=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
-    secrets:
-      - db_password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-
-  # ---------------------------------------------------------------------------
-  # Redis (Session Storage)
-  # ---------------------------------------------------------------------------
-  redis:
-    image: redis:7-alpine
-    container_name: ipai-odoo-redis
-    volumes:
-      - redis_data:/data
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
@@ -135,8 +49,6 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - supabase_db_data:/var/lib/postgresql/data
-    networks:
-      - supabase
     secrets:
       - supabase_db_password
     healthcheck:
@@ -158,9 +70,6 @@ services:
       - PGRST_DB_SCHEMAS=public,graphql_public
       - PGRST_DB_ANON_ROLE=anon
       - PGRST_JWT_SECRET_FILE=/run/secrets/supabase_jwt_secret
-    networks:
-      - supabase
-      - edge
     secrets:
       - supabase_jwt_secret
     depends_on:
@@ -168,12 +77,13 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+volumes:
+  supabase_db_data:
+
 # ---------------------------------------------------------------------------
 # Secrets (file-based for security)
 # ---------------------------------------------------------------------------
 secrets:
-  db_password:
-    file: ./secrets/db_password.txt
   supabase_db_password:
     file: ./secrets/supabase_db_password.txt
   supabase_jwt_secret:
