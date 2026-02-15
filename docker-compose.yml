@@ -1,8 +1,15 @@
 # =============================================================================
 # Docker Compose: Odoo CE 19 — Canonical SSOT
 # =============================================================================
-# Single source of truth for the Odoo development stack.
-# All other compose files are overlays or deprecated.
+# SSOT for Odoo development stack. All overlays MUST use include: directive.
+# DB Name Invariant: odoo_dev (locked, no parameterization)
+# Odoo Version: 19 (unified across all files)
+# Namespace: ipai
+#
+# Authorized Overlays (MUST use include:):
+#   docker-compose.dev.yml            # Dev tools (Superset, n8n, MCP)
+#   .devcontainer/docker-compose.devcontainer.yml  # VS Code DevContainer
+#   ipai-platform/compose.yaml        # Platform services (nginx, optional Supabase)
 #
 # Usage:
 #   docker compose up -d                      # Odoo + PG + Redis
@@ -15,10 +22,6 @@
 #   docker compose --profile tools up -d      # + pgAdmin + Mailpit
 #   docker compose --profile init up          # One-shot module install
 #   docker compose --profile update up        # One-shot module update
-#
-# Overlays:
-#   docker-compose.dev.yml    - Full stack (Superset, n8n, MCP)
-#   docker-compose.shell.yml  - Browser web shell
 #
 # Production:
 #   infra/deploy/docker-compose.prod.yml      - Immutable image, Caddy, caps
@@ -38,7 +41,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-odoo}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
-      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+      POSTGRES_DB: odoo_dev
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     command:
       - "postgres"
@@ -64,7 +67,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo} -d ${POSTGRES_DB:-odoo}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo} -d odoo_dev"]
       interval: 5s
       timeout: 3s
       retries: 20
