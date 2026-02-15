@@ -20,9 +20,10 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@fastify/cors": "11.2.0",
     "fastify": "^4.26.0",
-    "yargs": "^17.7.2",
-    "yaml": "^2.3.4"
+    "yaml": "^2.3.4",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",

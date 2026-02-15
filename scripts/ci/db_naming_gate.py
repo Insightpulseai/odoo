@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 # Canonical database name allowlist
-ALLOWED_DB_NAMES = {"odoo_dev", "odoo_staging", "odoo_prod"}
+ALLOWED_DB_NAMES = {"odoo_dev", "odoo_stage", "odoo_prod"}
 
 # File patterns to scan
 SCAN_PATTERNS = [
@@ -38,7 +38,11 @@ EXCLUDE_PATTERNS = [
     ".env.example",
     "**/.env.example",
     "**/node_modules/**",
+    "archive/**",
     "**/archive/**",
+    "templates/**",  # Template files may contain example DB names
+    "infra/do-oca-stack/**",  # OCA reference stack (not canonical)
+    "odoo/compose/**",  # Example/pattern stack (not canonical)
 ]
 
 
@@ -89,7 +93,10 @@ def scan_repository(root_dir: Path) -> dict:
     for pattern in SCAN_PATTERNS:
         for file_path in root_dir.rglob(pattern):
             # Skip excluded paths
-            if any(file_path.match(excl) for excl in EXCLUDE_PATTERNS):
+            rel_path = str(file_path.relative_to(root_dir))
+            if any(rel_path.startswith(excl.rstrip('**/')) for excl in EXCLUDE_PATTERNS if not excl.startswith('**/')):
+                continue
+            if any(file_path.match(excl) for excl in EXCLUDE_PATTERNS if excl.startswith('**/')):
                 continue
 
             # Skip if not a file

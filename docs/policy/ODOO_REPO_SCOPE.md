@@ -83,7 +83,7 @@ Everything else (standalone apps, agent frameworks, design systems) belongs in s
 Only these database names are permitted in this repository:
 
 - **`odoo_dev`** — Development environment
-- **`odoo_staging`** — Staging environment
+- **`odoo_stage`** — Staging environment
 - **`odoo_prod`** — Production environment
 
 ### Enforcement
