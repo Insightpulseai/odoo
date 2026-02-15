@@ -42,7 +42,7 @@ jobs:
           echo "::error::Database naming allowlist violation detected."
           echo "::error::Only the following database names are allowed:"
           echo "::error::  - odoo_dev"
-          echo "::error::  - odoo_staging"
+          echo "::error::  - odoo_stage"
           echo "::error::  - odoo_prod"
           echo "::error::See job logs for details."
         shell: bash

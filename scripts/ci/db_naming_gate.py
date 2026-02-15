@@ -5,7 +5,7 @@ Database Naming Enforcement Gate
 
 Scans the repository for database name references and enforces the allowlist:
 - odoo_dev
-- odoo_staging
+- odoo_stage
 - odoo_prod
 
 Scans:

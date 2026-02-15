@@ -163,7 +163,7 @@ pulser:
       extends: tester
       skills:
         - odoo_test_runner
-        - odoo_staging_validation
+        - odoo_stage_validation
         - odoo_mail_catcher_checks
     - id: odoo_pm
       label: "Odoo Project Manager (Odoo.sh-style)"
@@ -262,7 +262,7 @@ odoo_sh_alignment:
     continuous_integration: [automated_tests, odoo_ci_runbot]
     ssh: [access_control, incident_response]
     mail_catcher: [odoo_mail_catcher_checks, regression]
-    staging_branches: [odoo_branch_promotion, odoo_staging_validation]
+    staging_branches: [odoo_branch_promotion, odoo_stage_validation]
     drag_drop_promotion: [release_mgmt, odoo_release_gates, odoo_branch_promotion]
     backups_incremental: [backups_restore, odoo_backup_restore]
     monitoring_kpis: [observability, odoo_monitoring_kpis]
