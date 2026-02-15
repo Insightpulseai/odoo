@@ -35,7 +35,7 @@ services:
 
     # Mount workspace for Dev Container
     volumes:
-      - ../:/workspace:cached
+      - ../:/workspaces/odoo:cached
       - odoo-web-data:/var/lib/odoo
       - ../addons/ipai:/mnt/extra-addons/ipai:ro
       - ../addons/oca:/mnt/extra-addons/OCA:ro
