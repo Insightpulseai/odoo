@@ -1,206 +1,250 @@
 # Odoo Repository Scope Policy
 
-**Purpose:** Define what belongs in this repository vs. organization-level repos.
+> **Status**: Active | **Version**: 1.0.0 | **Last Updated**: 2026-02-15
 
-**Last Updated:** 2026-02-15
+## Purpose
 
----
+This document defines what belongs in the `odoo` repository versus future organization-level repositories (`platform/`, `web/`, `agents/`).
 
-## Repository Identity
+## TLDR
 
-**Name:** `Insightpulseai/odoo`
+**`odoo` repo = Odoo ERP runtime + custom modules + OCA layer + deployment config**
 
-**Purpose:** Odoo CE 19 ERP system with OCA modules + IPAI custom modules
-
-**Scope:** Odoo-specific code, configuration, deployment, and documentation
+Everything else (standalone apps, agent frameworks, design systems) belongs in separate repos.
 
 ---
 
-## What MUST Be In This Repo
+## Scope Definition
 
-### Runtime Entrypoints (Root Only)
-- `docker-compose.yml` - SSOT for Odoo stack
-- `docker-compose.dev.yml` - Optional dev overlay
-- `Makefile` - Build and dev commands
-- `odoo-bin` - Odoo executable
-- `Dockerfile` - Container image definition
+### ✅ What Belongs in `odoo/`
 
-### Configuration (Root + config/)
-- `config/` - Odoo configuration files
-- `pyproject.toml`, `requirements*.txt` - Python dependencies
-- `package.json`, `pnpm-*.yaml` - Node dependencies (for tooling)
-- `.env*.example` - Environment templates
+#### Core Odoo Runtime
+- Odoo CE 19.0 configuration (`config/{dev,staging,prod}/`)
+- Docker compose files for Odoo stack
+- Database migrations and initialization scripts
+- Odoo deployment infrastructure (`infra/deploy/`, `docker/`)
 
-### Core Directories
-- `addons/` - Odoo modules (IPAI custom + third-party)
-- `addons/ipai/` - IPAI custom modules (43+ modules)
-- `oca-parity/` - OCA modules organized by functional area
-- `third_party/` - Other third-party addons
-- `config/` - Odoo and service configurations
-- `docker/` - Dockerfiles and compose overlays
-- `scripts/` - Operational scripts (install, update, deploy, CI)
-- `tests/` - Test suites
-- `docs/` - All documentation
-- `spec/` - Spec Kit feature specifications
-- `infra/` - Infrastructure as code (Terraform, Ansible)
-- `deploy/` - Deployment configurations
-- `.devcontainer/` - VS Code Dev Container setup
-- `.github/` - GitHub Actions workflows and configs
+#### Odoo Custom Modules
+- **IPAI modules**: `addons/ipai/ipai_*` — custom business logic modules
+- **OCA integration**: `addons/oca/` — OCA module manifests and lockfiles
+- **Module scaffolding**: Templates and generators for Odoo modules
 
----
+#### Odoo-Specific Tooling
+- Odoo CLI scripts (`scripts/odoo/`)
+- OCA workflow automation (`scripts/oca/`)
+- Module testing and quality gates (`scripts/ci/`, `.github/workflows/`)
+- Odoo data importers and ETL scripts
 
-## What MUST NOT Be In This Repo
+#### Domain-Specific Configuration
+- Finance SSC configuration (`config/finance/`)
+- BIR compliance templates (`config/bir/`)
+- Integration point configuration (n8n, Slack, Superset)
 
-### Organization-Level Concerns (Move to Separate Repos)
+#### Specifications
+- Odoo feature specs (`spec/odoo-*`, `spec/ipai-*`)
+- OCA module selection criteria (`spec/oca-*`)
+- Parity catalogs for EE equivalence (`catalog/`)
 
-**Platform Services** → `Insightpulseai/platform`
-- `apps/` - Standalone applications
-- `platform/`, `platform-kit/` - Platform infrastructure
-- `api/` - Platform APIs
-- `services/` - Microservices
+### ❌ What Does NOT Belong in `odoo/`
 
-**Frontend/Design** → `Insightpulseai/design-system`
-- `web/` - Standalone web apps
-- `frontend-fluent/` - UI frameworks
-- `design/`, `design-tokens/` - Design systems
-- `branding/` - Brand assets
-- `figma/` - Design files
+#### Standalone Web Applications
+- Next.js apps → `web/` repo (future)
+- React SPAs → `web/` repo (future)
+- Static sites → `web/` repo (future)
 
-**Agent Infrastructure** → `Insightpulseai/agents`
-- `agent-library/`, `agent-library-pack/` - Agent catalogs
-- `contains-studio-agents/` - Agent development
+**Rationale**: These apps have independent deployment lifecycles and don't require Odoo runtime.
 
-**Deprecated Services**
-- `mattermost/` - Migrated to Slack (deprecated 2026-01-28)
-- `notion-n8n-monthly-close/` - Legacy integration
-- `affine/`, `appfine/` - Removed services
+**Current State**: `apps/web/` is marked for future extraction (see `FUTURE_SPLIT.md`).
 
----
+#### AI Agent Framework
+- Agent orchestration → `agents/` repo (future)
+- MCP servers → `agents/` repo (future)
+- Prompt libraries → `agents/` repo (future)
 
-## Root Directory Rules
+**Rationale**: Agent framework is platform-agnostic and used across multiple projects.
 
-### Allowed at Root
+**Current State**: `agents/` is self-contained and ready for extraction.
 
-**Standard Files:**
-- `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, `LICENSE`
-- `CLAUDE.md` - AI agent instructions
+#### Platform Tooling
+- Design systems → `platform/` repo (future)
+- Shared UI components → `platform/` repo (future)
+- Cross-project utilities → `platform/` repo (future)
 
-**Entrypoints:**
-- `docker-compose.yml`, `docker-compose.dev.yml`
-- `Makefile`, `odoo-bin`, `Dockerfile`
+**Rationale**: Platform components serve multiple applications beyond Odoo.
 
-**Tooling Configs:**
-- `pyproject.toml`, `requirements*.txt`, `package.json`, `pnpm-*.yaml`, `turbo.json`
-- `.gitignore`, `.pre-commit-config.yaml`, `.python-version`
-- `.env*.example` (templates only)
-
-**Special:**
-- `llms.txt` - LLM context file
-
-### Disallowed at Root
-
-**Documentation:** `*.md` files except standard ones → Move to `docs/`
-**Scripts:** `*.sh`, `*.py` files → Move to `scripts/`
-**Data:** `*.csv`, `*.json` (except configs), `*.html` → Move to `artifacts/` or `docs/evidence/`
-**Code Directories:** Any directory not in canonical list → Move to appropriate location or `archive/root/`
+**Current State**: `infra/platform-kit/` is marked for future extraction.
 
 ---
 
-## Directory Taxonomy
+## Database Naming Policy
 
-### `docs/` - All Documentation
+### Allowlist (Enforced by CI)
 
-```
-docs/
-├── policy/          # Governance, constraints, repo rules
-├── guides/          # How-to, setup, user guides
-├── runbooks/        # Operational procedures, deployment
-├── architecture/    # System design, diagrams, snapshots
-├── evidence/        # Timestamped execution evidence
-│   └── YYYYMMDD-HHMM-<slug>/
-└── ai/              # AI agent documentation
-```
+Only these database names are permitted in this repository:
 
-### `scripts/` - Operational Scripts
+- **`odoo_dev`** — Development environment
+- **`odoo_stage`** — Staging environment
+- **`odoo_prod`** — Production environment
 
-```
-scripts/
-├── dev/             # Development tools
-├── ops/             # Operations scripts
-├── ci/              # CI validation scripts
-└── <category>/      # Domain-specific scripts
-```
+### Enforcement
 
-### `artifacts/` - Build & Execution Artifacts
+- **CI Gate**: `.github/workflows/db-naming-gate.yml`
+- **Validator**: `scripts/ci/db_naming_gate.py`
+- **Scanned Files**:
+  - `docker-compose*.yml`
+  - `config/**/odoo.conf`
+  - `.env*` (excluding `.env.example`)
 
-```
-artifacts/
-├── reports/         # Generated reports
-├── exports/         # Data exports
-└── builds/          # Build outputs
-```
+### Rationale
+
+Deterministic database naming prevents:
+- Shadow databases causing state drift
+- Accidental production writes from local dev
+- Unclear environment boundaries
+- Odoo's multi-DB UI confusion (`list_db=False`)
 
 ---
 
-## Migration Strategy
+## Environment Configuration Policy
 
-### Phase 1: Foundation (Current)
-- ✅ Establish root allowlist
-- ✅ Create CI enforcement
-- ✅ Document scope policy
+### Single Source of Truth (SSOT)
 
-### Phase 2: Move Loose Files (Next)
-- Move root `*.md` files to `docs/`
-- Move root scripts to `scripts/`
-- Move data files to `artifacts/` or `docs/evidence/`
+Each environment has exactly ONE canonical configuration file:
 
-### Phase 3: Archive Out-of-Scope Directories
-- Move `apps/`, `web/`, `platform/` to `archive/root/` with migration plan
-- Create separate org repos for these concerns
-- Update CI to prevent re-introduction
+\`\`\`
+config/
+├── dev/odoo.conf       # Development (local Docker Desktop)
+├── staging/odoo.conf   # Staging (pre-production validation)
+└── prod/odoo.conf      # Production (DigitalOcean / live traffic)
+\`\`\`
 
-### Phase 4: Continuous Enforcement
-- CI fails on new root violations
-- Quarterly review of `archive/root/` for extraction
-- Document org-level repo structure
+### Environment Selection
 
----
+Docker Compose uses \`\${ODOO_ENV:-dev}\` substitution:
 
-## Enforcement
+\`\`\`yaml
+volumes:
+  - ./config/\${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
+\`\`\`
 
-**CI Workflow:** `.github/workflows/repo-root-allowlist.yml`
-**Allowlist:** `.insightpulse/repo-root-allowlist.json`
-**Validation Script:** `scripts/ci/check_root_allowlist.py`
+\`\`\`bash
+# Development (default)
+docker compose up
 
-**Process:**
-1. PR adds new root file/dir
-2. CI runs allowlist check
-3. If not in allowlist → CI fails with helpful message
-4. Developer either:
-   - Moves to appropriate directory
-   - Adds to allowlist with justification in PR
+# Staging
+ODOO_ENV=staging docker compose up
 
----
+# Production
+ODOO_ENV=prod docker compose up
+\`\`\`
 
-## Questions & Exceptions
+### Configuration Inheritance
 
-**Q: Can I add a temporary script at root?**
-**A:** No. Use `scripts/dev/` or `scripts/ops/` with a descriptive name.
-
-**Q: Where do one-off reports go?**
-**A:** `artifacts/reports/` or `docs/evidence/YYYYMMDD-HHMM-<slug>/`
-
-**Q: What if I need a config file at root?**
-**A:** Add to allowlist with justification. Must be a true runtime entrypoint.
-
-**Q: How do I move code that doesn't belong?**
-**A:** First to `archive/root/`, then plan extraction to separate repo.
+Each environment config is self-contained (no inheritance or includes). This ensures:
+- No hidden config dependencies
+- Full environment portability
+- Explicit configuration differences
 
 ---
 
-## Related Documents
+## Repository Boundary Markers
 
-- [Docker Compose SSOT](../../docker/README.md)
-- [Root Allowlist](.insightpulse/repo-root-allowlist.json)
-- [Spec Kit Structure](../../spec/README.md)
-- [Contributing Guide](../../CONTRIBUTING.md)
+### Identified Split Candidates
+
+The following directories are candidates for future extraction to separate repositories:
+
+1. **\`apps/web/\`** → \`web/\` repo
+   - Status: Marked for extraction
+   - Marker: \`apps/web/FUTURE_SPLIT.md\`
+   - Reason: Independent deployment lifecycle
+
+2. **\`infra/platform-kit/\`** → \`platform/\` repo
+   - Status: Marked for extraction
+   - Marker: \`infra/platform-kit/FUTURE_SPLIT.md\`
+   - Reason: Cross-project platform utilities
+
+3. **\`agents/\`** → \`agents/\` repo (already extracted)
+   - Status: Self-contained, ready for extraction
+   - Marker: \`agents/README.md\` (notes independence)
+   - Reason: Platform-agnostic agent framework
+
+### Migration Strategy
+
+When extracting a split candidate:
+
+1. Create new repository with canonical name
+2. Move directory contents via \`git filter-repo\` (preserve history)
+3. Add git submodule or package dependency in \`odoo/\`
+4. Update CI workflows to reference new repo
+5. Archive original directory: \`archive/root/<name>/\`
+
+---
+
+## Compliance Verification
+
+### Automated Checks
+
+The following CI gates enforce this policy:
+
+- **\`repo-structure-guard.yml\`**: Prevents shadow Odoo roots
+- **\`db-naming-gate.yml\`**: Enforces database naming allowlist
+- **\`odoo-module-lint.yml\`**: Validates IPAI module naming (\`ipai_*\`)
+
+### Manual Audits
+
+Quarterly review checklist:
+
+- [ ] No \`web/\` apps tightly coupled to Odoo runtime
+- [ ] No \`agents/\` code dependent on Odoo internals
+- [ ] All Odoo modules in \`addons/ipai/ipai_*\` (no root-level)
+- [ ] No shadow databases (scan Docker volumes)
+- [ ] Config files in canonical locations only
+
+---
+
+## Decision Log
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-02-15 | Environment config split (\`config/{dev,staging,prod}/\`) | Deterministic environments, explicit config per env |
+| 2026-02-15 | DB naming allowlist (odoo_dev/staging/prod) | Prevent multi-DB chaos, enforce single-DB pattern |
+| 2026-02-15 | Archive \`infra/docker/\` (moved to \`archive/root/\`) | Consolidate to root \`docker/\`, remove duplicate |
+
+---
+
+## Escalation Path
+
+**Question**: "Does this belong in \`odoo/\` repo?"
+
+**Decision Tree**:
+
+1. **Does it require Odoo runtime to function?**
+   - Yes → \`odoo/\` repo
+   - No → Go to 2
+
+2. **Is it Odoo-specific configuration or business logic?**
+   - Yes → \`odoo/\` repo
+   - No → Go to 3
+
+3. **Is it used exclusively by Odoo modules/workflows?**
+   - Yes → \`odoo/\` repo
+   - No → Separate repo (\`web/\`, \`platform/\`, \`agents/\`)
+
+**Still Unsure?**
+- Raise in GitHub Discussions: \`Insightpulseai/odoo/discussions\`
+- Tag: \`question/repo-scope\`
+- Default: Separate repo (easier to merge later than split)
+
+---
+
+## References
+
+- **Target Enterprise Org Structure**: See \`/tmp/alignment_analysis.md\`
+- **Current Repo Structure**: \`docs/architecture/REPO_SSOT_MAP.md\`
+- **OCA Integration Workflow**: \`docs/ai/OCA_WORKFLOW.md\`
+- **Database Naming Gate**: \`.github/workflows/db-naming-gate.yml\`
+- **Config SSOT**: \`config/README.md\`
+
+---
+
+*This policy is part of the Odoo repository governance framework. For parent organization policies, see \`Insightpulseai/GOVERNANCE.md\` (future).*

@@ -434,24 +434,24 @@ docker start odoo-db-1
 **Verification Procedure**:
 ```bash
 # 1. Create staging database
-docker exec odoo-db-1 createdb -U odoo odoo_staging
+docker exec odoo-db-1 createdb -U odoo odoo_stage
 
 # 2. Restore latest backup
 gunzip < /opt/backups/odoo/odoo_backup_latest.sql.gz | \
-  docker exec -i odoo-db-1 psql -U odoo -d odoo_staging
+  docker exec -i odoo-db-1 psql -U odoo -d odoo_stage
 
 # 3. Verify record counts match production
-docker exec odoo-db-1 psql -U odoo -d odoo_staging -c \
+docker exec odoo-db-1 psql -U odoo -d odoo_stage -c \
   "SELECT COUNT(*) FROM account_move;"
 # Compare with production count
 
 # 4. Verify IPAI module data intact
-docker exec odoo-db-1 psql -U odoo -d odoo_staging -c \
+docker exec odoo-db-1 psql -U odoo -d odoo_stage -c \
   "SELECT COUNT(*) FROM ipai_finance_bir_schedule;"
 # Expected: 8+ BIR forms
 
 # 5. Drop staging database
-docker exec odoo-db-1 dropdb -U odoo odoo_staging
+docker exec odoo-db-1 dropdb -U odoo odoo_stage
 ```
 
 ---
