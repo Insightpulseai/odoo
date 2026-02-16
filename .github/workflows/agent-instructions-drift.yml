@@ -9,7 +9,7 @@ on:
       - "AGENTS.md"
       - "GEMINI.md"
   push:
-    branches: ["main", "_git_aggregated"]
+    branches: ["main"]
     paths:
       - "docs/agent_instructions/**"
       - "scripts/agents/**"

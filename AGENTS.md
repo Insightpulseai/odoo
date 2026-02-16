@@ -28,7 +28,8 @@ When producing terminal output intended to be pasted into ChatGPT, ALWAYS format
 **[EVIDENCE]**
 - command: <cmd>
   result: <PASS/FAIL + 1-3 key lines>
-  saved_to: <path to log file if available>
+  logs: <path to captured stdout/stderr artifact>
+  outputs: <paths created/modified>
 
 **[DIFF SUMMARY]**
 - <path>: <why this changed>
@@ -50,6 +51,18 @@ When producing terminal output intended to be pasted into ChatGPT, ALWAYS format
 - Never claim "0 errors / tests pass / secure" without citing evidence line(s) or saved log
 - Prefer repo-relative paths in CHANGES/DIFF SUMMARY; absolute paths allowed in EVIDENCE logs
 
+### Completion Semantics
+
+- Use one of: `STATUS=BLOCKED` | `STATUS=PARTIAL` | `STATUS=COMPLETE`
+- **Examples must be labeled**: Any non-executed or illustrative output must be labeled `EXAMPLE:` to avoid contradicting EVIDENCE
+- **No contradictions**: If EVIDENCE shows PASS, do not show failure examples without `EXAMPLE:` prefix
+
+### Determinism Language
+
+- Use **"repo-supported deterministic path"** unless an enforced wrapper/runner exists in-repo
+- Do not claim **"guaranteed"** unless CI enforces the wrapper path and it is present in the repo
+- If no wrapper exists yet, **manual injection is the deterministic fallback** until wrappers are added
+
 ---
 
 ## Operating Contract
@@ -66,6 +79,41 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 **Execution surfaces**: Git, GitHub Actions, SSH (DO droplet), Docker, Supabase CLI.
 
 **Banned**: "here's a guide", "run these commands", "you should...", time estimates, asking for confirmation, UI clickpaths.
+
+### Hard Rules: No-UI + Deterministic Completions
+
+**NO-UI default**:
+- Do not include UI navigation steps (e.g., "Visit URL", "Click Settings") in NEXT steps
+- If a platform requires UI for a step, mark it explicitly as `[MANUAL_REQUIRED]` (see Completion Semantics)
+- UI-only steps appear **only** inside `[MANUAL_REQUIRED]` blocks, never in NEXT
+
+**No full command blocks by default**:
+- Do not embed "Ready to execute" command blocks in summaries unless the user explicitly asked for commands
+- If commands are necessary, move them to an Appendix section and label it: `APPENDIX: Commands (only if requested)`
+- Commands shown in EVIDENCE are acceptable (they document what was executed)
+
+**Evidence path contract**:
+- Canonical evidence lives under: `web/docs/evidence/<YYYYMMDD-HHMM+TZ>/<topic>/`
+- Evidence stamps **MUST** include timezone (e.g., `20260216-1754+0800`)
+- `sandbox/**` is **never** a canonical evidence location (transient development only)
+- Any evidence in sandbox paths must have a `MOVED.md` pointer to canonical location
+
+**MANUAL_REQUIRED blocks**:
+- Format:
+  ```
+  ## [MANUAL_REQUIRED]
+  - What: <specific action>
+  - Why: <technical reason (e.g., "UI-only step", "requires external approval")>
+  - Evidence: <docs reference or artifact path>
+  - Minimal human action: <bullet list>
+  - Then: <what automation resumes after>
+  ```
+- Use when: first-time UI setup, external approvals, credentials generation (if no API), DNS changes requiring registrar
+
+**Status semantics**:
+- `STATUS=COMPLETE`: All automation finished, no manual steps remain, all evidence present
+- `STATUS=PARTIAL`: Automation completed up to a point, manual step(s) required before resuming
+- `STATUS=BLOCKED`: Cannot proceed due to missing dependency, broken service, or unresolved blocker
 
 ---
 

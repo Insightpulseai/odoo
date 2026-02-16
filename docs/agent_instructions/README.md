@@ -80,31 +80,35 @@ This repo guarantees that instructions are available via generated mirror files:
 
 ### Ingestion Responsibility
 
-Tool auto-loading behavior is **not** treated as a guarantee. The supported mechanism is:
+Tool auto-loading behavior is **not** treated as a guarantee. The repo-supported deterministic mechanism is:
 
-1. **Wrapper injection** (deterministic): The runner/wrapper explicitly injects the appropriate mirror file into the tool session, OR
+1. **Wrapper injection** (repo-supported deterministic path): The runner/wrapper explicitly injects the appropriate mirror file into the tool session, OR
 2. **Tool auto-load** (best-effort): The tool auto-loads the mirror file if it supports it
 
 ### Deterministic Rule
 
 If behavior differs across machines/versions, the **wrapper injection path is the source of truth**.
 
+**Important**: If no wrapper exists yet, **manual injection is the deterministic fallback** until wrappers are added to the repo.
+
 ### Per-Tool Patterns
 
 **Claude Code**:
-- **Primary**: Auto-loads `CLAUDE.md` at session start (supported)
-- **Fallback**: N/A (Claude Code reliably loads CLAUDE.md)
+- **Repo-supported path**: Auto-loads `CLAUDE.md` at session start (Claude Code reliably supports this)
+- **Wrapper needed**: No (built-in auto-load is deterministic enough)
 
 **Codex CLI / agents.md Ecosystem**:
-- **Primary**: Wrapper injection via CLI option (deterministic)
+- **Repo-supported path**: Manual injection via CLI option (deterministic)
 - **Best-effort**: May auto-discover `AGENTS.md` (version-dependent)
-- **Wrapper**: `codex-cli --instructions "$(cat AGENTS.md)" <command>`
+- **Wrapper pattern**: `codex-cli --instructions "$(cat AGENTS.md)" <command>`
+- **Status**: Wrapper not yet in repo - manual injection is current deterministic path
 
 **Gemini Code Assist / CLI**:
-- **Primary**: Wrapper injection required (deterministic)
+- **Repo-supported path**: Manual injection via CLI option (deterministic)
 - **Best-effort**: Does not auto-discover (as of 2026-02)
-- **Wrapper**: `gemini-cli --instructions "$(cat GEMINI.md)" <command>`
-- **Helper**: Create `scripts/agents/print_gemini_instructions.sh` for reusability
+- **Wrapper pattern**: `gemini-cli --instructions "$(cat GEMINI.md)" <command>`
+- **Status**: Wrapper not yet in repo - manual injection is current deterministic path
+- **Future**: Create `scripts/agents/run_gemini.sh` for enforced wrapper usage
 
 ## Adding New Agent Tools
 
