@@ -4,6 +4,7 @@ import { createMenu } from './menu';
 import { setupIPCHandlers, cleanupIPCHandlers } from './ipc-handlers';
 
 let mainWindow: BrowserWindow | null = null;
+let isQuitting = false;
 
 /**
  * Get the renderer entry point based on environment.
@@ -53,7 +54,7 @@ function createWindow() {
 
   // Hide to tray on close (macOS behavior)
   mainWindow.on('close', (event) => {
-    if (!app.isQuitting) {
+    if (!isQuitting) {
       event.preventDefault();
       mainWindow?.hide();
     }
@@ -86,6 +87,6 @@ app.on('activate', () => {
 });
 
 app.on('before-quit', () => {
-  app.isQuitting = true;
+  isQuitting = true;
   cleanupIPCHandlers();
 });

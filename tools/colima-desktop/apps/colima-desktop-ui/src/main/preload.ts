@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { StatusResponse, ColimaConfig, LifecycleRequest } from '../../../../tools/colima-desktop/src/shared/contracts/index.js';
+import type { StatusResponse, ColimaConfig, LifecycleRequest } from '../shared/types';
 
 // Expose secure API to renderer via contextBridge
 contextBridge.exposeInMainWorld('colima', {

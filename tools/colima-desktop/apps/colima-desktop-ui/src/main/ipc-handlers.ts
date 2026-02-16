@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import type { StatusResponse, ColimaConfig, LifecycleRequest } from '../../../../tools/colima-desktop/src/shared/contracts/index.js';
+import type { StatusResponse, ColimaConfig, LifecycleRequest } from '../shared/types';
 
 const BASE_URL = 'http://localhost:35100';
 let statusPollInterval: NodeJS.Timeout | null = null;
@@ -70,7 +70,7 @@ export function setupIPCHandlers(window: BrowserWindow) {
     
     const res = await fetch(`${BASE_URL}/v1/logs?${params}`);
     if (!res.ok) throw new Error(`Tail logs failed: ${res.statusText}`);
-    const data = await res.json();
+    const data = await res.json() as { lines?: string[] };
     return data.lines || [];
   });
 
@@ -106,7 +106,7 @@ function startStatusPolling(window: BrowserWindow) {
     try {
       const res = await fetch(`${BASE_URL}/v1/status`);
       if (res.ok) {
-        const status: StatusResponse = await res.json();
+        const status = await res.json() as StatusResponse;
         
         // Only emit if status changed
         if (JSON.stringify(status) !== JSON.stringify(lastStatus)) {
