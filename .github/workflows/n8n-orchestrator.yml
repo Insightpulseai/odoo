@@ -20,12 +20,12 @@ on:
       - main
       - develop
     paths:
-      - 'n8n/**'
+      - 'automations/n8n/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'n8n/**'
+      - 'automations/n8n/**'
   workflow_dispatch:
     inputs:
       action:
@@ -75,7 +75,7 @@ jobs:
           valid_count=0
           invalid_count=0
 
-          for file in n8n/**/*.json; do
+          for file in automations/n8n/**/*.json; do
             if [ -f "$file" ]; then
               if python3 -c "import json; json.load(open('$file'))" 2>/dev/null; then
                 echo "✅ Valid: $file"
@@ -103,7 +103,7 @@ jobs:
           echo "### Workflow Structure Validation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          for file in n8n/**/*.json; do
+          for file in automations/n8n/**/*.json; do
             if [ -f "$file" ]; then
               # Check for required n8n workflow fields
               has_name=$(python3 -c "import json; d=json.load(open('$file')); print('name' in d)" 2>/dev/null || echo "False")
@@ -222,16 +222,16 @@ jobs:
 
           # Sync specific workflow or all workflows
           if [ -n "$SPECIFIC_WORKFLOW" ]; then
-            if [ -f "n8n/$SPECIFIC_WORKFLOW" ]; then
-              sync_workflow "n8n/$SPECIFIC_WORKFLOW"
-            elif [ -f "n8n/workflows/$SPECIFIC_WORKFLOW" ]; then
-              sync_workflow "n8n/workflows/$SPECIFIC_WORKFLOW"
+            if [ -f "automations/n8n/$SPECIFIC_WORKFLOW" ]; then
+              sync_workflow "automations/n8n/$SPECIFIC_WORKFLOW"
+            elif [ -f "automations/n8n/workflows/$SPECIFIC_WORKFLOW" ]; then
+              sync_workflow "automations/n8n/workflows/$SPECIFIC_WORKFLOW"
             else
               echo "::error::Workflow not found: $SPECIFIC_WORKFLOW"
               exit 1
             fi
           else
-            for file in n8n/*.json n8n/workflows/*.json; do
+            for file in automations/n8n/*.json n8n/workflows/*.json; do
               if [ -f "$file" ]; then
                 sync_workflow "$file"
               fi

@@ -36,7 +36,7 @@
     }
   ],
   "functions": {
-    "vercel/api/ask.py": {
+    "infra/vercel/api/ask.py": {
       "runtime": "python3.11"
     }
   },
