@@ -2,7 +2,7 @@
 
 > **Odoo 19 CE** | TBWA\SMP Philippines | `erp.insightpulseai.com`
 > **Branch**: `claude/deploy-finance-ppm-odoo19-LbLm4`
-> **Date**: 2026-02-15
+> **Date**: 2026-02-16
 
 ---
 
@@ -30,13 +30,18 @@
 │  └────────┬─────────┘  └────────┬─────────┘                   │
 │           │                      │                              │
 │  ┌────────▼──────────────────────▼─────────┐                   │
-│  │      ipai_enterprise_bridge             │  ← OCA Parity     │
-│  │  (OAuth, IoT, MQTT, project_timeline)   │                   │
+│  │      ipai_enterprise_bridge             │  ← Delta (stubs)  │
+│  │  (safe stubs + redirections only)       │                   │
+│  └────────┬──────────────────────┬─────────┘                   │
+│           │                      │                              │
+│  ┌────────▼──────────────────────▼─────────┐                   │
+│  │  OCA: project_timeline + dependencies   │  ← OCA Layer      │
+│  │  (timeline view, NOT Gantt/critical path)│                   │
 │  └────────┬──────────────────────┬─────────┘                   │
 │           │                      │                              │
 │  ┌────────▼─────────┐  ┌────────▼─────────┐                   │
-│  │    n8n Workflows  │  │  Superset Views  │  ← Automation     │
-│  │  (alerts, eFPS,   │  │  (6 SQL views)   │                   │
+│  │    n8n Workflows  │  │  Superset Views  │  ← Platform       │
+│  │  (alerts, eFPS,   │  │  (11 SQL views)  │    Bridges        │
 │  │   AI journal)     │  │                   │                   │
 │  └──────────────────┘  └──────────────────┘                   │
 │                                                                 │
@@ -205,7 +210,7 @@ pip install requests
 ## 5. ipai_enterprise_bridge
 
 **Path**: `addons/ipai/ipai_enterprise_bridge/`
-**Purpose**: Replace Odoo Enterprise/IAP features with CE+OCA alternatives
+**Purpose**: Minimal model/field compatibility stubs for EE model references (does NOT reimplement EE features)
 
 ### Dependencies
 ```
@@ -239,14 +244,20 @@ pip install requests paho-mqtt
 
 ### Enterprise Feature Mappings
 
-| Enterprise Feature | Bridge Mode | OCA Alternative |
-|-------------------|-------------|----------------|
-| Planning (Gantt) | OCA | `project_timeline` |
-| Approvals | OCA | `purchase_requisition` |
-| Studio | Custom | `ipai_enterprise_bridge` |
-| IoT | Custom | `iot_mqtt_bridge.py` |
-| Helpdesk | OCA | `helpdesk_mgmt` |
-| Marketing Automation | n8n | n8n workflows |
+> **Note**: `ipai_enterprise_bridge` provides **safe stubs and redirections** only.
+> It does NOT reimplement any EE product. See `spec/finance-ppm/decisions/0003-enterprise-bridge-stubs.md`.
+
+| Enterprise Feature | Resolution Layer | Implementation | Notes |
+|-------------------|-----------------|---------------|-------|
+| Timeline view | OCA (module) | `project_timeline` | Timeline bar view, NOT full Gantt |
+| Task dependencies | OCA (module) | `project_task_dependency` | Predecessor/successor |
+| Approvals | OCA (module) | `purchase_requisition` | Procurement-oriented |
+| Helpdesk | OCA (module) | `helpdesk_mgmt` | — |
+| EE model stubs | Delta (module) | `ipai_enterprise_bridge` | Stubs only, no features |
+| IoT | Delta (module) | `iot_mqtt_bridge.py` | MQTT-based |
+| Marketing Automation | Bridge (platform) | n8n workflows | External to Odoo |
+| Critical path | — | Not available | Unverified for 19.0 |
+| Resource leveling | — | Not available | No CE/OCA module |
 
 ---
 
@@ -290,7 +301,7 @@ python3 scripts/install_module_xmlrpc.py --modules "ipai_bir_tax_compliance"
 python3 scripts/install_module_xmlrpc.py --modules "ipai_bir_notifications"
 python3 scripts/install_module_xmlrpc.py --modules "ipai_bir_plane_sync"
 
-# 3. Install OCA Gantt bridge (Bridge Gap 1)
+# 3. Install OCA timeline + dependencies
 bash scripts/install_oca_gantt_bridge.sh "$ODOO_ADMIN_PASSWORD"
 
 # 4. Seed Finance PPM data
@@ -318,7 +329,7 @@ bash scripts/test_finance_ppm_odoo19.sh "$ODOO_ADMIN_PASSWORD"
           │                 │            │
      ┌────▼─────────────────▼────────────▼──┐
      │      ipai_enterprise_bridge          │
-     │   (OAuth, IoT, MQTT, EE parity)     │
+     │   (safe stubs + redirections)       │
      └────┬──────────────────────┬──────────┘
           │                      │
      ┌────▼───────────┐    ┌────▼────────────────┐
@@ -330,7 +341,7 @@ bash scripts/test_finance_ppm_odoo19.sh "$ODOO_ADMIN_PASSWORD"
                │                │                   │
      ┌─────────▼──────┐ ┌──────▼─────────┐ ┌──────▼──────────────┐
      │ipai_finance_ppm│ │ipai_bir_tax    │ │ OCA project_timeline│
-     │(budget/analytic)│ │ _compliance    │ │ (Gantt/timeline)    │
+     │(budget/analytic)│ │ _compliance    │ │ (timeline view)     │
      └────────────────┘ │(36 eBIRForms)  │ └─────────────────────┘
                         └──────┬─────────┘
                                │
@@ -399,14 +410,19 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 
 ---
 
-## SAP FCC Bridge Gaps — Implementation Status
+## SAP FCC Gaps — Implementation Status
 
-| # | Gap | SAP Feature | Odoo 19 Bridge | Status |
-|---|-----|------------|-----------------|--------|
-| 1 | Gantt/Critical Path | SAP FCC Task Scheduler | OCA `project_timeline` + `project_task_dependency` | `install_oca_gantt_bridge.sh` |
-| 2 | Tax Form Generation | SAP Tax Compliance Forms | Odoo 19 PH l10n + `ipai_bir_tax_compliance` | `n8n_bir_form_generation.json` |
-| 3 | e-Filing Automation | SAP Tax Filing Integration | n8n → eFPS/eBIRForms/eAFS | `n8n_bir_efiling_automation.json` |
-| 4 | AI Journal Posting | SAP Smart Journal | Claude API + n8n → `account.move` draft | `n8n_ai_journal_posting.json` |
+> **Parity map**: `spec/finance-ppm/parity_map.yaml`
+> **Decision records**: `spec/finance-ppm/decisions/`
+
+| # | Gap | SAP Feature | Layer | Odoo 19 Implementation | Status |
+|---|-----|------------|-------|----------------------|--------|
+| 1 | Timeline view | FCC Task Scheduler | OCA (module) | `project_timeline` + `project_task_dependency` | Verified 19.0 |
+| 2 | Critical path | FCC critical-path designation | — | Not available | Unverified; see ADR-0006 |
+| 3 | Tax form generation | Tax Compliance Forms | Bridge (platform) | n8n workflow → .dat files | `platform/bridges/bir-form-generation/` |
+| 4 | e-Filing | Tax Filing Integration | Bridge (platform) | n8n → eFPS/eBIRForms/eAFS | `platform/bridges/efiling-automation/` |
+| 5 | AI journal posting | Smart Journal / IAP AI | Bridge (platform) | Claude API + n8n → `account.move` draft | `platform/bridges/ai-journal-posting/` |
+| 6 | Compliance dashboard | FCC Closing Cockpit | Bridge (platform) | Superset (11 SQL views) | `platform/bridges/compliance-dashboard/` |
 
 ---
 
@@ -475,6 +491,71 @@ Never create seed files at `data/finance_seed/` or `artifacts/data/`.
 
 ---
 
+## How We Choose Solutions
+
+Every capability follows the **mandatory parity order** (see `spec/finance-ppm/constitution.md`):
+
+```
+CE native → OCA add-on → ipai_* delta → Platform bridge
+```
+
+### Decision Framework
+
+| Question | If yes | If no |
+|---------|--------|-------|
+| Can Odoo 19 CE express this natively (config, views, server actions)? | Use CE — done | → Next |
+| Does an OCA module (19.0 series, verified) cover this? | Install OCA — done | → Next |
+| Is this a module-level gap (needs new models/views/logic inside Odoo)? | Create `ipai_*` delta — done | → Next |
+| Is this a platform/service gap (runs outside Odoo process)? | Create a platform bridge | → Investigate further |
+
+### Examples
+
+| Capability | Why this layer |
+|-----------|---------------|
+| 6-stage Kanban | **CE**: native `project.task.type` — no module needed |
+| Task dependencies | **OCA**: `project_task_dependency` covers predecessors/successors |
+| Budget/variance tracking | **Delta**: no OCA module provides finance PPM fields |
+| AI journal validation | **Bridge**: requires external API (Claude) — not an Odoo module |
+
+---
+
+## Bridge Layer (Platform Bridges)
+
+> **Directory**: `platform/bridges/`
+> **Decision record**: `spec/finance-ppm/decisions/0005-platform-bridges.md`
+
+Platform bridges substitute **platform-level EE/SAP services** that cannot be
+replaced by any Odoo module (CE, OCA, or custom). They run **outside** the
+Odoo process.
+
+### Active Bridges (5)
+
+| Bridge | Location | Trigger | Replaces |
+|--------|----------|---------|----------|
+| Recurrent Alerts | `platform/bridges/recurrent-alerts/` | Cron 9AM/5PM PHT | EE activity scheduling |
+| BIR Form Generation | `platform/bridges/bir-form-generation/` | Weekly + Webhook | SAP Tax Compliance forms |
+| e-Filing Automation | `platform/bridges/efiling-automation/` | Webhook | SAP Tax Filing integration |
+| AI Journal Posting | `platform/bridges/ai-journal-posting/` | Weekday 6AM + Webhook | SAP Smart Journal / IAP AI |
+| Compliance Dashboard | `platform/bridges/compliance-dashboard/` | On-demand | SAP FCC Closing Cockpit |
+
+### What Bridges Are NOT
+
+- Bridges are **not** Odoo modules — they cannot be installed via `ir.module.module`
+- Bridges are **not** OCA replacements — OCA modules solve module-level gaps
+- Bridges are **not** ipai_* deltas — deltas run inside Odoo, bridges run outside
+- Failure of a bridge does not crash Odoo — graceful degradation by design
+
+### Out of Scope (Acknowledged Gaps)
+
+| Feature | SAP/EE Source | Status |
+|---------|-------------|--------|
+| Odoo.sh (hosting platform) | EE SaaS | Replaced by DO + Docker + GH Actions (infra, not Finance PPM scope) |
+| IAP OCR / Document Digitization | EE IAP | Not needed for Finance PPM v1 |
+| Resource Leveling | EE Planning | No CE/OCA/bridge solution; manual workaround via Superset |
+| Critical Path Analysis | SAP FCC | `project_timeline_critical_path` unverified for 19.0 |
+
+---
+
 ## Scripts Reference
 
 | Script | Purpose |
@@ -488,6 +569,7 @@ Never create seed files at `data/finance_seed/` or `artifacts/data/`.
 | `dashboard_queries_odoo19.sql` | 11 Superset SQL views |
 | `finance/validate_team_directory.py` | Team roster invariant validator |
 | `finance/validate_seed_ssot.py` | Seed data SSOT enforcement |
+| `policy/validate_parity_map.py` | Parity map enforcement (CE→OCA→Delta→Bridge) |
 
 ---
 
@@ -517,4 +599,4 @@ Analyst prepares → Manager reviews → Senior Manager validates → Director a
 
 ---
 
-*Generated: 2026-02-15 | Odoo 19 CE + OCA 19.0 | TBWA\SMP Philippines*
+*Generated: 2026-02-16 | Odoo 19 CE + OCA 19.0 | TBWA\SMP Philippines*

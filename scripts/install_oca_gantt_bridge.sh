@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Bridge Gap 1: OCA Gantt / Critical Path for Finance PPM
+# OCA Timeline + Dependencies for Finance PPM
 # ============================================================================
 # Installs OCA project_timeline + project_task_dependency on Odoo 19 CE
-# to bridge the SAP FCC Gantt/Critical Path gap.
+# to provide timeline visualization and task dependency management.
+#
+# NOTE: project_timeline provides a timeline bar view, NOT a full Gantt chart.
+# Critical-path highlighting is NOT available (unverified for Odoo 19).
+# See: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
 #
 # Modules installed:
-#   - project_timeline       → Timeline/Gantt view for project tasks
+#   - project_timeline       → Timeline bar view for project tasks (NOT Gantt)
 #   - project_task_dependency → Task dependency management (predecessors/successors)
 #   - project_stage_closed    → Distinguish closed stages (Done/Cancelled)
 #
@@ -49,7 +53,7 @@ IPAI_MODULES=(
 )
 
 echo "============================================================"
-echo "Bridge Gap 1: OCA Gantt / Critical Path Installation"
+echo "OCA Timeline + Dependencies Installation"
 echo "============================================================"
 echo "Target: ${ODOO_URL}"
 echo "DB:     ${ODOO_DB}"
@@ -161,13 +165,17 @@ for p in projects:
 
 echo ""
 echo "============================================================"
-echo "Bridge Gap 1: Complete"
+echo "OCA Timeline + Dependencies: Complete"
 echo ""
-echo "SAP FCC Feature Parity:"
-echo "  ✓ Timeline/Gantt View     → OCA project_timeline"
+echo "Installed capabilities:"
+echo "  ✓ Timeline View           → OCA project_timeline (bar view, NOT full Gantt)"
 echo "  ✓ Task Dependencies       → OCA project_task_dependency"
-echo "  ✓ Critical Path Analysis  → Dependency chain + deadline tracking"
 echo "  ✓ Stage Closed Detection  → OCA project_stage_closed"
+echo ""
+echo "NOT available (see ADR-0006):"
+echo "  ✗ Critical Path Analysis  → Unverified for Odoo 19"
+echo "  ✗ Interactive Gantt       → project_timeline is read-only timeline"
+echo "  ✗ Resource Leveling       → No CE/OCA module available"
 echo ""
 echo "Access: ${ODOO_URL}/odoo/project → Timeline tab"
 echo "============================================================"

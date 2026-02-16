@@ -1,0 +1,33 @@
+name: "Policy: Parity Map Enforcement"
+
+on:
+  pull_request:
+    paths:
+      - 'spec/*/parity_map.yaml'
+      - 'spec/*/decisions/**'
+      - 'spec/*/constitution.md'
+      - 'platform/bridges/**'
+      - 'addons/ipai/**'
+      - 'scripts/policy/**'
+
+jobs:
+  validate-parity-map:
+    name: Validate Parity Maps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run parity map validator
+        run: python3 scripts/policy/validate_parity_map.py
+
+      - name: Run parity map self-test
+        run: python3 scripts/policy/validate_parity_map.py --self-test

@@ -3,7 +3,7 @@
 > **Module**: Finance PPM (Project Portfolio Management)
 > **Client**: TBWA\SMP Philippines
 > **Stack**: Odoo 19 CE + OCA 19.0 + PostgreSQL 16
-> **Version**: 1.2.0
+> **Version**: 1.3.0
 
 ---
 
@@ -91,7 +91,70 @@ To Do → In Preparation → Under Review → Pending Approval → Done → Canc
 
 ---
 
-## SAP Feature Parity
+## Parity Model: Module Replacements vs Platform Bridges
+
+> **Authoritative map**: `spec/finance-ppm/parity_map.yaml`
+> **Constitution**: `spec/finance-ppm/constitution.md`
+> **Decision records**: `spec/finance-ppm/decisions/`
+> **Enforced by**: `scripts/policy/validate_parity_map.py` + CI gate
+
+### Parity Order (Non-Negotiable)
+
+```
+CE native → OCA add-on → ipai_* delta → Platform bridge
+```
+
+Each step-up requires a decision record (`spec/finance-ppm/decisions/`) explaining
+why the previous layer was insufficient.
+
+### Module Replacements (Layers 1-3)
+
+These are **installable Odoo modules** (`ir.module.module`).
+
+| Capability | Layer | Implementation | Notes |
+|-----------|-------|---------------|-------|
+| Project structure | CE | Native `project.project` + `project.task` | 2 projects, 89 tasks, 6 stages |
+| Kanban workflow | CE | Native `project.task.type` stages | 6-stage workflow |
+| Task assignment | CE | Native `res.users` on tasks | Team member assignment |
+| Task deadlines | CE | Native `date_deadline` | WD offsets + BIR calendar |
+| Task tags | CE | Native `project.tags` | 33 tags (phases + BIR forms) |
+| Project milestones | CE | Native `project.milestone` | 11 logframe milestones |
+| Fiscal positions | CE | Native `account.fiscal.position` | PH withholding tax |
+| Task dependencies | OCA | `project_task_dependency` (19.0) | Predecessor/successor |
+| Timeline view | OCA | `project_timeline` (19.0) | Timeline bar view (NOT full Gantt) |
+| Stage closed | OCA | `project_stage_closed` (19.0) | Done/Cancelled distinction |
+| Finance PPM controls | Delta | `ipai_finance_ppm` | Budget/forecast/variance |
+| BIR tax compliance | Delta | `ipai_bir_tax_compliance` | 36 eBIRForms |
+| BIR notifications | Delta | `ipai_bir_notifications` | Filing deadline alerts |
+| Enterprise stubs | Delta | `ipai_enterprise_bridge` | Safe stubs only |
+| Finance workflow | Delta | `ipai_finance_workflow` | Role-based stage transitions |
+
+### Platform Bridges (Layer 4)
+
+These are **NOT Odoo modules**. They run outside the Odoo process and substitute
+platform-level services that have no module equivalent.
+
+| Capability | Replaces | Implementation | Location |
+|-----------|----------|---------------|----------|
+| Recurrent alerts | EE activity scheduling | n8n → Slack | `platform/bridges/recurrent-alerts/` |
+| BIR form generation | SAP Tax Compliance forms | n8n → .dat files | `platform/bridges/bir-form-generation/` |
+| e-Filing automation | SAP Tax Filing integration | n8n → eFPS/eBIRForms | `platform/bridges/efiling-automation/` |
+| AI journal posting | SAP Smart Journal / Odoo IAP | n8n + Claude API | `platform/bridges/ai-journal-posting/` |
+| Compliance dashboard | SAP FCC Closing Cockpit | Superset + 11 SQL views | `platform/bridges/compliance-dashboard/` |
+
+### Acknowledged Gaps (Not Available)
+
+| Capability | SAP/EE Feature | Status |
+|-----------|---------------|--------|
+| Critical path analysis | SAP FCC critical-path designation | Planned; `project_timeline_critical_path` unverified for 19.0 |
+| Resource leveling | SAP Planning resource leveling | Out of scope for v1 |
+| Interactive Gantt | EE Gantt with drag-and-drop | Out of scope; OCA `project_timeline` is read-only timeline |
+
+See `spec/finance-ppm/decisions/0006-critical-path-unavailable.md` for details.
+
+---
+
+## SAP Feature Parity (Reference)
 
 ### SAP Financial Close Cockpit (FCC)
 
@@ -118,15 +181,16 @@ and automation support, including ML acceleration for tax determination:
 - **Compliance Calendar**: Jurisdiction-aware deadline tracking with
   escalation and notification rules
 
-### Odoo 19 Bridge Implementation
+### Odoo 19 Implementation Status
 
-| SAP Feature | Odoo 19 Bridge | Status |
-|-------------|---------------|--------|
-| Gantt / Critical Path | OCA `project_timeline` + `project_task_dependency` | `install_oca_gantt_bridge.sh` |
-| Tax Form Generation | Odoo 19 PH localization + `ipai_bir_tax_compliance` | `n8n_bir_form_generation.json` |
-| e-Filing Automation | n8n → eFPS / eBIRForms / eAFS | `n8n_bir_efiling_automation.json` |
-| AI Journal Posting | Claude API validation → `account.move` draft | `n8n_ai_journal_posting.json` |
-| Compliance Dashboard | Superset (11 SQL views including logframe KPIs) | `dashboard_queries_odoo19.sql` |
+| SAP Feature | Odoo 19 Layer | Implementation | Status |
+|-------------|--------------|---------------|--------|
+| Timeline view | OCA (module) | `project_timeline` + `project_task_dependency` | Verified for 19.0 |
+| Critical path | — | Not available | Unverified; see ADR-0006 |
+| Tax form generation | Bridge (platform) | n8n workflow → .dat files | `platform/bridges/bir-form-generation/` |
+| e-Filing | Bridge (platform) | n8n → eFPS/eBIRForms/eAFS | `platform/bridges/efiling-automation/` |
+| AI journal posting | Bridge (platform) | Claude API + n8n → `account.move` draft | `platform/bridges/ai-journal-posting/` |
+| Compliance dashboard | Bridge (platform) | Superset (11 SQL views) | `platform/bridges/compliance-dashboard/` |
 
 ### Sources
 
@@ -189,5 +253,6 @@ Views 7-11: Logframe KPIs (goal, outcome, IM1, IM2, outputs) with RAG status
 |------|--------|---------|
 | Team directory drift | `scripts/finance/validate_team_directory.py` | PR touching roster/spec/import |
 | Seed SSOT enforcement | `scripts/finance/validate_seed_ssot.py` | PR touching data/seed, data/archive, scripts |
+| Parity map enforcement | `scripts/policy/validate_parity_map.py` | PR touching spec, bridges, addons/ipai |
 | Finance PPM data | `scripts/validate_finance_ppm_data.py` | Existing gate |
 | Deployment test | `scripts/test_finance_ppm_odoo19.sh` | Post-deploy |
