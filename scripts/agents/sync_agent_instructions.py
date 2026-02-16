@@ -75,6 +75,22 @@ HEADERS = {
 }
 
 
+def normalize_text(s: str) -> str:
+    """
+    Normalize text to stable form across OS/tooling.
+
+    - Convert all line endings to LF (\\n)
+    - Ensure single trailing newline
+    """
+    # Normalize line endings to LF
+    s = s.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Ensure single trailing newline
+    s = s.rstrip("\n") + "\n"
+
+    return s
+
+
 def read_ssot() -> str:
     """Read the SSOT file."""
     if not SSOT_PATH.exists():
@@ -82,7 +98,15 @@ def read_ssot() -> str:
         sys.exit(1)
 
     try:
-        return SSOT_PATH.read_text(encoding="utf-8")
+        content = SSOT_PATH.read_text(encoding="utf-8")
+        content = normalize_text(content)
+
+        # Validate SSOT is not empty
+        if not content.strip():
+            print(f"ERROR: SSOT is empty: {SSOT_PATH}", file=sys.stderr)
+            sys.exit(1)
+
+        return content
     except Exception as e:
         print(f"ERROR: Failed to read SSOT: {e}", file=sys.stderr)
         sys.exit(1)
@@ -114,6 +138,8 @@ def write_output(filename: str, content: str) -> None:
 
     try:
         full_content = header + content
+        # Normalize before writing to ensure deterministic output
+        full_content = normalize_text(full_content)
         output_path.write_text(full_content, encoding="utf-8")
         print(f"✓ Generated: {output_path.relative_to(REPO_ROOT)}")
     except Exception as e:

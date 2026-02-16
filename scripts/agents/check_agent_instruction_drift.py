@@ -91,13 +91,15 @@ def main() -> None:
                 print(f"✗ {filename}: DRIFT DETECTED")
                 drift_detected = True
 
-                # Show first 20 lines of diff
+                # Show unified diff (capped at 200 lines for CI readability)
                 if diff_lines:
-                    print(f"\n  First 20 lines of diff:\n")
-                    for line in diff_lines[:20]:
+                    print(f"\n  Unified diff (repo → expected):\n")
+                    for i, line in enumerate(diff_lines):
+                        if i >= 200:
+                            remaining = len(diff_lines) - 200
+                            print(f"\n  ... (diff truncated, {remaining} more lines)")
+                            break
                         print(f"  {line.rstrip()}")
-                    if len(diff_lines) > 20:
-                        print(f"\n  ... ({len(diff_lines) - 20} more lines)")
                 print()
 
     if drift_detected:

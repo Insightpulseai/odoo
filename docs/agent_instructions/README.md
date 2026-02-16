@@ -71,25 +71,40 @@ Validates that generated files match SSOT:
   run: python scripts/agents/check_agent_instruction_drift.py
 ```
 
-## Tool Consumption
+## Tool Consumption Contract (Repo-Supported)
 
-### Claude Code
-- **Auto-loads**: `CLAUDE.md` at session start
-- **No action needed**: Just edit SSOT + sync
+This repo guarantees that instructions are available via generated mirror files:
+- `CLAUDE.md` (Claude Code mirror)
+- `AGENTS.md` (agent-runner / Codex mirror)
+- `GEMINI.md` (Gemini mirror)
 
-### Codex CLI / agents.md Ecosystem
-- **File**: `AGENTS.md`
-- **Usage**: Codex CLI auto-discovers `AGENTS.md` (depending on version)
-- **Manual**: If not auto-discovered, inject via CLI option or wrapper
+### Ingestion Responsibility
 
-### Gemini Code Assist / CLI
-- **File**: `GEMINI.md`
-- **Usage**: Manual injection required (Gemini doesn't auto-discover)
-- **Wrapper pattern**:
-  ```bash
-  gemini-cli --instructions "$(cat GEMINI.md)" <command>
-  ```
-- **Or**: Create `scripts/agents/print_gemini_instructions.sh` that outputs `GEMINI.md`
+Tool auto-loading behavior is **not** treated as a guarantee. The supported mechanism is:
+
+1. **Wrapper injection** (deterministic): The runner/wrapper explicitly injects the appropriate mirror file into the tool session, OR
+2. **Tool auto-load** (best-effort): The tool auto-loads the mirror file if it supports it
+
+### Deterministic Rule
+
+If behavior differs across machines/versions, the **wrapper injection path is the source of truth**.
+
+### Per-Tool Patterns
+
+**Claude Code**:
+- **Primary**: Auto-loads `CLAUDE.md` at session start (supported)
+- **Fallback**: N/A (Claude Code reliably loads CLAUDE.md)
+
+**Codex CLI / agents.md Ecosystem**:
+- **Primary**: Wrapper injection via CLI option (deterministic)
+- **Best-effort**: May auto-discover `AGENTS.md` (version-dependent)
+- **Wrapper**: `codex-cli --instructions "$(cat AGENTS.md)" <command>`
+
+**Gemini Code Assist / CLI**:
+- **Primary**: Wrapper injection required (deterministic)
+- **Best-effort**: Does not auto-discover (as of 2026-02)
+- **Wrapper**: `gemini-cli --instructions "$(cat GEMINI.md)" <command>`
+- **Helper**: Create `scripts/agents/print_gemini_instructions.sh` for reusability
 
 ## Adding New Agent Tools
 
