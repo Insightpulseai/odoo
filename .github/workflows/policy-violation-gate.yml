@@ -20,7 +20,7 @@ on:
     paths:
       - 'web/**'
       - 'scripts/**'
-      - 'mcp/**'
+      - 'agents/mcp/**'
       - 'supabase/**'
   push:
     branches:

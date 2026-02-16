@@ -86,7 +86,7 @@ jobs:
               - 'Dockerfile*'
               - 'docker-compose*.yml'
             n8n:
-              - 'n8n/**'
+              - 'automations/n8n/**'
 
       - name: Set environment
         id: set-env
@@ -357,7 +357,7 @@ jobs:
           valid=0
           invalid=0
 
-          for workflow in n8n/**/*.json; do
+          for workflow in automations/n8n/**/*.json; do
             if [ -f "$workflow" ]; then
               if python3 -c "import json; json.load(open('$workflow'))" 2>/dev/null; then
                 name=$(python3 -c "import json; print(json.load(open('$workflow')).get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")
@@ -391,7 +391,7 @@ jobs:
 
           echo "## n8n Workflow Sync" >> $GITHUB_STEP_SUMMARY
 
-          for workflow in n8n/**/*.json; do
+          for workflow in automations/n8n/**/*.json; do
             if [ -f "$workflow" ]; then
               name=$(python3 -c "import json; print(json.load(open('$workflow')).get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")
               echo "Syncing: $name"

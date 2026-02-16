@@ -14,7 +14,7 @@ set -euo pipefail
 # Configuration
 N8N_URL="${N8N_URL:-http://localhost:5678}"
 N8N_API_KEY="${N8N_API_KEY:-}"
-WORKFLOW_DIR="n8n/workflows"
+WORKFLOW_DIR="automations/n8n/workflows"
 
 # Colors
 RED='\033[0;31m'

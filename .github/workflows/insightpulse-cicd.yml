@@ -28,7 +28,7 @@ on:
     paths:
       - 'supabase/**'
       - 'addons/**'
-      - 'n8n/**'
+      - 'automations/n8n/**'
       - 'docker/**'
       - 'docker-compose*.yml'
       - 'Dockerfile*'
@@ -95,7 +95,7 @@ jobs:
               - 'Dockerfile*'
               - 'docker-compose*.yml'
             n8n:
-              - 'n8n/**'
+              - 'automations/n8n/**'
             docker:
               - 'docker/**'
               - 'Dockerfile*'
@@ -284,7 +284,7 @@ jobs:
           echo "## n8n Workflow Sync" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          for file in n8n/**/*.json; do
+          for file in automations/n8n/**/*.json; do
             if [ -f "$file" ]; then
               if python3 -c "import json; json.load(open('$file'))" 2>/dev/null; then
                 workflow_name=$(python3 -c "import json; print(json.load(open('$file')).get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")

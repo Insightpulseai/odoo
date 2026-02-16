@@ -1,0 +1,133 @@
+# =============================================================================
+# GitHub Actions: Verify Staging
+# =============================================================================
+# Health checks for all staging planes: Supabase + Vercel + Odoo + Superset.
+# Runs after deploy-staging or on demand.
+#
+# Required Secrets (set in GitHub Environment: staging):
+#   - STAGING_SUPABASE_URL, STAGING_SUPABASE_ANON_KEY
+#   - STAGING_VERCEL_URL
+#   - STAGING_ODOO_URL
+#   - STAGING_SUPERSET_URL (optional)
+# =============================================================================
+
+name: Verify Staging
+
+on:
+  workflow_run:
+    workflows: ["Deploy Staging"]
+    types: [completed]
+  workflow_dispatch: {}
+
+jobs:
+  verify:
+    name: Verify Staging Health
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Supabase health
+        id: supabase
+        run: |
+          URL="${{ secrets.STAGING_SUPABASE_URL }}"
+          KEY="${{ secrets.STAGING_SUPABASE_ANON_KEY }}"
+
+          if [ -z "$URL" ]; then
+            echo "::warning::STAGING_SUPABASE_URL not set"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" \
+            -H "apikey: $KEY" \
+            "$URL/rest/v1/" 2>/dev/null || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+            echo "::error::Supabase staging returned HTTP $HTTP_CODE"
+          fi
+
+      - name: Check Vercel health
+        id: vercel
+        run: |
+          URL="${{ secrets.STAGING_VERCEL_URL }}"
+
+          if [ -z "$URL" ]; then
+            echo "::warning::STAGING_VERCEL_URL not set"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "$URL" 2>/dev/null || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "308" ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+            echo "::error::Vercel staging returned HTTP $HTTP_CODE"
+          fi
+
+      - name: Check Odoo health
+        id: odoo
+        run: |
+          URL="${{ secrets.STAGING_ODOO_URL }}"
+
+          if [ -z "$URL" ]; then
+            echo "::warning::STAGING_ODOO_URL not set"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "$URL/web/health" 2>/dev/null || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+            echo "::error::Odoo staging returned HTTP $HTTP_CODE"
+          fi
+
+      - name: Check Superset health (optional)
+        id: superset
+        run: |
+          URL="${{ secrets.STAGING_SUPERSET_URL }}"
+
+          if [ -z "$URL" ]; then
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "$URL/health" 2>/dev/null || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+            echo "::warning::Superset staging returned HTTP $HTTP_CODE"
+          fi
+
+      - name: Generate summary
+        run: |
+          echo "## Staging Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Plane | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Supabase | ${{ steps.supabase.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Vercel | ${{ steps.vercel.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Odoo | ${{ steps.odoo.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Superset | ${{ steps.superset.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail if any plane is unhealthy
+        run: |
+          if [ "${{ steps.supabase.outputs.status }}" = "unhealthy" ] || \
+             [ "${{ steps.vercel.outputs.status }}" = "unhealthy" ] || \
+             [ "${{ steps.odoo.outputs.status }}" = "unhealthy" ]; then
+            echo "::error::One or more staging planes are unhealthy"
+            exit 1
+          fi

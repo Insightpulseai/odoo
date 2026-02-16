@@ -235,3 +235,17 @@ infra/cloudflare/**/terraform.tfvars
 # Large evidence files (>100MB)
 docs/evidence/**/*.txt
 docs/evidence/**/*.log
+
+# Superset local env (examples only in repo)
+infra/superset/env/.env.superset
+infra/superset/env/.env.*.local
+
+# Cloudflare local env
+.env.cloudflare
+
+# Devcontainer local overrides
+.devcontainer/.env
+
+# Generic infra env files (examples only)
+infra/**/env/.env
+infra/**/env/.env.*.local

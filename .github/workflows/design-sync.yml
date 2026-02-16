@@ -5,7 +5,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "figma/**"
+      - "design/figma/**"
       - "scripts/design-sync.sh"
       - "scripts/figma-export-variables.mjs"
 

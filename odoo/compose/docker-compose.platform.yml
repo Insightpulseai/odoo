@@ -93,7 +93,7 @@ services:
       - "5678:5678"
     volumes:
       - n8n_data:/home/node/.n8n
-      - ../../n8n/workflows:/workflows:ro
+      - ../../automations/n8n/workflows:/workflows:ro
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:5678/healthz"]
       interval: 30s
@@ -117,7 +117,7 @@ services:
     ports:
       - "3333:3333"
     volumes:
-      - ../../mcp:/app/mcp:ro
+      - ../../agents/mcp:/app/mcp:ro
     command: >
       sh -c "echo 'MCP Gateway placeholder - implement with mcp/coordinator' && sleep infinity"
     profiles:
