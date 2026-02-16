@@ -1,7 +1,7 @@
 #!/bin/bash
 # Upgrade from Odoo 18 to Odoo 19 EE parity image
 
-cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+cd ~/Documents/GitHub/Insightpulseai/odoo/sandbox/dev
 
 echo "🛑 Stopping old containers..."
 docker compose down
