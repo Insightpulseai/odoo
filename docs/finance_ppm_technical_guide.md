@@ -381,7 +381,7 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 
 ---
 
-## Superset Dashboard Views (6)
+## Superset Dashboard Views (11)
 
 | View | Purpose |
 |------|---------|
@@ -391,6 +391,11 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 | `v_assignee_workload` | Workload distribution per analyst |
 | `v_closing_timeline` | Close cycle timeline |
 | `v_finance_team` | Team directory with roles |
+| `v_logframe_goal_kpi` | On-time % with RAG status (Goal) |
+| `v_logframe_outcome_kpi` | Avg delay per project (Outcome) |
+| `v_logframe_im1_kpi` | Monthly close reconciliation (IM1) |
+| `v_logframe_im2_kpi` | BIR filing rate by form type (IM2) |
+| `v_logframe_outputs_kpi` | Consolidated output counts |
 
 ---
 
@@ -405,31 +410,68 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 
 ---
 
-## Finance Team (9 members)
+## Finance Team (SSOT)
 
-| Code | Name | Role | Approval Level |
-|------|------|------|---------------|
-| CKVC | Khalil Veracruz | Finance Director | Approver (final) |
-| RIM | Rey Meran | Senior Finance Manager | Reviewer (senior) |
-| BOM | Beng Manalo | Finance Manager | Preparer (BIR) |
-| JPAL | Jinky Paladin | Finance Analyst | Phase III lead |
-| LAS | Amor Lasaga | Finance Analyst | Phase III-IV |
-| JLI | Jerald Loterte | Finance Analyst | Phase IV |
-| RMQB | Sally Brillantes | Finance Analyst | Phase IV |
-| JAP | Jasmin Ignacio | Finance Analyst | Phase IV |
-| JRMO | Jhoee Oliva | Finance Analyst | Phase IV |
+> **Canonical source**: `data/seed/finance_ppm/tbwa_smp/team_directory.csv`
+> **Validator**: `scripts/finance/validate_team_directory.py`
+> **CI gate**: `.github/workflows/finance-team-directory-gate.yml`
+
+| Code | Name | Role | Tier | Approval Level |
+|------|------|------|------|---------------|
+| CKVC | Khalil Veracruz | Finance Director | Director | Approver (final) |
+| RIM | Rey Meran | Senior Finance Manager | Senior Manager | Reviewer (senior) |
+| BOM | Beng Manalo | Finance Manager | Manager | Preparer (BIR) |
+| JPAL | Jinky Paladin | Finance Analyst | Analyst | Phase III lead |
+| LAS | Amor Lasaga | Finance Analyst | Analyst | Phase III-IV |
+| JLI | Jerald Loterte | Finance Analyst | Analyst | Phase IV |
+| RMQB | Sally Brillantes | Finance Analyst | Analyst | Phase IV |
+| JAP | Jasmin Ignacio | Finance Analyst | Analyst | Phase IV |
+| JRMO | Jhoee Oliva | Finance Analyst | Analyst | Phase IV |
+
+### Roster Invariants
+
+- **Headcount**: exactly 9
+- **Tier counts**: Director=1, Senior Manager=1, Manager=1, Analyst=6
+- **Uniqueness**: Code and Name are both unique
+- **JPAL**: must be Finance Analyst (enforced by validator)
+- **Cross-artifact parity**: CSV must match EMPLOYEES dict in `bulk_import_tasks_odoo19.py`
+
+### How Drift Is Prevented
+
+1. `validate_team_directory.py` checks all invariants (headcount, tiers, roles, uniqueness, JPAL)
+2. `validate_seed_ssot.py` ensures no duplicate seed data exists outside canonical/archive
+3. CI workflow runs both validators on PRs touching roster, spec, or import files
+4. Import script EMPLOYEES dict has no fallback — fails fast if canonical data is wrong
 
 ---
 
-## Seed Data Files
+## Seed Data (SSOT)
+
+> **Canonical root**: `data/seed/finance_ppm/tbwa_smp/`
+> **Archive root**: `data/archive/finance_ppm/tbwa_smp/`
+> **Validator**: `scripts/finance/validate_seed_ssot.py`
+
+### Canonical Seed Files
 
 | File | Records | Purpose |
 |------|---------|---------|
-| `data/finance_seed/01_project.tags.csv` | 33 tags | Phase tags + BIR form tags |
-| `data/finance_seed/02_project.project.csv` | 2 projects | Month-End Close + BIR Tax Filing |
-| `data/finance_seed/03_project.task.month_end.csv` | 39 tasks | 5-phase closing workflow |
-| `data/finance_seed/04_project.task.bir_tax.csv` | 50 tasks | 9 BIR form types |
-| `artifacts/data/ipai_finance_ppm_directory.csv` | 9 records | Employee directory |
+| `team_directory.csv` | 9 | Employee directory with Tier column |
+| `projects.csv` | 2 | Month-End Close + BIR Tax Filing |
+| `tags.csv` | 33 | Phase tags + BIR form tags |
+| `tasks_month_end.csv` | 39 | 5-phase closing workflow |
+| `tasks_bir_tax.csv` | 50 | 9 BIR form types |
+| `logframe.csv` | 7 | Logframe matrix (Goal → Activities) |
+
+### Adding New Seed Data
+
+All new seed data must go to `data/seed/finance_ppm/tbwa_smp/`.
+Never create seed files at `data/finance_seed/` or `artifacts/data/`.
+
+### Archive Policy
+
+- Superseded seed variants are moved to `data/archive/finance_ppm/tbwa_smp/<YYYYMMDD>/`
+- Every archived set must include a `MANIFEST.md` with provenance
+- CI fails if duplicate seed data appears outside canonical/archive
 
 ---
 
@@ -439,10 +481,13 @@ N8N_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
 |--------|---------|
 | `seed_finance_ppm_stages_odoo19.py` | Seeds 6 stages + 2 projects |
 | `bulk_import_tasks_odoo19.py` | Imports 89 tasks (39 close + 50 BIR) |
+| `seed_logframe_milestones_odoo19.py` | Seeds logframe milestones |
 | `deploy_finance_ppm_odoo19.sh` | Full deployment orchestrator |
 | `test_finance_ppm_odoo19.sh` | 10-point verification test suite |
 | `install_oca_gantt_bridge.sh` | OCA timeline + dependency install |
-| `dashboard_queries_odoo19.sql` | 6 Superset SQL views |
+| `dashboard_queries_odoo19.sql` | 11 Superset SQL views |
+| `finance/validate_team_directory.py` | Team roster invariant validator |
+| `finance/validate_seed_ssot.py` | Seed data SSOT enforcement |
 
 ---
 

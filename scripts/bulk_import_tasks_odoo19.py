@@ -55,16 +55,19 @@ PROJECT_TAX = "Finance PPM - BIR Tax Filing"
 # Employee directory
 # ---------------------------------------------------------------------------
 EMPLOYEES = {
-    "CKVC": {"name": "Khalil Veracruz", "email": "khalil.veracruz@omc.com", "role": "Finance Director"},
-    "RIM":  {"name": "Rey Meran", "email": "rey.meran@omc.com", "role": "Senior Finance Manager"},
-    "BOM":  {"name": "Beng Manalo", "email": "beng.manalo@omc.com", "role": "Finance Manager"},
-    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Analyst"},
-    "LAS":  {"name": "Amor Lasaga", "email": "amor.lasaga@omc.com", "role": "Finance Analyst"},
-    "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst"},
-    "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst"},
-    "JAP":  {"name": "Jasmin Ignacio", "email": "jasmin.ignacio@omc.com", "role": "Finance Analyst"},
-    "JRMO": {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst"},
+    "CKVC": {"name": "Khalil Veracruz", "email": "khalil.veracruz@omc.com", "role": "Finance Director", "tier": "Director"},
+    "RIM":  {"name": "Rey Meran", "email": "rey.meran@omc.com", "role": "Senior Finance Manager", "tier": "Senior Manager"},
+    "BOM":  {"name": "Beng Manalo", "email": "beng.manalo@omc.com", "role": "Finance Manager", "tier": "Manager"},
+    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    "LAS":  {"name": "Amor Lasaga", "email": "amor.lasaga@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    "JAP":  {"name": "Jasmin Ignacio", "email": "jasmin.ignacio@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    "JRMO": {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
 }
+
+# Canonical seed data root (SSOT — do not add fallback paths)
+SEED_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "seed", "finance_ppm", "tbwa_smp")
 
 # Company reference
 COMPANY = "TBWA\\SMP Philippines"
