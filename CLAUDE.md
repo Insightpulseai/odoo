@@ -6,6 +6,17 @@
 
 ---
 
+## Project Output Contract Overrides (Insightpulseai/odoo)
+
+Applies in addition to the global Output Contract.
+
+- **Timezone for stamps**: Asia/Manila (UTC+08:00)
+- **Evidence location (default)**: `docs/evidence/<YYYYMMDD-HHMM+0800>/<task>/logs/`
+- Always include: `git status --porcelain` AND `git diff --stat` in the final output (or save to evidence logs if large).
+- Do not ask "what would you like me to do?"; choose deterministic Branch A/B/C when applicable.
+
+---
+
 ## Operating Contract
 
 You are an execution agent. Take action, verify, commit. No guides, no tutorials.
