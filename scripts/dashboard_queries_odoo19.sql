@@ -220,6 +220,230 @@ ORDER BY
     total_tasks DESC;
 
 -- ---------------------------------------------------------------------------
+-- View 7: Logframe — Goal KPI
+-- On-time completion rate across both projects (Goal indicator)
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_logframe_goal_kpi AS
+SELECT
+    'Goal' AS logframe_level,
+    'On-time filing & closing rate' AS kpi_name,
+    COUNT(pt.id) AS total_tasks,
+    COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) AS completed_tasks,
+    COUNT(CASE WHEN ptt.name = 'Done'
+               AND (pt.date_deadline IS NULL OR pt.write_date::date <= pt.date_deadline)
+          THEN 1 END) AS completed_on_time,
+    ROUND(
+        COUNT(CASE WHEN ptt.name = 'Done'
+                   AND (pt.date_deadline IS NULL OR pt.write_date::date <= pt.date_deadline)
+              THEN 1 END) * 100.0 /
+        NULLIF(COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END), 0),
+        1
+    ) AS on_time_pct,
+    CASE
+        WHEN COUNT(CASE WHEN ptt.name = 'Done'
+                        AND (pt.date_deadline IS NULL OR pt.write_date::date <= pt.date_deadline)
+                   THEN 1 END) * 100.0 /
+             NULLIF(COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END), 0) >= 95
+        THEN 'GREEN'
+        WHEN COUNT(CASE WHEN ptt.name = 'Done'
+                        AND (pt.date_deadline IS NULL OR pt.write_date::date <= pt.date_deadline)
+                   THEN 1 END) * 100.0 /
+             NULLIF(COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END), 0) >= 80
+        THEN 'AMBER'
+        ELSE 'RED'
+    END AS rag_status
+FROM
+    project_task pt
+    JOIN project_project pp ON pt.project_id = pp.id
+    LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+WHERE
+    pp.name LIKE '%Finance PPM%';
+
+-- ---------------------------------------------------------------------------
+-- View 8: Logframe — Outcome KPI
+-- Average processing delay per task (Outcome indicator: <1 day)
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_logframe_outcome_kpi AS
+SELECT
+    'Outcome' AS logframe_level,
+    'Avg processing delay (days)' AS kpi_name,
+    pp.name AS project_name,
+    COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) AS completed_tasks,
+    ROUND(
+        AVG(
+            CASE WHEN ptt.name = 'Done' AND pt.date_deadline IS NOT NULL
+                 THEN GREATEST(pt.write_date::date - pt.date_deadline, 0)
+            END
+        ), 1
+    ) AS avg_delay_days,
+    CASE
+        WHEN AVG(
+            CASE WHEN ptt.name = 'Done' AND pt.date_deadline IS NOT NULL
+                 THEN GREATEST(pt.write_date::date - pt.date_deadline, 0)
+            END
+        ) <= 1 THEN 'GREEN'
+        WHEN AVG(
+            CASE WHEN ptt.name = 'Done' AND pt.date_deadline IS NOT NULL
+                 THEN GREATEST(pt.write_date::date - pt.date_deadline, 0)
+            END
+        ) <= 3 THEN 'AMBER'
+        ELSE 'RED'
+    END AS rag_status
+FROM
+    project_task pt
+    JOIN project_project pp ON pt.project_id = pp.id
+    LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+WHERE
+    pp.name LIKE '%Finance PPM%'
+GROUP BY
+    pp.name;
+
+-- ---------------------------------------------------------------------------
+-- View 9: Logframe — IM1 KPI (Month-End Closing)
+-- Closing reconciliation rate + adjustment count
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_logframe_im1_kpi AS
+SELECT
+    'IM1' AS logframe_level,
+    'Month-End Closing' AS objective,
+    DATE_TRUNC('month', pt.date_deadline)::DATE AS period_month,
+    TO_CHAR(pt.date_deadline, 'YYYY-MM') AS month_label,
+    COUNT(pt.id) AS total_closing_tasks,
+    COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) AS reconciled_tasks,
+    COUNT(CASE WHEN ptt.name NOT IN ('Done', 'Cancelled') THEN 1 END) AS pending_adjustments,
+    ROUND(
+        COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) * 100.0 /
+        NULLIF(COUNT(pt.id), 0), 1
+    ) AS reconciliation_pct,
+    CASE
+        WHEN COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) * 100.0 /
+             NULLIF(COUNT(pt.id), 0) >= 95 THEN 'GREEN'
+        WHEN COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) * 100.0 /
+             NULLIF(COUNT(pt.id), 0) >= 75 THEN 'AMBER'
+        ELSE 'RED'
+    END AS rag_status
+FROM
+    project_task pt
+    JOIN project_project pp ON pt.project_id = pp.id
+    LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+WHERE
+    pp.name = 'Finance PPM - Month-End Close'
+    AND pt.date_deadline IS NOT NULL
+GROUP BY
+    DATE_TRUNC('month', pt.date_deadline),
+    TO_CHAR(pt.date_deadline, 'YYYY-MM')
+ORDER BY
+    period_month;
+
+-- ---------------------------------------------------------------------------
+-- View 10: Logframe — IM2 KPI (Tax Filing Compliance)
+-- BIR filing rate vs deadlines by form type
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_logframe_im2_kpi AS
+SELECT
+    'IM2' AS logframe_level,
+    'Tax Filing Compliance' AS objective,
+    CASE
+        WHEN pt.name LIKE '%1601-C%'  THEN '1601-C'
+        WHEN pt.name LIKE '%0619-E%'  THEN '0619-E'
+        WHEN pt.name LIKE '%2550M%'   THEN '2550M'
+        WHEN pt.name LIKE '%2550Q%'   THEN '2550Q'
+        WHEN pt.name LIKE '%1601-EQ%' THEN '1601-EQ'
+        WHEN pt.name LIKE '%1702Q%'   THEN '1702Q'
+        WHEN pt.name LIKE '%1702-RT%' THEN '1702-RT'
+        WHEN pt.name LIKE '%1604-CF%' THEN '1604-CF'
+        WHEN pt.name LIKE '%1604-E%'  THEN '1604-E'
+        ELSE 'Other'
+    END AS bir_form,
+    COUNT(pt.id) AS total_filings,
+    COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END) AS filed,
+    COUNT(CASE WHEN ptt.name = 'Done'
+               AND pt.write_date::date <= pt.date_deadline
+          THEN 1 END) AS filed_on_time,
+    COUNT(CASE WHEN pt.date_deadline < CURRENT_DATE
+               AND ptt.name NOT IN ('Done', 'Cancelled')
+          THEN 1 END) AS overdue,
+    ROUND(
+        COUNT(CASE WHEN ptt.name = 'Done'
+                   AND pt.write_date::date <= pt.date_deadline
+              THEN 1 END) * 100.0 /
+        NULLIF(COUNT(CASE WHEN ptt.name = 'Done' THEN 1 END), 0),
+        1
+    ) AS on_time_filing_pct,
+    CASE
+        WHEN COUNT(CASE WHEN pt.date_deadline < CURRENT_DATE
+                        AND ptt.name NOT IN ('Done', 'Cancelled')
+                   THEN 1 END) = 0 THEN 'GREEN'
+        WHEN COUNT(CASE WHEN pt.date_deadline < CURRENT_DATE
+                        AND ptt.name NOT IN ('Done', 'Cancelled')
+                   THEN 1 END) <= 2 THEN 'AMBER'
+        ELSE 'RED'
+    END AS rag_status
+FROM
+    project_task pt
+    JOIN project_project pp ON pt.project_id = pp.id
+    LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+WHERE
+    pp.name = 'Finance PPM - BIR Tax Filing'
+GROUP BY
+    CASE
+        WHEN pt.name LIKE '%1601-C%'  THEN '1601-C'
+        WHEN pt.name LIKE '%0619-E%'  THEN '0619-E'
+        WHEN pt.name LIKE '%2550M%'   THEN '2550M'
+        WHEN pt.name LIKE '%2550Q%'   THEN '2550Q'
+        WHEN pt.name LIKE '%1601-EQ%' THEN '1601-EQ'
+        WHEN pt.name LIKE '%1702Q%'   THEN '1702Q'
+        WHEN pt.name LIKE '%1702-RT%' THEN '1702-RT'
+        WHEN pt.name LIKE '%1604-CF%' THEN '1604-CF'
+        WHEN pt.name LIKE '%1604-E%'  THEN '1604-E'
+        ELSE 'Other'
+    END
+ORDER BY
+    bir_form;
+
+-- ---------------------------------------------------------------------------
+-- View 11: Logframe — Outputs KPI
+-- Consolidated output completion across both projects
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_logframe_outputs_kpi AS
+SELECT
+    'Outputs' AS logframe_level,
+    TO_CHAR(CURRENT_DATE, 'YYYY-MM') AS current_period,
+    -- Output 1: Journal entries and accruals finalized (Month-End Close project)
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+     WHERE pp.name = 'Finance PPM - Month-End Close'
+       AND ptt.name = 'Done') AS je_accruals_completed,
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     WHERE pp.name = 'Finance PPM - Month-End Close') AS je_accruals_total,
+    -- Output 2: All BIR forms filed (BIR Tax Filing project)
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+     WHERE pp.name = 'Finance PPM - BIR Tax Filing'
+       AND ptt.name = 'Done') AS bir_forms_filed,
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     WHERE pp.name = 'Finance PPM - BIR Tax Filing') AS bir_forms_total,
+    -- Output 3: Reports reviewed and approved
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+     WHERE pp.name LIKE '%Finance PPM%'
+       AND ptt.name IN ('Done', 'Pending Approval')) AS reports_reviewed,
+    -- Overall
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     LEFT JOIN project_task_type ptt ON pt.stage_id = ptt.id
+     WHERE pp.name LIKE '%Finance PPM%'
+       AND ptt.name = 'Done') AS total_completed,
+    (SELECT COUNT(*) FROM project_task pt
+     JOIN project_project pp ON pt.project_id = pp.id
+     WHERE pp.name LIKE '%Finance PPM%') AS total_tasks;
+
+-- ---------------------------------------------------------------------------
 -- Grant Superset read access
 -- ---------------------------------------------------------------------------
 DO $$
@@ -231,13 +455,18 @@ BEGIN
         GRANT SELECT ON v_closing_timeline TO superset;
         GRANT SELECT ON v_tax_filing_calendar TO superset;
         GRANT SELECT ON v_finance_team TO superset;
-        RAISE NOTICE 'Granted SELECT on all views to superset role';
+        GRANT SELECT ON v_logframe_goal_kpi TO superset;
+        GRANT SELECT ON v_logframe_outcome_kpi TO superset;
+        GRANT SELECT ON v_logframe_im1_kpi TO superset;
+        GRANT SELECT ON v_logframe_im2_kpi TO superset;
+        GRANT SELECT ON v_logframe_outputs_kpi TO superset;
+        RAISE NOTICE 'Granted SELECT on all 11 views to superset role';
     ELSE
         RAISE NOTICE 'superset role not found - skipping grants';
     END IF;
 END $$;
 
--- Verification
+-- Verification (11 views)
 SELECT 'v_closing_task_summary' AS view_name, COUNT(*) AS status FROM information_schema.views WHERE table_name = 'v_closing_task_summary'
 UNION ALL
 SELECT 'v_stage_funnel', COUNT(*) FROM information_schema.views WHERE table_name = 'v_stage_funnel'
@@ -248,4 +477,14 @@ SELECT 'v_closing_timeline', COUNT(*) FROM information_schema.views WHERE table_
 UNION ALL
 SELECT 'v_tax_filing_calendar', COUNT(*) FROM information_schema.views WHERE table_name = 'v_tax_filing_calendar'
 UNION ALL
-SELECT 'v_finance_team', COUNT(*) FROM information_schema.views WHERE table_name = 'v_finance_team';
+SELECT 'v_finance_team', COUNT(*) FROM information_schema.views WHERE table_name = 'v_finance_team'
+UNION ALL
+SELECT 'v_logframe_goal_kpi', COUNT(*) FROM information_schema.views WHERE table_name = 'v_logframe_goal_kpi'
+UNION ALL
+SELECT 'v_logframe_outcome_kpi', COUNT(*) FROM information_schema.views WHERE table_name = 'v_logframe_outcome_kpi'
+UNION ALL
+SELECT 'v_logframe_im1_kpi', COUNT(*) FROM information_schema.views WHERE table_name = 'v_logframe_im1_kpi'
+UNION ALL
+SELECT 'v_logframe_im2_kpi', COUNT(*) FROM information_schema.views WHERE table_name = 'v_logframe_im2_kpi'
+UNION ALL
+SELECT 'v_logframe_outputs_kpi', COUNT(*) FROM information_schema.views WHERE table_name = 'v_logframe_outputs_kpi';
