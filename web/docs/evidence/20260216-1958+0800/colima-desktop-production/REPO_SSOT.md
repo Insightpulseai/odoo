@@ -2,7 +2,7 @@
 
 **Timezone**: Asia/Manila (UTC+08:00)
 **Evidence Stamp**: 20260216-1958+0800
-**Last Updated**: 2026-02-17 00:25:00+0800
+**Last Updated**: 2026-02-17 01:00:00+0800 (Migration Complete)
 
 ---
 
@@ -18,12 +18,15 @@
   - `README.md` - Overview and navigation
 
 ### Application Code
-- **Target Location**: `web/apps/colima-desktop/` *(to be created)*
-- **Current Location**: Split across two locations:
-  - `tools/colima-desktop/` - Daemon + CLI (Node.js/TypeScript)
-  - `tools/colima-desktop/apps/colima-desktop-ui/` - Electron UI
+- **Location**: `web/apps/colima-desktop/`
+- **Structure**:
+  - `src/` - Daemon + CLI (Node.js/TypeScript)
+  - `apps/colima-desktop-ui/` - Electron UI
+  - `test/` - Unit tests (daemon + CLI)
+  - `AUDIT_POLICY.md` - Security vulnerability policy
+  - `BLOCKERS_RESOLVED.md` - Prerequisites resolution tracker
 
-**Migration Required**: Consolidate all code under `web/apps/colima-desktop/` per SSOT decision
+**Migration Status**: ✅ Complete - All code now at canonical location
 
 ### Evidence Bundle
 - **Location**: `web/docs/evidence/20260216-1958+0800/colima-desktop-production/`
@@ -78,23 +81,24 @@ All claims in this repo must be backed by verifiable evidence logs.
 
 ---
 
-## Path Migration Plan
+## Migration Complete ✅
 
-### Current State (SSOT Violation)
-- Code lives at: `tools/colima-desktop/` and `tools/colima-desktop/apps/colima-desktop-ui/`
-- Spec lives at: `spec/colima-desktop/`
-- Evidence lives at: `docs/evidence/20260216-1958/colima-desktop-production/` (old timestamp format)
+### Final State (SSOT Compliant)
+- ✅ Code: `web/apps/colima-desktop/` (moved via `git mv`, history preserved)
+- ✅ Spec: `web/spec/colima-desktop/` (moved via `git mv`, history preserved)
+- ✅ Evidence: `web/docs/evidence/20260216-1958+0800/colima-desktop-production/`
 
-### Target State (SSOT Compliant)
-- Code lives at: `web/apps/colima-desktop/`
-- Spec lives at: `web/spec/colima-desktop/`
-- Evidence lives at: `web/docs/evidence/20260216-1958+0800/colima-desktop-production/`
+### Pointers at Old Locations
+- `tools/colima-desktop/MOVED.md` → redirects to canonical location
+- `spec/colima-desktop/MOVED.md` → redirects to canonical location
+- `apps/colima-desktop-ui/README_MOVED.md` → redirects to canonical location
 
-### Migration Steps
-1. **Spec Kit**: Move `spec/colima-desktop/` → `web/spec/colima-desktop/`
-2. **Application Code**: Consolidate `tools/colima-desktop/` → `web/apps/colima-desktop/`
-3. **Evidence**: Update all documentation paths to reference `web/` canonical locations
-4. **Documentation**: Update `INSTALL.md` and `README.md` with correct paths
+### Migration Completed
+All migration steps executed:
+1. ✅ Spec Kit moved: `spec/colima-desktop/` → `web/spec/colima-desktop/`
+2. ✅ Application Code moved: `tools/colima-desktop/` → `web/apps/colima-desktop/`
+3. ✅ Evidence docs updated: All paths reference `web/` canonical locations
+4. ✅ Pointers created: Old paths contain MOVED.md redirects
 
 ---
 

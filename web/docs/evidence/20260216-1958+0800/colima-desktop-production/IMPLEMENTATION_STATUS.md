@@ -3,7 +3,7 @@
 **Timezone**: Asia/Manila (UTC+08:00)
 **Evidence Stamp**: 20260216-1958+0800
 **Last Updated**: 2026-02-17 00:25:00+0800
-**Status**: ⚠️ **SSOT Migration Required + Prerequisites Failing**
+**Status**: ✅ **SSOT Migration Complete** | ⚠️ **Prerequisites Failing** (TS config, security)
 
 ---
 
@@ -69,10 +69,10 @@ $ cat logs/audit-severity.txt
    - Breakdown: 10 low, 32 moderate, 31 HIGH, 3 CRITICAL
    - Impact: Blocks production release (security gate fails)
 
-3. **SSOT Violations**: Code not at canonical location
-   - Current: `tools/colima-desktop/` and `spec/colima-desktop/`
-   - Required: `web/apps/colima-desktop/` and `web/spec/colima-desktop/`
-   - Impact: Repo standards non-compliance
+3. **SSOT Violations**: ✅ **RESOLVED**
+   - Moved: `tools/colima-desktop/` → `web/apps/colima-desktop/` (git history preserved)
+   - Moved: `spec/colima-desktop/` → `web/spec/colima-desktop/` (git history preserved)
+   - Status: All code now at canonical location
 
 ### What's Not Yet Attempted ⚠️
 - DMG packaging (blocked by TS build error)
@@ -88,7 +88,7 @@ $ cat logs/audit-severity.txt
 Must be resolved before any phase work can proceed:
 
 ### 1. Fix TypeScript Configuration ❌ BLOCKING
-**File**: `tools/colima-desktop/apps/colima-desktop-ui/tsconfig.main.json`
+**File**: `web/apps/colima-desktop/apps/colima-desktop-ui/tsconfig.main.json`
 **Error**: `Option 'bundler' can only be used when 'module' is set to 'preserve' or 'es2015' or later`
 **Fix Required**: Change `moduleResolution` or `module` setting
 **Verification**: Re-run build, capture clean evidence log
@@ -102,17 +102,13 @@ Must be resolved before any phase work can proceed:
 - Document exceptions if vulnerabilities are in dev dependencies only
 **Verification**: Re-run audit, capture updated severity log
 
-### 3. Migrate to SSOT Structure ❌ BLOCKING
-**Current Paths**:
-- Code: `tools/colima-desktop/`
-- Spec: `spec/colima-desktop/`
-- Evidence: `docs/evidence/20260216-1958/colima-desktop-production/`
-
-**Target Paths**:
-- Code: `web/apps/colima-desktop/`
-- Spec: `web/spec/colima-desktop/`
+### 3. Migrate to SSOT Structure ✅ COMPLETE
+**Final Paths**:
+- Code: `web/apps/colima-desktop/` (moved from `tools/colima-desktop/`)
+- Spec: `web/spec/colima-desktop/` (moved from `spec/colima-desktop/`)
 - Evidence: `web/docs/evidence/20260216-1958+0800/colima-desktop-production/`
 
+**Status**: Git history preserved, pointers created at old locations
 **Verification**: All documentation paths reference `web/` locations
 
 ---
@@ -197,14 +193,14 @@ Must be resolved before any phase work can proceed:
 
 ### Action 1: Fix TypeScript Configuration
 ```bash
-cd tools/colima-desktop/apps/colima-desktop-ui
+cd web/apps/colima-desktop/apps/colima-desktop-ui
 
 # Edit tsconfig.main.json
 # Change: "moduleResolution": "bundler"
 # To: "moduleResolution": "node" or "module": "es2015"
 
 # Verify fix
-pnpm build 2>&1 | tee ../../web/docs/evidence/20260216-1958+0800/colima-desktop-production/logs/tsc-ui-fixed.txt
+pnpm build 2>&1 | tee ../../../../docs/evidence/20260216-1958+0800/colima-desktop-production/logs/tsc-ui-fixed.txt
 
 # Check exit code (must be 0)
 echo $?
@@ -212,33 +208,26 @@ echo $?
 
 ### Action 2: Resolve Security Vulnerabilities
 ```bash
-cd tools/colima-desktop
+cd web/apps/colima-desktop
 
 # Attempt automatic fix
 pnpm audit fix
 
 # Re-audit and capture
-pnpm audit | grep -i "severity:" | sort | uniq -c > ../../web/docs/evidence/20260216-1958+0800/colima-desktop-production/logs/audit-severity-fixed.txt
+pnpm audit | grep -i "severity:" | sort | uniq -c > ../../docs/evidence/20260216-1958+0800/colima-desktop-production/logs/audit-severity-fixed.txt
 
 # Verify 0 HIGH/CRITICAL
-cat ../../web/docs/evidence/20260216-1958+0800/colima-desktop-production/logs/audit-severity-fixed.txt
+cat ../../docs/evidence/20260216-1958+0800/colima-desktop-production/logs/audit-severity-fixed.txt
 ```
 
-### Action 3: Migrate to SSOT Structure
+### Action 3: Migrate to SSOT Structure ✅ COMPLETE
 ```bash
-cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
-
-# Create target directories
-mkdir -p web/apps web/spec
-
-# Move code (or create symlink for testing)
-mv tools/colima-desktop web/apps/colima-desktop
-
-# Move spec
-mv spec/colima-desktop web/spec/colima-desktop
-
-# Update all documentation paths
-# (grep for old paths and replace with web/ paths)
+# SSOT migration completed 2026-02-17 01:00:00+0800
+# Git history preserved with git mv commands
+# Pointers created at old locations:
+#   - tools/colima-desktop/MOVED.md
+#   - spec/colima-desktop/MOVED.md
+#   - apps/colima-desktop-ui/README_MOVED.md
 ```
 
 ### Action 4: Verify All Gates Pass
@@ -280,5 +269,6 @@ Before proceeding to any deployment phase:
 ---
 
 **Current Branch**: Branch C (Prerequisites Failing)
-**Blocking Issues**: TS config error, security vulnerabilities, SSOT violations
-**Next Step**: Execute Action 1 (Fix TS Config)
+**Blocking Issues**: TS config error, security vulnerabilities
+**SSOT Migration**: ✅ COMPLETE (2026-02-17 01:00:00+0800)
+**Next Step**: Execute Action 1 (Fix TS Config) at canonical location
