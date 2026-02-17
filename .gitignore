@@ -225,3 +225,17 @@ docs/evidence/**/*.log
 
 # Archived compose files (rely on git history for restoration)
 archive/compose/
+
+# Superset local env (examples only in repo)
+infra/superset/env/.env.superset
+infra/superset/env/.env.*.local
+
+# Cloudflare local env
+.env.cloudflare
+
+# Devcontainer local overrides
+.devcontainer/.env
+
+# Generic infra env files (examples only)
+infra/**/env/.env
+infra/**/env/.env.*.local

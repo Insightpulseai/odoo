@@ -1,0 +1,443 @@
+{
+  "generated_at": "2026-02-17T00:00:00Z",
+  "source": "infra/dns/subdomain-registry.yaml",
+  "domain": "insightpulseai.com",
+  "origin_ip": "178.128.112.214",
+  "canonical_urls": {
+    "production": [
+      {
+        "url": "https://erp.insightpulseai.com",
+        "subdomain": "erp",
+        "service": "Odoo ERP (CE 19.0)",
+        "record_type": "A",
+        "port": 8069,
+        "health_check": "/web/login",
+        "success_criteria": "HTTP 200-399; login form renders; /web redirects correctly; core CSS/JS assets load",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 774,
+        "owner": "Odoo CE 19.0",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://n8n.insightpulseai.com",
+        "subdomain": "n8n",
+        "service": "n8n Workflow Automation",
+        "record_type": "A",
+        "port": 5678,
+        "health_check": "/healthz",
+        "success_criteria": "HTTP 200-399; UI loads; /healthz returns OK; workflows executable via API key",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 131,
+        "owner": "n8n automation",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://mcp.insightpulseai.com",
+        "subdomain": "mcp",
+        "service": "MCP Gateway (11 servers)",
+        "record_type": "CNAME",
+        "target": "pulse-hub-web-an645.ondigitalocean.app",
+        "health_check": "/healthz",
+        "success_criteria": "HTTP 200-399; /healthz returns JSON OK; MCP routes to configured servers",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 53,
+        "owner": "MCP coordination (11 servers)",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://superset.insightpulseai.com",
+        "subdomain": "superset",
+        "service": "Apache Superset BI",
+        "record_type": "A",
+        "port": 8088,
+        "health_check": "/health",
+        "success_criteria": "HTTP 200-399; /health returns OK; /login loads; dashboards reachable behind auth",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 138,
+        "owner": "Apache Superset BI",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://ocr.insightpulseai.com",
+        "subdomain": "ocr",
+        "service": "PaddleOCR Microservice",
+        "record_type": "A",
+        "port": 8080,
+        "health_check": "/health",
+        "success_criteria": "HTTP 200-399; /health returns JSON OK; OCR endpoint accepts image payloads",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 72,
+        "owner": "PaddleOCR microservice",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://auth.insightpulseai.com",
+        "subdomain": "auth",
+        "service": "Authentication Service",
+        "record_type": "A",
+        "port": 3000,
+        "health_check": "/.well-known/openid-configuration",
+        "success_criteria": "HTTP 200-399; OIDC discovery document returns valid JSON; token endpoint reachable",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 45,
+        "owner": "Authentication service",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://www.insightpulseai.com",
+        "subdomain": "www",
+        "service": "WWW Redirect",
+        "record_type": "A",
+        "port": 80,
+        "health_check": "/",
+        "success_criteria": "Redirects to https://insightpulseai.com or serves same content; no mixed canonical",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": 2,
+        "owner": "Redirect to apex",
+        "tls_mode": "Full (strict)",
+        "cloudflare_proxied": true
+      },
+      {
+        "url": "https://insightpulseai.com",
+        "subdomain": "@",
+        "service": "Root / Marketing Site",
+        "record_type": "A",
+        "health_check": "/",
+        "success_criteria": "HTTP 200-399; correct TLS; fast load; canonical domain (not .net)",
+        "status": "active",
+        "ssot_defined": true,
+        "code_references": null,
+        "owner": "Apex domain"
+      }
+    ],
+    "planned": [
+      {
+        "url": "https://api.insightpulseai.com",
+        "subdomain": "api",
+        "service": "API Gateway",
+        "record_type": "A",
+        "port": 8000,
+        "health_check": "/api/health",
+        "success_criteria": "HTTP 200-399; /api/health returns JSON OK; API routes resolve",
+        "status": "planned",
+        "ssot_defined": true,
+        "code_references": 11,
+        "owner": "API Gateway"
+      }
+    ],
+    "staging": [
+      {
+        "url": "https://stage-erp.insightpulseai.com",
+        "subdomain": "stage-erp",
+        "service": "Odoo CE 19.0 (staging)",
+        "record_type": "A",
+        "port": 8069,
+        "health_check": "/web/login",
+        "success_criteria": "HTTP 200-399; uses odoo_stage DB; no prod secrets; login form renders",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-n8n.insightpulseai.com",
+        "subdomain": "stage-n8n",
+        "service": "n8n (staging)",
+        "record_type": "A",
+        "port": 5678,
+        "health_check": "/healthz",
+        "success_criteria": "HTTP 200-399; isolated credentials; staging workflows only",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-mcp.insightpulseai.com",
+        "subdomain": "stage-mcp",
+        "service": "MCP Gateway (staging)",
+        "record_type": "A",
+        "port": 3000,
+        "health_check": "/healthz",
+        "success_criteria": "HTTP 200-399; /healthz OK; routes to staging MCP servers",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-superset.insightpulseai.com",
+        "subdomain": "stage-superset",
+        "service": "Superset BI (staging)",
+        "record_type": "A",
+        "port": 8088,
+        "health_check": "/health",
+        "success_criteria": "HTTP 200-399; /health OK; staging dashboards",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-api.insightpulseai.com",
+        "subdomain": "stage-api",
+        "service": "API Gateway (staging)",
+        "record_type": "A",
+        "port": 8000,
+        "health_check": "/api/health",
+        "success_criteria": "HTTP 200-399; /api/health OK; staging API routes",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-auth.insightpulseai.com",
+        "subdomain": "stage-auth",
+        "service": "Auth (staging)",
+        "record_type": "A",
+        "port": 3000,
+        "health_check": "/.well-known/openid-configuration",
+        "success_criteria": "HTTP 200-399; OIDC discovery valid; staging credentials",
+        "status": "active",
+        "ssot_defined": true
+      },
+      {
+        "url": "https://stage-ocr.insightpulseai.com",
+        "subdomain": "stage-ocr",
+        "service": "PaddleOCR (staging)",
+        "record_type": "A",
+        "port": 8080,
+        "health_check": "/health",
+        "success_criteria": "HTTP 200-399; /health OK; staging OCR endpoint",
+        "status": "active",
+        "ssot_defined": true
+      }
+    ],
+    "local_dev": [
+      {
+        "url": "http://localhost:8069",
+        "service": "Odoo dev local",
+        "success_criteria": "/web/login OK; uses odoo_dev; dev services reachable"
+      },
+      {
+        "url": "http://localhost:5678",
+        "service": "n8n dev local",
+        "success_criteria": "UI loads; workflows editable"
+      },
+      {
+        "url": "http://localhost:8088",
+        "service": "Superset dev local",
+        "success_criteria": "/health OK; login page loads"
+      },
+      {
+        "url": "http://localhost:3000",
+        "service": "Auth / Next.js dev",
+        "success_criteria": "Service responds"
+      },
+      {
+        "url": "http://localhost:5432",
+        "service": "PostgreSQL",
+        "success_criteria": "Connection accepted"
+      }
+    ]
+  },
+  "drift": {
+    "found_not_in_ssot": [
+      {
+        "subdomain": "ipa",
+        "fqdn": "ipa.insightpulseai.com",
+        "references": 148,
+        "status": "migrated",
+        "assessment": "Old n8n hostname; migrated to n8n.insightpulseai.com",
+        "risk": "high",
+        "action": "remove_from_code"
+      },
+      {
+        "subdomain": "ops",
+        "fqdn": "ops.insightpulseai.com",
+        "references": 63,
+        "status": "undocumented",
+        "assessment": "Operations console; actively referenced in deployment docs",
+        "risk": "high",
+        "action": "add_to_ssot_or_remove"
+      },
+      {
+        "subdomain": "chat",
+        "fqdn": "chat.insightpulseai.com",
+        "references": 57,
+        "status": "deprecated",
+        "assessment": "Mattermost (deprecated 2026-01-28, replaced by Slack)",
+        "risk": "high",
+        "action": "remove_from_code"
+      },
+      {
+        "subdomain": "odoo",
+        "fqdn": "odoo.insightpulseai.com",
+        "references": 40,
+        "status": "legacy",
+        "assessment": "Old hostname; canonical is erp.insightpulseai.com",
+        "risk": "medium",
+        "action": "remove_from_code"
+      },
+      {
+        "subdomain": "staging",
+        "fqdn": "staging.insightpulseai.com",
+        "references": 32,
+        "status": "unclear",
+        "assessment": "Generic staging ref; SSOT uses stage-* pattern",
+        "risk": "medium",
+        "action": "clarify_or_remove"
+      },
+      {
+        "subdomain": "plane",
+        "fqdn": "plane.insightpulseai.com",
+        "references": 18,
+        "status": "undocumented",
+        "assessment": "Project management (Plane.so); has CI workflow",
+        "risk": "medium",
+        "action": "add_to_ssot"
+      },
+      {
+        "subdomain": "boards",
+        "fqdn": "boards.insightpulseai.com",
+        "references": 12,
+        "status": "undocumented",
+        "assessment": "Focalboard/kanban boards",
+        "risk": "medium",
+        "action": "add_to_ssot_or_remove"
+      },
+      {
+        "subdomain": "docs",
+        "fqdn": "docs.insightpulseai.com",
+        "references": 5,
+        "status": "undocumented",
+        "assessment": "Documentation portal",
+        "risk": "low",
+        "action": "clarify_or_remove"
+      },
+      {
+        "subdomain": "app",
+        "fqdn": "app.insightpulseai.com",
+        "references": 2,
+        "status": "undocumented",
+        "assessment": "SaaS app frontend (Supabase OAuth ref)",
+        "risk": "low",
+        "action": "clarify_or_remove"
+      },
+      {
+        "subdomain": "storybook",
+        "fqdn": "storybook.insightpulseai.com",
+        "references": 2,
+        "status": "sandbox",
+        "assessment": "UI component library",
+        "risk": "low",
+        "action": "archive_or_add"
+      },
+      {
+        "subdomain": "gpu",
+        "fqdn": "gpu.insightpulseai.com",
+        "references": 1,
+        "status": "active_config",
+        "assessment": "GPU/LLM inference endpoint in agent config",
+        "risk": "low",
+        "action": "add_to_ssot"
+      },
+      {
+        "subdomain": "mlflow",
+        "fqdn": "mlflow.insightpulseai.com",
+        "references": 1,
+        "status": "config",
+        "assessment": "ML experiment tracking",
+        "risk": "low",
+        "action": "add_if_production"
+      },
+      {
+        "subdomain": "keycloak",
+        "fqdn": "keycloak.insightpulseai.com",
+        "references": 1,
+        "status": "research",
+        "assessment": "Identity provider reference in sandbox doc",
+        "risk": "low",
+        "action": "no_action"
+      }
+    ],
+    "deprecated_still_referenced": [
+      {
+        "fqdn": "*.insightpulseai.net",
+        "references_in_active_files": 60,
+        "deprecated_date": "2026-02",
+        "replacement": "*.insightpulseai.com",
+        "critical_files": [
+          "ipai-platform/nginx/conf.d/sites/odoo-prod.conf",
+          "ipai-platform/.env.example",
+          "ipai-platform/odoo/odoo.conf",
+          "supabase/migrations/20251227_database_webhooks.sql",
+          "docs/templates/ipai-ops-stack/caddy/Caddyfile"
+        ]
+      },
+      {
+        "fqdn": "mattermost.insightpulseai.com",
+        "references_in_active_files": 34,
+        "deprecated_date": "2026-01-28",
+        "replacement": "Slack",
+        "module_removed": true
+      },
+      {
+        "fqdn": "mg.insightpulseai.com",
+        "references_in_active_files": 7,
+        "deprecated_date": "2026-02",
+        "replacement": "Zoho Mail SMTP",
+        "module_removed": true
+      },
+      {
+        "fqdn": "affine.insightpulseai.com",
+        "references_in_active_files": 1,
+        "deprecated_date": "2026-02-09",
+        "replacement": null,
+        "dns_removed": true,
+        "container_removed": true
+      }
+    ]
+  },
+  "automation_paths": {
+    "canonical": {
+      "path": "automations/n8n/workflows/",
+      "count": 31,
+      "status": "authoritative"
+    },
+    "legacy": [
+      {
+        "path": "workflows/n8n/",
+        "count": 7,
+        "status": "legacy",
+        "action": "audit_for_duplicates_then_migrate"
+      },
+      {
+        "path": "workflows/*.json",
+        "count": 4,
+        "status": "stale",
+        "action": "update_domain_refs_or_remove"
+      },
+      {
+        "path": "notion-n8n-monthly-close/workflows/",
+        "count": 10,
+        "status": "archived",
+        "action": "no_action"
+      }
+    ]
+  },
+  "summary": {
+    "total_canonical_production": 8,
+    "total_canonical_staging": 7,
+    "total_planned": 1,
+    "total_local_dev": 5,
+    "drift_items": 13,
+    "deprecated_with_active_refs": 4,
+    "stale_net_domain_refs": 60,
+    "stale_ipa_domain_refs": 148
+  }
+}

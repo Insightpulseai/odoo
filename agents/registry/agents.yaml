@@ -1,3 +1,14 @@
+# =============================================================================
+# SSOT: Agent Registry
+# =============================================================================
+# This YAML is authoritative for all registered agents.
+# agents.json is GENERATED from this file — do not edit agents.json by hand.
+# Generator: scripts/agents/generate_agents_json.py
+#
+# Every agent must define: id, name, domain, owners, scopes.
+# Optional: entrypoint, skills, policies_ref, memory_contract.
+# =============================================================================
+
 version: 1
 agents:
   - id: odoo-sage
@@ -48,13 +59,3 @@ agents:
       - rls
       - edge-functions
       - ssot
-  - id: slack-app
-    name: SLACK-APP
-    domain: integrations
-    owners: ["@Insightpulseai-net/integrations"]
-    scopes:
-      - slack
-      - webhooks
-      - alerts
-      - workflows
-YAML

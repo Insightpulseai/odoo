@@ -358,7 +358,7 @@ ssh root@erp.insightpulseai.com \
 3. BIR deadline alerts (7 days before)
 4. Equipment booking → calendar sync
 
-**Deployment Location**: n8n at `https://ipa.insightpulseai.com`
+**Deployment Location**: n8n at `https://n8n.insightpulseai.com`
 
 **Deployment Commands**:
 ```bash

@@ -163,7 +163,7 @@ This directory contains the complete technical specifications for the InsightPul
 ### InsightPulse Infrastructure
 - Production ERP: https://erp.insightpulseai.com
 - OCR Service: https://ocr.insightpulseai.com
-- n8n Automation: https://ipa.insightpulseai.com
+- n8n Automation: https://n8n.insightpulseai.com
 - Superset BI: https://superset.insightpulseai.com
 
 ---

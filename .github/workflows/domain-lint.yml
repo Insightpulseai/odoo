@@ -1,0 +1,123 @@
+# =============================================================================
+# Domain Lint — .net Regression Gate
+# =============================================================================
+# Prevents deprecated .net domain references from leaking into active code.
+# Allowlist: archive/, .git/, migration scripts explicitly dealing with .net,
+#            this workflow itself, and CLAUDE.md deprecation table.
+#
+# SSOT: infra/dns/subdomain-registry.yaml
+# Spec: spec/insightpulseai-com/prd.md (FR4)
+# =============================================================================
+
+name: Domain Lint
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  domain-lint:
+    name: Block .net domain references
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Scan for .net domain references
+        run: |
+          echo "=============================================="
+          echo "  DOMAIN LINT — .net regression gate"
+          echo "=============================================="
+          echo ""
+
+          # Directories/files to exclude from scan
+          EXCLUDE_PATTERNS=(
+            "archive/"
+            ".git/"
+            "node_modules/"
+            ".venv/"
+            "__pycache__/"
+            # Files that legitimately reference .net for deprecation/migration
+            "CLAUDE.md"
+            "scripts/deploy/migrate-net-to-com.sh"
+            "docs/architecture/CANONICAL_URLS.md"
+            "reports/url_inventory.json"
+            "spec/insightpulseai-com/"
+            # Audit scripts that check for .net violations
+            "scripts/audit/"
+            "domain-lint.yml"
+            # Domain policy check script (intentionally references .net in regex)
+            "check_domain_policy.py"
+          )
+
+          # Build grep exclude args
+          EXCLUDE_ARGS=""
+          for pattern in "${EXCLUDE_PATTERNS[@]}"; do
+            EXCLUDE_ARGS="${EXCLUDE_ARGS} --exclude-dir=${pattern} "
+          done
+
+          # Search for .net references (case-insensitive hostname match)
+          # Pattern: insightpulseai.net (with word boundary to avoid false positives)
+          HITS=$(grep -rn \
+            --include="*.md" \
+            --include="*.py" \
+            --include="*.sh" \
+            --include="*.yml" \
+            --include="*.yaml" \
+            --include="*.json" \
+            --include="*.conf" \
+            --include="*.sql" \
+            --include="*.env*" \
+            --include="*.toml" \
+            --include="*.cfg" \
+            --include="Caddyfile" \
+            --include="Dockerfile*" \
+            --include="*.tf" \
+            --include="*.tfvars" \
+            --exclude-dir="archive" \
+            --exclude-dir=".git" \
+            --exclude-dir="node_modules" \
+            --exclude-dir=".venv" \
+            --exclude-dir="__pycache__" \
+            --exclude="CLAUDE.md" \
+            --exclude="migrate-net-to-com.sh" \
+            --exclude="CANONICAL_URLS.md" \
+            --exclude="url_inventory.json" \
+            --exclude="domain-lint.yml" \
+            --exclude="check_domain_policy.py" \
+            'insightpulseai\.net' . 2>/dev/null || true)
+
+          if [ -n "$HITS" ]; then
+            echo "::error::Deprecated .net domain references found in active files"
+            echo ""
+            echo "The following files contain 'insightpulseai.net' references:"
+            echo "These must be updated to 'insightpulseai.com'."
+            echo ""
+            echo "$HITS"
+            echo ""
+            echo "----------------------------------------------"
+            echo "  POLICY: .net domains deprecated 2026-02"
+            echo "  SSOT: infra/dns/subdomain-registry.yaml"
+            echo "  Spec: spec/insightpulseai-com/constitution.md"
+            echo "----------------------------------------------"
+            echo ""
+            echo "Fix: Replace all .net references with .com equivalents."
+            echo "If the reference is intentional (migration script, audit),"
+            echo "add the file to the exclude list in this workflow."
+            exit 1
+          else
+            echo "No .net domain references found in active files."
+            echo ""
+            echo "----------------------------------------------"
+            echo "  DOMAIN LINT PASSED"
+            echo "  All references use .com (canonical)"
+            echo "----------------------------------------------"
+          fi
