@@ -239,3 +239,4 @@ infra/superset/env/.env.*.local
 # Generic infra env files (examples only)
 infra/**/env/.env
 infra/**/env/.env.*.local
+.env.production

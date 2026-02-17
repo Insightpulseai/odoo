@@ -1,0 +1,73 @@
+{
+  "generated": "2026-02-17T15:55:00+08:00",
+  "branch": "chore/root-hygiene-loose-files",
+  "pr_title": "chore(repo): root cleanup (move loose files into canonical folders)",
+  "moves": [
+    {
+      "from": "COLIMA_SETUP_COMPLETE.md",
+      "to": "docs/guides/COLIMA_SETUP_COMPLETE.md",
+      "reason": "Setup guide; not a GitHub-conventional root file. Belongs in docs/guides/.",
+      "refs_updated": []
+    },
+    {
+      "from": "branch_protection.json",
+      "to": "docs/architecture/branch_protection.json",
+      "reason": "GitHub branch protection config snapshot; architecture documentation, not tooling.",
+      "refs_updated": []
+    },
+    {
+      "from": "devserver.config.json",
+      "to": "config/devserver.config.json",
+      "reason": "Dev server configuration; no tooling requires it at root.",
+      "refs_updated": []
+    },
+    {
+      "from": "superclaude_bridge.yaml",
+      "to": ".claude/superclaude_bridge.yaml",
+      "reason": "Claude agent bridge config; belongs in .claude/ tool directory.",
+      "refs_updated": []
+    },
+    {
+      "from": "aiux_ship_manifest.yml",
+      "to": "config/aiux_ship_manifest.yml",
+      "reason": "Application ship manifest; not a root convention file.",
+      "refs_updated": [
+        ".github/workflows/aiux-ship-gate.yml"
+      ]
+    }
+  ],
+  "security": [
+    {
+      "file": ".env.production",
+      "action": "removed_from_git_tracking",
+      "reason": "Duplicate of .env.prod; contained hardcoded production credentials. Added to .gitignore.",
+      "note": "Credentials were already in git history. Rotate affected credentials."
+    }
+  ],
+  "kept_at_root": [
+    {
+      "file": "oca-aggregate.yml",
+      "reason": "scripts/validate_oca_aggregate_output.py hardcodes ROOT_DIR / 'oca-aggregate.yml'"
+    },
+    {
+      "file": "oca.lock.json",
+      "reason": "Referenced by .github/workflows/build-odoo-ce19-ee-parity.yml, validate-addons-mounts.yml, scripts/oca-sync.sh"
+    },
+    {
+      "file": "addons.manifest.json",
+      "reason": "Referenced by .github/workflows/validate-addons-mounts.yml and scripts/verify-addons-mounts.sh"
+    },
+    {
+      "file": "llms.txt",
+      "reason": "llms.txt convention for AI tool discovery; .github/workflows/llms-txt-check.yml checks root"
+    },
+    {
+      "file": "llms-full.txt",
+      "reason": "Extended llms.txt; same CI check"
+    },
+    {
+      "file": "aiux_ship_manifest.yml",
+      "reason": "N/A — moved to config/"
+    }
+  ]
+}
