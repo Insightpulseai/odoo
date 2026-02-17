@@ -112,12 +112,35 @@ done
 echo ""
 
 # ---------------------------------------------------------------------------
+# PB-008: ipai_bundle_* meta-modules must contain zero Python logic
+# ---------------------------------------------------------------------------
+echo "[PB-008] Bundle meta-modules must be dependency-only"
+for dir in "$ADDONS_DIR"/ipai_bundle_*/ "$ADDONS_DIR"/ipai/ipai_bundle_*/; do
+    [ -d "$dir" ] || continue
+    name=$(basename "$dir")
+    if [ ! -f "$dir/__manifest__.py" ]; then
+        error "addons/$name has no __manifest__.py (PB-008)"
+        continue
+    fi
+    # Count Python LOC excluding __init__.py
+    py_loc=$(find "$dir" -name "*.py" -not -name "__init__.py" -type f -exec cat {} + 2>/dev/null | wc -l || echo 0)
+    if [ "$py_loc" -gt 0 ]; then
+        error "addons/$name has ${py_loc} Python LOC beyond __init__.py — bundle meta-modules must be deps-only (PB-008)"
+    else
+        pass "addons/$name is dependency-only (0 LOC beyond __init__.py)"
+    fi
+done
+echo ""
+
+# ---------------------------------------------------------------------------
 # PB-005: addons/ipai/* >1000 LOC Python = warning
 # ---------------------------------------------------------------------------
 echo "[PB-005] IPAI addons LOC check (<1000 Python LOC)"
 for dir in "$ADDONS_DIR"/ipai_*/ "$ADDONS_DIR"/ipai/ipai_*/; do
     [ -d "$dir" ] || continue
     name=$(basename "$dir")
+    # Skip bundle meta-modules (checked in PB-008)
+    [[ "$name" =~ ^ipai_bundle_ ]] && continue
     loc=$(find "$dir" -name "*.py" -type f -exec cat {} + 2>/dev/null | wc -l || echo 0)
     if [ "$loc" -gt 1000 ]; then
         warn "addons/$name has ${loc} Python LOC (>1000, review needed) (PB-005)"

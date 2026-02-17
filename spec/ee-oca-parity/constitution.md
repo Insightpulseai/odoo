@@ -1,6 +1,6 @@
 # EE-OCA Parity Constitution
 
-> **Version**: 1.1.0
+> **Version**: 1.2.0
 > **Ratified**: 2026-02-17
 > **Last Amended**: 2026-02-17
 
@@ -20,12 +20,17 @@ exactly one of three categories. No component may blur these boundaries.
 | **Parity Addon** | OCA module replacing an EE-only *module* | `addons/oca/<repo>/` | Yes | Yes |
 | **Integration Bridge** | Non-module service closing an EE-only *capability* gap | `bridges/` or `services/` | No | No |
 | **Thin Connector** | Minimal Odoo addon wiring Odoo ↔ a bridge service | `addons/ipai/<name>/` | Yes | Yes |
+| **Meta-module** | Dependency-only addon for "install as one" bundling | `addons/ipai/ipai_bundle_*/` | Yes | Yes |
 
 **Rules**:
 - A **Parity Addon** is always an OCA module. Never custom code claiming EE parity.
 - An **Integration Bridge** is never installed via Odoo Apps. It runs as an external service.
 - A **Thin Connector** is <1000 LOC, has no business logic, only API client/webhook sink/auth handoff.
 - A Thin Connector is **never** called a "parity module". It is an adapter.
+- A **Meta-module** (`ipai_bundle_*`) contains only `__init__.py` + `__manifest__.py` with a
+  `depends` list. Zero Python logic. It is a packaging mechanism, not a parity replacement.
+- Bridges are external services (separate containers). They may have a thin connector in
+  `addons/ipai/` but the bridge itself is never an Odoo module.
 
 **Enforcement**:
 - CI gate `scripts/ci/check_parity_boundaries.sh` rejects PRs that violate placement rules.
@@ -96,8 +101,9 @@ addons/
 ├── oca/                    # OCA modules ONLY (parity addons)
 │   └── <oca-repo-name>/   # e.g., account-financial-tools/
 │       └── <module>/       # e.g., account_asset_management/
-├── ipai/                   # IPAI thin connectors ONLY
+├── ipai/                   # IPAI thin connectors + meta-modules
 │   └── ipai_<name>/       # e.g., ipai_doc_ocr_bridge/
+│   └── ipai_bundle_<name>/ # e.g., ipai_bundle_finance/ (meta-module)
 ├── _deprecated/            # Archived modules pending removal
 └── (CE addons here if not using upstream subtree)
 
@@ -269,3 +275,4 @@ Production     → T4 (Verified)        — module survives 30-day soak
 |---------|------|--------|--------|
 | 1.0.0 | 2026-02-17 | Initial ratification — module/bridge/connector taxonomy, evidence tiers, directory boundaries | claude/agent |
 | 1.1.0 | 2026-02-17 | Added Principle 6 (merge-to-main policy, bundle modules) and Principle 7 (staging contract, anti-drift) | claude/agent |
+| 1.2.0 | 2026-02-17 | Added meta-module taxonomy, bridge reaffirmation, ipai_bundle_* directory rule | claude/agent |
