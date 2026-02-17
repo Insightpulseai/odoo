@@ -1,6 +1,6 @@
 # EE-OCA Parity Constitution
 
-> **Version**: 1.0.0
+> **Version**: 1.1.0
 > **Ratified**: 2026-02-17
 > **Last Amended**: 2026-02-17
 
@@ -145,6 +145,94 @@ services/                   # Alternative name for bridges/ (alias)
 
 ---
 
+### Principle 6: Merge-to-Main Policy — Installable, Not Activated
+
+**Statement**: Merging OCA parity modules to `main` requires T2 (installable)
+status. Merge does not imply activation. Modules are activated explicitly via
+environment-specific bundle modules.
+
+**Merge Policy Matrix**:
+
+| Stage | Tier Required | Activation | Who Decides |
+|-------|--------------|------------|-------------|
+| **PR branch** | T1 (Mapped) | Not installed | CI gate validates mapping |
+| **main** | T2 (Installable) | Not installed by default | PR reviewer validates install proof |
+| **Staging** | T3 (Functional) | Activated via bundle module | QA validates functional checklist |
+| **Production** | T4 (Verified) | Activated via bundle module | Maintainer approves deploy |
+
+**Rules**:
+- Merging to `main` proves the module installs cleanly (`odoo-bin -i <module> --stop-after-init` exits 0).
+- Merging to `main` does NOT activate the module in any running environment.
+- Activation is controlled by **bundle modules**: meta-modules that declare `depends` on a set of OCA modules for a specific environment.
+- Auto-upgrade (`-u`) applies ONLY to already-installed modules. New modules are never auto-installed on deploy.
+- A module may exist on `main` at T2 indefinitely. There is no pressure to activate.
+
+**Bundle Module Taxonomy**:
+
+```
+addons/ipai/
+├── ipai_bundle_base/         # Core: contacts, company, base config
+├── ipai_bundle_finance/      # Accounting, invoicing, assets, budget
+├── ipai_bundle_hr/           # Payroll, expenses, attendance, planning
+├── ipai_bundle_projects/     # Project, timesheet, helpdesk
+└── ipai_bundle_docs/         # Document management, sign, OCR
+```
+
+Bundle modules:
+- Are thin `__manifest__.py` files with only `depends` lists
+- Contain zero Python code (only `__init__.py` + `__manifest__.py`)
+- Are environment-specific: staging may install `ipai_bundle_finance`, production may not yet
+- Are the ONLY mechanism for activating OCA parity modules
+
+**Enforcement**:
+- CI blocks merge to `main` if any new OCA module lacks T2 install evidence.
+- CI blocks any `ipai_bundle_*` module with Python code beyond `__init__.py`.
+
+---
+
+### Principle 7: Staging Contract — T3 Proving Ground
+
+**Statement**: Staging is the exclusive proving ground for T3 (Functional) claims.
+No module may claim T3 without passing staging validation. Staging mirrors
+production topology.
+
+**Staging Roles**:
+
+| Role | What It Proves |
+|------|---------------|
+| **Integration checkpoint** | OCA modules, bridges, and connectors work together |
+| **Production-like data rehearsal** | Module behaves correctly with realistic (anonymized) data |
+| **Upgrade rehearsal** | `odoo-bin -u <module>` succeeds against existing database |
+| **Release candidate gate** | Bundle module activates without regression |
+| **Rollback confidence** | Deactivation/uninstall path verified |
+
+**Evidence Tier Mapping**:
+
+```
+CI Pipeline    → T2 (Installable)     — module installs in isolation
+Staging        → T3 (Functional)      — module works in integrated environment
+Production     → T4 (Verified)        — module survives 30-day soak
+```
+
+**Staging Requirements**:
+- Staging runs the same Odoo 19 CE + PostgreSQL 16 stack as production.
+- Staging database is a sanitized copy of production (no real credentials, PII anonymized).
+- Staging activates modules via the same bundle modules used in production.
+- Staging runs the full OCA + bridge + connector stack, not isolated modules.
+- Every T3 promotion requires a staging deploy log + functional checklist sign-off.
+
+**Anti-Drift Rules**:
+- Staging topology must match production (same Docker images, same `addons_path`, same PostgreSQL version).
+- Configuration drift is checked by `scripts/ci/check_staging_drift.sh` (compares staging vs production compose/config).
+- Any staging/production divergence blocks T3 promotion.
+
+**Enforcement**:
+- No module may be promoted to T3 without staging evidence in `docs/evidence/<date>/parity/<domain>_functional.md`.
+- Staging deploy failures are logged and block the corresponding T4 promotion.
+- Staging is refreshed from production data at least monthly.
+
+---
+
 ## Constraints & Security
 
 | Constraint | Policy |
@@ -180,3 +268,4 @@ services/                   # Alternative name for bridges/ (alias)
 | Version | Date | Change | Author |
 |---------|------|--------|--------|
 | 1.0.0 | 2026-02-17 | Initial ratification — module/bridge/connector taxonomy, evidence tiers, directory boundaries | claude/agent |
+| 1.1.0 | 2026-02-17 | Added Principle 6 (merge-to-main policy, bundle modules) and Principle 7 (staging contract, anti-drift) | claude/agent |

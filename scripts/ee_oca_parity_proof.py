@@ -1571,6 +1571,24 @@ def build_parity_proof(oca_repos: dict) -> dict:
         "warnings": warnings,
         "modules": verified,
     }
+
+    # ── Tier count invariant ──
+    tc = report["summary"]["tier_counts"]
+    tier_sum = sum(tc.values())
+    if tier_sum != total_ee:
+        raise RuntimeError(
+            f"Tier count mismatch: total_ee={total_ee} but "
+            f"sum(tiers)={tier_sum} (breakdown: {tc})"
+        )
+    in_scope = sum(v for k, v in tc.items() if k != "N/A")
+    na = tc.get("N/A", 0)
+    report["summary"]["tier_invariant"] = {
+        "total": total_ee,
+        "in_scope": in_scope,
+        "not_applicable": na,
+        "check": "PASS" if (in_scope + na) == total_ee else "FAIL",
+    }
+
     return report
 
 
@@ -1615,6 +1633,7 @@ def generate_evidence_md(report: dict) -> str:
         f"| T3 | Functional | {tier_counts.get('T3', 0)} | ≥80% feature coverage for our workflows |",
         f"| T4 | Verified | {tier_counts.get('T4', 0)} | Production-tested, 30-day soak |",
         f"| N/A | Not needed | {tier_counts.get('N/A', 0)} | Demo/test data, skip |",
+        f"| | **Total** | **{sum(tier_counts.values())}** | in-scope: {sum(v for k, v in tier_counts.items() if k != 'N/A')}, N/A: {tier_counts.get('N/A', 0)} |",
         "",
         "### Strategy Breakdown",
         "",

@@ -121,6 +121,11 @@ for dir in "$ADDONS_DIR"/ipai_*/ "$ADDONS_DIR"/ipai/ipai_*/; do
     loc=$(find "$dir" -name "*.py" -type f -exec cat {} + 2>/dev/null | wc -l || echo 0)
     if [ "$loc" -gt 1000 ]; then
         warn "addons/$name has ${loc} Python LOC (>1000, review needed) (PB-005)"
+        if [ ! -f "$dir/PARITY_CONNECTOR_JUSTIFICATION.md" ]; then
+            warn "addons/$name exceeds 1000 LOC and is missing PARITY_CONNECTOR_JUSTIFICATION.md (PB-005)"
+        else
+            pass "addons/$name has PARITY_CONNECTOR_JUSTIFICATION.md"
+        fi
     else
         pass "addons/$name: ${loc} Python LOC"
     fi
