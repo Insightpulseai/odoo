@@ -1,5 +1,17 @@
 {
-  "generated_at": "2026-02-17T18:20:06Z",
+  "generated_at": "2026-02-17T18:31:46Z",
+  "upstream_references": {
+    "odoo_release_notes": {
+      "url": "https://www.odoo.com/odoo-19-release-notes",
+      "version": "19",
+      "observed_release_month": "September 2025",
+      "usage": "Version-specific behavioral expectations; detect UX/engine changes (not new modules)"
+    },
+    "odoo_editions_compare": {
+      "url": "https://www.odoo.com/page/editions",
+      "usage": "Classify capabilities as Module vs Non-module (Platform/IAP/Service)"
+    }
+  },
   "summary": {
     "total_ee_modules": 151,
     "total_in_scope": 150,
@@ -96,6 +108,59 @@
     ],
     "oca_repos_verified": 152,
     "oca_repos_missing": 0,
+    "oca_repo_stats": {
+      "total_unique_referenced": 45,
+      "addons_repos": 45,
+      "infra_repos": 0,
+      "addons_repo_names": [
+        "account-budgeting",
+        "account-consolidation",
+        "account-financial-reporting",
+        "account-financial-tools",
+        "account-reconcile",
+        "automation",
+        "bank-payment",
+        "bank-statement-import",
+        "calendar",
+        "commission",
+        "connector-ecommerce",
+        "connector-telephony",
+        "contract",
+        "credit-control",
+        "crm",
+        "delivery-carrier",
+        "dms",
+        "field-service",
+        "fleet",
+        "geospatial",
+        "helpdesk",
+        "hr",
+        "hr-attendance",
+        "hr-holidays",
+        "intrastat-extrastat",
+        "iot",
+        "knowledge",
+        "manufacture",
+        "mis-builder",
+        "payroll",
+        "project",
+        "repair",
+        "reporting-engine",
+        "server-tools",
+        "shift-planning",
+        "sign",
+        "social",
+        "spreadsheet",
+        "stock-logistics-barcode",
+        "stock-logistics-reporting",
+        "stock-logistics-workflow",
+        "tier-validation",
+        "timesheet",
+        "vertical-rental",
+        "web"
+      ],
+      "infra_repo_names": []
+    },
     "tier_invariant": {
       "total": 151,
       "in_scope": 150,

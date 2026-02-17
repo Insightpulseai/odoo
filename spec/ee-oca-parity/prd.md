@@ -137,6 +137,58 @@ The parity report (`reports/ee_oca_parity_proof.json`) must include per module:
 
 ---
 
+## Canonical Upstream References
+
+We treat the following official Odoo pages as authoritative *product-level* references:
+
+- **Odoo 19 Release Notes** (feature deltas, version positioning): https://www.odoo.com/odoo-19-release-notes
+- **Compare Editions** (EE vs CE positioning at capability level): https://www.odoo.com/page/editions
+
+**Usage rules**:
+- The Editions page classifies **capabilities** as likely "Module" vs "Non-module (Platform/IAP/Service)".
+  Example: Hosting is a platform capability; OCR/digitization is service-backed.
+- The Release Notes page validates version-specific **behavioral expectations** and detects features that
+  are UX/engine changes (not new modules) which should not be treated as EE-module gaps.
+- Neither page is treated as a machine-readable EE module list. The EE module list must come from code
+  inventories and/or curated mapping sources; editions/release notes are evidence annotations only.
+
+**Capability classification hints** (from Editions page — non-module indicators):
+
+| Editions Page Item | Classification | Replacement Via |
+|--------------------|---------------|-----------------|
+| Hosting (Odoo.sh) | Platform capability | `bridges/deploy/` (self-hosted) |
+| Vendor Bill OCR | IAP service | `bridges/ocr/` + `ipai_doc_ocr_bridge` |
+| Expense Digitalization OCR | IAP service | `bridges/ocr/` + `ipai_expense_ocr` |
+| Studio (visual builder) | Platform capability | CE `base_automation` + OCA `base_custom_info` |
+| Online Bank Sync (Plaid/Yodlee) | IAP service | OCA `bank-statement-import` (file-based) |
+| SMS Marketing | IAP service | `bridges/sms/` + Twilio API |
+| Push Notifications | IAP service | Firebase Cloud Messaging / OneSignal |
+
+Items in this table are **not** EE modules — they are platform/service capabilities replaced by integration bridges.
+
+---
+
+## OCA Repository Classification
+
+Not every OCA repository is an addon pack. The parity proof only counts repositories
+that contain installable Odoo addons as "parity addon repositories". Tooling repos
+(e.g., `OpenUpgrade`, `maintainer-tools`, `OCB`) are classified as L3 ecosystem tooling
+and are excluded from EE-module replacement counting.
+
+**Classification rule**: `scripts/ee_oca_parity_proof.py` assigns each OCA repo a `kind`:
+
+| Kind | Meaning | Counts for parity? |
+|------|---------|--------------------|
+| `addons_repo` | Contains installable Odoo modules (`__manifest__.py`) | Yes |
+| `infra_repo` | CI, tooling, bots, templates | No |
+| `core_fork` | OCB (Odoo Community Backports) | No |
+| `migration_tooling` | OpenUpgrade, openupgradelib, migrator | No |
+
+The JSON report (`reports/ee_oca_parity_proof.json`) includes `oca_repo_stats` showing
+the breakdown. The Markdown evidence includes a classification summary section.
+
+---
+
 ## Non-Goals
 
 - Replacing Odoo.sh hosting (that's `spec/odoo-sh-clone/`)

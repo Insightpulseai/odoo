@@ -1341,6 +1341,70 @@ EE_MODULES = {
 }
 
 
+# ---------------------------------------------------------------------------
+# OCA repository kind classification
+# Not every OCA repo is an addons pack. Infra/tooling repos must not pollute
+# EE-module replacement counting.
+# kind ∈ {"addons_repo", "infra_repo", "core_fork", "migration_tooling", "unknown"}
+# ---------------------------------------------------------------------------
+OCA_INFRA_REPOS = {
+    "OpenUpgrade": "migration_tooling",
+    "OCB": "core_fork",
+    "maintainer-tools": "infra_repo",
+    "maintainer-quality-tools": "infra_repo",
+    "oca-github-bot": "infra_repo",
+    "odoo-community.org": "infra_repo",
+    "repo-maintainer": "infra_repo",
+    "repo-maintainer-conf": "infra_repo",
+    "oca-ci": "infra_repo",
+    "oca-custom": "infra_repo",
+    "oca-decorators": "infra_repo",
+    "oca-port": "infra_repo",
+    "oca-weblate-deployment": "infra_repo",
+    "oca.recipe.odoo": "infra_repo",
+    "oca-addons-repo-template": "infra_repo",
+    "odoo-module-migrator": "migration_tooling",
+    "odoo-pre-commit-hooks": "infra_repo",
+    "odoo-sentinel": "infra_repo",
+    "odoo-sphinx-autodoc": "infra_repo",
+    "odoo-test-helper": "infra_repo",
+    "odoorpc": "infra_repo",
+    "openupgradelib": "migration_tooling",
+    "pylint-odoo": "infra_repo",
+    "py3o.template": "infra_repo",
+    "runbot-addons": "infra_repo",
+    "webkit-tools": "infra_repo",
+    "ansible-odoo": "infra_repo",
+    "dotnet": "infra_repo",
+    "docs": "infra_repo",
+    "interface-github": "infra_repo",
+    "module-composition-analysis": "infra_repo",
+    "version-control-platform": "infra_repo",
+}
+
+
+def oca_repo_kind(name: str) -> str:
+    """Classify an OCA repo as addons_repo or infra/tooling."""
+    return OCA_INFRA_REPOS.get(name, "addons_repo")
+
+
+# ---------------------------------------------------------------------------
+# Upstream references (annotation sources, NOT module enumerators)
+# ---------------------------------------------------------------------------
+UPSTREAM_REFERENCES = {
+    "odoo_release_notes": {
+        "url": "https://www.odoo.com/odoo-19-release-notes",
+        "version": "19",
+        "observed_release_month": "September 2025",
+        "usage": "Version-specific behavioral expectations; detect UX/engine changes (not new modules)",
+    },
+    "odoo_editions_compare": {
+        "url": "https://www.odoo.com/page/editions",
+        "usage": "Classify capabilities as Module vs Non-module (Platform/IAP/Service)",
+    },
+}
+
+
 # Known OCA repositories (fetched 2026-02-17 via GitHub API, 256 repos).
 # Used as fallback when GitHub API is rate-limited.
 KNOWN_OCA_REPOS = {
@@ -1541,8 +1605,17 @@ def build_parity_proof(oca_repos: dict) -> dict:
     total_ipai = sum(1 for v in verified if "ipai" in v["strategy"])
     total_not_needed = total_na
 
+    # ── OCA repo kind stats ──
+    all_oca_refs = sorted(set(
+        r["ref"].replace("OCA/", "")
+        for v in verified for r in v["oca_repos"] if r["exists"]
+    ))
+    addons_repos = [n for n in all_oca_refs if oca_repo_kind(n) == "addons_repo"]
+    infra_repos = [n for n in all_oca_refs if oca_repo_kind(n) != "addons_repo"]
+
     report = {
         "generated_at": ts,
+        "upstream_references": UPSTREAM_REFERENCES,
         "summary": {
             "total_ee_modules": total_ee,
             "total_in_scope": total_in_scope,
@@ -1571,6 +1644,13 @@ def build_parity_proof(oca_repos: dict) -> dict:
             )),
             "oca_repos_verified": sum(1 for v in verified for r in v["oca_repos"] if r["exists"]),
             "oca_repos_missing": sum(1 for v in verified for r in v["oca_repos"] if not r["exists"]),
+            "oca_repo_stats": {
+                "total_unique_referenced": len(all_oca_refs),
+                "addons_repos": len(addons_repos),
+                "infra_repos": len(infra_repos),
+                "addons_repo_names": addons_repos,
+                "infra_repo_names": infra_repos,
+            },
         },
         "warnings": warnings,
         "modules": verified,
@@ -1603,6 +1683,10 @@ def generate_evidence_md(report: dict) -> str:
 
     tier_counts = s.get("tier_counts", {})
 
+    refs = report.get("upstream_references", {})
+    total_in_scope_tiers = sum(v for k, v in tier_counts.items() if k != "N/A")
+    na_count = tier_counts.get("N/A", 0)
+
     lines = [
         "# EE-to-OCA Parity Proof: Every Enterprise Module Has a Replacement",
         "",
@@ -1610,13 +1694,19 @@ def generate_evidence_md(report: dict) -> str:
         "> Script: `scripts/ee_oca_parity_proof.py`",
         "> Spec: `spec/ee-oca-parity/constitution.md`",
         "",
-        "---",
+        "## Official Upstream References (annotation only, not module enumeration)",
         "",
-        "## Executive Summary",
-        "",
-        f"**{s['total_covered']}/{s['total_in_scope']} in-scope Enterprise-only modules are covered ({s['coverage_pct']}%)**",
-        "",
-        f"({s['total_not_applicable']} module(s) excluded as N/A — demo/test data, not part of runtime parity scope.)",
+    ]
+    for key, ref in refs.items():
+        label = key.replace("_", " ").title()
+        lines.append(f"- **{label}**: {ref['url']}")
+        if ref.get("usage"):
+            lines.append(f"  - Usage: {ref['usage']}")
+    lines.extend(["", "---", "", "## Executive Summary", ""])
+    lines.append(f"**{s['total_covered']}/{s['total_in_scope']} in-scope Enterprise-only modules are covered ({s['coverage_pct']}%)**")
+    lines.append("")
+    lines.append(f"({s['total_not_applicable']} module(s) excluded as N/A — demo/test data, not part of runtime parity scope.)")
+    lines.extend([
         "",
         "Every in-scope Odoo Enterprise Edition module has been mapped to one or more of:",
         "",
@@ -1633,40 +1723,66 @@ def generate_evidence_md(report: dict) -> str:
         "",
         "| Tier | Name | Count | Meaning |",
         "|------|------|-------|---------|",
-        f"| T0 | Unmapped | {tier_counts.get('T0', 0)} | No verified replacement |",
-        f"| **T1** | **Mapped** | **{tier_counts.get('T1', 0)}** | **Replacement identified, OCA repo verified** |",
-        f"| T2 | Installable | {tier_counts.get('T2', 0)} | Installs on our Odoo 19 CE baseline |",
-        f"| T3 | Functional | {tier_counts.get('T3', 0)} | ≥80% feature coverage for our workflows |",
-        f"| T4 | Verified | {tier_counts.get('T4', 0)} | Production-tested, 30-day soak |",
-        f"| N/A | Not needed | {tier_counts.get('N/A', 0)} | Demo/test data, skip |",
-        f"| | **Total** | **{sum(tier_counts.values())}** | in-scope: {sum(v for k, v in tier_counts.items() if k != 'N/A')}, N/A: {tier_counts.get('N/A', 0)} |",
+    ])
+    t0 = tier_counts.get("T0", 0)
+    t1 = tier_counts.get("T1", 0)
+    t2 = tier_counts.get("T2", 0)
+    t3 = tier_counts.get("T3", 0)
+    t4 = tier_counts.get("T4", 0)
+    t_na = tier_counts.get("N/A", 0)
+    t_total = sum(tier_counts.values())
+    lines.append(f"| T0 | Unmapped | {t0} | No verified replacement |")
+    lines.append(f"| **T1** | **Mapped** | **{t1}** | **Replacement identified, OCA repo verified** |")
+    lines.append(f"| T2 | Installable | {t2} | Installs on our Odoo 19 CE baseline |")
+    lines.append(f"| T3 | Functional | {t3} | ≥80% feature coverage for our workflows |")
+    lines.append(f"| T4 | Verified | {t4} | Production-tested, 30-day soak |")
+    lines.append(f"| N/A | Not needed | {t_na} | Demo/test data, skip |")
+    lines.append(f"| | **Total** | **{t_total}** | in-scope: {total_in_scope_tiers}, N/A: {na_count} |")
+    sb = s["strategy_breakdown"]
+    lines.extend([
         "",
         "### Strategy Breakdown",
         "",
         "| Strategy | Count | Description |",
         "|----------|-------|-------------|",
-        f"| OCA only | {s['strategy_breakdown']['oca_only']} | Direct OCA replacement |",
-        f"| OCA + bridge | {s['strategy_breakdown']['oca_plus_ipai']} | OCA + ipai/external glue |",
-        f"| External service | {s['strategy_breakdown']['external_service']} | n8n, Mautic, APIs (no module needed) |",
-        f"| CE native | {s['strategy_breakdown']['ce_native']} | Already in Community Edition |",
-        f"| IPAI custom | {s['strategy_breakdown']['ipai_custom']} | Thin ipai connector |",
-        f"| Not needed | {s['strategy_breakdown']['not_needed']} | Demo/test data, skip |",
-        f"| **Total** | **{s['total_ee_modules']}** | |",
-        "",
-        "### OCA Repository Verification",
-        "",
-        f"- Verified OCA repos referenced: **{s['oca_repos_verified']}**",
-        f"- Missing OCA repos: **{s['oca_repos_missing']}**",
-        f"- Unique OCA repos used: **{len(s['oca_repos_referenced'])}**",
-        "",
-        "Referenced OCA repos:",
-        "",
-    ]
+    ])
+    lines.append(f"| OCA only | {sb['oca_only']} | Direct OCA replacement |")
+    lines.append(f"| OCA + bridge | {sb['oca_plus_ipai']} | OCA + ipai/external glue |")
+    lines.append(f"| External service | {sb['external_service']} | n8n, Mautic, APIs (no module needed) |")
+    lines.append(f"| CE native | {sb['ce_native']} | Already in Community Edition |")
+    lines.append(f"| IPAI custom | {sb['ipai_custom']} | Thin ipai connector |")
+    lines.append(f"| Not needed | {sb['not_needed']} | Demo/test data, skip |")
+    lines.append(f"| **Total** | **{s['total_ee_modules']}** | |")
+    lines.extend([""])
+    lines.append("### OCA Repository Verification")
+    lines.append("")
+    lines.append(f"- Verified OCA repos referenced: **{s['oca_repos_verified']}**")
+    lines.append(f"- Missing OCA repos: **{s['oca_repos_missing']}**")
+    lines.append(f"- Unique OCA repos used: **{len(s['oca_repos_referenced'])}**")
+    lines.extend(["", "Referenced OCA repos:", ""])
 
     for repo in s["oca_repos_referenced"]:
         repo_name = repo.replace("OCA/", "")
-        lines.append(f"- [{repo}](https://github.com/{repo})")
+        kind = oca_repo_kind(repo_name)
+        kind_tag = "" if kind == "addons_repo" else f" *({kind})*"
+        lines.append(f"- [{repo}](https://github.com/{repo}){kind_tag}")
     lines.append("")
+
+    # OCA repo classification
+    repo_stats = s.get("oca_repo_stats", {})
+    lines.extend([
+        "### OCA Repo Classification",
+        "",
+        f"- **Addon repos** (contain installable Odoo modules, count for parity): **{repo_stats.get('addons_repos', 0)}**",
+        f"- **Infra/tooling repos** (ecosystem support, excluded from parity counting): **{repo_stats.get('infra_repos', 0)}**",
+        "",
+    ])
+    if repo_stats.get("infra_repo_names"):
+        lines.append("Infra repos referenced (excluded):")
+        lines.append("")
+        for name in repo_stats["infra_repo_names"]:
+            lines.append(f"- `OCA/{name}` ({oca_repo_kind(name)})")
+        lines.append("")
 
     # Domain breakdown
     lines.extend([
