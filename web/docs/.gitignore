@@ -5,3 +5,5 @@ dist/
 .env*.local
 .DS_Store
 *.log
+# Exception: canonical evidence log artifacts are committed
+!evidence/**/logs/*.log
