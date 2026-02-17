@@ -1,0 +1,4 @@
+--- a/workflows/finance_ppm/task_escalation.json
++++ b/automations/n8n/workflows/task_escalation.json
+@@ Move stray workflow to canonical location @@
+# git mv 'workflows/finance_ppm/task_escalation.json' 'automations/n8n/workflows/task_escalation.json'

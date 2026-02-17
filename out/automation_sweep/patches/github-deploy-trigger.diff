@@ -1,0 +1,4 @@
+--- a/n8n/workflows/github-deploy-trigger.json
++++ b/automations/n8n/workflows/github-deploy-trigger.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/github-deploy-trigger.json' 'automations/n8n/workflows/github-deploy-trigger.json'
