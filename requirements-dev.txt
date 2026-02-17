@@ -2,7 +2,7 @@
 # Used by GitHub Actions for type-checking and vulnerability scanning
 
 # Type checking
-mypy==1.8.0
+mypy==1.19.1
 
 # Vulnerability scanning
 pip-audit==2.7.1
