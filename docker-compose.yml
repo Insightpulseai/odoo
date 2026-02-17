@@ -148,6 +148,8 @@ services:
     volumes:
       - ./ipai-platform/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./ipai-platform/nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - default
 
   # ===========================================================================
   # pgAdmin 4 — Database Admin (profile: tools)
