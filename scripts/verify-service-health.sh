@@ -28,6 +28,8 @@ QUIET=false
 # origin URL = http://127.0.0.1:<port><path>
 # edge   URL = https://<fqdn><path>
 PROD_SERVICES=(
+  "apex|-|/|${DOMAIN}"
+  "www|-|/|www.${DOMAIN}"
   "erp|8069|/web/health|erp.${DOMAIN}"
   "n8n|5678|/healthz|n8n.${DOMAIN}"
   "ocr|8080|/health|ocr.${DOMAIN}"
@@ -64,10 +66,12 @@ Scope (which services):
 Output:
   --json          Machine-readable JSON
   --quiet         Summary only
+  --signature     Enable content signature checks (detects misrouting)
 
 Environment variables:
   HEALTHCHECK_TOKEN   Shared secret for X-Healthcheck-Token header (edge mode)
   HEALTHCHECK_UA      User-Agent string (default: healthcheck/prod)
+  SIGNATURE_CHECK     Same as --signature (true/false)
   MODE                Same as --mode
   SCOPE               Same as --production/--staging/--all
 EOF
@@ -84,6 +88,7 @@ for arg in "$@"; do
     --all)         SCOPE="all" ;;
     --json)        JSON_OUTPUT=true ;;
     --quiet)       QUIET=true ;;
+    --signature)   SIGNATURE_CHECK=true ;;
     --help|-h)     usage ;;
   esac
 done
@@ -177,6 +182,38 @@ emit() {
   esac
 }
 
+# ─── Content signature map (detects misrouting) ─────────────────────────────
+# Format: service_name → expected string in response body
+# If the signature is missing, the correct app is NOT served on that domain.
+declare -A CONTENT_SIGNATURES=(
+  ["apex"]="InsightPulse"
+  ["www"]="insightpulseai.com"
+  ["erp"]="Odoo"
+  ["n8n"]="n8n"
+  ["superset"]="Superset"
+)
+SIGNATURE_CHECK="${SIGNATURE_CHECK:-false}"
+
+check_signature() {
+  local name="$1" url="$2" probe="$3"
+  local expected="${CONTENT_SIGNATURES[$name]:-}"
+  if [[ -z "$expected" ]]; then return; fi
+  if [[ "$SIGNATURE_CHECK" != "true" ]]; then return; fi
+
+  local body
+  body=$(curl -sL --max-time "$TIMEOUT" "$url" 2>/dev/null | head -c 8192 || true)
+  if echo "$body" | grep -qi "$expected" 2>/dev/null; then
+    if ! $QUIET && ! $JSON_OUTPUT; then
+      printf "  ✅ %-15s %-8s content signature OK (%s)\n" "$name" "[$probe]" "$expected"
+    fi
+  else
+    if ! $QUIET && ! $JSON_OUTPUT; then
+      printf "  ❌ %-15s %-8s content signature MISSING (expected: %s)\n" "$name" "[$probe]" "$expected"
+    fi
+    ((FAIL++))
+  fi
+}
+
 check_service() {
   local entry="$1"
   IFS='|' read -r name port path fqdn <<< "$entry"
@@ -201,6 +238,8 @@ check_service() {
     latency=$(curl_edge_latency "$edge_url")
     result=$(classify "$status")
     emit "$name" "$edge_url" "edge" "$status" "$latency" "$result"
+    # Content signature check (optional, detects misrouting)
+    check_signature "$name" "$edge_url" "edge"
   fi
 }
 
