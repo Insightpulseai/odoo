@@ -57,7 +57,12 @@ jobs:
 
       # ── Code Signing Setup ───────────────────────────────────────────
       - name: Import signing certificate
-        if: ${{ github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/') }}
+        # Requires: sign=true OR tag push, AND all Apple secrets present
+        if: >-
+          (github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/')) &&
+          secrets.APPLE_CERTIFICATE_BASE64 != '' &&
+          secrets.APPLE_CERTIFICATE_PASSWORD != '' &&
+          secrets.KEYCHAIN_PASSWORD != ''
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -138,7 +143,10 @@ jobs:
 
       # ── Update Homebrew formula ───────────────────────────────────────
       - name: Update Homebrew formula
-        if: ${{ github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/') }}
+        # Only meaningful after a signed release; skip for unsigned tag builds
+        if: >-
+          (github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/')) &&
+          secrets.APPLE_CERTIFICATE_BASE64 != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
