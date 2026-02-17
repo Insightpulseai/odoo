@@ -1532,19 +1532,23 @@ def build_parity_proof(oca_repos: dict) -> dict:
         verified.append(entry)
 
     total_ee = len(EE_MODULES)
-    total_covered = sum(1 for v in verified if v["covered"])
+    total_na = sum(1 for v in verified if v["strategy"] == "not_needed")
+    total_in_scope = total_ee - total_na
+    total_covered = sum(1 for v in verified if v["covered"] and v["tier"] != "N/A")
     total_oca = sum(1 for v in verified if "oca" in v["strategy"])
     total_external = sum(1 for v in verified if "external" in v["strategy"])
     total_ce = sum(1 for v in verified if v["strategy"] in ("ce", "ce+oca"))
     total_ipai = sum(1 for v in verified if "ipai" in v["strategy"])
-    total_not_needed = sum(1 for v in verified if v["strategy"] == "not_needed")
+    total_not_needed = total_na
 
     report = {
         "generated_at": ts,
         "summary": {
             "total_ee_modules": total_ee,
+            "total_in_scope": total_in_scope,
+            "total_not_applicable": total_na,
             "total_covered": total_covered,
-            "coverage_pct": round(total_covered / total_ee * 100, 1) if total_ee else 0,
+            "coverage_pct": round(total_covered / total_in_scope * 100, 1) if total_in_scope else 0,
             "strategy_breakdown": {
                 "oca_only": sum(1 for v in verified if v["strategy"] == "oca"),
                 "oca_plus_ipai": sum(1 for v in verified if v["strategy"] in ("oca+ipai", "oca+external")),
@@ -1610,9 +1614,11 @@ def generate_evidence_md(report: dict) -> str:
         "",
         "## Executive Summary",
         "",
-        f"**{s['total_covered']}/{s['total_ee_modules']} Enterprise-only modules are covered ({s['coverage_pct']}%)**",
+        f"**{s['total_covered']}/{s['total_in_scope']} in-scope Enterprise-only modules are covered ({s['coverage_pct']}%)**",
         "",
-        "Every Odoo Enterprise Edition module has been mapped to one or more of:",
+        f"({s['total_not_applicable']} module(s) excluded as N/A — demo/test data, not part of runtime parity scope.)",
+        "",
+        "Every in-scope Odoo Enterprise Edition module has been mapped to one or more of:",
         "",
         "1. **OCA module** — direct open-source replacement from Odoo Community Association",
         "2. **CE-native** — functionality already in Odoo Community Edition",
@@ -1775,7 +1781,8 @@ def main():
     print("[2/3] Building parity proof...")
     report = build_parity_proof(oca_repos)
     s = report["summary"]
-    print(f"  EE modules mapped: {s['total_covered']}/{s['total_ee_modules']} ({s['coverage_pct']}%)")
+    print(f"  In-scope EE modules: {s['total_in_scope']} (+ {s['total_not_applicable']} N/A excluded)")
+    print(f"  EE modules covered: {s['total_covered']}/{s['total_in_scope']} ({s['coverage_pct']}%)")
     print(f"  OCA repos verified: {s['oca_repos_verified']}")
     if report["warnings"]:
         print(f"  Warnings: {len(report['warnings'])}")
@@ -1797,7 +1804,9 @@ def main():
     print(f"  Evidence: {REPORT_MD.relative_to(REPO_ROOT)}")
 
     print()
-    print(f"RESULT: {s['coverage_pct']}% coverage — every EE module has a replacement path.")
+    print(f"RESULT: {s['total_covered']}/{s['total_in_scope']} in-scope EE modules covered ({s['coverage_pct']}%).")
+    if s['total_not_applicable'] > 0:
+        print(f"  ({s['total_not_applicable']} module(s) excluded as N/A: demo/test data, not part of runtime parity scope)")
     print("Done.")
 
 

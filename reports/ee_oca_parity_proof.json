@@ -1,8 +1,10 @@
 {
-  "generated_at": "2026-02-17T18:13:49Z",
+  "generated_at": "2026-02-17T18:20:06Z",
   "summary": {
     "total_ee_modules": 151,
-    "total_covered": 151,
+    "total_in_scope": 150,
+    "total_not_applicable": 1,
+    "total_covered": 150,
     "coverage_pct": 100.0,
     "strategy_breakdown": {
       "oca_only": 106,
