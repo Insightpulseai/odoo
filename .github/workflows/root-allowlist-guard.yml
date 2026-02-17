@@ -1,0 +1,111 @@
+name: root-allowlist-guard
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check-root-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enforce root file allowlist
+        run: |
+          # Root-level FILES only (not directories or dotfiles).
+          # Edit docs/architecture/ROOT_ALLOWLIST.md to request additions,
+          # then update ALLOWED below and open a PR.
+
+          ALLOWED=(
+            # GitHub / community health
+            "AGENTS.md"
+            "CHANGELOG.md"
+            "CLAUDE.md"
+            "CONTRIBUTING.md"
+            "GEMINI.md"
+            "README.md"
+            "SECURITY.md"
+
+            # Node tooling (must stay at root)
+            "package.json"
+            "pnpm-lock.yaml"
+            "pnpm-workspace.yaml"
+            "turbo.json"
+
+            # Python tooling (must stay at root)
+            "pyproject.toml"
+            "requirements.txt"
+            "requirements-dev.txt"
+            "requirements-docs.txt"
+            "requirements-oca.txt"
+
+            # Linting / quality tooling
+            ".flake8"
+            ".markdownlint-cli2.jsonc"
+            ".mypy-baseline.txt"
+            ".pre-commit-config.yaml"
+            ".python-version"
+            ".yamllint.yml"
+            ".cursorignore"
+            ".agentignore"
+
+            # Git
+            ".gitignore"
+            ".gitmodules"
+            ".gitattributes"
+
+            # Docker
+            "Dockerfile"
+            "docker-compose.yml"
+            "docker-compose.dev.yml"
+
+            # Build orchestration
+            "Makefile"
+            "mkdocs.yml"
+            "vercel.json"
+            "odoo-bin"
+            "odoo.code-workspace"
+
+            # OCA aggregation (hardcoded ROOT_DIR in tools)
+            "oca-aggregate.yml"
+            "oca.lock.json"
+
+            # Odoo addons manifest (CI expects root)
+            "addons.manifest.json"
+
+            # LLM discovery (llms.txt convention + CI check)
+            "llms.txt"
+            "llms-full.txt"
+          )
+
+          # Get all files in root (non-dotfiles, non-directories)
+          ROOT_FILES=$(find . -maxdepth 1 -type f ! -name '.*' -printf '%f\n' | sort)
+
+          FAILED=0
+          for f in $ROOT_FILES; do
+            MATCH=0
+            for allowed in "${ALLOWED[@]}"; do
+              if [[ "$f" == "$allowed" ]]; then
+                MATCH=1
+                break
+              fi
+            done
+            if [[ "$MATCH" == "0" ]]; then
+              echo "❌ Unexpected root file: $f"
+              echo "   To allow it: add to ALLOWED in .github/workflows/root-allowlist-guard.yml"
+              echo "   and update docs/architecture/ROOT_ALLOWLIST.md"
+              FAILED=1
+            fi
+          done
+
+          if [[ "$FAILED" == "1" ]]; then
+            echo ""
+            echo "Root allowlist guard FAILED. Move loose files to canonical folders"
+            echo "or add them to the allowlist with documented justification."
+            exit 1
+          fi
+
+          echo "✅ Root allowlist guard PASSED — no unexpected root files."
