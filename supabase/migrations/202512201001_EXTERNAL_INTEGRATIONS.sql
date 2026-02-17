@@ -928,7 +928,7 @@ INSERT INTO integrations.providers (code, name, provider_type, base_url, auth_ty
      '2022-06-28'),
 
     ('paddleocr', 'PaddleOCR', 'ocr',
-     'http://ocr.insightpulseai.net:8090',
+     'https://ocr.insightpulseai.com',
      'api_key',
      NULL,
      'v1'),

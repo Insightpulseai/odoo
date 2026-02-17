@@ -11,6 +11,20 @@ Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI cu
 **Production URL:** https://erp.insightpulseai.com
 **Documentation:** https://insightpulseai.github.io/odoo/
 
+### Canonical URLs (Production)
+
+| Service | URL | Health Check |
+|---------|-----|--------------|
+| ERP (Odoo 19 CE) | https://erp.insightpulseai.com | `/web/login` |
+| n8n Automation | https://n8n.insightpulseai.com | `/healthz` |
+| MCP Gateway | https://mcp.insightpulseai.com | `/healthz` |
+| Superset BI | https://superset.insightpulseai.com | `/health` |
+| OCR Service | https://ocr.insightpulseai.com | `/health` |
+| Auth Service | https://auth.insightpulseai.com | `/.well-known/openid-configuration` |
+
+Full URL inventory, drift analysis, and success criteria: [`docs/architecture/CANONICAL_URLS.md`](./docs/architecture/CANONICAL_URLS.md)
+DNS SSOT: [`infra/dns/subdomain-registry.yaml`](./infra/dns/subdomain-registry.yaml)
+
 ---
 
 ## Quick Start
