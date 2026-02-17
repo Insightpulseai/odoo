@@ -152,6 +152,16 @@ Should output:
 ✅ No drift detected. All mirrors match SSOT.
 ```
 
+### Evidence Storage
+
+**Canonical root:** `web/docs/evidence/<YYYYMMDD-HHMM+0800>/<topic>/logs/`
+
+Rules:
+- All command logs (stdout/stderr) go under the canonical root
+- `docs/evidence/**` is legacy-only — include `MOVED.md` if used
+- `sandbox/**` is never a canonical evidence location
+- `[EVIDENCE] logs:` in any output block must be a file path, never "captured above"
+
 ## References
 
 - [Claude Code Documentation](https://code.claude.com/docs/en/overview)

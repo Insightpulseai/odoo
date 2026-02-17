@@ -38,10 +38,10 @@ if git rev-parse --show-toplevel >/dev/null 2>&1; then
 fi
 CWD="$(pwd)"
 
-EVID_DIR="${REPO_ROOT}/docs/evidence/${STAMP}/${TASK_SLUG}/logs"
+EVID_DIR="${REPO_ROOT}/web/docs/evidence/${STAMP}/${TASK_SLUG}/logs"
 if [[ "${REPO_ROOT}" == "not a git repo" ]]; then
-  # fall back to current dir evidence folder
-  EVID_DIR="${CWD}/docs/evidence/${STAMP}/${TASK_SLUG}/logs"
+  # fall back to cwd-relative canonical path
+  EVID_DIR="${CWD}/web/docs/evidence/${STAMP}/${TASK_SLUG}/logs"
 fi
 mkdir -p "${EVID_DIR}"
 

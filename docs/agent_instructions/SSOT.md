@@ -44,11 +44,20 @@ When producing terminal output intended to be pasted into ChatGPT, ALWAYS format
 ### Output Rules
 
 - **Timezone for stamps**: Asia/Manila (UTC+08:00)
-- **Evidence location**: `docs/evidence/<YYYYMMDD-HHMM+0800>/<task>/logs/`
+- **Evidence location (canonical)**: `web/docs/evidence/<YYYYMMDD-HHMM+0800>/<topic>/logs/`
+- `docs/evidence/**` is **legacy-only** — must contain a `MOVED.md` pointing to canonical path
+- `sandbox/**` is **never** a canonical evidence location
 - Always include: `git status --porcelain` AND `git diff --stat` in final output (or save to evidence logs if large)
 - No interactive questions - choose deterministic Branch A/B/C when applicable
 - Never claim "0 errors / tests pass / secure" without citing evidence line(s) or saved log
 - Prefer repo-relative paths in CHANGES/DIFF SUMMARY; absolute paths allowed in EVIDENCE logs
+
+### Evidence Rules
+
+- `logs:` in `[EVIDENCE]` **must** be a file path — never "captured above" or "see terminal"
+- `outputs:` lists files created/modified, not where logs went
+- `git commit` evidence requires capturing output to a log file (e.g., `commit.log`)
+- Evidence stamps **must** include timezone (e.g., `+0800`)
 
 ### Completion Semantics
 
