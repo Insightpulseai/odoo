@@ -1,6 +1,6 @@
 # n8n Webhook Deployment Guide - TBWA Finance SSC
 
-**Stack**: Odoo CE 18 + n8n (ipa.insightpulseai.com) + Supabase + Mattermost
+**Stack**: Odoo CE 18 + n8n (n8n.insightpulseai.com) + Supabase + Mattermost
 
 ---
 
@@ -33,8 +33,8 @@ Before importing workflows, create these credentials in n8n:
 - **Service Role Key**: (from `~/.zshrc` → `$SUPABASE_SERVICE_ROLE_KEY`)
 
 #### 3. Mattermost API Credential
-- **Name**: `Mattermost (ipa.insightpulseai.com)`
-- **Base URL**: `https://ipa.insightpulseai.com`
+- **Name**: `Mattermost (n8n.insightpulseai.com)`
+- **Base URL**: `https://n8n.insightpulseai.com`
 - **Access Token**: (from Mattermost → Integrations → Bot Accounts)
 
 ### Environment Variables (n8n)
@@ -83,7 +83,7 @@ with odoo.registry('production').cursor() as cr:
 scp workflows/n8n_*.json root@<n8n-server>:/tmp/
 
 # Import via n8n UI:
-# 1. Open n8n (https://ipa.insightpulseai.com)
+# 1. Open n8n (https://n8n.insightpulseai.com)
 # 2. Click "Workflows" → "Import from File"
 # 3. Select each JSON file
 # 4. Update credentials to match your setup
@@ -94,12 +94,12 @@ scp workflows/n8n_*.json root@<n8n-server>:/tmp/
 
 After importing, each workflow will have a unique URL:
 
-**Format**: `https://ipa.insightpulseai.com/webhook/<path>`
+**Format**: `https://n8n.insightpulseai.com/webhook/<path>`
 
 Example URLs:
-- **OCR Expense**: `https://ipa.insightpulseai.com/webhook/ocr-expense`
-- **BIR Deadline**: `https://ipa.insightpulseai.com/webhook/bir-deadline`
-- **Scout Sync**: `https://ipa.insightpulseai.com/webhook/scout-sync`
+- **OCR Expense**: `https://n8n.insightpulseai.com/webhook/ocr-expense`
+- **BIR Deadline**: `https://n8n.insightpulseai.com/webhook/bir-deadline`
+- **Scout Sync**: `https://n8n.insightpulseai.com/webhook/scout-sync`
 
 ---
 
@@ -109,7 +109,7 @@ Example URLs:
 
 **High Confidence (Auto-Create)**:
 ```bash
-curl -X POST https://ipa.insightpulseai.com/webhook/ocr-expense \
+curl -X POST https://n8n.insightpulseai.com/webhook/ocr-expense \
   -H "Content-Type: application/json" \
   -d '{
     "vendor_name": "SM Supermarket",
@@ -133,7 +133,7 @@ curl -X POST https://ipa.insightpulseai.com/webhook/ocr-expense \
 
 **Low Confidence (Review Required)**:
 ```bash
-curl -X POST https://ipa.insightpulseai.com/webhook/ocr-expense \
+curl -X POST https://n8n.insightpulseai.com/webhook/ocr-expense \
   -H "Content-Type: application/json" \
   -d '{
     "vendor_name": "Unknown Vendor",
@@ -158,7 +158,7 @@ curl -X POST https://ipa.insightpulseai.com/webhook/ocr-expense \
 
 **Urgent Deadline (≤7 days)**:
 ```bash
-curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline \
+curl -X POST https://n8n.insightpulseai.com/webhook/bir-deadline \
   -H "Content-Type: application/json" \
   -d '{
     "bir_form": "1601-C",
@@ -178,7 +178,7 @@ curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline \
 
 **Standard Deadline (>7 days)**:
 ```bash
-curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline \
+curl -X POST https://n8n.insightpulseai.com/webhook/bir-deadline \
   -H "Content-Type: application/json" \
   -d '{
     "bir_form": "2550Q",
@@ -191,7 +191,7 @@ curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline \
 
 **Multi-Transaction Sync**:
 ```bash
-curl -X POST https://ipa.insightpulseai.com/webhook/scout-sync \
+curl -X POST https://n8n.insightpulseai.com/webhook/scout-sync \
   -H "Content-Type: application/json" \
   -d '{
     "employee_code": "RIM",
@@ -265,7 +265,7 @@ Action: Execute Python Code
 import requests
 import json
 
-webhook_url = "https://ipa.insightpulseai.com/webhook/expense-approved"
+webhook_url = "https://n8n.insightpulseai.com/webhook/expense-approved"
 
 payload = {
     "expense_id": record.id,
@@ -395,5 +395,5 @@ In each workflow, add a **Set** node after critical steps:
 ## Support
 
 **Documentation**: `/Users/tbwa/odoo/workflows/`
-**n8n Instance**: https://ipa.insightpulseai.com
+**n8n Instance**: https://n8n.insightpulseai.com
 **Contact**: Jake Tolentino (TBWA Finance SSC / InsightPulse AI)

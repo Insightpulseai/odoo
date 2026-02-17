@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-DOMAIN="${DOMAIN:-erp.insightpulseai.net}"
+DOMAIN="${DOMAIN:-erp.insightpulseai.com}"
 CERT_DIR="./nginx/certs"
 MODE="${1:-selfsigned}"
 
@@ -41,7 +41,7 @@ case "$MODE" in
             --standalone \
             --non-interactive \
             --agree-tos \
-            --email "admin@insightpulseai.net" \
+            --email "admin@insightpulseai.com" \
             -d "$DOMAIN"
 
         # Copy certificates to nginx/certs

@@ -13,6 +13,61 @@ Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI cu
 
 ---
 
+## Canonical URLs (SSOT)
+
+This repository uses a **single source of truth** for all service URLs.
+
+**Authoritative reference:**
+[`docs/architecture/CANONICAL_URLS.md`](docs/architecture/CANONICAL_URLS.md)
+
+### Production
+
+| Service  | URL                                 | Success Criteria |
+|----------|-------------------------------------|------------------|
+| ERP      | https://erp.insightpulseai.com      | HTTP 200, Odoo login visible |
+| n8n      | https://n8n.insightpulseai.com      | HTTP 200, n8n UI loads |
+| MCP      | https://mcp.insightpulseai.com      | `/health` → `{ "status": "ok" }` |
+| Superset | https://superset.insightpulseai.com | HTTP 200, login page |
+| OCR      | https://ocr.insightpulseai.com      | `/healthz` returns OK |
+| Auth     | https://auth.insightpulseai.com     | Supabase auth reachable |
+| Web      | https://www.insightpulseai.com      | HTTP 200, marketing site |
+| Apex     | https://insightpulseai.com          | Redirects or serves root |
+
+### Staging
+
+| Service  | URL                                     |
+|----------|-----------------------------------------|
+| ERP      | https://stage-erp.insightpulseai.com    |
+| n8n      | https://stage-n8n.insightpulseai.com    |
+| MCP      | https://stage-mcp.insightpulseai.com    |
+| Superset | https://stage-superset.insightpulseai.com |
+| API      | https://stage-api.insightpulseai.com    |
+| Auth     | https://stage-auth.insightpulseai.com   |
+| OCR      | https://stage-ocr.insightpulseai.com    |
+
+### Local Development
+
+| Service  | URL |
+|----------|-----|
+| Odoo     | http://localhost:8069 |
+| n8n      | http://localhost:5678 |
+| MCP      | http://localhost:8766 |
+| Supabase | http://localhost:54321 |
+
+### Rules
+
+- **Do not hardcode URLs** outside `CANONICAL_URLS.md`
+- `.net` domains are deprecated — `.com` only
+- Any new subdomain **must be added to SSOT first**
+- CI and audits rely on this mapping
+
+See also:
+- `reports/url_inventory.json` — machine-readable inventory
+- `docs/architecture/INTEGRATIONS_SURFACE.md`
+- `spec/insightpulseai-com/` — Spec Kit bundle
+
+---
+
 ## Quick Start
 
 ### Option 1: Dev Container (Recommended for Development)
