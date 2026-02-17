@@ -15,7 +15,7 @@ create schema if not exists audit;
 create table if not exists ops.runtime_identifiers (
   id uuid primary key default gen_random_uuid(),
   environment text not null,         -- prod/dev/stage
-  system text not null,              -- erp.insightpulseai.net
+  system text not null,              -- erp.insightpulseai.com
   identifiers jsonb not null,        -- host, containers, db, domains, etc
   source text not null default 'git',-- git|manual|probe
   artifact_ref text,                 -- repo@sha:path

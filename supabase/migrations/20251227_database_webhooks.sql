@@ -143,28 +143,28 @@ INSERT INTO database_webhooks (name, description, table_name, events, webhook_ur
     'Notify n8n when MCP job completes',
     'mcp_job_queue',
     ARRAY['UPDATE'],
-    'https://n8n.insightpulseai.net/webhook/mcp-job-status'
+    'https://n8n.insightpulseai.com/webhook/mcp-job-status'
 ),
 (
     'github_webhook_received',
     'Process GitHub webhooks via n8n',
     'github_webhook_events',
     ARRAY['INSERT'],
-    'https://n8n.insightpulseai.net/webhook/github-event'
+    'https://n8n.insightpulseai.com/webhook/github-event'
 ),
 (
     'cron_job_failed',
     'Alert on cron job failures',
     'cron_executions',
     ARRAY['INSERT', 'UPDATE'],
-    'https://n8n.insightpulseai.net/webhook/cron-alert'
+    'https://n8n.insightpulseai.com/webhook/cron-alert'
 ),
 (
     'sync_event_broadcast',
     'Broadcast sync events to realtime',
     'sync_events',
     ARRAY['INSERT'],
-    'https://n8n.insightpulseai.net/webhook/sync-broadcast'
+    'https://n8n.insightpulseai.com/webhook/sync-broadcast'
 )
 ON CONFLICT (name) DO NOTHING;
 
