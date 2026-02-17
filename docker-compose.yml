@@ -133,6 +133,23 @@ services:
       start_period: 90s
 
   # ===========================================================================
+  # Nginx — Reverse Proxy (canonical SSOT; was previously orphaned)
+  # Config: ipai-platform/nginx/nginx.conf + conf.d/
+  # ===========================================================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ipai-nginx
+    restart: unless-stopped
+    depends_on:
+      odoo:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./ipai-platform/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ipai-platform/nginx/conf.d:/etc/nginx/conf.d:ro
+
+  # ===========================================================================
   # pgAdmin 4 — Database Admin (profile: tools)
   # ===========================================================================
   pgadmin:
