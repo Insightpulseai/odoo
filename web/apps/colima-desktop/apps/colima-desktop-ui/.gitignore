@@ -1,0 +1,11 @@
+# Electron build outputs
+dist/
+dist-main/
+dist-renderer/
+node_modules/
+
+# Keep build/ for electron-builder config (entitlements, notarize.js)
+# Root .gitignore has build/ but we need it here
+!build/
+!build/entitlements.mac.plist
+!build/notarize.js

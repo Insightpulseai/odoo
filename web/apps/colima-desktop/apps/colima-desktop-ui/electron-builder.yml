@@ -11,6 +11,13 @@ mac:
         - x64
         - arm64
   icon: resources/icon.icns
+  # Code signing (Phase 2 — requires APPLE_DEVELOPER_IDENTITY env var)
+  # Set to null for unsigned builds (Branch B: Phase 1 testing)
+  identity: null
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
 files:
   - dist-renderer/**/*
   - dist-main/**/*
@@ -19,3 +26,6 @@ files:
 dmg:
   title: ${productName} ${version}
   icon: resources/icon.icns
+
+# Notarization hook (runs after signing if APPLE_* env vars are set)
+afterSign: build/notarize.js
