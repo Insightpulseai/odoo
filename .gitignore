@@ -91,9 +91,9 @@ oca/*
 !oca/.gitkeep
 # Logs
 logs/
-# Exception: canonical evidence logs are committed artifacts
-!web/docs/evidence/**/logs/
-!web/docs/evidence/**/logs/*.log
+# Exception: canonical evidence logs under timestamped bundles only (20YY* prefix)
+!web/docs/evidence/20*/**/logs/
+!web/docs/evidence/20*/**/logs/*.log
 # Temporary files
 tmp/
 temp/

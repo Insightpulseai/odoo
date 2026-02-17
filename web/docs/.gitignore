@@ -5,5 +5,5 @@ dist/
 .env*.local
 .DS_Store
 *.log
-# Exception: canonical evidence log artifacts are committed
-!evidence/**/logs/*.log
+# Exception: canonical evidence logs under timestamped bundles only (20YY* prefix)
+!evidence/20*/**/logs/*.log
