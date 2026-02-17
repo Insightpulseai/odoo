@@ -3,7 +3,7 @@
 **Timezone**: Asia/Manila (UTC+08:00)
 **Evidence Stamp**: 20260216-1958+0800
 **Last Updated**: 2026-02-17 00:25:00+0800
-**Status**: ✅ **SSOT Complete** | ✅ **Security Gate Passed** | ⚠️ **TS Config** (Phase B pending)
+**Status**: ✅ **All Prerequisites Pass** | 🔄 **Branch B: Phase 1 Active** (unsigned DMGs built)
 
 ---
 
@@ -18,9 +18,9 @@ All claims below are backed by verifiable log files in `logs/` directory.
 | Daemon TS | 0 errors | `logs/tsc-daemon.txt` | ✅ PASS |
 | Daemon Tests | 25/25 passing | `logs/tests.txt` | ✅ PASS |
 | UI Renderer | Vite build OK | `logs/tsc-ui.txt` | ✅ PASS |
-| UI Main Process | TS config error | `logs/tsc-ui.txt` | ❌ FAIL |
-| Security Audit | 31 HIGH + 3 CRITICAL | `logs/audit-severity.txt` | ❌ FAIL |
-| DMG Packaging | Not attempted | N/A | ⚠️ PENDING |
+| UI Main Process | TS 0 errors | `logs/tsc-ui-canonical.txt` | ✅ PASS |
+| Security Audit | 1 HIGH, 0 CRITICAL | `logs/audit-severity-final.txt` | ✅ PASS |
+| DMG Packaging | x64+arm64 built | `logs/packaging.txt` | ✅ PASS |
 
 ### Evidence Files
 
@@ -53,35 +53,21 @@ $ cat logs/audit-severity.txt
 
 ## Current State Analysis
 
-### What Actually Works ✅
+### What Works ✅
 - **Daemon Core**: TypeScript builds successfully (0 errors)
 - **Daemon Tests**: All 25 unit tests passing (100%)
 - **UI Renderer**: Vite build successful (150.80 KB, gzip: 47.99 KB)
-- **Documentation**: Installation guide created (`INSTALL.md`)
-- **Spec Kit**: Constitution and plan exist at `spec/colima-desktop/`
+- **UI Main Process**: TypeScript 0 errors (Node16 module system)
+- **Security Audit**: 1 HIGH (documented exception), 0 CRITICAL
+- **SSOT Structure**: Canonical paths enforced (`web/apps/`, `web/spec/`)
+- **DMG Packaging**: x64 (100MB) + arm64 (95MB) built unsigned
 
-### What's Broken ❌
-1. **UI Main Process Build**: TS config error blocks Electron app compilation
-   - Error: `Option 'bundler' can only be used when 'module' is set to 'preserve' or 'es2015' or later`
-   - Impact: Cannot package DMG without fixing tsconfig.main.json
-
-2. **Security Vulnerabilities**: ✅ **RESOLVED**
-   - Before: 76 vulnerabilities (31 HIGH, 3 CRITICAL)
-   - After: 8 vulnerabilities (1 HIGH, 0 CRITICAL)
-   - Improvement: 89.5% reduction via pnpm overrides
-   - Exception: ip@<=2.0.1 (unfixable, dev-only, mitigated)
-
-3. **SSOT Violations**: ✅ **RESOLVED**
-   - Moved: `tools/colima-desktop/` → `web/apps/colima-desktop/` (git history preserved)
-   - Moved: `spec/colima-desktop/` → `web/spec/colima-desktop/` (git history preserved)
-   - Status: All code now at canonical location
-
-### What's Not Yet Attempted ⚠️
-- DMG packaging (blocked by TS build error)
-- Manual installation testing (blocked by packaging)
-- Code signing (blocked by packaging + no Apple cert)
-- Notarization (blocked by signing)
-- Homebrew formula (blocked by signed DMGs)
+### What Requires Action ⚠️
+- **Pre-Phase 0**: Apple Developer account + Developer ID certificate required
+- **Phase 1 Manual Testing**: DMGs built, testing pending on clean macOS
+- **Phase 2**: Code signing + notarization (needs Apple cert first)
+- **Phase 3**: Homebrew formula (needs signed DMG)
+- **Phase 4**: Documentation + release (final phase)
 
 ---
 
@@ -89,11 +75,10 @@ $ cat logs/audit-severity.txt
 
 Must be resolved before any phase work can proceed:
 
-### 1. Fix TypeScript Configuration ❌ BLOCKING
+### 1. Fix TypeScript Configuration ✅ COMPLETE
 **File**: `web/apps/colima-desktop/apps/colima-desktop-ui/tsconfig.main.json`
-**Error**: `Option 'bundler' can only be used when 'module' is set to 'preserve' or 'es2015' or later`
-**Fix Required**: Change `moduleResolution` or `module` setting
-**Verification**: Re-run build, capture clean evidence log
+**Fix Applied**: Changed to `module: "Node16"`, `moduleResolution: "Node16"` (Electron main process requires Node-style resolution)
+**Evidence**: `logs/tsc-ui-canonical.txt` - exit code 0
 
 ### 2. Resolve Security Vulnerabilities ✅ COMPLETE
 **Before**: 31 HIGH + 3 CRITICAL vulnerabilities
@@ -158,16 +143,21 @@ Must be resolved before any phase work can proceed:
 
 ### Completed ✅
 - [x] REPO_SSOT.md - Canonical location reference
-- [x] Evidence logs captured - Build, test, audit outputs
-- [x] INSTALL.md - Installation guide (needs path updates)
-- [x] MOVED.md - Migration pointer in old location
+- [x] MOVED.md - Migration pointers at old locations (3 files)
+- [x] AUDIT_POLICY.md - Security vulnerability policy and results
+- [x] BLOCKERS_RESOLVED.md - Prerequisites resolution tracker
+- [x] `logs/tsc-daemon-canonical.txt` - Daemon build: 0 errors
+- [x] `logs/tsc-ui-canonical.txt` - UI build: 0 errors
+- [x] `logs/tests-canonical.txt` - Tests: 25/25 passing
+- [x] `logs/audit-severity-final.txt` - Audit: 1 HIGH, 0 CRITICAL
+- [x] `logs/packaging.txt` - DMG: x64 + arm64 built
 
 ### Pending Evidence ⚠️
-- [ ] Clean TS build log (blocked by config error)
-- [ ] Clean security audit log (blocked by vulnerabilities)
-- [ ] DMG packaging log (blocked by TS build)
-- [ ] Signing verification log (blocked by packaging)
-- [ ] Manual test evidence bundle (blocked by packaging)
+- [ ] Manual installation test (Phase 1 - requires testers with clean macOS)
+- [ ] Signed DMG (Phase 2 - requires Apple Developer account)
+- [ ] Notarization receipt (Phase 2 - requires Apple account)
+- [ ] Homebrew formula + tap (Phase 3)
+- [ ] v0.1.0 release assets (Phase 4)
 
 ---
 
@@ -270,10 +260,13 @@ Before proceeding to any deployment phase:
 
 ---
 
-**Current Branch**: Branch C → Transition to Branch A/B
-**Prerequisites Status**:
-- ✅ SSOT Migration: COMPLETE (2026-02-17 01:00:00+0800)
-- ✅ Security Gate: PASSED (2026-02-17 02:15:00+0800)
-- ⚠️ TS Config: Still failing (Action 1 pending)
+**Current Branch**: Branch B (Not Signing-Ready)
+**Branch Condition**: No Apple Developer ID Application certificate found
 
-**Next Step**: Fix TypeScript configuration, then transition to Branch A (signing-ready) or Branch B (not signing-ready)
+**Prerequisites Status (All Clear)**:
+- ✅ SSOT Migration: COMPLETE (2026-02-17 01:00:00+0800)
+- ✅ Security Gate: PASSED (1 HIGH exception, 0 CRITICAL)
+- ✅ TS Config: FIXED (Node16 module system)
+- ✅ DMG Packaging: COMPLETE (x64 + arm64 unsigned)
+
+**Next Step**: Pre-Phase 0 (Apple Developer account) → Phase 1 manual testing (unsigned DMG) → Phase 2 (signing) → Phase 3 (Homebrew) → Phase 4 (release)
