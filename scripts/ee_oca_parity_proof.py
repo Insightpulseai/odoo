@@ -874,8 +874,8 @@ EE_MODULES = {
         "desc": "Work Orders - HR Bridge",
         "strategy": "oca",
         "oca_repos": ["OCA/manufacture"],
-        "oca_modules": [],
-        "notes": "Worker assignment to work orders via OCA extensions",
+        "oca_modules": ["mrp_multi_level"],
+        "notes": "Worker assignment to work orders via OCA manufacture extensions",
     },
     "mrp_workorder_iot": {
         "domain": "manufacturing",
@@ -891,8 +891,8 @@ EE_MODULES = {
         "desc": "Work Orders - PLM Bridge",
         "strategy": "oca",
         "oca_repos": ["OCA/manufacture"],
-        "oca_modules": [],
-        "notes": "Engineering change orders linked to work orders",
+        "oca_modules": ["mrp_bom_tracking"],
+        "notes": "Engineering change orders via BOM tracking linked to work orders",
     },
     "mrp_plm": {
         "domain": "manufacturing",
@@ -1077,8 +1077,8 @@ EE_MODULES = {
         "desc": "USPS Shipping",
         "strategy": "oca",
         "oca_repos": ["OCA/delivery-carrier"],
-        "oca_modules": [],
-        "notes": "OCA delivery-carrier framework; USPS via direct API or stamps.com",
+        "oca_modules": ["base_delivery_carrier_label"],
+        "notes": "OCA delivery-carrier framework + base label module; USPS via direct API or stamps.com",
     },
 
     # ── VoIP ──────────────────────────────────────────────────────────────
@@ -1195,10 +1195,11 @@ EE_MODULES = {
     "web_cohort": {
         "domain": "web",
         "desc": "Cohort Analysis View",
-        "strategy": "oca",
+        "strategy": "oca+external",
+        "external_service": "Apache Superset / Metabase",
         "oca_repos": ["OCA/web", "OCA/reporting-engine"],
-        "oca_modules": [],
-        "notes": "Cohort analysis achievable via OCA reporting-engine + BI tools (Superset/Metabase)",
+        "oca_modules": ["bi_sql_editor"],
+        "notes": "Cohort analysis via OCA bi_sql_editor + Superset/Metabase dashboards",
     },
     "web_dashboard": {
         "domain": "web",
@@ -1318,16 +1319,16 @@ EE_MODULES = {
         "desc": "Fleet Enterprise Views",
         "strategy": "oca",
         "oca_repos": ["OCA/fleet"],
-        "oca_modules": [],
-        "notes": "OCA fleet modules extend CE fleet with additional views",
+        "oca_modules": ["fleet_vehicle_log_fuel"],
+        "notes": "OCA fleet modules extend CE fleet with fuel logs, additional views",
     },
     "stock_enterprise": {
         "domain": "project",
         "desc": "Stock Enterprise Views",
         "strategy": "oca",
         "oca_repos": ["OCA/stock-logistics-reporting"],
-        "oca_modules": [],
-        "notes": "OCA stock reporting provides enhanced warehouse views",
+        "oca_modules": ["stock_picking_report_valued"],
+        "notes": "OCA stock reporting provides valued picking reports and enhanced warehouse views",
     },
     "rental": {
         "domain": "project",
@@ -1492,17 +1493,41 @@ def build_parity_proof(oca_repos: dict) -> dict:
             if not exists:
                 warnings.append(f"OCA repo {repo_ref} not found for {ee_mod}")
 
+        # Determine evidence tier
+        # T0=unmapped, T1=mapped+repo verified, T2=installable, T3=functional, T4=verified
+        all_repos_verified = all(r["exists"] for r in repo_verified) if repo_verified else True
+        has_replacement = (
+            info.get("oca_modules")
+            or info.get("external_service")
+            or info.get("ipai_modules")
+            or strategy.startswith("ce")       # CE-native = replacement is already in Community
+            or "ce" in strategy                 # ce+oca, etc.
+        )
+        if strategy == "not_needed":
+            tier = "N/A"
+        elif all_repos_verified and has_replacement:
+            tier = "T1"  # Mapped — repo exists, replacement identified
+        else:
+            tier = "T0"  # Unmapped or unverified
+
         entry = {
             "ee_module": ee_mod,
             "domain": info.get("domain"),
             "description": info.get("desc"),
             "strategy": strategy,
+            "tier": tier,
             "oca_repos": repo_verified,
             "oca_modules": info.get("oca_modules", []),
             "ipai_modules": info.get("ipai_modules", []),
             "external_service": info.get("external_service"),
             "notes": info.get("notes"),
-            "covered": True,  # Every entry has a strategy
+            "covered": tier in ("T1", "T2", "T3", "T4", "N/A"),
+            "evidence": {
+                "t1_mapped": tier in ("T1", "T2", "T3", "T4"),
+                "t2_installable": None,  # Requires install test
+                "t3_functional": None,   # Requires QA checklist
+                "t4_verified": None,     # Requires production soak
+            },
         }
         verified.append(entry)
 
@@ -1528,6 +1553,14 @@ def build_parity_proof(oca_repos: dict) -> dict:
                 "ipai_custom": sum(1 for v in verified if v["strategy"] in ("ipai", "external+ipai")),
                 "not_needed": total_not_needed,
             },
+            "tier_counts": {
+                "T0": sum(1 for v in verified if v["tier"] == "T0"),
+                "T1": sum(1 for v in verified if v["tier"] == "T1"),
+                "T2": sum(1 for v in verified if v["tier"] == "T2"),
+                "T3": sum(1 for v in verified if v["tier"] == "T3"),
+                "T4": sum(1 for v in verified if v["tier"] == "T4"),
+                "N/A": sum(1 for v in verified if v["tier"] == "N/A"),
+            },
             "domain_counts": dict(sorted(domain_counts.items())),
             "oca_repos_referenced": sorted(set(
                 ref for v in verified for r in v["oca_repos"] for ref in [r["ref"]] if r["exists"]
@@ -1546,11 +1579,14 @@ def generate_evidence_md(report: dict) -> str:
     ts = report["generated_at"]
     s = report["summary"]
 
+    tier_counts = s.get("tier_counts", {})
+
     lines = [
         "# EE-to-OCA Parity Proof: Every Enterprise Module Has a Replacement",
         "",
         f"> Generated: {ts}",
         "> Script: `scripts/ee_oca_parity_proof.py`",
+        "> Spec: `spec/ee-oca-parity/constitution.md`",
         "",
         "---",
         "",
@@ -1564,6 +1600,21 @@ def generate_evidence_md(report: dict) -> str:
         "2. **CE-native** — functionality already in Odoo Community Edition",
         "3. **External service** — third-party API (n8n, Twilio, Superset, etc.) replacing Odoo IAP",
         "4. **IPAI thin bridge** — minimal `ipai_*` glue module (<1k LOC)",
+        "",
+        "### Evidence Tier Status",
+        "",
+        "> **Important**: A mapping (T1) proves a replacement *exists*.",
+        "> It does NOT prove installability (T2), functional parity (T3),",
+        "> or production readiness (T4). See `spec/ee-oca-parity/constitution.md`.",
+        "",
+        "| Tier | Name | Count | Meaning |",
+        "|------|------|-------|---------|",
+        f"| T0 | Unmapped | {tier_counts.get('T0', 0)} | No verified replacement |",
+        f"| **T1** | **Mapped** | **{tier_counts.get('T1', 0)}** | **Replacement identified, OCA repo verified** |",
+        f"| T2 | Installable | {tier_counts.get('T2', 0)} | Installs on our Odoo 19 CE baseline |",
+        f"| T3 | Functional | {tier_counts.get('T3', 0)} | ≥80% feature coverage for our workflows |",
+        f"| T4 | Verified | {tier_counts.get('T4', 0)} | Production-tested, 30-day soak |",
+        f"| N/A | Not needed | {tier_counts.get('N/A', 0)} | Demo/test data, skip |",
         "",
         "### Strategy Breakdown",
         "",
@@ -1633,8 +1684,8 @@ def generate_evidence_md(report: dict) -> str:
         if m["domain"] != current_domain:
             current_domain = m["domain"]
             lines.extend([f"### {current_domain.replace('_', ' ').title()}", ""])
-            lines.append("| EE Module | Strategy | OCA Replacement | Notes |")
-            lines.append("|-----------|----------|-----------------|-------|")
+            lines.append("| EE Module | Tier | Strategy | OCA Replacement | Notes |")
+            lines.append("|-----------|------|----------|-----------------|-------|")
 
         oca_mods = ", ".join(f"`{m}`" for m in m["oca_modules"]) if m["oca_modules"] else ""
         ipai_mods = ", ".join(f"`{m}`" for m in m.get("ipai_modules", [])) if m.get("ipai_modules") else ""
@@ -1649,8 +1700,9 @@ def generate_evidence_md(report: dict) -> str:
             replacement_parts.append(ext)
         replacement = " + ".join(replacement_parts) if replacement_parts else "CE native"
 
+        tier = m.get("tier", "T0")
         notes = m["notes"][:80] if m["notes"] else ""
-        lines.append(f"| `{m['ee_module']}` | {m['strategy']} | {replacement} | {notes} |")
+        lines.append(f"| `{m['ee_module']}` | {tier} | {m['strategy']} | {replacement} | {notes} |")
 
         # Check if next module has different domain
         idx = sorted(report["modules"], key=lambda x: (x["domain"], x["ee_module"])).index(m)
