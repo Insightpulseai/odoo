@@ -6,6 +6,12 @@
 #
 # Used by: .devcontainer/devcontainer.json
 # Extends: ../docker-compose.yml
+#
+# Canonical dev root: /workspaces/odoo (repo root bind-mounted).
+# All addons-path entries reference /workspaces/odoo/addons/* so that edits
+# in the devcontainer are immediately visible to Odoo (hot-reload deterministic).
+# Do NOT add separate /mnt/extra-addons/* mounts in this overlay — they create
+# two-root ambiguity without adding value.
 # ==============================================================================
 
 version: '3.8'
@@ -16,11 +22,13 @@ services:
   # ===========================================================================
   odoo:
     # Override to enable full dev mode
+    working_dir: /workspaces/odoo
     environment:
       - ODOO_DEV_MODE=all
       - ODOO_LOG_LEVEL=debug
 
-    # Dev-specific command with all debugging enabled
+    # Dev-specific command with all debugging enabled.
+    # All addons-path entries use /workspaces/odoo/* — single canonical root.
     command: >
       odoo
       --db_host=db
@@ -28,17 +36,17 @@ services:
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/workspaces/odoo/addons/oca/server-tools,/workspaces/odoo/addons/oca/server-ux,/workspaces/odoo/addons/oca/web,/workspaces/odoo/addons/oca/automation,/workspaces/odoo/addons/oca/account-financial-tools,/workspaces/odoo/addons/oca/account-financial-reporting,/workspaces/odoo/addons/oca/project,/workspaces/odoo/addons/oca/queue,/workspaces/odoo/addons/oca/reporting-engine,/workspaces/odoo/addons/oca/sale-workflow,/workspaces/odoo/addons/oca/purchase-workflow,/workspaces/odoo/addons/oca/server-backend,/workspaces/odoo/addons/oca/mis-builder,/workspaces/odoo/addons/oca/spreadsheet,/workspaces/odoo/addons/oca/knowledge,/workspaces/odoo/addons/oca/dms,/workspaces/odoo/addons/oca/rest-framework,/workspaces/odoo/addons/oca/social,/workspaces/odoo/addons/oca/account-reconcile,/workspaces/odoo/addons/oca/hr-expense,/workspaces/odoo/addons/oca/contract,/workspaces/odoo/addons/oca/timesheet,/workspaces/odoo/addons/oca/connector,/workspaces/odoo/addons/oca/storage,/workspaces/odoo/addons/oca/ai,/workspaces/odoo/addons/ipai
       --log-level=debug
       --dev=all
       --log-handler=:DEBUG
 
-    # Mount workspace for Dev Container
+    # Single canonical root: /workspaces/odoo is the dev runtime root.
+    # Do NOT add separate addons/ipai or addons/oca mounts here — they are
+    # already accessible under /workspaces/odoo/addons/* via the repo mount.
     volumes:
       - ../:/workspaces/odoo:cached
       - odoo-web-data:/var/lib/odoo
-      - ../addons/ipai:/mnt/extra-addons/ipai:ro
-      - ../addons/oca:/mnt/extra-addons/OCA:ro
 
   # ===========================================================================
   # PostgreSQL — Dev Container Overrides
