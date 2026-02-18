@@ -109,3 +109,36 @@ jobs:
           fi
 
           echo "✅ Root allowlist guard PASSED — no unexpected root files."
+
+      - name: Block high-risk root artifacts
+        if: github.event_name == 'pull_request'
+        run: |
+          # Fail if any added/modified file at repo root matches a high-risk pattern.
+          # Scoped to PR diffs only (push to main is handled by the allowlist above).
+          BAD=$(git diff --name-only --diff-filter=AM origin/main...HEAD -- \
+            | awk -F/ 'NF==1 {print $0}')
+
+          if [[ -z "$BAD" ]]; then
+            echo "✅ No new root files in this PR."
+            exit 0
+          fi
+
+          FAILED=0
+          while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            if echo "$f" | grep -qE \
+              '(^\.env($|\.)|\.(pem|key|p12|pfx)$|\.tfstate(\.backup)?$|dump\.sql$|(^|[-_])(secrets?|credentials?|password|passwd)([-_.]|$))'; then
+              echo "🚨 High-risk root artifact detected: $f"
+              echo "   Never commit credentials, keys, state files, or SQL dumps to repo root."
+              FAILED=1
+            fi
+          done <<< "$BAD"
+
+          if [[ "$FAILED" == "1" ]]; then
+            exit 1
+          fi
+          echo "✅ No high-risk root artifacts detected."
+
+      - name: Check for stale references to moved root files
+        run: |
+          bash scripts/ci/check_root_moves_backcompat.sh
