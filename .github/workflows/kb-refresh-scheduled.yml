@@ -1,0 +1,63 @@
+name: kb-refresh-scheduled
+
+on:
+  schedule:
+    # Run at 00:00 on Sunday
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "Optional upstream commit SHA to pin"
+        required: false
+
+jobs:
+  refresh-kb:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Execute Skill (Refresh Odoo 19 KB)
+        run: |
+          COMMIT_ARG=""
+          if [ -n "${{ inputs.commit }}" ]; then
+            COMMIT_ARG="--commit=${{ inputs.commit }}"
+          fi
+
+          python3 scripts/skills/refresh_odoo19_kb.py $COMMIT_ARG
+
+      - name: Verify Changes
+        run: |
+          # Ensure git status shows changes or is clean (if no upstream updates)
+          git status
+
+      - name: Commit and Push
+        run: |
+          # If there are changes, commit them
+          if [[ -n $(git status -s) ]]; then
+            git add docs/kb/odoo19/ docs/evidence/
+            git commit -m "chore(kb): refresh odoo19 knowledge base [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi

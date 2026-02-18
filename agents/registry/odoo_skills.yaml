@@ -1,0 +1,159 @@
+# OdooOps Procedural Skills Registry
+# Skills are deterministic workflows with non-negotiable step ordering
+# All procedural skills must follow the template in deploy-odoo-modules-git/SKILL.md
+
+skills:
+  - id: deploy-odoo-modules-git
+    type: procedural
+    entrypoint: agents/skills/deploy-odoo-modules-git/SKILL.md
+    domains: [odoo, odooops, devops]
+    requires:
+      - ops_schema
+      - git
+      - odoo_runtime_access
+    guardrails:
+      prod_requires_staging_success: true
+      forbid_enterprise_modules: true
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - classify
+        - lint
+        - manifest_parse
+        - dependency_sort
+  - id: odoo-fullstack-ai-dev
+    type: knowledge
+    entrypoint: agents/skills/odoo-fullstack-ai-dev/SKILL.md
+    domains: [odoo, ai, fullstack, backend, frontend, testing]
+    guardrails: {}
+    routing:
+      default_tier: remote
+
+  - id: backup-odoo-environment
+    type: procedural
+    entrypoint: agents/skills/backup-odoo-environment/SKILL.md
+    domains: [odoo, odooops, sre]
+    requires:
+      - ops_schema
+      - runtime_executor
+      - artifact_storage
+    guardrails:
+      forbid_parallel_deploy_restore: true
+      redact_secrets_in_evidence: true
+      integrity_checks_required: true
+      retention_policy_default:
+        daily: 7
+        weekly: 4
+        monthly: 3
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - classify
+        - log_classification
+
+  - id: restore-odoo-environment
+    type: procedural
+    entrypoint: agents/skills/restore-odoo-environment/SKILL.md
+    domains: [odoo, odooops, sre, disaster-recovery]
+    requires:
+      - ops_schema
+      - runtime_executor
+      - artifact_storage
+      - pg_restore_tools
+      - backup_artifact_contract_v1
+    guardrails:
+      forbid_parallel_deploy_restore: true
+      prod_requires_human_confirmation: true
+      pre_restore_backup_mandatory: true
+      redact_secrets_in_evidence: true
+      integrity_checks_required: true
+      rollback_on_failure_default: true
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - classify
+        - log_classification
+        - parse_artifact_metadata
+
+  - id: promote-staging-to-prod
+    title: "Promote Staging to Prod"
+    type: procedural
+    version: "1.0.0"
+    entrypoint: agents/skills/promote-staging-to-prod/SKILL.md
+    domains: [odoo, odooops, release, deployment]
+    requires:
+      - restore-odoo-environment
+      - backup-odoo-environment
+      - runtime_executor
+      - artifact_storage
+      - ops_schema
+    guardrails:
+      prod_requires_staging_success: true
+      forbid_enterprise_modules: true
+      rollback_default: true
+      evidence_required: true
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - log_classification
+        - metrics_summarization
+    evidence:
+      required: true
+      path_pattern: "docs/evidence/<YYYY-MM-DD>/promote/<run_id>/"
+
+  - id: refresh-odoo19-kb
+    type: procedural
+    entrypoint: agents/skills/refresh-odoo19-kb/SKILL.md
+    domains: [odoo, docs, knowledge]
+    requires:
+      - git
+    guardrails:
+      redact_secrets_in_evidence: true
+      integrity_checks_required: true
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - classify
+        - log_classification
+
+  - id: validate-odoo-module-against-kb
+    title: "Validate Odoo Module Against Odoo19 KB"
+    type: procedural
+    version: "1.0.0"
+    entrypoint: agents/skills/validate-odoo-module-against-kb/SKILL.md
+    domains: [odoo, quality, security]
+    kb:
+      namespace: "docs/kb/odoo19"
+      pinned_commit_ref: "docs/kb/odoo19/UPSTREAM_PIN.json"
+    routing:
+      default_tier: local
+      allow_local_steps:
+        - log_classification
+        - report_summarization
+    guardrails:
+      forbid_enterprise_modules: true
+      prod_requires_staging_success: false
+    evidence:
+      required: true
+      path_pattern: "docs/evidence/<YYYY-MM-DD>/kb/validate/<run_id>/"
+
+  - id: generate-odoo-skill-from-kb
+    title: "Generate Procedural Skill From Odoo19 KB"
+    type: procedural
+    version: "1.0.0"
+    entrypoint: agents/skills/generate-odoo-skill-from-kb/SKILL.md
+    domains: [odoo, meta, devtools]
+    kb:
+      namespace: "docs/kb/odoo19"
+      pinned_commit_ref: "docs/kb/odoo19/UPSTREAM_PIN.json"
+    routing:
+      default_tier: remote
+      allow_local_steps:
+        - formatting
+        - summaries
+    guardrails:
+      forbid_enterprise_modules: true
+      prod_requires_staging_success: false
+    evidence:
+      required: true
+      path_pattern: "docs/evidence/<YYYY-MM-DD>/kb/generate-skill/<run_id>/"

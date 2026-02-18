@@ -1,0 +1,54 @@
+name: VS Code Stabilization
+
+on:
+  push:
+    paths:
+      - 'scripts/vscode/**'
+      - '.github/workflows/vscode_stabilization.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Verify Scripts Syntax
+        run: |
+          python3 -m py_compile scripts/vscode/stabilize_product_json.py
+          python3 -m py_compile scripts/vscode/validate_product_api_proposals.py
+
+      - name: Test Stabilization Logic (Mock)
+        run: |
+          # Create mock product.json
+          cat <<EOF > mock_product.json
+          {
+            "extensionEnabledApiProposals": {
+              "valid.ext": ["validProposal"],
+              "invalid.ext": ["attributableCoverage", "chatSessionsProvider@3"]
+            },
+            "builtInExtensions": [
+              { "id": "hediet.vscode-drawio" },
+              { "id": "hediet.vscode-drawio-insiders-build" },
+              "copilot-swe-agent",
+              "valid-extension"
+            ]
+          }
+          EOF
+
+          # Create mock vscode.d.ts
+          echo "export interface validProposal {}" > mock_vscode.d.ts
+
+          # Run stabilizer
+          python3 scripts/vscode/stabilize_product_json.py mock_product.json --output stabilized_product.json
+
+          # Check output content
+          cat stabilized_product.json
+
+          # Validate matching
+          python3 scripts/vscode/validate_product_api_proposals.py --product stabilized_product.json --dts mock_vscode.d.ts

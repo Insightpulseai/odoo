@@ -8,10 +8,12 @@ SSOT="../docker-compose.yml"
 test -f "$DC" || { echo "ERROR: missing $DC" >&2; exit 1; }
 
 python3 - <<PY
-import json, sys
+import json, re, sys
 p="${DC}"
 ssot="${SSOT}"
-d=json.load(open(p,"r",encoding="utf-8"))
+raw = open(p,"r",encoding="utf-8").read()
+stripped = re.sub(r'//[^\n]*', '', raw)
+d=json.loads(stripped)
 files=d.get("dockerComposeFile") or []
 if isinstance(files, str): files=[files]
 if ssot not in files:

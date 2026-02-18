@@ -1,0 +1,16 @@
+module.exports=[31327,a=>{"use strict";var b=a.i(42904),c=a.i(40898);function d(){let[a,d]=(0,c.useState)("addons/ipai_core/__manifest__.py"),[e,f]=(0,c.useState)(`{
+    "name": "IPAI Core",
+    "version": "19.0.1.0.0",
+    "category": "Technical",
+    "summary": "Core functionality for IPAI addons",
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.com",
+    "license": "LGPL-3",
+    "depends": ["base"],
+    "data": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+}`),g=[{name:"addons",type:"folder",path:"addons",children:[{name:"ipai_core",type:"folder",path:"addons/ipai_core",children:[{name:"__manifest__.py",type:"file",path:"addons/ipai_core/__manifest__.py"},{name:"__init__.py",type:"file",path:"addons/ipai_core/__init__.py"}]}]},{name:"odoo.conf",type:"file",path:"odoo.conf"}],h=(c,e=0)=>c.map(c=>(0,b.jsx)("div",{style:{paddingLeft:`${16*e}px`},children:"folder"===c.type?(0,b.jsxs)("div",{children:[(0,b.jsxs)("div",{className:"py-1 text-sm text-gray-700 font-medium cursor-pointer hover:bg-gray-100",children:["📁 ",c.name]}),c.children&&h(c.children,e+1)]}):(0,b.jsxs)("div",{className:`py-1 text-sm cursor-pointer hover:bg-gray-100 ${a===c.path?"bg-blue-50 text-blue-700":"text-gray-600"}`,onClick:()=>d(c.path),children:["📄 ",c.name]})},c.path));return(0,b.jsxs)("div",{className:"space-y-4",children:[(0,b.jsxs)("div",{className:"flex items-center justify-between",children:[(0,b.jsx)("h2",{className:"text-lg font-semibold",children:"Code Editor"}),(0,b.jsxs)("div",{className:"flex gap-2",children:[(0,b.jsx)("button",{className:"px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50",children:"Read-only Mode"}),(0,b.jsx)("button",{className:"px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700",children:"Open in IDE"})]})]}),(0,b.jsxs)("div",{className:"grid grid-cols-4 gap-4 border border-gray-200 rounded-lg overflow-hidden",children:[(0,b.jsxs)("div",{className:"col-span-1 bg-gray-50 border-r border-gray-200 p-4 overflow-y-auto max-h-[600px]",children:[(0,b.jsx)("h3",{className:"text-sm font-semibold mb-3",children:"Files"}),h(g)]}),(0,b.jsx)("div",{className:"col-span-3 bg-white",children:a?(0,b.jsxs)("div",{className:"flex flex-col h-full",children:[(0,b.jsx)("div",{className:"border-b border-gray-200 px-4 py-2 bg-gray-50",children:(0,b.jsx)("span",{className:"text-sm font-medium",children:a})}),(0,b.jsx)("div",{className:"flex-1 p-4",children:(0,b.jsx)("pre",{className:"font-mono text-sm bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto",children:e})}),(0,b.jsx)("div",{className:"border-t border-gray-200 px-4 py-2 bg-gray-50 text-xs text-gray-600",children:"Read-only view • Full editing available in IDE"})]}):(0,b.jsx)("div",{className:"flex items-center justify-center h-[600px] text-gray-500",children:"Select a file to view"})})]}),(0,b.jsx)("div",{className:"text-sm text-gray-600",children:(0,b.jsx)("p",{children:'💡 This is a read-only preview. For full editing capabilities, use the "Open in IDE" button to launch your local development environment.'})})]})}a.s(["default",()=>d])}];
+
+//# sourceMappingURL=8d3cb_app_%28app%29_projects_%5BprojectId%5D_builds_%5BbuildId%5D_editor_page_tsx_abf3a5b9._.js.map

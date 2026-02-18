@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/odoo/W002_OD_BIR_ALERTS.json
++++ b/automations/n8n/workflows/W002_OD_BIR_ALERTS.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/odoo/W002_OD_BIR_ALERTS.json' 'automations/n8n/workflows/W002_OD_BIR_ALERTS.json'

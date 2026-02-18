@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-02-17T15:43:31.409146+00:00",
+  "env": "stage",
+  "apply": false,
+  "base_url": "https://n8n.insightpulseai.com",
+  "total": 13,
+  "created": 0,
+  "updated": 0,
+  "skipped": 0,
+  "failed": 0,
+  "dry_run": 13,
+  "results": [
+    {
+      "name": "System Health Check",
+      "source": "automations/n8n/workflows/01-health-check.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Git Operations Hub",
+      "source": "automations/n8n/workflows/02-git-operations-hub.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Finance Close Orchestrator",
+      "source": "automations/n8n/workflows/03-finance-close-orchestrator.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "BIR Compliance Reminders",
+      "source": "automations/n8n/workflows/04-bir-compliance.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "GitHub OAuth Callback Handler",
+      "source": "automations/n8n/workflows/05-github-oauth-callback.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "BIR Deadline Reminder",
+      "source": "automations/n8n/workflows/bir_deadline_reminder.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Expense Receipt Capture",
+      "source": "automations/n8n/workflows/expense_receipt_capture.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Finance Month-End Closing - Automation",
+      "source": "automations/n8n/workflows/finance_closing_automation.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Invoice OCR to Odoo",
+      "source": "automations/n8n/workflows/invoice_ocr_to_odoo.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "Odoo Reverse Mapper - SaaS Feature Gap Automation",
+      "source": "automations/n8n/workflows/odoo_reverse_mapper.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "PPM Monthly Close - Notification Automation",
+      "source": "automations/n8n/workflows/ppm_monthly_close_automation.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "BIR Deadline Reminder (9AM & 5PM)",
+      "source": "automations/n8n/bir_deadline_reminder_workflow.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    },
+    {
+      "name": "BIR Overdue Daily Nudge",
+      "source": "automations/n8n/bir_overdue_nudge_workflow.json",
+      "action": "CREATE",
+      "remote_id": null,
+      "status": "dry-run"
+    }
+  ]
+}

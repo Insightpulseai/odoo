@@ -1,0 +1,16 @@
+/* [project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/login.module.css [app-client] (css) */
+.login-module__DCZ7ha__loginSubmitButton {
+  cursor: pointer;
+  padding: 10px;
+  transition: opacity .2s;
+}
+
+.login-module__DCZ7ha__loginSubmitButton:hover {
+  opacity: .8;
+}
+
+.login-module__DCZ7ha__loginSubmitButton:active {
+  opacity: .7;
+}
+
+/*# sourceMappingURL=7889e_Insightpulseai_odoo_templates_odooops-console_app_login_login_module_87d4467d.css.map*/

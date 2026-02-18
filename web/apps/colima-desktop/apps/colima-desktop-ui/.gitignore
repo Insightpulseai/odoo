@@ -1,0 +1,14 @@
+# Electron build outputs
+dist/
+dist-main/
+dist-renderer/
+node_modules/
+
+#
+# build/ is ignored at repo root (generic `build/` pattern).
+# Track exactly two electron-builder config files; deny everything else under build/.
+#
+build/**
+!build/
+!build/entitlements.mac.plist
+!build/notarize.js

@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/odoo/W001_OD_MNTH_CLOSE_SYNC.json
++++ b/automations/n8n/workflows/W001_OD_MNTH_CLOSE_SYNC.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/odoo/W001_OD_MNTH_CLOSE_SYNC.json' 'automations/n8n/workflows/W001_OD_MNTH_CLOSE_SYNC.json'
