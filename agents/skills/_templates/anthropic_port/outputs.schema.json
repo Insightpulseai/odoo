@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "string",
+      "description": "Primary output from the skill"
+    }
+  },
+  "required": ["result"]
+}
