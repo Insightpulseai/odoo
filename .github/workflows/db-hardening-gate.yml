@@ -1,0 +1,98 @@
+name: db-hardening-gate
+
+on:
+  pull_request:
+    paths:
+      - "db/**"
+      - "scripts/db/**"
+      - "docker-compose.yml"
+      - ".gitignore"
+      - ".github/workflows/db-hardening-gate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "db/**"
+      - "scripts/db/**"
+      - "docker-compose.yml"
+      - ".gitignore"
+      - ".github/workflows/db-hardening-gate.yml"
+
+jobs:
+  validate-artifacts:
+    name: Validate DB hardening artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Assert DB hardening artifacts exist
+        run: |
+          set -euo pipefail
+          echo "✓ Checking for required DB hardening files..."
+
+          # Init script (runs on fresh DB)
+          test -f db/init/10_unaccent_immutable.sql || {
+            echo "❌ Missing: db/init/10_unaccent_immutable.sql"
+            exit 1
+          }
+          echo "  ✓ db/init/10_unaccent_immutable.sql"
+
+          # Apply script (runs on existing DB)
+          test -f db/sql/apply_unaccent_immutable.sql || {
+            echo "❌ Missing: db/sql/apply_unaccent_immutable.sql"
+            exit 1
+          }
+          echo "  ✓ db/sql/apply_unaccent_immutable.sql"
+
+          # Helper script
+          test -f scripts/db/apply_unaccent_fix.sh || {
+            echo "❌ Missing: scripts/db/apply_unaccent_fix.sh"
+            exit 1
+          }
+          echo "  ✓ scripts/db/apply_unaccent_fix.sh"
+
+      - name: Assert helper script is executable
+        run: |
+          set -euo pipefail
+          test -x scripts/db/apply_unaccent_fix.sh || {
+            echo "❌ scripts/db/apply_unaccent_fix.sh is not executable"
+            echo "Fix: chmod +x scripts/db/apply_unaccent_fix.sh"
+            exit 1
+          }
+          echo "✓ Helper script is executable"
+
+      - name: Assert compose mounts /sql as read-only
+        run: |
+          set -euo pipefail
+          grep -qE '\./db/sql:/sql:ro' docker-compose.yml || {
+            echo "❌ docker-compose.yml missing required mount: ./db/sql:/sql:ro"
+            echo "Required for on-demand DB hardening scripts"
+            exit 1
+          }
+          echo "✓ docker-compose.yml mounts ./db/sql:/sql:ro"
+
+      - name: Assert gitignore allows db sql tracking
+        run: |
+          set -euo pipefail
+          grep -qE '^\!db/\*\*/\*\.sql' .gitignore || {
+            echo "❌ .gitignore missing exception for db/**/*.sql"
+            echo "DB hardening SQL scripts must be tracked in git"
+            exit 1
+          }
+          echo "✓ .gitignore allows tracking db/**/*.sql"
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ All DB hardening gates passed"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Validated:"
+          echo "  - Init script: db/init/10_unaccent_immutable.sql"
+          echo "  - Apply script: db/sql/apply_unaccent_immutable.sql"
+          echo "  - Helper script: scripts/db/apply_unaccent_fix.sh (executable)"
+          echo "  - Docker mount: ./db/sql:/sql:ro"
+          echo "  - Git tracking: !db/**/*.sql exception"
+          echo ""

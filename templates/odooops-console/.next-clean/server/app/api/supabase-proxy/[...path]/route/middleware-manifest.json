@@ -1,0 +1,39 @@
+{
+  "sorted_middleware": [
+    "/api/supabase-proxy/[...path]/route"
+  ],
+  "middleware": {},
+  "instrumentation": null,
+  "functions": {
+    "/api/supabase-proxy/[...path]/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "required-server-files.js",
+        "server/server-reference-manifest.js",
+        "server/app/api/supabase-proxy/[...path]/route_client-reference-manifest.js",
+        "server/edge/chunks/8d3cb__next-internal_server_app_api_supabase-proxy_[___path]_route_actions_4e912376.js",
+        "server/edge/chunks/[root-of-the-server]__94d338fd._.js",
+        "server/edge/chunks/bfc07_bbd61081._.js",
+        "server/edge/chunks/5724a_next_dist_esm_build_templates_edge-wrapper_b4715d75.js"
+      ],
+      "name": "app/api/supabase-proxy/[...path]/route",
+      "page": "/api/supabase-proxy/[...path]/route",
+      "matchers": [
+        {
+          "regexp": "^/api/supabase-proxy/(?P<nxtPpath>.+?)(?:/)?$",
+          "originalSource": "/api/supabase-proxy/[...path]"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "jmrKi51JithVeklOUpDTn",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "QG1B4fD+CYlJDUHeRLaOuDydE6nCL1tUfkWxgd75KsI=",
+        "__NEXT_PREVIEW_MODE_ID": "c05208f42d597ceb11835a3462693770",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "1780fc46407a3ef598bf93484df08952a4e4be2c6a9fc61ab638ee9d71f77393",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "4a23ef345a02131e31126cfb6c67b8229457c0fe90840ad7db411002b01500f5"
+      }
+    }
+  }
+}

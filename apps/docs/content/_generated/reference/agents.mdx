@@ -1,0 +1,97 @@
+---
+title: Agent Registry
+last_verified: 2026-02-15T08:13:38.864919
+evidence: agents/registry/odoo_skills.yaml
+---
+
+::banner{type='warning'}
+**Generated Content**: This page is auto-generated from runtime artifacts. Do not edit manually.
+::
+
+::verify-badge{path='agents/registry/odoo_skills.yaml'}
+::
+
+# OdooOps Agent Registry
+
+List of registered agents and skills available in the platform.
+
+## Procedural Skills
+
+### deploy-odoo-modules-git
+
+- **ID**: `deploy-odoo-modules-git`
+- **Type**: `procedural`
+- **Domains**: odoo, odooops, devops
+- **Guardrails**:
+  - `prod_requires_staging_success`: True
+  - `forbid_enterprise_modules`: True
+
+### odoo-fullstack-ai-dev
+
+- **ID**: `odoo-fullstack-ai-dev`
+- **Type**: `knowledge`
+- **Domains**: odoo, ai, fullstack, backend, frontend, testing
+- **Guardrails**:
+
+### backup-odoo-environment
+
+- **ID**: `backup-odoo-environment`
+- **Type**: `procedural`
+- **Domains**: odoo, odooops, sre
+- **Guardrails**:
+  - `forbid_parallel_deploy_restore`: True
+  - `redact_secrets_in_evidence`: True
+  - `integrity_checks_required`: True
+  - `retention_policy_default`: {'daily': 7, 'weekly': 4, 'monthly': 3}
+
+### restore-odoo-environment
+
+- **ID**: `restore-odoo-environment`
+- **Type**: `procedural`
+- **Domains**: odoo, odooops, sre, disaster-recovery
+- **Guardrails**:
+  - `forbid_parallel_deploy_restore`: True
+  - `prod_requires_human_confirmation`: True
+  - `pre_restore_backup_mandatory`: True
+  - `redact_secrets_in_evidence`: True
+  - `integrity_checks_required`: True
+  - `rollback_on_failure_default`: True
+
+### Promote Staging to Prod
+
+- **ID**: `promote-staging-to-prod`
+- **Type**: `procedural`
+- **Domains**: odoo, odooops, release, deployment
+- **Guardrails**:
+  - `prod_requires_staging_success`: True
+  - `forbid_enterprise_modules`: True
+  - `rollback_default`: True
+  - `evidence_required`: True
+
+### refresh-odoo19-kb
+
+- **ID**: `refresh-odoo19-kb`
+- **Type**: `procedural`
+- **Domains**: odoo, docs, knowledge
+- **Guardrails**:
+  - `redact_secrets_in_evidence`: True
+  - `integrity_checks_required`: True
+
+### Validate Odoo Module Against Odoo19 KB
+
+- **ID**: `validate-odoo-module-against-kb`
+- **Type**: `procedural`
+- **Domains**: odoo, quality, security
+- **Guardrails**:
+  - `forbid_enterprise_modules`: True
+  - `prod_requires_staging_success`: False
+
+### Generate Procedural Skill From Odoo19 KB
+
+- **ID**: `generate-odoo-skill-from-kb`
+- **Type**: `procedural`
+- **Domains**: odoo, meta, devtools
+- **Guardrails**:
+  - `forbid_enterprise_modules`: True
+  - `prod_requires_staging_success`: False
+

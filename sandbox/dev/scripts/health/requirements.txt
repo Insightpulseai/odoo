@@ -1,0 +1,4 @@
+# Health check dependencies
+requests>=2.31.0
+pyyaml>=6.0
+psycopg2-binary>=2.9.9  # Optional: for PostgreSQL checks

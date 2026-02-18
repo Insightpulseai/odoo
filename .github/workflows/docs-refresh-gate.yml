@@ -1,0 +1,40 @@
+name: docs-refresh-gate
+
+on:
+  pull_request:
+    paths:
+      - "agents/registry/odoo_skills.yaml"
+      - "docs/docs.manifest.yaml"
+      - "scripts/docs/refresh_docs.py"
+      - "apps/docs/**"
+  push:
+    branches:
+      - main
+
+jobs:
+  check-docs-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Run Docs Refresh
+        run: python3 scripts/docs/refresh_docs.py
+
+      - name: Check for Drift
+        run: |
+          if [[ -n $(git status -s apps/docs/content/_generated) ]]; then
+            echo "::error::Documentation drift detected! Run 'python3 scripts/docs/refresh_docs.py' and commit the changes."
+            git status -s apps/docs/content/_generated
+            exit 1
+          fi
+          echo "Documentation is up to date."

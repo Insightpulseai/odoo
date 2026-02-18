@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\n  \"app\": {\n    \"[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/page\": [\n      \"static/media/caa3a2e1cccd8315-s.p.853070df.woff2\"\n    ]\n  },\n  \"appUsingSizeAdjust\": true,\n  \"pages\": {},\n  \"pagesUsingSizeAdjust\": false\n}"

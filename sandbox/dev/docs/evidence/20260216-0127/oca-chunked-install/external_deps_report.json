@@ -1,0 +1,76 @@
+{
+  "bin": {
+    "storage_media": []
+  },
+  "python": {
+    "base_rest": [
+      "apispec",
+      "cerberus",
+      "parse-accept-language",
+      "pyquerystring"
+    ],
+    "base_rest_auth_api_key": [
+      "apispec"
+    ],
+    "base_rest_pydantic": [
+      "pydantic>=2.0.0"
+    ],
+    "extendable": [
+      "extendable>=0.0.4"
+    ],
+    "fastapi": [
+      "a2wsgi>=1.10.6",
+      "fastapi>=0.110.0",
+      "parse-accept-language",
+      "python-multipart",
+      "ujson"
+    ],
+    "field_vector": [
+      "numpy"
+    ],
+    "fs_attachment": [
+      "fsspec>=2025.3.0",
+      "python_slugify"
+    ],
+    "fs_attachment_s3": [
+      "fsspec[s3]"
+    ],
+    "fs_storage": [
+      "fsspec>=2024.5.0"
+    ],
+    "fs_storage_ms_drive": [
+      "fsspec>=2025.0.0",
+      "msgraphfs"
+    ],
+    "pydantic": [
+      "contextvars",
+      "pydantic>=2.0.0",
+      "typing-extensions"
+    ],
+    "queue_job": [
+      "requests"
+    ],
+    "report_xlsx": [
+      "xlrd",
+      "xlsxwriter"
+    ],
+    "storage_backend_ftp": [
+      "pyftpdlib"
+    ],
+    "storage_backend_s3": [
+      "boto3"
+    ],
+    "storage_backend_sftp": [
+      "paramiko"
+    ],
+    "storage_file": [
+      "python_slugify"
+    ],
+    "storage_media": [],
+    "upgrade_analysis": [
+      "dataclasses",
+      "odoorpc",
+      "openupgradelib"
+    ]
+  }
+}

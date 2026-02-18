@@ -400,14 +400,11 @@ jobs:
           done
 
           # Create GitHub release
+          RELEASE_NOTES="Automated production deployment\n\n**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG\`\n**Commit:** ${{ github.sha }}\n**Deployed by:** ${{ github.actor }}\n**Workflow:** [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          printf '%b\n' "$RELEASE_NOTES" > /tmp/release-notes.md
           gh release create "$TAG" \
             --title "Production: $TAG" \
-            --notes "Automated production deployment
-
-**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG\`
-**Commit:** ${{ github.sha }}
-**Deployed by:** ${{ github.actor }}
-**Workflow:** [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
+            --notes-file /tmp/release-notes.md \
             --latest
 
       - name: Release summary
@@ -432,22 +429,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          ISSUE_BODY="## CD Pipeline Failure\n\n**Workflow Run:** [#${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n**Triggered by:** ${{ github.actor }}\n**Commit:** ${{ github.sha }}\n\n### Failed Jobs\nCheck the workflow run for details on which stage failed.\n\n### Recovery Steps\n1. Check the workflow logs\n2. Fix the issue\n3. Re-run the workflow or push a fix to main"
+          printf '%b\n' "$ISSUE_BODY" > /tmp/issue-body.md
           gh issue create \
             --repo ${{ github.repository }} \
             --title "CD Pipeline Failed: ${{ github.run_id }}" \
-            --body "## CD Pipeline Failure
-
-**Workflow Run:** [#${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-**Triggered by:** ${{ github.actor }}
-**Commit:** ${{ github.sha }}
-
-### Failed Jobs
-Check the workflow run for details on which stage failed.
-
-### Recovery Steps
-1. Check the workflow logs
-2. Fix the issue
-3. Re-run the workflow or push a fix to main" \
+            --body-file /tmp/issue-body.md \
             --label "bug,ci" || echo "Could not create issue"
 
       - name: Failure summary

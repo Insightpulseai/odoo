@@ -1,0 +1,121 @@
+{
+  "node": {
+    "00a858acf2044f51a0ecb3ee38b0042b1867d73436": {
+      "workers": {
+        "app/(app)/projects/[projectId]/backups/page": {
+          "moduleId": 63649,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/branches/page": {
+          "moduleId": 69002,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/builds/[buildId]/editor/page": {
+          "moduleId": 90302,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/builds/[buildId]/logs/page": {
+          "moduleId": 1543,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/builds/[buildId]/monitor/page": {
+          "moduleId": 93120,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/builds/[buildId]/shell/page": {
+          "moduleId": 19624,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/builds/page": {
+          "moduleId": 13798,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/monitor/page": {
+          "moduleId": 71007,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/settings/page": {
+          "moduleId": 20186,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/[projectId]/upgrade/page": {
+          "moduleId": 5068,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        },
+        "app/(app)/projects/page": {
+          "moduleId": 89662,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(app)/projects/[projectId]/backups/page": "rsc",
+        "app/(app)/projects/[projectId]/branches/page": "rsc",
+        "app/(app)/projects/[projectId]/builds/[buildId]/editor/page": "rsc",
+        "app/(app)/projects/[projectId]/builds/[buildId]/logs/page": "rsc",
+        "app/(app)/projects/[projectId]/builds/[buildId]/monitor/page": "rsc",
+        "app/(app)/projects/[projectId]/builds/[buildId]/shell/page": "rsc",
+        "app/(app)/projects/[projectId]/builds/page": "rsc",
+        "app/(app)/projects/[projectId]/monitor/page": "rsc",
+        "app/(app)/projects/[projectId]/settings/page": "rsc",
+        "app/(app)/projects/[projectId]/upgrade/page": "rsc",
+        "app/(app)/projects/page": "rsc"
+      },
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts",
+      "exportedName": "signOut"
+    },
+    "40cf70b488c85f8c24a14d0cc79e25761c42f6b092": {
+      "workers": {
+        "app/(auth)/login/page": {
+          "moduleId": 84684,
+          "async": false,
+          "exportedName": "loginAction",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(auth)/login/server-actions.ts"
+        }
+      },
+      "layer": {
+        "app/(auth)/login/page": "action-browser"
+      },
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(auth)/login/server-actions.ts",
+      "exportedName": "loginAction"
+    },
+    "00c31ed256ab32458b81c626e5da502069c62c75a0": {
+      "workers": {
+        "app/logout/page": {
+          "moduleId": 28984,
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/logout/server-actions.ts"
+        }
+      },
+      "layer": {
+        "app/logout/page": "rsc"
+      },
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/logout/server-actions.ts",
+      "exportedName": "logoutAction"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "QG1B4fD+CYlJDUHeRLaOuDydE6nCL1tUfkWxgd75KsI="
+}

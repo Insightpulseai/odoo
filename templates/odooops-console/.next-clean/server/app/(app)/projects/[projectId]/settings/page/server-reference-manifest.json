@@ -1,0 +1,20 @@
+{
+  "node": {
+    "00a858acf2044f51a0ecb3ee38b0042b1867d73436": {
+      "workers": {
+        "app/(app)/projects/[projectId]/settings/page": {
+          "moduleId": 20186,
+          "async": false,
+          "exportedName": "signOut",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(app)/projects/[projectId]/settings/page": "rsc"
+      },
+      "exportedName": "signOut",
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(app)/actions.ts"
+    }
+  },
+  "edge": {}
+}

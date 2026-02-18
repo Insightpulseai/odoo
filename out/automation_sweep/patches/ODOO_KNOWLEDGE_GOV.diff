@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/ODOO_KNOWLEDGE_GOV.json
++++ b/automations/n8n/workflows/ODOO_KNOWLEDGE_GOV.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/ODOO_KNOWLEDGE_GOV.json' 'automations/n8n/workflows/ODOO_KNOWLEDGE_GOV.json'

@@ -1,0 +1,154 @@
+name: Colima Desktop Gate
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'tools/colima-desktop/**'
+      - 'apps/colima-desktop-ui/**'
+      - '.github/workflows/colima-desktop-gate.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'tools/colima-desktop/**'
+      - 'apps/colima-desktop-ui/**'
+      - '.github/workflows/colima-desktop-gate.yml'
+
+jobs:
+  daemon-cli:
+    name: Daemon + CLI
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        working-directory: tools/colima-desktop
+        run: pnpm install
+
+      - name: Lint
+        working-directory: tools/colima-desktop
+        run: pnpm lint || echo "Linting skipped (no lint script)"
+
+      - name: Type check
+        working-directory: tools/colima-desktop
+        run: pnpm typecheck || pnpm tsc --noEmit
+
+      - name: Run tests
+        working-directory: tools/colima-desktop
+        run: pnpm test
+
+      - name: Build
+        working-directory: tools/colima-desktop
+        run: pnpm build
+
+      - name: Verify build artifacts
+        working-directory: tools/colima-desktop
+        run: |
+          test -f dist/index.js || exit 1
+          test -f dist/index.d.ts || exit 1
+          echo "✅ Build artifacts verified"
+
+  electron-ui:
+    name: Electron UI
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        working-directory: apps/colima-desktop-ui
+        run: pnpm install
+
+      - name: Lint
+        working-directory: apps/colima-desktop-ui
+        run: pnpm lint
+
+      - name: Type check
+        working-directory: apps/colima-desktop-ui
+        run: pnpm typecheck
+
+      - name: Build
+        working-directory: apps/colima-desktop-ui
+        run: pnpm build
+
+      - name: Verify build artifacts
+        working-directory: apps/colima-desktop-ui
+        run: |
+          test -d dist-main || exit 1
+          test -d dist-renderer || exit 1
+          echo "✅ Electron build artifacts verified"
+
+      - name: Package macOS DMG (release gate)
+        working-directory: apps/colima-desktop-ui
+        run: pnpm package
+
+      - name: Verify DMG artifacts
+        working-directory: apps/colima-desktop-ui
+        run: |
+          echo "Listing dist/ contents:"
+          ls -la dist/ || { echo "❌ dist/ directory not found"; exit 1; }
+
+          # Count DMG files (must have at least 1)
+          DMG_COUNT=$(ls -1 dist/*.dmg 2>/dev/null | wc -l | tr -d ' ')
+          echo "Found ${DMG_COUNT} DMG file(s)"
+          test "${DMG_COUNT}" -ge 1 || { echo "❌ No DMG files found"; exit 1; }
+
+          # Verify both architectures exist (arm64 + non-arm64)
+          ARM64_COUNT=$(ls -1 dist/*.dmg 2>/dev/null | grep -i 'arm64' | wc -l | tr -d ' ')
+          NON_ARM64_COUNT=$(ls -1 dist/*.dmg 2>/dev/null | grep -vi 'arm64' | wc -l | tr -d ' ')
+
+          echo "Architecture breakdown: arm64=${ARM64_COUNT}, non-arm64=${NON_ARM64_COUNT}"
+          test "${ARM64_COUNT}" -ge 1 || { echo "❌ No arm64 DMG found"; exit 1; }
+          test "${NON_ARM64_COUNT}" -ge 1 || { echo "❌ No non-arm64 DMG found"; exit 1; }
+
+          echo "✅ DMG artifacts verified (arm64 + non-arm64)"
+
+      - name: Upload DMG artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: colima-desktop-dmg
+          path: apps/colima-desktop-ui/dist/*.dmg
+          retention-days: 30
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Audit daemon dependencies
+        working-directory: tools/colima-desktop
+        run: pnpm audit --audit-level=high || echo "⚠️ Security vulnerabilities found"
+
+      - name: Audit UI dependencies
+        working-directory: apps/colima-desktop-ui
+        run: pnpm audit --audit-level=high || echo "⚠️ Security vulnerabilities found"

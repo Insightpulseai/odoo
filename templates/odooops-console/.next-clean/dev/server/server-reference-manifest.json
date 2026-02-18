@@ -1,0 +1,21 @@
+{
+  "node": {
+    "40163562cf803cc8333dd0bc255df9b541be5f2650": {
+      "workers": {
+        "app/login/page": {
+          "moduleId": "[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/.next-internal/server/app/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/server-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "loginAction",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/server-actions.ts"
+        }
+      },
+      "layer": {
+        "app/login/page": "rsc"
+      },
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/server-actions.ts",
+      "exportedName": "loginAction"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "df2+C0dSbI5uSkF7m3ASM62ljBhX6g+4Repsc1IB0E4="
+}

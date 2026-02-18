@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/ODOO_BIR_PREP.json
++++ b/automations/n8n/workflows/ODOO_BIR_PREP.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/ODOO_BIR_PREP.json' 'automations/n8n/workflows/ODOO_BIR_PREP.json'

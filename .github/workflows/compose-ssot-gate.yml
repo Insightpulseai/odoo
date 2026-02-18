@@ -1,0 +1,31 @@
+name: Docker Compose SSOT Gate
+
+on:
+  pull_request:
+    paths:
+      - '**/docker-compose*.yml'
+      - '**/compose.yaml'
+      - '.github/compose-allowlist.txt'
+      - 'scripts/validate-compose-ssot.sh'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/docker-compose*.yml'
+      - '**/compose.yaml'
+
+jobs:
+  validate-ssot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Compose SSOT
+        run: |
+          chmod +x scripts/validate-compose-ssot.sh
+          ./scripts/validate-compose-ssot.sh
+
+      - name: Validate Compose Syntax
+        run: |
+          docker compose -f docker-compose.yml config > /dev/null
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml config > /dev/null

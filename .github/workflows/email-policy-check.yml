@@ -1,0 +1,319 @@
+name: Email Policy Enforcement
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+      - 'addons/ipai/**'
+      - '**/*.yaml'
+      - '**/*.yml'
+      - '**/*.json'
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  email-policy-check:
+    name: Validate Email Policy Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Load email policy SSOT
+        id: load-policy
+        run: |
+          if [ ! -f infra/identity/admin-email-policy.yaml ]; then
+            echo "ERROR: Email policy SSOT not found at infra/identity/admin-email-policy.yaml"
+            exit 1
+          fi
+
+          echo "✅ Email policy SSOT loaded"
+
+          # Extract forbidden emails for validation
+          grep -A 20 "^forbidden_admin_aliases:" infra/identity/admin-email-policy.yaml | \
+            grep "^  -" | sed 's/^  - "//;s/"$//' > /tmp/forbidden_emails.txt
+
+          echo "Forbidden admin emails:"
+          cat /tmp/forbidden_emails.txt
+
+      - name: Check for personal email addresses in configs
+        id: check-personal-emails
+        run: |
+          EXIT_CODE=0
+
+          # E002: No personal emails (@gmail, @yahoo, @outlook) as system owners
+          echo "🔍 E002: Checking for personal emails in system configs..."
+
+          PERSONAL_EMAIL_PATTERNS=(
+            "@gmail.com"
+            "@yahoo.com"
+            "@outlook.com"
+            "@hotmail.com"
+            "@live.com"
+            "jgtolentino.rn@gmail.com"
+          )
+
+          for pattern in "${PERSONAL_EMAIL_PATTERNS[@]}"; do
+            # Search in config files only (exclude docs, evidence, tests)
+            MATCHES=$(git grep -i "${pattern}" -- \
+              'infra/**/*.yaml' \
+              'infra/**/*.yml' \
+              'infra/**/*.json' \
+              '.github/workflows/**' \
+              'scripts/**/*.sh' \
+              'addons/ipai/**/manifest.py' \
+              ':!docs/' \
+              ':!docs/**' \
+              ':!*.md' \
+              ':!**/evidence/**' \
+              ':!**/tests/**' \
+              || true)
+
+            if [ -n "$MATCHES" ]; then
+              echo "❌ VIOLATION E002: Found personal email '${pattern}' in config:"
+              echo "$MATCHES"
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ E002: No personal emails found in system configs"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Check for forbidden admin aliases
+        id: check-forbidden-aliases
+        run: |
+          EXIT_CODE=0
+
+          # E001: All infrastructure platforms must use devops@ as admin
+          echo "🔍 E001: Checking for forbidden admin aliases..."
+
+          FORBIDDEN_ALIASES=(
+            "business@insightpulseai.com"
+            "info@insightpulseai.com"
+            "support@insightpulseai.com"
+            "team@insightpulseai.com"
+            "ceo@insightpulseai.com"
+            "no-reply@insightpulseai.com"
+          )
+
+          # Context patterns that indicate admin/owner usage
+          ADMIN_CONTEXTS=(
+            "admin_email"
+            "owner_email"
+            "system_email"
+            "admin:"
+            "owner:"
+            "ADMIN_EMAIL"
+            "OWNER_EMAIL"
+            "SYSTEM_EMAIL"
+          )
+
+          for alias in "${FORBIDDEN_ALIASES[@]}"; do
+            # Search for forbidden aliases in admin contexts
+            for context in "${ADMIN_CONTEXTS[@]}"; do
+              MATCHES=$(git grep -i "${alias}" -- \
+                'infra/**/*.yaml' \
+                'infra/**/*.yml' \
+                'infra/**/*.json' \
+                '.github/workflows/**' \
+                'scripts/**/*.sh' \
+                ':!docs/' \
+                ':!docs/**' \
+                ':!*.md' \
+                ':!**/evidence/**' \
+                | grep -i "${context}" || true)
+
+              if [ -n "$MATCHES" ]; then
+                echo "❌ VIOLATION E001: Forbidden alias '${alias}' used in admin context:"
+                echo "$MATCHES"
+                EXIT_CODE=1
+              fi
+            done
+          done
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ E001: No forbidden aliases found in admin contexts"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Check for no-reply as admin (E005)
+        id: check-no-reply-admin
+        run: |
+          EXIT_CODE=0
+
+          # E005: Never use no-reply@ as admin/owner
+          echo "🔍 E005: Checking for no-reply@ in admin contexts..."
+
+          MATCHES=$(git grep -i "no-reply@insightpulseai.com" -- \
+            'infra/**/*.yaml' \
+            'infra/**/*.yml' \
+            'infra/**/*.json' \
+            '.github/workflows/**' \
+            'scripts/**/*.sh' \
+            ':!docs/' \
+            ':!docs/**' \
+            ':!*.md' \
+            ':!**/evidence/**' \
+            | grep -iE "(admin|owner|system)(_email|:|=)" || true)
+
+          if [ -n "$MATCHES" ]; then
+            echo "❌ VIOLATION E005: no-reply@ used in admin/owner context:"
+            echo "$MATCHES"
+            EXIT_CODE=1
+          else
+            echo "✅ E005: no-reply@ not used as admin/owner"
+          fi
+
+          exit $EXIT_CODE
+
+      - name: Verify devops@ as system owner (E001)
+        id: verify-devops-owner
+        run: |
+          EXIT_CODE=0
+
+          # E001: All infrastructure platforms must use devops@ as admin
+          echo "🔍 E001: Verifying devops@ is used for system ownership..."
+
+          # Check if devops@ appears in admin contexts
+          DEVOPS_USAGE=$(git grep -i "devops@insightpulseai.com" -- \
+            'infra/**/*.yaml' \
+            'infra/**/*.yml' \
+            'infra/**/*.json' \
+            '.github/workflows/**' \
+            'scripts/**/*.sh' \
+            ':!docs/' \
+            ':!docs/**' \
+            ':!*.md' \
+            ':!**/evidence/**' \
+            | grep -iE "(admin|owner|system)(_email|:|=)" || true)
+
+          if [ -z "$DEVOPS_USAGE" ]; then
+            echo "⚠️ WARNING E001: No devops@ usage found in admin contexts"
+            echo "This may indicate missing system owner configuration"
+            # Don't fail, just warn
+          else
+            echo "✅ E001: devops@ found in system owner contexts:"
+            echo "$DEVOPS_USAGE" | head -n 5
+          fi
+
+      - name: Check n8n configuration for devops@ (E003)
+        id: check-n8n-email
+        run: |
+          EXIT_CODE=0
+
+          # E003: System-generated emails must use no-reply@
+          echo "🔍 E003: Checking n8n email configuration..."
+
+          # Check if n8n SMTP config uses no-reply@
+          N8N_SMTP_CONFIGS=$(find . -name "*.env*" -o -name "*n8n*" -type f \
+            | xargs grep -i "N8N_EMAIL" 2>/dev/null || true)
+
+          if [ -n "$N8N_SMTP_CONFIGS" ]; then
+            # Check if using no-reply@ for FROM address
+            if echo "$N8N_SMTP_CONFIGS" | grep -iq "no-reply@insightpulseai.com"; then
+              echo "✅ E003: n8n configured to use no-reply@ for system emails"
+            else
+              echo "⚠️ WARNING E003: n8n email config may not use no-reply@"
+              echo "$N8N_SMTP_CONFIGS"
+              # Don't fail, just warn (config may be in env vars)
+            fi
+          else
+            echo "ℹ️ E003: No n8n email config found in repo (may be in runtime env)"
+          fi
+
+      - name: Generate compliance report
+        if: always()
+        run: |
+          echo "📊 Email Policy Compliance Report"
+          echo "=================================="
+          echo ""
+          echo "Policy Version: $(grep '^version:' infra/identity/admin-email-policy.yaml | awk '{print $2}' | tr -d '\"')"
+          echo "Check Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo ""
+          echo "## Enforcement Rules Checked:"
+          echo ""
+          echo "- E001: All infrastructure platforms must use devops@ as admin"
+          echo "- E002: No personal emails (@gmail, @yahoo) as system owners"
+          echo "- E003: System-generated emails must use no-reply@"
+          echo "- E005: Never use no-reply@ as admin/owner"
+          echo ""
+          echo "## Results:"
+          echo ""
+          echo "See step summaries above for detailed violations."
+          echo ""
+          echo "## Remediation:"
+          echo ""
+          echo "If violations found:"
+          echo "1. Review infra/identity/admin-email-policy.yaml for policy"
+          echo "2. Update configs to use devops@insightpulseai.com for admin/owner"
+          echo "3. Use no-reply@insightpulseai.com only for system-generated emails"
+          echo "4. Never use personal emails or forbidden aliases for infrastructure"
+          echo ""
+          echo "## Migration Guide:"
+          echo ""
+          echo "See infra/identity/email-migration-checklist.md for platform migration steps"
+
+      - name: Comment PR with violations (if any)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const body = `## ❌ Email Policy Violations Detected
+
+            This PR contains email policy violations. Please review and correct before merging.
+
+            **Policy Reference**: \`infra/identity/admin-email-policy.yaml\`
+
+            ### Common Issues:
+
+            - **Personal emails (@gmail, @yahoo)** used in system configs
+            - **Forbidden aliases** (business@, info@, support@) used as admin/owner
+            - **no-reply@** used in admin/owner contexts (should only be for system-generated emails)
+
+            ### Required Actions:
+
+            1. Update all admin/owner configs to use \`devops@insightpulseai.com\`
+            2. Use \`no-reply@insightpulseai.com\` only for system-generated emails (never admin)
+            3. Remove personal email addresses from infrastructure configs
+
+            ### Migration Guide:
+
+            See [\`infra/identity/email-migration-checklist.md\`](https://github.com/${{ github.repository }}/blob/main/infra/identity/email-migration-checklist.md) for platform migration steps.
+
+            ### Policy Details:
+
+            **Golden Rule**: Any account with write access to infrastructure, secrets, DNS, CI, or production databases MUST be owned by \`devops@insightpulseai.com\`.
+
+            ---
+
+            Check the workflow logs for specific violations and file locations.`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: body
+            });
+
+      - name: Fail if violations found
+        if: failure()
+        run: |
+          echo "❌ Email policy violations detected. PR blocked."
+          echo ""
+          echo "Review the logs above for specific violations."
+          echo "Update configs to comply with infra/identity/admin-email-policy.yaml"
+          echo ""
+          exit 1

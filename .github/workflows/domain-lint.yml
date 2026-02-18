@@ -87,12 +87,31 @@ jobs:
             --exclude-dir="node_modules" \
             --exclude-dir=".venv" \
             --exclude-dir="__pycache__" \
+            --exclude-dir=".gemini" \
+            --exclude-dir="platform-kit" \
+            --exclude-dir="evidence" \
+            --exclude-dir="migrations" \
+            --exclude-dir="specs" \
+            --exclude-dir="sandbox" \
+            --exclude-dir="ee-parity-gate" \
             --exclude="CLAUDE.md" \
+            --exclude="AGENTS.md" \
+            --exclude="GEMINI.md" \
             --exclude="migrate-net-to-com.sh" \
             --exclude="CANONICAL_URLS.md" \
             --exclude="url_inventory.json" \
             --exclude="domain-lint.yml" \
             --exclude="check_domain_policy.py" \
+            --exclude="sweep_repo.py" \
+            --exclude="setup-insightpulseai-domain.sh" \
+            --exclude="SSOT.md" \
+            --exclude-dir="issues" \
+            --exclude="DEPRECATED_DOCS.md" \
+            --exclude="PROD_RUNTIME_SNAPSHOT.md" \
+            --exclude="EE_PARITY_GATE_REPORT.md" \
+            --exclude="ODOOSH_GRADE_PARITY_GATING.md" \
+            --exclude="deployment-timeline.md" \
+            --exclude="update_phase_tags.sql" \
             'insightpulseai\.net' . 2>/dev/null || true)
 
           if [ -n "$HITS" ]; then

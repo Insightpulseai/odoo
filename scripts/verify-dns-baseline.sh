@@ -42,7 +42,7 @@ echo ""
 # Verify no .net records exist
 echo "4. Verify .net deprecation:"
 for service in erp n8n ocr auth affine; do
-  fqdn="${service}.insightpulseai.net"
+  fqdn="${service}.insightpulseai.com"
   result=$(dig +short A "$fqdn" || true)
   if [[ -z "$result" ]]; then
     echo "  ✅ $fqdn → (no record, correctly deprecated)"

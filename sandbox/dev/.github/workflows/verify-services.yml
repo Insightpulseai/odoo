@@ -1,0 +1,156 @@
+name: Verify Services Health
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+      - 'platform/**'
+      - 'web/**'
+      - 'agents/**'
+      - 'automations/**'
+      - 'scripts/health/**'
+      - '.github/workflows/verify-services.yml'
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to check'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: staging
+
+jobs:
+  health-check:
+    name: Health Check - ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - staging
+          # Add prod when ready: - prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r scripts/health/requirements.txt
+
+      - name: Run health checks - ${{ matrix.environment }}
+        env:
+          # Odoo
+          ODOO_BASE_URL: ${{ secrets[format('ODOO_BASE_URL_{0}', matrix.environment)] || secrets.ODOO_BASE_URL }}
+          ODOO_LONGPOLLING_URL: ${{ secrets[format('ODOO_LONGPOLLING_URL_{0}', matrix.environment)] }}
+
+          # Supabase
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+          # n8n
+          N8N_BASE_URL: ${{ secrets[format('N8N_BASE_URL_{0}', matrix.environment)] || secrets.N8N_BASE_URL }}
+
+          # Superset
+          SUPERSET_BASE_URL: ${{ secrets[format('SUPERSET_BASE_URL_{0}', matrix.environment)] || secrets.SUPERSET_BASE_URL }}
+          SUPERSET_TOKEN: ${{ secrets.SUPERSET_TOKEN }}
+
+          # Vercel
+          OPS_CONSOLE_URL: ${{ secrets[format('OPS_CONSOLE_URL_{0}', matrix.environment)] || secrets.OPS_CONSOLE_URL }}
+          MARKETING_URL: ${{ secrets[format('MARKETING_URL_{0}', matrix.environment)] || secrets.MARKETING_URL }}
+
+          # Optional
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+
+          # PostgreSQL (optional)
+          POSTGRES_URL: ${{ secrets[format('POSTGRES_URL_{0}', matrix.environment)] }}
+
+        run: |
+          python scripts/health/all_services_healthcheck.py \
+            --env ${{ matrix.environment }} \
+            --json out/health/${{ matrix.environment }}-report.json \
+            --md out/health/${{ matrix.environment }}-report.md \
+            --verbose
+
+      - name: Upload health check reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: health-check-reports-${{ matrix.environment }}
+          path: out/health/
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'out/health/${{ matrix.environment }}-report.md';
+
+            if (fs.existsSync(reportPath)) {
+              const report = fs.readFileSync(reportPath, 'utf8');
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## Health Check Results - ${{ matrix.environment }}\n\n${report}`
+              });
+            }
+
+      - name: Fail if health check failed
+        if: failure()
+        run: |
+          echo "::error::Health check failed for ${{ matrix.environment }}"
+          echo "Review the detailed report in the artifacts"
+          exit 1
+
+  summary:
+    name: Health Check Summary
+    runs-on: ubuntu-latest
+    needs: health-check
+    if: always()
+
+    steps:
+      - name: Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports/
+
+      - name: Generate summary
+        run: |
+          echo "# Health Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for report in reports/*/staging-report.md; do
+            if [ -f "$report" ]; then
+              cat "$report" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Check overall status
+        run: |
+          if [ "${{ needs.health-check.result }}" != "success" ]; then
+            echo "::error::One or more health checks failed"
+            exit 1
+          fi

@@ -1,0 +1,164 @@
+name: Colima Desktop Release
+
+# Trigger: push a version tag (e.g., colima-desktop/v0.2.0)
+# Creates a signed + notarized DMG and publishes GitHub release
+on:
+  push:
+    tags:
+      - 'colima-desktop/v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 0.2.0)'
+        required: true
+        type: string
+      sign:
+        description: 'Code sign + notarize'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── Daemon Build ──────────────────────────────────────────────────
+      - name: Build daemon (TypeScript)
+        working-directory: web/apps/colima-desktop
+        run: pnpm build
+
+      - name: Run daemon tests
+        working-directory: web/apps/colima-desktop
+        run: pnpm test
+
+      # ── UI Build ─────────────────────────────────────────────────────
+      - name: Build UI (Vite + TypeScript main)
+        working-directory: web/apps/colima-desktop/apps/colima-desktop-ui
+        run: pnpm build
+
+      # ── Code Signing Setup ───────────────────────────────────────────
+      - name: Import signing certificate
+        # Requires: sign=true OR tag push, AND all Apple secrets present
+        if: >-
+          (github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/')) &&
+          secrets.APPLE_CERTIFICATE_BASE64 != '' &&
+          secrets.APPLE_CERTIFICATE_PASSWORD != '' &&
+          secrets.KEYCHAIN_PASSWORD != ''
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+
+          # Import certificate
+          echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+          security import certificate.p12 \
+            -k build.keychain \
+            -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm certificate.p12
+
+      # ── DMG Packaging ─────────────────────────────────────────────────
+      - name: Package DMG (signed or unsigned)
+        working-directory: web/apps/colima-desktop/apps/colima-desktop-ui
+        env:
+          # Code signing (optional — skipped if not set)
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: pnpm package
+
+      # ── Security audit gate ──────────────────────────────────────────
+      - name: Security audit gate
+        working-directory: web/apps/colima-desktop
+        run: |
+          # Fail if any CRITICAL vulnerabilities found
+          CRITICAL=$(pnpm audit --json 2>/dev/null | jq '[.advisories[].severity] | map(select(. == "critical")) | length' || echo 0)
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "FAIL: $CRITICAL CRITICAL vulnerabilities found"
+            exit 1
+          fi
+          echo "PASS: No CRITICAL vulnerabilities"
+
+      # ── Upload artifacts ─────────────────────────────────────────────
+      - name: Collect DMG artifacts
+        id: artifacts
+        working-directory: web/apps/colima-desktop/apps/colima-desktop-ui/dist
+        run: |
+          ls -lh *.dmg
+          echo "x64_dmg=$(ls *[^arm64].dmg | head -1)" >> "$GITHUB_OUTPUT"
+          echo "arm64_dmg=$(ls *arm64.dmg | head -1)" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate SHA256 checksums
+        working-directory: web/apps/colima-desktop/apps/colima-desktop-ui/dist
+        run: |
+          shasum -a 256 *.dmg | tee checksums.txt
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME:-colima-desktop/v${{ github.event.inputs.version }}}"
+          VERSION="${TAG#colima-desktop/v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Colima Desktop v${{ steps.version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          body_path: web/apps/colima-desktop/apps/colima-desktop-ui/CHANGELOG.md
+          draft: true
+          files: |
+            web/apps/colima-desktop/apps/colima-desktop-ui/dist/*.dmg
+            web/apps/colima-desktop/apps/colima-desktop-ui/dist/checksums.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Update Homebrew formula ───────────────────────────────────────
+      - name: Update Homebrew formula
+        # Only meaningful after a signed release; skip for unsigned tag builds
+        if: >-
+          (github.event.inputs.sign == 'true' || startsWith(github.ref, 'refs/tags/')) &&
+          secrets.APPLE_CERTIFICATE_BASE64 != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd web/apps/colima-desktop
+          bash scripts/update-formula.sh "$VERSION"
+
+          echo "Formula updated for v${VERSION}"
+          echo "Next: commit Formula/colima-desktop.rb to homebrew tap"
+
+      # ── Cleanup keychain ─────────────────────────────────────────────
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          security delete-keychain build.keychain 2>/dev/null || true

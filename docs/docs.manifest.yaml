@@ -1,0 +1,84 @@
+# Documentation Platform Manifest (SSOT)
+# Controls navigation, versioning, and content generation for apps/docs
+
+schema_version: "1.0.0"
+
+versions:
+  - id: "v1.0"
+    label: "Platform v1 (Odoo 19)"
+    is_latest: true
+    runtime_snapshot_path: "docs/architecture/PROD_RUNTIME_SNAPSHOT.md"
+
+navigation:
+  top:
+    - label: "Overview"
+      path: "/overview"
+    - label: "Apps"
+      path: "/apps"
+    - label: "How-to"
+      path: "/howto"
+    - label: "Reference"
+      path: "/reference"
+    - label: "Policies"
+      path: "/policies"
+
+  sidebars:
+    default:
+      - label: "Overview"
+        items:
+          - label: "Architecture"
+            path: "/overview/architecture"
+          - label: "Environments"
+            path: "/overview/environments"
+
+      - label: "Apps"
+        items:
+          - label: "Odoo Runtime"
+            path: "/apps/odoo"
+          - label: "OdooOps Platform"
+            path: "/apps/odooops"
+          - label: "Agents & Skills"
+            path: "/apps/agents"
+
+      - label: "How-to"
+        items:
+          - label: "Deploy Modules"
+            path: "/howto/deploy-modules"
+          - label: "Backup & Restore"
+            path: "/howto/backup-restore"
+          - label: "Refresh KB"
+            path: "/howto/refresh-kb"
+
+      - label: "Reference"
+        items:
+          - label: "Database Schema"
+            path: "/reference/schema"
+            generated_from: "supabase/migrations"
+          - label: "RPC Catalog"
+            path: "/reference/rpc"
+            generated_from: "runtime"
+          - label: "Agent Registry"
+            path: "/reference/agents"
+            generated_from: "agents/registry/odoo_skills.yaml"
+          - label: "Runtime Snapshot"
+            path: "/reference/runtime"
+            generated_from: "docs/architecture/PROD_RUNTIME_SNAPSHOT.md"
+
+      - label: "Policies"
+        items:
+          - label: "Repo Scope"
+            path: "/policies/repo-scope"
+          - label: "Security & RLS"
+            path: "/policies/security"
+
+generation_rules:
+  - source: "agents/registry/odoo_skills.yaml"
+    target: "apps/docs/content/_generated/reference/agents.mdx"
+    processor: "render_agent_registry"
+
+  - source: "docs/architecture/PROD_RUNTIME_SNAPSHOT.md"
+    target: "apps/docs/content/_generated/reference/runtime.mdx"
+    processor: "render_runtime_snapshot"
+
+evidence_requirements:
+  - "docs/architecture/runtime_identifiers.json"

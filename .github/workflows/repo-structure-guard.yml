@@ -1,6 +1,6 @@
 name: repo-structure-guard
 
-# Enforce SSOT: This canonical odoo/ repository is the single source of truth
+# Enforce SSOT: This canonical Insightpulseai/odoo repository is the single source of truth
 # No nested odoo-ce or duplicate odoo roots should exist within this repo
 on:
   pull_request:

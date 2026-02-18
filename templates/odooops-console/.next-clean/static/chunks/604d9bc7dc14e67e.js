@@ -1,0 +1,4 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,27380,e=>{"use strict";var r=e.i(49328),t=e.i(68868),a=e.i(12175);let l=[{id:"branches",label:"Branches"},{id:"builds",label:"Builds"},{id:"backups",label:"Backups"},{id:"upgrade",label:"Upgrade"},{id:"settings",label:"Settings"},{id:"monitor",label:"Monitor"}];function s({projectId:e}){let s=(0,a.usePathname)();return(0,r.jsx)("nav",{className:"border-b border-gray-200 bg-white",children:(0,r.jsx)("div",{className:"flex space-x-8 px-6",children:l.map(a=>{let l=`/app/projects/${e}/${a.id}`,i=s===l||s.startsWith(`${l}/`);return(0,r.jsx)(t.default,{href:l,className:`
+                border-b-2 py-4 px-1 text-sm font-medium
+                ${i?"border-blue-500 text-blue-600":"border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"}
+              `,children:a.label},a.id)})})})}e.s(["ProjectTabs",()=>s])}]);

@@ -1,0 +1,20 @@
+{
+  "node": {
+    "00c31ed256ab32458b81c626e5da502069c62c75a0": {
+      "workers": {
+        "app/logout/page": {
+          "moduleId": 28984,
+          "async": false,
+          "exportedName": "logoutAction",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/logout/server-actions.ts"
+        }
+      },
+      "layer": {
+        "app/logout/page": "rsc"
+      },
+      "exportedName": "logoutAction",
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/logout/server-actions.ts"
+    }
+  },
+  "edge": {}
+}

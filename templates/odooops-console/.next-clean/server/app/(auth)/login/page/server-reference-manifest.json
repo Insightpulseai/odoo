@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40cf70b488c85f8c24a14d0cc79e25761c42f6b092": {
+      "workers": {
+        "app/(auth)/login/page": {
+          "moduleId": 84684,
+          "async": false,
+          "exportedName": "loginAction",
+          "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(auth)/login/server-actions.ts"
+        }
+      },
+      "layer": {
+        "app/(auth)/login/page": "action-browser"
+      },
+      "exportedName": "loginAction",
+      "filename": "Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/(auth)/login/server-actions.ts"
+    }
+  },
+  "edge": {}
+}

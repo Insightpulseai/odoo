@@ -1,0 +1,22 @@
+module.exports = [
+"[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/opengraph-image.png (static in ecmascript, tag client)", ((__turbopack_context__) => {
+
+__turbopack_context__.v("/_next/static/media/opengraph-image.e8d7f42e.png");}),
+"[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/opengraph-image.png.mjs { IMAGE => \"[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/opengraph-image.png (static in ecmascript, tag client)\" } [app-rsc] (structured image object, ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>__TURBOPACK__default__export__
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$GitHub$2f$Insightpulseai$2f$odoo$2f$templates$2f$odooops$2d$console$2f$app$2f$opengraph$2d$image$2e$png__$28$static__in__ecmascript$2c$__tag__client$29$__ = __turbopack_context__.i("[project]/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/opengraph-image.png (static in ecmascript, tag client)");
+;
+const __TURBOPACK__default__export__ = {
+    src: __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$GitHub$2f$Insightpulseai$2f$odoo$2f$templates$2f$odooops$2d$console$2f$app$2f$opengraph$2d$image$2e$png__$28$static__in__ecmascript$2c$__tag__client$29$__["default"],
+    width: 1200,
+    height: 600
+};
+}),
+];
+
+//# sourceMappingURL=Documents_GitHub_Insightpulseai_odoo_templates_odooops-console_app_eaef2e21._.js.map

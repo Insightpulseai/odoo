@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/W150_FINANCE_HEALTH_CHECK.json
++++ b/automations/n8n/workflows/W150_FINANCE_HEALTH_CHECK.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/W150_FINANCE_HEALTH_CHECK.json' 'automations/n8n/workflows/W150_FINANCE_HEALTH_CHECK.json'
