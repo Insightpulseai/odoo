@@ -1,0 +1,43 @@
+name: devcontainer-invariants
+
+on:
+  pull_request:
+    paths:
+      - ".devcontainer/**"
+      - "config/**"
+      - "docker/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".devcontainer/**"
+      - "config/**"
+      - "docker/**"
+
+jobs:
+  check:
+    name: No legacy /mnt/extra-addons paths
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get install -y --no-install-recommends ripgrep
+
+      - name: Assert no legacy extra-addons mounts
+        run: |
+          set -euo pipefail
+          FOUND=0
+          for dir in .devcontainer config docker; do
+            [ -d "${dir}" ] || continue
+            if rg -n "/mnt/extra-addons" "${dir}"; then
+              FOUND=1
+            fi
+          done
+          if [ "${FOUND}" -eq 1 ]; then
+            echo ""
+            echo "ERROR: legacy /mnt/extra-addons reference(s) found."
+            echo "Use /workspaces/odoo/addons/* instead (canonical dev root)."
+            exit 1
+          fi
+          echo "OK: no legacy /mnt/extra-addons references found."
