@@ -1,0 +1,46 @@
+name: Agent Instructions Drift Check
+
+on:
+  pull_request:
+    paths:
+      - "docs/agent_instructions/**"
+      - "scripts/agents/**"
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "GEMINI.md"
+  push:
+    branches: ["main"]
+    paths:
+      - "docs/agent_instructions/**"
+      - "scripts/agents/**"
+      - "CLAUDE.md"
+      - "AGENTS.md"
+      - "GEMINI.md"
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check instruction mirrors match SSOT
+        run: python scripts/agents/check_agent_instruction_drift.py
+
+      - name: Report drift
+        if: failure()
+        run: |
+          echo "❌ Agent instruction drift detected!"
+          echo ""
+          echo "Generated files (CLAUDE.md, AGENTS.md, GEMINI.md) differ from SSOT."
+          echo ""
+          echo "To fix:"
+          echo "  1. If SSOT is correct: python scripts/agents/sync_agent_instructions.py"
+          echo "  2. Commit all changes"
+          echo ""
+          echo "Never edit CLAUDE.md, AGENTS.md, or GEMINI.md directly."

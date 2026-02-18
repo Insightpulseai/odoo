@@ -1,0 +1,61 @@
+name: Odoo Docs Platform Gate
+
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - "docs/kb/odoo19/**"
+      - "templates/odooops-console/**"
+      - "scripts/kb/**"
+  pull_request:
+    paths:
+      - "docs/kb/odoo19/**"
+      - "templates/odooops-console/**"
+      - "scripts/kb/**"
+  workflow_dispatch:
+
+jobs:
+  verify-kb-pin:
+    name: Verify KB Pin Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Verify Pin
+        run: python3 scripts/kb/verify_odoo_docs_pin.py --kb-root docs/kb/odoo19
+
+  verify-kb-index:
+    name: Verify KB Index Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Index Integrity
+        run: python3 scripts/kb/verify_kb_index.py --kb-root docs/kb/odoo19
+
+  resolver-tests:
+    name: Docs Resolver Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: templates/odooops-console
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: templates/odooops-console/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Jest Tests
+        run: npm test

@@ -1,0 +1,6 @@
+# OCA REST Framework (base_rest) external python deps
+# Source: addons/oca/rest-framework/base_rest/__manifest__.py external_dependencies["python"]
+apispec
+cerberus
+parse-accept-language
+pyquerystring

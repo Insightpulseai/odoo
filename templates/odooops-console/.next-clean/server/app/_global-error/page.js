@@ -1,0 +1,11 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_global-error/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__e82d629c._.js")
+R.c("server/chunks/ssr/Documents_GitHub_Insightpulseai_odoo_templates_odooops-console_856a39da._.js")
+R.c("server/chunks/ssr/bfc07_next_dist_ac590374._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__60705b28._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__20fb1ffe._.js")
+R.c("server/chunks/ssr/bfc07_next_dist_1606ad85._.js")
+R.c("server/chunks/ssr/Documents_GitHub_Insightpulseai_odoo_templates_odooops-console_app_7da3043f._.js")
+R.c("server/chunks/ssr/93f3e_odooops-console__next-internal_server_app__global-error_page_actions_51b57548.js")
+R.m(17007)
+module.exports=R.m(17007).exports

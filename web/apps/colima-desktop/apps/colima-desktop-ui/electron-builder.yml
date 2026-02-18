@@ -1,0 +1,31 @@
+appId: com.insightpulseai.colima-desktop
+productName: Colima Desktop
+directories:
+  output: dist
+  buildResources: resources
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: resources/icon.icns
+  # Code signing (Phase 2 — requires APPLE_DEVELOPER_IDENTITY env var)
+  # Set to null for unsigned builds (Branch B: Phase 1 testing)
+  identity: null
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+files:
+  - dist-renderer/**/*
+  - dist-main/**/*
+  - package.json
+  - node_modules/**/*
+dmg:
+  title: ${productName} ${version}
+  icon: resources/icon.icns
+
+# Notarization hook (runs after signing if APPLE_* env vars are set)
+afterSign: build/notarize.js

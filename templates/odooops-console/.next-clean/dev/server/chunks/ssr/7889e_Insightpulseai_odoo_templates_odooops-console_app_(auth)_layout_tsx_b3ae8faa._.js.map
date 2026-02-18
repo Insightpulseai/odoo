@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/tbwa/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/%28auth%29/layout.tsx"],"sourcesContent":["export default function AuthLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <div className=\"min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900\">\n      <div className=\"w-full max-w-md px-6\">\n        {children}\n      </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS,WAAW,EACjC,QAAQ,EAGT;IACC,qBACE,kUAAC;QAAI,WAAU;kBACb,cAAA,kUAAC;YAAI,WAAU;sBACZ;;;;;;;;;;;AAIT"}}]
+}
