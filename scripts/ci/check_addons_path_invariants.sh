@@ -3,19 +3,30 @@
 set -euo pipefail
 FAIL=0
 
-EXCEPTIONS=("docker-compose.yml" "config/dev/odoo.conf" "config/prod/odoo.conf")
+# Only check runtime configuration files (not docs, archives, etc.)
+CHECK_PATTERNS=(
+    ".devcontainer/*.yml"
+    ".devcontainer/*.yaml"
+    ".devcontainer/docker-compose*.yml"
+)
 
-while IFS= read -r file; do
-    skip=0
-    for exc in "${EXCEPTIONS[@]}"; do
-        [[ "$file" == *"$exc" ]] && skip=1 && break
-    done
-    [[ "$skip" == "1" ]] && continue
-    if grep -q "/mnt/extra-addons" "$file" 2>/dev/null; then
-        echo "FAIL: /mnt/extra-addons found in $file"
-        FAIL=1
-    fi
-done < <(git ls-files)
+# Exceptions (production configs that legitimately use /mnt/extra-addons)
+EXCEPTIONS=("docker-compose.yml" "config/dev/odoo.conf" "config/prod/odoo.conf" "config/stage/odoo.conf")
+
+for pattern in "${CHECK_PATTERNS[@]}"; do
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+        skip=0
+        for exc in "${EXCEPTIONS[@]}"; do
+            [[ "$file" == *"$exc" ]] && skip=1 && break
+        done
+        [[ "$skip" == "1" ]] && continue
+        if grep -q "/mnt/extra-addons" "$file" 2>/dev/null; then
+            echo "FAIL: /mnt/extra-addons found in $file"
+            FAIL=1
+        fi
+    done < <(git ls-files "$pattern" 2>/dev/null || true)
+done
 
 DC=".devcontainer/docker-compose.devcontainer.yml"
 if [[ -f "$DC" ]]; then

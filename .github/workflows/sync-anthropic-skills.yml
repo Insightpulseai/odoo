@@ -1,0 +1,51 @@
+name: sync-anthropic-skills
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: "Upstream ref (branch/tag/sha) to sync"
+        required: false
+        default: "main"
+  schedule:
+    - cron: "0 3 * * 1"  # Mondays 03:00 UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set upstream ref
+        id: ref
+        run: |
+          REF="${{ github.event.inputs.upstream_ref }}"
+          if [ -z "$REF" ]; then REF="main"; fi
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+
+      - name: Sync mirror
+        run: |
+          UPSTREAM_REF="${{ steps.ref.outputs.ref }}" bash scripts/vendor/sync_anthropic_skills.sh
+
+      - name: Generate index
+        run: python3 scripts/skills/index_anthropic_skills.py
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/sync-anthropic-skills
+          title: "chore(skills): sync anthropics/skills mirror"
+          commit-message: "chore(skills): sync anthropics/skills mirror"
+          body: |
+            Automated mirror sync of upstream Anthropic skills repository.
+            - Mirror path: third_party/anthropic_skills
+            - Index outputs: reports/anthropic_skills_index.json, docs/agents/ANTHROPIC_SKILLS_INDEX.md
+            - Upstream: https://github.com/anthropics/skills
+          labels: |
+            automation
+            skills
