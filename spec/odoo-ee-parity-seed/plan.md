@@ -112,9 +112,10 @@ git checkout HEAD^ -- spec/parity/odoo_editions_parity_seed.yaml
 
 ## Enforcement Plan: SSOT/SOR Boundary
 
-- Add a CI check that scans Supabase migrations/functions for tables that look like ledger primitives (invoice/journal/payment) and blocks introducing authoritative accounting tables outside Odoo.
-- Require an "ownership declaration" block in new integration specs: `owner_system: odoo|supabase`.
-- Require `ops.runs/run_events/artifacts` emission for any Edge Function worker path.
+- **CI Shadow Ledger Gate**: `scripts/ci/check_shadow_ledger.sh` scans Supabase migrations/functions for ledger primitives and blocks new violations (baseline-friendly)
+- **Ownership Declaration Template**: All new integrations must use `templates/supabase-integration/OWNERSHIP_DECLARATION.md` to declare owner system, sync mode, and SSOT/SOR acknowledgement
+- **Audit Trail Requirement**: All Edge Function workers must emit `ops.runs/run_events/artifacts` for observability
+- **CI Workflow Integration**: Shadow ledger check runs in `.github/workflows/canonical-gate.yml` alongside other governance gates
 
 ## Canonical Supabase Example References (Pattern Intake)
 

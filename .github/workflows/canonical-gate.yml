@@ -95,6 +95,9 @@ jobs:
       - name: Check Addons Path Invariants
         run: bash scripts/ci/check_addons_path_invariants.sh
 
+      - name: Check Shadow Ledger Boundary (Supabase)
+        run: bash scripts/ci/check_shadow_ledger.sh
+
       - name: Upload Audit Report
         if: always()
         uses: actions/upload-artifact@v4
