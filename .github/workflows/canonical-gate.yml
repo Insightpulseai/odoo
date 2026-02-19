@@ -92,6 +92,9 @@ jobs:
           print("✅ No deprecated modules are installable")
           PY
 
+      - name: Check Addons Path Invariants
+        run: bash scripts/ci/check_addons_path_invariants.sh
+
       - name: Upload Audit Report
         if: always()
         uses: actions/upload-artifact@v4
