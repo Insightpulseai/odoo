@@ -61,3 +61,21 @@ Systematically extract and track Odoo Enterprise vs Community Edition capabiliti
 - ❌ Real-time extraction (weekly is sufficient)
 - ❌ JavaScript rendering (Editions page is static HTML)
 - ❌ Multi-version support (focus on current Odoo major version only)
+
+---
+
+## ipai_* Namespace Reservation (Non-Negotiable)
+
+The `ipai_*` module namespace is RESERVED for:
+- Integration Bridge connectors (e.g. `ipai_slack_connector`, `ipai_auth_oidc`)
+- AI/MCP tools with no OCA equivalent
+- BIR compliance modules (Philippine-specific)
+- OCR/expense automation glue
+
+The `ipai_*` namespace is FORBIDDEN for:
+- Modules that replicate Odoo Enterprise functionality → use `addons/oca/*`
+- Modules that replicate existing OCA modules → use or extend `addons/oca/*`
+- General business logic → use `addons/oca/*`
+
+**Justification requirement**: Any `ipai_*` module outside the reserved categories
+MUST have a `PARITY_CONNECTOR_JUSTIFICATION.md` in its module directory.
