@@ -1,0 +1,4 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,3510,e=>{"use strict";var r=e.i(49328),l=e.i(68868),t=e.i(12175);let a=[{id:"logs",label:"Logs"},{id:"shell",label:"Shell"},{id:"editor",label:"Editor"},{id:"monitor",label:"Monitor"}];function i({projectId:e,buildId:i}){let o=(0,t.usePathname)();return(0,r.jsx)("nav",{className:"border-b border-gray-200 bg-white",children:(0,r.jsx)("div",{className:"flex space-x-8 px-6",children:a.map(t=>{let a=`/app/projects/${e}/builds/${i}/${t.id}`,d=o===a;return(0,r.jsx)(l.default,{href:a,className:`
+                border-b-2 py-4 px-1 text-sm font-medium
+                ${d?"border-blue-500 text-blue-600":"border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"}
+              `,children:t.label},t.id)})})})}e.s(["BuildTabs",()=>i])}]);

@@ -1,0 +1,4 @@
+--- a/n8n/workflows/integration/event-router.json
++++ b/automations/n8n/workflows/event-router.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/integration/event-router.json' 'automations/n8n/workflows/event-router.json'

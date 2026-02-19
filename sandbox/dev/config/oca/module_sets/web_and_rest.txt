@@ -1,0 +1,12 @@
+# Web UX baseline (adjust to your enabled OCA repos)
+web_responsive
+web_environment_ribbon
+web_dialog_size
+
+# REST framework baseline (OCA/rest-framework)
+# base_rest  # Waiting for OCA 19.0 migration (component module dependency)
+# base_rest_datamodel  # Waiting for OCA 19.0 migration
+ipai_rest_controllers  # Native implementation (interim)
+# Optional auth add-ons (uncomment if present in your repo)
+# base_rest_auth_api_key
+# base_rest_auth_jwt

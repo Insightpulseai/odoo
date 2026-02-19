@@ -56,7 +56,7 @@ export DO_SPACES_SECRET="..."
 
 ```bash
 # Check from local
-curl -I https://plane.insightpulseai.net
+curl -I https://plane.insightpulseai.com
 
 # Check logs from droplet
 ssh root@188.166.237.231 'cd /opt/plane && docker compose ps'
@@ -105,7 +105,7 @@ Configure these in repo Settings → Secrets → Actions:
 | Service | Host | Port | User | Database |
 |---------|------|------|------|----------|
 | PostgreSQL | odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com | 25060 | doadmin | plane |
-| Plane Web | plane.insightpulseai.net | 443 | - | - |
+| Plane Web | plane.insightpulseai.com | 443 | - | - |
 | Plane Direct | 188.166.237.231 | 8080 | - | - |
 
 ## Troubleshooting
@@ -125,6 +125,6 @@ docker compose logs migrator
 ### SSL certificate issues
 ```bash
 ssh root@188.166.237.231
-certbot certonly --nginx -d plane.insightpulseai.net
+certbot certonly --nginx -d plane.insightpulseai.com
 nginx -t && systemctl reload nginx
 ```

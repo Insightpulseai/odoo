@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 30, "column": 0}, "map": {"version":3,"sources":["file:///Users/tbwa/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/%28auth%29/login/page.tsx"],"sourcesContent":["import { redirect } from \"next/navigation\";\nimport { createClient } from \"@/utils/supabase/server\";\nimport { LoginClient } from \"./LoginClient\";\n\nexport default async function LoginPage({\n  searchParams,\n}: {\n  searchParams: Promise<{ next?: string }>;\n}) {\n  const supabase = await createClient();\n  const { data: { user } } = await supabase.auth.getUser();\n\n  // If already authenticated, redirect to app\n  if (user) {\n    const params = await searchParams;\n    const next = params?.next || \"/\";\n    redirect(next);\n  }\n\n  const params = await searchParams;\n  const next = params?.next || \"/\";\n\n  return <LoginClient next={next} />;\n}\n"],"names":[],"mappings":";;;;;AAAA;AAAA;;;;;;;;;;;;;;;AAIe,eAAe,UAAU,EACtC,YAAY,EAGb;IACC,MAAM,WAAW,MAAM;IACvB,MAAM,EAAE,MAAM,EAAE,IAAI,EAAE,EAAE,GAAG,MAAM,SAAS,IAAI,CAAC,OAAO;IAEtD,4CAA4C;IAC5C,IAAI,MAAM;QACR,MAAM,SAAS,MAAM;QACrB,MAAM,OAAO,QAAQ,QAAQ;QAC7B,IAAA,qRAAQ,EAAC;IACX;IAEA,MAAM,SAAS,MAAM;IACrB,MAAM,OAAO,QAAQ,QAAQ;IAE7B,qBAAO,kUAAC;QAAY,MAAM;;;;;;AAC5B"}}]
+}

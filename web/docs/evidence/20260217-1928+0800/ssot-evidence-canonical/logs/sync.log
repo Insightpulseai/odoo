@@ -1,0 +1,14 @@
+Reading SSOT from: docs/agent_instructions/SSOT.md
+
+Generating mirrors...
+✓ Generated: CLAUDE.md
+✓ Generated: AGENTS.md
+✓ Generated: GEMINI.md
+
+✅ All agent instruction mirrors synchronized.
+
+Next steps:
+  1. Review generated files (CLAUDE.md, AGENTS.md, GEMINI.md)
+  2. Run drift check: python scripts/agents/check_agent_instruction_drift.py
+  3. Commit all changes if validation passes
+[sync exit:0]

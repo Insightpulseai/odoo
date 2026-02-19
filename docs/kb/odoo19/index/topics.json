@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "topic_map_version": 1,
+  "topics": [
+    {
+      "id": "odoo19.dev.orm",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "ORM (Models, Fields, Environment)",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.dev.security",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "Backend Security (ACL, Record Rules)",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.dev.testing",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "Testing (TransactionCase, Tours)",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.dev.qweb",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "QWeb Templates",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.dev.views_actions",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "Views + Actions (Form/List/Kanban/Search, Server Actions, Automated Actions)",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.dev.js_owl",
+      "include_paths": [
+        "content/developer/**"
+      ],
+      "label": "Javascript / OWL (Assets, Registry, Components)",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.admin.odoo_sh",
+      "include_paths": [
+        "content/administration/**"
+      ],
+      "label": "Odoo.sh Administration",
+      "matched_count": 0,
+      "matched_files": []
+    },
+    {
+      "id": "odoo19.apps.services",
+      "include_paths": [
+        "content/applications/services/**"
+      ],
+      "label": "Services Apps (Project/Timesheets/Field Service/Helpdesk/Planning/Appointments)",
+      "matched_count": 0,
+      "matched_files": []
+    }
+  ]
+}

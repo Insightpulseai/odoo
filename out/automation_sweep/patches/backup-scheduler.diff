@@ -1,0 +1,4 @@
+--- a/n8n/workflows/control-plane/backup-scheduler.json
++++ b/automations/n8n/workflows/backup-scheduler.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/control-plane/backup-scheduler.json' 'automations/n8n/workflows/backup-scheduler.json'

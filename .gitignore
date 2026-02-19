@@ -47,29 +47,12 @@ addons/*
 # --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
-# --- OCA meta layer (tracked) ---
-# Only track manifests + lockfile, NOT cloned repos
-!addons/oca/
-addons/oca/*/
-!addons/oca/.gitkeep
-!addons/oca/__init__.py
-!addons/oca/__manifest__.py
-!addons/oca/manifest.yaml
-!addons/oca/requirements.txt
-!addons/oca/oca.lock.json
-!addons/oca/README.md
-!addons/oca/OCA_PINS.yaml
-!addons/oca/ODOO_PIN.txt
-# --- OCA Bridge Modules (custom-built for EE parity) ---
-# These are NOT cloned OCA repos; they are IPAI-built bridges
-!addons/oca/account_reconcile_oca/
-!addons/oca/account_reconcile_oca/**
-!addons/oca/account_financial_report/
-!addons/oca/account_financial_report/**
-!addons/oca/account_asset_management/
-!addons/oca/account_asset_management/**
-!addons/oca/hr_expense/
-!addons/oca/hr_expense/**
+
+# --- Generated OCA aggregation output (git-aggregator target) ---
+# SSOT: oca-aggregate.yml (tracked)
+# Output: addons/oca/ (generated, never tracked)
+addons/oca/
+addons/OCA/
 # Common ignores
 addons/**/__pycache__/
 addons/**/*.pyc
@@ -108,6 +91,9 @@ oca/*
 !oca/.gitkeep
 # Logs
 logs/
+# Exception: canonical evidence logs under timestamped bundles only (20YY* prefix)
+!web/docs/evidence/20*/**/logs/
+!web/docs/evidence/20*/**/logs/*.log
 # Temporary files
 tmp/
 temp/
@@ -116,6 +102,7 @@ temp/
 *.orig
 # Database
 *.sql
+!db/**/*.sql
 !infra/platform-kit/**/*.sql
 !supabase/migrations/*.sql
 !supabase/seed.sql
@@ -236,6 +223,9 @@ infra/cloudflare/**/terraform.tfvars
 docs/evidence/**/*.txt
 docs/evidence/**/*.log
 
+# Archived compose files (rely on git history for restoration)
+archive/compose/
+
 # Superset local env (examples only in repo)
 infra/superset/env/.env.superset
 infra/superset/env/.env.*.local
@@ -249,4 +239,4 @@ infra/superset/env/.env.*.local
 # Generic infra env files (examples only)
 infra/**/env/.env
 infra/**/env/.env.*.local
-.env.production
+odoo-docs/

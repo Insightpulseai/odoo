@@ -1,0 +1,84 @@
+name: Automation Sweep (Audit Only)
+
+on:
+  pull_request:
+    paths:
+      - "automations/**"
+      - "scripts/**"
+      - "infra/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Target environment"
+        required: false
+        default: "stage"
+        type: choice
+        options: [dev, stage, prod]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  sweep:
+    name: Automation Sweep (audit-only)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run audit sweep (dry-run, no secrets needed)
+        id: sweep
+        run: |
+          python scripts/automations/sweep_repo.py \
+            --env ${{ inputs.env || 'stage' }} \
+            --out out/automation_sweep \
+            --verbose
+        continue-on-error: true
+
+      - name: Upload sweep artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: automation-sweep-${{ github.run_number }}
+          path: |
+            out/automation_sweep/inventory.json
+            out/automation_sweep/report.md
+            out/automation_sweep/backlog.md
+            out/automation_sweep/patches/
+          retention-days: 30
+
+      - name: Comment report on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'out/automation_sweep/report.md';
+            if (!fs.existsSync(reportPath)) {
+              console.log('No report found, skipping comment');
+              return;
+            }
+            const report = fs.readFileSync(reportPath, 'utf8');
+            const summary = report.split('\n').slice(0, 30).join('\n');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🤖 Automation Sweep\n\n${summary}\n\n*[Full report in CI artifacts]*`
+            });
+
+      - name: Fail if critical issues found
+        if: steps.sweep.outcome == 'failure' && steps.sweep.outputs.exit_code == '1'
+        run: |
+          echo "Automation sweep found issues. Review out/automation_sweep/backlog.md"
+          exit 1

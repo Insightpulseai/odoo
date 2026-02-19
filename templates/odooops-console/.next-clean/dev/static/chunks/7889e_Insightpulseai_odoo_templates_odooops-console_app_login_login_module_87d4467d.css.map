@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/tbwa/Documents/GitHub/Insightpulseai/odoo/templates/odooops-console/app/login/login.module.css"],"sourcesContent":["/* Login page styles */\n.loginSubmitButton {\n  padding: 10px;\n  cursor: pointer;\n  transition: opacity 0.2s;\n}\n\n.loginSubmitButton:hover {\n  opacity: 0.8;\n}\n\n.loginSubmitButton:active {\n  opacity: 0.7;\n}\n"],"names":[],"mappings":"AACA;;;;;;AAMA;;;;AAIA"}}]
+}

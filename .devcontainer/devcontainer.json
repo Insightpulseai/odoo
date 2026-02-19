@@ -1,5 +1,6 @@
 {
   "name": "ipai-devcontainer",
+  "dockerContext": "colima-odoo",
   // Compose SSOT + overlay(s). Later files override earlier ones.
   "dockerComposeFile": [
     "../docker-compose.yml",
