@@ -87,6 +87,22 @@ python scripts/automations/sweep_repo.py \
 
 ---
 
+## Severity Schema
+
+| Level | Definition | CI Action |
+|-------|------------|-----------|
+| P0 | Broken reference, invalid YAML format, unreachable workflow | Fail CI (exit 1) |
+| P1 | Stray workflow (not in canon), duplicate trigger | Warn only |
+| P2 | Stale reference, optimization opportunity | Info only |
+
+### CI Threshold
+
+- `--fail-on P0`: CI exits non-zero if any P0 findings exist
+- P1/P2: recorded in `out/automation_sweep/backlog.md`, never block CI
+- `out/` artifacts from CI runs are ephemeral (not committed); only local dry-run evidence committed
+
+---
+
 ## Success Criteria
 
 | Criterion | Measure |

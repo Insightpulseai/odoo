@@ -42,7 +42,8 @@ jobs:
           python scripts/automations/sweep_repo.py \
             --env ${{ inputs.env || 'stage' }} \
             --out out/automation_sweep \
-            --verbose
+            --verbose \
+            --fail-on P0
         continue-on-error: true
 
       - name: Upload sweep artifacts
