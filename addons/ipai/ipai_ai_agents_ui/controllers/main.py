@@ -23,6 +23,12 @@ from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
+import sys as _sys
+import os as _os
+_REPO_ROOT = _os.path.abspath(
+    _os.path.join(_os.path.dirname(__file__), '..', '..', '..', '..')
+)
+
 # Optional: import retriever and LLM services
 try:
     import requests as http_requests
@@ -291,7 +297,7 @@ class IPAIAIAgentsController(http.Controller):
 
         base_url = (
             os.environ.get("IPAI_EMBEDDINGS_BASE_URL")
-            or os.environ.get("IPAI_LLM_BASE_URL")
+            or os.environ.get("IPAI_LLM_BASE_URL")  # ALLOW: embeddings endpoint only
             or "https://api.openai.com/v1"
         ).rstrip("/")
         model = os.environ.get("IPAI_EMBEDDINGS_MODEL", "text-embedding-3-small")
@@ -411,76 +417,69 @@ Evidence from Knowledge Base:
 Remember to respond with valid JSON only."""
 
     def _call_llm(self, system_prompt, user_prompt):
-        """Call LLM API and parse response."""
-        if not http_requests:
-            return self._fallback_response()
+        """Call LLM via ProviderRouter (infra/ai/provider_router/router.py).
 
-        api_key = os.environ.get("IPAI_LLM_API_KEY", "").strip()
-        if not api_key:
-            return self._fallback_response("LLM API key not configured")
-
-        base_url = os.environ.get(
-            "IPAI_LLM_BASE_URL", "https://api.openai.com/v1"
-        ).rstrip("/")
-        model = os.environ.get("IPAI_LLM_MODEL", "gpt-4o-mini")
-        temperature = float(os.environ.get("IPAI_LLM_TEMPERATURE", "0.2"))
+        Routes to the provider set by AI_PROVIDER_PRIMARY env var
+        (openai | ollama | anthropic …). Falls back to _fallback_response()
+        if the router package is not importable.
+        """
+        # Ensure repo root is on sys.path so `infra` package is importable.
+        if _REPO_ROOT not in _sys.path:
+            _sys.path.insert(0, _REPO_ROOT)
 
         try:
-            resp = http_requests.post(
-                f"{base_url}/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt},
-                    ],
-                    "temperature": temperature,
-                    "response_format": {"type": "json_object"},
-                },
-                timeout=60,
+            from infra.ai.provider_router.router import call_ai, AIError  # lazy import
+        except (ImportError, Exception) as exc:
+            _logger.warning(
+                "ProviderRouter not importable (infra.ai.provider_router): %s. "
+                "Falling back to stub response.",
+                exc,
             )
+            return self._fallback_response("ProviderRouter not available")
 
-            if resp.status_code >= 300:
-                _logger.error(f"LLM API error: {resp.status_code} - {resp.text[:500]}")
-                return self._fallback_response(f"LLM API error: {resp.status_code}")
+        combined_prompt = f"{system_prompt}\n\n---\n\n{user_prompt}"
 
-            data = resp.json()
-            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        try:
+            result = call_ai(
+                prompt=combined_prompt,
+                json_mode=True,
+                meta={"source": "odoo/ipai_ai_agents_ui", "endpoint": "ask"},
+            )
+        except AIError as exc:
+            _logger.error("ProviderRouter AIError: %s", exc)
+            return self._fallback_response(str(exc))
+        except Exception:
+            _logger.exception("Unexpected error from ProviderRouter")
+            return self._fallback_response("LLM request failed")
 
-            # Parse JSON response
-            try:
-                parsed = json.loads(content)
-                return {
-                    "answer": parsed.get("answer", ""),
-                    "citations": [
-                        {
-                            "title": c.get("title"),
-                            "url": c.get("url"),
-                            "snippet": c.get("snippet"),
-                            "score": c.get("score", 0.0),
-                        }
-                        for c in parsed.get("citations", [])
-                    ],
-                    "confidence": parsed.get("confidence", 0.5),
-                    "is_uncertain": parsed.get("is_uncertain", False),
-                    "tokens": data.get("usage", {}).get("total_tokens", 0),
-                }
-            except json.JSONDecodeError:
-                # Fallback: use raw content as answer
-                return {
-                    "answer": content,
-                    "citations": [],
-                    "confidence": 0.3,
-                    "is_uncertain": True,
-                }
+        content = result.content if hasattr(result, "content") else ""
+        tokens_used = getattr(result, "tokens_used", 0)
 
-        except Exception as e:
-            _logger.exception("LLM request failed")
-            return self._fallback_response(str(e))
+        try:
+            parsed = json.loads(content)
+            return {
+                "answer": parsed.get("answer", ""),
+                "citations": [
+                    {
+                        "title": c.get("title"),
+                        "url": c.get("url"),
+                        "snippet": c.get("snippet"),
+                        "score": c.get("score", 0.0),
+                    }
+                    for c in parsed.get("citations", [])
+                ],
+                "confidence": parsed.get("confidence", 0.5),
+                "is_uncertain": parsed.get("is_uncertain", False),
+                "tokens": tokens_used,
+            }
+        except json.JSONDecodeError:
+            return {
+                "answer": content,
+                "citations": [],
+                "confidence": 0.3,
+                "is_uncertain": True,
+                "tokens": tokens_used,
+            }
 
     def _fallback_response(self, reason="Service unavailable"):
         """Return fallback response when LLM is unavailable."""

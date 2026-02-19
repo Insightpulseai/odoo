@@ -1,0 +1,69 @@
+{
+  "generated": "2026-02-17T16:00:00+08:00",
+  "branch": "chore/root-cleanup-2026-02-17",
+  "pr_title": "chore(repo): root cleanup (move loose files into canonical folders)",
+  "moves": [
+    {
+      "from": "branch_protection.json",
+      "to": "docs/architecture/branch_protection.json",
+      "reason": "GitHub branch protection config snapshot; architecture documentation, not tooling.",
+      "refs_updated": []
+    },
+    {
+      "from": "devserver.config.json",
+      "to": "config/devserver.config.json",
+      "reason": "Dev server configuration; no tooling requires it at root.",
+      "refs_updated": []
+    },
+    {
+      "from": "superclaude_bridge.yaml",
+      "to": ".claude/superclaude_bridge.yaml",
+      "reason": "Claude agent bridge config; belongs in .claude/ tool directory.",
+      "refs_updated": []
+    },
+    {
+      "from": "aiux_ship_manifest.yml",
+      "to": "config/aiux_ship_manifest.yml",
+      "reason": "Application ship manifest; not a root convention file.",
+      "refs_updated": [
+        ".github/workflows/aiux-ship-gate.yml"
+      ]
+    },
+    {
+      "from": "figma.config.json",
+      "to": "figma/figma.config.json",
+      "reason": "Figma Code Connect config; belongs with other Figma tooling in figma/.",
+      "refs_updated": [
+        "scripts/design-sync.sh"
+      ]
+    },
+    {
+      "from": "figma-make-dev.yaml",
+      "to": "figma/figma-make-dev.yaml",
+      "reason": "Figma Make dev config; belongs with other Figma tooling in figma/.",
+      "refs_updated": []
+    }
+  ],
+  "security": [
+    {
+      "file": ".env.production",
+      "action": "removed_from_git_tracking",
+      "reason": "Duplicate of .env.prod; contained hardcoded production credentials. Added to .gitignore.",
+      "note": "Credentials already in git history. Rotate POSTGRES_PASSWORD and ODOO_ADMIN_PASSWORD."
+    }
+  ],
+  "kept_at_root": [
+    {
+      "file": "oca-aggregate.yml",
+      "reason": "scripts/validate_oca_aggregate_output.py hardcodes ROOT_DIR / 'oca-aggregate.yml'"
+    },
+    {
+      "file": "oca.lock.json",
+      "reason": "Referenced by CI workflows: build-odoo-ce19-ee-parity.yml, validate-addons-mounts.yml, scripts/oca-sync.sh"
+    },
+    {
+      "file": "addons.manifest.json",
+      "reason": "Referenced by validate-addons-mounts.yml and scripts/verify-addons-mounts.sh"
+    }
+  ]
+}

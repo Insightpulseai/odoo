@@ -497,4 +497,21 @@ Spec: expense-automation
 
 ---
 
+## Repo Hygiene
+
+Root directory changes are governed by an explicit allowlist and CI guard:
+
+- **Allowlist + justifications**: [`docs/architecture/ROOT_ALLOWLIST.md`](docs/architecture/ROOT_ALLOWLIST.md)
+- **CI enforcement**: `.github/workflows/root-allowlist-guard.yml`
+
+**To add a new root file legitimately:**
+1. Open a PR with the file
+2. Add it to `ALLOWED` in `root-allowlist-guard.yml`
+3. Document the justification in `ROOT_ALLOWLIST.md`
+4. Get the PR approved
+
+The guard also blocks high-risk root artifacts (`.env*`, `*.pem/key/p12`, `*.tfstate`, `dump.sql`, `*secret*/*credential*`).
+
+---
+
 *Thank you for contributing to Odoo CE!*
