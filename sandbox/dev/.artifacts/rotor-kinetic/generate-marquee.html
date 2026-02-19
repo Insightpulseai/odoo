@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Generate Marquee</title></head>
+<body style="background:#111;display:flex;flex-direction:column;align-items:center;padding:40px;font-family:sans-serif;color:white">
+<h2>Marquee Texture — W9 Studio</h2>
+<canvas id="c"></canvas>
+<br>
+<a id="dl" style="display:none"></a>
+<p id="msg" style="color:#aaa;margin-top:12px"></p>
+<script>
+  // Match original exactly: 3112 x 294 px
+  const W = 3112, H = 294;
+  const c = document.getElementById('c');
+  c.width = W;
+  c.height = H;
+  c.style.maxWidth = '900px';
+  c.style.border = '1px solid #444';
+
+  const ctx = c.getContext('2d');
+
+  // --- white background ---
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // --- measure helpers ---
+  // The original tile is: [BOLD BRAND]  [gray secondary]  •
+  // We replicate the layout for one tile then repeat it.
+
+  const BRAND   = 'W9 STUDIO';
+  const SUB     = 'Chino Roces Makati';
+  const DOT_R   = 14;          // dot radius
+  const GAP     = 40;          // gap between brand and sub text
+  const DOT_GAP = 80;          // gap after sub text before dot
+
+  // Font sizes (match visual proportions of original)
+  const BRAND_SIZE = 112;
+  const SUB_SIZE   = 112;
+
+  ctx.textBaseline = 'middle';
+  const MID = H / 2;
+
+  // Measure brand text
+  ctx.font = `bold ${BRAND_SIZE}px "Arial Black", Arial, sans-serif`;
+  const brandW = ctx.measureText(BRAND).width;
+
+  // Measure sub text
+  ctx.font = `${SUB_SIZE}px Arial, sans-serif`;
+  const subW = ctx.measureText(SUB).width;
+
+  // Content width per tile (no padding — padding will be distributed)
+  const contentW = brandW + GAP + subW + DOT_GAP + DOT_R * 2;
+
+  // How many full tiles fit without overlap
+  const reps = Math.max(1, Math.floor(W / contentW));
+  const actualTileW = W / reps;
+  const PAD_L = (actualTileW - contentW) / 2; // center content in each tile
+
+  for (let i = 0; i < reps; i++) {
+    const ox = i * actualTileW; // tile origin x
+
+    let x = ox + PAD_L;
+
+    // Brand — bold black
+    ctx.shadowBlur = 0;
+    ctx.font = `bold ${BRAND_SIZE}px "Arial Black", Arial, sans-serif`;
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'left';
+    ctx.fillText(BRAND, x, MID);
+    x += ctx.measureText(BRAND).width + GAP;
+
+    // Sub — gray regular
+    ctx.font = `${SUB_SIZE}px Arial, sans-serif`;
+    ctx.fillStyle = '#888888';
+    ctx.fillText(SUB, x, MID);
+    x += ctx.measureText(SUB).width + DOT_GAP;
+
+    // Dot — filled black circle
+    ctx.beginPath();
+    ctx.arc(x + DOT_R, MID, DOT_R, 0, Math.PI * 2);
+    ctx.fillStyle = '#000000';
+    ctx.fill();
+  }
+
+  // Auto-download as JPEG
+  setTimeout(() => {
+    const dl = document.getElementById('dl');
+    dl.href = c.toDataURL('image/jpeg', 0.97);
+    dl.download = 'w9-studio-marquee.jpg';
+    dl.textContent = '⬇ Download w9-studio-marquee.jpg';
+    dl.style.cssText = 'display:inline-block;padding:12px 24px;background:#fff;color:#000;border-radius:8px;font-weight:bold;text-decoration:none;margin-top:8px';
+    dl.click();
+    document.getElementById('msg').textContent = '✓ Downloaded. Drop into the MARQUEE STRIP zone at localhost:3001';
+  }, 300);
+</script>
+</body>
+</html>
