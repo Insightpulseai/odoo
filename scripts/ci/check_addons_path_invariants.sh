@@ -22,7 +22,9 @@ for pattern in "${CHECK_PATTERNS[@]}"; do
         done
         [[ "$skip" == "1" ]] && continue
         if grep -q "/mnt/extra-addons" "$file" 2>/dev/null; then
-            echo "FAIL: /mnt/extra-addons found in $file"
+            line=$(grep -n "/mnt/extra-addons" "$file" | head -1)
+            echo "FAIL[AP-03]: /mnt/extra-addons reference in devcontainer config: $file"
+            echo "  Line: $line"
             FAIL=1
         fi
     done < <(git ls-files "$pattern" 2>/dev/null || true)
@@ -30,11 +32,17 @@ done
 
 DC=".devcontainer/docker-compose.devcontainer.yml"
 if [[ -f "$DC" ]]; then
-    grep -q "working_dir: /workspaces/odoo" "$DC" || {
-        echo "FAIL: working_dir missing from $DC"; FAIL=1; }
-    grep -q "/mnt/extra-addons" "$DC" && {
-        echo "FAIL: /mnt/extra-addons still in devcontainer overlay"; FAIL=1; }
+    if ! grep -q "working_dir: /workspaces/odoo" "$DC"; then
+        echo "FAIL[AP-01]: working_dir must be /workspaces/odoo in $DC"
+        FAIL=1
+    fi
+    if grep -q "/mnt/extra-addons" "$DC"; then
+        line=$(grep -n "/mnt/extra-addons" "$DC" | head -1)
+        echo "FAIL[AP-02]: devcontainer must not mount /mnt/extra-addons: $DC"
+        echo "  Line: $line"
+        FAIL=1
+    fi
 fi
 
-[[ "$FAIL" -eq 0 ]] && echo "OK: All addons path invariants satisfied"
+[[ "$FAIL" -eq 0 ]] && echo "✅ OK: All addons path invariants satisfied"
 exit "$FAIL"
