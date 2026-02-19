@@ -2,6 +2,11 @@
 ops/secrets/age-key.txt
 ops/secrets/*.key
 
+# Sandbox artifacts (generated / not source-controlled)
+sandbox/**/.artifacts/
+sandbox/**/.tmp/
+sandbox/**/tmp/
+
 # Python
 __pycache__/
 *.py[cod]
