@@ -133,3 +133,95 @@ Supabase partner integrations are permitted only when:
 - Supabase UI must not become the canonical design system; our design tokens remain SSOT.
 - Treat Supabase UI as **shadcn-style generated components** (vendored into repo), not a long-lived dependency,
   because the legacy `supabase/ui` library is deprecated and components are moving into the main monorepo.
+
+---
+
+## Article 4: Structural Boundaries
+
+### §4.1 Directory Taxonomy
+
+The repository organizes Odoo modules into four canonical directories:
+
+1. **`addons/odoo/`** (Upstream Core): Odoo CE core modules (read-only reference)
+2. **`addons/oca/`** (EE Parity Layer): Modules implementing Odoo Enterprise Edition feature parity using OCA patterns
+3. **`addons/ipai/`** (Integration Bridges): Modules connecting Odoo to external services and systems
+4. **`addons/ipai_meta/`** (Meta Modules): Repository infrastructure and development tooling
+
+**Authoritative Reference**: `docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md` defines complete taxonomy, boundary rules, decision trees, and migration strategy.
+
+### §4.2 Parity Location Invariant (Hard Rule)
+
+**Statement**: All modules implementing Odoo Enterprise Edition feature parity MUST reside in `addons/oca/`.
+
+**Rationale**:
+- OCA modules provide community-vetted implementations
+- Reduces maintenance burden (shared upstream)
+- Avoids duplication and fragmentation
+
+**Enforcement**: CI keyword detection + manifest parsing in `scripts/ci/check_parity_boundaries.sh`
+
+**Examples**:
+- ✅ `addons/oca/subscription_management` (EE parity)
+- ❌ `addons/ipai/ipai_subscriptions` (wrong location)
+
+### §4.3 Integration Scope Constraint (Hard Rule)
+
+**Statement**: Modules in `addons/ipai/` MUST be integration bridges or external service connectors ONLY.
+
+**Allowed Categories**:
+- External service connectors (Slack, Auth0, payment gateways)
+- API bridges (MCP, REST controllers for non-Odoo clients)
+- AI/ML tools (OCR, document processing, embeddings)
+- BIR compliance (Philippine-specific tax/regulatory)
+- Data integration (ETL, sync engines, webhook receivers)
+
+**Forbidden Categories**:
+- ❌ EE feature parity (belongs in `addons/oca/`)
+- ❌ General business logic (belongs in `addons/oca/`)
+- ❌ OCA module duplicates (extend existing OCA modules instead)
+
+**Enforcement**: Justification file requirement (`PARITY_CONNECTOR_JUSTIFICATION.md`) + CI validation
+
+### §4.4 Baseline Tolerance Policy
+
+**Current State**: 45 existing violations tracked in `scripts/ci/baselines/parity_boundaries_baseline.json`
+
+**Policy**:
+- **Existing violations**: Allowed to remain (grandfathered)
+- **New violations**: Blocked by CI (must fix before merge)
+- **Migration cadence**: Incremental over 6 months (target: zero violations by 2026-08-20)
+- **Baseline review**: First Monday of each month
+
+**Rationale**: Avoid forced migrations and repository churn while preventing new violations.
+
+### §4.5 Enforcement Chain
+
+**CI Workflow** → `scripts/ci/check_parity_boundaries.sh` → Baseline Comparison → Documentation
+
+**Enforcement Mechanisms**:
+1. **CI Validation** (`.github/workflows/parity-boundaries.yml`):
+   - Runs on every PR to `main`
+   - Keyword detection (EE terms in wrong location)
+   - Manifest parsing (Enterprise dependencies)
+   - Justification file verification
+   - Baseline comparison (allow existing, block new)
+
+2. **Pre-Commit Hook** (optional):
+   - Local enforcement before CI
+   - Faster feedback loop
+   - Reduces CI build failures
+
+3. **Monthly Baseline Review**:
+   - First Monday of each month
+   - Track migration progress (7-8 modules per month target)
+   - Update baseline after approved migrations
+
+**Exit Codes**:
+- `0`: Pass (no new violations)
+- `1`: Fail (new violations detected)
+
+**Cross-References**:
+- Complete taxonomy: `docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md`
+- CI script: `scripts/ci/check_parity_boundaries.sh`
+- Baseline tracking: `scripts/ci/baselines/parity_boundaries_baseline.json`
+- Workflow: `.github/workflows/parity-boundaries.yml`
