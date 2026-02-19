@@ -190,7 +190,7 @@ class AIClient(models.AbstractModel):
         """
         try:
             response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
+                "https://api.openai.com/v1/chat/completions",  # ALLOW: legacy direct call — migrate to ProviderRouter
                 headers={
                     "Authorization": f"Bearer {config['openai_key']}",
                     "Content-Type": "application/json",

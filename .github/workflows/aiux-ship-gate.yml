@@ -9,7 +9,7 @@ on:
       - 'addons/ipai/ipai_ask_ai/**'
       - 'addons/ipai/ipai_document_ai/**'
       - 'addons/ipai/ipai_expense_ocr/**'
-      - 'aiux_ship_manifest.yml'
+      - 'config/aiux_ship_manifest.yml'
       - 'scripts/aiux/**'
       - '.github/workflows/aiux-ship-gate.yml'
   pull_request:
@@ -20,7 +20,7 @@ on:
       - 'addons/ipai/ipai_ask_ai/**'
       - 'addons/ipai/ipai_document_ai/**'
       - 'addons/ipai/ipai_expense_ocr/**'
-      - 'aiux_ship_manifest.yml'
+      - 'config/aiux_ship_manifest.yml'
       - 'scripts/aiux/**'
   workflow_dispatch:
     inputs:
