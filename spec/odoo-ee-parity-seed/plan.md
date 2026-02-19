@@ -108,6 +108,47 @@ git checkout HEAD^ -- spec/parity/odoo_editions_parity_seed.yaml
 # Edit .github/workflows/editions-parity-seed.yml → comment out cron
 ```
 
+---
+
+## Enforcement Plan: SSOT/SOR Boundary
+
+- Add a CI check that scans Supabase migrations/functions for tables that look like ledger primitives (invoice/journal/payment) and blocks introducing authoritative accounting tables outside Odoo.
+- Require an "ownership declaration" block in new integration specs: `owner_system: odoo|supabase`.
+- Require `ops.runs/run_events/artifacts` emission for any Edge Function worker path.
+
+## Canonical Supabase Example References (Pattern Intake)
+
+Use raw URLs for deterministic ingestion:
+- Edge Functions README: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/README.md
+- GH Action deploy example: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/github-action-deploy/README.md
+- Signed webhooks pattern (Stripe): https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/stripe-webhooks/README.md
+- Auth+RLS DB access pattern: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/select-from-table-with-auth-rls/index.ts
+- Storage multipart upload pattern: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/file-upload-storage/index.ts
+- (Optional) Realtime reference app: https://raw.githubusercontent.com/supabase/supabase/master/examples/slack-clone/nextjs-slack-clone/README.md
+
+## Supabase Examples Intake Playbook (Reference-Only)
+
+### Goal
+Use Supabase upstream examples to accelerate SSOT/control-plane implementation while preserving:
+- Supabase as SSOT (ops/orchestration/identity for non-Odoo surfaces)
+- Odoo as SOR (ledger and posted ERP truth)
+
+### Intake rules
+1. Prefer pattern extraction over cloning whole example apps.
+2. Extract only:
+   - RLS policy shapes
+   - Edge Function worker/deploy structure
+   - Auth session handling patterns
+   - Storage policy patterns
+3. Every extracted pattern must be re-homed under our SSOT schemas (`ops.*`, `audit.*`, `mdm.*`, `ai.*`)
+   with the SSOT/SOR boundary enforced (no shadow ledger tables).
+
+### Canonical upstream references
+- Edge Functions examples (local dev + deploy + GH Actions)
+- Next.js user-management tutorial (Auth + RLS + Storage)
+
+---
+
 ## Estimated Effort
 
 - Phase 1 (Spec Kit): 1 hour

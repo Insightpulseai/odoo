@@ -135,6 +135,27 @@ parity_seed:
 - **confidence**: Default 0.0; enrichment phase sets to 0.0-1.0 based on match quality
 - **notes**: Free-form annotation for manual review
 
+## Supabase Feature Mapping (SSOT Implementation Contract)
+
+| Supabase Capability | SSOT Usage (Required) | SOR Boundary / Constraint |
+|---|---|---|
+| Postgres Database | Canonical schemas for `ops.*`, `mdm.*`, `ai.*`, `audit.*`, plus `odoo_replica.*` | `odoo_replica.*` is read-only replica/derivative; Odoo remains authoritative for ledger/posted docs |
+| RLS + Auth | All non-Odoo apps/portals/agents must gate via Auth + RLS; tables private by default | Never grant anon/select on SOR replicas; elevate only workers; log every privileged action |
+| RPC / Instant APIs | Prefer RPC as stable interface; apps call RPC not tables | RPCs must not write Odoo-owned domains; use exception queues instead |
+| Edge Functions | Webhook ingestion, workers, queue consumers, backfills, signing/verification | Any write-back into Odoo must be audited and limited to non-SOR domains |
+| Realtime | Ops-console run status, exception queues, human review loops | No sensitive SOR data broadcast; only event metadata + scoped payloads |
+| Storage + CDN | Artifacts, exports, evidence, attachments mirrored with provenance | Odoo attachments are SOR; Supabase stores pointers/hashes unless explicitly mirrored |
+| Queues | Durable async orchestration (retries, DLQ, rate limits) | Every job emits `ops.runs`, `ops.run_events`, `ops.artifacts` |
+| Cron | Scheduled sync, refresh, reconciliation, reporting | Must be idempotent and checkpointed |
+| Observability | Logs/metrics/drains + evidence-first verification | Fail CI if evidence hooks are missing for new workflows |
+| Vectors / AI | Embeddings, retrieval indexes, feature store, insight artifacts | Must include provenance pointers to source records; no hallucinated facts without citations |
+
+### Acceptance criteria
+1. Any new integration must declare: owner system, sync mode, checkpoints, RLS model, failure modes, evidence outputs.
+2. CI must be able to detect and block "shadow ledger" patterns (writes into Odoo-owned domains from Supabase).
+
+---
+
 ## Testing Strategy
 
 ### Unit Tests
