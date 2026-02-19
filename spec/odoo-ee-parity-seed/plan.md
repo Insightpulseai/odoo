@@ -150,6 +150,28 @@ Use Supabase upstream examples to accelerate SSOT/control-plane implementation w
 
 ---
 
+## Supabase Platform Kit Placement
+
+### Canonical host application
+Platform Kit (embedded Supabase Manager UI + Management API proxy) must be installed in **exactly one** Next.js app:
+- **Canonical host:** `web/ai-control-plane/`
+- **Installation:** `npx shadcn@latest add @supabase/platform-kit-nextjs` (NOT npm install)
+- **Purpose:** Ops/admin console for Supabase project management (control plane)
+
+**Note:** If `web/ai-control-plane/` is renamed or moved, update this section and `docs/supabase/SDK_VS_PLATFORM_KIT.md`.
+
+### Non-goals
+- **Do NOT** install Platform Kit into end-user portals or non-ops apps
+- **Do NOT** confuse Platform Kit install (shadcn generator) with Supabase Client SDK install (`@supabase/supabase-js`)
+- **Do NOT** expose Management API token to client (proxy routes must enforce server-side-only access)
+
+### SDK vs Platform Kit distinction
+See `docs/supabase/SDK_VS_PLATFORM_KIT.md` for complete clarification:
+- **Client SDK** (`@supabase/supabase-js`): Data plane (Auth/RLS/DB/Storage/Realtime) for end-user apps
+- **Platform Kit** (`@supabase/platform-kit-nextjs`): Control plane (project management UI) for ops console
+
+---
+
 ## Estimated Effort
 
 - Phase 1 (Spec Kit): 1 hour
