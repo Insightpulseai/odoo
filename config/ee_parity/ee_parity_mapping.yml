@@ -413,3 +413,97 @@ mapping:
     owner: "localization"
     priority: "P0"
     notes: "Direct .DAT export for Alphalist/ReLiEf"
+
+  # ---- Enterprise Bridge Capabilities ----
+  # Tracks capabilities provided by ipai_enterprise_bridge (monolithic Phase 0)
+  # Target: decompose into per-capability connectors in Phase 2-4 (see spec/enterprise-bridge/)
+
+  - feature_id: ee_feature_routing
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "platform"
+    priority: "P0"
+    notes: "EE feature slug → CE/OCA routing table. Stays in ipai_enterprise_bridge."
+
+  - feature_id: iap_bypass
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "platform"
+    priority: "P0"
+    notes: "Intercepts IAP calls; routes SMS/mail/OCR to direct alternatives (no odoo.com billing)."
+
+  - feature_id: job_outbox_queue
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "platform"
+    priority: "P0"
+    notes: "Async job outbox: ai_analysis, sync_event, webhook_callback, data_export. 5-min cron."
+
+  - feature_id: expense_event_emitter
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "finance"
+    priority: "P1"
+    notes: "Emits expense.submitted/approved/rejected/paid events to Supabase. Target: ipai_expense_bridge (Phase 4)."
+
+  - feature_id: finance_task_event_emitter
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "finance"
+    priority: "P1"
+    notes: "Emits finance_task.* events on project stage changes. Target: ipai_finance_bridge (Phase 4)."
+
+  - feature_id: iot_mqtt_bridge
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "ops"
+    priority: "P2"
+    notes: "IoT device registry + paho-mqtt in-process (Phase 0 exception). Target: iot-bridge-service + ipai_iot_connector (Phase 3)."
+
+  - feature_id: month_end_close_checklists
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "finance"
+    priority: "P1"
+    notes: "Period-based close workflows. Business feature — stays in ipai_enterprise_bridge permanently."
+
+  - feature_id: company_approval_policies
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "finance"
+    priority: "P1"
+    notes: "Bill approval thresholds, attachment requirements, DMS-linking enforcement. Business governance — stays."
+
+  - feature_id: scout_retail_product_fields
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "retail"
+    priority: "P2"
+    notes: "is_grocery, shelf_code, expiry_required, substitution_group on product.template. Target: ipai_vertical_retail (Phase 2)."
+
+  - feature_id: bir_invoice_form_fields
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_enterprise_bridge
+    status: "installed"
+    owner: "localization"
+    priority: "P0"
+    notes: "bir_form_type on account.move (2307,2316,1601-C,2550M/Q). Will migrate to ipai_finance_bir when ready."
