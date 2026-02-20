@@ -4,25 +4,36 @@
 
 ---
 
-## 🚀 Deployment Status
+## 🚀 Deployment Approach
 
-⏳ **Current Phase**: Workflows created, awaiting manual import to n8n
+### ✅ Recommended: Instance-Level MCP (Simpler)
 
-**Completed**:
-- ✅ 9 workflow JSONs created (6 read-only + 3 write-path)
-- ✅ Claude.ai skill with connector configuration
-- ✅ 95+ query examples across 3 categories
-- ✅ Comprehensive documentation
+**Use n8n's built-in instance-level MCP server** - no special trigger nodes needed!
 
-**Next Steps**:
-- ⏳ Import workflows to n8n via web UI (manual)
-- ⏳ Activate all 9 workflows
-- ⏳ Configure Claude.ai custom connector with base URL
-- ⏳ Test integration end-to-end
+**Quick Setup** (3 minutes):
+1. Enable MCP Access in n8n Settings
+2. Mark workflows as "Available in MCP"
+3. Connect Claude.ai with OAuth2
 
-👉 **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete setup instructions**
+👉 **See [QUICK_START_V2.md](./QUICK_START_V2.md) | [DEPLOYMENT_GUIDE_V2.md](./DEPLOYMENT_GUIDE_V2.md)**
 
-**Note**: n8n API import attempted but encountered authentication issues. Manual UI import is recommended.
+**Benefits**:
+- ✅ OAuth2 automatic authentication (no bearer tokens!)
+- ✅ Use regular workflow triggers (no MCP Server Trigger nodes)
+- ✅ Centralized management via MCP Access page
+- ✅ Simpler architecture and troubleshooting
+
+### ⚠️ Alternative: MCP Server Trigger Nodes (Complex)
+
+**Not recommended** unless you need per-workflow SSE endpoints with bearer tokens.
+
+👉 **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) | [QUICK_START.md](./QUICK_START.md)**
+
+**Limitations**:
+- ❌ Requires manual bearer token configuration
+- ❌ Must add MCP Server Trigger node to each workflow
+- ❌ More complex troubleshooting
+- ❌ n8n API authentication challenges
 
 ---
 
