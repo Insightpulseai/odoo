@@ -3,7 +3,7 @@
 
 {
     "name": "IPAI Zoho Mail Integration",
-    "summary": "Zoho Mail SMTP/IMAP configuration for insightpulseai.com",
+    "summary": "Zoho Mail SMTP/IMAP with settings panel, user linking, and fetch wizard",
     "description": """
 IPAI Zoho Mail Integration
 ==========================
@@ -16,6 +16,9 @@ Features:
 * Incoming IMAP server (imap.zoho.com:993 SSL)
 * System parameters for catchall domain and base URL
 * Email aliases for sales, support, accounting
+* Per-user Zoho Mail address field
+* Settings panel with SMTP/IMAP configuration
+* Manual fetch wizard with date filter
 
 Configuration:
 --------------
@@ -30,27 +33,28 @@ DNS Requirements:
 * DKIM TXT record (configured in Zoho admin)
 * DMARC TXT record for monitoring
 
-Post-Installation:
-------------------
-1. Go to Settings → Technical → Email → Outgoing Mail Servers
-2. Edit "Zoho SMTP (Prod)" and enter the SMTP password
-3. Click "Test Connection" to verify
-4. Go to Settings → Technical → Email → Incoming Mail Servers
-5. Edit "Zoho IMAP (Prod)" and enter the IMAP password
-6. Click "Fetch Mail" to verify
+SMTP Delivery Note:
+-------------------
+DigitalOcean blocks outbound SMTP (ports 25, 465, 587) at the network level.
+Submit a support ticket to DO to unblock before testing email delivery.
     """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Mail",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [
         "mail",
+        "fetchmail",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "data/config_params.xml",
         "data/mail_server.xml",
         "data/fetchmail_server.xml",
+        "views/res_users_views.xml",
+        "views/res_config_settings_views.xml",
+        "wizard/zoho_fetch_wizard_view.xml",
     ],
     "installable": True,
     "auto_install": False,
