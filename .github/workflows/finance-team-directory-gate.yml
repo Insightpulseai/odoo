@@ -1,0 +1,53 @@
+name: Finance PPM — Team Directory & Seed SSOT Gate
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - 'data/seed/finance_ppm/**'
+      - 'data/archive/finance_ppm/**'
+      - 'data/finance_seed/**'
+      - 'artifacts/data/ipai_finance_ppm*'
+      - 'scripts/bulk_import_tasks_odoo19.py'
+      - 'scripts/seed_finance_ppm_stages_odoo19.py'
+      - 'scripts/seed_logframe_milestones_odoo19.py'
+      - 'scripts/finance/**'
+      - 'spec/finance-ppm/**'
+      - 'addons/ipai_finance_ppm_umbrella/data/**'
+
+jobs:
+  validate-team-directory:
+    name: Validate Team Directory
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run team directory validator
+        run: python3 scripts/finance/validate_team_directory.py
+
+      - name: Run team directory self-test
+        run: python3 scripts/finance/validate_team_directory.py --self-test
+
+  validate-seed-ssot:
+    name: Validate Seed Data SSOT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run seed SSOT validator
+        run: python3 scripts/finance/validate_seed_ssot.py --verbose
+
+      - name: Run seed SSOT self-test
+        run: python3 scripts/finance/validate_seed_ssot.py --self-test

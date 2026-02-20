@@ -438,6 +438,71 @@ priorities:
           - Committed: chore(oca): sync base_technical_features to 19.0 (77c7cd0)
           - Inner repo: addons/oca/server-ux/ on 18.0 branch
 
+  # -----------------------------------------------------------------------
+  # Blocked / Uninstallable modules (never expose to addons-oca/)
+  # -----------------------------------------------------------------------
+  blocked:
+    description: "Modules that fail installation — must fix before exposing"
+    modules:
+      - name: quality_control_oca
+        oca_repo: manufacture
+        state: blocked
+        reason: "Invalid search view definition causes Odoo to crash on install"
+        notes: "Blocks quality_control_stock_oca as transitive dependency"
+
+      - name: quality_control_stock_oca
+        oca_repo: manufacture
+        state: blocked
+        depends: [quality_control_oca]
+        reason: "Depends on quality_control_oca which is blocked (invalid search view)"
+
+  uninstallable:
+    description: "Modules whose dependency chain is impossible for Odoo 19 — do not expose"
+    modules:
+      - name: mis_builder
+        oca_repo: mis-builder
+        state: uninstallable
+        reason: "MIS builder family not ported to 19.0; deep dependency chain"
+      - name: mis_builder_budget
+        oca_repo: mis-builder
+        state: uninstallable
+        reason: "Depends on mis_builder (uninstallable)"
+      - name: mis_builder_demo
+        oca_repo: mis-builder
+        state: uninstallable
+        reason: "Depends on mis_builder (uninstallable)"
+
+      - name: base_rest
+        oca_repo: rest-framework
+        state: uninstallable
+        reason: "REST/FastAPI stack not ported to 19.0; requires major rework"
+      - name: fastapi
+        oca_repo: rest-framework
+        state: uninstallable
+        reason: "FastAPI stack not ported to 19.0"
+
+      - name: fs_storage
+        oca_repo: storage
+        state: uninstallable
+        reason: "fs_* storage family not ported to 19.0"
+      - name: fs_attachment
+        oca_repo: storage
+        state: uninstallable
+        reason: "Depends on fs_storage (uninstallable)"
+      - name: fs_file
+        oca_repo: storage
+        state: uninstallable
+        reason: "Depends on fs_storage (uninstallable)"
+
+      - name: dms
+        oca_repo: dms
+        state: uninstallable
+        reason: "DMS chain not ported to 19.0"
+      - name: dms_field
+        oca_repo: dms
+        state: uninstallable
+        reason: "Depends on dms (uninstallable)"
+
 port_log:
   # This section populated by scripts/oca/port_addon.sh
   # Format:

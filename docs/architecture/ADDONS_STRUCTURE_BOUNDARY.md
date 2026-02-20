@@ -1,12 +1,62 @@
 # Addons Structure Boundary (SSOT)
 
-> **Version**: 1.0.0
+> **Version**: 1.1.0
 > **Status**: Active
 > **Last Updated**: 2026-02-20
 
 ## Purpose
 
 This document defines the canonical directory taxonomy and boundary rules for Odoo modules in this repository. It serves as the single source of truth for determining where new modules belong and how to enforce structural invariants.
+
+## OCA Module Layers: Stored vs Exposed
+
+OCA modules exist in two distinct layers to prevent Odoo from discovering uninstallable or untested modules:
+
+### A) Stored Layer — `addons/oca/<oca_repo>/`
+
+Full OCA repository clones/submodules. **Not included in `addons_path`.**
+
+- Contains complete repos (bank-payment, web, server-auth, etc.)
+- Modules here are invisible to Odoo until explicitly exposed
+- Updated via `git fetch` / `oca-port` / submodule sync
+
+### B) Exposed Layer — `addons-oca/<module>` (symlinks only)
+
+Symlinks to individual modules in the stored layer. **This is the only OCA directory in `addons_path`.**
+
+```
+addons-oca/queue_job → addons/oca/queue/queue_job
+addons-oca/base_tier_validation → addons/oca/server-ux/base_tier_validation
+```
+
+### Production `addons_path` (stable)
+
+```
+addons_path = /opt/odoo/odoo/addons,/opt/odoo/addons,/opt/odoo/addons-oca
+```
+
+**Why this matters:** Odoo will not "see" uninstallable modules, eliminating the endless "uninstallable/blocked" churn from modules never intended for installation.
+
+---
+
+## Module State Machine
+
+Each OCA module tracked in `config/oca/port_queue.yml` must have one of these states:
+
+| State | Meaning |
+|-------|---------|
+| `absent` | Repo not present / module path missing |
+| `present` | Repo present, module exists, **not exposed** |
+| `exposed` | Symlink exists in `addons-oca/` |
+| `installable` | Dependency check passes (static analysis) |
+| `installed` | Installed in Odoo (`ir.module.module`) |
+| `blocked` | Install fails (must record reason + file/line) |
+| `uninstallable` | Dependency chain impossible for Odoo 19 (hard stop) |
+| `forbidden` | Policy forbids exposure (EE parity boundary, etc.) |
+
+**Rule:** Only modules in state `exposed` or higher are eligible for installation. Modules in `blocked`, `uninstallable`, or `forbidden` must never be symlinked into `addons-oca/`.
+
+---
 
 ## Directory Taxonomy
 
@@ -367,6 +417,12 @@ Q2: Where does it belong?
 ---
 
 ## Changelog
+
+### v1.1.0 (2026-02-20)
+- Add OCA stored/exposed layer model (addons/oca vs addons-oca symlinks)
+- Define module state machine (absent → present → exposed → installable → installed)
+- Add blocked/uninstallable/forbidden states for problematic modules
+- Document production addons_path configuration
 
 ### v1.0.0 (2026-02-20)
 - Initial release
