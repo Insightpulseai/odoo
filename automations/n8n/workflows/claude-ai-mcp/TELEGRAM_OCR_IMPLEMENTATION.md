@@ -175,56 +175,67 @@ curl -sS -X POST \
   "${N8N_BASE_URL}/api/v1/workflows/${WORKFLOW_ID}/activate"
 ```
 
-**[MANUAL_REQUIRED] Credential Attachment**:
-- **What**: Attach Telegram Bot credential to workflow nodes
-- **Why**: n8n Public API doesn't support credential creation/management (platform limitation)
-- **Evidence**: n8n API docs, 405 Method Not Allowed on POST /credentials
-- **Minimal human action**:
-  1. Open `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
-  2. For each Telegram node (Trigger, Get File, Reply):
-     - Click node → Credentials dropdown
-     - Select "Telegram Bot OCR" (or create new with token: `8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY`)
-  3. Save workflow
-- **Then**: Automation resumes with testing (step 3)
+**Credential Provisioning** (API-first with known limitation):
 
-**Helper Script** (optional but recommended):
+The n8n Public API **does support** `POST /api/v1/credentials` for credential creation ([n8n API Reference](https://docs.n8n.io/api/api-reference/)). However, there's a known limitation:
 
-Create `automations/n8n/scripts/import_and_activate_workflow.sh`:
+- **Personal Space vs Project Space**: Credentials created via API may land in your personal space; moving them to a specific project may require UI interaction depending on your organization/project configuration ([n8n Community](https://community.n8n.io/t/n8n-api-creating-credentials-in-a-project/185779))
+- **Workflow-Credential Matching**: If your workflow and credentials are in the same space, credential attachment is fully automatable by patching workflow JSON `nodes[].credentials` references
+
+**Option A - Automated (Recommended)**:
+
+Use the helper script with credential creation flags:
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
+# Set credential secrets (never committed to git)
+export TELEGRAM_BOT_TOKEN="8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY"
 
-WORKFLOW_FILE="${1:?Usage: $0 <workflow.json>}"
-: "${N8N_BASE_URL:?N8N_BASE_URL not set}"
-: "${N8N_API_KEY:?N8N_API_KEY not set}"
-
-# Strip UI-only fields
-IMPORT_JSON="/tmp/$(basename "${WORKFLOW_FILE}" .json)_import.json"
-jq 'del(.versionId, .meta.instanceId, .meta.templateId, .id) |
-    walk(if type == "object" then del(.webhookId) else . end) |
-    walk(if type == "object" and has("credentials") then
-      .credentials |= with_entries(.value |= del(.id))
-    else . end)' \
-  "${WORKFLOW_FILE}" > "${IMPORT_JSON}"
-
-# Import
-WORKFLOW_ID=$(curl -sS -X POST \
-  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
-  -H "Content-Type: application/json" \
-  -d @"${IMPORT_JSON}" \
-  "${N8N_BASE_URL}/api/v1/workflows" | jq -r '.id')
-
-echo "✅ Imported workflow ID: ${WORKFLOW_ID}"
-
-# Activate
-curl -sS -X POST \
-  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
-  "${N8N_BASE_URL}/api/v1/workflows/${WORKFLOW_ID}/activate"
-
-echo "✅ Activated workflow: ${N8N_BASE_URL}/workflow/${WORKFLOW_ID}"
-echo "⚠️  [MANUAL] Attach Telegram credentials to nodes (see TELEGRAM_OCR_IMPLEMENTATION.md)"
+# Create credentials + attach + import + activate
+./automations/n8n/scripts/import_and_activate_workflow.sh \
+  --create-creds \
+  --attach-creds \
+  automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json
 ```
+
+**Option B - Manual Credential Attachment** (if project-scoping requires UI):
+
+If credentials landed in personal space and need project assignment:
+
+1. Open `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
+2. For each Telegram node (Trigger, Get File, Reply):
+   - Click node → Credentials dropdown
+   - Select "Telegram Bot OCR" (or create new with token from `$TELEGRAM_BOT_TOKEN`)
+3. Save workflow
+
+**Helper Script** (recommended):
+
+The script at `automations/n8n/scripts/import_and_activate_workflow.sh` supports:
+
+**Usage**:
+
+```bash
+# Basic import + activate (credentials attached manually later)
+./automations/n8n/scripts/import_and_activate_workflow.sh <workflow.json>
+
+# Full automation: create credentials + attach + import + activate
+export TELEGRAM_BOT_TOKEN="8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY"
+./automations/n8n/scripts/import_and_activate_workflow.sh \
+  --create-creds \
+  --attach-creds \
+  automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json
+
+# Dry-run mode (print API calls without executing)
+./automations/n8n/scripts/import_and_activate_workflow.sh \
+  --dry-run \
+  --create-creds \
+  --attach-creds \
+  <workflow.json>
+```
+
+**Flags**:
+- `--create-creds`: Create credentials via `POST /api/v1/credentials` (requires `$TELEGRAM_BOT_TOKEN`)
+- `--attach-creds`: Patch workflow JSON to attach credential IDs before import
+- `--dry-run`: Print planned API calls without execution (for verification)
 
 ### 3. Test End-to-End
 
@@ -319,20 +330,44 @@ curl -sS -X POST \
 
 **Symptom**: Red "Select Credential" on Telegram nodes after API import
 
-**Root Cause**: n8n Public API doesn't support credential creation/management (platform limitation, confirmed 405 Method Not Allowed on POST /credentials)
+**Root Cause**: Workflow JSON imported without credential IDs attached
 
-**Fix** [MANUAL_REQUIRED]: Attach credentials via n8n UI:
-1. Open workflow in n8n web UI: `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
-2. For each Telegram node (Trigger, Get File, Reply):
-   - Click node → Credentials dropdown
-   - Select existing "Telegram Bot OCR" credential
-   - OR create new:
-     - Name: "Telegram Bot OCR"
-     - Access Token: `8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY`
-     - Base URL: (leave default)
+**API-First Fix**:
+
+```bash
+# Create credential via n8n Public API
+CRED_ID=$(curl -sS -X POST \
+  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Telegram Bot OCR",
+    "type": "telegramApi",
+    "data": {
+      "accessToken": "'"${TELEGRAM_BOT_TOKEN}"'"
+    }
+  }' \
+  "${N8N_BASE_URL}/api/v1/credentials" | jq -r '.id')
+
+echo "Created credential ID: ${CRED_ID}"
+
+# Patch workflow JSON to attach credential
+jq --arg cred_id "${CRED_ID}" '
+  walk(
+    if type == "object" and .type == "n8n-nodes-base.telegramTrigger" or .type == "n8n-nodes-base.telegram" then
+      .credentials.telegramApi.id = $cred_id
+    else . end
+  )' workflow.json > workflow_with_creds.json
+
+# Then re-import or update via API
+```
+
+**Manual UI Fix** (fallback if credential-project scoping requires UI):
+
+1. Open `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
+2. For each Telegram node: Click node → Select "Telegram Bot OCR" credential
 3. Save workflow
 
-**Note**: This is the ONLY manual UI step required. All other operations (import, activate, test) are API-driven.
+**Known Limitation**: Credentials created via API may land in personal space; project assignment may require UI depending on your n8n configuration ([n8n Community](https://community.n8n.io/t/n8n-api-creating-credentials-in-a-project/185779)).
 
 ## Next Steps
 
