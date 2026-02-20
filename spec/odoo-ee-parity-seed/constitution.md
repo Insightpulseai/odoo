@@ -136,6 +136,105 @@ Supabase partner integrations are permitted only when:
 
 ---
 
+## Article 3: Integration Invariants (Provider API Keys & Credentials)
+
+### §3.1 No Client-Side Provider Keys (Hard Rule)
+
+**Statement**: External provider API keys (Gemini, OpenAI, n8n Google credentials, etc.) MUST NEVER be exposed to client-side code (browser, mobile apps).
+
+**Rationale**:
+- Client-side exposure enables key theft, quota abuse, and unauthorized usage
+- Browser DevTools, bundle source maps, and network inspection expose secrets
+- Mobile app decompilation reveals hardcoded keys
+
+**Enforcement**:
+- CI linter MUST flag any provider API key usage in client-side code paths
+- All provider API calls MUST route through server-side proxies (Supabase Edge Functions, backend routes)
+- Client apps use `anon` key only, constrained by RLS
+
+**Examples**:
+- ✅ Supabase Edge Function calls Gemini API with `GEMINI_API_KEY` from Vault
+- ✅ Backend route uses Google Service Account key from env/secret store
+- ❌ React component imports `GEMINI_API_KEY` from `.env.local`
+- ❌ Mobile app bundles `google_service_account.json` as asset
+
+### §3.2 Secrets Referenced Only (Hard Rule)
+
+**Statement**: All provider credentials MUST be referenced via environment variables or secret store paths, NEVER embedded directly in code or configuration files committed to git.
+
+**Rationale**:
+- Git history is immutable; committed secrets cannot be fully removed
+- Secret rotation becomes manual and error-prone
+- Compliance audits flag hardcoded secrets as critical vulnerabilities
+
+**Enforcement**:
+- `.gitignore` MUST exclude all secret files (`.env*`, `*credentials*.json`, `*service-account*.json`)
+- CI secret scanner MUST run on every PR (detect patterns: `sk-`, `private_key`, `client_secret`)
+- Pre-commit hook MAY warn on secret-like patterns
+
+**Examples**:
+- ✅ `process.env.GEMINI_API_KEY` in Edge Function
+- ✅ Supabase Vault path: `google/service_account_key`
+- ❌ `const apiKey = "sk-proj-abc123..."` in source file
+- ❌ `credentials.json` committed with service account key
+
+### §3.3 n8n Credentials Are Operational Config, Supabase Is SSOT (Hard Rule)
+
+**Statement**: n8n credential objects are execution context configuration. Supabase `ops.*` tables are the canonical SSOT for integration state, audit trails, and provenance.
+
+**Rationale**:
+- n8n credentials are transient (encrypted in n8n DB, not version-controlled)
+- Integration state (sync cursors, checkpoints) must persist beyond n8n execution
+- Audit trails must be queryable and compliance-ready (Supabase provides this)
+
+**Ownership Matrix**:
+- **n8n owns**: Encrypted token storage, OAuth refresh automation, workflow execution context
+- **Supabase SSOT owns**: Integration state (`ops.integration_state`), audit logs (`ops.run_events`), provenance tracking
+- **Odoo SOR owns**: Nothing (integrations are operational control-plane, not ERP ledger)
+
+**Conflict Policy**:
+- If n8n and Supabase disagree on integration state, Supabase wins (SSOT)
+- n8n execution logs are transient; `ops.run_events` is canonical audit trail
+- n8n credential changes (rotation) MUST emit events to `ops.credential_rotations`
+
+**Examples**:
+- ✅ n8n stores Google OAuth refresh token → Supabase logs API call events
+- ✅ n8n workflow updates `ops.integration_state` with Drive sync cursor
+- ❌ n8n workflow writes directly to Odoo ledger tables (SOR violation)
+- ❌ Integration state stored only in n8n workflow JSON (not queryable SSOT)
+
+### §3.4 Audit Trail Completeness (Hard Rule)
+
+**Statement**: Every external provider API call MUST emit a structured event to Supabase `ops.run_events` with correlation_id, request metadata, and response status.
+
+**Rationale**:
+- Compliance audits require complete trails (who, what, when, why)
+- Debugging requires correlation across distributed systems (n8n, Edge Functions, Odoo)
+- Cost monitoring requires token/quota usage tracking per API call
+
+**Required Event Fields**:
+- `run_id` (FK to `ops.runs`)
+- `event_type` (e.g., `gemini_api_call`, `google_api_call`)
+- `event_data`:
+  - `provider` (gemini, google, openai, etc.)
+  - `operation` (generateContent, files.list, chat.completions.create)
+  - `request_id` / `correlation_id`
+  - `response_status` (200, 429, 500, etc.)
+  - `quota_consumed` (tokens, API units)
+  - `latency_ms`
+
+**Enforcement**:
+- CI checks MUST verify all Edge Functions emit audit events
+- Weekly compliance report: "API calls without audit trail" (target: 0)
+
+**Examples**:
+- ✅ Edge Function logs Gemini API call with prompt tokens, response status
+- ✅ n8n workflow emits event to `ops.run_events` after Google Drive API call
+- ❌ API call made without corresponding `ops.run_events` entry
+- ❌ Audit event missing `correlation_id` or `response_status`
+
+---
+
 ## Article 4: Structural Boundaries
 
 ### §4.1 Directory Taxonomy

@@ -18,6 +18,7 @@ Priority review requested. CI is green.
 - [ ] Any UI/manual steps are labeled Optional; primary path is automation-first
 - [ ] Plan includes verification & rollback steps
 - [ ] Tasks reflect current PR scope
+- [ ] n8n workflow exports (if any) are secret-free (`automations/n8n/workflows/*.json`)
 - [ ] N/A - This is a minor change (bug fix, docs, config)
 
 ## Design Contract (if UI changes)

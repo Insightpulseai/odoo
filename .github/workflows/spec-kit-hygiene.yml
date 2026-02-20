@@ -3,6 +3,7 @@ name: Spec Kit Hygiene
 on:
   pull_request:
     paths:
+      - "automations/**"
       - "spec/**"
       - ".github/pull_request_template.md"
       - "docs/**"
@@ -95,3 +96,17 @@ jobs:
               fi
             done
           done
+
+      - name: Check n8n Workflow Secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Install ripgrep for pattern matching
+          sudo apt-get update && sudo apt-get install -y ripgrep
+
+          # Run n8n secret hygiene check
+          chmod +x scripts/ci/check_n8n_workflow_secrets.sh
+          if ! ./scripts/ci/check_n8n_workflow_secrets.sh ci; then
+            echo "❌ n8n workflow secret check failed"
+            exit 1
+          fi
