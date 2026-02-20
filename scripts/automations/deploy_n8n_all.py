@@ -50,6 +50,7 @@ def n8n_request(method: str, path: str, base_url: str, api_key: str, body: dict 
         "X-N8N-API-KEY": api_key,
         "Content-Type": "application/json",
         "Accept": "application/json",
+        "User-Agent": "n8n-deploy/1.0 curl/8.7.1",
     }
     data = json.dumps(body).encode() if body else None
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
@@ -77,12 +78,20 @@ def get_workflow_by_name(name: str, workflows: list[dict]) -> dict | None:
     return None
 
 
+_API_ALLOWED_KEYS = {"name", "nodes", "connections", "settings", "staticData"}
+
+
+def _strip_for_api(wf_json: dict) -> dict:
+    """Strip read-only / additional fields rejected by n8n v2 Public API."""
+    return {k: v for k, v in wf_json.items() if k in _API_ALLOWED_KEYS}
+
+
 def create_workflow(wf_json: dict, base_url: str, api_key: str) -> tuple[dict, int]:
-    return n8n_request("POST", "/api/v1/workflows", base_url, api_key, body=wf_json)
+    return n8n_request("POST", "/api/v1/workflows", base_url, api_key, body=_strip_for_api(wf_json))
 
 
 def update_workflow(wf_id: str, wf_json: dict, base_url: str, api_key: str) -> tuple[dict, int]:
-    return n8n_request("PUT", f"/api/v1/workflows/{wf_id}", base_url, api_key, body=wf_json)
+    return n8n_request("PUT", f"/api/v1/workflows/{wf_id}", base_url, api_key, body=_strip_for_api(wf_json))
 
 
 def workflows_differ(local: dict, remote: dict) -> bool:
