@@ -34,27 +34,27 @@ if ! command -v rg &> /dev/null; then
 fi
 
 # Secret patterns to detect (high-confidence only)
-# Excludes: $env.VARIABLE references (legitimate n8n pattern)
+# Excludes: $env.VARIABLE and ={{ $env.VARIABLE }} references (legitimate n8n patterns)
 declare -a PATTERNS=(
   # API keys and tokens
-  '"api_key"\s*:\s*"(?!\$env\.)([^"]{10,})"'
-  '"apiKey"\s*:\s*"(?!\$env\.)([^"]{10,})"'
-  '"access_token"\s*:\s*"(?!\$env\.)([^"]{10,})"'
-  '"accessToken"\s*:\s*"(?!\$env\.)([^"]{10,})"'
-  '"client_secret"\s*:\s*"(?!\$env\.)([^"]{10,})"'
-  '"clientSecret"\s*:\s*"(?!\$env\.)([^"]{10,})"'
+  '"api_key"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
+  '"apiKey"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
+  '"access_token"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
+  '"accessToken"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
+  '"client_secret"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
+  '"clientSecret"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"'
 
-  # Bearer tokens (JWT pattern)
-  '"Authorization"\s*:\s*"Bearer\s+eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"'
-  '"authorization"\s*:\s*"Bearer\s+eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"'
+  # Bearer tokens (JWT pattern) - exclude n8n expressions
+  '"Authorization"\s*:\s*"(?!=\{\{)Bearer\s+eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"'
+  '"authorization"\s*:\s*"(?!=\{\{)Bearer\s+eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"'
 
-  # Supabase specific tokens
-  'sbp_[A-Za-z0-9]{40,}'  # Personal access tokens
-  '"service_role"\s*:\s*"eyJ[A-Za-z0-9_-]{100,}"'  # Service role keys (very long JWTs)
+  # Supabase specific tokens (raw values only, not in expressions)
+  '(?<![=\{])sbp_[A-Za-z0-9]{40,}(?!\})'  # Personal access tokens
+  '"service_role"\s*:\s*"(?!=\{\{)eyJ[A-Za-z0-9_-]{100,}"'  # Service role keys (very long JWTs)
 
-  # Generic passwords and secrets (8+ chars, not env refs)
-  '"password"\s*:\s*"(?!\$env\.)([^"]{8,})"'
-  '"secret"\s*:\s*"(?!\$env\.)([A-Za-z0-9]{20,})"'
+  # Generic passwords and secrets (8+ chars, not env refs or expressions)
+  '"password"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{8,})"'
+  '"secret"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([A-Za-z0-9]{20,})"'
 )
 
 # Track violations
