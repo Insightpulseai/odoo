@@ -1,510 +1,326 @@
-# =============================================================================
 # OCA Module Porting Queue for Odoo 19.0
-# =============================================================================
-# Single source of truth for porting backlog, priorities, and status tracking.
-# Follows OCA maintainer-tools migration workflow (git format-patch + git am).
-#
-# RULES:
-#   1. Edit this file to update porting status, never edit generated artifacts
-#   2. Priorities: P0 (foundation, blocking), P1 (high value), P2 (defer if low capacity)
-#   3. Status: missing (not migrated), uninstallable (exists but deps unsatisfiable),
-#              in_progress (porting started), complete (merged upstream), abandoned
-#   4. Dependencies are addons from this queue or already available modules
-#
-# WORKFLOW:
-#   1. Pick module from queue (P0 first)
-#   2. Run: ./scripts/oca/port_to_19.sh <repo> <module>
-#   3. Follow: docs/oca/PORTING_19_RUNBOOK.md
-#   4. Update status here when complete
-#
-# =============================================================================
+# Auto-generated timestamp: 2026-02-20T18:00:00+08:00
+# Purpose: Track systematic porting of 40 OCA modules from 18.0 → 19.0
+# Tooling: OCA's official `oca-port` CLI + OpenUpgrade migration libraries
+# Workflow: select → port → test → commit → PR
 
-version: 1
-target_odoo_version: "19.0"
-source_odoo_version: "18.0"
-porting_method: "OCA maintainer-tools git format-patch + git am"
-last_updated: "2026-02-20"
-
-# Porting statistics
-stats:
-  total_modules: 40
-  missing: 32
-  uninstallable: 8
-  in_progress: 0
-  complete: 0
-  abandoned: 0
-
-# Porting queues by priority
-queues:
-  # =============================================================================
-  # P0: Foundation (Business-critical, blocking dependencies)
-  # =============================================================================
+priorities:
   P0:
-    # Component/Connector Stack - foundational for many integrations
-    - addon: component
-      repo: connector
-      status: missing
-      reason: "Foundational dependency for connector framework, many modules depend on this"
-      deps: []
-      upstream_url: "https://github.com/OCA/connector"
-      notes:
-        assumption: false
-        priority_reason: "Connector framework requires this - blocks all connector-based modules"
+    description: "Blockers - required for core functionality (15 modules)"
+    modules:
+      # Environment & Configuration
+      - name: server_environment
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Configuration framework for environment-specific settings"
 
-    - addon: component_event
-      repo: connector
-      status: missing
-      reason: "Event system for component framework, dependency of connector"
-      deps: [component]
-      upstream_url: "https://github.com/OCA/connector"
-      notes:
-        assumption: false
-        priority_reason: "Part of connector stack foundation"
+      # Connector Framework (dependency chain)
+      - name: component
+        oca_repo: connector
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Base component framework for connector architecture"
 
-    - addon: connector
-      repo: connector
-      status: missing
-      reason: "Core connector framework - foundation for all integration modules"
-      deps: [component, component_event]
-      upstream_url: "https://github.com/OCA/connector"
-      notes:
-        assumption: false
-        priority_reason: "Many OCA modules use connector pattern"
+      - name: connector
+        oca_repo: connector
+        upstream_branch: "18.0"
+        status: pending
+        depends: [component]
+        reason: "Core connector framework for external system integration"
 
-    # Server Environment - critical for deployment/config management
-    - addon: server_environment
-      repo: server-env
-      status: missing
-      reason: "Environment-based configuration, required for multi-env deployments (dev/staging/prod)"
-      deps: []
-      upstream_url: "https://github.com/OCA/server-env"
-      notes:
-        assumption: false
-        priority_reason: "Critical for environment separation in production deployments"
+      # Bank Statement Imports
+      - name: account_statement_import_base
+        oca_repo: bank-statement-import
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Base module for all bank statement import formats"
 
-    - addon: server_environment_data_encryption
-      repo: server-env
-      status: missing
-      reason: "Encrypted storage for sensitive config (API keys, credentials)"
-      deps: [server_environment]
-      upstream_url: "https://github.com/OCA/server-env"
-      notes:
-        assumption: false
-        priority_reason: "Security requirement for storing secrets"
+      - name: account_statement_import_camt
+        oca_repo: bank-statement-import
+        upstream_branch: "18.0"
+        status: pending
+        depends: [account_statement_import_base]
+        reason: "CAMT.053 bank statement format (European standard)"
 
-    # REST Framework - API foundation (many uninstallable deps)
-    - addon: extendable
-      repo: rest-framework
-      status: uninstallable
-      reason: "Dependency issues with pydantic/fastapi - base for extendable_fastapi"
-      deps: []
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Foundation for FastAPI integration"
-        blockers: "Pydantic version conflicts, may require upstream fix"
+      - name: account_statement_import_ofx
+        oca_repo: bank-statement-import
+        upstream_branch: "18.0"
+        status: pending
+        depends: [account_statement_import_base]
+        reason: "OFX bank statement format (US/Philippines standard)"
 
-    - addon: pydantic
-      repo: rest-framework
-      status: uninstallable
-      reason: "Pydantic integration for Odoo - dependency issues"
-      deps: []
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Required for modern API patterns"
-        blockers: "Version compatibility with Odoo 19 Python environment"
+      - name: account_statement_import_file
+        oca_repo: bank-statement-import
+        upstream_branch: "18.0"
+        status: pending
+        depends: [account_statement_import_base]
+        reason: "Generic file-based statement import"
 
-    - addon: fastapi
-      repo: rest-framework
-      status: uninstallable
-      reason: "FastAPI integration - depends on extendable + pydantic"
-      deps: [extendable, pydantic]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Modern REST API framework"
-        blockers: "Dependency cascade from extendable/pydantic"
+      - name: account_statement_import_csv
+        oca_repo: bank-statement-import
+        upstream_branch: "18.0"
+        status: pending
+        depends: [account_statement_import_file]
+        reason: "CSV bank statement import"
 
-    - addon: extendable_fastapi
-      repo: rest-framework
-      status: missing
-      reason: "FastAPI extension framework"
-      deps: [extendable, fastapi]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Enables FastAPI-based API endpoints"
+      # Queue System
+      - name: queue_job
+        oca_repo: queue
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Asynchronous job queue (replaces Odoo EE's job queue)"
 
-    - addon: fastapi_auth_api_key
-      repo: rest-framework
-      status: missing
-      reason: "API key authentication for FastAPI endpoints"
-      deps: [fastapi, extendable_fastapi]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Security layer for REST APIs"
+      # Base Extensions
+      - name: base_tier_validation
+        oca_repo: server-ux
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Multi-tier approval workflow framework"
 
-    - addon: fastapi_auth_jwt
-      repo: rest-framework
-      status: missing
-      reason: "JWT authentication for FastAPI endpoints"
-      deps: [fastapi, extendable_fastapi]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Modern auth pattern for APIs"
+      - name: base_exception
+        oca_repo: server-ux
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Exception handling framework for business logic"
 
-    - addon: base_rest
-      repo: rest-framework
-      status: uninstallable
-      reason: "Legacy REST framework - dependency issues"
-      deps: []
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        priority_reason: "Some modules may still depend on this (pre-FastAPI)"
-        blockers: "May be deprecated in favor of fastapi stack"
+      - name: web_environment_ribbon
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: [server_environment]
+        reason: "Environment indicator ribbon (dev/staging/prod)"
 
-    - addon: base_rest_auth_api_key
-      repo: rest-framework
-      status: uninstallable
-      reason: "API key auth for base_rest - dependency issues"
-      deps: [base_rest]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        blockers: "Depends on uninstallable base_rest"
+      # Email Enhancements
+      - name: mail_tracking
+        oca_repo: social
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Email delivery tracking and notifications"
 
-    - addon: base_rest_pydantic
-      repo: rest-framework
-      status: uninstallable
-      reason: "Pydantic integration for base_rest - dependency issues"
-      deps: [base_rest, pydantic]
-      upstream_url: "https://github.com/OCA/rest-framework"
-      notes:
-        assumption: false
-        blockers: "Depends on uninstallable base_rest + pydantic"
+      - name: fetchmail_notify_error_to_sender
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Error notifications for failed email fetches"
 
-    # Bank Reconciliation Foundation
-    - addon: account_statement_import_base
-      repo: bank-statement-import
-      status: missing
-      reason: "Base module for all bank statement import workflows - dependency for reconciliation"
-      deps: []
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Foundational for bank reconciliation workflows"
+      - name: mail_debrand
+        oca_repo: social
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Remove Odoo branding from emails"
 
-  # =============================================================================
-  # P1: High Value (Port within quarter, significant business functionality)
-  # =============================================================================
   P1:
-    # Accounting Reconciliation
-    - addon: account_reconcile_oca
-      repo: account-reconcile
-      status: missing
-      reason: "Advanced bank reconciliation UI and workflows"
-      deps: [account_statement_import_base]
-      upstream_url: "https://github.com/OCA/account-reconcile"
-      notes:
-        assumption: false
-        priority_reason: "Critical for finance team productivity"
+    description: "High value features - significant EE parity improvements (19 modules)"
+    modules:
+      # Purchase Workflow
+      - name: purchase_tier_validation
+        oca_repo: purchase-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for purchase orders"
 
-    - addon: account_reconcile_model_oca
-      repo: account-reconcile
-      status: missing
-      reason: "Reconciliation rules and models (auto-matching)"
-      deps: [account_reconcile_oca]
-      upstream_url: "https://github.com/OCA/account-reconcile"
-      notes:
-        assumption: false
-        priority_reason: "Automation for reconciliation"
+      - name: purchase_advance_payment
+        oca_repo: purchase-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Advance payment handling for purchases"
 
-    - addon: account_reconcile_oca_add_default_filters
-      repo: account-reconcile
-      status: missing
-      reason: "UX improvements for reconciliation filters"
-      deps: [account_reconcile_oca]
-      upstream_url: "https://github.com/OCA/account-reconcile"
-      notes:
-        assumption: false
-        priority_reason: "Quality of life for finance users"
+      - name: purchase_exception
+        oca_repo: purchase-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_exception]
+        reason: "Exception rules for purchase orders"
 
-    - addon: account_partner_reconcile
-      repo: account-reconcile
-      status: missing
-      reason: "Partner-level reconciliation views"
-      deps: [account_reconcile_oca]
-      upstream_url: "https://github.com/OCA/account-reconcile"
-      notes:
-        assumption: false
-        priority_reason: "Vendor/customer reconciliation workflows"
+      # Accounting Enhancements
+      - name: account_reconcile_oca
+        oca_repo: account-reconcile
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Enhanced bank reconciliation features"
 
-    # Bank Statement Import Formats
-    - addon: account_statement_import_file
-      repo: bank-statement-import
-      status: missing
-      reason: "File-based statement import (CSV, Excel)"
-      deps: [account_statement_import_base]
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Common import format"
+      - name: account_move_tier_validation
+        oca_repo: account-financial-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for journal entries"
 
-    - addon: account_statement_import_file_reconcile_oca
-      repo: bank-statement-import
-      status: missing
-      reason: "Integration between file import and OCA reconciliation"
-      deps: [account_statement_import_file, account_reconcile_oca]
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Connects import to reconciliation workflow"
+      - name: account_payment_tier_validation
+        oca_repo: account-payment
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for payments"
 
-    - addon: account_statement_import_camt
-      repo: bank-statement-import
-      status: missing
-      reason: "CAMT.053 format import (European banking standard)"
-      deps: [account_statement_import_base]
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Required for European banks"
+      - name: account_invoice_tier_validation
+        oca_repo: account-invoicing
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for invoices"
 
-    - addon: account_statement_import_camt54
-      repo: bank-statement-import
-      status: missing
-      reason: "CAMT.054 format import (debit/credit notifications)"
-      deps: [account_statement_import_base]
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Required for European banks"
+      # Sale Workflow
+      - name: sale_tier_validation
+        oca_repo: sale-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for sales orders"
 
-    - addon: account_statement_import_ofx
-      repo: bank-statement-import
-      status: missing
-      reason: "OFX format import (US/international standard)"
-      deps: [account_statement_import_base]
-      upstream_url: "https://github.com/OCA/bank-statement-import"
-      notes:
-        assumption: false
-        priority_reason: "Required for US banks and international"
+      - name: sale_advance_payment
+        oca_repo: sale-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Advance payment handling for sales"
 
-    # Purchase Workflow Improvements
-    - addon: purchase_tier_validation
-      repo: purchase-workflow
-      status: missing
-      reason: "Multi-tier approval workflow for purchase orders (e.g., manager → director → CFO)"
-      deps: []
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "Critical for purchase approval workflows"
-        assumption_note: "Assuming repo is purchase-workflow, verify base_tier_validation availability"
+      - name: sale_exception
+        oca_repo: sale-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_exception]
+        reason: "Exception rules for sales orders"
 
-    - addon: purchase_request_tier_validation
-      repo: purchase-workflow
-      status: missing
-      reason: "Approval workflow for purchase requests"
-      deps: [purchase_tier_validation]
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "Purchase request approval process"
+      # Stock/Inventory
+      - name: stock_tier_validation
+        oca_repo: stock-logistics-workflow
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for stock operations"
 
-    - addon: purchase_advance_payment
-      repo: purchase-workflow
-      status: missing
-      reason: "Advance payment handling for purchase orders"
-      deps: []
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "Financial control for procurement"
+      # HR Extensions
+      - name: hr_expense_tier_validation
+        oca_repo: hr-expense
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for expense reports"
 
-    - addon: purchase_exception
-      repo: purchase-workflow
-      status: missing
-      reason: "Exception handling workflow for purchase orders"
-      deps: []
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "Quality control in procurement"
+      # Partner/CRM
+      - name: partner_tier_validation
+        oca_repo: partner-contact
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for partner/contact changes"
 
-    - addon: purchase_order_approval_block
-      repo: purchase-workflow
-      status: missing
-      reason: "Block unapproved purchase orders from processing"
-      deps: []
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "Policy enforcement for procurement"
+      # Project Management
+      - name: project_tier_validation
+        oca_repo: project
+        upstream_branch: "18.0"
+        status: pending
+        depends: [base_tier_validation]
+        reason: "Multi-tier approval for projects and tasks"
 
-    - addon: purchase_order_line_sequence
-      repo: purchase-workflow
-      status: missing
-      reason: "Sequencing for purchase order lines"
-      deps: []
-      upstream_url: "https://github.com/OCA/purchase-workflow"
-      notes:
-        assumption: true
-        priority_reason: "UX improvement for procurement"
+      # Database Tools
+      - name: auto_backup
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Automated database backup scheduling"
 
-    # Account Move Workflow
-    - addon: account_move_tier_validation
-      repo: account-financial-tools
-      status: missing
-      reason: "Multi-tier approval for journal entries (accounting control)"
-      deps: []
-      upstream_url: "https://github.com/OCA/account-financial-tools"
-      notes:
-        assumption: true
-        priority_reason: "Financial controls for accounting"
-        assumption_note: "Assuming repo, may be in account-invoicing"
+      # Web Interface
+      - name: web_responsive
+        oca_repo: web
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Mobile-responsive backend interface"
 
-  # =============================================================================
-  # P2: Nice-to-Have (Defer if low capacity, quality of life improvements)
-  # =============================================================================
+      - name: web_notify
+        oca_repo: web
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "User notifications in web interface"
+
+      # Reporting
+      - name: report_xlsx
+        oca_repo: reporting-engine
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Excel report generation"
+
+      - name: report_qweb_pdf
+        oca_repo: reporting-engine
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Enhanced PDF report generation"
+
   P2:
-    # HR
-    - addon: hr_employee_firstname
-      repo: hr
-      status: missing
-      reason: "Separate first/last name fields for employees"
-      deps: []
-      upstream_url: "https://github.com/OCA/hr"
-      notes:
-        assumption: false
-        priority_reason: "Data quality for HR"
+    description: "Nice-to-have enhancements - quality of life improvements (6 modules)"
+    modules:
+      # Developer Tools
+      - name: module_analysis
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Module dependency analysis and documentation"
 
-    # CRM Extensions
-    - addon: crm_lead_code
-      repo: crm
-      status: missing
-      reason: "Auto-generated codes for leads (e.g., LEAD/2024/001)"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "Better lead tracking"
+      # Session Management
+      - name: session_db
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Database-backed session storage (multi-server)"
 
-    - addon: crm_lead_currency
-      repo: crm
-      status: missing
-      reason: "Multi-currency support for leads"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "International sales tracking"
+      # Authentication
+      - name: auth_api_key
+        oca_repo: server-auth
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "API key authentication for external systems"
 
-    - addon: crm_lead_firstname
-      repo: crm
-      status: missing
-      reason: "Separate first/last name for lead contacts"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "Data quality for CRM"
+      # Audit Trail
+      - name: auditlog
+        oca_repo: server-tools
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Comprehensive audit logging for compliance"
 
-    - addon: crm_industry
-      repo: crm
-      status: missing
-      reason: "Industry classification for leads/partners"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "Segmentation and reporting"
+      # Web Enhancements
+      - name: web_widget_colorpicker
+        oca_repo: web
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Color picker widget for UI customization"
 
-    - addon: crm_phonecall
-      repo: crm
-      status: missing
-      reason: "Phone call logging and tracking"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "Communication tracking for sales"
+      # Misc Tools
+      - name: base_technical_features
+        oca_repo: server-ux
+        upstream_branch: "18.0"
+        status: pending
+        depends: []
+        reason: "Toggle technical features without developer mode"
 
-    - addon: crm_stage_probability
-      repo: crm
-      status: missing
-      reason: "Automatic probability updates based on stage"
-      deps: []
-      upstream_url: "https://github.com/OCA/crm"
-      notes:
-        assumption: false
-        priority_reason: "Sales pipeline accuracy"
-
-    # Reporting (uninstallable - complex dependencies)
-    - addon: mis_builder
-      repo: mis-builder
-      status: uninstallable
-      reason: "Management Information System builder - dependency issues"
-      deps: []
-      upstream_url: "https://github.com/OCA/mis-builder"
-      notes:
-        assumption: false
-        priority_reason: "Advanced financial reporting"
-        blockers: "Likely pydantic/fastapi compatibility issues, may require upstream fix"
-
-    - addon: mis_builder_budget
-      repo: mis-builder
-      status: uninstallable
-      reason: "Budget integration for MIS builder"
-      deps: [mis_builder]
-      upstream_url: "https://github.com/OCA/mis-builder"
-      notes:
-        assumption: false
-        blockers: "Depends on uninstallable mis_builder"
-
-# Repo mapping (canonical OCA repositories)
-repositories:
-  connector:
-    url: "https://github.com/OCA/connector"
-    description: "Connector framework for Odoo integrations"
-  server-env:
-    url: "https://github.com/OCA/server-env"
-    description: "Server environment configuration"
-  rest-framework:
-    url: "https://github.com/OCA/rest-framework"
-    description: "REST API framework (base_rest + FastAPI)"
-  bank-statement-import:
-    url: "https://github.com/OCA/bank-statement-import"
-    description: "Bank statement import formats"
-  account-reconcile:
-    url: "https://github.com/OCA/account-reconcile"
-    description: "Bank reconciliation tools"
-  purchase-workflow:
-    url: "https://github.com/OCA/purchase-workflow"
-    description: "Purchase order improvements"
-  account-financial-tools:
-    url: "https://github.com/OCA/account-financial-tools"
-    description: "Accounting utilities"
-  hr:
-    url: "https://github.com/OCA/hr"
-    description: "Human resources"
-  crm:
-    url: "https://github.com/OCA/crm"
-    description: "Customer relationship management"
-  mis-builder:
-    url: "https://github.com/OCA/mis-builder"
-    description: "Management information system reporting"
-
-# Validation rules for CI
-validation:
-  required_keys: [addon, repo, status, deps, upstream_url]
-  valid_priorities: [P0, P1, P2]
-  valid_statuses: [missing, uninstallable, in_progress, complete, abandoned]
-  allow_duplicates: false
-  require_upstream_url: true
-
-# END_PORT_QUEUE
+port_log:
+  # This section populated by scripts/oca/port_addon.sh
+  # Format:
+  # - module: <name>
+  #   status: completed|failed
+  #   timestamp: <ISO8601+TZ>
+  #   evidence: <path to evidence directory>
+  #   notes: <optional notes>
