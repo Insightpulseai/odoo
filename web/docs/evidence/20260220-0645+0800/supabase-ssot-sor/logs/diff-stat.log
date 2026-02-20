@@ -1,0 +1,9 @@
+ docs/supabase/patterns/auth-rls-function-access.md | 145 +++++++++++++++++++
+ docs/supabase/patterns/edge-functions-ci-deploy.md |  98 +++++++++++++
+ docs/supabase/patterns/edge-functions-worker.md    |  93 ++++++++++++
+ docs/supabase/patterns/storage-multipart-upload.md | 153 ++++++++++++++++++++
+ docs/supabase/patterns/webhook-ingest-verify.md    | 156 +++++++++++++++++++++
+ spec/odoo-ee-parity-seed/constitution.md           |  54 +++++++
+ spec/odoo-ee-parity-seed/plan.md                   |  41 ++++++
+ spec/odoo-ee-parity-seed/spec.md                   |  21 +++
+ 8 files changed, 761 insertions(+)

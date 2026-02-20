@@ -1,0 +1,20 @@
+name: No CODEOWNERS
+
+on:
+  pull_request:
+    paths:
+      - '.github/CODEOWNERS'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if CODEOWNERS exists
+        run: |
+          echo "❌ CODEOWNERS file detected"
+          echo ""
+          echo "This is a single-maintainer repository."
+          echo "Domain boundaries are enforced via CI policy gates, not CODEOWNERS."
+          echo ""
+          echo "See docs/architecture/MONOREPO_CONTRACT.md for governance rules."
+          exit 1

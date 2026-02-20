@@ -1,0 +1,47 @@
+================================================================
+OCA EE Parity Installation Plan - Summary
+================================================================
+Timestamp: 2026-02-20T13:35:00+08:00
+
+CURRENT STATE:
+  - Base allowlist: 70 modules
+  - Successfully installed: 30 modules (42.9%)
+  - Blocked (missing in 19.0): 32 modules
+  - Blocked (uninstallable): 8 modules
+  - Current EE parity: ~70% (baseline features)
+
+ENHANCEMENT:
+  - Enhanced allowlist: 120+ modules (+50 high-value additions)
+  - New modules focus: invoicing, purchase, contacts, auth
+  - Expected install after Phase 1: 60-80 modules
+  - Target EE parity: 85%+
+
+NEW MODULES BY CATEGORY:
+  Accounting/Invoicing: 10 modules (recurring billing, discounts, validation)
+  Purchase Extended: 10 modules (blanket orders, deposits, framework agreements)
+  Partner/Contact: 9 modules (hierarchy, ID tracking, ranking)
+  Server Auth: 3 modules (session timeout, impersonation)
+  Accounting Tools: 3 modules (tag codes, print, post dates)
+
+INSTALLATION PHASES:
+  Phase 1 (Immediate): Install 50+ available modules from enhanced allowlist
+  Phase 2 (2-4 weeks): Port 15 P0 foundation modules from 18.0
+  Phase 3 (4-6 weeks): Port 16 P1 high-value modules from 18.0
+
+CRITICAL GAPS (Needs Porting):
+  - Bank reconciliation (5 modules) - BLOCKER for finance ops
+  - Connector framework (5 modules) - BLOCKER for integrations
+  - Server environment (2 modules) - BLOCKER for production deploy
+  - Purchase approvals (4 modules) - High value workflow
+
+EXPECTED OUTCOMES:
+  Phase 1: 70% → 82% EE parity (+30-50 modules)
+  Phase 2: 82% → 85% EE parity (foundation working)
+  Phase 3: 85% → 90% EE parity (full finance + procurement)
+
+NEXT ACTIONS:
+  1. Review enhanced allowlist
+  2. Backup current config
+  3. Run installation with enhanced allowlist
+  4. Start porting critical P0 modules
+================================================================

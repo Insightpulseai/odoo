@@ -1,0 +1,55 @@
+name: Vercel Environment Variable Leak Guard
+
+on:
+  pull_request:
+    paths:
+      - 'web/ai-control-plane/**'
+      - '.env*'
+  push:
+    branches: [main, master]
+    paths:
+      - 'web/ai-control-plane/**'
+      - '.env*'
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for NEXT_PUBLIC_ service role key leaks
+        run: |
+          if grep -r "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE" web/ai-control-plane/; then
+            echo "❌ FORBIDDEN: NEXT_PUBLIC_ vars must not contain service role keys"
+            exit 1
+          fi
+
+          if grep -r "NEXT_PUBLIC_SUPABASE_MANAGEMENT" web/ai-control-plane/; then
+            echo "❌ FORBIDDEN: NEXT_PUBLIC_ vars must not contain management API tokens"
+            exit 1
+          fi
+
+          if grep -r "NEXT_PUBLIC_GITHUB_TOKEN" web/ai-control-plane/; then
+            echo "❌ FORBIDDEN: NEXT_PUBLIC_ vars must not contain GitHub tokens"
+            exit 1
+          fi
+
+          echo "✅ No NEXT_PUBLIC_ leaks detected"
+
+      - name: Verify .env.local is gitignored
+        run: |
+          if git ls-files web/ai-control-plane/.env.local | grep -q .; then
+            echo "❌ FORBIDDEN: .env.local must be gitignored"
+            exit 1
+          fi
+
+          echo "✅ .env.local is properly gitignored"
+
+      - name: Check for hardcoded secrets in code
+        run: |
+          if grep -rE "(sk-[a-zA-Z0-9]{40,}|eyJ[a-zA-Z0-9_-]{40,})" web/ai-control-plane/app/ web/ai-control-plane/lib/; then
+            echo "❌ FORBIDDEN: Potential hardcoded secrets detected"
+            exit 1
+          fi
+
+          echo "✅ No hardcoded secrets detected"

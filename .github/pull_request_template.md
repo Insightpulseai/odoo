@@ -1,29 +1,36 @@
 ## Summary
 <!-- What changed and why? Keep it brief. -->
 
-## Status Context
-<!-- Optional: If you're in a Launching window, indicate priority -->
+## Policy Gates
+<!-- CI gates enforce merge policy. No human reviewer required when all pass. -->
+<!-- See: docs/governance/POLICY_GATES.md -->
 
-<!-- Uncomment if applicable:
-**Current:** Launching — merge → deploy → validate
-Priority review requested. CI is green.
--->
+All 5 policy gates must be green before merge:
+- **Gate 1** Spec Bundle Presence (feat/* with >3 scoped changes)
+- **Gate 2** Secret Pattern Diff (no hardcoded credentials in changed lines)
+- **Gate 3** Odoo 19 View Convention (`<list>` not `<tree>`)
+- **Gate 4** Migration RLS Contract (new tables must enable RLS)
+- **Gate 5** Deprecated Reference Block (no `.net`, Mattermost, Mailgun, etc.)
 
 ## Spec Kit Compliance
-<!-- Required for significant features. Check all that apply. -->
+<!-- Required for significant features on feat/* branches. Check all that apply. -->
 
 - [ ] Spec bundle exists under `spec/<slug>/` (constitution.md, prd.md, plan.md, tasks.md)
+- [ ] Spec bundle paths are canonical (no docs/development/* drift; plan/tasks references match deliverables)
+- [ ] Tasks are DoD-style and machine-checkable (Owner + Deliverable + DoD markers present)
+- [ ] Any UI/manual steps are labeled Optional; primary path is automation-first
 - [ ] Plan includes verification & rollback steps
 - [ ] Tasks reflect current PR scope
-- [ ] N/A - This is a minor change (bug fix, docs, config)
+- [ ] n8n workflow exports (if any) are secret-free (`automations/n8n/workflows/*.json`)
+- [ ] N/A — Minor change (bug fix, docs, config, OCA porting)
 
 ## Design Contract (if UI changes)
 <!-- Required when PR touches UI components or tokens -->
 
 - [ ] Figma contract exists (`ops/design/figma_contract.json`)
 - [ ] Token diff is acceptable (no unexpected changes)
-- [ ] Design owners approved
-- [ ] N/A - No UI changes
+- [ ] Design gate CI check passed (`canonical-gate.yml` green)
+- [ ] N/A — No UI changes
 
 ## Odoo / Supabase / Ops Impact
 <!-- Check all that apply -->
@@ -32,7 +39,7 @@ Priority review requested. CI is green.
 - [ ] Seed strategy included (if ref data changed)
 - [ ] RLS policies updated (if access control changed)
 - [ ] Observability updated (alerts/runbooks/metrics as needed)
-- [ ] N/A - No ops impact
+- [ ] N/A — No ops impact
 
 ## Validation Evidence
 <!-- Attach proof that this works -->

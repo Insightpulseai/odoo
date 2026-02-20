@@ -64,6 +64,22 @@ Automated system to extract Odoo Enterprise vs Community Edition capabilities fr
 - **FR6.4:** Artifact upload: seed YAML + enrichment results
 - **FR6.5:** Slack notification on drift (optional)
 
+### FR7: Gemini API Integration (Supabase SSOT Capability)
+- **FR7.1:** Server-side only execution (Supabase Edge Functions/workers)
+- **FR7.2:** API key storage in Supabase Vault (never client-side)
+- **FR7.3:** All API calls logged to `ops.run_events` with token usage
+- **FR7.4:** Retry logic with exponential backoff (429/500 errors)
+- **FR7.5:** Acceptance criteria: key never in client; audit events emitted; no SOR domain writes
+
+### FR8: n8n Google Credentials Integration (Supabase SSOT Capability)
+- **FR8.1:** OAuth2 Single Service support (user-delegated) + Service Account support (server-to-server)
+- **FR8.2:** Credentials stored in n8n secret store + Supabase Vault (never git-committed)
+- **FR8.3:** Integration state tracked in Supabase `ops.integration_state` table
+- **FR8.4:** All n8n → Google API calls logged to `ops.run_events`
+- **FR8.5:** Scope minimization enforced (CI lint checks for overly broad scopes)
+- **FR8.6:** Service account key rotation schedule (90-day cadence)
+- **FR8.7:** Acceptance criteria: creds never committed; audit trail complete; n8n is config, Supabase is SSOT
+
 ## Non-Functional Requirements
 
 ### NFR1: Performance

@@ -1,0 +1,169 @@
+name: OCA Port Queue Validation
+
+on:
+  pull_request:
+    paths:
+      - 'config/oca/port_queue.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'config/oca/port_queue.yml'
+  workflow_dispatch:
+
+jobs:
+  lint-port-queue:
+    name: Validate OCA Port Queue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml jsonschema
+
+      - name: Validate YAML syntax
+        run: |
+          python -c "
+          import yaml
+          import sys
+
+          try:
+              with open('config/oca/port_queue.yml', 'r') as f:
+                  data = yaml.safe_load(f)
+              print('✓ YAML syntax valid')
+          except yaml.YAMLError as e:
+              print(f'✗ YAML syntax error: {e}')
+              sys.exit(1)
+          "
+
+      - name: Validate schema and business rules
+        run: |
+          python3 << 'EOF'
+          import yaml
+          import sys
+          from collections import defaultdict
+
+          # Load port queue
+          with open('config/oca/port_queue.yml', 'r') as f:
+              data = yaml.safe_load(f)
+
+          errors = []
+          warnings = []
+
+          # Validation rules
+          VALID_PRIORITIES = ['P0', 'P1', 'P2']
+          VALID_STATUSES = ['missing', 'uninstallable', 'in_progress', 'complete', 'abandoned']
+          REQUIRED_KEYS = ['addon', 'repo', 'status', 'deps', 'upstream_url']
+
+          # Track seen addons for duplicate detection
+          seen_addons = defaultdict(list)
+
+          # Validate each priority queue
+          if 'queues' not in data:
+              errors.append("Missing 'queues' key in root")
+              sys.exit(1)
+
+          for priority, modules in data['queues'].items():
+              # Validate priority name
+              if priority not in VALID_PRIORITIES:
+                  errors.append(f"Invalid priority: {priority} (must be one of {VALID_PRIORITIES})")
+
+              if not isinstance(modules, list):
+                  errors.append(f"Priority {priority} must be a list of modules")
+                  continue
+
+              # Validate each module
+              for idx, module in enumerate(modules):
+                  # Check required keys
+                  for key in REQUIRED_KEYS:
+                      if key not in module:
+                          errors.append(f"{priority}[{idx}]: Missing required key '{key}' for module")
+
+                  # Validate status enum
+                  if 'status' in module and module['status'] not in VALID_STATUSES:
+                      errors.append(f"{priority}[{idx}] {module.get('addon', 'unknown')}: Invalid status '{module['status']}' (must be one of {VALID_STATUSES})")
+
+                  # Check for duplicates
+                  if 'addon' in module:
+                      addon_name = module['addon']
+                      seen_addons[addon_name].append(priority)
+
+                  # Validate dependencies format
+                  if 'deps' in module:
+                      if not isinstance(module['deps'], list):
+                          errors.append(f"{priority}[{idx}] {module.get('addon', 'unknown')}: 'deps' must be a list")
+
+                  # Validate upstream_url format
+                  if 'upstream_url' in module:
+                      url = module['upstream_url']
+                      if not url.startswith('https://github.com/'):
+                          warnings.append(f"{priority}[{idx}] {module.get('addon', 'unknown')}: upstream_url should start with https://github.com/")
+
+          # Check for duplicate addons
+          for addon, priorities in seen_addons.items():
+              if len(priorities) > 1:
+                  errors.append(f"Duplicate addon '{addon}' found in priorities: {', '.join(priorities)}")
+
+          # Validate dependency references
+          all_addons = set(seen_addons.keys())
+          for priority, modules in data['queues'].items():
+              for module in modules:
+                  if 'addon' not in module or 'deps' not in module:
+                      continue
+                  addon_name = module['addon']
+                  for dep in module['deps']:
+                      if dep not in all_addons:
+                          warnings.append(f"{addon_name}: Dependency '{dep}' not found in port queue (may be already available)")
+
+          # Print results
+          print("=" * 60)
+          print("OCA Port Queue Validation")
+          print("=" * 60)
+
+          if errors:
+              print(f"\n✗ Found {len(errors)} error(s):\n")
+              for error in errors:
+                  print(f"  - {error}")
+
+          if warnings:
+              print(f"\n⚠ Found {len(warnings)} warning(s):\n")
+              for warning in warnings:
+                  print(f"  - {warning}")
+
+          if not errors and not warnings:
+              print("\n✓ All validations passed")
+
+          # Summary
+          total_modules = sum(len(modules) for modules in data['queues'].values())
+          print(f"\nSummary:")
+          print(f"  Total modules: {total_modules}")
+          print(f"  Priorities: {', '.join(data['queues'].keys())}")
+          print(f"  Unique addons: {len(all_addons)}")
+
+          # Exit with error if validation failed
+          if errors:
+              print("\n✗ Validation failed")
+              sys.exit(1)
+          else:
+              print("\n✓ Validation successful")
+          EOF
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### OCA Port Queue Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ $? -eq 0 ]; then
+            echo "✅ **All validations passed**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Validation failed** - see job logs for details" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**File:** \`config/oca/port_queue.yml\`" >> $GITHUB_STEP_SUMMARY

@@ -56,6 +56,53 @@ variable "github_app_private_key" {
 }
 
 # -----------------------------------------------------------------------------
+# Zoho Mail OAuth2 Bridge (added 2026-02-21)
+# Required by: supabase/functions/zoho-mail-bridge/index.ts
+# Provisioned manually via Zoho API Console (api-console.zoho.com)
+# -----------------------------------------------------------------------------
+
+variable "zoho_client_id" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Zoho OAuth2 client ID (Server-based app at api-console.zoho.com)"
+}
+
+variable "zoho_client_secret" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Zoho OAuth2 client secret"
+}
+
+variable "zoho_refresh_token" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Zoho OAuth2 long-lived refresh token (scopes: ZohoMail.messages.CREATE, ZohoMail.accounts.READ)"
+}
+
+# Vault stubs — uncomment when Supabase Terraform provider supports vault resources:
+# resource "supabase_vault_secret" "zoho_client_id" {
+#   project_ref = var.production_project_ref
+#   name        = "ZOHO_CLIENT_ID"
+#   value       = var.zoho_client_id
+#   description = "Zoho OAuth2 client ID"
+# }
+# resource "supabase_vault_secret" "zoho_client_secret" {
+#   project_ref = var.production_project_ref
+#   name        = "ZOHO_CLIENT_SECRET"
+#   value       = var.zoho_client_secret
+#   description = "Zoho OAuth2 client secret"
+# }
+# resource "supabase_vault_secret" "zoho_refresh_token" {
+#   project_ref = var.production_project_ref
+#   name        = "ZOHO_REFRESH_TOKEN"
+#   value       = var.zoho_refresh_token
+#   description = "Zoho OAuth2 refresh token"
+# }
+
+# -----------------------------------------------------------------------------
 # Supabase Vault Resources (Pseudo-structure)
 # -----------------------------------------------------------------------------
 # When Supabase Terraform provider adds vault support, uncomment and use:

@@ -1,0 +1,83 @@
+name: Parity Governance Gate
+
+# Enforce parity boundaries and prevent sandbox artifacts from being tracked
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/oca/**'
+      - 'sandbox/**'
+      - 'scripts/ci/check_parity_boundaries.sh'
+      - 'scripts/ci/check_no_artifacts_tracked.sh'
+      - 'scripts/ci/baselines/parity_boundaries_baseline.json'
+      - '.github/workflows/parity-governance-gate.yml'
+
+jobs:
+  parity-boundaries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/ci/check_parity_boundaries.sh
+          chmod +x scripts/ci/check_no_artifacts_tracked.sh
+
+      - name: Check parity boundaries
+        run: |
+          echo "=========================================="
+          echo "Parity Boundary Enforcement"
+          echo "=========================================="
+          bash scripts/ci/check_parity_boundaries.sh ci
+
+      - name: Check no sandbox artifacts tracked
+        run: |
+          echo ""
+          echo "=========================================="
+          echo "Sandbox Artifacts Guard"
+          echo "=========================================="
+          bash scripts/ci/check_no_artifacts_tracked.sh
+
+      - name: Upload baseline on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-baseline
+          path: scripts/ci/baselines/parity_boundaries_baseline.json
+          retention-days: 7
+
+      - name: Comment on PR (on failure)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = `❌ **Parity Governance Gate Failed**
+
+            One or more parity boundary violations detected:
+            - New modules in \`addons/ipai/\` without proper justification
+            - Modules with EE keywords in wrong location
+            - Sandbox artifacts tracked in git
+
+            **Next steps:**
+            1. Review workflow logs: [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            2. For guidance: \`docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md\`
+            3. Run locally: \`./scripts/ci/check_parity_boundaries.sh ci\`
+            4. Check next violations: \`./scripts/ci/next_parity_violations.sh\`
+
+            **Quick fixes:**
+            - Move EE parity modules to \`addons/oca/\`
+            - Add \`PARITY_CONNECTOR_JUSTIFICATION.md\` for integration bridges
+            - Remove sandbox artifacts from git: \`git rm --cached sandbox/**/.artifacts/**\`
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
