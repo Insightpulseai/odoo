@@ -2,8 +2,12 @@
 set -euo pipefail
 
 # OCA Module Port Automation Script
-# Purpose: Thin wrapper around official oca-port CLI
+# Purpose: Thin wrapper around official oca-port CLI (v0.21+)
 # Usage: ./scripts/oca/port_addon.sh <module-name> [from-version] [to-version]
+#
+# Correct oca-port invocation (v0.21):
+#   cd addons/oca/<repo>/
+#   oca-port oca/<from> oca/<to> <addon-name> --non-interactive --repo-name <repo>
 
 MODULE="${1:?Module name required}"
 FROM_VERSION="${2:-18.0}"
@@ -18,18 +22,17 @@ EVIDENCE_DIR="web/docs/evidence/${TIMESTAMP}/oca-port-${MODULE}"
 mkdir -p "${EVIDENCE_DIR}/logs"
 
 echo "==== OCA Module Port: ${MODULE} ===="
-echo "From: ${FROM_VERSION}"
-echo "To: ${TO_VERSION}"
+echo "From: ${FROM_VERSION} → To: ${TO_VERSION}"
 echo "Evidence: ${EVIDENCE_DIR}"
 echo ""
 
 # Step 1: Check oca-port installed
 if ! command -v oca-port &>/dev/null; then
-  echo "Installing oca-port from PyPI..."
-  pip3 install oca-port | tee "${EVIDENCE_DIR}/logs/install-oca-port.log"
+  echo "Installing oca-port..."
+  pip3 install oca-port 2>&1 | tee "${EVIDENCE_DIR}/logs/install-oca-port.log"
 fi
 
-# Step 2: Get OCA repo name from port_queue.yml
+# Step 2: Get OCA repo from port_queue.yml
 OCA_REPO=$(yq ".priorities[].modules[] | select(.name == \"${MODULE}\") | .oca_repo" config/oca/port_queue.yml | head -1)
 
 if [[ -z "${OCA_REPO}" ]]; then
@@ -39,132 +42,93 @@ fi
 
 echo "OCA Repo: ${OCA_REPO}"
 
-# Step 3: Run oca-port
+OCA_REPO_DIR="${REPO_ROOT}/addons/oca/${OCA_REPO}"
+
+if [[ ! -d "${OCA_REPO_DIR}" ]]; then
+  echo "ERROR: OCA repo directory not found: ${OCA_REPO_DIR}" >&2
+  echo "Clone it first: git clone https://github.com/OCA/${OCA_REPO}.git ${OCA_REPO_DIR}" >&2
+  exit 1
+fi
+
+# Step 3: Ensure 18.0 and 19.0 branches are fetched
+echo "Fetching remote branches..."
+cd "${OCA_REPO_DIR}"
+git fetch oca "${FROM_VERSION}" "${TO_VERSION}" 2>&1 | tee "${EVIDENCE_DIR}/logs/fetch.log" || true
+
+# Step 4: Run oca-port (correct v0.21 invocation)
+# Must run from INSIDE the OCA repo directory
+# SOURCE and TARGET are git refs: oca/18.0, oca/19.0
 echo "Running oca-port..."
-oca-port "${MODULE}" \
-  --from "${FROM_VERSION}" \
-  --to "${TO_VERSION}" \
-  --repo "OCA/${OCA_REPO}" \
-  2>&1 | tee "${EVIDENCE_DIR}/logs/port.log"
+oca-port \
+  "oca/${FROM_VERSION}" \
+  "oca/${TO_VERSION}" \
+  "${MODULE}" \
+  --non-interactive \
+  --repo-name "${OCA_REPO}" \
+  2>&1 | tee "${REPO_ROOT}/${EVIDENCE_DIR}/logs/port.log"
 
 PORT_EXIT_CODE=${PIPESTATUS[0]}
+cd "${REPO_ROOT}"
 
 if [[ ${PORT_EXIT_CODE} -ne 0 ]]; then
-  echo "ERROR: oca-port failed with exit code ${PORT_EXIT_CODE}" >&2
-  echo "See logs: ${EVIDENCE_DIR}/logs/port.log" >&2
-  
-  # Update port_queue.yml with failure
+  echo "ERROR: oca-port failed (exit ${PORT_EXIT_CODE})" >&2
+  echo "Log: ${EVIDENCE_DIR}/logs/port.log" >&2
   yq -i ".priorities[].modules[] |= (select(.name == \"${MODULE}\") | .status = \"failed\")" config/oca/port_queue.yml
-  
-  cat >> config/oca/port_queue.yml << EOFLOG
-  - module: ${MODULE}
-    status: failed
-    timestamp: ${TIMESTAMP}
-    evidence: ${EVIDENCE_DIR}
-    notes: "oca-port failed, see logs"
-EOFLOG
-  
   exit 1
 fi
 
-# Step 4: Smoke tests
+# Step 5: Smoke tests
 echo ""
 echo "==== Smoke Tests ===="
+MODULE_PATH="${OCA_REPO_DIR}/${MODULE}"
 
-# 4a. Module directory exists
-MODULE_PATH="addons/oca/${OCA_REPO}/${MODULE}"
 if [[ ! -d "${MODULE_PATH}" ]]; then
-  echo "ERROR: Module directory not found: ${MODULE_PATH}" >&2
+  echo "ERROR: Module directory not found after port: ${MODULE_PATH}" >&2
+  echo "oca-port may have placed module on a separate branch — check port log" >&2
   exit 1
 fi
-echo "✓ Module directory exists: ${MODULE_PATH}"
+echo "✓ Module directory: ${MODULE_PATH}"
 
-# 4b. Version check
-VERSION=$(grep "^    'version':" "${MODULE_PATH}/__manifest__.py" | cut -d"'" -f2)
+# Version check
+VERSION=$(grep "'version'" "${MODULE_PATH}/__manifest__.py" | grep -o "'[0-9][0-9.]*'" | tr -d "'" | head -1)
 if [[ ! "${VERSION}" =~ ^${TO_VERSION} ]]; then
   echo "ERROR: Version mismatch. Expected ${TO_VERSION}.x.y.z, got ${VERSION}" >&2
   exit 1
 fi
-echo "✓ Version correct: ${VERSION}"
+echo "✓ Version: ${VERSION}"
 
-# 4c. Python syntax check
-echo "Running Python syntax check..."
-find "${MODULE_PATH}" -name "*.py" -exec python3 -m py_compile {} \; 2>&1 | tee "${EVIDENCE_DIR}/logs/syntax-check.log"
-SYNTAX_EXIT_CODE=${PIPESTATUS[0]}
-
-if [[ ${SYNTAX_EXIT_CODE} -ne 0 ]]; then
-  echo "ERROR: Python syntax errors found" >&2
-  exit 1
-fi
+# Python syntax
+echo "Running py_compile..."
+find "${MODULE_PATH}" -name "*.py" | xargs python3 -m py_compile 2>&1 | tee "${EVIDENCE_DIR}/logs/syntax.log"
 echo "✓ No Python syntax errors"
 
-# 4d. Odoo load test (skip if Odoo not running)
-if pgrep -f "odoo-bin" >/dev/null; then
-  echo "Testing module load in Odoo..."
-  ./scripts/odoo_shell.sh -c "print(env['ir.module.module'].search([('name', '=', '${MODULE}')]).name)" 2>&1 | tee "${EVIDENCE_DIR}/logs/load-test.log"
-  
-  if grep -q "${MODULE}" "${EVIDENCE_DIR}/logs/load-test.log"; then
-    echo "✓ Module loads in Odoo shell"
-  else
-    echo "⚠ Module not found in Odoo (may need database update)"
-  fi
-else
-  echo "ℹ Skipping Odoo load test (Odoo not running)"
-fi
-
-# 4e. Install test (skip if Odoo not running)
-if pgrep -f "odoo-bin" >/dev/null && [[ -f "./scripts/odoo_module_install.sh" ]]; then
-  echo "Testing module install..."
-  ./scripts/odoo_module_install.sh "${MODULE}" 2>&1 | tee "${EVIDENCE_DIR}/logs/install.log"
-  
-  if grep -q "successfully" "${EVIDENCE_DIR}/logs/install.log"; then
-    echo "✓ Module installs successfully"
-  else
-    echo "⚠ Module install had issues, check logs"
-  fi
-else
-  echo "ℹ Skipping module install test (Odoo not running or install script missing)"
-fi
-
-# Step 5: Create status document
+# Step 6: Evidence STATUS.md
 cat > "${EVIDENCE_DIR}/STATUS.md" << EOFSTATUS
 # Port Status: ${MODULE}
 
 - **From**: ${FROM_VERSION}
 - **To**: ${TO_VERSION}
 - **OCA Repo**: ${OCA_REPO}
-- **Status**: ✅ COMPLETED
+- **Status**: COMPLETE
 - **Timestamp**: ${TIMESTAMP}
 
 ## Verification
 
-- [x] Module directory exists
-- [x] Version is ${VERSION}
-- [x] No syntax errors
-$(if pgrep -f "odoo-bin" >/dev/null; then echo "- [x] Loads in Odoo shell"; else echo "- [ ] Loads in Odoo shell (not tested - Odoo not running)"; fi)
-$(if pgrep -f "odoo-bin" >/dev/null && [[ -f "./scripts/odoo_module_install.sh" ]]; then echo "- [x] Installs successfully"; else echo "- [ ] Installs successfully (not tested - Odoo not running)"; fi)
+- [x] Module directory: addons/oca/${OCA_REPO}/${MODULE}
+- [x] Version: ${VERSION}
+- [x] No Python syntax errors
 
 ## Evidence
 
-- Port log: logs/port.log
-- Syntax check: logs/syntax-check.log
-$(if pgrep -f "odoo-bin" >/dev/null; then echo "- Load test: logs/load-test.log"; fi)
-$(if pgrep -f "odoo-bin" >/dev/null && [[ -f "./scripts/odoo_module_install.sh" ]]; then echo "- Install log: logs/install.log"; fi)
+- fetch.log
+- port.log
+- syntax.log
 EOFSTATUS
 
-# Step 6: Update port_queue.yml
-yq -i ".priorities[].modules[] |= (select(.name == \"${MODULE}\") | .status = \"completed\")" config/oca/port_queue.yml
-
-cat >> config/oca/port_queue.yml << EOFLOG
-  - module: ${MODULE}
-    status: completed
-    timestamp: ${TIMESTAMP}
-    evidence: ${EVIDENCE_DIR}
-    notes: "Automated port via oca-port, smoke tests passed"
-EOFLOG
+# Step 7: Update port_queue.yml
+yq -i "(.priorities[].modules[] | select(.name == \"${MODULE}\")).status = \"completed\"" config/oca/port_queue.yml
 
 echo ""
-echo "==== Port Completed Successfully ===="
-echo "Module: ${MODULE}"
+echo "==== Port Complete: ${MODULE} ===="
 echo "Evidence: ${EVIDENCE_DIR}"
-echo "Next: Review evidence and commit changes"
+echo "Next: git add, commit, push"

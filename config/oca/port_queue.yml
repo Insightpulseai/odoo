@@ -3,6 +3,21 @@
 # Purpose: Track systematic porting of 40 OCA modules from 18.0 → 19.0
 # Tooling: OCA's official `oca-port` CLI + OpenUpgrade migration libraries
 # Workflow: select → port → test → commit → PR
+#
+# REPO CORRECTIONS (2026-02-20):
+#   server_environment: server-tools → server-env (OCA/server-env)
+#   base_exception: server-ux → server-tools (OCA/server-tools)
+#   web_environment_ribbon: server-tools → web (OCA/web, already on 19.0)
+#   mail_tracking: NOT in OCA/social — see notes
+#   mail_debrand: NOT in OCA/social — see notes
+#
+# STATUS VALUES:
+#   pending: not started
+#   pre_ported: already exists on OCA upstream 19.0 branch (checkout only)
+#   in_progress: oca-port running
+#   completed: ported, smoke-tested, committed
+#   failed: oca-port failed, manual intervention needed
+#   no_oca_18: not in OCA 18.0 — needs custom ipai_* module or skip
 
 priorities:
   P0:
@@ -10,11 +25,12 @@ priorities:
     modules:
       # Environment & Configuration
       - name: server_environment
-        oca_repo: server-tools
+        oca_repo: server-env
         upstream_branch: "18.0"
         status: pending
         depends: []
         reason: "Configuration framework for environment-specific settings"
+        notes: "REPO FIXED: was server-tools, correct is OCA/server-env. Clone needed."
 
       # Connector Framework (dependency chain)
       - name: component
@@ -23,6 +39,7 @@ priorities:
         status: pending
         depends: []
         reason: "Base component framework for connector architecture"
+        notes: "connector/19.0 is empty — needs oca-port from 18.0"
 
       - name: connector
         oca_repo: connector
@@ -30,21 +47,24 @@ priorities:
         status: pending
         depends: [component]
         reason: "Core connector framework for external system integration"
+        notes: "connector/19.0 is empty — needs oca-port after component"
 
       # Bank Statement Imports
       - name: account_statement_import_base
         oca_repo: bank-statement-import
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: []
         reason: "Base module for all bank statement import formats"
+        notes: "CONFIRMED on bank-statement-import/oca/19.0 — checkout only"
 
       - name: account_statement_import_camt
         oca_repo: bank-statement-import
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: [account_statement_import_base]
         reason: "CAMT.053 bank statement format (European standard)"
+        notes: "CONFIRMED on bank-statement-import/oca/19.0 — checkout only"
 
       - name: account_statement_import_ofx
         oca_repo: bank-statement-import
@@ -52,13 +72,15 @@ priorities:
         status: pending
         depends: [account_statement_import_base]
         reason: "OFX bank statement format (US/Philippines standard)"
+        notes: "NOT on 19.0 — needs oca-port from 18.0"
 
       - name: account_statement_import_file
         oca_repo: bank-statement-import
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: [account_statement_import_base]
         reason: "Generic file-based statement import"
+        notes: "CONFIRMED on bank-statement-import/oca/19.0 — checkout only"
 
       - name: account_statement_import_csv
         oca_repo: bank-statement-import
@@ -71,9 +93,10 @@ priorities:
       - name: queue_job
         oca_repo: queue
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: []
         reason: "Asynchronous job queue (replaces Odoo EE's job queue)"
+        notes: "CONFIRMED on queue/oca/19.0 — checkout only"
 
       # Base Extensions
       - name: base_tier_validation
@@ -82,28 +105,32 @@ priorities:
         status: pending
         depends: []
         reason: "Multi-tier approval workflow framework"
+        notes: "server-ux/19.0 only has base_cancel_confirm, base_substate, etc. — needs oca-port"
 
       - name: base_exception
-        oca_repo: server-ux
-        upstream_branch: "18.0"
-        status: pending
-        depends: []
-        reason: "Exception handling framework for business logic"
-
-      - name: web_environment_ribbon
         oca_repo: server-tools
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
+        depends: []
+        reason: "Exception handling framework for business logic"
+        notes: "REPO FIXED: was server-ux, correct is OCA/server-tools. CONFIRMED on 19.0 — checkout only"
+
+      - name: web_environment_ribbon
+        oca_repo: web
+        upstream_branch: "18.0"
+        status: pre_ported
         depends: [server_environment]
         reason: "Environment indicator ribbon (dev/staging/prod)"
+        notes: "REPO FIXED: was server-tools, correct is OCA/web. CONFIRMED on web/oca/19.0 — checkout only"
 
       # Email Enhancements
       - name: mail_tracking
         oca_repo: social
         upstream_branch: "18.0"
-        status: pending
+        status: no_oca_18
         depends: []
         reason: "Email delivery tracking and notifications"
+        notes: "NOT FOUND in OCA/social 18.0 or 19.0. social/18.0 only has mail_gateway, mail_activity_unlink_log, etc. Needs investigation — may need ipai_mail_tracking custom module or different OCA repo."
 
       - name: fetchmail_notify_error_to_sender
         oca_repo: server-tools
@@ -115,9 +142,10 @@ priorities:
       - name: mail_debrand
         oca_repo: social
         upstream_branch: "18.0"
-        status: pending
+        status: no_oca_18
         depends: []
         reason: "Remove Odoo branding from emails"
+        notes: "NOT FOUND in OCA/social 18.0 or 19.0. May be retired or renamed. Needs investigation."
 
   P1:
     description: "High value features - significant EE parity improvements (19 modules)"
@@ -280,9 +308,10 @@ priorities:
       - name: session_db
         oca_repo: server-tools
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: []
         reason: "Database-backed session storage (multi-server)"
+        notes: "CONFIRMED on server-tools/oca/19.0 — checkout only"
 
       # Authentication
       - name: auth_api_key
@@ -296,9 +325,10 @@ priorities:
       - name: auditlog
         oca_repo: server-tools
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: []
         reason: "Comprehensive audit logging for compliance"
+        notes: "CONFIRMED on server-tools/oca/19.0 — checkout only"
 
       # Web Enhancements
       - name: web_widget_colorpicker
@@ -312,9 +342,10 @@ priorities:
       - name: base_technical_features
         oca_repo: server-ux
         upstream_branch: "18.0"
-        status: pending
+        status: pre_ported
         depends: []
         reason: "Toggle technical features without developer mode"
+        notes: "CONFIRMED on server-ux/oca/19.0 — checkout only"
 
 port_log:
   # This section populated by scripts/oca/port_addon.sh
