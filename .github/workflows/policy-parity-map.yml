@@ -10,6 +10,9 @@ on:
       - 'addons/ipai/**'
       - 'scripts/policy/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-parity-map:
     name: Validate Parity Maps

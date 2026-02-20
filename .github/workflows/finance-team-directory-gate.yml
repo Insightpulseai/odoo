@@ -14,6 +14,9 @@ on:
       - 'spec/finance-ppm/**'
       - 'addons/ipai_finance_ppm_umbrella/data/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-team-directory:
     name: Validate Team Directory

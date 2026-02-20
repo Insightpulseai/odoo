@@ -572,7 +572,7 @@ uid = common.authenticate(ODOO_DB, ODOO_USER, ODOO_PASSWORD, {})
 if not uid:
     sys.stderr.write("ERROR: Authentication failed.\n")
     sys.exit(1)
-print(f"Authenticated as UID {uid}")
+print("Authenticated to Odoo backend")
 
 models = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object")
 
@@ -618,15 +618,15 @@ for code, emp in EMPLOYEES.items():
     users = _kw("res.users", "search", [[("login", "=", emp["email"])]], {"limit": 1})
     if users:
         user_map[code] = users[0]
-        print(f"  User {code}: {emp['name']} (UID {users[0]})")
+        print(f"  User {code}: matched to existing Odoo user (by login)")
     else:
         # Try by name
         users = _kw("res.users", "search", [[("name", "ilike", emp["name"])]], {"limit": 1})
         if users:
             user_map[code] = users[0]
-            print(f"  User {code}: {emp['name']} (UID {users[0]}) [matched by name]")
+            print(f"  User {code}: matched to existing Odoo user (by name)")
         else:
-            print(f"  User {code}: {emp['name']} [NOT FOUND - will skip assignment]")
+            print(f"  User {code}: NOT FOUND — will skip assignment")
 
 # ---------------------------------------------------------------------------
 # Import closing tasks
