@@ -1,0 +1,39 @@
+**[CONTEXT]**
+- repo: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
+- branch: _git_aggregated
+- cwd: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
+- goal: Fix false positives in n8n workflow secret scanner
+- stamp: 2026-02-20T09:30:00+08:00
+
+**[CHANGES]**
+- scripts/ci/check_n8n_workflow_secrets.sh: Fixed regex patterns to exclude n8n expression syntax (={{ $env.VAR }})
+
+**[EVIDENCE]**
+- command: ./scripts/ci/check_n8n_workflow_secrets.sh ci
+  result: PASS - Zero false positives on 20+ existing workflows
+  logs: web/docs/evidence/20260220-0930+0800/n8n-secret-hygiene/logs/test1_existing_workflows.log
+
+- command: Test violation detection
+  result: PASS - Correctly detects hardcoded secrets
+  logs: web/docs/evidence/20260220-0930+0800/n8n-secret-hygiene/logs/test3_detect_violation.log
+
+- command: Test graceful skip
+  result: PASS - Gracefully skips when directory not found
+  logs: web/docs/evidence/20260220-0930+0800/n8n-secret-hygiene/logs/test2_graceful_skip.log
+
+- command: git log -1 --stat
+  result: PASS - Commit created successfully
+  outputs: dda5f286b fix(ci): exclude n8n expression syntax from secret detection
+
+**[DIFF SUMMARY]**
+- scripts/ci/check_n8n_workflow_secrets.sh: Added negative lookahead for ={{ pattern in all regex patterns to exclude n8n expression syntax
+
+**[BLOCKERS]**
+None - Implementation complete
+
+**[NEXT - DETERMINISTIC]**
+- step 1: Push commit to remote: git push origin _git_aggregated
+- step 2: Verify CI passes on next PR with workflow changes
+- step 3: No further action required - gate is active
+
+STATUS=COMPLETE
