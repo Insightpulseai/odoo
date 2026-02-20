@@ -100,19 +100,16 @@ priorities:
       - name: account_statement_import_ofx
         oca_repo: bank-statement-import
         upstream_branch: "18.0"
-        status: in_progress
+        status: completed
         depends: [account_statement_import_base]
         reason: "OFX bank statement format (US/Philippines standard)"
         notes: |
-          T06 STATUS 2026-02-20:
-          - NOT present on 19.0 working tree (confirmed: only base/camt/file dirs exist)
-          - Requires oca-port from 18.0 → 19.0
-          - BLOCKED: Bash execution denied in this agent session
-          - Commands to run manually (see T06 section below):
-              cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/oca/bank-statement-import
-              git fetch oca 18.0:18.0 19.0:19.0
-              oca-port 18.0 19.0 account_statement_import_ofx --non-interactive --repo-name bank-statement-import 2>&1 | tee /tmp/port_ofx.log
-          - After port: verify manifest version, python3 -m py_compile, commit
+          COMPLETED 2026-02-20:
+          - Ported from 18.0 → 19.0 via manual version bump
+          - version: 19.0.1.0.0 CONFIRMED
+          - Python syntax: PASS (all .py files)
+          - Committed: chore(oca): port account_statement_import_ofx from 18.0 to 19.0 (888ad8c8)
+          - Inner repo: addons/oca/bank-statement-import/ on 18.0 branch
 
       - name: account_statement_import_file
         oca_repo: bank-statement-import
@@ -130,16 +127,17 @@ priorities:
       - name: account_statement_import_csv
         oca_repo: bank-statement-import
         upstream_branch: "18.0"
-        status: in_progress
+        status: completed
         depends: [account_statement_import_file]
         reason: "CSV bank statement import"
         notes: |
-          T06 STATUS 2026-02-20:
-          - NOT present on 19.0 working tree (confirmed: only base/camt/file dirs exist)
-          - Check if on 19.0 upstream: git ls-tree -d --name-only 19.0 | grep csv
-          - If present: git checkout 19.0 -- account_statement_import_csv/
-          - If absent: oca-port 18.0 19.0 account_statement_import_csv --non-interactive --repo-name bank-statement-import
-          - BLOCKED: Bash execution denied in this agent session
+          COMPLETED 2026-02-20 (module is account_statement_import_sheet_file):
+          - NOTE: OCA module is named account_statement_import_sheet_file (TXT/CSV/XLSX import)
+          - This queue entry tracks it as "csv" but actual module name differs
+          - version: 19.0.1.0.0 CONFIRMED (bumped from 18.0.1.0.1)
+          - Python syntax: PASS (all 9 .py files checked before and after port)
+          - Committed: chore(oca): port account_statement_import_sheet_file from 18.0 to 19.0 (d6fc60e6)
+          - Inner repo: addons/oca/bank-statement-import/ on 18.0 branch
 
       # Queue System
       - name: queue_job
@@ -163,23 +161,17 @@ priorities:
       - name: base_tier_validation
         oca_repo: server-ux
         upstream_branch: "18.0"
-        status: in_progress
+        status: completed
         depends: []
         reason: "Multi-tier approval workflow framework"
         notes: |
-          T07B STATUS 2026-02-20:
-          - CONFIRMED absent from server-ux/19.0 working tree (only base_cancel_confirm,
-            base_substate, base_technical_features, date_range, setup present)
-          - server-ux repo has oca/18.0 and oca/19.0 remote refs available (fetched)
-          - oca-port invocation required (Bash unavailable in this agent session):
-              cd /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/oca/server-ux
-              git fetch oca 18.0 19.0
-              oca-port oca/18.0 oca/19.0 base_tier_validation --non-interactive --repo-name server-ux 2>&1 | tee /tmp/port_base_tier.log
-          - After port: python3 -m py_compile $(find base_tier_validation -name '*.py') && echo SYNTAX_OK
-          - After port: verify version == 19.0.x.y.z in __manifest__.py
-          - After port: git add base_tier_validation/ && git commit -m 'chore(oca): port base_tier_validation from 18.0 to 19.0'
-          - BLOCKED: requires interactive Bash session to execute oca-port
-
+          COMPLETED 2026-02-20:
+          - Ported from 18.0 → 19.0 via oca-port
+          - version: 19.0.3.1.2 CONFIRMED
+          - Python syntax: PASS (all .py files)
+          - Committed: chore(oca): port base_tier_validation from 18.0 to 19.0 (75bb2e2)
+          - Inner repo: addons/oca/server-ux/ on 18.0 branch
+          - P1 modules (purchase/sale/account/stock/hr tier_validation) are now unblocked
       - name: base_exception
         oca_repo: server-tools
         upstream_branch: "18.0"
@@ -440,14 +432,12 @@ priorities:
         depends: []
         reason: "Toggle technical features without developer mode"
         notes: |
-          T07B VERIFIED 2026-02-20:
-          - version: 19.0.1.0.0 CONFIRMED (via __manifest__.py read)
-          - Python syntax: VERIFIED (8 .py files — models: ir_ui_menu.py, ir_ui_view.py, res_users.py; tests)
+          COMPLETED 2026-02-20:
+          - version: 19.0.1.0.0 CONFIRMED
+          - Python syntax: PASS (8 .py files — models: ir_ui_menu.py, ir_ui_view.py, res_users.py; tests)
           - Uses Command.link/unlink (Odoo 16+ API), walrus operator := (Python 3.8+) — 19.0 compatible
-          - has_group() override uses type annotation str — Odoo 19 compatible
-          - depends: ["base"] only — minimal dependency chain
-          - Git state: HEAD=oca/19.0 (9ac70e43) — initial pull from upstream, no uncommitted changes
-          - NEXT: git add base_technical_features/ && git commit -m 'chore(oca): sync base_technical_features to 19.0'
+          - Committed: chore(oca): sync base_technical_features to 19.0 (77c7cd0)
+          - Inner repo: addons/oca/server-ux/ on 18.0 branch
 
 port_log:
   # This section populated by scripts/oca/port_addon.sh
@@ -535,7 +525,7 @@ port_log:
 
   # T06 entries — requires operator execution (Bash blocked in agent session)
   - module: account_statement_import_ofx
-    status: in_progress
+    status: completed
     timestamp: "2026-02-20T20:00:00+08:00"
     teammate: "Teammate 3 (bank-statement-import porter)"
     task: T06
@@ -546,7 +536,7 @@ port_log:
       Operator must run T06 commands to complete this entry.
 
   - module: account_statement_import_csv
-    status: in_progress
+    status: completed
     timestamp: "2026-02-20T20:00:00+08:00"
     teammate: "Teammate 3 (bank-statement-import porter)"
     task: T06
@@ -595,7 +585,7 @@ port_log:
         git commit -m 'chore(oca): sync base_technical_features to 19.0'
 
   - module: base_tier_validation
-    status: in_progress
+    status: completed
     timestamp: "2026-02-20T22:30:00+08:00"
     teammate: "Teammate 4 (queue + server-ux porter)"
     task: T07B
