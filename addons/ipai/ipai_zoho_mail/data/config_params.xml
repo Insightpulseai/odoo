@@ -10,45 +10,47 @@
     - Bounce alias: bounce
     - Default from: noreply@insightpulseai.com
     - Base URL: https://erp.insightpulseai.com
+
+    Uses set_param() to upsert — safe even if keys already exist.
 -->
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- Email Catchall Domain -->
-        <record id="mail_catchall_domain" model="ir.config_parameter" forcecreate="True">
-            <field name="key">mail.catchall.domain</field>
-            <field name="value">insightpulseai.com</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.catchall.domain</value>
+            <value>insightpulseai.com</value>
+        </function>
 
         <!-- Email Catchall Alias -->
-        <record id="mail_catchall_alias" model="ir.config_parameter" forcecreate="True">
-            <field name="key">mail.catchall.alias</field>
-            <field name="value">catchall</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.catchall.alias</value>
+            <value>catchall</value>
+        </function>
 
         <!-- Email Bounce Alias -->
-        <record id="mail_bounce_alias" model="ir.config_parameter" forcecreate="True">
-            <field name="key">mail.bounce.alias</field>
-            <field name="value">bounce</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.bounce.alias</value>
+            <value>bounce</value>
+        </function>
 
         <!-- Default From Email -->
-        <record id="mail_default_from" model="ir.config_parameter" forcecreate="True">
-            <field name="key">mail.default.from</field>
-            <field name="value">noreply@insightpulseai.com</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.default.from</value>
+            <value>noreply@insightpulseai.com</value>
+        </function>
 
         <!-- Base URL for Email Links -->
-        <record id="web_base_url" model="ir.config_parameter" forcecreate="True">
-            <field name="key">web.base.url</field>
-            <field name="value">https://erp.insightpulseai.com</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>web.base.url</value>
+            <value>https://erp.insightpulseai.com</value>
+        </function>
 
         <!-- Freeze Base URL (prevent auto-detection override) -->
-        <record id="web_base_url_freeze" model="ir.config_parameter" forcecreate="True">
-            <field name="key">web.base.url.freeze</field>
-            <field name="value">True</field>
-        </record>
+        <function model="ir.config_parameter" name="set_param">
+            <value>web.base.url.freeze</value>
+            <value>True</value>
+        </function>
 
     </data>
 </odoo>

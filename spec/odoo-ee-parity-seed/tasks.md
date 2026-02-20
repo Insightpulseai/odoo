@@ -60,3 +60,60 @@
 - [ ] 7.2: Implement seed vs ee_parity_mapping.yml comparison
 - [ ] 7.3: Generate deduplication reports
 - [ ] 7.4: Add CI gate for duplicate detection
+
+---
+
+## Parity Boundary Baseline Burn-Down (Grandfathered Violations)
+
+**Source of truth**: `scripts/ci/baselines/parity_boundaries_baseline.json`
+
+### Target
+- **Zero violations by 2026-08-20** (6-month incremental migration)
+- Current baseline: 55 violations (as of 2026-02-20)
+  - 10 keyword violations (EE terms in wrong location)
+  - 45 missing justification files
+
+### Work Items
+
+#### Phase 1: Justification Files (Target: 2026-03-20)
+- [ ] Create `PARITY_CONNECTOR_JUSTIFICATION.md` for each "missing justification" entry (45 modules)
+- [ ] Use template from `docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md`
+- [ ] Document external dependencies and integration purpose
+- [ ] Commit batch updates (7-8 modules per week)
+
+#### Phase 2: Keyword Violations - Move to OCA (Target: 2026-05-20)
+- [ ] `ipai_helpdesk` → `addons/oca/helpdesk_*` (move or refactor)
+- [ ] `ipai_helpdesk_refund` → `addons/oca/helpdesk_*` (move or refactor)
+- [ ] `ipai_sign` → `addons/oca/sign_*` (move or refactor)
+- [ ] `ipai_documents_ai` → `addons/oca/documents_*` (move or refactor)
+- [ ] `ipai_planning_attendance` → `addons/oca/planning_*` (move or refactor)
+- [ ] `ipai_whatsapp_connector` → evaluate: OCA vs justified bridge
+- [ ] `ipai_esg_social` → evaluate: OCA vs justified bridge
+- [ ] `ipai_ai_agent_builder` → evaluate: OCA vs justified bridge
+- [ ] `ipai_design_system` → evaluate: split or justify (contains "sign" substring)
+- [ ] `ipai_design_system_apps_sdk` → evaluate: split or justify (contains "sign" substring)
+
+#### Phase 3: Baseline Reduction (Monthly)
+- [ ] After each batch, run `./scripts/ci/check_parity_boundaries.sh update-baseline`
+- [ ] Commit reduced baseline with migration notes
+- [ ] Track progress in monthly review (first Monday of each month)
+
+### Helper Commands
+```bash
+# View next N violations to address
+./scripts/ci/next_parity_violations.sh 10
+
+# Check current baseline status
+./scripts/ci/check_parity_boundaries.sh ci
+
+# Update baseline after migrations
+./scripts/ci/check_parity_boundaries.sh update-baseline
+```
+
+### Monthly Review Checklist
+- [ ] 2026-03-03: Review progress (target: 45 justifications complete)
+- [ ] 2026-04-07: Review progress (target: 5 keyword violations migrated)
+- [ ] 2026-05-05: Review progress (target: 8 keyword violations migrated)
+- [ ] 2026-06-02: Review progress (target: 10 keyword violations migrated, all done)
+- [ ] 2026-07-07: Final cleanup (ensure 0 violations)
+- [ ] 2026-08-04: Buffer month (address any blockers)

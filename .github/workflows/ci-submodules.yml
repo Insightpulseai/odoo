@@ -1,0 +1,122 @@
+name: Submodule Integrity Check
+
+# Runs on every PR and push to main.
+# Fails if any .gitmodules-declared submodule is:
+#   - Not initialized (directory absent or no .git)
+#   - Drifted (checked-out SHA != index-pinned SHA)
+#
+# NOTE: git submodule status is NOT used here because the index contains a
+# stale gitlink for 'apps/web/web' (no .gitmodules entry) which causes a
+# fatal error. We read .gitmodules directly instead.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-submodules:
+    name: Submodule Integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (no recurse — we want to detect the problem, not hide it)
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Assert all declared submodules are initialized and not drifted
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          FAIL=0
+
+          # Read every declared path from .gitmodules
+          while IFS= read -r subpath; do
+            [[ -z "$subpath" ]] && continue
+
+            # 1. Check initialized (directory exists and contains .git)
+            if [[ ! -d "$subpath" ]]; then
+              echo "❌ UNINITIALIZED: $subpath (directory missing)"
+              FAIL=1
+              continue
+            fi
+
+            if [[ ! -e "$subpath/.git" ]]; then
+              echo "❌ UNINITIALIZED: $subpath (no .git inside)"
+              FAIL=1
+              continue
+            fi
+
+            # 2. Check for drift: index-pinned SHA vs. checked-out HEAD
+            # The index stores what SHA the main repo expects for this submodule.
+            INDEX_SHA=$(git ls-tree HEAD "$subpath" 2>/dev/null | awk '{print $3}')
+            if [[ -z "$INDEX_SHA" ]]; then
+              # Path exists in .gitmodules but not yet committed to index — untracked
+              echo "⚠️  UNTRACKED_IN_INDEX: $subpath (in .gitmodules but not in tree)"
+              # Not a hard failure — might be a new addition not yet committed
+              continue
+            fi
+
+            ACTUAL_SHA=$(git -C "$subpath" rev-parse HEAD 2>/dev/null || echo "UNRESOLVABLE")
+            if [[ "$ACTUAL_SHA" == "UNRESOLVABLE" ]]; then
+              echo "❌ UNRESOLVABLE HEAD: $subpath"
+              FAIL=1
+              continue
+            fi
+
+            if [[ "$INDEX_SHA" != "$ACTUAL_SHA" ]]; then
+              echo "❌ DRIFTED: $subpath"
+              echo "   Index expects: $INDEX_SHA"
+              echo "   Actual HEAD:   $ACTUAL_SHA"
+              FAIL=1
+            else
+              echo "✅ OK: $subpath @ ${ACTUAL_SHA:0:12}"
+            fi
+
+          done < <(git config --file .gitmodules --get-regexp 'submodule\..*\.path' \
+                     | awk '{print $2}')
+
+          if [[ $FAIL -ne 0 ]]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "SUBMODULE INTEGRITY FAILED"
+            echo "Fix: git submodule update --init --recursive"
+            echo "Then: git add <path>  &&  git commit"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+          echo ""
+          echo "All declared submodules are initialized and at pinned SHAs."
+
+      - name: Check for stale index gitlinks (no .gitmodules entry)
+        shell: bash
+        run: |
+          # Warn (not fail) about gitlinks in the index that lack a .gitmodules entry.
+          # Known stale: apps/web/web  scratch/temp-landing-page  temp-landing-page
+          set -euo pipefail
+
+          STALE=()
+          while IFS= read -r indexed_path; do
+            [[ -z "$indexed_path" ]] && continue
+            if ! git config --file .gitmodules "submodule.$indexed_path.url" &>/dev/null; then
+              STALE+=("$indexed_path")
+            fi
+          done < <(git ls-files --stage | awk '/^160000/{print $4}')
+
+          if [[ ${#STALE[@]} -gt 0 ]]; then
+            echo "⚠️  STALE GITLINKS (in index, missing from .gitmodules):"
+            for p in "${STALE[@]}"; do
+              echo "   $p"
+            done
+            echo ""
+            echo "These are harmless but should be cleaned up:"
+            echo "   git rm --cached <path>  &&  git commit -m 'chore(repo): remove stale gitlink'"
+            # Warn only — do not fail so existing PRs are not blocked
+          else
+            echo "✅ No stale gitlinks."
+          fi

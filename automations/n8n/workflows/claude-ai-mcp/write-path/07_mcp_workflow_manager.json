@@ -1,0 +1,141 @@
+{
+  "name": "MCP Tool: n8n Workflow Manager (CRUD)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-007",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "n8n_workflow_manager",
+        "description": "Create, update, list, get, activate, deactivate, or delete n8n workflows. Claude can generate complete n8n workflow JSON and deploy it live. Actions: list (all workflows), get (by ID), create (from JSON), update (by ID + JSON), activate, deactivate, delete, export (get full JSON for backup/git). For create/update supply workflow_json with name, nodes[], connections{}, settings{}.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "action",
+              "description": "Action: list, get, create, update, activate, deactivate, delete, export",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "workflow_id",
+              "description": "Workflow ID — required for get, update, activate, deactivate, delete, export",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "workflow_json",
+              "description": "Complete n8n workflow JSON string for create/update. Must include name, nodes (array of node objects with id/name/type/typeVersion/position/parameters), connections (object mapping node names to outputs), and optionally settings.",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-wf-manager",
+      "name": "Workflow Manager Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst action = (input.action || 'list').toLowerCase().trim();\nconst wfId = input.workflow_id || '';\nlet wfJson = null;\n\nif (input.workflow_json) {\n  try {\n    wfJson = typeof input.workflow_json === 'string'\n      ? JSON.parse(input.workflow_json)\n      : input.workflow_json;\n  } catch (e) {\n    return [{ json: { error: true, message: `Invalid workflow_json: ${e.message}` } }];\n  }\n}\n\n// Validate requirements\nif (['get','update','activate','deactivate','delete','export'].includes(action) && !wfId) {\n  return [{ json: { error: true, message: `workflow_id required for action '${action}'` } }];\n}\nif (['create','update'].includes(action) && !wfJson) {\n  return [{ json: { error: true, message: `workflow_json required for action '${action}'` } }];\n}\n\nconst N8N_URL = $env.N8N_API_URL || 'https://n8n.insightpulseai.com';\nconst base = `${N8N_URL}/api/v1/workflows`;\n\nconst routes = {\n  list:       { method: 'GET',    url: `${base}?limit=100`,  body: null },\n  get:        { method: 'GET',    url: `${base}/${wfId}`,     body: null },\n  export:     { method: 'GET',    url: `${base}/${wfId}`,     body: null },\n  create:     { method: 'POST',   url: base,                  body: wfJson },\n  update:     { method: 'PATCH',  url: `${base}/${wfId}`,     body: wfJson },\n  activate:   { method: 'PATCH',  url: `${base}/${wfId}`,     body: { active: true } },\n  deactivate: { method: 'PATCH',  url: `${base}/${wfId}`,     body: { active: false } },\n  delete:     { method: 'DELETE', url: `${base}/${wfId}`,     body: null },\n};\n\nconst route = routes[action];\nif (!route) {\n  return [{ json: { error: true, message: `Unknown action: ${action}. Valid: ${Object.keys(routes).join(', ')}` } }];\n}\n\nreturn [{ json: { action, ...route, is_export: action === 'export' } }];"
+      },
+      "id": "code-route",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "err",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-err",
+      "name": "Validation OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "={{ $json.method }}",
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.body ? JSON.stringify($json.body) : '{}' }}",
+        "options": {
+          "timeout": 30000,
+          "response": { "response": { "neverError": true } }
+        }
+      },
+      "id": "http-n8n-api",
+      "name": "n8n API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst meta = $('Route Action').first().json;\nconst action = meta.action;\n\nif (raw.code || raw.message === 'Not Found') {\n  return [{ json: { status:'error', action, error: raw.message || 'API error' } }];\n}\n\nlet r = { status:'success', action };\nconst N8N = $env.N8N_API_URL || 'https://n8n.insightpulseai.com';\n\nswitch (action) {\n  case 'list': {\n    const wfs = raw.data || (Array.isArray(raw) ? raw : []);\n    r.count = wfs.length;\n    r.workflows = wfs.map(w => ({\n      id: w.id, name: w.name, active: w.active,\n      nodes: (w.nodes||[]).length,\n      tags: (w.tags||[]).map(t=>t.name),\n      updated: w.updatedAt,\n      url: `${N8N}/workflow/${w.id}`\n    }));\n    break;\n  }\n  case 'get': {\n    r.workflow = {\n      id: raw.id, name: raw.name, active: raw.active,\n      nodes: (raw.nodes||[]).map(n=>({id:n.id,name:n.name,type:n.type})),\n      node_count: (raw.nodes||[]).length,\n      tags: (raw.tags||[]).map(t=>t.name),\n      created: raw.createdAt, updated: raw.updatedAt,\n      url: `${N8N}/workflow/${raw.id}`\n    };\n    break;\n  }\n  case 'export': {\n    // Return full JSON for git commit / backup\n    r.workflow_json = JSON.stringify({\n      name: raw.name, nodes: raw.nodes,\n      connections: raw.connections,\n      settings: raw.settings || {},\n      tags: (raw.tags||[]).map(t=>({name:t.name}))\n    }, null, 2);\n    r.filename = `${(raw.name||'workflow').replace(/[^a-zA-Z0-9_-]/g,'_').toLowerCase()}.json`;\n    r.message = `Exported workflow \"${raw.name}\" — ready for git commit.`;\n    break;\n  }\n  case 'create': {\n    const w = raw.data?.[0] || raw;\n    r.workflow = {\n      id: w.id, name: w.name, active: w.active||false,\n      node_count: (w.nodes||[]).length,\n      url: `${N8N}/workflow/${w.id}`\n    };\n    r.message = `Created \"${w.name}\" → ${r.workflow.url}`;\n    break;\n  }\n  case 'update': {\n    const w = raw.data?.[0] || raw;\n    r.workflow = {\n      id: w.id, name: w.name, active: w.active,\n      node_count: (w.nodes||[]).length,\n      url: `${N8N}/workflow/${w.id}`\n    };\n    r.message = `Updated \"${w.name}\" (${(w.nodes||[]).length} nodes)`;\n    break;\n  }\n  case 'activate':\n  case 'deactivate': {\n    const w = raw.data?.[0] || raw;\n    r.message = `\"${w.name}\" is now ${w.active?'ACTIVE':'INACTIVE'}`;\n    break;\n  }\n  case 'delete':\n    r.message = 'Workflow deleted.';\n    break;\n}\n\nreturn [{ json: r }];"
+      },
+      "id": "code-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 200]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{ "node": "Workflow Manager Tool", "type": "main", "index": 0 }]]
+    },
+    "Workflow Manager Tool": {
+      "main": [[{ "node": "Route Action", "type": "main", "index": 0 }]]
+    },
+    "Route Action": {
+      "main": [[{ "node": "Validation OK?", "type": "main", "index": 0 }]]
+    },
+    "Validation OK?": {
+      "main": [
+        [],
+        [{ "node": "n8n API", "type": "main", "index": 0 }]
+      ]
+    },
+    "n8n API": {
+      "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "tags": [{ "name": "mcp" }, { "name": "write-path" }],
+  "meta": { "instanceId": "insightpulseai-n8n" }
+}

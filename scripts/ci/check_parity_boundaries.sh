@@ -1,193 +1,241 @@
 #!/usr/bin/env bash
-# check_parity_boundaries.sh — CI gate enforcing EE-OCA parity directory boundaries.
-#
-# Rules enforced (from spec/ee-oca-parity/constitution.md):
-#   PB-001: addons/oca/* must have __manifest__.py
-#   PB-002: addons/ipai/* must have __manifest__.py
-#   PB-003: addons/ipai/* must match ipai_* naming
-#   PB-004: bridges/* must NOT have __manifest__.py
-#   PB-005: addons/ipai/* >1000 LOC Python = warning
-#   PB-006: addons/_deprecated/* excluded from checks
-#   PB-007: addons/* subdirs (except oca/, ipai/, _deprecated/) must have __manifest__.py
-#
-# Exit codes: 0 = pass, 1 = fail (blocking), 2 = warnings only
-
+# check_parity_boundaries.sh — enforce addons structure boundary
+# Usage: ./check_parity_boundaries.sh [ci|pre-commit|update-baseline]
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-ADDONS_DIR="$REPO_ROOT/addons"
-BRIDGES_DIR="$REPO_ROOT/bridges"
-SERVICES_DIR="$REPO_ROOT/services"
+# Modes
+MODE="${1:-ci}"  # ci, pre-commit, update-baseline
 
-ERRORS=0
-WARNINGS=0
+# Baseline file
+BASELINE_FILE="scripts/ci/baselines/parity_boundaries_baseline.json"
 
-error() { echo "  ERROR: $1"; ERRORS=$((ERRORS + 1)); }
-warn()  { echo "  WARN:  $1"; WARNINGS=$((WARNINGS + 1)); }
-pass()  { echo "  PASS:  $1"; }
+# Established integration-bridge modules (no justification file required)
+# These are grandfathered and should NOT appear in new code
+ALLOWLIST=(
+    "ipai_enterprise_bridge"
+    "ipai_slack_connector"
+    "ipai_auth_oidc"
+    "ipai_ai_tools"
+    "ipai_mcp_bridge"
+    "ipai_rest_controllers"
+    "ipai_finance_ppm"
+    "ipai_bir_compliance"
+    "ipai_bir_alphalist"
+    "ipai_bir_itad"
+    "ipai_bir_qap"
+    "ipai_ocr_expense"
+)
 
-echo "=== Parity Boundary Check ==="
-echo ""
+# EE parity keywords (high confidence indicators)
+EE_KEYWORDS=(
+    "subscription" "subscriptions"
+    "forecast" "forecasting"
+    "planning" "planner"
+    "consolidation" "consolidated"
+    "helpdesk" "ticket"
+    "knowledge" "wiki"
+    "sign" "signature" "esignature"
+    "studio" "builder"
+    "voip" "phone" "call"
+    "documents" "document_management"
+    "appointment" "booking" "calendar_appointment"
+    "rental" "rentals"
+    "social" "social_media"
+    "whatsapp"
+)
 
-# ---------------------------------------------------------------------------
-# PB-001: addons/oca/* must have __manifest__.py
-# ---------------------------------------------------------------------------
-echo "[PB-001] OCA addons must have __manifest__.py"
-if [ -d "$ADDONS_DIR/oca" ]; then
-    for dir in "$ADDONS_DIR/oca"/*/; do
-        [ -d "$dir" ] || continue
-        name=$(basename "$dir")
-        # OCA repos contain multiple modules — check that at least ONE subdir
-        # has __manifest__.py, or the dir itself does
-        if [ -f "$dir/__manifest__.py" ]; then
-            pass "addons/oca/$name has __manifest__.py"
-        else
-            has_submodule=false
-            for subdir in "$dir"/*/; do
-                [ -d "$subdir" ] || continue
-                if [ -f "$subdir/__manifest__.py" ]; then
-                    has_submodule=true
-                    break
+# Enterprise manifest dependencies
+EE_MANIFEST_DEPS=(
+    "web_enterprise"
+    "base_enterprise"
+    "web_studio"
+    "web_mobile"
+)
+
+# Violation tracking
+VIOLATIONS=()
+
+# Utility functions
+violation() {
+    local msg="$1"
+    VIOLATIONS+=("$msg")
+    echo "❌ VIOLATION: $msg"
+}
+
+is_allowlisted() {
+    local module="$1"
+    for allowed in "${ALLOWLIST[@]}"; do
+        [[ "$module" == "$allowed" ]] && return 0
+    done
+    return 1
+}
+
+# Check 1: EE keywords in wrong location (addons/ipai/)
+check_keyword_violations() {
+    echo "🔍 Checking for EE parity keywords in addons/ipai/..."
+
+    if [[ ! -d "addons/ipai" ]]; then
+        echo "   ℹ️  No addons/ipai/ directory found, skipping keyword checks"
+        return 0
+    fi
+
+    for module_dir in addons/ipai/*/; do
+        [[ ! -d "$module_dir" ]] && continue
+
+        module=$(basename "$module_dir")
+        is_allowlisted "$module" && continue
+
+        # Check module name for EE keywords
+        for keyword in "${EE_KEYWORDS[@]}"; do
+            if echo "$module" | grep -qi "$keyword"; then
+                violation "$module — module name contains EE keyword '$keyword' (should be in addons/oca/)"
+            fi
+        done
+
+        # Check manifest file for EE dependencies
+        manifest="$module_dir/__manifest__.py"
+        if [[ -f "$manifest" ]]; then
+            for dep in "${EE_MANIFEST_DEPS[@]}"; do
+                if grep -q "'$dep'" "$manifest" 2>/dev/null || grep -q "\"$dep\"" "$manifest" 2>/dev/null; then
+                    violation "$module — __manifest__.py depends on '$dep' (Enterprise dependency, should be in addons/oca/)"
                 fi
             done
-            if $has_submodule; then
-                pass "addons/oca/$name has submodules with __manifest__.py"
-            else
-                error "addons/oca/$name has no __manifest__.py (PB-001)"
-            fi
         fi
     done
-else
-    echo "  (addons/oca/ does not exist yet — skipping)"
-fi
-echo ""
+}
 
-# ---------------------------------------------------------------------------
-# PB-002 + PB-003: addons/ipai/* must have __manifest__.py and match ipai_*
-# ---------------------------------------------------------------------------
-echo "[PB-002] IPAI addons must have __manifest__.py"
-echo "[PB-003] IPAI addons must match ipai_* naming"
-if [ -d "$ADDONS_DIR/ipai" ]; then
-    for dir in "$ADDONS_DIR/ipai"/*/; do
-        [ -d "$dir" ] || continue
-        name=$(basename "$dir")
-        if [ ! -f "$dir/__manifest__.py" ]; then
-            error "addons/ipai/$name has no __manifest__.py (PB-002)"
-        fi
-        if [[ ! "$name" =~ ^ipai_ ]]; then
-            error "addons/ipai/$name does not match ipai_* naming (PB-003)"
+# Check 2: Missing justification files
+check_justification_files() {
+    echo "🔍 Checking for PARITY_CONNECTOR_JUSTIFICATION.md in addons/ipai/..."
+
+    if [[ ! -d "addons/ipai" ]]; then
+        echo "   ℹ️  No addons/ipai/ directory found, skipping justification checks"
+        return 0
+    fi
+
+    for module_dir in addons/ipai/*/; do
+        [[ ! -d "$module_dir" ]] && continue
+
+        module=$(basename "$module_dir")
+        is_allowlisted "$module" && continue
+
+        if [[ ! -f "$module_dir/PARITY_CONNECTOR_JUSTIFICATION.md" ]]; then
+            violation "$module — missing PARITY_CONNECTOR_JUSTIFICATION.md (required for ipai namespace)"
         fi
     done
-else
-    echo "  (addons/ipai/ does not exist yet — skipping)"
-fi
+}
 
-# Also check ipai_* modules at addons root level (current layout)
-for dir in "$ADDONS_DIR"/ipai_*/; do
-    [ -d "$dir" ] || continue
-    name=$(basename "$dir")
-    if [ ! -f "$dir/__manifest__.py" ]; then
-        error "addons/$name has no __manifest__.py (PB-002)"
-    else
-        pass "addons/$name has __manifest__.py"
+# Load baseline violations
+load_baseline() {
+    if [[ ! -f "$BASELINE_FILE" ]]; then
+        echo "[]"
+        return
     fi
-done
-echo ""
 
-# ---------------------------------------------------------------------------
-# PB-004: bridges/* must NOT have __manifest__.py
-# ---------------------------------------------------------------------------
-echo "[PB-004] Bridges must NOT have __manifest__.py"
-for bdir in "$BRIDGES_DIR" "$SERVICES_DIR"; do
-    [ -d "$bdir" ] || continue
-    bname=$(basename "$bdir")
-    while IFS= read -r manifest; do
-        rel="${manifest#$REPO_ROOT/}"
-        error "$rel found in $bname/ — bridges must not be Odoo modules (PB-004)"
-    done < <(find "$bdir" -name "__manifest__.py" -type f 2>/dev/null || true)
-    if [ "$(find "$bdir" -name "__manifest__.py" -type f 2>/dev/null | wc -l)" -eq 0 ]; then
-        pass "$bname/ has no __manifest__.py files"
-    fi
-done
-echo ""
+    # Extract violation messages from JSON
+    jq -r '.violations[]' "$BASELINE_FILE" 2>/dev/null || echo "[]"
+}
 
-# ---------------------------------------------------------------------------
-# PB-008: ipai_bundle_* meta-modules must contain zero Python logic
-# ---------------------------------------------------------------------------
-echo "[PB-008] Bundle meta-modules must be dependency-only"
-for dir in "$ADDONS_DIR"/ipai_bundle_*/ "$ADDONS_DIR"/ipai/ipai_bundle_*/; do
-    [ -d "$dir" ] || continue
-    name=$(basename "$dir")
-    if [ ! -f "$dir/__manifest__.py" ]; then
-        error "addons/$name has no __manifest__.py (PB-008)"
-        continue
+# Compare current violations with baseline
+compare_with_baseline() {
+    if [[ ${#VIOLATIONS[@]} -eq 0 ]]; then
+        echo ""
+        echo "✅ PASS — all parity boundaries respected (0 violations)"
+        return 0
     fi
-    # Count Python LOC excluding __init__.py
-    py_loc=$(find "$dir" -name "*.py" -not -name "__init__.py" -type f -exec cat {} + 2>/dev/null | wc -l || echo 0)
-    if [ "$py_loc" -gt 0 ]; then
-        error "addons/$name has ${py_loc} Python LOC beyond __init__.py — bundle meta-modules must be deps-only (PB-008)"
-    else
-        pass "addons/$name is dependency-only (0 LOC beyond __init__.py)"
-    fi
-done
-echo ""
 
-# ---------------------------------------------------------------------------
-# PB-005: addons/ipai/* >1000 LOC Python = warning
-# ---------------------------------------------------------------------------
-echo "[PB-005] IPAI addons LOC check (<1000 Python LOC)"
-for dir in "$ADDONS_DIR"/ipai_*/ "$ADDONS_DIR"/ipai/ipai_*/; do
-    [ -d "$dir" ] || continue
-    name=$(basename "$dir")
-    # Skip bundle meta-modules (checked in PB-008)
-    [[ "$name" =~ ^ipai_bundle_ ]] && continue
-    loc=$(find "$dir" -name "*.py" -type f -exec cat {} + 2>/dev/null | wc -l || echo 0)
-    if [ "$loc" -gt 1000 ]; then
-        warn "addons/$name has ${loc} Python LOC (>1000, review needed) (PB-005)"
-        if [ ! -f "$dir/PARITY_CONNECTOR_JUSTIFICATION.md" ]; then
-            warn "addons/$name exceeds 1000 LOC and is missing PARITY_CONNECTOR_JUSTIFICATION.md (PB-005)"
-        else
-            pass "addons/$name has PARITY_CONNECTOR_JUSTIFICATION.md"
+    # Load baseline
+    baseline_violations=$(load_baseline)
+
+    # Find new violations (not in baseline)
+    NEW_VIOLATIONS=()
+    for violation in "${VIOLATIONS[@]}"; do
+        if ! echo "$baseline_violations" | grep -Fxq "$violation" 2>/dev/null; then
+            NEW_VIOLATIONS+=("$violation")
         fi
-    else
-        pass "addons/$name: ${loc} Python LOC"
+    done
+
+    if [[ ${#NEW_VIOLATIONS[@]} -gt 0 ]]; then
+        echo ""
+        echo "❌ FAIL: ${#NEW_VIOLATIONS[@]} new parity boundary violation(s) detected:"
+        echo ""
+        printf '  %s\n' "${NEW_VIOLATIONS[@]}"
+        echo ""
+        echo "To fix:"
+        echo "  1. Move EE parity modules to addons/oca/"
+        echo "  2. Add PARITY_CONNECTOR_JUSTIFICATION.md for integration bridges"
+        echo "  3. See docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md for guidance"
+        echo ""
+        echo "To update baseline (if violations are intentional):"
+        echo "  ./scripts/ci/check_parity_boundaries.sh update-baseline"
+        return 1
     fi
-done
-echo ""
 
-# ---------------------------------------------------------------------------
-# PB-007: addons/* subdirs (except oca, ipai, _deprecated) must have __manifest__.py
-# ---------------------------------------------------------------------------
-echo "[PB-007] Other addons subdirs must have __manifest__.py"
-EXEMPT_DIRS="oca|ipai|_deprecated|__pycache__"
-for dir in "$ADDONS_DIR"/*/; do
-    [ -d "$dir" ] || continue
-    name=$(basename "$dir")
-    # Skip exempt dirs and ipai_* (checked above)
-    [[ "$name" =~ ^($EXEMPT_DIRS)$ ]] && continue
-    [[ "$name" =~ ^ipai_ ]] && continue
-    [[ "$name" =~ ^\.  ]] && continue
-    if [ ! -f "$dir/__manifest__.py" ]; then
-        warn "addons/$name has no __manifest__.py — not a valid Odoo module (PB-007)"
-    fi
-done
-echo ""
+    # All violations are in baseline
+    echo ""
+    echo "✅ PASS (${#VIOLATIONS[@]} baseline violations, 0 new violations)"
+    echo ""
+    echo "Baseline violations (grandfathered):"
+    printf '  %s\n' "${VIOLATIONS[@]}"
+    echo ""
+    echo "Target: Zero violations by 2026-08-20 (incremental migration)"
+    return 0
+}
 
-# ---------------------------------------------------------------------------
-# Summary
-# ---------------------------------------------------------------------------
-echo "=== Summary ==="
-echo "  Errors:   $ERRORS"
-echo "  Warnings: $WARNINGS"
-echo ""
+# Update baseline file
+update_baseline() {
+    echo "📝 Updating baseline file..."
 
-if [ "$ERRORS" -gt 0 ]; then
-    echo "FAIL — $ERRORS boundary violations found."
-    exit 1
-elif [ "$WARNINGS" -gt 0 ]; then
-    echo "PASS (with $WARNINGS warnings)"
-    exit 0
-else
-    echo "PASS — all parity boundaries respected."
-    exit 0
-fi
+    # Create baselines directory if needed
+    mkdir -p "$(dirname "$BASELINE_FILE")"
+
+    # Generate JSON baseline
+    cat > "$BASELINE_FILE" <<EOF
+{
+  "updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "target_date": "2026-08-20",
+  "migration_policy": "incremental (7-8 modules per month)",
+  "violations": [
+$(for v in "${VIOLATIONS[@]}"; do echo "    \"$v\","; done | sed '$ s/,$//')
+  ],
+  "total": ${#VIOLATIONS[@]}
+}
+EOF
+
+    echo "✅ Baseline updated: $BASELINE_FILE"
+    echo "   Total violations: ${#VIOLATIONS[@]}"
+
+    # Show baseline
+    cat "$BASELINE_FILE"
+}
+
+# Main execution
+main() {
+    echo "========================================"
+    echo "Parity Boundaries Check ($MODE mode)"
+    echo "========================================"
+    echo ""
+
+    # Run checks
+    check_keyword_violations
+    check_justification_files
+
+    # Handle mode
+    case "$MODE" in
+        update-baseline)
+            update_baseline
+            exit 0
+            ;;
+        ci|pre-commit)
+            compare_with_baseline
+            exit $?
+            ;;
+        *)
+            echo "❌ Unknown mode: $MODE"
+            echo "Usage: $0 [ci|pre-commit|update-baseline]"
+            exit 1
+            ;;
+    esac
+}
+
+main

@@ -418,6 +418,12 @@ def main() -> int:
     parser.add_argument("--out", default="out/automation_sweep")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument(
+        "--fail-on",
+        choices=["P0", "P1", "P2"],
+        default=None,
+        help="Exit non-zero if any backlog findings at this severity or higher exist",
+    )
     args = parser.parse_args()
 
     out_dir = REPO_ROOT / args.out
@@ -474,6 +480,18 @@ def main() -> int:
     total_issues = len(stale) + len(workflows["stray"])
     log(f"\n=== Complete. Issues: {total_issues}  Opportunities: {len(opps)}", force=True)
     log(f"  Artifacts: {out_dir}/", force=True)
+
+    # Severity-gated exit (if --fail-on specified)
+    if args.fail_on:
+        severity_order = {"P0": 0, "P1": 1, "P2": 2}
+        threshold = severity_order[args.fail_on]
+        blocking = [
+            item for item in opps
+            if severity_order.get(item.get("priority", "P2"), 2) <= threshold
+        ]
+        if blocking:
+            log(f"[FAIL] {len(blocking)} finding(s) at {args.fail_on} or higher.", force=True)
+            return 1
 
     return 1 if total_issues > 0 else 0
 

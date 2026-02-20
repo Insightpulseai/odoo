@@ -55,7 +55,9 @@
     "figma.config.json",
     "figma-make-dev.yaml",
     "superclaude_bridge.yaml",
-    "CLAUDE.md"
+    "CLAUDE.md",
+    "AGENTS.md",
+    "GEMINI.md"
   ],
   "allow_root_dirs": [
     ".devcontainer",

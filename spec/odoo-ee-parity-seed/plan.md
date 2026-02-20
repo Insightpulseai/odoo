@@ -108,6 +108,70 @@ git checkout HEAD^ -- spec/parity/odoo_editions_parity_seed.yaml
 # Edit .github/workflows/editions-parity-seed.yml → comment out cron
 ```
 
+---
+
+## Enforcement Plan: SSOT/SOR Boundary
+
+- **CI Shadow Ledger Gate**: `scripts/ci/check_shadow_ledger.sh` scans Supabase migrations/functions for ledger primitives and blocks new violations (baseline-friendly)
+- **Ownership Declaration Template**: All new integrations must use `templates/supabase-integration/OWNERSHIP_DECLARATION.md` to declare owner system, sync mode, and SSOT/SOR acknowledgement
+- **Audit Trail Requirement**: All Edge Function workers must emit `ops.runs/run_events/artifacts` for observability
+- **CI Workflow Integration**: Shadow ledger check runs in `.github/workflows/canonical-gate.yml` alongside other governance gates
+
+## Canonical Supabase Example References (Pattern Intake)
+
+Use raw URLs for deterministic ingestion:
+- Edge Functions README: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/README.md
+- GH Action deploy example: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/github-action-deploy/README.md
+- Signed webhooks pattern (Stripe): https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/stripe-webhooks/README.md
+- Auth+RLS DB access pattern: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/select-from-table-with-auth-rls/index.ts
+- Storage multipart upload pattern: https://raw.githubusercontent.com/supabase/supabase/master/examples/edge-functions/supabase/functions/file-upload-storage/index.ts
+- (Optional) Realtime reference app: https://raw.githubusercontent.com/supabase/supabase/master/examples/slack-clone/nextjs-slack-clone/README.md
+
+## Supabase Examples Intake Playbook (Reference-Only)
+
+### Goal
+Use Supabase upstream examples to accelerate SSOT/control-plane implementation while preserving:
+- Supabase as SSOT (ops/orchestration/identity for non-Odoo surfaces)
+- Odoo as SOR (ledger and posted ERP truth)
+
+### Intake rules
+1. Prefer pattern extraction over cloning whole example apps.
+2. Extract only:
+   - RLS policy shapes
+   - Edge Function worker/deploy structure
+   - Auth session handling patterns
+   - Storage policy patterns
+3. Every extracted pattern must be re-homed under our SSOT schemas (`ops.*`, `audit.*`, `mdm.*`, `ai.*`)
+   with the SSOT/SOR boundary enforced (no shadow ledger tables).
+
+### Canonical upstream references
+- Edge Functions examples (local dev + deploy + GH Actions)
+- Next.js user-management tutorial (Auth + RLS + Storage)
+
+---
+
+## Supabase Platform Kit Placement
+
+### Canonical host application
+Platform Kit (embedded Supabase Manager UI + Management API proxy) must be installed in **exactly one** Next.js app:
+- **Canonical host:** `web/ai-control-plane/`
+- **Installation:** `npx shadcn@latest add @supabase/platform-kit-nextjs` (NOT npm install)
+- **Purpose:** Ops/admin console for Supabase project management (control plane)
+
+**Note:** If `web/ai-control-plane/` is renamed or moved, update this section and `docs/supabase/SDK_VS_PLATFORM_KIT.md`.
+
+### Non-goals
+- **Do NOT** install Platform Kit into end-user portals or non-ops apps
+- **Do NOT** confuse Platform Kit install (shadcn generator) with Supabase Client SDK install (`@supabase/supabase-js`)
+- **Do NOT** expose Management API token to client (proxy routes must enforce server-side-only access)
+
+### SDK vs Platform Kit distinction
+See `docs/supabase/SDK_VS_PLATFORM_KIT.md` for complete clarification:
+- **Client SDK** (`@supabase/supabase-js`): Data plane (Auth/RLS/DB/Storage/Realtime) for end-user apps
+- **Platform Kit** (`@supabase/platform-kit-nextjs`): Control plane (project management UI) for ops console
+
+---
+
 ## Estimated Effort
 
 - Phase 1 (Spec Kit): 1 hour
