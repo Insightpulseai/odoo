@@ -44,3 +44,6 @@ echo "   cd sandbox/dev && docker compose up -d"
 echo "   docker compose exec odoo odoo -d odoo_dev -u all"
 echo "   ./scripts/repo_health.sh"
 echo ""
+
+# Fail fast if workspace root invariant is broken
+"$(dirname "$0")/verify-workspace-root.sh" || exit 1

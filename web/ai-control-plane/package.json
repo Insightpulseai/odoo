@@ -29,9 +29,11 @@
     "@tanstack/react-table": "8.21.3",
     "ai": "^3.4.0",
     "axios": "1.13.5",
+    "class-variance-authority": "^0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "common-tags": "1.8.2",
+    "dockerode": "4.0.9",
     "lucide-react": "0.564.0",
     "next": "^14.2.0",
     "openai": "6.16.0",
@@ -47,6 +49,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/dockerode": "4.0.1",
     "@types/node": "latest",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
