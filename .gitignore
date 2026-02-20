@@ -252,3 +252,6 @@ artifacts/
 sandbox/dev/.artifacts/
 design-tokens/.figma-*
 design-tokens/figma-*.json
+
+# Agent Teams worktrees
+.worktrees/
