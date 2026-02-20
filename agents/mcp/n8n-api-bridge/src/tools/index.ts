@@ -4,7 +4,7 @@
  * Registers all n8n API tools with the MCP server.
  */
 
-import { N8nClient } from '../client.js';
+import { N8nClient } from '../n8nClient.js';
 import {
   ListWorkflowsParamsSchema,
   GetWorkflowParamsSchema,
@@ -18,7 +18,9 @@ import {
   AuditEventParamsSchema,
   ListCredentialsParamsSchema,
   ListTagsParamsSchema,
+  McpToolDefinition,
 } from '../types.js';
+import { aiTools } from './aiTools.js';
 
 /**
  * MCP Tool definition
@@ -45,10 +47,38 @@ interface Logger {
 }
 
 /**
+ * Convert McpToolDefinition to McpTool format
+ */
+function convertToolDefinition(toolDef: McpToolDefinition): McpTool {
+  return {
+    name: toolDef.name,
+    description: toolDef.description,
+    inputSchema: {
+      type: 'object' as const,
+      properties: toolDef.inputSchema.shape as Record<string, unknown>,
+      required: toolDef.inputSchema._def.unknownKeys === 'strict'
+        ? Object.keys(toolDef.inputSchema.shape).filter(key =>
+            !toolDef.inputSchema.shape[key]._def.typeName?.includes('Optional')
+          )
+        : [],
+    },
+    handler: async (args) => {
+      const result = await toolDef.handler(args);
+      // Convert McpToolResponse to simple return value
+      if (result.content && result.content[0]?.type === 'text') {
+        return JSON.parse(result.content[0].text || '{}');
+      }
+      return result;
+    },
+  };
+}
+
+/**
  * Register all tools
  */
 export function registerTools(client: N8nClient, logger: Logger): McpTool[] {
-  return [
+  // Standard workflow/execution tools
+  const standardTools: McpTool[] = [
     // ====================================================================
     // Workflow Tools
     // ====================================================================
@@ -202,17 +232,13 @@ export function registerTools(client: N8nClient, logger: Logger): McpTool[] {
       inputSchema: {
         type: 'object' as const,
         properties: AuditEventParamsSchema.shape as Record<string, unknown>,
-        required: ['category', 'action'],
+        required: ['eventName'],
       },
       handler: async (args) => {
         const params = AuditEventParamsSchema.parse(args);
-        logger.info(`Logging audit event: ${params.category}/${params.action}`);
-        const result = await client.audit({
-          category: params.category,
-          action: params.action,
-          metadata: params.metadata,
-        });
-        return { success: true, ...result };
+        logger.info(`Logging audit event: ${params.eventName}`);
+        await client.audit(params);
+        return { success: true };
       },
     },
 
@@ -251,5 +277,23 @@ export function registerTools(client: N8nClient, logger: Logger): McpTool[] {
         return await client.listTags(params);
       },
     },
+  ];
+
+  // AI Agent Tools
+  const aiAgentTools: McpTool[] = aiTools.map(toolDef => {
+    const converted = convertToolDefinition(toolDef);
+    // Wrap handler with logging
+    const originalHandler = converted.handler;
+    converted.handler = async (args) => {
+      logger.info(`AI Tool: ${toolDef.name}`, args);
+      return await originalHandler(args);
+    };
+    return converted;
+  });
+
+  // Combine all tools
+  return [
+    ...standardTools,
+    ...aiAgentTools,
   ];
 }

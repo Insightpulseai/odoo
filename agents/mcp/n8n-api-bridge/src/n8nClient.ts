@@ -104,6 +104,32 @@ export interface AuditEvent {
 }
 
 /**
+ * Workflow tool node
+ */
+export interface WorkflowTool {
+  nodeId: string;
+  nodeName: string;
+  nodeType: string;
+  workflowId: string;
+  workflowName: string;
+  toolDescription?: string;
+  operation?: string;
+  parameters?: Record<string, unknown>;
+}
+
+/**
+ * Tool execution context
+ */
+export interface ToolExecutionContext {
+  workflowId: string;
+  inputData?: Record<string, unknown>;
+  aiContext?: {
+    message?: string;
+    variables?: Record<string, unknown>;
+  };
+}
+
+/**
  * Paginated response
  */
 interface PaginatedResponse<T> {
@@ -257,6 +283,39 @@ export class N8nClient {
   }
 
   /**
+   * Activate workflow
+   */
+  async activateWorkflow(id: string): Promise<WorkflowDetail> {
+    if (!id) {
+      throw new Error('Workflow ID is required');
+    }
+    this.checkMutationsAllowed('activateWorkflow');
+    return this.request<WorkflowDetail>('PATCH', `/api/v1/workflows/${id}`, { active: true });
+  }
+
+  /**
+   * Deactivate workflow
+   */
+  async deactivateWorkflow(id: string): Promise<WorkflowDetail> {
+    if (!id) {
+      throw new Error('Workflow ID is required');
+    }
+    this.checkMutationsAllowed('deactivateWorkflow');
+    return this.request<WorkflowDetail>('PATCH', `/api/v1/workflows/${id}`, { active: false });
+  }
+
+  /**
+   * Trigger workflow execution
+   */
+  async triggerWorkflow(id: string, data?: Record<string, unknown>): Promise<Execution> {
+    if (!id) {
+      throw new Error('Workflow ID is required');
+    }
+    this.checkMutationsAllowed('triggerWorkflow');
+    return this.request<Execution>('POST', `/api/v1/workflows/${id}/execute`, data);
+  }
+
+  /**
    * List executions
    *
    * @see https://docs.n8n.io/api/v1/executions/
@@ -286,11 +345,12 @@ export class N8nClient {
    *
    * @see https://docs.n8n.io/api/v1/executions/
    */
-  async getExecution(id: string): Promise<ExecutionDetail> {
+  async getExecution(id: string, includeData = true): Promise<ExecutionDetail> {
     if (!id) {
       throw new Error('Execution ID is required');
     }
-    return this.request<ExecutionDetail>('GET', `/api/v1/executions/${id}`);
+    const query = includeData ? '?includeData=true' : '';
+    return this.request<ExecutionDetail>('GET', `/api/v1/executions/${id}${query}`);
   }
 
   /**
@@ -305,6 +365,159 @@ export class N8nClient {
     this.checkMutationsAllowed('retryExecution');
 
     return this.request<ExecutionDetail>('POST', `/api/v1/executions/${id}/retry`);
+  }
+
+  /**
+   * Delete execution
+   */
+  async deleteExecution(id: string): Promise<void> {
+    if (!id) {
+      throw new Error('Execution ID is required');
+    }
+    this.checkMutationsAllowed('deleteExecution');
+    await this.request<void>('DELETE', `/api/v1/executions/${id}`);
+  }
+
+  /**
+   * List credentials (metadata only)
+   */
+  async listCredentials(options?: ListWorkflowsOptions): Promise<PaginatedResponse<{ id: string; name: string; type: string }>> {
+    const params = new URLSearchParams();
+    if (options?.limit) {
+      params.set('limit', options.limit.toString());
+    }
+    if (options?.cursor) {
+      params.set('cursor', options.cursor);
+    }
+
+    const queryString = params.toString();
+    const path = `/api/v1/credentials${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<PaginatedResponse<{ id: string; name: string; type: string }>>('GET', path);
+  }
+
+  /**
+   * List tags
+   */
+  async listTags(options?: ListWorkflowsOptions): Promise<PaginatedResponse<{ id: string; name: string }>> {
+    const params = new URLSearchParams();
+    if (options?.limit) {
+      params.set('limit', options.limit.toString());
+    }
+    if (options?.cursor) {
+      params.set('cursor', options.cursor);
+    }
+
+    const queryString = params.toString();
+    const path = `/api/v1/tags${queryString ? `?${queryString}` : ''}`;
+
+    return this.request<PaginatedResponse<{ id: string; name: string }>>('GET', path);
+  }
+
+  /**
+   * List workflow tools
+   *
+   * Finds tool-compatible nodes in workflows (jiraTool, notionTool, etc.)
+   * that can be used by AI agents
+   */
+  async listWorkflowTools(workflowId?: string): Promise<WorkflowTool[]> {
+    const tools: WorkflowTool[] = [];
+
+    // Get workflows to search
+    let workflows: WorkflowDetail[];
+    if (workflowId) {
+      workflows = [await this.getWorkflow(workflowId)];
+    } else {
+      const response = await this.listWorkflows({ limit: 100 });
+      workflows = await Promise.all(
+        response.data.map(w => this.getWorkflow(w.id))
+      );
+    }
+
+    // Extract tool nodes
+    for (const workflow of workflows) {
+      for (const node of workflow.nodes) {
+        // Check if node is a tool (ends with "Tool" or has toolDescription)
+        const isTool = node.type.endsWith('Tool') ||
+                       (node.parameters?.toolDescription as string | undefined);
+
+        if (isTool) {
+          tools.push({
+            nodeId: node.id,
+            nodeName: node.name,
+            nodeType: node.type,
+            workflowId: workflow.id,
+            workflowName: workflow.name,
+            toolDescription: node.parameters?.toolDescription as string | undefined,
+            operation: node.parameters?.operation as string | undefined,
+            parameters: node.parameters,
+          });
+        }
+      }
+    }
+
+    return tools;
+  }
+
+  /**
+   * Execute workflow with AI context
+   *
+   * Triggers workflow execution with AI-provided context and variables
+   */
+  async executeWorkflowWithContext(
+    context: ToolExecutionContext
+  ): Promise<ExecutionDetail> {
+    if (!context.workflowId) {
+      throw new Error('workflowId is required in ToolExecutionContext');
+    }
+
+    this.checkMutationsAllowed('executeWorkflowWithContext');
+
+    // Prepare execution payload with AI context
+    const payload: Record<string, unknown> = {
+      ...context.inputData,
+    };
+
+    // Add AI context as metadata
+    if (context.aiContext) {
+      payload._aiContext = context.aiContext;
+    }
+
+    // Trigger workflow
+    const execution = await this.triggerWorkflow(context.workflowId, payload);
+
+    // Wait briefly for execution to complete, then fetch details
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return this.getExecution(execution.id, true);
+  }
+
+  /**
+   * Get tool definition from workflow
+   *
+   * Extracts tool schema and parameters for a specific tool node
+   */
+  async getToolDefinition(
+    workflowId: string,
+    nodeId: string
+  ): Promise<WorkflowTool | null> {
+    const workflow = await this.getWorkflow(workflowId);
+    const node = workflow.nodes.find(n => n.id === nodeId);
+
+    if (!node) {
+      return null;
+    }
+
+    return {
+      nodeId: node.id,
+      nodeName: node.name,
+      nodeType: node.type,
+      workflowId: workflow.id,
+      workflowName: workflow.name,
+      toolDescription: node.parameters?.toolDescription as string | undefined,
+      operation: node.parameters?.operation as string | undefined,
+      parameters: node.parameters,
+    };
   }
 
   /**
