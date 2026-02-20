@@ -11,10 +11,43 @@ Keep Cloudflare DNS records in sync with the committed YAML SSOT. Eliminates man
 
 | Requirement | Notes |
 |-------------|-------|
-| `CLOUDFLARE_API_TOKEN` | Token with `Zone:DNS Records:Edit` permission for `insightpulseai.com` |
+| `CLOUDFLARE_API_TOKEN` | Token with `Zone:DNS Records:Edit` permission for `insightpulseai.com` — see Token Scope below |
 | `CLOUDFLARE_ZONE_ID` | Zone ID for `insightpulseai.com` (from Cloudflare dashboard → Zone Overview) |
 | `pyyaml` installed | `pip install pyyaml` |
 | Python 3.8+ | Uses `urllib` (stdlib only, no requests dependency) |
+
+### Token Scope Requirements
+
+Create a **Custom Token** (not a Global API Key) at
+`https://dash.cloudflare.com/profile/api-tokens`:
+
+| Setting | Value |
+|---------|-------|
+| **Permissions** | Zone — DNS Records — **Edit** |
+| **Zone Resources** | Include — Specific zone — `insightpulseai.com` |
+| **IP filtering** | Optional: restrict to CI runner IPs for extra security |
+
+> **Why "Edit" and not "Read"**: The apply script creates and updates records.
+> Read-only tokens work for `--verify` only; they will return HTTP 403 on
+> create/update operations.
+>
+> **Least-privilege note**: `Zone:DNS Records:Edit` grants write access to ALL
+> DNS record types (A, CNAME, MX, TXT, etc.) in the zone. There is no
+> per-record-type permission in Cloudflare's token model. Scope to the
+> specific zone (not "All zones") to minimize blast radius.
+>
+> **DKIM TXT records**: Cloudflare imposes a 2048-char limit on TXT record
+> content. The Zoho DKIM key used here is within that limit. If you rotate to
+> a larger key, verify against this limit before applying.
+
+### Verify Token Permissions Before Apply
+
+```bash
+curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  https://api.cloudflare.com/client/v4/user/tokens/verify | python3 -m json.tool
+```
+
+Expected: `"status": "active"` and permissions include `dns_records:edit`.
 
 ## Inputs
 

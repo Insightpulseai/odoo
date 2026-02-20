@@ -39,6 +39,7 @@ import time
 import xmlrpc.client
 from datetime import datetime, timezone
 from pathlib import Path
+import fcntl
 
 try:
     import yaml
@@ -49,6 +50,7 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = REPO_ROOT / "docs" / "oca" / "install_manifest.yaml"
 STATE_FILE = REPO_ROOT / ".oca_install_state.json"
+LOCK_FILE = REPO_ROOT / ".oca_install.lock"
 REPORT_DIR = REPO_ROOT / "out" / "oca_install"
 
 CHUNK_SIZE = 5       # modules per odoo-bin call
@@ -143,6 +145,48 @@ def install_chunk(modules: list[str], db: str, dry_run: bool,
     except subprocess.TimeoutExpired:
         print(f"    ❌ Timeout after {timeout}s installing: {mod_str}")
         return False
+
+
+# ---------------------------------------------------------------------------
+# Concurrency lock (advisory, POSIX flock)
+# ---------------------------------------------------------------------------
+
+class InstallLock:
+    """Advisory lock to prevent concurrent wave installer runs.
+
+    Uses POSIX flock so the lock is auto-released if the process dies.
+    Only active on install/upgrade operations (not --verify / --status).
+    """
+
+    def __init__(self, path: Path) -> None:
+        self._path = path
+        self._fh = None
+
+    def acquire(self) -> None:
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        self._fh = open(self._path, "w")
+        try:
+            fcntl.flock(self._fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            pid_line = self._fh.readline().strip()
+            self._fh.close()
+            print(f"ERROR: Another installer is running (lock: {self._path}; "
+                  f"{pid_line or 'no pid info'}). "
+                  f"If no process is running, delete the lock file and retry.",
+                  file=sys.stderr)
+            sys.exit(1)
+        self._fh.write(f"pid={os.getpid()}\n")
+        self._fh.flush()
+
+    def release(self) -> None:
+        if self._fh:
+            fcntl.flock(self._fh, fcntl.LOCK_UN)
+            self._fh.close()
+            self._fh = None
+            try:
+                self._path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 # ---------------------------------------------------------------------------
@@ -323,6 +367,21 @@ def main() -> int:
         print("State file cleared.")
 
     manifest = load_manifest()
+
+    # Acquire advisory lock for install/upgrade operations only
+    lock = InstallLock(LOCK_FILE)
+    is_write_op = not (args.status or args.verify)
+    if is_write_op:
+        lock.acquire()
+
+    try:
+        return _run(args, manifest)
+    finally:
+        if is_write_op:
+            lock.release()
+
+
+def _run(args, manifest: dict) -> int:
     db, pwd, uid, models = _connect()
     state = load_state()
 
@@ -347,7 +406,7 @@ def main() -> int:
     elif args.wave:
         wave_nums = [int(x.strip()) for x in args.wave.split(",")]
     else:
-        p.print_help()
+        print("ERROR: specify --wave N or --all", file=sys.stderr)
         return 1
 
     installed = get_installed_modules(db, pwd, uid, models, all_names)
