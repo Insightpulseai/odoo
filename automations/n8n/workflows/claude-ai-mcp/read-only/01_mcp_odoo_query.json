@@ -1,0 +1,102 @@
+{
+  "name": "MCP Tool: Odoo Query (SOR Read-Only)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-odoo-query",
+        "options": {},
+        "responseMode": "onReceived"
+      },
+      "id": "webhook-01",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// PLACEHOLDER: Validate bearer token\n// User must replace with actual implementation\nconst authHeader = $input.first().headers['authorization'];\nif (!authHeader || !authHeader.startsWith('Bearer ')) {\n  throw new Error('Unauthorized: Missing bearer token');\n}\nconst token = authHeader.substring(7);\nconst validToken = $env.MCP_BEARER_TOKEN;\nif (token !== validToken) {\n  throw new Error('Unauthorized: Invalid bearer token');\n}\nreturn [$input.first().json];"
+      },
+      "id": "validate-token-01",
+      "name": "Validate Bearer Token",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// PLACEHOLDER: Extract and validate query parameters\n// User must replace with actual Odoo query logic\nconst params = $input.first().json;\nconst model = params.model || 'account.move';\nconst domain = params.domain ? JSON.parse(params.domain) : [];\nconst fields = params.fields || ['id', 'name'];\nconst limit = params.limit || 100;\n\nreturn [{\n  json: {\n    model,\n    domain,\n    fields,\n    limit,\n    odoo_url: $env.ODOO_URL,\n    odoo_db: $env.ODOO_DB,\n    odoo_user: $env.ODOO_USER,\n    odoo_password: $env.ODOO_PASSWORD\n  }\n}];"
+      },
+      "id": "parse-params-01",
+      "name": "Parse Query Parameters",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.odoo_url }}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "bodyContentType": "raw",
+        "rawBody": "=<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><string>{{ $json.odoo_db }}</string></param>\n    <param><string>{{ $json.odoo_user }}</string></param>\n    <param><string>{{ $json.odoo_password }}</string></param>\n    <param><string>{{ $json.model }}</string></param>\n    <param><string>search_read</string></param>\n    <param><array><data>{{ $json.domain }}</data></array></param>\n    <param><struct>\n      <member><name>fields</name><value><array><data>{{ $json.fields }}</data></array></value></member>\n      <member><name>limit</name><value><int>{{ $json.limit }}</int></value></member>\n    </struct></param>\n  </params>\n</methodCall>",
+        "options": {
+          "responseHeaders": {
+            "Content-Type": "text/xml"
+          }
+        }
+      },
+      "id": "odoo-query-01",
+      "name": "Execute Odoo Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ JSON.stringify($json.data) }}",
+        "options": {
+          "responseHeaders": {
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-01",
+      "name": "Return SSE Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{"node": "Validate Bearer Token", "type": "main", "index": 0}]]
+    },
+    "Validate Bearer Token": {
+      "main": [[{"node": "Parse Query Parameters", "type": "main", "index": 0}]]
+    },
+    "Parse Query Parameters": {
+      "main": [[{"node": "Execute Odoo Query", "type": "main", "index": 0}]]
+    },
+    "Execute Odoo Query": {
+      "main": [[{"node": "Return SSE Response", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "saveExecutionProgress": "true",
+    "saveDataSuccessExecution": "all"
+  },
+  "versionId": "1",
+  "id": "mcp-odoo-query-01",
+  "meta": {
+    "instanceId": "n8n-insightpulseai-prod"
+  },
+  "tags": ["mcp", "claude-ai", "odoo", "read-only"]
+}
