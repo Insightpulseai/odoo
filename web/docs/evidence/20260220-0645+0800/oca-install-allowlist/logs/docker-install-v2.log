@@ -1,0 +1,12 @@
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;34m   OCA Module Installation (Docker - V2)[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+
+   Container: odoo-core
+   Database:  odoo_dev
+   Allowlist: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/config/oca/module_allowlist.yml
+
+[0;32m✓ Container 'odoo-core' is running[0m
+
+chmod: changing permissions of '/tmp/install_oca.py': Operation not permitted
+chmod: changing permissions of '/tmp/module_allowlist.yml': Operation not permitted

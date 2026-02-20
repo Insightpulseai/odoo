@@ -1,0 +1,25 @@
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;34m   OCA Module Installation from Allowlist[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+
+   Odoo URL: http://localhost:8069
+   Database: odoo
+   Allowlist: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/config/oca/module_allowlist.yml
+
+[0;32mValidating allowlist...[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;34m   OCA Clean Install Validation (Phase 3 Gate)[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+
+[0;32mValidating allowlist...[0m
+[0;32m✓[0m No TODO placeholders found
+[0;32m✓[0m All 70 modules found in inventory
+
+[0;32mAllowlist validation passed (70 modules)[0m
+
+[1;33mDry run mode - skipping actual install test[0m
+
+[0;31mERROR: Failed to connect to Odoo: <Fault 1: 'Traceback (most recent call last):\n  File "/usr/lib/python3/dist-packages/odoo/addons/rpc/controllers/xmlrpc.py", line 162, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/addons/rpc/controllers/xmlrpc.py", line 134, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/http.py", line 439, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/service/common.py", line 60, in dispatch\n    return g[exp_method_name](*params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/service/common.py", line 31, in exp_authenticate\n    return env[\'res.users\'].authenticate(credential, {**user_agent_env, \'interactive\': False})[\'uid\']\n           ~~~^^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/orm/environments.py", line 107, in __getitem__\n    return self.registry[model_name](self, (), ())\n           ~~~~~~~~~~~~~^^^^^^^^^^^^\n  File "/usr/lib/python3/dist-packages/odoo/orm/registry.py", line 335, in __getitem__\n    return self.models[model_name]\n           ~~~~~~~~~~~^^^^^^^^^^^^\nKeyError: \'res.users\'\n'>[0m
+[0;32mFound 70 modules in 10 packs[0m
+
+[0;34mConnecting to Odoo...[0m
