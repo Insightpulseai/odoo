@@ -297,7 +297,7 @@ Installing a bundle installs all its dependencies transitively.
 
 ### Bridge Module
 
-**`ipai_enterprise_bridge`** — Thin glue layer for CE+OCA parity:
+**`ipai_enterprise_bridge`** — Minimal stubs and redirections for EE model references:
 - Configuration policies and settings
 - Approval tier validation mixins
 - AI/infrastructure connector stubs
