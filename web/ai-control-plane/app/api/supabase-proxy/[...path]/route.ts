@@ -1,12 +1,23 @@
 import { NextResponse } from 'next/server'
+import { assertAllowedProjectRef, assertRole, getEnvOrThrow, getRequestContext } from '@/platform/security'
+import { audit } from '@/platform/audit'
+
+const MGMT_TOKEN = getEnvOrThrow('SUPABASE_MANAGEMENT_API_TOKEN')
+
+function getProjectRefFromUrl(url: URL): string | null {
+  // Most Platform Kit calls include /projects/{ref}/... in the path.
+  const m = url.pathname.match(/\/projects\/([^/]+)\//)
+  return m?.[1] ?? null
+}
+
+function getRequestId(req: Request): string {
+  const h = req.headers.get('x-request-id')
+  if (h && h.trim()) return h.trim()
+  // Stable enough for correlation; crypto is available in Next runtime.
+  return crypto.randomUUID()
+}
 
 async function forwardToSupabaseAPI(request: Request, method: string, params: { path: string[] }) {
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
-  if (!process.env.SUPABASE_MANAGEMENT_API_TOKEN) {
-    console.error('Supabase Management API token is not configured.')
-    return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 })
-  }
-
   const { path } = params
   const apiPath = path.join('/')
 
@@ -16,23 +27,9 @@ async function forwardToSupabaseAPI(request: Request, method: string, params: { 
   url.port = '443'
   url.pathname = apiPath
 
-  const projectRef = path[2]
-
-  // Implement your permission check here (e.g. check if the user is a member of the project)
-  // In this example, everyone can access all projects
-  const userHasPermissionForProject = Boolean(projectRef)
-
-  if (!userHasPermissionForProject) {
-    return NextResponse.json(
-      { message: 'You do not have permission to access this project.' },
-      { status: 403 }
-    )
-  }
-
   try {
     const forwardHeaders: HeadersInit = {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      Authorization: `Bearer ${process.env.SUPABASE_MANAGEMENT_API_TOKEN}`,
+      Authorization: `Bearer ${MGMT_TOKEN}`,
     }
 
     // Copy relevant headers from the original request
@@ -81,34 +78,105 @@ async function forwardToSupabaseAPI(request: Request, method: string, params: { 
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const { userId, role } = await getRequestContext(request)
+  if (!userId) return new Response('Unauthorized', { status: 401 })
+  assertRole(role, 'platform_operator')
+
+  const requestId = getRequestId(request)
+  const projectRef = getProjectRefFromUrl(new URL(request.url))
+  if (projectRef) assertAllowedProjectRef(projectRef)
+
   const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'GET', resolvedParams)
+  const res = await forwardToSupabaseAPI(request, 'GET', resolvedParams)
+
+  await audit({
+    userId,
+    action: 'supabase_mgmt_proxy',
+    projectRef,
+    path: new URL(request.url).pathname,
+    method: 'GET',
+    status: res.status,
+    requestId,
+    payload: {
+      upstream: 'api.supabase.com',
+    },
+  })
+
+  // Optional: echo for downstream correlation
+  res.headers.set('x-request-id', requestId)
+  return res
 }
 
 export async function HEAD(request: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const { userId, role } = await getRequestContext(request)
+  if (!userId) return new Response('Unauthorized', { status: 401 })
+  assertRole(role, 'platform_operator')
+
+  const requestId = getRequestId(request)
+  const projectRef = getProjectRefFromUrl(new URL(request.url))
+  if (projectRef) assertAllowedProjectRef(projectRef)
+
   const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'HEAD', resolvedParams)
+  const res = await forwardToSupabaseAPI(request, 'HEAD', resolvedParams)
+
+  await audit({
+    userId,
+    action: 'supabase_mgmt_proxy',
+    projectRef,
+    path: new URL(request.url).pathname,
+    method: 'HEAD',
+    status: res.status,
+    requestId,
+    payload: {
+      upstream: 'api.supabase.com',
+    },
+  })
+
+  res.headers.set('x-request-id', requestId)
+  return res
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const { userId, role } = await getRequestContext(request)
+  if (!userId) return new Response('Unauthorized', { status: 401 })
+  assertRole(role, 'platform_admin') // POST is powerful; start strict
+
+  const requestId = getRequestId(request)
+  const projectRef = getProjectRefFromUrl(new URL(request.url))
+  if (projectRef) assertAllowedProjectRef(projectRef)
+
   const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'POST', resolvedParams)
+  const res = await forwardToSupabaseAPI(request, 'POST', resolvedParams)
+
+  await audit({
+    userId,
+    action: 'supabase_mgmt_proxy',
+    projectRef,
+    path: new URL(request.url).pathname,
+    method: 'POST',
+    status: res.status,
+    requestId,
+    payload: {
+      upstream: 'api.supabase.com',
+    },
+  })
+
+  res.headers.set('x-request-id', requestId)
+  return res
 }
 
+// Temporarily disabled for safety - enable when explicitly needed
 export async function PUT(request: Request, { params }: { params: Promise<{ path: string[] }> }) {
-  const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'PUT', resolvedParams)
+  return new Response('Method temporarily disabled for safety', { status: 405 })
 }
 
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'DELETE', resolvedParams)
+  return new Response('Method temporarily disabled for safety', { status: 405 })
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ path: string[] }> }) {
-  const resolvedParams = await params
-  return forwardToSupabaseAPI(request, 'PATCH', resolvedParams)
+  return new Response('Method temporarily disabled for safety', { status: 405 })
 }

@@ -4,6 +4,7 @@ import createClient from 'openapi-fetch'
 
 import type { paths } from '@/lib/management-api-schema'
 import { listTablesSql } from '@/lib/pg-meta'
+import { assertAllowedProjectRef, assertRole, getRequestContext } from '@/platform/security'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -66,16 +67,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'projectRef is required.' }, { status: 400 })
     }
 
-    // Implement your permission check here (e.g. check if the user is a member of the project)
-    // In this example, everyone can access all projects
-    const userHasPermissionForProject = Boolean(projectRef)
-
-    if (!userHasPermissionForProject) {
-      return NextResponse.json(
-        { message: 'You do not have permission to access this project.' },
-        { status: 403 }
-      )
-    }
+    // Security gates
+    const { userId, role } = await getRequestContext(request)
+    if (!userId) return new Response('Unauthorized', { status: 401 })
+    assertRole(role, 'platform_operator')
+    assertAllowedProjectRef(projectRef)
 
     // 1. Get database schema
     const schema = await getDbSchema(projectRef)

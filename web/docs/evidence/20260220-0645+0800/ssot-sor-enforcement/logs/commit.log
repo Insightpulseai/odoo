@@ -1,0 +1,25 @@
+commit 6e95a5f2fa8d889bc20e13c765e834e328717748
+Author: Jake Tolentino <jgtolentino.rn@gmail.com>
+Date:   Fri Feb 20 04:19:25 2026 +0800
+
+    chore(ci): enforce SSOT/SOR boundaries (shadow ledger gate + ownership template)
+    
+    - Add scripts/ci/check_shadow_ledger.sh (baseline-friendly ledger primitive detector)
+    - Add config/ci/shadow_ledger_baseline.txt (baseline for existing violations)
+    - Add templates/supabase-integration/OWNERSHIP_DECLARATION.md (integration template)
+    - Wire shadow ledger check into .github/workflows/canonical-gate.yml
+    - Create spec/odoo-ee-parity-seed/prd.md (Spec Kit standard 4-file bundle)
+    - Move Supabase feature mapping from spec.md to prd.md (align with Spec Kit)
+    - Update plan.md enforcement section with CI gate details and template reference
+    
+    Converts SSOT/SOR policy into enforceable, regression-proof CI gates.
+    Aligns spec bundle structure with Spec Kit standard (constitution, prd, plan, tasks).
+
+ .github/workflows/canonical-gate.yml               |   3 +
+ config/ci/shadow_ledger_baseline.txt               |  11 ++
+ scripts/ci/check_shadow_ledger.sh                  |  55 +++++++
+ spec/odoo-ee-parity-seed/plan.md                   |   7 +-
+ spec/odoo-ee-parity-seed/prd.md                    | 177 +++++++++++++++++++++
+ spec/odoo-ee-parity-seed/spec.md                   |  21 ---
+ .../supabase-integration/OWNERSHIP_DECLARATION.md  |  29 ++++
+ 7 files changed, 279 insertions(+), 24 deletions(-)
