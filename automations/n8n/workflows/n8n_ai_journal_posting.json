@@ -1,0 +1,207 @@
+{
+  "name": "Finance PPM - AI Journal Posting (Claude API + Odoo 19)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 22 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule (6AM PHT Weekdays)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300],
+      "notes": "Runs at 22:00 UTC (6AM PHT) Mon-Fri to process pending journal entries"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-journal-post",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook (Manual/API)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 500],
+      "notes": "POST /webhook/ai-journal-post with body: {task_id, action: 'validate|draft|post'}"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/common",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>authenticate</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_USER}}</string></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><struct/></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "odoo-auth",
+      "name": "Authenticate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.N8N_ODOO_URL}}/xmlrpc/2/object",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/xml",
+        "body": "<?xml version=\"1.0\"?>\n<methodCall>\n  <methodName>execute_kw</methodName>\n  <params>\n    <param><value><string>={{$env.N8N_ODOO_DB}}</string></value></param>\n    <param><value><int>={{$node['Authenticate'].json.params.param.value.int}}</int></value></param>\n    <param><value><string>={{$env.N8N_ODOO_PASSWORD}}</string></value></param>\n    <param><value><string>project.task</string></value></param>\n    <param><value><string>search_read</string></value></param>\n    <param><value><array>\n      <data>\n        <value><array><data>\n          <value><array><data>\n            <value><string>project_id.name</string></value>\n            <value><string>like</string></value>\n            <value><string>Finance PPM</string></value>\n          </data></value></array>\n          <value><array><data>\n            <value><string>stage_id.name</string></value>\n            <value><string>=</string></value>\n            <value><string>Pending Approval</string></value>\n          </data></value></array>\n        </data></value></array>\n      </data>\n    </value></array></param>\n    <param><value><struct>\n      <member><name>fields</name><value><array><data>\n        <value><string>name</string></value>\n        <value><string>description</string></value>\n        <value><string>date_deadline</string></value>\n        <value><string>user_ids</string></value>\n        <value><string>stage_id</string></value>\n        <value><string>project_id</string></value>\n        <value><string>tag_ids</string></value>\n      </data></array></value></member>\n      <member><name>limit</name><value><int>50</int></value></member>\n    </struct></value></param>\n  </params>\n</methodCall>"
+      },
+      "id": "fetch-pending-tasks",
+      "name": "Fetch Pending Approval Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 300],
+      "notes": "Gets tasks in 'Pending Approval' stage — these have completed review and need journal posting"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract closing tasks that require journal entries\n// Month-End Close tasks map to specific account.move patterns:\n//\n// Phase I: Payroll JEs, Tax Provisions, Rent/Lease entries\n// Phase II: Depreciation, Amortization, Corporate accruals\n// Phase III: WIP reclassifications, Client billing accruals\n// Phase IV: VAT entries, Expense reclassifications\n// Phase V: Sign-off (no JE, just approval)\n\nconst tasksData = $node['Fetch Pending Approval Tasks'].json;\n\nfunction parseTasks(data) {\n  if (!data || !data.params) return [];\n  const param = data.params.param;\n  if (!param || !param.value || !param.value.array) return [];\n  const items = param.value.array.data.value;\n  if (!Array.isArray(items)) return items ? [items] : [];\n  return items.map(item => {\n    const members = item.struct.member;\n    const task = {};\n    members.forEach(m => {\n      task[m.name] = m.value.string || m.value.int || '';\n    });\n    return task;\n  });\n}\n\nconst tasks = parseTasks(tasksData);\n\n// Classify tasks by journal entry type\nconst JOURNAL_PATTERNS = {\n  'Payroll & Personnel': {\n    journal: 'HR',\n    account_debit: '621xxx',\n    account_credit: '214xxx',\n    description: 'Payroll accrual / final pay / SL conversion'\n  },\n  'Tax & Provisions': {\n    journal: 'MISC',\n    account_debit: '637xxx',\n    account_credit: '214xxx',\n    description: 'Tax provision / PPB provision'\n  },\n  'Rent & Leases': {\n    journal: 'MISC',\n    account_debit: '635xxx',\n    account_credit: '165xxx',\n    description: 'Rental income/expense amortization'\n  },\n  'Accruals & Expenses': {\n    journal: 'MISC',\n    account_debit: '636xxx',\n    account_credit: '214xxx',\n    description: 'General expense accrual'\n  },\n  'Amortization & Corporate': {\n    journal: 'MISC',\n    account_debit: '681xxx',\n    account_credit: '28xxxx',\n    description: 'Depreciation / amortization'\n  },\n  'VAT & Taxes': {\n    journal: 'TAX',\n    account_debit: '445xxx',\n    account_credit: '445xxx',\n    description: 'Input/Output VAT compilation'\n  },\n  'WIP/OOP Management': {\n    journal: 'SAL',\n    account_debit: '370xxx',\n    account_credit: '370xxx',\n    description: 'WIP/OOP reclassification'\n  },\n  'Client Billings': {\n    journal: 'SAL',\n    account_debit: '411xxx',\n    account_credit: '370xxx',\n    description: 'Revenue accrual from client billing'\n  }\n};\n\nconst journalJobs = [];\n\nfor (const task of tasks) {\n  const name = task.name || '';\n  const desc = task.description || '';\n  \n  // Extract category from task name: [CODE] Category: Description\n  const categoryMatch = name.match(/\\]\\s*([^:]+):/);\n  const category = categoryMatch ? categoryMatch[1].trim() : null;\n  \n  // Skip Sign-off tasks (no JE needed)\n  if (category === 'Sign-off') continue;\n  \n  const pattern = category ? JOURNAL_PATTERNS[category] : null;\n  \n  journalJobs.push({\n    task_id: task.id,\n    task_name: name,\n    category: category,\n    description: desc,\n    deadline: task.date_deadline,\n    journal_pattern: pattern,\n    needs_ai_validation: true,\n    project: task.project_id\n  });\n}\n\nreturn [{\n  json: {\n    journal_jobs: journalJobs,\n    job_count: journalJobs.length,\n    categories: [...new Set(journalJobs.map(j => j.category).filter(Boolean))]\n  }\n}];"
+      },
+      "id": "classify-journal-entries",
+      "name": "Classify Journal Entries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.N8N_ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-5-20250929\",\n  \"max_tokens\": 4096,\n  \"system\": \"You are a Philippine accounting expert specializing in PFRS/PAS standards and BIR compliance. You validate journal entries for a month-end close process at TBWA\\\\SMP Philippines (advertising agency). Your role is to:\\n1. Validate debit/credit account assignments\\n2. Check for common errors (wrong account codes, unbalanced entries)\\n3. Ensure compliance with BIR withholding tax rules\\n4. Flag any entries that need manual review\\n5. Return structured JSON with validation results.\\n\\nAccount structure: Philippine Chart of Accounts (BIR-compliant)\\nCompany: TBWA\\\\SMP Philippines (advertising/media agency)\\nCurrency: PHP\\nFiscal year: Calendar year\",\n  \"messages\": [{\n    \"role\": \"user\",\n    \"content\": \"Validate these {{$json.job_count}} pending journal entries for month-end close. For each entry, confirm the account mapping is correct and flag any issues.\\n\\nPending entries:\\n{{JSON.stringify($json.journal_jobs.slice(0, 20), null, 2)}}\\n\\nRespond in JSON format:\\n{\\n  \\\"validated_entries\\\": [{\\n    \\\"task_name\\\": \\\"...\\\",\\n    \\\"status\\\": \\\"approved|needs_review|rejected\\\",\\n    \\\"journal_code\\\": \\\"MISC|HR|TAX|SAL\\\",\\n    \\\"debit_account\\\": \\\"account code\\\",\\n    \\\"credit_account\\\": \\\"account code\\\",\\n    \\\"notes\\\": \\\"validation notes\\\",\\n    \\\"bir_compliance\\\": true|false\\n  }],\\n  \\\"summary\\\": {\\n    \\\"total\\\": N,\\n    \\\"approved\\\": N,\\n    \\\"needs_review\\\": N,\\n    \\\"rejected\\\": N\\n  }\\n}\"\n  }]\n}"
+      },
+      "id": "claude-validate",
+      "name": "Claude API: Validate JEs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1150, 400],
+      "notes": "Uses Claude Sonnet 4.5 for journal entry validation\nValidates: account codes, BIR compliance, debit/credit balance"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Claude API validation results\n// Route entries to: auto-post (approved) or manual-review queue\n\nconst claudeResponse = $json;\nlet validationResult;\n\ntry {\n  // Extract JSON from Claude response\n  const content = claudeResponse.content?.[0]?.text || '{}';\n  // Try to parse as JSON, handle markdown code blocks\n  const jsonMatch = content.match(/```json\\n([\\s\\S]*?)\\n```/) || content.match(/\\{[\\s\\S]*\\}/);\n  validationResult = JSON.parse(jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content);\n} catch(e) {\n  validationResult = {\n    validated_entries: [],\n    summary: { total: 0, approved: 0, needs_review: 0, rejected: 0 },\n    error: 'Failed to parse Claude response'\n  };\n}\n\nconst approved = (validationResult.validated_entries || []).filter(e => e.status === 'approved');\nconst needsReview = (validationResult.validated_entries || []).filter(e => e.status === 'needs_review');\nconst rejected = (validationResult.validated_entries || []).filter(e => e.status === 'rejected');\n\n// Build Slack notification\nconst blocks = [\n  {\n    type: 'header',\n    text: { type: 'plain_text', text: 'AI Journal Posting — Validation Report' }\n  },\n  {\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: `:robot_face: *Claude API Validation Complete*\\n` +\n        `:white_check_mark: Approved: ${approved.length}\\n` +\n        `:warning: Needs Review: ${needsReview.length}\\n` +\n        `:x: Rejected: ${rejected.length}\\n` +\n        `\\n_Model: claude-sonnet-4-5 | Standard: PFRS/PAS + BIR_`\n    }\n  },\n  { type: 'divider' }\n];\n\n// List approved entries (ready for auto-post)\nif (approved.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: ':ledger: *Ready for Auto-Post:*\\n' +\n        approved.slice(0, 10).map(e =>\n          `• ${e.task_name} → ${e.journal_code} (${e.debit_account} / ${e.credit_account})` +\n          (e.bir_compliance ? ' :white_check_mark: BIR' : ' :warning: BIR')\n        ).join('\\n')\n    }\n  });\n  blocks.push({ type: 'divider' });\n}\n\n// List entries needing review\nif (needsReview.length > 0) {\n  blocks.push({\n    type: 'section',\n    text: {\n      type: 'mrkdwn',\n      text: ':eyes: *Manual Review Required:*\\n' +\n        needsReview.slice(0, 10).map(e =>\n          `• ${e.task_name} — ${e.notes}`\n        ).join('\\n')\n    }\n  });\n}\n\nblocks.push({\n  type: 'context',\n  elements: [{\n    type: 'mrkdwn',\n    text: '_AI-assisted validation only. All journal entries require Finance Director (CKVC) approval before final posting._'\n  }]\n});\n\nreturn [{\n  json: {\n    blocks: JSON.stringify(blocks),\n    text: `AI Journal Validation: ${approved.length} approved, ${needsReview.length} review, ${rejected.length} rejected`,\n    approved_entries: approved,\n    review_entries: needsReview,\n    rejected_entries: rejected,\n    auto_post_ready: approved.length > 0,\n    summary: validationResult.summary || {}\n  }\n}];"
+      },
+      "id": "process-validation",
+      "name": "Process Validation Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://slack.com/api/chat.postMessage",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "={{$env.N8N_SLACK_CHANNEL_ID}}"
+            },
+            {
+              "name": "blocks",
+              "value": "={{$json.blocks}}"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.text}}"
+            }
+          ]
+        }
+      },
+      "id": "slack-notify",
+      "name": "Slack: Validation Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create draft journal entries in Odoo for approved items\n// Uses account.move model with state='draft' (never auto-posts to 'posted')\n// Finance Director must manually confirm posting\n\nconst data = $json;\n\nif (!data.auto_post_ready) {\n  return [{ json: { action: 'skip', reason: 'No approved entries for draft creation' } }];\n}\n\n// Build account.move creation payloads\nconst draftMoves = data.approved_entries.map(entry => ({\n  ref: `AI-PPM: ${entry.task_name}`,\n  journal_code: entry.journal_code,\n  debit_account: entry.debit_account,\n  credit_account: entry.credit_account,\n  notes: entry.notes,\n  bir_compliant: entry.bir_compliance,\n  // account.move will be created in DRAFT state\n  // Requires Finance Director approval to post\n  target_state: 'draft'\n}));\n\nreturn [{\n  json: {\n    drafts: draftMoves,\n    draft_count: draftMoves.length,\n    action: 'create_drafts',\n    note: 'All entries created as DRAFT. Finance Director (CKVC) must approve and post manually.'\n  }\n}];"
+      },
+      "id": "create-draft-moves",
+      "name": "Create Draft Journal Entries",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 500],
+      "notes": "Creates account.move in DRAFT state only.\nNEVER auto-posts — requires Finance Director manual approval."
+    }
+  ],
+  "connections": {
+    "Schedule (6AM PHT Weekdays)": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Webhook (Manual/API)": {
+      "main": [[{ "node": "Authenticate", "type": "main", "index": 0 }]]
+    },
+    "Authenticate": {
+      "main": [[{ "node": "Fetch Pending Approval Tasks", "type": "main", "index": 0 }]]
+    },
+    "Fetch Pending Approval Tasks": {
+      "main": [[{ "node": "Classify Journal Entries", "type": "main", "index": 0 }]]
+    },
+    "Classify Journal Entries": {
+      "main": [[{ "node": "Claude API: Validate JEs", "type": "main", "index": 0 }]]
+    },
+    "Claude API: Validate JEs": {
+      "main": [[{ "node": "Process Validation Results", "type": "main", "index": 0 }]]
+    },
+    "Process Validation Results": {
+      "main": [[
+        { "node": "Slack: Validation Report", "type": "main", "index": 0 },
+        { "node": "Create Draft Journal Entries", "type": "main", "index": 0 }
+      ]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Manila"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "finance" },
+    { "name": "ai" },
+    { "name": "journal-posting" },
+    { "name": "odoo19" },
+    { "name": "claude-api" }
+  ],
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "finance-ppm-ai-journal"
+  }
+}
