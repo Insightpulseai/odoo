@@ -1,0 +1,83 @@
+name: PR Scope Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  scope-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > /tmp/changed_files.txt
+          echo "Changed files:"
+          cat /tmp/changed_files.txt
+
+      - name: Check zoho-bridge PR scope
+        if: contains(github.event.pull_request.title, 'zoho-bridge') || contains(github.event.pull_request.title, 'zoho-mail')
+        run: |
+          ALLOWED_PATTERNS=(
+            "addons/ipai/ipai_zoho_mail/"
+            "config/odoo/mail_settings.yaml"
+            "scripts/odoo/apply_mail_settings.py"
+            "infra/dns/zoho_mail_dns.yaml"
+            "docs/contracts/DNS_EMAIL_CONTRACT.md"
+            "supabase/migrations/.*zoho"
+            "supabase/functions/zoho-mail-bridge/"
+            "spec/zoho-mail-bridge/"
+            "infra/supabase/vault_secrets.tf"
+            "docs/architecture/SSOT_BOUNDARIES.md"
+            ".github/workflows/pr-scope-guard.yml"
+          )
+
+          FAILED=0
+          while IFS= read -r file; do
+            ALLOWED=0
+            for pattern in "${ALLOWED_PATTERNS[@]}"; do
+              if echo "$file" | grep -qE "$pattern"; then
+                ALLOWED=1
+                break
+              fi
+            done
+            if [[ $ALLOWED -eq 0 ]]; then
+              echo "❌ OUT-OF-SCOPE: $file"
+              FAILED=1
+            fi
+          done < /tmp/changed_files.txt
+
+          if [[ $FAILED -eq 1 ]]; then
+            echo ""
+            echo "This PR title contains 'zoho-bridge' but modifies files outside the allowed scope."
+            echo "Either adjust the PR title or move unrelated changes to a separate PR."
+            exit 1
+          else
+            echo "✅ All changed files are within zoho-bridge scope."
+          fi
+
+      - name: Secret scan gate
+        run: |
+          # Scan diff for real-looking secrets (not placeholders)
+          git diff origin/${{ github.base_ref }}...HEAD -- . \
+            ':(exclude)*.lock' \
+            ':(exclude)pnpm-lock.yaml' \
+            | grep -E '^\+' \
+            | grep -iE '(password|secret|token|api_key)\s*[:=]\s*["\x27]?[A-Za-z0-9+/]{20,}' \
+            | grep -ivE '(placeholder|ENV_VAR|environ|Deno\.env|os\.environ|\$\{|\$\()' \
+            > /tmp/secret_scan.txt || true
+
+          if [[ -s /tmp/secret_scan.txt ]]; then
+            echo "❌ Potential secrets found in diff:"
+            cat /tmp/secret_scan.txt
+            echo ""
+            echo "Ensure no raw credentials are committed. Use env vars or Vault references."
+            exit 1
+          else
+            echo "✅ No hardcoded secrets detected in diff."
+          fi
