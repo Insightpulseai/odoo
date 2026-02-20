@@ -1,9 +1,114 @@
 {
   "name": "MCP Tool: Workflow Monitor",
-  "nodes": [],
-  "connections": {},
-  "active": false,
-  "settings": {},
-  "tags": ["mcp", "claude-ai", "read-only"],
-  "meta": {"note": "PLACEHOLDER - User must import actual workflow from zip file"}
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-005",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "workflow_monitor",
+        "description": "Monitor n8n workflow executions. Actions: recent_failures (failed executions in last N hours), execution_stats (success/fail counts), active_workflows (list all active), workflow_detail (info about specific workflow). Useful for diagnosing automation issues.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "action",
+              "description": "Action: recent_failures, execution_stats, active_workflows, workflow_detail",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "workflow_id",
+              "description": "Specific workflow ID (for workflow_detail action)",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "hours",
+              "description": "Lookback window in hours (default 24, max 168 = 7 days)",
+              "type": "number",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-monitor",
+      "name": "Workflow Monitor Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Route to appropriate n8n API endpoint\nconst input = $input.first().json;\nconst action = input.action || 'recent_failures';\nconst hours = Math.min(input.hours || 24, 168);\nconst workflowId = input.workflow_id || '';\nconst since = new Date(Date.now() - hours * 3600000).toISOString();\n\nconst endpoints = {\n  recent_failures: {\n    url: '/api/v1/executions',\n    params: { status: 'error', startedAfter: since, limit: 50 }\n  },\n  execution_stats: {\n    url: '/api/v1/executions',\n    params: { startedAfter: since, limit: 200 }\n  },\n  active_workflows: {\n    url: '/api/v1/workflows',\n    params: { active: true, limit: 100 }\n  },\n  workflow_detail: {\n    url: `/api/v1/workflows/${workflowId}`,\n    params: {}\n  }\n};\n\nconst config = endpoints[action] || endpoints.recent_failures;\n\nreturn [{\n  json: {\n    action,\n    hours,\n    since,\n    endpoint: config.url,\n    params: config.params\n  }\n}];"
+      },
+      "id": "code-route-monitor",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://n8n.insightpulseai.com{{ $json.endpoint }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "={{ Object.keys($json.params)[0] || 'limit' }}",
+              "value": "={{ Object.values($json.params)[0] || '50' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000,
+          "response": {"response": {"neverError": true}}
+        }
+      },
+      "id": "http-n8n-api",
+      "name": "n8n API Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format monitoring results\nconst raw = $input.first().json;\nconst meta = $('Route Action').first().json;\n\nif (raw.message) {\n  return [{ json: { status: 'error', message: raw.message } }];\n}\n\nlet report = { status: 'success', action: meta.action, lookback_hours: meta.hours };\n\nswitch (meta.action) {\n  case 'recent_failures': {\n    const executions = raw.data || raw || [];\n    const items = Array.isArray(executions) ? executions : [executions];\n    report.failure_count = items.length;\n    report.failures = items.slice(0, 20).map(e => ({\n      id: e.id,\n      workflow_name: e.workflowData?.name || e.workflowId || 'unknown',\n      started_at: e.startedAt,\n      finished_at: e.stoppedAt,\n      error: e.data?.resultData?.error?.message || 'Unknown error',\n      node: e.data?.resultData?.lastNodeExecuted || 'unknown'\n    }));\n    break;\n  }\n  case 'execution_stats': {\n    const execs = raw.data || raw || [];\n    const items = Array.isArray(execs) ? execs : [execs];\n    const total = items.length;\n    const success = items.filter(e => e.status === 'success').length;\n    const failed = items.filter(e => e.status === 'error').length;\n    const running = items.filter(e => e.status === 'running').length;\n    report.stats = { total, success, failed, running, success_rate: total > 0 ? ((success / total) * 100).toFixed(1) + '%' : 'N/A' };\n    break;\n  }\n  case 'active_workflows': {\n    const workflows = raw.data || raw || [];\n    const items = Array.isArray(workflows) ? workflows : [workflows];\n    report.active_count = items.length;\n    report.workflows = items.map(w => ({\n      id: w.id,\n      name: w.name,\n      active: w.active,\n      updated_at: w.updatedAt,\n      tags: (w.tags || []).map(t => t.name)\n    }));\n    break;\n  }\n  case 'workflow_detail': {\n    report.workflow = {\n      id: raw.id,\n      name: raw.name,\n      active: raw.active,\n      nodes: (raw.nodes || []).length,\n      node_types: (raw.nodes || []).map(n => n.type),\n      created_at: raw.createdAt,\n      updated_at: raw.updatedAt,\n      tags: (raw.tags || []).map(t => t.name)\n    };\n    break;\n  }\n}\n\nreturn [{ json: report }];"
+      },
+      "id": "code-format-monitor",
+      "name": "Format Monitor Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Workflow Monitor Tool", "type": "main", "index": 0}]]
+    },
+    "Workflow Monitor Tool": {
+      "main": [[{"node": "Route Action", "type": "main", "index": 0}]]
+    },
+    "Route Action": {
+      "main": [[{"node": "n8n API Call", "type": "main", "index": 0}]]
+    },
+    "n8n API Call": {
+      "main": [[{"node": "Format Monitor Report", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1", "saveManualExecutions": true},
+  "tags": [{"name": "mcp"}, {"name": "monitoring"}],
+  "meta": {"instanceId": "insightpulseai-n8n"}
 }

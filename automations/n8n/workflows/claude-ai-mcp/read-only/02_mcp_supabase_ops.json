@@ -1,9 +1,141 @@
 {
-  "name": "MCP Tool: Supabase Operations (SSOT)",
-  "nodes": [],
-  "connections": {},
-  "active": false,
-  "settings": {},
-  "tags": ["mcp", "claude-ai", "supabase", "read-only"],
-  "meta": {"note": "PLACEHOLDER - User must import actual workflow from zip file"}
+  "name": "MCP Tool: Supabase Ops (SSOT Query)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-002",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "supabase_ops",
+        "description": "Query InsightPulseAI Supabase SSOT control-plane. Available schemas: ops (runs, run_events, queue_items, outbox), ref (master data lookups), bridge (Odoo mapping tables), audit (immutable trails). Returns JSON. Use PostgREST-style select syntax.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "table",
+              "description": "Schema-qualified table name. Examples: ops.runs, ops.run_events, ops.queue_items, ops.outbox, ref.companies, bridge.odoo_invoice_map, audit.events",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "select",
+              "description": "Columns to return (PostgREST select syntax). Example: id,status,created_at,payload. Use * for all columns.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "filters",
+              "description": "JSON object of filters. Example: {\"status\":\"eq.failed\",\"created_at\":\"gte.2025-02-01\"}. Supports eq, neq, gt, gte, lt, lte, like, in operators.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "order",
+              "description": "Sort column and direction. Example: created_at.desc",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "description": "Maximum rows to return (default 25, max 200)",
+              "type": "number",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-supabase-ops",
+      "name": "Supabase Ops Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/{{ $json.table ? $json.table.replace('.', '_') : 'ops_runs' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "count=exact"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "={{ $json.select || '*' }}"
+            },
+            {
+              "name": "order",
+              "value": "={{ $json.order || 'created_at.desc' }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ Math.min($json.limit || 25, 200) }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "http-supabase",
+      "name": "Supabase REST Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format Supabase response\nconst input = $input.all();\nconst table = $('Supabase Ops Tool').first().json.table || 'unknown';\n\nif (!input || input.length === 0) {\n  return [{ json: { status: 'success', source: 'supabase_ssot', table, record_count: 0, records: [] } }];\n}\n\n// Handle error responses\nif (input[0].json?.message || input[0].json?.code) {\n  return [{\n    json: {\n      status: 'error',\n      source: 'supabase_ssot',\n      table,\n      message: input[0].json.message || 'Query failed',\n      hint: input[0].json.hint || 'Check table name and filter syntax'\n    }\n  }];\n}\n\nconst records = input.map(i => i.json);\n\nreturn [{\n  json: {\n    status: 'success',\n    source: 'supabase_ssot',\n    table,\n    record_count: records.length,\n    records: records.slice(0, 200)\n  }\n}];"
+      },
+      "id": "code-format-supa",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Supabase Ops Tool", "type": "main", "index": 0}]]
+    },
+    "Supabase Ops Tool": {
+      "main": [[{"node": "Supabase REST Query", "type": "main", "index": 0}]]
+    },
+    "Supabase REST Query": {
+      "main": [[{"node": "Format Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [{"name": "mcp"}, {"name": "supabase-ssot"}],
+  "meta": {"instanceId": "insightpulseai-n8n"}
 }

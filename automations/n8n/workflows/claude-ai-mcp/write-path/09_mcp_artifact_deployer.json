@@ -1,9 +1,155 @@
 {
-  "name": "MCP Tool: Artifact Deployer [ADMIN ONLY]",
-  "nodes": [],
-  "connections": {},
-  "active": false,
-  "settings": {},
-  "tags": ["mcp", "claude-ai", "admin", "write-path"],
-  "meta": {"note": "PLACEHOLDER - User must import actual workflow from zip file. Requires admin bearer token."}
+  "name": "MCP Tool: Artifact Deployer (n8n + GitHub)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-009",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "artifact_deployer",
+        "description": "Deploy Claude-generated artifacts to n8n AND/OR GitHub in one step. Modes: deploy_workflow (create n8n workflow + commit JSON to GitHub repo), commit_artifact (commit any file to GitHub + optionally create an issue linking to it), full_deploy (create n8n workflow + commit to GitHub + open a PR). Perfect for when Claude generates workflow JSON, migration SQL, edge functions, or any code — this deploys it live.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "mode",
+              "description": "Mode: deploy_workflow, commit_artifact, full_deploy",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "artifact_content",
+              "description": "The artifact content to deploy (JSON string for workflows, or raw text for files)",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "artifact_name",
+              "description": "Name for the artifact (used as workflow name and/or filename stem)",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "github_path",
+              "description": "File path in GitHub repo (e.g. 'workflows/my_flow.json', 'migrations/001_init.sql'). Auto-generated if not provided.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "repo",
+              "description": "GitHub repo (owner/name). Default: InsightPulseAI/odoo",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "branch",
+              "description": "Target branch. Default: main",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "commit_message",
+              "description": "Git commit message. Auto-generated if not provided.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "create_issue",
+              "description": "Also create a GitHub issue linking to the artifact (true/false). Default: false",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "issue_labels",
+              "description": "Comma-separated labels for the issue if created",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "pr_title",
+              "description": "For full_deploy: PR title. If provided, a new branch is created and a PR opened.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "activate_workflow",
+              "description": "For deploy_workflow: also activate the workflow after creation (true/false). Default: false",
+              "type": "boolean",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-deployer",
+      "name": "Artifact Deployer Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst mode = (input.mode || '').toLowerCase().trim();\nconst content = input.artifact_content || '';\nconst name = input.artifact_name || 'unnamed_artifact';\nconst repo = input.repo || 'InsightPulseAI/odoo';\nconst branch = input.branch || 'main';\nconst slug = name.replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();\n\nif (!['deploy_workflow', 'commit_artifact', 'full_deploy'].includes(mode)) {\n  return [{ json: { error: true, message: `Unknown mode: ${mode}. Use: deploy_workflow, commit_artifact, full_deploy` } }];\n}\nif (!content) {\n  return [{ json: { error: true, message: 'artifact_content is required' } }];\n}\n\n// Determine GitHub file path\nlet ghPath = input.github_path;\nif (!ghPath) {\n  if (mode === 'deploy_workflow' || mode === 'full_deploy') {\n    ghPath = `workflows/n8n/${slug}.json`;\n  } else {\n    // Guess from content type\n    if (content.trim().startsWith('{') || content.trim().startsWith('[')) {\n      ghPath = `artifacts/${slug}.json`;\n    } else if (content.includes('CREATE TABLE') || content.includes('ALTER TABLE')) {\n      ghPath = `migrations/${slug}.sql`;\n    } else {\n      ghPath = `artifacts/${slug}.md`;\n    }\n  }\n}\n\nconst commitMsg = input.commit_message || `chore(artifact): deploy ${name}`;\n\nreturn [{ json: {\n  mode, name, slug, content, repo, branch, ghPath, commitMsg,\n  createIssue: input.create_issue || false,\n  issueLabels: input.issue_labels || '',\n  prTitle: input.pr_title || '',\n  activateWorkflow: input.activate_workflow || false\n} }];"
+      },
+      "id": "code-plan",
+      "name": "Plan Deployment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            { "id": "err", "leftValue": "={{ $json.error }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals", "singleValue": true } }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-err",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const plan = $('Plan Deployment').first().json;\nconst GH_TOKEN = $env.GITHUB_TOKEN;\nconst N8N_URL = $env.N8N_API_URL || 'https://n8n.insightpulseai.com';\nconst N8N_KEY = $env.N8N_API_KEY;\n\nconst results = { steps: [], errors: [] };\n\nconst ghHeaders = {\n  'Authorization': `Bearer ${GH_TOKEN}`,\n  'Accept': 'application/vnd.github.v3+json',\n  'Content-Type': 'application/json',\n  'X-GitHub-Api-Version': '2022-11-28'\n};\nconst n8nHeaders = {\n  'X-N8N-API-KEY': N8N_KEY,\n  'Content-Type': 'application/json'\n};\n\nconst [owner, repoName] = plan.repo.split('/');\nlet targetBranch = plan.branch;\nlet prUrl = null;\n\ntry {\n  // ── STEP 0: If full_deploy with PR, create branch first ──\n  if (plan.mode === 'full_deploy' && plan.prTitle) {\n    const branchName = `deploy/${plan.slug}-${Date.now()}`;\n    \n    // Get base SHA\n    const baseResp = await fetch(`https://api.github.com/repos/${owner}/${repoName}/git/ref/heads/${plan.branch}`, { headers: ghHeaders });\n    const baseData = await baseResp.json();\n    \n    if (baseResp.ok) {\n      const createResp = await fetch(`https://api.github.com/repos/${owner}/${repoName}/git/refs`, {\n        method: 'POST', headers: ghHeaders,\n        body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: baseData.object.sha })\n      });\n      if (createResp.ok) {\n        targetBranch = branchName;\n        results.steps.push({ step: 'create_branch', branch: branchName, status: 'ok' });\n      } else {\n        results.errors.push({ step: 'create_branch', error: (await createResp.json()).message });\n      }\n    }\n  }\n\n  // ── STEP 1: Deploy to n8n (if workflow mode) ──\n  if (['deploy_workflow', 'full_deploy'].includes(plan.mode)) {\n    let wfJson;\n    try {\n      wfJson = JSON.parse(plan.content);\n    } catch (e) {\n      wfJson = { name: plan.name, nodes: [], connections: {}, settings: {} };\n      results.errors.push({ step: 'parse_workflow', warning: 'Content is not valid n8n JSON; created empty workflow shell' });\n    }\n    \n    const createResp = await fetch(`${N8N_URL}/api/v1/workflows`, {\n      method: 'POST', headers: n8nHeaders,\n      body: JSON.stringify(wfJson)\n    });\n    const createData = await createResp.json();\n    \n    if (createResp.ok) {\n      const wf = createData.data?.[0] || createData;\n      results.steps.push({\n        step: 'create_n8n_workflow',\n        workflow_id: wf.id,\n        name: wf.name,\n        url: `${N8N_URL}/workflow/${wf.id}`,\n        status: 'ok'\n      });\n      \n      // Optionally activate\n      if (plan.activateWorkflow) {\n        await fetch(`${N8N_URL}/api/v1/workflows/${wf.id}`, {\n          method: 'PATCH', headers: n8nHeaders,\n          body: JSON.stringify({ active: true })\n        });\n        results.steps.push({ step: 'activate_workflow', status: 'ok' });\n      }\n    } else {\n      results.errors.push({ step: 'create_n8n_workflow', error: createData.message || 'Failed' });\n    }\n  }\n\n  // ── STEP 2: Commit to GitHub ──\n  if (GH_TOKEN) {\n    const contentB64 = Buffer.from(plan.content).toString('base64');\n    \n    // Check if file exists (to get SHA for update)\n    const checkResp = await fetch(\n      `https://api.github.com/repos/${owner}/${repoName}/contents/${plan.ghPath}?ref=${targetBranch}`,\n      { headers: ghHeaders }\n    );\n    \n    let putBody = {\n      message: plan.commitMsg,\n      content: contentB64,\n      branch: targetBranch\n    };\n    \n    if (checkResp.ok) {\n      const existing = await checkResp.json();\n      putBody.sha = existing.sha; // update\n    }\n    \n    const commitResp = await fetch(\n      `https://api.github.com/repos/${owner}/${repoName}/contents/${plan.ghPath}`,\n      { method: 'PUT', headers: ghHeaders, body: JSON.stringify(putBody) }\n    );\n    const commitData = await commitResp.json();\n    \n    if (commitResp.ok) {\n      results.steps.push({\n        step: 'github_commit',\n        path: plan.ghPath,\n        sha: commitData.commit?.sha,\n        url: commitData.content?.html_url,\n        status: 'ok'\n      });\n    } else {\n      results.errors.push({ step: 'github_commit', error: commitData.message });\n    }\n  } else {\n    results.errors.push({ step: 'github_commit', error: 'GITHUB_TOKEN not set' });\n  }\n\n  // ── STEP 3: Create issue (optional) ──\n  if (plan.createIssue && GH_TOKEN) {\n    const labels = plan.issueLabels ? plan.issueLabels.split(',').map(l=>l.trim()) : ['automation'];\n    const fileUrl = results.steps.find(s=>s.step==='github_commit')?.url || '';\n    const n8nUrl = results.steps.find(s=>s.step==='create_n8n_workflow')?.url || '';\n    \n    const issueBody = `## Deployed Artifact: ${plan.name}\\n\\n` +\n      `**Mode:** ${plan.mode}\\n` +\n      (fileUrl ? `**GitHub:** ${fileUrl}\\n` : '') +\n      (n8nUrl ? `**n8n Workflow:** ${n8nUrl}\\n` : '') +\n      `**Branch:** ${targetBranch}\\n\\n` +\n      `Deployed via Claude.ai MCP artifact deployer.`;\n    \n    const issueResp = await fetch(`https://api.github.com/repos/${owner}/${repoName}/issues`, {\n      method: 'POST', headers: ghHeaders,\n      body: JSON.stringify({ title: `[Deploy] ${plan.name}`, body: issueBody, labels })\n    });\n    const issueData = await issueResp.json();\n    \n    if (issueResp.ok) {\n      results.steps.push({\n        step: 'create_issue',\n        number: issueData.number,\n        url: issueData.html_url,\n        status: 'ok'\n      });\n    } else {\n      results.errors.push({ step: 'create_issue', error: issueData.message });\n    }\n  }\n\n  // ── STEP 4: Create PR (if full_deploy with prTitle) ──\n  if (plan.mode === 'full_deploy' && plan.prTitle && targetBranch !== plan.branch && GH_TOKEN) {\n    const prBody = `## ${plan.prTitle}\\n\\n` +\n      `Artifact: \\`${plan.ghPath}\\`\\n` +\n      `Deployed via Claude.ai MCP artifact deployer.\\n\\n` +\n      results.steps.map(s => `- ${s.step}: ${s.status}`).join('\\n');\n    \n    const prResp = await fetch(`https://api.github.com/repos/${owner}/${repoName}/pulls`, {\n      method: 'POST', headers: ghHeaders,\n      body: JSON.stringify({\n        title: plan.prTitle,\n        body: prBody,\n        head: targetBranch,\n        base: plan.branch\n      })\n    });\n    const prData = await prResp.json();\n    \n    if (prResp.ok) {\n      results.steps.push({\n        step: 'create_pr',\n        number: prData.number,\n        url: prData.html_url,\n        status: 'ok'\n      });\n    } else {\n      results.errors.push({ step: 'create_pr', error: prData.message });\n    }\n  }\n\n} catch (e) {\n  results.errors.push({ step: 'unexpected', error: e.message });\n}\n\n// ── SUMMARY ──\nconst allOk = results.errors.length === 0;\nconst summary = {\n  status: allOk ? 'success' : 'partial',\n  mode: plan.mode,\n  artifact: plan.name,\n  steps_completed: results.steps.length,\n  steps: results.steps,\n  errors: results.errors.length > 0 ? results.errors : undefined\n};\n\n// Friendly message\nconst msgs = results.steps.map(s => {\n  switch(s.step) {\n    case 'create_n8n_workflow': return `✅ n8n workflow: ${s.url}`;\n    case 'activate_workflow': return `✅ Workflow activated`;\n    case 'github_commit': return `✅ Committed to GitHub: ${s.url}`;\n    case 'create_issue': return `✅ Issue #${s.number}: ${s.url}`;\n    case 'create_pr': return `✅ PR #${s.number}: ${s.url}`;\n    case 'create_branch': return `✅ Branch: ${s.branch}`;\n    default: return `✅ ${s.step}`;\n  }\n});\nsummary.message = msgs.join('\\n');\n\nreturn [{ json: summary }];"
+      },
+      "id": "code-execute",
+      "name": "Execute Deployment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 200]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{ "node": "Artifact Deployer Tool", "type": "main", "index": 0 }]]
+    },
+    "Artifact Deployer Tool": {
+      "main": [[{ "node": "Plan Deployment", "type": "main", "index": 0 }]]
+    },
+    "Plan Deployment": {
+      "main": [[{ "node": "Valid?", "type": "main", "index": 0 }]]
+    },
+    "Valid?": {
+      "main": [
+        [],
+        [{ "node": "Execute Deployment", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "tags": [{ "name": "mcp" }, { "name": "deploy" }, { "name": "write-path" }],
+  "meta": { "instanceId": "insightpulseai-n8n" }
 }
