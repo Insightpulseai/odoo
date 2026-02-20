@@ -2,6 +2,18 @@
 ops/secrets/age-key.txt
 ops/secrets/*.key
 
+# Sandbox artifacts (generated / not source-controlled)
+sandbox/**/.artifacts/
+sandbox/**/.tmp/
+sandbox/**/tmp/
+
+# Workspace / agent artifacts (never commit)
+.cache/
+_work/
+artifacts/figma/
+design-tokens/.figma-*
+design-tokens/figma-*.json
+
 # Python
 __pycache__/
 *.py[cod]
@@ -61,6 +73,10 @@ node_modules/
 # Docker
 .env
 docker-compose.override.yml
+
+# Vite/Node local envs (workspace artifacts)
+**/.env.local
+**/.env.*.local
 # IDE
 # .vscode/
 !/.vscode/extensions.json
@@ -173,6 +189,9 @@ docs/incidents/*
 !docs/incidents/templates/
 # OCA local clones (dev-only, not committed)
 sandbox/dev/oca-addons/
+# OCA wave installer runtime files
+.oca_install_state.json
+.oca_install.lock
 .env.local
 !scripts/lib/
 # ---- Large/derived artifacts (indexer-noise reduction) ----

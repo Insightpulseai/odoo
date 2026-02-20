@@ -1,0 +1,291 @@
+name: Policy Gates (Governance SSOT)
+
+# =============================================================================
+# POLICY GATES — The enforcement SSOT for this repository.
+#
+# These CI checks ARE the merge gatekeepers. No human reviewer approval is
+# required when all gates pass. No CODEOWNERS file is maintained.
+#
+# Gate registry:
+#   Gate 1 — Spec Bundle Presence (feat/* with scoped changes)
+#   Gate 2 — Secret Pattern Diff  (all PRs, changed files only)
+#   Gate 3 — Odoo 19 View Convention  (<tree> → <list>)
+#   Gate 4 — Supabase Migration RLS Contract  (new .sql files)
+#   Gate 5 — Deprecated Reference Block  (insightpulseai.net, Mattermost, etc.)
+#
+# See: docs/governance/POLICY_GATES.md
+# =============================================================================
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: policy-gates-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ============================================================================
+  # Gate 1 — Spec Bundle Presence
+  # Feature branches touching >3 scoped files must have a spec bundle.
+  # Scoped paths: addons/ipai/, platform/, web/, infra/, automations/,
+  #               agents/, design/, analytics/
+  # ============================================================================
+  spec-bundle-presence:
+    name: "Gate 1 — Spec Bundle Presence"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check spec bundle for feature branches
+        run: |
+          BRANCH="${GITHUB_HEAD_REF}"
+          echo "Branch: $BRANCH"
+
+          # Only enforce on feat/* branches
+          if [[ "$BRANCH" != feat/* ]]; then
+            echo "ℹ️  Non-feature branch — spec bundle not required"
+            exit 0
+          fi
+
+          SLUG="${BRANCH#feat/}"
+
+          # Count scoped changes
+          SCOPED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | \
+            grep -cE '^(addons/ipai/|platform/|web/|infra/|automations/|agents/|design/|analytics/)' || true)
+
+          echo "Scoped files changed: $SCOPED"
+
+          if [ "$SCOPED" -le 3 ]; then
+            echo "ℹ️  ≤3 scoped files changed — spec bundle optional"
+            exit 0
+          fi
+
+          if [ -f "spec/$SLUG/plan.md" ]; then
+            echo "✅ Spec bundle found: spec/$SLUG/"
+          else
+            echo "::warning::No spec bundle at spec/$SLUG/ but $SCOPED scoped files changed"
+            echo "Create: mkdir -p spec/$SLUG && touch spec/$SLUG/{constitution.md,prd.md,plan.md,tasks.md}"
+            # Warning-only: does not block. Upgrade to exit 1 after adoption period.
+          fi
+
+  # ============================================================================
+  # Gate 2 — Secret Pattern Diff
+  # Quick diff-only scan for the most dangerous hardcoded secret patterns.
+  # Full repo scan runs separately in secret-scan.yml on push to main.
+  # ============================================================================
+  secret-pattern-diff:
+    name: "Gate 2 — Secret Pattern (Diff)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan changed lines for secret patterns
+        run: |
+          # Only examine added lines (+) in changed source/config files
+          DIFF=$(git diff "origin/${{ github.base_ref }}...HEAD" -- \
+            '*.py' '*.js' '*.ts' '*.sh' '*.yml' '*.yaml' '*.json' '*.conf' '*.env*' \
+            2>/dev/null || true)
+
+          HITS=$(printf '%s' "$DIFF" | grep -nE \
+            '^\+.*(password|passwd|secret|api_key|apikey|private_key)\s*=\s*["'"'"'][^"'"'"']{6,}|^\+.*sk-[A-Za-z0-9]{20,}|^\+.*SUPABASE_SERVICE_ROLE_KEY\s*=\s*[^$\{]' \
+            || true)
+
+          if [ -n "$HITS" ]; then
+            echo "::error::Potential hardcoded secret detected in diff:"
+            echo "$HITS"
+            echo ""
+            echo "Use environment variables or Supabase Vault — never hardcode credentials."
+            exit 1
+          fi
+          echo "✅ No secret patterns in changed lines"
+
+  # ============================================================================
+  # Gate 3 — Odoo 19 View Convention
+  # <tree> is deprecated in Odoo 19 — use <list> instead.
+  # Applied to all changed XML files under addons/.
+  # ============================================================================
+  odoo-view-convention:
+    name: "Gate 3 — Odoo 19 View Convention"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block deprecated <tree> view tag
+        run: |
+          CHANGED_XML=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" | \
+            grep -E '^addons/.*\.xml$' || true)
+
+          if [ -z "$CHANGED_XML" ]; then
+            echo "ℹ️  No Odoo addon XML files changed"
+            exit 0
+          fi
+
+          VIOLATIONS=""
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            FOUND=$(grep -nE '<tree(\s|>|/)' "$f" || true)
+            if [ -n "$FOUND" ]; then
+              VIOLATIONS="$VIOLATIONS\n--- $f ---\n$FOUND"
+            fi
+          done <<< "$CHANGED_XML"
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "::error::Odoo 19 convention violation: <tree> is deprecated, use <list>"
+            printf '%b\n' "$VIOLATIONS"
+            echo ""
+            echo "Replace all occurrences: sed -i 's/<tree/<list/g; s/<\/tree>/<\/list>/g' <file>"
+            echo "Ref: https://www.odoo.com/documentation/19.0/developer/reference/views.html"
+            exit 1
+          fi
+          echo "✅ No deprecated <tree> view tags in changed XML files"
+
+  # ============================================================================
+  # Gate 4 — Supabase Migration RLS Contract
+  # Every new migration that creates a table must enable Row Level Security.
+  # Applied to newly added files in supabase/migrations/*.sql.
+  # ============================================================================
+  supabase-migration-rls:
+    name: "Gate 4 — Migration RLS Contract"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce RLS on new migration tables
+        run: |
+          NEW_MIGRATIONS=$(git diff --name-only --diff-filter=A \
+            "origin/${{ github.base_ref }}...HEAD" | \
+            grep -E '^supabase/migrations/.*\.sql$' || true)
+
+          if [ -z "$NEW_MIGRATIONS" ]; then
+            echo "ℹ️  No new migration files"
+            exit 0
+          fi
+
+          VIOLATIONS=""
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            CREATES_TABLE=$(grep -iE 'CREATE\s+TABLE' "$f" || true)
+            if [ -n "$CREATES_TABLE" ]; then
+              HAS_RLS=$(grep -iE '(ENABLE\s+ROW\s+LEVEL\s+SECURITY|ALTER\s+TABLE.*ENABLE\s+ROW)' "$f" || true)
+              if [ -z "$HAS_RLS" ]; then
+                VIOLATIONS="$VIOLATIONS\n$f: Creates table(s) without ENABLE ROW LEVEL SECURITY"
+              fi
+            fi
+          done <<< "$NEW_MIGRATIONS"
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "::error::Migration RLS contract violated:"
+            printf '%b\n' "$VIOLATIONS"
+            echo ""
+            echo "Add after CREATE TABLE: ALTER TABLE <table_name> ENABLE ROW LEVEL SECURITY;"
+            exit 1
+          fi
+          echo "✅ All new migrations satisfy RLS contract"
+
+  # ============================================================================
+  # Gate 5 — Deprecated Reference Block
+  # Blocks introduction of references to deprecated domains and services.
+  # See: CLAUDE.md § Deprecated (Never Use)
+  # ============================================================================
+  deprecated-reference-check:
+    name: "Gate 5 — Deprecated Reference Block"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block deprecated domain/service references in diff
+        run: |
+          DIFF=$(git diff "origin/${{ github.base_ref }}...HEAD" -- \
+            '*.py' '*.js' '*.ts' '*.sh' '*.yml' '*.yaml' '*.json' \
+            '*.md' '*.xml' '*.conf' '*.env*' \
+            2>/dev/null || true)
+
+          HITS=$(printf '%s' "$DIFF" | grep -nE \
+            '^\+.*(insightpulseai\.net|mattermost\.(insightpulseai|com)|ipai_mattermost|ipai_mailgun_bridge|xkxyvboeubffxxbebsll|ublqmilcjtpnflofprkr|odoo-ce\.insightpulseai)' \
+            || true)
+
+          if [ -n "$HITS" ]; then
+            echo "::error::Deprecated reference introduced in diff:"
+            echo "$HITS"
+            echo ""
+            echo "See CLAUDE.md § Deprecated for current replacements:"
+            echo "  insightpulseai.net → insightpulseai.com"
+            echo "  Mattermost         → Slack"
+            echo "  ipai_mailgun_bridge → Zoho Mail SMTP"
+            exit 1
+          fi
+          echo "✅ No deprecated domain/service references"
+
+  # ============================================================================
+  # Summary — All Gates
+  # Reports the combined result. This job must succeed for the PR to merge.
+  # ============================================================================
+  policy-gates-summary:
+    name: "Policy Gates — All Clear"
+    runs-on: ubuntu-latest
+    needs:
+      - spec-bundle-presence
+      - secret-pattern-diff
+      - odoo-view-convention
+      - supabase-migration-rls
+      - deprecated-reference-check
+    if: always()
+
+    steps:
+      - name: Evaluate gate results
+        run: |
+          G1="${{ needs.spec-bundle-presence.result }}"
+          G2="${{ needs.secret-pattern-diff.result }}"
+          G3="${{ needs.odoo-view-convention.result }}"
+          G4="${{ needs.supabase-migration-rls.result }}"
+          G5="${{ needs.deprecated-reference-check.result }}"
+
+          icon() { [ "$1" = "success" ] && echo "✅ Pass" || echo "❌ Fail"; }
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## Policy Gate Results
+
+          | # | Gate | Result |
+          |---|------|--------|
+          | 1 | Spec Bundle Presence   | $(icon $G1) |
+          | 2 | Secret Pattern Diff    | $(icon $G2) |
+          | 3 | Odoo 19 View Convention| $(icon $G3) |
+          | 4 | Migration RLS Contract | $(icon $G4) |
+          | 5 | Deprecated References  | $(icon $G5) |
+
+          > **These gates are the enforcement SSOT. No human reviewer substitutes for gate compliance.**
+          > See [docs/governance/POLICY_GATES.md](../docs/governance/POLICY_GATES.md)
+          EOF
+
+          for result in "$G1" "$G2" "$G3" "$G4" "$G5"; do
+            if [ "$result" != "success" ]; then
+              echo "❌ One or more policy gates failed."
+              echo "Fix all gate violations before requesting merge."
+              exit 1
+            fi
+          done
+
+          echo "✅ All 5 policy gates passed."
+          echo "Merge is permitted without additional human reviewer approval."

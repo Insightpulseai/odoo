@@ -1,0 +1,151 @@
+{
+  "name": "MCP Tool: Sync Trigger (Outbox Pattern)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-006",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "sync_trigger",
+        "description": "Trigger Odoo↔Supabase data sync. Creates a queue item in ops.outbox (Supabase SSOT). The bridge executor picks it up and syncs with Odoo. Sync types: invoices, payments, partners, journal_entries, full. IMPORTANT: dry_run defaults to true — set to false to actually execute. Never writes directly to Odoo; uses outbox→bridge pattern.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "sync_type",
+              "description": "Sync type: invoices, payments, partners, journal_entries, full",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "since",
+              "description": "ISO datetime for incremental sync start. Example: 2025-02-01T00:00:00Z. Leave empty for last checkpoint.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "dry_run",
+              "description": "Preview only without executing sync. Default: true (safe). Set to false to actually enqueue.",
+              "type": "boolean",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-sync",
+      "name": "Sync Trigger Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build outbox entry — NEVER write to Odoo directly\nconst input = $input.first().json;\nconst syncType = input.sync_type || 'invoices';\nconst since = input.since || null;\nconst dryRun = input.dry_run !== false; // default true\n\nconst modelMap = {\n  invoices: 'account.move',\n  payments: 'account.payment',\n  partners: 'res.partner',\n  journal_entries: 'account.move.line',\n  full: 'all'\n};\n\nconst outboxEntry = {\n  id: `sync_${syncType}_${Date.now()}`,\n  queue: 'odoo_sync',\n  status: dryRun ? 'dry_run_preview' : 'pending',\n  priority: syncType === 'full' ? 1 : 5,\n  payload: {\n    sync_type: syncType,\n    odoo_model: modelMap[syncType] || syncType,\n    since: since,\n    direction: 'odoo_to_supabase',\n    requested_by: 'claude_mcp',\n    requested_at: new Date().toISOString()\n  },\n  attempts: 0,\n  max_attempts: 3,\n  created_at: new Date().toISOString()\n};\n\nreturn [{ json: { dry_run: dryRun, outbox_entry: outboxEntry } }];"
+      },
+      "id": "code-build-outbox",
+      "name": "Build Outbox Entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "dry-run-check",
+              "leftValue": "={{ $json.dry_run }}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "equals", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-dry-run",
+      "name": "Dry Run Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/ops_outbox",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "return=representation"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.outbox_entry) }}",
+        "options": {"timeout": 10000}
+      },
+      "id": "http-enqueue",
+      "name": "Enqueue to Supabase Outbox",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Return enqueue confirmation\nconst entry = $('Build Outbox Entry').first().json;\nconst result = $input.first().json;\n\nreturn [{\n  json: {\n    status: 'success',\n    action: 'enqueued',\n    message: `Sync job enqueued to ops.outbox. The bridge executor will process it.`,\n    outbox_id: entry.outbox_entry.id,\n    sync_type: entry.outbox_entry.payload.sync_type,\n    direction: 'odoo_to_supabase',\n    note: 'This does NOT write directly to Odoo. The bridge executor handles the actual sync.'\n  }\n}];"
+      },
+      "id": "code-confirm",
+      "name": "Confirm Enqueue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Return dry run preview\nconst entry = $('Build Outbox Entry').first().json;\n\nreturn [{\n  json: {\n    status: 'success',\n    action: 'dry_run_preview',\n    message: 'Dry run — no changes made. Set dry_run=false to actually enqueue this sync.',\n    would_enqueue: entry.outbox_entry,\n    sync_type: entry.outbox_entry.payload.sync_type,\n    direction: 'odoo_to_supabase',\n    safety_note: 'Writes go through ops.outbox → bridge executor. Never directly to Odoo.'\n  }\n}];"
+      },
+      "id": "code-dry-run",
+      "name": "Dry Run Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 400]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Sync Trigger Tool", "type": "main", "index": 0}]]
+    },
+    "Sync Trigger Tool": {
+      "main": [[{"node": "Build Outbox Entry", "type": "main", "index": 0}]]
+    },
+    "Build Outbox Entry": {
+      "main": [[{"node": "Dry Run Check", "type": "main", "index": 0}]]
+    },
+    "Dry Run Check": {
+      "main": [
+        [{"node": "Enqueue to Supabase Outbox", "type": "main", "index": 0}],
+        [{"node": "Dry Run Response", "type": "main", "index": 0}]
+      ]
+    },
+    "Enqueue to Supabase Outbox": {
+      "main": [[{"node": "Confirm Enqueue", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1", "saveManualExecutions": true},
+  "tags": [{"name": "mcp"}, {"name": "sync"}, {"name": "outbox"}],
+  "meta": {"instanceId": "insightpulseai-n8n"}
+}

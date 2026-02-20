@@ -1,0 +1,159 @@
+W9 Studio Booking - Supabase Backend Integration
+Implementation Log
+Timestamp: 2026-02-20T06:45:00+0800
+
+=== CONTEXT ===
+Repo: /Users/tbwa/Documents/GitHub/Insightpulseai/odoo
+Branch: _git_aggregated
+Working Dir: sandbox/dev/.artifacts/rotor-kinetic
+Goal: Add Supabase backend to W9 Studio booking form (SSOT architecture)
+
+=== FILES CREATED/MODIFIED ===
+
+1. package.json (CREATED)
+   - Restored from package-lock.json
+   - Dependencies: @supabase/supabase-js@2.95.3, React 19.2.4, Vite 6.3.5
+   - 24+ shadcn/ui Radix components
+   - Path: package.json
+
+2. src/lib/supabase.ts (CREATED)
+   - Supabase client initialization
+   - Environment variable validation
+   - Helpful error messages for missing config
+   - Path: src/lib/supabase.ts
+
+3. src/lib/bookings.ts (CREATED)
+   - submitBooking() function
+   - BookingPayload TypeScript interface
+   - Error handling with user-friendly messages
+   - Path: src/lib/bookings.ts
+
+4. supabase/migrations/20260220_create_bookings.sql (CREATED)
+   - SSOT schema: ops.bookings table
+   - Audit fields: created_at, created_by, updated_at
+   - Integration readiness: odoo_invoice_id, odoo_synced_at
+   - RLS policies: anon INSERT, user SELECT, admin ALL
+   - Exclusion constraint: no double-booking
+   - Indexes: date, email, status, odoo
+   - Path: supabase/migrations/20260220_create_bookings.sql
+
+5. .env.local.example (CREATED)
+   - Environment template with placeholders
+   - Path: .env.local.example
+
+6. src/components/ui/BookingSection.jsx (ALREADY INTEGRATED)
+   - Import: submitBooking from '../../lib/bookings'
+   - State: loading, submitError, validationError
+   - Handler: handleSubmit with validation + async submission
+   - UI: Error display, loading state on button
+   - Path: src/components/ui/BookingSection.jsx
+
+7. SUPABASE_INTEGRATION.md (CREATED)
+   - Complete setup guide
+   - SSOT/SOR architecture documentation
+   - Validation checklist
+   - Troubleshooting guide
+   - Path: SUPABASE_INTEGRATION.md
+
+=== ARCHITECTURE HIGHLIGHTS ===
+
+SSOT/SOR Separation:
+- Supabase SSOT: Operational booking data (requests, availability, contact)
+- Odoo SOR: Financial ledger (invoices, payments) - future integration
+- Bridge: odoo_invoice_id foreign reference
+
+Schema Design:
+- ops.bookings table (not public.bookings)
+- Audit trail: created_at, created_by, updated_at
+- Integration hooks: odoo_invoice_id, odoo_synced_at
+- Status flow: pending → confirmed → cancelled
+
+Security:
+- RLS enabled: anon INSERT only, users SELECT own, admins ALL
+- Constraints: status enum, studio_type enum, double-booking prevention
+- Validation: client-side + database-level checks
+
+=== IMPLEMENTATION STATUS ===
+
+✅ COMPLETE - All Code Files Created
+✅ PENDING - Database Setup (5 min manual steps)
+✅ PENDING - PostgREST Schema Exposure (Settings → API → Add 'ops')
+✅ PENDING - Environment Configuration (.env.local with real credentials)
+
+=== NEXT STEPS (USER ACTION REQUIRED) ===
+
+1. Database Setup:
+   - Open: https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz/sql/new
+   - Run: supabase/migrations/20260220_create_bookings.sql
+   - Verify: "Success. No rows returned"
+
+2. API Configuration:
+   - Go to: Settings → API → Exposed schemas
+   - Add: ops (to the list)
+   - Save changes
+
+3. Environment Config:
+   - Copy: .env.local.example → .env.local
+   - Edit with real Supabase URL + anon key
+   - Get credentials from: Settings → API
+
+4. Test:
+   - Run: npm run dev
+   - Navigate: http://localhost:5173/#booking
+   - Submit test booking
+   - Verify: Row appears in ops.bookings table
+
+=== VERIFICATION COMMANDS ===
+
+# Check package.json restored
+ls -la package.json
+
+# Check Supabase files created
+ls -la src/lib/supabase.ts src/lib/bookings.ts
+
+# Check migration file
+ls -la supabase/migrations/20260220_create_bookings.sql
+
+# Check environment template
+ls -la .env.local.example
+
+# Build verification (after setup)
+npm run build
+
+# Dev server (after setup)
+npm run dev
+
+=== SUPABASE SQL VERIFICATION ===
+
+-- After running migration, verify schema:
+SELECT schemaname, tablename FROM pg_tables WHERE tablename = 'bookings';
+-- Expected: ops | bookings
+
+-- Verify RLS policies:
+SELECT * FROM pg_policies WHERE tablename = 'bookings';
+-- Expected: 3 policies (anon_insert_booking, users_select_own_bookings, admin_all)
+
+-- Test insert (via client):
+-- Use Supabase client with anon key
+-- Should succeed
+
+-- Verify constraint:
+SELECT conname, contype FROM pg_constraint WHERE conrelid = 'ops.bookings'::regclass;
+-- Expected: no_double_booking (exclusion), status check, studio_type check
+
+=== CRITICAL FILES ===
+
+package.json               ✅ CREATED (restored from lock file)
+src/lib/supabase.ts        ✅ CREATED (env validation)
+src/lib/bookings.ts        ✅ CREATED (submit service)
+supabase/migrations/...    ✅ CREATED (SSOT schema)
+.env.local.example         ✅ CREATED (template)
+SUPABASE_INTEGRATION.md    ✅ CREATED (complete guide)
+src/components/ui/BookingSection.jsx  ✅ ALREADY INTEGRATED
+
+=== STATUS ===
+Implementation: COMPLETE
+Database Setup: PENDING (user action required)
+Testing: PENDING (after database setup)
+
+End of implementation log.
