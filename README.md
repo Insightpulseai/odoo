@@ -140,6 +140,44 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ---
 
+## Repo Map
+
+**Full governance contract:** [`docs/architecture/MONOREPO_CONTRACT.md`](./docs/architecture/MONOREPO_CONTRACT.md)
+
+This repository merges two architectural archetypes:
+
+1. **Supabase-style platform mono** (`web/`, `supabase/`, `automations/`)
+2. **Odoo-style ERP mono** (`odoo/addons/`, Python runtime, OCA-first)
+
+**Top-level directory guide:**
+
+| Directory | Purpose | Owner Team |
+|-----------|---------|------------|
+| `odoo/` | ERP System of Record (SOR) | ERP/Backend |
+| `supabase/` | Control plane SSOT, ops.* tables | Platform/DB |
+| `web/` | Odoo.sh-equivalent control plane UI | Frontend/Platform |
+| `automations/` | n8n workflows, runbooks, audits | DevOps/Automations |
+| `infra/` | Cloudflare/DO/Vercel/IaC + drift detection | DevOps/Infra |
+| `design/` | tokens.json SSOT + extracted assets | Design/Frontend |
+| `agents/` | Agent registry + skills + runbooks | AI/Platform |
+| `docs/` | Architecture + contracts + runbooks | All |
+| `scripts/` | Repo-wide tooling | All |
+| `spec/` | Spec Kit bundles (constitution, prd, plan, tasks) | Architecture/Product |
+
+**Key boundaries:**
+- ✅ Odoo is the SOR for accounting, inventory, posted documents
+- ✅ Supabase is the SSOT for ops/control plane, analytics, AI layers
+- ❌ `ipai_*` modules must NOT implement EE parity (use OCA instead)
+- ❌ No cross-domain writes without audit trail
+
+See [MONOREPO_CONTRACT.md](./docs/architecture/MONOREPO_CONTRACT.md) for:
+- Detailed sub-structure standards
+- Data flow rules (what talks to what)
+- CI invariants and quality gates
+- CODEOWNERS enforcement
+
+---
+
 ## Odoo Execution Patterns
 
 **⚠️ Important**: Use the correct execution pattern to avoid errors.
