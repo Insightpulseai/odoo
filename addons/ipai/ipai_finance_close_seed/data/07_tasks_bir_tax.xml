@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             BIR Tax Filing Tasks — Full Year 2026
+             All tasks: Preparer: BOM | Reviewer: RIM | Approver: CKVC
+             ============================================================ -->
+
+        <!-- ===== January 2026 ===== -->
+
+        <record id="task_bir_jan_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - January 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-02-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">10</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: January 2026
+Prep Request: 2026-02-04
+Report Approval: 2026-02-06
+Payment Approval: 2026-02-09
+Deadline: 2026-02-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_jan_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - January 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-02-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">20</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: January 2026
+Deadline: 2026-02-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== February 2026 ===== -->
+
+        <record id="task_bir_feb_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - February 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">30</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: February 2026
+Deadline: 2026-03-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_feb_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - February 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-03-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">40</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: February 2026
+Deadline: 2026-03-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== March 2026 ===== -->
+
+        <record id="task_bir_mar_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - March 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-04-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">50</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: March 2026
+Deadline: 2026-04-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_mar_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - March 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-04-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">60</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: March 2026
+Deadline: 2026-04-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== Q1 2026 Quarterly ===== -->
+
+        <record id="task_bir_q1_2550q" model="project.task">
+            <field name="name">2550Q (Quarterly VAT) - Q1 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
+            <field name="date_deadline">2026-04-25</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">70</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q1 2026 (Jan-Mar)
+Deadline: 2026-04-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_q1_1601eq" model="project.task">
+            <field name="name">1601-EQ (Quarterly EWT) - Q1 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
+            <field name="date_deadline">2026-04-30</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">80</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q1 2026 (Jan-Mar)
+Deadline: 2026-04-30
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== Annual: 1702-RT (due Apr 15) ===== -->
+
+        <record id="task_bir_2026_1702rt" model="project.task">
+            <field name="name">1702-RT (Annual Income Tax) - 2025</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1702rt')])]"/>
+            <field name="date_deadline">2026-04-15</field>
+            <field name="planned_hours">24.0</field>
+            <field name="sequence">85</field>
+            <field name="milestone_id" ref="milestone_bir_annual"/>
+            <field name="description">BIR Form: 1702-RT/EX (Annual Income Tax Return)
+Period: Calendar Year 2025
+Deadline: 2026-04-15
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== April 2026 ===== -->
+
+        <record id="task_bir_apr_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - April 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-05-11</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">90</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: April 2026
+Deadline: 2026-05-11 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_apr_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - April 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-05-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">100</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: April 2026
+Deadline: 2026-05-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== May 2026 ===== -->
+
+        <record id="task_bir_may_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - May 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-06-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">110</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: May 2026
+Deadline: 2026-06-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_may_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - May 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-06-22</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">120</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: May 2026
+Deadline: 2026-06-22 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== June 2026 ===== -->
+
+        <record id="task_bir_jun_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - June 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-07-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">130</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: June 2026
+Deadline: 2026-07-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_jun_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - June 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-07-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">140</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: June 2026
+Deadline: 2026-07-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== Q2 2026 Quarterly ===== -->
+
+        <record id="task_bir_q2_2550q" model="project.task">
+            <field name="name">2550Q (Quarterly VAT) - Q2 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
+            <field name="date_deadline">2026-07-25</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">150</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q2 2026 (Apr-Jun)
+Deadline: 2026-07-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_q2_1601eq" model="project.task">
+            <field name="name">1601-EQ (Quarterly EWT) - Q2 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
+            <field name="date_deadline">2026-07-31</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">160</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q2 2026 (Apr-Jun)
+Deadline: 2026-07-31
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== July 2026 ===== -->
+
+        <record id="task_bir_jul_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - July 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-08-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">170</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: July 2026
+Deadline: 2026-08-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_jul_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - July 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-08-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">180</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: July 2026
+Deadline: 2026-08-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== August 2026 ===== -->
+
+        <record id="task_bir_aug_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - August 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-09-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">190</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: August 2026
+Deadline: 2026-09-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_aug_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - August 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-09-21</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">200</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: August 2026
+Deadline: 2026-09-21 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== September 2026 ===== -->
+
+        <record id="task_bir_sep_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - September 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-10-12</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">210</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: September 2026
+Deadline: 2026-10-12 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_sep_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - September 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-10-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">220</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: September 2026
+Deadline: 2026-10-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== Q3 2026 Quarterly ===== -->
+
+        <record id="task_bir_q3_2550q" model="project.task">
+            <field name="name">2550Q (Quarterly VAT) - Q3 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
+            <field name="date_deadline">2026-10-26</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">230</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q3 2026 (Jul-Sep)
+Deadline: 2026-10-26 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_q3_1601eq" model="project.task">
+            <field name="name">1601-EQ (Quarterly EWT) - Q3 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
+            <field name="date_deadline">2026-10-30</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">240</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q3 2026 (Jul-Sep)
+Deadline: 2026-10-30
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== October 2026 ===== -->
+
+        <record id="task_bir_oct_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - October 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-11-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">250</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: October 2026
+Deadline: 2026-11-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_oct_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - October 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-11-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">260</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: October 2026
+Deadline: 2026-11-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== November 2026 ===== -->
+
+        <record id="task_bir_nov_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - November 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2026-12-10</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">270</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: November 2026
+Deadline: 2026-12-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_nov_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - November 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2026-12-21</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">280</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: November 2026
+Deadline: 2026-12-21 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== December 2026 ===== -->
+
+        <record id="task_bir_dec_1601c" model="project.task">
+            <field name="name">1601-C (Withholding Tax) - December 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601c')])]"/>
+            <field name="date_deadline">2027-01-11</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">290</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: December 2026
+Deadline: 2027-01-11 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_dec_0619e" model="project.task">
+            <field name="name">0619-E (Expanded Withholding Tax) - December 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_0619e')])]"/>
+            <field name="date_deadline">2027-01-20</field>
+            <field name="planned_hours">8.0</field>
+            <field name="sequence">300</field>
+            <field name="milestone_id" ref="milestone_bir_monthly_wht"/>
+            <field name="description">BIR Form: 0619-E (Monthly Remittance of Creditable Income Taxes Withheld - Expanded)
+Period: December 2026
+Deadline: 2027-01-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <!-- ===== Q4 2026 Quarterly ===== -->
+
+        <record id="task_bir_q4_2550q" model="project.task">
+            <field name="name">2550Q (Quarterly VAT) - Q4 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_2550q')])]"/>
+            <field name="date_deadline">2027-01-25</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">310</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q4 2026 (Oct-Dec)
+Deadline: 2027-01-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+        <record id="task_bir_q4_1601eq" model="project.task">
+            <field name="name">1601-EQ (Quarterly EWT) - Q4 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir_1601eq')])]"/>
+            <field name="date_deadline">2027-01-29</field>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">320</field>
+            <field name="milestone_id" ref="milestone_bir_quarterly"/>
+            <field name="description">BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q4 2026 (Oct-Dec)
+Deadline: 2027-01-29
+Preparer: BOM | Reviewer: RIM | Approver: CKVC</field>
+        </record>
+
+    </data>
+</odoo>

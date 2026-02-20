@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             TBWA\SMP Company (res.partner)
+             ============================================================ -->
+
+        <record id="partner_tbwa_smp" model="res.partner">
+            <field name="name">TBWA\SMP Philippines</field>
+            <field name="is_company" eval="True"/>
+            <field name="company_type">company</field>
+        </record>
+
+        <!-- ============================================================
+             Team Partners (res.partner) — 9 members
+             ============================================================ -->
+
+        <record id="partner_ckvc" model="res.partner">
+            <field name="name">Khalil Veracruz</field>
+            <field name="email">khalil.veracruz@omc.com</field>
+            <field name="function">Finance Director</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_rim" model="res.partner">
+            <field name="name">Rey Meran</field>
+            <field name="email">rey.meran@omc.com</field>
+            <field name="function">Senior Finance Manager</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_bom" model="res.partner">
+            <field name="name">Beng Manalo</field>
+            <field name="email">beng.manalo@omc.com</field>
+            <field name="function">Finance Manager</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_jpal" model="res.partner">
+            <field name="name">Jinky Paladin</field>
+            <field name="email">jinky.paladin@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_las" model="res.partner">
+            <field name="name">Amor Lasaga</field>
+            <field name="email">amor.lasaga@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_jli" model="res.partner">
+            <field name="name">Jerald Loterte</field>
+            <field name="email">jerald.loterte@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_rmqb" model="res.partner">
+            <field name="name">Sally Brillantes</field>
+            <field name="email">sally.brillantes@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_jap" model="res.partner">
+            <field name="name">Jasmin Ignacio</field>
+            <field name="email">jasmin.ignacio@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="partner_jrmo" model="res.partner">
+            <field name="name">Jhoee Oliva</field>
+            <field name="email">jhoee.oliva@omc.com</field>
+            <field name="function">Finance Analyst</field>
+            <field name="parent_id" ref="partner_tbwa_smp"/>
+        </record>
+
+        <!-- ============================================================
+             HR Employees — linked to partners above
+             ============================================================ -->
+
+        <record id="emp_ckvc" model="hr.employee">
+            <field name="name">Khalil Veracruz</field>
+            <field name="job_title">Finance Director</field>
+            <field name="work_email">khalil.veracruz@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+        </record>
+        <record id="emp_rim" model="hr.employee">
+            <field name="name">Rey Meran</field>
+            <field name="job_title">Senior Finance Manager</field>
+            <field name="work_email">rey.meran@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_ckvc"/>
+        </record>
+        <record id="emp_bom" model="hr.employee">
+            <field name="name">Beng Manalo</field>
+            <field name="job_title">Finance Manager</field>
+            <field name="work_email">beng.manalo@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_rim"/>
+        </record>
+        <record id="emp_jpal" model="hr.employee">
+            <field name="name">Jinky Paladin</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">jinky.paladin@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_bom"/>
+        </record>
+        <record id="emp_las" model="hr.employee">
+            <field name="name">Amor Lasaga</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">amor.lasaga@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_rim"/>
+        </record>
+        <record id="emp_jli" model="hr.employee">
+            <field name="name">Jerald Loterte</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">jerald.loterte@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_bom"/>
+        </record>
+        <record id="emp_rmqb" model="hr.employee">
+            <field name="name">Sally Brillantes</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">sally.brillantes@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_rim"/>
+        </record>
+        <record id="emp_jap" model="hr.employee">
+            <field name="name">Jasmin Ignacio</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">jasmin.ignacio@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_bom"/>
+        </record>
+        <record id="emp_jrmo" model="hr.employee">
+            <field name="name">Jhoee Oliva</field>
+            <field name="job_title">Finance Analyst</field>
+            <field name="work_email">jhoee.oliva@omc.com</field>
+            <field name="address_id" ref="partner_tbwa_smp"/>
+            <field name="parent_id" ref="emp_bom"/>
+        </record>
+
+    </data>
+</odoo>
