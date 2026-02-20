@@ -16,7 +16,7 @@
 meta:
   odoo_version: "19.0"
   purpose: "Curated OCA modules for CE Enterprise Parity"
-  last_updated: "2026-01-29"
+  last_updated: "2026-02-21"
   inventory_count: 288
 
 # Install order - packs are installed in this sequence
@@ -24,6 +24,7 @@ install_order:
   - foundation
   - web_ux
   - accounting_core
+  - accounting_payments
   - accounting_reconcile
   - accounting_statements
   - purchase_workflow
@@ -31,6 +32,7 @@ install_order:
   - project_timesheet
   - crm_extensions
   - reporting
+  - documents
 
 # Module packs - grouped by functional area
 # ALL modules verified to exist in docs/oca/ADDON_NAMES.txt
@@ -57,6 +59,8 @@ packs:
     - server_environment_data_encryption
     - auditlog
     - date_range
+    - base_substate
+    - auth_session_timeout
 
   # Web UX: Frontend improvements
   web_ux:
@@ -83,6 +87,14 @@ packs:
   accounting_reconcile:
     - account_reconcile_oca_add_default_filters
     - account_partner_reconcile
+
+  # Accounting Payments: Payment modes and batch payment orders
+  accounting_payments:
+    - account_payment_mode
+    - account_payment_order
+    - account_payment_order_grouped
+    - account_payment_purchase
+    - account_payment_sale
 
   # Accounting Statements: Bank statement processing
   accounting_statements:
