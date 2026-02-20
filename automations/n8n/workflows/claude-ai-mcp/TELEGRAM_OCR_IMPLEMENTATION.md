@@ -34,16 +34,16 @@ Telegram Reply (formatted summary + JSON or error)
 # Gemini API
 GEMINI_API_KEY="AIzaSyCpotW0q81UxWvq40_G4Qs2P_BoGXpQXVw"
 
-# Supabase
+# Supabase (REQUIRED: service_role key for RPC security definer)
 SUPABASE_URL="https://spdtwktxdalcfigzeqrz.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="eyJhbGc..." # Preferred for logging
-# OR
-SUPABASE_ANON_KEY="eyJhbGc..." # Fallback (requires RLS policies)
+SUPABASE_SERVICE_ROLE_KEY="eyJhbGc..." # REQUIRED for ops.log_ocr_event RPC
 
 # n8n (for workflow management)
 N8N_BASE_URL="https://n8n.insightpulseai.com"
 N8N_API_KEY="eyJhbGc..."
 ```
+
+**⚠️ Authentication Note**: The Supabase Log OCR Event node **requires** `SUPABASE_SERVICE_ROLE_KEY`, not `SUPABASE_ANON_KEY`. The `ops.log_ocr_event` RPC function is `security definer` and has `revoke all from public`, so anon key access will fail with 401 Unauthorized.
 
 ## Workflow JSON Schema
 
@@ -133,22 +133,97 @@ supabase db push
 # psql "$POSTGRES_URL" < migrations/20260221000000_ocr_events.sql
 ```
 
-### 2. Import Workflow to n8n
+### 2. Import Workflow to n8n (API-First)
 
-**Option A - UI Import:**
-1. Open https://n8n.insightpulseai.com
-2. Workflows → Import from File
-3. Select `11_telegram_ocr_gemini_complete.json`
-4. Verify credentials are attached (Telegram Bot OCR)
-5. Activate workflow
+**⚠️ Important**: Strip UI-only fields from workflow JSON before API import. The following fields are instance-specific and must be removed:
 
-**Option B - API Import (if supported):**
+- `versionId` (root level)
+- `meta.instanceId` (root level)
+- `meta.templateId` (optional, but instance-specific)
+- `id` (root level, workflow ID)
+- `webhookId` (in Telegram Trigger node)
+- `credentials.*.id` (credential IDs are instance-specific)
+
+**Prepare workflow JSON for import:**
+
 ```bash
-curl -X POST \
+# Create API-importable version
+jq 'del(.versionId, .meta.instanceId, .meta.templateId, .id) |
+    walk(if type == "object" then del(.webhookId) else . end) |
+    walk(if type == "object" and has("credentials") then
+      .credentials |= with_entries(.value |= del(.id))
+    else . end)' \
+  automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json \
+  > /tmp/telegram_ocr_import.json
+```
+
+**Import via n8n Public API:**
+
+```bash
+# Import workflow
+WORKFLOW_ID=$(curl -sS -X POST \
   -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   -H "Content-Type: application/json" \
-  -d @automations/n8n/workflows/claude-ai-mcp/11_telegram_ocr_gemini_complete.json \
-  "https://n8n.insightpulseai.com/api/v1/workflows"
+  -d @/tmp/telegram_ocr_import.json \
+  "${N8N_BASE_URL}/api/v1/workflows" | jq -r '.id')
+
+echo "Imported workflow ID: ${WORKFLOW_ID}"
+
+# Activate workflow
+curl -sS -X POST \
+  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+  "${N8N_BASE_URL}/api/v1/workflows/${WORKFLOW_ID}/activate"
+```
+
+**[MANUAL_REQUIRED] Credential Attachment**:
+- **What**: Attach Telegram Bot credential to workflow nodes
+- **Why**: n8n Public API doesn't support credential creation/management (platform limitation)
+- **Evidence**: n8n API docs, 405 Method Not Allowed on POST /credentials
+- **Minimal human action**:
+  1. Open `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
+  2. For each Telegram node (Trigger, Get File, Reply):
+     - Click node → Credentials dropdown
+     - Select "Telegram Bot OCR" (or create new with token: `8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY`)
+  3. Save workflow
+- **Then**: Automation resumes with testing (step 3)
+
+**Helper Script** (optional but recommended):
+
+Create `automations/n8n/scripts/import_and_activate_workflow.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKFLOW_FILE="${1:?Usage: $0 <workflow.json>}"
+: "${N8N_BASE_URL:?N8N_BASE_URL not set}"
+: "${N8N_API_KEY:?N8N_API_KEY not set}"
+
+# Strip UI-only fields
+IMPORT_JSON="/tmp/$(basename "${WORKFLOW_FILE}" .json)_import.json"
+jq 'del(.versionId, .meta.instanceId, .meta.templateId, .id) |
+    walk(if type == "object" then del(.webhookId) else . end) |
+    walk(if type == "object" and has("credentials") then
+      .credentials |= with_entries(.value |= del(.id))
+    else . end)' \
+  "${WORKFLOW_FILE}" > "${IMPORT_JSON}"
+
+# Import
+WORKFLOW_ID=$(curl -sS -X POST \
+  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d @"${IMPORT_JSON}" \
+  "${N8N_BASE_URL}/api/v1/workflows" | jq -r '.id')
+
+echo "✅ Imported workflow ID: ${WORKFLOW_ID}"
+
+# Activate
+curl -sS -X POST \
+  -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
+  "${N8N_BASE_URL}/api/v1/workflows/${WORKFLOW_ID}/activate"
+
+echo "✅ Activated workflow: ${N8N_BASE_URL}/workflow/${WORKFLOW_ID}"
+echo "⚠️  [MANUAL] Attach Telegram credentials to nodes (see TELEGRAM_OCR_IMPLEMENTATION.md)"
 ```
 
 ### 3. Test End-to-End
@@ -194,39 +269,70 @@ curl -X POST \
 
 ### Supabase Log Fails
 
-**Symptom**: Workflow execution stops at Supabase node
+**Symptom**: Workflow execution stops at Supabase node with 401 Unauthorized or permission denied
+
+**Root Cause**: The `ops.log_ocr_event` RPC function is defined as `security definer` with `revoke all on function ops.log_ocr_event(...) from public`. This means:
+
+1. **Service role key is REQUIRED** — anon key will always fail with 401
+2. **RLS does NOT apply** — function runs with definer's privileges (schema owner)
+3. **No public grants** — only service role can execute
 
 **Debug**:
-1. Check n8n execution logs
-2. Common issues:
-   - `SUPABASE_SERVICE_ROLE_KEY` not set
-   - RPC `log_ocr_event` not created
-   - RLS blocking anon key access
+1. Check n8n execution logs for HTTP 401 or "permission denied for function"
+2. Verify n8n environment variable:
+   ```bash
+   # In n8n settings → Environments → SUPABASE_SERVICE_ROLE_KEY
+   # Must start with: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS...
+   ```
+3. Common issues:
+   - Using `SUPABASE_ANON_KEY` instead of `SUPABASE_SERVICE_ROLE_KEY`
+   - RPC `log_ocr_event` not created (migration not applied)
+   - Wrong Supabase project URL
 
 **Fix**:
 ```bash
-# Verify migration applied
+# 1. Verify migration applied
 psql "$POSTGRES_URL" -c "\df ops.log_ocr_event"
+# Expected output: ops | log_ocr_event | uuid | plpgsql
 
-# Test RPC directly
-psql "$POSTGRES_URL" << 'SQL'
-select ops.log_ocr_event(
-  'telegram',
-  '123456',
-  'test_file_id',
-  'other',
-  '{"test": true}'::jsonb
-);
-SQL
+# 2. Test RPC directly with service_role key
+curl -sS -X POST \
+  -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": "telegram",
+    "chat_id": "test_123",
+    "file_id": "test_file",
+    "doc_type": "other",
+    "payload": {"test": true}
+  }' \
+  "${SUPABASE_URL}/rest/v1/rpc/log_ocr_event"
+
+# 3. If test succeeds but workflow fails, check n8n Supabase node config:
+# - URL: {{$env.SUPABASE_URL}}/rest/v1/rpc/log_ocr_event
+# - Headers: apikey={{$env.SUPABASE_SERVICE_ROLE_KEY}}
+# - Headers: Authorization=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}
 ```
 
 ### Telegram Credentials Missing
 
-**Symptom**: Red "Select Credential" on Telegram nodes
+**Symptom**: Red "Select Credential" on Telegram nodes after API import
 
-**Fix**: Manually attach credential in n8n UI:
-1. Open each Telegram node
-2. Select credential: "Telegram Bot OCR" (or create new with token `8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY`)
+**Root Cause**: n8n Public API doesn't support credential creation/management (platform limitation, confirmed 405 Method Not Allowed on POST /credentials)
+
+**Fix** [MANUAL_REQUIRED]: Attach credentials via n8n UI:
+1. Open workflow in n8n web UI: `${N8N_BASE_URL}/workflow/${WORKFLOW_ID}`
+2. For each Telegram node (Trigger, Get File, Reply):
+   - Click node → Credentials dropdown
+   - Select existing "Telegram Bot OCR" credential
+   - OR create new:
+     - Name: "Telegram Bot OCR"
+     - Access Token: `8221767220:AAGJdtPu9RRiH12_AoM6XmSdaPoy5pdIPqY`
+     - Base URL: (leave default)
+3. Save workflow
+
+**Note**: This is the ONLY manual UI step required. All other operations (import, activate, test) are API-driven.
 
 ## Next Steps
 
