@@ -1,0 +1,87 @@
+# Odoo Control Plane - Implementation Progress
+
+## STATUS=PARTIAL
+
+## Completed Tasks (60%)
+
+### ✅ Task #1: shadcn/ui Installation
+- Installed: tailwindcss, postcss, autoprefixer, class-variance-authority, clsx, tailwind-merge, lucide-react
+- Created: tailwind.config.js, postcss.config.js, app/globals.css, lib/utils.ts
+- Updated: app/layout.tsx with global styles
+
+### ✅ Task #2: Supabase ops Client
+- Created: lib/supabase-ops.ts with full TypeScript types
+- Types: OpsProject, OpsEnvironment, OpsRun, OpsRunEvent, OpsArtifact, OpsBackup
+- Query helpers: getAllProjects, getProject, getEnvironmentsByProject, getRunsByProject, etc.
+- Real-time: subscribeToRunEvents, subscribeToRunStatus
+
+### ✅ Task #3: Platform Dashboard
+- Created: app/platform/page.tsx with project cards
+- Features: Run stats (last 24h), success/failed/running badges
+- Navigation: Links to project detail, quick links to APIs
+
+### ✅ Task #4: Project Detail View
+- Created: app/platform/[project_id]/page.tsx
+- Layout: 3-column Dev/Staging/Prod environment panes
+- Features: Latest run per environment, action buttons (View Run, Shell, Logs), recent runs timeline
+
+### ✅ Task #5: Real-Time Run Monitoring
+- Created: app/platform/runs/[run_id]/page.tsx (client component with SSE)
+- Features: Live event streaming, event filtering, status badges
+- API routes: /api/ops/runs/[id]/route.ts, /api/ops/runs/[id]/events/route.ts, /api/ops/runs/[id]/stream/route.ts
+
+### ✅ Task #6: Docker Integration
+- Created: lib/docker-client.ts with dockerode wrapper
+- Functions: getContainerStatus, restartContainer, streamLogs, execShell, listContainersByProject
+
+### ✅ Additional: GitHub Client
+- Created: lib/github-client.ts
+- Functions: triggerDeploy, promoteBranch, mergePullRequest
+
+## Pending Tasks (40%)
+
+### ⏳ Task #7: Branch Promotion Workflow
+- API route: /api/ops/promotions/route.ts
+- UI: Promotion wizard with approval modal
+
+### ⏳ Task #8: Backup Management
+- API route: /api/ops/backups/route.ts
+- UI: Backup list with download/restore actions
+- n8n webhook integration
+
+### ⏳ Task #9: Testing Infrastructure
+- vitest.config.ts
+- Integration tests for deployments, promotions, backups
+
+### ⏳ Task #10: Agent Skill Documentation
+- .agents/skills/odoo-control-plane/SKILL.md
+
+## Evidence
+
+### File Count
+- New files created: 23
+- Modified files: 5
+- Total changes: 28 files
+
+### Dependencies Added
+- Runtime: dockerode, class-variance-authority, clsx, tailwind-merge, lucide-react
+- DevDependencies: tailwindcss, postcss, autoprefixer, tailwindcss-animate, @types/dockerode
+
+### Package Changes
+- Fixed: Removed invalid @supabase/platform-kit-nextjs from templates/odooops-console
+- Updated: web/ai-control-plane/package.json
+- Updated: pnpm-lock.yaml
+
+## Next Steps (Deterministic)
+
+1. Create API route for branch promotions
+2. Create API route for backup operations  
+3. Add testing infrastructure with vitest
+4. Create agent skill documentation
+5. Commit all changes with OCA-style message
+6. Address Vercel deployment contract (per user request)
+
+## Time Estimate
+
+- Remaining work: ~2-3 hours
+- Total implementation: ~5-6 hours (60% complete in 3h)
