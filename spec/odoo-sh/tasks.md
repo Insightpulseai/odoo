@@ -2,70 +2,57 @@
 
 ## P0: Contracts + Guardrails (Critical Path)
 
-These tasks MUST be completed before any environment automation. They establish the foundation for deterministic builds and safe deployments.
+Critical path. Must be completed before automation.
 
 ### P0.1: Dev Runtime Contract
 **Owner:** Architect
-**Deliverable:** `docs/development/DEV_ENVIRONMENT.md`
+**Deliverable:** `docs/architecture/DEV_RUNTIME_CONTRACT.md`
 
-**Tasks:**
-- [ ] Document current `docker-compose.yml` setup (services, volumes, networks)
-- [ ] Document `.devcontainer/devcontainer.json` configuration
-- [ ] Specify `--dev=all` flags and asset build toolchain (Webpack/esbuild)
-- [ ] Define hot reload expectations (<3s Python, <5s JS/CSS)
-- [ ] List required environment variables (`ODOO_STAGE=development`, `POSTGRES_URL`, etc.)
-- [ ] Document addons path order (odoo, oca, ipai, ipai_meta)
-- [ ] Add troubleshooting section (common errors, restart procedures)
-
-**Acceptance:** Dev contract published, peer-reviewed, no ambiguities.
+**DoD:**
+- Defines required dev flags (`--dev=all`) and expected hot-reload behavior (<3s Python, <5s JS/CSS)
+- Documents `ODOO_STAGE` semantics (development/staging/production)
+- Lists required environment variables and addons path order
+- References existing Docker Compose and DevContainer configurations
+- Includes troubleshooting section for common dev environment issues
 
 ---
 
 ### P0.2: Staging Runtime Contract
 **Owner:** Architect
-**Deliverable:** `docs/deployment/STAGING_ENVIRONMENT.md`
+**Deliverable:** `docs/architecture/STAGING_RUNTIME_CONTRACT.md`
 
-**Tasks:**
-- [ ] Document neutralization requirements (email, crons, integrations)
-- [ ] Specify staging-specific configuration (`.env.staging`, `odoo.conf.staging`)
-- [ ] Define staging data source (production snapshot workflow)
-- [ ] Document manual cron trigger procedure
-- [ ] Specify test API keys for external services (Slack, payment gateways)
-- [ ] Add configuration validation checklist
-
-**Acceptance:** Staging contract published, neutralization requirements clear.
+**DoD:**
+- Defines neutralization requirements (email catchall, cron disabling, test integrations)
+- Specifies staging-specific configuration templates
+- Documents staging data source (production snapshot workflow)
+- Defines manual cron trigger procedure for testing
+- Includes configuration validation checklist
 
 ---
 
 ### P0.3: Production Runtime Contract
 **Owner:** Architect
-**Deliverable:** `docs/deployment/PRODUCTION_ENVIRONMENT.md`
+**Deliverable:** `docs/architecture/PRODUCTION_RUNTIME_CONTRACT.md`
 
-**Tasks:**
-- [ ] Document current production deployment process (manual steps)
-- [ ] Specify production configuration (`.env.production`, `odoo.conf.production`)
-- [ ] Define rollback procedure (manual in v1)
-- [ ] Document health check endpoints (HTTP, database)
-- [ ] Specify resource limits (workers, connection pool, memory)
-- [ ] Add disaster recovery procedure
-
-**Acceptance:** Production contract published, rollback procedure tested.
+**DoD:**
+- Documents current production deployment process and configuration templates
+- Defines rollback procedure (manual in v1, <10 minute target)
+- Specifies health check endpoints (HTTP, database connectivity)
+- Documents resource limits (workers, connection pool, memory constraints)
+- Includes disaster recovery procedure
 
 ---
 
 ### P0.4: Environment Variable Inventory
 **Owner:** DevOps
-**Deliverable:** `docs/deployment/ENVIRONMENT_VARIABLES.md`
+**Deliverable:** `docs/architecture/ENVIRONMENT_VARIABLES.md`
 
-**Tasks:**
-- [ ] Catalog all env vars across dev/staging/production
-- [ ] Mark required vs. optional for each environment
-- [ ] Document source (`.env` file, CI secrets, runtime injection)
-- [ ] Specify default values where applicable
-- [ ] Add security notes (which vars contain secrets)
-- [ ] Create `.env.template` files for each environment
-
-**Acceptance:** Complete inventory, all env vars documented, templates created.
+**DoD:**
+- Catalogs all env vars across dev/staging/production with required/optional marking
+- Documents source for each variable (.env file, CI secrets, runtime injection)
+- Specifies default values and security notes (secret identification)
+- Includes `.env.template` files for each environment
+- References neutralization requirements from staging contract
 
 ---
 
@@ -73,15 +60,12 @@ These tasks MUST be completed before any environment automation. They establish 
 **Owner:** DevOps
 **Deliverable:** Extend `scripts/ci/check_addons_path.sh`
 
-**Tasks:**
-- [ ] Extract addons path from `docker-compose.yml`
-- [ ] Extract addons path from `.devcontainer/devcontainer.json`
-- [ ] Extract addons path from deployment manifests (if applicable)
-- [ ] Compare paths, fail CI if divergence detected
-- [ ] Add to `.github/workflows/ci.yml` (run on all PRs)
-- [ ] Document expected addons path order in error message
-
-**Acceptance:** CI guard passing, prevents configuration drift.
+**DoD:**
+- Extracts and compares addons paths from docker-compose.yml, devcontainer.json, deployment manifests
+- Fails CI with clear error message if paths diverge
+- Integrated into `.github/workflows/ci.yml` (runs on all PRs)
+- Error output documents expected canonical order
+- Prevents configuration drift between environments
 
 ---
 
@@ -89,53 +73,41 @@ These tasks MUST be completed before any environment automation. They establish 
 **Owner:** DevOps
 **Deliverable:** `scripts/ci/check_environment_consistency.sh`
 
-**Tasks:**
-- [ ] Parse `.env.staging` and verify `ODOO_STAGE=staging`
-- [ ] Verify staging has `mail.catchall` configured
-- [ ] Verify staging has `--max-cron-threads=0` or equivalent
-- [ ] Parse `.env.production` and verify production SMTP settings
-- [ ] Verify production has required integration keys (non-empty)
-- [ ] Add to `.github/workflows/staging-deploy.yml`
-- [ ] Document neutralization checklist in error output
-
-**Acceptance:** CI guard validates staging neutralization, fails on misconfiguration.
+**DoD:**
+- Validates staging config: `ODOO_STAGE=staging`, `mail.catchall` set, crons disabled
+- Validates production config: SMTP settings, integration keys present
+- Fails CI with remediation steps if validation fails
+- Integrated into `.github/workflows/staging-deploy.yml`
+- Prevents production secrets leakage to staging
 
 ---
 
 ## P1: Runbot-lite + Staging Neutralization (Core Features)
 
-These tasks deliver the primary value: PR environments and safe staging deployments.
+Core value delivery: PR environments and safe staging deployments.
 
 ### P1.1: GitHub Actions - PR Environment Deploy
 **Owner:** DevOps
 **Deliverable:** `.github/workflows/pr-environment.yml`
 
-**Tasks:**
-- [ ] Trigger workflow on PR open/synchronize (push to PR branch)
-- [ ] Build Docker image for PR branch (`docker build -t pr-<number>:latest .`)
-- [ ] Tag image with PR number and git SHA
-- [ ] Push image to registry (GitHub Container Registry or Docker Hub)
-- [ ] Invoke database provisioning script (`scripts/pr_environment/provision_db.sh`)
-- [ ] Start Odoo container with unique subdomain (`pr-<number>-<slug>.dev.insightpulseai.com`)
-- [ ] Run health check (wait for HTTP 200 on `/web/database/selector`)
-- [ ] Post PR comment with access link, credentials, database info
-- [ ] Handle errors gracefully (post failure comment to PR)
-
-**Acceptance:** PR environments deploy in <15 minutes, access link posted to PR.
+**DoD:**
+- Triggers on PR open/synchronize, builds Docker image tagged with PR number and SHA
+- Invokes database provisioning script, starts Odoo with unique subdomain pattern
+- Runs health check (HTTP 200), posts PR comment with access link and credentials
+- Handles errors gracefully (failure comment to PR)
+- Completes deployment in <15 minutes
 
 ---
 
 ### P1.2: DNS Wildcard Configuration
 **Owner:** DevOps
-**Deliverable:** Cloudflare wildcard DNS record
+**Deliverable:** Cloudflare wildcard DNS + routing configuration
 
-**Tasks:**
-- [ ] Add wildcard DNS record: `*.dev.insightpulseai.com` → Cloudflare proxy
-- [ ] Configure Traefik or nginx to route subdomains to Docker containers
-- [ ] Test manual subdomain creation (`pr-test.dev.insightpulseai.com`)
-- [ ] Document DNS configuration in `docs/deployment/DNS.md`
-
-**Acceptance:** Wildcard DNS resolves, traffic routes to containers.
+**DoD:**
+- Wildcard DNS record configured: `*.dev.insightpulseai.com`
+- Traefik/nginx routes subdomains to Docker containers
+- Manual subdomain test passing (pr-test.dev.insightpulseai.com resolves)
+- Configuration documented in `docs/deployment/DNS.md`
 
 ---
 
@@ -143,16 +115,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** Backend
 **Deliverable:** `scripts/pr_environment/provision_db.sh`
 
-**Tasks:**
-- [ ] Accept PR number as argument
-- [ ] Create PostgreSQL database: `odoo_pr_<number>`
-- [ ] Option 1: Copy staging DB (sanitized snapshot)
-- [ ] Option 2: Initialize with demo data (`--without-demo=False`)
-- [ ] Set connection string in `.env.pr-<number>` file
-- [ ] Return database credentials (user, password, host, port)
-- [ ] Add cleanup on failure (drop database if creation fails)
-
-**Acceptance:** Database provisioned in <5 minutes, connection string valid.
+**DoD:**
+- Accepts PR number argument, creates PostgreSQL database `odoo_pr_<number>`
+- Supports staging DB copy (sanitized) OR demo data initialization
+- Returns connection string in `.env.pr-<number>` file
+- Includes cleanup on failure (drops database if creation fails)
+- Provisions database in <5 minutes
 
 ---
 
@@ -160,16 +128,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** DevOps
 **Deliverable:** `.github/workflows/pr-environment-cleanup.yml`
 
-**Tasks:**
-- [ ] Trigger workflow on PR close or merge
-- [ ] Stop Docker container for PR (`docker stop pr-<number>`)
-- [ ] Remove Docker container (`docker rm pr-<number>`)
-- [ ] Drop PostgreSQL database (`dropdb odoo_pr_<number>`)
-- [ ] Delete `.env.pr-<number>` file
-- [ ] Remove DNS entry (if dynamic, otherwise no-op)
-- [ ] Log cleanup actions to GitHub Actions output
-
-**Acceptance:** Environments tear down within 1 hour of PR close, no orphaned resources.
+**DoD:**
+- Triggers on PR close/merge, stops and removes Docker container
+- Drops PostgreSQL database, deletes `.env.pr-<number>` file
+- Removes DNS entry if dynamic (otherwise no-op)
+- Logs all cleanup actions to GitHub Actions output
+- Completes teardown within 1 hour, no orphaned resources
 
 ---
 
@@ -177,16 +141,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** Backend
 **Deliverable:** `scripts/staging/snapshot_production_db.sh`
 
-**Tasks:**
-- [ ] Create PostgreSQL dump of production database (`pg_dump`)
-- [ ] Sanitize PII: `UPDATE res_partner SET email = 'test+' || id || '@example.com'`
-- [ ] Sanitize PII: `UPDATE res_partner SET phone = '+1234567890'`
-- [ ] Anonymize financial data: `UPDATE account_move_line SET debit = debit * random(), credit = credit * random()`
-- [ ] Compress dump (`gzip`)
-- [ ] Upload to Supabase Storage or S3
-- [ ] Return snapshot URL and metadata (timestamp, size)
-
-**Acceptance:** Snapshot created in <30 minutes, PII sanitized, uploaded to storage.
+**DoD:**
+- Creates PostgreSQL dump with PII sanitization (emails, phone numbers)
+- Anonymizes financial data (randomized multipliers for amounts)
+- Compresses dump (gzip), uploads to Supabase Storage or S3
+- Returns snapshot URL and metadata (timestamp, size)
+- Completes in <30 minutes
 
 ---
 
@@ -194,17 +154,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** Backend
 **Deliverable:** `scripts/staging/restore_snapshot.sh`
 
-**Tasks:**
-- [ ] Download latest production snapshot from storage
-- [ ] Drop existing staging database (`dropdb odoo_staging`)
-- [ ] Create new staging database (`createdb odoo_staging`)
-- [ ] Restore snapshot (`psql odoo_staging < snapshot.sql`)
-- [ ] Run post-restore cleanup script (`scripts/staging/post_restore_cleanup.sql`)
-- [ ] Delete production API keys: `UPDATE ir_config_parameter SET value = 'TEST_KEY' WHERE key LIKE '%api_key%'`
-- [ ] Reset admin password to known staging password
-- [ ] Verify restore success (check record counts)
-
-**Acceptance:** Staging restores in <30 minutes, data sanitized, admin access works.
+**DoD:**
+- Downloads latest snapshot, drops/recreates staging database
+- Restores snapshot, runs post-restore cleanup (delete prod API keys, reset admin password)
+- Verifies restore success (record count checks)
+- Completes in <30 minutes
+- Admin access functional after restore
 
 ---
 
@@ -212,15 +167,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** Backend
 **Deliverable:** `.env.staging`, `odoo.conf.staging`
 
-**Tasks:**
-- [ ] Set `ODOO_STAGE=staging` in `.env.staging`
-- [ ] Configure email catchall: `mail.catchall = catchall@localhost`
-- [ ] Disable crons: `--max-cron-threads=0` in `odoo.conf.staging`
-- [ ] Override Slack webhook: `SLACK_WEBHOOK_URL=https://webhook.test/slack`
-- [ ] Use test payment gateway keys: `STRIPE_API_KEY=sk_test_...`
-- [ ] Document neutralization in `docs/deployment/STAGING_ENVIRONMENT.md`
-
-**Acceptance:** Staging configuration files created, neutralization verified.
+**DoD:**
+- Sets `ODOO_STAGE=staging`, configures email catchall and cron disabling
+- Overrides external integration endpoints with test URLs/keys
+- Configuration validated by P0.6 CI guard
+- Documented in staging runtime contract
+- Zero production emails possible from staging
 
 ---
 
@@ -228,15 +180,12 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** DevOps
 **Deliverable:** `scripts/ci/validate_staging_neutralization.sh`
 
-**Tasks:**
-- [ ] Parse `.env.staging` and check `ODOO_STAGE=staging`
-- [ ] Parse `odoo.conf.staging` and check `mail.catchall` is set
-- [ ] Parse `odoo.conf.staging` and check `--max-cron-threads=0`
-- [ ] Verify production secrets NOT in `.env.staging` (pattern match `prod`, `live`)
-- [ ] Exit with error code 1 if validation fails
-- [ ] Print clear error message with remediation steps
-
-**Acceptance:** CI validator passes for valid staging config, fails for invalid.
+**DoD:**
+- Parses staging config, checks ODOO_STAGE, mail.catchall, cron threads
+- Verifies production secrets NOT present in staging configuration
+- Exits with error code 1 and clear remediation message on failure
+- Passes for valid staging config, fails for invalid
+- Prevents staging misconfigurations
 
 ---
 
@@ -244,38 +193,29 @@ These tasks deliver the primary value: PR environments and safe staging deployme
 **Owner:** DevOps
 **Deliverable:** `.github/workflows/staging-deploy.yml`
 
-**Tasks:**
-- [ ] Trigger on merge to `main` branch
-- [ ] Run tests (`pytest`, `npm test`)
-- [ ] Run security scan (`bandit`, `npm audit`)
-- [ ] Run neutralization validator (`scripts/ci/validate_staging_neutralization.sh`)
-- [ ] Build Docker image and push to registry
-- [ ] Deploy to staging server (Docker Compose or managed service)
-- [ ] Run health check (wait for HTTP 200)
-- [ ] Post deployment evidence to Supabase `ops.deployments` (if available)
-- [ ] Notify Slack on success/failure
-
-**Acceptance:** Staging deploys on merge to `main`, neutralization validated before deploy.
+**DoD:**
+- Triggers on merge to main, runs tests and security scans
+- Executes neutralization validator before deployment
+- Builds/deploys Docker image, runs health checks
+- Emits deployment evidence to Supabase ops.deployments (if available)
+- Notifies Slack on success/failure
 
 ---
 
-## P2: Snapshot Restore + Promotion + Evidence (Advanced Features)
+## P2: Promotion + Evidence (Advanced Features)
 
-These tasks complete the platform with production promotion workflow and full observability.
+Production promotion workflow and full observability.
 
 ### P2.1: Supabase Schema - `ops.*` Tables
 **Owner:** Backend
 **Deliverable:** `supabase/migrations/<timestamp>_ops_schema.sql`
 
-**Tasks:**
-- [ ] Create `ops.builds` table: columns for git SHA, branch, commit message, author, timestamp, dependencies hash, docker image SHA256
-- [ ] Create `ops.deployments` table: environment, deployed SHA, migration scripts, health check results, rollback SHA
-- [ ] Create `ops.migrations` table: module name, version before/after, migration script, execution time
-- [ ] Add indexes on frequently queried columns (environment, deployed SHA, timestamp)
-- [ ] Add RLS policies if needed (client isolation)
-- [ ] Run migration in Supabase project
-
-**Acceptance:** Tables created, indexes present, RLS configured.
+**DoD:**
+- Creates ops.builds (git SHA, dependencies hash, Docker image SHA256)
+- Creates ops.deployments (environment, deployed SHA, health checks, rollback SHA)
+- Creates ops.migrations (module versions, migration scripts, execution time)
+- Adds indexes on frequently queried columns
+- Configures RLS policies if needed for client isolation
 
 ---
 
@@ -283,15 +223,12 @@ These tasks complete the platform with production promotion workflow and full ob
 **Owner:** DevOps
 **Deliverable:** GitHub Actions step in build workflow
 
-**Tasks:**
-- [ ] Capture build metadata (git SHA, branch, commit message, author)
-- [ ] Compute Docker image SHA256 (`docker inspect --format='{{.Id}}' <image>`)
-- [ ] Compute dependencies lock hash (`sha256sum requirements.txt package-lock.json`)
-- [ ] Insert record into Supabase `ops.builds` table via API
-- [ ] Save full build logs to `web/docs/evidence/<YYYYMMDD-HHMM+0800>/build/logs/build.log`
-- [ ] Handle Supabase API errors gracefully (log warning, don't fail build)
-
-**Acceptance:** Build evidence inserted into Supabase for every build.
+**DoD:**
+- Captures build metadata (SHA, branch, commit message, author)
+- Computes Docker image SHA256 and dependencies lock hash
+- Inserts record into Supabase ops.builds table via API
+- Saves full build logs to canonical evidence path
+- Handles Supabase API errors gracefully (warns, doesn't fail build)
 
 ---
 
@@ -299,15 +236,12 @@ These tasks complete the platform with production promotion workflow and full ob
 **Owner:** DevOps
 **Deliverable:** GitHub Actions step in deploy workflow
 
-**Tasks:**
-- [ ] Capture deployment metadata (environment, deployed SHA, timestamp)
-- [ ] Run health checks (HTTP 200 on `/web`, database connectivity)
-- [ ] Execute migration dry-run (`odoo -u <modules> --stop-after-init --test-enable`)
-- [ ] Insert record into Supabase `ops.deployments` table via API
-- [ ] Save deployment logs to `web/docs/evidence/<YYYYMMDD-HHMM+0800>/deploy/logs/deploy.log`
-- [ ] Include rollback SHA (previous deployment SHA from Supabase query)
-
-**Acceptance:** Deployment evidence inserted into Supabase for every deployment.
+**DoD:**
+- Captures deployment metadata (environment, SHA, timestamp)
+- Runs health checks (HTTP 200, database connectivity)
+- Executes migration dry-run for validation
+- Inserts record into Supabase ops.deployments with rollback SHA
+- Saves deployment logs to canonical evidence path
 
 ---
 
@@ -315,18 +249,12 @@ These tasks complete the platform with production promotion workflow and full ob
 **Owner:** DevOps
 **Deliverable:** `.github/workflows/production-promote.yml`
 
-**Tasks:**
-- [ ] Trigger: manual approval on GitHub Actions (workflow_dispatch)
-- [ ] Prerequisite check: CI gates pass (tests, security scan, migration dry-run)
-- [ ] Execute merge: `main` → `production` branch
-- [ ] Build production Docker image (if not built already)
-- [ ] Deploy to production server
-- [ ] Run health checks (HTTP 200, database connectivity)
-- [ ] Emit evidence to Supabase `ops.deployments`
-- [ ] Post success/failure notification to Slack
-- [ ] On failure: auto-rollback to previous SHA (if health check fails)
-
-**Acceptance:** Production promotions require manual approval, CI gates block bad promotions.
+**DoD:**
+- Requires manual approval (workflow_dispatch)
+- Validates CI gates pass (tests, security, migration dry-run)
+- Executes main→production branch merge and deployment
+- Runs health checks, emits evidence to Supabase
+- Auto-rollback on health check failure, Slack notification on completion
 
 ---
 
@@ -334,15 +262,12 @@ These tasks complete the platform with production promotion workflow and full ob
 **Owner:** Architect
 **Deliverable:** `docs/deployment/ROLLBACK_PROCEDURE.md`
 
-**Tasks:**
-- [ ] Document how to identify previous deployment SHA from Supabase `ops.deployments`
-- [ ] Document how to revert `production` branch to previous SHA (`git reset --hard <SHA>`)
-- [ ] Document how to trigger redeployment (re-run production workflow)
-- [ ] Document how to verify rollback success (health checks, smoke tests)
-- [ ] Add rollback playbook for common failure scenarios
-- [ ] Test rollback procedure in staging environment
-
-**Acceptance:** Rollback procedure documented, tested in staging, <10 minute execution time.
+**DoD:**
+- Documents SHA identification from Supabase ops.deployments
+- Documents branch revert and redeployment trigger procedures
+- Includes rollback playbook for common failure scenarios
+- Tested in staging environment
+- Target execution time <10 minutes
 
 ---
 
@@ -350,54 +275,73 @@ These tasks complete the platform with production promotion workflow and full ob
 **Owner:** DevOps
 **Deliverable:** `scripts/evidence/cleanup_old_artifacts.sh`
 
-**Tasks:**
-- [ ] Find evidence artifacts older than 30 days (`find web/docs/evidence/ -mtime +30`)
-- [ ] Compress with gzip (`gzip -9 <file>`)
-- [ ] Move to long-term storage (Supabase Storage or S3)
-- [ ] Delete local compressed files after successful upload
-- [ ] Delete artifacts older than 90 days from long-term storage
-- [ ] Document retention policy in `docs/deployment/EVIDENCE_RETENTION.md`
-- [ ] Add to cron job (weekly execution)
-
-**Acceptance:** Evidence artifacts compressed, moved to storage, deleted per policy.
+**DoD:**
+- Compresses evidence artifacts older than 30 days (gzip)
+- Moves to long-term storage (Supabase Storage or S3)
+- Deletes local compressed files after upload, removes 90+ day artifacts
+- Documented in `docs/deployment/EVIDENCE_RETENTION.md`
+- Runs weekly via cron job
 
 ---
 
-### P2.7: PR Environment Documentation
-**Owner:** Scribe
-**Deliverable:** `docs/development/PR_ENVIRONMENTS.md`
+### P2.7: PR Environment Runtime Contract
+**Owner:** Architect
+**Deliverable:** `docs/architecture/PR_RUNTIME_CONTRACT.md`
 
-**Tasks:**
-- [ ] Document how to access PR environments (URL format, credentials)
-- [ ] Document how to view PR database (connection string, admin access)
-- [ ] Document how to manually trigger rebuild (re-run workflow)
-- [ ] Add troubleshooting section (common errors, restart procedures)
-- [ ] Document how to test staging neutralization in PR environment
-- [ ] Add screenshots of PR comment with access link
-
-**Acceptance:** PR environment usage documented, screenshots included, no ambiguities.
+**DoD:**
+- Documents PR environment access (URL format, credentials, database connection)
+- Documents manual rebuild trigger procedure (re-run workflow)
+- Includes troubleshooting section for common errors and restart procedures
+- Documents staging neutralization testing in PR environment
+- No ambiguities in usage instructions
 
 ---
 
-## Notes
+## Task Inventory (Authoritative)
 
-- **P0 tasks** are blocking for all other work. Complete these first.
-- **P1 tasks** can be parallelized across team members (PR environments and staging neutralization are independent).
-- **P2 tasks** depend on P1 completion (promotion workflow requires staging to work).
-- **Estimated Total Effort:**
-  - P0: 1 week (contracts + guards)
-  - P1: 2-3 weeks (PR environments + staging neutralization)
-  - P2: 1-2 weeks (promotion + evidence + observability)
-  - **Total: 4-6 weeks for full implementation**
+**P0: Contracts + Guardrails** (6 tasks)
+- P0.1 Dev Runtime Contract
+- P0.2 Staging Runtime Contract
+- P0.3 Production Runtime Contract
+- P0.4 Environment Variable Inventory
+- P0.5 CI Guard: Addons Path Invariants
+- P0.6 CI Guard: Environment Consistency
+
+**P1: Runbot-lite + Staging Neutralization** (9 tasks)
+- P1.1 GitHub Actions: PR Environment Deploy
+- P1.2 DNS Wildcard Configuration
+- P1.3 Database Provisioning Script
+- P1.4 PR Environment Cleanup Workflow
+- P1.5 Production Snapshot Script
+- P1.6 Staging Restore Script
+- P1.7 Staging Neutralization Configuration
+- P1.8 CI Neutralization Validator
+- P1.9 Staging Deployment Workflow
+
+**P2: Promotion + Evidence** (7 tasks)
+- P2.1 Supabase Schema: ops.* Tables
+- P2.2 CI Build Evidence Emitter
+- P2.3 CI Deployment Evidence Emitter
+- P2.4 Production Promotion Workflow
+- P2.5 Rollback Procedure Documentation
+- P2.6 Evidence Artifact Retention Policy
+- P2.7 PR Environment Runtime Contract
+
+**Total: 22 tasks across 3 priorities**
 
 ---
 
-## Task Ownership
+## Effort Estimates
 
-| Priority | Task Count | Owner | Est. Effort |
-|----------|------------|-------|-------------|
-| P0 | 6 tasks | Architect (3), DevOps (3) | 1 week |
-| P1 | 9 tasks | DevOps (5), Backend (4) | 2-3 weeks |
-| P2 | 7 tasks | DevOps (4), Backend (1), Architect (1), Scribe (1) | 1-2 weeks |
+| Priority | Tasks | Owner Distribution | Est. Effort |
+|----------|-------|-------------------|-------------|
+| P0 | 6 | Architect (4), DevOps (2) | 1 week |
+| P1 | 9 | DevOps (5), Backend (4) | 2-3 weeks |
+| P2 | 7 | DevOps (4), Backend (1), Architect (2) | 1-2 weeks |
 
-**Total:** 22 tasks across 3 priorities.
+**Total: 4-6 weeks for full implementation**
+
+**Dependencies:**
+- P0 blocks all automation (contracts define what to automate)
+- P1 tasks parallelizable (PR environments independent from staging neutralization)
+- P2 requires P1 completion (promotion workflow requires working staging)

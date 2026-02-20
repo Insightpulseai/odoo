@@ -19,23 +19,23 @@ This plan delivers an Odoo.sh-like platform for the InsightPulse AI monorepo thr
 
 ### Deliverables
 
-1. **Dev Runtime Contract** (`docs/development/DEV_ENVIRONMENT.md`)
+1. **Dev Runtime Contract** (`docs/architecture/DEV_RUNTIME_CONTRACT.md`)
    - Document current `docker-compose.yml` and `.devcontainer/devcontainer.json` setup
    - Specify `--dev=all` flags and asset build toolchain
    - Define hot reload expectations (<3s Python, <5s JS/CSS)
    - List required environment variables (`ODOO_STAGE=development`)
 
-2. **Staging Runtime Contract** (`docs/deployment/STAGING_ENVIRONMENT.md`)
+2. **Staging Runtime Contract** (`docs/architecture/STAGING_RUNTIME_CONTRACT.md`)
    - Document neutralization requirements (email, crons, integrations)
    - Specify staging-specific configuration (`.env.staging`, `odoo.conf.staging`)
    - Define staging data source (production snapshot workflow)
 
-3. **Production Runtime Contract** (`docs/deployment/PRODUCTION_ENVIRONMENT.md`)
+3. **Production Runtime Contract** (`docs/architecture/PRODUCTION_RUNTIME_CONTRACT.md`)
    - Document production deployment process (current manual steps)
    - Specify production configuration (`.env.production`, `odoo.conf.production`)
    - Define rollback procedure (manual in v1)
 
-4. **Environment Variable Inventory** (`docs/deployment/ENVIRONMENT_VARIABLES.md`)
+4. **Environment Variable Inventory** (`docs/architecture/ENVIRONMENT_VARIABLES.md`)
    - Catalog all env vars across dev/staging/production
    - Mark which are required vs. optional
    - Document source (`.env` file, CI secrets, runtime)
@@ -91,7 +91,7 @@ This plan delivers an Odoo.sh-like platform for the InsightPulse AI monorepo thr
    - Remove DNS entry (if dynamic)
    - Delete `.env.pr-<number>` file
 
-5. **PR Environment Documentation** (`docs/development/PR_ENVIRONMENTS.md`)
+5. **PR Environment Runtime Contract** (`docs/architecture/PR_RUNTIME_CONTRACT.md`)
    - How to access PR environments
    - Credentials and database access
    - How to manually trigger rebuild
