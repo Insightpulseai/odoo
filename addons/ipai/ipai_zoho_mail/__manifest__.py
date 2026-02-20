@@ -46,7 +46,6 @@ Post-Installation:
     "license": "LGPL-3",
     "depends": [
         "mail",
-        "fetchmail",
     ],
     "data": [
         "data/config_params.xml",

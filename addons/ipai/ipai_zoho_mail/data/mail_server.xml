@@ -15,12 +15,7 @@
     Generate at: https://accounts.zoho.com/u/h#security/app_password
 -->
 <odoo>
-    <data noupdate="0">
-
-        <!-- Deactivate any existing mail servers to avoid conflicts -->
-        <function model="ir.mail_server" name="search">
-            <value eval="[[('active', '=', True)]]"/>
-        </function>
+    <data noupdate="1">
 
         <!-- Zoho SMTP Production Server -->
         <record id="zoho_smtp_prod" model="ir.mail_server">
@@ -34,16 +29,6 @@
             <field name="from_filter">@insightpulseai.com</field>
             <field name="active" eval="True"/>
             <field name="sequence">1</field>
-        </record>
-
-        <!-- Fallback: Generic SMTP (disabled by default) -->
-        <record id="generic_smtp_fallback" model="ir.mail_server">
-            <field name="name">Generic SMTP (Fallback)</field>
-            <field name="smtp_host">localhost</field>
-            <field name="smtp_port">25</field>
-            <field name="smtp_encryption">none</field>
-            <field name="active" eval="False"/>
-            <field name="sequence">99</field>
         </record>
 
     </data>

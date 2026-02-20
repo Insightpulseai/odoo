@@ -1,0 +1,96 @@
+# =============================================================================
+# Superset Datasets — Odoo Finance Views
+# =============================================================================
+# These datasets map to the SQL views defined in:
+#   infra/superset/virtual_datasets.sql
+#
+# Prerequisites:
+#   1. Run scripts/superset/setup_odoo_superset.sh to create superset_ro role
+#      and deploy the views into Odoo PostgreSQL
+#   2. Register the Odoo Direct database (databases/odoo_direct.yaml)
+#
+# Deploy via:
+#   superset import-datasources -p datasources/odoo_finance.yaml
+# =============================================================================
+
+datasets:
+  # ---------------------------------------------------------------------------
+  # BIR Withholding Tax Summary
+  # ---------------------------------------------------------------------------
+  - table_name: vw_bir_withholding_summary
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      BIR withholding tax summary by vendor and period.
+      Used for BIR 1601-C and 2550Q compliance reports.
+    main_dttm_col: invoice_date
+    filter_select_enabled: true
+    cache_timeout: 300
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000001"
+
+  # ---------------------------------------------------------------------------
+  # Consolidated Trial Balance
+  # ---------------------------------------------------------------------------
+  - table_name: vw_consolidated_trial_balance
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      Multi-company consolidated trial balance by period.
+      Powers the Executive Summary and Month-End dashboards.
+    main_dttm_col: period
+    filter_select_enabled: true
+    cache_timeout: 600
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000002"
+
+  # ---------------------------------------------------------------------------
+  # AP Aging Report
+  # ---------------------------------------------------------------------------
+  - table_name: vw_ap_aging
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      Accounts Payable aging by vendor. Buckets: Current, 1-30, 31-60, 61-90, 90+ days.
+    main_dttm_col: invoice_date
+    filter_select_enabled: true
+    cache_timeout: 300
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000003"
+
+  # ---------------------------------------------------------------------------
+  # AR Aging Report
+  # ---------------------------------------------------------------------------
+  - table_name: vw_ar_aging
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      Accounts Receivable aging by customer. Buckets: Current, 1-30, 31-60, 61-90, 90+ days.
+    main_dttm_col: invoice_date
+    filter_select_enabled: true
+    cache_timeout: 300
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000004"
+
+  # ---------------------------------------------------------------------------
+  # Expense Analytics
+  # ---------------------------------------------------------------------------
+  - table_name: vw_expense_analytics
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      Employee expense analytics with policy compliance classification.
+      Requires hr_expense module installed in Odoo.
+    main_dttm_col: expense_date
+    filter_select_enabled: true
+    cache_timeout: 300
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000005"
+
+  # ---------------------------------------------------------------------------
+  # Cash Position Summary
+  # ---------------------------------------------------------------------------
+  - table_name: vw_cash_position
+    database_uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    schema: public
+    description: >
+      Real-time cash position across all bank accounts and companies.
+    main_dttm_col: last_transaction_date
+    filter_select_enabled: true
+    cache_timeout: 120
+    uuid: "a0b1c2d3-e4f5-4678-90ab-000000000006"
