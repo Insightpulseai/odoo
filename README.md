@@ -174,7 +174,6 @@ See [MONOREPO_CONTRACT.md](./docs/architecture/MONOREPO_CONTRACT.md) for:
 - Detailed sub-structure standards
 - Data flow rules (what talks to what)
 - CI invariants and quality gates
-- CODEOWNERS enforcement
 
 ---
 

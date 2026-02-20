@@ -1,6 +1,6 @@
 # Monorepo Contract — Governance & Boundaries
 
-> **SSOT for Insightpulseai/odoo monorepo structure, ownership boundaries, and data flow rules.**
+> **SSOT for Insightpulseai/odoo monorepo structure and data flow rules.**
 > All architectural decisions regarding directory layout, cross-domain communication, and CI invariants must reference this document.
 
 **Status:** Canonical (enforced by CI gates)
@@ -24,7 +24,7 @@ This monorepo merges **two distinct archetypes** under unified governance:
 
 ```
 .
-├── .github/                      # CI workflows, templates, CODEOWNERS, policies
+├── .github/                      # CI workflows, templates, policies
 ├── odoo/                         # ERP runtime + addons (CE + OCA + ipai bridges)
 ├── supabase/                     # DB SSOT: schema, functions, policies, seeds, Edge Functions
 ├── web/                          # Next.js control plane + product web apps
@@ -306,38 +306,9 @@ n8n workflows ← → Next.js control plane
 
 ---
 
-## Ownership Boundaries (CODEOWNERS)
+## Maintenance & Enforcement
 
-```
-# Monorepo Contract & Global Governance
-/docs/architecture/MONOREPO_CONTRACT.md  @architecture-team
-/.github/CODEOWNERS                      @architecture-team
-/README.md                               @architecture-team
-
-# Odoo ERP (SOR)
-/odoo/**                                 @erp-team @backend-team
-
-# Supabase Platform (SSOT)
-/supabase/**                             @platform-team @db-team
-
-# Next.js Control Plane
-/web/ai-control-plane/**                 @platform-team @frontend-team
-
-# n8n Automations
-/automations/**                          @devops-team @automations-team
-
-# Infrastructure & IaC
-/infra/**                                @devops-team
-
-# Design Tokens
-/design/**                               @design-team @frontend-team
-
-# Agents & Skills
-/agents/**                               @ai-team @platform-team
-
-# Spec Kit
-/spec/**                                 @architecture-team @product-team
-```
+**Single-maintainer repository:** No CODEOWNERS file. Domain boundaries and architectural invariants are enforced via CI policy gates only.
 
 ---
 
@@ -348,7 +319,6 @@ Before merging changes that modify directory structure or cross-domain communica
 - [ ] Top-level directories match this contract (no new random roots)
 - [ ] `odoo/`, `supabase/`, `web/`, `automations/`, `design/` boundaries are explicit
 - [ ] README "Repo Map" points to this contract
-- [ ] CODEOWNERS prevents accidental cross-domain merges
 - [ ] `.gitignore` blocks `.env.local` + workspace artifacts
 - [ ] CI gates list is documented (even if some gates are "TODO")
 - [ ] Data flow follows allowed patterns (no forbidden boundary crossings)
@@ -360,10 +330,9 @@ Before merging changes that modify directory structure or cross-domain communica
 
 **Process:**
 1. Propose amendment via GitHub Issue (label: `architecture`)
-2. Review by Architecture Team
-3. Update this document via PR
-4. Update affected CI gates
-5. Communicate changes to all teams
+2. Update this document via PR
+3. Update affected CI gates
+4. Document changes in amendment log below
 
 **Amendment Log:**
 - 2026-02-20: Initial contract ratified
