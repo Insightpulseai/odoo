@@ -1,4 +1,15 @@
 # =============================================================================
+# DEPRECATED — Use oca-aggregate.yml (repo root) instead
+# =============================================================================
+# This file targeted Odoo 18.0. The canonical SSOT is now:
+#   /oca-aggregate.yml (targets 19.0, 30 repos)
+#
+# To sync OCA repos:
+#   ./scripts/sync_oca.sh    (or: make oca-aggregate)
+#
+# This file is kept for reference only. Do not use.
+# =============================================================================
+# ORIGINAL HEADER:
 # OCA Git-Aggregator Configuration for Extended Platform
 # =============================================================================
 # Odoo 18.0 CE + OCA Extended Platform Bundle

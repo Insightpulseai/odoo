@@ -16,6 +16,7 @@ on:
     paths:
       - 'infra/do-oca-stack/**'
       - 'addons/ipai/**'
+      - 'oca-aggregate.yml'
       - 'docker-compose.yml'
       - '.github/workflows/deploy-do-oca.yml'
   workflow_dispatch:
@@ -129,14 +130,20 @@ jobs:
             git checkout main
             git pull origin main --ff-only
 
-            # Sync OCA repos from lock file
-            cd infra/do-oca-stack
-            if [[ -f oca.lock ]]; then
-              make verify || make fetch
-            else
-              make fetch
+            # Sync OCA repos via gitaggregate (preferred) or legacy Makefile
+            if [[ -f oca-aggregate.yml ]] && [[ -x scripts/sync_oca.sh ]]; then
+              echo "Syncing OCA via gitaggregate..."
+              ./scripts/sync_oca.sh
+            elif [[ -d infra/do-oca-stack ]]; then
+              echo "Fallback: syncing OCA via DO stack Makefile..."
+              cd infra/do-oca-stack
+              if [[ -f oca.lock ]]; then
+                make verify || make fetch
+              else
+                make fetch
+              fi
+              cd ../..
             fi
-            cd ../..
 
             # Pull latest images
             docker compose pull
