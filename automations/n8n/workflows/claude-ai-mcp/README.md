@@ -4,6 +4,28 @@
 
 ---
 
+## 🚀 Deployment Status
+
+⏳ **Current Phase**: Workflows created, awaiting manual import to n8n
+
+**Completed**:
+- ✅ 9 workflow JSONs created (6 read-only + 3 write-path)
+- ✅ Claude.ai skill with connector configuration
+- ✅ 95+ query examples across 3 categories
+- ✅ Comprehensive documentation
+
+**Next Steps**:
+- ⏳ Import workflows to n8n via web UI (manual)
+- ⏳ Activate all 9 workflows
+- ⏳ Configure Claude.ai custom connector with base URL
+- ⏳ Test integration end-to-end
+
+👉 **See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete setup instructions**
+
+**Note**: n8n API import attempted but encountered authentication issues. Manual UI import is recommended.
+
+---
+
 ## Architecture Overview
 
 ```
