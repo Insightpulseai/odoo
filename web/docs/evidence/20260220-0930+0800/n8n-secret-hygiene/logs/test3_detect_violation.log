@@ -1,0 +1,24 @@
+Scanning n8n workflows for hardcoded secrets...
+Directory: automations/n8n/workflows
+
+❌ [0;31mHardcoded secret detected[0m
+  File: automations/n8n/workflows/_test_violation.json:1
+  Pattern: "api_key"\s*:\s*"(?!\$env\.|=\{\{\s*\$env\.)([^"]{10,})"
+  Context: {"nodes": [{"parameters": {"api_key": "sk_live_hardcoded_secret_value_12345"}}]}
+
+----------------------------------------
+❌ [0;31mFound 1 hardcoded secret(s) in 1 file(s)[0m
+
+Remediation Steps:
+  1. Replace hardcoded secrets with n8n credential IDs or environment variables
+  2. Use $env.VARIABLE_NAME for environment variable references
+  3. Use n8n credentials system for API keys and tokens
+  4. Never commit actual secret values to git
+
+Example Fix:
+  BAD:  "api_key": "hardcoded_secret_value"
+  GOOD: "api_key": "$env.API_KEY"
+  GOOD: Use n8n credential node with credential ID
+
+CI Mode: Blocking merge until secrets are removed
+Expected failure: violation detected

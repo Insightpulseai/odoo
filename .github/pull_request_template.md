@@ -15,6 +15,7 @@ Priority review requested. CI is green.
 - [ ] Spec bundle exists under `spec/<slug>/` (constitution.md, prd.md, plan.md, tasks.md)
 - [ ] Plan includes verification & rollback steps
 - [ ] Tasks reflect current PR scope
+- [ ] n8n workflow exports (if any) are secret-free (`automations/n8n/workflows/*.json`)
 - [ ] N/A - This is a minor change (bug fix, docs, config)
 
 ## Design Contract (if UI changes)
