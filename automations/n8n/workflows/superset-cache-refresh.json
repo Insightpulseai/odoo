@@ -1,0 +1,270 @@
+{
+  "name": "Superset Cache Refresh",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 200]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "superset-refresh",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Manual Refresh Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "superset-cache-refresh"
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPERSET_URL }}/api/v1/security/login",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "={{ $env.SUPERSET_USERNAME }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $env.SUPERSET_PASSWORD }}"
+            },
+            {
+              "name": "provider",
+              "value": "db"
+            },
+            {
+              "name": "refresh",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "superset-login",
+      "name": "Superset Login",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 100],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst token = response.access_token;\nif (!token) {\n  throw new Error('Superset login failed: no access_token in response');\n}\nreturn [{ json: { access_token: token } }];"
+      },
+      "id": "extract-token",
+      "name": "Extract Access Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 100]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPERSET_URL }}/api/v1/dataset/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Extract Access Token').first().json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "list-datasets",
+      "name": "List All Datasets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 100],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter to Odoo-related datasets (those from the Odoo Direct database)\nconst data = $input.first().json;\nconst datasets = (data.result || []);\n\n// Filter datasets whose datasource_name starts with 'vw_'\nconst odooDatasets = datasets.filter(ds => \n  ds.table_name && ds.table_name.startsWith('vw_')\n);\n\nconsole.log(`Found ${odooDatasets.length} Odoo view datasets to refresh`);\n\nreturn odooDatasets.map(ds => ({\n  json: {\n    dataset_id: ds.id,\n    table_name: ds.table_name,\n    access_token: $('Extract Access Token').first().json.access_token\n  }\n}));"
+      },
+      "id": "filter-odoo-datasets",
+      "name": "Filter Odoo Datasets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 100]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPERSET_URL }}/api/v1/dataset/{{ $json.dataset_id }}/refresh",
+        "requestMethod": "PUT",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "refresh-dataset",
+      "name": "Refresh Dataset Schema",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 100],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.all();\nconst successCount = results.filter(r => r.json && !r.json.error).length;\nconst total = results.length;\n\nconst summary = {\n  refreshed: successCount,\n  total: total,\n  failed: total - successCount,\n  timestamp: new Date().toISOString(),\n  status: successCount === total ? 'SUCCESS' : 'PARTIAL'\n};\n\nconsole.log(`Cache refresh: ${successCount}/${total} datasets refreshed`);\nreturn [{ json: summary }];"
+      },
+      "id": "summarize-results",
+      "name": "Summarize Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "webhook-response",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1750, 0]
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Superset Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Refresh Webhook": {
+      "main": [
+        [
+          {
+            "node": "Superset Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Superset Login": {
+      "main": [
+        [
+          {
+            "node": "Extract Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Access Token": {
+      "main": [
+        [
+          {
+            "node": "List All Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List All Datasets": {
+      "main": [
+        [
+          {
+            "node": "Filter Odoo Datasets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Odoo Datasets": {
+      "main": [
+        [
+          {
+            "node": "Refresh Dataset Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh Dataset Schema": {
+      "main": [
+        [
+          {
+            "node": "Summarize Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Results": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "meta": {
+    "description": "Refreshes Superset dataset schemas for all Odoo view datasets (vw_*). Runs every 6 hours and can be triggered manually via webhook POST /webhook/superset-cache-refresh. Requires SUPERSET_URL, SUPERSET_USERNAME, SUPERSET_PASSWORD n8n environment variables.",
+    "version": "1.0.0",
+    "tags": ["superset", "odoo", "cache", "bi"]
+  },
+  "tags": ["superset", "odoo", "bi"]
+}

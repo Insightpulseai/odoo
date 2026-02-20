@@ -15,7 +15,7 @@ new root files outside this allowlist.
 
 ## Allowed Root Files
 
-### GitHub / Community Health
+### GitHub / Community Health (GitHub convention)
 | File | Reason |
 |------|--------|
 | `README.md` | GitHub convention |
@@ -103,12 +103,11 @@ Moved as part of `chore(repo): root cleanup` — see `reports/repo_hygiene/root_
 
 | Old path | New path | Reason |
 |----------|----------|--------|
+| `COLIMA_SETUP_COMPLETE.md` | `docs/guides/COLIMA_SETUP_COMPLETE.md` | Setup guide, not a root convention |
 | `branch_protection.json` | `docs/architecture/branch_protection.json` | Architecture doc, not tooling |
 | `devserver.config.json` | `config/devserver.config.json` | Tool config, not a root convention |
 | `superclaude_bridge.yaml` | `.claude/superclaude_bridge.yaml` | Claude tooling, belongs in `.claude/` |
 | `aiux_ship_manifest.yml` | `config/aiux_ship_manifest.yml` | App config, not a root convention |
-| `figma.config.json` | `figma/figma.config.json` | Figma tooling, belongs in `figma/` |
-| `figma-make-dev.yaml` | `figma/figma-make-dev.yaml` | Figma config, belongs in `figma/` |
 | `.env.production` | *(removed from git)* | Duplicate of `.env.prod`; contained hardcoded credentials |
 
 ---

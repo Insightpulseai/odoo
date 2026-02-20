@@ -1,0 +1,14 @@
+DMG Packaging Evidence - 2026-02-17 19:31:00+0800
+Build: pnpm package → electron-builder 24.13.3
+Electron: 28.3.3
+Platform: darwin arm64
+
+Artifacts:
+  dist/Colima Desktop-0.1.0.dmg       100MB (x64/Intel)
+  dist/Colima Desktop-0.1.0-arm64.dmg  95MB (arm64/Apple Silicon)
+
+Code Signing: SKIPPED (no Developer ID Application certificate)
+Status: Branch B - unsigned DMGs for Phase 1 testing
+Gatekeeper: Will warn - right-click Open required for installation
+
+Exit code: 0

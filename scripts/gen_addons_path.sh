@@ -2,7 +2,7 @@
 # =============================================================================
 # gen_addons_path.sh — Deterministic Odoo addons-path generator
 # =============================================================================
-# Enumerates OCA repos (external-src/<repo>) and custom addons (addons/ipai)
+# Enumerates OCA repos (addons/oca/<repo>) and custom addons (addons/ipai)
 # to produce a single, deterministic addons_path string.
 #
 # OCA-canonical: each OCA repo is its own folder in the addons path.
@@ -14,7 +14,7 @@
 #   infra/odoo/addons-path.env  — ODOO_ADDONS_PATH=comma,separated
 #
 # Usage:
-#   ./scripts/gen_addons_path.sh            # generate from external-src/
+#   ./scripts/gen_addons_path.sh            # generate from addons/oca/
 #   ./scripts/gen_addons_path.sh --docker   # output Docker mount paths
 # =============================================================================
 set -euo pipefail
@@ -31,12 +31,12 @@ if [[ "$DOCKER_MODE" == "--docker" ]]; then
   # Paths inside the Docker container
   CORE="/usr/lib/python3/dist-pkgs/odoo/addons"
   IPAI="/mnt/extra-addons/ipai"
-  OCA_PREFIX="/mnt/extra-addons/OCA"
+  OCA_PREFIX="/mnt/extra-addons/oca"
 else
   # Paths relative to repo root (for odoo-bin local dev)
   CORE="."  # odoo core handled by odoo binary itself
   IPAI="addons/ipai"
-  OCA_PREFIX="external-src"
+  OCA_PREFIX="addons/oca"
 fi
 
 BASE=()
@@ -44,10 +44,11 @@ BASE=()
 BASE+=("$IPAI")
 
 # ---------------------------------------------------------------------------
-# OCA repos: enumerate external-src/<repo> alphabetically
+# OCA repos: enumerate addons/oca/<repo> alphabetically
 # ---------------------------------------------------------------------------
+# Cloned by: gitaggregate -c oca-aggregate.yml
 OCA_REPOS=()
-OCA_DIR="external-src"
+OCA_DIR="addons/oca"
 if [[ -d "$OCA_DIR" ]]; then
   while IFS= read -r -d '' d; do
     name="$(basename "$d")"

@@ -13,7 +13,7 @@ SHELL := /bin/bash
 .PHONY: help up down ps logs health init update restart config \
         db-shell db-health redis-health odoo-shell \
         tools ipai-guard parity-seed parity-seed-check \
-        gen-addons-path render-odoo-conf addons-path-check \
+        oca-aggregate oca-aggregate-single gen-addons-path render-odoo-conf addons-path-check \
         chore lint
 
 # ---------------------------------------------------------------------------
@@ -97,10 +97,20 @@ parity-seed-check: ## Generate parity seed and check for drift
 	git diff --exit-code -- spec/parity/odoo_editions_parity_seed.yaml
 
 # ---------------------------------------------------------------------------
+# OCA dependencies (git-aggregator)
+# ---------------------------------------------------------------------------
+
+oca-aggregate: ## Clone/update all OCA repos (gitaggregate)
+	gitaggregate -c oca-aggregate.yml -j 4
+
+oca-aggregate-single: ## Clone/update one OCA repo (OCA_REPO=web)
+	gitaggregate -c oca-aggregate.yml -d ./addons/oca/$${OCA_REPO}
+
+# ---------------------------------------------------------------------------
 # Addons path (OCA-canonical deterministic enumeration)
 # ---------------------------------------------------------------------------
 
-gen-addons-path: ## Regenerate addons-path from external-src/<repo>
+gen-addons-path: ## Regenerate addons-path from addons/oca/<repo>
 	./scripts/gen_addons_path.sh
 
 render-odoo-conf: ## Render odoo.conf from template + generated addons-path

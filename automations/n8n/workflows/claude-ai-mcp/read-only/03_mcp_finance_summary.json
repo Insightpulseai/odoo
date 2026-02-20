@@ -1,0 +1,109 @@
+{
+  "name": "MCP Tool: Finance Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-003",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "finance_summary",
+        "description": "Get aggregated financial summaries from Odoo (System of Record). Reports: ar_aging (accounts receivable aging), ap_aging (accounts payable aging), trial_balance, monthly_pnl (profit & loss), bir_summary (BIR tax compliance), invoice_stats, payment_stats. Data sourced from Odoo posted entries only.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "report_type",
+              "description": "Report type: ar_aging, ap_aging, trial_balance, monthly_pnl, bir_summary, invoice_stats, payment_stats",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "period",
+              "description": "Period in YYYY-MM format (for monthly) or YYYY-QN (for quarterly, e.g. 2025-Q1). Default: current month.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "company",
+              "description": "Filter by company name or code. Leave empty for all companies.",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-finance",
+      "name": "Finance Summary Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Odoo domain based on report type and period\nconst input = $input.first().json;\nconst reportType = input.report_type || 'invoice_stats';\nconst period = input.period || new Date().toISOString().slice(0, 7);\nconst company = input.company || '';\n\n// Parse period\nlet dateFrom, dateTo;\nif (period.includes('Q')) {\n  const [year, q] = period.split('-Q');\n  const qNum = parseInt(q);\n  const startMonth = (qNum - 1) * 3 + 1;\n  dateFrom = `${year}-${String(startMonth).padStart(2, '0')}-01`;\n  dateTo = `${year}-${String(startMonth + 2).padStart(2, '0')}-${startMonth + 2 === 12 || startMonth + 2 === 3 || startMonth + 2 === 6 || startMonth + 2 === 9 ? 30 : 31}`;\n} else {\n  dateFrom = `${period}-01`;\n  const [y, m] = period.split('-').map(Number);\n  const lastDay = new Date(y, m, 0).getDate();\n  dateTo = `${period}-${lastDay}`;\n}\n\nconst reportConfigs = {\n  invoice_stats: {\n    model: 'account.move',\n    domain: `[[\"state\",\"=\",\"posted\"],[\"move_type\",\"in\",[\"out_invoice\",\"out_refund\"]],[\"date\",\">=\",\"${dateFrom}\"],[\"date\",\"<=\",\"${dateTo}\"]]`,\n    fields: 'name,partner_id,amount_total,amount_residual,state,date,move_type,currency_id',\n    order: 'date desc'\n  },\n  payment_stats: {\n    model: 'account.payment',\n    domain: `[[\"state\",\"=\",\"posted\"],[\"date\",\">=\",\"${dateFrom}\"],[\"date\",\"<=\",\"${dateTo}\"]]`,\n    fields: 'name,partner_id,amount,payment_type,date,state,journal_id',\n    order: 'date desc'\n  },\n  ar_aging: {\n    model: 'account.move',\n    domain: `[[\"state\",\"=\",\"posted\"],[\"move_type\",\"=\",\"out_invoice\"],[\"amount_residual\",\">\",0]]`,\n    fields: 'name,partner_id,amount_total,amount_residual,date,invoice_date_due',\n    order: 'invoice_date_due asc'\n  },\n  ap_aging: {\n    model: 'account.move',\n    domain: `[[\"state\",\"=\",\"posted\"],[\"move_type\",\"=\",\"in_invoice\"],[\"amount_residual\",\">\",0]]`,\n    fields: 'name,partner_id,amount_total,amount_residual,date,invoice_date_due',\n    order: 'invoice_date_due asc'\n  },\n  trial_balance: {\n    model: 'account.move.line',\n    domain: `[[\"move_id.state\",\"=\",\"posted\"],[\"date\",\">=\",\"${dateFrom}\"],[\"date\",\"<=\",\"${dateTo}\"]]`,\n    fields: 'account_id,debit,credit,balance,date',\n    order: 'account_id asc'\n  },\n  monthly_pnl: {\n    model: 'account.move.line',\n    domain: `[[\"move_id.state\",\"=\",\"posted\"],[\"account_id.account_type\",\"in\",[\"income\",\"income_other\",\"expense\",\"expense_depreciation\",\"expense_direct_cost\"]],[\"date\",\">=\",\"${dateFrom}\"],[\"date\",\"<=\",\"${dateTo}\"]]`,\n    fields: 'account_id,debit,credit,balance',\n    order: 'account_id asc'\n  },\n  bir_summary: {\n    model: 'account.move',\n    domain: `[[\"state\",\"=\",\"posted\"],[\"date\",\">=\",\"${dateFrom}\"],[\"date\",\"<=\",\"${dateTo}\"]]`,\n    fields: 'name,partner_id,amount_total,amount_tax,date,move_type',\n    order: 'date asc'\n  }\n};\n\nconst config = reportConfigs[reportType] || reportConfigs.invoice_stats;\n\nreturn [{\n  json: {\n    ...config,\n    report_type: reportType,\n    period,\n    date_from: dateFrom,\n    date_to: dateTo,\n    company\n  }\n}];"
+      },
+      "id": "code-build-query",
+      "name": "Build Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ODOO_URL }}/jsonrpc",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{"name": "Content-Type", "value": "application/json"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_API_KEY }}\",\n      \"{{ $json.model }}\",\n      \"search_read\",\n      [{{ $json.domain }}],\n      {\n        \"fields\": {{ JSON.stringify($json.fields.split(',').map(f => f.trim())) }},\n        \"limit\": 500,\n        \"order\": \"{{ $json.order }}\"\n      }\n    ]\n  },\n  \"id\": {{ Date.now() }}\n}",
+        "options": {"timeout": 45000}
+      },
+      "id": "http-odoo-finance",
+      "name": "Odoo Finance Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate and format finance report\nconst raw = $input.first().json;\nconst queryMeta = $('Build Query').first().json;\nconst records = raw.result || [];\n\nif (raw.error) {\n  return [{ json: { status: 'error', message: raw.error.data?.message || 'Query failed' } }];\n}\n\nlet summary = {};\n\nswitch (queryMeta.report_type) {\n  case 'ar_aging':\n  case 'ap_aging': {\n    const now = new Date();\n    const buckets = { current: 0, '1_30': 0, '31_60': 0, '61_90': 0, over_90: 0 };\n    let total = 0;\n    records.forEach(r => {\n      const due = new Date(r.invoice_date_due || r.date);\n      const days = Math.floor((now - due) / 86400000);\n      const amt = r.amount_residual || 0;\n      total += amt;\n      if (days <= 0) buckets.current += amt;\n      else if (days <= 30) buckets['1_30'] += amt;\n      else if (days <= 60) buckets['31_60'] += amt;\n      else if (days <= 90) buckets['61_90'] += amt;\n      else buckets.over_90 += amt;\n    });\n    summary = { aging_buckets: buckets, total_outstanding: total, invoice_count: records.length };\n    break;\n  }\n  case 'invoice_stats':\n  case 'payment_stats': {\n    const total = records.reduce((s, r) => s + (r.amount_total || r.amount || 0), 0);\n    summary = { total_amount: total, record_count: records.length, records: records.slice(0, 50) };\n    break;\n  }\n  default:\n    summary = { record_count: records.length, records: records.slice(0, 100) };\n}\n\nreturn [{\n  json: {\n    status: 'success',\n    source: 'odoo_sor',\n    report_type: queryMeta.report_type,\n    period: queryMeta.period,\n    date_range: { from: queryMeta.date_from, to: queryMeta.date_to },\n    ...summary\n  }\n}];"
+      },
+      "id": "code-aggregate",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Finance Summary Tool", "type": "main", "index": 0}]]
+    },
+    "Finance Summary Tool": {
+      "main": [[{"node": "Build Query", "type": "main", "index": 0}]]
+    },
+    "Build Query": {
+      "main": [[{"node": "Odoo Finance Query", "type": "main", "index": 0}]]
+    },
+    "Odoo Finance Query": {
+      "main": [[{"node": "Aggregate Results", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1", "saveManualExecutions": true},
+  "tags": [{"name": "mcp"}, {"name": "finance"}],
+  "meta": {"instanceId": "insightpulseai-n8n"}
+}

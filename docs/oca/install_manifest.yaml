@@ -1,0 +1,222 @@
+# OCA Module Install Manifest — Odoo 19.0 CE
+# SSOT for all OCA modules to install on erp.insightpulseai.com
+# Used by: scripts/oca/install_waves.py
+#
+# Status values: pending | installed | skipped | failed
+# After install, versions are filled in by the installer script.
+# Do NOT edit the 'installed_version' fields manually.
+
+instance: erp.insightpulseai.com
+db: odoo_prod
+odoo_version: "19.0"
+
+waves:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Wave 1 — Quick Wins: Already present on instance, just activate
+  # Risk: None. These modules exist on disk and are verified 19.0 compatible.
+  # ──────────────────────────────────────────────────────────────────────────
+  - wave: 1
+    name: "Quick Wins — Already Present"
+    risk: none
+    gate: none
+    modules:
+      - name: quality_control_oca
+        source: already_present
+        status: pending
+        installed_version: null
+        notes: "Present on instance, not installed"
+
+      - name: quality_control_stock_oca
+        source: already_present
+        status: pending
+        installed_version: null
+        notes: "Depends on quality_control_oca"
+
+      - name: account_statement_import_file_reconcile_oca
+        source: already_present
+        status: pending
+        installed_version: null
+        notes: "Bank statement reconciliation — verify exact module name before install"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Wave 2 — UX + Reporting (no business logic risk)
+  # Gate: Symlinks exist in addons/oca/ for all modules
+  # ──────────────────────────────────────────────────────────────────────────
+  - wave: 2
+    name: "UX + Reporting"
+    risk: low
+    gate: symlinks_present
+    oca_repos:
+      - repo: reporting-engine
+        url: https://github.com/OCA/reporting-engine.git
+        branch: "19.0"
+      - repo: web
+        url: https://github.com/OCA/web.git
+        branch: "19.0"
+      - repo: server-ux
+        url: https://github.com/OCA/server-ux.git
+        branch: "19.0"
+      - repo: server-auth
+        url: https://github.com/OCA/server-auth.git
+        branch: "19.0"
+    modules:
+      - name: report_xlsx
+        source: oca/reporting-engine
+        status: pending
+        installed_version: null
+
+      - name: report_xlsx_helper
+        source: oca/reporting-engine
+        status: pending
+        installed_version: null
+        notes: "Depends on report_xlsx"
+
+      - name: web_responsive
+        source: oca/web
+        status: pending
+        installed_version: null
+
+      - name: web_dialog_size
+        source: oca/web
+        status: pending
+        installed_version: null
+
+      - name: web_environment_ribbon
+        source: oca/web
+        status: pending
+        installed_version: null
+
+      - name: date_range
+        source: oca/server-ux
+        status: pending
+        installed_version: null
+
+      - name: base_substate
+        source: oca/server-ux
+        status: pending
+        installed_version: null
+
+      - name: auth_session_timeout
+        source: oca/server-auth
+        status: pending
+        installed_version: null
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Wave 3 — Finance Power Tools
+  # Gate: Finance team approval (BOM, CKVC, RIM) + staging test pass
+  # WARNING: account_move_name_sequence changes journal entry numbering
+  # ──────────────────────────────────────────────────────────────────────────
+  - wave: 3
+    name: "Finance Power Tools"
+    risk: medium
+    gate: finance_team_approval
+    oca_repos:
+      - repo: account-financial-tools
+        url: https://github.com/OCA/account-financial-tools.git
+        branch: "19.0"
+      - repo: bank-payment
+        url: https://github.com/OCA/bank-payment.git
+        branch: "19.0"
+    modules:
+      - name: account_move_name_sequence
+        source: oca/account-financial-tools
+        status: pending
+        installed_version: null
+        notes: "⚠️ Changes journal entry numbering — test on staging first"
+
+      - name: account_journal_restrict_mode
+        source: oca/account-financial-tools
+        status: pending
+        installed_version: null
+
+      - name: account_usability
+        source: oca/account-financial-tools
+        status: pending
+        installed_version: null
+
+      - name: account_tax_balance
+        source: oca/account-financial-tools
+        status: pending
+        installed_version: null
+        notes: "Depends on date_range (Wave 2)"
+
+      - name: account_payment_mode
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+
+      - name: account_payment_order
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+        notes: "Depends on account_payment_mode; verify base_iban is available"
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Wave 4 — Nice-to-Haves
+  # Gate: none (install when needed)
+  # ──────────────────────────────────────────────────────────────────────────
+  - wave: 4
+    name: "Nice-to-Haves"
+    risk: low
+    gate: none
+    oca_repos:
+      - repo: hr
+        url: https://github.com/OCA/hr.git
+        branch: "19.0"
+      - repo: knowledge
+        url: https://github.com/OCA/knowledge.git
+        branch: "19.0"
+      - repo: timesheet
+        url: https://github.com/OCA/timesheet.git
+        branch: "19.0"
+    modules:
+      - name: hr_employee_firstname
+        source: oca/hr
+        status: pending
+        installed_version: null
+
+      - name: document_url
+        source: oca/knowledge
+        status: pending
+        installed_version: null
+
+      - name: hr_timesheet_task_stage
+        source: oca/timesheet
+        status: pending
+        installed_version: null
+
+      - name: account_payment_purchase
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+        notes: "Depends on account_payment_order (Wave 3)"
+
+      - name: account_payment_sale
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+        notes: "Depends on account_payment_order (Wave 3)"
+
+# ──────────────────────────────────────────────────────────────────────────
+# Confirmed NOT available in 19.0 — do not attempt to install
+# ──────────────────────────────────────────────────────────────────────────
+not_available_19:
+  - name: base_tier_validation
+    last_oca_version: "18.0"
+    alternative: "n8n approval workflows + Slack notifications"
+  - name: helpdesk_mgmt
+    last_oca_version: "18.0"
+    alternative: "Project app with helpdesk-style stages"
+  - name: mail_activity_board
+    last_oca_version: "18.0"
+    alternative: "Native Activities menu"
+  - name: stock_barcodes
+    last_oca_version: "18.0"
+    alternative: "Odoo CE native barcode scanner"
+  - name: account_lock_date_update
+    last_oca_version: "18.0"
+    alternative: null
+  - name: contract
+    last_oca_version: "18.0"
+    alternative: null

@@ -1,0 +1,11 @@
+# Baseline for scripts/ci/check_shadow_ledger.sh
+# One file path per line.
+# Update only with explicit justification in the relevant spec bundle.
+
+# Existing migrations (grandfathered):
+supabase/migrations/20250101_afc_canonical_schema.sql
+supabase/migrations/20250101_afc_rls_comprehensive.sql
+supabase/migrations/20251220_001_docs_taxonomy.sql
+supabase/migrations/202512201001_EXTERNAL_INTEGRATIONS.sql
+supabase/migrations/20260120100002_odoo_shadow_tables.sql
+supabase/migrations/20260126_billing_schema.sql

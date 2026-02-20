@@ -5,7 +5,7 @@
 
     Incoming Mail Server Configuration for Zoho Mail
     =================================================
-    IMAP: imap.zoho.com:993 (SSL/TLS)
+    IMAP: imappro.zoho.com:993 (SSL/TLS) — US datacenter endpoint
     User: catchall@insightpulseai.com
 
     IMPORTANT: After installation, manually set the IMAP password in:
@@ -25,7 +25,7 @@
         <record id="zoho_imap_prod" model="fetchmail.server">
             <field name="name">Zoho IMAP (Prod)</field>
             <field name="server_type">imap</field>
-            <field name="server">imap.zoho.com</field>
+            <field name="server">imappro.zoho.com</field>
             <field name="port">993</field>
             <field name="is_ssl" eval="True"/>
             <field name="user">catchall@insightpulseai.com</field>
