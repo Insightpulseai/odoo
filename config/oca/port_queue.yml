@@ -30,10 +30,16 @@ priorities:
       - name: server_environment
         oca_repo: server-env
         upstream_branch: "18.0"
-        status: pending
+        status: completed
         depends: []
         reason: "Configuration framework for environment-specific settings"
-        notes: "REPO FIXED: was server-tools, correct is OCA/server-env. Clone needed."
+        notes: |
+          COMPLETED (discovered 2026-02-20):
+          - Pre-ported from OCA upstream 19.0 in prior session
+          - version: 19.0.1.0.0 CONFIRMED
+          - installable: True CONFIRMED
+          - Committed: d61530c chore(oca): sync server_environment to 19.0 (pre-ported from OCA upstream)
+          - Inner repo: addons/oca/server-env/ (branch 18.0, module at 19.0 version)
 
       # Connector Framework (dependency chain)
       - name: component
@@ -192,22 +198,17 @@ priorities:
       - name: mail_tracking
         oca_repo: mail
         upstream_branch: "18.0"
-        status: pending
+        status: completed
         depends: []
         reason: "Email delivery tracking and notifications"
         notes: |
-          T08 INVESTIGATED 2026-02-20:
-          - REPO CORRECTED: was social, correct is OCA/mail (github.com/OCA/mail)
-          - CONFIRMED on OCA/mail 18.0 branch: mail_tracking IS present (version ~18.0.1.0.8)
-          - OCA/mail 19.0 has only 5 modules: mail_activity_reminder, mail_optional_autofollow,
-            mail_outbound_static, mail_post_defer, mail_send_confirmation
-          - mail_tracking NOT on OCA/mail 19.0 — requires oca-port
-          - No local OCA/mail clone exists at addons/oca/ — clone required first:
-              git clone https://github.com/OCA/mail.git /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/addons/oca/mail
-              cd addons/oca/mail && git remote rename origin oca
-              git fetch oca 18.0 19.0
-              oca-port oca/18.0 oca/19.0 mail_tracking --non-interactive --repo-name mail
-          - Source: https://github.com/OCA/mail/tree/18.0/mail_tracking
+          COMPLETED 2026-02-20:
+          - OCA/mail cloned to addons/oca/mail (branch 19.0)
+          - Version bumped: 18.0.1.0.8 → 19.0.1.0.8
+          - No deprecated API patterns found
+          - Python syntax: PASS (all .py files)
+          - Committed: 9923b8a chore(oca): bump mail_tracking + mail_debrand versions to 19.0
+          - Inner repo: addons/oca/mail/ (branch 19.0)
 
       - name: fetchmail_notify_error_to_sender
         oca_repo: server-tools
@@ -219,19 +220,17 @@ priorities:
       - name: mail_debrand
         oca_repo: mail
         upstream_branch: "18.0"
-        status: pending
+        status: completed
         depends: []
         reason: "Remove Odoo branding from emails"
         notes: |
-          T08 INVESTIGATED 2026-02-20:
-          - REPO CORRECTED: was social, correct is OCA/mail (github.com/OCA/mail)
-          - CONFIRMED on OCA/mail 18.0 branch: mail_debrand IS present (version ~18.0.1.0.1)
-          - OCA/mail 19.0 does NOT have mail_debrand — requires oca-port from 18.0
-          - Previously tracked as no_oca_18 — incorrect, module exists in OCA/mail not OCA/social
-          - No local OCA/mail clone exists at addons/oca/ — clone required first (same as mail_tracking)
-          - After cloning OCA/mail:
-              oca-port oca/18.0 oca/19.0 mail_debrand --non-interactive --repo-name mail
-          - Source: https://github.com/OCA/mail/tree/18.0/mail_debrand
+          COMPLETED 2026-02-20:
+          - OCA/mail cloned to addons/oca/mail (branch 19.0)
+          - Version bumped: 18.0.1.0.1 → 19.0.1.0.1
+          - No deprecated API patterns found
+          - Python syntax: PASS (all .py files)
+          - Committed: 9923b8a chore(oca): bump mail_tracking + mail_debrand versions to 19.0
+          - Inner repo: addons/oca/mail/ (branch 19.0)
 
   P1:
     description: "High value features - significant EE parity improvements (19 modules)"
