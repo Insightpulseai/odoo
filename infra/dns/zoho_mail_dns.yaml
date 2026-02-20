@@ -43,13 +43,12 @@ records:
 
   # ─── DKIM ─────────────────────────────────────────────────────────────────
   # DKIM selector: zoho (default Zoho selector)
-  # Value: retrieve from Zoho Admin → Email → Email Authentication → DKIM
-  # Replace PLACEHOLDER below with the actual DKIM public key value
+  # Retrieved from Zoho Admin → Email → Email Authentication → DKIM (2026-02-21)
   - type: TXT
     name: "zoho._domainkey"
-    content: "PLACEHOLDER — replace with DKIM TXT value from Zoho Admin panel"
+    content: "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmFj2PpxreN9r4Dv8DGdNpqc7VPsbAlDQh64jyTl78NCuXU4bAPHC2JCgeQkSnoxBH19Keewr62iRcsBNnHrz8HwgkbTg8ZwooC+Bd18Z9M4ZSwBD1IK53/lUKPMHmBAPoamo2COYKG+hmRvtxeJa3ZuX1Z9Hc2hYULEXg3pus9Su34FfD/GYb43ZaqSFqth4Qt14jOfBbX4lqAZJop2iwKRQCX00CBKugVHs/heVGnsBNKIqYMVgM9gtI0P2H81gxDlvisygCQVuuEHLHVmsx0UGBL+z3b4bMvaReWY66Otv2tUKP2rOssZCx9ZbtMrPJgx2xYv/tvtoQDi9A2pGBQIDAQAB"
     ttl: 3600
-    comment: "Zoho DKIM public key — manual setup required"
+    comment: "Zoho DKIM public key — zoho._domainkey.insightpulseai.com"
 
   # ─── DMARC ────────────────────────────────────────────────────────────────
   - type: TXT
