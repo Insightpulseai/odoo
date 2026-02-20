@@ -1,0 +1,58 @@
+{
+  "name": "MCP Connection Test",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-test",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "name": "connection_test",
+        "description": "Test MCP connection with bearer token authentication. Returns success message if connection works.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "message",
+              "description": "Test message to echo back",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      },
+      "name": "Connection Test Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst testMessage = input.message || 'Hello from MCP!';\n\nreturn [{\n  json: {\n    status: 'success',\n    message: testMessage,\n    connection: 'MCP bearer token authentication working',\n    timestamp: new Date().toISOString(),\n    server: 'n8n InsightPulse AI',\n    note: 'If you see this, Claude.ai successfully connected to n8n via MCP'\n  }\n}];"
+      },
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [750, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Connection Test Tool", "type": "main", "index": 0}]]
+    },
+    "Connection Test Tool": {
+      "main": [[{"node": "Format Response", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+}

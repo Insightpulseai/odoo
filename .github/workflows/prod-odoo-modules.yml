@@ -86,20 +86,30 @@ jobs:
             echo "📥 Pulling latest changes..."
             git pull origin main || git pull origin master || true
 
+            # Sync OCA repos before checking manifests
+            if [ -f oca-aggregate.yml ] && [ -x scripts/sync_oca.sh ]; then
+              echo "Syncing OCA modules..."
+              ./scripts/sync_oca.sh
+            fi
+
             IFS=',' read -ra MODS <<< "$MODULES"
             for mod in "\${MODS[@]}"; do
               manifest=""
-              for path in addons/ipai addons/OCA addons; do
-                if [ -f "\$path/\$mod/__manifest__.py" ]; then
-                  manifest="\$path/\$mod/__manifest__.py"
-                  break
-                fi
+              # Search order: ipai custom → OCA repos (gitaggregate) → OCA legacy → flat addons
+              for path in addons/ipai addons/oca/*/. addons/OCA addons; do
+                # Handle glob expansion for addons/oca/*/
+                for expanded in \$path; do
+                  if [ -f "\$expanded/\$mod/__manifest__.py" ]; then
+                    manifest="\$expanded/\$mod/__manifest__.py"
+                    break 2
+                  fi
+                done
               done
 
               if [ -n "\$manifest" ]; then
-                echo "✅ \$mod: \$manifest"
+                echo "OK \$mod: \$manifest"
               else
-                echo "❌ \$mod: NOT FOUND"
+                echo "MISSING \$mod: NOT FOUND in any addons path"
               fi
             done
           ENDSSH

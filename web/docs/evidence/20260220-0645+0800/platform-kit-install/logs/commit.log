@@ -1,0 +1,49 @@
+commit a3800758bf83a0dbd57316f8b38335bb8c5ad2b7
+Author: Jake Tolentino <jgtolentino.rn@gmail.com>
+Date:   Fri Feb 20 09:42:31 2026 +0800
+
+    spec(odoo-sh): add Spec Kit bundle for Odoo.sh-equivalent platform
+    
+    - Add constitution.md: 8 articles defining platform principles
+      - Article 1: Purpose (Odoo.sh-like platform)
+      - Article 2: System Boundaries (SSOT/SOR, no shadow ledger)
+      - Article 3: Environment Semantics (dev/staging/prod, ODOO_STAGE)
+      - Article 4: Branch-Driven Lifecycle (PR builds, promotion)
+      - Article 5: Deterministic Builds (code+config in repo)
+      - Article 6: Evidence-First Operations (logs, metadata, artifacts)
+      - Article 7: Security + Secrets (no secrets in git)
+      - Article 8: Constraints Compatibility (worker recycling, timeouts)
+    
+    - Add prd.md: Product requirements with 5 functional requirements
+      - FR1: Dev Hot Reload (--dev flags, debug assets)
+      - FR2: Staging Semantics (neutralized integrations)
+      - FR3: PR/Branch Build (Runbot-lite)
+      - FR4: Promotion Workflow (gated dev→staging→prod)
+      - FR5: Observability + Evidence (logs, artifacts)
+      - 4 user personas, acceptance criteria
+    
+    - Add plan.md: 5-phase implementation roadmap
+      - Phase 0: Inventory + Contracts (docs, guards)
+      - Phase 1: Runbot-lite (PR environments)
+      - Phase 2: Staging Snapshot + Neutralization
+      - Phase 3: Promotion + Evidence
+      - Phase 4: Observability Parity
+    
+    - Add tasks.md: P0-P2 task breakdown
+      - P0: Contracts + Guardrails (dev runtime, CI guards)
+      - P1: Runbot-lite + Staging Neutralization
+      - P2: Snapshot Restore + Promotion + Evidence
+    
+    Governance:
+    - Aligns with established SSOT/SOR boundaries
+    - References existing addons path invariants
+    - Evidence-first operations (ops.* schema)
+    - Follows spec-kit conventions from 23 existing bundles
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+ spec/odoo-sh/constitution.md | 229 ++++++++++++++++++++++++
+ spec/odoo-sh/plan.md         | 308 +++++++++++++++++++++++++++++++++
+ spec/odoo-sh/prd.md          | 259 +++++++++++++++++++++++++++
+ spec/odoo-sh/tasks.md        | 403 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 1199 insertions(+)

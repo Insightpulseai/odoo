@@ -1,0 +1,167 @@
+{
+  "name": "MCP Tool: GitHub Ops (Issues + Files + PRs)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-008",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "github_ops",
+        "description": "GitHub operations for InsightPulseAI repos. Actions: create_issue (new issue with title/body/labels), list_issues (open issues), create_file (commit a new file to repo), update_file (edit existing file), create_branch (new branch from base), create_pr (pull request), list_prs (open PRs), get_file (read file contents). Default repo: InsightPulseAI/odoo. Claude can generate code/docs and commit directly to GitHub.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "action",
+              "description": "Action: create_issue, list_issues, create_file, update_file, create_branch, create_pr, list_prs, get_file",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "repo",
+              "description": "Repository in owner/name format. Default: InsightPulseAI/odoo",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "title",
+              "description": "Title for issue or PR",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "body",
+              "description": "Body/description for issue or PR. Supports markdown.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "labels",
+              "description": "Comma-separated labels for issue (e.g. 'bug,priority:high')",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "file_path",
+              "description": "File path in repo for create_file, update_file, get_file (e.g. 'workflows/my_flow.json')",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "file_content",
+              "description": "File content string for create_file or update_file",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "commit_message",
+              "description": "Commit message for file operations",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "branch",
+              "description": "Branch name. Default: main. For create_branch this is the new branch name.",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "base_branch",
+              "description": "Base branch for create_branch or create_pr. Default: main",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      },
+      "id": "tool-github",
+      "name": "GitHub Ops Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst action = (input.action || '').toLowerCase().trim();\nconst repo = input.repo || 'InsightPulseAI/odoo';\nconst [owner, repoName] = repo.includes('/') ? repo.split('/') : ['InsightPulseAI', repo];\nconst branch = input.branch || 'main';\nconst baseBranch = input.base_branch || 'main';\n\nconst GH = 'https://api.github.com';\n\n// Build API config per action\nlet cfg = null;\n\nswitch (action) {\n  case 'create_issue': {\n    if (!input.title) return [{ json: { error: true, message: 'title required for create_issue' } }];\n    const labels = input.labels ? input.labels.split(',').map(l => l.trim()) : [];\n    cfg = {\n      method: 'POST',\n      url: `${GH}/repos/${owner}/${repoName}/issues`,\n      body: { title: input.title, body: input.body || '', labels }\n    };\n    break;\n  }\n  case 'list_issues': {\n    cfg = {\n      method: 'GET',\n      url: `${GH}/repos/${owner}/${repoName}/issues?state=open&per_page=30`,\n      body: null\n    };\n    break;\n  }\n  case 'get_file': {\n    if (!input.file_path) return [{ json: { error: true, message: 'file_path required for get_file' } }];\n    cfg = {\n      method: 'GET',\n      url: `${GH}/repos/${owner}/${repoName}/contents/${input.file_path}?ref=${branch}`,\n      body: null\n    };\n    break;\n  }\n  case 'create_file': {\n    if (!input.file_path || !input.file_content) {\n      return [{ json: { error: true, message: 'file_path and file_content required for create_file' } }];\n    }\n    // Base64-encode the content\n    const b64 = Buffer.from(input.file_content).toString('base64');\n    cfg = {\n      method: 'PUT',\n      url: `${GH}/repos/${owner}/${repoName}/contents/${input.file_path}`,\n      body: {\n        message: input.commit_message || `Add ${input.file_path}`,\n        content: b64,\n        branch: branch\n      }\n    };\n    break;\n  }\n  case 'update_file': {\n    if (!input.file_path || !input.file_content) {\n      return [{ json: { error: true, message: 'file_path and file_content required for update_file' } }];\n    }\n    // Need to get SHA first — set flag\n    cfg = {\n      method: 'GET_THEN_PUT',\n      get_url: `${GH}/repos/${owner}/${repoName}/contents/${input.file_path}?ref=${branch}`,\n      put_url: `${GH}/repos/${owner}/${repoName}/contents/${input.file_path}`,\n      content_b64: Buffer.from(input.file_content).toString('base64'),\n      commit_message: input.commit_message || `Update ${input.file_path}`,\n      branch: branch\n    };\n    break;\n  }\n  case 'create_branch': {\n    if (!input.branch) return [{ json: { error: true, message: 'branch required for create_branch' } }];\n    // Need SHA of base branch first\n    cfg = {\n      method: 'CREATE_BRANCH',\n      base_ref_url: `${GH}/repos/${owner}/${repoName}/git/ref/heads/${baseBranch}`,\n      create_ref_url: `${GH}/repos/${owner}/${repoName}/git/refs`,\n      new_branch: branch\n    };\n    break;\n  }\n  case 'create_pr': {\n    if (!input.title || !input.branch) {\n      return [{ json: { error: true, message: 'title and branch required for create_pr' } }];\n    }\n    cfg = {\n      method: 'POST',\n      url: `${GH}/repos/${owner}/${repoName}/pulls`,\n      body: {\n        title: input.title,\n        body: input.body || '',\n        head: branch,\n        base: baseBranch\n      }\n    };\n    break;\n  }\n  case 'list_prs': {\n    cfg = {\n      method: 'GET',\n      url: `${GH}/repos/${owner}/${repoName}/pulls?state=open&per_page=20`,\n      body: null\n    };\n    break;\n  }\n  default:\n    return [{ json: { error: true, message: `Unknown action: ${action}` } }];\n}\n\nreturn [{ json: { action, repo: `${owner}/${repoName}`, ...cfg } }];"
+      },
+      "id": "code-route",
+      "name": "Route GitHub Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "err",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-err",
+      "name": "Validation OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Route GitHub Action').first().json;\nconst GH_TOKEN = $env.GITHUB_TOKEN;\n\nif (!GH_TOKEN) {\n  return [{ json: { status:'error', message:'GITHUB_TOKEN not set in n8n env vars' } }];\n}\n\nconst headers = {\n  'Authorization': `Bearer ${GH_TOKEN}`,\n  'Accept': 'application/vnd.github.v3+json',\n  'Content-Type': 'application/json',\n  'X-GitHub-Api-Version': '2022-11-28'\n};\n\ntry {\n  // ---- SIMPLE GET/POST/PUT/DELETE ----\n  if (['GET','POST','PUT','DELETE','PATCH'].includes(cfg.method)) {\n    const opts = { method: cfg.method, headers };\n    if (cfg.body) opts.body = JSON.stringify(cfg.body);\n    \n    const resp = await fetch(cfg.url, opts);\n    const data = await resp.json();\n    \n    if (!resp.ok) {\n      return [{ json: { status:'error', code: resp.status, message: data.message || 'GitHub API error', detail: data } }];\n    }\n    return [{ json: { status:'ok', action: cfg.action, repo: cfg.repo, data } }];\n  }\n\n  // ---- UPDATE FILE (GET SHA then PUT) ----\n  if (cfg.method === 'GET_THEN_PUT') {\n    const getResp = await fetch(cfg.get_url, { method:'GET', headers });\n    const fileInfo = await getResp.json();\n    \n    if (!getResp.ok) {\n      return [{ json: { status:'error', message: `File not found: ${fileInfo.message}` } }];\n    }\n    \n    const putResp = await fetch(cfg.put_url, {\n      method: 'PUT', headers,\n      body: JSON.stringify({\n        message: cfg.commit_message,\n        content: cfg.content_b64,\n        sha: fileInfo.sha,\n        branch: cfg.branch\n      })\n    });\n    const putData = await putResp.json();\n    \n    if (!putResp.ok) {\n      return [{ json: { status:'error', code: putResp.status, message: putData.message } }];\n    }\n    return [{ json: { status:'ok', action: cfg.action, repo: cfg.repo, data: putData } }];\n  }\n\n  // ---- CREATE BRANCH (GET base SHA then POST ref) ----\n  if (cfg.method === 'CREATE_BRANCH') {\n    const refResp = await fetch(cfg.base_ref_url, { method:'GET', headers });\n    const refData = await refResp.json();\n    \n    if (!refResp.ok) {\n      return [{ json: { status:'error', message: `Base branch not found: ${refData.message}` } }];\n    }\n    \n    const sha = refData.object?.sha;\n    const createResp = await fetch(cfg.create_ref_url, {\n      method: 'POST', headers,\n      body: JSON.stringify({ ref: `refs/heads/${cfg.new_branch}`, sha })\n    });\n    const createData = await createResp.json();\n    \n    if (!createResp.ok) {\n      return [{ json: { status:'error', code: createResp.status, message: createData.message } }];\n    }\n    return [{ json: { status:'ok', action: cfg.action, repo: cfg.repo, data: createData } }];\n  }\n\n  return [{ json: { status:'error', message: 'Unhandled method type' } }];\n\n} catch (e) {\n  return [{ json: { status:'error', message: e.message } }];\n}"
+      },
+      "id": "code-github-api",
+      "name": "GitHub API Executor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\n\nif (raw.status === 'error') return [{ json: raw }];\n\nconst { action, repo, data } = raw;\nlet r = { status: 'success', action, repo };\n\nswitch (action) {\n  case 'create_issue': {\n    r.issue = {\n      number: data.number,\n      title: data.title,\n      url: data.html_url,\n      labels: (data.labels||[]).map(l=>l.name),\n      state: data.state\n    };\n    r.message = `Issue #${data.number} created: ${data.html_url}`;\n    break;\n  }\n  case 'list_issues': {\n    const items = Array.isArray(data) ? data : [];\n    r.count = items.length;\n    r.issues = items.filter(i => !i.pull_request).map(i => ({\n      number: i.number, title: i.title,\n      labels: (i.labels||[]).map(l=>l.name),\n      assignee: i.assignee?.login || 'unassigned',\n      created: i.created_at,\n      url: i.html_url\n    }));\n    break;\n  }\n  case 'get_file': {\n    const content = data.content ? Buffer.from(data.content, 'base64').toString('utf-8') : '';\n    r.file = {\n      path: data.path, sha: data.sha, size: data.size,\n      url: data.html_url, download_url: data.download_url\n    };\n    // Truncate if huge\n    r.content = content.length > 8000 ? content.substring(0, 8000) + '\\n... (truncated)' : content;\n    break;\n  }\n  case 'create_file': {\n    r.commit = {\n      sha: data.commit?.sha,\n      message: data.commit?.message,\n      url: data.content?.html_url\n    };\n    r.message = `File committed: ${data.content?.path} → ${data.content?.html_url}`;\n    break;\n  }\n  case 'update_file': {\n    r.commit = {\n      sha: data.commit?.sha,\n      message: data.commit?.message,\n      url: data.content?.html_url\n    };\n    r.message = `File updated: ${data.content?.path} → ${data.content?.html_url}`;\n    break;\n  }\n  case 'create_branch': {\n    r.ref = data.ref;\n    r.sha = data.object?.sha;\n    r.message = `Branch created: ${data.ref}`;\n    break;\n  }\n  case 'create_pr': {\n    r.pr = {\n      number: data.number, title: data.title,\n      url: data.html_url, state: data.state,\n      head: data.head?.ref, base: data.base?.ref\n    };\n    r.message = `PR #${data.number} created: ${data.html_url}`;\n    break;\n  }\n  case 'list_prs': {\n    const items = Array.isArray(data) ? data : [];\n    r.count = items.length;\n    r.prs = items.map(p => ({\n      number: p.number, title: p.title,\n      author: p.user?.login, state: p.state,\n      head: p.head?.ref, base: p.base?.ref,\n      created: p.created_at, url: p.html_url\n    }));\n    break;\n  }\n}\n\nreturn [{ json: r }];"
+      },
+      "id": "code-format",
+      "name": "Format GitHub Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 200]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{ "node": "GitHub Ops Tool", "type": "main", "index": 0 }]]
+    },
+    "GitHub Ops Tool": {
+      "main": [[{ "node": "Route GitHub Action", "type": "main", "index": 0 }]]
+    },
+    "Route GitHub Action": {
+      "main": [[{ "node": "Validation OK?", "type": "main", "index": 0 }]]
+    },
+    "Validation OK?": {
+      "main": [
+        [],
+        [{ "node": "GitHub API Executor", "type": "main", "index": 0 }]
+      ]
+    },
+    "GitHub API Executor": {
+      "main": [[{ "node": "Format GitHub Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true },
+  "tags": [{ "name": "mcp" }, { "name": "github" }, { "name": "write-path" }],
+  "meta": { "instanceId": "insightpulseai-n8n" }
+}

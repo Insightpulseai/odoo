@@ -1,59 +1,59 @@
 # =============================================================================
-# OCA Git Aggregator Configuration
+# OCA Git Aggregator Configuration — Odoo 19.0 CE
 # =============================================================================
-# Use OCA's git-aggregator for deterministic dependency management.
+# SSOT for all OCA dependencies. Replaces git submodules.
 #
 # Install:
 #   pip install git-aggregator
 #
 # Usage:
-#   gitaggregate -c oca-aggregate.yml
+#   gitaggregate -c oca-aggregate.yml          # clone/update all
+#   gitaggregate -c oca-aggregate.yml -j 4     # parallel (4 jobs)
+#   gitaggregate -c oca-aggregate.yml -d ./addons/oca/web  # single repo
+#
+# Output goes to addons/oca/<repo>/ (gitignored, never committed).
 #
 # Pattern: One top-level key = one checkout directory per OCA repo.
-# This avoids "unrelated histories" merge errors.
+# Each checkout contains a full 19.0 branch clone — Odoo scans for
+# __manifest__.py inside these directories automatically.
+#
+# To pin a specific commit (recommended for production):
+#   merges:
+#     - oca refs/heads/19.0  # or a specific SHA
+#
+# See: https://github.com/acsone/git-aggregator
 # =============================================================================
+
+# ---------------------------------------------------------------------------
+# Tier 0 — Core Infrastructure (needed by many OCA modules)
+# ---------------------------------------------------------------------------
 
 ./addons/oca/server-tools:
   remotes:
     oca: https://github.com/OCA/server-tools.git
   merges:
     - oca 19.0
+  # Modules: date_range (dep), base_*, module_auto_update, etc.
 
 ./addons/oca/server-ux:
   remotes:
     oca: https://github.com/OCA/server-ux.git
   merges:
     - oca 19.0
+  # Modules: date_range, base_substate
 
-./addons/oca/web:
+./addons/oca/server-backend:
   remotes:
-    oca: https://github.com/OCA/web.git
+    oca: https://github.com/OCA/server-backend.git
   merges:
     - oca 19.0
 
-./addons/oca/automation:
+./addons/oca/server-auth:
   remotes:
-    oca: https://github.com/OCA/automation.git
+    oca: https://github.com/OCA/server-auth.git
   merges:
     - oca 19.0
-
-./addons/oca/account-financial-tools:
-  remotes:
-    oca: https://github.com/OCA/account-financial-tools.git
-  merges:
-    - oca 19.0
-
-./addons/oca/account-financial-reporting:
-  remotes:
-    oca: https://github.com/OCA/account-financial-reporting.git
-  merges:
-    - oca 19.0
-
-./addons/oca/project:
-  remotes:
-    oca: https://github.com/OCA/project.git
-  merges:
-    - oca 19.0
+  # Modules: auth_session_timeout
 
 ./addons/oca/queue:
   remotes:
@@ -61,29 +61,33 @@
   merges:
     - oca 19.0
 
+./addons/oca/connector:
+  remotes:
+    oca: https://github.com/OCA/connector.git
+  merges:
+    - oca 19.0
+
+# ---------------------------------------------------------------------------
+# Tier 1 — Web / UX
+# ---------------------------------------------------------------------------
+
+./addons/oca/web:
+  remotes:
+    oca: https://github.com/OCA/web.git
+  merges:
+    - oca 19.0
+  # Modules: web_responsive, web_dialog_size, web_environment_ribbon
+
+# ---------------------------------------------------------------------------
+# Tier 2 — Reporting
+# ---------------------------------------------------------------------------
+
 ./addons/oca/reporting-engine:
   remotes:
     oca: https://github.com/OCA/reporting-engine.git
   merges:
     - oca 19.0
-
-./addons/oca/sale-workflow:
-  remotes:
-    oca: https://github.com/OCA/sale-workflow.git
-  merges:
-    - oca 19.0
-
-./addons/oca/purchase-workflow:
-  remotes:
-    oca: https://github.com/OCA/purchase-workflow.git
-  merges:
-    - oca 19.0
-
-./addons/oca/server-backend:
-  remotes:
-    oca: https://github.com/OCA/server-backend.git
-  merges:
-    - oca 19.0
+  # Modules: report_xlsx, report_xlsx_helper
 
 ./addons/oca/mis-builder:
   remotes:
@@ -97,27 +101,21 @@
   merges:
     - oca 19.0
 
-./addons/oca/knowledge:
+# ---------------------------------------------------------------------------
+# Tier 3 — Finance / Accounting
+# ---------------------------------------------------------------------------
+
+./addons/oca/account-financial-tools:
   remotes:
-    oca: https://github.com/OCA/knowledge.git
+    oca: https://github.com/OCA/account-financial-tools.git
   merges:
     - oca 19.0
+  # Modules: account_move_name_sequence, account_journal_restrict_mode,
+  #          account_usability, account_tax_balance
 
-./addons/oca/dms:
+./addons/oca/account-financial-reporting:
   remotes:
-    oca: https://github.com/OCA/dms.git
-  merges:
-    - oca 19.0
-
-./addons/oca/rest-framework:
-  remotes:
-    oca: https://github.com/OCA/rest-framework.git
-  merges:
-    - oca 19.0
-
-./addons/oca/social:
-  remotes:
-    oca: https://github.com/OCA/social.git
+    oca: https://github.com/OCA/account-financial-reporting.git
   merges:
     - oca 19.0
 
@@ -126,10 +124,54 @@
     oca: https://github.com/OCA/account-reconcile.git
   merges:
     - oca 19.0
+  # Modules: account_statement_base, account_stmt_import_file_oca
+
+./addons/oca/bank-payment:
+  remotes:
+    oca: https://github.com/OCA/bank-payment.git
+  merges:
+    - oca 19.0
+  # Modules: account_payment_mode, account_payment_order,
+  #          account_payment_order_grouped, account_payment_purchase,
+  #          account_payment_sale
+
+# ---------------------------------------------------------------------------
+# Tier 4 — HR / People
+# ---------------------------------------------------------------------------
+
+./addons/oca/hr:
+  remotes:
+    oca: https://github.com/OCA/hr.git
+  merges:
+    - oca 19.0
+  # Modules: hr_employee_firstname
 
 ./addons/oca/hr-expense:
   remotes:
     oca: https://github.com/OCA/hr-expense.git
+  merges:
+    - oca 19.0
+
+./addons/oca/timesheet:
+  remotes:
+    oca: https://github.com/OCA/timesheet.git
+  merges:
+    - oca 19.0
+  # Modules: hr_timesheet_task_stage
+
+# ---------------------------------------------------------------------------
+# Tier 5 — Sales / Purchase / Contract
+# ---------------------------------------------------------------------------
+
+./addons/oca/sale-workflow:
+  remotes:
+    oca: https://github.com/OCA/sale-workflow.git
+  merges:
+    - oca 19.0
+
+./addons/oca/purchase-workflow:
+  remotes:
+    oca: https://github.com/OCA/purchase-workflow.git
   merges:
     - oca 19.0
 
@@ -139,15 +181,65 @@
   merges:
     - oca 19.0
 
-./addons/oca/timesheet:
+# ---------------------------------------------------------------------------
+# Tier 6 — Knowledge / DMS / Social
+# ---------------------------------------------------------------------------
+
+./addons/oca/knowledge:
   remotes:
-    oca: https://github.com/OCA/timesheet.git
+    oca: https://github.com/OCA/knowledge.git
+  merges:
+    - oca 19.0
+  # Modules: document_url
+
+./addons/oca/dms:
+  remotes:
+    oca: https://github.com/OCA/dms.git
   merges:
     - oca 19.0
 
-./addons/oca/connector:
+./addons/oca/social:
   remotes:
-    oca: https://github.com/OCA/connector.git
+    oca: https://github.com/OCA/social.git
+  merges:
+    - oca 19.0
+
+# ---------------------------------------------------------------------------
+# Tier 7 — Project / Quality
+# ---------------------------------------------------------------------------
+
+./addons/oca/project:
+  remotes:
+    oca: https://github.com/OCA/project.git
+  merges:
+    - oca 19.0
+
+./addons/oca/manufacture:
+  remotes:
+    oca: https://github.com/OCA/manufacture.git
+  merges:
+    - oca 19.0
+  # Modules: quality_control_oca, quality_control_stock_oca
+
+# ---------------------------------------------------------------------------
+# Tier 8 — AI / Automation / REST
+# ---------------------------------------------------------------------------
+
+./addons/oca/ai:
+  remotes:
+    oca: https://github.com/OCA/ai.git
+  merges:
+    - oca 19.0
+
+./addons/oca/automation:
+  remotes:
+    oca: https://github.com/OCA/automation.git
+  merges:
+    - oca 19.0
+
+./addons/oca/rest-framework:
+  remotes:
+    oca: https://github.com/OCA/rest-framework.git
   merges:
     - oca 19.0
 
@@ -157,8 +249,12 @@
   merges:
     - oca 19.0
 
-./addons/oca/ai:
+# ---------------------------------------------------------------------------
+# Tier 9 — Partner / Contact
+# ---------------------------------------------------------------------------
+
+./addons/oca/partner-contact:
   remotes:
-    oca: https://github.com/OCA/ai.git
+    oca: https://github.com/OCA/partner-contact.git
   merges:
     - oca 19.0

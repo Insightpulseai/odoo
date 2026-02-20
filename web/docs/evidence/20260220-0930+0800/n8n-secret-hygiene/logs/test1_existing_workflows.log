@@ -1,0 +1,6 @@
+Scanning n8n workflows for hardcoded secrets...
+Directory: automations/n8n/workflows
+
+----------------------------------------
+✅ [0;32mNo hardcoded secrets detected[0m
+  Scanned: automations/n8n/workflows/*.json

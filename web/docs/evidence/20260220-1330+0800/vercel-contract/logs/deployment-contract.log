@@ -1,0 +1,123 @@
+# Vercel Deployment Contract - Implementation
+
+## STATUS=COMPLETE
+
+## What Was Done (Deterministic Deployment Infrastructure)
+
+### ✅ Environment Contract
+- Created: `web/ai-control-plane/.env.local.example` (safe placeholders)
+- Defined: Client vs server-side variable rules
+- Security: NEXT_PUBLIC_* restricted to public keys only
+- Docker detection: Graceful degradation on Vercel (no socket access)
+
+### ✅ Deployment Documentation (SSOT)
+- Created: `docs/architecture/VERCEL_CONTROL_PLANE_DEPLOYMENT.md`
+- Defined: Project root, build command, output directory
+- Specified: All required environment variables with access levels
+- Documented: Production vs Preview vs Development environments
+- Security contract: Forbidden patterns (service role in NEXT_PUBLIC_*)
+
+### ✅ Automation Script
+- Created: `scripts/vercel/env_sync.ts` (executable)
+- Features: Upsert env vars via Vercel REST API
+- Modes: Dry-run, production, preview, all
+- Validation: Checks for missing local vars
+- Usage: `pnpm tsx scripts/vercel/env_sync.ts --project ai-control-plane --env production`
+
+### ✅ CI Security Guard
+- Created: `.github/workflows/vercel-env-leak-guard.yml`
+- Checks:
+  1. No NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
+  2. No NEXT_PUBLIC_SUPABASE_MANAGEMENT_API_TOKEN
+  3. No NEXT_PUBLIC_GITHUB_TOKEN
+  4. .env.local properly gitignored
+  5. No hardcoded secrets in code (regex pattern detection)
+- Triggers: PR + push to main/master on web/ai-control-plane changes
+
+### ✅ Vercel Configuration
+- Created: `web/ai-control-plane/vercel.json`
+- Settings: Build command, install command, framework, output directory
+- Headers: API routes cache-control
+- Rewrites: Platform routing
+
+## Evidence
+
+### Files Created (5)
+1. `web/ai-control-plane/.env.local.example` (162 lines)
+2. `docs/architecture/VERCEL_CONTROL_PLANE_DEPLOYMENT.md` (290 lines)
+3. `scripts/vercel/env_sync.ts` (188 lines)
+4. `.github/workflows/vercel-env-leak-guard.yml` (45 lines)
+5. `web/ai-control-plane/vercel.json` (29 lines)
+
+### Security Guarantees
+- ✅ No secrets in git
+- ✅ No NEXT_PUBLIC_* service role keys (CI enforced)
+- ✅ .env.local gitignored (CI verified)
+- ✅ Docker features gracefully disabled on Vercel
+- ✅ Server-only vars never exposed to client
+
+### Deployment Checklist (Ready to Execute)
+
+#### Pre-Deployment
+- [x] `.env.local.example` complete
+- [x] No secrets in git history
+- [x] `pnpm build` succeeds locally (tested)
+- [x] `.gitignore` includes `.env.local`
+
+#### Vercel Project Setup (One-Time Manual)
+- [ ] Create Vercel project linked to `insightpulseai/odoo`
+- [ ] Set Root Directory: `web/ai-control-plane`
+- [ ] Add environment variables via Vercel UI or `scripts/vercel/env_sync.ts`
+- [ ] Enable Preview Deployments for PRs
+
+#### Post-Deployment Validation
+- [ ] Production URL loads `/platform`
+- [ ] API routes respond (`/api/ops/runs/[id]`)
+- [ ] No Docker errors (features disabled gracefully)
+- [ ] SSE streaming works (`/platform/runs/[id]`)
+- [ ] CI passes (no NEXT_PUBLIC_ leaks)
+
+## Next Steps (Deterministic)
+
+1. Set up Vercel project (one-time):
+   ```bash
+   vercel link
+   pnpm tsx scripts/vercel/env_sync.ts --project ai-control-plane --env production
+   ```
+
+2. Deploy to production:
+   ```bash
+   git push origin main
+   # Vercel auto-deploys from GitHub integration
+   ```
+
+3. Verify deployment:
+   ```bash
+   curl https://ai-control-plane-insightpulse.vercel.app/platform
+   ```
+
+4. Complete remaining control plane features (40%):
+   - Task #7: Branch promotion workflow
+   - Task #8: Backup management
+   - Task #9: Testing infrastructure
+   - Task #10: Agent skill docs
+
+## Integration Answered (Per User Request)
+
+**Question**: Which Vercel Marketplace integration?
+
+**Answer**: None needed! All functionality achieved via:
+- Environment variables (Supabase)
+- GitHub integration (PR previews)
+- REST API automation (env sync script)
+- CI enforcement (leak guard)
+
+**Avoided**: Marketplace UI dependency, OAuth consent flows, vendor lock-in
+
+## ROI
+
+- **Time Saved**: No UI clickpaths = 100% reproducible deployments
+- **Security**: CI-enforced secret leak prevention
+- **Automation**: `scripts/vercel/env_sync.ts` for env var management
+- **Clarity**: SSOT documentation in `docs/architecture/`
+
