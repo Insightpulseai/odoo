@@ -1,47 +1,75 @@
 name: PR Scope Guard
 
+# Runs on PR open/sync. Detects Zoho-bridge PRs via branch name OR title,
+# enforces a strict file allowlist, and scans all PRs for hardcoded secrets.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  scope-guard:
+  verify-commit-scope:
+    name: Verify changed files
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          # Full depth so we can diff against the base ref reliably
           fetch-depth: 0
 
-      - name: Get changed files
+      - name: List changed files
         id: changed
         run: |
-          git fetch origin ${{ github.base_ref }}
-          git diff --name-only origin/${{ github.base_ref }}...HEAD > /tmp/changed_files.txt
-          echo "Changed files:"
+          BASE="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "$BASE"
+          git diff --name-only "origin/$BASE...HEAD" > /tmp/changed_files.txt
+          echo "=== Changed files ==="
           cat /tmp/changed_files.txt
+          echo "files_count=$(wc -l < /tmp/changed_files.txt)" >> "$GITHUB_OUTPUT"
 
-      - name: Check zoho-bridge PR scope
-        if: contains(github.event.pull_request.title, 'zoho-bridge') || contains(github.event.pull_request.title, 'zoho-mail')
+      # -----------------------------------------------------------------------
+      # Zoho-bridge scope guard
+      # Triggered by branch name OR PR title containing zoho/zoho-bridge/zoho-mail
+      # -----------------------------------------------------------------------
+      - name: Detect Zoho-bridge PR
+        id: detect_zoho
         run: |
+          BRANCH="${{ github.head_ref }}"
+          TITLE="${{ github.event.pull_request.title }}"
+          if echo "$BRANCH $TITLE" | grep -iqE "zoho"; then
+            echo "is_zoho=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_zoho=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Zoho-bridge allowlist check
+        if: steps.detect_zoho.outputs.is_zoho == 'true'
+        run: |
+          # Strict allowlist for zoho-bridge PRs.
+          # Each entry is an extended-regex pattern matched against the full file path.
           ALLOWED_PATTERNS=(
-            "addons/ipai/ipai_zoho_mail/"
-            "config/odoo/mail_settings.yaml"
-            "scripts/odoo/apply_mail_settings.py"
-            "infra/dns/zoho_mail_dns.yaml"
-            "docs/contracts/DNS_EMAIL_CONTRACT.md"
-            "supabase/migrations/.*zoho"
-            "supabase/functions/zoho-mail-bridge/"
-            "spec/zoho-mail-bridge/"
-            "infra/supabase/vault_secrets.tf"
-            "docs/architecture/SSOT_BOUNDARIES.md"
-            ".github/workflows/pr-scope-guard.yml"
+            "^addons/ipai/ipai_zoho_mail/"
+            "^config/odoo/mail_settings\.yaml$"
+            "^scripts/odoo/apply_mail_settings\.py$"
+            "^scripts/odoo/smoke_mail\.py$"
+            "^scripts/odoo/cleanup_smoke_mail\.py$"
+            "^infra/dns/zoho_mail_dns\.yaml$"
+            "^infra/supabase/vault_secrets\.tf$"
+            "^docs/contracts/DNS_EMAIL_CONTRACT\.md$"
+            "^docs/architecture/SSOT_BOUNDARIES\.md$"
+            "^docs/runbooks/RB_ODOO_MAIL_SMOKE\.md$"
+            "^supabase/migrations/[0-9]+_integrations_zoho"
+            "^supabase/functions/zoho-mail-bridge/"
+            "^spec/zoho-mail-bridge/"
+            "^\.github/workflows/pr-scope-guard\.yml$"
           )
 
           FAILED=0
           while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
             ALLOWED=0
-            for pattern in "${ALLOWED_PATTERNS[@]}"; do
-              if echo "$file" | grep -qE "$pattern"; then
+            for pat in "${ALLOWED_PATTERNS[@]}"; do
+              if echo "$file" | grep -qE "$pat"; then
                 ALLOWED=1
                 break
               fi
@@ -54,30 +82,50 @@ jobs:
 
           if [[ $FAILED -eq 1 ]]; then
             echo ""
-            echo "This PR title contains 'zoho-bridge' but modifies files outside the allowed scope."
-            echo "Either adjust the PR title or move unrelated changes to a separate PR."
+            echo "This PR is detected as a Zoho-bridge PR (branch or title contains 'zoho')."
+            echo "It modifies files outside the allowed scope."
+            echo "Either rename the branch/title or move unrelated changes to a separate PR."
             exit 1
-          else
-            echo "✅ All changed files are within zoho-bridge scope."
           fi
+          echo "✅ All changed files are within zoho-bridge scope."
 
-      - name: Secret scan gate
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan diff for hardcoded secrets
         run: |
-          # Scan diff for real-looking secrets (not placeholders)
-          git diff origin/${{ github.base_ref }}...HEAD -- . \
-            ':(exclude)*.lock' \
-            ':(exclude)pnpm-lock.yaml' \
-            | grep -E '^\+' \
-            | grep -iE '(password|secret|token|api_key)\s*[:=]\s*["\x27]?[A-Za-z0-9+/]{20,}' \
-            | grep -ivE '(placeholder|ENV_VAR|environ|Deno\.env|os\.environ|\$\{|\$\()' \
-            > /tmp/secret_scan.txt || true
+          BASE="${{ github.event.pull_request.base.ref }}"
+          git fetch origin "$BASE"
 
-          if [[ -s /tmp/secret_scan.txt ]]; then
-            echo "❌ Potential secrets found in diff:"
-            cat /tmp/secret_scan.txt
+          # Extract added lines from the diff (skip binary, lock files)
+          git diff "origin/$BASE...HEAD" \
+            -- ':!*.lock' ':!pnpm-lock.yaml' ':!package-lock.json' \
+            | grep -E '^\+' \
+            | grep -ivE '^\+\+\+' \
+            > /tmp/diff_adds.txt || true
+
+          # Pattern: key/secret/password/token followed by a value-like string
+          # Exclude: template placeholders, env var references, masked values
+          grep -iE \
+            '(password|secret|token|api_key|private_key)\s*[:=]\s*["\x27]?[A-Za-z0-9+/\-_]{20,}' \
+            /tmp/diff_adds.txt \
+            | grep -ivE \
+            '(placeholder|ENV_VAR|Deno\.env|os\.environ|\$\{|\$\(|example\.invalid|REPLACE|your_|<.*>|\*{4,})' \
+            > /tmp/secret_hits.txt || true
+
+          if [[ -s /tmp/secret_hits.txt ]]; then
+            echo "❌ Potential hardcoded secrets detected in diff:"
+            # Print only the pattern match context — not the raw value — to avoid leaking in logs
+            while IFS= read -r line; do
+              echo "  $(echo "$line" | sed -E 's/([A-Za-z0-9+\/\-_]{20,})/[REDACTED]/g')"
+            done < /tmp/secret_hits.txt
             echo ""
-            echo "Ensure no raw credentials are committed. Use env vars or Vault references."
+            echo "Use env vars (\${VAR}), Supabase Vault, or Deno.env — never hardcode credentials."
             exit 1
-          else
-            echo "✅ No hardcoded secrets detected in diff."
           fi
+          echo "✅ No hardcoded secrets detected."
