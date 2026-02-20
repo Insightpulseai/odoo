@@ -1,0 +1,65 @@
+# infra/dns/zoho_mail_dns.yaml
+# Declarative DNS records for Zoho Mail (insightpulseai.com)
+# Applied via Cloudflare API or Terraform — not via UI.
+# Source of truth: this file. Do not edit Cloudflare records directly.
+#
+# Drift check: scripts/verify-dns-baseline.sh
+# Apply: via infra/cloudflare/ Terraform or Cloudflare API
+
+domain: insightpulseai.com
+provider: cloudflare
+managed_by: zoho_mail_dns.yaml
+
+records:
+  # ─── MX Records ───────────────────────────────────────────────────────────
+  # Zoho US datacenter MX records (required for @insightpulseai.com)
+  - type: MX
+    name: "@"
+    content: mx.zoho.com
+    priority: 10
+    ttl: 3600
+    comment: "Zoho Mail primary MX (US)"
+
+  - type: MX
+    name: "@"
+    content: mx2.zoho.com
+    priority: 20
+    ttl: 3600
+    comment: "Zoho Mail secondary MX (US)"
+
+  - type: MX
+    name: "@"
+    content: mx3.zoho.com
+    priority: 50
+    ttl: 3600
+    comment: "Zoho Mail tertiary MX (US)"
+
+  # ─── SPF ──────────────────────────────────────────────────────────────────
+  - type: TXT
+    name: "@"
+    content: "v=spf1 include:zoho.com ~all"
+    ttl: 3600
+    comment: "Zoho SPF record — authorizes Zoho servers to send for insightpulseai.com"
+
+  # ─── DKIM ─────────────────────────────────────────────────────────────────
+  # DKIM selector: zoho (default Zoho selector)
+  # Value: retrieve from Zoho Admin → Email → Email Authentication → DKIM
+  # Replace PLACEHOLDER below with the actual DKIM public key value
+  - type: TXT
+    name: "zoho._domainkey"
+    content: "PLACEHOLDER — replace with DKIM TXT value from Zoho Admin panel"
+    ttl: 3600
+    comment: "Zoho DKIM public key — manual setup required"
+
+  # ─── DMARC ────────────────────────────────────────────────────────────────
+  - type: TXT
+    name: "_dmarc"
+    content: "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@insightpulseai.com; ruf=mailto:dmarc-reports@insightpulseai.com; fo=1; adkim=r; aspf=r; pct=100; sp=quarantine"
+    ttl: 3600
+    comment: "DMARC policy — quarantine failures, aggregate reports to dmarc-reports@"
+
+# ─── Verification Commands ────────────────────────────────────────────────
+# MX:   dig MX insightpulseai.com
+# SPF:  dig TXT insightpulseai.com | grep spf
+# DKIM: dig TXT zoho._domainkey.insightpulseai.com
+# DMARC: dig TXT _dmarc.insightpulseai.com

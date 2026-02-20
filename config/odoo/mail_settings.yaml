@@ -1,0 +1,56 @@
+# config/odoo/mail_settings.yaml
+# Single source of truth for Odoo mail server configuration (SMTP + IMAP).
+# Passwords are placeholders — supply via environment variables or Vault.
+# Used by: scripts/odoo/apply_mail_settings.py
+
+dev:
+  smtp:
+    name: "Zoho SMTP (Dev)"
+    host: "smtppro.zoho.com"
+    port: 587
+    encryption: "starttls"
+    user: "business@insightpulseai.com"
+    password: "${ZOHO_SMTP_APP_PASSWORD}"
+    from_filter: "@insightpulseai.com"
+    active: true
+    sequence: 1
+
+  imap:
+    name: "Zoho IMAP (Dev)"
+    host: "imappro.zoho.com"
+    port: 993
+    ssl: true
+    user: "catchall@insightpulseai.com"
+    password: "${ZOHO_IMAP_APP_PASSWORD}"
+    attach: true
+    original: true
+    active: false  # Disabled in dev to avoid processing real mail
+
+prod:
+  smtp:
+    name: "Zoho SMTP (Prod)"
+    host: "smtppro.zoho.com"
+    port: 587
+    encryption: "starttls"
+    user: "business@insightpulseai.com"
+    password: "${ZOHO_SMTP_APP_PASSWORD}"
+    from_filter: "@insightpulseai.com"
+    active: true
+    sequence: 1
+
+  imap:
+    name: "Zoho IMAP (Prod)"
+    host: "imappro.zoho.com"
+    port: 993
+    ssl: true
+    user: "catchall@insightpulseai.com"
+    password: "${ZOHO_IMAP_APP_PASSWORD}"
+    attach: true
+    original: true
+    active: true
+
+# Notes:
+# - smtppro.zoho.com / imappro.zoho.com = US datacenter (required for @insightpulseai.com)
+# - smtp.zoho.com / imap.zoho.com = global (wrong for this account, causes 535)
+# - Passwords must be Zoho App Passwords, NOT the Zoho account login password
+# - Generate at: https://accounts.zoho.com/u/h#security/app_password
