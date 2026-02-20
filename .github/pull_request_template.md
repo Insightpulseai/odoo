@@ -13,9 +13,9 @@ Priority review requested. CI is green.
 <!-- Required for significant features. Check all that apply. -->
 
 - [ ] Spec bundle exists under `spec/<slug>/` (constitution.md, prd.md, plan.md, tasks.md)
-- [ ] Cross-file paths are consistent (deliverables referenced in plan/tasks match)
-- [ ] Tasks are DoD-style (Owner + Deliverable + DoD bullets)
-- [ ] No UI/manual steps as the primary execution path
+- [ ] Spec bundle paths are canonical (no docs/development/* drift; plan/tasks references match deliverables)
+- [ ] Tasks are DoD-style and machine-checkable (Owner + Deliverable + DoD markers present)
+- [ ] Any UI/manual steps are labeled Optional; primary path is automation-first
 - [ ] Plan includes verification & rollback steps
 - [ ] Tasks reflect current PR scope
 - [ ] N/A - This is a minor change (bug fix, docs, config)
