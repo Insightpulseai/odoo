@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'AI Control Plane',
-  description: 'BugBot, Vercel Bot, and infrastructure automation via Vercel AI Gateway + Supabase Vault',
+  description: 'BugBot, Vercel Bot, Odoo.sh-equivalent platform control, and infrastructure automation',
 };
 
 export default function RootLayout({
@@ -12,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-background font-sans antialiased">{children}</body>
     </html>
   );
 }

@@ -1,0 +1,88 @@
+name: OCA Port Queue Validation
+
+on:
+  pull_request:
+    paths:
+      - 'config/oca/port_queue.yml'
+      - '.github/workflows/oca-port-queue-validate.yml'
+  push:
+    branches: [main, feat/oca-porting-pipeline]
+    paths:
+      - 'config/oca/port_queue.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/bin/yq
+      
+      - name: Validate YAML syntax
+        run: |
+          yq eval '.' config/oca/port_queue.yml > /dev/null
+          echo "✓ YAML syntax valid"
+      
+      - name: Check required fields
+        run: |
+          # Check all modules have required fields
+          for priority in P0 P1 P2; do
+            modules=$(yq ".priorities.${priority}.modules[] | .name" config/oca/port_queue.yml)
+            for module in ${modules}; do
+              # Check name, oca_repo, upstream_branch, status, depends, reason
+              yq ".priorities.${priority}.modules[] | select(.name == \"${module}\") | .oca_repo" config/oca/port_queue.yml | grep -q "." || (echo "ERROR: ${module} missing oca_repo" && exit 1)
+              yq ".priorities.${priority}.modules[] | select(.name == \"${module}\") | .upstream_branch" config/oca/port_queue.yml | grep -q "." || (echo "ERROR: ${module} missing upstream_branch" && exit 1)
+              yq ".priorities.${priority}.modules[] | select(.name == \"${module}\") | .status" config/oca/port_queue.yml | grep -q "." || (echo "ERROR: ${module} missing status" && exit 1)
+              yq ".priorities.${priority}.modules[] | select(.name == \"${module}\") | .reason" config/oca/port_queue.yml | grep -q "." || (echo "ERROR: ${module} missing reason" && exit 1)
+            done
+          done
+          echo "✓ All required fields present"
+      
+      - name: Check for duplicates
+        run: |
+          # Get all module names
+          all_modules=$(yq '.priorities[].modules[].name' config/oca/port_queue.yml | sort)
+          
+          # Check for duplicates
+          duplicates=$(echo "${all_modules}" | uniq -d)
+          
+          if [[ -n "${duplicates}" ]]; then
+            echo "ERROR: Duplicate modules found:"
+            echo "${duplicates}"
+            exit 1
+          fi
+          
+          echo "✓ No duplicate modules"
+      
+      - name: Validate status values
+        run: |
+          # Valid statuses: pending, in_progress, completed, failed
+          invalid=$(yq '.priorities[].modules[] | select(.status != "pending" and .status != "in_progress" and .status != "completed" and .status != "failed") | .name' config/oca/port_queue.yml)
+          
+          if [[ -n "${invalid}" ]]; then
+            echo "ERROR: Invalid status values for modules:"
+            echo "${invalid}"
+            exit 1
+          fi
+          
+          echo "✓ All status values valid"
+      
+      - name: Summary
+        run: |
+          echo "## Port Queue Summary"
+          echo ""
+          echo "**Total modules**: $(yq '.priorities[].modules[] | .name' config/oca/port_queue.yml | wc -l)"
+          echo ""
+          echo "**By priority**:"
+          echo "- P0: $(yq '.priorities.P0.modules[] | .name' config/oca/port_queue.yml | wc -l) modules"
+          echo "- P1: $(yq '.priorities.P1.modules[] | .name' config/oca/port_queue.yml | wc -l) modules"
+          echo "- P2: $(yq '.priorities.P2.modules[] | .name' config/oca/port_queue.yml | wc -l) modules"
+          echo ""
+          echo "**By status**:"
+          echo "- Pending: $(yq '.priorities[].modules[] | select(.status == "pending") | .name' config/oca/port_queue.yml | wc -l)"
+          echo "- In Progress: $(yq '.priorities[].modules[] | select(.status == "in_progress") | .name' config/oca/port_queue.yml | wc -l)"
+          echo "- Completed: $(yq '.priorities[].modules[] | select(.status == "completed") | .name' config/oca/port_queue.yml | wc -l)"
+          echo "- Failed: $(yq '.priorities[].modules[] | select(.status == "failed") | .name' config/oca/port_queue.yml | wc -l)"

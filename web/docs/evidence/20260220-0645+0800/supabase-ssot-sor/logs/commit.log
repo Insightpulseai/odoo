@@ -1,0 +1,28 @@
+commit 7d317a9ff5b1f43e5f8b9e9cfb347046cec4dd4d
+Author: Jake Tolentino <jgtolentino.rn@gmail.com>
+Date:   Fri Feb 20 11:32:16 2026 +0800
+
+    docs(spec): define Supabase SSOT + Odoo SOR architectural boundaries
+    
+    - Add SSOT/SOR boundary policy to constitution (Odoo = SOR, Supabase = SSOT)
+    - Add Supabase feature mapping table to PRD with boundary constraints
+    - Add enforcement plan to implementation plan (CI checks, ownership declarations)
+    - Add canonical example references (Edge Functions, webhooks, RLS, Storage)
+    - Add partner integrations policy (RLS perimeter, audit trails)
+    - Add UI components policy (accelerator, not design system SSOT)
+    - Create 5 pattern extraction docs under docs/supabase/patterns/
+    - Maintain existing governance sections (ipai_* namespace, parity boundaries)
+    
+    Establishes clear boundaries to prevent shadow ledger and unauthorized
+    writebacks while enabling Supabase as control-plane SSOT.
+    
+    Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+
+ docs/supabase/patterns/auth-rls-function-access.md | 229 +++++++++++++++++
+ docs/supabase/patterns/edge-functions-ci-deploy.md | 142 +++++++++++
+ docs/supabase/patterns/edge-functions-worker.md    | 122 +++++++++
+ docs/supabase/patterns/storage-multipart-upload.md | 282 +++++++++++++++++++++
+ docs/supabase/patterns/webhook-ingest-verify.md    | 240 ++++++++++++++++++
+ sandbox/dev/spec/odoo-ee-parity-seed/plan.md       |  37 +++
+ sandbox/dev/spec/odoo-ee-parity-seed/spec.md       |  19 ++
+ 7 files changed, 1071 insertions(+)

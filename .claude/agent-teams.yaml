@@ -1,0 +1,212 @@
+# Claude Code Agent Teams Configuration
+# Multi-agent coordination for Odoo SaaS Platform development
+
+version: "1.0"
+
+teams:
+  - name: "odoo-saas-platform"
+    description: "Multi-tenant Odoo SaaS platform with Odoo.sh CI/CD parity"
+
+    agents:
+      - name: "platform-engineer"
+        role: "Odoo.sh Platform Operations Specialist"
+        persona_file: "agents/personas/odoo-sh-platform-engineer.md"
+        skills:
+          - "odoo-sh-github-integration"
+          - "odoo-sh-environment-manager"
+        responsibilities:
+          - "CI/CD pipeline management"
+          - "Environment lifecycle (dev/staging/prod)"
+          - "Deployment orchestration (blue-green)"
+          - "Database backups and restores"
+          - "Build tracking and monitoring"
+        auto_activate:
+          keywords:
+            - "deploy"
+            - "deployment"
+            - "promote"
+            - "rollback"
+            - "build"
+            - "ci/cd"
+            - "pipeline"
+            - "environment"
+            - "staging"
+            - "production"
+        mcp_servers:
+          primary: "sequential"
+          secondary: ["context7", "github", "digitalocean"]
+
+      - name: "frontend-engineer"
+        role: "Multi-Tenant UI Specialist"
+        persona: "frontend"
+        responsibilities:
+          - "Next.js middleware for tenant resolution"
+          - "Tenant-scoped UI components"
+          - "Custom domain configuration UI"
+          - "Environment dashboard (drag-and-drop)"
+          - "Build/deployment status displays"
+        auto_activate:
+          keywords:
+            - "tenant"
+            - "subdomain"
+            - "custom domain"
+            - "middleware"
+            - "dashboard"
+            - "ui"
+            - "component"
+        mcp_servers:
+          primary: "magic"
+          secondary: ["sequential", "playwright"]
+
+      - name: "backend-engineer"
+        role: "API & RLS Isolation Specialist"
+        persona: "backend"
+        responsibilities:
+          - "API tenant isolation (x-tenant-id enforcement)"
+          - "RLS policy creation and testing"
+          - "Supabase Edge Functions"
+          - "Database schema design"
+          - "ops.* table management"
+        auto_activate:
+          keywords:
+            - "api"
+            - "rls"
+            - "tenant_id"
+            - "isolation"
+            - "edge function"
+            - "schema"
+            - "database"
+        mcp_servers:
+          primary: "sequential"
+          secondary: ["context7", "supabase"]
+
+      - name: "devops-engineer"
+        role: "Infrastructure & DNS Automation"
+        persona: "devops"
+        responsibilities:
+          - "DNS wildcard configuration (Cloudflare)"
+          - "Vercel domain management"
+          - "DigitalOcean App Platform deployments"
+          - "Docker containerization"
+          - "CI/CD workflow automation"
+        auto_activate:
+          keywords:
+            - "dns"
+            - "cloudflare"
+            - "vercel"
+            - "digitalocean"
+            - "docker"
+            - "container"
+            - "infrastructure"
+        mcp_servers:
+          primary: "sequential"
+          secondary: ["digitalocean", "github"]
+
+    coordination:
+      task_sharing: true
+      message_passing: true
+      parallel_execution: true
+      max_concurrent_agents: 3
+
+    workflows:
+      - name: "multi-tenant-deployment"
+        description: "Complete multi-tenant SaaS deployment workflow"
+        phases:
+          - name: "Phase 1: Database Schema"
+            agents: ["backend-engineer"]
+            tasks:
+              - "Create ops.tenants, ops.tenant_domains, ops.tenant_memberships tables"
+              - "Add tenant_id foreign keys to all ops.* tables"
+              - "Implement RLS policies for tenant isolation"
+
+          - name: "Phase 2: Next.js Middleware"
+            agents: ["frontend-engineer", "backend-engineer"]
+            tasks:
+              - "Create tenant resolution middleware (Host header parsing)"
+              - "Implement subdomain and custom domain lookups"
+              - "Add x-tenant-id header injection"
+
+          - name: "Phase 3: API Isolation"
+            agents: ["backend-engineer"]
+            tasks:
+              - "Update all /api/ops/* routes with tenant_id filtering"
+              - "Add tenant context validation middleware"
+              - "Test API isolation between tenants"
+
+          - name: "Phase 4: DNS Configuration"
+            agents: ["devops-engineer", "frontend-engineer"]
+            tasks:
+              - "Configure *.app.insightpulseai.com wildcard in Cloudflare"
+              - "Set up custom domain verification workflow"
+              - "Create verification scripts"
+
+          - name: "Phase 5: Documentation"
+            agents: ["frontend-engineer", "backend-engineer", "devops-engineer"]
+            tasks:
+              - "Update MONOREPO_CONTRACT.md with multi-tenant section"
+              - "Create MULTI_TENANT_SAAS.md architecture docs"
+              - "Document deployment procedures"
+
+      - name: "odoo-sh-cicd-setup"
+        description: "Odoo.sh CI/CD platform setup and testing"
+        phases:
+          - name: "Database Setup"
+            agents: ["backend-engineer", "platform-engineer"]
+            tasks:
+              - "Apply ops.builds, ops.deployments, ops.build_logs tables"
+              - "Create helper functions (gen_build_id, get_latest_build, get_active_deployment)"
+              - "Seed test data (odoo-ce project + 3 environments)"
+
+          - name: "GitHub Integration"
+            agents: ["platform-engineer", "devops-engineer"]
+            tasks:
+              - "Configure GitHub webhook endpoints"
+              - "Implement odoo-sh-github-integration skill workflow"
+              - "Test automated build triggers"
+
+          - name: "Environment Management"
+            agents: ["platform-engineer", "frontend-engineer"]
+            tasks:
+              - "Implement odoo-sh-environment-manager operations"
+              - "Create drag-and-drop UI for environment promotion"
+              - "Test auto-cleanup policies"
+
+          - name: "Deployment Validation"
+            agents: ["platform-engineer", "devops-engineer"]
+            tasks:
+              - "Test blue-green deployment workflow"
+              - "Verify rollback capability"
+              - "Validate smoke tests and health checks"
+
+    shared_context:
+      database_url: "${SUPABASE_URL}"
+      database_direct: "postgresql://postgres:[PASSWORD]@db.spdtwktxdalcfigzeqrz.supabase.co:5432/postgres"
+      github_repo: "https://github.com/Insightpulseai/odoo"
+      vercel_project: "ai-control-plane"
+      cloudflare_zone: "insightpulseai.com"
+      dns_wildcard: "*.app.insightpulseai.com"
+
+    quality_gates:
+      - name: "Schema Validation"
+        agent: "backend-engineer"
+        check: "All ops.* tables exist with correct columns and indexes"
+
+      - name: "Tenant Isolation"
+        agent: "backend-engineer"
+        check: "RLS policies prevent cross-tenant data access"
+
+      - name: "API Isolation"
+        agent: "backend-engineer"
+        check: "All /api/ops/* routes enforce tenant_id filtering"
+
+      - name: "DNS Resolution"
+        agent: "devops-engineer"
+        check: "Wildcard subdomain resolves correctly to Vercel"
+
+      - name: "Build Pipeline"
+        agent: "platform-engineer"
+        check: "GitHub webhook triggers build and deployment successfully"
+
+      - name: "Environment Promotion"
+        agent: "platform-engineer"
+        check: "Dev → Staging → Production workflow works end-to-end"

@@ -240,3 +240,18 @@ infra/superset/env/.env.*.local
 infra/**/env/.env
 infra/**/env/.env.*.local
 odoo-docs/
+
+# ============================================================================
+# Workspace Artifacts (Transient Development Files)
+# ============================================================================
+# Per MONOREPO_CONTRACT.md: These are ephemeral workspace artifacts
+# that should never be committed
+.cache/
+_work/
+artifacts/
+sandbox/dev/.artifacts/
+design-tokens/.figma-*
+design-tokens/figma-*.json
+
+# Agent Teams worktrees
+.worktrees/

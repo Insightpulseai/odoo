@@ -1,0 +1,44 @@
+name: oca-allowlist-lint
+
+on:
+  pull_request:
+    paths:
+      - "config/oca/module_allowlist.yml"
+      - "scripts/oca/**"
+      - "scripts/lib/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "config/oca/module_allowlist.yml"
+      - "scripts/oca/**"
+      - "scripts/lib/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure END_ALLOWLIST marker exists
+        run: |
+          if ! grep -q "^# END_ALLOWLIST$" config/oca/module_allowlist.yml; then
+            echo "ERROR: config/oca/module_allowlist.yml must end with '# END_ALLOWLIST' marker"
+            echo "This marker is required by Docker installation scripts for stdin parsing"
+            exit 1
+          fi
+          echo "✓ END_ALLOWLIST marker found"
+
+      - name: Validate allowlist YAML syntax
+        run: |
+          python3 -c "import yaml; yaml.safe_load(open('config/oca/module_allowlist.yml'))"
+          echo "✓ YAML syntax valid"
+
+      - name: Check repo_root.sh helper exists
+        run: |
+          if [[ ! -f scripts/lib/repo_root.sh ]]; then
+            echo "ERROR: scripts/lib/repo_root.sh is required by OCA installation scripts"
+            exit 1
+          fi
+          echo "✓ repo_root.sh helper found"

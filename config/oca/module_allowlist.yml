@@ -150,3 +150,5 @@ policy:
   require_all_modules_installed: true
   fail_if_module_not_found: true
   skip_missing_in_dry_run: true
+
+# END_ALLOWLIST

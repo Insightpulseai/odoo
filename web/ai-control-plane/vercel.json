@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapis.vercel.sh/vercel.json",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm dev --port 3100",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/platform/:path*",
+      "destination": "/platform/:path*"
+    }
+  ]
+}
