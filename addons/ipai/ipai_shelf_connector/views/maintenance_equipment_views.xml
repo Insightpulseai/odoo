@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_equipment_form_shelf" model="ir.ui.view">
+        <field name="name">maintenance.equipment.form.shelf</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Shelf.nu" name="shelf_sync">
+                    <group>
+                        <group string="Shelf Asset">
+                            <field name="shelf_asset_id"/>
+                            <field name="shelf_asset_url" widget="url"/>
+                            <field name="shelf_qr_code_id"/>
+                            <field name="shelf_sync_status"/>
+                            <field name="shelf_last_sync"/>
+                        </group>
+                        <group string="Actions">
+                            <button name="sync_to_shelf" type="object"
+                                    string="Sync to Shelf"
+                                    class="btn-primary"
+                                    confirm="Push this equipment to Shelf.nu?"/>
+                        </group>
+                    </group>
+                    <group string="Sync Error" invisible="not shelf_sync_error">
+                        <field name="shelf_sync_error" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

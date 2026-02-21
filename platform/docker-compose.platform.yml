@@ -1,0 +1,120 @@
+# ==========================================================================
+# Platform Services: Plane + Shelf.nu
+# Extends the main docker-compose.yml for the IPAI platform
+# Usage: docker compose -f docker-compose.yml -f platform/docker-compose.platform.yml up
+# ==========================================================================
+
+services:
+  # ========================================================================
+  # Plane — Project Management (Jira/Linear alternative)
+  # Source: platform/plane/
+  # Deploy: Docker only (Django + Postgres + Redis + RabbitMQ + MinIO)
+  # ========================================================================
+  plane-api:
+    build:
+      context: ./platform/plane/apps/api
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-api.sh
+    env_file:
+      - ./platform/plane/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
+    networks:
+      - ipai
+
+  plane-worker:
+    build:
+      context: ./platform/plane/apps/api
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-worker.sh
+    env_file:
+      - ./platform/plane/.env
+    depends_on:
+      - plane-api
+      - plane-db
+      - plane-redis
+      - plane-mq
+    networks:
+      - ipai
+
+  plane-web:
+    build:
+      context: ./platform/plane
+      dockerfile: ./apps/web/Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      - plane-api
+    networks:
+      - ipai
+
+  plane-db:
+    image: postgres:15.7-alpine
+    restart: unless-stopped
+    volumes:
+      - plane-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: plane
+      POSTGRES_PASSWORD: plane
+      POSTGRES_DB: plane
+    networks:
+      - ipai
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    volumes:
+      - plane-redis-data:/data
+    networks:
+      - ipai
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: plane
+      RABBITMQ_DEFAULT_PASS: plane
+    volumes:
+      - plane-mq-data:/var/lib/rabbitmq
+    networks:
+      - ipai
+
+  plane-minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9090"
+    volumes:
+      - plane-minio-data:/data
+    networks:
+      - ipai
+
+  # ========================================================================
+  # Shelf.nu — Asset Management
+  # Source: platform/shelf/
+  # Deploy: Vercel (recommended) or Docker
+  # Uses existing Supabase project (spdtwktxdalcfigzeqrz) for DB + Auth
+  # ========================================================================
+  shelf-web:
+    build:
+      context: ./platform/shelf
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./platform/shelf/.env
+    networks:
+      - ipai
+
+volumes:
+  plane-db-data:
+  plane-redis-data:
+  plane-mq-data:
+  plane-minio-data:
+
+networks:
+  ipai:
+    external: true

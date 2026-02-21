@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="shelf_sync_enabled" model="ir.config_parameter">
+            <field name="key">shelf.sync_enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="shelf_base_url" model="ir.config_parameter">
+            <field name="key">shelf.base_url</field>
+            <field name="value">https://shelf.insightpulseai.com</field>
+        </record>
+        <record id="shelf_supabase_url" model="ir.config_parameter">
+            <field name="key">shelf.supabase_url</field>
+            <field name="value">https://spdtwktxdalcfigzeqrz.supabase.co</field>
+        </record>
+        <record id="shelf_organization_id" model="ir.config_parameter">
+            <field name="key">shelf.organization_id</field>
+            <field name="value"></field>
+        </record>
+        <!-- shelf.supabase_service_role_key must be set via env var, never hardcoded -->
+    </data>
+</odoo>

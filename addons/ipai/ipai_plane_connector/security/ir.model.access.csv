@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_plane_sync_log_user,plane.sync.log.user,model_plane_sync_log,base.group_user,1,0,0,0
+access_plane_sync_log_manager,plane.sync.log.manager,model_plane_sync_log,project.group_project_manager,1,1,1,0

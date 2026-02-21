@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form_plane" model="ir.ui.view">
+        <field name="name">project.task.form.plane</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Plane Sync" name="plane_sync">
+                    <group>
+                        <group string="Plane Work Item">
+                            <field name="plane_work_item_id"/>
+                            <field name="plane_work_item_url" widget="url"/>
+                            <field name="plane_sync_status"/>
+                            <field name="plane_last_sync"/>
+                        </group>
+                        <group string="Actions">
+                            <button name="sync_to_plane" type="object"
+                                    string="Sync to Plane"
+                                    class="btn-primary"
+                                    confirm="Push this task to Plane?"/>
+                        </group>
+                    </group>
+                    <group string="Sync Error" invisible="not plane_sync_error">
+                        <field name="plane_sync_error" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

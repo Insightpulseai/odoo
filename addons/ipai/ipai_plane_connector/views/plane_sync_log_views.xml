@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="plane_sync_log_tree" model="ir.ui.view">
+        <field name="name">plane.sync.log.tree</field>
+        <field name="model">plane.sync.log</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="task_id"/>
+                <field name="direction"/>
+                <field name="status" decoration-success="status == 'success'"
+                       decoration-danger="status == 'error'"/>
+                <field name="error_message" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="plane_sync_log_action" model="ir.actions.act_window">
+        <field name="name">Plane Sync Log</field>
+        <field name="res_model">plane.sync.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_plane_sync_log"
+              name="Plane Sync Log"
+              parent="project.menu_project_config"
+              action="plane_sync_log_action"
+              sequence="90"/>
+</odoo>

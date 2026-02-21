@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="plane_sync_enabled" model="ir.config_parameter">
+            <field name="key">plane.sync_enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="plane_base_url" model="ir.config_parameter">
+            <field name="key">plane.base_url</field>
+            <field name="value">https://plane.insightpulseai.com</field>
+        </record>
+        <record id="plane_api_url" model="ir.config_parameter">
+            <field name="key">plane.api_url</field>
+            <field name="value">https://plane.insightpulseai.com</field>
+        </record>
+        <record id="plane_workspace_slug" model="ir.config_parameter">
+            <field name="key">plane.workspace_slug</field>
+            <field name="value">ipai</field>
+        </record>
+        <!-- plane.api_key should be set via env var or Settings UI, never hardcoded -->
+    </data>
+</odoo>
