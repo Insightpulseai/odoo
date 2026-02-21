@@ -76,20 +76,34 @@ def get_existing_providers(models, uid, db, password) -> list[dict]:
     )
 
 
-def validate_schema(models, uid, db, password) -> None:
-    """Fail fast if auth.oauth.provider doesn't exist (module not installed)."""
+def validate_schema(models, uid, db, password) -> dict:
+    """
+    Fail fast if auth.oauth.provider doesn't exist (module not installed).
+    Returns the fields dict so callers can adapt to schema variations.
+    """
     try:
         fields = models.execute_kw(
             db, uid, password, PROVIDER_MODEL, "fields_get",
             [], {"attributes": ["string", "type"]},
         )
-        if "name" not in fields:
-            print(f"ERROR: {PROVIDER_MODEL} has no 'name' field — module not installed?",
-                  file=sys.stderr)
-            sys.exit(1)
     except Exception as exc:
         print(f"ERROR: cannot introspect {PROVIDER_MODEL}: {exc}", file=sys.stderr)
         sys.exit(1)
+
+    if "name" not in fields:
+        print(f"ERROR: {PROVIDER_MODEL} has no 'name' field — is auth_oauth installed?",
+              file=sys.stderr)
+        sys.exit(1)
+
+    # Warn if auth_endpoint is absent (older Odoo used auth_link)
+    if "auth_endpoint" not in fields:
+        candidates = [f for f in fields if "auth" in f.lower() or "endpoint" in f.lower()]
+        print(f"WARN: field 'auth_endpoint' not found in {PROVIDER_MODEL}. "
+              f"Candidates: {candidates}. "
+              f"Edit MANAGED_FIELDS and the desired dict if schema differs.",
+              file=sys.stderr)
+
+    return fields
 
 
 def apply_providers(
@@ -112,8 +126,8 @@ def apply_providers(
             "css_class": p.get("css_class", ""),
             "sequence": p.get("sequence", 10),
             "scope": p.get("scopes", "openid profile email"),
-            # auth_link is the authorize endpoint for auth_oauth
-            "auth_link": p.get("auth_endpoint", ""),
+            # Odoo 19 auth_oauth field name is auth_endpoint (not auth_link)
+            "auth_endpoint": p.get("auth_endpoint", ""),
             "validation_endpoint": p.get("userinfo_endpoint", ""),
         }
         if client_id:
@@ -181,7 +195,7 @@ def main() -> None:
     forbidden: list[str] = cfg.get("forbidden", [])
 
     uid, models, db, password = connect()
-    validate_schema(models, uid, db, password)
+    schema = validate_schema(models, uid, db, password)
 
     print(f"Config: {CONFIG_FILE}")
     print(f"Providers to apply: {[p['name'] for p in providers]}")
