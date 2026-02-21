@@ -49,7 +49,9 @@ max_rows = 1000
 # Port to use for the local database URL
 port = 54322
 # Major version of PostgreSQL
-major_version = 16
+# NOTE: Supabase cloud runs PG15. The self-hosted DO droplet runs PG16 but that
+# is irrelevant here — this value controls the local dev container only.
+major_version = 15
 
 [studio]
 # Port to use for Supabase Studio
