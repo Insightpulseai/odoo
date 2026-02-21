@@ -9,6 +9,7 @@
         "account",
         "analytic",
         "mail",
+        "web",
     ],
     "data": [
         "security/ir.model.access.csv",
@@ -16,8 +17,14 @@
         "views/project_project_views.xml",
         "views/account_analytic_account_views.xml",
         "views/ppm_import_wizard_views.xml",
+        "views/okr_dashboard_action.xml",
         "data/ir_cron_ppm_sync.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ipai_finance_ppm/static/src/js/okr_dashboard_action.js",
+        ],
+    },
     "installable": True,
     "application": False,
 }
