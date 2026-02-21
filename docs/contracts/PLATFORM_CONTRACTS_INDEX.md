@@ -18,7 +18,7 @@
 | C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md) | n8n workflows | `ops.task_queue` (Supabase) | 🔲 Pending | — |
 | C-05 | [Design Tokens](DESIGN_TOKENS_CONTRACT.md) | Figma | `packages/design-tokens/tokens.json` | 🔲 Pending | — |
 | C-06 | [Vercel Environment Variables](VERCEL_ENV_CONTRACT.md) | Vercel dashboard | Next.js apps | 🔲 Pending | `vercel-env-leak-guard.yml` |
-| C-07 | [Supabase Vault Secrets](VAULT_SECRETS_CONTRACT.md) | Supabase Vault | Edge Functions, CI | 🔲 Pending | `platform-guardrails.yml` |
+| C-07 | [Supabase Vault Secrets](SUPABASE_VAULT_CONTRACT.md) | Supabase Vault | Edge Functions, pg_cron | ✅ Active | `20260221000001_vault_secret_registry.sql` |
 | C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md) | All services | `ops.platform_events` (Supabase) | 🔲 Pending | — |
 | C-09 | [GitHub Actions Secrets](GH_SECRETS_CONTRACT.md) | GitHub org secrets | CI workflows | 🔲 Pending | `platform-guardrails.yml` |
 | C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md) | Supabase Auth | Zoho SMTP (`smtppro.zoho.com`) | ✅ Active | `RB_SUPABASE_AUTH_SMTP_VERIFY.md` |
