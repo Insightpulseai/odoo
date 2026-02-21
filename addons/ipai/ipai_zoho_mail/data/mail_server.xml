@@ -27,7 +27,8 @@
             <!-- Password must be set manually after installation -->
             <field name="smtp_pass"></field>
             <field name="from_filter">@insightpulseai.com</field>
-            <field name="active" eval="True"/>
+            <!-- Deactivated: DO blocks outbound SMTP (25/465/587). Use ipai_mail_bridge_zoho instead. -->
+            <field name="active" eval="False"/>
             <field name="sequence">1</field>
         </record>
 
