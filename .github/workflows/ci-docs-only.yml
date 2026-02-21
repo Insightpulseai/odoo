@@ -10,6 +10,9 @@ on:
       - ".github/workflows/ci-docs-only.yml"
       - ".github/workflows/docs-pages.yml"
 
+permissions:
+  contents: read
+
 jobs:
   docs-lint:
     name: Docs Lint & Validation

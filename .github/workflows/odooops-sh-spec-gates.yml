@@ -12,6 +12,9 @@ on:
       - 'spec/odooops-sh/**'
       - 'supabase/migrations/*ops*'
 
+permissions:
+  contents: read
+
 jobs:
   validate-spec-kit:
     name: Validate Spec Kit Structure

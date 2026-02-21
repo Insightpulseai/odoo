@@ -24,6 +24,9 @@ on:
       - "mkdocs.yml"
       - "requirements-docs.txt"
 
+permissions:
+  contents: read
+
 jobs:
   preflight:
     name: Platform Preflight

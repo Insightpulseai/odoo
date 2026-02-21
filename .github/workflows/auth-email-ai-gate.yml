@@ -27,6 +27,9 @@ on:
 env:
   MAILGUN_DOMAIN: mg.insightpulseai.com
 
+permissions:
+  contents: read
+
 jobs:
   # Job 1: Validate .env.example completeness
   validate-env-example:

@@ -17,6 +17,9 @@ on:
       - 'addons/ipai_ops_mirror/**'
       - 'ops/**'
 
+permissions:
+  contents: read
+
 jobs:
   sanity:
     name: Ops SSOT Sanity Checks

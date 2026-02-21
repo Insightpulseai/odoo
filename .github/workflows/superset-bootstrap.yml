@@ -9,6 +9,9 @@ on:
       - "assets/superset/**"
       - ".github/workflows/superset-bootstrap.yml"
 
+permissions:
+  contents: read
+
 jobs:
   bootstrap:
     runs-on: ubuntu-latest

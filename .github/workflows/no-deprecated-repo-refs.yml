@@ -2,6 +2,9 @@ name: Block deprecated repo references
 on:
   pull_request:
   push:
+permissions:
+  contents: read
+
 jobs:
   scan:
     runs-on: ubuntu-latest

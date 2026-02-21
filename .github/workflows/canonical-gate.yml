@@ -6,6 +6,9 @@ on:
   push:
     branches: [main, 18.0]
 
+permissions:
+  contents: read
+
 jobs:
   canonical-lint:
     name: Canonical Structure Audit
