@@ -23,6 +23,9 @@ env:
   DB_USER: "doadmin"
   DB_NAME: "plane"
 
+permissions:
+  contents: read
+
 jobs:
   deploy-plane:
     runs-on: ubuntu-latest

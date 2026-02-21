@@ -29,6 +29,9 @@ env:
   TF_VAR_supabase_org_id: ${{ secrets.SUPABASE_ORG_ID }}
   WORKING_DIR: infra/supabase
 
+permissions:
+  contents: read
+
 jobs:
   terraform-check:
     name: Terraform Check

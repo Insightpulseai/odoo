@@ -16,6 +16,9 @@ defaults:
 env:
   NODE_VERSION: '20'
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint & Type Check

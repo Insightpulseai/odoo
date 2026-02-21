@@ -13,6 +13,9 @@ on:
       - 'scripts/oca-bootstrap.sh'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-tokens:
     name: Validate Design Tokens

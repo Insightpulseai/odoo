@@ -22,6 +22,9 @@ on:
 env:
   SYSTEM_TENANT_ID: '00000000-0000-0000-0000-000000000001'
 
+permissions:
+  contents: read
+
 jobs:
   discover-infrastructure:
     name: Discover Infrastructure

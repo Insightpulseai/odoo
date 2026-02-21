@@ -13,6 +13,9 @@ on:
       - 'docs/ipai/**'
       - 'docs/CANONICAL_MAP.md'
 
+permissions:
+  contents: read
+
 jobs:
   validate-module-references:
     name: Validate IPAI Module References

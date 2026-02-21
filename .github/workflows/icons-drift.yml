@@ -11,6 +11,9 @@ on:
       - ".github/workflows/icons-drift.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   icons:
     runs-on: ubuntu-latest

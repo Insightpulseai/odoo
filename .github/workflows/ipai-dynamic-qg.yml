@@ -12,6 +12,9 @@ on:
       - "scripts/ipai_full_audit.py"
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   static-audit:
     name: Static Validation

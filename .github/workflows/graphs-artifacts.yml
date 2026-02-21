@@ -16,6 +16,9 @@ on:
       - 'spec/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-graphs:
     runs-on: ubuntu-latest

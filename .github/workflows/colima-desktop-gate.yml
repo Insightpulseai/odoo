@@ -14,6 +14,9 @@ on:
       - 'apps/colima-desktop-ui/**'
       - '.github/workflows/colima-desktop-gate.yml'
 
+permissions:
+  contents: read
+
 jobs:
   daemon-cli:
     name: Daemon + CLI

@@ -7,6 +7,9 @@ name: Terraform - Cloudflare DNS (deprecated)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   redirect:
     runs-on: ubuntu-latest

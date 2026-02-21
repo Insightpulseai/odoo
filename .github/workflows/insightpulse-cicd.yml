@@ -62,6 +62,9 @@ env:
   IMAGE_NAME: jgtolentino/odoo
   SUPABASE_PROJECT_ID: spdtwktxdalcfigzeqrz
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Detect Changes

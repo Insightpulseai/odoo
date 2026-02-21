@@ -448,7 +448,7 @@ def main():
     print("🔨 Generating XML seed data files...\n")
 
     employees = generate_employees(closing_df)
-    print(f"   👥 {len(employees)} employees: {', '.join(employees)}\n")
+    print(f"   👥 {len(employees)} employee codes processed\n")
 
     categories = generate_logframe(closing_df)
     print(f"   📊 {len(categories)} task categories found\n")

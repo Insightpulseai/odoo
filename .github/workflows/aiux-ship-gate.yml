@@ -34,6 +34,9 @@ env:
   SHIP_VERSION: "1.1.0"
   SHIP_MODULES: "ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_document_ai,ipai_expense_ocr"
 
+permissions:
+  contents: read
+
 jobs:
   # ============================================
   # 1. Preflight - Verify all modules exist

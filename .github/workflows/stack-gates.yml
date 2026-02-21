@@ -42,6 +42,9 @@ env:
   POSTGRES_PASSWORD: odoo
   POSTGRES_DB: odoo_test
 
+permissions:
+  contents: read
+
 jobs:
   # Job 1: Validate stack manifest and lockfile
   validate-manifest:

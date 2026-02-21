@@ -23,6 +23,9 @@ on:
           - staging
           - all
 
+permissions:
+  contents: read
+
 jobs:
   edge-health:
     runs-on: ubuntu-latest

@@ -55,15 +55,17 @@ PROJECT_TAX = "Finance PPM - BIR Tax Filing"
 # Employee directory
 # ---------------------------------------------------------------------------
 EMPLOYEES = {
-    "CKVC": {"name": "Khalil Veracruz", "email": "khalil.veracruz@omc.com", "role": "Finance Director", "tier": "Director"},
-    "RIM":  {"name": "Rey Meran", "email": "rey.meran@omc.com", "role": "Senior Finance Manager", "tier": "Senior Manager"},
-    "BOM":  {"name": "Beng Manalo", "email": "beng.manalo@omc.com", "role": "Finance Manager", "tier": "Manager"},
-    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "LAS":  {"name": "Amor Lasaga", "email": "amor.lasaga@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JAP":  {"name": "Jasmin Ignacio", "email": "jasmin.ignacio@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JRMO": {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    # Placeholder employee codes — map to real Odoo users by login at import time.
+    # Real names/emails are NOT stored here; resolved via Odoo user records.
+    "CKVC": {"name": "Finance Director",        "email": "finance.director@example.com",       "role": "Finance Director",        "tier": "Director"},
+    "RIM":  {"name": "Senior Finance Manager",  "email": "sr.finance.manager@example.com",     "role": "Senior Finance Manager",  "tier": "Senior Manager"},
+    "BOM":  {"name": "Finance Manager",         "email": "finance.manager@example.com",        "role": "Finance Manager",         "tier": "Manager"},
+    "JPAL": {"name": "Finance Analyst A",       "email": "finance.analyst.a@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "LAS":  {"name": "Finance Analyst B",       "email": "finance.analyst.b@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JLI":  {"name": "Finance Analyst C",       "email": "finance.analyst.c@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "RMQB": {"name": "Finance Analyst D",       "email": "finance.analyst.d@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JAP":  {"name": "Finance Analyst E",       "email": "finance.analyst.e@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JRMO": {"name": "Finance Analyst F",       "email": "finance.analyst.f@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
 }
 
 # Canonical seed data root (SSOT — do not add fallback paths)
