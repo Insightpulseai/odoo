@@ -21,6 +21,7 @@
 | C-07 | [Supabase Vault Secrets](VAULT_SECRETS_CONTRACT.md) | Supabase Vault | Edge Functions, CI | 🔲 Pending | `platform-guardrails.yml` |
 | C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md) | All services | `ops.platform_events` (Supabase) | 🔲 Pending | — |
 | C-09 | [GitHub Actions Secrets](GH_SECRETS_CONTRACT.md) | GitHub org secrets | CI workflows | 🔲 Pending | `platform-guardrails.yml` |
+| C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md) | Supabase Auth | Zoho SMTP (`smtppro.zoho.com`) | ✅ Active | `RB_SUPABASE_AUTH_SMTP_VERIFY.md` |
 
 ---
 

@@ -67,6 +67,24 @@ Only these fields may be written from Supabase → Odoo:
 | Portal / external user | Never auto-provisioned in Odoo | Odoo portal disabled by default |
 | Service account | Pre-seeded in `scripts/odoo/` bootstrap | No Supabase counterpart |
 
+### Identity emails (Invites / Reset / Magic Links)
+
+**SSOT Owner:** Supabase Auth
+**Email Provider:** Zoho SMTP (configured in Supabase Auth SMTP settings)
+**Contract:** `docs/contracts/SUPABASE_AUTH_SMTP_CONTRACT.md`
+
+**Odoo MUST NOT send invitation or identity lifecycle emails.**
+Odoo only receives user projections when ERP access is required (on-demand provisioning).
+The `ipai_mail_bridge_zoho` addon is for ERP document email (invoices, POs, CRM) — not identity.
+
+| Email type | Sent by | Provider |
+|-----------|---------|---------|
+| User invitation | Supabase Auth | Zoho SMTP (`smtppro.zoho.com:587`) |
+| Password reset | Supabase Auth | Zoho SMTP |
+| Magic link / OTP | Supabase Auth | Zoho SMTP |
+| Invoice / PO / ERP document | Odoo (`ipai_mail_bridge_zoho`) | Zoho Mail API (HTTPS bridge) |
+| Catchall / inbound | Zoho Mail | n/a |
+
 ---
 
 ## §2 — Mail: YAML is SSOT, Odoo DB is derived
