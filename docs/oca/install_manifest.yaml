@@ -137,9 +137,20 @@ waves:
 
       - name: account_tax_balance
         source: oca/account-financial-tools
+        status: blocked
+        installed_version: null
+        notes: "NOT on OCA 19.0 branch — requires porting from 18.0 or use account_financial_report instead"
+
+      - name: account_move_post_date_user
+        source: oca/account-financial-tools
         status: pending
         installed_version: null
-        notes: "Depends on date_range (Wave 2)"
+        notes: "Tracks which user posted the journal entry"
+
+      - name: account_move_print
+        source: oca/account-financial-tools
+        status: pending
+        installed_version: null
 
       - name: account_payment_mode
         source: oca/bank-payment
@@ -151,6 +162,18 @@ waves:
         status: pending
         installed_version: null
         notes: "Depends on account_payment_mode; verify base_iban is available"
+
+      - name: account_payment_purchase
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+        notes: "Depends on account_payment_order (Tier 3 within Wave 3)"
+
+      - name: account_payment_sale
+        source: oca/bank-payment
+        status: pending
+        installed_version: null
+        notes: "Depends on account_payment_order (Tier 3 within Wave 3)"
 
   # ──────────────────────────────────────────────────────────────────────────
   # Wave 4 — Nice-to-Haves
@@ -186,25 +209,14 @@ waves:
         status: pending
         installed_version: null
 
-      - name: account_payment_purchase
-        source: oca/bank-payment
-        status: pending
-        installed_version: null
-        notes: "Depends on account_payment_order (Wave 3)"
-
-      - name: account_payment_sale
-        source: oca/bank-payment
-        status: pending
-        installed_version: null
-        notes: "Depends on account_payment_order (Wave 3)"
-
 # ──────────────────────────────────────────────────────────────────────────
 # Confirmed NOT available in 19.0 — do not attempt to install
 # ──────────────────────────────────────────────────────────────────────────
 not_available_19:
-  - name: base_tier_validation
+  - name: account_tax_balance
     last_oca_version: "18.0"
-    alternative: "n8n approval workflows + Slack notifications"
+    alternative: "Port from 18.0 via oca-port, or use account_financial_report (already installed)"
+    review_date: "2026-02-21"
   - name: helpdesk_mgmt
     last_oca_version: "18.0"
     alternative: "Project app with helpdesk-style stages"
@@ -220,3 +232,11 @@ not_available_19:
   - name: contract
     last_oca_version: "18.0"
     alternative: null
+
+# Corrected: base_tier_validation was ported locally (commit 75bb2e2)
+# Removed from not_available_19 list — it is available via port_queue.yml
+ported_from_18:
+  - name: base_tier_validation
+    ported_version: "19.0.3.1.2"
+    commit: "75bb2e2"
+    notes: "Ported from 18.0 via oca-port on 2026-02-20"
