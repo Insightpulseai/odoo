@@ -1,0 +1,48 @@
+# config/odoo/auth_providers.yaml
+# SSOT for Odoo OAuth / OIDC provider configuration.
+# Used by: scripts/odoo/apply_auth_providers.py
+#
+# Rules:
+# - Only Supabase is the allowed identity provider (IdP SSOT).
+# - Zoho is mail transport only — never an OAuth provider in Odoo.
+# - Client ID / Secret are env-var references — never hardcode here.
+# - apply_auth_providers.py enforces the allowlist: any provider NOT listed here
+#   and found in the DB is reported as a violation (not deleted, but flagged).
+#
+# SSOT boundary: docs/architecture/SSOT_BOUNDARIES.md §1
+
+providers:
+  - name: "Supabase"
+    enabled: true
+    kind: "oidc"
+    # Supabase OIDC issuer endpoint for project spdtwktxdalcfigzeqrz
+    issuer: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1"
+    # OAuth2 authorization and token endpoints (derived from issuer)
+    auth_endpoint: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/authorize"
+    token_endpoint: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/token"
+    # User info / userinfo endpoint
+    userinfo_endpoint: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/user"
+    # Credentials from container env vars — never hardcode
+    client_id_env: "ODOO_OIDC_SUPABASE_CLIENT_ID"
+    client_secret_env: "ODOO_OIDC_SUPABASE_CLIENT_SECRET"
+    # Scopes to request
+    scopes: "openid profile email"
+    # CSS class for login button (Odoo auth_oauth field: css_class)
+    css_class: "o_auth_login_with_supabase"
+    # Body displayed on the login button
+    body: "Sign in with InsightPulseAI"
+    # Sequence (lower = higher priority on login page)
+    sequence: 1
+
+# ---------------------------------------------------------------------------
+# Provider allowlist (enforced by apply_auth_providers.py --enforce)
+# Any provider in the Odoo DB that is NOT in this list will be reported.
+# ---------------------------------------------------------------------------
+allowlist:
+  - "Supabase"
+
+# Explicitly forbidden providers (apply_auth_providers.py will disable them if found)
+forbidden:
+  - "Zoho"         # mail transport only, not IdP
+  - "Google"       # not configured for this stack
+  - "GitHub"       # dev SSO only; manage via Supabase social providers

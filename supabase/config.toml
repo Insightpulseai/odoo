@@ -127,6 +127,16 @@ double_confirm_changes = true
 # Enable email confirmation requirement
 enable_confirmations = true
 
+[auth.sms.twilio]
+# Twilio phone OTP — SMS and WhatsApp (WhatsApp requires Twilio Verify, not plain Twilio)
+# Credentials stored in Supabase Vault (never hardcode here).
+# message_service_sid: create a Twilio Messaging Service, add TWILIO_FROM_NUMBER to it,
+#   then set TWILIO_MESSAGE_SERVICE_SID to the MG... SID.
+enabled = true
+account_sid = "env(TWILIO_ACCOUNT_SID)"
+auth_token = "env(TWILIO_AUTH_TOKEN)"
+message_service_sid = "env(TWILIO_MESSAGE_SERVICE_SID)"
+
 [auth.external.github]
 enabled = true
 client_id = "env(GITHUB_CLIENT_ID)"

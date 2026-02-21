@@ -26,6 +26,8 @@
 | C-12 | [Supabase Cron](SUPABASE_CRON_CONTRACT.md) | `supabase/migrations/*_cron_*.sql` | pg_cron jobs | ✅ Active | `cron.job_run_details` |
 | C-13 | [Nightly Repo Hygiene](SUPABASE_CRON_REPO_HYGIENE.md) | `automations/repo_hygiene/jobs/nightly.yml` | `ops.repo_hygiene_*` (Supabase) | ✅ Active | `ops.repo_hygiene_runs` |
 | C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md) | Supabase Postgres (CDC/WAL) | Analytics Buckets (Iceberg) / BigQuery | ✅ Active | `pg_stat_replication` |
+| C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md) | `config/odoo/settings.yaml` | Odoo `ir.config_parameter` | ✅ Active | `apply_settings.py --verify-only` |
+| C-16 | Odoo Auth Providers | `config/odoo/auth_providers.yaml` | Odoo `auth.oauth.provider` | ✅ Active | `apply_auth_providers.py --enforce` |
 
 ---
 
