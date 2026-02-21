@@ -9,6 +9,9 @@ on:
         default: 'ops/jobs/odoo/ipai_finance_ppm_install.yaml'
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   run-cli-job:
     runs-on: ubuntu-latest

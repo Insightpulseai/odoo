@@ -39,6 +39,9 @@ on:
 env:
   AUDIT_OUTPUT_DIR: artifacts/audit
 
+permissions:
+  contents: read
+
 jobs:
   integration-audit:
     name: Run Integration Audit

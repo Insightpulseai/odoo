@@ -17,6 +17,9 @@ on:
       - 'infra/odoo/addons-path.*'
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   regen-check:
     name: Verify generated artifacts are reproducible

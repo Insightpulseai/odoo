@@ -7,6 +7,9 @@ on:
       - '.github/workflows/vscode_stabilization.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   validate-scripts:
     runs-on: ubuntu-latest

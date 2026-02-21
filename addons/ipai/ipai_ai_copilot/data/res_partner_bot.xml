@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        AI Copilot bot partner.
+        noupdate="1": created once; admin can rename without losing XMLID.
+        This is a partner only (no user login); the bot posts via sudo().
+    -->
+    <record id="partner_ai_copilot_bot" model="res.partner">
+        <field name="name">AI Copilot</field>
+        <field name="active" eval="True"/>
+        <field name="email">ai-copilot@insightpulseai.com</field>
+        <field name="comment">
+            Internal AI Copilot bot. Powered by Ollama via ai_oca_native_generate_ollama.
+            This partner is used as the author of bot replies in #ai-copilot.
+        </field>
+    </record>
+</odoo>

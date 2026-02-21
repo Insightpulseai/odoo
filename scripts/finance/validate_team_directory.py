@@ -243,7 +243,7 @@ def run_self_test():
         {"Code": "BOM", "Name": "Beng Manalo", "Role": "Finance Manager", "Tier": "Manager"},
         {"Code": "JPAL", "Name": "Jinky Paladin", "Role": "Finance Analyst", "Tier": "Analyst"},
         {"Code": "LAS", "Name": "Amor Lasaga", "Role": "Finance Analyst", "Tier": "Analyst"},
-        {"Code": "JLI", "Name": "Jerald Loterte", "Role": "Finance Analyst", "Tier": "Analyst"},
+        {"Code": "JLI", "Name": "Jerald Lorente", "Role": "Finance Analyst", "Tier": "Analyst"},
         {"Code": "RMQB", "Name": "Sally Brillantes", "Role": "Finance Analyst", "Tier": "Analyst"},
         {"Code": "JAP", "Name": "Jasmin Ignacio", "Role": "Finance Analyst", "Tier": "Analyst"},
         {"Code": "JRMO", "Name": "Jhoee Oliva", "Role": "Finance Analyst", "Tier": "Analyst"},

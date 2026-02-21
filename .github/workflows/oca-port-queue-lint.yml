@@ -11,6 +11,9 @@ on:
       - 'config/oca/port_queue.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint-port-queue:
     name: Validate OCA Port Queue

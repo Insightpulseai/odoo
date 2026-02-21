@@ -83,9 +83,9 @@
 
     <!-- Accountant - JPL -->
     <record id="user_jpl" model="res.users">
-        <field name="name">Jerald Loterte</field>
-        <field name="login">jerald.loterte@omc.com</field>
-        <field name="email">jerald.loterte@omc.com</field>
+        <field name="name">Jerald Lorente</field>
+        <field name="login">jerald.lorente@omc.com</field>
+        <field name="email">jerald.lorente@omc.com</field>
         <field name="finance_code">JPL</field>
         <field name="groups_id" eval="[
             (4, ref('base.group_user')),

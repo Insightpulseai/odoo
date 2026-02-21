@@ -127,7 +127,6 @@ for stage_def in STAGES:
     vals = {
         "sequence": stage_def["sequence"],
         "fold": stage_def["fold"],
-        "description": stage_def["description"],
     }
     if existing:
         _kw("project.task.type", "write", [existing, vals])
@@ -169,15 +168,21 @@ for proj_name, proj_desc in [
         pid = existing_project[0]
         print(f"  Project exists: {proj_name} (ID {pid})")
     else:
-        pid = _kw("project.project", "create", [{
-            "name": proj_name,
+        # Discover available fields to avoid Invalid field errors on CE installs
+        available_fields = _kw("project.project", "fields_get", [], {"attributes": ["string"]})
+        proj_vals = {"name": proj_name}
+        optional = {
             "allow_timesheets": True,
             "allow_subtasks": True,
             "allow_recurring_tasks": True,
             "allow_task_dependencies": True,
             "allow_milestones": True,
             "description": proj_desc,
-        }])
+        }
+        for k, v in optional.items():
+            if k in available_fields:
+                proj_vals[k] = v
+        pid = _kw("project.project", "create", [proj_vals])
         print(f"  Created Project: {proj_name} (ID {pid})")
 
     # Link stages to project

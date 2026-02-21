@@ -9,6 +9,9 @@ on:
 env:
   PROJECT_URL: https://github.com/users/jgtolentino/projects/4
 
+permissions:
+  contents: read
+
 jobs:
   # Auto-add new issues and PRs to project
   add-to-project:

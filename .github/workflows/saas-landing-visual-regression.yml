@@ -6,6 +6,9 @@ on:
     paths:
       - 'templates/saas-landing/**'
 
+permissions:
+  contents: read
+
 jobs:
   visual-regression:
     runs-on: ubuntu-latest

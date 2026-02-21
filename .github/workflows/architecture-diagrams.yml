@@ -13,6 +13,9 @@ on:
       - 'scripts/export_architecture_diagrams.sh'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check-exports:
     name: Check Diagram Exports

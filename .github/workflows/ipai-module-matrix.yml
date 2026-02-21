@@ -10,6 +10,9 @@ on:
       - 'scripts/test_ipai_install_upgrade.py'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   audit-inventory:
     name: IPAI Module Audit

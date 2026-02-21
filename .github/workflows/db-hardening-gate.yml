@@ -18,6 +18,9 @@ on:
       - ".gitignore"
       - ".github/workflows/db-hardening-gate.yml"
 
+permissions:
+  contents: read
+
 jobs:
   validate-artifacts:
     name: Validate DB hardening artifacts

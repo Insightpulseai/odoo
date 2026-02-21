@@ -47,6 +47,9 @@ env:
   SOURCE_BRANCH: ${{ github.event.inputs.source_branch }}
   TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
 
+permissions:
+  contents: read
+
 jobs:
   # ==========================================================================
   # Pre-Flight Checks

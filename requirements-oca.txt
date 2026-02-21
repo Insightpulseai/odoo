@@ -13,3 +13,9 @@ dateutil>=2.8
 
 # Quality Control
 qrcode>=7.0
+
+# auth_oidc
+python-jose>=3.3.0
+
+# partner_email_check
+email-validator>=2.0.0

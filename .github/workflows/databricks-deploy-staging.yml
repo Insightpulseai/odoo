@@ -18,6 +18,9 @@ defaults:
   run:
     working-directory: infra/databricks
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Deploy to Staging

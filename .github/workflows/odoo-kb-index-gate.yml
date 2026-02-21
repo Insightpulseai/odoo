@@ -8,6 +8,9 @@ on:
       - "agents/skills/**/KB_SOURCES.yaml"
       - "tests/test_odoo_kb_indexer.py"
 
+permissions:
+  contents: read
+
 jobs:
   kb-index:
     runs-on: ubuntu-latest
