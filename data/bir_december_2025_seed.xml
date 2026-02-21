@@ -8,7 +8,7 @@
         <!-- Finance Team Member IDs (from production res.users) -->
         <!-- Khalil Veracruz: 65 (Finance Manager) -->
         <!-- Rey Meran (TBWA): 77 (Finance Director) -->
-        <!-- Jerald Loterte: 72 (GL Specialist) -->
+        <!-- Jerald Lorente: 72 (GL Specialist) -->
         <!-- Jhoee Oliva: 74 (Tax Specialist) -->
         <!-- Jasmin Ignacio: 73 (AP Specialist) -->
         <!-- Jinky Paladin: 71 (AR Specialist) -->
@@ -19,7 +19,7 @@
             <field name="name">[JAN-10] 1601-C Prep: Extract Dec 2025 Payroll</field>
             <field name="project_id" ref="project.project_project_data_6"/>
             <field name="date_deadline">2026-01-05</field>
-            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Loterte (GL) -->
+            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Lorente (GL) -->
             <field name="description">Extract December 2025 payroll data from HR module. Verify employee records, compensation amounts, and withholding tax calculations.</field>
             <field name="priority">1</field>
         </record>
@@ -84,7 +84,7 @@
             <field name="name">[DEC-05] GL Reconciliation - December 2025</field>
             <field name="project_id" ref="project.project_project_data_7"/>
             <field name="date_deadline">2026-01-05</field>
-            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Loterte (GL Specialist) -->
+            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Lorente (GL Specialist) -->
             <field name="description">Reconcile all GL accounts for December 2025. Verify subledger balances match GL, resolve discrepancies.</field>
             <field name="priority">2</field>
         </record>
