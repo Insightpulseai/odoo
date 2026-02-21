@@ -8,16 +8,16 @@ Imports tasks into 2 separate projects:
   - "Finance PPM - BIR Tax Filing": 50 BIR tax filing tasks (9 form types)
 Total: 89 base tasks across 2 projects.
 
-Employee Reference:
-    CKVC - Khalil Veracruz  (Finance Director / Approver)
-    RIM  - Rey Meran         (Senior Finance Manager / Reviewer)
-    BOM  - Beng Manalo       (Finance Manager)
-    JPAL - Jinky Paladin     (Finance Analyst)
-    LAS  - Amor Lasaga       (Finance Analyst)
-    JLI  - Jerald Loterte    (Finance Analyst)
-    RMQB - Sally Brillantes  (Finance Analyst)
-    JAP  - Jasmin Ignacio    (Finance Analyst)
-    JRMO - Jhoee Oliva       (Finance Analyst)
+Employee Reference (codes — resolve to real users via Odoo at import time):
+    CKVC - Finance Director / Approver
+    RIM  - Senior Finance Manager / Reviewer
+    BOM  - Finance Manager
+    JPAL - Finance Analyst
+    LAS  - Finance Analyst
+    JLI  - Finance Analyst
+    RMQB - Finance Analyst
+    JAP  - Finance Analyst
+    JRMO - Finance Analyst
 
 Usage:
     python3 scripts/bulk_import_tasks_odoo19.py <admin_password>
