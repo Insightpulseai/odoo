@@ -4,7 +4,7 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-02-21
+> Last updated: 2026-02-21 (C-13 added)
 
 ---
 
@@ -24,6 +24,7 @@
 | C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md) | Supabase Auth | Zoho SMTP (`smtppro.zoho.com`) | ✅ Active | `RB_SUPABASE_AUTH_SMTP_VERIFY.md` |
 | C-11 | [Edge Functions](SUPABASE_EDGE_FUNCTIONS_CONTRACT.md) | `supabase/functions/` | All integration bridges | ✅ Active | `ssot-surface-guard.yml` |
 | C-12 | [Supabase Cron](SUPABASE_CRON_CONTRACT.md) | `supabase/migrations/*_cron_*.sql` | pg_cron jobs | ✅ Active | `cron.job_run_details` |
+| C-13 | [Nightly Repo Hygiene](SUPABASE_CRON_REPO_HYGIENE.md) | `automations/repo_hygiene/jobs/nightly.yml` | `ops.repo_hygiene_*` (Supabase) | ✅ Active | `ops.repo_hygiene_runs` |
 
 ---
 
