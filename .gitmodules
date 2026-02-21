@@ -142,3 +142,9 @@
 	path = vendor/oca/hr
 	url = https://github.com/OCA/hr.git
 	branch = 18.0
+[submodule "platform/plane"]
+	path = platform/plane
+	url = https://github.com/makeplane/plane.git
+[submodule "platform/shelf"]
+	path = platform/shelf
+	url = https://github.com/Shelf-nu/shelf.nu.git
