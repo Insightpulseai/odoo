@@ -13,6 +13,9 @@ on:
       - "sql/**"
       - "pkgs/db/**"
 
+permissions:
+  contents: read
+
 jobs:
   notify:
     runs-on: ubuntu-latest

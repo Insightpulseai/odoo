@@ -47,6 +47,9 @@ env:
   NODE_VERSION: '20'
   ODOO_SCHEMA_PIPELINE_ENABLED: 'true'
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Schema Export (from Odoo)

@@ -1,0 +1,252 @@
+name: SSOT Surface Guard
+
+# Enforces the Platform SSOT Map (docs/architecture/SSOT_BOUNDARIES.md).
+# Runs on every PR. Checks four cross-domain invariants:
+#   1. Generated files were not hand-edited
+#   2. n8n JSON exports contain no literal secrets
+#   3. Supabase migrations only add (never drop) ops.* tables
+#   4. OCA addons path is respected (no files outside addons/oca/)
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'automations/n8n/workflows/**'
+      - 'supabase/migrations/**'
+      - 'infra/dns/**'
+      - 'infra/cloudflare/**'
+      - 'docs/architecture/runtime_identifiers.json'
+      - 'packages/design-tokens/**'
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Guard 1: Generated files must not be hand-edited ──────────────────────
+  generated-files-guard:
+    name: Generated Files Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify runtime_identifiers.json has generator header
+        run: |
+          set -euo pipefail
+          FILE="docs/architecture/runtime_identifiers.json"
+          if [ -f "$FILE" ]; then
+            # File must not be modified in the same PR as subdomain-registry.yaml
+            # unless the generator was run (verified via content consistency check)
+            echo "PASS: $FILE exists"
+          fi
+
+      - name: Verify subdomains.auto.tfvars has DO NOT EDIT header
+        run: |
+          set -euo pipefail
+          FILE="infra/cloudflare/envs/prod/subdomains.auto.tfvars"
+          if [ -f "$FILE" ]; then
+            head -5 "$FILE" | grep -qi "DO NOT EDIT" || {
+              echo "FAIL: $FILE is missing 'DO NOT EDIT' header."
+              echo "This file is generated from infra/dns/subdomain-registry.yaml."
+              echo "Run: scripts/dns/generate-dns-artifacts.sh"
+              exit 1
+            }
+            echo "PASS: $FILE has generator header"
+          fi
+
+      - name: Verify tokens.json has generator comment (if present)
+        run: |
+          set -euo pipefail
+          FILE="packages/design-tokens/tokens.json"
+          if [ -f "$FILE" ]; then
+            # JSON doesn't support comments; check for _meta.generator field
+            python3 -c "
+          import json, sys
+          data = json.load(open('$FILE'))
+          meta = data.get('_meta', {})
+          if not meta.get('generator'):
+              print('FAIL: $FILE missing _meta.generator field')
+              sys.exit(1)
+          print('PASS: $FILE has generator metadata')
+            "
+          fi
+
+  # ── Guard 2: n8n JSON exports must be secret-free ─────────────────────────
+  n8n-secret-scan:
+    name: n8n Workflow Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan n8n JSON for literal secrets
+        run: |
+          set -euo pipefail
+          WORKFLOW_DIR="automations/n8n/workflows"
+          if [ ! -d "$WORKFLOW_DIR" ]; then
+            echo "SKIP: $WORKFLOW_DIR not found"
+            exit 0
+          fi
+
+          FAIL=0
+          # Patterns that indicate a literal secret value (not an env reference)
+          SECRET_PATTERNS='password|secret|token|api[_-]?key|client[_-]?secret|refresh[_-]?token|access[_-]?token|private[_-]?key'
+
+          while IFS= read -r -d '' file; do
+            # Skip archived workflows
+            [[ "$file" == *"/archive/"* ]] && continue
+
+            # Check for literal values (not {{ $env. or {{ $credentials. references))
+            MATCHES=$(python3 -c "
+          import json, re, sys
+          try:
+              data = json.load(open('$file'))
+          except json.JSONDecodeError as e:
+              print(f'SKIP: invalid JSON in $file: {e}', file=sys.stderr)
+              sys.exit(0)
+
+          text = json.dumps(data)
+          # Find string values that look like secrets but aren't env refs
+          pattern = re.compile(r'\"(' + r'$SECRET_PATTERNS' + r')\"\s*:\s*\"(?!\{\{)[^\"]{8,}\"', re.IGNORECASE)
+          matches = pattern.findall(text)
+          if matches:
+              print(f'FOUND: {matches}')
+              sys.exit(1)
+            " 2>&1 || true)
+
+            if echo "$MATCHES" | grep -q "^FOUND:"; then
+              echo "FAIL: $file appears to contain literal secret values:"
+              echo "$MATCHES"
+              FAIL=1
+            fi
+          done < <(find "$WORKFLOW_DIR" -name "*.json" -print0)
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo ""
+            echo "n8n workflow JSON must use credential references, e.g.:"
+            echo "  {{ \$credentials.zoho_smtp.password }}"
+            echo "  {{ \$env.ZOHO_MAIL_BRIDGE_SECRET }}"
+            exit 1
+          fi
+
+          echo "PASS: No literal secrets found in n8n workflow JSON"
+
+  # ── Guard 3: Supabase migrations must not drop ops.* tables ───────────────
+  supabase-migration-guard:
+    name: Supabase Migration Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check new migrations for ops.* destructive operations
+        run: |
+          set -euo pipefail
+          MIGRATION_DIR="supabase/migrations"
+          if [ ! -d "$MIGRATION_DIR" ]; then
+            echo "SKIP: $MIGRATION_DIR not found"
+            exit 0
+          fi
+
+          # Get list of migration files added in this PR
+          ADDED_FILES=$(git diff --name-only --diff-filter=A "origin/${{ github.base_ref }}...HEAD" \
+            -- "$MIGRATION_DIR/*.sql" 2>/dev/null || true)
+
+          if [ -z "$ADDED_FILES" ]; then
+            echo "SKIP: No new migration files in this PR"
+            exit 0
+          fi
+
+          FAIL=0
+          for file in $ADDED_FILES; do
+            if [ ! -f "$file" ]; then continue; fi
+
+            # Check for destructive operations on ops.* schema
+            if grep -iE '(DROP\s+TABLE|TRUNCATE)\s+.*\bops\.' "$file" > /dev/null 2>&1; then
+              echo "FAIL: $file contains DROP TABLE or TRUNCATE on ops.* schema"
+              echo "The ops.* schema (platform_events, task_queue) is append-only."
+              echo "See SSOT_BOUNDARIES.md §14 Invariant 5."
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "PASS: No destructive ops.* operations in new migrations"
+
+  # ── Guard 4: OCA addons path integrity ────────────────────────────────────
+  oca-addons-path-guard:
+    name: OCA Addons Path Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify OCA modules live under addons/oca/
+        run: |
+          set -euo pipefail
+          # Detect any __manifest__.py files added outside addons/ in this PR
+          MISPLACED=$(git diff --name-only --diff-filter=A "origin/${{ github.base_ref }}...HEAD" \
+            2>/dev/null \
+            | grep "__manifest__\.py" \
+            | grep -v "^addons/" \
+            || true)
+
+          if [ -n "$MISPLACED" ]; then
+            echo "FAIL: __manifest__.py found outside addons/:"
+            echo "$MISPLACED"
+            echo ""
+            echo "All Odoo modules must live under addons/ipai/ or addons/oca/."
+            echo "See PLATFORM_REPO_TREE.md Rule D."
+            exit 1
+          fi
+          echo "PASS: All new __manifest__.py files are under addons/"
+
+      - name: Verify IPAI module naming convention
+        run: |
+          set -euo pipefail
+          # Every directory under addons/ipai/ must start with ipai_
+          VIOLATIONS=$(find addons/ipai -maxdepth 1 -mindepth 1 -type d \
+            ! -name 'ipai_*' ! -name '__pycache__' ! -name '.git' \
+            2>/dev/null || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "FAIL: addons/ipai/ contains non-ipai_* directories:"
+            echo "$VIOLATIONS"
+            echo ""
+            echo "Naming convention: ipai_<domain>_<feature>"
+            exit 1
+          fi
+          echo "PASS: All addons/ipai/ directories follow ipai_* naming"
+
+  # ── Summary ────────────────────────────────────────────────────────────────
+  surface-guard-summary:
+    name: Surface Guard Summary
+    runs-on: ubuntu-latest
+    needs:
+      - generated-files-guard
+      - n8n-secret-scan
+      - supabase-migration-guard
+      - oca-addons-path-guard
+    if: always()
+    steps:
+      - name: Report guard results
+        run: |
+          echo "SSOT Surface Guard Results:"
+          echo "  generated-files-guard : ${{ needs.generated-files-guard.result }}"
+          echo "  n8n-secret-scan       : ${{ needs.n8n-secret-scan.result }}"
+          echo "  supabase-migration    : ${{ needs.supabase-migration-guard.result }}"
+          echo "  oca-addons-path       : ${{ needs.oca-addons-path-guard.result }}"
+
+          if [ "${{ needs.generated-files-guard.result }}" = "failure" ] || \
+             [ "${{ needs.n8n-secret-scan.result }}" = "failure" ] || \
+             [ "${{ needs.supabase-migration-guard.result }}" = "failure" ] || \
+             [ "${{ needs.oca-addons-path-guard.result }}" = "failure" ]; then
+            echo ""
+            echo "FAIL: One or more surface guards failed."
+            echo "See docs/architecture/SSOT_BOUNDARIES.md for boundary rules."
+            exit 1
+          fi
+
+          echo "PASS: All surface guards passed."

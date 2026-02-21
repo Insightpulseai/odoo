@@ -29,6 +29,9 @@ on:
       - 'docs/api/openapi.ipai_ai_platform.yaml'
       - '.github/workflows/ipai-ai-platform-ci.yml'
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Python Lint

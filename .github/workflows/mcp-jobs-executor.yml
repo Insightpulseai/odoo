@@ -13,7 +13,10 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
-      max_jobs:
+      max_permissions:
+  contents: read
+
+jobs:
         description: 'Maximum jobs to process per run'
         required: false
         default: '10'

@@ -14,6 +14,9 @@ on:
       - "scripts/kb/**"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   verify-kb-pin:
     name: Verify KB Pin Integrity

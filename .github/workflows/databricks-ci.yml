@@ -18,6 +18,9 @@ defaults:
   run:
     working-directory: infra/databricks
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint Python

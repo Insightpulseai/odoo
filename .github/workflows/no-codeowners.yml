@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/CODEOWNERS'
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest

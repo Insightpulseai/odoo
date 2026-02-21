@@ -17,6 +17,9 @@ env:
   SUPABASE_URL: https://spdtwktxdalcfigzeqrz.supabase.co
   SUPABASE_PROJECT_REF: spdtwktxdalcfigzeqrz
 
+permissions:
+  contents: read
+
 jobs:
   scrape-bir-forms:
     runs-on: ubuntu-latest

@@ -49,7 +49,9 @@ max_rows = 1000
 # Port to use for the local database URL
 port = 54322
 # Major version of PostgreSQL
-major_version = 16
+# NOTE: Supabase cloud runs PG15. The self-hosted DO droplet runs PG16 but that
+# is irrelevant here — this value controls the local dev container only.
+major_version = 15
 
 [studio]
 # Port to use for Supabase Studio
@@ -124,6 +126,16 @@ enable_signup = true
 double_confirm_changes = true
 # Enable email confirmation requirement
 enable_confirmations = true
+
+[auth.sms.twilio]
+# Twilio phone OTP — SMS and WhatsApp (WhatsApp requires Twilio Verify, not plain Twilio)
+# Credentials stored in Supabase Vault (never hardcode here).
+# message_service_sid: create a Twilio Messaging Service, add TWILIO_FROM_NUMBER to it,
+#   then set TWILIO_MESSAGE_SERVICE_SID to the MG... SID.
+enabled = true
+account_sid = "env(TWILIO_ACCOUNT_SID)"
+auth_token = "env(TWILIO_AUTH_TOKEN)"
+message_service_sid = "env(TWILIO_MESSAGE_SERVICE_SID)"
 
 [auth.external.github]
 enabled = true

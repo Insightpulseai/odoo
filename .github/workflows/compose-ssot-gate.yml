@@ -14,6 +14,9 @@ on:
       - '**/docker-compose*.yml'
       - '**/compose.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   validate-ssot:
     runs-on: ubuntu-latest

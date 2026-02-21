@@ -28,6 +28,9 @@ env:
   ORG_SLUG: ${{ vars.ORG_SLUG || 'Insightpulseai-net' }}
   DEFAULT_BRANCH: ${{ vars.DEFAULT_BRANCH || 'main' }}
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Governance Config

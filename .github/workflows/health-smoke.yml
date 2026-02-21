@@ -12,6 +12,9 @@ on:
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
 
+permissions:
+  contents: read
+
 jobs:
   smoke:
     runs-on: ubuntu-latest

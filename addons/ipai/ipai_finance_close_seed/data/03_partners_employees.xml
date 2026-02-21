@@ -47,8 +47,8 @@
             <field name="parent_id" ref="partner_tbwa_smp"/>
         </record>
         <record id="partner_jli" model="res.partner">
-            <field name="name">Jerald Loterte</field>
-            <field name="email">jerald.loterte@omc.com</field>
+            <field name="name">Jerald Lorente</field>
+            <field name="email">jerald.lorente@omc.com</field>
             <field name="function">Finance Analyst</field>
             <field name="parent_id" ref="partner_tbwa_smp"/>
         </record>
@@ -110,9 +110,9 @@
             <field name="parent_id" ref="emp_rim"/>
         </record>
         <record id="emp_jli" model="hr.employee">
-            <field name="name">Jerald Loterte</field>
+            <field name="name">Jerald Lorente</field>
             <field name="job_title">Finance Analyst</field>
-            <field name="work_email">jerald.loterte@omc.com</field>
+            <field name="work_email">jerald.lorente@omc.com</field>
             <field name="address_id" ref="partner_tbwa_smp"/>
             <field name="parent_id" ref="emp_bom"/>
         </record>

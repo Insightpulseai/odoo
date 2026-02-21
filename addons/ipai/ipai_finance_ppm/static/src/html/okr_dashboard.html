@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Finance PPM — OKR Dashboard v3 · TBWA\SMP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#27727B;--red:#C1232B;--gold:#FCCE10;--orange:#E87C25;--olive:#B5C334;
+--salmon:#FE8463;--green:#9BCA63;--amber:#F3A43B;--sky:#60C0DD;--coral:#D7504B;--cyan:#26C0C0;
+--bg:#FAFAF6;--card:#fff;--border:#E8E6E0;--text:#2C3E40;--muted:#7A8A8C;--subtle:#F2F1EC;--track:#EEEDEA;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'IBM Plex Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;}
+.hdr{background:linear-gradient(135deg,#27727B,#1E5A62);color:#fff;padding:18px 28px;position:relative;overflow:hidden;}
+.hdr::after{content:'';position:absolute;top:-50%;right:-5%;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(252,206,16,.08),transparent 70%);pointer-events:none;}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;}
+.hdr h1{font-family:'DM Serif Display',serif;font-size:21px;font-weight:400;letter-spacing:-.3px;}
+.hdr .sub{font-size:10px;opacity:.65;font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+.hdr-r{display:flex;gap:7px;align-items:center;}
+.htag{font-size:9px;font-family:'IBM Plex Mono',monospace;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);}
+.sel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 10px;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;outline:none;appearance:none;}
+.sel option{color:#333;background:#fff;}
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);padding:0 28px;overflow-x:auto;}
+.tab{padding:10px 16px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;font-family:'IBM Plex Sans',sans-serif;letter-spacing:.3px;}
+.tab:hover{color:var(--teal);}.tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.ct{padding:18px 28px 40px;max-width:1480px;margin:0 auto;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.mb{margin-bottom:16px;}.hidden{display:none;}
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.sh h2{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;}
+.bdg{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.4px;}
+.bt{background:#27727B12;color:var(--teal);}.br{background:#C1232B0e;color:var(--red);}.bg{background:#FCCE1018;color:#B8940A;}.bo{background:#E87C250e;color:var(--orange);}.bv{background:#B5C33412;color:#7A8522;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.ct-t{font-size:11px;font-weight:700;letter-spacing:.15px;}
+.hero{display:grid;grid-template-columns:200px 1fr;gap:14px;margin-bottom:16px;}
+.overall-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.overall-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.obj-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.obj-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;position:relative;overflow:hidden;transition:box-shadow .15s;}
+.obj-card:hover{box-shadow:0 2px 14px rgba(39,114,123,.08);}
+.obj-card .accent{position:absolute;top:0;left:0;width:100%;height:3px;}
+.obj-name{font-size:10px;font-weight:600;line-height:1.3;margin-top:4px;min-height:26px;}
+.obj-weight{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;margin-top:2px;}
+.obj-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;}
+.tp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.tp-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;transition:box-shadow .15s;}
+.tp-card:hover{box-shadow:0 2px 12px rgba(39,114,123,.06);}
+.tp-ring{position:relative;width:76px;height:76px;margin:0 auto 6px;}
+.tp-avatar{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;}
+.tp-name{font-size:10px;font-weight:600;}.tp-role{font-size:8px;color:var(--muted);}
+.tp-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-top:1px;}
+.as-tbl{width:100%;border-collapse:collapse;}
+.as-tbl th{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;text-align:left;padding:0 0 6px;border-bottom:2px solid var(--border);}
+.as-tbl th:last-child{text-align:right;width:180px;}
+.as-tbl td{padding:6px 0;border-bottom:1px solid var(--border);font-size:10px;vertical-align:middle;}
+.as-tbl tr:last-child td{border-bottom:none;}
+.as-obj{font-weight:700;color:var(--teal);white-space:nowrap;}
+.as-kr{font-size:10px;color:var(--text);}
+.as-act{font-size:10px;color:var(--muted);}
+.bar-wrap{width:100%;display:flex;align-items:center;gap:6px;}
+.bar-track{flex:1;height:8px;background:var(--track);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+.bar-pct{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;min-width:30px;text-align:right;}
+.issues{display:flex;gap:0;border-radius:6px;overflow:hidden;margin-bottom:10px;}
+.iss-seg{flex:1;padding:7px 10px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#fff;}
+.iss-lbl{font-size:7px;font-weight:600;letter-spacing:.5px;margin-top:1px;opacity:.85;}
+.kpi-m{background:var(--subtle);border:1px solid var(--border);border-radius:7px;padding:9px 11px;}
+.kpi-ml{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px;}
+.kpi-mv{font-family:'DM Serif Display',serif;font-size:20px;line-height:1;}
+.kpi-ms{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px;}
+.ms{display:flex;align-items:center;gap:10px;padding:7px 11px;border-radius:6px;margin-bottom:5px;background:var(--subtle);border:1px solid var(--border);}
+.ms-dot{width:9px;height:9px;border-radius:50%;border:2.5px solid;flex-shrink:0;}
+.ms-text{font-size:10px;flex:1;line-height:1.3;}.ms-kr{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;}
+.lf{border-radius:8px;padding:12px 14px;margin-bottom:7px;background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden;}
+.lf-accent{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:8px 0 0 8px;}
+.lf-level{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:1px;}
+.lf-name{font-size:12px;font-weight:700;line-height:1.3;margin-bottom:5px;padding-left:10px;}
+.lf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-left:10px;}
+.lf-cell{background:var(--subtle);border-radius:4px;padding:6px 8px;}
+.lf-cell-h{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;}
+.lf-cell-v{font-size:10px;line-height:1.35;}
+.pm-tbl{width:100%;border-collapse:collapse;}
+.pm-tbl th{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:0 0 6px;border-bottom:2px solid var(--border);}
+.pm-tbl td{padding:7px 0;border-bottom:1px solid var(--border);font-size:10px;vertical-align:top;}
+.pm-tbl tr:last-child td{border-bottom:none;}
+.pm-area{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;white-space:nowrap;}
+.tm{display:grid;grid-template-columns:34px 1fr 42px;gap:7px;padding:7px 0;border-bottom:1px solid var(--border);align-items:center;}
+.tm:last-child{border-bottom:none;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;}
+.tm-n{font-size:10px;font-weight:600;}.tm-r{font-size:8px;font-weight:600;margin-top:1px;}
+.tm-t{text-align:right;font-family:'DM Serif Display',serif;font-size:15px;}
+.pb{margin-bottom:8px;}.pb-l{display:flex;justify-content:space-between;margin-bottom:2px;}
+.pb-l span:first-child{font-size:10px;}.pb-l span:last-child{font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.pb-t{height:5px;background:var(--track);border-radius:3px;overflow:hidden;}.pb-f{height:100%;border-radius:3px;}
+.ttab{width:100%;border-collapse:collapse;}
+.ttab th{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:0 0 6px;border-bottom:2px solid var(--border);}
+.ttab td{padding:7px 0;border-bottom:1px solid var(--border);font-size:10px;}
+.ttab tr:last-child td{border-bottom:none;}
+.tf{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:10px;}
+.fb{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;padding:2px 5px;border-radius:3px;}
+.step{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:7px;border:1px solid;margin-bottom:6px;}
+.step-n{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:13px;color:#fff;flex-shrink:0;}
+.step-lb{font-size:11px;font-weight:600;}.step-rl{font-size:9px;margin-top:1px;}
+.step-ld{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:auto;flex-shrink:0;}
+.fbox{background:var(--subtle);border-radius:5px;border:1px solid var(--border);padding:9px 11px;margin-top:10px;}
+.fbox-l{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+.fbox p{font-size:9px;line-height:1.5;}
+.fbox code{font-family:'IBM Plex Mono',monospace;font-size:9px;background:#fff;padding:1px 4px;border-radius:3px;border:1px solid var(--border);}
+.alert{border-radius:7px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;}
+.alert-t{font-size:10px;font-weight:700;margin-bottom:1px;}.alert-b{font-size:9px;line-height:1.5;}
+.alert-b code{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:1px 4px;border-radius:3px;}
+.wf{display:flex;align-items:center;justify-content:center;gap:0;padding:12px 0;flex-wrap:wrap;}
+.wf-s{text-align:center;padding:12px 20px;border-radius:8px;border:2px solid;min-width:110px;}
+.wf-arr{padding:0 4px;color:var(--border);font-size:15px;}
+.gantt-r{display:grid;grid-template-columns:160px 1fr;gap:8px;align-items:center;margin-bottom:4px;}
+.gantt-trk{height:22px;background:var(--track);border-radius:4px;position:relative;overflow:hidden;}
+.gantt-bar{position:absolute;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:#fff;}
+.ftr{border-top:1px solid var(--border);padding:9px 28px;display:flex;justify-content:space-between;align-items:center;}
+.ftr-l{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);}
+.ftr-tags{display:flex;gap:4px;}
+.ftr-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:600;padding:2px 5px;border-radius:3px;border:1px solid var(--border);color:var(--muted);}
+.sidebar-layout{display:grid;grid-template-columns:1fr 260px;gap:14px;}
+.risk-item{padding:7px 0;border-bottom:1px solid var(--border);font-size:10px;}
+.risk-item:last-child{border-bottom:none;}
+.risk-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.5px;}
+@media(max-width:1080px){.hero{grid-template-columns:1fr;}.obj-grid,.tp-grid{grid-template-columns:repeat(3,1fr);}.sidebar-layout{grid-template-columns:1fr;}.ct{padding:12px;}}
+@media(max-width:680px){.obj-grid,.tp-grid,.g5{grid-template-columns:1fr 1fr;}.g2,.g3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div><h1>Finance PPM — Objectives &amp; Key Results</h1><div class="sub">TBWA\SMP · Odoo CE 19.0 + OCA · Supabase SSOT · PMP/PMBOK + Clarity PPM</div></div>
+    <div class="hdr-r">
+      <span class="htag" id="todayTag"></span>
+      <span class="htag">v3.0</span>
+      <select class="sel"><option>Nov 2025</option><option>Dec 2025</option><option>Jan 2026</option><option selected>Feb 2026</option><option>Mar 2026</option></select>
+      <button onclick="loadLiveData()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:4px 10px;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;">⟳ Live</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="okr">◎ OKRs &amp; KPIs</button>
+  <button class="tab" data-tab="logframe">▣ Logframe</button>
+  <button class="tab" data-tab="wbs">▤ WBS Timeline</button>
+  <button class="tab" data-tab="team">◆ Team Load</button>
+  <button class="tab" data-tab="tax">⬡ Tax Filing</button>
+</div>
+
+<div class="ct">
+
+<div id="tab-okr">
+  <div class="hero mb">
+    <div class="overall-box">
+      <div class="overall-lbl">Overall Progress</div>
+      <div id="overall-ring" style="width:160px;height:160px;"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;">Score 0.0–1.0 · Target ≥ 0.7</div>
+    </div>
+    <div>
+      <div class="sh" style="margin-bottom:8px;"><h2>Objectives</h2><span class="bdg bt">5 OBJECTIVES · WEIGHTED</span></div>
+      <div class="obj-grid" id="objGrid"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-layout mb">
+    <div>
+      <div class="card mb">
+        <div class="ch"><span class="ct-t">Key Results (SMART · 0.0–1.0 Scoring)</span><span class="bdg br">3 KRs</span></div>
+        <div style="display:grid;grid-template-columns:1fr 60px 60px 36px 76px;gap:6px;padding:0 0 5px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid var(--border);">
+          <span>Key Result</span><span>Baseline</span><span>Target</span><span>Score</span><span>Risk</span>
+        </div>
+        <div id="krRows"></div>
+        <div class="fbox"><div class="fbox-l">Wikipedia OKR Scoring</div><p>Score monthly 0.0–1.0. <strong>0.7 ≈ aspirational success</strong>. Limit 3–5 KRs per Objective. Score &lt; 0.4 = immediate risk register escalation.</p></div>
+      </div>
+      <div class="card mb">
+        <div class="ch"><span class="ct-t">Activity Status</span><span class="bdg bt">OBJECTIVE → KR → ACTIVITY</span></div>
+        <table class="as-tbl"><thead><tr><th>Objective</th><th>Key Result</th><th>Activities</th><th style="text-align:right;width:180px;">Goal / Completed</th></tr></thead><tbody id="asTblBody"></tbody></table>
+      </div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="ch"><span class="ct-t">Outstanding Issues</span></div>
+        <div class="issues">
+          <div class="iss-seg" style="background:var(--red);">1<div class="iss-lbl">HIGH</div></div>
+          <div class="iss-seg" style="background:var(--orange);">2<div class="iss-lbl">MEDIUM</div></div>
+          <div class="iss-seg" style="background:var(--olive);">0<div class="iss-lbl">LOW</div></div>
+        </div>
+        <div class="risk-item"><span class="risk-lbl" style="color:var(--red);">HIGH</span> · BIR portal downtime risk for KR2 filing deadline</div>
+        <div class="risk-item"><span class="risk-lbl" style="color:var(--orange);">MED</span> · CKVC approval bottleneck (93% of approvals)</div>
+        <div class="risk-item"><span class="risk-lbl" style="color:var(--orange);">MED</span> · Accrual data completeness for KR3 variance</div>
+      </div>
+      <div class="card mb" style="border-left:3px solid var(--red);">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--red);letter-spacing:.5px;margin-bottom:3px;">RISK ESCALATION</div>
+        <div style="font-size:10px;line-height:1.5;">KR confidence <strong>&lt; 40%</strong> → Risk Register entry with owner + mitigation plan + response strategy.</div>
+      </div>
+      <div class="card mb">
+        <div class="ch"><span class="ct-t">Milestones</span><span class="bdg bv">3</span></div>
+        <div class="ms"><div class="ms-dot" style="border-color:var(--teal);"></div><div class="ms-text"><strong>Close — Day-3</strong></div><div class="ms-kr" style="color:var(--teal);">KR1</div></div>
+        <div class="ms"><div class="ms-dot" style="border-color:var(--red);"></div><div class="ms-text"><strong>All Taxes Filed</strong></div><div class="ms-kr" style="color:var(--red);">KR2</div></div>
+        <div class="ms"><div class="ms-dot" style="border-color:var(--orange);"></div><div class="ms-text"><strong>Variance &lt; ₱50k</strong></div><div class="ms-kr" style="color:var(--orange);">KR3</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct-t">Ongoing Activity</span></div>
+        <div id="ongoingAct"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh"><h2>Team Member Progress</h2><span class="bdg bt" id="teamBdg">10 MEMBERS</span><span class="bdg bg">FEB 2026</span></div>
+  <div class="tp-grid mb" id="teamRings"></div>
+
+  <div class="g3 mb">
+    <div class="card"><div class="ch"><span class="ct-t">Burndown Chart</span><span class="bdg bo">D+1→D+5</span></div><div id="chart-burn" style="height:175px;"></div></div>
+    <div class="card"><div class="ch"><span class="ct-t">Closing Velocity</span><span class="bdg bv">CUM %</span></div><div id="chart-vel" style="height:175px;"></div></div>
+    <div class="card"><div class="ch"><span class="ct-t">Stage Distribution</span><span class="bdg bt" id="stageBdg">STAGES</span></div><div id="chart-pie" style="height:175px;"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><span class="ct-t">Quarterly Closing KPIs</span><span class="bdg br">9 DELIVERABLES</span></div>
+    <div id="qtrKpis" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;"></div>
+  </div>
+</div>
+
+<div id="tab-logframe" class="hidden">
+  <div class="sh"><h2>PMP Logical Framework</h2><span class="bdg bt">7 LEVELS</span></div>
+  <div id="logframeTree"></div>
+  <div class="card" style="margin-top:14px;">
+    <div class="ch"><span class="ct-t">PMBOK Process Group → OKR</span><span class="bdg bt">5 GROUPS</span></div>
+    <table class="pm-tbl"><thead><tr><th>Group</th><th>OKR Fit</th><th>Finance PPM</th></tr></thead><tbody>
+      <tr><td class="pm-area" style="color:var(--teal);">Initiating</td><td>Define objectives</td><td>100% compliant close + filing</td></tr>
+      <tr><td class="pm-area" style="color:var(--orange);">Planning</td><td>KRs → WBS → milestones</td><td>3 SMART KRs, 168 tasks</td></tr>
+      <tr><td class="pm-area" style="color:var(--olive);">Executing</td><td>Update KR actuals</td><td>D+1→D+5 cycle execution</td></tr>
+      <tr><td class="pm-area" style="color:var(--red);">M&amp;C</td><td>KRs as control metrics</td><td>Score &lt; 0.4 → risk</td></tr>
+      <tr><td class="pm-area" style="color:#9BCA63;">Closing</td><td>KR acceptance</td><td>TB sign-off, lock period</td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<div id="tab-wbs" class="hidden">
+  <div class="g2 mb">
+    <div class="card"><div class="ch"><span class="ct-t">WBS Phases</span><span class="bdg bt">4</span></div><div id="phaseList"></div></div>
+    <div class="card"><div class="ch"><span class="ct-t" id="pdT">Select Phase</span><span class="bdg bg" id="pdB"></span></div><div id="pdBody" style="min-height:140px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:10px;">Click a phase</div></div>
+  </div>
+  <div class="card mb"><div class="ch"><span class="ct-t">Gantt</span><span class="bdg bv">D+1→D+5</span></div><div id="ganttBox"></div></div>
+  <div class="card"><div class="ch"><span class="ct-t">Workflow</span><span class="bdg bt">3-STEP</span></div><div id="wfBox" class="wf"></div></div>
+</div>
+
+<div id="tab-team" class="hidden">
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;">
+    <div class="card"><div class="ch"><span class="ct-t">Finance Team</span><span class="bdg bt">10</span></div><div id="teamList"></div></div>
+    <div>
+      <div class="card mb"><div class="ch"><span class="ct-t">Workload by Role</span></div><div id="wlBars"></div></div>
+      <div class="card mb"><div class="ch"><span class="ct-t">Workload by Activity</span></div><div id="chart-wl" style="height:180px;"></div></div>
+      <div class="alert" style="background:#C1232B06;border:1px solid #C1232B18;">
+        <div style="font-size:13px;color:var(--red);flex-shrink:0;">⚠</div>
+        <div><div class="alert-t" style="color:var(--red);">Bottleneck: Approval Concentration</div><div class="alert-b">CKVC handles 52/56 approval tasks (93%). Delegate via <code style="background:#C1232B06;border:1px solid #C1232B15;color:var(--red);">project_task_delegation</code>.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-tax" class="hidden">
+  <div class="g2 mb">
+    <div class="kpi-m"><div class="kpi-ml">Tax Tasks</div><div class="kpi-mv">66</div><div class="kpi-ms">6 BIR form types</div></div>
+    <div class="kpi-m"><div class="kpi-ml">Filing Workflow</div><div class="kpi-mv">3-Step</div><div class="kpi-ms">BOM → RIM → CKVC</div></div>
+  </div>
+  <div class="g2 mb">
+    <div class="card"><div class="ch"><span class="ct-t">BIR Tax Forms</span><span class="bdg br">6</span></div><table class="ttab" id="taxTbl"></table></div>
+    <div class="card"><div class="ch"><span class="ct-t">Filing Chain</span></div><div id="taxSteps"></div>
+      <div class="fbox"><div class="fbox-l">Deadline Calc</div><p><code>WORKDAY()</code> with PH holiday calendar. Lead: 4 WD prep, 2 WD review, 1 WD approval.</p></div>
+    </div>
+  </div>
+  <div class="card"><div class="ch"><span class="ct-t">Filing Frequency</span><span class="bdg bo">66/YR</span></div><div id="chart-tax" style="height:150px;"></div></div>
+</div>
+
+</div>
+
+<div class="ftr">
+  <div class="ftr-l">Finance PPM v3.0 · Odoo CE 19.0 + OCA · Supabase SSOT · PMP/PMBOK + Clarity PPM · <span id="ftrDate"></span></div>
+  <div class="ftr-tags"><span class="ftr-tag">Odoo SOR</span><span class="ftr-tag">Supabase SSOT</span><span class="ftr-tag">n8n</span><span class="ftr-tag">ECharts</span><span class="ftr-tag">PMBOK 7</span></div>
+</div>
+
+<script>
+// ── Today ────────────────────────────────────────────────────────────────
+const today=new Date();
+const ds=today.toLocaleDateString('en-PH',{day:'2-digit',month:'short',year:'numeric'});
+document.getElementById('todayTag').textContent=ds;
+document.getElementById('ftrDate').textContent=ds;
+
+// ── Theme ────────────────────────────────────────────────────────────────
+const CP=['#C1232B','#27727B','#FCCE10','#E87C25','#B5C334','#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD','#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'];
+echarts.registerTheme('infographic',{color:CP,tooltip:{backgroundColor:'rgba(50,50,50,0.5)',axisPointer:{type:'line',lineStyle:{color:'#27727B',type:'dashed'}}},categoryAxis:{axisLine:{lineStyle:{color:'#27727B'}},splitLine:{show:false}},valueAxis:{axisLine:{show:false},splitArea:{show:false},splitLine:{lineStyle:{color:['#ccc'],type:'dashed'}}}});
+
+const ch={};
+const resize=()=>Object.values(ch).forEach(c=>c&&c.resize());
+window.addEventListener('resize',resize);
+
+// ── Tabs ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  ['okr','logframe','wbs','team','tax'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));
+  setTimeout(resize,60);
+});});
+
+// ── Static data ───────────────────────────────────────────────────────────
+const OBJ=[
+  {id:'O1',name:'Initial compliance by D+2',proj:'Close',tasks:18,assignees:7,weight:11,color:'#E87C25',pct:0},
+  {id:'O2',name:'Accruals & amortizations by D+3',proj:'Close',tasks:46,assignees:7,weight:27,color:'#27727B',pct:0},
+  {id:'O3',name:'WIP/OOP reconciliation by D+3',proj:'Close',tasks:6,assignees:5,weight:4,color:'#C1232B',pct:0},
+  {id:'O4',name:'Final close & TB sign-off by D+5',proj:'Close',tasks:32,assignees:8,weight:19,color:'#B5C334',pct:0},
+  {id:'O5',name:'Statutory BIR filings before deadline',proj:'Tax',tasks:66,assignees:3,weight:39,color:'#F3A43B',pct:0},
+];
+const KR=[
+  {id:'KR1',name:'% close tasks finished by Day-3',base:'0%',target:'≥ 95%',score:0.0,risk:'MEDIUM',riskC:'#E87C25',scope:'IM1'},
+  {id:'KR2',name:'# filings before statutory deadline',base:'1/6',target:'6/6',score:0.0,risk:'HIGH',riskC:'#C1232B',scope:'IM2'},
+  {id:'KR3',name:'GL adjustment vs accrual variance',base:'₱580k',target:'≤ ₱50k',score:0.0,risk:'MEDIUM',riskC:'#E87C25',scope:'Quality'},
+];
+const TEAM=[
+  {c:'CKVC',n:'Khalil Veracruz',r:'Finance Director',t:53,cl:'#C1232B',p:0},
+  {c:'RIM',n:'Rey Meran',r:'Sr. Finance Mgr',t:52,cl:'#E87C25',p:0},
+  {c:'BOM',n:'Beng Manalo',r:'Finance Supervisor',t:35,cl:'#27727B',p:0},
+  {c:'JPAL',n:'Jinky Paladin',r:'Accountant',t:11,cl:'#60C0DD',p:0},
+  {c:'LAS',n:'Amor Lasaga',r:'Accountant',t:8,cl:'#9BCA63',p:0},
+  {c:'JAP',n:'Jasmin Ignacio',r:'Accountant',t:2,cl:'#B5C334',p:0},
+  {c:'JLI',n:'Jerald Lorente',r:'Accountant',t:2,cl:'#F3A43B',p:0},
+  {c:'JRMO',n:'Jhoee Oliva',r:'Accountant',t:1,cl:'#FE8463',p:0},
+  {c:'JMSM',n:'Joana Maravillas',r:'Accountant',t:1,cl:'#D7504B',p:0},
+  {c:'RMQB',n:'Sally Brillantes',r:'Accountant',t:3,cl:'#26C0C0',p:0},
+];
+const ACTIVITIES=[
+  {obj:'O1',kr:'Payroll/tax provision',acts:['Payroll entries','Final pay processing','SL conversion','Tax provision','PPB entries','VAT reporting'],pcts:[0,0,0,0,0,0]},
+  {obj:'O2',kr:'Accruals & amortization',acts:['Depreciation','Mgmt fees/royalties','Insurance accruals','Bank charges/forex','Recurring expenses','Reversals','Cash advances'],pcts:[0,0,0,0,0,0,0]},
+  {obj:'O3',kr:'WIP/OOP reconciliation',acts:['WIP schedule per Job#','OOP reconciliation'],pcts:[0,0]},
+  {obj:'O4',kr:'Close & TB sign-off',acts:['IC billing','WIP/revenue rec','TB review','Consolidation pack','Lock period'],pcts:[0,0,0,0,0]},
+  {obj:'O5',kr:'BIR statutory filings',acts:['1601-C monthly','0619-E monthly','2550Q quarterly','1601-EQ quarterly','1702Q/1702-RT'],pcts:[0,0,0,0,0]},
+];
+const PHASES=[
+  {phase:'I. Initial & Compliance',day:'D+1',color:'#E87C25',clusters:[{name:'Payroll & Tax',tasks:6,owner:'RIM',reviewer:'RIM',approver:'CKVC'},{name:'VAT Data',tasks:9,owner:'JAP/JLI/JPAL',reviewer:'JPAL/RIM',approver:'RIM/CKVC'}]},
+  {phase:'II. Accruals & Adj.',day:'D+2',color:'#27727B',clusters:[{name:'Amortization',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'},{name:'Corporate',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'},{name:'Insurance/Treasury',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'}]},
+  {phase:'III. WIP & IC',day:'D+3',color:'#C1232B',clusters:[{name:'IC Billing',tasks:9,owner:'BOM/JPAL',reviewer:'JPAL/RIM',approver:'CKVC'},{name:'WIP/Rev Rec',tasks:9,owner:'LAS/JPAL',reviewer:'JPAL/RIM',approver:'CKVC'}]},
+  {phase:'IV. Final Close',day:'D+4–5',color:'#B5C334',clusters:[{name:'TB Review',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'},{name:'Consolidation',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'},{name:'Lock/Archive',tasks:6,owner:'BOM',reviewer:'RIM',approver:'CKVC'}]},
+];
+const TAX=[
+  {f:'1601-C',d:'Compensation',fr:'Monthly',dl:'15th',t:36,fc:'#27727B'},
+  {f:'0619-E',d:'Creditable EWT',fr:'Monthly',dl:'10th',t:12,fc:'#27727B'},
+  {f:'2550Q',d:'Quarterly VAT',fr:'Quarterly',dl:'25th',t:6,fc:'#C1232B'},
+  {f:'1601-EQ',d:'Quarterly EWT',fr:'Quarterly',dl:'Last day',t:6,fc:'#C1232B'},
+  {f:'1702Q',d:'Qtr Income Tax',fr:'Quarterly',dl:'60d post-Q',t:3,fc:'#C1232B'},
+  {f:'1702-RT',d:'Annual IT',fr:'Annual',dl:'Apr 15',t:3,fc:'#E87C25'},
+];
+const LF=[
+  {level:'Goal',color:'#C1232B',indent:0,name:'Ensure 100% compliant and timely month-end closing and tax filing.',indicator:'% submitted on time',mov:'BIR receipts, audit reports',assumption:'Systems stable'},
+  {level:'Outcome',color:'#27727B',indent:1,name:'Streamlined Finance, Payroll, Tax, Treasury coordination.',indicator:'Avg delay < 1 day',mov:'Task tracker',assumption:'Teams follow deadlines'},
+  {level:'IM1 · Close',color:'#E87C25',indent:2,name:'Accurate closing: journals, accruals, WIP, TB sign-off.',indicator:'% TB reconciled; # adjustments',mov:'Recon sheets, GL',assumption:'Data complete'},
+  {level:'IM2 · Tax',color:'#F3A43B',indent:2,name:'On-time payroll, VAT, withholding tax filing.',indicator:'% before BIR deadlines',mov:'BIR confirmations',assumption:'Portals operational'},
+  {level:'Outputs',color:'#B5C334',indent:3,name:'1) JE finalized 2) BIR forms filed 3) Reports approved',indicator:'# tasks per calendar',mov:'Compliance sheet',assumption:'Timely reviews'},
+  {level:'Activities (IM1)',color:'#60C0DD',indent:4,name:'Reconcile · Post accruals · WIP/TB · Finalize · Approve',indicator:'Daily completion %',mov:'Close calendar',assumption:'No data loss'},
+  {level:'Activities (IM2)',color:'#9BCA63',indent:4,name:'Compute VAT · 1601C/0619E · Approvals · File · Upload',indicator:'Filing rate vs deadline',mov:'Tax tracker',assumption:'Portals accessible'},
+];
+
+// ── Live data loader ──────────────────────────────────────────────────────
+function loadLiveData(){
+  fetch('/web/dataset/call_kw',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',method:'call',params:{
+      model:'project.task',method:'read_group',args:[[['project_id.name','in',['Finance PPM - Month-End Close','Finance PPM - BIR Tax Filing']]],['stage_id'],['stage_id']],kwargs:{lazy:false}
+    }})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(!d.result)return;
+    const sc={};
+    d.result.forEach(g=>{sc[g['stage_id'][1]||'No Stage']=g.stage_id_count;});
+    updateStageChart(sc);
+    updateOverall(sc);
+  })
+  .catch(()=>console.log('Live data fetch failed — showing static data'));
+}
+
+function updateStageChart(sc){
+  const keys=Object.keys(sc),vals=Object.values(sc);
+  const total=vals.reduce((a,b)=>a+b,0);
+  document.getElementById('stageBdg').textContent=keys.length+' STAGES';
+  ch.pie&&ch.pie.setOption({series:[{data:keys.map((k,i)=>({value:sc[k],name:k,itemStyle:{color:CP[i%CP.length]}}))}]});
+}
+
+function updateOverall(sc){
+  const foldNames=['Done','Cancelled'];
+  const done=foldNames.reduce((s,n)=>s+(sc[n]||0),0);
+  const total=Object.values(sc).reduce((a,b)=>a+b,0);
+  const pct=total?Math.round(done/total*100):0;
+  ch.overall&&ch.overall.setOption({series:[{label:{formatter:pct+'%'},data:[{value:pct},{value:100-pct}]}]});
+}
+
+// ── Render: Overall donut ─────────────────────────────────────────────────
+ch.overall=echarts.init(document.getElementById('overall-ring'),'infographic');
+ch.overall.setOption({series:[{type:'pie',radius:['62%','82%'],center:['50%','50%'],startAngle:90,
+  label:{show:true,position:'center',formatter:'0%',fontSize:28,fontFamily:'DM Serif Display',fontWeight:400,color:'#2C3E40'},
+  data:[{value:.001,itemStyle:{color:'#27727B'}},{value:100,itemStyle:{color:'#EEEDEA'}}],
+  emphasis:{disabled:true}}]});
+
+// ── Objective donuts ──────────────────────────────────────────────────────
+document.getElementById('objGrid').innerHTML=OBJ.map(o=>`
+  <div class="obj-card">
+    <div class="accent" style="background:${o.color};"></div>
+    <div id="obj-${o.id}" style="width:70px;height:70px;margin:0 auto;"></div>
+    <div class="obj-name">${o.name}</div>
+    <div class="obj-weight" style="color:${o.color};">(${o.weight}%)</div>
+    <div class="obj-meta">${o.tasks}t · ${o.assignees} assignees</div>
+  </div>`).join('');
+OBJ.forEach(o=>{
+  ch['obj-'+o.id]=echarts.init(document.getElementById('obj-'+o.id));
+  ch['obj-'+o.id].setOption({series:[{type:'pie',radius:['55%','78%'],center:['50%','50%'],startAngle:90,silent:true,
+    label:{show:true,position:'center',formatter:o.pct+'%',fontSize:14,fontFamily:'IBM Plex Mono',fontWeight:700,color:o.color},
+    data:[{value:o.pct||.001,itemStyle:{color:o.color}},{value:100-(o.pct||.001),itemStyle:{color:'#EEEDEA'}}],
+    emphasis:{disabled:true}}]});
+});
+
+// ── KR rows ───────────────────────────────────────────────────────────────
+document.getElementById('krRows').innerHTML=KR.map(k=>`
+  <div style="display:grid;grid-template-columns:1fr 60px 60px 36px 76px;gap:6px;padding:7px 0;border-bottom:1px solid var(--border);align-items:center;font-size:10px;">
+    <div><strong style="color:${k.riskC};">${k.id}</strong> — ${k.name}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:600;">${k.base}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">${k.target}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;">${k.score}</div>
+    <div><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;background:${k.riskC}10;color:${k.riskC};">⚠ ${k.risk}</span></div>
+  </div>`).join('');
+
+// ── Activity table ────────────────────────────────────────────────────────
+const asTbl=document.getElementById('asTblBody');
+ACTIVITIES.forEach(a=>{
+  const o=OBJ.find(x=>x.id===a.obj);
+  a.acts.forEach((act,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`${i===0?`<td class="as-obj" style="color:${o.color};" rowspan="${a.acts.length}">${o.id}</td><td rowspan="${a.acts.length}" style="font-size:10px;">${a.kr}</td>`:''}
+      <td class="as-act">${act}</td>
+      <td><div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:${a.pcts[i]}%;background:${o.color};"></div></div><span class="bar-pct" style="color:${a.pcts[i]>0?o.color:'var(--muted)'};">${a.pcts[i]}%</span></div></td>`;
+    asTbl.appendChild(tr);
+  });
+});
+
+// ── Ongoing activity ──────────────────────────────────────────────────────
+document.getElementById('ongoingAct').innerHTML=[
+  {n:'Journal Entries',p:0},{n:'Accrual Posting',p:0},{n:'Tax Computation',p:0},{n:'TB Reconciliation',p:0},{n:'Approval Routing',p:0}
+].map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:10px;"><span>${a.n}</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">${a.p}%</span></div>`).join('');
+
+// ── Team rings ────────────────────────────────────────────────────────────
+document.getElementById('teamRings').innerHTML=TEAM.map(m=>`
+  <div class="tp-card">
+    <div class="tp-ring"><div id="ring-${m.c}" style="width:76px;height:76px;"></div>
+      <div class="tp-avatar" style="background:${m.cl}14;border:2px solid ${m.cl}28;color:${m.cl};">${m.c}</div>
+    </div>
+    <div class="tp-name">${m.n}</div>
+    <div class="tp-role">${m.r}</div>
+    <div class="tp-pct" style="color:${m.p>0?m.cl:'var(--muted)'};">${m.p.toFixed(1)}%</div>
+  </div>`).join('');
+TEAM.forEach(m=>{
+  ch['ring-'+m.c]=echarts.init(document.getElementById('ring-'+m.c));
+  ch['ring-'+m.c].setOption({series:[{type:'pie',radius:['68%','90%'],center:['50%','50%'],startAngle:90,silent:true,
+    label:{show:false},
+    data:[{value:m.p||.3,itemStyle:{color:m.cl}},{value:100-(m.p||.3),itemStyle:{color:'#EEEDEA'}}],
+    emphasis:{disabled:true}}]});
+});
+
+// ── Burndown ──────────────────────────────────────────────────────────────
+ch.burn=echarts.init(document.getElementById('chart-burn'),'infographic');
+ch.burn.setOption({tooltip:{trigger:'axis'},legend:{bottom:0,textStyle:{fontSize:8},itemWidth:8,itemHeight:8},
+  grid:{left:36,right:10,top:8,bottom:28},
+  xAxis:{type:'category',data:['D+0','D+1','D+2','D+3','D+4','D+5'],axisLabel:{fontFamily:'IBM Plex Mono',fontSize:9,fontWeight:600}},
+  yAxis:{type:'value',max:36,axisLabel:{fontFamily:'IBM Plex Mono',fontSize:8,color:'#7A8A8C'}},
+  series:[
+    {name:'Planned',type:'line',data:[36,28,18,10,4,0],lineStyle:{width:2,color:'#C1232B',type:'dashed'},itemStyle:{color:'#C1232B'},symbol:'circle',symbolSize:5},
+    {name:'Actual',type:'line',data:[36,36,36,36,36,36],lineStyle:{width:2.5,color:'#27727B'},itemStyle:{color:'#27727B'},symbol:'circle',symbolSize:5,
+     areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#27727B18'},{offset:1,color:'#27727B03'}])}},
+  ]});
+
+// ── Velocity ──────────────────────────────────────────────────────────────
+const vel=[{d:'D+1',t:8,c:22},{d:'D+2',t:10,c:50},{d:'D+3',t:8,c:72},{d:'D+4',t:6,c:89},{d:'D+5',t:4,c:100}];
+ch.vel=echarts.init(document.getElementById('chart-vel'),'infographic');
+ch.vel.setOption({tooltip:{trigger:'axis'},legend:{bottom:0,textStyle:{fontSize:8},itemWidth:8,itemHeight:8},
+  grid:{left:34,right:34,top:8,bottom:28},
+  xAxis:{type:'category',data:vel.map(d=>d.d),axisLabel:{fontFamily:'IBM Plex Mono',fontSize:9,fontWeight:600}},
+  yAxis:[{type:'value',max:12,axisLabel:{fontFamily:'IBM Plex Mono',fontSize:8,color:'#7A8A8C'}},{type:'value',max:100,axisLabel:{fontFamily:'IBM Plex Mono',fontSize:8,color:'#7A8A8C',formatter:'{value}%'}}],
+  series:[
+    {name:'Daily',type:'bar',data:vel.map(d=>d.t),itemStyle:{color:'#E87C25',borderRadius:[3,3,0,0]},barWidth:20},
+    {name:'Cum%',type:'line',yAxisIndex:1,data:vel.map(d=>d.c),itemStyle:{color:'#27727B'},lineStyle:{width:2},symbol:'circle',symbolSize:6,
+     areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#27727B18'},{offset:1,color:'#27727B03'}])}}
+  ]});
+
+// ── Stage pie ─────────────────────────────────────────────────────────────
+ch.pie=echarts.init(document.getElementById('chart-pie'),'infographic');
+ch.pie.setOption({tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},legend:{bottom:0,textStyle:{fontSize:8},itemWidth:8,itemHeight:8},
+  series:[{type:'pie',radius:['36%','64%'],center:['50%','42%'],itemStyle:{borderRadius:3,borderColor:'#fff',borderWidth:2},
+    label:{show:true,formatter:'{c}',fontSize:10,fontWeight:700,fontFamily:'IBM Plex Mono'},
+    data:[{value:56,name:'Preparation',itemStyle:{color:'#E87C25'}},{value:56,name:'Review',itemStyle:{color:'#27727B'}},{value:56,name:'Approval',itemStyle:{color:'#C1232B'}}]}]});
+
+// ── Quarterly KPIs ────────────────────────────────────────────────────────
+const QK=[{t:'Quarterly Tax',dl:'Q+15d',o:'JAP'},{t:'Aged Receivables',dl:'Q+5d',o:'JPAL'},{t:'Aged Payables',dl:'Q+5d',o:'LAS'},{t:'Bank Recon',dl:'Q+3d',o:'BOM'},{t:'IC Balances',dl:'Q+7d',o:'BOM'},{t:'Fixed Assets',dl:'Q+5d',o:'BOM'},{t:'Flash Report',dl:'Q+10d',o:'RIM'},{t:'Regional Reporting',dl:'Q+15d',o:'BOM'},{t:'Lock Quarter',dl:'Q+20d',o:'CKVC'}];
+document.getElementById('qtrKpis').innerHTML=QK.map(k=>`<div style="background:var(--subtle);border:1px solid var(--border);border-radius:5px;padding:8px 10px;"><div style="font-size:10px;font-weight:600;margin-bottom:2px;">${k.t}</div><div style="display:flex;gap:8px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--teal);">${k.o}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--orange);">${k.dl}</span></div></div>`).join('');
+
+// ── Logframe ──────────────────────────────────────────────────────────────
+document.getElementById('logframeTree').innerHTML=LF.map(l=>`
+  <div class="lf" style="margin-left:${l.indent*18}px;">
+    <div class="lf-accent" style="background:${l.color};"></div>
+    <div style="padding-left:10px;">
+      <div class="lf-level" style="color:${l.color};">${l.level}</div>
+      <div class="lf-name">${l.name}</div>
+      <div class="lf-grid">
+        <div class="lf-cell"><div class="lf-cell-h">Indicators</div><div class="lf-cell-v">${l.indicator}</div></div>
+        <div class="lf-cell"><div class="lf-cell-h">Verification</div><div class="lf-cell-v">${l.mov}</div></div>
+        <div class="lf-cell"><div class="lf-cell-h">Assumptions</div><div class="lf-cell-v">${l.assumption}</div></div>
+      </div>
+    </div>
+  </div>`).join('');
+
+// ── WBS ───────────────────────────────────────────────────────────────────
+document.getElementById('phaseList').innerHTML=PHASES.map(p=>{
+  const tc=p.clusters.reduce((s,c)=>s+c.tasks,0);
+  return `<div style="display:grid;grid-template-columns:40px 1fr;gap:7px;padding:9px 10px;border-left:3px solid ${p.color};border-radius:0 5px 5px 0;cursor:pointer;margin-bottom:2px;" onclick="selPhase('${p.phase.replace(/'/g,"\\'")}')">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:${p.color};">${p.day}</div>
+    <div><div style="font-size:11px;font-weight:600;">${p.phase}</div><div style="font-size:8px;color:var(--muted);">${p.clusters.length} clusters · ${tc} tasks</div></div></div>`;
+}).join('');
+window.selPhase=function(name){
+  const p=PHASES.find(x=>x.phase===name);if(!p)return;
+  document.getElementById('pdT').textContent=p.phase;document.getElementById('pdB').textContent=p.clusters.length+' clusters';
+  document.getElementById('pdBody').style.display='block';
+  document.getElementById('pdBody').innerHTML=p.clusters.map(c=>`<div style="background:var(--subtle);border:1px solid var(--border);border-radius:5px;padding:8px;margin-bottom:5px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;font-weight:700;">${c.name}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:${p.color};">${c.tasks}t</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">${[{l:'Prep',v:c.owner,cl:'#E87C25'},{l:'Rev',v:c.reviewer,cl:'#27727B'},{l:'App',v:c.approver,cl:'#C1232B'}].map(r=>`<div style="background:${r.cl}06;border-radius:3px;padding:4px 6px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;color:var(--muted);">${r.l}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:${r.cl};">${r.v}</div></div>`).join('')}</div></div>`).join('');
+};
+const gd=[{p:'Initial',d:'D+1',c:'#E87C25',s:0,w:15,t:15},{p:'Accruals',d:'D+2',c:'#27727B',s:15,w:26,t:18},{p:'WIP/IC',d:'D+3',c:'#C1232B',s:41,w:24,t:18},{p:'Final',d:'D+4-5',c:'#B5C334',s:65,w:35,t:18}];
+document.getElementById('ganttBox').innerHTML=gd.map(g=>`<div class="gantt-r"><div style="display:flex;align-items:center;gap:4px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:${g.c};width:28px;">${g.d}</span><span style="font-size:9px;">${g.p}</span></div><div class="gantt-trk"><div class="gantt-bar" style="left:${g.s}%;width:${g.w}%;background:${g.c};">${g.t}t</div></div></div>`).join('');
+document.getElementById('wfBox').innerHTML=[{s:'Preparation',r:'Acct/FS',c:'#E87C25',i:'✎'},{s:'Review',r:'SFM/FS',c:'#27727B',i:'⊘'},{s:'Approval',r:'FD/SFM',c:'#C1232B',i:'✓'}].map((s,i,a)=>`<div class="wf-s" style="border-color:${s.c}30;background:${s.c}06;"><div style="font-size:16px;margin-bottom:2px;">${s.i}</div><div style="color:${s.c};font-size:11px;font-weight:700;">${s.s}</div><div style="font-size:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">${s.r}</div></div>${i<a.length-1?'<div class="wf-arr">→</div>':''}`).join('');
+
+// ── Team tab ──────────────────────────────────────────────────────────────
+document.getElementById('teamList').innerHTML=TEAM.map(m=>`<div class="tm"><div class="av" style="background:${m.cl}12;border:2px solid ${m.cl}24;color:${m.cl};">${m.c.slice(0,3)}</div><div><div class="tm-n">${m.n}</div><div class="tm-r" style="color:${m.cl};">${m.r}</div></div><div><div class="tm-t">${m.t}</div><div style="font-size:7px;color:var(--muted);text-align:right;">tasks</div></div></div>`).join('');
+document.getElementById('wlBars').innerHTML=[
+  {l:'CKVC — FD',p:31,s:'53 (31%)',c:'#C1232B'},{l:'RIM — SFM',p:31,s:'52 (31%)',c:'#E87C25'},{l:'BOM — FS',p:21,s:'35 (21%)',c:'#27727B'},{l:'JPAL — Acct',p:7,s:'11 (7%)',c:'#60C0DD'},{l:'LAS — Acct',p:5,s:'8 (5%)',c:'#9BCA63'},{l:'Others (5)',p:5,s:'9 (5%)',c:'#7A8A8C'},
+].map(b=>`<div class="pb"><div class="pb-l"><span>${b.l}</span><span>${b.s}</span></div><div class="pb-t"><div class="pb-f" style="width:${b.p*3.2}%;background:${b.c};"></div></div></div>`).join('');
+ch.wl=echarts.init(document.getElementById('chart-wl'),'infographic');
+const wl=[{n:'CKVC',p:1,r:0,a:52},{n:'RIM',p:5,r:44,a:3},{n:'BOM',p:28,r:6,a:1},{n:'JPAL',p:7,r:4,a:0},{n:'LAS',p:7,r:1,a:0},{n:'RMQB',p:3,r:0,a:0}];
+ch.wl.setOption({tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},legend:{bottom:0,textStyle:{fontSize:8},itemWidth:8,itemHeight:8},grid:{left:40,right:10,top:6,bottom:26},
+  yAxis:{type:'category',data:wl.map(d=>d.n).reverse(),axisLabel:{fontFamily:'IBM Plex Mono',fontSize:8,fontWeight:600}},
+  xAxis:{type:'value',axisLabel:{fontFamily:'IBM Plex Mono',fontSize:7,color:'#7A8A8C'}},
+  series:[{name:'Prep',type:'bar',stack:'t',data:wl.map(d=>d.p).reverse(),itemStyle:{color:'#E87C25'},barWidth:12},{name:'Rev',type:'bar',stack:'t',data:wl.map(d=>d.r).reverse(),itemStyle:{color:'#27727B'}},{name:'App',type:'bar',stack:'t',data:wl.map(d=>d.a).reverse(),itemStyle:{color:'#C1232B'},barBorderRadius:[0,3,3,0]}]
+});
+
+// ── Tax tab ───────────────────────────────────────────────────────────────
+document.getElementById('taxTbl').innerHTML=`<thead><tr><th>Form</th><th>Desc</th><th>Freq</th><th>DL</th><th style="text-align:right">Tasks</th></tr></thead><tbody>${TAX.map(t=>`<tr><td><span class="tf" style="color:${t.fc};">${t.f}</span></td><td>${t.d}</td><td><span class="fb" style="background:${t.fc}0e;color:${t.fc};">${t.fr}</span></td><td style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);">${t.dl}</td><td style="text-align:right;font-family:'DM Serif Display',serif;font-size:13px;">${t.t}</td></tr>`).join('')}</tbody>`;
+document.getElementById('taxSteps').innerHTML=[{n:1,l:'Prep & File',o:'BOM',r:'Finance Supervisor',ld:'-4 WD',c:'#E87C25'},{n:2,l:'Report Approval',o:'RIM',r:'Sr. Finance Mgr',ld:'-2 WD',c:'#27727B'},{n:3,l:'Payment Approval',o:'CKVC',r:'Finance Director',ld:'-1 WD',c:'#C1232B'}].map(s=>`<div class="step" style="border-color:${s.c}18;background:${s.c}04;"><div class="step-n" style="background:${s.c};">${s.n}</div><div style="flex:1;"><div class="step-lb">${s.l}</div><div class="step-rl" style="color:var(--muted);"><span style="color:${s.c};font-weight:700;font-family:'IBM Plex Mono',monospace;">${s.o}</span> — ${s.r}</div></div><div class="step-ld" style="background:${s.c}0e;color:${s.c};">${s.ld}</div></div>`).join('');
+ch.tax=echarts.init(document.getElementById('chart-tax'),'infographic');
+ch.tax.setOption({tooltip:{trigger:'axis'},grid:{left:28,right:10,top:6,bottom:22},
+  xAxis:{type:'category',data:TAX.map(t=>t.f),axisLabel:{fontFamily:'IBM Plex Mono',fontSize:8,fontWeight:600}},
+  yAxis:{type:'value',axisLabel:{fontFamily:'IBM Plex Mono',fontSize:7,color:'#7A8A8C'}},
+  series:[{type:'bar',data:TAX.map(t=>({value:t.t,itemStyle:{color:t.fc}})),barWidth:24,itemStyle:{borderRadius:[3,3,0,0]}}]
+});
+
+// Auto-load live data on mount
+loadLiveData();
+</script>
+</body>
+</html>

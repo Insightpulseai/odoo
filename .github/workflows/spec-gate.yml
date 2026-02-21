@@ -13,6 +13,9 @@ on:
       - 'spec/**'
       - 'supabase/migrations/**'
 
+permissions:
+  contents: read
+
 jobs:
   spec-files:
     name: Validate Spec Files

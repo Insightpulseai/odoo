@@ -8,16 +8,16 @@ Imports tasks into 2 separate projects:
   - "Finance PPM - BIR Tax Filing": 50 BIR tax filing tasks (9 form types)
 Total: 89 base tasks across 2 projects.
 
-Employee Reference:
-    CKVC - Khalil Veracruz  (Finance Director / Approver)
-    RIM  - Rey Meran         (Senior Finance Manager / Reviewer)
-    BOM  - Beng Manalo       (Finance Manager)
-    JPAL - Jinky Paladin     (Finance Analyst)
-    LAS  - Amor Lasaga       (Finance Analyst)
-    JLI  - Jerald Loterte    (Finance Analyst)
-    RMQB - Sally Brillantes  (Finance Analyst)
-    JAP  - Jasmin Ignacio    (Finance Analyst)
-    JRMO - Jhoee Oliva       (Finance Analyst)
+Employee Reference (codes — resolve to real users via Odoo at import time):
+    CKVC - Finance Director / Approver
+    RIM  - Senior Finance Manager / Reviewer
+    BOM  - Finance Manager
+    JPAL - Finance Analyst
+    LAS  - Finance Analyst
+    JLI  - Finance Analyst
+    RMQB - Finance Analyst
+    JAP  - Finance Analyst
+    JRMO - Finance Analyst
 
 Usage:
     python3 scripts/bulk_import_tasks_odoo19.py <admin_password>
@@ -55,15 +55,17 @@ PROJECT_TAX = "Finance PPM - BIR Tax Filing"
 # Employee directory
 # ---------------------------------------------------------------------------
 EMPLOYEES = {
-    "CKVC": {"name": "Khalil Veracruz", "email": "khalil.veracruz@omc.com", "role": "Finance Director", "tier": "Director"},
-    "RIM":  {"name": "Rey Meran", "email": "rey.meran@omc.com", "role": "Senior Finance Manager", "tier": "Senior Manager"},
-    "BOM":  {"name": "Beng Manalo", "email": "beng.manalo@omc.com", "role": "Finance Manager", "tier": "Manager"},
-    "JPAL": {"name": "Jinky Paladin", "email": "jinky.paladin@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "LAS":  {"name": "Amor Lasaga", "email": "amor.lasaga@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JLI":  {"name": "Jerald Loterte", "email": "jerald.loterte@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "RMQB": {"name": "Sally Brillantes", "email": "sally.brillantes@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JAP":  {"name": "Jasmin Ignacio", "email": "jasmin.ignacio@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
-    "JRMO": {"name": "Jhoee Oliva", "email": "jhoee.oliva@omc.com", "role": "Finance Analyst", "tier": "Analyst"},
+    # Placeholder employee codes — map to real Odoo users by login at import time.
+    # Real names/emails are NOT stored here; resolved via Odoo user records.
+    "CKVC": {"name": "Finance Director",        "email": "finance.director@example.com",       "role": "Finance Director",        "tier": "Director"},
+    "RIM":  {"name": "Senior Finance Manager",  "email": "sr.finance.manager@example.com",     "role": "Senior Finance Manager",  "tier": "Senior Manager"},
+    "BOM":  {"name": "Finance Manager",         "email": "finance.manager@example.com",        "role": "Finance Manager",         "tier": "Manager"},
+    "JPAL": {"name": "Finance Analyst A",       "email": "finance.analyst.a@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "LAS":  {"name": "Finance Analyst B",       "email": "finance.analyst.b@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JLI":  {"name": "Finance Analyst C",       "email": "finance.analyst.c@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "RMQB": {"name": "Finance Analyst D",       "email": "finance.analyst.d@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JAP":  {"name": "Finance Analyst E",       "email": "finance.analyst.e@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
+    "JRMO": {"name": "Finance Analyst F",       "email": "finance.analyst.f@example.com",      "role": "Finance Analyst",         "tier": "Analyst"},
 }
 
 # Canonical seed data root (SSOT — do not add fallback paths)
@@ -611,6 +613,28 @@ print(f"Stages: {list(stage_map.keys())}")
 in_prep_stage = stage_map.get("In Preparation", stage_map.get("To Do"))
 
 # ---------------------------------------------------------------------------
+# Discover available fields on project.task to avoid Invalid field errors
+# ---------------------------------------------------------------------------
+_task_fields = set(_kw("project.task", "fields_get", [], {"attributes": ["string"]}).keys())
+
+
+def _filter_task_vals(vals):
+    """Remove any keys not present in project.task on this instance.
+    Also remap Odoo 17/18 field names to Odoo 19 equivalents:
+      planned_hours → allocated_hours (renamed in v19, no hr_timesheet required)
+    """
+    # Remap v17/v18 field names to v19 equivalents before filtering
+    FIELD_REMAP = {
+        "planned_hours": "allocated_hours",
+    }
+    remapped = {}
+    for k, v in vals.items():
+        new_k = FIELD_REMAP.get(k, k)
+        remapped[new_k] = v
+    return {k: v for k, v in remapped.items() if k in _task_fields}
+
+
+# ---------------------------------------------------------------------------
 # Resolve user IDs by email
 # ---------------------------------------------------------------------------
 user_map = {}
@@ -676,7 +700,7 @@ for task in CLOSING_TASKS:
         vals["user_ids"] = [(4, user_map[assignee_code])]
 
     try:
-        _kw("project.task", "create", [vals])
+        _kw("project.task", "create", [_filter_task_vals(vals)])
         created += 1
         print(f"  Created: {task_name}")
     except Exception as e:
@@ -710,7 +734,7 @@ for task in bir_tasks:
         "project_id": tax_project_id,
         "sequence": task["seq"],
         "description": task["description"],
-        "planned_hours": task["planned_hours"],
+        "allocated_hours": float(task.get("planned_hours", 0) or 0),  # v19 renamed field
         "date_deadline": task["deadline"],
         "stage_id": in_prep_stage,
     }
@@ -720,7 +744,7 @@ for task in bir_tasks:
         vals["user_ids"] = [(4, user_map[assignee_code])]
 
     try:
-        _kw("project.task", "create", [vals])
+        _kw("project.task", "create", [_filter_task_vals(vals)])
         bir_created += 1
         print(f"  Created: {task_name}")
     except Exception as e:
@@ -771,7 +795,7 @@ if GENERATE_MONTHS > 0:
                 vals["user_ids"] = [(4, user_map[assignee_code])]
 
             try:
-                _kw("project.task", "create", [vals])
+                _kw("project.task", "create", [_filter_task_vals(vals)])
                 monthly_created += 1
             except Exception:
                 pass

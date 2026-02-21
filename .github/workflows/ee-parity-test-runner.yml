@@ -28,6 +28,9 @@ env:
   ODOO_USER: ${{ secrets.ODOO_USER || 'admin' }}
   ODOO_PASS: ${{ secrets.ODOO_PASS || 'admin' }}
 
+permissions:
+  contents: read
+
 jobs:
   parity-tests:
     name: Run EE Parity Tests

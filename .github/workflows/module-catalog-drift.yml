@@ -11,6 +11,9 @@ on:
       - "scripts/enforce_assets_policy.py"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest

@@ -16,6 +16,9 @@ on:
       - 'addons/ipai/**'
       - 'addons/delta/**'
 
+permissions:
+  contents: read
+
 jobs:
   check-drift:
     name: Check Module Generator Drift

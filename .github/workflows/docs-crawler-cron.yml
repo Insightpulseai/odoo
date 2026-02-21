@@ -11,6 +11,9 @@ on:
         required: false
         default: 'all'
 
+permissions:
+  contents: read
+
 jobs:
   crawl-and-ingest:
     runs-on: ubuntu-latest

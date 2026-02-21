@@ -3,6 +3,9 @@ on:
   pull_request:
   push:
     branches: [ main ]
+permissions:
+  contents: read
+
 jobs:
   dbname:
     runs-on: ubuntu-latest

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        AI Copilot Discuss channel.
+        noupdate="1": created once; admin can add members / rename without conflict.
+        channel_type="channel" (public to internal users) — not a DM.
+        Access: internal users only (group_user).
+    -->
+    <record id="channel_ai_copilot" model="mail.channel">
+        <field name="name">ai-copilot</field>
+        <field name="description">
+            Internal AI assistant channel. Post any question here — the AI Copilot
+            (powered by Ollama / ai_oca_native_generate_ollama) will reply.
+            All messages are visible to all internal users of this channel.
+        </field>
+        <field name="channel_type">channel</field>
+        <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>
