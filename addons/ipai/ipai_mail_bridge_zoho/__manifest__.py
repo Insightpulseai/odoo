@@ -19,7 +19,10 @@ and sends via Zoho Mail REST API — entirely over HTTPS.
 Configuration (Docker / systemd env vars — NOT committed to git):
   ZOHO_MAIL_BRIDGE_URL    — Supabase Edge Function URL
                             e.g. https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/zoho-mail-bridge
-  ZOHO_MAIL_BRIDGE_SECRET — Supabase anon key (used as Bearer token)
+  ZOHO_MAIL_BRIDGE_SECRET — Dedicated 32+ char random shared secret.
+                            NOT the Supabase anon key (that is a public client credential).
+                            Generate with: openssl rand -hex 32
+                            Must match BRIDGE_SHARED_SECRET in Supabase Vault.
 
 If these env vars are absent, falls back to standard Odoo SMTP (safe for local dev).
     """,
