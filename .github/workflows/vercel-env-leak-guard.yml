@@ -11,6 +11,9 @@ on:
       - 'web/ai-control-plane/**'
       - '.env*'
 
+permissions:
+  contents: read
+
 jobs:
   guard:
     runs-on: ubuntu-latest

@@ -11,6 +11,9 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+
 jobs:
   no-cli-no-docker-scan:
     runs-on: ubuntu-latest

@@ -10,6 +10,9 @@ on:
         required: false
         default: 'false'
 
+permissions:
+  contents: read
+
 jobs:
   route:
     name: Score Health + Route Alerts

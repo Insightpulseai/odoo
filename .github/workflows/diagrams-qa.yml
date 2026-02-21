@@ -26,6 +26,9 @@ env:
   DRAWIO_HEADLESS: "true"
   DIFF_THRESHOLD: ${{ inputs.diff_threshold || '0.003' }}
 
+permissions:
+  contents: read
+
 jobs:
   export:
     name: Export Diagrams

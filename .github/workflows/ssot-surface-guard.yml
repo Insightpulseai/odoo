@@ -1,0 +1,95 @@
+name: SSOT Surface Guard
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'supabase/**'
+      - 'automations/n8n/workflows/**'
+      - 'infra/dns/**'
+      - 'infra/cloudflare/**'
+      - 'config/**'
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Cross-domain SSOT enforcement
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Rule 1: OCA path convention — addons/oca/ (slash), never addons-oca/ (hyphen)
+      - name: Check OCA path convention
+        run: |
+          if grep -r "addons-oca" config/ 2>/dev/null; then
+            echo "ERROR: use addons/oca/ (slash), not addons-oca/ (hyphen)" >&2
+            exit 1
+          fi
+          echo "OCA path convention: OK"
+
+      # Rule 2: Supabase schema changes only via migrations/
+      - name: Check Supabase migration-only schema changes
+        run: |
+          changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^supabase/' \
+            | grep -v '^supabase/migrations/' \
+            | grep -v '^supabase/functions/' \
+            | grep -v '^supabase/seed/' \
+            | grep -v '^supabase/config\.toml' \
+            | grep -v '^supabase/\.branches/' \
+            || true)
+          if [ -n "$changed" ]; then
+            echo "ERROR: Supabase schema changes must go through supabase/migrations/:" >&2
+            echo "$changed" >&2
+            exit 1
+          fi
+          echo "Supabase migration-only rule: OK"
+
+      # Rule 3: n8n workflow JSON exports must be secret-free
+      - name: Check n8n workflow exports are secret-free
+        run: |
+          secret_pattern='"password"\|"token"\|"secret"\|"apiKey"\|"api_key"\|"accessToken"'
+          changed_workflows=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^automations/n8n/workflows/.*\.json$' || true)
+          if [ -n "$changed_workflows" ]; then
+            for f in $changed_workflows; do
+              if [ -f "$f" ] && grep -l "$secret_pattern" "$f" 2>/dev/null; then
+                echo "ERROR: $f contains secret field(s) — strip credentials before committing workflow JSON" >&2
+                exit 1
+              fi
+            done
+          fi
+          echo "n8n secret-free check: OK"
+
+      # Rule 4: DNS changes must have contract doc present
+      - name: Check DNS contract doc presence
+        run: |
+          dns_changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^infra/dns/' || true)
+          if [ -n "$dns_changed" ] && [ ! -f "docs/contracts/DNS_EMAIL_CONTRACT.md" ]; then
+            echo "ERROR: infra/dns/ changed but docs/contracts/DNS_EMAIL_CONTRACT.md is missing" >&2
+            exit 1
+          fi
+          echo "DNS contract doc check: OK"
+
+      # Rule 5: .net domain references must not appear in changed files
+      - name: Check deprecated .net domain references
+        run: |
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || true)
+          if [ -n "$changed_files" ]; then
+            hits=$(git diff origin/${{ github.base_ref }}...HEAD -- $changed_files \
+              | grep '^+' \
+              | grep -v '^+++' \
+              | grep -i 'insightpulseai\.net' || true)
+            if [ -n "$hits" ]; then
+              echo "ERROR: deprecated insightpulseai.net domain found in diff — use insightpulseai.com" >&2
+              echo "$hits" >&2
+              exit 1
+            fi
+          fi
+          echo "Deprecated domain check: OK"

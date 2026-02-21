@@ -19,6 +19,9 @@ on:
       - 'tools/diagramflow/**'
       - '.github/workflows/diagrams.yml'
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Build diagramflow tool

@@ -13,6 +13,9 @@ on:
       - ".claude/superclaude/skills/**"
       - "scripts/skills/build_skills.py"
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest

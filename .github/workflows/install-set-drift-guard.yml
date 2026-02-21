@@ -22,6 +22,9 @@ on:
       - 'scripts/regen_install_sets.sh'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   drift-guard:
     runs-on: ubuntu-latest

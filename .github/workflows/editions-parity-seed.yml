@@ -5,6 +5,9 @@ on:
     - cron: '0 0 * * 0'  # Sundays at midnight UTC
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate-seed:
     runs-on: ubuntu-latest

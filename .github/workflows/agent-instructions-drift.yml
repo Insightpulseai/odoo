@@ -17,6 +17,9 @@ on:
       - "AGENTS.md"
       - "GEMINI.md"
 
+permissions:
+  contents: read
+
 jobs:
   drift:
     runs-on: ubuntu-latest

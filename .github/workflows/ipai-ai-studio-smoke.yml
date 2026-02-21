@@ -9,6 +9,9 @@ on:
       - '.github/workflows/ipai-ai-studio-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   smoke:
     runs-on: ubuntu-latest

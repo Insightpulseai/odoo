@@ -26,6 +26,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   # -----------------------------------------
   # Static checks (no containers needed)

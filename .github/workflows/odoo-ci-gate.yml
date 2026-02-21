@@ -12,6 +12,9 @@ on:
       - "ci/odoo/**"
       - ".github/workflows/odoo-ci-gate.yml"
 
+permissions:
+  contents: read
+
 jobs:
   gate:
     name: Odoo Module Gate

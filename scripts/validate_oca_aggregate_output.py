@@ -49,7 +49,7 @@ def main():
     # 0. Security: never allow embedded PATs in remote URLs
     if AGGREGATE_FILE.exists():
         agg_text = AGGREGATE_FILE.read_text(encoding="utf-8", errors="replace")
-        if "https://ghp_" in agg_text or ("https://github.com/" in agg_text and "@github.com" in agg_text):
+        if re.search(r'https://ghp_[A-Za-z0-9]+', agg_text) or re.search(r'https://[^@\s]+@github\.com/', agg_text):
             return _fail(
                 "oca-aggregate.yml appears to contain embedded credentials in remote URLs.\n"
                 "   Replace with plain https://github.com/OCA/<repo>.git"

@@ -17,6 +17,9 @@ defaults:
   run:
     working-directory: infra/databricks
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Deployment
