@@ -613,6 +613,17 @@ print(f"Stages: {list(stage_map.keys())}")
 in_prep_stage = stage_map.get("In Preparation", stage_map.get("To Do"))
 
 # ---------------------------------------------------------------------------
+# Discover available fields on project.task to avoid Invalid field errors
+# ---------------------------------------------------------------------------
+_task_fields = set(_kw("project.task", "fields_get", [], {"attributes": ["string"]}).keys())
+
+
+def _filter_task_vals(vals):
+    """Remove any keys not present in project.task on this instance."""
+    return {k: v for k, v in vals.items() if k in _task_fields}
+
+
+# ---------------------------------------------------------------------------
 # Resolve user IDs by email
 # ---------------------------------------------------------------------------
 user_map = {}
@@ -678,7 +689,7 @@ for task in CLOSING_TASKS:
         vals["user_ids"] = [(4, user_map[assignee_code])]
 
     try:
-        _kw("project.task", "create", [vals])
+        _kw("project.task", "create", [_filter_task_vals(vals)])
         created += 1
         print(f"  Created: {task_name}")
     except Exception as e:
@@ -722,7 +733,7 @@ for task in bir_tasks:
         vals["user_ids"] = [(4, user_map[assignee_code])]
 
     try:
-        _kw("project.task", "create", [vals])
+        _kw("project.task", "create", [_filter_task_vals(vals)])
         bir_created += 1
         print(f"  Created: {task_name}")
     except Exception as e:
@@ -773,7 +784,7 @@ if GENERATE_MONTHS > 0:
                 vals["user_ids"] = [(4, user_map[assignee_code])]
 
             try:
-                _kw("project.task", "create", [vals])
+                _kw("project.task", "create", [_filter_task_vals(vals)])
                 monthly_created += 1
             except Exception:
                 pass
