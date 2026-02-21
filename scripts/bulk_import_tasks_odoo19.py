@@ -619,8 +619,19 @@ _task_fields = set(_kw("project.task", "fields_get", [], {"attributes": ["string
 
 
 def _filter_task_vals(vals):
-    """Remove any keys not present in project.task on this instance."""
-    return {k: v for k, v in vals.items() if k in _task_fields}
+    """Remove any keys not present in project.task on this instance.
+    Also remap Odoo 17/18 field names to Odoo 19 equivalents:
+      planned_hours → allocated_hours (renamed in v19, no hr_timesheet required)
+    """
+    # Remap v17/v18 field names to v19 equivalents before filtering
+    FIELD_REMAP = {
+        "planned_hours": "allocated_hours",
+    }
+    remapped = {}
+    for k, v in vals.items():
+        new_k = FIELD_REMAP.get(k, k)
+        remapped[new_k] = v
+    return {k: v for k, v in remapped.items() if k in _task_fields}
 
 
 # ---------------------------------------------------------------------------
@@ -723,7 +734,7 @@ for task in bir_tasks:
         "project_id": tax_project_id,
         "sequence": task["seq"],
         "description": task["description"],
-        "planned_hours": task["planned_hours"],
+        "allocated_hours": float(task.get("planned_hours", 0) or 0),  # v19 renamed field
         "date_deadline": task["deadline"],
         "stage_id": in_prep_stage,
     }
