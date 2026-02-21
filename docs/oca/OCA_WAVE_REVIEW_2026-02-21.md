@@ -140,37 +140,86 @@ The user's script defines `wave3_clone` for finance repos but Wave 4 modules com
 
 ---
 
-## Dependency Chain Verification
+## Dependency Audit (from `__manifest__.py`)
+
+**Audit method**: Each module's `__manifest__.py` fetched from OCA GitHub 19.0 branch.
+All `depends` values classified against Odoo CE 19.0 core module list.
+
+### Odoo CE 19.0 Core Modules Referenced
+
+`base`, `web`, `web_tour`, `mail`, `account`, `sale`, `purchase`, `hr`, `hr_timesheet`, `base_iban`
+
+All confirmed present in `odoo/odoo` 19.0 branch.
+
+### Module-by-Module Dependencies
+
+| # | Module | `depends` | Classification |
+|---|--------|-----------|---------------|
+| 1 | `report_xlsx` | `base`, `web` | core, core |
+| 2 | `report_xlsx_helper` | `report_xlsx` | **oca** (in plan) |
+| 3 | `web_responsive` | `web`, `web_tour`, `mail` | core, core, core |
+| 4 | `web_dialog_size` | `web` | core |
+| 5 | `web_environment_ribbon` | `web` | core |
+| 6 | `web_refresher` | `web` | core |
+| 7 | `web_search_with_and` | `web` | core |
+| 8 | `date_range` | `web` | core |
+| 9 | `base_substate` | `base`, `mail` | core, core |
+| 10 | `auth_session_timeout` | *(none)* -> `base` | core (default) |
+| 11 | `account_move_name_sequence` | `account` | core |
+| 12 | `account_journal_restrict_mode` | `account` | core |
+| 13 | `account_usability` | `account` | core |
+| 14 | `account_move_post_date_user` | `account` | core |
+| 15 | `account_move_print` | `account` | core |
+| 16 | `account_tax_balance` | `account`, `date_range` | core, **oca** (Wave 2) |
+| 17 | `account_payment_mode` | `account` | core |
+| 18 | `account_payment_order` | `account_payment_mode`, `base_iban` | **oca** (in plan), core |
+| 19 | `account_payment_purchase` | `account_payment_mode`, `purchase` | **oca** (in plan), core |
+| 20 | `account_payment_sale` | `sale`, `account_payment_mode` | core, **oca** (in plan) |
+| 21 | `hr_employee_firstname` | `hr` | core |
+| 22 | `document_url` | `mail` | core |
+| 23 | `hr_timesheet_task_stage` | `hr_timesheet` | core |
+
+### Blockers: ZERO
+
+Every dependency resolves to either Odoo CE 19.0 core or another OCA module in the plan.
+
+### Critical Ordering Constraints
 
 ```
-Tier 1 (no inter-OCA deps):
-  report_xlsx → base, web (core) ✓
-  web_responsive → web, web_tour, mail (core) ✓
-  web_dialog_size → web (core) ✓
-  web_environment_ribbon → web (core) ✓
-  web_refresher → web (core) ✓
-  web_search_with_and → web (core) ✓
-  date_range → web (core) ✓
-  auth_session_timeout → base (core) ✓
-  account_move_name_sequence → account (core) ✓
-  account_journal_restrict_mode → account (core) ✓
-  account_usability → account (core) ✓
-  account_payment_mode → account (core) ✓
-  hr_employee_firstname → hr (core) ✓
-  document_url → mail (core) ✓
+Cross-wave:
+  date_range (Wave 2) ──→ account_tax_balance (Wave 3 Tier 2)  ✓ handled
 
-Tier 2 (depends on Tier 1):
+Within Wave 2:
+  report_xlsx ──→ report_xlsx_helper  ✓ handled
+
+Within Wave 3:
+  account_payment_mode (Tier 1) ──→ account_payment_order (Tier 2)  ✓ handled
+  account_payment_order (Tier 2) ──→ account_payment_purchase (Tier 3)  ✓ handled
+  account_payment_order (Tier 2) ──→ account_payment_sale (Tier 3)  ✓ handled
+```
+
+### Tier Summary
+
+```
+Tier 1 (no inter-OCA deps — 14 modules):
+  report_xlsx, web_responsive, web_dialog_size, web_environment_ribbon,
+  web_refresher, web_search_with_and, date_range, base_substate,
+  auth_session_timeout, account_move_name_sequence, account_journal_restrict_mode,
+  account_usability, account_payment_mode, hr_employee_firstname, document_url
+
+Tier 2 (depends on Tier 1 — 5 modules):
   report_xlsx_helper → report_xlsx ✓
-  account_tax_balance → account, date_range ✓ (in OCA/account-financial-reporting)
+  account_tax_balance → date_range ✓
   account_payment_order → account_payment_mode, base_iban ✓
-  hr_timesheet_task_stage → hr_timesheet (core) ✓
+  account_move_post_date_user → account ✓
+  hr_timesheet_task_stage → hr_timesheet ✓
 
-Tier 3 (depends on Tier 2):
-  account_payment_purchase → account_payment_order, purchase ✓
-  account_payment_sale → account_payment_order, sale ✓
+Tier 3 (depends on Tier 2 — 2 modules):
+  account_payment_purchase → account_payment_order ✓
+  account_payment_sale → account_payment_order ✓
 ```
 
-All dependency chains are valid. No broken links.
+All dependency chains valid. No missing modules. Wave ordering correct.
 
 ---
 
