@@ -145,6 +145,45 @@ Features to adopt (in priority order):
 | JWT signing keys (asymmetric) | P1 | Pending | Harden JWT validation |
 | Captcha protection | P2 | Pending | Sign-up flows |
 | Custom domains | P2 | Pending | White-label auth endpoints |
+| **Phone OTP login (SMS)** | P2 | Pending | Requires messaging provider (Twilio / MessageBird) |
+| **Phone OTP login (WhatsApp)** | P3 | Pending | WhatsApp OTP only via Twilio / Twilio Verify — same provider config as Phone MFA |
+
+### §4.1 — Phone OTP Login
+
+Phone OTP (passwordless) is an additional **credential channel** for Supabase Auth — not a separate IdP.
+
+```
+User enters phone  →  Supabase signInWithOtp({ phone, channel: 'sms'|'whatsapp' })
+                                    │
+                             messaging provider sends OTP
+                                    │
+User enters token  →  Supabase verifyOtp({ phone, token, type: 'sms' })
+                                    │
+                              session JWT issued
+                                    │
+                           RLS-protected queries work normally
+```
+
+**Constraints to codify before enabling**:
+
+| Constraint | Detail |
+|------------|--------|
+| WhatsApp OTP | Only supported via **Twilio / Twilio Verify** providers |
+| SMS OTP | Supported via Twilio, MessageBird, Vonage, and others |
+| Shared provider config | Messaging provider config (Twilio creds) powers **both** Phone OTP login and Phone MFA — one config, two use-cases |
+| PK-less users | Phone-only users have no email — Odoo projection must handle `null` email gracefully |
+| Rate limits | Supabase applies per-IP and per-phone rate limiting — add Edge Function rate-limit wrapper if exposed publicly |
+
+**When to enable (decision criteria)**:
+- Phone login is appropriate when users onboard **without email** (mobile-first flow).
+- If the only requirement is **sending invitations**, phone login is out of scope — use email + Zoho SMTP bridge.
+
+**Implementation scope** (deferred — consumer not yet identified):
+- `phone_login.ts` helper: `signInWithOtp` + `verifyOtp` + session validation
+- Rate-limit guard at Edge Function boundary for public-facing flows
+- Test plan: OTP request succeeds → OTP verify yields JWT → RLS query passes
+
+**Blocked on**: consumer app identification (Odoo portal / Vercel Next.js / n8n-only).
 
 ---
 
@@ -156,6 +195,58 @@ Features to adopt (in priority order):
 |-----------|---------------|-------------------|
 | `zoho-bridge` title | `addons/ipai/ipai_zoho_mail/**`, `config/odoo/mail_settings.yaml`, `scripts/odoo/apply_mail_settings.py`, `infra/dns/zoho_mail_dns.yaml`, `docs/contracts/DNS_EMAIL_CONTRACT.md`, `supabase/*/zoho-mail-bridge/**`, `spec/zoho-mail-bridge/**`, `infra/supabase/vault_secrets.tf` | Anything else |
 | `auth` title | `supabase/migrations/*auth*`, `supabase/functions/*auth*`, `spec/*auth*`, `docs/architecture/SSOT_BOUNDARIES.md` | Odoo addons, n8n |
+
+---
+
+## §6 — ETL / OLAP Replication: Supabase Postgres remains SSOT
+
+### Rule: ETL destinations are analytics replicas, not authoritative sources
+
+Supabase ETL (CDC via Postgres WAL / logical replication) copies data from the OLTP database into
+analytics destinations. The copied data is **never** the source of truth.
+
+```
+Supabase Postgres (SSOT/OLTP)
+         │
+         │  CDC via logical replication (WAL)
+         │  append-only changelog + cdc_operation column
+         ▼
+Analytics Destination (read-only replica)
+  • Analytics Buckets (Iceberg) — Supabase-native, first-class
+  • BigQuery — external, for heavy cross-system OLAP
+         │
+         ▼
+BI Tools (Superset, Tableau, etc.)  — never write back
+```
+
+### Invariants
+
+| Rule | Rationale |
+|------|-----------|
+| No write-backs from analytics → SSOT | ETL destinations are append-only replicas; writes must go through Odoo or Supabase edge functions |
+| Only explicit pipelines may sync analytics → SSOT | Feedback loops (e.g. enriched labels) require a formal pipeline with audit trail in `ops.platform_events` |
+| ETL outputs are non-authoritative | A BigQuery row or Iceberg file is evidence of what happened, not a system of record |
+| Schema changes require migration first | ETL has limited DDL support; structural changes must land in Supabase migration before ETL can replicate them |
+
+### What should be replicated
+
+| Source table / schema | Destination | Rationale |
+|-----------------------|-------------|-----------|
+| `ops.platform_events` | Analytics Buckets | Compliance audit history without OLTP pressure |
+| `ops.repo_hygiene_runs/findings` | Analytics Buckets | Historical hygiene trends for dashboards |
+| Odoo → Supabase projections (invoices, tasks) | Analytics Buckets / BigQuery | OLAP queries, Superset dashboards |
+
+### What must NOT be replicated
+
+| Data | Reason |
+|------|--------|
+| `vault.secrets` / `vault.decrypted_secrets` | Secrets never leave Vault |
+| `auth.users` (raw) | PII; replicate only derived/anonymized projections |
+| Supabase internal schema tables | System tables, not application data |
+
+### Contract
+
+Full operational policy: `docs/contracts/SUPABASE_ETL_CONTRACT.md` (C-14)
 
 ### Secret scan gate
 

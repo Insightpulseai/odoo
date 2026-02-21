@@ -25,6 +25,7 @@
 | C-11 | [Edge Functions](SUPABASE_EDGE_FUNCTIONS_CONTRACT.md) | `supabase/functions/` | All integration bridges | ✅ Active | `ssot-surface-guard.yml` |
 | C-12 | [Supabase Cron](SUPABASE_CRON_CONTRACT.md) | `supabase/migrations/*_cron_*.sql` | pg_cron jobs | ✅ Active | `cron.job_run_details` |
 | C-13 | [Nightly Repo Hygiene](SUPABASE_CRON_REPO_HYGIENE.md) | `automations/repo_hygiene/jobs/nightly.yml` | `ops.repo_hygiene_*` (Supabase) | ✅ Active | `ops.repo_hygiene_runs` |
+| C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md) | Supabase Postgres (CDC/WAL) | Analytics Buckets (Iceberg) / BigQuery | ✅ Active | `pg_stat_replication` |
 
 ---
 
@@ -119,6 +120,28 @@ supabase secrets set --project-ref spdtwktxdalcfigzeqrz \
 **File**: `docs/contracts/DESIGN_TOKENS_CONTRACT.md` *(not yet created)*
 
 **Purpose**: Define the schema of `packages/design-tokens/tokens.json` and the Figma → export → commit flow.
+
+---
+
+---
+
+## C-14 — Supabase ETL Contract
+
+**File**: `docs/contracts/SUPABASE_ETL_CONTRACT.md`
+**SSOT**: Supabase Postgres (WAL logical replication)
+**Consumers**: Analytics Buckets (Iceberg), BigQuery
+
+**Purpose**: Route OLAP workloads off the OLTP database via CDC replication.
+
+**Invariants**:
+- ETL destinations are non-authoritative replicas — never write-back into SSOT
+- Primary key required on every replicated table
+- `vault.secrets`, `auth.users` (PII), and Supabase system tables must never be replicated
+- Schema DDL changes must land in Supabase migration before ETL replicates them
+
+**Monitoring**: `pg_stat_replication` slot lag; pg_cron alert if lag > 5 min
+
+**[MANUAL_REQUIRED]**: ETL pipeline configuration is UI-only in Supabase dashboard (as of 2026-02).
 
 ---
 
