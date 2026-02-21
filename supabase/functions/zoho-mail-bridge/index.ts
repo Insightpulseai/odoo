@@ -49,9 +49,20 @@ let tokenCache: TokenCache | null = null;
 // Helpers
 // ---------------------------------------------------------------------------
 
-function jsonError(message: string, status = 400): Response {
+// Allowed actions allowlist — any action not in this set gets a 404.
+const ALLOWED_ACTIONS = new Set(["health", "send_email", "mint_token"]);
+
+type ErrorCode =
+  | "UNAUTHORIZED"
+  | "BAD_REQUEST"
+  | "METHOD_NOT_ALLOWED"
+  | "NOT_FOUND"
+  | "SERVICE_ERROR"
+  | "NOT_CONFIGURED";
+
+function jsonErr(code: ErrorCode, message: string, status: number): Response {
   return new Response(
-    JSON.stringify({ error: message }),
+    JSON.stringify({ ok: false, code, message }),
     { status, headers: { "Content-Type": "application/json" } },
   );
 }
@@ -73,11 +84,11 @@ function jsonOk(data: unknown, status = 200): Response {
 function requireBridgeAuth(req: Request): Response | null {
   const expected = Deno.env.get("BRIDGE_SHARED_SECRET");
   if (!expected) {
-    return jsonError("Bridge not configured: BRIDGE_SHARED_SECRET missing", 503);
+    return jsonErr("NOT_CONFIGURED", "BRIDGE_SHARED_SECRET not set", 503);
   }
   const got = req.headers.get("x-bridge-secret") ?? "";
   if (!got || got !== expected) {
-    return jsonError("Unauthorized: missing or invalid x-bridge-secret", 401);
+    return jsonErr("UNAUTHORIZED", "missing or invalid x-bridge-secret", 401);
   }
   return null;
 }
@@ -230,21 +241,23 @@ serve(async (req: Request) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const url = new URL(req.url);
-  const action = url.searchParams.get("action");
+  const action = url.searchParams.get("action") ?? "";
+
+  // Strict allowlist — anything not in the set is a 404, not a 400.
+  // This prevents probing for undocumented action names.
+  if (!ALLOWED_ACTIONS.has(action)) {
+    return jsonErr(
+      "NOT_FOUND",
+      `Unknown action '${action}'. Allowed: health, send_email, mint_token`,
+      404,
+    );
+  }
 
   try {
     switch (action) {
-      // ── Health check — no auth required ──────────────────────────────────
+      // ── Health check — no auth, minimal response ──────────────────────────
       case "health": {
-        return jsonOk({
-          ok: true,
-          service: "zoho-mail-bridge",
-          bridge_secret_configured: !!Deno.env.get("BRIDGE_SHARED_SECRET"),
-          zoho_configured: !!(
-            Deno.env.get("ZOHO_CLIENT_ID") &&
-            Deno.env.get("ZOHO_ACCOUNT_ID")
-          ),
-        });
+        return jsonOk({ ok: true, service: "zoho-mail-bridge" });
       }
 
       // ── Send email — requires x-bridge-secret ────────────────────────────
@@ -252,10 +265,12 @@ serve(async (req: Request) => {
         const authErr = requireBridgeAuth(req);
         if (authErr) return authErr;
 
-        if (req.method !== "POST") return jsonError("POST required", 405);
+        if (req.method !== "POST") {
+          return jsonErr("METHOD_NOT_ALLOWED", "POST required", 405);
+        }
         const payload = await req.json() as SendEmailPayload;
         if (!payload.to || !payload.subject) {
-          return jsonError("Missing required fields: to, subject");
+          return jsonErr("BAD_REQUEST", "Missing required fields: to, subject", 400);
         }
         await sendEmail(supabase, payload);
         return jsonOk({ ok: true });
@@ -269,14 +284,12 @@ serve(async (req: Request) => {
         await mintToken(supabase);
         return jsonOk({ ok: true, expires_at: tokenCache?.expires_at });
       }
-
-      default:
-        return jsonError(
-          "Unknown action. Use ?action=health | ?action=send_email | ?action=mint_token",
-        );
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return jsonError(message, 500);
+    return jsonErr("SERVICE_ERROR", message, 500);
   }
+
+  // TypeScript exhaustiveness — unreachable but satisfies the compiler
+  return jsonErr("SERVICE_ERROR", "Unhandled state", 500);
 });
