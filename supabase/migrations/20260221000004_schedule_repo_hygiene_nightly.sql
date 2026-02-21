@@ -33,22 +33,11 @@
 
 BEGIN;
 
--- Require pg_cron and pg_net (fail early if not enabled)
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_extension WHERE extname = 'pg_cron'
-  ) THEN
-    RAISE EXCEPTION 'pg_cron extension is not enabled. Enable it in Supabase project settings → Database Extensions.';
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_extension WHERE extname = 'pg_net'
-  ) THEN
-    RAISE EXCEPTION 'pg_net extension is not enabled. Enable it in Supabase project settings → Database Extensions.';
-  END IF;
-END;
-$$;
+-- Ensure required extensions exist (SSOT; no dashboard toggles required)
+-- If the Supabase plan/project does not permit these extensions, migration
+-- fails loudly here — treat as a provisioning constraint, not a manual step.
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+CREATE EXTENSION IF NOT EXISTS pg_net;
 
 -- =============================================================================
 -- Job: ops_repo_hygiene_nightly

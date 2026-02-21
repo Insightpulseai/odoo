@@ -185,18 +185,37 @@ SELECT cron.unschedule('ops_repo_hygiene_nightly');
 
 ---
 
-## 11. [MANUAL_REQUIRED] Before First Run
+## 11. Pre-Run Provisioning (migration-driven; no dashboard steps)
 
-1. **Enable pg_cron and pg_net** in Supabase dashboard → Database → Extensions.
-2. **Set Vault secrets** (`ops.cron.repo_hygiene_url`, `ops.cron.repo_hygiene_secret`) via SQL.
-3. **Set Edge Function secret** (`REPO_HYGIENE_SECRET`) via `supabase secrets set`.
-4. **Apply migrations** in order:
-   - `20260221000003_ops_repo_hygiene.sql`
-   - `20260221000004_schedule_repo_hygiene_nightly.sql`
-5. **Verify job** with health check:
-   ```bash
-   curl https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/repo-hygiene-runner?action=health
-   ```
+**Extensions**: `pg_cron` and `pg_net` are enabled by the schedule migration
+(`CREATE EXTENSION IF NOT EXISTS`). If the Supabase plan does not permit these
+extensions, the migration fails loudly — treat as a provisioning constraint,
+not a manual step.
+
+**Vault secrets** (names only; values are runtime provisioning — never committed):
+
+```sql
+-- Set via Supabase SQL editor or supabase-cli exec; values not stored in repo
+SELECT vault.create_secret('<url>', 'ops.cron.repo_hygiene_url', 'repo-hygiene-runner URL');
+SELECT vault.create_secret('<secret>', 'ops.cron.repo_hygiene_secret', 'x-bridge-secret');
+```
+
+**Edge Function secret** (names only; value is runtime provisioning):
+
+```bash
+supabase secrets set --project-ref spdtwktxdalcfigzeqrz REPO_HYGIENE_SECRET=<value>
+```
+
+**Apply migrations** (in order):
+```bash
+supabase db push  # or apply 000003 then 000004 via Supabase CLI
+```
+
+**Verify** (no dashboard required):
+```bash
+curl https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/repo-hygiene-runner?action=health
+# Expected: {"ok":true,"service":"repo-hygiene-runner","request_id":"..."}
+```
 
 ---
 

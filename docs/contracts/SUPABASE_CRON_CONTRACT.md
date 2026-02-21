@@ -135,13 +135,11 @@ SELECT cron.unschedule('ops_zoho_token_prewarm');
 
 ## 8. Extension Requirements
 
-| Extension | Where to enable |
-|-----------|----------------|
-| `pg_cron` | Supabase dashboard → Database → Extensions → pg_cron |
-| `pg_net` | Same → pg_net |
+`pg_cron` and `pg_net` are enabled by each cron migration via
+`CREATE EXTENSION IF NOT EXISTS`. No dashboard step is required.
 
-Both must be enabled before applying `20260221000002_cron_token_prewarm.sql`.
-The migration fails fast with a clear error if either is absent.
+If a Supabase plan/project does not permit these extensions, the migration fails
+loudly — treat as a provisioning constraint, not a manual step.
 
 ---
 
