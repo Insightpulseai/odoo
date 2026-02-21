@@ -3,16 +3,19 @@
  * Supabase Edge Function — Zoho Mail OAuth2 token minting + send API
  *
  * Routes (via ?action= query param):
- *   mint_token  — Refresh OAuth2 access token using refresh_token grant
- *   send_email  — Send email via Zoho Mail API (uses minted token)
+ *   health      — Liveness check (no auth required)
+ *   send_email  — Send email via Zoho Mail API (requires x-bridge-secret)
+ *   mint_token  — Refresh OAuth2 access token (requires x-bridge-secret)
  *
  * Required Env Vars (from Supabase Vault / Edge Function secrets):
+ *   BRIDGE_SHARED_SECRET  — Random 32+ char secret shared with Odoo
+ *                           NOT the Supabase anon key (that's a public client key)
  *   ZOHO_CLIENT_ID
  *   ZOHO_CLIENT_SECRET
  *   ZOHO_REFRESH_TOKEN
  *   ZOHO_ACCOUNT_ID       (Zoho Mail account ID — obtained from /api/accounts)
  *
- * All operations are audited to ops.platform_events via the service role client.
+ * All send_email operations are audited to ops.platform_events.
  */
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
@@ -58,6 +61,25 @@ function jsonOk(data: unknown, status = 200): Response {
     JSON.stringify(data),
     { status, headers: { "Content-Type": "application/json" } },
   );
+}
+
+/**
+ * requireBridgeAuth validates the x-bridge-secret header against BRIDGE_SHARED_SECRET.
+ * Returns an error Response if invalid, or null if auth passes.
+ *
+ * This is a dedicated shared secret — NOT the Supabase anon key.
+ * The anon key is a public client credential; bridge auth must be separate.
+ */
+function requireBridgeAuth(req: Request): Response | null {
+  const expected = Deno.env.get("BRIDGE_SHARED_SECRET");
+  if (!expected) {
+    return jsonError("Bridge not configured: BRIDGE_SHARED_SECRET missing", 503);
+  }
+  const got = req.headers.get("x-bridge-secret") ?? "";
+  if (!got || got !== expected) {
+    return jsonError("Unauthorized: missing or invalid x-bridge-secret", 401);
+  }
+  return null;
 }
 
 async function audit(
@@ -191,18 +213,18 @@ async function sendEmail(
 // ---------------------------------------------------------------------------
 
 serve(async (req: Request) => {
-  // CORS preflight
+  // CORS preflight — include x-bridge-secret in allowed headers
   if (req.method === "OPTIONS") {
     return new Response(null, {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Authorization, Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, x-bridge-secret",
       },
     });
   }
 
-  // Supabase service role client for audit writes
+  // Supabase service role client for audit writes (internal only)
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseKey);
@@ -212,12 +234,24 @@ serve(async (req: Request) => {
 
   try {
     switch (action) {
-      case "mint_token": {
-        const token = await mintToken(supabase);
-        return jsonOk({ ok: true, expires_at: tokenCache?.expires_at });
+      // ── Health check — no auth required ──────────────────────────────────
+      case "health": {
+        return jsonOk({
+          ok: true,
+          service: "zoho-mail-bridge",
+          bridge_secret_configured: !!Deno.env.get("BRIDGE_SHARED_SECRET"),
+          zoho_configured: !!(
+            Deno.env.get("ZOHO_CLIENT_ID") &&
+            Deno.env.get("ZOHO_ACCOUNT_ID")
+          ),
+        });
       }
 
+      // ── Send email — requires x-bridge-secret ────────────────────────────
       case "send_email": {
+        const authErr = requireBridgeAuth(req);
+        if (authErr) return authErr;
+
         if (req.method !== "POST") return jsonError("POST required", 405);
         const payload = await req.json() as SendEmailPayload;
         if (!payload.to || !payload.subject) {
@@ -227,8 +261,19 @@ serve(async (req: Request) => {
         return jsonOk({ ok: true });
       }
 
+      // ── Mint token — requires x-bridge-secret ───────────────────────────
+      case "mint_token": {
+        const authErr = requireBridgeAuth(req);
+        if (authErr) return authErr;
+
+        await mintToken(supabase);
+        return jsonOk({ ok: true, expires_at: tokenCache?.expires_at });
+      }
+
       default:
-        return jsonError("Unknown action. Use ?action=mint_token or ?action=send_email");
+        return jsonError(
+          "Unknown action. Use ?action=health | ?action=send_email | ?action=mint_token",
+        );
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
