@@ -115,6 +115,9 @@ waves:
       - repo: account-financial-tools
         url: https://github.com/OCA/account-financial-tools.git
         branch: "19.0"
+      - repo: account-financial-reporting
+        url: https://github.com/OCA/account-financial-reporting.git
+        branch: "19.0"
       - repo: bank-payment
         url: https://github.com/OCA/bank-payment.git
         branch: "19.0"
@@ -136,10 +139,10 @@ waves:
         installed_version: null
 
       - name: account_tax_balance
-        source: oca/account-financial-tools
-        status: blocked
+        source: oca/account-financial-reporting
+        status: pending
         installed_version: null
-        notes: "NOT on OCA 19.0 branch — requires porting from 18.0 or use account_financial_report instead"
+        notes: "CORRECTED: lives in OCA/account-financial-reporting (NOT account-financial-tools). Version 19.0.1.0.2. Depends on date_range (Wave 2)"
 
       - name: account_move_post_date_user
         source: oca/account-financial-tools
@@ -213,10 +216,8 @@ waves:
 # Confirmed NOT available in 19.0 — do not attempt to install
 # ──────────────────────────────────────────────────────────────────────────
 not_available_19:
-  - name: account_tax_balance
-    last_oca_version: "18.0"
-    alternative: "Port from 18.0 via oca-port, or use account_financial_report (already installed)"
-    review_date: "2026-02-21"
+  # NOTE: account_tax_balance was REMOVED from this list — it IS on 19.0
+  #       in OCA/account-financial-reporting (not account-financial-tools)
   - name: helpdesk_mgmt
     last_oca_version: "18.0"
     alternative: "Project app with helpdesk-style stages"

@@ -9,15 +9,19 @@
 
 ## Executive Summary
 
-The OCA wave install plan is **well-structured** and mostly correct. Of 22 unique modules
-across 4 waves, **21 are confirmed available on OCA 19.0 branches**. One critical finding:
-`account_tax_balance` is **NOT on 19.0** and requires porting.
+The OCA wave install plan is **well-structured** and correct. All 22 unique modules
+across 4 waves are **confirmed available on OCA 19.0 branches**.
+
+**CORRECTION (v2)**: `account_tax_balance` was initially reported as missing from 19.0.
+Deep verification revealed it lives in `OCA/account-financial-reporting` (version
+19.0.1.0.2), NOT `OCA/account-financial-tools`. All 22/22 modules are available.
 
 | Metric | Value |
 |--------|-------|
 | Modules checked | 22 |
-| Confirmed on 19.0 | 21 |
-| Missing from 19.0 | 1 (`account_tax_balance`) |
+| Confirmed on 19.0 | **22** (all available) |
+| Missing from 19.0 | 0 |
+| Repo corrections needed | 1 (`account_tax_balance` repo) |
 | Already in allowlist | 18 of 22 |
 | New additions needed | 4 (`web_refresher`, `account_move_post_date_user`, `account_move_print`, `account_payment_order_grouped`) |
 | Dependency conflicts | 0 |
@@ -68,7 +72,7 @@ across 4 waves, **21 are confirmed available on OCA 19.0 branches**. One critica
 | `account_move_name_sequence` | account-financial-tools | CONFIRMED | YES | OK |
 | `account_journal_restrict_mode` | account-financial-tools | CONFIRMED | YES | OK |
 | `account_usability` | account-financial-tools | CONFIRMED | YES | OK |
-| `account_tax_balance` | account-financial-tools | **NOT FOUND** | YES | **BLOCKER** |
+| `account_tax_balance` | **account-financial-reporting** | CONFIRMED (19.0.1.0.2) | YES | **REPO CORRECTED** |
 | `account_move_post_date_user` | account-financial-tools | CONFIRMED | YES (enhanced) | OK |
 | `account_move_print` | account-financial-tools | CONFIRMED | YES (enhanced) | OK |
 | `account_payment_mode` | bank-payment | CONFIRMED | YES | OK |
@@ -76,16 +80,11 @@ across 4 waves, **21 are confirmed available on OCA 19.0 branches**. One critica
 | `account_payment_purchase` | bank-payment | CONFIRMED | YES | OK |
 | `account_payment_sale` | bank-payment | CONFIRMED | YES | OK |
 
-**Critical Issues**:
-1. **`account_tax_balance` is NOT on OCA 19.0** — The module does not exist on the
-   `account-financial-tools` 19.0 branch. Options:
-   - **Option A**: Port from 18.0 using `oca-port` (add to `port_queue.yml`)
-   - **Option B**: Skip for now; use `account_financial_report` (already installed) which
-     provides tax reporting capabilities
-   - **Option C**: Build a lightweight `ipai_tax_balance` wrapper using the date_range
-     framework
-   - **Recommendation**: Option A (port) or Option B (skip). `account_financial_report`
-     v19.0.0.0.2 is already installed and includes tax balance reporting
+**Issues**:
+1. **`account_tax_balance` repo correction** — This module does NOT live in
+   `account-financial-tools`. It is in **`OCA/account-financial-reporting`** where it is
+   confirmed available at version 19.0.1.0.2 with `installable: True`. The install script
+   and manifest have been corrected to clone `account-financial-reporting` in Wave 3.
 
 2. `account_move_post_date_user` and `account_move_print` are in the Mermaid diagram but
    **not in the install_manifest.yaml Wave 3** — they need to be added to the manifest
@@ -94,7 +93,7 @@ across 4 waves, **21 are confirmed available on OCA 19.0 branches**. One critica
    Wave 4 but the Mermaid diagram puts them in Wave 3 — **align to Wave 3** since they
    logically belong with the payment order ecosystem
 
-**Verdict**: APPROVED with `account_tax_balance` either ported or deferred.
+**Verdict**: APPROVED. All modules confirmed available (repo corrected for account_tax_balance).
 
 ---
 
@@ -162,7 +161,7 @@ Tier 1 (no inter-OCA deps):
 
 Tier 2 (depends on Tier 1):
   report_xlsx_helper → report_xlsx ✓
-  account_tax_balance → account, date_range ⚠️ (module not on 19.0)
+  account_tax_balance → account, date_range ✓ (in OCA/account-financial-reporting)
   account_payment_order → account_payment_mode, base_iban ✓
   hr_timesheet_task_stage → hr_timesheet (core) ✓
 
@@ -171,8 +170,7 @@ Tier 3 (depends on Tier 2):
   account_payment_sale → account_payment_order, sale ✓
 ```
 
-All dependency chains are valid. The only broken link is `account_tax_balance` (module
-not available on 19.0).
+All dependency chains are valid. No broken links.
 
 ---
 
@@ -204,26 +202,25 @@ Modules in wave plan but **not in any allowlist pack**:
 
 | Module | Last OCA Version | Alternative |
 |--------|-----------------|-------------|
-| `account_tax_balance` | 18.0 | Port via oca-port OR use account_financial_report |
-| `base_tier_validation` | 18.0 (ported locally) | Already ported in port_queue.yml |
 | `helpdesk_mgmt` | 18.0 | Project app with helpdesk stages |
 | `mail_activity_board` | 18.0 | Native Activities menu |
 | `stock_barcodes` | 18.0 | Odoo CE native barcode |
 | `account_lock_date_update` | 18.0 | N/A |
 | `contract` | 18.0 | N/A |
 
-Note: `base_tier_validation` was listed as "not available" in the install_manifest but
-the port_queue.yml shows it was **successfully ported** (commit `75bb2e2`). Update the
-manifest accordingly.
+**Corrections applied**:
+- `account_tax_balance` REMOVED from this list — it IS on 19.0 in
+  `OCA/account-financial-reporting` (was incorrectly looked up in `account-financial-tools`)
+- `base_tier_validation` REMOVED — was ported locally (commit `75bb2e2`, v19.0.3.1.2)
 
 ---
 
 ## Recommended Actions
 
-### Immediate (before Wave 1)
-1. Update `docs/oca/install_manifest.yaml` — add missing Wave 3 modules
-2. Add `web_refresher` to `config/oca/module_allowlist.yml` web_ux pack
-3. Decide on `account_tax_balance`: port or defer
+### Immediate (before Wave 1) -- DONE
+1. Updated `docs/oca/install_manifest.yaml` — added missing Wave 3 modules
+2. Added `web_refresher` to `config/oca/module_allowlist.yml` web_ux pack
+3. Corrected `account_tax_balance` repo: `OCA/account-financial-reporting` (v19.0.1.0.2)
 
 ### Wave 1 Execution
 - Activate 3 already-present modules (no git operations needed)
@@ -236,7 +233,7 @@ manifest accordingly.
 - Test responsive layout + XLSX export + session timeout
 
 ### Wave 3 Execution
-- Clone 2 OCA repos (account-financial-tools, bank-payment)
+- Clone 3 OCA repos (account-financial-tools, account-financial-reporting, bank-payment)
 - Install Tier 1 finance tools first (no inter-OCA deps)
 - Install Tier 2 (payment orders + tax balance) after Tier 1
 - Finance team approval required before production

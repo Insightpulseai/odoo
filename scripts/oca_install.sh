@@ -170,17 +170,18 @@ wave3_clone() {
     cd "$REPO_ROOT"
 
     clone_oca_repo "account-financial-tools"
+    clone_oca_repo "account-financial-reporting"
     clone_oca_repo "bank-payment"
 
-    # Finance tools
+    # Finance tools (from account-financial-tools)
     symlink_module "oca/account-financial-tools/account_move_name_sequence"
     symlink_module "oca/account-financial-tools/account_journal_restrict_mode"
     symlink_module "oca/account-financial-tools/account_usability"
     symlink_module "oca/account-financial-tools/account_move_post_date_user"
     symlink_module "oca/account-financial-tools/account_move_print"
 
-    # NOTE: account_tax_balance is NOT on 19.0 — skipped
-    # Port from 18.0 first, then add symlink manually
+    # Tax balance (from account-financial-reporting, NOT account-financial-tools)
+    symlink_module "oca/account-financial-reporting/account_tax_balance"
 
     # Bank payment
     symlink_module "oca/bank-payment/account_payment_mode"
@@ -191,7 +192,6 @@ wave3_clone() {
     echo ""
     log "Wave 3 clone complete!"
     warn "These affect accounting! Test on staging (ODOO_DB=odoo_stage) first!"
-    warn "account_tax_balance NOT on 19.0 — requires porting from 18.0"
     info "  1. Run: ODOO_DB=odoo_stage $0 wave3-install"
     info "  2. Have Finance team (BOM/RIM) verify"
     info "  3. Then: ODOO_DB=odoo_prod $0 wave3-install"
@@ -218,8 +218,8 @@ wave3_install() {
     install_modules "account_move_name_sequence,account_journal_restrict_mode,account_usability,account_payment_mode,account_move_post_date_user,account_move_print"
 
     # Tier 2: depends on Tier 1 + Wave 2 (date_range must be installed)
-    info "Installing Tier 2: payment orders..."
-    install_modules "account_payment_order"
+    info "Installing Tier 2: payment orders + tax balance..."
+    install_modules "account_tax_balance,account_payment_order"
 
     # Tier 3: depends on Tier 2
     info "Installing Tier 3: payment order extensions..."
@@ -229,9 +229,9 @@ wave3_install() {
     log "Wave 3 install complete!"
     info "Verify with Finance team:"
     info "  - Create a payment order batch"
+    info "  - Check tax balance report"
     info "  - Verify journal entry sequences unchanged"
     info "  - Check account_move_post_date_user captures posting user"
-    warn "account_tax_balance was SKIPPED (not on 19.0)"
 }
 
 # --- Wave 4: Clone Nice-to-Have Repos (LOCAL) ---------------------------------
