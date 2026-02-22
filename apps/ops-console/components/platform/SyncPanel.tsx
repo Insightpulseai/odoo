@@ -4,7 +4,7 @@
 import React from "react";
 import { useOpsSyncCheckpoints } from "@/hooks/use-ops-sync-checkpoints";
 import { useOpsSyncDlq } from "@/hooks/use-ops-sync-dlq";
-import { ago, statusColor } from "@/lib/mock-data";
+import { ago, statusColor } from "@/lib/visuals";
 import { PlatformCard, Badge } from "./Visuals";
 
 export const SyncPanel = () => {

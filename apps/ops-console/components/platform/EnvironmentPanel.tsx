@@ -4,7 +4,7 @@
 import React from "react";
 import { useOpsEnvironments } from "@/hooks/use-ops-environments";
 import { useOpsRunMutation } from "@/hooks/use-ops-run-mutation";
-import { ago } from "@/lib/mock-data";
+import { ago } from "@/lib/visuals";
 import { Badge } from "./Visuals";
 
 export const EnvironmentPanel = () => {

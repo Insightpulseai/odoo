@@ -2,11 +2,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { QUERIES } from "@/lib/mock-data";
-import { PlatformCard } from "./Visuals";
+import { mocks } from "@/lib/mocks";
+import { useOpsEnvironments } from "@/hooks/use-ops-environments";
+import { useOpsRunMutation } from "@/hooks/use-ops-run-mutation";
+import { ago } from "@/lib/visuals";
+import { Badge, PlatformCard } from "./Visuals";
 
 export const SQLPanel = () => {
-  const [query, setQuery] = useState(QUERIES[0]);
+  const [query, setQuery] = useState(mocks.QUERIES[0]);
   const [aiPrompt, setAiPrompt] = useState("");
 
   const handleSuggest = (s: string) => {
@@ -113,7 +116,7 @@ export const SQLPanel = () => {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
           <div style={{ display: "flex", gap: 4 }}>
-            {QUERIES.map((q, i) => (
+            {mocks.QUERIES.map((q, i) => (
               <button
                 key={i}
                 onClick={() => setQuery(q)}

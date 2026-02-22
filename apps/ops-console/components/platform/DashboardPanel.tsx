@@ -1,6 +1,6 @@
 import { useOpsDeployments } from "@/hooks/use-ops-deployments";
 import { useOpsRuns } from "@/hooks/use-ops-runs";
-import { ago, statusColor, statusIcon } from "@/lib/mock-data";
+import { ago, statusColor, statusIcon } from "@/lib/visuals";
 import { PlatformCard, Stat, Badge } from "./Visuals";
 
 export const DashboardPanel = () => {

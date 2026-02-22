@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useOpsDeployments } from "@/hooks/use-ops-deployments";
-import { ago, statusColor, statusIcon } from "@/lib/mock-data";
+import { ago, statusColor, statusIcon } from "@/lib/visuals";
 import { Badge } from "./Visuals";
 
 export const BuildPanel = () => {

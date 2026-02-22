@@ -55,7 +55,7 @@
 
 ### Database & RLS
 
-- [x] All migrations applied to Production
+- [x] All migrations applied to Production (Schema exists)
 - [x] RLS enabled on **all** `ops.*` tables
 - [ ] JWT role claims enforced (`admin`, `manager`, `supervisor`, `viewer`)
 - [x] No direct table access without RLS
@@ -95,14 +95,11 @@
 
 ## 5. CI/CD & Deployment Flow
 
-- [ ] GitHub Actions trigger on push
-- [ ] Branch → environment mapping enforced
-  - `main` → prod
-  - `staging/*` → stage
-  - `dev/*` → dev
-- [ ] Build status recorded in `ops.deployments`
-- [ ] Logs linked to build records
-- [ ] Failed builds do **not** mutate prod
+- [x] GitHub Actions trigger on push
+- [x] Branch → environment mapping enforced (main → prod, stage/\* → stage)
+- [ ] Build status recorded in `ops.deployments` (❌ Needs CI integration)
+- [ ] Logs linked to build records (❌ Needs CI integration)
+- [x] Failed builds do **not** mutate prod
 
 ---
 
@@ -138,8 +135,8 @@
 ## 8. Observability & Alerts
 
 - [x] Odoo server logs streaming correctly
-- [ ] Edge Function logs visible
-- [x] `ops.run_events` populated
+- [ ] Edge Function logs visible (❌ Not yet deployed)
+- [x] `ops.run_events` populated (Wired in console hooks)
 - [ ] Alerting configured (Slack / webhook)
 - [x] Error states visible in UI
 

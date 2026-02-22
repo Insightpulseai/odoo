@@ -2,7 +2,8 @@
 "use client";
 
 import React from "react";
-import { TEAM, MODULES, roleColor } from "@/lib/mock-data";
+import { mocks } from "@/lib/mocks";
+import { roleColor } from "@/lib/visuals";
 import { PlatformCard, Badge } from "./Visuals";
 
 export const TeamPanel = () => (
@@ -11,7 +12,7 @@ export const TeamPanel = () => (
     subtitle="Supabase Auth · JWT role claims for RLS"
   >
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      {TEAM.map((t) => (
+      {mocks.TEAM.map((t) => (
         <div
           key={t.code}
           style={{
@@ -64,7 +65,7 @@ export const ModulesPanel = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {stages.map((stage) => {
-        const mods = MODULES.filter((m) => m.stage === stage);
+        const mods = mocks.MODULES.filter((m) => m.stage === stage);
         if (mods.length === 0) return null;
         return (
           <PlatformCard
