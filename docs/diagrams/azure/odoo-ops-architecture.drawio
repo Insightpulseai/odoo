@@ -7,97 +7,97 @@
         <mxCell id="1" parent="0" />
 
         <!-- Header -->
-        <mxCell id="title" value="Insightpulseai Odoo 19 CE — Prod Architecture (Agent Skills &amp; Anthropics Spec)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="50" y="20" width="1300" height="40" as="geometry" />
+        <mxCell id="title" value="Insightpulseai Odoo 19 CE — Prod Architecture (Agent Skills &amp; Anthropics Spec)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="1300" height="50" as="geometry" />
         </mxCell>
 
-        <!-- Swimlanes -->
-        <mxCell id="lane-repo" value="GitHub Repo (SSOT)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="50" y="90" width="320" height="760" as="geometry" />
+        <!-- Swimlanes with Premium Styling -->
+        <mxCell id="lane-repo" value="GitHub Repo (SSOT)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="100" width="320" height="760" as="geometry" />
         </mxCell>
 
-        <mxCell id="lane-ci" value="CI / Policy Gates" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="390" y="90" width="320" height="760" as="geometry" />
+        <mxCell id="lane-ci" value="CI / Policy Gates" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="100" width="320" height="760" as="geometry" />
         </mxCell>
 
-        <mxCell id="lane-runtime" value="Odoo Runtime (DO Droplet)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="730" y="90" width="360" height="760" as="geometry" />
+        <mxCell id="lane-runtime" value="Odoo Runtime (DO Droplet)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="100" width="360" height="760" as="geometry" />
         </mxCell>
 
-        <mxCell id="lane-platform" value="Platform / Bridges" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="1110" y="90" width="240" height="760" as="geometry" />
+        <mxCell id="lane-platform" value="Platform / Bridges" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="100" width="240" height="760" as="geometry" />
         </mxCell>
 
-        <!-- Repo Content -->
-        <mxCell id="repo-core" value="Upstream Odoo&#xa;(odoo/ + addons/odoo)&#xa;Pinned commit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-repo">
-          <mxGeometry x="20" y="60" width="280" height="110" as="geometry" />
+        <!-- Repo Content with Gradients -->
+        <mxCell id="repo-core" value="Upstream Odoo&#xa;(odoo/ + addons/odoo)&#xa;Pinned commit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
+          <mxGeometry x="25" y="60" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-oca" value="OCA Submodules&#xa;addons/oca/repos/*&#xa;(Restricted Access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-repo">
-          <mxGeometry x="20" y="190" width="280" height="110" as="geometry" />
+        <mxCell id="repo-oca" value="OCA Submodules&#xa;addons/oca/repos/*&#xa;(Restricted Access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
+          <mxGeometry x="25" y="190" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-allowlist" value="ALLOWLIST.yaml&#xa;- repo/path mapping&#xa;- risk: low/med/high" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane-repo">
-          <mxGeometry x="20" y="320" width="280" height="110" as="geometry" />
+        <mxCell id="repo-allowlist" value="ALLOWLIST.yaml&#xa;- repo/path mapping&#xa;- risk: low/med/high" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
+          <mxGeometry x="25" y="320" width="270" height="110" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-skills" value="Agent Skills (Anthropic Port)&#xa;agents/skills/**/SKILL.md&#xa;metadata.yaml registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-repo">
-          <mxGeometry x="20" y="450" width="280" height="130" as="geometry" />
+        <mxCell id="repo-skills" value="Agent Skills (Anthropic Port)&#xa;agents/skills/**/SKILL.md&#xa;metadata.yaml registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
+          <mxGeometry x="25" y="450" width="270" height="130" as="geometry" />
         </mxCell>
 
-        <mxCell id="repo-sdk" value="IPAI AI SDK&#xa;Thin adapters &amp; Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-repo">
-          <mxGeometry x="20" y="600" width="280" height="110" as="geometry" />
+        <mxCell id="repo-sdk" value="IPAI AI SDK&#xa;Thin adapters &amp; Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
+          <mxGeometry x="25" y="600" width="270" height="110" as="geometry" />
         </mxCell>
 
         <!-- CI Content -->
-        <mxCell id="ci-gate1" value="Gate: verify_oca_allowlist.py&#xa;- selected symlinks match" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane-ci">
-          <mxGeometry x="20" y="90" width="280" height="130" as="geometry" />
+        <mxCell id="ci-gate1" value="Gate: verify_oca_allowlist.py&#xa;- selected symlinks match" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-ci">
+          <mxGeometry x="25" y="90" width="270" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="ci-skill-check" value="Gate: validate_skill_registry.py&#xa;- checksums &amp; schemas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane-ci">
-          <mxGeometry x="20" y="240" width="280" height="130" as="geometry" />
+        <mxCell id="ci-skill-check" value="Gate: validate_skill_registry.py&#xa;- checksums &amp; schemas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-ci">
+          <mxGeometry x="25" y="230" width="270" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="ci-gate2" value="Gate: ipai-custom-modules-guard&#xa;Surgical risk-tier label required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane-ci">
-          <mxGeometry x="20" y="390" width="280" height="130" as="geometry" />
+        <mxCell id="ci-gate2" value="Gate: ipai-custom-modules-guard&#xa;Surgical risk-tier label required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-ci">
+          <mxGeometry x="25" y="370" width="270" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="ci-deploy" value="Deploy Pipeline&#xa;- odoo-bin rollout&#xa;- skill registry sync" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="lane-ci">
-          <mxGeometry x="20" y="550" width="280" height="110" as="geometry" />
+        <mxCell id="ci-deploy" value="Deploy Pipeline&#xa;- odoo-bin rollout&#xa;- skill registry sync" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;gradientColor=#b3b3b3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-ci">
+          <mxGeometry x="25" y="530" width="270" height="110" as="geometry" />
         </mxCell>
 
         <!-- Runtime Content -->
-        <mxCell id="rt-odoo" value="Odoo App Server&#xa;(odoo-bin rollout)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-runtime">
+        <mxCell id="rt-odoo" value="Odoo App Server&#xa;(odoo-bin rollout)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-runtime">
           <mxGeometry x="20" y="90" width="320" height="120" as="geometry" />
         </mxCell>
 
-        <mxCell id="rt-pg" value="Managed Postgres&#xa;odoo-db-sgp1 (PG16)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-runtime">
+        <mxCell id="rt-pg" value="Managed Postgres&#xa;odoo-db-sgp1 (PG16)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-runtime">
           <mxGeometry x="20" y="590" width="320" height="110" as="geometry" />
         </mxCell>
 
         <!-- Platform Content -->
-        <mxCell id="pl-skill-layer" value="Skill Execution Layer&#xa;(MCP Server / Tools)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-platform">
+        <mxCell id="pl-skill-layer" value="Skill Execution Layer&#xa;(MCP Server / Tools)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-platform">
           <mxGeometry x="20" y="90" width="200" height="130" as="geometry" />
         </mxCell>
 
-        <mxCell id="pl-supabase" value="Supabase Control Plane&#xa;Dynamic Routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-platform">
+        <mxCell id="pl-supabase" value="Supabase Control Plane&#xa;Dynamic Routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-platform">
           <mxGeometry x="20" y="240" width="200" height="140" as="geometry" />
         </mxCell>
 
-        <mxCell id="pl-n8n" value="n8n Automations&#xa;Scheduled Ops" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-platform">
+        <mxCell id="pl-n8n" value="n8n Automations&#xa;Scheduled Ops" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-platform">
           <mxGeometry x="20" y="400" width="200" height="110" as="geometry" />
         </mxCell>
 
-        <!-- Edges -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="repo-skills" target="ci-skill-check">
+        <!-- Edges with Better Rendering -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="repo-skills" target="ci-skill-check">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="ci-deploy" target="pl-skill-layer">
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#27AE60;curved=1;" edge="1" parent="1" source="ci-deploy" target="pl-skill-layer">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="ci-deploy" target="rt-odoo">
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#2980B9;curved=1;" edge="1" parent="1" source="ci-deploy" target="rt-odoo">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 

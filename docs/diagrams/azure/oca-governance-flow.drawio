@@ -7,56 +7,56 @@
         <mxCell id="1" parent="0" />
 
         <!-- Header -->
-        <mxCell id="title" value="OCA Governance Flow — Skills Generation + Surgical Risk-Tier Gate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="60" y="20" width="1280" height="40" as="geometry" />
+        <mxCell id="title" value="OCA Governance Flow — Skills Generation + Surgical Risk-Tier Gate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+          <mxGeometry x="60" y="20" width="1280" height="50" as="geometry" />
         </mxCell>
 
-        <!-- Swimlanes -->
-        <mxCell id="lane-dev" value="Developer / Generator" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="60" y="90" width="300" height="760" as="geometry" />
+        <!-- Swimlanes with Premium Styling -->
+        <mxCell id="lane-dev" value="Developer / Generator" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="300" height="760" as="geometry" />
         </mxCell>
 
-        <mxCell id="lane-repo" value="Repo SSOT (Pinned)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="380" y="90" width="340" height="760" as="geometry" />
+        <mxCell id="lane-repo" value="Repo SSOT (Pinned)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="100" width="340" height="760" as="geometry" />
         </mxCell>
 
-        <mxCell id="lane-ci" value="CI Gates &amp; Validation" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;rounded=1;startSize=28" vertex="1" parent="1">
-          <mxGeometry x="740" y="90" width="330" height="760" as="geometry" />
+        <mxCell id="lane-ci" value="CI Gates &amp; Validation" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="740" y="100" width="330" height="760" as="geometry" />
         </mxCell>
 
         <!-- Developer Content -->
-        <mxCell id="dev-kb" value="Vendored Odoo 19 KB&#xa;(pinned commit verify)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-dev">
-          <mxGeometry x="20" y="60" width="260" height="100" as="geometry" />
+        <mxCell id="dev-kb" value="Vendored Odoo 19 KB&#xa;(pinned commit verify)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-dev">
+          <mxGeometry x="25" y="60" width="250" height="100" as="geometry" />
         </mxCell>
 
-        <mxCell id="dev-gen" value="Procedural Skill Gen&#xa;generate_skill_from_kb.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane-dev">
-          <mxGeometry x="20" y="180" width="260" height="100" as="geometry" />
+        <mxCell id="dev-gen" value="Procedural Skill Gen&#xa;generate_skill_from_kb.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-dev">
+          <mxGeometry x="25" y="185" width="250" height="100" as="geometry" />
         </mxCell>
 
-        <mxCell id="dev-pr" value="Open PR&#xa;(SKILL.md + registry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="lane-dev">
-          <mxGeometry x="20" y="300" width="260" height="80" as="geometry" />
+        <mxCell id="dev-pr" value="Open PR&#xa;(SKILL.md + registry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-dev">
+          <mxGeometry x="25" y="310" width="250" height="80" as="geometry" />
         </mxCell>
 
         <!-- Repo Content -->
-        <mxCell id="repo-skills" value="agents/skills/registry/&#xa;Anthropic-compatible&#xa;Skill Port Library" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane-repo">
+        <mxCell id="repo-skills" value="agents/skills/registry/&#xa;Anthropic-compatible&#xa;Skill Port Library" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-repo">
           <mxGeometry x="20" y="80" width="300" height="140" as="geometry" />
         </mxCell>
 
         <!-- CI Content -->
-        <mxCell id="ci-validate" value="validate_skill_registry.py&#xa;- Schema validation&#xa;- Risk level checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane-ci">
+        <mxCell id="ci-validate" value="validate_skill_registry.py&#xa;- Schema validation&#xa;- Risk level checks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1" vertex="1" parent="lane-ci">
           <mxGeometry x="20" y="90" width="290" height="130" as="geometry" />
         </mxCell>
 
-        <!-- Edges -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="dev-kb" target="dev-gen">
+        <!-- Edges with Better Rendering -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="dev-kb" target="dev-gen">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="dev-pr" target="repo-skills">
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="dev-pr" target="repo-skills">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="repo-skills" target="ci-validate">
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="repo-skills" target="ci-validate">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
