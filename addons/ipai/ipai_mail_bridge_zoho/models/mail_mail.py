@@ -51,6 +51,7 @@ class MailMail(models.Model):
             "to": ", ".join(to_list),
             "subject": mail.subject or "(no subject)",
         }
+
         if mail.body_html:
             payload["htmlBody"] = mail.body_html
         elif mail.body:
@@ -65,16 +66,12 @@ class MailMail(models.Model):
         }
 
         try:
-            resp = requests.post(
-                url, headers=headers, data=json.dumps(payload), timeout=20
-            )
+            resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=20)
         except requests.exceptions.RequestException as exc:
             raise UserError(_("Zoho bridge connection error: %s") % exc) from exc
 
         if resp.status_code >= 300:
-            raise UserError(
-                _("Zoho bridge failed (HTTP %s): %s") % (resp.status_code, resp.text)
-            )
+            raise UserError(_("Zoho bridge failed (HTTP %s): %s") % (resp.status_code, resp.text))
 
         return resp.json()
 
@@ -111,9 +108,7 @@ class MailMail(models.Model):
                     result.get("ok"),
                 )
             except Exception as exc:
-                _logger.exception(
-                    "ipai_mail_bridge_zoho: failed to send mail.mail id=%s", mail.id
-                )
+                _logger.exception("ipai_mail_bridge_zoho: failed to send mail.mail id=%s", mail.id)
                 mail.write(
                     {
                         "state": "exception",
@@ -122,6 +117,7 @@ class MailMail(models.Model):
                 )
                 if raise_exception:
                     raise
+
             if auto_commit:
                 self.env.cr.commit()
 

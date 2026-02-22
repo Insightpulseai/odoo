@@ -1,0 +1,33 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://odoo.insightpulse.ai
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/odoo-ops
+            git fetch --tags
+            git checkout ${{ github.ref_name }}
+            ./scripts/deploy/deploy.sh prod ${{ github.ref_name }}
+            ./scripts/deploy/migrate.sh prod
