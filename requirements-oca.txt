@@ -13,3 +13,7 @@ dateutil>=2.8
 
 # Quality Control
 qrcode>=7.0
+
+# Upgrade Analysis
+odoorpc>=0.10
+openupgradelib>=3.12
