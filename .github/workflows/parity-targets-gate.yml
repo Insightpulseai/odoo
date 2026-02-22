@@ -1,0 +1,37 @@
+name: Parity Targets Gate
+
+on:
+  pull_request:
+    paths:
+      - "docs/architecture/**"
+      - "docs/ops/**"
+      - "odoo/ssot/**"
+      - "addons/ipai/**"
+      - "addons/oca/**"
+      - "scripts/odoo/validate_parity_targets.py"
+  push:
+    branches: [main]
+    paths:
+      - "odoo/ssot/parity_targets.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-parity:
+    name: Validate ERP Parity Targets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run parity targets validator
+        run: python scripts/odoo/validate_parity_targets.py
