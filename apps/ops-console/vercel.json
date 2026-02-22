@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["syd1"],
+  "ignoreCommand": "bash -lc 'BASE=${VERCEL_GIT_PREVIOUS_SHA:-origin/main}; git diff --name-only \"$BASE\" \"$VERCEL_GIT_COMMIT_SHA\" | grep -qE \"^apps/ops-console/\" && exit 1 || exit 0'",
+  "functions": {
+    "app/api/ai/sql/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/supabase-proxy/[...path]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

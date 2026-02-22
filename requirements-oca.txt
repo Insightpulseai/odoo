@@ -19,3 +19,7 @@ python-jose>=3.3.0
 
 # partner_email_check
 email-validator>=2.0.0
+
+# Upgrade Analysis
+odoorpc>=0.10
+openupgradelib>=3.12

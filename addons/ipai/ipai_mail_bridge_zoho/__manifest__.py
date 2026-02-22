@@ -25,6 +25,8 @@ Configuration (Docker / systemd env vars — NOT committed to git):
                             Must match BRIDGE_SHARED_SECRET in Supabase Vault.
 
 If these env vars are absent, falls back to standard Odoo SMTP (safe for local dev).
+
+See: docs/contracts/DNS_EMAIL_CONTRACT.md
     """,
     "category": "Mail",
     "license": "LGPL-3",

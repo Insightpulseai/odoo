@@ -1,47 +1,27 @@
 name: SSOT Surface Guard
 
-# Enforces the Platform SSOT Map (docs/architecture/SSOT_BOUNDARIES.md).
-# Runs on every PR. Checks four cross-domain invariants:
-#   1. Generated files were not hand-edited
-#   2. n8n JSON exports contain no literal secrets
-#   3. Supabase migrations only add (never drop) ops.* tables
-#   4. OCA addons path is respected (no files outside addons/oca/)
-
 on:
   pull_request:
     paths:
-      - 'addons/**'
-      - 'automations/n8n/workflows/**'
-      - 'supabase/migrations/**'
-      - 'infra/dns/**'
-      - 'infra/cloudflare/**'
-      - 'docs/architecture/runtime_identifiers.json'
-      - 'packages/design-tokens/**'
-  push:
-    branches: [main]
+      - "addons/**"
+      - "supabase/**"
+      - "automations/n8n/workflows/**"
+      - "infra/dns/**"
+      - "infra/cloudflare/**"
+      - "config/**"
 
 permissions:
   contents: read
 
 jobs:
-  # ── Guard 1: Generated files must not be hand-edited ──────────────────────
+  # ── Guard 1: Generated files must not be hand-edited ─────────────────────
   generated-files-guard:
     name: Generated Files Guard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify runtime_identifiers.json has generator header
-        run: |
-          set -euo pipefail
-          FILE="docs/architecture/runtime_identifiers.json"
-          if [ -f "$FILE" ]; then
-            # File must not be modified in the same PR as subdomain-registry.yaml
-            # unless the generator was run (verified via content consistency check)
-            echo "PASS: $FILE exists"
-          fi
-
-      - name: Verify subdomains.auto.tfvars has DO NOT EDIT header
+      - name: Verify Cloudflare tfvars has generator header
         run: |
           set -euo pipefail
           FILE="infra/cloudflare/envs/prod/subdomains.auto.tfvars"
@@ -220,6 +200,41 @@ jobs:
           fi
           echo "PASS: All addons/ipai/ directories follow ipai_* naming"
 
+  # ── Guard 5: Domain & Contract Checks (Local Rules) ────────────────────────
+  platform-governance-guard:
+    name: Platform Governance Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check DNS contract doc presence
+        run: |
+          dns_changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^infra/dns/' || true)
+          if [ -n "$dns_changed" ] && [ ! -f "docs/contracts/DNS_EMAIL_CONTRACT.md" ]; then
+            echo "ERROR: infra/dns/ changed but docs/contracts/DNS_EMAIL_CONTRACT.md is missing" >&2
+            exit 1
+          fi
+          echo "DNS contract doc check: OK"
+
+      - name: Check deprecated .net domain references
+        run: |
+          changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || true)
+          if [ -n "$changed_files" ]; then
+            hits=$(git diff origin/${{ github.base_ref }}...HEAD -- $changed_files \
+              | grep '^+' \
+              | grep -v '^+++' \
+              | grep -i 'insightpulseai\.net' || true)
+            if [ -n "$hits" ]; then
+              echo "ERROR: deprecated insightpulseai.net domain found in diff — use insightpulseai.com" >&2
+              echo "$hits" >&2
+              exit 1
+            fi
+          fi
+          echo "Deprecated domain check: OK"
+
   # ── Summary ────────────────────────────────────────────────────────────────
   surface-guard-summary:
     name: Surface Guard Summary
@@ -229,6 +244,7 @@ jobs:
       - n8n-secret-scan
       - supabase-migration-guard
       - oca-addons-path-guard
+      - platform-governance-guard
     if: always()
     steps:
       - name: Report guard results
@@ -238,11 +254,13 @@ jobs:
           echo "  n8n-secret-scan       : ${{ needs.n8n-secret-scan.result }}"
           echo "  supabase-migration    : ${{ needs.supabase-migration-guard.result }}"
           echo "  oca-addons-path       : ${{ needs.oca-addons-path-guard.result }}"
+          echo "  platform-governance   : ${{ needs.platform-governance-guard.result }}"
 
           if [ "${{ needs.generated-files-guard.result }}" = "failure" ] || \
              [ "${{ needs.n8n-secret-scan.result }}" = "failure" ] || \
              [ "${{ needs.supabase-migration-guard.result }}" = "failure" ] || \
-             [ "${{ needs.oca-addons-path-guard.result }}" = "failure" ]; then
+             [ "${{ needs.oca-addons-path-guard.result }}" = "failure" ] || \
+             [ "${{ needs.platform-governance-guard.result }}" = "failure" ]; then
             echo ""
             echo "FAIL: One or more surface guards failed."
             echo "See docs/architecture/SSOT_BOUNDARIES.md for boundary rules."

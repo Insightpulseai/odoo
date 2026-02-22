@@ -1,0 +1,25 @@
+services:
+  odoo-stage:
+    build:
+      context: ../..
+      dockerfile: docker/odoo/Dockerfile
+    image: insightpulseai/odoo:stage
+    container_name: odoo_stage
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-data-stage:/var/lib/odoo
+      - ../../addons/oca/selected:/mnt/extra-addons/selected:ro
+      - ../../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=odoo_stage
+      - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
+    restart: unless-stopped
+
+volumes:
+  odoo-data-stage:
