@@ -12,6 +12,21 @@
 
 ## Canonical Hydration Workflow
 
+### Option A: Script (recommended for local dev)
+
+```bash
+# One command — idempotent, skips if already hydrated
+./scripts/hydrate_oca.sh
+
+# Force re-hydrate (re-clone all repos)
+./scripts/hydrate_oca.sh --force
+
+# Parallel jobs (default: 4)
+OCA_JOBS=8 ./scripts/hydrate_oca.sh
+```
+
+### Option B: Manual git-aggregator
+
 ```bash
 # 1. Install git-aggregator (once per environment)
 pip install git-aggregator
@@ -27,6 +42,36 @@ gitaggregate -c oca-aggregate.yml -j 4     # parallel (4 jobs)
 After hydration, `addons/oca/` contains one subdirectory per OCA repo
 (e.g., `addons/oca/web/`, `addons/oca/server-tools/`). Each subdirectory is
 a full git clone of the corresponding OCA 19.0 branch.
+
+## Automatic Hydration in Dev
+
+The entrypoint hook `config/entrypoint.d/05-hydrate-oca.sh` can auto-hydrate
+at container startup. It is **disabled by default** and gated by an env var:
+
+```yaml
+# In docker-compose.yml or docker-compose.override.yml:
+environment:
+  OCA_HYDRATE: "1"        # Enable auto-hydration at startup
+  OCA_JOBS: "4"           # Parallel clone jobs (optional, default: 4)
+```
+
+**Behavior:**
+- If `OCA_HYDRATE != 1` → skip silently (zero overhead)
+- If `addons/oca/` already has repos → skip (idempotent, fast path)
+- If `git-aggregator` is not installed → warn and continue (non-fatal)
+- If hydration fails → warn and continue (Odoo starts without OCA)
+
+**Production note:** Do not use `OCA_HYDRATE=1` in production. Production
+images should bake OCA repos at Docker build time for deterministic deploys.
+
+## Hydration Strategies by Environment
+
+| Environment | Strategy | How |
+|-------------|----------|-----|
+| **Local dev** | Script or auto-hydrate | `./scripts/hydrate_oca.sh` or `OCA_HYDRATE=1` |
+| **DevContainer** | Auto-hydrate on create | Add to `postCreateCommand` |
+| **CI** | Hydrate + test + publish | `scripts/hydrate_oca.sh` in workflow |
+| **Production** | Bake at build time | `RUN` in Dockerfile (future) |
 
 ## Docker Compose Alignment
 
@@ -70,6 +115,8 @@ If a reproducible lockfile is needed in the future, it must be generated from
 ## Related Documents
 
 - [`oca-aggregate.yml`](../../oca-aggregate.yml) — SSOT for OCA repo composition
+- [`scripts/hydrate_oca.sh`](../../scripts/hydrate_oca.sh) — Idempotent hydration script
+- [`config/entrypoint.d/05-hydrate-oca.sh`](../../config/entrypoint.d/05-hydrate-oca.sh) — Startup hook (dev)
 - [`REPO_LAYOUT.md`](REPO_LAYOUT.md) — Three-stack addon architecture rationale
 - [`EE_PARITY_POLICY.md`](EE_PARITY_POLICY.md) — EE parity placement rules
 - [`ADDONS_STRUCTURE_BOUNDARY.md`](ADDONS_STRUCTURE_BOUNDARY.md) — Full boundary taxonomy
