@@ -2,10 +2,12 @@
 <!-- Copyright 2026 InsightPulse AI
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-     Replaces mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
-     for Odoo 19 compatibility.  The only change is the mobileTopbar template:
-       OLD parent: mail.Discuss.mobileTopbar      (removed in Odoo 19)
-       NEW parent: mail.DiscussContent.mobileTopbar (current name in Odoo 19)
+     Replaces: mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
+     Reason  : OCA template inherits from mail.Discuss.mobileTopbar which was
+               renamed to mail.DiscussContent.mobileTopbar in Odoo 19.
+
+     The first two templates (Mailbox.main, DiscussSidebarMailboxes) are
+     unchanged from upstream; only the mobileTopbar t-inherit is corrected.
 -->
 <templates xml:space="preserve">
     <t
@@ -14,7 +16,7 @@
         t-inherit-mode="extension"
     >
         <xpath expr="//span[@t-esc='mailbox.counter']" position="attributes">
-            <!-- Override colour class: muted for starred, danger for failed -->
+            <!-- Override colour: muted for starred, danger for failed -->
             <attribute
                 name="t-att-class"
             >{'o-muted': mailbox.id === 'starred', 'o-danger': mailbox.id === 'failed'}</attribute>
@@ -29,6 +31,10 @@
             <Mailbox mailbox="store.failed" />
         </xpath>
     </t>
+    <!--
+        CHANGED: t-inherit was "mail.Discuss.mobileTopbar" (removed in Odoo 19).
+        Correct parent in Odoo 19: mail.DiscussContent.mobileTopbar
+    -->
     <t
         t-name="mail_tracking.DiscussContent.mobileTopbar"
         t-inherit="mail.DiscussContent.mobileTopbar"
