@@ -47,6 +47,30 @@ Odoo process:
 If it **only extends Odoo models/views** and talks to no external service,
 it is NOT a bridge and belongs in `addons/oca/`.
 
+## Allowed Exception: Temporary Compatibility Shims
+
+An `ipai_*` module may exist in `addons/ipai/` as a **temporary compatibility
+shim** if and only if ALL of the following constraints are met:
+
+| # | Constraint |
+|---|-----------|
+| 1 | The module contains **only** JS and/or XML shims — no Python models, views, security rules, or data files |
+| 2 | It fixes a **hard boot failure** caused by removed upstream APIs (not a nice-to-have) |
+| 3 | The `__manifest__.py` description explicitly states **"TEMPORARY"** and lists concrete removal criteria |
+| 4 | A `README.md` in the module directory documents purpose, constraints, and sunset plan |
+| 5 | The module must **never** implement business logic, EE-parity features, or standalone functionality |
+| 6 | Removal criteria are reviewed on the same monthly cadence as the EE Parity Policy |
+
+**Current temporary shims**:
+
+| Module | Shims | Removal trigger |
+|--------|-------|-----------------|
+| `ipai_mail_compat` | `mail.Discuss.mobileTopbar` stub, `Record.one/many/attr` aliases | OCA 19.0 branches drop Odoo 17 API references |
+
+This exception exists because the alternative — forking OCA module source — would
+violate the OCA module isolation rule (`.claude/rules/ssot-platform.md` Rule 10).
+Temporary shims are the lesser policy violation.
+
 ## Enforcement
 
 - **CI**: `check_parity_boundaries.sh` blocks new violations on every PR
