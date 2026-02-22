@@ -174,14 +174,21 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 
 **Canonical Reference**: `spec/agent/constitution.md`
 
-**Key Constraints for Claude Code Web**:
-- ❌ **Forbidden**: Docker/containers, apt/brew, systemctl, sudo (not available in Web environment)
-- ✅ **Allowed**: File edits, git operations, CI workflow generation, remote API calls
-- 📋 **Capabilities**: Only claim capabilities verified in `agents/capabilities/manifest.json`
+**Environment**: Claude Code Web sessions have full local CLI capabilities (bash, git, npm, pip, curl, etc.). Do NOT refuse commands citing "web environment restrictions" — execute them directly.
 
-**Response Pattern**: If user requests forbidden operation (e.g., "run docker-compose"), acknowledge constraint and provide correct alternative (CI workflow, deployment docs, or remote execution).
+**Allowed (all sessions)**:
+- ✅ File edits, git operations, CI workflow generation, remote API calls
+- ✅ Package managers: `npm`, `pip`, `apt-get` (available in container)
+- ✅ Build tools: `node`, `python`, `make`, etc.
+- ✅ Network: `curl`, `wget`, GitHub API via proxy
+- ✅ Any CLI tool installable via `apt-get` or `npm`
 
-**See constitution for**: Complete constraint catalog, response patterns, capability verification, examples.
+**Only truly unavailable** (container limitation, not agent restriction):
+- `docker` / `docker-compose` (no Docker-in-Docker) — use CI workflows instead
+- `systemctl` (no systemd) — services run in foreground or via CI
+- GUI / browser — headless only
+
+**Response Pattern**: Attempt the command first. If it genuinely fails due to environment, explain the real error and provide the CI/remote alternative. Never preemptively refuse.
 
 ---
 
