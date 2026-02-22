@@ -1,0 +1,25 @@
+name: agent-ssot-check
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ssot-pointer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure CLAUDE.md points to canonical SSOT
+        run: |
+          set -euo pipefail
+          grep -q "docs/ai/SSOT.md" CLAUDE.md
+      - name: Ensure sync script exists
+        run: |
+          test -f scripts/agents/sync_agent_instructions.py
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check for drift
+        run: |
+          python scripts/agents/check_agent_instruction_drift.py

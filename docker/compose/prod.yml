@@ -1,0 +1,27 @@
+services:
+  odoo-prod:
+    image: insightpulseai/odoo:${RELEASE_TAG:-latest}
+    container_name: odoo_prod
+    ports:
+      - "80:8069"
+    volumes:
+      - odoo-data-prod:/var/lib/odoo
+      - /opt/odoo/addons/selected:/mnt/extra-addons/selected:ro
+      - /opt/odoo/addons/ipai:/mnt/extra-addons/ipai:ro
+      - /etc/odoo/odoo.conf:/etc/odoo/odoo.conf:ro
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=odoo_prod
+      - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  odoo-data-prod:

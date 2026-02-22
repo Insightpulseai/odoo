@@ -91,49 +91,55 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 
 ## SSOT Assignment Table
 
-| Path pattern | SSOT owner | Derived from | Regenerate command |
-|-------------|-----------|-------------|-------------------|
-| `addons/ipai/**` | Git | (original) | — |
-| `addons/oca/**` | OCA upstream | submodule pin | `git submodule update` |
-| `automations/n8n/workflows/*.json` | Git (export from n8n) | Live n8n instance | `scripts/automations/export_n8n.py` |
-| `config/odoo/mail_settings.yaml` | Git | (original) | — |
-| `deploy/*.compose.yml` | Git | (original) | — |
-| `docs/architecture/runtime_identifiers.json` | **Generated** | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
-| `infra/cloudflare/envs/prod/subdomains.auto.tfvars` | **Generated** | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
-| `infra/dns/dns-validation-spec.json` | **Generated** | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
-| `infra/dns/subdomain-registry.yaml` | Git | (original) | — |
-| `packages/design-tokens/tokens.json` | **Generated** | Figma file | `scripts/design/export_tokens.sh` |
-| `supabase/config.toml` | Git | (original) | — |
-| `supabase/migrations/*.sql` | Git | (original) | — |
-| `supabase/functions/**` | Git | (original) | — |
-| `.github/workflows/*.yml` | Git | (original) | — |
+| Path pattern                                        | SSOT owner            | Derived from                        | Regenerate command                      |
+| --------------------------------------------------- | --------------------- | ----------------------------------- | --------------------------------------- |
+| `addons/ipai/**`                                    | Git                   | (original)                          | —                                       |
+| `addons/oca/**`                                     | OCA upstream          | submodule pin                       | `git submodule update`                  |
+| `automations/n8n/workflows/*.json`                  | Git (export from n8n) | Live n8n instance                   | `scripts/automations/export_n8n.py`     |
+| `config/odoo/mail_settings.yaml`                    | Git                   | (original)                          | —                                       |
+| `deploy/*.compose.yml`                              | Git                   | (original)                          | —                                       |
+| `docs/architecture/runtime_identifiers.json`        | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
+| `infra/cloudflare/envs/prod/subdomains.auto.tfvars` | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
+| `infra/dns/dns-validation-spec.json`                | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
+| `infra/dns/subdomain-registry.yaml`                 | Git                   | (original)                          | —                                       |
+| `packages/design-tokens/tokens.json`                | **Generated**         | Figma file                          | `scripts/design/export_tokens.sh`       |
+| `supabase/config.toml`                              | Git                   | (original)                          | —                                       |
+| `supabase/migrations/*.sql`                         | Git                   | (original)                          | —                                       |
+| `supabase/functions/**`                             | Git                   | (original)                          | —                                       |
+| `.github/workflows/*.yml`                           | Git                   | (original)                          | —                                       |
 
 ---
 
 ## Surface Area Rules
 
 ### Rule A — Generated files must not be hand-edited
+
 Files marked **Generated** above carry a `# DO NOT EDIT DIRECTLY` header.
 A CI check (`repo-structure-guard.yml`) detects edits that bypass the generator.
 
 ### Rule B — New paths require SSOT assignment before first commit
+
 Before adding a new top-level directory or significant sub-tree:
+
 1. Add a row to the SSOT Assignment Table above.
 2. Add a path guard to `.github/workflows/ssot-surface-guard.yml`.
 3. Reference the governing contract in `docs/contracts/PLATFORM_CONTRACTS_INDEX.md`.
 
 ### Rule C — Ephemeral paths must not be committed
-| Ephemeral path | Reason |
-|---------------|--------|
-| `sandbox/**` | Development scratch space — `sandbox/` in `.gitignore` |
-| `web/docs/evidence/**` | CI evidence — committed only in timestamped bundles |
-| `*.log`, `*.tmp` | Build artifacts |
-| `.env`, `.env.*` | Secrets — absolute block |
+
+| Ephemeral path         | Reason                                                 |
+| ---------------------- | ------------------------------------------------------ |
+| `sandbox/**`           | Development scratch space — `sandbox/` in `.gitignore` |
+| `web/docs/evidence/**` | CI evidence — committed only in timestamped bundles    |
+| `*.log`, `*.tmp`       | Build artifacts                                        |
+| `.env`, `.env.*`       | Secrets — absolute block                               |
 
 ### Rule D — Addons must follow OCA naming
+
 `addons/ipai/ipai_<domain>_<feature>/` — no exceptions.
 Violations detected by `ipai-custom-modules-guard.yml`.
 
 ### Rule E — n8n JSON exports must be secret-free
+
 `automations/n8n/workflows/*.json` must not contain literal credential values.
 Enforced by `ssot-surface-guard.yml` secret scan step.
