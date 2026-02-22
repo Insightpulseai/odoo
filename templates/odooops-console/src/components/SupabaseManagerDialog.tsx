@@ -1,7 +1,27 @@
 "use client";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { PlatformKit } from "@supabase/platform-kit-nextjs";
+
+// TODO: Replace with @supabase/platform-kit-nextjs when it ships on npm.
+// The package does not exist yet — using a placeholder embed.
+function PlatformKit({ projectRef, className }: {
+  projectRef: string;
+  apiUrl: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <p className="text-sm text-muted-foreground mb-2">
+        Supabase project: <code>{projectRef}</code>
+      </p>
+      <iframe
+        src={`https://supabase.com/dashboard/project/${projectRef}`}
+        className="w-full h-full border rounded"
+        title="Supabase Dashboard"
+      />
+    </div>
+  );
+}
 
 interface SupabaseManagerDialogProps {
   open: boolean;
