@@ -179,6 +179,15 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 | `scripts/` | Repo-wide tooling | All |
 | `spec/` | Spec Kit bundles (constitution, prd, plan, tasks) | Architecture/Product |
 
+### OCA Addons (Hydrated)
+
+`addons/oca/` is **generated** by hydrating [`oca-aggregate.yml`](oca-aggregate.yml) (Odoo 19.0 SSOT).
+The directory is intentionally empty in git (only a `.gitkeep`) and is populated at
+dev/build time via [git-aggregator](https://github.com/acsone/git-aggregator).
+Docker Compose mounts it into the container at `/mnt/oca`.
+
+See: [`docs/architecture/OCA_HYDRATION.md`](docs/architecture/OCA_HYDRATION.md)
+
 ### Canonical `addons_path` (all environments)
 
 All environments must load the three addon stacks in this priority order:

@@ -62,8 +62,9 @@ addons/*
 
 # --- Generated OCA aggregation output (git-aggregator target) ---
 # SSOT: oca-aggregate.yml (tracked)
-# Output: addons/oca/ (generated, never tracked)
-addons/oca/
+# Output: addons/oca/ (hydrated by git-aggregator, never committed)
+addons/oca/*
+!addons/oca/.gitkeep
 addons/OCA/
 # Common ignores
 addons/**/__pycache__/
