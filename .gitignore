@@ -29,6 +29,10 @@ eggs/
 lib/
 !clients/**/lib/
 !apps/**/lib/
+!templates/**/src/lib/
+!templates/**/src/lib/**
+!web/**/src/lib/
+!web/**/src/lib/**
 lib64/
 parts/
 sdist/
