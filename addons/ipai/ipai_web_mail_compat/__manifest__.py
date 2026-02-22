@@ -33,6 +33,8 @@
     "auto_install": True,
     "depends": ["mail", "mail_tracking"],
     "post_init_hook": "post_init_hook",
+    # CI verification: scripts/verify_ipai_web_mail_compat.py
+    # Smoke tests:     addons/ipai/ipai_web_mail_compat/tests/test_mail_compat_smoke.py
     "assets": {
         # Target: same bundle mail_tracking uses (web.assets_backend).
         # Order matters: remove first, then add replacement, then probe.
