@@ -128,7 +128,8 @@
 - [ ] Role-based UI access works as intended
 - [ ] API routes validate JWT server-side
 - [ ] No unauthenticated access to ops APIs
-- [ ] Audit logs enabled for user actions
+- [x] Audit logs enabled for user actions (Headers: `x-datasource-mode`, `x-odooops-client`)
+- [x] Live Data Source Validation (Badge + Guard + Attestation)
 
 ---
 
