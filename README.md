@@ -1,8 +1,24 @@
-# InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
+# InsightPulseAI Odoo Runtime (CE + OCA + Bridges)
 
 [![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
-Self-hosted **Odoo 19 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+This repository is a **production runtime wrapper** around:
+
+- **Odoo Community Edition (CE)** — base ERP runtime (official `odoo:19` Docker image)
+- **OCA addons** — community EE-parity modules (vendored under `addons/oca/`)
+- **IPAI integration bridges** — thin connectors to external services only (under `addons/ipai/`)
+
+> **This is intentionally NOT structured like upstream `odoo/odoo`.**
+> Upstream places CE addons directly under `/addons/`. We separate three addon stacks
+> to enforce OCA-first parity, restrict `ipai_*` to integration bridges, and maintain
+> deterministic deploy + CI governance. See [REPO_LAYOUT.md](docs/architecture/REPO_LAYOUT.md).
+
+### What counts as an "integration bridge"?
+
+If it talks to something **outside Odoo** (daemon, cloud API, hardware, queue) → it is a bridge (`addons/ipai/`).
+If it extends **Odoo business logic** or replaces EE features → it must be CE or OCA (`addons/oca/`).
+
+Self-hosted **Odoo 19 CE** + **OCA** stack with InsightPulseAI bridges for:
 - PH expense & travel management
 - Equipment booking & inventory
 - Finance month-end close and PH BIR tax filing task automation (Finance PPM)
@@ -143,26 +159,46 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 ## Repo Map
 
 **Full governance contract:** [`docs/architecture/MONOREPO_CONTRACT.md`](./docs/architecture/MONOREPO_CONTRACT.md)
-
-This repository merges two architectural archetypes:
-
-1. **Supabase-style platform mono** (`web/`, `supabase/`, `automations/`)
-2. **Odoo-style ERP mono** (`odoo/addons/`, Python runtime, OCA-first)
+**Addons boundary rules:** [`docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md`](./docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md)
 
 **Top-level directory guide:**
 
 | Directory | Purpose | Owner Team |
 |-----------|---------|------------|
-| `odoo/` | ERP System of Record (SOR) | ERP/Backend |
+| `addons/odoo/` | CE core addons (upstream mirror, read-only) | Upstream |
+| `addons/oca/` | OCA EE-parity addons (vendored via gitaggregate) | OCA/Backend |
+| `addons/ipai/` | Integration bridge connectors only (thin adapters) | IPAI/Backend |
 | `supabase/` | Control plane SSOT, ops.* tables | Platform/DB |
-| `web/` | Odoo.sh-equivalent control plane UI | Frontend/Platform |
 | `automations/` | n8n workflows, runbooks, audits | DevOps/Automations |
 | `infra/` | Cloudflare/DO/Vercel/IaC + drift detection | DevOps/Infra |
+| `config/` | Odoo config per environment (dev/staging/prod) | DevOps |
+| `docker/` | Docker images, compose templates, entrypoints | DevOps |
 | `design/` | tokens.json SSOT + extracted assets | Design/Frontend |
 | `agents/` | Agent registry + skills + runbooks | AI/Platform |
 | `docs/` | Architecture + contracts + runbooks | All |
 | `scripts/` | Repo-wide tooling | All |
 | `spec/` | Spec Kit bundles (constitution, prd, plan, tasks) | Architecture/Product |
+
+### OCA Addons (Hydrated)
+
+`addons/oca/` is **generated** by hydrating [`oca-aggregate.yml`](oca-aggregate.yml) (Odoo 19.0 SSOT).
+The directory is intentionally empty in git (only a `.gitkeep`) and is populated at
+dev/build time via [git-aggregator](https://github.com/acsone/git-aggregator).
+Docker Compose mounts it into the container at `/mnt/oca`.
+
+See: [`docs/architecture/OCA_HYDRATION.md`](docs/architecture/OCA_HYDRATION.md)
+
+### Canonical `addons_path` (all environments)
+
+All environments must load the three addon stacks in this priority order:
+
+1. `addons/odoo` — CE core
+2. `addons/oca` — OCA EE-parity modules
+3. `addons/ipai` — Integration bridges only
+
+> Any new EE-parity functionality must land in **OCA** (preferred) or CE.
+> `addons/ipai/*` is reserved for connectors to external bridges
+> (OCR, IoT daemons, payment terminals, queues, email gateways, etc.).
 
 **Key boundaries:**
 - ✅ Odoo is the SOR for accounting, inventory, posted documents
@@ -233,34 +269,28 @@ docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-ini
 
 <!-- CURRENT_STATE:END -->
 
-## Repository Layout
+## Repository Layout (SSOT)
+
+> This repo is a **deployment + governance wrapper**, not a source distribution.
+> See [REPO_LAYOUT.md](docs/architecture/REPO_LAYOUT.md) for rationale.
 
 ```
-odoo/
-├── addons/                    # Custom InsightPulse modules
-│   ├── ipai/                  # IPAI namespace (nested modules)
-│   │   ├── ipai_expense/      # PH expense & travel workflows
-│   │   ├── ipai_equipment/    # Equipment booking system
-│   │   ├── ipai_ce_cleaner/   # Enterprise/IAP removal
-│   │   ├── ipai_finance_*     # Finance PPM, BIR compliance, month-end
-│   │   ├── ipai_ppm*/         # Project Portfolio Management
-│   │   └── ...                # Additional IPAI modules
-│   ├── ipai_finance_close_seed/   # Finance close seed data
-│   ├── ipai_*                 # Flat IPAI modules (various)
-│   └── ...
-├── oca/                       # OCA community addons (submodules)
-├── deploy/                    # Deployment configurations
-│   ├── docker-compose.yml     # Docker Compose stack
-│   ├── odoo.conf              # Odoo CE configuration
-│   └── nginx/                 # Nginx reverse proxy configs
-├── docs/                      # Documentation
-│   └── data-model/            # Canonical DBML/ERD/ORM maps + JSON index
-├── scripts/                   # Deterministic generators + automation
-├── spec/                      # Spec bundles (constitution, PRD, plan, tasks)
-├── .github/workflows/         # CI/CD guardrails + drift gates
-├── spec.md                    # Project specification
-├── plan.md                    # Implementation plan
-└── tasks.md                   # Task checklist
+addons/
+  odoo/          # CE core addons (vendor mirror, read-only)
+  oca/           # OCA addons (vendored via gitaggregate, see oca-aggregate.yml)
+  ipai/          # Integration-bridge connectors only (thin adapters)
+config/
+  dev/           # Dev environment Odoo conf
+  staging/       # Staging environment Odoo conf
+  prod/          # Production environment Odoo conf
+docker/          # Images, compose templates, entrypoints
+scripts/         # Idempotent lifecycle + install tooling
+docs/            # Architecture + ops SSOT
+  architecture/  # Canonical contracts and boundary docs
+  data-model/    # DBML / ERD / ORM maps + JSON index
+spec/            # Spec Kit bundles (constitution, PRD, plan, tasks)
+.github/
+  workflows/     # CI/CD guardrails + drift gates
 ```
 
 ---

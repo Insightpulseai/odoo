@@ -3,29 +3,6 @@
   "version": 2,
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": null,
-  "projects": [
-    {
-      "name": "ipai-control-center-docs",
-      "rootDirectory": "web/ipai-control-center-docs",
-      "framework": "nextjs",
-      "buildCommand": "npm run build",
-      "outputDirectory": ".next"
-    },
-    {
-      "name": "ipai-web",
-      "rootDirectory": "web/web",
-      "framework": "nextjs",
-      "buildCommand": "npm run build",
-      "outputDirectory": ".next"
-    },
-    {
-      "name": "ipai-control-room",
-      "rootDirectory": "web/control-room",
-      "framework": "nextjs",
-      "buildCommand": "npm run build",
-      "outputDirectory": ".next"
-    }
-  ],
   "builds": [
     {
       "src": "web/ipai-chatgpt-app/web/package.json",
