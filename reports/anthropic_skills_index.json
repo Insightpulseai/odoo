@@ -1,0 +1,75 @@
+{
+  "upstream": "anthropics/skills",
+  "upstream_url": "https://github.com/anthropics/skills",
+  "count": 17,
+  "items": [
+    {
+      "skill_id": "skills/algorithmic-art",
+      "skill_md": "skills/algorithmic-art/SKILL.md"
+    },
+    {
+      "skill_id": "skills/brand-guidelines",
+      "skill_md": "skills/brand-guidelines/SKILL.md"
+    },
+    {
+      "skill_id": "skills/canvas-design",
+      "skill_md": "skills/canvas-design/SKILL.md"
+    },
+    {
+      "skill_id": "skills/doc-coauthoring",
+      "skill_md": "skills/doc-coauthoring/SKILL.md"
+    },
+    {
+      "skill_id": "skills/docx",
+      "skill_md": "skills/docx/SKILL.md"
+    },
+    {
+      "skill_id": "skills/frontend-design",
+      "skill_md": "skills/frontend-design/SKILL.md"
+    },
+    {
+      "skill_id": "skills/internal-comms",
+      "skill_md": "skills/internal-comms/SKILL.md"
+    },
+    {
+      "skill_id": "skills/mcp-builder",
+      "skill_md": "skills/mcp-builder/SKILL.md"
+    },
+    {
+      "skill_id": "skills/pdf",
+      "skill_md": "skills/pdf/SKILL.md"
+    },
+    {
+      "skill_id": "skills/pptx",
+      "skill_md": "skills/pptx/SKILL.md"
+    },
+    {
+      "skill_id": "skills/skill-creator",
+      "skill_md": "skills/skill-creator/SKILL.md"
+    },
+    {
+      "skill_id": "skills/slack-gif-creator",
+      "skill_md": "skills/slack-gif-creator/SKILL.md"
+    },
+    {
+      "skill_id": "skills/theme-factory",
+      "skill_md": "skills/theme-factory/SKILL.md"
+    },
+    {
+      "skill_id": "skills/web-artifacts-builder",
+      "skill_md": "skills/web-artifacts-builder/SKILL.md"
+    },
+    {
+      "skill_id": "skills/webapp-testing",
+      "skill_md": "skills/webapp-testing/SKILL.md"
+    },
+    {
+      "skill_id": "skills/xlsx",
+      "skill_md": "skills/xlsx/SKILL.md"
+    },
+    {
+      "skill_id": "template",
+      "skill_md": "template/SKILL.md"
+    }
+  ]
+}
