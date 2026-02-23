@@ -80,9 +80,14 @@ class ProjectTaskIntegration(models.Model):
             "prep_deadline": task.bir_schedule_id.prep_deadline.isoformat() if task.bir_schedule_id and task.bir_schedule_id.prep_deadline else None,
             "filing_deadline": task.bir_schedule_id.filing_deadline.isoformat() if task.bir_schedule_id and task.bir_schedule_id.filing_deadline else None,
             "status": task.stage_id.name if task.stage_id else None,
+            "new_stage": task.stage_id.name if task.stage_id else None,
             "assigned_to": task.user_ids[0].name if task.user_ids else None,
             "logframe_id": task.finance_logframe_id.id if task.finance_logframe_id else None,
             "logframe_level": task.finance_logframe_id.level if task.finance_logframe_id else None,
+            # Email orchestration fields — required by Supabase enqueue trigger
+            "assignee_emails": [u.email for u in task.user_ids if u.email],
+            "project_name": task.project_id.name if task.project_id else "",
+            "write_date_unix": int(task.write_date.timestamp()) if task.write_date else 0,
         }
 
         event = {
