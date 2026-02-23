@@ -2,8 +2,15 @@
 # Copyright 2026 InsightPulse AI
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 """
-CI/ops verifier: confirms ipai_web_mail_compat is installed and that its
-asset contract is correct in ir.asset (no browser / no UI steps required).
+CI/ops verifier: confirms ipai_web_mail_compat is installed and that the
+asset contract is satisfied by inspecting the *fully resolved* bundle.
+
+Uses IrAsset._get_asset_paths() which processes manifest-declared assets
+(including '("remove", ...)' stanzas) and ir.asset dynamic records, giving
+the FINAL resolved file list after all directives have been applied.
+
+Tuple structure returned by _get_asset_paths():
+    (path, full_path, bundle, last_modified)   — 4 elements
 
 Exit codes
   0  all checks passed
@@ -76,7 +83,7 @@ def main() -> int:
 
         # ── 2. Module installed? ──────────────────────────────────────────────
         module_name = "ipai_web_mail_compat"
-        mod = env["ir.module.module"].search([("name", "=", module_name)], limit=1)
+        mod = env["ir.module.module"].search([(("name", "=", module_name))], limit=1)
         if not mod:
             fail(f"Module '{module_name}' not found in ir.module.module.")
         if mod.state != "installed":
@@ -101,45 +108,54 @@ def main() -> int:
         if len(added_contract) != 3:
             fail(f"Probe.added_compat_assets expected 3 entries, got {added_contract}")
 
-        # ── 4. ir.asset correctness ───────────────────────────────────────────
-        # Odoo 19 ir.asset has: name, bundle, directive, path, active
-        # directive values: 'append' (default), 'prepend', 'remove', 'replace', etc.
-        Asset = env.get("ir.asset")
-        if not Asset:
+        # ── 4. Resolved bundle check ──────────────────────────────────────────
+        # _get_asset_paths() processes manifest-declared assets (including
+        # '("remove", ...)' stanzas) PLUS ir.asset dynamic records and returns
+        # the FINAL resolved list after all directives are applied.
+        #
+        # Tuple structure: (path, full_path, bundle, last_modified) — 4 elements.
+        # We only need index 0 (the relative addon path).
+        #
+        # Correct verification semantics:
+        #   • removed_upstream_assets  → must NOT be in the final bundle
+        #   • added_compat_assets      → must be in the final bundle
+        try:
+            Asset = env["ir.asset"]
+        except KeyError:
             die("'ir.asset' model not found — this Odoo build may be unusually old.")
 
-        records = Asset.sudo().search(
-            [("bundle", "=", args.bundle), ("active", "=", True)]
-        )
-        # Build {path: directive} map; use 'append' for blank (default)
-        asset_map = {r.path: (r.directive or "append") for r in records}
+        try:
+            resolved = Asset._get_asset_paths(args.bundle, {})
+        except Exception as exc:
+            die(f"IrAsset._get_asset_paths('{args.bundle}') raised: {exc}")
 
-        if not asset_map:
+        # Build path set from element 0 of each 4-tuple.
+        # _get_asset_paths() returns paths with a leading slash when resolved
+        # from the filesystem (e.g. '/mail_tracking/static/...' not
+        # 'mail_tracking/static/...').  Strip the leading slash so both the
+        # probe contract paths (no slash) and the resolved paths match.
+        path_set = {entry[0].lstrip('/') for entry in resolved}
+
+        if not path_set:
             fail(
-                f"No active ir.asset records found for bundle '{args.bundle}'.\n"
-                "Possible causes: bundle name wrong, module not upgraded after install."
+                f"_get_asset_paths('{args.bundle}') returned an empty list.\n"
+                "Possible causes: bundle name wrong, no installed addons declare assets."
             )
-        ok(f"Loaded {len(asset_map)} ir.asset paths from '{args.bundle}'.")
+        ok(f"Resolved {len(path_set)} asset paths from '{args.bundle}'.")
 
-        # 4a. Removed upstream files must have directive='remove'
+        # 4a. Upstream broken files must NOT appear in the final bundle
         errors = []
         for upstream_path in removed_contract:
-            actual = asset_map.get(upstream_path)
-            if actual != "remove":
+            if upstream_path in path_set:
                 errors.append(
-                    f"  EXPECT remove  PATH={upstream_path!r}  ACTUAL={actual!r}"
+                    f"  STILL_PRESENT (expected removed): PATH={upstream_path!r}"
                 )
 
-        # 4b. Compat files must be present as 'append'
+        # 4b. Compat replacement files must be present in the final bundle
         for compat_path in added_contract:
-            actual = asset_map.get(compat_path)
-            if actual not in ("append", None):
+            if compat_path not in path_set:
                 errors.append(
-                    f"  EXPECT append  PATH={compat_path!r}  ACTUAL={actual!r}"
-                )
-            elif actual is None and compat_path not in asset_map:
-                errors.append(
-                    f"  MISSING        PATH={compat_path!r}"
+                    f"  MISSING (expected present): PATH={compat_path!r}"
                 )
 
         if errors:

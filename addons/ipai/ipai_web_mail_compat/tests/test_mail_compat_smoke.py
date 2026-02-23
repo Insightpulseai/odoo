@@ -8,49 +8,75 @@ from odoo.tests.common import TransactionCase, tagged
 class TestIpaiWebMailCompatSmoke(TransactionCase):
     """Smoke tests that block the two original OCA mail_tracking regressions.
 
-    These tests run post-install so the asset records are already committed.
-    They do not test JS runtime (not possible in Python), but they verify the
-    *preconditions* that make the JS fixes effective:
+    These tests run post-install so all module manifests have been processed.
+    They verify the *preconditions* that make the JS fixes effective by
+    inspecting the FULLY RESOLVED asset bundle via IrAsset._get_asset_paths().
 
-      1. The upstream broken files are registered as REMOVED in ir.asset.
-      2. The compat replacement files are registered as APPEND in ir.asset.
-      3. The probe contract is internally consistent.
+    _get_asset_paths() processes manifest-declared assets (including the
+    '("remove", ...)' stanzas) AND dynamic ir.asset records, returning the
+    final list after all directives are applied.
 
-    If Odoo renames templates again or upstream paths change, test 2 catches it.
+    Tuple structure: (path, full_path, bundle, last_modified) — 4 elements.
+
+    Contract:
+      1. Upstream broken files are NOT in the resolved bundle (removed).
+      2. Compat replacement files ARE in the resolved bundle (added).
+      3. The probe model returns a consistent and well-formed contract dict.
+      4. Removed and added sets are disjoint.
     """
 
     BUNDLE = "web.assets_backend"
 
-    def _asset_paths(self):
-        """Return a dict {path: directive} for all active assets in our bundle."""
-        records = self.env["ir.asset"].sudo().search(
-            [("bundle", "=", self.BUNDLE), ("active", "=", True)]
-        )
-        return {r.path: r.directive for r in records}
+    def _asset_path_set(self):
+        """Return a frozenset of resolved paths for BUNDLE.
+
+        Uses IrAsset._get_asset_paths() — the authoritative Odoo API for
+        final bundle contents.  Manifest-declared removes are already applied,
+        so removed paths are absent and added paths are present.
+        """
+        IrAsset = self.env["ir.asset"].sudo()
+        resolved = IrAsset._get_asset_paths(self.BUNDLE, {})
+        # Each entry is a 4-tuple (path, full_path, bundle, last_modified).
+        # Index 0 is the addon-relative path used in manifests / ir.asset.
+        # _get_asset_paths() returns paths with a leading slash when resolved
+        # from the filesystem (e.g. '/mail_tracking/static/...' not
+        # 'mail_tracking/static/...').  Strip so comparisons against the probe
+        # contract (which uses slashless paths matching __manifest__.py) work.
+        return frozenset(entry[0].lstrip('/') for entry in resolved)
 
     def test_upstream_broken_files_are_removed(self):
-        """ir.asset must have 'remove' directives for both OCA broken files."""
-        assets = self._asset_paths()
+        """Upstream broken OCA files must NOT be in the resolved bundle.
+
+        The ('remove', ...) stanzas in __manifest__.py cause _get_asset_paths()
+        to exclude these paths from the final list.  If this test fails, the
+        removal stanza is broken or the module needs to be reinstalled.
+        """
+        path_set = self._asset_path_set()
         probe = self.env["ipai.compat.probe"].sudo().mail_tracking()
         for upstream_path in probe["removed_upstream_assets"]:
-            self.assertEqual(
-                assets.get(upstream_path),
-                "remove",
-                f"Expected ir.asset directive 'remove' for upstream path '{upstream_path}' "
-                f"in bundle '{self.BUNDLE}'.  If missing, the ('remove', ...) stanza in "
-                f"__manifest__.py did not register — reinstall the module.",
+            self.assertNotIn(
+                upstream_path,
+                path_set,
+                f"Upstream path '{upstream_path}' is STILL in bundle '{self.BUNDLE}'. "
+                f"The ('remove', ...) stanza in __manifest__.py did not take effect — "
+                f"reinstall the module or check manifest syntax.",
             )
 
-    def test_compat_replacement_files_are_appended(self):
-        """ir.asset must have 'append' directives for all compat replacement files."""
-        assets = self._asset_paths()
+    def test_compat_replacement_files_are_present(self):
+        """Compat replacement files must be in the resolved bundle.
+
+        Regular path entries in __manifest__.py assets cause _get_asset_paths()
+        to include them.  If this test fails, a static file is missing or the
+        manifest path is wrong.
+        """
+        path_set = self._asset_path_set()
         probe = self.env["ipai.compat.probe"].sudo().mail_tracking()
         for compat_path in probe["added_compat_assets"]:
             self.assertIn(
-                assets.get(compat_path),
-                ("append", None),  # None = default append
-                f"Expected compat asset '{compat_path}' to be present as 'append' "
-                f"in bundle '{self.BUNDLE}'.  Check __manifest__.py assets stanza.",
+                compat_path,
+                path_set,
+                f"Compat asset '{compat_path}' NOT found in bundle '{self.BUNDLE}'. "
+                f"Check __manifest__.py assets stanza and that the static file exists.",
             )
 
     def test_probe_contract_shape(self):
