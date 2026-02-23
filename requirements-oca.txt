@@ -23,3 +23,7 @@ email-validator>=2.0.0
 # Upgrade Analysis
 odoorpc>=0.10
 openupgradelib>=3.12
+
+# OCA test helper (required by base_tier_validation tests)
+# Patched at runtime for Odoo 19: MetaModel.module_to_models → _module_to_models__
+odoo-test-helper>=2.0

@@ -12,7 +12,7 @@ Implements 'Path A' AI chat: an internal-users-only Discuss channel
 (#ai-copilot) backed by the already-installed OCA Ollama connector.
 
 Architecture:
-  User posts in #ai-copilot  →  mail.channel._message_post_after_hook
+  User posts in #ai-copilot  →  discuss.channel._message_post_after_hook
   → ollama.Client (same config params as OCA AI module)
   → Bot user posts response back into channel
 

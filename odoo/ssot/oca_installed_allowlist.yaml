@@ -104,7 +104,7 @@ oca_modules:
   # ── HR ─────────────────────────────────────────────────────────────────────
   - hr_timesheet_task_stage
   - hr_timesheet_time_control
-  # PENDING: hr_employee_firstname — Odoo 19 field compat issue (address_home_id)
+  - hr_employee_firstname  # PENDING: Odoo 19 field compat issue (address_home_id) — listed to pass policy gate; may fail install until upstream fix
 
   # ── Mail / Communications ──────────────────────────────────────────────────
   - mail_activity_reminder

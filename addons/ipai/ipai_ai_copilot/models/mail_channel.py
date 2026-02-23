@@ -29,8 +29,8 @@ _SYSTEM_PROMPT = textwrap.dedent("""\
 """)
 
 
-class MailChannel(models.Model):
-    _inherit = "mail.channel"
+class DiscussChannel(models.Model):
+    _inherit = "discuss.channel"
 
     # ------------------------------------------------------------------
     # Helpers

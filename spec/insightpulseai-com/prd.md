@@ -46,6 +46,7 @@ that integrates cleanly with SSOT infrastructure and automated verification.
 ### FR3 — Health checks
 
 A health check runner validates:
+
 - HTTP reachability (status 200–399)
 - TLS validity
 - Canonical redirect correctness (www → apex)
@@ -87,3 +88,13 @@ Runner: `scripts/verify-service-health.sh` (marketing surface entry added).
 - Mixed canonical policy (apex vs www) causing SEO + caching issues
 - Cloudflare drift from SSOT if not gated
 - Misrouting (e.g., serving wrong app) not detected without content signature checks
+
+## Canvas-to-Capabilities Mapping
+
+Source: AI Marketing Canvas (PDF)
+
+- **Foundation** → Data/identity/consent rules (Odoo contacts + Supabase auth/RLS).
+- **Experimentation** → Segments + measurement (Supabase queries + Vercel analytics).
+- **Expansion** → Scoring + activation (Odoo Activities, Supabase Edge Functions).
+- **Transformation** → Closed-loop + autopilot (Supabase webhooks, GraphRAG over assets).
+- **Monetization** → Packaging + governance (Templates, SLOs, Billing/Metering via Stripe).

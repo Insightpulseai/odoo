@@ -10,18 +10,11 @@
      unchanged from upstream; only the mobileTopbar t-inherit is corrected.
 -->
 <templates xml:space="preserve">
-    <t
-        t-name="mail_tracking.Mailbox.main"
-        t-inherit="mail.Mailbox.main"
-        t-inherit-mode="extension"
-    >
-        <xpath expr="//span[@t-esc='mailbox.counter']" position="attributes">
-            <!-- Override colour: muted for starred, danger for failed -->
-            <attribute
-                name="t-att-class"
-            >{'o-muted': mailbox.id === 'starred', 'o-danger': mailbox.id === 'failed'}</attribute>
-        </xpath>
-    </t>
+    <!--
+        REMOVED: mail_tracking.Mailbox.main xpath targeting //span[@t-esc='mailbox.counter']
+        The span element was removed in Odoo 19.0; this override caused an OWL OwlError.
+        Counter styling (o-muted/o-danger) is no longer applied — acceptable regression.
+    -->
     <t
         t-name="mail_tracking.DiscussSidebarMailboxes"
         t-inherit="mail.DiscussSidebarMailboxes"
