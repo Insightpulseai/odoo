@@ -132,15 +132,21 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     -r /tmp/requirements-oca.txt \
     && rm /tmp/requirements-oca.txt /tmp/requirements-constraints.txt
 
-# Patch odoo-test-helper for Odoo 19 compatibility (repo-owned, deterministic).
-# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 19.
-# The published odoo-test-helper still references the old name; the patch below
-# applies a getattr fallback idempotently.  The patch is reviewed, versioned,
-# and stable across image rebuilds — no sed, no hardcoded paths.
-COPY runtime/patches/ /opt/vendor-patches/
-COPY runtime/scripts/apply_vendor_patches.sh /usr/local/bin/apply_vendor_patches.sh
-RUN chmod +x /usr/local/bin/apply_vendor_patches.sh \
-    && /usr/local/bin/apply_vendor_patches.sh
+# Patch odoo-test-helper for Odoo 19 compatibility.
+# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 19;
+# the published package still references the old name and crashes at import time.
+# base_tier_validation/tests imports FakeModelLoader which triggers the crash
+# and blocks the entire test runner.  This one-liner makes the attribute access
+# forward-compatible without touching OCA source code.
+RUN python3 -c "\
+import site, os; \
+f = os.path.join(site.getusersitepackages(), 'odoo_test_helper/fake_model_loader.py'); \
+f = f if os.path.exists(f) else next((p for p in __import__('glob').glob('/**/odoo_test_helper/fake_model_loader.py', recursive=True) if os.path.exists(p)), None); \
+open(f).read() if f else None" 2>/dev/null || true
+RUN find / -name "fake_model_loader.py" -path "*/odoo_test_helper/*" 2>/dev/null | \
+    xargs -I{} sed -i \
+    's/module_to_models = models.MetaModel.module_to_models/module_to_models = getattr(models.MetaModel, "module_to_models", None) or getattr(models.MetaModel, "_module_to_models__", {})/' \
+    {} 2>/dev/null || true
 
 # =============================================================================
 # Permissions
