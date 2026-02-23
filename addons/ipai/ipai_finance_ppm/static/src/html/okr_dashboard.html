@@ -138,6 +138,7 @@ body{font-family:'IBM Plex Sans',-apple-system,sans-serif;background:var(--bg);c
     <div class="hdr-r">
       <span class="htag" id="todayTag"></span>
       <span class="htag">v3.0</span>
+      <span class="htag" id="last-updated" style="opacity:.6;font-size:9px;min-width:0;"></span>
       <select class="sel"><option>Nov 2025</option><option>Dec 2025</option><option>Jan 2026</option><option selected>Feb 2026</option><option>Mar 2026</option></select>
       <button onclick="loadLiveData()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:4px 10px;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;">⟳ Live</button>
     </div>
@@ -298,6 +299,11 @@ echarts.registerTheme('infographic',{color:CP,tooltip:{backgroundColor:'rgba(50,
 
 const ch={};
 const resize=()=>Object.values(ch).forEach(c=>c&&c.resize());
+
+// ── Auto-refresh state ────────────────────────────────────────────────────
+let _refreshTimer=null;
+let _refreshInFlight=false;
+const REFRESH_MS=60000;
 window.addEventListener('resize',resize);
 
 // ── Tabs ─────────────────────────────────────────────────────────────────
@@ -365,6 +371,8 @@ const LF=[
 
 // ── Live data loader ──────────────────────────────────────────────────────
 function loadLiveData(){
+  if(_refreshInFlight)return;
+  _refreshInFlight=true;
   fetch('/web/dataset/call_kw',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -374,13 +382,19 @@ function loadLiveData(){
   })
   .then(r=>r.json())
   .then(d=>{
+    _refreshInFlight=false;
     if(!d.result)return;
     const sc={};
     d.result.forEach(g=>{sc[g['stage_id'][1]||'No Stage']=g.stage_id_count;});
     updateStageChart(sc);
     updateOverall(sc);
+    const el=document.getElementById('last-updated');
+    if(el)el.textContent='↻ '+new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   })
-  .catch(()=>console.log('Live data fetch failed — showing static data'));
+  .catch(()=>{
+    _refreshInFlight=false;
+    console.log('Live data fetch failed — showing static data');
+  });
 }
 
 function updateStageChart(sc){
@@ -561,8 +575,21 @@ ch.tax.setOption({tooltip:{trigger:'axis'},grid:{left:28,right:10,top:6,bottom:2
   series:[{type:'bar',data:TAX.map(t=>({value:t.t,itemStyle:{color:t.fc}})),barWidth:24,itemStyle:{borderRadius:[3,3,0,0]}}]
 });
 
-// Auto-load live data on mount
+// ── Polling lifecycle ─────────────────────────────────────────────────────
+function startAutoRefresh(){
+  if(_refreshTimer)return;
+  _refreshTimer=setInterval(()=>{if(!document.hidden)loadLiveData();},REFRESH_MS);
+}
+function stopAutoRefresh(){
+  if(!_refreshTimer)return;
+  clearInterval(_refreshTimer);
+  _refreshTimer=null;
+}
+
+// Auto-load live data on mount + start 60s polling
 loadLiveData();
+startAutoRefresh();
+window.addEventListener('beforeunload',stopAutoRefresh);
 </script>
 </body>
 </html>
