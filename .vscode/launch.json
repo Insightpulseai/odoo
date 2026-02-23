@@ -2,12 +2,63 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach: Odoo (debugpy in Docker)",
-      "type": "python",
+      "name": "Odoo (Launch local)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/odoo-bin",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-c", "${workspaceFolder}/config/dev/odoo.conf",
+        "-d", "odoo_dev",
+        "--dev=xml,qweb,werkzeug"
+      ],
+      "justMyCode": false,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    {
+      "name": "Odoo (Attach — DevContainer / debugpy :5678)",
+      "type": "debugpy",
       "request": "attach",
-      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "connect": {
+        "host": "127.0.0.1",
+        "port": 5678
+      },
       "pathMappings": [
-        { "localRoot": "${workspaceFolder}", "remoteRoot": "/mnt" }
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/workspaces/odoo"
+        },
+        {
+          "localRoot": "${workspaceFolder}/addons/ipai",
+          "remoteRoot": "/workspaces/odoo/addons/ipai"
+        },
+        {
+          "localRoot": "${workspaceFolder}/addons/oca",
+          "remoteRoot": "/workspaces/odoo/addons/oca"
+        }
+      ],
+      "justMyCode": false
+    },
+    {
+      "name": "Odoo (Attach — Docker CE19 image / debugpy :5678)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "127.0.0.1",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/addons/ipai",
+          "remoteRoot": "/mnt/addons/ipai"
+        },
+        {
+          "localRoot": "${workspaceFolder}/addons/oca",
+          "remoteRoot": "/mnt/addons/oca"
+        }
       ],
       "justMyCode": false
     }
