@@ -33,7 +33,7 @@ class FinancePPMDashboard(http.Controller):
     @http.route(
         "/finance-ppm/okr-dashboard/data",
         auth="user",
-        type="json",
+        type="jsonrpc",
         methods=["POST"],
     )
     def okr_dashboard_data(self):
