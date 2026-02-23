@@ -6,37 +6,17 @@
      Reason  : OCA template inherits from mail.Discuss.mobileTopbar which was
                renamed to mail.DiscussContent.mobileTopbar in Odoo 19.
 
-     The first two templates (Mailbox.main, DiscussSidebarMailboxes) are
-     unchanged from upstream; only the mobileTopbar t-inherit is corrected.
+     Odoo 19 compat notes:
+       - Mailbox.main removed: //span[@t-esc='mailbox.counter'] no longer exists.
+       - DiscussSidebarMailboxes removed: <Mailbox mailbox="store.failed" /> triggers
+         ctx.mailbox.notEq() crash because store.failed is a plain JS object, not a
+         Record. The Mailbox component requires a Record instance with notEq().
+       - mobileTopbar removed for same reason: t-call="mail.MobileMailbox" passes
+         store.failed which has no notEq().
+     All three extensions are disabled until store.failed is ported to a proper
+     Record or OCA releases an Odoo 19 compatible mail_tracking.
 -->
 <templates xml:space="preserve">
-    <!--
-        REMOVED: mail_tracking.Mailbox.main xpath targeting //span[@t-esc='mailbox.counter']
-        The span element was removed in Odoo 19.0; this override caused an OWL OwlError.
-        Counter styling (o-muted/o-danger) is no longer applied — acceptable regression.
-    -->
-    <t
-        t-name="mail_tracking.DiscussSidebarMailboxes"
-        t-inherit="mail.DiscussSidebarMailboxes"
-        t-inherit-mode="extension"
-    >
-        <xpath expr="//div" position="inside">
-            <Mailbox mailbox="store.failed" />
-        </xpath>
-    </t>
-    <!--
-        CHANGED: t-inherit was "mail.Discuss.mobileTopbar" (removed in Odoo 19).
-        Correct parent in Odoo 19: mail.DiscussContent.mobileTopbar
-    -->
-    <t
-        t-name="mail_tracking.DiscussContent.mobileTopbar"
-        t-inherit="mail.DiscussContent.mobileTopbar"
-        t-inherit-mode="extension"
-    >
-        <xpath expr="//div" position="inside">
-            <t t-call="mail.MobileMailbox">
-                <t t-set="mailbox" t-value="store.failed" />
-            </t>
-        </xpath>
-    </t>
+    <!-- Sidebar extensions intentionally empty for Odoo 19 compatibility.
+         See comments above. -->
 </templates>

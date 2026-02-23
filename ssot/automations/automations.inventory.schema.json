@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Automations Inventory Schema",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "version": { "type": "string" },
+        "repo": { "type": "string" },
+        "owner": { "type": "string" },
+        "status": { "type": "string" },
+        "ssot_intent": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "generator_script": { "type": "string" },
+        "generator_version": { "type": "string" },
+        "repo_branch": { "type": "string" },
+        "repo_commit": { "type": "string" },
+        "verification_scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "odoo_crons": { "type": "string" },
+            "supabase_edge_functions": { "type": "string" },
+            "github_actions": { "type": "string" },
+            "pg_cron": { "type": "string" },
+            "n8n": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["status", "version"]
+    },
+    "odoo_crons": { "$ref": "#/definitions/automation_list" },
+    "edge_functions": { "$ref": "#/definitions/automation_list" },
+    "other_automations": { "$ref": "#/definitions/automation_list" }
+  },
+  "required": ["metadata", "odoo_crons", "edge_functions", "other_automations"],
+  "definitions": {
+    "automation_list": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/automation_entry" }
+    },
+    "automation_entry": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "platform": { "type": "string" },
+        "source_path": { "type": "string" },
+        "trigger": { "type": "string" },
+        "definition_status": { "type": "string" },
+        "config_status": { "type": "string" },
+        "enablement_status": {
+          "type": "string",
+          "enum": ["enabled", "disabled", "unknown", "not_applicable"]
+        },
+        "runtime_status": {
+          "type": "string",
+          "enum": [
+            "healthy",
+            "degraded",
+            "failing",
+            "unknown",
+            "not_applicable",
+            "failed"
+          ]
+        },
+        "verification_basis": { "type": "string" },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "owner": { "type": "string" },
+        "notes": { "type": "string" },
+        "status_provenance": { "type": "string" },
+        "canonical_key": { "type": "string" },
+        "kind": { "type": "string" },
+        "trigger_normalized": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "http",
+              "webhook",
+              "schedule",
+              "push_pr",
+              "manual",
+              "cron",
+              "mixed",
+              "unknown"
+            ]
+          }
+        },
+        "schedule_cron": { "type": ["string", "null"] },
+        "runtime_probe": {
+          "type": ["object", "null"],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "http_health",
+                "gh_runs_api",
+                "supabase_mgmt_api",
+                "none"
+              ]
+            },
+            "target": { "type": "string" },
+            "timeout_ms": { "type": "integer" }
+          },
+          "required": ["method"]
+        },
+        "last_verified_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "last_verified_source": {
+          "type": "string",
+          "enum": ["repo-static", "runtime-api", "manual-evidence"]
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["tier0", "tier1", "tier2", "dev-only"]
+        },
+        "owner_team": { "type": "string" },
+        "status_lifecycle": {
+          "type": "string",
+          "enum": ["active", "deprecated", "experimental", "template"]
+        },
+        "supersedes": { "type": ["string", "null"] },
+        "superseded_by": { "type": ["string", "null"] },
+        "related_automations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "scheduler_binding": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "source": { "type": "string" },
+            "status": { "type": "string" }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "platform",
+        "source_path",
+        "trigger",
+        "enablement_status",
+        "runtime_status",
+        "confidence",
+        "status_provenance",
+        "canonical_key",
+        "trigger_normalized"
+      ]
+    }
+  }
+}

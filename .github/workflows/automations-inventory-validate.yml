@@ -1,0 +1,42 @@
+name: Validated Automations Inventory
+
+on:
+  push:
+    paths:
+      - "automations-inventory.json"
+      - "ssot/automations/automations.inventory.schema.json"
+      - "scripts/automations_inventory_normalize.py"
+  pull_request:
+    paths:
+      - "automations-inventory.json"
+      - "ssot/automations/automations.inventory.schema.json"
+
+jobs:
+  validate-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: pip install jsonschema
+
+      - name: Run Normalization & Validation Check
+        run: |
+          python scripts/automations_inventory_normalize.py \
+            automations-inventory.json \
+            ssot/automations/automations.inventory.schema.json \
+            docs/architecture/AUTOMATIONS_INVENTORY_SUMMARY.md
+
+      - name: Verify No Uncommitted Local Changes
+        # Fails CI if the validation script had to mutate the json (meaning PR was unnormalized)
+        run: |
+          if [[ -n $(git status --porcelain automations-inventory.json) ]]; then
+            echo "ERROR: automations-inventory.json is not normalized. Run scripts/automations_inventory_normalize.py locally and commit the result."
+            git diff automations-inventory.json
+            exit 1
+          fi
