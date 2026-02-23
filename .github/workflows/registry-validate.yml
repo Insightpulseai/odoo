@@ -13,6 +13,9 @@ on:
       - "schemas/**"
       - "scripts/validate_registries.py"
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest

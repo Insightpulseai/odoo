@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Project 1: Month-End Close
+             ============================================================ -->
+
+        <record id="project_month_end_close" model="project.project">
+            <field name="name">Finance PPM - Month-End Close</field>
+            <field name="active" eval="True"/>
+            <field name="description">Month-End Close - Finance SSC | 9 employees | 39 closing tasks across 5 phases</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_recurring_tasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+        <!-- ============================================================
+             Project 2: BIR Tax Filing
+             ============================================================ -->
+
+        <record id="project_bir_tax_filing" model="project.project">
+            <field name="name">Finance PPM - BIR Tax Filing</field>
+            <field name="active" eval="True"/>
+            <field name="description">BIR Tax Filing - Finance SSC | 9 employees | 50 BIR tasks | 1601-C; 0619-E; 2550M; 2550Q; 1601-EQ; 1702Q; 1702-RT; 1604-CF; 1604-E</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_recurring_tasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+            <field name="allow_milestones" eval="True"/>
+            <field name="type_ids" eval="[
+                (4, ref('stage_todo')),
+                (4, ref('stage_in_preparation')),
+                (4, ref('stage_under_review')),
+                (4, ref('stage_pending_approval')),
+                (4, ref('stage_done')),
+                (4, ref('stage_cancelled')),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>

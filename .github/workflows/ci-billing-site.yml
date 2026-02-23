@@ -18,6 +18,9 @@ defaults:
   run:
     working-directory: web/billing-site
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint & Type Check

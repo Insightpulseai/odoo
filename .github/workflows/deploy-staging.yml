@@ -35,6 +35,9 @@ concurrency:
   group: deploy-staging
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Deploy Supabase Staging

@@ -10,7 +10,6 @@ for p in projects:
     </field>
     <field name="interval_number">1</field>
     <field name="interval_type">days</field>
-    <field name="numbercall">-1</field>
     <field name="active">True</field>
   </record>
 </odoo>

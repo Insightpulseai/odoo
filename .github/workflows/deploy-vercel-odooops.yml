@@ -1,0 +1,80 @@
+name: Deploy OdooOps Console to Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - claude/fix-frontend-breakages-*
+    paths:
+      - 'templates/odooops-console/**'
+      - 'vercel.json'
+      - '.github/workflows/deploy-vercel-odooops.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy target'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment
+        run: |
+          cd templates/odooops-console
+          vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ODOOOPS_PROJECT_ID }}
+
+      - name: Build
+        run: |
+          cd templates/odooops-console
+          vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ODOOOPS_PROJECT_ID }}
+
+      - name: Deploy Production
+        if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+        run: |
+          cd templates/odooops-console
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} | tee deploy_url.txt
+          echo "## Vercel Production Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "URL: $(cat deploy_url.txt)" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ODOOOPS_PROJECT_ID }}
+
+      - name: Deploy Preview
+        if: github.ref != 'refs/heads/main' && github.event.inputs.environment != 'production'
+        run: |
+          cd templates/odooops-console
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} | tee deploy_url.txt
+          echo "## Vercel Preview Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "URL: $(cat deploy_url.txt)" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ODOOOPS_PROJECT_ID }}

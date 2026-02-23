@@ -2,7 +2,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 {
     "name": "IPAI Enterprise Bridge",
-    "summary": "Replace Odoo Enterprise/IAP features with CE+OCA alternatives",
+    "summary": "Minimal stubs and redirections for EE model references (does not reimplement EE features)",
     "version": "19.0.1.0.0",
     "category": "Technical",
     "author": "InsightPulseAI",

@@ -27,6 +27,9 @@ on:
         default: 'true'
         type: boolean
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     name: Validate Supabase Configuration

@@ -59,3 +59,15 @@ agents:
       - rls
       - edge-functions
       - ssot
+  - id: automation-specialist
+    name: AUTOMATION-SPECIALIST
+    domain: platform
+    owners: ["@Insightpulseai-net/platform"]
+    scopes:
+      - n8n
+      - automation
+      - odoo
+      - supabase
+    entrypoint: "agents/personas/automation_specialist.md"
+    skills:
+      - "skills/n8n_workflow_builder.md"

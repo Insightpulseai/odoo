@@ -27,6 +27,9 @@ env:
   POSTGRES_PASSWORD: odoo
   POSTGRES_DB: test_odoo
 
+permissions:
+  contents: read
+
 jobs:
   # ---------------------------------------------------------------------------
   # Gate: Runnable Slice Check (fast, no Docker)

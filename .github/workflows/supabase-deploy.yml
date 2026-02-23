@@ -54,6 +54,9 @@ concurrency:
 env:
   SUPABASE_PROJECT_ID_PRODUCTION: spdtwktxdalcfigzeqrz
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Detect Changes

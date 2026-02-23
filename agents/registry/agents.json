@@ -1,5 +1,23 @@
 [
   {
+    "domain": "platform",
+    "entrypoint": "agents/personas/automation_specialist.md",
+    "id": "automation-specialist",
+    "name": "AUTOMATION-SPECIALIST",
+    "owners": [
+      "@Insightpulseai-net/platform"
+    ],
+    "scopes": [
+      "n8n",
+      "automation",
+      "odoo",
+      "supabase"
+    ],
+    "skills": [
+      "skills/n8n_workflow_builder.md"
+    ]
+  },
+  {
     "domain": "data",
     "id": "data-forge",
     "name": "DATA-FORGE",

@@ -19,6 +19,9 @@ on:
 env:
   PARITY_BASE_REF: origin/main
 
+permissions:
+  contents: read
+
 jobs:
   validate-manifests:
     name: Validate Manifests

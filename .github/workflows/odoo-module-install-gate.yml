@@ -11,6 +11,9 @@ on:
       - 'config/ship_set.txt'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   module-install-test:
     runs-on: ubuntu-latest

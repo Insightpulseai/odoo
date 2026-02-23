@@ -56,6 +56,9 @@ env:
   ODOO_IMAGE_NAME: ${{ github.repository_owner }}/odoo
   SUPABASE_PROJECT_ID: spdtwktxdalcfigzeqrz
 
+permissions:
+  contents: read
+
 jobs:
   # ============================================
   # DETECT CHANGES

@@ -24,6 +24,9 @@ env:
   PYTHON_VERSION: "3.12"
   POSTGRES_VERSION: "16"
 
+permissions:
+  contents: read
+
 jobs:
   # ==========================================================================
   # Collect Test Targets

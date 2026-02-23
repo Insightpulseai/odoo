@@ -16,6 +16,9 @@ on:
       - "agents/registry/agents.meta.json"
       - "scripts/agents/generate_agents_json.py"
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest

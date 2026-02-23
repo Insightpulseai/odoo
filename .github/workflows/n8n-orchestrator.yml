@@ -50,6 +50,9 @@ concurrency:
   group: n8n-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # ===========================================================================
   # Validate n8n Workflows
