@@ -12,6 +12,7 @@ name: Policy Gates (Governance SSOT)
 #   Gate 3 — Odoo 19 View Convention  (<tree> → <list>)
 #   Gate 4 — Supabase Migration RLS Contract  (new .sql files)
 #   Gate 5 — Deprecated Reference Block  (insightpulseai.net, Mattermost, etc.)
+#   Gate 6 — Edition Policy Check  (EE-only modules in ODOO_INSTALL_MODULES)
 #
 # See: docs/governance/POLICY_GATES.md
 # =============================================================================
@@ -19,6 +20,7 @@ name: Policy Gates (Governance SSOT)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore: []   # all paths watched; Gate 6 triggers on spec/odoo/edition_policy.yaml changes too
 
 concurrency:
   group: policy-gates-${{ github.head_ref }}
@@ -242,6 +244,33 @@ jobs:
           echo "✅ No deprecated domain/service references"
 
   # ============================================================================
+  # Gate 6 — Edition Policy Check
+  # Blocks EE-only Odoo apps from being added to an install target.
+  # Advisory when ODOO_INSTALL_MODULES is empty (normal CI runs).
+  # Enforcing when set by installer jobs or release pipelines.
+  # Ref: spec/odoo/edition_policy.yaml
+  # ============================================================================
+  edition-policy-check:
+    name: "Gate 6 — Edition Policy Check"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Edition policy check
+        run: python3 scripts/policy/check_edition_policy.py
+        env:
+          ODOO_INSTALL_MODULES: ${{ env.ODOO_INSTALL_MODULES }}
+
+  # ============================================================================
   # Summary — All Gates
   # Reports the combined result. This job must succeed for the PR to merge.
   # ============================================================================
@@ -254,6 +283,7 @@ jobs:
       - odoo-view-convention
       - supabase-migration-rls
       - deprecated-reference-check
+      - edition-policy-check
     if: always()
 
     steps:
@@ -264,6 +294,7 @@ jobs:
           G3="${{ needs.odoo-view-convention.result }}"
           G4="${{ needs.supabase-migration-rls.result }}"
           G5="${{ needs.deprecated-reference-check.result }}"
+          G6="${{ needs.edition-policy-check.result }}"
 
           icon() { [ "$1" = "success" ] && echo "✅ Pass" || echo "❌ Fail"; }
 
@@ -277,12 +308,13 @@ jobs:
           | 3 | Odoo 19 View Convention| $(icon $G3) |
           | 4 | Migration RLS Contract | $(icon $G4) |
           | 5 | Deprecated References  | $(icon $G5) |
+          | 6 | Edition Policy Check   | $(icon $G6) |
 
           > **These gates are the enforcement SSOT. No human reviewer substitutes for gate compliance.**
           > See [docs/governance/POLICY_GATES.md](../docs/governance/POLICY_GATES.md)
           EOF
 
-          for result in "$G1" "$G2" "$G3" "$G4" "$G5"; do
+          for result in "$G1" "$G2" "$G3" "$G4" "$G5" "$G6"; do
             if [ "$result" != "success" ]; then
               echo "❌ One or more policy gates failed."
               echo "Fix all gate violations before requesting merge."
@@ -290,5 +322,5 @@ jobs:
             fi
           done
 
-          echo "✅ All 5 policy gates passed."
+          echo "✅ All 6 policy gates passed."
           echo "Merge is permitted without additional human reviewer approval."

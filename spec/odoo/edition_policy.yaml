@@ -1,0 +1,51 @@
+version: 1
+ssot_reference: docs/architecture/ODOO_EDITIONS_SSOT.md
+
+# Machine-checkable CE/EE edition policy for this repository.
+# Enforced by: scripts/policy/check_edition_policy.py
+# CI gate:     .github/workflows/policy-gates.yml (Gate 6)
+#
+# Usage: set ODOO_INSTALL_MODULES=comma,separated,list before running the
+# validator in installer jobs or release pipelines. Empty → advisory skip.
+
+deny:
+  - name: documents
+    reason: "EE-only app (Odoo Editions page); replace with OCA DMS"
+    replace_with:
+      oca_repo: dms
+      modules: [dms, dms_company, dms_field, dms_mail]
+
+  - name: sign
+    reason: "EE-only app; replace with OCA sign"
+    replace_with:
+      oca_repo: sign
+      modules: [sign]
+
+  - name: spreadsheet
+    reason: "EE-only spreadsheet app; replace with OCA spreadsheet_oca"
+    replace_with:
+      oca_repo: spreadsheet
+      modules: [spreadsheet_oca]
+
+  - name: studio
+    reason: "EE-only customization tool; use module dev + config-as-code instead"
+    replace_with:
+      oca_repo: null
+      modules: []
+
+require_oca:
+  - surface: helpdesk
+    oca_repo: helpdesk
+    modules_hint: [helpdesk_mgmt, helpdesk_type]
+
+  - surface: social_marketing
+    oca_repo: social
+    modules_hint: []
+
+mapping_from_catalog:
+  Documents:        { decision: deny,        replace: dms }
+  Sign:             { decision: deny,        replace: sign }
+  Spreadsheets:     { decision: deny,        replace: spreadsheet }
+  Studio:           { decision: deny,        replace: none }
+  Helpdesk:         { decision: require_oca, repo: helpdesk }
+  Social Marketing: { decision: require_oca, repo: social }

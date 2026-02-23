@@ -29,6 +29,8 @@ eggs/
 lib/
 !clients/**/lib/
 !apps/**/lib/
+!web/**/lib/
+!templates/**/lib/
 !templates/**/src/lib/
 !templates/**/src/lib/**
 !web/**/src/lib/
@@ -126,6 +128,7 @@ temp/
 !db/**/*.sql
 !infra/platform-kit/**/*.sql
 !supabase/migrations/*.sql
+!supabase/supabase/migrations/*.sql
 !supabase/seed.sql
 !supabase/seeds/*.sql
 !supabase/seed/**/*.sql
@@ -279,3 +282,6 @@ design-tokens/figma-*.json
 
 # Agent Teams worktrees
 .worktrees/
+
+# Machine-local audit output (contains local paths, never commit)
+docs/supabase/machine_integrations_detected.json

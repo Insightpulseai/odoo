@@ -4,6 +4,8 @@ import "./globals.css"
 import { Providers } from "./providers"
 import { Toaster } from "sonner"
 import { LayoutDashboard, Server, ShieldCheck, History, Settings, Bell, Search, User } from "lucide-react"
+import "@/lib/datasource/guard"
+import { DataSourceBadge } from "@/components/platform/DataSourceBadge"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -85,6 +87,7 @@ export default function RootLayout({
             </main>
           </div>
           <Toaster richColors position="top-right" />
+          <DataSourceBadge />
         </Providers>
       </body>
     </html>
