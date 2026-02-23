@@ -8,6 +8,9 @@ on:
     paths:
       - 'addons/ipai/ipai_ai_*/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-ai-naming:
     name: Validate AI Module Naming Conventions

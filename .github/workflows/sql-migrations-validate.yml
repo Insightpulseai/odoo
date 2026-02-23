@@ -13,6 +13,9 @@ on:
       - 'tests/sql/**'
       - 'db/migrations/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-sql:
     runs-on: ubuntu-latest

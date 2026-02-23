@@ -18,6 +18,9 @@ concurrency:
   group: llms-txt-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   llms-txt-gate:
     name: LLMs.txt Validation

@@ -104,7 +104,7 @@ def main():
     print("\n=== Caching User IDs ===")
     user_cache = {}
     for name in ['RIM - Rey Meran', 'Beng Manalo', 'Jinky Paladin', 'Amor Lasaga',
-                 'Jerald Loterte', 'Jhoee Oliva', 'Jasmin Ignacio', 'Joana Maravillas']:
+                 'Jerald Lorente', 'Jhoee Oliva', 'Jasmin Ignacio', 'Joana Maravillas']:
         user_id = get_user_id(models, db, uid, password, name)
         if user_id:
             user_cache[name] = user_id

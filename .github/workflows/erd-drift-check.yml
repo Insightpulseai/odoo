@@ -1,0 +1,76 @@
+name: ERD Drift Check
+
+# =============================================================================
+# ERD DRIFT CHECK
+#
+# Regenerates DBML + crosswalk artifacts from pg_catalog and fails the PR
+# if the committed copies differ from the regenerated output.
+#
+# The ORM export step (schema.json) is skipped in CI (SKIP_ORM_EXPORT=1)
+# because it requires a live Odoo DB. Only pg_catalog-based artifacts are gated.
+#
+# To fix a drift failure:
+#   bash scripts/erd/generate_all.sh
+#   git add docs/erd/ && git commit -m "chore(erd): regenerate schema artifacts"
+# =============================================================================
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/erd/**'
+      - 'docs/erd/**'
+      - 'tools/odoo_schema/**'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/erd/**'
+      - 'docs/erd/**'
+      - 'tools/odoo_schema/**'
+  workflow_dispatch:
+
+concurrency:
+  group: erd-drift-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  erd-drift:
+    name: "ERD Drift Check"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      SKIP_ORM_EXPORT: "1"   # no live Odoo DB in CI; pg_catalog artifacts are gated
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install psycopg2-binary pyyaml
+
+      - name: Regenerate DBML + crosswalk
+        run: bash scripts/erd/generate_all.sh
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # advisory until DATABASE_URL is provisioned in CI secrets
+        continue-on-error: true
+
+      - name: Fail if docs/erd artifacts drifted
+        run: |
+          if ! git diff --quiet docs/erd/; then
+            echo "::error::ERD artifacts drifted from committed copies."
+            echo ""
+            echo "Regenerate and commit:"
+            echo "  bash scripts/erd/generate_all.sh"
+            echo "  git add docs/erd/ && git commit -m 'chore(erd): regenerate schema artifacts'"
+            echo ""
+            git diff --stat docs/erd/
+            exit 1
+          fi
+          echo "✅ ERD artifacts are up to date"

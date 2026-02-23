@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Stub templates for Odoo 17 -> 19 backward compatibility.
+
+    mail.Discuss.mobileTopbar existed in Odoo 17:
+        addons/mail/static/src/core/common/discuss.xml
+    It was removed in Odoo 18 when the Discuss mobile UI was restructured.
+
+    OCA modules ported from 17.0 may still t-inherit this template.
+    Registering an empty stub prevents:
+        "Missing (extension) parent templates: mail.Discuss.mobileTopbar"
+
+    mail.MobileMailbox was also removed; stub included for completeness.
+-->
+<templates xml:space="preserve">
+
+    <t t-name="mail.Discuss.mobileTopbar">
+        <!-- Stub: original showed inbox/starred/history toggle buttons.
+             Odoo 19 handles mobile navigation differently (burger menu). -->
+    </t>
+
+    <t t-name="mail.MobileMailbox">
+        <!-- Stub: companion template used by mobileTopbar. -->
+    </t>
+
+</templates>

@@ -1,0 +1,64 @@
+# config/odoo/settings.yaml
+# SSOT for ir.config_parameter values managed as code.
+# Used by: scripts/odoo/apply_settings.py
+#
+# Rules:
+# - Secrets MUST NOT appear here — use ${ENV_VAR} placeholders, not real values.
+# - Module-toggle settings (checkboxes that install modules) do NOT belong here.
+#   Those belong in config/odoo/desired_modules.yml.
+# - Mail server settings belong in config/odoo/mail_settings.yaml.
+# - Identity settings (invites, OTP, MFA) are SSOT in Supabase Auth — set
+#   Odoo to "On invitation" here and stop; Supabase drives the invite flow.
+#
+# Managed keys: only keys listed here are touched by apply_settings.py.
+# Any key NOT here is left untouched (no destructive resets).
+
+config_parameters:
+
+  # ---------------------------------------------------------------------------
+  # Signup / identity (Odoo is a relying party — Supabase Auth is SSOT)
+  # ---------------------------------------------------------------------------
+  # "b2b" = On invitation only (Supabase sends invites via Zoho; Odoo just accepts)
+  # "b2c" = Free signup (do NOT use — bypasses Supabase identity SSOT)
+  auth_signup.invitation_scope: "b2b"
+  auth_signup.allow_uninvited: "False"
+  # Allow password reset via Odoo email (keep True — fallback for service accounts)
+  auth_signup.reset_password: "True"
+
+  # ---------------------------------------------------------------------------
+  # Import / export
+  # ---------------------------------------------------------------------------
+  base_import.import_enabled: "True"
+  base.group_export_spreadsheet: "1"   # allow XLSX export in list views
+
+  # ---------------------------------------------------------------------------
+  # Digest (weekly summary email)
+  # ---------------------------------------------------------------------------
+  # Disabled until Zoho mail bridge is smoke-tested end-to-end
+  digest.default_periodicity: "weekly"
+
+  # ---------------------------------------------------------------------------
+  # Language / locale
+  # ---------------------------------------------------------------------------
+  lang: "en_PH"
+  date_format: "%m/%d/%Y"
+  # Timezone for scheduled actions and digest
+  default_user_tz: "Asia/Manila"
+
+  # ---------------------------------------------------------------------------
+  # Web base URL (canonical — must match DNS SSOT)
+  # ---------------------------------------------------------------------------
+  web.base.url: "https://erp.insightpulseai.com"
+  web.base.url.freeze: "True"
+
+  # ---------------------------------------------------------------------------
+  # Discuss / AI Copilot
+  # ---------------------------------------------------------------------------
+  # Disable OdooBot (AI Copilot replaces it)
+  discuss.discuss.disable_odoobot: "True"
+
+  # ---------------------------------------------------------------------------
+  # Email validation (stricter for invite-only model)
+  # ---------------------------------------------------------------------------
+  # email.use_catchall_domain: "True"
+  # email.catchall.domain: "insightpulseai.com"

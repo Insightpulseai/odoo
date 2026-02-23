@@ -1,0 +1,46 @@
+name: Odoo Semantic Lint
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/ipai_*/**'
+      - 'scripts/odoo/odoo_semantic_lint.py'
+      - 'scripts/odoo/baselines/**'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/ipai_*/**'
+
+permissions:
+  contents: read
+
+jobs:
+  semantic-lint:
+    name: Odoo Semantic Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run self-test
+        run: python3 scripts/odoo/odoo_semantic_lint.py --self-test
+
+      - name: Lint addons/ipai
+        run: python3 scripts/odoo/odoo_semantic_lint.py addons/ipai
+
+      - name: Lint addons/ipai_* (umbrella modules)
+        run: |
+          for dir in addons/ipai_*/; do
+            if [ -d "$dir" ]; then
+              echo "Linting $dir..."
+              python3 scripts/odoo/odoo_semantic_lint.py "$dir" || exit 1
+            fi
+          done

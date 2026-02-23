@@ -89,18 +89,28 @@ async def handle_scan_directory(path: str) -> Dict[str, Any]:
     Returns:
         Scan statistics
     """
-    scan_path = Path(path)
+    scan_path = Path(path).resolve()
+
+    # Prevent path traversal: reject paths that escape the repo root
+    try:
+        repo_root = Path(__file__).resolve().parents[5]
+        scan_path.relative_to(repo_root)
+    except ValueError:
+        return {
+            "error": "Path is outside the allowed repository root",
+            "path": path
+        }
 
     if not scan_path.exists():
         return {
             "error": "Path does not exist",
-            "path": path
+            "path": str(scan_path)
         }
 
     if not scan_path.is_dir():
         return {
             "error": "Path is not a directory",
-            "path": path
+            "path": str(scan_path)
         }
 
     stats = await scan_repository([scan_path], settings.lib_db_path, verbose=False)

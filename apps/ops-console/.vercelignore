@@ -1,0 +1,33 @@
+# Exclude everything outside apps/ops-console from the Vercel upload.
+# Vercel resolves .vercelignore relative to the project root directory
+# (apps/ops-console when Root Directory is set correctly).
+# These paths only apply if Vercel is mistakenly set to repo root —
+# keep them as a safety net.
+
+# Odoo / Python
+addons/
+odoo19/
+*.py
+*.pyc
+__pycache__/
+
+# Other apps
+apps/mcp-jobs/
+apps/docs/
+
+# Packages (not imported by ops-console yet)
+pkgs/
+
+# Repo infra
+.devcontainer/
+.github/
+scripts/
+spec/
+supabase/
+infra/
+docker/
+docs/
+templates/
+web/
+mcp/
+agents/

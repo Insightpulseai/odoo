@@ -1,0 +1,69 @@
+name: GraphRAG Indexer Manifest Check
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/**'
+      - 'scripts/build_kb_graph.py'
+      - 'docs/architecture/GRAPHRAG_CONTRACT.md'
+      - 'reports/graphrag_manifest.json'
+      - 'scripts/ci/check_graphrag_manifest.py'
+      - '.github/workflows/graphrag-indexer-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**'
+      - 'scripts/build_kb_graph.py'
+      - 'docs/architecture/GRAPHRAG_CONTRACT.md'
+      - 'reports/graphrag_manifest.json'
+      - 'scripts/ci/check_graphrag_manifest.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manifest-check:
+    name: Validate GraphRAG Manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate manifest
+        id: validate
+        run: python scripts/ci/check_graphrag_manifest.py
+        # Non-blocking (advisory) until the indexer runs in CI on every push.
+        # Remove continue-on-error once DB credentials are available in CI.
+        continue-on-error: true
+
+      - name: Upload manifest as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: graphrag-manifest
+          path: reports/graphrag_manifest.json
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## GraphRAG Indexer Manifest Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Validates that \`reports/graphrag_manifest.json\` is present and consistent." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f reports/graphrag_manifest.json ]; then
+            echo "### Manifest content" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            cat reports/graphrag_manifest.json >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "> **Warning**: \`reports/graphrag_manifest.json\` not found." >> $GITHUB_STEP_SUMMARY
+            echo "> Re-run the indexer: \`python scripts/build_kb_graph.py\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See [GRAPHRAG_CONTRACT.md](docs/architecture/GRAPHRAG_CONTRACT.md) for schema contract." >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================================
+             Phase I: Initial &amp; Compliance (6 tasks) — Prep: RIM
+             ============================================================ -->
+
+        <record id="task_me_01" model="project.task">
+            <field name="name">[I.1] Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_payroll_personnel')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">10</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Payroll &amp; Personnel
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_02" model="project.task">
+            <field name="name">[I.2] Calculate and record monthly Tax Provision and PPB Provision</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_tax_provisions')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">20</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Tax &amp; Provisions
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_03" model="project.task">
+            <field name="name">[I.3] Record recurring monthly Rental Income/Expense and hospitalization plan amortization</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_rent_leases')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">30</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Rent &amp; Leases
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_04" model="project.task">
+            <field name="name">[I.4] Record accruals for Consultancy Fees and General Expense Accruals</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_accruals_expenses')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">40</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Accruals &amp; Expenses
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_05" model="project.task">
+            <field name="name">[I.5] Process and record Payments for various Cash Advances</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_accruals_expenses')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">50</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Accruals &amp; Expenses
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_06" model="project.task">
+            <field name="name">[I.6] Process reversal entries for prior month accruals and reclassifications</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_1'), ref('tag_prior_period_review')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">60</field>
+            <field name="milestone_id" ref="milestone_phase_1"/>
+            <field name="description">Phase I: Initial &amp; Compliance
+Category: Prior Period Review
+Prep by: RIM | Review: CKVC | Approve: CKVC</field>
+        </record>
+
+        <!-- ============================================================
+             Phase II: Accruals &amp; Amortization (6 tasks) — Prep: BOM
+             ============================================================ -->
+
+        <record id="task_me_07" model="project.task">
+            <field name="name">[II.1] Record monthly Depreciation, Amortization for vehicles/purchases/LOA</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">70</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Amortization &amp; Corporate
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_08" model="project.task">
+            <field name="name">[II.2] Accrue monthly Management/Royalty fees and Innovations/Initiatives funds</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_corporate_accruals')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">80</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Corporate Accruals
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_09" model="project.task">
+            <field name="name">[II.3] Record monthly Corporate Insurance accrual and prepaid Health Insurance amortization</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_insurance')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">90</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Insurance
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_10" model="project.task">
+            <field name="name">[II.4] Record bank charges, FX revaluation, and stock option expense</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_treasury_other')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">100</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Treasury &amp; Other
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_11" model="project.task">
+            <field name="name">[II.5] Process reversal entries for prior month Accruals (trainings, production/retainers)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_prior_period_review')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">110</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Prior Period Review
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_12" model="project.task">
+            <field name="name">[II.6] Prepare reports for Flash, Wins &amp; Losses and Revenue</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_2'), ref('tag_regional_reporting')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">120</field>
+            <field name="milestone_id" ref="milestone_phase_2"/>
+            <field name="description">Phase II: Accruals &amp; Amortization
+Category: Regional Reporting
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <!-- ============================================================
+             Phase III: WIP (12 tasks) — Prep: JPAL + LAS
+             ============================================================ -->
+
+        <record id="task_me_13" model="project.task">
+            <field name="name">[III.1] Accrue Production, Retainer Fees, Media Commission, Creative Fees, and OOPC</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_client_billings')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">130</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Client Billings
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_14" model="project.task">
+            <field name="name">[III.2] Perform month-end Reclassifications of OOP to WIP and WIP to OOP</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_wip_oop_management')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">140</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: WIP/OOP Management
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_15" model="project.task">
+            <field name="name">[III.3] Record monthly Amortization of Business Permit and LOA</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">150</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Amortization &amp; Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_16" model="project.task">
+            <field name="name">[III.4] Accrue estimated monthly Audit Fees</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">160</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Amortization &amp; Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_17" model="project.task">
+            <field name="name">[III.5] Record monthly Intercompany Rental Expense/Income</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">170</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Amortization &amp; Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_18" model="project.task">
+            <field name="name">[III.6] Perform month-end Revaluation of Intercompany Balances</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">180</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Amortization &amp; Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_19" model="project.task">
+            <field name="name">[III.7] Prepare Working Capital reports for AR</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_ar_aging_wc')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">190</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: AR Aging - WC
+Prep by: JPAL | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_20" model="project.task">
+            <field name="name">[III.8] Process and record CA Liquidations for project-related expenses</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_ca_liquidations')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">200</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: CA Liquidations
+Prep by: LAS | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_21" model="project.task">
+            <field name="name">[III.9] Prepare AP Aging report for working capital submission</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_ap_aging_wc')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">210</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: AP Aging - WC
+Prep by: LAS | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_22" model="project.task">
+            <field name="name">[III.10] Prepare HOW's summary report</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_oop')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">220</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: OOP
+Prep by: LAS | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_23" model="project.task">
+            <field name="name">[III.11] Record monthly interest expense on leased assets and amortization reclass</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_asset_lease_entries')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">230</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Asset &amp; Lease Entries
+Prep by: LAS | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_24" model="project.task">
+            <field name="name">[III.12] Process GL reclassifications and Marketing Expense categories</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_3'), ref('tag_reclassifications')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">240</field>
+            <field name="milestone_id" ref="milestone_phase_3"/>
+            <field name="description">Phase III: WIP
+Category: Reclassifications
+Prep by: LAS | Review: BOM | Approve: CKVC</field>
+        </record>
+
+        <!-- ============================================================
+             Phase IV: Final Adjustments (12 tasks) — Prep: JLI, RMQB, JAP, JRMO
+             ============================================================ -->
+
+        <record id="task_me_25" model="project.task">
+            <field name="name">[IV.1] Compile and record monthly Input VAT entries and VAT Report</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_vat_taxes')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">250</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: VAT &amp; Taxes
+Prep by: JLI | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_26" model="project.task">
+            <field name="name">[IV.2] Accrue recurring Expenses for monthly costs</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">260</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Accruals &amp; Assets
+Prep by: JLI | Review: LAS | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_27" model="project.task">
+            <field name="name">[IV.3] Record monthly capitalization of Other Computer Related Costs</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">270</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Accruals &amp; Assets
+Prep by: JLI | Review: LAS | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_28" model="project.task">
+            <field name="name">[IV.4] Prepare AP Aging report with detailed status per invoice</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_ap_aging')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">280</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: AP Aging
+Prep by: JLI | Review: LAS | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_29" model="project.task">
+            <field name="name">[IV.5] Process and record CA Liquidations submitted by employees</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_ca_liquidations')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">290</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: CA Liquidations
+Prep by: RMQB | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_30" model="project.task">
+            <field name="name">[IV.6] Accrue monthly Employee Cellphone Allowance expense</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">300</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Accruals &amp; Assets
+Prep by: RMQB | Review: LAS | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_31" model="project.task">
+            <field name="name">[IV.7] Process expense reclassifications (General Expense to Wireless/Meals)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_expense_reclassification')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">310</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Expense Reclassification
+Prep by: RMQB | Review: RIM | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_32" model="project.task">
+            <field name="name">[IV.8] Compile and record monthly VAT Report (Initial and additional entries)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_vat_reporting')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">320</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: VAT Reporting
+Prep by: JAP | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_33" model="project.task">
+            <field name="name">[IV.9] Process and record Job Code Transfers for consultancy/corporate projects</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_job_transfers')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">330</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Job Transfers
+Prep by: JAP | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_34" model="project.task">
+            <field name="name">[IV.10] Record specific GL reclassifications for month-end adjustments</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_job_transfers')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">340</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Job Transfers
+Prep by: JAP | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_35" model="project.task">
+            <field name="name">[IV.11] Compile documents for revenue accrual attachments</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">350</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: Accruals
+Prep by: JRMO | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <record id="task_me_36" model="project.task">
+            <field name="name">[IV.12] Prepare WIP schedule summary per Job#</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_4'), ref('tag_wip')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">360</field>
+            <field name="milestone_id" ref="milestone_phase_4"/>
+            <field name="description">Phase IV: Final Adjustments
+Category: WIP
+Prep by: JRMO | Review: JPAL | Approve: CKVC</field>
+        </record>
+
+        <!-- ============================================================
+             Phase V: Sign-off (3 tasks) — RIM, CKVC, BOM
+             ============================================================ -->
+
+        <record id="task_me_37" model="project.task">
+            <field name="name">[V.1] Final Trial Balance Review (SFM)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_5'), ref('tag_signoff')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">370</field>
+            <field name="milestone_id" ref="milestone_phase_5"/>
+            <field name="description">Phase V: Sign-off
+Category: Sign-off
+Review by: RIM (Senior Finance Manager)</field>
+        </record>
+
+        <record id="task_me_38" model="project.task">
+            <field name="name">[V.2] Final Trial Balance Sign-off (FD)</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_5'), ref('tag_signoff')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">380</field>
+            <field name="milestone_id" ref="milestone_phase_5"/>
+            <field name="description">Phase V: Sign-off
+Category: Sign-off
+Sign-off by: CKVC (Finance Director)</field>
+        </record>
+
+        <record id="task_me_39" model="project.task">
+            <field name="name">[V.3] Regional Submission</field>
+            <field name="project_id" ref="project_month_end_close"/>
+            <field name="stage_id" ref="stage_todo"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_phase_5'), ref('tag_signoff')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="sequence">390</field>
+            <field name="milestone_id" ref="milestone_phase_5"/>
+            <field name="description">Phase V: Sign-off
+Category: Sign-off
+Prep by: BOM | Review: RIM | Approve: CKVC</field>
+        </record>
+
+    </data>
+</odoo>

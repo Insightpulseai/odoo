@@ -1,0 +1,14 @@
+[options]
+addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/selected,/mnt/extra-addons/ipai
+data_dir = /var/lib/odoo
+admin_passwd = ${ODOO_ADMIN_PASSWORD}
+db_host = ${DB_HOST}
+db_port = ${DB_PORT}
+db_user = ${DB_USER}
+db_password = ${DB_PASSWORD}
+db_name = ${DB_NAME}
+db_sslmode = require
+list_db = False
+proxy_mode = True
+workers = ${ODOO_WORKERS:-2}
+max_cron_threads = ${ODOO_CRON_THREADS:-1}

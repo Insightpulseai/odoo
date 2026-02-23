@@ -35,6 +35,9 @@ env:
   TF_VAR_repo_name: ${{ github.event.repository.name }}
   TERRAFORM_DIR: infra/digitalocean/pr-sandbox
 
+permissions:
+  contents: read
+
 jobs:
   # Determine action based on event
   preflight:

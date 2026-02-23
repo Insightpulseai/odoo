@@ -29,6 +29,12 @@ eggs/
 lib/
 !clients/**/lib/
 !apps/**/lib/
+!web/**/lib/
+!templates/**/lib/
+!templates/**/src/lib/
+!templates/**/src/lib/**
+!web/**/src/lib/
+!web/**/src/lib/**
 lib64/
 parts/
 sdist/
@@ -62,8 +68,9 @@ addons/*
 
 # --- Generated OCA aggregation output (git-aggregator target) ---
 # SSOT: oca-aggregate.yml (tracked)
-# Output: addons/oca/ (generated, never tracked)
-addons/oca/
+# Output: addons/oca/ (hydrated by git-aggregator, never committed)
+addons/oca/*
+!addons/oca/.gitkeep
 addons/OCA/
 # Common ignores
 addons/**/__pycache__/
@@ -121,6 +128,7 @@ temp/
 !db/**/*.sql
 !infra/platform-kit/**/*.sql
 !supabase/migrations/*.sql
+!supabase/supabase/migrations/*.sql
 !supabase/seed.sql
 !supabase/seeds/*.sql
 !supabase/seed/**/*.sql
@@ -274,3 +282,6 @@ design-tokens/figma-*.json
 
 # Agent Teams worktrees
 .worktrees/
+
+# Machine-local audit output (contains local paths, never commit)
+docs/supabase/machine_integrations_detected.json

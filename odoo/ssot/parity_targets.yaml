@@ -1,0 +1,1002 @@
+# ERP SaaS Parity Targets — Machine-readable SSOT
+# Human-readable twin: docs/architecture/EE_PARITY_MATRIX.md
+# Validator: scripts/odoo/validate_parity_targets.py
+# Schema:
+#   capability_id: str (e.g. A01)
+#   name: str
+#   resolution: CE | OCA | PORT | BRIDGE | GAP  (how parity is achieved)
+#   delivery_mode: CE | OCA | BRIDGE | PORT | PLATFORM  (runtime delivery layer)
+#   criticality: must_have | scope_based | optional
+#   v19_status: installed | partial | planned | blocked
+#   oca_modules: list[str]   (for OCA/PORT only)
+#   ipai_connectors: list[str]  (connector-only ipai_* modules)
+#   bridge_services: list[str]  (external services)
+#   bridge_owner: str | null   (when delivery_mode=BRIDGE/PLATFORM)
+#   runbook: str | null  (path under docs/ops/ for BRIDGE; null otherwise)
+#   status: installed | partial | planned | blocked
+#   notes: str | null
+
+---
+parity_targets:
+
+  # ─── A. Core ERP ──────────────────────────────────────────────────────────
+
+  - capability_id: A01
+    name: "Chart of accounts, journals, fiscal year"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [l10n_ph]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "PH localization via l10n_ph; base config in odoo.conf"
+
+  - capability_id: A02
+    name: "Customer invoicing & vendor bills"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [account_move_name_sequence]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "Sequence enforced via OCA module"
+
+  - capability_id: A03
+    name: "PH withholding tax (EWT / expanded)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [l10n_account_withholding_tax, l10n_account_withholding_tax_pos]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A04
+    name: "Bank statement import (CSV / CAMT)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [account_statement_base, account_statement_import_base, account_statement_import_camt, account_statement_import_file, account_statement_import_online]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A05
+    name: "Bank reconciliation"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "Native Odoo 19 reconciliation engine"
+
+  - capability_id: A06
+    name: "Payment orders / SEPA"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [account_payment_order, account_payment_order_grouped_output, account_payment_mode, account_payment_sale, account_payment_purchase]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A07
+    name: "Financial reporting (P&L, BS, cashflow)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [account_financial_report, mis_builder, mis_builder_budget]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A08
+    name: "Tax balance / analytic reporting"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [account_tax_balance, bi_sql_editor]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A09
+    name: "Sales orders, quotations, pricelists"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A10
+    name: "Sale discounts (order + line level)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [sale_order_general_discount, base_global_discount]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A11
+    name: "Sale order types, priorities, exceptions"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [sale_order_type, sale_order_priority, sale_exception]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A12
+    name: "Sale automatic workflow"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [sale_automatic_workflow]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A13
+    name: "Purchase orders, RFQ, types"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [purchase_order_type, purchase_request, purchase_force_invoiced, purchase_order_general_discount, purchase_order_owner]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A14
+    name: "Inventory, moves, routes"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A15
+    name: "Manufacturing, BOM, MO lifecycle"
+    resolution: CE
+    delivery_mode: CE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A16
+    name: "MRP quality control"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [quality_control_oca, quality_control_stock_oca]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A17
+    name: "MRP operations extensions"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mrp_attachment_mgmt, mrp_bom_component_menu, mrp_bom_image, mrp_bom_note, mrp_bom_tracking, mrp_production_back_to_draft, mrp_sale_info, mrp_tag]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A18
+    name: "Project management, timesheets"
+    resolution: CE
+    delivery_mode: CE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A19
+    name: "Project stage management"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [project_task_default_stage, project_task_stage_mgmt, project_task_stage_state]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A20
+    name: "Timesheet controls"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [hr_timesheet_task_stage, hr_timesheet_time_control]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A21
+    name: "Human resources (employees, leaves, attendance)"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A22
+    name: "HR recruitment"
+    resolution: CE
+    delivery_mode: CE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A23
+    name: "Point of sale"
+    resolution: CE
+    delivery_mode: CE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: A24
+    name: "CRM / leads pipeline"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  # ─── B. Compliance & Localisation ─────────────────────────────────────────
+
+  - capability_id: B01
+    name: "BIR compliance automation (PH)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [l10n_ph, l10n_account_withholding_tax]
+    ipai_connectors: [ipai_finance_ppm]
+    bridge_services: [n8n, supabase]
+    bridge_owner: "n8n + supabase"
+    runbook: "docs/ops/SUPABASE_N8N.md"
+    status: installed
+    notes: "ipai_finance_ppm is a connector/event-emitter only, not a BIR clone"
+
+  - capability_id: B02
+    name: "IBAN / bank / VAT validation"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [base_iban, base_vat, partner_vat_unique]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: B03
+    name: "Audit log"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [auditlog]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: B04
+    name: "Partner deduplication / GDPR"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [partner_auto_archive, privacy_lookup, data_recycle]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: B05
+    name: "Field-level data encryption"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [data_encryption]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "Encryption keys stored in server_environment / env vars"
+
+  # ─── C. Mail & Communications ─────────────────────────────────────────────
+
+  - capability_id: C01
+    name: "SMTP relay (Zoho Mail)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: [ipai_mail_bridge_zoho]
+    bridge_services: [zoho_smtp]
+    bridge_owner: "zoho_smtp"
+    runbook: "docs/ops/SUPABASE_N8N.md"
+    status: installed
+    notes: "smtp.zoho.com:587; ipai_mail_bridge_zoho is connector-only"
+
+  - capability_id: C02
+    name: "Mail debranding"
+    resolution: PORT
+    delivery_mode: PORT
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mail_debranding]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "Odoo 19 compat patch applied"
+
+  - capability_id: C03
+    name: "Activity reminders"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mail_activity_reminder]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: C04
+    name: "Optional autofollow"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: optional
+    v19_status: installed
+    oca_modules: [mail_optional_autofollow]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: C05
+    name: "Outbound static domain"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [mail_outbound_static]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: C06
+    name: "Deferred mail sending"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mail_post_defer]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: C07
+    name: "Delivery confirmations"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mail_send_confirmation]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: C08
+    name: "Mail open/click tracking"
+    resolution: PORT
+    delivery_mode: PORT
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [mail_tracking]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "_init_messaging() patched: store.add() dict call removed (Odoo 19 API change)"
+
+  - capability_id: C09
+    name: "Mass mailing / email marketing"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  # ─── D. Security & Identity ───────────────────────────────────────────────
+
+  - capability_id: D01
+    name: "SSO / OIDC"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [auth_oidc, auth_oauth, auth_oauth_multi_token]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D02
+    name: "2FA / TOTP"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D03
+    name: "Passkey / WebAuthn"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [auth_passkey, auth_passkey_portal]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D04
+    name: "Session timeout"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [auth_session_timeout]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D05
+    name: "Role-based access control"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [base_user_role]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D06
+    name: "Impersonation (support)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [impersonate_login]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D07
+    name: "Server environment tiering"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [server_environment]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: D08
+    name: "Database access control"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "list_db=False, proxy_mode=True enforced in odoo.conf"
+
+  # ─── E. Platform / Odoo.sh Parity ────────────────────────────────────────
+
+  - capability_id: E01
+    name: "CI build + test"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [github_actions]
+    bridge_owner: "github_actions"
+    runbook: "docs/ops/TESTING.md"
+    status: installed
+    notes: null
+
+  - capability_id: E02
+    name: "Staging environment"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [digitalocean, docker]
+    bridge_owner: "digitalocean + docker"
+    runbook: "docs/ops/ODOO_SH_EQUIVALENT_MATRIX.md"
+    status: installed
+    notes: null
+
+  - capability_id: E03
+    name: "DB promotion (staging → prod)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [supabase, digitalocean]
+    bridge_owner: "supabase + digitalocean"
+    runbook: "docs/ops/PROMOTION_CHECKLIST.md"
+    status: installed
+    notes: null
+
+  - capability_id: E04
+    name: "Preview deploys (web surfaces)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [vercel, n8n]
+    bridge_owner: "vercel + n8n"
+    runbook: "docs/architecture/ENVIRONMENTS.md"
+    status: installed
+    notes: null
+
+  - capability_id: E05
+    name: "DNS management"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [cloudflare]
+    bridge_owner: "cloudflare"
+    runbook: "docs/ops/CLOUDFLARE_DNS_SSOT.md"
+    status: installed
+    notes: null
+
+  - capability_id: E06
+    name: "Observability (metrics/logs/traces)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [digitalocean_monitoring, supabase]
+    bridge_owner: "digitalocean_monitoring + supabase"
+    runbook: "docs/ops/DIGITALOCEAN_OBSERVABILITY.md"
+    status: installed
+    notes: null
+
+  - capability_id: E07
+    name: "Backup / disaster recovery"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [digitalocean_managed_db]
+    bridge_owner: "digitalocean_managed_db"
+    runbook: "docs/ops/ODOO_SH_EQUIVALENT_MATRIX.md"
+    status: installed
+    notes: null
+
+  - capability_id: E08
+    name: "Security posture / GHAS"
+    resolution: BRIDGE
+    delivery_mode: PLATFORM
+    criticality: scope_based
+    v19_status: planned
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [github_advanced_security]
+    bridge_owner: "github_advanced_security"
+    runbook: "docs/ops/SECURITY_REMEDIATION_LANE.md"
+    status: planned
+    notes: null
+
+  # ─── F. Document & OCR Pipeline ───────────────────────────────────────────
+
+  - capability_id: F01
+    name: "Vendor bill OCR (invoice ingestion)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [paddleocr, claude_llm, n8n, supabase]
+    bridge_owner: "paddleocr + claude_llm + n8n + supabase"
+    runbook: "docs/ops/SUPABASE_N8N.md"
+    status: installed
+    notes: "automations/n8n/workflows/invoice_ocr_to_odoo.json"
+
+  - capability_id: F02
+    name: "Document management (DMS)"
+    resolution: PORT
+    delivery_mode: PORT
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [document_url]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: "v19 compat patches applied"
+
+  - capability_id: F03
+    name: "Attachment indexing (full-text search)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [attachment_indexation]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: F04
+    name: "File storage (S3 / external)"
+    resolution: GAP
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: blocked
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [supabase_storage]
+    bridge_owner: "supabase_storage"
+    runbook: null
+    status: blocked
+    notes: "fs_attachment: OCA sets installable=False on v19. Use Supabase Storage via bridge when needed."
+
+  - capability_id: F05
+    name: "e-Signature workflow"
+    resolution: GAP
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: planned
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: planned
+    notes: "No OCA v19 port. Defer to ipai_sign_bridge_* when business need arises."
+
+  # ─── G. BI & Reporting ────────────────────────────────────────────────────
+
+  - capability_id: G01
+    name: "MIS Builder (financial templates)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [mis_builder, mis_builder_budget]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: G02
+    name: "BI SQL views (custom reports)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: [bi_sql_editor]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: G03
+    name: "Spreadsheet / pivot dashboards"
+    resolution: CE
+    delivery_mode: CE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: G04
+    name: "External BI (Superset / Tableau)"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [apache_superset, supabase]
+    bridge_owner: "apache_superset + supabase"
+    runbook: "docs/ops/SUPABASE_METRICS.md"
+    status: installed
+    notes: null
+
+  - capability_id: G05
+    name: "REST API framework for external consumers"
+    resolution: GAP
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: blocked
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: blocked
+    notes: "rest-framework / fastapi OCA modules set installable=False on v19. Use Odoo JSON-RPC or n8n bridge."
+
+  # ─── H. Integration Framework ─────────────────────────────────────────────
+
+  - capability_id: H01
+    name: "Job queue (async, batch, cron)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [queue_job, queue_job_batch, queue_job_cron, queue_job_subscribe]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: H02
+    name: "Connector base framework"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: must_have
+    v19_status: installed
+    oca_modules: [connector, component, component_event]
+    ipai_connectors: []
+    bridge_services: []
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null
+
+  - capability_id: H03
+    name: "n8n automation bus"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: must_have
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [n8n, supabase]
+    bridge_owner: "n8n + supabase"
+    runbook: "docs/ops/SUPABASE_N8N.md"
+    status: installed
+    notes: null
+
+  - capability_id: H04
+    name: "External event bus"
+    resolution: BRIDGE
+    delivery_mode: BRIDGE
+    criticality: scope_based
+    v19_status: installed
+    oca_modules: []
+    ipai_connectors: []
+    bridge_services: [supabase_realtime]
+    bridge_owner: "supabase_realtime"
+    runbook: "docs/ops/SUPABASE_METRICS.md"
+    status: installed
+    notes: null
+
+  - capability_id: H05
+    name: "AI / LLM copilot (ask AI)"
+    resolution: OCA
+    delivery_mode: OCA
+    criticality: optional
+    v19_status: installed
+    oca_modules: [ai_oca_native_generate_ollama]
+    ipai_connectors: []
+    bridge_services: [ollama]
+    bridge_owner: null
+    runbook: null
+    status: installed
+    notes: null

@@ -16,6 +16,9 @@ on:
       - 'config/install_sets/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   dry-run:
     runs-on: ubuntu-latest

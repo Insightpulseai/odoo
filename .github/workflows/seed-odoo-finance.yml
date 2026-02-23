@@ -26,6 +26,9 @@ concurrency:
 env:
   SUPABASE_EDGE_URL: ${{ secrets.SUPABASE_URL }}
 
+permissions:
+  contents: read
+
 jobs:
   seed:
     name: Seed Odoo Projects/Tasks

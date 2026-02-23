@@ -32,6 +32,9 @@ env:
   MANIFEST_PATH: infra/superset/manifest.json
   DO_SPEC_PATH: infra/superset/do-app-spec.yaml
 
+permissions:
+  contents: read
+
 jobs:
   bump:
     name: Bump Superset Version

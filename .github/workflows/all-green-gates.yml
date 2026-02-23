@@ -21,6 +21,9 @@ concurrency:
   group: all-green-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # ==========================================================================
   # Gate 1: Spec Kit Validation

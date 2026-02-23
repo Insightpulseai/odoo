@@ -1,0 +1,279 @@
+# Finance PPM — Parity Map (Machine-Readable SSOT)
+#
+# Authoritative mapping of every Finance PPM capability to its resolution layer.
+# Schema:
+#   capability_id:   unique slug
+#   capability_name: human-readable name
+#   target_parity:   ce | oca | delta | bridge
+#   implementation_refs: list of repo paths (modules, scripts, workflows)
+#   decision:        required if target_parity is delta or bridge
+#   evidence:        required if target_parity is delta or bridge
+#   status:          verified | unverified | planned
+#   notes:           optional clarifications
+#
+# Enforced by: scripts/policy/validate_parity_map.py
+# Referenced by: spec/finance-ppm/constitution.md (Rule 6)
+
+capabilities:
+
+  # ── CE Layer (native Odoo 19 configuration) ─────────────────────────
+
+  - capability_id: project-management
+    capability_name: Project structure (2 projects, stages, tasks)
+    target_parity: ce
+    implementation_refs:
+      - scripts/seed_finance_ppm_stages_odoo19.py
+      - scripts/bulk_import_tasks_odoo19.py
+    status: verified
+    notes: Native project.project + project.task + project.task.type
+
+  - capability_id: kanban-workflow
+    capability_name: 6-stage Kanban workflow
+    target_parity: ce
+    implementation_refs:
+      - scripts/seed_finance_ppm_stages_odoo19.py
+    status: verified
+    notes: Native project.task.type stages
+
+  - capability_id: task-assignment
+    capability_name: Task assignment to team members
+    target_parity: ce
+    implementation_refs:
+      - scripts/bulk_import_tasks_odoo19.py
+    status: verified
+    notes: Native res.users assignment on project.task
+
+  - capability_id: task-deadlines
+    capability_name: Task deadline tracking (WD offsets + fixed BIR dates)
+    target_parity: ce
+    implementation_refs:
+      - scripts/bulk_import_tasks_odoo19.py
+    status: verified
+    notes: Native date_deadline field on project.task
+
+  - capability_id: task-tags
+    capability_name: Task categorization via tags (phases + BIR forms)
+    target_parity: ce
+    implementation_refs:
+      - data/seed/finance_ppm/tbwa_smp/tags.csv
+      - scripts/bulk_import_tasks_odoo19.py
+    status: verified
+    notes: Native project.tags model
+
+  - capability_id: project-milestones
+    capability_name: Logframe milestones mapped to projects
+    target_parity: ce
+    implementation_refs:
+      - scripts/seed_logframe_milestones_odoo19.py
+    status: verified
+    notes: Native project.milestone model (Odoo 16+)
+
+  - capability_id: fiscal-positions
+    capability_name: Philippine fiscal position for BIR tax mapping
+    target_parity: ce
+    implementation_refs:
+      - addons/ipai_bir_tax_compliance/
+    status: verified
+    notes: Native account.fiscal.position configuration
+
+  # ── OCA Layer (community add-ons, verified 19.0) ────────────────────
+
+  - capability_id: task-dependencies
+    capability_name: Task predecessor/successor dependencies
+    target_parity: oca
+    implementation_refs:
+      - scripts/install_oca_gantt_bridge.sh
+    status: verified
+    notes: OCA project_task_dependency (19.0 series)
+
+  - capability_id: timeline-view
+    capability_name: Timeline visualization for project tasks
+    target_parity: oca
+    implementation_refs:
+      - scripts/install_oca_gantt_bridge.sh
+    status: verified
+    notes: >
+      OCA project_timeline provides a timeline (bar chart) view.
+      This is NOT a full interactive Gantt chart.
+      Critical-path highlighting is NOT available (unverified for 19.0).
+
+  - capability_id: stage-closed
+    capability_name: Distinguish closed/cancelled stages from active
+    target_parity: oca
+    implementation_refs:
+      - scripts/install_oca_gantt_bridge.sh
+    status: verified
+    notes: OCA project_stage_closed (19.0 series)
+
+  # ── Delta Layer (ipai_* custom modules) ─────────────────────────────
+
+  - capability_id: finance-ppm-controls
+    capability_name: Budget/forecast/variance tracking on projects
+    target_parity: delta
+    implementation_refs:
+      - addons/ipai/ipai_finance_ppm/
+    decision: >
+      CE project model lacks budget/forecast/variance fields.
+      No OCA module provides finance-specific PPM extensions for Odoo 19.
+    evidence: spec/finance-ppm/decisions/0001-finance-ppm-controls.md
+    status: verified
+
+  - capability_id: bir-tax-compliance
+    capability_name: Philippine BIR tax compliance (36 eBIRForms)
+    target_parity: delta
+    implementation_refs:
+      - addons/ipai_bir_tax_compliance/
+    decision: >
+      Philippine BIR tax compliance is jurisdiction-specific.
+      No OCA module covers BIR eBIRForms filing for Philippines.
+      Odoo 19 PH localization covers fiscal positions but not filing workflows.
+    evidence: spec/finance-ppm/decisions/0002-bir-tax-compliance.md
+    status: verified
+
+  - capability_id: bir-notifications
+    capability_name: BIR deadline alert notifications
+    target_parity: delta
+    implementation_refs:
+      - addons/ipai/ipai_bir_notifications/
+    decision: >
+      Alert timing and cooldown logic is specific to BIR filing cadence.
+      No generic OCA notification module provides this.
+    evidence: spec/finance-ppm/decisions/0002-bir-tax-compliance.md
+    status: verified
+
+  - capability_id: enterprise-bridge-stubs
+    capability_name: Minimal model/field compatibility stubs for EE models
+    target_parity: delta
+    implementation_refs:
+      - addons/ipai/ipai_enterprise_bridge/
+    decision: >
+      Provides safe stubs and redirections for code that references EE models.
+      Does NOT reimplement EE features — only prevents import errors.
+    evidence: spec/finance-ppm/decisions/0003-enterprise-bridge-stubs.md
+    status: verified
+
+  - capability_id: finance-workflow
+    capability_name: Shared finance stages + role-based workflow
+    target_parity: delta
+    implementation_refs:
+      - addons/ipai/ipai_finance_workflow/
+    decision: >
+      CE project stages are generic. Finance PPM requires role-based stage
+      transitions (Analyst→Manager→Senior→Director) with approval semantics.
+      No OCA module provides finance-specific approval workflow.
+    evidence: spec/finance-ppm/decisions/0004-finance-workflow.md
+    status: verified
+
+  # ── Bridge Layer (platform/service substitutes) ─────────────────────
+
+  - capability_id: recurrent-alerts
+    capability_name: Automated Slack alerts for due/overdue tasks
+    target_parity: bridge
+    implementation_refs:
+      - platform/bridges/recurrent-alerts/
+      - scripts/n8n_finance_ppm_workflow_odoo19.json
+    decision: >
+      EE provides built-in activity scheduling and email digests.
+      CE lacks Slack integration and cron-triggered alert workflows.
+      This is a platform-level automation gap, not a module gap.
+    evidence: spec/finance-ppm/decisions/0005-platform-bridges.md
+    status: verified
+
+  - capability_id: bir-form-generation
+    capability_name: BIR .dat file generation via n8n + Odoo PH
+    target_parity: bridge
+    implementation_refs:
+      - platform/bridges/bir-form-generation/
+      - scripts/n8n_bir_form_generation.json
+    decision: >
+      SAP Tax Compliance provides built-in form generation.
+      Odoo CE has no equivalent. This is a platform-level service gap
+      bridged via n8n workflow orchestration.
+    evidence: spec/finance-ppm/decisions/0005-platform-bridges.md
+    status: verified
+
+  - capability_id: efiling-automation
+    capability_name: eFPS/eBIRForms/eAFS electronic filing
+    target_parity: bridge
+    implementation_refs:
+      - platform/bridges/efiling-automation/
+      - scripts/n8n_bir_efiling_automation.json
+    decision: >
+      SAP provides built-in e-filing integration.
+      No Odoo module (CE or OCA) provides BIR eFPS integration.
+      Bridged via n8n workflow → government portal APIs.
+    evidence: spec/finance-ppm/decisions/0005-platform-bridges.md
+    status: verified
+
+  - capability_id: ai-journal-posting
+    capability_name: AI-validated journal entry drafting
+    target_parity: bridge
+    implementation_refs:
+      - platform/bridges/ai-journal-posting/
+      - scripts/n8n_ai_journal_posting.json
+    decision: >
+      SAP provides IAP-based AI/ML features.
+      Odoo CE has no AI journal validation. Odoo IAP is EE-only.
+      Bridged via Claude API + n8n → account.move draft.
+      AI never auto-posts; Director must approve.
+    evidence: spec/finance-ppm/decisions/0005-platform-bridges.md
+    status: verified
+
+  - capability_id: compliance-dashboard
+    capability_name: Superset dashboard with logframe KPIs
+    target_parity: bridge
+    implementation_refs:
+      - platform/bridges/compliance-dashboard/
+      - scripts/dashboard_queries_odoo19.sql
+    decision: >
+      SAP FCC provides built-in closing cockpit dashboard.
+      Odoo CE dashboards are limited. Superset provides
+      SQL-driven views with RAG status for logframe KPIs.
+    evidence: spec/finance-ppm/decisions/0005-platform-bridges.md
+    status: verified
+
+  # ── Not Available / Out of Scope ────────────────────────────────────
+
+  - capability_id: critical-path-analysis
+    capability_name: Critical path computation and highlighting
+    target_parity: bridge
+    implementation_refs: []
+    decision: >
+      SAP FCC provides critical-path designation on tasks.
+      OCA project_timeline_critical_path exists but is verified only for
+      older series (≤14.0), NOT for Odoo 19.
+      Status: NOT AVAILABLE until independently verified and evidenced.
+    evidence: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
+    status: planned
+    notes: >
+      Workaround: task dependencies + deadline tracking provide
+      implicit ordering. True critical-path computation requires
+      verification of project_timeline_critical_path on Odoo 19
+      or a custom implementation.
+
+  - capability_id: resource-leveling
+    capability_name: Resource leveling and capacity planning
+    target_parity: bridge
+    implementation_refs: []
+    decision: >
+      SAP provides resource leveling in Planning module.
+      No CE, OCA, or custom module provides this for Odoo 19.
+      Status: NOT AVAILABLE. Workaround: manual workload balancing
+      via v_assignee_workload Superset view.
+    evidence: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
+    status: planned
+    notes: Out of scope for Finance PPM v1. May be addressed in future.
+
+  - capability_id: gantt-drag-drop
+    capability_name: Interactive Gantt chart with drag-and-drop
+    target_parity: bridge
+    implementation_refs: []
+    decision: >
+      SAP and Odoo EE provide full interactive Gantt.
+      OCA project_timeline provides a read-only timeline bar view.
+      Full interactive Gantt is NOT available in CE+OCA.
+    evidence: spec/finance-ppm/decisions/0006-critical-path-unavailable.md
+    status: planned
+    notes: >
+      OCA project_timeline is a timeline visualization, not a Gantt chart.
+      Drag-and-drop is limited. Do not claim "Gantt support."

@@ -10,6 +10,9 @@ on:
       - "web/web/src/lib/supabase.ts"
       - "scripts/supabase/test_auth_flows_safe.sh"
 
+permissions:
+  contents: read
+
 jobs:
   smoke-test:
     name: Auth Flow Smoke Test

@@ -145,7 +145,7 @@ Generated: 2025-11-26
             "LAS": "user_finance_manager_1",  # Amor Lasaga
             "BOM": "user_finance_supervisor_1",  # Beng Manalo
             "JPAL": "user_finance_assistant_vat_1",  # Jinky Paladin
-            "JPL": "user_finance_assistant_ap_1",  # Jerald Loterte
+            "JPL": "user_finance_assistant_ap_1",  # Jerald Lorente
             "JI": "user_finance_assistant_assets_1",  # Jasmin Ignacio
             "JO": "user_finance_assistant_support_1",  # Jhoee Oliva
             "JM": "user_finance_assistant_support_2",  # Joana Maravillas

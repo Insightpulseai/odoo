@@ -9,6 +9,9 @@ on:
       - "addons/ipai_finance_ppm_umbrella/**"
       - "scripts/finance_ppm_health_check.*"
 
+permissions:
+  contents: read
+
 jobs:
   health-check:
     runs-on: ubuntu-latest

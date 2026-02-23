@@ -23,6 +23,9 @@ on:
           - "true"
           - "false"
 
+permissions:
+  contents: read
+
 jobs:
   apply-dns:
     name: Apply DNS SSOT to Cloudflare

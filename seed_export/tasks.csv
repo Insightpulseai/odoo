@@ -1,6 +1,6 @@
 id,name,project_id,project_name,stage_id,stage_name,active,priority,sequence,date_deadline,parent_id,parent_name,company_id,description,user_logins,tag_names
 648,[DEC-07] Period Close Sign-Off - December 2025,7,Month-end closing,,,False,3,0,2026-01-07 23:00:00,,,,Final sign-off for December 2025 period. Lock accounting period and approve financial statements.,rey.meran@tbwa-smp.com,
-646,[DEC-05] GL Reconciliation - December 2025,7,Month-end closing,,,False,2,0,2026-01-05 23:00:00,,,,"Reconcile all GL accounts for December 2025. Verify subledger balances match GL, resolve discrepancies.",jerald.loterte@omc.com,
+646,[DEC-05] GL Reconciliation - December 2025,7,Month-end closing,,,False,2,0,2026-01-05 23:00:00,,,,"Reconcile all GL accounts for December 2025. Verify subledger balances match GL, resolve discrepancies.",jerald.lorente@omc.com,
 645,[DEC-05] Bank Reconciliation - December 2025,7,Month-end closing,,,False,2,0,2026-01-05 23:00:00,,,,"Reconcile all bank accounts for December 2025. Clear outstanding checks, deposits in transit, bank charges.",joana.maravillas@omc.com,
 647,[DEC-07] Financial Statements - December 2025,7,Month-end closing,,,False,2,0,2026-01-07 23:00:00,,,,"Generate December 2025 financial statements (IS, BS, CF). Review for accuracy and completeness before sign-off.",khalil.veracruz@omc.com,
 641,[JAN-10] 1601-C Approval: Submit Dec 2025 via eFPS,6,BIR Tax Filing,,,False,2,0,2026-01-09 23:00:00,,,,Final approval and submission of December 2025 1601-C via eBIRForms/eFPS. Archive filed return and payment confirmation.,rey.meran@tbwa-smp.com,
@@ -21,7 +21,7 @@ id,name,project_id,project_name,stage_id,stage_name,active,priority,sequence,dat
 221,[JAN-31] Alphalist Submission - CY 2025,6,BIR Tax Filing,,,True,1,100,2026-01-30 23:00:00,,,,<p>Alphabetical List of Employees/Payees from whom taxes were withheld</p>,,
 250,[FEB-28] 1702Q Quarterly Income Tax - Q4 2025,6,BIR Tax Filing,,,True,1,110,2026-02-27 23:00:00,,,,<p>Quarterly Income Tax Return for Q4 2025 (60 days after quarter)</p>,,
 228,[FEB-28] 1702Q Quarterly Income Tax - Q4 2025,6,BIR Tax Filing,,,True,1,110,2026-02-27 23:00:00,,,,<p>Quarterly Income Tax Return for Q4 2025 (60 days after quarter)</p>,,
-639,[JAN-10] 1601-C Prep: Extract Dec 2025 Payroll,6,BIR Tax Filing,,,False,1,0,2026-01-05 23:00:00,,,,"Extract December 2025 payroll data from HR module. Verify employee records, compensation amounts, and withholding tax calculations.",jerald.loterte@omc.com,
+639,[JAN-10] 1601-C Prep: Extract Dec 2025 Payroll,6,BIR Tax Filing,,,False,1,0,2026-01-05 23:00:00,,,,"Extract December 2025 payroll data from HR module. Verify employee records, compensation amounts, and withholding tax calculations.",jerald.lorente@omc.com,
 640,[JAN-10] 1601-C Review: Validate Dec 2025 WHT,6,BIR Tax Filing,,,False,1,0,2026-01-07 23:00:00,,,,Review and validate December 2025 withholding tax amounts. Cross-check against payroll register and tax tables.,khalil.veracruz@omc.com,
 642,[JAN-25] 2550Q Prep: Q4 2025 Income Summary,6,BIR Tax Filing,,,False,1,0,2026-01-20 23:00:00,,,,"Compile Q4 2025 income summary (Oct-Dec). Calculate quarterly income tax, prior quarter payments, and final tax due.",jhoee.oliva@omc.com,
 643,[JAN-25] 2550Q Review: Validate Q4 2025 Tax Computation,6,BIR Tax Filing,,,False,1,0,2026-01-22 23:00:00,,,,Review Q4 2025 income tax computation. Verify quarterly installment calculations and prior payments.,khalil.veracruz@omc.com,
@@ -266,7 +266,7 @@ Accounting → Assets → Assets
 
 ## Approval Required
 Fixed asset capitalizations over threshold require approval.
-        </p>",jerald.loterte@omc.com,Assets
+        </p>",jerald.lorente@omc.com,Assets
 753,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2025-12-09 23:00:00,,,,,,
 754,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2025-12-19 23:00:00,,,,,,
 756,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-09 23:00:00,,,,,,
@@ -313,7 +313,7 @@ Fixed asset capitalizations over threshold require approval.
 57,[Accruals & Expenses] Review and reconcile all accrued expenses to ensure accuracy and completeness.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
 56,[Accruals & Expenses] Record accruals for Consultancy Fees and various routine General Expense Accruals. Estimated expense for which a vendor invoice has not yet been received.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
 761,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-02-27 23:00:00,,,,,,
-743,Jerald Loterte,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+743,Jerald Lorente,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 742,Joana Maravillas,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 741,Jhoee Oliva,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 740,Jasmin Ignacio,6,BIR Tax Filing,,,True,0,10,False,,,,,,
@@ -342,14 +342,14 @@ Accounting → Assets → [Select Asset] → Sell or Dispose
 - [ ] Calculate and record gain/loss
 
 ## Must complete BEFORE depreciation run.
-        </p>",jerald.loterte@omc.com,Assets
+        </p>",jerald.lorente@omc.com,Assets
 274,Jake Tolentino,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 273,Cliff Dejecacion,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 272,Sally Brillantes,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 271,Joana Maravillas,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 270,Jhoee Oliva,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 269,Jasmin Ignacio,6,BIR Tax Filing,,,True,0,10,False,,,,,,
-268,Jerald Loterte,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+268,Jerald Lorente,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 267,Jinky Paladin,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 266,Beng Manalo,6,BIR Tax Filing,,,True,0,10,False,,,,,,
 265,Amor Lasaga,6,BIR Tax Filing,,,True,0,10,False,,,,,,
@@ -377,7 +377,7 @@ Accounting → Assets → Compute Depreciation
 
 ## Note
 Run after all capitalizations and disposals are complete.
-        </p>",jerald.loterte@omc.com,"Assets,Automated"
+        </p>",jerald.lorente@omc.com,"Assets,Automated"
 624,3.1 Reverse Prior Month Accruals,15,Month-End Close Template,313,Backlog,True,0,12,False,,,,"<p>## Objective
 Automatically reverse prior month accrual entries.
 
@@ -394,7 +394,7 @@ Use ""Auto-Reverse"" flag on original accrual entries.
 
 ## Note
 This should be fully automated via entry settings.
-        </p>",jerald.loterte@omc.com,"Automated,GL"
+        </p>",jerald.lorente@omc.com,"Automated,GL"
 625,3.2 Post Manual Accruals,15,Month-End Close Template,313,Backlog,True,0,13,False,,,,"<p>## Objective
 Post period-end accrual entries for expenses incurred but not invoiced.
 
@@ -417,7 +417,7 @@ T-Code: FBS1 - Enter Accrual/Deferral Document
 
 ## OCA Module
 account_move_template - for recurring entry templates
-        </p>",jerald.loterte@omc.com,GL
+        </p>",jerald.lorente@omc.com,GL
 626,3.3 Prepaid Expense Amortization,15,Month-End Close Template,313,Backlog,True,0,14,False,,,,"<p>## Objective
 Amortize prepaid expenses to expense accounts.
 
@@ -438,7 +438,7 @@ T-Code: FBS1 - Accrual/Deferral
 
 ## OCA Module
 account_cutoff_prepaid - automates this process
-        </p>",jerald.loterte@omc.com,GL
+        </p>",jerald.lorente@omc.com,GL
 627,3.4 Update Foreign Exchange Rates,15,Month-End Close Template,313,Backlog,True,0,15,False,,,,"<p>## Objective
 Update currency exchange rates to period-end rates.
 
@@ -459,7 +459,7 @@ BSP (Bangko Sentral ng Pilipinas) for PHP rates
 
 ## OCA Module
 currency_rate_update - auto-fetches from BSP
-        </p>",jerald.loterte@omc.com,"Automated,GL"
+        </p>",jerald.lorente@omc.com,"Automated,GL"
 628,3.5 Foreign Currency Revaluation,15,Month-End Close Template,313,Backlog,True,0,16,False,,,,"<p>## Objective
 Revalue foreign currency monetary items at period-end rates.
 
@@ -482,7 +482,7 @@ T-Code: FAGL_FC_VAL - Foreign Currency Valuation
 ## Entry
 Dr/Cr: Asset/Liability (adjustment)
 Cr/Dr: Unrealized FX Gain/Loss
-        </p>",jerald.loterte@omc.com,GL
+        </p>",jerald.lorente@omc.com,GL
 629,4.1 Prepare BIR 1601-C (Withholding Tax - Compensation),15,Month-End Close Template,313,Backlog,True,0,17,False,,,,"<p>## Objective
 Prepare and file monthly withholding tax return for compensation.
 

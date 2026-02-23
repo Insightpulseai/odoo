@@ -389,10 +389,19 @@ Brief description of changes
 
 ### Checkout and Manual Merge via Command Line
 
-If you cannot use the merge button or an automatic merge cannot be performed, you can
-perform a manual merge on the command line.
+If you do not want to use the merge button or an automatic merge cannot be performed,
+you can perform a manual merge on the command line.
 
 > **Note:** These steps are not applicable if the base branch is protected.
+
+#### Repository URLs
+
+| Method | URL |
+|--------|-----|
+| **HTTPS** | `https://github.com/Insightpulseai/odoo.git` |
+| **SSH** | `git@github.com:Insightpulseai/odoo.git` |
+
+#### Steps
 
 **Step 1:** Clone the repository or update your local repository with the latest changes.
 
@@ -428,16 +437,18 @@ See [Resolving a merge conflict using the command line](https://docs.github.com/
 git push -u origin <pr-branch-name>
 ```
 
-**Example:** For a PR from branch `feat/add-expense-ocr`:
+#### Example
+
+For a PR from branch `claude/deploy-finance-ppm-odoo19-LbLm4`:
 
 ```bash
 git pull origin main
-git checkout feat/add-expense-ocr
+git checkout claude/deploy-finance-ppm-odoo19-LbLm4
 git merge main
 # Resolve any conflicts...
 git add .
 git commit -m "fix: resolve merge conflicts with main"
-git push -u origin feat/add-expense-ocr
+git push -u origin claude/deploy-finance-ppm-odoo19-LbLm4
 ```
 
 ### Commit Message Format

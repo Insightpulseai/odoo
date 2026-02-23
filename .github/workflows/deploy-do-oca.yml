@@ -39,6 +39,9 @@ env:
   DEPLOY_PATH: /opt/odoo-oca
   COMPOSE_PROJECT_NAME: odoo-oca
 
+permissions:
+  contents: read
+
 jobs:
   # -----------------------------------------
   # Pre-flight checks

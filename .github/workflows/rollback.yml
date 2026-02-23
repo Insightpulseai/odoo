@@ -1,0 +1,37 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to rollback"
+        required: true
+        default: "stage"
+        type: choice
+        options:
+          - stage
+          - prod
+      previous_tag:
+        description: "Tag or SHA to rollback to"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    name: Rollback
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: SSH Rollback
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.environment == 'prod' && secrets.PROD_HOST || secrets.STAGING_HOST }}
+          username: ${{ inputs.environment == 'prod' && secrets.PROD_USER || secrets.STAGING_USER }}
+          key: ${{ inputs.environment == 'prod' && secrets.PROD_SSH_KEY || secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/odoo-ops
+            ./scripts/deploy/rollback.sh ${{ inputs.environment }} ${{ inputs.previous_tag }}
