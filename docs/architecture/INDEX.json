@@ -1,0 +1,192 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "generated": "2026-02-23T00:00:00+08:00",
+    "git_sha": "980c9998a",
+    "repo": "Insightpulseai/odoo",
+    "layer": "sc-index-layer1",
+    "description": "Machine-readable repo index for GraphRAG KB agents. Layer 1: deterministic symbolic map. Layer 2: semantic embeddings (kb_chunks). Layer 3: graph (kb_nodes/kb_edges).",
+    "update_commands": [
+      "python scripts/build_kb_graph.py",
+      "# then refresh this file manually or via scripts/generate_repo_index.py"
+    ]
+  },
+
+  "identity": {
+    "workspace": "ipai",
+    "supabase_ref": "spdtwktxdalcfigzeqrz",
+    "odoo_version": "19.0",
+    "stack": ["Odoo CE 19.0", "OCA", "PostgreSQL 16", "n8n", "Supabase", "Next.js", "pnpm"],
+    "domain": "insightpulseai.com",
+    "production_ip": "178.128.112.214"
+  },
+
+  "file_counts": {
+    "total_files": 128998,
+    "python_files": 250,
+    "javascript_files": 0,
+    "sql_migrations": 160,
+    "github_workflows": 264,
+    "scripts": 755,
+    "ipai_modules": 54,
+    "index_date": "2026-02-23"
+  },
+
+  "addon_zones": [
+    {
+      "path": "addons/odoo",
+      "addon_kind": "core",
+      "edit_policy": "no_touch",
+      "description": "Odoo CE 19.0 core addons — read-only reference"
+    },
+    {
+      "path": "addons/oca",
+      "addon_kind": "oca",
+      "edit_policy": "overlay_only",
+      "description": "OCA community modules — git-aggregated, never patch directly. Use _inherit overrides in addons/ipai/"
+    },
+    {
+      "path": "addons/ipai",
+      "addon_kind": "ipai",
+      "edit_policy": "editable",
+      "description": "Custom ipai_* modules — all custom development goes here"
+    }
+  ],
+
+  "modules": {
+    "ipai_ai_agent_builder":        { "domain": "ai",       "policy": "editable", "purpose": "Agent workflow builder UI" },
+    "ipai_ai_agents_ui":            { "domain": "ai",       "policy": "editable", "purpose": "Agent management interface" },
+    "ipai_ai_automations":          { "domain": "ai",       "policy": "editable", "purpose": "Trigger-based automations" },
+    "ipai_ai_copilot":              { "domain": "ai",       "policy": "editable", "purpose": "AI copilot embedded in Odoo" },
+    "ipai_ai_fields":               { "domain": "ai",       "policy": "editable", "purpose": "AI-powered computed fields" },
+    "ipai_ai_livechat":             { "domain": "ai",       "policy": "editable", "purpose": "LiveChat AI integration" },
+    "ipai_ai_platform":             { "domain": "ai",       "policy": "editable", "purpose": "Core AI platform layer" },
+    "ipai_ai_rag":                  { "domain": "ai",       "policy": "editable", "purpose": "RAG query and retrieval" },
+    "ipai_ai_tools":                { "domain": "ai",       "policy": "editable", "purpose": "LLM tool definitions" },
+    "ipai_auth_oidc":               { "domain": "ops",      "policy": "editable", "purpose": "OIDC/SSO authentication" },
+    "ipai_bir_notifications":       { "domain": "finance",  "policy": "editable", "purpose": "BIR deadline alerts" },
+    "ipai_bir_plane_sync":          { "domain": "finance",  "policy": "editable", "purpose": "Plane.so BIR sync" },
+    "ipai_chatgpt_sdk_theme":       { "domain": "ui",       "policy": "editable", "purpose": "ChatGPT-style theme" },
+    "ipai_copilot_ui":              { "domain": "ui",       "policy": "editable", "purpose": "Copilot panel component" },
+    "ipai_design_system":           { "domain": "ui",       "policy": "editable", "purpose": "TBWA design system" },
+    "ipai_design_system_apps_sdk":  { "domain": "ui",       "policy": "editable", "purpose": "Design system SDK" },
+    "ipai_documents_ai":            { "domain": "ops",      "policy": "editable", "purpose": "AI document processing" },
+    "ipai_enterprise_bridge":       { "domain": "ops",      "policy": "editable", "purpose": "EE feature parity bridge" },
+    "ipai_equity":                  { "domain": "finance",  "policy": "editable", "purpose": "Equity tracking" },
+    "ipai_esg":                     { "domain": "finance",  "policy": "editable", "purpose": "ESG reporting" },
+    "ipai_esg_social":              { "domain": "finance",  "policy": "editable", "purpose": "ESG social metrics" },
+    "ipai_expense_ocr":             { "domain": "ops",      "policy": "editable", "purpose": "OCR receipt to expense" },
+    "ipai_finance_close_seed":      { "domain": "finance",  "policy": "editable", "purpose": "Month-close seeding" },
+    "ipai_finance_ppm":             { "domain": "finance",  "policy": "editable", "purpose": "Project Portfolio Management" },
+    "ipai_finance_tax_return":      { "domain": "finance",  "policy": "editable", "purpose": "BIR tax return filing" },
+    "ipai_finance_workflow":        { "domain": "finance",  "policy": "editable", "purpose": "Finance approval flows" },
+    "ipai_foundation":              { "domain": "ai",       "policy": "editable", "purpose": "Cross-module base utilities" },
+    "ipai_helpdesk":                { "domain": "ops",      "policy": "editable", "purpose": "Helpdesk customization" },
+    "ipai_helpdesk_refund":         { "domain": "ops",      "policy": "editable", "purpose": "Refund workflow" },
+    "ipai_hr_expense_liquidation":  { "domain": "finance",  "policy": "editable", "purpose": "Expense liquidation" },
+    "ipai_hr_payroll_ph":           { "domain": "finance",  "policy": "editable", "purpose": "PH payroll compliance" },
+    "ipai_mail_bridge_zoho":        { "domain": "ops",      "policy": "editable", "purpose": "Zoho Mail SMTP bridge" },
+    "ipai_odooops_shell":           { "domain": "ops",      "policy": "editable", "purpose": "OdooOps CLI shell" },
+    "ipai_ops_connector":           { "domain": "ops",      "policy": "editable", "purpose": "Supabase ops bus connector" },
+    "ipai_planning_attendance":     { "domain": "ops",      "policy": "editable", "purpose": "Planning to attendance sync" },
+    "ipai_platform_api":            { "domain": "ai",       "policy": "editable", "purpose": "REST API endpoints" },
+    "ipai_platform_theme":          { "domain": "ui",       "policy": "editable", "purpose": "Platform-level theme" },
+    "ipai_project_templates":       { "domain": "ops",      "policy": "editable", "purpose": "Project template library" },
+    "ipai_rest_controllers":        { "domain": "ai",       "policy": "editable", "purpose": "HTTP controller layer" },
+    "ipai_sign":                    { "domain": "ops",      "policy": "editable", "purpose": "eSign integration" },
+    "ipai_system_config":           { "domain": "ops",      "policy": "editable", "purpose": "System-level configuration" },
+    "ipai_theme_copilot":           { "domain": "ui",       "policy": "editable", "purpose": "Copilot theme" },
+    "ipai_theme_fluent2":           { "domain": "ui",       "policy": "editable", "purpose": "Fluent 2 theme" },
+    "ipai_theme_tbwa":              { "domain": "ui",       "policy": "editable", "purpose": "TBWA brand theme" },
+    "ipai_ui_brand_tokens":         { "domain": "ui",       "policy": "editable", "purpose": "Design tokens" },
+    "ipai_vertical_media":          { "domain": "vertical", "policy": "editable", "purpose": "Media industry vertical" },
+    "ipai_vertical_retail":         { "domain": "vertical", "policy": "editable", "purpose": "Retail vertical" },
+    "ipai_web_fluent2":             { "domain": "ui",       "policy": "editable", "purpose": "Web Fluent 2 assets" },
+    "ipai_web_icons_fluent":        { "domain": "ui",       "policy": "editable", "purpose": "Fluent icon set" },
+    "ipai_web_mail_compat":         { "domain": "ops",      "policy": "editable", "purpose": "Mail JS compat shim for Odoo 19" },
+    "ipai_web_theme_tbwa":          { "domain": "ui",       "policy": "editable", "purpose": "Web theme assets" },
+    "ipai_website_coming_soon":     { "domain": "ui",       "policy": "editable", "purpose": "Coming-soon page" },
+    "ipai_whatsapp_connector":      { "domain": "vertical", "policy": "editable", "purpose": "WhatsApp integration" },
+    "ipai_zoho_mail":               { "domain": "ops",      "policy": "editable", "purpose": "Zoho Mail module" }
+  },
+
+  "entrypoints": {
+    "odoo_config":        "config/dev/odoo.conf",
+    "dockerfile":         "runtime/docker/docker/Dockerfile.ce19",
+    "devcontainer":       ".devcontainer/devcontainer.json",
+    "ops_console":        "apps/ops-console/app/page.tsx",
+    "ai_control_plane":   "web/ai-control-plane/",
+    "mcp_server_tools":   "agents/mcp/servers/lib-mcp-server/src/tools.py",
+    "supabase_schema":    "docs/architecture/schema.prisma",
+    "n8n_workflows":      "automations/n8n/workflows/",
+    "kb_graph_indexer":   "scripts/build_kb_graph.py",
+    "dns_ssot":           "infra/dns/subdomain-registry.yaml",
+    "agent_ssot":         "docs/ai/SSOT.md",
+    "claude_entry":       "CLAUDE.md"
+  },
+
+  "runtime_surfaces": {
+    "odoo_erp":           "https://erp.insightpulseai.com",
+    "n8n_automation":     "https://n8n.insightpulseai.com",
+    "ops_console":        "https://ops.insightpulseai.com",
+    "supabase_api":       "https://spdtwktxdalcfigzeqrz.supabase.co",
+    "mcp_server":         "https://mcp.insightpulseai.com",
+    "superset_bi":        "https://superset.insightpulseai.com"
+  },
+
+  "graphrag": {
+    "supabase_ref": "spdtwktxdalcfigzeqrz",
+    "migration": "20260223000008_kb_graph_layer.sql",
+    "applied": "2026-02-23",
+    "node_counts": {
+      "OdooModule": 55,
+      "File": 250,
+      "Model": 81,
+      "total": 386
+    },
+    "edge_counts": {
+      "DEFINED_IN": 329,
+      "DEPENDS_ON": 8,
+      "total": 337
+    },
+    "indexer": "scripts/build_kb_graph.py",
+    "policy_zones": {
+      "editable":     ["ipai", "generated"],
+      "overlay_only": ["oca"],
+      "no_touch":     ["core", "vendor"]
+    }
+  },
+
+  "ci_gates": {
+    "production_deploy":   ".github/workflows/cd-production.yml",
+    "odoo_build":          ".github/workflows/build-odoo-ce19-ee-parity.yml",
+    "migration_push":      ".github/workflows/supabase-db-push.yml",
+    "rls_audit":           ".github/workflows/supabase-sql-rls-checks.yml",
+    "addons_path_guard":   ".github/workflows/odoo-addons-path-guard.yml",
+    "ssot_drift":          ".github/workflows/agent-instructions-drift.yml",
+    "kb_crawler":          ".github/workflows/agentic-codebase-crawler.yml",
+    "n8n_sweep":           ".github/workflows/automation-sweep.yml",
+    "ops_console_gate":    ".github/workflows/ops-console-check.yml"
+  },
+
+  "invariants": [
+    "CE only — no Enterprise modules, no odoo.com IAP",
+    "addons/oca/ is overlay_only — _inherit only, never direct edits",
+    "Odoo uses local PostgreSQL; Supabase is external integration bus only",
+    "Secrets in .env files or CI secrets — never in source",
+    "DNS via infra/dns/subdomain-registry.yaml SSOT only",
+    "Domain: insightpulseai.com (.net deprecated)",
+    "Mail via ipai_mail_bridge_zoho — never direct SMTP",
+    "Comms: Slack only (Mattermost deprecated 2026-01-28)",
+    "KB graph: re-run scripts/build_kb_graph.py after module changes"
+  ],
+
+  "deprecated": {
+    "insightpulseai.net":        "replaced by insightpulseai.com",
+    "Mattermost":                "replaced by Slack (2026-01-28)",
+    "Mailgun/ipai_mailgun_bridge": "replaced by Zoho Mail SMTP",
+    "Affine/Appfine":            "removed 2026-02",
+    "ipai_mattermost_connector": "replaced by ipai_slack_connector",
+    "Supabase ublqmilcjtpnflofprkr": "old OPEX project — do not use"
+  }
+}

@@ -1,0 +1,327 @@
+// docs/architecture/schema.prisma
+// ORM representation of the complete Supabase project.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  schemas    = ["public", "ops", "auth", "cron"]
+  extensions = [vector, pg_stat_statements, pgcrypto, citext, uuid_ossp(map: "uuid-ossp"), pg_net, pg_cron(map: "pg_cron")]
+}
+
+// ==========================================
+// Enums (GraphRAG provenance + policy)
+// ==========================================
+
+enum AddonKind {
+  core
+  oca
+  ipai
+  vendor
+  generated
+}
+
+enum EditPolicy {
+  editable
+  overlay_only
+  no_touch
+}
+
+enum KbNodeType {
+  File
+  OdooModule
+  Model
+  View
+  Asset
+  AssetBundle
+  Controller
+  Doc
+}
+
+enum KbEdgeType {
+  CALLS
+  DEPENDS_ON
+  INHERITS_FROM
+  ASSET_IN_BUNDLE
+  REMOVES
+  OVERLAYS
+  DEFINED_IN
+  IMPORTS
+}
+
+// ==========================================
+// SCHEMA: public
+// ==========================================
+
+model Role {
+  id          String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String      @unique
+  description String?
+  userRoles   UserRole[]
+
+  @@schema("public")
+  @@map("roles")
+}
+
+model Profile {
+  id         String      @id @db.Uuid // matches auth.users.id
+  email      String?
+  full_name  String?
+  avatar_url String?
+  created_at DateTime    @default(now()) @db.Timestamptz
+  updated_at DateTime    @default(now()) @updatedAt @db.Timestamptz
+  userRoles  UserRole[]
+
+  @@schema("public")
+  @@map("profiles")
+}
+
+model UserRole {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String   @db.Uuid
+  role_id    String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  profile Profile @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  role    Role    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, role_id])
+  @@schema("public")
+  @@map("user_roles")
+}
+
+model KbChunk {
+  id          String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  document_id String
+  content     String
+  metadata    Json           @default("{}")
+  // Provenance fields (GraphRAG contract)
+  path        String?
+  span_start  Int?
+  span_end    Int?
+  text_hash   String?        // hash(chunk text) — used for incremental embedding cache
+  git_sha     String?        // repo SHA at index time
+  module      String?        // Odoo module name (e.g. ipai_web_mail_compat)
+  addon_kind  AddonKind?     // core | oca | ipai | vendor | generated
+  edit_policy EditPolicy     @default(editable)
+  created_at  DateTime       @default(now()) @db.Timestamptz
+  updated_at  DateTime       @default(now()) @updatedAt @db.Timestamptz
+  embeddings  KbEmbedding[]
+
+  @@schema("public")
+  @@map("kb_chunks")
+}
+
+model KbEmbedding {
+  id         String                 @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chunk_id   String                 @db.Uuid
+  // Prisma doesn't natively map pgvector; Unsupported is canonical
+  embedding  Unsupported("vector")
+  model      String
+  dims       Int?
+  created_at DateTime               @default(now()) @db.Timestamptz
+
+  chunk KbChunk @relation(fields: [chunk_id], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+  @@map("kb_embeddings")
+}
+
+model KbNode {
+  id          String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type        KbNodeType
+  name        String
+  path        String?
+  module      String?
+  addon_kind  AddonKind?
+  edit_policy EditPolicy  @default(editable)
+  git_sha     String?
+  attrs       Json        @default("{}")
+  created_at  DateTime    @default(now()) @db.Timestamptz
+  updated_at  DateTime    @default(now()) @updatedAt @db.Timestamptz
+
+  outEdges KbEdge[] @relation("KbEdgeSrc")
+  inEdges  KbEdge[] @relation("KbEdgeDst")
+
+  @@unique([type, path, name])
+  @@schema("public")
+  @@map("kb_nodes")
+}
+
+model KbEdge {
+  id         String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  src_id     String     @db.Uuid
+  dst_id     String     @db.Uuid
+  type       KbEdgeType
+  attrs      Json       @default("{}")
+  git_sha    String?
+  created_at DateTime   @default(now()) @db.Timestamptz
+
+  src KbNode @relation("KbEdgeSrc", fields: [src_id], references: [id], onDelete: Cascade)
+  dst KbNode @relation("KbEdgeDst", fields: [dst_id], references: [id], onDelete: Cascade)
+
+  @@unique([src_id, dst_id, type])
+  @@schema("public")
+  @@map("kb_edges")
+}
+
+// ==========================================
+// SCHEMA: ops
+// ==========================================
+
+model Integration {
+  id            BigInt    @id @default(autoincrement())
+  name          String    @unique
+  enabled       Boolean   @default(true)
+  config        Json      @default("{}")
+  last_seen_at  DateTime? @db.Timestamptz
+  last_error_at DateTime? @db.Timestamptz
+  error_count   BigInt    @default(0)
+  created_at    DateTime  @default(now()) @db.Timestamptz
+  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz
+
+  webhookEvents WebhookEvent[]
+  jobs          Job[]
+
+  @@schema("ops")
+  @@map("integrations")
+}
+
+model WebhookEvent {
+  id              BigInt    @id @default(autoincrement())
+  integration     String
+  event_type      String?
+  idempotency_key String?
+  signature_valid Boolean   @default(false)
+  received_at     DateTime  @default(now()) @db.Timestamptz
+  headers         Json      @default("{}")
+  payload         Json
+  processed_at    DateTime? @db.Timestamptz
+  status          String    @default("received")
+  error           String?
+
+  integrationRecord Integration @relation(fields: [integration], references: [name], onDelete: NoAction)
+  deployments       Deployment[]
+  billingEvents     BillingEvent[]
+  emailEvents       EmailEvent[]
+
+  @@schema("ops")
+  @@map("webhook_events")
+}
+
+model Job {
+  id           BigInt    @id @default(autoincrement())
+  integration  String
+  job_type     String
+  payload      Json
+  run_after    DateTime  @default(now()) @db.Timestamptz
+  attempts     Int       @default(0)
+  max_attempts Int       @default(10)
+  locked_at    DateTime? @db.Timestamptz
+  locked_by    String?
+  status       String    @default("queued")
+  last_error   String?
+  created_at   DateTime  @default(now()) @db.Timestamptz
+  updated_at   DateTime  @default(now()) @updatedAt @db.Timestamptz
+
+  integrationRecord Integration @relation(fields: [integration], references: [name], onDelete: NoAction)
+
+  @@index([status, run_after])
+  @@schema("ops")
+  @@map("jobs")
+}
+
+model Deployment {
+  id           BigInt    @id @default(autoincrement())
+  provider     String    @default("vercel")
+  provider_id  String?
+  project_id   String?
+  env          String?
+  url          String?
+  status       String?
+  created_at   DateTime  @default(now()) @db.Timestamptz
+  raw_event_id BigInt?
+
+  webhookEvent WebhookEvent? @relation(fields: [raw_event_id], references: [id], onDelete: SetNull)
+
+  @@schema("ops")
+  @@map("deployments")
+}
+
+model BillingEvent {
+  id           BigInt    @id @default(autoincrement())
+  provider     String    @default("stripe")
+  provider_id  String?
+  customer_id  String?
+  event_type   String?
+  amount       BigInt?
+  currency     String?
+  created_at   DateTime  @default(now()) @db.Timestamptz
+  raw_event_id BigInt?
+
+  webhookEvent WebhookEvent? @relation(fields: [raw_event_id], references: [id], onDelete: SetNull)
+
+  @@schema("ops")
+  @@map("billing_events")
+}
+
+model EmailEvent {
+  id           BigInt    @id @default(autoincrement())
+  provider     String    @default("resend")
+  provider_id  String?
+  to_email     String?
+  template     String?
+  status       String?
+  created_at   DateTime  @default(now()) @db.Timestamptz
+  raw_event_id BigInt?
+
+  webhookEvent WebhookEvent? @relation(fields: [raw_event_id], references: [id], onDelete: SetNull)
+
+  @@schema("ops")
+  @@map("email_events")
+}
+
+model EdgeTarget {
+  name       String   @id
+  url        String
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@schema("ops")
+  @@map("edge_targets")
+}
+
+// ==========================================
+// VIEWS: ops metrics
+// ==========================================
+
+/// @view
+model IntegrationMetrics {
+  name             String    @id
+  enabled          Boolean
+  last_seen_at     DateTime? @db.Timestamptz
+  last_error_at    DateTime? @db.Timestamptz
+  error_count      BigInt
+  queued_jobs      BigInt
+  dead_jobs        BigInt
+  failed_webhooks  BigInt
+  observed_at      DateTime  @db.Timestamptz
+
+  @@schema("ops")
+  @@map("integration_metrics")
+}
+
+/// @view
+model QueueMetrics {
+  status            String    @id
+  job_count         BigInt
+  oldest_created_at DateTime? @db.Timestamptz
+  next_run_after    DateTime? @db.Timestamptz
+
+  @@schema("ops")
+  @@map("queue_metrics")
+}
