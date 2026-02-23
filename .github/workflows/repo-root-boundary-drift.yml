@@ -1,0 +1,36 @@
+name: Repo Root Boundary Drift
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '*'
+  push:
+    branches: [main]
+    paths:
+      - '*'
+
+jobs:
+  check-root-boundary:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Warn-only phase — non-blocking
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run root boundary drift check
+        run: |
+          python scripts/policy/check_root_boundary_drift.py . \
+            --report-file drift-report.txt
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: root-boundary-drift-report
+          path: drift-report.txt
+          retention-days: 30
