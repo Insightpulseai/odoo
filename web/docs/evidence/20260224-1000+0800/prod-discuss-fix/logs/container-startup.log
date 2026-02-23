@@ -1,0 +1,30 @@
+    cron._callback(job['cron_name'], job['ir_actions_server_id'])
+  File "/usr/lib/python3/dist-packages/odoo/addons/base/models/ir_cron.py", line 643, in _callback
+    self.env['ir.actions.server'].browse(server_action_id).run()
+  File "/usr/lib/python3/dist-packages/odoo/addons/base/models/ir_actions.py", line 1173, in run
+    eval_context = self._get_eval_context(action)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/odoo/addons/mail/models/ir_actions_server.py", line 394, in _get_eval_context
+    eval_context = super()._get_eval_context(action=action)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/odoo/addons/base/models/ir_actions.py", line 1125, in _get_eval_context
+    model = self.env[model_name]
+            ~~~~~~~~^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/odoo/orm/environments.py", line 107, in __getitem__
+    return self.registry[model_name](self, (), ())
+           ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/odoo/orm/registry.py", line 335, in __getitem__
+    return self.models[model_name]
+           ~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'automatic.workflow.job'
+2026-02-23 19:32:33,035 13 INFO odoo_prod odoo.addons.base.models.ir_cron: Job 'Automatic Workflow Job' (54) failed (#loop 1; done 0; remaining 0; duration 0.03s) 
+2026-02-23 19:32:36,759 10 INFO odoo werkzeug: 162.158.106.213 - - [23/Feb/2026 19:32:36] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 1 0.002 0.004
+2026-02-23 19:32:41,181 10 INFO odoo werkzeug: 162.158.107.46 - - [23/Feb/2026 19:32:41] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 1 0.006 0.004
+2026-02-23 19:32:54,824 9 INFO odoo werkzeug: 172.70.93.118 - - [23/Feb/2026 19:32:54] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 1 0.002 0.007
+2026-02-23 19:33:01,330 10 INFO odoo werkzeug: 172.70.208.71 - - [23/Feb/2026 19:33:01] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 1 0.003 0.004
+2026-02-23 19:33:14,008 10 INFO odoo werkzeug: 172.68.242.49 - - [23/Feb/2026 19:33:14] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 1 0.003 0.007
+2026-02-23 19:33:19,346 9 INFO odoo werkzeug: 172.71.152.81 - - [23/Feb/2026 19:33:19] "GET / HTTP/1.0" 303 - 1 0.003 0.006
+2026-02-23 19:33:19,424 10 INFO odoo werkzeug: 172.70.208.116 - - [23/Feb/2026 19:33:19] "GET /odoo HTTP/1.0" 303 - 1 0.004 0.005
+2026-02-23 19:33:19,772 10 INFO odoo werkzeug: 108.162.226.145 - - [23/Feb/2026 19:33:19] "GET /web/login?redirect=/odoo? HTTP/1.0" 200 - 53 0.077 0.184
+2026-02-23 19:33:19,859 9 INFO odoo werkzeug: 172.71.152.81 - - [23/Feb/2026 19:33:19] "GET /web/binary/company_logo HTTP/1.0" 304 - 2 0.006 0.009
+2026-02-23 19:33:20,098 9 INFO odoo werkzeug: 162.158.107.19 - - [23/Feb/2026 19:33:20] "GET /web/webclient/translations?hash=758b76c1fef0b23cfcadf45c8ac741d7c430f565&lang= HTTP/1.0" 200 - 3 0.005 0.011
