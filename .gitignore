@@ -277,3 +277,6 @@ design-tokens/figma-*.json
 
 # Agent Teams worktrees
 .worktrees/
+
+# Machine-local audit output (contains local paths, never commit)
+docs/supabase/machine_integrations_detected.json
