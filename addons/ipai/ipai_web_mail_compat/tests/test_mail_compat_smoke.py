@@ -23,26 +23,61 @@ class TestIpaiWebMailCompatSmoke(TransactionCase):
       2. Compat replacement files ARE in the resolved bundle (added).
       3. The probe model returns a consistent and well-formed contract dict.
       4. Removed and added sets are disjoint.
+      5. Path canonicalization is stable for both leading-slash and slashless inputs.
     """
 
     BUNDLE = "web.assets_backend"
 
+    # ── path canonicalization ─────────────────────────────────────────────────
+
+    @staticmethod
+    def _canon_asset_path(p: str) -> str:
+        """Normalise an asset path to manifest-style (no leading slash).
+
+        IrAsset._get_asset_paths() resolves paths from the filesystem as
+        ``absolute_path[len(addons_path):]`` which yields a leading ``/``
+        because addons_path has no trailing slash.  Manifest contract paths are
+        written without a leading slash.  Applying this helper to both sides
+        keeps comparisons format-agnostic and robust against future drift in
+        the probe contract lists.
+        """
+        return (p or "").lstrip("/")
+
+    # ── resolved path set ─────────────────────────────────────────────────────
+
     def _asset_path_set(self):
-        """Return a frozenset of resolved paths for BUNDLE.
+        """Return a frozenset of canonicalised paths for BUNDLE.
 
         Uses IrAsset._get_asset_paths() — the authoritative Odoo API for
-        final bundle contents.  Manifest-declared removes are already applied,
-        so removed paths are absent and added paths are present.
+        the final bundle contents after all directives are applied.
         """
         IrAsset = self.env["ir.asset"].sudo()
         resolved = IrAsset._get_asset_paths(self.BUNDLE, {})
         # Each entry is a 4-tuple (path, full_path, bundle, last_modified).
-        # Index 0 is the addon-relative path used in manifests / ir.asset.
-        # _get_asset_paths() returns paths with a leading slash when resolved
-        # from the filesystem (e.g. '/mail_tracking/static/...' not
-        # 'mail_tracking/static/...').  Strip so comparisons against the probe
-        # contract (which uses slashless paths matching __manifest__.py) work.
-        return frozenset(entry[0].lstrip('/') for entry in resolved)
+        # Canonicalise entry[0] so both leading-slash and slashless paths match.
+        return frozenset(self._canon_asset_path(entry[0]) for entry in resolved)
+
+    # ── regression: canonicalization helper ───────────────────────────────────
+
+    def test_canon_asset_path_is_stable(self):
+        """Canonicalization must produce identical output for both input forms."""
+        cases = [
+            # (input, expected_output)
+            ("/mail_tracking/static/src/services/store_service_patch.esm.js",
+             "mail_tracking/static/src/services/store_service_patch.esm.js"),
+            ("mail_tracking/static/src/services/store_service_patch.esm.js",
+             "mail_tracking/static/src/services/store_service_patch.esm.js"),
+            ("/ipai_web_mail_compat/static/src/compat_probe.esm.js",
+             "ipai_web_mail_compat/static/src/compat_probe.esm.js"),
+            ("ipai_web_mail_compat/static/src/compat_probe.esm.js",
+             "ipai_web_mail_compat/static/src/compat_probe.esm.js"),
+            ("", ""),
+        ]
+        for inp, expected in cases:
+            with self.subTest(inp=inp):
+                self.assertEqual(self._canon_asset_path(inp), expected)
+
+    # ── asset contract assertions ─────────────────────────────────────────────
 
     def test_upstream_broken_files_are_removed(self):
         """Upstream broken OCA files must NOT be in the resolved bundle.
@@ -55,7 +90,7 @@ class TestIpaiWebMailCompatSmoke(TransactionCase):
         probe = self.env["ipai.compat.probe"].sudo().mail_tracking()
         for upstream_path in probe["removed_upstream_assets"]:
             self.assertNotIn(
-                upstream_path,
+                self._canon_asset_path(upstream_path),
                 path_set,
                 f"Upstream path '{upstream_path}' is STILL in bundle '{self.BUNDLE}'. "
                 f"The ('remove', ...) stanza in __manifest__.py did not take effect — "
@@ -73,7 +108,7 @@ class TestIpaiWebMailCompatSmoke(TransactionCase):
         probe = self.env["ipai.compat.probe"].sudo().mail_tracking()
         for compat_path in probe["added_compat_assets"]:
             self.assertIn(
-                compat_path,
+                self._canon_asset_path(compat_path),
                 path_set,
                 f"Compat asset '{compat_path}' NOT found in bundle '{self.BUNDLE}'. "
                 f"Check __manifest__.py assets stanza and that the static file exists.",
@@ -97,8 +132,8 @@ class TestIpaiWebMailCompatSmoke(TransactionCase):
     def test_probe_removed_and_added_are_disjoint(self):
         """Removed and added asset paths must not overlap (would indicate manifest error)."""
         probe = self.env["ipai.compat.probe"].sudo().mail_tracking()
-        removed = set(probe["removed_upstream_assets"])
-        added = set(probe["added_compat_assets"])
+        removed = {self._canon_asset_path(p) for p in probe["removed_upstream_assets"]}
+        added = {self._canon_asset_path(p) for p in probe["added_compat_assets"]}
         overlap = removed & added
         self.assertFalse(
             overlap,

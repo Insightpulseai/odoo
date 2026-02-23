@@ -45,6 +45,18 @@ def die(msg: str) -> None:
     fail(msg, code=2)
 
 
+def canon_asset_path(p: str) -> str:
+    """Normalise an asset path to the manifest-style (no leading slash).
+
+    IrAsset._get_asset_paths() resolves paths from the filesystem as
+    ``absolute_path[len(addons_path):]`` which yields a leading ``/`` because
+    addons_path has no trailing slash (e.g. ``/mnt/extra-addons/ipai``).
+    Manifest contract paths are written without a leading slash.
+    Applying this helper to both sides keeps comparisons format-agnostic.
+    """
+    return (p or "").lstrip("/")
+
+
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def main() -> int:
@@ -129,31 +141,31 @@ def main() -> int:
         except Exception as exc:
             die(f"IrAsset._get_asset_paths('{args.bundle}') raised: {exc}")
 
-        # Build path set from element 0 of each 4-tuple.
-        # _get_asset_paths() returns paths with a leading slash when resolved
-        # from the filesystem (e.g. '/mail_tracking/static/...' not
-        # 'mail_tracking/static/...').  Strip the leading slash so both the
-        # probe contract paths (no slash) and the resolved paths match.
-        path_set = {entry[0].lstrip('/') for entry in resolved}
+        # Build normalised path set.  Apply canon_asset_path to both sides so
+        # the comparison is resilient to probe-list drift (e.g. if someone
+        # accidentally adds a leading slash to a probe contract entry).
+        path_set = {canon_asset_path(entry[0]) for entry in resolved}
 
         if not path_set:
             fail(
                 f"_get_asset_paths('{args.bundle}') returned an empty list.\n"
-                "Possible causes: bundle name wrong, no installed addons declare assets."
+                "Possible causes: bundle name wrong, no installed addons declare assets.\n"
+                f"Bundle checked: {args.bundle!r}"
             )
         ok(f"Resolved {len(path_set)} asset paths from '{args.bundle}'.")
 
-        # 4a. Upstream broken files must NOT appear in the final bundle
+        # 4a. Upstream broken files must NOT appear in the final bundle.
+        # canon_asset_path applied to both sides: handles future probe drift.
         errors = []
         for upstream_path in removed_contract:
-            if upstream_path in path_set:
+            if canon_asset_path(upstream_path) in path_set:
                 errors.append(
                     f"  STILL_PRESENT (expected removed): PATH={upstream_path!r}"
                 )
 
-        # 4b. Compat replacement files must be present in the final bundle
+        # 4b. Compat replacement files must be present in the final bundle.
         for compat_path in added_contract:
-            if compat_path not in path_set:
+            if canon_asset_path(compat_path) not in path_set:
                 errors.append(
                     f"  MISSING (expected present): PATH={compat_path!r}"
                 )
