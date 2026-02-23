@@ -29,6 +29,8 @@ eggs/
 lib/
 !clients/**/lib/
 !apps/**/lib/
+!web/**/lib/
+!templates/**/lib/
 lib64/
 parts/
 sdist/
@@ -121,6 +123,7 @@ temp/
 !db/**/*.sql
 !infra/platform-kit/**/*.sql
 !supabase/migrations/*.sql
+!supabase/supabase/migrations/*.sql
 !supabase/seed.sql
 !supabase/seeds/*.sql
 !supabase/seed/**/*.sql

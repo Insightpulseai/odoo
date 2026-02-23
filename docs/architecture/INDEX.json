@@ -7,7 +7,7 @@
     "layer": "sc-index-layer1",
     "description": "Machine-readable repo index for GraphRAG KB agents. Layer 1: deterministic symbolic map. Layer 2: semantic embeddings (kb_chunks). Layer 3: graph (kb_nodes/kb_edges).",
     "update_commands": [
-      "python scripts/build_kb_graph.py",
+      "python scripts/build_kb_graph.py [--dry-run] [--manifest-out reports/graphrag_manifest.json]",
       "# then refresh this file manually or via scripts/generate_repo_index.py"
     ]
   },
@@ -135,6 +135,10 @@
   },
 
   "graphrag": {
+    "contract_version": "1.0.0",
+    "indexer_version": "1.1.0",
+    "contract_doc": "docs/architecture/GRAPHRAG_CONTRACT.md",
+    "last_run_manifest": "reports/graphrag_manifest.json",
     "supabase_ref": "spdtwktxdalcfigzeqrz",
     "migration": "20260223000008_kb_graph_layer.sql",
     "applied": "2026-02-23",

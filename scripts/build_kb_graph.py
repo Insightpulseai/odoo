@@ -10,24 +10,32 @@ Edge types emitted:  DEFINED_IN | DEPENDS_ON | INHERITS_FROM
 
 Usage:
   python scripts/build_kb_graph.py [--dry-run] [--addons-path addons/ipai]
+                                    [--manifest-out reports/graphrag_manifest.json]
 
 Environment (inherits from .env or shell):
   POSTGRES_URL_NON_POOLING  — direct (non-pooled) Supabase connection
   POSTGRES_PASSWORD + POSTGRES_HOST etc. — fallback individual params
+
+Contract: docs/architecture/GRAPHRAG_CONTRACT.md
 """
 
 import argparse
 import ast
+import hashlib
 import json
 import os
 import re
 import sys
 import subprocess
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 CACHE_TAGS = REPO_ROOT / ".cache" / "tags"
+
+CONTRACT_VERSION = "1.0.0"
+INDEXER_VERSION  = "1.1.0"
 
 ADDON_KIND_MAP = {
     "addons/ipai": "ipai",
@@ -119,7 +127,54 @@ def get_git_sha() -> Optional[str]:
         return None
 
 
-# ── Manifest parsing ───────────────────────────────────────────────────────────
+# ── Checksum helpers ───────────────────────────────────────────────────────────
+
+def compute_input_checksum(addons_path: Path) -> str:
+    """SHA-256 of the sorted list of .py file paths (repo-relative).
+
+    This checksum changes whenever Python files are added/removed/renamed.
+    It does NOT change for in-file edits (intentional: the graph is path-based).
+    Stable across OS because paths are sorted and normalized to forward-slashes.
+    """
+    paths = sorted(
+        str(p.relative_to(REPO_ROOT)).replace("\\", "/")
+        for p in addons_path.rglob("*.py")
+    )
+    digest = hashlib.sha256("\n".join(paths).encode()).hexdigest()
+    return digest
+
+
+# ── Manifest helpers ───────────────────────────────────────────────────────────
+
+def write_manifest(
+    manifest_out: Path,
+    git_sha: Optional[str],
+    addons_path: Path,
+    input_checksum: str,
+    nodes_written: int,
+    edges_written: int,
+    dry_run: bool,
+) -> None:
+    """Write a JSON manifest describing this indexer run."""
+    manifest = {
+        "contract_version": CONTRACT_VERSION,
+        "indexer_version": INDEXER_VERSION,
+        "git_sha": git_sha or "(unknown)",
+        "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "addons_path": str(addons_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+        "input_checksum": input_checksum,
+        "dry_run": dry_run,
+        "stats": {
+            "nodes_written": nodes_written,
+            "edges_written": edges_written,
+        },
+    }
+    manifest_out.parent.mkdir(parents=True, exist_ok=True)
+    manifest_out.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    print(f"\nManifest written → {manifest_out.relative_to(REPO_ROOT)}")
+
+
+# ── Module discovery ───────────────────────────────────────────────────────────
 
 def addon_kind_for_path(path: Path) -> str:
     rel = path.relative_to(REPO_ROOT)
@@ -130,8 +185,12 @@ def addon_kind_for_path(path: Path) -> str:
 
 
 def discover_modules(addons_path: Path):
-    """Yield (module_dir, manifest_dict) for every OCA-style __manifest__.py."""
-    for manifest in sorted(addons_path.rglob("__manifest__.py")):
+    """Yield (module_dir, manifest_dict) for every OCA-style __manifest__.py.
+
+    Stable ordering: sorted by manifest path string so output is deterministic
+    across OS and filesystem enumeration order.
+    """
+    for manifest in sorted(addons_path.rglob("__manifest__.py"), key=str):
         module_dir = manifest.parent
         try:
             src = manifest.read_text(encoding="utf-8", errors="replace")
@@ -175,11 +234,16 @@ def scan_python_file(fpath: Path):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def build(addons_path: Path, dry_run: bool):
+def build(addons_path: Path, dry_run: bool, manifest_out: Path):
     git_sha = get_git_sha()
-    print(f"Git SHA: {git_sha or '(unknown)'}")
-    print(f"Addons path: {addons_path}")
-    print(f"Dry run: {dry_run}")
+    input_checksum = compute_input_checksum(addons_path)
+
+    print(f"Git SHA:          {git_sha or '(unknown)'}")
+    print(f"Contract version: {CONTRACT_VERSION}")
+    print(f"Indexer version:  {INDEXER_VERSION}")
+    print(f"Addons path:      {addons_path}")
+    print(f"Input checksum:   {input_checksum}")
+    print(f"Dry run:          {dry_run}")
     print()
 
     if not dry_run:
@@ -199,7 +263,7 @@ def build(addons_path: Path, dry_run: bool):
         module_name = module_dir.name
         kind        = addon_kind_for_path(module_dir)
         policy      = EDIT_POLICY_MAP.get(kind, "editable")
-        rel_path    = str(module_dir.relative_to(REPO_ROOT))
+        rel_path    = str(module_dir.relative_to(REPO_ROOT)).replace("\\", "/")
 
         attrs = {
             "version":    manifest.get("version", ""),
@@ -219,18 +283,14 @@ def build(addons_path: Path, dry_run: bool):
         nodes_written += 1
         print(f"  MODULE {module_name} [{kind}/{policy}]")
 
-        # DEPENDS_ON edges (declared in manifest)
-        for dep in manifest.get("depends", []):
-            # We'll wire these in pass 3 once all module nodes are known
-            pass
-
     # ── Pass 2: File nodes + Model nodes from Python files ────────────────────
     print(f"\n=== Pass 2: File + Model nodes ({addons_path}) ===")
     file_node_ids: dict[str, object] = {}   # rel_path → node uuid
     model_node_ids: dict[str, object] = {}  # class_name → node uuid
 
-    for py_file in sorted(addons_path.rglob("*.py")):
-        rel = str(py_file.relative_to(REPO_ROOT))
+    # Stable sort: key=str normalises to forward-slash on POSIX, consistent ordering
+    for py_file in sorted(addons_path.rglob("*.py"), key=str):
+        rel = str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
         kind   = addon_kind_for_path(py_file)
         policy = EDIT_POLICY_MAP.get(kind, "editable")
 
@@ -248,7 +308,7 @@ def build(addons_path: Path, dry_run: bool):
         file_node_ids[rel] = file_id
         nodes_written += 1
 
-        # Link File → OdooModule
+        # Link File → OdooModule via DEFINED_IN
         module_id = module_node_ids.get(module_name)
         upsert_edge(cur, module_id, file_id, "DEFINED_IN", git_sha=git_sha, dry_run=dry_run)
         if module_id and file_id:
@@ -284,7 +344,7 @@ def build(addons_path: Path, dry_run: bool):
 
     # ── Pass 4: INHERITS_FROM edges between models ────────────────────────────
     print("\n=== Pass 4: INHERITS_FROM edges between models ===")
-    for py_file in addons_path.rglob("*.py"):
+    for py_file in sorted(addons_path.rglob("*.py"), key=str):
         for class_name, inherited_model in scan_python_file(py_file):
             if inherited_model:
                 src_id = model_node_ids.get(class_name)
@@ -303,6 +363,17 @@ def build(addons_path: Path, dry_run: bool):
     print(f"  Nodes: {nodes_written}")
     print(f"  Edges: {edges_written}")
 
+    # ── Manifest ──────────────────────────────────────────────────────────────
+    write_manifest(
+        manifest_out=manifest_out,
+        git_sha=git_sha,
+        addons_path=addons_path,
+        input_checksum=input_checksum,
+        nodes_written=nodes_written,
+        edges_written=edges_written,
+        dry_run=dry_run,
+    )
+
 
 def main():
     parser = argparse.ArgumentParser(description="Build GraphRAG KB graph from Odoo addons")
@@ -310,13 +381,17 @@ def main():
                         help="Print what would be written, do not modify DB")
     parser.add_argument("--addons-path", default="addons/ipai",
                         help="Path to addons directory (default: addons/ipai)")
+    parser.add_argument("--manifest-out", default="reports/graphrag_manifest.json",
+                        help="Path to write manifest JSON (default: reports/graphrag_manifest.json)")
     args = parser.parse_args()
 
-    addons_path = REPO_ROOT / args.addons_path
+    addons_path  = REPO_ROOT / args.addons_path
+    manifest_out = REPO_ROOT / args.manifest_out
+
     if not addons_path.exists():
         sys.exit(f"ERROR: addons path not found: {addons_path}")
 
-    build(addons_path, dry_run=args.dry_run)
+    build(addons_path, dry_run=args.dry_run, manifest_out=manifest_out)
 
 
 if __name__ == "__main__":
