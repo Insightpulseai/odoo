@@ -27,6 +27,17 @@ Current and planned use cases include:
 - Cross-document synthesis
 - Agent execution guidance with citations/evidence
 
+### Existing Repository Capabilities (Confirmed)
+
+This repository already has automated codebase/KB indexing and verification in CI, including:
+
+- GitHub Actions gates for KB/index integrity verification
+- Python verification scripts for index validation
+- Auto-generated AI-assistant-oriented index artifacts (e.g., agent/codelens catalogs)
+- Artifact sweep/validation during build/deploy to prevent index drift
+
+This materially lowers the implementation cost of the RAG/Hybrid path because corpus/index freshness and drift detection are already enforced by repository automation.
+
 We are evaluating three patterns:
 
 1. **RAG (Retrieval-Augmented Generation)**
@@ -96,6 +107,7 @@ This pattern balances:
 - **Accuracy** (better synthesis from stable context + lower retrieval miss risk for core rules)
 - **Freshness** (dynamic retrieval on changing data)
 - **Cost control** (cache reuse for repeated core context)
+- **Operational leverage** (reuses existing CI-automated KB/index generation + verification instead of introducing a separate indexing process)
 
 ## Architectural Implications
 
@@ -156,6 +168,23 @@ Hybrid architecture must preserve evidence provenance in both paths:
 
 - **CAG path:** cite document/section/version included in cached corpus
 - **RAG path:** cite retrieved chunks/records
+
+### 5) Repository Indexes as First-Class Retrieval Inputs (Required for code-aware use cases)
+
+For codebase-aware assistant features, retrieval should preferentially reuse repository-generated index artifacts (already validated in CI) before introducing duplicate indexing pipelines.
+
+Examples of eligible inputs:
+
+- KB/document search indexes
+- code symbol/tag catalogs
+- AI-assistant-specific generated indexes
+- boundary inventories / SSOT manifests
+
+Implications:
+
+- Retrieval quality improves via deterministic, repo-native artifacts
+- CI can gate index freshness and schema compatibility
+- We avoid “shadow indexes” that drift from the build system
 
 ## Decision Rules (Routing Policy)
 
