@@ -1,0 +1,51 @@
+name: MCP Servers Build Matrix
+
+on:
+  push:
+    paths:
+      - ".claude/mcp-servers.json"
+      - "agents/mcp/servers/**"
+  workflow_dispatch:
+
+jobs:
+  build-mcp-servers:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        server:
+          [
+            odoo-erp-server,
+            digitalocean-mcp-server,
+            superset-mcp-server,
+            vercel-mcp-server,
+            pulser-mcp-server,
+            speckit-mcp-server,
+            memory-mcp-server,
+            agent-coordination-server,
+          ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "agents/mcp/servers/${{ matrix.server }}/package-lock.json"
+
+      - name: Install dependencies
+        run: |
+          cd agents/mcp/servers/${{ matrix.server }}
+          npm ci
+
+      - name: Build Server
+        run: |
+          cd agents/mcp/servers/${{ matrix.server }}
+          npm run build
+
+      - name: Verify Distribution Files
+        run: |
+          if [ ! -f "agents/mcp/servers/${{ matrix.server }}/dist/index.js" ]; then
+            echo "Build failed: dist/index.js not found for ${{ matrix.server }}"
+            exit 1
+          fi
