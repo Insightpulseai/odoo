@@ -116,11 +116,37 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     requests \
     || true
 
-# OCA module dependencies
+# OCA module dependencies (per-module requirements.txt files)
 RUN find /mnt/addons/oca -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
 
 # IPAI module dependencies
 RUN find /mnt/addons/ipai -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# Repo-level OCA requirements (odoorpc for upgrade_analysis, etc.)
+# Uses a constraints file for deterministic pinning — update requirements-constraints.txt
+# when bumping versions, never loosen the pins without testing first.
+COPY requirements-oca.txt /tmp/requirements-oca.txt
+COPY requirements-constraints.txt /tmp/requirements-constraints.txt
+RUN pip3 install --no-cache-dir --break-system-packages \
+    -c /tmp/requirements-constraints.txt \
+    -r /tmp/requirements-oca.txt \
+    && rm /tmp/requirements-oca.txt /tmp/requirements-constraints.txt
+
+# Patch odoo-test-helper for Odoo 19 compatibility.
+# MetaModel.module_to_models was renamed to _module_to_models__ in Odoo 19;
+# the published package still references the old name and crashes at import time.
+# base_tier_validation/tests imports FakeModelLoader which triggers the crash
+# and blocks the entire test runner.  This one-liner makes the attribute access
+# forward-compatible without touching OCA source code.
+RUN python3 -c "\
+import site, os; \
+f = os.path.join(site.getusersitepackages(), 'odoo_test_helper/fake_model_loader.py'); \
+f = f if os.path.exists(f) else next((p for p in __import__('glob').glob('/**/odoo_test_helper/fake_model_loader.py', recursive=True) if os.path.exists(p)), None); \
+open(f).read() if f else None" 2>/dev/null || true
+RUN find / -name "fake_model_loader.py" -path "*/odoo_test_helper/*" 2>/dev/null | \
+    xargs -I{} sed -i \
+    's/module_to_models = models.MetaModel.module_to_models/module_to_models = getattr(models.MetaModel, "module_to_models", None) or getattr(models.MetaModel, "_module_to_models__", {})/' \
+    {} 2>/dev/null || true
 
 # =============================================================================
 # Permissions

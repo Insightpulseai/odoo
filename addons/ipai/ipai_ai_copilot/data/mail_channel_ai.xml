@@ -6,7 +6,7 @@
         channel_type="channel" (public to internal users) — not a DM.
         Access: internal users only (group_user).
     -->
-    <record id="channel_ai_copilot" model="mail.channel">
+    <record id="channel_ai_copilot" model="discuss.channel">
         <field name="name">ai-copilot</field>
         <field name="description">
             Internal AI assistant channel. Post any question here — the AI Copilot
