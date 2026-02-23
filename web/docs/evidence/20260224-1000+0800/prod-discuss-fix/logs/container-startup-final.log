@@ -1,0 +1,80 @@
+  File "/usr/lib/python3/dist-packages/odoo/service/server.py", line 1510, in preload_registries
+    registry = Registry.new(dbname, update_module=update_module, install_modules=config['init'], upgrade_modules=config['update'], reinit_modules=config['reinit'])
+  File "/usr/lib/python3/dist-packages/odoo/tools/func.py", line 88, in locked
+    return func(inst, *args, **kwargs)
+  File "/usr/lib/python3/dist-packages/odoo/orm/registry.py", line 199, in new
+    load_modules(
+  File "/usr/lib/python3/dist-packages/odoo/modules/loading.py", line 456, in load_modules
+    load_module_graph(
+  File "/usr/lib/python3/dist-packages/odoo/modules/loading.py", line 170, in load_module_graph
+    load_openerp_module(package.name)
+  File "/usr/lib/python3/dist-packages/odoo/modules/module.py", line 505, in load_openerp_module
+    __import__(qualname)
+  File "/mnt/oca/mail/mail_tracking/__init__.py", line 2, in <module>
+    from . import models
+  File "/mnt/oca/mail/mail_tracking/models/__init__.py", line 8, in <module>
+    from . import mail_message
+  File "/mnt/oca/mail/mail_tracking/models/mail_message.py", line 8, in <module>
+    from odoo.osv import expression
+  File "/usr/lib/python3/dist-packages/odoo/osv/__init__.py", line 4, in <module>
+    warnings.warn("Since 19.0, odoo.osv is deprecated use odoo.fields.Domain", DeprecationWarning)
+ 
+2026-02-23 20:47:52,601 1 INFO odoo_prod odoo.addons.queue_job.post_load: Apply Request._get_session_and_dbname monkey patch to capture db from request with multiple databases 
+2026-02-23 20:47:53,287 1 WARNING odoo_prod odoo.addons.ipai_enterprise_bridge.models.iot_mqtt_bridge: paho-mqtt not installed. IoT MQTT bridge disabled. 
+2026-02-23 20:47:53,834 1 INFO odoo_prod odoo.modules.loading: 342 modules loaded in 2.25s, 0 queries (+0 extra) 
+2026-02-23 20:47:54,193 1 WARNING odoo_prod odoo.fields: Field mail.message.mail_tracking_ids: unknown parameter 'auto_join', if this is an actual parameter you may want to override the method _valid_field_parameter on the relevant model in order to allow it 
+2026-02-23 20:47:54,400 1 ERROR odoo_prod odoo.modules.loading: Some modules are not loaded, some dependencies or manifest may be missing: ['account_account_tag_code', 'account_journal_restrict_mode', 'account_move_name_sequence', 'account_move_post_date_user', 'account_move_print', 'account_usability', 'ipai_mail_bridge_zoho'] 
+2026-02-23 20:47:54,401 1 INFO odoo_prod odoo.modules.loading: Modules loaded. 
+2026-02-23 20:47:54,414 1 WARNING odoo_prod odoo.modules.module_graph: module account_usability: not installable, skipped 
+2026-02-23 20:47:54,415 1 WARNING odoo_prod odoo.modules.module_graph: module ipai_mail_bridge_zoho: not installable, skipped 
+2026-02-23 20:47:54,415 1 WARNING odoo_prod odoo.modules.module_graph: module account_journal_restrict_mode: not installable, skipped 
+2026-02-23 20:47:54,415 1 WARNING odoo_prod odoo.modules.module_graph: module account_move_post_date_user: not installable, skipped 
+2026-02-23 20:47:54,416 1 WARNING odoo_prod odoo.modules.module_graph: module account_account_tag_code: not installable, skipped 
+2026-02-23 20:47:54,416 1 WARNING odoo_prod odoo.modules.module_graph: module account_move_print: not installable, skipped 
+2026-02-23 20:47:54,416 1 WARNING odoo_prod odoo.modules.module_graph: module account_move_name_sequence: not installable, skipped 
+2026-02-23 20:47:54,606 1 INFO odoo_prod odoo.registry: Registry loaded in 3.276s 
+2026-02-23 20:47:54,607 1 INFO odoo_prod odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=20): Closed 1 connections  
+2026-02-23 20:47:54,636 1 INFO odoo_prod odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=20): Closed 1 connections  
+2026-02-23 20:47:54,643 13 INFO odoo_prod odoo.service.server: Worker WorkerHTTP (13) alive 
+2026-02-23 20:47:54,649 14 INFO odoo_prod odoo.service.server: Worker WorkerHTTP (14) alive 
+2026-02-23 20:47:54,656 17 INFO odoo_prod odoo.service.server: Worker WorkerCron (17) alive 
+2026-02-23 20:47:54,695 13 WARNING ? odoo.http: Logged into database 'odoo', but dbfilter rejects it; logging session out. 
+2026-02-23 20:47:54,724 13 INFO odoo_prod odoo.addons.base.models.ir_http: Generating routing map for key None 
+2026-02-23 20:47:54,786 13 INFO odoo_prod werkzeug: 162.158.170.123 - - [23/Feb/2026 20:47:54] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 2 0.013 0.122
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/var/lib/odoo/addons/18.0', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, no such directory '/external-src/account-financial-tools', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/automation', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/contract', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/dms', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/helpdesk', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/hr-expense', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/social', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/spreadsheet', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option smtp_ssl_certificate_filename reads 'False' in the config file at /etc/odoo/odoo.conf but isn't a boolean option, skip 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option smtp_ssl_private_key_filename reads 'False' in the config file at /etc/odoo/odoo.conf but isn't a boolean option, skip 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/var/lib/odoo/addons/18.0', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, no such directory '/external-src/account-financial-tools', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/automation', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/contract', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/dms', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/helpdesk', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/hr-expense', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/social', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option addons_path, invalid addons directory '/mnt/oca/spreadsheet', skipped 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option smtp_ssl_certificate_filename reads 'False' in the config file at /etc/odoo/odoo.conf but isn't a boolean option, skip 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: option smtp_ssl_private_key_filename reads 'False' in the config file at /etc/odoo/odoo.conf but isn't a boolean option, skip 
+2026-02-23 20:47:55,248 15 WARNING ? odoo.tools.config: missing --http-interface/http_interface, using 0.0.0.0 by default, will change to 127.0.0.1 in 20.0 
+2026-02-23 20:47:55,249 15 INFO ? odoo: Odoo version 19.0-20260118 
+2026-02-23 20:47:55,249 15 INFO ? odoo: Using configuration file at /etc/odoo/odoo.conf 
+2026-02-23 20:47:55,249 15 INFO ? odoo: addons paths: _NamespacePath(['/usr/lib/python3/dist-packages/odoo/addons', '/var/lib/odoo/.local/share/Odoo/addons/19.0', '/mnt/oca/account-financial-reporting', '/mnt/oca/account-reconcile', '/mnt/oca/ai', '/mnt/oca/bank-payment', '/mnt/oca/bank-statement-import', '/mnt/oca/connector', '/mnt/oca/hr', '/mnt/oca/knowledge', '/mnt/oca/mail', '/mnt/oca/manufacture', '/mnt/oca/mis-builder', '/mnt/oca/partner-contact', '/mnt/oca/payroll', '/mnt/oca/project', '/mnt/oca/purchase-workflow', '/mnt/oca/queue', '/mnt/oca/reporting-engine', '/mnt/oca/rest-framework', '/mnt/oca/sale-workflow', '/mnt/oca/server-auth', '/mnt/oca/server-backend', '/mnt/oca/server-brand', '/mnt/oca/server-env', '/mnt/oca/server-tools', '/mnt/oca/server-ux', '/mnt/oca/storage', '/mnt/oca/timesheet', '/mnt/oca/web', '/mnt/extra-addons', '/usr/lib/python3/dist-packages/addons']) 
+2026-02-23 20:47:55,249 15 INFO ? odoo: database: doadmin@private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com:25060 
+2026-02-23 20:47:55,694 15 INFO ? odoo.service.server: Evented Service (longpolling) running on 0.0.0.0:8072 
+2026-02-23 20:48:06,412 13 WARNING ? odoo.http: Logged into database 'odoo', but dbfilter rejects it; logging session out. 
+2026-02-23 20:48:06,420 13 INFO odoo_prod werkzeug: 104.23.175.193 - - [23/Feb/2026 20:48:06] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 2 0.008 0.036
+2026-02-23 20:48:30,530 13 WARNING ? odoo.http: Logged into database 'odoo', but dbfilter rejects it; logging session out. 
+2026-02-23 20:48:30,541 13 INFO odoo_prod werkzeug: 108.162.226.153 - - [23/Feb/2026 20:48:30] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 2 0.016 0.053
+2026-02-23 20:48:32,462 14 WARNING ? odoo.http: Logged into database 'odoo', but dbfilter rejects it; logging session out. 
+2026-02-23 20:48:32,502 14 INFO odoo_prod odoo.addons.base.models.ir_http: Generating routing map for key None 
+2026-02-23 20:48:32,562 14 INFO odoo_prod werkzeug: 172.71.124.37 - - [23/Feb/2026 20:48:32] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 2 0.012 0.123
+2026-02-23 20:48:43,310 14 WARNING ? odoo.http: Logged into database 'odoo', but dbfilter rejects it; logging session out. 
+2026-02-23 20:48:43,319 14 INFO odoo_prod werkzeug: 108.162.226.161 - - [23/Feb/2026 20:48:43] "GET /websocket?version=19.0-2 HTTP/1.0" 400 - 2 0.011 0.035
