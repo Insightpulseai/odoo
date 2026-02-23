@@ -247,6 +247,51 @@ Views 7-11: Logframe KPIs (goal, outcome, IM1, IM2, outputs) with RAG status
 
 ---
 
+## Email Notifications (v1)
+
+> **Context**: DigitalOcean blocks outbound SMTP ports 25/465/587 on Droplets by default.
+> All notification email is routed through Supabase Edge Functions (unrestricted outbound TCP)
+> rather than Odoo's SMTP stack.
+
+### Event Coverage (v1)
+
+| Event | Trigger | Template | Recipients |
+|-------|---------|----------|------------|
+| `task_assigned` | `finance_task.created` emitted by Odoo | Email: assigned task with project context | All `task.user_ids` with email |
+| `task_stage_changed` | `finance_task.{in_progress,submitted,approved,filed}` | Email: task moved to new stage | All `task.user_ids` with email |
+
+### Architecture
+
+```
+Odoo project_task_integration.py
+  → send_ipai_event() (webhook with assignee_emails + project_name in payload)
+  → supabase/functions/webhook-ingest
+  → ops.webhook_events (INSERT)
+  → ops.enqueue_email_notifications() TRIGGER
+  → ops.email_notification_events (pending row per recipient)
+  → supabase/functions/tick (every cycle)
+  → supabase/functions/email-dispatcher
+  → supabase/functions/zoho-mail-bridge?action=send_email
+  → Zoho Mail API → recipient inbox
+```
+
+### Retry Policy
+
+| Attempt | Backoff | Status after |
+|---------|---------|--------------|
+| 1 | immediate | → 5 min retry if fail |
+| 2 | +5 min | → 30 min retry if fail |
+| 3 | +30 min | → dead if fail |
+| 4+ | — | status=dead (no more retries) |
+
+### Required Supabase Secrets
+
+- `BRIDGE_SHARED_SECRET` — shared secret for `zoho-mail-bridge` auth
+- `ZOHO_FROM_EMAIL` — sender address (e.g. `noreply@insightpulseai.com`)
+- Zoho OAuth2 credentials already required by `zoho-mail-bridge`
+
+---
+
 ## Quality Gates
 
 | Gate | Script | Trigger |
