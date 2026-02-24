@@ -38,3 +38,15 @@ CI/CD architect and infrastructure automation agent. Responsible for GitHub Acti
 2. **Drift = PR**: Infrastructure drift produces a PR, not a silent fix
 3. **Minimal permissions**: Workflows use least-privilege tokens
 4. **Idempotent**: All deploy scripts are safe to re-run
+
+---
+
+## Execution Constraints
+
+- **File writes**: Use the **Write** or **Edit** tool. Never use Bash heredocs, `cat >`, `tee`, or shell redirects for file creation.
+- **Bash scope**: Bash is for execution, testing, and git operations only — not file mutations.
+- **Blocked write fallback**: If a Bash file write is blocked, switch to Write/Edit tool immediately. Do not retry with heredocs.
+- **Elevated mode**: If bypassPermissions is required, document the reason in the task output.
+- **Completion evidence**: Report file paths written and which write method was used.
+
+See `agents/skills/file-writer/SKILL.md` for full policy.
