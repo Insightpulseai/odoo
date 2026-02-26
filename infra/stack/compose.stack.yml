@@ -23,6 +23,47 @@ services:
     volumes:
       - ../../${ODOO_CONF_HOST_PATH}:/etc/odoo/odoo.conf:ro
       - odoo_filestore:/var/lib/odoo
+      # IPAI custom modules (addons_path: /mnt/extra-addons)
+      - ../../addons/ipai:/mnt/extra-addons:ro
+      # OCA repos — each path listed in infra/odoo.conf addons_path must be mounted here.
+      # Hydrated by git-aggregator (oca-aggregate.yml); never committed to repo.
+      # CI guard: scripts/validate_addons_path.py enforces compose ↔ addons_path parity.
+      - ../../addons/oca/account-financial-reporting:/mnt/oca/account-financial-reporting:ro
+      - ../../addons/oca/account-financial-tools:/mnt/oca/account-financial-tools:ro
+      - ../../addons/oca/account-reconcile:/mnt/oca/account-reconcile:ro
+      - ../../addons/oca/ai:/mnt/oca/ai:ro
+      - ../../addons/oca/automation:/mnt/oca/automation:ro
+      - ../../addons/oca/bank-payment:/mnt/oca/bank-payment:ro
+      - ../../addons/oca/bank-statement-import:/mnt/oca/bank-statement-import:ro
+      - ../../addons/oca/connector:/mnt/oca/connector:ro
+      - ../../addons/oca/contract:/mnt/oca/contract:ro
+      - ../../addons/oca/dms:/mnt/oca/dms:ro
+      - ../../addons/oca/helpdesk:/mnt/oca/helpdesk:ro
+      - ../../addons/oca/hr:/mnt/oca/hr:ro
+      - ../../addons/oca/hr-expense:/mnt/oca/hr-expense:ro
+      - ../../addons/oca/knowledge:/mnt/oca/knowledge:ro
+      - ../../addons/oca/mail:/mnt/oca/mail:ro
+      - ../../addons/oca/manufacture:/mnt/oca/manufacture:ro
+      - ../../addons/oca/mis-builder:/mnt/oca/mis-builder:ro
+      - ../../addons/oca/partner-contact:/mnt/oca/partner-contact:ro
+      - ../../addons/oca/payroll:/mnt/oca/payroll:ro
+      - ../../addons/oca/project:/mnt/oca/project:ro
+      - ../../addons/oca/purchase-workflow:/mnt/oca/purchase-workflow:ro
+      - ../../addons/oca/queue:/mnt/oca/queue:ro
+      - ../../addons/oca/reporting-engine:/mnt/oca/reporting-engine:ro
+      - ../../addons/oca/rest-framework:/mnt/oca/rest-framework:ro
+      - ../../addons/oca/sale-workflow:/mnt/oca/sale-workflow:ro
+      - ../../addons/oca/server-auth:/mnt/oca/server-auth:ro
+      - ../../addons/oca/server-backend:/mnt/oca/server-backend:ro
+      - ../../addons/oca/server-brand:/mnt/oca/server-brand:ro
+      - ../../addons/oca/server-env:/mnt/oca/server-env:ro
+      - ../../addons/oca/server-tools:/mnt/oca/server-tools:ro
+      - ../../addons/oca/server-ux:/mnt/oca/server-ux:ro
+      - ../../addons/oca/social:/mnt/oca/social:ro
+      - ../../addons/oca/spreadsheet:/mnt/oca/spreadsheet:ro
+      - ../../addons/oca/storage:/mnt/oca/storage:ro
+      - ../../addons/oca/timesheet:/mnt/oca/timesheet:ro
+      - ../../addons/oca/web:/mnt/oca/web:ro
     networks: [edge]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8069/web/health || exit 1"]

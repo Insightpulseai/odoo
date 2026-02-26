@@ -75,7 +75,7 @@ class MailMail(models.Model):
 
         return resp.json()
 
-    def send(self, auto_commit=False, raise_exception=False, smtp_session=None):
+    def send(self, auto_commit=False, raise_exception=False, **kwargs):
         """Override: route via HTTPS bridge if configured; else standard SMTP.
 
         This intercepts the mail.mail.send() business layer so the bridge
@@ -84,12 +84,15 @@ class MailMail(models.Model):
 
         Falls back to standard Odoo SMTP if ZOHO_MAIL_BRIDGE_URL or
         ZOHO_MAIL_BRIDGE_SECRET env vars are not set (safe for local dev).
+
+        Note: smtp_session was removed in Odoo 19 (replaced by post_send_callback).
+        Using **kwargs forwards any version-specific params to super().
         """
         if not self._ipai_bridge_enabled():
             return super().send(
                 auto_commit=auto_commit,
                 raise_exception=raise_exception,
-                smtp_session=smtp_session,
+                **kwargs,
             )
 
         for mail in self:
