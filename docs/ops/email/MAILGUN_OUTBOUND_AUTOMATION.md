@@ -74,6 +74,32 @@ All steps are idempotent. Re-running `apply_dns_cloudflare.py` when records alre
 
 ---
 
+## Mailgun SMTP Port Contract
+
+Per [Mailgun SMTP docs](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-smtp):
+
+| Port | Encryption | Notes |
+|------|------------|-------|
+| 465 | TLS | Legacy TLS (SSL) |
+| 587 | STARTTLS | Standard submission |
+| **2525** | **STARTTLS** | **Our config — DO SMTP bypass** |
+| 25 | STARTTLS | Blocked by most clouds |
+
+**Current Odoo config**: `smtp.mailgun.org:2525` + STARTTLS ✅
+
+**Hard rule — no IP allowlisting**: Mailgun SMTP and HTTP endpoint IPs change
+frequently. Outbound egress rules must be **hostname-based** (or fully open) —
+never pin specific Mailgun IPs.
+
+### Optional: Per-message behavior via SMTP headers
+
+Mailgun supports `X-Mailgun-*` headers injected into SMTP messages for
+tagging, tracking, test mode, TLS enforcement, and delivery scheduling.
+These can be added via a future `ipai_mailgun_smtp_headers` override module
+without switching to the HTTP API. (Deferred — not in current scope.)
+
+---
+
 ## Odoo Mail Server Sequence
 
 | Sequence | Server | Purpose |
