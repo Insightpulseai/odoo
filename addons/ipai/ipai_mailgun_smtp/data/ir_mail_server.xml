@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Mailgun SMTP outbound server for mg.insightpulseai.com.
+        sequence=2 → second priority (after Zoho API at sequence=1).
+        Port 2525: Mailgun alternate submission port, not blocked on DigitalOcean.
+        smtp_pass intentionally empty — set via scripts/setup_mailgun_smtp_password.sh.
+    -->
+    <record id="mail_server_mailgun_smtp" model="ir.mail_server">
+        <field name="name">Mailgun SMTP (mg.insightpulseai.com)</field>
+        <field name="sequence">2</field>
+        <field name="smtp_host">smtp.mailgun.org</field>
+        <field name="smtp_port">2525</field>
+        <field name="smtp_encryption">starttls</field>
+        <field name="smtp_user">no-reply@mg.insightpulseai.com</field>
+    </record>
+</odoo>

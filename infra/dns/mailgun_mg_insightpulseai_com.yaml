@@ -1,0 +1,46 @@
+# Mailgun outbound-only DNS auth for mg.insightpulseai.com
+# Source: Mailgun > Sending > Domains > mg.insightpulseai.com > DNS records tab
+#
+# DO NOT add Mailgun MX records — outbound-only, Zoho handles inbound.
+# NOTE: TXT values are single-line strings. Do not wrap DKIM/DMARC across lines.
+#
+# Apply via: scripts/generate-dns-artifacts.sh (after ensuring generator supports this file)
+# Last updated: 2026-02-27
+#
+# See: docs/contracts/DNS_EMAIL_CONTRACT.md
+
+zone: insightpulseai.com
+purpose: mailgun_outbound_auth
+
+records:
+  # SPF — authorizes Mailgun to send on behalf of mg.insightpulseai.com
+  - type: TXT
+    name: mg
+    value: "v=spf1 include:mailgun.org ~all"
+    ttl: 3600
+    mailgun_label: "Sending records / SPF"
+
+  # DKIM — cryptographic sender verification (single-line, do not wrap)
+  - type: TXT
+    name: mx._domainkey.mg
+    value: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
+    ttl: 3600
+    mailgun_label: "Sending records / DKIM"
+
+  # Tracking CNAME — enables open/click/unsubscribe tracking
+  - type: CNAME
+    name: email.mg
+    value: "mailgun.org"
+    ttl: 3600
+    mailgun_label: "Tracking records"
+
+  # DMARC — monitoring mode (p=none), single-line, do not wrap
+  - type: TXT
+    name: _dmarc.mg
+    value: "v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;"
+    ttl: 3600
+    mailgun_label: "Authentication records / DMARC"
+
+# Intentionally omitted:
+# - MX records (mxa/mxb.mailgun.org) — outbound-only, not needed
+# - Root insightpulseai.com MX is Zoho and must not change
