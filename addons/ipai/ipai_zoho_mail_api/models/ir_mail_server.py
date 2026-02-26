@@ -17,7 +17,7 @@ import logging
 from email.header import decode_header as _decode_header_raw
 
 from odoo import api, fields, models
-from odoo.exceptions import MailDeliveryException
+from odoo.addons.base.models.ir_mail_server import MailDeliveryException
 
 _logger = logging.getLogger(__name__)
 
