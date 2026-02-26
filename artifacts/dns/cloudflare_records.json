@@ -1,0 +1,31 @@
+{
+  "zone": "insightpulseai.com",
+  "generated": true,
+  "source": "infra/dns/*_auth files via generate-dns-artifacts.sh",
+  "records": [
+    {
+      "type": "TXT",
+      "name": "mg",
+      "content": "v=spf1 include:mailgun.org ~all",
+      "ttl": 3600
+    },
+    {
+      "type": "TXT",
+      "name": "mx._domainkey.mg",
+      "content": "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB",
+      "ttl": 3600
+    },
+    {
+      "type": "CNAME",
+      "name": "email.mg",
+      "content": "mailgun.org",
+      "ttl": 3600
+    },
+    {
+      "type": "TXT",
+      "name": "_dmarc.mg",
+      "content": "v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;",
+      "ttl": 3600
+    }
+  ]
+}

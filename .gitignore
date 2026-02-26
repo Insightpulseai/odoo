@@ -276,7 +276,9 @@ odoo-docs/
 # that should never be committed
 .cache/
 _work/
-artifacts/
+artifacts/*
+!artifacts/dns/
+!artifacts/dns/cloudflare_records.json
 sandbox/dev/.artifacts/
 design-tokens/.figma-*
 design-tokens/figma-*.json
