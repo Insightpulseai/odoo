@@ -111,6 +111,51 @@ class IrMailServer(models.Model):
             limit=1,
         ) or None
 
+    # ── Override _connect__ (Odoo 19) ────────────────────────────────────────
+
+    def _connect__(  # noqa: PLW3201
+        self,
+        host=None,
+        port=None,
+        user=None,
+        password=None,
+        encryption=None,
+        smtp_from=None,
+        ssl_certificate=None,
+        ssl_private_key=None,
+        smtp_debug=False,
+        mail_server_id=None,
+        allow_archived=False,
+    ):
+        """Skip SMTP connect for Zoho API servers (send_email handles the REST call).
+
+        Odoo 19's mail.mail.send() calls _connect__() before send_email().
+        Attempting an actual SMTP connection to mail.zoho.com:465 would block/
+        timeout on DigitalOcean (SMTP ports 25/465/587 are blocked).
+        Return None so send_email() proceeds directly to our REST API path.
+        """
+        server = self._zoho_server_for(mail_server_id)
+        if server:
+            _logger.debug(
+                "ipai_zoho_mail_api: skipping SMTP connect for Zoho API server '%s' "
+                "(will use HTTPS REST API instead)",
+                server.name,
+            )
+            return None  # No SMTP session needed; send_email() uses Zoho REST API
+        return super()._connect__(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            encryption=encryption,
+            smtp_from=smtp_from,
+            ssl_certificate=ssl_certificate,
+            ssl_private_key=ssl_private_key,
+            smtp_debug=smtp_debug,
+            mail_server_id=mail_server_id,
+            allow_archived=allow_archived,
+        )
+
     # ── Override send_email ───────────────────────────────────────────────────
 
     @api.model
