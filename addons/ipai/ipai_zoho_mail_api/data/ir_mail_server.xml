@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Zoho Mail API outbound server.
+        sequence=1 → highest Odoo priority (picked when no specific server is requested).
+        SMTP fields are set to Zoho values for documentation; they are never used
+        because use_zoho_api=True bypasses SMTP entirely.
+        smtp_user / smtp_pass are intentionally left empty (no secrets in XML).
+    -->
+    <record id="mail_server_zoho_api" model="ir.mail_server">
+        <field name="name">Zoho Mail API</field>
+        <field name="sequence">1</field>
+        <field name="smtp_host">mail.zoho.com</field>
+        <field name="smtp_port">465</field>
+        <field name="smtp_encryption">ssl</field>
+        <field name="smtp_user">no-reply@insightpulseai.com</field>
+        <field name="use_zoho_api">True</field>
+    </record>
+</odoo>

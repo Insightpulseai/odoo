@@ -101,7 +101,7 @@ async function audit(
   payload?: unknown,
   errorDetail?: string,
 ) {
-  await supabase.from("ops.platform_events").insert({
+  await supabase.schema("ops").from("platform_events").insert({
     event_type: eventType,
     actor: "zoho-mail-bridge",
     target,
