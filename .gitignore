@@ -11,8 +11,9 @@ sandbox/**/tmp/
 .cache/
 _work/
 artifacts/figma/
-design-tokens/.figma-*
-design-tokens/figma-*.json
+.pnpm-store/
+.worktrees/
+.pytest_cache/
 
 # Python
 __pycache__/

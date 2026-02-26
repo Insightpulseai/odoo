@@ -20,7 +20,7 @@ agents:
       - oca
       - addons
       - migration
-    entrypoint: ".agent/skills/oca-development-standards/SKILL.md"
+    entrypoint: "agents/skills/oca-development-standards/SKILL.md"
   - id: devops-prime
     name: DEVOPS-PRIME
     domain: devops
@@ -31,7 +31,7 @@ agents:
       - infra
       - security
       - drift
-    entrypoint: ".agent/skills/odoo-ci-optimization/SKILL.md"
+    entrypoint: "agents/skills/odoo-ci-optimization/SKILL.md"
   - id: data-forge
     name: DATA-FORGE
     domain: data
@@ -49,7 +49,7 @@ agents:
       - react
       - tailwind
       - design-tokens
-    entrypoint: ".agent/skills/oca-owl-standards/SKILL.md"
+    entrypoint: "agents/skills/oca-owl-standards/SKILL.md"
   - id: supabase-ssot
     name: SUPABASE-SSOT
     domain: platform

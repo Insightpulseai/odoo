@@ -1,0 +1,24 @@
+id: github_docs
+name: GitHub Docs Grounded Skill
+version: 0.1.0
+source_of_truth:
+  - https://docs.github.com/en
+  - https://docs.github.com/en/rest
+  - https://docs.github.com/en/graphql
+  - https://docs.github.com/en/webhooks
+guardrails:
+  require_citations: true
+  allowed_domains:
+    - docs.github.com
+  freshness:
+    strategy: scheduled_reindex
+    max_age_days: 30
+retrieval:
+  chunk_chars: 1200
+  overlap_chars: 150
+  top_k: 8
+  rerank: true
+outputs:
+  must_include:
+    - citations
+    - assumptions_if_any
