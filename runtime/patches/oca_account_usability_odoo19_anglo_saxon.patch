@@ -1,0 +1,181 @@
+diff --git a/account_account_tag_code/__manifest__.py b/account_account_tag_code/__manifest__.py
+index 5563fb0a..66e89e04 100644
+--- a/account_account_tag_code/__manifest__.py
++++ b/account_account_tag_code/__manifest__.py
+@@ -10,4 +10,5 @@
+     "website": "https://github.com/OCA/account-financial-tools",
+     "depends": ["account", "account_usability"],
+     "data": ["views/account_account_tag_views.xml"],
++    "installable": True,
+ }
+diff --git a/account_asset_management/__manifest__.py b/account_asset_management/__manifest__.py
+index 46f46f6c..979f76ea 100644
+--- a/account_asset_management/__manifest__.py
++++ b/account_asset_management/__manifest__.py
+@@ -5,7 +5,7 @@
+ 
+ {
+     "name": "Assets Management",
+-    "version": "18.0.1.1.0",
++    "version": "19.0.1.1.0",
+     "license": "AGPL-3",
+     "depends": ["account", "report_xlsx_helper"],
+     "excludes": ["account_asset"],
+diff --git a/account_asset_management/models/account_asset_profile.py b/account_asset_management/models/account_asset_profile.py
+index dddb030d..863840dd 100644
+--- a/account_asset_management/models/account_asset_profile.py
++++ b/account_asset_management/models/account_asset_profile.py
+@@ -17,40 +17,40 @@ class AccountAssetProfile(models.Model):
+     note = fields.Text()
+     account_asset_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         string="Asset Account",
+         check_company=True,
+         required=True,
+     )
+     account_depreciation_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         string="Depreciation Account",
+         check_company=True,
+         required=True,
+     )
+     account_expense_depreciation_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         string="Depr. Expense Account",
+         check_company=True,
+         required=True,
+     )
+     account_plus_value_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         string="Plus-Value Account",
+     )
+     account_min_value_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         string="Min-Value Account",
+     )
+     account_residual_value_id = fields.Many2one(
+         comodel_name="account.account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         string="Residual Value Account",
+     )
+diff --git a/account_asset_management/report/account_asset_report_views.xml b/account_asset_management/report/account_asset_report_views.xml
+index 202575c6..b9026563 100644
+--- a/account_asset_management/report/account_asset_report_views.xml
++++ b/account_asset_management/report/account_asset_report_views.xml
+@@ -58,7 +58,7 @@
+                     filter_domain="[('partner_id','child_of', self)]"
+                 />
+                 <field name="company_id" groups="base.group_multi_company" />
+-                <group expand="1" string="Group By">
++                <group>
+                     <filter
+                         string="Asset"
+                         name="asset"
+diff --git a/account_asset_management/wizard/account_asset_remove.py b/account_asset_management/wizard/account_asset_remove.py
+index 5ee4ef86..cf84d6bb 100644
+--- a/account_asset_management/wizard/account_asset_remove.py
++++ b/account_asset_management/wizard/account_asset_remove.py
+@@ -39,28 +39,28 @@ class AccountAssetRemove(models.TransientModel):
+     account_sale_id = fields.Many2one(
+         comodel_name="account.account",
+         string="Asset Sale Account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         default=lambda self: self._default_account_sale_id(),
+     )
+     account_plus_value_id = fields.Many2one(
+         comodel_name="account.account",
+         string="Plus-Value Account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         default=lambda self: self._default_account_plus_value_id(),
+     )
+     account_min_value_id = fields.Many2one(
+         comodel_name="account.account",
+         string="Min-Value Account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         default=lambda self: self._default_account_min_value_id(),
+     )
+     account_residual_value_id = fields.Many2one(
+         comodel_name="account.account",
+         string="Residual Value Account",
+-        domain=[("deprecated", "=", False)],
++        domain=[("active", "=", True)],
+         check_company=True,
+         default=lambda self: self._default_account_residual_value_id(),
+     )
+diff --git a/account_move_post_date_user/__manifest__.py b/account_move_post_date_user/__manifest__.py
+index 0009e751..08343c26 100644
+--- a/account_move_post_date_user/__manifest__.py
++++ b/account_move_post_date_user/__manifest__.py
+@@ -13,4 +13,5 @@
+         "account",
+     ],
+     "data": ["views/account_move.xml"],
++    "installable": True,
+ }
+diff --git a/account_usability/models/res_config_settings.py b/account_usability/models/res_config_settings.py
+index 07b14408..8f7695b0 100644
+--- a/account_usability/models/res_config_settings.py
++++ b/account_usability/models/res_config_settings.py
+@@ -1,17 +1,9 @@
+ # Copyright 2021 Opener B.V. <stefan@opener.amsterdam>
+ # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+-from odoo import fields, models
++from odoo import models
+ 
+ 
+ class ResConfigSettings(models.TransientModel):
+     _inherit = "res.config.settings"
+ 
+-    anglo_saxon_accounting = fields.Boolean(
+-        related="company_id.anglo_saxon_accounting",
+-        readonly=False,
+-        string="Use anglo-saxon accounting",
+-        help=(
+-            "Record the cost of a good as an expense when this good is "
+-            "invoiced to a final customer."
+-        ),
+-    )
++    pass
+diff --git a/account_usability/views/res_config_settings_views.xml b/account_usability/views/res_config_settings_views.xml
+index a1659c38..cf483c4b 100644
+--- a/account_usability/views/res_config_settings_views.xml
++++ b/account_usability/views/res_config_settings_views.xml
+@@ -8,18 +8,6 @@
+                 <attribute name="string">Accounting</attribute>
+             </app>
+             <app name="account" position="inside">
+-                <block
+-                    title="Anglo-Saxon Accounting"
+-                    name="anglo_saxon_setting_container"
+-                >
+-                    <setting
+-                        string="Anglo-Saxon Accounting"
+-                        id="anglo_saxon"
+-                        help="Record the cost of a good as an expense when this good is invoiced to a final customer (instead of recording the cost as soon as the product is received in stock)."
+-                    >
+-                        <field name="anglo_saxon_accounting" />
+-                    </setting>
+-                </block>
+             </app>
+         </field>
+     </record>
