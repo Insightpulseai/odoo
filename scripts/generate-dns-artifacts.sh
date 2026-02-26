@@ -208,6 +208,100 @@ EOF
 echo "✅ Generated: $VALIDATION_OUTPUT"
 
 # =============================================================================
+# 4. Generate Cloudflare Email-Auth Records Artifact
+#    Reads infra/dns/*.yaml files with purpose: *outbound_auth*
+#    and emits apply-ready JSON for scripts/apply_dns_cloudflare.py.
+# =============================================================================
+echo "📝 Generating Cloudflare email-auth records artifact..."
+
+CF_AUTH_OUTPUT="$REPO_ROOT/artifacts/dns/cloudflare_records.json"
+mkdir -p "$(dirname "$CF_AUTH_OUTPUT")"
+
+AUTH_JSON=$(REPO_ROOT="$REPO_ROOT" python3 - <<'PYEOF'
+import glob, json, os, sys
+
+repo_root = os.environ.get("REPO_ROOT", ".")
+pattern   = os.path.join(repo_root, "infra", "dns", "*.yaml")
+
+auth_records = []
+zone = None
+
+for fpath in sorted(glob.glob(pattern)):
+    fname = os.path.basename(fpath)
+    if fname == "subdomain-registry.yaml":
+        continue
+    with open(fpath) as f:
+        raw = f.read()
+
+    # Lightweight line-by-line parser for our constrained YAML schema
+    file_records = []
+    lines = raw.splitlines()
+    doc_meta = {}
+    current_record = None
+    records_section = False
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#") or not stripped:
+            continue
+        if stripped.startswith("- type:"):
+            current_record = {"type": stripped.split(":", 1)[1].strip()}
+            records_section = True
+        elif records_section and current_record is not None and ":" in stripped and not stripped.startswith("-"):
+            k, _, v = stripped.partition(":")
+            k = k.strip()
+            v = v.strip().strip('"')
+            if k == "ttl":
+                current_record[k] = int(v)
+                file_records.append(dict(current_record))
+                current_record = None
+            else:
+                current_record[k] = v
+        elif ":" in stripped and not stripped.startswith("-"):
+            k, _, v = stripped.partition(":")
+            k = k.strip()
+            v = v.strip().strip('"')
+            if k != "records":
+                doc_meta[k] = v
+
+    purpose   = doc_meta.get("purpose", "")
+    file_zone = doc_meta.get("zone", "")
+
+    if "outbound_auth" not in purpose:
+        continue
+
+    auth_records.extend(file_records)
+    if zone is None and file_zone:
+        zone = file_zone
+
+output = {
+    "zone":      zone or "insightpulseai.com",
+    "generated": True,
+    "source":    "infra/dns/*_auth files via generate-dns-artifacts.sh",
+    "records": [
+        {
+            "type":    r.get("type", ""),
+            "name":    r.get("name", ""),
+            "content": r.get("value", r.get("content", "")),
+            "ttl":     r.get("ttl", 3600),
+        }
+        for r in auth_records
+        if r.get("type") and r.get("name") and (r.get("value") or r.get("content"))
+    ],
+}
+print(json.dumps(output, indent=2))
+PYEOF
+)
+
+if [ -n "$AUTH_JSON" ]; then
+    echo "$AUTH_JSON" > "$CF_AUTH_OUTPUT"
+    RECORD_COUNT=$(echo "$AUTH_JSON" | python3 -c "import json,sys; print(len(json.load(sys.stdin)['records']))" 2>/dev/null || echo "?")
+    echo "✅ Generated: $CF_AUTH_OUTPUT ($RECORD_COUNT record(s))"
+else
+    echo "⚠️  No auth companion YAML files found — $CF_AUTH_OUTPUT not written"
+fi
+
+# =============================================================================
 # Summary
 # =============================================================================
 echo ""
@@ -217,10 +311,15 @@ echo "Generated files:"
 echo "  1. $TF_OUTPUT"
 echo "  2. $JSON_OUTPUT"
 echo "  3. $VALIDATION_OUTPUT"
+[ -f "$CF_AUTH_OUTPUT" ] && echo "  4. $CF_AUTH_OUTPUT"
 echo ""
 echo "Next steps:"
 echo "  1. Review generated files"
-echo "  2. git add infra/dns/ infra/cloudflare/ docs/architecture/"
+echo "  2. git add infra/dns/ infra/cloudflare/ docs/architecture/ artifacts/dns/"
 echo "  3. git commit -m 'chore(infra): update DNS SSOT'"
 echo "  4. git push (CI will validate sync)"
+echo ""
+echo "To publish email auth records to Cloudflare + verify Mailgun:"
+echo "  CF_API_TOKEN=\$CF_API_TOKEN python3 scripts/apply_dns_cloudflare.py"
+echo "  MAILGUN_API_KEY=\$MAILGUN_API_KEY python3 scripts/verify_mailgun_domain.py"
 echo ""
