@@ -7,7 +7,6 @@ on:
       - 'skills/**'
       - 'docs/**'
       - 'spec/**'
-      - '.agent/**'
   push:
     branches: [ main ]
 
@@ -33,7 +32,6 @@ jobs:
             "skills"
             "docs"
             "spec"
-            ".agent"
           )
 
           # Forbidden patterns: docker, compose, apt/brew, systemctl, sudo

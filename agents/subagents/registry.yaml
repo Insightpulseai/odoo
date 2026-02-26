@@ -1,0 +1,37 @@
+subagents:
+  - id: git-expert
+    path: .agent/subagents/git-expert
+    description: Git workflows, history forensics, conflict/release playbooks.
+    required_skills:
+      - git_docs
+      - internal_repo_ssot
+    ssot_paths:
+      - docs/internal/git-policy.md
+      - .github/PULL_REQUEST_TEMPLATE.md
+      - .github/workflows/**
+    output_contract: .agent/coordinator/policies/output_contract.md
+
+  - id: devops-expert
+    path: .agent/subagents/devops-expert
+    description: CI/CD, deploy/promote/rollback, secrets, obs, infra-as-code.
+    required_skills:
+      - github_docs
+      - internal_repo_ssot
+    ssot_paths:
+      - .github/workflows/**
+      - infra/**
+      - supabase/**
+      - docs/ops/**
+    output_contract: .agent/coordinator/policies/output_contract.md
+
+  - id: repo-expert
+    path: .agent/subagents/repo-expert
+    description: Monorepo structure, Spec Kit governance, docs SSOT, ownership.
+    required_skills:
+      - internal_repo_ssot
+      - github_docs
+    ssot_paths:
+      - spec/**/*
+      - docs/**/*
+      - CODEOWNERS
+    output_contract: .agent/coordinator/policies/output_contract.md

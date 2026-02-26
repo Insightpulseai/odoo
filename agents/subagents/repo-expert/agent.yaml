@@ -1,0 +1,8 @@
+id: repo-expert
+role: Specialist
+defaults:
+  require_repo_ssot: true
+  require_citations: true
+  allowed_citation_sources:
+    - internal_repo_ssot
+    - github_docs

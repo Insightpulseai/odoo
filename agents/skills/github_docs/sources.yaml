@@ -1,0 +1,17 @@
+sources:
+  - name: github-docs-rest
+    base_url: https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api
+    include:
+      - "/**"
+  - name: github-docs-graphql
+    base_url: https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api
+    include:
+      - "/**"
+  - name: github-docs-webhooks
+    base_url: https://docs.github.com/en/webhooks/webhook-events-and-payloads
+    include:
+      - "/**"
+  - name: github-docs-actions
+    base_url: https://docs.github.com/actions
+    include:
+      - "/**"

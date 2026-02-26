@@ -1,0 +1,8 @@
+version: 1
+command_sets:
+  - name: speckit-core
+    commands_dir: .claude/commands
+  - name: subagents
+    commands_dir: .agent/commands-subagents
+routing:
+  default_output_contract: docs/agents/output_contract.md

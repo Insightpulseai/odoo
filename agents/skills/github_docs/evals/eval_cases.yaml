@@ -1,0 +1,19 @@
+cases:
+  - id: rest_rate_limit_handling
+    query: "How should a client behave when x-ratelimit-remaining reaches 0?"
+    must_contain:
+      - "x-ratelimit-remaining"
+      - "x-ratelimit-reset"
+    must_cite:
+      - "docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api"
+  - id: graphql_rate_limits
+    query: "How does GitHub GraphQL rate limiting work at a high level?"
+    must_contain:
+      - "rate limit"
+      - "secondary rate limit"
+    must_cite:
+      - "docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api"
+  - id: webhook_events
+    query: "Where is the canonical list of webhook events and payloads?"
+    must_cite:
+      - "docs.github.com/en/webhooks/webhook-events-and-payloads"
