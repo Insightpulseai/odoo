@@ -20,6 +20,7 @@ Environment:
     TO_EMAIL  — recipient address (default: jake.tolentino@insightpulseai.com)
 """
 
+import json
 import logging
 import os
 import sys
@@ -32,6 +33,18 @@ ODOO_DB = os.environ.get("ODOO_DB", "odoo_prod")
 TO_EMAIL = os.environ.get("TO_EMAIL", "jake.tolentino@insightpulseai.com")
 POLL_TIMEOUT = 120  # seconds
 POLL_INTERVAL = 5   # seconds
+
+
+def _emit(status, mail_id=None, server=None, to=None, reason=None):
+    """Print a single-line JSON result for CI/health-check consumers."""
+    print(json.dumps({
+        "status": status,   # PASS | EXCEPTION | TIMEOUT | ERROR
+        "mail_id": mail_id,
+        "server": server,
+        "to": to or TO_EMAIL,
+        "reason": reason,
+        "stamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }), flush=True)
 
 
 def main():
@@ -49,6 +62,7 @@ def main():
         registry = Registry(ODOO_DB)
     except Exception as exc:
         _logger.error("Failed to initialise Odoo registry: %s", exc)
+        _emit("ERROR", reason=str(exc))
         return 3
 
     try:
@@ -86,16 +100,20 @@ def main():
 
             if state == "sent":
                 _logger.info("✅ SUCCESS — mail delivered via Zoho API (id=%d)", mail_id)
+                _emit("PASS", mail_id=mail_id, server="Zoho Mail API", to=TO_EMAIL)
                 return 0
             if state == "exception":
                 _logger.error("❌ EXCEPTION (id=%d): %s", mail_id, reason)
+                _emit("EXCEPTION", mail_id=mail_id, server="Zoho Mail API", reason=reason)
                 return 1
 
         _logger.error("⏱  Timed out after %ds — last state=%r", POLL_TIMEOUT, state)
+        _emit("TIMEOUT", mail_id=mail_id, reason=f"last_state={state}")
         return 2
 
     except Exception as exc:
         _logger.exception("Unexpected error: %s", exc)
+        _emit("ERROR", reason=str(exc))
         return 3
 
 
