@@ -84,3 +84,16 @@ jobs:
         run: pip install pyyaml --quiet
       - name: Validate OCA must-have accounting SSOT
         run: python3 scripts/ci/check_oca_must_have_accounting_ssot.py --repo-root .
+
+  settings-catalog-ssot:
+    name: settings-catalog-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate settings catalog schema and ordering
+        run: python3 scripts/ci/check_settings_catalog.py --repo-root .
