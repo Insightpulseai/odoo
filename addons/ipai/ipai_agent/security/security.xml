@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ── Category ─────────────────────────────────────── -->
+        <record id="module_category_ipai_agent" model="ir.module.category">
+            <field name="name">IPAI Agent</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- ── Groups ───────────────────────────────────────── -->
+
+        <!-- User: can trigger runs, view own runs -->
+        <record id="group_ipai_agent_user" model="res.groups">
+            <field name="name">Agent User</field>
+            <field name="category_id" ref="module_category_ipai_agent"/>
+            <field name="comment">Can trigger IPAI agent runs and view their own run history.</field>
+        </record>
+
+        <!-- Approver: can approve/reject waiting_approval runs -->
+        <record id="group_ipai_agent_approver" model="res.groups">
+            <field name="name">Agent Approver</field>
+            <field name="category_id" ref="module_category_ipai_agent"/>
+            <field name="implied_ids" eval="[(4, ref('group_ipai_agent_user'))]"/>
+            <field name="comment">Can approve or reject runs pending human review.</field>
+        </record>
+
+        <!-- Admin: full access including tool/policy configuration -->
+        <record id="group_ipai_agent_admin" model="res.groups">
+            <field name="name">Agent Admin</field>
+            <field name="category_id" ref="module_category_ipai_agent"/>
+            <field name="implied_ids" eval="[(4, ref('group_ipai_agent_approver'))]"/>
+            <field name="comment">Full CRUD on runs, tools, and policies. Manages ir.config_parameter secrets.</field>
+        </record>
+
+    </data>
+</odoo>
