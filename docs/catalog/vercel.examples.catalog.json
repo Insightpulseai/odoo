@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "vercel",
+    "type": "examples",
+    "base_url": "https://github.com/vercel/next.js/tree/main/examples"
+  },
+  "items": [
+    {
+      "id": "with-supabase",
+      "title": "Next.js with Supabase (SSR Auth)",
+      "url": "https://github.com/vercel/next.js/tree/main/examples/with-supabase",
+      "tags": ["nextjs", "supabase", "auth", "ssr", "server-components", "middleware"],
+      "use_cases": ["ops-console", "platform-kit"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "middleware.ts — session guard using @supabase/ssr updateSession()",
+        "lib/supabase/server.ts — SSR client (createServerClient + cookies())",
+        "lib/supabase/client.ts — browser client (createBrowserClient)",
+        "app/(auth)/login/ and /auth/confirm/ route patterns"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "ai-chatbot",
+      "title": "Vercel AI Chatbot (AI SDK streaming)",
+      "url": "https://github.com/vercel/ai-chatbot",
+      "tags": ["ai-sdk", "streaming", "nextjs", "chat", "tools"],
+      "use_cases": ["ops-console", "ai-ops-agent"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "app/api/chat/route.ts — server streaming handler (streamText + tools)",
+        "components/chat.tsx — useChat hook integration + message rendering",
+        "lib/ai/tools/ — tool definitions pattern (zod schema + execute)",
+        "app/(auth)/auth.ts — session-aware AI access pattern"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "platforms-starter-kit",
+      "title": "Platforms Starter Kit (multi-tenant custom domains)",
+      "url": "https://github.com/vercel/platforms",
+      "tags": ["multi-tenant", "custom-domains", "nextjs", "prisma", "platforms"],
+      "use_cases": ["multi-tenant", "platform-kit"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "app/[domain]/ — subdomain-based tenant routing",
+        "middleware.ts — domain rewrite logic (custom subdomain → tenant context)",
+        "lib/auth.ts — tenant-scoped session handling"
+      ],
+      "risk": "medium",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "with-opentelemetry",
+      "title": "Next.js with OpenTelemetry",
+      "url": "https://github.com/vercel/next.js/tree/main/examples/with-opentelemetry",
+      "tags": ["otel", "observability", "nextjs", "tracing", "vercel-otel"],
+      "use_cases": ["observability", "ops-console"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "instrumentation.ts — OTel SDK init (register() hook)",
+        "lib/otel.ts — tracer + span helper (if present)",
+        "@vercel/otel package setup"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "edge-config",
+      "title": "Edge Config (feature flags at the edge)",
+      "url": "https://github.com/vercel/next.js/tree/main/examples/edge-config",
+      "tags": ["edge-config", "feature-flags", "nextjs", "edge", "middleware"],
+      "use_cases": ["ops-console", "platform-kit"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "middleware.ts — edge flag evaluation before route resolution",
+        "lib/flags.ts — flag read helper (@vercel/edge-config)"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "vercel-docs-ssot",
+      "title": "Vercel Docs SSOT (docs + llms-full.txt + key ops pages)",
+      "url": "https://vercel.com/docs",
+      "tags": ["vercel", "docs", "mcp", "monorepo", "previews", "deployment-protection", "ai-gateway"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Pin canonical docs URLs used in this repo; enable deterministic references for agents.",
+        "https://vercel.com/docs/llms-full.txt — machine-readable full docs snapshot for agent context.",
+        "https://vercel.com/docs/agent-resources/vercel-mcp — MCP server for structured operations."
+      ],
+      "risk": "low",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "vercel.docs-ssot"
+    },
+    {
+      "id": "vercel-integrations-diff",
+      "title": "Vercel Integrations Drift Detector (daily diff + GitHub Issues + Slack)",
+      "url": "https://vercel.com/docs/integrations",
+      "tags": ["vercel", "integrations", "drift", "ci", "github-issues", "slack", "monitoring"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Daily cron diff of ops.integrations_snapshots (added/removed/changed).",
+        "Idempotent GitHub Issue per team with stable HTML marker.",
+        "Slack webhook notification on drift; auto-close issue on clean run."
+      ],
+      "risk": "low",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "vercel.integrations-diff"
+    },
+    {
+      "id": "vercel-production-checklist",
+      "title": "Vercel Production Checklist SSOT (pre/post-deploy gates)",
+      "url": "https://vercel.com/docs/deployments/environments",
+      "tags": ["vercel", "checklist", "production", "deployment-protection", "rollback", "ops"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Pre-deploy env var checklist for all 3 Vercel environments.",
+        "Post-deploy health check targets (LCP ≤ 2.5s, error rate ≤ 0.1%).",
+        "Rollback runbook: vercel rollback + expected recovery < 2 min."
+      ],
+      "risk": "low",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "vercel.production-checklist"
+    },
+    {
+      "id": "ops-advisor-ui",
+      "title": "Ops Advisor UI (Azure Advisor-like dashboard — 5 pillars, findings, workbooks)",
+      "url": "https://vercel.com/docs/deployments/environments",
+      "tags": ["ops", "advisor", "dashboard", "recharts", "tanstack-table", "supabase", "nextjs"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Supabase migration: ops.advisor_runs / ops.advisor_findings / ops.advisor_scores with RLS.",
+        "platform/advisor/ scorer (tsx CLI): loads ruleset YAML, evaluates rules, writes to ops.*.",
+        "4 UI routes: /advisor dashboard (RadialBarChart score rings), /advisor/[pillar], /advisor/findings (TanStack table), /advisor/workbooks.",
+        "2 API routes: GET/POST /api/advisor/runs, GET /api/advisor/findings — server-only, no supabase-js."
+      ],
+      "risk": "low",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "ops.advisor-ui"
+    },
+    {
+      "id": "monorepo-turborepo",
+      "title": "Turborepo + Next.js monorepo",
+      "url": "https://github.com/vercel/turbo/tree/main/examples/with-nextjs",
+      "tags": ["turborepo", "monorepo", "nextjs", "pnpm", "workspace"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "turbo.json — build/dev/lint pipeline with ^build deps",
+        "packages/ui/ — shared component package pattern",
+        "pnpm-workspace.yaml — workspace glob patterns"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    }
+  ]
+}

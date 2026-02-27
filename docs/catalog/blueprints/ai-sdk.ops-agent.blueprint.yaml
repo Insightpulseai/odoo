@@ -1,0 +1,91 @@
+id: ai-sdk.ops-agent
+title: AI SDK Ops Agent (Vercel AI SDK + streaming tools + Supabase persistence)
+category: ai-ops-agent
+
+sources:
+  - type: vercel-example
+    url: https://github.com/vercel/ai-chatbot
+    catalog_id: ai-chatbot
+  - type: vercel-template
+    url: https://vercel.com/templates/next.js/ai-sdk-internal-tool
+    catalog_id: ai-sdk-internal-tools
+
+target:
+  app_dir: apps/ops-console
+  package_manager: pnpm
+  creates_new_app: false
+
+variables:
+  - name: ANTHROPIC_BASE_URL
+    required: true
+    description: Vercel AI Gateway URL
+    example: https://ai-gateway.vercel.sh
+  - name: ANTHROPIC_AUTH_TOKEN
+    required: true
+    description: Vercel AI Gateway API key (server-only)
+    example: sk-ant-...
+  - name: ANTHROPIC_API_KEY
+    required: false
+    description: Leave empty — gateway authenticates
+    example: ""
+  - name: NEXT_PUBLIC_SUPABASE_URL
+    required: true
+    description: Supabase project URL for chat persistence
+    example: https://spdtwktxdalcfigzeqrz.supabase.co
+
+automation:
+  steps:
+    - name: add_chat_route
+      description: Add streaming chat API route with tool support
+      agent_instruction: |
+        Create apps/ops-console/app/api/ai/chat/route.ts:
+        - Use streamText from ai package
+        - Use Anthropic provider (anthropic('claude-sonnet-4-6'))
+        - Include maxSteps: 5 for multi-step tool loops
+        - Define at least 2 tools using zod schema:
+          * getDropletStatus: calls /api/observability/do/droplets
+          * querySupabaseLogs: calls /api/supabase-proxy/v1/projects/.../analytics/...
+        - Wire ANTHROPIC_BASE_URL + ANTHROPIC_AUTH_TOKEN from env (not ANTHROPIC_API_KEY)
+        - Return StreamingTextResponse or toDataStreamResponse()
+
+    - name: add_chat_page
+      description: Add /ai route with chat UI
+      agent_instruction: |
+        Create apps/ops-console/app/ai/page.tsx as a client component.
+        Use the useChat hook from ai/react.
+        Display messages with streaming markdown (MarkdownStream component if available,
+        or simple prose div otherwise).
+        Show tool invocation results in a collapsible detail block.
+        Add a text input with submit button.
+        No authentication bypass — use existing session from middleware.
+
+    - name: add_persistence
+      description: Add Supabase chat history persistence
+      agent_instruction: |
+        Create a server action or API route to:
+        - Save chat messages to a Supabase table (chat_sessions + chat_messages)
+        - Table schema: id (uuid), session_id (uuid), role (user|assistant), content (text), created_at
+        - Only store messages after successful response (not during stream)
+        - RLS: user can only read their own messages (auth.uid() = user_id)
+        Do not create the table via ad-hoc SQL — create a migration:
+        supabase migration new add_chat_history
+
+verification:
+  required_checks:
+    - ops-console-check
+    - golden-path-summary
+  preview:
+    expectations:
+      - chat-route-returns-200-with-streaming-headers
+      - tool-invocation-visible-in-response
+      - messages-persisted-to-supabase
+
+rollback:
+  strategy: revert_pr
+  notes: Chat history table migration must be reverted separately via supabase db reset on DEV branch.
+
+notes:
+  minor_customization:
+    - Set ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN in Vercel project env vars (server-only, no NEXT_PUBLIC_)
+    - Create DEV branch in Supabase before running migration (supabase branches create dev-ai-chat)
+    - Merge DEV branch after testing (supabase branches merge)

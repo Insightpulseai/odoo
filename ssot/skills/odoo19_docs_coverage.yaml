@@ -1,0 +1,111 @@
+# Canonical mapping: Odoo 19 docs sections + external skill packs required by CI.
+# SSOT path: ssot/skills/odoo19_docs_coverage.yaml
+# Validator:  scripts/skills/validate_odoo19_skills_coverage.py
+# CI gate:    .github/workflows/skill-coverage-gate.yml
+
+odoo_version: "19.0"
+
+docs:
+  general: "https://www.odoo.com/documentation/19.0/applications/general/"
+  finance: "https://www.odoo.com/documentation/19.0/applications/finance/"
+  sales: "https://www.odoo.com/documentation/19.0/applications/sales/"
+  websites: "https://www.odoo.com/documentation/19.0/applications/websites/"
+  inventory_and_mrp: "https://www.odoo.com/documentation/19.0/applications/inventory_and_mrp/"
+  hr: "https://www.odoo.com/documentation/19.0/applications/hr/"
+  marketing: "https://www.odoo.com/documentation/19.0/applications/marketing/"
+  services: "https://www.odoo.com/documentation/19.0/applications/services/"
+  productivity: "https://www.odoo.com/documentation/19.0/applications/productivity/"
+  developer: "https://www.odoo.com/documentation/19.0/developer.html"
+  contributing: "https://www.odoo.com/documentation/19.0/contributing/"
+  administration: "https://github.com/odoo/documentation/tree/19.0/content/administration"
+  documentation: "https://github.com/odoo/documentation"
+
+external_skill_packs:
+  vercel_agent_skills: "https://github.com/vercel-labs/agent-skills"
+  supabase_agent_skills: "https://github.com/supabase/supabase/tree/master/.agents/skills"
+
+expected:
+  finance:
+    accounting: ["odoo19/accounting"]
+    documents: ["odoo19/documents"]
+    expenses: ["odoo19/expenses"]
+    spreadsheet: ["odoo19/spreadsheet"]
+    sign: ["odoo19/sign"]
+  sales:
+    sales: ["odoo19/sales"]
+    crm: ["odoo19/crm"]
+    point_of_sale: ["odoo19/point_of_sale"]
+    subscriptions: ["odoo19/subscriptions"]
+    rental: ["odoo19/rental"]
+  websites:
+    website: ["odoo19/website"]
+    ecommerce: ["odoo19/ecommerce"]
+    blog: ["odoo19/blog"]
+    forum: ["odoo19/forum"]
+    livechat: ["odoo19/livechat"]
+    elearning: ["odoo19/elearning"]
+  inventory_and_mrp:
+    inventory: ["odoo19/inventory"]
+    manufacturing: ["odoo19/manufacturing"]
+    plm: ["odoo19/plm"]
+    purchase: ["odoo19/purchase"]
+    maintenance: ["odoo19/maintenance"]
+    quality: ["odoo19/quality"]
+  hr:
+    employees: ["odoo19/employees"]
+    recruitment: ["odoo19/recruitment"]
+    time_off: ["odoo19/time_off"]
+    appraisals: ["odoo19/appraisals"]
+    referrals: ["odoo19/referrals"]
+    fleet: ["odoo19/fleet"]
+    lunch: ["odoo19/lunch"]
+  marketing:
+    social_marketing: ["odoo19/social_marketing"]
+    email_marketing: ["odoo19/email_marketing"]
+    sms_marketing: ["odoo19/sms_marketing"]
+    events: ["odoo19/events"]
+    marketing_automation: ["odoo19/marketing_automation"]
+    surveys: ["odoo19/surveys"]
+  services:
+    project: ["odoo19/project"]
+    timesheets: ["odoo19/timesheets"]
+    field_service: ["odoo19/field_service"]
+    helpdesk: ["odoo19/helpdesk"]
+    planning: ["odoo19/planning"]
+    appointments: ["odoo19/appointments"]
+  productivity:
+    discuss: ["odoo19/discuss"]
+    iot: ["odoo19/iot"]
+    whatsapp: ["odoo19/whatsapp"]
+  developer:
+    orm: ["odoo/odoo19-orm"]
+    module: ["odoo/odoo19-module"]
+    actions: ["odoo/odoo19-actions"]
+    data_files: ["odoo/odoo19-data-files"]
+    mixins: ["odoo/odoo19-mixins"]
+    owl_components: ["odoo/odoo19-owl-components"]
+    frontend: ["odoo/odoo19-frontend"]
+    assets: ["odoo/odoo19-assets"]
+    qweb: ["odoo/odoo19-qweb"]
+    http_controllers: ["odoo/odoo19-http-controllers"]
+    external_api: ["odoo/odoo19-external-api"]
+    security: ["odoo/odoo19-security"]
+    testing: ["odoo/odoo19-testing"]
+    reports: ["odoo/odoo19-reports"]
+    performance: ["odoo/odoo19-performance"]
+  contributing:
+    coding_guidelines: ["odoo/odoo19-coding-guidelines"]
+    git_guidelines: ["odoo/odoo19-git-guidelines"]
+  administration:
+    administration: ["odoo19/administration"]
+  documentation:
+    documentation: ["odoo19/documentation"]
+  vercel_agent_skills:
+    base: ["vercel-agent-skills/base"]
+    browser: ["vercel-agent-skills/browser"]
+    desktop: ["vercel-agent-skills/desktop"]
+    mcp: ["vercel-agent-skills/mcp"]
+    office: ["vercel-agent-skills/office"]
+    os: ["vercel-agent-skills/os"]
+  supabase_agent_skills:
+    vitest: ["supabase-agent-skills/vitest"]

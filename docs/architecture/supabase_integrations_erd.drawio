@@ -1,0 +1,66 @@
+<mxfile host="Electron" modified="2026-02-23T07:58:00.000Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.8 Safari/537.36" version="22.1.2" type="device">
+  <diagram name="Supabase Integrations ERD" id="xyz123">
+    <mxGraphModel dx="1242" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ops.integrations Table -->
+        <mxCell id="table_integrations" value="&lt;b&gt;ops.integrations&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;name (UQ)&lt;br&gt;enabled&lt;br&gt;config&lt;br&gt;last_seen_at&lt;br&gt;last_error_at&lt;br&gt;error_count&lt;br&gt;created_at&lt;br&gt;updated_at&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="50" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- ops.webhook_events Table -->
+        <mxCell id="table_webhooks" value="&lt;b&gt;ops.webhook_events&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;integration (FK)&lt;br&gt;event_type&lt;br&gt;idempotency_key (UQ)&lt;br&gt;signature_valid&lt;br&gt;received_at&lt;br&gt;headers&lt;br&gt;payload&lt;br&gt;processed_at&lt;br&gt;status&lt;br&gt;error&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="400" y="50" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- ops.jobs Table -->
+        <mxCell id="table_jobs" value="&lt;b&gt;ops.jobs&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;integration (FK)&lt;br&gt;job_type&lt;br&gt;payload&lt;br&gt;run_after&lt;br&gt;attempts&lt;br&gt;max_attempts&lt;br&gt;locked_at&lt;br&gt;locked_by&lt;br&gt;status&lt;br&gt;last_error&lt;br&gt;created_at&lt;br&gt;updated_at&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="720" y="50" width="200" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Derived Tables Section -->
+        <mxCell id="table_deployments" value="&lt;b&gt;ops.deployments&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;provider&lt;br&gt;provider_id&lt;br&gt;project_id&lt;br&gt;env&lt;br&gt;url&lt;br&gt;status&lt;br&gt;created_at&lt;br&gt;raw_event_id (FK webhook_events)&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="100" y="350" width="280" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="table_billing" value="&lt;b&gt;ops.billing_events&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;provider&lt;br&gt;provider_id&lt;br&gt;customer_id&lt;br&gt;event_type&lt;br&gt;amount&lt;br&gt;currency&lt;br&gt;created_at&lt;br&gt;raw_event_id (FK webhook_events)&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="450" y="350" width="280" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="table_email" value="&lt;b&gt;ops.email_events&lt;/b&gt;&lt;hr&gt;&lt;div style=&quot;text-align: left;&quot;&gt;id (PK)&lt;br&gt;provider&lt;br&gt;provider_id&lt;br&gt;to_email&lt;br&gt;template&lt;br&gt;status&lt;br&gt;created_at&lt;br&gt;raw_event_id (FK webhook_events)&lt;/div&gt;" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=0;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="350" width="250" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Edges/Foreign Keys -->
+        <mxCell id="edge_integrations_webhooks" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=block;" edge="1" parent="1" source="table_integrations" target="table_webhooks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_integrations_jobs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;endArrow=block;" edge="1" parent="1" source="table_integrations" target="table_jobs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="270" />
+              <mxPoint x="700" y="270" />
+              <mxPoint x="700" y="165" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edge_webhooks_deployments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeWidth=2;" edge="1" parent="1" source="table_webhooks" target="table_deployments">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_webhooks_billing" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeWidth=2;" edge="1" parent="1" source="table_webhooks" target="table_billing">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_webhooks_email" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.9;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeWidth=2;" edge="1" parent="1" source="table_webhooks" target="table_email">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

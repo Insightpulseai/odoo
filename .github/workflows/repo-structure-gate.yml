@@ -1,0 +1,56 @@
+name: Repo Structure Gate
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-repo-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Odoo Addons Paths
+        run: |
+          if [ -d "addons" ]; then
+            for dir in addons/*; do
+              basename=$(basename "$dir")
+              if [[ "$basename" != "odoo" && "$basename" != "oca" && "$basename" != "ipai" ]]; then
+                echo "Error: Directory addons/$basename is not allowed. Only odoo, oca, and ipai are permitted."
+                exit 1
+              fi
+            done
+          fi
+
+      - name: Validate Supabase Structure
+        run: |
+          if [ -d "supabase" ]; then
+            if [ ! -d "supabase/migrations" ] || [ ! -d "supabase/functions" ]; then
+              echo "Error: supabase/ must contain migrations/ and functions/ directories."
+              exit 1
+            fi
+          fi
+
+      - name: Validate Design Tokens
+        run: |
+          if [ -d "design" ]; then
+            if [ ! -f "design/tokens/tokens.json" ]; then
+              echo "Error: design/tokens/tokens.json SSOT is missing."
+              exit 1
+            fi
+          fi
+
+      - name: Enforce Spec Kit Bundles
+        run: |
+          # Ensure new work in spec/ has a complete bundle (constitution, prd, plan, tasks)
+          if [ -d "spec" ]; then
+            for spec_dir in spec/*; do
+              if [ -d "$spec_dir" ]; then
+                for required in constitution.md prd.md plan.md tasks.md; do
+                  if [ ! -f "$spec_dir/$required" ]; then
+                    echo "Warning: Spec Kit bundle $spec_dir is missing $required. Enforcing completeness recommended."
+                    # Note: Set up to fail (exit 1) once enforcement is fully strict
+                  fi
+                done
+              fi
+            done
+          fi

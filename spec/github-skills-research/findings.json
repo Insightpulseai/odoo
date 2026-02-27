@@ -1,0 +1,31 @@
+{
+  "topic": "github-agent-skills-index",
+  "scanned_targets": [
+    "https://docs.github.com/en",
+    "https://docs.github.com/en/rest",
+    "https://docs.github.com/en/apps",
+    "https://docs.github.com/en/actions"
+  ],
+  "capabilities_mapped": [
+    {
+      "domain": "GitHub Apps",
+      "agent_utility": "Authentication, Webhook ingress, fine-grained access isolation",
+      "confidence": "high"
+    },
+    {
+      "domain": "REST API",
+      "agent_utility": "Synchronous control plane for PRs, issues, commits, and workflows",
+      "confidence": "high"
+    },
+    {
+      "domain": "GitHub Actions",
+      "agent_utility": "Asynchronous compute environment for heavy tool execution",
+      "confidence": "medium_high"
+    }
+  ],
+  "open_questions": [
+    "Rate limits for hyper-active agent accounts",
+    "Dynamic vs Static Action Workflow generation"
+  ],
+  "recommended_spec_patch": "Create ipai_github_mcp_server spec utilizing GitHub Apps authentication."
+}

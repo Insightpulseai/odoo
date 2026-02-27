@@ -1,0 +1,60 @@
+default_platform(:ios)
+
+platform :ios do
+  # ── Shared setup ─────────────────────────────────────────────────────────────
+
+  before_all do
+    setup_ci if ENV["CI"]
+  end
+
+  # ── Lanes ────────────────────────────────────────────────────────────────────
+
+  desc "Run unit tests"
+  lane :test do
+    run_tests(
+      project: "apps/odoo-mobile-ios",
+      scheme: "OdooMobile",
+      clean: true,
+      output_directory: "fastlane/test_output",
+      output_types: "html,junit"
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :build_testflight do
+    match(type: "appstore", readonly: is_ci)
+    increment_build_number(
+      xcodeproj: "apps/odoo-mobile-ios/OdooMobile.xcodeproj"
+    )
+    build_app(
+      workspace: "apps/odoo-mobile-ios/OdooMobile.xcworkspace",
+      scheme: "OdooMobile",
+      export_method: "app-store",
+      output_directory: "fastlane/builds"
+    )
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  desc "Submit release to App Store"
+  lane :release_appstore do
+    match(type: "appstore", readonly: true)
+    build_app(
+      workspace: "apps/odoo-mobile-ios/OdooMobile.xcworkspace",
+      scheme: "OdooMobile",
+      export_method: "app-store",
+      output_directory: "fastlane/builds"
+    )
+    upload_to_app_store(
+      submit_for_review: false,
+      automatic_release: false,
+      skip_screenshots: false,
+      skip_metadata: false
+    )
+  end
+
+  # ── Error handling ────────────────────────────────────────────────────────────
+
+  error do |lane, exception|
+    UI.error("Lane #{lane} failed: #{exception.message}")
+  end
+end
