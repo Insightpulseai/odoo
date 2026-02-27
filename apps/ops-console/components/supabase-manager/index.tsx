@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
@@ -279,6 +280,7 @@ export default function SupabaseManagerDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="w-full h-[80vh] max-h-[700px] sm:max-w-[calc(100%-2rem)] w-[1180px] p-0 overflow-hidden sm:rounded-lg">
             <DialogTitle className="sr-only">Manage your back-end</DialogTitle>
+            <DialogDescription className="sr-only">Database, storage, auth, users, secrets, and logs for your Supabase project.</DialogDescription>
             {content}
           </DialogContent>
         </Dialog>
