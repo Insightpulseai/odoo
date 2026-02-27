@@ -182,13 +182,38 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 
 ---
 
-## Secrets Policy (Non-Negotiable)
+## Secrets Policy
 
-- **Never** ask users to paste secrets/tokens/passwords
-- **Never** hardcode secrets in source checked into git
-- **Never** log/echo secrets in debug output or CI logs
-- Secrets live in: `.env*` (local), GitHub Actions secrets (CI), env vars (runtime)
-- Missing secret? Say what's missing in one sentence, continue executing
+### Hard rules (non-negotiable)
+- **Never** hardcode secrets in any file tracked by Git
+- **Never** log or echo secrets in CI logs, debug output, or chat history
+- **Never** store secrets in `runtime/evidence/**`, runbooks, or PR descriptions
+- Use placeholder names in docs: e.g., `CF_API_TOKEN=<from keychain>`
+
+### Approved secret stores
+
+| Context | Store | How to access at runtime |
+|---------|-------|--------------------------|
+| Local dev | OS keychain/keyring (macOS Keychain, GNOME Keyring) | env var injection at shell start |
+| CI / GitHub Actions | GitHub Actions Secrets (repo or org level) | `${{ secrets.NAME }}` |
+| Platform / automation | Supabase Vault (`vault.secrets`) | `vault.decrypted_secrets` view (restricted) |
+
+### "Pasted once" rule
+Showing a secret value once in chat or a terminal for the purpose of immediate storage
+**does not automatically constitute an exposure event**. The correct response is:
+1. Move the value immediately into one of the approved stores above
+2. Reference only the secret's name/identifier from that point forward
+3. If the value remains in durable chat history or logs: rotate it when convenient
+
+### Assistant behavior
+- Provide **one short reminder** ("store in keychain/GitHub Secrets; rotate if it lands in logs")
+- Do **not** block execution, repeat rotation warnings, or refuse to continue
+- Continue with the fastest path to production after the reminder
+- Missing secret? State the name needed in one sentence, continue executing
+
+### SSOT for secret identifiers
+`ssot/secrets/registry.yaml` — tracks secret names, purpose, and consumers.
+**Never contains values.** See `docs/runbooks/SECRETS_SSOT.md` for full workflow.
 
 ---
 
