@@ -1,0 +1,114 @@
+name: Cloudflare DNS Apply (on merge)
+
+# =============================================================================
+# Applies infra/cloudflare/zones/insightpulseai.com/records.yaml to the live
+# Cloudflare zone on every push to main that touches infra/cloudflare/**.
+#
+# This is the "push = deploy" step for DNS records.
+# Pull requests use cloudflare-dns-drift.yml (read-only) and
+# cloudflare-authority-gate.yml (NS delegation check).
+#
+# Secrets required (must be set in repo Settings → Secrets and variables → Actions):
+#   CF_DNS_EDIT_TOKEN — Cloudflare API token with Zone:DNS:Edit permission
+#                       Scope: insightpulseai.com zone only (blast radius limited)
+#   CF_DNS_ZONE_ID    — Zone ID for insightpulseai.com
+#                       (also embedded in records.yaml as zone.id for local use)
+# =============================================================================
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/cloudflare/**"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (show changes without applying)"
+        type: boolean
+        default: false
+      yaml_file:
+        description: "YAML file path (relative to repo root)"
+        required: false
+        default: "infra/cloudflare/zones/insightpulseai.com/records.yaml"
+
+permissions:
+  contents: read
+
+env:
+  YAML_FILE: ${{ github.event.inputs.yaml_file || 'infra/cloudflare/zones/insightpulseai.com/records.yaml' }}
+
+jobs:
+  apply-dns:
+    name: Apply DNS records to Cloudflare
+    runs-on: ubuntu-latest
+    environment: production  # Requires approval gate if configured
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Verify Cloudflare authority (pre-flight)
+        run: |
+          sudo apt-get install -y dnsutils -q
+          python3 scripts/cloudflare/verify_authoritative.py || \
+            echo "::warning::Cloudflare is not yet authoritative — applying records anyway (they will activate once NS delegation completes)"
+
+      - name: Dry run (show changes)
+        if: github.event.inputs.dry_run == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_DNS_EDIT_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_DNS_ZONE_ID }}
+        run: |
+          python3 infra/cloudflare/scripts/apply_dns_from_yaml.py \
+            --file "$YAML_FILE" \
+            --dry-run
+
+      - name: Apply DNS records
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_DNS_EDIT_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_DNS_ZONE_ID }}
+        run: |
+          python3 infra/cloudflare/scripts/apply_dns_from_yaml.py \
+            --file "$YAML_FILE" \
+            2>&1 | tee /tmp/dns_apply.log
+          echo "exit_code=${PIPESTATUS[0]}" > /tmp/apply_result
+
+      - name: Check apply result
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          source /tmp/apply_result
+          cat /tmp/dns_apply.log
+          if grep -q "errors=[1-9]" /tmp/dns_apply.log; then
+            echo "::error::DNS apply completed with errors — check log above"
+            exit 1
+          fi
+          echo "✅ DNS apply complete"
+
+      - name: Verify applied records
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_DNS_EDIT_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_DNS_ZONE_ID }}
+        run: |
+          python3 infra/cloudflare/scripts/apply_dns_from_yaml.py \
+            --file "$YAML_FILE" \
+            --verify 2>&1 || echo "::warning::Verification shows some records missing — may need re-apply"
+        continue-on-error: true
+
+      - name: Upload apply log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dns-apply-log-${{ github.run_id }}
+          path: /tmp/dns_apply.log
+          retention-days: 30

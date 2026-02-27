@@ -50,6 +50,8 @@ Feature specifications following Spec Kit structure.
 | seed-bundle | `spec/seed-bundle` | ✓ Complete |
 | test-coverage-improvement | `spec/test-coverage-improvement` | ✓ Complete |
 | workos-notion-clone | `spec/workos-notion-clone` | ✓ Complete |
+| odoo-receipt-digitization | `spec/odoo-receipt-digitization` | ✓ Complete |
+| supabase-maximization | `spec/supabase-maximization` | 🔄 Active (Phase 1) |
 
 ---
 

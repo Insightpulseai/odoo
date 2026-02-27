@@ -86,10 +86,23 @@ def update_record(zone_id: str, token: str, record_id: str, record: dict) -> dic
 # ---------------------------------------------------------------------------
 
 def load_yaml(path: Path) -> list[dict]:
-    """Return list of record dicts from SSOT YAML."""
+    """Return list of record dicts from SSOT YAML.
+
+    Supports two formats:
+      Legacy:  domain: insightpulseai.com  + records: [...]
+      Current: zone: {name: insightpulseai.com, id: ..., ...}  + records: [...]
+    """
     with open(path) as f:
         doc = yaml.safe_load(f)
-    domain = doc["domain"]
+    # Support both "domain:" (legacy zoho_mail_dns.yaml) and "zone.name:" (insightpulseai.com/records.yaml)
+    if "domain" in doc:
+        domain = doc["domain"]
+    elif "zone" in doc and "name" in doc["zone"]:
+        domain = doc["zone"]["name"]
+    else:
+        raise KeyError(
+            "YAML must have 'domain: <name>' or 'zone: {name: <name>}' at top level"
+        )
     records = []
     for r in doc["records"]:
         rec = {

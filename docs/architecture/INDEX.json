@@ -122,7 +122,9 @@
     "kb_graph_indexer":   "scripts/build_kb_graph.py",
     "dns_ssot":           "infra/dns/subdomain-registry.yaml",
     "agent_ssot":         "docs/ai/SSOT.md",
-    "claude_entry":       "CLAUDE.md"
+    "claude_entry":       "CLAUDE.md",
+    "supabase_adoption":  "docs/architecture/SUPABASE_FEATURES_INTEGRATIONS_ADOPTION.md",
+    "secrets_registry":   "ssot/secrets/registry.yaml"
   },
 
   "runtime_surfaces": {
@@ -176,8 +178,8 @@
   "invariants": [
     "CE only — no Enterprise modules, no odoo.com IAP",
     "addons/oca/ is overlay_only — _inherit only, never direct edits",
-    "Odoo uses local PostgreSQL; Supabase is external integration bus only",
-    "Secrets in .env files or CI secrets — never in source",
+    "Odoo uses local PostgreSQL; Supabase is System of Control (ops, pipelines, analytics, AI)",
+    "Secrets: Vault-first for server-readable; names in ssot/secrets/registry.yaml; never values in git",
     "DNS via infra/dns/subdomain-registry.yaml SSOT only",
     "Domain: insightpulseai.com (.net deprecated)",
     "Mail via ipai_mail_bridge_zoho — never direct SMTP",

@@ -1,0 +1,178 @@
+# =============================================================================
+# Cloudflare DNS Records — insightpulseai.com
+# =============================================================================
+# SSOT for all Cloudflare zone DNS records.
+#
+# Edit this file — never edit the Cloudflare dashboard directly.
+# After editing: commit → push → CI applies via apply-on-merge workflow.
+#
+# Apply:       .github/workflows/cloudflare-dns-apply.yml  (push to main)
+# Drift gate:  .github/workflows/cloudflare-dns-drift.yml  (PR check)
+# Authority:   .github/workflows/cloudflare-authority-gate.yml (PR check)
+# Runbook:     docs/ops/CLOUDFLARE_DNS_SSOT.md
+# README:      infra/cloudflare/README.md
+#
+# Generated outputs (DO NOT EDIT):
+#   artifacts/cloudflare/zone_state.json   ← live zone snapshot
+# =============================================================================
+
+zone:
+  name: insightpulseai.com
+  id: 73f587aee652fc24fd643aec00dcca81
+  account_id: dadf50a41a8bb4c0d0bbbb15681a53af
+
+records:
+  # ─── A Records (Proxied → 178.128.112.214) ─────────────────────────────────
+  # Cloudflare proxy ("orange cloud") — HTTP/HTTPS termination at CF edge.
+  # All traffic goes through Cloudflare before reaching origin (178.128.112.214).
+  # Apps behind proxy MUST be configured for reverse-proxy mode.
+
+  - type: A
+    name: "@"
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1           # "1" = Auto (Cloudflare proxied records ignore TTL)
+    comment: "Apex — insightpulseai.com (proxied)"
+
+  - type: A
+    name: www
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "www.insightpulseai.com (proxied)"
+
+  - type: A
+    name: erp
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "erp.insightpulseai.com → Odoo ERP (proxied)"
+
+  - type: A
+    name: n8n
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "n8n.insightpulseai.com → n8n automation (proxied)"
+
+  - type: A
+    name: auth
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "auth.insightpulseai.com → Authentication service (proxied)"
+
+  - type: A
+    name: ocr
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "ocr.insightpulseai.com → PaddleOCR microservice (proxied)"
+
+  - type: A
+    name: chat
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "chat.insightpulseai.com → Mattermost/Slack gateway (proxied)"
+
+  # ─── A Records (DNS-only → 178.128.112.214) ────────────────────────────────
+  # DNS-only ("grey cloud") — traffic goes directly to origin, no CF proxy.
+  # Use for: SSH, mail delivery (SMTP won't work through CF proxy), internal tools.
+
+  - type: A
+    name: mail
+    content: 178.128.112.214
+    proxied: false
+    ttl: 3600
+    comment: "mail.insightpulseai.com → DO droplet (DNS-only, no proxy)"
+
+  # ─── MX Records (Zoho Mail) ────────────────────────────────────────────────
+  # Primary outbound: Zoho Mail (smtp.zoho.com:587)
+  # Mailgun subdomain mg.insightpulseai.com handles transactional/automated mail.
+
+  - type: MX
+    name: "@"
+    content: mx.zoho.com
+    priority: 10
+    ttl: 3600
+    comment: "Primary MX — Zoho Mail"
+
+  - type: MX
+    name: "@"
+    content: mx2.zoho.com
+    priority: 20
+    ttl: 3600
+    comment: "Secondary MX — Zoho Mail"
+
+  - type: MX
+    name: "@"
+    content: mx3.zoho.com
+    priority: 50
+    ttl: 3600
+    comment: "Tertiary MX — Zoho Mail"
+
+  # ─── TXT Records ──────────────────────────────────────────────────────────
+
+  - type: TXT
+    name: "@"
+    content: "v=spf1 include:zoho.com include:mailgun.org ~all"
+    ttl: 3600
+    comment: "SPF — authorize Zoho + Mailgun for @insightpulseai.com"
+
+  - type: TXT
+    name: "@"
+    content: "v=DMARC1; p=quarantine; pct=100; rua=mailto:devops@insightpulseai.com"
+    ttl: 3600
+    comment: "DMARC — quarantine unaligned senders"
+
+  # ─── Mailgun subdomain (mg.insightpulseai.com) ────────────────────────────
+  # Handles: transactional email, n8n notifications, system alerts
+
+  - type: TXT
+    name: mg
+    content: "v=spf1 include:mailgun.org ~all"
+    ttl: 3600
+    comment: "SPF for mg subdomain"
+
+  - type: TXT
+    name: mx._domainkey.mg
+    content: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
+    ttl: 3600
+    comment: "DKIM key for mg subdomain (Mailgun)"
+
+  - type: TXT
+    name: _dmarc.mg
+    content: "v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;"
+    ttl: 3600
+    comment: "DMARC for mg subdomain"
+
+  - type: CNAME
+    name: email.mg
+    content: mailgun.org
+    proxied: false
+    ttl: 3600
+    comment: "Mailgun tracking pixel / click tracking"
+
+  # ─── CNAME Records ────────────────────────────────────────────────────────
+
+  - type: CNAME
+    name: superset
+    content: superset-nlavf.ondigitalocean.app
+    proxied: false
+    ttl: 3600
+    comment: "superset.insightpulseai.com → DO App Platform (Superset)"
+
+  - type: CNAME
+    name: mcp
+    content: pulse-hub-web-an645.ondigitalocean.app
+    proxied: false
+    ttl: 3600
+    comment: "mcp.insightpulseai.com → DO App Platform (MCP gateway)"
+
+  - type: CNAME
+    name: agent
+    content: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
+    proxied: false
+    ttl: 3600
+    comment: "agent.insightpulseai.com → DO AI Agent"

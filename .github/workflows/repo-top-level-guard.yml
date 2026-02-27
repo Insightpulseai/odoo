@@ -1,0 +1,116 @@
+name: Repo Top-Level Boundary Guard
+
+# =============================================================================
+# Fails PRs that add top-level directories not in the canonical allowlist.
+#
+# Allowlist SSOT: ssot/repo/top_level_allowlist.yaml
+# Checker script: scripts/repo/enforce_top_level_allowlist.py
+#
+# Behaviour:
+#   - Violations (dirs not in allowlist at all) -> FAIL
+#   - Tier 2/3 legacy dirs (grandfathered) -> WARN (pass unless --strict)
+#   - Hidden dirs (dot-prefix) -> always OK
+#   - Generated dirs (node_modules, __pycache__, etc.) -> always OK
+#
+# To add a new top-level directory:
+#   1. Add it to ssot/repo/top_level_allowlist.yaml with tier, purpose, owner
+#   2. Include that change in the same PR as the new directory
+# =============================================================================
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/repo/top_level_allowlist.yaml"
+      - "scripts/repo/enforce_top_level_allowlist.py"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  top-level-guard:
+    name: Enforce canonical top-level structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run top-level boundary check
+        id: check
+        run: |
+          python3 scripts/repo/enforce_top_level_allowlist.py \
+            2>&1 | tee /tmp/tl_guard.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: Post PR comment on violation
+        if: steps.check.outputs.exit_code != '0' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG=$(head -c 3000 /tmp/tl_guard.log 2>/dev/null || echo "Log unavailable")
+          {
+            echo '## Top-Level Boundary Guard - FAILED'
+            echo ''
+            echo 'This PR adds a top-level directory that is not in the canonical allowlist.'
+            echo ''
+            echo '### Required action'
+            echo ''
+            echo '1. Add the new directory to `ssot/repo/top_level_allowlist.yaml` with:'
+            echo '   - `tier`: 0, 1, 2, or 3'
+            echo '   - `purpose`: one-line description'
+            echo '   - `owner`: team/person responsible'
+            echo '   - `migrate_to`: (Tier 2/3 only) where it should eventually live'
+            echo ''
+            echo '2. Include the allowlist update in this same PR.'
+            echo ''
+            echo '### Canonical top-level boundaries (prefer these over new root dirs)'
+            echo ''
+            echo '| Root | Use for |'
+            echo '|------|---------|'
+            echo '| `infra/` | IaC, DNS, cloud configs, Terraform |'
+            echo '| `platform/` | Supabase platform kit, advisor, registry |'
+            echo '| `web/` | Next.js apps, control plane, AI control plane |'
+            echo '| `agents/` | Agent registry, skills, workflows |'
+            echo '| `apps/` | Standalone applications (iOS, ops-console) |'
+            echo '| `docs/` | Architecture, runbooks, contracts |'
+            echo '| `spec/` | Spec Kit bundles |'
+            echo '| `scripts/` | Tooling, CI checks |'
+            echo '| `supabase/` | DB schema, Edge Functions, RLS |'
+            echo '| `addons/` | Odoo addons (CE, OCA, ipai) |'
+            echo ''
+            echo '---'
+            echo '*Checker log:*'
+            echo '```'
+            echo "$LOG"
+            echo '```'
+          } > /tmp/tl_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/tl_comment.md
+
+      - name: Fail on violations
+        if: steps.check.outputs.exit_code != '0'
+        run: |
+          cat /tmp/tl_guard.log
+          echo "::error::Unknown top-level directories found. Update ssot/repo/top_level_allowlist.yaml."
+          exit 1
+
+      - name: Pass
+        if: steps.check.outputs.exit_code == '0'
+        run: |
+          echo "All top-level directories are allowlisted."
+          # Show any tier 2/3 warnings for awareness
+          grep "Tier 2" /tmp/tl_guard.log || true

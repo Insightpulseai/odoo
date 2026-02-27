@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Extends hr.expense form view with:
+        1. "Digitize Receipt" button in header (visible in draft + reported states)
+        2. Smart stat button showing OCR scan count (hidden if 0)
+    -->
+    <record id="hr_expense_form_ocr_digitize" model="ir.ui.view">
+        <field name="name">hr.expense.form.ocr.digitize</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Digitize button in form header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_digitize_receipt"
+                        string="Digitize Receipt"
+                        type="object"
+                        icon="fa-magic"
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', 'in', ['posted', 'done'])]}"/>
+            </xpath>
+
+            <!-- Smart button: OCR scan count (only shown when at least 1 scan exists) -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button"
+                        type="object"
+                        name="action_open_ocr_runs"
+                        icon="fa-eye"
+                        attrs="{'invisible': [('ocr_run_count', '=', 0)]}">
+                    <field name="ocr_run_count" widget="statinfo" string="OCR Scans"/>
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

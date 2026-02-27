@@ -1,11 +1,42 @@
 # Canonical URLs & Subdomains — InsightPulse AI
 
-> **SSOT**: This document is sourced from `infra/dns/subdomain-registry.yaml`.
-> Edit the YAML, run the generator, commit all artifacts together.
-> CI validates sync via `.github/workflows/dns-sync-check.yml`.
+> **SSOT**: DNS records live in `infra/cloudflare/zones/insightpulseai.com/records.yaml`.
+> Edit the YAML, commit + push → CI applies on merge to main.
+> CI gates: `cloudflare-authority-gate.yml` (NS check) + `cloudflare-dns-drift.yml` (drift check).
 > Spec bundle: `spec/insightpulseai-com/`
 
-Last updated: 2026-02-17
+Last updated: 2026-02-27
+
+---
+
+## Authoritative DNS Status
+
+| Check | Status | Proof mechanism |
+|-------|--------|----------------|
+| **Cloudflare is authoritative** | ✅ Confirmed 2026-02-27 | `dig NS insightpulseai.com` → `edna.ns.cloudflare.com` + `keanu.ns.cloudflare.com` (verified by `scripts/cloudflare/verify_authoritative.py`) |
+| **CI authority gate** | ✅ Enforced | `.github/workflows/cloudflare-authority-gate.yml` — blocks DNS PRs if not authoritative |
+| **DNS records in SSOT** | ✅ Committed | `infra/cloudflare/zones/insightpulseai.com/records.yaml` |
+| **Apply on merge** | ✅ Configured | `.github/workflows/cloudflare-dns-apply.yml` (push to main) |
+
+### Authoritative nameservers (confirmed)
+
+Cloudflare is the authoritative resolver for `insightpulseai.com`:
+- `edna.ns.cloudflare.com`
+- `keanu.ns.cloudflare.com`
+
+DNS record commits in `infra/cloudflare/zones/` **take effect on next apply-on-merge run**.
+The CI authority gate will pass — no `cf-ns-pending` label bypass needed.
+
+Verify current status: `python3 scripts/cloudflare/verify_authoritative.py`
+
+### DNS record SSOT location
+
+```
+infra/cloudflare/zones/insightpulseai.com/records.yaml   ← SSOT (edit this)
+artifacts/cloudflare/zone_state.json                      ← generated output (do not edit)
+```
+
+> `artifacts/` is **output-only**. All SSOT inputs live in `infra/`.
 
 ---
 
