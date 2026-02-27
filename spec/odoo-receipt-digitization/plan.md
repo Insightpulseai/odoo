@@ -270,3 +270,33 @@ network (same droplet or DO managed DB). Replication slot persists across restar
 
 No new Supabase Edge Functions. No n8n workflows changed. No schema migrations (model
 uses existing `ipai.expense.ocr.run` + new mixin fields are computed-only).
+
+---
+
+## Supabase Feature Adoption
+
+> Full adoption map: `docs/architecture/SUPABASE_FEATURES_INTEGRATIONS_ADOPTION.md`
+> Spec: `spec/supabase-maximization/`
+
+| Feature | This spec uses it for | SSOT location | Phase |
+|---------|----------------------|---------------|-------|
+| Edge Functions | OCR policy check post-digitization | `supabase/functions/expense-policy-check/` | Existing |
+| Queues (PGMQ) | Future: enqueue digitize jobs (Phase 2) | `supabase/migrations/*_queues*` | Phase 2 |
+| Storage | Future: receipt images → bucket (Phase 2) | `supabase/storage/receipts/` | Phase 2 |
+| ETL → Iceberg | CDC from Odoo expense tables | `infra/supabase-etl/odoo-expense.toml` | Lane B |
+| Realtime | Future: digitize progress events (Phase 2) | Application subscriptions | Phase 2 |
+
+---
+
+## Iceberg Landing Contract (Lane B)
+
+| Property | Value |
+|----------|-------|
+| Namespace | `odoo_ops` |
+| Table naming | snake_case, singular noun (e.g. `expense`, `expense_ocr_run`) |
+| Schema evolution | Additive only (new nullable columns); breaking changes require new table version |
+| Partitioning | By `date` (daily) where `date` column present; else by `_sdc_received_at` |
+| Idempotency | ETL slot ensures at-least-once; downstream queries must be dedup-tolerant |
+| Replay | Recreate slot + replay from oldest LSN if needed; no destructive ETL ops |
+| Binary columns | Excluded from Iceberg schema (e.g. `ir_attachment.datas`) — see `expense_attachment_meta` |
+| Source env vars | All as `ICEBERG_*` prefix; registered in `ssot/secrets/registry.yaml` |

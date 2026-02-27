@@ -106,3 +106,13 @@ existing PaddleOCR service at `ocr.insightpulseai.com`.
 | `ipai_expense_ocr_run` | `expense_ocr_run` | INSERT |
 
 Delivery: at-least-once, resumable via replication slot. Lag target: < 60 seconds.
+
+---
+
+### Supabase / Infrastructure Acceptance Criteria
+
+- [ ] No plaintext secrets in `infra/supabase-etl/odoo-expense.toml` or any spec doc — env var references only
+- [ ] Lane B ETL config references Vault or env var names; values never in git
+- [ ] Any new `ops.*` table created for this feature has RLS enabled + policies defined
+- [ ] CDC is at-least-once + replayable (slot persists across restarts; no data loss on worker restart)
+- [ ] `ir_attachment.datas` binary column excluded from all Iceberg schema definitions

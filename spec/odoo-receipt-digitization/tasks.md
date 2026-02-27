@@ -36,6 +36,9 @@ All tasks within `addons/ipai/ipai_expense_ocr/`.
 | 2.6 | Add GitHub Actions secrets: `ODOO_PG_CDC_URL`, `ICEBERG_CATALOG_URI`, `ICEBERG_WAREHOUSE`, `ICEBERG_NAMESPACE`, `ICEBERG_S3_ENDPOINT`, `ICEBERG_REGION`, `ICEBERG_ACCESS_KEY_ID`, `ICEBERG_SECRET_ACCESS_KEY`, `ICEBERG_S3_PATH_STYLE` | GitHub UI | `gh secret list \| grep ICEBERG_CATALOG_URI` |
 | 2.7 | Create `.github/workflows/supabase-etl-expense.yml` — deploys ETL worker on DO App Platform | NEW | Workflow runs, worker starts |
 | 2.8 | Integration test: insert test expense in `odoo_dev` → confirm Iceberg snapshot advances and row is queryable within 60s | — | `SELECT * FROM odoo_ops.expense ORDER BY id DESC LIMIT 1` via Iceberg query engine returns inserted row; snapshot ID has incremented |
+| 2.9 | Verify `ICEBERG_*` env var names exist in `ssot/secrets/registry.yaml` (as name entries, not values) | `ssot/secrets/registry.yaml` | `grep ICEBERG_ ssot/secrets/registry.yaml` → matches |
+| 2.10 | Add `check_no_plaintext_secrets.sh` lint step to CI if not present | `.github/workflows/` | `grep -r 'ICEBERG_\|ODOO_PG_CDC' infra/` → only `${VAR}` refs |
+| 2.11 | Confirm `ir_attachment.datas` is not in any Iceberg table schema definition | `infra/supabase-etl/` | `grep -r 'datas' infra/supabase-etl/` → zero results |
 
 ---
 
