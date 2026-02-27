@@ -3,29 +3,29 @@
 
 """Server-side enforcement: @omc.com users → TBWA\\SMP company only.
 
-Enforcement runs on:
+Uses ResCompany._ipai_tbwa_company() for deterministic resolution:
+  1. ir.config_parameter ipai.company.tbwa_company_id  (preferred)
+  2. Unique ipai_is_tbwa_smp=True flag
+  3. Last-resort ilike "TBWA"
+
+Enforcement fires on:
   - res.users.create()  — after the record exists
   - res.users.write()   — when login, company_id, or company_ids change
 
 The companion record rule (security/security.xml) provides belt-and-suspenders
-filtering so non-sudo res.company searches return only the marked company.
-
-MRO notes:
-  - No direct write() on self inside create() MRO; enforce is called after super()
-  - _ipai_enforce_omc_scope() uses a targeted write that touches only
-    company_id/company_ids — not the full record — to avoid recursion
+filtering so non-sudo searches on res.company return only TBWA\\SMP for
+OMC-restricted users.
 """
 
 import logging
 
-from odoo import api, models, _
-from odoo.exceptions import ValidationError
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
 OMC_DOMAIN = "@omc.com"
 
-# Keys in vals that should trigger re-enforcement on write()
+# Keys in vals that trigger re-enforcement on write()
 _SCOPE_TRIGGER_KEYS = frozenset({"login", "company_id", "company_ids"})
 
 
@@ -33,27 +33,6 @@ class ResUsers(models.Model):
     _inherit = "res.users"
 
     # ── Helpers ──────────────────────────────────────────────────────────────
-
-    def _ipai_tbwa_company(self):
-        """Return the single TBWA\\SMP company (ipai_is_tbwa_smp=True).
-
-        Raises ValidationError if none is marked — administrators must run
-        scripts/company/mark_tbwa_smp_company.py once after module install.
-        """
-        company = (
-            self.env["res.company"]
-            .sudo()
-            .search([("ipai_is_tbwa_smp", "=", True)], limit=1)
-        )
-        if not company:
-            raise ValidationError(
-                _(
-                    "ipai_company_scope_omc: No company is marked as TBWA\\SMP "
-                    "(ipai_is_tbwa_smp=True). "
-                    "Run scripts/company/mark_tbwa_smp_company.py to mark the correct company."
-                )
-            )
-        return company
 
     @staticmethod
     def _ipai_login_is_omc(login):
@@ -65,18 +44,24 @@ class ResUsers(models.Model):
 
         Idempotent — if already correct, no write is issued.
         Called after create() and conditionally after write().
+
+        Uses ResCompany._ipai_tbwa_company() for deterministic resolution.
         """
-        tbwa = self._ipai_tbwa_company()
+        # Resolve via the deterministic resolver on res.company
+        tbwa = self.env["res.company"]._ipai_tbwa_company()
+
         for user in self:
             if not self._ipai_login_is_omc(user.login):
                 continue
-            # Check current state to stay idempotent
+
+            # Idempotency check
             already_correct = (
                 user.company_id.id == tbwa.id
                 and set(user.company_ids.ids) == {tbwa.id}
             )
             if already_correct:
                 continue
+
             _logger.info(
                 "ipai_company_scope_omc: enforcing TBWA\\SMP scope for user %r "
                 "(was company_id=%r, company_ids=%r)",
@@ -84,8 +69,7 @@ class ResUsers(models.Model):
                 user.company_id.name,
                 user.company_ids.mapped("name"),
             )
-            # Use super().write() to avoid re-triggering our override and
-            # to skip the portal/public user guard in res.users.write()
+            # Bypass our own write() override to avoid recursion
             super(ResUsers, user).write({
                 "company_id": tbwa.id,
                 "company_ids": [(6, 0, [tbwa.id])],
@@ -103,7 +87,6 @@ class ResUsers(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        # Re-enforce if login or company fields changed, OR if any record is OMC
         has_scope_change = bool(_SCOPE_TRIGGER_KEYS & vals.keys())
         for user in self:
             if has_scope_change or self._ipai_login_is_omc(user.login):
