@@ -73,6 +73,32 @@ into `addons/ipai/` modules.
 - `docs/runbooks/SECRETS_SSOT.md` -- Secret management workflow
 - `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` -- Go-live procedure
 
+### O5: AI Provider Bridge as Platform Contract
+
+**Problem**: Odoo 19 "Ask AI" (html editor AI action) is an EE/IAP feature. Each AI surface
+(editor, chatter, automations, ops-console) currently re-implements AI access independently,
+creating ungoverned provider coupling.
+
+**Requirement**: The IPAI AI Provider Bridge is the single platform contract for all AI generation:
+
+- **O5.1**: Odoo AI (Ask AI / html editor assistant) MUST call the IPAI AI Provider Bridge
+  by default. Calls are proxied through `ipai_ai_widget` Odoo addon (no Odoo IAP dependency).
+  OCA-local Ollama generation (`ai_oca_native_generate_ollama`) MAY be enabled as a fallback
+  for offline/local-only tenants by setting `ssot/ai/odoo_ai.yaml` mode to `ollama`.
+- **O5.2**: All AI generation calls MUST return `{ provider, text, model, trace_id }`.
+  Telemetry with those fields MUST be emitted to ops event log (trace_id enables cost
+  attribution and audit). No fire-and-forget AI calls.
+
+**Success criteria**:
+- `ssot/bridges/catalog.yaml` has `ipai_ai_tools_bridge` status=active with consumers:
+  `[odoo, ops-console, workers]` and `fallback: oca_ollama`
+- `ssot/parity/ee_to_oca_matrix.yaml` records "Ask AI editor assistant" as
+  `gap_type: ipai_bridge` (not `oca_available`) pointing to `ipai_ai_widget`
+- `ipai_ai_widget` addon routes via `ir.config_parameter ipai_ai_widget.bridge_url` —
+  no hardcoded LLM endpoint inside Odoo source
+- Missing `GEMINI_API_KEY` on bridge side returns `503 AI_KEY_NOT_CONFIGURED`
+  (enforced by contract, tested in `docs/contracts/AI_WIDGET_CONTRACT.md`)
+
 ---
 
 ## Non-Requirements (Out of Scope)
