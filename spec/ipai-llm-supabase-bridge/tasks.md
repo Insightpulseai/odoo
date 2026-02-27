@@ -190,3 +190,38 @@
   - Commit 2: `feat(ai): add ipai_llm_supabase_bridge module scaffold + Supabase schema`
   - Commit 3: `chore(ssot): register llm bridge in bridges catalog and secrets registry`
   - AC: All 3 commits pushed; CI green
+
+---
+
+## Phase 6 — Dependency Gate: Pin upstream refs + activate lifecycle
+
+> These tasks gate activation of all ipai_ai_* modules.
+> Tracked in `ssot/ai/dependencies.yaml` (apexive_odoo_llm, oca_ai_ollama).
+
+- [ ] **T6.1** Verify Apexive odoo-llm 19.0 port status
+  - Check `https://github.com/apexive/odoo-llm` for a `19.0` branch
+  - If branch exists: proceed to T6.2
+  - If absent: set `ssot/ai/dependencies.yaml` apexive_odoo_llm.status.lifecycle = `blocked`;
+    open a GitHub issue; link issue URL in the `evidence` field
+  - AC: `lifecycle` field is no longer `unknown`
+
+- [ ] **T6.2** Pin `apexive_odoo_llm.upstream.pinned_ref`
+  - Select a reviewed tag or SHA from the upstream 19.0 branch
+  - Set `pinned_ref` in `ssot/ai/dependencies.yaml`
+  - Record audit evidence: install smoke test output as `apexive_port_smoke_test.log`
+    in `docs/evidence/<stamp>/ai-deps/logs/` (canonical evidence path)
+  - AC: `pinned_ref != null` AND `dependency_policy.prod_activation_requires` both pass
+    (i.e., `check_ai_dependencies.py --schema-only` exits 0 for this entry)
+    AND smoke test artifact path recorded in `evidence` field
+
+- [ ] **T6.3** Flip lifecycle to `planned` or `active`
+  - After T6.2: set `lifecycle: planned` (port in-flight) or `lifecycle: active` (install verified)
+  - AC: `lifecycle != unknown` (invariant `unknown_is_blocked` no longer applies)
+    AND CI dependency gate (`pinned_ref_required_for_active` invariant) passes for this entry
+
+- [ ] **T6.4** Pin `oca_ai_ollama.upstream.pinned_ref`
+  - Audit vendored `addons/oca/ai/ai_oca_native_generate_ollama/` manifest version
+  - Record matching tag/SHA from `https://github.com/OCA/ai`
+  - Set `pinned_ref` in `ssot/ai/dependencies.yaml`
+  - AC: `pinned_ref != null` AND `dependency_policy.prod_activation_requires` passes
+    AND module installs cleanly on Odoo 19 (`--stop-after-init` exits 0)
