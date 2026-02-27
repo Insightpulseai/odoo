@@ -194,6 +194,67 @@ Workflow: `.github/workflows/debugpy-contract.yml` (runs on PR, path-filtered).
 
 ---
 
+## When to debug vs when to write a test
+
+Use this decision tree before reaching for the debugger.
+
+### Default workflow
+
+```
+Unexpected behaviour observed
+    ↓
+Can you reproduce it reliably?
+    ├─ No  → add logging/assertions to narrow it down first
+    └─ Yes → Does a regression test already exist?
+                 ├─ Yes → run it; if it passes, the bug is environmental → debug
+                 └─ No  → WRITE THE TEST FIRST, then debug to make it pass
+```
+
+### Criteria: reach for the debugger when…
+
+| Situation | Why debugger helps |
+|-----------|-------------------|
+| Root cause is unknown and logging is insufficient | Step through state changes interactively |
+| Bug only occurs under Odoo framework lifecycle (registry, compute triggers, ORM events) | Need to inspect real model instances |
+| Performance regression with no obvious hotspot | Profile with `IPAI_DEBUGPY_WAIT=1` to attach before load |
+| Exception raised deep in OCA/Odoo internals | Inspect live traceback and locals |
+| Race condition or timing-sensitive issue | Single-threaded `workers=0` debugpy is the only viable tool |
+
+### Criteria: write a test instead when…
+
+| Situation | Why a test is better |
+|-----------|---------------------|
+| You already understand the expected vs actual behaviour | Test captures the contract permanently |
+| The bug is in your own `ipai_*` code | You control the inputs; mock the rest |
+| You want to prevent regression | Debugger session is ephemeral; test is CI-enforced |
+| The scenario is a known edge case (missing attachment, blank config) | Unit test covers it in milliseconds |
+| You just debugged and found the root cause | Write the regression test **before** you write the fix |
+
+### The rule: debug to discover, test to prevent
+
+```
+1. Reproduce the failure
+2. Debug to find root cause   (debugpy or print-debugging)
+3. Write a regression test    (pytest or Odoo TransactionCase)
+4. Fix the code
+5. Verify: test must turn green, CI must pass
+```
+
+A fix without a test is a fix that will break again.
+
+### Test layer quick reference
+
+| What you're testing | Layer | Run command |
+|--------------------|-------|-------------|
+| `fetch_image_text()` network I/O | Pure pytest | `pytest addons/ipai/ipai_expense_ocr/tests/test_ocr_client.py -v` |
+| `parse_text()` / `normalize_amount()` | Pure pytest | `pytest addons/ipai/ipai_expense_ocr/tests/test_ocr_extract.py -v` |
+| `action_digitize_receipt()` end-to-end | Odoo TransactionCase | `python odoo-bin --test-enable --test-tags ipai_expense_ocr -d odoo_dev` |
+| Entrypoint silent-off + fail-fast | Bash contract gate | `bash scripts/ci/check_debugpy_contract.sh` |
+
+See `docs/architecture/ODOO_TEST_STRATEGY.md` for the full testing strategy matrix.
+
+---
+
 ## Related files
 
 | File | Role |
