@@ -16,7 +16,10 @@
     "depends": ["mail", "web", "base"],  # no enterprise deps
     "data": [
         "security/ir.model.access.csv",
+        "data/res_partner_bot.xml",
+        "data/mail_channel_ai.xml",
         "data/copilot_tools.xml",
+        "data/copilot_cron.xml",
     ],
     "assets": {
         "web.assets_backend": [
