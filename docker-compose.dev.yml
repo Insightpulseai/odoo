@@ -90,7 +90,9 @@ services:
       - N8N_BASIC_AUTH_USER=admin
       - N8N_BASIC_AUTH_PASSWORD=admin
     ports:
-      # 5679 host → 5678 container to leave host:5678 free for debugpy.
+      # host:5678 is RESERVED for Odoo debugpy (scripts/odoo_debugpy_entrypoint.py).
+      # n8n uses host:5679 → container:5678 to avoid the collision.
+      # Do NOT change back to 5678:5678 here.
       - "5679:5678"
     volumes:
       - n8n_data:/home/node/.n8n

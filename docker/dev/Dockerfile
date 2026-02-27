@@ -23,8 +23,10 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages -r /tmp/oca_re
 # =============================================================================
 # Install debugpy — required for IPAI_DEBUGPY=1 attach mode
 # =============================================================================
-# Only present in the *dev* image; never in prod (infra/deploy/docker-compose.prod.yml).
-RUN python3 -m pip install --no-cache-dir --break-system-packages debugpy
+# DEV-ONLY: this layer must NOT be copied into stage/prod images.
+# Prod image: infra/deploy/docker-compose.prod.yml uses odoo:19 directly — no debugpy.
+# Version pinned for reproducible builds; bump deliberately and re-tag.
+RUN python3 -m pip install --no-cache-dir --break-system-packages "debugpy==1.8.14"
 
 USER odoo
 
