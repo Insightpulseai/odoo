@@ -58,3 +58,29 @@ jobs:
         # IAP (iap.account, iap module) requires Odoo Enterprise license.
         # CE constraint: CLAUDE.md §Critical Rules rule #4.
         run: python3 scripts/ci/check_no_iap_imports.py --repo-root .
+
+  oca-must-have-ssot:
+    name: oca-must-have-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate OCA must-have base SSOT
+        run: python3 scripts/ci/check_oca_must_have_ssot.py --repo-root .
+
+  oca-must-have-accounting-ssot:
+    name: oca-must-have-accounting-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate OCA must-have accounting SSOT
+        run: python3 scripts/ci/check_oca_must_have_accounting_ssot.py --repo-root .

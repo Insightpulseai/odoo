@@ -1,0 +1,23 @@
+schema: ssot.oca.must_have_base.v1
+version: "1.0"
+source:
+  name: "OCA Must Have Base modules"
+  url: "https://test.odoo-community.org/list-of-must-have-oca-modules"
+modules:
+  - technical_name: queue_job
+    repo: queue
+    rationale: "Async job queue + jobrunner for background work."
+  - technical_name: report_xlsx
+    repo: reporting-engine
+    rationale: "Base XLSX report framework."
+  - technical_name: password_security
+    repo: server-auth
+    rationale: "Company-level password policy enforcement."
+  - technical_name: disable_odoo_online
+    repo: server-brand
+    rationale: "Remove odoo.com online services/links in CE contexts."
+  - technical_name: remove_odoo_enterprise
+    repo: server-brand
+    rationale: "Remove EE-only settings/views and EE marketing surfaces."
+notes:
+  - "This file is authoritative; docs must reference it and avoid duplicating the list."
