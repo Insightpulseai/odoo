@@ -2,19 +2,43 @@ name: ssot-gates
 
 on:
   pull_request:
+    paths:
+      - "ssot/**"
+      - "scripts/ci/**"
+      - "docs/runbooks/**"
+      - ".github/workflows/ssot-gates.yml"
   push:
     branches: [main]
+    paths:
+      - "ssot/**"
+      - "scripts/ci/**"
+      - "docs/runbooks/**"
+      - ".github/workflows/ssot-gates.yml"
   merge_group:
 
 jobs:
-  secrets-registry:
-    name: Validate secrets SSOT registry
+  secrets-ssot:
+    name: secrets-ssot
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - name: Install dependencies
         run: pip install pyyaml --quiet
-
       - name: Validate secrets registry
         run: python3 scripts/ci/check_secrets_ssot.py --repo-root .
+
+  parity-and-bridges-ssot:
+    name: parity-and-bridges-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate parity matrix and bridge catalog
+        run: python3 scripts/ci/check_parity_and_bridges_ssot.py --repo-root .

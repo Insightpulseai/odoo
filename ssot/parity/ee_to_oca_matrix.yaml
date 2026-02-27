@@ -1,0 +1,115 @@
+# schema: ssot.parity.ee_to_oca.v1
+# Maps Odoo Enterprise Edition features to OCA equivalents or IPAI bridges.
+# Used by CI parity gate and quarterly review process.
+#
+# gap_type values:
+#   oca_available   — OCA module exists and is used/planned
+#   ipai_bridge     — IPAI integration bridge fills the gap (see ssot/bridges/catalog.yaml)
+#   no_alternative  — No OCA or bridge available; feature gap accepted
+#
+# status values:
+#   active    — solution is deployed
+#   planned   — solution identified, not yet deployed
+#   evaluating — OCA module identified, under evaluation
+#   gap       — no solution, gap accepted
+
+version: "1.0.0"
+schema: ssot.parity.ee_to_oca.v1
+last_reviewed: "2026-02-27"
+
+schema_rules:
+  required_fields:
+    - ee_feature
+    - ee_module
+    - gap_type        # oca_available | ipai_bridge | no_alternative
+    - status          # active | planned | evaluating | gap
+  gap_type_values:
+    - oca_available
+    - ipai_bridge
+    - no_alternative
+  status_values:
+    - active
+    - planned
+    - evaluating
+    - gap
+
+entries:
+  - ee_feature: "mail.enterprise (Discuss module enhancements)"
+    ee_module: mail_enterprise
+    gap_type: ipai_bridge
+    oca_module: null
+    ipai_bridge: ipai_slack_connector
+    status: active
+    notes: "Slack replaces Mattermost/Discuss. ipai_slack_connector handles notifications."
+
+  - ee_feature: "account_accountant (Advanced accounting)"
+    ee_module: account_accountant
+    gap_type: oca_available
+    oca_module: account_move_line_search_all (OCA/account-financial-tools)
+    ipai_bridge: null
+    status: evaluating
+    notes: "Core accounting uses CE account module. OCA supplements for advanced reporting."
+
+  - ee_feature: "documents (Document management)"
+    ee_module: documents
+    gap_type: oca_available
+    oca_module: dms (OCA/dms)
+    ipai_bridge: null
+    status: evaluating
+    notes: "OCA/dms provides open-source document management. Evaluate for v19 compatibility."
+
+  - ee_feature: "sign (Electronic signatures)"
+    ee_module: sign
+    gap_type: no_alternative
+    oca_module: null
+    ipai_bridge: null
+    status: gap
+    notes: "No OCA equivalent for full e-signature. Gap accepted for now. Docu-sign integration possible future bridge."
+
+  - ee_feature: "social (Social marketing)"
+    ee_module: social
+    gap_type: no_alternative
+    oca_module: null
+    ipai_bridge: null
+    status: gap
+    notes: "Not a priority for InsightPulse AI use case."
+
+  - ee_feature: "loyalty (Loyalty programs)"
+    ee_module: loyalty
+    gap_type: no_alternative
+    oca_module: null
+    ipai_bridge: null
+    status: gap
+    notes: "Not applicable to current business model."
+
+  - ee_feature: "ai_tools (Odoo AI / IoT integration)"
+    ee_module: enterprise_ai
+    gap_type: ipai_bridge
+    oca_module: null
+    ipai_bridge: ipai_ai_tools_bridge
+    status: planned
+    notes: "Google Gemini bridge via platform/ai/providers/gemini.ts fills this gap."
+
+  - ee_feature: "mail_server (Outbound mail with custom domain)"
+    ee_module: mail_enterprise
+    gap_type: ipai_bridge
+    oca_module: null
+    ipai_bridge: ipai_zoho_mail_api
+    status: active
+    notes: "Zoho Mail API bridge handles outbound mail via smtp.zoho.com:587."
+
+  - ee_feature: "ocr_document (Document AI / OCR)"
+    ee_module: documents_ocr
+    gap_type: ipai_bridge
+    oca_module: null
+    ipai_bridge: ipai_ocr_paddleocr
+    status: active
+    notes: "PaddleOCR-VL self-hosted on DO droplet. REST API bridge via ipai_ai_tools."
+
+  - ee_feature: "helpdesk (Customer support)"
+    ee_module: helpdesk
+    gap_type: oca_available
+    oca_module: helpdesk (OCA/helpdesk)
+    ipai_bridge: null
+    status: evaluating
+    notes: "OCA helpdesk module available for v16+. Evaluate v19 port status."
