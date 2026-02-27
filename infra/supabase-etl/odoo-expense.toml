@@ -1,0 +1,42 @@
+# Supabase ETL — Odoo Expense CDC Publication
+# Streams INSERT/UPDATE/DELETE from Odoo Postgres to analytics destination.
+# Docs: https://supabase.github.io/etl
+#
+# Required env vars:
+#   ODOO_PG_CDC_URL   — postgres://odoo_cdc:<pw>@<host>:5432/odoo?sslmode=require
+#   BQ_PROJECT_ID     — BigQuery project ID (swap to ICEBERG_CATALOG_URI when ready)
+#
+# Prereqs on Odoo Postgres (run once):
+#   ALTER SYSTEM SET wal_level = 'logical';
+#   CREATE ROLE odoo_cdc REPLICATION LOGIN PASSWORD '<generated>';
+#   GRANT SELECT ON hr_expense, hr_expense_sheet, ir_attachment, ipai_expense_ocr_run TO odoo_cdc;
+#   CREATE PUBLICATION odoo_expense_pub FOR TABLE
+#     hr_expense, hr_expense_sheet, ir_attachment, ipai_expense_ocr_run;
+
+[source]
+type               = "postgres"
+connection_string  = "${ODOO_PG_CDC_URL}"
+slot_name          = "odoo_expense_etl_slot"
+publication        = "odoo_expense_pub"
+
+[destination]
+type       = "bigquery"
+project_id = "${BQ_PROJECT_ID}"
+dataset    = "odoo_ops"
+
+[[table]]
+source      = "hr_expense"
+destination = "expense"
+
+[[table]]
+source      = "hr_expense_sheet"
+destination = "expense_sheet"
+
+[[table]]
+source      = "ir_attachment"
+destination = "expense_attachment"
+# Note: exclude binary 'datas' column in destination schema definition
+
+[[table]]
+source      = "ipai_expense_ocr_run"
+destination = "expense_ocr_run"
