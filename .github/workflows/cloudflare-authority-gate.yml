@@ -8,12 +8,12 @@ name: Cloudflare Authority Gate
 # domain's nameservers still point to the old registrar (Spacesquare).
 # This gate makes that condition explicit and visible on every PR.
 #
-# Pass: Cloudflare NS delegation is live → PR may merge.
-# Fail: Old NS delegation → PR blocked with actionable message.
+# Pass: Cloudflare NS delegation is live -> PR may merge.
+# Fail: Old NS delegation -> PR blocked with actionable message.
 #
 # Secrets required: none (NS/SOA check is a public DNS query).
 # Bypass: If NS delegation is genuinely in progress, add label "cf-ns-pending"
-#         to the PR — the gate will warn but not block.
+#         to the PR -- the gate will warn but not block.
 # =============================================================================
 
 on:
@@ -59,7 +59,7 @@ jobs:
       - name: Read check result
         id: result
         run: |
-          if grep -q "✅ PASS" /tmp/authority_check.log; then
+          if grep -q "PASS" /tmp/authority_check.log; then
             echo "authoritative=true" >> "$GITHUB_OUTPUT"
           else
             echo "authoritative=false" >> "$GITHUB_OUTPUT"
@@ -75,49 +75,46 @@ jobs:
             --json labels --jq '.labels[].name' 2>/dev/null || echo "")
           if echo "$LABELS" | grep -q "cf-ns-pending"; then
             echo "bypassed=true" >> "$GITHUB_OUTPUT"
-            echo "⚠️  Bypass label 'cf-ns-pending' found — gate warning only, not blocking."
+            echo "Bypass label 'cf-ns-pending' found -- gate warning only, not blocking."
           else
             echo "bypassed=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Post PR comment (if not authoritative)
         if: steps.result.outputs.authoritative == 'false' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const body = `## ❌ Cloudflare Authority Gate — FAILED
-
-**Cloudflare is NOT currently the authoritative DNS for \`insightpulseai.com\`.**
-
-DNS record changes committed to \`infra/cloudflare/zones/\` will have **no effect** until Cloudflare nameservers are delegated.
-
-### Required action (one-time, at registrar)
-
-1. Log into **Spacesquare** (domain registrar)
-2. Set nameservers to:
-   - \`edna.ns.cloudflare.com\`
-   - \`keanu.ns.cloudflare.com\`
-3. Wait for NS propagation (up to 24-48 hours)
-4. Re-run this check: trigger the **Cloudflare Authority Gate** workflow manually
-
-### While delegation is pending
-
-Add label **\`cf-ns-pending\`** to this PR to convert the gate from blocking to warning-only.
-DNS record commits are still safe to merge — they will apply once delegation completes.
-
----
-*Check log:*
-\`\`\`
-${require('fs').readFileSync('/tmp/authority_check.log', 'utf8').slice(0, 2000)}
-\`\`\`
-`;
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body,
-            });
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG=$(head -c 2000 /tmp/authority_check.log 2>/dev/null || echo "Log unavailable")
+          {
+            echo '## Cloudflare Authority Gate - FAILED'
+            echo ''
+            echo 'Cloudflare is NOT currently the authoritative DNS for `insightpulseai.com`.'
+            echo ''
+            echo 'DNS record changes committed to `infra/cloudflare/zones/` will have no effect'
+            echo 'until Cloudflare nameservers are delegated.'
+            echo ''
+            echo '### Required action (one-time, at registrar)'
+            echo ''
+            echo '1. Log into Spacesquare (domain registrar)'
+            echo '2. Set nameservers to:'
+            echo '   - `edna.ns.cloudflare.com`'
+            echo '   - `keanu.ns.cloudflare.com`'
+            echo '3. Wait for NS propagation (up to 24-48 hours)'
+            echo '4. Re-run this check: trigger the Cloudflare Authority Gate workflow manually'
+            echo ''
+            echo '### While delegation is pending'
+            echo ''
+            echo 'Add label `cf-ns-pending` to this PR to convert the gate from blocking to warning-only.'
+            echo 'DNS record commits are still safe to merge -- they will apply once delegation completes.'
+            echo ''
+            echo '---'
+            echo '*Check log:*'
+            echo '```'
+            echo "$LOG"
+            echo '```'
+          } > /tmp/cf_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/cf_comment.md
 
       - name: Fail gate (if not authoritative and not bypassed)
         if: steps.result.outputs.authoritative == 'false' && steps.bypass.outputs.bypassed != 'true'
@@ -136,4 +133,4 @@ ${require('fs').readFileSync('/tmp/authority_check.log', 'utf8').slice(0, 2000)}
       - name: Pass
         if: steps.result.outputs.authoritative == 'true'
         run: |
-          echo "✅ Cloudflare is authoritative for $VERIFY_DOMAIN — DNS changes will apply on merge."
+          echo "Cloudflare is authoritative for $VERIFY_DOMAIN -- DNS changes will apply on merge."

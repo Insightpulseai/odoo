@@ -7,10 +7,10 @@ name: Repo Top-Level Boundary Guard
 # Checker script: scripts/repo/enforce_top_level_allowlist.py
 #
 # Behaviour:
-#   - Violations (dirs not in allowlist at all) → FAIL ❌
-#   - Tier 2/3 legacy dirs (grandfathered) → WARN ⚠️ (pass unless --strict)
-#   - Hidden dirs (dot-prefix) → always OK ✅
-#   - Generated dirs (node_modules, __pycache__, etc.) → always OK ✅
+#   - Violations (dirs not in allowlist at all) -> FAIL
+#   - Tier 2/3 legacy dirs (grandfathered) -> WARN (pass unless --strict)
+#   - Hidden dirs (dot-prefix) -> always OK
+#   - Generated dirs (node_modules, __pycache__, etc.) -> always OK
 #
 # To add a new top-level directory:
 #   1. Add it to ssot/repo/top_level_allowlist.yaml with tier, purpose, owner
@@ -59,52 +59,47 @@ jobs:
 
       - name: Post PR comment on violation
         if: steps.check.outputs.exit_code != '0' && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const log = fs.readFileSync('/tmp/tl_guard.log', 'utf8').slice(0, 3000);
-            const body = `## ❌ Top-Level Boundary Guard — FAILED
-
-This PR adds a **top-level directory that is not in the canonical allowlist**.
-
-### Required action
-
-1. Add the new directory to \`ssot/repo/top_level_allowlist.yaml\` with:
-   - \`tier\`: 0, 1, 2, or 3
-   - \`purpose\`: one-line description
-   - \`owner\`: team/person responsible
-   - \`migrate_to\`: (Tier 2/3 only) where it should eventually live
-
-2. Include the allowlist update in **this same PR**.
-
-### Canonical top-level boundaries (prefer these over new root dirs)
-
-| Root | Use for |
-|------|---------|
-| \`infra/\` | IaC, DNS, cloud configs, Terraform |
-| \`platform/\` | Supabase platform kit, advisor, registry |
-| \`web/\` | Next.js apps, control plane, AI control plane |
-| \`agents/\` | Agent registry, skills, workflows |
-| \`apps/\` | Standalone applications (iOS, ops-console) |
-| \`docs/\` | Architecture, runbooks, contracts |
-| \`spec/\` | Spec Kit bundles |
-| \`scripts/\` | Tooling, CI checks |
-| \`supabase/\` | DB schema, Edge Functions, RLS |
-| \`addons/\` | Odoo addons (CE, OCA, ipai) |
-
----
-*Checker log:*
-\`\`\`
-${log}
-\`\`\`
-`;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body,
-            });
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG=$(head -c 3000 /tmp/tl_guard.log 2>/dev/null || echo "Log unavailable")
+          {
+            echo '## Top-Level Boundary Guard - FAILED'
+            echo ''
+            echo 'This PR adds a top-level directory that is not in the canonical allowlist.'
+            echo ''
+            echo '### Required action'
+            echo ''
+            echo '1. Add the new directory to `ssot/repo/top_level_allowlist.yaml` with:'
+            echo '   - `tier`: 0, 1, 2, or 3'
+            echo '   - `purpose`: one-line description'
+            echo '   - `owner`: team/person responsible'
+            echo '   - `migrate_to`: (Tier 2/3 only) where it should eventually live'
+            echo ''
+            echo '2. Include the allowlist update in this same PR.'
+            echo ''
+            echo '### Canonical top-level boundaries (prefer these over new root dirs)'
+            echo ''
+            echo '| Root | Use for |'
+            echo '|------|---------|'
+            echo '| `infra/` | IaC, DNS, cloud configs, Terraform |'
+            echo '| `platform/` | Supabase platform kit, advisor, registry |'
+            echo '| `web/` | Next.js apps, control plane, AI control plane |'
+            echo '| `agents/` | Agent registry, skills, workflows |'
+            echo '| `apps/` | Standalone applications (iOS, ops-console) |'
+            echo '| `docs/` | Architecture, runbooks, contracts |'
+            echo '| `spec/` | Spec Kit bundles |'
+            echo '| `scripts/` | Tooling, CI checks |'
+            echo '| `supabase/` | DB schema, Edge Functions, RLS |'
+            echo '| `addons/` | Odoo addons (CE, OCA, ipai) |'
+            echo ''
+            echo '---'
+            echo '*Checker log:*'
+            echo '```'
+            echo "$LOG"
+            echo '```'
+          } > /tmp/tl_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/tl_comment.md
 
       - name: Fail on violations
         if: steps.check.outputs.exit_code != '0'
@@ -116,6 +111,6 @@ ${log}
       - name: Pass
         if: steps.check.outputs.exit_code == '0'
         run: |
-          echo "✅ All top-level directories are allowlisted."
+          echo "All top-level directories are allowlisted."
           # Show any tier 2/3 warnings for awareness
-          grep "⚠️" /tmp/tl_guard.log || true
+          grep "Tier 2" /tmp/tl_guard.log || true
