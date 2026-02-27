@@ -4,7 +4,7 @@
 {
     "name": "IPAI Mailgun SMTP Transport",
     "version": "19.0.1.0.0",
-    "summary": "Mailgun SMTP outbound server for mg.insightpulseai.com (port 2525, bypasses DO block)",
+    "summary": "DEPRECATED - Mailgun replaced by Zoho Mail (ipai_zoho_mail). Do not install.",
     "description": """
 IPAI Mailgun SMTP Transport
 =============================
@@ -35,7 +35,7 @@ Sending domain: mg.insightpulseai.com (outbound-only, Zoho handles inbound).
     "data": [
         "data/ir_mail_server.xml",
     ],
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
 }

@@ -1,6 +1,6 @@
 {
     "name": "IPAI OdooOps Shell (Hybrid)",
-    "version": "1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Tools",
     "summary": "QWeb shell for auth/nav + Next.js dashboard embed",
     "depends": ["website"],

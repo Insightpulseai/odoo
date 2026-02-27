@@ -40,7 +40,7 @@ This module is part of the CES creative analytics platform.
         "views/sale_order_views.xml",
         "views/crm_lead_views.xml",
     ],
-    "installable": True,
+    "installable": False,
     "application": True,
     "auto_install": False,
 }

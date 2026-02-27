@@ -60,7 +60,7 @@
             "ipai_hr_payroll_ph/static/src/**/*",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": True,
     "auto_install": False,
 }

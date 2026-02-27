@@ -56,7 +56,7 @@ This module serves as the foundation for:
         "views/finance_role_views.xml",
         "views/menus.xml",
     ],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

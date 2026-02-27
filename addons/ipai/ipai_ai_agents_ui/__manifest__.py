@@ -58,7 +58,7 @@ License: LGPL-3
             "ipai_ai_agents_ui/static/lib/ipai_ai_ui.css",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }
