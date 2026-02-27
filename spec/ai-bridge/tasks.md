@@ -8,4 +8,4 @@
 - [x] **T-4** Create OWL 2 component + XML template (button in chatter, dialog, insert)
 - [x] **T-5** Add `ipai_ai_widget` to `ssot/bridges/catalog.yaml`
 - [x] **T-6** Create `docs/contracts/AI_WIDGET_CONTRACT.md`
-- [ ] **T-7** Add no-IAP CI lint gate to `.github/workflows/ssot-gates.yml`
+- [x] **T-7** Add no-IAP CI lint gate to `.github/workflows/ssot-gates.yml`
