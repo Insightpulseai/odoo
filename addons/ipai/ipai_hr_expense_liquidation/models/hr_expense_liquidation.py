@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -285,6 +285,46 @@ class HrExpenseLiquidation(models.Model):
     def action_reset_to_draft(self):
         self.ensure_one()
         self.write({"state": "draft"})
+
+    def action_trigger_agent_run(self):
+        """
+        Create an ipai.agent.run targeting this liquidation and open it.
+        Requires ipai_agent module to be installed; silently skips if not present.
+        """
+        self.ensure_one()
+        if "ipai.agent.run" not in self.env:
+            raise UserError(_("IPAI Agent module is not installed."))
+        run = self.env["ipai.agent.run"].find_or_create({
+            "tool_id": self._get_default_agent_tool_id(),
+            "target_model": self._name,
+            "target_res_id": self.id,
+            "input_json": __import__("json").dumps({
+                "liquidation_name": self.name,
+                "employee": self.employee_id.name,
+                "total_expenses": self.total_expenses,
+                "settlement_amount": self.settlement_amount,
+            }),
+        })
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "ipai.agent.run",
+            "res_id": run.id,
+            "view_mode": "form",
+            "target": "new",
+        }
+
+    def _get_default_agent_tool_id(self):
+        """Return the ID of the default agent tool for liquidation processing."""
+        tool = self.env["ipai.agent.tool"].search([
+            ("technical_name", "=", "liquidation_process"),
+            ("active", "=", True),
+        ], limit=1)
+        if not tool:
+            raise UserError(_(
+                "No active tool with technical name 'liquidation_process' found. "
+                "Configure one in IPAI → Agents → Configuration → Tools."
+            ))
+        return tool.id
 
     def action_view_lines(self):
         self.ensure_one()
