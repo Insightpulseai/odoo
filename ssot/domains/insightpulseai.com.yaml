@@ -1,0 +1,115 @@
+# schema: ssot.domains.v1
+# Single source of truth for InsightPulse AI domain policy.
+# Edit this file to add/remove canonical subdomains.
+# CI enforcement: .github/workflows/domain-lint.yml
+
+apex: insightpulseai.com
+
+prohibited_domains:
+  - insightpulseai.net
+  - insightpulse.net
+  - "*.vercel.app"
+  - "*.ondigitalocean.app"
+
+prohibited_patterns:
+  - description: "Legacy .net domain"
+    pattern: "insightpulseai\\.net"
+    exception_paths:
+      - "docs/99-Archive/"
+      - "docs/XX-Archive/"
+      - ".github/DEPRECATED"
+      - "CLAUDE.md"                # deprecated items table
+      - "AGENTS.md"                # agent instructions reference deprecated items
+      - "GEMINI.md"                # agent instructions reference deprecated items
+      - "docs/ai/"                 # AI docs reference deprecated items
+      - "docs/arch/"               # architecture snapshots reference deprecated items
+      - "docs/architecture/"       # canonical URLs doc references deprecated items
+      - "docs/ee-parity-gate/"     # parity reports reference deprecated items
+      - "docs/evidence/"           # historical evidence bundles
+      - "docs/governance/"         # policy gates reference deprecated items
+      - "docs/issues/"             # issue audits reference deprecated items
+      - "docs/pages/"              # deployment timeline references deprecated items
+      - "docs/process/"            # governance docs reference deprecated items
+      - "docs/DEPRECATED"          # deprecated docs index
+      - "scripts/deploy/"          # migration scripts intentionally reference .net
+      - "scripts/automations/"     # sweep scripts detect .net references
+      - "scripts/ci/"              # CI scripts (including this checker) reference .net
+      - "ssot/"                    # SSOT files themselves list prohibited domains
+      - ".claude/"                 # agent rules reference deprecated items
+      - ".github/workflows/"       # CI workflows scan for .net
+      - "archive/"                 # archived files
+      - "reports/"                 # audit reports
+      - "specs/"                   # spec docs
+      - "web/platform-kit/"        # platform-kit references deprecated items
+
+canonical_subdomains:
+  - host: erp
+    service: Odoo CE 19
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "Primary ERP — erp.insightpulseai.com"
+
+  - host: auth
+    service: Supabase Auth / Stack Auth
+    stack: supabase
+    resolves_to: 178.128.112.214
+    notes: "Authentication gateway"
+
+  - host: n8n
+    service: n8n automation
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "Workflow automation"
+
+  - host: ocr
+    service: PaddleOCR service
+    stack: do-app-platform
+    resolves_to: 178.128.112.214
+    notes: "Document OCR processing"
+
+  - host: ops
+    service: Ops Console
+    stack: vercel-nextjs
+    resolves_to: vercel-cname
+    notes: "Internal operations dashboard"
+
+  - host: api
+    service: API gateway
+    stack: tbd
+    resolves_to: tbd
+    notes: "Planned — not yet active"
+
+  - host: docs
+    service: Documentation
+    stack: tbd
+    resolves_to: tbd
+    notes: "Planned — not yet active"
+
+  - host: superset
+    service: Apache Superset BI
+    stack: do-app-platform
+    resolves_to: superset-nlavf.ondigitalocean.app
+    dns_type: CNAME
+    notes: "BI analytics dashboard"
+
+  - host: mcp
+    service: MCP coordination server
+    stack: do-app-platform
+    resolves_to: pulse-hub-web-an645.ondigitalocean.app
+    dns_type: CNAME
+    notes: "MCP server hub"
+
+  - host: agent
+    service: AI agent endpoint
+    stack: do-agents
+    resolves_to: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
+    dns_type: CNAME
+    notes: "Primary AI agent endpoint"
+
+  - host: chat
+    service: Mattermost (legacy)
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    status: deprecated
+    replacement: Slack
+    notes: "DEPRECATED — use Slack for new integrations"
