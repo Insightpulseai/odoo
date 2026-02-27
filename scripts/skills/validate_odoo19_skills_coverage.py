@@ -1,24 +1,8 @@
 #!/usr/bin/env python3
 """
 validate_odoo19_skills_coverage.py
-
-Validates that the repository contains all skill stub directories required by
-the coverage SSOT (ssot/skills/odoo19_docs_coverage.yaml).
-
-Exits:
-  0 — all expected stubs present
-  1 — one or more stubs missing
-
-Output (stdout): JSON with structured coverage broken down by section:
-  {
-    "coverage": {
-      "odoo19_docs":         { "total": N, "found": N, "missing": N, "pct": 100.0 },
-      "vercel_agent_skills": { "total": N, "found": N, "missing": N, "pct": 100.0 },
-      "supabase_agent_skills": { ... }
-    },
-    "overall": { "total": N, "found": N, "missing": N, "pct": 100.0 },
-    "missing_skills": []
-  }
+Validates that the repository contains all the Odoo 19 application skills
+defined in the SSOT (ssot/odoo/odoo19_app_skills_map.yaml).
 """
 
 import sys
@@ -27,25 +11,8 @@ import yaml
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent.parent.resolve()
-SSOT_PATH = REPO_ROOT / "ssot" / "skills" / "odoo19_docs_coverage.yaml"
+SSOT_PATH = REPO_ROOT / "ssot" / "odoo" / "odoo19_app_skills_map.yaml"
 SKILLS_DIR = REPO_ROOT / "skills"
-
-# Groups that belong to external skill packs (not Odoo docs)
-EXTERNAL_PACK_GROUPS = {"vercel_agent_skills", "supabase_agent_skills"}
-
-
-def check_group(group: str, apps: dict) -> dict:
-    total, found, missing = 0, 0, []
-    for _app, paths in apps.items():
-        for p in paths:
-            total += 1
-            if (SKILLS_DIR / p).is_dir():
-                found += 1
-            else:
-                missing.append(p)
-    pct = round(found / total * 100, 2) if total > 0 else 100.0
-    return {"total": total, "found": found, "missing": len(missing), "pct": pct,
-            "_missing_paths": missing}
 
 
 def main():
@@ -56,60 +23,47 @@ def main():
     with open(SSOT_PATH) as f:
         ssot = yaml.safe_load(f)
 
-    expected = ssot.get("expected", {})
+    expected_skills = {}
+    for group, apps in ssot.get("expected", {}).items():
+        for app, paths in apps.items():
+            for p in paths:
+                expected_skills[p] = f"{group}.{app}"
 
-    # Split into odoo19_docs vs external skill packs
-    odoo_groups = {g: a for g, a in expected.items() if g not in EXTERNAL_PACK_GROUPS}
-    ext_groups   = {g: a for g, a in expected.items() if g in EXTERNAL_PACK_GROUPS}
+    missing_skills = []
+    found_skills = []
 
-    coverage: dict = {}
+    for skill_path, _ in expected_skills.items():
+        full_path = SKILLS_DIR / skill_path
+        if full_path.exists() and full_path.is_dir():
+            found_skills.append(skill_path)
+        else:
+            missing_skills.append(skill_path)
 
-    # --- Odoo 19 docs coverage (aggregated) ---
-    odoo_total, odoo_found, odoo_missing = 0, 0, []
-    for group, apps in odoo_groups.items():
-        r = check_group(group, apps)
-        odoo_total += r["total"]
-        odoo_found += r["found"]
-        odoo_missing.extend(r["_missing_paths"])
-    odoo_pct = round(odoo_found / odoo_total * 100, 2) if odoo_total > 0 else 100.0
-    coverage["odoo19_docs"] = {
-        "total": odoo_total, "found": odoo_found,
-        "missing": len(odoo_missing), "pct": odoo_pct,
+    # Extra skills (optional to check all, but keeping simple for this validation)
+    # We just focus on whether the expected ones are present.
+
+    total = len(expected_skills)
+    found = len(found_skills)
+    coverage = (found / total * 100) if total > 0 else 100
+
+    summary = {
+        "total_expected": total,
+        "found": found,
+        "missing": len(missing_skills),
+        "coverage_percentage": round(coverage, 2),
+        "missing_skills": missing_skills,
     }
 
-    # --- External skill packs (one section each) ---
-    all_ext_missing: list = []
-    for group, apps in ext_groups.items():
-        r = check_group(group, apps)
-        coverage[group] = {
-            "total": r["total"], "found": r["found"],
-            "missing": r["missing"], "pct": r["pct"],
-        }
-        all_ext_missing.extend(r["_missing_paths"])
+    print(json.dumps(summary, indent=2))
 
-    # --- Overall ---
-    all_missing = odoo_missing + all_ext_missing
-    all_total   = sum(v["total"] for v in coverage.values())
-    all_found   = sum(v["found"] for v in coverage.values())
-    overall_pct = round(all_found / all_total * 100, 2) if all_total > 0 else 100.0
-
-    output = {
-        "coverage": coverage,
-        "overall": {"total": all_total, "found": all_found,
-                    "missing": len(all_missing), "pct": overall_pct},
-        "missing_skills": all_missing,
-    }
-
-    print(json.dumps(output, indent=2))
-
-    if all_missing:
+    if missing_skills:
         print(
-            "\n[FAIL] Missing skill stubs. Create stub directories for each entry in missing_skills.",
+            "\n[FAIL] Missing required skills defined in SSOT. Please create stub directories for them.",
             file=sys.stderr,
         )
         sys.exit(1)
     else:
-        print("\n[OK] All expected skill stubs are present.", file=sys.stderr)
+        print("\n[OK] All expected skills are present.", file=sys.stderr)
         sys.exit(0)
 
 

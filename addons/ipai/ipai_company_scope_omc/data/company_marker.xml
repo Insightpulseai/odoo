@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+     Intentionally minimal: marking is done deterministically by
+     scripts/company/mark_tbwa_smp_company.py which sets both:
+       - res.company.ipai_is_tbwa_smp = True
+       - ir.config_parameter(ipai.company.tbwa_company_id) = <company id>
+
+     The <function> below is a convenience-only fallback for environments
+     where the company happens to be named exactly "TBWA\SMP".  It logs
+     a WARNING (does NOT fail install) if no such company is found.
+
+     If your company name differs, this is a no-op — run the script manually.
+-->
+<odoo>
+    <data noupdate="1">
+
+        <function
+            model="res.company"
+            name="_ipai_mark_tbwa_smp_by_name">
+            <value>TBWA\SMP</value>
+        </function>
+
+    </data>
+</odoo>
