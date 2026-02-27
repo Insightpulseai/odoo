@@ -27,6 +27,7 @@ except ImportError:
     sys.exit(2)
 
 SSOT_PATH = "ssot/domains/insightpulseai.com.yaml"
+REQUIRED_ROOT_DOMAIN = "insightpulseai.com"
 
 NOQA_MARKER = "noqa: domain-lint"
 
@@ -157,6 +158,15 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     ssot = load_ssot(repo_root)
+
+    apex = ssot.get("apex", "")
+    if apex != REQUIRED_ROOT_DOMAIN:
+        print(
+            f"ERROR: SSOT schema error — 'apex' must be '{REQUIRED_ROOT_DOMAIN}', "
+            f"got '{apex}'",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     violations = scan_files(repo_root, ssot)
 
