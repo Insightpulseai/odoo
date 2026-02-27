@@ -96,6 +96,7 @@ subdomains:
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: active
+    drift_note: "Cloudflare currently has A record (178.128.112.214) — WRONG. Must be CNAME. Will be fixed on next Terraform apply."
 
   # ---------------------------------------------------------------------------
   # Additional Subdomains (for www, api, etc.)
@@ -119,6 +120,20 @@ subdomains:
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     status: planned
+
+  # ---------------------------------------------------------------------------
+  # Vercel Deployments (CNAME → cname.vercel-dns.com)
+  # ---------------------------------------------------------------------------
+  - name: ops
+    type: CNAME
+    service: ops_console_vercel
+    target: cname.vercel-dns.com
+    health_check: /api/health
+    owner_system: "OdooOps Console (Next.js on Vercel)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    status: active
+    notes: "Vercel project: odooops-console (apps/ops-console). Add ops.insightpulseai.com in Vercel dashboard domains."
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
@@ -210,3 +225,25 @@ deprecated:
     reason: "Service no longer needed"
     dns_removed: true
     container_removed: true
+
+  # Mailgun email routing — replaced by Zoho Mail SMTP (2026-02)
+  # Remove from Cloudflare: email.mg CNAME, mg SPF TXT, mx._domainkey.mg DKIM TXT, _dmarc.mg DMARC TXT
+  - name: mg
+    deprecated_date: "2026-02-01"
+    replacement: "Zoho Mail (mx.zoho.com / mx2 / mx3)"
+    reason: "Mailgun deprecated; outbound mail now routes through Zoho Mail SMTP bridge (ipai_zoho_mail_api)"
+    dns_removed: false
+    records_to_remove:
+      - type: CNAME
+        name: email.mg
+        content: mailgun.org
+      - type: TXT
+        name: mg
+        content: "v=spf1 include:mailgun.org ~all"
+      - type: TXT
+        name: mx._domainkey.mg
+        content: "k=rsa; p=MIGfMA0..."
+      - type: TXT
+        name: _dmarc.mg
+        content: "v=DMARC1; p=none; ..."
+    notes: "4 records still present in Cloudflare as of 2026-02-27 — remove via Terraform apply"
