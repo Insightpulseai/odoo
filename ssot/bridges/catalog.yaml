@@ -133,3 +133,26 @@ bridges:
       and provider cost routing (Flash/Pro). Gemini function calling enables
       create/update/search Odoo records from natural language.
       ir.config_parameter: ipai_ai_copilot.bridge_url = /api/ai/gemini/tools
+
+  - name: ipai_llm_supabase_bridge
+    display_name: "LLM Observability Bridge (Apexive → Supabase)"
+    replaces_ee_feature: "Odoo AI activity logging / audit trail (EE)"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_llm_supabase_bridge/
+    status: planned
+    contract_doc: docs/contracts/LLM_SUPABASE_BRIDGE_CONTRACT.md
+    secrets:
+      - llm_bridge_webhook_secret
+      - anthropic_api_key
+    consumers:
+      - odoo          # ipai_llm_supabase_bridge module (event outbox)
+      - supabase      # functions/llm-webhook-ingest (event ingestion)
+    endpoints:
+      - llm-webhook-ingest    # POST Supabase Edge Function — signed webhook delivery
+    notes: >
+      Observability bridge connecting Apexive odoo-llm framework to Supabase ops.* schema.
+      Hooks into llm_tool._execute() and llm_thread lifecycle to emit signed webhook events.
+      Provides DLQ + exponential-backoff retry via cron. One-way only: Odoo SOR → Supabase SSOT.
+      Architecture layer: different from ipai_ai_copilot (which routes inference through bridge URL).
+      Apexive framework makes direct provider calls; this module adds observability on top.
+      Spec: spec/ipai-llm-supabase-bridge/
