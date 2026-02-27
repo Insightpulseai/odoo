@@ -3,7 +3,17 @@
 **Audit date**: 2026-02-27
 **Branch**: `feat/ipai-module-audit-odoo19`
 **Auditor**: Claude Code (automated manifest + view scan)
-**Scope**: `addons/ipai/` — 60 modules enumerated (1 is `__pycache__`, 59 real modules)
+**Scope**: `addons/ipai/` — 59 real modules (primary) + `addons/ipai_*/` root-level — 40 legacy modules
+
+> **⚠️ Architectural finding**: The repo contains two populations of custom modules:
+> - **`addons/ipai/`** (59 modules) — in the configured `addons-path`, Odoo can see these
+> - **`addons/ipai_*/`** root-level (40 modules) — **NOT in any addons-path config** (DevContainer, prod, dev, stage)
+>
+> Root-level modules are unreachable by Odoo. They appear to be legacy 18.0 modules
+> that predate the `addons/ipai/` consolidation and have not been migrated.
+> `ipai_bir_tax_compliance` at `addons/ipai_bir_tax_compliance/` (18.0.x) is one of these —
+> it exists on disk but is invisible to Odoo. The 7 modules blocked by missing deps in this
+> audit remain correctly disabled until 19.0-compatible versions are placed in `addons/ipai/`.
 
 ---
 
@@ -200,8 +210,63 @@ In Odoo 19, `<tree>` is deprecated in favor of `<list>` and `view_mode` values m
 
 ### Future PRs (out of scope here)
 
-- Scaffold `ipai_bir_tax_compliance` (Philippine BIR core + filing forms)
-- Scaffold `ipai_workspace_core` (shared workspace primitives for verticals)
-- Scaffold `ipai_ai_core` (shared AI provider config for AI modules)
+- Scaffold `ipai_bir_tax_compliance` 19.0 in `addons/ipai/` (Philippine BIR core + filing forms)
+- Scaffold `ipai_workspace_core` 19.0 in `addons/ipai/` (shared workspace primitives for verticals)
+- Scaffold `ipai_ai_core` 19.0 in `addons/ipai/` (shared AI provider config for AI modules)
+- Audit root-level `addons/ipai_*/` legacy modules — decide: port to 19.0+addons/ipai/, archive, or delete
 - Evaluate OCA `helpdesk_mgmt` as replacement for `ipai_helpdesk` (lower maintenance burden)
 - Evaluate OCA `auth_oidc` as replacement for `ipai_auth_oidc`
+
+---
+
+## Root-Level Legacy Modules (addons/ipai_*/ — NOT in addons-path)
+
+These 40 modules exist under `addons/` root but are **not in any configured addons-path**.
+They are unreachable by Odoo. Most are Odoo 18.0 vintage and predate the `addons/ipai/` consolidation.
+
+**Decision needed**: port 19.0-compatible ones to `addons/ipai/`, archive or delete the rest.
+
+| Module | Version | Functional Area | Migration Path |
+|--------|---------|----------------|----------------|
+| `ipai_ai_agent_builder` | 19.0.1.0.0 | AI | Has 19.0 equivalent in addons/ipai/ (deprecated) — skip |
+| `ipai_ai_rag` | 18.0.1.0.0 | AI | Port to 19.0 + addons/ipai/ or supersede with ipai_ai_copilot |
+| `ipai_ai_tools` | 18.0.1.0.0 | AI | Port to 19.0 + addons/ipai/ or supersede with ipai_ai_copilot |
+| `ipai_ask_ai` | 1.0.0 | AI | Evaluate: superseded by ipai_ai_widget? |
+| `ipai_ask_ai_chatter` | 18.0.1.1.0 | AI | Evaluate: superseded by ipai_ai_copilot? |
+| `ipai_bir_data` | 18.0.1.0.0 | BIR | Port to 19.0 — needed by BIR suite |
+| `ipai_bir_tax_compliance` | 18.0.1.0.0 | BIR | **Priority port** — unblocks 3 addons/ipai/ modules |
+| `ipai_crm_pipeline` | 18.0.1.0.0 | CRM | Evaluate: OCA crm replacement? |
+| `ipai_doc_ocr_bridge` | 19.0.1.0.0 | OCR | 19.0 — consider moving to addons/ipai/ |
+| `ipai_docflow_review` | 19.0.1.0.0 | OCR | 19.0 — consider moving to addons/ipai/ |
+| `ipai_enterprise_bridge` | 19.0.1.0.0 | Core | Duplicate of addons/ipai/ipai_enterprise_bridge — resolve |
+| `ipai_finance_closing` | 18.0.1.0.0 | Finance | Port to 19.0 or use ipai_finance_close_seed |
+| `ipai_finance_ppm_golive` | 18.0.1.0.0 | Finance | Port to 19.0 or archive |
+| `ipai_finance_ppm_umbrella` | 19.0.1.1.0 | Finance | 19.0 — move to addons/ipai/ |
+| `ipai_grid_view` | 18.0.1.0.0 | UI | OCA web_grid available — consider OCA-first |
+| `ipai_month_end` | 18.0.1.0.0 | Finance | Superseded by ipai_finance_close_seed? |
+| `ipai_month_end_closing` | 18.0.1.0.0 | Finance | Superseded by ipai_finance_close_seed? |
+| `ipai_ocr_gateway` | 19.0.1.0.0 | OCR | 19.0 — move to addons/ipai/ |
+| `ipai_ops_mirror` | 18.0.1.0.0 | Ops | Supabase SSOT mirror — port to 19.0 |
+| `ipai_platform_approvals` | 18.0.1.0.0 | Platform | Port to 19.0 or use native Odoo approvals |
+| `ipai_platform_audit` | 18.0.1.0.0 | Platform | Port to 19.0 or use OCA audit_log |
+| `ipai_platform_permissions` | 18.0.1.0.0 | Platform | Port to 19.0 |
+| `ipai_platform_theme` | 18.0.1.3.0 | UI | Deprecated in addons/ipai/ — archive root version |
+| `ipai_platform_workflow` | 18.0.1.0.0 | Platform | Port to 19.0 |
+| `ipai_ppm_okr` | 18.0.1.0.0 | Finance | Port to 19.0 — OKR for PPM |
+| `ipai_sms_gateway` | 18.0.1.0.0 | Comms | Port or use OCA sms |
+| `ipai_superset_connector` | 18.0.1.0.0 | BI | Port to 19.0 |
+| `ipai_tbwa_finance` | 18.0.1.0.0 | Finance | Port to 19.0 |
+| `ipai_theme_tbwa` | 18.0.1.0.0 | UI | 19.0 version already in addons/ipai/ — archive root |
+| `ipai_theme_tbwa_backend` | 18.0.1.3.0 | UI | Evaluate vs ipai_theme_tbwa (19.0) |
+| `ipai_web_theme_chatgpt` | 18.0.1.0.0 | UI | Archive — replaced by design_system_apps_sdk |
+| `ipai_workos_affine` | 18.0.1.0.0 | WorkOS | WorkOS suite (10 modules) — architecture decision needed |
+| `ipai_workos_blocks` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_canvas` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_collab` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_core` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_db` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_search` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_templates` | 18.0.1.0.0 | WorkOS | Same |
+| `ipai_workos_views` | 18.0.1.0.0 | WorkOS | Same |
+
+**WorkOS suite note**: 10 `ipai_workos_*` modules implement an AFFiNE-like workspace. All are 18.0 and unreachable. Requires a strategic decision: port to 19.0, sunset, or replace with OCA knowledge + wiki.
