@@ -41,7 +41,7 @@ function ProviderSettingsView({
 
   const handleUpdateAuthConfig = (formData: z.infer<typeof actualSchema>) => {
     const payload = Object.fromEntries(
-      Object.entries(formData).filter(([_, value]) => value !== undefined)
+      Object.entries(formData).filter(([, value]) => value !== undefined)
     )
 
     if (Object.keys(payload).length === 0) {
@@ -104,7 +104,7 @@ export function AuthManager({ projectRef }: { projectRef: string }) {
 
   const handleUpdateGeneralSettings = (formData: AuthGeneralSettingsSchema) => {
     const payload = Object.fromEntries(
-      Object.entries(formData).filter(([_, value]) => value !== undefined)
+      Object.entries(formData).filter(([, value]) => value !== undefined)
     )
 
     if (Object.keys(payload).length === 0) {
