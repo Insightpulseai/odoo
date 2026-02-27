@@ -16,13 +16,17 @@ data "cloudflare_zone" "zone" {
 locals {
   _ssot = yamldecode(file("${path.root}/../../../infra/dns/subdomain-registry.yaml"))
 
-  # Filter: active + non-staging + non-planned
+  # Filter: active + non-staging + non-planned + claim verified
+  # Belt-and-suspenders: even if CI gate is bypassed, Terraform only provisions
+  # records that have a verified provider claim (status=claimed).
+  # Records with no provider_claim block default to "claimed" for backward compat.
   _prod_active = [
     for r in local._ssot.subdomains :
     r
     if try(r.lifecycle, "active") == "active"
     && try(r.status, "active") != "planned"
     && !contains(keys(r), "environment")
+    && try(r.provider_claim.status, "claimed") == "claimed"
   ]
 
   # Split by record type
