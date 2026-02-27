@@ -11,7 +11,7 @@
 # Endpoints:
 #   - Odoo:     http://localhost:8069      (from SSOT)
 #   - Superset: http://localhost:8088      (admin/admin)
-#   - n8n:      http://localhost:5678      (admin/admin)
+#   - n8n:      http://localhost:5679      (admin/admin — host port remapped from 5678 for debugpy)
 #   - MCP:      http://localhost:3333      (placeholder)
 # =============================================================================
 
@@ -73,7 +73,9 @@ services:
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
       - NODE_ENV=development
-      - WEBHOOK_URL=http://localhost:5678/
+      # Host port remapped to 5679 so that 5678 is available for debugpy.
+      # n8n still listens internally on :5678 — only the host mapping changes.
+      - WEBHOOK_URL=http://localhost:5679/
       - GENERIC_TIMEZONE=Asia/Manila
       # Database
       - DB_TYPE=postgresdb
@@ -88,7 +90,10 @@ services:
       - N8N_BASIC_AUTH_USER=admin
       - N8N_BASIC_AUTH_PASSWORD=admin
     ports:
-      - "5678:5678"
+      # host:5678 is RESERVED for Odoo debugpy (scripts/odoo_debugpy_entrypoint.py).
+      # n8n uses host:5679 → container:5678 to avoid the collision.
+      # Do NOT change back to 5678:5678 here.
+      - "5679:5678"
     volumes:
       - n8n_data:/home/node/.n8n
       - ./n8n:/home/node/workflows:ro

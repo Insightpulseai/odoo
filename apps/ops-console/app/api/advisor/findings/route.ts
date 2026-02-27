@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getOrCreateRequestId, correlationHeaders } from "@/lib/http/correlation"
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
@@ -21,8 +22,11 @@ function supabaseHeaders() {
  *   limit     — max results (default 100)
  */
 export async function GET(req: NextRequest) {
+  const rid = getOrCreateRequestId(req.headers.get("x-request-id"))
+  const hdrs = correlationHeaders(rid)
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 })
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 503, headers: hdrs })
   }
 
   const { searchParams } = req.nextUrl
@@ -37,11 +41,11 @@ export async function GET(req: NextRequest) {
       { headers: supabaseHeaders() }
     )
     if (!runRes.ok) {
-      return NextResponse.json({ error: await runRes.text() }, { status: runRes.status })
+      return NextResponse.json({ error: await runRes.text() }, { status: runRes.status, headers: hdrs })
     }
     const runs = await runRes.json()
     if (runs.length === 0) {
-      return NextResponse.json({ findings: [], run: null })
+      return NextResponse.json({ findings: [], run: null }, { headers: hdrs })
     }
     const latestRun = runs[0]
 
@@ -58,12 +62,12 @@ export async function GET(req: NextRequest) {
       { headers: supabaseHeaders() }
     )
     if (!findingsRes.ok) {
-      return NextResponse.json({ error: await findingsRes.text() }, { status: findingsRes.status })
+      return NextResponse.json({ error: await findingsRes.text() }, { status: findingsRes.status, headers: hdrs })
     }
     const findings = await findingsRes.json()
 
-    return NextResponse.json({ findings, run: latestRun })
+    return NextResponse.json({ findings, run: latestRun }, { headers: hdrs })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: hdrs })
   }
 }
