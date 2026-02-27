@@ -8,13 +8,28 @@
 ## How it works
 
 `scripts/odoo_debugpy_entrypoint.py` is a thin wrapper that reads `IPAI_DEBUGPY`.
-When set to `1`, it calls `debugpy.listen()` before `os.execvp`-ing into Odoo.
-When `IPAI_DEBUGPY=0` (the default), the wrapper is a zero-overhead pass-through.
+When set to a truthy value (`1`, `true`, `yes`), it calls `debugpy.listen()` before
+`os.execvp`-ing into Odoo.  When `IPAI_DEBUGPY=0` (the default), the wrapper is a
+zero-overhead pass-through.
 
 ```
-IPAI_DEBUGPY=0  →  entrypoint → os.execvp("odoo", args)  (no debugpy overhead)
+IPAI_DEBUGPY=0  →  entrypoint → os.execvp("odoo", args)  (no output, no overhead)
 IPAI_DEBUGPY=1  →  entrypoint → debugpy.listen(:5678) → os.execvp("odoo", args)
 ```
+
+**Startup log line** — when enabled, the wrapper prints a greppable JSON summary
+before starting debugpy:
+```
+{"ipai_debugpy": true, "port": 5678, "wait": false}
+```
+Grep this in CI/logs: `docker logs odoo-core | grep ipai_debugpy`
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | Odoo exited cleanly (`os.execvp` replaces the wrapper process) |
+| 2 | `IPAI_DEBUGPY=1` but `debugpy` not installed — rebuild with dev image |
 
 `IPAI_DEBUGPY_WAIT=1` blocks Odoo startup until VS Code attaches (useful for
 debugging early initialisation — models, registry loading, etc.).
@@ -131,7 +146,8 @@ The DevContainer does **not** load `docker-compose.dev.yml` (only `docker-compos
 | `Connection refused` on attach | debugpy not listening | Check `IPAI_DEBUGPY=1` is set; check `docker logs odoo-core` for `[debugpy]` line |
 | Odoo hangs on startup | `IPAI_DEBUGPY_WAIT=1` but no client attached | Attach VS Code immediately, or set `IPAI_DEBUGPY_WAIT=0` |
 | Port 5678 already in use | n8n dev.yml not updated | Confirm `docker-compose.dev.yml` maps n8n to `5679:5678` |
-| `ModuleNotFoundError: debugpy` | Image not rebuilt | Run `docker compose build --no-cache odoo` |
+| Entrypoint exits with code 2 | `IPAI_DEBUGPY=1` but debugpy not installed (prod/stage image) | Run `docker compose build --no-cache odoo` to rebuild dev image; check for `DEBUGPY_MISSING` in stderr |
+| `ModuleNotFoundError: debugpy` | Import error variant of the above | Same fix: rebuild dev image |
 | Workers > 0 warning | Requests split across processes | `workers = 0` in `config/dev/odoo.conf`; `--workers=0` in compose command |
 
 ---
