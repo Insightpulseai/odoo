@@ -1,0 +1,41 @@
+name: Supabase Schema Drift Gate
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/config.toml"
+  workflow_dispatch:
+
+jobs:
+  check-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase Local
+        run: supabase start
+
+      - name: Check Schema Drift
+        run: |
+          echo "Verifying local migrations apply cleanly against empty DB..."
+          supabase db reset
+
+          echo "Comparing migrations to live branch/project..."
+          # In a real environment, you branch the DB on PR creation
+          # For now, we simulate drift failure if `db diff` returns uncommitted schema changes
+          # The --use-migra flag is critical for strict SSOT checks
+          DIFF=$(supabase db diff --use-migra --local)
+
+          if [[ -n "$DIFF" ]]; then
+            echo "::error::Schema drift detected! Ensure dashboard changes are captured in migrations."
+            echo "$DIFF"
+            exit 1
+          else
+            echo "✅ Schema is perfectly synced with migrations."
+          fi

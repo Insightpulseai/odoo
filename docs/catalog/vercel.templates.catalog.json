@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "vercel",
+    "type": "templates",
+    "base_url": "https://vercel.com/templates"
+  },
+  "items": [
+    {
+      "id": "nextjs-shadcn-admin",
+      "title": "Next.js + shadcn/ui Admin Dashboard",
+      "url": "https://vercel.com/templates/next.js/nextjs-shadcn-ui-admin-dashboard",
+      "tags": ["nextjs", "shadcn-ui", "admin", "dashboard", "tailwind"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "Sidebar nav pattern (collapsible, icon + label)",
+        "Dashboard layout: header + sidebar + main content slot",
+        "Stat card components (count + trend indicator)",
+        "Data table pattern (sortable, paginated)"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "ai-sdk-internal-tools",
+      "title": "AI SDK Internal Tools",
+      "url": "https://vercel.com/templates/next.js/ai-sdk-internal-tool",
+      "tags": ["ai-sdk", "tools", "nextjs", "streaming", "internal-tools"],
+      "use_cases": ["ops-console", "ai-ops-agent"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "Tool calling pattern (client → /api/chat → streamText with tools)",
+        "Tool result rendering (structured output display)",
+        "Multi-step agent loop (maxSteps pattern)"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "next-enterprise",
+      "title": "Next.js Enterprise (Blazity)",
+      "url": "https://github.com/Blazity/next-enterprise",
+      "tags": ["nextjs", "enterprise", "typescript", "eslint", "playwright", "bundle-size"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "ESLint flat config (core-web-vitals + typescript-eslint)",
+        "Prettier config (tailwindcss plugin + sort imports)",
+        "Playwright smoke test setup",
+        "Bundle size CI action (github-action-next-bundle-analyzer pattern)"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "saas-starter-supabase",
+      "title": "SaaS Starter (Supabase + Stripe)",
+      "url": "https://vercel.com/templates/next.js/nextjs-subscription-payments",
+      "tags": ["saas", "supabase", "stripe", "subscriptions", "nextjs"],
+      "use_cases": ["multi-tenant", "platform-kit"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "Subscription-aware middleware (check plan before granting access)",
+        "Customer portal link pattern",
+        "Webhook handler structure (Stripe events → DB upsert)"
+      ],
+      "risk": "medium",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "vercel-saas-microservices",
+      "title": "Vercel SaaS Microservices (multi-tenant + Edge middleware)",
+      "url": "https://vercel.com/templates/next.js/microservices-starter",
+      "tags": ["saas", "microservices", "multi-tenant", "edge", "nextjs", "middleware"],
+      "use_cases": ["ops-console", "platform-kit"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "Edge middleware for per-tenant routing (subdomain → context injection)",
+        "API route composition pattern (shared handler + tenant-scoped auth)",
+        "Supabase project ref resolver for multi-tenant DB isolation"
+      ],
+      "risk": "low",
+      "license_notes": "MIT",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "vercel.saas-microservices"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+name: ops-console · bundle size
+
+on:
+  pull_request:
+    paths:
+      - "apps/ops-console/**"
+      - ".github/workflows/ops-console-bundle-size.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write   # required to post PR comment with size diff
+
+defaults:
+  run:
+    working-directory: apps/ops-console
+
+jobs:
+  analyze:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/ops-console/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with stats
+        run: npm run build
+        env:
+          ANALYZE: "true"
+
+      - name: Upload bundle stats artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-stats-${{ github.run_id }}
+          path: apps/ops-console/.next/analyze/
+          retention-days: 30
+
+      # Comment on PR with bundle size diff using the official Next.js bundle
+      # analysis action (https://github.com/hashicorp/nextjs-bundle-analysis).
+      # Replace `hashicorp/nextjs-bundle-analysis` with your preferred action
+      # if Vercel's own bundle size reporter becomes available.
+      - name: Bundle size report
+        uses: hashicorp/nextjs-bundle-analysis@v1
+        with:
+          working-directory: apps/ops-console

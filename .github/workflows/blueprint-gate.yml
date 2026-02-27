@@ -1,0 +1,39 @@
+name: blueprint-gate
+
+on:
+  pull_request:
+    paths:
+      - "docs/catalog/blueprints/*.blueprint.yaml"
+      - "docs/catalog/blueprints/generated/*.md"
+      - "scripts/catalog/validate_blueprints.py"
+      - "scripts/catalog/build_blueprints.py"
+  push:
+    branches: [main]
+    paths:
+      - "docs/catalog/blueprints/*.blueprint.yaml"
+      - "docs/catalog/blueprints/generated/*.md"
+      - "scripts/catalog/validate_blueprints.py"
+      - "scripts/catalog/build_blueprints.py"
+
+permissions:
+  contents: read
+
+jobs:
+  blueprint-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Validate blueprints
+        run: python3 scripts/catalog/validate_blueprints.py
+
+      - name: Check generated docs are up-to-date
+        run: python3 scripts/catalog/build_blueprints.py --check

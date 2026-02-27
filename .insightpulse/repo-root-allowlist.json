@@ -48,7 +48,12 @@
     "llms-full.txt",
     "oca-aggregate.yml",
     "oca.lock.json",
+    "oca_install_state.json",
+    ".oca_install_state.json",
     "addons.manifest.json",
+    "automations-inventory.json",
+    "automations-inventory.md",
+    "requirements-constraints.txt",
     "aiux_ship_manifest.yml",
     "branch_protection.json",
     "devserver.config.json",
@@ -57,7 +62,10 @@
     "superclaude_bridge.yaml",
     "CLAUDE.md",
     "AGENTS.md",
-    "GEMINI.md"
+    "GEMINI.md",
+    "automations-inventory.json",
+    "automations-inventory.md",
+    "requirements-constraints.txt"
   ],
   "allow_root_dirs": [
     ".devcontainer",
@@ -172,13 +180,20 @@
     "scratch",
     ".agent",
     ".ai",
+    ".cache",
     ".claude",
     ".continue",
     ".gemini",
     ".githooks",
     ".lib",
+    ".pnpm-store",
+    ".pytest_cache",
     ".refactor",
-    "mattermost"
+    ".worktrees",
+    "fastlane",
+    "mattermost",
+    "runtime",
+    "ssot"
   ],
   "notes": {
     "hidden_files": "Hidden files starting with . are allowed if listed above",

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "insightpulseai",
+    "type": "mobile",
+    "description": "Mobile app assets and templates for the InsightPulse AI platform"
+  },
+  "items": [
+    {
+      "id": "odoo-mobile-ios",
+      "title": "Odoo iOS App Store Client (SwiftUI + Fastlane)",
+      "url": "https://developer.apple.com/documentation/swiftui",
+      "tags": ["ios", "swiftui", "odoo", "fastlane", "app-store", "oidc", "biometric", "offline"],
+      "use_cases": ["mobile", "ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Package.swift — Swift Package, iOS 17+, no external deps.",
+        "5 native capabilities: SSO (ASWebAuthenticationSession), biometric gate (LocalAuthentication), document scan (VNDocumentCameraViewController), offline queue (CoreData), push + deep links (APNs).",
+        "Fastlane: test, build_testflight, release_appstore lanes with match code signing.",
+        ".github/workflows/ios-appstore.yml — path-filtered CI on macos-14 + Xcode 15.2."
+      ],
+      "risk": "medium",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "odoo.ios-app"
+    },
+    {
+      "id": "mobile-release-workbook",
+      "title": "Mobile Release Readiness Workbook (Ops Advisor extension — 10 rules)",
+      "url": "https://developer.apple.com/app-store/review/guidelines/",
+      "tags": ["ios", "app-store", "workbook", "fastlane", "testflight", "advisor"],
+      "use_cases": ["ops-console", "mobile"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "platform/advisor/rulesets/mobile-release-readiness.yaml — 10 rules (CI, code signing, security, privacy, QA).",
+        "platform/advisor/sources/appstoreconnect.ts — App Store Connect API v1 check functions.",
+        "Workbook UI: /advisor/workbooks/mobile — pass/fail/skip per rule, remediation steps, Export JSON.",
+        "API route: GET /api/advisor/workbooks/mobile — evaluates filesystem + ASC + advisor run findings."
+      ],
+      "risk": "low",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22",
+      "blueprint_id": "ops.mobile-release-workbook"
+    }
+  ]
+}

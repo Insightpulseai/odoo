@@ -1,0 +1,77 @@
+id: marketing.site
+title: Marketing Site (Next.js + Vercel + content layer)
+category: marketing
+
+sources:
+  - type: vercel-template
+    url: https://vercel.com/templates/next.js/nextjs-boilerplate
+    catalog_id: nextjs-shadcn-admin
+  - type: vercel-example
+    url: https://github.com/vercel/next.js/tree/main/examples/with-supabase
+    catalog_id: with-supabase
+
+target:
+  app_dir: apps/marketing
+  package_manager: pnpm
+  creates_new_app: true
+
+variables:
+  - name: VERCEL_PROJECT_NAME
+    required: true
+    description: Vercel project name for the marketing site
+    example: insightpulseai-marketing
+  - name: NEXT_PUBLIC_SITE_URL
+    required: true
+    description: Production URL for canonical links and OG tags
+    example: https://insightpulseai.com
+
+automation:
+  steps:
+    - name: create_app
+      description: Scaffold new Next.js app in apps/marketing
+      agent_instruction: |
+        Create apps/marketing/ as a new pnpm workspace member:
+        - package.json with name: @ipai/marketing
+        - Add to pnpm-workspace.yaml apps/* (already covered by glob)
+        - Minimal Next.js 15 setup: app/layout.tsx, app/page.tsx, next.config.ts
+        - tailwind + shadcn/ui (copy config from apps/ops-console as baseline)
+        - vercel.json with ignoreCommand path-filtered to apps/marketing/**
+        - .vercelignore excluding all non-marketing paths
+
+    - name: add_seo_baseline
+      description: Add SEO metadata baseline
+      agent_instruction: |
+        In apps/marketing/app/layout.tsx, add:
+        - <Metadata> with title template: %s | InsightPulse AI
+        - Open Graph defaults (title, description, image)
+        - Canonical URL using NEXT_PUBLIC_SITE_URL
+        - robots.txt via app/robots.ts
+        - sitemap via app/sitemap.ts (static pages only initially)
+
+    - name: add_ci
+      description: Add marketing-scoped CI gates
+      agent_instruction: |
+        Create .github/workflows/marketing-check.yml:
+        - Path filter: apps/marketing/**
+        - Steps: pnpm --filter @ipai/marketing lint, typecheck, build
+        - Add to golden-path-gate.yml required checks list
+
+verification:
+  required_checks:
+    - marketing-check
+    - golden-path-summary
+  preview:
+    expectations:
+      - vercel-preview-url-posted-to-pr
+      - site-renders-without-500
+      - og-tags-present-in-head
+
+rollback:
+  strategy: delete_files
+  notes: New app — rollback by deleting apps/marketing/ and removing from pnpm-workspace.yaml.
+
+notes:
+  minor_customization:
+    - Create new Vercel project linked to apps/marketing (vercel link --repo from apps/marketing)
+    - Set Vercel Root Directory to apps/marketing
+    - Point vercel.com project DNS to custom domain (www.insightpulseai.com)
