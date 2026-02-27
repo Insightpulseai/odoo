@@ -13,19 +13,19 @@ Last updated: 2026-02-27
 
 | Check | Status | Proof mechanism |
 |-------|--------|----------------|
-| **Cloudflare is authoritative** | ❓ Pending confirmation | `dig NS insightpulseai.com` must return `edna.ns.cloudflare.com` + `keanu.ns.cloudflare.com` |
+| **Cloudflare is authoritative** | ✅ Confirmed 2026-02-27 | `dig NS insightpulseai.com` → `edna.ns.cloudflare.com` + `keanu.ns.cloudflare.com` (verified by `scripts/cloudflare/verify_authoritative.py`) |
 | **CI authority gate** | ✅ Enforced | `.github/workflows/cloudflare-authority-gate.yml` — blocks DNS PRs if not authoritative |
 | **DNS records in SSOT** | ✅ Committed | `infra/cloudflare/zones/insightpulseai.com/records.yaml` |
 | **Apply on merge** | ✅ Configured | `.github/workflows/cloudflare-dns-apply.yml` (push to main) |
 
-### What "authoritative" means
+### Authoritative nameservers (confirmed)
 
-Until the domain registrar (Spacesquare) delegates nameservers to:
+Cloudflare is the authoritative resolver for `insightpulseai.com`:
 - `edna.ns.cloudflare.com`
 - `keanu.ns.cloudflare.com`
 
-DNS record commits in `infra/cloudflare/zones/` **have no effect on live DNS**.
-The CI authority gate will fail on DNS PRs and post a PR comment with remediation steps.
+DNS record commits in `infra/cloudflare/zones/` **take effect on next apply-on-merge run**.
+The CI authority gate will pass — no `cf-ns-pending` label bypass needed.
 
 Verify current status: `python3 scripts/cloudflare/verify_authoritative.py`
 

@@ -210,6 +210,11 @@ tier2:
       purpose: "Exported seed data"
       migrate_to: "supabase/seeds/ or artifacts/"
 
+    - name: "secrets"
+      purpose: "Docker Compose file-based secrets placeholders (e.g. odoo_pg_pass)"
+      owner: "DevOps"
+      migrate_to: "deploy/secrets/ or infra/secrets/"
+
     - name: "baselines"
       purpose: "Baseline snapshots for drift detection"
       migrate_to: "artifacts/baselines/ or docs/baselines/"
