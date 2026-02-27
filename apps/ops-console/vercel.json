@@ -10,6 +10,9 @@
     "app/api/ai/sql/route.ts": {
       "maxDuration": 60
     },
+    "app/api/secrets/sync/route.ts": {
+      "maxDuration": 300
+    },
     "app/api/supabase-proxy/[...path]/route.ts": {
       "maxDuration": 30
     }
