@@ -73,6 +73,25 @@ into `addons/ipai/` modules.
 - `docs/runbooks/SECRETS_SSOT.md` -- Secret management workflow
 - `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` -- Go-live procedure
 
+### O5: AI Provider Bridge (SSOT-native)
+
+**Problem**: AI provider integrations (Gemini, future OpenAI) can grow without governance,
+leading to untracked secret dependencies and silent runtime failures.
+
+**Requirement**: Every AI provider route must:
+- Return a deterministic `503 KEY_MISSING` response when the required API key env var is unset
+  (fail before making any outbound API call)
+- Have its API key registered in `ssot/secrets/registry.yaml` with all consumers listed
+- Be documented in `docs/architecture/AI_PROVIDER_BRIDGE.md`
+
+**Success criteria**:
+- `POST /api/ai/gemini` returns `{"error": "GEMINI_API_KEY_MISSING"}` with status 503
+  when `GEMINI_API_KEY` is not set
+- `ssot/secrets/registry.yaml` contains a `gemini_api_key` entry with consumers
+  covering both `vercel_env:apps/ops-console` and `vercel_env:platform/ai/providers/gemini`
+- `check_secrets_ssot.py` exits 0 on the registry (validated by `ssot-gates` CI job)
+- `docs/architecture/AI_PROVIDER_BRIDGE.md` exists and documents the route contract
+
 ---
 
 ## Non-Requirements (Out of Scope)
