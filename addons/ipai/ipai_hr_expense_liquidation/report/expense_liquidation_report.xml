@@ -32,6 +32,7 @@
                                 <strong>Reference:</strong> <span t-field="o.name"/><br/>
                                 <strong>Liquidation Type:</strong> <span t-field="o.liquidation_type"/><br/>
                                 <strong>Date:</strong> <span t-field="o.date"/><br/>
+                                <strong>Date Prepared:</strong> <span t-field="o.liquidation_report_date"/><br/>
                             </div>
                             <div class="col-6">
                                 <strong>Employee:</strong> <span t-field="o.employee_id.name"/><br/>
@@ -60,6 +61,10 @@
                                     <tr t-if="o.advance_date">
                                         <td><strong>Advance Date</strong></td>
                                         <td><span t-field="o.advance_date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>If Cash Advance Liquidation, Form No.</strong></td>
+                                        <td><span t-field="o.name"/></td>
                                     </tr>
                                 </table>
                             </div>
