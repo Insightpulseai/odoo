@@ -13,6 +13,7 @@ sources:
   administration: "https://github.com/odoo/documentation/tree/19.0/content/administration"
   documentation: "https://github.com/odoo/documentation"
   vercel_agent_skills: "https://github.com/vercel-labs/agent-skills"
+  supabase_agent_skills: "https://github.com/supabase/supabase/tree/master/.agents/skills"
 expected:
   finance:
     accounting: ["odoo19/accounting"]
@@ -96,3 +97,5 @@ expected:
     mcp: ["vercel-agent-skills/mcp"]
     office: ["vercel-agent-skills/office"]
     os: ["vercel-agent-skills/os"]
+  supabase_agent_skills:
+    vitest: ["supabase-agent-skills/vitest"]
