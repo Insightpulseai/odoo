@@ -20,6 +20,7 @@ import {
   X,
   BarChart3,
   Cpu,
+  Plug,
 } from "lucide-react"
 import { useState, useCallback, useEffect } from "react"
 
@@ -64,6 +65,7 @@ const navSections: NavSection[] = [
   {
     label: "Resources",
     items: [
+      { href: "/integrations", icon: Plug, label: "Integrations" },
       { href: "/runbooks", icon: BookOpen, label: "Runbooks" },
       { href: "/settings", icon: Settings, label: "Settings" },
     ],
