@@ -131,20 +131,26 @@ auth:
 # ---------------------------------------------------------------------------
 payments:
   stripe:
-    # mode: test (current) | live (flip when Vault has sk_live_... and account is verified)
-    mode: test
-    # Secret IDs only — raw sk_*/whsec_* values never in repo
-    # Registry: ssot/secrets/registry.yaml
-    api_key_secret_id: stripe_api_key
-    webhook_secret_id: stripe_webhook_secret
+    enabled: true
+    # mode: live is required in prod (CI gate enforces this).
+    # Flip Vault secret to sk_live_... before setting mode: live.
+    mode: live
+    # Secret IDs only — raw sk_*/whsec_*/pk_* values never in repo
+    # All IDs must exist in ssot/secrets/registry.yaml
+    secrets:
+      secret_key: stripe_secret_key                       # sk_live_... in Vault
+      webhook_signing_secret: stripe_webhook_signing_secret  # whsec_... from Stripe Dashboard → Webhooks
+    public:
+      publishable_key_ref: stripe_publishable_key         # pk_live_... via Vercel env / Vault
     supabase_wrapper:
       enabled: true
       server_name: stripe_server
       schema: stripe          # foreign tables imported into this schema
     notes: >
-      Stripe FDW wired via Supabase Vault. Migration: supabase/migrations/20260228000001_stripe_wrapper.sql.
-      api_key_secret_id references the Vault secret that holds sk_test_... (or sk_live_... in prod).
-      Flip mode to live + rotate Vault secret to sk_live_... when Stripe account is activated.
+      Stripe FDW: supabase/migrations/20260228000001_stripe_wrapper.sql.
+      Server creation requires Vault secret UUID — provision out-of-band, then run follow-up migration.
+      stripe_secret_key (sk_live_...) and stripe_publishable_key (pk_live_...) must both be live-mode.
+      Rotate stripe_secret_key via Stripe Dashboard → API Keys → Roll key, then update Vault.
 
 # ---------------------------------------------------------------------------
 # Domain Lifecycle Truth

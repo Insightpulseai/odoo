@@ -37,14 +37,14 @@ create schema if not exists stripe;
 --   Option A (Supabase Dashboard): Database → Vault → New Secret
 --                                   Name: stripe_api_key
 --                                   Value: sk_test_... (or sk_live_... for prod)
---   Option B (SQL):
+--   Option B (SQL — after key is rotated to live):
 --     select vault.create_secret(
---       'sk_test_YOURKEY',    -- value
---       'stripe_api_key',     -- name  (matches ssot/secrets/registry.yaml)
---       'Stripe API key for FDW (test mode)'  -- description
+--       'sk_live_YOURKEY',          -- value (live key only; never commit this)
+--       'stripe_secret_key',        -- name  (matches ssot/secrets/registry.yaml)
+--       'Stripe secret key for FDW (live mode)'  -- description
 --     );
 --   Then retrieve the UUID:
---     select id from vault.secrets where name = 'stripe_api_key';
+--     select id from vault.secrets where name = 'stripe_secret_key';
 --
 -- After provisioning, run the server creation + import below manually or
 -- in a follow-up migration: supabase/migrations/YYYYMMDDHHMMSS_stripe_server.sql
