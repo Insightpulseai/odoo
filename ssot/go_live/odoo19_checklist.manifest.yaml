@@ -1,0 +1,53 @@
+# =============================================================================
+# Go-Live Runbook Manifest — Odoo 19 CE
+# =============================================================================
+# Machine-verifiable contract that prevents the go-live checklist from being
+# accidentally truncated, renamed, or stripped of required sections.
+#
+# Enforced by: .github/workflows/go-live-runbook-gate.yml
+# Runbook:     docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-27"
+owner: "DevOps / Finance"
+
+runbook_path: docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+
+# Required section headings (must appear verbatim in the runbook file)
+# CI fails if any heading is renamed, removed, or mangled.
+required_sections:
+  - "## A) Pre-Cutover Controls"
+  - "## B) Opening Entries — Accounts Receivable (AR)"
+  - "## C) Opening Entries — Accounts Payable (AP)"
+  - "## D) Inventory Opening"
+  - "## E) Trial Balance Import"
+  - "## F) Post-Cutover Validation — Go/No-Go Gate"
+  - "## G) Operational Hardening — Self-Hosted Specifics"
+  - "## H) Evidence Capture Convention"
+  - "## Go/No-Go Decision Matrix"
+
+# CI workflows that must be green before declaring go-live complete.
+# This list is informational (not automatically enforced by the gate itself —
+# cutover managers must verify these manually).
+required_ci_gates:
+  - odoo-ci-gate
+  - repo-structure-gate
+  - odoo-env-neutralization-gate
+  - go-live-runbook-gate
+  - secrets-scan-gate
+
+# Minimum number of checklist items (- [ ] markers) to catch accidental truncation.
+minimum_checklist_items: 60
+
+# Self-hosted specifics that must be covered (verified by substring match in runbook)
+required_content_markers:
+  - "ipai_zoho_mail_api"          # Zoho email transport referenced
+  - "odoo-core"                   # Container name documented
+  - "erp.insightpulseai.com"      # Production domain documented
+  - "web/docs/evidence"           # Evidence path convention present
+  - "STATUS=COMPLETE"             # Completion semantics present
+
+# Runbook size sanity bounds (lines)
+min_lines: 200
+max_lines: 1000

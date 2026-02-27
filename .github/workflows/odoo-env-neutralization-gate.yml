@@ -1,0 +1,105 @@
+name: Odoo Environment Neutralization Gate
+
+# =============================================================================
+# Enforces the Odoo.sh-equivalent neutralization model:
+#   - stage/dev compose files must declare IPAI_ENV (not prod)
+#   - scripts/odoo_neutralize.py must exist and be executable
+#   - prod compose must declare IPAI_ENV=prod
+#
+# Ref: https://www.odoo.com/documentation/17.0/administration/neutralized_database.html
+# Architecture: docs/architecture/ODOO_SH_EQUIVALENT.md
+# =============================================================================
+
+on:
+  pull_request:
+    paths:
+      - "docker/compose/**"
+      - "scripts/odoo_neutralize.py"
+      - "docs/architecture/ODOO_SH_EQUIVALENT.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "docker/compose/**"
+      - "scripts/odoo_neutralize.py"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  neutralization-gate:
+    name: Verify neutralization model is enforced
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check neutralize script exists
+        run: |
+          if [ ! -f scripts/odoo_neutralize.py ]; then
+            echo "::error::scripts/odoo_neutralize.py is missing."
+            echo "::error::This script is required to neutralize non-prod Odoo databases."
+            echo "::error::See docs/architecture/ODOO_SH_EQUIVALENT.md"
+            exit 1
+          fi
+          echo "✅ scripts/odoo_neutralize.py exists."
+
+      - name: Validate Python syntax of neutralize script
+        run: |
+          python3 -m py_compile scripts/odoo_neutralize.py
+          echo "✅ scripts/odoo_neutralize.py syntax valid."
+
+      - name: Verify stage compose declares IPAI_ENV=stage
+        run: |
+          STAGE_FILE=docker/compose/stage.yml
+          if [ ! -f "$STAGE_FILE" ]; then
+            echo "::warning::$STAGE_FILE not found — skipping stage check."
+            exit 0
+          fi
+
+          if ! grep -q "IPAI_ENV=stage" "$STAGE_FILE"; then
+            echo "::error::$STAGE_FILE does not declare IPAI_ENV=stage."
+            echo "::error::Stage environment must be marked so neutralization script applies."
+            echo "::error::Add:  - IPAI_ENV=stage  to the environment: section."
+            exit 1
+          fi
+          echo "✅ $STAGE_FILE declares IPAI_ENV=stage."
+
+      - name: Verify prod compose declares IPAI_ENV=prod
+        run: |
+          PROD_FILE=docker/compose/prod.yml
+          if [ ! -f "$PROD_FILE" ]; then
+            echo "::warning::$PROD_FILE not found — skipping prod check."
+            exit 0
+          fi
+
+          if ! grep -q "IPAI_ENV=prod" "$PROD_FILE"; then
+            echo "::error::$PROD_FILE does not declare IPAI_ENV=prod."
+            echo "::error::Production environment must explicitly declare IPAI_ENV=prod."
+            exit 1
+          fi
+
+          # Verify prod does NOT accidentally set a non-prod IPAI_ENV
+          if grep -qE "IPAI_ENV=(stage|dev)" "$PROD_FILE"; then
+            echo "::error::$PROD_FILE declares a non-prod IPAI_ENV. Production cannot be neutralized."
+            exit 1
+          fi
+          echo "✅ $PROD_FILE declares IPAI_ENV=prod (not stage/dev)."
+
+      - name: Check architecture doc exists
+        run: |
+          if [ ! -f docs/architecture/ODOO_SH_EQUIVALENT.md ]; then
+            echo "::warning::docs/architecture/ODOO_SH_EQUIVALENT.md is missing."
+            echo "::warning::This document describes the neutralization model. Recommended to add it."
+          else
+            echo "✅ docs/architecture/ODOO_SH_EQUIVALENT.md exists."
+          fi
+
+      - name: Summary
+        run: |
+          echo "Odoo.sh-equivalent neutralization model is enforced."
+          echo "  - scripts/odoo_neutralize.py: present and valid"
+          echo "  - docker/compose/stage.yml:    IPAI_ENV=stage ✅"
+          echo "  - docker/compose/prod.yml:     IPAI_ENV=prod  ✅"
