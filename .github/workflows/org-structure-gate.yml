@@ -1,10 +1,30 @@
 name: Org Structure Gate
 
+# Scope: only runs when repo-structural files change (scripts, manifests, config).
+# Docs/spec/markdown changes do NOT require structure re-validation and would
+# generate false-positive noise on every feature-branch PR.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'docs/**'
+      - 'spec/**'
+      - 'web/docs/**'
+      - 'ssot/**'
+      - '**/*.md'
+      - '**/*.rst'
+      - '**/*.txt'
   push:
     branches: [main, staging]
+    paths-ignore:
+      - 'docs/**'
+      - 'spec/**'
+      - 'web/docs/**'
+      - 'ssot/**'
+      - '**/*.md'
+      - '**/*.rst'
+      - '**/*.txt'
   workflow_dispatch:
 
 permissions:

@@ -1,8 +1,15 @@
 # =============================================================================
 # MCP Jobs Executor - GitHub Actions Cron Trigger
 # =============================================================================
-# Purpose: Trigger the run-executor Edge Function every minute to process jobs
-# Alternative to pg_cron → pg_net (which requires vault permissions)
+# Purpose: Trigger the run-executor Edge Function every minute to process jobs.
+# Alternative to pg_cron → pg_net (which requires vault permissions).
+#
+# Scope: schedule + workflow_dispatch ONLY.
+# Never triggers on push/pull_request — prevents false-positive failures
+# when MCP_JOBS_CRON_SECRET is absent on feature-branch contexts.
+#
+# Required Secrets:
+#   - MCP_JOBS_CRON_SECRET: Authorization header value for the Edge Function
 # =============================================================================
 
 name: MCP Jobs Executor
@@ -13,10 +20,7 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
-      max_permissions:
-  contents: read
-
-jobs:
+      max_jobs:
         description: 'Maximum jobs to process per run'
         required: false
         default: '10'
@@ -26,6 +30,9 @@ jobs:
         required: false
         type: string
 
+permissions:
+  contents: read
+
 env:
   SUPABASE_URL: https://spdtwktxdalcfigzeqrz.supabase.co
 
@@ -33,6 +40,9 @@ jobs:
   execute-jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Guard: only proceed if the cron secret is present (avoids meaningless
+    # failures in forks and external PRs where the secret is absent).
+    if: vars.SUPABASE_URL != '' || secrets.MCP_JOBS_CRON_SECRET != ''
 
     steps:
       - name: Trigger Run Executor
@@ -41,6 +51,11 @@ jobs:
         run: |
           MAX_JOBS="${{ github.event.inputs.max_jobs || '10' }}"
           SOURCE_FILTER="${{ github.event.inputs.source_filter || '' }}"
+
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::warning::MCP_JOBS_CRON_SECRET not configured; skipping executor trigger"
+            exit 0
+          fi
 
           # Build request body
           BODY="{\"max_jobs\": $MAX_JOBS, \"timeout_minutes\": 5"
@@ -74,7 +89,6 @@ jobs:
           echo "✅ Processed: $PROCESSED jobs"
           echo "🔄 Reaped: $REAPED stuck jobs"
 
-          # Set output for summary
           echo "### MCP Jobs Executor Run" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
@@ -86,6 +100,10 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.MCP_JOBS_CRON_SECRET }}
         run: |
+          if [ -z "$CRON_SECRET" ]; then
+            exit 0
+          fi
+
           RESPONSE=$(curl -s -X GET \
             "${SUPABASE_URL}/functions/v1/run-executor/health" \
             -H "X-CRON-SECRET: $CRON_SECRET")

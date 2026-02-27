@@ -2,7 +2,7 @@
 
 import { Terminal } from 'lucide-react'
 import { useMemo } from 'react'
-import { MarkdownStream } from '@/components/MarkdownStream'
+import ReactMarkdown from 'react-markdown'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -82,8 +82,24 @@ export function SuggestionsManager({ projectRef }: { projectRef: string }) {
                         )}
                       </div>
                     </div>
-                    <div className="text-sm text-muted-foreground mt-2">
-                      <MarkdownStream value={suggestion.detail} />
+                    <div className="text-sm text-muted-foreground mt-2 prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          code({ inline, children, ...props }: any) {
+                            return inline ? (
+                              <code className="bg-muted px-1 rounded" {...props}>
+                                {children}
+                              </code>
+                            ) : (
+                              <pre className="bg-muted p-2 rounded overflow-x-auto" {...props}>
+                                <code>{children}</code>
+                              </pre>
+                            )
+                          },
+                        }}
+                      >
+                        {suggestion.detail}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>

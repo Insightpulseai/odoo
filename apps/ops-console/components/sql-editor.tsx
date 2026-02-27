@@ -186,6 +186,7 @@ export function SqlEditor({
           <h2 className="font-semibold flex-1">{label}</h2>
           <ToggleGroup
             type="multiple"
+            size="sm"
             value={toggleValues}
             onValueChange={handleToggleGroupChange}
             className="gap-1"
@@ -324,6 +325,7 @@ export function SqlEditor({
                 }}
               />
               <Button
+                size="sm"
                 onClick={handleRunQuery}
                 disabled={isPending}
                 className="absolute bottom-4 right-4"

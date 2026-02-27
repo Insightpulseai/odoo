@@ -197,13 +197,10 @@ export function LogsManager({ projectRef }: { projectRef: string }) {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {Object.keys(logs.result[0] as object).map((key, idx, arr) => (
+                {Object.keys(logs.result[0] as object).map((key) => (
                   <TableHead
                     key={key}
-                    className={
-                      (idx === 0 ? 'first:pl-6 lg:first:pl-8 ' : '') +
-                      (idx === arr.length - 1 ? 'last:pr-6 lg:last:pr-8 ' : '')
-                    }
+                    className="first:pl-6 lg:first:pl-8 last:pr-6 lg:last:pr-8"
                   >
                     {key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </TableHead>
