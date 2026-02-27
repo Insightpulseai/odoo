@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/app/(.*)",
+      "destination": "https://<ops-console-project-domain>/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://<marketing-project-domain>/$1"
+    }
+  ]
+}

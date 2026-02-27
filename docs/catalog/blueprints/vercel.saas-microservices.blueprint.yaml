@@ -1,0 +1,51 @@
+id: vercel.saas-microservices
+title: Vercel SaaS Microservices (multi-tenant + Edge middleware)
+category: ops-console
+sources:
+  - type: vercel-template
+    url: https://vercel.com/templates/next.js/microservices-starter
+    catalog_id: vercel-saas-microservices
+target:
+  app_dir: apps/ops-console
+variables:
+  - name: SUPABASE_PROJECT_REF
+    required: true
+    description: Supabase project ref used in tenant resolver middleware.
+  - name: NEXT_PUBLIC_SUPABASE_URL
+    required: true
+    description: Supabase project URL (public, safe to expose).
+automation:
+  steps:
+    - name: lift_middleware
+      description: Lift Edge middleware for per-tenant routing
+      instruction: |
+        Copy middleware.ts from the SaaS Microservices template into apps/ops-console/.
+        Adapt tenant resolver to use SUPABASE_PROJECT_REF env var for DB isolation.
+        Ensure middleware only activates on /api/* and /platform/* routes.
+    - name: lift_api_layer
+      description: Lift shared API route handler pattern
+      instruction: |
+        In apps/ops-console/app/api/, create a shared withTenant() wrapper that reads
+        tenant context set by middleware and injects it into route handlers.
+        Follow existing proxy route pattern in app/api/supabase-proxy/.
+    - name: catalog_item_link
+      description: Ensure catalog item exists with blueprint_id=vercel.saas-microservices
+      instruction: |
+        Ensure docs/catalog/vercel.templates.catalog.json contains an item with
+        id: vercel-saas-microservices, blueprint_id: vercel.saas-microservices,
+        and use_cases: [ops-console, platform-kit].
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+  preview:
+    expectations:
+      - middleware-ts-exists
+      - tenant-resolver-uses-env-var
+      - no-hardcoded-project-refs
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - Update tenant resolver to use SUPABASE_PROJECT_REF env var (not hardcoded ref).
+    - Remove Stripe integration if not needed — only lift middleware + API handler pattern.

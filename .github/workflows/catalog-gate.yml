@@ -1,0 +1,36 @@
+name: catalog-gate
+
+on:
+  pull_request:
+    paths:
+      - "docs/catalog/*.catalog.json"
+      - "docs/catalog/INDEX.md"
+      - "scripts/catalog/validate_catalogs.py"
+      - "scripts/catalog/build_index.py"
+  push:
+    branches: [main]
+    paths:
+      - "docs/catalog/*.catalog.json"
+      - "docs/catalog/INDEX.md"
+      - "scripts/catalog/validate_catalogs.py"
+      - "scripts/catalog/build_index.py"
+
+permissions:
+  contents: read
+
+jobs:
+  catalog-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate catalogs
+        run: python3 scripts/catalog/validate_catalogs.py
+
+      - name: Check INDEX.md is up-to-date
+        run: python3 scripts/catalog/build_index.py --check

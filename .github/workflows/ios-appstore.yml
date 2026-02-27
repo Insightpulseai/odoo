@@ -1,0 +1,91 @@
+name: iOS App Store
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - "fastlane/**"
+      - ".github/workflows/ios-appstore.yml"
+  pull_request:
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - "fastlane/**"
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "Fastlane lane to run"
+        required: true
+        default: "test"
+        type: choice
+        options:
+          - test
+          - build_testflight
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: iOS Tests
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Run Fastlane tests
+        run: bundle exec fastlane ios test
+        env:
+          CI: "true"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: fastlane/test_output/
+          retention-days: 14
+
+  build_testflight:
+    name: Build + TestFlight
+    runs-on: macos-14
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.2.app
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Build and upload to TestFlight
+        run: bundle exec fastlane ios build_testflight
+        env:
+          CI: "true"
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OdooMobile.ipa
+          path: fastlane/builds/*.ipa
+          retention-days: 30

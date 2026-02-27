@@ -252,8 +252,8 @@ See [MONOREPO_CONTRACT.md](./docs/architecture/MONOREPO_CONTRACT.md) for:
 **Detected in repo:**
 
 - Canonical modules present: `ipai_enterprise_bridge`
-- Other IPAI modules (feature/legacy): 66
-- Non-IPAI modules at addons root: 1
+- Other IPAI modules (feature/legacy): 91
+- Non-IPAI modules at addons root: 2
 
 **Policy:**
 - Only canonical modules define the platform surface area

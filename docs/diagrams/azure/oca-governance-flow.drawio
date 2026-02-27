@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-22T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="OCA Governance Flow" id="oca-gov-flow">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="layer-gen" value="Generation" parent="0" />
+        <mxCell id="layer-repo" value="Repository" parent="0" />
+        <mxCell id="layer-val" value="Validation" parent="0" />
+
+        <!-- Header -->
+        <mxCell id="title" value="OCA Governance Flow — Skills Generation + Surgical Risk-Tier Gate" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+          <mxGeometry x="60" y="20" width="1280" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Swimlanes -->
+        <mxCell id="lane-dev" value="Developer / Generator" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="layer-gen">
+          <mxGeometry x="60" y="100" width="300" height="760" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-repo" value="Repo SSOT (Pinned)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="layer-repo">
+          <mxGeometry x="380" y="100" width="340" height="760" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-ci" value="CI Gates &amp; Validation" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#DEE2E6;rounded=1;startSize=40;glass=1;shadow=1;fontSize=14;fontStyle=1;" vertex="1" parent="layer-val">
+          <mxGeometry x="740" y="100" width="330" height="760" as="geometry" />
+        </mxCell>
+
+        <!-- Developer Content -->
+        <mxCell id="dev-kb" value="Vendored Odoo 19 KB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Source truth (pinned commit) for skill generation" link="https://github.com/Insightpulseai/odoo/tree/claude/deploy-finance-ppm-odoo19-LbLm4/docs/kb">
+          <mxGeometry x="25" y="60" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dev-gen" value="Procedural Skill Gen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;gradientColor=#97d077;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="Generates SKILL.md from pinned KB docs" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/scripts/kb/generate_skill_from_kb.py">
+          <mxGeometry x="25" y="185" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dev-pr" value="Open PR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;gradientColor=#b3cde3;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-dev" tooltip="New skills require CI validation and registry sync">
+          <mxGeometry x="25" y="310" width="250" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Repo Content -->
+        <mxCell id="repo-skills" value="Skill Port Library" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-repo" tooltip="Standardized Anthropics Skills specification" link="https://github.com/anthropics/skills">
+          <mxGeometry x="20" y="80" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- CI Content -->
+        <mxCell id="ci-validate" value="validate_skill_registry.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;gradientColor=#ea9999;glass=1;shadow=1;fontStyle=1;" vertex="1" parent="lane-ci" tooltip="Verification of checksums, schemas, and risk-tiers" link="https://github.com/Insightpulseai/odoo/blob/claude/deploy-finance-ppm-odoo19-LbLm4/scripts/skills/refresh_odoo19_kb.py" tags="risk:entry;type:gate">
+          <mxGeometry x="20" y="90" width="290" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="dev-kb" target="dev-gen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="repo-skills" target="ci-validate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

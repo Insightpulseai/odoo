@@ -1,0 +1,21 @@
+name: odoo-addons-path-guard
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: [main]
+
+jobs:
+  guard:
+    name: Odoo addons_path — selected-only policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Policy check (addons_path must not include addons/oca/repos)
+        shell: bash
+        run: |
+          chmod +x scripts/ci/check_odoo_addons_path.sh
+          scripts/ci/check_odoo_addons_path.sh

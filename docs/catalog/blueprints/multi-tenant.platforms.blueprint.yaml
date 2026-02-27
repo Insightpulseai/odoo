@@ -1,0 +1,81 @@
+id: multi-tenant.platforms
+title: Multi-tenant Platform (subdomain routing + tenant-scoped DB)
+category: multi-tenant
+
+sources:
+  - type: vercel-example
+    url: https://github.com/vercel/platforms
+    catalog_id: platforms-starter-kit
+  - type: supabase-example
+    url: https://github.com/supabase/supabase/tree/master/examples/auth/nextjs
+    catalog_id: nextjs-with-supabase
+
+target:
+  app_dir: apps/ops-console
+  package_manager: pnpm
+  creates_new_app: false
+
+variables:
+  - name: ROOT_DOMAIN
+    required: true
+    description: Root domain for subdomain routing
+    example: insightpulseai.com
+  - name: NEXT_PUBLIC_SUPABASE_URL
+    required: true
+    description: Supabase URL
+    example: https://spdtwktxdalcfigzeqrz.supabase.co
+  - name: SUPABASE_SERVICE_ROLE_KEY
+    required: true
+    description: Service role key for tenant lookup (server-only)
+    example: eyJhbGciOiJIUzI1...
+
+automation:
+  steps:
+    - name: add_subdomain_middleware
+      description: Add subdomain-based tenant routing middleware
+      agent_instruction: |
+        Update apps/ops-console/middleware.ts to:
+        - Extract the subdomain from req.nextUrl.hostname
+        - If subdomain is a known tenant (lookup from Supabase tenants table),
+          rewrite to /tenant/[slug] routing
+        - If not, continue to normal routing
+        - Keep existing Supabase auth session refresh logic
+        Pattern: vercel/platforms middleware.ts approach
+
+    - name: add_tenant_routing
+      description: Add tenant-scoped page routing
+      agent_instruction: |
+        Create apps/ops-console/app/tenant/[slug]/ directory with:
+        - layout.tsx: fetch tenant metadata from Supabase (tenant slug → tenant row)
+        - page.tsx: tenant dashboard scaffold
+        - Tenant context via React Context or layout-level RSC prop drilling
+        No wildcard catch-all at top level — only /tenant/[slug] for now.
+
+    - name: add_tenant_rls
+      description: Document RLS pattern for tenant data isolation
+      agent_instruction: |
+        Create a Supabase migration (supabase migration new add_tenant_rls) that adds:
+        - tenants table: id (uuid), slug (text unique), name (text), created_at
+        - tenant_members table: tenant_id (uuid fk), user_id (uuid fk), role (text)
+        - RLS policy template on tenant_members:
+          tenant_id IN (SELECT tenant_id FROM tenant_members WHERE user_id = auth.uid())
+        Document the pattern in a comment at the top of the migration file.
+
+verification:
+  required_checks:
+    - ops-console-check
+    - golden-path-summary
+  preview:
+    expectations:
+      - subdomain-routing-works-in-vercel-preview
+      - tenant-data-isolated-by-rls
+
+rollback:
+  strategy: revert_pr
+  notes: Migration rollback required if tenants/tenant_members tables were created.
+
+notes:
+  minor_customization:
+    - Add wildcard subdomain to Vercel project domains (*.insightpulseai.com)
+    - Add wildcard CNAME in Cloudflare (*.insightpulseai.com → Vercel) — update infra/cloudflare SSOT YAML
+    - Set ROOT_DOMAIN env var in Vercel project settings

@@ -62,7 +62,10 @@
     "superclaude_bridge.yaml",
     "CLAUDE.md",
     "AGENTS.md",
-    "GEMINI.md"
+    "GEMINI.md",
+    "automations-inventory.json",
+    "automations-inventory.md",
+    "requirements-constraints.txt"
   ],
   "allow_root_dirs": [
     ".devcontainer",

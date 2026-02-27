@@ -1,0 +1,66 @@
+name: ops-console · e2e
+
+on:
+  pull_request:
+    paths:
+      - "apps/ops-console/**"
+      - ".github/workflows/ops-console-playwright.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/ops-console/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: apps/ops-console
+
+jobs:
+  e2e:
+    name: Playwright E2E (smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Provide via GitHub Actions secrets for authenticated flows.
+      # Smoke tests run against the built app without secrets.
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/ops-console/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Playwright smoke tests
+        run: npx playwright test --reporter=list
+        env:
+          # Start server from build output
+          PORT: 3100
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: apps/ops-console/playwright-report/
+          retention-days: 7

@@ -1,0 +1,49 @@
+name: Vercel Integrations Diff
+
+on:
+  schedule:
+    - cron: "0 8 * * *"   # Daily at 08:00 UTC
+  workflow_dispatch:        # Manual trigger for testing
+
+permissions:
+  contents: read
+
+jobs:
+  diff:
+    name: Detect integration drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
+      SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tsx (run TypeScript directly)
+        run: npm install -g tsx
+
+      - name: Run integrations diff
+        run: tsx platform/vercel-integrations/run.ts
+        # Exits 0 on no drift (success), exits 1 on unrecoverable error.
+        # Drift itself is reported via GitHub Issues + Slack, not exit code.
+
+      - name: Upload diff output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diff-output-${{ github.run_id }}
+          path: /tmp/vercel-integrations-diff-*.json
+          retention-days: 14
+          if-no-files-found: ignore
