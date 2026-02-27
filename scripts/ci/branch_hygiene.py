@@ -167,7 +167,7 @@ def main() -> int:
     cutoff_ts = now - args.max_age_days * 86400
 
     print(f"Branch Hygiene — {repo}")
-    print(f"  Mode      : {'DRY RUN (report only)' if dry_run else f'LIVE (will delete; confirmed with token)'}")
+    print(f"  Mode      : {'DRY RUN (report only)' if dry_run else 'LIVE (will delete; confirmed with token)'}")
     print(f"  Max age   : {args.max_age_days} days")
     print(f"  Cutoff    : {datetime.datetime.utcfromtimestamp(cutoff_ts).isoformat()}Z")
     print()

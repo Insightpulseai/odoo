@@ -87,6 +87,91 @@ surfaces:
       No CE equivalent — requires AI agents framework (enterprise_ai module).
     modes: []           # no CE path; accepted gap
 
+# ── Anthropic / Claude provider ───────────────────────────────────────────────
+# Added per spec/ipai-llm-supabase-bridge/prd.md O2 + O5.3.
+# Claude is IPAI's first-class AI provider — not available in Odoo EE natively.
+# Enabled once vendor/apexive-llm llm_anthropic port to 19.0 is complete (see
+# ssot/ai/dependencies.yaml: apexive_odoo_llm status).
+anthropic:
+  bridge: vendor_apexive_llm_anthropic     # llm_anthropic module in vendor tree
+  module: llm_anthropic                    # addons path: vendor/apexive-llm/llm_anthropic
+  models:
+    - claude-sonnet-4-6
+    - claude-haiku-4-5-20251001
+    - claude-opus-4-6
+  required_secret: anthropic_api_key       # registered in ssot/secrets/registry.yaml
+  endpoint_param: anthropic.api_key        # ir.config_parameter key set in Odoo Settings
+  failure_code: AI_KEY_NOT_CONFIGURED      # HTTP 503 when key is missing (consistent with gemini)
+  status: pending_port                     # allowed: pending_port | active | deprecated
+  differentiator: >
+    Anthropic Claude is not supported in Odoo 19 Enterprise (EE ships ChatGPT + Gemini BYOK only).
+    IPAI's llm_anthropic port gives tenants Claude support that Enterprise does not provide.
+
+# ── CE vs EE vs IPAI capability stance ───────────────────────────────────────
+# Codified from Odoo 19 release notes audit (2026-02-28).
+ce_ee_ipai_gap:
+  community_edition:
+    ai_native: false
+    notes: "Zero native AI in CE. All 17 Odoo 19 AI features are Enterprise-only."
+  enterprise:
+    ai_native: true
+    providers_supported: [openai, gemini]
+    providers_missing: [anthropic]
+    notes: >
+      Odoo 19 EE ships ChatGPT 5.0 and Gemini BYOK (via AI app → Configuration → Providers).
+      No Anthropic/Claude support. IAP credits apply to OCR/document digitization only, not AI chat.
+  ipai:
+    ai_native: false                       # CE base, no native AI
+    providers_supported: [gemini, anthropic, ollama]
+    differentiators:
+      - "Claude support (llm_anthropic) — not available in EE"
+      - "Supabase observability bridge (ipai_llm_supabase_bridge) — real-time LLM telemetry"
+      - "Provider-agnostic bridge — swap backends without Odoo config changes"
+
+# ── Provider policy (SSOT enforced) ──────────────────────────────────────────
+provider_policy:
+  registration_required: true
+  notes: >
+    All AI providers must be registered in this file before use. Using an unregistered
+    provider is a policy violation and will be caught by check_ai_dependencies.py.
+  fail_closed_semantics:
+    missing_key_code: AI_KEY_NOT_CONFIGURED
+    http_status: 503
+    remediation_ref: ssot/secrets/registry.yaml
+  first_class_providers:
+    - id: anthropic
+      priority: 1
+      reason: "IPAI canonical provider; Claude 4.x model family; IPAI differentiator vs EE"
+    - id: gemini
+      priority: 2
+      reason: "Default active provider; production-ready Gemini 2.0 Flash bridge"
+  optional_providers:
+    - id: ollama
+      reason: "Opt-in for offline/air-gapped tenants; no telemetry"
+  prohibited_providers:
+    - id: odoo_iap
+      reason: "Enterprise license required; CE-only constraint (CLAUDE.md §Critical Rules)"
+    - id: openai_direct
+      reason: >
+        Not prohibited but not first-class. Use anthropic or gemini for IPAI tenants.
+        Only valid for compatibility testing against llm_openai module.
+
+# ── External dependency references ────────────────────────────────────────────
+# IDs must exactly match ssot/ai/dependencies.yaml dependency.id values.
+# Gate: a provider whose upstream dependency has lifecycle=unknown or pinned_ref=null
+#       MUST NOT be activated in production Odoo.
+dependencies:
+  - apexive_odoo_llm    # required for: anthropic provider, llm surfaces, supabase bridge
+  - oca_ai_ollama       # required for: ollama provider, html_editor_action surface (opt-in)
+
+# Structured gate policy — mirrors invariants in ssot/ai/dependencies.yaml.
+# Evaluated by check_ai_dependencies.py; must stay in sync with invariants block.
+dependency_policy:
+  prod_activation_requires:
+    - "status.lifecycle in ['planned', 'active']"
+    - "upstream.pinned_ref != null"
+  treat_unknown_as: "blocked"
+
 # ── Prohibited modes ─────────────────────────────────────────────────────────
 prohibited:
   - mode: odoo_iap

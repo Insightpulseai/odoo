@@ -13,6 +13,15 @@
   },
   "ruff.enable": true,
   "ruff.format.args": ["--config", "pyproject.toml"],
+  // Preferred: repo-local venv (portable across machines and CI).
+  // Create it with: python -m venv .venv && .venv/bin/pip install -e .
+  // When .venv/bin/python exists, VS Code picks it up automatically.
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  // Allow VS Code to discover the .venv alongside any pyenv envs in this folder.
+  "python.venvPath": "${workspaceFolder}",
+  // macOS-only fallback (pyenv odoo-19-dev). Flip the two lines above/below if .venv
+  // is not yet populated (e.g. fresh clone before repo setup scripts are run).
+  // "python.defaultInterpreterPath": "${userHome}/.pyenv/versions/odoo-19-dev/bin/python",
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoSearchPaths": true,
   "python.analysis.extraPaths": [

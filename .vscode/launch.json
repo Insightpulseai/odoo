@@ -2,12 +2,68 @@
   "version": "0.2.0",
   "configurations": [
     // =========================================================================
-    // 1. Launch local (inside DevContainer — starts Odoo directly via debugpy)
+    // 1. Launch — macOS host (pyenv odoo-19-dev)
+    // =========================================================================
+    // Pre-requisites:
+    //   • pyenv shell odoo-19-dev  (or .python-version auto-selects it)
+    //   • PostgreSQL running locally with odoo_dev database
+    // Interpreter: python.defaultInterpreterPath in settings.json
+    // No "python" key here — debugpy does not expand ${env:HOME} in that field.
+    {
+      "name": "Odoo (Launch — macOS host)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${env:HOME}/.pyenv/versions/odoo-19-dev/bin/odoo",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--config=${workspaceFolder}/config/dev/odoo.conf",
+        "--database=odoo_dev",
+        "--workers=0",
+        "--dev=xml,qweb,werkzeug"
+      ],
+      "justMyCode": false,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+
+    // =========================================================================
+    // 2. Launch — repo interpreter (stable; uses whichever interpreter VS Code
+    //    has selected — .venv or pyenv — without ${env:HOME} expansion risk)
+    // =========================================================================
+    // Pre-requisites:
+    //   • Select the correct interpreter in VS Code (Ctrl+Shift+P → "Select Interpreter")
+    //   • Same PostgreSQL/database requirements as config #1
+    // Uses ${command:python.interpreterPath}: reads the currently selected interpreter
+    // directly from the Python extension — works reliably on macOS, Linux, and CI.
+    {
+      "name": "Odoo (Launch — repo interpreter)",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${command:python.interpreterPath}",
+      "program": "${env:HOME}/.pyenv/versions/odoo-19-dev/bin/odoo",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--config=${workspaceFolder}/config/dev/odoo.conf",
+        "--database=odoo_dev",
+        "--workers=0",
+        "--dev=xml,qweb,werkzeug"
+      ],
+      "justMyCode": false,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+
+    // =========================================================================
+    // 3. Launch — DevContainer (starts Odoo directly via debugpy)
     // =========================================================================
     // Pre-requisites: running inside the DevContainer (workspaceFolder = /workspaces/odoo)
     // Odoo executable installed at /usr/bin/odoo in the official Docker image.
     {
-      "name": "Odoo (Launch local)",
+      "name": "Odoo (Launch — DevContainer)",
       "type": "debugpy",
       "request": "launch",
       "program": "/usr/bin/odoo",
@@ -26,7 +82,7 @@
     },
 
     // =========================================================================
-    // 2. Attach — DevContainer (Odoo running inside the devcontainer via entrypoint)
+    // 4. Attach — DevContainer (Odoo running inside the devcontainer via entrypoint)
     // =========================================================================
     // Pre-requisites:
     //   • Container started with IPAI_DEBUGPY=1 (set in .env or shell)
@@ -50,7 +106,7 @@
     },
 
     // =========================================================================
-    // 3. Attach — Docker CE19 image (plain docker compose, not devcontainer)
+    // 5. Attach — Docker CE19 image (plain docker compose, not devcontainer)
     // =========================================================================
     // Pre-requisites:
     //   • docker compose up with IPAI_DEBUGPY=1 in environment or .env
