@@ -197,6 +197,7 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 | Local dev | OS keychain/keyring (macOS Keychain, GNOME Keyring) | env var injection at shell start |
 | CI / GitHub Actions | GitHub Actions Secrets (repo or org level) | `${{ secrets.NAME }}` |
 | Platform / automation | Supabase Vault (`vault.secrets`) | `vault.decrypted_secrets` view (restricted) |
+| Vercel deployments | Vercel environment variables | Auto-injected by Vercel at build/runtime |
 
 ### "Pasted once" rule
 Showing a secret value once in chat or a terminal for the purpose of immediate storage
@@ -212,7 +213,7 @@ Showing a secret value once in chat or a terminal for the purpose of immediate s
 - Missing secret? State the name needed in one sentence, continue executing
 
 ### SSOT for secret identifiers
-`ssot/secrets/registry.yaml` — tracks secret names, purpose, and consumers.
+`ssot/secrets/registry.yaml` — tracks secret names, purpose, approved stores, and consumers.
 **Never contains values.** See `docs/runbooks/SECRETS_SSOT.md` for full workflow.
 
 ---
