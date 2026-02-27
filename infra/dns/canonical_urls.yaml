@@ -1,0 +1,259 @@
+# =============================================================================
+# Canonical URLs Registry — Machine-Readable SSOT
+# =============================================================================
+# This file is the machine-readable source of truth for ALL URLs under
+# insightpulseai.com that appear in docs, monitoring, and CI gates.
+#
+# Generated from: infra/dns/subdomain-registry.yaml (DNS lifecycle)
+# Consumed by:    scripts/ci/check_canonical_urls.py
+#                 .github/workflows/canonical-urls-gate.yml
+#                 ssot/runtime/prod_settings.yaml (active_required list)
+#
+# DO NOT manually sync this with docs/architecture/CANONICAL_URLS.md.
+# The CI gate reads this YAML; CANONICAL_URLS.md is the human-readable view.
+#
+# lifecycle field (mirrors subdomain-registry.yaml):
+#   active  → URL is live, DNS provisioned, origin healthy, nginx routed
+#   planned → URL in DNS but origin not provisioned / not fully wired
+#   broken  → DNS exists, origin unreachable or endpoint returning errors
+#
+# runtime_class field:
+#   DEPLOYED  → all 5 conditions met: DNS + edge + origin healthy + TLS + lifecycle=active
+#   REDIRECT  → healthy but only serves redirects (no app content)
+#   STAGED    → planned in DNS, no backing service running
+#   BROKEN    → partially wired, one or more conditions failing
+#
+# backing field:
+#   nginx_vhost   → nginx server_name block exists for this subdomain
+#   platform      → DO App Platform or Vercel handles routing (no local nginx needed)
+#   direct        → origin binds 0.0.0.0, CF proxies direct (no nginx vhost)
+#   none          → no routing wired
+#
+# =============================================================================
+
+version: "1.0"
+domain: insightpulseai.com
+schema: ssot.canonical_urls.v1
+last_updated: "2026-02-28"
+
+urls:
+  # ---------------------------------------------------------------------------
+  # DEPLOYED — all 5 conditions met
+  # ---------------------------------------------------------------------------
+  - url: "https://erp.insightpulseai.com"
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: nginx_vhost
+    health_probe: /web/login
+    dns_type: A
+    origin_port: 8069
+    container: odoo-prod
+    tls: "Full (strict)"
+    notes: "Odoo CE 19.0 — primary ERP"
+
+  - url: "https://n8n.insightpulseai.com"
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: nginx_vhost
+    health_probe: /healthz
+    dns_type: A
+    origin_port: 5678
+    container: ipai-n8n
+    tls: "Full (strict)"
+    notes: "n8n workflow automation"
+
+  - url: "https://plane.insightpulseai.com"
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: nginx_vhost
+    health_probe: /
+    dns_type: A
+    origin_port: 3002
+    container: community-web-1
+    tls: "Full (strict)"
+    notes: "Plane CE project management"
+
+  - url: "https://superset.insightpulseai.com"
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: nginx_vhost
+    health_probe: /health
+    dns_type: A
+    origin_port: 8088
+    container: superset-prod
+    tls: "Full (strict)"
+    database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
+    notes: "Apache Superset BI"
+
+  - url: "https://mcp.insightpulseai.com"
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: platform
+    health_probe: /healthz
+    dns_type: CNAME
+    target: pulse-hub-web-an645.ondigitalocean.app
+    tls: "Full (strict)"
+    drift_note: "CF currently has A record (178.128.112.214) — must be CNAME. Fix on next Terraform apply."
+    notes: "MCP coordination — DO App Platform"
+
+  - url: "https://www.insightpulseai.com"
+    lifecycle: active
+    runtime_class: REDIRECT
+    backing: nginx_vhost
+    health_probe: /
+    dns_type: A
+    origin_port: 80
+    tls: "Full (strict)"
+    notes: "Redirects to apex domain"
+
+  # ---------------------------------------------------------------------------
+  # BROKEN — DNS claimed, origin exists but not fully wired
+  # ---------------------------------------------------------------------------
+  - url: "https://ocr.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: BROKEN
+    backing: direct
+    health_probe: /health
+    dns_type: A
+    origin_port: 8001
+    container: ocr-prod
+    tls: "Full (strict)"
+    breaking_conditions:
+      - "No nginx vhost for ocr.insightpulseai.com — relies on CF origin rule or direct :8001 access"
+    activation_criteria:
+      - "Add nginx vhost routing ocr.insightpulseai.com → 127.0.0.1:8001"
+    notes: "PaddleOCR microservice — origin healthy on :8001 but no nginx vhost"
+
+  - url: "https://auth.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: BROKEN
+    backing: none
+    health_probe: /.well-known/openid-configuration
+    dns_type: A
+    origin_port: 8080
+    container: auth-prod
+    tls: "Full (strict)"
+    breaking_conditions:
+      - "No nginx vhost for auth.insightpulseai.com"
+      - "OIDC discovery endpoint returns 404 (not implemented)"
+    activation_criteria:
+      - "Add nginx vhost routing auth.insightpulseai.com → 127.0.0.1:8080"
+      - "Implement /.well-known/openid-configuration endpoint in auth-prod service"
+    notes: "auth-prod container runs on :8080, is healthy, but OIDC not implemented"
+
+  # ---------------------------------------------------------------------------
+  # STAGED — DNS claimed/planned, no backing service running
+  # ---------------------------------------------------------------------------
+  - url: "https://stage-erp.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /web/login
+    dns_type: A
+    origin_port: 8069
+    environment: staging
+    activation_criteria:
+      - "Provision staging Odoo compose stack"
+      - "Add nginx vhost for stage-erp → :8069"
+    notes: "No staging Odoo container provisioned"
+
+  - url: "https://stage-api.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /api/health
+    dns_type: A
+    origin_port: 8100
+    environment: staging
+    activation_criteria:
+      - "Provision API gateway staging container on port 8100"
+      - "Add nginx vhost for stage-api → :8100"
+    notes: "Port 8100 (8000 conflicts with paddleocr-service on prod host)"
+
+  - url: "https://stage-auth.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /.well-known/openid-configuration
+    dns_type: A
+    origin_port: 8080
+    environment: staging
+    activation_criteria:
+      - "Provision staging auth container"
+      - "Implement OIDC discovery endpoint"
+      - "Add nginx vhost for stage-auth → :8080"
+    notes: "No staging auth container"
+
+  - url: "https://stage-mcp.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /healthz
+    dns_type: A
+    origin_port: 8766
+    environment: staging
+    activation_criteria:
+      - "Provision staging MCP coordinator container on port 8766"
+      - "Add nginx vhost for stage-mcp → :8766"
+    notes: "No staging MCP container"
+
+  - url: "https://stage-n8n.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /healthz
+    dns_type: A
+    origin_port: 5679
+    environment: staging
+    activation_criteria:
+      - "Provision staging n8n container on port 5679"
+      - "Add nginx vhost for stage-n8n → :5679"
+    notes: "Port 5679 (5678 conflicts with prod n8n)"
+
+  - url: "https://stage-superset.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /health
+    dns_type: A
+    origin_port: 8089
+    environment: staging
+    activation_criteria:
+      - "Provision staging Superset container on port 8089"
+      - "Add nginx vhost for stage-superset → :8089"
+    notes: "Port 8089 (8088 conflicts with prod Superset)"
+
+  - url: "https://stage-ocr.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /health
+    dns_type: A
+    origin_port: 8002
+    environment: staging
+    activation_criteria:
+      - "Provision staging OCR container on port 8002"
+      - "Add nginx vhost for stage-ocr → :8002"
+    notes: "Port 8002 (8080 conflicts with auth-prod)"
+
+  - url: "https://ops.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: platform
+    health_probe: /api/health
+    dns_type: CNAME
+    target: cname.vercel-dns.com
+    environment: production
+    activation_criteria:
+      - "Claim domain in Vercel dashboard (provider_claim.status: unclaimed)"
+      - "Update subdomain-registry.yaml: provider_claim.status → claimed"
+    notes: "OdooOps Console — Vercel domain not yet claimed"
+
+  - url: "https://api.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /api/health
+    dns_type: A
+    origin_port: 8000
+    notes: "API gateway — not yet provisioned"

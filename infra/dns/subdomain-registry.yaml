@@ -132,13 +132,14 @@ subdomains:
   - name: ocr
     type: A
     service: paddleocr_microservice
-    port: 8080
+    port: 8001
     health_check: /health
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    notes: "No nginx vhost; ocr-prod binds 0.0.0.0:8001. Verify CF origin rule or add nginx vhost."
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -148,18 +149,26 @@ subdomains:
   - name: auth
     type: A
     service: authentication_service
-    port: 3000
+    port: 8080
     health_check: /.well-known/openid-configuration
     owner_system: "Authentication service"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    # lifecycle=planned: auth-prod container runs on :8080 but has no nginx vhost
+    # and OIDC discovery endpoint returns 404. Must not be "active" until both
+    # conditions are resolved.
+    lifecycle: planned
+    status: planned
+    backing_status: broken
+    activation_criteria:
+      - "Add nginx vhost routing auth.insightpulseai.com → 127.0.0.1:8080"
+      - "Implement /.well-known/openid-configuration endpoint in auth-prod service"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-06-01"
 
   - name: superset
     type: A
@@ -256,6 +265,10 @@ subdomains:
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
   # ---------------------------------------------------------------------------
+  # ALL staging entries are lifecycle=planned because no staging containers exist.
+  # DNS records are live in Cloudflare (claimed) but no backing service is running.
+  # Do not flip to lifecycle=active until docker-compose staging stack is provisioned.
+  # ---------------------------------------------------------------------------
   - name: stage-erp
     type: A
     service: odoo_ce_19_staging
@@ -264,116 +277,156 @@ subdomains:
     owner_system: "Odoo CE 19.0 (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    activation_criteria:
+      - "Provision staging Odoo compose stack"
+      - "Add nginx vhost for stage-erp → :8069"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-api
     type: A
     service: api_gateway_staging
-    port: 8000
+    port: 8100
     health_check: /api/health
     owner_system: "API Gateway (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    notes: "Port changed from 8000 (conflict: paddleocr-service binds 127.0.0.1:8000 on prod host)"
+    activation_criteria:
+      - "Provision API gateway staging container on port 8100"
+      - "Add nginx vhost for stage-api → :8100"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-auth
     type: A
     service: authentication_service_staging
-    port: 3000
+    port: 8080
     health_check: /.well-known/openid-configuration
     owner_system: "Authentication service (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    activation_criteria:
+      - "Provision staging auth container"
+      - "Implement OIDC discovery endpoint"
+      - "Add nginx vhost for stage-auth → :8080"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-mcp
     type: A
     service: mcp_gateway_staging
-    port: 3000
+    port: 8766
     health_check: /healthz
     owner_system: "MCP coordination (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    activation_criteria:
+      - "Provision staging MCP coordinator container on port 8766"
+      - "Add nginx vhost for stage-mcp → :8766"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-n8n
     type: A
     service: n8n_workflow_automation_staging
-    port: 5678
+    port: 5679
     health_check: /healthz
     owner_system: "n8n automation (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    notes: "Port changed from 5678 (conflict: prod n8n binds 0.0.0.0:5678)"
+    activation_criteria:
+      - "Provision staging n8n container on port 5679"
+      - "Add nginx vhost for stage-n8n → :5679"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-superset
     type: A
     service: apache_superset_bi_staging
-    port: 8088
+    port: 8089
     health_check: /health
     owner_system: "Apache Superset BI (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    notes: "Port changed from 8088 (conflict: prod Superset binds 127.0.0.1:8088)"
+    activation_criteria:
+      - "Provision staging Superset container on port 8089"
+      - "Add nginx vhost for stage-superset → :8089"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
   - name: stage-ocr
     type: A
     service: paddleocr_microservice_staging
-    port: 8080
+    port: 8002
     health_check: /health
     owner_system: "PaddleOCR microservice (staging)"
     cloudflare_proxied: false
     tls_mode: "Full (strict)"
-    lifecycle: active
-    status: active
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
     environment: staging
+    notes: "Port changed from 8080 (conflict: auth-prod binds 0.0.0.0:8080)"
+    activation_criteria:
+      - "Provision staging OCR container on port 8002"
+      - "Add nginx vhost for stage-ocr → :8002"
     provider_claim:
       provider: cloudflare
       status: claimed
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
+      expires_at: "2026-09-01"
 
 # =============================================================================
 # Deprecated Services (Archived for Reference)

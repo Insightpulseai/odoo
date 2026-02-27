@@ -1,0 +1,21 @@
+name: prod-settings-ssot-gate
+on:
+  pull_request:
+  push:
+  merge_group:
+permissions:
+  contents: read
+jobs:
+  prod-settings-ssot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+      - name: Validate prod settings SSOT
+        run: python3 scripts/ci/check_prod_settings_ssot.py
