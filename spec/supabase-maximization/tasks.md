@@ -32,6 +32,9 @@
 | 2.6 | Enable `ops.task_queue` Realtime in `supabase/config.toml` | EDIT | `grep "task_queue" supabase/config.toml` → match |
 | 2.7 | Activate CDC pipeline: create DO App Platform worker via `supabase-etl-expense.yml` | CI | Workflow run succeeds; Iceberg snapshot advances |
 | 2.8 | Integration test: Odoo INSERT → Iceberg row visible within 60s | — | `SELECT * FROM odoo_ops.expense ORDER BY id DESC LIMIT 1` returns row |
+| 2.9 | Create analytics bucket `odoo-expense-etl`; wire ETL pipeline status events to `ops.run_events` via `webhook-ingest` Edge Function | `infra/supabase-etl/odoo-expense.toml`, `supabase/functions/webhook-ingest/` | `SELECT event_type FROM ops.run_events WHERE source='etl_worker' LIMIT 1` returns row |
+| 2.10 | Create `scripts/ci/check_iceberg_etl_smoke.sh` — DuckDB Iceberg smoke query asserting row_count > 0 and lag < 60s | CREATE | Script exits 0 on healthy pipeline; exits 1 if row_count = 0 or lag ≥ 60s |
+| 2.11 | Add `check_iceberg_etl_smoke.sh` step to `.github/workflows/supabase-etl-expense.yml` (runs after ETL worker deploy) | EDIT | Workflow log shows smoke query PASS; `scripts/ci/check_iceberg_etl_smoke.sh` referenced in workflow |
 
 ---
 

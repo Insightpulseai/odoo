@@ -102,6 +102,36 @@ Ops console subscribes to channel for live run progress UI.
 Activate Supabase ETL worker on DO App Platform using `infra/supabase-etl/odoo-expense.toml`.
 CI workflow: `.github/workflows/supabase-etl-expense.yml` (already in tasks.md 2.7).
 
+### 2.5 Analytics Plane — ETL → Iceberg landing
+
+> Ref: `docs/architecture/SUPABASE_FEATURES_INTEGRATIONS_ADOPTION.md §Analytics Plane`
+
+**EL-only constraint**: No transforms in the ETL worker. All transformations happen downstream
+(DuckDB queries, dbt-style views, or Superset SQL).
+
+**Bucket naming**: `odoo-<domain>-etl` (e.g. `odoo-expense-etl`). Future ETL publications follow
+this convention.
+
+**Schema evolution rules** (additive only):
+- New nullable columns: allowed
+- Column rename / type change: requires new table version (`expense_v2`, etc.)
+- Binary columns (`ir_attachment.datas`): excluded from all Iceberg schemas — pointer-only pattern
+
+**DuckDB Iceberg query workflow**:
+```sql
+-- CI smoke query (run after ETL worker deploy)
+INSTALL iceberg; LOAD iceberg;
+SELECT count(*) AS row_count, max(_sdc_received_at) AS latest_event
+FROM iceberg_scan('s3://ICEBERG_WAREHOUSE/odoo_ops/expense/');
+-- Asserts: row_count > 0 AND latest_event > now() - INTERVAL '60 seconds'
+```
+
+SSOT for this script: `scripts/ci/check_iceberg_etl_smoke.sh`
+
+**Pipeline health events**: ETL worker emits `pipeline.start`, `pipeline.stop`, `pipeline.error`
+events to `ops.run_events` via Edge Function `webhook-ingest`. Enables Realtime dashboard and
+alerting without polling the Iceberg warehouse.
+
 ---
 
 ## Phase 3 — Vector + MCP

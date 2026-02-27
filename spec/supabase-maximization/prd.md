@@ -42,6 +42,9 @@ work defaults to Supabase primitives without requiring per-PR judgment.
 | T2-3 | CDC pipeline active: Odoo expense tables → Iceberg; lag < 60s | Iceberg snapshot timestamp within 60s of Odoo INSERT |
 | T2-4 | Realtime subscription active for run progress events | WebSocket subscription to `ops.task_queue` changes works in ops console |
 | T2-5 | `ir_attachment.datas` excluded from all Iceberg schema definitions | `grep -r 'datas' infra/supabase-etl/` → zero results |
+| T2-6 | Analytics bucket `odoo-expense-etl` created; publication `odoo_expense_pub` wired to ETL worker | `supabase storage ls` lists bucket; ETL config `infra/supabase-etl/odoo-expense.toml` present |
+| T2-7 | ETL pipeline health surfaced in `ops.run_events` (pipeline start/stop/error events emitted) | `SELECT event_type FROM ops.run_events WHERE source='etl_worker' LIMIT 1` returns row |
+| T2-8 | DuckDB Iceberg smoke query passes in CI: row count > 0, event lag < 60 s | `scripts/ci/check_iceberg_etl_smoke.sh` exits 0 after ETL worker deploy |
 
 ### Tier 3 (Phase 3)
 
