@@ -1,19 +1,25 @@
 name: Cloudflare Authority Gate
 
 # =============================================================================
-# Prevents DNS record changes from merging when Cloudflare is NOT the
-# authoritative DNS for insightpulseai.com.
+# Two-job gate for DNS/Terraform PRs.
 #
-# Why: Committing DNS records to infra/cloudflare/ has zero effect if the
-# domain's nameservers still point to the old registrar (Spacesquare).
-# This gate makes that condition explicit and visible on every PR.
+# Job 1 — provider-claims:
+#   Validates that every lifecycle=active record in infra/dns/subdomain-registry.yaml
+#   has a verified provider claim (status=claimed + claimed_at + claim_ref).
+#   Fails on planned records with an expired expires_at.
+#   Blocks merge before any DNS or Terraform changes land.
 #
-# Pass: Cloudflare NS delegation is live -> PR may merge.
-# Fail: Old NS delegation -> PR blocked with actionable message.
+# Job 2 — authority-check:
+#   Verifies Cloudflare is the authoritative NS for insightpulseai.com.
+#   Runs ONLY if provider-claims passes (needs: [provider-claims]).
+#   Prevents DNS record commits from merging when NS delegation is still pending.
 #
-# Secrets required: none (NS/SOA check is a public DNS query).
-# Bypass: If NS delegation is genuinely in progress, add label "cf-ns-pending"
-#         to the PR -- the gate will warn but not block.
+# Pass:  Both gates green → PR may merge.
+# Fail:  Either gate fails → PR blocked with actionable PR comment.
+# Bypass (authority-check only): add label "cf-ns-pending" to the PR.
+#         provider-claims has NO bypass — claim evidence is always required.
+#
+# Secrets required: none (all checks are SSOT-file or public DNS queries).
 # =============================================================================
 
 on:
@@ -22,6 +28,7 @@ on:
       - "infra/cloudflare/**"
       - "infra/dns/**"
       - "ssot/secrets/registry.yaml"
+      - "scripts/ci/check_dns_provider_claims.py"
   workflow_dispatch:
     inputs:
       domain:
@@ -33,69 +40,103 @@ permissions:
   contents: read
   pull-requests: write
 
+# ─── Job 1: Provider Claim Gate ───────────────────────────────────────────────
 jobs:
+  provider-claims:
+    name: DNS provider claim gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PyYAML
+        run: pip install pyyaml --quiet
+
+      - name: Run provider claim gate
+        id: gate
+        run: |
+          python3 scripts/ci/check_dns_provider_claims.py \
+            2>&1 | tee /tmp/provider_claims.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: Post PR comment (failure)
+        if: steps.gate.outputs.exit_code != '0' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG=$(cat /tmp/provider_claims.log 2>/dev/null | head -c 3000 || echo "Log unavailable")
+          {
+            echo '## DNS Provider Claim Gate — FAILED'
+            echo ''
+            echo 'One or more `lifecycle: active` records lack a verified provider claim,'
+            echo 'or a `lifecycle: planned` record has passed its `expires_at` deadline.'
+            echo ''
+            echo '### Rules'
+            echo ''
+            echo '| Condition | Requirement |'
+            echo '|-----------|-------------|'
+            echo '| `lifecycle: active` | `provider_claim.status: claimed` + `claimed_at` + `claim_ref` |'
+            echo '| `lifecycle: planned` + `expires_at` in the past | Must resolve or extend deadline |'
+            echo ''
+            echo '### Remediation'
+            echo ''
+            echo '**A) Record is active but unclaimed** (e.g., Vercel CNAME not yet set up):'
+            echo '```yaml'
+            echo '# Step 1: Temporarily keep as planned'
+            echo 'lifecycle: planned'
+            echo 'provider_claim:'
+            echo '  provider: vercel'
+            echo '  status: unclaimed'
+            echo '  expires_at: "YYYY-MM-DD"   # ~21 days'
+            echo ''
+            echo '# Step 2: After claiming domain in Vercel dashboard:'
+            echo 'lifecycle: active'
+            echo 'provider_claim:'
+            echo '  provider: vercel'
+            echo '  status: claimed'
+            echo '  claimed_at: "YYYY-MM-DD"'
+            echo '  claim_ref: "vercel:prj_<your-project-id>"'
+            echo '```'
+            echo ''
+            echo '**B) Planned record expired** → claim the domain and transition to active (see above),'
+            echo 'or extend `expires_at` with justification in the commit message.'
+            echo ''
+            echo '---'
+            echo '<details><summary>Gate output</summary>'
+            echo ''
+            echo '```'
+            echo "$LOG"
+            echo '```'
+            echo '</details>'
+          } > /tmp/claims_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/claims_comment.md
+
+      - name: Fail gate
+        if: steps.gate.outputs.exit_code != '0'
+        run: |
+          echo "::error::DNS provider claim gate failed."
+          echo "::error::Active records must have status=claimed + claimed_at + claim_ref."
+          echo "::error::Planned records cannot have expired expires_at."
+          echo "::error::See PR comment for remediation."
+          exit 1
+
+      - name: Pass
+        if: steps.gate.outputs.exit_code == '0'
+        run: echo "DNS provider claim gate passed."
+
+# ─── Job 2: Cloudflare NS Authority Check ────────────────────────────────────
   authority-check:
     name: Verify Cloudflare is authoritative
     runs-on: ubuntu-latest
+    needs: [provider-claims]   # ← hard prerequisite: claim gate must pass first
     env:
       VERIFY_DOMAIN: ${{ github.event.inputs.domain || 'insightpulseai.com' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Python dependencies
-        run: pip install pyyaml --quiet
-
-      - name: DNS provider claim gate
-        id: provider_claims
-        run: |
-          python3 scripts/ci/check_dns_provider_claims.py \
-            2>&1 | tee /tmp/provider_claims_check.log
-          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
-        continue-on-error: true
-
-      - name: Post PR comment (provider claim failures)
-        if: steps.provider_claims.outputs.exit_code != '0' && github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          LOG=$(cat /tmp/provider_claims_check.log 2>/dev/null || echo "Log unavailable")
-          {
-            echo '## DNS Provider Claim Gate - FAILED'
-            echo ''
-            echo 'One or more DNS records have `lifecycle: active` but an unclaimed `provider_claim`.'
-            echo 'This means Terraform would provision a CNAME that cannot resolve until the'
-            echo 'provider (e.g. Vercel) claims the domain.'
-            echo ''
-            echo '### Remediation'
-            echo ''
-            echo '**Option A — Keep `lifecycle: planned` until claimed** (safe, no DNS change):'
-            echo '1. Ensure the record has `lifecycle: planned` in `infra/dns/subdomain-registry.yaml`'
-            echo '2. Claim the domain in the provider dashboard (Vercel → Domains → Add custom domain)'
-            echo '3. Update `provider_claim.status: claimed` in the SSOT file'
-            echo '4. Change `lifecycle: active` in the same commit'
-            echo '5. Re-run this gate'
-            echo ''
-            echo '**Option B — Already claimed** (update SSOT to reflect reality):'
-            echo '1. Confirm the domain is claimed in the provider dashboard'
-            echo '2. Update `provider_claim.status: claimed` in `infra/dns/subdomain-registry.yaml`'
-            echo '3. The gate will pass on the next push'
-            echo ''
-            echo '---'
-            echo '*Check output:*'
-            echo '```'
-            echo "$LOG"
-            echo '```'
-          } > /tmp/claims_comment.md
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/claims_comment.md
-
-      - name: Fail gate (provider claims not satisfied)
-        if: steps.provider_claims.outputs.exit_code != '0'
-        run: |
-          echo "::error::DNS provider claim gate failed — active records have unclaimed provider_claim."
-          echo "::error::See PR comment or /tmp/provider_claims_check.log for details."
-          exit 1
 
       - name: Install dig (dnsutils)
         run: sudo apt-get install -y dnsutils
@@ -140,7 +181,7 @@ jobs:
         run: |
           LOG=$(head -c 2000 /tmp/authority_check.log 2>/dev/null || echo "Log unavailable")
           {
-            echo '## Cloudflare Authority Gate - FAILED'
+            echo '## Cloudflare Authority Gate — FAILED'
             echo ''
             echo 'Cloudflare is NOT currently the authoritative DNS for `insightpulseai.com`.'
             echo ''
@@ -162,10 +203,12 @@ jobs:
             echo 'DNS record commits are still safe to merge -- they will apply once delegation completes.'
             echo ''
             echo '---'
-            echo '*Check log:*'
+            echo '<details><summary>Check log</summary>'
+            echo ''
             echo '```'
             echo "$LOG"
             echo '```'
+            echo '</details>'
           } > /tmp/cf_comment.md
           gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/cf_comment.md
 
