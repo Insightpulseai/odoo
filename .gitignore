@@ -138,6 +138,7 @@ temp/
 !supabase/seed.sql
 !supabase/seeds/*.sql
 !supabase/seed/**/*.sql
+!supabase/tests/*.sql
 !scripts/lakehouse/*.sql
 !platform/db/migrations/*.sql
 !scripts/supabase/sql/*.sql

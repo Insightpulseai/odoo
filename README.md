@@ -116,7 +116,7 @@ See also:
 - ✅ **Python 3.12** + dev tools (black, flake8, pytest, pre-commit)
 - ✅ **Node.js LTS** + pnpm
 - ✅ **Docker-outside-of-Docker** (manage host containers)
-- ✅ **3 databases** pre-created (odoo_dev, odoo_stage, odoo_prod)
+- ✅ **2 databases** pre-created (odoo_dev, odoo) — dev and prod names per CLAUDE.md
 - ✅ **VS Code extensions** (Python, Docker, Git, AI tools)
 - ✅ **Spec Kit** integration
 - ✅ **Auto-reload** on code changes
@@ -220,7 +220,7 @@ See [MONOREPO_CONTRACT.md](./docs/architecture/MONOREPO_CONTRACT.md) for:
 | Command | Status | Notes |
 |---------|--------|-------|
 | `./scripts/odoo.sh` | ✅ **Recommended** | Auto-detects environment |
-| `./odoo-bin` | ✅ Correct | Direct bash execution |
+| `./odoo-bin` | ✅ Correct | Repo-provided bash wrapper (not upstream `odoo-bin`) |
 | `python -m odoo` | ✅ Correct | If `odoo` package installed |
 | `python odoo-bin` | ❌ **WRONG** | Results in `SyntaxError` (bash ≠ Python) |
 
@@ -367,7 +367,7 @@ Modules that are no longer maintained should be moved to `addons/_deprecated/` a
 Recommended for fresh Ubuntu 22.04/24.04 droplet.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
+curl -fsSL https://raw.githubusercontent.com/Insightpulseai/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
 chmod +x deploy_m1.sh
 sudo ./deploy_m1.sh
 ```
@@ -386,7 +386,7 @@ tail -f /var/log/odoo_deploy.log
 ## Quick Start (Local Dev)
 
 ```bash
-git clone https://github.com/jgtolentino/odoo.git
+git clone https://github.com/Insightpulseai/odoo.git
 cd odoo
 cd deploy
 docker compose up -d
@@ -466,7 +466,7 @@ git diff --exit-code addons/ipai_finance_close_seed
 
 CI enforces:
 
-- **Odoo 18 CE / OCA CI** — Lint, static checks, and unit tests
+- **Odoo 19 CE / OCA CI** — Lint, static checks, and unit tests
 - **guardrails** — Block Enterprise modules and odoo.com links
 - **repo-structure** — Repo tree in spec.md must match generator
 - **data-model-drift** — `docs/data-model/` must match generator output
@@ -578,7 +578,7 @@ Odoo BIR Module ↔ Supabase Edge Function (plane-sync/) ↔ Plane API
 - `docs/` — Architecture + deployment docs
 - `docs/data-model/` — Canonical schema outputs
 - `docs/arch/SUPABASE_PRIMITIVES.md` — **Supabase prioritization framework (5-criterion rubric)**
-- `spec/agent/constitution.md` — **Agent execution constraints (NO-CLI/NO-DOCKER)**
+- `spec/agent/constitution.md` — **Agent execution constraints** (defines what agents running in CI/runner environments can and cannot do; not a repo-wide restriction)
 - `docs/arch/IDEAL_ORG_ENTERPRISE_REPO_STRUCTURE.md` — Ideal repository structure guide
 - `docs/EMAIL_INTEGRATION.md` — Complete email integration guide
 
@@ -593,5 +593,5 @@ Odoo BIR Module ↔ Supabase Edge Function (plane-sync/) ↔ Plane API
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo/issues)
-- Docs: https://jgtolentino.github.io/odoo/
+- Issues: [GitHub Issues](https://github.com/Insightpulseai/odoo/issues)
+- Docs: https://insightpulseai.github.io/odoo/

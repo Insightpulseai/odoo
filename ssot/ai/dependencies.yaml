@@ -1,0 +1,101 @@
+# ssot.ai.dependencies.v1
+# External AI dependency registry — Odoo 19 CE + IPAI.
+# Gate rule: a dependency must have lifecycle != unknown and pinned_ref set
+#            before any consumer module can be activated.
+# CI: python scripts/ci/check_ai_dependencies.py --schema-only  (non-blocking)
+# Referenced by: ssot/ai/odoo_ai.yaml (dependencies list)
+#                spec/ipai-llm-supabase-bridge/tasks.md (T1.1–T1.10)
+
+version: 1
+
+# Machine-checkable invariants — evaluated by check_ai_dependencies.py.
+# Prose gate rules above are informational; these are the enforceable form.
+invariants:
+  - id: pinned_ref_required_for_active
+    description: "A dependency with lifecycle=active must have a non-null pinned_ref."
+    rule: "dependency.upstream.pinned_ref != null OR dependency.status.lifecycle != 'active'"
+  - id: unknown_is_blocked
+    description: "lifecycle=unknown is treated as blocked; prod activation is forbidden."
+    rule: "dependency.status.lifecycle != 'unknown' OR prod_activation == false"
+
+dependencies:
+
+  - id: apexive_odoo_llm
+    type: vendor_repo
+    scope: odoo_addons
+    upstream:
+      name: "Apexive odoo-llm"
+      repo: "https://github.com/apexive/odoo-llm"
+      target_branch: "19.0"
+      pinned_ref: null              # set to tag/sha once validated; REQUIRED before activation
+    status:
+      lifecycle: unknown            # unknown | planned | active | blocked | deprecated
+      reason: >
+        Need to verify 19.0 port status + compatibility with our Odoo 19 baseline.
+        Check upstream branch list; if absent set lifecycle: blocked.
+    consumers:
+      odoo_modules:
+        - "addons/ipai/ipai_llm_supabase_bridge"
+        - "addons/ipai/ipai_ai_tools_bridge"
+        - "addons/ipai/ipai_ai_copilot"
+        - "vendor/apexive-llm/llm"
+        - "vendor/apexive-llm/llm_thread"
+        - "vendor/apexive-llm/llm_tool"
+        - "vendor/apexive-llm/llm_assistant"
+        - "vendor/apexive-llm/llm_openai"
+        - "vendor/apexive-llm/llm_mcp_server"
+        - "vendor/apexive-llm/llm_anthropic"
+      supabase:
+        - "supabase/functions/llm-webhook-ingest"
+        - "supabase/migrations/*_ops_llm_observability.sql"
+    contract:
+      capabilities_required:
+        - "provider abstraction (LLM providers via config)"
+        - "tool calling / function calling surface"
+        - "no network dependency during Odoo module install"
+      compatibility:
+        odoo_major: 19
+        python_major: 3
+      licensing:
+        required: true
+        notes: "LGPL-3 — compatible with IPAI distribution policy."
+    fallback:
+      strategy: "ipai-native"
+      notes:
+        - "If not ported, keep IPAI bridge Odoo-side thin and route inference via Supabase Edge Functions only."
+        - "Block any ipai_ai_* module that requires vendor surfaces until pinned_ref is set."
+        - "Anthropic support requires the port or a standalone llm_anthropic shim in addons/ipai/."
+    risks:
+      - "Unpinned upstream can introduce breaking changes; enforce pinned_ref before activation."
+      - "Provider API surface may not match our Supabase bridge contract."
+    acceptance:
+      to_activate:
+        - "Upstream target_branch (19.0) exists in the repo"
+        - "pinned_ref set to a reviewed tag/sha"
+        - "Smoke tests pass in CI: install + basic provider invocation (stubbed key)"
+
+  - id: oca_ai_ollama
+    type: oca_repo
+    scope: odoo_addons
+    upstream:
+      name: "OCA/ai (ai_oca_native_generate_ollama)"
+      repo: "https://github.com/OCA/ai"
+      target_branch: "19.0"
+      pinned_ref: null              # set once audited against our vendored tree
+    status:
+      lifecycle: unknown
+      reason: >
+        Module may already be vendored in addons/oca/ai/; verify version and pin ref
+        for provenance parity. Ollama is opt-in only — not a blocking dependency.
+    consumers:
+      odoo_modules:
+        - "addons/oca/ai/ai_oca_native_generate_ollama"
+    fallback:
+      strategy: "accept_ce_gap"
+      notes:
+        - "CE has no native AI surface; Ollama is an optional local-inference path."
+        - "html_editor_action remains a known CE gap (ssot/ai/odoo_ai.yaml surfaces)."
+    acceptance:
+      to_activate:
+        - "pinned_ref recorded after audit of vendored tree"
+        - "Module installs cleanly on Odoo 19 (odoo -i ai_oca_native_generate_ollama --stop-after-init exits 0)"
