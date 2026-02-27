@@ -1,0 +1,46 @@
+odoo_version: "19.0"
+sources:
+  general: "https://www.odoo.com/documentation/19.0/applications/general/"
+  services: "https://www.odoo.com/documentation/19.0/applications/services/"
+  developer: "https://www.odoo.com/documentation/19.0/developer.html"
+  contributing: "https://www.odoo.com/documentation/19.0/contributing/"
+expected:
+  general:
+    discuss: ["odoo19/discuss"]
+    calendar: ["odoo19/calendar"]
+    contacts: ["odoo19/contacts"]
+    dashboards: ["odoo19/dashboards"]
+    data_cleaning: ["odoo19/data_cleaning"]
+    documents: ["odoo19/documents"]
+    expenses: ["odoo19/expenses"]
+    spreadsheet: ["odoo19/spreadsheet"]
+    users: ["odoo19/users"]
+    voip: ["odoo19/voip"]
+    whatsapp: ["odoo19/whatsapp"]
+    to_do: ["odoo19/to_do"]
+  services:
+    project: ["odoo19/project"]
+    timesheets: ["odoo19/timesheets"]
+    field_service: ["odoo19/field_service"]
+    helpdesk: ["odoo19/helpdesk"]
+    planning: ["odoo19/planning"]
+    appointments: ["odoo19/appointments"]
+  developer:
+    orm: ["odoo/odoo19-orm"]
+    module: ["odoo/odoo19-module"]
+    actions: ["odoo/odoo19-actions"]
+    data_files: ["odoo/odoo19-data-files"]
+    mixins: ["odoo/odoo19-mixins"]
+    owl_components: ["odoo/odoo19-owl-components"]
+    frontend: ["odoo/odoo19-frontend"]
+    assets: ["odoo/odoo19-assets"]
+    qweb: ["odoo/odoo19-qweb"]
+    http_controllers: ["odoo/odoo19-http-controllers"]
+    external_api: ["odoo/odoo19-external-api"]
+    security: ["odoo/odoo19-security"]
+    testing: ["odoo/odoo19-testing"]
+    reports: ["odoo/odoo19-reports"]
+    performance: ["odoo/odoo19-performance"]
+  contributing:
+    coding_guidelines: ["odoo/odoo19-coding-guidelines"]
+    git_guidelines: ["odoo/odoo19-git-guidelines"]
