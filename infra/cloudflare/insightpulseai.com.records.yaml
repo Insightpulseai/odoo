@@ -118,3 +118,38 @@ records:
     proxied: false
     ttl: 3600
     comment: "Zoho DKIM public key — zoho._domainkey.insightpulseai.com"
+
+  # ─── Mailgun mg.* Records (DNS-only, outbound-only) ────────────────────────
+  # Mailgun outbound auth for mg.insightpulseai.com subdomain.
+  # Zoho Mail is primary for inbound and @insightpulseai.com outbound.
+  # Mailgun records are retained for outbound continuity (mg.* subdomain only).
+  # Source: infra/dns/mailgun_mg_insightpulseai_com.yaml
+  # These records MUST remain DNS-only — Cloudflare cannot proxy email/DNS auth.
+
+  - type: TXT
+    name: mg
+    content: "v=spf1 include:mailgun.org ~all"
+    proxied: false
+    ttl: 3600
+    comment: "Mailgun SPF for mg.insightpulseai.com (outbound-only)"
+
+  - type: TXT
+    name: "mx._domainkey.mg"
+    content: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
+    proxied: false
+    ttl: 3600
+    comment: "Mailgun DKIM for mx._domainkey.mg.insightpulseai.com"
+
+  - type: CNAME
+    name: email.mg
+    content: "mailgun.org"
+    proxied: false
+    ttl: 3600
+    comment: "Mailgun tracking CNAME — email.mg.insightpulseai.com"
+
+  - type: TXT
+    name: "_dmarc.mg"
+    content: "v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;"
+    proxied: false
+    ttl: 3600
+    comment: "DMARC monitoring for _dmarc.mg.insightpulseai.com (Mailgun, p=none)"
