@@ -314,15 +314,25 @@ class HrExpenseLiquidation(models.Model):
         }
 
     def _get_default_agent_tool_id(self):
-        """Return the ID of the default agent tool for liquidation processing."""
+        """
+        Return the ID of the canonical validation tool for liquidation runs.
+
+        Canonical technical name: ``expense_liquidation.validate_and_pack_evidence``
+        (seeded by ipai_agent/data/tools_seed.xml on first install).
+
+        If the canonical tool is not present (e.g. ipai_agent not yet installed
+        or the seed was not applied), raises a UserError with actionable guidance.
+        """
         tool = self.env["ipai.agent.tool"].search([
-            ("technical_name", "=", "liquidation_process"),
+            ("technical_name", "=", "expense_liquidation.validate_and_pack_evidence"),
             ("active", "=", True),
         ], limit=1)
         if not tool:
             raise UserError(_(
-                "No active tool with technical name 'liquidation_process' found. "
-                "Configure one in IPAI → Agents → Configuration → Tools."
+                "No active tool with technical name "
+                "'expense_liquidation.validate_and_pack_evidence' found. "
+                "Ensure ipai_agent is installed and the module has been upgraded "
+                "(IPAI → Agents → Configuration → Tools)."
             ))
         return tool.id
 
