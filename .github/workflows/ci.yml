@@ -43,6 +43,13 @@ jobs:
             echo "No oca_hydrate.sh found; skipping OCA hydration"
           fi
 
+      - name: Validate addons_path / compose mount parity
+        # Every /mnt/* path in infra/odoo.conf addons_path must have a bind mount
+        # in the ipai-odoo service in infra/stack/compose.stack.yml.
+        # Prevents the class of OwlError caused by OCA Python code being absent
+        # at runtime (silently skipped addons_path entry → undefined field).
+        run: python3 scripts/validate_addons_path.py
+
       - name: Lint Odoo Entrypoint
         run: |
           echo "Checking for direct python odoo-bin invocations..."
