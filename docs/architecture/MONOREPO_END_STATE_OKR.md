@@ -112,6 +112,46 @@ All external services MUST resolve under `*.insightpulseai.com`:
 
 ---
 
+## O5: OCA-first baseline is mandatory and machine-enforced
+
+**Objective**: Every database gets a minimum viable OCA foundation (security/UX/async/reporting)
+before any `ipai_*` bridge is considered.
+
+| Key Result | Target | Measure |
+|-----------|--------|---------|
+| KR5.1 | SSOT registry exists at `ssot/oca/must_have_base.yaml` listing "Must Have (Base)" modules (technical name + upstream repo + rationale) | File present + CI passes |
+| KR5.2 | CI gate fails if SSOT file is missing/invalid or contains unknown fields | `ssot-gates.yml` job `oca-must-have-ssot` |
+| KR5.3 | Go-live documentation references this SSOT as the authoritative baseline list (no duplicated editable lists) | Docs link to SSOT; no standalone copy |
+| KR5.4 | Any `ipai_*` module claiming to replace an EE feature links to the EE→OCA matrix row + "Bridge-only gap" justification | Checked in PR review |
+
+**Baseline modules (descriptive — `ssot/oca/must_have_base.yaml` is authoritative):**
+- `queue_job` (repo: queue) — async jobs/jobrunner
+- `report_xlsx` (repo: reporting-engine) — XLSX report base class
+- `password_security` (repo: server-auth) — enforce password rules
+- `disable_odoo_online` (repo: server-brand) — CE-friendly removal of odoo.com links
+- `remove_odoo_enterprise` (repo: server-brand) — removes EE-only settings/views
+
+---
+
+## O6: OCA Accounting foundation is mandatory and machine-enforced
+
+**Objective**: Accounting installs include an OCA minimum set (reporting, partner enrichment,
+compliance helpers) as SSOT — not copy/pasted docs.
+
+| Key Result | Target | Measure |
+|-----------|--------|---------|
+| KR6.1 | SSOT registry exists at `ssot/oca/must_have_accounting.yaml` (module technical name + upstream repo + rationale) | File present + CI passes |
+| KR6.2 | CI gate fails if SSOT missing/invalid/unknown fields | `ssot-gates.yml` job `oca-must-have-accounting-ssot` |
+| KR6.3 | EE→OCA parity matrix references these modules where relevant (no "mystery modules") | `ssot/parity/ee_to_oca_matrix.yaml` rows link here |
+| KR6.4 | Go-live checklist references SSOT path (no duplicated authoritative lists) | Single editable source |
+
+**Accounting modules (descriptive — `ssot/oca/must_have_accounting.yaml` is authoritative):**
+- `account_financial_report` (repo: account-financial-reporting)
+- `partner_statement` (repo: account-financial-reporting)
+- `account_add_gln` (repo: odoo core)
+
+---
+
 ## SPATRES Matrix
 
 | Dimension | Definition |
