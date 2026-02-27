@@ -12,6 +12,16 @@ schema: ssot.odoo.settings_catalog.v1
 version: '1.0'
 odoo_version: '19.0'
 edition: CE
+source_of_truth: live_instance
+generation:
+  tool: scripts/odoo/extract_settings_catalog.py
+  mode: source_scan
+  authoritative: false
+  notes: >
+    This catalog is authoritative only when extracted from a live Odoo 19 CE
+    instance (method=xmlrpc). Source-scan mode is best-effort and incomplete.
+    Do not treat as a complete Odoo 19 CE settings reference when
+    extraction.method=source_scan.
 extraction:
   method: source_scan
   extracted_at: '2026-02-27T22:05:31Z'
