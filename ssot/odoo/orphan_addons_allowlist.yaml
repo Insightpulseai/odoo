@@ -1,0 +1,251 @@
+# ssot/odoo/orphan_addons_allowlist.yaml
+#
+# Authoritative allowlist for addons/ipai_*/ directories that exist at the
+# REPO ROOT but are NOT in the canonical addons-path (addons/ipai/).
+#
+# These modules are invisible to Odoo at runtime.
+# Each entry must document WHY it is here and WHERE it should go.
+#
+# Schema: ssot.odoo.orphan_addons_allowlist.v1
+# Validator: scripts/ci/check_orphan_addons.py
+# CI gate: .github/workflows/orphan-addons-gate.yml
+#
+# Rule: Any addons/ipai_*/ directory NOT listed here will FAIL CI.
+# To add a new module, either:
+#   a) Create it directly inside addons/ipai/<module_name>/  (preferred), OR
+#   b) Add it here with a migration_target and open a follow-up PR.
+#
+# Allowed keys per module entry:
+#   name             — directory name (required, e.g. "ipai_bir_tax_compliance")
+#   reason           — why it is not yet in addons/ipai/ (required)
+#   migration_target — path where it should land (optional but recommended)
+#   ticket           — issue/PR tracking migration (optional)
+#
+# Do NOT add "convenience" entries here just to silence CI.
+# Every entry represents technical debt that must be tracked.
+#
+schema: ssot.odoo.orphan_addons_allowlist.v1
+version: "1.0"
+
+notes:
+  - "All 39 entries below are legacy directories from pre-19.0 development."
+  - "They were created before the addons/ipai/ canonical path was established."
+  - "Each must be migrated to addons/ipai/<name>/ (19.0 port) or archived."
+  - "Tracked in: docs/audits/custom_addons_reassessment.md §Root-Level Legacy"
+  - "Priority follow-up PR: scaffold ipai_bir_tax_compliance + ipai_workspace_core first."
+
+modules:
+  # ── AI / OCR ──────────────────────────────────────────────────────────────
+  - name: ipai_ai_agent_builder
+    reason: "18.0 prototype; not ported to 19.0 — superseded by ipai_ai_platform"
+    migration_target: "addons/ipai/ipai_ai_agent_builder/ (19.0 port) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ai_rag
+    reason: "18.0 prototype; not ported to 19.0 — RAG layer moved to Supabase Edge Functions"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ai_tools
+    reason: "18.0 prototype; not ported — functionality in ipai_ai_platform"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ask_ai
+    reason: "18.0 prototype; not ported — superseded by ipai_ai_widget"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ask_ai_chatter
+    reason: "18.0 prototype; not ported — superseded by ipai_ai_widget chatter integration"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_doc_ocr_bridge
+    reason: "18.0 prototype; OCR moved to ipai_expense_ocr + PaddleOCR-VL service"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ocr_gateway
+    reason: "18.0 prototype; gateway layer now in ipai_expense_ocr + Supabase"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── BIR / Tax ──────────────────────────────────────────────────────────────
+  - name: ipai_bir_data
+    reason: "18.0 BIR reference data; needs 19.0 port and move to addons/ipai/"
+    migration_target: "addons/ipai/ipai_bir_data/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_bir_tax_compliance
+    reason: "18.0 core BIR module; blocking ipai_bir_notifications + 2 others — P1 migration"
+    migration_target: "addons/ipai/ipai_bir_tax_compliance/ (19.0 port) — PRIORITY"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── CRM / Operations ────────────────────────────────────────────────────────
+  - name: ipai_crm_pipeline
+    reason: "18.0 CRM overlay; needs 19.0 port or absorption into base CRM config"
+    migration_target: "addons/ipai/ipai_crm_pipeline/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── Finance / PPM ──────────────────────────────────────────────────────────
+  - name: ipai_finance_closing
+    reason: "18.0 month-end closing helper; consolidate with ipai_finance_workflow"
+    migration_target: "addons/ipai/ipai_finance_workflow/ (merge candidate)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_finance_ppm_golive
+    reason: "18.0 PPM go-live checklist module; evaluate vs ipai_finance_ppm spec"
+    migration_target: "addons/ipai/ipai_finance_ppm/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_finance_ppm_umbrella
+    reason: "18.0 PPM umbrella project helper; evaluate vs ipai_finance_ppm spec"
+    migration_target: "addons/ipai/ipai_finance_ppm/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_month_end
+    reason: "18.0 month-end workflow; consolidate with ipai_finance_workflow"
+    migration_target: "addons/ipai/ipai_finance_workflow/ (merge candidate)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_month_end_closing
+    reason: "18.0 month-end closing; duplicate of ipai_finance_closing — evaluate merge"
+    migration_target: "archive or merge into ipai_finance_workflow"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_tbwa_finance
+    reason: "18.0 TBWA-specific finance customization; evaluate vs ipai_finance_workflow"
+    migration_target: "addons/ipai/ipai_tbwa_finance/ (19.0 port) or merge"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── Workflow / Documents ────────────────────────────────────────────────────
+  - name: ipai_docflow_review
+    reason: "18.0 document approval workflow; evaluate vs native Odoo approval flows"
+    migration_target: "addons/ipai/ipai_docflow_review/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_enterprise_bridge
+    reason: "18.0 EE feature bridge; superseded by OCA parity strategy"
+    migration_target: "archive — OCA + ipai_* pattern replaces this"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_grid_view
+    reason: "18.0 grid view extension; evaluate vs OCA web_grid module"
+    migration_target: "addons/oca/web_grid or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── OPS / Mirror ────────────────────────────────────────────────────────────
+  - name: ipai_ops_mirror
+    reason: "18.0 ops mirror/sync helper; evaluate vs n8n workflow automation"
+    migration_target: "addons/ipai/ipai_ops_mirror/ (19.0 port) or n8n workflow"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── Platform ────────────────────────────────────────────────────────────────
+  - name: ipai_platform_approvals
+    reason: "18.0 approval workflow; evaluate vs ipai_platform_api or OCA approval"
+    migration_target: "addons/ipai/ipai_platform_api/ (merge) or 19.0 port"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_platform_audit
+    reason: "18.0 audit log module; evaluate vs OCA audit_trail"
+    migration_target: "addons/oca/audit_trail or addons/ipai/ipai_platform_audit/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_platform_permissions
+    reason: "18.0 permission overlay; evaluate vs native Odoo ACL/security groups"
+    migration_target: "addons/ipai/ipai_platform_permissions/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_platform_theme
+    reason: "18.0 theme prototype; superseded by ipai_design_system in addons/ipai/"
+    migration_target: "archive — ipai_design_system covers this"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_platform_workflow
+    reason: "18.0 workflow engine; evaluate vs OCA base_automation + n8n"
+    migration_target: "addons/ipai/ipai_platform_workflow/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_ppm_okr
+    reason: "18.0 PPM + OKR integration; evaluate vs ipai_finance_ppm spec"
+    migration_target: "addons/ipai/ipai_finance_ppm/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── Integrations ────────────────────────────────────────────────────────────
+  - name: ipai_sms_gateway
+    reason: "18.0 SMS gateway; evaluate vs OCA sms modules or Twilio n8n workflow"
+    migration_target: "addons/ipai/ipai_sms_gateway/ (19.0 port) or n8n workflow"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_superset_connector
+    reason: "18.0 Superset BI connector; evaluate vs direct Supabase/n8n pipeline"
+    migration_target: "addons/ipai/ipai_superset_connector/ (19.0 port)"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── Themes ──────────────────────────────────────────────────────────────────
+  - name: ipai_theme_tbwa
+    reason: "18.0 TBWA branding theme; superseded by ipai_design_system in addons/ipai/"
+    migration_target: "archive — ipai_design_system covers frontend branding"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_theme_tbwa_backend
+    reason: "18.0 TBWA backend theme; superseded by ipai_design_system"
+    migration_target: "archive — ipai_design_system covers backend branding"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_web_theme_chatgpt
+    reason: "18.0 ChatGPT-style UI theme experiment; not production — archive"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  # ── WorkOS Suite (all 10) ───────────────────────────────────────────────────
+  # These 10 modules form the WorkOS product suite built at 18.0 for
+  # Affine/Appfine integration.  Affine is deprecated (CLAUDE.md §Deprecated).
+  # All are disk-only archives — none are installable.
+  # Migration path: evaluate for 19.0 rewrite as a standalone workspace module
+  # OR archive permanently if the WorkOS product direction is abandoned.
+  - name: ipai_workos_affine
+    reason: "18.0 Affine workspace integration; Affine deprecated (CLAUDE.md) — archive"
+    migration_target: "archive outside addons/"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_blocks
+    reason: "18.0 WorkOS block editor; Affine deprecated — evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_blocks/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_canvas
+    reason: "18.0 WorkOS canvas/whiteboard; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_canvas/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_collab
+    reason: "18.0 WorkOS real-time collaboration; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_collab/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_core
+    reason: "18.0 WorkOS core module; BLOCKING all other workos_* — must port first"
+    migration_target: "addons/ipai/ipai_workos_core/ (19.0 rewrite) — prerequisite"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_db
+    reason: "18.0 WorkOS database views; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_db/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_search
+    reason: "18.0 WorkOS search module; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_search/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_templates
+    reason: "18.0 WorkOS page templates; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_templates/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"
+
+  - name: ipai_workos_views
+    reason: "18.0 WorkOS view definitions; evaluate vs 19.0 rewrite"
+    migration_target: "addons/ipai/ipai_workos_views/ (19.0 rewrite) or archive"
+    ticket: "docs/audits/custom_addons_reassessment.md"

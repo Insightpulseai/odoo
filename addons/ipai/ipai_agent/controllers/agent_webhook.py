@@ -75,31 +75,36 @@ class IpaiAgentWebhook(http.Controller):
         if not run_name:
             return {"ok": False, "error": "missing run_id"}
 
-        # ── Update run record ─────────────────────────────────────────────
+        # ── Require event_id + timestamp in payload body ──────────────────
+        if not data.get("event_id"):
+            _logger.warning(
+                "/ipai/agent/callback: missing event_id in payload for run %s", run_name
+            )
+            return {"ok": False, "error": "missing event_id"}
+
+        if not data.get("timestamp"):
+            _logger.warning(
+                "/ipai/agent/callback: missing timestamp in payload for run %s", run_name
+            )
+            return {"ok": False, "error": "missing timestamp"}
+
+        # ── Apply event with idempotency guard ────────────────────────────
         run = env["ipai.agent.run"].search([("name", "=", run_name)], limit=1)
         if not run:
             _logger.warning("/ipai/agent/callback: run not found: %s", run_name)
             return {"ok": False, "error": "run not found"}
 
-        state = data.get("state", "succeeded")
-        if state not in ("succeeded", "failed"):
-            state = "succeeded"
+        applied = run._apply_external_event(data)
+        if not applied:
+            _logger.info(
+                "/ipai/agent/callback: duplicate event for run %s — NOOP", run_name
+            )
+            return {"ok": True, "noop": True}
 
-        vals = {
-            "state": state,
-            "tool_calls_json": json.dumps(data.get("tool_calls")) if data.get("tool_calls") else False,
-            "output_json": json.dumps(data.get("output")) if data.get("output") else False,
-            "evidence_log": data.get("evidence_log"),
-            "completed_at": http.fields.Datetime.now(),
-        }
-        if data.get("external_run_id"):
-            vals["external_run_id"] = data["external_run_id"]
-        if state == "failed" and data.get("error_message"):
-            vals["error_message"] = data["error_message"]
-
-        run.write(vals)
-        run.message_post(body=f"Agent run completed with state: {state}")
-        _logger.info("/ipai/agent/callback: run %s updated → %s", run_name, state)
+        _logger.info(
+            "/ipai/agent/callback: run %s updated → %s",
+            run_name, data.get("state", "succeeded"),
+        )
         return {"ok": True}
 
     @staticmethod

@@ -168,6 +168,24 @@ class IpaiAgentRun(models.Model):
         help="Run ID returned by the Supabase Edge Function / MCP.",
     )
 
+    # ── Callback idempotency ─────────────────────────────────────────────────
+
+    last_event_hash = fields.Char(
+        string="Last Event Hash",
+        copy=False,
+        index=True,
+        help=(
+            "SHA-256 of (external_run_id | event_id | state | timestamp). "
+            "Prevents duplicate state transitions from callback retry storms."
+        ),
+    )
+    last_event_at = fields.Datetime(
+        string="Last Event At",
+        readonly=True,
+        copy=False,
+        help="Timestamp when the last callback event was successfully applied.",
+    )
+
     # ── State machine ───────────────────────────────────────────────────────
 
     state = fields.Selection(
@@ -277,11 +295,20 @@ class IpaiAgentRun(models.Model):
     def _check_tool_access(self, tool):
         """
         Server-side deny-by-default enforcement.
-        If the tool has no allowed_group_ids, access is open to any agent user.
-        If allowed_group_ids are set, the calling user must be in at least one.
-        This check runs regardless of UI visibility — it cannot be bypassed via RPC.
+        Checks:
+          1. Tool must exist and be active.
+          2. If tool has no allowed_group_ids, any agent user may use it.
+          3. If allowed_group_ids are set, the calling user must be in at least one.
+        This check runs regardless of UI visibility — cannot be bypassed via RPC.
         """
-        if not tool or not tool.allowed_group_ids:
+        if not tool:
+            return
+        if not tool.active:
+            raise AccessError(_(
+                "IPAI tool '%s' is inactive and cannot be invoked. "
+                "Activate it in IPAI → Agents → Configuration → Tools."
+            ) % tool.name)
+        if not tool.allowed_group_ids:
             return
         user_group_ids = set(self.env.user.groups_id.ids)
         allowed_ids = set(tool.allowed_group_ids.ids)
@@ -536,3 +563,80 @@ class IpaiAgentRun(models.Model):
                     t_activities.sudo().action_feedback(feedback=fb)
         except Exception:
             pass
+
+    # ── Callback idempotency guard ────────────────────────────────────────────
+
+    def _apply_external_event(self, payload):
+        """
+        Apply a callback payload to this run with idempotency protection.
+
+        Event fingerprint (SHA-256):
+            external_run_id | event_id | state | timestamp
+
+        If the computed hash matches ``last_event_hash`` the call is a NOOP
+        (duplicate delivery / retry storm) — returns False without any write.
+
+        Otherwise: transitions state, persists the hash, and returns True.
+
+        Called by the webhook controller. Also callable from tests and
+        from n8n workflows via Supabase RPC.
+
+        Args:
+            payload (dict): Callback payload containing at minimum:
+                - event_id   (str)  — unique event identifier from the caller
+                - state      (str)  — "succeeded" or "failed"
+                - timestamp  (str)  — Unix epoch of the event
+
+        Returns:
+            bool: True if event was applied; False if it was a NOOP.
+        """
+        self.ensure_one()
+
+        # Build deterministic event fingerprint
+        fingerprint = "|".join([
+            str(payload.get("external_run_id") or self.external_run_id or ""),
+            str(payload.get("event_id") or ""),
+            str(payload.get("state") or ""),
+            str(payload.get("timestamp") or ""),
+        ])
+        event_hash = hashlib.sha256(fingerprint.encode()).hexdigest()
+
+        if self.last_event_hash == event_hash:
+            _logger.info(
+                "ipai.agent.run %s: duplicate callback event (hash=%s…) — NOOP",
+                self.name, event_hash[:12],
+            )
+            return False
+
+        state = payload.get("state", "succeeded")
+        if state not in ("succeeded", "failed"):
+            state = "succeeded"
+
+        now = fields.Datetime.now()
+        vals = {
+            "state": state,
+            "last_event_hash": event_hash,
+            "last_event_at": now,
+            "completed_at": now,
+        }
+        if payload.get("tool_calls"):
+            vals["tool_calls_json"] = json.dumps(payload["tool_calls"])
+        if payload.get("output"):
+            vals["output_json"] = json.dumps(payload["output"])
+        if payload.get("evidence_log"):
+            vals["evidence_log"] = payload["evidence_log"]
+        if payload.get("external_run_id"):
+            vals["external_run_id"] = payload["external_run_id"]
+        if state == "failed" and payload.get("error_message"):
+            vals["error_message"] = payload["error_message"]
+
+        self.write(vals)
+        self.message_post(
+            body=_("Agent run completed with state: %s") % state,
+            subtype_xmlid="mail.mt_note",
+        )
+        _logger.info(
+            "ipai.agent.run %s: event applied → state=%s (hash=%s…)",
+            self.name, state, event_hash[:12],
+        )
+        return True

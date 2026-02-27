@@ -67,6 +67,36 @@ In Odoo 19 CE, `<tree>` view elements and `view_mode` values containing `tree` g
 
 ---
 
+## Priority 1-E — This PR (governance enforcement)
+
+### P1-E: CI gate for root-level orphan addons
+
+**Policy**: No `addons/ipai_*/` directory may exist at the repo root unless
+listed in `ssot/odoo/orphan_addons_allowlist.yaml` with a documented reason
+and migration target.
+
+**Rationale**: The Odoo `addons-path` points exclusively to `addons/ipai/` and
+`addons/oca/*/`. Any module in `addons/ipai_*` at the root is invisible to
+Odoo at runtime. These directories accumulate silently as dead code.
+
+**Enforcement**:
+
+| Artifact | Path |
+|----------|------|
+| Validator | `scripts/ci/check_orphan_addons.py` |
+| Allowlist | `ssot/odoo/orphan_addons_allowlist.yaml` |
+| CI gate | `.github/workflows/orphan-addons-gate.yml` |
+
+**Current state** (2026-02-27): 40 orphan directories exist.
+All 40 are now allowlisted with migration targets.
+Gate passes (exit 0).
+
+**Required follow-up** (separate PRs):
+- Migrate each allowlisted module to `addons/ipai/<name>/` (19.0 port) or `addons/_deprecated/<name>/` (archive)
+- Once all entries are resolved, the allowlist becomes empty and future additions auto-fail CI
+
+---
+
 ## No-Change Decisions (rationale logged)
 
 | Module | Rationale for keeping as-is |

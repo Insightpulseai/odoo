@@ -393,3 +393,124 @@ class TestHmacVerification(TransactionCase):
         from odoo.addons.ipai_agent.controllers.agent_webhook import IpaiAgentWebhook
         body = b'{"run_id":"AGT/2026/0001"}'
         self.assertFalse(IpaiAgentWebhook._verify_signature(body, "", "", "secret"))
+
+
+class TestCallbackIdempotency(TestIpaiAgentSetup):
+    """
+    Callback idempotency guard (_apply_external_event).
+
+    Guarantees:
+    - Same (external_run_id, event_id, state, timestamp) → NOOP (False).
+    - Different event_id → new event applied (True), state updated.
+    - Duplicate retry on a succeeded run never re-transitions state.
+    """
+
+    def _make_payload(self, event_id="evt-001", state="succeeded", ts="1700000000"):
+        return {
+            "external_run_id": "ext-run-001",
+            "event_id": event_id,
+            "state": state,
+            "timestamp": ts,
+            "output": {"result": "ok"},
+        }
+
+    def test_first_event_is_applied(self):
+        """Fresh run with no prior hash: event is applied, returns True."""
+        self.assertFalse(self.run.last_event_hash)
+        applied = self.run._apply_external_event(self._make_payload())
+        self.assertTrue(applied)
+        self.assertEqual(self.run.state, "succeeded")
+        self.assertTrue(self.run.last_event_hash)
+        self.assertTrue(self.run.last_event_at)
+
+    def test_duplicate_event_is_noop(self):
+        """Same payload applied twice: second call is NOOP, state unchanged after first."""
+        payload = self._make_payload()
+        self.run._apply_external_event(payload)
+        self.assertEqual(self.run.state, "succeeded")
+        # Apply identical payload again
+        applied = self.run._apply_external_event(payload)
+        self.assertFalse(applied, "Duplicate callback must be a NOOP")
+        self.assertEqual(self.run.state, "succeeded")
+
+    def test_different_event_id_applies_new_state(self):
+        """Different event_id produces different hash → applied."""
+        self.run._apply_external_event(self._make_payload(event_id="evt-001"))
+        # Simulate a second event (e.g. a corrective failure callback) with different event_id
+        self.run.write({"state": "running"})  # reset for test isolation
+        applied = self.run._apply_external_event(
+            self._make_payload(event_id="evt-002", state="failed")
+        )
+        self.assertTrue(applied)
+        self.assertEqual(self.run.state, "failed")
+
+    def test_stale_timestamp_in_payload_still_applies(self):
+        """
+        Timestamp skew guard is the webhook's job (header x-timestamp).
+        _apply_external_event itself does NOT reject stale timestamps —
+        it uses the timestamp only as part of the fingerprint.
+        """
+        payload = self._make_payload(ts="9999")  # far-past timestamp
+        applied = self.run._apply_external_event(payload)
+        self.assertTrue(applied)
+
+    def test_unknown_state_normalised_to_succeeded(self):
+        """Unknown state values are coerced to 'succeeded'."""
+        payload = self._make_payload(state="partial")
+        self.run._apply_external_event(payload)
+        self.assertEqual(self.run.state, "succeeded")
+
+
+class TestToolProviderConstraints(TestIpaiAgentSetup):
+    """
+    Tool provider invariants:
+    - provider='http' without allowed_group_ids → ValidationError
+    - provider='http' with allowed_group_ids → allowed
+    - provider='supabase_edge' without groups → allowed
+    - Inactive tool raises AccessError when access-checked
+    """
+
+    def test_http_tool_without_groups_raises(self):
+        """Creating a provider='http' tool with no groups raises ValidationError."""
+        from odoo.exceptions import ValidationError
+        with self.assertRaises(ValidationError):
+            self.env["ipai.agent.tool"].create({
+                "name": "Bad HTTP Tool",
+                "technical_name": "bad_http_tool",
+                "provider": "http",
+                "auth_mode": "api_key",
+                # no allowed_group_ids
+            })
+
+    def test_http_tool_with_groups_is_allowed(self):
+        """provider='http' with at least one allowed group passes validation."""
+        admin_group = self.env.ref(
+            "ipai_agent.group_ipai_agent_admin", raise_if_not_found=False
+        )
+        if not admin_group:
+            self.skipTest("group_ipai_agent_admin not found")
+        # Should not raise
+        tool = self.env["ipai.agent.tool"].create({
+            "name": "Guarded HTTP Tool",
+            "technical_name": "guarded_http_tool",
+            "provider": "http",
+            "auth_mode": "api_key",
+            "allowed_group_ids": [(4, admin_group.id)],
+        })
+        self.assertEqual(tool.provider, "http")
+
+    def test_supabase_edge_without_groups_is_allowed(self):
+        """provider='supabase_edge' with no groups is valid (open to any agent user)."""
+        tool = self.env["ipai.agent.tool"].create({
+            "name": "Open Edge Tool",
+            "technical_name": "open_edge_tool",
+            "provider": "supabase_edge",
+            "auth_mode": "hmac",
+        })
+        self.assertEqual(tool.provider, "supabase_edge")
+
+    def test_inactive_tool_raises_access_error(self):
+        """_check_tool_access raises AccessError if the tool is inactive."""
+        self.tool.active = False
+        with self.assertRaises(AccessError):
+            self.env["ipai.agent.run"]._check_tool_access(self.tool)
