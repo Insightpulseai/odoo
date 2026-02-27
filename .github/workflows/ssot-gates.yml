@@ -6,6 +6,7 @@ on:
       - "ssot/**"
       - "scripts/ci/**"
       - "docs/runbooks/**"
+      - "addons/ipai/**"
       - ".github/workflows/ssot-gates.yml"
   push:
     branches: [main]
@@ -13,6 +14,7 @@ on:
       - "ssot/**"
       - "scripts/ci/**"
       - "docs/runbooks/**"
+      - "addons/ipai/**"
       - ".github/workflows/ssot-gates.yml"
   merge_group:
 
@@ -42,3 +44,17 @@ jobs:
         run: pip install pyyaml --quiet
       - name: Validate parity matrix and bridge catalog
         run: python3 scripts/ci/check_parity_and_bridges_ssot.py --repo-root .
+
+  no-iap-lint:
+    name: no-iap-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: CE IAP import lint (addons/ipai/)
+        # Scans addons/ipai/**/*.py for odoo.com IAP module usage.
+        # IAP (iap.account, iap module) requires Odoo Enterprise license.
+        # CE constraint: CLAUDE.md §Critical Rules rule #4.
+        run: python3 scripts/ci/check_no_iap_imports.py --repo-root .

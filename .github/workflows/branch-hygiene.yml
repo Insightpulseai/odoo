@@ -1,23 +1,45 @@
 name: Branch Hygiene — Auto-prune stale agent branches
 
+# Safety contract:
+#   - schedule → ALWAYS dry-run (observe + report only; never deletes)
+#   - workflow_dispatch dry_run=false → requires confirm="YES" to delete
+#   - merge_group → does NOT run (no write ops needed at merge time)
+#
+# SSOT: ssot/policy/branch_hygiene.yaml
+# Script: scripts/ci/branch_hygiene.py
+# Report: reports/ci/branch_hygiene_report.json (artifact uploaded on every run)
+
 on:
   schedule:
-    # Nightly at 03:00 UTC (11:00 Asia/Manila)
+    # Nightly at 03:00 UTC (11:00 Asia/Manila) — report-only mode
     - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run — log only, do not delete"
+        description: "Dry run — log only, do not delete (always true for scheduled runs)"
         type: boolean
+        required: true
         default: true
+      confirm:
+        description: "Type YES to allow deletions when dry_run=false (safety double-lock)"
+        type: string
+        required: false
+        default: ""
       older_than_days:
-        description: "Delete branches older than N days (default: 14)"
+        description: "Treat branches older than N days as stale (default: 14)"
         type: number
+        required: false
         default: 14
+      comment:
+        description: "Post a job-summary comment after run (dispatch only)"
+        type: boolean
+        required: false
+        default: false
 
+# Minimal permissions — only write for actual deletes; reads for audit
 permissions:
-  contents: write      # Required to delete remote branch refs
-  pull-requests: read  # Required to check for open PRs
+  contents: write      # Required only when dry_run=false + confirm=YES
+  pull-requests: read  # Required to check for open PRs before any action
 
 jobs:
   prune-stale-branches:
@@ -31,65 +53,89 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Prune stale branches
+      - name: Run branch hygiene
         id: prune
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'true' }}
-          MAX_AGE_DAYS: ${{ github.event_name == 'workflow_dispatch' && inputs.older_than_days || 14 }}
+          # Scheduled runs are ALWAYS dry-run at the workflow layer (first lock)
+          DRY_RUN: >-
+            ${{ github.event_name == 'schedule' && 'true'
+                || (inputs.dry_run == true && 'true' || 'false') }}
+          # Confirm token passed through; script validates it (second lock)
+          CONFIRM: >-
+            ${{ github.event_name == 'schedule' && ''
+                || inputs.confirm }}
+          MAX_AGE_DAYS: >-
+            ${{ github.event_name == 'schedule' && '14'
+                || inputs.older_than_days }}
         run: |
           mkdir -p reports/ci
-          python3 scripts/ci/branch_hygiene.py
+          python3 scripts/ci/branch_hygiene.py \
+            --dry-run="${DRY_RUN}" \
+            --confirm="${CONFIRM}" \
+            --max-age-days="${MAX_AGE_DAYS}"
 
-      - name: Upload hygiene report
+      - name: Upload report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: branch-hygiene-report-${{ github.run_number }}
+          # Stable artifact name (not run-number-suffixed) so dashboards can query it
+          name: branch-hygiene-report
           path: reports/ci/branch_hygiene_report.json
           retention-days: 30
+          overwrite: true
           if-no-files-found: warn
 
-      - name: Job summary
+      - name: Write job summary
         if: always()
         env:
           REPORT: reports/ci/branch_hygiene_report.json
         run: |
-          if [ ! -f "$REPORT" ]; then
-            echo "## Branch Hygiene — no report generated" >> "$GITHUB_STEP_SUMMARY"
+          if [ ! -f "${REPORT}" ]; then
+            echo "## Branch Hygiene — no report generated" >> "${GITHUB_STEP_SUMMARY}"
             exit 0
           fi
           python3 - <<'PYEOF'
           import json, os
 
-          with open(os.environ["REPORT"]) as f:
+          report_path = os.environ["REPORT"]
+          summary_path = os.environ["GITHUB_STEP_SUMMARY"]
+
+          with open(report_path) as f:
               r = json.load(f)
 
           dry = r.get("dry_run", True)
           label = "Would delete" if dry else "Deleted"
-          mode = "**Dry run** — no deletions" if dry else "**Live** — deletions applied"
+          mode_str = "**Report-only (dry run)** — no branches were deleted" \
+                     if dry else "**Live** — branches were deleted"
 
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-              f.write(f"## Branch Hygiene Run\n\n")
-              f.write(f"Mode: {mode}  \n")
-              f.write(f"Max age: {r.get('max_age_days', '?')} days\n\n")
-              f.write(f"| Metric | Count |\n|--------|-------|\n")
-              f.write(f"| {label} | {len(r['deleted'])} |\n")
-              f.write(f"| Skipped (open PR) | {len(r['skipped_open_pr'])} |\n")
-              f.write(f"| Skipped (protected/not candidate) | {len(r['skipped_other'])} |\n")
-              f.write(f"| Skipped (too new) | {len(r['skipped_too_new'])} |\n")
-              f.write(f"| Errors | {len(r['errors'])} |\n\n")
+          lines = [
+              "## Branch Hygiene Run\n",
+              f"Mode: {mode_str}  ",
+              f"Max age: {r.get('max_age_days', '?')} days\n",
+              "| Metric | Count |",
+              "|--------|-------|",
+              f"| {label} | {len(r['deleted'])} |",
+              f"| Skipped (open PR) | {len(r['skipped_open_pr'])} |",
+              f"| Skipped (protected) | {len(r['skipped_other'])} |",
+              f"| Skipped (too new) | {len(r['skipped_too_new'])} |",
+              f"| Errors | {len(r['errors'])} |",
+              "",
+          ]
 
-              if r["deleted"]:
-                  f.write(f"### {label}\n\n")
-                  for b in r["deleted"]:
-                      f.write(f"- `{b['name']}` (age: {b.get('age_days', '?')}d)\n")
-                  f.write("\n")
+          if r["deleted"]:
+              lines.append(f"### {label}\n")
+              for b in r["deleted"]:
+                  lines.append(f"- `{b['name']}` (age: {b.get('age_days', '?')}d)")
+              lines.append("")
 
-              if r["errors"]:
-                  f.write("### Errors\n\n")
-                  for e in r["errors"]:
-                      f.write(f"- `{e['name']}`: {e['error']}\n")
-                  f.write("\n")
+          if r["errors"]:
+              lines.append("### Errors\n")
+              for e in r["errors"]:
+                  lines.append(f"- `{e['name']}`: {e['error']}")
+              lines.append("")
+
+          with open(summary_path, "a") as f:
+              f.write("\n".join(lines) + "\n")
           PYEOF

@@ -46,6 +46,7 @@
   "forwardPorts": [
     8069,
     8072,
+    5678,
     "db:5432"
   ],
   "portsAttributes": {
@@ -55,6 +56,10 @@
     },
     "8072": {
       "label": "Odoo Longpoll",
+      "onAutoForward": "silent"
+    },
+    "5678": {
+      "label": "debugpy",
       "onAutoForward": "silent"
     },
     "5432": {
