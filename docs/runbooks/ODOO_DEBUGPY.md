@@ -184,6 +184,14 @@ bash scripts/ci/check_debugpy_contract.sh
 
 Workflow: `.github/workflows/debugpy-contract.yml` (runs on PR, path-filtered).
 
+### Determinism invariants
+
+| Invariant | Value | Reason |
+|-----------|-------|--------|
+| **Triggers** | `pull_request` + `push` + `merge_group` | Gate runs during merge-queue evaluation, not only on PR open/update |
+| **Python version** | `"3.11"` (pinned) | Repo standard (85 CI workflow uses); eliminates `3.x` patch-level drift |
+| **Path filters** | All 9 debugpy-surface files + workflow itself | A port remap in `docker-compose.dev.yml` or a devcontainer change also triggers the gate |
+
 ---
 
 ## Related files
