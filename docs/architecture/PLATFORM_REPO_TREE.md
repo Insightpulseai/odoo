@@ -4,7 +4,7 @@
 > If a path is not listed here, it is either ephemeral (not committed) or must be added
 > with an explicit SSOT assignment before any agent may write to it.
 >
-> Last updated: 2026-02-21
+> Last updated: 2026-02-28
 
 ---
 
@@ -15,13 +15,20 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 │
 ├── addons/                              ← Odoo module code (Git SSOT)
 │   ├── ipai/                            ← Custom IPAI modules (43 modules)
-│   │   └── ipai_<domain>_<feature>/     ← OCA-style module naming
+│   │   ├── ipai_<domain>_<feature>/     ← OCA-style module naming
+│   │   └── ipai_prisma_consulting/      ← PRISMA Consulting: services, packages, CRM glue
 │   └── oca/                             ← OCA submodule pinned references
+│
+├── apps/                                ← Web applications (Git SSOT)
+│   └── prismaconsulting/                ← Vite SPA (React 18) — PRISMA Consulting front-end
+│       │                                   ⚠ risk: markdown artifact pollution in src/
+│       └── [source per app CLAUDE.md]
 │
 ├── automations/                         ← n8n workflow exports (Git SSOT for structure)
 │   └── n8n/
 │       ├── workflows/                   ← Exported JSON — canonical n8n SSOT
-│       │   └── archive/                 ← Stale workflows (>90d no execution)
+│       │   ├── archive/                 ← Stale workflows (>90d no execution)
+│       │   └── prismaconsulting/        ← PRISMA Consulting n8n workflows (5 workflows)
 │       └── credentials/                 ← YAML manifests (names only, no values)
 │
 ├── config/                              ← Service configuration files (Git SSOT)
@@ -94,8 +101,11 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | Path pattern                                        | SSOT owner            | Derived from                        | Regenerate command                      |
 | --------------------------------------------------- | --------------------- | ----------------------------------- | --------------------------------------- |
 | `addons/ipai/**`                                    | Git                   | (original)                          | —                                       |
+| `addons/ipai/ipai_prisma_consulting/**`             | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting:src/addons/` | — |
 | `addons/oca/**`                                     | OCA upstream          | submodule pin                       | `git submodule update`                  |
+| `apps/prismaconsulting/**`                          | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting` | — |
 | `automations/n8n/workflows/*.json`                  | Git (export from n8n) | Live n8n instance                   | `scripts/automations/export_n8n.py`     |
+| `automations/n8n/workflows/prismaconsulting/*.json` | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting:src/n8n/workflows/` | — |
 | `config/odoo/mail_settings.yaml`                    | Git                   | (original)                          | —                                       |
 | `deploy/*.compose.yml`                              | Git                   | (original)                          | —                                       |
 | `docs/architecture/runtime_identifiers.json`        | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |

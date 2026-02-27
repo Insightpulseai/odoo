@@ -1,0 +1,120 @@
+# schema: ssot.integrations.v1
+# PRISMA Consulting integration register.
+# Declares all components, boundaries, and risk flags for the
+# jgtolentino/Prismaconsulting sibling repo integration.
+#
+# Source repo:  jgtolentino/Prismaconsulting (private)
+# Primary lang: TypeScript (Vite SPA) + Python (Odoo addon)
+# Last synced:  2026-02-28
+#
+# Integration model: SSOT-native port (not git subtree)
+#   - Odoo addon  → addons/ipai/ipai_prisma_consulting/
+#   - Web app     → apps/prismaconsulting/
+#   - Supabase    → supabase/migrations/ (merge into canonical sequence)
+#   - n8n         → automations/n8n/workflows/prismaconsulting/
+#
+# Do NOT copy-paste ad hoc. Follow the port plan in docs/runbooks/OCA_PORTING.md
+# and the contract rules in docs/architecture/SSOT_BOUNDARIES.md.
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: prismaconsulting
+display_name: "PRISMA Consulting"
+source_repo: "jgtolentino/Prismaconsulting"
+status: planned           # planned | porting | active | deprecated
+last_reviewed: "2026-02-28"
+
+components:
+  web_app:
+    description: "Vite SPA (React 18 + shadcn/ui) — PRISMA Consulting marketing + RAG chat"
+    source_path: "src/"          # relative to source_repo root
+    target_path: "apps/prismaconsulting/"
+    runtime: "vercel_or_docker"
+    build_tool: "vite"
+    note: >
+      Despite 'next' in package.json, this is a Vite SPA.
+      API routes under src/app/api/ follow Next.js conventions but run under Vite.
+
+  odoo_addon:
+    description: "Odoo CE 19.0 module: service catalog, packages, CRM lead integration"
+    source_path: "src/addons/ipai_prisma_consulting/"
+    target_path: "addons/ipai/ipai_prisma_consulting/"
+    odoo_version: "19.0"
+    naming_convention: "ipai_<domain>_<feature>"  # compliant
+
+  supabase_migrations:
+    description: "pgvector knowledge base for RAG (prisma_document_embeddings table)"
+    source_path: "supabase/migrations/"
+    target_path: "supabase/migrations/"
+    note: >
+      Must be merged into canonical timestamped sequence.
+      001_vector_store.sql → rename to YYYYMMDDHHMMSS_prisma_vector_store.sql.
+    rpc_functions:
+      - "match_documents(embedding, match_threshold, match_count)"
+
+  n8n_workflows:
+    description: "5 n8n workflow JSON exports for CRM enrichment, DevOps alerts, etc."
+    source_path: "src/n8n/workflows/"
+    target_path: "automations/n8n/workflows/prismaconsulting/"
+    workflows:
+      - "01-figma-odoo-github-sync.json"
+      - "02-crm-lead-ai-enrichment.json"
+      - "03-devops-monitoring-alerts.json"
+      - "04-digitalocean-infrastructure-automation.json"
+      - "05-github-mcp-enhanced-automation.json"
+    validation: "jq . <file> >/dev/null  # syntax only; no credential values allowed"
+
+secrets_required:
+  - OPENAI_API_KEY          # RAG pipeline (text-embedding-3-small + chat completions)
+  - NEXT_PUBLIC_SUPABASE_URL
+  - NEXT_PUBLIC_SUPABASE_ANON_KEY
+  - SUPABASE_SERVICE_ROLE_KEY
+  # All values must live in GitHub Actions Secrets or Supabase Vault — never in repo files.
+
+risk_flags:
+  - id: markdown_artifact_pollution
+    severity: low
+    description: >
+      src/ in source repo contains ~50 .md files co-located with source code
+      from iterative AI-assisted development. These must NOT be ported.
+    mitigation: >
+      During port: only copy src/components/, src/lib/, src/app/, src/index.css,
+      src/main.tsx, src/App.tsx. Exclude all *.md files from src/.
+
+  - id: vite_nextjs_convention_mismatch
+    severity: low
+    description: >
+      'next' is listed in package.json dependencies but the build system is Vite.
+      API routes follow Next.js file conventions but do not run under Next.js.
+    mitigation: >
+      During port: remove 'next' from package.json. Keep api route file structure
+      but ensure handlers are compatible with Vite server middleware or extract
+      to a separate Express/Hono API layer.
+
+  - id: stale_domain_reference
+    severity: medium
+    description: >
+      Source repo references wss://erp.insightpulseai.net/websocket (deprecated .net domain).
+    mitigation: >
+      Replace all .net references with .com before porting.
+      Search pattern: insightpulseai\.net
+
+  - id: dual_runtime_confusion
+    severity: low
+    description: >
+      Source repo uses both a local PostgreSQL container (Odoo) and Supabase cloud
+      (pgvector RAG). This is intentional per InsightPulseAI architecture but
+      must be documented clearly in the ported app.
+    mitigation: >
+      Odoo uses local PG only. Supabase is for RAG/vector store only.
+      Document this in apps/prismaconsulting/README.md.
+
+port_checklist:
+  - "[ ] Rename supabase migration to canonical timestamp format"
+  - "[ ] Remove .net domain references (insightpulseai.net → .com)"
+  - "[ ] Remove 'next' from package.json, verify Vite build still passes"
+  - "[ ] Exclude src/**/*.md from port (artifact pollution)"
+  - "[ ] Validate n8n JSONs are secret-free (jq . + grep for passwords/tokens)"
+  - "[ ] Confirm ipai_prisma_consulting/__manifest__.py version is 19.0.x.x"
+  - "[ ] Add ipai_prisma_consulting to addons/ipai/ module index"
+  - "[ ] Open port PR with spec reference: spec/prisma-consulting/"
