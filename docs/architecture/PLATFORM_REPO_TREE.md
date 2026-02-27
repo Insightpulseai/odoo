@@ -104,6 +104,7 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | `infra/dns/subdomain-registry.yaml`                 | Git                   | (original)                          | —                                       |
 | `packages/design-tokens/tokens.json`                | **Generated**         | Figma file                          | `scripts/design/export_tokens.sh`       |
 | `ssot/odoo/settings_catalog.yaml`                   | **Generated**         | Live Odoo 19 CE instance            | `scripts/odoo/extract_settings_catalog.py` |
+| `ssot/runtime/prod_settings.yaml`                   | Git                   | (original)                          | —                                       |
 | `supabase/config.toml`                              | Git                   | (original)                          | —                                       |
 | `supabase/migrations/*.sql`                         | Git                   | (original)                          | —                                       |
 | `supabase/functions/**`                             | Git                   | (original)                          | —                                       |
