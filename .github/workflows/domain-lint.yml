@@ -56,6 +56,8 @@ jobs:
             "domain-lint.yml"
             # Domain policy check script (intentionally references .net in regex)
             "check_domain_policy.py"
+            # Agent rules — reference .net to document the deprecation
+            ".claude/rules/"
           )
 
           # Build grep exclude args
@@ -88,6 +90,7 @@ jobs:
             --exclude-dir=".venv" \
             --exclude-dir="__pycache__" \
             --exclude-dir=".gemini" \
+            --exclude-dir=".claude" \
             --exclude-dir="platform-kit" \
             --exclude-dir="evidence" \
             --exclude-dir="migrations" \

@@ -95,8 +95,79 @@ git status --short | grep '^??'
 
 ---
 
+---
+
+## Automated Branch Pruning
+
+### Policy SSOT
+
+`ssot/policy/branch_hygiene.yaml` — canonical source for retention days, candidate prefixes, and protected patterns.
+
+### How it works
+
+Workflow: `.github/workflows/branch-hygiene.yml`
+Script: `scripts/ci/branch_hygiene.py`
+
+Triggers:
+- **Nightly** at 03:00 UTC (scheduled, dry-run unless policy changed)
+- **Manual** via workflow_dispatch (set `dry_run: false` to actually delete)
+
+Algorithm:
+1. List all remote branches via GitHub API
+2. Filter to candidate prefixes (`claude/`, `codex/`, `bot/`, `dependabot/`, `renovate/`)
+3. Skip any branch with an open PR (draft or review-ready)
+4. Skip any branch newer than `max_age_days` (default 14)
+5. Skip all protected patterns (`main`, `release/`, `hotfix/`, `chore/`, `feat/`, etc.)
+6. Delete (or log in dry-run) remaining branches
+
+### Candidate prefixes (auto-delete)
+
+| Prefix | Source | Notes |
+|--------|--------|-------|
+| `claude/` | Claude Code agent | All agent-generated branches |
+| `codex/` | OpenAI Codex agent | — |
+| `bot/` | GitHub Apps / bots | e.g. `bot/sync-anthropic-skills` |
+| `dependabot/` | Dependabot | Closed-PR orphans only |
+| `renovate/` | Renovate | Same as dependabot |
+
+### Protected — never deleted
+
+All other prefixes and patterns are **never** auto-deleted:
+`main`, `master`, `develop`, `release/*`, `hotfix/*`, `chore/*`, `feat/*`, `fix/*`, `docs/*`, `test/*`, `refactor/*`
+
+Any branch with an open PR (regardless of prefix) is also protected.
+
+### To run manually
+
+```bash
+# Dry run (view what would be deleted)
+gh workflow run branch-hygiene.yml -f dry_run=true -f older_than_days=14
+
+# Live deletion (14-day cutoff)
+gh workflow run branch-hygiene.yml -f dry_run=false -f older_than_days=14
+
+# Local dry run
+REPO=Insightpulseai/odoo DRY_RUN=true MAX_AGE_DAYS=14 \
+  GH_TOKEN=$(gh auth token) python3 scripts/ci/branch_hygiene.py
+```
+
+### Report artifact
+
+Every run uploads `reports/ci/branch_hygiene_report.json` as a GitHub Actions artifact (`branch-hygiene-report-<run_number>`, retained 30 days).
+
+### To exempt a branch from pruning
+
+Either:
+1. Open a PR against it (even a draft), **or**
+2. Add its prefix to `protected_patterns` in `ssot/policy/branch_hygiene.yaml`
+
+---
+
 ## Related
 
 - `CLAUDE.md` § Git Workflow (no direct commits to main, feature branches)
+- `ssot/policy/branch_hygiene.yaml` — automated pruning policy
+- `.github/workflows/branch-hygiene.yml` — nightly pruning workflow
+- `scripts/ci/branch_hygiene.py` — pruning implementation
 - `scripts/repo_health.sh` — run before opening PRs
 - `scripts/git_state_preflight.sh` — pre-flight checklist for branch state
