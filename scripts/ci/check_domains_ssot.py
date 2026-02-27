@@ -6,9 +6,11 @@ Reads ssot/domains/insightpulseai.com.yaml and scans the repo for:
   1. Prohibited domain references (e.g., insightpulseai.net)
   2. Subdomain references not listed in canonical_subdomains
 
+Inline suppression: add "# noqa: domain-lint" to any line to exempt it.
+
 Exit codes:
-  0 — clean (no violations)
-  1 — violations found
+  0 — clean (no violations), or --warn-only mode
+  1 — violations found (only when not in --warn-only mode)
   2 — SSOT file missing or invalid
 """
 
@@ -25,6 +27,8 @@ except ImportError:
     sys.exit(2)
 
 SSOT_PATH = "ssot/domains/insightpulseai.com.yaml"
+
+NOQA_MARKER = "noqa: domain-lint"
 
 # File extensions to scan
 SCAN_EXTENSIONS = {
@@ -52,6 +56,14 @@ def load_ssot(repo_root: Path) -> dict:
         sys.exit(2)
 
 
+def has_noqa(content: str, match_text: str) -> bool:
+    """Check if any line containing match_text also has the noqa marker."""
+    for line in content.splitlines():
+        if match_text in line and NOQA_MARKER in line:
+            return True
+    return False
+
+
 def scan_files(repo_root: Path, ssot: dict) -> list[dict]:
     violations = []
     apex = ssot.get("apex", "insightpulseai.com")
@@ -62,10 +74,13 @@ def scan_files(repo_root: Path, ssot: dict) -> list[dict]:
         s["host"] for s in ssot.get("canonical_subdomains", [])
     }
 
-    # Build exception paths per pattern
+    # Build exception paths per pattern + a global set for plain domain checks
     exception_map: dict[str, list[str]] = {}
+    all_exception_paths: list[str] = []
     for pp in prohibited_patterns:
-        exception_map[pp["pattern"]] = pp.get("exception_paths", [])
+        exc = pp.get("exception_paths", [])
+        exception_map[pp["pattern"]] = exc
+        all_exception_paths.extend(exc)
 
     for path in repo_root.rglob("*"):
         # Skip directories and non-files
@@ -99,6 +114,8 @@ def scan_files(repo_root: Path, ssot: dict) -> list[dict]:
                 continue
             matches = re.findall(pattern, content, re.IGNORECASE)
             for match in matches:
+                if has_noqa(content, match):
+                    continue
                 violations.append({
                     "file": rel_str,
                     "type": "prohibited_domain",
@@ -107,13 +124,14 @@ def scan_files(repo_root: Path, ssot: dict) -> list[dict]:
                 })
 
         # Check plain prohibited domains (not already covered by patterns)
-        for domain in prohibited:
-            if domain in content:
-                violations.append({
-                    "file": rel_str,
-                    "type": "prohibited_domain",
-                    "detail": f"Found reference to prohibited domain: {domain}",
-                })
+        if not any(rel_str.startswith(exc) for exc in all_exception_paths):
+            for domain in prohibited:
+                if domain in content and not has_noqa(content, domain):
+                    violations.append({
+                        "file": rel_str,
+                        "type": "prohibited_domain",
+                        "detail": f"Found reference to prohibited domain: {domain}",
+                    })
 
     return violations
 
@@ -130,6 +148,11 @@ def main() -> int:
         action="store_true",
         help="Suppress output (exit code only)"
     )
+    parser.add_argument(
+        "--warn-only",
+        action="store_true",
+        help="Print violations but always exit 0 (non-blocking mode)"
+    )
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -139,13 +162,18 @@ def main() -> int:
 
     if not args.quiet:
         if violations:
-            print(f"Domain SSOT violations found ({len(violations)}):")
+            label = "warnings" if args.warn_only else "violations"
+            print(f"Domain SSOT {label} found ({len(violations)}):")
             for v in violations:
                 print(f"  [{v['type']}] {v['file']}: {v['detail']}")
+            if args.warn_only:
+                print(f"\n  --warn-only: exiting 0 despite {len(violations)} {label}")
         else:
             apex = ssot.get("apex", "insightpulseai.com")
             print(f"Domain SSOT check passed — all references compliant with {apex}")
 
+    if args.warn_only:
+        return 0
     return 1 if violations else 0
 
 
