@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Database, GitBranch, ScrollText, ArrowUpRight, Construction } from 'lucide-react'
+import { IntegrationBadges } from '@/components/platform/IntegrationBadges'
 
 // Management API client (server-side via /api/supabase-proxy)
 // import { client } from '@/lib/management-api'
@@ -80,6 +81,9 @@ export default function PlatformPage() {
           <p className="text-sm text-muted-foreground mt-1">
             Management API control plane — projects, branches, logs, security.
           </p>
+          <div className="mt-2">
+            <IntegrationBadges />
+          </div>
         </div>
         <Badge variant="outline" className="text-xs font-mono hidden md:flex">
           /api/supabase-proxy → api.supabase.com
