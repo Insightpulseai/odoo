@@ -4,6 +4,7 @@ sources:
   services: "https://www.odoo.com/documentation/19.0/applications/services/"
   developer: "https://www.odoo.com/documentation/19.0/developer.html"
   contributing: "https://www.odoo.com/documentation/19.0/contributing/"
+  administration: "https://github.com/odoo/documentation/tree/19.0/content/administration"
 expected:
   general:
     discuss: ["odoo19/discuss"]
@@ -44,3 +45,5 @@ expected:
   contributing:
     coding_guidelines: ["odoo/odoo19-coding-guidelines"]
     git_guidelines: ["odoo/odoo19-git-guidelines"]
+  administration:
+    administration: ["odoo19/administration"]
