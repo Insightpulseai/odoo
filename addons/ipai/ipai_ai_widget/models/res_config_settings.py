@@ -12,3 +12,10 @@ class ResConfigSettings(models.TransientModel):
              "Leave empty to disable the Ask AI widget.",
         config_parameter="ipai_ai_widget.bridge_url",
     )
+    ipai_ai_bridge_token = fields.Char(
+        string="AI Bridge Token",
+        help="Optional bearer token sent as Authorization: Bearer <token> "
+             "in server-to-server requests to the bridge. "
+             "Never exposed to the browser.",
+        config_parameter="ipai_ai_widget.bridge_token",
+    )

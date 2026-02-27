@@ -11,6 +11,10 @@
                              help="URL of the IPAI AI provider bridge. Set GEMINI_API_KEY on the bridge side (Vercel env vars). See docs/contracts/AI_WIDGET_CONTRACT.md.">
                         <field name="ipai_ai_bridge_url" placeholder="https://ops.insightpulseai.com/api/ai/gemini"/>
                     </setting>
+                    <setting string="AI Bridge Token"
+                             help="Optional bearer token for server-to-server auth to the bridge. Never reaches the browser.">
+                        <field name="ipai_ai_bridge_token" password="True" placeholder="(optional)"/>
+                    </setting>
                 </block>
             </xpath>
         </field>
