@@ -1,3 +1,5 @@
+export const dynamic = "force-static"
+
 export default function ModulesPage() {
   return (
     <div className="space-y-4">
