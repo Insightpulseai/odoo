@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- ── Navigation Tools ──────────────────────────────────────────────── -->
+
+    <record id="tool_navigate_to" model="ipai.copilot.tool">
+      <field name="name">navigate_to</field>
+      <field name="display_name">Navigate To Record</field>
+      <field name="description">Open a specific Odoo record in the main view.</field>
+      <field name="category">navigation</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name (e.g. sale.order, res.partner)"},"record_id":{"type":"integer","description":"Record ID to navigate to"}},"required":["model","record_id"]}</field>
+    </record>
+
+    <!-- ── Read Tools ─────────────────────────────────────────────────────── -->
+
+    <record id="tool_search_records" model="ipai.copilot.tool">
+      <field name="name">search_records</field>
+      <field name="display_name">Search Records</field>
+      <field name="description">Search any Odoo model using natural language. Returns matching records with ID and name.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name (e.g. sale.order, res.partner)"},"query":{"type":"string","description":"Natural language search query"},"limit":{"type":"integer","description":"Maximum number of results to return","default":5}},"required":["model","query"]}</field>
+    </record>
+
+    <record id="tool_read_record" model="ipai.copilot.tool">
+      <field name="name">read_record</field>
+      <field name="display_name">Read Record</field>
+      <field name="description">Get field values from a specific Odoo record by model and ID.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name"},"record_id":{"type":"integer","description":"Record ID to read"},"fields":{"type":"array","items":{"type":"string"},"description":"List of field names to read (optional, returns name/id if omitted)"}},"required":["model","record_id"]}</field>
+    </record>
+
+    <record id="tool_get_pipeline_summary" model="ipai.copilot.tool">
+      <field name="name">get_pipeline_summary</field>
+      <field name="display_name">Get Pipeline Summary</field>
+      <field name="description">Get a summary of the current CRM pipeline grouped by stage with counts and expected revenue.</field>
+      <field name="category">analysis</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{}}</field>
+    </record>
+
+    <record id="tool_check_stock" model="ipai.copilot.tool">
+      <field name="name">check_stock</field>
+      <field name="display_name">Check Stock</field>
+      <field name="description">Get the current on-hand quantity for a specific product.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"product_id":{"type":"integer","description":"Product ID to check stock for"}},"required":["product_id"]}</field>
+    </record>
+
+    <record id="tool_run_aged_receivables" model="ipai.copilot.tool">
+      <field name="name">run_aged_receivables</field>
+      <field name="display_name">Aged Receivables</field>
+      <field name="description">Get a list of open customer invoices with amounts and due dates, ordered by due date ascending.</field>
+      <field name="category">analysis</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{}}</field>
+    </record>
+
+    <!-- ── Write Tools (all require confirmation) ─────────────────────────── -->
+
+    <record id="tool_create_record" model="ipai.copilot.tool">
+      <field name="name">create_record</field>
+      <field name="display_name">Create Record</field>
+      <field name="description">Create a new Odoo record. REQUIRES USER CONFIRMATION before execution.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name"},"values":{"type":"object","description":"Field name to value mapping for the new record"}},"required":["model","values"]}</field>
+    </record>
+
+    <record id="tool_update_record" model="ipai.copilot.tool">
+      <field name="name">update_record</field>
+      <field name="display_name">Update Record</field>
+      <field name="description">Update fields on an existing Odoo record. REQUIRES USER CONFIRMATION before execution.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name"},"record_id":{"type":"integer","description":"ID of the record to update"},"values":{"type":"object","description":"Field name to new value mapping"}},"required":["model","record_id","values"]}</field>
+    </record>
+
+    <record id="tool_send_chatter_message" model="ipai.copilot.tool">
+      <field name="name">send_chatter_message</field>
+      <field name="display_name">Send Chatter Message</field>
+      <field name="description">Post a message in a record's chatter (message log). REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name"},"record_id":{"type":"integer","description":"Record ID to post the message on"},"message":{"type":"string","description":"Message content to post in the chatter"}},"required":["model","record_id","message"]}</field>
+    </record>
+
+    <record id="tool_schedule_activity" model="ipai.copilot.tool">
+      <field name="name">schedule_activity</field>
+      <field name="display_name">Schedule Activity</field>
+      <field name="description">Create a follow-up activity on a record. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"model":{"type":"string","description":"Odoo model technical name"},"record_id":{"type":"integer","description":"Record ID to schedule the activity on"},"summary":{"type":"string","description":"Activity summary/title"},"date":{"type":"string","description":"Deadline date in YYYY-MM-DD format"},"activity_type":{"type":"string","description":"Activity type (e.g. todo, email, call)","default":"todo"}},"required":["model","record_id","summary","date"]}</field>
+    </record>
+
+    <record id="tool_confirm_invoice" model="ipai.copilot.tool">
+      <field name="name">confirm_invoice</field>
+      <field name="display_name">Confirm Invoice</field>
+      <field name="description">Validate (post) a draft invoice. Changes state from draft to posted. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"invoice_id":{"type":"integer","description":"ID of the account.move (invoice) to confirm"}},"required":["invoice_id"]}</field>
+    </record>
+
+    <record id="tool_create_quotation" model="ipai.copilot.tool">
+      <field name="name">create_quotation</field>
+      <field name="display_name">Create Quotation</field>
+      <field name="description">Create a new sales quotation for a customer partner. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"partner_id":{"type":"integer","description":"Customer partner ID"},"order_lines":{"type":"array","items":{"type":"object","properties":{"product_id":{"type":"integer"},"qty":{"type":"number"},"price_unit":{"type":"number"}}},"description":"Optional list of order lines"}},"required":["partner_id"]}</field>
+    </record>
+
+    <record id="tool_confirm_sale_order" model="ipai.copilot.tool">
+      <field name="name">confirm_sale_order</field>
+      <field name="display_name">Confirm Sale Order</field>
+      <field name="description">Confirm a sale order, moving it from quotation to sale state. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"order_id":{"type":"integer","description":"ID of the sale.order to confirm"}},"required":["order_id"]}</field>
+    </record>
+
+    <!-- ── Automation Tools ───────────────────────────────────────────────── -->
+
+    <record id="tool_trigger_workflow" model="ipai.copilot.tool">
+      <field name="name">trigger_workflow</field>
+      <field name="display_name">Trigger n8n Workflow</field>
+      <field name="description">Trigger a configured n8n automation workflow via webhook. REQUIRES USER CONFIRMATION. Workflow must be allowlisted in ssot/bridges/catalog.yaml and configured via ir.config_parameter.</field>
+      <field name="category">automation</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"workflow_id":{"type":"string","description":"n8n workflow ID from the allowlist (matches ir.config_parameter key suffix)"},"data":{"type":"object","description":"Data payload to pass to the n8n webhook"}},"required":["workflow_id"]}</field>
+    </record>
+
+  </data>
+</odoo>
