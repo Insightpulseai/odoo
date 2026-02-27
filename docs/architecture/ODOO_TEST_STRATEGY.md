@@ -130,8 +130,8 @@ class TestFoo(TransactionCase):
 |--------|-----------------|--------------------------|--------------------|----|
 | `ipai_expense_ocr` | `test_ocr_extract.py` (8), `test_ocr_client.py` (9) | `test_hr_expense_digitize.py` (T1–T6) | — | Full coverage |
 | `ipai_debugpy_entrypoint` | — | — | `check_debugpy_contract.sh` (2 contracts) | Contract-only; no Odoo layer |
-| `ipai_mail_bridge_zoho` | — | — | — | Needs Layer 2 (TODO) |
-| `ipai_slack_connector` | — | — | — | Needs Layer 2 (TODO) |
+| `ipai_mail_bridge_zoho` | — | `test_mail_bridge_zoho_send.py` (B1–B6) | — | Bridge tests added |
+| `ipai_slack_connector` | — | `test_slack_connector_notify.py` (S1–S5) | — | Scaffold + tests added |
 | OCA modules | — (never modify OCA) | — | smoke only via `odoo_dev` install | OCA maintains own tests |
 
 ---
@@ -162,7 +162,7 @@ from . import test_hr_expense_digitize
 | `debugpy-contract.yml` | PR / push / merge_group (path-filtered) | Layer 3: `check_debugpy_contract.sh` |
 | `odoo-addons-path-guard.yml` | PR / push (path-filtered) | Layer 3: `check_odoo_addons_path.sh` |
 | _(planned)_ `ipai-pytest.yml` | PR / push on `addons/ipai/**` | Layer 1: `pytest addons/ipai/ --ignore=*TransactionCase*` |
-| _(planned)_ `ipai-odoo-tests.yml` | PR / push on `addons/ipai/**` | Layer 2: `python odoo-bin --test-enable --test-tags /ipai_ -d odoo_dev` |
+| `ipai-odoo-tests.yml` | PR / push on bridge module paths | Layer 2: bridge modules (B1–B6, S1–S5) |
 
 ---
 
