@@ -82,6 +82,11 @@ class HrExpenseLiquidation(models.Model):
     )
     period_start = fields.Date(string="Period Start")
     period_end = fields.Date(string="Period End")
+    liquidation_report_date = fields.Date(
+        string="Date Prepared",
+        default=fields.Date.context_today,
+        help="Date the liquidation report was prepared (TBWA report header)",
+    )
 
     # Currency
     currency_id = fields.Many2one(
