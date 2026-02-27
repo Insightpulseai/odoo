@@ -84,6 +84,53 @@ This is the canonical reference — never invent new names.
 
 ---
 
+## Cloudflare token split — read vs edit
+
+Cloudflare API tokens for this repo are split by blast radius:
+
+| Secret name | Cloudflare permission | Used by | Blast radius |
+|-------------|----------------------|---------|--------------|
+| `CF_DNS_READ_TOKEN` | Zone:DNS:Read (scoped to insightpulseai.com) | `cloudflare-dns-drift.yml`, `cloudflare-authority-gate.yml`, `verify_cloudflare_dns_drift.py` | Read-only — cannot modify records |
+| `CF_DNS_EDIT_TOKEN` | Zone:DNS:Edit (scoped to insightpulseai.com) | `cloudflare-dns-apply.yml` only | Can create/update DNS records in the zone |
+| `CF_DNS_ZONE_ID` | N/A (Zone ID string, not an API token) | All Cloudflare workflows | None — not a secret per se, but treated as one |
+
+### Why split?
+
+- The drift/authority gate workflows run on **every PR** including forks.
+  A read-only token limits the damage if the token is extracted from CI logs.
+- The edit token is used only by the **apply-on-merge** workflow (push to main),
+  which runs in a protected environment with no fork access.
+- This follows Cloudflare's **minimal-permission tokens** best practice.
+
+### Create tokens in Cloudflare dashboard
+
+```
+Cloudflare → My Profile → API Tokens → Create Token
+
+Read token (CF_DNS_READ_TOKEN):
+  Template: "Read all resources" → customize:
+  Permissions: Zone:DNS:Read
+  Zone resources: Include → Specific zone → insightpulseai.com
+  TTL: 1 year (or no expiry)
+
+Edit token (CF_DNS_EDIT_TOKEN):
+  Template: "Edit zone DNS" → customize:
+  Permissions: Zone:DNS:Edit
+  Zone resources: Include → Specific zone → insightpulseai.com
+  IP filtering: (optional) restrict to GitHub Actions IP ranges
+  TTL: 6 months (rotate regularly)
+```
+
+### Rotation schedule
+
+| Token | Recommended rotation | Notes |
+|-------|---------------------|-------|
+| `CF_DNS_READ_TOKEN` | Annual | Low risk; rotate with other annual secrets |
+| `CF_DNS_EDIT_TOKEN` | Every 6 months | Higher risk; more frequent rotation |
+| `CF_DNS_ZONE_ID` | Never (it's a Zone ID, not a token) | Update only if zone changes |
+
+---
+
 ## Supabase Vault (platform / automation)
 
 Vault stores secrets encrypted at rest in `vault.secrets`. Decrypted values are
