@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Ask AI floating button, patched into mail.Chatter toolbar -->
+    <t t-name="ipai_ai_widget.AskAiButton" owl="1">
+        <button class="o_ask_ai_btn btn btn-secondary btn-sm ms-1"
+                title="Ask AI"
+                t-on-click="() => this.openDialog()">
+            <i class="fa fa-magic me-1"/>Ask AI
+        </button>
+    </t>
+
+    <!-- Ask AI dialog -->
+    <t t-name="ipai_ai_widget.AskAiDialog" owl="1">
+        <div class="o_ask_ai_dialog modal d-block" role="dialog" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fa fa-magic me-2"/>Ask AI
+                        </h5>
+                        <button type="button" class="btn-close" t-on-click="() => this.props.close()"/>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Prompt</label>
+                            <textarea class="form-control"
+                                      rows="4"
+                                      placeholder="Ask anything…"
+                                      t-ref="promptInput"
+                                      t-model="state.prompt"/>
+                        </div>
+                        <t t-if="state.error">
+                            <div class="alert alert-danger mb-3" role="alert">
+                                <i class="fa fa-exclamation-triangle me-2"/>
+                                <strong t-esc="state.error"/>
+                                <t t-if="state.error === 'BRIDGE_URL_NOT_CONFIGURED'">
+                                    — Configure the AI Bridge URL in Settings.
+                                </t>
+                                <t t-elif="state.error === 'AI_KEY_NOT_CONFIGURED'">
+                                    — GEMINI_API_KEY not set on the bridge server.
+                                </t>
+                            </div>
+                        </t>
+                        <t t-if="state.response">
+                            <div class="o_ai_response border rounded p-3 bg-light mb-3">
+                                <div class="o_ai_response_text" t-esc="state.response.text"/>
+                                <div class="mt-2 text-muted small">
+                                    <span t-esc="state.response.provider"/> /
+                                    <span t-esc="state.response.model"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="modal-footer gap-2">
+                        <button class="btn btn-primary"
+                                t-att-disabled="state.loading || !state.prompt.trim()"
+                                t-on-click="() => this.onAsk()">
+                            <t t-if="state.loading">
+                                <i class="fa fa-spinner fa-spin me-1"/>Thinking…
+                            </t>
+                            <t t-else="">Ask</t>
+                        </button>
+                        <button t-if="state.response"
+                                class="btn btn-outline-secondary"
+                                t-on-click="() => this.onInsert()">
+                            Insert into message
+                        </button>
+                        <button class="btn btn-secondary" t-on-click="() => this.props.close()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
