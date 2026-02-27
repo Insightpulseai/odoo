@@ -142,6 +142,19 @@ payments:
       webhook_signing_secret: stripe_webhook_signing_secret  # whsec_... from Stripe Dashboard → Webhooks
     public:
       publishable_key_ref: stripe_publishable_key         # pk_live_... via Vercel env / Vault
+    webhook:
+      enabled: true
+      # Supabase Edge Function path — must match supabase/functions/stripe-webhook/
+      endpoint_path: "/functions/v1/stripe-webhook"
+      # Allowlist — reject any event type not listed here at the Edge Function level
+      # Add events only when the corresponding handler is implemented
+      allowed_events:
+        - "checkout.session.completed"
+        - "invoice.paid"
+        - "invoice.payment_failed"
+        - "customer.subscription.created"
+        - "customer.subscription.updated"
+        - "customer.subscription.deleted"
     supabase_wrapper:
       enabled: true
       server_name: stripe_server
