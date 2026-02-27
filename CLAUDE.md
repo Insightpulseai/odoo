@@ -184,11 +184,27 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 
 ## Secrets Policy (Non-Negotiable)
 
-- **Never** ask users to paste secrets/tokens/passwords
 - **Never** hardcode secrets in source checked into git
 - **Never** log/echo secrets in debug output or CI logs
-- Secrets live in: `.env*` (local), GitHub Actions secrets (CI), env vars (runtime)
-- Missing secret? Say what's missing in one sentence, continue executing
+- **Never** use secrets as URL query parameters or commit `.env*` files
+
+### Approved stores (in order of preference)
+
+| Secret type | Approved store | Notes |
+|-------------|----------------|-------|
+| Server-readable (Edge Functions, runtime) | **Supabase Vault** | Registry name in `ssot/secrets/registry.yaml`; never the value |
+| CI-only | **GitHub Actions Secrets** | `gh secret list` to audit; rotate on team change |
+| Local dev | **OS Keychain / Keyring** | `vercel env pull` for Vercel; never commit |
+
+### Vault-first rule
+Any secret read by server code (Edge Functions, API routes, DO workers) **must** live in
+Supabase Vault. Reference by secret name/UUID only. Source of record: `ssot/secrets/registry.yaml`.
+
+### "Pasted once ≠ exposed"
+One-time paste into Vault or CI Secrets UI during onboarding is acceptable.
+Repeated plaintext exposure (screenshots, commits, logs, Slack) is a policy violation.
+
+**Missing secret?** State what's missing in one sentence, continue executing.
 
 ---
 

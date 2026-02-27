@@ -104,6 +104,9 @@ docker-compose.override.yml
 *.crt
 secrets/
 .secrets
+# Identifier-only registry (no values) — intentionally tracked
+!ssot/secrets/
+!ssot/secrets/registry.yaml
 # Deployment
 deploy/.env
 deploy/*.local
