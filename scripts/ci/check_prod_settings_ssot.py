@@ -66,22 +66,39 @@ def main() -> int:
     if isinstance(ocr_health, str) and not ocr_health.startswith("/"):
         die("ocr.endpoint.health_path must start with '/'", code=4)
 
-    # Rule 5: Stripe payments block — validate when present
+    # Rule 5: Stripe payments block — validate when present and enabled
     stripe = ((ps.get("payments") or {}).get("stripe")) or {}
-    if stripe:
+    if stripe and stripe.get("enabled"):
         mode = stripe.get("mode")
         if mode not in ("test", "live"):
             die(f"payments.stripe.mode must be 'test' or 'live', got {mode!r}", code=5)
-        for field in ("api_key_secret_id", "webhook_secret_id"):
-            sid = stripe.get(field)
+        # Prod must use live mode (test keys must never reach production)
+        if ps.get("environment") == "prod" and mode != "live":
+            die(
+                f"payments.stripe.mode must be 'live' in prod environment (got {mode!r}). "
+                f"Provision sk_live_... in Supabase Vault and set mode: live.",
+                code=5,
+            )
+        # Validate secret refs exist in registry
+        stripe_secrets = (stripe.get("secrets") or {})
+        for field in ("secret_key", "webhook_signing_secret"):
+            sid = stripe_secrets.get(field)
             if not sid:
-                die(f"payments.stripe.{field} is required when payments.stripe is present", code=5)
+                die(f"payments.stripe.secrets.{field} is required when stripe is enabled", code=5)
             if sid not in secret_ids:
                 die(
-                    f"payments.stripe.{field} references '{sid}' which is absent from "
-                    f"ssot/secrets/registry.yaml",
+                    f"payments.stripe.secrets.{field} references '{sid}' which is absent "
+                    f"from ssot/secrets/registry.yaml",
                     code=2,
                 )
+        # Validate optional publishable key ref if present
+        pub_ref = ((stripe.get("public") or {}).get("publishable_key_ref"))
+        if pub_ref and pub_ref not in secret_ids:
+            die(
+                f"payments.stripe.public.publishable_key_ref references '{pub_ref}' which is "
+                f"absent from ssot/secrets/registry.yaml",
+                code=2,
+            )
 
     print("OK: prod settings SSOT is valid and secrets/URLs are consistent.")
     return 0
