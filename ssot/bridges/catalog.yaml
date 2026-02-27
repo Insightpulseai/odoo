@@ -14,6 +14,19 @@ version: "1.0.0"
 schema: ssot.bridges.v1
 last_reviewed: "2026-02-27"
 
+schema_rules:
+  required_fields:
+    - name
+    - display_name
+    - replaces_ee_feature
+    - status          # active | planned | deprecated
+    - contract_doc    # path to docs/contracts/<NAME>_CONTRACT.md
+    - secrets         # list of secret identifiers (empty list [] is valid)
+  status_values:
+    - active
+    - planned
+    - deprecated
+
 bridges:
   - name: ipai_zoho_mail_api
     display_name: "Zoho Mail API Bridge"
