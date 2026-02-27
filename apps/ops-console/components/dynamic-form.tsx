@@ -138,7 +138,8 @@ export function DynamicForm<T extends z.ZodRawShape = z.ZodRawShape>({
   )
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(schema) as any, // zod@3.25.x / @hookform/resolvers@3.10.0 type mismatch
     defaultValues: defaultValues as any,
   })
 

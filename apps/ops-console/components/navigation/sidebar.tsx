@@ -10,7 +10,6 @@ import {
   History,
   Settings,
   Database,
-  Activity,
   Eye,
   Package,
   BookOpen,
@@ -21,6 +20,9 @@ import {
   BarChart3,
   Cpu,
   Plug,
+  HardDrive,
+  Hammer,
+  FileText,
 } from "lucide-react"
 import { useState, useCallback, useEffect } from "react"
 
@@ -43,6 +45,8 @@ const navSections: NavSection[] = [
       { href: "/", icon: LayoutDashboard, label: "Overview" },
       { href: "/environments", icon: Server, label: "Environments" },
       { href: "/deployments", icon: History, label: "Deployments" },
+      { href: "/builds", icon: Hammer, label: "Builds", badge: "New" },
+      { href: "/logs", icon: FileText, label: "Logs" },
       { href: "/gates", icon: ShieldCheck, label: "Policy Gates" },
     ],
   },
@@ -50,7 +54,8 @@ const navSections: NavSection[] = [
     label: "Platform",
     items: [
       { href: "/database", icon: Database, label: "Database" },
-      { href: "/platform", icon: Cpu, label: "Control Plane", badge: "New" },
+      { href: "/backups", icon: HardDrive, label: "Backups", badge: "New" },
+      { href: "/platform", icon: Cpu, label: "Control Plane" },
       { href: "/modules", icon: Package, label: "Modules" },
     ],
   },
@@ -101,8 +106,8 @@ function SidebarLink({
       className={cn(
         "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
         active
-          ? "bg-primary text-white shadow-lg shadow-primary/20"
-          : "text-muted-foreground hover:bg-white/5 hover:text-white"
+          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+          : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
       )}
     >
       <Icon
@@ -189,8 +194,8 @@ export function Sidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto p-6 border-t border-white/5">
-        <div className="flex items-center space-x-3 p-2 rounded-lg bg-white/5">
+      <div className="mt-auto p-6 border-t border-border">
+        <div className="flex items-center space-x-3 p-2 rounded-lg bg-black/5">
           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 shadow-lg shadow-purple-500/20" />
           <div>
             <div className="text-xs font-semibold">TBWA Ops</div>
@@ -208,7 +213,7 @@ export function Sidebar() {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed top-4 left-4 z-[60] lg:hidden p-2 rounded-lg glass border border-white/10"
+        className="fixed top-4 left-4 z-[60] lg:hidden p-2 rounded-lg glass border border-border"
         aria-label="Open navigation"
       >
         <Menu className="h-5 w-5" />
@@ -225,13 +230,13 @@ export function Sidebar() {
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-[70] w-64 glass border-r border-white/5 flex flex-col transition-transform duration-300 lg:hidden",
+          "fixed inset-y-0 left-0 z-[70] w-64 glass border-r border-border flex flex-col transition-transform duration-300 lg:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <button
           onClick={closeMobile}
-          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-white/10 transition-colors"
+          className="absolute top-4 right-4 p-1 rounded-lg hover:bg-black/10 transition-colors"
           aria-label="Close navigation"
         >
           <X className="h-4 w-4" />
@@ -240,7 +245,7 @@ export function Sidebar() {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-64 glass border-r border-white/5 flex-col fixed inset-y-0 left-0 z-50">
+      <aside className="hidden lg:flex w-64 glass border-r border-border flex-col fixed inset-y-0 left-0 z-50">
         {sidebarContent}
       </aside>
     </>

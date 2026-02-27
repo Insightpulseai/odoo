@@ -7,9 +7,6 @@
   "regions": ["syd1"],
   "ignoreCommand": "bash -lc 'BASE=${VERCEL_GIT_PREVIOUS_SHA:-origin/main}; git diff --name-only \"$BASE\" \"$VERCEL_GIT_COMMIT_SHA\" | grep -qE \"^apps/ops-console/\" || exit 1'",
   "functions": {
-    "app/api/**": {
-      "runtime": "nodejs24.x"
-    },
     "app/api/ai/sql/route.ts": {
       "maxDuration": 60
     },
