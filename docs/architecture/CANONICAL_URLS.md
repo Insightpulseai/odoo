@@ -1,11 +1,29 @@
 # Canonical URLs & Subdomains — InsightPulse AI
 
-> **SSOT**: DNS records live in `infra/cloudflare/zones/insightpulseai.com/records.yaml`.
+## Authority
+
+> **This document is documentation only.**
+> The machine-readable SSOT for runtime URL state is: `infra/dns/canonical_urls.yaml`
+>
+> CI gates validate URLs against the YAML file — Markdown is never the source of truth.
+>
+> ### Rule
+> - Add or update URLs in `infra/dns/canonical_urls.yaml` **first**.
+> - Update this document to reflect the YAML (documentation follows YAML, not the reverse).
+> - **Do not introduce new URLs in this Markdown file** — CI (exit code 5) will fail the PR.
+>
+> DNS record SSOT: `infra/dns/subdomain-registry.yaml` (Terraform-managed DNS records)
+> URL lifecycle SSOT: `infra/dns/canonical_urls.yaml` (runtime class, backing, health probes)
+> CI guard: `scripts/ci/check_canonical_urls.py` + `.github/workflows/canonical-urls-gate.yml`
+
+---
+
+> **DNS records**: `infra/cloudflare/zones/insightpulseai.com/records.yaml`.
 > Edit the YAML, commit + push → CI applies on merge to main.
 > CI gates: `cloudflare-authority-gate.yml` (NS check) + `cloudflare-dns-drift.yml` (drift check).
 > Spec bundle: `spec/insightpulseai-com/`
 
-Last updated: 2026-02-27
+Last updated: 2026-02-28
 
 ---
 

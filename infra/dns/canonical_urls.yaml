@@ -257,3 +257,43 @@ urls:
     dns_type: A
     origin_port: 8000
     notes: "API gateway — not yet provisioned"
+
+  # ---------------------------------------------------------------------------
+  # INVENTORY ONLY — mentioned in docs/code but no DNS, no container, no spec
+  # These entries exist to satisfy the Markdown drift gate.
+  # Do not activate until: DNS record created + service provisioned + spec exists.
+  # ---------------------------------------------------------------------------
+  - url: "https://app.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /
+    notes: "2 code refs (Supabase OAuth callback); no DNS, no container, no spec. Do not activate without spec bundle."
+
+  - url: "https://boards.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /
+    notes: "Inventory-only. Focalboard/kanban reference in docs; not in DNS SSOT; no container. Add to DNS registry first."
+
+  - url: "https://docs.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /
+    notes: "Documentation portal — GitHub Pages at insightpulseai.github.io/odoo/ (mkdocs). Custom domain DNS never configured."
+
+  - url: "https://gpu.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /healthz
+    notes: "GPU/LLM inference — ollama-service runs on droplet but is unhealthy. No DNS entry. Do not route until service is healthy and spec exists."
+
+  - url: "https://mlflow.insightpulseai.com"
+    lifecycle: planned
+    runtime_class: STAGED
+    backing: none
+    health_probe: /health
+    notes: "ML experiment tracking — 1 config reference. No DNS, no container, no spec bundle."
