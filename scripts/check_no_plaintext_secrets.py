@@ -13,19 +13,27 @@ Permitted forms (never flagged):
   <placeholder>                — generic placeholder
   keychain_ref: <label>        — documented keychain reference
 
+  See also: ssot/secrets/allowlist_regex.txt (SSOT allowlist — loaded at runtime)
+
 Exit codes:
   0 — no secrets detected
   1 — one or more secrets detected (see output for details)
 
+Output format (stable, grep-compatible):
+  path:line:SEVERITY:pattern_name
+
 Usage:
   # Scan git diff (CI mode — only changed files):
-  git diff --name-only HEAD~1 | python3 scripts/check_no_plaintext_secrets.py --diff
+  python3 scripts/check_no_plaintext_secrets.py --diff
 
   # Scan specific files:
   python3 scripts/check_no_plaintext_secrets.py path/to/file.py
 
   # Scan all tracked files (expensive; use for audits):
   python3 scripts/check_no_plaintext_secrets.py --all
+
+  # Audit mode (report but exit 0):
+  python3 scripts/check_no_plaintext_secrets.py --all --no-fail
 """
 
 import argparse
@@ -41,44 +49,45 @@ from typing import List, Tuple
 # ---------------------------------------------------------------------------
 SECRET_PATTERNS: List[Tuple[str, re.Pattern, str]] = [
     # GitHub tokens
-    ("GitHub Personal Access Token (classic)", re.compile(r"\bghp_[A-Za-z0-9]{36}\b"), "CRITICAL"),
-    ("GitHub OAuth token", re.compile(r"\bgho_[A-Za-z0-9]{36}\b"), "CRITICAL"),
-    ("GitHub App token", re.compile(r"\bghs_[A-Za-z0-9]{36}\b"), "CRITICAL"),
-    ("GitHub Actions token", re.compile(r"\bghr_[A-Za-z0-9]{36}\b"), "CRITICAL"),
-    ("GitHub Fine-Grained PAT", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{59}\b"), "CRITICAL"),
+    ("github-pat-classic", re.compile(r"\bghp_[A-Za-z0-9]{36}\b"), "CRITICAL"),
+    ("github-oauth-token", re.compile(r"\bgho_[A-Za-z0-9]{36}\b"), "CRITICAL"),
+    ("github-app-token", re.compile(r"\bghs_[A-Za-z0-9]{36}\b"), "CRITICAL"),
+    ("github-actions-token", re.compile(r"\bghr_[A-Za-z0-9]{36}\b"), "CRITICAL"),
+    ("github-fine-grained-pat", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{59}\b"), "CRITICAL"),
 
     # Bearer tokens (generic long tokens)
-    ("Bearer token (long)", re.compile(r"\bBearer\s+[A-Za-z0-9_\-\.]{40,}\b"), "HIGH"),
+    ("bearer-token-long", re.compile(r"\bBearer\s+[A-Za-z0-9_\-\.]{40,}\b"), "HIGH"),
 
-    # JWT (non-expiry check — any JWT in a source file is a red flag)
-    ("JWT token (hardcoded)", re.compile(r"\beyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b"), "HIGH"),
+    # JWT (any hardcoded JWT in source is a red flag)
+    ("jwt-hardcoded", re.compile(r"\beyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b"), "HIGH"),
 
-    # Supabase / Postgres credentials
-    ("Supabase service role key (JWT)", re.compile(r"\beyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b"), "CRITICAL"),
+    # Supabase service role key (JWT with known header)
+    ("supabase-service-role-key", re.compile(
+        r"\beyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b"
+    ), "CRITICAL"),
 
-    # API keys — common patterns
-    ("OpenAI API key", re.compile(r"\bsk-[A-Za-z0-9]{32,}\b"), "CRITICAL"),
-    ("Anthropic API key", re.compile(r"\bsk-ant-api[A-Za-z0-9\-_]{20,}\b"), "CRITICAL"),
-    ("Stripe secret key", re.compile(r"\bsk_(live|test)_[A-Za-z0-9]{24,}\b"), "CRITICAL"),
-    ("Mailgun API key", re.compile(r"\bkey-[0-9a-f]{32}\b"), "HIGH"),
-    ("Cloudflare API token (40 char hex+)", re.compile(r"\b[A-Za-z0-9_\-]{37,40}Q[A-Za-z0-9_\-]{1,5}\b"), "MEDIUM"),  # CF tokens end in specific format
-    ("DigitalOcean PAT (dop_v1)", re.compile(r"\bdop_v1_[A-Za-z0-9]{64}\b"), "CRITICAL"),
+    # API keys — common providers
+    ("openai-api-key", re.compile(r"\bsk-[A-Za-z0-9]{32,}\b"), "CRITICAL"),
+    ("anthropic-api-key", re.compile(r"\bsk-ant-api[A-Za-z0-9\-_]{20,}\b"), "CRITICAL"),
+    ("stripe-secret-key", re.compile(r"\bsk_(live|test)_[A-Za-z0-9]{24,}\b"), "CRITICAL"),
+    ("mailgun-api-key", re.compile(r"\bkey-[0-9a-f]{32}\b"), "HIGH"),
+    ("digitalocean-pat", re.compile(r"\bdop_v1_[A-Za-z0-9]{64}\b"), "CRITICAL"),
 
-    # Generic high-entropy passwords in assignments
-    ("Hardcoded password assignment", re.compile(
-        r'(?i)(password|passwd|pwd|secret|token|api_key|apikey|access_key|auth_token)\s*[:=]\s*["\'][A-Za-z0-9!@#$%^&*()_+\-=\[\]{};:,./?~`]{12,}["\']'
+    # Generic password/secret assignments
+    ("hardcoded-password-assignment", re.compile(
+        r'(?i)(password|passwd|pwd|secret|token|api_key|apikey|access_key|auth_token)'
+        r'\s*[:=]\s*["\'][A-Za-z0-9!@#$%^&*()_+\-=\[\]{};:,./?~`]{12,}["\']'
     ), "HIGH"),
 
     # Private keys
-    ("RSA/EC private key", re.compile(r"-----BEGIN (RSA|EC|OPENSSH|DSA|PGP) PRIVATE KEY-----"), "CRITICAL"),
-    ("Private key (generic)", re.compile(r"-----BEGIN PRIVATE KEY-----"), "CRITICAL"),
+    ("rsa-private-key", re.compile(r"-----BEGIN (RSA|EC|OPENSSH|DSA|PGP) PRIVATE KEY-----"), "CRITICAL"),
+    ("generic-private-key", re.compile(r"-----BEGIN PRIVATE KEY-----"), "CRITICAL"),
 ]
 
 # ---------------------------------------------------------------------------
-# Allowlist — patterns that override false positives
-# Match against the full line content.
+# Built-in allowlist (loaded first; SSOT file adds to this at runtime)
 # ---------------------------------------------------------------------------
-ALLOWLIST_PATTERNS: List[re.Pattern] = [
+_BUILTIN_ALLOWLIST: List[re.Pattern] = [
     # Shell/Python env var references
     re.compile(r'\$\{[A-Z_][A-Z0-9_]*\}'),
     # GitHub Actions secret references
@@ -92,16 +101,38 @@ ALLOWLIST_PATTERNS: List[re.Pattern] = [
     re.compile(r'<placeholder>'),
     re.compile(r'keychain_ref:'),
     # Example/template markers
-    re.compile(r'(EXAMPLE|example|placeholder|your[-_]|<YOUR_|MY_TOKEN|REPLACE_ME)'),
+    re.compile(r'(EXAMPLE|example|placeholder|your[-_]|<YOUR_|MY_TOKEN|REPLACE_ME|CHANGEME|__REPLACE__)'),
     # Test/fixture markers
-    re.compile(r'(test_secret|fake_token|dummy_key|mock_key|test_key|sample_key|example_key)'),
+    re.compile(r'(test_secret|fake_token|dummy_key|mock_key|test_key|sample_key|example_key|fixture_key)'),
     # Documentation patterns (the scanner itself explains patterns)
     re.compile(r'(re\.compile|r"\\b|r\'\\b)'),
-    # .example files are documentation — not enforced
-    # (handled at file-level, not line-level)
-    # Hash-preceded lines in YAML (key names only, no values)
+    # Hash-preceded comment lines in YAML (key names only, no values)
     re.compile(r'^\s*#'),
 ]
+
+ALLOWLIST_PATTERNS: List[re.Pattern] = list(_BUILTIN_ALLOWLIST)
+
+
+def load_ssot_allowlist(repo_root: str) -> None:
+    """Load additional allowlist regexes from ssot/secrets/allowlist_regex.txt."""
+    allowlist_path = Path(repo_root) / "ssot" / "secrets" / "allowlist_regex.txt"
+    if not allowlist_path.exists():
+        return  # SSOT file optional; built-in allowlist is the minimum
+
+    with open(allowlist_path, encoding="utf-8") as f:
+        for lineno, raw in enumerate(f, start=1):
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            try:
+                ALLOWLIST_PATTERNS.append(re.compile(line))
+            except re.error as exc:
+                # Non-fatal: warn but continue
+                print(
+                    f"Warning: allowlist_regex.txt line {lineno}: invalid regex '{line}': {exc}",
+                    file=sys.stderr,
+                )
+
 
 # ---------------------------------------------------------------------------
 # File extensions / names to always skip
@@ -109,17 +140,39 @@ ALLOWLIST_PATTERNS: List[re.Pattern] = [
 SKIP_EXTENSIONS = {
     ".png", ".jpg", ".jpeg", ".gif", ".ico", ".pdf", ".zip", ".tar", ".gz",
     ".woff", ".woff2", ".ttf", ".eot", ".svg", ".lock", ".sum",
+    ".pyc", ".pyo",
 }
 SKIP_FILENAMES = {
     "pnpm-lock.yaml", "yarn.lock", "package-lock.json", "poetry.lock",
     "go.sum", "Pipfile.lock",
 }
+
+# ---------------------------------------------------------------------------
+# Directory prefixes to always skip (vendored / generated / build outputs)
+# These generate excessive false positives and are not canonical source paths.
+# ---------------------------------------------------------------------------
+SKIP_DIR_PREFIXES = (
+    "addons/odoo/",       # Odoo CE core — not our source
+    "addons/oca/",        # OCA vendored modules
+    "node_modules/",
+    ".pnpm-store/",
+    "vendor/",
+    ".next/",
+    "dist/",
+    "build/",
+    "__pycache__/",
+    ".tox/",
+    ".venv/",
+    "venv/",
+)
+
 SKIP_PATH_PATTERNS = [
     re.compile(r"\.example$"),          # .env.example, etc.
     re.compile(r"\.example\."),         # file.example.yaml
     re.compile(r"/tests?/fixtures?/"),  # test fixtures
     re.compile(r"SECRETS_SSOT\.md$"),   # secrets runbook (documents patterns)
     re.compile(r"check_no_plaintext_secrets\.py$"),  # this script itself
+    re.compile(r"allowlist_regex\.txt$"),            # SSOT allowlist file itself
 ]
 
 
@@ -129,6 +182,11 @@ def should_skip_file(path: str) -> bool:
         return True
     if p.name in SKIP_FILENAMES:
         return True
+    # Normalise to forward-slash for prefix matching
+    norm = path.replace("\\", "/")
+    for prefix in SKIP_DIR_PREFIXES:
+        if norm.startswith(prefix) or ("/" + prefix) in norm:
+            return True
     for pat in SKIP_PATH_PATTERNS:
         if pat.search(path):
             return True
@@ -146,7 +204,7 @@ def line_is_allowed(line: str) -> bool:
 def scan_file(filepath: str) -> List[Tuple[int, str, str, str]]:
     """
     Scan a file for secret patterns.
-    Returns list of (line_number, pattern_name, severity, line_content).
+    Returns list of (line_number, pattern_id, severity, line_content).
     """
     if should_skip_file(filepath):
         return []
@@ -159,7 +217,6 @@ def scan_file(filepath: str) -> List[Tuple[int, str, str, str]]:
 
     findings = []
     for lineno, line in enumerate(lines, start=1):
-        # Skip comment lines and allowlisted lines early
         stripped = line.strip()
         if not stripped:
             continue
@@ -168,11 +225,11 @@ def scan_file(filepath: str) -> List[Tuple[int, str, str, str]]:
 
         for name, pattern, severity in SECRET_PATTERNS:
             if pattern.search(line):
-                # Double-check: if after removing env-var refs the match disappears, allow it
+                # Double-check: if after substituting env-var refs the match disappears, allow it
                 cleaned = re.sub(r'\$\{[A-Z_][A-Z0-9_]*\}', 'ENVREF', line)
                 cleaned = re.sub(r'\$\{\{[^}]*\}\}', 'GHSECREF', cleaned)
                 if not pattern.search(cleaned):
-                    continue  # was an env var ref that happened to match the pattern shape
+                    continue  # was an env var ref that happened to match pattern shape
                 findings.append((lineno, name, severity, line.rstrip()))
                 break  # one finding per line is enough
 
@@ -194,7 +251,10 @@ def get_changed_files_from_git() -> List[str]:
             ["git", "diff", "--cached", "--name-only"],
             capture_output=True, text=True,
         )
-        return [f.strip() for f in result.stdout.splitlines() if f.strip() and os.path.isfile(f.strip())]
+        return [
+            f.strip() for f in result.stdout.splitlines()
+            if f.strip() and os.path.isfile(f.strip())
+        ]
 
 
 def get_all_tracked_files() -> List[str]:
@@ -203,7 +263,22 @@ def get_all_tracked_files() -> List[str]:
         ["git", "ls-files"],
         capture_output=True, text=True,
     )
-    return [f.strip() for f in result.stdout.splitlines() if f.strip() and os.path.isfile(f.strip())]
+    return [
+        f.strip() for f in result.stdout.splitlines()
+        if f.strip() and os.path.isfile(f.strip())
+    ]
+
+
+def get_repo_root() -> str:
+    """Return the git repository root, or cwd if not in a repo."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True,
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return os.getcwd()
 
 
 def main() -> None:
@@ -214,6 +289,10 @@ def main() -> None:
     parser.add_argument("--no-fail", action="store_true", help="Report but exit 0 (audit mode)")
     args = parser.parse_args()
 
+    # Load SSOT allowlist (extends built-in list)
+    repo_root = get_repo_root()
+    load_ssot_allowlist(repo_root)
+
     if args.diff:
         files = get_changed_files_from_git()
     elif args.all:
@@ -221,7 +300,6 @@ def main() -> None:
     elif args.files:
         files = args.files
     else:
-        # Default: scan git-changed files (suitable for CI)
         files = get_changed_files_from_git()
 
     if not files:
@@ -230,28 +308,36 @@ def main() -> None:
 
     total_findings = 0
     has_critical = False
+    skipped = 0
 
     for filepath in files:
+        if should_skip_file(filepath):
+            skipped += 1
+            continue
+
         findings = scan_file(filepath)
         if not findings:
             continue
 
-        print(f"\n{'='*60}")
-        print(f"FILE: {filepath}")
-        print(f"{'='*60}")
         for lineno, name, severity, line_content in findings:
             total_findings += 1
             if severity == "CRITICAL":
                 has_critical = True
-            preview = line_content[:120] + ("..." if len(line_content) > 120 else "")
-            print(f"  [{severity}] Line {lineno}: {name}")
-            print(f"           {preview}")
+            # Stable grep-compatible output: path:line:SEVERITY:pattern-id
+            print(f"{filepath}:{lineno}:{severity}:{name}")
+            # Indented preview (truncated, for human readability)
+            preview = line_content.strip()[:100] + ("..." if len(line_content.strip()) > 100 else "")
+            print(f"  {preview}")
 
     if total_findings == 0:
-        print(f"✅ No plaintext secrets detected in {len(files)} file(s).")
+        print(
+            f"✅ No plaintext secrets detected in {len(files) - skipped} file(s)"
+            f" ({skipped} skipped)."
+        )
         sys.exit(0)
 
-    print(f"\n{'='*60}")
+    print("")
+    print(f"{'='*60}")
     print(f"RESULT: {total_findings} potential secret(s) detected.")
     print(f"{'='*60}")
     print("")
@@ -259,7 +345,8 @@ def main() -> None:
     print("  Local dev:  store in OS keychain; inject as env var at shell start")
     print("  CI:         GitHub Actions secret  ${{ secrets.NAME }}")
     print("  Platform:   Supabase Vault         vault_secret_name: <key>")
-    print("  Reference:  docs/runbooks/SECRETS_SSOT.md")
+    print("  Allowlist:  ssot/secrets/allowlist_regex.txt (false-positive patterns)")
+    print("  Runbook:    docs/runbooks/SECRETS_SSOT.md")
     print("")
 
     if args.no_fail:

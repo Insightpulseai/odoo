@@ -8,13 +8,14 @@
 # Runbook:     docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
 # =============================================================================
 
-version: "1.0"
+schema: "ssot.go_live.manifest.v1"
+version: "1.1"
 last_updated: "2026-02-27"
 owner: "DevOps / Finance"
 
 runbook_path: docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
 
-# Required section headings (must appear verbatim in the runbook file)
+# Required section headings (must appear verbatim in the runbook file).
 # CI fails if any heading is renamed, removed, or mangled.
 required_sections:
   - "## A) Pre-Cutover Controls"
@@ -27,9 +28,18 @@ required_sections:
   - "## H) Evidence Capture Convention"
   - "## Go/No-Go Decision Matrix"
 
+# Representative checklist items that must be present verbatim.
+# These pin critical controls — accidental removal fails CI.
+required_items:
+  - "Confirm Chart of Accounts is finalized"
+  - "Activate all required currencies"
+  - "Confirm outbound email transport"
+  - "Balance Sheet ties to signed-off Trial Balance"
+  - "AR aging report matches legacy system"
+  - "AP aging report matches legacy system"
+
 # CI workflows that must be green before declaring go-live complete.
-# This list is informational (not automatically enforced by the gate itself —
-# cutover managers must verify these manually).
+# Informational only — cutover managers must verify these manually.
 required_ci_gates:
   - odoo-ci-gate
   - repo-structure-gate
@@ -40,7 +50,7 @@ required_ci_gates:
 # Minimum number of checklist items (- [ ] markers) to catch accidental truncation.
 minimum_checklist_items: 60
 
-# Self-hosted specifics that must be covered (verified by substring match in runbook)
+# Self-hosted specifics that must be covered (verified by substring match in runbook).
 required_content_markers:
   - "ipai_zoho_mail_api"          # Zoho email transport referenced
   - "odoo-core"                   # Container name documented
@@ -48,6 +58,6 @@ required_content_markers:
   - "web/docs/evidence"           # Evidence path convention present
   - "STATUS=COMPLETE"             # Completion semantics present
 
-# Runbook size sanity bounds (lines)
+# Runbook size sanity bounds (lines).
 min_lines: 200
 max_lines: 1000
