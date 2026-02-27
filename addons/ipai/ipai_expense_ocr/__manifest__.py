@@ -9,6 +9,7 @@
     "depends": ["base", "mail", "hr_expense"],
     "data": [
         "security/ir.model.access.csv",
+        "views/hr_expense_views.xml",
         "views/menu.xml",
     ],
     "installable": True,
