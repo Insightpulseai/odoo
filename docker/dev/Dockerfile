@@ -20,6 +20,12 @@ COPY docker/requirements/oca_rest_framework.txt /tmp/oca_rest_framework.txt
 RUN python3 -m pip install --no-cache-dir --break-system-packages -r /tmp/oca_rest_framework.txt \
     && rm /tmp/oca_rest_framework.txt
 
+# =============================================================================
+# Install debugpy — required for IPAI_DEBUGPY=1 attach mode
+# =============================================================================
+# Only present in the *dev* image; never in prod (infra/deploy/docker-compose.prod.yml).
+RUN python3 -m pip install --no-cache-dir --break-system-packages debugpy
+
 USER odoo
 
 # =============================================================================
