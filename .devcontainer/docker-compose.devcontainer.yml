@@ -26,16 +26,27 @@ services:
     environment:
       - ODOO_DEV_MODE=all
       - ODOO_LOG_LEVEL=debug
+      # debugpy — set IPAI_DEBUGPY=1 to attach VS Code debugger on port 5678.
+      # IPAI_DEBUGPY_WAIT=0 means Odoo starts immediately; attach when ready.
+      - IPAI_DEBUGPY=${IPAI_DEBUGPY:-0}
+      - IPAI_DEBUGPY_HOST=0.0.0.0
+      - IPAI_DEBUGPY_PORT=5678
+      - IPAI_DEBUGPY_WAIT=${IPAI_DEBUGPY_WAIT:-0}
+    ports:
+      # debugpy attach port — only active when IPAI_DEBUGPY=1
+      - "5678:5678"
 
-    # Dev-specific command with all debugging enabled.
+    # Dev-specific command routed through the debugpy entrypoint wrapper.
     # All addons-path entries use /workspaces/odoo/* — single canonical root.
     command: >
+      python3 /workspaces/odoo/scripts/odoo_debugpy_entrypoint.py --
       odoo
       --db_host=db
       --db_port=5432
       --db_user=${POSTGRES_USER:-odoo}
       --db_password=${POSTGRES_PASSWORD:-odoo}
       --database=${ODOO_DB:-odoo_dev}
+      --workers=0
       --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/workspaces/odoo/addons/oca/server-tools,/workspaces/odoo/addons/oca/server-ux,/workspaces/odoo/addons/oca/web,/workspaces/odoo/addons/oca/automation,/workspaces/odoo/addons/oca/account-financial-tools,/workspaces/odoo/addons/oca/account-financial-reporting,/workspaces/odoo/addons/oca/project,/workspaces/odoo/addons/oca/queue,/workspaces/odoo/addons/oca/reporting-engine,/workspaces/odoo/addons/oca/sale-workflow,/workspaces/odoo/addons/oca/purchase-workflow,/workspaces/odoo/addons/oca/server-backend,/workspaces/odoo/addons/oca/mis-builder,/workspaces/odoo/addons/oca/spreadsheet,/workspaces/odoo/addons/oca/knowledge,/workspaces/odoo/addons/oca/dms,/workspaces/odoo/addons/oca/rest-framework,/workspaces/odoo/addons/oca/social,/workspaces/odoo/addons/oca/account-reconcile,/workspaces/odoo/addons/oca/hr-expense,/workspaces/odoo/addons/oca/contract,/workspaces/odoo/addons/oca/timesheet,/workspaces/odoo/addons/oca/connector,/workspaces/odoo/addons/oca/storage,/workspaces/odoo/addons/oca/ai,/workspaces/odoo/addons/ipai
       --log-level=debug
       --dev=all
