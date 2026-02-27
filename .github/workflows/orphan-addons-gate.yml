@@ -1,0 +1,45 @@
+name: orphan-addons-gate
+
+# Fails if any addons/ipai_*/ directory exists at repo root
+# without an entry in ssot/odoo/orphan_addons_allowlist.yaml.
+#
+# Background: addons-path is addons/ipai/ only.
+# Root-level addons/ipai_*/ are invisible to Odoo and represent
+# untracked technical debt.
+#
+# Gate: scripts/ci/check_orphan_addons.py
+# SSOT: ssot/odoo/orphan_addons_allowlist.yaml
+# Docs: docs/audits/custom_addons_reassessment.md §Root-Level Legacy
+
+on:
+  pull_request:
+    paths:
+      - "addons/ipai_*/**"
+      - "ssot/odoo/orphan_addons_allowlist.yaml"
+      - "scripts/ci/check_orphan_addons.py"
+      - ".github/workflows/orphan-addons-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "addons/ipai_*/**"
+      - "ssot/odoo/orphan_addons_allowlist.yaml"
+      - "scripts/ci/check_orphan_addons.py"
+      - ".github/workflows/orphan-addons-gate.yml"
+  merge_group:
+
+jobs:
+  orphan-addons-gate:
+    name: orphan-addons-gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+
+      - name: Check for unlisted orphan addons
+        run: python3 scripts/ci/check_orphan_addons.py --repo-root .

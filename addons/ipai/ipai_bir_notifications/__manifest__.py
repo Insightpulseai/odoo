@@ -7,7 +7,7 @@
     "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "application": False,
-    "installable": True,
+    "installable": False,
     "depends": [
         "base",
         "mail",

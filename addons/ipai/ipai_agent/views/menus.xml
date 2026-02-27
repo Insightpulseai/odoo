@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ── Top-level IPAI menu (reuse or create) ─────────────────────────── -->
+    <menuitem
+        id="menu_ipai_root"
+        name="IPAI"
+        sequence="90"
+        web_icon="ipai_agent,static/description/icon.png"
+        groups="ipai_agent.group_ipai_agent_user"
+    />
+
+    <!-- ── Agents sub-menu ───────────────────────────────────────────────── -->
+    <menuitem
+        id="menu_ipai_agents"
+        name="Agents"
+        parent="menu_ipai_root"
+        sequence="10"
+        groups="ipai_agent.group_ipai_agent_user"
+    />
+
+    <menuitem
+        id="menu_ipai_agent_runs"
+        name="Runs"
+        parent="menu_ipai_agents"
+        action="action_ipai_agent_run"
+        sequence="10"
+        groups="ipai_agent.group_ipai_agent_user"
+    />
+
+    <menuitem
+        id="menu_ipai_agent_runs_all"
+        name="All Runs"
+        parent="menu_ipai_agents"
+        action="action_ipai_agent_run_all"
+        sequence="15"
+        groups="ipai_agent.group_ipai_agent_admin"
+    />
+
+    <!-- ── Configuration sub-menu (admin only) ───────────────────────────── -->
+    <menuitem
+        id="menu_ipai_agent_config"
+        name="Configuration"
+        parent="menu_ipai_agents"
+        sequence="90"
+        groups="ipai_agent.group_ipai_agent_admin"
+    />
+
+    <menuitem
+        id="menu_ipai_agent_tools"
+        name="Tools"
+        parent="menu_ipai_agent_config"
+        action="action_ipai_agent_tool"
+        sequence="10"
+        groups="ipai_agent.group_ipai_agent_admin"
+    />
+
+    <menuitem
+        id="menu_ipai_agent_policies"
+        name="Policies"
+        parent="menu_ipai_agent_config"
+        action="action_ipai_agent_policy"
+        sequence="20"
+        groups="ipai_agent.group_ipai_agent_admin"
+    />
+
+</odoo>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -82,6 +82,11 @@ class HrExpenseLiquidation(models.Model):
     )
     period_start = fields.Date(string="Period Start")
     period_end = fields.Date(string="Period End")
+    liquidation_report_date = fields.Date(
+        string="Date Prepared",
+        default=fields.Date.context_today,
+        help="Date the liquidation report was prepared (TBWA report header)",
+    )
 
     # Currency
     currency_id = fields.Many2one(
@@ -223,6 +228,30 @@ class HrExpenseLiquidation(models.Model):
                 record.settlement_amount = 0.0
                 record.settlement_status = "balanced"
 
+    @api.constrains("employee_id", "company_id")
+    def _check_linked_expenses_scope(self):
+        """
+        Guard against cross-entity drift: any hr.expense records that reference
+        this liquidation must share the same employee and company.
+        Called on create/write of employee_id or company_id.
+        """
+        for rec in self:
+            linked = self.env["hr.expense"].search(
+                [("cash_advance_liquidation_id", "=", rec.id)], limit=50
+            )
+            bad_emp = linked.filtered(lambda e: e.employee_id != rec.employee_id)
+            if bad_emp:
+                raise ValidationError(_(
+                    "Expense(s) '%s' belong to a different employee "
+                    "and cannot be linked to this liquidation (%s)."
+                ) % (", ".join(bad_emp.mapped("name")), rec.employee_id.name))
+            bad_company = linked.filtered(lambda e: e.company_id != rec.company_id)
+            if bad_company:
+                raise ValidationError(_(
+                    "Expense(s) '%s' belong to a different company "
+                    "and cannot be linked to this liquidation."
+                ) % ", ".join(bad_company.mapped("name")))
+
     @api.model
     def create(self, vals):
         if vals.get("name", _("New")) == _("New"):
@@ -256,6 +285,56 @@ class HrExpenseLiquidation(models.Model):
     def action_reset_to_draft(self):
         self.ensure_one()
         self.write({"state": "draft"})
+
+    def action_trigger_agent_run(self):
+        """
+        Create an ipai.agent.run targeting this liquidation and open it.
+        Requires ipai_agent module to be installed; silently skips if not present.
+        """
+        self.ensure_one()
+        if "ipai.agent.run" not in self.env:
+            raise UserError(_("IPAI Agent module is not installed."))
+        run = self.env["ipai.agent.run"].find_or_create({
+            "tool_id": self._get_default_agent_tool_id(),
+            "target_model": self._name,
+            "target_res_id": self.id,
+            "input_json": __import__("json").dumps({
+                "liquidation_name": self.name,
+                "employee": self.employee_id.name,
+                "total_expenses": self.total_expenses,
+                "settlement_amount": self.settlement_amount,
+            }),
+        })
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "ipai.agent.run",
+            "res_id": run.id,
+            "view_mode": "form",
+            "target": "new",
+        }
+
+    def _get_default_agent_tool_id(self):
+        """
+        Return the ID of the canonical validation tool for liquidation runs.
+
+        Canonical technical name: ``expense_liquidation.validate_and_pack_evidence``
+        (seeded by ipai_agent/data/tools_seed.xml on first install).
+
+        If the canonical tool is not present (e.g. ipai_agent not yet installed
+        or the seed was not applied), raises a UserError with actionable guidance.
+        """
+        tool = self.env["ipai.agent.tool"].search([
+            ("technical_name", "=", "expense_liquidation.validate_and_pack_evidence"),
+            ("active", "=", True),
+        ], limit=1)
+        if not tool:
+            raise UserError(_(
+                "No active tool with technical name "
+                "'expense_liquidation.validate_and_pack_evidence' found. "
+                "Ensure ipai_agent is installed and the module has been upgraded "
+                "(IPAI → Agents → Configuration → Tools)."
+            ))
+        return tool.id
 
     def action_view_lines(self):
         self.ensure_one()

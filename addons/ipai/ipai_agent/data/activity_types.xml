@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!--
+        IPAI Agent activity types.
+        These integrate with Odoo's native Activities UX (header clock icon,
+        chatter "Planned Activities", scheduled activities list).
+
+        Types are generic (no res_model_id) so they can be scheduled on:
+          - ipai.agent.run records
+          - hr.expense.liquidation records (target of a run)
+          - hr.expense records (future OCR review)
+    -->
+
+    <!-- Approval activity — created when a run enters waiting_approval -->
+    <record id="activity_type_ipai_approve" model="mail.activity.type">
+        <field name="name">IPAI: Approve Run</field>
+        <field name="category">default</field>
+        <field name="icon">fa-check-square</field>
+        <field name="decoration_type">warning</field>
+        <field name="summary">Review and approve or reject this IPAI agent run</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- OCR review — future: scheduled when OCR confidence is below threshold -->
+    <record id="activity_type_ipai_review_ocr" model="mail.activity.type">
+        <field name="name">IPAI: Review OCR</field>
+        <field name="category">default</field>
+        <field name="icon">fa-search</field>
+        <field name="decoration_type">info</field>
+        <field name="summary">Review OCR extraction before submitting expense</field>
+        <field name="sequence">101</field>
+    </record>
+
+    <!-- Liquidation validation — future: scheduled before Finance posts -->
+    <record id="activity_type_ipai_validate_liquidation" model="mail.activity.type">
+        <field name="name">IPAI: Validate Liquidation</field>
+        <field name="category">default</field>
+        <field name="icon">fa-file-text</field>
+        <field name="decoration_type">info</field>
+        <field name="summary">Validate liquidation report data before posting</field>
+        <field name="sequence">102</field>
+    </record>
+
+</odoo>

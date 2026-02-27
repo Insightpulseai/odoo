@@ -5,7 +5,7 @@
         <field name="name">platform.deployment.tree</field>
         <field name="model">platform.deployment</field>
         <field name="arch" type="xml">
-            <tree decoration-success="status=='success'" decoration-danger="status=='failed'">
+            <list decoration-success="status=='success'" decoration-danger="status=='failed'">
                 <field name="name"/>
                 <field name="environment"/>
                 <field name="status" widget="badge"
@@ -17,7 +17,7 @@
                 <field name="duration" widget="float_time"/>
                 <field name="started_at"/>
                 <field name="completed_at"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -87,7 +87,7 @@
     <record id="action_platform_deployment" model="ir.actions.act_window">
         <field name="name">Deployments</field>
         <field name="res_model">platform.deployment</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu Item -->
