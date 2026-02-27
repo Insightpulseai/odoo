@@ -9,14 +9,18 @@ Rules enforced:
      (must be "planned" or carry explicit activation_criteria).
   4. planned entries with an expires_at in the past fail (prevent limbo).
   5. All URLs must have url, lifecycle, runtime_class, backing, health_probe.
+  6. docs/architecture/CANONICAL_URLS.md must not introduce URLs absent from YAML
+     (Markdown is documentation-only; infra/dns/canonical_urls.yaml is SSOT).
 
 Exit codes:
   0  all checks pass
   1  validation errors (structural / invariant)
   2  expired planned entry (deadline passed)
+  5  Markdown introduces a URL not present in SSOT YAML
 """
 from __future__ import annotations
 
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -26,10 +30,15 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 CANONICAL = ROOT / "infra/dns/canonical_urls.yaml"
+CANON_MD = ROOT / "docs/architecture/CANONICAL_URLS.md"
 
 REQUIRED_FIELDS = {"url", "lifecycle", "runtime_class", "backing", "health_probe"}
 VALID_LIFECYCLES = {"active", "planned", "broken", "deprecated"}
 VALID_CLASSES = {"DEPLOYED", "REDIRECT", "STAGED", "BROKEN"}
+
+# Matches https?://... URLs in Markdown.
+# Stops at whitespace, ), ], ', ", >, backtick, or end-of-line.
+_URL_RE = re.compile(r'https?://[^\s\)\]\'\"`>]+')
 
 
 def die(msg: str, code: int = 1) -> None:
@@ -105,6 +114,51 @@ def check_expires(entry: dict[str, Any], expired: list[str]) -> None:
         )
 
 
+def _extract_md_urls(md_path: Path) -> set[str]:
+    """Return the set of https?:// URLs that appear in the Markdown file."""
+    if not md_path.exists():
+        return set()
+    text = md_path.read_text()
+    raw = set(_URL_RE.findall(text))
+    # Normalise: strip trailing punctuation artefacts left by the regex
+    cleaned: set[str] = set()
+    for u in raw:
+        u = u.rstrip(".,;:")
+        # Skip wildcard URLs — they are pattern references, not real entries
+        if "*" in u:
+            continue
+        cleaned.add(u)
+    return cleaned
+
+
+def check_markdown_drift(yaml_urls: set[str], md_drift: list[str]) -> None:
+    """Rule 6: Markdown must not introduce URLs absent from the YAML SSOT."""
+    if not CANON_MD.exists():
+        return  # Markdown is optional — absence is not an error
+
+    md_urls = _extract_md_urls(CANON_MD)
+
+    # We only care about subdomain URLs (not the apex domain itself)
+    # Apex https://insightpulseai.com is not tracked as a subdomain registry entry
+    domain = "insightpulseai.com"
+    md_domain_urls = {
+        u for u in md_urls
+        if domain in u
+        and not u.rstrip("/") in (f"https://{domain}", f"http://{domain}")
+    }
+    yaml_domain_urls = {u for u in yaml_urls if domain in u}
+
+    offenders = sorted(md_domain_urls - yaml_domain_urls)
+    if offenders:
+        md_drift.extend(
+            [
+                "Markdown introduces URLs not present in infra/dns/canonical_urls.yaml.",
+                "Add them to the YAML first, then update the Markdown:",
+            ]
+            + [f"  - {u}" for u in offenders]
+        )
+
+
 def main() -> int:
     data = load_yaml(CANONICAL)
 
@@ -117,10 +171,15 @@ def main() -> int:
 
     errors: list[str] = []
     expired: list[str] = []
+    md_drift: list[str] = []
+
+    yaml_urls = {e["url"] for e in entries if isinstance(e, dict) and "url" in e}
 
     for entry in entries:
         check_entry(entry, errors)
         check_expires(entry, expired)
+
+    check_markdown_drift(yaml_urls, md_drift)
 
     if errors:
         for e in errors:
@@ -132,7 +191,12 @@ def main() -> int:
             print(f"ERROR: {e}", file=sys.stderr)
         raise SystemExit(2)
 
-    print(f"OK: {len(entries)} URL entries validated — all lifecycle/runtime_class invariants pass.")
+    if md_drift:
+        for e in md_drift:
+            print(f"ERROR: {e}", file=sys.stderr)
+        raise SystemExit(5)
+
+    print(f"OK: {len(entries)} URL entries validated — lifecycle/runtime_class invariants pass, Markdown not drifted.")
     return 0
 
 
