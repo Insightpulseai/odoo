@@ -1,0 +1,75 @@
+# schema: ssot.bridges.v1
+# IPAI integration bridges that fill Odoo EE feature gaps.
+# Every active bridge must have:
+#   1. An entry here
+#   2. A contract doc at the path specified in contract_doc
+#   3. Secret identifiers in ssot/secrets/registry.yaml
+#
+# status values:
+#   active    — bridge is deployed and in production use
+#   planned   — bridge is planned, not yet deployed
+#   deprecated — bridge was replaced or removed
+
+version: "1.0.0"
+schema: ssot.bridges.v1
+last_reviewed: "2026-02-27"
+
+schema_rules:
+  required_fields:
+    - name
+    - display_name
+    - replaces_ee_feature
+    - status          # active | planned | deprecated
+    - contract_doc    # path to docs/contracts/<NAME>_CONTRACT.md
+    - secrets         # list of secret identifiers (empty list [] is valid)
+  status_values:
+    - active
+    - planned
+    - deprecated
+
+bridges:
+  - name: ipai_zoho_mail_api
+    display_name: "Zoho Mail API Bridge"
+    replaces_ee_feature: "Outbound mail server (EE)"
+    ee_module: mail_enterprise
+    addon_path: addons/ipai/ipai_zoho_mail_api/
+    status: active
+    contract_doc: docs/contracts/MAIL_BRIDGE_CONTRACT.md
+    secrets:
+      - zoho_client_id
+      - zoho_client_secret
+      - zoho_refresh_token
+    notes: "OAuth2 bridge to Zoho Mail SMTP. Handles all outbound email from Odoo CE."
+
+  - name: ipai_ai_tools_bridge
+    display_name: "AI Tools Bridge (Google Gemini)"
+    replaces_ee_feature: "Odoo AI features (EE)"
+    ee_module: enterprise_ai
+    addon_path: platform/ai/providers/gemini.ts
+    status: planned
+    contract_doc: docs/contracts/AI_BRIDGE_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    notes: "Google Gemini 2.0 Flash bridge. REST endpoint at /api/ai/gemini in Ops Console."
+
+  - name: ipai_slack_connector
+    display_name: "Slack Connector"
+    replaces_ee_feature: "Discuss / Mattermost integration (EE)"
+    ee_module: mail_enterprise
+    addon_path: addons/ipai/ipai_slack_connector/
+    status: active
+    contract_doc: docs/contracts/SLACK_BRIDGE_CONTRACT.md
+    secrets:
+      - slack_bot_token
+      - slack_signing_secret
+    notes: "Slack replaces Mattermost (deprecated 2026-01-28). All notifications route through Slack."
+
+  - name: ipai_ocr_paddleocr
+    display_name: "PaddleOCR Document Processing Bridge"
+    replaces_ee_feature: "Document AI / OCR (EE)"
+    ee_module: documents_ocr
+    addon_path: addons/ipai/ipai_ai_tools/
+    status: active
+    contract_doc: docs/contracts/OCR_BRIDGE_CONTRACT.md
+    secrets: []
+    notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."

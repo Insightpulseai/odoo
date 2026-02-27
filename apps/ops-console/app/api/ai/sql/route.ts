@@ -4,6 +4,7 @@ import createClient from 'openapi-fetch'
 
 import type { paths } from '@/lib/management-api-schema'
 import { listTablesSql } from '@/lib/pg-meta'
+import { getOrCreateRequestId, correlationHeaders } from '@/lib/http/correlation'
 
 // Prefer Vercel AI Gateway (100+ models, unified billing) over direct OpenAI.
 // AI Gateway endpoint: https://ai-gateway.vercel.sh/v1
@@ -63,21 +64,24 @@ function formatSchemaForPrompt(schema: any) {
 }
 
 export async function POST(request: Request) {
+  const rid = getOrCreateRequestId(request.headers.get('x-request-id'))
+  const headers = correlationHeaders(rid)
+
   try {
     if (!openai) {
       return NextResponse.json(
         { message: 'AI not configured. Set AI_GATEWAY_API_KEY or OPENAI_API_KEY in .env.local.' },
-        { status: 503 }
+        { status: 503, headers }
       )
     }
 
     const { prompt, projectRef } = await request.json()
 
     if (!prompt) {
-      return NextResponse.json({ message: 'Prompt is required.' }, { status: 400 })
+      return NextResponse.json({ message: 'Prompt is required.' }, { status: 400, headers })
     }
     if (!projectRef) {
-      return NextResponse.json({ message: 'projectRef is required.' }, { status: 400 })
+      return NextResponse.json({ message: 'projectRef is required.' }, { status: 400, headers })
     }
 
     // 1. Get database schema
@@ -102,16 +106,16 @@ export async function POST(request: Request) {
     if (!sql) {
       return NextResponse.json(
         { message: 'Could not generate SQL from the prompt.' },
-        { status: 500 }
+        { status: 500, headers }
       )
     }
 
     // 4. Return the generated SQL
-    return NextResponse.json({ sql })
+    return NextResponse.json({ sql }, { headers })
   } catch (error: any) {
     console.error('AI SQL generation error:', error)
     const errorMessage = error.message || 'An unexpected error occurred.'
     const status = error.status || error.response?.status || 500
-    return NextResponse.json({ message: errorMessage }, { status })
+    return NextResponse.json({ message: errorMessage }, { status, headers })
   }
 }
