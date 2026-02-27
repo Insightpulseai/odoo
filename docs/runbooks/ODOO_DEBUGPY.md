@@ -152,12 +152,48 @@ The DevContainer does **not** load `docker-compose.dev.yml` (only `docker-compos
 
 ---
 
+## debugpy version pin
+
+`docker/dev/Dockerfile` installs a pinned version (`debugpy==1.8.14`).
+
+**Why pinned:** debugpy uses a binary wire protocol to talk to VS Code's Python
+extension. Silent protocol drift between a floating `debugpy` install and a newer
+VS Code release can cause breakpoints to stop hitting without any obvious error.
+Pinning and bumping deliberately (with a build test) keeps this deterministic.
+
+To upgrade: bump the version in `docker/dev/Dockerfile` and rebuild:
+```bash
+docker compose build --no-cache odoo
+```
+Then re-run the contract gate to confirm the new version still satisfies the
+contracts:
+```bash
+bash scripts/ci/check_debugpy_contract.sh
+```
+
+---
+
+## CI contract gate
+
+`scripts/ci/check_debugpy_contract.sh` verifies two contracts without Docker or Odoo:
+
+| Contract | Test |
+|----------|------|
+| **silent-off** | `IPAI_DEBUGPY=0` → no wrapper stdout before exec |
+| **fail-fast** | `IPAI_DEBUGPY=1` + debugpy absent → exit **2** + `DEBUGPY_MISSING` on stderr |
+
+Workflow: `.github/workflows/debugpy-contract.yml` (runs on PR, path-filtered).
+
+---
+
 ## Related files
 
 | File | Role |
 |------|------|
 | `scripts/odoo_debugpy_entrypoint.py` | Wrapper: conditional debugpy.listen → execvp |
-| `docker/dev/Dockerfile` | Bakes `debugpy` into the dev image |
+| `scripts/ci/check_debugpy_contract.sh` | Contract gate (exit-2 + silent-off) |
+| `.github/workflows/debugpy-contract.yml` | CI workflow for the contract gate |
+| `docker/dev/Dockerfile` | Bakes `debugpy==1.8.14` (pinned) into the dev image |
 | `config/dev/odoo.conf` | Sets `workers = 0` |
 | `.devcontainer/docker-compose.devcontainer.yml` | IPAI_DEBUGPY env + port 5678 + wrapper command |
 | `.devcontainer/devcontainer.json` | Forwards port 5678 to host |
