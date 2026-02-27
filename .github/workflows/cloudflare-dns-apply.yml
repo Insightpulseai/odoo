@@ -45,6 +45,22 @@ jobs:
     environment: production  # Requires approval gate if configured
 
     steps:
+      - name: Guard — CF credentials present
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_DNS_EDIT_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CF_DNS_ZONE_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::error::Secret CF_DNS_EDIT_TOKEN is empty or not set."
+            echo "::error::Go to repo Settings → Secrets and variables → Actions and add CF_DNS_EDIT_TOKEN."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ZONE_ID}" ]; then
+            echo "::error::Secret CF_DNS_ZONE_ID is empty or not set."
+            exit 1
+          fi
+          echo "✅ CF credentials present (token=${CLOUDFLARE_API_TOKEN:0:4}…, zone=${CLOUDFLARE_ZONE_ID:0:8}…)"
+
       - name: Checkout
         uses: actions/checkout@v4
 
