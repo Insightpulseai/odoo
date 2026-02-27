@@ -15,7 +15,7 @@ export const DataSourceBadge = () => {
   const [data, setData] = useState<Attestation | null>(null);
 
   useEffect(() => {
-    fetch("/api/_debug/datasources")
+    fetch("/api/debug/datasources")
       .then((res) => res.json())
       .then(setData)
       .catch((err) => console.error("Failed to fetch attestation:", err));
