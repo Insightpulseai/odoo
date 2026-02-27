@@ -73,3 +73,19 @@ bridges:
     contract_doc: docs/contracts/OCR_BRIDGE_CONTRACT.md
     secrets: []
     notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."
+
+  - name: ipai_ai_widget
+    display_name: "Ask AI Widget (Odoo 19 CE Chatter)"
+    replaces_ee_feature: "Ask AI (EE/IAP)"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_widget/
+    status: active
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_WIDGET_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    notes: >
+      OWL 2 Ask AI widget for Odoo 19 CE chatter. Proxies LLM calls through
+      the IPAI provider bridge (configurable via ir.config_parameter).
+      No Odoo IAP dependency. Supports Gemini (and future providers) via
+      the platform/ai/providers contract.
