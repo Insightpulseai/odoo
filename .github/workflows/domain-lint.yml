@@ -16,6 +16,7 @@ on:
     branches: [main, master]
   push:
     branches: [main, master]
+  merge_group:
   workflow_dispatch:
 
 permissions:
@@ -143,3 +144,8 @@ jobs:
             echo "  All references use .com (canonical)"
             echo "----------------------------------------------"
           fi
+
+      - name: Domain SSOT gate (hard fail)
+        run: |
+          pip install pyyaml --quiet
+          python3 scripts/ci/check_domains_ssot.py --repo-root .
