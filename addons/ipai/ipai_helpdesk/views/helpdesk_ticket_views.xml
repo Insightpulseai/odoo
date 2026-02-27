@@ -88,7 +88,7 @@
         <field name="name">ipai.helpdesk.ticket.tree</field>
         <field name="model">ipai.helpdesk.ticket</field>
         <field name="arch" type="xml">
-            <tree string="Tickets" decoration-danger="sla_status == 'failed'"
+            <list string="Tickets" decoration-danger="sla_status == 'failed'"
                   decoration-warning="sla_status == 'warning'"
                   decoration-muted="is_closed">
                 <field name="ticket_ref"/>
@@ -104,7 +104,7 @@
                        decoration-warning="sla_status == 'warning'"
                        decoration-danger="sla_status == 'failed'"/>
                 <field name="is_closed" column_invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -204,7 +204,7 @@
     <record id="action_ipai_helpdesk_ticket" model="ir.actions.act_window">
         <field name="name">Tickets</field>
         <field name="res_model">ipai.helpdesk.ticket</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="ipai_helpdesk_ticket_view_search"/>
         <field name="context">{'search_default_open': 1}</field>
         <field name="help" type="html">
