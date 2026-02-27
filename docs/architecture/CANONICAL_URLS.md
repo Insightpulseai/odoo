@@ -133,6 +133,88 @@ These subdomains are referenced in active (non-archive) code but are **not defin
 
 ---
 
+## Runtime Classification Audit
+
+> Audited: 2026-02-28 | SSH audit of `178.128.112.214` + `nginx -T` + `docker ps` + DNS SSOT
+> Legend: ✅ Healthy | ⚠️ Issues present | ❌ Broken or missing
+
+### Classification Key
+
+| Class | Meaning |
+|-------|---------|
+| **DEPLOYED SERVICE** | Backing runtime confirmed: container running + nginx vhost wired + DNS active |
+| **REDIRECT ONLY** | No content; issues a 301/302 to another URL |
+| **DOCS/STATIC OUTPUT** | Generated static content (GitHub Pages, JSON artifacts) |
+| **STAGED/BROKEN** | DNS record is live in Cloudflare but backing service absent or non-functional |
+| **INVENTORY ONLY** | Code/doc references exist but no DNS record, no container, no nginx vhost |
+
+### Production URLs
+
+| URL | Class | Backing Runtime | Health | Gap / Action |
+|-----|-------|-----------------|--------|--------------|
+| `https://insightpulseai.com` | DEPLOYED SERVICE | nginx vhost present on droplet | ⚠️ Verify content | Confirm correct marketing content served; not just Odoo default |
+| `https://www.insightpulseai.com` | REDIRECT ONLY | nginx 301 → apex | ✅ | None |
+| `https://erp.insightpulseai.com` | DEPLOYED SERVICE | `odoo-prod` → port 8069; nginx vhost | ✅ | None |
+| `https://n8n.insightpulseai.com` | DEPLOYED SERVICE | `ipai-n8n` → port 5678; nginx vhost | ✅ | None |
+| `https://mcp.insightpulseai.com` | DEPLOYED SERVICE | `mcp-coordinator` → port 8766; nginx vhost | ⚠️ DNS drift | SSOT declares CNAME to `pulse-hub-web-an645.ondigitalocean.app`; CF actually has A record → droplet; reconcile |
+| `https://superset.insightpulseai.com` | DEPLOYED SERVICE | `superset-prod` → port 8088; nginx vhost | ✅ | Stale `superset.insightpulseai.net` vhost in nginx — remove |
+| `https://ocr.insightpulseai.com` | DEPLOYED SERVICE | `ocr-prod` port 8001 (externally bound); CF origin rule inferred | ✅ | No nginx vhost; add vhost or document CF origin port rule |
+| `https://auth.insightpulseai.com` | STAGED/BROKEN | `auth-prod` → port 8080 (healthy); **no nginx vhost**; OIDC endpoint returns 404 | ❌ | MISSING: nginx vhost wiring auth → 8080; OIDC discovery handler not implemented in app |
+| `https://plane.insightpulseai.com` | DEPLOYED SERVICE | `community-proxy-1` → port 3002; nginx vhost | ⚠️ `community-space-1` unhealthy | Added 2026-02-28; monitor Plane space service |
+| `https://api.insightpulseai.com` | INVENTORY ONLY | None | ❌ | SSOT status: planned; no container, no nginx vhost; do not route |
+
+### Staging URLs
+
+All `stage-*` DNS entries carry `lifecycle: active / status: claimed` in `infra/dns/subdomain-registry.yaml`
+— records are live in Cloudflare — but **zero staging containers are running on the droplet**.
+
+| URL | Class | Gap / Action |
+|-----|-------|--------------|
+| `https://stage-erp.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging Odoo container; requests resolve to dead port |
+| `https://stage-n8n.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging n8n container |
+| `https://stage-mcp.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging MCP container |
+| `https://stage-superset.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging Superset container |
+| `https://stage-api.insightpulseai.com` | STAGED/BROKEN | DNS live; port 8000 is `paddleocr-service` — **MISMAPPED** (wrong service) |
+| `https://stage-auth.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging auth container |
+| `https://stage-ocr.insightpulseai.com` | STAGED/BROKEN | DNS live; no staging OCR container |
+
+Recommended: change all `stage-*` SSOT lifecycle to `planned` (removes false confidence that staging exists)
+until containers are actually provisioned.
+
+### Drift URLs (Found in Code, Not in DNS SSOT)
+
+| URL | Class | Backing Runtime | Gap / Action |
+|-----|-------|-----------------|--------------|
+| `https://ops.insightpulseai.com` | STAGED/BROKEN | Vercel project `prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX` (ops-console) confirmed | DNS SSOT lifecycle: planned; Vercel domain not claimed; promote to active once Vercel domain assigned |
+| `https://boards.insightpulseai.com` | INVENTORY ONLY | None | Not in DNS SSOT; no container running; `docs/integrations/FOCALBOARD.md` incorrectly claims this as prod — fix doc |
+| `https://docs.insightpulseai.com` | DOCS/STATIC OUTPUT | GitHub Pages at `insightpulseai.github.io/odoo/` (mkdocs output) | Custom domain DNS never created; GitHub Pages not configured for custom domain |
+| `https://app.insightpulseai.com` | INVENTORY ONLY | None | 2 code refs (Supabase OAuth callback); no DNS, no container, no spec |
+| `https://gpu.insightpulseai.com` | INVENTORY ONLY | `ollama-service` running on droplet (unhealthy) | No DNS entry; no nginx vhost; do not route until service is healthy and spec exists |
+| `https://mlflow.insightpulseai.com` | INVENTORY ONLY | None | 1 config reference; no DNS, no container, no spec bundle |
+
+### Static / Generated Output
+
+| URL | Class | Notes |
+|-----|-------|-------|
+| `https://insightpulseai.github.io/odoo/` | DOCS/STATIC OUTPUT | mkdocs build output; GitHub Pages; no custom domain pointing here |
+| `artifacts/cloudflare/zone_state.json` | DOCS/STATIC OUTPUT | Generated CF zone snapshot; do not edit |
+| `infra/cloudflare/envs/prod/subdomains.auto.tfvars` | DOCS/STATIC OUTPUT | Generated from `infra/dns/subdomain-registry.yaml`; do not edit |
+
+### Remediation Backlog
+
+| Priority | URL | Required Action |
+|----------|-----|-----------------|
+| 🔴 HIGH | `https://auth.insightpulseai.com` | Add nginx vhost routing → port 8080 AND implement OIDC discovery endpoint in `auth-prod` |
+| 🔴 HIGH | `https://stage-api.insightpulseai.com` | Unmap port 8000 (PaddleOCR collision) — either provision real API gateway or deprovision DNS record |
+| 🟡 MEDIUM | `https://ops.insightpulseai.com` | Claim Vercel custom domain → promote SSOT to `lifecycle: active` |
+| 🟡 MEDIUM | `https://mcp.insightpulseai.com` | Reconcile DNS drift: update CF to CNAME → DO App Platform OR accept A record and update SSOT |
+| 🟡 MEDIUM | `https://ocr.insightpulseai.com` | Add nginx vhost or document CF origin rule explicitly in registry |
+| 🟢 LOW | All `stage-*` (7 entries) | Change SSOT lifecycle to `planned` until staging containers provisioned |
+| 🟢 LOW | nginx `superset.insightpulseai.net` | Remove stale `.net` vhost block from nginx conf |
+| 🟢 LOW | `docs/integrations/FOCALBOARD.md` | Update to reflect Focalboard deprovisioned state; remove false prod URL claim |
+
+---
+
 ## Deprecated Services
 
 | Subdomain | Deprecated Date | Replacement | DNS Removed | Container Removed |
