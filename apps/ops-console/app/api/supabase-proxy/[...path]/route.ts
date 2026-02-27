@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 
 async function forwardToSupabaseAPI(request: Request, method: string, params: { path: string[] }) {
-  
   if (!process.env.SUPABASE_MANAGEMENT_API_TOKEN) {
     console.error('Supabase Management API token is not configured.')
     return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 })
@@ -31,7 +30,6 @@ async function forwardToSupabaseAPI(request: Request, method: string, params: { 
 
   try {
     const forwardHeaders: HeadersInit = {
-      
       Authorization: `Bearer ${process.env.SUPABASE_MANAGEMENT_API_TOKEN}`,
     }
 
