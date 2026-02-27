@@ -171,8 +171,69 @@ the console shows a **NEUTRALIZED** badge and blocks mail-send operations.
 | Gate | Workflow | What it checks |
 |------|----------|---------------|
 | Email policy | `email-policy-check.yml` | No port 25 configs, no personal emails |
-| Neutralization | `odoo-env-neutralization-gate.yml` | stage/dev compose files have `IPAI_ENV` set; script exists |
+| Neutralization | `odoo-env-neutralization-gate.yml` | stage/dev compose files have `IPAI_ENV` set; script exists; import test; 4 dry-run behavioral tests |
 | DB naming | `odoo-dbname-gate.yml` | Only `odoo_prod`, `odoo_stage`, `odoo_dev_*` DB names allowed |
+
+---
+
+## 8. Gate Contracts (machine enforced)
+
+`scripts/odoo_neutralize.py` v1.1.0 exposes the following invariants that CI verifies.
+
+### Validation hard-stops (`validate_config()`)
+
+These checks run **before** any database connection. A failure exits immediately with code `1`.
+
+| Check | What triggers it | Exit |
+|-------|-----------------|------|
+| Unknown `IPAI_ENV` | Value not in `{stage, dev, prod}` | 1 |
+| DB-name mismatch | `stage` env but `DB_NAME != odoo_stage` | 1 |
+| DB-name mismatch | `dev` env but `DB_NAME != odoo_dev_*` | 1 |
+| Missing confirm | Non-prod live run without `IPAI_NEUTRALIZE_CONFIRM=YES` | 1 |
+
+`ENV_DB_MAP` (in-script constant):
+```python
+ENV_DB_MAP = {
+    "stage": "odoo_stage",
+    "dev":   "odoo_dev",   # prefix match; odoo_dev_* also accepted
+}
+```
+
+### `--dry-run` mode
+
+`python3 scripts/odoo_neutralize.py --dry-run`
+
+- Connects to the database and counts pending changes with `SELECT COUNT(*)`.
+- Emits the JSON summary line (see below).
+- Makes **no writes** to any table.
+- Accepted by the CI gate as a passing run (exit 0 or 2 for DB-unreachable; never exit 1).
+
+### JSON summary line
+
+Every execution path (success, no-op, dry-run, error) emits exactly one line to stdout:
+
+```
+NEUTRALIZE_SUMMARY: {"env":"stage","db":"odoo_stage","dry_run":false,"mail_servers_changed":4,"crons_changed":18,"already_neutralized":false,"status":"ok"}
+```
+
+CI captures this line for structured evidence. The `status` field is `ok | no_op | dry_run | error`.
+
+### Exit code semantics
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success or no-op (already neutralized) |
+| `1` | Config / confirm error — do not retry without fixing the root cause |
+| `2` | DB / runtime error — transient; may be retried |
+
+### CI behavioral test matrix (`odoo-env-neutralization-gate.yml`)
+
+| Test | `IPAI_ENV` | `DB_NAME` | `--dry-run` | Expected exit |
+|------|-----------|----------|------------|--------------|
+| Valid stage | `stage` | `odoo_stage` | yes | 0 or 2 (not 1) |
+| Unknown env | `unknown` | `odoo_dev` | yes | 1 |
+| DB mismatch | `stage` | `odoo_prod` | yes | 1 |
+| Prod no-op | `prod` | `odoo_prod` | yes | 0 |
 
 ---
 

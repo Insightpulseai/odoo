@@ -3,6 +3,10 @@
 > **Self-hosted CE 19.0** · Container: `odoo-core` · DB: `odoo`
 > Domain: `erp.insightpulseai.com` · Nginx: `ipai-nginx`
 > No outbound SMTP (DO blocks 25/465/587) — email via `ipai_zoho_mail_api`
+>
+> **Machine-verifiable manifest**: `ssot/go_live/odoo19_checklist.manifest.yaml`
+> Schema: `ssot.go_live.manifest.v1` · Version: `1.1`
+> `required_items` array pins 6 critical controls that must pass before go-live.
 
 Last updated: 2026-02-27
 
