@@ -99,6 +99,17 @@ def main() -> int:
                 f"absent from ssot/secrets/registry.yaml",
                 code=2,
             )
+        # Validate webhook contract when enabled
+        webhook = stripe.get("webhook") or {}
+        if webhook.get("enabled"):
+            ep = webhook.get("endpoint_path")
+            if not ep:
+                die("payments.stripe.webhook.endpoint_path is required when webhook.enabled", code=5)
+            if not ep.startswith("/"):
+                die(f"payments.stripe.webhook.endpoint_path must start with '/', got {ep!r}", code=5)
+            events = webhook.get("allowed_events")
+            if not events or not isinstance(events, list) or len(events) == 0:
+                die("payments.stripe.webhook.allowed_events must be a non-empty list", code=5)
 
     print("OK: prod settings SSOT is valid and secrets/URLs are consistent.")
     return 0
