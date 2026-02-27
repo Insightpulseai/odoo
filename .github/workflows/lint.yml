@@ -10,8 +10,21 @@ name: Lint Gate
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "addons/**"
+      - "scripts/**"
+      - "tests/**"
+      - "apps/**"
+      - "platform/**"
+      - "pyproject.toml"
+      - ".github/workflows/lint.yml"
   push:
     branches: [main]
+    paths:
+      - "addons/**"
+      - "scripts/**"
+      - "tests/**"
+      - "pyproject.toml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

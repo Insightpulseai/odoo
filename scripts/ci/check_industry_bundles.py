@@ -346,7 +346,7 @@ def main() -> int:
         for m in all_required_missing:
             print(f"  odoo -i {m} --stop-after-init")
         if all_strict_missing:
-            print(f"  # (--strict-oca required extensions)")
+            print("  # (--strict-oca required extensions)")
             for m in all_strict_missing:
                 print(f"  odoo -i {m} --stop-after-init")
 
