@@ -9,7 +9,7 @@
 > [Neutralized DB](https://www.odoo.com/documentation/17.0/administration/neutralized_database.html),
 > [Create project](https://www.odoo.com/documentation/19.0/administration/odoo_sh/getting_started/create.html)
 
-Last updated: 2026-02-27
+Last updated: 2026-02-27 · **Contract version: 1.1.0** (must match `scripts/odoo_neutralize.py __version__`)
 
 ---
 

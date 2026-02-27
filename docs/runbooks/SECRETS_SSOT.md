@@ -1,8 +1,10 @@
 # Secrets SSOT Runbook
 
 > SSOT for secret identifiers: `ssot/secrets/registry.yaml`
+> Allowlist SSOT: `ssot/secrets/allowlist_regex.txt`
 > Policy: `CLAUDE.md § Secrets Policy`
 > Supabase project: `spdtwktxdalcfigzeqrz`
+> **Contract version: 1.1.0** (scanner output format + allowlist SSOT)
 
 ---
 

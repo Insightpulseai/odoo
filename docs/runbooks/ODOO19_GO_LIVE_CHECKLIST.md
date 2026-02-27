@@ -7,6 +7,8 @@
 > **Machine-verifiable manifest**: `ssot/go_live/odoo19_checklist.manifest.yaml`
 > Schema: `ssot.go_live.manifest.v1` · Version: `1.1`
 > `required_items` array pins 6 critical controls that must pass before go-live.
+>
+> **Contract version: 1.1** (must match manifest `version` field)
 
 Last updated: 2026-02-27
 
