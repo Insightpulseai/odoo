@@ -1,0 +1,20 @@
+name: ssot-gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  merge_group:
+
+jobs:
+  secrets-registry:
+    name: Validate secrets SSOT registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+
+      - name: Validate secrets registry
+        run: python3 scripts/ci/check_secrets_ssot.py --repo-root .
