@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getOrCreateRequestId, correlationHeaders } from "@/lib/http/correlation"
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
@@ -18,8 +19,11 @@ function supabaseHeaders() {
  * Query params: limit (default 1)
  */
 export async function GET(req: NextRequest) {
+  const rid = getOrCreateRequestId(req.headers.get("x-request-id"))
+  const hdrs = correlationHeaders(rid)
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 })
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 503, headers: hdrs })
   }
 
   const limit = req.nextUrl.searchParams.get("limit") ?? "1"
@@ -32,7 +36,7 @@ export async function GET(req: NextRequest) {
     )
     if (!runsRes.ok) {
       const text = await runsRes.text()
-      return NextResponse.json({ error: text }, { status: runsRes.status })
+      return NextResponse.json({ error: text }, { status: runsRes.status, headers: hdrs })
     }
     const runs = await runsRes.json()
 
@@ -46,9 +50,9 @@ export async function GET(req: NextRequest) {
       if (scoresRes.ok) scores = await scoresRes.json()
     }
 
-    return NextResponse.json({ runs, scores })
+    return NextResponse.json({ runs, scores }, { headers: hdrs })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: hdrs })
   }
 }
 
@@ -58,9 +62,12 @@ export async function GET(req: NextRequest) {
  * Triggers a new advisor scan (async, returns the run record immediately).
  * The scorer runs as a background task; status is updated in ops.advisor_runs.
  */
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const rid = getOrCreateRequestId(req.headers.get("x-request-id"))
+  const hdrs = correlationHeaders(rid)
+
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error: "Supabase not configured" }, { status: 503 })
+    return NextResponse.json({ error: "Supabase not configured" }, { status: 503, headers: hdrs })
   }
 
   try {
@@ -76,17 +83,12 @@ export async function POST() {
     })
     if (!runRes.ok) {
       const text = await runRes.text()
-      return NextResponse.json({ error: text }, { status: runRes.status })
+      return NextResponse.json({ error: text }, { status: runRes.status, headers: hdrs })
     }
     const [run] = await runRes.json()
 
-    // TODO: Trigger scorer asynchronously (e.g., via n8n webhook or Edge Function)
-    // For now, the run is created with status "pending" and must be executed via:
-    //   tsx platform/advisor/scorer.ts
-    // or a scheduled CI workflow.
-
-    return NextResponse.json({ run, message: "Scan queued. Run: tsx platform/advisor/scorer.ts to execute." }, { status: 202 })
+    return NextResponse.json({ run, message: "Scan queued. Run: tsx platform/advisor/scorer.ts to execute." }, { status: 202, headers: hdrs })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    return NextResponse.json({ error: String(err) }, { status: 500, headers: hdrs })
   }
 }
