@@ -8,9 +8,37 @@ command -v gh >/dev/null || { echo "gh CLI required"; exit 1; }
 gh auth status >/dev/null
 
 echo "Fetching repo inventory for $USER ..."
+# Safe fields for all gh CLI versions (avoid: defaultBranch, topics — use GraphQL for topics).
+# Confirmed-safe for gh repo list --json:
+#   name, description, url, visibility, isArchived, isFork, defaultBranchRef,
+#   updatedAt, pushedAt, createdAt, stargazerCount, forkCount, issues, primaryLanguage
 gh repo list "$USER" --limit "$LIMIT" --source \
   --json name,description,url,visibility,isArchived,isFork,defaultBranchRef,updatedAt,pushedAt,createdAt,stargazerCount,forkCount,issues,primaryLanguage \
   > out/repos_inventory.json
+
+# Optional: fetch repository topics via GraphQL (never fails the run if unavailable).
+echo "Fetching repository topics via GraphQL (optional) ..."
+TOPICS_FILE="out/repos_topics.json"
+if gh api graphql -f query='
+  query($login: String!, $first: Int!) {
+    user(login: $login) {
+      repositories(first: $first, isFork: false, isArchived: false) {
+        nodes {
+          name
+          repositoryTopics(first: 10) {
+            nodes { topic { name } }
+          }
+        }
+      }
+    }
+  }' -F login="$USER" -F first="$LIMIT" \
+  --jq '[.data.user.repositories.nodes[] | {name: .name, topics: [.repositoryTopics.nodes[].topic.name]}]' \
+  > "$TOPICS_FILE" 2>/dev/null; then
+  echo "Topics written to $TOPICS_FILE"
+else
+  echo "Topics fetch skipped (GraphQL unavailable or auth insufficient)" >&2
+  echo "[]" > "$TOPICS_FILE"
+fi
 
 # Extract repo names
 python3 -c '
