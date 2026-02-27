@@ -1,0 +1,100 @@
+name: supabase-etl-expense
+
+# Deploy the Supabase ETL worker (Odoo expense CDC → Iceberg) to DO App Platform
+# and run the DuckDB Iceberg smoke gate after deploy.
+#
+# Triggers:
+#   - Push to main that touches ETL config or this workflow
+#   - Manual dispatch (always deploys)
+#
+# Required secrets (GitHub Actions):
+#   DO_ACCESS_TOKEN           — DigitalOcean API token
+#   ODOO_PG_CDC_URL           — CDC connection string (from Supabase Vault at runtime)
+#   ICEBERG_CATALOG_URI
+#   ICEBERG_WAREHOUSE
+#   ICEBERG_NAMESPACE
+#   ICEBERG_S3_ENDPOINT
+#   ICEBERG_REGION
+#   ICEBERG_ACCESS_KEY_ID
+#   ICEBERG_SECRET_ACCESS_KEY
+#   ICEBERG_S3_PATH_STYLE
+#
+# SSOT: spec/supabase-maximization/tasks.md §§ 2.7, 2.9, 2.10, 2.11
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/supabase-etl/odoo-expense.toml'
+      - '.github/workflows/supabase-etl-expense.yml'
+  workflow_dispatch:
+
+jobs:
+  etl-lint:
+    name: EL-only invariant lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fail if transform/aggregate/derived logic found in ETL config
+        run: |
+          if grep -rE 'transform|aggregate|derived' infra/supabase-etl/*.toml; then
+            echo "ERROR: EL-only invariant violation — transform/aggregate/derived logic detected"
+            echo "The ETL worker must be pure extract-and-load. Add transforms downstream (DuckDB/dbt)."
+            exit 1
+          fi
+          echo "PASS: no transform logic detected in infra/supabase-etl/"
+
+  deploy-etl-worker:
+    name: Deploy ETL worker
+    runs-on: ubuntu-latest
+    needs: etl-lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+
+      - name: Validate ETL app spec
+        run: doctl apps validate --spec infra/supabase-etl/odoo-expense.toml
+
+      - name: Deploy ETL worker to DO App Platform
+        env:
+          ODOO_PG_CDC_URL:           ${{ secrets.ODOO_PG_CDC_URL }}
+          ICEBERG_CATALOG_URI:       ${{ secrets.ICEBERG_CATALOG_URI }}
+          ICEBERG_WAREHOUSE:         ${{ secrets.ICEBERG_WAREHOUSE }}
+          ICEBERG_NAMESPACE:         ${{ secrets.ICEBERG_NAMESPACE }}
+          ICEBERG_S3_ENDPOINT:       ${{ secrets.ICEBERG_S3_ENDPOINT }}
+          ICEBERG_REGION:            ${{ secrets.ICEBERG_REGION }}
+          ICEBERG_ACCESS_KEY_ID:     ${{ secrets.ICEBERG_ACCESS_KEY_ID }}
+          ICEBERG_SECRET_ACCESS_KEY: ${{ secrets.ICEBERG_SECRET_ACCESS_KEY }}
+          ICEBERG_S3_PATH_STYLE:     ${{ secrets.ICEBERG_S3_PATH_STYLE }}
+        run: |
+          doctl apps create --spec infra/supabase-etl/odoo-expense.toml --no-wait \
+            || doctl apps update --spec infra/supabase-etl/odoo-expense.toml
+          echo "ETL worker deployed — waiting 30s for warm-up before smoke check"
+          sleep 30
+
+  iceberg-smoke:
+    name: DuckDB Iceberg smoke gate (T2-8)
+    runs-on: ubuntu-latest
+    needs: deploy-etl-worker
+    env:
+      ICEBERG_WAREHOUSE:         ${{ secrets.ICEBERG_WAREHOUSE }}
+      ICEBERG_S3_ENDPOINT:       ${{ secrets.ICEBERG_S3_ENDPOINT }}
+      ICEBERG_REGION:            ${{ secrets.ICEBERG_REGION }}
+      ICEBERG_ACCESS_KEY_ID:     ${{ secrets.ICEBERG_ACCESS_KEY_ID }}
+      ICEBERG_SECRET_ACCESS_KEY: ${{ secrets.ICEBERG_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install DuckDB
+        run: |
+          pip install duckdb --quiet
+
+      - name: Run Iceberg smoke query
+        # Script exits 0 + prints PASS, or exits 1 + prints FAIL: <reason>
+        # A non-zero exit here fails the entire workflow (CI-blocking).
+        run: bash scripts/ci/check_iceberg_etl_smoke.sh

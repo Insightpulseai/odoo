@@ -106,31 +106,37 @@ CI workflow: `.github/workflows/supabase-etl-expense.yml` (already in tasks.md 2
 
 > Ref: `docs/architecture/SUPABASE_FEATURES_INTEGRATIONS_ADOPTION.md §Analytics Plane`
 
-**EL-only constraint**: No transforms in the ETL worker. All transformations happen downstream
-(DuckDB queries, dbt-style views, or Superset SQL).
+**EL-only invariant (enforced, not advisory)**: The ETL worker is a pure extract-and-load process.
+No transforms, no aggregations, no derived columns may be added to the worker. Any attempt to add
+transform logic to `infra/supabase-etl/*.toml` or the worker container is a contract violation.
+Enforcement: `grep -r 'transform\|aggregate\|derived' infra/supabase-etl/` → zero results (added
+to `.github/workflows/supabase-etl-expense.yml` as a pre-deploy lint step).
 
 **Bucket naming**: `odoo-<domain>-etl` (e.g. `odoo-expense-etl`). Future ETL publications follow
-this convention.
+this convention exactly — hyphens, lowercase, `-etl` suffix.
 
-**Schema evolution rules** (additive only):
-- New nullable columns: allowed
-- Column rename / type change: requires new table version (`expense_v2`, etc.)
+**Schema evolution rules** (additive only — hard invariant):
+- New nullable columns: allowed; old columns must remain
+- Column rename / type change: **prohibited** — requires a new table version (`expense_v2`, etc.)
 - Binary columns (`ir_attachment.datas`): excluded from all Iceberg schemas — pointer-only pattern
+- CI enforcement: schema diff between current and previous Iceberg snapshot must show only additions
 
-**DuckDB Iceberg query workflow**:
+**DuckDB Iceberg smoke gate** (CI-blocking):
 ```sql
--- CI smoke query (run after ETL worker deploy)
+-- Executed by scripts/ci/check_iceberg_etl_smoke.sh
 INSTALL iceberg; LOAD iceberg;
 SELECT count(*) AS row_count, max(_sdc_received_at) AS latest_event
-FROM iceberg_scan('s3://ICEBERG_WAREHOUSE/odoo_ops/expense/');
--- Asserts: row_count > 0 AND latest_event > now() - INTERVAL '60 seconds'
+FROM iceberg_scan('s3://${ICEBERG_WAREHOUSE}/odoo_ops/expense/');
+-- Exits 0 (prints PASS) if: row_count > 0 AND latest_event > now() - INTERVAL '60 seconds'
+-- Exits 1 (prints FAIL: <reason>) on: row_count = 0, lag >= 60s, read error, or missing env vars
 ```
 
-SSOT for this script: `scripts/ci/check_iceberg_etl_smoke.sh`
+Script SSOT: `scripts/ci/check_iceberg_etl_smoke.sh`
+Workflow step: `.github/workflows/supabase-etl-expense.yml` (after ETL worker deploy)
 
 **Pipeline health events**: ETL worker emits `pipeline.start`, `pipeline.stop`, `pipeline.error`
-events to `ops.run_events` via Edge Function `webhook-ingest`. Enables Realtime dashboard and
-alerting without polling the Iceberg warehouse.
+events to `ops.run_events` via `supabase/functions/webhook-ingest/index.ts`. Enables Realtime
+dashboard and alerting without polling the Iceberg warehouse.
 
 ---
 
