@@ -1,0 +1,33 @@
+name: prod-settings-ssot-gate
+
+on:
+  pull_request:
+    paths:
+      - "ssot/runtime/prod_settings.yaml"
+      - "ssot/secrets/registry.yaml"
+      - "docs/architecture/CANONICAL_URLS.md"
+      - "scripts/ci/check_prod_settings_ssot.py"
+      - ".github/workflows/prod-settings-ssot-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/runtime/prod_settings.yaml"
+      - "ssot/secrets/registry.yaml"
+      - "docs/architecture/CANONICAL_URLS.md"
+      - "scripts/ci/check_prod_settings_ssot.py"
+      - ".github/workflows/prod-settings-ssot-gate.yml"
+  merge_group:
+
+jobs:
+  prod-settings-validate:
+    name: prod-settings-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate prod settings SSOT (schema + cross-refs)
+        run: python3 scripts/ci/check_prod_settings_ssot.py --repo-root .
