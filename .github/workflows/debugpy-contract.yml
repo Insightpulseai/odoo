@@ -9,6 +9,11 @@ on:
       - "scripts/odoo_debugpy_entrypoint.py"
       - "scripts/ci/check_debugpy_contract.sh"
       - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
       - ".github/workflows/debugpy-contract.yml"
   push:
     branches: [main]
@@ -16,6 +21,23 @@ on:
       - "scripts/odoo_debugpy_entrypoint.py"
       - "scripts/ci/check_debugpy_contract.sh"
       - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
+      - ".github/workflows/debugpy-contract.yml"
+  merge_group:
+    paths:
+      - "scripts/odoo_debugpy_entrypoint.py"
+      - "scripts/ci/check_debugpy_contract.sh"
+      - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
+      - ".github/workflows/debugpy-contract.yml"
 
 permissions:
   contents: read
@@ -33,7 +55,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Run contract gate
         run: |
