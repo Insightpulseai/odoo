@@ -1,0 +1,50 @@
+name: Industry Bundles SSOT Gate
+
+# Validates ssot/odoo/industry_bundles.yaml schema and runs the CE/OCA audit gate.
+#
+# SSOT: ssot/odoo/industry_bundles.yaml
+# Script: scripts/ci/check_industry_bundles.py
+# Tests: tests/test_check_industry_bundles.py
+
+on:
+  pull_request:
+    paths:
+      - "ssot/odoo/industry_bundles.yaml"
+      - "scripts/ci/check_industry_bundles.py"
+      - "tests/test_check_industry_bundles.py"
+      - ".github/workflows/industry-bundles-gate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/odoo/industry_bundles.yaml"
+      - "scripts/ci/check_industry_bundles.py"
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  industry-bundles-gate:
+    name: Industry Bundles SSOT Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml pytest
+
+      - name: Schema validation (pytest)
+        run: |
+          pytest -v tests/test_check_industry_bundles.py
+
+      - name: Schema-only gate (CI mode)
+        run: |
+          python3 scripts/ci/check_industry_bundles.py --mode schema
