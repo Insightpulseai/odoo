@@ -41,7 +41,7 @@ This module is part of the Scout retail analytics platform.
     "demo": [
         "data/retail_demo_stores.xml",
     ],
-    "installable": True,
+    "installable": False,
     "application": True,
     "auto_install": False,
 }
