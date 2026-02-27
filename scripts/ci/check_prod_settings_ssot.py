@@ -65,6 +65,24 @@ def main() -> int:
     ocr_health = ((((ps.get("ocr") or {}).get("endpoint")) or {}).get("health_path"))
     if isinstance(ocr_health, str) and not ocr_health.startswith("/"):
         die("ocr.endpoint.health_path must start with '/'", code=4)
+
+    # Rule 5: Stripe payments block — validate when present
+    stripe = ((ps.get("payments") or {}).get("stripe")) or {}
+    if stripe:
+        mode = stripe.get("mode")
+        if mode not in ("test", "live"):
+            die(f"payments.stripe.mode must be 'test' or 'live', got {mode!r}", code=5)
+        for field in ("api_key_secret_id", "webhook_secret_id"):
+            sid = stripe.get(field)
+            if not sid:
+                die(f"payments.stripe.{field} is required when payments.stripe is present", code=5)
+            if sid not in secret_ids:
+                die(
+                    f"payments.stripe.{field} references '{sid}' which is absent from "
+                    f"ssot/secrets/registry.yaml",
+                    code=2,
+                )
+
     print("OK: prod settings SSOT is valid and secrets/URLs are consistent.")
     return 0
 
