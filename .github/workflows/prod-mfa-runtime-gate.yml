@@ -1,0 +1,73 @@
+name: prod-mfa-runtime-gate
+on:
+  pull_request:
+    paths:
+      - "ssot/runtime/prod_settings.yaml"
+      - "supabase/**"
+      - "scripts/ci/check_prod_mfa_ssot.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/runtime/prod_settings.yaml"
+      - "supabase/**"
+      - "scripts/ci/check_prod_mfa_ssot.py"
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Gate mode: schema (SSOT only) or live (+ Supabase API probe)"
+        required: false
+        default: "schema"
+        type: choice
+        options:
+          - schema
+          - live
+
+permissions:
+  contents: read
+
+jobs:
+  mfa-schema:
+    name: MFA SSOT schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+      - name: Validate MFA SSOT (schema only)
+        run: python3 scripts/ci/check_prod_mfa_ssot.py --mode schema
+
+  mfa-live:
+    name: MFA runtime probe (live)
+    runs-on: ubuntu-latest
+    # Live probe runs only on:
+    #   1. Manual dispatch with mode=live
+    #   2. Push to main (not PRs — avoids exposing secrets to fork PRs)
+    # Skipped when SUPABASE_MANAGEMENT_TOKEN is absent (optional enforcement).
+    if: |
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'live') ||
+      github.event_name == 'push'
+    needs: mfa-schema
+    environment: production   # gates on production environment secrets
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+      - name: Probe Supabase MFA runtime state
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_MANAGEMENT_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
+        run: python3 scripts/ci/check_prod_mfa_ssot.py --mode live
+        # Non-zero exit only if auth.mfa.enforcement == required or totp.required == true.
+        # When enforcement=optional, live probe warns but does not fail CI.
