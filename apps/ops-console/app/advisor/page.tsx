@@ -5,6 +5,7 @@ import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts"
 import { Shield, DollarSign, Zap, Settings, Activity, RefreshCw, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { IntegrationBadges } from "@/components/platform/IntegrationBadges"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -132,6 +133,9 @@ export default function AdvisorPage() {
           <p className="text-sm text-muted-foreground mt-1">
             Platform health across 5 pillars · Azure Advisor–style recommendations
           </p>
+          <div className="mt-2">
+            <IntegrationBadges />
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {latestRun && (

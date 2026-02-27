@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+  <!-- ── Systray Toggle Button ──────────────────────────────────────────────── -->
+  <t t-name="ipai_ai_copilot.CopilotToggle">
+    <div class="o_menu_sections">
+      <button
+        class="btn btn-sm btn-light ipai-copilot-toggle d-flex align-items-center gap-1"
+        t-on-click="toggle"
+        title="IPAI Copilot (Ctrl+Space)">
+        <i class="fa fa-magic text-primary"/>
+        <span>Copilot</span>
+      </button>
+    </div>
+  </t>
+
+  <!-- ── Main Sidebar ───────────────────────────────────────────────────────── -->
+  <t t-name="ipai_ai_copilot.CopilotSidebar">
+    <t t-if="state.open">
+      <div class="ipai-copilot-sidebar">
+
+        <!-- Header -->
+        <div class="ipai-copilot-header d-flex align-items-center justify-content-between p-2 border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-magic text-primary fa-sm"/>
+            <strong style="font-size:0.875rem">IPAI Copilot</strong>
+            <span class="badge text-bg-primary" style="font-size:0.6rem;padding:2px 5px">BETA</span>
+          </div>
+          <div class="d-flex align-items-center gap-1">
+            <!-- Tab buttons -->
+            <button
+              t-att-class="'btn btn-xs px-2 py-0 ' + (localState.tab === 'chat' ? 'btn-primary' : 'btn-outline-secondary')"
+              t-on-click="() => switchTab('chat')"
+              style="font-size:0.75rem;border-radius:4px">Chat</button>
+            <button
+              t-att-class="'btn btn-xs px-2 py-0 position-relative ' + (localState.tab === 'insights' ? 'btn-primary' : 'btn-outline-secondary')"
+              t-on-click="() => switchTab('insights')"
+              style="font-size:0.75rem;border-radius:4px">
+              Insights
+              <t t-if="state.insights.length > 0">
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      style="font-size:0.55rem;padding:1px 4px">
+                  <t t-esc="state.insights.length"/>
+                </span>
+              </t>
+            </button>
+            <!-- Close button -->
+            <button class="btn btn-xs btn-light ms-1"
+                    t-on-click="() => copilot.toggle()"
+                    title="Close"
+                    style="font-size:0.75rem;line-height:1;padding:2px 6px">×</button>
+          </div>
+        </div>
+
+        <!-- ── Chat Tab ──────────────────────────────────────────────────────── -->
+        <t t-if="localState.tab === 'chat'">
+
+          <!-- Messages area -->
+          <div class="ipai-copilot-messages p-2" t-ref="messages">
+
+            <!-- Empty state with starter prompts -->
+            <t t-if="state.messages.length === 0 and not state.loading">
+              <div class="text-center py-3" style="color:#6c757d">
+                <div style="font-size:2rem;margin-bottom:8px">✨</div>
+                <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">IPAI Copilot</div>
+                <div style="font-size:0.78rem;line-height:1.4">
+                  Ask about your business data or let me take actions for you.
+                </div>
+                <div class="mt-3 d-flex flex-column gap-1">
+                  <button class="btn btn-outline-primary btn-sm"
+                          style="font-size:0.75rem"
+                          t-on-click="() => sendStarter('What are my top 5 open invoices?')">
+                    Top 5 open invoices
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm"
+                          style="font-size:0.75rem"
+                          t-on-click="() => sendStarter('Show overdue sales orders')">
+                    Overdue sales orders
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm"
+                          style="font-size:0.75rem"
+                          t-on-click="() => sendStarter('Summarize my pipeline by stage')">
+                    Pipeline summary
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm"
+                          style="font-size:0.75rem"
+                          t-on-click="() => sendStarter('What products are low on stock?')">
+                    Low stock products
+                  </button>
+                </div>
+              </div>
+            </t>
+
+            <!-- Message list -->
+            <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+
+              <!-- User message -->
+              <t t-if="msg.role === 'user'">
+                <div class="ipai-copilot-message user mb-2">
+                  <div class="message-bubble p-2 rounded-3">
+                    <span t-esc="msg.content"/>
+                  </div>
+                </div>
+              </t>
+
+              <!-- Assistant: tool confirmation -->
+              <t t-elif="msg.role === 'assistant' and msg.type === 'tool_confirmation'">
+                <div class="ipai-copilot-message assistant mb-2">
+                  <div class="message-bubble p-2 rounded-3">
+                    <div class="d-flex align-items-center gap-1 mb-2" style="color:#856404;font-size:0.8rem">
+                      <i class="fa fa-bolt"/>
+                      <strong>Action required</strong>
+                    </div>
+                    <t t-foreach="msg.tool_results_preview" t-as="tr" t-key="tr_index">
+                      <div class="border rounded p-1 mb-1 bg-light" style="font-size:0.78rem">
+                        <i class="fa fa-cog me-1 text-secondary"/>
+                        <t t-esc="tr.result"/>
+                      </div>
+                    </t>
+                    <t t-if="!msg.dismissed">
+                      <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-success btn-sm" style="font-size:0.75rem"
+                                t-on-click="() => confirmTools(msg)">
+                          <i class="fa fa-check me-1"/>Confirm
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" style="font-size:0.75rem"
+                                t-on-click="() => dismissTools(msg)">
+                          Cancel
+                        </button>
+                      </div>
+                    </t>
+                    <t t-else="">
+                      <div class="mt-1" style="font-size:0.75rem;color:#6c757d">Cancelled</div>
+                    </t>
+                  </div>
+                </div>
+              </t>
+
+              <!-- Assistant: tool result -->
+              <t t-elif="msg.role === 'assistant' and msg.type === 'tool_result'">
+                <div class="ipai-copilot-message assistant mb-2">
+                  <div class="message-bubble p-2 rounded-3">
+                    <div class="d-flex align-items-center gap-1 mb-1" style="color:#0d6832;font-size:0.8rem">
+                      <i class="fa fa-check-circle"/>
+                      <strong>Done</strong>
+                    </div>
+                    <span style="font-size:0.8rem" t-esc="msg.content"/>
+                  </div>
+                </div>
+              </t>
+
+              <!-- Assistant: error -->
+              <t t-elif="msg.role === 'assistant' and msg.type === 'error'">
+                <div class="ipai-copilot-message assistant mb-2">
+                  <div class="message-bubble p-2 rounded-3" style="background:#fee2e2">
+                    <div class="d-flex align-items-center gap-1 mb-1" style="color:#b91c1c;font-size:0.8rem">
+                      <i class="fa fa-exclamation-circle"/>
+                      <strong>Error</strong>
+                    </div>
+                    <span style="font-size:0.8rem" t-esc="msg.content"/>
+                  </div>
+                </div>
+              </t>
+
+              <!-- Assistant: plain message -->
+              <t t-else="">
+                <div class="ipai-copilot-message assistant mb-2">
+                  <div class="message-bubble p-2 rounded-3">
+                    <span t-esc="msg.content"/>
+                    <t t-if="msg.trace_id">
+                      <div style="font-size:0.6rem;color:#adb5bd;margin-top:4px"
+                           t-att-title="'trace: ' + msg.trace_id">
+                        <i class="fa fa-link me-1"/>
+                        <t t-esc="msg.model || 'ai'"/>
+                      </div>
+                    </t>
+                  </div>
+                </div>
+              </t>
+
+            </t>
+
+            <!-- Typing indicator -->
+            <t t-if="state.loading">
+              <div class="ipai-copilot-message assistant mb-2">
+                <div class="message-bubble p-2 rounded-3">
+                  <span class="ipai-typing-indicator">
+                    <span/><span/><span/>
+                  </span>
+                </div>
+              </div>
+            </t>
+
+          </div><!-- /.ipai-copilot-messages -->
+
+          <!-- Input area -->
+          <div class="ipai-copilot-input border-top p-2">
+            <div class="input-group input-group-sm">
+              <textarea
+                class="form-control"
+                rows="2"
+                placeholder="Ask anything… (Enter to send)"
+                t-ref="input"
+                t-model="localState.inputValue"
+                t-on-keydown="onKeydown"
+                t-att-disabled="state.loading"
+                style="resize:none;font-size:0.8rem"/>
+              <button class="btn btn-primary"
+                      t-on-click="send"
+                      t-att-disabled="state.loading or !localState.inputValue.trim()">
+                <i class="fa fa-paper-plane"/>
+              </button>
+            </div>
+            <div class="d-flex justify-content-between mt-1">
+              <span style="font-size:0.62rem;color:#adb5bd">
+                Ctrl+Space from any view · Write actions require confirmation
+              </span>
+              <button class="btn btn-link btn-sm p-0"
+                      style="font-size:0.62rem"
+                      t-on-click="clearChat">Clear</button>
+            </div>
+          </div>
+
+        </t><!-- /chat tab -->
+
+        <!-- ── Insights Tab ───────────────────────────────────────────────────── -->
+        <t t-if="localState.tab === 'insights'">
+          <div class="p-2 flex-grow-1" style="overflow-y:auto">
+            <t t-if="state.insights.length === 0">
+              <div class="text-center py-4" style="font-size:0.8rem;color:#6c757d">
+                <i class="fa fa-lightbulb-o fa-2x mb-2"/>
+                <div>No insights yet.</div>
+                <div class="mt-1">Copilot runs analysis daily at 06:00 UTC.</div>
+              </div>
+            </t>
+            <t t-foreach="state.insights" t-as="insight" t-key="insight.id">
+              <div class="card mb-2 border-start border-3"
+                   t-att-class="insight.priority === '2' ? 'border-danger' : insight.priority === '1' ? 'border-warning' : 'border-primary'">
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="fw-semibold" style="font-size:0.82rem">
+                      <t t-esc="insight.title"/>
+                    </div>
+                    <span class="badge"
+                          t-att-class="insight.category === 'finance' ? 'text-bg-info' : insight.category === 'sales' ? 'text-bg-success' : insight.category === 'inventory' ? 'text-bg-warning' : 'text-bg-secondary'"
+                          style="font-size:0.6rem">
+                      <t t-esc="insight.category"/>
+                    </span>
+                  </div>
+                  <div style="font-size:0.78rem;color:#495057;margin-top:2px">
+                    <t t-esc="insight.body"/>
+                  </div>
+                  <div class="mt-2">
+                    <button class="btn btn-link btn-sm p-0"
+                            style="font-size:0.73rem"
+                            t-on-click="() => askInsight(insight)">
+                      Ask Copilot about this →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </div>
+        </t><!-- /insights tab -->
+
+      </div><!-- /.ipai-copilot-sidebar -->
+    </t>
+  </t>
+
+</templates>

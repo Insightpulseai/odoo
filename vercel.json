@@ -3,18 +3,10 @@
   "version": 2,
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": null,
-  "builds": [
-    {
-      "src": "web/ipai-chatgpt-app/web/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
   "functions": {
     "infra/vercel/api/ask.py": {
-      "runtime": "python3.11"
+      "runtime": "python3.11",
+      "maxDuration": 30
     }
   },
   "env": {

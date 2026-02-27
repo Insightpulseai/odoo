@@ -42,15 +42,29 @@ bridges:
     notes: "OAuth2 bridge to Zoho Mail SMTP. Handles all outbound email from Odoo CE."
 
   - name: ipai_ai_tools_bridge
-    display_name: "AI Tools Bridge (Google Gemini)"
-    replaces_ee_feature: "Odoo AI features (EE)"
+    display_name: "IPAI AI Provider Bridge (platform contract)"
+    replaces_ee_feature: "Odoo AI features (EE/IAP)"
     ee_module: enterprise_ai
     addon_path: platform/ai/providers/gemini.ts
-    status: planned
+    status: active
     contract_doc: docs/contracts/AI_BRIDGE_CONTRACT.md
     secrets:
       - gemini_api_key
-    notes: "Google Gemini 2.0 Flash bridge. REST endpoint at /api/ai/gemini in Ops Console."
+    # Platform-level consumers and routing metadata
+    consumers:
+      - odoo          # via ipai_ai_widget addon (ir.config_parameter bridge_url)
+      - ops-console   # via apps/ops-console/app/api/ai/gemini/route.ts
+      - workers       # future automation workers
+    endpoints:
+      - generate      # POST /api/ai/gemini — text generation (active)
+      - chat          # planned
+      - embeddings    # planned
+    fallback: oca_ollama   # ai_oca_native_generate_ollama for offline/local tenants
+    notes: >
+      Primary AI platform contract. Google Gemini 2.0 Flash REST bridge at
+      /api/ai/gemini (Ops Console / Vercel). All Odoo AI calls route through
+      ipai_ai_widget → ir.config_parameter bridge_url → this endpoint.
+      No Odoo IAP dependency. OCA Ollama is opt-in fallback for local tenants.
 
   - name: ipai_slack_connector
     display_name: "Slack Connector"
@@ -73,3 +87,49 @@ bridges:
     contract_doc: docs/contracts/OCR_BRIDGE_CONTRACT.md
     secrets: []
     notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."
+
+  - name: ipai_ai_widget
+    display_name: "Ask AI Widget (Odoo 19 CE Chatter)"
+    replaces_ee_feature: "Ask AI (EE/BYOM — OpenAI or Gemini key in AI app Settings)"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_widget/
+    status: active
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_WIDGET_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    notes: >
+      Odoo-side proxy addon (OWL 2 button in chatter + Odoo controller).
+      NOT the platform contract — this is the Odoo UI + controller layer that
+      calls ipai_ai_tools_bridge via ir.config_parameter bridge_url.
+      No Odoo IAP dependency. Provider switching happens at bridge level, not here.
+
+  - name: ipai_ai_copilot
+    display_name: "IPAI AI Copilot (M365/Joule-class)"
+    replaces_ee_feature: "Odoo EE AI Agents + M365 Copilot + SAP Joule"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_copilot/
+    status: planned
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_COPILOT_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    consumers:
+      - odoo          # via ipai_ai_copilot addon (ir.config_parameter bridge_url)
+    endpoints:
+      - generate      # POST /api/ai/gemini (simple, no tools)
+      - tools         # POST /api/ai/gemini/tools (function calling, new)
+    capabilities:
+      - persistent_sidebar
+      - command_palette
+      - gemini_function_calling
+      - tool_registry
+      - proactive_insights
+      - n8n_automation_bridge
+      - supabase_rag
+    notes: >
+      Full AI copilot for Odoo 19 CE. Surpasses EE AI agents in:
+      multi-provider support, cross-system n8n automation, Supabase-backed RAG,
+      and provider cost routing (Flash/Pro). Gemini function calling enables
+      create/update/search Odoo records from natural language.
+      ir.config_parameter: ipai_ai_copilot.bridge_url = /api/ai/gemini/tools

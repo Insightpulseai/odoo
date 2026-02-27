@@ -110,6 +110,12 @@ services:
       PORT: 5432
       USER: ${POSTGRES_USER:-odoo}
       PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      # debugpy toggle — off by default; set IPAI_DEBUGPY=1 in shell or .env to enable.
+      # See scripts/odoo_debugpy_entrypoint.py and docs/runbooks/ODOO_DEBUGPY.md.
+      IPAI_DEBUGPY: ${IPAI_DEBUGPY:-0}
+      IPAI_DEBUGPY_HOST: ${IPAI_DEBUGPY_HOST:-0.0.0.0}
+      IPAI_DEBUGPY_PORT: ${IPAI_DEBUGPY_PORT:-5678}
+      IPAI_DEBUGPY_WAIT: ${IPAI_DEBUGPY_WAIT:-0}
     volumes:
       # Odoo data persistence (filestore + sessions)
       - odoo-web-data:/var/lib/odoo

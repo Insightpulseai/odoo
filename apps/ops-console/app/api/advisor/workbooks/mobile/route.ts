@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import * as fs from "fs"
 import * as path from "path"
+import { getOrCreateRequestId, correlationHeaders } from "@/lib/http/correlation"
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
@@ -41,7 +42,9 @@ interface WorkbookResult {
  *
  * Returns pass/fail/skip per rule with remediation steps.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const rid = getOrCreateRequestId(request.headers.get("x-request-id"))
+  const hdrs = correlationHeaders(rid)
   // ── Load ruleset ─────────────────────────────────────────────────────────────
   const rulesetPath = path.join(process.cwd(), "../../platform/advisor/rulesets/mobile-release-readiness.yaml")
   let rules: WorkbookRule[] = []
@@ -155,7 +158,7 @@ export async function GET() {
     fail_count: failCount,
     skip_count: skipCount,
     ready,
-  })
+  }, { headers: hdrs })
 }
 
 // ── Filesystem checks ─────────────────────────────────────────────────────────
