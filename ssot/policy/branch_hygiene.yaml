@@ -2,23 +2,22 @@
 #
 # Branch hygiene policy — canonical source of truth for automated pruning.
 # Consumed by: .github/workflows/branch-hygiene.yml
+#              scripts/ci/branch_hygiene.py
 #
-# Schema fields:
-#   retention_days:    Max age (days) of a branch with no open PR before auto-delete
-#   auto_delete_prefixes: Branch prefixes subject to automated pruning
-#   protected_patterns: Never auto-delete (anchored prefix or exact name)
-#   dry_run_default:   true = log-only; false = actually delete (overridden per-run)
-#   report_artifact:   Name of the GitHub Actions artifact with JSON pruning report
+# Safety model (two locks):
+#   Lock 1 (workflow): scheduled runs always force dry_run=true
+#   Lock 2 (script):   --dry-run=false requires --confirm=YES
 #
-# Policy rationale:
-#   Agent-generated branches (claude/, codex/, bot/) and short-lived feature branches
-#   accumulate rapidly. Without cleanup, refs lists balloon and PR searches become noisy.
-#   This policy enforces automatic expiry while guaranteeing main/release/hotfix branches
-#   are never touched.
+# A branch with ANY open PR (draft or review-ready) is ALWAYS kept,
+# regardless of all rules below.
 #
-# To exempt a branch from pruning:
-#   Add it to protected_patterns OR ensure it has an open PR.
-#   A branch with ANY open PR (draft or review-ready) is always kept.
+# To add a new auto-delete prefix:
+#   1. Add to auto_delete_prefixes
+#   2. Confirm prefix is NOT in protected_prefixes
+#   3. Open a PR — effective on next nightly run
+#
+# To exempt a specific branch permanently:
+#   Add to excluded_branches (exact name) or protected_prefixes (prefix match)
 
 ---
 schema: ssot.policy.branch_hygiene.v1
@@ -29,37 +28,49 @@ retention:
   # Branches with NO open PR older than this are candidates for deletion
   default_days: 14
 
-  # Per-prefix overrides (key = prefix, value = retention days)
+  # Per-prefix overrides (key = prefix string, value = days)
   prefix_overrides:
-    bot/:  7
-    claude/: 7
-    codex/: 7
+    "bot/": 7
+    "claude/": 7
+    "codex/": 7
 
+# Only branches matching these prefixes are auto-delete eligible
 auto_delete_prefixes:
-  # Only branches matching these prefixes are subject to automated deletion
-  - claude/
-  - codex/
-  - bot/
-  - dependabot/   # Dependabot closes its own PRs but orphaned branches can linger
-  - renovate/     # Same as dependabot
+  - "claude/"       # Claude Code agent branches
+  - "codex/"        # OpenAI Codex branches
+  - "bot/"          # GitHub App / bot branches (e.g. bot/sync-anthropic-skills)
+  - "dependabot/"   # Dependabot — closed-PR orphan branches
+  - "renovate/"     # Renovate Bot
 
-protected_patterns:
-  # Exact names or prefix anchors that are NEVER auto-deleted
+# Exact branch names that are NEVER deleted
+protected_exact:
   - main
   - master
   - develop
-  - release/
-  - hotfix/
-  - chore/
-  - feat/
-  - fix/
-  - docs/
-  - test/
-  - refactor/
+  - gh-pages
 
-dry_run_default: true  # Set to false only via workflow_dispatch with explicit override
+# Prefix anchors — branches starting with these are NEVER deleted
+protected_prefixes:
+  - "release/"
+  - "hotfix/"
+  - "prod/"
+  - "staging/"
+  - "chore/"
+  - "feat/"
+  - "fix/"
+  - "docs/"
+  - "test/"
+  - "refactor/"
+
+# Explicit full-name exclusions (edge cases not covered by prefix rules)
+excluded_branches:
+  - "gh-pages"
+
+# Scheduled runs are ALWAYS dry_run=true regardless of this value (workflow lock 1).
+# This controls the CLI default when running the script manually with no --dry-run flag.
+dry_run_default: true
 
 report:
   artifact_name: branch-hygiene-report
+  path: reports/ci/branch_hygiene_report.json
   retention_days: 30
-  json_path: reports/ci/branch_hygiene_report.json

@@ -99,6 +99,19 @@ git status --short | grep '^??'
 
 ## Automated Branch Pruning
 
+### Safety model (two locks)
+
+| Trigger | Behavior |
+|---------|----------|
+| Scheduled (nightly) | **Report-only** — Lock 1 forces `DRY_RUN=true` at the workflow layer; no branches are ever deleted |
+| `workflow_dispatch` with `dry_run=true` (default) | Report-only — same as schedule |
+| `workflow_dispatch` with `dry_run=false` + `confirm=YES` | **Live deletions** — both locks satisfied; candidates are deleted |
+| `workflow_dispatch` with `dry_run=false` + no/wrong confirm | Refused — script exits with code 4 (`REFUSING_DELETE`) |
+
+**Lock 1 (workflow)**: `branch-hygiene.yml` unconditionally sets `DRY_RUN=true` for all `schedule` events.
+
+**Lock 2 (script)**: `branch_hygiene.py` refuses any deletion unless `--confirm=YES` is passed. This check runs before any API call; a wrong or missing value exits(4) immediately.
+
 ### Policy SSOT
 
 `ssot/policy/branch_hygiene.yaml` — canonical source for retention days, candidate prefixes, and protected patterns.
@@ -109,57 +122,87 @@ Workflow: `.github/workflows/branch-hygiene.yml`
 Script: `scripts/ci/branch_hygiene.py`
 
 Triggers:
-- **Nightly** at 03:00 UTC (scheduled, dry-run unless policy changed)
-- **Manual** via workflow_dispatch (set `dry_run: false` to actually delete)
+- **Nightly at 03:00 UTC** (report-only — never deletes)
+- **Manual** via `workflow_dispatch` (deletions only when `dry_run=false` + `confirm=YES`)
 
 Algorithm:
-1. List all remote branches via GitHub API
-2. Filter to candidate prefixes (`claude/`, `codex/`, `bot/`, `dependabot/`, `renovate/`)
-3. Skip any branch with an open PR (draft or review-ready)
-4. Skip any branch newer than `max_age_days` (default 14)
-5. Skip all protected patterns (`main`, `release/`, `hotfix/`, `chore/`, `feat/`, etc.)
-6. Delete (or log in dry-run) remaining branches
+1. List all remote branches via paginated GitHub API
+2. Check exact protected names (`main`, `master`, `develop`, `gh-pages`) — skip
+3. Check protected prefixes (`release/`, `hotfix/`, `chore/`, `feat/`, `fix/`, etc.) — skip
+4. Filter to candidate prefixes only (`claude/`, `codex/`, `bot/`, `dependabot/`, `renovate/`)
+5. Skip branches newer than `max_age_days` (default: 14)
+6. Open-PR guard — skip any candidate with an open PR (draft or review-ready)
+7. Delete (live) or report (dry-run) remaining candidates
 
-### Candidate prefixes (auto-delete)
+### Candidate prefixes (auto-delete eligible)
 
-| Prefix | Source | Notes |
-|--------|--------|-------|
-| `claude/` | Claude Code agent | All agent-generated branches |
-| `codex/` | OpenAI Codex agent | — |
-| `bot/` | GitHub Apps / bots | e.g. `bot/sync-anthropic-skills` |
-| `dependabot/` | Dependabot | Closed-PR orphans only |
-| `renovate/` | Renovate | Same as dependabot |
+| Prefix | Source | Default retention |
+|--------|--------|-------------------|
+| `claude/` | Claude Code agent | 7 days |
+| `codex/` | OpenAI Codex | 7 days |
+| `bot/` | GitHub Apps / bots | 7 days |
+| `dependabot/` | Dependabot | 14 days |
+| `renovate/` | Renovate Bot | 14 days |
 
 ### Protected — never deleted
 
-All other prefixes and patterns are **never** auto-deleted:
-`main`, `master`, `develop`, `release/*`, `hotfix/*`, `chore/*`, `feat/*`, `fix/*`, `docs/*`, `test/*`, `refactor/*`
+```
+Exact:    main, master, develop, gh-pages
+Prefix:   release/  hotfix/  prod/  staging/
+          chore/  feat/  fix/  docs/  test/  refactor/
++ Any branch with an open PR (regardless of prefix or age)
+```
 
-Any branch with an open PR (regardless of prefix) is also protected.
+### Exit codes
 
-### To run manually
+| Code | Meaning |
+|------|---------|
+| 0 | Success (including clean dry-run) |
+| 2 | Misconfiguration (missing `REPO` env var) |
+| 3 | API failure (could not list branches or delete failed) |
+| 4 | Refused unsafe delete (`--dry-run=false` without `--confirm=YES`) |
+
+### Running via workflow_dispatch
 
 ```bash
-# Dry run (view what would be deleted)
-gh workflow run branch-hygiene.yml -f dry_run=true -f older_than_days=14
+# View what would be deleted (safe — no deletions)
+gh workflow run branch-hygiene.yml \
+  -f dry_run=true \
+  -f older_than_days=14
 
-# Live deletion (14-day cutoff)
-gh workflow run branch-hygiene.yml -f dry_run=false -f older_than_days=14
+# Live deletion — requires confirm=YES (human intent required)
+gh workflow run branch-hygiene.yml \
+  -f dry_run=false \
+  -f confirm=YES \
+  -f older_than_days=14
+```
 
-# Local dry run
+### Running locally
+
+```bash
+# Dry run — report only
 REPO=Insightpulseai/odoo DRY_RUN=true MAX_AGE_DAYS=14 \
-  GH_TOKEN=$(gh auth token) python3 scripts/ci/branch_hygiene.py
+  GH_TOKEN=$(gh auth token) \
+  python3 scripts/ci/branch_hygiene.py --dry-run=true
+
+# Live run — double lock enforced by script
+REPO=Insightpulseai/odoo DRY_RUN=false MAX_AGE_DAYS=14 \
+  GH_TOKEN=$(gh auth token) \
+  python3 scripts/ci/branch_hygiene.py --dry-run=false --confirm=YES
 ```
 
 ### Report artifact
 
-Every run uploads `reports/ci/branch_hygiene_report.json` as a GitHub Actions artifact (`branch-hygiene-report-<run_number>`, retained 30 days).
+Every run writes `reports/ci/branch_hygiene_report.json` and uploads it as the
+GitHub Actions artifact `branch-hygiene-report` (stable name, overwritten each run,
+retained 30 days). A structured job summary is also written to the Actions UI.
 
 ### To exempt a branch from pruning
 
 Either:
 1. Open a PR against it (even a draft), **or**
-2. Add its prefix to `protected_patterns` in `ssot/policy/branch_hygiene.yaml`
+2. Add the exact name to `excluded_branches` or its prefix to `protected_prefixes`
+   in `ssot/policy/branch_hygiene.yaml`
 
 ---
 
