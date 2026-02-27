@@ -73,6 +73,38 @@ into `addons/ipai/` modules.
 - `docs/runbooks/SECRETS_SSOT.md` -- Secret management workflow
 - `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` -- Go-live procedure
 
+### O5: AI Provider Bridge as Platform Contract (SSOT-native)
+
+**Problem**: Odoo 19 "Ask AI" is an EE/IAP feature; each AI surface (Chatter widget,
+html editor, ops-console, automations) currently re-implements AI access independently,
+creating ungoverned provider coupling and untracked secret dependencies.
+
+**Requirement**: The IPAI AI Provider Bridge is the single platform contract for all AI generation:
+
+- **O5.1**: Odoo AI (Ask AI / Chatter widget) MUST call the IPAI AI Provider Bridge
+  by default. Calls are proxied through `ipai_ai_widget` Odoo addon (no Odoo IAP dependency).
+  OCA-local Ollama generation MAY be enabled as a fallback for offline/local-only tenants.
+- **O5.2**: All AI generation calls MUST return `{ provider, text, model, trace_id }`.
+  Telemetry with those fields MUST be emitted to ops event log (trace_id enables cost
+  attribution and audit). No fire-and-forget AI calls.
+- **O5.3**: Every AI provider route MUST return a deterministic `503 KEY_MISSING` response
+  when the required API key env var is unset (fail before making any outbound API call).
+- **O5.4**: Every AI provider API key MUST be registered in `ssot/secrets/registry.yaml`
+  with all consumers listed, and documented in `docs/architecture/AI_PROVIDER_BRIDGE.md`.
+
+**Success criteria**:
+- `ssot/bridges/catalog.yaml` has `ipai_ai_tools_bridge` status=active with consumers:
+  `[odoo, ops-console, workers]`
+- `ssot/parity/ee_to_oca_matrix.yaml` records "Ask AI editor assistant" as
+  `gap_type: ipai_bridge` pointing to `ipai_ai_widget`
+- `ipai_ai_widget` addon routes via `ir.config_parameter ipai_ai_widget.bridge_url` —
+  no hardcoded LLM endpoint inside Odoo source
+- `POST /api/ai/gemini` returns `{"error": "GEMINI_API_KEY_MISSING"}` with status 503
+  when `GEMINI_API_KEY` is not set
+- `ssot/secrets/registry.yaml` contains a `gemini_api_key` entry with consumers covering
+  both `vercel_env:apps/ops-console` and `vercel_env:platform/ai/providers/gemini`
+- `docs/architecture/AI_PROVIDER_BRIDGE.md` exists and documents both route contracts
+
 ---
 
 ## Non-Requirements (Out of Scope)

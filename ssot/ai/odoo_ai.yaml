@@ -1,0 +1,93 @@
+# schema: ssot.ai.odoo_ai.v1
+# AI provider configuration for Odoo 19 CE deployment.
+# This file governs which AI backend is active and its parameters.
+# Referenced by: spec/monorepo-endstate/prd.md O5.1
+#
+# ── GOAL: Replace Odoo EE AI (BYOM) with CE-native IPAI bridge ────────────────
+# Odoo 19 EE "Ask AI" uses Bring Your Own Model (BYOM): the enterprise AI app
+# lets you configure your own OpenAI or Google Gemini API key directly in
+# AI app → Configuration → Settings → Providers. IAP credits are NOT used for
+# v19 AI features (IAP = OCR/document digitization only).
+#
+# This deployment replaces EE BYOM with the IPAI bridge pattern:
+#   EE:  Odoo AI app + ai.google.api_key (system param) → Gemini directly
+#   CE:  ipai_ai_widget addon + ir.config_parameter:bridge_url → IPAI → Gemini
+#
+# Both paths use the same Gemini API key — the key lives at Vercel (IPAI side),
+# not inside Odoo. This keeps Odoo clean and provider-agnostic.
+#
+# ── Surfaces replaced ─────────────────────────────────────────────────────────
+# EE surfaces:      top-bar Ask AI, Ctrl+K palette, html editor action,
+#                   AI agents (RAG+pgvector), AI fields (Studio), voice transcription
+# CE covered now:   chatter button (ipai_ai_widget) — partial replacement
+# CE gap:           html editor action requires OCA port to 19.0 (see task T-1)
+#
+# mode values:
+#   gemini  — IPAI AI Provider Bridge (default, SaaS-grade, Vercel-hosted)
+#   ollama  — OCA ai_oca_native_generate_ollama (self-hosted, offline/local tenants)
+#
+# To enable Ollama fallback: set mode: ollama and provide ollama_endpoint below.
+# To revert to Gemini primary: set mode: gemini (or remove the file entirely).
+#
+# IMPORTANT: mode=ollama requires ai_oca_native_generate_ollama installed in Odoo.
+# Never set mode=odoo_iap — IAP requires EE license (CE-only constraint).
+
+version: "1.0.0"
+schema: ssot.ai.odoo_ai.v1
+last_reviewed: "2026-02-27"
+
+# ── Primary AI mode ──────────────────────────────────────────────────────────
+mode: gemini   # gemini | ollama
+
+# ── Gemini (primary, default) ─────────────────────────────────────────────────
+gemini:
+  bridge: ipai_ai_tools_bridge
+  # URL is read from ir.config_parameter:ipai_ai_widget.bridge_url in Odoo.
+  # Value must be set via Odoo Settings → Technical → Parameters, NOT committed here.
+  endpoint_param: ipai_ai_widget.bridge_url
+  model: gemini-2.0-flash-preview
+  # Secret: gemini_api_key (see ssot/secrets/registry.yaml)
+  # Key lives at: Vercel env var GEMINI_API_KEY (ops-console project)
+  required_secret: gemini_api_key
+  failure_code: AI_KEY_NOT_CONFIGURED    # HTTP 503 when key is missing
+  response_shape:
+    - provider
+    - text
+    - model
+    - trace_id
+
+# ── Ollama (opt-in fallback for offline / local tenants) ─────────────────────
+ollama:
+  oca_module: ai_oca_native_generate_ollama
+  # Endpoint is configured inside Odoo (OCA module settings).
+  # Typical value: http://localhost:11434 (or remote Ollama host)
+  default_endpoint: http://localhost:11434
+  default_model: llama3
+  notes: >
+    Opt-in only. Set mode: ollama to enable. Requires ai_oca_native_generate_ollama
+    installed and active in Odoo. Module available at OCA/ai (port to 19.0 needed).
+    Fallback disables telemetry (no trace_id) — acceptable for offline tenants only.
+
+# ── Odoo AI surfaces covered by this config ───────────────────────────────────
+surfaces:
+  - name: chatter_button
+    addon: ipai_ai_widget
+    description: "OWL 2 Ask AI button in mail.chatter (CE path for html editor assistant)"
+    modes: [gemini, ollama]
+  - name: html_editor_action
+    description: >
+      Native Odoo 19 html editor AI action (EE/BYOM — OpenAI or Gemini key in AI app Settings).
+      Appears in: Knowledge, Discuss, email compose, notes.
+      CE gap: requires OCA ai_oca_native_generate_ollama ported to 19.0 and reconfigured
+      to call IPAI bridge instead of Ollama (task T-1 in spec/ai-bridge/tasks.md).
+    modes: []           # no CE path yet; gap noted in ssot/parity/ee_to_oca_matrix.yaml
+  - name: top_bar_ask_ai
+    description: >
+      EE top-bar Ask AI button (Ctrl+K palette). Full RAG agent with pgvector.
+      No CE equivalent — requires AI agents framework (enterprise_ai module).
+    modes: []           # no CE path; accepted gap
+
+# ── Prohibited modes ─────────────────────────────────────────────────────────
+prohibited:
+  - mode: odoo_iap
+    reason: "Requires Odoo Enterprise license. CE-only constraint (CLAUDE.md §Critical Rules)."

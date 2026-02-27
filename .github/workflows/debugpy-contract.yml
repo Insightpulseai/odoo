@@ -1,0 +1,85 @@
+name: debugpy entrypoint contract gate
+
+# Runs without Docker, Odoo, or any external service.
+# Pure Python contract check on the entrypoint wrapper.
+
+on:
+  pull_request:
+    paths:
+      - "scripts/odoo_debugpy_entrypoint.py"
+      - "scripts/ci/check_debugpy_contract.sh"
+      - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
+      - ".github/workflows/debugpy-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/odoo_debugpy_entrypoint.py"
+      - "scripts/ci/check_debugpy_contract.sh"
+      - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
+      - ".github/workflows/debugpy-contract.yml"
+  merge_group:
+    paths:
+      - "scripts/odoo_debugpy_entrypoint.py"
+      - "scripts/ci/check_debugpy_contract.sh"
+      - "docker/dev/Dockerfile"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".devcontainer/**"
+      - ".vscode/launch.json"
+      - "docs/runbooks/ODOO_DEBUGPY.md"
+      - ".github/workflows/debugpy-contract.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  entrypoint-contracts:
+    name: debugpy entrypoint contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run contract gate
+        run: |
+          chmod +x scripts/ci/check_debugpy_contract.sh
+          bash scripts/ci/check_debugpy_contract.sh
+
+      - name: Verify debugpy absent from non-dev Dockerfiles
+        run: |
+          set -euo pipefail
+          echo "Scanning for debugpy installs outside docker/dev/..."
+          FOUND=0
+          while IFS= read -r -d '' dockerfile; do
+            # Skip the canonical dev Dockerfile
+            if [[ "${dockerfile}" == "docker/dev/Dockerfile" ]]; then
+              continue
+            fi
+            if grep -q "debugpy" "${dockerfile}" 2>/dev/null; then
+              echo "  FAIL  ${dockerfile} contains debugpy — must be dev-only"
+              FOUND=1
+            fi
+          done < <(find . -name "Dockerfile*" -not -path "./.git/*" -print0)
+
+          if [[ "${FOUND}" -eq 1 ]]; then
+            echo "FAIL: debugpy found outside dev image"
+            exit 1
+          fi
+          echo "PASS: debugpy is dev-only (docker/dev/Dockerfile)"

@@ -10,7 +10,7 @@
         <field name="name">ai-copilot</field>
         <field name="description">
             Internal AI assistant channel. Post any question here — the AI Copilot
-            (powered by Ollama / ai_oca_native_generate_ollama) will reply.
+            (powered by IPAI AI Provider Bridge / Gemini) will reply.
             All messages are visible to all internal users of this channel.
         </field>
         <field name="channel_type">channel</field>
