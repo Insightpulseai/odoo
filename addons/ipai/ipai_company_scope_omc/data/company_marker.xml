@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+     NOTE: This file marks TBWA\SMP as the canonical OMC company by matching
+     on the exact company name.  If your production company is named differently,
+     DO NOT ship this file — instead run scripts/company/mark_tbwa_smp_company.py
+     with the correct search criteria.
+
+     noupdate="1" ensures this record is not reset on subsequent upgrades.
+-->
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Locate the TBWA\SMP company by name and set the marker flag.
+            Uses a function= field update pattern so it is safe to re-run.
+        -->
+        <function model="res.company" name="_ipai_mark_tbwa_smp_by_name">
+            <value>TBWA\SMP</value>
+        </function>
+
+    </data>
+</odoo>
