@@ -13,10 +13,16 @@
 #   # Audit live Odoo against a bundle (requires ODOO_* env vars):
 #   python3 scripts/ci/check_industry_bundles.py --mode audit --bundle photography
 #
+#   # Audit all bundles with strict extension check:
+#   python3 scripts/ci/check_industry_bundles.py --mode audit --bundle all --strict-oca
+#
 # Rule: DO NOT add modules to ce_core unless they exist in Odoo CE 19.
 # Rule: oca_replacements entries must map to OCA repos we actually vendor
 #       (addons/oca/ or approved via orphan_addons_allowlist).
-# Rule: oca_extensions are optional OCA enhancements — missing = warning only.
+# Rule: oca_extensions with optional=false are treated as required under --strict-oca.
+# Rule: oca_extensions with optional=true are warnings only — never fail CI.
+# Rule: ee_modules lists EE-only apps implied by the Odoo industry page;
+#       declared for documentation only — not installed.
 #
 schema: ssot.odoo.industry_bundles.v1
 version: "1.0"
@@ -33,6 +39,10 @@ bundles:
   - slug: photography
     label: "Photography Studio"
     odoo_industry_url: https://www.odoo.com/industries/photography
+    # EE-only modules implied by the Odoo industry page — declared for documentation;
+    # never installed on CE. Used to track coverage gaps.
+    ee_modules:
+      - documents
     # Modules that MUST be installed for this bundle to be considered active.
     # All are Odoo CE 19 core modules.
     ce_core:
@@ -47,25 +57,36 @@ bundles:
       - name: account
         reason: "Invoicing, AR/AP, payment matching"
     # OCA modules that replace EE-only features.
-    # Missing = FAIL when mode=audit with --strict-oca.
+    # Missing = FAIL in audit mode (always required).
     oca_replacements:
       - name: dms
         replaces_ee: documents
         oca_repo: OCA/dms
         reason: "Odoo Documents is EE; OCA DMS handles contracts/briefs/deliverables"
-    # Optional OCA enhancements — missing = WARNING only.
+    # Optional OCA enhancements.
+    # optional=true  → warning only, never fail CI
+    # optional=false → fail under --strict-oca
     oca_extensions:
-      - name: project_task_default_stage
-        oca_repo: OCA/project
-        reason: "Default stages per project type — useful for shoot workflows"
-      - name: sale_order_line_description
-        oca_repo: OCA/sale-workflow
-        reason: "Cleaner quotation line descriptions for shoot packages"
+      - addon: project_task_default_stage
+        repo: OCA/project
+        optional: true
+        rationale: "Default stages per project type — useful for shoot workflows"
+      - addon: sale_order_line_description
+        repo: OCA/sale-workflow
+        optional: true
+        rationale: "Cleaner quotation line descriptions for shoot packages"
+    notes:
+      - "Odoo Documents (EE) replaced by OCA DMS for contracts, briefs, and deliverables."
 
   # ── Marketing Agency ───────────────────────────────────────────────────────
   - slug: marketing-agency
     label: "Marketing Agency"
     odoo_industry_url: https://www.odoo.com/industries/marketing-agency
+    ee_modules:
+      - documents
+      - social_marketing
+      - mass_mailing
+      - marketing_automation
     ce_core:
       - name: crm
         reason: "Client pipeline and opportunity management"
@@ -87,21 +108,25 @@ bundles:
         oca_repo: OCA/dms
         reason: "Creative briefs, assets, deliverables — OCA DMS replaces EE Documents"
     oca_extensions:
-      - name: sale_order_line_description
-        oca_repo: OCA/sale-workflow
-        reason: "Rich service line descriptions on client proposals"
-      - name: project_milestone
-        oca_repo: OCA/project
-        reason: "Campaign milestone tracking"
-      # Social Marketing note: Odoo Social Marketing is EE.
-      # OCA/social has partial connectors; most agencies keep social scheduling
-      # external (Buffer, Hootsuite) and sync outcomes back into CRM/Project.
-      # No required oca_replacements entry — flag as known gap.
+      - addon: sale_order_line_description
+        repo: OCA/sale-workflow
+        optional: true
+        rationale: "Rich service line descriptions on client proposals"
+      - addon: project_milestone
+        repo: OCA/project
+        optional: true
+        rationale: "Campaign milestone tracking"
+    notes:
+      - "Odoo Documents (EE) replaced by OCA DMS for creative briefs and deliverables."
+      - "Social Marketing (EE) has no OCA equivalent — external tool (Buffer, Hootsuite) is recommended."
+      - "Mass Mailing is CE (email_marketing); Marketing Automation is EE — accepted gap."
 
   # ── Odoo Partner ───────────────────────────────────────────────────────────
   - slug: odoo-partner
     label: "Odoo Partner / Consultancy"
     odoo_industry_url: https://www.odoo.com/industries/odoo-partner
+    ee_modules:
+      - documents
     ce_core:
       - name: crm
         reason: "Partner pipeline — leads, opportunities, partner success tracking"
@@ -123,15 +148,19 @@ bundles:
         oca_repo: OCA/dms
         reason: "SOWs, project docs, deliverables — OCA DMS replaces EE Documents"
     oca_extensions:
-      - name: sale_product_set
-        oca_repo: OCA/sale-workflow
-        reason: "Predefined service bundles / success pack templates"
-      - name: sale_order_line_description
-        oca_repo: OCA/sale-workflow
-        reason: "Rich descriptions on success pack quotation lines"
-      - name: project_task_default_stage
-        oca_repo: OCA/project
-        reason: "Default implementation stages per project type"
-      # Note: Odoo Partner "quote calculator" + ROI templates are proprietary UX.
-      # Recommendation: thin ipai_service_catalog module (custom IPAI layer).
-      # Note: Timesheet leaderboard/gamification = EE-only; no OCA equivalent.
+      - addon: sale_product_set
+        repo: OCA/sale-workflow
+        optional: false
+        rationale: "Predefined service bundles / success pack templates; near-required for partner quoting"
+      - addon: sale_order_line_description
+        repo: OCA/sale-workflow
+        optional: true
+        rationale: "Rich descriptions on success pack quotation lines"
+      - addon: project_task_default_stage
+        repo: OCA/project
+        optional: true
+        rationale: "Default implementation stages per project type"
+    notes:
+      - "Odoo Documents (EE) replaced by OCA DMS for SOWs, project docs, and deliverables."
+      - "Timesheet leaderboard/gamification (EE) has no OCA equivalent — accepted gap."
+      - "Quote calculator / ROI templates (proprietary UX) → use ipai_service_catalog custom module."
