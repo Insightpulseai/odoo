@@ -1,3 +1,5 @@
+export const dynamic = "force-static"
+
 export default function GatesPage() {
   const gates = [
     { name: 'OCA Allowlist', description: 'Modules must be in addons/oca/selected', status: 'Passed', lastRun: '2h ago', result: 'All 42 submodules verified.' },

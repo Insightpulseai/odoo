@@ -1,0 +1,195 @@
+name: Deploy OdooOps Console (ops-console)
+
+# Implements Odoo.sh-equivalent 3-tier promotion:
+#
+#   pull_request  → Preview deploy  (non-blocking, URL posted to PR)
+#   push to main  → Staging deploy  (GitHub environment: staging)
+#   tag v*        → Production deploy (GitHub environment: production)
+#   workflow_dispatch → Staging or Production (manual promote)
+#
+# Bucket prefix guard runs before every non-preview deploy:
+#   staging    → SUPABASE_STORAGE_BUCKET must start with "staging-"
+#   production → SUPABASE_STORAGE_BUCKET must start with "prod-"
+#
+# App path: apps/ops-console/
+# Vercel project secret: VERCEL_OPS_CONSOLE_PROJECT_ID
+
+on:
+  pull_request:
+    paths:
+      - 'apps/ops-console/**'
+      - '.github/workflows/deploy-odooops-console.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ops-console/**'
+      - '.github/workflows/deploy-odooops-console.yml'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+  merge_group:
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PREVIEW — runs on pull_request
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+  preview:
+    name: Preview deploy
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Build preview
+        working-directory: apps/ops-console
+        run: |
+          vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}
+
+      - name: Deploy preview
+        id: deploy
+        working-directory: apps/ops-console
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "## Preview Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "URL: $URL" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}
+
+      - name: Post preview URL to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `### 🔍 Preview deployment ready\n\n**URL:** ${{ steps.deploy.outputs.url }}\n\n*Commit: \`${{ github.sha }}\`*`
+            });
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGING — runs on push to main (or manual dispatch with target=staging)
+# ─────────────────────────────────────────────────────────────────────────────
+  staging:
+    name: Staging deploy
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'staging')
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard — Supabase bucket prefix (staging)
+        run: python3 scripts/ci/check_supabase_bucket_env.py
+        env:
+          DEPLOY_ENV: staging
+          SUPABASE_STORAGE_BUCKET: ${{ secrets.SUPABASE_STORAGE_BUCKET_STAGING }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Build staging
+        working-directory: apps/ops-console
+        run: |
+          vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}
+
+      - name: Deploy staging
+        id: deploy
+        working-directory: apps/ops-console
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "## Staging Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "URL: $URL" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PRODUCTION — runs on version tag push (v*) or manual dispatch with target=production
+# ─────────────────────────────────────────────────────────────────────────────
+  production:
+    name: Production deploy
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production')
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard — Supabase bucket prefix (production)
+        run: python3 scripts/ci/check_supabase_bucket_env.py
+        env:
+          DEPLOY_ENV: production
+          SUPABASE_STORAGE_BUCKET: ${{ secrets.SUPABASE_STORAGE_BUCKET_PROD }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Build production
+        working-directory: apps/ops-console
+        run: |
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}
+
+      - name: Deploy production
+        id: deploy
+        working-directory: apps/ops-console
+        run: |
+          URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "## Production Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "URL: $URL" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_OPS_CONSOLE_PROJECT_ID }}

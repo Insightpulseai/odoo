@@ -8,6 +8,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { getDropletMetrics } from '@/lib/do-client'
+import { getOrCreateRequestId, correlationHeaders } from '@/lib/http/correlation'
 
 const ALLOWED_METRICS = [
   'cpu',
@@ -19,22 +20,25 @@ const ALLOWED_METRICS = [
 type MetricType = (typeof ALLOWED_METRICS)[number]
 
 export async function GET(req: NextRequest) {
+  const rid = getOrCreateRequestId(req.headers.get('x-request-id'))
+  const hdrs = correlationHeaders(rid)
+
   const { searchParams } = req.nextUrl
   const dropletIdStr = searchParams.get('dropletId')
   const metric = searchParams.get('metric') as MetricType | null
   const hoursStr = searchParams.get('hours') ?? '1'
 
   if (!dropletIdStr || !metric) {
-    return NextResponse.json({ error: 'dropletId and metric are required' }, { status: 400 })
+    return NextResponse.json({ error: 'dropletId and metric are required' }, { status: 400, headers: hdrs })
   }
 
   if (!ALLOWED_METRICS.includes(metric)) {
-    return NextResponse.json({ error: `metric must be one of: ${ALLOWED_METRICS.join(', ')}` }, { status: 400 })
+    return NextResponse.json({ error: `metric must be one of: ${ALLOWED_METRICS.join(', ')}` }, { status: 400, headers: hdrs })
   }
 
   const dropletId = parseInt(dropletIdStr, 10)
   if (isNaN(dropletId)) {
-    return NextResponse.json({ error: 'dropletId must be a number' }, { status: 400 })
+    return NextResponse.json({ error: 'dropletId must be a number' }, { status: 400, headers: hdrs })
   }
 
   const hours = Math.min(Math.max(parseInt(hoursStr, 10) || 1, 1), 24)
@@ -43,9 +47,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const result = await getDropletMetrics(dropletId, metric, start, end)
-    return NextResponse.json({ metric, dropletId, start: start.toISOString(), end: end.toISOString(), result })
+    return NextResponse.json({ metric, dropletId, start: start.toISOString(), end: end.toISOString(), result }, { headers: hdrs })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 502 })
+    return NextResponse.json({ error: message }, { status: 502, headers: hdrs })
   }
 }
