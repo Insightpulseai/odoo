@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulseAI
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <data noupdate="1">
+
+        <!-- ── Security group ─────────────────────────────────────────── -->
+        <record id="group_omc_restricted" model="res.groups">
+            <field name="name">OMC Restricted (TBWA\SMP only)</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="comment">
+                Members of this group can only read the company marked
+                ipai_is_tbwa_smp=True in res.company.
+                Assign to all users whose login ends with @omc.com.
+            </field>
+        </record>
+
+        <!-- ── Record rule: res.company ───────────────────────────────── -->
+        <!--
+            Belt-and-suspenders: even if company_ids is mis-set via direct
+            SQL or by another module, the record rule ensures that any
+            non-sudo res.company search for OMC-restricted users only sees
+            the TBWA\SMP company.
+        -->
+        <record id="rule_res_company_omc_only_tbwa" model="ir.rule">
+            <field name="name">res.company: OMC restricted → TBWA\SMP only</field>
+            <field name="model_id" ref="base.model_res_company"/>
+            <field name="groups" eval="[(4, ref('ipai_company_scope_omc.group_omc_restricted'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="domain_force">[('ipai_is_tbwa_smp', '=', True)]</field>
+        </record>
+
+    </data>
+</odoo>
