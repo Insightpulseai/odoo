@@ -1,0 +1,33 @@
+name: canonical-urls-gate
+on:
+  pull_request:
+    paths:
+      - "infra/dns/canonical_urls.yaml"
+      - "infra/dns/subdomain-registry.yaml"
+      - "docs/architecture/CANONICAL_URLS.md"
+      - "scripts/ci/check_canonical_urls.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/dns/canonical_urls.yaml"
+      - "infra/dns/subdomain-registry.yaml"
+      - "docs/architecture/CANONICAL_URLS.md"
+      - "scripts/ci/check_canonical_urls.py"
+  merge_group:
+permissions:
+  contents: read
+jobs:
+  canonical-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+      - name: Validate canonical URLs SSOT
+        run: python3 scripts/ci/check_canonical_urls.py

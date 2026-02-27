@@ -225,3 +225,18 @@
   - Set `pinned_ref` in `ssot/ai/dependencies.yaml`
   - AC: `pinned_ref != null` AND `dependency_policy.prod_activation_requires` passes
     AND module installs cleanly on Odoo 19 (`--stop-after-init` exits 0)
+
+- [ ] **T6.5** Prod readiness SSOT gate (email + OCR + invariants)
+  - Ship `ssot/runtime/prod_settings.yaml` encoding: Odoo base URL, proxy_mode,
+    email SMTP secrets (by name only), OCR health endpoint, AI fail-closed policy,
+    domain invariants, backup evidence references
+  - Ship `scripts/ci/check_prod_settings_ssot.py`: validates schema, secret name
+    lookup in `ssot/secrets/registry.yaml`, active_required URLs in
+    `docs/architecture/CANONICAL_URLS.md`, no-plaintext heuristic
+  - Ship `.github/workflows/prod-settings-ssot-gate.yml`: triggers on
+    pull_request, push, merge_group; runs check_prod_settings_ssot.py
+  - Add missing secret IDs to `ssot/secrets/registry.yaml`:
+    `zoho_smtp_user`, `zoho_smtp_app_password`, `ocr_bridge_token`
+  - AC: `python3 scripts/ci/check_prod_settings_ssot.py` exits 0
+    AND CI gate passes on a test PR touching `ssot/runtime/prod_settings.yaml`
+    AND `git grep -r "smtp_pass\s*=\s*['\"]" ssot/` returns empty (no plaintext)
