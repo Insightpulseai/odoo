@@ -1,0 +1,252 @@
+# schema: ssot.odoo.oca_repos.v1
+# OCA Repository Registry — Odoo 19 CE + IPAI
+#
+# Authoritative record of every OCA repo vendored under addons/oca/.
+# CI gate: .github/workflows/oca-19-readiness-report.yml
+# Scanner:  scripts/ci/scan_oca_repos.py
+#
+# status values:
+#   ok       — on _git_aggregated or 19.0 branch; all manifests version 19.0.x
+#   pinned   — explicitly on OCA 19.0 branch (best)
+#   blocked  — on 18.0 branch OR has pre-19 manifests; must port before prod activation
+#   empty    — 0 modules; MUST NOT appear in addons_path
+#
+# Rule: empty repos are FORBIDDEN in addons_path (caught by CI gate).
+# Rule: blocked repos MUST be ported or removed before prod promotion.
+# Rule: _git_aggregated is acceptable IFF all manifest versions are 19.0.x
+#       (scanner validates this automatically).
+
+version: 1
+schema: ssot.odoo.oca_repos.v1
+last_scanned: "2026-02-28"
+target_version: "19.0"
+
+repos:
+
+  # ── PINNED to 19.0 branch (cleanest state) ───────────────────────────────
+  - name: mail
+    source: https://github.com/OCA/mail
+    branch: "19.0"
+    status: pinned
+    modules: 7
+    notes: "Explicitly on 19.0 branch. Provides mail_activity_board, mail_debrand, etc."
+
+  - name: manufacture
+    source: https://github.com/OCA/manufacture
+    branch: "19.0"
+    status: pinned
+    modules: 12
+    notes: "Explicitly on 19.0 branch."
+
+  - name: payroll
+    source: https://github.com/OCA/payroll
+    branch: "19.0"
+    status: pinned
+    modules: 2
+    notes: "Explicitly on 19.0 branch."
+
+  # ── _git_aggregated + 19.0.x manifests (ok) ──────────────────────────────
+  - name: account-financial-reporting
+    source: https://github.com/OCA/account-financial-reporting
+    branch: _git_aggregated
+    status: ok
+    modules: 3
+
+  - name: account-financial-tools
+    source: https://github.com/OCA/account-financial-tools
+    branch: _git_aggregated
+    status: ok
+    modules: 7
+
+  - name: account-reconcile
+    source: https://github.com/OCA/account-reconcile
+    branch: _git_aggregated
+    status: ok
+    modules: 1
+
+  - name: ai
+    source: https://github.com/OCA/ai
+    branch: _git_aggregated
+    status: ok
+    modules: 1
+    notes: "Provides ai_oca_native_generate_ollama. See ssot/ai/dependencies.yaml oca_ai_ollama entry."
+
+  - name: bank-payment
+    source: https://github.com/OCA/bank-payment
+    branch: _git_aggregated
+    status: ok
+    modules: 5
+
+  - name: connector
+    source: https://github.com/OCA/connector
+    branch: _git_aggregated
+    status: ok
+    modules: 3
+
+  - name: dms
+    source: https://github.com/OCA/dms
+    branch: _git_aggregated
+    status: ok
+    modules: 2
+    notes: "DMS replaces Odoo Documents EE in industry bundles (photography, marketing, partner)."
+
+  - name: hr
+    source: https://github.com/OCA/hr
+    branch: _git_aggregated
+    status: ok
+    modules: 2
+
+  - name: knowledge
+    source: https://github.com/OCA/knowledge
+    branch: _git_aggregated
+    status: ok
+    modules: 1
+
+  - name: mis-builder
+    source: https://github.com/OCA/mis-builder
+    branch: _git_aggregated
+    status: ok
+    modules: 3
+
+  - name: partner-contact
+    source: https://github.com/OCA/partner-contact
+    branch: _git_aggregated
+    status: ok
+    modules: 30
+
+  - name: project
+    source: https://github.com/OCA/project
+    branch: _git_aggregated
+    status: ok
+    modules: 4
+
+  - name: purchase-workflow
+    source: https://github.com/OCA/purchase-workflow
+    branch: _git_aggregated
+    status: ok
+    modules: 9
+
+  - name: queue
+    source: https://github.com/OCA/queue
+    branch: _git_aggregated
+    status: ok
+    modules: 8
+    notes: "Provides queue_job, queue_job_cron, queue_job_batch (must-have baseline)."
+
+  - name: reporting-engine
+    source: https://github.com/OCA/reporting-engine
+    branch: _git_aggregated
+    status: ok
+    modules: 6
+
+  - name: rest-framework
+    source: https://github.com/OCA/rest-framework
+    branch: _git_aggregated
+    status: ok
+    modules: 7
+
+  - name: sale-workflow
+    source: https://github.com/OCA/sale-workflow
+    branch: _git_aggregated
+    status: ok
+    modules: 21
+
+  - name: server-auth
+    source: https://github.com/OCA/server-auth
+    branch: _git_aggregated
+    status: ok
+    modules: 5
+
+  - name: server-backend
+    source: https://github.com/OCA/server-backend
+    branch: _git_aggregated
+    status: ok
+    modules: 2
+
+  - name: server-tools
+    source: https://github.com/OCA/server-tools
+    branch: _git_aggregated
+    status: ok
+    modules: 13
+    notes: "Must-have baseline. Provides base_technical_features, date_range, etc."
+
+  - name: server-ux
+    source: https://github.com/OCA/server-ux
+    branch: _git_aggregated
+    status: ok
+    modules: 5
+
+  - name: storage
+    source: https://github.com/OCA/storage
+    branch: _git_aggregated
+    status: ok
+    modules: 21
+
+  - name: timesheet
+    source: https://github.com/OCA/timesheet
+    branch: _git_aggregated
+    status: ok
+    modules: 3
+
+  - name: web
+    source: https://github.com/OCA/web
+    branch: _git_aggregated
+    status: ok
+    modules: 9
+    notes: "Must-have baseline. Provides web_responsive, web_environment_ribbon, etc."
+
+  # ── BLOCKED — 18.0 branch, must port to 19.0 ─────────────────────────────
+  - name: bank-statement-import
+    source: https://github.com/OCA/bank-statement-import
+    branch: "18.0"
+    status: blocked
+    modules: 14
+    notes: >
+      Pinned to 18.0 branch. NOT in addons_path (correctly excluded).
+      Port required before adding to addons_path. Track at:
+      https://github.com/OCA/bank-statement-import/issues (19.0 milestone).
+
+  - name: server-env
+    source: https://github.com/OCA/server-env
+    branch: "18.0"
+    status: blocked
+    modules: 4
+    notes: >
+      Pinned to 18.0 branch. NOT in addons_path (correctly excluded).
+      Port required before activation. Provides server_environment, server_environment_ir_config_parameter.
+
+  # ── EMPTY — 0 modules, forbidden in addons_path ───────────────────────────
+  - name: automation
+    source: https://github.com/OCA/automation
+    branch: _git_aggregated
+    status: empty
+    modules: 0
+    notes: "Empty — no modules found. MUST NOT be in addons_path. Remove or populate."
+
+  - name: contract
+    source: https://github.com/OCA/contract
+    branch: _git_aggregated
+    status: empty
+    modules: 0
+    notes: "Empty — no modules found. MUST NOT be in addons_path."
+
+  - name: hr-expense
+    source: https://github.com/OCA/hr-expense
+    branch: _git_aggregated
+    status: empty
+    modules: 0
+    notes: "Empty — no modules found. MUST NOT be in addons_path."
+
+  - name: social
+    source: https://github.com/OCA/social
+    branch: _git_aggregated
+    status: empty
+    modules: 0
+    notes: "Empty — no modules found. MUST NOT be in addons_path."
+
+  - name: spreadsheet
+    source: https://github.com/OCA/spreadsheet
+    branch: _git_aggregated
+    status: empty
+    modules: 0
+    notes: "Empty — no modules found. MUST NOT be in addons_path."
