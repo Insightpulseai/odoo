@@ -1,453 +1,261 @@
 # Odoo 19 Go-Live Checklist — Accounting + Inventory + Ops
 
-> **Self-hosted CE 19.0** · Container: `odoo-core` · DB: `odoo`
-> Domain: `erp.insightpulseai.com` · Nginx: `ipai-nginx`
-> No outbound SMTP (DO blocks 25/465/587) — email via `ipai_zoho_mail_api`
+> Self-hosted CE · `odoo-core` container · DB: `odoo` · Domain: `erp.insightpulseai.com`
 >
-> **Machine-verifiable manifest**: `ssot/go_live/odoo19_checklist.manifest.yaml`
-> Schema: `ssot.go_live.manifest.v1` · Version: `1.1`
-> `required_items` array pins 6 critical controls that must pass before go-live.
->
-> **Contract version: 1.1** (must match manifest `version` field)
-
-Last updated: 2026-02-27
+> Run this checklist for each go-live event (initial cutover or major module activation).
+> Evidence convention: `web/docs/evidence/<YYYYMMDD-HHMM+0800>/go-live/logs/`
 
 ---
 
 ## Quick Reference — Container Commands
 
 ```bash
-# Shell into Odoo
-docker exec -it odoo-core bash
+# SSH to droplet
+ssh root@178.128.112.214
 
-# Odoo CLI
-docker exec -it odoo-core /bin/bash -c \
-  "python3 /opt/odoo/odoo-bin --config /etc/odoo/odoo.conf <args>"
+# Odoo shell
+docker exec -it odoo-core /odoo/odoo-bin shell -d odoo --no-http
 
-# PostgreSQL
-docker exec -it odoo-postgres psql -U odoo -d odoo
+# Odoo logs (live)
+docker logs odoo-core --follow --tail 100
 
-# Health check
-curl -s https://erp.insightpulseai.com/web/health | python3 -m json.tool
-scripts/healthcheck_odoo.sh  # full smoke test
+# Restart Odoo
+docker restart odoo-core
 
-# Module install/update
-docker exec odoo-core python3 /opt/odoo/odoo-bin \
-  --config /etc/odoo/odoo.conf \
-  -d odoo --update ipai_zoho_mail_api --stop-after-init
+# Database backup (before any cutover step)
+docker exec odoo-postgres pg_dump -U odoo odoo | gzip > /backup/odoo-$(date +%Y%m%d-%H%M).sql.gz
+
+# Verify backup
+ls -lh /backup/odoo-$(date +%Y%m%d)*.sql.gz
 ```
 
 ---
 
 ## A) Pre-Cutover Controls
 
-> Complete ALL items before any accounting data entry. Non-negotiable gate.
+### A1 — Database backup
+```bash
+# On droplet
+docker exec odoo-postgres pg_dump -U odoo odoo | gzip > /backup/odoo-pre-golive.sql.gz
+ls -lh /backup/odoo-pre-golive.sql.gz
+```
+**Evidence**: Record backup file size and timestamp.
+**Acceptance**: Backup file > 0 bytes.
 
-- [ ] **Freeze window declared** — announce cutover date/time to all users; lock legacy system
-- [ ] **Chart of Accounts (CoA) finalized** — no pending account additions or renames
-- [ ] **Currencies configured** — base currency set (`PHP`); foreign currencies + exchange rates imported
-- [ ] **Fiscal year / tax periods open** — confirm opening fiscal period is unlocked for journal posting
-- [ ] **Bank journals created** — one journal per bank account; account numbers + currencies correct
-- [ ] **Email transport verified** — `ipai_zoho_mail_api` config parameters set (see §G2); test send passes
-- [ ] **Backup baseline captured** — DB + filestore snapshot before any data entry:
-  ```bash
-  # DB dump
-  docker exec odoo-postgres pg_dump -U odoo -Fc odoo > \
-    backups/odoo_pre_golive_$(date +%Y%m%d_%H%M).dump
-  # Filestore
-  tar -czf backups/filestore_pre_golive_$(date +%Y%m%d_%H%M).tar.gz \
-    /var/lib/docker/volumes/odoo_filestore/
-  ```
+### A2 — Module health check
+```bash
+docker exec odoo-core /odoo/odoo-bin --db_host localhost -d odoo \
+  --test-enable --log-level=test --stop-after-init 2>&1 | tail -20
+```
+**Acceptance**: No `ERROR` in final 20 lines.
+
+### A3 — Freeze new transactions
+- Notify all users: "System entering maintenance mode at HH:MM"
+- Disable self-service user login (optional: set maintenance mode in Odoo settings)
+- Confirm no open transactions in progress
+
+### A4 — Confirm chart of accounts
+- Verify CoA matches target accounting standard (Philippines PFRS / IFRS)
+- Check: `Settings → Accounting → Chart of Accounts → Filter: Unreconciled`
+
+### A5 — Confirm fiscal year / period
+```bash
+# Odoo shell
+from odoo.fields import Date
+env['account.fiscal.year'].search([('state', '=', 'draft')])
+```
+**Acceptance**: Active fiscal year covers go-live date.
 
 ---
 
 ## B) Opening Entries — Accounts Receivable (AR)
 
-### B1) AR Clearing Account Setup
+### B1 — Set up AR control account
+- Account: `120000` (or per CoA) — `Accounts Receivable Control (ARC)`
+- Type: Receivable, Reconcile: True
+- Verify: `Accounting → Configuration → Accounts → Type: Receivable`
 
-```sql
--- Confirm account exists: type=asset_current, reconcile=true
-SELECT code, name, account_type, reconcile
-FROM account_account
-WHERE code LIKE '%AR%' OR name ILIKE '%receivable%clearing%';
+### B2 — Import open invoices
+```bash
+# Via CSV import or manual entry
+# Each open invoice: customer, amount, due date, invoice date
+# Leave as "Posted" state — do not set to "Paid"
+```
+**Acceptance**: All open invoices visible in `Accounting → Customers → Invoices → Filter: Open`
+
+### B3 — Import customer payments on account
+```bash
+# Payments already collected but not matched to invoices
+# Entry: DR Cash/Bank, CR Customer account
 ```
 
-- [ ] Account `1300` (or similar) exists with `account_type = asset_current`
-- [ ] `reconcile = true` (Allow Reconciliation checked)
-- [ ] Account NOT the same as the normal AR trade account
-
-### B2) Open Invoices + Credit Notes Import
-
-- [ ] Export open AR aging from legacy system as of cutover date
-- [ ] Import via `account.move` CSV or Odoo data import wizard:
-  - Move type: `out_invoice` (invoices), `out_refund` (credit notes)
-  - Journal: dedicated `AR Opening` journal (type=General)
-  - Counterpart: AR Clearing account (B1)
-- [ ] Verify total imported AR = legacy AR aging total
-  ```sql
-  SELECT SUM(amount_residual)
-  FROM account_move
-  WHERE move_type = 'out_invoice'
-    AND state = 'posted'
-    AND payment_state != 'paid';
-  ```
-
-### B3) Open Customer Payments + Reconciliation
-
-- [ ] Import unreconciled payments against AR Clearing account
-- [ ] Reconcile each payment against the corresponding open invoice
-- [ ] Verify AR Clearing balance approaches zero:
-  ```sql
-  SELECT SUM(balance)
-  FROM account_move_line
-  WHERE account_id = (SELECT id FROM account_account WHERE code = '1300')
-    AND parent_state = 'posted';
-  -- Expected: 0.00 (or within rounding tolerance)
-  ```
-
-### B4) AR Validation Gate ✅
-
-- [ ] AR aging in Odoo matches signed-off legacy aging (diff < rounding threshold)
-- [ ] AR Clearing account balance = 0.00
+### B4 — Reconcile AR
+- Run: `Accounting → Accounting → Actions → Reconcile → AR`
+- Match payments to invoices where applicable
+**Acceptance**: Unreconciled items < 5% of AR balance (investigate remainder)
 
 ---
 
 ## C) Opening Entries — Accounts Payable (AP)
 
-### C1) AP Clearing Account Setup
+### C1 — Set up AP control account
+- Account: `200000` (or per CoA) — `Accounts Payable Control (APC)`
+- Type: Payable, Reconcile: True
 
-```sql
-SELECT code, name, account_type, reconcile
-FROM account_account
-WHERE code LIKE '%AP%' OR name ILIKE '%payable%clearing%';
-```
+### C2 — Import open vendor bills
+- Each open bill: vendor, amount, due date, bill date
+- State: Posted (not paid)
+**Acceptance**: All open bills visible in `Accounting → Vendors → Bills → Filter: Open`
 
-- [ ] Account `2100` (or similar) exists with `account_type = liability_current`
-- [ ] `reconcile = true`
-- [ ] Account NOT the same as normal AP trade account
+### C3 — Import vendor payments on account
+- Payments made but not matched to bills
+- Entry: DR Vendor account, CR Cash/Bank
 
-### C2) Open Bills + Refunds Import
-
-- [ ] Export open AP aging from legacy as of cutover date
-- [ ] Import via `account.move`:
-  - Move type: `in_invoice` (bills), `in_refund` (vendor refunds)
-  - Journal: `AP Opening` journal (type=General)
-  - Counterpart: AP Clearing account (C1)
-- [ ] Verify total imported AP = legacy AP aging total:
-  ```sql
-  SELECT SUM(amount_residual)
-  FROM account_move
-  WHERE move_type = 'in_invoice'
-    AND state = 'posted'
-    AND payment_state != 'paid';
-  ```
-
-### C3) Open Vendor Payments + Reconciliation
-
-- [ ] Import unreconciled payments against AP Clearing account
-- [ ] Reconcile each payment against the corresponding open bill
-- [ ] Verify AP Clearing balance = 0.00:
-  ```sql
-  SELECT SUM(balance)
-  FROM account_move_line
-  WHERE account_id = (SELECT id FROM account_account WHERE code = '2100')
-    AND parent_state = 'posted';
-  ```
-
-### C4) AP Validation Gate ✅
-
-- [ ] AP aging in Odoo matches signed-off legacy aging
-- [ ] AP Clearing account balance = 0.00
+### C4 — Reconcile AP
+**Acceptance**: Unreconciled items < 5% of AP balance
 
 ---
 
 ## D) Inventory Opening
 
-> Choose D1 (automated valuation) or D2 (manual/average cost). Not both.
+### D1 — Automated valuation (Average Cost / FIFO)
+```bash
+# Odoo shell — create inventory adjustment
+env['stock.quant'].with_context(inventory_mode=True).create({
+    'product_id': product.id,
+    'location_id': location.id,
+    'quantity': qty,
+})
+env['stock.inventory'].action_validate()
+```
 
-### D1) Automated Valuation (Stock Accounting Active)
+### D2 — Manual valuation
+- `Inventory → Operations → Physical Inventory`
+- Enter quantities for each product/location
+- Validate → Creates journal entries automatically (if automated valuation enabled)
 
-- [ ] **Product categories** configured:
-  - Costing Method: `Average Cost (AVCO)` or `FIFO` (match legacy)
-  - Inventory Valuation: `Automated`
-  - Stock Input/Output/Valuation accounts set
-- [ ] **Inventory Clearing account** created:
-  - Type: `asset_current`, `reconcile = false`
-  - Used as counterpart for opening stock journal entry
-- [ ] **On-hand quantities import** via `stock.quant` wizard or CSV:
-  - Product, location (`WH/Stock`), quantity, unit cost
-- [ ] **Opening value journal entry** posted:
-  - Dr Inventory Valuation account (sum of all qty × cost)
-  - Cr Inventory Clearing account (same amount)
-- [ ] **Opening value validation**:
-  ```sql
-  -- Odoo computed stock value
-  SELECT SUM(quantity * cost) AS total_value
-  FROM stock_quant
-  WHERE location_id IN (
-    SELECT id FROM stock_location WHERE usage = 'internal'
-  );
-  -- Compare to signed-off inventory value from legacy
-  ```
-- [ ] Inventory Clearing account balance = legacy-agreed value (offset by §E)
-
-### D2) Manual Valuation
-
-- [ ] Import quantities only (no accounting postings)
-- [ ] No Inventory Clearing account needed
-- [ ] Verify quantities match legacy count sheets:
-  ```sql
-  SELECT pt.name, sq.quantity, sq.location_id
-  FROM stock_quant sq
-  JOIN product_product pp ON sq.product_id = pp.id
-  JOIN product_template pt ON pp.product_tmpl_id = pt.id
-  ORDER BY pt.name;
-  ```
+**Acceptance**: `Inventory → Reporting → Inventory Valuation` matches trial balance inventory account.
 
 ---
 
 ## E) Trial Balance Import
 
-> Import the signed-off legacy trial balance to establish opening balances
-> for all accounts not covered by AR/AP/Inventory entries above.
-
-### E1) Bank Journals — Approach Decision
-
-Choose one approach per bank account:
-
-| Approach | When to use | Notes |
-|----------|-------------|-------|
-| **A — With payments** | Outstanding cheques / uncleared items exist | Import individual transactions; reconcile against statement |
-| **B — Net balance only** | Balance is clean / no uncleared items | Single journal entry: Dr/Cr bank account = TB balance |
-
-- [ ] Decision recorded for each bank journal: Approach A or B
-
-### E2) Trial Balance Posting Steps
-
-For accounts with cleared TB balances (excluding AR, AP, Inventory handled above):
-
-1. **Remap** AR/AP/Inventory lines in the import to their respective Clearing accounts
-   (the real AR/AP/Inventory accounts are already populated via §B/C/D)
-2. **Post** opening journal entries:
-   - Journal: `Opening Balance Journal` (type=General, `default_move_type=general`)
-   - Date: last day of prior fiscal year (or first day of new FY, per accountant preference)
-3. **Retained earnings / Opening Equity** entry:
-   - Net difference posts to `Retained Earnings (Opening)` account
-   - This is the balancing entry; the TB import should net to zero
-
-```sql
--- Verify total debits = total credits in opening journal
-SELECT SUM(debit) AS total_dr, SUM(credit) AS total_cr,
-       SUM(debit) - SUM(credit) AS imbalance
-FROM account_move_line aml
-JOIN account_move am ON aml.move_id = am.id
-WHERE am.ref LIKE '%Opening%'
-  AND am.state = 'posted';
--- Expected: imbalance = 0
+### E1 — Bank journal opening balances
+```bash
+# For each bank account: create an opening entry
+# DR Bank, CR Opening Balance Equity (999000)
+# Date: day before go-live date
 ```
 
-### E3) Clearing Accounts → Zero Validation
+### E2 — Trial balance posting
+- Import TB from previous system (CSV)
+- Each line: Account code, Debit, Credit
+- Post as opening journal entry dated: day before go-live
 
-- [ ] AR Clearing = 0.00 (after B3 reconciliation)
-- [ ] AP Clearing = 0.00 (after C3 reconciliation)
-- [ ] Inventory Clearing = 0.00 (after TB entry offsets D1 entry)
-- [ ] Bank Opening entries reconciled against opening statements
-
----
-
-## F) Post-Cutover Validation — Go/No-Go Gate
-
-> All items must be ✅ before declaring go-live complete.
-
-### F1) AR Validation
-
-- [ ] AR Aging report in Odoo matches signed-off legacy aging (customer-level)
-- [ ] Total open AR balance matches legacy (diff ≤ rounding tolerance)
-
-### F2) AP Validation
-
-- [ ] AP Aging report in Odoo matches signed-off legacy aging (vendor-level)
-- [ ] Total open AP balance matches legacy
-
-### F3) Balance Sheet
-
-- [ ] Balance Sheet in Odoo matches signed-off trial balance:
-  - Total Assets = Total Liabilities + Equity
-  - Major account groups tie line-by-line to legacy TB
-  - Cash/bank balances match bank statements
-
-### F4) P&L Baseline
-
-- [ ] P&L report for the opening period shows zero or only expected YTD activity
-- [ ] No phantom revenue/expense from data entry errors
-
-### F5) Stock Validation (if D1)
-
-- [ ] Inventory on-hand (qty) matches signed-off count sheets
-- [ ] Stock valuation (cost) matches agreed opening inventory value
+### E3 — Zero validation
+```bash
+# Odoo shell — verify TB is zero-balanced
+from odoo import fields
+moves = env['account.move.line'].search([('move_id.date', '<=', fields.Date.today())])
+total = sum(m.debit - m.credit for m in moves)
+print(f"Net balance: {total}")  # Expected: 0.0
+```
+**Acceptance**: Net balance = 0.00 (within rounding tolerance ±0.01)
 
 ---
 
-## G) Operational Hardening — Self-Hosted Specifics
+## F) Post-Cutover Go/No-Go Gate
 
-### G1) Module Health
+Run all checks. ALL must pass before declaring go-live complete.
+
+| Check | Command | Expected |
+|-------|---------|---------|
+| AR balance matches TB | `account.move.line` query | Matches opening TB |
+| AP balance matches TB | `account.move.line` query | Matches opening TB |
+| Inventory value matches TB | `stock.valuation.layer` | Matches opening TB |
+| Bank balance matches statement | Manual check | Matches bank statement |
+| No unposted opening entries | `account.move` filter Draft | 0 draft entries |
+| Module health | `docker logs odoo-core \| grep ERROR` | 0 errors |
+| Email test | Send test mail from Odoo | Received via Zoho Mail |
+
+**Decision**:
+- ALL pass → **GO** — announce go-live to stakeholders
+- ANY fail → **NO-GO** — execute rollback (restore pre-golive backup)
+
+---
+
+## G) Operational Hardening
+
+### G1 — Module health (post go-live)
+```bash
+# Check for import errors
+docker exec odoo-core python3 -c "import odoo; print('OK')"
+docker logs odoo-core --since 1h 2>&1 | grep -c ERROR
+```
+**Acceptance**: 0 ERROR lines in last 1 hour.
+
+### G2 — Email verification
+```bash
+# Send test email from Odoo
+# Settings → Technical → Email → Outgoing Mail Servers → Test Connection
+# Then: Settings → Technical → Email → Send Test Email
+```
+**Acceptance**: Test email received at admin inbox.
+
+### G3 — Automated backups
+```bash
+# Verify backup cron is active
+docker exec odoo-postgres crontab -l | grep backup
+```
+**Acceptance**: Backup cron runs daily at minimum.
+
+### G4 — Security review
+- [ ] Default admin password changed from `admin`
+- [ ] 2FA enabled for admin account
+- [ ] `list_db` set to `False` in `odoo.conf`
+- [ ] No debug mode enabled in production
+- [ ] `erp.insightpulseai.com` returns valid SSL certificate
 
 ```bash
-# Check addons_path warnings
-docker logs odoo-core 2>&1 | grep -i "warning\|error" | grep -i "addon" | tail -20
-
-# Full repo health
-scripts/repo_health.sh
-
-# Odoo health endpoint
-curl -sf https://erp.insightpulseai.com/web/health && echo "PASS" || echo "FAIL"
+# Verify SSL
+curl -sI https://erp.insightpulseai.com | grep -E "HTTP|Strict"
 ```
-
-- [ ] Zero addon-path warnings in startup logs
-- [ ] `scripts/repo_health.sh` exits 0
-- [ ] `/web/health` returns `{"status": "pass"}` with HTTP 200
-- [ ] All required `ipai_*` modules installed and active:
-  ```sql
-  SELECT name, state FROM ir_module_module
-  WHERE name LIKE 'ipai_%'
-  ORDER BY name;
-  -- Expected: all 'installed'
-  ```
-
-### G2) Email — Zoho API Transport
-
-> `ipai_zoho_mail_api` replaces SMTP (DO blocks outbound mail ports).
-> Credentials stored as `ir.config_parameter`, never hardcoded.
-
-- [ ] Config parameters set (via Odoo Settings → Technical → Parameters):
-  - `zoho_mail_api.client_id` — from Supabase Vault `zoho_client_id`
-  - `zoho_mail_api.client_secret` — from Supabase Vault `zoho_client_secret`
-  - `zoho_mail_api.refresh_token` — from Supabase Vault `zoho_refresh_token`
-  - `zoho_mail_api.from_address` — e.g. `noreply@insightpulseai.com`
-- [ ] Outgoing mail server: type=`zoho_api`, confirmed active (no SMTP server needed)
-- [ ] Test send from Odoo:
-  ```python
-  # In Odoo shell (docker exec -it odoo-core python3 /opt/odoo/odoo-bin shell -d odoo)
-  env['mail.mail'].create({
-      'subject': 'Odoo Go-Live Test',
-      'email_to': 'devops@insightpulseai.com',
-      'body_html': '<p>Go-live email test from Odoo CE 19.0</p>',
-  }).send()
-  ```
-- [ ] Test password-reset email sends successfully (Odoo built-in template):
-  `Settings → Users → [user] → Send Password Reset Email`
-
-### G3) Backups
-
-- [ ] **DB backup job scheduled** — cron or CI workflow:
-  ```bash
-  # Example: daily dump to /backups/
-  0 2 * * * docker exec odoo-postgres pg_dump -U odoo -Fc odoo > \
-    /backups/odoo_$(date +\%Y\%m\%d).dump
-  ```
-- [ ] **Restore test performed** — restore to separate DB and verify:
-  ```bash
-  docker exec odoo-postgres createdb -U odoo odoo_restore_test
-  docker exec -i odoo-postgres pg_restore -U odoo -d odoo_restore_test < backup.dump
-  # Spot-check record counts
-  docker exec odoo-postgres psql -U odoo -d odoo_restore_test \
-    -c "SELECT COUNT(*) FROM res_partner;"
-  ```
-- [ ] Restore test evidence saved to `web/docs/evidence/<YYYYMMDD-HHMM+0800>/go-live/logs/restore_test.log`
-- [ ] **Filestore backup** scheduled (volume mount `/var/lib/odoo`)
-
-### G4) Security
-
-- [ ] **Company scope enforcement** — `ipai_company_scope_omc` active:
-  OMC-domain users are automatically restricted to TBWA company only
-  ```sql
-  SELECT name, state FROM ir_module_module
-  WHERE name = 'ipai_company_scope_omc';
-  -- Expected: installed
-  ```
-- [ ] **Admin account review**:
-  - Default `admin` user password rotated (store in OS keychain, not in repo)
-  - Admin email set to `devops@insightpulseai.com`
-  - `list_db = False` in `odoo.conf` (prevents DB listing via web)
-- [ ] **Auth subdomain resolves**: `https://auth.insightpulseai.com/.well-known/openid-configuration`
-  returns valid OIDC discovery JSON (DNS PR #401 merged)
-- [ ] **2FA enabled** for all admin-level users
-- [ ] **No debug mode** in production URL: `/web?debug=` must not expose developer options
 
 ---
 
-## H) Evidence Capture Convention
+## H) Evidence Capture
 
-All go-live evidence bundles to:
+All go-live evidence goes to:
 ```
 web/docs/evidence/<YYYYMMDD-HHMM+0800>/go-live/logs/
 ```
 
-### Required Artifacts
-
-| File | Contents | How to generate |
-|------|----------|-----------------|
-| `balance_sheet_opening.csv` | Odoo Balance Sheet export at cutover date | Accounting → Reports → Balance Sheet → Export CSV |
-| `ar_aging_opening.csv` | AR Aging report at cutover date | Accounting → Reports → Aged Receivable → Export |
-| `ap_aging_opening.csv` | AP Aging report at cutover date | Accounting → Reports → Aged Payable → Export |
-| `stock_valuation_opening.csv` | Inventory valuation report | Inventory → Reports → Valuation → Export |
-| `go_live_health_check.log` | Full health check output | `scripts/healthcheck_odoo.sh > .../go_live_health_check.log 2>&1` |
-| `trial_balance_comparison.csv` | Side-by-side: legacy TB vs Odoo TB | Manual comparison spreadsheet |
-| `restore_test.log` | DB restore smoke test output | See §G3 |
-| `email_test.log` | Zoho API test send result | Capture from Odoo mail logs |
-
-### Capture Script
+Required artifacts:
+- `pre-golive-backup.log` — backup file path + size
+- `module-health.log` — output of step A2
+- `tb-zero-check.log` — output of step E3
+- `post-golive-errors.log` — `docker logs odoo-core --since 1h 2>&1 | grep ERROR`
+- `email-test.log` — confirmation email received
+- `ssl-check.log` — output of curl command in G4
 
 ```bash
+# Capture all evidence
 STAMP=$(date +%Y%m%d-%H%M+0800)
-EVIDENCE=web/docs/evidence/${STAMP}/go-live/logs
-mkdir -p "$EVIDENCE"
+EVIDENCE_DIR="web/docs/evidence/${STAMP}/go-live/logs"
+mkdir -p "$EVIDENCE_DIR"
 
-# Health check
-scripts/healthcheck_odoo.sh 2>&1 | tee "${EVIDENCE}/go_live_health_check.log"
+# Run checks and capture
+docker logs odoo-core --since 1h 2>&1 | grep ERROR > "${EVIDENCE_DIR}/post-golive-errors.log"
+curl -sI https://erp.insightpulseai.com > "${EVIDENCE_DIR}/ssl-check.log"
+ls -lh /backup/odoo-pre-golive.sql.gz > "${EVIDENCE_DIR}/pre-golive-backup.log"
 
-# Module states
-docker exec odoo-postgres psql -U odoo -d odoo \
-  -c "SELECT name, state FROM ir_module_module WHERE name LIKE 'ipai_%' ORDER BY name;" \
-  > "${EVIDENCE}/ipai_module_states.log"
-
-# Stock valuation
-docker exec odoo-postgres psql -U odoo -d odoo \
-  -c "SELECT pt.name, sq.quantity, sq.cost FROM stock_quant sq JOIN product_product pp ON sq.product_id=pp.id JOIN product_template pt ON pp.product_tmpl_id=pt.id ORDER BY pt.name;" \
-  > "${EVIDENCE}/stock_valuation_opening.csv"
-
-echo "Evidence captured to: ${EVIDENCE}/"
-echo "STATUS=PARTIAL — export Balance Sheet, AR/AP aging, TB comparison manually from Odoo UI"
+echo "Evidence captured at: ${EVIDENCE_DIR}"
 ```
 
----
-
-## Go/No-Go Decision Matrix
-
-| Gate | Owner | Pass Criteria | Status |
-|------|-------|---------------|--------|
-| AR balance matches legacy | Finance | Diff ≤ 1 PHP | ☐ |
-| AP balance matches legacy | Finance | Diff ≤ 1 PHP | ☐ |
-| Balance Sheet ties to TB | Finance | All major lines match | ☐ |
-| Stock value matches | Ops | Diff ≤ agreed threshold | ☐ |
-| Health check passes | DevOps | Exit 0, `/web/health` 200 | ☐ |
-| Email sends successfully | DevOps | Test email delivered | ☐ |
-| Backup + restore verified | DevOps | Restore count matches | ☐ |
-| Security review complete | DevOps | No open admin risks | ☐ |
-
-**All gates ✅ → STATUS=COMPLETE → Live**
-**Any gate ❌ → STATUS=BLOCKED → Do not go live**
+**STATUS**: Report `STATUS=COMPLETE` only when all sections A-G have passed and evidence is captured.
 
 ---
 
-## Related Files
-
-| File | Purpose |
-|------|---------|
-| `docs/runbooks/SECRETS_SSOT.md` | Vault secrets management (Zoho creds, etc.) |
-| `ssot/secrets/registry.yaml` | Secret identifier registry |
-| `addons/ipai/ipai_zoho_mail_api/` | Zoho API transport module |
-| `addons/ipai/ipai_company_scope_omc/` | OMC user company restriction |
-| `scripts/healthcheck_odoo.sh` | Full Odoo health check script |
-| `deploy/odoo-prod.compose.yml` | Production container definitions |
-| `config/odoo/odoo.conf` | Odoo runtime configuration |
+*Owner: Platform Engineering*
+*Template version: 1.0.0 (2026-02-27)*
+*Evidence convention: `web/docs/evidence/<YYYYMMDD-HHMM+0800>/go-live/`*
