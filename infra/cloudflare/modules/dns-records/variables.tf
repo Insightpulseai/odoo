@@ -43,3 +43,12 @@ variable "dkim" {
     value    = "TODO"
   }
 }
+
+variable "cname_records" {
+  description = "CNAME records (name → target). Used for DO App Platform and Vercel services."
+  type = map(object({
+    target  = string
+    proxied = optional(bool, true)
+  }))
+  default = {}
+}

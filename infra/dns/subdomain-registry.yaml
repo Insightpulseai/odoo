@@ -12,6 +12,54 @@
 #   - docs/architecture/runtime_identifiers.json
 #   - infra/dns/dns-validation-spec.json
 # =============================================================================
+#
+# lifecycle field (schema: ssot.dns.v1)
+# ─────────────────────────────────────
+# active  → Terraform provisions/maintains the record.
+#           REQUIRED: provider_claim.status must be "claimed" with claimed_at + claim_ref.
+#           CI gate (check_dns_provider_claims.py) blocks merge if not satisfied.
+#
+# planned → Record is defined in SSOT but Terraform SKIPS it.
+#           Safe to commit; no DNS change occurs.
+#           Optional: set expires_at to auto-age stale planned records.
+#           CI gate fails if expires_at is in the past (forces resolution).
+#
+# provider_claim field (schema: ssot.dns.provider_claim.v1)
+# ──────────────────────────────────────────────────────────
+# Required on ALL subdomains (active and planned alike).
+#
+#   provider:    WHO owns/manages the target endpoint.
+#                Allowed: cloudflare | vercel | digitalocean | other
+#
+#   status:      Claim state.
+#                Allowed: unclaimed | claimed
+#
+#   claimed_at:  YYYY-MM-DD — REQUIRED when status=claimed.
+#                Date the provider confirmed domain ownership.
+#
+#   claim_ref:   String — REQUIRED when status=claimed.
+#                Traceability anchor. Examples:
+#                  "ssot:cloudflare"               → A record direct to origin, Cloudflare is the CDN
+#                  "ssot:digitalocean-app-platform" → DO App Platform CNAME
+#                  "vercel:prj_<id>"               → Vercel project ID (from dashboard)
+#                  "ticket:ops-2026-042"            → Internal incident/ops ticket
+#
+#   expires_at:  YYYY-MM-DD — OPTIONAL, only meaningful on planned records.
+#                After this date, CI fails until the claim is resolved or the
+#                record is removed from SSOT. Prevents permanent "planned" limbo.
+#
+# Transition path for planned → active (e.g. Vercel custom domains)
+# ──────────────────────────────────────────────────────────────────
+# 1. DNS record committed with lifecycle=planned + provider_claim.status=unclaimed.
+#    ↳ Terraform skips it; gate passes; DNS unchanged.
+# 2. Operator claims the domain in the provider dashboard.
+# 3. Operator commits:
+#    - provider_claim.status:   unclaimed → claimed
+#    - provider_claim.claimed_at: <today>
+#    - provider_claim.claim_ref:  <provider reference ID>
+#    - lifecycle:               planned → active
+# 4. Gate passes → PR merges → Terraform provisions the record.
+# =============================================================================
 
 version: "1.0"
 domain: insightpulseai.com
@@ -41,7 +89,13 @@ subdomains:
     owner_system: "Odoo CE 19.0"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: n8n
     type: A
@@ -51,7 +105,13 @@ subdomains:
     owner_system: "n8n automation"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: ocr
     type: A
@@ -61,7 +121,13 @@ subdomains:
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: auth
     type: A
@@ -71,7 +137,13 @@ subdomains:
     owner_system: "Authentication service"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: superset
     type: A
@@ -82,7 +154,13 @@ subdomains:
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   # ---------------------------------------------------------------------------
   # App Platform Services (CNAME Records → DO App Platform)
@@ -95,7 +173,14 @@ subdomains:
     owner_system: "MCP coordination (11 servers)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    drift_note: "Cloudflare currently has A record (178.128.112.214) — WRONG. Must be CNAME. Will be fixed on next Terraform apply."
+    provider_claim:
+      provider: digitalocean
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:digitalocean-app-platform"
 
   # ---------------------------------------------------------------------------
   # Additional Subdomains (for www, api, etc.)
@@ -108,7 +193,13 @@ subdomains:
     owner_system: "Redirect to apex"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: api
     type: A
@@ -118,7 +209,33 @@ subdomains:
     owner_system: "API Gateway"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: planned
     status: planned
+    provider_claim:
+      provider: cloudflare
+      status: unclaimed
+      expires_at: "2026-06-01"
+
+  # ---------------------------------------------------------------------------
+  # Vercel Deployments (CNAME → cname.vercel-dns.com)
+  # ---------------------------------------------------------------------------
+  - name: ops
+    type: CNAME
+    service: ops_console_vercel
+    target: cname.vercel-dns.com
+    health_check: /api/health
+    owner_system: "OdooOps Console (Next.js on Vercel)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    # lifecycle=planned: Terraform SKIPS this record until the Vercel domain
+    # is claimed and provider_claim.status is updated to "claimed".
+    # expires_at enforces a deadline: CI will fail after this date if still unclaimed.
+    lifecycle: planned
+    status: active
+    provider_claim:
+      provider: vercel
+      status: unclaimed
+      expires_at: "2026-03-15"
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
@@ -131,8 +248,14 @@ subdomains:
     owner_system: "Odoo CE 19.0 (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-api
     type: A
@@ -142,8 +265,14 @@ subdomains:
     owner_system: "API Gateway (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-auth
     type: A
@@ -153,8 +282,14 @@ subdomains:
     owner_system: "Authentication service (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-mcp
     type: A
@@ -164,8 +299,14 @@ subdomains:
     owner_system: "MCP coordination (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-n8n
     type: A
@@ -175,8 +316,14 @@ subdomains:
     owner_system: "n8n automation (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-superset
     type: A
@@ -186,8 +333,14 @@ subdomains:
     owner_system: "Apache Superset BI (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
   - name: stage-ocr
     type: A
@@ -197,8 +350,14 @@ subdomains:
     owner_system: "PaddleOCR microservice (staging)"
     cloudflare_proxied: false
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-27"
+      claim_ref: "ssot:cloudflare"
 
 # =============================================================================
 # Deprecated Services (Archived for Reference)
@@ -210,3 +369,25 @@ deprecated:
     reason: "Service no longer needed"
     dns_removed: true
     container_removed: true
+
+  # Mailgun email routing — replaced by Zoho Mail SMTP (2026-02)
+  # Remove from Cloudflare: email.mg CNAME, mg SPF TXT, mx._domainkey.mg DKIM TXT, _dmarc.mg DMARC TXT
+  - name: mg
+    deprecated_date: "2026-02-01"
+    replacement: "Zoho Mail (mx.zoho.com / mx2 / mx3)"
+    reason: "Mailgun deprecated; outbound mail now routes through Zoho Mail SMTP bridge (ipai_zoho_mail_api)"
+    dns_removed: false
+    records_to_remove:
+      - type: CNAME
+        name: email.mg
+        content: mailgun.org
+      - type: TXT
+        name: mg
+        content: "v=spf1 include:mailgun.org ~all"
+      - type: TXT
+        name: mx._domainkey.mg
+        content: "k=rsa; p=MIGfMA0..."
+      - type: TXT
+        name: _dmarc.mg
+        content: "v=DMARC1; p=none; ..."
+    notes: "4 records still present in Cloudflare as of 2026-02-27 — remove via Terraform apply"

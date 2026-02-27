@@ -107,3 +107,17 @@ resource "cloudflare_record" "dkim" {
   ttl     = 3600
   proxied = false
 }
+
+# CNAME records (DO App Platform, Vercel, external services)
+# Populated from infra/dns/subdomain-registry.yaml via envs/prod/main.tf locals.
+# Only lifecycle=active CNAME records are passed here.
+resource "cloudflare_record" "cname_records" {
+  for_each = var.cname_records
+
+  zone_id = var.zone_id
+  name    = each.key
+  type    = "CNAME"
+  value   = each.value.target
+  ttl     = 1 # auto
+  proxied = each.value.proxied
+}

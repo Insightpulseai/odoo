@@ -2,6 +2,53 @@ data "cloudflare_zone" "zone" {
   name = var.zone_name
 }
 
+# =============================================================================
+# SSOT-driven DNS locals
+# =============================================================================
+# Reads infra/dns/subdomain-registry.yaml and derives Terraform module inputs.
+# Rules:
+#   - Only records with lifecycle=active (or no lifecycle field) are provisioned.
+#   - Records with status=planned or lifecycle=planned are skipped.
+#   - Records with environment=staging are excluded from prod Terraform.
+#   - Type A records → split by cloudflare_proxied for app_subdomains / extra_a_subdomains.
+#   - Type CNAME records → passed as cname_records map.
+# =============================================================================
+locals {
+  _ssot = yamldecode(file("${path.root}/../../../infra/dns/subdomain-registry.yaml"))
+
+  # Filter: active + non-staging + non-planned + claim verified
+  # Belt-and-suspenders: even if CI gate is bypassed, Terraform only provisions
+  # records that have a verified provider claim (status=claimed).
+  # Records with no provider_claim block default to "claimed" for backward compat.
+  _prod_active = [
+    for r in local._ssot.subdomains :
+    r
+    if try(r.lifecycle, "active") == "active"
+    && try(r.status, "active") != "planned"
+    && !contains(keys(r), "environment")
+    && try(r.provider_claim.status, "claimed") == "claimed"
+  ]
+
+  # Split by record type
+  _prod_a     = [for r in local._prod_active : r if r.type == "A"]
+  _prod_cname = [for r in local._prod_active : r if r.type == "CNAME"]
+
+  # Proxied A records (passed as app_subdomains — get origin IP, proxied=true)
+  _proxied_a = [for r in local._prod_a : r.name if try(r.cloudflare_proxied, true) == true]
+
+  # Non-proxied A records (passed as extra_a_subdomains — get origin IP, proxied=false)
+  _unproxied_a = [for r in local._prod_a : r.name if try(r.cloudflare_proxied, true) == false]
+
+  # CNAME records as map: name → {target, proxied}
+  _cname_map = {
+    for r in local._prod_cname :
+    r.name => {
+      target  = r.target
+      proxied = try(r.cloudflare_proxied, true)
+    }
+  }
+}
+
 module "dns_records" {
   source      = "../../modules/dns-records"
   zone_id     = data.cloudflare_zone.zone.id
@@ -15,21 +62,14 @@ module "dns_records" {
     { priority = 50, host = "mx3.zoho.com" },
   ]
 
-  # Core subdomains (SSOT)
-  # NOTE: adjust list as you standardize services
-  app_subdomains = [
-    "erp",
-    "n8n",
-    "mcp",
-    "superset",
-    "auth",
-    "api",
-  ]
+  # SSOT-derived A records (proxied subdomains → same origin_ipv4)
+  app_subdomains = local._proxied_a
 
-  # Optional: additional subdomains you want pointed at the same origin
-  extra_a_subdomains = [
-    "www",
-  ]
+  # SSOT-derived A records (non-proxied, e.g. stage-ocr in prod — none currently)
+  extra_a_subdomains = local._unproxied_a
+
+  # SSOT-derived CNAME records (App Platform, Vercel services)
+  cname_records = local._cname_map
 
   # TXT records (SPF/DMARC placeholders, update as needed)
   txt_records = {
