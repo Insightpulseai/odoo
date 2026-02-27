@@ -1,24 +1,59 @@
 odoo_version: "19.0"
 sources:
-  general: "https://www.odoo.com/documentation/19.0/applications/general/"
+  finance: "https://www.odoo.com/documentation/19.0/applications/finance/"
+  sales: "https://www.odoo.com/documentation/19.0/applications/sales/"
+  websites: "https://www.odoo.com/documentation/19.0/applications/websites/"
+  inventory_and_mrp: "https://www.odoo.com/documentation/19.0/applications/inventory_and_mrp/"
+  hr: "https://www.odoo.com/documentation/19.0/applications/hr/"
+  marketing: "https://www.odoo.com/documentation/19.0/applications/marketing/"
   services: "https://www.odoo.com/documentation/19.0/applications/services/"
+  productivity: "https://www.odoo.com/documentation/19.0/applications/productivity/"
   developer: "https://www.odoo.com/documentation/19.0/developer.html"
   contributing: "https://www.odoo.com/documentation/19.0/contributing/"
   administration: "https://github.com/odoo/documentation/tree/19.0/content/administration"
+  documentation: "https://github.com/odoo/documentation"
 expected:
-  general:
-    discuss: ["odoo19/discuss"]
-    calendar: ["odoo19/calendar"]
-    contacts: ["odoo19/contacts"]
-    dashboards: ["odoo19/dashboards"]
-    data_cleaning: ["odoo19/data_cleaning"]
+  finance:
+    accounting: ["odoo19/accounting"]
     documents: ["odoo19/documents"]
     expenses: ["odoo19/expenses"]
     spreadsheet: ["odoo19/spreadsheet"]
-    users: ["odoo19/users"]
-    voip: ["odoo19/voip"]
-    whatsapp: ["odoo19/whatsapp"]
-    to_do: ["odoo19/to_do"]
+    sign: ["odoo19/sign"]
+  sales:
+    sales: ["odoo19/sales"]
+    crm: ["odoo19/crm"]
+    point_of_sale: ["odoo19/point_of_sale"]
+    subscriptions: ["odoo19/subscriptions"]
+    rental: ["odoo19/rental"]
+  websites:
+    website: ["odoo19/website"]
+    ecommerce: ["odoo19/ecommerce"]
+    blog: ["odoo19/blog"]
+    forum: ["odoo19/forum"]
+    livechat: ["odoo19/livechat"]
+    elearning: ["odoo19/elearning"]
+  inventory_and_mrp:
+    inventory: ["odoo19/inventory"]
+    manufacturing: ["odoo19/manufacturing"]
+    plm: ["odoo19/plm"]
+    purchase: ["odoo19/purchase"]
+    maintenance: ["odoo19/maintenance"]
+    quality: ["odoo19/quality"]
+  hr:
+    employees: ["odoo19/employees"]
+    recruitment: ["odoo19/recruitment"]
+    time_off: ["odoo19/time_off"]
+    appraisals: ["odoo19/appraisals"]
+    referrals: ["odoo19/referrals"]
+    fleet: ["odoo19/fleet"]
+    lunch: ["odoo19/lunch"]
+  marketing:
+    social_marketing: ["odoo19/social_marketing"]
+    email_marketing: ["odoo19/email_marketing"]
+    sms_marketing: ["odoo19/sms_marketing"]
+    events: ["odoo19/events"]
+    marketing_automation: ["odoo19/marketing_automation"]
+    surveys: ["odoo19/surveys"]
   services:
     project: ["odoo19/project"]
     timesheets: ["odoo19/timesheets"]
@@ -26,6 +61,10 @@ expected:
     helpdesk: ["odoo19/helpdesk"]
     planning: ["odoo19/planning"]
     appointments: ["odoo19/appointments"]
+  productivity:
+    discuss: ["odoo19/discuss"]
+    iot: ["odoo19/iot"]
+    whatsapp: ["odoo19/whatsapp"]
   developer:
     orm: ["odoo/odoo19-orm"]
     module: ["odoo/odoo19-module"]
@@ -47,3 +86,5 @@ expected:
     git_guidelines: ["odoo/odoo19-git-guidelines"]
   administration:
     administration: ["odoo19/administration"]
+  documentation:
+    documentation: ["odoo19/documentation"]
