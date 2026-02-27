@@ -1,75 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- Ask AI floating button, patched into mail.Chatter toolbar -->
+    <!--
+        AskAiButton — rendered by the AskAiButton OWL component.
+        Injected into the Chatter via registry.category("mail.chatter/action").
+    -->
     <t t-name="ipai_ai_widget.AskAiButton" owl="1">
         <button class="o_ask_ai_btn btn btn-secondary btn-sm ms-1"
-                title="Ask AI"
-                t-on-click="() => this.openDialog()">
+                title="Ask AI (IPAI Bridge)"
+                t-on-click="openDialog">
             <i class="fa fa-magic me-1"/>Ask AI
         </button>
     </t>
 
-    <!-- Ask AI dialog -->
+    <!--
+        AskAiDialog — modal rendered by AskAiDialog OWL component.
+
+        State bindings:
+          state.prompt   — textarea two-way binding (t-model)
+          state.loading  — disables Ask button + shows spinner
+          state.error    — error CODE (resolved to message via errorMessage getter)
+          state.response — { provider, text, model, trace_id }
+          state.copied   — shows "Copied!" momentarily after clipboard write
+
+        Record context flows in via props.threadModel + props.threadId.
+    -->
     <t t-name="ipai_ai_widget.AskAiDialog" owl="1">
         <div class="o_ask_ai_dialog modal d-block" role="dialog" aria-modal="true">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
+
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fa fa-magic me-2"/>Ask AI
+                            <i class="fa fa-magic me-2 text-primary"/>Ask AI
+                            <t t-if="props.threadModel">
+                                <small class="text-muted ms-2 small"
+                                       t-esc="props.threadModel"/>
+                            </t>
                         </h5>
-                        <button type="button" class="btn-close" t-on-click="() => this.props.close()"/>
+                        <button type="button"
+                                class="btn-close"
+                                t-on-click="() => this.props.close()"/>
                     </div>
+
                     <div class="modal-body">
+                        <!-- Prompt input -->
                         <div class="mb-3">
                             <label class="form-label fw-bold">Prompt</label>
                             <textarea class="form-control"
                                       rows="4"
-                                      placeholder="Ask anything…"
+                                      placeholder="Describe what you need — summarise this record, draft a reply, explain a term…"
                                       t-ref="promptInput"
-                                      t-model="state.prompt"/>
+                                      t-model="state.prompt"
+                                      t-att-disabled="state.loading"/>
                         </div>
-                        <t t-if="state.error">
+
+                        <!-- Error message (human-readable — never raw error codes) -->
+                        <t t-if="errorMessage">
                             <div class="alert alert-danger mb-3" role="alert">
                                 <i class="fa fa-exclamation-triangle me-2"/>
-                                <strong t-esc="state.error"/>
-                                <t t-if="state.error === 'BRIDGE_URL_NOT_CONFIGURED'">
-                                    — Configure the AI Bridge URL in Settings.
-                                </t>
-                                <t t-elif="state.error === 'AI_KEY_NOT_CONFIGURED'">
-                                    — GEMINI_API_KEY not set on the bridge server.
-                                </t>
+                                <span t-esc="errorMessage"/>
                             </div>
                         </t>
+
+                        <!-- Response box -->
                         <t t-if="state.response">
                             <div class="o_ai_response border rounded p-3 bg-light mb-3">
-                                <div class="o_ai_response_text" t-esc="state.response.text"/>
-                                <div class="mt-2 text-muted small">
-                                    <span t-esc="state.response.provider"/> /
-                                    <span t-esc="state.response.model"/>
+                                <div class="o_ai_response_text"
+                                     style="white-space: pre-wrap; font-size: 0.95rem;"
+                                     t-esc="state.response.text"/>
+                                <div class="mt-2 text-muted small d-flex justify-content-between">
+                                    <span>
+                                        <i class="fa fa-server me-1"/>
+                                        <span t-esc="state.response.provider"/> /
+                                        <span t-esc="state.response.model"/>
+                                    </span>
+                                    <span class="font-monospace"
+                                          t-esc="state.response.trace_id"/>
                                 </div>
                             </div>
                         </t>
                     </div>
+
                     <div class="modal-footer gap-2">
+                        <!-- Ask button -->
                         <button class="btn btn-primary"
                                 t-att-disabled="state.loading || !state.prompt.trim()"
-                                t-on-click="() => this.onAsk()">
+                                t-on-click="onAsk">
                             <t t-if="state.loading">
                                 <i class="fa fa-spinner fa-spin me-1"/>Thinking…
                             </t>
-                            <t t-else="">Ask</t>
+                            <t t-else="">
+                                <i class="fa fa-magic me-1"/>Ask
+                            </t>
                         </button>
+
+                        <!-- Copy-to-clipboard button (shown after a successful response) -->
                         <button t-if="state.response"
                                 class="btn btn-outline-secondary"
-                                t-on-click="() => this.onInsert()">
-                            Insert into message
+                                t-on-click="onInsert">
+                            <t t-if="state.copied">
+                                <i class="fa fa-check me-1"/>Copied!
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-clipboard me-1"/>Copy to clipboard
+                            </t>
                         </button>
-                        <button class="btn btn-secondary" t-on-click="() => this.props.close()">
+
+                        <button class="btn btn-secondary"
+                                t-on-click="() => this.props.close()">
                             Close
                         </button>
                     </div>
+
                 </div>
             </div>
         </div>
