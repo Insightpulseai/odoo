@@ -127,6 +127,26 @@ auth:
   # Platform rule reference: ssot-platform.md — Rule 9: Odoo is relying party, Supabase is IdP
 
 # ---------------------------------------------------------------------------
+# Payments
+# ---------------------------------------------------------------------------
+payments:
+  stripe:
+    # mode: test (current) | live (flip when Vault has sk_live_... and account is verified)
+    mode: test
+    # Secret IDs only — raw sk_*/whsec_* values never in repo
+    # Registry: ssot/secrets/registry.yaml
+    api_key_secret_id: stripe_api_key
+    webhook_secret_id: stripe_webhook_secret
+    supabase_wrapper:
+      enabled: true
+      server_name: stripe_server
+      schema: stripe          # foreign tables imported into this schema
+    notes: >
+      Stripe FDW wired via Supabase Vault. Migration: supabase/migrations/20260228000001_stripe_wrapper.sql.
+      api_key_secret_id references the Vault secret that holds sk_test_... (or sk_live_... in prod).
+      Flip mode to live + rotate Vault secret to sk_live_... when Stripe account is activated.
+
+# ---------------------------------------------------------------------------
 # Domain Lifecycle Truth
 # ---------------------------------------------------------------------------
 urls:
