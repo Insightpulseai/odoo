@@ -1,0 +1,129 @@
+name: Copilot Guardrails
+
+# Checks that apply to all PRs regardless of AI assistance.
+# Enforces: GITHUB_COPILOT_CONTRACT.md
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Unsafe env var logging check
+  # Catches: print(os.environ...), console.log(process.env...), etc.
+  # ─────────────────────────────────────────────
+  no-env-logging:
+    name: No Env Var Logging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for unsafe env var logging in diff
+        run: |
+          FAIL=0
+          git diff "origin/${{ github.base_ref }}...HEAD" \
+            -- '*.py' '*.js' '*.ts' '*.tsx' \
+            | grep -v "^---\|^+++\|^@@\|^diff\|^index" \
+            | grep "^+" \
+            | grep -iE \
+              "(print\s*\(.*os\.environ|print\s*\(.*os\.getenv|console\.log\s*\(.*process\.env|logging\.(info|debug|warning|error)\s*\(.*os\.environ)" \
+            | grep -v "#" \
+          && FAIL=1
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo "FAIL: Unsafe env var logging detected. Do not print secrets to logs."
+            echo "See: docs/contracts/GITHUB_COPILOT_CONTRACT.md §4"
+            exit 1
+          fi
+          echo "PASS: No unsafe env var logging."
+
+  # ─────────────────────────────────────────────
+  # Policy file drift check
+  # Sensitive files that change require CODEOWNERS review (enforced via branch protection).
+  # This step logs which sensitive files changed — informational only.
+  # ─────────────────────────────────────────────
+  policy-drift-notice:
+    name: Policy File Drift Notice
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for sensitive path changes
+        run: |
+          SENSITIVE_PATHS=(
+            "supabase/migrations/"
+            "supabase/functions/"
+            "infra/policy/"
+            "docs/contracts/"
+            ".github/workflows/"
+            "addons/ipai/ipai_auth_"
+            "config/odoo/"
+          )
+
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD")
+          FLAGGED=()
+
+          for path in "${SENSITIVE_PATHS[@]}"; do
+            matches=$(echo "$CHANGED" | grep "^$path" || true)
+            if [ -n "$matches" ]; then
+              FLAGGED+=("$matches")
+            fi
+          done
+
+          if [ ${#FLAGGED[@]} -gt 0 ]; then
+            echo "NOTICE: Sensitive path(s) modified in this PR:"
+            for f in "${FLAGGED[@]}"; do
+              echo "  - $f"
+            done
+            echo ""
+            echo "CODEOWNERS review is required (enforced via branch protection)."
+            echo "See: docs/contracts/GITHUB_COPILOT_CONTRACT.md §3"
+          else
+            echo "PASS: No sensitive paths modified."
+          fi
+
+  # ─────────────────────────────────────────────
+  # Hard-coded credential pattern scan (defence-in-depth)
+  # Specific to common patterns introduced by AI code generation
+  # ─────────────────────────────────────────────
+  no-hardcoded-creds:
+    name: No Hard-coded Credentials
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan for hard-coded credential assignments
+        run: |
+          git diff "origin/${{ github.base_ref }}...HEAD" \
+            -- '*.py' '*.js' '*.ts' '*.tsx' '*.yaml' '*.yml' '*.toml' '*.json' \
+            | grep -v "^---\|^+++\|^@@\|^diff\|^index" \
+            | grep "^+" \
+            | grep -iE \
+              "(password\s*=\s*['\"][^'\"]{8,}['\"]|api_key\s*=\s*['\"][^'\"]{8,}['\"]|secret\s*=\s*['\"][^'\"]{16,}['\"]|auth_token\s*=\s*['\"][^'\"]{8,}['\"])" \
+            | grep -v \
+              -e "env(" \
+              -e "os.environ" \
+              -e "process.env" \
+              -e "getenv" \
+              -e "placeholder" \
+              -e "REPLACE" \
+              -e "example\|test\|fake\|dummy\|mock" \
+              -e "xxxx\|####\|<" \
+            && echo "FAIL: Hard-coded credential pattern detected" && exit 1 \
+            || echo "PASS: No hard-coded credential patterns."

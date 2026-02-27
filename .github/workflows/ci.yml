@@ -172,6 +172,21 @@ jobs:
         # Uses ci/odoo_core_addons_allowlist.txt for core module recognition (no Odoo instance required)
         run: python3 scripts/validate_manifest.py
 
+      - name: Assert clean working tree (tracked changes only)
+        # Fails if any CI step (formatter, codegen, hydration, patch-apply) left
+        # tracked modifications uncommitted. Untracked files (??) are ignored.
+        # Enforces the rule in docs/runbooks/BRANCH_HYGIENE.md:
+        #   M/A/D entries must be zero at PR merge time.
+        run: |
+          set -euo pipefail
+          DIRTY=$(git status --porcelain | grep -v '^??' || true)
+          if [ -n "$DIRTY" ]; then
+            echo "::error::Tracked changes detected after CI steps — commit or revert before merging."
+            echo "$DIRTY"
+            exit 1
+          fi
+          echo "✅ Working tree clean (no tracked modifications)"
+
   lint:
     name: Lint & Static Checks
     runs-on: ubuntu-latest

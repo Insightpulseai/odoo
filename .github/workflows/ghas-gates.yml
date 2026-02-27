@@ -1,0 +1,109 @@
+name: GHAS Security Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly full scan on Sundays at 02:00 UTC
+    - cron: '0 2 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  # ─────────────────────────────────────────────
+  # CodeQL Analysis
+  # ─────────────────────────────────────────────
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, javascript]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Phase 1: warn only — queries set to security-extended
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
+          # Upload SARIF regardless of findings (for tracking)
+          upload: true
+
+  # ─────────────────────────────────────────────
+  # Dependabot Alert Threshold Gate
+  # (Phase 2: will block on Critical in sensitive paths)
+  # ─────────────────────────────────────────────
+  dependabot-gate:
+    name: Dependabot Alert Gate
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for critical dependency patterns in diff
+        run: |
+          # Phase 1: informational check only — does not fail
+          # Phase 2: update exit code logic to fail on Critical findings
+          echo "GHAS Gate: Phase 1 (warn-only). Dependabot alerts monitored."
+          echo "Upgrade to Phase 2 by updating exit logic in this step."
+
+  # ─────────────────────────────────────────────
+  # Secret Pattern Scan (defence-in-depth)
+  # Push protection handles the primary block;
+  # this catches patterns in PR diffs as a secondary gate.
+  # ─────────────────────────────────────────────
+  secret-scan:
+    name: Secret Pattern Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan PR diff for secret patterns
+        run: |
+          # Get diff of changed files in this PR
+          git diff "origin/${{ github.base_ref }}...HEAD" -- . \
+            | grep -v "^---\|^+++\|^@@\|^diff\|^index" \
+            | grep "^+" \
+            | grep -iE \
+              "(password\s*=\s*['\"][^'\"]{8,}|api[_-]?key\s*=\s*['\"][^'\"]{8,}|secret\s*=\s*['\"][^'\"]{8,}|token\s*=\s*['\"][^'\"]{8,}|auth[_-]?token\s*=\s*['\"][^'\"]{8,})" \
+            | grep -v \
+              -e "env(" \
+              -e "os.environ" \
+              -e "process.env" \
+              -e "placeholder" \
+              -e "REPLACE" \
+              -e "example" \
+              -e "your_" \
+              -e "xxxx" \
+              -e "<" \
+            && echo "FAIL: Possible secret pattern detected in diff" && exit 1 \
+            || echo "PASS: No secret patterns detected in diff"

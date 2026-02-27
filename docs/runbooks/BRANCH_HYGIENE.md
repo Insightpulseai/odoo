@@ -1,67 +1,102 @@
-# Branch Hygiene — Insightpulseai/odoo
+# Branch Hygiene Runbook
+
+> Enforce clean branches before PRs. A dirty working tree when opening a PR
+> creates ambiguity about what is "done" vs "local-only."
+
+---
 
 ## Rules
 
-1. **One feature = one branch = one PR.**
-2. No long-lived `claude/*` branches without a PR within 24 h of the first commit.
-3. **Merge order** (to keep main stable):
-   - Unblock prod (`fix/*`) → infra/CI gates (`chore/ci/*`) → features (`feat/*`) → deps bumps (`dependabot/*` batched)
-4. Squash-merge preferred; preserve multi-commit history only for refactors with meaningful per-commit messages.
-5. Delete branch after merge (no stale remote refs).
+1. **One PR, one concern.** Keep branch scope tight — secrets policy changes
+   should not include unrelated spec bundles.
 
-## Naming
+2. **Feature branches only.** Never commit directly to `main`.
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Bug fix | `fix/<area>-<slug>` | `fix/mail-zoho-transport` |
-| Feature | `feat/<area>-<slug>` | `feat/omc-company-scope` |
-| Chore | `chore/<area>-<slug>` | `chore/deps-batch-20260227` |
-| Claude agent | `claude/<slug>-<hash>` | `claude/add-service-health-checks-Jqvz8` |
-| Docs | `docs/<slug>` | `docs/monorepo-contract` |
+3. **Commit before PR open.** All intended changes must be committed and pushed
+   before running `gh pr create`.
 
-## Cleanup procedure
+4. **Verify diff before PR open.**
+   ```bash
+   git diff origin/main..HEAD --name-only
+   ```
+   Expected: only the files intended for this PR.
 
+5. **Delete branch after merge.** No stale remote refs.
+
+---
+
+## PR creation gate
+
+**Never open a PR with a dirty working tree.**
+
+If `gh pr create` warns about uncommitted changes:
+
+1. Run `git status --short` and classify every `??` / `M` entry:
+   - **Intended for this PR** → stage and commit, then re-push
+   - **Unrelated work** → spin a new branch, commit there
+   - **Pre-existing untracked noise** → safe to ignore (they won't appear
+     in the PR diff); document it in the PR description
+
+2. Verify the PR diff is scoped correctly:
+   ```bash
+   git diff origin/main..HEAD --name-only
+   ```
+
+3. Re-open (or update) the PR only when `git diff` matches intent.
+
+**Expectation: `git diff origin/main..HEAD --name-only` is clean and scoped
+before the PR is considered ready for review.**
+
+---
+
+## Diagnosing "uncommitted changes" warnings from `gh pr create`
+
+`gh pr create` counts **all** untracked files (`??`) in the working tree, not
+just files changed on the current branch. A large monorepo will always produce
+this warning — it does **not** automatically mean those files are in the PR diff.
+
+**Interpret `git status --short` output like this:**
+
+| Prefix | Meaning | Required action before PR |
+|--------|---------|---------------------------|
+| `??` | Untracked (never committed) | Safe if absent from PR diff — confirm with `git diff origin/main..HEAD` |
+| `M` | Tracked file modified | **Must** be committed (if intended) or `git restore`d (if accidental) |
+| `A` | Staged new file | **Must** be committed (if intended) or `git restore --staged` (if accidental) |
+| `D` | Tracked file deleted | **Must** be committed (if intended) or `git restore`d (if accidental) |
+
+**Rule: `M`/`A`/`D` entries are never safe to leave at PR open time.
+`??` entries are safe only after confirming the PR diff.**
+
+**Quick check:**
 ```bash
-# After a PR is merged, delete the remote branch:
-git push origin --delete <branch-name>
+# Ground truth — what will actually merge:
+git diff origin/main..HEAD --name-only
 
-# Prune stale remote-tracking refs locally:
-git fetch --prune
+# Tracked modifications (must be zero before merging):
+git status --short | grep -v '^??'
 
-# List all remote branches older than 30 days with no associated open PR:
-git for-each-ref --sort=-committerdate --format='%(refname:short) %(committerdate:relative)' refs/remotes/origin/ \
-  | grep -v 'HEAD\|main'
+# Untracked noise (safe if absent from PR diff):
+git status --short | grep '^??'
 ```
 
-## Dependabot batching
+---
 
-Individual dependabot PRs should be batched before merging:
+## Common patterns
 
-```bash
-# Create a batch branch from main
-git checkout main && git pull
-git checkout -b chore/deps-batch-$(date +%Y%m%d)
+| Scenario | Action |
+|----------|--------|
+| `??` files pre-date the branch | Confirm absent from PR diff — then safe to ignore |
+| `M` (modified tracked file) intended | `git add <file>` → commit → push |
+| `M` (modified tracked file) accidental | `git restore <file>` |
+| `A` (staged new file) accidental | `git restore --staged <file>` |
+| `D` (deleted tracked file) accidental | `git restore <file>` |
+| New work accidentally on wrong branch | `git stash` → checkout correct branch → `git stash pop` |
+| Large unrelated tree needs its own PR | `git checkout -b chore/cleanup-<scope>` → stage → commit → push → PR |
 
-# Cherry-pick each dependabot commit
-git cherry-pick <sha1> <sha2> ...
+---
 
-# Open a single PR that closes all individual ones
-gh pr create --title "chore(deps): batch dependency updates" \
-  --body "Closes #NNN, #NNN, ..."
-```
+## Related
 
-Close the individual Dependabot PRs after the batch PR merges.
-
-## Agent branch policy
-
-`claude/*` branches are created by the Claude Code agent. Rules:
-
-- If the branch has been merged into main: **delete it**.
-- If the branch has no open PR after 24 h: open a PR or delete the branch.
-- CI nightly audit (`branch-hygiene.yml`) tracks branches older than 7 days without a PR.
-
-## Nightly hygiene audit
-
-See `.github/workflows/branch-hygiene.yml` — runs nightly, opens/updates a
-GitHub issue listing `claude/*` and feature branches older than 7 days with no
-associated open PR. **No branches are auto-deleted** — this is tracking only.
+- `CLAUDE.md` § Git Workflow (no direct commits to main, feature branches)
+- `scripts/repo_health.sh` — run before opening PRs
+- `scripts/git_state_preflight.sh` — pre-flight checklist for branch state
