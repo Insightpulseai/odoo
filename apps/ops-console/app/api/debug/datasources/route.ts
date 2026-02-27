@@ -1,4 +1,4 @@
-// apps/ops-console/app/api/_debug/datasources/route.ts
+// apps/ops-console/app/api/debug/datasources/route.ts
 import { NextResponse } from "next/server";
 import { getAttestation } from "@/lib/datasource/runtime";
 

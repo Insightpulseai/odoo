@@ -3,13 +3,10 @@
 
 import React, { useState } from "react";
 import { mocks } from "@/lib/mocks";
-import { useOpsEnvironments } from "@/hooks/use-ops-environments";
-import { useOpsRunMutation } from "@/hooks/use-ops-run-mutation";
-import { ago } from "@/lib/visuals";
-import { Badge, PlatformCard } from "./Visuals";
+import { PlatformCard } from "./Visuals";
 
 export const SQLPanel = () => {
-  const [query, setQuery] = useState(mocks.QUERIES[0]);
+  const [, setQuery] = useState(mocks.QUERIES[0]);
   const [aiPrompt, setAiPrompt] = useState("");
 
   const handleSuggest = (s: string) => {
@@ -108,11 +105,11 @@ export const SQLPanel = () => {
           {"\n"}
           <span style={{ color: "#c084fc" }}>WHERE </span>
           <span style={{ color: "#e4e4e7" }}>state = </span>
-          <span style={{ color: "#fbbf24" }}>'posted'</span>
+          <span style={{ color: "#fbbf24" }}>&apos;posted&apos;</span>
           {"\n"}
           <span style={{ color: "#c084fc" }}>AND </span>
           <span style={{ color: "#e4e4e7" }}>date {">"}= </span>
-          <span style={{ color: "#fbbf24" }}>'2026-01-01'</span>
+          <span style={{ color: "#fbbf24" }}>&apos;2026-01-01&apos;</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
           <div style={{ display: "flex", gap: 4 }}>

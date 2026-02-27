@@ -1,10 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { StatCard } from "@/components/stat-card"
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
-import { Activity, Server, ShieldCheck, Zap, ArrowUpRight, Clock, Box } from "lucide-react"
+import { Activity, Server, ShieldCheck, Zap, ArrowUpRight, Clock, Box, Database } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import SupabaseManagerDialog from "@/components/supabase-manager"
+import { useMobile } from "@/hooks/use-mobile"
 
 type Deployment = {
   id: string
@@ -83,6 +86,10 @@ const columns: ColumnDef<Deployment>[] = [
 import { cn } from "@/lib/utils"
 
 export default function OverviewPage() {
+  const [supabaseOpen, setSupabaseOpen] = useState(false)
+  const isMobile = useMobile()
+  const projectRef = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF ?? ''
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
@@ -94,11 +101,21 @@ export default function OverviewPage() {
           <Button variant="outline" size="sm" className="glass border-white/5">
             <Box className="mr-2 h-4 w-4" /> Export Report
           </Button>
-          <Button variant="premium" size="sm">
+          <Button variant="outline" size="sm" className="glass border-white/5" onClick={() => setSupabaseOpen(true)}>
+            <Database className="mr-2 h-4 w-4" /> Manage Supabase
+          </Button>
+          <Button variant="default" size="sm">
             <Zap className="mr-2 h-4 w-4" /> Trigger Preflight
           </Button>
         </div>
       </div>
+
+      <SupabaseManagerDialog
+        projectRef={projectRef}
+        open={supabaseOpen}
+        onOpenChange={setSupabaseOpen}
+        isMobile={isMobile}
+      />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
