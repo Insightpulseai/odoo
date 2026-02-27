@@ -163,6 +163,198 @@ class TestAgentToolRegistry(TestIpaiAgentSetup):
             })
 
 
+class TestAgentActivities(TestIpaiAgentSetup):
+    """
+    Activities (Odoo Essentials alignment):
+    - waiting_approval → creates mail.activity on the run
+    - action_approve → closes approval activity (marks done)
+    - action_reject  → closes approval activity (marks done)
+    """
+
+    def _get_approve_type(self):
+        return self.env.ref(
+            "ipai_agent.activity_type_ipai_approve", raise_if_not_found=False
+        )
+
+    def _create_run_with_waiting_approval(self):
+        run = self.env["ipai.agent.run"].create({
+            "tool_id": self.tool.id,
+            "target_model": "res.company",
+            "target_res_id": self.env.company.id,
+            "state": "waiting_approval",
+        })
+        return run
+
+    def test_schedule_approval_activity_creates_activity_on_run(self):
+        """_schedule_approval_activity creates a mail.activity on the run."""
+        run = self._create_run_with_waiting_approval()
+        activity_type = self._get_approve_type()
+        if not activity_type:
+            self.skipTest("activity_type_ipai_approve not loaded in test env")
+
+        # No activities yet
+        self.assertFalse(
+            run.activity_ids.filtered(lambda a: a.activity_type_id == activity_type)
+        )
+
+        run._schedule_approval_activity()
+
+        activities = run.activity_ids.filtered(
+            lambda a: a.activity_type_id == activity_type
+        )
+        self.assertTrue(activities, "Approval activity should be created on the run")
+
+    def test_approve_closes_approval_activity(self):
+        """action_approve marks the approval activity as done."""
+        run = self._create_run_with_waiting_approval()
+        activity_type = self._get_approve_type()
+        if not activity_type:
+            self.skipTest("activity_type_ipai_approve not loaded in test env")
+
+        run.activity_schedule(
+            act_type_xmlid="ipai_agent.activity_type_ipai_approve",
+            summary="Approve run",
+            user_id=self.env.user.id,
+        )
+        self.assertTrue(
+            run.activity_ids.filtered(lambda a: a.activity_type_id == activity_type)
+        )
+
+        run.action_approve()
+
+        self.assertEqual(run.state, "queued")
+        remaining = run.activity_ids.filtered(
+            lambda a: a.activity_type_id == activity_type
+        )
+        self.assertFalse(remaining, "Approval activity should be closed after approve")
+
+    def test_reject_closes_approval_activity(self):
+        """action_reject marks the approval activity as done."""
+        run = self._create_run_with_waiting_approval()
+        activity_type = self._get_approve_type()
+        if not activity_type:
+            self.skipTest("activity_type_ipai_approve not loaded in test env")
+
+        run.activity_schedule(
+            act_type_xmlid="ipai_agent.activity_type_ipai_approve",
+            summary="Approve run",
+            user_id=self.env.user.id,
+        )
+
+        run.action_reject()
+
+        self.assertEqual(run.state, "cancelled")
+        remaining = run.activity_ids.filtered(
+            lambda a: a.activity_type_id == activity_type
+        )
+        self.assertFalse(remaining, "Approval activity should be closed after reject")
+
+    def test_cron_creates_activity_when_policy_requires_approval(self):
+        """cron_dispatch_queued creates an approval activity when policy gates the run."""
+        self.env["ipai.agent.policy"].create({
+            "name": "Activity Cron Policy",
+            "target_model": "res.company",
+            "require_approval": True,
+        })
+        run = self.env["ipai.agent.run"].create({
+            "tool_id": self.tool.id,
+            "target_model": "res.company",
+            "target_res_id": self.env.company.id,
+        })
+        self.env["ipai.agent.run"].cron_dispatch_queued()
+
+        self.assertEqual(run.state, "waiting_approval")
+
+        activity_type = self._get_approve_type()
+        if activity_type:
+            activities = run.activity_ids.filtered(
+                lambda a: a.activity_type_id == activity_type
+            )
+            self.assertTrue(activities, "Cron should schedule approval activity")
+
+    def test_cancel_from_waiting_closes_activity(self):
+        """action_cancel from waiting_approval also closes the approval activity."""
+        run = self._create_run_with_waiting_approval()
+        activity_type = self._get_approve_type()
+        if not activity_type:
+            self.skipTest("activity_type_ipai_approve not loaded in test env")
+
+        run.activity_schedule(
+            act_type_xmlid="ipai_agent.activity_type_ipai_approve",
+            summary="Approve run",
+            user_id=self.env.user.id,
+        )
+        run.action_cancel()
+
+        self.assertEqual(run.state, "cancelled")
+        remaining = run.activity_ids.filtered(
+            lambda a: a.activity_type_id == activity_type
+        )
+        self.assertFalse(remaining, "Activity should be closed on cancel from waiting")
+
+
+class TestToolAccessEnforcement(TestIpaiAgentSetup):
+    """
+    Server-side tool access enforcement (General settings alignment):
+    - Tools with no allowed_group_ids are open to all agent users.
+    - Tools with allowed_group_ids deny users not in those groups.
+    - Bypass: env.su (superuser / cron context).
+    """
+
+    def test_tool_with_no_groups_allows_any_user(self):
+        """A tool with no allowed_group_ids is accessible to any user."""
+        tool = self.env["ipai.agent.tool"].create({
+            "name": "Open Tool",
+            "technical_name": "open_tool",
+            "auth_mode": "none",
+            # allowed_group_ids is empty
+        })
+        # Should not raise
+        self.env["ipai.agent.run"]._check_tool_access(tool)
+
+    def test_tool_with_admin_group_blocks_plain_user(self):
+        """A tool restricted to admin group raises AccessError for a plain user."""
+        admin_group = self.env.ref(
+            "ipai_agent.group_ipai_agent_admin", raise_if_not_found=False
+        )
+        if not admin_group:
+            self.skipTest("group_ipai_agent_admin not found")
+
+        tool = self.env["ipai.agent.tool"].create({
+            "name": "Admin-Only Tool",
+            "technical_name": "admin_only_tool",
+            "auth_mode": "none",
+            "allowed_group_ids": [(4, admin_group.id)],
+        })
+
+        # Create a user without admin group
+        plain_user = self.env["res.users"].create({
+            "name": "Plain User",
+            "login": "plain_user_test@ipai.test",
+        })
+        # Execute check as plain user
+        with self.assertRaises(AccessError):
+            self.env["ipai.agent.run"].with_user(plain_user)._check_tool_access(tool)
+
+    def test_superuser_bypasses_tool_access_check(self):
+        """Superuser context (cron) bypasses the tool allowlist check."""
+        admin_group = self.env.ref(
+            "ipai_agent.group_ipai_agent_admin", raise_if_not_found=False
+        )
+        if not admin_group:
+            self.skipTest("group_ipai_agent_admin not found")
+
+        tool = self.env["ipai.agent.tool"].create({
+            "name": "Admin Cron Tool",
+            "technical_name": "admin_cron_tool",
+            "auth_mode": "none",
+            "allowed_group_ids": [(4, admin_group.id)],
+        })
+        # sudo() sets env.su = True → bypassed
+        # Should not raise even though the tool requires admin group
+        self.env["ipai.agent.run"].sudo()._check_tool_access(tool)
+
+
 class TestHmacVerification(TransactionCase):
     """HMAC-SHA256 signature verification in the webhook controller."""
 

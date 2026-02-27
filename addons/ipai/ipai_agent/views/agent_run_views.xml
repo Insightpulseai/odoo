@@ -112,37 +112,85 @@
         </field>
     </record>
 
-    <!-- ── Search ─────────────────────────────────────────────────────────── -->
+    <!-- ── Search (Favorites-ready: stable domains, no transient logic) ──── -->
     <record id="view_ipai_agent_run_search" model="ir.ui.view">
         <field name="name">ipai.agent.run.search</field>
         <field name="model">ipai.agent.run</field>
         <field name="arch" type="xml">
             <search string="Agent Runs">
+                <!-- Searchable fields -->
                 <field name="name"/>
                 <field name="external_run_id"/>
                 <field name="requested_by"/>
                 <field name="tool_id"/>
-                <filter string="Queued" name="queued" domain="[('state','=','queued')]"/>
-                <filter string="Waiting Approval" name="waiting" domain="[('state','=','waiting_approval')]"/>
-                <filter string="Running" name="running" domain="[('state','=','running')]"/>
-                <filter string="Succeeded" name="succeeded" domain="[('state','=','succeeded')]"/>
-                <filter string="Failed" name="failed" domain="[('state','=','failed')]"/>
+                <field name="target_model"/>
+
+                <!-- ── Canned filters (pre-configured, saveable as Favorites) ── -->
+                <filter string="My Runs" name="mine"
+                        domain="[('requested_by','=',uid)]"/>
+                <filter string="Needs Approval" name="needs_approval"
+                        domain="[('state','=','waiting_approval')]"/>
+                <filter string="Failed" name="failed"
+                        domain="[('state','=','failed')]"/>
                 <separator/>
-                <filter string="Mine" name="mine" domain="[('requested_by','=',uid)]"/>
+                <filter string="Queued" name="queued"
+                        domain="[('state','=','queued')]"/>
+                <filter string="Running" name="running"
+                        domain="[('state','=','running')]"/>
+                <filter string="Succeeded" name="succeeded"
+                        domain="[('state','=','succeeded')]"/>
+                <filter string="Cancelled" name="cancelled"
+                        domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <!-- Last 7 days — datetime.now() + timedelta evaluated server-side -->
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="[('requested_at','&gt;=',(datetime.now()-timedelta(7)).strftime('%Y-%m-%d'))]"/>
+
+                <!-- ── Group By ─────────────────────────────────────────────── -->
                 <group expand="0" string="Group By">
-                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Tool" name="group_tool" context="{'group_by': 'tool_id'}"/>
-                    <filter string="Requested By" name="group_user" context="{'group_by': 'requested_by'}"/>
+                    <filter string="State" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Tool" name="group_tool"
+                            context="{'group_by': 'tool_id'}"/>
+                    <filter string="Requested By" name="group_user"
+                            context="{'group_by': 'requested_by'}"/>
+                    <filter string="Target Model" name="group_target_model"
+                            context="{'group_by': 'target_model'}"/>
+                    <filter string="Company" name="group_company"
+                            context="{'group_by': 'company_id'}"/>
+                    <filter string="Month" name="group_month"
+                            context="{'group_by': 'requested_at:month'}"/>
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- ── Action ─────────────────────────────────────────────────────────── -->
+    <!-- ── Pivot (Agent observability reporting) ─────────────────────────── -->
+    <!--
+        Pivot measures (Odoo Essentials — Reporting alignment):
+          - Count (always available)
+          - Duration (seconds) — stored computed field on the run
+        Dimensions:
+          - Tool (rows) × State (cols)
+          - Users can drill down via Group By and export to .xlsx
+    -->
+    <record id="view_ipai_agent_run_pivot" model="ir.ui.view">
+        <field name="name">ipai.agent.run.pivot</field>
+        <field name="model">ipai.agent.run</field>
+        <field name="arch" type="xml">
+            <pivot string="Agent Runs Analysis" sample="1">
+                <field name="tool_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="duration_seconds" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ── Actions ────────────────────────────────────────────────────────── -->
     <record id="action_ipai_agent_run" model="ir.actions.act_window">
         <field name="name">Agent Runs</field>
         <field name="res_model">ipai.agent.run</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,pivot,form</field>
         <field name="search_view_id" ref="view_ipai_agent_run_search"/>
         <field name="context">{'search_default_mine': 1}</field>
         <field name="help" type="html">
@@ -153,11 +201,11 @@
         </field>
     </record>
 
-    <!-- All runs action (admin) -->
+    <!-- All runs action (admin) — no default filter -->
     <record id="action_ipai_agent_run_all" model="ir.actions.act_window">
         <field name="name">All Agent Runs</field>
         <field name="res_model">ipai.agent.run</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,pivot,form</field>
         <field name="search_view_id" ref="view_ipai_agent_run_search"/>
     </record>
 
