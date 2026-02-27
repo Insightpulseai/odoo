@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
+import { getOrCreateRequestId, correlationHeaders } from '@/lib/http/correlation'
 
 async function forwardToSupabaseAPI(request: Request, method: string, params: { path: string[] }) {
+  const rid = getOrCreateRequestId(request.headers.get('x-request-id'))
+  const hdrs = correlationHeaders(rid)
+
   if (!process.env.SUPABASE_MANAGEMENT_API_TOKEN) {
     console.error('Supabase Management API token is not configured.')
-    return NextResponse.json({ message: 'Server configuration error.' }, { status: 500 })
+    return NextResponse.json({ message: 'Server configuration error.' }, { status: 500, headers: hdrs })
   }
 
   const { path } = params
@@ -24,13 +28,14 @@ async function forwardToSupabaseAPI(request: Request, method: string, params: { 
   if (!userHasPermissionForProject) {
     return NextResponse.json(
       { message: 'You do not have permission to access this project.' },
-      { status: 403 }
+      { status: 403, headers: hdrs }
     )
   }
 
   try {
     const forwardHeaders: HeadersInit = {
       Authorization: `Bearer ${process.env.SUPABASE_MANAGEMENT_API_TOKEN}`,
+      'x-request-id': rid,
     }
 
     // Copy relevant headers from the original request
@@ -70,11 +75,11 @@ async function forwardToSupabaseAPI(request: Request, method: string, params: { 
     }
 
     // Return the response with the same status
-    return NextResponse.json(responseData, { status: response.status })
+    return NextResponse.json(responseData, { status: response.status, headers: hdrs })
   } catch (error: any) {
     console.error('Supabase API proxy error:', error)
     const errorMessage = error.message || 'An unexpected error occurred.'
-    return NextResponse.json({ message: errorMessage }, { status: 500 })
+    return NextResponse.json({ message: errorMessage }, { status: 500, headers: hdrs })
   }
 }
 

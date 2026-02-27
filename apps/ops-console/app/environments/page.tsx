@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 export default function EnvironmentsPage() {
   const envs = [
     { name: 'PROD', host: '178.128.112.214', db: 'odoo-db-sgp1 (odoo_prod)', sha: 'v1.4.2', health: 'Green', lastDeploy: '2h ago', protected: true },
