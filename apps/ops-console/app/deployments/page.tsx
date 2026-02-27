@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 export default function DeploymentsPage() {
   const deployments = [
     { id: 'DP-892', env: 'PROD', version: 'v1.4.2', author: 'tbwa', time: '2h ago', status: 'Success', duration: '4m 12s' },
