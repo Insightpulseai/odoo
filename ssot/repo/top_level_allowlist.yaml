@@ -1,0 +1,463 @@
+# =============================================================================
+# Top-Level Directory Allowlist — Insightpulseai/odoo
+# =============================================================================
+# Canonical list of allowed top-level directories and files.
+# Enforced by: scripts/repo/enforce_top_level_allowlist.py
+# CI gate:     .github/workflows/repo-top-level-guard.yml
+#
+# Tier 0 — Core platform boundaries (protected, never remove without RFC)
+# Tier 1 — Canonical extensions (stable, well-scoped)
+# Tier 2 — Legacy/provisional (should converge over time)
+# Tier 3 — Deprecated (add deprecation note + migrate_to target)
+#
+# Adding a new top-level dir:
+#   1. Add entry here with tier, purpose, owner
+#   2. Open PR — CI gate enforces this allowlist
+#   3. Get approval from Architecture team
+# =============================================================================
+
+policy:
+  version: "1.0"
+  last_updated: "2026-02-27"
+  enforcement: strict           # strict = fail on violation; warn = warn only
+  new_dirs_require_approval: true
+
+# ---------------------------------------------------------------------------
+# Tier 0 — Core platform boundaries (immovable)
+# ---------------------------------------------------------------------------
+tier0:
+  description: "Core platform archetypes. Never removed without major RFC."
+  dirs:
+    - name: ".github"
+      purpose: "CI/CD workflows, templates, branch protection, GitHub policies"
+      owner: "DevOps"
+
+    - name: ".devcontainer"
+      purpose: "VS Code devcontainer setup (workspace mount, Docker Compose)"
+      owner: "DevOps"
+
+    - name: ".vscode"
+      purpose: "Shared VS Code settings, extensions, workspace file"
+      owner: "DevOps"
+
+    - name: ".insightpulse"
+      purpose: "Platform governance: allowlists, policy contracts, config"
+      owner: "Architecture"
+
+    - name: "addons"
+      purpose: "Odoo addons: addons/odoo (CE), addons/oca (OCA), addons/ipai (custom)"
+      owner: "ERP/Backend"
+
+    - name: "docs"
+      purpose: "Architecture, contracts, runbooks, ops docs (human-facing)"
+      owner: "Architecture"
+
+    - name: "infra"
+      purpose: "IaC: Cloudflare DNS/WAF, DigitalOcean, Vercel, Terraform modules"
+      owner: "DevOps/Infra"
+
+    - name: "scripts"
+      purpose: "Repo-wide tooling: lint, CI checks, release, evidence, DNS, health"
+      owner: "DevOps"
+
+    - name: "spec"
+      purpose: "Spec Kit bundles: spec/<slug>/{constitution,prd,plan,tasks}.md"
+      owner: "Product"
+
+    - name: "supabase"
+      purpose: "Supabase SSOT: schema migrations, Edge Functions, RLS policies, seeds"
+      owner: "Platform/DB"
+
+    - name: "web"
+      purpose: "Next.js control plane, OdooOps console, AI control plane"
+      owner: "Frontend/Platform"
+
+    - name: "ssot"
+      purpose: "SSOT registries: secrets, repo, skills, env policy"
+      owner: "Architecture"
+
+# ---------------------------------------------------------------------------
+# Tier 1 — Canonical extensions (stable, well-scoped)
+# ---------------------------------------------------------------------------
+tier1:
+  description: "Stable directories with clear ownership and scope."
+  dirs:
+    - name: "agents"
+      purpose: "Agent registry: skills, workflows, rules, claude/gemini agents"
+      owner: "AI/Agents"
+
+    - name: "apps"
+      purpose: "Non-Odoo standalone applications (iOS, ops-console, etc.)"
+      owner: "Frontend"
+
+    - name: "automations"
+      purpose: "n8n workflow JSON exports and deployment scripts"
+      owner: "DevOps"
+
+    - name: "config"
+      purpose: "Odoo runtime config (odoo.conf variants), devserver config"
+      owner: "ERP/Backend"
+
+    - name: "deploy"
+      purpose: "Deployment compose files, Nginx configs, DO stack definitions"
+      owner: "DevOps"
+
+    - name: "design"
+      purpose: "Design tokens SSOT (tokens.json, Figma exports)"
+      owner: "Design"
+
+    - name: "packages"
+      purpose: "Shared pnpm packages (@ipai/* scoped)"
+      owner: "Frontend/Platform"
+
+    - name: "platform"
+      purpose: "Platform kit: advisor, vercel integrations, service metadata"
+      owner: "Platform"
+
+    - name: "templates"
+      purpose: "Reusable scaffolding: odooops-console template, OdooOps UI"
+      owner: "Frontend"
+
+    - name: "tests"
+      purpose: "Cross-module tests: smoke, integration, CI harnesses"
+      owner: "QA"
+
+    - name: "tools"
+      purpose: "Dev tools: audit, parity analysis, DB inventory"
+      owner: "DevOps"
+
+    - name: "docker"
+      purpose: "Dockerfiles for Odoo, n8n, services"
+      owner: "DevOps"
+
+    - name: "mcp"
+      purpose: "MCP server configurations and coordination"
+      owner: "AI/Platform"
+
+    - name: "runtime"
+      purpose: "Runtime scripts, patches applied on startup"
+      owner: "DevOps"
+
+    - name: "third_party"
+      purpose: "Vendored third-party source not available via package managers"
+      owner: "DevOps"
+
+    - name: "vendor"
+      purpose: "Vendored packages (npm, pip) pinned for offline use"
+      owner: "DevOps"
+
+    - name: "archive"
+      purpose: "Archived/deprecated code preserved for reference"
+      owner: "Architecture"
+
+    - name: "artifacts"
+      purpose: "Generated outputs ONLY — CI drift snapshots, DNS state exports. No SSOT inputs."
+      owner: "CI"
+      generated: true
+      note: "artifacts/ must never contain SSOT inputs. All inputs belong in their domain directory."
+
+# ---------------------------------------------------------------------------
+# Tier 2 — Legacy/provisional (target consolidation)
+# ---------------------------------------------------------------------------
+tier2:
+  description: "Historically created dirs. Tolerated for backward compatibility; consolidation tracked."
+  dirs:
+    - name: "catalog"
+      purpose: "Adapter/template catalogs (should migrate to docs/ or platform/)"
+      migrate_to: "platform/catalog/ or docs/catalog/"
+
+    - name: "db"
+      purpose: "DB migrations/seeds not in supabase/ (should consolidate into supabase/)"
+      migrate_to: "supabase/migrations/ or supabase/seeds/"
+
+    - name: "schemas"
+      purpose: "Standalone schema definitions (should move to supabase/ or docs/)"
+      migrate_to: "supabase/ or docs/architecture/"
+
+    - name: "integrations"
+      purpose: "Integration configs (should move to infra/ or platform/)"
+      migrate_to: "infra/integrations/ or platform/integrations/"
+
+    - name: "odoo"
+      purpose: "Legacy Odoo 19 path (addons are now canonical in addons/)"
+      migrate_to: "addons/"
+
+    - name: "odoo19"
+      purpose: "Legacy Odoo 19 runtime path"
+      migrate_to: "addons/ or config/"
+
+    - name: "ci"
+      purpose: "Local CI scripts (should move to scripts/ci/ or .github/workflows/)"
+      migrate_to: "scripts/ci/"
+
+    - name: "bin"
+      purpose: "CLI executables (consider scripts/ or apps/)"
+      migrate_to: "scripts/ or apps/"
+
+    - name: "src"
+      purpose: "Generic source dir (should be under a named app or package)"
+      migrate_to: "apps/<name>/ or packages/<name>/"
+
+    - name: "data"
+      purpose: "Data files (seeds, fixtures, exports)"
+      migrate_to: "supabase/seeds/ or tests/fixtures/"
+
+    - name: "seeds"
+      purpose: "DB seed data (should be under supabase/seeds/)"
+      migrate_to: "supabase/seeds/"
+
+    - name: "seed_export"
+      purpose: "Exported seed data"
+      migrate_to: "supabase/seeds/ or artifacts/"
+
+    - name: "baselines"
+      purpose: "Baseline snapshots for drift detection"
+      migrate_to: "artifacts/baselines/ or docs/baselines/"
+
+    - name: "patches"
+      purpose: "Runtime patches (should be under runtime/patches/)"
+      migrate_to: "runtime/patches/"
+
+    - name: "reports"
+      purpose: "Generated reports (should be artifacts/reports/ or docs/)"
+      migrate_to: "artifacts/reports/"
+
+    - name: "research"
+      purpose: "Research documents (should be docs/research/)"
+      migrate_to: "docs/research/"
+
+    - name: "tasks"
+      purpose: "Agent task lists (should be .claude/tasks/ or ssot/tasks/)"
+      migrate_to: ".claude/tasks/"
+
+    - name: "workflows"
+      purpose: "Workflow definitions (n8n = automations/, GitHub = .github/workflows/)"
+      migrate_to: "automations/ or .github/workflows/"
+
+    - name: "contracts"
+      purpose: "Contract docs (should be docs/contracts/)"
+      migrate_to: "docs/contracts/"
+
+    - name: "clients"
+      purpose: "Client integrations (should be platform/clients/ or integrations/)"
+      migrate_to: "platform/clients/"
+
+    - name: "services"
+      purpose: "Service definitions (should be infra/services/ or apps/)"
+      migrate_to: "infra/services/ or apps/"
+
+    - name: "api"
+      purpose: "API definitions (should be under a specific app/package)"
+      migrate_to: "apps/<name>/api/ or packages/<name>/"
+
+    - name: "pkgs"
+      purpose: "Alias for packages/ (consolidate)"
+      migrate_to: "packages/"
+
+    - name: "parity"
+      purpose: "OCA/EE parity analysis (should be docs/architecture/ or catalog/)"
+      migrate_to: "docs/architecture/parity/ or catalog/"
+
+    - name: "releasekit"
+      purpose: "Release tooling (should be scripts/release/ or tools/)"
+      migrate_to: "scripts/release/"
+
+    - name: "registry"
+      purpose: "Component registry (should be platform/registry/ or catalog/)"
+      migrate_to: "platform/registry/"
+
+    - name: "stack"
+      purpose: "Stack definitions (should be infra/ or docs/)"
+      migrate_to: "infra/ or docs/architecture/"
+
+    - name: "engines"
+      purpose: "Engine configs (should be under infra/ or services/)"
+      migrate_to: "infra/"
+
+    - name: "ops"
+      purpose: "Ops tooling (should be scripts/ops/ or infra/ops/)"
+      migrate_to: "scripts/ops/ or infra/"
+
+    - name: "security"
+      purpose: "Security configs/audits (should be docs/security/ or tools/)"
+      migrate_to: "docs/security/ or tools/audit/"
+
+    - name: "audit"
+      purpose: "Audit scripts/reports (should be tools/audit/ or artifacts/)"
+      migrate_to: "tools/audit/"
+
+    - name: "memory"
+      purpose: "Claude project memory (should be .claude/memory/ or claudedocs/)"
+      migrate_to: ".claude/memory/"
+
+    - name: "claudedocs"
+      purpose: "Claude-generated documentation (should be docs/ subdirectory)"
+      migrate_to: "docs/claude/"
+
+    - name: "kb"
+      purpose: "Knowledge base (should be docs/kb/)"
+      migrate_to: "docs/kb/"
+
+    - name: "handbook"
+      purpose: "Team handbook (should be docs/handbook/)"
+      migrate_to: "docs/handbook/"
+
+    - name: "skillpack"
+      purpose: "Skill packs (should be agents/skills/)"
+      migrate_to: "agents/skills/"
+
+    - name: "skills"
+      purpose: "Skills (should be agents/skills/)"
+      migrate_to: "agents/skills/"
+
+    - name: "specs"
+      purpose: "Duplicate of spec/ (should consolidate into spec/)"
+      migrate_to: "spec/"
+
+    - name: "platform-kit"
+      purpose: "Platform kit (should be platform/)"
+      migrate_to: "platform/"
+
+    - name: "dev"
+      purpose: "Dev utilities (should be scripts/dev/ or tools/)"
+      migrate_to: "scripts/dev/ or tools/"
+
+    - name: "figma"
+      purpose: "Figma exports (should be design/figma/)"
+      migrate_to: "design/figma/"
+
+    - name: "harness"
+      purpose: "Test harnesses (should be tests/harness/)"
+      migrate_to: "tests/"
+
+    - name: "inventory"
+      purpose: "Inventory manifests (should be docs/inventory/ or artifacts/)"
+      migrate_to: "docs/ or artifacts/"
+
+    - name: "ccpm"
+      purpose: "CCPM tooling (should be tools/ccpm/ or platform/)"
+      migrate_to: "tools/ or platform/"
+
+    - name: "calendar"
+      purpose: "Calendar tooling (should be apps/ or platform/)"
+      migrate_to: "apps/ or platform/"
+
+    - name: "fastlane"
+      purpose: "iOS Fastlane config (should be apps/odoo-mobile-ios/fastlane/)"
+      migrate_to: "apps/odoo-mobile-ios/fastlane/"
+
+    - name: "ipai-platform"
+      purpose: "IPAI platform (should be platform/ipai/ or infra/)"
+      migrate_to: "platform/"
+
+    - name: "dbt"
+      purpose: "dbt models (should be infra/dbt/ or platform/analytics/)"
+      migrate_to: "infra/analytics/ or platform/"
+
+    - name: "osi"
+      purpose: "OSI tooling (purpose unclear — audit and rehome)"
+      migrate_to: "archive/ (if unused)"
+
+    - name: "ocr-adapter"
+      purpose: "OCR adapter (should be apps/ocr-adapter/ or services/)"
+      migrate_to: "apps/ocr-adapter/"
+
+    - name: "ocr_service"
+      purpose: "OCR service (should be apps/ocr-service/ or services/)"
+      migrate_to: "apps/ocr-service/"
+
+    - name: "docs-assistant"
+      purpose: "Docs assistant (should be apps/ or agents/)"
+      migrate_to: "apps/docs-assistant/ or agents/"
+
+    - name: "architecture-review"
+      purpose: "Architecture reviews (should be docs/architecture/reviews/)"
+      migrate_to: "docs/architecture/"
+
+    - name: "vercel"
+      purpose: "Vercel config (should be infra/vercel/ or web/)"
+      migrate_to: "infra/vercel/"
+
+    - name: "n8n"
+      purpose: "n8n configs (should be automations/)"
+      migrate_to: "automations/"
+
+    - name: "mattermost"
+      purpose: "Mattermost configs (DEPRECATED — migrated to Slack)"
+      migrate_to: "archive/mattermost/"
+      deprecated: true
+
+# ---------------------------------------------------------------------------
+# Tier 3 — Deprecated (should not be present; archive or remove)
+# ---------------------------------------------------------------------------
+tier3:
+  description: "Explicitly deprecated. These dirs should be moved to archive/ or removed."
+  dirs:
+    - name: "agent-library"
+      deprecated: true
+      migrate_to: "agents/library/ or archive/"
+      reason: "Consolidated into agents/"
+
+    - name: "agent-library-pack"
+      deprecated: true
+      migrate_to: "agents/library/ or archive/"
+      reason: "Consolidated into agents/"
+
+    - name: "contains-studio-agents"
+      deprecated: true
+      migrate_to: "agents/ or archive/"
+      reason: "Consolidate into agents/"
+
+    - name: "docflow-agentic-finance"
+      deprecated: true
+      migrate_to: "agents/ or archive/"
+      reason: "Project-specific agent — consolidate"
+
+    - name: "notion-n8n-monthly-close"
+      deprecated: true
+      migrate_to: "automations/ or archive/"
+      reason: "Single-purpose workflow — consolidate"
+
+    - name: "odoo-schema-mirror"
+      deprecated: true
+      migrate_to: "supabase/schema-mirror/ or archive/"
+      reason: "Schema mirrors belong in supabase/"
+
+# ---------------------------------------------------------------------------
+# Hidden dirs (dot-prefixed) — always allowed
+# ---------------------------------------------------------------------------
+hidden:
+  description: "Dot-prefixed directories. Unconditionally allowed by convention."
+  always_allowed: true
+  dirs:
+    - ".agent"
+    - ".ai"
+    - ".claude"
+    - ".continue"
+    - ".gemini"
+    - ".git"
+    - ".githooks"
+    - ".lib"
+    - ".mypy_cache"
+    - ".pnpm-store"
+    - ".refactor"
+    - ".specify"
+    - ".supabase"
+    - ".venv"
+    - ".worktrees"
+
+# ---------------------------------------------------------------------------
+# Generated dirs (always allowed — created by build tools, never committed)
+# ---------------------------------------------------------------------------
+generated:
+  description: "Generated by build tools. git-ignored. Unconditionally allowed."
+  always_allowed: true
+  dirs:
+    - "node_modules"
+    - "__pycache__"
+    - ".next"
+    - ".turbo"
+    - ".vercel"
+    - "dist"
+    - "build"
+    - "out"
