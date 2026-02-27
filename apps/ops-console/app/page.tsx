@@ -94,7 +94,7 @@ export default function OverviewPage() {
           <Button variant="outline" size="sm" className="glass border-white/5">
             <Box className="mr-2 h-4 w-4" /> Export Report
           </Button>
-          <Button variant="premium" size="sm">
+          <Button variant="default" size="sm">
             <Zap className="mr-2 h-4 w-4" /> Trigger Preflight
           </Button>
         </div>
