@@ -1,3 +1,7 @@
+import { IntegrationBadges } from '@/components/platform/IntegrationBadges'
+
+export const dynamic = "force-static"
+
 export default function SettingsPage() {
   return (
     <div className="space-y-6">
@@ -6,6 +10,9 @@ export default function SettingsPage() {
         <p className="text-sm text-muted-foreground mt-1">
           Platform configuration and secrets management.
         </p>
+        <div className="mt-2">
+          <IntegrationBadges />
+        </div>
       </div>
 
       <div className="grid gap-4">
