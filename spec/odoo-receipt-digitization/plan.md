@@ -2,6 +2,7 @@
 
 **Spec bundle**: `spec/odoo-receipt-digitization/`
 **Implements**: `prd.md`
+**Governance SSOT**: `spec/supabase-maximization/` — Supabase feature adoption tiers, Vault-first policy, Iceberg contract rules
 
 ---
 

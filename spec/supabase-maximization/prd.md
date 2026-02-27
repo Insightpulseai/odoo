@@ -3,6 +3,9 @@
 **Spec bundle**: `spec/supabase-maximization/`
 **Status**: Active — Phase 1 in progress
 **Depends on**: `spec/supabase-auth-ssot/` (Auth already complete)
+**Applied by**:
+- `spec/odoo-receipt-digitization/` — Lane B CDC, Iceberg landing contract, Storage (Phase 2)
+- Future: all new `ops.*`/`ai.*` feature specs (via T1 gate)
 
 > For the full feature adoption map see:
 > `docs/architecture/SUPABASE_FEATURES_INTEGRATIONS_ADOPTION.md`
