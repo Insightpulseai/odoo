@@ -5,13 +5,13 @@ on:
     branches: ["main"]
     paths:
       - "skills/**"
-      - "ssot/odoo/**"
+      - "ssot/skills/**"
       - "scripts/skills/**"
   pull_request:
     branches: ["main"]
     paths:
       - "skills/**"
-      - "ssot/odoo/**"
+      - "ssot/skills/**"
       - "scripts/skills/**"
 
 jobs:
@@ -28,5 +28,5 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: Validate Odoo 19 Skills Coverage
-        run: ./scripts/skills/validate_odoo19_skills_coverage.py
+      - name: Validate skills coverage (Odoo 19 docs + Vercel/Supabase skill packs)
+        run: python scripts/skills/validate_odoo19_skills_coverage.py
