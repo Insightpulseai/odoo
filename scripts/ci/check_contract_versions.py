@@ -93,6 +93,11 @@ def extract_yaml_version(yaml_path: str) -> str:
 # Main
 # --------------------------------------------------------------------------- #
 
+# SSOT rule: manifest version fields MUST be quoted strings ("1.1", not 1.1).
+# YAML libraries coerce bare decimals to float which can round/format unexpectedly.
+# extract_yaml_version() calls str() as a safety net, but the source file must
+# use double-quoted strings to be unambiguous. CI will error if version: is missing.
+
 CHECKS = [
     # (label, doc_path, authoritative_description, extractor_fn, *extractor_args)
     (
