@@ -113,6 +113,22 @@ subdomains:
       claimed_at: "2026-02-27"
       claim_ref: "ssot:cloudflare"
 
+  - name: plane
+    type: A
+    service: plane_project_management
+    port: 3002
+    health_check: /
+    owner_system: "Plane CE (self-hosted)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-28"
+      claim_ref: "ssot:cloudflare"
+
   - name: ocr
     type: A
     service: paddleocr_microservice
