@@ -57,7 +57,10 @@
     "superclaude_bridge.yaml",
     "CLAUDE.md",
     "AGENTS.md",
-    "GEMINI.md"
+    "GEMINI.md",
+    "automations-inventory.json",
+    "automations-inventory.md",
+    "requirements-constraints.txt"
   ],
   "allow_root_dirs": [
     ".devcontainer",
@@ -178,7 +181,8 @@
     ".githooks",
     ".lib",
     ".refactor",
-    "mattermost"
+    "mattermost",
+    "ssot"
   ],
   "notes": {
     "hidden_files": "Hidden files starting with . are allowed if listed above",
