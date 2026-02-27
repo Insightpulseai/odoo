@@ -6,8 +6,16 @@ import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Activity, Server, ShieldCheck, Zap, ArrowUpRight, Clock, Box, Database } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import SupabaseManagerDialog from "@/components/supabase-manager"
+import dynamic from "next/dynamic"
 import { useMobile } from "@/hooks/use-mobile"
+
+// SupabaseManagerDialog imports Monaco Editor (sql-editor) and vaul Drawer —
+// both access browser-only APIs at module level. Must be ssr:false to avoid
+// "Application error: a client-side exception" on initial page load.
+const SupabaseManagerDialog = dynamic(
+  () => import("@/components/supabase-manager"),
+  { ssr: false }
+)
 
 type Deployment = {
   id: string
