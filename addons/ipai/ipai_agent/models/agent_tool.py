@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import fields, models, _
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -10,6 +11,12 @@ AUTH_MODE = [
     ("jwt", "Supabase JWT (user token)"),
     ("service_role", "Supabase Service Role"),
     ("hmac", "HMAC-SHA256 (webhook secret)"),
+]
+
+PROVIDER = [
+    ("supabase_edge", "Supabase Edge Function"),
+    ("internal", "Internal (Odoo method)"),
+    ("http", "External HTTP"),
 ]
 
 
@@ -40,6 +47,18 @@ class IpaiAgentTool(models.Model):
     )
     active = fields.Boolean(default=True)
     description = fields.Text(string="Description")
+    provider = fields.Selection(
+        PROVIDER,
+        string="Provider",
+        required=True,
+        default="supabase_edge",
+        help=(
+            "supabase_edge: Calls a Supabase Edge Function via endpoint in ir.config_parameter.\n"
+            "internal: Calls an Odoo model method directly (no HTTP transport).\n"
+            "http: Arbitrary external HTTP — requires at least one allowed_group_ids entry "
+            "to prevent open-access creep. Use supabase_edge for Supabase targets."
+        ),
+    )
     auth_mode = fields.Selection(
         AUTH_MODE,
         string="Auth Mode",
@@ -73,6 +92,21 @@ class IpaiAgentTool(models.Model):
     _sql_constraints = [
         ("unique_technical_name", "UNIQUE(technical_name)", "Technical name must be unique."),
     ]
+
+    @api.constrains("provider", "allowed_group_ids")
+    def _check_http_provider_requires_groups(self):
+        """
+        Block arbitrary HTTP tools with no access restrictions.
+        Any tool with provider='http' must have at least one allowed_group_ids entry
+        to prevent open-access creep (anyone triggering calls to external endpoints).
+        supabase_edge and internal tools may have open access (no groups required).
+        """
+        for tool in self:
+            if tool.provider == "http" and not tool.allowed_group_ids:
+                raise ValidationError(_(
+                    "Tool '%s': provider 'http' (arbitrary external HTTP) requires at least "
+                    "one allowed group. Add an allowed group, or use 'supabase_edge' instead."
+                ) % tool.name)
 
     def get_endpoint(self):
         """Return the live endpoint URL from ir.config_parameter (never hardcoded)."""
