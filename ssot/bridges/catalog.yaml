@@ -73,3 +73,33 @@ bridges:
     contract_doc: docs/contracts/OCR_BRIDGE_CONTRACT.md
     secrets: []
     notes: "PaddleOCR-VL self-hosted on DO droplet (178.128.112.214). REST API at ocr.insightpulseai.com."
+
+  - name: ipai_ai_copilot
+    display_name: "IPAI AI Copilot (M365/Joule-class)"
+    replaces_ee_feature: "Odoo EE AI Agents + M365 Copilot + SAP Joule"
+    ee_module: enterprise_ai
+    addon_path: addons/ipai/ipai_ai_copilot/
+    status: planned
+    version: "19.0.1.0.0"
+    contract_doc: docs/contracts/AI_COPILOT_CONTRACT.md
+    secrets:
+      - gemini_api_key
+    consumers:
+      - odoo          # via ipai_ai_copilot addon (ir.config_parameter bridge_url)
+    endpoints:
+      - generate      # POST /api/ai/gemini (simple, no tools)
+      - tools         # POST /api/ai/gemini/tools (function calling, new)
+    capabilities:
+      - persistent_sidebar
+      - command_palette
+      - gemini_function_calling
+      - tool_registry
+      - proactive_insights
+      - n8n_automation_bridge
+      - supabase_rag
+    notes: >
+      Full AI copilot for Odoo 19 CE. Surpasses EE AI agents in:
+      multi-provider support, cross-system n8n automation, Supabase-backed RAG,
+      and provider cost routing (Flash/Pro). Gemini function calling enables
+      create/update/search Odoo records from natural language.
+      ir.config_parameter: ipai_ai_copilot.bridge_url = /api/ai/gemini/tools
