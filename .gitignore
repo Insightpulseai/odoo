@@ -103,6 +103,8 @@ docker-compose.override.yml
 *.pem
 *.crt
 secrets/
+!ssot/secrets/
+!ssot/secrets/registry.yaml
 .secrets
 # Deployment
 deploy/.env
