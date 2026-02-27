@@ -1,0 +1,116 @@
+name: OCA-19 Readiness Report
+
+on:
+  pull_request:
+    paths:
+      - "addons/oca/**"
+      - "scripts/ci/scan_oca_repos.py"
+      - "ssot/odoo/oca_repos.yaml"
+      - "config/dev/odoo.conf"
+      - "config/prod/odoo.conf"
+      - "config/stage/odoo.conf"
+      - ".github/workflows/oca-19-readiness-report.yml"
+  push:
+    branches: [main]
+    paths:
+      - "addons/oca/**"
+      - "scripts/ci/scan_oca_repos.py"
+  workflow_dispatch:
+    inputs:
+      warn_only:
+        description: "Warn on blocked repos instead of failing"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: OCA-19 Readiness Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run OCA repo scanner
+        id: scan
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 scripts/ci/scan_oca_repos.py \
+            --oca-dir addons/oca \
+            --json artifacts/oca_19_readiness.json \
+            ${{ inputs.warn_only == 'true' && '--warn-only' || '' }} \
+            | tee artifacts/oca_19_readiness.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Validate addons_path has no empty repos
+        run: |
+          set -euo pipefail
+          EMPTY_REPOS=("automation" "contract" "hr-expense" "social" "spreadsheet")
+
+          fail=0
+          for conf in config/dev/odoo.conf config/prod/odoo.conf config/stage/odoo.conf; do
+            if [ ! -f "$conf" ]; then continue; fi
+            for repo in "${EMPTY_REPOS[@]}"; do
+              if grep -q "oca/$repo" "$conf" || grep -q "oca\\/$repo" "$conf"; then
+                echo "FAIL: $conf still contains empty repo '$repo' in addons_path"
+                fail=1
+              fi
+            done
+          done
+
+          if [ $fail -ne 0 ]; then
+            echo "Remove empty repos from addons_path — they have 0 modules and slow down module discovery."
+            exit 2
+          fi
+          echo "addons_path clean: no empty repos found."
+
+      - name: Validate SSOT oca_repos.yaml is current
+        run: |
+          set -euo pipefail
+          SSOT="ssot/odoo/oca_repos.yaml"
+          if [ ! -f "$SSOT" ]; then
+            echo "FAIL: $SSOT not found — run scan and create SSOT entry per docs/runbooks/OCA_PORTING.md"
+            exit 1
+          fi
+          echo "SSOT present: $SSOT"
+          # Validate YAML is parseable
+          python3 -c "import yaml; yaml.safe_load(open('$SSOT'))" && echo "SSOT YAML valid."
+
+      - name: Upload readiness artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oca-19-readiness
+          path: artifacts/
+          retention-days: 30
+
+      - name: Annotate blocked repos
+        if: always()
+        run: |
+          python3 - <<'PYEOF'
+          import json, sys
+          try:
+              with open("artifacts/oca_19_readiness.json") as f:
+                  report = json.load(f)
+          except FileNotFoundError:
+              sys.exit(0)
+
+          for r in report.get("repos", []):
+              if r["status"] in ("blocked", "empty"):
+                  for issue in r["issues"]:
+                      marker = "error" if r["status"] == "empty" else "warning"
+                      print(f"::{marker} title=OCA repo {r['status'].upper()}::{r['repo']}: {issue}")
+          PYEOF
