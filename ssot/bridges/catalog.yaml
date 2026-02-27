@@ -149,6 +149,12 @@ bridges:
       - supabase      # functions/llm-webhook-ingest (event ingestion)
     endpoints:
       - llm-webhook-ingest    # POST Supabase Edge Function — signed webhook delivery
+    activation_criteria:
+      - "Supabase migration applied: ops.runs, ops.run_events, ops.artifacts tables exist and ops.ingest_bridge_event() function is callable (SELECT routine_name FROM information_schema.routines WHERE routine_schema = 'ops')"
+      - "Edge Function deployed + HMAC verified: POST with valid X-Signature-256 header → HTTP 200; POST without header → HTTP 401"
+      - "Odoo module installs cleanly: ipai.bridge.config and ipai.bridge.event models registered, no outbound network calls during install (python odoo-bin --test-enable --test-tags ipai_llm_supabase_bridge -d odoo_dev)"
+      - "E2E event flow proven: tool.call event emitted from Odoo appears in ops.run_events; duplicate call with same idempotency_key produces exactly 1 row (SELECT COUNT(*) FROM ops.run_events WHERE idempotency_key = '<key>') = 1"
+      - "RLS verified: service_role reads all rows; authenticated role can only read rows WHERE created_by = auth.uid() (SELECT COUNT(*) AS own FROM ops.run_events WHERE created_by = auth.uid()) matches expected subset"
     notes: >
       Observability bridge connecting Apexive odoo-llm framework to Supabase ops.* schema.
       Hooks into llm_tool._execute() and llm_thread lifecycle to emit signed webhook events.
