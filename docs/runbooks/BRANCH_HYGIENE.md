@@ -49,24 +49,35 @@ before the PR is considered ready for review.**
 
 ---
 
-## Diagnosing "144 uncommitted changes" style warnings
+## Diagnosing "uncommitted changes" warnings from `gh pr create`
 
 `gh pr create` counts **all** untracked files (`??`) in the working tree, not
-just files changed on the current branch. A large monorepo with many in-progress
-local files will always produce this warning — it does **not** mean those files
-are in the PR diff.
+just files changed on the current branch. A large monorepo will always produce
+this warning — it does **not** automatically mean those files are in the PR diff.
+
+**Interpret `git status --short` output like this:**
+
+| Prefix | Meaning | Required action before PR |
+|--------|---------|---------------------------|
+| `??` | Untracked (never committed) | Safe if absent from PR diff — confirm with `git diff origin/main..HEAD` |
+| `M` | Tracked file modified | **Must** be committed (if intended) or `git restore`d (if accidental) |
+| `A` | Staged new file | **Must** be committed (if intended) or `git restore --staged` (if accidental) |
+| `D` | Tracked file deleted | **Must** be committed (if intended) or `git restore`d (if accidental) |
+
+**Rule: `M`/`A`/`D` entries are never safe to leave at PR open time.
+`??` entries are safe only after confirming the PR diff.**
 
 **Quick check:**
 ```bash
-# What is actually in the PR diff?
+# Ground truth — what will actually merge:
 git diff origin/main..HEAD --name-only
 
-# What is untracked (not in any commit)?
+# Tracked modifications (must be zero before merging):
+git status --short | grep -v '^??'
+
+# Untracked noise (safe if absent from PR diff):
 git status --short | grep '^??'
 ```
-
-The PR diff is the ground truth. Untracked files are local-only unless explicitly
-committed and pushed.
 
 ---
 
@@ -74,8 +85,11 @@ committed and pushed.
 
 | Scenario | Action |
 |----------|--------|
-| `??` files pre-date the branch | Ignore — not in PR diff |
-| `M` (modified tracked file) not intended | `git restore <file>` |
+| `??` files pre-date the branch | Confirm absent from PR diff — then safe to ignore |
+| `M` (modified tracked file) intended | `git add <file>` → commit → push |
+| `M` (modified tracked file) accidental | `git restore <file>` |
+| `A` (staged new file) accidental | `git restore --staged <file>` |
+| `D` (deleted tracked file) accidental | `git restore <file>` |
 | New work accidentally on wrong branch | `git stash` → checkout correct branch → `git stash pop` |
 | Large unrelated tree needs its own PR | `git checkout -b chore/cleanup-<scope>` → stage → commit → push → PR |
 
