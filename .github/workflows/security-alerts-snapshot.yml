@@ -1,0 +1,109 @@
+name: security-alerts-snapshot
+
+# Pulls GitHub Dependabot + Code Scanning alert counts, writes a snapshot,
+# compares against ssot/security/vuln_policy.yaml thresholds, and fails CI
+# if critical/high exceed thresholds without a valid (non-expired) exception.
+#
+# Triggers:
+#   - Daily schedule (catches drift between pushes)
+#   - PR (so contributors see violations before merge)
+#   - Manual dispatch
+#
+# Required secret:
+#   GITHUB_TOKEN — provided automatically by Actions (read:security_events scope needed)
+#
+# SSOT: ssot/security/vuln_policy.yaml
+# Snapshot: reports/security/github_alerts_snapshot.json
+# Runbook: docs/runbooks/SECURITY_GATES.md
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 02:00 UTC daily (10:00 Manila)
+  pull_request:
+    paths:
+      - 'ssot/security/vuln_policy.yaml'
+      - '.github/workflows/security-alerts-snapshot.yml'
+      - 'scripts/security/export_github_alerts_snapshot.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: read   # needed to read Dependabot + code scanning alerts
+  pull-requests: write    # needed to post PR comments
+
+jobs:
+  snapshot:
+    name: Security alerts snapshot + threshold check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML (for policy parsing)
+        run: pip install pyyaml --quiet
+
+      - name: Export snapshot + check thresholds
+        id: snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/security/export_github_alerts_snapshot.py \
+            2>&1 | tee /tmp/snapshot_output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-snapshot-${{ github.run_number }}
+          path: reports/security/github_alerts_snapshot.json
+          retention-days: 90
+
+      - name: Post PR comment (PR runs only)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let snapshotBody = '_(snapshot not generated)_';
+            try {
+              const snap = JSON.parse(fs.readFileSync('reports/security/github_alerts_snapshot.json', 'utf8'));
+              const dep = snap.dependabot.by_severity;
+              const cs  = snap.code_scanning.by_severity;
+              snapshotBody = [
+                '| Source | critical | high | medium/warning | low/note |',
+                '|--------|----------|------|----------------|----------|',
+                `| Dependabot | ${dep.critical||0} | ${dep.high||0} | ${dep.medium||0} | ${dep.low||0} |`,
+                `| Code scanning | ${cs.error||0} (error) | ${cs.warning||0} (warning) | ${cs.note||0} (note) | — |`,
+              ].join('\n');
+            } catch(e) {}
+
+            const output = fs.readFileSync('/tmp/snapshot_output.txt', 'utf8');
+            const passing = output.includes('✅ All thresholds pass');
+            const icon = passing ? '✅' : '❌';
+            const body = [
+              `## ${icon} Security Alerts Snapshot`,
+              '',
+              snapshotBody,
+              '',
+              passing
+                ? '_All thresholds pass (or covered by active exceptions in `ssot/security/vuln_policy.yaml`)_'
+                : '**Policy violations detected — see workflow log for details.**\n\nTo add an exception: edit `ssot/security/vuln_policy.yaml`. See `docs/runbooks/SECURITY_GATES.md`.',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+
+      - name: Fail if threshold violations found
+        if: steps.snapshot.outputs.exit_code != '0'
+        run: |
+          echo "Security policy violation. See snapshot output above."
+          echo "Edit ssot/security/vuln_policy.yaml to add a time-bounded exception."
+          exit 1
