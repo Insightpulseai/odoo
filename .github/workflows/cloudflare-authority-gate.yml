@@ -44,6 +44,59 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Python dependencies
+        run: pip install pyyaml --quiet
+
+      - name: DNS provider claim gate
+        id: provider_claims
+        run: |
+          python3 scripts/ci/check_dns_provider_claims.py \
+            2>&1 | tee /tmp/provider_claims_check.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: Post PR comment (provider claim failures)
+        if: steps.provider_claims.outputs.exit_code != '0' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LOG=$(cat /tmp/provider_claims_check.log 2>/dev/null || echo "Log unavailable")
+          {
+            echo '## DNS Provider Claim Gate - FAILED'
+            echo ''
+            echo 'One or more DNS records have `lifecycle: active` but an unclaimed `provider_claim`.'
+            echo 'This means Terraform would provision a CNAME that cannot resolve until the'
+            echo 'provider (e.g. Vercel) claims the domain.'
+            echo ''
+            echo '### Remediation'
+            echo ''
+            echo '**Option A — Keep `lifecycle: planned` until claimed** (safe, no DNS change):'
+            echo '1. Ensure the record has `lifecycle: planned` in `infra/dns/subdomain-registry.yaml`'
+            echo '2. Claim the domain in the provider dashboard (Vercel → Domains → Add custom domain)'
+            echo '3. Update `provider_claim.status: claimed` in the SSOT file'
+            echo '4. Change `lifecycle: active` in the same commit'
+            echo '5. Re-run this gate'
+            echo ''
+            echo '**Option B — Already claimed** (update SSOT to reflect reality):'
+            echo '1. Confirm the domain is claimed in the provider dashboard'
+            echo '2. Update `provider_claim.status: claimed` in `infra/dns/subdomain-registry.yaml`'
+            echo '3. The gate will pass on the next push'
+            echo ''
+            echo '---'
+            echo '*Check output:*'
+            echo '```'
+            echo "$LOG"
+            echo '```'
+          } > /tmp/claims_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/claims_comment.md
+
+      - name: Fail gate (provider claims not satisfied)
+        if: steps.provider_claims.outputs.exit_code != '0'
+        run: |
+          echo "::error::DNS provider claim gate failed — active records have unclaimed provider_claim."
+          echo "::error::See PR comment or /tmp/provider_claims_check.log for details."
+          exit 1
+
       - name: Install dig (dnsutils)
         run: sudo apt-get install -y dnsutils
 

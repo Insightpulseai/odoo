@@ -12,6 +12,24 @@
 #   - docs/architecture/runtime_identifiers.json
 #   - infra/dns/dns-validation-spec.json
 # =============================================================================
+#
+# lifecycle field (schema: ssot.dns.v1)
+# --------------------------------------
+# active  → Terraform provisions/maintains the record.
+# planned → Record is defined in SSOT but Terraform SKIPS it.
+#           Use for records awaiting provider onboarding (e.g., Vercel domain claim).
+#           Transition to active only after all provider_claim.status == "claimed".
+#
+# provider_claim field (optional)
+# --------------------------------
+# Required when the record cannot resolve correctly until an external provider
+# (e.g., Vercel) claims the domain. The CI gate script
+# scripts/ci/check_dns_provider_claims.py fails if lifecycle=active + status=unclaimed.
+#   provider: vercel | digitalocean | other
+#   project:  provider project/app identifier
+#   domain:   full custom hostname being claimed
+#   status:   unclaimed | claimed
+# =============================================================================
 
 version: "1.0"
 domain: insightpulseai.com
@@ -41,6 +59,7 @@ subdomains:
     owner_system: "Odoo CE 19.0"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
 
   - name: n8n
@@ -51,6 +70,7 @@ subdomains:
     owner_system: "n8n automation"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
 
   - name: ocr
@@ -61,6 +81,7 @@ subdomains:
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
 
   - name: auth
@@ -71,6 +92,7 @@ subdomains:
     owner_system: "Authentication service"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
 
   - name: superset
@@ -82,6 +104,7 @@ subdomains:
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
+    lifecycle: active
     status: active
 
   # ---------------------------------------------------------------------------
@@ -95,6 +118,7 @@ subdomains:
     owner_system: "MCP coordination (11 servers)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     drift_note: "Cloudflare currently has A record (178.128.112.214) — WRONG. Must be CNAME. Will be fixed on next Terraform apply."
 
@@ -109,6 +133,7 @@ subdomains:
     owner_system: "Redirect to apex"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
 
   - name: api
@@ -119,6 +144,7 @@ subdomains:
     owner_system: "API Gateway"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: planned
     status: planned
 
   # ---------------------------------------------------------------------------
@@ -132,8 +158,20 @@ subdomains:
     owner_system: "OdooOps Console (Next.js on Vercel)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    # lifecycle=planned: Terraform will NOT provision this record until
+    # provider_claim.status transitions to "claimed". To claim:
+    #   1. Go to Vercel project settings → Domains → Add ops.insightpulseai.com
+    #   2. Vercel confirms delegation (CNAME points to cname.vercel-dns.com)
+    #   3. Update provider_claim.status below to "claimed"
+    #   4. Change lifecycle to "active"
+    #   5. Commit → CI gate passes → Terraform applies the record
+    lifecycle: planned
     status: active
-    notes: "Vercel project: odooops-console (apps/ops-console). Add ops.insightpulseai.com in Vercel dashboard domains."
+    provider_claim:
+      provider: vercel
+      project: odooops-console
+      domain: ops.insightpulseai.com
+      status: unclaimed
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
@@ -146,6 +184,7 @@ subdomains:
     owner_system: "Odoo CE 19.0 (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -157,6 +196,7 @@ subdomains:
     owner_system: "API Gateway (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -168,6 +208,7 @@ subdomains:
     owner_system: "Authentication service (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -179,6 +220,7 @@ subdomains:
     owner_system: "MCP coordination (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -190,6 +232,7 @@ subdomains:
     owner_system: "n8n automation (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -201,6 +244,7 @@ subdomains:
     owner_system: "Apache Superset BI (staging)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
@@ -212,6 +256,7 @@ subdomains:
     owner_system: "PaddleOCR microservice (staging)"
     cloudflare_proxied: false
     tls_mode: "Full (strict)"
+    lifecycle: active
     status: active
     environment: staging
 
