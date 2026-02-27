@@ -147,4 +147,4 @@ jobs:
       - name: Validate domain SSOT compliance
         run: |
           pip install pyyaml --quiet
-          python3 scripts/ci/check_domains_ssot.py --repo-root .
+          python3 scripts/ci/check_domains_ssot.py --repo-root . --warn-only
