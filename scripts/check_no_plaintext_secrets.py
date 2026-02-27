@@ -36,6 +36,8 @@ Usage:
   python3 scripts/check_no_plaintext_secrets.py --all --no-fail
 """
 
+CONTRACT_VERSION = "1.1.0"  # Must match SECRETS_SSOT.md "Contract version:" line
+
 import argparse
 import os
 import re
