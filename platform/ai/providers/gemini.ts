@@ -14,9 +14,15 @@
 const DEFAULT_MODEL = "gemini-2.0-flash-preview";
 
 export interface GeminiTextResult {
+  provider: string;
   text: string;
   model: string;
   trace_id: string;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
 }
 
 /**
@@ -72,9 +78,21 @@ export async function generateText(prompt: string): Promise<GeminiTextResult> {
     data.candidates?.[0]?.content?.parts?.[0]?.text ??
     "No content returned from Gemini API";
 
+  // Extract usage metadata if available (Gemini returns usageMetadata)
+  const usageMeta = (data as any).usageMetadata;
+  const usage = usageMeta
+    ? {
+        prompt_tokens: usageMeta.promptTokenCount,
+        completion_tokens: usageMeta.candidatesTokenCount,
+        total_tokens: usageMeta.totalTokenCount,
+      }
+    : undefined;
+
   return {
+    provider: "gemini",
     text,
     model,
     trace_id: crypto.randomUUID(),
+    ...(usage && { usage }),
   };
 }
