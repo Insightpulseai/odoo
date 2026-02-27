@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-02-26T17:56:28Z",
+  "generated_at": "2026-02-27T00:55:01Z",
   "source": "infra/dns/subdomain-registry.yaml",
   "validation_rules": {
     "terraform_file": "infra/cloudflare/envs/prod/subdomains.auto.tfvars",
@@ -12,6 +12,6 @@
   "checksums": {
     "ssot_file": "efc2e71604ede571482f3d386c0158eb825d065042fbf37fb3585f8eff02ccaa",
     "terraform_file": "07d62c1423bfd36d04de5fa7a0b2f3c91b0fce5ee0a12ef19e3ebc590b406694",
-    "runtime_file": "0e4f2ba963f629e57da8617914e95fa702fcb6bdd790e01bc97795e4a8b4fced"
+    "runtime_file": "bf7be0af3225c5c48a6ed1739e0cb069a3a284376fdd55d4fd9652601bf92d76"
   }
 }
