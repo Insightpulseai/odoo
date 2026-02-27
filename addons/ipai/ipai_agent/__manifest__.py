@@ -41,6 +41,7 @@ Endpoint URL and HMAC secret live in ir.config_parameter, never hardcoded.
         "security/ir.model.access.csv",
         "data/ir_sequence.xml",
         "data/ir_cron.xml",
+        "data/activity_types.xml",
         "views/agent_run_views.xml",
         "views/agent_tool_views.xml",
         "views/agent_policy_views.xml",
