@@ -1,5 +1,7 @@
 import SupabaseManagerClient from './supabase-manager-client'
 
+export const dynamic = "force-dynamic"
+
 export default function DatabasePage() {
   const projectRef = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_REF ?? ''
   return (
