@@ -95,8 +95,6 @@ git status --short | grep '^??'
 
 ---
 
----
-
 ## Automated Branch Pruning
 
 ### Safety model (two locks)
