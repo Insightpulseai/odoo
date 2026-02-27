@@ -228,6 +228,30 @@ class HrExpenseLiquidation(models.Model):
                 record.settlement_amount = 0.0
                 record.settlement_status = "balanced"
 
+    @api.constrains("employee_id", "company_id")
+    def _check_linked_expenses_scope(self):
+        """
+        Guard against cross-entity drift: any hr.expense records that reference
+        this liquidation must share the same employee and company.
+        Called on create/write of employee_id or company_id.
+        """
+        for rec in self:
+            linked = self.env["hr.expense"].search(
+                [("cash_advance_liquidation_id", "=", rec.id)], limit=50
+            )
+            bad_emp = linked.filtered(lambda e: e.employee_id != rec.employee_id)
+            if bad_emp:
+                raise ValidationError(_(
+                    "Expense(s) '%s' belong to a different employee "
+                    "and cannot be linked to this liquidation (%s)."
+                ) % (", ".join(bad_emp.mapped("name")), rec.employee_id.name))
+            bad_company = linked.filtered(lambda e: e.company_id != rec.company_id)
+            if bad_company:
+                raise ValidationError(_(
+                    "Expense(s) '%s' belong to a different company "
+                    "and cannot be linked to this liquidation."
+                ) % ", ".join(bad_company.mapped("name")))
+
     @api.model
     def create(self, vals):
         if vals.get("name", _("New")) == _("New"):
