@@ -1,0 +1,120 @@
+# =============================================================================
+# Cloudflare DNS Records — insightpulseai.com
+# =============================================================================
+# SSOT for all Cloudflare zone records for the insightpulseai.com zone.
+# Edit this file, never edit Cloudflare UI directly.
+#
+# Drift check: scripts/ci/verify_cloudflare_dns_drift.py
+# CI gate:     .github/workflows/cloudflare-dns-drift.yml
+# Runbook:     docs/ops/CLOUDFLARE_DNS_SSOT.md
+# =============================================================================
+
+zone:
+  name: insightpulseai.com
+  id: 73f587aee652fc24fd643aec00dcca81
+  account_id: dadf50a41a8bb4c0d0bbbb15681a53af
+
+records:
+  # ─── A Records (Proxied → 178.128.112.214) ─────────────────────────────────
+  # Cloudflare proxy ("orange cloud") — HTTP/HTTPS termination at Cloudflare edge.
+  # All traffic goes through Cloudflare before reaching origin (178.128.112.214).
+  # Apps behind proxy MUST be configured for reverse-proxy mode (see runbook).
+
+  - type: A
+    name: "@"
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1           # "1" = Auto (Cloudflare proxied records ignore TTL)
+    comment: "Apex — insightpulseai.com (proxied)"
+
+  - type: A
+    name: www
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "www.insightpulseai.com (proxied)"
+
+  - type: A
+    name: erp
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "erp.insightpulseai.com → Odoo ERP (proxied)"
+
+  - type: A
+    name: n8n
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "n8n.insightpulseai.com → n8n automation (proxied)"
+
+  - type: A
+    name: mcp
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "mcp.insightpulseai.com → MCP coordination (proxied)"
+
+  - type: A
+    name: auth
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "auth.insightpulseai.com → Authentication service (proxied)"
+
+  - type: A
+    name: superset
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "superset.insightpulseai.com → Apache Superset BI (proxied)"
+
+  # ─── MX Records (DNS-only) ─────────────────────────────────────────────────
+  # Email records MUST be DNS-only (no proxy). Cloudflare does not proxy SMTP.
+
+  - type: MX
+    name: "@"
+    content: mx.zoho.com
+    priority: 10
+    proxied: false
+    ttl: 3600
+    comment: "Zoho Mail primary MX"
+
+  - type: MX
+    name: "@"
+    content: mx2.zoho.com
+    priority: 20
+    proxied: false
+    ttl: 3600
+    comment: "Zoho Mail secondary MX"
+
+  - type: MX
+    name: "@"
+    content: mx3.zoho.com
+    priority: 50
+    proxied: false
+    ttl: 3600
+    comment: "Zoho Mail tertiary MX"
+
+  # ─── TXT Records (DNS-only) ────────────────────────────────────────────────
+
+  - type: TXT
+    name: "@"
+    content: "v=spf1 include:zohomail.com ~all"
+    proxied: false
+    ttl: 3600
+    comment: "SPF — authorize Zoho to send for insightpulseai.com"
+
+  - type: TXT
+    name: "_dmarc"
+    content: "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@insightpulseai.com"
+    proxied: false
+    ttl: 3600
+    comment: "DMARC — quarantine failures; aggregate reports to dmarc-reports@"
+
+  - type: TXT
+    name: "zoho._domainkey"
+    content: "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmFj2PpxreN9r4Dv8DGdNpqc7VPsbAlDQh64jyTl78NCuXU4bAPHC2JCgeQkSnoxBH19Keewr62iRcsBNnHrz8HwgkbTg8ZwooC+Bd18Z9M4ZSwBD1IK53/lUKPMHmBAPoamo2COYKG+hmRvtxeJa3ZuX1Z9Hc2hYULEXg3pus9Su34FfD/GYb43ZaqSFqth4Qt14jOfBbX4lqAZJop2iwKRQCX00CBKugVHs/heVGnsBNKIqYMVgM9gtI0P2H81gxDlvisygCQVuuEHLHVmsx0UGBL+z3b4bMvaReWY66Otv2tUKP2rOssZCx9ZbtMrPJgx2xYv/tvtoQDi9A2pGBQIDAQAB"
+    proxied: false
+    ttl: 3600
+    comment: "Zoho DKIM public key — zoho._domainkey.insightpulseai.com"
