@@ -4,7 +4,7 @@
 > If a path is not listed here, it is either ephemeral (not committed) or must be added
 > with an explicit SSOT assignment before any agent may write to it.
 >
-> Last updated: 2026-02-21
+> Last updated: 2026-02-27
 
 ---
 
@@ -103,6 +103,8 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | `infra/dns/dns-validation-spec.json`                | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
 | `infra/dns/subdomain-registry.yaml`                 | Git                   | (original)                          | —                                       |
 | `packages/design-tokens/tokens.json`                | **Generated**         | Figma file                          | `scripts/design/export_tokens.sh`       |
+| `ssot/odoo/settings_catalog.yaml`                   | **Generated**         | Live Odoo 19 CE instance            | `scripts/odoo/extract_settings_catalog.py` |
+| `ssot/runtime/prod_settings.yaml`                   | Git                   | (original)                          | —                                       |
 | `supabase/config.toml`                              | Git                   | (original)                          | —                                       |
 | `supabase/migrations/*.sql`                         | Git                   | (original)                          | —                                       |
 | `supabase/functions/**`                             | Git                   | (original)                          | —                                       |
