@@ -106,11 +106,24 @@ auth:
         enabled: true
         mode: portal        # portal | internal (default portal for external users)
         link_key: supabase_user_id   # field on res.partner that links to Supabase identity
+  mfa:
+    # MFA belongs to the IdP (Supabase). Odoo TOTP is explicitly disabled to
+    # prevent a parallel MFA system that would allow users to bypass Supabase MFA
+    # depending on which entrypoint they use.
+    enforcement: optional          # optional | required (flip required when rollout complete)
+    provider: supabase             # must remain supabase while identity_sor=supabase
+    totp:
+      enabled: true
+      required: false              # flip true when ready to enforce for all users
+      issuer_label: "InsightPulseAI"
+    odoo_totp:
+      enabled: false               # explicit: Odoo's own TOTP module must not be activated
   #
   # Downstream contracts:
   #   - Supabase tables: orgs, org_members, roles (RLS enforced)
   #   - Odoo: res.partner.supabase_user_id = Supabase UUID (set by provisioning bridge post-login)
   #   - No standalone Odoo-only identity for cross-app users; service accounts are exempt
+  #   - "Is TOTP set up?" = "Is the user enrolled in Supabase MFA?" — not Odoo 2FA
   # Platform rule reference: ssot-platform.md — Rule 9: Odoo is relying party, Supabase is IdP
 
 # ---------------------------------------------------------------------------
