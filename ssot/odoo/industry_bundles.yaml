@@ -1,0 +1,137 @@
+# ssot/odoo/industry_bundles.yaml
+#
+# Authoritative mapping of Odoo "Industry" pages to CE + OCA equivalents.
+# Each bundle defines the required CE core modules and OCA replacements
+# for a given industry vertical.
+#
+# Schema: ssot.odoo.industry_bundles.v1
+# Validator: scripts/ci/check_industry_bundles.py
+# Usage:
+#   # Validate SSOT schema only (CI gate):
+#   python3 scripts/ci/check_industry_bundles.py
+#
+#   # Audit live Odoo against a bundle (requires ODOO_* env vars):
+#   python3 scripts/ci/check_industry_bundles.py --mode audit --bundle photography
+#
+# Rule: DO NOT add modules to ce_core unless they exist in Odoo CE 19.
+# Rule: oca_replacements entries must map to OCA repos we actually vendor
+#       (addons/oca/ or approved via orphan_addons_allowlist).
+# Rule: oca_extensions are optional OCA enhancements — missing = warning only.
+#
+schema: ssot.odoo.industry_bundles.v1
+version: "1.0"
+
+notes:
+  - "Odoo Industry pages bundle standard apps + preconfigured templates."
+  - "The CE+OCA stack here is the open-source equivalent baseline."
+  - "Refs: https://www.odoo.com/industries/{slug}"
+  - "EE-only features (Documents, Social Marketing, Gamification) are replaced by OCA."
+
+bundles:
+
+  # ── Photography ────────────────────────────────────────────────────────────
+  - slug: photography
+    label: "Photography Studio"
+    odoo_industry_url: https://www.odoo.com/industries/photography
+    # Modules that MUST be installed for this bundle to be considered active.
+    # All are Odoo CE 19 core modules.
+    ce_core:
+      - name: website
+        reason: "Site builder — booking forms, portfolio pages"
+      - name: crm
+        reason: "Lead pipeline for new enquiries"
+      - name: sale_management
+        reason: "Quotations → orders for shoots and packages"
+      - name: project
+        reason: "Shoots/jobs as projects + tasks (delivery tracking)"
+      - name: account
+        reason: "Invoicing, AR/AP, payment matching"
+    # OCA modules that replace EE-only features.
+    # Missing = FAIL when mode=audit with --strict-oca.
+    oca_replacements:
+      - name: dms
+        replaces_ee: documents
+        oca_repo: OCA/dms
+        reason: "Odoo Documents is EE; OCA DMS handles contracts/briefs/deliverables"
+    # Optional OCA enhancements — missing = WARNING only.
+    oca_extensions:
+      - name: project_task_default_stage
+        oca_repo: OCA/project
+        reason: "Default stages per project type — useful for shoot workflows"
+      - name: sale_order_line_description
+        oca_repo: OCA/sale-workflow
+        reason: "Cleaner quotation line descriptions for shoot packages"
+
+  # ── Marketing Agency ───────────────────────────────────────────────────────
+  - slug: marketing-agency
+    label: "Marketing Agency"
+    odoo_industry_url: https://www.odoo.com/industries/marketing-agency
+    ce_core:
+      - name: crm
+        reason: "Client pipeline and opportunity management"
+      - name: sale_management
+        reason: "Service quotations, retainers, campaign packages"
+      - name: project
+        reason: "Campaigns and deliverables as projects/tasks"
+      - name: hr_timesheet
+        reason: "Time tracking against campaigns and retainers"
+      - name: sale_timesheet
+        reason: "Billable time from timesheets → invoices"
+      - name: account
+        reason: "Invoicing, retainer billing, revenue recognition"
+      - name: website
+        reason: "Agency website / portfolio"
+    oca_replacements:
+      - name: dms
+        replaces_ee: documents
+        oca_repo: OCA/dms
+        reason: "Creative briefs, assets, deliverables — OCA DMS replaces EE Documents"
+    oca_extensions:
+      - name: sale_order_line_description
+        oca_repo: OCA/sale-workflow
+        reason: "Rich service line descriptions on client proposals"
+      - name: project_milestone
+        oca_repo: OCA/project
+        reason: "Campaign milestone tracking"
+      # Social Marketing note: Odoo Social Marketing is EE.
+      # OCA/social has partial connectors; most agencies keep social scheduling
+      # external (Buffer, Hootsuite) and sync outcomes back into CRM/Project.
+      # No required oca_replacements entry — flag as known gap.
+
+  # ── Odoo Partner ───────────────────────────────────────────────────────────
+  - slug: odoo-partner
+    label: "Odoo Partner / Consultancy"
+    odoo_industry_url: https://www.odoo.com/industries/odoo-partner
+    ce_core:
+      - name: crm
+        reason: "Partner pipeline — leads, opportunities, partner success tracking"
+      - name: sale_management
+        reason: "Service quotes, success packs, SOW-based orders"
+      - name: sale_project
+        reason: "Auto-create project/tasks on sale order confirmation"
+      - name: project
+        reason: "Implementation projects, tasks, milestones"
+      - name: hr_timesheet
+        reason: "Billable consulting hours on tasks"
+      - name: sale_timesheet
+        reason: "Billable hours → invoice lines"
+      - name: account
+        reason: "Invoicing, time-and-materials billing, AR/AP"
+    oca_replacements:
+      - name: dms
+        replaces_ee: documents
+        oca_repo: OCA/dms
+        reason: "SOWs, project docs, deliverables — OCA DMS replaces EE Documents"
+    oca_extensions:
+      - name: sale_product_set
+        oca_repo: OCA/sale-workflow
+        reason: "Predefined service bundles / success pack templates"
+      - name: sale_order_line_description
+        oca_repo: OCA/sale-workflow
+        reason: "Rich descriptions on success pack quotation lines"
+      - name: project_task_default_stage
+        oca_repo: OCA/project
+        reason: "Default implementation stages per project type"
+      # Note: Odoo Partner "quote calculator" + ROI templates are proprietary UX.
+      # Recommendation: thin ipai_service_catalog module (custom IPAI layer).
+      # Note: Timesheet leaderboard/gamification = EE-only; no OCA equivalent.
