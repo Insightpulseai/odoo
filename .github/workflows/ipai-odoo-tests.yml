@@ -1,0 +1,83 @@
+name: IPAI Odoo Layer-2 Bridge Tests
+
+# Runs Layer-2 (Odoo TransactionCase) tests for the two highest-risk bridge modules:
+#   - ipai_mail_bridge_zoho  (B1–B6)
+#   - ipai_slack_connector   (S1–S5)
+#
+# Scope: path-filtered to only run when these modules or this workflow change.
+# Strategy: shallow Odoo 19 clone + postgres:16 service + run_odoo_tests.sh
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/ipai_mail_bridge_zoho/**'
+      - 'addons/ipai/ipai_slack_connector/**'
+      - '.github/workflows/ipai-odoo-tests.yml'
+      - 'scripts/ci/run_odoo_tests.sh'
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/ipai/ipai_mail_bridge_zoho/**'
+      - 'addons/ipai/ipai_slack_connector/**'
+  merge_group:
+
+jobs:
+  bridge-layer2-tests:
+    name: Layer-2 bridge tests (Zoho mail + Slack)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Odoo CE 19 (shallow clone)
+        run: |
+          git clone https://github.com/odoo/odoo.git /opt/odoo \
+            --branch 19.0 --depth 1 --quiet
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py312-odoo19-pip-v1
+          restore-keys: |
+            ${{ runner.os }}-py312-odoo19-pip-
+
+      - name: Install Python dependencies
+        run: pip install -r /opt/odoo/requirements.txt --quiet
+
+      - name: Run bridge Layer-2 tests
+        env:
+          ODOO_BIN: /opt/odoo/odoo-bin
+          DB_NAME: odoo_test
+          TEST_TAGS: ipai_mail_bridge_zoho,ipai_slack_connector
+          ODOO_MODULES: ipai_mail_bridge_zoho,ipai_slack_connector
+          ADDONS_PATH: "${{ github.workspace }}/addons/ipai,/opt/odoo/addons"
+          LOG_LEVEL: test
+        run: |
+          bash scripts/ci/run_odoo_tests.sh \
+            --db_host 127.0.0.1 \
+            --db_port 5432 \
+            --db_user odoo \
+            --db_password odoo
