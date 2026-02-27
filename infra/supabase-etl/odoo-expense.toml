@@ -1,10 +1,17 @@
 # Supabase ETL — Odoo Expense CDC Publication
-# Streams INSERT/UPDATE/DELETE from Odoo Postgres to analytics destination.
+# Streams INSERT/UPDATE/DELETE from Odoo Postgres to Apache Iceberg.
 # Docs: https://supabase.github.io/etl
 #
 # Required env vars:
-#   ODOO_PG_CDC_URL   — postgres://odoo_cdc:<pw>@<host>:5432/odoo?sslmode=require
-#   BQ_PROJECT_ID     — BigQuery project ID (swap to ICEBERG_CATALOG_URI when ready)
+#   ODOO_PG_CDC_URL            — postgres://odoo_cdc:<pw>@<host>:5432/odoo?sslmode=require
+#   ICEBERG_CATALOG_URI        — REST catalog URI (e.g. https://catalog.insightpulseai.com)
+#   ICEBERG_WAREHOUSE          — warehouse root (e.g. s3://ipai-warehouse/odoo)
+#   ICEBERG_NAMESPACE          — target namespace (odoo_ops)
+#   ICEBERG_S3_ENDPOINT        — DO Spaces or MinIO endpoint (e.g. https://sgp1.digitaloceanspaces.com)
+#   ICEBERG_REGION             — S3 region (e.g. sgp1)
+#   ICEBERG_ACCESS_KEY_ID      — S3 access key (DO Spaces key)
+#   ICEBERG_SECRET_ACCESS_KEY  — S3 secret key
+#   ICEBERG_S3_PATH_STYLE      — true (required for MinIO/DO Spaces)
 #
 # Prereqs on Odoo Postgres (run once):
 #   ALTER SYSTEM SET wal_level = 'logical';
@@ -20,9 +27,15 @@ slot_name          = "odoo_expense_etl_slot"
 publication        = "odoo_expense_pub"
 
 [destination]
-type       = "bigquery"
-project_id = "${BQ_PROJECT_ID}"
-dataset    = "odoo_ops"
+type               = "iceberg"
+catalog_uri        = "${ICEBERG_CATALOG_URI}"
+warehouse          = "${ICEBERG_WAREHOUSE}"
+namespace          = "${ICEBERG_NAMESPACE}"
+s3_endpoint        = "${ICEBERG_S3_ENDPOINT}"
+region             = "${ICEBERG_REGION}"
+access_key_id      = "${ICEBERG_ACCESS_KEY_ID}"
+secret_access_key  = "${ICEBERG_SECRET_ACCESS_KEY}"
+s3_path_style      = "${ICEBERG_S3_PATH_STYLE}"
 
 [[table]]
 source      = "hr_expense"
@@ -33,9 +46,10 @@ source      = "hr_expense_sheet"
 destination = "expense_sheet"
 
 [[table]]
+# Metadata-only: binary 'datas' column MUST be excluded in the Iceberg table schema.
+# Map to expense_attachment_meta to make the metadata-only intent explicit.
 source      = "ir_attachment"
-destination = "expense_attachment"
-# Note: exclude binary 'datas' column in destination schema definition
+destination = "expense_attachment_meta"
 
 [[table]]
 source      = "ipai_expense_ocr_run"

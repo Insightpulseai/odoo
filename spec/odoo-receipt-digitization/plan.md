@@ -35,8 +35,8 @@ Employee uploads JPEG receipt
   (odoo_expense_pub publication)
         │
         ▼
-  BigQuery / Iceberg destination
-  Tables: expense, expense_sheet, expense_attachment, expense_ocr_run
+  Iceberg destination (DO Spaces / MinIO)
+  Tables: expense, expense_sheet, expense_attachment_meta, expense_ocr_run
 ```
 
 ---
@@ -203,9 +203,15 @@ slot_name          = "odoo_expense_etl_slot"
 publication        = "odoo_expense_pub"
 
 [destination]
-type       = "bigquery"     # swap to "iceberg" when catalog is ready
-project_id = "${BQ_PROJECT_ID}"
-dataset    = "odoo_ops"
+type               = "iceberg"
+catalog_uri        = "${ICEBERG_CATALOG_URI}"
+warehouse          = "${ICEBERG_WAREHOUSE}"
+namespace          = "${ICEBERG_NAMESPACE}"
+s3_endpoint        = "${ICEBERG_S3_ENDPOINT}"
+region             = "${ICEBERG_REGION}"
+access_key_id      = "${ICEBERG_ACCESS_KEY_ID}"
+secret_access_key  = "${ICEBERG_SECRET_ACCESS_KEY}"
+s3_path_style      = "${ICEBERG_S3_PATH_STYLE}"
 
 [[table]]
 source      = "hr_expense"
@@ -216,9 +222,9 @@ source      = "hr_expense_sheet"
 destination = "expense_sheet"
 
 [[table]]
+# Metadata-only — binary datas column excluded from Iceberg schema
 source      = "ir_attachment"
-destination = "expense_attachment"
-# Note: binary (datas) column excluded via destination schema
+destination = "expense_attachment_meta"
 
 [[table]]
 source      = "ipai_expense_ocr_run"
@@ -230,7 +236,14 @@ destination = "expense_ocr_run"
 | Secret | Where | Purpose |
 |--------|-------|---------|
 | `ODOO_PG_CDC_URL` | GitHub Actions + runtime | `postgres://odoo_cdc:<pw>@<host>:5432/odoo?sslmode=require` |
-| `BQ_PROJECT_ID` | GitHub Actions + runtime | BigQuery destination project |
+| `ICEBERG_CATALOG_URI` | GitHub Actions + runtime | REST catalog endpoint |
+| `ICEBERG_WAREHOUSE` | GitHub Actions + runtime | S3 warehouse root path |
+| `ICEBERG_NAMESPACE` | GitHub Actions + runtime | Target namespace (`odoo_ops`) |
+| `ICEBERG_S3_ENDPOINT` | GitHub Actions + runtime | DO Spaces / MinIO endpoint |
+| `ICEBERG_REGION` | GitHub Actions + runtime | S3 region (`sgp1`) |
+| `ICEBERG_ACCESS_KEY_ID` | GitHub Actions + runtime | S3 access key |
+| `ICEBERG_SECRET_ACCESS_KEY` | GitHub Actions + runtime | S3 secret key |
+| `ICEBERG_S3_PATH_STYLE` | GitHub Actions + runtime | `true` (DO Spaces / MinIO) |
 
 ### Deployment
 

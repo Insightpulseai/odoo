@@ -33,9 +33,9 @@ All tasks within `addons/ipai/ipai_expense_ocr/`.
 | 2.3 | Create read-only replication user: `CREATE ROLE odoo_cdc REPLICATION LOGIN PASSWORD '...';` + grant SELECT on expense tables | SQL | `\du odoo_cdc` shows REPLICATION |
 | 2.4 | Create publication: `CREATE PUBLICATION odoo_expense_pub FOR TABLE hr_expense, hr_expense_sheet, ir_attachment, ipai_expense_ocr_run;` | SQL | `\dRp` lists `odoo_expense_pub` |
 | 2.5 | Create `infra/supabase-etl/odoo-expense.toml` | NEW | `supabase-etl validate infra/supabase-etl/odoo-expense.toml` exits 0 |
-| 2.6 | Add GitHub Actions secrets: `ODOO_PG_CDC_URL`, `BQ_PROJECT_ID` (or `ICEBERG_CATALOG_URI`) | GitHub UI | `gh secret list \| grep ODOO_PG_CDC_URL` |
+| 2.6 | Add GitHub Actions secrets: `ODOO_PG_CDC_URL`, `ICEBERG_CATALOG_URI`, `ICEBERG_WAREHOUSE`, `ICEBERG_NAMESPACE`, `ICEBERG_S3_ENDPOINT`, `ICEBERG_REGION`, `ICEBERG_ACCESS_KEY_ID`, `ICEBERG_SECRET_ACCESS_KEY`, `ICEBERG_S3_PATH_STYLE` | GitHub UI | `gh secret list \| grep ICEBERG_CATALOG_URI` |
 | 2.7 | Create `.github/workflows/supabase-etl-expense.yml` — deploys ETL worker on DO App Platform | NEW | Workflow runs, worker starts |
-| 2.8 | Integration test: insert test expense in `odoo_dev` → confirm row appears in destination within 60s | — | Destination query returns inserted row |
+| 2.8 | Integration test: insert test expense in `odoo_dev` → confirm Iceberg snapshot advances and row is queryable within 60s | — | `SELECT * FROM odoo_ops.expense ORDER BY id DESC LIMIT 1` via Iceberg query engine returns inserted row; snapshot ID has incremented |
 
 ---
 
