@@ -12,6 +12,7 @@ sources:
   contributing: "https://www.odoo.com/documentation/19.0/contributing/"
   administration: "https://github.com/odoo/documentation/tree/19.0/content/administration"
   documentation: "https://github.com/odoo/documentation"
+  vercel_agent_skills: "https://github.com/vercel-labs/agent-skills"
 expected:
   finance:
     accounting: ["odoo19/accounting"]
@@ -88,3 +89,10 @@ expected:
     administration: ["odoo19/administration"]
   documentation:
     documentation: ["odoo19/documentation"]
+  vercel_agent_skills:
+    base: ["vercel-agent-skills/base"]
+    browser: ["vercel-agent-skills/browser"]
+    desktop: ["vercel-agent-skills/desktop"]
+    mcp: ["vercel-agent-skills/mcp"]
+    office: ["vercel-agent-skills/office"]
+    os: ["vercel-agent-skills/os"]
