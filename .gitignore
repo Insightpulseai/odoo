@@ -159,6 +159,7 @@ parity_report.json
 # Exception: Claude external memory
 !.claude/project_memory.db
 .claude/settings.local.json
+.claude/worktrees/
 # DB Inventory tool output
 tools/db-inventory/output/
 .env.smtp
