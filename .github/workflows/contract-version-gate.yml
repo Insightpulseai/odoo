@@ -1,0 +1,39 @@
+name: contract-version-gate
+
+# Verifies that "Contract version: X.Y.Z" lines in three runbook/arch docs
+# match their authoritative code/manifest artifact versions.
+# Fails if any version line has drifted (exit 1) or cannot be parsed (exit 2).
+#
+# Authoritative sources:
+#   docs/architecture/ODOO_SH_EQUIVALENT.md
+#       → scripts/odoo_neutralize.py  __version__
+#   docs/runbooks/SECRETS_SSOT.md
+#       → scripts/check_no_plaintext_secrets.py  CONTRACT_VERSION
+#   docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+#       → ssot/go_live/odoo19_checklist.manifest.yaml  version
+#
+# Gate script: scripts/ci/check_contract_versions.py
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  merge_group:
+
+jobs:
+  contract-versions:
+    name: Contract version drift check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pyyaml
+        run: pip install --quiet pyyaml
+
+      - name: Check contract versions
+        run: python3 scripts/ci/check_contract_versions.py
