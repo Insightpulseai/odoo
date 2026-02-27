@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, "dark")} suppressHydrationWarning>
+      <body className={cn(inter.className)} suppressHydrationWarning>
         <Providers>
           <div className="flex min-h-screen bg-transparent">
             <Sidebar />
@@ -33,23 +33,23 @@ export default function RootLayout({
             {/* Main Content */}
             <main className="flex-1 lg:ml-64 min-h-screen">
               {/* Top Bar */}
-              <header className="h-16 glass border-b border-white/5 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
+              <header className="h-16 glass border-b border-border flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40">
                 <div className="flex items-center space-x-4 flex-1 ml-12 lg:ml-0">
                   <div className="relative max-w-md w-full">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <input
                       type="text"
                       placeholder="Search infra, modules, logs..."
-                      className="w-full bg-white/5 border border-white/5 rounded-full py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-medium"
+                      className="w-full bg-black/5 border border-border rounded-full py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-medium"
                     />
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">
-                  <button className="relative text-muted-foreground hover:text-white transition-colors">
+                  <button className="relative text-muted-foreground hover:text-foreground transition-colors">
                     <Bell className="h-4 w-4" />
                     <span className="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full border border-background" />
                   </button>
-                  <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center border border-white/5 hover:border-white/20 transition-all cursor-pointer">
+                  <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center border border-border hover:border-primary/30 transition-all cursor-pointer">
                     <User className="h-4 w-4" />
                   </div>
                 </div>

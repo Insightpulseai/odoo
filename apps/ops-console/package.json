@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "3.0.33",
+    "@google/generative-ai": "0.24.1",
     "@hookform/resolvers": "3.10.0",
     "@monaco-editor/react": "4.7.0",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -29,6 +31,10 @@
     "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-query": "5.90.21",
     "@tanstack/react-table": "8.21.3",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/otel": "^1.14.0",
+    "@vercel/speed-insights": "^1.2.0",
+    "ai": "6.0.103",
     "axios": "1.13.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -49,8 +55,6 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "1.1.2",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
     "zod": "3.25.76"
   },
   "engines": {
