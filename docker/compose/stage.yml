@@ -19,6 +19,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=odoo_stage
       - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
+      - IPAI_ENV=stage
     restart: unless-stopped
 
 volumes:

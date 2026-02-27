@@ -179,3 +179,18 @@ Features within a Tier are gated:
 - T4 features can start in parallel with T3 (no shared dependencies)
 
 Phase status is tracked in `spec/supabase-maximization/plan.md`.
+
+---
+
+## Analytics Plane — CI Enforcement Map
+
+| Acceptance criterion | Enforced by | Exact artifact |
+|----------------------|-------------|----------------|
+| EL-only invariant (no transform/aggregate/derived in ETL config) | Pre-deploy lint step | `.github/workflows/supabase-etl-expense.yml` job `etl-lint` |
+| DuckDB Iceberg smoke: row_count > 0 AND lag < 60s (T2-8) | CI-blocking smoke step | `.github/workflows/supabase-etl-expense.yml` job `iceberg-smoke` |
+| Smoke script exits 0 = PASS, non-zero = FAIL | Shell contract | `scripts/ci/check_iceberg_etl_smoke.sh` |
+| All `ICEBERG_*` env vars registered (names, not values) | Vault-first rule | `ssot/secrets/registry.yaml` |
+| Pipeline health events surfaced in `ops.run_events` | Edge Function | `supabase/functions/webhook-ingest/index.ts` |
+
+Workflow reference: `.github/workflows/supabase-etl-expense.yml`
+Script reference: `scripts/ci/check_iceberg_etl_smoke.sh`
