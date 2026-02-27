@@ -1,0 +1,52 @@
+name: settings-catalog-gate
+
+on:
+  pull_request:
+    paths:
+      - "ssot/odoo/settings_catalog.yaml"
+      - "scripts/odoo/extract_settings_catalog.py"
+      - "scripts/ci/check_settings_catalog.py"
+      - ".github/workflows/settings-catalog-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/odoo/settings_catalog.yaml"
+      - "scripts/odoo/extract_settings_catalog.py"
+      - "scripts/ci/check_settings_catalog.py"
+      - ".github/workflows/settings-catalog-gate.yml"
+  merge_group:
+
+jobs:
+  schema-validate:
+    name: settings-catalog-schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate settings catalog schema and ordering
+        run: python3 scripts/ci/check_settings_catalog.py --repo-root .
+
+  live-drift:
+    name: settings-catalog-live-drift
+    runs-on: ubuntu-latest
+    # Only run live drift check when explicitly enabled via env
+    if: ${{ vars.SETTINGS_CATALOG_LIVE == '1' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Live drift check against Odoo instance
+        env:
+          ODOO_URL: ${{ secrets.ODOO_URL }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          ODOO_ADMIN_LOGIN: ${{ secrets.ODOO_ADMIN_LOGIN }}
+          ODOO_ADMIN_PASSWORD: ${{ secrets.ODOO_ADMIN_PASSWORD }}
+          SETTINGS_CATALOG_LIVE: "1"
+        run: python3 scripts/ci/check_settings_catalog.py --repo-root . --live
