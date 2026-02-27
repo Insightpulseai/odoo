@@ -17,6 +17,22 @@ version: "1.0.0"
 schema: ssot.parity.ee_to_oca.v1
 last_reviewed: "2026-02-27"
 
+schema_rules:
+  required_fields:
+    - ee_feature
+    - ee_module
+    - gap_type        # oca_available | ipai_bridge | no_alternative
+    - status          # active | planned | evaluating | gap
+  gap_type_values:
+    - oca_available
+    - ipai_bridge
+    - no_alternative
+  status_values:
+    - active
+    - planned
+    - evaluating
+    - gap
+
 entries:
   - ee_feature: "mail.enterprise (Discuss module enhancements)"
     ee_module: mail_enterprise
