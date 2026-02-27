@@ -1,16 +1,22 @@
 {
   "version": "0.2.0",
   "configurations": [
+    // =========================================================================
+    // 1. Launch local (inside DevContainer — starts Odoo directly via debugpy)
+    // =========================================================================
+    // Pre-requisites: running inside the DevContainer (workspaceFolder = /workspaces/odoo)
+    // Odoo executable installed at /usr/bin/odoo in the official Docker image.
     {
       "name": "Odoo (Launch local)",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/odoo-bin",
+      "program": "/usr/bin/odoo",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "args": [
-        "-c", "${workspaceFolder}/config/dev/odoo.conf",
-        "-d", "odoo_dev",
+        "--config=${workspaceFolder}/config/dev/odoo.conf",
+        "--database=odoo_dev",
+        "--workers=0",
         "--dev=xml,qweb,werkzeug"
       ],
       "justMyCode": false,
@@ -18,6 +24,14 @@
         "PYTHONUNBUFFERED": "1"
       }
     },
+
+    // =========================================================================
+    // 2. Attach — DevContainer (Odoo running inside the devcontainer via entrypoint)
+    // =========================================================================
+    // Pre-requisites:
+    //   • Container started with IPAI_DEBUGPY=1 (set in .env or shell)
+    //   • Port 5678 forwarded (devcontainer.json forwardPorts already includes it)
+    // pathMappings: /workspaces/odoo ↔ ${workspaceFolder} (single canonical root)
     {
       "name": "Odoo (Attach — DevContainer / debugpy :5678)",
       "type": "debugpy",
@@ -30,18 +44,20 @@
         {
           "localRoot": "${workspaceFolder}",
           "remoteRoot": "/workspaces/odoo"
-        },
-        {
-          "localRoot": "${workspaceFolder}/addons/ipai",
-          "remoteRoot": "/workspaces/odoo/addons/ipai"
-        },
-        {
-          "localRoot": "${workspaceFolder}/addons/oca",
-          "remoteRoot": "/workspaces/odoo/addons/oca"
         }
       ],
       "justMyCode": false
     },
+
+    // =========================================================================
+    // 3. Attach — Docker CE19 image (plain docker compose, not devcontainer)
+    // =========================================================================
+    // Pre-requisites:
+    //   • docker compose up with IPAI_DEBUGPY=1 in environment or .env
+    //   • Port 5678 exposed in docker-compose.yml (add "5678:5678" to odoo ports)
+    // pathMappings: Docker volume mounts (from docker-compose.yml)
+    //   ./addons/ipai → /mnt/extra-addons/ipai  (read-only)
+    //   ./addons/oca  → /mnt/oca                (read-write)
     {
       "name": "Odoo (Attach — Docker CE19 image / debugpy :5678)",
       "type": "debugpy",
@@ -53,11 +69,11 @@
       "pathMappings": [
         {
           "localRoot": "${workspaceFolder}/addons/ipai",
-          "remoteRoot": "/mnt/addons/ipai"
+          "remoteRoot": "/mnt/extra-addons/ipai"
         },
         {
           "localRoot": "${workspaceFolder}/addons/oca",
-          "remoteRoot": "/mnt/addons/oca"
+          "remoteRoot": "/mnt/oca"
         }
       ],
       "justMyCode": false
