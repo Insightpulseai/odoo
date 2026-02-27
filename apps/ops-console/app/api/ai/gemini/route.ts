@@ -8,7 +8,8 @@
  *
  * Errors:
  *   400 — prompt missing or empty
- *   500 — Gemini API error or GEMINI_API_KEY not set
+ *   503 — GEMINI_API_KEY not set
+ *   500 — Gemini API error
  *
  * @see platform/ai/providers/gemini.ts
  * @see docs/architecture/AI_PROVIDER_BRIDGE.md
@@ -35,6 +36,14 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json(
       { error: "prompt is required and must not be empty" },
       { status: 400 }
+    );
+  }
+
+  // Explicit 503 for missing API key — fail fast before any external call
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json(
+      { error: "GEMINI_API_KEY_MISSING", hint: "Set GEMINI_API_KEY in Vercel env vars" },
+      { status: 503 }
     );
   }
 
