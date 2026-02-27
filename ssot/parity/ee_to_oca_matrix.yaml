@@ -89,7 +89,10 @@ entries:
     ipai_bridge: ipai_ai_tools_bridge
     status: active
     notes: >
-      IPAI AI Provider Bridge (platform contract) fills this gap.
+      EE v19 BYOM: Odoo AI app (EE) + bring-your-own OpenAI or Gemini API key
+      (configured in AI app → Settings → Providers). IAP credits are NOT used for
+      v19 AI features — IAP is OCR/document digitization only.
+      CE replacement: IPAI AI Provider Bridge (platform contract) fills this gap.
       Google Gemini 2.0 Flash via platform/ai/providers/gemini.ts.
       See ssot/bridges/catalog.yaml#ipai_ai_tools_bridge.
 
@@ -100,11 +103,15 @@ entries:
     ipai_bridge: ipai_ai_widget
     status: active
     notes: >
-      NOT a single installable widget — it's an action inside Odoo's html editor.
-      EE/IAP path requires Odoo AI app + configured provider.
-      CE path: ipai_ai_widget addon (OWL 2 button in chatter) proxies to
-      ipai_ai_tools_bridge. OCA fallback: ai_oca_native_generate_ollama (Ollama,
-      opt-in via ssot/ai/odoo_ai.yaml mode=ollama).
+      EE v19 BYOM: html editor AI action (Ask AI button) uses own OpenAI/Gemini
+      key — not IAP. Surfaces: top-bar Ask AI button, Ctrl+K palette, html editor
+      in Knowledge/Discuss/email/notes, AI agents (RAG), AI fields, voice transcription.
+      Requires pgvector for RAG/agents. CE has NO native equivalent.
+      CE replacement: ipai_ai_widget (OWL 2 chatter button) proxies to
+      ipai_ai_tools_bridge (Gemini). Covers chatter surface only.
+      Full CE surface parity requires OCA ai_oca_native_generate_ollama port to 19.0
+      reconfigured to call IPAI bridge instead of Ollama.
+      OCA fallback: ai_oca_native_generate_ollama (opt-in via ssot/ai/odoo_ai.yaml mode=ollama).
 
   - ee_feature: "mail_server (Outbound mail with custom domain)"
     ee_module: mail_enterprise

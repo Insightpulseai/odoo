@@ -90,7 +90,7 @@ bridges:
 
   - name: ipai_ai_widget
     display_name: "Ask AI Widget (Odoo 19 CE Chatter)"
-    replaces_ee_feature: "Ask AI (EE/IAP)"
+    replaces_ee_feature: "Ask AI (EE/BYOM — OpenAI or Gemini key in AI app Settings)"
     ee_module: enterprise_ai
     addon_path: addons/ipai/ipai_ai_widget/
     status: active
