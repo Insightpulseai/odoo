@@ -1,0 +1,165 @@
+name: Go-Live Runbook Gate
+
+# =============================================================================
+# Validates the Odoo 19 go-live runbook is present, contains required sections,
+# and has not been accidentally truncated or renamed.
+#
+# Manifest SSOT: ssot/go_live/odoo19_checklist.manifest.yaml
+# Runbook:       docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md
+# =============================================================================
+
+on:
+  pull_request:
+    paths:
+      - "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md"
+      - "ssot/go_live/odoo19_checklist.manifest.yaml"
+      - ".github/workflows/go-live-runbook-gate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md"
+      - "ssot/go_live/odoo19_checklist.manifest.yaml"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  runbook-gate:
+    name: Validate go-live runbook integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pyyaml
+        run: pip install pyyaml
+
+      - name: Validate runbook exists and manifest integrity
+        run: |
+          python3 - <<'PY'
+          import sys
+          import yaml
+          import os
+
+          MANIFEST_PATH = "ssot/go_live/odoo19_checklist.manifest.yaml"
+          EXIT = 0
+
+          # ── Load manifest ──────────────────────────────────────────────────
+          if not os.path.exists(MANIFEST_PATH):
+              print(f"::error::Manifest not found: {MANIFEST_PATH}")
+              sys.exit(1)
+
+          with open(MANIFEST_PATH) as f:
+              manifest = yaml.safe_load(f)
+
+          runbook_path = manifest.get("runbook_path", "")
+          required_sections = manifest.get("required_sections", [])
+          required_markers = manifest.get("required_content_markers", [])
+          min_checklist = manifest.get("minimum_checklist_items", 0)
+          min_lines = manifest.get("min_lines", 0)
+          max_lines = manifest.get("max_lines", 9999)
+
+          # ── Runbook must exist ─────────────────────────────────────────────
+          if not os.path.exists(runbook_path):
+              print(f"::error::Runbook not found at path declared in manifest: {runbook_path}")
+              print(f"::error::Manifest declares runbook_path: {runbook_path}")
+              print(f"::error::If the file was renamed, update ssot/go_live/odoo19_checklist.manifest.yaml")
+              sys.exit(1)
+
+          print(f"✅ Runbook exists: {runbook_path}")
+
+          with open(runbook_path) as f:
+              content = f.read()
+          lines = content.splitlines()
+
+          # ── Line count sanity check ────────────────────────────────────────
+          num_lines = len(lines)
+          if num_lines < min_lines:
+              print(f"::error::Runbook has only {num_lines} lines (minimum: {min_lines}). Possible truncation.")
+              EXIT = 1
+          elif num_lines > max_lines:
+              print(f"::warning::Runbook has {num_lines} lines (max threshold: {max_lines}). Consider splitting.")
+          else:
+              print(f"✅ Line count: {num_lines} (within bounds {min_lines}–{max_lines}).")
+
+          # ── Required sections ──────────────────────────────────────────────
+          missing_sections = []
+          for section in required_sections:
+              if section not in content:
+                  missing_sections.append(section)
+
+          if missing_sections:
+              for s in missing_sections:
+                  print(f"::error::Required section missing or renamed: {s!r}")
+              print(f"::error::{len(missing_sections)} required section(s) are missing.")
+              print("::error::Update the runbook OR update ssot/go_live/odoo19_checklist.manifest.yaml if sections were intentionally renamed.")
+              EXIT = 1
+          else:
+              print(f"✅ All {len(required_sections)} required sections present.")
+
+          # ── Required content markers ───────────────────────────────────────
+          missing_markers = []
+          for marker in required_markers:
+              if marker not in content:
+                  missing_markers.append(marker)
+
+          if missing_markers:
+              for m in missing_markers:
+                  print(f"::error::Required content marker missing: {m!r}")
+              EXIT = 1
+          else:
+              print(f"✅ All {len(required_markers)} required content markers present.")
+
+          # ── Checklist item count ───────────────────────────────────────────
+          checklist_count = content.count("- [ ]")
+          if checklist_count < min_checklist:
+              print(f"::error::Runbook has only {checklist_count} checklist items (minimum: {min_checklist}).")
+              print("::error::Possible truncation detected. Check runbook for missing sections.")
+              EXIT = 1
+          else:
+              print(f"✅ Checklist items: {checklist_count} (minimum {min_checklist} required).")
+
+          if EXIT == 0:
+              print("")
+              print("Go-live runbook gate PASSED.")
+          else:
+              print("")
+              print("Go-live runbook gate FAILED. Fix the issues above before merging.")
+
+          sys.exit(EXIT)
+          PY
+
+      - name: Post comment on PR if gate fails
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo '## Go-Live Runbook Gate - FAILED'
+            echo ''
+            echo 'The go-live runbook failed integrity validation.'
+            echo ''
+            echo '### Common causes'
+            echo ''
+            echo '- `docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md` was renamed or deleted'
+            echo '- A required section heading was changed (headings must match exactly)'
+            echo '- The runbook was accidentally truncated (line count too low)'
+            echo '- A required content marker was removed'
+            echo ''
+            echo '### Remediation'
+            echo ''
+            echo '1. Restore the runbook to its expected path'
+            echo '2. Ensure all required sections are present (see `ssot/go_live/odoo19_checklist.manifest.yaml`)'
+            echo '3. If sections were intentionally renamed, update the manifest too'
+            echo ''
+            echo 'Manifest SSOT: `ssot/go_live/odoo19_checklist.manifest.yaml`'
+          } > /tmp/golive_comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/golive_comment.md

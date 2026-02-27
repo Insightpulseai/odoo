@@ -1,8 +1,10 @@
 # Secrets SSOT Runbook
 
 > SSOT for secret identifiers: `ssot/secrets/registry.yaml`
+> Allowlist SSOT: `ssot/secrets/allowlist_regex.txt`
 > Policy: `CLAUDE.md § Secrets Policy`
 > Supabase project: `spdtwktxdalcfigzeqrz`
+> **Contract version: 1.1.0** (scanner output format + allowlist SSOT)
 
 ---
 
@@ -230,6 +232,67 @@ All secrets are registered in `ssot/secrets/registry.yaml` with:
 1. Add an entry to `ssot/secrets/registry.yaml` (identifiers only)
 2. Store the value in the approved store(s)
 3. Reference by name in code (never inline the value)
+
+---
+
+## Scanner allowlist (SSOT)
+
+The secrets scanner (`scripts/check_no_plaintext_secrets.py`) loads a runtime allowlist of
+false-positive suppression patterns from:
+
+```
+ssot/secrets/allowlist_regex.txt
+```
+
+This file is the **single authoritative source** for patterns that are safe to ignore during
+scanning. Do not hard-code allowlist patterns inside the scanner script itself — add them here.
+
+### File format
+
+One Python regex per line. Lines starting with `#` are comments. Blank lines are ignored.
+
+```
+# Env var references (never raw secrets)
+\$\{[A-Z_][A-Z0-9_]*\}
+\$\{\{[^}]*secrets\.[A-Z_][A-Z0-9_]*[^}]*\}\}
+
+# Supabase Vault references
+vault\.decrypted_secrets
+
+# Example / placeholder markers
+(EXAMPLE|example|placeholder|your[-_]|<YOUR_|MY_TOKEN|REPLACE_ME|CHANGEME|__REPLACE__)
+
+# Test fixtures
+(test_secret|fake_token|dummy_key|mock_key|test_key|sample_key|example_key|fixture_key)
+```
+
+### Adding a new allowlist entry
+
+1. Open `ssot/secrets/allowlist_regex.txt`.
+2. Add a regex with a comment explaining what it matches and why it is safe.
+3. Commit the change. The scanner picks it up on the next run — no code change needed.
+
+### Directories excluded from scanning
+
+These paths are never scanned regardless of the allowlist (third-party / build artifacts):
+
+```
+addons/odoo/   addons/oca/   node_modules/   .pnpm-store/
+vendor/        .next/        dist/           build/
+__pycache__/   .tox/         .venv/          venv/
+```
+
+### Stable output format
+
+The scanner emits one line per finding:
+
+```
+path/to/file.py:42:HIGH:github-pat-classic
+    ghp_EXAMPLETOKEN...
+```
+
+Format: `<path>:<line>:<SEVERITY>:<pattern-id>` — grep- and annotation-safe.
+CI converts these lines into GitHub PR annotations automatically.
 
 ---
 

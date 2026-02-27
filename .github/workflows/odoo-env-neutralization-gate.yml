@@ -1,0 +1,182 @@
+name: Odoo Environment Neutralization Gate
+
+# =============================================================================
+# Enforces the Odoo.sh-equivalent neutralization model:
+#   - stage/dev compose files must declare IPAI_ENV (not prod)
+#   - prod compose must declare IPAI_ENV=prod
+#   - scripts/odoo_neutralize.py must exist, import cleanly, and support --dry-run
+#
+# Ref: https://www.odoo.com/documentation/17.0/administration/neutralized_database.html
+# Architecture: docs/architecture/ODOO_SH_EQUIVALENT.md
+# =============================================================================
+
+on:
+  pull_request:
+    paths:
+      - "docker/compose/**"
+      - "scripts/odoo_neutralize.py"
+      - "docs/architecture/ODOO_SH_EQUIVALENT.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "docker/compose/**"
+      - "scripts/odoo_neutralize.py"
+  merge_group:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  neutralization-gate:
+    name: Verify neutralization model is enforced
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # ---- Script existence and syntax ----
+
+      - name: Check neutralize script exists
+        run: |
+          if [ ! -f scripts/odoo_neutralize.py ]; then
+            echo "::error::scripts/odoo_neutralize.py is missing."
+            echo "::error::This script is required to neutralize non-prod Odoo databases."
+            echo "::error::See docs/architecture/ODOO_SH_EQUIVALENT.md"
+            exit 1
+          fi
+          echo "✅ scripts/odoo_neutralize.py exists."
+
+      - name: Validate Python syntax
+        run: |
+          python3 -m py_compile scripts/odoo_neutralize.py
+          echo "✅ Syntax valid."
+
+      # ---- Import test: script must be importable and expose __version__ ----
+
+      - name: Import test — verify module exposes __version__
+        run: |
+          VERSION=$(python3 - <<'PYEOF'
+          import importlib.util, sys
+          spec = importlib.util.spec_from_file_location(
+              "odoo_neutralize", "scripts/odoo_neutralize.py"
+          )
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          print(getattr(mod, "__version__", "MISSING"))
+          PYEOF
+          )
+          if [ "$VERSION" = "MISSING" ]; then
+            echo "::error::scripts/odoo_neutralize.py does not define __version__."
+            exit 1
+          fi
+          echo "✅ Module importable. __version__ = $VERSION"
+
+      # ---- Dry-run test: script must support --dry-run without a live DB ----
+      # We point at a non-existent DB host (will fail to connect) unless the
+      # script correctly handles --dry-run as a first-class path.
+      # With psycopg2 not installed in CI we verify the arg-parsing and env-
+      # validation logic: IPAI_ENV=stage + DB_NAME=odoo_stage + --dry-run
+      # must exit 0 when psycopg2 is absent (missing import → sys.exit(2), not 1)
+      # OR we install psycopg2-binary and verify dry-run exits gracefully on
+      # DB connection failure (not with a config error code 1).
+
+      - name: Install psycopg2-binary for dry-run test
+        run: pip install psycopg2-binary --quiet
+
+      - name: Dry-run test — stage env with correct DB name
+        run: |
+          # Dry-run should attempt to connect, fail gracefully (no DB in CI),
+          # OR succeed if DB is unreachable by exiting with code 2 (DB error),
+          # not code 1 (config error).
+          # We accept exit 0 (full dry-run success) or exit 2 (DB unreachable).
+          set +e
+          IPAI_ENV=stage DB_NAME=odoo_stage \
+            python3 scripts/odoo_neutralize.py --dry-run 2>&1 | tee /tmp/dry_run_stage.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          set -e
+          if [ "$EXIT_CODE" -eq 1 ]; then
+            echo "::error::Dry-run exited with code 1 (config error) — should not happen for valid stage+odoo_stage config."
+            cat /tmp/dry_run_stage.log
+            exit 1
+          fi
+          echo "✅ Dry-run (stage) exited with code $EXIT_CODE (0=success, 2=DB-unreachable-OK)."
+
+      - name: Dry-run test — unknown env must exit 1 (config error)
+        run: |
+          set +e
+          IPAI_ENV=unknown DB_NAME=odoo_dev \
+            python3 scripts/odoo_neutralize.py --dry-run 2>&1
+          EXIT_CODE=$?
+          set -e
+          if [ "$EXIT_CODE" -ne 1 ]; then
+            echo "::error::Unknown IPAI_ENV should exit 1 (config error), got $EXIT_CODE."
+            exit 1
+          fi
+          echo "✅ Unknown env correctly rejected with exit 1."
+
+      - name: Dry-run test — DB name mismatch must exit 1 (safety gate)
+        run: |
+          set +e
+          IPAI_ENV=stage DB_NAME=odoo_prod \
+            python3 scripts/odoo_neutralize.py --dry-run 2>&1
+          EXIT_CODE=$?
+          set -e
+          if [ "$EXIT_CODE" -ne 1 ]; then
+            echo "::error::DB name mismatch (stage+odoo_prod) should exit 1, got $EXIT_CODE."
+            exit 1
+          fi
+          echo "✅ DB name mismatch correctly rejected with exit 1."
+
+      - name: Dry-run test — prod must exit 0 (always no-op)
+        run: |
+          IPAI_ENV=prod DB_NAME=odoo_prod \
+            python3 scripts/odoo_neutralize.py --dry-run
+          echo "✅ Prod correctly exits 0 (no-op)."
+
+      # ---- Compose file checks ----
+
+      - name: Verify stage compose declares IPAI_ENV=stage
+        run: |
+          STAGE_FILE=docker/compose/stage.yml
+          if [ ! -f "$STAGE_FILE" ]; then
+            echo "::warning::$STAGE_FILE not found — skipping."
+            exit 0
+          fi
+          if ! grep -q "IPAI_ENV=stage" "$STAGE_FILE"; then
+            echo "::error::$STAGE_FILE does not declare IPAI_ENV=stage."
+            echo "::error::Add:  - IPAI_ENV=stage  to the environment: section."
+            exit 1
+          fi
+          echo "✅ $STAGE_FILE declares IPAI_ENV=stage."
+
+      - name: Verify prod compose declares IPAI_ENV=prod (not stage/dev)
+        run: |
+          PROD_FILE=docker/compose/prod.yml
+          if [ ! -f "$PROD_FILE" ]; then
+            echo "::warning::$PROD_FILE not found — skipping."
+            exit 0
+          fi
+          if ! grep -q "IPAI_ENV=prod" "$PROD_FILE"; then
+            echo "::error::$PROD_FILE does not declare IPAI_ENV=prod."
+            exit 1
+          fi
+          if grep -qE "IPAI_ENV=(stage|dev)" "$PROD_FILE"; then
+            echo "::error::$PROD_FILE declares a non-prod IPAI_ENV. Production cannot be neutralized."
+            exit 1
+          fi
+          echo "✅ $PROD_FILE declares IPAI_ENV=prod."
+
+      - name: Summary
+        run: |
+          echo "✅ Odoo.sh-equivalent neutralization model verified:"
+          echo "   scripts/odoo_neutralize.py — present, importable, dry-run supported"
+          echo "   docker/compose/stage.yml   — IPAI_ENV=stage"
+          echo "   docker/compose/prod.yml    — IPAI_ENV=prod"
