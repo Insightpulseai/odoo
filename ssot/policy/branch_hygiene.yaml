@@ -1,0 +1,65 @@
+# ssot/policy/branch_hygiene.yaml
+#
+# Branch hygiene policy — canonical source of truth for automated pruning.
+# Consumed by: .github/workflows/branch-hygiene.yml
+#
+# Schema fields:
+#   retention_days:    Max age (days) of a branch with no open PR before auto-delete
+#   auto_delete_prefixes: Branch prefixes subject to automated pruning
+#   protected_patterns: Never auto-delete (anchored prefix or exact name)
+#   dry_run_default:   true = log-only; false = actually delete (overridden per-run)
+#   report_artifact:   Name of the GitHub Actions artifact with JSON pruning report
+#
+# Policy rationale:
+#   Agent-generated branches (claude/, codex/, bot/) and short-lived feature branches
+#   accumulate rapidly. Without cleanup, refs lists balloon and PR searches become noisy.
+#   This policy enforces automatic expiry while guaranteeing main/release/hotfix branches
+#   are never touched.
+#
+# To exempt a branch from pruning:
+#   Add it to protected_patterns OR ensure it has an open PR.
+#   A branch with ANY open PR (draft or review-ready) is always kept.
+
+---
+schema: ssot.policy.branch_hygiene.v1
+updated: "2026-02-27"
+policy_ref: "CLAUDE.md#git-workflow"
+
+retention:
+  # Branches with NO open PR older than this are candidates for deletion
+  default_days: 14
+
+  # Per-prefix overrides (key = prefix, value = retention days)
+  prefix_overrides:
+    bot/:  7
+    claude/: 7
+    codex/: 7
+
+auto_delete_prefixes:
+  # Only branches matching these prefixes are subject to automated deletion
+  - claude/
+  - codex/
+  - bot/
+  - dependabot/   # Dependabot closes its own PRs but orphaned branches can linger
+  - renovate/     # Same as dependabot
+
+protected_patterns:
+  # Exact names or prefix anchors that are NEVER auto-deleted
+  - main
+  - master
+  - develop
+  - release/
+  - hotfix/
+  - chore/
+  - feat/
+  - fix/
+  - docs/
+  - test/
+  - refactor/
+
+dry_run_default: true  # Set to false only via workflow_dispatch with explicit override
+
+report:
+  artifact_name: branch-hygiene-report
+  retention_days: 30
+  json_path: reports/ci/branch_hygiene_report.json
