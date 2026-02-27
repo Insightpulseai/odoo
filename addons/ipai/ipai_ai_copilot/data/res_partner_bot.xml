@@ -10,7 +10,7 @@
         <field name="active" eval="True"/>
         <field name="email">ai-copilot@insightpulseai.com</field>
         <field name="comment">
-            Internal AI Copilot bot. Powered by Ollama via ai_oca_native_generate_ollama.
+            Internal AI Copilot bot. Powered by IPAI AI Provider Bridge (Gemini).
             This partner is used as the author of bot replies in #ai-copilot.
         </field>
     </record>
