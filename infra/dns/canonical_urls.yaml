@@ -110,19 +110,16 @@ urls:
   # BROKEN — DNS claimed, origin exists but not fully wired
   # ---------------------------------------------------------------------------
   - url: "https://ocr.insightpulseai.com"
-    lifecycle: planned
-    runtime_class: BROKEN
-    backing: direct
-    health_probe: /health
+    lifecycle: active
+    runtime_class: DEPLOYED
+    backing: nginx_vhost
+    health_probe: /healthz
     dns_type: A
     origin_port: 8001
     container: ocr-prod
     tls: "Full (strict)"
-    breaking_conditions:
-      - "No nginx vhost for ocr.insightpulseai.com — relies on CF origin rule or direct :8001 access"
-    activation_criteria:
-      - "Add nginx vhost routing ocr.insightpulseai.com → 127.0.0.1:8001"
-    notes: "PaddleOCR microservice — origin healthy on :8001 but no nginx vhost"
+    vhost_file: "infra/nginx/ocr.insightpulseai.com.conf"
+    notes: "PaddleOCR microservice — nginx vhost deployed, proxies to 127.0.0.1:8001"
 
   - url: "https://auth.insightpulseai.com"
     lifecycle: planned

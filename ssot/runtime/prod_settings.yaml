@@ -88,6 +88,32 @@ ai:
       secret: gemini_api_key
 
 # ---------------------------------------------------------------------------
+# Identity & Auth Policy
+# ---------------------------------------------------------------------------
+auth:
+  # Supabase is the identity system-of-record (SoR).
+  # Supabase mints the invite token; Odoo sends the branded email (optional).
+  # Odoo partner/user is provisioned on first post-accept login, not before.
+  #
+  # identity_sor: supabase | odoo
+  identity_sor: supabase
+  invitation:
+    issuer: supabase
+    email_sender: odoo   # Odoo sends branded email template; link contains Supabase-generated token
+    acceptance_url: "https://ops.insightpulseai.com/auth/accept-invite"
+    post_accept_provisioning:
+      odoo:
+        enabled: true
+        mode: portal        # portal | internal (default portal for external users)
+        link_key: supabase_user_id   # field on res.partner that links to Supabase identity
+  #
+  # Downstream contracts:
+  #   - Supabase tables: orgs, org_members, roles (RLS enforced)
+  #   - Odoo: res.partner.supabase_user_id = Supabase UUID (set by provisioning bridge post-login)
+  #   - No standalone Odoo-only identity for cross-app users; service accounts are exempt
+  # Platform rule reference: ssot-platform.md — Rule 9: Odoo is relying party, Supabase is IdP
+
+# ---------------------------------------------------------------------------
 # Domain Lifecycle Truth
 # ---------------------------------------------------------------------------
 urls:

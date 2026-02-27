@@ -133,13 +133,13 @@ subdomains:
     type: A
     service: paddleocr_microservice
     port: 8001
-    health_check: /health
+    health_check: /healthz
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    notes: "No nginx vhost; ocr-prod binds 0.0.0.0:8001. Verify CF origin rule or add nginx vhost."
+    vhost_file: "infra/nginx/ocr.insightpulseai.com.conf"
     provider_claim:
       provider: cloudflare
       status: claimed

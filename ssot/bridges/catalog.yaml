@@ -155,6 +155,7 @@ bridges:
       - "Odoo module installs cleanly: ipai.bridge.config and ipai.bridge.event models registered, no outbound network calls during install (python odoo-bin --test-enable --test-tags ipai_llm_supabase_bridge -d odoo_dev)"
       - "E2E event flow proven: tool.call event emitted from Odoo appears in ops.run_events; duplicate call with same idempotency_key produces exactly 1 row (SELECT COUNT(*) FROM ops.run_events WHERE idempotency_key = '<key>') = 1"
       - "RLS verified: service_role reads all rows; authenticated role can only read rows WHERE created_by = auth.uid() (SELECT COUNT(*) AS own FROM ops.run_events WHERE created_by = auth.uid()) matches expected subset"
+      - "Auth policy: invitations minted by Supabase; Odoo may send branded invite emails; Odoo user/partner provisioned post-accept (identity_sor=supabase per ssot/runtime/prod_settings.yaml)"
     notes: >
       Observability bridge connecting Apexive odoo-llm framework to Supabase ops.* schema.
       Hooks into llm_tool._execute() and llm_thread lifecycle to emit signed webhook events.
