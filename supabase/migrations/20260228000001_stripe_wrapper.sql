@@ -51,26 +51,39 @@ create schema if not exists stripe;
 --     'stripe_secret_key',         -- name: must match ssot/secrets/registry.yaml id
 --     'Stripe secret key for FDW (live mode, provisioned YYYYMMDD)'
 --   );
+--   -- vault.create_secret() returns the key_id (vault.secrets.key_id).
+--   -- Record this value — it is what api_key_id expects below.
 --
--- After provisioning, retrieve the UUID:
+-- After provisioning, confirm the secret and capture the key_id:
 --
---   select id, name from vault.secrets where name = 'stripe_secret_key';
+--   select key_id, name from vault.secrets where name = 'stripe_secret_key';
+--   -- key_id is the value for api_key_id below (NOT vault.secrets.id)
+--   -- See: https://github.com/supabase/wrappers/issues/284
 --
 -- Then:
 --   1. Flip ssot/runtime/vault_provisioning.yaml :: vault.stripe_secret_key.provisioned = true
---   2. Uncomment the block below, filling in the UUID from the SELECT above
+--   2. Uncomment the block below, supplying EITHER api_key_id OR api_key_name (not both)
 --   3. Open PR → CI gate verifies all conditions before merge
 --
--- NOTE: api_key_id must be the vault.secrets.id UUID, not the raw key value.
---       See Supabase Wrappers docs for exact option names for your wrapper version.
+-- NOTE: api_key_id expects vault.secrets.key_id — NOT vault.secrets.id.
+--       These are different columns. Using vault.secrets.id will fail at runtime.
+--       Alternatively, use api_key_name with the secret's name string (see below).
 -- ---------------------------------------------------------------------------
 
 -- create server if not exists stripe_server
 --   foreign data wrapper stripe_wrapper
 --   options (
---     api_key_id  '<vault_secret_uuid>',       -- replace with vault.secrets.id UUID
---     api_url     'https://api.stripe.com/v1/',
---     api_version '2024-06-20'                 -- pin to stable version; update when upgrading wrapper
+--     -- Use ONE of the following two options (not both):
+--
+--     -- Option A: api_key_id — use key_id returned by vault.create_secret()
+--     --           (vault.secrets.key_id, NOT vault.secrets.id)
+--     api_key_id   '<vault_key_id>',            -- replace with vault.secrets.key_id
+--
+--     -- Option B: api_key_name — use the Vault secret's name string (portable)
+--     -- api_key_name 'stripe_secret_key',      -- must match name= in vault.create_secret()
+--
+--     api_url     'https://api.stripe.com/v1/', -- optional; shown explicitly for clarity
+--     api_version '2024-06-20'                  -- optional; pin to stable; update with wrapper upgrades
 --   );
 --
 -- grant usage on foreign server stripe_server to postgres, service_role;
