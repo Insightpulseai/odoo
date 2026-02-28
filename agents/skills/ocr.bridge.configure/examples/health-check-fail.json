@@ -1,0 +1,14 @@
+{
+  "description": "Failure case: OCR microservice is not responding",
+  "inputs": {
+    "environment": "prod"
+  },
+  "expected_result": "PARTIAL",
+  "verification_results": {
+    "prod_settings_schema": "pass",
+    "canonical_url_registered": "pass",
+    "ocr_health_endpoint": "fail (connection refused or timeout)",
+    "ocr_settings_valid": "pass"
+  },
+  "notes": "Config is correct but service is down. Report as STATUS=PARTIAL — config verified, live health failed. Do NOT change config to 'fix' a service outage."
+}
