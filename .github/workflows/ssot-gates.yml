@@ -4,19 +4,25 @@ on:
   pull_request:
     paths:
       - "ssot/**"
+      - "ssot/vercel/**"
       - "scripts/ci/**"
       - "docs/runbooks/**"
       - "addons/ipai/**"
       - "automations/n8n/**"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
       - ".github/workflows/ssot-gates.yml"
   push:
     branches: [main]
     paths:
       - "ssot/**"
+      - "ssot/vercel/**"
       - "scripts/ci/**"
       - "docs/runbooks/**"
       - "addons/ipai/**"
       - "automations/n8n/**"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
       - ".github/workflows/ssot-gates.yml"
   merge_group:
 
@@ -144,3 +150,27 @@ jobs:
         # Requires: no hardcoded secrets, no direct Odoo DB access,
         #           n8n.yaml register exists, _index.yaml registration, CREDENTIALS.md
         run: python3 scripts/ci/check_n8n_workflows_ssot.py
+
+  vercel-monorepo-ssot:
+    name: vercel-monorepo-ssot
+    runs-on: ubuntu-latest
+    # Runs in parallel with all other ssot-gates jobs (no needs: dependency).
+    # Triggered by the path filters at the top of this workflow:
+    #   ssot/vercel/**  |  pnpm-workspace.yaml  |  turbo.json
+    # Contract: docs/architecture/VERCEL_MONOREPO_CONTRACT.md
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate Vercel monorepo SSOT invariants
+        # Enforces 6 invariants against ssot/vercel/projects.yaml:
+        #   1. File exists and is valid YAML
+        #   2. All root_directory values start with apps/
+        #   3. uses_packages:true implies include_files_outside_root:true
+        #   4. turborepo:true at monorepo level implies turbo.json at repo root
+        #   5. pnpm-workspace.yaml has apps/* and packages/* patterns
+        #   6. All projects declare ignored_build
+        run: python scripts/ci/check_vercel_monorepo_ssot.py --repo-root .
