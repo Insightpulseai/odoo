@@ -7,6 +7,7 @@ on:
       - "scripts/ci/**"
       - "docs/runbooks/**"
       - "addons/ipai/**"
+      - "automations/n8n/**"
       - ".github/workflows/ssot-gates.yml"
   push:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - "scripts/ci/**"
       - "docs/runbooks/**"
       - "addons/ipai/**"
+      - "automations/n8n/**"
       - ".github/workflows/ssot-gates.yml"
   merge_group:
 
@@ -125,3 +127,20 @@ jobs:
         # Checks ssot/github/enterprise-cloud.yaml against invariants defined in
         # docs/architecture/GITHUB_ENTERPRISE_CONTRACT.md
         run: python3 scripts/ci/check_github_enterprise_ssot.py --repo-root .
+
+  n8n-workflows-ssot:
+    name: n8n-workflows-ssot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml --quiet
+      - name: Validate n8n workflows SSOT contract
+        # Checks automations/n8n/workflows/ against invariants defined in
+        # docs/architecture/N8N_AUTOMATION_CONTRACT.md
+        # Requires: no hardcoded secrets, no direct Odoo DB access,
+        #           n8n.yaml register exists, _index.yaml registration, CREDENTIALS.md
+        run: python3 scripts/ci/check_n8n_workflows_ssot.py
