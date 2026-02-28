@@ -12,13 +12,14 @@ class ResConfigSettings(models.TransientModel):
     # ===================
     ipai_mail_provider = fields.Selection(
         [
-            ("mailgun", "Mailgun"),
+            ("zoho", "Zoho Mail"),          # canonical provider (SSOT: ssot/runtime/prod_settings.yaml)
             ("smtp", "Generic SMTP"),
             ("postfix", "Local Postfix"),
+            ("mailgun", "Mailgun"),          # deprecated 2026-02 — kept for migration only
         ],
         string="Mail Provider",
         config_parameter="ipai.mail.provider",
-        default="mailgun",
+        default="zoho",                     # was: mailgun (deprecated)
     )
     ipai_mailgun_api_key = fields.Char(
         string="Mailgun API Key",
@@ -113,7 +114,7 @@ class ResConfigSettings(models.TransientModel):
         res = super().get_values()
         params = self.env["ir.config_parameter"].sudo()
         res.update(
-            ipai_mail_provider=params.get_param("ipai.mail.provider", "mailgun"),
+            ipai_mail_provider=params.get_param("ipai.mail.provider", "zoho"),
             ipai_mailgun_api_key=params.get_param("ipai.mailgun.api_key", ""),
             ipai_mailgun_domain=params.get_param("ipai.mailgun.domain", ""),
             ipai_mail_catchall_domain=params.get_param("mail.catchall.domain", ""),
@@ -128,7 +129,7 @@ class ResConfigSettings(models.TransientModel):
     def set_values(self):
         super().set_values()
         params = self.env["ir.config_parameter"].sudo()
-        params.set_param("ipai.mail.provider", self.ipai_mail_provider or "mailgun")
+        params.set_param("ipai.mail.provider", self.ipai_mail_provider or "zoho")
         params.set_param("ipai.mailgun.api_key", self.ipai_mailgun_api_key or "")
         params.set_param("ipai.mailgun.domain", self.ipai_mailgun_domain or "")
         params.set_param("mail.catchall.domain", self.ipai_mail_catchall_domain or "")

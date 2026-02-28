@@ -26,6 +26,13 @@ config_parameters:
   auth_signup.reset_password: "True"
 
   # ---------------------------------------------------------------------------
+  # Mail provider (SSOT: ssot/runtime/prod_settings.yaml email.smtp.provider)
+  # Deprecated: mailgun (removed 2026-02). Canonical: zoho.
+  # CI gate: scripts/ci/check_deprecated_provider_defaults.py
+  # ---------------------------------------------------------------------------
+  ipai.mail.provider: "zoho"
+
+  # ---------------------------------------------------------------------------
   # Import / export
   # ---------------------------------------------------------------------------
   base_import.import_enabled: "True"
