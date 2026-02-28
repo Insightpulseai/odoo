@@ -227,16 +227,14 @@
     AND module installs cleanly on Odoo 19 (`--stop-after-init` exits 0)
 
 - [ ] **T6.5** Prod readiness SSOT gate (email + OCR + invariants)
-  - Ship `ssot/runtime/prod_settings.yaml` encoding: Odoo base URL, proxy_mode,
-    email SMTP secrets (by name only), OCR health endpoint, AI fail-closed policy,
-    domain invariants, backup evidence references
-  - Ship `scripts/ci/check_prod_settings_ssot.py`: validates schema, secret name
-    lookup in `ssot/secrets/registry.yaml`, active_required URLs in
-    `docs/architecture/CANONICAL_URLS.md`, no-plaintext heuristic
-  - Ship `.github/workflows/prod-settings-ssot-gate.yml`: triggers on
-    pull_request, push, merge_group; runs check_prod_settings_ssot.py
-  - Add missing secret IDs to `ssot/secrets/registry.yaml`:
-    `zoho_smtp_user`, `zoho_smtp_app_password`, `ocr_bridge_token`
-  - AC: `python3 scripts/ci/check_prod_settings_ssot.py` exits 0
-    AND CI gate passes on a test PR touching `ssot/runtime/prod_settings.yaml`
-    AND `git grep -r "smtp_pass\s*=\s*['\"]" ssot/` returns empty (no plaintext)
+  - SSOT artifact: `ssot/runtime/prod_settings.yaml` (schema `ssot.runtime.prod_settings.v1`)
+  - CI gate: `scripts/ci/check_prod_settings_ssot.py` (deterministic, no network)
+  - Workflow: `.github/workflows/prod-settings-ssot-gate.yml` + wired into `ssot-gates.yml`
+  - Gate validates:
+    - Schema structure (email.status=required, ocr.status=required, ai.policy.fail_closed=true)
+    - Cross-ref: every `secrets_refs` entry exists in `ssot/secrets/registry.yaml`
+    - Cross-ref: every `urls.active_required` URL exists in `docs/architecture/CANONICAL_URLS.md`
+    - Odoo invariants declared (web_base_url, web_base_url_freeze, proxy_mode)
+  - AC: `python3 scripts/ci/check_prod_settings_ssot.py --repo-root .` exits 0
+    AND removing a referenced secret from the registry makes it exit 3
+    AND removing a required URL from CANONICAL_URLS.md makes it exit 3

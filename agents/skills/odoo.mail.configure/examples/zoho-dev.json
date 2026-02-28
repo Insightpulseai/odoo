@@ -1,0 +1,25 @@
+{
+  "description": "Configure Zoho SMTP for development environment (IMAP disabled)",
+  "inputs": {
+    "provider": "zoho",
+    "environment": "dev"
+  },
+  "expected_state": {
+    "smtp_host": "smtppro.zoho.com",
+    "smtp_port": 587,
+    "smtp_encryption": "starttls",
+    "smtp_user": "business@insightpulseai.com",
+    "from_filter": "@insightpulseai.com",
+    "imap_host": "imappro.zoho.com",
+    "imap_port": 993,
+    "imap_active": false
+  },
+  "expected_outputs": [
+    "config/odoo/mail_settings.yaml"
+  ],
+  "verification_results": {
+    "mail_settings_valid": "pass",
+    "smtp_connectivity": "pass (STARTTLS banner received)"
+  },
+  "notes": "Dev environment disables IMAP to avoid processing real mail. SMTP still uses smtppro.zoho.com."
+}

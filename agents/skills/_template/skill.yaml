@@ -1,0 +1,52 @@
+# Agent Skill Contract Template
+# Copy this directory to agents/skills/<your-skill-id>/ and fill in.
+#
+# Schema: agents/skills/schema/skill.schema.json
+# Validator: scripts/ci/check_agent_skills.py
+#
+# Maturity levels:
+#   L0 = Prompt-only (no contract)
+#   L1 = Contract + examples (schema validate)
+#   L2 = Tool calls + deterministic verify (CI checks) ← default target
+#   L3 = Prod policy + drift detection (SSOT gates + health checks)
+#   L4 = Self-healing + rollback (can revert + re-verify)
+
+id: domain.feature.action
+version: 1
+description: "Short description of what this skill does (10-500 chars)"
+maturity: L2
+
+inputs:
+  example_param:
+    type: string
+    description: "Describe what this parameter controls"
+    required: true
+
+requires:
+  secrets: []
+  # Names only — must exist in ssot/secrets/registry.yaml
+  # Example: [zoho_client_id, zoho_client_secret]
+  ssot_files: []
+  # Repo-relative paths to SSOT files this skill reads
+  # Example: [ssot/runtime/prod_settings.yaml, config/odoo/mail_settings.yaml]
+
+outputs:
+  artifacts: []
+  # Repo-relative paths this skill produces or modifies
+  # Example: [ssot/runtime/prod_settings.yaml]
+  evidence: "web/docs/evidence/<stamp>/<topic>/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci: []
+  # CI scripts that must pass after execution
+  # Example: [scripts/ci/check_prod_settings_ssot.py]
+  idempotent: true
+  rollback_supported: false
+
+verification:
+  checks:
+    - name: "example_check"
+      type: file_exists
+      target: "path/to/expected/output"
+      notes: "Describe what this check validates"
