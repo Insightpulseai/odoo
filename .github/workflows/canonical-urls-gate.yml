@@ -1,33 +1,150 @@
 name: canonical-urls-gate
+
 on:
-  pull_request:
+  push:
+    branches:
+      - main
+      - "feat/*"
     paths:
       - "infra/dns/canonical_urls.yaml"
-      - "infra/dns/subdomain-registry.yaml"
-      - "docs/architecture/CANONICAL_URLS.md"
       - "scripts/ci/check_canonical_urls.py"
-  push:
+  pull_request:
     branches:
       - main
     paths:
       - "infra/dns/canonical_urls.yaml"
-      - "infra/dns/subdomain-registry.yaml"
-      - "docs/architecture/CANONICAL_URLS.md"
       - "scripts/ci/check_canonical_urls.py"
   merge_group:
+
 permissions:
   contents: read
+
 jobs:
-  canonical-urls:
+  # ---------------------------------------------------------------------------
+  # Job 1: lint — validates canonical_urls.yaml schema and internal consistency
+  # Blocks PR merge on any non-zero exit from check_canonical_urls.py
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Canonical URLs SSOT lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install deps
+          python-version: "3.12"
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install pyyaml
+
       - name: Validate canonical URLs SSOT
+        id: validate
         run: python3 scripts/ci/check_canonical_urls.py
+
+      - name: Report failure details
+        if: failure() && steps.validate.outcome == 'failure'
+        run: |
+          echo "::error title=Canonical URLs SSOT gate failed::One or more entries in infra/dns/canonical_urls.yaml failed validation."
+          echo ""
+          echo "  SSOT file : infra/dns/canonical_urls.yaml"
+          echo "  Guard     : scripts/ci/check_canonical_urls.py"
+          echo ""
+          echo "Common causes:"
+          echo "  - Missing required field (url, lifecycle, runtime_class, backing, health_probe)"
+          echo "  - Invalid lifecycle value (must be: active | planned)"
+          echo "  - Invalid runtime_class value (must be: DEPLOYED | REDIRECT | STAGED | BROKEN)"
+          echo "  - URL does not end with insightpulseai.com domain"
+          echo "  - Duplicate URL entry"
+          echo ""
+          echo "Fix: Edit infra/dns/canonical_urls.yaml and re-push."
+          exit 1
+
+  # ---------------------------------------------------------------------------
+  # Job 2: health-spot-check — advisory curl probe against DEPLOYED URLs
+  # Runs after lint passes. Does NOT fail the workflow — origin may be in
+  # maintenance or behind Cloudflare access controls. Warnings only.
+  # ---------------------------------------------------------------------------
+  health-spot-check:
+    name: DEPLOYED URL health spot-check (advisory)
+    runs-on: ubuntu-latest
+    needs: lint
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Extract DEPLOYED URLs and probe paths
+        run: |
+          python3 - <<'PYEOF'
+          import yaml, json
+
+          with open("infra/dns/canonical_urls.yaml") as f:
+              data = yaml.safe_load(f)
+
+          deployed = [
+              {"url": entry["url"], "probe": entry.get("health_probe", "/")}
+              for entry in data.get("urls", [])
+              if entry.get("runtime_class") == "DEPLOYED"
+          ]
+
+          print(f"Found {len(deployed)} DEPLOYED URLs to probe:")
+          for entry in deployed:
+              print(f"  {entry['url']}{entry['probe']}")
+
+          with open("/tmp/deployed_urls.json", "w") as f:
+              json.dump(deployed, f)
+          PYEOF
+
+      - name: Probe DEPLOYED URL health endpoints
+        run: |
+          python3 - <<'PYEOF'
+          import json, subprocess
+
+          with open("/tmp/deployed_urls.json") as f:
+              deployed = json.load(f)
+
+          warnings = []
+          passed = []
+
+          for entry in deployed:
+              target = entry["url"].rstrip("/") + entry["probe"]
+              result = subprocess.run(
+                  ["curl", "-sf", "--max-time", "10", "-o", "/dev/null", "-w", "%{http_code}", target],
+                  capture_output=True,
+                  text=True,
+              )
+              http_code = result.stdout.strip()
+              if result.returncode != 0 or not http_code.startswith(("2", "3")):
+                  warnings.append(f"  WARN  {target}  (exit={result.returncode}, http={http_code or 'none'})")
+              else:
+                  passed.append(f"  OK    {target}  (http={http_code})")
+
+          print("=== Health Spot-Check Results (advisory -- does not block merge) ===")
+          for line in passed:
+              print(line)
+          for line in warnings:
+              print(line)
+
+          if warnings:
+              print("")
+              print(f"Advisory: {len(warnings)} URL(s) did not respond as expected.")
+              print("This does NOT block the PR. The origin may be in maintenance,")
+              print("behind Cloudflare Access, or rate-limiting GitHub Actions IPs.")
+              print("Investigate separately if the service is expected to be healthy.")
+          else:
+              print(f"All {len(passed)} DEPLOYED URLs responded successfully.")
+          PYEOF
