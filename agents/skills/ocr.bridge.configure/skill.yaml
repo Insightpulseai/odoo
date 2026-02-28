@@ -1,0 +1,64 @@
+# Agent Skill Contract: ocr.bridge.configure
+#
+# Configure the PaddleOCR bridge endpoint and verify connectivity.
+# Reads ssot/runtime/prod_settings.yaml for expected OCR config.
+#
+# Schema: agents/skills/schema/skill.schema.json
+# Validator: scripts/ci/check_agent_skills.py
+
+id: ocr.bridge.configure
+version: 1
+description: "Configure and verify the PaddleOCR microservice bridge endpoint for Odoo document processing"
+maturity: L3
+
+inputs:
+  environment:
+    type: string
+    enum: [dev, prod]
+    description: "Target environment for OCR bridge configuration"
+  base_url:
+    type: string
+    description: "Override base URL for the OCR service (defaults to SSOT value)"
+    required: false
+
+requires:
+  secrets: []
+  ssot_files:
+    - ssot/runtime/prod_settings.yaml
+    - docs/architecture/CANONICAL_URLS.md
+
+outputs:
+  artifacts:
+    - ssot/runtime/prod_settings.yaml
+  evidence: "web/docs/evidence/<stamp>/ocr_bridge/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci:
+    - scripts/ci/check_prod_settings_ssot.py
+    - scripts/ci/check_domains_ssot.py
+  idempotent: true
+  rollback_supported: false
+
+verification:
+  checks:
+    - name: prod_settings_schema
+      type: ci_script
+      target: scripts/ci/check_prod_settings_ssot.py
+      expected: "exit 0"
+      notes: "Validates OCR section structure and URL presence in CANONICAL_URLS.md"
+    - name: canonical_url_registered
+      type: ci_script
+      target: scripts/ci/check_domains_ssot.py
+      expected: "exit 0"
+      notes: "Validates ocr.insightpulseai.com is in the canonical URL list"
+    - name: ocr_health_endpoint
+      type: http_get
+      target: "https://ocr.insightpulseai.com/health"
+      expected: "HTTP 200 with JSON OK"
+      notes: "Live check — requires network. CI gate validates URL is canonical only."
+    - name: ocr_settings_valid
+      type: yaml_valid
+      target: ssot/runtime/prod_settings.yaml
+      expected: "YAML parses and ocr.base_url is set"
+      notes: "Ensures prod settings OCR section is valid YAML with correct base URL"

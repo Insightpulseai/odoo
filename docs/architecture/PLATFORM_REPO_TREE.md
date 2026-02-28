@@ -61,9 +61,24 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 │   └── design-tokens/
 │       └── tokens.json                  ← Design tokens (generated from Figma, Git SSOT)
 │
+├── agents/                              ← AI agent framework (Git SSOT)
+│   ├── skills/                          ← Agent skill contracts
+│   │   ├── schema/                      ← JSON Schema for skill.yaml
+│   │   │   └── skill.schema.json        ← Skill contract schema (v1)
+│   │   ├── _template/                   ← Skill scaffolding template
+│   │   │   ├── skill.yaml
+│   │   │   ├── prompt.md
+│   │   │   ├── examples/
+│   │   │   └── tests/
+│   │   ├── odoo.mail.configure/         ← L3 skill: email config
+│   │   └── ocr.bridge.configure/        ← L3 skill: OCR bridge config
+│   └── ...                              ← Personas, capabilities, knowledge, etc.
+│
 ├── scripts/                             ← Automation scripts (Git SSOT)
 │   ├── agents/                          ← Agent instruction sync
 │   ├── automations/                     ← n8n deploy/sweep scripts
+│   ├── ci/                              ← CI validation scripts
+│   │   └── check_agent_skills.py        ← Skill contract validator
 │   ├── design/                          ← Token export scripts
 │   ├── dns/                             ← DNS artifact generator
 │   └── odoo/                            ← Odoo management wrappers
@@ -93,6 +108,9 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 
 | Path pattern                                        | SSOT owner            | Derived from                        | Regenerate command                      |
 | --------------------------------------------------- | --------------------- | ----------------------------------- | --------------------------------------- |
+| `agents/skills/schema/**`                            | Git                   | (original)                          | —                                       |
+| `agents/skills/*/skill.yaml`                         | Git                   | (original)                          | —                                       |
+| `agents/skills/_template/**`                         | Git                   | (original)                          | —                                       |
 | `addons/ipai/**`                                    | Git                   | (original)                          | —                                       |
 | `addons/oca/**`                                     | OCA upstream          | submodule pin                       | `git submodule update`                  |
 | `automations/n8n/workflows/*.json`                  | Git (export from n8n) | Live n8n instance                   | `scripts/automations/export_n8n.py`     |
