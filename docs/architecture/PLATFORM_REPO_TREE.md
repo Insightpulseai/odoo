@@ -4,7 +4,7 @@
 > If a path is not listed here, it is either ephemeral (not committed) or must be added
 > with an explicit SSOT assignment before any agent may write to it.
 >
-> Last updated: 2026-02-28
+> Last updated: 2026-02-27
 
 ---
 
@@ -15,20 +15,13 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 │
 ├── addons/                              ← Odoo module code (Git SSOT)
 │   ├── ipai/                            ← Custom IPAI modules (43 modules)
-│   │   ├── ipai_<domain>_<feature>/     ← OCA-style module naming
-│   │   └── ipai_prisma_consulting/      ← PRISMA Consulting: services, packages, CRM glue
+│   │   └── ipai_<domain>_<feature>/     ← OCA-style module naming
 │   └── oca/                             ← OCA submodule pinned references
-│
-├── apps/                                ← Web applications (Git SSOT)
-│   └── prismaconsulting/                ← Vite SPA (React 18) — PRISMA Consulting front-end
-│       │                                   ⚠ risk: markdown artifact pollution in src/
-│       └── [source per app CLAUDE.md]
 │
 ├── automations/                         ← n8n workflow exports (Git SSOT for structure)
 │   └── n8n/
 │       ├── workflows/                   ← Exported JSON — canonical n8n SSOT
-│       │   ├── archive/                 ← Stale workflows (>90d no execution)
-│       │   └── prismaconsulting/        ← PRISMA Consulting n8n workflows (5 workflows)
+│       │   └── archive/                 ← Stale workflows (>90d no execution)
 │       └── credentials/                 ← YAML manifests (names only, no values)
 │
 ├── config/                              ← Service configuration files (Git SSOT)
@@ -68,9 +61,24 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 │   └── design-tokens/
 │       └── tokens.json                  ← Design tokens (generated from Figma, Git SSOT)
 │
+├── agents/                              ← AI agent framework (Git SSOT)
+│   ├── skills/                          ← Agent skill contracts
+│   │   ├── schema/                      ← JSON Schema for skill.yaml
+│   │   │   └── skill.schema.json        ← Skill contract schema (v1)
+│   │   ├── _template/                   ← Skill scaffolding template
+│   │   │   ├── skill.yaml
+│   │   │   ├── prompt.md
+│   │   │   ├── examples/
+│   │   │   └── tests/
+│   │   ├── odoo.mail.configure/         ← L3 skill: email config
+│   │   └── ocr.bridge.configure/        ← L3 skill: OCR bridge config
+│   └── ...                              ← Personas, capabilities, knowledge, etc.
+│
 ├── scripts/                             ← Automation scripts (Git SSOT)
 │   ├── agents/                          ← Agent instruction sync
 │   ├── automations/                     ← n8n deploy/sweep scripts
+│   ├── ci/                              ← CI validation scripts
+│   │   └── check_agent_skills.py        ← Skill contract validator
 │   ├── design/                          ← Token export scripts
 │   ├── dns/                             ← DNS artifact generator
 │   └── odoo/                            ← Odoo management wrappers
@@ -100,12 +108,12 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 
 | Path pattern                                        | SSOT owner            | Derived from                        | Regenerate command                      |
 | --------------------------------------------------- | --------------------- | ----------------------------------- | --------------------------------------- |
+| `agents/skills/schema/**`                            | Git                   | (original)                          | —                                       |
+| `agents/skills/*/skill.yaml`                         | Git                   | (original)                          | —                                       |
+| `agents/skills/_template/**`                         | Git                   | (original)                          | —                                       |
 | `addons/ipai/**`                                    | Git                   | (original)                          | —                                       |
-| `addons/ipai/ipai_prisma_consulting/**`             | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting:src/addons/` | — |
 | `addons/oca/**`                                     | OCA upstream          | submodule pin                       | `git submodule update`                  |
-| `apps/prismaconsulting/**`                          | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting` | — |
 | `automations/n8n/workflows/*.json`                  | Git (export from n8n) | Live n8n instance                   | `scripts/automations/export_n8n.py`     |
-| `automations/n8n/workflows/prismaconsulting/*.json` | Git (ported from Prismaconsulting repo) | `jgtolentino/Prismaconsulting:src/n8n/workflows/` | — |
 | `config/odoo/mail_settings.yaml`                    | Git                   | (original)                          | —                                       |
 | `deploy/*.compose.yml`                              | Git                   | (original)                          | —                                       |
 | `docs/architecture/runtime_identifiers.json`        | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
@@ -113,6 +121,8 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | `infra/dns/dns-validation-spec.json`                | **Generated**         | `infra/dns/subdomain-registry.yaml` | `scripts/dns/generate-dns-artifacts.sh` |
 | `infra/dns/subdomain-registry.yaml`                 | Git                   | (original)                          | —                                       |
 | `packages/design-tokens/tokens.json`                | **Generated**         | Figma file                          | `scripts/design/export_tokens.sh`       |
+| `ssot/odoo/settings_catalog.yaml`                   | **Generated**         | Live Odoo 19 CE instance            | `scripts/odoo/extract_settings_catalog.py` |
+| `ssot/runtime/prod_settings.yaml`                   | Git                   | (original)                          | —                                       |
 | `supabase/config.toml`                              | Git                   | (original)                          | —                                       |
 | `supabase/migrations/*.sql`                         | Git                   | (original)                          | —                                       |
 | `supabase/functions/**`                             | Git                   | (original)                          | —                                       |

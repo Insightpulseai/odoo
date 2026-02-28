@@ -1,198 +1,128 @@
-version: 1
-type: ssot.runtime.prod_settings
-scope: odoo_runtime
-
-# =============================================================================
-# Prod Settings SSOT — InsightPulse AI
-# =============================================================================
-# This file is the production readiness contract for the Odoo runtime.
-# It captures invariants (what must be true) and secret references (by name only).
+# ssot/runtime/prod_settings.yaml
 #
-# CI gate: scripts/ci/check_prod_settings_ssot.py
-# Workflow: .github/workflows/prod-settings-ssot-gate.yml
+# Production readiness SSOT — email, OCR, invariants, URLs, AI policy.
 #
-# Rules:
-# - NO plaintext secrets or credentials in this file
-# - Secrets are referenced by registry ID (must exist in ssot/secrets/registry.yaml)
-# - "required: true" means the gate fails if the invariant is absent from SSOT
-# =============================================================================
+# Schema: ssot.runtime.prod_settings.v1
+# Validator: scripts/ci/check_prod_settings_ssot.py
+#
+# This file is hand-authored (not generated). It declares what MUST be true
+# for production to be considered healthy. The CI gate validates:
+#   1. Schema structure and required keys
+#   2. Every secret_ref exists in ssot/secrets/registry.yaml
+#   3. Every URL in urls.active_required exists in docs/architecture/CANONICAL_URLS.md
+#   4. Deterministic only — no network calls
+#
+# When a service is added or removed from prod, update this file and commit.
+# CI will fail if the contract is violated.
 
-environment: prod
+schema: ssot.runtime.prod_settings.v1
+version: "1.0"
+last_reviewed: "2026-02-27"
 
-# ---------------------------------------------------------------------------
-# Odoo Core Runtime Invariants
-# ---------------------------------------------------------------------------
-odoo:
-  invariants:
-    web_base_url: "https://erp.insightpulseai.com"
-    web_base_url_freeze: true
-    proxy_mode: true
+# ── Email ────────────────────────────────────────────────────────────────
 
-  auth:
-    signup:
-      allow_uninvited: false
-      reset_password: true
-
-# ---------------------------------------------------------------------------
-# Email
-# ---------------------------------------------------------------------------
 email:
   status: required
-  smtp:
-    provider: zoho
+  provider: zoho_smtp
+  notes: "Zoho Mail SMTP is the production mail provider. Mailgun is deprecated."
+  config:
+    smtp_host: smtp.zoho.com
+    smtp_port: 465
+    imap_host: imap.zoho.com
+    imap_port: 993
     from_domain: insightpulseai.com
-    # Secret names only — raw values never in repo
-    # Registry IDs must exist in ssot/secrets/registry.yaml
-    secrets:
-      smtp_user: zoho_smtp_user
-      smtp_app_password: zoho_smtp_app_password
-  aliases:
-    enabled: true
-    catchall_domain: "insightpulseai.com"
+  secrets_refs:
+    # Names only — values live in approved stores per ssot/secrets/registry.yaml
+    - zoho_client_id
+    - zoho_client_secret
+    - zoho_refresh_token
+  odoo_config_parameters:
+    - key: ipai_zoho_mail.smtp_host
+      expected: smtp.zoho.com
+    - key: ipai_zoho_mail.smtp_port
+      expected: "465"
+    - key: ipai_zoho_mail.imap_host
+      expected: imap.zoho.com
+    - key: ipai_zoho_mail.imap_port
+      expected: "993"
+    - key: ipai_zoho_mail.from_domain
+      expected: insightpulseai.com
+  health_check:
+    method: smtp_connect
+    notes: "Live check requires network; CI gate is schema-only."
 
-# ---------------------------------------------------------------------------
-# OCR Pipeline
-# ---------------------------------------------------------------------------
+# ── OCR ──────────────────────────────────────────────────────────────────
+
 ocr:
   status: required
-  endpoint:
-    base_url: "https://ocr.insightpulseai.com"
-    health_path: "/health"
-  secrets:
-    bridge_token: ocr_bridge_token
+  provider: paddleocr
+  base_url: https://ocr.insightpulseai.com
+  health_endpoint: /health
+  notes: "PaddleOCR microservice. /health must return HTTP 200 with JSON OK."
+  secrets_refs: []
+  odoo_config_parameters: []
+  health_check:
+    method: http_get
+    url: https://ocr.insightpulseai.com/health
+    notes: "Live check requires network; CI gate validates URL is in CANONICAL_URLS.md."
 
-# ---------------------------------------------------------------------------
-# AI Provider Policy
-# ---------------------------------------------------------------------------
+# ── Odoo invariants ─────────────────────────────────────────────────────
+
+odoo:
+  invariants:
+    web_base_url:
+      expected: https://erp.insightpulseai.com
+      config_parameter: web.base.url
+      notes: "Must match production domain. Controls links in outbound emails."
+    web_base_url_freeze:
+      expected: "True"
+      config_parameter: web.base.url.freeze
+      notes: "Prevents Odoo from auto-updating web.base.url on login."
+    proxy_mode:
+      expected: "True"
+      config_parameter: proxy_mode
+      notes: "Required behind nginx reverse proxy. Enables X-Forwarded-* headers."
+    list_db:
+      expected: "False"
+      config_parameter: list_db
+      notes: "Disable DB selector on login page. Hardened for production."
+    dbfilter:
+      expected: "^odoo$"
+      notes: "Restrict to prod DB only. Set in odoo.conf, not ir.config_parameter."
+
+# ── URLs ─────────────────────────────────────────────────────────────────
+
+urls:
+  active_required:
+    # Every URL here must appear in docs/architecture/CANONICAL_URLS.md
+    # under Production Services (not Planned, not Deprecated).
+    - url: https://erp.insightpulseai.com
+      service: Odoo ERP
+      health_check: /web/login
+    - url: https://ocr.insightpulseai.com
+      service: PaddleOCR Microservice
+      health_check: /health
+    - url: https://n8n.insightpulseai.com
+      service: n8n Workflow Automation
+      health_check: /healthz
+    - url: https://mcp.insightpulseai.com
+      service: MCP Gateway
+      health_check: /healthz
+
+# ── AI policy ────────────────────────────────────────────────────────────
+
 ai:
   policy:
     fail_closed: true
-    missing_key_http_status: 503
-    missing_key_code: "AI_KEY_NOT_CONFIGURED"
-    provider_priority:
-      - anthropic
-      - gemini
-      - ollama
-  policy_ssot:
-    file: ssot/ai/odoo_ai.yaml
-    require_fail_closed: true
-  providers:
-    anthropic:
-      status: optional
-      secret: anthropic_api_key
-      dependency_gate:
-        dependency_id: apexive_odoo_llm
-        require_pinned_ref: true
-    gemini:
-      status: optional
-      secret: gemini_api_key
-
-# ---------------------------------------------------------------------------
-# Identity & Auth Policy
-# ---------------------------------------------------------------------------
-auth:
-  # Supabase is the identity system-of-record (SoR).
-  # Supabase mints the invite token; Odoo sends the branded email (optional).
-  # Odoo partner/user is provisioned on first post-accept login, not before.
-  #
-  # identity_sor: supabase | odoo
-  identity_sor: supabase
-  invitation:
-    issuer: supabase
-    email_sender: odoo   # Odoo sends branded email template; link contains Supabase-generated token
-    acceptance_url: "https://ops.insightpulseai.com/auth/accept-invite"
-    post_accept_provisioning:
-      odoo:
-        enabled: true
-        mode: portal        # portal | internal (default portal for external users)
-        link_key: supabase_user_id   # field on res.partner that links to Supabase identity
-  mfa:
-    # MFA belongs to the IdP (Supabase). Odoo TOTP is explicitly disabled to
-    # prevent a parallel MFA system that would allow users to bypass Supabase MFA
-    # depending on which entrypoint they use.
-    enforcement: optional          # optional | required (flip required when rollout complete)
-    provider: supabase             # must remain supabase while identity_sor=supabase
-    totp:
-      enabled: true
-      required: false              # flip true when ready to enforce for all users
-      issuer_label: "InsightPulseAI"
-    odoo_totp:
-      enabled: false               # explicit: Odoo's own TOTP module must not be activated
-  #
-  # Downstream contracts:
-  #   - Supabase tables: orgs, org_members, roles (RLS enforced)
-  #   - Odoo: res.partner.supabase_user_id = Supabase UUID (set by provisioning bridge post-login)
-  #   - No standalone Odoo-only identity for cross-app users; service accounts are exempt
-  #   - "Is TOTP set up?" = "Is the user enrolled in Supabase MFA?" — not Odoo 2FA
-  # Platform rule reference: ssot-platform.md — Rule 9: Odoo is relying party, Supabase is IdP
-
-# ---------------------------------------------------------------------------
-# Payments
-# ---------------------------------------------------------------------------
-payments:
-  stripe:
-    enabled: true
-    # mode: live is required in prod (CI gate enforces this).
-    # Flip Vault secret to sk_live_... before setting mode: live.
-    mode: live
-    # Secret IDs only — raw sk_*/whsec_*/pk_* values never in repo
-    # All IDs must exist in ssot/secrets/registry.yaml
-    secrets:
-      secret_key: stripe_secret_key                       # sk_live_... in Vault
-      webhook_signing_secret: stripe_webhook_signing_secret  # whsec_... from Stripe Dashboard → Webhooks
-    public:
-      publishable_key_ref: stripe_publishable_key         # pk_live_... via Vercel env / Vault
-    webhook:
-      enabled: true
-      # Supabase Edge Function path — must match supabase/functions/stripe-webhook/
-      endpoint_path: "/functions/v1/stripe-webhook"
-      # Allowlist — reject any event type not listed here at the Edge Function level
-      # Add events only when the corresponding handler is implemented
-      allowed_events:
-        - "checkout.session.completed"
-        - "invoice.paid"
-        - "invoice.payment_failed"
-        - "customer.subscription.created"
-        - "customer.subscription.updated"
-        - "customer.subscription.deleted"
-    supabase_wrapper:
-      enabled: true
-      server_name: stripe_server
-      schema: stripe          # foreign tables imported into this schema
-      vault_secret_id: stripe_secret_key   # must exist in Vault before activation
-      activation:
-        # Both conditions must hold before the CREATE SERVER block may be uncommented:
-        require_vault_secret: true          # stripe_secret_key provisioned in Supabase Vault
-        require_manual_uncomment: true      # explicit PR diff required — no auto-activation
-        # CI gate: scripts/ci/check_stripe_wrapper_activation.py
-        # Marker file: ssot/runtime/vault_provisioning.yaml (provisioned: false until done)
     notes: >
-      Stripe FDW: supabase/migrations/20260228000001_stripe_wrapper.sql.
-      Server creation requires Vault secret UUID — provision out-of-band, then run follow-up migration.
-      stripe_secret_key (sk_live_...) and stripe_publishable_key (pk_live_...) must both be live-mode.
-      Rotate stripe_secret_key via Stripe Dashboard → API Keys → Roll key, then update Vault.
-
-# ---------------------------------------------------------------------------
-# Domain Lifecycle Truth
-# ---------------------------------------------------------------------------
-urls:
-  lifecycle_truth:
-    require_healthcheck_for_active: true
-  active_required:
-    - "https://erp.insightpulseai.com"
-    - "https://ocr.insightpulseai.com"
-
-# ---------------------------------------------------------------------------
-# Backup Evidence References
-# ---------------------------------------------------------------------------
-backups:
-  database:
-    required: true
-    evidence:
-      - path: docs/ops/BACKUP_POLICY.md
-        required: false  # Gate won't fail if absent; use as documentation pointer
-  filestore:
-    required: true
-    evidence:
-      - path: docs/ops/BACKUP_POLICY.md
-        required: false
+      AI modules must not activate unless their upstream dependency is pinned.
+      If apexive_odoo_llm.upstream.pinned_ref is null, all consumer modules
+      are blocked from prod activation.
+  dependencies:
+    - id: apexive_odoo_llm
+      ssot_ref: ssot/ai/dependencies.yaml
+      gate: "pinned_ref != null AND lifecycle != 'unknown'"
+      notes: "Anthropic provider requires this port. See spec/ipai-llm-supabase-bridge/."
+  secrets_refs:
+    - anthropic_api_key
+    - llm_bridge_webhook_secret

@@ -43,6 +43,7 @@ by running their declared regenerate command:
 | `docs/architecture/runtime_identifiers.json`        | `scripts/dns/generate-dns-artifacts.sh` |
 | `infra/dns/dns-validation-spec.json`                | `scripts/dns/generate-dns-artifacts.sh` |
 | `packages/design-tokens/tokens.json`                | `scripts/design/export_tokens.sh`       |
+| `ssot/odoo/settings_catalog.yaml`                   | `scripts/odoo/extract_settings_catalog.py` |
 
 If asked to edit a generated file directly, instead:
 

@@ -1,0 +1,74 @@
+name: Agent Skills Gate
+
+on:
+  pull_request:
+    paths:
+      - "agents/skills/**"
+      - "scripts/ci/check_agent_skills.py"
+      - "agents/skills/schema/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "agents/skills/**"
+      - "scripts/ci/check_agent_skills.py"
+      - "agents/skills/schema/**"
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-skill-contracts:
+    name: Validate Skill Contracts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml jsonschema
+
+      - name: Validate all skill contracts
+        run: python scripts/ci/check_agent_skills.py --repo-root .
+
+      - name: Verify schema file exists
+        run: |
+          if [ ! -f agents/skills/schema/skill.schema.json ]; then
+            echo "ERROR: skill.schema.json not found"
+            exit 1
+          fi
+          echo "Schema file present: agents/skills/schema/skill.schema.json"
+
+      - name: Verify schema is valid JSON
+        run: python -c "import json; json.load(open('agents/skills/schema/skill.schema.json'))"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Agent Skills Gate" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Count skills
+          SKILL_COUNT=$(find agents/skills -name "skill.yaml" -not -path "*/\_template/*" | wc -l)
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Skills validated | ${SKILL_COUNT} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Schema | \`agents/skills/schema/skill.schema.json\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validator | \`scripts/ci/check_agent_skills.py\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # List skills
+          echo "### Skills" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          for skill in $(find agents/skills -name "skill.yaml" -not -path "*/\_template/*" | sort); do
+            DIR=$(dirname "$skill")
+            NAME=$(basename "$DIR")
+            echo "- \`${NAME}\`" >> $GITHUB_STEP_SUMMARY
+          done
