@@ -228,7 +228,7 @@ Deno.serve(async (req: Request) => {
 
   const args = extractArgs(event);
 
-  const { data, error } = await supabase.rpc("ops.ingest_stripe_event", args);
+  const { data, error } = await supabase.schema("ops").rpc("ingest_stripe_event", args);
 
   if (error) {
     console.error("ops.ingest_stripe_event failed:", error);
