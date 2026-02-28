@@ -45,6 +45,7 @@ urls:
     runtime_class: DEPLOYED
     backing: nginx_vhost
     health_probe: /web/login
+    vhost_file: "infra/nginx/erp.insightpulseai.com.conf"
     dns_type: A
     origin_port: 8069
     container: odoo-prod
@@ -56,6 +57,7 @@ urls:
     runtime_class: DEPLOYED
     backing: nginx_vhost
     health_probe: /healthz
+    vhost_file: "infra/nginx/n8n.insightpulseai.com.conf"
     dns_type: A
     origin_port: 5678
     container: ipai-n8n
@@ -67,6 +69,7 @@ urls:
     runtime_class: DEPLOYED
     backing: nginx_vhost
     health_probe: /
+    vhost_file: "infra/nginx/plane.insightpulseai.com.conf"
     dns_type: A
     origin_port: 3002
     container: community-web-1
@@ -78,6 +81,7 @@ urls:
     runtime_class: DEPLOYED
     backing: nginx_vhost
     health_probe: /health
+    vhost_file: "infra/nginx/superset.insightpulseai.com.conf"
     dns_type: A
     origin_port: 8088
     container: superset-prod
