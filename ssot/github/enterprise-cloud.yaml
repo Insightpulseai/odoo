@@ -59,6 +59,86 @@ audit:
     Ingestion is not required for base governance. Enable streaming when a
     SIEM or Supabase ops.audit_events pipeline is operational.
 
+# ── GitHub Enterprise Cloud vs Server ────────────────────────────────────────
+
+deployment_model:
+  choice: github_enterprise_cloud     # GHEC (hosted by GitHub) — NOT self-hosted
+  rationale: >
+    GHEC: GitHub hosts infra (no ops overhead); fastest new feature access
+    (especially Copilot / AI devex); managed security posture.
+    Enterprise plan entitles both GHEC + GHES (GitHub Enterprise Server) simultaneously;
+    GHES is available as fallback for isolated/regulated workloads if needed.
+
+  ghec_benefits:
+    - "No infrastructure to operate (GitHub handles uptime, scaling, backups)"
+    - "Fastest access to new platform features (AI, Copilot, Advanced Security)"
+    - "Enterprise audit log surface (org-level + enterprise-level events)"
+    - "Org-level centralized policy enforcement via rulesets"
+    - "Optional: GHEC with data residency for stricter geo-control"
+
+  ghes_status: not_adopted
+  ghes_trigger: >
+    Adopt GHES only if: (a) network isolation requirement enforced by contract,
+    or (b) data sovereignty cannot be met by GHEC data residency option.
+    Record decision in docs/architecture/GITHUB_ENTERPRISE_CONTRACT.md.
+
+# ── Advanced Security Capability Map ─────────────────────────────────────────
+
+advanced_security:
+  # GitHub splits Advanced Security into two product families:
+  # 1. Secret Protection (secret scanning + push protection + validity checking)
+  # 2. Code Security    (code scanning + Dependabot premium + dependency review +
+  #                      security overview + Copilot Autofix)
+  # Both are available on GHEC (and Team) — plan and add-on entitlement determines access.
+
+  desired_state:
+    # Secret Protection
+    secret_scanning:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC (may require GHAS add-on depending on tier)"
+
+    push_protection:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC (may require GHAS add-on depending on tier)"
+
+    secret_validity_checking:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC with Secret Protection add-on"
+
+    # Code Security
+    code_scanning:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "GHEC (may require GHAS add-on or Code Security tier)"
+
+    dependabot_alerts:
+      desired: true
+      product: "GitHub Code Security (Dependabot)"
+      plan_gate: "Available on all plans (free for public repos)"
+
+    dependabot_security_updates:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "Available on GHEC"
+
+    dependency_review:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "GHEC with Code Security"
+
+    copilot_autofix:
+      desired: false     # deferred — review when Copilot plan is active
+      product: "GitHub Code Security (Copilot Autofix)"
+      plan_gate: "Requires Copilot license"
+
+  verification_note: >
+    Desired-state entries are intent; CI validates keys + structure only.
+    Verify actual enablement against GitHub Org Settings → Code security and analysis.
+    Features gated by plan/add-on are NOT automatically enforced by SSOT alone.
+
 notes: |
   secret_scanning and push_protection availability varies by GitHub plan:
   - GitHub Free / Team: not available
@@ -69,3 +149,7 @@ notes: |
   invariants (keys present, values correct) but cannot check live GitHub API
   state. Human review against the GitHub Org Settings UI is required to confirm
   actual enforcement.
+
+  GitHub Enterprise plan entitles use of both GHEC (cloud) and GHES (self-hosted)
+  under the same user license count. Adoption of GHES is not planned; see
+  deployment_model.ghes_status above.
