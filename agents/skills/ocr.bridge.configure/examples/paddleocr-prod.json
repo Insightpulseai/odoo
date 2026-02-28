@@ -1,0 +1,22 @@
+{
+  "description": "Happy path: verify PaddleOCR bridge in production",
+  "inputs": {
+    "environment": "prod"
+  },
+  "expected_state": {
+    "base_url": "https://ocr.insightpulseai.com",
+    "health_endpoint": "/health",
+    "provider": "paddleocr",
+    "status": "required"
+  },
+  "expected_outputs": [
+    "ssot/runtime/prod_settings.yaml"
+  ],
+  "verification_results": {
+    "prod_settings_schema": "pass",
+    "canonical_url_registered": "pass",
+    "ocr_health_endpoint": "pass (HTTP 200)",
+    "ocr_settings_valid": "pass"
+  },
+  "notes": "OCR bridge has no secrets. Verification is URL presence + health check."
+}
