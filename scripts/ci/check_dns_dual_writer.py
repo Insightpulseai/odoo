@@ -61,6 +61,9 @@ TF_EXTENSIONS = {".tf", ".tf.json"}
 SKIP_DIRS = {
     ".git", ".github", "node_modules", "__pycache__",
     ".terraform", ".cache", "vendor",
+    # Worktree roots — these are copies of the repo at other branches.
+    # We only scan the live working tree, not worktree clones.
+    ".worktrees", ".claude",
 }
 
 
@@ -127,12 +130,17 @@ def main() -> int:
     args = parser.parse_args()
 
     current_repo = os.environ.get("GITHUB_REPOSITORY", "")
+    repo_root = Path(args.repo_root).resolve()
 
-    if args.allow_odoo_repo and current_repo == AUTHORITATIVE_REPO:
+    # Detect authoritative repo: either via GITHUB_REPOSITORY env var (CI)
+    # or by the presence of the canonical SSOT file (local dev).
+    ssot_sentinel = repo_root / "infra" / "dns" / "subdomain-registry.yaml"
+    is_authoritative = (current_repo == AUTHORITATIVE_REPO) or ssot_sentinel.exists()
+
+    if args.allow_odoo_repo and is_authoritative:
         print(f"✅ Authoritative repo ({AUTHORITATIVE_REPO}) — dual-writer check skipped.")
         return 0
 
-    repo_root = Path(args.repo_root).resolve()
     print(f"🔍 Scanning {repo_root} for Cloudflare zone-write resources targeting {TARGET_ZONE}…")
 
     findings = scan_repo(repo_root)
