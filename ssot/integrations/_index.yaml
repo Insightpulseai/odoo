@@ -45,3 +45,27 @@ integrations:
     status: active
     category: automation_runner
     vendor: n8n
+
+  - id: cloudflare_workers
+    file: ssot/integrations/cloudflare_workers.yaml
+    status: planned
+    category: edge_runtime
+    vendor: cloudflare
+
+  - id: vercel_hosting
+    file: ssot/integrations/vercel_hosting.yaml
+    status: active
+    category: hosting
+    vendor: vercel
+
+  - id: supabase_wrappers_stripe
+    file: ssot/integrations/supabase_wrappers_stripe.yaml
+    status: planned
+    category: postgres_fdw
+    vendor: supabase
+
+  - id: figma
+    file: ssot/integrations/figma.yaml
+    status: planned
+    category: design_platform
+    vendor: figma
