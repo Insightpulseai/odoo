@@ -243,39 +243,108 @@ CREATE TRIGGER tg_enqueue_block
   FOR EACH ROW EXECUTE FUNCTION work.tg_enqueue_block();
 
 -- ---------------------------------------------------------------------------
--- Supabase Cron schedule (pg_cron — if extension present)
--- Invokes workspace-indexer every 2 minutes via net.http_post.
--- Replace <PROJECT_REF> with spdtwktxdalcfigzeqrz at deploy time.
--- This is repo-owned scheduling — no dashboard cron setup required.
+-- DB-side tsvector indexer function
+-- Called by pg_cron every 2 minutes. Handles tsvector computation only.
+-- Embedding computation (requires OPENAI_API_KEY) is done by the
+-- workspace-indexer Edge Function, invoked via:
+--   - Supabase scheduled functions (supabase/config.toml)
+--   - OR: supabase functions invoke workspace-indexer (manual/taskbus)
+-- ---------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION work.process_index_queue_tsvector(p_batch_size int DEFAULT 20)
+RETURNS TABLE(processed int, succeeded int, failed int)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  item        work.index_queue%ROWTYPE;
+  v_processed int := 0;
+  v_succeeded int := 0;
+  v_failed    int := 0;
+  v_title     text;
+  v_body      text;
+  v_tsv       tsvector;
+BEGIN
+  FOR item IN
+    SELECT * FROM work.claim_index_batch(p_batch_size, 'pg-cron-tsvector')
+  LOOP
+    BEGIN
+      -- Fetch text from source table
+      IF item.source_table = 'pages' THEN
+        SELECT
+          coalesce(p.title, ''),
+          coalesce(p.title, '') || ' ' || coalesce(p.content::text, '')
+        INTO v_title, v_body
+        FROM work.pages p WHERE p.id = item.source_id;
+
+      ELSIF item.source_table = 'blocks' THEN
+        SELECT
+          NULL,
+          coalesce(b.content->>'text', b.content->>'value', b.content->>'expression', '')
+        INTO v_title, v_body
+        FROM work.blocks b WHERE b.id = item.source_id;
+      END IF;
+
+      IF v_body IS NULL OR trim(v_body) = '' THEN
+        -- Nothing to index; ack as done
+        PERFORM work.ack_index(item.id, true, NULL);
+        v_succeeded := v_succeeded + 1;
+      ELSE
+        v_tsv := to_tsvector('english', trim(coalesce(v_title,'') || ' ' || v_body));
+
+        INSERT INTO work.search_index (source_table, source_id, space_id, title, body, search_vec, updated_at)
+        VALUES (item.source_table, item.source_id, item.space_id, v_title, trim(v_body), v_tsv, now())
+        ON CONFLICT (source_table, source_id) DO UPDATE
+          SET title      = EXCLUDED.title,
+              body       = EXCLUDED.body,
+              search_vec = EXCLUDED.search_vec,
+              updated_at = EXCLUDED.updated_at;
+        -- Note: embedding column is left unchanged — updated by workspace-indexer Edge Function
+
+        PERFORM work.ack_index(item.id, true, NULL);
+        v_succeeded := v_succeeded + 1;
+      END IF;
+
+    EXCEPTION WHEN OTHERS THEN
+      PERFORM work.ack_index(item.id, false, SQLERRM);
+      v_failed := v_failed + 1;
+    END;
+
+    v_processed := v_processed + 1;
+  END LOOP;
+
+  RETURN QUERY SELECT v_processed, v_succeeded, v_failed;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION work.process_index_queue_tsvector TO service_role;
+
+-- ---------------------------------------------------------------------------
+-- pg_cron schedule — DB-side tsvector maintenance (no HTTP call)
+-- Requires pg_cron extension (enabled by default on Supabase Pro+).
+-- Schedules work.process_index_queue_tsvector() — a pure SQL function.
+--
+-- Embedding computation is NOT done here; it is done by the
+-- workspace-indexer Edge Function on its own schedule (supabase/config.toml).
 -- ---------------------------------------------------------------------------
 
 DO $$
 BEGIN
-  IF EXISTS (
-    SELECT 1 FROM pg_extension WHERE extname = 'pg_cron'
-  ) AND EXISTS (
-    SELECT 1 FROM pg_extension WHERE extname = 'pg_net'
-  ) THEN
-    -- Remove old job if it exists
-    PERFORM cron.unschedule('workspace-indexer-poll')
-    WHERE EXISTS (
-      SELECT 1 FROM cron.job WHERE jobname = 'workspace-indexer-poll'
-    );
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    -- Idempotent: unschedule if already exists, then recreate
+    BEGIN
+      PERFORM cron.unschedule('workspace-tsvector-poll');
+    EXCEPTION WHEN OTHERS THEN NULL;
+    END;
 
-    -- Schedule: every 2 minutes
     PERFORM cron.schedule(
-      'workspace-indexer-poll',
+      'workspace-tsvector-poll',
       '*/2 * * * *',
-      $$
-        SELECT net.http_post(
-          url    := current_setting('app.supabase_functions_url') || '/workspace-indexer',
-          headers := '{"Content-Type":"application/json","Authorization":"Bearer ' ||
-                     current_setting('app.service_role_key') || '"}'::jsonb,
-          body   := '{"source":"pg_cron"}'::jsonb
-        )
-      $$
+      $cron$ SELECT work.process_index_queue_tsvector(20) $cron$
     );
   END IF;
+  -- If pg_cron is not available, tsvector updates happen when the
+  -- workspace-indexer Edge Function is invoked (it also handles tsvector via upsert).
 END $$;
 
 -- ---------------------------------------------------------------------------

@@ -40,11 +40,13 @@ interface AskRequest {
 }
 
 interface Citation {
+  /** Stable opaque ID: "page:<uuid>" or "block:<uuid>" — safe to persist in external refs */
+  id: string;
   source_table: string;
-  source_id: string;  // stable page_id or block_id
+  source_id: string;
   title: string | null;
   snippet: string;    // up to 400 chars of relevant context
-  rank?: number;
+  rank: number;       // higher = more relevant
 }
 
 // ---------------------------------------------------------------------------
@@ -125,13 +127,18 @@ async function ftsSearch(
     return [];
   }
 
-  return (data ?? []).map((row: Record<string, unknown>) => ({
-    source_table: String(row.source_table ?? ""),
-    source_id: String(row.id ?? row.source_id ?? ""),
-    title: row.title ? String(row.title) : null,
-    snippet: String(row.snippet ?? row.body ?? "").slice(0, 400),
-    rank: typeof row.rank === "number" ? row.rank : undefined,
-  }));
+  return (data ?? []).map((row: Record<string, unknown>) => {
+    const table = String(row.source_table ?? "");
+    const sid = String(row.id ?? row.source_id ?? "");
+    return {
+      id: `${table}:${sid}`,
+      source_table: table,
+      source_id: sid,
+      title: row.title ? String(row.title) : null,
+      snippet: String(row.snippet ?? row.body ?? "").slice(0, 400),
+      rank: typeof row.rank === "number" ? row.rank : 0,
+    };
+  });
 }
 
 async function vectorSearch(
@@ -171,27 +178,42 @@ async function vectorSearch(
 
   return (data ?? []).map(
     (row: { source_table: string; source_id: string; title: string | null; body: string }, i: number) => ({
+      id: `${row.source_table}:${row.source_id}`,
       source_table: row.source_table,
       source_id: row.source_id,
       title: row.title ?? null,
       snippet: row.body.slice(0, 400),
+      // rank: invert position (closest = highest rank); pgvector orders by distance ASC
       rank: limit - i,
     }),
   );
 }
 
+/**
+ * Merge FTS + vector results:
+ *   1. Deduplicate by stable `id` ("table:uuid")
+ *   2. Sum ranks for items appearing in both result sets
+ *   3. Sort: rank DESC, then id ASC (deterministic tie-break)
+ *   4. Return top_k
+ */
 function mergeResults(fts: Citation[], vec: Citation[], topK: number): Citation[] {
-  const seen = new Set<string>();
-  const merged: Citation[] = [];
+  const map = new Map<string, Citation>();
+
   for (const c of [...fts, ...vec]) {
-    const key = `${c.source_table}:${c.source_id}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      merged.push(c);
+    if (map.has(c.id)) {
+      // Item in both sets — sum ranks for combined score
+      map.get(c.id)!.rank += c.rank;
+    } else {
+      map.set(c.id, { ...c });
     }
-    if (merged.length >= topK) break;
   }
-  return merged;
+
+  return Array.from(map.values())
+    .sort((a, b) => {
+      if (b.rank !== a.rank) return b.rank - a.rank;   // rank DESC
+      return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;  // id ASC (stable tie-break)
+    })
+    .slice(0, topK);
 }
 
 // ---------------------------------------------------------------------------
