@@ -133,7 +133,7 @@ subdomains:
     type: A
     service: paddleocr_microservice
     port: 8001
-    health_check: /healthz
+    health_check: /health
     owner_system: "PaddleOCR microservice"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"

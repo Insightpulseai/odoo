@@ -57,7 +57,7 @@ ocr:
   status: required
   endpoint:
     base_url: "https://ocr.insightpulseai.com"
-    health_path: "/healthz"
+    health_path: "/health"
   secrets:
     bridge_token: ocr_bridge_token
 
