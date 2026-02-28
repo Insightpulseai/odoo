@@ -162,3 +162,19 @@ backend = "postgres"
 
 [functions.stripe-webhook]
 verify_jwt = false   # Stripe cannot send Supabase JWT — signature verified in-function
+
+# SoW workspace Edge Functions
+# workspace-indexer: polling worker for work.index_queue (embeddings + search_index upsert)
+#   Invocation: verify_jwt = true (Authorization: Bearer <service_role_key> required)
+#   Schedule (Supabase scheduled functions): every 5 minutes for embedding pass
+#   tsvector pass: handled DB-side by work.process_index_queue_tsvector() via pg_cron
+#   To invoke manually: supabase functions invoke workspace-indexer --no-verify-jwt false
+[functions.workspace-indexer]
+verify_jwt = true
+
+# workspace-ask-docs: RAG answer endpoint
+#   Auth: authenticated JWT (space membership checked) or service_role
+#   Requires: ANTHROPIC_API_KEY (preferred) or OPENAI_API_KEY in Supabase Vault
+#   Returns 503 KEY_MISSING if no provider key is set (see ssot/secrets/registry.yaml)
+[functions.workspace-ask-docs]
+verify_jwt = false   # auth enforced in-function (supports both JWT + service_role)

@@ -172,10 +172,14 @@ All automation must be expressed as the combination of:
 | Secret identity | `ssot/secrets/registry.yaml` (names only, never values) |
 | Secret value | Supabase Vault / GitHub Actions Secrets / Vercel env vars |
 
-**Examples of forbidden UI-only config:**
-- Setting up Database Webhooks in the Supabase dashboard to trigger Edge Functions
-- Adding cron jobs via the Supabase dashboard Cron UI without a corresponding migration
-- Adding Supabase Vault secrets without registering them in `ssot/secrets/registry.yaml`
+**Forbidden vs Allowed — quick reference for CI reviewers:**
+
+| ❌ Forbidden | ✅ Allowed replacement |
+|-------------|----------------------|
+| DB Webhook in Supabase Dashboard → triggers Edge Function | Trigger on table → `work.index_queue` → worker (pg_cron + Edge Function schedule) |
+| Cron job added in Supabase Dashboard UI | `cron.schedule()` in a migration file OR `supabase/config.toml` function schedule |
+| Supabase Vault secret set without registry entry | Secret registered in `ssot/secrets/registry.yaml` first, then set value in Vault |
+| Edge Function invoked inline during a write transaction | Async queue: trigger enqueues, cron/scheduler claims and processes |
 
 **Correct pattern for event-driven indexing:**
 ```
