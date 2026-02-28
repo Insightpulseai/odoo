@@ -1,6 +1,9 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "GH_HOST": "github.com",
+    "GH_TOKEN": "${GITHUB_TOKEN}",
+    "GITHUB_TOKEN": "${GITHUB_TOKEN}"
   },
   "teammateMode": "in-process",
   "allowedTools": [
