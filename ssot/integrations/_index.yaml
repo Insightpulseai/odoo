@@ -27,3 +27,15 @@ integrations:
     status: active
     category: agent
     vendor: slack
+
+  - id: plane_webhooks
+    file: ssot/integrations/plane_webhooks.yaml
+    status: planned
+    category: integration
+    vendor: plane
+
+  - id: plane_mcp
+    file: ssot/integrations/plane_mcp.yaml
+    status: planned
+    category: agent
+    vendor: plane
