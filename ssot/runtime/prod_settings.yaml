@@ -159,6 +159,13 @@ payments:
       enabled: true
       server_name: stripe_server
       schema: stripe          # foreign tables imported into this schema
+      vault_secret_id: stripe_secret_key   # must exist in Vault before activation
+      activation:
+        # Both conditions must hold before the CREATE SERVER block may be uncommented:
+        require_vault_secret: true          # stripe_secret_key provisioned in Supabase Vault
+        require_manual_uncomment: true      # explicit PR diff required — no auto-activation
+        # CI gate: scripts/ci/check_stripe_wrapper_activation.py
+        # Marker file: ssot/runtime/vault_provisioning.yaml (provisioned: false until done)
     notes: >
       Stripe FDW: supabase/migrations/20260228000001_stripe_wrapper.sql.
       Server creation requires Vault secret UUID — provision out-of-band, then run follow-up migration.
