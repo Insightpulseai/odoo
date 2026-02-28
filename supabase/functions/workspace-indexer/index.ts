@@ -1,69 +1,81 @@
 // supabase/functions/workspace-indexer/index.ts
-// Triggered by Supabase DB webhook on work.pages and work.blocks.
-// Maintains tsvector search index + optional OpenAI embeddings in work.search_index.
+// Polling worker — claims items from work.index_queue, computes tsvector text
+// and optional embeddings, upserts into work.search_index, then acks each item.
 //
-// Webhook payload shape (Supabase database webhook):
-//   { type: "INSERT"|"UPDATE", schema: "work", table: "pages"|"blocks", record: {...}, old_record: {...} }
+// Invocation:
+//   - Supabase pg_cron (every 2 min) via net.http_post — see migration 000003
+//   - Taskbus worker: job_type "index_workspace", agent "workspace-indexer-agent"
+//   - Manual POST with Authorization: Bearer <service_role_key>
 //
-// Setup (run once in Supabase dashboard → Database → Webhooks):
-//   Table: work.pages  → Events: INSERT, UPDATE → URL: <function-url>/workspace-indexer
-//   Table: work.blocks → Events: INSERT, UPDATE → URL: <function-url>/workspace-indexer
+// No DB webhooks required — queue is populated by triggers on work.pages/blocks.
 //
-// Environment variables required:
-//   SUPABASE_URL           (auto-injected)
+// Environment variables (auto-injected + optional):
+//   SUPABASE_URL              (auto-injected)
 //   SUPABASE_SERVICE_ROLE_KEY (auto-injected)
-//   OPENAI_API_KEY         (optional — skip embeddings if absent)
+//   OPENAI_API_KEY            (optional — skip embeddings if absent)
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+
+const BATCH_SIZE = 10;
+const WORKER_ID = "workspace-indexer";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface WebhookPayload {
-  type: "INSERT" | "UPDATE" | "DELETE";
-  schema: string;
-  table: string;
-  record: Record<string, unknown> | null;
-  old_record: Record<string, unknown> | null;
+// ---------------------------------------------------------------------------
+// Auth guard: only service_role callers may invoke this function
+// ---------------------------------------------------------------------------
+function isServiceRole(req: Request, serviceKey: string): boolean {
+  const auth = req.headers.get("authorization") ?? "";
+  return auth === `Bearer ${serviceKey}`;
 }
 
-interface SearchIndexUpsert {
-  source_table: string;
-  source_id: string;
-  space_id: string;
-  title: string | null;
-  body: string;
-  search_vec: string | null; // raw text — Postgres generates tsvector via function
-  embedding: number[] | null;
-  updated_at: string;
+// ---------------------------------------------------------------------------
+// Source record fetchers
+// ---------------------------------------------------------------------------
+async function fetchPage(
+  supabase: ReturnType<typeof createClient>,
+  id: string,
+): Promise<{ title: string; body: string } | null> {
+  const { data } = await supabase
+    .schema("work")
+    .from("pages")
+    .select("title, content")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!data) return null;
+  const title = String(data.title ?? "");
+  const body = title + " " + String(data.content ?? "");
+  return { title, body: body.trim() };
 }
 
-/** Extract indexable text from a page record */
-function extractPageText(record: Record<string, unknown>): { title: string; body: string } {
-  return {
-    title: String(record.title ?? ""),
-    body: String(record.title ?? "") + " " + String(record.content ?? ""),
-  };
-}
+async function fetchBlock(
+  supabase: ReturnType<typeof createClient>,
+  id: string,
+): Promise<{ title: string | null; body: string } | null> {
+  const { data } = await supabase
+    .schema("work")
+    .from("blocks")
+    .select("content, type")
+    .eq("id", id)
+    .maybeSingle();
 
-/** Extract indexable text from a block record */
-function extractBlockText(record: Record<string, unknown>): { title: string | null; body: string } {
-  const content = record.content as Record<string, unknown> | null;
+  if (!data) return null;
+  const content = data.content as Record<string, unknown> | null;
   if (!content) return { title: null, body: "" };
 
-  // Most block types store displayable text in content.text or content.value
-  const text =
-    String(content.text ?? content.value ?? content.expression ?? "").trim();
-
-  // For code blocks include the language as context
-  const lang = content.language ? `[${content.language}] ` : "";
+  const text = String(content.text ?? content.value ?? content.expression ?? "").trim();
+  const lang = content.language ? `[${String(content.language)}] ` : "";
   return { title: null, body: lang + text };
 }
 
-/** Call OpenAI text-embedding-3-small to produce a 1536-dim vector */
+// ---------------------------------------------------------------------------
+// OpenAI embedding (text-embedding-3-small, 1536 dims)
+// ---------------------------------------------------------------------------
 async function embed(text: string, apiKey: string): Promise<number[]> {
   const res = await fetch("https://api.openai.com/v1/embeddings", {
     method: "POST",
@@ -73,110 +85,141 @@ async function embed(text: string, apiKey: string): Promise<number[]> {
     },
     body: JSON.stringify({ input: text.slice(0, 8192), model: "text-embedding-3-small" }),
   });
-
   const json = await res.json();
-  if (json.error) throw new Error(`OpenAI: ${json.error.message}`);
+  if (json.error) throw new Error(`OpenAI embed: ${json.error.message}`);
   return json.data[0].embedding as number[];
 }
 
+// ---------------------------------------------------------------------------
+// tsvector text: computed in Postgres via the existing search_index structure;
+// we store raw body text here and let the DB generate tsvector via trigger.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
 serve(async (req) => {
-  // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    const openaiKey = Deno.env.get("OPENAI_API_KEY");
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const openaiKey = Deno.env.get("OPENAI_API_KEY");
 
-    if (!supabaseUrl || !serviceKey) {
-      return new Response(
-        JSON.stringify({ error: "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+  // Auth: require service_role
+  if (!isServiceRole(req, serviceKey)) {
+    return new Response(JSON.stringify({ error: "Unauthorized: service_role required" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
-    const supabase = createClient(supabaseUrl, serviceKey);
+  const supabase = createClient(supabaseUrl, serviceKey);
 
-    const payload: WebhookPayload = await req.json();
-    const { type, table, record } = payload;
+  // Claim a batch from the queue
+  const { data: batch, error: claimErr } = await supabase
+    .schema("work")
+    .rpc("claim_index_batch", { p_batch_size: BATCH_SIZE, p_worker_id: WORKER_ID });
 
-    // Ignore deletes — search_index rows are cleaned up separately
-    if (type === "DELETE" || !record) {
-      return new Response(JSON.stringify({ skipped: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+  if (claimErr) {
+    console.error("claim_index_batch error:", claimErr.message);
+    return new Response(JSON.stringify({ error: claimErr.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
-    // Only handle known tables
-    if (table !== "pages" && table !== "blocks") {
-      return new Response(
-        JSON.stringify({ error: `Unknown table: ${table}` }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+  const items = batch as Array<{
+    id: string;
+    source_table: string;
+    source_id: string;
+    space_id: string;
+  }>;
 
-    // Extract text
-    let extracted: { title: string | null; body: string };
-    if (table === "pages") {
-      extracted = extractPageText(record);
-    } else {
-      extracted = extractBlockText(record);
-    }
-
-    // Skip if no meaningful text
-    const fullText = ((extracted.title ?? "") + " " + extracted.body).trim();
-    if (!fullText) {
-      return new Response(JSON.stringify({ skipped: true, reason: "empty text" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Optionally generate embedding
-    let embedding: number[] | null = null;
-    if (openaiKey) {
-      try {
-        embedding = await embed(fullText, openaiKey);
-      } catch (embErr) {
-        // Embedding failure is non-fatal; proceed without vector
-        console.error("Embedding failed:", embErr);
-      }
-    }
-
-    // Build search_index row — search_vec is maintained by work.work_search RPC using plainto_tsquery
-    // We store the raw text; a Postgres GENERATED column or trigger handles the tsvector on search_index.
-    const row: SearchIndexUpsert = {
-      source_table: table,
-      source_id: String(record.id),
-      space_id: String(record.space_id),
-      title: extracted.title,
-      body: fullText,
-      search_vec: null, // tsvector generated by DB trigger on search_index
-      embedding,
-      updated_at: new Date().toISOString(),
-    };
-
-    const { error } = await supabase
-      .schema("work")
-      .from("search_index")
-      .upsert(row, {
-        onConflict: "source_table,source_id",
-        ignoreDuplicates: false,
-      });
-
-    if (error) throw error;
-
+  if (!items || items.length === 0) {
     return new Response(
-      JSON.stringify({ ok: true, source_table: table, source_id: record.id }),
+      JSON.stringify({ ok: true, processed: 0, message: "queue empty" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("workspace-indexer error:", message);
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
   }
+
+  const results: Array<{ id: string; ok: boolean; error?: string }> = [];
+
+  for (const item of items) {
+    try {
+      // Fetch source text
+      let extracted: { title: string | null; body: string } | null = null;
+
+      if (item.source_table === "pages") {
+        extracted = await fetchPage(supabase, item.source_id);
+      } else if (item.source_table === "blocks") {
+        extracted = await fetchBlock(supabase, item.source_id);
+      }
+
+      if (!extracted || !extracted.body.trim()) {
+        // Empty content — ack as done (nothing to index)
+        await supabase.schema("work").rpc("ack_index", { p_id: item.id, p_ok: true });
+        results.push({ id: item.id, ok: true });
+        continue;
+      }
+
+      const fullText = ((extracted.title ?? "") + " " + extracted.body).trim();
+
+      // Optional embedding
+      let embedding: number[] | null = null;
+      if (openaiKey) {
+        try {
+          embedding = await embed(fullText, openaiKey);
+        } catch (embErr) {
+          // Embedding failure is non-fatal; proceed without vector
+          console.warn("Embedding skipped:", embErr instanceof Error ? embErr.message : embErr);
+        }
+      }
+
+      // Upsert into search_index
+      const { error: upsertErr } = await supabase
+        .schema("work")
+        .from("search_index")
+        .upsert(
+          {
+            source_table: item.source_table,
+            source_id: item.source_id,
+            space_id: item.space_id,
+            title: extracted.title ?? null,
+            body: fullText,
+            // search_vec: Postgres tsvector is generated by the DB trigger on search_index
+            embedding,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "source_table,source_id", ignoreDuplicates: false },
+        );
+
+      if (upsertErr) throw new Error(upsertErr.message);
+
+      // Ack success
+      await supabase.schema("work").rpc("ack_index", { p_id: item.id, p_ok: true });
+      results.push({ id: item.id, ok: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`indexer error for item ${item.id}:`, message);
+
+      // Ack failure — queue will retry with backoff (up to 5 attempts)
+      await supabase.schema("work").rpc("ack_index", {
+        p_id: item.id,
+        p_ok: false,
+        p_error: message,
+      });
+
+      results.push({ id: item.id, ok: false, error: message });
+    }
+  }
+
+  const succeeded = results.filter((r) => r.ok).length;
+  const failed = results.filter((r) => !r.ok).length;
+
+  return new Response(
+    JSON.stringify({ ok: true, processed: items.length, succeeded, failed, results }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+  );
 });

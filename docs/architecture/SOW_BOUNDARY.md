@@ -158,9 +158,44 @@ Any feature that **crosses a boundary** (e.g., a work page embedding Odoo invoic
 
 ---
 
+## No UI-Only Configuration Rule (ENFORCED)
+
+> **No deployment-critical step may depend on "set it in the dashboard".**
+
+All automation must be expressed as the combination of:
+
+| Component | Where it lives |
+|-----------|---------------|
+| Schema change | `supabase/migrations/<timestamp>_<name>.sql` |
+| Edge Function | `supabase/functions/<name>/index.ts` |
+| Cron schedule | `supabase/migrations/` via `pg_cron` + `pg_net`, OR taskbus schedule in `ops.schedules` |
+| Secret identity | `ssot/secrets/registry.yaml` (names only, never values) |
+| Secret value | Supabase Vault / GitHub Actions Secrets / Vercel env vars |
+
+**Examples of forbidden UI-only config:**
+- Setting up Database Webhooks in the Supabase dashboard to trigger Edge Functions
+- Adding cron jobs via the Supabase dashboard Cron UI without a corresponding migration
+- Adding Supabase Vault secrets without registering them in `ssot/secrets/registry.yaml`
+
+**Correct pattern for event-driven indexing:**
+```
+work.pages / work.blocks (Postgres table)
+  └─ AFTER INSERT OR UPDATE trigger (in migration 000003)
+       └─ calls work.enqueue_index() RPC
+            └─ inserts into work.index_queue
+
+pg_cron (scheduled in migration 000003)
+  └─ every 2 min → POST /functions/v1/workspace-indexer
+       └─ work.claim_index_batch() → process → work.ack_index()
+```
+
+**SoW indexing is always async via queue — never inline on writes.**
+Inline indexing would block the write transaction and couple latency to LLM/embedding API calls.
+
 ## Enforcement
 
 - **CI**: `ssot-surface-guard.yml` scans PRs for direct cross-boundary writes.
 - **RLS**: Postgres policies prevent authenticated users writing to `ops.*`.
 - **Agent policies**: `AGENT_POLICIES` in `packages/taskbus/src/policies.ts` allowlists write surfaces per agent.
 - **TypeScript**: `import 'server-only'` in Vercel apps prevents service-role key reaching client bundles.
+- **SSOT gate**: Any secret consumed by a SoW function must have an entry in `ssot/secrets/registry.yaml` before the PR is merged.
