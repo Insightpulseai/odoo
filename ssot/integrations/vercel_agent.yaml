@@ -1,0 +1,43 @@
+# schema: ssot.integrations.v1
+# Vercel Agent — AI PR reviewer invoked via @vercel in GitHub PR comments.
+# Ref: https://vercel.com/agent
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: vercel_agent
+status: planned
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: vercel
+  surface: github_pr_comments
+  invocation: "@vercel mention in PR comment thread"
+
+components:
+  pr_reviewer:
+    description: "Reads PR thread context and proposes fixes or explanations."
+    activation: "@vercel mention in GitHub PR comment"
+    output: "Inline PR comment with suggestions"
+
+boundary_rules:
+  - "Vercel Agent is advisory only — never treated as authoritative SSOT."
+  - "Agent suggestions must be converted to ops.advisor_findings or workbook steps before acting."
+  - "Agent cannot write to any SSOT files; only humans or CI can update SSOT."
+  - "Log 'Agent suggested X' into ops.run_events for audit trail."
+
+required_secrets: []
+# No secrets required — Agent authenticates via Vercel's GitHub App installation.
+
+integration_stance:
+  role: signal_source
+  feeds_into: ops.advisor_findings (via PR comment ingestion)
+  findings_pillar: ops_excellence
+  findings_severity: info
+
+notes: |
+  Treat Vercel Agent as a "reviewer signal," not an execution engine.
+  When @vercel produces suggestions in a PR:
+    - Ingest via GitHub PR comments API
+    - Store as ops.advisor_findings (pillar: ops_excellence, severity: info)
+    - Link to relevant workbook step for manual action
+  Reference: https://vercel.com/agent

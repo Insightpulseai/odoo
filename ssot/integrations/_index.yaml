@@ -69,3 +69,15 @@ integrations:
     status: planned
     category: design_platform
     vendor: figma
+
+  - id: vercel_agent
+    file: ssot/integrations/vercel_agent.yaml
+    status: planned
+    category: ai_code_review
+    vendor: vercel
+
+  - id: vercel_ai_gateway
+    file: ssot/integrations/vercel_ai_gateway.yaml
+    status: planned
+    category: llm_gateway
+    vendor: vercel
