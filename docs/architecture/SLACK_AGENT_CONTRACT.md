@@ -158,26 +158,42 @@ Response: { "challenge": "abc123" }
 
 No signature is present on challenge requests; they bypass verification.
 
-## 9. Local Development
+## 9. Install State SSOT
+
+Slack App configuration is declared in `ssot/integrations/slack_agent.install.yaml`
+(the authoritative mapping — not tribal knowledge, not this doc).
+
+That file specifies:
+- Required endpoint paths (`/api/slack/events`, `/api/slack/interactive`, `/api/slack/commands`)
+- Required bot OAuth scopes (`chat:write`, `commands`)
+- ACK contract: ack_within_ms=2500, pattern=ACK then enqueue
+- Idempotency key formats and dedup behaviour
+- Secrets consumers (server-only, no browser/CI access)
+- Enterprise Grid readiness notes (planned: org/workspace routing tables)
+
+**During initial setup**, follow the install YAML, not this document, for URL and scope values.
+
+**For Enterprise Grid**: The install YAML contains a `enterprise_grid_readiness` block.
+Before enabling org-wide install, add the three ops tables listed there and a separate
+admin token entry to the secrets registry.
+
+## 10. Local Development
 
 ```bash
 # Start Nitro dev server (port 3300)
 cd apps/slack-agent && pnpm dev
 
-# Expose via ngrok or similar
-ngrok http 3300
+# Expose via ngrok or similar, then set Request URLs in Slack App settings
+# following ssot/integrations/slack_agent.install.yaml endpoints.
 
-# Set Slack App → Event Subscriptions URL:
-# https://<ngrok-id>.ngrok.io/api/slack/events
-
-# Required env vars
-SLACK_SIGNING_SECRET=<from Slack App > Basic Information > App Credentials>
-SLACK_BOT_TOKEN=<from Slack App > OAuth & Permissions>
+# Required env vars (server-side only — never expose to browser)
+SLACK_SIGNING_SECRET=<Slack App → Basic Information → Signing Secret>
+SLACK_BOT_TOKEN=<Slack App → OAuth & Permissions → Bot Token>
 SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<from Supabase project settings>
+SUPABASE_SERVICE_ROLE_KEY=<Supabase project → API settings>
 ```
 
-## 10. Tests
+## 11. Tests
 
 ```bash
 # From apps/slack-agent/
@@ -190,25 +206,27 @@ pnpm test
 #                         slash normalization in commands
 ```
 
-## 11. Deployment
+## 12. Deployment
 
 The app deploys via Vercel (preset: `vercel` in `NITRO_PRESET`).
 
-**Vercel env vars required** (all consumed via `useRuntimeConfig`):
-- `SLACK_SIGNING_SECRET`
-- `SLACK_BOT_TOKEN`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+Env vars must be set in Vercel Dashboard (not committed to git) and in Supabase Vault.
+See `ssot/secrets/registry.yaml` entries `slack_signing_secret`, `slack_bot_token` for
+approved stores and explicit consumer list.
 
-**Slack App configuration**:
-- Event Subscriptions → Request URL: `https://<vercel-url>/api/slack/events`
-- Interactivity → Request URL: `https://<vercel-url>/api/slack/interactive`
-- Slash Commands → Request URL: `https://<vercel-url>/api/slack/commands`
+## 13. Contract Enforcement
 
-## 12. Contract Enforcement
+**SSOT files** (these are the authoritative sources — update them, not this doc):
+- `ssot/integrations/slack_agent.yaml` — components, boundary rules, risk flags
+- `ssot/integrations/slack_agent.install.yaml` — endpoints, scopes, ACK/idempotency contract
+- `ssot/integrations/_index.yaml` — integration registration
 
-This contract is validated by `ssot/integrations/slack_agent.yaml`.
+**CI gate**: `.github/workflows/slack-agent-ssot-gate.yml` runs
+`scripts/ci/check_slack_agent_contract.py` on every change to `apps/slack-agent/**`
+or `ssot/integrations/slack_agent*.yaml`. CI fails if:
+- Any route removes signature verification
+- ACK is sent after enqueue (ACK-fast violation)
+- Idempotency key builder is missing from a route
+- Install YAML is missing required fields
+
 Cross-boundary rules are enforced by `docs/architecture/SSOT_BOUNDARIES.md`.
-
-Any change to the ACK pattern, idempotency key format, or boundary rules requires
-updating both this document and the SSOT registration.

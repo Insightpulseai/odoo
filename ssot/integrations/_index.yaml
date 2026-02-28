@@ -1,0 +1,29 @@
+# schema: ssot.integrations.index.v1
+# Single index of all per-integration SSOT files.
+#
+# This file is the ONLY authoritative registry of integration files.
+# CI validators MUST read this index rather than scanning the directory.
+#
+# To register a new integration:
+#   1. Create ssot/integrations/<id>.yaml following the ssot.integrations.v1 schema
+#   2. Add a row here
+#   3. Optionally add ssot/integrations/<id>.install.yaml for declarative install state
+#
+# Last updated: 2026-03-01
+
+version: "1.0.0"
+schema: ssot.integrations.index.v1
+
+integrations:
+  - id: prismaconsulting
+    file: ssot/integrations/prismaconsulting.yaml
+    status: planned
+    category: integration
+    vendor: internal
+
+  - id: slack_agent
+    file: ssot/integrations/slack_agent.yaml
+    install_state: ssot/integrations/slack_agent.install.yaml
+    status: active
+    category: agent
+    vendor: slack
