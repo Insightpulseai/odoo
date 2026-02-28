@@ -34,7 +34,7 @@
 version: "1.0"
 domain: insightpulseai.com
 schema: ssot.canonical_urls.v1
-last_updated: "2026-02-28"
+last_updated: "2026-02-28"  # ocr promoted DEPLOYED 2026-02-28
 
 urls:
   # ---------------------------------------------------------------------------
@@ -106,21 +106,21 @@ urls:
     tls: "Full (strict)"
     notes: "Redirects to apex domain"
 
-  # ---------------------------------------------------------------------------
-  # BROKEN — DNS claimed, origin exists but not fully wired
-  # ---------------------------------------------------------------------------
   - url: "https://ocr.insightpulseai.com"
     lifecycle: active
     runtime_class: DEPLOYED
     backing: nginx_vhost
-    health_probe: /healthz
+    health_probe: /health
     dns_type: A
     origin_port: 8001
     container: ocr-prod
     tls: "Full (strict)"
     vhost_file: "infra/nginx/ocr.insightpulseai.com.conf"
-    notes: "PaddleOCR microservice — nginx vhost deployed, proxies to 127.0.0.1:8001"
+    notes: "PaddleOCR microservice — nginx vhost + Let's Encrypt cert deployed 2026-02-28; proxies to 127.0.0.1:8001; /healthz remapped to /health"
 
+  # ---------------------------------------------------------------------------
+  # BROKEN — DNS claimed, origin exists but not fully wired
+  # ---------------------------------------------------------------------------
   - url: "https://auth.insightpulseai.com"
     lifecycle: planned
     runtime_class: BROKEN
