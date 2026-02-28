@@ -129,6 +129,22 @@ subdomains:
       claimed_at: "2026-02-28"
       claim_ref: "ssot:cloudflare"
 
+  - name: shelf
+    type: A
+    service: shelf_asset_management
+    port: 3003
+    health_check: /healthcheck
+    owner_system: "Shelf.nu (self-hosted, ipai fork)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-02-28"
+      claim_ref: "ssot:cloudflare"
+
   - name: ocr
     type: A
     service: paddleocr_microservice
