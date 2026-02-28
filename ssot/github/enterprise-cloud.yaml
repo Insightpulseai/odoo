@@ -1,0 +1,71 @@
+# schema: ssot.github.enterprise.v1
+# GitHub Enterprise Cloud governance — Track A (personal accounts)
+# Codifies desired-state controls for the insightpulseai org.
+# CI validator: scripts/ci/check_github_enterprise_ssot.py
+
+enterprise:
+  type: personal_accounts
+  org: insightpulseai
+  plan: github_enterprise_cloud
+
+policy:
+  sso:
+    enabled: true
+    mode: saml
+    enforcement_target: org
+    # When enforcement_target=org, all org members must authenticate via SAML
+    # before accessing org resources. Non-SAML sessions are blocked.
+    idp_hint: "Configure IdP (e.g. Okta, Azure AD) in GitHub Org SSO settings"
+
+  auth:
+    require_2fa: true
+    restrict_third_party_oauth_apps: true
+    # restrict_third_party_oauth_apps: members cannot authorize OAuth apps
+    # unless an org owner approves them. Reduces supply-chain OAuth risk.
+
+  repo_rulesets:
+    # Rulesets replace legacy branch protection rules (GitHub Enterprise Cloud 2023+)
+    # Applied at org level; individual repos may add stricter rulesets.
+    default_branch_protection:
+      require_pull_request: true
+      required_approving_reviews: 1
+      dismiss_stale_reviews_on_push: true
+      require_status_checks: true
+      require_linear_history: true
+      # require_linear_history: enforces rebase/squash merge strategy; no merge commits.
+      # This keeps git history bisectable and audit-friendly.
+
+  security:
+    dependabot_alerts: true
+    dependabot_security_updates: true
+    secret_scanning: true
+    push_protection: true
+    # Note: secret_scanning and push_protection availability varies by plan.
+    # On GHEC free or Team tiers these may require GHAS add-on.
+    # Treat all entries in this block as desired-state; verify current plan entitlements.
+
+audit:
+  source: github_enterprise_audit_log
+  # GitHub Enterprise Cloud surfaces audit events at:
+  #   https://github.com/organizations/<org>/settings/audit-log
+  # Events include: member joins/leaves, repo visibility changes, SAML session events,
+  #   ruleset bypass attempts, secret scanning alerts.
+  ingestion: optional
+  # optional: if an audit ingest pipeline exists, stream to ops.audit_events
+  # (see docs/architecture/GITHUB_ENTERPRISE_CONTRACT.md §Audit Log).
+  ingest_target_table: ops.audit_events
+  ingest_format: json_stream
+  note: |
+    Ingestion is not required for base governance. Enable streaming when a
+    SIEM or Supabase ops.audit_events pipeline is operational.
+
+notes: |
+  secret_scanning and push_protection availability varies by GitHub plan:
+  - GitHub Free / Team: not available
+  - GitHub Enterprise Cloud (GHEC): available with GHAS add-on, or included
+    in some GHEC tiers. Always verify current entitlements against the org
+    billing page before treating these as enforced controls.
+  All entries in this file represent desired-state. CI validates structural
+  invariants (keys present, values correct) but cannot check live GitHub API
+  state. Human review against the GitHub Org Settings UI is required to confirm
+  actual enforcement.
