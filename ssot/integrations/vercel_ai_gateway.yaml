@@ -1,0 +1,66 @@
+# schema: ssot.integrations.v1
+# Vercel AI Gateway — unified LLM provider routing + observability + billing.
+# Ref: https://vercel.com/ai-gateway
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: vercel_ai_gateway
+status: planned
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: vercel
+  surface: api_endpoint
+  description: "Single endpoint for many LLM providers with unified billing and observability."
+
+components:
+  model_router:
+    description: "Routes model calls to OpenAI, Anthropic, Gemini, etc."
+    endpoint: "ai.vercel.app (or configured gateway URL)"
+
+  observability_layer:
+    description: "Logs per-request provider, model, tokens, cost, latency."
+    feeds_into: ops.run_events
+
+  billing_layer:
+    description: "Unified billing for all model calls across providers."
+
+boundary_rules:
+  - "AI Gateway is execution surface only — NOT SSOT."
+  - "All LLM calls via Gateway MUST log to ops.run_events with: provider, model, request_id, cost."
+  - "Gateway API key must NEVER reach client-side bundle (server-side only)."
+  - "Gateway does NOT replace per-model retry/fallback logic in application code."
+  - "Model calls routed via Gateway MUST carry trace_id and run_id correlation fields."
+
+required_secrets:
+  - vercel_ai_gateway_api_key
+
+allowed_egress:
+  - api.vercel.com
+
+consumers:
+  - apps/workspace       # RAG endpoint LLM calls
+  - apps/slack-agent     # agent LLM calls
+  - apps/odooops-console # Advisor AI explanations
+
+risk_flags:
+  - id: cost_runaway
+    severity: medium
+    description: "Unrestricted model calls without spend limits could produce surprise costs."
+    mitigation: "Set budget alerts in Vercel AI Gateway console; monitor Cost pillar in Advisor."
+  - id: key_exposure
+    severity: high
+    description: "Gateway API key reaching client-side bundle exposes all provider access."
+    mitigation: "Enforce server-only usage; CI check for VERCEL_AI_GATEWAY_* in client bundles."
+
+integration_stance:
+  role: llm_gateway
+  feeds_into: ops.run_events (via application-level logging)
+  findings_pillar: cost (spend monitoring) + performance (model latency)
+
+notes: |
+  Use AI Gateway as the default LLM transport for all apps/* model calls.
+  Do not call OpenAI/Anthropic directly from apps — route via Gateway for unified observability.
+  Vercel AI Gateway + Vercel Observability together cover "AI cost" and "model latency" pillars
+  in Ops Advisor without requiring Enterprise upgrade.
+  Reference: https://vercel.com/ai-gateway
