@@ -39,3 +39,9 @@ integrations:
     status: planned
     category: agent
     vendor: plane
+
+  - id: n8n_automation
+    file: ssot/integrations/n8n.yaml
+    status: active
+    category: automation_runner
+    vendor: n8n
