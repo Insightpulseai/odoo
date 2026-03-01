@@ -38,7 +38,19 @@ From the App settings page, note:
 - **App ID** (numeric) → `GITHUB_APP_ID`
 - **Client ID** (alphanumeric) → `GITHUB_CLIENT_ID`
 
-These are not secrets (visible in the public URL) but must be registered in SSOT.
+These are not secrets (App ID is visible in the public URL; Client ID is displayed on the
+App settings page). Both must be registered in `ssot/github/app-manifest.yaml`.
+
+**JWT `iss` field**: GitHub now accepts `client_id` as the JWT issuer when minting
+installation tokens, and recommends it for forward compatibility.
+See: https://github.blog/changelog/2024-05-01-github-apps-can-now-use-the-client-id-to-fetch-installation-tokens
+
+The `github-app-auth` Edge Function implements `client_id`-first selection:
+```
+JWT_ISSUER = GITHUB_CLIENT_ID || GITHUB_APP_ID
+```
+Both still work; client_id is preferred. If you only set `GITHUB_APP_ID`, the function
+falls back correctly — numeric app_id remains valid indefinitely.
 
 ---
 
