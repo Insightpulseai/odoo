@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Add to project
         uses: actions/add-to-project@v1.0.2
+        continue-on-error: true  # failure-mode: CI.AUTOMATION.PROJECT_BOARD_FAILED (non-blocking)
         with:
           # User project: https://github.com/users/jgtolentino/projects/4
           project-url: https://github.com/users/jgtolentino/projects/4

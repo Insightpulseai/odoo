@@ -1,0 +1,106 @@
+# =============================================================================
+# ssot/errors/failure_modes.yaml — Failure Modes SSOT
+# =============================================================================
+# Every tracked failure mode that recurs, generates CI noise, or requires
+# manual intervention. Each entry links to a deterministic runbook.
+#
+# Schema:
+#   code          — unique dot-namespaced identifier (CATEGORY.SUBCATEGORY.NAME)
+#   category      — ci | auth | env | dns | infra | odoo
+#   severity      — critical | high | medium | low
+#   description   — one sentence, what is broken
+#   root_cause    — one sentence, why it breaks
+#   fix.automated — true if self-healing; false if manual runbook required
+#   fix.runbook   — path to runbook (relative to repo root)
+#   ci_behavior   — blocking | non_blocking | non_blocking_until_fixed
+#   convergence_finding (optional):
+#     kind        — finding kind emitted by ops-convergence-scan
+#     target      — target identifier string
+# =============================================================================
+
+failure_modes:
+
+  - code: CI.AUTOMATION.PROJECT_BOARD_FAILED
+    category: ci
+    severity: low
+    description: "GitHub automation failed to add issue/PR to project board"
+    root_cause: "Token scope, org permission, or project board ID mismatch"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/CI.AUTOMATION.PROJECT_BOARD_FAILED.md
+    ci_behavior: non_blocking   # must not block merges
+
+  - code: CI.POLICY_GATES.MISSING_BINARY
+    category: ci
+    severity: medium
+    description: "Policy violation scan script exits 127 (binary/script not found)"
+    root_cause: "Scan script path wrong, missing install step, or PATH not set"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/CI.POLICY_GATES.MISSING_BINARY.md
+    ci_behavior: non_blocking_until_fixed
+
+  - code: AUTH.SUPABASE.TOKEN_STALE
+    category: auth
+    severity: critical
+    description: "Supabase management token expired or revoked"
+    root_cause: "90-day token rotation; token not refreshed before expiry"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/AUTH.SUPABASE.TOKEN_STALE.md
+    ci_behavior: blocking
+    convergence_finding:
+      kind: token_stale
+      target: "Supabase Access Token"
+
+  - code: ENV.VERCEL.KEY_MISSING.PLANE_WEBHOOK_SECRET
+    category: env
+    severity: high
+    description: "PLANE_WEBHOOK_SECRET not set in Vercel odooops-console project"
+    root_cause: "Not provisioned after ops-console deployment"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    ci_behavior: non_blocking
+    convergence_finding:
+      kind: env_missing
+      target: "PLANE_WEBHOOK_SECRET@vercel:odooops-console"
+
+  - code: ENV.VERCEL.KEY_MISSING.GITHUB_WEBHOOK_SECRET
+    category: env
+    severity: high
+    description: "GITHUB_WEBHOOK_SECRET not set in Vercel odooops-console project"
+    root_cause: "Not provisioned after ops-console deployment"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    ci_behavior: non_blocking
+    convergence_finding:
+      kind: env_missing
+      target: "GITHUB_WEBHOOK_SECRET@vercel:odooops-console"
+
+  - code: DNS.MAILGUN.DKIM2_MISSING
+    category: dns
+    severity: medium
+    description: "Second Mailgun DKIM record (krs2._domainkey.mg) not provisioned"
+    root_cause: "Placeholder value in subdomain-registry.yaml not yet replaced"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    ci_behavior: non_blocking
+    convergence_finding:
+      kind: dns_placeholder
+      target: "krs2._domainkey.mg.insightpulseai.com"
+
+  - code: DNS.MAILGUN.TRACKING_CNAME_MISSING
+    category: dns
+    severity: medium
+    description: "Mailgun tracking CNAME (email.mg) not provisioned"
+    root_cause: "Placeholder value in subdomain-registry.yaml not yet replaced"
+    fix:
+      automated: false
+      runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    ci_behavior: non_blocking
+    convergence_finding:
+      kind: dns_placeholder
+      target: "email.mg.insightpulseai.com"

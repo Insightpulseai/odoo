@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: Add to project
         uses: actions/add-to-project@v1.0.2
+        continue-on-error: true  # failure-mode: CI.AUTOMATION.PROJECT_BOARD_FAILED (non-blocking)
         with:
           project-url: ${{ env.PROJECT_URL }}
           github-token: ${{ secrets.PROJECT_TOKEN }}
@@ -33,6 +34,7 @@ jobs:
     steps:
       - name: Add bug/enhancement to project
         uses: actions/add-to-project@v1.0.2
+        continue-on-error: true  # failure-mode: CI.AUTOMATION.PROJECT_BOARD_FAILED (non-blocking)
         with:
           project-url: ${{ env.PROJECT_URL }}
           github-token: ${{ secrets.PROJECT_TOKEN }}
