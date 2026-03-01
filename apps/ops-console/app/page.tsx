@@ -5,6 +5,7 @@ import { StatCard } from "@/components/stat-card"
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Activity, Server, ShieldCheck, Zap, ArrowUpRight, Clock, Box, Database } from "lucide-react"
+import { ConvergenceCard } from "@/components/convergence-card"
 import { Button } from "@/components/ui/button"
 import dynamic from "next/dynamic"
 import { useMobile } from "@/hooks/use-mobile"
@@ -156,6 +157,10 @@ export default function OverviewPage() {
           trend={{ value: "-20s", positive: true }}
           className="glass-card"
         />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ConvergenceCard />
       </div>
 
       <div className="space-y-4">
