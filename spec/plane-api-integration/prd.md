@@ -94,6 +94,15 @@ Then refactor `ipai_bir_plane_sync` to inherit from the connector base instead o
 - REST client retries on 429 with exponential backoff + jitter (max 3 retries).
 - Webhook retries from Plane (10 min → 30 min → ...) are safe due to dedup.
 
+### Acceptance Criteria (Cross-Cutting)
+
+- **Rate limiting**: On 429, retry with exponential backoff + jitter; stop after bounded attempts (max 3); return typed error with reset timestamp. Client reads `X-RateLimit-Remaining`/`Reset` headers proactively.
+- **Webhook verification**: Reject if signature missing or invalid (return 401). Store raw payload + headers for audit. Acknowledge (`200`) only after dedupe record is durably stored.
+- **Dedup persistence**: `X-Plane-Delivery` UUID stored in `plane.webhook.delivery` with a unique constraint. Duplicate deliveries return `200` with no side effects.
+- **Self-host support**: All URLs and secrets are configurable — no hardcoded cloud endpoints. Base URL join logic (`PLANE_BASE_URL` + `/api/v1/`) handles trailing slashes safely.
+- **Webhook failure mode**: If processing fails after durable enqueue, return `200` (Odoo retries internally). Only return non-`200` when you explicitly want Plane-level redelivery.
+- **Provider selection**: Prefer MCP for agentic ops; REST for deterministic batch sync; OAuth Plane App only when user-context is required.
+
 ---
 
 ## 5. Integration Points

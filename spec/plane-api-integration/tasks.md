@@ -113,6 +113,17 @@ Phase 6 (OAuth) — sequential, depends on Phase 1 client
 
 ---
 
+## Merge Gates (CI-Enforced)
+
+| Gate | Phase | Requirement | Enforcement |
+|------|-------|-------------|-------------|
+| **Gate A** (Rate-limit) | Phase 2 | Unit test asserting 429 handler reads `X-RateLimit-Reset` header and sleeps/backs off appropriately (mock time). Must pass in CI. | `test_plane_client.py::test_rate_limit_*` |
+| **Gate B** (Schema) | Phase 1 | Dedupe persistence with unique constraint on `delivery_id` column in `plane.webhook.delivery` model. Migration must enforce `_sql_constraints`. | Schema validation in `test_plane_webhook.py::test_duplicate_delivery_rejected` |
+| **Gate C** (SSOT) | Phase 4 | `ssot/secrets/registry.yaml` must contain entries for `plane_api_key` and `plane_webhook_secret` with correct consumers before merge. Follows `KEY_MISSING` gate pattern. | `ssot-surface-guard.yml` or pre-merge CI check |
+| **Gate D** (URL) | Phase 2 | Unit test asserting base URL join produces correct paths for both `https://api.plane.so` and `https://api.plane.so/` (trailing slash). | `test_plane_client.py::test_base_url_normalization` |
+
+---
+
 ## Implementation Strategy
 
 **MVP-first**: Phases 1–4 form the MVP. Ship the generic connector, tests, BIR refactor, and governance docs together.

@@ -23,6 +23,11 @@ Define non-negotiable rules for how this repo integrates with Plane (project man
 | C8 | **Domain modules inherit, never fork** — domain-specific sync modules (e.g., `ipai_bir_plane_sync`) must `_inherit` from the connector base, not duplicate client logic. | DRY + consistent error handling. |
 | C9 | **MCP transport config must support all three modes** — remote OAuth, remote API-key, and local stdio — selectable by environment. | Covers Plane Cloud, self-hosted, and local dev. |
 | C10 | **Webhook deduplication by `X-Plane-Delivery` header** — every webhook handler must deduplicate on this UUID before processing. | Plane retries with exponential backoff; without dedupe, events process multiple times. |
+| C11 | **Idempotency is mandatory for webhook handlers.** All webhook processing MUST be keyed by `X-Plane-Delivery` and event type, stored in durable storage _before_ side effects execute. | Guarantees exactly-once semantics even across process restarts. |
+| C12 | **Throttle contract.** Client MUST parse `X-RateLimit-Remaining` and `X-RateLimit-Reset` and implement adaptive backoff; 429 MUST be retried with jitter and a bounded upper limit (max 3 retries). | Prevents cascading failures and respects Plane's 60 req/min budget. |
+| C13 | **Cursor iteration contract.** Pagination MUST use `next_cursor`/`prev_cursor` from response; cursor format is opaque (do not parse except to store/forward). | Forward-compatible if Plane changes cursor internals. |
+| C14 | **No duplicate side effects.** Re-delivered events MUST be no-ops (exactly-once effect) even across restarts. Dedupe persistence uses a unique constraint on `delivery_id`. | Prevents double-writes to Odoo records on webhook re-delivery. |
+| C15 | **Base URL normalization.** All requests MUST be built from `PLANE_BASE_URL` + `/api/v1/` with safe join (no double slashes), and test coverage must assert correct URL joining for both trailing-slash and no-trailing-slash base URLs. | Self-hosted deployments commonly break on URL construction. |
 
 ## 3. Security
 
@@ -36,6 +41,8 @@ Define non-negotiable rules for how this repo integrates with Plane (project man
 |------|-------------|
 | PR merge | All Plane client unit tests pass (auth, rate-limit, pagination, webhook verification). |
 | PR merge | No secrets in diff (checked by `ssot-surface-guard.yml`). |
+| PR merge | `plane_api_key` and `plane_webhook_secret` entries exist in `ssot/secrets/registry.yaml`. |
+| PR merge | Dedupe persistence has unique constraint on `delivery_id` (schema gate). |
 | Deploy | Plane connectivity health-check passes (`/api/v1/users/me/` returns 200). |
 
 ## 5. Governance

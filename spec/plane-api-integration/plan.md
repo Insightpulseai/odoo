@@ -137,7 +137,36 @@ PlaneClient.paginate(endpoint, **params):
 
 ---
 
-## 6. Integration Selection Policy
+## 6. System of Record Matrix
+
+| Domain | SSOT Owner | Role |
+|--------|-----------|------|
+| Work items, projects, cycles, modules, comments | **Plane** | Authoritative for PM artifacts; Odoo reads/mirrors. |
+| Finance, ops workflows (BIR, docflow, approvals) | **Odoo** | Authoritative for ERP records; Plane receives a view. |
+| Connector mappings (entity ↔ issue) | **Supabase** (`ops.plane_sync_mappings`) | Bridge state; neither Plane nor Odoo owns the mapping. |
+| Secrets & credentials | **Supabase Vault** | Never in Odoo DB or Plane. |
+
+### Failure-Mode Semantics
+
+| Scenario | Behavior |
+|----------|----------|
+| Webhook processing succeeds | Return `200`. Side effects committed. |
+| Webhook processing fails after durable enqueue | Return `200`. Odoo retries internally via queue. Plane does NOT redeliver. |
+| Webhook processing fails before durable enqueue | Return `500`. Plane redelivers with exponential backoff (10 min → 30 min). Safe because dedupe hasn't recorded this delivery yet. |
+| REST call gets 429 | Retry with exponential backoff + jitter (1s, 2s, 4s; max 3 retries). Parse `X-RateLimit-Reset` header. |
+| REST call gets 5xx | Retry once after 2s. If still failing, raise typed exception. |
+| Missing secret at runtime | Return `503 KEY_MISSING` with `ssot_ref` pointing to registry entry. |
+
+### Provider Selection Policy
+
+- **MCP**: Primary for agentic operations (Claude/agent workflows). Use remote API-key transport for automation, OAuth transport for user-consent flows.
+- **REST**: Primary for deterministic batch sync (BIR deadlines, bulk operations). Use `PlaneClient` with rate-limit and pagination.
+- **OAuth Plane App**: Only when user-context is required (actions attributable to a specific user, not a bot).
+- **Built-in connector**: Always prefer Plane's native integration (GitHub/Slack/GitLab/Sentry) before building a custom bridge.
+
+---
+
+## 7. Built-in Integration Selection Policy
 
 | Need | First choice | Fallback |
 |------|-------------|----------|
@@ -151,7 +180,7 @@ PlaneClient.paginate(endpoint, **params):
 
 ---
 
-## 7. Self-Hosted Deployment Topology
+## 8. Self-Hosted Deployment Topology
 
 ### Current State
 
@@ -169,7 +198,7 @@ PlaneClient.paginate(endpoint, **params):
 
 ---
 
-## 8. MCP Configuration
+## 9. MCP Configuration
 
 Three transport templates (config-only, no Odoo code needed):
 
@@ -213,7 +242,7 @@ Three transport templates (config-only, no Odoo code needed):
 
 ---
 
-## 9. Constitutional Compliance
+## 10. Constitutional Compliance
 
 | Constraint | How addressed |
 |-----------|---------------|
@@ -227,10 +256,15 @@ Three transport templates (config-only, no Odoo code needed):
 | C8 (Inherit, not fork) | `ipai_bir_plane_sync` will `_inherit` from `ipai.plane.connector`. |
 | C9 (MCP 3 modes) | Config templates for all three transports. |
 | C10 (Webhook dedup) | `plane.webhook.delivery` model with UUID lookup. |
+| C11 (Idempotency) | Delivery ID persisted _before_ side effects; duplicate deliveries are no-ops. |
+| C12 (Throttle contract) | Client parses `X-RateLimit-*` headers; adaptive backoff with jitter; bounded retries. |
+| C13 (Cursor opaque) | `paginate()` stores/forwards cursor as-is; no parsing of cursor format. |
+| C14 (No dup side effects) | Unique constraint on `delivery_id`; duplicate insert raises → skip. |
+| C15 (URL normalization) | Base URL join tested for trailing-slash variants; `urljoin` with path safety. |
 
 ---
 
-## 10. Risks & Mitigations
+## 11. Risks & Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|-----------|
@@ -242,7 +276,7 @@ Three transport templates (config-only, no Odoo code needed):
 
 ---
 
-## 11. Verification Commands
+## 12. Verification Commands
 
 ```bash
 # Run connector unit tests
@@ -263,6 +297,6 @@ grep 'plane_api_key' ssot/secrets/registry.yaml && echo "PASS" || echo "FAIL"
 
 ---
 
-## 12. Handoff
+## 13. Handoff
 
 After plan approval → generate tasks via `/speckit.tasks` → implement phase by phase.
