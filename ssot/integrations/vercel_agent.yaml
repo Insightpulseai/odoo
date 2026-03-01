@@ -73,6 +73,9 @@ conflict_resolution:
   effective_domains:
     high: ["apps/**/*.ts", "apps/**/*.tsx", "docs/**/*.md", "ssot/**/*.yaml"]
     low:  ["supabase/migrations/**", "addons/oca/**", "dist/**", "*.lock"]
+  hard_constraints:
+    - "Agent suggestions MUST NOT modify supabase/migrations/** to resolve conflicts; require human decision for migration ordering."
+    - "ssot/**/*.yaml edits from Agent must pass check_repo_structure.py before accepting — YAML edits may look correct but change semantics."
   prompt_templates:
     default:       "@vercel resolve the merge conflicts and keep ssot/ boundary rules intact"
     scoped:        "@vercel resolve conflicts in ssot/** and docs/**; do not touch addons/**"
