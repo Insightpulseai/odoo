@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "regions": ["syd1"],
+  "buildCommand": "next build",
+  "outputDirectory": ".next"
+}

@@ -1,11 +1,21 @@
 {
   "version": 2,
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["syd1"],
   "ignoreCommand": "bash -lc 'BASE=${VERCEL_GIT_PREVIOUS_SHA:-origin/main}; git diff --name-only \"$BASE\" \"$VERCEL_GIT_COMMIT_SHA\" | grep -qE \"^apps/ops-console/\" || exit 1'",
+  "crons": [
+    {
+      "path": "/api/cron/tick",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/advisor-nightly",
+      "schedule": "0 1 * * *"
+    }
+  ],
   "functions": {
     "app/api/ai/sql/route.ts": {
       "maxDuration": 60
@@ -15,6 +25,15 @@
     },
     "app/api/supabase-proxy/[...path]/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/tick/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/cron/advisor-nightly/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/queues/consume/route.ts": {
+      "maxDuration": 60
     }
   },
   "headers": [

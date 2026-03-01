@@ -1,0 +1,10 @@
+# DigitalOcean cost snapshot — January 2026
+# Source: DO billing dashboard reviewed 2026-03-01
+# Context: Migration in progress — some managed surfaces still present
+
+month: "2026-01"
+total_usd: 153.52
+
+analysis:
+  trend: "Reduction of $46.96 from Dec 2025 — migration from App Platform / Registry started"
+  still_present: "Some managed surfaces still active; full consolidation target by Feb 2026"

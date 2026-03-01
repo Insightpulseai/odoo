@@ -1,0 +1,90 @@
+# schema: ssot.integrations.install.v1
+# Declarative install state for apps/slack-agent.
+#
+# This file converts "go configure the Slack App in the UI" into
+# SSOT-declared install requirements. CI can validate this file exists
+# and is complete; humans follow it during initial setup.
+#
+# Referenced by: docs/architecture/SLACK_AGENT_CONTRACT.md §12
+# Source of truth for: required endpoints, scopes, ACK/idempotency contract
+
+version: "1.0.0"
+schema: ssot.integrations.install.v1
+integration: slack_agent
+last_reviewed: "2026-03-01"
+
+app:
+  name: insightpulseai-slack-agent
+  description: "SSOT taskbus relay — routes Slack events/interactions/commands to ops.runs"
+
+endpoints:
+  events:
+    path: /api/slack/events
+    setting: "Slack App → Features → Event Subscriptions → Request URL"
+  interactive:
+    path: /api/slack/interactive
+    setting: "Slack App → Features → Interactivity & Shortcuts → Request URL"
+  commands:
+    path: /api/slack/commands
+    setting: "Slack App → Features → Slash Commands (per command) → Request URL"
+
+required_scopes:
+  bot:
+    - chat:write       # chat.postMessage for run results
+    - chat:write.public
+    - commands         # slash command handling
+  note: >
+    Do NOT add admin-level scopes (admin.*, audit_logs:read) for MVP.
+    Those require org-wide install and a separate governed token
+    (see enterprise_grid_readiness below).
+
+event_subscriptions:
+  enabled: true
+  subscribed_events:
+    - app_mention
+    - message.channels
+    - message.im
+
+ack_contract:
+  ack_within_ms: 2500   # Slack timeout = 3000ms; we target <2500ms for safety
+  pattern: "ACK HTTP 200 immediately, then enqueue async (fire-and-forget)"
+  violation: "Any await/blocking work before send() call is a contract violation"
+
+idempotency_contract:
+  key_column: ops.runs.idempotency_key
+  constraint: UNIQUE
+  key_formats:
+    events: "slack:event:{event_id}"
+    interactive: "slack:interaction:{trigger_id}"
+    commands: "slack:command:{command}:{trigger_id}"
+  dedup_behaviour: "INSERT ... ON CONFLICT DO NOTHING — duplicate Slack retries are silently dropped"
+
+secrets:
+  signing_secret:
+    name: slack_signing_secret
+    env_var: SLACK_SIGNING_SECRET
+    store: vercel_env + supabase_vault
+    consumers: apps/slack-agent (server-side only)
+  bot_token:
+    name: slack_bot_token
+    env_var: SLACK_BOT_TOKEN
+    store: vercel_env + supabase_vault
+    consumers: apps/slack-agent (server-side only)
+  prohibited_consumers:
+    - browser / client-side JS
+    - CI environment variables
+    - GitHub Actions secrets
+
+enterprise_grid_readiness:
+  status: planned    # active | planned | not-applicable
+  notes: >
+    For Enterprise Grid support, every Slack event includes enterprise_id (org)
+    and team_id (workspace). The current implementation passes these through as
+    input fields in ops.runs but does NOT route across workspaces.
+    Required SSOT additions before enabling Enterprise Grid:
+      - ops.integrations_slack_orgs  (org-level install + policies)
+      - ops.integrations_slack_workspaces  (workspace-level install state)
+      - ops.integrations_slack_channels    (channel subscriptions per workspace)
+    Separate admin token (admin.*) required for org-level features; must
+    be stored and rotated independently of slack_bot_token.
+    See: https://docs.slack.dev/enterprise/ for Enterprise Grid org model.

@@ -1,0 +1,114 @@
+# schema: ssot.integrations.v1
+# Vercel Hosting integration register.
+# Declares components, SSOT boundary rules, and risk flags for
+# Vercel as the deployment fabric for apps/* (Next.js applications).
+#
+# Integration model: Vercel is the deployment platform for all apps/*.
+#   - Each app maps to a dedicated Vercel project
+#   - Required env vars per app are tracked here; values live in Vault/Vercel dashboard
+#   - SUPABASE_URL and SUPABASE_ANON_KEY are always Vercel env vars (never hardcoded)
+#   - SUPABASE_SERVICE_ROLE_KEY must be marked sensitive and server-only
+#
+# Boundary doctrine: docs/architecture/SOW_BOUNDARY.md
+# Supabase "Works With" partner: https://supabase.com/partners/integrations/vercel
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: vercel_hosting
+display_name: "Vercel Hosting (Next.js Apps)"
+status: active               # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: vercel
+  runtime: nodejs
+  framework: nextjs
+  template: "vercel-nextjs-supabase"
+
+components:
+  deployment_pipeline:
+    description: >
+      Vercel build and deployment pipeline for apps/* directories.
+      Triggered on push to main (production) or PR (preview deployments).
+    path: "apps/*/"
+    notes: >
+      Each app has its own Vercel project. Monorepo root deployments are
+      prohibited — all deployments are scoped to apps/<name>/.
+
+  env_var_propagation:
+    description: >
+      Vercel env var system propagating Supabase credentials and other
+      runtime secrets to deployed functions and build steps.
+      Names are tracked in SSOT; values live in Vercel dashboard or Vault.
+    env_var_names:
+      - NEXT_PUBLIC_SUPABASE_URL        # public — safe in browser
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY   # public — safe in browser (RLS enforced)
+      - SUPABASE_SERVICE_ROLE_KEY       # server-only — never expose to browser
+    notes: >
+      vercel.json may reference env var names in "env:" and "build.env:" blocks
+      but must never include values. Values are set via Vercel dashboard or
+      `vercel env add`. Local dev: use `vercel env pull` to create .env.local.
+
+  build_hooks:
+    description: >
+      Vercel deploy hooks (webhook URLs) for triggering deployments from
+      external systems (n8n, GitHub Actions) without Vercel API token.
+    notes: "Hook URLs are non-secret but should not be logged in CI output."
+
+known_apps:
+  - id: workspace
+    path: "apps/workspace/"
+    vercel_project: "ops-console"       # or workspace — confirm in Vercel dashboard
+    notes: "Ops console or workspace app"
+
+  - id: ops_console
+    path: "apps/ops-console/"
+    vercel_project: "odoo-ops-console"
+    notes: "Odoo ops console — primary internal admin UI"
+
+  - id: slack_agent
+    path: "apps/slack-agent/"
+    vercel_project: "slack-agent"
+    framework: nitro                    # Nitro preset: vercel (prod), node-server (dev)
+    notes: "Slack agent Nitro app — deployed to Vercel with Nitro vercel preset"
+
+ssot_boundary_rules:
+  - "App source directories are apps/* — no monorepo root deployments"
+  - "SUPABASE_URL and SUPABASE_ANON_KEY MUST be Vercel env vars; never hardcoded in source"
+  - "SUPABASE_SERVICE_ROLE_KEY MUST be marked as sensitive and server-only (not NEXT_PUBLIC_)"
+  - "vercel.json may reference env var names but never values"
+  - "KEY_MISSING behavior (when env var absent) MUST be tested in CI before merge to production"
+  - ".env.local is excluded from git (.gitignore); generated via `vercel env pull` for local dev"
+
+required_secrets:
+  - supabase_anon_key          # see ssot/secrets/registry.yaml → NEXT_PUBLIC_SUPABASE_ANON_KEY
+  - supabase_service_role_key  # see ssot/secrets/registry.yaml → server-only
+
+allowed_egress:
+  - "*.supabase.co"            # Supabase PostgREST + Auth + Realtime + Storage
+  - "supabase.co"
+  - "vercel.com"               # Vercel APIs (if programmatic deploy)
+  - "*.vercel.app"             # Preview deployment domains
+
+risk_flags:
+  - id: env_var_drift
+    severity: medium
+    description: >
+      Env vars added or removed in the Vercel dashboard without updating the
+      SSOT (this file and ssot/secrets/registry.yaml) cause drift.
+      KEY_MISSING failures are silent at build time and surface only at runtime.
+    mitigation: >
+      Document all env var names in this file (env_var_names above) and in
+      ssot/secrets/registry.yaml consumers.
+      CI check: compare declared names in SSOT vs. `vercel env ls` output.
+      Add KEY_MISSING handling in app code (throw early with descriptive error).
+
+  - id: build_secrets_exposure
+    severity: low
+    description: >
+      Build-time env vars printed in Vercel build logs expose their values
+      if console.log() or process.env logging is left in build scripts.
+    mitigation: >
+      Audit build scripts for process.env logging patterns.
+      Use Vercel's "Sensitive" flag on SERVICE_ROLE_KEY to suppress log output.
+      Never set NEXT_PUBLIC_ prefix on server-only keys.

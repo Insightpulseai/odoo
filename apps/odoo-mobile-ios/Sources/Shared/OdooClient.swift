@@ -89,15 +89,65 @@ struct OdooClient {
         return try JSONDecoder().decode(T.self, from: data)
     }
 
-    /// Upload a document (image data) to Odoo's attachment endpoint.
+    /// Upload a document to Odoo via multipart POST to /web/binary/upload_attachment.
+    /// Returns the ir.attachment record ID on success.
     func uploadDocument(
         name: String,
         data: Data,
         mimeType: String = "image/jpeg",
-        resModel: String = "documents.document"
+        resModel: String = "documents.document",
+        resId: Int = 0
     ) async throws -> Int {
-        // TODO: implement multipart upload to /web/binary/upload_attachment
-        throw URLError(.unsupportedURL)
+        guard let url = URL(string: "\(baseURL)/web/binary/upload_attachment") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        if let tokens = try? TokenStore.shared.load() {
+            request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))"
+        request.setValue(
+            "multipart/form-data; boundary=\(boundary)",
+            forHTTPHeaderField: "Content-Type"
+        )
+
+        var body = Data()
+
+        func appendText(_ s: String) { if let d = s.data(using: .utf8) { body.append(d) } }
+        func appendPart(_ field: String, _ value: String) {
+            appendText("--\(boundary)\r\n")
+            appendText("Content-Disposition: form-data; name=\"\(field)\"\r\n\r\n")
+            appendText("\(value)\r\n")
+        }
+
+        appendPart("name", name)
+        appendPart("model", resModel)
+        appendPart("id", "\(resId)")
+
+        // File part
+        appendText("--\(boundary)\r\n")
+        appendText("Content-Disposition: form-data; name=\"ufile\"; filename=\"\(name)\"\r\n")
+        appendText("Content-Type: \(mimeType)\r\n\r\n")
+        body.append(data)
+        appendText("\r\n--\(boundary)--\r\n")
+
+        request.httpBody = body
+
+        let (responseData, response) = try await session.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+
+        struct UploadResult: Decodable { let result: Int?; let id: Int? }
+        if let decoded = try? JSONDecoder().decode(UploadResult.self, from: responseData),
+           let attachmentId = decoded.result ?? decoded.id {
+            return attachmentId
+        }
+        throw URLError(.cannotParseResponse)
     }
 }
 

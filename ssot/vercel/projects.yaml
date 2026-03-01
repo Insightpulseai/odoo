@@ -1,0 +1,104 @@
+# schema: ssot.vercel.projects.v1
+# Vercel monorepo project map — apps/* deployables + shared packages/*
+# Contract doc: docs/architecture/VERCEL_MONOREPO_CONTRACT.md
+# CI guard: scripts/ci/check_vercel_monorepo_ssot.py
+# Ref: https://vercel.com/docs/monorepos
+
+version: "1.0.0"
+schema: ssot.vercel.projects.v1
+last_reviewed: "2026-03-01"
+
+monorepo:
+  repo: Insightpulseai/odoo
+  workspace_manager: pnpm
+  apps_root: apps
+  packages_root: packages
+  turborepo: true
+  link_strategy: repo_root
+  # vercel link --repo from monorepo root (not subdir)
+  # Reference: https://vercel.com/docs/monorepos#linking-from-the-repo-root
+
+projects:
+
+  - name: odooops-console
+    root_directory: apps/odooops-console
+    framework: nextjs
+    uses_packages: true
+    include_files_outside_root: true
+    # REQUIRED when project imports from packages/* — Vercel setting
+    # Reference: https://vercel.com/docs/monorepos#include-files-outside-root
+    turborepo: true
+    build:
+      command: "turbo build --filter=odooops-console"
+      output: ".next"
+    ignored_build:
+      strategy: turbo_ignore
+      command: "npx turbo-ignore"
+    env_strategy: vercel_env_dashboard
+    # Values never in repo — only names referenced
+    purpose: "Ops console UI — Advisor, embedded manager, policy gates"
+
+  - name: workspace
+    root_directory: apps/workspace
+    framework: nextjs
+    uses_packages: true
+    include_files_outside_root: true
+    turborepo: true
+    build:
+      command: "turbo build --filter=workspace"
+      output: ".next"
+    ignored_build:
+      strategy: turbo_ignore
+      command: "npx turbo-ignore"
+    env_strategy: vercel_env_dashboard
+    purpose: "SoW UI — Notion-like pages, blocks, RAG"
+
+  - name: slack-agent
+    root_directory: apps/slack-agent
+    framework: nitro
+    uses_packages: true
+    include_files_outside_root: true
+    turborepo: true
+    build:
+      command: "turbo build --filter=slack-agent"
+      output: ".output"     # Nitro output
+    ignored_build:
+      strategy: turbo_ignore
+      command: "npx turbo-ignore"
+    env_strategy: vercel_env_dashboard
+    purpose: "Slack Bolt/Nitro agent wired to taskbus"
+
+# ── Shared Packages ───────────────────────────────────────────────────────────
+
+packages:
+  - name: taskbus
+    path: packages/taskbus
+    purpose: "Idempotent orchestration helpers — ops.runs lifecycle"
+  - name: shared-ui
+    path: packages/shared-ui
+    purpose: "Design system / component library (when shared across apps)"
+    status: planned
+  - name: sdk
+    path: packages/sdk
+    purpose: "Internal client SDKs for ops/work APIs"
+    status: planned
+
+# ── Policy ────────────────────────────────────────────────────────────────────
+
+policy:
+  include_files_outside_root_required: true
+  # Mandatory for all apps that import packages/*
+  env_values_never_in_repo: true
+  app_platform_disallowed: true
+  # Vercel is canonical; DO App Platform is disallowed (see ssot/infra/digitalocean/policy.yaml)
+  ignored_build_required: true
+  # All apps must declare an ignored-build strategy to avoid unnecessary deploys
+
+notes: |
+  Vercel monorepo: each Vercel Project sets Root Directory = apps/<name>.
+  All shared code lives under packages/*.
+  "Include source files outside of the Root Directory" MUST be enabled for any project
+  that imports from packages/* (Vercel will fail to resolve imports otherwise).
+  Reference: https://vercel.com/docs/monorepos
+  Use turbo-ignore for intelligent ignored-build: only builds affected apps.
+  vercel.json is NOT the authority for build settings in monorepos — keep desired state here.

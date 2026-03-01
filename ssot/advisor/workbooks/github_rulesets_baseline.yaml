@@ -1,0 +1,325 @@
+# schema: ssot.advisor.workbook.v1
+# ---------------------------------------------------------------------------
+# Workbook: github_rulesets_baseline
+# Name:     GitHub governance baseline — rulesets, CODEOWNERS, environments
+# Pillar:   ops_excellence
+# Source:   ssot/integrations/github_features.yaml
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Step-by-step guide for establishing the GitHub governance baseline on
+#   the Insightpulseai organization. Covers organization-level rulesets,
+#   CODEOWNERS coverage, required status checks, Actions permissions, and
+#   GitHub Environments with deployment protection rules.
+#
+#   Triggered by: github_features pillar checks
+#     - github_rulesets_default_branch  (severity: high)
+#     - github_rulesets_codeowners      (severity: medium)
+#     - github_rulesets_required_status (severity: high)
+#     - github_rulesets_actions_permissions (severity: high)
+#     - github_rulesets_deployment_envs (severity: medium)
+#
+# Target org: Insightpulseai
+# Primary repo: Insightpulseai/odoo
+#
+# Steps are ordered from foundational (rulesets) to operational (drift
+# detection). Steps with evidence_required=true block workbook completion
+# in the Ops Console until the operator captures proof.
+# ---------------------------------------------------------------------------
+
+id: github_rulesets_baseline
+name: "GitHub governance baseline — rulesets, CODEOWNERS, environments"
+pillar: ops_excellence
+source: ssot/integrations/github_features.yaml
+version: "1.0.0"
+
+context: >
+  The Insightpulseai GitHub organization requires a governance baseline that
+  protects the default branch of all repositories, ensures code review, and
+  restricts unsafe GitHub Actions usage. The Insightpulseai/odoo repository
+  hosts critical infrastructure (Odoo ERP, CI/CD for 40+ custom modules, Supabase
+  migrations, and IaC). Without rulesets and CODEOWNERS, a single bad merge can
+  break production. Work through these steps in order.
+
+steps:
+
+  - step_no: 1
+    text: >
+      Verify whether organization-level rulesets already exist.
+      Run:
+        gh api /orgs/Insightpulseai/rulesets --jq '.[].name'
+      If the output is empty or returns "[]", no org ruleset is configured.
+      Capture the API response as evidence before proceeding.
+
+      Expected response fields to note:
+        - id          (ruleset numeric ID)
+        - name        (display name)
+        - enforcement (active | disabled | evaluate)
+        - conditions  (repository_name or ref_name filters)
+        - rules       (required_linear_history, pull_request, required_status_checks, etc.)
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Either at least one active org ruleset covering all repositories and the
+      default branch is confirmed (step is satisfied), or a gap is identified
+      that triggers step 2.
+
+  - step_no: 2
+    text: >
+      If no qualifying org ruleset exists, create one via the GitHub API.
+      The ruleset must target all repositories and require:
+        - At least 1 pull request approval before merging
+        - At least 1 required status check (ci/lint or ci/typecheck)
+        - Dismiss stale reviews on new commits (dismiss_stale_reviews_on_push: true)
+
+      Use the GitHub REST API:
+        gh api --method POST /orgs/Insightpulseai/rulesets \
+          --input - << 'EOF'
+        {
+          "name": "default-branch-protection",
+          "target": "branch",
+          "enforcement": "active",
+          "conditions": {
+            "repository_name": { "include": ["~ALL"] },
+            "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] }
+          },
+          "rules": [
+            { "type": "pull_request",
+              "parameters": {
+                "required_approving_review_count": 1,
+                "dismiss_stale_reviews_on_push": true,
+                "require_code_owner_review": true,
+                "require_last_push_approval": false
+              }
+            },
+            { "type": "required_status_checks",
+              "parameters": {
+                "required_status_checks": [
+                  { "context": "ci/lint" }
+                ],
+                "strict_required_status_checks_policy": false
+              }
+            }
+          ]
+        }
+        EOF
+
+      Record the returned ruleset ID for step 8.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      A new active org ruleset named "default-branch-protection" is created.
+      API response returns HTTP 201 and a numeric ruleset ID.
+      All repositories in the Insightpulseai org now require 1 PR approval
+      and at least the ci/lint status check to pass before merging to the
+      default branch.
+
+  - step_no: 3
+    text: >
+      Add or update a CODEOWNERS file in the Insightpulseai/odoo repository.
+      The file must cover the following sensitive paths at minimum:
+
+        ssot/                  @Insightpulseai/platform-leads
+        supabase/migrations/   @Insightpulseai/platform-leads
+        .github/workflows/     @Insightpulseai/platform-leads
+        infra/                 @Insightpulseai/platform-leads
+        addons/ipai/           @Insightpulseai/odoo-leads
+
+      Check whether the file already exists:
+        gh api /repos/Insightpulseai/odoo/contents/CODEOWNERS 2>/dev/null \
+          | jq -r '.content' | base64 -d
+
+      If missing or incomplete, create/update it at the repo root (.github/CODEOWNERS
+      is also acceptable — GitHub checks both locations):
+        # Edit locally, then:
+        git -C <odoo-repo-path> add CODEOWNERS
+        git -C <odoo-repo-path> commit -m "chore(repo): add CODEOWNERS for sensitive paths"
+        git -C <odoo-repo-path> push origin main
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      A CODEOWNERS file exists at the root of Insightpulseai/odoo covering
+      ssot/, supabase/migrations/, .github/workflows/, infra/, and addons/ipai/.
+      Pull requests that modify these paths now require approval from the
+      designated code owners before merge.
+
+  - step_no: 4
+    text: >
+      Verify that required status checks are configured for Insightpulseai/odoo
+      (the primary production-linked repository).
+
+      Check current branch protection:
+        gh api /repos/Insightpulseai/odoo/branches/main/protection \
+          --jq '.required_status_checks'
+
+      The ruleset created in step 2 should enforce this org-wide. For repo-level
+      confirmation, verify that the branch protection shows at least one required
+      context (e.g., ci/lint, ci/typecheck).
+
+      If missing at the repo level and the org ruleset is confirmed active,
+      the org ruleset takes precedence — no additional repo-level rule is needed.
+      Document which check context names are enforced.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      At least one required status check (e.g., ci/lint) is enforced on the
+      main branch of Insightpulseai/odoo, either via the org ruleset (step 2)
+      or an explicit repo-level branch protection rule. Merges are blocked
+      until the check passes.
+
+  - step_no: 5
+    text: >
+      Set GitHub Actions permissions to "Allow actions from this organization
+      and verified creators only". This prevents workflows from using arbitrary
+      third-party actions that could exfiltrate secrets.
+
+      Check current setting:
+        gh api /orgs/Insightpulseai/actions/permissions \
+          --jq '{enabled_repositories, allowed_actions, github_owned_allowed, verified_allowed}'
+
+      If allowed_actions is not "selected" (or if untrusted actions are allowed), update:
+        gh api --method PUT /orgs/Insightpulseai/actions/permissions \
+          --field enabled_repositories=all \
+          --field allowed_actions=selected
+
+        gh api --method PUT /orgs/Insightpulseai/actions/permissions/selected-actions \
+          --field github_owned_allowed=true \
+          --field verified_allowed=true \
+          --field patterns_allowed='[]'
+
+      Verify the updated setting matches expected_state: restricted
+      (github_owned_allowed=true, verified_allowed=true, patterns_allowed=[]).
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      GitHub Actions in the Insightpulseai organization are restricted to:
+        - GitHub-owned actions (actions/checkout, actions/setup-node, etc.)
+        - Actions from verified creators in the GitHub Marketplace
+      Arbitrary third-party actions (e.g., unverified community actions) are blocked.
+
+  - step_no: 6
+    text: >
+      Configure GitHub Environments for production deployments in the
+      Insightpulseai/odoo repository. At minimum, create:
+        - "production"   — for Odoo ERP and n8n on the DO droplet
+        - "supabase-prod" — for Supabase Edge Function deployments
+
+      Check existing environments:
+        gh api /repos/Insightpulseai/odoo/environments --jq '.environments[].name'
+
+      Create missing environments (example for "production"):
+        gh api --method PUT \
+          /repos/Insightpulseai/odoo/environments/production \
+          --input - << 'EOF'
+        {
+          "wait_timer": 0,
+          "reviewers": [],
+          "deployment_branch_policy": {
+            "protected_branches": true,
+            "custom_branch_policies": false
+          }
+        }
+        EOF
+
+      Repeat for "supabase-prod". Capture the API response for each environment.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Both "production" and "supabase-prod" environments exist on the
+      Insightpulseai/odoo repository with deployment branch policy set to
+      "protected_branches only". Deployments can only run from protected
+      branches (main), preventing arbitrary branch deploys.
+
+  - step_no: 7
+    text: >
+      Enable Deployment Protection Rules (manual approval gate) for the
+      "production" environment. This ensures a human approves every deploy
+      to the live Odoo ERP / DO droplet.
+
+      Add a required reviewer to the production environment:
+        gh api --method PUT \
+          /repos/Insightpulseai/odoo/environments/production \
+          --input - << 'EOF'
+        {
+          "wait_timer": 0,
+          "reviewers": [
+            { "type": "Team", "id": <platform-leads-team-id> }
+          ],
+          "deployment_branch_policy": {
+            "protected_branches": true,
+            "custom_branch_policies": false
+          }
+        }
+        EOF
+
+      Get the platform-leads team ID first:
+        gh api /orgs/Insightpulseai/teams --jq '.[] | select(.slug=="platform-leads") | .id'
+
+      Verify the environment shows "Required reviewers" in the GitHub UI or API:
+        gh api /repos/Insightpulseai/odoo/environments/production \
+          --jq '.protection_rules'
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      The "production" environment requires approval from the platform-leads
+      team before any deployment job can proceed. GitHub Actions deployment
+      workflows that reference environment: production will pause and wait
+      for a team member to approve before running deploy steps.
+
+  - step_no: 8
+    text: >
+      Document all ruleset IDs created in steps 1-2 in the drift detection
+      SSOT file. Create or update ssot/github/rulesets.yaml with the following
+      structure:
+
+        # schema: ssot.github.rulesets.v1
+        org: Insightpulseai
+        last_verified: "2026-03-01"
+        rulesets:
+          - id: <ruleset-numeric-id>
+            name: "default-branch-protection"
+            enforcement: active
+            target: branch
+            conditions:
+              repository_name: "~ALL"
+              ref_name: "~DEFAULT_BRANCH"
+            rules_summary:
+              - pull_request (min_approvals=1, dismiss_stale=true, codeowner_review=true)
+              - required_status_checks (contexts=[ci/lint])
+            created: "2026-03-01"
+            verified_by: "ops-console github_features scan"
+
+      Commit this file:
+        git add ssot/github/rulesets.yaml
+        git commit -m "chore(repo): document GitHub org ruleset IDs for drift detection"
+        git push origin main
+
+      The CI guard (.github/workflows/ssot-surface-guard.yml) should be updated
+      to validate that the ruleset IDs in this file still exist on next scan.
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      ssot/github/rulesets.yaml exists and contains the numeric IDs of all
+      active org rulesets. The Ops Advisor scan adapter can diff this file
+      against the live GitHub API response to detect ruleset drift (deletion
+      or enforcement downgrade).
+
+# Completion criteria:
+# Workbook is complete when:
+#   - Step 1 evidence: org rulesets API response captured
+#   - Step 2 evidence: ruleset created (HTTP 201) or confirmed existing
+#   - Step 3 evidence: CODEOWNERS file present covering all required paths
+#   - Step 4 evidence: required status checks confirmed on main
+#   - Step 5 evidence: Actions permissions set to restricted
+#   - Step 6 evidence: production + supabase-prod environments created
+#   - Step 7 evidence: production environment has required reviewer
+#   - Step 8: ssot/github/rulesets.yaml committed (no evidence gate)
+completion_check:
+  rerun_rules:
+    - github_features.org_rulesets
+    - github_features.codeowners
+    - github_features.required_status_checks
+    - github_features.actions_permissions
+    - github_features.deployment_environments
+  all_rules_must_pass: true

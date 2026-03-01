@@ -1,0 +1,99 @@
+# schema: ssot.integrations.v1
+# Vercel Agent — AI PR Code Review; sandbox-validated suggestions + on-demand @vercel invocation.
+# Ref: https://vercel.com/docs/agent/pr-review
+
+version: "1.1.0"
+schema: ssot.integrations.v1
+name: vercel_agent
+status: active
+last_reviewed: "2026-03-01"
+category: ai_code_review
+
+provider:
+  platform: vercel
+  surfaces:
+    - pr_review           # auto-triggered on PR open/push
+    - pr_comment_demand   # on-demand via "@vercel …" comment
+  invocation:
+    auto: "PR opened or updated (when Vercel Agent PR Review enabled in dashboard)"
+    on_demand: "@vercel mention in GitHub PR comment thread"
+  guideline_file: ".github/copilot-instructions.md"
+  # Vercel Agent reads this file for coding guidelines to tailor review feedback.
+  # Keep boundary rules, atomicity constraints, and SSOT rules here.
+
+components:
+  pr_reviewer:
+    description: >
+      Multi-step reasoning over PR diff; generates patches; runs real builds/tests/linters
+      in secure sandboxes; only suggestions that pass sandbox checks appear in the PR.
+    activation: "PR open/push (auto) or @vercel comment (on-demand)"
+    output: "Inline PR comment with sandbox-validated suggestions (one-click apply)"
+  on_demand_commands:
+    examples:
+      - "@vercel run a review"
+      - "@vercel fix the type errors"
+      - "@vercel why is this failing?"
+
+policy:
+  guidelines_required: true
+  # The guideline_file above is read by Vercel Agent to enforce repo conventions.
+  # Highest-signal rules (boundaries, atomicity, SSOT) must appear in that file.
+  no_ui_only_steps: true
+  # Agent must not produce suggestions that require UI-only actions.
+  ssot_immutable: true
+  # Agent suggestions MUST NOT modify files in ssot/; only humans or CI may update SSOT.
+  secrets_policy: vault_refs_only
+  # Any suggested code must use env var references, not inline secrets.
+  pr_atomicity: one_logical_unit_per_pr
+  # Agent should flag PRs that mix unrelated logical units (cross-branch contamination signal).
+
+boundary_rules:
+  - "Vercel Agent is advisory only — never treated as authoritative SSOT."
+  - "Agent suggestions must be converted to ops.advisor_findings or workbook steps before acting."
+  - "Agent cannot write to any SSOT files; only humans or CI can update SSOT."
+  - "Agent suggestions that fail the real sandbox build/test are suppressed by Vercel — never apply suppressed suggestions manually."
+  - "Log '@vercel suggested X' into ops.run_events for audit trail when acting on suggestions."
+  - "PR atomicity: flag any PR that contains files from more than one logical domain (e.g. migrations + Edge Functions in same PR)."
+
+required_secrets: []
+# No secrets required — Agent authenticates via Vercel's GitHub App installation.
+
+integration_stance:
+  role: signal_source
+  feeds_into: "ops.advisor_findings (pillar: ops_excellence, severity: info)"
+  findings_pillar: ops_excellence
+  findings_severity: info
+
+conflict_resolution:
+  capable: true
+  constraints:
+    - "Can propose patches to conflicted files; validates via real builds/tests in sandbox."
+    - "Cannot resolve conflicts at git plumbing level — a commit is still required."
+    - "Partial fixes expected for: semantic conflicts, large refactors, generated files, multi-PR drift."
+  effective_domains:
+    high: ["apps/**/*.ts", "apps/**/*.tsx", "docs/**/*.md", "ssot/**/*.yaml"]
+    low:  ["supabase/migrations/**", "addons/oca/**", "dist/**", "*.lock"]
+  hard_constraints:
+    - "Agent suggestions MUST NOT modify supabase/migrations/** to resolve conflicts; require human decision for migration ordering."
+    - "ssot/**/*.yaml edits from Agent must pass check_repo_structure.py before accepting — YAML edits may look correct but change semantics."
+  prompt_templates:
+    default:       "@vercel resolve the merge conflicts and keep ssot/ boundary rules intact"
+    scoped:        "@vercel resolve conflicts in ssot/** and docs/**; do not touch addons/**"
+    ts_only:       "@vercel fix the merge conflicts in apps/ keeping existing import paths"
+  post_resolution_checklist:
+    - "SSOT invariants preserved (no new keys removed or renamed)"
+    - "No UI-only steps introduced by the resolution"
+    - "python scripts/ci/check_repo_structure.py passes"
+    - "pnpm lint && pnpm typecheck pass if TS files touched"
+
+notes: |
+  Treat Vercel Agent as a "reviewer signal," not an execution engine.
+  When @vercel produces suggestions in a PR:
+    - Apply via Vercel dashboard one-click (sandbox-validated) or manually after review.
+    - Store notable patterns as ops.advisor_findings (pillar: ops_excellence, severity: info).
+    - Link to relevant workbook step for tracking.
+  Merge order safety: Vercel Agent reviews each PR independently; it does not know
+  about cross-PR FK dependencies. Enforce merge order manually (PR #429 → C → A/B).
+  Conflict resolution: trigger @vercel only after conflict markers exist; always verify
+  the post_resolution_checklist above before merging the resolved commit.
+  Reference: https://vercel.com/docs/agent/pr-review

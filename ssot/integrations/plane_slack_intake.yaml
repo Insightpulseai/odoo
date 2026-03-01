@@ -1,0 +1,107 @@
+# schema: ssot.integrations.v1
+# Slack → Plane intake — converts Slack threads into tracked Plane work items.
+# Closes the Operate → Plan loop (triage funnel from team conversations).
+#
+# Integrates with apps/slack-agent (existing) to route intake events.
+# Thread → Plane issue mapping stored in work_plane.slack_intake_events.
+#
+# Parent registry: ssot/integrations/plane.yaml
+# Slack agent:     ssot/integrations/slack_agent.yaml
+# Contract doc:    docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §Slack
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane_slack_intake
+display_name: "Slack → Plane Work Intake"
+status: planned
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  category: intake
+  direction: inbound_only
+
+components:
+  slack_agent_extension:
+    description: >
+      Extension of apps/slack-agent that handles the :plane: reaction or
+      /plane create <title> command to trigger Plane issue creation.
+    path: "apps/slack-agent/"
+    new_handlers:
+      - event: reaction_added (emoji: plane)
+        action: create_plane_issue_from_thread
+      - command: /plane create
+        action: create_plane_issue_interactive
+
+  intake_table:
+    description: "Idempotency store: maps Slack thread_ts to Plane issue ID"
+    table: work_plane.slack_intake_events
+    schema:
+      workspace_id: text
+      channel_id: text
+      thread_ts: text        # Slack thread timestamp (primary dedup key)
+      plane_issue_id: uuid
+      plane_project_id: uuid
+      created_at: timestamptz
+      created_by_slack_user: text
+
+  ops_audit:
+    description: "ops.runs row per intake event"
+    idempotency_key_format: "{workspace_id}:{channel_id}:{thread_ts}"
+
+intake_flow:
+  trigger:
+    - "User adds :plane: reaction to any Slack message/thread"
+    - "User runs /plane create <title> [--project <slug>]"
+  steps:
+    - step: "slack-agent receives event"
+    - step: "Validate signing secret (SLACK_SIGNING_SECRET)"
+    - step: "Check work_plane.slack_intake_events for existing thread_ts (idempotency)"
+    - step: "If new: call Plane API to create issue in default project (or --project arg)"
+    - step: "Insert row into work_plane.slack_intake_events with plane_issue_id"
+    - step: "Write ops.run_events row for audit"
+    - step: "Reply in thread: 'Issue created: [PLANE-{id}] <title> → <plane_url>'"
+  idempotency:
+    key: "{workspace_id}:{channel_id}:{thread_ts}"
+    on_duplicate: "skip insert; reply with existing Plane issue link"
+
+required_secrets:
+  - plane_api_key
+  - plane_workspace_id
+  - slack_bot_token         # reuses existing ssot/secrets/registry.yaml entry
+  - slack_signing_secret    # reuses existing ssot/secrets/registry.yaml entry
+
+default_project_policy:
+  description: >
+    When no --project argument is given, the intake handler selects the default
+    project using this priority: (1) channel → project mapping in ssot/mappings/,
+    (2) workspace-level default in plane_workspace_id config.
+  mapping_file: "ssot/mappings/plane_slack_channels.yaml"  # to be created when needed
+
+boundary_rules:
+  - rule: "Intake MUST be idempotent by {workspace_id}:{channel_id}:{thread_ts}"
+    rationale: "Slack retries events; duplicate issues must never be created"
+
+  - rule: "Plane issue creation response MUST be echoed in the originating thread"
+    rationale: "User feedback closes the intake loop; silent failures are unacceptable"
+
+  - rule: "SLACK_SIGNING_SECRET MUST be validated before processing any event"
+    rationale: "Prevents spoofed Slack events from creating Plane issues"
+
+  - rule: "Intake MUST emit ops.run_events per issue created"
+    rationale: "Advisor 'Slack intake active' check reads ops.runs for this integration"
+
+risk_flags:
+  - flag: "Slack bot invited to unintended channels creates noise issues"
+    severity: medium
+    mitigation: >
+      Channel allowlist in ssot/mappings/plane_slack_channels.yaml.
+      Events from non-mapped channels are silently ignored (no Plane API call).
+      Log discarded events in ops.run_events with status = 'skipped_channel'.
+
+  - flag: "Default project ambiguity creates mis-filed issues"
+    severity: low
+    mitigation: >
+      Workspace-level default project is required config before activation.
+      If plane_workspace_id has no default project, intake replies with
+      "No project configured for this channel — use /plane create --project <slug>".

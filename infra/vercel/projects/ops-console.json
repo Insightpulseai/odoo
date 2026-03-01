@@ -1,0 +1,26 @@
+{
+  "_comment": "Vercel project settings SSOT for apps/ops-console. Apply via scripts/vercel/apply_project_settings.sh",
+  "_source": "infra/vercel/projects/ops-console.json",
+  "_apply_cmd": "bash scripts/vercel/apply_project_settings.sh ops-console",
+
+  "projectId": "prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX",
+  "orgId": "team_wphKJ7lHA3QiZu6VgcotQBQM",
+  "name": "odooops-console",
+  "productionBranch": "main",
+
+  "rootDirectory": "apps/ops-console",
+  "nodeVersion": "20.x",
+  "framework": "nextjs",
+
+  "_note_buildCommands": "Set in apps/ops-console/vercel.json — project-level nulls defer to vercel.json",
+  "installCommand": null,
+  "buildCommand": null,
+  "outputDirectory": null,
+
+  "_note_overrides": "Production Overrides must be cleared. Root cause: rootDirectory was null, causing Vercel to build from repo root. Fix: PATCH /v9/projects/{id} with rootDirectory=apps/ops-console",
+
+  "expectedDomains": [
+    "odooops-console.vercel.app",
+    "ops.insightpulseai.com"
+  ]
+}

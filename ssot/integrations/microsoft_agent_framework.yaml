@@ -1,0 +1,160 @@
+# schema: ssot.integrations.v1
+# Microsoft Agent Framework integration register.
+# Catalogs Semantic Kernel and AutoGen as reference architectures for
+# agentic workloads in the IPAI stack.
+#
+# Integration model:
+#   - Semantic Kernel: model-agnostic skill/plugin composition framework.
+#     Used as the SSOT architecture reference for structured agentic pipelines
+#     that span Copilot + Odoo + Supabase.
+#   - AutoGen: multi-agent conversation pattern framework from Microsoft Research.
+#     Reference only — no production deployment in this stack.
+#
+# Both components are catalog_only / reference_only in this PR.
+# Implementation PRs will update status to porting or active.
+#
+# Architecture doc:  docs/architecture/AGENT_RUNTIMES.md
+# Contract doc:      docs/architecture/AGENTIC_CODING_CONTRACT.md
+#
+# References:
+#   microsoft/semantic-kernel     — https://learn.microsoft.com/semantic-kernel/overview/
+#   microsoft/autogen             — https://microsoft.github.io/autogen/
+#   microsoft/autogen-agentchat  — AgentChat API for multi-agent patterns
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+id: microsoft_agent_framework
+name: "Microsoft Agent Framework (AutoGen / Semantic Kernel)"
+vendor: microsoft
+category: agent_framework
+status: planned
+reviewed: "2026-03-01"
+
+description: >
+  Microsoft's agent orchestration layer. Semantic Kernel provides model-agnostic
+  skill composition; AutoGen provides multi-agent conversation patterns.
+  Used here as the SSOT governance reference for agentic workloads that
+  orchestrate Copilot + Odoo + Supabase across the platform.
+
+components:
+  - id: semantic_kernel
+    name: "Semantic Kernel"
+    url: "https://learn.microsoft.com/semantic-kernel/overview/"
+    role: skill_composition
+    description: >
+      Orchestrates skills/plugins across LLMs. A skill is a typed function
+      (prompt or native code) that an AI planner can sequence into a pipeline.
+      SK supports Python, C#, and Java. SK plugins can wrap Odoo RPC calls,
+      Supabase queries, or n8n webhook triggers as first-class AI-addressable tools.
+    language_support: [python, csharp, java]
+    ipai_status: reference_only
+    notes: >
+      Architecture reference only. No production deployment in this stack yet.
+      When activated, SK orchestration config will live in agents/semantic-kernel/.
+      SK planners must log each skill execution to ops.run_events before the
+      activation of the GitHub Coding Agent integration.
+
+  - id: autogen
+    name: "AutoGen (Microsoft)"
+    url: "https://microsoft.github.io/autogen/"
+    role: multi_agent_conversation
+    description: >
+      Multi-agent conversation framework. Agents (AssistantAgent, UserProxyAgent,
+      GroupChatManager) exchange messages to complete tasks collaboratively.
+      AutoGen AgentChat API (v0.4+) provides a stable surface for orchestrating
+      multiple specialized agents in a typed, inspectable way.
+    ipai_status: reference_only
+    notes: >
+      Reference only. No production deployment in this stack yet.
+      Relevant for future orchestration of: finance_ssc_agent + devops_agent +
+      odoo_developer_agent in a supervised group chat pattern.
+      AutoGen patterns are registered here so future PRs can reference this
+      SSOT entry rather than re-litigating the framework choice.
+
+repo_contract:
+  architecture_doc: "docs/architecture/AGENT_RUNTIMES.md"
+  ssot_owner: "docs/architecture/AGENTIC_CODING_CONTRACT.md"
+  no_code_target: true
+  notes: >
+    This PR registers the framework in the SSOT catalog.
+    No production code is deployed. Implementation PRs will:
+      1. Update status from planned to porting
+      2. Add agents/semantic-kernel/ directory with kernel config
+      3. Add ops.run_events logging hooks for each SK skill execution
+      4. Update this file's status to active and add an implementation_path field
+
+ssot_boundary_rules:
+  - "Semantic Kernel skill/plugin implementations must live in agents/semantic-kernel/ (not inline in app code)"
+  - "All SK skill executions in production must emit to ops.run_events before completing"
+  - "AutoGen agent definitions must use credential references (never literal API keys)"
+  - "SK planners must not mutate Supabase schema — read-only access via supabase_rest_api skill"
+  - "Agent-to-agent communication payloads must not contain raw secrets or PII"
+  - "Framework status changes (planned → active) require an implementation PR with passing CI"
+
+risk_flags:
+  - id: uncontrolled_planner_scope
+    severity: high
+    description: >
+      Semantic Kernel auto planners (e.g., Handlebars planner, Stepwise planner)
+      can sequence arbitrary combinations of registered plugins. Without scope
+      constraints, a planner could invoke high-privilege operations (Supabase
+      schema changes, production deployments) in unintended sequences.
+    mitigation: >
+      Allowlist plugins available to each planner explicitly in the SK kernel config.
+      Do not register deployment or schema-mutation plugins in the default kernel.
+      Require human approval gate in the agentic loop before executing any
+      plan that touches production resources.
+
+  - id: autogen_agent_proliferation
+    severity: medium
+    description: >
+      AutoGen GroupChatManager can spawn sub-agents dynamically. Without
+      registration discipline, new agents appear in conversation logs without
+      SSOT catalog entries, creating audit gaps.
+    mitigation: >
+      All AutoGen agent definitions must have a corresponding entry in
+      ssot/agents/ (planned directory). GroupChatManager config must reference
+      only registered agent IDs. CI lint step should validate this constraint.
+
+  - id: model_key_exposure
+    severity: high
+    description: >
+      Semantic Kernel and AutoGen require LLM API keys (OpenAI, Azure OpenAI, Anthropic).
+      Keys stored in config files or environment variables outside approved stores
+      can be leaked via logs or error output.
+    mitigation: >
+      LLM API keys must be stored in GitHub Actions Secrets or Supabase Vault.
+      SK KernelBuilder must read keys via environment variables (never hardcoded).
+      CI secret scanning (github_governance rulepack) catches raw keys in commits.
+
+posture:
+  - pillar: ops_excellence
+    maturity_level: "catalog_only"
+    note: >
+      Framework registered in SSOT catalog. No active production workload yet.
+      Activate when agentic coding agent PR workflow is live and the first
+      Semantic Kernel skill is deployed to agents/semantic-kernel/.
+    next_action: >
+      When Copilot Coding Agent goes GA and is activated on this repo,
+      evaluate SK as the orchestration layer for multi-agent coding workflows.
+      Open an implementation PR that sets status to porting.
+
+allowed_egress:
+  - api.openai.com                           # OpenAI API (if SK uses OpenAI connector)
+  - *.openai.azure.com                       # Azure OpenAI (if using Azure connector)
+  - api.anthropic.com                        # Anthropic API (if using Anthropic connector)
+  - packages.nuget.org                       # NuGet for C# SK packages
+  - pypi.org                                 # PyPI for Python SK/AutoGen packages
+
+secrets_required:
+  - name: OPENAI_API_KEY
+    purpose: "Semantic Kernel / AutoGen LLM inference (OpenAI connector)"
+    store: github_actions_secrets
+    required: false
+    note: "Not required until SK or AutoGen is promoted from planned to porting"
+
+  - name: AZURE_OPENAI_API_KEY
+    purpose: "Azure OpenAI connector for Semantic Kernel"
+    store: github_actions_secrets
+    required: false
+    note: "Not required until SK or AutoGen is promoted from planned to porting"
