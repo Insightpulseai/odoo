@@ -268,15 +268,13 @@ subdomains:
     owner_system: "OdooOps Console (Next.js on Vercel)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # lifecycle=planned: Terraform SKIPS this record until the Vercel domain
-    # is claimed and provider_claim.status is updated to "claimed".
-    # expires_at enforces a deadline: CI will fail after this date if still unclaimed.
-    lifecycle: planned
+    lifecycle: active
     status: active
     provider_claim:
       provider: vercel
-      status: unclaimed
-      expires_at: "2026-03-15"
+      status: claimed
+      claimed_at: "2026-03-01"
+      claim_ref: "vercel:odooops-console"
 
   - name: console
     description: "Ops Console — Next.js app on Vercel (Supabase-backed)"
@@ -286,6 +284,56 @@ subdomains:
     lifecycle: planned
     provider_claim:
       provider: vercel
+      status: unclaimed
+      expires_at: "2026-06-01"
+
+  # ---------------------------------------------------------------------------
+  # Mailgun Sending Domain Records (mg.insightpulseai.com)
+  # ---------------------------------------------------------------------------
+  # NOTE: The mg subdomain was deprecated for outbound mail (2026-02-01) in favour
+  # of Zoho Mail SMTP.  The records below represent the REMAINING Mailgun DNS
+  # entries that are still present in Cloudflare as of 2026-02-27 (per the
+  # deprecated.mg section below) PLUS the tracking CNAME and second DKIM TXT
+  # that were never provisioned and are now confirmed missing.
+  #
+  # Action required:
+  #   1. Obtain exact values from the Mailgun dashboard (Sending → Domains →
+  #      mg.insightpulseai.com → DNS Records).
+  #   2. Replace all <PLACEHOLDER_*> tokens with real values.
+  #   3. Flip lifecycle=planned → lifecycle=active and set provider_claim.status=claimed.
+  #   4. Run scripts/dns/generate-dns-artifacts.sh and commit.
+  #   5. Remove the four records listed in deprecated.mg.records_to_remove via
+  #      Terraform apply (they are already tagged dns_removed=false there).
+  #
+  # Tracking CNAME (email click/open tracking) — MISSING
+  - name: email.mg
+    type: CNAME
+    service: mailgun_tracking
+    target: "<MAILGUN_TRACKING_CNAME_TARGET>"
+    # Typical Mailgun value: mailgun.org  (confirm in dashboard)
+    description: "Mailgun email tracking CNAME (open/click tracking for mg.insightpulseai.com)"
+    cloudflare_proxied: false
+    lifecycle: planned
+    status: planned
+    notes: "MISSING — obtain target hostname from Mailgun dashboard DNS Records page"
+    provider_claim:
+      provider: other
+      status: unclaimed
+      expires_at: "2026-06-01"
+
+  # Second DKIM TXT (krs2._domainkey.mg or pic._domainkey.mg) — MISSING
+  - name: krs2._domainkey.mg
+    type: TXT
+    service: mailgun_dkim2
+    content: "<MAILGUN_DKIM2_VALUE>"
+    # Typical format: "k=rsa; p=<base64-key>"  (confirm exact name + value in dashboard)
+    description: "Mailgun second DKIM TXT record for mg.insightpulseai.com (DKIM rotation)"
+    cloudflare_proxied: false
+    lifecycle: planned
+    status: planned
+    notes: "MISSING — exact record name (krs2 vs pic) and key value must come from Mailgun dashboard"
+    provider_claim:
+      provider: other
       status: unclaimed
       expires_at: "2026-06-01"
 
