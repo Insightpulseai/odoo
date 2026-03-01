@@ -1,0 +1,60 @@
+# schema: ssot.providers.v1
+# Vercel Sandbox — isolated code execution provider
+# Pattern: follows ssot/providers/digitalocean/provider.yaml
+# Contract: docs/contracts/C-VERCEL-01-sandbox.md (to create when capability is active)
+
+version: "1.0.0"
+schema: ssot.providers.v1
+last_reviewed: "2026-03-01"
+
+provider:
+  id: vercel_sandbox
+  name: Vercel Sandbox
+  type: execution_sandbox
+  status: planned
+  auth:
+    method: bearer_token
+    secret_name: vercel_token
+    ssot_registry: ssot/secrets/registry.yaml
+  api:
+    base_url: https://api.vercel.com
+    sandbox_api: https://api.vercel.com/v1/sandbox
+    rate_limit: per-plan
+    retry_policy:
+      max_attempts: 3
+      backoff: exponential
+
+capabilities:
+  - id: sandbox_run
+    name: Isolated Code Execution
+    status: planned
+    ops_table: ops.sandbox_runs
+    baseline_allowed: true
+    plan_tier: baseline
+    surfaces:
+      - /studio
+      - /runs
+
+ingestion:
+  worker: vercel-sandbox-runner
+  audit_tables:
+    runs: ops.sandbox_runs
+    events: ops.run_events
+
+console_integration:
+  pages:
+    - path: /runs
+      reads:
+        - ops.sandbox_runs
+    - path: /studio
+      reads:
+        - ops.sandbox_runs
+        - ops.run_events
+
+boundary_rules:
+  - rule: "All sandbox executions MUST write a row to ops.sandbox_runs before starting"
+    rationale: "Evidence-first: run_id must exist before execution begins"
+  - rule: "preview_url MUST be recorded in ops.sandbox_runs when available"
+    rationale: "Links sandbox output to Vercel Preview for traceability"
+  - rule: "Status transitions are append-only via ops.run_events"
+    rationale: "Rule 5 (ssot-platform.md): ops.* tables are append-only"

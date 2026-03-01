@@ -1,0 +1,79 @@
+# schema: ssot.providers.v1
+# AI Inference Provider — Vercel AI Gateway (primary) / direct Gemini (fallback)
+# Pattern: follows ssot/providers/digitalocean/provider.yaml
+# Related: ssot/integrations/vercel_ai_gateway.yaml (Gateway-specific config)
+# Related: ssot/ai/odoo_ai.yaml (Odoo-specific AI surface config)
+
+version: "1.0.0"
+schema: ssot.providers.v1
+last_reviewed: "2026-03-01"
+
+provider:
+  id: ai_gateway
+  name: Vercel AI Gateway
+  type: inference
+  status: active
+  reference_contract: ssot/integrations/vercel_ai_gateway.yaml
+  auth:
+    method: bearer_token
+    secret_name: vercel_token       # VERCEL_AI_GATEWAY_URL env var selects gateway
+    ssot_registry: ssot/secrets/registry.yaml
+  api:
+    base_url: "$VERCEL_AI_GATEWAY_URL"   # absent = fall back to provider direct
+    fallback_provider: gemini_direct
+    fallback_base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    fallback_secret_name: gemini_api_key
+
+capabilities:
+  - id: streaming_chat
+    name: Streaming Chat (streamText)
+    status: active
+    ops_table: ops.runs
+    baseline_allowed: true
+    plan_tier: baseline
+    surfaces:
+      - /studio
+      - /api/ai/stream
+
+  - id: tool_calling
+    name: Tool Calling (generateText with tools)
+    status: active
+    ops_table: ops.runs
+    baseline_allowed: true
+    plan_tier: baseline
+
+  - id: text_generation
+    name: Text Generation (generateText)
+    status: active
+    ops_table: ops.runs
+    baseline_allowed: true
+    plan_tier: baseline
+
+models:
+  default: google/gemini-2.0-flash
+  available:
+    - id: google/gemini-2.0-flash
+      status: active
+      secret_name: gemini_api_key
+    - id: openai/gpt-4.1
+      status: active
+      secret_name: openai_api_key
+    - id: anthropic/claude-3-haiku
+      status: planned             # pending ANTHROPIC_API_KEY in Vercel env
+      secret_name: anthropic_api_key
+
+console_integration:
+  pages:
+    - path: /studio
+      reads:
+        - ops.runs
+    - path: /api/ai/stream
+      reads: []
+
+boundary_rules:
+  - rule: "Missing API key MUST return HTTP 503 with JSON error code AI_KEY_NOT_CONFIGURED"
+    rationale: "Fail-closed: silent fallback to wrong provider is worse than an explicit error"
+  - rule: "AI Gateway URL takes precedence; direct provider is fallback only"
+    rationale: "Centralised gateway provides rate-limiting, caching, and observability"
+  - rule: "No model selector in route handler — model is config-driven via this YAML"
+    rationale: "Prevents ad-hoc model sprawl; changes go through SSOT"
