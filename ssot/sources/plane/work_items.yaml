@@ -1,0 +1,27 @@
+# SSOT: Plane → ops.work_items ingestion source
+# Contract: docs/contracts/C-PLANE-02-workitems-webhooks.md
+source:
+  kind: plane_work_items
+  base_url: "${PLANE_BASE_URL}"
+  workspace_slug: "${PLANE_WORKSPACE_SLUG}"
+  project_filters: []          # optional list of project ids/slugs; empty = all
+  cadence:
+    refresh: "15m"             # fallback poller interval
+  webhooks:
+    enabled: true
+    endpoint: "${PUBLIC_BASE_URL}/api/webhooks/plane"
+    signature_header: X-Plane-Signature
+    secret_ref: plane_webhook_secret
+
+ingest:
+  target_table: ops.work_items
+  upsert_key: [work_item_ref]
+  ref_format: "plane:{issue_id}"
+  field_map:
+    work_item_ref: "plane:{issue.id}"
+    system: plane
+    title: issue.name
+    status: issue.state.name
+    assignee: "issue.assignees[0].display_name"
+    url: issue.url
+    updated_at: issue.updated_at

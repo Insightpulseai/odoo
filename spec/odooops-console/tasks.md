@@ -61,6 +61,36 @@
 
 ---
 
+## Phase 6c — Work items ingestion (Boards parity)
+
+16e. Implement Plane → ops.work_items ingestion:
+     - poll or webhook ingest issues/projects for selected workspace(s)
+     - normalize into work_item_ref = plane:<issue_id>
+     - upsert into ops.work_items
+16f. Implement GitHub Issues → ops.work_items ingestion:
+     - fetch issues for selected repos/org
+     - normalize into work_item_ref = github:<org>/<repo>#<number>
+     - upsert into ops.work_items
+16g. Add "source selection" SSOT:
+     - ssot/sources/plane/work_items.yaml (workspace slug + project filters)
+     - ssot/sources/github/work_items.yaml (org/repo filters)
+16h. Add traceability enforcement (soft gate initially):
+     - PR template requires a work_item_ref
+     - CI check warns when missing; later can be promoted to fail.
+16i. Implement Plane webhook receiver:
+     - verify signature (HMAC SHA-256, X-Plane-Signature header)
+     - persist X-Plane-Delivery ledger row (primary key = delivery_id)
+     - enqueue processing job to ops.work_queue
+     - return NextResponse.json({ ok:true }) immediately
+16j. Implement GitHub webhook receiver:
+     - verify signature (X-Hub-Signature-256: sha256=...)
+     - persist X-GitHub-Delivery ledger row (primary key = delivery_id)
+     - enqueue processing job to ops.work_queue
+     - return NextResponse.json({ ok:true }) immediately
+16k. Add CI gate: webhook endpoints must always return JSON (no empty body), and ledgers must enforce unique delivery ids.
+
+---
+
 ## Phase 7 — Advisor + Observability + Metrics
 
 21. Create `ops.advisor_runs` + `ops.advisor_findings` migrations.

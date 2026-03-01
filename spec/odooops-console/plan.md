@@ -96,6 +96,26 @@ All providers implement:
 
 ---
 
+## Work items ingestion topology
+
+### Plane
+
+- **Default**: webhooks → ingest endpoint → delivery ledger → async processor → ops.work_items upsert.
+- Fallback: scheduled poller (cursor pagination + rate-limit handling) for drift repair.
+
+### GitHub Issues
+
+- **Default**: GitHub webhooks for issues → delivery ledger → async processor → ops.work_items upsert.
+- Fallback: scheduled poller for drift repair and missed deliveries.
+
+### Idempotency
+
+- Upserts keyed by `work_item_ref`.
+- Webhook deliveries are persisted **before** any side effects; re-deliveries are no-ops.
+- Processing is async by default (durable enqueue → immediate 200).
+
+---
+
 ## Odoo.sh Parity Implementation Map
 
 | Odoo.sh Feature | OdooOps Console Module | Backing System | Evidence Artifact |
