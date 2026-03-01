@@ -3,8 +3,10 @@
 -- ============================================================================
 -- Created: 2026-03-02
 -- Spec:    spec/ppm-clarity/
--- SSOT:    ssot/ppm/portfolio.yaml  (seeded by ops-ppm-rollup Edge Function)
+-- SSOT:    ssot/ppm/portfolio.yaml  (seeded by ops-ppm-rollup Edge Function via CI)
 -- ============================================================================
+
+CREATE SCHEMA IF NOT EXISTS ops;
 
 -- Portfolio initiatives (mirrors ssot/ppm/portfolio.yaml)
 CREATE TABLE IF NOT EXISTS ops.ppm_initiatives (
@@ -20,7 +22,17 @@ CREATE TABLE IF NOT EXISTS ops.ppm_initiatives (
   target_date      DATE,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  metadata         JSONB       NOT NULL DEFAULT '{}'::jsonb
+  metadata         JSONB       NOT NULL DEFAULT '{}'::jsonb,
+
+  -- Generated FTS column (updated automatically on write)
+  fts              TSVECTOR GENERATED ALWAYS AS (
+    to_tsvector('english',
+      coalesce(initiative_id, '') || ' ' ||
+      coalesce(name, '')          || ' ' ||
+      coalesce(owner, '')         || ' ' ||
+      coalesce(spec_slug, '')
+    )
+  ) STORED
 );
 
 -- Computed status rollups (written by ops-ppm-rollup Edge Function)
@@ -36,19 +48,18 @@ CREATE TABLE IF NOT EXISTS ops.ppm_status_rollups (
   metadata         JSONB       NOT NULL DEFAULT '{}'::jsonb
 );
 
+-- Indexes
 CREATE INDEX IF NOT EXISTS idx_ppm_initiatives_status
   ON ops.ppm_initiatives(status);
 
 CREATE INDEX IF NOT EXISTS idx_ppm_initiatives_owner
   ON ops.ppm_initiatives(owner);
 
+CREATE INDEX IF NOT EXISTS idx_ppm_initiatives_fts
+  ON ops.ppm_initiatives USING GIN (fts);
+
 CREATE INDEX IF NOT EXISTS idx_ppm_rollups_initiative
   ON ops.ppm_status_rollups(initiative_id, computed_at DESC);
-
--- Full-text search index
-CREATE INDEX IF NOT EXISTS idx_ppm_initiatives_fts
-  ON ops.ppm_initiatives
-  USING GIN (to_tsvector('english', coalesce(name,'') || ' ' || coalesce(spec_slug,'') || ' ' || coalesce(owner,'')));
 
 -- Updated-at trigger
 CREATE OR REPLACE FUNCTION ops.set_ppm_initiatives_updated_at()
@@ -67,14 +78,15 @@ FOR EACH ROW EXECUTE FUNCTION ops.set_ppm_initiatives_updated_at();
 ALTER TABLE ops.ppm_initiatives     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ops.ppm_status_rollups  ENABLE ROW LEVEL SECURITY;
 
--- service_role: full access (for Edge Functions)
+-- service_role: full access (for Edge Functions and CI)
 CREATE POLICY ppm_initiatives_service_all ON ops.ppm_initiatives
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 CREATE POLICY ppm_rollups_service_all ON ops.ppm_status_rollups
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
--- authenticated: read-only
+-- authenticated: read-only (ops console users)
+-- Note: anon role has NO access — these tables are internal only
 CREATE POLICY ppm_initiatives_auth_select ON ops.ppm_initiatives
   FOR SELECT TO authenticated USING (true);
 
