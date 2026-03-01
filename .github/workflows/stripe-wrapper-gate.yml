@@ -1,0 +1,44 @@
+name: stripe-wrapper-gate
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**stripe_wrapper*.sql"
+      - "ssot/runtime/prod_settings.yaml"
+      - "ssot/runtime/vault_provisioning.yaml"
+      - "ssot/secrets/registry.yaml"
+      - "scripts/ci/check_stripe_wrapper_activation.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "supabase/migrations/**stripe_wrapper*.sql"
+      - "ssot/runtime/prod_settings.yaml"
+      - "ssot/runtime/vault_provisioning.yaml"
+      - "ssot/secrets/registry.yaml"
+      - "scripts/ci/check_stripe_wrapper_activation.py"
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stripe-wrapper-activation:
+    name: Gate Stripe FDW activation on Vault provisioning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PyYAML
+        run: pip install pyyaml --quiet
+      - name: Check stripe wrapper activation gate
+        run: python3 scripts/ci/check_stripe_wrapper_activation.py
+        # Fails (exit 1) if any stripe_wrapper migration has an uncommented
+        # CREATE SERVER or IMPORT FOREIGN SCHEMA block AND any of these is missing:
+        #   - stripe_secret_key in ssot/secrets/registry.yaml
+        #   - payments.stripe.supabase_wrapper.vault_secret_id in prod_settings.yaml
+        #   - vault_provisioning.yaml :: vault.stripe_secret_key.provisioned = true
+        # Passes immediately if activation block is still commented (safe default).
