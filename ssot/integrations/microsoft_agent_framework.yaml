@@ -141,7 +141,7 @@ posture:
 
 allowed_egress:
   - api.openai.com                           # OpenAI API (if SK uses OpenAI connector)
-  - *.openai.azure.com                       # Azure OpenAI (if using Azure connector)
+  - "*.openai.azure.com"                     # Azure OpenAI (if using Azure connector)
   - api.anthropic.com                        # Anthropic API (if using Anthropic connector)
   - packages.nuget.org                       # NuGet for C# SK packages
   - pypi.org                                 # PyPI for Python SK/AutoGen packages
