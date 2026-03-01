@@ -4,7 +4,7 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-03-01 (C-18–C-20 added: DO API, Odoo.sh Parity, Mail Catcher)
+> Last updated: 2026-03-01 (C-18–C-22 added: DO API, Odoo.sh Parity, Mail Catcher, Plane Work Items Webhooks, GitHub Issues Webhooks)
 
 ---
 
@@ -32,6 +32,8 @@
 | C-18 | [DigitalOcean API](C-DO-01-digitalocean-api.md)        | DigitalOcean v2 REST API                    | `ops.do_*` tables, ops-console UI         | ✅ Active  | `ssot/providers/digitalocean/provider.yaml` |
 | C-19 | [Odoo.sh Parity](C-ODOOS-01-parity.md)                 | ops-console platform                        | All console modules                       | ✅ Active  | `spec/odooops-console/constitution.md`     |
 | C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)              | Mailgun relay + `ops.mail_events`           | ops-console Observability                 | 🔲 Planned | CI gate (task 33)                          |
+| C-21 | [Plane Work Items Webhooks](C-PLANE-02-workitems-webhooks.md) | `ssot/sources/plane/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/plane/route.ts` |
+| C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/github/route.ts` |
 
 ---
 
