@@ -1,0 +1,114 @@
+# =============================================================================
+# DNS Placeholder Guard — Block active DNS entries with placeholder values
+# =============================================================================
+# Fails CI if any entry in infra/dns/subdomain-registry.yaml has:
+#   - lifecycle: active  AND
+#   - any string field value containing a placeholder like <SOME_PLACEHOLDER>
+#
+# This prevents accidentally activating a DNS record that still has an
+# unresolved placeholder as its target or any other field value.
+#
+# Schema reference: ssot.dns.v1 (see file header in subdomain-registry.yaml)
+# =============================================================================
+
+name: DNS Placeholder Guard
+
+on:
+  pull_request:
+    paths:
+      - 'infra/dns/subdomain-registry.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'infra/dns/subdomain-registry.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-active-placeholders:
+    name: Block active DNS with placeholders
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pyyaml
+        run: pip install pyyaml --quiet
+
+      - name: Check for active entries with placeholder values
+        run: |
+          python3 - <<'PYEOF'
+          import yaml, sys, re
+
+          REGISTRY = "infra/dns/subdomain-registry.yaml"
+
+          with open(REGISTRY) as f:
+              data = yaml.safe_load(f)
+
+          # Matches any value containing <UPPER_CASE_OR_UNDERSCORE> placeholder tokens
+          placeholder_pat = re.compile(r"<[A-Z][A-Z0-9_]*>")
+
+          violations = []
+
+          def scan_value(value, path):
+              """Recursively scan a value for placeholder strings, recording violations."""
+              if isinstance(value, str):
+                  if placeholder_pat.search(value):
+                      violations.append(f"  {path} = {value!r}")
+              elif isinstance(value, dict):
+                  for k, v in value.items():
+                      scan_value(v, f"{path}.{k}")
+              elif isinstance(value, list):
+                  for i, v in enumerate(value):
+                      scan_value(v, f"{path}[{i}]")
+
+          def check_entry(entry, path):
+              """Check a single subdomain entry: only flag if lifecycle == 'active'."""
+              if not isinstance(entry, dict):
+                  return
+              if entry.get("lifecycle") != "active":
+                  return
+              # Scan every field in the entry for placeholders
+              for k, v in entry.items():
+                  scan_value(v, f"{path}.{k}")
+
+          # Navigate the subdomain-registry.yaml schema:
+          # Top-level key is 'subdomains' and its value is a list of entries.
+          subdomains = data.get("subdomains", [])
+
+          if isinstance(subdomains, list):
+              for i, entry in enumerate(subdomains):
+                  name = entry.get("name", "?") if isinstance(entry, dict) else "?"
+                  check_entry(entry, f"subdomains[{i}]({name})")
+          elif isinstance(subdomains, dict):
+              for name, entry in subdomains.items():
+                  check_entry(entry, f"subdomains.{name}")
+
+          if violations:
+              print("::error::Active DNS entries contain placeholder values. "
+                    "Resolve all placeholders before setting lifecycle: active.")
+              print("")
+              print("Violations found:")
+              for v in violations:
+                  print(v)
+              print("")
+              print("Fix: Replace placeholder values with real targets, "
+                    "or set lifecycle: planned until the target is known.")
+              sys.exit(1)
+          else:
+              count = sum(
+                  1 for e in (subdomains if isinstance(subdomains, list) else subdomains.values())
+                  if isinstance(e, dict) and e.get("lifecycle") == "active"
+              )
+              print(f"✅ No active DNS entries with placeholder values "
+                    f"({count} active entr{'y' if count == 1 else 'ies'} checked)")
+          PYEOF
