@@ -34,10 +34,6 @@ Read-only surfaces backed by Supabase `ops.*` tables and Storage artifacts.
 | `ops.do_actions` | DO action audit |
 | `ops.do_ingest_runs` | DO ingest audit |
 | `ops.mail_events` | Mail catcher events |
-| `ops.convergence_findings` | Deployment convergence drift findings |
-| `ops.maintenance_runs` | Maintenance chore execution |
-| `ops.maintenance_run_events` | Maintenance run audit trail |
-| `ops.ai_models` | AI provider model inventory |
 
 ### Control Plane Jobs (Edge Functions)
 
@@ -64,8 +60,6 @@ All providers implement:
 | DigitalOcean | offset (page/per_page) | Bearer token | `ops-do-ingest` |
 | Mailgun | — (webhooks) | HMAC signed payload | `ops-mailgun-ingest` |
 | Slack | cursor | Bot token | `ops-slack-notify` |
-| Convergence | — (internal) | service role | `ops-convergence-scan` |
-| FixBot | — (internal) | service role | `ops-fixbot-dispatch` |
 
 ---
 
@@ -185,169 +179,6 @@ Decision order for new integrations:
 2. Supabase partner integration
 3. Vercel marketplace integration
 4. Custom bridge (Edge Function + `ops.*` tables + Storage artifacts)
-
----
-
-## Vercel for GitHub Semantics (Contract)
-
-### Deploy-on-push + Deploy-on-PR
-
-- Vercel deploys every push by default, including PR branches.
-- If multiple commits push while a build is running on the same branch, Vercel
-  finishes the current build then deploys only the latest commit, canceling
-  queued intermediates (latest commit wins per branch).
-- SSOT implication: treat "canceled superseded builds" as expected, not failures.
-
-### Preview URLs + PR Association
-
-- Each PR gets a unique preview deployment URL; Vercel can post it as a PR comment.
-- Vercel uses GitHub's Deployments API: deployments appear in GitHub UI.
-- `ops.deployments` stores: `deployment_url`, `environment` (preview|production),
-  `pr_number` (nullable), `git_sha`, `github_deployment_id` (nullable).
-
-### Production Branch + Instant Rollback
-
-- Merges/pushes to the production branch update custom domains with the latest
-  production deployment.
-- Reverting a deployed commit effectively rolls back to the previous production
-  deployment on the domain.
-- Console "Rollback" modeled as: promote previous production deployment or
-  revert commit (Git-first rollback).
-
-### Fork PR Authorization
-
-- PRs from forks require authorization before Vercel deploys (prevents env var /
-  OIDC leakage).
-- Console must show "Awaiting authorization" state distinctly from "failed".
-
-### Optional GitHub Actions Deployment Mode
-
-- For GHES or "don't expose source to Vercel" scenarios:
-  `vercel pull` → `vercel build` → `vercel deploy --prebuilt`.
-- Modeled as a toggle in integrations policy.
-
-### Normalized Build Statuses
-
-Map Vercel build states into:
-- `success`
-- `failed`
-- `canceled_superseded` (expected — intermediate build replaced by later commit)
-- `awaiting_authorization` (fork PR protection)
-
----
-
-## FixBot Execution Surfaces
-
-### Purpose
-
-When an error occurs (failed build, gate failure, webhook signature error,
-migration failure), the system detects → creates an agent run → invokes
-@claude / coding agent → requires verification → opens PR → posts evidence.
-
-### Agent Run Model
-
-Uses existing `ops.agent_runs` + `ops.agent_events` + `ops.agent_artifacts`
-tables (renamed in migration `20260213`).
-
-New columns on `ops.agent_runs`:
-- `kind` (fix_build | fix_gate | fix_migration | fix_webhook)
-- `trigger_source` (vercel | github | supabase | manual)
-- `trigger_ref` (deployment_id, run_id, gate_id, etc.)
-- `prompt` (Agent Relay Template payload)
-- `pr_url` (nullable — set when PR is opened)
-
-### Governance Policy
-
-Defined in `ssot/agents/fixbot_policy.yaml`:
-- PR-only (never push to main)
-- Require tests + gates to pass
-- Max files/lines changed limits
-- Forbidden paths (secrets, CI workflows)
-- Escalation on repeat failures → create work item
-
-### Trigger Mechanism
-
-1. Gate failure or build failure detected in `ops.*` tables.
-2. Dispatcher creates `ops.agent_runs` row with pre-filled prompt.
-3. Agent invoked (Slack action or backend trigger).
-4. Agent opens PR with fix + evidence.
-
----
-
-## Deployment Convergence
-
-### Purpose
-
-Periodic maintenance job that detects drift between Git reality and runtime
-reality, then drives environments to completion (or raises actionable tickets).
-
-### Signals Checked
-
-| Signal | Description |
-|--------|-------------|
-| Merged but not deployed | `main` advanced but prod/stage deployed SHA didn't move |
-| Deployment failed | Latest build/deploy status is `failed` |
-| Deployment incomplete | Deploy succeeded but follow-ups pending (migrations, functions, secrets, DNS) |
-| Checklist not verified | Release checklist exists but has unverified items |
-
-### Completion Definition
-
-Per-environment requirements defined in `ssot/maintenance/convergence.yaml`:
-- Required migrations (range)
-- Required edge functions deployed
-- Required env vars present
-- Required vault keys present
-- Required DNS entries active
-- Required gates green
-
-### Runner Behavior
-
-- Level 1 (default): detect + report findings to `ops.convergence_findings`.
-- Level 2 (optional): auto-complete safe actions (re-trigger deploy, re-run gate).
-- Level 3: escalate persistent items to Slack + work items.
-
-### Cadence
-
-- Every 15 minutes: convergence scan.
-- Daily: summarize outstanding findings + open tickets.
-- Weekly: auto-close stale items / archive evidence.
-
----
-
-## Periodic Maintenance Schedule
-
-Defined in `ssot/maintenance/schedules.yaml`:
-
-| Cadence | Chore | Runner |
-|---------|-------|--------|
-| Daily | CI gates + security scan | CI |
-| Daily | Dependency vulnerability scan | Dependabot / CI |
-| Daily | Backup freshness check | ops-convergence-scan |
-| Daily | Provider inventory ingest (DO) | ops-do-ingest |
-| Daily | Log/error rollup | ops-summary |
-| Weekly | Dependency upgrade PR window | CI |
-| Weekly | Diagram drift enforcement | CI |
-| Weekly | RLS/policy drift audit | ops-convergence-scan |
-| Weekly | Secrets registry audit | ops-convergence-scan |
-| Monthly | Backup restore drill (staging) | manual + ops runner |
-| Monthly | Access review (GitHub/Vercel/Supabase/DO) | ops-convergence-scan |
-| Monthly | Cost & quota review | ops-convergence-scan |
-| Quarterly | Key/token rotation window | manual + ops runner |
-| Quarterly | Major version upgrade planning | manual |
-
----
-
-## DigitalOcean Gradient ADK (Optional Provider)
-
-Deploy agent services as managed endpoints on DigitalOcean Gradient AI Platform.
-Console triggers runs and stores evidence.
-
-- **Modules**: agents/ADK, serverless inference, knowledge bases, routing,
-  guardrails, insights/logs, tracing, evaluation.
-- **Auth**: `GRADIENT_MODEL_ACCESS_KEY` + `DIGITALOCEAN_API_TOKEN` (genai CRUD).
-- **Local**: `gradient agent run` → `http://0.0.0.0:8080/run`.
-- **Deployed**: `https://agents.do-ai.run/v1/.../<deployment>/run`.
-- **Provider SSOT**: `ssot/providers/digitalocean/gradient_adk.yaml`.
 
 ---
 
