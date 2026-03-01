@@ -3,7 +3,8 @@ import Foundation
 
 /// SSO authentication via Odoo OIDC endpoint using ASWebAuthenticationSession.
 /// Tokens are returned as OAuthTokens; caller is responsible for storing them.
-struct SSOAuthSession: NSObject {
+@available(macOS 10.15, iOS 13.0, *)
+struct SSOAuthSession {
     /// OAuth token pair returned after successful OIDC flow.
     struct OAuthTokens {
         let accessToken: String

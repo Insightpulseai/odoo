@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import UIKit
 import UserNotifications
 
@@ -9,7 +10,6 @@ struct PushRegistration {
         self.odooClient = client
     }
 
-    /// Request notification authorization and register device token with Odoo.
     func requestAndRegister() async {
         let center = UNUserNotificationCenter.current()
         guard (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) == true else {
@@ -20,10 +20,9 @@ struct PushRegistration {
         }
     }
 
-    /// Called from AppDelegate/scene delegate with the APNs device token data.
     func register(deviceTokenData: Data) async {
         let tokenString = deviceTokenData.map { String(format: "%02x", $0) }.joined()
-        // TODO: call OdooClient to POST token to /web/push/register or custom endpoint
         print("[PushRegistration] APNs token: \(tokenString) — TODO: register with Odoo")
     }
 }
+#endif
