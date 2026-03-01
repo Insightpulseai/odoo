@@ -153,3 +153,87 @@
 
 38. Add CI check: all nav routes from layout have a corresponding `app/*/page.tsx` or `app/**/page.tsx`.
 39. Add `scripts/check-spec-kit.sh` for `spec/odooops-console/` bundle completeness validation.
+
+---
+
+## Phase 12 — Vercel/GitHub Deployment Semantics
+
+40. Extend `ops.deployments` schema ingestion to include:
+    - `deployment_url`, `environment` (preview|production), `pr_number` (nullable), `git_sha`
+    - `github_deployment_id` (nullable)
+41. Normalize Vercel build statuses:
+    - Map to: `success`, `failed`, `canceled_superseded`, `awaiting_authorization`
+42. Update Deployments UI:
+    - Treat "canceled superseded builds" as expected (not failed) — distinct badge
+    - Show "Awaiting authorization" state for fork PR deploys
+43. Store preview URL + PR linkage in `ops.deployments`:
+    - Enables PR → Preview URL → E2E tests dashboards
+
+---
+
+## Phase 13 — FixBot (Agent Auto-Fix)
+
+44. Create `ssot/agents/fixbot_policy.yaml` defining:
+    - Allowed fix kinds (fix_build, fix_gate, fix_migration, fix_webhook)
+    - Guardrails (PR-only, require tests, max files/lines, forbidden paths)
+    - Escalation policy (repeat failures → create work item)
+45. Extend `ops.agent_runs` with FixBot columns:
+    - `kind`, `trigger_source`, `trigger_ref`, `prompt`, `pr_url`
+46. Implement `ops-fixbot-dispatch` Edge Function:
+    - On gate/build failure: create `ops.agent_runs` row with Agent Relay Template
+    - Invoke @claude integration endpoint (or enqueue via Inngest)
+47. Add "Fix" action button on gate/build failure cards in UI
+48. Add `ops.agent_run_events` linkage for FixBot run lifecycle tracking
+
+---
+
+## Phase 14 — Deployment Convergence
+
+49. Create `ssot/maintenance/convergence.yaml` defining per-env completion requirements:
+    - Required migrations range, edge functions, env vars, vault keys, DNS, gates
+50. Create `ops.convergence_findings` migration:
+    - `env`, `kind`, `key`, `status`, `evidence`, `first_seen`, `last_seen`
+    - Finding kinds: `deploy_failed`, `migrations_pending`, `env_missing`,
+      `vault_missing`, `dns_planned`, `gate_failed`, `webhook_unverified`
+51. Implement `ops-convergence-scan` Edge Function:
+    - Reads latest git SHA from ops.builds/deployments
+    - Reads latest deployed SHA per env
+    - Checks pending migrations, missing functions, missing secrets, DNS lifecycle, gate status
+    - Writes findings + emits Slack alert on blockers
+52. Add Maintenance → Convergence page in UI:
+    - Shows converged vs behind vs blocked per env
+    - Findings list with requirement, evidence link, suggested action
+    - "Trigger fix" button (invokes FixBot if enabled)
+
+---
+
+## Phase 15 — Periodic Maintenance Schedule
+
+53. Create `ssot/maintenance/schedules.yaml` defining Daily/Weekly/Monthly/Quarterly chores
+54. Create `ops.maintenance_runs` + `ops.maintenance_run_events` tables
+55. Seed `ops.schedules` with maintenance chore entries:
+    - backup_freshness_check (daily)
+    - convergence_scan (every 15 min)
+    - secrets_registry_audit (weekly)
+    - rls_drift_audit (weekly)
+    - access_review (monthly)
+    - cost_snapshot (monthly)
+56. Add Maintenance dashboard page listing:
+    - Next runs, last status, evidence links, auto-generated PR links
+57. Wire first two working chores: backup freshness + convergence scan
+
+---
+
+## Phase 16 — DigitalOcean Gradient ADK (Optional)
+
+58. Create `ssot/providers/digitalocean/gradient_adk.yaml`:
+    - ADK module taxonomy (agents, inference, KB, routing, guardrails, tracing, eval)
+    - Auth config (GRADIENT_MODEL_ACCESS_KEY, DIGITALOCEAN_API_TOKEN)
+    - Local/deployed endpoint patterns
+59. Update `ssot/secrets/registry.yaml`:
+    - Add `gradient_model_access_key`, `digitalocean_api_token_genai`
+60. Add provider adapter stub for `do-gradient-agents`:
+    - POST `{ "prompt": "..." }` to local :8080/run or deployed agents.do-ai.run
+    - Record in `ops.agent_runs` per invocation
+61. Create `ops.ai_models` migration (provider, model, status, metadata jsonb)
+62. Add placeholder UI panel under Platform → AI Providers

@@ -1,0 +1,66 @@
+# Deployment Convergence — Per-Environment Completion Requirements
+# Defines what "fully deployed and operational" means for each environment.
+# Runner: ops-convergence-scan Edge Function reads this to produce findings.
+# See: spec/odooops-console/plan.md § "Deployment Convergence"
+
+version: "1.0.0"
+schema: ssot.maintenance.convergence.v1
+last_reviewed: "2026-03-01"
+
+finding_kinds:
+  - deploy_failed         # latest deploy attempt failed
+  - deploy_behind         # git HEAD is ahead of deployed SHA
+  - canceled_superseded   # informational — intermediate build replaced
+  - migrations_pending    # unapplied migrations exist
+  - function_missing      # required Edge Function not deployed
+  - env_missing           # required env var not present
+  - vault_missing         # required Vault secret not present
+  - dns_planned           # DNS entry lifecycle=planned (not active)
+  - gate_failed           # required policy gate failing
+  - webhook_unverified    # webhook endpoint returning non-200
+  - awaiting_auth         # fork PR awaiting Vercel deploy authorization
+
+environments:
+  prod:
+    deploy_target: main
+    required:
+      functions:
+        - ops-do-ingest
+        - ops-mailgun-ingest
+        - ops-workitems-processor
+        - ops-convergence-scan
+      vercel_env:
+        - NEXT_PUBLIC_SUPABASE_URL
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY
+        - CRON_SECRET
+      supabase_vault:
+        - digitalocean_api_token
+        - mailgun_signing_key
+        - slack_bot_token
+      dns:
+        - odooops-console.vercel.app
+      gates:
+        - oca_allowlist
+        - json_only_contract
+        - diagram_drift
+    thresholds:
+      max_deploy_age_hours: 24
+      max_commits_behind: 5
+      escalate_after_hours: 2
+
+  stage:
+    deploy_target: staging
+    required:
+      functions:
+        - ops-do-ingest
+      vercel_env:
+        - NEXT_PUBLIC_SUPABASE_URL
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY
+      supabase_vault: []
+      dns: []
+      gates:
+        - oca_allowlist
+    thresholds:
+      max_deploy_age_hours: 48
+      max_commits_behind: 10
+      escalate_after_hours: 8

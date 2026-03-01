@@ -1,0 +1,77 @@
+# FixBot Policy — Agent Auto-Fix Governance
+# Defines what the FixBot agent is allowed to fix and the guardrails it must follow.
+# See: spec/odooops-console/plan.md § "FixBot Execution Surfaces"
+
+version: "1.0.0"
+schema: ssot.agents.fixbot_policy.v1
+last_reviewed: "2026-03-01"
+
+fixbot:
+  enabled: true
+
+  allowed_kinds:
+    - fix_build        # failed CI build → fix lint/type/test errors
+    - fix_gate         # failed policy gate → fix diagram drift, OCA allowlist, etc.
+    - fix_migration    # failed migration → fix SQL syntax, missing deps
+    - fix_webhook      # webhook signature/delivery errors → fix endpoint/config
+
+  guardrails:
+    # FixBot must ALWAYS open a PR, never push to main
+    pr_only: true
+    # PR must pass tests and policy gates before merge
+    require_tests: true
+    require_gates: true
+    # Scope limits (prevent runaway changes)
+    max_files_changed: 40
+    max_lines_changed: 1200
+    # Paths the bot must never touch
+    forbidden_paths:
+      - "ssot/secrets/**"
+      - ".env*"
+      - "supabase/config.toml"
+    # Paths requiring extra review (not forbidden, but flagged)
+    sensitive_paths:
+      - ".github/workflows/**"
+      - "supabase/migrations/**"
+      - "infra/**"
+
+  escalation:
+    # If the same signal fails > N times consecutively, escalate
+    on_repeat_failures:
+      threshold: 3
+      action: create_work_item
+    # If FixBot PR fails tests, escalate
+    on_fix_pr_failure:
+      action: create_work_item
+    # Notify channel on any FixBot action
+    notify_channel: "#ops-alerts"
+
+  prompt_template: |
+    You are FixBot. Your job is to fix the failing signal and open a PR.
+
+    CONTEXT
+    - repo: Insightpulseai/odoo
+    - failing signal: {signal_name}
+    - trigger ref: {trigger_ref}
+    - evidence: {evidence_links}
+
+    GUARDRAILS
+    - PR-only. Do not push to main.
+    - Do not touch ssot/secrets/*.
+    - Keep changes minimal.
+    - Run tests and the relevant policy gates locally/CI.
+    - If you can't fix within the allowed scope, open a PR that adds diagnostics + a clear next step.
+
+    TASK
+    1) Reproduce the failure using repo scripts/tests.
+    2) Implement the smallest fix.
+    3) Update/add tests to prevent regression.
+    4) Open a PR with:
+       - summary
+       - root cause
+       - evidence links
+       - verification steps
+    Return:
+    - PR URL
+    - files changed
+    - test results
