@@ -28,7 +28,7 @@ components:
       /plane create <title> command to trigger Plane issue creation.
     path: "apps/slack-agent/"
     new_handlers:
-      - event: reaction_added (emoji: plane)
+      - event: "reaction_added (emoji: plane)"
         action: create_plane_issue_from_thread
       - command: /plane create
         action: create_plane_issue_interactive
