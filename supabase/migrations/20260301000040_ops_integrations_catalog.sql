@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS ops.integrations_catalog (
   -- ── PlanGuard fields ──────────────────────────────────────────────────────
   baseline_allowed BOOLEAN NOT NULL DEFAULT true,
   plan_tier        TEXT NOT NULL DEFAULT 'baseline' CHECK (plan_tier IN (
-    'baseline','optional','enterprise_only'
+    'baseline','optional','premium'
   )),
   cost_band        TEXT NOT NULL DEFAULT 'included' CHECK (cost_band IN (
     'free','included','low','medium','high'

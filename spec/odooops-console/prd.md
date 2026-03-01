@@ -136,15 +136,31 @@ This product aims to replicate the *operational outcomes* of Odoo.sh on our stac
 - Data: `ops.do_droplets`, `ops.do_databases`, `ops.do_firewalls`.
 - Powered by `ops-do-ingest` hourly worker.
 
-### FR17 — Slack Interface (Pulser Slash Commands)
-- Pulser slash commands (`/pulser`) enqueue intents into `ops.taskbus_intents`.
-- **Response SLA**: Slack handler must ACK within 3 seconds with ephemeral message.
-- **Intent enqueue only**: No direct side effects in Slack handler; all execution is async.
-- **MVP commands**: `/pulser status`, `/pulser gates --failures`, `/pulser mail latest`.
-- **Odoo intents**: `odoo.healthcheck`, `odoo.modules.status`, `odoo.config.snapshot`.
-- **Transport**: Socket Mode is the default for long-lived agent runners.
-- Data: `ops.taskbus_intents` (intent queue), `ops.run_events` (audit trail).
-- Contract: `docs/contracts/C-PULSER-ODOO-01.md`.
+### FR17 — Deployment Convergence + Maintenance (scaffold → beta)
+- Periodic scan detects drift between Git HEAD and deployed SHA per environment.
+- Shows convergence status: converged | behind | blocked.
+- Findings catalog: `deploy_failed`, `migrations_pending`, `env_missing`,
+  `vault_missing`, `dns_planned`, `gate_failed`, `webhook_unverified`.
+- Actions: "Trigger fix" (FixBot), "Re-run deploy", "View evidence".
+- Data: `ops.convergence_findings`, `ops.maintenance_runs`.
+
+### FR18 — FixBot (Agent Auto-Fix) (scaffold → beta)
+- On gate/build failure, FixBot can create a PR with the fix (not push to main).
+- Governed by `ssot/agents/fixbot_policy.yaml`: PR-only, require tests, max scope.
+- UI shows agent run lifecycle: queued → running → pr_opened → done | failed.
+- Data: `ops.agent_runs` (extended with kind, trigger_source, prompt, pr_url).
+
+### FR19 — Vercel Preview + Deployment Semantics (beta)
+- Deployments table shows normalized statuses: success, failed,
+  canceled_superseded, awaiting_authorization.
+- Preview deployments linked to PR number and preview URL.
+- Production deployments linked to custom domain and rollback capability.
+- Data: `ops.deployments` (extended with deployment_url, environment, pr_number, git_sha).
+
+### FR20 — AI Providers Inventory (scaffold)
+- Optional panel under Platform showing connected AI providers.
+- Tracks available models, deprecations, and provider status.
+- Data: `ops.ai_models` (provider, model, status, metadata).
 
 ---
 
@@ -180,3 +196,6 @@ This product aims to replicate the *operational outcomes* of Odoo.sh on our stac
 | `/metrics` | Metrics | `beta` | Prometheus config + SSOT |
 | `/runbooks` | Runbooks | `scaffold` | docs/ops/runbooks/* |
 | `/settings` | Settings | `beta` | env vars presence |
+| `/maintenance` | Maintenance | `scaffold` | ops.maintenance_runs, ops.convergence_findings |
+| `/maintenance/convergence` | Convergence | `scaffold` | ops.convergence_findings |
+| `/platform/ai-providers` | AI Providers | `scaffold` | ops.ai_models |
