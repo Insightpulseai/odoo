@@ -1,0 +1,75 @@
+Building for debugging...
+[0/2] Write swift-version--1AB21518FC5DEDBE.txt
+Build complete! (0.12s)
+􀟈  Test run started.
+􀄵  Testing Library Version: 1501
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "OfflineQueue" started.
+􀟈  Suite "DeepLinkRouter" started.
+􀟈  Suite "TokenStore" started.
+􀟈  Suite "OdooClient" started.
+􀟈  Test "random https URL → unknown" started.
+􀟈  Test "task — id 7" started.
+􀟈  Test "empty path → unknown" started.
+􀟈  Test "expense — non-numeric id → unknown" started.
+􀟈  Test "expense — id 3" started.
+􀟈  Test "wrong scheme 'odoo://' → unknown" started.
+􀟈  Test "record — missing id → unknown" started.
+􀟈  Test "record — non-numeric id → unknown" started.
+􀟈  Test "record — account.move/999" started.
+􀟈  Test "record — purchase.order/1" started.
+􀟈  Test "task — large id 100000" started.
+􀟈  Test "call POSTs to /web/dataset/call_kw with JSON content-type" started.
+􀟈  Test "task — non-numeric id → unknown" started.
+􀟈  Test "universal link insightpulseai.com → unknown (stub)" started.
+􀟈  Test "pendingCount is zero for an empty queue" started.
+􀟈  Test "save + load round-trip" started.
+􀟈  Test "record — sale.order/42" started.
+􁁛  Test "task — id 7" passed after 0.001 seconds.
+􁁛  Test "expense — id 3" passed after 0.001 seconds.
+􁁛  Test "random https URL → unknown" passed after 0.001 seconds.
+􁁛  Test "expense — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Test "task — large id 100000" passed after 0.001 seconds.
+􁁛  Test "wrong scheme 'odoo://' → unknown" passed after 0.001 seconds.
+􁁛  Test "empty path → unknown" passed after 0.001 seconds.
+􁁛  Test "record — purchase.order/1" passed after 0.001 seconds.
+􁁛  Test "record — missing id → unknown" passed after 0.001 seconds.
+􁁛  Test "record — account.move/999" passed after 0.001 seconds.
+􁁛  Test "task — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Test "universal link insightpulseai.com → unknown (stub)" passed after 0.001 seconds.
+􁁛  Test "record — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Test "record — sale.order/42" passed after 0.001 seconds.
+􁁛  Suite "DeepLinkRouter" passed after 0.001 seconds.
+􁁛  Test "pendingCount is zero for an empty queue" passed after 0.005 seconds.
+􀟈  Test "enqueue increases pendingCount by one per call" started.
+􁁛  Test "enqueue increases pendingCount by one per call" passed after 0.001 seconds.
+􀟈  Test "sync removes items when server returns HTTP 200" started.
+􁁛  Test "call POSTs to /web/dataset/call_kw with JSON content-type" passed after 0.007 seconds.
+􀟈  Test "call body encodes jsonrpc:2.0, model, and method" started.
+􁁛  Test "call body encodes jsonrpc:2.0, model, and method" passed after 0.020 seconds.
+􀟈  Test "call decodes typed result from JSON-RPC envelope" started.
+􁁛  Test "sync removes items when server returns HTTP 200" passed after 0.022 seconds.
+􀟈  Test "sync retains items when server returns HTTP 500" started.
+􁁛  Test "call decodes typed result from JSON-RPC envelope" passed after 0.005 seconds.
+􀟈  Test "call throws URLError on HTTP 500" started.
+􁁛  Test "sync retains items when server returns HTTP 500" passed after 0.005 seconds.
+􁁛  Suite "OfflineQueue" passed after 0.034 seconds.
+􁁛  Test "call throws URLError on HTTP 500" passed after 0.003 seconds.
+􀟈  Test "uploadDocument POSTs multipart to /web/binary/upload_attachment" started.
+􁁛  Test "save + load round-trip" passed after 0.041 seconds.
+􀟈  Test "load returns nil when empty" started.
+􁁛  Test "load returns nil when empty" passed after 0.001 seconds.
+􀟈  Test "clear removes tokens" started.
+􁁛  Test "uploadDocument POSTs multipart to /web/binary/upload_attachment" passed after 0.006 seconds.
+􀟈  Test "uploadDocument body contains filename, model, and file bytes" started.
+􁁛  Test "uploadDocument body contains filename, model, and file bytes" passed after 0.010 seconds.
+􀟈  Test "uploadDocument throws URLError on HTTP 403" started.
+􁁛  Test "uploadDocument throws URLError on HTTP 403" passed after 0.001 seconds.
+􁁛  Suite "OdooClient" passed after 0.054 seconds.
+􁁛  Test "clear removes tokens" passed after 0.018 seconds.
+􀟈  Test "overwrite updates value" started.
+􁁛  Test "overwrite updates value" passed after 0.032 seconds.
+􀟈  Test "clear is idempotent on empty keychain" started.
+􁁛  Test "clear is idempotent on empty keychain" passed after 0.001 seconds.
+􁁛  Suite "TokenStore" passed after 0.094 seconds.
+􁁛  Test run with 30 tests in 4 suites passed after 0.094 seconds.

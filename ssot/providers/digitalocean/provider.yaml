@@ -1,0 +1,124 @@
+# DigitalOcean Provider SSOT
+# Contract: docs/contracts/C-DO-01-digitalocean-api.md
+# Registry entry: Platform Contracts Index C-18
+
+provider:
+  id: digitalocean
+  name: DigitalOcean
+  type: cloud_infrastructure
+  status: active
+  reference_contract: docs/contracts/C-DO-01-digitalocean-api.md
+
+  auth:
+    method: bearer_token
+    secret_name: digitalocean_api_token
+    ssot_registry: ssot/secrets/registry.yaml
+
+  api:
+    base_url: https://api.digitalocean.com/v2
+    pagination: offset  # page + per_page, max 200
+    rate_limit: 5000/hour
+    retry_policy:
+      max_attempts: 5
+      strategy: exponential_backoff  # 2^s seconds
+      retry_on: [429, 500, 502, 503, 504]
+      no_retry_on: [400, 401, 403, 404]
+
+capabilities:
+  # MVP — ingested and surfaced in ops-console
+  - id: droplets
+    name: Droplets (Compute)
+    status: active
+    ops_table: ops.do_droplets
+    api_endpoint: /v2/droplets
+    surfaces:
+      - /overview    # Active Nodes count
+      - /environments  # Host → Droplet mapping
+      - /platform/digitalocean  # Droplets card
+    baseline_allowed: true
+    plan_tier: baseline
+
+  - id: managed_databases
+    name: Managed Databases (PostgreSQL, MySQL, Redis)
+    status: active
+    ops_table: ops.do_databases
+    api_endpoint: /v2/databases
+    surfaces:
+      - /overview    # Active Nodes count (db clusters)
+      - /environments  # Managed PG endpoint mapping
+      - /platform/digitalocean  # Databases card
+    baseline_allowed: true
+    plan_tier: baseline
+
+  - id: firewalls
+    name: Cloud Firewalls
+    status: active
+    ops_table: ops.do_firewalls
+    api_endpoint: /v2/firewalls
+    surfaces:
+      - /platform/digitalocean  # Firewalls card
+      - /policy-gates  # Firewall drift gate
+    baseline_allowed: true
+    plan_tier: baseline
+
+  # Roadmap — not yet ingested
+  - id: load_balancers
+    name: Load Balancers
+    status: planned
+    ops_table: ops.do_load_balancers  # future migration
+    api_endpoint: /v2/load_balancers
+    baseline_allowed: true
+    plan_tier: optional
+
+  - id: vpc
+    name: VPC Networks
+    status: planned
+    ops_table: ops.do_vpcs  # future migration
+    api_endpoint: /v2/vpcs
+    baseline_allowed: true
+    plan_tier: optional
+
+  - id: spaces
+    name: Spaces (Object Storage)
+    status: planned
+    ops_table: ops.do_spaces  # future migration
+    api_endpoint: /v2/spaces  # via S3-compatible API
+    baseline_allowed: false
+    plan_tier: optional
+
+  - id: monitoring
+    name: Monitoring & Alerts
+    status: planned
+    ops_table: ops.do_alerts  # future migration
+    api_endpoint: /v2/monitoring/alerts
+    baseline_allowed: true
+    plan_tier: optional
+
+  - id: snapshots_backups
+    name: Snapshots & Backups
+    status: planned
+    ops_table: ops.do_snapshots  # future migration
+    api_endpoint: /v2/snapshots
+    baseline_allowed: true
+    plan_tier: optional
+
+ingestion:
+  worker: ops-do-ingest
+  worker_path: supabase/functions/ops-do-ingest/index.ts
+  schedule: "0 * * * *"  # every hour via pg_cron / Vercel cron
+  audit_tables:
+    runs: ops.do_ingest_runs
+    actions: ops.do_actions
+    events: ops.run_events
+
+console_integration:
+  pages:
+    - path: /overview
+      reads: [ops.do_droplets, ops.do_databases]
+      components: [ActiveNodesCard]
+    - path: /environments
+      reads: [ops.do_droplets, ops.do_databases]
+      components: [EnvironmentRow]
+    - path: /platform/digitalocean
+      reads: [ops.do_droplets, ops.do_databases, ops.do_firewalls]
+      components: [DODropletsCard, DODatabasesCard, DONetworkingCard]

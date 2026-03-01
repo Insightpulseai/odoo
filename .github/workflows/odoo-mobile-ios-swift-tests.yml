@@ -1,0 +1,135 @@
+# =============================================================================
+# CI: odoo-mobile-ios Swift build + test
+# =============================================================================
+# Job 1 (macos-swift-clt): swift build + swift test on macOS CLT
+#   - No Xcode required; runs via Command Line Tools
+#   - Covers all 30 unit tests in 4 suites
+#
+# Job 2 (ios-simulator): xcodebuild test with iOS Simulator
+#   - Requires Xcode 16 (auto-selected on macos-15 runner)
+#   - MANUAL_REQUIRED: xcodes install "16.4" with Apple ID for local runs
+#   - Runs as a best-effort job (continue-on-error: true) until Xcode 16.4 is pinned
+# =============================================================================
+
+name: odoo-mobile-ios — Swift Tests
+
+on:
+  push:
+    branches: [main, "feat/**", "chore/**"]
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - ".github/workflows/odoo-mobile-ios-swift-tests.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - ".github/workflows/odoo-mobile-ios-swift-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: macOS CLT — swift build + swift test (deterministic, no Apple ID)
+  # ---------------------------------------------------------------------------
+  macos-swift-clt:
+    name: swift test (macOS CLT)
+    runs-on: macos-15
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Build
+        working-directory: apps/odoo-mobile-ios
+        run: swift build
+
+      - name: Test
+        working-directory: apps/odoo-mobile-ios
+        run: |
+          swift test 2>&1 | tee /tmp/swift_test.log
+          # Fail if any test did not pass
+          grep -q "Test run started" /tmp/swift_test.log || (echo "ERROR: no test output" && exit 1)
+          if grep -q "Test run had" /tmp/swift_test.log; then
+            FAILURES=$(grep "Test run had" /tmp/swift_test.log | grep -oE "[0-9]+ failure" || echo "")
+            if [ -n "$FAILURES" ]; then
+              echo "FAIL: $FAILURES"
+              exit 1
+            fi
+          fi
+          echo "✅ All tests passed"
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-test-log
+          path: /tmp/swift_test.log
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Job 2: iOS Simulator — xcodebuild test
+  # MANUAL_REQUIRED for local runs: xcodes install "16.4" with Apple ID
+  # In CI: macos-15 runner ships with Xcode 16.2+ which supports iOS 18 Simulator
+  # ---------------------------------------------------------------------------
+  ios-simulator:
+    name: xcodebuild test (iOS 18 Simulator)
+    runs-on: macos-15
+    timeout-minutes: 30
+    # Best-effort until Xcode 16.4 is pinned; non-blocking on main CI
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: |
+          XCODE=$(ls /Applications/ | grep -E "^Xcode_16" | sort -V | tail -1)
+          if [ -z "$XCODE" ]; then
+            XCODE=$(ls /Applications/ | grep "^Xcode" | sort -V | tail -1)
+          fi
+          sudo xcode-select -s "/Applications/${XCODE}/Contents/Developer"
+          xcodebuild -version
+
+      - name: List available simulators
+        run: |
+          xcrun simctl list devices available | grep "iPhone 16" | head -5
+
+      - name: xcodebuild test (iPhone 16 / iOS 18)
+        working-directory: apps/odoo-mobile-ios
+        run: |
+          xcodebuild test \
+            -scheme OdooMobile \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -resultBundlePath /tmp/odoo-mobile-ios.xcresult \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee /tmp/xcodebuild_test.log
+          # Check for test failures
+          if grep -qE "(FAIL|** TEST BUILD FAILED)" /tmp/xcodebuild_test.log; then
+            echo "FAIL: xcodebuild tests reported failures"
+            exit 1
+          fi
+          echo "✅ xcodebuild tests passed"
+
+      - name: Upload xcresult bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-xcresult
+          path: /tmp/odoo-mobile-ios.xcresult
+          retention-days: 7
+
+      - name: Upload xcodebuild log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-test-log
+          path: /tmp/xcodebuild_test.log
+          retention-days: 7

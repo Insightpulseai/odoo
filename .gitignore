@@ -123,6 +123,10 @@ logs/
 # Exception: canonical evidence logs under timestamped bundles only (20YY* prefix)
 !web/docs/evidence/20*/**/logs/
 !web/docs/evidence/20*/**/logs/*.log
+# Exception: Next.js app route directories named "logs" are source code, not log files
+!apps/*/app/**/logs/
+!apps/*/app/**/logs/*.tsx
+!apps/*/app/**/logs/*.ts
 # Temporary files
 tmp/
 temp/
