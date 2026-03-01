@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
+
+// Browser Supabase client — reads session cookies set by Supabase Auth.
+// We create it lazily so it only runs in the browser (this is a Client Component).
+function getBrowserClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: true } }
+  );
+}
 
 interface SearchResult {
   type: "initiative" | "run" | "finding";
@@ -24,7 +34,6 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 export default function SearchPage() {
-  const supabase = createClientComponentClient();
   const [query, setQuery]     = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +46,8 @@ export default function SearchPage() {
       setLoading(true);
       setError(null);
       try {
-        // Get current user session for auth forwarding
+        // Get current user session for auth forwarding (uses @supabase/supabase-js)
+        const supabase = getBrowserClient();
         const { data: { session } } = await supabase.auth.getSession();
         const authHeader = session?.access_token
           ? `Bearer ${session.access_token}`
@@ -67,7 +77,7 @@ export default function SearchPage() {
         setLoading(false);
       }
     },
-    [supabase]
+    []
   );
 
   return (

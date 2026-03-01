@@ -31,6 +31,8 @@ jobs:
   sync-portfolio:
     name: Sync portfolio.yaml to Supabase
     runs-on: ubuntu-latest
+    permissions:
+      contents: read   # checkout only; no writes to repo
     steps:
       - uses: actions/checkout@v4
 
