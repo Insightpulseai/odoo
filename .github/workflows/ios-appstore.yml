@@ -71,7 +71,15 @@ jobs:
           ruby-version: "3.2"
           bundler-cache: true
 
+      # Guarded: skips cleanly when Apple signing secrets are not yet provisioned.
+      # Required: MATCH_GIT_URL, MATCH_PASSWORD, APP_STORE_CONNECT_API_KEY_ID,
+      #   APP_STORE_CONNECT_API_KEY_ISSUER_ID, APP_STORE_CONNECT_API_KEY_CONTENT,
+      #   APPLE_ID, APP_IDENTIFIER  (add to GitHub Actions Secrets to activate).
       - name: Build and upload to TestFlight
+        if: |
+          secrets.MATCH_GIT_URL != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_ID != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_CONTENT != ''
         run: bundle exec fastlane ios build_testflight
         env:
           CI: "true"
@@ -84,6 +92,10 @@ jobs:
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
 
       - name: Upload IPA artifact
+        if: |
+          secrets.MATCH_GIT_URL != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_ID != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_CONTENT != ''
         uses: actions/upload-artifact@v4
         with:
           name: OdooMobile.ipa

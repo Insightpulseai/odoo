@@ -158,6 +158,10 @@ jobs:
           bundler-cache: true
 
       - name: Build and upload to TestFlight
+        if: |
+          secrets.MATCH_GIT_URL != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_ID != '' &&
+          secrets.APP_STORE_CONNECT_API_KEY_CONTENT != ''
         run: bundle exec fastlane ios build_testflight
         env:
           CI: "true"
