@@ -159,6 +159,12 @@ jobs:
         run: pip install pyyaml
 
       - name: Validate JSON files
+        # Excludes:
+        #   - All nested node_modules (not just root-level)
+        #   - .claude/worktrees and .worktrees (local git worktrees, not CI artifacts)
+        #   - docs/evidence and .gemini/tmp (generated output, not source)
+        #   - JSONC files: tsconfig.json, devcontainer.json, .vscode/*.json
+        #     (these are JSON-with-comments by spec; strict JSON parsers reject them)
         run: |
           fail=0
           while IFS= read -r jsonfile; do
@@ -166,10 +172,24 @@ jobs:
               echo "::error file=$jsonfile::Invalid JSON"
               fail=1
             }
-          done < <(find . -name "*.json" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+          done < <(find . \
+            \( -path "*/node_modules/*" \
+               -o -path "*/.git/*" \
+               -o -path "*/.claude/worktrees/*" \
+               -o -path "*/.worktrees/*" \
+               -o -path "*/docs/evidence/*" \
+               -o -path "*/.gemini/tmp/*" \
+            \) -prune -o \
+            -type f -name "*.json" \
+            ! -name "tsconfig.json" \
+            ! -name "tsconfig.*.json" \
+            ! -name "devcontainer.json" \
+            ! -path "*/.vscode/*.json" \
+            -print 2>/dev/null || true)
           exit $fail
 
       - name: Validate YAML files
+        # Excludes node_modules, .git, worktrees, and generated output paths
         run: |
           fail=0
           while IFS= read -r yamlfile; do
@@ -177,7 +197,14 @@ jobs:
               echo "::error file=$yamlfile::Invalid YAML"
               fail=1
             }
-          done < <(find . -name "*.yaml" -o -name "*.yml" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+          done < <(find . \
+            \( -path "*/node_modules/*" \
+               -o -path "*/.git/*" \
+               -o -path "*/.claude/worktrees/*" \
+               -o -path "*/.worktrees/*" \
+            \) -prune -o \
+            \( -name "*.yaml" -o -name "*.yml" \) \
+            -type f -print 2>/dev/null || true)
           exit $fail
 
   # ==========================================================================
