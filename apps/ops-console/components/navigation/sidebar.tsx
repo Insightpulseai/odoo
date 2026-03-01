@@ -23,6 +23,14 @@ import {
   HardDrive,
   Hammer,
   FileText,
+  Bot,
+  Globe,
+  Layers,
+  MonitorDot,
+  FileCode2,
+  SearchCode,
+  HardHat,
+  Paintbrush,
 } from "lucide-react"
 import { useState, useCallback, useEffect } from "react"
 
@@ -73,6 +81,19 @@ const navSections: NavSection[] = [
       { href: "/integrations", icon: Plug, label: "Integrations" },
       { href: "/runbooks", icon: BookOpen, label: "Runbooks" },
       { href: "/settings", icon: Settings, label: "Settings" },
+    ],
+  },
+  {
+    label: "Explore",
+    items: [
+      { href: "/use-cases/ai-apps", icon: Bot, label: "AI Apps" },
+      { href: "/use-cases/marketing-sites", icon: Globe, label: "Marketing Sites" },
+      { href: "/use-cases/multi-tenant-platforms", icon: Layers, label: "Multi-Tenant" },
+      { href: "/use-cases/web-apps", icon: MonitorDot, label: "Web Apps" },
+      { href: "/tools/templates", icon: FileCode2, label: "Templates" },
+      { href: "/tools/partner-finder", icon: SearchCode, label: "Partner Finder" },
+      { href: "/users/platform-engineers", icon: HardHat, label: "Platform Engineers" },
+      { href: "/users/design-engineers", icon: Paintbrush, label: "Design Engineers" },
     ],
   },
 ]
