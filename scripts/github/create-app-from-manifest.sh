@@ -3,24 +3,30 @@
 # One-time GitHub App creation via GitHub Manifest Conversion API.
 #
 # Usage:
-#   scripts/github/create-app-from-manifest.sh <app-slug>
+#   scripts/github/create-app-from-manifest.sh <app-slug> [options]
 #
-# Where <app-slug> is a directory under infra/github/apps/:
+# Modes:
+#   (default)                  Interactive: opens browser, waits for code paste
+#   --dry-run                  Print what would happen without touching GitHub or Vault
+#   --exchange-code <code>     Non-interactive: skip browser, use supplied code
+#
+# Examples:
 #   scripts/github/create-app-from-manifest.sh ipai-integrations
+#   scripts/github/create-app-from-manifest.sh ipai-integrations --dry-run
+#   scripts/github/create-app-from-manifest.sh ipai-integrations --exchange-code Ab1Cd2Ef3
 #
 # What it does:
 #   1. Reads infra/github/apps/<slug>/manifest.json
-#   2. Opens a browser to GitHub's manifest conversion URL
-#      (interactive step — user approves the App creation)
-#   3. After redirect, GitHub returns a temporary code; user pastes it here
-#   4. Exchanges the code for App credentials via GitHub API
-#   5. Writes a machine-readable JSON artifact to .artifacts/github-apps/<slug>/credentials.json
-#      (NO secrets in the artifact — only app_id, client_id, and Vault *refs*)
-#   6. Prints Supabase CLI commands to store secrets in Vault
+#   2. Opens a browser to GitHub's manifest conversion URL (skipped in --exchange-code)
+#   3. Exchanges the code for App credentials via GitHub API
+#   4. Stores secrets in Supabase Vault via supabase CLI
+#   5. Writes .artifacts/github-apps/<slug>/credentials.json (app_id + client_id + vault refs,
+#      NO raw secrets in artifact)
+#   6. Prints exact SSOT update instructions
 #
 # Prerequisites:
 #   - gh CLI authenticated (gh auth status)
-#   - ORG_NAME: GitHub org (default: Insightpulseai)
+#   - supabase CLI linked to project (supabase link --project-ref ...)
 #   - python3 (stdlib only)
 #
 # SSOT:    ssot/integrations/github_apps.yaml
@@ -29,7 +35,24 @@
 
 set -euo pipefail
 
+# ── Parse args ────────────────────────────────────────────────────────────────
+
 APP_SLUG="${1:-}"
+DRY_RUN=false
+EXCHANGE_CODE=""
+
+shift || true
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=true; shift ;;
+    --exchange-code)
+      EXCHANGE_CODE="${2:-}"; shift 2 ;;
+    *)
+      echo "Unknown option: $1"; exit 1 ;;
+  esac
+done
+
 ORG_NAME="${GITHUB_ORG:-Insightpulseai}"
 MANIFEST_FILE="infra/github/apps/${APP_SLUG}/manifest.json"
 ARTIFACT_DIR=".artifacts/github-apps/${APP_SLUG}"
@@ -38,8 +61,10 @@ ARTIFACT_FILE="${ARTIFACT_DIR}/credentials.json"
 # ── Validate inputs ───────────────────────────────────────────────────────────
 
 if [[ -z "$APP_SLUG" ]]; then
-  echo "Usage: $0 <app-slug>"
+  echo "Usage: $0 <app-slug> [--dry-run | --exchange-code <code>]"
   echo "Example: $0 ipai-integrations"
+  echo "         $0 ipai-integrations --dry-run"
+  echo "         $0 ipai-integrations --exchange-code Ab1Cd2Ef3"
   exit 1
 fi
 
@@ -58,64 +83,93 @@ if ! gh auth status &>/dev/null; then
   exit 1
 fi
 
-# ── Step 1: Open browser for App creation ────────────────────────────────────
+# ── Dry-run mode ──────────────────────────────────────────────────────────────
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo ""
+  echo "┌──────────────────────────────────────────────────────────────────────┐"
+  echo "│  DRY RUN — no GitHub or Supabase calls will be made                  │"
+  echo "└──────────────────────────────────────────────────────────────────────┘"
+  echo ""
+  echo "  App slug:       ${APP_SLUG}"
+  echo "  Org:            ${ORG_NAME}"
+  echo "  Manifest:       ${MANIFEST_FILE}"
+  echo "  Artifact out:   ${ARTIFACT_FILE}"
+  echo ""
+  echo "  Steps that would run:"
+  echo "    1. Open https://github.com/organizations/${ORG_NAME}/settings/apps/new?manifest=..."
+  echo "    2. Wait for code from redirect"
+  echo "    3. POST https://api.github.com/app-manifests/<code>/conversions"
+  echo "    4. supabase secrets set GITHUB_APP_ID=..."
+  echo "    4. supabase secrets set GITHUB_APP_WEBHOOK_SECRET=..."
+  echo "    4. supabase secrets set GITHUB_PRIVATE_KEY=<base64>"
+  echo "    4. supabase secrets set GITHUB_CLIENT_SECRET=..."
+  echo "    5. Write ${ARTIFACT_FILE} (non-secret IDs + vault refs)"
+  echo ""
+  echo "  Manifest contents:"
+  python3 -m json.tool "${MANIFEST_FILE}" 2>/dev/null || cat "${MANIFEST_FILE}"
+  echo ""
+  echo "STATUS=DRY_RUN (no changes made)"
+  exit 0
+fi
+
+# ── Step 1: Open browser for App creation (skipped if --exchange-code) ────────
 
 echo ""
 echo "┌──────────────────────────────────────────────────────────────────────┐"
 echo "│  GitHub App Manifest Conversion — ${APP_SLUG}"
 echo "│  Org: ${ORG_NAME}"
 echo "└──────────────────────────────────────────────────────────────────────┘"
-echo ""
-echo "Opening GitHub App creation page for org ${ORG_NAME} ..."
-echo ""
-echo "  [MANUAL] The browser will open. Review and click 'Create GitHub App'."
-echo "           After creation, GitHub redirects to the callback URL."
-echo "           Copy the 'code' query parameter from the redirect URL."
-echo ""
 
-MANIFEST_URL="https://github.com/organizations/${ORG_NAME}/settings/apps/new"
 MANIFEST_CONTENT="$(cat "${MANIFEST_FILE}")"
 
-# Use Python to percent-encode the manifest JSON for the redirect
+# Percent-encode the manifest JSON for the redirect URL
 ENCODED_MANIFEST=$(python3 -c "
 import json, urllib.parse, sys
 m = json.loads(sys.stdin.read())
 print(urllib.parse.quote(json.dumps(m)))
 " <<< "${MANIFEST_CONTENT}")
 
-CREATION_URL="${MANIFEST_URL}?manifest=${ENCODED_MANIFEST}"
+CREATION_URL="https://github.com/organizations/${ORG_NAME}/settings/apps/new?manifest=${ENCODED_MANIFEST}"
 
-# Open browser (macOS: open; Linux: xdg-open)
-if command -v open &>/dev/null; then
-  open "${CREATION_URL}" 2>/dev/null || true
-elif command -v xdg-open &>/dev/null; then
-  xdg-open "${CREATION_URL}" 2>/dev/null || true
+if [[ -z "${EXCHANGE_CODE}" ]]; then
+  echo ""
+  echo "Opening GitHub App creation page for org ${ORG_NAME} ..."
+  echo ""
+  echo "  [MANUAL] The browser will open. Review and click 'Create GitHub App'."
+  echo "           After creation, GitHub redirects to the callback URL."
+  echo "           Copy the 'code' query parameter from the redirect URL."
+  echo "           URL format: https://…/oauth/github-app/installed?code=<CODE>&state=…"
+  echo ""
+
+  if command -v open &>/dev/null; then
+    open "${CREATION_URL}" 2>/dev/null || true
+  elif command -v xdg-open &>/dev/null; then
+    xdg-open "${CREATION_URL}" 2>/dev/null || true
+  else
+    echo "  Could not open browser automatically. Visit:"
+    echo "  ${CREATION_URL}"
+  fi
+
+  read -r -p "  Paste the code parameter here: " EXCHANGE_CODE
+
+  if [[ -z "${EXCHANGE_CODE}" ]]; then
+    echo "ERROR: no code provided. Aborting."
+    exit 1
+  fi
 else
-  echo "Could not open browser automatically. Visit:"
-  echo "  ${CREATION_URL}"
+  echo ""
+  echo "  Using supplied code (--exchange-code mode): ${EXCHANGE_CODE:0:8}…"
 fi
 
-# ── Step 2: Get code from user ────────────────────────────────────────────────
+# ── Step 2: Exchange code for credentials ─────────────────────────────────────
 
 echo ""
-echo "After approving the App, copy the 'code' value from the redirect URL."
-echo "The URL looks like: https://…/oauth/github-app/installed?code=<CODE>&state=…"
-echo ""
-read -r -p "Paste the code parameter here: " GITHUB_CODE
-
-if [[ -z "${GITHUB_CODE}" ]]; then
-  echo "ERROR: no code provided. Aborting."
-  exit 1
-fi
-
-# ── Step 3: Exchange code for credentials ─────────────────────────────────────
-
-echo ""
-echo "Exchanging code for App credentials ..."
+echo "  Exchanging code for App credentials ..."
 
 RESPONSE=$(curl -s -X POST \
   -H "Accept: application/vnd.github.v3+json" \
-  "https://api.github.com/app-manifests/${GITHUB_CODE}/conversions")
+  "https://api.github.com/app-manifests/${EXCHANGE_CODE}/conversions")
 
 # Parse response
 APP_ID=$(echo "${RESPONSE}"         | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('id',''))")
@@ -133,10 +187,10 @@ fi
 
 echo "  ✅ App created: ${APP_NAME} (app_id=${APP_ID}, client_id=${CLIENT_ID})"
 
-# ── Step 4: Store secrets in Supabase Vault via CLI ──────────────────────────
+# ── Step 3: Store secrets in Supabase Vault via CLI ──────────────────────────
 
 echo ""
-echo "Storing secrets in Supabase Vault ..."
+echo "  Storing secrets in Supabase Vault ..."
 
 supabase secrets set "GITHUB_APP_ID=${APP_ID}"
 supabase secrets set "GITHUB_APP_WEBHOOK_SECRET=${WEBHOOK_SECRET}"
@@ -148,7 +202,7 @@ fi
 
 echo "  ✅ Secrets stored in Supabase Vault"
 
-# ── Step 5: Write machine-readable artifact (no secrets) ─────────────────────
+# ── Step 4: Write machine-readable artifact (no secrets) ─────────────────────
 
 mkdir -p "${ARTIFACT_DIR}"
 
@@ -177,10 +231,10 @@ with open("${ARTIFACT_FILE}", "w") as f:
     json.dump(artifact, f, indent=2)
     f.write("\n")
 
-print(f"  ✅ Artifact written: ${ARTIFACT_FILE}")
+print(f"  \u2705 Artifact written: ${ARTIFACT_FILE}")
 PYEOF
 
-# ── Step 6: Print SSOT update instructions ───────────────────────────────────
+# ── Step 5: Print SSOT update instructions ───────────────────────────────────
 
 echo ""
 echo "┌──────────────────────────────────────────────────────────────────────┐"
@@ -188,17 +242,17 @@ echo "│  NEXT: Update SSOT with non-secret identifiers                       �
 echo "└──────────────────────────────────────────────────────────────────────┘"
 echo ""
 echo "  Edit ssot/integrations/github_apps.yaml:"
-echo "    apps[0].app_id:   ${APP_ID}"
+echo "    apps[0].app_id:    ${APP_ID}"
 echo "    apps[0].client_id: ${CLIENT_ID}"
-echo "    apps[0].status:   active"
+echo "    apps[0].status:    active"
 echo ""
 echo "  Then commit:"
 echo "    git add ssot/integrations/github_apps.yaml"
 echo "    git commit -m 'chore(ssot): record ipai-integrations app_id + client_id, status→active'"
 echo ""
 echo "  Then deploy:"
-echo "    supabase functions deploy ops-github-webhook-ingest"
+echo "    supabase functions deploy ops-github-webhook-ingest --project-ref spdtwktxdalcfigzeqrz"
 echo ""
-echo "  Artifact at: ${ARTIFACT_FILE}"
+echo "  Artifact: ${ARTIFACT_FILE}"
 echo ""
 echo "STATUS=COMPLETE"
