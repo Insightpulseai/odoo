@@ -1,10 +1,14 @@
 /**
  * Vercel team integrations registry.
- * Source of truth for integration metadata displayed across the console.
  *
- * Update this file when integrations are added/removed from the Vercel dashboard.
+ * Static fallback: INTEGRATIONS array (used when DB is unavailable).
+ * Runtime source:  ops.integrations_view (Supabase) via fetchIntegrations().
+ *
+ * PlanGuard fields (plan_tier, cost_band, baseline_allowed) control
+ * which integrations appear in the default "Baseline-ready" view.
  */
 
+// ── Legacy types (keep for backward compat with IntegrationBadges, etc.) ─────
 export type IntegrationCategory = "ai" | "auth" | "agents" | "messaging" | "devtools"
 export type IntegrationStatus = "active" | "inactive" | "setup-required"
 export type IntegrationBilling = "vercel" | "direct" | "free"
@@ -21,6 +25,37 @@ export interface Integration {
   /** Env vars required for this integration to function */
   envKeys: string[]
   docsUrl?: string
+}
+
+// ── Extended catalog types (ops.integrations_catalog) ─────────────────────────
+export type PlanTier   = "baseline" | "optional" | "enterprise_only"
+export type CostBand   = "free" | "included" | "low" | "medium" | "high"
+export type VendorLockIn = "low" | "medium" | "high"
+export type DbCategory =
+  | "auth_data" | "ai_inference" | "agents" | "devtools" | "messaging"
+  | "observability" | "storage" | "security" | "analytics" | "workflow"
+export type DbStatus  = "active" | "inactive" | "error" | "setup_required"
+export type Provider  = "vercel_marketplace" | "supabase_native" | "direct" | "custom_bridge"
+
+/** Full row from ops.integrations_view */
+export interface CatalogEntry {
+  key: string
+  name: string
+  category: DbCategory
+  provider: Provider
+  description: string | null
+  baseline_allowed: boolean
+  plan_tier: PlanTier
+  cost_band: CostBand
+  vendor_lock_in: VendorLockIn
+  capabilities: string[]
+  surfaces: string[]
+  env_keys: string[]
+  docs_url: string | null
+  status: DbStatus
+  billing: string
+  evidence: Record<string, unknown>
+  last_checked_at: string | null
 }
 
 export const INTEGRATIONS: Integration[] = [
@@ -113,3 +148,59 @@ export const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
 }
 
 export const CATEGORY_ORDER: IntegrationCategory[] = ["auth", "ai", "agents", "devtools", "messaging"]
+
+// ── DB category labels (extended set) ────────────────────────────────────────
+export const DB_CATEGORY_LABELS: Record<DbCategory, string> = {
+  auth_data:    "Authentication & Data",
+  ai_inference: "AI & Inference",
+  agents:       "Agents",
+  devtools:     "Developer Tools",
+  messaging:    "Messaging",
+  observability:"Observability",
+  storage:      "Storage",
+  security:     "Security",
+  analytics:    "Analytics",
+  workflow:     "Workflow",
+}
+
+export const DB_CATEGORY_ORDER: DbCategory[] = [
+  "auth_data", "ai_inference", "agents", "devtools", "messaging",
+  "observability", "workflow", "analytics", "storage", "security",
+]
+
+export const PLAN_TIER_LABELS: Record<PlanTier, string> = {
+  baseline:        "Baseline",
+  optional:        "Optional spend",
+  enterprise_only: "Enterprise only",
+}
+
+// ── Runtime fetch from ops.integrations_view ─────────────────────────────────
+/**
+ * Fetches the full catalog + installation status from Supabase.
+ * Returns null on any error so callers can fall back to static data.
+ * Only safe to call from Server Components or API routes (uses service role key).
+ */
+export async function fetchIntegrations(): Promise<CatalogEntry[] | null> {
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
+  const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ""
+  if (!supabaseUrl || !serviceKey) return null
+
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/integrations_view?select=*`,
+      {
+        headers: {
+          apikey:        serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+          Accept:        "application/json",
+        },
+        // 5-minute cache — integrations status doesn't change frequently
+        next: { revalidate: 300 },
+      }
+    )
+    if (!res.ok) return null
+    return (await res.json()) as CatalogEntry[]
+  } catch {
+    return null
+  }
+}

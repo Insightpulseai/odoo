@@ -1,0 +1,48 @@
+# Mailgun Integration SSOT
+# Contract: docs/contracts/C-MAIL-01-mail-catcher.md
+# Role: Mail catcher (Odoo.sh parity) + transactional mail for PROD
+
+mailgun:
+  domain: mg.insightpulseai.com
+  status: active
+
+  smtp:
+    host: smtp.mailgun.org
+    ports:
+      production: 587
+      staging_dev: 2525   # catcher routing — never port 25
+    policy:
+      port_25_forbidden: true
+      non_prod_must_use_catcher: true
+
+  webhook:
+    enabled: true
+    endpoint_ref: "platform:ops-mailgun-ingest"
+    signature_verification: required
+    payload_format: mailgun_v3
+
+  evidence:
+    ops_table: ops.mail_events
+    required_fields:
+      - env
+      - provider
+      - message_id
+      - subject
+      - sender
+      - recipient
+      - transport
+      - stamp
+      - received_at
+      - raw
+
+  secrets:
+    # Values never stored here — only secret key names
+    api_key: mailgun_api_key
+    signing_key: mailgun_signing_key
+    smtp_password: mailgun_smtp_password
+
+  e2e_evidence_anchor:
+    subject: E2E-MAILGUN-ODOO-TEXT
+    transport: "smtp.mailgun.org:2525"
+    sender: "no-reply@mg.insightpulseai.com"
+    confirmed_date: "2026-03-01"

@@ -130,3 +130,52 @@ func emptyData() -> Data { Data() }
 
 /// Returns true when the error is a URLError — avoids `import Foundation` in test files.
 func isURLError(_ e: Error) -> Bool { e is URLError }
+
+// MARK: - OfflineQueue-dedicated mock (separate static state from MockURLProtocol)
+// Used by OfflineQueueTests, which run in a different suite and can execute in parallel.
+// Keeping separate classes avoids racing on MockURLProtocol's shared static state.
+
+final class OfflineQueueMockProtocol: URLProtocol {
+
+    static var statusCode: Int = 200
+    static var responseBodyData: Data = Data()
+
+    /// Configure a JSON-RPC 2.0 success envelope (HTTP 200).
+    static func configureSuccess() {
+        statusCode = 200
+        responseBodyData = (try? JSONSerialization.data(withJSONObject: [
+            "jsonrpc": "2.0", "id": 1, "result": 0,
+        ])) ?? Data()
+    }
+
+    /// Configure an HTTP 500 error with empty body.
+    static func configureFailure() { statusCode = 500; responseBodyData = Data() }
+
+    /// Reset to success state (call in `defer` after each test).
+    static func reset() { configureSuccess() }
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+
+    override func startLoading() {
+        let fallback = URL(string: "https://test.example.com")!
+        let response = HTTPURLResponse(
+            url: request.url ?? fallback,
+            statusCode: OfflineQueueMockProtocol.statusCode,
+            httpVersion: nil,
+            headerFields: nil
+        )!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: OfflineQueueMockProtocol.responseBodyData)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
+}
+
+/// URLSession backed by OfflineQueueMockProtocol (no shared state with mockSession()).
+func queueSyncSession() -> URLSession {
+    let config = URLSessionConfiguration.ephemeral
+    config.protocolClasses = [OfflineQueueMockProtocol.self]
+    return URLSession(configuration: config)
+}
