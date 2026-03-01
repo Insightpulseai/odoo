@@ -114,6 +114,22 @@ def main() -> int:
     for app in apps:
         app_id   = app.get("id", "<unnamed>")
         prefix   = f"[{app_id}]"
+        status   = app.get("status", "not_provisioned")
+
+        # ── Check 0: active status requires provisioned identifiers ───────────
+        # An app flipped to status: active MUST have app_id + client_id populated.
+        # This prevents "flip to active but nothing works" drift.
+        if status == "active":
+            if not app.get("app_id"):
+                errors.append(
+                    f"{prefix} ACTIVE_MISSING_APP_ID: status=active but app_id is not set. "
+                    f"Run: scripts/github/create-app-from-manifest.sh {app_id}"
+                )
+            if not app.get("client_id"):
+                errors.append(
+                    f"{prefix} ACTIVE_MISSING_CLIENT_ID: status=active but client_id is not set. "
+                    f"Fill from the GitHub App settings page after provisioning."
+                )
 
         # ── Check 1: manifest.json exists ─────────────────────────────────────
         manifest_path = Path(INFRA_BASE) / app_id / "manifest.json"
