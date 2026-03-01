@@ -136,6 +136,16 @@ This product aims to replicate the *operational outcomes* of Odoo.sh on our stac
 - Data: `ops.do_droplets`, `ops.do_databases`, `ops.do_firewalls`.
 - Powered by `ops-do-ingest` hourly worker.
 
+### FR17 — Slack Interface (Pulser Slash Commands)
+- Pulser slash commands (`/pulser`) enqueue intents into `ops.taskbus_intents`.
+- **Response SLA**: Slack handler must ACK within 3 seconds with ephemeral message.
+- **Intent enqueue only**: No direct side effects in Slack handler; all execution is async.
+- **MVP commands**: `/pulser status`, `/pulser gates --failures`, `/pulser mail latest`.
+- **Odoo intents**: `odoo.healthcheck`, `odoo.modules.status`, `odoo.config.snapshot`.
+- **Transport**: Socket Mode is the default for long-lived agent runners.
+- Data: `ops.taskbus_intents` (intent queue), `ops.run_events` (audit trail).
+- Contract: `docs/contracts/C-PULSER-ODOO-01.md`.
+
 ---
 
 ## Non-Functional Requirements
