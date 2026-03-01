@@ -1,0 +1,28 @@
+name: Odoo EE Parity Gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ssot/parity/**"
+      - "scripts/ci/check_odoo_enterprise_parity.py"
+  pull_request:
+    paths:
+      - "ssot/parity/**"
+      - "addons/ipai/**"
+      - "addons/oca/**"
+  schedule:
+    - cron: "0 2 * * 1"  # Weekly Monday 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  parity-check:
+    name: Enterprise Parity Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Run parity gate
+        run: python scripts/ci/check_odoo_enterprise_parity.py

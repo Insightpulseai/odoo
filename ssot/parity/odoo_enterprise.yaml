@@ -1,0 +1,229 @@
+# ssot/parity/odoo_enterprise.yaml
+# Single source of truth for Odoo Enterprise parity tracking.
+# Scope: CE self-hosted + OCA + ipai_* bridges.
+# CI gate: scripts/ci/check_odoo_enterprise_parity.py (fails if required=true && status=missing)
+#
+# Fields:
+#   id:              unique feature identifier (UPPERCASE.DOT.SEPARATED)
+#   category:        Finance | Services | Productivity | Customization | Platform
+#   description:     what the Enterprise feature does
+#   required:        true = must be met for go-live; false = nice-to-have or waived
+#   status:          met | partial | missing | waived
+#   implementation:  ce | oca | ipai_bridge | external_service | n8n | waived
+#   module_or_ref:   OCA module name, ipai_* module, or external service name
+#   evidence:        path to CI check, ops query, or runbook that proves it
+#   notes:           optional context
+
+version: "1.0.0"
+generated_at: "2026-03-02"
+scope: "Odoo 19.0 CE self-hosted"
+
+features:
+
+  # -- Finance --
+
+  - id: FINANCE.ACCOUNTING_LOCK
+    category: Finance
+    description: Lock accounting periods for auditing
+    required: true
+    status: met
+    implementation: ce
+    module_or_ref: account (CE core)
+    evidence: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    notes: Native CE feature
+
+  - id: FINANCE.VENDOR_BILL_OCR
+    category: Finance
+    description: Automatic vendor bill digitization via OCR
+    required: true
+    status: met
+    implementation: external_service
+    module_or_ref: PaddleOCR-VL (ocr.insightpulseai.com)
+    evidence: supabase/functions/ops-secrets-scan/index.ts
+    notes: PaddleOCR-VL replaces Odoo AI OCR; ipai_expense_ocr bridge module
+
+  - id: FINANCE.EXPENSE_MANAGEMENT
+    category: Finance
+    description: Employee expense reports with approval flow
+    required: true
+    status: met
+    implementation: oca
+    module_or_ref: hr_expense (CE) + OCA hr_expense_sequence
+    evidence: addons/oca/
+    notes: CE hr_expense covers core; OCA adds sequencing
+
+  - id: FINANCE.BUDGET_MANAGEMENT
+    category: Finance
+    description: Budget plans, alerts, and period variance tracking
+    required: true
+    status: partial
+    implementation: ipai_bridge
+    module_or_ref: ipai_finance_ppm
+    evidence: addons/ipai/ipai_finance_ppm/
+    notes: PPM module covers project budget; consolidated budget views partial
+
+  - id: FINANCE.CONSOLIDATION
+    category: Finance
+    description: Multi-company account consolidation
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Single-entity operation; not needed
+
+  - id: FINANCE.BANK_SYNC
+    category: Finance
+    description: Automated bank statement import
+    required: true
+    status: partial
+    implementation: oca
+    module_or_ref: account_bank_statement_import (OCA)
+    evidence: ~
+    notes: OCA import available; real-time sync not configured
+
+  # -- Productivity --
+
+  - id: PRODUCTIVITY.DOCUMENTS
+    category: Productivity
+    description: Document management (DMS) with workspace
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Using repo + Supabase Storage for document management
+
+  - id: PRODUCTIVITY.SIGN
+    category: Productivity
+    description: Electronic signature requests and tracking
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Not needed in current scope
+
+  - id: PRODUCTIVITY.SPREADSHEET
+    category: Productivity
+    description: Collaborative spreadsheets inside Odoo
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Apache Superset covers analytical spreadsheet needs
+
+  - id: PRODUCTIVITY.APPROVALS
+    category: Productivity
+    description: Configurable multi-level approval workflows
+    required: true
+    status: met
+    implementation: oca
+    module_or_ref: approval (OCA base_setup)
+    evidence: ~
+    notes: OCA approval module covers PO, expense, time off approvals
+
+  - id: PRODUCTIVITY.HELPDESK
+    category: Productivity
+    description: Customer support ticketing
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Not in current scope
+
+  # -- Services / CRM --
+
+  - id: SERVICES.VOIP
+    category: Services
+    description: VoIP integration for calls from CRM
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: ~
+    notes: Not needed
+
+  - id: SERVICES.FIELD_SERVICE
+    category: Services
+    description: On-site service scheduling + mobile
+    required: false
+    status: missing
+    implementation: ~
+    module_or_ref: ~
+    evidence: ~
+    notes: Evaluate OCA field_service if needed
+
+  - id: SERVICES.PROJECT_FORECAST
+    category: Services
+    description: Resource planning and forecasting
+    required: true
+    status: partial
+    implementation: ipai_bridge
+    module_or_ref: ipai_finance_ppm
+    evidence: addons/ipai/ipai_finance_ppm/
+    notes: PPM covers forecast; granular resource allocation partial
+
+  # -- Customization / Platform --
+
+  - id: CUSTOMIZATION.STUDIO
+    category: Customization
+    description: No-code form/view customization (Odoo Studio)
+    required: false
+    status: partial
+    implementation: ipai_bridge
+    module_or_ref: ipai_* override modules + OCA base_setup
+    evidence: ~
+    notes: Custom ipai_* modules cover specific customizations; Studio drag-drop waived
+
+  - id: CUSTOMIZATION.MOBILE_APP
+    category: Customization
+    description: Native iOS/Android mobile app
+    required: true
+    status: partial
+    implementation: ipai_bridge
+    module_or_ref: feat/ios-preview-builds (PR #454)
+    evidence: .github/workflows/ios-preview-builds.yml
+    notes: iOS preview builds pipeline in progress (PR #454)
+
+  - id: PLATFORM.HOSTING
+    category: Platform
+    description: Managed hosting with guaranteed uptime
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: DigitalOcean self-hosted
+    evidence: infra/
+    notes: Self-hosted on DigitalOcean; SLA managed internally
+
+  - id: PLATFORM.UPGRADES
+    category: Platform
+    description: Automated minor version upgrades
+    required: false
+    status: waived
+    implementation: waived
+    module_or_ref: ~
+    evidence: scripts/odoo_*.sh
+    notes: Manual upgrade process via scripts; acceptable for current scale
+
+  - id: PLATFORM.ODOO_SH_PARITY
+    category: Platform
+    description: CI/staging/dev neutralization (Odoo.sh-style)
+    required: true
+    status: partial
+    implementation: ipai_bridge
+    module_or_ref: ops-convergence-scan + maintenance_runs
+    evidence: supabase/functions/ops-convergence-scan/index.ts
+    notes: Convergence scanner covers drift detection; staging branch management in progress
+
+  - id: PLATFORM.ANALYTICS_BI
+    category: Platform
+    description: Embedded BI dashboards and analytics
+    required: true
+    status: met
+    implementation: external_service
+    module_or_ref: Apache Superset (superset.insightpulseai.com) + Tableau
+    evidence: apps/ops-console/
+    notes: Superset replaces Odoo Reporting app; full BI implemented
