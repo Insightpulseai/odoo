@@ -1,19 +1,50 @@
 import Foundation
 
+// MARK: - Transport abstraction
+
+/// Abstracts the HTTP layer so OdooClient can be unit-tested without URLProtocol mocks.
+/// Use URLSessionTransport (default) for production; inject CaptureTransport in tests
+/// that validate JSON-RPC request serialization without a live Odoo server.
+protocol OdooRPCTransport {
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
+}
+
+/// Production transport — thin wrapper over URLSession.
+struct URLSessionTransport: OdooRPCTransport {
+    private let session: URLSession
+    init(session: URLSession = .shared) { self.session = session }
+
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        try await session.data(for: request)
+    }
+}
+
+// MARK: - OdooClient
+
 /// JSON-RPC 2.0 client for Odoo's `/web/dataset/call_kw` endpoint.
 /// All calls require a valid session cookie or Bearer token from TokenStore.
 struct OdooClient {
     private let baseURL: String
-    private let session: URLSession
+    private let transport: any OdooRPCTransport
 
+    /// Convenience init with URLSession (backward-compatible with existing tests
+    /// that pass mockSession() / queueSyncSession()). Wraps session in URLSessionTransport.
     init(
         baseURL: String? = nil,
         session: URLSession = .shared
     ) {
+        self.init(baseURL: baseURL, transport: URLSessionTransport(session: session))
+    }
+
+    /// Primary init — inject any OdooRPCTransport (URLSessionTransport, CaptureTransport, etc.).
+    init(
+        baseURL: String? = nil,
+        transport: any OdooRPCTransport
+    ) {
         self.baseURL = baseURL
             ?? Bundle.main.object(forInfoDictionaryKey: "OdooBaseURL") as? String
             ?? "https://erp.insightpulseai.com"
-        self.session = session
+        self.transport = transport
     }
 
     // MARK: - JSON-RPC call
@@ -66,7 +97,6 @@ struct OdooClient {
             request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
         }
 
-        // TODO: serialize args/kwargs as AnyCodable
         let body: [String: Any] = [
             "jsonrpc": "2.0",
             "method": "call",
@@ -80,7 +110,7 @@ struct OdooClient {
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await transport.send(request)
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
@@ -136,7 +166,7 @@ struct OdooClient {
 
         request.httpBody = body
 
-        let (responseData, response) = try await session.data(for: request)
+        let (responseData, response) = try await transport.send(request)
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
