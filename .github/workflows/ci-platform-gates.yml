@@ -99,18 +99,32 @@ jobs:
           PY
 
       - name: Validate JSON configs
+        # Excludes nested node_modules, worktrees, evidence output, and JSONC files
+        # (tsconfig.json / devcontainer.json / .vscode/*.json allow comments by spec)
         run: |
           python - <<'PY'
-          import glob, json, sys
+          import glob, json, sys, os
+          SKIP_DIRS = {"node_modules", ".git", "worktrees", "evidence", ".gemini"}
+          SKIP_NAMES = {"tsconfig.json", "devcontainer.json"}
           errors = []
-          for pattern in ["**/*.json", ".claude/*.json"]:
-              for f in glob.glob(pattern, recursive=True):
-                  if "node_modules" in f or ".git" in f:
-                      continue
-                  try:
-                      json.load(open(f))
-                  except Exception as e:
-                      errors.append(f"{f}: {e}")
+          for f in glob.glob("**/*.json", recursive=True):
+              parts = set(f.replace("\\", "/").split("/"))
+              # Skip any path component that is a known excluded directory
+              if parts & SKIP_DIRS:
+                  continue
+              # Skip .vscode JSON (JSONC)
+              if "/.vscode/" in f.replace("\\", "/") or f.startswith(".vscode/"):
+                  continue
+              # Skip .worktrees and .claude/worktrees (local git worktrees)
+              if ".worktrees/" in f or ".claude/worktrees/" in f:
+                  continue
+              # Skip known JSONC filenames
+              if os.path.basename(f) in SKIP_NAMES or os.path.basename(f).startswith("tsconfig."):
+                  continue
+              try:
+                  json.load(open(f))
+              except Exception as e:
+                  errors.append(f"{f}: {e}")
           if errors:
               print("JSON validation errors (first 10):")
               for e in errors[:10]:
