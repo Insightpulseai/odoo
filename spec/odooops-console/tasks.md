@@ -156,17 +156,84 @@
 
 ---
 
-## Phase 12 — Pulser Slash Commands + Odoo Connector (DONE ✅)
+## Phase 12 — Vercel/GitHub Deployment Semantics
 
-40. ~~Create `ops.taskbus_intents` migration with claiming fields~~ → **DONE** (`20260301000070_ops_taskbus_intents.sql`).
-41. ~~Create `ops.claim_taskbus_intent()` atomic claim RPC~~ → **DONE** (same migration).
-42. ~~Create `pulser-slack-handler` Edge Function (slash command parser + intent enqueuer)~~ → **DONE**.
-43. ~~Create `pulser-intent-runner` Edge Function (intent consumer + Slack reply)~~ → **DONE**.
-44. ~~Create `ipai_pulser_connector` Odoo addon (cron + claim + dispatch + handlers)~~ → **DONE**.
-45. ~~Implement MVP handlers: `odoo.healthcheck`, `odoo.modules.status`, `odoo.config.snapshot`~~ → **DONE**.
-46. ~~Implement exact JSON envelope contract (success/error + trace + evidence)~~ → **DONE**.
-47. ~~Implement args validation (env, installed_sample cap, allowlist profile, redaction mode)~~ → **DONE**.
-48. ~~Add `/pulser` command routing to `apps/slack-agent/server/lib/taskbus.ts`~~ → **DONE**.
-49. ~~Create `docs/contracts/C-PULSER-ODOO-01.md`~~ → **DONE**.
-50. ~~Add tests for handlers + envelope contract~~ → **DONE**.
-51. Manual E2E test: insert `odoo.healthcheck` intent → Odoo claims → marks done → result JSON present.
+40. Extend `ops.deployments` schema ingestion to include:
+    - `deployment_url`, `environment` (preview|production), `pr_number` (nullable), `git_sha`
+    - `github_deployment_id` (nullable)
+41. Normalize Vercel build statuses:
+    - Map to: `success`, `failed`, `canceled_superseded`, `awaiting_authorization`
+42. Update Deployments UI:
+    - Treat "canceled superseded builds" as expected (not failed) — distinct badge
+    - Show "Awaiting authorization" state for fork PR deploys
+43. Store preview URL + PR linkage in `ops.deployments`:
+    - Enables PR → Preview URL → E2E tests dashboards
+
+---
+
+## Phase 13 — FixBot (Agent Auto-Fix)
+
+44. Create `ssot/agents/fixbot_policy.yaml` defining:
+    - Allowed fix kinds (fix_build, fix_gate, fix_migration, fix_webhook)
+    - Guardrails (PR-only, require tests, max files/lines, forbidden paths)
+    - Escalation policy (repeat failures → create work item)
+45. Extend `ops.agent_runs` with FixBot columns:
+    - `kind`, `trigger_source`, `trigger_ref`, `prompt`, `pr_url`
+46. Implement `ops-fixbot-dispatch` Edge Function:
+    - On gate/build failure: create `ops.agent_runs` row with Agent Relay Template
+    - Invoke @claude integration endpoint (or enqueue via Inngest)
+47. Add "Fix" action button on gate/build failure cards in UI
+48. Add `ops.agent_run_events` linkage for FixBot run lifecycle tracking
+
+---
+
+## Phase 14 — Deployment Convergence
+
+49. Create `ssot/maintenance/convergence.yaml` defining per-env completion requirements:
+    - Required migrations range, edge functions, env vars, vault keys, DNS, gates
+50. Create `ops.convergence_findings` migration:
+    - `env`, `kind`, `key`, `status`, `evidence`, `first_seen`, `last_seen`
+    - Finding kinds: `deploy_failed`, `migrations_pending`, `env_missing`,
+      `vault_missing`, `dns_planned`, `gate_failed`, `webhook_unverified`
+51. Implement `ops-convergence-scan` Edge Function:
+    - Reads latest git SHA from ops.builds/deployments
+    - Reads latest deployed SHA per env
+    - Checks pending migrations, missing functions, missing secrets, DNS lifecycle, gate status
+    - Writes findings + emits Slack alert on blockers
+52. Add Maintenance → Convergence page in UI:
+    - Shows converged vs behind vs blocked per env
+    - Findings list with requirement, evidence link, suggested action
+    - "Trigger fix" button (invokes FixBot if enabled)
+
+---
+
+## Phase 15 — Periodic Maintenance Schedule
+
+53. Create `ssot/maintenance/schedules.yaml` defining Daily/Weekly/Monthly/Quarterly chores
+54. Create `ops.maintenance_runs` + `ops.maintenance_run_events` tables
+55. Seed `ops.schedules` with maintenance chore entries:
+    - backup_freshness_check (daily)
+    - convergence_scan (every 15 min)
+    - secrets_registry_audit (weekly)
+    - rls_drift_audit (weekly)
+    - access_review (monthly)
+    - cost_snapshot (monthly)
+56. Add Maintenance dashboard page listing:
+    - Next runs, last status, evidence links, auto-generated PR links
+57. Wire first two working chores: backup freshness + convergence scan
+
+---
+
+## Phase 16 — DigitalOcean Gradient ADK (Optional)
+
+58. Create `ssot/providers/digitalocean/gradient_adk.yaml`:
+    - ADK module taxonomy (agents, inference, KB, routing, guardrails, tracing, eval)
+    - Auth config (GRADIENT_MODEL_ACCESS_KEY, DIGITALOCEAN_API_TOKEN)
+    - Local/deployed endpoint patterns
+59. Update `ssot/secrets/registry.yaml`:
+    - Add `gradient_model_access_key`, `digitalocean_api_token_genai`
+60. Add provider adapter stub for `do-gradient-agents`:
+    - POST `{ "prompt": "..." }` to local :8080/run or deployed agents.do-ai.run
+    - Record in `ops.agent_runs` per invocation
+61. Create `ops.ai_models` migration (provider, model, status, metadata jsonb)
+62. Add placeholder UI panel under Platform → AI Providers

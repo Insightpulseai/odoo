@@ -5,13 +5,11 @@ on:
     branches: [main, 'claude/**']
     paths:
       - 'web/billing-site/**'
-      - 'supabase/migrations/**'
       - '.github/workflows/ci-billing-site.yml'
   pull_request:
     branches: [main]
     paths:
       - 'web/billing-site/**'
-      - 'supabase/migrations/**'
       - '.github/workflows/ci-billing-site.yml'
 
 defaults:
