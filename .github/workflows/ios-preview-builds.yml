@@ -1,17 +1,16 @@
 name: iOS Preview Builds
 
-# Path A (every push/PR): build-for-testing on iOS Simulator target → validates iOS compilation
-# Path B (main push only): fastlane build_testflight → IPA upload to TestFlight
+# Path A (every push/PR): iOS compilation gate via xcodebuild build-for-testing
+# Path B (main push only): fastlane build_testflight -> IPA upload to TestFlight
 #
 # Package.swift defines OdooMobile as a library product (not an executable/app).
-# xcodebuild build-for-testing validates iOS compilation without a committed .xcodeproj —
+# xcodebuild build-for-testing validates iOS compilation without a committed .xcodeproj --
 # Xcode.app (selected by verify_xcode.sh) resolves the SPM package and its schemes directly.
-# A .app artifact requires adding an application target; tracked in follow-on work.
+# A .app artifact requires an application target; tracked as follow-on work.
 #
 # ops.artifacts is always posted with a truthful status:
-#   success  — iOS compilation succeeded (build-for-testing passed)
-#   failed   — iOS compilation failed
-# TestFlight job additionally posts success | failed based on fastlane exit code.
+#   success  -- iOS compilation succeeded (build-for-testing passed)
+#   failed   -- iOS compilation failed
 
 on:
   push:
@@ -34,14 +33,14 @@ permissions:
   contents: read
 
 jobs:
-  # ─── Path A: iOS compilation gate (PRs + main) ───────────────────────────────
+  # --- Path A: iOS compilation gate (PRs + main) --------------------------------
   simulator-build:
     name: iOS Compilation Gate
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      # Select Xcode.app 16.x — required for SPM scheme resolution (CLT alone is not enough).
+      # Select Xcode.app 16.x -- required for SPM scheme resolution (CLT alone is not enough).
       - name: Select Xcode 16.x
         run: sudo bash scripts/mobile/verify_xcode.sh
 
@@ -53,7 +52,7 @@ jobs:
             2>&1 | tee /tmp/spm-resolve.log
         working-directory: apps/odoo-mobile-ios
 
-      # Run the deterministic CLT test suite — gates on macOS target.
+      # Run the deterministic CLT test suite -- validates on macOS target.
       - name: Run unit tests (macOS / CLT)
         run: |
           swift test \
@@ -64,8 +63,8 @@ jobs:
         working-directory: apps/odoo-mobile-ios
 
       # Compile all targets for the iOS Simulator target.
-      # This validates iOS-specific code paths that swift test (macOS target) does not cover.
-      # Package.swift is a library — no .app produced; add an app target when needed.
+      # Validates iOS-specific code paths that swift test (macOS target) does not cover.
+      # Package.swift is a library -- no .app produced; add an app target when needed.
       - name: Build for iOS Simulator (compilation gate)
         id: ios-build
         run: |
@@ -100,11 +99,11 @@ jobs:
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
           case "${BUILD_OUTCOME}" in
-            success)  STATUS="success"; REASON="" ;;
-            failure)  STATUS="failed";  REASON="IOS_COMPILATION_FAILED" ;;
-            cancelled) STATUS="failed"; REASON="CANCELLED" ;;
-            skipped)  STATUS="skipped"; REASON="STEP_SKIPPED" ;;
-            *)         STATUS="failed"; REASON="UNKNOWN_${BUILD_OUTCOME}" ;;
+            success)   STATUS="success"; REASON="" ;;
+            failure)   STATUS="failed";  REASON="IOS_COMPILATION_FAILED" ;;
+            cancelled) STATUS="failed";  REASON="CANCELLED" ;;
+            skipped)   STATUS="skipped"; REASON="STEP_SKIPPED" ;;
+            *)         STATUS="failed";  REASON="UNKNOWN_${BUILD_OUTCOME}" ;;
           esac
 
           curl -sf -X POST "${SUPABASE_URL}/rest/v1/artifacts" \
@@ -140,7 +139,7 @@ jobs:
               "${GITHUB_SHA:0:8}")" \
           || echo "::warning::ops.artifacts POST failed (non-blocking)"
 
-  # ─── Path B: TestFlight (main pushes only, gated on Path A) ──────────────────
+  # --- Path B: TestFlight (main pushes only, gated on Path A) -------------------
   testflight:
     name: TestFlight Upload
     runs-on: macos-14
