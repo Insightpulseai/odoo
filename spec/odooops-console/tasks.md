@@ -153,3 +153,20 @@
 
 38. Add CI check: all nav routes from layout have a corresponding `app/*/page.tsx` or `app/**/page.tsx`.
 39. Add `scripts/check-spec-kit.sh` for `spec/odooops-console/` bundle completeness validation.
+
+---
+
+## Phase 12 — Pulser Slash Commands + Odoo Connector (DONE ✅)
+
+40. ~~Create `ops.taskbus_intents` migration with claiming fields~~ → **DONE** (`20260301000070_ops_taskbus_intents.sql`).
+41. ~~Create `ops.claim_taskbus_intent()` atomic claim RPC~~ → **DONE** (same migration).
+42. ~~Create `pulser-slack-handler` Edge Function (slash command parser + intent enqueuer)~~ → **DONE**.
+43. ~~Create `pulser-intent-runner` Edge Function (intent consumer + Slack reply)~~ → **DONE**.
+44. ~~Create `ipai_pulser_connector` Odoo addon (cron + claim + dispatch + handlers)~~ → **DONE**.
+45. ~~Implement MVP handlers: `odoo.healthcheck`, `odoo.modules.status`, `odoo.config.snapshot`~~ → **DONE**.
+46. ~~Implement exact JSON envelope contract (success/error + trace + evidence)~~ → **DONE**.
+47. ~~Implement args validation (env, installed_sample cap, allowlist profile, redaction mode)~~ → **DONE**.
+48. ~~Add `/pulser` command routing to `apps/slack-agent/server/lib/taskbus.ts`~~ → **DONE**.
+49. ~~Create `docs/contracts/C-PULSER-ODOO-01.md`~~ → **DONE**.
+50. ~~Add tests for handlers + envelope contract~~ → **DONE**.
+51. Manual E2E test: insert `odoo.healthcheck` intent → Odoo claims → marks done → result JSON present.

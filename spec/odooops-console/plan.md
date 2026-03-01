@@ -60,6 +60,39 @@ All providers implement:
 | DigitalOcean | offset (page/per_page) | Bearer token | `ops-do-ingest` |
 | Mailgun | — (webhooks) | HMAC signed payload | `ops-mailgun-ingest` |
 | Slack | cursor | Bot token | `ops-slack-notify` |
+| Pulser (Slack) | — (slash commands) | Signing secret (HMAC-SHA256) | `pulser-slack-handler` |
+| Pulser (Odoo) | — (cron poll) | Service role key | `ipai_pulser_connector` |
+
+### Slack Transport (Pulser)
+
+- **Socket Mode** is the default transport for Pulser's long-lived agent runner.
+- Pulser is a **software engineering agent interface** in Slack: it enqueues intents,
+  never executes long tasks inline.
+- Response SLA: ACK within 3 seconds, async execution via `ops.taskbus_intents`.
+- Intent router: `supabase/functions/pulser-slack-handler/` parses `/pulser` commands.
+- Intent runner: `supabase/functions/pulser-intent-runner/` consumes non-Odoo intents.
+- Odoo connector: `addons/ipai/ipai_pulser_connector/` claims `odoo.*` intents via
+  `ops.claim_taskbus_intent()` RPC.
+- Contract: `docs/contracts/C-PULSER-ODOO-01.md`.
+
+### Slack Two-App Model (Plane + Pulser)
+
+Plane Slack and Pulser Slack are **separate Slack apps** with distinct endpoint
+surfaces, OAuth models, scopes, and failure domains:
+
+- **Plane Slack app** (`/plane`): Plane-native integration at `plane.insightpulseai.com`.
+  Handles issue creation from Slack threads, unfurls, and workspace OAuth.
+  Endpoints: `/silo/api/slack/*` (command, events, action, options, OAuth callbacks).
+
+- **Pulser Slack app** (`/pulser`): Ops control plane runner. Socket Mode transport,
+  intent-enqueue architecture, bot-token-only auth.
+
+Integration boundary: Pulser integrates with Plane via **REST API and webhooks
+into `ops.work_items`**, not by sharing Slack configuration. `/pulser plane status`
+queries the data plane, not the Slack layer.
+
+SSOT: `ssot/integrations/slack/apps.yaml`
+Contract: `docs/contracts/C-SLACK-PLANE-01.md`
 
 ---
 
