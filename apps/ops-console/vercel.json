@@ -34,6 +34,12 @@
     },
     "app/api/queues/consume/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/webhooks/plane/route.ts": {
+      "maxDuration": 15
+    },
+    "app/api/webhooks/github/route.ts": {
+      "maxDuration": 15
     }
   },
   "headers": [
