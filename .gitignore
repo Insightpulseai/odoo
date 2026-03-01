@@ -105,6 +105,7 @@ docker-compose.override.yml
 secrets/
 !ssot/secrets/
 !ssot/secrets/registry.yaml
+!apps/ops-console/app/platform/secrets/
 .secrets
 # Identifier-only registry (no values) — intentionally tracked
 !ssot/secrets/
