@@ -1,0 +1,58 @@
+# PPM Portfolio Register — SSOT
+# Edit this file to add/update initiatives.
+# ops-ppm-rollup reads this and upserts ops.ppm_initiatives.
+# Fields:
+#   id:            Unique initiative ID (INIT-NNN)
+#   name:          Display name
+#   owner:         GitHub username of owner
+#   status:        active | on-hold | completed | cancelled
+#   spec_slug:     Spec bundle folder under spec/ (or null)
+#   github_label:  GitHub label filtering PRs for merged_prs_30d
+#   start_date:    ISO date
+#   target_date:   ISO date (or null)
+
+initiatives:
+  - id: INIT-001
+    name: "Ops Console — Platform Operations Hub"
+    owner: tbwa
+    status: active
+    spec_slug: odooops-console
+    github_label: ops-console
+    start_date: "2026-01-01"
+    target_date: "2026-03-31"
+
+  - id: INIT-002
+    name: "Odoo CE EE Parity (80% target)"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: odoo-parity
+    start_date: "2026-01-15"
+    target_date: "2026-06-30"
+
+  - id: INIT-003
+    name: "PPM Clarity — Notion Replacement"
+    owner: tbwa
+    status: active
+    spec_slug: ppm-clarity
+    github_label: ppm
+    start_date: "2026-03-01"
+    target_date: "2026-03-31"
+
+  - id: INIT-004
+    name: "DNS & Mail SSOT Convergence"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: dns
+    start_date: "2026-02-01"
+    target_date: "2026-03-15"
+
+  - id: INIT-005
+    name: "iOS Preview Build Pipeline"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: ios
+    start_date: "2026-02-15"
+    target_date: "2026-04-30"
