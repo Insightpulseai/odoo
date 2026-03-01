@@ -1,0 +1,120 @@
+name: Spec Kit Drift Gate
+
+# Fail if .specify/ templates or speckit.*.md commands drift from the
+# pinned `specify` CLI version declared in ssot/tooling/spec-kit.yaml.
+#
+# SSOT:    ssot/tooling/spec-kit.yaml
+# Policy:  docs/policies/spec-kit.md
+# Runbook: docs/runbooks/spec-kit-refresh.md
+
+on:
+  pull_request:
+    paths:
+      - ".specify/**"
+      - ".claude/commands/speckit.*.md"
+      - "ssot/tooling/spec-kit.yaml"
+      - ".github/workflows/spec-kit-drift.yml"
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Enable debug output"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  spec-kit-drift:
+    name: Spec Kit Drift Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read pinned version
+        id: version
+        run: |
+          VERSION=$(python3 -c "
+          import yaml, sys
+          data = yaml.safe_load(open('ssot/tooling/spec-kit.yaml'))
+          v = data['spec_kit']['cli']['version']
+          print(v)
+          ")
+          echo "SPECIFY_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Pinned specify version: $VERSION"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install specify CLI
+        run: npm install -g specify@${{ steps.version.outputs.version }}
+
+      - name: Copy repo to temp workspace
+        run: |
+          TMPDIR=$(mktemp -d)
+          cp -r . "$TMPDIR/repo"
+          echo "WORKSPACE=$TMPDIR/repo" >> "$GITHUB_ENV"
+
+      - name: Run specify init in temp workspace
+        run: |
+          cd "$WORKSPACE"
+          specify init --here --force --ignore-agent-tools
+        env:
+          CI: "true"
+
+      - name: Check for drift
+        id: drift
+        run: |
+          # Compare only the template paths (never spec/<slug>/ bundles)
+          DRIFT_PATHS=(
+            ".specify/templates"
+            ".specify/scripts"
+          )
+
+          fail=0
+          for path in "${DRIFT_PATHS[@]}"; do
+            if [ -d "$WORKSPACE/$path" ] || [ -f "$WORKSPACE/$path" ]; then
+              if ! diff -rq "$path" "$WORKSPACE/$path" > /dev/null 2>&1; then
+                echo "::warning::Drift detected in $path"
+                diff -r "$path" "$WORKSPACE/$path" || true
+                fail=1
+              fi
+            fi
+          done
+
+          echo "drift_found=$fail" >> "$GITHUB_OUTPUT"
+
+          if [ "$fail" -eq 1 ]; then
+            echo "::error::Spec Kit template drift detected. Run the refresh command and commit the results."
+            echo "Refresh command: npx specify@$SPECIFY_VERSION init --here --force --ignore-agent-tools"
+            echo "See docs/runbooks/spec-kit-refresh.md for full procedure."
+          else
+            echo "No spec kit drift found. Templates are up to date."
+          fi
+
+      - name: Generate patch artifact on drift
+        if: steps.drift.outputs.drift_found == '1'
+        run: |
+          PATCH_FILE="spec-kit-drift-$(date +%Y%m%d-%H%M%S).patch"
+          for path in ".specify/templates" ".specify/scripts"; do
+            diff -r "$path" "$WORKSPACE/$path" >> "$PATCH_FILE" || true
+          done
+          echo "PATCH_FILE=$PATCH_FILE" >> "$GITHUB_ENV"
+
+      - name: Upload patch artifact
+        if: steps.drift.outputs.drift_found == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-kit-drift-patch
+          path: ${{ env.PATCH_FILE }}
+          retention-days: 7
+
+      - name: Fail on drift
+        if: steps.drift.outputs.drift_found == '1'
+        run: exit 1
