@@ -1,43 +1,75 @@
 # schema: ssot.integrations.v1
-# Vercel Agent — AI PR reviewer invoked via @vercel in GitHub PR comments.
-# Ref: https://vercel.com/agent
+# Vercel Agent — AI PR Code Review; sandbox-validated suggestions + on-demand @vercel invocation.
+# Ref: https://vercel.com/docs/agent/pr-review
 
-version: "1.0.0"
+version: "1.1.0"
 schema: ssot.integrations.v1
 name: vercel_agent
-status: planned
+status: active
 last_reviewed: "2026-03-01"
+category: ai_code_review
 
 provider:
   platform: vercel
-  surface: github_pr_comments
-  invocation: "@vercel mention in PR comment thread"
+  surfaces:
+    - pr_review           # auto-triggered on PR open/push
+    - pr_comment_demand   # on-demand via "@vercel …" comment
+  invocation:
+    auto: "PR opened or updated (when Vercel Agent PR Review enabled in dashboard)"
+    on_demand: "@vercel mention in GitHub PR comment thread"
+  guideline_file: ".github/copilot-instructions.md"
+  # Vercel Agent reads this file for coding guidelines to tailor review feedback.
+  # Keep boundary rules, atomicity constraints, and SSOT rules here.
 
 components:
   pr_reviewer:
-    description: "Reads PR thread context and proposes fixes or explanations."
-    activation: "@vercel mention in GitHub PR comment"
-    output: "Inline PR comment with suggestions"
+    description: >
+      Multi-step reasoning over PR diff; generates patches; runs real builds/tests/linters
+      in secure sandboxes; only suggestions that pass sandbox checks appear in the PR.
+    activation: "PR open/push (auto) or @vercel comment (on-demand)"
+    output: "Inline PR comment with sandbox-validated suggestions (one-click apply)"
+  on_demand_commands:
+    examples:
+      - "@vercel run a review"
+      - "@vercel fix the type errors"
+      - "@vercel why is this failing?"
+
+policy:
+  guidelines_required: true
+  # The guideline_file above is read by Vercel Agent to enforce repo conventions.
+  # Highest-signal rules (boundaries, atomicity, SSOT) must appear in that file.
+  no_ui_only_steps: true
+  # Agent must not produce suggestions that require UI-only actions.
+  ssot_immutable: true
+  # Agent suggestions MUST NOT modify files in ssot/; only humans or CI may update SSOT.
+  secrets_policy: vault_refs_only
+  # Any suggested code must use env var references, not inline secrets.
+  pr_atomicity: one_logical_unit_per_pr
+  # Agent should flag PRs that mix unrelated logical units (cross-branch contamination signal).
 
 boundary_rules:
   - "Vercel Agent is advisory only — never treated as authoritative SSOT."
   - "Agent suggestions must be converted to ops.advisor_findings or workbook steps before acting."
   - "Agent cannot write to any SSOT files; only humans or CI can update SSOT."
-  - "Log 'Agent suggested X' into ops.run_events for audit trail."
+  - "Agent suggestions that fail the real sandbox build/test are suppressed by Vercel — never apply suppressed suggestions manually."
+  - "Log '@vercel suggested X' into ops.run_events for audit trail when acting on suggestions."
+  - "PR atomicity: flag any PR that contains files from more than one logical domain (e.g. migrations + Edge Functions in same PR)."
 
 required_secrets: []
 # No secrets required — Agent authenticates via Vercel's GitHub App installation.
 
 integration_stance:
   role: signal_source
-  feeds_into: ops.advisor_findings (via PR comment ingestion)
+  feeds_into: "ops.advisor_findings (pillar: ops_excellence, severity: info)"
   findings_pillar: ops_excellence
   findings_severity: info
 
 notes: |
   Treat Vercel Agent as a "reviewer signal," not an execution engine.
   When @vercel produces suggestions in a PR:
-    - Ingest via GitHub PR comments API
-    - Store as ops.advisor_findings (pillar: ops_excellence, severity: info)
-    - Link to relevant workbook step for manual action
-  Reference: https://vercel.com/agent
+    - Apply via Vercel dashboard one-click (sandbox-validated) or manually after review.
+    - Store notable patterns as ops.advisor_findings (pillar: ops_excellence, severity: info).
+    - Link to relevant workbook step for tracking.
+  Merge order safety: Vercel Agent reviews each PR independently; it does not know
+  about cross-PR FK dependencies. Enforce merge order manually (PR #429 → C → A/B).
+  Reference: https://vercel.com/docs/agent/pr-review
