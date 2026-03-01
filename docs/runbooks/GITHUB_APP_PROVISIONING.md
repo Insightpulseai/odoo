@@ -69,6 +69,10 @@ supabase secrets set GITHUB_CLIENT_SECRET=<client_secret>
 
 ## Step 4: Deploy the ingest function
 
+The function reads `GITHUB_APP_WEBHOOK_SECRET` from Supabase Vault (set in Step 3).
+If the secret is absent the function logs a warning and processes the request without
+signature verification — acceptable during initial setup, **not** in production.
+
 ```bash
 supabase functions deploy ops-github-webhook-ingest
 ```
@@ -81,6 +85,26 @@ curl -s -X GET \
   -H "Authorization: Bearer $SUPABASE_ANON_KEY" | jq .
 # Expected: {"error":"Method Not Allowed"}
 ```
+
+### Stored event shape
+
+All accepted deliveries are stored in `ops.webhook_events`. Key columns added by
+migration `20260302000050`:
+
+| Column | Description |
+|--------|-------------|
+| `delivery_id` | `X-GitHub-Delivery` UUID — deduplicated by unique index |
+| `action` | event sub-action (opened / closed / merged / …) |
+| `repo_full_name` | `org/repo` extracted from payload |
+| `installation_id` | GitHub App installation ID |
+| `sender_login` | GitHub login who triggered the event |
+| `reason` | structured reason for `status=unhandled`: `unknown_event`, `missing_action`, `payload_too_large`, `schema_mismatch` |
+
+Supported events that produce `status=queued`: `issues`, `pull_request`,
+`check_run`, `check_suite`, `push`, `installation`.
+
+All other events are stored with `status=unhandled` and a `reason` code; they are
+**not** dropped.
 
 ---
 
@@ -103,15 +127,23 @@ Send a test ping from the GitHub App settings page and check Supabase function l
 supabase functions logs ops-github-webhook-ingest --tail 20
 ```
 
-Expected log (successful delivery):
+Expected log (successful delivery — ping is `unhandled` because it is not a subscribed event):
 ```
-ops-github-webhook-ingest: stored delivery=<uuid> event=ping status=unhandled
+ops-github-webhook-ingest: payload_too_large delivery=<uuid> size=<n>   # if oversized
+ops-github-webhook-ingest: invalid signature delivery=<uuid> event=ping  # sig failure
 ```
 
-Signature failure would log:
+A successful ingest does not emit a log line — inspect `ops.webhook_events` directly:
+```sql
+SELECT delivery_id, event_type, status, reason, received_at
+FROM ops.webhook_events
+WHERE integration = 'github'
+ORDER BY received_at DESC
+LIMIT 10;
 ```
-ops-github-webhook-ingest: invalid signature delivery=<uuid> event=ping
-```
+
+Signature failure blocks storage and returns HTTP 401. All other events
+(including unsupported ones) are stored and queryable.
 
 ---
 
