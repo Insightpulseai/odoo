@@ -1,6 +1,7 @@
-"use client";
-
-import { useEffect, useState } from "react";
+// Server Component — fetches directly from Supabase via service role.
+// The internal API routes (/api/ppm/*) are NOT called from the browser;
+// they exist for CI and server-to-server callers only.
+import { createClient } from "@supabase/supabase-js";
 
 interface Initiative {
   initiative_id: string;
@@ -19,53 +20,60 @@ interface Rollup {
 }
 
 const STATUS_BADGE: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
+  active:    "bg-green-100 text-green-800",
   "on-hold": "bg-yellow-100 text-yellow-800",
   completed: "bg-blue-100 text-blue-800",
   cancelled: "bg-gray-100 text-gray-600",
 };
 
-export default function PPMPage() {
-  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
-  const [rollups, setRollups] = useState<Record<string, Rollup>>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+async function getData(): Promise<{
+  initiatives: Initiative[];
+  rollupMap: Record<string, Rollup>;
+  error: string | null;
+}> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const [initRes, rollupRes] = await Promise.all([
-          fetch("/api/ppm/initiatives"),
-          fetch("/api/ppm/rollups"),
-        ]);
-        if (!initRes.ok) throw new Error(`initiatives: ${initRes.status}`);
-        const { data: inits } = await initRes.json();
-        const { data: rolls } = await rollupRes.json();
-
-        setInitiatives(inits ?? []);
-
-        // Index rollups by initiative_id (latest per initiative)
-        const map: Record<string, Rollup> = {};
-        for (const r of rolls ?? []) {
-          if (!map[r.initiative_id] || r.computed_at > map[r.initiative_id].computed_at) {
-            map[r.initiative_id] = r;
-          }
-        }
-        setRollups(map);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Load failed");
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="p-6 text-sm text-gray-500 animate-pulse">Loading portfolio...</div>
-    );
+  if (!supabaseUrl || !serviceKey) {
+    return { initiatives: [], rollupMap: {}, error: "Supabase env not configured" };
   }
+
+  const supabase = createClient(supabaseUrl, serviceKey, {
+    auth: { persistSession: false },
+  });
+
+  const [initResult, rollupResult] = await Promise.all([
+    supabase
+      .schema("ops")
+      .from("ppm_initiatives")
+      .select("initiative_id, name, owner, status, spec_slug, target_date")
+      .order("status")
+      .order("initiative_id"),
+    supabase
+      .schema("ops")
+      .from("ppm_status_rollups")
+      .select("initiative_id, blocking_findings, merged_prs_30d, computed_at")
+      .order("computed_at", { ascending: false })
+      .limit(500),
+  ]);
+
+  if (initResult.error) {
+    return { initiatives: [], rollupMap: {}, error: initResult.error.message };
+  }
+
+  // Latest rollup per initiative
+  const rollupMap: Record<string, Rollup> = {};
+  for (const r of rollupResult.data ?? []) {
+    if (!rollupMap[r.initiative_id] || r.computed_at > rollupMap[r.initiative_id].computed_at) {
+      rollupMap[r.initiative_id] = r;
+    }
+  }
+
+  return { initiatives: (initResult.data as Initiative[]) ?? [], rollupMap, error: null };
+}
+
+export default async function PPMPage() {
+  const { initiatives, rollupMap, error } = await getData();
 
   if (error) {
     return (
@@ -108,7 +116,7 @@ export default function PPMPage() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {initiatives.map((i) => {
-              const r = rollups[i.initiative_id];
+              const r = rollupMap[i.initiative_id];
               return (
                 <tr key={i.initiative_id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-mono text-gray-500 text-xs">
@@ -139,24 +147,16 @@ export default function PPMPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-xs">{i.owner ?? "—"}</td>
                   <td className="px-4 py-3 text-right">
-                    {r ? (
-                      r.blocking_findings > 0 ? (
-                        <span className="text-red-600 font-semibold">
-                          ⚠️ {r.blocking_findings}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">0</span>
-                      )
-                    ) : (
-                      <span className="text-gray-300">—</span>
-                    )}
+                    {r
+                      ? r.blocking_findings > 0
+                        ? <span className="text-red-600 font-semibold">⚠️ {r.blocking_findings}</span>
+                        : <span className="text-gray-400">0</span>
+                      : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-right text-gray-600">
                     {r?.merged_prs_30d ?? "—"}
                   </td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">
-                    {i.target_date ?? "—"}
-                  </td>
+                  <td className="px-4 py-3 text-gray-500 text-xs">{i.target_date ?? "—"}</td>
                 </tr>
               );
             })}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface SearchResult {
   type: "initiative" | "run" | "finding";
@@ -12,43 +13,62 @@ interface SearchResult {
 
 const TYPE_ICON: Record<string, string> = {
   initiative: "🎯",
-  run: "⚙️",
-  finding: "⚠️",
+  run:        "⚙️",
+  finding:    "⚠️",
 };
 
 const TYPE_LABEL: Record<string, string> = {
   initiative: "Initiative",
-  run: "Run",
-  finding: "Finding",
+  run:        "Run",
+  finding:    "Finding",
 };
 
 export default function SearchPage() {
-  const [query, setQuery] = useState("");
+  const supabase = createClientComponentClient();
+  const [query, setQuery]     = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError]     = useState<string | null>(null);
 
-  const doSearch = useCallback(async (q: string) => {
-    if (!q.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q.trim(), limit: 30 }),
-      });
-      if (!res.ok) throw new Error(`Search failed: ${res.status}`);
-      const { results: r } = await res.json();
-      setResults(r ?? []);
-      setSearched(true);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Search error");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const doSearch = useCallback(
+    async (q: string) => {
+      if (!q.trim()) return;
+      setLoading(true);
+      setError(null);
+      try {
+        // Get current user session for auth forwarding
+        const { data: { session } } = await supabase.auth.getSession();
+        const authHeader = session?.access_token
+          ? `Bearer ${session.access_token}`
+          : undefined;
+
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (authHeader) headers["Authorization"] = authHeader;
+
+        const res = await fetch("/api/search", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ query: q.trim(), limit: 30 }),
+        });
+
+        if (res.status === 401) {
+          setError("Sign in to search.");
+          return;
+        }
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+
+        const { results: r } = await res.json();
+        setResults(r ?? []);
+        setSearched(true);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Search error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
   return (
     <div className="p-6 space-y-4 max-w-2xl">
@@ -58,10 +78,7 @@ export default function SearchPage() {
       </p>
 
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          doSearch(query);
-        }}
+        onSubmit={(e) => { e.preventDefault(); doSearch(query); }}
         className="flex gap-2"
       >
         <input
@@ -106,9 +123,7 @@ export default function SearchPage() {
                     {r.title}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs text-gray-400">
-                      {TYPE_LABEL[r.type]}
-                    </span>
+                    <span className="text-xs text-gray-400">{TYPE_LABEL[r.type]}</span>
                     {r.status && (
                       <span className="text-xs text-gray-500">· {r.status}</span>
                     )}
