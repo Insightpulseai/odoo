@@ -98,9 +98,14 @@ Vercel Agent can propose patches for merge conflicts and sandbox-validate them, 
 @vercel fix the merge conflicts in apps/ keeping existing import paths
 ```
 
+**Hard constraints Vercel Agent must not violate:**
+- Never modify `supabase/migrations/**` to resolve a conflict — migration ordering requires a human decision.
+- `ssot/**/*.yaml` edits must pass `python scripts/ci/check_repo_structure.py` even if they look syntactically correct — SSOT edits can silently change semantics.
+
 **Post-resolution checklist before merging:**
-- [ ] `python scripts/ci/check_repo_structure.py` passes
+- [ ] `python scripts/ci/check_repo_structure.py` passes (SSOT boundary validator)
 - [ ] SSOT invariants preserved (no keys removed/renamed without intention)
+- [ ] No migrations modified by Agent resolution
 - [ ] No UI-only steps introduced by the resolution
 - [ ] `pnpm lint && pnpm typecheck` pass if TS files were touched
 
