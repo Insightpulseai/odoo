@@ -76,6 +76,13 @@ records:
     ttl: 1
     comment: "chat.insightpulseai.com → Mattermost/Slack gateway (proxied)"
 
+  - type: A
+    name: shelf
+    content: 178.128.112.214
+    proxied: true
+    ttl: 1
+    comment: "shelf.insightpulseai.com → Shelf.nu asset management (proxied)"
+
   # ─── A Records (DNS-only → 178.128.112.214) ────────────────────────────────
   # DNS-only ("grey cloud") — traffic goes directly to origin, no CF proxy.
   # Use for: SSH, mail delivery (SMTP won't work through CF proxy), internal tools.

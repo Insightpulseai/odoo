@@ -1,0 +1,34 @@
+name: provider-defaults-gate
+
+on:
+  pull_request:
+    paths:
+      - "addons/ipai/**"
+      - "scripts/ci/check_deprecated_provider_defaults.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "addons/ipai/**"
+      - "scripts/ci/check_deprecated_provider_defaults.py"
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provider-defaults:
+    name: Block deprecated provider defaults
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Scan for deprecated provider defaults
+        run: python3 scripts/ci/check_deprecated_provider_defaults.py
+        # Fails (exit 1) if any file under addons/ipai/**/*.py contains:
+        #   default="mailgun"  OR  get_param(..., "mailgun")  OR  set_param(... or "mailgun")
+        # Fix: change all mailgun defaults/fallbacks to "zoho".
+        # Reference: ssot/runtime/prod_settings.yaml email.smtp.provider

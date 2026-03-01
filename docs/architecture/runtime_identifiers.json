@@ -1,7 +1,7 @@
 {
   "domain": "insightpulseai.com",
-  "consolidation_date": "2026-02-27",
-  "generated_at": "2026-02-27T00:55:00Z",
+  "consolidation_date": "2026-02-28",
+  "generated_at": "2026-02-28T15:22:46Z",
   "generator": "scripts/generate-dns-artifacts.sh",
   "source": "infra/dns/subdomain-registry.yaml",
   "nameservers": [],
@@ -32,29 +32,42 @@
       "status": "active"
     }
 ,
+    "plane": {
+      "fqdn": "plane.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 3002,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Plane CE (self-hosted)",
+      "health_check": "/",
+      "status": "active"
+    }
+,
+    "shelf": {
+      "fqdn": "shelf.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 3003,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Shelf.nu (self-hosted, ipai fork)",
+      "health_check": "/healthcheck",
+      "status": "active"
+    }
+,
     "ocr": {
       "fqdn": "ocr.insightpulseai.com",
       "record_type": "A",
       "target": "178.128.112.214",
       "cloudflare_proxied": true,
-      "origin_port": 8080,
+      "origin_port": 8001,
       "tls_mode": "Full (strict)",
       "runtime_host": "odoo-production",
       "owner_system": "PaddleOCR microservice",
       "health_check": "/health",
-      "status": "active"
-    }
-,
-    "auth": {
-      "fqdn": "auth.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 3000,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "Authentication service",
-      "health_check": "/.well-known/openid-configuration",
       "status": "active"
     }
 ,
@@ -97,94 +110,16 @@
       "status": "active"
     }
 ,
-    "stage-erp": {
-      "fqdn": "stage-erp.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
+    "ops": {
+      "fqdn": "ops.insightpulseai.com",
+      "record_type": "CNAME",
+      "target": "cname.vercel-dns.com",
       "cloudflare_proxied": true,
-      "origin_port": 8069,
+      "origin_port": null,
       "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "Odoo CE 19.0 (staging)",
-      "health_check": "/web/login",
-      "status": "active"
-    }
-,
-    "stage-api": {
-      "fqdn": "stage-api.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 8000,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "API Gateway (staging)",
+      "runtime_host": "DO App Platform",
+      "owner_system": "OdooOps Console (Next.js on Vercel)",
       "health_check": "/api/health",
-      "status": "active"
-    }
-,
-    "stage-auth": {
-      "fqdn": "stage-auth.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 3000,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "Authentication service (staging)",
-      "health_check": "/.well-known/openid-configuration",
-      "status": "active"
-    }
-,
-    "stage-mcp": {
-      "fqdn": "stage-mcp.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 3000,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "MCP coordination (staging)",
-      "health_check": "/healthz",
-      "status": "active"
-    }
-,
-    "stage-n8n": {
-      "fqdn": "stage-n8n.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 5678,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "n8n automation (staging)",
-      "health_check": "/healthz",
-      "status": "active"
-    }
-,
-    "stage-superset": {
-      "fqdn": "stage-superset.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 8088,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "Apache Superset BI (staging)",
-      "health_check": "/health",
-      "status": "active"
-    }
-,
-    "stage-ocr": {
-      "fqdn": "stage-ocr.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": false,
-      "origin_port": 8080,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "PaddleOCR microservice (staging)",
-      "health_check": "/health",
       "status": "active"
     }
   },
@@ -194,6 +129,15 @@
       "deprecated_date": "2026-02-09",
       "replacement": null,
       "reason": "Service no longer needed",
+      "dns_removed": true,
+      "container_removed": true
+    }
+,
+    "mg": {
+      "fqdn": "mg.insightpulseai.com",
+      "deprecated_date": "2026-02-01",
+      "replacement": null,
+      "reason": "Mailgun deprecated; outbound mail now routes through Zoho Mail SMTP bridge (ipai_zoho_mail_api)",
       "dns_removed": true,
       "container_removed": true
     }

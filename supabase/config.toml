@@ -155,3 +155,10 @@ backend = "postgres"
 # Local Development
 # =============================================================================
 # Note: Local development config managed via .supabase/config.toml after linking
+
+# =============================================================================
+# Edge Function Configuration
+# =============================================================================
+
+[functions.stripe-webhook]
+verify_jwt = false   # Stripe cannot send Supabase JWT — signature verified in-function

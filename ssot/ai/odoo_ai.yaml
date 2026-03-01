@@ -131,9 +131,12 @@ ce_ee_ipai_gap:
 # ── Provider policy (SSOT enforced) ──────────────────────────────────────────
 provider_policy:
   registration_required: true
+  identity_sor: supabase        # mirrors ssot/runtime/prod_settings.yaml auth.identity_sor
+  invitation_issuer: supabase   # Supabase mints invite tokens; Odoo may send branded email
   notes: >
     All AI providers must be registered in this file before use. Using an unregistered
     provider is a policy violation and will be caught by check_ai_dependencies.py.
+    Identity SoR is Supabase; Odoo is a relying party (Rule 9, ssot-platform.md).
   fail_closed_semantics:
     missing_key_code: AI_KEY_NOT_CONFIGURED
     http_status: 503
