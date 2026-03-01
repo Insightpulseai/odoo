@@ -137,6 +137,69 @@ supabase secrets set --project-ref spdtwktxdalcfigzeqrz \
 
 ---
 
+## C-18 — Plane Sync Contract [pending]
+
+**File**: `docs/contracts/PLANE_SYNC_CONTRACT.md` _(not yet created)_
+
+**Purpose**: Define the bidirectional sync between Odoo (`ipai_plane_connector`) and Plane API for issue/task tracking.
+
+**Key fields to specify**:
+
+- Plane REST API endpoint and authentication (API key in `X-API-Key` header)
+- Webhook verification (`X-Plane-Signature`, HMAC-SHA256)
+- Sync direction and conflict resolution
+- Entity mapping (Plane issues <-> Odoo tasks)
+
+**Consumers**: `addons/ipai/ipai_plane_connector/`, `supabase/functions/plane-sync/`
+
+---
+
+## C-19 — GitHub App Contract
+
+**File**: `docs/contracts/GITHUB_APP_CONTRACT.md`
+**SSOT**: `ssot/integrations/github/github_app_ipai.yaml`
+**Consumers**: `supabase/functions/github-app-webhook/`, `supabase/functions/github-app-token/`, `supabase/functions/github-app-actions/`
+
+**Protocol**: Webhooks (inbound) + REST with installation tokens (outbound).
+
+**Invariants**:
+
+- Every inbound webhook MUST be verified via `X-Hub-Signature-256` (HMAC-SHA256).
+- Idempotency via `X-GitHub-Delivery` UUID — persist before side effects.
+- Installation tokens are short-lived (1 hour) — never stored in database or Vault.
+- Only allowlisted events are processed (see SSOT YAML `policy.allowlisted_events`).
+- Least-privilege permissions: start minimal, expand only when needed.
+
+**Env vars (Supabase Vault)**: `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY_PEM`, `GITHUB_WEBHOOK_SECRET`
+
+**Validator**: `ssot-surface-guard.yml`
+
+---
+
+## C-20 — Slack Pulser Contract
+
+**File**: `docs/contracts/SLACK_PULSER_CONTRACT.md`
+**SSOT**: `ssot/integrations/slack/pulser.yaml`
+**Consumers**: `supabase/functions/ops-slack-bridge/`, `supabase/functions/ops-slack-socket/`
+
+**Transport**: Socket Mode (primary, WebSocket), HTTP endpoints (optional fallback).
+
+**Invariants**:
+
+- Socket Mode envelopes must be acknowledged within 3 seconds.
+- Envelope deduplication on `(team_id, envelope_id)` via `ops.slack_envelopes` table.
+- Persist envelope before side effects (insert-before-process).
+- HTTP requests verified via signing secret (HMAC-SHA256, `X-Slack-Signature`).
+- All secrets in Supabase Vault — never in code or logs.
+
+**Env vars (Supabase Vault)**: `slack_bot_token`, `slack_app_token`, `slack_signing_secret`, `slack_client_secret`, `slack_refresh_token`
+
+**Idempotency table**: `ops.slack_envelopes` (migration `20260301000002_slack_envelopes.sql`)
+
+**Validator**: `ssot-surface-guard.yml`
+
+---
+
 ## C-14 — Supabase ETL Contract
 
 **File**: `docs/contracts/SUPABASE_ETL_CONTRACT.md`
