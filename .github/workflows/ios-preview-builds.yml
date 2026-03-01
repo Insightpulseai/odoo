@@ -2,6 +2,11 @@ name: iOS Preview Builds
 
 # Path A (every push/PR): simulator .app → GHA artifact + ops.artifacts
 # Path B (main push only):  fastlane build_testflight → IPA + ops.artifacts
+#
+# ops.artifacts is always posted with a truthful status:
+#   success  — xcodebuild ran and .app was found
+#   failed   — xcodebuild ran and failed (hard failure, job fails)
+#   skipped  — no .xcodeproj/.xcworkspace present (SPM-only checkout)
 
 on:
   push:
@@ -34,7 +39,7 @@ jobs:
       - name: Select Xcode 16.x
         run: sudo bash scripts/mobile/verify_xcode.sh
 
-      # Run the deterministic CLT test suite first so we gate on test pass.
+      # Deterministic CLT test suite — gates the rest of the job.
       - name: Run unit tests (CLT)
         run: |
           swift test \
@@ -44,11 +49,28 @@ jobs:
             2>&1 | tee /tmp/swift-test.log
         working-directory: apps/odoo-mobile-ios
 
-      # Build a simulator .app — continues even if xcodebuild fails
-      # (needs Xcode to resolve SPM scheme; may require xcodeproj generation on first run).
+      # Detect whether an Xcode project or workspace exists.
+      # SPM-only checkout will have has_project=false until fastlane generates it.
+      - name: Detect Xcode project
+        id: detect-project
+        run: |
+          if ls apps/odoo-mobile-ios/*.xcodeproj 2>/dev/null | head -1 | grep -q '.'; then
+            echo "has_project=true"  >> "$GITHUB_OUTPUT"
+            echo "project_type=xcodeproj" >> "$GITHUB_OUTPUT"
+          elif ls apps/odoo-mobile-ios/*.xcworkspace 2>/dev/null | head -1 | grep -q '.'; then
+            echo "has_project=true"  >> "$GITHUB_OUTPUT"
+            echo "project_type=xcworkspace" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_project=false" >> "$GITHUB_OUTPUT"
+            echo "project_type=none" >> "$GITHUB_OUTPUT"
+            echo "::notice::No .xcodeproj or .xcworkspace found — sim build skipped. Run fastlane match/generate-xcodeproj first."
+          fi
+
+      # Build simulator .app only when an Xcode project is present.
+      # Hard-fails if the project exists but the build fails (no continue-on-error).
       - name: Build iOS Simulator app
         id: sim-build
-        continue-on-error: true
+        if: steps.detect-project.outputs.has_project == 'true'
         run: |
           xcodebuild \
             -scheme OdooMobile \
@@ -56,27 +78,25 @@ jobs:
             -derivedDataPath .build/xcode-sim \
             build \
             2>&1 | tee /tmp/xcodebuild-sim.log
+
+          APP=$(find .build/xcode-sim -name "OdooMobile.app" -not -path "*/PlugIns/*" 2>/dev/null | head -1)
+          if [ -n "$APP" ]; then
+            zip -r "${RUNNER_TEMP}/ios-preview-${GITHUB_SHA:0:8}.zip" "$APP"
+            echo "app_zip=${RUNNER_TEMP}/ios-preview-${GITHUB_SHA:0:8}.zip" >> "$GITHUB_OUTPUT"
+            echo "app_found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::xcodebuild succeeded but OdooMobile.app was not found in derivedData"
+            echo "app_found=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
         working-directory: apps/odoo-mobile-ios
 
-      - name: Find and zip simulator app
-        id: find-app
-        run: |
-          APP=$(find apps/odoo-mobile-ios/.build/xcode-sim \
-                  -name "OdooMobile.app" -not -path "*/PlugIns/*" 2>/dev/null | head -1)
-          if [ -n "$APP" ]; then
-            zip -r "ios-preview-${GITHUB_SHA:0:8}.zip" "$APP"
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Simulator .app not found — xcodebuild may need xcodeproj generation (see xcodebuild-sim log artifact)."
-          fi
-
       - name: Upload simulator app
-        if: steps.find-app.outputs.found == 'true'
+        if: steps.detect-project.outputs.has_project == 'true' && steps.sim-build.outputs.app_found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ios-preview-${{ github.sha }}
-          path: ios-preview-${{ github.sha }}.zip
+          path: ${{ steps.sim-build.outputs.app_zip }}
           retention-days: 30
 
       - name: Upload build logs
@@ -89,27 +109,51 @@ jobs:
             /tmp/xcodebuild-sim.log
           retention-days: 14
 
+      # Always record a truthful ops.artifacts row:
+      #   status=skipped   when has_project=false (nothing to build)
+      #   status=success   when xcodebuild ran and .app was found
+      #   status=failed    when this step is reached after a hard xcodebuild failure
+      #                    (job will still fail; this step runs with if: always())
       - name: Record artifact in ops.artifacts
         if: always()
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          HAS_PROJECT="${{ steps.detect-project.outputs.has_project }}"
+          APP_FOUND="${{ steps.sim-build.outputs.app_found }}"
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          SIM_FOUND="${{ steps.find-app.outputs.found }}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          if [ "${HAS_PROJECT}" = "false" ]; then
+            STATUS="skipped"
+            REASON="NO_XCODE_PROJECT"
+          elif [ "${APP_FOUND}" = "true" ]; then
+            STATUS="success"
+            REASON=""
+          else
+            STATUS="failed"
+            REASON="SIM_BUILD_FAILED"
+          fi
+
           curl -sf -X POST "${SUPABASE_URL}/rest/v1/artifacts" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Content-Type: application/json" \
+            -H "Prefer: resolution=ignore-duplicates" \
             -d "$(printf '{
               "kind": "ios_simulator_build",
               "sha": "%s",
               "branch": "%s",
               "pr_number": %s,
               "run_id": "%s",
-              "artifact_url": "https://github.com/%s/actions/runs/%s",
+              "artifact_url": "%s",
+              "status": "%s",
+              "reason": "%s",
+              "env": "ci",
+              "name": "ios-preview-%s",
               "metadata": {
-                "sim_app_found": %s,
+                "app_found": %s,
                 "tests_passed": true,
                 "workflow": "ios-preview-builds"
               }
@@ -118,9 +162,11 @@ jobs:
               "${GITHUB_REF_NAME}" \
               "${PR_NUMBER:-null}" \
               "${GITHUB_RUN_ID}" \
-              "${GITHUB_REPOSITORY}" \
-              "${GITHUB_RUN_ID}" \
-              "${SIM_FOUND:-false}")" \
+              "${RUN_URL}" \
+              "${STATUS}" \
+              "${REASON}" \
+              "${GITHUB_SHA:0:8}" \
+              "${APP_FOUND:-false}")" \
           || echo "::warning::ops.artifacts POST failed (non-blocking)"
 
   # ─── Path B: TestFlight (main pushes only, gated on Path A) ──────────────────
@@ -162,26 +208,43 @@ jobs:
           retention-days: 30
 
       - name: Record IPA in ops.artifacts
-        if: success()
+        if: always()
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          IPA_STATUS="${{ job.status }}"
+          # Normalise GHA job.status to our status vocabulary
+          case "${IPA_STATUS}" in
+            success)  STATUS="success"; REASON="" ;;
+            failure)  STATUS="failed";  REASON="FASTLANE_FAILED" ;;
+            cancelled) STATUS="failed"; REASON="CANCELLED" ;;
+            *)         STATUS="failed"; REASON="UNKNOWN_${IPA_STATUS}" ;;
+          esac
+
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           curl -sf -X POST "${SUPABASE_URL}/rest/v1/artifacts" \
             -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
             -H "Content-Type: application/json" \
+            -H "Prefer: resolution=ignore-duplicates" \
             -d "$(printf '{
               "kind": "ios_ipa",
               "sha": "%s",
               "branch": "main",
               "pr_number": null,
               "run_id": "%s",
-              "artifact_url": "https://github.com/%s/actions/runs/%s",
+              "artifact_url": "%s",
+              "status": "%s",
+              "reason": "%s",
+              "env": "ci",
+              "name": "OdooMobile-ipa-%s",
               "metadata": {"destination": "testflight", "workflow": "ios-preview-builds"}
             }' \
               "${GITHUB_SHA}" \
               "${GITHUB_RUN_ID}" \
-              "${GITHUB_REPOSITORY}" \
-              "${GITHUB_RUN_ID}")" \
+              "${RUN_URL}" \
+              "${STATUS}" \
+              "${REASON}" \
+              "${GITHUB_SHA:0:8}")" \
           || echo "::warning::ops.artifacts POST failed (non-blocking)"
