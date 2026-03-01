@@ -7,10 +7,28 @@
 # Last verified: 2026-03-02
 
 name: pulser-hub
+app_id: 2191216
+client_id: Iv23liwGL7fnYySPPAjS      # secret_ref: github_app_client_id (ssot/secrets/registry.yaml)
+
 description: >
   InsightPulse AI automation identity. Used by FixBot, ops-console webhook
   ingestion, PPM rollups, and agent PR creation. All automation flows use
   installation tokens derived from this App — never PATs.
+
+# ── App URLs ──────────────────────────────────────────────────────────────────
+# These are what the live App settings should show. Update via GitHub UI if
+# they still show the deprecated mcp.insightpulseai.net URLs.
+homepage_url: "https://mcp.insightpulseai.com"
+callback_urls:
+  - "https://mcp.insightpulseai.com/oauth/github/callback"
+
+# ── Secrets health ────────────────────────────────────────────────────────────
+secrets_health:
+  client_secret_notes: >
+    A client secret was generated in November 2025 and has never been used
+    (no OAuth flow is active). Revoke it to reduce blast radius; generate a
+    fresh one when user-OAuth is implemented.
+  action_required: revoke_unused_nov2025_client_secret
 
 # ── Permissions ──────────────────────────────────────────────────────────────
 # Level: read | write (read+write) | none
@@ -36,6 +54,8 @@ webhook:
   url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
   active: true
   secret_ref: github_app_webhook_secret   # ssot/secrets/registry.yaml key
+  # DRIFT: Live App still shows webhook → https://mcp.insightpulseai.net/webhooks/github
+  # (the old .net URL). Update in GitHub UI to the Supabase function URL above.
 
 # ── Installation Scope ────────────────────────────────────────────────────────
 installation:
