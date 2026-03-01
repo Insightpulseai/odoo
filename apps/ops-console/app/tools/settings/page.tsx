@@ -44,7 +44,7 @@ async function fetchDeployments(): Promise<{ deployments: Deployment[]; error?: 
   }
   try {
     const res = await fetch(
-      "https://api.vercel.com/v6/deployments?projectId=odooops-console&limit=8",
+      "https://api.vercel.com/v6/deployments?projectId=prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX&teamId=team_wphKJ7lHA3QiZu6VgcotQBQM&limit=8",
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { revalidate: 60 },
