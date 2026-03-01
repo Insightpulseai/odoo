@@ -26,12 +26,14 @@ on:
       - "ssot/secrets/registry.yaml"
       - "supabase/functions/ops-github-webhook-ingest/**"
       - "scripts/ci/check_github_apps_ssot.py"
+      - "scripts/github/create-app-from-manifest.sh"
   push:
     branches: [main]
     paths:
       - "ssot/github/apps.yaml"
       - "ssot/integrations/github_apps.yaml"
       - "infra/github/apps/**"
+      - "scripts/github/**"
 
 jobs:
   # ── Canonical check: single-app integration SSOT ─────────────────────────
