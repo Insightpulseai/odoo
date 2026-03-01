@@ -142,6 +142,8 @@ async function writeOpsRun(
     status,
     issueId,
     error,
+    severity,
+    reason,
   }: {
     deliveryId: string;
     repoFullName: string;
@@ -149,9 +151,14 @@ async function writeOpsRun(
     status: "success" | "skipped" | "error";
     issueId?: string;
     error?: string;
+    /** Audit severity override — defaults to "info" for skipped, "error" for errors */
+    severity?: "info" | "warning" | "error";
+    /** Machine-readable skip reason surfaced in Advisor posture scan */
+    reason?: string;
   }
 ): Promise<void> {
   const idempotencyKey = `plane_github_sync:${deliveryId}`;
+  const auditSeverity = severity ?? (status === "error" ? "error" : "info");
 
   await supabase.from("ops.runs").upsert(
     {
@@ -171,6 +178,8 @@ async function writeOpsRun(
     metadata: {
       repo: repoFullName,
       plane_issue_id: issueId,
+      severity: auditSeverity,
+      ...(reason ? { reason } : {}),
       ...(error ? { error } : {}),
     },
   });
@@ -233,8 +242,25 @@ serve(async (req: Request) => {
       repoFullName,
       event: githubEvent,
       status: "skipped",
+      severity: "info",
+      reason: "repo_not_in_mapping",
     });
     return jsonResponse({ ok: true, status: "skipped", reason: "repo_not_in_mapping" });
+  }
+
+  // Mapping exists but plane_project_id not yet populated.
+  // "Merge now, activate later" — return 200 so GitHub does not retry.
+  // Advisor posture scan surfaces MAPPING_MISSING repos via ops.run_events.
+  if (!mapping.plane_project_id || mapping.plane_project_id.trim() === "") {
+    await writeOpsRun(supabase, {
+      deliveryId,
+      repoFullName,
+      event: githubEvent,
+      status: "skipped",
+      severity: "info",
+      reason: "MAPPING_MISSING",
+    });
+    return jsonResponse({ ok: true, status: "ignored", reason: "MAPPING_MISSING" });
   }
 
   // Handle pull_request events
