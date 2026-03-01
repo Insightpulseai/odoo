@@ -60,6 +60,20 @@ All providers implement:
 | DigitalOcean | offset (page/per_page) | Bearer token | `ops-do-ingest` |
 | Mailgun | — (webhooks) | HMAC signed payload | `ops-mailgun-ingest` |
 | Slack | cursor | Bot token | `ops-slack-notify` |
+| Pulser (Slack) | — (slash commands) | Signing secret (HMAC-SHA256) | `pulser-slack-handler` |
+| Pulser (Odoo) | — (cron poll) | Service role key | `ipai_pulser_connector` |
+
+### Slack Transport (Pulser)
+
+- **Socket Mode** is the default transport for Pulser's long-lived agent runner.
+- Pulser is a **software engineering agent interface** in Slack: it enqueues intents,
+  never executes long tasks inline.
+- Response SLA: ACK within 3 seconds, async execution via `ops.taskbus_intents`.
+- Intent router: `supabase/functions/pulser-slack-handler/` parses `/pulser` commands.
+- Intent runner: `supabase/functions/pulser-intent-runner/` consumes non-Odoo intents.
+- Odoo connector: `addons/ipai/ipai_pulser_connector/` claims `odoo.*` intents via
+  `ops.claim_taskbus_intent()` RPC.
+- Contract: `docs/contracts/C-PULSER-ODOO-01.md`.
 
 ---
 

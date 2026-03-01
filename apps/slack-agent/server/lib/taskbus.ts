@@ -69,11 +69,15 @@ export function resolveSlackAction(eventType: string): { jobType: string; agent:
 
 /**
  * Map a slash command to a run_type + agent.
+ *
+ * /pulser routes to pulser-intent-agent which enqueues into ops.taskbus_intents.
+ * See: docs/contracts/C-PULSER-ODOO-01.md
  */
 export function resolveSlackCommand(command: string): { jobType: string; agent: string } | null {
   const routes: Record<string, { jobType: string; agent: string }> = {
     '/run': { jobType: 'slack.run_command', agent: 'ops-agent' },
     '/ask': { jobType: 'slack.ask_command', agent: 'slack-copilot-agent' },
+    '/pulser': { jobType: 'slack.pulser_command', agent: 'pulser-intent-agent' },
   }
   return routes[command] ?? null
 }
