@@ -75,6 +75,25 @@ All providers implement:
   `ops.claim_taskbus_intent()` RPC.
 - Contract: `docs/contracts/C-PULSER-ODOO-01.md`.
 
+### Slack Two-App Model (Plane + Pulser)
+
+Plane Slack and Pulser Slack are **separate Slack apps** with distinct endpoint
+surfaces, OAuth models, scopes, and failure domains:
+
+- **Plane Slack app** (`/plane`): Plane-native integration at `plane.insightpulseai.com`.
+  Handles issue creation from Slack threads, unfurls, and workspace OAuth.
+  Endpoints: `/silo/api/slack/*` (command, events, action, options, OAuth callbacks).
+
+- **Pulser Slack app** (`/pulser`): Ops control plane runner. Socket Mode transport,
+  intent-enqueue architecture, bot-token-only auth.
+
+Integration boundary: Pulser integrates with Plane via **REST API and webhooks
+into `ops.work_items`**, not by sharing Slack configuration. `/pulser plane status`
+queries the data plane, not the Slack layer.
+
+SSOT: `ssot/integrations/slack/apps.yaml`
+Contract: `docs/contracts/C-SLACK-PLANE-01.md`
+
 ---
 
 ## Feature Maturity Map

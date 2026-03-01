@@ -1,0 +1,83 @@
+# schema: ssot.integrations.slack_apps.v1
+# Two-app Slack model: Plane and Pulser are separate Slack apps.
+#
+# Rationale:
+#   - Different endpoint surfaces (/silo/api/slack/* vs /api/slack/)
+#   - Different OAuth models (workspace OAuth vs Socket Mode runner)
+#   - Different failure domains (Plane upgrade != Pulser outage)
+#   - Minimal-scope tokens (no "God token" anti-pattern)
+#
+# Integration boundary: Pulser integrates with Plane via REST API and
+# webhooks → ops.work_items, NOT by sharing Slack configuration.
+#
+# See: docs/contracts/C-SLACK-PLANE-01.md
+
+version: "1.0.0"
+schema: ssot.integrations.slack_apps.v1
+last_reviewed: "2026-03-01"
+
+slack_apps:
+  plane:
+    purpose: "Plane-native Slack integration (issues from Slack, unfurls, thread sync)"
+    command: "/plane"
+    base_url: "https://plane.insightpulseai.com"
+    endpoints:
+      command: "https://plane.insightpulseai.com/silo/api/slack/command/"
+      team_oauth_callback: "https://plane.insightpulseai.com/silo/api/slack/team/auth/callback/"
+      user_oauth_callback: "https://plane.insightpulseai.com/silo/api/slack/user/auth/callback/"
+      events: "https://plane.insightpulseai.com/silo/api/slack/events"
+      action: "https://plane.insightpulseai.com/silo/api/slack/action/"
+      options: "https://plane.insightpulseai.com/silo/api/slack/options/"
+    socket_mode: false
+    oauth: true
+    required_env:
+      - PLANE_SLACK_CLIENT_ID
+      - PLANE_SLACK_CLIENT_SECRET
+    scopes:
+      bot:
+        - "commands"
+        - "links:read"
+        - "links:write"
+        - "chat:write"
+        - "chat:write.public"
+      events:
+        - "link_shared"
+        - "message.channels"
+    owns:
+      - "/plane"
+    does_not_handle:
+      - "/pulser"
+
+  pulser:
+    purpose: "Ops runner (intent enqueue + status/gates/mail + fix workflows)"
+    command: "/pulser"
+    endpoints_prefix: "/api/slack/"
+    socket_mode: true
+    oauth: optional
+    required_env:
+      - SLACK_SIGNING_SECRET
+      - SLACK_BOT_TOKEN
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+    scopes:
+      bot:
+        - "commands"
+        - "chat:write"
+        - "chat:write.public"
+    owns:
+      - "/pulser"
+    does_not_handle:
+      - "/plane"
+    intent_queue: "ops.taskbus_intents"
+    contract: "docs/contracts/C-PULSER-ODOO-01.md"
+
+boundary:
+  rule: "Two separate Slack apps, never merged"
+  integration_layer: "ops.work_items"
+  rationale: |
+    Plane and Pulser have incompatible endpoint surfaces, OAuth models,
+    scope requirements, and failure domains. Merging them creates:
+    1. Brittle coupling (Plane upgrade breaks ops runner)
+    2. God-token scopes (combined permissions exceed either app's needs)
+    3. Shared failure domain (incident tool fails during the incident)
+    Unify at the data plane (ops.work_items), not the Slack app layer.
