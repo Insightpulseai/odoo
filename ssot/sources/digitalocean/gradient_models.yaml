@@ -1,0 +1,24 @@
+# DigitalOcean Gradient — Model Inventory Ingestion Stub
+# Tracks available models + deprecations from Gradient AI Platform.
+# See: spec/odooops-console/plan.md § "DigitalOcean Gradient ADK"
+
+source:
+  kind: do_gradient_models
+  provider: digitalocean
+  capability: gradient_adk
+  status: planned  # not yet ingesting
+
+cadence:
+  refresh: daily
+  cron: "0 6 * * *"
+
+ingest:
+  target_table: ops.ai_models
+  upsert_key: [provider, model]
+  fields:
+    - provider     # "digitalocean"
+    - model        # model name/ID
+    - status       # available | deprecated | preview
+    - capabilities # [chat, completions, embeddings, ...]
+    - updated_at
+    - metadata     # jsonb: context_window, pricing, etc.
