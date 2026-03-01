@@ -9,7 +9,7 @@
 #   2. Add a row here
 #   3. Optionally add ssot/integrations/<id>.install.yaml for declarative install state
 #
-# Last updated: 2026-03-01
+# Last updated: 2026-03-01 (added github_copilot_sdk, microsoft_agent_framework, m365_copilot)
 
 version: "1.0.0"
 schema: ssot.integrations.index.v1
@@ -81,3 +81,27 @@ integrations:
     status: planned
     category: llm_gateway
     vendor: vercel
+
+  - id: github_features
+    file: ssot/integrations/github_features.yaml
+    status: active
+    category: platform_posture
+    vendor: github
+
+  - id: github_copilot_sdk
+    file: ssot/integrations/github_copilot_sdk.yaml
+    status: active
+    category: agentic_coding
+    vendor: github
+
+  - id: microsoft_agent_framework
+    file: ssot/integrations/microsoft_agent_framework.yaml
+    status: planned
+    category: agentic_coding
+    vendor: microsoft
+
+  - id: m365_copilot
+    file: ssot/integrations/m365_copilot.yaml
+    status: planned
+    category: ai_interaction_plane
+    vendor: microsoft
