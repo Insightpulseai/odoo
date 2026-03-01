@@ -64,6 +64,25 @@ integration_stance:
   findings_pillar: ops_excellence
   findings_severity: info
 
+conflict_resolution:
+  capable: true
+  constraints:
+    - "Can propose patches to conflicted files; validates via real builds/tests in sandbox."
+    - "Cannot resolve conflicts at git plumbing level — a commit is still required."
+    - "Partial fixes expected for: semantic conflicts, large refactors, generated files, multi-PR drift."
+  effective_domains:
+    high: ["apps/**/*.ts", "apps/**/*.tsx", "docs/**/*.md", "ssot/**/*.yaml"]
+    low:  ["supabase/migrations/**", "addons/oca/**", "dist/**", "*.lock"]
+  prompt_templates:
+    default:       "@vercel resolve the merge conflicts and keep ssot/ boundary rules intact"
+    scoped:        "@vercel resolve conflicts in ssot/** and docs/**; do not touch addons/**"
+    ts_only:       "@vercel fix the merge conflicts in apps/ keeping existing import paths"
+  post_resolution_checklist:
+    - "SSOT invariants preserved (no new keys removed or renamed)"
+    - "No UI-only steps introduced by the resolution"
+    - "python scripts/ci/check_repo_structure.py passes"
+    - "pnpm lint && pnpm typecheck pass if TS files touched"
+
 notes: |
   Treat Vercel Agent as a "reviewer signal," not an execution engine.
   When @vercel produces suggestions in a PR:
@@ -72,4 +91,6 @@ notes: |
     - Link to relevant workbook step for tracking.
   Merge order safety: Vercel Agent reviews each PR independently; it does not know
   about cross-PR FK dependencies. Enforce merge order manually (PR #429 → C → A/B).
+  Conflict resolution: trigger @vercel only after conflict markers exist; always verify
+  the post_resolution_checklist above before merging the resolved commit.
   Reference: https://vercel.com/docs/agent/pr-review

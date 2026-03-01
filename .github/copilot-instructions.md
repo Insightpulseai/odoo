@@ -83,6 +83,27 @@ When `@vercel` suggestions appear in PR comments:
 - On-demand invocation: `@vercel run a review`, `@vercel fix the type errors`.
 - Advisory only: Vercel Agent is not authoritative; CI gates are the source of truth.
 
+### Conflict resolution via Vercel Agent
+
+Vercel Agent can propose patches for merge conflicts and sandbox-validate them, but
+**cannot resolve conflicts at the git plumbing level** — a commit is still required.
+
+**Use it for** (high effectiveness): `apps/**/*.ts`, `docs/**/*.md`, `ssot/**/*.yaml`
+**Avoid relying on it for**: `supabase/migrations/**`, `addons/oca/**`, `*.lock`, generated files
+
+**@vercel prompts for conflict resolution:**
+```
+@vercel resolve the merge conflicts and keep ssot/ boundary rules intact
+@vercel resolve conflicts in ssot/** and docs/**; do not touch addons/**
+@vercel fix the merge conflicts in apps/ keeping existing import paths
+```
+
+**Post-resolution checklist before merging:**
+- [ ] `python scripts/ci/check_repo_structure.py` passes
+- [ ] SSOT invariants preserved (no keys removed/renamed without intention)
+- [ ] No UI-only steps introduced by the resolution
+- [ ] `pnpm lint && pnpm typecheck` pass if TS files were touched
+
 ## What "Done" Means
 
 A task is complete only when:
