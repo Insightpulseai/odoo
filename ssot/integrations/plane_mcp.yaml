@@ -1,0 +1,150 @@
+# schema: ssot.integrations.v1
+# Plane MCP server — agentic SoW tool surface for Claude Code and VS Code.
+# Provides the official Plane MCP integration as a governed SSOT plugin.
+#
+# All tool invocations MUST emit ops.run_events rows (audit trail + Advisor scan).
+# Tool allowlist is the only surface agents may call; no direct API calls outside list.
+#
+# MCP server path: mcp/servers/plane/
+# Parent registry:  ssot/integrations/plane.yaml
+# Contract doc:     docs/architecture/PLANE_MARKETPLACE_INTEGRATIONS.md §MCP
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: plane_mcp
+display_name: "Plane MCP Server (Claude + VS Code)"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: plane
+  category: agent
+  api_base: https://api.plane.so/api/v1/
+  auth_env_var: PLANE_API_KEY
+  surfaces:
+    - claude_code   # Claude Code MCP client (mcp/servers/plane/)
+    - vscode_mcp    # VS Code Copilot MCP integration
+
+components:
+  mcp_server:
+    description: "Node.js TypeScript MCP server implementing the tool allowlist"
+    path: "mcp/servers/plane/"
+    runtime: node
+    entry: "mcp/servers/plane/index.ts"
+    transport: stdio
+
+  audit_sink:
+    description: "ops.run_events write — required for every tool call"
+    table: ops.run_events
+    writer: "supabase/functions/plane-audit-sink/"
+    idempotency_key_format: "plane_mcp:{tool_name}:{input_hash}:{iso_timestamp}"
+
+tool_allowlist:
+  - id: create_issue
+    description: "Create a new issue in a Plane project"
+    http_method: POST
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/issues/
+    writes_to: plane
+    audit: required
+    idempotency: required
+
+  - id: update_issue
+    description: "Update an existing Plane issue (state, priority, assignee, labels)"
+    http_method: PATCH
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/
+    writes_to: plane
+    audit: required
+    idempotency: required
+
+  - id: get_issue
+    description: "Get a single Plane issue by ID"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/
+    reads_from: plane
+    audit: required
+
+  - id: list_issues
+    description: "List issues in a project with optional filters (state, priority, assignee)"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/issues/
+    reads_from: plane
+    audit: required
+
+  - id: list_projects
+    description: "List Plane projects in the workspace"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/
+    reads_from: plane
+    audit: required
+
+  - id: list_cycles
+    description: "List cycles (sprints) in a Plane project"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/cycles/
+    reads_from: plane
+    audit: required
+
+  - id: list_modules
+    description: "List modules (epics) in a Plane project"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/modules/
+    reads_from: plane
+    audit: required
+
+  - id: search_pages
+    description: "Search Plane Pages by keyword within a project"
+    http_method: GET
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/pages/
+    reads_from: plane
+    audit: required
+
+required_secrets:
+  - plane_api_key        # X-API-Key header
+  - plane_workspace_id   # workspace slug injected into all API paths
+
+rate_limits:
+  requests_per_minute: 60
+  burst: 10
+  backoff_strategy: exponential
+  backoff_base_ms: 1000
+
+audit:
+  table: ops.run_events
+  required_fields:
+    - tool_name
+    - input_hash
+    - response_status
+    - latency_ms
+    - timestamp
+  telemetry_source: plane_mcp
+
+boundary_rules:
+  - rule: "MCP server MUST read plane_api_key from env — never hardcode or commit"
+    rationale: "Secrets policy; ssot/secrets/registry.yaml prohibited_consumers"
+
+  - rule: "Every tool invocation MUST write an ops.run_events row before returning"
+    rationale: "Audit trail; without this, Advisor SoW posture scan has a gap"
+
+  - rule: "Tool calls that write to Plane MUST include idempotency_key in request"
+    rationale: "Prevents duplicate issue creation on MCP retry storms"
+
+  - rule: "MCP server MUST NOT call Plane API paths outside tool_allowlist"
+    rationale: "Tool allowlist is the governance boundary; no freestyle API calls"
+
+  - rule: "MCP server MUST NOT write directly to work_plane.* tables"
+    rationale: "Mirror writes are the responsibility of sync workers, not the MCP server"
+
+risk_flags:
+  - flag: "ops.run_events writes blocked by Supabase Vault key unavailability"
+    severity: medium
+    mitigation: >
+      MCP server logs the tool call locally and buffers to a local queue file
+      (mcp/servers/plane/.audit-buffer.ndjson) when Supabase is unreachable.
+      Buffer is drained on next successful connection.
+
+  - flag: "Tool allowlist bypass via prompt injection"
+    severity: high
+    mitigation: >
+      Server validates tool name against allowlist on every call.
+      Unknown tool names return 403 without forwarding to Plane API.
+      Input parameters are schema-validated before execution.

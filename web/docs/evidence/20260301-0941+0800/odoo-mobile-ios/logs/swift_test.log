@@ -1,0 +1,57 @@
+Building for debugging...
+[0/4] Write sources
+[1/4] Write swift-version--1AB21518FC5DEDBE.txt
+[3/6] Compiling OdooMobile OdooMobileApp.swift
+[4/6] Emitting module OdooMobile
+[5/9] Emitting module OdooMobileTests
+[6/9] Compiling OdooMobileTests TokenStoreTests.swift
+[7/9] Compiling OdooMobileTests DeepLinkRouterTests.swift
+[7/9] Write Objects.LinkFileList
+[8/9] Linking OdooMobilePackageTests
+Build complete! (3.46s)
+􀟈  Test run started.
+􀄵  Testing Library Version: 1501
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite "TokenStore" started.
+􀟈  Suite "DeepLinkRouter" started.
+􀟈  Test "record — purchase.order/1" started.
+􀟈  Test "record — missing id → unknown" started.
+􀟈  Test "task — id 7" started.
+􀟈  Test "record — sale.order/42" started.
+􀟈  Test "expense — id 3" started.
+􀟈  Test "random https URL → unknown" started.
+􀟈  Test "record — account.move/999" started.
+􀟈  Test "task — large id 100000" started.
+􀟈  Test "record — non-numeric id → unknown" started.
+􀟈  Test "universal link insightpulseai.com → unknown (stub)" started.
+􀟈  Test "task — non-numeric id → unknown" started.
+􀟈  Test "empty path → unknown" started.
+􀟈  Test "wrong scheme 'odoo://' → unknown" started.
+􀟈  Test "expense — non-numeric id → unknown" started.
+􀟈  Test "save + load round-trip" started.
+􁁛  Test "record — sale.order/42" passed after 0.001 seconds.
+􁁛  Test "expense — id 3" passed after 0.001 seconds.
+􁁛  Test "task — large id 100000" passed after 0.001 seconds.
+􁁛  Test "record — purchase.order/1" passed after 0.001 seconds.
+􁁛  Test "random https URL → unknown" passed after 0.001 seconds.
+􁁛  Test "record — missing id → unknown" passed after 0.001 seconds.
+􁁛  Test "task — id 7" passed after 0.001 seconds.
+􁁛  Test "record — account.move/999" passed after 0.001 seconds.
+􁁛  Test "task — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Test "empty path → unknown" passed after 0.001 seconds.
+􁁛  Test "universal link insightpulseai.com → unknown (stub)" passed after 0.001 seconds.
+􁁛  Test "wrong scheme 'odoo://' → unknown" passed after 0.001 seconds.
+􁁛  Test "record — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Test "expense — non-numeric id → unknown" passed after 0.001 seconds.
+􁁛  Suite "DeepLinkRouter" passed after 0.002 seconds.
+􁁛  Test "save + load round-trip" passed after 0.047 seconds.
+􀟈  Test "load returns nil when empty" started.
+􁁛  Test "load returns nil when empty" passed after 0.001 seconds.
+􀟈  Test "clear removes tokens" started.
+􁁛  Test "clear removes tokens" passed after 0.020 seconds.
+􀟈  Test "overwrite updates value" started.
+􁁛  Test "overwrite updates value" passed after 0.031 seconds.
+􀟈  Test "clear is idempotent on empty keychain" started.
+􁁛  Test "clear is idempotent on empty keychain" passed after 0.001 seconds.
+􁁛  Suite "TokenStore" passed after 0.101 seconds.
+􁁛  Test run with 19 tests in 2 suites passed after 0.101 seconds.

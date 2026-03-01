@@ -33,6 +33,22 @@ jobs:
     environment: production
 
     steps:
+      - name: Guard — CF credentials present
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::error::Secret CLOUDFLARE_API_TOKEN is empty or not set."
+            echo "::error::Go to repo Settings → Secrets and variables → Actions and add CLOUDFLARE_API_TOKEN."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ZONE_ID}" ]; then
+            echo "::error::Secret CLOUDFLARE_ZONE_ID is empty or not set."
+            exit 1
+          fi
+          echo "✅ CF credentials present (token=${CLOUDFLARE_API_TOKEN:0:4}…, zone=${CLOUDFLARE_ZONE_ID:0:8}…)"
+
       - uses: actions/checkout@v4
 
       - name: Set up Python

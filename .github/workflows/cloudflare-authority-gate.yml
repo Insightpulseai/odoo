@@ -230,3 +230,40 @@ jobs:
         if: steps.result.outputs.authoritative == 'true'
         run: |
           echo "Cloudflare is authoritative for $VERIFY_DOMAIN -- DNS changes will apply on merge."
+
+# ─── Job 3: Dual-Writer Scan ─────────────────────────────────────────────────
+  dual-writer-scan:
+    name: Dual-writer scan (this repo only)
+    runs-on: ubuntu-latest
+    # Runs independently — no dependency on other jobs.
+    # This validates that the odoo repo itself stays clean of ad-hoc resources.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Scan for zone-write Terraform resources
+        id: scan
+        run: |
+          # Pass --allow-odoo-repo so the check skips if GITHUB_REPOSITORY == Insightpulseai/odoo.
+          # The check is primarily useful when run in *other* repos to prevent split-brain.
+          # In this repo we run it to keep the script exercised and its exit-path validated.
+          python3 scripts/ci/check_dns_dual_writer.py \
+            --repo-root . \
+            --allow-odoo-repo \
+            2>&1 | tee /tmp/dual_writer_scan.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+
+      - name: Fail on violation
+        if: steps.scan.outputs.exit_code != '0'
+        run: |
+          echo "::error::Dual-writer violation: this repo contains Cloudflare zone-write resources"
+          echo "::error::that conflict with the DNS authority contract."
+          echo "::error::See docs/architecture/DNS_AUTHORITY_CONTRACT.md for remediation."
+          cat /tmp/dual_writer_scan.log
+          exit 1
+
+      - name: Pass
+        if: steps.scan.outputs.exit_code == '0'
+        run: echo "Dual-writer scan passed — no conflicting Cloudflare resources found."

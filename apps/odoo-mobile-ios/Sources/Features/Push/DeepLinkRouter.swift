@@ -32,12 +32,12 @@ struct DeepLinkRouter {
     private static func resolveCustomScheme(_ url: URL) -> Destination {
         let components = url.pathComponents.filter { $0 != "/" }
         switch (url.host, components.first, components.dropFirst().first) {
-        case ("record", let model?, let idStr?) where Int(idStr ?? "") != nil:
-            return .record(model: model, id: Int(idStr!)!)
-        case ("task", let idStr?, _) where Int(idStr ?? "") != nil:
-            return .task(id: Int(idStr!)!)
-        case ("expense", let idStr?, _) where Int(idStr ?? "") != nil:
-            return .expense(id: Int(idStr!)!)
+        case ("record", let model?, let idStr?) where Int(idStr) != nil:
+            return .record(model: model, id: Int(idStr)!)
+        case ("task", let idStr?, _) where Int(idStr) != nil:
+            return .task(id: Int(idStr)!)
+        case ("expense", let idStr?, _) where Int(idStr) != nil:
+            return .expense(id: Int(idStr)!)
         default:
             return .unknown
         }

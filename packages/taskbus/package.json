@@ -1,0 +1,17 @@
+{
+  "name": "@ipai/taskbus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Task bus core — enqueue, idempotency, and policy guardrails for ops agent runs",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2"
+  }
+}

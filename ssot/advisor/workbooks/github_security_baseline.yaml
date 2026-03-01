@@ -1,0 +1,377 @@
+# schema: ssot.advisor.workbook.v1
+# ---------------------------------------------------------------------------
+# Workbook: github_security_baseline
+# Name:     GitHub security baseline — Dependabot, secret scanning, CodeQL
+# Pillar:   security
+# Source:   ssot/integrations/github_features.yaml
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Step-by-step guide for enabling and verifying the GitHub code security
+#   feature set on the Insightpulseai organization. Covers Dependabot alerts,
+#   Dependabot security update PRs, secret scanning, push protection, and
+#   CodeQL automated code scanning.
+#
+#   Triggered by: github_features pillar checks
+#     - github_security_dependabot        (severity: medium)
+#     - github_security_secret_scanning   (severity: high)
+#     - github_security_push_protection   (severity: high)
+#     - github_security_codeql            (severity: high)
+#
+# Target org: Insightpulseai
+# Primary repo: Insightpulseai/odoo
+#
+# Note on GHAS (GitHub Advanced Security):
+#   Secret scanning and CodeQL on private repositories require GHAS.
+#   For public repositories (or if GHAS is enabled at the org level),
+#   all steps below are fully actionable via the GitHub REST API.
+#   If GHAS is not available, step 3 notes an open-source alternative
+#   (gitleaks / trufflehog) that can be added as a CI check.
+#
+# Steps are ordered from broadest coverage (Dependabot alerts) to most
+# targeted (CodeQL per-repo workflow). Steps with evidence_required=true
+# block workbook completion until the operator captures proof.
+# ---------------------------------------------------------------------------
+
+id: github_security_baseline
+name: "GitHub security baseline — Dependabot, secret scanning, CodeQL"
+pillar: security
+source: ssot/integrations/github_features.yaml
+version: "1.0.0"
+
+context: >
+  The Insightpulseai GitHub organization manages production infrastructure
+  code including Odoo ERP customizations, Supabase Edge Functions, IaC (infra/),
+  and CI/CD for 40+ custom modules. Undetected vulnerable dependencies, exposed
+  secrets, or insecure code patterns present a direct risk to the production
+  droplet (178.128.112.214) and the Supabase instance (spdtwktxdalcfigzeqrz).
+  This workbook activates GitHub's built-in security scanning layer across
+  the organization. Work through steps in order — each step is independent
+  and can be applied without waiting for the others to complete.
+
+steps:
+
+  - step_no: 1
+    text: >
+      Enable Dependabot vulnerability alerts at the organization level.
+      Dependabot alerts are free for all GitHub plan tiers (public and private
+      repositories) and require no GitHub Advanced Security license.
+
+      Check current state for the primary repo:
+        gh api /repos/Insightpulseai/odoo/vulnerability-alerts \
+          --silent && echo "ENABLED" || echo "DISABLED"
+
+      Enable for the organization (requires org owner token):
+        # Enable on all existing repos in the org:
+        gh api /orgs/Insightpulseai --jq '.login' | xargs -I{} \
+          gh api /orgs/{}/members --jq '.[].login'
+        # Simpler: enable org-level default via Settings → Security → Dependabot alerts
+        # API equivalent (requires admin:org scope):
+        gh api --method PUT /orgs/Insightpulseai/dependabot/secrets
+
+      Enable for Insightpulseai/odoo directly if org-level is pending:
+        gh api --method PUT /repos/Insightpulseai/odoo/vulnerability-alerts
+
+      Verify after enabling:
+        gh api /repos/Insightpulseai/odoo/vulnerability-alerts \
+          --silent && echo "ENABLED" || echo "DISABLED"
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Dependabot vulnerability alerts are enabled on Insightpulseai/odoo.
+      The GitHub Security tab for the repo shows the Dependabot Alerts section.
+      Known vulnerable dependencies (matching the GitHub Advisory Database) will
+      now trigger alerts visible to maintainers and org security managers.
+
+  - step_no: 2
+    text: >
+      Enable Dependabot security update PRs (automated pull requests that
+      fix vulnerable dependencies). This extends Dependabot alerts with
+      auto-generated PRs targeting the minimum safe version.
+
+      Check current state:
+        gh api /repos/Insightpulseai/odoo/automated-security-fixes \
+          --jq '.enabled'
+
+      Enable automated security fixes:
+        gh api --method PUT /repos/Insightpulseai/odoo/automated-security-fixes
+
+      Verify:
+        gh api /repos/Insightpulseai/odoo/automated-security-fixes \
+          --jq '.enabled'
+        # Expected output: true
+
+      Check for any existing Dependabot security update PRs:
+        gh pr list --repo Insightpulseai/odoo --label "dependencies" \
+          --json number,title,createdAt,state
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Dependabot security updates are enabled on Insightpulseai/odoo.
+      When a new vulnerability is published for a dependency used in this repo,
+      Dependabot automatically opens a PR targeting the patched version.
+      Existing Dependabot PRs (if any) are listed for triage.
+
+  - step_no: 3
+    text: >
+      Enable GitHub secret scanning at the organization level. Secret scanning
+      detects credentials and tokens that are committed to the repository and
+      alerts the affected service provider (e.g., GitHub revokes GitHub tokens
+      immediately; other providers are notified via their partner programs).
+
+      Note: Secret scanning on private repositories requires GitHub Advanced
+      Security (GHAS). If GHAS is not available, skip to the fallback below.
+
+      Check secret scanning status on the primary repo:
+        gh api /repos/Insightpulseai/odoo \
+          --jq '.security_and_analysis.secret_scanning.status'
+        # Expected: "enabled"
+
+      Enable secret scanning on Insightpulseai/odoo (if disabled):
+        gh api --method PATCH /repos/Insightpulseai/odoo \
+          --field security_and_analysis='{"secret_scanning":{"status":"enabled"}}'
+
+      Check for existing open secret scanning alerts:
+        gh api /repos/Insightpulseai/odoo/secret-scanning/alerts \
+          --jq '.[] | {number, secret_type, state, created_at}'
+
+      FALLBACK (if GHAS not available for private repos):
+        Add gitleaks as a pre-commit hook and CI check:
+          # .github/workflows/secret-scan.yml (planned)
+          # scripts/ci/secret_scan.sh wraps: gitleaks detect --source . --verbose
+        This provides detection-on-commit without requiring GHAS.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Secret scanning is enabled on Insightpulseai/odoo (or a gitleaks CI
+      check is active as a fallback). Open secret scanning alerts (if any)
+      are listed; each high-severity alert must be resolved before this
+      workbook is marked complete (see step 6).
+
+  - step_no: 4
+    text: >
+      Enable push protection to block secrets from being committed in the
+      first place. Push protection intercepts pushes containing detected
+      secrets and blocks the push at the network layer before the secret
+      lands in the repository history.
+
+      Note: Push protection on private repositories requires GHAS.
+      On public repositories, push protection is available on all plans.
+
+      Check push protection status:
+        gh api /repos/Insightpulseai/odoo \
+          --jq '.security_and_analysis.secret_scanning_push_protection.status'
+        # Expected: "enabled"
+
+      Enable push protection:
+        gh api --method PATCH /repos/Insightpulseai/odoo \
+          --field security_and_analysis='{"secret_scanning_push_protection":{"status":"enabled"}}'
+
+      Verify:
+        gh api /repos/Insightpulseai/odoo \
+          --jq '.security_and_analysis.secret_scanning_push_protection.status'
+
+      Enable org-wide policy (prevents per-repo bypass):
+        # GitHub Settings → Code security → Push protection → Enable for all repositories
+        # API: (requires admin:org + GHAS)
+        gh api --method PATCH /orgs/Insightpulseai \
+          --field security_and_analysis='{"secret_scanning_push_protection":{"status":"enabled"}}'
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Push protection is enabled on Insightpulseai/odoo. Any developer
+      attempting to push a commit containing a recognized secret pattern
+      (GitHub token, AWS access key, Supabase service role key, etc.) will
+      receive a push rejection with a link to resolve the issue before the
+      commit enters the repository history.
+
+  - step_no: 5
+    text: >
+      Enable CodeQL code scanning on Insightpulseai/odoo's default branch.
+      CodeQL performs semantic analysis to detect security vulnerabilities
+      (injection, XSS, path traversal, insecure deserialization, etc.) in
+      both JavaScript/TypeScript and Python code in this monorepo.
+
+      Check whether a CodeQL workflow already exists:
+        gh api /repos/Insightpulseai/odoo/contents/.github/workflows \
+          --jq '.[].name' | grep -i codeql
+
+      If not found, create .github/workflows/codeql.yml with the standard
+      GitHub CodeQL Action. The file must:
+        - trigger on: [push, pull_request, schedule]
+        - analyze languages: ['javascript', 'python']
+        - use: github/codeql-action/analyze@v3
+
+      Minimal workflow stub (commit to the repo):
+        # File: .github/workflows/codeql.yml
+        name: "CodeQL"
+        on:
+          push:
+            branches: [main]
+          pull_request:
+            branches: [main]
+          schedule:
+            - cron: '30 1 * * 1'
+        jobs:
+          analyze:
+            name: Analyze
+            runs-on: ubuntu-latest
+            permissions:
+              actions: read
+              contents: read
+              security-events: write
+            strategy:
+              matrix:
+                language: ['javascript', 'python']
+            steps:
+              - uses: actions/checkout@v4
+              - uses: github/codeql-action/init@v3
+                with:
+                  languages: ${{ matrix.language }}
+              - uses: github/codeql-action/autobuild@v3
+              - uses: github/codeql-action/analyze@v3
+
+      Commit and push the workflow file:
+        git add .github/workflows/codeql.yml
+        git commit -m "chore(ci): add CodeQL code scanning workflow"
+        git push origin main
+
+      Verify the first run completes:
+        gh run list --repo Insightpulseai/odoo --workflow codeql.yml --limit 1
+    evidence_required: true
+    automation_ref: ".github/workflows/codeql.yml"
+    expected_outcome: >
+      A CodeQL workflow exists at .github/workflows/codeql.yml and has
+      completed at least one successful analysis run. The Security tab for
+      Insightpulseai/odoo shows a "Code scanning" section. Any high or
+      critical severity findings surface as GitHub code scanning alerts.
+
+  - step_no: 6
+    text: >
+      Review and resolve all open high-severity secret scanning alerts.
+      Secret scanning alerts with state=open and resolution=null represent
+      credentials that may still be active and should be treated as an
+      active security incident.
+
+      List all open alerts sorted by severity:
+        gh api /repos/Insightpulseai/odoo/secret-scanning/alerts \
+          --jq 'sort_by(.created_at) | reverse | .[] | select(.state=="open") |
+            {number, secret_type, created_at, html_url}'
+
+      For each open alert:
+        1. Determine whether the secret is still active (attempt revocation
+           via the service provider's dashboard — do NOT echo the secret).
+        2. If active: revoke immediately in the service provider, then rotate
+           (issue a new credential and update all consumers via GitHub Secrets
+           or Supabase Vault).
+        3. If already revoked or inactive: dismiss the alert with justification:
+             gh api --method PATCH \
+               /repos/Insightpulseai/odoo/secret-scanning/alerts/{alert_number} \
+               --field state=resolved \
+               --field resolution=revoked \
+               --field resolution_comment="Rotated on YYYY-MM-DD per security baseline workbook"
+
+      Target: 0 open high-severity secret scanning alerts before marking
+      this workbook complete.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      All open high-severity secret scanning alerts are either:
+        (a) resolved by revoking and rotating the affected credential, or
+        (b) dismissed with documented justification (secret already inactive).
+      The Security tab for Insightpulseai/odoo shows 0 open secret alerts
+      at high or critical severity.
+
+  - step_no: 7
+    text: >
+      Extend CodeQL scanning to other active repositories in the Insightpulseai
+      organization that contain application code (TypeScript, Python, or both).
+
+      List repositories with code that may need scanning:
+        gh repo list Insightpulseai --json name,primaryLanguage,isArchived \
+          --jq '.[] | select(.isArchived==false) | {name, primaryLanguage}'
+
+      For each active repo that contains TypeScript or Python and does not yet
+      have a CodeQL workflow:
+        # Copy the workflow from step 5 and adapt the language matrix
+        # Repos to prioritize (at minimum):
+        #   - Any repo with .github/workflows/*deploy*.yml
+        #   - Any repo with vercel.json or a Supabase Edge Function directory
+
+      For each repo, commit .github/workflows/codeql.yml following the same
+      pattern established in step 5.
+
+      Track which repos were updated:
+        # Document in the evidence capture:
+        gh repo list Insightpulseai --json name \
+          --jq '.[].name' | while read repo; do
+            gh api /repos/Insightpulseai/$repo/contents/.github/workflows \
+              --jq '.[].name' 2>/dev/null | grep -q codeql \
+              && echo "$repo: PRESENT" || echo "$repo: MISSING"
+          done
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      All active repositories in the Insightpulseai org that contain
+      application code have a CodeQL workflow file. Code scanning alerts
+      are surfaced per-repo in the GitHub Security tab. Repositories that
+      are archived or contain only documentation are exempt.
+
+  - step_no: 8
+    text: >
+      Triage the Dependabot PR backlog. Dependabot security update PRs
+      (enabled in step 2) require human review and merge to take effect.
+      Open Dependabot PRs older than 30 days represent accepted risk.
+
+      List open Dependabot PRs:
+        gh pr list --repo Insightpulseai/odoo \
+          --author app/dependabot \
+          --json number,title,createdAt,labels,isDraft \
+          --jq 'sort_by(.createdAt)'
+
+      For each open Dependabot PR:
+        a. MERGE: If the CI checks pass and the change is a patch or minor
+           version bump, merge without code review (automated security fix).
+             gh pr merge <pr-number> --repo Insightpulseai/odoo --squash
+
+        b. REVIEW REQUIRED: If the change is a major version bump, request
+           a developer review before merging (breaking change risk).
+
+        c. DISMISS WITH JUSTIFICATION: If the vulnerability is a false
+           positive or the affected code path is not reachable:
+             gh pr close <pr-number> --repo Insightpulseai/odoo \
+               --comment "Dismissing: [reason — vulnerable path not reachable / false positive]"
+
+      Target: Dependabot PR backlog addressed (no unreviewed PRs older than 7 days).
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      All open Dependabot security update PRs have been triaged:
+        - Patch/minor bumps with passing CI merged immediately.
+        - Major version bumps scheduled for review.
+        - Inapplicable findings dismissed with a documented reason.
+      Ongoing Dependabot PRs will continue to arrive automatically as new
+      advisories are published; this step establishes the triage habit and
+      clears the existing backlog.
+
+# Completion criteria:
+# Workbook is complete when:
+#   - Step 1 evidence: Dependabot alerts confirmed enabled
+#   - Step 2 evidence: Dependabot security updates confirmed enabled + PR list captured
+#   - Step 3 evidence: Secret scanning confirmed enabled (or gitleaks CI active)
+#   - Step 4 evidence: Push protection confirmed enabled
+#   - Step 5 evidence: CodeQL workflow committed and first run completed
+#   - Step 6 evidence: 0 open high-severity secret scanning alerts
+#   - Step 7: CodeQL extended to other repos (no evidence gate)
+#   - Step 8: Dependabot backlog triaged (no evidence gate)
+completion_check:
+  rerun_rules:
+    - github_features.dependabot_alerts
+    - github_features.dependabot_security_updates
+    - github_features.secret_scanning
+    - github_features.push_protection
+    - github_features.code_scanning_codeql
+  all_rules_must_pass: true
+  # Residual open high-severity secret scanning alerts block completion
+  max_open_high_severity_secret_alerts: 0

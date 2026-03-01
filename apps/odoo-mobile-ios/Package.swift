@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "OdooMobile",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v14)   // enables `swift test` on macOS CI without Xcode
     ],
     products: [
         .library(

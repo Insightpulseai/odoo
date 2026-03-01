@@ -1,0 +1,73 @@
+# schema: ssot.devex.tool.v1
+# ---
+# SSOT: VS Code Enterprise posture
+# Ref: https://code.visualstudio.com/docs/setup/enterprise
+#      https://code.visualstudio.com/docs/copilot/overview
+# Reviewed: 2026-03-01
+
+id: vscode_enterprise
+name: "VS Code enterprise configuration posture"
+category: developer_tooling
+reviewed: "2026-03-01"
+version: "1.0.0"
+
+# Org-level policies (enforced via OS policy mechanism, not repo)
+policies:
+  update_mode: manual          # UpdateMode = manual; prevents auto-update disruption
+  extension_enforcement: allowlist  # only org-approved extensions installable
+  private_marketplace:
+    enabled: false             # enabled if you have GitHub Enterprise + Copilot Business/Enterprise
+    note: "requires GitHub Enterprise account + Copilot Business/Enterprise license"
+
+# Network requirements for restricted environments
+network:
+  proxy: system                # VS Code uses system proxy settings by default
+  allowlist_required: true
+  # Key hostnames to allowlist (based on VS Code enterprise docs):
+  # - update.code.visualstudio.com (updates)
+  # - marketplace.visualstudio.com (extensions)
+  # - *.gallerycdn.vsassets.io (extension assets)
+  # - vscode.blob.core.windows.net (telemetry/settings sync)
+  # - *.github.com / github.com (Copilot auth)
+  # see: https://code.visualstudio.com/docs/setup/network
+
+# Approved extensions (enforced by allowlist policy; recommended via .vscode/extensions.json)
+approved_extensions:
+  core:
+    - ms-vscode-remote.remote-containers   # Dev Containers
+    - ms-vscode-remote.remote-ssh          # SSH remote
+    - ms-vscode.vscode-typescript-next     # TypeScript nightly
+    - esbenp.prettier-vscode               # Prettier
+    - dbaeumer.vscode-eslint               # ESLint
+    - github.vscode-github-actions         # GitHub Actions linting
+    - redhat.vscode-yaml                   # YAML support
+  odoo:
+    - ms-python.python                     # Python
+    - ms-python.pylance                    # Pyright language server
+    - ms-python.black-formatter            # Black formatter
+    - charliermarsh.ruff                   # Ruff linter
+  copilot:
+    - github.copilot                       # Copilot inline suggestions
+    - github.copilot-chat                  # Copilot chat
+
+# Workspace defaults (enforced via .vscode/settings.json, overridable locally)
+workspace_defaults:
+  editor_format_on_save: true
+  python_formatter: black
+  typescript_formatter: prettier
+  yaml_validate: true
+
+# Copilot configuration
+copilot:
+  model_selection:
+    default: latest             # use Copilot's latest available model
+    pinning_guidance: "Pin model per task type in .github/copilot-instructions.md"
+  instructions:
+    repo_level: ".github/copilot-instructions.md"    # file-based, higher priority than settings
+    note: "File-based > settings-based (VS Code recommendation)"
+  agent_skills:
+    directory: "agent-skills/"  # Copilot agent skills package directory (compatible with Copilot CLI + coding agent)
+  agentic_loop:
+    expectation: "plan → patch → verify (tests/gates) → PR"
+    evidence_required: true
+    pr_required_for_code_changes: true

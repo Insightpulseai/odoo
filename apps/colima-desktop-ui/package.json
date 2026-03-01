@@ -1,0 +1,10 @@
+{
+  "name": "colima-desktop-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Colima desktop UI — vanilla HTML/CSS helper panel (no Node.js build step)",
+  "scripts": {
+    "build": "echo 'No build step — vanilla HTML app'",
+    "test": "echo 'No test suite'"
+  }
+}

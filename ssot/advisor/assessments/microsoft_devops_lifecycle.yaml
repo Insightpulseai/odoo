@@ -1,0 +1,345 @@
+# schema: ssot.advisor.assessment.v1
+# ---------------------------------------------------------------------------
+# Assessment: microsoft_devops_lifecycle
+# Name:       Microsoft DevOps Lifecycle Posture
+# Source:     Microsoft DevOps Framework (Plan/Develop/Deliver/Operate)
+#             https://learn.microsoft.com/devops/what-is-devops
+# Pillar:     ops_excellence
+# Version:    1.0.0
+# Reviewed:   2026-03-01
+#
+# Purpose:
+#   Maps the Microsoft DevOps lifecycle phases to IPAI's existing toolchain.
+#   Each phase has: IPAI surface, expected posture, gap indicators.
+#
+# This assessment drives the devops_baseline workbook.
+# ---------------------------------------------------------------------------
+
+id: microsoft_devops_lifecycle
+name: "Microsoft DevOps Lifecycle Posture"
+version: "1.0.0"
+last_reviewed: "2026-03-01"
+pillar: ops_excellence
+source: microsoft_devops_framework
+citation_base: "https://learn.microsoft.com/devops/what-is-devops"
+advisor_workbook: devops_baseline
+
+phases:
+
+  # ---------------------------------------------------------------------------
+  # Phase 1: Plan
+  # Toolchain: Plane (project management) + Spec Kit (specs/PRDs)
+  # ---------------------------------------------------------------------------
+  - phase: Plan
+    description: >
+      Agile planning, backlog management, requirements tracking, and specification.
+      Teams define what to build, break work into epics/stories/tasks, and link
+      requirements to deliverables via spec bundles. IPAI uses Plane for tracking
+      and the Spec Kit (spec/<feature-slug>/) for structured PRD + plan artifacts.
+    ipai_surfaces:
+      - id: plane
+        tool: "Plane (project management)"
+        url: "https://plane.insightpulseai.com"
+        ssot_ref: null
+      - id: spec_kit
+        tool: "Spec Kit (spec/<feature-slug>/)"
+        url: null
+        ssot_ref: "spec/agent/constitution.md"
+    posture_checks:
+      - id: plan_backlog_structure
+        title: "Backlog structured with epics, stories, and tasks in Plane"
+        severity: medium
+        expected_state: >
+          All active development work tracked in Plane with a minimum three-level
+          hierarchy: Epic (feature/initiative) → Story (user-facing slice) → Task
+          (engineering work item). No orphaned tasks without a parent story.
+        gap_indicator: >
+          Tasks exist in Plane without parent epics or stories, or active features
+          have no corresponding Plane project.
+
+      - id: plan_spec_bundle_coverage
+        title: "Spec bundles exist for all active features (spec/ directory completeness)"
+        severity: high
+        expected_state: >
+          Every feature that is in the Develop phase or later has a corresponding
+          spec bundle at spec/<feature-slug>/ containing at minimum constitution.md
+          and prd.md. Features in the Plan phase should have at minimum prd.md drafted.
+        gap_indicator: >
+          A Plane epic or story references a feature for which no spec bundle
+          exists in the spec/ directory, or an existing spec bundle is missing
+          constitution.md or prd.md.
+
+      - id: plan_milestones_linked
+        title: "OKRs and milestones defined and linked to Plane issues"
+        severity: low
+        expected_state: >
+          Active quarters have OKRs documented and linked to Plane milestones.
+          Milestones reference the relevant epics. At least one Plane milestone
+          per active quarter is present and contains at least one epic.
+        gap_indicator: >
+          No Plane milestones defined for the current quarter, or milestones
+          exist without any linked epics or issues.
+
+      - id: plan_spec_tasks_generated
+        title: "Spec bundles include tasks.md with engineering task breakdown"
+        severity: medium
+        expected_state: >
+          Every spec bundle in an active feature branch has a tasks.md file
+          generated from /speckit.tasks. Tasks.md items map 1:1 to Plane tasks
+          or contain the explicit note that Plane tasks are managed externally.
+        gap_indicator: >
+          Spec bundles at plan.md stage lack a tasks.md, preventing traceability
+          from requirements to engineering work items.
+
+    advisor_workbook: devops_baseline
+
+  # ---------------------------------------------------------------------------
+  # Phase 2: Develop
+  # Toolchain: GitHub (code review, rulesets) + VS Code + Copilot
+  # ---------------------------------------------------------------------------
+  - phase: Develop
+    description: >
+      Code authoring, review, and quality gates. All code lives in GitHub
+      (Insightpulseai/odoo). Branch protection, required status checks, CODEOWNERS,
+      and Copilot instructions govern the development experience. Agentic coding
+      runs (ops.runs) are tracked for auditability.
+    ipai_surfaces:
+      - id: github
+        tool: "GitHub (Insightpulseai/odoo)"
+        url: "https://github.com/Insightpulseai/odoo"
+        ssot_ref: "ssot/advisor/rulepacks/github_governance.yaml"
+      - id: vscode
+        tool: "VS Code + GitHub Copilot"
+        url: null
+        ssot_ref: ".github/copilot-instructions.md"
+      - id: ops_runs
+        tool: "Ops Console agentic runs (ops.runs)"
+        url: "https://ops.insightpulseai.com"
+        ssot_ref: "apps/ops-console/app/api/runs/[runId]"
+    posture_checks:
+      - id: develop_feature_branches
+        title: "All commits on feature branches — no direct commits to main"
+        severity: high
+        expected_state: >
+          The default branch (main) is protected by an organization-level ruleset
+          requiring a pull request with at least one approval before merging. Direct
+          pushes to main by any user (including admins) are blocked.
+          Check via: GET /orgs/Insightpulseai/rulesets
+        gap_indicator: >
+          Commit history on main shows commits that were not merged via a pull
+          request, or the organization ruleset does not restrict force-pushes
+          and direct pushes to the default branch.
+
+      - id: develop_required_status_checks
+        title: "Required status checks must pass before merge"
+        severity: high
+        expected_state: >
+          At minimum the following status checks are required before any PR can
+          merge to main: ci/lint, ci/typecheck. For Odoo modules: ci/odoo-lint.
+          For spec bundles: ci/spec-validate (scripts/spec_validate.sh).
+        gap_indicator: >
+          PRs can be merged to main without all required status checks passing,
+          or no required status checks are configured in branch protection or
+          organization rulesets.
+
+      - id: develop_copilot_instructions
+        title: "Copilot instructions file present (.github/copilot-instructions.md)"
+        severity: medium
+        expected_state: >
+          The file .github/copilot-instructions.md exists in the repository and
+          contains IPAI-specific context: module naming conventions (ipai_*),
+          OCA-first philosophy, CE-only constraint, and commit message format.
+        gap_indicator: >
+          .github/copilot-instructions.md is absent or contains generic content
+          that does not encode IPAI repo conventions.
+
+      - id: develop_codeowners
+        title: "CODEOWNERS file covers sensitive paths"
+        severity: medium
+        expected_state: >
+          CODEOWNERS (at root or .github/CODEOWNERS) covers: ssot/, supabase/migrations/,
+          .github/workflows/, infra/, addons/ipai/. PRs touching these paths require
+          review from the designated owner before merge.
+        gap_indicator: >
+          CODEOWNERS is absent, or one or more of the sensitive paths (ssot/,
+          supabase/migrations/, .github/workflows/, infra/) is not covered by
+          a CODEOWNERS entry, allowing unreviewed merges.
+
+      - id: develop_agentic_coding_contract
+        title: "Agentic coding runs tracked in ops.runs"
+        severity: low
+        expected_state: >
+          Claude Code and other agentic coding sessions that produce commits are
+          logged in ops.runs via the ops-console API. Each run record includes:
+          run_id, agent_id, repo, branch, commit_sha (post-commit), outcome, and
+          duration. The ops-console /api/runs endpoint is reachable.
+        gap_indicator: >
+          Agentic coding commits cannot be traced to a corresponding ops.runs
+          record, or the ops-console API is returning non-200 responses for
+          run creation.
+
+    advisor_workbook: devops_baseline
+
+  # ---------------------------------------------------------------------------
+  # Phase 3: Deliver
+  # Toolchain: GitHub Actions + Vercel + DigitalOcean App Platform
+  # ---------------------------------------------------------------------------
+  - phase: Deliver
+    description: >
+      Continuous integration and deployment pipelines. GitHub Actions drive CI.
+      Vercel deploys Next.js apps (public-facing). DigitalOcean App Platform
+      deploys backend services. All deployments are gated by CI; no direct
+      pushes to production. Deployment environments are protected with approval
+      rules and rollback runbooks exist.
+    ipai_surfaces:
+      - id: github_actions
+        tool: "GitHub Actions (153 workflows)"
+        url: "https://github.com/Insightpulseai/odoo/actions"
+        ssot_ref: ".github/workflows/"
+      - id: vercel
+        tool: "Vercel (Next.js apps)"
+        url: "https://vercel.com/insightpulseai"
+        ssot_ref: "infra/vercel/"
+      - id: do_app_platform
+        tool: "DigitalOcean App Platform"
+        url: "https://cloud.digitalocean.com/apps"
+        ssot_ref: "ssot/infra/digitalocean/monitoring.yaml"
+    posture_checks:
+      - id: deliver_vercel_ci_gated
+        title: "Vercel deployments gated by CI — no direct production pushes"
+        severity: high
+        expected_state: >
+          Vercel projects are configured to require a passing GitHub Actions
+          deployment workflow (or Vercel's preview check) before promoting to
+          production. No Vercel project is configured for auto-deploy on push
+          without CI checks. Branch protection on main enforces this.
+        gap_indicator: >
+          A Vercel project is configured to deploy directly from main without
+          requiring CI checks, or production deployments are triggered by direct
+          pushes rather than merged pull requests with passing status checks.
+
+      - id: deliver_actions_minimum_permissions
+        title: "GitHub Actions workflows use minimum required permissions"
+        severity: high
+        expected_state: >
+          All GitHub Actions workflows declare permissions at the job or workflow
+          level with the minimum required scope. Workflows without explicit
+          permissions declarations default to read-only (enforced by org settings).
+          No workflow uses permissions: write-all or permissions: contents: write
+          without explicit justification.
+        gap_indicator: >
+          One or more workflows in .github/workflows/ lack explicit permissions
+          declarations, or use overly broad permissions (e.g., contents: write,
+          packages: write) beyond what the job requires.
+
+      - id: deliver_deployment_environments
+        title: "Deployment environments configured with protection rules"
+        severity: medium
+        expected_state: >
+          GitHub repository environments (production, staging) are configured
+          with required reviewers for the production environment. At minimum,
+          the production environment requires one reviewer approval before a
+          deployment job can run.
+        gap_indicator: >
+          The production GitHub environment has no required reviewers configured,
+          allowing automated deployments to production without human approval.
+
+      - id: deliver_rollback_runbooks
+        title: "Rollback procedure documented in runbooks"
+        severity: medium
+        expected_state: >
+          A rollback runbook exists at docs/runbooks/ROLLBACK.md (or equivalent)
+          covering: Vercel instant rollback, DigitalOcean App Platform deployment
+          revert, Odoo module downgrade steps, and Supabase migration rollback.
+          The runbook is referenced in the production deployment workflow.
+        gap_indicator: >
+          No rollback runbook exists, or the existing runbook does not cover all
+          deployment surfaces (Vercel, DO App Platform, Odoo, Supabase).
+
+    advisor_workbook: devops_baseline
+
+  # ---------------------------------------------------------------------------
+  # Phase 4: Operate
+  # Toolchain: DigitalOcean Monitoring + Supabase + n8n + Ops Advisor
+  # ---------------------------------------------------------------------------
+  - phase: Operate
+    description: >
+      Production monitoring, incident response, and continuous improvement.
+      DigitalOcean monitoring alerts cover the odoo-production droplet. Supabase
+      schema changes flow through migrations only. n8n workflows are version-controlled
+      in the repo. Ops Advisor surfaces findings and tracks resolution rates.
+    ipai_surfaces:
+      - id: do_monitoring
+        tool: "DigitalOcean Monitoring (odoo-production droplet)"
+        url: "https://cloud.digitalocean.com/monitoring"
+        ssot_ref: "ssot/infra/digitalocean/monitoring.yaml"
+      - id: supabase
+        tool: "Supabase (spdtwktxdalcfigzeqrz)"
+        url: "https://spdtwktxdalcfigzeqrz.supabase.co"
+        ssot_ref: "supabase/migrations/"
+      - id: n8n
+        tool: "n8n (n8n.insightpulseai.com)"
+        url: "https://n8n.insightpulseai.com"
+        ssot_ref: "automations/n8n/workflows/"
+      - id: ops_advisor
+        tool: "Ops Advisor (ops-console)"
+        url: "https://ops.insightpulseai.com"
+        ssot_ref: "ssot/advisor/"
+    posture_checks:
+      - id: operate_do_monitoring_alerts
+        title: "DigitalOcean monitoring alerts configured for odoo-production"
+        severity: high
+        expected_state: >
+          The odoo-production droplet has active DigitalOcean monitoring alerts for:
+          CPU utilization >= 80%, disk utilization >= 75%, memory utilization >= 85%,
+          and outbound bandwidth spike. Alerts route to the ops team notification
+          channel (email or Slack webhook). Configuration is committed to
+          ssot/infra/digitalocean/monitoring.yaml.
+        gap_indicator: >
+          One or more of the required DO monitoring alert policies (CPU, disk,
+          memory, bandwidth) is absent or points to a stale notification endpoint.
+          The monitoring SSOT file (ssot/infra/digitalocean/monitoring.yaml) has
+          not been updated to match the live alert configuration.
+
+      - id: operate_supabase_migrations_only
+        title: "Supabase schema changes only via migrations — no dashboard SQL"
+        severity: high
+        expected_state: >
+          All schema changes to the Supabase database (spdtwktxdalcfigzeqrz) are
+          made via versioned migration files in supabase/migrations/. No ad-hoc
+          SQL is executed through the Supabase dashboard or psql directly against
+          production. The SSOT platform rule (Rule 4: schema changes via migrations)
+          is enforced. New migrations are reviewed before deployment.
+        gap_indicator: >
+          Schema changes are present in the Supabase dashboard that do not
+          correspond to a migration file in supabase/migrations/, or the migration
+          history is out of sync with the live schema.
+
+      - id: operate_n8n_workflows_in_repo
+        title: "n8n workflows exported and checked into repo"
+        severity: medium
+        expected_state: >
+          All production n8n workflows are exported as JSON and committed to
+          automations/n8n/workflows/. The export is current: any workflow modified
+          in the n8n UI within the past 30 days has a corresponding updated JSON
+          in the repo. Credential references use {{ $credentials.<name>.<field> }}
+          with no literal values.
+        gap_indicator: >
+          The n8n UI contains workflows that have no corresponding JSON file in
+          automations/n8n/workflows/, or existing JSON files are stale (last
+          committed more than 30 days before the workflow's last modified date).
+
+      - id: operate_ops_advisor_resolution_rate
+        title: "Ops Advisor finding resolution rate >= 80%"
+        severity: medium
+        expected_state: >
+          The Ops Advisor system (ops-console) tracks findings from rulepack scans.
+          The 30-day rolling resolution rate (findings resolved / findings created)
+          is at or above 80%. Unresolved high-severity findings are fewer than 3.
+          The advisor is actively scanning on its configured schedule.
+        gap_indicator: >
+          The 30-day finding resolution rate is below 80%, or more than 3
+          high-severity findings are in open state. The ops-console scan schedule
+          is not running (no recent scan records in ops.platform_events).
+
+    advisor_workbook: devops_baseline

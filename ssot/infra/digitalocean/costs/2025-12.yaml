@@ -1,0 +1,49 @@
+# DigitalOcean cost snapshot — December 2025
+# Source: DO billing dashboard screenshot reviewed 2026-03-01
+# Context: Highest-cost month — expensive managed surfaces before consolidation
+
+month: "2025-12"
+total_usd: 200.48
+
+line_items:
+  apps:
+    count: 8
+    cost_usd: 52.00
+    note: "8 DO App Platform apps; removed Feb 2026 (moved to Vercel + droplet compose)"
+
+  container_registry:
+    count: 1
+    cost_usd: 20.00
+    note: "DO Container Registry; removed Feb 2026"
+
+  droplet_backups:
+    count: 2
+    cost_usd: 21.60
+    note: "Automated droplet backups for 2 droplets; policy now: snapshots only"
+
+  droplet_snapshots:
+    count: 7
+    cost_usd: 12.88
+    note: "7 snapshots; no retention policy enforced; now controlled via policy.yaml"
+
+  droplets:
+    count: 2
+    cost_usd: 72.00
+    note: "2 droplets (odoo-production + ocr-service-droplet)"
+
+  volumes:
+    count: 3
+    cost_usd: 22.00
+    note: "3 block storage volumes; review for unattached/redundant"
+
+  bandwidth:
+    cost_usd: 0.00
+    note: "Negligible — no change expected"
+
+analysis:
+  expensive_surfaces:
+    - "Apps + Registry = $72 (equivalent to a medium droplet — dead weight once Vercel canonical)"
+    - "Backups + Snapshots + Volumes = $56.48 (compounded silently; needs retention enforcement)"
+  decision: >
+    Commit to Vercel + droplet compose as canonical. DO App Platform = 0. Registry = 0.
+    Use snapshot retention policy (policy.yaml). Volumes must have owner tag.

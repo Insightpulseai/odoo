@@ -1,0 +1,137 @@
+# schema: ssot.integrations.index.v1
+# Single index of all per-integration SSOT files.
+#
+# This file is the ONLY authoritative registry of integration files.
+# CI validators MUST read this index rather than scanning the directory.
+#
+# To register a new integration:
+#   1. Create ssot/integrations/<id>.yaml following the ssot.integrations.v1 schema
+#   2. Add a row here
+#   3. Optionally add ssot/integrations/<id>.install.yaml for declarative install state
+#
+# Last updated: 2026-03-01 (added github_copilot_sdk, microsoft_agent_framework, m365_copilot)
+
+version: "1.0.0"
+schema: ssot.integrations.index.v1
+
+integrations:
+  - id: prismaconsulting
+    file: ssot/integrations/prismaconsulting.yaml
+    status: planned
+    category: integration
+    vendor: internal
+
+  - id: slack_agent
+    file: ssot/integrations/slack_agent.yaml
+    install_state: ssot/integrations/slack_agent.install.yaml
+    status: active
+    category: agent
+    vendor: slack
+
+  - id: plane_webhooks
+    file: ssot/integrations/plane_webhooks.yaml
+    status: planned
+    category: integration
+    vendor: plane
+
+  - id: plane_mcp
+    file: ssot/integrations/plane_mcp.yaml
+    status: planned
+    category: agent
+    vendor: plane
+
+  - id: n8n_automation
+    file: ssot/integrations/n8n.yaml
+    status: active
+    category: automation_runner
+    vendor: n8n
+
+  - id: cloudflare_workers
+    file: ssot/integrations/cloudflare_workers.yaml
+    status: planned
+    category: edge_runtime
+    vendor: cloudflare
+
+  - id: vercel_hosting
+    file: ssot/integrations/vercel_hosting.yaml
+    status: active
+    category: hosting
+    vendor: vercel
+
+  - id: supabase_wrappers_stripe
+    file: ssot/integrations/supabase_wrappers_stripe.yaml
+    status: planned
+    category: postgres_fdw
+    vendor: supabase
+
+  - id: figma
+    file: ssot/integrations/figma.yaml
+    status: planned
+    category: design_platform
+    vendor: figma
+
+  - id: vercel_agent
+    file: ssot/integrations/vercel_agent.yaml
+    status: planned
+    category: ai_code_review
+    vendor: vercel
+
+  - id: vercel_ai_gateway
+    file: ssot/integrations/vercel_ai_gateway.yaml
+    status: planned
+    category: llm_gateway
+    vendor: vercel
+
+  - id: github_features
+    file: ssot/integrations/github_features.yaml
+    status: active
+    category: platform_posture
+    vendor: github
+
+  - id: github_copilot_sdk
+    file: ssot/integrations/github_copilot_sdk.yaml
+    status: active
+    category: agentic_coding
+    vendor: github
+
+  - id: microsoft_agent_framework
+    file: ssot/integrations/microsoft_agent_framework.yaml
+    status: planned
+    category: agentic_coding
+    vendor: microsoft
+
+  - id: m365_copilot
+    file: ssot/integrations/m365_copilot.yaml
+    status: planned
+    category: ai_interaction_plane
+    vendor: microsoft
+
+  # ---------------------------------------------------------------------------
+  # Plane.so marketplace integrations (SSOT-governed SoW plugins)
+  # Tier 0: plane_mcp (already registered above)
+  # Tier 1: github_sync, slack_intake, sentry_sync
+  # Parent registry: ssot/integrations/plane.yaml
+  # ---------------------------------------------------------------------------
+  - id: plane
+    file: ssot/integrations/plane.yaml
+    status: planned
+    category: sow
+    vendor: plane
+
+  - id: plane_github_sync
+    file: ssot/integrations/plane_github_sync.yaml
+    status: planned
+    category: integration
+    vendor: plane
+
+  - id: plane_slack_intake
+    file: ssot/integrations/plane_slack_intake.yaml
+    status: planned
+    category: intake
+    vendor: plane
+
+  - id: plane_sentry_sync
+    file: ssot/integrations/plane_sentry_sync.yaml
+    status: planned
+    category: integration
+    vendor: plane
