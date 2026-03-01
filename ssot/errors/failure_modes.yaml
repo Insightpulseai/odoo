@@ -1,66 +1,215 @@
 # =============================================================================
 # ssot/errors/failure_modes.yaml — Failure Modes SSOT
 # =============================================================================
-# Every tracked failure mode that recurs, generates CI noise, or requires
-# manual intervention. Each entry links to a deterministic runbook.
+# Canonical failure code registry for all IPAI agents, CI pipelines,
+# and infrastructure operations.
 #
 # Schema:
 #   code          — unique dot-namespaced identifier (CATEGORY.SUBCATEGORY.NAME)
-#   category      — ci | auth | env | dns | infra | odoo
+#   category      — agent | ci | auth | env | dns | infra | odoo | schema
 #   severity      — critical | high | medium | low
-#   description   — one sentence, what is broken
-#   root_cause    — one sentence, why it breaks
-#   fix.automated — true if self-healing; false if manual runbook required
-#   fix.runbook   — path to runbook (relative to repo root)
-#   ci_behavior   — blocking | non_blocking | non_blocking_until_fixed
+#   description   — one-paragraph description of what is broken
+#   runbook       — path to runbook (relative to repo root)
+#   http_status   — HTTP status code if edge-function-raised; null for CI/infra
+#   retryable     — true if automated retry is safe; false if manual intervention required
+#   ci_behavior   — blocking | non_blocking | non_blocking_until_fixed (CI-only codes)
 #   convergence_finding (optional):
 #     kind        — finding kind emitted by ops-convergence-scan
 #     target      — target identifier string
+#
+# Domain prefixes:
+#   AGENT.*  — agent runtime failures (deer-flow patterns)
+#   CI.*     — CI pipeline failures
+#   SCHEMA.* — database / SSOT schema failures
+#   AUTH.*   — authentication / authorization failures
+#   ENV.*    — environment variable / secret failures
+#   DNS.*    — DNS record failures
+#
+# Spec:         spec/deerflow-patterns-adoption/
+# Last updated: 2026-03-02
 # =============================================================================
 
+meta:
+  schema_version: "1.1"
+  updated_at: "2026-03-02"
+  spec: "spec/deerflow-patterns-adoption/"
+
 failure_modes:
+
+  # ── Agent Runtime (deer-flow patterns) ────────────────────────────────────
+
+  - code: AGENT.SKILL_NOT_FOUND
+    category: agent
+    severity: critical
+    description: >
+      The requested skill_id does not exist in ops.skills. The agent
+      cannot proceed because no executor config or state machine is defined.
+    runbook: docs/runbooks/failures/AGENT.SKILL_NOT_FOUND.md
+    http_status: 422
+    retryable: false
+
+  - code: AGENT.STATE_MACHINE_SKIP
+    category: agent
+    severity: critical
+    description: >
+      An agent attempted to transition to a state out of the declared
+      state_machine order (e.g., PATCH before PLAN). This indicates a
+      logic error in the agent implementation.
+    runbook: docs/runbooks/failures/AGENT.STATE_MACHINE_SKIP.md
+    http_status: 422
+    retryable: false
+
+  - code: AGENT.PLAN_EMPTY
+    category: agent
+    severity: high
+    description: >
+      The PLAN phase produced no actionable steps. The agent reached PLAN
+      state but the output was empty or contained only ignored items.
+    runbook: docs/runbooks/failures/AGENT.PLAN_EMPTY.md
+    http_status: 200
+    retryable: true
+
+  - code: AGENT.PATCH_DIFF_TOO_LARGE
+    category: agent
+    severity: high
+    description: >
+      The generated diff exceeds the allowed diff size (default: 500 lines).
+      Large diffs indicate the agent is doing too much in one run.
+    runbook: docs/runbooks/failures/AGENT.PATCH_DIFF_TOO_LARGE.md
+    http_status: 422
+    retryable: false
+
+  - code: AGENT.VERIFY_CI_FAIL
+    category: agent
+    severity: high
+    description: >
+      The VERIFY phase completed but CI checks did not pass within the
+      configured wait window. The PR is blocked from auto-merge.
+    runbook: docs/runbooks/failures/AGENT.VERIFY_CI_FAIL.md
+    http_status: 200
+    retryable: true
+
+  - code: AGENT.PR_OPEN_FAILED
+    category: agent
+    severity: high
+    description: >
+      The PR phase could not open a GitHub PR. Common causes: insufficient
+      token permissions, branch protection misconfiguration, or rate limit.
+    runbook: docs/runbooks/failures/AGENT.PR_OPEN_FAILED.md
+    http_status: 502
+    retryable: true
+
+  - code: AGENT.MEMORY_WRITE_FAILED
+    category: agent
+    severity: medium
+    description: >
+      ops-memory-write Edge Function returned a non-200 response. The run
+      continues but memory state may be incomplete.
+    runbook: docs/runbooks/failures/AGENT.MEMORY_WRITE_FAILED.md
+    http_status: 200
+    retryable: true
+
+  - code: AGENT.BENCHMARK_SCORE_BELOW_THRESHOLD
+    category: agent
+    severity: medium
+    description: >
+      The benchmark run scored below the minimum acceptable tier (default: B).
+      The agent run is complete but flagged for human review.
+    runbook: docs/runbooks/failures/AGENT.BENCHMARK_SCORE_BELOW_THRESHOLD.md
+    http_status: 200
+    retryable: false
+
+  # ── CI Pipeline ────────────────────────────────────────────────────────────
 
   - code: CI.AUTOMATION.PROJECT_BOARD_FAILED
     category: ci
     severity: low
     description: "GitHub automation failed to add issue/PR to project board"
-    root_cause: "Token scope, org permission, or project board ID mismatch"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/CI.AUTOMATION.PROJECT_BOARD_FAILED.md
+    runbook: docs/runbooks/failures/CI.AUTOMATION.PROJECT_BOARD_FAILED.md
+    http_status: null
+    retryable: false
     ci_behavior: non_blocking   # must not block merges
+    convergence_finding:
+      kind: ci_failure
+      target: "project-board-automation"
 
   - code: CI.POLICY_GATES.MISSING_BINARY
     category: ci
     severity: medium
     description: "Policy violation scan script exits 127 (binary/script not found)"
-    root_cause: "Scan script path wrong, missing install step, or PATH not set"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/CI.POLICY_GATES.MISSING_BINARY.md
+    runbook: docs/runbooks/failures/CI.POLICY_GATES.MISSING_BINARY.md
+    http_status: null
+    retryable: true
     ci_behavior: non_blocking_until_fixed
+
+  - code: CI.PPM_PORTFOLIO_SYNC_FAILED
+    category: ci
+    severity: high
+    description: >
+      The ppm-portfolio-sync GitHub Action could not POST portfolio.yaml
+      to the ops-ppm-rollup Edge Function.
+    runbook: docs/runbooks/failures/CI.PPM_PORTFOLIO_SYNC_FAILED.md
+    http_status: null
+    retryable: true
+    ci_behavior: non_blocking
+
+  - code: CI.SKILLS_REGISTRY_INVALID
+    category: ci
+    severity: critical
+    description: >
+      scripts/ci/validate_skills_registry.py found a schema violation in
+      ssot/agents/skills.yaml. All PRs touching agent code are blocked.
+    runbook: docs/runbooks/failures/CI.SKILLS_REGISTRY_INVALID.md
+    http_status: null
+    retryable: false
+    ci_behavior: blocking
+
+  # ── Schema / SSOT ──────────────────────────────────────────────────────────
+
+  - code: SCHEMA.MIGRATION_FAILED
+    category: schema
+    severity: critical
+    description: >
+      A Supabase migration failed during supabase db push. The ops schema
+      may be in a partial state.
+    runbook: docs/runbooks/failures/SCHEMA.MIGRATION_FAILED.md
+    http_status: null
+    retryable: false
+    ci_behavior: blocking
+
+  # ── Authentication ─────────────────────────────────────────────────────────
+
+  - code: AUTH.INVALID_JWT
+    category: auth
+    severity: high
+    description: >
+      An Edge Function received a request with a missing or invalid JWT.
+      The caller should re-authenticate and retry.
+    runbook: docs/runbooks/failures/AUTH.INVALID_JWT.md
+    http_status: 401
+    retryable: false
 
   - code: AUTH.SUPABASE.TOKEN_STALE
     category: auth
     severity: critical
     description: "Supabase management token expired or revoked"
-    root_cause: "90-day token rotation; token not refreshed before expiry"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/AUTH.SUPABASE.TOKEN_STALE.md
+    runbook: docs/runbooks/failures/AUTH.SUPABASE.TOKEN_STALE.md
+    http_status: null
+    retryable: false
     ci_behavior: blocking
     convergence_finding:
       kind: token_stale
       target: "Supabase Access Token"
 
+  # ── Environment / Secrets ──────────────────────────────────────────────────
+
   - code: ENV.VERCEL.KEY_MISSING.PLANE_WEBHOOK_SECRET
     category: env
     severity: high
     description: "PLANE_WEBHOOK_SECRET not set in Vercel odooops-console project"
-    root_cause: "Not provisioned after ops-console deployment"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    http_status: null
+    retryable: false
     ci_behavior: non_blocking
     convergence_finding:
       kind: env_missing
@@ -70,23 +219,23 @@ failure_modes:
     category: env
     severity: high
     description: "GITHUB_WEBHOOK_SECRET not set in Vercel odooops-console project"
-    root_cause: "Not provisioned after ops-console deployment"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    runbook: docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md
+    http_status: null
+    retryable: false
     ci_behavior: non_blocking
     convergence_finding:
       kind: env_missing
       target: "GITHUB_WEBHOOK_SECRET@vercel:odooops-console"
 
+  # ── DNS ────────────────────────────────────────────────────────────────────
+
   - code: DNS.MAILGUN.DKIM2_MISSING
     category: dns
     severity: medium
     description: "Second Mailgun DKIM record (krs2._domainkey.mg) not provisioned"
-    root_cause: "Placeholder value in subdomain-registry.yaml not yet replaced"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    http_status: null
+    retryable: false
     ci_behavior: non_blocking
     convergence_finding:
       kind: dns_placeholder
@@ -96,10 +245,9 @@ failure_modes:
     category: dns
     severity: medium
     description: "Mailgun tracking CNAME (email.mg) not provisioned"
-    root_cause: "Placeholder value in subdomain-registry.yaml not yet replaced"
-    fix:
-      automated: false
-      runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    runbook: docs/runbooks/failures/DNS.MAILGUN.RECORDS.md
+    http_status: null
+    retryable: false
     ci_behavior: non_blocking
     convergence_finding:
       kind: dns_placeholder
