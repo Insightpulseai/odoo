@@ -6,6 +6,7 @@ on:
     paths:
       - "ssot/**"
       - "infra/dns/subdomain-registry.yaml"
+      - "infra/cloudflare/zones/insightpulseai.com/records.yaml"
       - "scripts/ci/generate_settings_snapshot.py"
       - ".github/workflows/settings-snapshot.yml"
   workflow_dispatch: {}
