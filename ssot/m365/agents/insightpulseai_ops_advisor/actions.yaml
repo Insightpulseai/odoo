@@ -1,0 +1,75 @@
+# schema: ssot.m365.agent.actions.v1
+agent_id: insightpulseai_ops_advisor
+reviewed: "2026-03-01"
+
+actions:
+  - id: query_advisor_findings
+    type: query
+    display_name: "Get Advisor findings"
+    description: "Return open Ops Advisor findings, optionally filtered by pillar or severity"
+    parameters:
+      - name: pillar
+        type: string
+        required: false
+        enum: [security, cost, reliability, ops_excellence, performance]
+        description: "Filter to a specific Advisor pillar"
+      - name: severity
+        type: string
+        required: false
+        enum: [critical, high, medium, low]
+        description: "Filter to a minimum severity level"
+      - name: limit
+        type: integer
+        required: false
+        default: 10
+        description: "Maximum number of findings to return"
+    response_schema: "advisor_findings_list"
+
+  - id: query_ops_runs
+    type: query
+    display_name: "Get recent agent runs"
+    description: "Return audit trail of recent agentic coding runs"
+    parameters:
+      - name: limit
+        type: integer
+        required: false
+        default: 5
+    response_schema: "ops_runs_list"
+
+  - id: trigger_advisor_scan
+    type: action
+    display_name: "Run Advisor scan"
+    description: "Trigger a full Ops Advisor scan (async)"
+    confirmation_required: true
+    confirmation_message: "This will trigger a full Advisor scan. Proceed?"
+    parameters: []
+    response_schema: "job_reference"
+
+  - id: acknowledge_finding
+    type: action
+    display_name: "Acknowledge Advisor finding"
+    description: "Acknowledge or dismiss a finding with a justification"
+    confirmation_required: true
+    parameters:
+      - name: finding_id
+        type: string
+        required: true
+        description: "The Advisor finding ID to acknowledge"
+      - name: justification
+        type: string
+        required: true
+        description: "Reason for acknowledgement or dismissal"
+      - name: disposition
+        type: string
+        required: true
+        enum: [acknowledged, dismissed, false_positive]
+    response_schema: "acknowledgement_result"
+
+# Allowlist: only these action IDs may appear in the generated manifest.
+# Drift check (scripts/ci/check_m365_manifest_drift.py) fails if manifest
+# contains action IDs not in this list.
+allowed_action_ids:
+  - query_advisor_findings
+  - query_ops_runs
+  - trigger_advisor_scan
+  - acknowledge_finding

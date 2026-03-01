@@ -1,0 +1,30 @@
+{
+  "_comment": [
+    "Figma MCP server configuration for Claude Code agents.",
+    "",
+    "FIGMA_PERSONAL_ACCESS_TOKEN must be set in the runtime environment.",
+    "Source: Supabase Vault (figma_personal_access_token) or os_keychain.",
+    "Never hardcode the token value in this file.",
+    "",
+    "SSOT: ssot/integrations/figma.yaml",
+    "Secrets: ssot/secrets/registry.yaml#figma_personal_access_token",
+    "Reference: figma/mcp-server-guide (github.com/figma/mcp-server-guide)",
+    "",
+    "Usage:",
+    "  - This config is read by Claude Code (claude_desktop_config.json) or",
+    "    any MCP-compatible agent runtime.",
+    "  - The Figma MCP server exposes read-only Figma context (files, components,",
+    "    variables, annotations) to agents. Agents MUST NOT write to Figma files.",
+    "  - All agent tool calls must emit to ops.run_events (see ssot boundary rules).",
+    "",
+    "Rate limits: See figma/mcp-server-guide. Be conservative — no batch polling."
+  ],
+  "mcpServers": {
+    "figma": {
+      "url": "https://api.figma.com/v1/ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${FIGMA_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  }
+}

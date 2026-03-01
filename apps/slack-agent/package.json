@@ -1,0 +1,27 @@
+{
+  "name": "@ipai/slack-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Slack agent — Bolt-compatible Nitro server wired to SSOT taskbus",
+  "scripts": {
+    "dev": "nitro dev --port 3300",
+    "build": "nitro build",
+    "start": "node .output/server/index.mjs",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@ipai/taskbus": "workspace:*",
+    "@slack/web-api": "^7.3.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "nitropack": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  }
+}

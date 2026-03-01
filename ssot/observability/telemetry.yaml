@@ -1,0 +1,86 @@
+# schema: ssot.observability.telemetry.v1
+# Telemetry posture — standard, required fields, platform stances.
+# Grounding: Supabase telemetry (logs/metrics/traces) + OpenTelemetry direction.
+#   https://supabase.com/docs/guides/telemetry
+
+version: "1.0.0"
+schema: ssot.observability.telemetry.v1
+last_reviewed: "2026-03-01"
+
+standard: opentelemetry
+# Supabase is working toward full OpenTelemetry support.
+# Treat OTel as the target standard for all new instrumentation.
+
+posture:
+  logs:
+    required: true
+    note: "Structured JSON logs required for all always-on services."
+  metrics:
+    required: true
+    note: "System metrics via do-agent (DO) + Supabase platform metrics."
+  traces:
+    required: false
+    recommended: true
+    note: "OTel traces recommended; implement correlation fields now, traces when OTel export lands."
+
+supabase:
+  telemetry_concepts: [logs, metrics, traces]
+  opentelemetry_status: in_progress
+  notes:
+    - "Supabase defines telemetry as logs, metrics, traces."
+    - "Full OpenTelemetry support is in progress — implement correlation fields first."
+    - "Do not buy third-party log/APM add-on until DO native + Supabase Edge logs are insufficient."
+
+# ── Correlation Fields ────────────────────────────────────────────────────────
+
+correlation:
+  required_fields:
+    - field: run_id
+      source: ops.runs.id
+      note: "Carried on every taskbus execution."
+    - field: trace_id
+      source: application_generated
+      note: "OTel trace ID; generated at request ingress, propagated via HTTP headers."
+    - field: integration_id
+      source: ssot.integrations._index.yaml
+      note: "References the integration that originated the event."
+
+# ── Log Drains ────────────────────────────────────────────────────────────────
+
+log_drains:
+  policy: "All always-on services drain structured logs to a central sink."
+  current_sinks:
+    - name: supabase_edge_function_logs
+      surface: supabase
+      status: active
+    - name: vercel_observability
+      surface: vercel
+      status: active
+    - name: digitalocean_monitoring_logs
+      surface: digitalocean
+      status: on_droplet_only
+      note: "do-agent collects metrics; logs require logrotate + drain to be configured."
+  future:
+    - name: opentelemetry_collector
+      status: planned
+      note: "Wire when Supabase OTel export is generally available."
+
+# ── DO Marketplace Add-On Guidance ───────────────────────────────────────────
+
+marketplace_guidance:
+  simple_observability:
+    status: optional
+    rationale: >
+      Add only if: log correlation across services is needed and DO native monitoring
+      + Supabase Edge logs are insufficient. Avoid pre-purchasing.
+  logs_telemetry:
+    status: not_adopted
+    rationale: >
+      Full log ingestion add-on. Justified only if cross-service correlation requires
+      searchable logs beyond DO native + Supabase Edge.
+
+notes: |
+  Implement correlation fields (run_id, trace_id, integration_id) now so telemetry
+  can be joined across services when OTel export lands.
+  Current priority: enforce log rotation on OCR droplet + Odoo droplet before
+  adopting external log drains. See ssot/infra/digitalocean/monitoring.yaml §disk_remediation.

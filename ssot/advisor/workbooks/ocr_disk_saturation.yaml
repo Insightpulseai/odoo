@@ -1,0 +1,142 @@
+# schema: ssot.advisor.workbook.v1
+# ---------------------------------------------------------------------------
+# Workbook: ocr_disk_saturation_remediation
+# Name:     OCR droplet disk saturation remediation
+# Pillar:   reliability
+# Source:   ssot/infra/digitalocean/monitoring.yaml
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Step-by-step guide for remediating disk saturation on the odoo-production
+#   droplet (which hosts Odoo ERP, n8n, OCR service, and the Agent service).
+#
+#   Triggered by: do_monitoring_posture rule ocr_disk_saturation
+#   (severity: high — disk utilization >= 75%)
+#
+# Target droplet: odoo-production (178.128.112.214, SGP1)
+#
+# Steps are ordered from fastest/cheapest (log rotation, tmp cleanup) to
+# most disruptive (model cache relocation, archive to DO Spaces).
+# Steps with evidence_required=true block workbook completion in the
+# Ops Console until the operator captures proof.
+# ---------------------------------------------------------------------------
+
+id: ocr_disk_saturation_remediation
+name: "OCR droplet disk saturation remediation"
+pillar: reliability
+source: ssot/infra/digitalocean/monitoring.yaml
+version: "1.0.0"
+
+# Context displayed in the Ops Console before step 1
+context: >
+  The odoo-production droplet hosts multiple services (Odoo ERP, n8n, OCR, Agent).
+  Disk saturation on this droplet can cause service failures across all hosted services,
+  not just the OCR pipeline. Work through these steps in order; stop when disk utilization
+  drops below 60%.
+
+steps:
+
+  - step_no: 1
+    text: >
+      Check disk usage breakdown to understand where space is being consumed.
+      Run:
+        ssh root@178.128.112.214
+        df -h /
+        du -sh /var/log /tmp /var/lib/docker /opt/odoo /root
+      Capture the output as evidence before proceeding.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Identify the largest consumer(s) of disk space. Common culprits:
+      Docker image layers (/var/lib/docker), OCR temp files (/tmp),
+      application logs (/var/log), Odoo filestore (/opt/odoo/data/filestore).
+
+  - step_no: 2
+    text: >
+      Rotate nginx and application logs. logrotate must be configured and executed:
+        ssh root@178.128.112.214 "logrotate -f /etc/logrotate.conf"
+      Verify: du -sh /var/log after rotation.
+      If logrotate is not installed: apt-get install -y logrotate
+    evidence_required: false
+    automation_ref: "scripts/maintenance/rotate_logs.sh"
+    expected_outcome: >
+      /var/log shrinks. Compressed .gz archives retain 30 days of history;
+      older logs are purged per the logrotate configuration.
+
+  - step_no: 3
+    text: >
+      Clear /tmp OCR input/output files. The OCR pipeline writes intermediate
+      files to /tmp/ocr-* which may not be cleaned up on error paths.
+      Run:
+        ssh root@178.128.112.214 "find /tmp -name 'ocr-*' -mtime +1 -delete"
+      Enforce a TTL cleanup cron if not already present:
+        echo '0 */6 * * * root find /tmp -name "ocr-*" -mtime +1 -delete' \
+          > /etc/cron.d/ocr-tmp-cleanup
+    evidence_required: false
+    automation_ref: "scripts/maintenance/cleanup_ocr_tmp.sh"
+    expected_outcome: >
+      /tmp OCR artifacts older than 24 hours are removed.
+      A 6-hourly cron prevents future accumulation.
+
+  - step_no: 4
+    text: >
+      Prune Docker images, stopped containers, and unused volumes.
+      WARNING: Only run this on the production droplet — do NOT use --all flag
+      (which removes images used by running containers).
+      Run:
+        ssh root@178.128.112.214 "docker system prune -f"
+      For volumes (more aggressive — verify no data volumes are affected first):
+        ssh root@178.128.112.214 "docker volume ls --filter dangling=true"
+        # Review the list before proceeding
+        ssh root@178.128.112.214 "docker volume prune -f"
+      Capture df -h output as evidence after pruning.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Dangling images, stopped containers, and unused volumes removed.
+      /var/lib/docker shrinks. Running containers are unaffected.
+
+  - step_no: 5
+    text: >
+      If disk utilization is still >= 75% after steps 1-4, move the OCR model
+      cache to a dedicated DigitalOcean Volume mounted at /mnt/ocr-models.
+      Steps:
+        1. Create a DO Volume: doctl compute volume create ocr-models \
+             --region sgp1 --size 10 --fs-type ext4
+        2. Attach to odoo-production: doctl compute volume-action attach \
+             {volume_id} {droplet_id}
+        3. Mount: mount -o discard,defaults /dev/disk/by-id/scsi-... /mnt/ocr-models
+        4. Update OCR service config to read models from /mnt/ocr-models
+        5. Remove model files from local disk
+      See: docs/architecture/OCR_MODEL_STORAGE.md (planned)
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      OCR model files (~2-4 GB depending on models in use) are relocated to
+      a separate DO Volume, freeing equivalent space on the root volume.
+
+  - step_no: 6
+    text: >
+      Long-term: archive old application and nginx logs to DO Spaces with a
+      lifecycle policy. This prevents log accumulation from recurring.
+      Steps (planned automation):
+        1. Configure logrotate postrotate to ship compressed logs to DO Spaces:
+             s3cmd put /var/log/nginx/*.gz s3://ipai-logs-archive/nginx/
+        2. Set a 90-day lifecycle expiry on the ipai-logs-archive bucket
+        3. Update scripts/maintenance/rotate_logs.sh to include the Spaces upload
+      See: ssot/infra/digitalocean/spaces.yaml (planned)
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      Log rotation no longer accumulates locally beyond the current month.
+      Historical logs are retained in DO Spaces at negligible cost (~$0.02/GB/month).
+
+# Completion criteria:
+# Workbook is complete when:
+#   - Step 1 evidence captured (df -h output)
+#   - Step 4 evidence captured (df -h after Docker prune)
+#   - Disk utilization < 60% (verified by running the scan adapter again)
+completion_check:
+  rerun_rule: do_monitoring_posture.ocr_disk_saturation
+  target_pct: 60

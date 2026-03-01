@@ -1,0 +1,325 @@
+# schema: ssot.advisor.workbook.v1
+# ---------------------------------------------------------------------------
+# Workbook: agentic_coding_baseline
+# Name:     Agentic coding baseline remediation
+# Pillar:   ops_excellence
+# Source:   ssot/advisor/rubrics/agentic_coding.yaml
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Step-by-step remediation guide for teams or repositories that score in
+#   the Baseline (0–5) or Developing (6–9) maturity band on the agentic coding
+#   rubric. Working through these steps in order will bring the agentic loop
+#   to Established (10–12) maturity.
+#
+# Triggered by:
+#   - Advisor finding: agentic_coding total score < 6 (Baseline band)
+#   - Manual activation when onboarding a new agent runtime to the repo
+#   - Pre-activation checklist for GitHub Copilot Coding Agent
+#
+# Target audience: Platform team, DevOps, any team activating an agent runtime
+#
+# Completion check:
+#   Rerun the agentic_coding rubric on the next agentic run.
+#   Workbook complete when total score >= 10 (Established).
+#
+# Contract doc: docs/architecture/AGENTIC_CODING_CONTRACT.md
+# Rubric SSOT:  ssot/advisor/rubrics/agentic_coding.yaml
+# ---------------------------------------------------------------------------
+
+id: agentic_coding_baseline
+name: "Agentic coding baseline remediation"
+pillar: ops_excellence
+source: "ssot/advisor/rubrics/agentic_coding.yaml"
+version: "1.0.0"
+
+context: >
+  This workbook brings agentic coding loop maturity from Baseline to Established.
+  Work through the steps in order. Each step targets one or more rubric dimensions.
+  Steps are ordered from highest-impact (audit trail wiring) to longest-lead
+  (automated evidence capture). Stop after each step and re-assess the rubric
+  before proceeding; some steps may resolve multiple dimension gaps simultaneously.
+
+steps:
+
+  - step_no: 1
+    text: >
+      Assess current agentic loop maturity by running the rubric self-assessment.
+
+      For the last 5 agentic runs in this repository, score each run against the
+      5 rubric dimensions in ssot/advisor/rubrics/agentic_coding.yaml.
+
+      If the Ops Console is operational, navigate to:
+        apps/ops-console/ → Runs → filter by agent_id
+
+      If ops.runs is not yet populated (first activation), score manually by
+      reviewing the last 5 PRs with the `agent-generated` label (or the last 5
+      PRs opened by Claude Code / Copilot in the repo).
+
+      Record the scores in a Plane issue or the ops.runs note field.
+      Calculate the average total score. Identify which dimensions score lowest.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      A table of scores for the last 5 runs showing total score, maturity band,
+      and lowest-scoring dimension(s). This baseline informs which subsequent
+      steps are highest priority for this repository.
+    target_dimensions: [planning_quality, patch_minimality, test_coverage, pr_evidence, audit_trail]
+    estimated_effort: "30 minutes"
+
+  - step_no: 2
+    text: >
+      Wire ops.runs logging into the agentic loop.
+
+      This is the single highest-impact step: it moves audit_trail from score 0
+      to at least score 2 for all future runs.
+
+      If using Claude Code as the primary agent runtime:
+        Add to CLAUDE.md or the agent workflow section:
+          "Before modifying any file, INSERT into ops.runs with status=running
+           and task_id from the current Plane/GitHub issue."
+
+      If using the GitHub Copilot Coding Agent:
+        Add to .github/copilot-instructions.md:
+          "Step 1 of every run: POST to Supabase ops.runs with status=running.
+           Use SUPABASE_SERVICE_ROLE_KEY from environment. Record the returned id
+           as the run_id for all subsequent ops.run_events inserts."
+
+      Supabase REST API insert (no migration needed if ops.runs already exists):
+        curl -X POST "$SUPABASE_URL/rest/v1/runs" \
+          -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+          -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+          -H "Content-Type: application/json" \
+          -d '{"task_id":"<issue-id>","agent_id":"<agent>","triggered_by":"<actor>","status":"running"}'
+
+      Verify: run a new agentic task and confirm a row appears in ops.runs.
+    evidence_required: true
+    automation_ref: "scripts/agents/create_ops_run.sh"
+    expected_outcome: >
+      ops.runs contains a row for the next agentic run before the first file
+      is modified. audit_trail score moves from 0 to at least 2.
+      ops.run_events has at least one row (step=plan, outcome=completed).
+    target_dimensions: [audit_trail]
+    estimated_effort: "2 hours (implementation + first verified run)"
+
+  - step_no: 3
+    text: >
+      Enforce the PR requirement for all code-changing agentic runs.
+
+      Verify that branch protection or the organization-level ruleset requires
+      a PR with at least 1 approval before merge to main/master.
+
+      Check current state:
+        gh api orgs/Insightpulseai/rulesets --jq '.[].name'
+        gh api repos/Insightpulseai/odoo/branches/main/protection 2>/dev/null
+
+      If no org-level ruleset exists protecting default branches:
+        Follow the remediation steps in ssot/advisor/rulepacks/github_governance.yaml
+        rule id: org_rulesets_default_branch.
+
+      Add the `agent-generated` label to GitHub labels if it does not exist:
+        gh label create "agent-generated" --color "#0052CC" \
+          --description "PR opened by an agentic coding runtime"
+
+      Verify: open a test PR from an agent branch. Confirm it cannot be merged
+      without a reviewer approval. Confirm the `agent-generated` label is applied.
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      Branch protection or org ruleset active: merging to main without a PR
+      and 1 approval is rejected by GitHub. `agent-generated` label exists.
+      pr_evidence score improves because PRs now have a structured review gate.
+    target_dimensions: [pr_evidence, audit_trail]
+    estimated_effort: "1 hour"
+
+  - step_no: 4
+    text: >
+      Add the SSOT validator to the CI pipeline and ensure all required gates
+      run on every agentic PR.
+
+      Required gates (must all be present in at least one CI workflow):
+        - scripts/repo_health.sh
+        - pnpm lint (for JS/TS changes)
+        - pnpm typecheck (for JS/TS changes)
+        - python -m flake8 (for Python changes)
+        - scripts/spec_validate.sh (for changes referencing spec bundles)
+
+      Check which gates already run on PRs:
+        ls .github/workflows/*.yml | xargs grep -l "repo_health\|pnpm lint\|flake8"
+
+      If repo_health.sh is not in any workflow, add it to the primary CI workflow:
+        - name: SSOT repo health check
+          run: ./scripts/repo_health.sh
+
+      Verify: open a PR with a deliberate lint error. Confirm the PR shows a
+      failing check. Fix the error and confirm all checks pass.
+    evidence_required: true
+    automation_ref: ".github/workflows/ci.yml"
+    expected_outcome: >
+      All required gates run on every PR targeting main. A PR with a lint error
+      shows a failing check and cannot be merged (with branch protection active).
+      test_coverage score improves to at least 2 for runs where all gates pass.
+    target_dimensions: [test_coverage]
+    estimated_effort: "2 hours"
+
+  - step_no: 5
+    text: >
+      Baseline documentation: ensure AGENTIC_CODING_CONTRACT.md is up to date
+      and that .github/copilot-instructions.md references it.
+
+      Check current state:
+        cat docs/architecture/AGENTIC_CODING_CONTRACT.md | head -10
+        # Should show version 1.0.0 and effective date 2026-03-01
+
+        cat .github/copilot-instructions.md 2>/dev/null | grep -i "contract"
+        # Should reference docs/architecture/AGENTIC_CODING_CONTRACT.md
+
+      If .github/copilot-instructions.md does not exist, create it with at minimum:
+        ---
+        # Copilot Coding Agent Instructions
+        # Contract: docs/architecture/AGENTIC_CODING_CONTRACT.md (v1.0.0)
+        # Rubric:   ssot/advisor/rubrics/agentic_coding.yaml
+        #
+        # Before modifying any file:
+        #   1. Create an ops.runs entry with status=running
+        #   2. Read the target file(s) before writing
+        #   3. Follow the loop: PLAN → PATCH → VERIFY → PR
+        #   4. Never push directly to main
+        ---
+
+      Add CODEOWNERS entry for both files:
+        echo ".github/copilot-instructions.md @Insightpulseai/platform-team" \
+          >> .github/CODEOWNERS
+        echo "docs/architecture/AGENTIC_CODING_CONTRACT.md @Insightpulseai/platform-team" \
+          >> .github/CODEOWNERS
+    evidence_required: false
+    automation_ref: null
+    expected_outcome: >
+      .github/copilot-instructions.md exists and references the contract doc.
+      CODEOWNERS entries protect both files from unauthorized modification.
+      planning_quality score improves because the agent now has explicit
+      documentation of the expected loop behavior.
+    target_dimensions: [planning_quality]
+    estimated_effort: "1 hour"
+
+  - step_no: 6
+    text: >
+      Wire ops.run_events for each step transition to enable full audit trail
+      (audit_trail score 3).
+
+      For each agentic loop phase (plan, patch, verify, pr), add an ops.run_events
+      INSERT at the end of the phase:
+
+        # Example: after VERIFY phase passes all gates
+        curl -X POST "$SUPABASE_URL/rest/v1/run_events" \
+          -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+          -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"run_id\": \"$RUN_ID\",
+            \"step\": \"verify\",
+            \"outcome\": \"pass\",
+            \"detail\": {
+              \"gates\": [\"repo_health\", \"lint\", \"typecheck\"],
+              \"all_exit_0\": true,
+              \"evidence_path\": \"$EVIDENCE_PATH\"
+            }
+          }"
+
+      The step values must be: plan, patch, verify, pr (exactly these strings).
+      The outcome values must be: started, completed, applied, pass, failed.
+
+      Verify: run a complete agentic loop and query ops.run_events:
+        curl "$SUPABASE_URL/rest/v1/run_events?run_id=eq.$RUN_ID" \
+          -H "apikey: $SUPABASE_SERVICE_ROLE_KEY"
+        # Should return 4 rows: plan, patch, verify, pr
+    evidence_required: true
+    automation_ref: "scripts/agents/emit_run_event.sh"
+    expected_outcome: >
+      ops.run_events contains 4 rows for the next complete agentic run.
+      audit_trail score moves from 2 to 3.
+      evidence_path is populated in both ops.runs and the verify event detail.
+    target_dimensions: [audit_trail]
+    estimated_effort: "3 hours (implementation + verified end-to-end run)"
+
+  - step_no: 7
+    text: >
+      Register the agentic coding rubric scan in the Ops Console so runs are
+      automatically scored and displayed in the dashboard.
+
+      Check whether the rubric scan adapter exists:
+        ls apps/ops-console/app/api/runs/[runId]/rubric* 2>/dev/null
+
+      If the rubric scoring endpoint does not exist, create a basic endpoint that:
+        1. Fetches the ops.runs row for the given runId
+        2. Fetches all ops.run_events for the run
+        3. Fetches the PR body from GitHub API (using pr_url)
+        4. Scores each dimension based on the signals in ssot/advisor/rubrics/agentic_coding.yaml
+        5. Returns the scored dimensions and total with maturity band
+        6. Optionally writes the score back to ops.runs.score
+
+      Minimum viable scorer (heuristic, not ML):
+        - audit_trail: ops.run_events row count (0=no rows, 1=1-2 rows, 2=2-3 rows, 3=4 rows)
+        - pr_evidence: check PR body for CONTEXT/CHANGES/EVIDENCE/DIFF SUMMARY sections
+        - test_coverage: check evidence_path for required .log files
+        - patch_minimality: check git diff file count vs plan file list
+        - planning_quality: check ops.runs.plan_artifact and ops.run_events step=plan
+
+      Verify: score a completed run and confirm the rubric output matches a
+      manual score of the same run against the rubric dimensions.
+    evidence_required: false
+    automation_ref: "apps/ops-console/app/api/runs/[runId]/rubric/route.ts"
+    expected_outcome: >
+      The Ops Console shows a rubric score for each completed run.
+      Teams can filter runs by maturity band and identify which dimension
+      needs improvement without reading every PR manually.
+    target_dimensions: [planning_quality, patch_minimality, test_coverage, pr_evidence, audit_trail]
+    estimated_effort: "4 hours (API endpoint + basic heuristic scorer)"
+
+  - step_no: 8
+    text: >
+      Residual risk review: audit any runs that are still missing ops.runs entries
+      and retroactively document or revert them.
+
+      Find PRs with `agent-generated` label that have no matching ops.runs entry:
+        gh pr list --label "agent-generated" --state merged --json number,url,title \
+          --limit 20 > /tmp/agent_prs.json
+
+        # For each PR, check ops.runs:
+        # curl "$SUPABASE_URL/rest/v1/runs?pr_url=eq.<PR_URL>" ...
+
+      For each unlogged run:
+        Option A (preferred): Create a retroactive ops.runs entry with:
+          status=completed, triggered_by=human_audit,
+          note="retroactive: audit 2026-03-01, PR <url>"
+        Option B (if change was unsafe/unreviewed): open a revert PR and
+          document the reversion in the retroactive ops.runs entry.
+
+      Document findings in a Plane issue or the Ops Console note field.
+
+      After completing this step, run the maturity self-assessment again (Step 1)
+      and confirm the rolling average score has reached Established (>= 10).
+    evidence_required: true
+    automation_ref: null
+    expected_outcome: >
+      All merged PRs with `agent-generated` label have a corresponding ops.runs entry.
+      Rolling 7-day average rubric score is >= 10 (Established maturity band).
+      No Baseline-band Advisor findings remain open.
+      Workbook is complete: rerun the agentic_coding rubric scan to confirm.
+    target_dimensions: [audit_trail]
+    estimated_effort: "1–2 hours depending on backlog size"
+
+# Completion criteria:
+# Workbook is complete when:
+#   - Step 2 evidence captured (ops.runs entry verified for a live run)
+#   - Step 3 evidence captured (branch protection and label verified)
+#   - Step 4 evidence captured (CI gates verified on a PR with a deliberate error)
+#   - Step 6 evidence captured (4 ops.run_events rows verified for a complete run)
+#   - Step 8 evidence captured (retroactive audit complete, no unlogged merged PRs)
+#   - Rerun of rubric scan shows total score >= 10 (Established band)
+completion_check:
+  rerun_rubric: agentic_coding
+  target_score: 10
+  target_band: Established
+  rerun_on_run: "next agentic run after completing all steps"

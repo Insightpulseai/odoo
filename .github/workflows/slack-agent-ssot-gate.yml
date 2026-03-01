@@ -1,0 +1,35 @@
+name: Slack Agent SSOT Gate
+
+on:
+  pull_request:
+    paths:
+      - 'apps/slack-agent/**'
+      - 'ssot/integrations/slack_agent*.yaml'
+      - 'ssot/integrations/_index.yaml'
+      - 'scripts/ci/check_slack_agent_contract.py'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/slack-agent/**'
+      - 'ssot/integrations/slack_agent*.yaml'
+      - 'ssot/integrations/_index.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  slack-agent-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install pyyaml --quiet
+
+      - name: Validate Slack agent SSOT contract
+        run: python scripts/ci/check_slack_agent_contract.py
