@@ -1,0 +1,109 @@
+# skills-sync.yml
+# Syncs ssot/agents/skills.yaml → ops.skills table (Supabase)
+# on every merge to main that touches the SSOT file.
+# Also supports manual trigger and weekly refresh.
+#
+# Requires GitHub Secrets:
+#   SUPABASE_URL              — https://<ref>.supabase.co
+#   SUPABASE_SERVICE_ROLE_KEY — service role key (write access)
+#
+# Failure mode: CI.SKILLS_REGISTRY_INVALID (if YAML is invalid before sync)
+
+name: Skills Registry Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/agents/skills.yaml"
+  schedule:
+    # Weekly refresh — Sunday 02:00 UTC
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (validate only, do not upsert)"
+        type: boolean
+        default: false
+
+jobs:
+  validate-and-sync:
+    name: Validate + sync skills to Supabase
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read   # checkout only
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python deps
+        run: pip install pyyaml -q
+
+      - name: Validate skills registry
+        run: python3 scripts/ci/validate_skills_registry.py
+
+      - name: Parse and upsert skills
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python3 - <<'PYEOF'
+          import yaml, json, os, urllib.request, urllib.error
+
+          supabase_url = os.environ["SUPABASE_URL"].rstrip("/")
+          service_key  = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+
+          with open("ssot/agents/skills.yaml") as f:
+              doc = yaml.safe_load(f)
+
+          skills = doc["skills"]
+
+          # Upsert each skill via PostgREST
+          for skill in skills:
+              payload = json.dumps({
+                  "id":             skill["id"],
+                  "name":           skill["name"],
+                  "description":    skill.get("description", ""),
+                  "executor":       skill["executor"],
+                  "max_duration_s": skill["max_duration_s"],
+                  "tags":           skill.get("tags", []),
+                  "state_machine":  skill.get("state_machine", ["PLAN","PATCH","VERIFY","PR"]),
+                  "owner":          skill.get("owner", ""),
+                  "status":         skill["status"],
+              }).encode()
+
+              req = urllib.request.Request(
+                  f"{supabase_url}/rest/v1/skills",
+                  data=payload,
+                  headers={
+                      "apikey":          service_key,
+                      "Authorization":   f"Bearer {service_key}",
+                      "Content-Type":    "application/json",
+                      "Prefer":          "resolution=merge-duplicates",
+                      "Accept-Profile":  "ops",
+                      "Content-Profile": "ops",
+                  },
+                  method="POST",
+              )
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      print(f"  ✅ {skill['id']} → {resp.status}")
+              except urllib.error.HTTPError as e:
+                  body = e.read().decode()
+                  raise SystemExit(f"  ❌ {skill['id']} failed: {e.code} {body}")
+
+          print(f"\n✅ Synced {len(skills)} skill(s) to ops.skills")
+          PYEOF
+
+      - name: Dry run summary
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🔍 DRY RUN — skills YAML validated, skipping Supabase upsert"
+          python3 -c "
+          import yaml
+          d = yaml.safe_load(open('ssot/agents/skills.yaml'))
+          for s in d['skills']:
+              print(f\"  {s['id']} [{s['status']}] executor={s['executor']}\")
+          "

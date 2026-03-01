@@ -1,0 +1,63 @@
+# ssot/agents/skills.yaml
+# Single source of truth for all IPAI agent skills.
+#
+# CI validator: scripts/ci/validate_skills_registry.py
+# Sync action:  .github/workflows/skills-sync.yml → ops.skills (Supabase)
+#
+# Field reference:
+#   id            - unique snake_case identifier (also the FK used in ops.runs.skill_id)
+#   name          - human-readable display name
+#   description   - what the skill does (1-2 sentences)
+#   executor      - vercel_sandbox | do_runner
+#   max_duration_s- hard timeout; Edge Function returns 504 if exceeded
+#   tags          - free-form list for filtering
+#   state_machine - list of required states in order (must be subset of PLAN,PATCH,VERIFY,PR)
+#   owner         - team or person responsible for keeping it green
+#   status        - active | deprecated | experimental
+#
+# Last updated: 2026-03-02
+# Spec:         spec/deerflow-patterns-adoption/
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-02"
+  spec: "spec/deerflow-patterns-adoption/"
+
+skills:
+  - id: pulser-patch
+    name: "Pulser Patch"
+    description: >
+      Implements a code change from a Plane issue or GitHub issue.
+      Reads the spec, generates a diff, opens a PR, and records CI results.
+    executor: vercel_sandbox
+    max_duration_s: 300
+    tags: [patch, pr, pulser, core]
+    state_machine: [PLAN, PATCH, VERIFY, PR]
+    owner: platform-team
+    status: active
+
+  - id: fixbot-triage
+    name: "FixBot Triage"
+    description: >
+      Triages a failing CI run or error report. Classifies the failure
+      using ssot/errors/failure_modes.yaml, creates a remediation plan,
+      and either auto-fixes or escalates with a labelled GitHub issue.
+    executor: vercel_sandbox
+    max_duration_s: 180
+    tags: [triage, ci, fixbot, error-handling]
+    state_machine: [PLAN, PATCH, VERIFY]
+    owner: platform-team
+    status: active
+
+  - id: ops-advisor-scan
+    name: "Ops Advisor Scan"
+    description: >
+      Scans the monorepo for convergence issues (drift, stale SSOT,
+      dependency vulnerabilities, orphaned specs). Writes findings to
+      ops.convergence_findings and posts a summary comment on main.
+    executor: do_runner
+    max_duration_s: 600
+    tags: [scan, advisor, convergence, ssot]
+    state_machine: [PLAN, VERIFY]
+    owner: platform-team
+    status: active
