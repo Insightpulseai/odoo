@@ -31,7 +31,6 @@ import {
   SearchCode,
   HardHat,
   Paintbrush,
-  KeyRound,
 } from "lucide-react"
 import { useState, useCallback, useEffect } from "react"
 
@@ -65,7 +64,6 @@ const navSections: NavSection[] = [
       { href: "/database", icon: Database, label: "Database" },
       { href: "/backups", icon: HardDrive, label: "Backups", badge: "New" },
       { href: "/platform", icon: Cpu, label: "Control Plane" },
-      { href: "/platform/secrets", icon: KeyRound, label: "Secrets" },
       { href: "/modules", icon: Package, label: "Modules" },
     ],
   },
