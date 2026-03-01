@@ -266,10 +266,13 @@ subdomains:
     target: cname.vercel-dns.com
     health_check: /api/health
     owner_system: "OdooOps Console (Next.js on Vercel)"
-    cloudflare_proxied: true
+    cloudflare_proxied: false   # DNS-only required for Vercel CNAME
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    # verification_txt: only required if Vercel prompts for _vercel.ops TXT.
+    # Run scripts/vercel/claim_domain.sh to get the token; it will print the SSOT snippet.
+    # Domain verified 2026-03-01 — no outstanding TXT required.
     provider_claim:
       provider: vercel
       status: claimed
