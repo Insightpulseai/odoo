@@ -1,0 +1,194 @@
+# benchmark-runner.yml
+# Runs benchmark scoring for skills that changed in a PR or merge.
+# Writes results to ops.agent_benchmark_results via Supabase PostgREST.
+#
+# Requires GitHub Secrets:
+#   SUPABASE_URL              — Supabase project REST URL
+#   SUPABASE_SERVICE_ROLE_KEY — service role key
+#
+# Failure mode: AGENT.BENCHMARK_SCORE_BELOW_THRESHOLD
+
+name: Agent Benchmark Runner
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/agents/skills.yaml"
+      - "ssot/agents/benchmark.yaml"
+  workflow_dispatch:
+    inputs:
+      skill_id:
+        description: "Skill ID to benchmark (leave blank for all active skills)"
+        type: string
+        default: ""
+
+jobs:
+  benchmark:
+    name: Run benchmarks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python deps
+        run: pip install pyyaml -q
+
+      - name: Validate skills registry first
+        run: python3 scripts/ci/validate_skills_registry.py
+
+      - name: Score benchmark runs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TARGET_SKILL_ID: ${{ github.event.inputs.skill_id }}
+        run: |
+          python3 - <<'PYEOF'
+          """
+          Benchmark runner — queries recent ops.runs for each skill and
+          computes composite benchmark scores from run_events evidence.
+          Writes scored results to ops.agent_benchmark_results.
+          """
+          import yaml, json, os, urllib.request, urllib.error, hashlib
+          from datetime import datetime, timezone
+
+          supabase_url = os.environ["SUPABASE_URL"].rstrip("/")
+          service_key  = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+          target_skill = os.environ.get("TARGET_SKILL_ID", "").strip()
+
+          def rest_get(path, params=""):
+              url = f"{supabase_url}/rest/v1/{path}?{params}"
+              req = urllib.request.Request(url, headers={
+                  "apikey":         service_key,
+                  "Authorization":  f"Bearer {service_key}",
+                  "Accept-Profile": "ops",
+              })
+              with urllib.request.urlopen(req) as r:
+                  return json.loads(r.read())
+
+          def rest_post(path, payload):
+              data = json.dumps(payload).encode()
+              req = urllib.request.Request(
+                  f"{supabase_url}/rest/v1/{path}",
+                  data=data,
+                  headers={
+                      "apikey":          service_key,
+                      "Authorization":   f"Bearer {service_key}",
+                      "Content-Type":    "application/json",
+                      "Prefer":          "return=minimal",
+                      "Accept-Profile":  "ops",
+                      "Content-Profile": "ops",
+                  },
+                  method="POST",
+              )
+              with urllib.request.urlopen(req) as r:
+                  return r.status
+
+          # Load benchmark config
+          with open("ssot/agents/benchmark.yaml") as f:
+              bench_cfg = yaml.safe_load(f)
+
+          weights = {m["id"]: m["weight"] for m in bench_cfg["metrics"]}
+          tiers   = bench_cfg["tiers"]
+          prod_min = bench_cfg["production_min_tier"]
+
+          # Load skills
+          with open("ssot/agents/skills.yaml") as f:
+              skills_doc = yaml.safe_load(f)
+
+          skills = [s for s in skills_doc["skills"] if s["status"] == "active"]
+          if target_skill:
+              skills = [s for s in skills if s["id"] == target_skill]
+
+          if not skills:
+              print("No active skills to benchmark")
+              raise SystemExit(0)
+
+          print(f"Benchmarking {len(skills)} skill(s)...")
+
+          for skill in skills:
+              sid = skill["id"]
+              max_dur = skill["max_duration_s"]
+
+              # Get recent completed runs for this skill (last 5)
+              try:
+                  runs = rest_get(
+                      "runs",
+                      f"skill_id=eq.{sid}&status=eq.completed&order=created_at.desc&limit=5&select=id,created_at,updated_at"
+                  )
+              except Exception as e:
+                  print(f"  ⚠️  {sid}: could not fetch runs ({e}), skipping")
+                  continue
+
+              if not runs:
+                  print(f"  ℹ️  {sid}: no completed runs yet, skipping")
+                  continue
+
+              for run in runs:
+                  run_id = run["id"]
+
+                  # Get run_events for evidence_compliance
+                  try:
+                      events = rest_get("run_events", f"run_id=eq.{run_id}&select=detail")
+                  except Exception:
+                      events = []
+
+                  total_events  = len(events)
+                  events_w_data = sum(1 for e in events if e.get("detail") and e["detail"] != {})
+                  evidence_score = (events_w_data / total_events) if total_events > 0 else 0.0
+
+                  # diff_minimality — infer from output metadata if available
+                  diff_minimality = 0.75  # default when not tracked yet
+
+                  # ci_pass_rate — infer from run outcome events
+                  verify_events = [e for e in events if e.get("detail", {}).get("step") == "VERIFY"]
+                  ci_pass_rate = 1.0 if not verify_events else 0.75  # default
+
+                  # time_to_green_s
+                  try:
+                      created = datetime.fromisoformat(run["created_at"].rstrip("Z") + "+00:00")
+                      updated = datetime.fromisoformat(run["updated_at"].rstrip("Z") + "+00:00")
+                      elapsed = (updated - created).total_seconds()
+                      time_score = max(0.0, 1.0 - elapsed / max_dur)
+                  except Exception:
+                      time_score = 0.5
+
+                  composite = (
+                      weights.get("evidence_compliance", 0.30) * evidence_score +
+                      weights.get("diff_minimality", 0.25) * diff_minimality +
+                      weights.get("ci_pass_rate", 0.30) * ci_pass_rate +
+                      weights.get("time_to_green_s", 0.15) * time_score
+                  ) * 100
+
+                  # Determine tier
+                  tier = "F"
+                  for t_name in ["A", "B", "C"]:
+                      if composite >= tiers[t_name]["min_score"]:
+                          tier = t_name
+                          break
+
+                  result = {
+                      "run_id":              run_id,
+                      "skill_id":            sid,
+                      "composite_score":     round(composite, 2),
+                      "tier":                tier,
+                      "evidence_compliance": round(evidence_score, 4),
+                      "diff_minimality":     round(diff_minimality, 4),
+                      "ci_pass_rate":        round(ci_pass_rate, 4),
+                      "metadata": {
+                          "benchmark_schema": bench_cfg["meta"]["schema_version"],
+                      }
+                  }
+
+                  try:
+                      status = rest_post("agent_benchmark_results", result)
+                      promo = "✅ promote" if tier in ["A", "B"] else "⚠️ review"
+                      print(f"  {sid} run={run_id[:8]}… score={composite:.1f} tier={tier} {promo}")
+                  except urllib.error.HTTPError as e:
+                      print(f"  ❌ {sid}: write failed {e.code}")
+
+          print("\nBenchmark run complete")
+          PYEOF

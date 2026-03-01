@@ -1,0 +1,58 @@
+# skills-registry-gate.yml
+# Blocks PRs that introduce invalid ssot/agents/skills.yaml entries.
+# Runs on all PRs that touch ssot/agents/ or any file that might reference skill IDs.
+#
+# Failure mode: CI.SKILLS_REGISTRY_INVALID
+# Runbook:      docs/runbooks/failures/CI.SKILLS_REGISTRY_INVALID.md
+
+name: Skills Registry Gate
+
+on:
+  pull_request:
+    paths:
+      - "ssot/agents/skills.yaml"
+      - "ssot/agents/benchmark.yaml"
+      - "supabase/functions/**"
+      - "scripts/ci/validate_skills_registry.py"
+
+jobs:
+  validate:
+    name: Validate skills registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # for PR comment on failure
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pyyaml
+        run: pip install pyyaml -q
+
+      - name: Validate skills registry
+        id: validate
+        run: python3 scripts/ci/validate_skills_registry.py
+
+      - name: Comment on PR if validation fails
+        if: failure() && steps.validate.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: [
+                '## ❌ CI.SKILLS_REGISTRY_INVALID',
+                '',
+                '`ssot/agents/skills.yaml` failed schema validation.',
+                '',
+                'Run locally to see errors:',
+                '```bash',
+                'pip install pyyaml',
+                'python3 scripts/ci/validate_skills_registry.py',
+                '```',
+                '',
+                'See runbook: `docs/runbooks/failures/CI.SKILLS_REGISTRY_INVALID.md`',
+              ].join('\n')
+            })
