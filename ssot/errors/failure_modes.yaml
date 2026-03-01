@@ -104,3 +104,13 @@ failure_modes:
     convergence_finding:
       kind: dns_placeholder
       target: "email.mg.insightpulseai.com"
+
+  - code: CI.GITHUB_MANIFEST_DRIFT
+    category: ci
+    severity: high
+    description: "ssot/github/app-manifest.yaml is out of sync with the secrets registry or PRD event list"
+    root_cause: "manifest.webhook.secret_ref references an unregistered secret, or subscribed events diverged from spec/github-integrations/prd.md"
+    fix:
+      automated: false
+      runbook: docs/runbooks/GITHUB_APP_PROVISIONING.md
+    ci_behavior: blocking

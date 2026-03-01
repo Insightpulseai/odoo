@@ -10,12 +10,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// GitHub App configuration
-const GITHUB_APP_ID = Deno.env.get('GITHUB_APP_ID') || '2191216'
+// GitHub App configuration (ssot/github/app-manifest.yaml)
+// app_id and client_id are non-secrets; env vars allow override without code change.
+const GITHUB_APP_ID    = Deno.env.get('GITHUB_APP_ID')    || '2191216'
 const GITHUB_CLIENT_ID = Deno.env.get('GITHUB_CLIENT_ID') || 'Iv23liwGL7fnYySPPAjS'
 const GITHUB_CLIENT_SECRET = Deno.env.get('GITHUB_CLIENT_SECRET')!
-const GITHUB_PRIVATE_KEY = Deno.env.get('GITHUB_PRIVATE_KEY')!
+const GITHUB_PRIVATE_KEY   = Deno.env.get('GITHUB_PRIVATE_KEY')!
 const CALLBACK_URL = Deno.env.get('GITHUB_CALLBACK_URL') || 'https://mcp.insightpulseai.com/callback'
+
+// ── JWT issuer selection ───────────────────────────────────────────────────────
+// GitHub now accepts client_id as JWT iss (recommended; numeric app_id still works).
+// https://github.blog/changelog/2024-05-01-github-apps-can-now-use-the-client-id-to-fetch-installation-tokens
+// Prefer client_id; fall back to app_id for environments where only app_id is set.
+const JWT_ISSUER = GITHUB_CLIENT_ID || GITHUB_APP_ID
+
+// ── Shared JWT minting helper ─────────────────────────────────────────────────
+// Single implementation — used by generateAppJWT() and handleInstallationToken().
+async function mintAppJWT(): Promise<string> {
+  const privateKey = await importPKCS8(GITHUB_PRIVATE_KEY, 'RS256')
+  const now = Math.floor(Date.now() / 1000)
+  return new SignJWT({})
+    .setProtectedHeader({ alg: 'RS256' })
+    .setIssuedAt(now - 60)          // 60 s in the past for clock-drift tolerance
+    .setExpirationTime(now + 600)   // 10-minute max (GitHub limit)
+    .setIssuer(JWT_ISSUER)          // client_id preferred; app_id as fallback
+    .sign(privateKey)
+}
 
 interface InstallationToken {
   token: string
@@ -212,18 +232,14 @@ async function handleWebhook(req: Request) {
 
 // Generate JWT for GitHub App authentication
 async function generateAppJWT(): Promise<Response> {
-  const privateKey = await importPKCS8(GITHUB_PRIVATE_KEY, 'RS256')
-
+  const jwt = await mintAppJWT()
   const now = Math.floor(Date.now() / 1000)
-  const jwt = await new SignJWT({})
-    .setProtectedHeader({ alg: 'RS256' })
-    .setIssuedAt(now - 60) // 60 seconds in the past for clock drift
-    .setExpirationTime(now + 600) // 10 minutes max
-    .setIssuer(GITHUB_APP_ID)
-    .sign(privateKey)
-
   return new Response(
-    JSON.stringify({ jwt, expires_at: new Date((now + 600) * 1000).toISOString() }),
+    JSON.stringify({
+      jwt,
+      iss: JWT_ISSUER,
+      expires_at: new Date((now + 600) * 1000).toISOString(),
+    }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   )
 }
@@ -240,15 +256,8 @@ async function handleInstallationToken(req: Request): Promise<Response> {
     )
   }
 
-  // Generate JWT first
-  const privateKey = await importPKCS8(GITHUB_PRIVATE_KEY, 'RS256')
-  const now = Math.floor(Date.now() / 1000)
-  const jwt = await new SignJWT({})
-    .setProtectedHeader({ alg: 'RS256' })
-    .setIssuedAt(now - 60)
-    .setExpirationTime(now + 600)
-    .setIssuer(GITHUB_APP_ID)
-    .sign(privateKey)
+  // Generate JWT using shared helper (iss = client_id preferred)
+  const jwt = await mintAppJWT()
 
   // Get installation token
   const response = await fetch(
