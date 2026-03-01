@@ -1,0 +1,54 @@
+# main-direct-push-guard.yml
+# Detects direct pushes to main (commits without an associated PR).
+# Direct pushes bypass the PR review process and should be prevented.
+#
+# This workflow is a DETECTIVE control (not preventive) — it fires after
+# the push has landed and alerts via the check status. Combined with the
+# GitHub repository ruleset (required_pull_request_reviews), direct
+# pushes are blocked at the GitHub layer before this workflow runs.
+#
+# Failure mode reference: CI.DIRECT_PUSH_TO_MAIN
+name: Main Direct Push Guard
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect-direct-push:
+    name: Detect direct push to main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if push is a PR merge
+        id: check
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Commit message: $COMMIT_MESSAGE"
+          echo "Pusher: ${{ github.event.pusher.name }}"
+
+          # PR merges have commit messages starting with "Merge pull request"
+          # Squash merges have "(#NNN)" in message
+          # Direct commits have neither pattern
+          if echo "$COMMIT_MESSAGE" | grep -qE "^Merge pull request #|^.+\(#[0-9]+\)"; then
+            echo "is_pr_merge=true" >> $GITHUB_OUTPUT
+            echo "✅ This push is a PR merge. Allowed."
+          else
+            echo "is_pr_merge=false" >> $GITHUB_OUTPUT
+            echo "::error::Direct push to main detected! Commit ${{ github.sha }} was pushed directly without a PR."
+            echo "::error::All changes must go through a pull request. Use: git checkout -b feat/your-branch && git push && gh pr create"
+            echo "::error::Failure mode: CI.DIRECT_PUSH_TO_MAIN"
+          fi
+
+      - name: Block direct push
+        if: steps.check.outputs.is_pr_merge == 'false'
+        run: |
+          echo "BLOCKED: Direct push to main is not allowed."
+          echo "To fix:"
+          echo "  1. git checkout -b fix/revert-direct-push"
+          echo "  2. git revert HEAD  (if the commit should be undone)"
+          echo "  3. gh pr create && gh pr merge"
+          exit 1
