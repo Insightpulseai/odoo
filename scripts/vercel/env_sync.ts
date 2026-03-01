@@ -29,6 +29,7 @@ if (!VERCEL_TOKEN) {
 }
 
 // Required env vars per docs/architecture/VERCEL_CONTROL_PLANE_DEPLOYMENT.md
+// and ssot/secrets/registry.yaml
 const ENV_VAR_SPEC: Record<string, { type: 'plain' | 'secret'; target: VercelEnvVar['target'] }> = {
   'NEXT_PUBLIC_SUPABASE_URL': { type: 'plain', target: ['production', 'preview', 'development'] },
   'NEXT_PUBLIC_SUPABASE_ANON_KEY': { type: 'plain', target: ['production', 'preview', 'development'] },
@@ -37,7 +38,12 @@ const ENV_VAR_SPEC: Record<string, { type: 'plain' | 'secret'; target: VercelEnv
   'GITHUB_TOKEN': { type: 'secret', target: ['production', 'preview'] },
   'ALLOWED_PROJECT_REFS': { type: 'plain', target: ['production', 'preview'] },
   'N8N_WEBHOOK_BACKUP_URL': { type: 'plain', target: ['production', 'preview'] },
-  'OPENAI_API_KEY': { type: 'secret', target: ['production', 'preview'] }
+  'OPENAI_API_KEY': { type: 'secret', target: ['production', 'preview'] },
+  // CRON_SECRET: Vercel injects this as Bearer token on scheduled cron invocations.
+  // Required by: apps/ops-console/app/api/cron/tick/route.ts
+  //              apps/ops-console/app/api/cron/advisor-nightly/route.ts
+  // SSOT: ssot/secrets/registry.yaml → cron_secret
+  'CRON_SECRET': { type: 'secret', target: ['production', 'preview'] },
 };
 
 async function getVercelProjectId(projectName: string): Promise<string> {
