@@ -58,10 +58,36 @@ feat|fix|refactor|docs|test|chore(scope): description
 
 Scopes: `oca`, `repo`, `ci`, `deps`, `deploy`, `ssot`, `advisor`, `devex`
 
+## PR Atomicity (enforced by Vercel Agent review)
+
+One PR = one logical unit. Flag (do not merge) any PR that mixes:
+
+| Mixed in same PR | Why it's banned |
+|-----------------|-----------------|
+| SQL migrations + Edge Functions | Merge order dependency; migrations must land first |
+| SSOT YAML + runtime code (`.ts`, `.py`) | SSOT files are policy; runtime is implementation |
+| Odoo modules + Supabase migrations | Different deployment surfaces |
+| Multiple unrelated feature domains | Contaminates git history and makes rollback harder |
+
+Cross-branch contamination check: if a PR's file set spans more than one of
+`supabase/migrations/`, `supabase/functions/`, `apps/`, `addons/`, `ssot/` —
+it is likely contaminated and must be split before merge.
+
+## Vercel Agent PR Review (advisory signals)
+
+When `@vercel` suggestions appear in PR comments:
+- Apply **only** sandbox-validated suggestions (Vercel suppresses ones that fail builds).
+- Suggestions that modify files in `ssot/` must be **rejected** — SSOT is human/CI-only.
+- Suggestions that introduce inline secrets must be **rejected** — use Vault refs.
+- Log acted-upon suggestions into `ops.run_events` for audit trail.
+- On-demand invocation: `@vercel run a review`, `@vercel fix the type errors`.
+- Advisory only: Vercel Agent is not authoritative; CI gates are the source of truth.
+
 ## What "Done" Means
 
 A task is complete only when:
 - SSOT validators pass (`python scripts/ci/check_repo_structure.py`)
 - Tests/linters pass
 - PR exists with evidence attached
+- PR contains exactly one logical unit (atomicity check above)
 - No residual `TODO` left in production code paths
