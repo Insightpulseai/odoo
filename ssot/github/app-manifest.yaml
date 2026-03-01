@@ -1,0 +1,45 @@
+# ssot/github/app-manifest.yaml
+# Declared intent for the pulser-hub GitHub App.
+# Permissions and subscribed events here must match the live App settings.
+#
+# Spec: spec/github-integrations/prd.md §FR-5
+# App:  https://github.com/settings/apps/pulser-hub (org: Insightpulseai)
+# Last verified: 2026-03-02
+
+name: pulser-hub
+description: >
+  InsightPulse AI automation identity. Used by FixBot, ops-console webhook
+  ingestion, PPM rollups, and agent PR creation. All automation flows use
+  installation tokens derived from this App — never PATs.
+
+# ── Permissions ──────────────────────────────────────────────────────────────
+# Level: read | write (read+write) | none
+permissions:
+  issues: write          # issue sync, comment posting (FR-3)
+  pull_requests: write   # agent PR creation, merge status (FR-3)
+  checks: write          # check_run evidence for VERIFY step (FR-3)
+  contents: read         # push events, diff analysis (FR-3)
+  metadata: read         # required by all GitHub Apps
+  repository_hooks: write  # webhook management
+
+# ── Subscribed Events ─────────────────────────────────────────────────────────
+events:
+  - issues
+  - pull_request
+  - check_run
+  - check_suite
+  - push
+  - installation
+
+# ── Webhook ──────────────────────────────────────────────────────────────────
+webhook:
+  url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
+  active: true
+  secret_ref: github_app_webhook_secret   # ssot/secrets/registry.yaml key
+
+# ── Installation Scope ────────────────────────────────────────────────────────
+installation:
+  type: org                   # installed on Insightpulseai org
+  target_org: Insightpulseai
+  repos:
+    - odoo                    # primary automation target
