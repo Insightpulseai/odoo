@@ -1,6 +1,7 @@
 // ops-github-webhook-ingest
-// Receives inbound GitHub App webhook events, verifies HMAC-SHA256 signature,
-// normalizes the payload, and stores it in ops.webhook_events.
+// Receives inbound GitHub App webhook events from multiple apps, verifies HMAC-SHA256
+// signatures, normalizes the payload, stores in ops.webhook_events, and fans out to
+// downstream handlers (n8n forwarding, plane-github-sync).
 //
 // Schema: ops.webhook_events (20260223000004 + 20260302000050)
 //
@@ -8,10 +9,15 @@
 // Signature failures: logged + HTTP 401; payload is NOT stored.
 // Unhandled events: stored with status='unhandled' + reason='unknown_event'.
 //
-// Supported events (spec/github-integrations/prd.md §FR-3):
-//   issues, pull_request, check_run, check_suite, push, installation
+// Multi-app routing (ssot/github/apps.yaml):
+//   pulser-hub       → GITHUB_APP_WEBHOOK_SECRET        → store only
+//   ipai-n8n         → GITHUB_APP_WEBHOOK_SECRET_N8N    → store + forward to n8n
+//   ipai-plane-bridge→ GITHUB_APP_WEBHOOK_SECRET_PLANE  → store + invoke plane-github-sync
 //
-// Failure mode: none (fail-open for storage errors; 401 only on bad sig)
+// Supported events (spec/github-integrations/prd.md §FR-3):
+//   issues, pull_request, check_run, check_suite, push, installation, issue_comment
+//
+// Failure mode: fail-open for storage errors; 401 only on bad sig
 // Runbook: docs/runbooks/GITHUB_APP_PROVISIONING.md
 // Spec:    spec/github-integrations/prd.md
 
@@ -19,8 +25,18 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SUPABASE_URL     = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-// App-level webhook secret (ssot/secrets/registry.yaml: github_app_webhook_secret)
-const WEBHOOK_SECRET   = Deno.env.get("GITHUB_APP_WEBHOOK_SECRET") ?? "";
+
+// ── Multi-app webhook secrets (ssot/secrets/registry.yaml) ───────────────────
+// Each entry maps source_app identifier → env var name for its webhook secret.
+const APP_SECRETS: Array<{ source_app: string; env_var: string }> = [
+  { source_app: "pulser-hub",        env_var: "GITHUB_APP_WEBHOOK_SECRET" },
+  { source_app: "ipai-n8n",          env_var: "GITHUB_APP_WEBHOOK_SECRET_N8N" },
+  { source_app: "ipai-plane-bridge", env_var: "GITHUB_APP_WEBHOOK_SECRET_PLANE" },
+];
+
+// ── Downstream routing ────────────────────────────────────────────────────────
+// n8n forward URL — set via Supabase secret N8N_WEBHOOK_GITHUB_URL
+const N8N_WEBHOOK_URL  = Deno.env.get("N8N_WEBHOOK_GITHUB_URL") ?? "";
 
 // Max raw payload we will process (10 MB). Beyond this we store a stub + reason.
 const MAX_PAYLOAD_BYTES = 10 * 1024 * 1024;
@@ -32,6 +48,7 @@ const SUPPORTED_EVENTS = new Set([
   "check_suite",
   "push",
   "installation",
+  "issue_comment",   // added for n8n and Plane bridge
 ]);
 
 // ── Constant-time HMAC-SHA256 signature verification ─────────────────────────
@@ -218,14 +235,31 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  // ── Signature verification ─────────────────────────────────────────────────
+  // ── Multi-app signature verification ──────────────────────────────────────
+  // Try each registered app's webhook secret in order. The first match wins and
+  // identifies which GitHub App sent this delivery.
   let signatureValid = false;
-  if (WEBHOOK_SECRET) {
-    signatureValid = await verifySignature(rawBody, sigHeader, WEBHOOK_SECRET);
+  let sourceApp = "unknown";
+
+  const provisioned = APP_SECRETS.filter(({ env_var }) => !!Deno.env.get(env_var));
+
+  if (provisioned.length === 0) {
+    // No secrets provisioned — log warning, allow (initial setup / ping test)
+    console.warn(
+      `ops-github-webhook-ingest: no webhook secrets set — skipping sig check delivery=${deliveryId}`,
+    );
+  } else {
+    for (const { source_app, env_var } of provisioned) {
+      const secret = Deno.env.get(env_var)!;
+      if (await verifySignature(rawBody, sigHeader, secret)) {
+        signatureValid = true;
+        sourceApp = source_app;
+        break;
+      }
+    }
     if (!signatureValid) {
-      // Do NOT store rejected payloads — log only
       console.error(
-        `ops-github-webhook-ingest: invalid signature delivery=${deliveryId} event=${eventType}`,
+        `ops-github-webhook-ingest: invalid signature delivery=${deliveryId} event=${eventType} tried=${provisioned.map(a => a.source_app).join(",")}`,
       );
       return new Response(
         JSON.stringify({
@@ -236,12 +270,6 @@ Deno.serve(async (req: Request) => {
         { status: 401, headers: { "Content-Type": "application/json" } },
       );
     }
-  } else {
-    // Secret not provisioned — log warning but allow (initial setup / ping test)
-    console.warn(
-      `ops-github-webhook-ingest: GITHUB_APP_WEBHOOK_SECRET not set — skipping sig check delivery=${deliveryId}`,
-    );
-    signatureValid = false;   // record the fact that sig was not checked
   }
 
   // ── Parse payload ──────────────────────────────────────────────────────────
@@ -290,6 +318,7 @@ Deno.serve(async (req: Request) => {
 
   const row = {
     integration:     "github",
+    source_app:      sourceApp,    // ipai-n8n | ipai-plane-bridge | pulser-hub | unknown
     event_type:      norm.event_type,
     idempotency_key: deliveryId,   // existing unique index: (integration, idempotency_key)
     delivery_id:     deliveryId,   // new column with dedicated unique index
@@ -321,11 +350,49 @@ Deno.serve(async (req: Request) => {
     );
   }
 
+  // ── Fan-out: route to downstream handlers ─────────────────────────────────
+  // Fire-and-forget — errors are logged but do NOT affect the 200 response.
+  // Stored event in ops.webhook_events is the durable record regardless of fan-out.
+
+  if (sourceApp === "ipai-n8n" && N8N_WEBHOOK_URL) {
+    // Forward full payload to n8n (n8n workflows pick up from here)
+    fetch(N8N_WEBHOOK_URL, {
+      method:  "POST",
+      headers: {
+        "Content-Type":     "application/json",
+        "X-GitHub-Event":   eventType,
+        "X-GitHub-Delivery": deliveryId,
+        "X-Source-App":     sourceApp,
+      },
+      body: new TextDecoder().decode(rawBody),
+    }).catch((e) =>
+      console.error(`ops-github-webhook-ingest: n8n forward failed delivery=${deliveryId}`, e),
+    );
+  }
+
+  if (sourceApp === "ipai-plane-bridge") {
+    // Invoke plane-github-sync Edge Function (same Supabase project — internal call)
+    const planeFnUrl = `${SUPABASE_URL}/functions/v1/plane-github-sync`;
+    fetch(planeFnUrl, {
+      method:  "POST",
+      headers: {
+        "Content-Type":     "application/json",
+        "Authorization":    `Bearer ${SERVICE_ROLE_KEY}`,
+        "X-GitHub-Event":   eventType,
+        "X-GitHub-Delivery": deliveryId,
+      },
+      body: new TextDecoder().decode(rawBody),
+    }).catch((e) =>
+      console.error(`ops-github-webhook-ingest: plane-github-sync invoke failed delivery=${deliveryId}`, e),
+    );
+  }
+
   return new Response(
     JSON.stringify({
       ok:          true,
       delivery_id: deliveryId,
       event_type:  norm.event_type,
+      source_app:  sourceApp,
       action:      common.action,
       status:      norm.status,
       ...(norm.reason ? { reason: norm.reason } : {}),

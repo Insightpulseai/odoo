@@ -1,0 +1,112 @@
+name: GitHub Apps SSOT Guard
+
+# Validates that:
+#   1. Every app in ssot/github/apps.yaml has a matching manifest in infra/github/apps/*/
+#   2. Webhook URLs in the manifest match the urls declared in apps.yaml
+#   3. Every secret_ref in apps.yaml exists in ssot/secrets/registry.yaml
+#   4. ops-github-webhook-ingest references env vars for each app in apps.yaml
+#
+# Does NOT create or update GitHub Apps (that is a one-time manual step).
+
+on:
+  pull_request:
+    paths:
+      - "ssot/github/apps.yaml"
+      - "ssot/github/app-manifest.yaml"
+      - "infra/github/apps/**"
+      - "ssot/secrets/registry.yaml"
+      - "supabase/functions/ops-github-webhook-ingest/**"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/github/apps.yaml"
+      - "infra/github/apps/**"
+
+jobs:
+  guard:
+    name: SSOT consistency check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Check — every app has a manifest.json
+        run: |
+          set -euo pipefail
+          FAIL=0
+          APP_IDS=$(yq '.apps[].id' ssot/github/apps.yaml)
+          for app_id in $APP_IDS; do
+            manifest="infra/github/apps/${app_id}/manifest.json"
+            if [[ ! -f "$manifest" ]]; then
+              echo "❌ MISSING manifest: $manifest (app: $app_id)"
+              FAIL=1
+            else
+              echo "✅ $manifest"
+            fi
+          done
+          exit $FAIL
+
+      - name: Check — manifest webhook URLs match SSOT
+        run: |
+          set -euo pipefail
+          FAIL=0
+          APP_COUNT=$(yq '.apps | length' ssot/github/apps.yaml)
+          for i in $(seq 0 $((APP_COUNT - 1))); do
+            app_id=$(yq ".apps[$i].id" ssot/github/apps.yaml)
+            ssot_url=$(yq ".apps[$i].webhook.url" ssot/github/apps.yaml)
+            manifest="infra/github/apps/${app_id}/manifest.json"
+            [[ -f "$manifest" ]] || continue
+            manifest_url=$(python3 -c "import json,sys; d=json.load(open('$manifest')); print(d.get('hook_attributes',{}).get('url',''))")
+            if [[ "$ssot_url" != "$manifest_url" ]]; then
+              echo "❌ Webhook URL mismatch for $app_id"
+              echo "   SSOT:     $ssot_url"
+              echo "   manifest: $manifest_url"
+              FAIL=1
+            else
+              echo "✅ $app_id webhook URL consistent"
+            fi
+          done
+          exit $FAIL
+
+      - name: Check — all secret_refs exist in registry.yaml
+        run: |
+          set -euo pipefail
+          FAIL=0
+          REFS=$(yq '.apps[].secrets[]' ssot/github/apps.yaml 2>/dev/null || true)
+          for ref in $REFS; do
+            if ! grep -q "^  ${ref}:" ssot/secrets/registry.yaml; then
+              echo "❌ secret_ref '${ref}' not found in ssot/secrets/registry.yaml"
+              FAIL=1
+            else
+              echo "✅ secret_ref '${ref}' registered"
+            fi
+          done
+          exit $FAIL
+
+      - name: Check — ingest function references env vars for all apps
+        run: |
+          set -euo pipefail
+          FAIL=0
+          INGEST="supabase/functions/ops-github-webhook-ingest/index.ts"
+          APP_IDS=$(yq '.apps[].id' ssot/github/apps.yaml)
+          for app_id in $APP_IDS; do
+            # Derive expected env var name: ipai-n8n → GITHUB_APP_WEBHOOK_SECRET_N8N
+            suffix=$(echo "$app_id" | sed 's/^ipai-//' | tr '[:lower:]-' '[:upper:]_')
+            env_var="GITHUB_APP_WEBHOOK_SECRET_${suffix}"
+            # pulser-hub is the legacy var name; handled separately
+            if [[ "$app_id" == "pulser-hub" ]]; then
+              env_var="GITHUB_APP_WEBHOOK_SECRET"
+            fi
+            if ! grep -q "$env_var" "$INGEST"; then
+              echo "❌ $INGEST does not reference $env_var (for app: $app_id)"
+              FAIL=1
+            else
+              echo "✅ $INGEST references $env_var"
+            fi
+          done
+          exit $FAIL
