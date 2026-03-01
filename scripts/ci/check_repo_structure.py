@@ -45,7 +45,7 @@ ENTERPRISE_MODULE_PREFIXES = (
     "industry_fsm",
     "l10n_",  # many EE l10n modules
     "lunch",
-    "maintenance",
+    # NOTE: 'maintenance' is Odoo CE (equipment/maintenance module) — not EE-only
     "marketing_automation",
     "mrp_plm",
     "mrp_workcenter",
@@ -248,6 +248,28 @@ def check_no_enterprise_deps_in_ipai_modules(repo_root: Path) -> bool:
 # ---------------------------------------------------------------------------
 # Check 4: Only one Odoo server root at repo root (canonical: odoo19/)
 # ---------------------------------------------------------------------------
+_ODOO_SERVER_MARKERS = (
+    "odoo-bin",            # Odoo 10+ server binary
+    "openerp-server",      # Odoo 8/9 server binary
+    "setup.py",            # source install marker (odoo/setup.py exists)
+)
+
+
+def _is_odoo_server_dir(path: Path) -> bool:
+    """Return True only if path looks like an actual Odoo/OpenERP server installation.
+
+    A plain config or docs directory named 'odoo/' at repo root is NOT a server.
+    We require at least one well-known server marker file to be present.
+    """
+    for marker in _ODOO_SERVER_MARKERS:
+        if (path / marker).exists():
+            return True
+    # Also match if it contains an odoo/ Python package (source checkout)
+    if (path / "odoo" / "__init__.py").exists():
+        return True
+    return False
+
+
 def check_single_odoo_root(repo_root: Path) -> bool:
     """Check 4: Only one Odoo server root at repo root level (canonical name: odoo19/)."""
     found_forbidden: List[str] = []
@@ -255,20 +277,20 @@ def check_single_odoo_root(repo_root: Path) -> bool:
 
     for name in FORBIDDEN_ODOO_ROOTS:
         candidate = repo_root / name
-        if candidate.exists() and candidate.is_dir():
+        if candidate.exists() and candidate.is_dir() and _is_odoo_server_dir(candidate):
             found_forbidden.append(name)
 
     ok = len(found_forbidden) == 0
     if found_forbidden:
         detail = (
-            f"forbidden Odoo root(s) found: {', '.join(found_forbidden)} "
+            f"forbidden Odoo server root(s) found: {', '.join(found_forbidden)} "
             f"(canonical is '{CANONICAL_ODOO_ROOT}/')"
         )
     elif canonical_exists:
-        detail = f"canonical '{CANONICAL_ODOO_ROOT}/' exists, no forbidden roots"
+        detail = f"canonical '{CANONICAL_ODOO_ROOT}/' exists, no forbidden server roots"
     else:
         # Neither canonical nor forbidden: fine (odoo19/ might not be checked out)
-        detail = f"'{CANONICAL_ODOO_ROOT}/' not present, no forbidden roots either"
+        detail = f"'{CANONICAL_ODOO_ROOT}/' not present, no forbidden server roots either"
 
     return result("check4", f"only '{CANONICAL_ODOO_ROOT}/' as Odoo server root", ok, detail)
 
