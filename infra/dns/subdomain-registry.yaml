@@ -278,6 +278,17 @@ subdomains:
       status: unclaimed
       expires_at: "2026-03-15"
 
+  - name: console
+    description: "Ops Console — Next.js app on Vercel (Supabase-backed)"
+    type: CNAME
+    target: cname.vercel-dns.com
+    proxied: false
+    lifecycle: planned
+    provider_claim:
+      provider: vercel
+      status: unclaimed
+      expires_at: "2026-06-01"
+
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
   # ---------------------------------------------------------------------------
