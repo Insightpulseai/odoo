@@ -105,3 +105,33 @@ integrations:
     status: planned
     category: ai_interaction_plane
     vendor: microsoft
+
+  # ---------------------------------------------------------------------------
+  # Plane.so marketplace integrations (SSOT-governed SoW plugins)
+  # Tier 0: plane_mcp (already registered above)
+  # Tier 1: github_sync, slack_intake, sentry_sync
+  # Parent registry: ssot/integrations/plane.yaml
+  # ---------------------------------------------------------------------------
+  - id: plane
+    file: ssot/integrations/plane.yaml
+    status: planned
+    category: sow
+    vendor: plane
+
+  - id: plane_github_sync
+    file: ssot/integrations/plane_github_sync.yaml
+    status: planned
+    category: integration
+    vendor: plane
+
+  - id: plane_slack_intake
+    file: ssot/integrations/plane_slack_intake.yaml
+    status: planned
+    category: intake
+    vendor: plane
+
+  - id: plane_sentry_sync
+    file: ssot/integrations/plane_sentry_sync.yaml
+    status: planned
+    category: integration
+    vendor: plane
