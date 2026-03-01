@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["syd1"],
@@ -10,6 +10,10 @@
     {
       "path": "/api/cron/tick",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/advisor-nightly",
+      "schedule": "0 1 * * *"
     }
   ],
   "functions": {
@@ -24,6 +28,9 @@
     },
     "app/api/cron/tick/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/cron/advisor-nightly/route.ts": {
+      "maxDuration": 300
     },
     "app/api/queues/consume/route.ts": {
       "maxDuration": 60
