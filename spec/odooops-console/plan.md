@@ -189,3 +189,40 @@ Every automated operation outputs:
 - Run record in the relevant `ops.*` table
 - Linkable artifact (text/json) in Supabase Storage when appropriate
 - GitHub Actions run link for CI-derived signals
+
+---
+
+## Navigation Taxonomy (Vercel-style IA)
+
+Added 2026-03-01. Three top-level sections — **Use Cases**, **Tools**, **Users** — compose existing
+pages under `/app/use-cases/`, `/app/tools/`, and `/app/users/` route groups.
+
+### Use Cases
+
+| Route | Title | Surfaces (ops tables / pages) |
+|-------|-------|-------------------------------|
+| `/use-cases/ai-apps` | AI Apps | `ops.runs` (agent runs), `ops.ai_models` (AI providers), `ops.advisor_findings` (artifacts) |
+| `/use-cases/marketing-sites` | Marketing Sites | `ops.deployments` (Vercel deploys), `ops.do_droplets` (domains), `ops.convergence_findings` (edge/DNS drift) |
+| `/use-cases/multi-tenant-platforms` | Multi-Tenant Platforms | `ops.do_databases` (Supabase environments), `ops.advisor_findings` (RLS audit), `ops.platform_events` (branch envs) |
+| `/use-cases/web-apps` | Web Apps | `ops.integrations_catalog` (integrations), `ops.platform_events` (monitoring), `ops.do_droplets` (metrics) |
+
+### Tools
+
+| Route | Title | Surfaces |
+|-------|-------|----------|
+| `/tools/integrations` | Integrations | Redirect → `/integrations` (alias only) |
+| `/tools/templates` | Templates | Spec kit bundles (`spec/`), runbook templates (`docs/ops/`), CI workflow templates |
+| `/tools/partner-finder` | Partner Finder | DIY guides, vendor alternatives, integration decision framework |
+
+### Users
+
+| Route | Title | Surfaces (ops tables / pages) |
+|-------|-------|-------------------------------|
+| `/users/platform-engineers` | Platform Engineers | `/environments`, `/deployments`, `/backups`, `ops.convergence_findings`, `ops.maintenance_runs` |
+| `/users/design-engineers` | Design Engineers | `ops.deployments` (preview URLs), `ops.builds` (build artifacts), `ops.runs` (FixBot fix-it loop) |
+
+### Sidebar Section
+
+A new **Explore** section was added to
+`apps/ops-console/components/navigation/sidebar.tsx` containing links to all Use Cases, Tools
+(excluding the redirect alias), and Users routes.
