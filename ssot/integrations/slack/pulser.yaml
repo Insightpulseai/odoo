@@ -1,0 +1,33 @@
+# Slack App: pulser — IPAI ops notifications and interactive actions
+# Non-secret metadata only. Secret values in Supabase Vault.
+
+app:
+  name: pulser
+  app_id: A0ABQ9BGYA3
+  client_id: "10217340964660.10398317576343"
+  created_at: "2026-01-31"
+
+transports:
+  socket_mode:
+    enabled: true
+    app_level_token:
+      ssot_secret_key: slack_app_token
+    required_scopes:
+      - connections:write
+      - authorizations:read
+      - app_configurations:write
+
+oauth:
+  enabled: true
+  client_id: "10217340964660.10398317576343"
+  client_secret:
+    ssot_secret_key: slack_client_secret
+  redirect_urls: []
+
+signing:
+  signing_secret:
+    ssot_secret_key: slack_signing_secret
+
+notes:
+  - "Verification Token is deprecated; do not use."
+  - "No authed users yet (installation pending)."

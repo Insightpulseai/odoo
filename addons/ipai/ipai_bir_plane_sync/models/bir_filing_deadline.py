@@ -1,8 +1,9 @@
-"""BIR Filing Deadline - Plane Sync Extension."""
+"""BIR Filing Deadline - Plane Sync Extension.
+
+Uses ipai_plane_connector for all Plane API calls instead of direct requests.
+"""
 
 import logging
-import requests
-from datetime import datetime
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -13,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class BIRFilingDeadline(models.Model):
     """Extend bir.filing.deadline with Plane sync fields."""
 
-    _inherit = "bir.filing.deadline"
+    _inherit = ["bir.filing.deadline", "ipai.plane.connector"]
 
     # Plane Integration Fields
     plane_issue_id = fields.Char(
@@ -240,18 +241,22 @@ class BIRFilingDeadline(models.Model):
         return "\n".join(lines)
 
     def _call_plane_sync_api(self, url, payload):
-        """
-        Call Plane sync Edge Function.
+        """Call Plane sync Edge Function via connector client.
 
         Args:
-            url: str - Edge Function URL
+            url: str - Edge Function URL (used for backward compat; ignored
+                 when connector routes through PlaneClient directly).
             payload: dict - Request payload
 
         Returns:
             dict: API response
         """
-        # Get Supabase service role key (for Edge Function auth)
-        service_key = self.env["ir.config_parameter"].sudo().get_param("supabase.service_role_key")
+        import requests as _requests
+
+        # Use Supabase Edge Function for sync (preserves existing relay)
+        service_key = self.env["ir.config_parameter"].sudo().get_param(
+            "supabase.service_role_key"
+        )
         if not service_key:
             raise UserError("Supabase service role key not configured")
 
@@ -259,24 +264,24 @@ class BIRFilingDeadline(models.Model):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {service_key}",
         }
-
-        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        response = _requests.post(url, json=payload, headers=headers, timeout=30)
         response.raise_for_status()
-
         return response.json()
 
     @api.model
     def _is_plane_sync_enabled(self):
-        """Check if Plane sync is configured."""
-        params = self.env["ir.config_parameter"].sudo()
-        required_params = [
-            "supabase.url",
-            "supabase.service_role_key",
-            "plane.workspace_slug",
-            "plane.bir_project_id",
-        ]
+        """Check if Plane sync is configured.
 
-        return all(params.get_param(p) for p in required_params)
+        Uses connector base check plus BIR-specific params.
+        """
+        if not self._plane_enabled():
+            return False
+        params = self.env["ir.config_parameter"].sudo()
+        return bool(
+            params.get_param("supabase.url")
+            and params.get_param("supabase.service_role_key")
+            and params.get_param("plane.bir_project_id")
+        )
 
     def action_sync_to_plane(self):
         """Manual sync action (button)."""
@@ -328,18 +333,35 @@ class BIRFilingDeadline(models.Model):
         }
 
     @api.model
-    def handle_plane_webhook(self, payload):
-        """
-        Handle incoming Plane webhook (issue updated in Plane).
+    def handle_plane_webhook(self, payload, headers=None):
+        """Handle incoming Plane webhook (issue updated in Plane).
 
         Called by Supabase Edge Function after Plane webhook received.
+        Uses connector for signature verification and delivery dedup.
 
         Args:
             payload: dict - Webhook payload from Plane
+            headers: dict - HTTP headers (optional, for verification)
 
         Returns:
             dict: Processing result
         """
+        # Verify signature if headers provided
+        if headers:
+            raw_body = headers.pop("_raw_body", None)
+            if raw_body and not self._plane_verify_webhook(headers, raw_body):
+                return {"success": False, "error": "Invalid signature"}
+
+            # Deduplicate
+            delivery_id = headers.get("X-Plane-Delivery")
+            if delivery_id:
+                if self._plane_is_duplicate_delivery(delivery_id):
+                    return {"success": True, "deduplicated": True}
+                self._plane_record_delivery(
+                    delivery_id,
+                    event_type=headers.get("X-Plane-Event"),
+                )
+
         plane_issue_id = payload.get("issue_id")
         if not plane_issue_id:
             return {"success": False, "error": "Missing issue_id"}

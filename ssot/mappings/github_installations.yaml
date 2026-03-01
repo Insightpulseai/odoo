@@ -1,0 +1,22 @@
+# GitHub App installation mappings
+# Maps org/repo -> installation_id for the token broker
+# Updated when the app is installed/uninstalled
+
+schema_version: "1.0"
+last_synced: null
+
+installations: []
+# Example entry:
+# - installation_id: 12345678
+#   account_type: Organization
+#   account_login: Insightpulseai
+#   repos:
+#     - Insightpulseai/odoo
+#   permissions:
+#     issues: read
+#     pull_requests: read
+#     checks: write
+#   events:
+#     - pull_request
+#     - issues
+#     - check_run

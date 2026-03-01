@@ -11,13 +11,11 @@
     "depends": [
         "base",
         "ipai_bir_tax_compliance",  # BIR core module
+        "ipai_plane_connector",  # Generic Plane API connector
     ],
     "data": [
         "security/ir.model.access.csv",
         "views/bir_filing_deadline_views.xml",
         "data/ir_config_parameter.xml",
     ],
-    "external_dependencies": {
-        "python": ["requests"],
-    },
 }

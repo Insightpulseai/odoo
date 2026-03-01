@@ -1,0 +1,33 @@
+# IPAI GitHub App — webhooks, installation tokens, PR/issue automation
+# Non-secret metadata only. Secret values in Supabase Vault.
+
+id: github_app_ipai
+provider: github
+category: devops_integration
+description: "IPAI GitHub App for webhooks, installation tokens, and PR/issue automation"
+
+surfaces:
+  - webhooks
+  - installation_tokens
+  - checks
+  - pr_comments
+
+required_secrets:
+  - github_app_id
+  - github_app_private_key_pem
+  - github_webhook_secret
+
+policy:
+  audit_required: true
+  idempotency_key: "github:delivery:{X-GitHub-Delivery}"
+  allowlisted_events:
+    - pull_request
+    - pull_request_review
+    - check_run
+    - check_suite
+    - issues
+    - issue_comment
+
+notes:
+  - "Use GitHub App (not OAuth) for centralized webhooks and scoped tokens."
+  - "Least-privilege permissions: start minimal, expand only when needed."

@@ -4,7 +4,7 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-02-27 (C-17 added — AI Copilot Bridge)
+> Last updated: 2026-03-01 (C-18/C-19/C-20 added — Plane, GitHub App, Slack Pulser)
 
 ---
 
@@ -29,6 +29,9 @@
 | C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md)             | `config/odoo/settings.yaml`                 | Odoo `ir.config_parameter`                | ✅ Active  | `apply_settings.py --verify-only`          |
 | C-16 | Odoo Auth Providers                                    | `config/odoo/auth_providers.yaml`           | Odoo `auth.oauth.provider`                | ✅ Active  | `apply_auth_providers.py --enforce`        |
 | C-17 | [AI Copilot Bridge](AI_COPILOT_CONTRACT.md)            | `platform/ai/providers/gemini_tools.ts`     | `addons/ipai/ipai_ai_copilot/`            | 🔲 Planned | `check_parity_and_bridges_ssot.py`         |
+| C-18 | Plane Sync                                             | `addons/ipai/ipai_plane_connector/`         | Plane API (`api.plane.so`)                | 🔲 Pending | `ssot-surface-guard.yml`                   |
+| C-19 | [GitHub App](GITHUB_APP_CONTRACT.md)                   | `supabase/functions/github-app-*/`          | GitHub API (`api.github.com`)             | ✅ Active  | `ssot-surface-guard.yml`                   |
+| C-20 | [Slack Pulser](SLACK_PULSER_CONTRACT.md)               | Slack API (Socket Mode + Events)            | `supabase/functions/ops-slack-*/`         | ✅ Active  | `ssot-surface-guard.yml`                   |
 
 ---
 
