@@ -79,9 +79,11 @@ type FindingKind =
   | "env_missing"
   | "vault_missing"
   | "dns_planned"
+  | "dns_placeholder"
   | "gate_failed"
   | "webhook_unverified"
-  | "awaiting_auth";
+  | "awaiting_auth"
+  | "token_stale";
 
 // ---------------------------------------------------------------------------
 // Core scan logic
@@ -184,6 +186,105 @@ async function scanEnvironment(env: string): Promise<ScanResult> {
   return { env, findings };
 }
 
+// ---------------------------------------------------------------------------
+// External checks: Vercel env vars + Supabase management token health
+// ---------------------------------------------------------------------------
+
+interface ExternalFinding {
+  kind: FindingKind;
+  key: string;
+  evidence: Record<string, unknown>;
+  suggested_action: string;
+}
+
+async function checkVercelEnvVars(): Promise<ExternalFinding[]> {
+  const findings: ExternalFinding[] = [];
+  const vercelToken = Deno.env.get("VERCEL_TOKEN");
+  const vercelProjectId = Deno.env.get("VERCEL_PROJECT_ID") ?? "odooops-console";
+
+  if (!vercelToken) {
+    // Cannot check — VERCEL_TOKEN not configured in this function's env
+    return findings;
+  }
+
+  let resp: Response;
+  try {
+    resp = await fetch(
+      `https://api.vercel.com/v10/projects/${vercelProjectId}/env`,
+      { headers: { Authorization: `Bearer ${vercelToken}` } },
+    );
+  } catch (_err) {
+    // Network error — skip check rather than emitting false positive
+    return findings;
+  }
+
+  if (!resp.ok) {
+    // Non-200 means token invalid or project not found — do not emit env_missing
+    return findings;
+  }
+
+  const body = await resp.json() as { envs?: Array<{ key: string }> };
+  const envKeys = (body.envs ?? []).map((e) => e.key);
+
+  const requiredEnvVars = [
+    "PLANE_WEBHOOK_SECRET",
+    "GITHUB_WEBHOOK_SECRET",
+  ] as const;
+
+  for (const required of requiredEnvVars) {
+    if (!envKeys.includes(required)) {
+      findings.push({
+        kind: "env_missing",
+        key: `${required}@vercel:${vercelProjectId}`,
+        evidence: {
+          project: vercelProjectId,
+          missing_key: required,
+          runbook: "docs/runbooks/failures/ENV.VERCEL.WEBHOOK_SECRETS.md",
+        },
+        suggested_action: `Set ${required} in Vercel project ${vercelProjectId}. See runbook ENV.VERCEL.WEBHOOK_SECRETS.md.`,
+      });
+    }
+  }
+
+  return findings;
+}
+
+async function checkSupabaseTokenHealth(): Promise<ExternalFinding[]> {
+  const findings: ExternalFinding[] = [];
+  const sbAccessToken = Deno.env.get("SUPABASE_ACCESS_TOKEN");
+
+  if (!sbAccessToken) {
+    // Token not configured — cannot check
+    return findings;
+  }
+
+  let resp: Response;
+  try {
+    resp = await fetch("https://api.supabase.com/v1/projects", {
+      headers: { Authorization: `Bearer ${sbAccessToken}` },
+    });
+  } catch (_err) {
+    // Network error — skip rather than false positive
+    return findings;
+  }
+
+  if (resp.status === 401 || resp.status === 403) {
+    findings.push({
+      kind: "token_stale",
+      key: "supabase_access_token",
+      evidence: {
+        http_status: resp.status,
+        runbook: "docs/runbooks/failures/AUTH.SUPABASE.TOKEN_STALE.md",
+        rotation_interval_days: 90,
+      },
+      suggested_action:
+        "Rotate SUPABASE_ACCESS_TOKEN: generate new token in Supabase Dashboard → Account → Access Tokens, then update GitHub secret. See runbook AUTH.SUPABASE.TOKEN_STALE.md.",
+    });
+  }
+
+  return findings;
+}
+
 async function runConvergenceScan(): Promise<{
   run_id: string;
   total_findings: number;
@@ -237,6 +338,51 @@ async function runConvergenceScan(): Promise<{
         data: { env, error: message },
       });
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // External checks (run once, not per-environment)
+  // ---------------------------------------------------------------------------
+  try {
+    const vercelFindings = await checkVercelEnvVars();
+    const tokenFindings = await checkSupabaseTokenHealth();
+    const externalFindings = [...vercelFindings, ...tokenFindings];
+
+    for (const finding of externalFindings) {
+      await rpc("upsert_convergence_finding", {
+        p_env: "prod",
+        p_kind: finding.kind,
+        p_key: finding.key,
+        p_status: "open",
+        p_evidence: finding.evidence,
+        p_suggested_action: finding.suggested_action,
+      });
+      totalFindings++;
+    }
+
+    if (externalFindings.length > 0) {
+      await postgrest("POST", "ops.maintenance_run_events", {
+        run_id: runId,
+        level: "warn",
+        message: `External checks: ${externalFindings.length} findings (Vercel env: ${vercelFindings.length}, Supabase token: ${tokenFindings.length})`,
+        data: { vercel_findings: vercelFindings.length, token_findings: tokenFindings.length },
+      });
+    } else {
+      await postgrest("POST", "ops.maintenance_run_events", {
+        run_id: runId,
+        level: "info",
+        message: "External checks: 0 findings",
+        data: { vercel_findings: 0, token_findings: 0 },
+      });
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    await postgrest("POST", "ops.maintenance_run_events", {
+      run_id: runId,
+      level: "error",
+      message: `Error in external checks: ${message}`,
+      data: { error: message },
+    });
   }
 
   // Complete maintenance run
