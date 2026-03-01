@@ -1,0 +1,192 @@
+# schema: ssot.integrations.v1
+# n8n DevOps templates — curated catalog of automation templates
+# normalized to ops.runs / ops.run_events telemetry model.
+#
+# Workflow: Import template → validate against policies → register in catalog
+#           → activate with SSOT-declared secrets → emit ops ledger events.
+#
+# Source: n8n template library (DevOps category)
+# API: https://api.n8n.io/api/templates (list/search/fetch)
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+last_reviewed: "2026-03-01"
+
+id: n8n_devops_templates
+provider: n8n
+category: automation_templates
+description: >
+  Curated DevOps templates imported from n8n library; normalized to
+  ops.runs/run_events telemetry model. All templates must emit
+  deterministic idempotency keys and constrain external calls to
+  SSOT-declared allowlists.
+
+sources:
+  - name: "n8n template library: DevOps category"
+    url: "https://n8n.io/workflows/?categories=devops"
+    api: "https://api.n8n.io/api/templates"
+  - name: "n8n templates API docs"
+    url: "https://docs.n8n.io/api/templates/"
+
+# --- Policy ---
+template_policy:
+  allowed_triggers:
+    - webhook
+    - cron
+    - github
+    - manual
+  forbidden:
+    - direct_prod_db_write      # no raw SQL to prod
+    - unbounded_shell_exec      # no open shell commands
+    - plaintext_secret_in_json  # credential references only
+  credential_rule: >
+    All templates must use {{ $credentials.<name>.<field> }} for secrets.
+    Literal values are rejected at import time.
+  env_var_rule: >
+    All templates must use {{ $env.<VAR_NAME> }} for environment variables.
+    Inline values are rejected at import time.
+
+# --- Telemetry ---
+telemetry:
+  required:
+    - ops.runs          # one row per template execution
+    - ops.run_events    # granular step events
+  idempotency_key_format: "n8n:<template_slug>:<execution_id>"
+  retention: "90 days (ops.run_events), indefinite (ops.runs)"
+
+# --- Template Catalog ---
+# Each entry maps an n8n template pattern to our ops model.
+# status: active | planned | evaluating
+templates:
+
+  - slug: do-droplet-provisioning
+    name: "DigitalOcean Droplet Provisioning"
+    n8n_source: "n8n DevOps category — Create Droplet pattern"
+    trigger: manual
+    idempotency_key: "do:droplet:{name}:{region}"
+    status: planned
+    secrets_consumed:
+      - do_access_token
+    ops_mapping:
+      run_type: infra_provisioning
+      events: [plan, apply, verify]
+    advisor_signals:
+      - category: Reliability
+        signal: "droplet_creation_success_rate"
+      - category: Cost
+        signal: "droplet_churn_rate"
+    success_criteria:
+      - "Droplet created matches requested spec"
+      - "ops.runs row written with success/failure"
+      - "ops.run_events has plan/apply/verify events"
+    local_workflow: automations/n8n/workflows/control-plane/deploy-trigger.json
+    notes: "PAT-auth. Maps to infra-as-code / drift-guard pipeline."
+
+  - slug: github-webhook-ops-router
+    name: "GitHub Webhook → Ops Event Router"
+    n8n_source: "n8n DevOps category — GitHub webhook patterns"
+    trigger: webhook
+    idempotency_key: "gh:delivery:{delivery_id}"
+    status: planned
+    secrets_consumed:
+      - github_token
+      - slack_bot_token
+    ops_mapping:
+      run_type: event_routing
+      events: [receive, classify, dispatch, confirm]
+    advisor_signals:
+      - category: Reliability
+        signal: "webhook_processing_success_rate"
+      - category: Automation
+        signal: "event_routing_coverage"
+    success_criteria:
+      - "GitHub delivery_id is idempotency key"
+      - "Zero duplicate alerts/actions under retries"
+      - "All actions bounded by SSOT allowlists"
+    local_workflows:
+      - automations/n8n/workflows/github-events-handler.json
+      - automations/n8n/workflows/github-router.json
+      - automations/n8n/workflows/github-deploy-trigger.json
+    notes: >
+      Fan-out to Slack alerts, Vercel deploy actions, Supabase Edge Functions,
+      DO infra checks. Uses existing github-router.json as base.
+
+  - slug: incident-intake-router
+    name: "Incident Intake → Ticket/Work Item Creation"
+    n8n_source: "n8n DevOps category — monitoring alert patterns"
+    trigger: webhook
+    idempotency_key: "incident:{source}:{fingerprint}"
+    status: planned
+    secrets_consumed:
+      - slack_bot_token
+    ops_mapping:
+      run_type: incident_intake
+      events: [receive, dedup, create_or_update, notify]
+    advisor_signals:
+      - category: Reliability
+        signal: "incident_response_time"
+      - category: Automation
+        signal: "dedup_effectiveness"
+    success_criteria:
+      - "Fingerprint-based dedup (update vs create policy)"
+      - "Rate limit guard with backoff"
+      - "ops.run_events tracks receive/dedup/create/notify"
+    local_workflow: null  # to be created
+    notes: >
+      Sentry/monitoring event → create/update work item in Odoo or
+      Supabase work.* tables. Dedup policy codified in SSOT.
+
+  - slug: deploy-notify-pipeline
+    name: "Deploy Event → Notification + Audit"
+    n8n_source: "n8n DevOps category — deployment notification patterns"
+    trigger: webhook
+    idempotency_key: "deploy:{provider}:{deploy_id}"
+    status: active
+    secrets_consumed:
+      - slack_bot_token
+    ops_mapping:
+      run_type: deploy_notification
+      events: [receive, enrich, notify, log]
+    advisor_signals:
+      - category: Reliability
+        signal: "deploy_success_rate"
+    success_criteria:
+      - "All deploys produce Slack notification"
+      - "ops.runs records deploy outcome"
+    local_workflows:
+      - automations/n8n/workflows/deployment-notify.json
+      - automations/n8n/workflows/vercel-drain-handler.json
+    notes: "Already active via deployment-notify.json and vercel-drain-handler.json."
+
+  - slug: secrets-rotation-reminder
+    name: "Secrets Rotation Reminder"
+    n8n_source: "n8n DevOps category — scheduled maintenance patterns"
+    trigger: cron
+    idempotency_key: "secrets:rotation:{secret_id}:{date}"
+    status: planned
+    secrets_consumed: []  # reads ssot/secrets/registry.yaml, not actual secrets
+    ops_mapping:
+      run_type: maintenance
+      events: [scan, evaluate, alert]
+    advisor_signals:
+      - category: Security
+        signal: "secrets_rotation_compliance"
+      - category: Reliability
+        signal: "expired_secret_count"
+    success_criteria:
+      - "Scans ssot/secrets/registry.yaml rotation_policy fields"
+      - "Alerts on overdue rotations via Slack"
+      - "ops.run_events records scan/evaluate/alert"
+    local_workflow: null  # to be created
+    notes: >
+      Weekly cron. Reads rotation_policy from ssot/secrets/registry.yaml,
+      compares against last_rotated timestamps, alerts via Slack.
+
+# --- Advisor Integration ---
+advisor:
+  scoring_dimensions:
+    - automation_coverage    # % of DevOps outcomes with active templates
+    - failure_rate           # template execution failure rate
+    - cost_signals           # infra churn, resource waste
+    - security_compliance    # secrets rotation, policy violations
+  data_source: "ops.runs WHERE run_type IN (template catalog run_types)"
