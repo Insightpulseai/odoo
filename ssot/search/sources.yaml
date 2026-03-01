@@ -1,0 +1,25 @@
+# Search Sources — SSOT
+# Defines what ops-search-query indexes via FTS.
+# Each source maps to a Supabase table/view or repo path pattern.
+
+sources:
+  - id: ppm_initiatives
+    label: "PPM Initiatives"
+    table: ops.ppm_initiatives
+    fts_columns: [name, status, owner, spec_slug]
+    link_template: "/tools/ppm?id={initiative_id}"
+    icon: "target"
+
+  - id: ops_runs
+    label: "Agent Runs"
+    table: ops.runs
+    fts_columns: [task_description, agent_id, status]
+    link_template: "/runs/{id}"
+    icon: "cpu"
+
+  - id: convergence_findings
+    label: "Convergence Findings"
+    table: ops.convergence_findings
+    fts_columns: [message, category, failure_mode]
+    link_template: "/findings/{id}"
+    icon: "alert-triangle"
