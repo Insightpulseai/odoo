@@ -1,0 +1,120 @@
+# ppm-portfolio-sync.yml
+# Syncs ssot/ppm/portfolio.yaml to ops-ppm-rollup Edge Function
+# on every merge to main that touches the portfolio file.
+# Also runs on a weekly schedule to keep rollup data fresh.
+#
+# Requires GitHub Secrets:
+#   SUPABASE_URL              — Supabase project REST URL
+#   SUPABASE_SERVICE_ROLE_KEY — service role key (write access)
+#
+# Failure mode: CI.PPM_PORTFOLIO_SYNC_FAILED
+
+name: PPM Portfolio Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ssot/ppm/portfolio.yaml"
+  schedule:
+    # Weekly refresh — Monday 03:00 UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (parse only, do not POST)"
+        type: boolean
+        default: false
+
+jobs:
+  sync-portfolio:
+    name: Sync portfolio.yaml to Supabase
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read   # checkout only; no writes to repo
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse portfolio.yaml
+        id: parse
+        run: |
+          python3 - <<'PYEOF'
+          import yaml, json, os
+
+          with open("ssot/ppm/portfolio.yaml") as f:
+              data = yaml.safe_load(f)
+
+          initiatives = data.get("initiatives", [])
+          if not initiatives:
+              raise SystemExit("ERROR: portfolio.yaml contains no initiatives")
+
+          payload = json.dumps({"initiatives": initiatives})
+
+          # Write to step output
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              # Escape for multi-line output
+              out.write(f"count={len(initiatives)}\n")
+              out.write(f"payload_file=/tmp/ppm_payload.json\n")
+
+          with open("/tmp/ppm_payload.json", "w") as f:
+              f.write(payload)
+
+          print(f"✅ Parsed {len(initiatives)} initiatives")
+          PYEOF
+          pip install pyyaml -q
+
+      - name: Re-parse with PyYAML installed
+        id: reparse
+        run: |
+          python3 - <<'PYEOF'
+          import yaml, json, os
+
+          with open("ssot/ppm/portfolio.yaml") as f:
+              data = yaml.safe_load(f)
+
+          initiatives = data.get("initiatives", [])
+          if not initiatives:
+              raise SystemExit("ERROR: portfolio.yaml contains no initiatives")
+
+          payload = json.dumps({"initiatives": initiatives})
+          with open("/tmp/ppm_payload.json", "w") as f:
+              f.write(payload)
+
+          count = len(initiatives)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"count={count}\n")
+
+          print(f"✅ Parsed {count} initiatives")
+          for i in initiatives:
+              print(f"  {i['id']}: {i['name']} [{i['status']}]")
+          PYEOF
+
+      - name: POST to ops-ppm-rollup
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          HTTP_STATUS=$(curl -s -o /tmp/ppm_response.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            --data-binary @/tmp/ppm_payload.json \
+            "$SUPABASE_URL/functions/v1/ops-ppm-rollup")
+
+          echo "HTTP Status: $HTTP_STATUS"
+          cat /tmp/ppm_response.json
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "::error::ops-ppm-rollup returned HTTP $HTTP_STATUS — failure mode: CI.PPM_PORTFOLIO_SYNC_FAILED"
+            exit 1
+          fi
+
+          echo "✅ Portfolio synced to Supabase"
+
+      - name: Dry run summary
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🔍 DRY RUN — parsed portfolio.yaml successfully, skipping POST"
+          cat /tmp/ppm_payload.json | python3 -m json.tool
