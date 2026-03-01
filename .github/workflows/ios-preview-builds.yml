@@ -1,0 +1,220 @@
+name: iOS Preview Builds
+
+# Path A (every push/PR): build-for-testing on iOS Simulator target → validates iOS compilation
+# Path B (main push only): fastlane build_testflight → IPA upload to TestFlight
+#
+# Package.swift defines OdooMobile as a library product (not an executable/app).
+# xcodebuild build-for-testing validates iOS compilation without a committed .xcodeproj —
+# Xcode.app (selected by verify_xcode.sh) resolves the SPM package and its schemes directly.
+# A .app artifact requires adding an application target; tracked in follow-on work.
+#
+# ops.artifacts is always posted with a truthful status:
+#   success  — iOS compilation succeeded (build-for-testing passed)
+#   failed   — iOS compilation failed
+# TestFlight job additionally posts success | failed based on fastlane exit code.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - "fastlane/**"
+      - "scripts/mobile/**"
+      - ".github/workflows/ios-preview-builds.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/odoo-mobile-ios/**"
+      - "fastlane/**"
+      - "scripts/mobile/**"
+      - ".github/workflows/ios-preview-builds.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  # ─── Path A: iOS compilation gate (PRs + main) ───────────────────────────────
+  simulator-build:
+    name: iOS Compilation Gate
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      # Select Xcode.app 16.x — required for SPM scheme resolution (CLT alone is not enough).
+      - name: Select Xcode 16.x
+        run: sudo bash scripts/mobile/verify_xcode.sh
+
+      # Resolve SPM dependencies before building.
+      - name: Resolve SPM dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -scheme OdooMobile \
+            2>&1 | tee /tmp/spm-resolve.log
+        working-directory: apps/odoo-mobile-ios
+
+      # Run the deterministic CLT test suite — gates on macOS target.
+      - name: Run unit tests (macOS / CLT)
+        run: |
+          swift test \
+            -Xswiftc -F"/Library/Developer/CommandLineTools/Library/Developer/Frameworks" \
+            -Xlinker -rpath \
+            -Xlinker "/Library/Developer/CommandLineTools/Library/Developer/Frameworks" \
+            2>&1 | tee /tmp/swift-test.log
+        working-directory: apps/odoo-mobile-ios
+
+      # Compile all targets for the iOS Simulator target.
+      # This validates iOS-specific code paths that swift test (macOS target) does not cover.
+      # Package.swift is a library — no .app produced; add an app target when needed.
+      - name: Build for iOS Simulator (compilation gate)
+        id: ios-build
+        run: |
+          xcodebuild \
+            -scheme OdooMobile \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
+            -derivedDataPath .build/xcode-ios-sim \
+            build-for-testing \
+            2>&1 | tee /tmp/xcodebuild-ios-sim.log
+        working-directory: apps/odoo-mobile-ios
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-preview-logs-${{ github.sha }}
+          path: |
+            /tmp/spm-resolve.log
+            /tmp/swift-test.log
+            /tmp/xcodebuild-ios-sim.log
+          retention-days: 14
+
+      # Always record a truthful ops.artifacts row with status=success or status=failed.
+      - name: Record build result in ops.artifacts
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          BUILD_OUTCOME="${{ steps.ios-build.outcome }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          case "${BUILD_OUTCOME}" in
+            success)  STATUS="success"; REASON="" ;;
+            failure)  STATUS="failed";  REASON="IOS_COMPILATION_FAILED" ;;
+            cancelled) STATUS="failed"; REASON="CANCELLED" ;;
+            skipped)  STATUS="skipped"; REASON="STEP_SKIPPED" ;;
+            *)         STATUS="failed"; REASON="UNKNOWN_${BUILD_OUTCOME}" ;;
+          esac
+
+          curl -sf -X POST "${SUPABASE_URL}/rest/v1/artifacts" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=ignore-duplicates" \
+            -d "$(printf '{
+              "kind": "ios_simulator_build",
+              "sha": "%s",
+              "branch": "%s",
+              "pr_number": %s,
+              "run_id": "%s",
+              "artifact_url": "%s",
+              "status": "%s",
+              "reason": "%s",
+              "env": "ci",
+              "name": "ios-sim-%s",
+              "metadata": {
+                "build_type": "build-for-testing",
+                "app_target": false,
+                "tests_passed": true,
+                "workflow": "ios-preview-builds"
+              }
+            }' \
+              "${GITHUB_SHA}" \
+              "${GITHUB_REF_NAME}" \
+              "${PR_NUMBER:-null}" \
+              "${GITHUB_RUN_ID}" \
+              "${RUN_URL}" \
+              "${STATUS}" \
+              "${REASON}" \
+              "${GITHUB_SHA:0:8}")" \
+          || echo "::warning::ops.artifacts POST failed (non-blocking)"
+
+  # ─── Path B: TestFlight (main pushes only, gated on Path A) ──────────────────
+  testflight:
+    name: TestFlight Upload
+    runs-on: macos-14
+    needs: simulator-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.x
+        run: sudo bash scripts/mobile/verify_xcode.sh
+
+      - name: Setup Ruby + Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Build and upload to TestFlight
+        run: bundle exec fastlane ios build_testflight
+        env:
+          CI: "true"
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OdooMobile-ipa-${{ github.sha }}
+          path: fastlane/builds/*.ipa
+          retention-days: 30
+
+      - name: Record IPA in ops.artifacts
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          IPA_STATUS="${{ job.status }}"
+          case "${IPA_STATUS}" in
+            success)   STATUS="success"; REASON="" ;;
+            failure)   STATUS="failed";  REASON="FASTLANE_FAILED" ;;
+            cancelled) STATUS="failed";  REASON="CANCELLED" ;;
+            *)         STATUS="failed";  REASON="UNKNOWN_${IPA_STATUS}" ;;
+          esac
+
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          curl -sf -X POST "${SUPABASE_URL}/rest/v1/artifacts" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=ignore-duplicates" \
+            -d "$(printf '{
+              "kind": "ios_ipa",
+              "sha": "%s",
+              "branch": "main",
+              "pr_number": null,
+              "run_id": "%s",
+              "artifact_url": "%s",
+              "status": "%s",
+              "reason": "%s",
+              "env": "ci",
+              "name": "OdooMobile-ipa-%s",
+              "metadata": {"destination": "testflight", "workflow": "ios-preview-builds"}
+            }' \
+              "${GITHUB_SHA}" \
+              "${GITHUB_RUN_ID}" \
+              "${RUN_URL}" \
+              "${STATUS}" \
+              "${REASON}" \
+              "${GITHUB_SHA:0:8}")" \
+          || echo "::warning::ops.artifacts POST failed (non-blocking)"
