@@ -75,7 +75,8 @@ security_settings:
   - id: github_push_protection_enabled
     description: "GitHub secret scanning Push Protection must be enabled to block committed secrets at push time"
     kind: security_setting_disabled
-    status: unverified
+    status: verified
+    verified_at: "2026-03-02"
     verify_cmd: "gh api repos/Insightpulseai/odoo --jq '.security_and_analysis.secret_scanning_push_protection.status'"
     expected_value: "enabled"
     enable_ref: "https://docs.github.com/en/get-started/learning-to-code/storing-your-secrets-safely"
