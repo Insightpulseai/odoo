@@ -1,7 +1,7 @@
 # GitHub Docs Index — Insightpulseai/odoo
 
 > Curated reference: GitHub documentation pages mapped to concrete repo actions.
-> Generated: 2026-03-02 | Updated: 2026-03-02 (added Authentication, GitHub Apps, REST API, GraphQL API, Webhooks security) | Source: GitHub official docs
+> Generated: 2026-03-02 | Updated: 2026-03-02 (added Authentication, Security/secrets, GitHub Apps, REST API, GraphQL API, Webhooks security) | Source: GitHub official docs
 > Update: edit this file + `ssot/devex/github.yaml` together.
 
 ---
@@ -36,6 +36,7 @@
 | **Authentication** | GitHub Actions OIDC | <https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect> | OIDC tokens are short-lived (~15 min), single-use JWTs issued by GitHub Actions — eliminate stored credentials entirely for cloud-native CI/CD. Cloud providers (AWS, GCP, Azure, DO) can trust GitHub's OIDC issuer to grant access without stored secrets. | Add `permissions: id-token: write` to workflow jobs that need OIDC. Use cloud provider trust policies to validate `sub` claim (e.g. `repo:Insightpulseai/odoo:ref:refs/heads/main`). No secrets to rotate. Audit via `actions` audit log events. | `permissions: id-token: write` in workflow YAML |
 | **Authentication** | Org auth enforcement | <https://docs.github.com/en/organizations/keeping-your-organization-secure> | Organization-level controls: require 2FA for all members, enforce SAML SSO (Enterprise), restrict PAT types, configure IP allowlists, review OAuth app access. Together these form a layered defence reducing insider and credential-theft risk. | Enable 2FA requirement: Org Settings → Security → Two-factor authentication. Set PAT policy to fine-grained only. Review OAuth apps quarterly. Export audit log for compliance. For GitHub Enterprise: configure SAML SSO IdP. | Org Settings → Security |
 | **Enterprise / Billing** | Set up VS subscription with GitHub Enterprise | <https://docs.github.com/en/enterprise-cloud@latest/billing/how-tos/set-up-payment/set-up-vs-subscription> | Microsoft Visual Studio subscriptions can bundle GitHub Enterprise Cloud seats. Relevant if the org moves from Team tier to Enterprise Cloud — unlocks SAML SSO, IP allowlists, audit log streaming, and OIDC for all members. Seat assignment is managed via Microsoft admin portal + GitHub org invite reconciliation. | [MANUAL_REQUIRED] Assign VS licenses in Microsoft admin portal → invite subscribers to `Insightpulseai` org → reconcile accounts. Document seat count and renewal date in `ssot/billing/github.yaml` (to be created). | GitHub Enterprise org licensing page + Visual Studio admin portal |
+| **Security** | Storing secrets safely | <https://docs.github.com/en/get-started/learning-to-code/storing-your-secrets-safely> | Covers risk of hardcoded secrets in git, principle of least privilege, env-var injection pattern, and GitHub Push Protection / Secret Scanning. Directly maps to this repo's SSOT secrets model — never commit values, only reference names from `ssot/secrets/registry.yaml`. | Link from `CONTRIBUTING.md` onboarding section. Enable Push Protection: Repo Settings → Code security → Secret scanning → Push protection. Add to contributor onboarding checklist. All CI secrets via `${{ secrets.NAME }}` — never `echo ${{ secrets.NAME }}`. | `ssot/secrets/registry.yaml`; `docs/runbooks/SECRETS_SSOT.md` |
 | **GitHub Apps** | GitHub Apps — installation tokens & bot identity | <https://docs.github.com/en/enterprise-cloud@latest/apps> | GitHub Apps authenticate with short-lived installation tokens (~1 hr) and have fine-grained, per-repo permissions — no user credential dependency. Distinct from OAuth Apps (user-scoped, long-lived) and classic PATs (broad, no granularity). The `pulser-hub` and `ipai-integrations` apps in this repo are GitHub App format. | All new automation uses GitHub Apps, not OAuth Apps or PATs. Provision `ipai-integrations` via `scripts/github/create-app-from-manifest.sh`. Private key stored in Supabase Vault; webhook secret in `ssot/secrets/registry.yaml` (names only). | `ssot/integrations/github_apps.yaml`; `infra/github/apps/` |
 | **APIs** | REST API versioning (2022-11-28) | <https://docs.github.com/en/enterprise-cloud@latest/rest?apiVersion=2022-11-28> | Versioned REST API (`Accept: application/vnd.github.2022-11-28+json`) prevents breaking changes across GitHub releases. PAT rate limit: 5,000 req/hr; unauthenticated: 60 req/hr. Endpoints cover Actions (trigger workflows, download artifacts), Packages (GHCR), Pull Requests, Issues, Webhooks. Pagination via `Link` header; conditional requests via `ETag`. | Prefix all `gh api` calls with `--header "X-GitHub-Api-Version: 2022-11-28"`. In automation scripts, check `X-RateLimit-Remaining` header before bulk calls. CI credential: `GITHUB_TOKEN` (Actions-issued) is sufficient for most endpoints; cross-repo ops need fine-grained PAT. | `Accept: application/vnd.github.2022-11-28+json` header; `scripts/automations/` |
 | **APIs** | GraphQL API — nested queries, point-based limits | <https://docs.github.com/en/enterprise-cloud@latest/graphql> | Single endpoint `https://api.github.com/graphql`. Point-based rate limits (5,000 pts/hr) — one query can fetch PR + checks + reviews + comments in one round-trip vs 5+ REST calls. Queries: `repository`, `pullRequest`, `search`; mutations: `createIssue`, `addPullRequestReview`. Pagination via `first:`/`after:` cursors. | Use GraphQL in CI workflows for PR enrichment (fetch all check-run statuses + review counts in one call instead of chaining REST calls). Useful for automated merge gating and Supabase audit log population (`ops.github_webhook_deliveries`). Authentication: `Authorization: Bearer $GITHUB_TOKEN`. | `https://api.github.com/graphql`; `Authorization: Bearer` header |
@@ -47,7 +48,7 @@
 
 ### `.github/CODEOWNERS`
 
-```
+```text
 # Fallback owner
 * @ipai/core
 
@@ -149,7 +150,7 @@ changelog:
 
 ### Main branch protection — recommended settings for 153-workflow monorepo
 
-```
+```text
 Settings → Branches → Branch protection rule for "main":
   ✅ Require pull request before merging
   ✅ Require 1 approval (2 for breaking/* labels)
@@ -173,7 +174,7 @@ Settings → Rules → New push ruleset (all branches):
 
 ### `~/.ssh/config` (macOS — ED25519 + Keychain)
 
-```
+```text
 Host github.com
   AddKeysToAgent yes
   UseKeychain yes
@@ -181,14 +182,16 @@ Host github.com
 ```
 
 **Linux** (omit `UseKeychain yes`):
-```
+
+```text
 Host github.com
   AddKeysToAgent yes
   IdentityFile ~/.ssh/id_ed25519
 ```
 
 **Multiple deploy keys on one server** (one entry per repo):
-```
+
+```text
 Host github-deploy-odoo
   HostName github.com
   User git
