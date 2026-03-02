@@ -1,7 +1,7 @@
 # GitHub Docs Index — Insightpulseai/odoo
 
 > Curated reference: GitHub documentation pages mapped to concrete repo actions.
-> Generated: 2026-03-02 | Source: GitHub official docs
+> Generated: 2026-03-02 | Updated: 2026-03-02 (added Authentication section) | Source: GitHub official docs
 > Update: edit this file + `ssot/devex/github.yaml` together.
 
 ---
@@ -26,6 +26,13 @@
 | **Packages** | Working with the Container Registry | <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry> | GHCR hosts Docker images for Odoo CE (`ghcr.io/jgtolentino/odoo`), Superset (`ghcr.io/jgtolentino/ipai-superset`), devcontainer (`ghcr.io/jgtolentino/odoo-devcontainer`). GITHUB_TOKEN needs `packages: write` to push; `packages: read` to pull. | Add `permissions: packages: write` to every workflow job that pushes images (fixed in `insightpulse-cicd.yml` this session). Add `LABEL org.opencontainers.image.source` to all Dockerfiles for GHCR auto-linking (fixed in `docker/odoo/Dockerfile`). | `permissions: packages: write` in workflow YAML; `LABEL` in Dockerfile |
 | **Webhooks** | About webhooks | <https://docs.github.com/en/webhooks> | GitHub sends HMAC-SHA256 signed POST to registered URL on events. Handler must: verify `X-Hub-Signature-256` with constant-time compare, handle `ping` event (sent on registration), deduplicate by `X-GitHub-Delivery`. | Webhook handler at `supabase/functions/ops-github-webhook-ingest/index.ts` — fixed `.on("conflict")` → `.upsert({onConflict})` and added ping handler (this session). Registered under `ipai-integrations` GitHub App. | `supabase/functions/ops-github-webhook-ingest/index.ts` |
 | **Copilot** | Use Copilot coding agent | <https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent> | Copilot Coding Agent creates PRs autonomously from GitHub Issues, Copilot Chat, or `/agent` CLI commands. It analyzes the issue, generates code, runs tests, and opens a PR for human review. Use `@copilot` in PR comments to request modifications. | Coding Agent is GitHub Copilot Enterprise feature. When enabled: annotate issues with `copilot:task` label. Agent respects CODEOWNERS assignments in generated PRs. Monitor via `agent-ssot-check.yml` workflow. All agent-created PRs still require human review (existing branch protection applies). | GitHub Copilot Enterprise settings |
+| **Authentication** | About authentication | <https://docs.github.com/en/authentication> | Umbrella for all auth mechanisms: passwords, 2FA, passkeys, SSH keys, PATs (classic vs fine-grained), GitHub Apps tokens, OIDC. Each has distinct scope, lifetime, and audit properties — wrong choice is the most common source of CI/CD credential sprawl. | Token hierarchy for new automation: GitHub Apps (installation token) > Fine-Grained PAT > Classic PAT. Enable 2FA org-wide. Use `ssot/secrets/registry.yaml` to track all token names and approved stores. | Settings → Password and authentication; `ssot/secrets/registry.yaml` |
+| **Authentication** | Connecting to GitHub with SSH | <https://docs.github.com/en/authentication/connecting-to-github-with-ssh> | SSH keys are required for Git operations in CI/CD. Covers generating ED25519 keys, adding to GitHub account, ssh-agent config, and testing the connection. Supersedes RSA 4096-bit for new setups. | Generate: `ssh-keygen -t ed25519 -C "email"`. Add public key to Settings → SSH and GPG keys. Test: `ssh -T git@github.com`. Add `~/.ssh/config` entry on macOS with `UseKeychain yes`. | `~/.ssh/id_ed25519`; `~/.ssh/config` |
+| **Authentication** | Deploy keys | <https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys> | Deploy keys are repo-scoped SSH keys for CI/CD automation — they survive contributor removal and isolate access to a single repo. Used in `insightpulse-cicd.yml` for `SSH_PRIVATE_KEY` → server deployment. Read-only by default; enable write for push. | Generate keypair per deployment target. Store private key in GitHub Actions secret (`SSH_PRIVATE_KEY`). Register public key in Repo Settings → Deploy keys. Run `ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts` in workflows to avoid host-key prompts. | Repo Settings → Deploy keys; GitHub Actions secret `SSH_PRIVATE_KEY` |
+| **Authentication** | Personal access tokens | <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens> | Fine-grained PATs (preferred) scope to specific repos + granular permissions with mandatory expiry (max 1 year). Classic PATs (legacy) are broad and indefinite — avoid for new automation. GITHUB_TOKEN in Actions is auto-issued per-run and should be preferred when workflows don't need cross-repo access. | Audit existing classic PATs in Settings → Developer settings → Personal access tokens → Tokens (classic). Migrate CI/CD tokens to fine-grained or GitHub App installation tokens. Set org PAT policy to require fine-grained only. | Settings → Developer settings → Personal access tokens; Org Settings → Security → PAT policies |
+| **Authentication** | GitHub Actions OIDC | <https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect> | OIDC tokens are short-lived (~15 min), single-use JWTs issued by GitHub Actions — eliminate stored credentials entirely for cloud-native CI/CD. Cloud providers (AWS, GCP, Azure, DO) can trust GitHub's OIDC issuer to grant access without stored secrets. | Add `permissions: id-token: write` to workflow jobs that need OIDC. Use cloud provider trust policies to validate `sub` claim (e.g. `repo:Insightpulseai/odoo:ref:refs/heads/main`). No secrets to rotate. Audit via `actions` audit log events. | `permissions: id-token: write` in workflow YAML |
+| **Authentication** | Org auth enforcement | <https://docs.github.com/en/organizations/keeping-your-organization-secure> | Organization-level controls: require 2FA for all members, enforce SAML SSO (Enterprise), restrict PAT types, configure IP allowlists, review OAuth app access. Together these form a layered defence reducing insider and credential-theft risk. | Enable 2FA requirement: Org Settings → Security → Two-factor authentication. Set PAT policy to fine-grained only. Review OAuth apps quarterly. Export audit log for compliance. For GitHub Enterprise: configure SAML SSO IdP. | Org Settings → Security |
+| **Enterprise / Billing** | Set up VS subscription with GitHub Enterprise | <https://docs.github.com/en/enterprise-cloud@latest/billing/how-tos/set-up-payment/set-up-vs-subscription> | Microsoft Visual Studio subscriptions can bundle GitHub Enterprise Cloud seats. Relevant if the org moves from Team tier to Enterprise Cloud — unlocks SAML SSO, IP allowlists, audit log streaming, and OIDC for all members. Seat assignment is managed via Microsoft admin portal + GitHub org invite reconciliation. | [MANUAL_REQUIRED] Assign VS licenses in Microsoft admin portal → invite subscribers to `Insightpulseai` org → reconcile accounts. Document seat count and renewal date in `ssot/billing/github.yaml` (to be created). | GitHub Enterprise org licensing page + Visual Studio admin portal |
 
 ---
 
@@ -133,6 +140,80 @@ changelog:
       labels: [docs]
 ```
 
+### `~/.ssh/config` (macOS — ED25519 + Keychain)
+
+```
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+**Linux** (omit `UseKeychain yes`):
+```
+Host github.com
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+**Multiple deploy keys on one server** (one entry per repo):
+```
+Host github-deploy-odoo
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/deploy_odoo
+  IdentitiesOnly yes
+```
+Then clone as: `git clone git@github-deploy-odoo:Insightpulseai/odoo.git`
+
+### SSH new key setup (one-time)
+
+```bash
+# Generate (ED25519 preferred)
+ssh-keygen -t ed25519 -C "your@email.com"
+
+# Add to agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519          # Linux
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519  # macOS
+
+# Test connection
+ssh -T git@github.com
+# Expected: "Hi USERNAME! You've successfully authenticated..."
+
+# Prevent host-key prompts in CI
+ssh-keyscan github.com >> ~/.ssh/known_hosts
+```
+
+### GitHub Actions workflow: SSH deploy key pattern
+
+```yaml
+- name: Setup deploy key
+  env:
+    SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    SSH_HOST: ${{ secrets.SSH_HOST }}
+  run: |
+    mkdir -p ~/.ssh
+    echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+    chmod 600 ~/.ssh/deploy_key
+    ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+```
+
+### GitHub Actions OIDC (keyless, no stored secrets)
+
+```yaml
+permissions:
+  id-token: write   # required for OIDC
+  contents: read
+
+steps:
+  - name: Configure cloud credentials via OIDC
+    uses: aws-actions/configure-aws-credentials@v4
+    with:
+      role-to-assume: arn:aws:iam::123456789012:role/github-actions
+      aws-region: ap-southeast-1
+```
+
 ---
 
 ## Related files in this repo
@@ -146,6 +227,9 @@ changelog:
 | `scripts/ci/check_claude_settings_auth.py` | Detect/fix bad env keys in settings.json |
 | `supabase/functions/ops-github-webhook-ingest/index.ts` | Webhook handler (HMAC-SHA256 + delivery ledger) |
 | `docs/runbooks/GITHUB_APP_PROVISIONING.md` | GitHub App setup runbook |
+| `ssot/secrets/registry.yaml` | Secret names, approved stores, consumers (no values) |
+| GitHub Actions secret `SSH_PRIVATE_KEY` | Deploy key private half — stored in repo secrets |
+| GitHub Actions secret `SSH_HOST` / `SSH_USER` | Deployment target — DigitalOcean droplet 178.128.112.214 |
 
 ---
 
