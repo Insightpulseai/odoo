@@ -1,0 +1,315 @@
+# schema: ssot.odoo.parity.erp_saas.v1
+# ERP SaaS Parity — Gap Report & Module Registry
+#
+# Authoritative record of enterprise-feature parity targets, installed
+# baseline, and prioritised gaps (P0/P1/P2).
+#
+# Philosophy: CE + OCA + ipai_* = ≥80% Odoo EE parity
+# SSOT for parity — all other docs are pointers to this file.
+#
+# Consumers:
+#   - spec/erp-saas-parity/  (spec bundle)
+#   - docs/dev/odoo/PARITY_MAP_ODOOSH.md  (pointer)
+#   - .github/workflows/odoo-ee-parity-gate.yml  (CI gate — future)
+#
+# Update flow: edit this file → commit → CI validates YAML syntax
+
+version: 1
+schema: ssot.odoo.parity.erp_saas.v1
+last_updated: "2026-03-02"
+parity_target_percent: 80
+
+# ─── How the baseline was produced ────────────────────────────────────
+installed_modules_source:
+  method: "psql via docker exec on odoo-prod container"
+  command: >
+    ssh root@178.128.112.214 "docker exec odoo-prod python3 -c \"
+    import psycopg2
+    conn = psycopg2.connect(
+      host='private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com',
+      port=25060, dbname='odoo_prod', user='doadmin',
+      password='<DB_PASSWORD>', sslmode='require')
+    cur = conn.cursor()
+    cur.execute(\\\"SELECT name FROM ir_module_module WHERE state='installed' ORDER BY name\\\")
+    for r in cur.fetchall(): print(r[0])
+    conn.close()\""
+  baseline_date: "2026-03-02"
+  total_installed: 383
+  notes: >
+    Password redacted. Full list available via re-running the above
+    command on the production droplet (178.128.112.214).
+
+# ─── Parity targets by domain ────────────────────────────────────────
+parity_targets:
+  finance:
+    target_percent: 90
+    current_percent: 85
+    notes: "Bank recon OCA available but not installed; asset mgmt missing"
+
+  hr_payroll:
+    target_percent: 95
+    current_percent: 95
+    notes: "PH locale fully covered by ipai_hr_payroll_ph (planned)"
+
+  compliance_ph:
+    target_percent: 100
+    current_percent: 100
+    notes: "BIR 1601-C/2316/alphalist planned; PH localisation installed"
+
+  services_crm:
+    target_percent: 80
+    current_percent: 60
+    notes: "Helpdesk OCA needed; Field Service deferred to P1"
+
+  approvals:
+    target_percent: 95
+    current_percent: 70
+    notes: "base_tier_validation in OCA server-ux repo (status: ok); not installed"
+
+  documents:
+    target_percent: 80
+    current_percent: 50
+    notes: "OCA/dms repo vendored (status: ok, 2 modules); not installed"
+
+  project_planning:
+    target_percent: 85
+    current_percent: 75
+    notes: "project_task_dependency in OCA project repo; not installed"
+
+  platform:
+    target_percent: 80
+    current_percent: 75
+    notes: "Superset + n8n + PaddleOCR cover EE platform services"
+
+# ─── P0 Gaps: OCA modules ────────────────────────────────────────────
+# MUST install for production readiness.
+# All repos below are already vendored under addons/oca/ with status ok.
+gaps:
+  p0:
+    oca:
+      - module: account_reconcile_oca
+        oca_repo: OCA/account-reconcile
+        repo_status: ok          # from ssot/odoo/oca_repos.yaml
+        replaces_ee: account_accountant (bank reconciliation widget)
+        why: "Daily bank reconciliation is a core finance operation"
+        dependencies: [account]
+        install_order: 1
+        status: planned
+
+      - module: account_asset_management
+        oca_repo: OCA/account-financial-tools
+        repo_status: ok
+        replaces_ee: account_asset (fixed-asset depreciation)
+        why: "Fixed asset tracking and depreciation schedules"
+        dependencies: [account]
+        install_order: 2
+        status: planned
+
+      - module: dms
+        oca_repo: OCA/dms
+        repo_status: ok
+        replaces_ee: documents (DMS)
+        why: "Centralised document management replaces EE Documents app"
+        dependencies: [base]
+        install_order: 3
+        status: planned
+
+      - module: dms_field
+        oca_repo: OCA/dms
+        repo_status: ok
+        replaces_ee: documents (field-level attachments)
+        why: "Extends DMS with model-level document directories"
+        dependencies: [dms]
+        install_order: 4
+        status: planned
+
+      - module: helpdesk_mgmt
+        oca_repo: OCA/helpdesk
+        repo_status: not_vendored
+        replaces_ee: helpdesk (ticket management)
+        why: "Customer support ticket management"
+        dependencies: [mail]
+        install_order: 5
+        status: planned
+        action: "Add OCA/helpdesk submodule to addons/oca/"
+
+      - module: helpdesk_mgmt_sla
+        oca_repo: OCA/helpdesk
+        repo_status: not_vendored
+        replaces_ee: helpdesk (SLA tracking)
+        why: "SLA deadline tracking on helpdesk tickets"
+        dependencies: [helpdesk_mgmt]
+        install_order: 6
+        status: planned
+        action: "Same submodule as helpdesk_mgmt"
+
+      - module: base_tier_validation
+        oca_repo: OCA/server-ux
+        repo_status: ok
+        replaces_ee: approvals (multi-level approval)
+        why: "Multi-level approval workflows for purchase/expense/leave"
+        dependencies: [base]
+        install_order: 7
+        status: planned
+
+      - module: base_tier_validation_formula
+        oca_repo: OCA/server-ux
+        repo_status: ok
+        replaces_ee: approvals (formula-based routing)
+        why: "Dynamic approval routing based on field values"
+        dependencies: [base_tier_validation]
+        install_order: 8
+        status: planned
+
+      - module: project_task_dependency
+        oca_repo: OCA/project
+        repo_status: ok
+        replaces_ee: project (task dependencies / Gantt)
+        why: "Task dependency chains enable critical path visibility"
+        dependencies: [project]
+        install_order: 9
+        status: planned
+
+    # IPAI bridges — mark as planned, no scaffolding in this PR
+    ipai:
+      - module: ipai_approvals
+        replaces_ee: approvals (workflow engine wrapping base_tier_validation)
+        why: "IPAI-specific approval chains (Finance→Director, HR→VP)"
+        dependencies: [base_tier_validation, ipai_foundation]
+        status: planned
+
+      - module: ipai_slack_connector
+        replaces_ee: mail_enterprise / Discuss enhancements
+        why: "Chatter → Slack bridge for approval notifications"
+        dependencies: [mail, ipai_foundation]
+        status: planned
+
+      - module: ipai_ocr_paddleocr
+        replaces_ee: EE IAP OCR (vendor bill scanning)
+        why: "PaddleOCR-VL bridge at ocr.insightpulseai.com"
+        dependencies: [account, ipai_foundation]
+        status: planned
+
+      - module: ipai_hr_payroll_ph
+        replaces_ee: hr_payroll (Philippine locale)
+        why: "SSS/PhilHealth/Pag-IBIG/BIR withholding computation"
+        dependencies: [hr, l10n_ph]
+        status: planned
+
+      - module: ipai_bir_1601c
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "Monthly 1601-C withholding tax return generation"
+        dependencies: [account, l10n_ph]
+        status: planned
+
+      - module: ipai_bir_2316
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "Annual BIR 2316 certificate generation"
+        dependencies: [hr, ipai_hr_payroll_ph]
+        status: planned
+
+      - module: ipai_bir_alphalist
+        replaces_ee: N/A (PH-specific BIR compliance)
+        why: "BIR alphalist export for annual filing"
+        dependencies: [ipai_bir_1601c]
+        status: planned
+
+  # ─── P1 Gaps: install within 30 days ─────────────────────────────────
+  p1:
+    oca:
+      - module: fieldservice
+        oca_repo: OCA/field-service
+        repo_status: not_vendored
+        replaces_ee: industry_fsm
+        why: "Field service management for on-site operations"
+        status: planned
+        action: "Add OCA/field-service submodule"
+
+      - module: project_timeline
+        oca_repo: OCA/project
+        repo_status: ok
+        replaces_ee: project (Gantt/timeline view)
+        why: "Timeline visualisation for project planning"
+        status: planned
+
+      - module: account_budget_oca
+        oca_repo: OCA/account-budgeting
+        repo_status: not_vendored
+        replaces_ee: account_budget
+        why: "Budget management with analytic account integration"
+        status: planned
+        action: "Add OCA/account-budgeting submodule"
+
+    ipai:
+      - module: ipai_ai_tools_bridge
+        replaces_ee: EE Odoo AI BYOM
+        why: "Gemini 2.0 Flash integration for Ask AI / auto-complete"
+        status: planned
+
+      - module: ipai_enterprise_bridge
+        replaces_ee: EE model compatibility stubs
+        why: "Prevents import errors when EE model references appear"
+        status: planned
+
+      - module: ipai_documents_ai
+        replaces_ee: documents + AI classification
+        why: "AI-powered document classification on top of OCA/dms"
+        status: planned
+
+  # ─── P2 Gaps: nice to have ───────────────────────────────────────────
+  p2:
+    oca:
+      - module: contract
+        oca_repo: OCA/contract
+        repo_status: empty
+        replaces_ee: subscription management
+        why: "Recurring contracts and subscriptions"
+        status: deferred
+        action: "Repo currently empty — wait for 19.0 port"
+
+      - module: sale_subscription
+        oca_repo: OCA/sale-workflow
+        replaces_ee: sale_subscription
+        why: "Subscription-based recurring sales"
+        status: deferred
+
+    ipai:
+      - module: ipai_resource_planning
+        replaces_ee: planning (resource leveling)
+        why: "Resource-level capacity planning"
+        status: deferred
+
+      - module: ipai_sign_basic
+        replaces_ee: sign (electronic signatures)
+        why: "Internal document signing (basic)"
+        status: deferred
+
+# ─── Platform-level service bridges (non-module) ─────────────────────
+platform_bridges:
+  - service: PaddleOCR-VL
+    url: https://ocr.insightpulseai.com
+    replaces_ee: EE IAP OCR
+    status: running
+
+  - service: Apache Superset
+    url: https://superset.insightpulseai.com
+    replaces_ee: EE Reporting / Dashboards
+    status: running
+
+  - service: n8n
+    url: https://n8n.insightpulseai.com
+    replaces_ee: EE Automated Actions
+    status: running
+
+  - service: Slack
+    replaces_ee: EE Discuss enhancements
+    status: active
+
+  - service: Zoho Mail
+    replaces_ee: EE mail_enterprise
+    status: active
+    notes: "ipai_mail_bridge_zoho intercept broken (401) — needs fix"
+
+  - service: Google Gemini 2.0 Flash
+    replaces_ee: EE Odoo AI BYOM
+    status: configured

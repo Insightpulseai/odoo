@@ -1,0 +1,95 @@
+# schema: ssot.odoo.parity.oca_p0_allowlist.v1
+# P0 OCA Module Allowlist — ERP SaaS Parity
+#
+# Only modules listed here are approved for P0 installation.
+# Source of truth: ssot/odoo/parity/erp_saas.yaml (gaps.p0.oca)
+#
+# Repo status key:
+#   vendored  — submodule exists under addons/oca/
+#   pending   — submodule must be added before installation
+#
+# Install order is dependency-safe (lower number = install first).
+
+version: 1
+schema: ssot.odoo.parity.oca_p0_allowlist.v1
+last_updated: "2026-03-02"
+
+modules:
+
+  # ── Finance ─────────────────────────────────────────────────────────
+  - module: account_reconcile_oca
+    oca_repo: OCA/account-reconcile
+    local_path: addons/oca/account-reconcile
+    repo_status: vendored
+    install_order: 1
+    replaces_ee: account_accountant
+    dependencies: [account]
+
+  - module: account_asset_management
+    oca_repo: OCA/account-financial-tools
+    local_path: addons/oca/account-financial-tools
+    repo_status: vendored
+    install_order: 2
+    replaces_ee: account_asset
+    dependencies: [account]
+
+  # ── Documents ───────────────────────────────────────────────────────
+  - module: dms
+    oca_repo: OCA/dms
+    local_path: addons/oca/dms
+    repo_status: vendored
+    install_order: 3
+    replaces_ee: documents
+    dependencies: [base]
+
+  - module: dms_field
+    oca_repo: OCA/dms
+    local_path: addons/oca/dms
+    repo_status: vendored
+    install_order: 4
+    replaces_ee: documents
+    dependencies: [dms]
+
+  # ── Helpdesk ────────────────────────────────────────────────────────
+  - module: helpdesk_mgmt
+    oca_repo: OCA/helpdesk
+    local_path: addons/oca/helpdesk
+    repo_status: pending
+    install_order: 5
+    replaces_ee: helpdesk
+    dependencies: [mail]
+    action: "git submodule add -b 19.0 https://github.com/OCA/helpdesk addons/oca/helpdesk"
+
+  - module: helpdesk_mgmt_sla
+    oca_repo: OCA/helpdesk
+    local_path: addons/oca/helpdesk
+    repo_status: pending
+    install_order: 6
+    replaces_ee: helpdesk
+    dependencies: [helpdesk_mgmt]
+
+  # ── Approvals ───────────────────────────────────────────────────────
+  - module: base_tier_validation
+    oca_repo: OCA/server-ux
+    local_path: addons/oca/server-ux
+    repo_status: vendored
+    install_order: 7
+    replaces_ee: approvals
+    dependencies: [base]
+
+  - module: base_tier_validation_formula
+    oca_repo: OCA/server-ux
+    local_path: addons/oca/server-ux
+    repo_status: vendored
+    install_order: 8
+    replaces_ee: approvals
+    dependencies: [base_tier_validation]
+
+  # ── Project ─────────────────────────────────────────────────────────
+  - module: project_task_dependency
+    oca_repo: OCA/project
+    local_path: addons/oca/project
+    repo_status: vendored
+    install_order: 9
+    replaces_ee: project (task dependencies)
+    dependencies: [project]

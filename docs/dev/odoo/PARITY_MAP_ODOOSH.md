@@ -48,6 +48,22 @@ Affected files to audit:
 
 ---
 
+## ERP SaaS Parity (EE-Feature Replacements)
+
+The authoritative gap report for Odoo Enterprise feature parity lives in:
+
+- **SSOT**: [`ssot/odoo/parity/erp_saas.yaml`](../../../ssot/odoo/parity/erp_saas.yaml)
+- **P0 allowlist**: [`ssot/odoo/parity/oca_p0_allowlist.yaml`](../../../ssot/odoo/parity/oca_p0_allowlist.yaml)
+- **Spec bundle**: [`spec/erp-saas-parity/`](../../../spec/erp-saas-parity/) (PRD, plan, tasks)
+- **OCA repo registry**: [`ssot/odoo/oca_repos.yaml`](../../../ssot/odoo/oca_repos.yaml)
+
+Parity formula: `CE (383 installed) + OCA (9 P0 modules) + ipai_* (7 bridges) = ≥80% EE parity`
+
+Baseline: 383 modules installed as of 2026-03-02. See SSOT YAML for full
+domain-by-domain gap analysis and prioritised install plan.
+
+---
+
 ## See also
 
 - [`docs/dev/odoo/DOCS_INDEX.md`](DOCS_INDEX.md) — Full Odoo docs reference table
