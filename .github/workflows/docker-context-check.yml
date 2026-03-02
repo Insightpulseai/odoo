@@ -1,0 +1,76 @@
+name: Docker Context Check
+
+# Non-invasive smoke check — skips gracefully if Docker is unavailable (CI runners).
+# Validates that docker_doctor.sh is syntactically correct and that devcontainer.json
+# references a non-deprecated Docker context.
+
+on:
+  pull_request:
+    paths:
+      - '.devcontainer/devcontainer.json'
+      - 'scripts/dev/docker_doctor.sh'
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/devcontainer.json'
+      - 'scripts/dev/docker_doctor.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  docker-context-check:
+    name: Docker context policy check
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker_doctor.sh syntax
+        run: |
+          bash -n scripts/dev/docker_doctor.sh
+          echo "✅ docker_doctor.sh syntax OK"
+
+      - name: Check devcontainer.json does not use deprecated colima-odoo context
+        run: |
+          CONTEXT=$(python3 -c "
+          import json, re, sys
+          raw = open('.devcontainer/devcontainer.json').read()
+          # Strip JS-style comments before parsing
+          clean = re.sub(r'//[^\n]*', '', raw)
+          d = json.loads(clean)
+          print(d.get('dockerContext', ''))
+          ")
+
+          echo "devcontainer.json dockerContext: '${CONTEXT}'"
+
+          if [[ "${CONTEXT}" == "colima-odoo" ]]; then
+            echo "::error::devcontainer.json uses deprecated context 'colima-odoo'."
+            echo "The colima-odoo profile isolates Supabase tooling and is not for Dev Containers."
+            echo "Use 'desktop-linux' (Docker Desktop) or 'colima' (default Colima profile)."
+            exit 1
+          fi
+
+          echo "✅ Docker context '${CONTEXT}' is not deprecated"
+
+      - name: Check docker_doctor.sh is executable
+        run: |
+          if [[ ! -x scripts/dev/docker_doctor.sh ]]; then
+            echo "::error::scripts/dev/docker_doctor.sh must be executable (chmod +x)"
+            exit 1
+          fi
+          echo "✅ docker_doctor.sh is executable"
+
+      - name: Smoke test docker_doctor.sh (skip if no Docker daemon)
+        run: |
+          if ! docker version >/dev/null 2>&1; then
+            echo "ℹ️ No Docker daemon in CI runner — skipping live smoke test"
+            exit 0
+          fi
+
+          # Docker is available — run doctor against whatever context exists
+          AVAILABLE=$(docker context ls --format '{{.Name}}' | head -1)
+          echo "Running docker_doctor.sh against first available context: ${AVAILABLE}"
+          bash scripts/dev/docker_doctor.sh "${AVAILABLE}"

@@ -1,6 +1,9 @@
 {
   "name": "ipai-devcontainer",
-  "dockerContext": "colima",
+  // Use Docker Desktop context. Run scripts/dev/docker_doctor.sh to verify.
+  // Switch to "colima" only if running Colima instead of Docker Desktop.
+  "dockerContext": "desktop-linux",
+  "initializeCommand": "bash scripts/dev/docker_doctor.sh desktop-linux",
   // Compose SSOT + overlay(s). Later files override earlier ones.
   "dockerComposeFile": [
     "../docker-compose.yml",
