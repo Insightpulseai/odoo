@@ -1,0 +1,24 @@
+# schema: eval.action_eval.v1
+# Regression gate for action correctness in tool-use copilot.
+# Referenced by: ssot/ai/odoo_ai_mapping.yaml (eval_harnesses.action_eval)
+# Gate: all cases must pass before write-capable tools are promoted to production.
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Regression gate for action correctness, permission enforcement, and safety."
+  created: "2026-03-03"
+  thresholds:
+    action_success_rate_min: 0.99  # 99% of valid actions must succeed
+    permission_denial_rate: 1.0    # 100% of unauthorized actions must be denied
+    confirmation_gate_rate: 1.0    # 100% of write actions must show confirmation
+
+# Eval cases — populate as tool specs are formalized.
+# Schema per case:
+#   id: unique case identifier
+#   description: what this case validates
+#   tool_id: which tool is being tested
+#   input: test parameters
+#   expected: expected outcome (success, denied, confirmation_shown)
+#   status: active | planned | skipped
+cases: []

@@ -1,0 +1,21 @@
+# schema: ssot.knowledge.corpus_registry.v1
+# Registry of knowledge corpora for RAG retrieval.
+# Referenced by: ssot/ai/odoo_ai_mapping.yaml (map-sources-to-corpora)
+# Gate: corpora must be registered here before being used as agent sources.
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Defines corpora, ACL mapping, retention class, and ingestion modes for citation-first RAG."
+  created: "2026-03-03"
+
+# Corpus entries — populate as knowledge bases are onboarded.
+# Schema per entry:
+#   id: unique corpus identifier
+#   name: human-readable name
+#   source_type: odoo_model | file | url | supabase_table
+#   acl: access control (public | authenticated | group:<xml_id>)
+#   retention: permanent | ttl_days:<n> | on_demand
+#   ingestion: batch_cron | realtime | manual
+#   status: active | planned | deprecated
+entries: []

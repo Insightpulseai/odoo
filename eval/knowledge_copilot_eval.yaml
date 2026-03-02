@@ -1,0 +1,23 @@
+# schema: eval.knowledge_copilot_eval.v1
+# Regression gate for citation faithfulness in RAG-augmented responses.
+# Referenced by: ssot/ai/odoo_ai_mapping.yaml (eval_harnesses.knowledge_eval)
+# Gate: all cases must pass before knowledge copilot is promoted to production.
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Regression gate for citation faithfulness and retrieval quality."
+  created: "2026-03-03"
+  thresholds:
+    citation_coverage_min: 0.95    # 95% of grounded answers must have citations
+    relevance_score_min: 0.7       # Minimum similarity score for retrieved chunks
+    hallucination_rate_max: 0.05   # Max 5% hallucination rate
+
+# Eval cases — populate as knowledge copilot capabilities are implemented.
+# Schema per case:
+#   id: unique case identifier
+#   description: what this case validates
+#   input: test query
+#   expected: expected behavior (citation_present, source_match, confidence_threshold)
+#   status: active | planned | skipped
+cases: []

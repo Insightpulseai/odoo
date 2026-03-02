@@ -209,3 +209,27 @@ Version: 1.0.0 | Status: Active | Last updated: 2026-02-27
 | T-22 | 6 | pending | T-02, T-03, T-04 |
 | T-23 | 6 | pending | T-19 |
 | T-24 | 6 | pending | T-23 |
+
+---
+
+## Phase -1: SSOT Gates (Prerequisites)
+
+### T-GATE-01: Create copilot parity priorities SSOT
+- Create `ssot/ai/copilot_parity_priorities.yaml` with P0/P1/P2 entries
+- Acceptance: YAML parses, all entries have id + status + acceptance criteria
+
+### T-GATE-02: Create Odoo 19 AI mapping SSOT
+- Create `ssot/ai/odoo_ai_mapping.yaml` with 4 mappings
+- Acceptance: YAML parses, all odoo_primitives mapped to our_primitives
+
+### T-GATE-03: Create corpus registry skeleton
+- Create `ssot/knowledge/corpus_registry.yaml`
+- Acceptance: YAML parses, meta fields populated
+
+### T-GATE-04: Create tool spec template
+- Create `contracts/tools/TOOL_SPEC_TEMPLATE.md`
+- Acceptance: template covers preview/approval/idempotency/audit envelope
+
+### T-GATE-05: Create eval harness skeletons
+- Create `eval/knowledge_copilot_eval.yaml` and `eval/action_eval.yaml`
+- Acceptance: YAML parses, meta fields populated
