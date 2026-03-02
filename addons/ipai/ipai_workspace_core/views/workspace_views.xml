@@ -93,21 +93,17 @@
         <field name="name">ipai.workspace.search</field>
         <field name="model">ipai.workspace</field>
         <field name="arch" type="xml">
-            <search string="Search Workspaces">
+            <search>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="owner_id"/>
                 <filter name="my_workspaces" string="My Workspaces"
                         domain="[('owner_id', '=', uid)]"/>
-                <filter name="archived" string="Archived"
-                        domain="[('active', '=', False)]"/>
                 <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_visibility" string="Visibility"
-                            context="{'group_by': 'visibility'}"/>
-                    <filter name="group_owner" string="Owner"
-                            context="{'group_by': 'owner_id'}"/>
-                </group>
+                <filter name="group_visibility" string="Visibility"
+                        context="{'group_by': 'visibility'}"/>
+                <filter name="group_owner" string="Owner"
+                        context="{'group_by': 'owner_id'}"/>
             </search>
         </field>
     </record>
@@ -190,7 +186,7 @@
         <field name="name">ipai.workspace.page.search</field>
         <field name="model">ipai.workspace.page</field>
         <field name="arch" type="xml">
-            <search string="Search Pages">
+            <search>
                 <field name="title"/>
                 <field name="workspace_id"/>
                 <field name="created_by"/>
@@ -198,12 +194,11 @@
                         domain="[('is_template', '=', True)]"/>
                 <filter name="root_pages" string="Root Pages"
                         domain="[('parent_id', '=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_workspace" string="Workspace"
-                            context="{'group_by': 'workspace_id'}"/>
-                    <filter name="group_parent" string="Parent Page"
-                            context="{'group_by': 'parent_id'}"/>
-                </group>
+                <separator/>
+                <filter name="group_workspace" string="Workspace"
+                        context="{'group_by': 'workspace_id'}"/>
+                <filter name="group_parent" string="Parent Page"
+                        context="{'group_by': 'parent_id'}"/>
             </search>
         </field>
     </record>
