@@ -61,6 +61,15 @@ If it fails, your Docker daemon or context is misconfigured. Common fixes:
 | `Server: null` | Start Docker Desktop or `colima start` |
 | `DOCKER_HOST` overriding context | `unset DOCKER_HOST && docker context use desktop-linux` |
 
+To switch to Colima **without editing any repo files**, set the override env var before launching VS Code:
+
+```bash
+export DOCKER_CONTEXT_OVERRIDE=colima
+code .   # VS Code picks it up via initializeCommand
+```
+
+The default (`desktop-linux`) is used when the variable is unset.
+
 ### Quick Setup
 
 ```bash
