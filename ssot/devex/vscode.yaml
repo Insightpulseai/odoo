@@ -42,6 +42,7 @@ vscode:
     - github.copilot
     - github.copilot-chat
     - ms-azuretools.vscode-docker
+    - GitHub.vscode-pull-request-github  # PR/issue review without leaving VS Code
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Copilot
@@ -94,6 +95,20 @@ python:
   devcontainer_settings_keys:
     - python.defaultInterpreterPath
     - python.terminal.activateEnvironment
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Source Control / GitHub auth
+# ─────────────────────────────────────────────────────────────────────────────
+source_control:
+  git_auth_delegate_to_gh_cli: true
+  # VS Code maintains its own GitHub credential session separate from gh CLI.
+  # Setting github.gitAuthentication: false delegates all auth to gh keyring →
+  # one credential source, no stale-token 401s.
+  devcontainer_settings_keys:
+    - github.gitAuthentication    # false = delegate to gh CLI keyring
+    - git.autofetch               # true = live branch status in Dev Container
+  docs_ref: https://code.visualstudio.com/docs/sourcecontrol/overview
+  ci_guard: .github/workflows/claude-settings-auth-guard.yml
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Dev Container

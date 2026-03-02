@@ -62,6 +62,31 @@ for k,v in checks:
 "
 ```
 
+### Policy 14 — Delegate GitHub auth to `gh` CLI keyring; never use VS Code's own session
+
+**Source**: <https://code.visualstudio.com/docs/sourcecontrol/overview>
+
+VS Code maintains its own GitHub credential session (`github.gitAuthentication`) independently of the `gh` CLI keyring. When these two credential sources diverge — e.g. VS Code session is valid but `gh` keyring is `jgtolentino`, or VS Code session expires — tools in VS Code's child processes get conflicting tokens → HTTP 401.
+
+**Set in `.devcontainer/devcontainer.json` `customizations.vscode.settings`**:
+
+```json
+{
+  "github.gitAuthentication": false,
+  "git.autofetch": true
+}
+```
+
+`github.gitAuthentication: false` tells VS Code to skip its own OAuth flow and let `gh` CLI handle all GitHub auth via keyring. One credential source → zero 401 conflicts.
+
+**Verify**:
+
+```bash
+# Inside Dev Container — confirm no VS Code GitHub session is active
+code --list-extensions | grep GitHub.vscode-pull-request-github
+# Then open any PR in VS Code — it should use gh CLI auth, not prompt for VS Code sign-in
+```
+
 ---
 
 ## See also
