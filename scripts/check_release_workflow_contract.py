@@ -8,7 +8,8 @@ integration points:
 
   1. build_release_manifest.py is invoked
   2. release_manifest.json is attached to the GitHub release
-  3. Manifest generation does not silently swallow failures (warning)
+  3. gates_report.json is attached to the GitHub release
+  4. Manifest generation does not silently swallow failures (warning)
 
 Exit 0 = pass, exit 1 = contract violation.
 """
@@ -41,6 +42,12 @@ REQUIRED_CHECKS: list[dict] = [
         "pattern": re.compile(r"release_manifest\.json"),
         "workflows": ["cd-production", "ship-on-deploy"],
     },
+    {
+        "id": "gates_report_attached",
+        "description": "gates_report.json is attached to release",
+        "pattern": re.compile(r"gates_report\.json"),
+        "workflows": ["cd-production", "ship-on-deploy"],
+    },
 ]
 
 # --- Advisory checks (warn but do not fail) ---
@@ -55,14 +62,6 @@ ADVISORY_CHECKS: list[dict] = [
         ),
         "workflows": ["cd-production", "ship-on-deploy"],
         "advisory": "Consider removing '|| echo WARNING...' to make manifest generation a hard gate.",
-    },
-    {
-        "id": "gates_report_missing",
-        "description": "gates_report.json not referenced (future enhancement)",
-        "pattern": re.compile(r"gates_report\.json"),
-        "workflows": ["cd-production"],
-        "invert": True,  # warn when pattern is NOT found
-        "advisory": "gates_report.json is not yet generated. Add gate report artifact in a future PR.",
     },
 ]
 
