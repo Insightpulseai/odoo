@@ -29,7 +29,7 @@ capabilities:
       - gate: corpus_registry_populated
         description: "corpus_registry.yaml has >= 3 corpus sources with file counts > 0"
         evidence: "ssot/knowledge/corpus_registry.yaml"
-        passing: false
+        passing: true
       - gate: knowledge_eval_threshold
         description: "eval/knowledge_copilot_eval.yaml: >= 80% of cases pass citation_present check"
         evidence: "docs/evidence/knowledge_copilot_eval/"
@@ -65,7 +65,7 @@ capabilities:
       - gate: tool_spec_contracts_exist
         description: "Each governed tool has a spec in contracts/tools/<tool>.md"
         evidence: "contracts/tools/"
-        passing: false
+        passing: true
       - gate: action_eval_threshold
         description: "eval/action_eval.yaml: 100% approval compliance for write/automation tools"
         evidence: "docs/evidence/action_eval/"
