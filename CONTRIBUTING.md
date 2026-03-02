@@ -34,6 +34,10 @@ By participating, you are expected to uphold this code.
 - Docker & Docker Compose
   - Supported runtimes: **Docker Desktop** (recommended) or **Colima**
   - Your Docker context must point to a running daemon (`Server != null`)
+- VS Code (recommended IDE)
+  - `code` CLI must be on PATH — verify: `code --version`
+  - Install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`)
+  - MCP servers are declared in `.vscode/mcp.json`; register new ones via `code --add-mcp`
 - Git with submodule support
 - Node.js 20+ (for frontend/tooling)
 
@@ -542,6 +546,22 @@ Spec: expense-automation
 ```
 
 ---
+
+## Copilot in this repo
+
+Behavioural rules live in `.github/copilot-instructions.md` — auto-loaded by Copilot for
+every contributor. Custom agents live in `.github/agents/`. Choose the right mode:
+
+| Mode | When to use | Example |
+|------|------------|---------|
+| **Ask** | Read-only questions, code explanation | "What does this function do?" |
+| **Agents / FixBot** | Multi-file changes with tool approval | "Fix the failing CI check" |
+| **Agents / Reviewer** | Code review only; no edits | "Review this PR for SSOT compliance" |
+| **Smart actions** | Drafts only (commit msg, tests, docs) | Right-click → Copilot → Generate commit message |
+
+Tool approvals: any tool with side effects (file write, git commit) requires explicit approval.
+Agents follow the PLAN → PATCH → VERIFY → PR loop defined in `copilot-instructions.md`.
+Org policy may disable agent mode (`chat.agent.enabled`); check with your admin if unavailable.
 
 ## Questions?
 

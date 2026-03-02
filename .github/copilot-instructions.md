@@ -50,6 +50,14 @@ Every code-changing run must follow:
 
 Never claim "done" without a passing verification step.
 
+### Interaction mode guide
+
+| Mode | Side effects? | Tool approval required? | Reusable prompt |
+|------|--------------|------------------------|-----------------|
+| Ask | None | No | `prompts/review_only.prompt.md` |
+| Agents (FixBot) | Yes (file edits, PR) | Yes — for all write operations | `prompts/fixbot_end_to_end.prompt.md` |
+| Smart actions | Drafts only | Review before commit | N/A |
+
 ## Commit Convention
 
 ```
