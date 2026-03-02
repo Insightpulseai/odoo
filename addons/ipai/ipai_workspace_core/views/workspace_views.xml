@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Workspace: form view                                          -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_form" model="ir.ui.view">
+        <field name="name">ipai.workspace.form</field>
+        <field name="model">ipai.workspace</field>
+        <field name="arch" type="xml">
+            <form string="Workspace">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icon" class="oe_inline" placeholder="Icon"/>
+                            <field name="name" placeholder="Workspace Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="owner_id"/>
+                            <field name="visibility"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Describe this workspace..."/>
+                    </group>
+                    <group>
+                        <field name="member_ids" widget="many2many_tags"/>
+                    </group>
+                    <notebook>
+                        <page string="Pages" name="pages">
+                            <field name="page_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="icon"/>
+                                    <field name="title"/>
+                                    <field name="parent_id"/>
+                                    <field name="is_template"/>
+                                    <field name="created_by"/>
+                                    <field name="last_modified_by"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Membership Roles" name="membership">
+                            <field name="workspace_member_ids">
+                                <list editable="bottom">
+                                    <field name="user_id"/>
+                                    <field name="role"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace: list view                                          -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_list" model="ir.ui.view">
+        <field name="name">ipai.workspace.list</field>
+        <field name="model">ipai.workspace</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="icon"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="owner_id"/>
+                <field name="visibility"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace: search view                                        -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_search" model="ir.ui.view">
+        <field name="name">ipai.workspace.search</field>
+        <field name="model">ipai.workspace</field>
+        <field name="arch" type="xml">
+            <search string="Search Workspaces">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="owner_id"/>
+                <filter name="my_workspaces" string="My Workspaces"
+                        domain="[('owner_id', '=', uid)]"/>
+                <filter name="archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_visibility" string="Visibility"
+                            context="{'group_by': 'visibility'}"/>
+                    <filter name="group_owner" string="Owner"
+                            context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace Page: form view                                     -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_page_form" model="ir.ui.view">
+        <field name="name">ipai.workspace.page.form</field>
+        <field name="model">ipai.workspace.page</field>
+        <field name="arch" type="xml">
+            <form string="Workspace Page">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icon" class="oe_inline" placeholder="Icon"/>
+                            <field name="title" placeholder="Page Title"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workspace_id"/>
+                            <field name="parent_id"
+                                   domain="[('workspace_id', '=', workspace_id)]"/>
+                            <field name="is_template"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="created_by"/>
+                            <field name="last_modified_by"/>
+                            <field name="cover_image_url" widget="url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Content" name="content">
+                            <field name="content_json" widget="ace"
+                                   options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Sub-Pages" name="sub_pages">
+                            <field name="child_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="icon"/>
+                                    <field name="title"/>
+                                    <field name="is_template"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace Page: list view                                     -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_page_list" model="ir.ui.view">
+        <field name="name">ipai.workspace.page.list</field>
+        <field name="model">ipai.workspace.page</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="icon"/>
+                <field name="title"/>
+                <field name="workspace_id"/>
+                <field name="parent_id"/>
+                <field name="is_template"/>
+                <field name="created_by"/>
+                <field name="last_modified_by"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace Page: search view                                   -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_page_search" model="ir.ui.view">
+        <field name="name">ipai.workspace.page.search</field>
+        <field name="model">ipai.workspace.page</field>
+        <field name="arch" type="xml">
+            <search string="Search Pages">
+                <field name="title"/>
+                <field name="workspace_id"/>
+                <field name="created_by"/>
+                <filter name="templates" string="Templates"
+                        domain="[('is_template', '=', True)]"/>
+                <filter name="root_pages" string="Root Pages"
+                        domain="[('parent_id', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_workspace" string="Workspace"
+                            context="{'group_by': 'workspace_id'}"/>
+                    <filter name="group_parent" string="Parent Page"
+                            context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Workspace Member: list view                                   -->
+    <!-- ============================================================ -->
+    <record id="view_ipai_workspace_member_list" model="ir.ui.view">
+        <field name="name">ipai.workspace.member.list</field>
+        <field name="model">ipai.workspace.member</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="workspace_id"/>
+                <field name="user_id"/>
+                <field name="role"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Actions                                                       -->
+    <!-- ============================================================ -->
+    <record id="action_ipai_workspace" model="ir.actions.act_window">
+        <field name="name">Workspaces</field>
+        <field name="res_model">ipai.workspace</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ipai_workspace_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first workspace
+            </p>
+            <p>
+                Workspaces organize your pages, documents, and team
+                collaboration in one place.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_ipai_workspace_page" model="ir.actions.act_window">
+        <field name="name">Pages</field>
+        <field name="res_model">ipai.workspace.page</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ipai_workspace_page_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first page
+            </p>
+            <p>Pages are the building blocks of your workspace.</p>
+        </field>
+    </record>
+
+    <record id="action_ipai_workspace_member" model="ir.actions.act_window">
+        <field name="name">Members</field>
+        <field name="res_model">ipai.workspace.member</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Menus                                                         -->
+    <!-- ============================================================ -->
+    <menuitem
+        id="menu_ipai_workspace_root"
+        name="Workspaces"
+        sequence="5"/>
+
+    <menuitem
+        id="menu_ipai_workspace_main"
+        name="Workspaces"
+        parent="menu_ipai_workspace_root"
+        action="action_ipai_workspace"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_ipai_workspace_pages"
+        name="Pages"
+        parent="menu_ipai_workspace_root"
+        action="action_ipai_workspace_page"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_ipai_workspace_members"
+        name="Members"
+        parent="menu_ipai_workspace_root"
+        action="action_ipai_workspace_member"
+        sequence="30"/>
+
+</odoo>
