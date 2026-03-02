@@ -125,6 +125,14 @@ third-party AI subscriptions beyond a single Gemini API key.
 
 ---
 
+## Coding Agent Harness (SWE-bench Style)
+
+Our coding-agent parity follows a SWE-bench-style harness: explore→plan→implement→verify,
+tests-first where feasible, tools-heavy iteration, minimal diffs, and evidence attached to PRs.
+SSOT: `ssot/evals/swebench_harness_policy.yaml`.
+
+---
+
 ## Success Criteria
 
 1. `ipai_ai_copilot` module installs cleanly on Odoo 19 CE with `depends = ["mail","web","base"]`
