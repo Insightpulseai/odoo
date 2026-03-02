@@ -19,7 +19,7 @@ git-aggregator==4.0
 
 # ----- OCA Linting -----
 pylint>=3.0.0,<3.1.0
-pylint-odoo==9.0.5
+pylint-odoo==10.0.1
 
 # ----- Testing -----
 pytest==9.0.2
