@@ -7,8 +7,7 @@
     "allow": [
       "Bash(docker exec *)",
       "Bash(SUPABASE_ACCESS_TOKEN=\"$SUPABASE_ACCESS_TOKEN\" supabase functions list --project-ref spdtwktxdalcfigzeqrz)",
-      "Bash(GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh pr create --base main --head docs/secrets-ssot-inventory-v1 --title \"docs\\(secrets\\): add SSOT secrets inventory with status and evidence\" --body \"## Summary:*)",
-      "Read(//Users/tbwa/**)"
+      "Bash(GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh pr create --base main --head docs/secrets-ssot-inventory-v1 --title \"docs\\(secrets\\): add SSOT secrets inventory with status and evidence\" --body \"## Summary:*)"
     ]
   },
   "teammateMode": "in-process",
