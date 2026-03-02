@@ -74,7 +74,89 @@ chores:
       - ops.platform_events
     alert_on_failure: false
 
+  - id: daily_mailgun_smtp_smoke
+    name: Mailgun SMTP E2E Smoke Test + Convergence Checks
+    cadence: daily
+    cron: "0 6 * * *"  # 06:00 UTC daily
+    runner: ops-convergence-scan
+    description: >
+      Phase 1 — Odoo mail convergence checks (run first; failures block send step):
+        - mailgun server exists + active in ir.mail_server
+        - mailgun has lowest sequence among active mail servers
+        - mailgun smtp_pass is non-empty
+        - running_env != 'test' in prod instance
+        - PR #445 DNS placeholders absent for lifecycle=active records
+      Phase 2 — E2E smoke send:
+        Send a stamped mail via smtp.mailgun.org:2525 (Odoo prod transport).
+        Subject: "E2E-MAILGUN-ODOO-TEXT <ISO8601-UTC-STAMP>".
+      Phase 3 — Evidence capture:
+        Mailgun webhook → ops-mailgun-ingest → ops.mail_events row.
+        Fallback: Mailgun Events API poll confirms delivery within 5 min.
+        Write run record + raw payload artifact to ops.artifacts.
+    outputs:
+      - ops.maintenance_runs
+      - ops.mail_events
+      - ops.artifacts
+      - ops.convergence_findings
+    alert_on_failure: true
+    success_criteria: "All convergence checks PASS + ops.mail_events row created within 5 minutes of send"
+    secrets_required:
+      - odoo_mailgun_smtp_password  # ssot/secrets/registry.yaml (prod Odoo SMTP, via ODOO_MAILGUN_SMTP_PASSWORD)
+      - mailgun_api_key             # ssot/secrets/registry.yaml (Events API poll fallback)
+    convergence_checks:
+      - id: mailgun_server_exists
+        query: "SELECT count(*) FROM ir_mail_server WHERE smtp_host='smtp.mailgun.org' AND active=true"
+        expected: ">= 1"
+        severity: high
+      - id: mailgun_server_selected_by_sequence
+        query: "SELECT smtp_host FROM ir_mail_server WHERE active=true ORDER BY sequence ASC LIMIT 1"
+        expected: "smtp.mailgun.org"
+        severity: high
+      - id: mailgun_password_present
+        query: "SELECT count(*) FROM ir_mail_server WHERE smtp_host='smtp.mailgun.org' AND smtp_pass IS NOT NULL AND smtp_pass != ''"
+        expected: ">= 1"
+        severity: high
+      - id: running_env_not_test
+        query: "SELECT value FROM ir_config_parameter WHERE key='running_env'"
+        expected_not: "test"
+        severity: medium
+      - id: mail_auth_incomplete
+        check: "DNS active-record placeholder scan (infra/dns/subdomain-registry.yaml)"
+        severity: medium
+        notes: "Fails if PR #445 tracking CNAME or DKIM #2 placeholder values remain in lifecycle=active DNS records"
+    reference: ssot/odoo/mail.yaml
+
   # ── Weekly ─────────────────────────────────────────────────────────────────
+  - id: weekly_agentstack_boot
+    name: AgentStack Compose Boot Verification
+    cadence: weekly
+    cron: "0 5 * * 1"  # Monday 05:00 UTC (before dependency window)
+    runner: ci
+    description: >
+      docker compose -f infra/agentstack/compose.yml up --wait --timeout 60;
+      health-check all services (mcp-gateway, mcp-postgres, agent-runner).
+      Record PASS/FAIL artifact to ops.maintenance_runs.
+      Uses default profile only (no local-model).
+    outputs:
+      - ops.maintenance_runs
+      - ops.agent_artifacts
+    alert_on_failure: true
+    reference: ssot/runtimes/agentstack.yaml
+
+  - id: monthly_model_inventory_refresh
+    name: Model Inventory Refresh (DMR + Gradient)
+    cadence: monthly
+    cron: "0 6 1 * *"  # 1st of month 06:00 UTC
+    runner: ops-convergence-scan
+    description: >
+      Re-ingest available model IDs and digests from Docker Model Runner
+      and DO Gradient into ops.ai_models. Alert on new deprecations.
+    outputs:
+      - ops.ai_models
+      - ops.maintenance_runs
+    alert_on_failure: false
+    reference: ssot/sources/digitalocean/gradient_models.yaml
+
   - id: dependency_upgrade_window
     name: Dependency Upgrade PR Window
     cadence: weekly
