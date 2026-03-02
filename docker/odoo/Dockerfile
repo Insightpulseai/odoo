@@ -1,5 +1,9 @@
 FROM odoo:19.0
 
+# OCI label: links GHCR package to this repository (GitHub Packages best practice)
+# See: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+LABEL org.opencontainers.image.source="https://github.com/Insightpulseai/odoo"
+
 USER root
 
 # Install dependencies for common OCA modules

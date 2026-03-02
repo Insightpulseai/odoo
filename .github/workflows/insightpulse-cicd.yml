@@ -191,6 +191,9 @@ jobs:
     if: |
       needs.detect-changes.outputs.odoo == 'true' ||
       (github.event_name == 'workflow_dispatch' && (github.event.inputs.component == 'all' || github.event.inputs.component == 'odoo'))
+    permissions:
+      contents: read
+      packages: write  # push Docker images to ghcr.io
 
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
