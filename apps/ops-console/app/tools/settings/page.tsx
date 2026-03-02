@@ -44,7 +44,7 @@ async function fetchDeployments(): Promise<{ deployments: Deployment[]; error?: 
   }
   try {
     const res = await fetch(
-      "https://api.vercel.com/v6/deployments?projectId=odooops-console&limit=8",
+      "https://api.vercel.com/v6/deployments?projectId=prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX&teamId=team_wphKJ7lHA3QiZu6VgcotQBQM&limit=8",
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { revalidate: 60 },
@@ -94,14 +94,16 @@ async function fetchSupabaseHealth(): Promise<{
 // ── Static domain data (from SSOT — no DB call needed) ───────────────────────
 
 const CANONICAL_DOMAINS: DomainEntry[] = [
-  { subdomain: "ops",      type: "CNAME", target: "cname.vercel-dns.com", purpose: "Ops Console",           status: "planned" },
-  { subdomain: "erp",      type: "A",     target: "178.128.112.214",       purpose: "Odoo ERP",              status: "active" },
-  { subdomain: "n8n",      type: "A",     target: "178.128.112.214",       purpose: "n8n automation",        status: "active" },
-  { subdomain: "ocr",      type: "A",     target: "178.128.112.214",       purpose: "OCR service",           status: "active" },
-  { subdomain: "auth",     type: "A",     target: "178.128.112.214",       purpose: "Authentication",        status: "active" },
-  { subdomain: "chat",     type: "A",     target: "178.128.112.214",       purpose: "Mattermost (legacy)",   status: "deprecated" },
-  { subdomain: "mcp",      type: "CNAME", target: "pulse-hub-web-an645.ondigitalocean.app", purpose: "MCP server", status: "drift" },
-  { subdomain: "superset", type: "CNAME", target: "superset-nlavf.ondigitalocean.app",      purpose: "Superset BI",status: "active" },
+  { subdomain: "ops",      type: "CNAME", target: "cname.vercel-dns.com",                         purpose: "Ops Console",    status: "active" },
+  { subdomain: "erp",      type: "A",     target: "178.128.112.214",                               purpose: "Odoo ERP",       status: "active" },
+  { subdomain: "n8n",      type: "A",     target: "178.128.112.214",                               purpose: "n8n automation", status: "active" },
+  { subdomain: "ocr",      type: "A",     target: "178.128.112.214",                               purpose: "OCR service",    status: "active" },
+  { subdomain: "auth",     type: "A",     target: "178.128.112.214",                               purpose: "Authentication", status: "planned" },
+  { subdomain: "superset", type: "A",     target: "178.128.112.214",                               purpose: "Superset BI",    status: "active" },
+  { subdomain: "plane",    type: "A",     target: "178.128.112.214",                               purpose: "Plane PM",       status: "active" },
+  { subdomain: "shelf",    type: "A",     target: "178.128.112.214",                               purpose: "Shelf.nu assets", status: "active" },
+  { subdomain: "mcp",      type: "CNAME", target: "pulse-hub-web-an645.ondigitalocean.app",        purpose: "MCP gateway",    status: "active" },
+  { subdomain: "cdn",      type: "CNAME", target: "ipai-assets.sgp1.cdn.digitaloceanspaces.com",   purpose: "Spaces CDN",     status: "planned" },
 ]
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -247,7 +249,7 @@ export default async function SettingsPage({
         <section className="space-y-4">
           <h2 className="text-base font-medium text-gray-900">Domain Registry</h2>
           <p className="text-sm text-gray-500">
-            Sourced from <code className="text-xs bg-gray-100 px-1 rounded">ssot/domains/subdomain-registry.yaml</code>.
+            Sourced from <code className="text-xs bg-gray-100 px-1 rounded">infra/dns/subdomain-registry.yaml</code>.
             Edit the SSOT file to change records; Terraform applies on merge to main.
           </p>
           <div className="overflow-hidden rounded-lg border border-gray-200">

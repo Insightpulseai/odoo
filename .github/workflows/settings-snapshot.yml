@@ -1,0 +1,42 @@
+name: settings-snapshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ssot/**"
+      - "infra/dns/subdomain-registry.yaml"
+      - "infra/cloudflare/zones/insightpulseai.com/records.yaml"
+      - "scripts/ci/generate_settings_snapshot.py"
+      - ".github/workflows/settings-snapshot.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: settings-snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    name: Generate & insert settings snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Generate settings snapshot
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: python scripts/ci/generate_settings_snapshot.py
