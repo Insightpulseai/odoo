@@ -85,7 +85,7 @@ jobs:
             "cd /opt/odoo && \
              ODOO_URL='https://erp.insightpulseai.com' \
              ODOO_DB='odoo' \
-             ODOO_LOGIN='jgtolentino_rn@yahoo.com' \
+             ODOO_LOGIN='devops@insightpulseai.com' \
              ODOO_PASSWORD='$ODOO_PASSWORD' \
              python3 scripts/check_project_tasks.py" \
             > health-report-tasks.txt 2>&1

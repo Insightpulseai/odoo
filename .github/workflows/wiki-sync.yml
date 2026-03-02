@@ -30,7 +30,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "GitHub Wiki Sync"
-          git config --global user.email "jgtolentino.rn@gmail.com"
+          git config --global user.email "devops@insightpulseai.com"
 
       - name: Clone wiki repo
         env:
