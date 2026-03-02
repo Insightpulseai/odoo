@@ -66,12 +66,11 @@ jobs:
             --run-id "${{ github.run_id }}" \
             --output /tmp/release_manifest.json || echo "WARNING: manifest generation failed"
 
-          # Create a Release with manifest attached
-          if [ -f /tmp/release_manifest.json ]; then
-            gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" /tmp/release_manifest.json || true
-          else
-            gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" || true
-          fi
+          # Create a Release with manifest + gates report attached
+          ASSETS=()
+          [ -f /tmp/release_manifest.json ] && ASSETS+=(/tmp/release_manifest.json)
+          [ -f /tmp/gates_report.json ] && ASSETS+=(/tmp/gates_report.json)
+          gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" "${ASSETS[@]}" || true
 
       - name: Update GitHub Project v2 item fields to Shipped
         env:

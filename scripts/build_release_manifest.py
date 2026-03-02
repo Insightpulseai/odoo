@@ -164,6 +164,19 @@ def main() -> int:
     output_path = Path(args.output)
     write_json(manifest, output_path)
 
+    # Always write gates_report.json alongside the manifest
+    gates_report = {
+        "version": 1,
+        "tag": manifest["tag"],
+        "commit_sha": manifest["commit_sha"],
+        "gates_passed": manifest["gates_passed"],
+        "gates_failed": [],
+        "advisories": [f"validation_errors={len(errors)}"] if errors else [],
+        "timestamp": manifest["timestamp"],
+    }
+    gates_report_path = output_path.parent / "gates_report.json"
+    write_json(gates_report, gates_report_path)
+
     # Optionally write YAML record
     if args.yaml:
         write_yaml_record(manifest, args.tag)

@@ -417,18 +417,15 @@ jobs:
           printf '%b\n' "$RELEASE_NOTES" > /tmp/release-notes.md
 
           RELEASE_ARGS="--title 'Production: $TAG' --notes-file /tmp/release-notes.md --latest"
-          if [ -f /tmp/release_manifest.json ]; then
-            gh release create "$TAG" \
-              --title "Production: $TAG" \
-              --notes-file /tmp/release-notes.md \
-              --latest \
-              /tmp/release_manifest.json
-          else
-            gh release create "$TAG" \
-              --title "Production: $TAG" \
-              --notes-file /tmp/release-notes.md \
-              --latest
-          fi
+          ASSETS=()
+          [ -f /tmp/release_manifest.json ] && ASSETS+=(/tmp/release_manifest.json)
+          [ -f /tmp/gates_report.json ] && ASSETS+=(/tmp/gates_report.json)
+
+          gh release create "$TAG" \
+            --title "Production: $TAG" \
+            --notes-file /tmp/release-notes.md \
+            --latest \
+            "${ASSETS[@]}"
 
       - name: Release summary
         run: |
