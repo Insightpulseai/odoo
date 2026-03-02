@@ -3,23 +3,27 @@
 #
 # CI validator: scripts/ci/validate_skills_registry.py
 # Sync action:  .github/workflows/skills-sync.yml → ops.skills (Supabase)
+# Interface:    ssot/agents/interface_schema.yaml (required fields + security defaults)
+# Tools:        ssot/tools/registry.yaml (allowed_tools must reference IDs here)
 #
 # Field reference:
-#   id            - unique snake_case identifier (also the FK used in ops.runs.skill_id)
+#   id            - unique kebab-case identifier (also the FK used in ops.runs.skill_id)
 #   name          - human-readable display name
 #   description   - what the skill does (1-2 sentences)
-#   executor      - vercel_sandbox | do_runner
+#   executor      - vercel_sandbox | do_runner | supabase_edge_fn
 #   max_duration_s- hard timeout; Edge Function returns 504 if exceeded
 #   tags          - free-form list for filtering
-#   state_machine - list of required states in order (must be subset of PLAN,PATCH,VERIFY,PR)
+#   state_machine - list of required states in order (must be subset of PLAN,PATCH,VERIFY,PR,MONITOR)
 #   owner         - team or person responsible for keeping it green
 #   status        - active | deprecated | experimental
+#   allowed_tools - list of tool IDs from ssot/tools/registry.yaml; ["__none__"] = no tools
+#   security      - security controls block (see ssot/agents/interface_schema.yaml)
 #
 # Last updated: 2026-03-02
 # Spec:         spec/deerflow-patterns-adoption/
 
 meta:
-  schema_version: "1.0"
+  schema_version: "1.1"
   updated_at: "2026-03-02"
   spec: "spec/deerflow-patterns-adoption/"
 
@@ -35,6 +39,23 @@ skills:
     state_machine: [PLAN, PATCH, VERIFY, PR]
     owner: platform-team
     status: active
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - ops_add_artifact
+      - github_read_issue
+      - github_open_pr
+      - mcp_plane_read_issue
+      - slack_post_approval_request
+      - repo_read_file
+      - repo_write_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000
 
   - id: fixbot-triage
     name: "FixBot Triage"
@@ -48,6 +69,22 @@ skills:
     state_machine: [PLAN, PATCH, VERIFY]
     owner: platform-team
     status: active
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - github_read_issue
+      - github_read_ci_run
+      - mcp_plane_read_issue
+      - mcp_plane_create_issue
+      - slack_post_ops_alert
+      - repo_read_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000
 
   - id: ops-advisor-scan
     name: "Ops Advisor Scan"
@@ -61,3 +98,19 @@ skills:
     state_machine: [PLAN, VERIFY]
     owner: platform-team
     status: active
+    allowed_tools:
+      - ops_start_run
+      - ops_log_event
+      - ops_complete_run
+      - ops_fail_run
+      - ops_write_convergence_finding
+      - ops_add_artifact
+      - github_read_ci_run
+      - slack_post_ops_alert
+      - edge_fn_convergence_scan
+      - repo_read_file
+    security:
+      path_traversal_guard: true
+      symlink_guard: true
+      metadata_escaping: true
+      max_skill_body_bytes: 5000

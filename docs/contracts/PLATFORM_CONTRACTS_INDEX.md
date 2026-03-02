@@ -4,7 +4,7 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-03-01 (C-18–C-22 added: DO API, Odoo.sh Parity, Mail Catcher, Plane Work Items Webhooks, GitHub Issues Webhooks)
+> Last updated: 2026-03-02 (C-23–C-24 added: Agent Workflows, Tool Permissions — MAF parity P0)
 
 ---
 
@@ -34,6 +34,8 @@
 | C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)              | Mailgun relay + `ops.mail_events`           | ops-console Observability                 | 🔲 Planned | CI gate (task 33)                          |
 | C-21 | [Plane Work Items Webhooks](C-PLANE-02-workitems-webhooks.md) | `ssot/sources/plane/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/plane/route.ts` |
 | C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/github/route.ts` |
+| C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
+| C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
 
 ---
 

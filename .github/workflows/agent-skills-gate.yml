@@ -3,9 +3,21 @@ name: Agent Skills Gate
 on:
   pull_request:
     paths:
+      # Legacy skill contract directories (per-skill subdirs)
       - "agents/skills/**"
       - "scripts/ci/check_agent_skills.py"
       - "agents/skills/schema/**"
+      # SSOT skills registry + tool registry + interface schema (MAF parity P0)
+      - "ssot/agents/skills.yaml"
+      - "ssot/agents/interface_schema.yaml"
+      - "ssot/tools/registry.yaml"
+      - "scripts/ci/validate_skills_registry.py"
+      # Contract docs that feed the citation-label check
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      - "docs/contracts/C-AGENT-WORKFLOWS-01.md"
+      - "docs/contracts/PLATFORM_CONTRACTS_INDEX.md"
+      # Test fixtures
+      - "tests/fixtures/skills/**"
   push:
     branches:
       - main
@@ -13,6 +25,14 @@ on:
       - "agents/skills/**"
       - "scripts/ci/check_agent_skills.py"
       - "agents/skills/schema/**"
+      - "ssot/agents/skills.yaml"
+      - "ssot/agents/interface_schema.yaml"
+      - "ssot/tools/registry.yaml"
+      - "scripts/ci/validate_skills_registry.py"
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      - "docs/contracts/C-AGENT-WORKFLOWS-01.md"
+      - "docs/contracts/PLATFORM_CONTRACTS_INDEX.md"
+      - "tests/fixtures/skills/**"
   merge_group:
   workflow_dispatch:
 
@@ -20,8 +40,9 @@ permissions:
   contents: read
 
 jobs:
+  # ── Job 1: Legacy per-skill contract validation ───────────────────────────
   validate-skill-contracts:
-    name: Validate Skill Contracts
+    name: Validate Skill Contracts (agents/skills/**)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -52,10 +73,9 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## Agent Skills Gate" >> $GITHUB_STEP_SUMMARY
+          echo "## Agent Skills Gate (legacy contracts)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Count skills
           SKILL_COUNT=$(find agents/skills -name "skill.yaml" -not -path "*/\_template/*" | wc -l)
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
@@ -64,7 +84,6 @@ jobs:
           echo "| Validator | \`scripts/ci/check_agent_skills.py\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # List skills
           echo "### Skills" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           for skill in $(find agents/skills -name "skill.yaml" -not -path "*/\_template/*" | sort); do
@@ -72,3 +91,63 @@ jobs:
             NAME=$(basename "$DIR")
             echo "- \`${NAME}\`" >> $GITHUB_STEP_SUMMARY
           done
+
+  # ── Job 2: SSOT skills registry + tool cross-ref + citation check ─────────
+  validate-ssot-registry:
+    name: Validate SSOT Skills Registry (ssot/agents/skills.yaml)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate SSOT skills registry (tool cross-ref + security block + citations)
+        run: |
+          python scripts/ci/validate_skills_registry.py \
+            --ssot-path ssot/agents/skills.yaml \
+            --tools-path ssot/tools/registry.yaml \
+            --check-docs docs/contracts spec
+
+      - name: Prove validator blocks bad tool refs (fixture test)
+        run: |
+          echo "Running validator against intentionally invalid fixture..."
+          if python scripts/ci/validate_skills_registry.py \
+              --ssot-path tests/fixtures/skills/bad_tool_ref.yaml \
+              --tools-path ssot/tools/registry.yaml \
+              --check-docs /dev/null 2>&1; then
+            echo "FAIL: validator did not reject bad tool refs — fixture test failed"
+            exit 1
+          else
+            echo "PASS: validator correctly rejected bad_tool_ref.yaml (exit 1)"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Agent Skills Gate (SSOT registry)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          SKILL_COUNT=$(python3 -c "
+          import yaml, sys
+          doc = yaml.safe_load(open('ssot/agents/skills.yaml'))
+          print(len(doc.get('skills', [])))
+          " 2>/dev/null || echo "?")
+          TOOL_COUNT=$(python3 -c "
+          import yaml
+          doc = yaml.safe_load(open('ssot/tools/registry.yaml'))
+          print(len(doc.get('tools', [])))
+          " 2>/dev/null || echo "?")
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SSOT skills | ${SKILL_COUNT} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Registered tools | ${TOOL_COUNT} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Registry | \`ssot/agents/skills.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool SSOT | \`ssot/tools/registry.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validator | \`scripts/ci/validate_skills_registry.py\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Contracts | [C-AGENT-WORKFLOWS-01](docs/contracts/C-AGENT-WORKFLOWS-01.md) · [C-TOOLS-PERMISSIONS-01](docs/contracts/C-TOOLS-PERMISSIONS-01.md) |" >> $GITHUB_STEP_SUMMARY
