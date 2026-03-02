@@ -20,4 +20,20 @@ meta:
 #   input: test query
 #   expected: expected behavior (citation_present, source_match, confidence_threshold)
 #   status: active | planned | skipped
-cases: []
+cases:
+  - id: citation-present-rag
+    description: "Verify RAG-augmented responses include source citations"
+    input:
+      query: "What is the return policy for product X?"
+      sources: [odoo_records, external_docs]
+    expected: citation_present
+    status: planned
+
+  - id: citation-coverage-threshold
+    description: "Verify citation coverage meets 95% threshold across test queries"
+    input:
+      query_set: "standard_knowledge_queries"   # Test query corpus TBD
+      sources: [odoo_records]
+    expected:
+      citation_coverage: ">= 0.95"
+    status: planned

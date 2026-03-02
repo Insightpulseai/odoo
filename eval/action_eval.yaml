@@ -21,4 +21,39 @@ meta:
 #   input: test parameters
 #   expected: expected outcome (success, denied, confirmation_shown)
 #   status: active | planned | skipped
-cases: []
+cases:
+  - id: read-only-default-enforced
+    description: "Verify agent cannot execute write tools when no write-capable topic is assigned"
+    tool_id: create_record
+    input:
+      topic: general_assistant          # Read-only topic
+      action: "create a sale order"
+    expected: denied
+    status: planned
+
+  - id: read-only-default-denied
+    description: "Verify unauthorized write returns ACCESS_DENIED error code"
+    tool_id: update_record
+    input:
+      topic: null                       # No topic assigned
+      action: "update the invoice amount"
+    expected: denied
+    status: planned
+
+  - id: approval-compliance-write
+    description: "Verify write tool shows confirmation dialog before execution"
+    tool_id: create_record
+    input:
+      topic: record_management
+      action: "create a new contact"
+    expected: confirmation_shown
+    status: planned
+
+  - id: approval-compliance-automation
+    description: "Verify automation tool shows confirmation before triggering workflow"
+    tool_id: trigger_workflow
+    input:
+      topic: automation
+      action: "trigger the invoice sync workflow"
+    expected: confirmation_shown
+    status: planned

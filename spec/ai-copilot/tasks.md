@@ -233,3 +233,43 @@ Version: 1.0.0 | Status: Active | Last updated: 2026-02-27
 ### T-GATE-05: Create eval harness skeletons
 - Create `eval/knowledge_copilot_eval.yaml` and `eval/action_eval.yaml`
 - Acceptance: YAML parses, meta fields populated
+
+### T-GATE-06: Create Gemini-first provider policy
+- Create `ssot/ai/provider_policy.yaml` with default_provider=gemini, routing per capability
+- Acceptance: YAML parses, routing entries cover knowledge/tool_use/coding/chatter/html_editor
+
+### T-GATE-07: Create OCA/ai integration model
+- Create `ssot/ai/oca_ai_integration.yaml` with Topics→Tools, Sources→Corpora, module status
+- Acceptance: YAML parses, all tool IDs match ipai_ai_copilot tool registry
+
+---
+
+## Phase OCA: Gemini Adapter + Audit + Eval
+
+### T-OCA-01: Implement Gemini adapter module (thin)
+- Create `addons/ipai/ipai_ai_oca_bridge_gemini/` module
+- Routes OCA/ai tool calls into Tool Contract v1 router
+- Depends: ipai_ai_copilot, ipai_ai_core, mail
+- Acceptance: module installs, tool calls route through IPAI bridge
+
+### T-OCA-02: Wire audit envelope to ops.platform_events
+- Every tool invocation emits: trace_id, user_id, tool_name, args (sanitized), result, timestamp
+- Acceptance: tool execution creates row in ops.platform_events; no secrets in args
+
+### T-OCA-03: Wire eval gates for read-only default
+- Add eval cases to `eval/action_eval.yaml`:
+  - `read-only-default-enforced`: verify agent cannot write without topic assignment
+  - `read-only-default-denied`: verify unauthorized write returns ACCESS_DENIED
+- Acceptance: eval cases added with status=planned
+
+### T-OCA-04: Wire eval gates for approval compliance
+- Add eval cases to `eval/action_eval.yaml`:
+  - `approval-compliance-write`: verify write tool shows confirmation before execution
+  - `approval-compliance-automation`: verify automation tool shows confirmation
+- Acceptance: eval cases added with status=planned
+
+### T-OCA-05: Add citation requirement to knowledge eval
+- Add eval cases to `eval/knowledge_copilot_eval.yaml`:
+  - `citation-present-rag`: verify RAG responses include source citations
+  - `citation-coverage-threshold`: verify >=95% citation coverage
+- Acceptance: eval cases added with status=planned
