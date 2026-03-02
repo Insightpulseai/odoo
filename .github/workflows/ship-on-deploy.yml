@@ -54,8 +54,24 @@ jobs:
           git tag -a "$TAG" -m "Shipped: $TAG" "$SHA"
           git push origin "$TAG"
 
-          # Create a Release (optional but recommended)
-          gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" || true
+          # Build release manifest (best-effort: no SBOM in this workflow)
+          pip install pyyaml >/dev/null 2>&1 || true
+          python scripts/build_release_manifest.py \
+            --tag "$TAG" \
+            --image-digest "sha256:unknown" \
+            --image-tag "$TAG" \
+            --commit-sha "$SHA" \
+            --gates "G1" \
+            --deployer "${{ github.actor }}" \
+            --run-id "${{ github.run_id }}" \
+            --output /tmp/release_manifest.json || echo "WARNING: manifest generation failed"
+
+          # Create a Release with manifest attached
+          if [ -f /tmp/release_manifest.json ]; then
+            gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" /tmp/release_manifest.json || true
+          else
+            gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" || true
+          fi
 
       - name: Update GitHub Project v2 item fields to Shipped
         env:
