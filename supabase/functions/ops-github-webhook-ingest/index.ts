@@ -207,17 +207,27 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
+  // ── ping handler (GitHub sends ping on webhook registration) ─────────────
+  if (eventType === "ping") {
+    return new Response(
+      JSON.stringify({ ok: true, pong: true, hook_id: payload["hook_id"] ?? null }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   // ── 1. Delivery ledger (durable; dedupe by PK delivery_id) ────────────────
   const { error: delivErr } = await supabase
     .schema("ops")
     .from("github_webhook_deliveries")
-    .insert({
-      delivery_id: deliveryId,
-      event_type:  eventType,
-      payload,
-      status:      "received",
-    })
-    .on("conflict", "delivery_id", { ignoreDuplicates: true } as never);
+    .upsert(
+      {
+        delivery_id: deliveryId,
+        event_type:  eventType,
+        payload,
+        status:      "received",
+      },
+      { onConflict: "delivery_id", ignoreDuplicates: true },
+    );
 
   if (delivErr && !delivErr.message.includes("duplicate")) {
     console.error("delivery insert error:", delivErr.message);
