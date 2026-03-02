@@ -3,12 +3,12 @@
     <!-- Helpdesk Security Groups -->
     <record id="group_helpdesk_user" model="res.groups">
         <field name="name">Helpdesk User</field>
-        <field name="category_id" ref="base.module_category_services_helpdesk"/>
+        <field name="category_id" ref="base.module_category_services"/>
     </record>
 
     <record id="group_helpdesk_manager" model="res.groups">
         <field name="name">Helpdesk Manager</field>
-        <field name="category_id" ref="base.module_category_services_helpdesk"/>
+        <field name="category_id" ref="base.module_category_services"/>
         <field name="implied_ids" eval="[(4, ref('group_helpdesk_user'))]"/>
     </record>
 

@@ -11,8 +11,8 @@
             <field name="active" eval="True"/>
             <field name="description">Month-End Close - Finance SSC | 9 employees | 39 closing tasks across 5 phases</field>
             <field name="allow_subtasks" eval="True"/>
-            <field name="allow_recurring_tasks" eval="True"/>
-            <field name="allow_task_dependencies" eval="True"/>
+            <!-- allow_recurring_tasks and allow_task_dependencies removed:
+                 require sale_project / project_task_dependency (not installed) -->
             <field name="allow_milestones" eval="True"/>
             <field name="type_ids" eval="[
                 (4, ref('stage_todo')),
@@ -33,8 +33,8 @@
             <field name="active" eval="True"/>
             <field name="description">BIR Tax Filing - Finance SSC | 9 employees | 50 BIR tasks | 1601-C; 0619-E; 2550M; 2550Q; 1601-EQ; 1702Q; 1702-RT; 1604-CF; 1604-E</field>
             <field name="allow_subtasks" eval="True"/>
-            <field name="allow_recurring_tasks" eval="True"/>
-            <field name="allow_task_dependencies" eval="True"/>
+            <!-- allow_recurring_tasks and allow_task_dependencies removed:
+                 require sale_project / project_task_dependency (not installed) -->
             <field name="allow_milestones" eval="True"/>
             <field name="type_ids" eval="[
                 (4, ref('stage_todo')),
