@@ -32,8 +32,43 @@ By participating, you are expected to uphold this code.
 - Python 3.11+
 - PostgreSQL 15+
 - Docker & Docker Compose
+  - Supported runtimes: **Docker Desktop** (recommended) or **Colima**
+  - Your Docker context must point to a running daemon (`Server != null`)
 - Git with submodule support
 - Node.js 20+ (for frontend/tooling)
+
+### Docker runtime sanity check (mandatory before Dev Containers)
+
+Run this before rebuilding or opening the Dev Container:
+
+```bash
+bash scripts/dev/docker_doctor.sh              # defaults to desktop-linux
+bash scripts/dev/docker_doctor.sh colima       # if using Colima instead
+```
+
+Expected output:
+
+```text
+OK: Docker daemon reachable via context 'desktop-linux'
+    Client=29.x.x  Server=29.x.x
+```
+
+If it fails, your Docker daemon or context is misconfigured. Common fixes:
+
+| Symptom | Fix |
+| ------- | --- |
+| `context not found` | `docker context ls` → use a listed context |
+| `Server: null` | Start Docker Desktop or `colima start` |
+| `DOCKER_HOST` overriding context | `unset DOCKER_HOST && docker context use desktop-linux` |
+
+To switch to Colima **without editing any repo files**, set the override env var before launching VS Code:
+
+```bash
+export DOCKER_CONTEXT_OVERRIDE=colima
+code .   # VS Code picks it up via initializeCommand
+```
+
+The default (`desktop-linux`) is used when the variable is unset.
 
 ### Quick Setup
 
@@ -41,6 +76,9 @@ By participating, you are expected to uphold this code.
 # Clone with submodules
 git clone --recurse-submodules https://github.com/jgtolentino/odoo.git
 cd odoo
+
+# Verify Docker daemon (required before compose or Dev Containers)
+bash scripts/dev/docker_doctor.sh
 
 # Install pre-commit hooks
 pip install pre-commit
