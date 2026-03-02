@@ -63,6 +63,14 @@
 
 ---
 
+## See also
+
+- [`docs/dev/github/INDEX.md`](../github/INDEX.md) — GitHub documentation reference
+- [`docs/dev/vercel/INDEX.md`](../vercel/INDEX.md) — Vercel documentation reference
+- [`docs/dev/odoo/DOCS_INDEX.md`](../odoo/DOCS_INDEX.md) — Odoo documentation reference
+
+---
+
 ## Related files in this repo
 
 | File | Purpose |
