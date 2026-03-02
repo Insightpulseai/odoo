@@ -10,6 +10,9 @@ on:
     paths:
       - '*'
 
+
+permissions:
+  contents: read
 jobs:
   check-root-boundary:
     runs-on: ubuntu-latest

@@ -26,6 +26,9 @@ on:
     paths:
       - ".claude/settings.json"
 
+
+permissions:
+  contents: read
 jobs:
   auth-guard:
     name: No GH_TOKEN/GITHUB_TOKEN in settings.json env block

@@ -29,6 +29,9 @@ on:
       - '.github/workflows/supabase-etl-expense.yml'
   workflow_dispatch:
 
+
+permissions:
+  contents: read
 jobs:
   etl-lint:
     name: EL-only invariant lint

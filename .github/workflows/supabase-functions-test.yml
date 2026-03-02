@@ -6,6 +6,9 @@ on:
       - "supabase/functions/**"
   workflow_dispatch:
 
+
+permissions:
+  contents: read
 jobs:
   test-functions:
     runs-on: ubuntu-latest

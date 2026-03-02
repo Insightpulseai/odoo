@@ -15,6 +15,9 @@ on:
     branches:
       - main
 
+
+permissions:
+  contents: read
 jobs:
   detect-direct-push:
     name: Detect direct push to main
