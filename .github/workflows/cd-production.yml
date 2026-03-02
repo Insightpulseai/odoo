@@ -399,13 +399,33 @@ jobs:
             sleep $WAIT
           done
 
-          # Create GitHub release
+          # Build release manifest
+          pip install pyyaml >/dev/null 2>&1 || true
+          python scripts/build_release_manifest.py \
+            --tag "$TAG" \
+            --image-digest "${{ needs.build.outputs.image_digest }}" \
+            --image-tag "${{ needs.build.outputs.image_tag }}" \
+            --commit-sha "${{ github.sha }}" \
+            --gates "G1,G2,G3" \
+            --deployer "${{ github.actor }}" \
+            --run-id "${{ github.run_id }}" \
+            --output /tmp/release_manifest.json \
+            --yaml || echo "WARNING: manifest generation failed"
+
+          # Create GitHub release with manifest attached
           RELEASE_NOTES="Automated production deployment\n\n**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG\`\n**Commit:** ${{ github.sha }}\n**Deployed by:** ${{ github.actor }}\n**Workflow:** [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
           printf '%b\n' "$RELEASE_NOTES" > /tmp/release-notes.md
+
+          RELEASE_ARGS="--title 'Production: $TAG' --notes-file /tmp/release-notes.md --latest"
+          ASSETS=()
+          [ -f /tmp/release_manifest.json ] && ASSETS+=(/tmp/release_manifest.json)
+          [ -f /tmp/gates_report.json ] && ASSETS+=(/tmp/gates_report.json)
+
           gh release create "$TAG" \
             --title "Production: $TAG" \
             --notes-file /tmp/release-notes.md \
-            --latest
+            --latest \
+            "${ASSETS[@]}"
 
       - name: Release summary
         run: |
