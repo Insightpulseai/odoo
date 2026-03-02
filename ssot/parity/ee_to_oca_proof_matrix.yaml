@@ -1,9 +1,10 @@
-# schema: ssot.parity.ee_to_oca_proof.v1
-# Evidence-based EE→OCA parity proof matrix.
+# schema: ssot.parity.ee_to_oca_proof.v2
+# Evidence-based EE→OCA parity proof matrix with execution fields.
 # Each entry must have at least one evidence_link (URL) proving the parity path.
 # Universal EE→OCA replacement is NOT claimed. Coverage is proven per-feature.
 #
 # Companion doc: docs/parity/EE_TO_OCA_PROOF.md
+# Derived map: ssot/parity/ee_to_oca_execution_map.yaml
 # Related SSOTs: ssot/parity/ee_to_oca_matrix.yaml (operational), ssot/parity/odoo_enterprise.yaml (status)
 #
 # parity_path values:
@@ -12,15 +13,22 @@
 #   bridge        — External service + ipai_* connector fills the gap
 #   gap           — No known open replacement; gap accepted or build/bridge needed
 #
+# route values (execution action):
+#   adopt_oca         — OCA module is 19.0-ready, pin and install
+#   port_then_adopt   — OCA module exists but needs 19.0 port first
+#   bridge            — Already bridged via ipai_* connector to external service
+#   build_ipai        — No OCA path; build custom ipai_* addon
+#   accept_gap        — Gap accepted; not in scope or waived
+#
 # odoo19_support values:
 #   yes           — Module confirmed working on Odoo 19.0
 #   needs_port    — Module exists for older versions, 19.0 port required
 #   unknown       — Not yet evaluated for 19.0 compatibility
 
-version: 1
+version: 2
 meta:
   owner: platform
-  purpose: "Evidence-based proof matrix mapping EE-only features to OCA/bridge alternatives with citations"
+  purpose: "Evidence-based proof matrix mapping EE-only features to OCA/bridge alternatives with execution routing"
   created: "2026-03-03"
   last_reviewed: "2026-03-03"
   source_of_truth_for_ee_features: "https://www.odoo.com/page/editions"
@@ -33,11 +41,13 @@ schema_rules:
   required_fields:
     - ee_feature_id
     - parity_path
+    - route
     - odoo19_support
   parity_path_values: [oca_direct, oca_partial, bridge, gap]
-  odoo19_support_values: [yes, needs_port, unknown]
+  route_values: [adopt_oca, port_then_adopt, bridge, build_ipai, accept_gap]
+  odoo19_support_values: [yes, needs_port, unknown, "n/a"]
 
-# ── Proven entries (with evidence links) ──────────────────────────────────────
+# ── Proven entries (with evidence links + execution fields) ───────────────────
 
 entries:
 
@@ -47,6 +57,11 @@ entries:
     ee_module_name: spreadsheet_edition
     description: "Collaborative spreadsheets inside Odoo (EE-only)"
     parity_path: oca_direct
+    route: port_then_adopt
+    owner: platform
+    milestone: M2_next
+    ledger_feature_id: "F-PARITY-001"
+    gates_required: [ci_pass]
     oca_repo: OCA/spreadsheet
     oca_modules:
       - spreadsheet_oca
@@ -62,6 +77,11 @@ entries:
     ee_module_name: documents
     description: "Document management with workspaces, tags, and workflows (EE-only)"
     parity_path: oca_direct
+    route: port_then_adopt
+    owner: platform
+    milestone: M2_next
+    ledger_feature_id: "F-PARITY-002"
+    gates_required: [ci_pass]
     oca_repo: OCA/dms
     oca_modules:
       - dms
@@ -79,6 +99,11 @@ entries:
     ee_module_name: sign
     description: "Electronic signature requests and tracking (EE-only)"
     parity_path: oca_partial
+    route: port_then_adopt
+    owner: platform
+    milestone: backlog
+    ledger_feature_id: "F-PARITY-003"
+    gates_required: [ci_pass]
     oca_repo: OCA/sign
     oca_modules:
       - sign
@@ -101,6 +126,11 @@ entries:
     ee_module_name: account_accountant
     description: "Advanced accounting with reconciliation widget, lock dates, reports"
     parity_path: oca_partial
+    route: port_then_adopt
+    owner: finance
+    milestone: M1_launch
+    ledger_feature_id: "F-PARITY-004"
+    gates_required: [ci_pass]
     oca_repo: OCA/account-financial-tools
     oca_modules:
       - account_move_line_search_all
@@ -118,6 +148,11 @@ entries:
     ee_module_name: documents_ocr
     description: "Automatic vendor bill digitization via OCR (IAP-based in EE)"
     parity_path: bridge
+    route: bridge
+    owner: finance
+    milestone: M1_launch
+    ledger_feature_id: "F-PARITY-005"
+    gates_required: [ci_pass, spec_bundle_exists, tool_contract_exists]
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -132,6 +167,11 @@ entries:
     ee_module_name: hr_expense (EE extensions)
     description: "Cash advance request, approval, release, liquidation"
     parity_path: oca_partial
+    route: port_then_adopt
+    owner: finance
+    milestone: M1_launch
+    ledger_feature_id: "F-PARITY-006"
+    gates_required: [ci_pass, spec_bundle_exists]
     oca_repo: OCA/hr-expense
     oca_modules:
       - hr_expense_advance_clearing
@@ -150,6 +190,11 @@ entries:
     ee_module_name: enterprise_ai
     description: "Odoo AI app — BYOM with OpenAI/Gemini API key, AI fields, agents"
     parity_path: bridge
+    route: bridge
+    owner: ai
+    milestone: M1_launch
+    ledger_feature_id: "F-PARITY-007"
+    gates_required: [ci_pass, spec_bundle_exists, tool_contract_exists]
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -167,6 +212,11 @@ entries:
     ee_module_name: enterprise_ai
     description: "Ask AI button in html editor, Knowledge, Discuss, email, notes"
     parity_path: bridge
+    route: bridge
+    owner: ai
+    milestone: M1_launch
+    ledger_feature_id: "F-PARITY-008"
+    gates_required: [ci_pass, spec_bundle_exists, tool_contract_exists]
     oca_repo: null
     oca_modules:
       - ai_oca_native_generate_ollama  # vendored, Ollama only
@@ -187,6 +237,11 @@ entries:
     ee_module_name: helpdesk
     description: "Customer support ticketing with SLA, ratings, and Knowledge base"
     parity_path: oca_partial
+    route: port_then_adopt
+    owner: platform
+    milestone: M2_next
+    ledger_feature_id: "F-PARITY-009"
+    gates_required: [ci_pass]
     oca_repo: OCA/helpdesk
     oca_modules:
       - helpdesk
@@ -204,6 +259,11 @@ entries:
     ee_module_name: web_studio
     description: "No-code form/view builder with drag-and-drop customization"
     parity_path: gap
+    route: accept_gap
+    owner: null
+    milestone: n_a
+    ledger_feature_id: null
+    gates_required: []
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -221,6 +281,11 @@ entries:
     ee_module_name: null  # platform service, not a module
     description: "Managed hosting with CI/staging/dev branches and automated upgrades"
     parity_path: gap
+    route: accept_gap
+    owner: null
+    milestone: n_a
+    ledger_feature_id: null
+    gates_required: []
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -236,6 +301,11 @@ entries:
     ee_module_name: iap
     description: "In-App Purchases for Odoo-hosted AI, SMS, lead generation services"
     parity_path: gap
+    route: accept_gap
+    owner: null
+    milestone: n_a
+    ledger_feature_id: null
+    gates_required: []
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -251,6 +321,11 @@ entries:
     ee_module_name: social
     description: "Social media marketing management"
     parity_path: gap
+    route: accept_gap
+    owner: null
+    milestone: n_a
+    ledger_feature_id: null
+    gates_required: []
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -263,6 +338,11 @@ entries:
     ee_module_name: loyalty
     description: "Loyalty programs, gift cards, and promotions"
     parity_path: gap
+    route: accept_gap
+    owner: null
+    milestone: n_a
+    ledger_feature_id: null
+    gates_required: []
     oca_repo: null
     oca_modules: []
     evidence_links:
@@ -275,10 +355,20 @@ entries:
 
 summary:
   total_entries: 14
-  oca_direct: 2       # Spreadsheet, Documents
-  oca_partial: 4      # Sign, Accounting Advanced, Expense Advance, Helpdesk
-  bridge: 3           # Vendor Bill OCR, AI Tools, Ask AI
-  gap: 5              # Studio, Odoo.sh, IAP, Social, Loyalty
+  by_parity_path:
+    oca_direct: 2       # Spreadsheet, Documents
+    oca_partial: 4      # Sign, Accounting Advanced, Expense Advance, Helpdesk
+    bridge: 3           # Vendor Bill OCR, AI Tools, Ask AI
+    gap: 5              # Studio, Odoo.sh, IAP, Social, Loyalty
+  by_route:
+    port_then_adopt: 6  # Spreadsheet, Documents, Sign, Accounting, Expense, Helpdesk
+    bridge: 3           # Vendor Bill OCR, AI Tools, Ask AI
+    accept_gap: 5       # Studio, Odoo.sh, IAP, Social, Loyalty
+  by_milestone:
+    M1_launch: 5        # Accounting, Vendor Bill OCR, Expense, AI Tools, Ask AI
+    M2_next: 3          # Spreadsheet, Documents, Helpdesk
+    backlog: 1          # Sign
+    n_a: 5              # All gaps
   coverage_note: >
     9 of 14 EE features have an OCA or bridge alternative (64%).
     5 gaps are either platform services (Studio, Odoo.sh, IAP) or non-applicable

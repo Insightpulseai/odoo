@@ -1,0 +1,30 @@
+name: Parity Matrix Contract Gate
+
+on:
+  pull_request:
+    paths: ['ssot/parity/**']
+  push:
+    branches: [main]
+    paths: ['ssot/parity/**']
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-parity-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate parity proof matrix
+        run: python scripts/check_parity_matrix.py
