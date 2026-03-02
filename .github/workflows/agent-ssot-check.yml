@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+
+permissions:
+  contents: read
 jobs:
   ssot-pointer:
     runs-on: ubuntu-latest

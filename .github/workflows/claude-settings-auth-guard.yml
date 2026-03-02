@@ -1,0 +1,47 @@
+name: Claude Settings Auth Guard
+
+# Prevents GH_TOKEN / GITHUB_TOKEN from being (re-)added to .claude/settings.json
+# env block, which would override the gh CLI keyring with an empty string and
+# cause HTTP 401 Bad credentials on all GitHub-authenticated tools.
+#
+# ROOT CAUSE (2026-03-02):
+#   Claude Code injects the `env` block into every child process before it starts.
+#   An empty GH_TOKEN="" suppresses keyring lookup → 401 everywhere (VS Code,
+#   MCP GitHub, gh CLI, Claude GitHub app).
+#
+# CORRECT PATTERN:
+#   - Locally: gh auth login → keyring (jgtolentino). No env var needed.
+#   - CI jobs: env: GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} per-job only.
+#   - .claude/settings.json env block: GH_HOST only, never GH_TOKEN/GITHUB_TOKEN.
+#
+# SSOT: scripts/ci/check_claude_settings_auth.py (--fix flag auto-corrects)
+# Runbook: docs/runbooks/devcontainers/DOCKER_CONTEXT_POLICY.md (auth pattern)
+
+on:
+  pull_request:
+    paths:
+      - ".claude/settings.json"
+  push:
+    branches: [main]
+    paths:
+      - ".claude/settings.json"
+
+
+permissions:
+  contents: read
+jobs:
+  auth-guard:
+    name: No GH_TOKEN/GITHUB_TOKEN in settings.json env block
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check .claude/settings.json for forbidden auth env vars
+        run: python scripts/ci/check_claude_settings_auth.py
+        # Exits 1 (fails CI) if GH_TOKEN or GITHUB_TOKEN found in env block.
+        # To auto-fix locally: python scripts/ci/check_claude_settings_auth.py --fix

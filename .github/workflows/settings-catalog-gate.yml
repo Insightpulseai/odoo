@@ -16,6 +16,9 @@ on:
       - ".github/workflows/settings-catalog-gate.yml"
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   schema-validate:
     name: settings-catalog-schema

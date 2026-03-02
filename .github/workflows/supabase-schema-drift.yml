@@ -7,6 +7,9 @@ on:
       - "supabase/config.toml"
   workflow_dispatch:
 
+
+permissions:
+  contents: read
 jobs:
   check-drift:
     runs-on: ubuntu-latest
