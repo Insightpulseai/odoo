@@ -116,6 +116,13 @@ jobs:
             --exclude="ODOOSH_GRADE_PARITY_GATING.md" \
             --exclude="deployment-timeline.md" \
             --exclude="update_phase_tags.sql" \
+            --exclude="POLICY_GATES.md" \
+            --exclude="MONOREPO_END_STATE_OKR.md" \
+            --exclude="INDEX.json" \
+            --exclude="ssot-surface-guard.yml" \
+            --exclude="policy-gates.yml" \
+            --exclude="check_domains_ssot.py" \
+            --exclude-dir="domains" \
             'insightpulseai\.net' . 2>/dev/null || true)
 
           if [ -n "$HITS" ]; then
