@@ -1,0 +1,420 @@
+# schema: ssot.docs.catalog.v1
+# ---
+# SSOT: Vercel documentation catalog for Insightpulseai/odoo
+# Docs index: docs/dev/vercel/INDEX.md
+# Last updated: 2026-03-02
+
+id: vercel_docs_catalog
+name: "Vercel documentation catalog — Insightpulseai/odoo"
+category: documentation
+reviewed: "2026-03-02"
+version: "1.0.0"
+
+platform: vercel
+team_slug: tbwa
+project_ids:
+  ops_console: prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX
+  org_id: team_wphKJ7lHA3QiZu6VgcotQBQM
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Critical topics
+# ─────────────────────────────────────────────────────────────────────────────
+critical_topics:
+  - env_vars         # @-ref syntax, scopes, shared vars — most common deploy failure cause
+  - root_directory   # monorepo misconfiguration — second most common failure
+  - cli_auth         # VERCEL_TOKEN vs OAuth vs vercel login
+  - webhooks         # deployment.error, firewall.attack events → Slack/n8n
+  - deployment_protection  # preview URL access control
+  - log_drains       # ephemeral logs → Supabase persistent audit
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Entries
+# ─────────────────────────────────────────────────────────────────────────────
+entries:
+
+  # ── Deployments ─────────────────────────────────────────────────────────────
+
+  - id: deploy_overview
+    title: "Deployments overview"
+    url: https://vercel.com/docs/deployments/overview
+    category: deployments
+    why_it_matters: >
+      Three environments: Production (main branch), Preview (all other branches),
+      Development (local vercel dev). Every branch auto-generates a stable URL per commit.
+      Root vercel.json and apps/ops-console/vercel.json target different Vercel projects.
+    repo_touchpoints:
+      - infra/vercel/projects/ops-console.json
+      - vercel.json
+      - apps/ops-console/vercel.json
+    automation_surface: github-actions
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: git_integration
+    title: "Git integration — branch-to-environment mapping"
+    url: https://vercel.com/docs/git
+    category: deployments
+    why_it_matters: >
+      Maps main → Production, all other branches → Preview.
+      VERCEL_GIT_COMMIT_SHA, VERCEL_ENV, VERCEL_URL auto-injected system vars.
+      Commit-stable preview URLs for PR reviews.
+    repo_touchpoints:
+      - infra/vercel/projects/ops-console.json
+    automation_surface: github-actions
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: managing_deployments
+    title: "Managing deployments — promote, roll back"
+    url: https://vercel.com/docs/deployments/managing-deployments
+    category: deployments
+    why_it_matters: >
+      vercel promote <url> makes a previous deployment production without rebuild.
+      vercel rollback aliases to most recent previous production deployment.
+      Critical for sub-minute rollback after bad deploy to ops-console.
+    repo_touchpoints:
+      - web/docs/evidence/
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: troubleshoot_deployments
+    title: "Troubleshooting deployments"
+    url: https://vercel.com/docs/deployments/troubleshoot-a-deployment
+    category: deployments
+    why_it_matters: >
+      Deployment failures surface in Build Logs. Common causes: missing @-ref env var,
+      pnpm install --frozen-lockfile failure, Edge Function bundle >4 MB.
+      Current all-failing deployments match missing @openai-api-key pattern.
+    repo_touchpoints:
+      - vercel.json
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Configuration ─────────────────────────────────────────────────────────
+
+  - id: project_configuration
+    title: "vercel.json configuration reference"
+    url: https://vercel.com/docs/project-configuration
+    category: configuration
+    why_it_matters: >
+      Controls installCommand, buildCommand, functions (max duration, memory, runtime),
+      rewrites, redirects, headers, regions, and @-ref env var syntax.
+      @-ref vars reference Vercel project env vars — entirely separate from GitHub Actions secrets.
+    repo_touchpoints:
+      - vercel.json
+      - apps/ops-console/vercel.json
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: build_configuration
+    title: "Build configuration — rootDirectory, framework"
+    url: https://vercel.com/docs/deployments/configure-a-build
+    category: configuration
+    why_it_matters: >
+      rootDirectory is the most common monorepo misconfiguration.
+      When null, Vercel builds from repo root and fails.
+      When set to apps/ops-console, Vercel cd's into that directory.
+    repo_touchpoints:
+      - infra/vercel/projects/ops-console.json
+      - apps/ops-console/.vercel/project.json
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Environment Variables ─────────────────────────────────────────────────
+
+  - id: environment_variables
+    title: "Environment variables"
+    url: https://vercel.com/docs/environment-variables
+    category: env_vars
+    why_it_matters: >
+      Three scopes: Production, Preview, Development.
+      GitHub Actions secrets and Vercel env vars are entirely separate namespaces.
+      Supabase x Vercel integration auto-syncs SUPABASE_URL, SUPABASE_ANON_KEY,
+      SUPABASE_SERVICE_ROLE_KEY from Supabase project.
+    repo_touchpoints:
+      - vercel.json
+      - ssot/secrets/registry.yaml
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: shared_environment_variables
+    title: "Shared environment variables"
+    url: https://vercel.com/docs/environment-variables/shared-environment-variables
+    category: env_vars
+    why_it_matters: >
+      Team-level env vars that propagate to all projects on next deploy.
+      Single rotation point for shared vars like SUPABASE_URL, SUPABASE_ANON_KEY.
+      Project-scoped var with same name overrides the shared one.
+    repo_touchpoints:
+      - ssot/secrets/registry.yaml
+    automation_surface: ops-console
+    dashboard_url: https://vercel.com/tbwa/~/settings/environment-variables
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Domains ───────────────────────────────────────────────────────────────
+
+  - id: domains
+    title: "Domains overview"
+    url: https://vercel.com/docs/domains
+    category: domains
+    why_it_matters: >
+      Custom domain assignment, TXT/CNAME verification, auto-SSL via Let's Encrypt.
+      Cloudflare proxy mode: DNS-only (grey cloud) for cname.vercel-dns.com —
+      orange cloud breaks SSL issuance.
+      All new Vercel subdomains must be added to infra/dns/subdomain-registry.yaml first.
+    repo_touchpoints:
+      - infra/dns/subdomain-registry.yaml
+      - infra/vercel/projects/ops-console.json
+    automation_surface: github-actions
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Security ──────────────────────────────────────────────────────────────
+
+  - id: deployment_protection
+    title: "Deployment Protection (password, auth, ShareLink, IP)"
+    url: https://vercel.com/docs/security/deployment-protection
+    category: security
+    why_it_matters: >
+      Preview deployments are publicly accessible by default.
+      Vercel Authentication limits previews to team members.
+      Four modes: Vercel Authentication, Password Protection, ShareLink, Trusted IPs.
+    repo_touchpoints:
+      - infra/vercel/projects/ops-console.json
+    automation_surface: ops-console
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: vercel_firewall
+    title: "Vercel Firewall (WAF + DDoS + Attack Mode)"
+    url: https://vercel.com/docs/security/vercel-firewall
+    category: security
+    why_it_matters: >
+      Edge-network WAF with OWASP Top 10 managed rules, bot detection, rate limiting.
+      Attack Mode blocks all non-human traffic instantly.
+      firewall.attack webhook event fires on Attack Mode activation.
+      Custom rules via vercel.json "firewall" block.
+    repo_touchpoints:
+      - vercel.json
+    automation_surface: ops-console
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Observability ─────────────────────────────────────────────────────────
+
+  - id: log_drains
+    title: "Logging and Log Drains"
+    url: https://vercel.com/docs/observability/log-drains/log-drains-overview
+    category: observability
+    why_it_matters: >
+      Without Log Drains, runtime logs are ephemeral (7-day retention on Pro).
+      Log Drains forward to Datadog, Splunk, or custom HTTPS endpoint.
+      vercel logs <deployment-url> --follow for real-time debugging.
+    repo_touchpoints:
+      - supabase/functions/ops-vercel-log-ingest/
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: webhooks
+    title: "Webhooks — events and signing"
+    url: https://vercel.com/docs/observability/webhooks-overview
+    category: observability
+    why_it_matters: >
+      Signed POST (SHA-1 HMAC, x-vercel-signature header) on events:
+      deployment.created, deployment.succeeded, deployment.error, deployment.promoted,
+      deployment.ready, deployment.canceled, project.env-variable.created,
+      project.env-variable.removed, firewall.attack, alerts.triggered, domain.purchased.
+      Team-level registration at vercel.com/tbwa/~/settings/webhooks.
+    repo_touchpoints:
+      - supabase/functions/ops-vercel-webhook-ingest/
+    automation_surface: ops-console
+    webhook_events:
+      - deployment.created
+      - deployment.succeeded
+      - deployment.error
+      - deployment.promoted
+      - deployment.ready
+      - deployment.canceled
+      - project.env-variable.created
+      - project.env-variable.removed
+      - firewall.attack
+      - alerts.triggered
+      - domain.purchased
+    dashboard_url: https://vercel.com/tbwa/~/settings/webhooks
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── CLI ───────────────────────────────────────────────────────────────────
+
+  - id: cli_reference
+    title: "Vercel CLI reference"
+    url: https://vercel.com/docs/cli
+    category: cli
+    why_it_matters: >
+      Primary automation surface for non-Git operations: deploy, env, domains,
+      logs, projects, pull, link, rollback, promote.
+      Auth via VERCEL_TOKEN env var in CI.
+      Rate limit: 120 API calls/min on Pro.
+    repo_touchpoints:
+      - ssot/secrets/registry.yaml
+    automation_surface: vercel-cli
+    github_secret: VERCEL_TOKEN
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: cli_deploying
+    title: "Deploying from CLI"
+    url: https://vercel.com/docs/cli/deploying-from-cli
+    category: cli
+    why_it_matters: >
+      vercel → Preview deploy. vercel --prod → Production.
+      vercel build → local build without deploying.
+      Flags: --force (skip cache), --no-wait (async), --archive=tgz.
+      CLI deploys bypass GitHub PR flow and branch protection — use for emergency only.
+    repo_touchpoints:
+      - .github/workflows/
+    automation_surface: vercel-cli
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: cli_project_linking
+    title: "Project linking (vercel link)"
+    url: https://vercel.com/docs/cli/project-linking
+    category: cli
+    why_it_matters: >
+      vercel link creates apps/ops-console/.vercel/project.json (projectId + orgId).
+      Commit this file — no secrets. Enables vercel env pull, vercel deploy without prompts.
+      VERCEL_ORG_ID + VERCEL_PROJECT_ID env vars override the JSON in CI.
+    repo_touchpoints:
+      - apps/ops-console/.vercel/project.json
+    automation_surface: vercel-cli
+    github_secrets:
+      - VERCEL_ORG_ID
+      - VERCEL_PROJECT_ID
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Authentication ────────────────────────────────────────────────────────
+
+  - id: sign_in_with_vercel
+    title: "Sign In With Vercel (OAuth 2.0 / OIDC)"
+    url: https://vercel.com/docs/sign-in-with-vercel
+    category: authentication
+    why_it_matters: >
+      Vercel as OAuth 2.0 / OIDC provider. Scopes: openid, profile, email,
+      read:deployment, write:deployment. Use if ops-console needs to take Vercel API
+      actions on behalf of individual team members. For CI automation, use VERCEL_TOKEN
+      (service account) instead.
+    repo_touchpoints:
+      - ssot/secrets/registry.yaml
+    automation_surface: ops-console
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── Integrations ──────────────────────────────────────────────────────────
+
+  - id: supabase_integration
+    title: "Supabase × Vercel integration"
+    url: https://vercel.com/integrations/supabase
+    category: integrations
+    why_it_matters: >
+      Auto-syncs SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY into Vercel
+      env vars. With Supabase Branching enabled, creates isolated Supabase preview DB per
+      Vercel preview deployment (requires Pro plan + supabase/config.toml branching block).
+      Integration already active for spdtwktxdalcfigzeqrz.
+    repo_touchpoints:
+      - supabase/config.toml
+      - infra/vercel/projects/ops-console.json
+    automation_surface: ops-console
+    supabase_project_ref: spdtwktxdalcfigzeqrz
+    status: curated
+    last_verified: "2026-03-02"
+
+  # ── AI ────────────────────────────────────────────────────────────────────
+
+  - id: ai_sdk
+    title: "AI SDK (Vercel AI SDK)"
+    url: https://vercel.com/docs/ai-sdk
+    category: ai
+    why_it_matters: >
+      TypeScript SDK for streaming AI UIs. Unified provider interface: OpenAI, Anthropic,
+      Google, Groq. generateObject with Zod schema for structured Odoo record creation.
+      streamText reduces perceived latency for AI-generated reports.
+    repo_touchpoints:
+      - apps/ops-console/package.json
+    automation_surface: ops-console
+    npm_package: ai
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: ai_gateway
+    title: "AI Gateway"
+    url: https://vercel.com/docs/ai-gateway
+    category: ai
+    why_it_matters: >
+      Unified proxy for LLM providers with rate limiting, caching, cost attribution,
+      PII masking, audit logs. Replace direct OpenAI/Anthropic API calls with Gateway URL.
+      Enables per-user cost tracking for AI-assisted ERP operations in ops-console.
+    repo_touchpoints:
+      - apps/ops-console/package.json
+      - vercel.json
+    automation_surface: ops-console
+    status: curated
+    last_verified: "2026-03-02"
+
+  - id: agents_mcp_sandboxes
+    title: "Agents, MCP Servers, and Sandboxes"
+    url: https://vercel.com/docs/ai/agents-and-tools/mcp
+    category: ai
+    why_it_matters: >
+      Vercel hosts MCP servers as serverless functions. Could replace DigitalOcean-hosted
+      mcp.insightpulseai.com (pulse-hub-web-an645.ondigitalocean.app) for lower latency.
+      Sandboxes provide isolated execution for AI-generated code.
+    repo_touchpoints:
+      - mcp/servers/
+    automation_surface: ops-console
+    status: curated
+    last_verified: "2026-03-02"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Deprecation watchlist
+# ─────────────────────────────────────────────────────────────────────────────
+deprecations:
+  - item: "vercel.json v1 (builds array)"
+    status: removed
+    migration: "Use v2 format with functions + rewrites"
+    audit_paths:
+      - vercel.json
+      - apps/ops-console/vercel.json
+
+  - item: "@-ref without corresponding project env var"
+    status: deployment_failure
+    migration: "Run: vercel env add <name> production --token=$VERCEL_TOKEN"
+    audit_paths:
+      - vercel.json
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Key env vars (names only — never values)
+# ─────────────────────────────────────────────────────────────────────────────
+key_env_vars:
+  github_actions_secrets:
+    - VERCEL_TOKEN          # Service account token for CLI + CI
+    - VERCEL_ORG_ID         # team_wphKJ7lHA3QiZu6VgcotQBQM
+    - VERCEL_PROJECT_ID     # prj_0pVE25oMd1EHDD1Ks3Xr7RTgqfsX (ops-console)
+  vercel_at_refs:
+    - "@supabase-url"
+    - "@supabase-anon-key"
+    - "@supabase-service-role-key"
+    - "@openai-api-key"
+  system_vars:
+    - VERCEL_URL            # Deployment URL (auto-injected)
+    - VERCEL_ENV            # production | preview | development (auto-injected)
+    - VERCEL_GIT_COMMIT_SHA # Git commit SHA (auto-injected)
+    - NEXT_PUBLIC_VERCEL_URL  # Public deployment URL (auto-injected)

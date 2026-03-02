@@ -270,5 +270,6 @@ steps:
 ## See also
 
 - [`docs/dev/vscode/INDEX.md`](../vscode/INDEX.md) — VS Code tooling reference
+- [`docs/dev/vercel/INDEX.md`](../vercel/INDEX.md) — Vercel documentation reference
 - [`docs/dev/odoo/DOCS_INDEX.md`](../odoo/DOCS_INDEX.md) — Odoo documentation reference
 - [`ssot/integrations/github_apps.yaml`](../../../ssot/integrations/github_apps.yaml) — Machine-readable integration SSOT
