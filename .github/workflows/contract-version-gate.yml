@@ -20,6 +20,9 @@ on:
     branches: [main]
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   contract-versions:
     name: Contract version drift check

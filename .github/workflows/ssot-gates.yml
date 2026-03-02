@@ -26,6 +26,9 @@ on:
       - ".github/workflows/ssot-gates.yml"
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   secrets-ssot:
     name: secrets-ssot

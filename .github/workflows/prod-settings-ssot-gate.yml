@@ -18,6 +18,9 @@ on:
       - ".github/workflows/prod-settings-ssot-gate.yml"
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   prod-settings-validate:
     name: prod-settings-ssot

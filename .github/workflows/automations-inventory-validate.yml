@@ -11,6 +11,9 @@ on:
       - "automations-inventory.json"
       - "ssot/automations/automations.inventory.schema.json"
 
+
+permissions:
+  contents: read
 jobs:
   validate-inventory:
     runs-on: ubuntu-latest

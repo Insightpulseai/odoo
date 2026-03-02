@@ -35,6 +35,9 @@ on:
       - "infra/github/apps/**"
       - "scripts/github/**"
 
+
+permissions:
+  contents: read
 jobs:
   # ── Canonical check: single-app integration SSOT ─────────────────────────
   guard-integrations:

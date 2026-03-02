@@ -7,6 +7,9 @@ on:
       - "agents/mcp/servers/**"
   workflow_dispatch:
 
+
+permissions:
+  contents: read
 jobs:
   build-mcp-servers:
     runs-on: ubuntu-latest

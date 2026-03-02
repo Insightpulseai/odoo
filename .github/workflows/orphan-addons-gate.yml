@@ -27,6 +27,9 @@ on:
       - ".github/workflows/orphan-addons-gate.yml"
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   orphan-addons-gate:
     name: orphan-addons-gate

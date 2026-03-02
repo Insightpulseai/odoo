@@ -22,6 +22,9 @@ on:
       - 'addons/ipai/ipai_slack_connector/**'
   merge_group:
 
+
+permissions:
+  contents: read
 jobs:
   bridge-layer2-tests:
     name: Layer-2 bridge tests (Zoho mail + Slack)

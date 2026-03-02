@@ -27,6 +27,9 @@ on:
     paths:
       - ".github/workflows/**"
 
+
+permissions:
+  contents: read
 jobs:
   pat-usage-guard:
     name: No new PAT-backed secrets in workflows

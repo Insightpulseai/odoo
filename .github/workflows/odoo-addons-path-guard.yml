@@ -6,6 +6,9 @@ on:
   push:
     branches: [main]
 
+
+permissions:
+  contents: read
 jobs:
   guard:
     name: Odoo addons_path — selected-only policy
