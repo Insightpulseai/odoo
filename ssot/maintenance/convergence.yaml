@@ -16,9 +16,10 @@ finding_kinds:
   - env_missing           # required env var not present
   - vault_missing         # required Vault secret not present
   - dns_planned           # DNS entry lifecycle=planned (not active)
-  - gate_failed           # required policy gate failing
-  - webhook_unverified    # webhook endpoint returning non-200
-  - awaiting_auth         # fork PR awaiting Vercel deploy authorization
+  - gate_failed              # required policy gate failing
+  - webhook_unverified       # webhook endpoint returning non-200
+  - awaiting_auth            # fork PR awaiting Vercel deploy authorization
+  - security_setting_disabled  # required GitHub security setting not yet verified as enabled
 
 environments:
   prod:
@@ -43,6 +44,7 @@ environments:
         - oca_allowlist
         - json_only_contract
         - diagram_drift
+        - github_push_protection_enabled
     thresholds:
       max_deploy_age_hours: 24
       max_commits_behind: 5
@@ -64,3 +66,18 @@ environments:
       max_deploy_age_hours: 48
       max_commits_behind: 10
       escalate_after_hours: 8
+
+# ─── Security settings — one-time manual findings ──────────────────────────
+# kind: security_setting_disabled
+# Verify with: gh api repos/Insightpulseai/odoo --jq '.security_and_analysis.<key>.status'
+# Enablement requires repo admin scope; mark MANUAL_REQUIRED until verified.
+security_settings:
+  - id: github_push_protection_enabled
+    description: "GitHub secret scanning Push Protection must be enabled to block committed secrets at push time"
+    kind: security_setting_disabled
+    status: verified
+    verified_at: "2026-03-02"
+    verify_cmd: "gh api repos/Insightpulseai/odoo --jq '.security_and_analysis.secret_scanning_push_protection.status'"
+    expected_value: "enabled"
+    enable_ref: "https://docs.github.com/en/get-started/learning-to-code/storing-your-secrets-safely"
+    tracking: "docs/dev/github/INDEX.md § Security | Storing secrets safely"
