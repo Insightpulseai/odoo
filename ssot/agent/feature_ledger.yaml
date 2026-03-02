@@ -63,7 +63,7 @@ capabilities:
       - trigger_workflow     # automation, requires confirmation
     required_gates:
       - gate: tool_spec_contracts_exist
-        description: "Each governed tool has a spec in contracts/tools/<tool>.md"
+        description: "Each governed tool has a spec in contracts/tools/<tool>.yaml"
         evidence: "contracts/tools/"
         passing: true
       - gate: action_eval_threshold
@@ -75,7 +75,7 @@ capabilities:
         evidence: "docs/evidence/action_eval/audit_envelope_sample.json"
         passing: false
     what_must_pass: |
-      1. contracts/tools/ has a .md spec for each of the 5 governed tools
+      1. contracts/tools/ has a .yaml spec for each of the 5 governed tools
       2. eval/action_eval.yaml has cases covering: preview shown, approval required,
          commit only after approval, audit envelope emitted
       3. 100% of write/automation tool calls go through confirmation dialog
