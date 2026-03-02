@@ -563,6 +563,25 @@ Tool approvals: any tool with side effects (file write, git commit) requires exp
 Agents follow the PLAN → PATCH → VERIFY → PR loop defined in `copilot-instructions.md`.
 Org policy may disable agent mode (`chat.agent.enabled`); check with your admin if unavailable.
 
+### Prompt library
+
+Ready-to-paste prompts for common jobs live in [`prompts/copilot/`](prompts/copilot/).
+Each file has a YAML frontmatter (`mode:`, `tools:`, `description:`) and fills in the
+context, constraints, verification gates, and rollback steps so you do not start from scratch.
+
+| Job | Prompt file |
+|-----|-------------|
+| Generate unit tests | `prompts/copilot/unit_tests.prompt.md` |
+| Debug invalid JSON | `prompts/copilot/invalid_json.prompt.md` |
+| Handle API rate limits | `prompts/copilot/api_rate_limits.prompt.md` |
+| Diagnose test failures | `prompts/copilot/diagnose_tests.prompt.md` |
+| Create templates | `prompts/copilot/templates.prompt.md` |
+| Create tables | `prompts/copilot/tables.prompt.md` |
+| Create diagrams | `prompts/copilot/diagrams.prompt.md` |
+
+See [`docs/dev/copilot/CHAT_COOKBOOK_IPAI.md`](docs/dev/copilot/CHAT_COOKBOOK_IPAI.md) for
+expected outputs, failure modes, and how each prompt maps to GitHub Copilot Chat Cookbook jobs.
+
 ## Questions?
 
 - Open a [GitHub Issue](https://github.com/jgtolentino/odoo/issues)
