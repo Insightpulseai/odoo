@@ -21,6 +21,9 @@
 | **Pull Requests** | Managing a merge queue | <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue> | Merge queue serializes merges to prevent race conditions and broken `main`. PRs pass all checks independently, then queue tests them as a group before applying. Critical when 153 workflows run in parallel. | Enable "Require merge queue" in branch protection rule for `main`. Add `merge_group` trigger to all critical CI workflows so queue tests batched PRs as a unit before merge. | `on: merge_group` in workflow YAML |
 | **Pull Requests** | Creating a pull request template | <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests> | PR templates auto-populate description fields, guiding contributors to include spec bundle reference, CI evidence, secrets checklist, and rollback steps — enforcing the output contract. | Create `.github/pull_request_template.md` with sections: Change type, Spec bundle ref, Evidence log path, CI checklist, Secrets sign-off, Rollback strategy. | `.github/pull_request_template.md` |
 | **Pull Requests** | Automatically merging a pull request | <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request> | Auto-merge allows PRs to self-merge once all reviews and CI gates pass. Reduces bottleneck of waiting for human button press after all checks are green. | Enable in Settings → Pull Requests → "Allow auto-merge". Use `gh pr merge --auto --squash` in CI automation or instruct contributors to click "Enable auto-merge" on ready PRs. Pair with merge queue. | Settings → Pull Requests |
+| **Pull Requests** | Changing the stage of a pull request (Draft PRs) | <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request> | Draft PRs signal work-in-progress: merging is blocked even if all checks pass, CODEOWNERS review requests are suppressed, and the PR is visually marked as incomplete. Reduces reviewer noise on in-flight work. | Use `gh pr create --draft` for all WIP branches. Convert to ready with `gh pr ready`. Enforce convention: no non-draft PR should be opened without at least a test plan. | `gh pr create --draft`; PR page → "Ready for review" |
+| **Pull Requests** | About merge methods | <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github> | Three strategies — merge commit (full history), squash (all commits → 1), rebase (linear, no merge commit). For a 43-module ERP monorepo, **squash** keeps `main` history readable; **rebase** gives linear graph; disabling merge commits enforces one consistent strategy. | Settings → Pull Requests → uncheck "Allow merge commits", enable "Allow squash merging" + "Default to PR title" for clean changelog. Enforce in branch protection: "Require linear history" disables merge commits entirely. | Settings → Pull Requests → merge strategy checkboxes |
+| **Pull Requests** | Push rulesets (block secrets at push time) | <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets> | Push rulesets block commits before they reach a PR — catching secrets, large files, or forbidden paths at the earliest possible point. Complements branch protection (which only gates merge) with push-time enforcement across all branches. | Create push ruleset: Settings → Rules → New ruleset → "Push" type. Block file patterns: `*.env*`, `*.key`, `secrets/**`. Block files >10 MB. Enable "Restrict file paths" for `supabase/migrations/**` (require deliberate override). | Settings → Rules → Rulesets → Push type |
 | **Integrations** | About integrations | <https://docs.github.com/en/integrations> | Three integration types: **GitHub Apps** (preferred — fine-grained permissions, bot identity, installable on org), **OAuth Apps** (user-level auth, broader scopes), **Webhooks** (event push to external URL). Choose GitHub App for any new automation. | All new integrations use GitHub App format. Existing: `ipai-integrations` App (webhook handler in `supabase/functions/ops-github-webhook-ingest/`). OAuth: avoid for new integrations. Document in `ssot/integrations/github_apps.yaml`. | `ssot/integrations/github_apps.yaml` |
 | **Integrations** | Use GitHub in Slack | <https://docs.github.com/en/integrations/how-tos/slack/use-github-in-slack> | GitHub Slack app subscribes Slack channels to repo events (PR opens/closes, issue opens, CI failures). `/github subscribe Insightpulseai/odoo` enables notifications. `/github open`, `/github close`, `/github reopen` manage issues from Slack. | Install GitHub Slack app. In `#devops` channel: `/github subscribe Insightpulseai/odoo reviews comments`. In `#ci-alerts` channel: `/github subscribe Insightpulseai/odoo workflows:failure`. Document in `docs/runbooks/SLACK_INTEGRATION.md`. | Slack workspace admin → GitHub app |
 | **Packages** | Working with the Container Registry | <https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry> | GHCR hosts Docker images for Odoo CE (`ghcr.io/jgtolentino/odoo`), Superset (`ghcr.io/jgtolentino/ipai-superset`), devcontainer (`ghcr.io/jgtolentino/odoo-devcontainer`). GITHUB_TOKEN needs `packages: write` to push; `packages: read` to pull. | Add `permissions: packages: write` to every workflow job that pushes images (fixed in `insightpulse-cicd.yml` this session). Add `LABEL org.opencontainers.image.source` to all Dockerfiles for GHCR auto-linking (fixed in `docker/odoo/Dockerfile`). | `permissions: packages: write` in workflow YAML; `LABEL` in Dockerfile |
@@ -138,6 +141,30 @@ changelog:
       labels: [ci, chore(ci), chore(deploy)]
     - title: "Documentation"
       labels: [docs]
+```
+
+### Main branch protection — recommended settings for 153-workflow monorepo
+
+```
+Settings → Branches → Branch protection rule for "main":
+  ✅ Require pull request before merging
+  ✅ Require 1 approval (2 for breaking/* labels)
+  ✅ Dismiss stale reviews when new commits pushed
+  ✅ Require review from Code Owners
+  ✅ Require status checks to pass (link all 153 workflow jobs)
+  ✅ Require branches to be up to date before merging
+  ✅ Require merge queue
+  ✅ Include administrators (no bypass)
+
+Settings → Pull Requests:
+  ✅ Allow auto-merge
+  ✅ Allow squash merging (default: PR title)
+  ❌ Allow merge commits (disable for clean history)
+  ❌ Allow rebase merging (optional; enable if contributors prefer linear)
+
+Settings → Rules → New push ruleset (all branches):
+  Block file patterns: *.env*, *.key, *.pem, secrets/**, credentials/**
+  Block files > 10 MB
 ```
 
 ### `~/.ssh/config` (macOS — ED25519 + Keychain)
