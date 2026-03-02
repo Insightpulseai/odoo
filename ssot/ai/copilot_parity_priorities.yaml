@@ -120,17 +120,23 @@ priorities:
   P1:
     - id: coding-agent-issue-to-pr
       reference: github_copilot
+      harness_policy: "ssot/evals/swebench_harness_policy.yaml"
       description: >
         Autonomous agent that reads a GitHub issue, generates implementation,
         runs tests, and opens a PR. Sandboxed execution with human approval gate.
+        Follows SWE-bench-style harness: explore→plan→implement→verify loop.
       acceptance:
         - "Agent creates branch from issue"
         - "Generated code passes lint + existing tests"
         - "PR opened with structured description"
         - "Human approval required before merge"
+        - "Tests-first: test written/strengthened before code change when feasible"
+        - "Verify loop enforced: agent runs tests before marking complete"
+        - "Evidence pack emitted: docs/evidence/agent_runs/<run_id>/"
       depends_on:
         - "addons/ipai/ipai_agent (agent runtime)"
         - "GitHub Actions CI"
+        - "ssot/evals/swebench_harness_policy.yaml"
       owner: platform
       status: planned
 
