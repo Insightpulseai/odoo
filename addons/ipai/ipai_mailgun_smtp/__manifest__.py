@@ -3,27 +3,33 @@
 
 {
     "name": "IPAI Mailgun SMTP Transport",
-    "version": "19.0.1.0.0",
-    "summary": "DEPRECATED - Mailgun replaced by Zoho Mail (ipai_zoho_mail). Do not install.",
+    "version": "19.0.2.0.0",
+    "summary": "Authoritative production outgoing mail server via Mailgun SMTP (port 2525).",
     "description": """
 IPAI Mailgun SMTP Transport
 =============================
 
-Registers an Odoo outgoing mail server that sends via Mailgun SMTP on port 2525.
+Registers the production outgoing mail server that routes through Mailgun SMTP
+on port 2525 (not blocked on DigitalOcean droplets).
 
-Port 2525 is Mailgun's alternate submission port and is not blocked on DigitalOcean
-droplets (unlike ports 25/587/465 which may be blocked).
+This is the AUTHORITATIVE prod mail transport. sequence=5 ensures it is selected
+above all other active mail servers. SSOT: ssot/odoo/mail.yaml.
 
 Configuration:
   SMTP server : smtp.mailgun.org
   Port        : 2525 (STARTTLS)
   Username    : no-reply@mg.insightpulseai.com
-  Password    : set via scripts/setup_mailgun_smtp_password.sh (never commit)
+  Password    : injected at install by post_install_hook from ODOO_MAILGUN_SMTP_PASSWORD env var
   From        : no-reply@mg.insightpulseai.com
-  Reply-To    : support@insightpulseai.com (optional — Zoho inbound)
+
+Password management:
+  - Never commit smtp_pass to XML
+  - Set ODOO_MAILGUN_SMTP_PASSWORD before running Odoo in production
+  - See: ssot/secrets/registry.yaml#mailgun_smtp_password
 
 DNS auth records for mg.insightpulseai.com:
-  infra/dns/mailgun_mg_insightpulseai_com.yaml
+  infra/dns/subdomain-registry.yaml (mg subdomain)
+  PR #445: tracking CNAME + DKIM #2 still pending
 
 Sending domain: mg.insightpulseai.com (outbound-only, Zoho handles inbound).
     """,
@@ -35,7 +41,8 @@ Sending domain: mg.insightpulseai.com (outbound-only, Zoho handles inbound).
     "data": [
         "data/ir_mail_server.xml",
     ],
-    "installable": False,
+    "post_install": "hooks.post_install_hook",
+    "installable": True,
     "auto_install": False,
     "application": False,
 }
