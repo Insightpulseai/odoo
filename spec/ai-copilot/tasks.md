@@ -253,11 +253,11 @@ Ledger entry: `citation_first_knowledge_copilot` in `ssot/agent/feature_ledger.y
 Ledger entry: `governed_tool_use_contract` in `ssot/agent/feature_ledger.yaml`
 
 ### T-TOOLS-01: Create tool spec contracts for 5 governed tools
-- Create `contracts/tools/search_records.yaml`
-- Create `contracts/tools/navigate_to.yaml`
-- Create `contracts/tools/create_record.yaml`
-- Create `contracts/tools/send_chatter_message.yaml`
-- Create `contracts/tools/trigger_workflow.yaml`
+- Create `contracts/tools/search_records.md`
+- Create `contracts/tools/navigate_to.md`
+- Create `contracts/tools/create_record.md`
+- Create `contracts/tools/send_chatter_message.md`
+- Create `contracts/tools/trigger_workflow.md`
 - Each spec: name, category, parameters (JSON Schema), requires_confirmation, access_model, side_effects
 - Acceptance: 5 files exist with valid YAML, match copilot_tools.xml definitions
 
