@@ -29,7 +29,7 @@
 | **Authentication** | Sign In With Vercel | <https://vercel.com/docs/sign-in-with-vercel> | Vercel acts as an OAuth 2.0 / OIDC provider. Allows third-party apps to authenticate users via their Vercel accounts. Scopes: `openid`, `profile`, `email`, `read:deployment`, `write:deployment`. Distinct from using `VERCEL_TOKEN` for service-account CI/CD automation. Useful if `ops-console` needs to take Vercel API actions on behalf of individual team members (e.g. trigger deploys, read logs). | If `ops-console` needs Vercel OAuth: register app at `vercel.com/account/tokens` → "OAuth App". Store client secret in Supabase Vault (`vercel_oauth_client_secret`). For CI automation, use `VERCEL_TOKEN` (service account) — not OAuth. | Vercel Account → OAuth Apps; Supabase Vault for OAuth client secret |
 | **Integrations** | Supabase × Vercel integration | <https://vercel.com/integrations/supabase> | First-party integration: auto-syncs `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (and JWT secret) into Vercel env vars on connection. With **Supabase Branching** enabled, creates a separate Supabase preview branch per Vercel preview deployment (requires Pro plan + `supabase/config.toml` branching block). Integration already active for `spdtwktxdalcfigzeqrz`. | Verify sync: `vercel env ls --token=$VERCEL_TOKEN \| grep SUPABASE`. For branching: add `[branching]\nenabled = true\nexperimental = true` to `supabase/config.toml`. This ties every Vercel Preview URL to an isolated Supabase preview DB. | `supabase/config.toml` branching block; Vercel integrations dashboard |
 | **AI** | AI SDK (Vercel AI SDK) | <https://vercel.com/docs/ai-sdk> | TypeScript SDK for streaming AI UIs — `streamText`, `generateObject`, `generateText`, `useChat`, `useCompletion`. Unified provider interface supports OpenAI, Anthropic, Google, Groq without vendor lock-in. `generateObject` with Zod schema produces structured data directly from LLM calls — useful for Odoo record creation from natural language. | Check `apps/ops-console/package.json` for `ai` package version (target `^4.x`). Use `generateObject` for AI-assisted Odoo field population. Streaming reduces perceived latency for expense report generation. AI calls should route through AI Gateway (see next row). | `apps/ops-console/package.json`; `ai` npm package |
-| **AI** | AI Gateway | <https://vercel.com/docs/ai-gateway> | Unified proxy for OpenAI, Anthropic, and other LLM providers. Features: rate limiting, response caching, cost attribution, PII masking, audit logs, automatic failover. Replaces direct provider API calls with Gateway URL — no code changes needed with AI SDK (just swap `baseURL`). The `@openai-api-key` ref in `vercel.json` can route through Gateway if configured. | Enable AI Gateway in Vercel project → AI tab. Update `OPENAI_BASE_URL` env var to Gateway URL. Enables per-user cost tracking for AI-assisted ERP operations in `ops-console`. | Vercel project → AI tab; `OPENAI_BASE_URL` env var |
+| **AI** | AI Gateway | <https://vercel.com/docs/ai-gateway> | Unified API endpoint (`https://ai-gateway.vercel.sh/v1`) for hundreds of LLM models across providers. One `AI_GATEWAY_API_KEY` replaces per-provider keys. Model format: `provider/model-name` (e.g. `anthropic/claude-sonnet-4.5`, `openai/gpt-5.2`, `xai/grok-4`). Key features: **zero token markup** (same cost as direct), automatic retry/fallback across providers, embeddings support, spend monitoring, web search, BYOK (Bring Your Own Key). Compatible with AI SDK, OpenAI SDK, Anthropic SDK, and plain cURL — just set `baseURL` and use `AI_GATEWAY_API_KEY`. | Add `AI_GATEWAY_API_KEY` to Vercel project env vars. In `apps/ops-console`, update AI SDK calls: `model: 'anthropic/claude-sonnet-4.5'` (provider-prefixed). For OpenAI SDK compat: `baseURL: 'https://ai-gateway.vercel.sh/v1'`. This consolidates `OPENAI_API_KEY` + `ANTHROPIC_API_KEY` into one gateway key for `ops-console`. | `AI_GATEWAY_API_KEY` env var; `https://ai-gateway.vercel.sh/v1` |
 | **AI** | Agents, MCP Servers, and Sandboxes | <https://vercel.com/docs/ai/agents-and-tools/mcp> | Vercel hosts MCP servers as serverless functions (Next.js Route Handlers or Edge Functions). `v0` agent can create UI from prompts. Sandboxes provide isolated execution environments for AI-generated code. Vercel-hosted MCP could replace the current DigitalOcean-hosted `mcp.insightpulseai.com` (`pulse-hub-web-an645.ondigitalocean.app`) for lower cold-start latency. | Evaluate: migrate lightweight MCP tools from DigitalOcean App Platform to Vercel Functions for cost and latency reduction. SSOT for MCP server definitions: `mcp/servers/`. Each Vercel-hosted MCP function must use `VERCEL_TOKEN` or `SUPABASE_SERVICE_ROLE_KEY` from Vercel env vars (no hardcoded secrets). | `mcp/servers/`; Vercel project → Functions |
 
 ---
@@ -151,6 +151,63 @@ vercel logs https://ops-console.vercel.app --follow --token=$VERCEL_TOKEN
 # List deployments
 vercel list --token=$VERCEL_TOKEN
 ```
+
+### AI Gateway — integration patterns
+
+**TypeScript (AI SDK v5/v6) — provider-prefixed model name:**
+
+```typescript
+import { generateText, streamText } from 'ai';
+
+// model = "provider/model-name"
+const { text } = await generateText({
+  model: 'anthropic/claude-sonnet-4.5',
+  prompt: 'Summarise this Odoo expense report...',
+});
+
+// structured output (Zod schema → typed object)
+import { generateObject } from 'ai';
+import { z } from 'zod';
+const { object } = await generateObject({
+  model: 'openai/gpt-5.2',
+  schema: z.object({ vendor: z.string(), amount: z.number(), currency: z.string() }),
+  prompt: 'Extract expense fields from receipt text...',
+});
+```
+
+**OpenAI SDK compat (Python or Node) — swap baseURL:**
+
+```python
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    api_key=os.getenv('AI_GATEWAY_API_KEY'),
+    base_url='https://ai-gateway.vercel.sh/v1',
+)
+response = client.chat.completions.create(
+    model='anthropic/claude-sonnet-4.5',  # provider-prefixed
+    messages=[{'role': 'user', 'content': '...'}],
+)
+```
+
+**cURL (direct API):**
+
+```bash
+curl -X POST "https://ai-gateway.vercel.sh/v1/chat/completions" \
+  -H "Authorization: Bearer $AI_GATEWAY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "anthropic/claude-sonnet-4.5", "messages": [{"role":"user","content":"..."}]}'
+```
+
+**Add gateway key to Vercel project:**
+
+```bash
+vercel env add AI_GATEWAY_API_KEY production --token=$VERCEL_TOKEN
+vercel env add AI_GATEWAY_API_KEY preview --token=$VERCEL_TOKEN
+```
+
+---
 
 ### `supabase/config.toml` — Supabase Branching block (for Vercel preview isolation)
 

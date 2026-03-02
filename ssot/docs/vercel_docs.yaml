@@ -359,13 +359,24 @@ entries:
     url: https://vercel.com/docs/ai-gateway
     category: ai
     why_it_matters: >
-      Unified proxy for LLM providers with rate limiting, caching, cost attribution,
-      PII masking, audit logs. Replace direct OpenAI/Anthropic API calls with Gateway URL.
-      Enables per-user cost tracking for AI-assisted ERP operations in ops-console.
+      Unified API endpoint (https://ai-gateway.vercel.sh/v1) for hundreds of LLM models.
+      One AI_GATEWAY_API_KEY replaces per-provider keys. Model format: provider/model-name
+      (anthropic/claude-sonnet-4.5, openai/gpt-5.2, xai/grok-4).
+      Zero token markup, automatic retry/fallback, embeddings, spend monitoring, BYOK.
+      Compatible with AI SDK, OpenAI SDK, Anthropic SDK, plain cURL.
     repo_touchpoints:
       - apps/ops-console/package.json
       - vercel.json
     automation_surface: ops-console
+    gateway_endpoint: https://ai-gateway.vercel.sh/v1
+    github_secret: AI_GATEWAY_API_KEY
+    sub_docs:
+      - https://vercel.com/docs/ai-gateway/getting-started
+      - https://vercel.com/docs/ai-gateway/models-and-providers
+      - https://vercel.com/docs/ai-gateway/authentication-and-byok/byok
+      - https://vercel.com/docs/ai-gateway/capabilities/observability
+      - https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-compat
+      - https://vercel.com/docs/ai-gateway/sdks-and-apis/anthropic-compat
     status: curated
     last_verified: "2026-03-02"
 
