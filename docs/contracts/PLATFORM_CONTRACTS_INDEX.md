@@ -36,6 +36,7 @@
 | C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/github/route.ts` |
 | C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
 | C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
+| C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
 
 ---
 
