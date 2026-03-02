@@ -73,7 +73,7 @@ CF_Key="$(_keychain_get \
 export CF_Key
 
 # Email is static — not a secret, but co-located here for acme.sh convenience
-CF_Email="Jgtolentino.rn@gmail.com"
+CF_Email="devops@insightpulseai.com"
 export CF_Email
 
 # --------------------------------------------------------------------------

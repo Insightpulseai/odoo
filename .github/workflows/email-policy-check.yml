@@ -78,6 +78,7 @@ jobs:
               ':!*.md' \
               ':!**/evidence/**' \
               ':!**/tests/**' \
+              ':!infra/identity/admin-email-policy.yaml' \
               || true)
 
             if [ -n "$MATCHES" ]; then

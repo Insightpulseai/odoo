@@ -13,7 +13,7 @@ set -euo pipefail
 CONTAINER="odoo-prod"
 SCRIPT_SRC="scripts/mail/e2e_mailgun_text.py"
 SCRIPT_DST="/tmp/e2e_mailgun_text.py"
-TO_EMAIL="${TO_EMAIL:-jgtolentino.rn@gmail.com}"
+TO_EMAIL="${TO_EMAIL:-devops@insightpulseai.com}"
 
 STAMP="$(TZ=Asia/Manila date +%Y%m%d-%H%M%S+0800)"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
