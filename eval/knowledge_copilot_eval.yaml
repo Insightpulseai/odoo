@@ -1,0 +1,259 @@
+# eval/knowledge_copilot_eval.yaml
+#
+# Evaluation suite for the citation-first knowledge copilot.
+# Each case provides a prompt and expected citation source(s).
+# The copilot MUST cite a document from ssot/knowledge/corpus_registry.yaml.
+#
+# Passing criteria:
+#   - citation_present: response includes a source path from a registered corpus
+#   - answer_grounded: answer content is traceable to the cited source
+#   - no_hallucination: response does not fabricate facts not in the source
+#
+# Run: python scripts/run_knowledge_copilot_eval.py (future)
+# Last updated: 2026-03-03
+
+meta:
+  schema_version: "1.0"
+  updated_at: "2026-03-03"
+  pass_threshold: 0.80  # 80% of cases must pass all checks
+  corpus_registry: "ssot/knowledge/corpus_registry.yaml"
+
+cases:
+
+  # ── Spec Bundle Questions (spec/**) ───────────────────────────────────────
+
+  - id: KEVAL-001
+    prompt: "What are the non-negotiable rules for the AI copilot?"
+    expected_sources:
+      - "spec/ai-copilot/constitution.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-002
+    prompt: "What tools does the AI copilot support?"
+    expected_sources:
+      - "spec/ai-copilot/prd.md"
+      - "spec/ai-copilot/tasks.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-003
+    prompt: "How does the copilot handle write operations? Does it require confirmation?"
+    expected_sources:
+      - "spec/ai-copilot/constitution.md"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "confirmation"
+      - "requires_confirmation"
+
+  - id: KEVAL-004
+    prompt: "What is the session history limit for copilot conversations?"
+    expected_sources:
+      - "spec/ai-copilot/constitution.md"
+      - "spec/ai-copilot/prd.md"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "50"
+
+  - id: KEVAL-005
+    prompt: "What are the phases in the AI copilot implementation plan?"
+    expected_sources:
+      - "spec/ai-copilot/tasks.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  # ── SSOT Configuration Questions (ssot/**) ────────────────────────────────
+
+  - id: KEVAL-006
+    prompt: "What AI provider does the Odoo copilot use by default?"
+    expected_sources:
+      - "ssot/ai/odoo_ai.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "gemini"
+
+  - id: KEVAL-007
+    prompt: "What tools are registered in the agent tools registry?"
+    expected_sources:
+      - "ssot/tools/registry.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-008
+    prompt: "What is the release contract? What fields does it require?"
+    expected_sources:
+      - "ssot/runtime/release_contract.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "tag"
+      - "image_digest"
+      - "gates_passed"
+
+  - id: KEVAL-009
+    prompt: "What agent skills are currently defined?"
+    expected_sources:
+      - "ssot/agents/skills.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-010
+    prompt: "What are the allowed executor types for agent tools?"
+    expected_sources:
+      - "ssot/tools/registry.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "supabase_rpc"
+      - "github_api"
+
+  # ── Contract & Architecture Questions (docs/**) ───────────────────────────
+
+  - id: KEVAL-011
+    prompt: "What is the tool permissions contract? How does it work?"
+    expected_sources:
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-012
+    prompt: "What is the DNS SSOT workflow for this project?"
+    expected_sources:
+      - "docs/ai/ARCHITECTURE.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-013
+    prompt: "How does the mail bridge work in Odoo?"
+    expected_sources:
+      - "docs/contracts/AI_COPILOT_CONTRACT.md"
+    checks:
+      - citation_present
+
+  - id: KEVAL-014
+    prompt: "What are the CI/CD workflows for this repository?"
+    expected_sources:
+      - "docs/ai/CI_WORKFLOWS.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-015
+    prompt: "What is the module naming convention for IPAI addons?"
+    expected_sources:
+      - "docs/ai/IPAI_MODULES.md"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "ipai_"
+
+  # ── Cross-Source Questions (require multi-document retrieval) ──────────────
+
+  - id: KEVAL-016
+    prompt: "How does the copilot integrate with n8n workflows?"
+    expected_sources:
+      - "spec/ai-copilot/prd.md"
+      - "ssot/tools/registry.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "trigger_workflow"
+      - "n8n"
+
+  - id: KEVAL-017
+    prompt: "What is the difference between agent tools and copilot tools?"
+    expected_sources:
+      - "ssot/tools/registry.yaml"
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-018
+    prompt: "What external dependencies does the AI system have?"
+    expected_sources:
+      - "ssot/ai/dependencies.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-019
+    prompt: "What is the Supabase project used for in this repo?"
+    expected_sources:
+      - "docs/ai/SUPABASE.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-020
+    prompt: "How should secrets be managed according to project policy?"
+    expected_sources:
+      - "docs/ai/ARCHITECTURE.md"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "vault"
+      - "env"
+
+  # ── Negative / Boundary Cases ─────────────────────────────────────────────
+
+  - id: KEVAL-021
+    prompt: "What is the weather in Manila today?"
+    expected_sources: []
+    checks:
+      - no_hallucination
+    expected_behavior: "Should decline or state it cannot answer from available corpus"
+
+  - id: KEVAL-022
+    prompt: "Can the copilot use OpenAI GPT-4?"
+    expected_sources:
+      - "ssot/ai/odoo_ai.yaml"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_behavior: "Should cite odoo_ai.yaml and note that odoo_iap (OpenAI) is prohibited"
+
+  - id: KEVAL-023
+    prompt: "How do I install Odoo Enterprise modules?"
+    expected_sources: []
+    checks:
+      - no_hallucination
+    expected_behavior: "Should decline — CE only repo, no Enterprise modules allowed"
+
+  - id: KEVAL-024
+    prompt: "What is the cash advance workflow?"
+    expected_sources:
+      - "spec/cash-advance-odoo/prd.md"
+    checks:
+      - citation_present
+      - answer_grounded
+
+  - id: KEVAL-025
+    prompt: "What proactive insights does the copilot generate?"
+    expected_sources:
+      - "spec/ai-copilot/prd.md"
+      - "spec/ai-copilot/tasks.md"
+    checks:
+      - citation_present
+      - answer_grounded
+    expected_keywords:
+      - "overdue invoices"
+      - "low stock"
