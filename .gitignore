@@ -2,10 +2,8 @@
 ops/secrets/age-key.txt
 ops/secrets/*.key
 
-# Sandbox artifacts (generated / not source-controlled)
-sandbox/**/.artifacts/
-sandbox/**/.tmp/
-sandbox/**/tmp/
+# Sandbox (local dev scratch — never canonical; see CLAUDE.md)
+sandbox/
 
 # Workspace / agent artifacts (never commit)
 .cache/
