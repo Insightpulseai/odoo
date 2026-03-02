@@ -223,6 +223,31 @@ subdomains:
       claimed_at: "2026-02-27"
       claim_ref: "ssot:digitalocean-app-platform"
 
+  # DigitalOcean Spaces CDN — dns-only, no proxy
+  # proxied: false is mandatory: Cloudflare proxy conflicts with Spaces CORS
+  # and strips CDN cache-control headers.
+  # lifecycle=planned until bucket 'ipai-assets' is created in DO Spaces (SGP1)
+  # and CDN endpoint is verified. Confirm target in DO console:
+  #   Spaces → ipai-assets → CDN → Endpoint FQDN.
+  - name: cdn
+    type: CNAME
+    service: do_spaces_cdn
+    target: ipai-assets.sgp1.cdn.digitaloceanspaces.com
+    description: "Static asset CDN via DigitalOcean Spaces (SGP1)"
+    cloudflare_proxied: false
+    lifecycle: planned
+    status: planned
+    backing_status: not_provisioned
+    activation_criteria:
+      - "Create DO Spaces bucket 'ipai-assets' in SGP1 region"
+      - "Enable CDN on the bucket and confirm CDN endpoint FQDN"
+      - "Update target if CDN endpoint differs from ipai-assets.sgp1.cdn.digitaloceanspaces.com"
+      - "Flip lifecycle → active + provider_claim.status → claimed"
+    provider_claim:
+      provider: digitalocean
+      status: unclaimed
+      expires_at: "2026-09-01"
+
   # ---------------------------------------------------------------------------
   # Additional Subdomains (for www, api, etc.)
   # ---------------------------------------------------------------------------

@@ -123,9 +123,9 @@ records:
 
   - type: TXT
     name: "@"
-    content: "v=spf1 include:zoho.com include:mailgun.org ~all"
+    content: "v=spf1 include:zohomail.com ~all"
     ttl: 3600
-    comment: "SPF — authorize Zoho + Mailgun for @insightpulseai.com"
+    comment: "SPF — authorize Zoho Mail only. Mailgun SPF lives on mg subdomain."
 
   - type: TXT
     name: "@"
@@ -183,3 +183,18 @@ records:
     proxied: false
     ttl: 3600
     comment: "agent.insightpulseai.com → DO AI Agent"
+
+  # ─── DigitalOcean Spaces CDN ────────────────────────────────────────────────
+  # cdn.insightpulseai.com → DO Spaces CDN endpoint (SGP1 region)
+  # DNS-only (proxied: false) required — Cloudflare proxy breaks Spaces CORS
+  # and CDN cache headers. Must stay grey-cloud until DO Spaces CDN is verified.
+  #
+  # To activate: confirm bucket name in DO console → replace target → flip
+  # proxied:false stays, lifecycle planned → active in subdomain-registry.yaml.
+
+  - type: CNAME
+    name: cdn
+    content: ipai-assets.sgp1.cdn.digitaloceanspaces.com
+    proxied: false
+    ttl: 3600
+    comment: "cdn.insightpulseai.com → DO Spaces CDN (SGP1, DNS-only)"
