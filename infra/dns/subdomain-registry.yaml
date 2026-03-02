@@ -333,37 +333,25 @@ subdomains:
   #   5. Remove the four records listed in deprecated.mg.records_to_remove via
   #      Terraform apply (they are already tagged dns_removed=false there).
   #
-  # Tracking CNAME (email click/open tracking) — MISSING
+  # Tracking CNAME (email click/open tracking) — CONFIRMED VALID 2026-03-02
   - name: email.mg
     type: CNAME
     service: mailgun_tracking
-    target: "<MAILGUN_TRACKING_CNAME_TARGET>"
-    # Typical Mailgun value: mailgun.org  (confirm in dashboard)
+    target: "mailgun.org"
     description: "Mailgun email tracking CNAME (open/click tracking for mg.insightpulseai.com)"
     cloudflare_proxied: false
-    lifecycle: planned
-    status: planned
-    notes: "MISSING — obtain target hostname from Mailgun dashboard DNS Records page"
+    lifecycle: active
+    status: active
+    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid"
     provider_claim:
-      provider: other
-      status: unclaimed
+      provider: mailgun
+      status: claimed
       expires_at: "2026-06-01"
 
-  # Second DKIM TXT (krs2._domainkey.mg or pic._domainkey.mg) — MISSING
-  - name: krs2._domainkey.mg
-    type: TXT
-    service: mailgun_dkim2
-    content: "<MAILGUN_DKIM2_VALUE>"
-    # Typical format: "k=rsa; p=<base64-key>"  (confirm exact name + value in dashboard)
-    description: "Mailgun second DKIM TXT record for mg.insightpulseai.com (DKIM rotation)"
-    cloudflare_proxied: false
-    lifecycle: planned
-    status: planned
-    notes: "MISSING — exact record name (krs2 vs pic) and key value must come from Mailgun dashboard"
-    provider_claim:
-      provider: other
-      status: unclaimed
-      expires_at: "2026-06-01"
+  # DKIM status note: Mailgun reports only ONE DKIM (mx._domainkey.mg) for this domain.
+  # No second DKIM rotation key (krs2/pic) is configured in Mailgun dashboard.
+  # Record removed from planned list — confirmed via Mailgun API 2026-03-02.
+  # If Mailgun adds a second key in future, re-add this entry with the actual value.
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
