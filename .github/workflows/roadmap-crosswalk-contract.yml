@@ -1,0 +1,30 @@
+name: Roadmap Crosswalk Contract Gate
+
+on:
+  pull_request:
+    paths: ['ssot/roadmap/**']
+  push:
+    branches: [main]
+    paths: ['ssot/roadmap/**']
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-roadmap-crosswalk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate roadmap crosswalk
+        run: python scripts/check_roadmap_crosswalk.py
