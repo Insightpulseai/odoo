@@ -1,7 +1,7 @@
 {
   "domain": "insightpulseai.com",
-  "consolidation_date": "2026-03-01",
-  "generated_at": "2026-03-01T18:13:22Z",
+  "consolidation_date": "2026-03-02",
+  "generated_at": "2026-03-02T04:12:57Z",
   "generator": "scripts/generate-dns-artifacts.sh",
   "source": "infra/dns/subdomain-registry.yaml",
   "nameservers": [],
@@ -114,12 +114,25 @@
       "fqdn": "ops.insightpulseai.com",
       "record_type": "CNAME",
       "target": "cname.vercel-dns.com",
-      "cloudflare_proxied": true,
+      "cloudflare_proxied": false,
       "origin_port": null,
       "tls_mode": "Full (strict)",
       "runtime_host": "DO App Platform",
       "owner_system": "OdooOps Console (Next.js on Vercel)",
       "health_check": "/api/health",
+      "status": "active"
+    }
+,
+    "email.mg": {
+      "fqdn": "email.mg.insightpulseai.com",
+      "record_type": "CNAME",
+      "target": "mailgun.org",
+      "cloudflare_proxied": false,
+      "origin_port": null,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "DO App Platform",
+      "owner_system": "Unknown",
+      "health_check": "",
       "status": "active"
     }
   },
