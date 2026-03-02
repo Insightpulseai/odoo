@@ -70,6 +70,11 @@ code .   # VS Code picks it up via initializeCommand
 
 The default (`desktop-linux`) is used when the variable is unset.
 
+#### Relevant Docker references
+
+- [dockerd CLI reference](https://docs.docker.com/reference/cli/dockerd/) — `--host`/`-H` socket flags, `DOCKER_HOST` env var behavior, and why `Server: null` appears when the client targets a stopped or wrong daemon.
+- [Docker Reference overview](https://docs.docker.com/reference/) — canonical flag, file-format, and API specs for the full Docker CLI toolchain.
+
 ### Quick Setup
 
 ```bash
