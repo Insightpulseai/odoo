@@ -1,84 +1,84 @@
 # Tasks: ERP SaaS Parity — P0 Module Installation
 
-## P0 OCA Module Installation
+## Status (2026-03-02)
 
-### Pre-install
+**Completed**: 5 IPAI modules installed (388 total, was 383)
+**Blocked**: 9 OCA modules not ported to 19.0; 6 IPAI modules missing deps; 2 IPAI modules have bugs
 
-- [ ] Take production DB backup (`pg_dump odoo_prod > odoo_prod_pre_parity.dump`)
-- [ ] Vendor OCA/helpdesk submodule (`git submodule add -b 19.0`)
-- [ ] Update `addons_path` to include `addons/oca/helpdesk`
-- [ ] Verify all OCA repos in `oca_repos.yaml` have `status: ok` or `pinned`
+## IPAI Module Installation (Completed)
 
-### Finance modules
+- [x] Install `ipai_ai_platform` (AI Platform HTTP Client)
+- [x] Install `ipai_expense_ocr` (OCR expense ingestion)
+- [x] Install `ipai_auth_oidc` (OIDC SSO + TOTP MFA)
+- [x] Install `ipai_theme_fluent2` (Fluent 2 multi-theme)
+- [x] Install `ipai_web_icons_fluent` (Fluent System Icons)
+- [x] Restart odoo-prod container
+- [x] Verify HTTP 200 at erp.insightpulseai.com
+- [x] Verify no broken modules (to upgrade / to install)
 
-- [ ] Install `account_reconcile_oca` (OCA/account-reconcile)
-- [ ] Verify: bank reconciliation widget accessible in Accounting
-- [ ] Install `account_asset_management` (OCA/account-financial-tools)
-- [ ] Verify: fixed asset depreciation schedules functional
+## IPAI Modules — Bug Fixes Required
 
-### Document management
+- [ ] Fix `ipai_helpdesk`: Change `base.module_category_services_helpdesk` to CE category in security XML
+- [ ] Fix `ipai_finance_close_seed`: Update `04_projects.xml` for Odoo 19 project.project model
+- [ ] Fix `ipai_enterprise_bridge`: Remove `fetchmail` from depends (merged into `mail` in Odoo 19)
+- [ ] Fix `ipai_zoho_mail`: Remove `fetchmail` from depends (same reason)
 
-- [ ] Install `dms` (OCA/dms)
-- [ ] Install `dms_field` (OCA/dms)
-- [ ] Verify: Documents menu visible, directory creation works
+## IPAI Modules — Missing Dependencies (Scaffolding Required)
 
-### Helpdesk
+- [ ] Create `ipai_ai_core` module (blocks `ipai_ai_agents_ui` — the "Ask AI" panel)
+- [ ] Create `ipai_workspace_core` module (blocks `ipai_finance_workflow`)
+- [ ] Create `ipai_bir_tax_compliance` module (blocks `ipai_bir_notifications` + `ipai_hr_payroll_ph`)
 
-- [ ] Install `helpdesk_mgmt` (OCA/helpdesk)
-- [ ] Install `helpdesk_mgmt_sla` (OCA/helpdesk)
-- [ ] Verify: Helpdesk menu visible, ticket creation works, SLA tracking active
+## P0 OCA Module Installation (ALL BLOCKED)
 
-### Approval workflows
+All 9 P0 OCA modules are NOT yet ported to Odoo 19.0 in their OCA repos.
 
-- [ ] Install `base_tier_validation` (OCA/server-ux)
-- [ ] Install `base_tier_validation_formula` (OCA/server-ux)
-- [ ] Verify: tier validation available on purchase orders / expenses
+### Option A: Wait for OCA community
 
-### Project planning
+- [ ] Monitor OCA repos for 19.0 ports (check monthly)
+- [ ] Subscribe to OCA/dms, OCA/helpdesk, OCA/server-ux, OCA/project migration issues
 
-- [ ] Install `project_task_dependency` (OCA/project)
-- [ ] Verify: task dependency field visible on project tasks
+### Option B: Port modules using oca-port (recommended)
 
-### Post-install validation
+- [ ] Port `account_reconcile_oca` from 18.0 → 19.0 using `oca-port`
+- [ ] Port `account_asset_management` from 18.0 → 19.0
+- [ ] Port `dms` + `dms_field` from 18.0 → 19.0
+- [ ] Port `base_tier_validation` + `base_tier_validation_formula` from 18.0 → 19.0
+- [ ] Port `project_task_dependency` from 18.0 → 19.0
+- [ ] Vendor `helpdesk_mgmt` + `helpdesk_mgmt_sla` (check 19.0 availability first)
 
-- [ ] Total installed module count = 392 (383 + 9)
-- [ ] No modules in `to upgrade` or `to install` state
-- [ ] `curl https://erp.insightpulseai.com/web/login` returns HTTP 200
-- [ ] Update `ssot/odoo/parity/erp_saas.yaml` status fields from `planned` → `installed`
-- [ ] Update `ssot/odoo/oca_repos.yaml` helpdesk entry from `pending_vendor` → `ok`
+### Option C: Write IPAI equivalents
 
-## P0 IPAI Bridge Planning (No Scaffolding — Separate PRs)
+- [ ] Evaluate whether `ipai_helpdesk` (after bug fix) covers helpdesk_mgmt needs
+- [ ] Evaluate IPAI-native DMS vs waiting for OCA/dms port
 
-- [ ] Create spec bundle `spec/ipai-approvals/` for `ipai_approvals`
-- [ ] Create spec bundle `spec/ipai-slack-connector/` for `ipai_slack_connector`
-- [ ] Create spec bundle `spec/ipai-ocr-paddleocr/` for `ipai_ocr_paddleocr`
-- [ ] Create spec bundle `spec/ipai-hr-payroll-ph/` for `ipai_hr_payroll_ph`
-- [ ] Create spec bundle `spec/ipai-bir-compliance/` for BIR modules (1601c, 2316, alphalist)
+## Post-Install Validation
+
+- [x] Total installed module count = 388 (383 + 5)
+- [x] No modules in `to upgrade` or `to install` state
+- [x] `curl https://erp.insightpulseai.com/web/login` returns HTTP 200
+- [x] Update `ssot/odoo/parity/erp_saas.yaml` status fields
+- [x] Update `ssot/odoo/parity/oca_p0_allowlist.yaml` with port status
+
+## Evidence
+
+- Install log: `web/docs/evidence/20260302-1930+0800/ipai-p0-install/logs/install_results.txt`
 
 ## Verification Script
 
-Re-dump installed modules from production (no UI required):
+Re-dump installed modules from production:
 
 ```bash
-ssh root@178.128.112.214 "docker exec odoo-prod python3 -c \"
+ssh root@178.128.112.214 "docker exec odoo-prod python3 -c '
 import psycopg2
 conn = psycopg2.connect(
-  host='private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com',
-  port=25060, dbname='odoo_prod', user='doadmin',
-  password='\$DB_PASSWORD', sslmode='require')
+  host=\"private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com\",
+  port=25060, dbname=\"odoo_prod\", user=\"doadmin\",
+  password=\"<DB_PASSWORD>\", sslmode=\"require\")
 cur = conn.cursor()
-cur.execute('SELECT name, state FROM ir_module_module WHERE state=\\'installed\\' ORDER BY name')
-for r in cur.fetchall(): print(f'{r[0]}: {r[1]}')
-print(f'Total: {cur.rowcount}')
+cur.execute(\"SELECT name, state FROM ir_module_module WHERE state=%s ORDER BY name\", (\"installed\",))
+for r in cur.fetchall(): print(r[0] + \": \" + r[1])
+print(\"Total: \" + str(cur.rowcount))
 conn.close()
-\""
+'"
 ```
-
-## Prod Rollout Steps
-
-1. Schedule maintenance window (low-traffic: Saturday 02:00 PHT)
-2. Execute pre-install checklist above
-3. Install modules in dependency order (plan.md Phase C)
-4. Run post-install validation checklist
-5. Monitor error logs for 1 hour
-6. Update SSOT files and commit
