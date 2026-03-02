@@ -1,0 +1,40 @@
+name: Coding Agent Eval (SWE-bench-like replay)
+
+on:
+  pull_request:
+    paths: ['ssot/evals/**', 'eval/**', 'scripts/run_coding_agent_eval.py']
+  push:
+    branches: [main]
+    paths: ['ssot/evals/**', 'eval/**', 'scripts/run_coding_agent_eval.py']
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  coding-agent-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install pyyaml
+
+      - name: Run eval suite
+        run: python scripts/run_coding_agent_eval.py --suite ssot/evals/coding_agent_eval_suite.yaml --base-ref HEAD
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coding-agent-eval-evidence
+          path: docs/evidence/coding_agent_eval/
+          if-no-files-found: ignore
