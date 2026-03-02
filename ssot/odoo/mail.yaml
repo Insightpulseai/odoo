@@ -14,6 +14,7 @@
 #
 # Odoo module: addons/ipai/ipai_mailgun_smtp/ (sequence=1, authoritative)
 # Password injection: post_install_hook reads ODOO_MAILGUN_SMTP_PASSWORD env var
+# Competitor deactivation: same hook deactivates Zoho servers in prod (RUNNING_ENV=prod)
 #
 # See: docs/runbooks/mail/MAIL_TRANSPORT.md
 #      ssot/integrations/mailgun.yaml
@@ -121,9 +122,24 @@ convergence_checks:
       WHERE key = 'web.base.url'
     expected_contains: "insightpulseai.com"
     additional_check: >
-      Verify running_env != 'test' in odoo.conf for production instance.
+      config/prod/odoo.conf sets running_env = prod; Docker/systemd passes RUNNING_ENV=prod
+      env var so hooks can detect prod without a DB query.
     severity: medium
-    remediation: "Set running_env = prod in /etc/odoo/odoo.conf and restart Odoo"
+    remediation: >
+      Verify running_env = prod in config/prod/odoo.conf (committed to repo).
+      Set RUNNING_ENV=prod in Docker env or systemd EnvironmentFile on prod droplet.
+
+  - id: no_competing_mail_servers
+    check: >
+      SELECT count(*) FROM ir_mail_server
+      WHERE active = true
+        AND (smtp_host ILIKE '%zoho%' OR smtp_host = 'mail.zoho.com')
+    expected: "0"
+    severity: high
+    remediation: >
+      Upgrade ipai_mailgun_smtp to trigger the deactivation hook:
+        RUNNING_ENV=prod odoo -d odoo_prod -u ipai_mailgun_smtp --stop-after-init
+      The hook will automatically deactivate all active Zoho mail servers.
 
 # ── Evidence anchor ───────────────────────────────────────────────────────────
 evidence_anchor:
