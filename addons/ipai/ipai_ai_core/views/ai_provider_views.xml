@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ── Tree View ──────────────────────────────────────────────────────── -->
+    <record id="view_ipai_ai_provider_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.provider.tree</field>
+        <field name="model">ipai.ai.provider</field>
+        <field name="arch" type="xml">
+            <list string="AI Providers" decoration-info="is_default">
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="model_name"/>
+                <field name="is_default"/>
+                <field name="total_requests"/>
+                <field name="avg_latency_ms" widget="float"/>
+                <field name="total_tokens"/>
+                <field name="active" optional="show"/>
+                <field name="company_id" optional="show" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form View ──────────────────────────────────────────────────────── -->
+    <record id="view_ipai_ai_provider_form" model="ir.ui.view">
+        <field name="name">ipai.ai.provider.form</field>
+        <field name="model">ipai.ai.provider</field>
+        <field name="arch" type="xml">
+            <form string="AI Provider">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. GPT-4o Production"/></h1>
+                    </div>
+                    <group>
+                        <group string="Provider Configuration">
+                            <field name="provider_type"/>
+                            <field name="model_name" placeholder="e.g. gpt-4o"/>
+                            <field name="base_url" placeholder="e.g. https://api.openai.com/v1"/>
+                            <field name="api_key_param"
+                                   placeholder="e.g. ipai.ai.openai_api_key"/>
+                        </group>
+                        <group string="Generation Parameters">
+                            <field name="max_tokens"/>
+                            <field name="temperature" widget="float"/>
+                            <field name="is_default"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Usage Statistics">
+                        <group>
+                            <field name="total_requests"/>
+                            <field name="total_tokens"/>
+                        </group>
+                        <group>
+                            <field name="avg_latency_ms" widget="float"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search View ────────────────────────────────────────────────────── -->
+    <record id="view_ipai_ai_provider_search" model="ir.ui.view">
+        <field name="name">ipai.ai.provider.search</field>
+        <field name="model">ipai.ai.provider</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="model_name"/>
+                <filter name="filter_default" string="Default"
+                        domain="[('is_default', '=', True)]"/>
+                <separator/>
+                <filter name="group_provider_type" string="Provider Type"
+                        context="{'group_by': 'provider_type'}"/>
+                <filter name="group_company" string="Company"
+                        context="{'group_by': 'company_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action ─────────────────────────────────────────────────────────── -->
+    <record id="action_ipai_ai_provider" model="ir.actions.act_window">
+        <field name="name">AI Providers</field>
+        <field name="res_model">ipai.ai.provider</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ipai_ai_provider_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add an AI Provider
+            </p>
+            <p>
+                Configure AI providers (OpenAI, Anthropic, Google, Ollama, or
+                Supabase Edge) for the IPAI AI Agents panel.
+            </p>
+        </field>
+    </record>
+
+    <!-- ── Menu entries under Settings > Technical > IPAI ─────────────────── -->
+    <menuitem
+        id="menu_ipai_ai_root"
+        name="IPAI AI"
+        parent="base.menu_custom"
+        sequence="95"
+    />
+
+    <menuitem
+        id="menu_ipai_ai_providers"
+        name="AI Providers"
+        parent="menu_ipai_ai_root"
+        action="action_ipai_ai_provider"
+        sequence="10"
+    />
+
+</odoo>

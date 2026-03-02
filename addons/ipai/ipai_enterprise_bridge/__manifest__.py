@@ -13,7 +13,7 @@
         "base_setup",
         "mail",
         "auth_oauth",
-        "fetchmail",
+        # "fetchmail" removed — merged into mail in Odoo 19
         "web",
         "hr_expense",
         "maintenance",

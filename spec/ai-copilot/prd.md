@@ -135,3 +135,50 @@ third-party AI subscriptions beyond a single Gemini API key.
 6. Session history persists across same-session navigation
 7. Proactive insights appear in sidebar after cron run
 8. trigger_workflow tool correctly posts to allowlisted n8n webhook
+
+---
+
+## Parity Priority Tiers
+
+Capabilities are prioritized in `ssot/ai/copilot_parity_priorities.yaml`:
+- **P0** (ship-blocking): citation-first knowledge, governed tool-use contract, agent runtime ledger, context engineering rules, read-only default safety
+- **P1** (next sprint): coding agent issue-to-PR, proactive insights engine, natural language query, multi-provider routing
+- **P2** (strategic): predictive analytics, workspace live ERP views, voice transcription, AI field generation
+
+Reference models: Notion AI/Agents, M365 Copilot, SAP Joule, Kapa AI, GitHub Copilot coding agent.
+
+Odoo 19 native AI baseline mapping: `ssot/ai/odoo_ai_mapping.yaml`.
+
+---
+
+## OCA/ai as In-Odoo Surface; IPAI Runtime as Governed Orchestration
+
+### Architecture
+
+OCA/ai provides the **in-Odoo agent surface** (Topics, Tools, Sources, chatter/doc-page adapters).
+IPAI runtime provides the **heavy lifting** (RAG, tool routing, approvals, audit, eval gates).
+Connected via a **thin adapter module** (`ipai_ai_oca_bridge_gemini`) — no OCA fork.
+
+### Provider: Gemini-first
+
+- Default: Gemini 2.0 Flash for chat + RAG + tool-use reasoning
+- Complex: Gemini 2.0 Pro for multi-step tool chains and coding agent
+- Fallback: Ollama for offline/air-gapped html_editor only
+- Policy: `ssot/ai/provider_policy.yaml`
+
+### OCA/ai Module Status
+
+| Module | Status | Override |
+|--------|--------|----------|
+| `ai_oca_native_generate_ollama` | Vendored (19.0) | No override needed |
+| `ai_oca_bridge` | Pending 19.0 port | `ipai_ai_widget` fills this role |
+| `ai_oca_bridge_chatter` | Pending 19.0 port | `ipai_ai_widget` fills this role |
+| `ai_oca_bridge_document_page` | Pending 19.0 port | Not yet needed |
+
+### Integration Model
+
+- Topics → Tool Contract v1 tool IDs: `ssot/ai/oca_ai_integration.yaml`
+- Sources → Corpus registry entries: `ssot/knowledge/corpus_registry.yaml`
+- Read-only default: agent cannot write unless topic with write tools is explicitly enabled
+- Approval gate: preview→approval→commit for all write tools
+- Audit: every invocation emits audit envelope to `ops.platform_events`
