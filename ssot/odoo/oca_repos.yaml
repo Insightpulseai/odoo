@@ -90,6 +90,17 @@ repos:
     modules: 2
     notes: "DMS replaces Odoo Documents EE in industry bundles (photography, marketing, partner)."
 
+  - name: helpdesk
+    source: https://github.com/OCA/helpdesk
+    branch: "19.0"
+    status: pending_vendor
+    modules: 0
+    notes: >
+      NOT YET VENDORED. Required for P0 ERP SaaS parity (helpdesk_mgmt,
+      helpdesk_mgmt_sla). Add submodule: git submodule add -b 19.0
+      https://github.com/OCA/helpdesk addons/oca/helpdesk.
+      Ref: ssot/odoo/parity/erp_saas.yaml
+
   - name: hr
     source: https://github.com/OCA/hr
     branch: _git_aggregated
