@@ -209,3 +209,76 @@ Version: 1.0.0 | Status: Active | Last updated: 2026-02-27
 | T-22 | 6 | pending | T-02, T-03, T-04 |
 | T-23 | 6 | pending | T-19 |
 | T-24 | 6 | pending | T-23 |
+| T-KAPA-01 | K1 | pending | none |
+| T-KAPA-02 | K1 | pending | T-KAPA-01 |
+| T-KAPA-03 | K1 | pending | T-KAPA-02 |
+| T-KAPA-04 | K1 | pending | T-KAPA-03 |
+| T-TOOLS-01 | G1 | pending | none |
+| T-TOOLS-02 | G1 | pending | T-TOOLS-01 |
+| T-TOOLS-03 | G1 | pending | T-TOOLS-02 |
+| T-TOOLS-04 | G1 | pending | T-TOOLS-03 |
+| T-TOOLS-05 | G1 | pending | T-TOOLS-03 |
+
+---
+
+## Sprint K1: Knowledge Copilot (Kapa-like)
+
+Ledger entry: `citation_first_knowledge_copilot` in `ssot/agent/feature_ledger.yaml`
+
+### T-KAPA-01: Populate corpus registry with real file counts
+- Run indexer over `spec/**/*.md`, `ssot/**/*.yaml`, `docs/ai/*.md`, `docs/contracts/*.md`, `docs/runbooks/**/*.md`
+- Update `file_count` in `ssot/knowledge/corpus_registry.yaml` for each corpus
+- Acceptance: all 5 corpora have `file_count > 0`
+
+### T-KAPA-02: Wire RAG retrieval pipeline to corpus
+- Configure `ipai_ai_rag` to index documents from corpus registry paths
+- Embed chunks into Supabase pgvector using existing Edge Function
+- Acceptance: `match_documents(query)` returns chunks with `source_path` from registered corpora
+
+### T-KAPA-03: Implement citation injection in copilot responses
+- Modify copilot chat endpoint to include `citations: [{source, chunk_id, text}]` in responses
+- Citations must reference actual corpus paths (not hallucinated paths)
+- Acceptance: copilot response includes at least one citation for knowledge questions
+
+### T-KAPA-04: Run knowledge eval suite and verify threshold
+- Execute `eval/knowledge_copilot_eval.yaml` cases against the live copilot
+- Record evidence packs in `docs/evidence/knowledge_copilot_eval/`
+- Acceptance: >= 80% of 25 cases pass `citation_present` + `answer_grounded` checks
+- Artifacts: `eval/knowledge_copilot_eval.yaml`, `docs/evidence/knowledge_copilot_eval/<run_id>/`
+
+---
+
+## Sprint G1: Governed Tool Use (M365/Joule-like)
+
+Ledger entry: `governed_tool_use_contract` in `ssot/agent/feature_ledger.yaml`
+
+### T-TOOLS-01: Create tool spec contracts for 5 governed tools
+- Create `contracts/tools/search_records.md`
+- Create `contracts/tools/navigate_to.md`
+- Create `contracts/tools/create_record.md`
+- Create `contracts/tools/send_chatter_message.md`
+- Create `contracts/tools/trigger_workflow.md`
+- Each spec: name, category, parameters (JSON Schema), requires_confirmation, access_model, side_effects
+- Acceptance: 5 files exist with valid YAML, match copilot_tools.xml definitions
+
+### T-TOOLS-02: Implement audit envelope emission
+- On every tool execution (dispatch or confirmed), emit structured audit envelope:
+  `{trace_id, user_id, timestamp, tool_name, tool_args, result_status, duration_ms}`
+- Store in `ipai.copilot.audit` model (new) or log to structured output
+- Acceptance: every tool call in `/ipai/copilot/execute_tools` emits an audit record
+
+### T-TOOLS-03: Verify preview → approval → commit flow for write tools
+- Ensure `create_record`, `send_chatter_message`, `trigger_workflow` show preview before execution
+- Ensure Cancel path works (no side effects on cancel)
+- Acceptance: manual test confirms all 3 write tools require confirmation UI
+
+### T-TOOLS-04: Run action eval suite and verify threshold
+- Execute `eval/action_eval.yaml` cases against the copilot tool executor
+- Record evidence packs in `docs/evidence/action_eval/`
+- Acceptance: 100% approval compliance for write/automation tools
+- Artifacts: `eval/action_eval.yaml`, `docs/evidence/action_eval/<run_id>/`
+
+### T-TOOLS-05: Validate audit envelope completeness
+- Verify every execution emits all 7 required fields (trace_id, user_id, timestamp, tool_name, tool_args, result_status, duration_ms)
+- Sample audit envelope saved to `docs/evidence/action_eval/audit_envelope_sample.json`
+- Acceptance: audit envelope sample validates against schema, no null fields
