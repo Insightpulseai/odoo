@@ -370,6 +370,14 @@ entries:
     automation_surface: ops-console
     gateway_endpoint: https://ai-gateway.vercel.sh/v1
     github_secret: AI_GATEWAY_API_KEY
+    # Named keys already provisioned (names only — never values)
+    # Manage at: vercel.com/tbwa/~/ai-gateway/keys
+    active_key_names:
+      - kit           # most recently active — likely ops-console or local dev
+      - n8n           # n8n workflows routing AI calls through Gateway (not direct to providers)
+      - GEMINI        # Gemini provider calls
+      - saricoach     # SariCoach project
+      # "AI Gateway v0 Key" — legacy, 28d ago; consider retiring
     sub_docs:
       - https://vercel.com/docs/ai-gateway/getting-started
       - https://vercel.com/docs/ai-gateway/models-and-providers
