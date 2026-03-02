@@ -1,10 +1,9 @@
 {
   "name": "ipai-devcontainer",
-  // Use Docker Desktop context. Run scripts/dev/docker_doctor.sh to verify.
-  // To switch runtime without editing this file:
-  //   export DOCKER_CONTEXT_OVERRIDE=colima  (then rebuild Dev Container)
-  "dockerContext": "desktop-linux",
-  "initializeCommand": "bash scripts/dev/docker_doctor.sh ${DOCKER_CONTEXT_OVERRIDE:-desktop-linux}",
+  // Docker context: uses whatever `docker context` is active on the host.
+  // No hardcoded dockerContext — works with Docker Desktop, Colima, or OrbStack.
+  // Run scripts/dev/docker_doctor.sh to verify connectivity before rebuild.
+  "initializeCommand": "bash scripts/dev/docker_doctor.sh ${DOCKER_CONTEXT_OVERRIDE:-default}",
   // Compose SSOT + overlay(s). Later files override earlier ones.
   "dockerComposeFile": [
     "../docker-compose.yml",
@@ -78,8 +77,8 @@
   "containerEnv": {
     "ODOO_DB": "${localEnv:ODOO_DB:odoo_dev}",
     "ODOO_LOG_LEVEL": "${localEnv:ODOO_LOG_LEVEL:debug}",
-    "POSTGRES_USER": "${localEnv:POSTGRES_USER:odoo}",
-    "POSTGRES_PASSWORD": "${localEnv:POSTGRES_PASSWORD:odoo}"
+    "POSTGRES_USER": "odoo",
+    "POSTGRES_PASSWORD": "odoo"
   },
   "containerUser": "devcontainer",
   "updateRemoteUserUID": true,
