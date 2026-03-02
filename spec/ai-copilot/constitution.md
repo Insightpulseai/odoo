@@ -57,3 +57,45 @@ The `trigger_workflow` tool may only trigger n8n workflows that are explicitly r
 `ssot/bridges/catalog.yaml` with a corresponding `ipai_ai_copilot.n8n_webhook.<workflow_id>`
 ir.config_parameter. Any workflow_id not in the allowlist MUST return an error, not attempt
 execution. New workflows require a SSOT update and code review before use.
+
+---
+
+## Extension Decision Policy (CE vs OCA vs addon vs Bridge)
+
+Before building or extending any capability, follow this decision tree in order:
+
+### A. Can Odoo CE configuration satisfy the requirement?
+- Use `ir.config_parameter`, system settings, or built-in module options.
+- **If yes** → Configure. No code needed. Document in `ssot/odoo/settings_catalog.yaml`.
+
+### B. Does an OCA module exist for this capability?
+- Search `OCA/*` repos and the OCA app store.
+- **If yes and mature (19.0 port available)** → Adopt the OCA module. Pin version in `.gitmodules` or `requirements.txt`. Do not fork or vendor — use `_inherit` overrides if customization is needed.
+- **If yes but no 19.0 port** → Mark `[NEEDS PORT]`. File an OCA issue or initiate a port. Use a temporary `ipai_*` shim if blocking, but plan to migrate when port lands.
+
+### C. Is a custom Odoo addon the right approach?
+- Only if A and B are exhausted.
+- **Naming**: `ipai_<domain>_<feature>` (e.g. `ipai_ai_copilot`).
+- **Must**: follow OCA quality standards (pre-commit, manifest, README, tests).
+- **Must not**: duplicate functionality available in OCA.
+
+### D. Does the capability require an external service?
+- AI/ML inference, OCR, vector search, or any non-Odoo runtime.
+- **If yes** → Bridge-first architecture. The Odoo addon (`ipai_*`) is a thin connector; heavy logic runs in the external service (Rule 4: all AI routes through IPAI bridge).
+- **Bridge contract**: `contracts/tools/TOOL_SPEC_TEMPLATE.md` (preview → approval → commit; audit envelope; idempotency key).
+
+### E. Tie-breakers
+- **EE parity feature** → Prefer OCA path (even partial) over custom addon. Document gap in `ssot/parity/`.
+- **AI/ML capability** → Always Bridge (Rule 4: no direct LLM calls from Odoo).
+- **OCA/ai surface** → Thin adapter only; no forking OCA modules (Rule 3: tool registry is the ONLY mechanism).
+- **Cross-domain integration** → Requires a contract doc per `ssot-platform.md` Rule 9.
+
+### Required artifacts per path
+
+| Path | Required artifact |
+|------|-------------------|
+| A (Config) | Settings entry in `ssot/odoo/settings_catalog.yaml` |
+| B (OCA) | `.gitmodules` pin or `requirements.txt` entry |
+| C (Custom addon) | `addons/ipai/ipai_<domain>_<feature>/` with manifest + tests |
+| D (Bridge) | Tool spec in `contracts/tools/` + bridge entry in `ssot/bridges/catalog.yaml` |
+| E (Parity) | Row in `ssot/parity/ee_to_oca_proof_matrix.yaml` |

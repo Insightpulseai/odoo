@@ -11,12 +11,13 @@
  */
 import { reactive } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { rpc } from "@web/core/network/rpc";
 
 export const copilotService = {
     name: "ipai_copilot",
-    dependencies: ["rpc", "notification"],
+    dependencies: ["notification"],
 
-    start(env, { rpc, notification }) {
+    start(env, { notification }) {
         /** @type {import("@odoo/owl").Reactive} */
         const state = reactive({
             open: false,

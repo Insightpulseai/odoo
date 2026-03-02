@@ -59,7 +59,7 @@
           <div class="ipai-copilot-messages p-2" t-ref="messages">
 
             <!-- Empty state with starter prompts -->
-            <t t-if="state.messages.length === 0 and not state.loading">
+            <t t-if="state.messages.length === 0 &amp;&amp; !state.loading">
               <div class="text-center py-3" style="color:#6c757d">
                 <div style="font-size:2rem;margin-bottom:8px">✨</div>
                 <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px">IPAI Copilot</div>
@@ -104,7 +104,7 @@
               </t>
 
               <!-- Assistant: tool confirmation -->
-              <t t-elif="msg.role === 'assistant' and msg.type === 'tool_confirmation'">
+              <t t-elif="msg.role === 'assistant' &amp;&amp; msg.type === 'tool_confirmation'">
                 <div class="ipai-copilot-message assistant mb-2">
                   <div class="message-bubble p-2 rounded-3">
                     <div class="d-flex align-items-center gap-1 mb-2" style="color:#856404;font-size:0.8rem">
@@ -137,7 +137,7 @@
               </t>
 
               <!-- Assistant: tool result -->
-              <t t-elif="msg.role === 'assistant' and msg.type === 'tool_result'">
+              <t t-elif="msg.role === 'assistant' &amp;&amp; msg.type === 'tool_result'">
                 <div class="ipai-copilot-message assistant mb-2">
                   <div class="message-bubble p-2 rounded-3">
                     <div class="d-flex align-items-center gap-1 mb-1" style="color:#0d6832;font-size:0.8rem">
@@ -150,7 +150,7 @@
               </t>
 
               <!-- Assistant: error -->
-              <t t-elif="msg.role === 'assistant' and msg.type === 'error'">
+              <t t-elif="msg.role === 'assistant' &amp;&amp; msg.type === 'error'">
                 <div class="ipai-copilot-message assistant mb-2">
                   <div class="message-bubble p-2 rounded-3" style="background:#fee2e2">
                     <div class="d-flex align-items-center gap-1 mb-1" style="color:#b91c1c;font-size:0.8rem">
@@ -207,7 +207,7 @@
                 style="resize:none;font-size:0.8rem"/>
               <button class="btn btn-primary"
                       t-on-click="send"
-                      t-att-disabled="state.loading or !localState.inputValue.trim()">
+                      t-att-disabled="state.loading || !localState.inputValue.trim()">
                 <i class="fa fa-paper-plane"/>
               </button>
             </div>

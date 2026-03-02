@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_workspace_page_user,ipai.workspace.page user,model_ipai_workspace_page,base.group_user,1,1,1,0
+access_ipai_workspace_page_manager,ipai.workspace.page manager,model_ipai_workspace_page,base.group_system,1,1,1,1
+access_ipai_workspace_member_user,ipai.workspace.member user,model_ipai_workspace_member,base.group_user,1,1,1,0
+access_ipai_workspace_member_manager,ipai.workspace.member manager,model_ipai_workspace_member,base.group_system,1,1,1,1

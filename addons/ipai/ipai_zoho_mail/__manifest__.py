@@ -45,7 +45,7 @@ Submit a support ticket to DO to unblock before testing email delivery.
     "license": "LGPL-3",
     "depends": [
         "mail",
-        "fetchmail",
+        # "fetchmail" removed — merged into mail in Odoo 19
     ],
     "data": [
         "security/ir.model.access.csv",
