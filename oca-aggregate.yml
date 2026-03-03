@@ -126,14 +126,27 @@
     - oca 19.0
   # Modules: account_statement_base, account_stmt_import_file_oca
 
+./addons/oca/account-invoicing:
+  remotes:
+    oca: https://github.com/OCA/account-invoicing.git
+  merges:
+    - oca 19.0
+  # Modules: account_invoice_refund_link, account_invoice_start_end_dates,
+  #          account_invoice_view_payment
+
+./addons/oca/account-payment:
+  remotes:
+    oca: https://github.com/OCA/account-payment.git
+  merges:
+    - oca 19.0
+  # Modules: account_payment_order, account_payment_mode, account_payment_partner
+
 ./addons/oca/bank-payment:
   remotes:
     oca: https://github.com/OCA/bank-payment.git
   merges:
     - oca 19.0
-  # Modules: account_payment_mode, account_payment_order,
-  #          account_payment_order_grouped, account_payment_purchase,
-  #          account_payment_sale
+  # Modules: account_banking_pain_base, account_banking_sepa_credit_transfer
 
 # ---------------------------------------------------------------------------
 # Tier 4 — HR / People
@@ -168,6 +181,13 @@
     oca: https://github.com/OCA/sale-workflow.git
   merges:
     - oca 19.0
+
+./addons/oca/sale-reporting:
+  remotes:
+    oca: https://github.com/OCA/sale-reporting.git
+  merges:
+    - oca 19.0
+  # Modules: sale_report_advanced
 
 ./addons/oca/purchase-workflow:
   remotes:
