@@ -194,12 +194,19 @@ def supabase_upsert(
     supabase_url: str,
     service_key: str,
 ) -> dict:
-    """Upsert rows to Supabase via PostgREST.
+    """Upsert rows to Supabase via SQL through the Management API.
 
-    Uses Prefer: resolution=merge-duplicates for upsert semantics.
+    The rag schema is not exposed via PostgREST by default, so we use
+    the Supabase Management API to execute INSERT ... ON CONFLICT directly.
+    Falls back to PostgREST for public schema tables.
     """
     import urllib.request
 
+    # For rag schema tables, use Management API SQL endpoint
+    if table.startswith("rag."):
+        return _sql_upsert(table, rows, on_conflict)
+
+    # For public schema tables, use PostgREST
     url = f"{supabase_url}/rest/v1/{table}"
     headers = {
         "apikey": service_key,
@@ -217,6 +224,80 @@ def supabase_upsert(
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8", errors="replace")
         return {"status": e.code, "error": error_body, "count": 0}
+
+
+def _sql_upsert(table: str, rows: list[dict], on_conflict: str) -> dict:
+    """Upsert rows via Supabase Management API SQL endpoint.
+
+    Builds INSERT ... ON CONFLICT (on_conflict) DO UPDATE SET ...
+    """
+    import urllib.request
+
+    access_token = os.environ.get("SUPABASE_ACCESS_TOKEN")
+    project_ref = os.environ.get("SUPABASE_PROJECT_REF")
+
+    if not access_token or not project_ref:
+        # Derive project_ref from SUPABASE_URL if not set
+        supabase_url = os.environ.get("SUPABASE_URL", "")
+        if not project_ref and supabase_url:
+            # https://<ref>.supabase.co -> <ref>
+            project_ref = supabase_url.split("//")[1].split(".")[0]
+
+    if not access_token:
+        return {"status": "error", "error": "SUPABASE_ACCESS_TOKEN required for rag schema upserts", "count": 0}
+
+    if not rows:
+        return {"status": 200, "count": 0}
+
+    columns = list(rows[0].keys())
+    update_cols = [c for c in columns if c != on_conflict]
+
+    # Build VALUES list with proper escaping
+    values_parts = []
+    for row in rows:
+        vals = []
+        for col in columns:
+            v = row.get(col)
+            if v is None:
+                vals.append("NULL")
+            elif isinstance(v, (int, float)):
+                vals.append(str(v))
+            elif isinstance(v, list):
+                vals.append(f"'{json.dumps(v)}'::jsonb")
+            elif isinstance(v, dict):
+                vals.append(f"'{json.dumps(v)}'::jsonb")
+            else:
+                # Escape single quotes
+                escaped = str(v).replace("'", "''")
+                vals.append(f"'{escaped}'")
+        values_parts.append(f"({', '.join(vals)})")
+
+    update_clause = ", ".join(
+        f"{c} = EXCLUDED.{c}" for c in update_cols
+    )
+
+    sql = f"""INSERT INTO {table} ({', '.join(columns)})
+VALUES {', '.join(values_parts)}
+ON CONFLICT ({on_conflict}) DO UPDATE SET {update_clause};"""
+
+    url = f"https://api.supabase.com/v1/projects/{project_ref}/database/query"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+        "User-Agent": "supabase-rag-upsert/1.0",
+    }
+
+    body = json.dumps({"query": sql}).encode("utf-8")
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return {"status": resp.status, "count": len(rows)}
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8", errors="replace")
+        return {"status": e.code, "error": error_body[:500], "count": 0}
+    except Exception as e:
+        return {"status": "error", "error": str(e)[:500], "count": 0}
 
 
 def process_corpus(
@@ -280,7 +361,7 @@ def process_corpus(
                     "tenant_id": DEFAULT_TENANT_ID,
                     "document_id": doc_id,
                     "content": chunk["content"],
-                    "section_path": chunk["section_path"],
+                    "section_path": chunk["section_path"][:500],
                     "metadata": json.dumps(chunk["metadata"]),
                 }
             )
@@ -326,8 +407,8 @@ def process_corpus(
     )
     result["doc_upsert"] = doc_result
 
-    # Upsert chunks (in batches of 500)
-    batch_size = 500
+    # Upsert chunks (in batches of 100 to stay under API size limits)
+    batch_size = 100
     chunk_results = []
     for i in range(0, len(chunk_rows), batch_size):
         batch = chunk_rows[i : i + batch_size]
