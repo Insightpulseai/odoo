@@ -7,6 +7,7 @@ Designed to be run locally or in CI (T-KAPA-01).
 Usage:
     python scripts/index_corpus_registry.py          # update in-place
     python scripts/index_corpus_registry.py --check   # exit 1 if any file_count == 0
+    python scripts/index_corpus_registry.py --sync-db # also upsert to Supabase RAG tables
 """
 from __future__ import annotations
 
@@ -53,6 +54,11 @@ def main() -> int:
         "--check",
         action="store_true",
         help="Check mode: exit 1 if any corpus has file_count == 0",
+    )
+    parser.add_argument(
+        "--sync-db",
+        action="store_true",
+        help="After indexing, upsert files into Supabase RAG tables (requires SUPABASE_URL)",
     )
     args = parser.parse_args()
 
@@ -116,6 +122,31 @@ def main() -> int:
         f.writelines(updated_lines)
 
     print(f"\nUpdated {REGISTRY_PATH}")
+
+    # Optional: sync to Supabase RAG tables
+    if args.sync_db:
+        print("\n── Syncing to Supabase RAG tables ──")
+        try:
+            import subprocess
+
+            upsert_script = os.path.join(SCRIPT_DIR, "rag", "supabase_upsert.py")
+            if not os.path.exists(upsert_script):
+                print("  SKIP: scripts/rag/supabase_upsert.py not found")
+            else:
+                result = subprocess.run(
+                    [sys.executable, upsert_script],
+                    cwd=REPO_ROOT,
+                    capture_output=True,
+                    text=True,
+                )
+                print(result.stdout)
+                if result.returncode != 0:
+                    print(f"  WARNING: upsert exited with code {result.returncode}")
+                    if result.stderr:
+                        print(f"  {result.stderr[:500]}")
+        except Exception as e:
+            print(f"  WARNING: DB sync failed: {e}")
+
     return 0
 
 
