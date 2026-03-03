@@ -1,100 +1,75 @@
 import { ButtonLink } from "@/common/button";
-import { Pump } from "basehub/react-pump";
-import { buttonFragment } from "@/lib/basehub/fragments";
-import { fragmentOn } from "basehub";
+import Image from "next/image";
 
 import { DesktopMenu, MobileMenu } from "./navigation-menu";
-import { DarkLightImageAutoscale } from "@/common/dark-light-image";
 
-const headerLinksFragment = fragmentOn("HeaderNavbarLinkComponent", {
-  _title: true,
-  href: true,
-  _id: true,
-  sublinks: {
-    items: {
-      _id: true,
-      _title: true,
-      link: {
-        __typename: true,
-        on_CustomTextComponent: {
-          text: true,
-        },
-        on_PageReferenceComponent: {
-          page: {
-            pathname: true,
-            _title: true,
-          },
-        },
-      },
-    },
-  },
-});
-
-export type HeaderLiksFragment = fragmentOn.infer<typeof headerLinksFragment>;
-
-export const headerFragment = fragmentOn("Header", {
+// Static header data - replace with site-data import as needed
+const headerData = {
   navbar: {
-    items: headerLinksFragment,
+    items: [
+      { _id: "1", _title: "Features", href: "/features", sublinks: { items: [] } },
+      { _id: "2", _title: "Pricing", href: "/pricing", sublinks: { items: [] } },
+      { _id: "3", _title: "Docs", href: "/docs", sublinks: { items: [] } },
+    ],
   },
   rightCtas: {
-    items: buttonFragment,
+    items: [
+      { _id: "login", href: "/login", label: "Log in", type: "secondary" as const },
+      { _id: "signup", href: "/sign-up", label: "Sign up", type: "primary" as const },
+    ],
   },
-});
+};
 
-export type HeaderFragment = fragmentOn.infer<typeof headerFragment>;
+export type HeaderLiksFragment = {
+  _id: string;
+  _title: string;
+  href?: string | null;
+  sublinks: {
+    items: Array<{
+      _id: string;
+      _title: string;
+      link: {
+        __typename: string;
+        text?: string;
+        page?: { pathname: string; _title: string };
+      };
+    }>;
+  };
+};
+
+export type HeaderFragment = {
+  navbar: { items: HeaderLiksFragment[] };
+  rightCtas: {
+    items: Array<{
+      _id: string;
+      href: string;
+      label: string;
+      type: "primary" | "secondary";
+    }>;
+  };
+};
 
 export async function Header() {
-  return (
-    <Pump
-      queries={[
-        {
-          site: {
-            header: headerFragment,
-            settings: {
-              logo: {
-                dark: {
-                  url: true,
-                  alt: true,
-                  width: true,
-                  height: true,
-                  aspectRatio: true,
-                  blurDataURL: true,
-                },
-                light: {
-                  url: true,
-                  alt: true,
-                  width: true,
-                  height: true,
-                  aspectRatio: true,
-                  blurDataURL: true,
-                },
-              },
-            },
-          },
-        },
-      ]}
-    >
-      {async ([
-        {
-          site: { header, settings },
-        },
-      ]) => {
-        "use server";
+  const header = headerData as unknown as HeaderFragment;
 
-        return (
-          <header className="sticky left-0 top-0 z-100 flex w-full flex-col border-b border-border bg-surface-primary dark:border-dark-border dark:bg-dark-surface-primary">
-            <div className="flex h-(--header-height) bg-surface-primary dark:bg-dark-surface-primary">
-              <div className="container mx-auto grid w-full grid-cols-header place-items-center content-center items-center px-6 *:first:justify-self-start">
-                <ButtonLink unstyled className="flex items-center ring-offset-2" href="/">
-                  <DarkLightImageAutoscale priority {...settings.logo} />
-                </ButtonLink>
-                <DesktopMenu {...header} />
-                <MobileMenu {...header} />
-              </div>
-            </div>
-          </header>
-        );
-      }}
-    </Pump>
+  return (
+    <header className="sticky left-0 top-0 z-100 flex w-full flex-col border-b border-neutral-stroke1 bg-neutral-bg1">
+      <div className="flex h-(--header-height) bg-neutral-bg1">
+        <div className="container mx-auto grid w-full grid-cols-header place-items-center content-center items-center px-6 *:first:justify-self-start">
+          <ButtonLink unstyled className="flex items-center ring-offset-2" href="/">
+            <Image
+              priority
+              alt="Logo"
+              className="h-8 w-auto"
+              height={32}
+              src="/logo.svg"
+              width={120}
+            />
+          </ButtonLink>
+          <DesktopMenu {...header} />
+          <MobileMenu {...header} />
+        </div>
+      </div>
+    </header>
   );
 }

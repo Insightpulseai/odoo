@@ -1,10 +1,24 @@
-import { type DarkLightImageFragment } from "@/lib/basehub/fragments";
 import clsx from "clsx";
-import { BaseHubImage } from "basehub/next-image";
-import type { ImageProps } from "next/image";
+import Image, { type ImageProps } from "next/image";
 
-type DarkLightImageProps = DarkLightImageFragment &
-  Omit<ImageProps, "src" | "alt"> & {
+type DarkLightImageProps = {
+  dark?: {
+    url: string;
+    alt?: string | null;
+    width?: number;
+    height?: number;
+    blurDataURL?: string;
+    aspectRatio?: string;
+  } | null;
+  light: {
+    url: string;
+    alt?: string | null;
+    width?: number;
+    height?: number;
+    blurDataURL?: string;
+    aspectRatio: string;
+  };
+} & Omit<ImageProps, "src" | "alt"> & {
     alt?: string;
     withPlaceholder?: boolean;
   };
@@ -20,38 +34,20 @@ export function DarkLightImage({
   ...props
 }: DarkLightImageProps) {
   return (
-    <>
-      {dark ? (
-        <BaseHubImage
-          alt={dark.alt ?? alt ?? ""}
-          className={clsx("hidden dark:block", className)}
-          height={height ?? dark.height}
-          src={dark.url}
-          width={width ?? dark.width}
-          {...props}
-          {...(withPlaceholder && dark.blurDataURL
-            ? {
-                placeholder: "blur",
-                blurDataURL: dark.blurDataURL,
-              }
-            : {})}
-        />
-      ) : null}
-      <BaseHubImage
-        alt={light.alt ?? alt ?? ""}
-        className={clsx(dark && "dark:hidden", className)}
-        height={height ?? light.height}
-        src={light.url}
-        width={width ?? light.width}
-        {...props}
-        {...(withPlaceholder && light.blurDataURL
-          ? {
-              placeholder: "blur",
-              blurDataURL: light.blurDataURL,
-            }
-          : {})}
-      />
-    </>
+    <Image
+      alt={light.alt ?? alt ?? ""}
+      className={className}
+      height={height ?? light.height}
+      src={light.url}
+      width={width ?? light.width}
+      {...props}
+      {...(withPlaceholder && light.blurDataURL
+        ? {
+            placeholder: "blur",
+            blurDataURL: light.blurDataURL,
+          }
+        : {})}
+    />
   );
 }
 

@@ -26,7 +26,7 @@ export function CustomTooltip({ children, content, className, ...props }: Simple
       <Tooltip.Portal>
         <Tooltip.Content
           className={clsx(
-            "z-999 max-w-[160px] rounded-md border border-border bg-surface-secondary px-2 py-1 text-sm text-text-secondary dark:border-dark-border dark:bg-dark-surface-secondary dark:text-dark-text-secondary",
+            "z-999 max-w-[160px] rounded-md border border-neutral-stroke1 bg-neutral-bg2 px-2 py-1 text-sm text-neutral-fg2",
             className,
           )}
           {...props}
@@ -52,11 +52,11 @@ function Arrow() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        className="fill-surface-secondary stroke-border dark:fill-dark-surface-secondary dark:stroke-dark-border"
+        className="fill-neutral-bg2 stroke-neutral-stroke1"
         d="M6.76649 7.55043C6.41506 8.12151 5.58494 8.12151 5.23351 7.55043L0.894781 0.500001L11.1052 0.5L6.76649 7.55043Z"
       />
       <path
-        className="fill-surface-secondary dark:fill-dark-surface-secondary"
+        className="fill-neutral-bg2"
         d="M1.3418 0H10.7666L10.1989 1H1.80013L1.3418 0Z"
       />
     </svg>

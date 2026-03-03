@@ -48,13 +48,12 @@ export function MobilePricingComparison({
           <SelectTrigger
             aria-label="Plan Data selector"
             className={clsx(
-              "text-text-secondary dark:text-dark-text-secondary relative flex w-full items-center justify-between rounded-sm px-4 py-2 pr-10",
-              "border-border bg-surface-secondary border",
-              "dark:border-dark-border dark:bg-dark-surface-secondary",
+              "text-neutral-fg2 relative flex w-full items-center justify-between rounded-sm px-4 py-2 pr-10",
+              "border-neutral-stroke1 bg-neutral-bg2 border",
             )}
           >
             <SelectValue placeholder={selectedPlan?._title ?? "Select a plan"} />
-            <span className="text-text-primary dark:text-dark-text-primary">
+            <span className="text-neutral-fg1">
               {selectedPlan?.price}
             </span>
             <SelectIcon className="absolute top-1/2 right-2 size-5 -translate-y-1/2">
@@ -64,8 +63,7 @@ export function MobilePricingComparison({
           <SelectPortal>
             <SelectContent
               className={clsx(
-                "border-border bg-surface-secondary z-100 w-full flex-col overflow-hidden rounded-sm border p-0.5",
-                "dark:border-dark-border dark:bg-dark-surface-secondary",
+                "border-neutral-stroke1 bg-neutral-bg2 z-100 w-full flex-col overflow-hidden rounded-sm border p-0.5",
               )}
               side="bottom"
             >
@@ -74,10 +72,10 @@ export function MobilePricingComparison({
                   <SelectItem
                     key={plan._id}
                     className={clsx(
-                      "group text-text-secondary dark:text-dark-text-secondary relative flex w-full flex-1 items-center justify-between rounded-sm px-4 py-2",
-                      "hover:bg-surface-tertiary dark:hover:bg-dark-surface-tertiary",
+                      "group text-neutral-fg2 relative flex w-full flex-1 items-center justify-between rounded-sm px-4 py-2",
+                      "hover:bg-neutral-bg3",
                       {
-                        "bg-surface-tertiary text-text-primary dark:bg-dark-surface-tertiary dark:text-dark-text-primary":
+                        "bg-neutral-bg3 text-neutral-fg1":
                           activePlan === plan._id,
                       },
                     )}
@@ -85,7 +83,7 @@ export function MobilePricingComparison({
                   >
                     <SelectItemText className="flex-1">{plan._title}</SelectItemText>
                     <div className="flex items-center gap-2">
-                      <span className="group-radix-state-active:text-text-primary dark:group-radix-state-active:text-dark-text-primary">
+                      <span className="group-radix-state-active:text-neutral-fg1">
                         {plan.price}
                       </span>
                       <div className="flex size-6 items-center justify-center">
@@ -102,14 +100,14 @@ export function MobilePricingComparison({
         </Select>
       </div>
       <Accordion
-        className="group bg-surface-primary dark:bg-dark-surface-primary flex w-full flex-col"
+        className="group bg-neutral-bg1 flex w-full flex-col"
         defaultValue={[categories.items[0]?._id ?? ""]}
         type="multiple"
       >
         {categories.items.map((category) => (
           <AccordionItem
             key={category._id}
-            className="group bg-surface-primary dark:bg-dark-surface-primary w-full"
+            className="group bg-neutral-bg1 w-full"
             value={category._id}
           >
             <AccordionTrigger className="flex w-full items-center justify-between px-3 pt-6 pb-1">
@@ -128,13 +126,13 @@ export function MobilePricingComparison({
                   {category.features.items.map((feature) => (
                     <tr
                       key={feature._id}
-                      className="border-border dark:border-dark-border col-span-2 grid grid-cols-subgrid place-content-end justify-start border-b px-3 py-3.5"
+                      className="border-neutral-stroke1 col-span-2 grid grid-cols-subgrid place-content-end justify-start border-b px-3 py-3.5"
                     >
                       <th className="flex w-auto items-center gap-1 place-self-start text-sm font-normal text-nowrap">
                         <p>{feature._title}</p>
                         {feature.tooltip ? (
                           <SimpleTooltip content={feature.tooltip}>
-                            <span className="text-text-tertiary dark:text-dark-text-tertiary ml-1">
+                            <span className="text-neutral-fg3 ml-1">
                               <QuestionMarkCircledIcon className="size-4" />
                             </span>
                           </SimpleTooltip>
@@ -165,21 +163,21 @@ function FeatureValue({
   if (!value) return null;
 
   return (
-    <td className="text-text-secondary dark:text-dark-text-secondary flex flex-1 items-center justify-end text-sm font-normal">
+    <td className="text-neutral-fg2 flex flex-1 items-center justify-end text-sm font-normal">
       {value.value?.__typename === "BooleanComponent" ? (
         value.value.boolean ? (
           <span className="bg-success/10 flex items-center justify-center rounded-full p-1.5">
             <CheckIcon className="text-success size-5" />
           </span>
         ) : (
-          <span className="text-text-tertiary/50 dark:text-dark-text-tertiary/50">&mdash;</span>
+          <span className="text-neutral-fg3/50">&mdash;</span>
         )
       ) : value.value?.__typename === "CustomTextComponent" ? (
-        <span className="text-text-secondary dark:text-dark-text-secondary text-right">
+        <span className="text-neutral-fg2 text-right">
           {value.value.text}
         </span>
       ) : (
-        <span className="text-text-secondary dark:text-dark-text-secondary">{value.value}</span>
+        <span className="text-neutral-fg2">{String(value.value ?? "")}</span>
       )}
     </td>
   );

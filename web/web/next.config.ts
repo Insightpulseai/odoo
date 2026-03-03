@@ -7,7 +7,7 @@ const nextConfig = {
     },
   },
   images: {
-    remotePatterns: [{ hostname: "assets.basehub.com" }, { hostname: "basehub.earth" }],
+    remotePatterns: [],
   },
 } satisfies NextConfig;
 

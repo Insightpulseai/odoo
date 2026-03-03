@@ -5,92 +5,99 @@ import clsx from "clsx";
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
 import { ButtonLink } from "@/common/button";
-import { fragmentOn } from "basehub";
-import { headingFragment } from "@/lib/basehub/fragments";
 
 import s from "./pricing.module.scss";
 
-export const pricingPlanItemFragment = fragmentOn("PlanComponent", {
-  plan: {
-    _id: true,
-    _title: true,
-    price: true,
-    billed: true,
+type PricingPlan = {
+  id: string;
+  title: string;
+  price: string;
+  billed: string;
+  isMostPopular: boolean;
+  features: string[];
+};
+
+const plans: PricingPlan[] = [
+  {
+    id: "starter",
+    title: "Starter",
+    price: "Free",
+    billed: "Forever free",
+    isMostPopular: false,
+    features: ["Up to 5 users", "Basic analytics", "Email support", "1 GB storage"],
+  },
+  {
+    id: "pro",
+    title: "Professional",
+    price: "$29/mo",
+    billed: "Billed annually",
     isMostPopular: true,
-    list: {
-      items: {
-        _title: true,
-        _id: true,
-      },
-    },
+    features: ["Unlimited users", "Advanced analytics", "Priority support", "100 GB storage", "Custom integrations"],
   },
-});
-
-export const pricingFragment = fragmentOn("PricingComponent", {
-  heading: headingFragment,
-  plans: {
-    items: pricingPlanItemFragment,
+  {
+    id: "enterprise",
+    title: "Enterprise",
+    price: "Custom",
+    billed: "Contact us",
+    isMostPopular: false,
+    features: ["Everything in Pro", "Dedicated support", "SLA guarantee", "Unlimited storage", "Custom development"],
   },
-});
+];
 
-type Pricing = fragmentOn.infer<typeof pricingFragment>;
-
-export function Pricing(pricing: Pricing) {
+export function Pricing() {
   return (
     <Section className="xl:max-w-(--breakpoint-xl)" id="pricing">
-      <Heading {...pricing.heading}>
-        <h4>{pricing.heading.title}</h4>
+      <Heading subtitle="Choose the plan that fits your needs" tag="Pricing">
+        <h4>Simple, transparent pricing</h4>
       </Heading>
       <div className="flex flex-col gap-5 self-stretch lg:flex-row">
-        {pricing.plans.items.map(({ plan }) => (
-          <PricingCard key={plan._title} {...plan} />
+        {plans.map((plan) => (
+          <PricingCard key={plan.title} {...plan} />
         ))}
       </div>
     </Section>
   );
 }
 
-type PricingPlanItem = fragmentOn.infer<typeof pricingPlanItemFragment>;
-
-function PricingCard(item: PricingPlanItem["plan"]) {
+function PricingCard(item: PricingPlan) {
   return (
     <article
-      key={item._title}
+      key={item.title}
       className={clsx(
-        "relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-border dark:border-dark-border",
+        "relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-neutral-stroke1",
         s.pricingCard,
       )}
     >
       <header className="flex flex-col gap-4 px-8 pb-0 pt-10">
         {item.isMostPopular ? (
-          <span className="bg-primary absolute left-1/2 top-4 -translate-x-1/2 text-center text-xs font-medium text-accent-500 lg:text-sm">
+          <span className="bg-primary absolute left-1/2 top-4 -translate-x-1/2 text-center text-xs font-medium text-brand-foreground lg:text-sm">
             Most popular
           </span>
         ) : null}
         <span className="text-center text-3xl font-medium lg:text-4xl">{item.price}</span>
         <div className="flex flex-col">
-          <h5 className="text-center text-lg font-medium lg:text-xl">{item._title}</h5>
-          <p className="text-center text-sm text-text-tertiary dark:text-dark-text-tertiary lg:text-base">
+          <h5 className="text-center text-lg font-medium lg:text-xl">{item.title}</h5>
+          <p className="text-center text-sm text-neutral-fg3 lg:text-base">
             {item.billed}
           </p>
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-6 p-6 pb-12! lg:p-8">
         <ul className="flex flex-col gap-4">
-          {item.list.items.map((feature) => (
+          {item.features.map((feature) => (
             <li
-              key={feature._title}
-              className="flex items-start gap-3 text-sm text-text-secondary dark:text-dark-text-secondary lg:text-base"
+              key={feature}
+              className="flex items-start gap-3 text-sm text-neutral-fg2 lg:text-base"
             >
               <CheckIcon className="mt-0.5 size-4 shrink-0 lg:size-5" />
-              <span>{feature._title}</span>
+              <span>{feature}</span>
             </li>
           ))}
         </ul>
       </div>
       <footer className="relative flex w-full items-center self-stretch p-8 pt-0">
         {item.isMostPopular ? (
-          <Shadow className="pointer-events-none absolute left-0 top-0 h-full w-full origin-bottom scale-[2.0] text-accent-500" />
+          <Shadow className="pointer-events-none absolute left-0 top-0 h-full w-full origin-bottom scale-[2.0] text-brand-foreground" />
         ) : null}
         <ButtonLink
           className="z-10 w-full"

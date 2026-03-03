@@ -1,16 +1,31 @@
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { headingFragment, quoteFragment } from "@/lib/basehub/fragments";
 
 import { TestimonialsGridClient } from "./testimonials-list";
 
-export const testimonialsGridFragment = fragmentOn("TestimonialsGridComponent", {
-  heading: headingFragment,
-  quotes: quoteFragment,
-});
+export type QuoteFragment = {
+  _id: string;
+  quote: string;
+  author: {
+    _title: string;
+    role?: string;
+    image: { url: string; alt?: string | null };
+    company: {
+      _title: string;
+      image?: { url: string; alt?: string | null } | null;
+    };
+  };
+};
 
-type TestimonialsGrid = fragmentOn.infer<typeof testimonialsGridFragment>;
+type TestimonialsGrid = {
+  heading: {
+    title: string;
+    subtitle?: string;
+    tag?: string;
+    align?: "center" | "left" | "right" | "none" | null;
+  };
+  quotes: QuoteFragment[];
+};
 
 export function TestimonialsGrid({ heading, quotes }: TestimonialsGrid) {
   return (

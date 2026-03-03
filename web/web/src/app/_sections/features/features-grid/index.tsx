@@ -1,60 +1,53 @@
-import { BaseHubImage } from "basehub/next-image";
+import Image from "next/image";
 
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { buttonFragment, headingFragment } from "@/lib/basehub/fragments";
-import { TrackedButtonLink } from "@/app/_components/tracked_button";
-import { GeneralEvents } from "@/../basehub-types";
+import { ButtonLink } from "@/common/button";
 
-export const featuresGridFragment = fragmentOn("FeaturesGridComponent", {
-  _analyticsKey: true,
-  featuresGridList: {
-    items: {
-      _id: true,
-      _title: true,
-      description: true,
-      icon: {
-        alt: true,
-        url: true,
-      },
-    },
+const features = [
+  {
+    id: "1",
+    title: "Workflow Automation",
+    description: "Automate repetitive tasks and streamline your business processes with powerful workflow tools.",
+    icon: "/icons/workflow.svg",
   },
-  heading: headingFragment,
-  actions: buttonFragment,
-});
+  {
+    id: "2",
+    title: "Real-time Analytics",
+    description: "Get instant insights into your business performance with comprehensive dashboards and reports.",
+    icon: "/icons/analytics.svg",
+  },
+  {
+    id: "3",
+    title: "Team Collaboration",
+    description: "Work together seamlessly with built-in communication tools and shared workspaces.",
+    icon: "/icons/collaboration.svg",
+  },
+];
 
-type FeaturesGrid = fragmentOn.infer<typeof featuresGridFragment>;
-
-export function FeaturesGrid({
-  heading,
-  featuresGridList,
-  actions,
-  eventsKey,
-}: FeaturesGrid & { eventsKey: GeneralEvents["ingestKey"] }) {
+export function FeaturesGrid() {
   return (
     <Section>
-      <Heading {...heading}>
-        <h4>{heading.title}</h4>
+      <Heading subtitle="Everything you need to run your business" tag="Features">
+        <h4>Powerful features for modern teams</h4>
       </Heading>
       <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
-        {featuresGridList.items.map(({ _id, _title, description, icon }) => (
+        {features.map(({ id, title, description, icon }) => (
           <article
-            key={_id}
-            className="border-border dark:border-dark-border flex flex-col gap-4 rounded-lg border p-4 [box-shadow:_70px_-20px_130px_0px_rgba(255,255,255,0.05)_inset] dark:[box-shadow:_70px_-20px_130px_0px_rgba(255,255,255,0.05)_inset]"
+            key={id}
+            className="border-neutral-stroke1 flex flex-col gap-4 rounded-lg border p-4 [box-shadow:_70px_-20px_130px_0px_rgba(255,255,255,0.05)_inset]"
           >
-            <figure className="border-border bg-surface-secondary dark:border-dark-border dark:bg-dark-surface-secondary flex size-9 items-center justify-center rounded-full border p-2">
-              <BaseHubImage
-                alt={icon.alt ?? _title}
-                className="dark:invert"
+            <figure className="border-neutral-stroke1 bg-neutral-bg2 flex size-9 items-center justify-center rounded-full border p-2">
+              <Image
+                alt={title}
                 height={18}
-                src={icon.url}
+                src={icon}
                 width={18}
               />
             </figure>
             <div className="flex flex-col items-start gap-1">
-              <h5 className="text-lg font-medium">{_title}</h5>
-              <p className="text-text-secondary dark:text-dark-text-secondary text-pretty">
+              <h5 className="text-lg font-medium">{title}</h5>
+              <p className="text-neutral-fg2 text-pretty">
                 {description}
               </p>
             </div>
@@ -62,18 +55,13 @@ export function FeaturesGrid({
         ))}
       </div>
       <div className="flex items-center justify-center gap-3 md:order-3">
-        {actions?.map((action) => (
-          <TrackedButtonLink
-            key={action._id}
-            analyticsKey={eventsKey}
-            href={action.href}
-            intent={action.type}
-            name="cta_click"
-            size="lg"
-          >
-            {action.label}
-          </TrackedButtonLink>
-        ))}
+        <ButtonLink
+          href="/features"
+          intent="primary"
+          size="lg"
+        >
+          Explore all features
+        </ButtonLink>
       </div>
     </Section>
   );

@@ -13,11 +13,11 @@ export function Input({
     <div className="relative">
       <input
         className={clsx(
-          "h-9 w-full rounded-full border border-border py-2 pl-4 pr-28 dark:border-dark-border md:h-11",
+          "h-9 w-full rounded-full border border-neutral-stroke1 py-2 pl-4 pr-28 md:h-11",
           "disabled:opacity-50",
-          "placeholder:text-sm placeholder:text-text-tertiary dark:placeholder-dark-text-tertiary",
-          "text-sm text-text-primary dark:text-dark-text-primary",
-          "outline-hidden focus-visible:ring-2 focus-visible:ring-control",
+          "placeholder:text-sm placeholder:text-neutral-fg3",
+          "text-sm text-neutral-fg1",
+          "outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-stroke-accessible",
           error ? "text-error placeholder:text-error/50" : "",
           className,
         )}
@@ -25,7 +25,7 @@ export function Input({
         {...props}
       />
       {error ? (
-        <p className="dark:text-dark-error absolute -bottom-5 left-4 text-xs text-error">{error}</p>
+        <p className="absolute -bottom-5 left-4 text-xs text-error">{error}</p>
       ) : null}
       <Button
         className={clsx(

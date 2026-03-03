@@ -1,9 +1,9 @@
 {
-  "name": "basehub-marketing-website-template",
+  "name": "insightpulseai-web",
   "version": "0.1.0",
   "scripts": {
-    "dev": "basehub dev & next dev --turbopack",
-    "build": "basehub && next build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -16,10 +16,8 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.3",
     "@tailwindcss/postcss": "^4.0.17",
-    "basehub": "^9.5.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "culori": "^4.0.1",
     "embla-carousel": "^8.0.4",
     "embla-carousel-react": "^8.0.4",
     "embla-carousel-wheel-gestures": "^8.0.1",
@@ -35,7 +33,6 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",
-    "@types/culori": "^2.1.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

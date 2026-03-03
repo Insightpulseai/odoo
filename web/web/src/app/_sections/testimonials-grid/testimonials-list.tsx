@@ -3,9 +3,9 @@
 import * as React from "react";
 
 import { Button } from "@/common/button";
-import type { QuoteFragment } from "@/lib/basehub/fragments";
+import type { QuoteFragment } from ".";
 import { cx } from "class-variance-authority";
-import { BaseHubImage } from "basehub/next-image";
+import Image from "next/image";
 
 const ITEMS_PER_COLUMN = 3;
 
@@ -35,27 +35,27 @@ export function TestimonialsGridClient({ quotes }: { quotes: QuoteFragment[] }) 
           <article
             key={_id}
             className={cx(
-              "mb-8 break-inside-avoid overflow-hidden rounded-xl border border-border last:mb-0 dark:border-dark-border",
+              "mb-8 break-inside-avoid overflow-hidden rounded-xl border border-neutral-stroke1 last:mb-0",
               { "hidden md:block": i > 2 && !showMore },
             )}
           >
-            <div className="flex items-start border-b border-border p-5 dark:border-dark-border">
-              <blockquote className="text-pretty text-base font-light text-text-secondary dark:text-dark-text-secondary md:text-lg">
+            <div className="flex items-start border-b border-neutral-stroke1 p-5">
+              <blockquote className="text-pretty text-base font-light text-neutral-fg2 md:text-lg">
                 {quote}
               </blockquote>
             </div>
-            <div className="flex items-center bg-surface-secondary px-4 py-3 dark:bg-dark-surface-secondary">
+            <div className="flex items-center bg-neutral-bg2 px-4 py-3">
               <div className="flex flex-1 flex-col gap-0.5">
-                <h5 className="text-xs font-medium text-text-tertiary dark:text-dark-text-tertiary md:text-sm">
+                <h5 className="text-xs font-medium text-neutral-fg3 md:text-sm">
                   {author._title}
                 </h5>
-                <p className="text-pretty text-xs text-text-tertiary dark:text-dark-text-tertiary md:text-sm">
+                <p className="text-pretty text-xs text-neutral-fg3 md:text-sm">
                   {author.role}, {author.company._title}
                 </p>
               </div>
               <div className="pl-4">
                 <figure className="aspect-square size-8 rounded-full">
-                  <BaseHubImage
+                  <Image
                     alt={author.image.alt ?? author._title}
                     className="size-8 rounded-full"
                     src={author.image.url}

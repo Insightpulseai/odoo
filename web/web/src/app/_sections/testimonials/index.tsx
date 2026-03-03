@@ -1,16 +1,29 @@
 import { Section } from "@/common/layout";
 import { Heading } from "@/common/heading";
-import { fragmentOn } from "basehub";
-import { headingFragment, quoteFragment } from "@/lib/basehub/fragments";
 
 import { Slider } from "./slider";
 
-export const testimonialsSliderFragment = fragmentOn("TestimonialSliderComponent", {
-  heading: headingFragment,
-  quotes: quoteFragment,
-});
-
-export type TestimonialsSlider = fragmentOn.infer<typeof testimonialsSliderFragment>;
+export type TestimonialsSlider = {
+  heading: {
+    title: string;
+    subtitle?: string;
+    tag?: string;
+    align?: "center" | "left" | "right" | "none" | null;
+  };
+  quotes: Array<{
+    _id: string;
+    quote: string;
+    author: {
+      _title: string;
+      role?: string;
+      image: { url: string; alt?: string | null };
+      company: {
+        _title: string;
+        image?: { url: string; alt?: string | null } | null;
+      };
+    };
+  }>;
+};
 
 export function Testimonials({ heading, quotes }: TestimonialsSlider) {
   return (

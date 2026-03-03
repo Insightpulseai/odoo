@@ -1,3 +1,1 @@
-import { setGlobalConfig } from "basehub";
-
-setGlobalConfig({});
+export {};

@@ -1,7 +1,5 @@
-import { type Language } from "basehub/react-code-block";
-
-// Define PartialBundledLanguage as Partial of BundledLanguage
-type PartialBundledLanguage = Partial<Record<Language, React.ReactNode>>;
+// Language icons for code snippets
+type PartialBundledLanguage = Partial<Record<string, React.ReactNode>>;
 
 export const languagesIcons: PartialBundledLanguage = {
   javascript: (

@@ -2,71 +2,70 @@ import { CheckIcon } from "@radix-ui/react-icons";
 
 import { Section } from "@/common/layout";
 import { Heading } from "@/common/heading";
-import { fragmentOn } from "basehub";
-import { darkLightImageFragment } from "@/lib/basehub/fragments";
-import { DarkLightImage } from "@/common/dark-light-image";
+import Image from "next/image";
 
-export const featureCardFragment = fragmentOn("FeaturesCardsListItem", {
-  _title: true,
-  description: true,
-  image: darkLightImageFragment,
-  characteristics: {
-    items: { _title: true },
+type FeatureCard = {
+  title: string;
+  description: string;
+  image: string;
+  characteristics: string[];
+};
+
+const featureCards: FeatureCard[] = [
+  {
+    title: "Financial Management",
+    description: "Complete accounting, invoicing, and expense management in one place.",
+    image: "/images/features/finance.png",
+    characteristics: ["Automated invoicing", "Expense tracking", "Financial reports"],
   },
-});
-
-export const featureCardsComponent = fragmentOn("FeaturesCardsComponent", {
-  heading: {
-    subtitle: true,
-    tag: true,
-    title: true,
+  {
+    title: "Project Management",
+    description: "Plan, track, and deliver projects on time with powerful project tools.",
+    image: "/images/features/projects.png",
+    characteristics: ["Task management", "Time tracking", "Resource planning"],
   },
-  featuresCardsList: {
-    items: featureCardFragment,
-  },
-});
+];
 
-type FeatureCard = fragmentOn.infer<typeof featureCardsComponent>;
-
-export async function FeaturesList({ featuresCardsList, heading }: FeatureCard) {
+export function FeaturesList() {
   return (
     <Section container="default">
-      <Heading subtitle={heading.subtitle} tag={heading.tag}>
-        <h4>{heading.title}</h4>
+      <Heading subtitle="Comprehensive tools for every department" tag="Capabilities">
+        <h4>Built for your entire organization</h4>
       </Heading>
       <div className="flex flex-col gap-6">
-        {featuresCardsList.items.map(({ image, ...item }) => (
+        {featureCards.map((item) => (
           <article
-            key={item._title}
-            className="flex min-h-96 w-full max-w-[380px] flex-col rounded-lg border border-border bg-surface-secondary p-px dark:border-dark-border dark:bg-dark-surface-secondary sm:max-w-full md:w-full md:flex-row md:odd:flex-row-reverse xl:gap-16"
+            key={item.title}
+            className="flex min-h-96 w-full max-w-[380px] flex-col rounded-lg border border-neutral-stroke1 bg-neutral-bg2 p-px sm:max-w-full md:w-full md:flex-row md:odd:flex-row-reverse xl:gap-16"
           >
             <figure className="p-2 md:h-auto md:w-[360px] lg:w-[480px] xl:w-[560px]">
-              <DarkLightImage
-                {...image}
-                className="block aspect-video h-[200px] w-full rounded-lg border border-border object-cover dark:border-dark-border md:h-full"
+              <Image
+                alt={item.title}
+                className="block aspect-video h-[200px] w-full rounded-lg border border-neutral-stroke1 object-cover md:h-full"
                 height={374}
+                src={item.image}
                 width={560}
               />
             </figure>
             <div className="flex flex-col gap-8 p-5 pt-6 md:flex-1 md:p-10">
               <div className="flex flex-col items-start gap-2">
-                <h5 className="text-2xl font-medium text-text-primary dark:text-dark-text-primary md:text-3xl">
-                  {item._title}
+                <h5 className="text-2xl font-medium text-neutral-fg1 md:text-3xl">
+                  {item.title}
                 </h5>
-                <p className="font-normal text-text-secondary dark:text-dark-text-secondary md:text-lg">
+                <p className="font-normal text-neutral-fg2 md:text-lg">
                   {item.description}
                 </p>
               </div>
               <ul className="flex flex-col items-start gap-3 pl-2 md:text-lg">
-                {item.characteristics.items.map(({ _title }) => (
+                {item.characteristics.map((char) => (
                   <li
-                    key={_title}
-                    className="flex items-center gap-4 font-normal text-text-secondary dark:text-dark-text-secondary"
+                    key={char}
+                    className="flex items-center gap-4 font-normal text-neutral-fg2"
                   >
-                    <span className="flex size-6 items-center justify-center rounded-full bg-surface-tertiary dark:bg-dark-surface-tertiary">
-                      <CheckIcon className="text-text-tertiary dark:text-dark-text-tertiary" />
+                    <span className="flex size-6 items-center justify-center rounded-full bg-neutral-bg3">
+                      <CheckIcon className="text-neutral-fg3" />
                     </span>
-                    {_title}
+                    {char}
                   </li>
                 ))}
               </ul>

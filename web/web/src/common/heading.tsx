@@ -22,7 +22,7 @@ type HeadingProps = {
   subtitle?: React.ReactNode;
   className?: string;
   title?: string;
-  align?: string | null;
+  align?: "center" | "left" | "right" | "none" | null;
 } & VariantProps<typeof $headingContainer>;
 
 export function Heading({ tag, subtitle, className, align = "center", ...props }: HeadingProps) {
@@ -42,7 +42,7 @@ export function Heading({ tag, subtitle, className, align = "center", ...props }
         })}
       >
         <Comp
-          className={clsx("text-pretty text-3xl font-medium md:text-4xl", {
+          className={clsx("text-pretty text-3xl font-semibold md:text-4xl", {
             "text-center": align === "center",
             "text-left": align === "left",
             "text-right": align === "right",
@@ -53,7 +53,7 @@ export function Heading({ tag, subtitle, className, align = "center", ...props }
       {subtitle ? (
         <p
           className={clsx(
-            "max-w-(--breakpoint-md) text-pretty text-lg font-light text-text-tertiary dark:text-dark-text-tertiary md:text-xl",
+            "max-w-(--breakpoint-md) text-pretty text-lg font-light text-neutral-fg3 md:text-xl",
             {
               "text-center": align === "center",
               "text-left": align === "left",
@@ -79,7 +79,7 @@ export function Tag({
   return (
     <Comp
       className={clsx(
-        "flex min-h-7 items-center justify-center gap-2 rounded-full bg-surface-secondary px-3.5 pb-px text-sm font-medium text-text-tertiary dark:bg-dark-surface-secondary dark:text-dark-text-tertiary md:text-base",
+        "flex min-h-7 items-center justify-center gap-2 rounded-full bg-neutral-bg2 px-3.5 pb-px text-sm font-medium text-neutral-fg3 md:text-base",
         className,
       )}
       {...props}

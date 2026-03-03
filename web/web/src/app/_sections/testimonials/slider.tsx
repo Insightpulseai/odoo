@@ -2,7 +2,7 @@
 import { type EmblaCarouselType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
 import * as React from "react";
-import { BaseHubImage } from "basehub/next-image";
+import Image from "next/image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import clsx from "clsx";
@@ -112,7 +112,7 @@ export function Slider({
               aria-label={`Testimonial ${String(index + 1)}`}
               className={clsx(
                 "group flex items-center justify-center rounded-full p-1",
-                index === selectedIndex ? "bg-accent-500/50" : "",
+                index === selectedIndex ? "bg-brand/50" : "",
               )}
               onClick={() => onDotButtonClick(index)}
             >
@@ -120,8 +120,8 @@ export function Slider({
                 className={clsx(
                   "size-2 rounded-full",
                   index === selectedIndex
-                    ? "bg-accent-500"
-                    : "bg-surface-tertiary dark:bg-dark-surface-secondary",
+                    ? "bg-brand"
+                    : "bg-neutral-bg3",
                 )}
               />
             </button>
@@ -135,15 +135,15 @@ export function Slider({
 export function VainillaCard({ quote, author }: TestimonialsSlider["quotes"][0]) {
   return (
     <div className="min-w-0 max-w-full shrink-0 grow-0 basis-[min(740px,100%)] self-stretch md:pr-10">
-      <article className="embla__slide flex h-full w-full min-w-0 transform touch-pan-y touch-pinch-zoom select-none flex-col rounded-xl border border-border [backface-visibility:hidden] last:visible! dark:border-dark-border">
-        <div className="flex flex-1 items-start border-b border-border px-5 py-[18px] dark:border-dark-border md:px-8 md:py-7">
-          <blockquote className="text-pretty text-xl font-extralight leading-[135%] text-text-primary dark:text-dark-text-primary sm:text-2xl md:text-4xl">
-            “{quote}”
+      <article className="embla__slide flex h-full w-full min-w-0 transform touch-pan-y touch-pinch-zoom select-none flex-col rounded-xl border border-neutral-stroke1 [backface-visibility:hidden] last:visible!">
+        <div className="flex flex-1 items-start border-b border-neutral-stroke1 px-5 py-[18px] md:px-8 md:py-7">
+          <blockquote className="text-pretty text-xl font-extralight leading-[135%] text-neutral-fg1 sm:text-2xl md:text-4xl">
+            &ldquo;{quote}&rdquo;
           </blockquote>
         </div>
         <div className="flex items-center gap-4 pl-5">
-          <div className="flex flex-1 items-center gap-5 border-r border-border py-4 dark:border-dark-border">
-            <BaseHubImage
+          <div className="flex flex-1 items-center gap-5 border-r border-neutral-stroke1 py-4">
+            <Image
               alt={author._title}
               className="hidden size-16 rounded-full md:block"
               height={64}
@@ -152,14 +152,14 @@ export function VainillaCard({ quote, author }: TestimonialsSlider["quotes"][0])
             />
             <div className="flex flex-1 flex-col">
               <h5 className="text-base font-medium md:text-lg">{author._title}</h5>
-              <p className="text-pretty text-sm text-text-tertiary dark:text-dark-text-tertiary md:text-base">
+              <p className="text-pretty text-sm text-neutral-fg3 md:text-base">
                 {author._title}, {author.company._title}
               </p>
             </div>
           </div>
           <div className="pr-5">
             {author.company.image ? (
-              <BaseHubImage
+              <Image
                 alt={author.company.image.alt ?? author.company._title}
                 className="w-12 md:w-16"
                 height={48}

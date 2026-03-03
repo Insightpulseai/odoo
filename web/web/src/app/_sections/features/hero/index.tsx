@@ -1,128 +1,127 @@
-import { BaseHubImage } from "basehub/next-image";
+import Image from "next/image";
 
-import { fragmentOn } from "basehub";
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { darkLightImageFragment, headingFragment } from "@/lib/basehub/fragments";
-import { Pump } from "basehub/react-pump";
-import clsx from "clsx";
-import { DarkLightImage } from "@/common/dark-light-image";
-import { TrackedButtonLink } from "@/app/_components/tracked_button";
+import { ButtonLink } from "@/common/button";
 
 import s from "./hero.module.scss";
-import { GeneralEvents } from "@/../basehub-types";
+import clsx from "clsx";
 
-export const featureHeroFragment = fragmentOn("FeatureHeroComponent", {
-  _analyticsKey: true,
-  heroLayout: true,
-  heading: headingFragment,
-  image: darkLightImageFragment,
-  actions: {
-    _id: true,
-    href: true,
-    label: true,
-    type: true,
-  },
-});
-
-type FeatureHero = fragmentOn.infer<typeof featureHeroFragment>;
+type FeatureHeroProps = {
+  layout?: "image-bottom" | "image-right" | "full-image" | "gradient";
+  title: string;
+  subtitle?: string;
+  tag?: string;
+  image?: string;
+  actions?: Array<{ id: string; href: string; label: string; intent: "primary" | "secondary" }>;
+};
 
 export default function FeatureHero({
-  heading,
-  heroLayout,
+  layout = "image-bottom",
+  title,
+  subtitle,
+  tag,
   image,
-  actions,
-  eventsKey,
-}: FeatureHero & { eventsKey: GeneralEvents["ingestKey"] }) {
-  switch (heroLayout) {
-    case "Image bottom": {
+  actions = [],
+}: FeatureHeroProps) {
+  switch (layout) {
+    case "image-bottom": {
       return (
         <Section>
           <div className="flex flex-col gap-6">
-            <Heading {...heading}>
-              <h4>{heading.title}</h4>
+            <Heading subtitle={subtitle} tag={tag}>
+              <h4>{title}</h4>
             </Heading>
             <div className="flex justify-center gap-3">
-              {actions?.map((action) => (
-                <TrackedButtonLink
-                  key={action._id}
-                  analyticsKey={eventsKey}
+              {actions.map((action) => (
+                <ButtonLink
+                  key={action.id}
                   href={action.href}
-                  intent={action.type}
-                  name="cta_click"
+                  intent={action.intent}
                   size="lg"
                 >
                   {action.label}
-                </TrackedButtonLink>
+                </ButtonLink>
               ))}
             </div>
           </div>
-          <DarkLightImage
-            priority
-            className="border-border dark:border-dark-border block rounded-lg border"
-            {...image}
-          />
+          {image && (
+            <Image
+              priority
+              alt={title}
+              className="border-neutral-stroke1 block rounded-lg border"
+              height={600}
+              src={image}
+              width={1200}
+            />
+          )}
         </Section>
       );
     }
-    case "Image Right": {
+    case "image-right": {
       return (
         <Section>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
             <div className="flex flex-1 flex-col gap-6 lg:pr-16">
-              <Heading {...heading} align="left">
-                <h4>{heading.title}</h4>
+              <Heading subtitle={subtitle} tag={tag} align="left">
+                <h4>{title}</h4>
               </Heading>
               <div className="flex justify-start gap-3">
-                {actions?.map((action) => (
-                  <TrackedButtonLink
-                    key={action._id}
-                    analyticsKey={eventsKey}
+                {actions.map((action) => (
+                  <ButtonLink
+                    key={action.id}
                     href={action.href}
-                    intent={action.type}
-                    name="cta_click"
+                    intent={action.intent}
                     size="lg"
                   >
                     {action.label}
-                  </TrackedButtonLink>
+                  </ButtonLink>
                 ))}
               </div>
             </div>
-            <DarkLightImage
-              priority
-              className="border-border dark:border-dark-border block flex-1 rounded-lg border lg:w-1/2"
-              {...image}
-            />
+            {image && (
+              <Image
+                priority
+                alt={title}
+                className="border-neutral-stroke1 block flex-1 rounded-lg border lg:w-1/2"
+                height={600}
+                src={image}
+                width={600}
+              />
+            )}
           </div>
         </Section>
       );
     }
-    case "full image": {
+    case "full-image": {
       return (
         <>
-          <DarkLightImage
-            {...image}
-            priority
-            className="border-border dark:border-dark-border block max-h-[720px] w-full border-y border-t-0 object-cover"
-          />
+          {image && (
+            <Image
+              priority
+              alt={title}
+              className="border-neutral-stroke1 block max-h-[720px] w-full border-y border-t-0 object-cover"
+              height={720}
+              src={image}
+              width={1920}
+            />
+          )}
           <Section>
             <div className="flex items-center justify-between self-stretch">
-              <Heading {...heading} align="left">
-                <h4>{heading.title}</h4>
+              <Heading subtitle={subtitle} tag={tag} align="left">
+                <h4>{title}</h4>
               </Heading>
-              {actions && actions.length > 0 ? (
+              {actions.length > 0 ? (
                 <div className="flex gap-3">
                   {actions.map((action) => (
-                    <TrackedButtonLink
-                      key={action._id}
-                      analyticsKey={eventsKey}
+                    <ButtonLink
+                      key={action.id}
                       href={action.href}
-                      intent={action.type}
-                      name="cta_click"
+                      intent={action.intent}
                       size="lg"
                     >
                       {action.label}
-                    </TrackedButtonLink>
+                    </ButtonLink>
                   ))}
                 </div>
               ) : null}
@@ -135,55 +134,20 @@ export default function FeatureHero({
       return (
         <Section>
           <div className="z-10 flex flex-col items-center gap-8">
-            <Pump
-              queries={[
-                {
-                  site: {
-                    settings: {
-                      logoLite: {
-                        url: true,
-                        width: true,
-                        height: true,
-                        alt: true,
-                      },
-                    },
-                  },
-                },
-              ]}
-            >
-              {async ([{ site }]) => {
-                "use server";
-
-                return (
-                  <BaseHubImage
-                    priority
-                    alt={site.settings.logoLite.alt ?? "Logo"}
-                    className="size-20"
-                    height={site.settings.logoLite.height}
-                    src={site.settings.logoLite.url}
-                    width={site.settings.logoLite.width}
-                  />
-                );
-              }}
-            </Pump>
-            <Heading {...heading}>
-              <h4>{heading.title}</h4>
+            <Heading subtitle={subtitle} tag={tag}>
+              <h4>{title}</h4>
             </Heading>
             <div className="flex gap-3">
-              {actions
-                ? actions.map((action) => (
-                    <TrackedButtonLink
-                      key={action._id}
-                      analyticsKey={eventsKey}
-                      href={action.href}
-                      intent={action.type}
-                      name="cta_click"
-                      size="lg"
-                    >
-                      {action.label}
-                    </TrackedButtonLink>
-                  ))
-                : null}
+              {actions.map((action) => (
+                <ButtonLink
+                  key={action.id}
+                  href={action.href}
+                  intent={action.intent}
+                  size="lg"
+                >
+                  {action.label}
+                </ButtonLink>
+              ))}
             </div>
           </div>
           {/* Gradient */}

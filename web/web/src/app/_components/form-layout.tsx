@@ -1,19 +1,5 @@
-import { buttonFragment } from "@/lib/basehub/fragments";
-import { fragmentOn } from "basehub";
-import { Pump } from "basehub/react-pump";
-import { RichText, type RichTextProps } from "basehub/react-rich-text";
 import Image from "next/image";
 import Link, { type LinkProps } from "next/link";
-
-export const formWrapperFragment = fragmentOn("FormWrapperComponent", {
-  title: true,
-  subtitle: {
-    json: {
-      content: true,
-    },
-  },
-  cta: buttonFragment,
-});
 
 export async function FormLayout({
   children,
@@ -25,47 +11,19 @@ export async function FormLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-5 rounded-xl border border-surface-secondary bg-surface-primary p-5 shadow-md dark:border-dark-border dark:bg-dark-surface-secondary dark:shadow-none">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-5 rounded-xl border border-neutral-bg2 bg-neutral-bg1 p-5 shadow-md">
       <header className="flex flex-col gap-3">
-        <Pump
-          queries={[
-            {
-              site: {
-                settings: {
-                  logoLite: {
-                    url: true,
-                    width: true,
-                    height: true,
-                  },
-                },
-              },
-            },
-          ]}
-        >
-          {async ([
-            {
-              site: {
-                settings: { logoLite },
-              },
-            },
-          ]) => {
-            "use server";
-
-            return (
-              <Image
-                priority
-                alt="Logo"
-                className="size-8 self-start"
-                height={logoLite.height}
-                src={logoLite.url}
-                width={logoLite.width}
-              />
-            );
-          }}
-        </Pump>
+        <Image
+          priority
+          alt="Logo"
+          className="size-8 self-start"
+          height={32}
+          src="/logo-icon.svg"
+          width={32}
+        />
         <div className="flex flex-col gap-1">
           <h1 className="text-xl font-medium">{title}</h1>
-          <div className="text-sm text-text-secondary dark:text-dark-text-secondary">
+          <div className="text-sm text-neutral-fg2">
             {subtitle}
           </div>
         </div>
@@ -75,16 +33,8 @@ export async function FormLayout({
   );
 }
 
-export function RichTextFormWrapper({ children }: RichTextProps) {
-  return (
-    <RichText
-      components={{
-        a: CustomAnchor,
-      }}
-    >
-      {children}
-    </RichText>
-  );
+export function RichTextFormWrapper({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 function CustomAnchor({
@@ -92,7 +42,7 @@ function CustomAnchor({
   ...props
 }: React.AllHTMLAttributes<HTMLAnchorElement> & LinkProps) {
   return (
-    <Link className="text-accent-500 hover:underline" {...props}>
+    <Link className="text-brand-foreground hover:underline" {...props}>
       {children}
     </Link>
   );

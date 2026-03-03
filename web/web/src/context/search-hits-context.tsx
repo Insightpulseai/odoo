@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 
-import { type AvatarFragment } from "@/lib/basehub/fragments";
+import { type AvatarFragment } from "@/common/avatar";
 
 interface SearchHitsContextType {
   authorsAvatars: Record<string, AvatarFragment>;

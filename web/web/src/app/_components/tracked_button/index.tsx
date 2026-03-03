@@ -1,12 +1,10 @@
 "use client";
 
-import { sendEvent } from "basehub/events";
 import { Button, ButtonLink } from "@/common/button";
-import { GeneralEvents } from "@/../basehub-types";
 
 interface TrackProps {
-  analyticsKey: GeneralEvents["ingestKey"];
-  name: string;
+  analyticsKey?: string;
+  name?: string;
 }
 
 type TrackedButtonProps = React.ComponentProps<typeof Button> & TrackProps;
@@ -24,9 +22,7 @@ export const TrackedButton = ({
       {...props}
       ref={ref}
       onClick={(e) => {
-        sendEvent(analyticsKey, {
-          eventType: name,
-        });
+        // Analytics tracking - implement with your analytics provider
         if (onClick) {
           onClick(e);
         }
@@ -52,9 +48,7 @@ export const TrackedButtonLink = ({
       {...props}
       ref={ref}
       onClick={(e) => {
-        sendEvent(analyticsKey, {
-          eventType: name,
-        });
+        // Analytics tracking - implement with your analytics provider
         if (onClick) {
           onClick(e);
         }

@@ -2,61 +2,123 @@
 
 @config '../../tailwind.config.ts';
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--gray-200, currentColor);
-  }
-}
-
 :root {
   --header-height: 64px;
 
-  text-rendering: geometricprecision;
-  -webkit-text-size-adjust: 100%;
+  /* Neutral backgrounds */
+  --colorNeutralBackground1: #ffffff;
+  --colorNeutralBackground2: #fafafa;
+  --colorNeutralBackground3: #f5f5f5;
+  --colorNeutralBackground4: #f0f0f0;
+  --colorNeutralBackground5: #ebebeb;
+  --colorNeutralBackgroundInverted: #292929;
+  --colorSubtleBackground: transparent;
+
+  /* Neutral foreground */
+  --colorNeutralForeground1: #242424;
+  --colorNeutralForeground2: #616161;
+  --colorNeutralForeground3: #9e9e9e;
+  --colorNeutralForeground4: #b3b3b3;
+  --colorNeutralForegroundOnBrand: #ffffff;
+
+  /* Neutral stroke */
+  --colorNeutralStroke1: #d1d1d1;
+  --colorNeutralStroke2: #e0e0e0;
+  --colorNeutralStrokeAccessible: #616161;
+
+  /* Brand (Indigo-based for InsightPulseAI) */
+  --colorBrandBackground: #4f46e5;
+  --colorBrandBackgroundHover: #4338ca;
+  --colorBrandBackgroundPressed: #3730a3;
+  --colorBrandForeground1: #4f46e5;
+  --colorBrandForeground2: #6366f1;
+  --colorBrandStroke1: #4f46e5;
+  --colorBrandBackground2: #eef2ff;
+
+  /* Status */
+  --colorStatusDangerForeground1: #b91c1c;
+  --colorStatusDangerBackground1: #fef2f2;
+  --colorStatusSuccessForeground1: #15803d;
+  --colorStatusSuccessBackground1: #f0fdf4;
+
+  /* Shadows (Fluent elevation) */
+  --shadow4: 0 2px 4px rgba(0,0,0,0.04);
+  --shadow8: 0 4px 8px rgba(0,0,0,0.06);
+  --shadow16: 0 8px 16px rgba(0,0,0,0.08);
+  --shadow28: 0 14px 28px rgba(0,0,0,0.12);
+
+  /* Radii (Fluent) */
+  --borderRadiusMedium: 4px;
+  --borderRadiusLarge: 8px;
+  --borderRadiusXLarge: 12px;
+  --borderRadiusCircular: 9999px;
+
+  /* Control ring */
+  --colorNeutralStrokeAccessiblePressed: #242424;
+}
+
+/* Light mode defaults */
+:root:not(.dark) {
+  color: var(--colorNeutralForeground1);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Dark theme */
+.dark {
+  --colorNeutralBackground1: #1f1f1f;
+  --colorNeutralBackground2: #292929;
+  --colorNeutralBackground3: #333333;
+  --colorNeutralBackground4: #3d3d3d;
+  --colorNeutralBackground5: #474747;
+  --colorNeutralBackgroundInverted: #ffffff;
+  --colorNeutralForeground1: #ffffff;
+  --colorNeutralForeground2: #d6d6d6;
+  --colorNeutralForeground3: #adadad;
+  --colorNeutralForeground4: #8a8a8a;
+  --colorNeutralForegroundOnBrand: #ffffff;
+  --colorNeutralStroke1: #404040;
+  --colorNeutralStroke2: #525252;
+  --colorNeutralStrokeAccessible: #adadad;
+  --colorBrandBackground: #6366f1;
+  --colorBrandBackgroundHover: #818cf8;
+  --colorBrandBackgroundPressed: #6366f1;
+  --colorBrandForeground1: #818cf8;
+  --colorBrandForeground2: #a5b4fc;
+  --colorBrandStroke1: #818cf8;
+  --colorBrandBackground2: #1e1b4b;
+  --colorStatusDangerForeground1: #fca5a5;
+  --colorStatusDangerBackground1: #450a0a;
+  --colorStatusSuccessForeground1: #86efac;
+  --colorStatusSuccessBackground1: #052e16;
+  --shadow4: 0 2px 4px rgba(0,0,0,0.2);
+  --shadow8: 0 4px 8px rgba(0,0,0,0.24);
+  --shadow16: 0 8px 16px rgba(0,0,0,0.28);
+  --shadow28: 0 14px 28px rgba(0,0,0,0.36);
+  --colorNeutralStrokeAccessiblePressed: #ffffff;
+}
+
+.dark {
+  color: var(--colorNeutralForeground1);
+  background-color: var(--colorNeutralBackground1);
+}
+
+/* Text rendering */
+html {
   -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-:root:not(html.dark) {
-  /* colors */
-  color: var(--text-primary);
-  background-color: var(--surface-primary);
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-:root:not(html.dark) ::selection {
-  background-color: var(--accent-200);
+::-webkit-scrollbar-track {
+  background: var(--colorNeutralBackground2);
 }
 
-:root:not(html.dark) *:focus-visible {
-  outline-color: var(--accent-300);
-}
-
-:root {
-  color: var(--dark-text-primary);
-  background-color: var(--dark-surface-primary);
-}
-
-:root ::selection {
-  background-color: var(--accent-950);
-}
-
-:root *:focus-visible {
-  outline-color: var(--accent-400);
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+::-webkit-scrollbar-thumb {
+  background: var(--colorNeutralStroke1);
+  border-radius: var(--borderRadiusMedium);
 }

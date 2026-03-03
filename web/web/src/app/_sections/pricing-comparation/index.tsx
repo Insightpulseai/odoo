@@ -6,13 +6,49 @@ import clsx from "clsx";
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
 import { ButtonLink } from "@/common/button";
-import { type fragmentOn } from "basehub";
 import { SimpleTooltip } from "@/common/tooltip";
 
 import { MobilePricingComparison } from "./mobile-pricing-comparison";
-import { type planFragment, type pricingTableFragment, type valueFragment } from "./fragments";
 
-export type PricingTableProps = fragmentOn.infer<typeof pricingTableFragment>;
+export type PlanFragment = {
+  _id: string;
+  _title: string;
+  price: string;
+  isMostPopular: boolean;
+};
+
+export type PricingTableProps = {
+  heading: {
+    title: string;
+    subtitle?: string;
+    tag?: string;
+    align?: "center" | "left" | "right" | "none" | null;
+  };
+  categories: {
+    items: Array<{
+      _id: string;
+      _title: string;
+      features: {
+        items: Array<{
+          _id: string;
+          _title: string;
+          tooltip?: string | null;
+          values: {
+            items: Array<{
+              _id: string;
+              plan: PlanFragment;
+              value?: {
+                __typename: string;
+                boolean?: boolean;
+                text?: string;
+              } | null;
+            }>;
+          };
+        }>;
+      };
+    }>;
+  };
+};
 
 export function PricingTable(props: PricingTableProps) {
   const { heading, categories } = props;
@@ -25,7 +61,7 @@ export function PricingTable(props: PricingTableProps) {
       </Heading>
       {/* Desktop pricing */}
       <table className="hidden w-full table-fixed lg:table">
-        <thead className="bg-surface-primary dark:bg-dark-surface-primary sticky top-(--header-height)">
+        <thead className="bg-neutral-bg1 sticky top-(--header-height)">
           <tr>
             <PlanHeader plan={null} />
             {plans.map((plan) => (
@@ -40,7 +76,7 @@ export function PricingTable(props: PricingTableProps) {
               {category.features.items.map((feature) => (
                 <tr
                   key={feature._id}
-                  className="border-border/70 dark:border-dark-border/70 border-b"
+                  className="border-neutral-stroke1/70 border-b"
                 >
                   <FeatureTitle {...feature} />
                   {feature.values.items.map((value) => (
@@ -70,8 +106,8 @@ const $tableCell = cva("min-h-16 px-3 text-base flex items-center gap-1.5 font-n
       end: "text-end justify-end",
     },
     type: {
-      default: "text-text-secondary dark:text-dark-text-secondary",
-      primary: "text-primary dark:text-dark-primary",
+      default: "text-neutral-fg2",
+      primary: "text-primary",
     },
   },
   defaultVariants: {
@@ -121,7 +157,7 @@ function FeatureTitle(
             side="right"
             sideOffset={4}
           >
-            <QuestionMarkCircledIcon className="dark:text-dark-text-tetext-text-tertiary text-text-tertiary size-4" />
+            <QuestionMarkCircledIcon className="text-neutral-fg3 size-4" />
           </SimpleTooltip>
         ) : null}
       </TableCell>
@@ -159,14 +195,12 @@ function CategoryHeader({
 
 /* --------------------------------- Plan Header --------------------------------- */
 
-type ValueFragment = fragmentOn.infer<typeof valueFragment>;
-
 function PlanHeader({ plan }: { plan: PlanFragment | null }) {
   return plan ? (
     <th className="w-[1fr] pt-6 pb-2">
       <span className="flex flex-col items-center gap-3 font-normal">
         <div className="flex flex-col items-center gap-0.5">
-          <p className="text-text-secondary dark:text-dark-text-secondary text-base md:text-base">
+          <p className="text-neutral-fg2 text-base md:text-base">
             {plan._title}
           </p>
           <p className="text-lg font-medium">{plan.price}</p>
@@ -183,7 +217,9 @@ function PlanHeader({ plan }: { plan: PlanFragment | null }) {
 
 /* --------------------------------- Cell td (value) -------------------------------- */
 
-function FeatureValue({ value }: { value?: ValueFragment }) {
+type ValueItem = PricingTableProps["categories"]["items"][0]["features"]["items"][0]["values"]["items"][0];
+
+function FeatureValue({ value }: { value?: ValueItem }) {
   return (
     <td className="w-[1fr]">
       <TableCell>
@@ -194,7 +230,7 @@ function FeatureValue({ value }: { value?: ValueFragment }) {
                 <CheckCircledIcon className="text-success size-5" />
               </span>
             ) : (
-              <span className="text-text-tertiary/50 dark:text-dark-text-tertiary/50 text-xl">
+              <span className="text-neutral-fg3/50 text-xl">
                 &mdash;
               </span>
             )
@@ -210,8 +246,6 @@ function FeatureValue({ value }: { value?: ValueFragment }) {
 /* -------------------------------------------------------------------------- */
 /*                                    Utils                                   */
 /* -------------------------------------------------------------------------- */
-
-export type PlanFragment = fragmentOn.infer<typeof planFragment>;
 
 const extractPlans = (categories: PricingTableProps["categories"]) => {
   const plans = new Map<string, PlanFragment>();

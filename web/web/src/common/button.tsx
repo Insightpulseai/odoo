@@ -1,17 +1,16 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import Link, { type LinkProps } from "next/link";
-import { Icon } from "basehub/react-icon";
 
 export const $button = cva(
-  "gap-1 font-normal shrink-0 rounded-full ring-control focus-visible:ring-2 outline-hidden outline-0",
+  "gap-1 font-normal shrink-0 rounded-[var(--borderRadiusMedium)] ring-neutral-stroke-accessible focus-visible:ring-2 outline-hidden outline-0",
   {
     variants: {
       intent: {
-        primary: "bg-accent-500 hover:bg-accent-600 text-text-on-accent-primary border-accent-600",
+        primary: "bg-brand hover:bg-brand-hover text-neutral-fg-on-brand border-brand-hover",
         secondary:
-          "bg-surface-secondary text-text-primary border-border border dark:bg-dark-surface-secondary dark:text-dark-text-primary dark:border-dark-border hover:bg-surface-tertiary dark:hover:bg-dark-surface-tertiary",
+          "bg-neutral-bg2 text-neutral-fg1 border-neutral-stroke1 border hover:bg-neutral-bg3",
         tertiary:
-          "bg-text-primary text-surface-primary dark:bg-dark-text-primary dark:text-dark-surface-primary border border-dark-border dark:border-border hover:bg-dark-surface-tertiary dark:hover:bg-surface-tertiary",
+          "bg-neutral-fg1 text-neutral-bg1 border border-neutral-stroke1 hover:bg-neutral-bg3",
       },
       disabled: {
         true: "opacity-30",
@@ -24,7 +23,7 @@ export const $button = cva(
         right: "flex-row pr-3",
       },
       unstyled: {
-        true: "px-0 py-0 bg-transparent border-none hover:bg-transparent hover:border-none dark:hover:bg-transparent dark:hover:border-none dark:bg-transparent dark:border-none",
+        true: "px-0 py-0 bg-transparent border-none hover:bg-transparent hover:border-none",
       },
       size: {
         md: "inline-flex items-center justify-center px-3.5 text-sm h-8 md:px-5",
@@ -73,7 +72,7 @@ export const Button = ({
       {...props}
     >
       {children}
-      {icon ? <span>{typeof icon === "string" ? <Icon content={icon} /> : icon}</span> : null}
+      {icon ? <span>{typeof icon === "string" ? icon : icon}</span> : null}
     </button>
   );
 };

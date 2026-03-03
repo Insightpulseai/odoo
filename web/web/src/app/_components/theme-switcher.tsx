@@ -15,7 +15,7 @@ export function ThemeSwitcher() {
   }, [theme]);
 
   return (
-    <div className="flex gap-0.5 rounded-full border border-border bg-surface-primary p-1 text-center dark:border-dark-border dark:bg-dark-surface-primary">
+    <div className="flex gap-0.5 rounded-full border border-neutral-stroke1 bg-neutral-bg1 p-1 text-center">
       <SwitchButton selectedTheme={selectedTheme} setTheme={setTheme} theme="light">
         <SunIcon color="currentColor" height={16} width={16} />
       </SwitchButton>
@@ -45,9 +45,9 @@ function SwitchButton({
       unstyled
       aria-label={`${theme} theme`}
       className={clsx(
-        "flex! size-6! items-center justify-center rounded-full p-[3px]! text-text-secondary dark:text-dark-text-secondary",
-        "data-[selected='true']:bg-surface-tertiary data-[selected='true']:text-text-primary dark:data-[selected='true']:bg-dark-surface-tertiary dark:data-[selected='true']:text-dark-text-primary",
-        "hover:bg-surface-secondary hover:text-text-primary dark:hover:bg-dark-surface-secondary dark:hover:text-dark-text-primary",
+        "flex! size-6! items-center justify-center rounded-full p-[3px]! text-neutral-fg2",
+        "data-[selected='true']:bg-neutral-bg3 data-[selected='true']:text-neutral-fg1",
+        "hover:bg-neutral-bg2 hover:text-neutral-fg1",
       )}
       data-selected={selectedTheme === theme}
       onClick={() => setTheme(theme)}

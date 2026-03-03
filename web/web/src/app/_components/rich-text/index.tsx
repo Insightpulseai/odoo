@@ -1,34 +1,31 @@
-import { RichText, type RichTextProps } from "basehub/react-rich-text";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { cva } from "class-variance-authority";
 
-import { fragmentOn } from "basehub";
 import s from "./rich-text.module.scss";
 import Image from "next/image";
 import clsx from "clsx";
 
 export const richTextClasses = clsx(
-  "prose prose-zinc max-w-prose text-start dark:prose-invert font-normal text-md w-full leading-relaxed",
-  "prose-p:text-text-secondary dark:prose-p:text-dark-text-secondary",
-  "prose-h1:text-4xl prose-h1:font-medium prose-h1:text-text-primary dark:prose-h1:text-dark-text-primary",
-  "prose-h2:text-3xl prose-h2:font-medium prose-h2:text-text-primary dark:prose-h2:text-dark-text-primary",
-  "prose-h3:text-2xl prose-h3:font-medium prose-h3:text-text-primary dark:prose-h3:text-dark-text-primary",
-  "prose-blockquote:border-border prose-blockquote:pl-5 prose-blockquote:text-2xl prose-blockquote:text-text-primary dark:prose-blockquote:border-dark-border dark:prose-blockquote:text-dark-text-primary",
+  "prose prose-zinc max-w-prose text-start font-normal text-md w-full leading-relaxed",
+  "prose-p:text-neutral-fg2",
+  "prose-h1:text-4xl prose-h1:font-medium prose-h1:text-neutral-fg1",
+  "prose-h2:text-3xl prose-h2:font-medium prose-h2:text-neutral-fg1",
+  "prose-h3:text-2xl prose-h3:font-medium prose-h3:text-neutral-fg1",
+  "prose-blockquote:border-neutral-stroke1 prose-blockquote:pl-5 prose-blockquote:text-2xl prose-blockquote:text-neutral-fg1",
   '[&_blockquote>p]:before:[content:""] [&_blockquote>p]:prose-blockquote:after:[content:""]',
   "prose-h4:text-2xl prose-h4:font-medium",
   "prose-strong:font-medium",
-  "prose-a:outline-accent-500 dark:prose-a:text-accent-400 prose-a:text-accent-600 prose-a:no-underline prose-a:hover:underline prose-a:decoration-accent-500/50",
+  "prose-a:outline-brand-foreground prose-a:text-brand-foreground prose-a:no-underline prose-a:hover:underline prose-a:decoration-brand-foreground/50",
   "prose-pre:pl-0",
   s["rich-text"],
 );
 
-// @ts-expect-error Code won't match props
-export const richTextBaseComponents: RichTextProps["components"] = {
+export const richTextBaseComponents = {
   code: Code,
-  pre: ({ children }) => <>{children}</>,
-  b: ({ children }) => <strong>{children}</strong>,
-  img: (props) => <RichTextImage {...props} />,
-  video: (props) => <RichTextVideo {...props} />,
+  pre: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  b: ({ children }: { children: React.ReactNode }) => <strong>{children}</strong>,
+  img: (props: { src: string; alt?: string; width?: number; height?: number; caption?: string }) => <RichTextImage {...props} />,
+  video: (props: { src: string; alt?: string; width?: number; height?: number; caption?: string }) => <RichTextVideo {...props} />,
 };
 
 function Code({
@@ -42,27 +39,18 @@ function Code({
 }) {
   if (isInline) {
     return (
-      <code className="rounded-sm border border-border px-2 py-0.5 text-accent-500 before:[content:none] after:[content:none] dark:border-dark-border dark:bg-dark-surface-secondary">
+      <code className="rounded-sm border border-neutral-stroke1 px-2 py-0.5 text-brand-foreground before:[content:none] after:[content:none]">
         {children}
       </code>
     );
   } else
-    return <pre className="rounded-lg border border-border dark:border-dark-border">{code}</pre>;
+    return <pre className="rounded-lg border border-neutral-stroke1">{code}</pre>;
 }
 
-export const FaqItemComponentFragment = fragmentOn("FaqItemComponent", {
-  _id: true,
-  _idPath: true,
-  _title: true,
-  answer: true,
-});
-
-type FaqItemComponentRichText = fragmentOn.infer<typeof FaqItemComponentFragment>;
-
-export function FaqRichtextComponent({ answer, _title }: FaqItemComponentRichText) {
+export function FaqRichtextComponent({ answer, _title }: { answer: string; _title: string; _id?: string; _idPath?: string }) {
   return (
-    <details className="group mb-2 flex flex-col gap-4 overflow-hidden rounded-lg border border-border bg-surface-secondary pb-1 dark:border-dark-border dark:bg-dark-surface-secondary">
-      <summary className="flex cursor-pointer items-start text-pretty rounded-md p-3 pb-2 pl-6 font-medium text-text-primary outline-hidden ring-inset ring-accent-500 focus-visible:ring-3 dark:text-dark-text-primary">
+    <details className="group mb-2 flex flex-col gap-4 overflow-hidden rounded-lg border border-neutral-stroke1 bg-neutral-bg2 pb-1">
+      <summary className="flex cursor-pointer items-start text-pretty rounded-md p-3 pb-2 pl-6 font-medium text-neutral-fg1 outline-hidden ring-inset ring-brand-foreground focus-visible:ring-3">
         <span className="mt-1 flex w-8 pr-2">
           <ChevronDownIcon className="transform group-open:rotate-180" />
         </span>
@@ -73,24 +61,8 @@ export function FaqRichtextComponent({ answer, _title }: FaqItemComponentRichTex
   );
 }
 
-export const richTextCalloutComponentFragment = fragmentOn("RichTextCalloutComponent", {
-  _title: true,
-  type: true,
-  _id: true,
-  size: true,
-  content: {
-    json: {
-      content: true,
-    },
-  },
-  __typename: true,
-  _idPath: true,
-});
-
-type RichTextCalloutComponentFragment = fragmentOn.infer<typeof richTextCalloutComponentFragment>;
-
 const $richTextCallout = cva(
-  "gap-2 border border-accent-500/40 bg-accent-500/5 p-4 pl-3 rounded-xl",
+  "gap-2 border border-brand-foreground/40 bg-brand-foreground/5 p-4 pl-3 rounded-xl",
   {
     variants: {
       size: {
@@ -108,20 +80,28 @@ export function RichTextCalloutComponent({
   _title,
   size,
   content,
-}: RichTextCalloutComponentFragment) {
+}: {
+  _title: string;
+  size?: string | null;
+  content?: React.ReactNode;
+  type?: string;
+  _id?: string;
+  __typename?: string;
+  _idPath?: string;
+}) {
   switch (size) {
     case "large":
       return (
         <article className={$richTextCallout({ size })} id={_title}>
           <div className={richTextClasses}>
-            <RichText components={richTextBaseComponents}>{content?.json.content}</RichText>
+            {content}
           </div>
         </article>
       );
     default:
       return (
         <article className={$richTextCallout()} id={_title}>
-          <div className="pr-2 text-accent-500">
+          <div className="pr-2 text-brand-foreground">
             <svg
               fill="none"
               height="24"
@@ -136,7 +116,7 @@ export function RichTextCalloutComponent({
             </svg>
           </div>
           <div className={clsx(richTextClasses)}>
-            <RichText components={richTextBaseComponents}>{content?.json.content}</RichText>
+            {content}
           </div>
         </article>
       );
@@ -154,7 +134,7 @@ export function RichTextImage(props: {
     <figure className="relative flex flex-col gap-2">
       <Image alt={props.caption ?? ""} {...props} />
       {props.caption ? (
-        <figcaption className="m-0 text-sm text-text-tertiary dark:text-dark-text-tertiary">
+        <figcaption className="m-0 text-sm text-neutral-fg3">
           {props.caption}
         </figcaption>
       ) : null}
@@ -176,7 +156,7 @@ export function RichTextVideo(props: {
         Your browser does not support the video tag.
       </video>
       {props.caption ? (
-        <figcaption className="m-0 text-sm text-text-tertiary dark:text-dark-text-tertiary">
+        <figcaption className="m-0 text-sm text-neutral-fg3">
           {props.caption}
         </figcaption>
       ) : null}

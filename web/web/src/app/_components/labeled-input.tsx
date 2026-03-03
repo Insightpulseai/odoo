@@ -15,7 +15,7 @@ export function LabeledInput({
       <input
         className={clsx(
           className,
-          "rounded-md border border-border bg-surface-secondary py-2 pl-3 pr-3.5 text-sm placeholder:text-sm placeholder:text-text-tertiary/50 dark:border-dark-border dark:bg-dark-surface-tertiary dark:placeholder:text-dark-text-tertiary/50",
+          "rounded-md border border-neutral-stroke1 bg-neutral-bg2 py-2 pl-3 pr-3.5 text-sm placeholder:text-sm placeholder:text-neutral-fg3/50",
         )}
         id={id}
         {...props}
@@ -40,7 +40,7 @@ export const LabeledTextarea = ({
         ref={ref}
         className={clsx(
           className,
-          "rounded-md border border-border bg-surface-secondary py-2 pl-3 pr-3.5 text-sm [form-sizing:content] placeholder:text-sm placeholder:text-text-tertiary dark:border-dark-border dark:bg-dark-surface-tertiary dark:placeholder:text-dark-text-tertiary",
+          "rounded-md border border-neutral-stroke1 bg-neutral-bg2 py-2 pl-3 pr-3.5 text-sm [form-sizing:content] placeholder:text-sm placeholder:text-neutral-fg3",
         )}
         id={id}
         {...props}
@@ -62,7 +62,7 @@ export const LabeledWrapper = ({
   return (
     <div ref={ref} className="relative flex flex-col">
       <label
-        className="pb-1.5 text-xs font-medium text-text-primary dark:text-dark-text-primary"
+        className="pb-1.5 text-xs font-medium text-neutral-fg1"
         htmlFor={id}
       >
         {label}

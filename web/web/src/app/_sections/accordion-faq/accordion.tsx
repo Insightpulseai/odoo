@@ -2,16 +2,16 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { MinusCircledIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import * as React from "react";
-import { type Faq } from "../faq";
-import { sendEvent } from "basehub/events";
-import { GeneralEvents } from "@/../basehub-types";
+
+type FaqItem = {
+  title: string;
+  answer: string;
+};
 
 export function Accordion({
   items,
-  eventsKey,
 }: {
-  items: Faq["questions"]["items"];
-  eventsKey: GeneralEvents["ingestKey"];
+  items: FaqItem[];
 }) {
   const [activeItems, setActiveItems] = React.useState<string[]>([]);
 
@@ -24,10 +24,10 @@ export function Accordion({
     >
       {items.map((item) => (
         <AccordionItem
-          key={item._title}
-          {...item}
-          eventsKey={eventsKey}
-          isActive={activeItems.includes(item._title)}
+          key={item.title}
+          title={item.title}
+          answer={item.answer}
+          isActive={activeItems.includes(item.title)}
         />
       ))}
     </AccordionPrimitive.Root>
@@ -35,21 +35,15 @@ export function Accordion({
 }
 
 function AccordionItem({
-  _title,
+  title,
   answer,
   isActive,
-  eventsKey,
-}: Faq["questions"]["items"][0] & { isActive: boolean; eventsKey: GeneralEvents["ingestKey"] }) {
+}: FaqItem & { isActive: boolean }) {
   return (
-    <AccordionPrimitive.Item key={_title} className="flex flex-col" value={_title}>
+    <AccordionPrimitive.Item key={title} className="flex flex-col" value={title}>
       <AccordionPrimitive.Header>
         <AccordionPrimitive.Trigger
-          className="ring-accent-500 flex w-full items-start gap-3 rounded-md py-2 text-lg leading-relaxed font-medium tracking-tighter outline-hidden focus-visible:ring-3"
-          onClick={() => {
-            sendEvent(eventsKey, {
-              eventType: "faq_expanded",
-            });
-          }}
+          className="ring-brand-foreground flex w-full items-start gap-3 rounded-md py-2 text-lg leading-relaxed font-medium tracking-tighter outline-hidden focus-visible:ring-3"
         >
           {isActive ? (
             <MinusCircledIcon className="my-1.5 size-4 shrink-0" />
@@ -57,10 +51,10 @@ function AccordionItem({
             <PlusCircledIcon className="my-1.5 size-4 shrink-0" />
           )}
 
-          <span className="text-start">{_title}</span>
+          <span className="text-start">{title}</span>
         </AccordionPrimitive.Trigger>
       </AccordionPrimitive.Header>
-      <AccordionPrimitive.Content className="text-text-tertiary data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown dark:text-dark-text-tertiary transform overflow-hidden pl-7 leading-relaxed tracking-tight">
+      <AccordionPrimitive.Content className="text-neutral-fg3 data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown transform overflow-hidden pl-7 leading-relaxed tracking-tight">
         <div>{answer}</div>
       </AccordionPrimitive.Content>
     </AccordionPrimitive.Item>
