@@ -11,6 +11,7 @@
 
 # Core subdomains (A records pointing to origin_ip)
 app_subdomains = [
+"@",
 "erp",
 "n8n",
 "plane",
@@ -18,8 +19,14 @@ app_subdomains = [
 "ocr",
 "auth",
 "superset",
+"mcp",
 "www",
 "api",
+"mail",
+"app",
+"boards",
+"gpu",
+"mlflow",
 "stage-erp",
 "stage-api",
 "stage-auth",
