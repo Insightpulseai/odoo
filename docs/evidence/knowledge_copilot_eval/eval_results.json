@@ -1,0 +1,1013 @@
+{
+  "run_timestamp": "2026-03-03T00:19:43.742943+00:00",
+  "eval_file": "eval/knowledge_copilot_eval.yaml",
+  "total_cases": 25,
+  "passed": 23,
+  "failed": 2,
+  "pass_rate": 0.92,
+  "threshold": 0.8,
+  "threshold_met": true,
+  "cases": [
+    {
+      "id": "KEVAL-001",
+      "prompt": "What are the non-negotiable rules for the AI copilot?",
+      "expected_sources": [
+        "spec/ai-copilot/constitution.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 19.2367,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 13.8162,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/github-integrations/constitution.md",
+          "score": 13.6919,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 12.3976,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/GITHUB_COPILOT_CONTRACT.md",
+          "score": 12.3481,
+          "corpus": "docs_contracts"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-002",
+      "prompt": "What tools does the AI copilot support?",
+      "expected_sources": [
+        "spec/ai-copilot/prd.md",
+        "spec/ai-copilot/tasks.md",
+        "docs/contracts/AI_COPILOT_CONTRACT.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 16.2198,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 15.5882,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 14.7661,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/tasks.md",
+          "score": 14.3146,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/plan.md",
+          "score": 12.828,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-003",
+      "prompt": "How does the copilot handle write operations? Does it require confirmation?",
+      "expected_sources": [
+        "spec/ai-copilot/constitution.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 20.3904,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 18.6203,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 17.2183,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-copilot/tasks.md",
+          "score": 17.1589,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/plan.md",
+          "score": 13.8654,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-004",
+      "prompt": "What is the session history limit for copilot conversations?",
+      "expected_sources": [
+        "spec/ai-copilot/constitution.md",
+        "spec/ai-copilot/prd.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/ai/ODOO_SETTINGS_AI_AGENTS.md",
+          "score": 21.1033,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 20.8702,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 17.4417,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 16.3726,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-copilot/tasks.md",
+          "score": 12.9939,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-005",
+      "prompt": "What are the phases in the AI copilot implementation plan?",
+      "expected_sources": [
+        "spec/ai-copilot/tasks.md",
+        "spec/ai-copilot/plan.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/plan.md",
+          "score": 14.5645,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 14.1118,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/odoo-platform-personas/plan.md",
+          "score": 13.5752,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/advisor/assessments/microsoft_devops_lifecycle.yaml",
+          "score": 13.1073,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 12.8929,
+          "corpus": "docs_contracts"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-006",
+      "prompt": "What AI provider does the Odoo copilot use by default?",
+      "expected_sources": [
+        "ssot/ai/odoo_ai.yaml",
+        "spec/ai-copilot/constitution.md",
+        "spec/ai-copilot/prd.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 17.8102,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 15.789,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/integrations/github_copilot_sdk.yaml",
+          "score": 13.8715,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 13.484,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/advisor/assessments/microsoft_devops_lifecycle.yaml",
+          "score": 13.0438,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-007",
+      "prompt": "What tools are registered in the agent tools registry?",
+      "expected_sources": [
+        "ssot/tools/registry.yaml",
+        "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+          "score": 16.2784,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/integrations/microsoft_agent_framework.yaml",
+          "score": 13.8372,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 13.2725,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/agents/interface_schema.yaml",
+          "score": 12.0173,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "ssot/tools/registry.yaml",
+          "score": 11.9529,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-008",
+      "prompt": "What is the release contract? What fields does it require?",
+      "expected_sources": [
+        "ssot/runtime/release_contract.yaml"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "ssot/runtime/release_contract.yaml",
+          "score": 15.3943,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/odoo-release-gates-control-plane/constitution.md",
+          "score": 13.3533,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/odoo-release-gates-control-plane/prd.md",
+          "score": 13.0247,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/odoo-platform-personas/plan.md",
+          "score": 12.774,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/agents/interface_schema.yaml",
+          "score": 12.0901,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": false
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-009",
+      "prompt": "What agent skills are currently defined?",
+      "expected_sources": [
+        "ssot/agents/skills.yaml",
+        "ssot/agents/interface_schema.yaml",
+        "docs/contracts/C-AGENT-WORKFLOWS-01.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/C-AGENT-WORKFLOWS-01.md",
+          "score": 14.9067,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+          "score": 12.5569,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/runbooks/SKILLS_COVERAGE.md",
+          "score": 11.9901,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "docs/runbooks/failures/AGENT.PATCH_DIFF_TOO_LARGE.md",
+          "score": 11.5525,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "ssot/agents/skills.yaml",
+          "score": 10.9849,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-010",
+      "prompt": "What are the allowed executor types for agent tools?",
+      "expected_sources": [
+        "ssot/tools/registry.yaml",
+        "ssot/agents/interface_schema.yaml",
+        "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+          "score": 19.3448,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/agents/interface_schema.yaml",
+          "score": 18.8005,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/contracts/C-AGENT-WORKFLOWS-01.md",
+          "score": 16.2326,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/ai/ODOO_SETTINGS_AI_AGENTS.md",
+          "score": 13.3497,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "ssot/agents/skills.yaml",
+          "score": 13.2714,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": false
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-011",
+      "prompt": "What is the tool permissions contract? How does it work?",
+      "expected_sources": [
+        "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+          "score": 20.2485,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/contracts/PLATFORM_CONTRACTS_INDEX.md",
+          "score": 14.7495,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/advisor/assessments/microsoft_devops_lifecycle.yaml",
+          "score": 14.1325,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "ssot/tools/registry.yaml",
+          "score": 12.6835,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "ssot/knowledge/corpus_registry.yaml",
+          "score": 12.1264,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-012",
+      "prompt": "What is the DNS SSOT workflow for this project?",
+      "expected_sources": [
+        "docs/ai/ARCHITECTURE.md",
+        "docs/ai/SSOT.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/ai/SSOT.md",
+          "score": 18.0306,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "docs/runbooks/failures/DNS.MAILGUN.RECORDS.md",
+          "score": 14.8434,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "ssot/errors/failure_modes.yaml",
+          "score": 12.4713,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/runbooks/failures/CI.AUTOMATION.PROJECT_BOARD_FAILED.md",
+          "score": 11.7168,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "ssot/platform/surfaces.yaml",
+          "score": 11.5169,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-013",
+      "prompt": "How does the mail bridge work in Odoo?",
+      "expected_sources": [
+        "docs/contracts/AI_COPILOT_CONTRACT.md",
+        "docs/contracts/ODOO_SETTINGS_CONTRACT.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/ODOO_SETTINGS_CONTRACT.md",
+          "score": 15.9734,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-bridge/prd.md",
+          "score": 14.2421,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/zoho-mail-bridge/prd.md",
+          "score": 13.6634,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/PLATFORM_CONTRACTS_INDEX.md",
+          "score": 13.1709,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/zoho-mail-bridge/plan.md",
+          "score": 13.1597,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-014",
+      "prompt": "What are the CI/CD workflows for this repository?",
+      "expected_sources": [
+        "docs/ai/CI_WORKFLOWS.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ee-oca-parity/prd.md",
+          "score": 9.8005,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/agent/constitution.md",
+          "score": 9.7184,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/runbooks/SKILLS_COVERAGE.md",
+          "score": 9.5862,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "ssot/advisor/rulepacks/github_governance.yaml",
+          "score": 9.2311,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/figma-sdlc/prd.md",
+          "score": 8.9196,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": false,
+        "answer_grounded": false
+      },
+      "passed": false
+    },
+    {
+      "id": "KEVAL-015",
+      "prompt": "What is the module naming convention for IPAI addons?",
+      "expected_sources": [
+        "docs/ai/IPAI_MODULES.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/ai/IPAI_MODULES.md",
+          "score": 16.216,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "spec/ee-oca-parity/constitution.md",
+          "score": 15.2771,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/ai/WORKSPACE_NAMING.md",
+          "score": 14.8557,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "spec/ipai-llm-supabase-bridge/constitution.md",
+          "score": 14.2461,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/ai/SSOT.md",
+          "score": 13.2156,
+          "corpus": "docs_ai"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-016",
+      "prompt": "How does the copilot integrate with n8n workflows?",
+      "expected_sources": [
+        "spec/ai-copilot/prd.md",
+        "ssot/tools/registry.yaml"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "ssot/advisor/assessments/microsoft_devops_lifecycle.yaml",
+          "score": 13.4525,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 13.0011,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/plan.md",
+          "score": 12.9343,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/integrations/github_copilot_sdk.yaml",
+          "score": 11.9351,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/db-hardening/plan.md",
+          "score": 11.5785,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-017",
+      "prompt": "What is the difference between agent tools and copilot tools?",
+      "expected_sources": [
+        "ssot/tools/registry.yaml",
+        "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+        "spec/ai-copilot/constitution.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 16.9254,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/C-TOOLS-PERMISSIONS-01.md",
+          "score": 15.0455,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-copilot/tasks.md",
+          "score": 13.9716,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 13.6891,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 13.5464,
+          "corpus": "spec_bundles"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-018",
+      "prompt": "What external dependencies does the AI system have?",
+      "expected_sources": [
+        "ssot/ai/dependencies.yaml",
+        "ssot/ai/odoo_ai.yaml"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/odoo-ee-parity-seed/constitution.md",
+          "score": 10.3274,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/mcp-provider-system/tasks.md",
+          "score": 9.7956,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/ai/dependencies.yaml",
+          "score": 9.7397,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "spec/ee-oca-parity/constitution.md",
+          "score": 9.7036,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/agents/interface_schema.yaml",
+          "score": 9.5622,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-019",
+      "prompt": "What is the Supabase project used for in this repo?",
+      "expected_sources": [
+        "docs/ai/SUPABASE.md",
+        "docs/contracts/SUPABASE_VAULT_CONTRACT.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/SUPABASE_VAULT_CONTRACT.md",
+          "score": 14.3843,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/contracts/SUPABASE_CRON_REPO_HYGIENE.md",
+          "score": 13.5255,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/runbooks/failures/AUTH.SUPABASE.TOKEN_STALE.md",
+          "score": 12.6681,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "docs/runbooks/SUPABASE_VERCEL_INTEGRATION_HEALTH.md",
+          "score": 12.5576,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "ssot/secrets/registry.yaml",
+          "score": 12.4872,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-020",
+      "prompt": "How should secrets be managed according to project policy?",
+      "expected_sources": [
+        "docs/ai/ARCHITECTURE.md",
+        "docs/runbooks/secrets/SECRETS_SSOT.md",
+        "ssot/secrets/inventory.yaml"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "ssot/infra/digitalocean/policy.yaml",
+          "score": 13.7354,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/contracts/ODOO_SETTINGS_CONTRACT.md",
+          "score": 10.4276,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "spec/odoo-sh/plan.md",
+          "score": 10.0407,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/C-DO-01-digitalocean-api.md",
+          "score": 9.7867,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/contracts/SUPABASE_VAULT_CONTRACT.md",
+          "score": 8.8267,
+          "corpus": "docs_contracts"
+        }
+      ],
+      "checks": {
+        "citation_present": false,
+        "answer_grounded": false,
+        "keywords_found": true
+      },
+      "passed": false
+    },
+    {
+      "id": "KEVAL-021",
+      "prompt": "What is the weather in Manila today?",
+      "expected_sources": [],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/SUPABASE_CRON_REPO_HYGIENE.md",
+          "score": 10.4412,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/m365/agents/insightpulseai_ops_advisor/capabilities.yaml",
+          "score": 9.1111,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/ai/SSOT.md",
+          "score": 6.9478,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "docs/contracts/ODOO_SETTINGS_CONTRACT.md",
+          "score": 6.4531,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/runbooks/supabase/cron_pg_cron.md",
+          "score": 5.9988,
+          "corpus": "docs_runbooks"
+        }
+      ],
+      "checks": {
+        "no_hallucination": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-022",
+      "prompt": "Can the copilot use OpenAI GPT-4?",
+      "expected_sources": [
+        "ssot/ai/odoo_ai.yaml",
+        "spec/ai-copilot/prd.md",
+        "spec/ai-copilot/constitution.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 16.9688,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/constitution.md",
+          "score": 15.1217,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/integrations/microsoft_agent_framework.yaml",
+          "score": 13.8149,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/ai/ODOO_SETTINGS_AI_AGENTS.md",
+          "score": 13.5851,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "ssot/providers/ai/selection.yaml",
+          "score": 13.1868,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-023",
+      "prompt": "How do I install Odoo Enterprise modules?",
+      "expected_sources": [],
+      "retrieved_sources": [
+        {
+          "path": "docs/contracts/ODOO_SETTINGS_CONTRACT.md",
+          "score": 12.4724,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "docs/runbooks/deployment/DEPLOY_ENTERPRISE_BRIDGE_FIX.md",
+          "score": 12.4379,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "spec/enterprise-bridge/plan.md",
+          "score": 12.2213,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "ssot/parity/odoo_enterprise.yaml",
+          "score": 11.9077,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/runbooks/deployment/DEPLOYMENT_STATUS.md",
+          "score": 10.7785,
+          "corpus": "docs_runbooks"
+        }
+      ],
+      "checks": {
+        "no_hallucination": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-024",
+      "prompt": "What is the cash advance workflow?",
+      "expected_sources": [
+        "spec/finance-ppm/prd.md",
+        "ssot/agent/feature_ledger.yaml"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "ssot/agent/feature_ledger.yaml",
+          "score": 18.2916,
+          "corpus": "ssot_yaml"
+        },
+        {
+          "path": "docs/runbooks/deployment/DEPLOYMENT_STATUS.md",
+          "score": 15.3546,
+          "corpus": "docs_runbooks"
+        },
+        {
+          "path": "docs/ai/CLAUDE_AI_N8N_CONNECTOR.md",
+          "score": 7.0374,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "docs/ai/SSOT.md",
+          "score": 5.8563,
+          "corpus": "docs_ai"
+        },
+        {
+          "path": "docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md",
+          "score": 5.4173,
+          "corpus": "docs_runbooks"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true
+      },
+      "passed": true
+    },
+    {
+      "id": "KEVAL-025",
+      "prompt": "What proactive insights does the copilot generate?",
+      "expected_sources": [
+        "spec/ai-copilot/prd.md",
+        "spec/ai-copilot/tasks.md"
+      ],
+      "retrieved_sources": [
+        {
+          "path": "spec/ai-copilot/prd.md",
+          "score": 26.2237,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/plan.md",
+          "score": 23.2029,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "spec/ai-copilot/tasks.md",
+          "score": 21.4294,
+          "corpus": "spec_bundles"
+        },
+        {
+          "path": "docs/contracts/AI_COPILOT_CONTRACT.md",
+          "score": 17.8408,
+          "corpus": "docs_contracts"
+        },
+        {
+          "path": "ssot/integrations/github_copilot_sdk.yaml",
+          "score": 11.5856,
+          "corpus": "ssot_yaml"
+        }
+      ],
+      "checks": {
+        "citation_present": true,
+        "answer_grounded": true,
+        "keywords_found": true
+      },
+      "passed": true
+    }
+  ]
+}

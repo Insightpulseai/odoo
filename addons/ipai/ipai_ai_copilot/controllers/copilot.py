@@ -30,6 +30,10 @@ Error codes (same pattern as ipai_ai_widget):
 
 import json
 import logging
+import time
+import uuid
+from datetime import datetime, timezone
+
 import requests
 from odoo import http
 from odoo.http import request
@@ -158,8 +162,11 @@ class IpaiCopilotController(http.Controller):
         for tc in tool_calls:
             tool_name = tc.get("name", "")
             tool_args = tc.get("args", {})
+            t0 = time.monotonic()
             try:
                 result = _execute_tool_confirmed(tool_name, tool_args)
+                duration_ms = int((time.monotonic() - t0) * 1000)
+                _emit_audit_envelope(tool_name, tool_args, "success", duration_ms)
                 results.append({"tool": tool_name, "status": "ok", "result": result})
                 # Append execution to session history if session provided
                 if session_id:
@@ -175,10 +182,14 @@ class IpaiCopilotController(http.Controller):
                     except Exception:
                         pass
             except PermissionError as exc:
+                duration_ms = int((time.monotonic() - t0) * 1000)
+                _emit_audit_envelope(tool_name, tool_args, "access_denied", duration_ms)
                 results.append(
                     {"tool": tool_name, "status": "error", "error": "ACCESS_DENIED", "detail": str(exc)}
                 )
             except Exception as exc:
+                duration_ms = int((time.monotonic() - t0) * 1000)
+                _emit_audit_envelope(tool_name, tool_args, "error", duration_ms)
                 _logger.error("Tool execution failed: %s(%s) — %s", tool_name, tool_args, exc)
                 results.append(
                     {"tool": tool_name, "status": "error", "error": "TOOL_EXECUTION_FAILED", "detail": str(exc)}
@@ -246,6 +257,27 @@ def _format_context(ctx):
     if ctx.get("company"):
         parts.append(f"Company: {ctx['company']}")
     return " | ".join(parts) if parts else "No record context"
+
+
+def _emit_audit_envelope(tool_name, tool_args, result_status, duration_ms, user_id=None):
+    """Emit a structured audit envelope for every tool execution.
+
+    Envelope schema (7 required fields):
+      trace_id, user_id, timestamp, tool_name, tool_args, result_status, duration_ms
+
+    Currently logs to structured logger. Future: write to ops.audit_log table.
+    """
+    envelope = {
+        "trace_id": str(uuid.uuid4()),
+        "user_id": user_id or (request.env.user.id if request else 0),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "tool_name": tool_name,
+        "tool_args": tool_args,
+        "result_status": result_status,
+        "duration_ms": duration_ms,
+    }
+    _logger.info("AUDIT_ENVELOPE %s", json.dumps(envelope))
+    return envelope
 
 
 def _dispatch_tool_preview(name, args):
