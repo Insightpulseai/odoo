@@ -234,21 +234,21 @@ subdomains:
   # App Platform Services (CNAME Records → DO App Platform)
   # ---------------------------------------------------------------------------
   - name: mcp
-    type: CNAME
+    type: A
     service: mcp_gateway
-    target: pulse-hub-web-an645.ondigitalocean.app
+    origin_port: 443
     health_check: /healthz
-    owner_system: "MCP coordination (11 servers)"
+    owner_system: "MCP Hub Coordinator (port 8766 on droplet)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
-    drift_note: "Cloudflare currently has A record (178.128.112.214) — WRONG. Must be CNAME. Will be fixed on next Terraform apply."
+    note: "MCP service runs on droplet at 127.0.0.1:8766 (confirmed 2026-03-04 via prod nginx -T). Previous CNAME→DO App Platform was stale; CF A record was correct all along."
     provider_claim:
-      provider: digitalocean
+      provider: cloudflare
       status: claimed
-      claimed_at: "2026-02-27"
-      claim_ref: "ssot:digitalocean-app-platform"
+      claimed_at: "2026-03-04"
+      claim_ref: "ssot:cloudflare"
 
   # DigitalOcean Spaces CDN — dns-only, no proxy
   # proxied: false is mandatory: Cloudflare proxy conflicts with Spaces CORS
