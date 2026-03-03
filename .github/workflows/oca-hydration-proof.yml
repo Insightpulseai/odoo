@@ -1,0 +1,84 @@
+name: OCA Hydration Proof Gate
+
+on:
+  pull_request:
+    paths:
+      - 'oca-aggregate.yml'
+      - 'config/oca/oca_must_have_*.yml'
+      - 'scripts/ci/check_oca_hydration_proof.py'
+      - 'scripts/ci/check_oca_must_have.py'
+  push:
+    branches: [main]
+    paths:
+      - 'oca-aggregate.yml'
+      - 'config/oca/oca_must_have_*.yml'
+  workflow_dispatch:
+
+jobs:
+  config-validation:
+    name: Validate OCA aggregate config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Phase 1 — Config validation
+        run: python3 scripts/ci/check_oca_must_have.py --strict
+
+      - name: Phase 1 — Hydration proof (config-only)
+        run: |
+          python3 scripts/ci/check_oca_hydration_proof.py \
+            --config-only \
+            --evidence-dir docs/evidence/oca_hydration
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oca-hydration-evidence
+          path: docs/evidence/oca_hydration/
+          retention-days: 30
+
+  full-hydration:
+    name: Full hydration proof
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml git-aggregator
+
+      - name: Cache OCA git clones
+        uses: actions/cache@v4
+        with:
+          path: addons/oca
+          key: oca-hydration-${{ hashFiles('oca-aggregate.yml') }}
+          restore-keys: oca-hydration-
+
+      - name: Run gitaggregate
+        run: gitaggregate -c oca-aggregate.yml -j4
+        timeout-minutes: 15
+
+      - name: Phase 2+3 — Full hydration proof
+        run: |
+          python3 scripts/ci/check_oca_hydration_proof.py \
+            --evidence-dir docs/evidence/oca_hydration
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oca-full-hydration-evidence
+          path: docs/evidence/oca_hydration/
+          retention-days: 30
