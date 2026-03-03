@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
-    "target": "ES6",
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -17,6 +17,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "noUncheckedIndexedAccess": true,
     "plugins": [
       {
         "name": "next"
@@ -24,7 +25,7 @@
     ],
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     }
   },
@@ -33,6 +34,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "basehub.d.ts",
+    "basehub.config.ts",
+    "basehub-types.d.ts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
