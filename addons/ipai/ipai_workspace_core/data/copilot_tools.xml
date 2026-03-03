@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- ── Workspace Copilot Tools ──────────────────────────────────── -->
+
+    <record id="tool_search_knowledge" model="ipai.copilot.tool">
+      <field name="name">search_knowledge</field>
+      <field name="display_name">Search Knowledge Base</field>
+      <field name="description">Search the knowledge base using RAG hybrid search. Calls rag.fts_search() via Supabase RPC to find relevant documents from the specified corpus.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"query":{"type":"string","description":"Natural language search query"},"corpus_id":{"type":"string","description":"Corpus identifier to search within (e.g. specs, ssot, docs_ai, contracts, runbooks)"}},"required":["query"]}</field>
+    </record>
+
+    <record id="tool_create_evidence_pack" model="ipai.copilot.tool">
+      <field name="name">create_evidence_pack</field>
+      <field name="display_name">Create Evidence Pack</field>
+      <field name="description">Create an audit evidence pack bundling record references and query results. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"name":{"type":"string","description":"Name for the evidence pack"},"record_refs":{"type":"array","items":{"type":"object","properties":{"model":{"type":"string"},"res_id":{"type":"integer"},"display_name":{"type":"string"}}},"description":"Array of linked record references"},"query_results":{"type":"string","description":"JSON string of query results to include as context"}},"required":["name"]}</field>
+    </record>
+
+    <record id="tool_save_query" model="ipai.copilot.tool">
+      <field name="name">save_query</field>
+      <field name="display_name">Save Query</field>
+      <field name="description">Save a RAG query for later re-use and embedding in workspace pages. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"name":{"type":"string","description":"Display name for the saved query"},"query_text":{"type":"string","description":"The search query text to save"},"corpus_id":{"type":"string","description":"Corpus identifier the query targets"}},"required":["name","query_text"]}</field>
+    </record>
+
+  </data>
+</odoo>

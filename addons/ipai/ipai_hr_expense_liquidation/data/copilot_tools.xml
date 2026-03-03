@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Cash Advance Copilot Tools -->
+
+        <record id="tool_create_cash_advance" model="ipai.copilot.tool">
+            <field name="name">create_cash_advance</field>
+            <field name="display_name">Create Cash Advance</field>
+            <field name="description">Create a draft cash advance request for an employee. Returns the new liquidation ID and reference number. REQUIRES USER CONFIRMATION.</field>
+            <field name="category">write</field>
+            <field name="requires_confirmation">True</field>
+            <field name="parameters_json">{"type":"object","properties":{"employee_id":{"type":"integer","description":"Employee ID requesting the cash advance"},"amount":{"type":"number","description":"Cash advance amount requested"},"purpose":{"type":"string","description":"Purpose or description for the cash advance"}},"required":["employee_id","amount","purpose"]}</field>
+        </record>
+
+        <record id="tool_submit_liquidation" model="ipai.copilot.tool">
+            <field name="name">submit_liquidation</field>
+            <field name="display_name">Submit Liquidation</field>
+            <field name="description">Submit a cash advance liquidation for manager approval. Changes state from draft to submitted. REQUIRES USER CONFIRMATION.</field>
+            <field name="category">write</field>
+            <field name="requires_confirmation">True</field>
+            <field name="parameters_json">{"type":"object","properties":{"liquidation_id":{"type":"integer","description":"ID of the hr.expense.liquidation record to submit"}},"required":["liquidation_id"]}</field>
+        </record>
+
+        <record id="tool_check_policy_compliance" model="ipai.copilot.tool">
+            <field name="name">check_policy_compliance</field>
+            <field name="display_name">Check Policy Compliance</field>
+            <field name="description">Run the policy engine against a cash advance or liquidation record. Returns a list of policy violations (warnings and blocking issues).</field>
+            <field name="category">analysis</field>
+            <field name="requires_confirmation">False</field>
+            <field name="parameters_json">{"type":"object","properties":{"liquidation_id":{"type":"integer","description":"ID of the hr.expense.liquidation record to check"}},"required":["liquidation_id"]}</field>
+        </record>
+
+        <record id="tool_get_overdue_advances" model="ipai.copilot.tool">
+            <field name="name">get_overdue_advances</field>
+            <field name="display_name">Get Overdue Advances</field>
+            <field name="description">Query cash advances that are released but overdue for liquidation. Returns a list of overdue records with employee, amount, and days overdue.</field>
+            <field name="category">analysis</field>
+            <field name="requires_confirmation">False</field>
+            <field name="parameters_json">{"type":"object","properties":{"days_threshold":{"type":"integer","description":"Number of days past release date to consider overdue","default":30}},"required":[]}</field>
+        </record>
+
+    </data>
+</odoo>
