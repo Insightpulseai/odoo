@@ -69,6 +69,7 @@ def build_manifest(args: argparse.Namespace) -> dict:
         "image_tag": args.image_tag,
         "commit_sha": args.commit_sha,
         "addon_set_fingerprint": compute_addon_set_fingerprint(),
+        "sbom_artifact": args.sbom,  # null when not available
         "gates_passed": gates,
         "deployer": args.deployer,
         "workflow_run_id": int(args.run_id),
@@ -76,8 +77,6 @@ def build_manifest(args: argparse.Namespace) -> dict:
     }
 
     # Optional fields
-    if args.sbom:
-        manifest["sbom_artifact"] = args.sbom
     if args.vuln_scan:
         manifest["vuln_scan_result"] = args.vuln_scan
     if args.oca_lock_hash:
@@ -98,11 +97,17 @@ def validate_manifest(manifest: dict) -> list[str]:
     contract = yaml.safe_load(CONTRACT_PATH.read_text(encoding="utf-8"))
     required = contract.get("required_fields", [])
 
+    # Fields that are structurally required but may be null when context
+    # is unavailable (e.g. ship-on-deploy has no SBOM)
+    nullable_required = {"sbom_artifact"}
+
     errors: list[str] = []
     for field_def in required:
         field_name = field_def.get("field", "")
-        if field_name not in manifest or manifest[field_name] is None:
+        if field_name not in manifest:
             errors.append(f"Missing required field: {field_name}")
+        elif manifest[field_name] is None and field_name not in nullable_required:
+            errors.append(f"Required field is null: {field_name}")
         elif field_name == "commit_sha" and len(str(manifest[field_name])) < 7:
             errors.append(f"commit_sha too short: {manifest[field_name]}")
         elif field_name == "gates_passed" and not manifest[field_name]:
