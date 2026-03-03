@@ -1,6 +1,7 @@
 # Supabase Features + Integrations — Adoption Map
 
 > **Cross-references**:
+> - `ssot/supabase/feature_adoption.yaml` — **machine-readable SSOT** for feature adoption decisions, verified sources, and priority ladder
 > - `docs/architecture/SSOT_BOUNDARIES.md` — ownership boundaries
 > - `docs/ops/SUPABASE_SSOT.md` — DB-first model
 > - `spec/supabase-maximization/` — full spec bundle with phased rollout
@@ -8,6 +9,10 @@
 
 This doc answers "where does X go?" for Supabase features and integrations.
 It is the opinionated decision table — do not re-narrate the SSOT docs above; cross-link to them.
+
+> **SSOT note**: The machine-readable source of truth for feature adoption status,
+> verified source URLs, and decision criteria is `ssot/supabase/feature_adoption.yaml`.
+> This markdown doc provides the architectural narrative; the YAML file is the CI-queryable registry.
 
 ---
 
