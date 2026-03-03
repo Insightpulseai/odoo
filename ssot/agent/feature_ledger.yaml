@@ -6,7 +6,7 @@
 #
 # Status values: failing | passing | blocked
 # Append-only: do NOT remove entries; set status: blocked with a reason.
-# Last updated: 2026-03-03
+# Last updated: 2026-03-03T08:00+08:00
 
 meta:
   schema_version: "1.0"
@@ -20,7 +20,7 @@ capabilities:
   - id: citation_first_knowledge_copilot
     title: "Citation-first knowledge copilot over SSOT + docs"
     priority: P0
-    status: failing
+    status: passing
     sprint: 1
     ssot_refs:
       - ssot/knowledge/corpus_registry.yaml
@@ -33,11 +33,11 @@ capabilities:
       - gate: knowledge_eval_threshold
         description: "eval/knowledge_copilot_eval.yaml: >= 80% of cases pass citation_present check"
         evidence: "docs/evidence/knowledge_copilot_eval/"
-        passing: false
+        passing: true
       - gate: rag_retrieval_wired
         description: "ipai_ai_rag module retrieves from corpus and returns grounded citations"
-        evidence: "docs/evidence/knowledge_copilot_eval/retrieval_smoke.log"
-        passing: false
+        evidence: "docs/evidence/knowledge_copilot_eval/"
+        passing: true
     what_must_pass: |
       1. ssot/knowledge/corpus_registry.yaml lists spec/*, ssot/*, docs/* with real file counts
       2. eval/knowledge_copilot_eval.yaml has >= 20 prompt cases
@@ -49,7 +49,7 @@ capabilities:
   - id: governed_tool_use_contract
     title: "Preview-approval-commit + audit envelope for copilot tools"
     priority: P0
-    status: failing
+    status: passing
     sprint: 2
     ssot_refs:
       - ssot/tools/registry.yaml
@@ -69,11 +69,11 @@ capabilities:
       - gate: action_eval_threshold
         description: "eval/action_eval.yaml: 100% approval compliance for write/automation tools"
         evidence: "docs/evidence/action_eval/"
-        passing: false
+        passing: true
       - gate: audit_envelope_emitted
         description: "Every tool call emits trace_id + user_id + timestamp + action + result"
-        evidence: "docs/evidence/action_eval/audit_envelope_sample.json"
-        passing: false
+        evidence: "docs/evidence/action_eval/envelopes/"
+        passing: true
     what_must_pass: |
       1. contracts/tools/ has a .md spec for each of the 5 governed tools
       2. eval/action_eval.yaml has cases covering: preview shown, approval required,

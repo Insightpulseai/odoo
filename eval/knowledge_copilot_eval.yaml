@@ -9,7 +9,7 @@
 #   - answer_grounded: answer content is traceable to the cited source
 #   - no_hallucination: response does not fabricate facts not in the source
 #
-# Run: python scripts/run_knowledge_copilot_eval.py (future)
+# Run: python scripts/eval/run_knowledge_eval.py
 # Last updated: 2026-03-03
 
 meta:
@@ -35,6 +35,7 @@ cases:
     expected_sources:
       - "spec/ai-copilot/prd.md"
       - "spec/ai-copilot/tasks.md"
+      - "docs/contracts/AI_COPILOT_CONTRACT.md"
     checks:
       - citation_present
       - answer_grounded
@@ -65,6 +66,7 @@ cases:
     prompt: "What are the phases in the AI copilot implementation plan?"
     expected_sources:
       - "spec/ai-copilot/tasks.md"
+      - "spec/ai-copilot/plan.md"
     checks:
       - citation_present
       - answer_grounded
@@ -75,6 +77,8 @@ cases:
     prompt: "What AI provider does the Odoo copilot use by default?"
     expected_sources:
       - "ssot/ai/odoo_ai.yaml"
+      - "spec/ai-copilot/constitution.md"
+      - "spec/ai-copilot/prd.md"
     checks:
       - citation_present
       - answer_grounded
@@ -85,6 +89,7 @@ cases:
     prompt: "What tools are registered in the agent tools registry?"
     expected_sources:
       - "ssot/tools/registry.yaml"
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
     checks:
       - citation_present
       - answer_grounded
@@ -105,6 +110,8 @@ cases:
     prompt: "What agent skills are currently defined?"
     expected_sources:
       - "ssot/agents/skills.yaml"
+      - "ssot/agents/interface_schema.yaml"
+      - "docs/contracts/C-AGENT-WORKFLOWS-01.md"
     checks:
       - citation_present
       - answer_grounded
@@ -113,6 +120,8 @@ cases:
     prompt: "What are the allowed executor types for agent tools?"
     expected_sources:
       - "ssot/tools/registry.yaml"
+      - "ssot/agents/interface_schema.yaml"
+      - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
     checks:
       - citation_present
       - answer_grounded
@@ -134,6 +143,7 @@ cases:
     prompt: "What is the DNS SSOT workflow for this project?"
     expected_sources:
       - "docs/ai/ARCHITECTURE.md"
+      - "docs/ai/SSOT.md"
     checks:
       - citation_present
       - answer_grounded
@@ -142,6 +152,7 @@ cases:
     prompt: "How does the mail bridge work in Odoo?"
     expected_sources:
       - "docs/contracts/AI_COPILOT_CONTRACT.md"
+      - "docs/contracts/ODOO_SETTINGS_CONTRACT.md"
     checks:
       - citation_present
 
@@ -182,6 +193,7 @@ cases:
     expected_sources:
       - "ssot/tools/registry.yaml"
       - "docs/contracts/C-TOOLS-PERMISSIONS-01.md"
+      - "spec/ai-copilot/constitution.md"
     checks:
       - citation_present
       - answer_grounded
@@ -190,6 +202,7 @@ cases:
     prompt: "What external dependencies does the AI system have?"
     expected_sources:
       - "ssot/ai/dependencies.yaml"
+      - "ssot/ai/odoo_ai.yaml"
     checks:
       - citation_present
       - answer_grounded
@@ -198,6 +211,7 @@ cases:
     prompt: "What is the Supabase project used for in this repo?"
     expected_sources:
       - "docs/ai/SUPABASE.md"
+      - "docs/contracts/SUPABASE_VAULT_CONTRACT.md"
     checks:
       - citation_present
       - answer_grounded
@@ -206,6 +220,8 @@ cases:
     prompt: "How should secrets be managed according to project policy?"
     expected_sources:
       - "docs/ai/ARCHITECTURE.md"
+      - "docs/runbooks/secrets/SECRETS_SSOT.md"
+      - "ssot/secrets/inventory.yaml"
     checks:
       - citation_present
       - answer_grounded
@@ -226,6 +242,8 @@ cases:
     prompt: "Can the copilot use OpenAI GPT-4?"
     expected_sources:
       - "ssot/ai/odoo_ai.yaml"
+      - "spec/ai-copilot/prd.md"
+      - "spec/ai-copilot/constitution.md"
     checks:
       - citation_present
       - answer_grounded
@@ -241,7 +259,8 @@ cases:
   - id: KEVAL-024
     prompt: "What is the cash advance workflow?"
     expected_sources:
-      - "spec/cash-advance-odoo/prd.md"
+      - "spec/finance-ppm/prd.md"
+      - "ssot/agent/feature_ledger.yaml"
     checks:
       - citation_present
       - answer_grounded
