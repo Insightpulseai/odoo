@@ -20,6 +20,10 @@ class HrExpenseLiquidation(models.Model):
     - Automatic bucket totals (Meals, Transportation, Misc)
     - Cash advance settlement calculations
     - Multi-currency support
+    - Extended 8-state approval workflow (cash advance lifecycle)
+    - Accounting entries with idempotency
+    - Policy engine with configurable rules
+    - Monitoring cron for overdue advances
     """
 
     _name = "hr.expense.liquidation"
@@ -163,14 +167,19 @@ class HrExpenseLiquidation(models.Model):
         store=True,
     )
 
-    # Approval Workflow
+    # Extended Approval Workflow (cash advance lifecycle)
     state = fields.Selection(
         [
             ("draft", "Draft"),
             ("submitted", "Submitted"),
-            ("approved", "Approved"),
-            ("settled", "Settled"),
+            ("manager_approved", "Manager Approved"),
+            ("finance_approved", "Finance Approved"),
+            ("released", "Released"),
+            ("in_liquidation", "In Liquidation"),
+            ("liquidated", "Liquidated"),
+            ("closed", "Closed"),
             ("rejected", "Rejected"),
+            ("cancelled", "Cancelled"),
         ],
         string="Status",
         default="draft",
@@ -182,10 +191,43 @@ class HrExpenseLiquidation(models.Model):
         tracking=True,
     )
     approval_date = fields.Datetime(string="Approval Date", readonly=True)
+    finance_approver_id = fields.Many2one(
+        "res.users",
+        string="Finance Approver",
+        tracking=True,
+    )
+    finance_approval_date = fields.Datetime(string="Finance Approval Date", readonly=True)
+
+    # Accounting entries
+    release_move_id = fields.Many2one(
+        "account.move",
+        string="Release Journal Entry",
+        readonly=True,
+        copy=False,
+    )
+    liquidation_move_id = fields.Many2one(
+        "account.move",
+        string="Liquidation Journal Entry",
+        readonly=True,
+        copy=False,
+    )
+
+    # Policy
+    policy_exception_ids = fields.One2many(
+        "hr.expense.policy.violation",
+        "liquidation_id",
+        string="Policy Violations",
+    )
+    policy_exception_count = fields.Integer(
+        compute="_compute_policy_exception_count",
+        string="Violations",
+    )
 
     # Notes
     description = fields.Text(string="Purpose/Description")
     notes = fields.Text(string="Internal Notes")
+
+    # ── Compute methods ──────────────────────────────────────────────────────
 
     @api.depends("line_ids")
     def _compute_line_count(self):
@@ -228,6 +270,13 @@ class HrExpenseLiquidation(models.Model):
                 record.settlement_amount = 0.0
                 record.settlement_status = "balanced"
 
+    @api.depends("policy_exception_ids")
+    def _compute_policy_exception_count(self):
+        for record in self:
+            record.policy_exception_count = len(record.policy_exception_ids)
+
+    # ── Constraints ──────────────────────────────────────────────────────────
+
     @api.constrains("employee_id", "company_id")
     def _check_linked_expenses_scope(self):
         """
@@ -252,39 +301,254 @@ class HrExpenseLiquidation(models.Model):
                     "and cannot be linked to this liquidation."
                 ) % ", ".join(bad_company.mapped("name")))
 
+    # ── CRUD overrides ───────────────────────────────────────────────────────
+
     @api.model
     def create(self, vals):
         if vals.get("name", _("New")) == _("New"):
             vals["name"] = self.env["ir.sequence"].next_by_code("hr.expense.liquidation") or _("New")
         return super().create(vals)
 
+    # ── State transitions ────────────────────────────────────────────────────
+
     def action_submit(self):
         self.ensure_one()
-        if not self.line_ids:
+        if not self.line_ids and self.liquidation_type != "cash_advance":
             raise ValidationError(_("Cannot submit liquidation without expense lines."))
         self.write({"state": "submitted"})
+        self.message_post(body=_("Cash advance request submitted for approval."))
 
-    def action_approve(self):
+    def action_manager_approve(self):
         self.ensure_one()
+        if self.state != "submitted":
+            raise ValidationError(_("Only submitted requests can be manager-approved."))
         self.write({
-            "state": "approved",
+            "state": "manager_approved",
             "approver_id": self.env.user.id,
             "approval_date": fields.Datetime.now(),
         })
+        self.message_post(body=_("Manager approved by %s.") % self.env.user.name)
+
+    def action_finance_approve(self):
+        self.ensure_one()
+        if self.state != "manager_approved":
+            raise ValidationError(_("Only manager-approved requests can be finance-approved."))
+        self.write({
+            "state": "finance_approved",
+            "finance_approver_id": self.env.user.id,
+            "finance_approval_date": fields.Datetime.now(),
+        })
+        self.message_post(body=_("Finance approved by %s.") % self.env.user.name)
+
+    def action_release(self):
+        """Release cash advance funds. Creates idempotent accounting entry."""
+        for rec in self:
+            if rec.state != "finance_approved":
+                raise ValidationError(_("Only finance-approved requests can be released."))
+            key = "CA-RELEASE-%s" % rec.name
+            existing = self.env["account.move"].search([("ref", "=", key)], limit=1)
+            if existing:
+                rec.release_move_id = existing
+            else:
+                journal = self.env["account.journal"].search(
+                    [("type", "=", "general"), ("company_id", "=", rec.company_id.id)],
+                    limit=1,
+                )
+                if not journal:
+                    raise ValidationError(_(
+                        "No general journal found for company %s. "
+                        "Please configure a Miscellaneous journal."
+                    ) % rec.company_id.name)
+                move = self.env["account.move"].create({
+                    "ref": key,
+                    "journal_id": journal.id,
+                    "move_type": "entry",
+                    "date": fields.Date.context_today(self),
+                })
+                rec.release_move_id = move
+            rec.state = "released"
+            rec.message_post(body=_(
+                "Cash advance of %s %s released. Journal entry: %s"
+            ) % (rec.currency_id.symbol, rec.advance_amount, rec.release_move_id.name or key))
+
+    def action_start_liquidation(self):
+        self.ensure_one()
+        if self.state != "released":
+            raise ValidationError(_("Only released advances can enter liquidation."))
+        self.write({"state": "in_liquidation"})
+        self.message_post(body=_("Liquidation started. Employee is submitting expenses."))
+
+    def action_liquidate(self):
+        """Post liquidation. Creates idempotent accounting entry."""
+        for rec in self:
+            if rec.state != "in_liquidation":
+                raise ValidationError(_("Only advances in liquidation can be liquidated."))
+            if not rec.line_ids:
+                raise ValidationError(_("Cannot liquidate without expense lines."))
+            # Check for blocking policy violations
+            blocking = rec.policy_exception_ids.filtered(
+                lambda v: v.severity == "block" and not v.resolved
+            )
+            if blocking:
+                raise ValidationError(_(
+                    "Cannot liquidate: %d blocking policy violation(s) must be resolved first."
+                ) % len(blocking))
+            key = "CA-LIQUIDATION-%s" % rec.name
+            existing = self.env["account.move"].search([("ref", "=", key)], limit=1)
+            if existing:
+                rec.liquidation_move_id = existing
+            else:
+                journal = self.env["account.journal"].search(
+                    [("type", "=", "general"), ("company_id", "=", rec.company_id.id)],
+                    limit=1,
+                )
+                if not journal:
+                    raise ValidationError(_(
+                        "No general journal found for company %s."
+                    ) % rec.company_id.name)
+                move = self.env["account.move"].create({
+                    "ref": key,
+                    "journal_id": journal.id,
+                    "move_type": "entry",
+                    "date": fields.Date.context_today(self),
+                })
+                rec.liquidation_move_id = move
+            rec.state = "liquidated"
+            rec.message_post(body=_(
+                "Liquidation posted. Total expenses: %s %s. Settlement: %s %s (%s)."
+            ) % (
+                rec.currency_id.symbol, rec.total_expenses,
+                rec.currency_id.symbol, abs(rec.settlement_amount),
+                rec.settlement_status,
+            ))
+
+    def action_close(self):
+        self.ensure_one()
+        if self.state != "liquidated":
+            raise ValidationError(_("Only liquidated advances can be closed."))
+        self.write({"state": "closed"})
+        self.message_post(body=_("Cash advance closed and fully settled."))
+
+    def action_approve(self):
+        """Legacy approve action — maps to manager_approve for backward compat."""
+        return self.action_manager_approve()
 
     def action_settle(self):
-        self.ensure_one()
-        if self.state != "approved":
-            raise ValidationError(_("Only approved liquidations can be settled."))
-        self.write({"state": "settled"})
+        """Legacy settle — maps to liquidate for backward compat."""
+        return self.action_liquidate()
 
     def action_reject(self):
         self.ensure_one()
+        if self.state not in ("submitted", "manager_approved"):
+            raise ValidationError(_("Only submitted or manager-approved requests can be rejected."))
         self.write({"state": "rejected"})
+        self.message_post(body=_("Rejected by %s.") % self.env.user.name)
+
+    def action_cancel(self):
+        self.ensure_one()
+        if self.state not in ("draft", "submitted"):
+            raise ValidationError(_("Only draft or submitted requests can be cancelled."))
+        self.write({"state": "cancelled"})
+        self.message_post(body=_("Cancelled by %s.") % self.env.user.name)
 
     def action_reset_to_draft(self):
         self.ensure_one()
+        if self.state not in ("rejected", "cancelled"):
+            raise ValidationError(_("Only rejected or cancelled requests can be reset to draft."))
         self.write({"state": "draft"})
+        self.message_post(body=_("Reset to draft."))
+
+    # ── Policy engine ────────────────────────────────────────────────────────
+
+    def action_check_policy(self):
+        """Run policy engine against this record and create violation records."""
+        for rec in self:
+            # Clear previously unresolved violations
+            rec.policy_exception_ids.filtered(lambda v: not v.resolved).unlink()
+            rules = self.env["hr.expense.policy.rule"].search([
+                ("active", "=", True),
+                "|", ("company_id", "=", rec.company_id.id),
+                     ("company_id", "=", False),
+            ])
+            for rule in rules:
+                if rule.rule_type == "amount_limit" and rule.threshold_amount:
+                    if rec.advance_amount > rule.threshold_amount:
+                        self.env["hr.expense.policy.violation"].create({
+                            "liquidation_id": rec.id,
+                            "rule_code": rule.rule_code,
+                            "severity": rule.severity,
+                            "description": _(
+                                "Amount %s exceeds limit of %s."
+                            ) % (rec.advance_amount, rule.threshold_amount),
+                        })
+                elif rule.rule_type == "receipt_required" and rule.threshold_amount:
+                    for line in rec.line_ids:
+                        if line.amount >= rule.threshold_amount and not line.receipt_ids:
+                            self.env["hr.expense.policy.violation"].create({
+                                "liquidation_id": rec.id,
+                                "rule_code": rule.rule_code,
+                                "severity": rule.severity,
+                                "description": _(
+                                    "Line '%s' (%s) requires receipt (threshold: %s)."
+                                ) % (line.description, line.amount, rule.threshold_amount),
+                            })
+                elif rule.rule_type == "category_limit" and rule.threshold_amount:
+                    bucket_totals = {
+                        "meals": rec.total_meals,
+                        "transportation": rec.total_transportation,
+                        "miscellaneous": rec.total_miscellaneous,
+                    }
+                    for bucket, total in bucket_totals.items():
+                        if total > rule.threshold_amount:
+                            self.env["hr.expense.policy.violation"].create({
+                                "liquidation_id": rec.id,
+                                "rule_code": rule.rule_code,
+                                "severity": rule.severity,
+                                "description": _(
+                                    "Category '%s' total %s exceeds limit %s."
+                                ) % (bucket, total, rule.threshold_amount),
+                            })
+
+    # ── Monitoring cron ──────────────────────────────────────────────────────
+
+    @api.model
+    def _cron_check_overdue_advances(self):
+        """
+        Scheduled action: find released advances past the max overdue days
+        defined by active OVERDUE_CHECK policy rules and create violations.
+        """
+        overdue_rules = self.env["hr.expense.policy.rule"].search([
+            ("active", "=", True),
+            ("rule_type", "=", "overdue_check"),
+            ("max_days", ">", 0),
+        ])
+        if not overdue_rules:
+            return
+        for rule in overdue_rules:
+            cutoff = fields.Date.subtract(fields.Date.today(), days=rule.max_days)
+            overdue_records = self.search([
+                ("state", "=", "released"),
+                ("date", "<=", cutoff),
+            ])
+            for rec in overdue_records:
+                existing = rec.policy_exception_ids.filtered(
+                    lambda v: v.rule_code == rule.rule_code and not v.resolved
+                )
+                if not existing:
+                    self.env["hr.expense.policy.violation"].create({
+                        "liquidation_id": rec.id,
+                        "rule_code": rule.rule_code,
+                        "severity": rule.severity,
+                        "description": _(
+                            "Advance released on %s is overdue by more than %d days."
+                        ) % (rec.date, rule.max_days),
+                    })
+                    _logger.info(
+                        "Overdue violation created for %s (released %s, rule %s)",
+                        rec.name, rec.date, rule.rule_code,
+                    )
+
+    # ── Agent integration ────────────────────────────────────────────────────
 
     def action_trigger_agent_run(self):
         """
@@ -332,7 +596,7 @@ class HrExpenseLiquidation(models.Model):
                 "No active tool with technical name "
                 "'expense_liquidation.validate_and_pack_evidence' found. "
                 "Ensure ipai_agent is installed and the module has been upgraded "
-                "(IPAI → Agents → Configuration → Tools)."
+                "(IPAI -> Agents -> Configuration -> Tools)."
             ))
         return tool.id
 
@@ -342,6 +606,17 @@ class HrExpenseLiquidation(models.Model):
             "type": "ir.actions.act_window",
             "name": _("Expense Lines"),
             "res_model": "hr.expense.liquidation.line",
+            "view_mode": "tree,form",
+            "domain": [("liquidation_id", "=", self.id)],
+            "context": {"default_liquidation_id": self.id},
+        }
+
+    def action_view_policy_violations(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Policy Violations"),
+            "res_model": "hr.expense.policy.violation",
             "view_mode": "tree,form",
             "domain": [("liquidation_id", "=", self.id)],
             "context": {"default_liquidation_id": self.id},
