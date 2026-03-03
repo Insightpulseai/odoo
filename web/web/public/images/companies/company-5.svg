@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+  <g fill="#616161">
+    <!-- Diamond mark -->
+    <rect x="8" y="8" width="17" height="17" rx="2" transform="rotate(45 16.5 16.5)" fill="none" stroke="#616161" stroke-width="1.5"/>
+    <rect x="13" y="13" width="7" height="7" rx="1" transform="rotate(45 16.5 16.5)" fill="none" stroke="#616161" stroke-width="1.2"/>
+    <!-- Text placeholder -->
+    <rect x="40" y="14" width="38" height="3.5" rx="1.75" opacity="0.7"/>
+    <rect x="40" y="21" width="26" height="2.5" rx="1.25" opacity="0.4"/>
+  </g>
+</svg>

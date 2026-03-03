@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
+  <g fill="#616161">
+    <!-- Rounded square with cross mark -->
+    <rect x="8" y="8" width="24" height="24" rx="5" fill="none" stroke="#616161" stroke-width="1.5"/>
+    <path d="M15 20h10M20 15v10" stroke="#616161" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Text placeholder -->
+    <rect x="42" y="14" width="36" height="3.5" rx="1.75" opacity="0.7"/>
+    <rect x="42" y="21" width="22" height="2.5" rx="1.25" opacity="0.4"/>
+  </g>
+</svg>

@@ -26,14 +26,14 @@
   --colorNeutralStroke2: #e0e0e0;
   --colorNeutralStrokeAccessible: #616161;
 
-  /* Brand (Indigo-based for InsightPulseAI) */
-  --colorBrandBackground: #4f46e5;
-  --colorBrandBackgroundHover: #4338ca;
-  --colorBrandBackgroundPressed: #3730a3;
-  --colorBrandForeground1: #4f46e5;
-  --colorBrandForeground2: #6366f1;
-  --colorBrandStroke1: #4f46e5;
-  --colorBrandBackground2: #eef2ff;
+  /* Brand (Teal/Cyan for InsightPulseAI) */
+  --colorBrandBackground: #0d9488;
+  --colorBrandBackgroundHover: #0f766e;
+  --colorBrandBackgroundPressed: #115e59;
+  --colorBrandForeground1: #0d9488;
+  --colorBrandForeground2: #14b8a6;
+  --colorBrandStroke1: #0d9488;
+  --colorBrandBackground2: #f0fdfa;
 
   /* Status */
   --colorStatusDangerForeground1: #b91c1c;
@@ -79,13 +79,13 @@
   --colorNeutralStroke1: #404040;
   --colorNeutralStroke2: #525252;
   --colorNeutralStrokeAccessible: #adadad;
-  --colorBrandBackground: #6366f1;
-  --colorBrandBackgroundHover: #818cf8;
-  --colorBrandBackgroundPressed: #6366f1;
-  --colorBrandForeground1: #818cf8;
-  --colorBrandForeground2: #a5b4fc;
-  --colorBrandStroke1: #818cf8;
-  --colorBrandBackground2: #1e1b4b;
+  --colorBrandBackground: #14b8a6;
+  --colorBrandBackgroundHover: #2dd4bf;
+  --colorBrandBackgroundPressed: #14b8a6;
+  --colorBrandForeground1: #2dd4bf;
+  --colorBrandForeground2: #5eead4;
+  --colorBrandStroke1: #2dd4bf;
+  --colorBrandBackground2: #042f2e;
   --colorStatusDangerForeground1: #fca5a5;
   --colorStatusDangerBackground1: #450a0a;
   --colorStatusSuccessForeground1: #86efac;

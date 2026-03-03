@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40">
+  <defs>
+    <linearGradient id="pulse-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="pulse-grad-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14B8A6"/>
+      <stop offset="100%" stop-color="#0891B2"/>
+    </linearGradient>
+  </defs>
+  <!-- Pulse icon mark -->
+  <g transform="translate(2, 4) scale(1)">
+    <!-- Back wave -->
+    <path d="M1 16 C6 16, 9 20, 12 20 C14 20, 15 18, 16 17 C17 18, 18 20, 20 20 C23 20, 26 16, 31 16 C26 16, 23 12, 20 12 C18 12, 17 14, 16 15 C15 14, 14 12, 12 12 C9 12, 6 16, 1 16Z" fill="url(#pulse-grad-dark)" opacity="0.7"/>
+    <!-- Front wave -->
+    <path d="M2 16 C6 16, 8.5 8, 12 8 C14 8, 15 12, 16 14 C17 12, 18 8, 20 8 C23.5 8, 26 16, 30 16 C26 16, 23.5 24, 20 24 C18 24, 17 20, 16 18 C15 20, 14 24, 12 24 C8.5 24, 6 16, 2 16Z" fill="url(#pulse-grad)"/>
+  </g>
+  <!-- InsightPulse text -->
+  <text x="40" y="27" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="currentColor" letter-spacing="-0.3">InsightPulse</text>
+  <!-- AI text in teal -->
+  <text x="156" y="27" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="17" font-weight="400" fill="#06B6D4" letter-spacing="-0.3">AI</text>
+</svg>
