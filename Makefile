@@ -14,7 +14,8 @@ SHELL := /bin/bash
         db-shell db-health redis-health odoo-shell \
         tools ipai-guard parity-seed parity-seed-check \
         oca-aggregate oca-aggregate-single gen-addons-path render-odoo-conf addons-path-check \
-        chore lint
+        chore lint \
+        db-backup db-seed runner-install runner-status
 
 # ---------------------------------------------------------------------------
 # Stack lifecycle
@@ -131,3 +132,25 @@ chore: ## Run all repo chores (regen + lint + deprecated check)
 
 lint: ## Run unified lint (python + yaml + markdown)
 	./scripts/lint_all.sh
+
+# ---------------------------------------------------------------------------
+# Database operations
+# ---------------------------------------------------------------------------
+
+db-backup: ## Backup Odoo database (pg_dump)
+	./scripts/backup_odoo.sh
+
+db-seed: ## Seed database after upgrade (post-upgrade data)
+	python3 scripts/odoo_seed_post_upgrade.py
+
+# ---------------------------------------------------------------------------
+# Self-hosted runner
+# ---------------------------------------------------------------------------
+
+runner-install: ## Install GitHub Actions self-hosted runner on DO droplet
+	@echo "Run via SSH: ssh root@178.128.112.214 'GITHUB_TOKEN=\$$GITHUB_TOKEN bash /opt/odoo/repo/scripts/ci/install-github-runner.sh'"
+
+runner-status: ## Check self-hosted runner status via GitHub API
+	@gh api repos/Insightpulseai/odoo/actions/runners \
+		--jq '.runners[] | "\(.name)\t\(.status)\t\(.labels | map(.name) | join(","))"' \
+		2>/dev/null || echo "No runners found (check gh auth)"
