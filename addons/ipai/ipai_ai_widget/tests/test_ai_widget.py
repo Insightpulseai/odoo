@@ -133,14 +133,14 @@ class TestAiWidgetController(TransactionCase):
         mock_resp.json.return_value = {
             "provider": "gemini",
             "text": "2 + 2 = 4",
-            "model": "gemini-2.0-flash",
+            "model": "gemini-3.1-pro-preview",
         }
         with patch("requests.post", return_value=mock_resp):
             result = self._ask("What is 2+2?", record_model="sale.order", record_id=1)
         self.assertNotIn("error", result)
         self.assertEqual(result["provider"], "gemini")
         self.assertEqual(result["text"], "2 + 2 = 4")
-        self.assertEqual(result["model"], "gemini-2.0-flash")
+        self.assertEqual(result["model"], "gemini-3.1-pro-preview")
         self.assertIn("trace_id", result)
         self.assertTrue(result["trace_id"])  # non-empty UUID
 
