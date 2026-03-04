@@ -104,7 +104,7 @@ class TestAiWidgetController(TransactionCase):
         self.assertEqual(result["status"], 503)
 
     def test_bridge_timeout(self):
-        with patch("requests.post", side_effect=requests.Timeout):
+        with patch("odoo.addons.ipai_ai_widget.controllers._bridge_helper.requests.post", side_effect=requests.Timeout):
             result = self._ask("hello")
         self.assertEqual(result["error"], "BRIDGE_TIMEOUT")
         self.assertEqual(result["status"], 504)
@@ -113,7 +113,7 @@ class TestAiWidgetController(TransactionCase):
         mock_resp = MagicMock()
         mock_resp.status_code = 503
         mock_resp.ok = False
-        with patch("requests.post", return_value=mock_resp):
+        with patch("odoo.addons.ipai_ai_widget.controllers._bridge_helper.requests.post", return_value=mock_resp):
             result = self._ask("hello")
         self.assertEqual(result["error"], "AI_KEY_NOT_CONFIGURED")
         self.assertEqual(result["status"], 503)
@@ -122,7 +122,7 @@ class TestAiWidgetController(TransactionCase):
         mock_resp = MagicMock()
         mock_resp.status_code = 500
         mock_resp.ok = False
-        with patch("requests.post", return_value=mock_resp):
+        with patch("odoo.addons.ipai_ai_widget.controllers._bridge_helper.requests.post", return_value=mock_resp):
             result = self._ask("hello")
         self.assertEqual(result["error"], "BRIDGE_ERROR")
 
@@ -133,14 +133,14 @@ class TestAiWidgetController(TransactionCase):
         mock_resp.json.return_value = {
             "provider": "gemini",
             "text": "2 + 2 = 4",
-            "model": "gemini-2.0-flash",
+            "model": "gemini-3.1-pro-preview",
         }
-        with patch("requests.post", return_value=mock_resp):
+        with patch("odoo.addons.ipai_ai_widget.controllers._bridge_helper.requests.post", return_value=mock_resp):
             result = self._ask("What is 2+2?", record_model="sale.order", record_id=1)
         self.assertNotIn("error", result)
         self.assertEqual(result["provider"], "gemini")
         self.assertEqual(result["text"], "2 + 2 = 4")
-        self.assertEqual(result["model"], "gemini-2.0-flash")
+        self.assertEqual(result["model"], "gemini-3.1-pro-preview")
         self.assertIn("trace_id", result)
         self.assertTrue(result["trace_id"])  # non-empty UUID
 
@@ -154,7 +154,7 @@ class TestAiWidgetController(TransactionCase):
         before_count = self.env["ipai.ai.audit.log"].sudo().search_count([
             ("outcome", "=", "success"),
         ])
-        with patch("requests.post", return_value=mock_resp):
+        with patch("odoo.addons.ipai_ai_widget.controllers._bridge_helper.requests.post", return_value=mock_resp):
             result = self._ask("audit test")
 
         after_count = self.env["ipai.ai.audit.log"].sudo().search_count([
