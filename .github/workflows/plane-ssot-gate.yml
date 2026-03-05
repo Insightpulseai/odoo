@@ -1,0 +1,40 @@
+name: Plane SSOT Gate
+
+on:
+  pull_request:
+    paths:
+      - 'ssot/plane/contracts/**'
+      - 'ssot/plane/projects/**'
+      - 'ssot/plane/taxonomy/**'
+      - 'ssot/plane/schema.plane-clarity-ppp.v1.json'
+      - 'scripts/plane/validate_plane_ssot.py'
+      - '.github/workflows/plane-ssot-gate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-plane-ssot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml jsonschema
+
+      - name: Validate Plane SSOT contract
+        run: |
+          python scripts/plane/validate_plane_ssot.py \
+            --contract ssot/plane/contracts/clarity_ppm.v1.yaml \
+            --schema ssot/plane/schema.plane-clarity-ppp.v1.json \
+            --report artifacts/plane/ssot/validation_report.json
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: plane-ssot-validation-report
+          path: artifacts/plane/ssot/validation_report.json
