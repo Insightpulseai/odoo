@@ -242,7 +242,7 @@
     "cloudflare-observability": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp"],
-      "description": "Cloudflare Observability MCP (official remote) - analytics, logs, performance monitoring",
+      "description": "Cloudflare Observability MCP (official remote) - application logs, analytics, performance monitoring",
       "status": "built"
     },
 
@@ -253,6 +253,48 @@
       "status": "built"
     },
 
+    "cloudflare-dns-analytics": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://dns-analytics.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare DNS Analytics MCP (official remote) - DNS performance optimization, query debugging, zone analytics",
+      "status": "built"
+    },
+
+    "cloudflare-radar": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://radar.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Radar MCP (official remote) - global internet traffic insights, URL scans, threat intelligence",
+      "status": "built"
+    },
+
+    "cloudflare-docs": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Docs MCP (official remote) - Cloudflare reference documentation search and retrieval",
+      "status": "built"
+    },
+
+    "cloudflare-audit-logs": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://auditlogs.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Audit Logs MCP (official remote) - query audit logs, security event reports",
+      "status": "built"
+    },
+
+    "cloudflare-ai-gateway": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://ai-gateway.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare AI Gateway MCP (official remote) - search LLM logs, analyze prompts/responses, usage metrics",
+      "status": "built"
+    },
+
+    "cloudflare-browser": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://browser.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Browser Rendering MCP (official remote) - fetch pages, screenshots, convert to markdown",
+      "status": "built"
+    },
+
     "cloudflare": {
       "command": "npx",
       "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
@@ -260,7 +302,7 @@
         "CLOUDFLARE_API_TOKEN": "${CF_API_TOKEN}",
         "CLOUDFLARE_ACCOUNT_ID": "${CF_ACCOUNT_ID}"
       },
-      "description": "Cloudflare MCP (npm) - Workers, Pages, DNS, KV, R2, D1, Zones, Firewall rules",
+      "description": "Cloudflare MCP (npm local) - Workers, Pages, DNS, KV, R2, D1, Zones, Firewall rules",
       "status": "built"
     },
 
@@ -276,6 +318,13 @@
       "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"],
       "description": "Next.js DevTools MCP (Vercel) - Next.js development tools, route inspection, component analysis",
+      "status": "built"
+    },
+
+    "playwright-ms": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "description": "Playwright MCP (official Microsoft) - browser automation via accessibility snapshots, no vision needed",
       "status": "built"
     },
 
@@ -297,6 +346,20 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch"],
       "description": "Fetch MCP (official reference) - web content fetching and conversion for efficient LLM usage",
+      "status": "built"
+    },
+
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "description": "Git MCP (official reference) - read, search, and manipulate Git repositories",
+      "status": "built"
+    },
+
+    "time": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-time"],
+      "description": "Time MCP (official reference) - time and timezone conversion (Asia/Manila default)",
       "status": "built"
     },
 
@@ -390,10 +453,10 @@
     "microsoft": ["azure", "azure-devops", "microsoft-learn", "microsoft-365-mail", "microsoft-365-calendar", "microsoft-365-copilot", "microsoft-365-user", "microsoft-365-search", "microsoft-teams", "microsoft-admin", "microsoft-foundry", "microsoft-clarity", "microsoft-dataverse", "microsoft-sql"],
     "design": ["figma", "notion"],
     "data": ["firecrawl", "huggingface"],
-    "infra": ["digitalocean-official", "vercel-official", "cloudflare", "cloudflare-observability", "cloudflare-bindings", "next-devtools"],
+    "infra": ["digitalocean-official", "vercel-official", "cloudflare", "cloudflare-observability", "cloudflare-bindings", "cloudflare-dns-analytics", "cloudflare-radar", "cloudflare-docs", "cloudflare-audit-logs", "cloudflare-ai-gateway", "cloudflare-browser", "next-devtools"],
     "communication": ["slack", "microsoft-teams"],
-    "automation": ["pulser", "speckit", "zapier", "playwright", "n8n"],
-    "reference": ["sequential-thinking", "filesystem", "fetch"],
+    "automation": ["pulser", "speckit", "zapier", "playwright", "playwright-ms", "n8n"],
+    "reference": ["sequential-thinking", "filesystem", "fetch", "git", "time"],
     "docs": ["microsoft-learn"]
   },
 
