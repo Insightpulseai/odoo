@@ -1,0 +1,78 @@
+name: GitHub Org Policy Guard
+
+on:
+  pull_request:
+    paths:
+      - "ssot/github/org-policy.yaml"
+      - "ssot/github/branch-protection.yaml"
+      - "scripts/ci/check_github_org_policy.py"
+      - ".github/workflows/github-org-policy-guard.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/github/org-policy.yaml"
+      - "ssot/github/branch-protection.yaml"
+      - "scripts/ci/check_github_org_policy.py"
+  schedule:
+    # Weekly drift check (Monday 09:00 UTC)
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-ssot:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        run: |
+          python3 -m pip install --quiet pyyaml 2>/dev/null || true
+
+      - name: Validate YAML syntax
+        run: |
+          set -euo pipefail
+          echo "=== Validating org policy SSOT YAML files ==="
+          python3 -c "
+          import yaml, sys
+
+          files = [
+              'ssot/github/org-policy.yaml',
+              'ssot/github/branch-protection.yaml',
+          ]
+          for f in files:
+              try:
+                  with open(f) as fh:
+                      data = yaml.safe_load(fh)
+                  if not data:
+                      print(f'ERROR: {f} is empty')
+                      sys.exit(1)
+                  print(f'OK: {f} (valid YAML)')
+              except FileNotFoundError:
+                  print(f'ERROR: {f} not found')
+                  sys.exit(1)
+              except Exception as e:
+                  print(f'ERROR: {f}: {e}')
+                  sys.exit(1)
+          "
+
+      - name: Validate org-policy required fields
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_github_org_policy.py --validate-only --scope org
+
+      - name: Validate branch-protection required fields
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_github_org_policy.py --validate-only --scope branch
+
+      - name: Check org policy drift (live API)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "=== Running live org policy drift check ==="
+          python3 scripts/ci/check_github_org_policy.py --scope all
