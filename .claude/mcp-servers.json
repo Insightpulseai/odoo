@@ -183,6 +183,20 @@
       },
       "description": "A2A coordination - agent registry, discovery, inter-agent invocation following Microsoft's MCP pattern",
       "status": "source_only"
+    },
+
+    "plane": {
+      "command": "node",
+      "args": ["mcp/servers/plane/dist/index.js"],
+      "env": {
+        "PLANE_API_URL": "${PLANE_API_URL:-https://plane.insightpulseai.com/api/v1}",
+        "PLANE_API_KEY": "${PLANE_API_KEY}",
+        "PLANE_WORKSPACE_SLUG": "${PLANE_WORKSPACE_SLUG:-fin-ops}",
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "description": "Plane MCP (self-hosted) - issues, cycles, modules, pages with SSOT governance",
+      "status": "source_only"
     }
   },
 
@@ -191,7 +205,7 @@
     "design": ["figma", "notion"],
     "data": ["firecrawl", "huggingface"],
     "infra": ["digitalocean", "vercel"],
-    "automation": ["pulser", "speckit", "zapier", "playwright"],
+    "automation": ["pulser", "speckit", "zapier", "playwright", "plane"],
     "docs": ["microsoft-learn"]
   },
 
