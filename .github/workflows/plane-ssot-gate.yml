@@ -28,12 +28,14 @@ jobs:
 
       - name: Validate Plane SSOT contract
         run: |
+          mkdir -p artifacts/plane/ssot
           python scripts/plane/validate_plane_ssot.py \
             --contract ssot/plane/contracts/clarity_ppm.v1.yaml \
             --schema ssot/plane/schema.plane-clarity-ppp.v1.json \
             --report artifacts/plane/ssot/validation_report.json
 
       - name: Upload validation report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: plane-ssot-validation-report
