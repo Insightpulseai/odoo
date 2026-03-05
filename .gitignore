@@ -246,11 +246,9 @@ infra/cloudflare/**/.terraform.lock.hcl
 infra/cloudflare/**/terraform.tfstate*
 infra/cloudflare/**/tfplan
 infra/cloudflare/**/terraform.tfvars
-# Environment files (only .env is gitignored, templates are committed)
-!.env.dev
-!.env.stage
-!.env.prod
- echo === CRITICAL: .env.production contains secrets and is tracked in git === echo  echo Adding to .gitignore now... echo .env.production echo Removing from git (keeping local file)... git rm --cached .env.production
+# Environment files — never commit secrets
+# .env.* on line 189 covers .env.stage, .env.prod, .env.dev, .env.production
+# Only .env.example and .env.*.example are tracked
 *.local.json
 # secrets (local only) - never commit
 *.secrets.local

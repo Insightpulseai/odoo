@@ -15,10 +15,13 @@ export default function SupabaseManagerClient({ projectRef }: { projectRef: stri
     setSyncing(true)
     try {
       const res = await fetch('/api/secrets/sync', { method: 'POST' })
-      const data = await res.json()
+      const body = await res.json().catch(() => null)
       if (!res.ok) {
-        toast.error(data.error ?? 'Sync failed')
-      } else if (data.synced?.length === 0) {
+        toast.error((body as any)?.error ?? res.statusText ?? 'Sync failed')
+        return
+      }
+      const data = body ?? {}
+      if (data.synced?.length === 0) {
         toast.warning(data.message)
       } else {
         toast.success(
