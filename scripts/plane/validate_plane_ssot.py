@@ -17,6 +17,39 @@ SCHEMA_PATH = REPO_ROOT / "ssot/plane/schema.plane-clarity-ppp.v1.json"
 REPORT_PATH = REPO_ROOT / "artifacts/plane/ssot/validation_report.json"
 
 
+def find_repo_root(start: Path) -> Path:
+    for candidate in [start, *start.parents]:
+        if (candidate / ".git").exists():
+            return candidate.resolve()
+    return REPO_ROOT.resolve()
+
+
+def resolve_input_path(raw: str, repo_root: Path) -> Path:
+    p = Path(raw)
+    if p.is_absolute():
+        return p
+
+    candidates = [Path.cwd() / p, repo_root / p]
+    if repo_root.name == "odoo":
+        candidates.append(repo_root.parent / p)
+        if p.parts and p.parts[0] == "odoo":
+            candidates.append(repo_root / Path(*p.parts[1:]))
+
+    for c in candidates:
+        if c.exists():
+            return c.resolve()
+    return (repo_root / p).resolve()
+
+
+def resolve_output_path(raw: str, repo_root: Path) -> Path:
+    p = Path(raw)
+    if p.is_absolute():
+        return p
+    if p.parts and p.parts[0] == "odoo" and repo_root.name == "odoo":
+        p = Path(*p.parts[1:])
+    return (repo_root / p).resolve()
+
+
 def load_yaml(path: Path) -> dict[str, Any]:
     import yaml  # type: ignore
 
@@ -100,8 +133,9 @@ def main() -> int:
     errors: list[str] = []
     checked_files: dict[str, Any] = {}
 
-    contract_path = Path(args.contract).resolve()
-    schema_path = Path(args.schema).resolve()
+    repo_root = find_repo_root(Path(__file__).resolve().parent)
+    contract_path = resolve_input_path(args.contract, repo_root)
+    schema_path = resolve_input_path(args.schema, repo_root)
 
     if not contract_path.exists():
         print(f"missing contract: {contract_path}", file=sys.stderr)
@@ -112,8 +146,8 @@ def main() -> int:
 
     contract = load_yaml(contract_path)
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    checked_files["contract"] = str(contract_path.relative_to(REPO_ROOT.resolve()))
-    checked_files["schema"] = str(schema_path.relative_to(REPO_ROOT.resolve()))
+    checked_files["contract"] = str(contract_path.relative_to(repo_root))
+    checked_files["schema"] = str(schema_path.relative_to(repo_root))
 
     validate_contract_schema(contract, schema, errors)
     checked_tax = validate_taxonomy(contract, errors)
@@ -125,7 +159,7 @@ def main() -> int:
         "checked_files": checked_files,
     }
 
-    report_path = Path(args.report)
+    report_path = resolve_output_path(args.report, repo_root)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
 
