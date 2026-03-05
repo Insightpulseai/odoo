@@ -1,9 +1,10 @@
 {
   "$schema": "https://modelcontextprotocol.io/schemas/mcp-servers.json",
-  "version": "1.0.0",
-  "description": "MCP server configuration for InsightPulse AI / TBWA stack",
+  "version": "2.0.0",
+  "description": "MCP server configuration for InsightPulse AI / TBWA stack — expanded with Microsoft/Azure + official platform servers",
 
   "mcpServers": {
+
     "supabase": {
       "command": "npx",
       "args": ["-y", "@supabase/mcp-server"],
@@ -76,14 +77,6 @@
       "status": "built"
     },
 
-    "microsoft-learn": {
-      "type": "http",
-      "url": "https://learn.microsoft.com/api/mcp",
-      "tools": ["*"],
-      "description": "Microsoft Learn MCP (official hosted endpoint) - Azure, .NET, VS, DevOps docs with code samples",
-      "status": "built"
-    },
-
     "playwright": {
       "command": "npx",
       "args": ["-y", "@anthropic/playwright-mcp-server"],
@@ -98,6 +91,212 @@
         "ZAPIER_NLA_KEY": "${ZAPIER_NLA_KEY}"
       },
       "description": "Zapier MCP - 8,000+ app integrations",
+      "status": "built"
+    },
+
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      },
+      "description": "Slack MCP (official) - channels, messages, users, workspace interaction",
+      "status": "built"
+    },
+
+    "n8n": {
+      "command": "npx",
+      "args": ["-y", "n8n-mcp"],
+      "env": {
+        "MCP_MODE": "stdio"
+      },
+      "description": "n8n MCP - workflow node docs, smart search across 1,236 nodes, config validation",
+      "status": "built"
+    },
+
+    "azure": {
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "server", "start"],
+      "description": "Azure MCP Server (official Microsoft) - unified Azure services: Storage, Cosmos DB, Monitor, App Service, Functions, Container Apps, Key Vault, SQL, Resource Management",
+      "status": "built"
+    },
+
+    "azure-devops": {
+      "command": "npx",
+      "args": ["-y", "@azure-devops/mcp"],
+      "env": {
+        "AZURE_DEVOPS_ORG": "${AZURE_DEVOPS_ORG}",
+        "AZURE_DEVOPS_PAT": "${AZURE_DEVOPS_PAT}"
+      },
+      "description": "Azure DevOps MCP (official Microsoft) - repos, pipelines, boards, work items, builds, releases",
+      "status": "built"
+    },
+
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"],
+      "description": "Microsoft Learn MCP (official hosted) - Azure, .NET, VS, DevOps docs with code samples",
+      "status": "built"
+    },
+
+    "microsoft-365-mail": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/mail/mcp",
+      "tools": ["*"],
+      "description": "Microsoft 365 Mail MCP (official remote) - create, send, reply, search, delete emails via Graph API",
+      "status": "built"
+    },
+
+    "microsoft-365-calendar": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/calendar/mcp",
+      "tools": ["*"],
+      "description": "Microsoft 365 Calendar MCP (official remote) - events, scheduling, availability via Graph API",
+      "status": "built"
+    },
+
+    "microsoft-365-copilot": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/copilot/mcp",
+      "tools": ["*"],
+      "description": "Microsoft 365 Copilot Chat MCP (official remote) - rich conversations against Microsoft Graph",
+      "status": "built"
+    },
+
+    "microsoft-365-user": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/user/mcp",
+      "tools": ["*"],
+      "description": "Microsoft 365 People/Org MCP (official remote) - user details, manager, team, org hierarchy via Graph",
+      "status": "built"
+    },
+
+    "microsoft-365-search": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/search/mcp",
+      "tools": ["*"],
+      "description": "Microsoft 365 Search MCP (official remote) - search docs, emails, sites, files, chats across M365",
+      "status": "built"
+    },
+
+    "microsoft-teams": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/teams/mcp",
+      "tools": ["*"],
+      "description": "Microsoft Teams MCP (official remote) - chats, channels, users, messages via Graph API",
+      "status": "built"
+    },
+
+    "microsoft-admin": {
+      "type": "http",
+      "url": "https://mcp.agent365.microsoft.com/admin/mcp",
+      "tools": ["*"],
+      "description": "Microsoft Admin Center MCP (official remote) - tenant admin, user management, licensing",
+      "status": "built"
+    },
+
+    "microsoft-foundry": {
+      "type": "http",
+      "url": "https://mcp.ai.azure.com",
+      "tools": ["*"],
+      "description": "Microsoft Foundry MCP (official remote) - Azure AI models, knowledge, evaluation, fine-tuning",
+      "status": "built"
+    },
+
+    "microsoft-clarity": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/clarity-mcp-server"],
+      "env": {
+        "CLARITY_API_KEY": "${CLARITY_API_KEY}"
+      },
+      "description": "Microsoft Clarity MCP - web analytics, heatmaps, session recordings, user behavior",
+      "status": "built"
+    },
+
+    "microsoft-dataverse": {
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "server", "start", "--namespace", "dataverse"],
+      "description": "Microsoft Dataverse MCP - Power Platform data, table discovery, queries via natural language",
+      "status": "built"
+    },
+
+    "microsoft-sql": {
+      "command": "npx",
+      "args": ["-y", "@azure/mcp@latest", "server", "start", "--namespace", "sql"],
+      "description": "Microsoft SQL MCP - Azure SQL, SQL Server, Fabric SQL - schema discovery, queries, CRUD via natural language",
+      "status": "built"
+    },
+
+    "digitalocean-official": {
+      "command": "npx",
+      "args": ["-y", "@digitalocean/mcp", "--services", "apps,databases,droplets,networking,kubernetes"],
+      "env": {
+        "DIGITALOCEAN_API_TOKEN": "${DIGITALOCEAN_TOKEN}"
+      },
+      "description": "DigitalOcean MCP (official) - App Platform, Databases, Droplets, DOKS, Networking, Spaces, Container Registry CI/CD",
+      "status": "built"
+    },
+
+    "cloudflare-observability": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://observability.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Observability MCP (official remote) - analytics, logs, performance monitoring",
+      "status": "built"
+    },
+
+    "cloudflare-bindings": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://bindings.mcp.cloudflare.com/mcp"],
+      "description": "Cloudflare Bindings MCP (official remote) - Workers, KV, R2, D1, Queues, DNS management",
+      "status": "built"
+    },
+
+    "cloudflare": {
+      "command": "npx",
+      "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
+      "env": {
+        "CLOUDFLARE_API_TOKEN": "${CF_API_TOKEN}",
+        "CLOUDFLARE_ACCOUNT_ID": "${CF_ACCOUNT_ID}"
+      },
+      "description": "Cloudflare MCP (npm) - Workers, Pages, DNS, KV, R2, D1, Zones, Firewall rules",
+      "status": "built"
+    },
+
+    "vercel-official": {
+      "type": "http",
+      "url": "https://mcp.vercel.com",
+      "tools": ["*"],
+      "description": "Vercel MCP (official remote with OAuth) - projects, deployments, domains, env vars, logs, analytics",
+      "status": "built"
+    },
+
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"],
+      "description": "Next.js DevTools MCP (Vercel) - Next.js development tools, route inspection, component analysis",
+      "status": "built"
+    },
+
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Sequential Thinking MCP (official reference) - dynamic reflective problem-solving through thought sequences",
+      "status": "built"
+    },
+
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/odoo"],
+      "description": "Filesystem MCP (official reference) - secure file operations with configurable access controls",
+      "status": "built"
+    },
+
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Fetch MCP (official reference) - web content fetching and conversion for efficient LLM usage",
       "status": "built"
     },
 
@@ -120,7 +319,7 @@
       "env": {
         "DIGITALOCEAN_TOKEN": "${DIGITALOCEAN_TOKEN}"
       },
-      "description": "Custom DigitalOcean MCP - droplets, apps, deployments",
+      "description": "Custom DigitalOcean MCP (legacy) - droplets, apps, deployments. Superseded by digitalocean-official",
       "status": "source_only"
     },
 
@@ -142,7 +341,7 @@
       "env": {
         "VERCEL_TOKEN": "${VERCEL_TOKEN}"
       },
-      "description": "Custom Vercel MCP - projects, deployments, logs",
+      "description": "Custom Vercel MCP (legacy) - projects, deployments, logs. Superseded by vercel-official",
       "status": "source_only"
     },
 
@@ -188,14 +387,17 @@
 
   "serverGroups": {
     "core": ["supabase", "github", "dbhub", "odoo-erp", "memory", "agent-coordination"],
+    "microsoft": ["azure", "azure-devops", "microsoft-learn", "microsoft-365-mail", "microsoft-365-calendar", "microsoft-365-copilot", "microsoft-365-user", "microsoft-365-search", "microsoft-teams", "microsoft-admin", "microsoft-foundry", "microsoft-clarity", "microsoft-dataverse", "microsoft-sql"],
     "design": ["figma", "notion"],
     "data": ["firecrawl", "huggingface"],
-    "infra": ["digitalocean", "vercel"],
-    "automation": ["pulser", "speckit", "zapier", "playwright"],
+    "infra": ["digitalocean-official", "vercel-official", "cloudflare", "cloudflare-observability", "cloudflare-bindings", "next-devtools"],
+    "communication": ["slack", "microsoft-teams"],
+    "automation": ["pulser", "speckit", "zapier", "playwright", "n8n"],
+    "reference": ["sequential-thinking", "filesystem", "fetch"],
     "docs": ["microsoft-learn"]
   },
 
-  "defaultEnabled": ["supabase", "github", "odoo-erp"],
+  "defaultEnabled": ["supabase", "github", "odoo-erp", "azure", "slack"],
 
   "notes": {
     "supabase_project": "spdtwktxdalcfigzeqrz is the active project",
@@ -204,6 +406,11 @@
       "ublqmilcjtpnflofprkr"
     ],
     "custom_servers": "Servers with status=source_only require 'npm run build' before use",
-    "memory_docs": "See docs/VERIFIED_MEMORY.md for memory system usage"
+    "memory_docs": "See docs/VERIFIED_MEMORY.md for memory system usage",
+    "microsoft_remote_servers": "M365 servers use remote HTTP endpoints at mcp.agent365.microsoft.com - require Azure AD auth",
+    "azure_namespaces": "Azure MCP supports --namespace flag to limit scope: storage, cosmosdb, sql, dataverse, monitor, appservice, functions, etc.",
+    "digitalocean_migration": "digitalocean-official replaces legacy custom digitalocean server. Use --services flag to limit scope",
+    "vercel_migration": "vercel-official (remote OAuth) replaces legacy custom vercel server",
+    "cloudflare_options": "Three Cloudflare options: npm package (full control), observability remote (analytics), bindings remote (Workers/KV/R2/D1)"
   }
 }
