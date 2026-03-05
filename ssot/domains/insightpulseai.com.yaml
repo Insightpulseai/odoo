@@ -106,6 +106,12 @@ canonical_subdomains:
     dns_type: CNAME
     notes: "Primary AI agent endpoint"
 
+  - host: shelf
+    service: Shelf.nu redirect
+    stack: nginx-redirect
+    resolves_to: 178.128.112.214
+    notes: "Redirect to shelf.nu (301)"
+
   - host: chat
     service: Mattermost (legacy)
     stack: self-hosted-docker
