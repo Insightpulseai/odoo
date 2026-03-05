@@ -1,0 +1,188 @@
+{
+  "name": "PPM Clarity: Odoo to Plane Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Every 10 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, plane_issue_id FROM project_task WHERE stage_id IN (SELECT id FROM project_task_type WHERE name = 'Done') AND write_date >= NOW() - INTERVAL '10 minutes'",
+        "options": {}
+      },
+      "id": "query-completed",
+      "name": "Query Completed Tasks",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [250, 0],
+      "credentials": {
+        "postgres": {
+          "id": "odoo-db",
+          "name": "Odoo Database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-tasks",
+      "name": "Process Each Task",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ops.sync_odoo_to_plane($1::jsonb)",
+        "options": {
+          "queryParams": "={{ JSON.stringify($json) }}"
+        }
+      },
+      "id": "sync-rpc",
+      "name": "Sync to Plane",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [750, 0],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-ppm",
+          "name": "Supabase PPM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_CHANNEL_LOGS }}",
+        "text": "✅ PPM Clarity: Synced Odoo completion to Plane\n• Task: {{ $json.name }}\n• Odoo ID: {{ $json.id }}\n• Plane ID: {{ $json.plane_issue_id }}",
+        "otherOptions": {}
+      },
+      "id": "notify-success",
+      "name": "Slack Success",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1000, 0],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_CHANNEL_ALERTS }}",
+        "text": "🚨 PPM Clarity: Failed to sync Odoo completion\n• Task: {{ $json.name }}\n• Odoo ID: {{ $json.id }}\n• Error: {{ $json.error.message }}",
+        "otherOptions": {}
+      },
+      "id": "notify-failure",
+      "name": "Slack Failure",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [750, 200],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "cron-trigger": {
+      "main": [
+        [
+          {
+            "node": "query-completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "query-completed": {
+      "main": [
+        [
+          {
+            "node": "split-tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-tasks": {
+      "main": [
+        [
+          {
+            "node": "sync-rpc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-rpc": {
+      "main": [
+        [
+          {
+            "node": "notify-success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notify-success": {
+      "main": [
+        [
+          {
+            "node": "split-tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-rpc": {
+      "main": [
+        [],
+        [
+          {
+            "node": "notify-failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "ppm-clarity",
+      "id": "ppm-clarity"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1.0.0"
+}

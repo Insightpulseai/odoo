@@ -438,3 +438,105 @@ These objects cross SSOT boundaries and require explicit mirror contracts:
 3. An n8n workflow that handles PII must audit each execution to `ops.platform_events`.
 4. An Odoo module must not bypass `mail.mail.send()` to SMTP directly — use the bridge when env vars are set.
 5. A Supabase migration must not drop or truncate a table named `ops.*` without a superseding migration.
+
+---
+
+## §15 — GitHub Organization Taxonomy
+
+**SSOT**: `ssot/github/org_repos.yaml` (when created)
+
+**Purpose**: Classify repositories by tier, data classification, and lifecycle state
+
+**Documentation**: `docs/architecture/ORG_TAXONOMY.md`
+
+### Tier System
+
+| Tier | Purpose | Classification | Visibility |
+|------|---------|----------------|------------|
+| **Tier 0** | Platform core (production infrastructure) | Confidential | Private |
+| **Tier 1** | Product applications (revenue-generating) | Confidential | Private |
+| **Tier 2** | Internal tools (dev productivity) | Confidential | Private |
+| **Tier 3** | Experiments & prototypes | Internal | Private (may be public) |
+| **Tier 4** | Archived & legacy | Historical | Archived |
+| **UI Libs** | Shared UI components | Public | Public (npm) |
+| **Finance** | BIR/PEZA compliance modules | Restricted | Private |
+
+### Naming Conventions
+
+| Tier | Pattern | Package Scope |
+|------|---------|---------------|
+| Tier 0-1 | `{name}` | `@ipai/{name}` |
+| Tier 2 | `{tool-name}` | `@ipai/{tool}` |
+| Tier 3 | `exp-{name}` or `poc-{name}` | `@ipai-labs/{name}` |
+| UI Libs | `ui-{library}` | `@ipai/{library}` |
+| Finance | `ipai-finance-{module}` | `@ipai/finance/{module}` |
+
+### Lifecycle States
+
+| State | Description | Commits | Issues/PRs |
+|-------|-------------|---------|------------|
+| `active` | Under active development | Regular (monthly) | Accepted |
+| `maintenance` | Bug fixes only, no new features | Critical fixes only | Low priority |
+| `deprecated` | Scheduled for archival, migration path documented | No new commits | Closed |
+| `archived` | Read-only, historical preservation | None | Disabled |
+
+### Cross-References
+
+- **Naming Rules**: Repository names must match SSOT entry `id` field
+- **Package Scopes**: npm/PyPI packages must use tier-appropriate scopes
+- **Lifecycle Transitions**: Require updating SSOT + adding migration guides
+
+---
+
+## §16 — Secrets Registry
+
+**SSOT**: `ssot/secrets/registry.yaml` (v2 schema)
+
+**Purpose**: Central inventory of all secrets across the platform
+
+**Documentation**: `docs/architecture/SECRETS_POLICY.md`
+
+### Secret Types
+
+| Type | Storage | Access Pattern | Rotation |
+|------|---------|---------------|----------|
+| `api_key` | Supabase Vault | Edge Functions via `Deno.env.get()` | 90 days |
+| `oauth_token` | Supabase Vault | Edge Functions via `Deno.env.get()` | Provider-managed |
+| `ssh_key` | GitHub Secrets | CI/CD workflows | Annual |
+| `database_password` | Container env vars | Docker Compose injection | Quarterly |
+| `signing_key` | Azure Key Vault | Container Apps reference | Annual |
+| `webhook_secret` | Supabase Vault | Edge Functions validation | 180 days |
+
+### Registry Schema (v2)
+
+```yaml
+# ssot/secrets/registry.yaml
+secrets:
+  - id: plane_api_key
+    name: PLANE_API_KEY
+    type: api_key
+    storage: supabase_vault
+    scope: ppm_clarity
+    rotation_days: 90
+    last_rotated: "2026-03-01"
+    consumers:
+      - n8n-workflows/ppm-clarity-plane-to-odoo
+      - supabase/functions/plane-sync
+
+  - id: odoo_admin_password
+    name: ODOO_ADMIN_PASSWORD
+    type: database_password
+    storage: container_env
+    scope: odoo_prod
+    rotation_days: 90
+    last_rotated: "2026-02-15"
+    consumers:
+      - deploy/odoo-prod.compose.yml
+```
+
+### Cross-References
+
+- **Naming**: Secret names must use `SCREAMING_SNAKE_CASE`
+- **Storage Decision Tree**: `docs/architecture/SECRETS_POLICY.md §3`
+- **Rotation Schedule**: `ssot/maintenance/schedules.yaml`
+- **Vault Provisioning**: `infra/supabase/vault_secrets.tf` (names only, not values)

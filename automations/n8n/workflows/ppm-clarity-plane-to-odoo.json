@@ -1,0 +1,228 @@
+{
+  "name": "PPM Clarity: Plane to Odoo Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ppm-clarity/plane-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-plane",
+      "name": "Plane Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "ppm-clarity-plane"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "combineOperation": "any"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body.state }}",
+              "rightValue": "Planned",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.body.state }}",
+              "rightValue": "In Progress",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.body.labels }}",
+              "rightValue": "commit",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-commitment",
+      "name": "Check Commitment Signal",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [250, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ops.sync_plane_to_odoo($1::jsonb)",
+        "options": {
+          "queryParams": "={{ JSON.stringify($json.body) }}"
+        }
+      },
+      "id": "sync-rpc",
+      "name": "Sync to Odoo",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [500, 0],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-ppm",
+          "name": "Supabase PPM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_CHANNEL_LOGS }}",
+        "text": "✅ PPM Clarity: Synced Plane task to Odoo\n• Task: {{ $json.body.name }}\n• Plane ID: {{ $json.body.id }}\n• Odoo Task: Created/Updated",
+        "otherOptions": {}
+      },
+      "id": "notify-success",
+      "name": "Slack Success",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [750, 0],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_CHANNEL_ALERTS }}",
+        "text": "🚨 PPM Clarity: Failed to sync Plane task\n• Task: {{ $json.body.name }}\n• Plane ID: {{ $json.body.id }}\n• Error: {{ $json.error.message }}",
+        "otherOptions": {}
+      },
+      "id": "notify-failure",
+      "name": "Slack Failure",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [500, 200],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ JSON.stringify({ status: 'success', message: 'Synced to Odoo' }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-ok",
+      "name": "Response OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1000, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ JSON.stringify({ status: 'ignored', message: 'No commitment signal' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-ignored",
+      "name": "Response Ignored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [250, 200]
+    }
+  ],
+  "connections": {
+    "webhook-plane": {
+      "main": [
+        [
+          {
+            "node": "check-commitment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-commitment": {
+      "main": [
+        [
+          {
+            "node": "sync-rpc",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "respond-ignored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-rpc": {
+      "main": [
+        [
+          {
+            "node": "notify-success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notify-success": {
+      "main": [
+        [
+          {
+            "node": "respond-ok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-rpc": {
+      "main": [
+        [],
+        [
+          {
+            "node": "notify-failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "ppm-clarity",
+      "id": "ppm-clarity"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1.0.0"
+}
