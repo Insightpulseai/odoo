@@ -438,6 +438,50 @@ hostnames:
       expected_status: 200
 
   # ---------------------------------------------------------------------------
+  # crm.insightpulseai.com — Atomic CRM (marmelab/atomic-crm)
+  # ---------------------------------------------------------------------------
+  - hostname: crm.insightpulseai.com
+    service: atomic_crm
+    envs:
+      local:
+        compose_service: null
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:3004
+        upstream_name: atomic_crm
+        nginx_paths:
+          - /etc/nginx/sites-enabled/crm.insightpulseai.com.conf
+        repo_config: infra/deploy/nginx/crm.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: crm.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/crm.insightpulseai.com.access.log
+        log_error: /var/log/nginx/crm.insightpulseai.com.error.log
+        note: "Atomic CRM SPA. Container atomic-crm :3004→80. Supabase backend."
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    client_limits:
+      max_body_size: 50M
+    health_check:
+      path: /
+      expected_status: 200
+
+  # ---------------------------------------------------------------------------
   # auth.insightpulseai.com — Authentication service (Express)
   # ---------------------------------------------------------------------------
   - hostname: auth.insightpulseai.com

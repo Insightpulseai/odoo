@@ -1,0 +1,133 @@
+# schema: ssot.tool_allowlist.v1
+# ChatGPT App Tool Allowlist — deny-by-default
+# Owner: ops
+# Created: 2026-03-05
+# Referenced by: ssot/apps/chatgpt_apps/odoo_plane_slack.yaml
+
+version: 1
+
+policy:
+  default: deny
+  audit_all: true
+  audit_sink: supabase.ops.run_events
+  idempotency: required_for_writes
+
+  allow:
+    # -------------------------------------------------------------------------
+    # Odoo tools (approval-gated in prod via Slack)
+    # Backend: XML-RPC with dedicated service user (odoo_chatgpt_rpc_user)
+    # -------------------------------------------------------------------------
+    - tool: "odoo.update_partner"
+      description: "Update res.partner fields (name, contact info, categories)"
+      environments: ["prod"]
+      requires_approval: true
+      allowed_fields:
+        - name
+        - email
+        - phone
+        - street
+        - city
+        - country_id
+        - category_id
+      blocked_fields:
+        - vat
+        - bank_ids
+        - property_account_receivable_id
+        - property_account_payable_id
+
+    - tool: "odoo.update_opportunity"
+      description: "Update crm.lead fields (stage, revenue, probability, deadline)"
+      environments: ["prod"]
+      requires_approval: true
+      allowed_fields:
+        - stage_id
+        - expected_revenue
+        - probability
+        - date_deadline
+        - tag_ids
+        - description
+      blocked_fields:
+        - partner_id  # use odoo.update_partner instead
+        - user_id     # reassignment requires manager approval
+
+    - tool: "odoo.create_activity"
+      description: "Schedule activities on Odoo records"
+      environments: ["prod", "stage"]
+      requires_approval: false
+      allowed_models:
+        - crm.lead
+        - res.partner
+        - project.task
+        - sale.order
+      blocked_models:
+        - account.move
+        - account.payment
+
+    - tool: "odoo.search_read"
+      description: "Read-only search across allowed Odoo models"
+      environments: ["prod", "stage"]
+      requires_approval: false
+      allowed_models:
+        - res.partner
+        - crm.lead
+        - project.task
+        - sale.order
+        - product.product
+      max_limit: 100
+
+    # -------------------------------------------------------------------------
+    # Plane tools (no approval needed)
+    # Backend: REST API with Bot Token (X-API-Key)
+    # Rate limit: 60 req/min (Plane API constraint)
+    # -------------------------------------------------------------------------
+    - tool: "plane.create_work_item"
+      description: "Create a new work item (issue) in Plane"
+      environments: ["prod", "stage"]
+      requires_approval: false
+      required_fields:
+        - name
+        - project_id
+      optional_fields:
+        - description_html
+        - priority
+        - state_id
+        - assignee_ids
+        - label_ids
+
+    - tool: "plane.update_work_item"
+      description: "Update an existing Plane work item"
+      environments: ["prod", "stage"]
+      requires_approval: false
+
+    - tool: "plane.create_page"
+      description: "Create a Plane page (wiki/doc)"
+      environments: ["prod", "stage"]
+      requires_approval: false
+
+    - tool: "plane.add_comment"
+      description: "Add a comment to a Plane work item"
+      environments: ["prod", "stage"]
+      requires_approval: false
+
+    - tool: "plane.list_work_items"
+      description: "List/search work items in a Plane project"
+      environments: ["prod", "stage"]
+      requires_approval: false
+      max_limit: 100
+
+    # -------------------------------------------------------------------------
+    # Slack tools (no approval needed)
+    # Backend: Slack Web API (xoxb- bot token)
+    # -------------------------------------------------------------------------
+    - tool: "slack.post_message"
+      description: "Post a message to a Slack channel"
+      environments: ["prod", "stage"]
+      requires_approval: false
+      allowed_channels_ref: ssot/integrations/slack/allowed_channels.yaml
+
+    - tool: "slack.request_approval"
+      description: "Send an interactive approval request via Slack"
+      environments: ["prod"]
+      requires_approval: false
+      response_action: "block_until_approved"
+      timeout_minutes: 60
