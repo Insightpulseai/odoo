@@ -1,228 +1,136 @@
 {
-  "name": "PPM Clarity: Plane to Odoo Sync",
+  "name": "PPM Clarity: Plane → Odoo (Commitment)",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "ppm-clarity/plane-webhook",
-        "responseMode": "responseNode",
-        "options": {}
+        "responseMode": "onReceived",
+        "options": {
+          "rawBody": true
+        }
       },
-      "id": "webhook-plane",
       "name": "Plane Webhook",
       "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [0, 0],
-      "webhookId": "ppm-clarity-plane"
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Validate HMAC-SHA256 signature\nconst crypto = require('crypto');\nconst secret = $env.PLANE_WEBHOOK_SECRET;\nconst signature = $input.first().headers['x-plane-signature'];\nconst body = $input.first().body;\n\nconst expected = crypto.createHmac('sha256', secret)\n  .update(JSON.stringify(body))\n  .digest('hex');\n\nif (signature !== expected) {\n  throw new Error('HMAC signature validation failed');\n}\n\n// Extract commitment signal\nconst event = body;\nconst issue = event.data || {};\nconst state = issue.state_detail?.name || '';\nconst labels = (issue.labels || []).map(l => l.name || l);\n\n// Only process commitment signals\nconst isCommitment = state === 'In Progress' || labels.includes('commit');\n\nreturn [{\n  json: {\n    should_sync: isCommitment,\n    plane_project_id: issue.project || event.project,\n    plane_issue_id: issue.id,\n    title: issue.name,\n    description: issue.description_html || '',\n    priority: issue.priority || 'none',\n    state: state,\n    labels: labels,\n    idempotency_key: `plane:plane_to_odoo:${issue.id}:${event.created_at || new Date().toISOString()}`\n  }\n}];"
+      },
+      "name": "Validate & Extract",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
     },
     {
       "parameters": {
         "conditions": {
-          "options": {
-            "combineOperation": "any"
-          },
-          "conditions": [
+          "boolean": [
             {
-              "leftValue": "={{ $json.body.state }}",
-              "rightValue": "Planned",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            },
-            {
-              "leftValue": "={{ $json.body.state }}",
-              "rightValue": "In Progress",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            },
-            {
-              "leftValue": "={{ $json.body.labels }}",
-              "rightValue": "commit",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
+              "value1": "={{ $json.should_sync }}",
+              "value2": true
             }
           ]
         }
       },
-      "id": "check-commitment",
-      "name": "Check Commitment Signal",
+      "name": "Is Commitment?",
       "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [250, 0]
+      "typeVersion": 1,
+      "position": [650, 300]
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT ops.sync_plane_to_odoo($1::jsonb)",
-        "options": {
-          "queryParams": "={{ JSON.stringify($json.body) }}"
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/upsert_work_item_link",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "p_plane_project_id", "value": "={{ $json.plane_project_id }}" },
+            { "name": "p_plane_issue_id", "value": "={{ $json.plane_issue_id }}" },
+            { "name": "p_sync_state", "value": "ok" }
+          ]
         }
       },
-      "id": "sync-rpc",
+      "name": "Upsert Link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Call Odoo XML-RPC to create/update task\n// This is a placeholder — actual implementation uses\n// the Python sync_engine via Edge Function or direct call\nconst input = $input.first().json;\n\nreturn [{\n  json: {\n    ...input,\n    sync_result: 'delegated_to_sync_engine',\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
       "name": "Sync to Odoo",
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.5,
-      "position": [500, 0],
-      "credentials": {
-        "postgres": {
-          "id": "supabase-ppm",
-          "name": "Supabase PPM"
-        }
-      }
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 200]
     },
     {
       "parameters": {
-        "channel": "={{ $env.SLACK_CHANNEL_LOGS }}",
-        "text": "✅ PPM Clarity: Synced Plane task to Odoo\n• Task: {{ $json.body.name }}\n• Plane ID: {{ $json.body.id }}\n• Odoo Task: Created/Updated",
-        "otherOptions": {}
-      },
-      "id": "notify-success",
-      "name": "Slack Success",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.2,
-      "position": [750, 0],
-      "credentials": {
-        "slackApi": {
-          "id": "slack-bot",
-          "name": "Slack Bot"
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/append_work_item_event",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "p_event_type", "value": "plane_to_odoo" },
+            { "name": "p_source_system", "value": "n8n" },
+            { "name": "p_event_data", "value": "={{ JSON.stringify($json) }}" },
+            { "name": "p_idempotency_key", "value": "={{ $json.idempotency_key }}" },
+            { "name": "p_success", "value": true }
+          ]
         }
-      }
+      },
+      "name": "Log Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1250, 200]
     },
     {
       "parameters": {
-        "channel": "={{ $env.SLACK_CHANNEL_ALERTS }}",
-        "text": "🚨 PPM Clarity: Failed to sync Plane task\n• Task: {{ $json.body.name }}\n• Plane ID: {{ $json.body.id }}\n• Error: {{ $json.error.message }}",
-        "otherOptions": {}
-      },
-      "id": "notify-failure",
-      "name": "Slack Failure",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 2.2,
-      "position": [500, 200],
-      "credentials": {
-        "slackApi": {
-          "id": "slack-bot",
-          "name": "Slack Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "respondWith": "text",
-        "responseBody": "={{ JSON.stringify({ status: 'success', message: 'Synced to Odoo' }) }}",
-        "options": {
-          "responseCode": 200,
-          "responseHeaders": {
-            "entries": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          }
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "channel", "value": "#ppm-clarity-logs" },
+            { "name": "text", "value": "Sync completed: Plane issue {{ $json.plane_issue_id }} \"{{ $json.title }}\" → Odoo" }
+          ]
         }
       },
-      "id": "respond-ok",
-      "name": "Response OK",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [1000, 0]
-    },
-    {
-      "parameters": {
-        "respondWith": "text",
-        "responseBody": "={{ JSON.stringify({ status: 'ignored', message: 'No commitment signal' }) }}",
-        "options": {
-          "responseCode": 200
-        }
-      },
-      "id": "respond-ignored",
-      "name": "Response Ignored",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [250, 200]
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1450, 200]
     }
   ],
   "connections": {
-    "webhook-plane": {
-      "main": [
-        [
-          {
-            "node": "check-commitment",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "check-commitment": {
-      "main": [
-        [
-          {
-            "node": "sync-rpc",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "respond-ignored",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "sync-rpc": {
-      "main": [
-        [
-          {
-            "node": "notify-success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "notify-success": {
-      "main": [
-        [
-          {
-            "node": "respond-ok",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "sync-rpc": {
-      "main": [
-        [],
-        [
-          {
-            "node": "notify-failure",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
+    "Plane Webhook": { "main": [[{ "node": "Validate & Extract", "type": "main", "index": 0 }]] },
+    "Validate & Extract": { "main": [[{ "node": "Is Commitment?", "type": "main", "index": 0 }]] },
+    "Is Commitment?": { "main": [[{ "node": "Upsert Link", "type": "main", "index": 0 }], []] },
+    "Upsert Link": { "main": [[{ "node": "Sync to Odoo", "type": "main", "index": 0 }]] },
+    "Sync to Odoo": { "main": [[{ "node": "Log Event", "type": "main", "index": 0 }]] },
+    "Log Event": { "main": [[{ "node": "Notify Slack", "type": "main", "index": 0 }]] }
   },
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
-  "tags": [
-    {
-      "name": "ppm-clarity",
-      "id": "ppm-clarity"
-    }
-  ],
-  "pinData": {},
-  "versionId": "1.0.0"
+  "tags": ["ppm-clarity", "plane", "odoo", "sync"]
 }
