@@ -188,25 +188,22 @@ subdomains:
     type: A
     service: authentication_service
     port: 8080
-    health_check: /.well-known/openid-configuration
-    owner_system: "Authentication service"
+    health_check: /
+    owner_system: "Authentication service (Express)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # lifecycle=planned: auth-prod container runs on :8080 but has no nginx vhost
-    # and OIDC discovery endpoint returns 404. Must not be "active" until both
-    # conditions are resolved.
-    lifecycle: planned
-    status: planned
-    backing_status: broken
-    activation_criteria:
-      - "Add nginx vhost routing auth.insightpulseai.com → 127.0.0.1:8080"
-      - "Implement /.well-known/openid-configuration endpoint in auth-prod service"
+    # DNS + nginx vhost deployed 2026-03-05. Container auth-prod healthy on :8080.
+    # OIDC discovery (/.well-known/openid-configuration) not yet implemented.
+    # Supabase OIDC IdP integration planned.
+    lifecycle: active
+    status: active
+    backing_status: partial
+    notes: "DNS + nginx live. Express container healthy but no OIDC discovery yet. Supabase Auth IdP integration planned."
     provider_claim:
       provider: cloudflare
       status: claimed
-      claimed_at: "2026-02-27"
+      claimed_at: "2026-03-05"
       claim_ref: "ssot:cloudflare"
-      expires_at: "2026-06-01"
 
   - name: superset
     type: A
@@ -315,15 +312,10 @@ subdomains:
     owner_system: "OdooOps Console (Next.js on Vercel)"
     cloudflare_proxied: false   # DNS-only required for Vercel CNAME
     tls_mode: "Full (strict)"
-    # lifecycle=planned: Vercel domain verified (2026-03-01) but CNAME not yet
-    # created in Cloudflare. ops.insightpulseai.com does not resolve.
-    # Flip to active after creating CNAME in CF dashboard or Terraform apply.
-    lifecycle: planned
-    status: planned
-    backing_status: dns_missing
-    activation_criteria:
-      - "Create CNAME ops → cname.vercel-dns.com in Cloudflare (DNS-only, no proxy)"
-      - "Verify ops.insightpulseai.com resolves to Vercel"
+    # CNAME created in Cloudflare 2026-03-05. DNS-only (not proxied).
+    lifecycle: active
+    status: active
+    notes: "CNAME created 2026-03-05. Vercel domain verified 2026-03-01."
     provider_claim:
       provider: vercel
       status: claimed

@@ -43,6 +43,7 @@ prohibited_patterns:
       - "web/platform-kit/"        # platform-kit references deprecated items
 
 canonical_subdomains:
+  # --- Active A records (proxied via Cloudflare → 178.128.112.214) ---
   - host: erp
     service: Odoo CE 19
     stack: self-hosted-docker
@@ -50,10 +51,10 @@ canonical_subdomains:
     notes: "Primary ERP — erp.insightpulseai.com"
 
   - host: auth
-    service: Supabase Auth / Stack Auth
-    stack: supabase
+    service: Auth service (Express)
+    stack: self-hosted-docker
     resolves_to: 178.128.112.214
-    notes: "Authentication gateway"
+    notes: "Authentication gateway — auth-prod container :8080. OIDC endpoint TBD."
 
   - host: n8n
     service: n8n automation
@@ -63,48 +64,15 @@ canonical_subdomains:
 
   - host: ocr
     service: PaddleOCR service
-    stack: do-app-platform
+    stack: self-hosted-docker
     resolves_to: 178.128.112.214
     notes: "Document OCR processing"
 
-  - host: ops
-    service: Ops Console
-    stack: vercel-nextjs
-    resolves_to: vercel-cname
-    notes: "Internal operations dashboard"
-
-  - host: api
-    service: API gateway
-    stack: tbd
-    resolves_to: tbd
-    notes: "Planned — not yet active"
-
-  - host: docs
-    service: Documentation
-    stack: tbd
-    resolves_to: tbd
-    notes: "Planned — not yet active"
-
-  - host: superset
-    service: Apache Superset BI
-    stack: do-app-platform
-    resolves_to: superset-nlavf.ondigitalocean.app
-    dns_type: CNAME
-    notes: "BI analytics dashboard"
-
-  - host: mcp
-    service: MCP coordination server
-    stack: do-app-platform
-    resolves_to: pulse-hub-web-an645.ondigitalocean.app
-    dns_type: CNAME
-    notes: "MCP server hub"
-
-  - host: agent
-    service: AI agent endpoint
-    stack: do-agents
-    resolves_to: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
-    dns_type: CNAME
-    notes: "Primary AI agent endpoint"
+  - host: plane
+    service: Plane project management
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "Plane CE (self-hosted) — community-proxy on :3002"
 
   - host: shelf
     service: Shelf asset management (self-hosted fork)
@@ -112,6 +80,55 @@ canonical_subdomains:
     resolves_to: 178.128.112.214
     notes: "Self-hosted Shelf.nu fork — asset tracking"
 
+  - host: superset
+    service: Apache Superset BI
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "BI analytics dashboard — superset-prod on :8088"
+
+  - host: mcp
+    service: MCP coordination server
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "MCP coordinator on :8766 — runs on droplet (not DO App Platform)"
+
+  - host: www
+    service: WWW redirect
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "Redirects to apex insightpulseai.com"
+
+  # --- Active CNAME records (DNS-only, not proxied) ---
+  - host: agent
+    service: AI agent endpoint
+    stack: do-agents
+    resolves_to: wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run
+    dns_type: CNAME
+    notes: "Primary AI agent endpoint — DO AI Agents platform"
+
+  - host: ops
+    service: Ops Console
+    stack: vercel-nextjs
+    resolves_to: cname.vercel-dns.com
+    dns_type: CNAME
+    notes: "Internal operations dashboard — Vercel deployment"
+
+  # --- Planned (not yet active) ---
+  - host: api
+    service: API gateway
+    stack: tbd
+    resolves_to: tbd
+    status: planned
+    notes: "Planned — not yet active"
+
+  - host: docs
+    service: Documentation
+    stack: tbd
+    resolves_to: tbd
+    status: planned
+    notes: "Planned — not yet active"
+
+  # --- Deprecated ---
   - host: chat
     service: Mattermost (legacy)
     stack: self-hosted-docker
