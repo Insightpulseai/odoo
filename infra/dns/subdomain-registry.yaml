@@ -151,17 +151,21 @@ subdomains:
 
   - name: shelf
     type: A
-    service: shelf_redirect
-    port: 80
-    health_check: /
-    owner_system: "Nginx redirect → shelf.nu"
+    service: shelf_asset_management
+    port: 3003
+    health_check: /healthcheck
+    owner_system: "Shelf.nu (self-hosted, ipai fork)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # Activated 2026-03-05: redirect-only vhost (301 → https://shelf.nu).
-    # No container needed — nginx handles the redirect.
+    # DNS active (A record exists in CF), but service not yet deployed.
+    # Nginx returns 503 placeholder until Shelf fork container runs on :3003.
     lifecycle: active
     status: active
-    notes: "Redirect-only. No upstream container. Nginx returns 301 to https://shelf.nu."
+    backing_status: not_deployed
+    activation_criteria:
+      - "Deploy Shelf.nu fork container on port 3003"
+      - "Update nginx vhost to proxy_pass → 127.0.0.1:3003"
+    notes: "CF A record created 2026-03-05. Nginx serves 503 placeholder. DNS resolves but service pending."
     provider_claim:
       provider: cloudflare
       status: claimed
