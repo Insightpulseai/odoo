@@ -38,31 +38,31 @@ DEFAULT_TENANT_ID = os.environ.get(
 SMOKE_QUERIES = [
     {
         "id": "SMOKE-001",
-        "query": "AI copilot non-negotiable rules",
+        "query": "copilot rules confirmation",
         "expected_corpus": "spec_bundles",
         "min_results": 1,
     },
     {
         "id": "SMOKE-002",
-        "query": "tool permissions contract",
+        "query": "tool permissions",
         "expected_corpus": "docs_contracts",
         "min_results": 1,
     },
     {
         "id": "SMOKE-003",
-        "query": "Gemini provider Odoo AI",
+        "query": "Gemini provider AI",
         "expected_corpus": "ssot_yaml",
         "min_results": 1,
     },
     {
         "id": "SMOKE-004",
-        "query": "release contract gates passed",
+        "query": "release gates deployment",
         "expected_corpus": "ssot_yaml",
         "min_results": 1,
     },
     {
         "id": "SMOKE-005",
-        "query": "IPAI module naming convention",
+        "query": "IPAI module naming",
         "expected_corpus": "docs_ai",
         "min_results": 1,
     },

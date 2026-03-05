@@ -29,6 +29,10 @@ required_fields:
     type: "sha256:..."
     description: "Hash of sorted addon manifest list (addons/ipai + addons/oca)"
 
+  - field: sbom_artifact
+    type: path
+    description: "SPDX or CycloneDX SBOM file"
+
   - field: gates_passed
     type: list
     description: "List of gates passed (G1-G4 per spec/odoo-release-gates-control-plane)"
@@ -46,10 +50,6 @@ required_fields:
     description: "UTC timestamp of release creation"
 
 optional_fields:
-  - field: sbom_artifact
-    type: path
-    description: "SPDX or CycloneDX SBOM file path (null if not generated)"
-
   - field: vuln_scan_result
     description: "Grype vulnerability scan summary (critical/high/medium/low counts)"
 

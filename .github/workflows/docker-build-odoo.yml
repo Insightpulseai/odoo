@@ -1,0 +1,366 @@
+name: Build and Publish Odoo Docker Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/oca/**'
+      - 'docker/odoo/**'
+      - 'requirements.txt'
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., 19.0.1)'
+        required: false
+        default: '19.0'
+
+env:
+  REGISTRY_GHCR: ghcr.io
+  REGISTRY_DO: registry.digitalocean.com/insightpulseai
+  IMAGE_NAME: odoo-ipai
+  ODOO_VERSION: "19.0"
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write  # For OIDC
+  security-events: write  # For Trivy SARIF upload
+
+jobs:
+  # Step 1: Authenticate with OIDC
+  authenticate:
+    name: "🔐 OIDC Authentication"
+    runs-on: ubuntu-latest
+    outputs:
+      supabase_token: ${{ steps.auth.outputs.token }}
+    steps:
+      - name: Get OIDC Token
+        id: oidc
+        run: |
+          OIDC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=insightpulseai-odoo" \
+            | jq -r '.value')
+          echo "::add-mask::$OIDC_TOKEN"
+          echo "oidc_token=$OIDC_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Exchange for Supabase Token
+        id: auth
+        run: |
+          SUPABASE_TOKEN=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/auth/v1/token?grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+            -H "Content-Type: application/json" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -d "{\"assertion\": \"${{ steps.oidc.outputs.oidc_token }}\"}" \
+            | jq -r '.access_token')
+          echo "::add-mask::$SUPABASE_TOKEN"
+          echo "token=$SUPABASE_TOKEN" >> $GITHUB_OUTPUT
+
+  # Step 2: Fetch secrets from Vault
+  fetch-secrets:
+    name: "🔑 Fetch Secrets from Vault"
+    runs-on: ubuntu-latest
+    needs: authenticate
+    outputs:
+      do_registry_token: ${{ steps.secrets.outputs.do_registry_token }}
+    steps:
+      - name: Fetch secrets from Supabase Vault
+        id: secrets
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          SECRETS=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_workflow_secrets" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"workflow_name": "docker-build-odoo"}')
+
+          # Extract DO registry token
+          DO_TOKEN=$(echo "$SECRETS" | jq -r '.DO_REGISTRY_TOKEN')
+          echo "::add-mask::$DO_TOKEN"
+          echo "do_registry_token=$DO_TOKEN" >> $GITHUB_OUTPUT
+
+  # Step 3: Build and push image
+  build-and-push:
+    name: "🐳 Build and Push Docker Image"
+    runs-on: self-hosted
+    needs: [authenticate, fetch-secrets]
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_GHCR }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_DO }}
+          username: ${{ secrets.DO_REGISTRY_USERNAME }}
+          password: ${{ needs.fetch-secrets.outputs.do_registry_token }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            ${{ env.REGISTRY_DO }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.ODOO_VERSION }}
+            type=raw,value=${{ env.ODOO_VERSION }}-{{sha}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Odoo IPAI
+            org.opencontainers.image.description=Odoo 19.0 CE with InsightPulse AI custom modules
+            org.opencontainers.image.vendor=InsightPulse AI
+            com.insightpulseai.odoo.version=${{ env.ODOO_VERSION }}
+            com.insightpulseai.odoo.modules=ipai,oca
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/odoo/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            ODOO_VERSION=${{ env.ODOO_VERSION }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+      - name: Export image digest
+        run: |
+          echo "Image digest: ${{ steps.build.outputs.digest }}"
+          echo "Image tags: ${{ steps.meta.outputs.tags }}"
+
+  # Step 4: Security scan with Trivy
+  security-scan:
+    name: "🔍 Security Scan (Trivy)"
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.ODOO_VERSION }}-${{ github.sha }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Parse Trivy results for Plane
+        id: parse
+        run: |
+          # Count vulnerabilities by severity
+          CRITICAL=$(jq '[.runs[].results[] | select(.level == "error")] | length' trivy-results.sarif)
+          HIGH=$(jq '[.runs[].results[] | select(.level == "warning")] | length' trivy-results.sarif)
+
+          echo "critical=$CRITICAL" >> $GITHUB_OUTPUT
+          echo "high=$HIGH" >> $GITHUB_OUTPUT
+
+          if [[ $CRITICAL -gt 0 ]] || [[ $HIGH -gt 0 ]]; then
+            echo "vulnerabilities_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Plane issue for vulnerabilities
+        if: steps.parse.outputs.vulnerabilities_found == 'true'
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          # Fetch Plane API key from Vault
+          PLANE_API_KEY=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_workflow_secrets" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"workflow_name": "docker-build-odoo"}' \
+            | jq -r '.PLANE_API_KEY')
+
+          # Create Plane issue
+          curl -X POST \
+            "${{ secrets.PLANE_API_URL }}/workspaces/fin-ops/projects/${{ secrets.PLANE_PROJECT_ID }}/issues/" \
+            -H "X-API-Key: $PLANE_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"name\": \"🚨 Security Vulnerabilities in odoo-ipai:${{ env.ODOO_VERSION }}-${{ github.sha }}\",
+              \"description_html\": \"<p><strong>Critical</strong>: ${{ steps.parse.outputs.critical }}<br><strong>High</strong>: ${{ steps.parse.outputs.high }}</p><p>Image: <code>${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.ODOO_VERSION }}-${{ github.sha }}</code></p><p>View details: ${{ github.server_url }}/${{ github.repository }}/security/code-scanning</p>\",
+              \"state\": \"backlog\",
+              \"priority\": \"urgent\",
+              \"labels\": [\"security\", \"docker\", \"vulnerabilities\"]
+            }"
+
+  # Step 5: Sign image with Cosign
+  sign-image:
+    name: "✍️ Sign Image (Cosign)"
+    runs-on: ubuntu-latest
+    needs: [build-and-push, security-scan]
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign container image
+        run: |
+          cosign sign --yes \
+            ${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ needs.build-and-push.outputs.image_digest }}
+
+  # Step 6: Trigger deployment
+  trigger-deployment:
+    name: "🚀 Trigger Deployment"
+    runs-on: ubuntu-latest
+    needs: [build-and-push, security-scan, sign-image]
+    if: github.ref == 'refs/heads/main' && needs.security-scan.outputs.vulnerabilities_found != 'true'
+    steps:
+      - name: Trigger n8n deployment workflow
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          # Fetch n8n webhook secret from Vault
+          N8N_WEBHOOK_SECRET=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_workflow_secrets" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"workflow_name": "docker-build-odoo"}' \
+            | jq -r '.N8N_WEBHOOK_SECRET')
+
+          # Trigger n8n webhook for deployment
+          curl -X POST \
+            "${{ secrets.N8N_WEBHOOK_URL }}/odoo-deployment" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Secret: $N8N_WEBHOOK_SECRET" \
+            -d "{
+              \"image\": \"${{ env.REGISTRY_DO }}/${{ env.IMAGE_NAME }}:${{ env.ODOO_VERSION }}\",
+              \"tag\": \"${{ env.ODOO_VERSION }}-${{ github.sha }}\",
+              \"commit_sha\": \"${{ github.sha }}\",
+              \"actor\": \"${{ github.actor }}\",
+              \"environment\": \"production\"
+            }"
+
+  # Step 7: Notifications
+  notify:
+    name: "📢 Notifications"
+    runs-on: ubuntu-latest
+    needs: [build-and-push, security-scan, sign-image, trigger-deployment]
+    if: always()
+    steps:
+      - name: Determine status emoji
+        id: status
+        run: |
+          if [[ "${{ needs.build-and-push.result }}" == "failure" ]]; then
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "status=Build Failed" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.security-scan.outputs.vulnerabilities_found }}" == "true" ]]; then
+            echo "emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "status=Security Issues Found" >> $GITHUB_OUTPUT
+          elif [[ "${{ needs.trigger-deployment.result }}" == "success" ]]; then
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "status=Deployed Successfully" >> $GITHUB_OUTPUT
+          else
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "status=Build Successful" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Slack
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          # Fetch Slack token from Vault
+          SLACK_BOT_TOKEN=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_workflow_secrets" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"workflow_name": "docker-build-odoo"}' \
+            | jq -r '.SLACK_BOT_TOKEN')
+
+          # Send Slack notification
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"channel\": \"C06DEPLOYMENTS\",
+              \"text\": \"${{ steps.status.outputs.emoji }} **Docker Build: ${{ steps.status.outputs.status }}**\n\n**Image**: \\\`${{ env.IMAGE_NAME }}:${{ env.ODOO_VERSION }}-${{ github.sha }}\\\`\n**Commit**: ${{ github.sha }}\n**Actor**: ${{ github.actor }}\n**Workflow**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+            }"
+
+      - name: Update Plane deployment issue
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          # Fetch Plane API key from Vault
+          PLANE_API_KEY=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_workflow_secrets" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"workflow_name": "docker-build-odoo"}' \
+            | jq -r '.PLANE_API_KEY')
+
+          # Create or update Plane deployment tracking issue
+          curl -X POST \
+            "${{ secrets.PLANE_API_URL }}/workspaces/fin-ops/projects/${{ secrets.PLANE_PROJECT_ID }}/issues/" \
+            -H "X-API-Key: $PLANE_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"name\": \"🐳 Odoo Docker Image: ${{ env.ODOO_VERSION }}-${{ github.sha }}\",
+              \"description_html\": \"<p>Status: ${{ steps.status.outputs.status }}</p><p>Image: <code>${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.ODOO_VERSION }}-${{ github.sha }}</code></p><p>Commit: ${{ github.sha }}</p>\",
+              \"state\": \"done\",
+              \"priority\": \"medium\",
+              \"labels\": [\"docker\", \"deployment\", \"odoo\"]
+            }"
+
+  # Step 8: Log workflow execution
+  log-execution:
+    name: "📊 Log Workflow Execution"
+    runs-on: ubuntu-latest
+    needs: [authenticate, build-and-push]
+    if: always()
+    steps:
+      - name: Log to Supabase ops.workflow_runs
+        env:
+          SUPABASE_TOKEN: ${{ needs.authenticate.outputs.supabase_token }}
+        run: |
+          curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/ops.workflow_runs" \
+            -H "Authorization: Bearer $SUPABASE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d "{
+              \"workflow_name\": \"${{ github.workflow }}\",
+              \"run_id\": ${{ github.run_id }},
+              \"run_number\": ${{ github.run_number }},
+              \"event\": \"${{ github.event_name }}\",
+              \"status\": \"${{ job.status }}\",
+              \"started_at\": \"${{ github.event.head_commit.timestamp }}\",
+              \"actor\": \"${{ github.actor }}\",
+              \"repository\": \"${{ github.repository }}\",
+              \"branch\": \"${{ github.ref_name }}\",
+              \"commit_sha\": \"${{ github.sha }}\",
+              \"runner_name\": \"$RUNNER_NAME\",
+              \"logs_url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+            }"

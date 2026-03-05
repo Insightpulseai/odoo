@@ -163,6 +163,47 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 
 ---
 
+## Azure Automation Contract (Odoo 19)
+
+**Goal**: Odoo.sh-like automation with Azure-native primitives
+
+### SSOT boundaries
+- **Infra**: `infra/azure/**`, `config/**`, `docker/**`
+- **CI/CD**: `.github/workflows/**`
+- **Evidence**: `web/docs/evidence/**`
+
+### Runtime target (preferred)
+- **Azure Container Apps** for Odoo runtime
+- **Azure Container Registry (ACR)** as artifact store
+- **Azure Database for PostgreSQL Flexible Server**
+- **Azure Key Vault** for runtime secrets
+
+### Auth + secrets policy
+- CI uses **GitHub Actions → Azure OIDC login** (federated identity, no long-lived credentials)
+- All runtime secrets from **Azure Key Vault** at deploy-time
+- No client secrets stored in GitHub (OIDC uses workload identity federation)
+
+### Deployment workflow
+1. **Build**: `az acr build` creates Docker image from `docker/Dockerfile`
+2. **Tag**: Image tagged with `{sha}` and `latest`
+3. **Push**: Automatic push to ACR
+4. **Deploy**: `az containerapp update` creates new revision with blue-green traffic switch
+5. **Verify**: Health checks before traffic routing
+
+### Evidence format
+- **Path**: `web/docs/evidence/<YYYYMMDD-HHMM+0800>/<topic>/logs/`
+- **Timezone**: Asia/Manila (UTC+08:00)
+- **Summary**: `summary.json` with status (`COMPLETE | PARTIAL | BLOCKED`) and log paths
+- **Logs**: Captured stdout/stderr for all operations (build, deploy, upgrade)
+
+**Workflows**:
+- Deploy: `.github/workflows/odoo-azure-deploy.yml` (OIDC-based, blue-green)
+- Upgrade: `.github/workflows/odoo-azure-upgrade-evidence.yml` (Container Apps Jobs + evidence)
+
+**Documentation**: `docs/ops/AZURE_ODOO_AUTOMATION.md`
+
+---
+
 ## Infrastructure SSOT
 
 **DNS Single Source of Truth:**
@@ -182,39 +223,13 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 
 ---
 
-## Secrets Policy
+## Secrets Policy (Non-Negotiable)
 
-### Hard rules (non-negotiable)
-- **Never** hardcode secrets in any file tracked by Git
-- **Never** log or echo secrets in CI logs, debug output, or chat history
-- **Never** store secrets in `runtime/evidence/**`, runbooks, or PR descriptions
-- Use placeholder names in docs: e.g., `CF_API_TOKEN=<from keychain>`
-
-### Approved secret stores
-
-| Context | Store | How to access at runtime |
-|---------|-------|--------------------------|
-| Local dev | OS keychain/keyring (macOS Keychain, GNOME Keyring) | env var injection at shell start |
-| CI / GitHub Actions | GitHub Actions Secrets (repo or org level) | `${{ secrets.NAME }}` |
-| Platform / automation | Supabase Vault (`vault.secrets`) | `vault.decrypted_secrets` view (restricted) |
-| Vercel deployments | Vercel environment variables | Auto-injected by Vercel at build/runtime |
-
-### "Pasted once" rule
-Showing a secret value once in chat or a terminal for the purpose of immediate storage
-**does not automatically constitute an exposure event**. The correct response is:
-1. Move the value immediately into one of the approved stores above
-2. Reference only the secret's name/identifier from that point forward
-3. If the value remains in durable chat history or logs: rotate it when convenient
-
-### Assistant behavior
-- Provide **one short reminder** ("store in keychain/GitHub Secrets; rotate if it lands in logs")
-- Do **not** block execution, repeat rotation warnings, or refuse to continue
-- Continue with the fastest path to production after the reminder
-- Missing secret? State the name needed in one sentence, continue executing
-
-### SSOT for secret identifiers
-`ssot/secrets/registry.yaml` — tracks secret names, purpose, approved stores, and consumers.
-**Never contains values.** See `docs/runbooks/SECRETS_SSOT.md` for full workflow.
+- **Never** ask users to paste secrets/tokens/passwords
+- **Never** hardcode secrets in source checked into git
+- **Never** log/echo secrets in debug output or CI logs
+- Secrets live in: `.env*` (local), GitHub Actions secrets (CI), env vars (runtime)
+- Missing secret? Say what's missing in one sentence, continue executing
 
 ---
 

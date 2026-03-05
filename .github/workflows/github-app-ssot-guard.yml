@@ -1,0 +1,133 @@
+name: GitHub App SSOT Guard
+
+on:
+  pull_request:
+    paths:
+      - "ssot/github/apps/**"
+      - "scripts/ci/check_github_app_ssot.py"
+      - "scripts/github_app/**"
+      - ".github/workflows/github-app-ssot-guard.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/github/apps/**"
+      - "scripts/ci/check_github_app_ssot.py"
+  schedule:
+    # Weekly drift check (Monday 09:00 UTC)
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-ssot:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        run: |
+          python3 -m pip install --quiet pyyaml 2>/dev/null || true
+
+      - name: Validate SSOT YAML syntax
+        run: |
+          set -euo pipefail
+          echo "=== Validating GitHub App SSOT files ==="
+          python3 -c "
+          import yaml, sys, glob
+          for f in sorted(glob.glob('ssot/github/apps/*.yaml')):
+              try:
+                  with open(f) as fh:
+                      data = yaml.safe_load(fh)
+                  if not data:
+                      print(f'ERROR: {f} is empty')
+                      sys.exit(1)
+                  print(f'OK: {f}')
+              except Exception as e:
+                  print(f'ERROR: {f}: {e}')
+                  sys.exit(1)
+          "
+
+      - name: Validate pulser-hub required fields
+        run: |
+          set -euo pipefail
+          python3 -c "
+          import yaml, sys
+
+          with open('ssot/github/apps/pulser-hub.yaml') as f:
+              data = yaml.safe_load(f)
+
+          app = data.get('app', {})
+          errors = []
+
+          # Required fields
+          for key in ['name', 'app_id', 'client_id', 'owner', 'permissions', 'events', 'webhook', 'installation', 'auth', 'secrets']:
+              if key not in app:
+                  errors.append(f'Missing required field: app.{key}')
+
+          # Webhook must have url and secret_ref
+          webhook = app.get('webhook', {})
+          if not webhook.get('url'):
+              errors.append('webhook.url is required')
+          if not webhook.get('secret_ref'):
+              errors.append('webhook.secret_ref is required')
+
+          # Auth must have jwt_issuer
+          auth = app.get('auth', {})
+          if not auth.get('jwt_issuer'):
+              errors.append('auth.jwt_issuer is required')
+
+          # Permissions must include metadata:read
+          perms = app.get('permissions', {})
+          if perms.get('metadata') != 'read':
+              errors.append('permissions.metadata must be read (required by all GitHub Apps)')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}')
+              sys.exit(1)
+          else:
+              print(f'OK: pulser-hub.yaml has all required fields')
+          "
+
+      - name: Validate org-installed required fields
+        run: |
+          set -euo pipefail
+          python3 -c "
+          import yaml, sys
+
+          with open('ssot/github/apps/org-installed.yaml') as f:
+              data = yaml.safe_load(f)
+
+          errors = []
+          apps = data.get('apps', [])
+
+          if not apps:
+              errors.append('No apps defined in org-installed.yaml')
+
+          for app in apps:
+              slug = app.get('slug', 'unknown')
+              for key in ['slug', 'app_id', 'installation_id', 'permissions']:
+                  if key not in app:
+                      errors.append(f'{slug}: missing required field: {key}')
+              # metadata:read required for all apps
+              perms = app.get('permissions', {})
+              if 'metadata' not in perms:
+                  errors.append(f'{slug}: missing metadata permission')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}')
+              sys.exit(1)
+          else:
+              print(f'OK: org-installed.yaml has {len(apps)} apps with required fields')
+          "
+
+      - name: Check org installation drift
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_github_app_ssot.py --app org

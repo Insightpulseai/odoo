@@ -135,3 +135,12 @@ integrations:
     status: planned
     category: integration
     vendor: plane
+
+  # ---------------------------------------------------------------------------
+  # Unified platform inventory (all confirmed integrations)
+  # ---------------------------------------------------------------------------
+  - id: platform_inventory
+    file: ssot/integrations/platform_inventory.yaml
+    status: active
+    category: platform_inventory
+    vendor: internal

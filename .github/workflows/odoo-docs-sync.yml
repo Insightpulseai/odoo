@@ -1,0 +1,323 @@
+name: Sync Odoo Official Documentation
+
+# Daily sync from odoo/documentation@19.0 to docs/kb/odoo19/
+# Triggers reindex and static site rebuild on changes
+
+on:
+  schedule:
+    # Daily at 3 AM UTC (low traffic time)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild even if no changes'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync-official-docs:
+    name: "📥 Sync from odoo/documentation"
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check-changes.outputs.has_changes }}
+      sync_commit: ${{ steps.commit-sync.outputs.sync_commit }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone official Odoo documentation
+        run: |
+          git clone \
+            --branch 19.0 \
+            --depth 1 \
+            https://github.com/odoo/documentation.git \
+            /tmp/odoo-docs
+
+          echo "✅ Cloned odoo/documentation@19.0"
+          echo "📊 Repository size: $(du -sh /tmp/odoo-docs | cut -f1)"
+
+      - name: Sync documentation content
+        run: |
+          # Ensure target directory exists
+          mkdir -p docs/kb/odoo19
+
+          # Sync with deletion of removed files
+          # --checksum: use checksums instead of timestamps
+          # --delete: delete files that don't exist in source
+          # --exclude: skip non-documentation files
+          rsync -av \
+            --checksum \
+            --delete \
+            --exclude='.git' \
+            --exclude='*.pyc' \
+            --exclude='__pycache__' \
+            --exclude='.DS_Store' \
+            /tmp/odoo-docs/content/ \
+            docs/kb/odoo19/
+
+          echo "✅ Synchronized documentation files"
+
+      - name: Generate sync metadata
+        run: |
+          # Get commit info from official repo
+          cd /tmp/odoo-docs
+          ODOO_COMMIT=$(git rev-parse HEAD)
+          ODOO_DATE=$(git log -1 --format=%ci)
+          ODOO_AUTHOR=$(git log -1 --format=%an)
+          ODOO_MESSAGE=$(git log -1 --format=%B | head -n1)
+
+          cd $GITHUB_WORKSPACE
+
+          # Count documentation files
+          ADMIN_COUNT=$(find docs/kb/odoo19/administration -name '*.rst' 2>/dev/null | wc -l || echo 0)
+          APPS_COUNT=$(find docs/kb/odoo19/applications -name '*.rst' 2>/dev/null | wc -l || echo 0)
+          CONTRIB_COUNT=$(find docs/kb/odoo19/contributing -name '*.rst' 2>/dev/null | wc -l || echo 0)
+          DEV_COUNT=$(find docs/kb/odoo19/developer -name '*.rst' 2>/dev/null | wc -l || echo 0)
+          TOTAL_COUNT=$((ADMIN_COUNT + APPS_COUNT + CONTRIB_COUNT + DEV_COUNT))
+
+          # Create metadata JSON
+          cat > docs/kb/odoo19/.sync-metadata.json << EOF
+          {
+            "sync_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "odoo_version": "19.0",
+            "source_repo": "https://github.com/odoo/documentation",
+            "source_commit": "${ODOO_COMMIT}",
+            "source_commit_date": "${ODOO_DATE}",
+            "source_commit_author": "${ODOO_AUTHOR}",
+            "source_commit_message": "${ODOO_MESSAGE}",
+            "file_counts": {
+              "administration": ${ADMIN_COUNT},
+              "applications": ${APPS_COUNT},
+              "contributing": ${CONTRIB_COUNT},
+              "developer": ${DEV_COUNT},
+              "total": ${TOTAL_COUNT}
+            },
+            "workflow_run_id": "${GITHUB_RUN_ID}",
+            "workflow_run_url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+
+          echo "✅ Generated sync metadata"
+          echo "📊 Total documentation files: ${TOTAL_COUNT}"
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet docs/kb/odoo19/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes detected in documentation"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes detected in documentation"
+
+            # Show diff stats
+            echo "📊 Diff summary:"
+            git diff --stat docs/kb/odoo19/
+          fi
+
+      - name: Commit synced documentation
+        id: commit-sync
+        if: steps.check-changes.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          git config user.name "Odoo Docs Sync Bot"
+          git config user.email "docs-sync@insightpulseai.com"
+
+          # Read metadata for commit message
+          ODOO_COMMIT=$(jq -r '.source_commit' docs/kb/odoo19/.sync-metadata.json)
+          ODOO_MESSAGE=$(jq -r '.source_commit_message' docs/kb/odoo19/.sync-metadata.json)
+          TOTAL_FILES=$(jq -r '.file_counts.total' docs/kb/odoo19/.sync-metadata.json)
+
+          git add docs/kb/odoo19/
+
+          git commit -m "docs(sync): update Odoo 19.0 official documentation
+
+          Source: odoo/documentation@${ODOO_COMMIT:0:7}
+          Latest upstream: ${ODOO_MESSAGE}
+          Total files: ${TOTAL_FILES}
+          Sync timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+          Co-Authored-By: Odoo Docs Sync Bot <docs-sync@insightpulseai.com>"
+
+          git push origin main
+
+          # Output commit SHA for downstream jobs
+          SYNC_COMMIT=$(git rev-parse HEAD)
+          echo "sync_commit=${SYNC_COMMIT}" >> $GITHUB_OUTPUT
+          echo "✅ Committed sync to ${SYNC_COMMIT:0:7}"
+
+  trigger-reindex:
+    name: "🔄 Trigger Documentation Reindex"
+    runs-on: ubuntu-latest
+    needs: sync-official-docs
+    if: needs.sync-official-docs.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+    steps:
+      - name: Trigger reindex via Supabase Edge Function
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Call workspace-indexer Edge Function to reindex docs/kb/odoo19/
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${SUPABASE_URL}/functions/v1/workspace-indexer" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "space_id": "odoo-docs",
+              "paths": ["docs/kb/odoo19"],
+              "force": true,
+              "tenant_id": "ipai-odoo-docs"
+            }')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Reindex triggered successfully"
+            echo "$BODY" | jq '.'
+          else
+            echo "⚠️  Reindex trigger failed with HTTP $HTTP_CODE"
+            echo "$BODY"
+            exit 1
+          fi
+
+      - name: Track reindex progress
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Poll task_queue for completion (max 10 minutes)
+          MAX_ATTEMPTS=60
+          ATTEMPT=0
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            TASK_STATUS=$(curl -s -X POST \
+              "${SUPABASE_URL}/rest/v1/rpc/ops_get_task_status" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{"p_task_type": "workspace-indexer", "p_tenant_id": "ipai-odoo-docs"}' \
+              | jq -r '.status // "pending"')
+
+            echo "📊 Reindex status: ${TASK_STATUS} (attempt ${ATTEMPT}/${MAX_ATTEMPTS})"
+
+            if [ "$TASK_STATUS" = "completed" ]; then
+              echo "✅ Reindex completed successfully"
+              break
+            elif [ "$TASK_STATUS" = "failed" ]; then
+              echo "❌ Reindex failed"
+              exit 1
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+            sleep 10
+          done
+
+          if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+            echo "⚠️  Reindex did not complete within timeout"
+            exit 1
+          fi
+
+  trigger-static-build:
+    name: "🏗️ Trigger Static Site Build"
+    runs-on: ubuntu-latest
+    needs: [sync-official-docs, trigger-reindex]
+    if: needs.sync-official-docs.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+    steps:
+      - name: Trigger docs-build-deploy workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Trigger the static site build workflow
+          gh workflow run docs-build-deploy.yml \
+            --repo ${{ github.repository }} \
+            --ref main
+
+          echo "✅ Triggered static site build workflow"
+
+  notify-slack:
+    name: "📢 Notify Slack"
+    runs-on: ubuntu-latest
+    needs: [sync-official-docs, trigger-reindex, trigger-static-build]
+    if: always() && (needs.sync-official-docs.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true')
+    steps:
+      - name: Checkout for metadata
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Send Slack notification
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        run: |
+          # Read sync metadata
+          TOTAL_FILES=$(jq -r '.file_counts.total' docs/kb/odoo19/.sync-metadata.json)
+          ODOO_COMMIT=$(jq -r '.source_commit' docs/kb/odoo19/.sync-metadata.json | cut -c1-7)
+
+          # Determine status emoji
+          if [ "${{ needs.trigger-static-build.result }}" = "success" ]; then
+            STATUS="✅ Success"
+          else
+            STATUS="⚠️ Partial Success"
+          fi
+
+          # Send to Slack
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${SLACK_BOT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"channel\": \"C06DOCUMENTATION\",
+              \"text\": \"${STATUS}: Odoo 19.0 Documentation Synced\",
+              \"blocks\": [
+                {
+                  \"type\": \"header\",
+                  \"text\": {
+                    \"type\": \"plain_text\",
+                    \"text\": \"📚 Odoo Documentation Sync\"
+                  }
+                },
+                {
+                  \"type\": \"section\",
+                  \"fields\": [
+                    {\"type\": \"mrkdwn\", \"text\": \"*Status:*\n${STATUS}\"},
+                    {\"type\": \"mrkdwn\", \"text\": \"*Total Files:*\n${TOTAL_FILES}\"},
+                    {\"type\": \"mrkdwn\", \"text\": \"*Source Commit:*\nodoo/documentation@${ODOO_COMMIT}\"},
+                    {\"type\": \"mrkdwn\", \"text\": \"*Workflow:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>\"}
+                  ]
+                }
+              ]
+            }"
+
+          echo "✅ Slack notification sent"
+
+  notify-plane-on-error:
+    name: "📌 Create Plane Issue on Error"
+    runs-on: ubuntu-latest
+    needs: [sync-official-docs, trigger-reindex, trigger-static-build]
+    if: failure()
+    steps:
+      - name: Create Plane issue
+        env:
+          PLANE_API_URL: ${{ secrets.PLANE_API_URL }}
+          PLANE_API_KEY: ${{ secrets.PLANE_API_KEY }}
+          PLANE_WORKSPACE_SLUG: ${{ secrets.PLANE_WORKSPACE_SLUG }}
+          PLANE_PROJECT_ID: ${{ secrets.PLANE_DOCS_PROJECT_ID }}
+        run: |
+          curl -X POST \
+            "${PLANE_API_URL}/workspaces/${PLANE_WORKSPACE_SLUG}/projects/${PLANE_PROJECT_ID}/issues/" \
+            -H "X-API-Key: ${PLANE_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"name\": \"🚨 Odoo Docs Sync Failed - $(date +%Y-%m-%d)\",
+              \"description_html\": \"<p>Documentation sync workflow failed.</p><p><strong>Workflow Run:</strong> <a href='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'>View Logs</a></p><p><strong>Branch:</strong> ${{ github.ref_name }}</p>\",
+              \"state\": \"backlog\",
+              \"priority\": \"high\",
+              \"labels\": [\"automation-failure\", \"documentation\"]
+            }"
+
+          echo "✅ Plane issue created for sync failure"

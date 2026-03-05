@@ -1,0 +1,96 @@
+# ssot/databricks/workspace.yaml
+# SSOT for Databricks workspace infrastructure configuration.
+# Derived from confirmed Bicep IaC and live workspace data.
+# IaC authority: infra/azure/databricks/main.bicep
+# Companion files: warehouse.yaml, agents.yaml
+
+schema_version: "1.0"
+last_updated: "2026-03-05"
+
+# ---------------------------------------------------------------------------
+# Workspace
+# ---------------------------------------------------------------------------
+workspace:
+  url: "https://adb-7405610347978231.11.azuredatabricks.net"
+  region: southeastasia
+  sku: premium  # required for Unity Catalog
+  naming_convention: "{resource_type}-ipai-{environment}"
+  resource_name: "dbw-ipai-dev"
+  iac_source: "infra/azure/databricks/main.bicep"
+
+# ---------------------------------------------------------------------------
+# Network — VNet injection & security
+# ---------------------------------------------------------------------------
+network:
+  vnet:
+    name: "vnet-ipai-databricks"
+    address_space: "10.10.0.0/16"
+    subnets:
+      public:
+        name: "snet-dbw-public"
+        cidr: "10.10.1.0/24"
+      private:
+        name: "snet-dbw-private"
+        cidr: "10.10.2.0/24"
+  nsg:
+    name: "nsg-dbw-ipai-dev"
+  secure_cluster_connectivity:
+    enabled: true          # enableNoPublicIp: true in Bicep
+    description: "No public IP assigned to cluster nodes"
+
+# ---------------------------------------------------------------------------
+# Identity & secrets
+# ---------------------------------------------------------------------------
+identity:
+  managed_identity:
+    name: "id-ipai-databricks-dev"
+    type: user_assigned
+  key_vault:
+    name: "kv-ipai-dev"
+    resource_group: "rg-ipai-shared-dev"  # cross-RG reference
+
+# ---------------------------------------------------------------------------
+# Managed resource group (Azure-managed, do not modify directly)
+# ---------------------------------------------------------------------------
+managed_resource_group:
+  name: "rg-dbw-managed-ipai-dev"
+
+# ---------------------------------------------------------------------------
+# Unity Catalog
+# ---------------------------------------------------------------------------
+unity_catalog:
+  metastore:
+    status: pending  # not yet confirmed from live workspace
+    note: "Metastore assignment to be verified after workspace provisioning"
+  catalogs:
+    dev:
+      name: ipai_lakehouse_dev
+      status: verified
+    staging:
+      name: ipai_lakehouse_staging
+      status: verified
+    prod:
+      name: ipai_lakehouse
+      status: verified
+
+# ---------------------------------------------------------------------------
+# Storage — ADLS Gen2 backing store
+# ---------------------------------------------------------------------------
+storage:
+  adls:
+    account: "stipaidevlake"
+    container: "lakehouse"
+    status: verified
+
+# ---------------------------------------------------------------------------
+# Companion SSOT files
+# ---------------------------------------------------------------------------
+references:
+  warehouse: "ssot/databricks/warehouse.yaml"
+  agents: "ssot/databricks/agents.yaml"
+
+# ---------------------------------------------------------------------------
+# Verification status legend
+# ---------------------------------------------------------------------------
+# verified  — confirmed from Bicep IaC output and/or live workspace query
+# pending   — planned or expected but not yet confirmed in live environment

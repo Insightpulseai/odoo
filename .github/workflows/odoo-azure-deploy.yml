@@ -1,0 +1,122 @@
+name: odoo-azure-deploy
+
+# Azure-native Odoo deployment with OIDC authentication
+# Implements "Odoo.sh-like" automation following Azure Container Apps blue-green pattern
+# SSOT: docs/ops/AZURE_ODOO_AUTOMATION.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (production requires approval)'
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+        required: true
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - "config/**"
+      - "addons/**"
+
+permissions:
+  id-token: write  # OIDC token exchange with Azure
+  contents: read
+
+env:
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ACR_NAME: ${{ secrets.ACR_NAME }}
+  CONTAINERAPP_NAME: ${{ secrets.CONTAINERAPP_NAME }}
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  deploy:
+    name: "🚀 Deploy to Azure Container Apps"
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and Push to ACR
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          echo "Building Odoo image for environment: ${ENV}"
+
+          az acr build \
+            --registry ${{ env.ACR_NAME }} \
+            --image odoo:${{ github.sha }} \
+            --image odoo:latest \
+            --file docker/Dockerfile \
+            --build-arg ODOO_VERSION=19.0 \
+            --build-arg ENVIRONMENT=${ENV} \
+            .
+
+          echo "✅ Image pushed: ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }}"
+
+      - name: Deploy Container App Revision
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          RESOURCE_GROUP="rg-ipai-${ENV}"
+          SHA_SHORT="$(echo ${{ github.sha }} | cut -c1-7)"
+
+          echo "Deploying to Container App: ${{ env.CONTAINERAPP_NAME }}"
+          echo "Resource Group: ${RESOURCE_GROUP}"
+          echo "Revision suffix: sha-${SHA_SHORT}"
+
+          az containerapp update \
+            --name ${{ env.CONTAINERAPP_NAME }} \
+            --resource-group ${RESOURCE_GROUP} \
+            --image ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }} \
+            --revision-suffix sha-${SHA_SHORT}
+
+          echo "✅ Revision deployed with blue-green traffic switch"
+
+      - name: Verify Deployment
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          RESOURCE_GROUP="rg-ipai-${ENV}"
+
+          echo "Active revisions with traffic:"
+          az containerapp revision list \
+            --name ${{ env.CONTAINERAPP_NAME }} \
+            --resource-group ${RESOURCE_GROUP} \
+            --query "[?properties.trafficWeight > 0].{name:name,traffic:properties.trafficWeight,active:properties.active}" \
+            -o table
+
+          # Verify at least one revision is active
+          ACTIVE_COUNT=$(az containerapp revision list \
+            --name ${{ env.CONTAINERAPP_NAME }} \
+            --resource-group ${RESOURCE_GROUP} \
+            --query "[?properties.trafficWeight > 0 && properties.active] | length(@)" \
+            -o tsv)
+
+          if [ "$ACTIVE_COUNT" -eq "0" ]; then
+            echo "❌ ERROR: No active revisions with traffic"
+            exit 1
+          fi
+
+          echo "✅ Deployment verified: ${ACTIVE_COUNT} active revision(s)"
+
+      - name: Post-Deployment Summary
+        if: always()
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          echo "## Deployment Summary"
+          echo ""
+          echo "- **Environment**: ${ENV}"
+          echo "- **Image**: ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }}"
+          echo "- **Commit**: ${{ github.sha }}"
+          echo "- **Triggered by**: ${{ github.actor }}"
+          echo "- **Status**: ${{ job.status }}"
