@@ -129,6 +129,9 @@ Insightpulseai/odoo/                     ← repo root (Git SSOT for everything 
 | `supabase/migrations/*.sql`                         | Git                   | (original)                          | —                                       |
 | `supabase/functions/**`                             | Git                   | (original)                          | —                                       |
 | `scripts/ci/validate_mcp_ssot.py`                   | Git                   | (original)                          | —                                       |
+| `scripts/ci/validate_org_taxonomy.py`               | Git                   | (original)                          | —                                       |
+| `scripts/ci/validate_secrets_usage.py`              | Git                   | (original)                          | —                                       |
+| `ssot/github/org_repos.yaml`                        | Git                   | (original)                          | —                                       |
 | `.github/workflows/*.yml`                           | Git                   | (original)                          | —                                       |
 
 ---

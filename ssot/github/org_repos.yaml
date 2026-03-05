@@ -1,214 +1,252 @@
 # schema: ssot.github.org_repos.v1
 # =============================================================================
-# GitHub Organization Taxonomy — InsightPulse AI
+# Organization Repository Taxonomy — InsightPulse AI
 # =============================================================================
-# Tier-based repository classification for the Insightpulseai GitHub org.
+# SSOT for all repos in the Insightpulseai GitHub org.
+# CI enforced: .github/workflows/org-taxonomy-guard.yml
 #
-# Purpose:
-#   - Classify all repos into governance tiers (0-4, ui_libs, finance)
-#   - Define naming conventions and package scopes
-#   - Track data classification and lifecycle states
-#   - Cross-reference with secrets registry
+# Tier definitions:
+#   0 — Governance / templates (org-wide policies, golden paths)
+#   1 — Platform primitives (runtime services, infra, MCP)
+#   2 — Operator UX (internal tools, consoles)
+#   3 — Product apps (customer-facing surfaces)
+#   4 — Experimental / labs (non-prod, learning, demos)
 #
-# Companion files:
-#   ssot/github/repos.yaml - Basic repo inventory
-#   ssot/secrets/registry.yaml - Secrets registry with required_for references
-#   docs/architecture/ORG_TAXONOMY.md - Complete taxonomy documentation
-#
-# CI validation: .github/workflows/validate-org-taxonomy.yml
 # Last updated: 2026-03-05
 # =============================================================================
 
 schema_version: "1.0"
 updated: "2026-03-05"
-
 org: Insightpulseai
 
-# Tier definitions:
-# 0 - Governance: .github templates, factory tools
-# 1 - Primitives: Core systems (odoo, ops-platform, mcp-core, edge, agent-framework)
-# 2 - Operator UX: ops-console
-# 3 - Product Apps: app-landing, app-crm
-# 4 - Labs: learn, demo-repository
-# ui_libs - UI component libraries
-# finance - Financial systems
-
+# ---------------------------------------------------------------------------
+# Tier 0 — Governance / Templates
+# ---------------------------------------------------------------------------
 repos:
-  # ── Tier 0: Governance ───────────────────────────────────────────────────
-  - repo_name: .github
+  - name: .github
     tier: 0
     category: governance
     system_of_record: github
-    data_classification: public
+    data_classification: internal
     lifecycle: active
+    description: "Org-wide policies, reusable workflows, PR templates"
     canonical_packages: []
-    visibility: public
-    description: "Organization-wide GitHub templates and workflows"
 
-  - repo_name: template-factory
+  - name: template-factory
     tier: 0
     category: governance
     system_of_record: github
-    data_classification: public
+    data_classification: internal
     lifecycle: active
+    description: "Golden path repo templates for new projects"
     canonical_packages: []
-    visibility: public
-    description: "Scaffolding tools for repository generation"
 
-  # ── Tier 1: Primitives ───────────────────────────────────────────────────
-  - repo_name: odoo
+  # ---------------------------------------------------------------------------
+  # Tier 1 — Platform Primitives
+  # ---------------------------------------------------------------------------
+  - name: odoo
     tier: 1
-    category: primitives
-    system_of_record: odoo
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/odoo-client"
-      - "@ipai/odoo-rpc"
-    visibility: private
-    description: "Odoo CE 19.0 + OCA + ipai_* modules - core ERP system"
-
-  - repo_name: ops-platform
-    tier: 1
-    category: primitives
-    system_of_record: supabase
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/ops-client"
-      - "@ipai/ops-sdk"
-    visibility: private
-    description: "Platform operations and infrastructure orchestration"
-
-  - repo_name: mcp-core
-    tier: 1
-    category: primitives
-    system_of_record: github
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/mcp-server"
-      - "@ipai/mcp-client"
-    visibility: private
-    description: "Model Context Protocol server implementations"
-
-  - repo_name: edge
-    tier: 1
-    category: primitives
-    system_of_record: vercel
-    data_classification: public
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/edge-runtime"
-      - "@ipai/edge-auth"
-    visibility: public
-    description: "Edge runtime and middleware components"
-
-  - repo_name: agent-framework
-    tier: 1
-    category: primitives
-    system_of_record: github
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/agent-sdk"
-      - "@ipai/agent-runtime"
-    visibility: private
-    description: "AI agent orchestration framework"
-
-  # ── Tier 2: Operator UX ──────────────────────────────────────────────────
-  - repo_name: ops-console
-    tier: 2
-    category: operator_ux
-    system_of_record: vercel
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/ops-console"
-    visibility: private
-    description: "Platform operator dashboard and control plane UI"
-
-  # ── Tier 3: Product Apps ─────────────────────────────────────────────────
-  - repo_name: app-landing
-    tier: 3
-    category: product_apps
-    system_of_record: vercel
-    data_classification: public
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/landing-site"
-    visibility: public
-    description: "Public marketing and landing pages"
-
-  - repo_name: app-crm
-    tier: 3
-    category: product_apps
-    system_of_record: supabase
-    data_classification: confidential
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/crm-client"
-    visibility: private
-    description: "Customer relationship management application"
-
-  # ── Tier 4: Labs ─────────────────────────────────────────────────────────
-  - repo_name: learn
-    tier: 4
-    category: labs
-    system_of_record: github
-    data_classification: public
-    lifecycle: active
-    canonical_packages: []
-    visibility: public
-    description: "Learning and experimentation sandbox"
-
-  - repo_name: demo-repository
-    tier: 4
-    category: labs
-    system_of_record: github
-    data_classification: public
-    lifecycle: active
-    canonical_packages: []
-    visibility: public
-    description: "Demo projects and proof-of-concepts"
-
-  # ── UI Libraries ─────────────────────────────────────────────────────────
-  - repo_name: fluent-owl
-    tier: ui_libs
-    category: ui_libraries
-    system_of_record: github
-    data_classification: public
-    lifecycle: active
-    canonical_packages:
-      - "@ipai/fluent-owl"
-      - "@ipai/ui-components"
-    visibility: public
-    description: "Fluent Design + OWL component library for Odoo"
-
-  # ── Finance ──────────────────────────────────────────────────────────────
-  - repo_name: fin-ops
-    tier: finance
-    category: finance
+    category: primitive
     system_of_record: odoo
     data_classification: restricted
     lifecycle: active
+    description: "ERP runtime — Odoo CE 19.0 + OCA + IPAI addons + Supabase control plane"
     canonical_packages:
-      - "@ipai/fin-client"
-    visibility: private
-    description: "Financial operations and accounting systems"
+      - ghcr.io/insightpulseai/odoo
 
-# Lifecycle states:
-# - active: In active development
-# - maintenance: Security updates only
-# - deprecated: Marked for removal
-# - archived: Read-only historical
+  - name: ops-platform
+    tier: 1
+    category: primitive
+    system_of_record: supabase
+    data_classification: restricted
+    lifecycle: active
+    description: "Supabase SSOT — Edge Functions, migrations, ops.* tables, task bus"
+    canonical_packages: []
 
-# Data classification:
-# - public: Open source, no sensitive data
-# - confidential: Internal, business data
-# - restricted: Financial, PII, regulated data
+  - name: mcp-core
+    tier: 1
+    category: primitive
+    system_of_record: github
+    data_classification: internal
+    lifecycle: active
+    description: "MCP registry, allowlists, tool contracts, gateway config"
+    canonical_packages: []
 
-# Naming conventions:
-# - Tier 0-1: No prefix requirement
-# - Tier 2-3: app- prefix for product applications
-# - Package scope: @ipai/* for all published packages
+  - name: agent-framework
+    tier: 1
+    category: primitive
+    system_of_record: github
+    data_classification: internal
+    lifecycle: active
+    description: "Reusable agent library — personas, skills, capabilities"
+    canonical_packages: []
+
+  - name: dev-environment
+    tier: 1
+    category: primitive
+    system_of_record: github
+    data_classification: internal
+    lifecycle: active
+    rename_target: edge
+    description: "Edge/DNS/Workers infra — Cloudflare, networking config"
+    canonical_packages: []
+
+  # ---------------------------------------------------------------------------
+  # Tier 2 — Operator UX
+  # ---------------------------------------------------------------------------
+  - name: ops-console
+    tier: 2
+    category: console
+    system_of_record: github
+    data_classification: internal
+    lifecycle: active
+    description: "Internal ops dashboard — Next.js on Vercel"
+    canonical_packages:
+      - ghcr.io/insightpulseai/ops-console
+
+  # ---------------------------------------------------------------------------
+  # Tier 3 — Product Apps
+  # ---------------------------------------------------------------------------
+  - name: web-landing
+    tier: 3
+    category: product
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    rename_from: app-landing
+    description: "Marketing site — insightpulseai.com"
+    canonical_packages: []
+
+  - name: app-crm
+    tier: 3
+    category: product
+    system_of_record: odoo
+    data_classification: internal
+    lifecycle: incubating
+    description: "CRM product surface (if separate from Odoo CRM module)"
+    canonical_packages: []
+
+  # ---------------------------------------------------------------------------
+  # Tier 4 — Experimental / Labs
+  # ---------------------------------------------------------------------------
+  - name: labs-learn
+    tier: 4
+    category: lab
+    system_of_record: github
+    data_classification: public
+    lifecycle: incubating
+    rename_from: learn
+    description: "Learning materials, tutorials, internal training"
+    canonical_packages: []
+
+  - name: labs-demo-github
+    tier: 4
+    category: lab
+    system_of_record: github
+    data_classification: public
+    lifecycle: incubating
+    rename_from: demo-repository
+    description: "GitHub feature demos, sandbox experiments"
+    canonical_packages: []
+
+  # ---------------------------------------------------------------------------
+  # UI / Design Libraries
+  # ---------------------------------------------------------------------------
+  - name: ui-fluent-owl
+    tier: 3
+    category: ui
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    rename_from: fluent-owl
+    description: "Fluent + OWL UI component library for Odoo"
+    canonical_packages: []
+
+  # ---------------------------------------------------------------------------
+  # Finance / Internal Ops
+  # ---------------------------------------------------------------------------
+  - name: ops-finance
+    tier: 2
+    category: console
+    system_of_record: github
+    data_classification: restricted
+    lifecycle: incubating
+    rename_from: fin-ops
+    description: "Finance operations workflows"
+    canonical_packages: []
+
+  # ---------------------------------------------------------------------------
+  # Roadmap / Planning
+  # ---------------------------------------------------------------------------
+  - name: planning-roadmap
+    tier: 0
+    category: governance
+    system_of_record: github
+    data_classification: internal
+    lifecycle: active
+    rename_from: roadmap
+    description: "Product roadmap tracking (supplement to GitHub Projects)"
+    canonical_packages: []
+
+# ---------------------------------------------------------------------------
+# Rename Queue — pending renames for consistency
+# ---------------------------------------------------------------------------
+pending_renames:
+  - from: app-landing
+    to: web-landing
+    reason: "Align with 'web-' prefix for marketing surfaces"
+  - from: learn
+    to: labs-learn
+    reason: "Explicitly label as non-prod experimental"
+  - from: demo-repository
+    to: labs-demo-github
+    reason: "Explicitly label as non-prod experimental"
+  - from: fluent-owl
+    to: ui-fluent-owl
+    reason: "Prefix UI libraries for discoverability"
+  - from: fin-ops
+    to: ops-finance
+    reason: "Align with ops-* naming for internal tools"
+  - from: roadmap
+    to: planning-roadmap
+    reason: "Distinguish from GitHub Projects execution boards"
+  - from: dev-environment
+    to: edge
+    reason: "Clarify purpose as edge/DNS/workers infra"
+
+# ---------------------------------------------------------------------------
+# GitHub Projects (tracking layer)
+# ---------------------------------------------------------------------------
+projects:
+  - name: "Execution Board"
+    scope: delivery
+    status: active
+  - name: "InsightPulse Roadmap"
+    scope: product
+    status: active
+  - name: "PROJECT TEMPLATE"
+    scope: template
+    status: active
+  - name: "Platform Governance"
+    scope: governance
+    status: proposed
+    description: "Rulesets, secrets SSOT, SLSA, drift gates, IP allowlists, audit trails"
+
+# ---------------------------------------------------------------------------
+# Publishable Packages (GHCR containers)
+# ---------------------------------------------------------------------------
+publishable_packages:
+  - image: ghcr.io/insightpulseai/odoo
+    source_repo: odoo
+    status: active
+  - image: ghcr.io/insightpulseai/ops-console
+    source_repo: ops-console
+    status: active
+  - image: ghcr.io/insightpulseai/n8n
+    source_repo: odoo
+    status: planned
+    notes: "Containerize if n8n needs CI-driven deploys"
+  - image: ghcr.io/insightpulseai/mcp-gateway
+    source_repo: odoo
+    status: planned
+    notes: "Only if MCP gateway is decoupled from Supabase Edge Functions"
