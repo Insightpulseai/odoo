@@ -1,0 +1,141 @@
+# schema: ssot.github.app.v1
+# =============================================================================
+# pulser-hub — InsightPulse AI Primary Automation Identity
+# =============================================================================
+# Consolidated SSOT for the pulser-hub GitHub App.
+# CI drift guard: .github/workflows/github-app-ssot-guard.yml
+#
+# This file declares the DESIRED state. The drift checker compares it against
+# the LIVE state returned by the GitHub API. Any mismatch fails CI.
+#
+# Companion files:
+#   ssot/github/apps/org-installed.yaml  — Third-party app inventory
+#   ssot/secrets/registry.yaml           — Secret identifiers (never values)
+#   supabase/functions/github-app-auth/  — Auth Edge Function (TypeScript)
+#   scripts/github_app/auth.py           — Auth helper (Python, CI/scripts)
+#   scripts/ci/check_github_app_ssot.py  — Drift verification
+#
+# Last reviewed: 2026-03-05
+# =============================================================================
+
+schema_version: "1.0"
+updated: "2026-03-05"
+
+app:
+  name: pulser-hub
+  app_id: 2191216
+  client_id: Iv23liwGL7fnYySPPAjS
+  owner: Insightpulseai            # org-owned GitHub App
+  visibility: private              # not listed on GitHub Marketplace
+  description: >
+    InsightPulse AI automation identity. Used by FixBot, ops-console webhook
+    ingestion, PPM rollups, and agent PR creation. All automation flows use
+    installation tokens derived from this App — never PATs.
+
+  urls:
+    homepage: "https://mcp.insightpulseai.com"
+    callback: "https://mcp.insightpulseai.com/oauth/github/callback"
+    setup: null
+
+  # ── Permissions (least-privilege) ────────────────────────────────────────────
+  # Level: read | write
+  # "write" implies read+write in GitHub's permission model.
+  permissions:
+    checks: write            # check_run evidence for VERIFY step
+    contents: read           # push events, diff analysis (read-only sufficient)
+    issues: write            # issue sync, comment posting
+    metadata: read           # required by all GitHub Apps
+    pull_requests: write     # agent PR creation, merge status
+    # REMOVED: repository_hooks:write — not needed; webhook configured at App level
+    # REMOVED: workflows:write — not needed unless App triggers workflow_dispatch
+
+  # ── Subscribed Events ──────────────────────────────────────────────────────
+  events:
+    - check_run
+    - check_suite
+    - installation
+    - issues
+    - pull_request
+    - push
+
+  # ── Webhook ────────────────────────────────────────────────────────────────
+  webhook:
+    url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
+    active: true
+    secret_ref: github_app_webhook_secret   # ssot/secrets/registry.yaml
+    content_type: json
+    ssl_verification: true
+
+  # ── Installation Scope ──────────────────────────────────────────────────────
+  installation:
+    type: org
+    target_org: Insightpulseai
+    repository_selection: all    # installed on all org repos
+    repos_note: "Primary target: odoo. Receives events from all repos."
+
+  # ── Auth Strategy ──────────────────────────────────────────────────────────
+  auth:
+    jwt_issuer: client_id        # Use client_id as JWT iss (GitHub recommended)
+    jwt_ttl_seconds: 600         # 10-minute max (GitHub limit)
+    jwt_clock_drift_seconds: 60  # iat = now - 60s for clock tolerance
+    installation_token_ttl: 3600 # 1 hour (GitHub default, non-configurable)
+    token_cache: supabase_vault  # Cache installation tokens in github_installation_tokens table
+
+  # ── Secrets (identifiers only — never values) ──────────────────────────────
+  secrets:
+    - id: github_app_id
+      purpose: "App ID for JWT iss fallback"
+      stores: [supabase_vault, github_actions]
+      non_secret: true
+
+    - id: github_app_client_id
+      purpose: "Client ID for JWT iss (preferred)"
+      stores: [supabase_vault]
+      non_secret: true
+
+    - id: github_app_private_key
+      purpose: "RSA private key for JWT signing"
+      stores: [supabase_vault, os_keychain]
+      rotation_policy: "Annually or on key compromise"
+
+    - id: github_app_webhook_secret
+      purpose: "HMAC secret for webhook signature verification"
+      stores: [supabase_vault, github_actions]
+      rotation_policy: "Annually or on team member offboarding"
+
+    - id: github_app_client_secret
+      purpose: "OAuth client secret (unused — revoke if no OAuth flow)"
+      stores: [supabase_vault]
+      status: revoke_recommended
+      notes: "Generated Nov 2025, never used. Revoke to reduce blast radius."
+
+  # ── Routing ────────────────────────────────────────────────────────────────
+  routing:
+    webhook_handler: supabase_edge_function
+    webhook_function: ops-github-webhook-ingest
+    event_routes:
+      push: "https://n8n.insightpulseai.com/webhook/github-push"
+      pull_request: "https://n8n.insightpulseai.com/webhook/github-pr"
+      installation: "internal (github_installations table)"
+      installation_repositories: "internal (github_installations table)"
+
+  # ── Known Drift (to resolve) ───────────────────────────────────────────────
+  known_drift:
+    - field: webhook.url
+      live_value: "https://mcp.insightpulseai.net/webhooks/github"
+      desired_value: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
+      action: "Update in GitHub App settings UI"
+      severity: high
+      ticket: null
+
+    - field: permissions.workflows
+      live_value: "write"
+      desired_value: null
+      action: "Remove workflows:write — not needed"
+      severity: medium
+
+    - field: permissions.contents
+      live_value: "write"
+      desired_value: "read"
+      action: "Downgrade to read — push events don't need write"
+      severity: medium
