@@ -67,11 +67,20 @@ app:
     ssl_verification: true
 
   # ── Installation Scope ──────────────────────────────────────────────────────
+  # installation_scope is the CI-enforceable contract:
+  #   org   — MUST be installed on target_org; CI fails if no installation found
+  #   repo  — installed on specific repos only (not org-wide)
+  #   none  — explicitly not installed (e.g. retired app)
   installation:
-    type: org
+    installation_scope: org      # CI enforced: must be org-installed
     target_org: Insightpulseai
     repository_selection: all    # installed on all org repos
     repos_note: "Primary target: odoo. Receives events from all repos."
+
+  # ── Expected Webhook URL (CI-enforceable) ──────────────────────────────────
+  # The drift checker compares this against the live App webhook URL.
+  # If they differ, CI fails with an actionable message.
+  expected_webhook_url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
 
   # ── Auth Strategy ──────────────────────────────────────────────────────────
   auth:
