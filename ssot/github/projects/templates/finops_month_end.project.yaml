@@ -1,0 +1,78 @@
+schema_version: "1.0"
+template_id: finops_month_end
+title: "FinOps Month-End"
+description: "Finance PPM month-end close planning and execution board"
+owner: org
+org: Insightpulseai
+project:
+  number: null
+  slug: finops-month-end
+labels:
+  - "area:finance"
+  - "area:ppm"
+  - "type:month-end"
+fields:
+  - key: status
+    name: Status
+    type: SINGLE_SELECT
+    required: true
+    options:
+      - name: Backlog
+        color: GRAY
+      - name: Todo
+        color: BLUE
+      - name: In Progress
+        color: YELLOW
+      - name: Review
+        color: PURPLE
+      - name: Done
+        color: GREEN
+
+  - key: priority
+    name: Priority
+    type: SINGLE_SELECT
+    required: true
+    options:
+      - name: P0
+        color: RED
+      - name: P1
+        color: ORANGE
+      - name: P2
+        color: YELLOW
+      - name: P3
+        color: BLUE
+
+  - key: workstream
+    name: Workstream
+    type: SINGLE_SELECT
+    options:
+      - name: Close
+        color: BLUE
+      - name: Reconciliation
+        color: GREEN
+      - name: Reporting
+        color: PURPLE
+      - name: Compliance
+        color: ORANGE
+
+  - key: due_date
+    name: Due Date
+    type: DATE
+
+  - key: owner
+    name: Owner
+    type: TEXT
+
+  - key: sprint
+    name: Sprint
+    type: ITERATION
+    iteration:
+      start_date: "2026-03-09"
+      duration: 14
+      iterations:
+        - title: "Sprint 1"
+          start_date: "2026-03-09"
+          duration: 14
+        - title: "Sprint 2"
+          start_date: "2026-03-23"
+          duration: 14
