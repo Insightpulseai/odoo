@@ -394,11 +394,10 @@ hostnames:
         remediation: "SSH to prod: rm /etc/nginx/conf.d/superset.conf && nginx -t && systemctl reload nginx"
 
   # ---------------------------------------------------------------------------
-  # shelf.insightpulseai.com — Placeholder (503) until Shelf fork deployed
+  # shelf.insightpulseai.com — Shelf.nu asset management (self-hosted fork)
   # ---------------------------------------------------------------------------
   - hostname: shelf.insightpulseai.com
-    service: shelf_placeholder
-    role: placeholder
+    service: shelf_asset_management
     envs:
       local:
         compose_service: null
@@ -407,7 +406,8 @@ hostnames:
       prod:
         edge_host: odoo-production
         edge_ip: 178.128.112.214
-        upstream: null  # No upstream — placeholder returns 503
+        upstream: 127.0.0.1:3003
+        upstream_name: shelf
         nginx_paths:
           - /etc/nginx/sites-enabled/shelf.insightpulseai.com
         repo_config: infra/deploy/nginx/shelf.insightpulseai.com.conf
@@ -417,17 +417,25 @@ hostnames:
         tls_provider: letsencrypt
         cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
         key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
-        note: "Placeholder vhost. Returns 503 JSON. Deploy Shelf fork on :3003 to activate."
+        log_access: /var/log/nginx/shelf.insightpulseai.com.access.log
+        log_error: /var/log/nginx/shelf.insightpulseai.com.error.log
+        note: "Self-hosted Shelf.nu fork. Container shelf-webapp-1 :3003→8080."
     cloudflare:
       dns_type: A
       proxied: true
       ssl_mode: full_strict
       origin_port: 443
       http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    client_limits:
+      max_body_size: 50M
     health_check:
-      path: /
-      expected_status: 503
-      note: "Expected 503 — self-hosted Shelf fork not yet deployed"
+      path: /login
+      expected_status: 200
 
 # =============================================================================
 # Failure Mode Catalog
