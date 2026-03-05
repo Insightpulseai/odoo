@@ -1,0 +1,478 @@
+# schema: ssot.mcp.servers.v1
+# SSOT for MCP server inventory — .claude/mcp-servers.json must match this registry.
+# CI enforced by: .github/workflows/mcp-ssot-guard.yml
+# Validator: scripts/ci/validate_mcp_ssot.py
+#
+# Fields:
+#   id:       Key in .claude/mcp-servers.json → mcpServers.<id>
+#   category: Logical grouping (microsoft, cloudflare, platform, custom, reference)
+#   auth:     Authentication type (oauth, token, none, env)
+#   risk:     Risk tier (low, medium, high, critical)
+#   type:     Transport type (stdio, http)
+#   enabled:  Environments where this server may be activated
+#   status:   built | source_only
+#   notes:    Optional human-readable context
+
+version: 1
+
+servers:
+  # =========================================================================
+  # Core / Platform
+  # =========================================================================
+  - id: supabase
+    category: platform
+    auth: token
+    risk: high
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: github
+    category: platform
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: dbhub
+    category: platform
+    auth: env
+    risk: high
+    type: stdio
+    enabled: [dev]
+    status: built
+    notes: "Direct PostgreSQL access — dev only"
+
+  - id: slack
+    category: platform
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  # =========================================================================
+  # Microsoft / Azure
+  # =========================================================================
+  - id: azure
+    category: microsoft
+    auth: none
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+    notes: "Azure CLI auth (ambient credentials)"
+
+  - id: azure-devops
+    category: microsoft
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: microsoft-learn
+    category: microsoft
+    auth: none
+    risk: low
+    type: http
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: microsoft-365-mail
+    category: microsoft
+    auth: none
+    risk: high
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-365-calendar
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-365-copilot
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-365-user
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-365-search
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-teams
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AD)"
+
+  - id: microsoft-admin
+    category: microsoft
+    auth: none
+    risk: critical
+    type: http
+    enabled: [dev]
+    status: built
+    notes: "Tenant admin — dev-only, requires explicit approval. OAuth at transport layer"
+
+  - id: microsoft-foundry
+    category: microsoft
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer (Azure AI)"
+
+  - id: microsoft-clarity
+    category: microsoft
+    auth: token
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: microsoft-dataverse
+    category: microsoft
+    auth: none
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+    notes: "Azure CLI ambient credentials"
+
+  - id: microsoft-sql
+    category: microsoft
+    auth: none
+    risk: high
+    type: stdio
+    enabled: [dev]
+    status: built
+    notes: "SQL write access possible — dev-only. Azure CLI ambient credentials"
+
+  # =========================================================================
+  # Cloudflare
+  # =========================================================================
+  - id: cloudflare
+    category: cloudflare
+    auth: token
+    risk: high
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+    notes: "Full control: Workers, DNS, KV, R2, D1, Firewall"
+
+  - id: cloudflare-observability
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: cloudflare-bindings
+    category: cloudflare
+    auth: none
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: cloudflare-dns-analytics
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: cloudflare-radar
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: cloudflare-docs
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: cloudflare-audit-logs
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: cloudflare-ai-gateway
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: cloudflare-browser
+    category: cloudflare
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  # =========================================================================
+  # Design / Data / Automation
+  # =========================================================================
+  - id: figma
+    category: design
+    auth: token
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: notion
+    category: design
+    auth: token
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: firecrawl
+    category: data
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: huggingface
+    category: data
+    auth: token
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: playwright
+    category: automation
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: zapier
+    category: automation
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev]
+    status: built
+
+  - id: n8n
+    category: automation
+    auth: env
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+    notes: "MCP_MODE env var (not a secret)"
+
+  # =========================================================================
+  # Infra / Hosting
+  # =========================================================================
+  - id: digitalocean-official
+    category: infra
+    auth: token
+    risk: high
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: vercel-official
+    category: infra
+    auth: none
+    risk: medium
+    type: http
+    enabled: [dev, staging]
+    status: built
+    notes: "OAuth at transport layer"
+
+  - id: next-devtools
+    category: infra
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev]
+    status: built
+
+  # =========================================================================
+  # Reference / Utility
+  # =========================================================================
+  - id: playwright-ms
+    category: reference
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: built
+
+  - id: sequential-thinking
+    category: reference
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: filesystem
+    category: reference
+    auth: none
+    risk: medium
+    type: stdio
+    enabled: [dev]
+    status: built
+    notes: "File system access — dev-only"
+
+  - id: fetch
+    category: reference
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: git
+    category: reference
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  - id: time
+    category: reference
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging, prod]
+    status: built
+
+  # =========================================================================
+  # Custom (source_only — require build before use)
+  # =========================================================================
+  - id: odoo-erp
+    category: custom
+    auth: env
+    risk: high
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+
+  - id: digitalocean
+    category: custom
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev]
+    status: source_only
+    notes: "Legacy — superseded by digitalocean-official"
+
+  - id: superset
+    category: custom
+    auth: env
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+
+  - id: vercel
+    category: custom
+    auth: token
+    risk: medium
+    type: stdio
+    enabled: [dev]
+    status: source_only
+    notes: "Legacy — superseded by vercel-official"
+
+  - id: pulser
+    category: custom
+    auth: env
+    risk: low
+    type: stdio
+    enabled: [dev]
+    status: source_only
+
+  - id: speckit
+    category: custom
+    auth: none
+    risk: low
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+
+  - id: memory
+    category: custom
+    auth: env
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+
+  - id: agent-coordination
+    category: custom
+    auth: env
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+
+  - id: plane
+    category: custom
+    auth: env
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+    notes: "Plane self-hosted — issues, cycles, modules, pages"
+
+# Domain blocklist — CI will reject any MCP endpoint containing these
+blocked_domains:
+  - insightpulseai.net
+  - mattermost.insightpulseai.com
