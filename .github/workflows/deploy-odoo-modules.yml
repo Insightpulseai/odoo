@@ -2,21 +2,22 @@ name: Deploy Odoo Modules (Blue-Green)
 
 # Blue-green deployment workflow for Odoo modules with rollback capability
 # Implements zero-downtime deployment with health checks and automatic rollback
+#
+# SECURITY: Production deployments require manual workflow_dispatch + environment approval
+# Push triggers are disabled for production safety (governance requirement)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'addons/ipai/**'
+  # REMOVED: Automatic push deployment (governance violation)
+  # All deployments must be explicit via workflow_dispatch
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: 'Deployment environment (production requires approval)'
         required: true
         type: choice
         options:
-          - production
           - staging
+          - production
       modules:
         description: 'Modules to deploy (comma-separated, or "all")'
         required: true
@@ -26,10 +27,12 @@ on:
         type: boolean
         default: false
 
+# Least-privilege permissions (governance requirement)
 permissions:
-  contents: read
-  id-token: write
-  issues: write
+  contents: read       # Read repo files
+  id-token: write      # OIDC token exchange
+  issues: write        # Create rollback/deployment issues
+  # Explicitly NOT granted: write to repo, packages, etc.
 
 env:
   DEPLOYMENT_ID: ${{ github.run_id }}-${{ github.run_attempt }}
@@ -149,6 +152,14 @@ jobs:
   deploy:
     name: "🚀 Blue-Green Deployment"
     runs-on: self-hosted
+
+    # Environment protection (governance requirement)
+    # Production requires manual approval from designated reviewers
+    # Staging runs without approval for testing
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: ${{ github.event.inputs.environment == 'production' && 'https://erp.insightpulseai.com' || 'https://staging-erp.insightpulseai.com' }}
+
     needs: [fetch-secrets, pre-deployment-tests]
     if: always() && (needs.pre-deployment-tests.result == 'success' || github.event.inputs.skip_tests == 'true')
     outputs:
