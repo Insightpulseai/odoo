@@ -107,10 +107,11 @@ canonical_subdomains:
     notes: "Primary AI agent endpoint"
 
   - host: shelf
-    service: Shelf.nu redirect
-    stack: nginx-redirect
+    service: Shelf asset management (self-hosted fork)
+    stack: self-hosted-docker
     resolves_to: 178.128.112.214
-    notes: "Redirect to shelf.nu (301)"
+    status: placeholder
+    notes: "503 placeholder — deploy Shelf fork on :3003 to activate"
 
   - host: chat
     service: Mattermost (legacy)

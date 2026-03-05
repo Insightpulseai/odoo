@@ -394,12 +394,11 @@ hostnames:
         remediation: "SSH to prod: rm /etc/nginx/conf.d/superset.conf && nginx -t && systemctl reload nginx"
 
   # ---------------------------------------------------------------------------
-  # shelf.insightpulseai.com — Redirect to shelf.nu (301)
+  # shelf.insightpulseai.com — Placeholder (503) until Shelf fork deployed
   # ---------------------------------------------------------------------------
   - hostname: shelf.insightpulseai.com
-    service: shelf_redirect
-    role: redirect_only
-    redirect_to: "https://shelf.nu"
+    service: shelf_placeholder
+    role: placeholder
     envs:
       local:
         compose_service: null
@@ -408,7 +407,7 @@ hostnames:
       prod:
         edge_host: odoo-production
         edge_ip: 178.128.112.214
-        upstream: null  # No upstream — redirect only
+        upstream: null  # No upstream — placeholder returns 503
         nginx_paths:
           - /etc/nginx/sites-enabled/shelf.insightpulseai.com
         repo_config: infra/deploy/nginx/shelf.insightpulseai.com.conf
@@ -418,7 +417,7 @@ hostnames:
         tls_provider: letsencrypt
         cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
         key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
-        note: "Redirect-only vhost. Returns 301 to https://shelf.nu. Uses SAN cert."
+        note: "Placeholder vhost. Returns 503 JSON. Deploy Shelf fork on :3003 to activate."
     cloudflare:
       dns_type: A
       proxied: true
@@ -427,9 +426,8 @@ hostnames:
       http_redirect: true
     health_check:
       path: /
-      expected_status: 301
-      expected_location: "https://shelf.nu/"
-      note: "Expected 301 redirect to shelf.nu"
+      expected_status: 503
+      note: "Expected 503 — self-hosted Shelf fork not yet deployed"
 
 # =============================================================================
 # Failure Mode Catalog
