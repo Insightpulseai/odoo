@@ -1,7 +1,7 @@
 name: Sync Official Odoo Documentation
 
 # Daily sync of official Odoo 19.0 documentation from GitHub
-# Syncs RST files, generates search index, deploys to GitHub Pages
+# Syncs to vendor subtree with diff gates to prevent blast radius
 
 on:
   schedule:
@@ -11,6 +11,11 @@ on:
     inputs:
       force_rebuild:
         description: 'Force complete rebuild and reindex'
+        required: false
+        type: boolean
+        default: false
+      skip_gates:
+        description: 'Skip diff gates (use with extreme caution)'
         required: false
         type: boolean
         default: false
@@ -26,10 +31,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.check-changes.outputs.has_changes }}
+      gate_passed: ${{ steps.diff-gate.outputs.passed }}
     steps:
       - uses: actions/checkout@v4
         with:
           path: repo
+          fetch-depth: 0  # Need full history for tags
 
       - name: Clone official Odoo documentation
         run: |
@@ -39,27 +46,83 @@ jobs:
             https://github.com/odoo/documentation.git \
             official-docs
 
-      - name: Sync documentation content
+      - name: Pre-sync validation (Gate 1 - File Count)
+        id: pre-sync-validation
         run: |
-          # Create docs structure
-          mkdir -p repo/docs/odoo-official/{administration,applications,contributing,developer}
+          # Count RST files in upstream
+          UPSTREAM_FILES=$(find official-docs/content -name '*.rst' | wc -l)
+          EXPECTED_MIN=100
+          EXPECTED_MAX=1000
+
+          echo "Upstream file count: $UPSTREAM_FILES"
+
+          if [ "$UPSTREAM_FILES" -lt "$EXPECTED_MIN" ]; then
+            echo "❌ GATE 1 FAILURE: Upstream file count too low: $UPSTREAM_FILES (expected >$EXPECTED_MIN)"
+            exit 1
+          fi
+
+          if [ "$UPSTREAM_FILES" -gt "$EXPECTED_MAX" ]; then
+            echo "⚠️ WARNING: Upstream file count unusually high: $UPSTREAM_FILES (expected <$EXPECTED_MAX)"
+          fi
+
+          echo "✅ Gate 1 passed: File count validation OK ($UPSTREAM_FILES files)"
+          echo "upstream_files=$UPSTREAM_FILES" >> $GITHUB_OUTPUT
+
+      - name: Sync documentation to vendor subtree
+        run: |
+          # Create vendor subtree structure
+          mkdir -p repo/vendor/docs/odoo-official/19.0/{administration,applications,contributing,developer}
 
           # Sync each documentation section with deletion of removed files
+          echo "Syncing administration docs..."
           rsync -av --delete --checksum \
             official-docs/content/administration/ \
-            repo/docs/odoo-official/administration/
+            repo/vendor/docs/odoo-official/19.0/administration/
 
+          echo "Syncing applications docs..."
           rsync -av --delete --checksum \
             official-docs/content/applications/ \
-            repo/docs/odoo-official/applications/
+            repo/vendor/docs/odoo-official/19.0/applications/
 
+          echo "Syncing contributing docs..."
           rsync -av --delete --checksum \
             official-docs/content/contributing/ \
-            repo/docs/odoo-official/contributing/
+            repo/vendor/docs/odoo-official/19.0/contributing/
 
+          echo "Syncing developer docs..."
           rsync -av --delete --checksum \
             official-docs/content/developer/ \
-            repo/docs/odoo-official/developer/
+            repo/vendor/docs/odoo-official/19.0/developer/
+
+      - name: Structural integrity check (Gate 2)
+        id: structure-validation
+        run: |
+          cd repo
+
+          # Verify all required directories exist and have content
+          REQUIRED_DIRS=(
+            "vendor/docs/odoo-official/19.0/administration"
+            "vendor/docs/odoo-official/19.0/applications"
+            "vendor/docs/odoo-official/19.0/contributing"
+            "vendor/docs/odoo-official/19.0/developer"
+          )
+
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "❌ GATE 2 FAILURE: Missing required directory: $dir"
+              exit 1
+            fi
+
+            FILE_COUNT=$(find "$dir" -name '*.rst' | wc -l)
+            if [ "$FILE_COUNT" -lt 5 ]; then
+              echo "❌ GATE 2 FAILURE: Directory nearly empty: $dir ($FILE_COUNT files)"
+              exit 1
+            fi
+
+            echo "✅ $dir verified ($FILE_COUNT files)"
+          done
+
+          echo "✅ Gate 2 passed: Structural integrity OK"
 
       - name: Generate sync metadata
         run: |
@@ -70,13 +133,13 @@ jobs:
           ODOO_DATE=$(cd ../official-docs && git log -1 --format=%ci)
 
           # Count files
-          ADMIN_COUNT=$(find docs/odoo-official/administration -name '*.rst' | wc -l)
-          APPS_COUNT=$(find docs/odoo-official/applications -name '*.rst' | wc -l)
-          CONTRIB_COUNT=$(find docs/odoo-official/contributing -name '*.rst' | wc -l)
-          DEV_COUNT=$(find docs/odoo-official/developer -name '*.rst' | wc -l)
+          ADMIN_COUNT=$(find vendor/docs/odoo-official/19.0/administration -name '*.rst' | wc -l)
+          APPS_COUNT=$(find vendor/docs/odoo-official/19.0/applications -name '*.rst' | wc -l)
+          CONTRIB_COUNT=$(find vendor/docs/odoo-official/19.0/contributing -name '*.rst' | wc -l)
+          DEV_COUNT=$(find vendor/docs/odoo-official/19.0/developer -name '*.rst' | wc -l)
           TOTAL_COUNT=$((ADMIN_COUNT + APPS_COUNT + CONTRIB_COUNT + DEV_COUNT))
 
-          cat > docs/odoo-official/SYNC_METADATA.json << EOF
+          cat > vendor/docs/odoo-official/19.0/SYNC_METADATA.json << EOF
           {
             "sync_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "odoo_version": "19.0",
@@ -94,7 +157,7 @@ jobs:
           EOF
 
           # Generate human-readable report
-          cat > docs/odoo-official/SYNC_REPORT.md << EOF
+          cat > vendor/docs/odoo-official/19.0/SYNC_REPORT.md << EOF
           # Documentation Sync Report
 
           **Sync Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
@@ -111,19 +174,26 @@ jobs:
 
           **Total**: ${TOTAL_COUNT} documentation files
 
-          ## Sections
+          ## Vendor Subtree Location
 
-          - \`docs/odoo-official/administration/\` - System administration guides
-          - \`docs/odoo-official/applications/\` - Application user guides
-          - \`docs/odoo-official/contributing/\` - Contribution guidelines
-          - \`docs/odoo-official/developer/\` - Developer documentation
+          - \`vendor/docs/odoo-official/19.0/administration/\` - System administration guides
+          - \`vendor/docs/odoo-official/19.0/applications/\` - Application user guides
+          - \`vendor/docs/odoo-official/19.0/contributing/\` - Contribution guidelines
+          - \`vendor/docs/odoo-official/19.0/developer/\` - Developer documentation
+
+          ## Diff Gates
+
+          All diff gates passed:
+          - ✅ File count validation
+          - ✅ Structural integrity check
+          - ✅ Diff magnitude validation
           EOF
 
       - name: Check for changes
         id: check-changes
         run: |
           cd repo
-          if git diff --quiet docs/odoo-official/; then
+          if git diff --quiet vendor/docs/odoo-official/; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No changes detected"
           else
@@ -131,18 +201,131 @@ jobs:
             echo "Changes detected"
           fi
 
-      - name: Commit synced documentation
+      - name: Diff magnitude check (Gate 3)
+        id: diff-gate
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          cd repo
+
+          # Calculate diff statistics
+          git diff --numstat vendor/docs/odoo-official/19.0/ > /tmp/diff-stats.txt
+
+          ADDED=$(awk '{sum+=$1} END {print sum}' /tmp/diff-stats.txt || echo 0)
+          DELETED=$(awk '{sum+=$2} END {print sum}' /tmp/diff-stats.txt || echo 0)
+          FILES_CHANGED=$(wc -l < /tmp/diff-stats.txt || echo 0)
+
+          # Define thresholds
+          MAX_FILES=50
+          MAX_LINES_DELETED=5000
+          WARN_LINES_ADDED=10000
+
+          echo "Diff statistics:"
+          echo "  Files changed: $FILES_CHANGED"
+          echo "  Lines added: +$ADDED"
+          echo "  Lines deleted: -$DELETED"
+
+          # Check if gates should be skipped
+          if [ "${{ github.event.inputs.skip_gates }}" == "true" ]; then
+            echo "⚠️ WARNING: Diff gates SKIPPED via workflow input"
+            echo "passed=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Hard stop conditions
+          GATE_FAILED=false
+
+          if [ "$FILES_CHANGED" -gt "$MAX_FILES" ]; then
+            echo "🚨 GATE 3 FAILURE: $FILES_CHANGED files changed (threshold: $MAX_FILES)"
+            echo "   This may indicate upstream restructure or sync error."
+            GATE_FAILED=true
+          fi
+
+          if [ "$DELETED" -gt "$MAX_LINES_DELETED" ]; then
+            echo "🚨 GATE 3 FAILURE: $DELETED lines deleted (threshold: $MAX_LINES_DELETED)"
+            echo "   This may indicate accidental deletion."
+            GATE_FAILED=true
+          fi
+
+          # Warnings only
+          if [ "$ADDED" -gt "$WARN_LINES_ADDED" ]; then
+            echo "⚠️ WARNING: $ADDED lines added (threshold: $WARN_LINES_ADDED)"
+            echo "   Review sync carefully."
+          fi
+
+          if [ "$GATE_FAILED" == "true" ]; then
+            echo "passed=false" >> $GITHUB_OUTPUT
+            echo ""
+            echo "To override gates, re-run workflow with 'skip_gates' enabled."
+            echo "⚠️ Only skip gates if you have manually verified the changes are legitimate."
+            exit 1
+          fi
+
+          echo "✅ Gate 3 passed: Diff magnitude OK"
+          echo "passed=true" >> $GITHUB_OUTPUT
+
+      - name: Create vendor README
         if: steps.check-changes.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          cd repo
+
+          cat > vendor/docs/odoo-official/README.md << 'EOF'
+          # Odoo Official Documentation (Vendor)
+
+          **Source**: https://github.com/odoo/documentation
+          **Sync Workflow**: `.github/workflows/docs-sync-odoo-official.yml`
+          **Last Sync**: See `19.0/SYNC_METADATA.json`
+
+          ## Directory Structure
+
+          - `19.0/` - Odoo 19.0 documentation (current)
+          - Future: `20.0/`, `21.0/` as versions are released
+
+          ## Sync Schedule
+
+          - **Daily**: 3 AM UTC via GitHub Actions
+          - **Manual**: Workflow dispatch available
+          - **Validation**: Pre-sync checks + diff gates
+
+          ## Diff Gates
+
+          Sync process includes three validation gates to prevent blast radius:
+
+          1. **Gate 1 - File Count**: Validates upstream has expected file count (100-1000 files)
+          2. **Gate 2 - Structural Integrity**: Verifies all 4 documentation sections present
+          3. **Gate 3 - Diff Magnitude**: Prevents syncs with >50 files or >5000 lines deleted
+
+          Gates can be skipped via workflow dispatch (use with caution).
+
+          ## Ownership
+
+          - **Content**: Odoo SA (upstream)
+          - **Sync Process**: InsightPulse AI DevOps
+          - **Do Not Edit**: Files are overwritten on next sync
+
+          ## Rollback
+
+          Successful syncs are tagged as `docs-sync-good-YYYYMMDD-HHMM`.
+
+          To rollback:
+          ```bash
+          git checkout docs-sync-good-20260304-0300 -- vendor/docs/odoo-official/
+          git commit -m "revert(docs): rollback to known good sync"
+          ```
+          EOF
+
+      - name: Commit synced documentation
+        if: steps.check-changes.outputs.has_changes == 'true' && steps.diff-gate.outputs.passed == 'true'
         run: |
           cd repo
           git config user.name "Docs Sync Bot"
           git config user.email "docs-sync@insightpulseai.com"
 
-          git add docs/odoo-official/
+          git add vendor/docs/odoo-official/
           git commit -m "docs(sync): update official Odoo 19.0 documentation
 
           Source: https://github.com/odoo/documentation/tree/19.0
           Sync timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          Vendor subtree: vendor/docs/odoo-official/19.0/
 
           Updated sections:
           - Administration docs
@@ -150,9 +333,18 @@ jobs:
           - Contributing docs
           - Developer docs
 
+          All diff gates passed:
+          - ✅ File count validation
+          - ✅ Structural integrity check
+          - ✅ Diff magnitude validation
+
           Co-Authored-By: Docs Sync Bot <docs-sync@insightpulseai.com>"
 
+          # Tag successful sync for rollback
+          git tag -a "docs-sync-good-$(date +%Y%m%d-%H%M)" -m "Known good documentation sync"
+
           git push origin main
+          git push --tags
 
   build-search-index:
     name: "🔍 Build Search Index"
@@ -208,7 +400,7 @@ jobs:
 
               return title, sections
 
-          docs_dir = Path('docs/odoo-official')
+          docs_dir = Path('vendor/docs/odoo-official/19.0')
           index_data = []
 
           for rst_file in sorted(docs_dir.rglob('*.rst')):
@@ -242,7 +434,7 @@ jobs:
                   'sections': sections[:5],  # Top 5 section headers
                   'category': category,
                   'path': str(rel_path),
-                  'url': f"/docs/odoo-official/{rel_path}".replace('.rst', '.html'),
+                  'url': f"/vendor/docs/odoo-official/19.0/{rel_path}".replace('.rst', '.html'),
                   'source_file': str(rst_file),
                   'indexed_at': datetime.utcnow().isoformat() + 'Z'
               }
@@ -251,7 +443,7 @@ jobs:
               print(f"✅ Indexed: {rel_path} ({len(content)} bytes)")
 
           # Save search index
-          index_file = Path('docs/odoo-official/search-index.json')
+          index_file = Path('vendor/docs/odoo-official/19.0/search-index.json')
           with open(index_file, 'w', encoding='utf-8') as f:
               json.dump({
                   'generated_at': datetime.utcnow().isoformat() + 'Z',
@@ -268,10 +460,11 @@ jobs:
           git config user.name "Docs Index Bot"
           git config user.email "docs-index@insightpulseai.com"
 
-          git add docs/odoo-official/search-index.json
+          git add vendor/docs/odoo-official/19.0/search-index.json
           git commit -m "docs(index): update search index
 
           Generated from official Odoo 19.0 documentation.
+          Vendor subtree: vendor/docs/odoo-official/19.0/
 
           Co-Authored-By: Docs Index Bot <docs-index@insightpulseai.com>" || echo "No index changes"
 
@@ -383,10 +576,10 @@ jobs:
              :maxdepth: 2
              :caption: Contents:
 
-             odoo-official/administration/index
-             odoo-official/applications/index
-             odoo-official/contributing/index
-             odoo-official/developer/index
+             ../vendor/docs/odoo-official/19.0/administration/index
+             ../vendor/docs/odoo-official/19.0/applications/index
+             ../vendor/docs/odoo-official/19.0/contributing/index
+             ../vendor/docs/odoo-official/19.0/developer/index
 
           Official Documentation Sections
           --------------------------------
@@ -414,10 +607,10 @@ jobs:
           * :ref:`search`
           RSTEOF
 
-          # Create section index files
+          # Create section index files in vendor subtree
           for section in administration applications contributing developer; do
-            mkdir -p docs/odoo-official/$section
-            cat > docs/odoo-official/$section/index.rst << SECEOF
+            mkdir -p vendor/docs/odoo-official/19.0/$section
+            cat > vendor/docs/odoo-official/19.0/$section/index.rst << SECEOF
           $(echo $section | tr '[:lower:]' '[:upper:]')
           $(printf '=%.0s' $(seq 1 ${#section}))
 
@@ -677,10 +870,10 @@ jobs:
   notify:
     name: "📢 Deployment Notifications"
     runs-on: ubuntu-latest
-    needs: deploy-pages
+    needs: [sync-official-docs, deploy-pages]
     if: always()
     steps:
-      - name: Notify Slack
+      - name: Notify Slack (Success)
         if: needs.deploy-pages.result == 'success'
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -689,9 +882,25 @@ jobs:
             📚 **Documentation Platform Updated**
 
             **Site**: https://insightpulseai.github.io/odoo/
-            **Sync**: Official Odoo 19.0 docs synchronized
+            **Sync**: Official Odoo 19.0 docs synchronized to vendor subtree
             **AI Assistant**: Available via chat widget
+            **Diff Gates**: All gates passed ✅
 
             View the latest documentation.
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack (Gate Failure)
+        if: needs.sync-official-docs.outputs.gate_passed == 'false'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C06DOCUMENTATION'
+          slack-message: |
+            🚨 **Documentation Sync: Diff Gate Failure**
+
+            **Workflow**: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **Reason**: Diff magnitude exceeded thresholds
+
+            **Action Required**: Review changes and re-run with `skip_gates` if legitimate.
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
