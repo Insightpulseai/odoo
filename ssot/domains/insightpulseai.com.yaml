@@ -110,8 +110,7 @@ canonical_subdomains:
     service: Shelf asset management (self-hosted fork)
     stack: self-hosted-docker
     resolves_to: 178.128.112.214
-    status: placeholder
-    notes: "503 placeholder — deploy Shelf fork on :3003 to activate"
+    notes: "Self-hosted Shelf.nu fork — asset tracking"
 
   - host: chat
     service: Mattermost (legacy)

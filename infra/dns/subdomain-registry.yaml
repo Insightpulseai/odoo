@@ -157,15 +157,10 @@ subdomains:
     owner_system: "Shelf.nu (self-hosted, ipai fork)"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # DNS active (A record exists in CF), but service not yet deployed.
-    # Nginx returns 503 placeholder until Shelf fork container runs on :3003.
+    # Fully active: DNS + nginx proxy + container running.
     lifecycle: active
     status: active
-    backing_status: not_deployed
-    activation_criteria:
-      - "Deploy Shelf.nu fork container on port 3003"
-      - "Update nginx vhost to proxy_pass → 127.0.0.1:3003"
-    notes: "CF A record created 2026-03-05. Nginx serves 503 placeholder. DNS resolves but service pending."
+    notes: "Self-hosted Shelf.nu fork. Container shelf-webapp-1 on :3003. Deployed 2026-03-05."
     provider_claim:
       provider: cloudflare
       status: claimed
