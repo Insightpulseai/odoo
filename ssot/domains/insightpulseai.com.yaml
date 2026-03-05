@@ -80,6 +80,12 @@ canonical_subdomains:
     resolves_to: 178.128.112.214
     notes: "Self-hosted Shelf.nu fork — asset tracking"
 
+  - host: crm
+    service: Atomic CRM (marmelab/atomic-crm)
+    stack: self-hosted-docker
+    resolves_to: 178.128.112.214
+    notes: "React SPA CRM with Supabase backend — atomic-crm container on :3004"
+
   - host: superset
     service: Apache Superset BI
     stack: self-hosted-docker

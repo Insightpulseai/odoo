@@ -1,0 +1,121 @@
+# schema: ssot.auth.oidc_clients.v1
+# Single source of truth for OIDC client registrations against Supabase Auth IdP.
+#
+# This file tracks:
+#   - Identity Provider (IdP) configuration
+#   - Registered OIDC/OAuth2 clients (relying parties)
+#   - Callback URLs, scopes, and activation status
+#
+# NEVER include client_secret values in this file.
+# Secret references point to ssot/secrets/registry.yaml entries.
+#
+# Related:
+#   - ssot/secrets/registry.yaml (secret name registry)
+#   - ssot/auth/github_auth_surface.yaml (GitHub OAuth surface)
+#   - addons/ipai/ipai_auth_oidc/ (Odoo OIDC module)
+
+version: "1.0.0"
+schema: ssot.auth.oidc_clients.v1
+last_reviewed: "2026-03-05"
+
+# ---------------------------------------------------------------------------
+# Identity Provider
+# ---------------------------------------------------------------------------
+idp:
+  name: "Supabase Auth"
+  type: oidc
+  project_ref: spdtwktxdalcfigzeqrz
+  issuer: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1"
+  endpoints:
+    authorization: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/authorize"
+    token: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/token"
+    userinfo: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/oauth/userinfo"
+    jwks: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/.well-known/jwks.json"
+    discovery: "https://spdtwktxdalcfigzeqrz.supabase.co/auth/v1/.well-known/openid-configuration"
+  supported_scopes:
+    - openid
+    - email
+    - profile
+  notes: >
+    Supabase Auth acts as the central IdP for all InsightPulse AI services.
+    OIDC clients authenticate users via the Authorization Code flow.
+    Odoo is a relying party — never store primary passwords in Odoo
+    for users with a Supabase counterpart (per ssot-platform rule 9).
+
+# ---------------------------------------------------------------------------
+# Registered OIDC Clients (Relying Parties)
+# ---------------------------------------------------------------------------
+clients:
+
+  - id: odoo
+    name: "Odoo ERP"
+    description: "Primary ERP — SSO via Supabase OIDC"
+    base_url: "https://erp.insightpulseai.com"
+    callback_url: "https://erp.insightpulseai.com/auth_oauth/signin"
+    scopes:
+      - openid
+      - email
+      - profile
+    grant_type: authorization_code
+    status: planned
+    secret_ref:
+      client_id: SUPABASE_OIDC_CLIENT_ID_ODOO
+      client_secret: SUPABASE_OIDC_CLIENT_SECRET_ODOO
+    notes: >
+      Uses Odoo's built-in auth_oauth module.
+      Provider registered in auth.oauth.provider (disabled until client credentials provisioned).
+      Module: auth_oauth (core) + ipai_auth_oidc (custom mappings if needed).
+
+  - id: shelf
+    name: "Shelf Knowledge Base"
+    description: "Internal knowledge base — SSO via Supabase OIDC"
+    base_url: "https://shelf.insightpulseai.com"
+    callback_url: "https://shelf.insightpulseai.com/oauth/callback"
+    scopes:
+      - openid
+      - email
+      - profile
+    grant_type: authorization_code
+    status: planned
+    secret_ref:
+      client_id: SUPABASE_OIDC_CLIENT_ID_SHELF
+      client_secret: SUPABASE_OIDC_CLIENT_SECRET_SHELF
+    notes: >
+      Shelf uses standard OAuth2/OIDC callback.
+      Requires OIDC client registration in Supabase dashboard.
+
+  - id: n8n
+    name: "n8n Automation"
+    description: "Workflow automation — SSO via Supabase OIDC"
+    base_url: "https://n8n.insightpulseai.com"
+    callback_url: "https://n8n.insightpulseai.com/rest/oauth2-credential/callback"
+    scopes:
+      - openid
+      - email
+      - profile
+    grant_type: authorization_code
+    status: planned
+    secret_ref:
+      client_id: SUPABASE_OIDC_CLIENT_ID_N8N
+      client_secret: SUPABASE_OIDC_CLIENT_SECRET_N8N
+    notes: >
+      n8n supports generic OAuth2 credential type for SSO.
+      Callback path is n8n's standard OAuth2 credential callback.
+
+  - id: plane
+    name: "Plane Project Management"
+    description: "Project management — SSO via Supabase OIDC"
+    base_url: "https://plane.insightpulseai.com"
+    callback_url: "https://plane.insightpulseai.com/api/oauth/callback"
+    scopes:
+      - openid
+      - email
+      - profile
+    grant_type: authorization_code
+    status: planned
+    secret_ref:
+      client_id: SUPABASE_OIDC_CLIENT_ID_PLANE
+      client_secret: SUPABASE_OIDC_CLIENT_SECRET_PLANE
+    notes: >
+      Plane supports OIDC via its OAuth callback API endpoint.
+      Requires OIDC client registration in Supabase dashboard.

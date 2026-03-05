@@ -167,6 +167,23 @@ subdomains:
       claimed_at: "2026-03-05"
       claim_ref: "ssot:cloudflare"
 
+  - name: crm
+    type: A
+    service: atomic_crm
+    port: 3004
+    health_check: /
+    owner_system: "Atomic CRM (marmelab/atomic-crm, Supabase-backed)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    notes: "Atomic CRM SPA (React/Vite). Container atomic-crm on 127.0.0.1:3004. Supabase backend (spdtwktxdalcfigzeqrz). Deployed 2026-03-05."
+    provider_claim:
+      provider: cloudflare
+      status: claimed
+      claimed_at: "2026-03-05"
+      claim_ref: "ssot:cloudflare"
+
   - name: ocr
     type: A
     service: paddleocr_microservice
