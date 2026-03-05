@@ -1,0 +1,46 @@
+name: Deny Direct Main Push
+
+# Makes non-PR pushes to main immediately noisy.
+# This is a server-side guardrail — branch protection "bypass" still lets
+# admin credentials push, but this workflow will fail the commit status.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-pr-association:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Check if push came through a PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          SHA="${{ github.sha }}"
+          REPO="${{ github.repository }}"
+
+          echo "Checking if commit ${SHA:0:8} has an associated PR..."
+
+          # Query GitHub API for PRs associated with this commit
+          PR_COUNT=$(gh api "repos/${REPO}/commits/${SHA}/pulls" \
+            --jq 'length' 2>/dev/null || echo "0")
+
+          if [ "$PR_COUNT" = "0" ]; then
+            echo "::error::Direct push to main detected (no associated PR)."
+            echo ""
+            echo "This commit was pushed directly to main without a pull request."
+            echo "All changes to main should go through a PR for review."
+            echo ""
+            echo "To fix: create a branch, open a PR, and merge through the PR workflow."
+            echo "  git checkout -b fix/your-change"
+            echo "  git push -u origin fix/your-change"
+            echo "  gh pr create --base main"
+            exit 1
+          else
+            echo "OK: Commit ${SHA:0:8} is associated with ${PR_COUNT} PR(s)"
+          fi

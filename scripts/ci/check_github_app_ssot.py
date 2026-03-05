@@ -47,8 +47,18 @@ def _load_yaml(path: Path) -> dict:
         raise RuntimeError("PyYAML required: pip install pyyaml")
 
 
-def _github_api(path: str, token: str) -> dict:
-    """Make authenticated GitHub API GET request."""
+def _github_api(path: str, token: str, *, token_type: str = "pat") -> dict:
+    """
+    Make authenticated GitHub API GET request.
+
+    token_type controls the Authorization header semantics:
+      "pat"     — PAT or OAuth user token (for org endpoints like /orgs/{org}/installations)
+      "app_jwt" — GitHub App JWT (for /app, /app/installations endpoints)
+
+    IMPORTANT: Never mix token types. PATs cannot authenticate to App-scoped
+    endpoints, and App JWTs cannot authenticate to user/org endpoints.
+    See: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app
+    """
     url = f"https://api.github.com{path}"
     req = Request(url)
     req.add_header("Authorization", f"Bearer {token}")
@@ -59,7 +69,12 @@ def _github_api(path: str, token: str) -> dict:
             return json.loads(resp.read())
     except HTTPError as e:
         body = e.read().decode()
-        print(f"ERROR: GitHub API {path} → {e.code}: {body}", file=sys.stderr)
+        hint = ""
+        if e.code == 401 and token_type == "pat":
+            hint = " (hint: this endpoint may require an App JWT, not a PAT)"
+        elif e.code == 403 and "GitHub App" in body:
+            hint = " (hint: this endpoint requires an App-authorized user token, not a PAT)"
+        print(f"ERROR: GitHub API {path} → {e.code}: {body}{hint}", file=sys.stderr)
         return {}
 
 
@@ -126,8 +141,66 @@ def check_org_installations(token: str) -> list:
     return errors
 
 
+def check_installation_scope(token: str) -> list:
+    """
+    Enforce installation_scope from pulser-hub SSOT.
+
+    If installation_scope=org, verifies pulser-hub is actually installed on
+    the org by checking /orgs/{org}/installations with a PAT (not JWT).
+    This is the correct endpoint — /user/installations requires an App-authorized
+    user token which a normal PAT cannot provide.
+    """
+    ssot_file = SSOT_DIR / "pulser-hub.yaml"
+    if not ssot_file.exists():
+        return []
+
+    ssot = _load_yaml(ssot_file)
+    app_config = ssot.get("app", {})
+    installation = app_config.get("installation", {})
+    scope = installation.get("installation_scope", "")
+    app_id = app_config.get("app_id")
+
+    if not scope:
+        return ["pulser-hub: installation_scope not declared in SSOT (add: org | repo | none)"]
+
+    errors = []
+
+    if scope == "org":
+        target_org = installation.get("target_org", ORG)
+        if not token:
+            return [f"pulser-hub: installation_scope=org but no GITHUB_TOKEN to verify"]
+
+        # Use PAT with /orgs/{org}/installations (NOT /user/installations which needs App token)
+        data = _github_api(f"/orgs/{target_org}/installations", token, token_type="pat")
+        found = False
+        for inst in data.get("installations", []):
+            if inst.get("app_id") == app_id:
+                found = True
+                break
+
+        if not found:
+            errors.append(
+                f"pulser-hub: installation_scope=org but app_id={app_id} NOT found "
+                f"in /orgs/{target_org}/installations. Install the app on the org first."
+            )
+        else:
+            print(f"  OK: pulser-hub (app_id={app_id}) is installed on {target_org}")
+
+    elif scope == "none":
+        print("  OK: pulser-hub installation_scope=none (explicitly not installed)")
+
+    return errors
+
+
 def check_pulser_hub() -> list:
-    """Check pulser-hub SSOT against live App settings (requires JWT auth)."""
+    """
+    Check pulser-hub SSOT against live App settings.
+
+    Token type hygiene:
+      - /app and /app/installations require an App JWT (from GITHUB_APP_PRIVATE_KEY)
+      - /orgs/{org}/installations requires a PAT (from GITHUB_TOKEN)
+      - These MUST NOT be mixed. A PAT sent to /app returns 401 "JWT could not be decoded".
+    """
     ssot_file = SSOT_DIR / "pulser-hub.yaml"
     if not ssot_file.exists():
         return [f"SSOT file missing: {ssot_file}"]
@@ -137,19 +210,37 @@ def check_pulser_hub() -> list:
 
     errors = []
 
-    # Try to get live app info via JWT
+    # --- Phase 1: Check expected_webhook_url against known_drift ---
+    expected_url = app_config.get("expected_webhook_url", "")
+    webhook_url = app_config.get("webhook", {}).get("url", "")
+    if expected_url and webhook_url and expected_url != webhook_url:
+        errors.append(
+            f"pulser-hub: webhook.url ({webhook_url}) != expected_webhook_url ({expected_url})"
+        )
+
+    known_drift = app_config.get("known_drift", [])
+    for drift in known_drift:
+        errors.append(
+            f"pulser-hub KNOWN DRIFT: {drift['field']} "
+            f"(live={drift.get('live_value', '?')}, desired={drift.get('desired_value', '?')}) "
+            f"— {drift.get('action', 'no action specified')}"
+        )
+
+    # --- Phase 2: Live API check via App JWT (only if private key available) ---
     private_key = os.environ.get("GITHUB_APP_PRIVATE_KEY", "")
     if not private_key:
-        print("SKIP: pulser-hub live check (GITHUB_APP_PRIVATE_KEY not set)", file=sys.stderr)
-        return []
+        print("SKIP: pulser-hub live API check (GITHUB_APP_PRIVATE_KEY not set)", file=sys.stderr)
+        return errors
 
     try:
         sys.path.insert(0, str(REPO_ROOT / "scripts" / "github_app"))
         from auth import mint_jwt, get_app_info
+        # IMPORTANT: mint_jwt() produces an App JWT. Only use it with /app endpoints.
+        # Never send this to /orgs/ or /repos/ endpoints (those need a PAT).
         app_jwt = mint_jwt()
-        live = get_app_info(app_jwt)
+        live = get_app_info(app_jwt)  # calls GET /app with App JWT — correct token type
     except Exception as e:
-        return [f"pulser-hub JWT auth failed: {e}"]
+        return errors + [f"pulser-hub JWT auth failed: {e}"]
 
     # Compare permissions
     ssot_perms = app_config.get("permissions", {})
@@ -177,17 +268,9 @@ def check_pulser_hub() -> list:
         if removed:
             errors.append(f"pulser-hub: SSOT has events not in live: {sorted(removed)}")
 
-    # Check webhook URL
-    ssot_webhook = app_config.get("webhook", {}).get("url", "")
-    # Webhook URL can only be checked via App settings (not API without JWT)
-    # Flag known drift from SSOT
-    known_drift = app_config.get("known_drift", [])
-    for drift in known_drift:
-        errors.append(
-            f"pulser-hub KNOWN DRIFT: {drift['field']} "
-            f"(live={drift.get('live_value', '?')}, desired={drift.get('desired_value', '?')}) "
-            f"— {drift.get('action', 'no action specified')}"
-        )
+    # Compare webhook URL if available in API response
+    live_webhook = live.get("events_url", "")  # Note: webhook_url not in GET /app response
+    # Webhook URL comparison relies on known_drift entries above
 
     return errors
 
@@ -261,6 +344,15 @@ def main():
             print("  OK: All org apps match SSOT")
 
     if not args.app or args.app == "pulser-hub":
+        print("\n=== Checking pulser-hub installation scope ===")
+        errors = check_installation_scope(token)
+        all_errors.extend(errors)
+        if errors:
+            for e in errors:
+                print(f"  DRIFT: {e}")
+        else:
+            print("  OK: pulser-hub installation scope verified")
+
         print("\n=== Checking pulser-hub ===")
         errors = check_pulser_hub()
         all_errors.extend(errors)
