@@ -1,11 +1,24 @@
 {
   "domain": "insightpulseai.com",
-  "consolidation_date": "2026-03-02",
-  "generated_at": "2026-03-02T04:12:57Z",
+  "consolidation_date": "2026-03-03",
+  "generated_at": "2026-03-03T18:57:12Z",
   "generator": "scripts/generate-dns-artifacts.sh",
   "source": "infra/dns/subdomain-registry.yaml",
   "nameservers": [],
   "services": {
+    "@": {
+      "fqdn": "@.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 80,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Apex domain (redirects or serves root)",
+      "health_check": "/",
+      "status": "active"
+    }
+,
     "erp": {
       "fqdn": "erp.insightpulseai.com",
       "record_type": "A",
@@ -45,19 +58,6 @@
       "status": "active"
     }
 ,
-    "shelf": {
-      "fqdn": "shelf.insightpulseai.com",
-      "record_type": "A",
-      "target": "178.128.112.214",
-      "cloudflare_proxied": true,
-      "origin_port": 3003,
-      "tls_mode": "Full (strict)",
-      "runtime_host": "odoo-production",
-      "owner_system": "Shelf.nu (self-hosted, ipai fork)",
-      "health_check": "/healthcheck",
-      "status": "active"
-    }
-,
     "ocr": {
       "fqdn": "ocr.insightpulseai.com",
       "record_type": "A",
@@ -86,13 +86,13 @@
 ,
     "mcp": {
       "fqdn": "mcp.insightpulseai.com",
-      "record_type": "CNAME",
-      "target": "pulse-hub-web-an645.ondigitalocean.app",
+      "record_type": "A",
+      "target": "178.128.112.214",
       "cloudflare_proxied": true,
       "origin_port": null,
       "tls_mode": "Full (strict)",
-      "runtime_host": "DO App Platform",
-      "owner_system": "MCP coordination (11 servers)",
+      "runtime_host": "odoo-production",
+      "owner_system": "MCP Hub Coordinator (port 8766 on droplet)",
       "health_check": "/healthz",
       "status": "active"
     }
@@ -110,16 +110,29 @@
       "status": "active"
     }
 ,
-    "ops": {
-      "fqdn": "ops.insightpulseai.com",
+    "agent": {
+      "fqdn": "agent.insightpulseai.com",
       "record_type": "CNAME",
-      "target": "cname.vercel-dns.com",
+      "target": "wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run",
       "cloudflare_proxied": false,
       "origin_port": null,
       "tls_mode": "Full (strict)",
       "runtime_host": "DO App Platform",
-      "owner_system": "OdooOps Console (Next.js on Vercel)",
-      "health_check": "/api/health",
+      "owner_system": "DigitalOcean AI Agent",
+      "health_check": "/",
+      "status": "active"
+    }
+,
+    "mail": {
+      "fqdn": "mail.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": false,
+      "origin_port": 25,
+      "tls_mode": "Off",
+      "runtime_host": "odoo-production",
+      "owner_system": "Mail routing (MX/SPF helper)",
+      "health_check": "",
       "status": "active"
     }
 ,
@@ -142,6 +155,15 @@
       "deprecated_date": "2026-02-09",
       "replacement": null,
       "reason": "Service no longer needed",
+      "dns_removed": true,
+      "container_removed": true
+    }
+,
+    "chat": {
+      "fqdn": "chat.insightpulseai.com",
+      "deprecated_date": "2026-01-28",
+      "replacement": null,
+      "reason": "Mattermost deprecated; team communication now uses Slack workspace",
       "dns_removed": true,
       "container_removed": true
     }

@@ -38,6 +38,8 @@ import requests
 from odoo import http
 from odoo.http import request
 
+from odoo.addons.ipai_ai_widget.controllers._bridge_helper import call_bridge
+
 _logger = logging.getLogger(__name__)
 TIMEOUT = 30
 SYSTEM_PROMPT = """You are IPAI Copilot, an intelligent business assistant embedded in Odoo ERP.
@@ -62,11 +64,9 @@ class IpaiCopilotController(http.Controller):
         if not message or not str(message).strip():
             return {"error": "MESSAGE_REQUIRED", "status": 400}
 
-        bridge_url = (
-            request.env["ir.config_parameter"]
-            .sudo()
-            .get_param("ipai_ai_copilot.bridge_url", default="")
-        )
+        params = request.env["ir.config_parameter"].sudo()
+        bridge_url = params.get_param("ipai_ai_copilot.bridge_url", default="")
+        bridge_token = params.get_param("ipai_ai_copilot.bridge_token", default="")
         if not bridge_url:
             return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
 
@@ -94,28 +94,14 @@ class IpaiCopilotController(http.Controller):
             "tools": tool_declarations,
         }
 
-        try:
-            resp = requests.post(
-                bridge_url,
-                json=payload,
-                timeout=TIMEOUT,
-                headers={"Content-Type": "application/json"},
-            )
-        except requests.Timeout:
-            return {"error": "BRIDGE_TIMEOUT", "status": 504}
-        except requests.RequestException as exc:
-            _logger.error("IPAI Copilot bridge error: %s", exc)
-            return {"error": "BRIDGE_ERROR", "status": 500}
-
-        if resp.status_code == 503:
-            return {"error": "AI_KEY_NOT_CONFIGURED", "status": 503}
-        if not resp.ok:
-            _logger.error(
-                "IPAI Copilot bridge returned %s: %s", resp.status_code, resp.text[:200]
-            )
-            return {"error": "BRIDGE_ERROR", "status": resp.status_code}
-
-        data = resp.json()
+        data, error_code = call_bridge(bridge_url, bridge_token, payload)
+        if error_code:
+            status_map = {
+                "BRIDGE_TIMEOUT": 504,
+                "AI_KEY_NOT_CONFIGURED": 503,
+                "BRIDGE_ERROR": 500,
+            }
+            return {"error": error_code, "status": status_map.get(error_code, 500)}
 
         # Handle tool calls — return to client for confirmation before execution
         if data.get("tool_calls"):

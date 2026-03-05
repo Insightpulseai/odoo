@@ -27,8 +27,9 @@ import { createHash } from "crypto";
 // Configuration (all from environment — never hardcoded)
 // ---------------------------------------------------------------------------
 
+const PLANE_API_URL = process.env.PLANE_API_URL || "https://api.plane.so/api/v1";
 const PLANE_API_KEY = process.env.PLANE_API_KEY;
-const PLANE_WORKSPACE_ID = process.env.PLANE_WORKSPACE_ID;
+const PLANE_WORKSPACE_SLUG = process.env.PLANE_WORKSPACE_SLUG;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -42,7 +43,7 @@ const AUDIT_BUFFER_PATH = "./.audit-buffer.ndjson";
 function assertConfig(): void {
   const missing: string[] = [];
   if (!PLANE_API_KEY) missing.push("PLANE_API_KEY");
-  if (!PLANE_WORKSPACE_ID) missing.push("PLANE_WORKSPACE_ID");
+  if (!PLANE_WORKSPACE_SLUG) missing.push("PLANE_WORKSPACE_SLUG");
   if (missing.length > 0) {
     throw new Error(
       `Missing required environment variables: ${missing.join(", ")}. ` +
@@ -55,14 +56,12 @@ function assertConfig(): void {
 // Plane API client
 // ---------------------------------------------------------------------------
 
-const PLANE_API_BASE = "https://api.plane.so/api/v1";
-
 async function planeRequest<T>(
   method: string,
   path: string,
   body?: unknown
 ): Promise<T> {
-  const url = `${PLANE_API_BASE}${path}`;
+  const url = `${PLANE_API_URL}${path}`;
   const response = await fetch(url, {
     method,
     headers: {
@@ -280,7 +279,7 @@ async function handleTool(
   name: string,
   args: ToolArgs
 ): Promise<Record<string, unknown>> {
-  const ws = PLANE_WORKSPACE_ID!;
+  const ws = PLANE_WORKSPACE_SLUG!;
 
   switch (name) {
     case "create_issue": {

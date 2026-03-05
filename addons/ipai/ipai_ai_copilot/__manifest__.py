@@ -13,7 +13,7 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "category": "Productivity",
-    "depends": ["mail", "web", "base"],  # no enterprise deps
+    "depends": ["mail", "web", "base", "ipai_ai_widget"],  # no enterprise deps
     "data": [
         "security/ir.model.access.csv",
         "data/res_partner_bot.xml",

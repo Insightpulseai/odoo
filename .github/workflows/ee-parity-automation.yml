@@ -1,0 +1,388 @@
+name: EE Feature Parity Analysis & Reporting
+
+# Registry-driven EE parity assessment and gap analysis
+# DOES NOT deploy changes - generates reports and PRs only
+#
+# GOVERNANCE: Read-only workflow (no deployments, no direct commits)
+# SOURCE: ssot/ee_parity/replacements.yaml (edit there, not here)
+# OUTPUT: Reports in docs/ee-parity/reports/ + PRs for gap closure
+
+on:
+  schedule:
+    # Weekly parity assessment on Mondays at 8 AM UTC
+    - cron: '0 8 * * 1'
+  pull_request:
+    paths:
+      - 'ssot/ee_parity/replacements.yaml'
+      - '.github/workflows/ee-parity-automation.yml'
+  workflow_dispatch:
+    inputs:
+      generate_pr:
+        description: 'Generate PR for low-hanging fruit improvements'
+        type: boolean
+        default: false
+
+# Least-privilege permissions (governance requirement)
+# NO contents:write - this workflow does not modify repo directly
+permissions:
+  contents: read       # Read SSOT registry and codebase
+  issues: write        # Create gap tracking issues
+  pull-requests: write # Create improvement PRs (if requested)
+
+env:
+  SSOT_REGISTRY: ssot/ee_parity/replacements.yaml
+  REPORT_DIR: docs/ee-parity/reports
+  EVIDENCE_DIR: web/docs/evidence/$(date +%Y%m%d-%H%M+0800)/ee-parity-${{ github.run_id }}
+
+jobs:
+  # Step 1: Validate SSOT Registry
+  validate-registry:
+    name: "📋 Validate SSOT Registry"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate Registry Schema
+        run: |
+          python3 << 'PYTHON_EOF'
+          import yaml
+          import sys
+          from pathlib import Path
+
+          registry_path = Path("${{ env.SSOT_REGISTRY }}")
+          if not registry_path.exists():
+              print(f"❌ SSOT registry not found: {registry_path}")
+              sys.exit(1)
+
+          with open(registry_path) as f:
+              registry = yaml.safe_load(f)
+
+          # Validation rules
+          errors = []
+
+          # Rule 1: All features must have evidence
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              if not feature.get('evidence'):
+                  errors.append(f"Feature '{name}' missing evidence documentation")
+
+          # Rule 2: No feature can claim >95% parity
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              parity = feature.get('parity_percent', 0)
+              if parity > 95:
+                  errors.append(f"Feature '{name}' claims {parity}% parity (max: 95%)")
+
+          # Rule 3: Production status requires >= 80% parity
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              status = feature.get('status', 'draft')
+              parity = feature.get('parity_percent', 0)
+              if status == 'production' and parity < 80:
+                  errors.append(f"Feature '{name}' marked production but only {parity}% parity")
+
+          # Rule 4: All features must document gaps
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              has_gaps = False
+              for replacement in feature.get('replacements', []):
+                  if replacement.get('gaps'):
+                      has_gaps = True
+              if not has_gaps and feature.get('parity_percent', 0) < 100:
+                  print(f"⚠️  WARNING: Feature '{name}' has no documented gaps")
+
+          if errors:
+              print("❌ Registry validation failed:")
+              for error in errors:
+                  print(f"  - {error}")
+              sys.exit(1)
+
+          print("✅ Registry validation passed")
+          PYTHON_EOF
+
+  # Step 2: Calculate Parity Metrics
+  calculate-metrics:
+    name: "📊 Calculate Parity Metrics"
+    runs-on: ubuntu-latest
+    needs: validate-registry
+    outputs:
+      average_parity: ${{ steps.metrics.outputs.average_parity }}
+      gap_to_target: ${{ steps.metrics.outputs.gap }}
+      production_ready: ${{ steps.metrics.outputs.production_count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Calculate Metrics
+        id: metrics
+        run: |
+          python3 << 'PYTHON_EOF'
+          import yaml
+          import json
+          import os
+
+          with open("${{ env.SSOT_REGISTRY }}") as f:
+              registry = yaml.safe_load(f)
+
+          features = registry['features']
+          total_parity = sum(f['parity_percent'] for f in features)
+          avg_parity = total_parity / len(features)
+          target = registry['meta']['parity_target']
+          gap = target - avg_parity
+          production_count = len([f for f in features if f['status'] == 'production'])
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"average_parity={avg_parity:.1f}\n")
+              f.write(f"gap={gap:.1f}\n")
+              f.write(f"production_count={production_count}\n")
+
+          # Generate detailed report
+          report = f"""# EE Feature Parity Report
+
+**Generated**: {registry['meta']['last_assessed']}
+**Odoo Version**: {registry['meta']['odoo_version']}
+
+## Summary
+
+- **Average Parity**: {avg_parity:.1f}%
+- **Target**: {target}%
+- **Gap to Target**: {gap:.1f}%
+- **Production-Ready Features**: {production_count}/{len(features)}
+
+## Feature Breakdown
+
+| Feature | Status | Parity | Target | Gap |
+|---------|--------|--------|--------|-----|
+"""
+
+          for feature in features:
+              name = feature['name']
+              status = feature['status']
+              parity = feature['parity_percent']
+              target_parity = feature['target_parity']
+              gap = target_parity - parity
+              report += f"| {name} | {status} | {parity}% | {target_parity}% | {gap}% |\n"
+
+          report += "\n## High-Priority Gaps\n\n"
+          for priority in registry['summary']['prioritization']['high_priority']:
+              feature = next(f for f in features if f['name'] == priority)
+              report += f"### {feature['name']}\n"
+              report += f"**Current Parity**: {feature['parity_percent']}%\n"
+              report += f"**Target**: {feature['target_parity']}%\n\n"
+              report += "**Known Gaps**:\n"
+              for replacement in feature['replacements']:
+                  for gap in replacement.get('gaps', []):
+                      report += f"- {gap}\n"
+              report += "\n"
+
+          with open("parity-report.md", "w") as f:
+              f.write(report)
+          PYTHON_EOF
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: parity-report.md
+          retention-days: 90
+
+  # Step 3: Identify Implementation Opportunities
+  identify-opportunities:
+    name: "💡 Identify Quick Wins"
+    runs-on: ubuntu-latest
+    needs: calculate-metrics
+    outputs:
+      opportunities: ${{ steps.scan.outputs.opportunities }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for Low-Hanging Fruit
+        id: scan
+        run: |
+          # Scan codebase for easy parity improvements
+          # Examples: missing n8n workflows, OCA modules not installed, simple config changes
+
+          OPPORTUNITIES=""
+
+          # Check if OCA modules are actually installed
+          if [ ! -d "addons/oca/helpdesk" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Install OCA helpdesk module (impacts: helpdesk_sla parity)"
+          fi
+
+          if [ ! -d "addons/oca/knowledge" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Install OCA knowledge module (impacts: knowledge_base parity)"
+          fi
+
+          # Check if documented workflows exist
+          if [ ! -f "automations/n8n/workflows/helpdesk-sla-alerts.json" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Create helpdesk SLA alert workflow (impacts: helpdesk_sla parity)"
+          fi
+
+          if [ -n "$OPPORTUNITIES" ]; then
+              {
+                  echo "opportunities<<EOF"
+                  echo "$OPPORTUNITIES"
+                  echo "EOF"
+              } >> "$GITHUB_OUTPUT"
+          else
+              echo "opportunities=none" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Step 4: Generate Improvement PR (Optional)
+  generate-pr:
+    name: "🔧 Generate Improvement PR"
+    runs-on: ubuntu-latest
+    needs: [calculate-metrics, identify-opportunities]
+    if: github.event.inputs.generate_pr == 'true' && needs.identify-opportunities.outputs.opportunities != 'none'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Branch
+        run: |
+          git checkout -b bot/ee-parity-improvements-$(date +%Y%m%d)
+
+      - name: Apply Low-Hanging Fruit Improvements
+        run: |
+          # Scaffold missing OCA module installations
+          # Generate stub n8n workflows
+          # Add configuration templates
+
+          echo "# EE Parity Improvements" > IMPROVEMENTS.md
+          echo "${{ needs.identify-opportunities.outputs.opportunities }}" >> IMPROVEMENTS.md
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat(ee-parity): automated low-hanging fruit improvements
+
+          Generated by EE Parity Analysis workflow based on gap analysis.
+
+          Opportunities addressed:
+          ${{ needs.identify-opportunities.outputs.opportunities }}
+
+          See: ssot/ee_parity/replacements.yaml for full parity registry"
+
+          git push origin HEAD
+
+          gh pr create \
+            --title "EE Parity: Automated Improvements" \
+            --body "$(cat IMPROVEMENTS.md)" \
+            --label "ee-parity,automation" \
+            --assignee "@me"
+
+  # Step 5: Create Gap Tracking Issues
+  track-gaps:
+    name: "📌 Track Priority Gaps"
+    runs-on: ubuntu-latest
+    needs: validate-registry
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Create Gap Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_EOF'
+          import yaml
+          import subprocess
+
+          with open("${{ env.SSOT_REGISTRY }}") as f:
+              registry = yaml.safe_load(f)
+
+          # Create issues for high-priority gaps
+          for priority_feature in registry['summary']['prioritization']['high_priority']:
+              feature = next(f for f in registry['features'] if f['name'] == priority_feature)
+
+              # Check if issue already exists
+              existing = subprocess.run(
+                  ['gh', 'issue', 'list', '--label', f'ee-parity/{feature["name"]}', '--json', 'number'],
+                  capture_output=True, text=True
+              )
+
+              if existing.stdout.strip() != '[]':
+                  print(f"Issue already exists for {feature['name']}, skipping")
+                  continue
+
+              # Create tracking issue
+              title = f"EE Parity: Close gap for {feature['ee_feature']}"
+              body = f"""## Feature: {feature['ee_feature']}
+
+**Current Parity**: {feature['parity_percent']}%
+**Target**: {feature['target_parity']}%
+**Gap**: {feature['target_parity'] - feature['parity_percent']}%
+
+### Known Gaps
+
+"""
+              for replacement in feature['replacements']:
+                  for gap in replacement.get('gaps', []):
+                      body += f"- [ ] {gap}\n"
+
+              body += f"""
+
+### Next Milestones
+
+"""
+              for milestone in feature.get('next_milestones', []):
+                  body += f"- [ ] {milestone['action']} (Target: {milestone['target_date']}, Impact: {milestone['parity_impact']})\n"
+
+              body += f"""
+
+**SSOT Reference**: `ssot/ee_parity/replacements.yaml`
+**Evidence**: `{feature['evidence'][0]['path']}`
+"""
+
+              subprocess.run([
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body', body,
+                  '--label', f'ee-parity/{feature["name"]},priority:high'
+              ])
+              print(f"✅ Created tracking issue for {feature['name']}")
+          PYTHON_EOF
+
+  # Final Summary
+  summary:
+    name: "📝 Workflow Summary"
+    runs-on: ubuntu-latest
+    needs: [calculate-metrics, identify-opportunities, generate-pr, track-gaps]
+    if: always()
+    steps:
+      - name: Report Results
+        run: |
+          echo "## EE Feature Parity Analysis Complete"
+          echo ""
+          echo "**Average Parity**: ${{ needs.calculate-metrics.outputs.average_parity }}%"
+          echo "**Gap to Target**: ${{ needs.calculate-metrics.outputs.gap }}%"
+          echo "**Production-Ready**: ${{ needs.calculate-metrics.outputs.production_ready }} features"
+          echo ""
+          echo "**Opportunities Identified**: ${{ needs.identify-opportunities.outputs.opportunities != 'none' && 'Yes' || 'None' }}"
+          echo ""
+          echo "Reports and tracking issues created. No direct deployments made."

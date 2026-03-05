@@ -463,6 +463,15 @@ servers:
     enabled: [dev, staging]
     status: source_only
 
+  - id: plane
+    category: custom
+    auth: env
+    risk: medium
+    type: stdio
+    enabled: [dev, staging]
+    status: source_only
+    notes: "Plane self-hosted — issues, cycles, modules, pages"
+
 # Domain blocklist — CI will reject any MCP endpoint containing these
 blocked_domains:
   - insightpulseai.net

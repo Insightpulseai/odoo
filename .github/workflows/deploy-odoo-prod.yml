@@ -31,7 +31,7 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64]
     steps:
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -41,21 +41,17 @@ jobs:
           key: ${{ secrets.ODOO_PROD_SSH_KEY }}
           script: |
             set -euo pipefail
-            # Adjust path if your repo is elsewhere, e.g. /workspace/odoo
-            # Trying common locations or user provided path
-            TARGET_DIR="/workspace/odoo"
-            if [ -d "/opt/odoo" ]; then TARGET_DIR="/opt/odoo"; fi
-            if [ -d "/srv/odoo" ]; then TARGET_DIR="/srv/odoo"; fi
-
-            # Allow override via secret if needed, otherwise fallback to detection
-            TARGET_DIR="${{ secrets.ODOO_REPO_PATH || '/workspace' }}"
+            # Server repo path: /opt/odoo/repo (verified via SSH)
+            TARGET_DIR="${{ secrets.ODOO_REPO_PATH || '/opt/odoo/repo' }}"
 
             echo "Deploying to $TARGET_DIR"
             cd "$TARGET_DIR" || { echo "Directory $TARGET_DIR not found"; exit 1; }
 
             git fetch --all
+            git stash --include-untracked || true
             git checkout main
             git pull --ff-only
+            git stash pop || true
             chmod +x scripts/deploy_odoo_upgrade.sh
 
             # Determine params from inputs or defaults
@@ -63,7 +59,7 @@ jobs:
             ACTION="${{ github.event.inputs.action || 'upgrade' }}"
 
             # Run the upgrade script
-            ODOO_CONTAINER=odoo-erp-prod \
+            ODOO_CONTAINER=odoo-prod \
             ODOO_DB=${{ secrets.ODOO_PROD_DB }} \
             ODOO_MODULES="$MODULES" \
             ODOO_ACTION="$ACTION" \
@@ -74,9 +70,9 @@ jobs:
             echo "SHA=$(git rev-parse --short HEAD)"
 
             echo ">>> Container Status"
-            docker ps --filter "name=odoo-erp-prod" --format "CONTAINER={{.Names}} STATUS={{.Status}}"
+            docker ps --filter "name=odoo-prod" --format "CONTAINER={{.Names}} STATUS={{.Status}}"
 
             echo ">>> Recent Logs (Verification)"
             # Check for success/error signals in recent logs
-            docker logs --tail=50 odoo-erp-prod 2>&1 | grep -E "Initiating shutdown|Ready|loaded|Traceback|ERROR" || true
+            docker logs --tail=50 odoo-prod 2>&1 | grep -E "Initiating shutdown|Ready|loaded|Traceback|ERROR" || true
             echo "::endgroup::"
