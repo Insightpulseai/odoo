@@ -1,0 +1,446 @@
+name: Comprehensive Test Suite
+
+# Comprehensive testing automation for Odoo 19 with AI-powered insights
+# Implements: unit, integration, functional (E2E), performance, and security testing
+# Reference: docs/integrations/ODOO_AI_TESTING_AUTOMATION.md
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  schedule:
+    # Nightly comprehensive tests at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Test type to run'
+        required: true
+        type: choice
+        options:
+          - all
+          - unit
+          - integration
+          - functional
+          - performance
+          - security
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  unit-tests:
+    name: "🧪 Unit Tests"
+    if: github.event.inputs.test_type == 'unit' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_USER: odoo
+          POSTGRES_DB: odoo_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - ipai_bir_plane_sync
+          - ipai_mail_bridge_zoho
+          - ipai_slack_connector
+          - ipai_finance_ppm
+          - ipai_ai_tools
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Odoo CE 19
+        run: |
+          git clone https://github.com/odoo/odoo.git /opt/odoo \
+            --branch 19.0 --depth 1 --quiet
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py312-odoo19-pip-v1
+          restore-keys: |
+            ${{ runner.os }}-py312-odoo19-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install -r /opt/odoo/requirements.txt --quiet
+          pip install coverage pytest-cov
+
+      - name: Run unit tests with coverage
+        env:
+          ODOO_BIN: /opt/odoo/odoo-bin
+          DB_NAME: test_${{ matrix.module }}
+          ADDONS_PATH: "${{ github.workspace }}/addons/ipai,/opt/odoo/addons"
+        run: |
+          coverage run --source=addons/ipai/${{ matrix.module }} \
+            /opt/odoo/odoo-bin \
+            --addons-path="${ADDONS_PATH}" \
+            -d ${DB_NAME} \
+            -i ${{ matrix.module }} \
+            --test-enable \
+            --test-tags=-at_install,post_install \
+            --stop-after-init \
+            --log-level=test \
+            --db_host=127.0.0.1 \
+            --db_port=5432 \
+            --db_user=odoo \
+            --db_password=odoo
+
+      - name: Generate coverage report
+        run: |
+          coverage report --fail-under=70
+          coverage xml -o coverage-${{ matrix.module }}.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage-${{ matrix.module }}.xml
+          flags: unit,${{ matrix.module }}
+          name: unit-${{ matrix.module }}
+
+  integration-tests:
+    name: "🔗 Integration Tests"
+    if: github.event.inputs.test_type == 'integration' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test n8n Webhook Integration
+        if: env.N8N_WEBHOOK_URL != ''
+        env:
+          N8N_WEBHOOK_URL: ${{ secrets.N8N_WEBHOOK_URL }}
+        run: |
+          response=$(curl -s -X POST "${N8N_WEBHOOK_URL}/plane-odoo-github-sync" \
+            -H "Content-Type: application/json" \
+            -d '{"test": true, "module": "integration_test"}')
+          echo "Response: $response"
+          echo "$response" | jq -e '.success == true'
+
+      - name: Test Plane API Integration
+        if: env.PLANE_API_URL != ''
+        env:
+          PLANE_API_URL: ${{ secrets.PLANE_API_URL }}
+          PLANE_WORKSPACE_SLUG: ${{ secrets.PLANE_WORKSPACE_SLUG }}
+          PLANE_API_KEY: ${{ secrets.PLANE_API_KEY }}
+        run: |
+          response=$(curl -s -X GET \
+            "${PLANE_API_URL}/workspaces/${PLANE_WORKSPACE_SLUG}/projects/" \
+            -H "X-API-Key: ${PLANE_API_KEY}")
+          echo "Response: $response"
+          echo "$response" | jq -e '.[0].id' | grep -qE '^[a-f0-9-]+$'
+
+      - name: Test Supabase Edge Function
+        if: env.SUPABASE_URL != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          response=$(curl -s -X POST \
+            "${SUPABASE_URL}/functions/v1/plane-sync?source=test" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"action": "ping"}')
+          echo "Response: $response"
+          echo "$response" | jq -e '.success == true'
+
+  performance-tests:
+    name: "⚡ Performance Tests"
+    if: github.event.inputs.test_type == 'performance' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Run load tests
+        env:
+          ODOO_BASE_URL: https://erp.insightpulseai.com
+          ODOO_LOGIN: ${{ secrets.ODOO_TEST_USER }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_TEST_PASSWORD }}
+        run: |
+          mkdir -p test-results
+          k6 run tests/load/odoo_login_and_nav.js \
+            --out json=test-results/performance.json \
+            --summary-export=test-results/summary.json
+
+      - name: Analyze performance metrics
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+
+          with open('test-results/summary.json') as f:
+              results = json.load(f)
+
+          # Extract metrics
+          metrics = results['metrics']
+          avg_response = metrics.get('http_req_duration', {}).get('avg', 0)
+          p95_response = metrics.get('http_req_duration', {}).get('p(95)', 0)
+          error_rate = metrics.get('http_req_failed', {}).get('rate', 0)
+
+          print(f"Performance Metrics:")
+          print(f"  - Avg response time: {avg_response:.2f}ms")
+          print(f"  - P95 response time: {p95_response:.2f}ms")
+          print(f"  - Error rate: {error_rate*100:.2f}%")
+
+          # Performance thresholds
+          failures = []
+          if avg_response > 500:
+              failures.append(f"❌ Avg response time {avg_response:.2f}ms exceeds 500ms threshold")
+          if p95_response > 2000:
+              failures.append(f"❌ P95 response time {p95_response:.2f}ms exceeds 2000ms threshold")
+          if error_rate > 0.01:
+              failures.append(f"❌ Error rate {error_rate*100:.2f}% exceeds 1% threshold")
+
+          if failures:
+              print("\nFailures:")
+              for failure in failures:
+                  print(failure)
+              sys.exit(1)
+          else:
+              print("\n✅ All performance thresholds met")
+          EOF
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: test-results/
+
+  security-tests:
+    name: "🛡️ Security Tests"
+    if: github.event.inputs.test_type == 'security' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Bandit (Python security)
+        run: |
+          pip install bandit
+          bandit -r addons/ipai -f json -o security-report.json --severity-level medium
+        continue-on-error: true
+
+      - name: Run Safety (dependency vulnerabilities)
+        run: |
+          pip install safety
+          pip freeze | safety check --json --output safety-report.json
+        continue-on-error: true
+
+      - name: Analyze security results
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+
+          exit_code = 0
+
+          # Check Bandit results
+          try:
+              with open('security-report.json') as f:
+                  bandit = json.load(f)
+
+              high_severity = [i for i in bandit.get('results', []) if i.get('issue_severity') == 'HIGH']
+              medium_severity = [i for i in bandit.get('results', []) if i.get('issue_severity') == 'MEDIUM']
+
+              print(f"Bandit Security Scan:")
+              print(f"  - High severity: {len(high_severity)}")
+              print(f"  - Medium severity: {len(medium_severity)}")
+
+              if high_severity:
+                  print(f"\n❌ {len(high_severity)} HIGH severity security issues found:")
+                  for issue in high_severity[:5]:  # Show first 5
+                      print(f"   - {issue.get('test_id')}: {issue.get('issue_text')} ({issue.get('filename')}:{issue.get('line_number')})")
+                  exit_code = 1
+              else:
+                  print("✅ No high severity issues")
+          except Exception as e:
+              print(f"Warning: Could not analyze Bandit results: {e}")
+
+          # Check Safety results
+          try:
+              with open('safety-report.json') as f:
+                  safety = json.load(f)
+
+              vulnerabilities = safety.get('vulnerabilities', [])
+              print(f"\nSafety Dependency Scan:")
+              print(f"  - Vulnerabilities found: {len(vulnerabilities)}")
+
+              if vulnerabilities:
+                  print(f"\n⚠️  {len(vulnerabilities)} dependency vulnerabilities found:")
+                  for vuln in vulnerabilities[:5]:  # Show first 5
+                      print(f"   - {vuln.get('package')}: {vuln.get('vulnerability')}")
+          except Exception as e:
+              print(f"Warning: Could not analyze Safety results: {e}")
+
+          sys.exit(exit_code)
+          EOF
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            security-report.json
+            safety-report.json
+
+  functional-tests:
+    name: "🎭 Functional Tests (E2E)"
+    if: github.event.inputs.test_type == 'functional' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright
+        run: |
+          pip install playwright pytest-playwright
+          playwright install chromium
+
+      - name: Run E2E tests
+        if: env.ODOO_BASE_URL != ''
+        env:
+          ODOO_BASE_URL: https://erp.insightpulseai.com
+          ODOO_USERNAME: ${{ secrets.ODOO_TEST_USER }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_TEST_PASSWORD }}
+        run: |
+          if [ -d "tests/e2e" ]; then
+            pytest tests/e2e/ \
+              --base-url="${ODOO_BASE_URL}" \
+              --headed=false \
+              --browser=chromium \
+              --tracing=retain-on-failure \
+              --screenshot=only-on-failure
+          else
+            echo "No E2E tests directory found, skipping"
+          fi
+        continue-on-error: true
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+
+  test-summary:
+    name: "📊 Test Summary & Reporting"
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, performance-tests, security-tests, functional-tests]
+    if: always()
+    steps:
+      - name: Generate test report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const summary = {
+              unit: '${{ needs.unit-tests.result }}',
+              integration: '${{ needs.integration-tests.result }}',
+              functional: '${{ needs.functional-tests.result }}',
+              performance: '${{ needs.performance-tests.result }}',
+              security: '${{ needs.security-tests.result }}'
+            };
+
+            const passed = Object.values(summary).filter(r => r === 'success').length;
+            const total = Object.keys(summary).length;
+            const passRate = ((passed / total) * 100).toFixed(1);
+
+            const statusIcon = (status) => {
+              if (status === 'success') return '✅';
+              if (status === 'failure') return '❌';
+              if (status === 'skipped') return '⏭️';
+              return '❓';
+            };
+
+            const body = `
+            ## 📊 Comprehensive Test Summary
+
+            **Overall Result**: ${passed}/${total} test suites passed (${passRate}%)
+
+            | Test Suite | Result | Status |
+            |------------|--------|--------|
+            | Unit Tests | ${statusIcon(summary.unit)} | ${summary.unit} |
+            | Integration Tests | ${statusIcon(summary.integration)} | ${summary.integration} |
+            | Functional Tests | ${statusIcon(summary.functional)} | ${summary.functional} |
+            | Performance Tests | ${statusIcon(summary.performance)} | ${summary.performance} |
+            | Security Tests | ${statusIcon(summary.security)} | ${summary.security} |
+
+            ---
+            **Workflow Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **Commit**: ${{ github.sha }}
+            `;
+
+            core.summary.addRaw(body).write();
+
+      - name: Notify on failure
+        if: ${{ needs.unit-tests.result == 'failure' || needs.security-tests.result == 'failure' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_body = `
+            ## ❌ Comprehensive Test Suite Failure
+
+            **Workflow**: ${{ github.workflow }}
+            **Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **Commit**: ${{ github.sha }}
+            **Branch**: ${{ github.ref }}
+
+            **Failed Suites**:
+            ${{ needs.unit-tests.result == 'failure' && '- Unit Tests' || '' }}
+            ${{ needs.integration-tests.result == 'failure' && '- Integration Tests' || '' }}
+            ${{ needs.functional-tests.result == 'failure' && '- Functional Tests' || '' }}
+            ${{ needs.performance-tests.result == 'failure' && '- Performance Tests' || '' }}
+            ${{ needs.security-tests.result == 'failure' && '- Security Tests' || '' }}
+
+            **Action Required**: Review failed tests and fix issues before merging.
+            `;
+
+            // Only create issue if not from a PR
+            if (!context.payload.pull_request) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `❌ Test Suite Failure: ${context.sha.substring(0, 7)}`,
+                body: issue_body,
+                labels: ['test-failure', 'ci', 'urgent']
+              });
+            }

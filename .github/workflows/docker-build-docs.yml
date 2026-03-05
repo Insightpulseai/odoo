@@ -1,0 +1,102 @@
+name: Build and Publish Documentation Builder Image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'docker/docs-builder/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY_GHCR: ghcr.io
+  IMAGE_NAME: docs-builder
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  security-events: write
+
+jobs:
+  authenticate:
+    name: "🔐 OIDC Authentication"
+    runs-on: ubuntu-latest
+    outputs:
+      supabase_token: ${{ steps.auth.outputs.token }}
+    steps:
+      - name: Get OIDC Token
+        id: oidc
+        run: |
+          OIDC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=insightpulseai-odoo" \
+            | jq -r '.value')
+          echo "::add-mask::$OIDC_TOKEN"
+          echo "oidc_token=$OIDC_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Exchange for Supabase Token
+        id: auth
+        run: |
+          SUPABASE_TOKEN=$(curl -X POST \
+            "${{ secrets.SUPABASE_URL }}/auth/v1/token?grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+            -H "Content-Type: application/json" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -d "{\"assertion\": \"${{ steps.oidc.outputs.oidc_token }}\"}" \
+            | jq -r '.access_token')
+          echo "::add-mask::$SUPABASE_TOKEN"
+          echo "token=$SUPABASE_TOKEN" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    name: "🐳 Build Docs Builder Image"
+    runs-on: self-hosted
+    needs: authenticate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY_GHCR }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: docker/docs-builder
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  security-scan:
+    name: "🔍 Security Scan"
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Run Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'

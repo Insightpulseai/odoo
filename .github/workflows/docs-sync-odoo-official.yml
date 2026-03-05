@@ -1,0 +1,697 @@
+name: Sync Official Odoo Documentation
+
+# Daily sync of official Odoo 19.0 documentation from GitHub
+# Syncs RST files, generates search index, deploys to GitHub Pages
+
+on:
+  schedule:
+    # Daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force complete rebuild and reindex'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  sync-official-docs:
+    name: "📥 Sync from odoo/documentation"
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check-changes.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Clone official Odoo documentation
+        run: |
+          git clone \
+            --branch 19.0 \
+            --depth 1 \
+            https://github.com/odoo/documentation.git \
+            official-docs
+
+      - name: Sync documentation content
+        run: |
+          # Create docs structure
+          mkdir -p repo/docs/odoo-official/{administration,applications,contributing,developer}
+
+          # Sync each documentation section with deletion of removed files
+          rsync -av --delete --checksum \
+            official-docs/content/administration/ \
+            repo/docs/odoo-official/administration/
+
+          rsync -av --delete --checksum \
+            official-docs/content/applications/ \
+            repo/docs/odoo-official/applications/
+
+          rsync -av --delete --checksum \
+            official-docs/content/contributing/ \
+            repo/docs/odoo-official/contributing/
+
+          rsync -av --delete --checksum \
+            official-docs/content/developer/ \
+            repo/docs/odoo-official/developer/
+
+      - name: Generate sync metadata
+        run: |
+          cd repo
+
+          # Get Odoo docs commit info
+          ODOO_COMMIT=$(cd ../official-docs && git rev-parse HEAD)
+          ODOO_DATE=$(cd ../official-docs && git log -1 --format=%ci)
+
+          # Count files
+          ADMIN_COUNT=$(find docs/odoo-official/administration -name '*.rst' | wc -l)
+          APPS_COUNT=$(find docs/odoo-official/applications -name '*.rst' | wc -l)
+          CONTRIB_COUNT=$(find docs/odoo-official/contributing -name '*.rst' | wc -l)
+          DEV_COUNT=$(find docs/odoo-official/developer -name '*.rst' | wc -l)
+          TOTAL_COUNT=$((ADMIN_COUNT + APPS_COUNT + CONTRIB_COUNT + DEV_COUNT))
+
+          cat > docs/odoo-official/SYNC_METADATA.json << EOF
+          {
+            "sync_timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "odoo_version": "19.0",
+            "source_repo": "https://github.com/odoo/documentation",
+            "source_commit": "${ODOO_COMMIT}",
+            "source_commit_date": "${ODOO_DATE}",
+            "file_counts": {
+              "administration": ${ADMIN_COUNT},
+              "applications": ${APPS_COUNT},
+              "contributing": ${CONTRIB_COUNT},
+              "developer": ${DEV_COUNT},
+              "total": ${TOTAL_COUNT}
+            }
+          }
+          EOF
+
+          # Generate human-readable report
+          cat > docs/odoo-official/SYNC_REPORT.md << EOF
+          # Documentation Sync Report
+
+          **Sync Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Odoo Version**: 19.0
+          **Source**: [odoo/documentation@${ODOO_COMMIT:0:7}](https://github.com/odoo/documentation/tree/${ODOO_COMMIT})
+          **Source Commit Date**: ${ODOO_DATE}
+
+          ## Files Synced
+
+          - **Administration**: ${ADMIN_COUNT} files
+          - **Applications**: ${APPS_COUNT} files
+          - **Contributing**: ${CONTRIB_COUNT} files
+          - **Developer**: ${DEV_COUNT} files
+
+          **Total**: ${TOTAL_COUNT} documentation files
+
+          ## Sections
+
+          - \`docs/odoo-official/administration/\` - System administration guides
+          - \`docs/odoo-official/applications/\` - Application user guides
+          - \`docs/odoo-official/contributing/\` - Contribution guidelines
+          - \`docs/odoo-official/developer/\` - Developer documentation
+          EOF
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          cd repo
+          if git diff --quiet docs/odoo-official/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+
+      - name: Commit synced documentation
+        if: steps.check-changes.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          cd repo
+          git config user.name "Docs Sync Bot"
+          git config user.email "docs-sync@insightpulseai.com"
+
+          git add docs/odoo-official/
+          git commit -m "docs(sync): update official Odoo 19.0 documentation
+
+          Source: https://github.com/odoo/documentation/tree/19.0
+          Sync timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+          Updated sections:
+          - Administration docs
+          - Applications docs
+          - Contributing docs
+          - Developer docs
+
+          Co-Authored-By: Docs Sync Bot <docs-sync@insightpulseai.com>"
+
+          git push origin main
+
+  build-search-index:
+    name: "🔍 Build Search Index"
+    runs-on: ubuntu-latest
+    needs: sync-official-docs
+    if: needs.sync-official-docs.outputs.has_changes == 'true' || github.event.inputs.force_rebuild == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install python-frontmatter markdown beautifulsoup4
+
+      - name: Build documentation search index
+        run: |
+          python3 << 'EOF'
+          import json
+          import re
+          from pathlib import Path
+          from datetime import datetime
+          import hashlib
+
+          def extract_rst_metadata(content: str, filepath: Path):
+              """Extract title and structure from RST file"""
+              lines = content.split('\n')
+
+              # Find title (first line followed by === or --- underline)
+              title = None
+              for i, line in enumerate(lines):
+                  if i + 1 < len(lines):
+                      next_line = lines[i + 1].strip()
+                      if (next_line and
+                          (all(c == '=' for c in next_line) or all(c == '-' for c in next_line)) and
+                          len(next_line) >= len(line.strip())):
+                          title = line.strip()
+                          break
+
+              if not title:
+                  title = filepath.stem.replace('_', ' ').title()
+
+              # Extract section headers for better indexing
+              sections = []
+              for i, line in enumerate(lines):
+                  if i + 1 < len(lines):
+                      next_line = lines[i + 1].strip()
+                      if next_line and all(c in '=-~^' for c in next_line):
+                          sections.append(line.strip())
+
+              return title, sections
+
+          docs_dir = Path('docs/odoo-official')
+          index_data = []
+
+          for rst_file in sorted(docs_dir.rglob('*.rst')):
+              try:
+                  with open(rst_file, encoding='utf-8') as f:
+                      content = f.read()
+              except Exception as e:
+                  print(f"⚠️  Error reading {rst_file}: {e}")
+                  continue
+
+              # Extract metadata
+              title, sections = extract_rst_metadata(content, rst_file)
+
+              # Calculate content hash for change detection
+              content_hash = hashlib.sha256(content.encode()).hexdigest()[:16]
+
+              # Get relative path and category
+              rel_path = rst_file.relative_to(docs_dir)
+              category = rel_path.parts[0] if len(rel_path.parts) > 1 else 'general'
+
+              # Clean content for search (remove RST directives)
+              clean_content = re.sub(r'\.\. \w+::', '', content)
+              clean_content = re.sub(r'::\n\n', '\n', clean_content)
+              clean_content = re.sub(r'[\*\`]+', '', clean_content)
+
+              # Create search document
+              doc = {
+                  'id': content_hash,
+                  'title': title,
+                  'content': clean_content[:2000],  # First 2000 chars for search
+                  'sections': sections[:5],  # Top 5 section headers
+                  'category': category,
+                  'path': str(rel_path),
+                  'url': f"/docs/odoo-official/{rel_path}".replace('.rst', '.html'),
+                  'source_file': str(rst_file),
+                  'indexed_at': datetime.utcnow().isoformat() + 'Z'
+              }
+
+              index_data.append(doc)
+              print(f"✅ Indexed: {rel_path} ({len(content)} bytes)")
+
+          # Save search index
+          index_file = Path('docs/odoo-official/search-index.json')
+          with open(index_file, 'w', encoding='utf-8') as f:
+              json.dump({
+                  'generated_at': datetime.utcnow().isoformat() + 'Z',
+                  'document_count': len(index_data),
+                  'documents': index_data
+              }, f, indent=2, ensure_ascii=False)
+
+          print(f"\n✅ Built search index: {len(index_data)} documents")
+          print(f"📄 Index file: {index_file} ({index_file.stat().st_size} bytes)")
+          EOF
+
+      - name: Commit search index
+        run: |
+          git config user.name "Docs Index Bot"
+          git config user.email "docs-index@insightpulseai.com"
+
+          git add docs/odoo-official/search-index.json
+          git commit -m "docs(index): update search index
+
+          Generated from official Odoo 19.0 documentation.
+
+          Co-Authored-By: Docs Index Bot <docs-index@insightpulseai.com>" || echo "No index changes"
+
+          git push origin main
+
+  build-static-site:
+    name: "🏗️ Build Static Documentation Site"
+    runs-on: ubuntu-latest
+    needs: build-search-index
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Sphinx and dependencies
+        run: |
+          pip install \
+            sphinx \
+            sphinx-rtd-theme \
+            myst-parser \
+            sphinx-autobuild \
+            sphinx-copybutton \
+            sphinxcontrib-httpdomain
+
+      - name: Create Sphinx configuration
+        run: |
+          mkdir -p docs/_build docs/_static docs/_templates
+
+          cat > docs/conf.py << 'PYEOF'
+          # Sphinx configuration for InsightPulse AI - Odoo Documentation
+
+          project = 'InsightPulse AI - Odoo 19.0 Documentation'
+          copyright = '2026, InsightPulse AI'
+          author = 'InsightPulse AI'
+          version = '19.0'
+          release = '19.0'
+
+          # Extensions
+          extensions = [
+              'sphinx.ext.autodoc',
+              'sphinx.ext.napoleon',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.todo',
+              'sphinx_copybutton',
+              'myst_parser',
+          ]
+
+          # Source files
+          source_suffix = {
+              '.rst': 'restructuredtext',
+              '.md': 'markdown',
+          }
+
+          templates_path = ['_templates']
+          exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'evidence/**']
+
+          # HTML output
+          html_theme = 'sphinx_rtd_theme'
+          html_static_path = ['_static']
+          html_title = 'InsightPulse AI - Odoo 19.0 Docs'
+          html_short_title = 'Odoo 19.0'
+          html_logo = None  # Add logo path if available
+          html_favicon = None  # Add favicon path if available
+
+          html_theme_options = {
+              'logo_only': False,
+              'display_version': True,
+              'prev_next_buttons_location': 'bottom',
+              'style_external_links': True,
+              'navigation_depth': 4,
+              'collapse_navigation': False,
+              'sticky_navigation': True,
+              'includehidden': True,
+              'titles_only': False
+          }
+
+          # Intersphinx mapping
+          intersphinx_mapping = {
+              'odoo': ('https://www.odoo.com/documentation/19.0', None),
+              'python': ('https://docs.python.org/3', None),
+          }
+
+          # Copy button configuration
+          copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+          copybutton_prompt_is_regexp = True
+
+          # MyST parser configuration
+          myst_enable_extensions = [
+              "colon_fence",
+              "deflist",
+              "substitution",
+          ]
+          PYEOF
+
+          cat > docs/index.rst << 'RSTEOF'
+          InsightPulse AI - Odoo 19.0 Documentation
+          ==========================================
+
+          Welcome to the InsightPulse AI Odoo 19.0 documentation platform.
+
+          This documentation is automatically synchronized from the official Odoo documentation repository
+          and enhanced with AI-powered search and assistance.
+
+          .. toctree::
+             :maxdepth: 2
+             :caption: Contents:
+
+             odoo-official/administration/index
+             odoo-official/applications/index
+             odoo-official/contributing/index
+             odoo-official/developer/index
+
+          Official Documentation Sections
+          --------------------------------
+
+          * **Administration** - System administration and deployment guides
+          * **Applications** - User guides for Odoo applications
+          * **Contributing** - Guidelines for contributing to Odoo
+          * **Developer** - Technical documentation for developers
+
+          Search
+          ------
+
+          Use the search box in the sidebar to find documentation across all sections.
+
+          AI Assistant
+          ------------
+
+          Click the AI assistant icon in the bottom-right corner to ask questions about Odoo.
+
+          Indices and tables
+          ==================
+
+          * :ref:`genindex`
+          * :ref:`modindex`
+          * :ref:`search`
+          RSTEOF
+
+          # Create section index files
+          for section in administration applications contributing developer; do
+            mkdir -p docs/odoo-official/$section
+            cat > docs/odoo-official/$section/index.rst << SECEOF
+          $(echo $section | tr '[:lower:]' '[:upper:]')
+          $(printf '=%.0s' $(seq 1 ${#section}))
+
+          .. toctree::
+             :maxdepth: 2
+             :glob:
+
+             *
+          SECEOF
+          done
+
+      - name: Build HTML documentation
+        run: |
+          sphinx-build -b html docs docs/_build/html
+
+      - name: Add AI chat widget
+        run: |
+          mkdir -p docs/_build/html/_static
+
+          cat > docs/_build/html/_static/ai-chat-widget.js << 'JSEOF'
+          // AI Documentation Chat Widget
+          (function() {
+            const EDGE_FUNCTION_URL = 'https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/docs-ai-ask';
+            const TENANT_ID = 'ipai-odoo-docs';
+
+            // Create widget HTML
+            const widgetHTML = `
+              <div id="ai-chat-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                <button id="ai-chat-toggle" style="
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  border: none;
+                  border-radius: 50%;
+                  width: 60px;
+                  height: 60px;
+                  font-size: 28px;
+                  cursor: pointer;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                  transition: transform 0.2s;
+                ">🤖</button>
+
+                <div id="ai-chat-panel" style="
+                  display: none;
+                  position: absolute;
+                  bottom: 70px;
+                  right: 0;
+                  width: 380px;
+                  max-height: 600px;
+                  background: white;
+                  border-radius: 12px;
+                  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+                  overflow: hidden;
+                  display: flex;
+                  flex-direction: column;
+                ">
+                  <div style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 16px 20px;
+                    font-weight: 600;
+                    font-size: 16px;
+                  ">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <span>Odoo Documentation Assistant</span>
+                      <button id="ai-chat-close" style="
+                        background: rgba(255,255,255,0.2);
+                        border: none;
+                        color: white;
+                        font-size: 20px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                        width: 28px;
+                        height: 28px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      ">×</button>
+                    </div>
+                  </div>
+
+                  <div id="chat-messages" style="
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    max-height: 450px;
+                  "></div>
+
+                  <div style="padding: 16px; border-top: 1px solid #e0e0e0; background: white;">
+                    <div style="display: flex; gap: 8px;">
+                      <input id="chat-input" type="text" placeholder="Ask about Odoo..." style="
+                        flex: 1;
+                        padding: 10px 14px;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        outline: none;
+                      ">
+                      <button id="chat-send" style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px 20px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        font-size: 14px;
+                      ">Send</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Inject widget on load
+            document.addEventListener('DOMContentLoaded', function() {
+              document.body.insertAdjacentHTML('beforeend', widgetHTML);
+
+              const toggle = document.getElementById('ai-chat-toggle');
+              const panel = document.getElementById('ai-chat-panel');
+              const close = document.getElementById('ai-chat-close');
+              const input = document.getElementById('chat-input');
+              const send = document.getElementById('chat-send');
+              const messages = document.getElementById('chat-messages');
+
+              // Toggle widget
+              toggle.addEventListener('click', () => {
+                panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+                if (panel.style.display === 'flex') input.focus();
+              });
+
+              close.addEventListener('click', () => {
+                panel.style.display = 'none';
+              });
+
+              // Send message
+              async function sendMessage() {
+                const question = input.value.trim();
+                if (!question) return;
+
+                input.value = '';
+                addMessage('user', question);
+
+                // Show loading
+                const loadingId = addMessage('assistant', '🤔 Thinking...');
+
+                try {
+                  const response = await fetch(EDGE_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      question,
+                      tenantId: TENANT_ID,
+                      surface: 'docs-static',
+                      context: {
+                        page: window.location.pathname,
+                        section: document.title
+                      }
+                    })
+                  });
+
+                  const data = await response.json();
+
+                  // Remove loading message
+                  document.getElementById(loadingId)?.remove();
+
+                  if (data.error) {
+                    addMessage('assistant', `⚠️ Error: ${data.error}`);
+                  } else {
+                    addMessage('assistant', data.answer, data.citations);
+                  }
+                } catch (error) {
+                  document.getElementById(loadingId)?.remove();
+                  addMessage('assistant', `❌ Network error: ${error.message}`);
+                }
+              }
+
+              function addMessage(role, text, citations = []) {
+                const id = `msg-${Date.now()}-${Math.random()}`;
+                const isUser = role === 'user';
+
+                const msgDiv = document.createElement('div');
+                msgDiv.id = id;
+                msgDiv.style.cssText = `
+                  margin-bottom: 16px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: ${isUser ? 'flex-end' : 'flex-start'};
+                `;
+
+                const bubble = document.createElement('div');
+                bubble.style.cssText = `
+                  background: ${isUser ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white'};
+                  color: ${isUser ? 'white' : '#333'};
+                  padding: 12px 16px;
+                  border-radius: 12px;
+                  max-width: 80%;
+                  word-wrap: break-word;
+                  box-shadow: ${isUser ? 'none' : '0 2px 4px rgba(0,0,0,0.1)'};
+                  font-size: 14px;
+                  line-height: 1.5;
+                `;
+                bubble.textContent = text;
+                msgDiv.appendChild(bubble);
+
+                // Add citations if present
+                if (citations && citations.length > 0) {
+                  const citDiv = document.createElement('div');
+                  citDiv.style.cssText = 'margin-top: 8px; font-size: 12px; color: #666;';
+                  citDiv.innerHTML = '<strong>Sources:</strong><br>' +
+                    citations.slice(0, 3).map(c =>
+                      `<a href="${c.url}" style="color: #667eea; text-decoration: none;">${c.title || c.document_id}</a>`
+                    ).join(' • ');
+                  msgDiv.appendChild(citDiv);
+                }
+
+                messages.appendChild(msgDiv);
+                messages.scrollTop = messages.scrollHeight;
+                return id;
+              }
+
+              send.addEventListener('click', sendMessage);
+              input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+              });
+
+              // Add welcome message
+              addMessage('assistant', 'Hi! I can help you find information in the Odoo documentation. What would you like to know?');
+            });
+          })();
+          JSEOF
+
+          # Inject widget script into all HTML pages
+          find docs/_build/html -name '*.html' -type f -exec sed -i '' \
+            's|</body>|<script src="/_static/ai-chat-widget.js"></script></body>|' {} +
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: docs/_build/html
+
+  deploy-pages:
+    name: "🚀 Deploy to GitHub Pages"
+    runs-on: ubuntu-latest
+    needs: build-static-site
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
+  notify:
+    name: "📢 Deployment Notifications"
+    runs-on: ubuntu-latest
+    needs: deploy-pages
+    if: always()
+    steps:
+      - name: Notify Slack
+        if: needs.deploy-pages.result == 'success'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'C06DOCUMENTATION'
+          slack-message: |
+            📚 **Documentation Platform Updated**
+
+            **Site**: https://insightpulseai.github.io/odoo/
+            **Sync**: Official Odoo 19.0 docs synchronized
+            **AI Assistant**: Available via chat widget
+
+            View the latest documentation.
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
