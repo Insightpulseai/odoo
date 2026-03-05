@@ -151,26 +151,22 @@ subdomains:
 
   - name: shelf
     type: A
-    service: shelf_asset_management
-    port: 3003
-    health_check: /healthcheck
-    owner_system: "Shelf.nu (self-hosted, ipai fork)"
+    service: shelf_redirect
+    port: 80
+    health_check: /
+    owner_system: "Nginx redirect → shelf.nu"
     cloudflare_proxied: true
     tls_mode: "Full (strict)"
-    # lifecycle=planned: SSOT said active but Cloudflare has NO record.
-    # shelf.insightpulseai.com → DNS_PROBE_FINISHED_NXDOMAIN (verified 2026-03-03).
-    # Flip to active after: (1) create A record in CF, (2) deploy Shelf container on :3003.
-    lifecycle: planned
-    status: planned
-    backing_status: not_provisioned
-    activation_criteria:
-      - "Create A record shelf → 178.128.112.214 in Cloudflare"
-      - "Deploy Shelf.nu container on port 3003"
-      - "Add nginx vhost for shelf.insightpulseai.com → :3003"
+    # Activated 2026-03-05: redirect-only vhost (301 → https://shelf.nu).
+    # No container needed — nginx handles the redirect.
+    lifecycle: active
+    status: active
+    notes: "Redirect-only. No upstream container. Nginx returns 301 to https://shelf.nu."
     provider_claim:
       provider: cloudflare
-      status: unclaimed
-      expires_at: "2026-09-01"
+      status: claimed
+      claimed_at: "2026-03-05"
+      claim_ref: "ssot:cloudflare"
 
   - name: ocr
     type: A
