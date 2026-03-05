@@ -163,6 +163,47 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 
 ---
 
+## Azure Automation Contract (Odoo 19)
+
+**Goal**: Odoo.sh-like automation with Azure-native primitives
+
+### SSOT boundaries
+- **Infra**: `infra/azure/**`, `config/**`, `docker/**`
+- **CI/CD**: `.github/workflows/**`
+- **Evidence**: `web/docs/evidence/**`
+
+### Runtime target (preferred)
+- **Azure Container Apps** for Odoo runtime
+- **Azure Container Registry (ACR)** as artifact store
+- **Azure Database for PostgreSQL Flexible Server**
+- **Azure Key Vault** for runtime secrets
+
+### Auth + secrets policy
+- CI uses **GitHub Actions → Azure OIDC login** (federated identity, no long-lived credentials)
+- All runtime secrets from **Azure Key Vault** at deploy-time
+- No client secrets stored in GitHub (OIDC uses workload identity federation)
+
+### Deployment workflow
+1. **Build**: `az acr build` creates Docker image from `docker/Dockerfile`
+2. **Tag**: Image tagged with `{sha}` and `latest`
+3. **Push**: Automatic push to ACR
+4. **Deploy**: `az containerapp update` creates new revision with blue-green traffic switch
+5. **Verify**: Health checks before traffic routing
+
+### Evidence format
+- **Path**: `web/docs/evidence/<YYYYMMDD-HHMM+0800>/<topic>/logs/`
+- **Timezone**: Asia/Manila (UTC+08:00)
+- **Summary**: `summary.json` with status (`COMPLETE | PARTIAL | BLOCKED`) and log paths
+- **Logs**: Captured stdout/stderr for all operations (build, deploy, upgrade)
+
+**Workflows**:
+- Deploy: `.github/workflows/odoo-azure-deploy.yml` (OIDC-based, blue-green)
+- Upgrade: `.github/workflows/odoo-azure-upgrade-evidence.yml` (Container Apps Jobs + evidence)
+
+**Documentation**: `docs/ops/AZURE_ODOO_AUTOMATION.md`
+
+---
+
 ## Infrastructure SSOT
 
 **DNS Single Source of Truth:**

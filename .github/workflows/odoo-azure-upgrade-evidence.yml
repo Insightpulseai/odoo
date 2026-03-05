@@ -1,0 +1,210 @@
+name: odoo-azure-upgrade-evidence
+
+# Odoo module upgrade workflow with evidence generation
+# Executes upgrades via Azure Container Apps Jobs and commits evidence bundles
+# Evidence path: web/docs/evidence/<YYYYMMDD-HHMM+0800>/<topic>/logs/
+# SSOT: docs/ops/AZURE_ODOO_AUTOMATION.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      db_name:
+        description: "Target Odoo DB name (e.g., odoo_prod, odoo_dev)"
+        required: true
+      modules:
+        description: "Comma-separated module list (e.g., ipai_finance_ppm,ipai_ai_tools)"
+        required: true
+      environment:
+        description: "Deployment environment"
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+        required: true
+
+permissions:
+  id-token: write    # OIDC token exchange with Azure
+  contents: write    # Commit evidence bundles to repo
+
+env:
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ACR_NAME: ${{ secrets.ACR_NAME }}
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  upgrade:
+    name: "📦 Upgrade Odoo Modules"
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Generate Evidence Stamp
+        id: stamp
+        run: |
+          TS="$(TZ='Asia/Manila' date +%Y%m%d-%H%M%z)"
+          echo "ts=${TS}" >> $GITHUB_OUTPUT
+          mkdir -p "web/docs/evidence/${TS}/odoo-upgrade/logs"
+          echo "Evidence path: web/docs/evidence/${TS}/odoo-upgrade/"
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Run Upgrade via Container Apps Job
+        id: upgrade
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+          RESOURCE_GROUP="rg-ipai-${ENV}"
+          CONTAINER_ENV="containerapp-env-ipai-${ENV}"
+          LOGS_DIR="web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/logs"
+
+          # Create ephemeral upgrade job
+          JOB_NAME="odoo-upgrade-$(date +%s)"
+          echo "Creating Container Apps Job: ${JOB_NAME}"
+
+          az containerapp job create \
+            --name ${JOB_NAME} \
+            --resource-group ${RESOURCE_GROUP} \
+            --environment ${CONTAINER_ENV} \
+            --image ${{ env.ACR_NAME }}.azurecr.io/odoo:latest \
+            --command "/usr/bin/odoo-bin" \
+            --args "--database=${{ github.event.inputs.db_name }} --update=${{ github.event.inputs.modules }} --stop-after-init --log-level=info" \
+            --replica-timeout 3600 \
+            --replica-retry-limit 0 \
+            --cpu 2.0 \
+            --memory 4Gi
+
+          # Start job and capture output
+          echo "Starting upgrade job..."
+          az containerapp job start \
+            --name ${JOB_NAME} \
+            --resource-group ${RESOURCE_GROUP} \
+            > "${LOGS_DIR}/upgrade-job-start.log" 2>&1
+
+          # Wait for completion (poll every 10 seconds, max 60 minutes)
+          echo "Waiting for job completion..."
+          MAX_WAIT=360  # 60 minutes
+          WAIT_COUNT=0
+          while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
+            STATUS=$(az containerapp job execution list \
+              --name ${JOB_NAME} \
+              --resource-group ${RESOURCE_GROUP} \
+              --query "[0].properties.status" -o tsv 2>/dev/null || echo "Pending")
+
+            if [ "$STATUS" == "Succeeded" ] || [ "$STATUS" == "Failed" ]; then
+              echo "Job completed with status: $STATUS"
+              break
+            fi
+
+            echo "Job status: $STATUS (waited ${WAIT_COUNT}0s)"
+            sleep 10
+            WAIT_COUNT=$((WAIT_COUNT + 1))
+          done
+
+          # Get final status
+          az containerapp job execution list \
+            --name ${JOB_NAME} \
+            --resource-group ${RESOURCE_GROUP} \
+            --query "[0].properties.status" -o tsv \
+            > "${LOGS_DIR}/upgrade-status.log" 2>&1
+
+          # Get detailed logs
+          EXECUTION_NAME=$(az containerapp job execution list \
+            --name ${JOB_NAME} \
+            --resource-group ${RESOURCE_GROUP} \
+            --query "[0].name" -o tsv)
+
+          if [ -n "$EXECUTION_NAME" ]; then
+            az containerapp job logs show \
+              --name ${JOB_NAME} \
+              --resource-group ${RESOURCE_GROUP} \
+              --execution ${EXECUTION_NAME} \
+              > "${LOGS_DIR}/upgrade-execution.log" 2>&1
+          else
+            echo "No execution logs available" > "${LOGS_DIR}/upgrade-execution.log"
+          fi
+
+          # Cleanup job (keep logs, delete job resource)
+          echo "Cleaning up job resource..."
+          az containerapp job delete \
+            --name ${JOB_NAME} \
+            --resource-group ${RESOURCE_GROUP} \
+            --yes \
+            > "${LOGS_DIR}/upgrade-cleanup.log" 2>&1
+
+          echo "job_name=${JOB_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Write Evidence Summary
+        run: |
+          LOGS_DIR="web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/logs"
+          STATUS_CODE=$(cat "${LOGS_DIR}/upgrade-status.log" 2>/dev/null || echo "Unknown")
+
+          if [ "$STATUS_CODE" == "Succeeded" ]; then
+            STATUS="COMPLETE"
+          elif [ "$STATUS_CODE" == "Failed" ]; then
+            STATUS="BLOCKED"
+          else
+            STATUS="PARTIAL"
+          fi
+
+          # Create structured summary
+          cat > "web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/summary.json" <<EOF
+          {
+            "timestamp": "${{ steps.stamp.outputs.ts }}",
+            "database": "${{ github.event.inputs.db_name }}",
+            "modules": "${{ github.event.inputs.modules }}",
+            "environment": "${{ github.event.inputs.environment }}",
+            "status": "${STATUS}",
+            "job_name": "${{ steps.upgrade.outputs.job_name }}",
+            "commit_sha": "${{ github.sha }}",
+            "triggered_by": "${{ github.actor }}",
+            "workflow_run_id": "${{ github.run_id }}",
+            "logs": {
+              "job_start": "${LOGS_DIR}/upgrade-job-start.log",
+              "status": "${LOGS_DIR}/upgrade-status.log",
+              "execution": "${LOGS_DIR}/upgrade-execution.log",
+              "cleanup": "${LOGS_DIR}/upgrade-cleanup.log"
+            }
+          }
+          EOF
+
+          echo "Evidence summary written with STATUS=${STATUS}"
+
+      - name: Commit Evidence Bundle
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add "web/docs/evidence/${{ steps.stamp.outputs.ts }}/"
+          git commit -m "chore(evidence): Odoo upgrade evidence for ${{ github.event.inputs.db_name }}
+
+          Modules: ${{ github.event.inputs.modules }}
+          Environment: ${{ github.event.inputs.environment }}
+          Timestamp: ${{ steps.stamp.outputs.ts }}
+
+          Evidence bundle: web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/"
+
+          git push
+
+      - name: Post-Upgrade Summary
+        if: always()
+        run: |
+          LOGS_DIR="web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/logs"
+          STATUS=$(cat "${LOGS_DIR}/upgrade-status.log" 2>/dev/null || echo "Unknown")
+
+          echo "## Upgrade Summary"
+          echo ""
+          echo "- **Database**: ${{ github.event.inputs.db_name }}"
+          echo "- **Modules**: ${{ github.event.inputs.modules }}"
+          echo "- **Environment**: ${{ github.event.inputs.environment }}"
+          echo "- **Status**: ${STATUS}"
+          echo "- **Evidence**: web/docs/evidence/${{ steps.stamp.outputs.ts }}/odoo-upgrade/"
+          echo "- **Triggered by**: ${{ github.actor }}"
+          echo "- **Workflow Run**: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
