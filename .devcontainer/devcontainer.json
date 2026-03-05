@@ -82,9 +82,23 @@
   },
   "containerUser": "devcontainer",
   "updateRemoteUserUID": true,
+  // Cache warming on Codespace creation (runs after clone, before postCreate).
+  // Installs Python deps + pre-compiles OCA/IPAI addons for fast startup.
+  "updateContentCommand": "bash -c 'pip install --quiet -r requirements.txt -r requirements-dev.txt -r requirements-oca.txt 2>/dev/null; python -m compileall -q addons/oca/ addons/ipai/ 2>/dev/null; npm install --prefer-offline --no-audit --ignore-scripts 2>/dev/null; true'",
   "postCreateCommand": "chmod +x ./.devcontainer/scripts/post-create.sh && ./.devcontainer/scripts/post-create.sh",
   "postStartCommand": "chmod +x ./.devcontainer/scripts/post-start.sh && ./.devcontainer/scripts/post-start.sh",
   "customizations": {
+    "codespaces": {
+      "openFiles": [],
+      "repositories": {
+        "Insightpulseai/odoo": {
+          "permissions": {
+            "contents": "read",
+            "packages": "write"
+          }
+        }
+      }
+    },
     "vscode": {
       "extensions": [
         "mhutchie.git-graph",
