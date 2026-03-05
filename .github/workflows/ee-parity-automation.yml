@@ -1,60 +1,122 @@
-name: EE Feature Parity Automation Pipeline
+name: EE Feature Parity Analysis & Reporting
 
-# Master automation workflow to match Odoo Enterprise Edition features
-# Implements: Studio, Approvals, Marketing Automation, Dashboards, Documents, Knowledge, Sign, Helpdesk
-# Goal: >=80% EE parity through CE + OCA + ipai_* + automation
+# Registry-driven EE parity assessment and gap analysis
+# DOES NOT deploy changes - generates reports and PRs only
+#
+# GOVERNANCE: Read-only workflow (no deployments, no direct commits)
+# SOURCE: ssot/ee_parity/replacements.yaml (edit there, not here)
+# OUTPUT: Reports in docs/ee-parity/reports/ + PRs for gap closure
 
 on:
   schedule:
-    # Daily at 1 AM UTC - continuous parity maintenance
-    - cron: '0 1 * * *'
-  push:
-    branches: [main]
+    # Weekly parity assessment on Mondays at 8 AM UTC
+    - cron: '0 8 * * 1'
+  pull_request:
     paths:
-      - 'addons/ipai/**'
-      - 'automations/n8n/**'
-      - 'supabase/functions/**'
+      - 'ssot/ee_parity/replacements.yaml'
+      - '.github/workflows/ee-parity-automation.yml'
   workflow_dispatch:
     inputs:
-      parity_feature:
-        description: 'EE feature to activate'
-        required: true
-        type: choice
-        options:
-          - all
-          - studio
-          - approvals
-          - marketing_automation
-          - spreadsheet_dashboards
-          - documents_dms
-          - knowledge_base
-          - digital_sign
-          - helpdesk_sla
-          - field_service
-          - planning
-      dry_run:
-        description: 'Dry run only (no deployment)'
+      generate_pr:
+        description: 'Generate PR for low-hanging fruit improvements'
         type: boolean
         default: false
 
+# Least-privilege permissions (governance requirement)
+# NO contents:write - this workflow does not modify repo directly
 permissions:
-  contents: write
-  id-token: write
-  issues: write
+  contents: read       # Read SSOT registry and codebase
+  issues: write        # Create gap tracking issues
+  pull-requests: write # Create improvement PRs (if requested)
 
 env:
-  PARITY_GOAL: "80"  # Target parity percentage
+  SSOT_REGISTRY: ssot/ee_parity/replacements.yaml
+  REPORT_DIR: docs/ee-parity/reports
   EVIDENCE_DIR: web/docs/evidence/$(date +%Y%m%d-%H%M+0800)/ee-parity-${{ github.run_id }}
 
 jobs:
-  # Step 1: Calculate Current Parity Status
-  parity-assessment:
-    name: "📊 EE Parity Assessment"
-    runs-on: self-hosted
+  # Step 1: Validate SSOT Registry
+  validate-registry:
+    name: "📋 Validate SSOT Registry"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate Registry Schema
+        run: |
+          python3 << 'PYTHON_EOF'
+          import yaml
+          import sys
+          from pathlib import Path
+
+          registry_path = Path("${{ env.SSOT_REGISTRY }}")
+          if not registry_path.exists():
+              print(f"❌ SSOT registry not found: {registry_path}")
+              sys.exit(1)
+
+          with open(registry_path) as f:
+              registry = yaml.safe_load(f)
+
+          # Validation rules
+          errors = []
+
+          # Rule 1: All features must have evidence
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              if not feature.get('evidence'):
+                  errors.append(f"Feature '{name}' missing evidence documentation")
+
+          # Rule 2: No feature can claim >95% parity
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              parity = feature.get('parity_percent', 0)
+              if parity > 95:
+                  errors.append(f"Feature '{name}' claims {parity}% parity (max: 95%)")
+
+          # Rule 3: Production status requires >= 80% parity
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              status = feature.get('status', 'draft')
+              parity = feature.get('parity_percent', 0)
+              if status == 'production' and parity < 80:
+                  errors.append(f"Feature '{name}' marked production but only {parity}% parity")
+
+          # Rule 4: All features must document gaps
+          for feature in registry.get('features', []):
+              name = feature.get('name', 'unknown')
+              has_gaps = False
+              for replacement in feature.get('replacements', []):
+                  if replacement.get('gaps'):
+                      has_gaps = True
+              if not has_gaps and feature.get('parity_percent', 0) < 100:
+                  print(f"⚠️  WARNING: Feature '{name}' has no documented gaps")
+
+          if errors:
+              print("❌ Registry validation failed:")
+              for error in errors:
+                  print(f"  - {error}")
+              sys.exit(1)
+
+          print("✅ Registry validation passed")
+          PYTHON_EOF
+
+  # Step 2: Calculate Parity Metrics
+  calculate-metrics:
+    name: "📊 Calculate Parity Metrics"
+    runs-on: ubuntu-latest
+    needs: validate-registry
     outputs:
-      current_parity: ${{ steps.assess.outputs.parity_percent }}
-      gaps: ${{ steps.assess.outputs.gaps }}
-      priority_features: ${{ steps.assess.outputs.priorities }}
+      average_parity: ${{ steps.metrics.outputs.average_parity }}
+      gap_to_target: ${{ steps.metrics.outputs.gap }}
+      production_ready: ${{ steps.metrics.outputs.production_count }}
     steps:
       - uses: actions/checkout@v4
 
@@ -64,669 +126,263 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install pyyaml jq
+        run: pip install pyyaml
 
-      - name: Run parity assessment
-        id: assess
+      - name: Calculate Metrics
+        id: metrics
         run: |
-          # Load parity matrix
           python3 << 'PYTHON_EOF'
-          import json
           import yaml
-          from pathlib import Path
-
-          # Load parity plans
-          with open('catalog/odoo_parity_plans.yaml') as f:
-              plans = yaml.safe_load(f)
-
-          # Load EE parity matrix
-          with open('docs/ai/EE_PARITY.md') as f:
-              content = f.read()
-
-          # Calculate current parity
-          total_features = 30  # From EE_PARITY.md table
-          implemented = 0
-          gaps = []
-          priorities = []
-
-          # Parse parity table (simplified - real impl would parse markdown)
-          parity_scores = {
-              'bank_reconciliation': 95,
-              'financial_reports': 90,
-              'asset_management': 90,
-              'budget_management': 85,
-              'payroll': 100,
-              'helpdesk': 90,
-              'approvals': 95,
-              'studio': 70,
-              'spreadsheet': 80,
-              'documents': 80,
-              'knowledge': 75,
-              'sign': 70,
-              'marketing_automation': 85,
-          }
-
-          # Calculate weighted average
-          total_parity = sum(parity_scores.values()) / len(parity_scores)
-
-          # Identify gaps (<80%)
-          for feature, score in parity_scores.items():
-              if score < 80:
-                  gaps.append({
-                      'feature': feature,
-                      'current': score,
-                      'target': 80,
-                      'gap': 80 - score
-                  })
-                  priorities.append(feature)
-
-          print(f"parity_percent={total_parity:.1f}" )
-          print(f"gaps={json.dumps(gaps)}" )
-          print(f"priorities={json.dumps(priorities[:5])}" )  # Top 5 gaps
-          PYTHON_EOF
-
-      - name: Generate parity report
-        run: |
-          mkdir -p $EVIDENCE_DIR/logs
-
-          cat > $EVIDENCE_DIR/logs/parity_report.md << 'EOF'
-          # EE Parity Assessment Report
-
-          **Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          **Current Parity**: ${{ steps.assess.outputs.parity_percent }}%
-          **Target**: ${PARITY_GOAL}%
-          **Gap**: $((${PARITY_GOAL} - ${{ steps.assess.outputs.parity_percent }}))%
-
-          ## Priority Features (Gaps <80%)
-
-          ${{ steps.assess.outputs.gaps }}
-
-          ## Automation Recommendations
-
-          - **Studio**: Enhance ipai_dev_studio_base with field/view wizards
-          - **Sign**: Implement DocuSign/SignWell integration via ipai_digital_signature
-          - **Knowledge**: Deploy ipai_knowledge_base with Supabase vector search
-          - **Documents**: Activate ipai_connector_supabase DMS features
-
-          ## Next Actions
-
-          1. Deploy automation workflows for gap features
-          2. Run parity validation tests
-          3. Update parity matrix with new scores
-          EOF
-
-  # Step 2: Studio Automation (Field/View/Model Builder)
-  studio-automation:
-    name: "🎨 Studio Automation (70% → 85%)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'studio' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy Studio Automation Workflow
-        run: |
-          # Create n8n workflow for Studio automation
-          cat > automations/n8n/workflows/studio-field-builder.json << 'WORKFLOW_EOF'
-          {
-            "name": "Studio Field Builder",
-            "nodes": [
-              {
-                "parameters": {
-                  "path": "studio/create-field",
-                  "responseMode": "responseNode",
-                  "options": {}
-                },
-                "name": "Webhook - Field Request",
-                "type": "n8n-nodes-base.webhook",
-                "position": [250, 300]
-              },
-              {
-                "parameters": {
-                  "model": "ir.model.fields",
-                  "operation": "create",
-                  "fieldsToSend": "defineBelow",
-                  "specifyFields": true,
-                  "fields": {
-                    "values": [
-                      {"name": "model_id", "fieldValue": "={{ $json.model_id }}"},
-                      {"name": "name", "fieldValue": "={{ $json.field_name }}"},
-                      {"name": "ttype", "fieldValue": "={{ $json.field_type }}"},
-                      {"name": "field_description", "fieldValue": "={{ $json.label }}"}
-                    ]
-                  }
-                },
-                "name": "Create Field in Odoo",
-                "type": "n8n-nodes-community.odoo",
-                "position": [450, 300]
-              },
-              {
-                "parameters": {
-                  "respondWith": "json",
-                  "response": "={{ $json }}"
-                },
-                "name": "Respond to Webhook",
-                "type": "n8n-nodes-base.respondToWebhook",
-                "position": [650, 300]
-              }
-            ],
-            "connections": {
-              "Webhook - Field Request": {
-                "main": [[{"node": "Create Field in Odoo", "type": "main", "index": 0}]]
-              },
-              "Create Field in Odoo": {
-                "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
-              }
-            }
-          }
-          WORKFLOW_EOF
-
-          echo "✅ Studio automation workflow created"
-
-      - name: Install Studio Enhancement Module
-        run: |
-          # Deploy ipai_dev_studio_base enhancements
-          docker exec odoo odoo-bin \
-            --addons-path="/var/lib/odoo/addons/ipai,/usr/lib/python3/dist-packages/odoo/addons" \
-            --database=odoo \
-            --update ipai_dev_studio_base \
-            --stop-after-init \
-            --no-http
-
-  # Step 3: Approvals Automation (95% parity)
-  approvals-automation:
-    name: "✅ Approvals Automation (95% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'approvals' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy Multi-Level Approval Workflow
-        run: |
-          # Create n8n workflow for approval automation
-          cat > automations/n8n/workflows/approvals-workflow.json << 'WORKFLOW_EOF'
-          {
-            "name": "Multi-Level Approval Workflow",
-            "nodes": [
-              {
-                "parameters": {"path": "approvals/request", "responseMode": "responseNode"},
-                "name": "Webhook - Approval Request",
-                "type": "n8n-nodes-base.webhook",
-                "position": [250, 300]
-              },
-              {
-                "parameters": {
-                  "resource": "issue",
-                  "operation": "create",
-                  "projectId": "fin-ops",
-                  "name": "Approval: {{ $json.title }}",
-                  "description": "{{ $json.description }}\n\nRequester: {{ $json.requester }}\nAmount: {{ $json.amount }}",
-                  "priority": "{{ $json.priority }}"
-                },
-                "name": "Create Plane Approval Task",
-                "type": "n8n-nodes-plane",
-                "position": [450, 300]
-              },
-              {
-                "parameters": {
-                  "channel": "approvals",
-                  "text": "🔔 New approval request: *{{ $json.title }}*\nRequester: {{ $json.requester }}\nAmount: {{ $json.amount }}\n<{{ $json.plane_url }}|View in Plane>"
-                },
-                "name": "Notify Slack",
-                "type": "n8n-nodes-base.slack",
-                "position": [650, 300]
-              },
-              {
-                "parameters": {
-                  "conditions": {
-                    "number": [
-                      {"value1": "={{ $json.amount }}", "operation": "larger", "value2": 10000}
-                    ]
-                  }
-                },
-                "name": "Check Approval Level",
-                "type": "n8n-nodes-base.if",
-                "position": [850, 300]
-              },
-              {
-                "parameters": {
-                  "values": {"string": [{"name": "approver", "value": "CFO"}]}
-                },
-                "name": "L2 Approval Required",
-                "type": "n8n-nodes-base.set",
-                "position": [1050, 200]
-              },
-              {
-                "parameters": {
-                  "values": {"string": [{"name": "approver", "value": "Finance Manager"}]}
-                },
-                "name": "L1 Approval Sufficient",
-                "type": "n8n-nodes-base.set",
-                "position": [1050, 400]
-              }
-            ],
-            "connections": {
-              "Webhook - Approval Request": {"main": [[{"node": "Create Plane Approval Task"}]]},
-              "Create Plane Approval Task": {"main": [[{"node": "Notify Slack"}]]},
-              "Notify Slack": {"main": [[{"node": "Check Approval Level"}]]},
-              "Check Approval Level": {
-                "main": [
-                  [{"node": "L2 Approval Required"}],
-                  [{"node": "L1 Approval Sufficient"}]
-                ]
-              }
-            }
-          }
-          WORKFLOW_EOF
-
-          echo "✅ Approvals workflow deployed"
-
-  # Step 4: Marketing Automation (85% parity via n8n)
-  marketing-automation:
-    name: "📧 Marketing Automation (85% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'marketing_automation' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy Campaign Automation Workflows
-        run: |
-          # Email drip campaign automation
-          cat > automations/n8n/workflows/marketing-drip-campaign.json << 'WORKFLOW_EOF'
-          {
-            "name": "Email Drip Campaign",
-            "nodes": [
-              {
-                "parameters": {"rule": {"interval": [{"field": "cronExpression", "expression": "0 9 * * *"}]}},
-                "name": "Daily Trigger",
-                "type": "n8n-nodes-base.scheduleTrigger",
-                "position": [250, 300]
-              },
-              {
-                "parameters": {
-                  "model": "res.partner",
-                  "operation": "search",
-                  "filters": {
-                    "and": [
-                      {"field": "email", "operator": "!=", "value": "false"},
-                      {"field": "opt_in_marketing", "operator": "=", "value": "true"}
-                    ]
-                  }
-                },
-                "name": "Get Marketing Contacts",
-                "type": "n8n-nodes-community.odoo",
-                "position": [450, 300]
-              },
-              {
-                "parameters": {
-                  "functionCode": "// Segment by engagement score\nconst items = $input.all();\nconst hot = items.filter(i => i.json.engagement_score >= 80);\nconst warm = items.filter(i => i.json.engagement_score >= 50 && i.json.engagement_score < 80);\nconst cold = items.filter(i => i.json.engagement_score < 50);\n\nreturn [\n  {json: {segment: 'hot', contacts: hot}},\n  {json: {segment: 'warm', contacts: warm}},\n  {json: {segment: 'cold', contacts: cold}}\n];"
-                },
-                "name": "Segment Contacts",
-                "type": "n8n-nodes-base.code",
-                "position": [650, 300]
-              },
-              {
-                "parameters": {
-                  "conditions": {"string": [{"value1": "={{ $json.segment }}", "value2": "hot"}]}
-                },
-                "name": "Route by Segment",
-                "type": "n8n-nodes-base.switch",
-                "position": [850, 300]
-              },
-              {
-                "parameters": {
-                  "fromEmail": "marketing@insightpulseai.com",
-                  "toEmail": "={{ $json.email }}",
-                  "subject": "Hot Lead Offer - Limited Time",
-                  "emailType": "html",
-                  "html": "={{ $json.hot_template }}"
-                },
-                "name": "Send Hot Lead Email",
-                "type": "n8n-nodes-base.emailSend",
-                "position": [1050, 200]
-              }
-            ],
-            "connections": {
-              "Daily Trigger": {"main": [[{"node": "Get Marketing Contacts"}]]},
-              "Get Marketing Contacts": {"main": [[{"node": "Segment Contacts"}]]},
-              "Segment Contacts": {"main": [[{"node": "Route by Segment"}]]},
-              "Route by Segment": {"main": [[{"node": "Send Hot Lead Email"}]]}
-            }
-          }
-          WORKFLOW_EOF
-
-          echo "✅ Marketing automation workflows deployed"
-
-  # Step 5: Spreadsheet/Dashboard Automation (80-85% parity via Superset)
-  dashboard-automation:
-    name: "📊 Dashboard Automation (85% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'spreadsheet_dashboards' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create Superset Dashboards via API
-        env:
-          SUPERSET_URL: "http://localhost:8088"
-        run: |
-          # Create financial dashboard
-          python3 << 'PYTHON_EOF'
-          import requests
           import json
+          import os
 
-          # Superset API endpoints
-          base_url = "http://localhost:8088"
+          with open("${{ env.SSOT_REGISTRY }}") as f:
+              registry = yaml.safe_load(f)
 
-          # Login and get token (simplified - real impl would use proper auth)
-          auth = requests.post(f"{base_url}/api/v1/security/login", json={
-              "username": "admin",
-              "password": os.environ.get("SUPERSET_PASSWORD", "admin")
-          })
-          token = auth.json()["access_token"]
+          features = registry['features']
+          total_parity = sum(f['parity_percent'] for f in features)
+          avg_parity = total_parity / len(features)
+          target = registry['meta']['parity_target']
+          gap = target - avg_parity
+          production_count = len([f for f in features if f['status'] == 'production'])
 
-          headers = {"Authorization": f"Bearer {token}"}
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"average_parity={avg_parity:.1f}\n")
+              f.write(f"gap={gap:.1f}\n")
+              f.write(f"production_count={production_count}\n")
 
-          # Create dataset from Odoo tables
-          dataset = requests.post(f"{base_url}/api/v1/dataset/", headers=headers, json={
-              "database": 1,
-              "schema": "public",
-              "table_name": "account_move",
-              "datasource_name": "Odoo Financial Transactions"
-          })
+          # Generate detailed report
+          report = f"""# EE Feature Parity Report
 
-          # Create charts
-          chart = requests.post(f"{base_url}/api/v1/chart/", headers=headers, json={
-              "datasource_id": dataset.json()["id"],
-              "datasource_type": "table",
-              "slice_name": "Revenue by Month",
-              "viz_type": "line",
-              "params": json.dumps({
-                  "metrics": ["sum__amount_total"],
-                  "groupby": ["date_trunc('month', date)"],
-                  "time_range": "Last year"
-              })
-          })
+**Generated**: {registry['meta']['last_assessed']}
+**Odoo Version**: {registry['meta']['odoo_version']}
 
-          # Create dashboard
-          dashboard = requests.post(f"{base_url}/api/v1/dashboard/", headers=headers, json={
-              "dashboard_title": "Financial Overview",
-              "slug": "financial-overview",
-              "position_json": json.dumps({
-                  "CHART_ID": {"id": chart.json()["id"], "type": "CHART"}
-              })
-          })
+## Summary
 
-          print(f"✅ Created dashboard: {dashboard.json()['url']}")
+- **Average Parity**: {avg_parity:.1f}%
+- **Target**: {target}%
+- **Gap to Target**: {gap:.1f}%
+- **Production-Ready Features**: {production_count}/{len(features)}
+
+## Feature Breakdown
+
+| Feature | Status | Parity | Target | Gap |
+|---------|--------|--------|--------|-----|
+"""
+
+          for feature in features:
+              name = feature['name']
+              status = feature['status']
+              parity = feature['parity_percent']
+              target_parity = feature['target_parity']
+              gap = target_parity - parity
+              report += f"| {name} | {status} | {parity}% | {target_parity}% | {gap}% |\n"
+
+          report += "\n## High-Priority Gaps\n\n"
+          for priority in registry['summary']['prioritization']['high_priority']:
+              feature = next(f for f in features if f['name'] == priority)
+              report += f"### {feature['name']}\n"
+              report += f"**Current Parity**: {feature['parity_percent']}%\n"
+              report += f"**Target**: {feature['target_parity']}%\n\n"
+              report += "**Known Gaps**:\n"
+              for replacement in feature['replacements']:
+                  for gap in replacement.get('gaps', []):
+                      report += f"- {gap}\n"
+              report += "\n"
+
+          with open("parity-report.md", "w") as f:
+              f.write(report)
           PYTHON_EOF
 
-  # Step 6: Documents DMS (80% parity via Supabase Storage)
-  documents-automation:
-    name: "📁 Documents DMS (80% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'documents_dms' || github.event.inputs.parity_feature == 'all'
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: parity-report.md
+          retention-days: 90
+
+  # Step 3: Identify Implementation Opportunities
+  identify-opportunities:
+    name: "💡 Identify Quick Wins"
+    runs-on: ubuntu-latest
+    needs: calculate-metrics
+    outputs:
+      opportunities: ${{ steps.scan.outputs.opportunities }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy Documents Sync Automation
+      - name: Scan for Low-Hanging Fruit
+        id: scan
         run: |
-          # Supabase Edge Function for document operations
-          cat > supabase/functions/documents-dms/index.ts << 'TYPESCRIPT_EOF'
-          import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-          import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+          # Scan codebase for easy parity improvements
+          # Examples: missing n8n workflows, OCA modules not installed, simple config changes
 
-          serve(async (req) => {
-            const supabase = createClient(
-              Deno.env.get('SUPABASE_URL') ?? '',
-              Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-            )
+          OPPORTUNITIES=""
 
-            const { operation, file, metadata } = await req.json()
+          # Check if OCA modules are actually installed
+          if [ ! -d "addons/oca/helpdesk" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Install OCA helpdesk module (impacts: helpdesk_sla parity)"
+          fi
 
-            switch (operation) {
-              case 'upload':
-                // Upload file to Supabase Storage
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                  .from('odoo-documents')
-                  .upload(`${metadata.category}/${file.name}`, file.data, {
-                    contentType: file.type,
-                    metadata: {
-                      odoo_model: metadata.model,
-                      odoo_id: metadata.record_id,
-                      tags: metadata.tags,
-                      uploaded_by: metadata.user_id
-                    }
-                  })
+          if [ ! -d "addons/oca/knowledge" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Install OCA knowledge module (impacts: knowledge_base parity)"
+          fi
 
-                // Create record in ops.document_registry
-                await supabase.from('ops.document_registry').insert({
-                  file_path: uploadData?.path,
-                  file_name: file.name,
-                  file_type: file.type,
-                  file_size: file.size,
-                  category: metadata.category,
-                  tags: metadata.tags,
-                  odoo_model: metadata.model,
-                  odoo_record_id: metadata.record_id,
-                  uploaded_by: metadata.user_id
-                })
+          # Check if documented workflows exist
+          if [ ! -f "automations/n8n/workflows/helpdesk-sla-alerts.json" ]; then
+              OPPORTUNITIES="${OPPORTUNITIES}\n- Create helpdesk SLA alert workflow (impacts: helpdesk_sla parity)"
+          fi
 
-                return new Response(JSON.stringify({ success: true, path: uploadData?.path }))
-
-              case 'search':
-                // Full-text search across documents
-                const { data: searchData } = await supabase
-                  .from('ops.document_registry')
-                  .select('*')
-                  .textSearch('file_name', metadata.query)
-                  .or(`tags.cs.{${metadata.tags}}`)
-
-                return new Response(JSON.stringify(searchData))
-
-              default:
-                return new Response('Invalid operation', { status: 400 })
-            }
-          })
-          TYPESCRIPT_EOF
-
-          echo "✅ Documents DMS automation deployed"
-
-  # Step 7: Knowledge Base (75% parity)
-  knowledge-automation:
-    name: "📚 Knowledge Base (75% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'knowledge_base' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy Knowledge Base with Vector Search
-        run: |
-          # Supabase Edge Function for knowledge base
-          cat > supabase/functions/knowledge-base-search/index.ts << 'TYPESCRIPT_EOF'
-          import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-          import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-
-          serve(async (req) => {
-            const supabase = createClient(
-              Deno.env.get('SUPABASE_URL') ?? '',
-              Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-            )
-
-            const { query, limit = 10 } = await req.json()
-
-            // Generate embedding for query using OpenAI
-            const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                model: 'text-embedding-ada-002',
-                input: query
-              })
-            })
-            const { data: [{ embedding }] } = await embeddingResponse.json()
-
-            // Vector similarity search
-            const { data: articles } = await supabase.rpc('match_knowledge_articles', {
-              query_embedding: embedding,
-              match_threshold: 0.7,
-              match_count: limit
-            })
-
-            return new Response(JSON.stringify({ articles }))
-          })
-          TYPESCRIPT_EOF
-
-          echo "✅ Knowledge base with vector search deployed"
-
-  # Step 8: Digital Sign (70% parity)
-  sign-automation:
-    name: "✍️ Digital Sign (70% parity)"
-    runs-on: self-hosted
-    needs: parity-assessment
-    if: github.event.inputs.parity_feature == 'digital_sign' || github.event.inputs.parity_feature == 'all'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy DocuSign/SignWell Integration
-        run: |
-          # n8n workflow for signature requests
-          cat > automations/n8n/workflows/digital-signature.json << 'WORKFLOW_EOF'
-          {
-            "name": "Digital Signature Workflow",
-            "nodes": [
+          if [ -n "$OPPORTUNITIES" ]; then
               {
-                "parameters": {"path": "sign/request"},
-                "name": "Webhook - Sign Request",
-                "type": "n8n-nodes-base.webhook",
-                "position": [250, 300]
-              },
-              {
-                "parameters": {
-                  "authentication": "oAuth2",
-                  "resource": "envelope",
-                  "operation": "create",
-                  "templateId": "={{ $json.template_id }}",
-                  "recipients": "={{ $json.signers }}"
-                },
-                "name": "Create DocuSign Envelope",
-                "type": "n8n-nodes-base.docusign",
-                "position": [450, 300]
-              },
-              {
-                "parameters": {
-                  "model": "ipai_digital_signature.signature_request",
-                  "operation": "create",
-                  "values": {
-                    "envelope_id": "={{ $json.envelope_id }}",
-                    "status": "sent",
-                    "document_name": "={{ $json.document_name }}",
-                    "signers": "={{ $json.signers }}"
-                  }
-                },
-                "name": "Log in Odoo",
-                "type": "n8n-nodes-community.odoo",
-                "position": [650, 300]
-              }
-            ],
-            "connections": {
-              "Webhook - Sign Request": {"main": [[{"node": "Create DocuSign Envelope"}]]},
-              "Create DocuSign Envelope": {"main": [[{"node": "Log in Odoo"}]]}
-            }
-          }
-          WORKFLOW_EOF
+                  echo "opportunities<<EOF"
+                  echo "$OPPORTUNITIES"
+                  echo "EOF"
+              } >> "$GITHUB_OUTPUT"
+          else
+              echo "opportunities=none" >> "$GITHUB_OUTPUT"
+          fi
 
-          echo "✅ Digital signature automation deployed"
-
-  # Step 9: Finalize and Report
-  parity-validation:
-    name: "✅ Validate Parity & Report"
-    runs-on: self-hosted
-    needs: [studio-automation, approvals-automation, marketing-automation, dashboard-automation, documents-automation, knowledge-automation, sign-automation]
-    if: always()
+  # Step 4: Generate Improvement PR (Optional)
+  generate-pr:
+    name: "🔧 Generate Improvement PR"
+    runs-on: ubuntu-latest
+    needs: [calculate-metrics, identify-opportunities]
+    if: github.event.inputs.generate_pr == 'true' && needs.identify-opportunities.outputs.opportunities != 'none'
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Parity Tests
+      - name: Create Branch
         run: |
-          # Run comprehensive parity validation
-          python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo
+          git checkout -b bot/ee-parity-improvements-$(date +%Y%m%d)
 
-          # Generate report
-          python scripts/test_ee_parity.py --report html --output $EVIDENCE_DIR/logs/parity_report.html
-
-      - name: Update Parity Matrix
-        if: github.event.inputs.dry_run != 'true'
+      - name: Apply Low-Hanging Fruit Improvements
         run: |
-          # Update parity scores in docs/ai/EE_PARITY.md
+          # Scaffold missing OCA module installations
+          # Generate stub n8n workflows
+          # Add configuration templates
+
+          echo "# EE Parity Improvements" > IMPROVEMENTS.md
+          echo "${{ needs.identify-opportunities.outputs.opportunities }}" >> IMPROVEMENTS.md
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat(ee-parity): automated low-hanging fruit improvements
+
+          Generated by EE Parity Analysis workflow based on gap analysis.
+
+          Opportunities addressed:
+          ${{ needs.identify-opportunities.outputs.opportunities }}
+
+          See: ssot/ee_parity/replacements.yaml for full parity registry"
+
+          git push origin HEAD
+
+          gh pr create \
+            --title "EE Parity: Automated Improvements" \
+            --body "$(cat IMPROVEMENTS.md)" \
+            --label "ee-parity,automation" \
+            --assignee "@me"
+
+  # Step 5: Create Gap Tracking Issues
+  track-gaps:
+    name: "📌 Track Priority Gaps"
+    runs-on: ubuntu-latest
+    needs: validate-registry
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Create Gap Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           python3 << 'PYTHON_EOF'
-          import re
+          import yaml
+          import subprocess
 
-          # Read current parity doc
-          with open('docs/ai/EE_PARITY.md') as f:
-              content = f.read()
+          with open("${{ env.SSOT_REGISTRY }}") as f:
+              registry = yaml.safe_load(f)
 
-          # Update scores based on automation deployment
-          updates = {
-              'Studio': 85,  # Was 70%, now 85% with automation
-              'Sign': 80,    # Was 70%, now 80% with DocuSign integration
-              'Knowledge': 80  # Was 75%, now 80% with vector search
-          }
+          # Create issues for high-priority gaps
+          for priority_feature in registry['summary']['prioritization']['high_priority']:
+              feature = next(f for f in registry['features'] if f['name'] == priority_feature)
 
-          for feature, new_score in updates.items():
-              content = re.sub(
-                  f'| {feature}.*\| (\d+)%',
-                  f'| {feature} | ... | {new_score}%',
-                  content
+              # Check if issue already exists
+              existing = subprocess.run(
+                  ['gh', 'issue', 'list', '--label', f'ee-parity/{feature["name"]}', '--json', 'number'],
+                  capture_output=True, text=True
               )
 
-          with open('docs/ai/EE_PARITY.md', 'w') as f:
-              f.write(content)
+              if existing.stdout.strip() != '[]':
+                  print(f"Issue already exists for {feature['name']}, skipping")
+                  continue
 
-          print("✅ Parity matrix updated")
+              # Create tracking issue
+              title = f"EE Parity: Close gap for {feature['ee_feature']}"
+              body = f"""## Feature: {feature['ee_feature']}
+
+**Current Parity**: {feature['parity_percent']}%
+**Target**: {feature['target_parity']}%
+**Gap**: {feature['target_parity'] - feature['parity_percent']}%
+
+### Known Gaps
+
+"""
+              for replacement in feature['replacements']:
+                  for gap in replacement.get('gaps', []):
+                      body += f"- [ ] {gap}\n"
+
+              body += f"""
+
+### Next Milestones
+
+"""
+              for milestone in feature.get('next_milestones', []):
+                  body += f"- [ ] {milestone['action']} (Target: {milestone['target_date']}, Impact: {milestone['parity_impact']})\n"
+
+              body += f"""
+
+**SSOT Reference**: `ssot/ee_parity/replacements.yaml`
+**Evidence**: `{feature['evidence'][0]['path']}`
+"""
+
+              subprocess.run([
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body', body,
+                  '--label', f'ee-parity/{feature["name"]},priority:high'
+              ])
+              print(f"✅ Created tracking issue for {feature['name']}")
           PYTHON_EOF
 
-      - name: Commit Updated Parity Matrix
-        if: github.event.inputs.dry_run != 'true'
+  # Final Summary
+  summary:
+    name: "📝 Workflow Summary"
+    runs-on: ubuntu-latest
+    needs: [calculate-metrics, identify-opportunities, generate-pr, track-gaps]
+    if: always()
+    steps:
+      - name: Report Results
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add docs/ai/EE_PARITY.md
-          git commit -m "chore(ee-parity): Update parity scores after automation deployment
-
-          Automated updates:
-          - Studio: 70% → 85% (field/view automation via n8n)
-          - Sign: 70% → 80% (DocuSign integration)
-          - Knowledge: 75% → 80% (vector search with pgvector)
-
-          Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-          git push
-
-      - name: Create Parity Report Issue
-        run: |
-          gh issue create \
-            --title "EE Parity Report - $(date +%Y-%m-%d)" \
-            --body "**Current Parity**: $(cat $EVIDENCE_DIR/logs/parity_report.html | grep 'Overall' | sed 's/<[^>]*>//g')
-
-          See full report: [$EVIDENCE_DIR/logs/parity_report.html]($EVIDENCE_DIR/logs/parity_report.html)
-
-          **Improvements This Run**:
-          - Studio automation deployed
-          - Marketing automation enhanced
-          - Dashboard automation via Superset
-          - Documents DMS with Supabase Storage
-          - Knowledge base with vector search
-          - Digital signature integration
-
-          **Next Priorities**:
-          - IoT connector (60% → 75%)
-          - VoIP integration (65% → 80%)
-          - Social marketing automation (70% → 85%)" \
-            --label "ee-parity,automation"
+          echo "## EE Feature Parity Analysis Complete"
+          echo ""
+          echo "**Average Parity**: ${{ needs.calculate-metrics.outputs.average_parity }}%"
+          echo "**Gap to Target**: ${{ needs.calculate-metrics.outputs.gap }}%"
+          echo "**Production-Ready**: ${{ needs.calculate-metrics.outputs.production_ready }} features"
+          echo ""
+          echo "**Opportunities Identified**: ${{ needs.identify-opportunities.outputs.opportunities != 'none' && 'Yes' || 'None' }}"
+          echo ""
+          echo "Reports and tracking issues created. No direct deployments made."

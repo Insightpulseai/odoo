@@ -1,0 +1,269 @@
+name: Branch Protection Audit
+
+# Enforces branch protection SSOT from docs/architecture/GOVERNANCE_BRANCH_PROTECTION.md
+# Fails if default branch protection settings drift from requirements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/branch-protection-audit.yml'
+      - 'docs/architecture/GOVERNANCE_BRANCH_PROTECTION.md'
+      - 'scripts/governance/**'
+  pull_request:
+    branches: [main]
+  schedule:
+    # Daily drift check at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write  # Create drift detection issues
+
+jobs:
+  audit-protection:
+    name: "Audit Branch Protection Settings"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Current Branch Protection
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching branch protection for main..."
+
+          # Get current protection settings
+          PROTECTION_JSON=$(gh api repos/${{ github.repository }}/branches/main/protection \
+            --jq '{
+              required_pull_request_reviews: .required_pull_request_reviews,
+              required_status_checks: .required_status_checks,
+              enforce_admins: .enforce_admins,
+              required_linear_history: .required_linear_history,
+              allow_force_pushes: .allow_force_pushes,
+              allow_deletions: .allow_deletions,
+              required_conversation_resolution: .required_conversation_resolution,
+              restrictions: .restrictions
+            }')
+
+          echo "$PROTECTION_JSON" > current-protection.json
+          cat current-protection.json
+
+      - name: Define Expected Configuration
+        run: |
+          # SSOT expected configuration from GOVERNANCE_BRANCH_PROTECTION.md
+          cat > expected-protection.json <<'EOF'
+          {
+            "required_pull_request_reviews": {
+              "required_approving_review_count": 1,
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false,
+              "require_last_push_approval": true
+            },
+            "required_status_checks": {
+              "strict": true,
+              "contexts": [
+                "GitHub App SSOT Guard",
+                "DNS SSOT Guard",
+                "Spec-Kit Drift Check",
+                "Secret Pattern Scan",
+                "Dependency Audit (Critical/High)",
+                "SAST (Semgrep)",
+                "Comprehensive Testing",
+                "TypeScript Build",
+                "Python Lint (Black + isort)",
+                "Spec Bundle Validation",
+                "Evidence Path Check"
+              ]
+            },
+            "enforce_admins": {
+              "enabled": true
+            },
+            "required_linear_history": {
+              "enabled": true
+            },
+            "allow_force_pushes": {
+              "enabled": false
+            },
+            "allow_deletions": {
+              "enabled": false
+            },
+            "required_conversation_resolution": {
+              "enabled": true
+            },
+            "restrictions": null
+          }
+          EOF
+
+      - name: Validate PR Requirements
+        run: |
+          REQUIRED_REVIEWS=$(jq -r '.required_pull_request_reviews.required_approving_review_count' current-protection.json)
+          DISMISS_STALE=$(jq -r '.required_pull_request_reviews.dismiss_stale_reviews' current-protection.json)
+          LAST_PUSH_APPROVAL=$(jq -r '.required_pull_request_reviews.require_last_push_approval' current-protection.json)
+
+          EXPECTED_REVIEWS=$(jq -r '.required_pull_request_reviews.required_approving_review_count' expected-protection.json)
+
+          if [ "$REQUIRED_REVIEWS" != "$EXPECTED_REVIEWS" ]; then
+            echo "❌ FAIL: Required approving reviews = $REQUIRED_REVIEWS (expected: $EXPECTED_REVIEWS)"
+            exit 1
+          fi
+
+          if [ "$DISMISS_STALE" != "true" ]; then
+            echo "❌ FAIL: Dismiss stale reviews not enabled"
+            exit 1
+          fi
+
+          if [ "$LAST_PUSH_APPROVAL" != "true" ]; then
+            echo "❌ FAIL: Require last push approval not enabled"
+            exit 1
+          fi
+
+          echo "✅ PASS: PR requirements match SSOT"
+
+      - name: Validate Required Status Checks
+        run: |
+          # Extract current required checks
+          CURRENT_CHECKS=$(jq -r '.required_status_checks.contexts[]' current-protection.json | sort)
+          EXPECTED_CHECKS=$(jq -r '.required_status_checks.contexts[]' expected-protection.json | sort)
+
+          # Find missing checks
+          MISSING_CHECKS=$(comm -23 <(echo "$EXPECTED_CHECKS") <(echo "$CURRENT_CHECKS"))
+
+          if [ -n "$MISSING_CHECKS" ]; then
+            echo "❌ FAIL: Missing required status checks:"
+            echo "$MISSING_CHECKS"
+            echo ""
+            echo "Add these checks to branch protection settings:"
+            echo "$MISSING_CHECKS" | sed 's/^/  - /'
+            exit 1
+          fi
+
+          # Check strict mode
+          STRICT=$(jq -r '.required_status_checks.strict' current-protection.json)
+          if [ "$STRICT" != "true" ]; then
+            echo "❌ FAIL: Required status checks not in strict mode"
+            exit 1
+          fi
+
+          echo "✅ PASS: Required status checks match SSOT"
+
+      - name: Validate Linear History
+        run: |
+          LINEAR_HISTORY=$(jq -r '.required_linear_history.enabled' current-protection.json)
+
+          if [ "$LINEAR_HISTORY" != "true" ]; then
+            echo "❌ FAIL: Linear history not required"
+            exit 1
+          fi
+
+          echo "✅ PASS: Linear history required"
+
+      - name: Validate Force Push Protection
+        run: |
+          FORCE_PUSH=$(jq -r '.allow_force_pushes.enabled' current-protection.json)
+          ALLOW_DELETIONS=$(jq -r '.allow_deletions.enabled' current-protection.json)
+
+          if [ "$FORCE_PUSH" != "false" ]; then
+            echo "❌ FAIL: Force pushes are allowed (should be disabled)"
+            exit 1
+          fi
+
+          if [ "$ALLOW_DELETIONS" != "false" ]; then
+            echo "❌ FAIL: Branch deletions are allowed (should be disabled)"
+            exit 1
+          fi
+
+          echo "✅ PASS: Force push and deletion protection enabled"
+
+      - name: Validate Admin Enforcement
+        run: |
+          ENFORCE_ADMINS=$(jq -r '.enforce_admins.enabled' current-protection.json)
+
+          if [ "$ENFORCE_ADMINS" != "true" ]; then
+            echo "❌ FAIL: Admin enforcement not enabled"
+            echo "Admins can bypass branch protection without enforcement"
+            exit 1
+          fi
+
+          echo "✅ PASS: Admin enforcement enabled"
+
+      - name: Validate Conversation Resolution
+        run: |
+          CONVERSATION_RESOLUTION=$(jq -r '.required_conversation_resolution.enabled' current-protection.json)
+
+          if [ "$CONVERSATION_RESOLUTION" != "true" ]; then
+            echo "❌ FAIL: Conversation resolution not required"
+            exit 1
+          fi
+
+          echo "✅ PASS: Conversation resolution required"
+
+      - name: Generate Drift Report
+        if: failure()
+        run: |
+          echo "# Branch Protection Drift Detected" > drift-report.md
+          echo "" >> drift-report.md
+          echo "**Branch**: main" >> drift-report.md
+          echo "**Detected**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> drift-report.md
+          echo "**SSOT**: docs/architecture/GOVERNANCE_BRANCH_PROTECTION.md" >> drift-report.md
+          echo "" >> drift-report.md
+          echo "## Current vs Expected" >> drift-report.md
+          echo "" >> drift-report.md
+          echo '```json' >> drift-report.md
+          echo "=== CURRENT ===" >> drift-report.md
+          cat current-protection.json >> drift-report.md
+          echo "" >> drift-report.md
+          echo "=== EXPECTED ===" >> drift-report.md
+          cat expected-protection.json >> drift-report.md
+          echo '```' >> drift-report.md
+          echo "" >> drift-report.md
+          echo "## Remediation" >> drift-report.md
+          echo "" >> drift-report.md
+          echo "Run: \`./scripts/governance/sync-branch-protection.sh\`" >> drift-report.md
+          echo "" >> drift-report.md
+          echo "Or manually update via GitHub API (requires admin:repo):" >> drift-report.md
+          echo '```bash' >> drift-report.md
+          echo 'gh api --method PUT repos/Insightpulseai/odoo/branches/main/protection \' >> drift-report.md
+          echo '  -F required_pull_request_reviews[required_approving_review_count]=1 \' >> drift-report.md
+          echo '  -F enforce_admins=true \' >> drift-report.md
+          echo '  -F required_linear_history=true' >> drift-report.md
+          echo '```' >> drift-report.md
+
+      - name: Create Drift Issue
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create issue only on scheduled runs (not on PRs)
+          gh issue create \
+            --title "Branch Protection Drift Detected on main" \
+            --body "$(cat drift-report.md)" \
+            --label "governance,priority:high" \
+            --assignee "@me"
+
+      - name: Upload Drift Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-protection-drift-report
+          path: drift-report.md
+          retention-days: 30
+
+  summary:
+    name: "Audit Summary"
+    runs-on: ubuntu-latest
+    needs: audit-protection
+    if: always()
+    steps:
+      - name: Report Status
+        run: |
+          if [ "${{ needs.audit-protection.result }}" == "success" ]; then
+            echo "✅ Branch protection settings match SSOT"
+            echo "All governance requirements enforced on main branch"
+          else
+            echo "❌ Branch protection drift detected"
+            echo "See audit job logs for details"
+            exit 1
+          fi
