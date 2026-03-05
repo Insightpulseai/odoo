@@ -345,6 +345,25 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def write_blocked_report(spec: dict[str, Any], output_path: Path, reason: str) -> None:
+    report = {
+        "spec_id": spec.get("template_id"),
+        "org": spec.get("org"),
+        "project_title": spec.get("title"),
+        "project_number": ((spec.get("project") or {}).get("number")),
+        "mode": "dry-run",
+        "status": "blocked",
+        "reason": reason,
+        "required_scopes": ["read:project", "project"],
+        "missing_fields": [],
+        "extra_fields": [],
+        "changed_fields": [],
+        "option_diffs": [],
+        "has_drift": False,
+    }
+    write_report(report, output_path)
+
+
 def main() -> int:
     args = parse_args()
     if args.dry_run == args.apply:
@@ -356,6 +375,7 @@ def main() -> int:
         print(f"Spec not found: {spec_path}", file=sys.stderr)
         return 2
 
+    spec: dict[str, Any] | None = None
     try:
         spec = load_yaml(spec_path)
         preflight(require_write=args.apply)
@@ -430,6 +450,12 @@ def main() -> int:
         message = str(exc)
         if "scope" in message.lower() or "resource not accessible" in message.lower():
             message = "CI.GH_PROJECTS_TOKEN_MISSING_SCOPE read:project|project"
+        if args.dry_run and spec is not None and (
+            "Missing token" in message or "CI.GH_PROJECTS_TOKEN_MISSING_SCOPE" in message
+        ):
+            write_blocked_report(spec, Path(args.output), "token_missing_or_scope_missing")
+            print(f"dry-run blocked. Drift report written: {args.output}")
+            return 0
         print(message, file=sys.stderr)
         return 1
 

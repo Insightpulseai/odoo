@@ -37,7 +37,6 @@ jobs:
   dry-run-sync:
     runs-on: ubuntu-latest
     needs: validate-template-ssot
-    if: ${{ secrets.GITHUB_PROJECTS_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

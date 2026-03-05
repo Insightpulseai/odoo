@@ -1,0 +1,45 @@
+name: odoo-install-set-verify
+
+on:
+  pull_request:
+    paths:
+      - 'ssot/odoo/oca_lock.yaml'
+      - 'ssot/odoo/install_sets/**'
+      - 'scripts/odoo/install_set.py'
+      - 'addons/ipai_meta/ipai_meta_finops_ppm/**'
+      - '.github/workflows/odoo-install-set-verify.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-finops-install-set:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate install set (dry-run)
+        run: |
+          python scripts/odoo/install_set.py \
+            --dry-run \
+            --set-file ssot/odoo/install_sets/finops_ppm.yaml \
+            --oca-lock ssot/odoo/oca_lock.yaml \
+            --report artifacts/odoo/install_sets/finops_ppm_report.json
+
+      - name: Upload install set report
+        uses: actions/upload-artifact@v4
+        with:
+          name: finops-ppm-install-set-report
+          path: artifacts/odoo/install_sets/finops_ppm_report.json
