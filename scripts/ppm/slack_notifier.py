@@ -1,300 +1,217 @@
-"""Slack notification client for PPM Clarity sync events.
+# Copyright 2026 InsightPulseAI
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+"""Slack notification client for PPM Clarity events.
 
-This module provides Slack notifications for sync operations, conflicts,
-and reconciliation reports with interactive conflict resolution blocks.
+Reuses the Pulser/ipai_slack_connector webhook pattern (PR #441).
+Posts structured messages to dedicated PPM Clarity channels.
+
+Channels:
+  - #ppm-clarity-logs: Sync success, daily reconciliation reports
+  - #ppm-clarity-alerts: Sync failures, retry notifications
+  - #ppm-clarity-conflicts: Conflict escalation with interactive buttons
 """
 
+import json
+import logging
 import os
-from typing import Any, Dict, List, Optional
 
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
+import requests
+
+_logger = logging.getLogger(__name__)
+
+
+# Channel configuration (override via environment)
+DEFAULT_CHANNELS = {
+    "logs": os.environ.get("SLACK_CHANNEL_LOGS", "#ppm-clarity-logs"),
+    "alerts": os.environ.get("SLACK_CHANNEL_ALERTS", "#ppm-clarity-alerts"),
+    "conflicts": os.environ.get("SLACK_CHANNEL_CONFLICTS", "#ppm-clarity-conflicts"),
+}
 
 
 class SlackNotifier:
-    """Slack notification client with interactive Block Kit support.
+    """Posts PPM Clarity notifications to Slack via Incoming Webhooks.
 
-    Notification Types:
-    - Sync success: Simple message with metrics
-    - Sync failure: Error details with retry options
-    - Conflict: Interactive blocks with resolution buttons
-    - Reconciliation report: Daily summary with conflict count
+    Uses the same webhook pattern as ipai_slack_connector.utils.slack_client.
     """
 
-    def __init__(
-        self,
-        token: Optional[str] = None,
-        channel: Optional[str] = None,
-    ):
-        """Initialize Slack client.
+    def __init__(self, webhook_url=None, channels=None):
+        """Initialize notifier.
 
         Args:
-            token: Slack bot token (defaults to SLACK_BOT_TOKEN env var)
-            channel: Default channel for notifications (defaults to SLACK_PPM_CHANNEL env var)
+            webhook_url: Slack Incoming Webhook URL. Falls back to SLACK_WEBHOOK_URL env.
+            channels: Dict mapping role → channel name. Falls back to DEFAULT_CHANNELS.
         """
-        self.token = token or os.getenv("SLACK_BOT_TOKEN")
-        self.channel = channel or os.getenv("SLACK_PPM_CHANNEL", "#ppm-clarity")
+        self.webhook_url = webhook_url or os.environ.get("SLACK_WEBHOOK_URL", "")
+        self.channels = channels or DEFAULT_CHANNELS
 
-        if not self.token:
-            raise ValueError(
-                "SLACK_BOT_TOKEN not provided and not found in environment"
-            )
-
-        self.client = WebClient(token=self.token)
-
-    def notify_sync_success(
-        self,
-        source: str,
-        target: str,
-        item_count: int,
-        duration_ms: int,
-        channel: Optional[str] = None,
-    ) -> Dict:
-        """Notify successful sync operation.
+    def _post(self, channel, text, blocks=None):
+        """Post a message to Slack via webhook.
 
         Args:
-            source: Source system (e.g., "Plane")
-            target: Target system (e.g., "Odoo")
-            item_count: Number of items synced
-            duration_ms: Sync duration in milliseconds
-            channel: Optional channel override
-
-        Returns:
-            Slack API response
+            channel: Channel name (e.g., "#ppm-clarity-logs").
+            text: Fallback text (shown in notifications).
+            blocks: Optional Block Kit blocks for rich formatting.
         """
-        message = (
-            f":white_check_mark: *PPM Clarity Sync Success*\n"
-            f"{source} → {target}\n"
-            f"• Items synced: {item_count}\n"
-            f"• Duration: {duration_ms}ms"
-        )
+        if not self.webhook_url:
+            _logger.warning("SLACK_WEBHOOK_URL not configured; skipping notification")
+            return None
 
-        return self._send_message(message, channel=channel)
-
-    def notify_sync_failure(
-        self,
-        source: str,
-        target: str,
-        error_message: str,
-        item_id: Optional[str] = None,
-        channel: Optional[str] = None,
-    ) -> Dict:
-        """Notify sync failure with error details.
-
-        Args:
-            source: Source system (e.g., "Plane")
-            target: Target system (e.g., "Odoo")
-            error_message: Error message from sync operation
-            item_id: Optional item ID that failed
-            channel: Optional channel override
-
-        Returns:
-            Slack API response
-        """
-        message = (
-            f":x: *PPM Clarity Sync Failed*\n"
-            f"{source} → {target}\n"
-            f"• Error: {error_message}"
-        )
-
-        if item_id:
-            message += f"\n• Item ID: `{item_id}`"
-
-        return self._send_message(message, channel=channel, color="danger")
-
-    def notify_conflict(
-        self,
-        plane_project_id: str,
-        plane_issue_id: str,
-        odoo_task_id: int,
-        conflict_fields: List[str],
-        channel: Optional[str] = None,
-    ) -> Dict:
-        """Notify sync conflict with interactive resolution blocks.
-
-        Args:
-            plane_project_id: Plane project ID
-            plane_issue_id: Plane issue ID
-            odoo_task_id: Odoo task ID
-            conflict_fields: List of conflicting field names
-            channel: Optional channel override
-
-        Returns:
-            Slack API response with interactive blocks
-        """
-        blocks = self._create_conflict_blocks(
-            plane_project_id=plane_project_id,
-            plane_issue_id=plane_issue_id,
-            odoo_task_id=odoo_task_id,
-            conflict_fields=conflict_fields,
-        )
+        payload = {"channel": channel, "text": text}
+        if blocks:
+            payload["blocks"] = blocks
 
         try:
-            return self.client.chat_postMessage(
-                channel=channel or self.channel,
-                blocks=blocks,
-                text=f"Sync conflict detected: Plane {plane_issue_id} ↔ Odoo Task {odoo_task_id}",
-            )
-        except SlackApiError as e:
-            raise Exception(f"Slack API error: {e.response['error']}")
+            resp = requests.post(self.webhook_url, json=payload, timeout=10)
+            if resp.status_code >= 300:
+                _logger.error("Slack webhook HTTP %s: %s", resp.status_code, resp.text[:200])
+            return resp
+        except requests.RequestException as exc:
+            _logger.error("Slack webhook error: %s", exc)
+            return None
 
-    def notify_reconciliation_report(
-        self,
-        total_conflicts: int,
-        resolved_conflicts: int,
-        failed_conflicts: int,
-        duration_ms: int,
-        channel: Optional[str] = None,
-    ) -> Dict:
-        """Notify nightly reconciliation summary.
+    # ── Notification methods ──────────────────────────────────────────
+
+    def notify_sync_success(self, event_data):
+        """Post sync success to #ppm-clarity-logs.
 
         Args:
-            total_conflicts: Total conflicts detected
-            resolved_conflicts: Successfully resolved conflicts
-            failed_conflicts: Failed conflict resolutions
-            duration_ms: Reconciliation duration in milliseconds
-            channel: Optional channel override
-
-        Returns:
-            Slack API response
+            event_data: Dict with plane_issue_id, odoo_task_id, title,
+                       event_type, fields_synced, duration_ms.
         """
-        success_rate = (
-            (resolved_conflicts / total_conflicts * 100) if total_conflicts > 0 else 100
+        text = (
+            "Sync completed: Plane issue #%s \"%s\" -> Odoo task #%s\n"
+            "- Event: %s\n"
+            "- Fields: %s\n"
+            "- Duration: %.1fs"
+        ) % (
+            event_data.get("plane_issue_id", "?"),
+            event_data.get("title", "Untitled"),
+            event_data.get("odoo_task_id", "?"),
+            event_data.get("event_type", "unknown"),
+            ", ".join(event_data.get("fields_synced", [])),
+            event_data.get("duration_ms", 0) / 1000,
         )
-        color = "good" if success_rate >= 90 else "warning" if success_rate >= 70 else "danger"
 
-        message = (
-            f"*PPM Clarity Nightly Reconciliation*\n"
-            f"• Total conflicts: {total_conflicts}\n"
-            f"• Resolved: {resolved_conflicts}\n"
-            f"• Failed: {failed_conflicts}\n"
-            f"• Success rate: {success_rate:.1f}%\n"
-            f"• Duration: {duration_ms}ms"
-        )
+        blocks = [
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": ":white_check_mark: " + text},
+            }
+        ]
 
-        return self._send_message(message, channel=channel, color=color)
+        self._post(self.channels["logs"], text, blocks)
 
-    def _create_conflict_blocks(
-        self,
-        plane_project_id: str,
-        plane_issue_id: str,
-        odoo_task_id: int,
-        conflict_fields: List[str],
-    ) -> List[Dict]:
-        """Create interactive Slack blocks for conflict resolution.
+    def notify_sync_failure(self, event_data):
+        """Post sync failure to #ppm-clarity-alerts.
 
         Args:
-            plane_project_id: Plane project ID
-            plane_issue_id: Plane issue ID
-            odoo_task_id: Odoo task ID
-            conflict_fields: List of conflicting field names
-
-        Returns:
-            List of Slack Block Kit blocks
+            event_data: Dict with plane_issue_id, error_message,
+                       retry_count, event_id.
         """
-        return [
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain_text",
-                    "text": ":warning: Sync Conflict Detected",
-                    "emoji": True,
-                },
-            },
-            {
-                "type": "section",
-                "fields": [
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*Plane Issue:*\n{plane_project_id}/{plane_issue_id}",
-                    },
-                    {
-                        "type": "mrkdwn",
-                        "text": f"*Odoo Task:*\n#{odoo_task_id}",
-                    },
-                ],
-            },
+        text = (
+            "Sync failed: Plane issue #%s\n"
+            "- Error: %s\n"
+            "- Retry: %s/3\n"
+            "- Manual: `/ppm-retry %s`"
+        ) % (
+            event_data.get("plane_issue_id", "?"),
+            event_data.get("error_message", "Unknown error"),
+            event_data.get("retry_count", 0),
+            event_data.get("event_id", "?"),
+        )
+
+        blocks = [
             {
                 "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*Conflicting Fields:*\n{', '.join(conflict_fields)}",
-                },
-            },
-            {
-                "type": "divider",
-            },
+                "text": {"type": "mrkdwn", "text": ":warning: " + text},
+            }
+        ]
+
+        self._post(self.channels["alerts"], text, blocks)
+
+    def notify_conflict(self, conflict_data):
+        """Post conflict to #ppm-clarity-conflicts with resolution options.
+
+        Args:
+            conflict_data: Dict with title, field_name, plane_value,
+                          odoo_value, link_id, last_sync_hours.
+        """
+        text = (
+            "Conflict detected: Both systems modified same field\n"
+            "- Item: \"%s\"\n"
+            "- Field: %s\n"
+            "- Plane: \"%s\"\n"
+            "- Odoo: \"%s\"\n"
+            "- Last sync: %s hours ago"
+        ) % (
+            conflict_data.get("title", "Unknown"),
+            conflict_data.get("field_name", "unknown"),
+            conflict_data.get("plane_value", ""),
+            conflict_data.get("odoo_value", ""),
+            conflict_data.get("last_sync_hours", "?"),
+        )
+
+        link_id = conflict_data.get("link_id", "?")
+
+        blocks = [
             {
                 "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Resolution Strategy:*\n"
-                    "Field ownership rules will be applied automatically:\n"
-                    "• Plane-owned → Update Odoo\n"
-                    "• Odoo-owned → Comment in Plane",
-                },
+                "text": {"type": "mrkdwn", "text": ":rotating_light: " + text},
             },
             {
                 "type": "actions",
                 "elements": [
                     {
                         "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "View in Plane",
-                            "emoji": True,
-                        },
-                        "url": f"https://plane.insightpulseai.com/{plane_project_id}/issues/{plane_issue_id}",
-                        "action_id": "view_plane",
+                        "text": {"type": "plain_text", "text": "Use Plane"},
+                        "style": "primary",
+                        "action_id": "ppm_resolve_plane",
+                        "value": "plane_%s" % link_id,
                     },
                     {
                         "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "View in Odoo",
-                            "emoji": True,
-                        },
-                        "url": f"https://insightpulseai.com/web#id={odoo_task_id}&model=project.task",
-                        "action_id": "view_odoo",
+                        "text": {"type": "plain_text", "text": "Use Odoo"},
+                        "action_id": "ppm_resolve_odoo",
+                        "value": "odoo_%s" % link_id,
+                    },
+                    {
+                        "type": "button",
+                        "text": {"type": "plain_text", "text": "Manual Merge"},
+                        "style": "danger",
+                        "action_id": "ppm_resolve_manual",
+                        "value": "manual_%s" % link_id,
                     },
                 ],
             },
         ]
 
-    def _send_message(
-        self,
-        message: str,
-        channel: Optional[str] = None,
-        color: Optional[str] = None,
-    ) -> Dict:
-        """Send simple message to Slack channel.
+        self._post(self.channels["conflicts"], text, blocks)
+
+    def notify_reconciliation_report(self, report_data):
+        """Post daily reconciliation summary to #ppm-clarity-logs.
 
         Args:
-            message: Message text (supports Markdown)
-            channel: Optional channel override
-            color: Optional color for attachment (good, warning, danger)
-
-        Returns:
-            Slack API response
+            report_data: Dict with items_scanned, conflicts_resolved,
+                        errors, duration_ms.
         """
-        try:
-            if color:
-                # Use legacy attachment for colored messages
-                return self.client.chat_postMessage(
-                    channel=channel or self.channel,
-                    attachments=[
-                        {
-                            "color": color,
-                            "text": message,
-                            "mrkdwn_in": ["text"],
-                        }
-                    ],
-                    text=message.split("\n")[0],  # Fallback text
-                )
-            else:
-                return self.client.chat_postMessage(
-                    channel=channel or self.channel,
-                    text=message,
-                )
-        except SlackApiError as e:
-            raise Exception(f"Slack API error: {e.response['error']}")
+        text = (
+            "Nightly reconciliation complete (2 AM UTC+08:00)\n"
+            "- Items scanned: %s\n"
+            "- Conflicts resolved: %s\n"
+            "- Errors: %s\n"
+            "- Duration: %.1fs"
+        ) % (
+            report_data.get("items_scanned", 0),
+            report_data.get("conflicts_resolved", 0),
+            report_data.get("errors", 0),
+            report_data.get("duration_ms", 0) / 1000,
+        )
+
+        blocks = [
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": ":bar_chart: " + text},
+            }
+        ]
+
+        self._post(self.channels["logs"], text, blocks)

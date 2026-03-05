@@ -1,303 +1,231 @@
-"""Odoo XML-RPC client for PPM Clarity integration.
+# Copyright 2026 InsightPulseAI
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+"""Odoo XML-RPC client for PPM Clarity sync.
 
-This module provides a Python client for interacting with Odoo's XML-RPC API
-to manage projects and tasks, calculate field ownership hashes, and synchronize with Plane.
+Handles task creation, updates, and hash calculation for Odoo-owned fields.
+Field ownership: assigned users, timesheets, costs, attachments, chatter.
 """
 
 import hashlib
 import json
+import logging
 import os
 import xmlrpc.client
-from typing import Any, Dict, List, Optional
+
+_logger = logging.getLogger(__name__)
 
 
 class OdooClient:
-    """Client for Odoo external RPC with XML-RPC/JSON-RPC support.
+    """Odoo external RPC client for project.task operations."""
 
-    Field Ownership (Odoo-owned):
-    - assigned_users (user_ids)
-    - timesheets (timesheet_ids)
-    - costs (effective_hours, cost calculations)
-    - attachments (attachment_ids)
-    - planned_hours (derived from Plane estimate, but managed in Odoo)
-    """
+    def __init__(self, url=None, db=None, username=None, password=None):
+        self.url = url or os.environ.get("ODOO_URL", "https://insightpulseai.com/odoo")
+        self.db = db or os.environ.get("ODOO_DB", "odoo")
+        username = username or os.environ.get("ODOO_USER", "")
+        password = password or os.environ.get("ODOO_PASSWORD", "")
 
-    def __init__(
-        self,
-        url: Optional[str] = None,
-        db: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-    ):
-        """Initialize Odoo client and authenticate.
-
-        Args:
-            url: Odoo server URL (defaults to ODOO_URL env var)
-            db: Odoo database name (defaults to ODOO_DB env var)
-            username: Odoo username (defaults to ODOO_USERNAME env var)
-            password: Odoo password (defaults to ODOO_PASSWORD env var)
-
-        Raises:
-            ValueError: If authentication fails or credentials missing
-        """
-        self.url = url or os.getenv("ODOO_URL", "http://localhost:8069")
-        self.db = db or os.getenv("ODOO_DB", "odoo")
-        self.username = username or os.getenv("ODOO_USERNAME")
-        self.password = password or os.getenv("ODOO_PASSWORD")
-
-        if not self.username or not self.password:
-            raise ValueError(
-                "Odoo credentials not provided and not found in environment"
-            )
-
-        # Authenticate
-        common = xmlrpc.client.ServerProxy(f"{self.url}/xmlrpc/2/common")
-        self.uid = common.authenticate(self.db, self.username, self.password, {})
-
+        common = xmlrpc.client.ServerProxy(
+            "%s/xmlrpc/2/common" % self.url, allow_none=True
+        )
+        self.uid = common.authenticate(self.db, username, password, {})
         if not self.uid:
-            raise ValueError(
-                f"Authentication failed for user {self.username} on database {self.db}"
-            )
+            raise ConnectionError("Odoo authentication failed for user: %s" % username)
 
-        self.models = xmlrpc.client.ServerProxy(f"{self.url}/xmlrpc/2/object")
+        self.password = password
+        self.models = xmlrpc.client.ServerProxy(
+            "%s/xmlrpc/2/object" % self.url, allow_none=True
+        )
+        _logger.info("OdooClient connected: url=%s db=%s uid=%s", self.url, self.db, self.uid)
 
-    def _execute(
-        self,
-        model: str,
-        method: str,
-        args: List[Any],
-        kwargs: Optional[Dict[str, Any]] = None,
-    ) -> Any:
-        """Execute RPC method on Odoo model."""
+    def _execute(self, model, method, *args, **kwargs):
+        """Execute an Odoo RPC call."""
         return self.models.execute_kw(
-            self.db, self.uid, self.password, model, method, args, kwargs or {}
+            self.db, self.uid, self.password, model, method, *args, **kwargs
         )
 
-    def create_project(
-        self, name: str, description: str, stages: List[str]
-    ) -> int:
-        """Create Odoo project with aligned stages.
+    # ── Project operations ────────────────────────────────────────────
+
+    def create_project(self, name, stages=None):
+        """Create project.project with optional stage names.
 
         Args:
-            name: Project name
-            description: Project description
-            stages: List of stage names (e.g., ["Draft", "Backlog", "In Progress", "Done"])
+            name: Project name.
+            stages: List of stage names (default: PPM Clarity template stages).
 
         Returns:
-            Created project ID
+            int: project.project ID.
         """
-        project_vals = {
-            "name": name,
-            "description": description,
-            "type_ids": [
-                (0, 0, {"name": stage, "sequence": i + 1})
-                for i, stage in enumerate(stages)
-            ],
-            "allow_timesheets": True,
-            "allow_billable": True,
-        }
-        return self._execute("project.project", "create", [project_vals])
+        if stages is None:
+            stages = [
+                "Backlog", "Triage", "Planned",
+                "In Progress", "Review", "Done", "Cancelled",
+            ]
 
-    def create_task(self, project_id: int, data: Dict[str, Any]) -> int:
-        """Create project.task from Plane work item.
+        project_id = self._execute(
+            "project.project", "create",
+            [{"name": name, "allow_timesheets": True}],
+        )
+
+        # Create stages aligned with Plane states
+        for seq, stage_name in enumerate(stages, start=1):
+            existing = self._execute(
+                "project.task.type", "search",
+                [[("name", "=", stage_name), ("project_ids", "in", [project_id])]],
+            )
+            if not existing:
+                self._execute(
+                    "project.task.type", "create",
+                    [{"name": stage_name, "sequence": seq, "project_ids": [(4, project_id)]}],
+                )
+
+        _logger.info("Created Odoo project: id=%s name=%s", project_id, name)
+        return project_id
+
+    # ── Task operations ───────────────────────────────────────────────
+
+    def create_task(self, project_id, data):
+        """Create project.task from Plane commitment signal.
 
         Args:
-            project_id: Odoo project ID
-            data: Task data with Plane-owned fields
+            project_id: Odoo project.project ID.
+            data: Dict with title, description, priority (Plane-owned fields).
 
         Returns:
-            Created task ID
+            int: project.task ID.
         """
-        task_vals = {
-            "name": data.get("title", "Untitled Task"),
+        stage_id = self._get_stage_id(project_id, data.get("state", "Backlog"))
+
+        priority_map = {"urgent": "1", "high": "1", "medium": "0", "low": "0", "none": "0"}
+        priority = priority_map.get(data.get("priority", "none"), "0")
+
+        vals = {
+            "name": data["title"],
             "description": data.get("description", ""),
             "project_id": project_id,
-            "priority": str(data.get("priority", "0")),
-            "planned_hours": data.get("planned_hours", 0.0),
+            "stage_id": stage_id,
+            "priority": priority,
         }
 
-        # Map stage if provided
-        if "stage" in data:
-            stage_id = self._get_stage_id(project_id, data["stage"])
-            if stage_id:
-                task_vals["stage_id"] = stage_id
+        task_id = self._execute("project.task", "create", [vals])
+        _logger.info("Created Odoo task: id=%s project=%s title=%s", task_id, project_id, data["title"])
+        return task_id
 
-        return self._execute("project.task", "create", [task_vals])
-
-    def update_task(self, task_id: int, data: Dict[str, Any]) -> bool:
-        """Update existing task with Plane-owned fields only.
+    def update_task(self, task_id, data):
+        """Update project.task with Plane-owned field changes.
 
         Args:
-            task_id: Odoo task ID
-            data: Update data (only Plane-owned fields)
+            task_id: Odoo project.task ID.
+            data: Dict with fields to update.
 
         Returns:
-            True if update successful
+            bool: True if update succeeded.
         """
-        update_vals = {}
-
-        # Only update Plane-owned fields
+        vals = {}
         if "title" in data:
-            update_vals["name"] = data["title"]
+            vals["name"] = data["title"]
         if "description" in data:
-            update_vals["description"] = data["description"]
+            vals["description"] = data["description"]
+        if "state" in data:
+            task = self._execute(
+                "project.task", "read", [task_id], {"fields": ["project_id"]},
+            )
+            if task:
+                project_id = task[0]["project_id"][0] if task[0].get("project_id") else None
+                if project_id:
+                    vals["stage_id"] = self._get_stage_id(project_id, data["state"])
         if "priority" in data:
-            update_vals["priority"] = str(data["priority"])
-        if "planned_hours" in data:
-            update_vals["planned_hours"] = data["planned_hours"]
+            priority_map = {"urgent": "1", "high": "1", "medium": "0", "low": "0", "none": "0"}
+            vals["priority"] = priority_map.get(data["priority"], "0")
 
-        # Handle stage mapping
-        if "stage" in data:
-            # Get task to find project
-            task = self.get_task_details(task_id)
-            project_id = task["project_id"][0] if task.get("project_id") else None
-            if project_id:
-                stage_id = self._get_stage_id(project_id, data["stage"])
-                if stage_id:
-                    update_vals["stage_id"] = stage_id
+        if vals:
+            self._execute("project.task", "write", [[task_id], vals])
+            _logger.info("Updated Odoo task: id=%s fields=%s", task_id, list(vals.keys()))
 
-        if not update_vals:
-            return True  # No changes needed
-
-        self._execute("project.task", "write", [[task_id], update_vals])
         return True
 
-    def get_task_details(self, task_id: int) -> Dict:
-        """Get task with Odoo-owned fields (timesheets, costs, attachments).
-
-        Args:
-            task_id: Odoo task ID
+    def get_task_details(self, task_id):
+        """Get task with Odoo-owned fields for hash calculation.
 
         Returns:
-            Task object with full details
+            dict: Task details including timesheets, user assignments.
         """
         fields = [
-            "name",
-            "description",
-            "project_id",
-            "stage_id",
-            "priority",
-            "user_ids",
-            "timesheet_ids",
-            "attachment_ids",
-            "planned_hours",
-            "effective_hours",
-            "write_date",
+            "name", "description", "project_id", "stage_id",
+            "user_ids", "priority", "timesheet_ids",
+            "date_deadline", "kanban_state",
         ]
-        tasks = self._execute(
-            "project.task", "read", [[task_id]], {"fields": fields}
-        )
-        return tasks[0] if tasks else {}
+        tasks = self._execute("project.task", "read", [task_id], {"fields": fields})
+        if not tasks:
+            return None
+        return tasks[0]
 
-    def get_completed_tasks(
-        self, since: str, project_ids: Optional[List[int]] = None
-    ) -> List[Dict]:
-        """Get tasks completed since a specific datetime.
+    def get_completed_tasks(self, project_id, since_dt=None):
+        """Get tasks in 'Done' stage for Odoo → Plane completion signal.
 
         Args:
-            since: ISO8601 datetime string (e.g., "2026-03-05 12:00:00")
-            project_ids: Optional list of project IDs to filter
+            project_id: Odoo project.project ID.
+            since_dt: ISO datetime string; only return tasks completed after this time.
 
         Returns:
-            List of completed task objects
+            list[dict]: Completed task records.
         """
-        domain = [("stage_id.is_closed", "=", True), ("write_date", ">=", since)]
-
-        if project_ids:
-            domain.append(("project_id", "in", project_ids))
+        domain = [
+            ("project_id", "=", project_id),
+            ("stage_id.name", "=", "Done"),
+        ]
+        if since_dt:
+            domain.append(("write_date", ">=", since_dt))
 
         task_ids = self._execute("project.task", "search", [domain])
         if not task_ids:
             return []
 
         return self._execute(
-            "project.task",
-            "read",
-            [task_ids],
-            {
-                "fields": [
-                    "id",
-                    "name",
-                    "project_id",
-                    "effective_hours",
-                    "write_date",
-                ]
-            },
+            "project.task", "read", [task_ids],
+            {"fields": ["name", "stage_id", "user_ids", "write_date"]},
         )
 
-    def calculate_hash(self, task: Dict) -> str:
-        """Calculate deterministic hash of Odoo-owned fields.
+    # ── Hash calculation (Odoo-owned fields) ──────────────────────────
 
-        This hash is used to detect drift between Odoo and Plane.
-        Only Odoo-owned fields are included to avoid false positives
-        from Plane-owned field changes.
+    @staticmethod
+    def calculate_hash(task):
+        """Calculate deterministic SHA-256 hash of Odoo-owned fields.
 
-        Args:
-            task: Odoo task object from get_task_details()
-
-        Returns:
-            SHA256 hex digest of canonical JSON representation
+        Odoo owns: assigned users, timesheets, costs, attachments.
+        Hash changes only when Odoo-side data changes.
         """
-        canonical_fields = {
-            "users": sorted(
-                [
-                    user[0] if isinstance(user, (list, tuple)) else user
-                    for user in task.get("user_ids", [])
-                ]
-            ),
-            "timesheets": sorted(
-                [
-                    ts[0] if isinstance(ts, (list, tuple)) else ts
-                    for ts in task.get("timesheet_ids", [])
-                ]
-            ),
-            "attachments": sorted(
-                [
-                    att[0] if isinstance(att, (list, tuple)) else att
-                    for att in task.get("attachment_ids", [])
-                ]
-            ),
-            "planned_hours": task.get("planned_hours", 0.0),
-            "effective_hours": task.get("effective_hours", 0.0),
+        owned_data = {
+            "user_ids": sorted(task.get("user_ids", [])),
+            "timesheet_ids": sorted(task.get("timesheet_ids", [])),
+            "stage_name": task.get("stage_id", [0, ""])[1] if isinstance(task.get("stage_id"), (list, tuple)) else str(task.get("stage_id", "")),
+            "kanban_state": task.get("kanban_state", ""),
         }
-        # Deterministic JSON serialization (sorted keys, no whitespace)
-        canonical_json = json.dumps(canonical_fields, sort_keys=True, separators=(",", ":"))
-        return hashlib.sha256(canonical_json.encode()).hexdigest()
+        canonical = json.dumps(owned_data, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(canonical.encode()).hexdigest()
 
-    def _get_stage_id(self, project_id: int, stage_name: str) -> Optional[int]:
-        """Lookup stage ID by name in project.
+    # ── Helpers ───────────────────────────────────────────────────────
 
-        Args:
-            project_id: Odoo project ID
-            stage_name: Stage name to lookup
-
-        Returns:
-            Stage ID if found, None otherwise
-        """
-        # Get project stages
-        project = self._execute(
-            "project.project",
-            "read",
-            [[project_id]],
-            {"fields": ["type_ids"]},
-        )
-        if not project:
-            return None
-
-        type_ids = project[0].get("type_ids", [])
-        if not type_ids:
-            return None
-
-        # Search for stage by name
+    def _get_stage_id(self, project_id, stage_name):
+        """Get or create a stage by name for a project."""
         stages = self._execute(
-            "project.task.type",
-            "read",
-            [type_ids],
-            {"fields": ["id", "name"]},
+            "project.task.type", "search_read",
+            [[("name", "=", stage_name), ("project_ids", "in", [project_id])]],
+            {"fields": ["id"], "limit": 1},
         )
+        if stages:
+            return stages[0]["id"]
 
-        for stage in stages:
-            if stage["name"] == stage_name:
-                return stage["id"]
+        # Fallback: search without project filter
+        stages = self._execute(
+            "project.task.type", "search_read",
+            [[("name", "=", stage_name)]],
+            {"fields": ["id"], "limit": 1},
+        )
+        if stages:
+            return stages[0]["id"]
 
-        return None
+        # Create if not found
+        return self._execute(
+            "project.task.type", "create",
+            [{"name": stage_name, "project_ids": [(4, project_id)]}],
+        )
