@@ -1,0 +1,202 @@
+{
+  "name": "PPM Clarity: Nightly Reconciliation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        },
+        "timezone": "Asia/Manila"
+      },
+      "id": "cron-nightly",
+      "name": "Daily 2 AM UTC+08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM ops.get_sync_conflicts()",
+        "options": {}
+      },
+      "id": "get-conflicts",
+      "name": "Get Sync Conflicts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [250, 0],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-ppm",
+          "name": "Supabase PPM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-conflicts",
+      "name": "Process Each Conflict",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [500, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Field ownership rules from spec/ppm-clarity-plane-odoo/plan.md\nconst fieldOwnership = {\n  plane: ['name', 'description', 'labels', 'estimate_point', 'priority', 'start_date', 'target_date'],\n  odoo: ['stage_id', 'user_ids', 'date_deadline', 'planned_hours', 'effective_hours', 'progress'],\n  shared: ['state']\n};\n\nconst conflict = $input.first().json;\nconst resolution = {};\n\n// Apply field ownership rules\nfor (const [field, values] of Object.entries(conflict.differing_fields)) {\n  if (fieldOwnership.plane.includes(field)) {\n    resolution[field] = values.plane_value;\n    resolution.winner = 'plane';\n  } else if (fieldOwnership.odoo.includes(field)) {\n    resolution[field] = values.odoo_value;\n    resolution.winner = 'odoo';\n  } else if (fieldOwnership.shared.includes(field)) {\n    // For shared fields, use last_modified timestamp\n    resolution[field] = conflict.plane_modified > conflict.odoo_modified ? values.plane_value : values.odoo_value;\n    resolution.winner = conflict.plane_modified > conflict.odoo_modified ? 'plane' : 'odoo';\n  }\n}\n\nreturn [{\n  json: {\n    conflict_id: conflict.id,\n    resolution: resolution,\n    link_id: conflict.link_id\n  }\n}];"
+      },
+      "id": "resolve-conflict",
+      "name": "Resolve via Field Ownership",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [750, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ops.apply_conflict_resolution($1::integer, $2::jsonb)",
+        "options": {
+          "queryParams": "={{ JSON.stringify([$json.link_id, $json.resolution]) }}"
+        }
+      },
+      "id": "apply-resolution",
+      "name": "Apply Resolution",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1000, 0],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-ppm",
+          "name": "Supabase PPM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst totalConflicts = items.length;\nconst resolved = items.filter(i => i.json.status === 'resolved').length;\nconst failed = totalConflicts - resolved;\n\nreturn [{\n  json: {\n    total: totalConflicts,\n    resolved: resolved,\n    failed: failed,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 0]
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_CHANNEL_LOGS }}",
+        "text": "📊 PPM Clarity: Daily Reconciliation Report\n• Total Conflicts: {{ $json.total }}\n• Resolved: {{ $json.resolved }} ✅\n• Failed: {{ $json.failed }} ❌\n• Timestamp: {{ $json.timestamp }}",
+        "otherOptions": {}
+      },
+      "id": "daily-report",
+      "name": "Slack Daily Report",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1500, 0],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "cron-nightly": {
+      "main": [
+        [
+          {
+            "node": "get-conflicts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get-conflicts": {
+      "main": [
+        [
+          {
+            "node": "split-conflicts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-conflicts": {
+      "main": [
+        [
+          {
+            "node": "resolve-conflict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "resolve-conflict": {
+      "main": [
+        [
+          {
+            "node": "apply-resolution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "apply-resolution": {
+      "main": [
+        [
+          {
+            "node": "split-conflicts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-conflicts": {
+      "main": [
+        [],
+        [
+          {
+            "node": "aggregate-results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate-results": {
+      "main": [
+        [
+          {
+            "node": "daily-report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "ppm-clarity",
+      "id": "ppm-clarity"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1.0.0"
+}

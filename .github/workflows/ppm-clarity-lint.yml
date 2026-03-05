@@ -1,0 +1,144 @@
+name: PPM Clarity - Spec & Schema Validation
+
+on:
+  pull_request:
+    paths:
+      - 'spec/ppm-clarity-plane-odoo/**'
+      - 'supabase/migrations/*_create_ppm_clarity_schema.sql'
+      - 'scripts/ppm/**'
+      - '.github/workflows/ppm-clarity-lint.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'spec/ppm-clarity-plane-odoo/**'
+      - 'supabase/migrations/*_create_ppm_clarity_schema.sql'
+      - 'scripts/ppm/**'
+
+jobs:
+  validate-spec-bundle:
+    name: Validate Spec Kit Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Spec Bundle Completeness
+        run: |
+          ./scripts/check-spec-kit.sh spec/ppm-clarity-plane-odoo
+
+      - name: Check Spec Bundle Consistency
+        run: |
+          # Verify all required files exist
+          required_files=(
+            "spec/ppm-clarity-plane-odoo/constitution.md"
+            "spec/ppm-clarity-plane-odoo/prd.md"
+            "spec/ppm-clarity-plane-odoo/plan.md"
+            "spec/ppm-clarity-plane-odoo/tasks.md"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Missing required spec file: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All required spec files present"
+
+  validate-sql-schema:
+    name: Validate SQL Schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Schema Tables
+        run: |
+          migration_file=$(ls supabase/migrations/*_create_ppm_clarity_schema.sql 2>/dev/null | head -1)
+
+          if [ -z "$migration_file" ]; then
+            echo "ERROR: PPM Clarity migration file not found"
+            exit 1
+          fi
+
+          echo "Validating migration: $migration_file"
+
+          # Check for required tables
+          required_tables=(
+            "ops.work_item_links"
+            "ops.work_item_events"
+          )
+
+          for table in "${required_tables[@]}"; do
+            if ! grep -q "CREATE TABLE $table" "$migration_file"; then
+              echo "ERROR: Missing table definition: $table"
+              exit 1
+            fi
+          done
+
+          echo "✅ All required schema tables present"
+
+  test-field-ownership:
+    name: Test Field Ownership Logic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd scripts/ppm
+          pip install -r requirements.txt
+
+      - name: Run field ownership tests
+        run: |
+          cd scripts/ppm
+          python -m pytest tests/test_field_ownership.py -v --tb=short
+
+  validate-n8n-workflows:
+    name: Validate n8n Workflows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON syntax
+        run: |
+          workflows=(
+            "automations/n8n/workflows/ppm-clarity-plane-to-odoo.json"
+            "automations/n8n/workflows/ppm-clarity-odoo-to-plane.json"
+            "automations/n8n/workflows/ppm-clarity-reconciliation.json"
+            "automations/n8n/workflows/ppm-clarity-slack-commands.json"
+          )
+
+          for workflow in "${workflows[@]}"; do
+            if [ ! -f "$workflow" ]; then
+              echo "ERROR: Workflow not found: $workflow"
+              exit 1
+            fi
+
+            if ! jq empty "$workflow" 2>/dev/null; then
+              echo "ERROR: Invalid JSON in workflow: $workflow"
+              exit 1
+            fi
+
+            echo "✅ Valid: $workflow"
+          done
+
+      - name: Validate workflow structure
+        run: |
+          for workflow in automations/n8n/workflows/ppm-clarity-*.json; do
+            # Check for required fields
+            if ! jq -e '.name' "$workflow" >/dev/null; then
+              echo "ERROR: Missing 'name' field in $workflow"
+              exit 1
+            fi
+
+            if ! jq -e '.nodes' "$workflow" >/dev/null; then
+              echo "ERROR: Missing 'nodes' field in $workflow"
+              exit 1
+            fi
+
+            echo "✅ Structure valid: $workflow"
+          done

@@ -1,0 +1,214 @@
+# schema: ssot.github.org_repos.v1
+# =============================================================================
+# GitHub Organization Taxonomy — InsightPulse AI
+# =============================================================================
+# Tier-based repository classification for the Insightpulseai GitHub org.
+#
+# Purpose:
+#   - Classify all repos into governance tiers (0-4, ui_libs, finance)
+#   - Define naming conventions and package scopes
+#   - Track data classification and lifecycle states
+#   - Cross-reference with secrets registry
+#
+# Companion files:
+#   ssot/github/repos.yaml - Basic repo inventory
+#   ssot/secrets/registry.yaml - Secrets registry with required_for references
+#   docs/architecture/ORG_TAXONOMY.md - Complete taxonomy documentation
+#
+# CI validation: .github/workflows/validate-org-taxonomy.yml
+# Last updated: 2026-03-05
+# =============================================================================
+
+schema_version: "1.0"
+updated: "2026-03-05"
+
+org: Insightpulseai
+
+# Tier definitions:
+# 0 - Governance: .github templates, factory tools
+# 1 - Primitives: Core systems (odoo, ops-platform, mcp-core, edge, agent-framework)
+# 2 - Operator UX: ops-console
+# 3 - Product Apps: app-landing, app-crm
+# 4 - Labs: learn, demo-repository
+# ui_libs - UI component libraries
+# finance - Financial systems
+
+repos:
+  # ── Tier 0: Governance ───────────────────────────────────────────────────
+  - repo_name: .github
+    tier: 0
+    category: governance
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    canonical_packages: []
+    visibility: public
+    description: "Organization-wide GitHub templates and workflows"
+
+  - repo_name: template-factory
+    tier: 0
+    category: governance
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    canonical_packages: []
+    visibility: public
+    description: "Scaffolding tools for repository generation"
+
+  # ── Tier 1: Primitives ───────────────────────────────────────────────────
+  - repo_name: odoo
+    tier: 1
+    category: primitives
+    system_of_record: odoo
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/odoo-client"
+      - "@ipai/odoo-rpc"
+    visibility: private
+    description: "Odoo CE 19.0 + OCA + ipai_* modules - core ERP system"
+
+  - repo_name: ops-platform
+    tier: 1
+    category: primitives
+    system_of_record: supabase
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/ops-client"
+      - "@ipai/ops-sdk"
+    visibility: private
+    description: "Platform operations and infrastructure orchestration"
+
+  - repo_name: mcp-core
+    tier: 1
+    category: primitives
+    system_of_record: github
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/mcp-server"
+      - "@ipai/mcp-client"
+    visibility: private
+    description: "Model Context Protocol server implementations"
+
+  - repo_name: edge
+    tier: 1
+    category: primitives
+    system_of_record: vercel
+    data_classification: public
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/edge-runtime"
+      - "@ipai/edge-auth"
+    visibility: public
+    description: "Edge runtime and middleware components"
+
+  - repo_name: agent-framework
+    tier: 1
+    category: primitives
+    system_of_record: github
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/agent-sdk"
+      - "@ipai/agent-runtime"
+    visibility: private
+    description: "AI agent orchestration framework"
+
+  # ── Tier 2: Operator UX ──────────────────────────────────────────────────
+  - repo_name: ops-console
+    tier: 2
+    category: operator_ux
+    system_of_record: vercel
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/ops-console"
+    visibility: private
+    description: "Platform operator dashboard and control plane UI"
+
+  # ── Tier 3: Product Apps ─────────────────────────────────────────────────
+  - repo_name: app-landing
+    tier: 3
+    category: product_apps
+    system_of_record: vercel
+    data_classification: public
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/landing-site"
+    visibility: public
+    description: "Public marketing and landing pages"
+
+  - repo_name: app-crm
+    tier: 3
+    category: product_apps
+    system_of_record: supabase
+    data_classification: confidential
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/crm-client"
+    visibility: private
+    description: "Customer relationship management application"
+
+  # ── Tier 4: Labs ─────────────────────────────────────────────────────────
+  - repo_name: learn
+    tier: 4
+    category: labs
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    canonical_packages: []
+    visibility: public
+    description: "Learning and experimentation sandbox"
+
+  - repo_name: demo-repository
+    tier: 4
+    category: labs
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    canonical_packages: []
+    visibility: public
+    description: "Demo projects and proof-of-concepts"
+
+  # ── UI Libraries ─────────────────────────────────────────────────────────
+  - repo_name: fluent-owl
+    tier: ui_libs
+    category: ui_libraries
+    system_of_record: github
+    data_classification: public
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/fluent-owl"
+      - "@ipai/ui-components"
+    visibility: public
+    description: "Fluent Design + OWL component library for Odoo"
+
+  # ── Finance ──────────────────────────────────────────────────────────────
+  - repo_name: fin-ops
+    tier: finance
+    category: finance
+    system_of_record: odoo
+    data_classification: restricted
+    lifecycle: active
+    canonical_packages:
+      - "@ipai/fin-client"
+    visibility: private
+    description: "Financial operations and accounting systems"
+
+# Lifecycle states:
+# - active: In active development
+# - maintenance: Security updates only
+# - deprecated: Marked for removal
+# - archived: Read-only historical
+
+# Data classification:
+# - public: Open source, no sensitive data
+# - confidential: Internal, business data
+# - restricted: Financial, PII, regulated data
+
+# Naming conventions:
+# - Tier 0-1: No prefix requirement
+# - Tier 2-3: app- prefix for product applications
+# - Package scope: @ipai/* for all published packages
