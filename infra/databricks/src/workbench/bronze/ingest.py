@@ -107,6 +107,8 @@ def ingest_azure_advisor(spark: SparkSession) -> DataFrame:
 def update_watermark(spark: SparkSession, source: str, last_sync: str) -> None:
     """Update sync watermark for incremental loads.
 
+    .. deprecated:: Use SyncEngine + StateManager instead.
+
     Args:
         spark: Spark session
         source: Data source name
@@ -127,3 +129,53 @@ def update_watermark(spark: SparkSession, source: str, last_sync: str) -> None:
 
     df.write.format("delta").mode("append").saveAsTable(watermark_table)
     logger.info(f"Updated watermark for {source}: {last_sync}")
+
+
+def ingest_via_sync_engine(
+    spark: SparkSession,
+    connector_id: str,
+    config: dict[str, Any],
+    slack_webhook_url: str = "",
+    history_mode: bool = False,
+) -> dict[str, Any]:
+    """Run a connector sync via the SDK SyncEngine.
+
+    This is the recommended entrypoint for new ingestion workflows.
+    Replaces direct connector calls with full lifecycle management:
+    state tracking, schema evolution, retry, monitoring, alerting.
+
+    Args:
+        spark: Spark session
+        connector_id: Registered connector ID (notion, azure, odoo_pg, github)
+        config: Connector-specific configuration dict
+        slack_webhook_url: Optional Slack webhook for alerts
+        history_mode: Enable SCD2 history tracking
+
+    Returns:
+        Dict with run_id, status, tables_synced, duration_seconds
+    """
+    from workbench.connectors import SyncEngine, create_connector
+
+    settings = get_settings()
+    connector = create_connector(connector_id, config)
+
+    engine = SyncEngine(
+        spark=spark,
+        connector=connector,
+        catalog=settings.catalog,
+        schema=settings.schema_bronze,
+        slack_webhook_url=slack_webhook_url,
+        history_mode=history_mode,
+    )
+
+    try:
+        result = engine.run()
+        return {
+            "run_id": result.run_id,
+            "status": result.status.value,
+            "tables_synced": result.tables_synced,
+            "duration_seconds": result.duration_seconds,
+            "error_message": result.error_message,
+        }
+    finally:
+        connector.close()

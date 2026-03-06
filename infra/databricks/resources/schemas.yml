@@ -17,13 +17,24 @@ resources:
       catalog_name: ${var.catalog}
       comment: "Business-ready data marts and aggregations"
 
-# Note: Tables are created dynamically by notebooks
+# Note: Tables are created dynamically by notebooks and Connector SDK
 # This file documents the expected schema
 
-# Bronze Tables:
+# Bronze Tables (Connector SDK):
+# - bronze.connector_state: Connector sync state (cursors, failures, pause)
+# - bronze.sync_runs: Per-run monitoring metrics
 # - bronze.notion_raw_pages: Raw Notion page payloads
-# - bronze.azure_rg_raw: Raw Azure Resource Graph results
-# - bronze.sync_watermarks: Sync tracking
+# - bronze.azure_advisor_raw: Azure Advisor recommendations
+# - bronze.azure_resources_raw: Azure resource inventory
+# - bronze.odoo_*: Odoo PostgreSQL tables (res_partner, account_move, etc.)
+# - bronze.github_repos: GitHub repositories
+# - bronze.github_issues: GitHub issues
+# - bronze.github_pull_requests: GitHub pull requests
+# - bronze.github_commits: GitHub commits
+# - bronze.github_workflow_runs: GitHub Actions workflow runs
+#
+# Legacy Bronze Tables:
+# - bronze.sync_watermarks: Sync tracking (deprecated — use connector_state)
 
 # Silver Tables:
 # - silver.notion_programs: Normalized programs

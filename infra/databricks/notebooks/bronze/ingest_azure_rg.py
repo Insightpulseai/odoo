@@ -1,6 +1,9 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Azure Resource Graph Ingestion
+# MAGIC # Azure Resource Graph Ingestion (DEPRECATED)
+# MAGIC
+# MAGIC **DEPRECATED**: Use `notebooks/bronze/connector_sync.py` with `connector_id=azure` instead.
+# MAGIC This notebook is kept for backward compatibility. New syncs should use the Connector SDK.
 # MAGIC
 # MAGIC Ingests Azure Advisor recommendations and Resource Graph data.
 

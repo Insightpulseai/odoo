@@ -19,13 +19,27 @@ variables:
     default: gold
   warehouse_id:
     description: SQL warehouse ID for queries
+    default: ""
   notion_token:
     description: Notion integration token
+    default: ""
   databricks_token:
     description: Databricks token for API calls
+    default: ""
+  slack_webhook_url:
+    description: Slack webhook URL for connector alerts
+    default: ""
+  job_pool_id:
+    description: Instance pool ID for job clusters (cost optimization)
+    default: ""
+  odoo_pg_host:
+    description: Odoo PostgreSQL host
+    default: "localhost"
+  github_org:
+    description: GitHub organization name
+    default: "Insightpulseai"
 
-workspace:
-  host: ${var.databricks_host}
+# workspace.host is set via DATABRICKS_HOST env var (variable interpolation not supported)
 
 include:
   - resources/*.yml
@@ -39,14 +53,14 @@ artifacts:
   notion_sync_wheel:
     type: whl
     path: ../../services/notion-sync
-    build: python setup.py bdist_wheel
+    build: pip3 wheel --no-deps --wheel-dir dist .
 
 targets:
   dev:
     mode: development
     default: true
     variables:
-      catalog: dev_ppm
+      catalog: ipai_lakehouse_dev
     workspace:
       root_path: /Workspace/Users/${workspace.current_user.userName}/notion-finance-ppm-dev
     resources:
@@ -63,6 +77,16 @@ targets:
           name: "[DEV] DQ Checks"
         control_room_refresh:
           name: "[DEV] Control Room Refresh"
+        connector_sync_notion:
+          name: "[DEV] Connector Sync: Notion"
+        connector_sync_odoo_pg:
+          name: "[DEV] Connector Sync: Odoo PG"
+        connector_sync_github:
+          name: "[DEV] Connector Sync: GitHub"
+        connector_sync_azure:
+          name: "[DEV] Connector Sync: Azure"
+        connector_replay:
+          name: "[DEV] Connector Replay / Backfill"
 
   staging:
     mode: development

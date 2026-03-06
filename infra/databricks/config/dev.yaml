@@ -21,6 +21,33 @@ alerting:
   enabled: false
   webhook_url: ""
 
+# Connector SDK configs
+connectors:
+  notion:
+    databases:
+      programs: "NOTION_PROGRAMS_DB_ID"
+      projects: "NOTION_PROJECTS_DB_ID"
+      budget_lines: "NOTION_BUDGET_LINES_DB_ID"
+      risks: "NOTION_RISKS_DB_ID"
+  odoo_pg:
+    pg_host: "localhost"
+    pg_port: 5432
+    pg_database: "odoo"
+    tables:
+      - res_partner
+      - account_move
+      - account_move_line
+      - sale_order
+      - purchase_order
+      - product_product
+      - hr_employee
+      - project_project
+      - project_task
+  github:
+    org: "Insightpulseai"
+    repos:
+      - odoo
+
 # Data quality thresholds
 quality:
   null_threshold_pct: 5.0

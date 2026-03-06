@@ -1,0 +1,171 @@
+# Connector Sync Jobs — one per connector, using generic notebook
+# All jobs use the parameterized connector_sync.py notebook
+
+resources:
+  jobs:
+    # ============================================
+    # Notion Connector (via SDK)
+    # ============================================
+
+    connector_sync_notion:
+      name: "Connector Sync: Notion"
+      description: "Sync Notion databases via Connector SDK"
+      max_concurrent_runs: 1
+      tags:
+        layer: bronze
+        source: notion
+        team: platform
+        sdk: connector-sync
+
+      tasks:
+        - task_key: sync_notion
+          description: "Run Notion connector via SyncEngine"
+          notebook_task:
+            notebook_path: ../../notebooks/bronze/connector_sync.py
+            base_parameters:
+              connector_id: notion
+              history_mode: "false"
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
+            spark_env_vars:
+              DATABRICKS_CATALOG: "${var.catalog}"
+          timeout_seconds: 1800
+          max_retries: 2
+
+      schedule:
+        quartz_cron_expression: "0 */15 * * * ?"
+        timezone_id: "UTC"
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - platform-alerts@insightpulseai.com
+
+    # ============================================
+    # Odoo PostgreSQL Connector
+    # ============================================
+
+    connector_sync_odoo_pg:
+      name: "Connector Sync: Odoo PG"
+      description: "Incremental sync from Odoo PostgreSQL via write_date"
+      max_concurrent_runs: 1
+      tags:
+        layer: bronze
+        source: odoo_pg
+        team: platform
+        sdk: connector-sync
+
+      tasks:
+        - task_key: sync_odoo_pg
+          description: "Run Odoo PG connector via SyncEngine"
+          notebook_task:
+            notebook_path: ../../notebooks/bronze/connector_sync.py
+            base_parameters:
+              connector_id: odoo_pg
+              history_mode: "false"
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
+            spark_env_vars:
+              DATABRICKS_CATALOG: "${var.catalog}"
+          libraries:
+            - pypi:
+                package: "psycopg2-binary>=2.9.0"
+          timeout_seconds: 3600
+          max_retries: 2
+
+      schedule:
+        quartz_cron_expression: "0 0 */4 * * ?"
+        timezone_id: "UTC"
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - platform-alerts@insightpulseai.com
+
+    # ============================================
+    # GitHub Connector
+    # ============================================
+
+    connector_sync_github:
+      name: "Connector Sync: GitHub"
+      description: "Sync GitHub repos, issues, PRs, commits, workflow runs"
+      max_concurrent_runs: 1
+      tags:
+        layer: bronze
+        source: github
+        team: platform
+        sdk: connector-sync
+
+      tasks:
+        - task_key: sync_github
+          description: "Run GitHub connector via SyncEngine"
+          notebook_task:
+            notebook_path: ../../notebooks/bronze/connector_sync.py
+            base_parameters:
+              connector_id: github
+              history_mode: "false"
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
+            spark_env_vars:
+              DATABRICKS_CATALOG: "${var.catalog}"
+          timeout_seconds: 3600
+          max_retries: 2
+
+      schedule:
+        quartz_cron_expression: "0 0 */6 * * ?"
+        timezone_id: "UTC"
+        pause_status: UNPAUSED
+
+      email_notifications:
+        on_failure:
+          - platform-alerts@insightpulseai.com
+
+    # ============================================
+    # Azure Connector (via SDK — replaces legacy)
+    # ============================================
+
+    connector_sync_azure:
+      name: "Connector Sync: Azure"
+      description: "Sync Azure Advisor and Resource Graph via SDK"
+      max_concurrent_runs: 1
+      tags:
+        layer: bronze
+        source: azure
+        team: platform
+        sdk: connector-sync
+
+      tasks:
+        - task_key: sync_azure
+          description: "Run Azure connector via SyncEngine"
+          notebook_task:
+            notebook_path: ../../notebooks/bronze/connector_sync.py
+            base_parameters:
+              connector_id: azure
+              history_mode: "false"
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
+            spark_env_vars:
+              DATABRICKS_CATALOG: "${var.catalog}"
+          timeout_seconds: 1800
+          max_retries: 2
+
+      schedule:
+        quartz_cron_expression: "0 0 */6 * * ?"
+        timezone_id: "UTC"
+        pause_status: UNPAUSED

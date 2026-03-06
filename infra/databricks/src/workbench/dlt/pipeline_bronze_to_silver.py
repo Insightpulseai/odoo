@@ -1,3 +1,4 @@
+# Databricks notebook source
 """DLT Pipeline: Bronze to Silver transformation.
 
 This pipeline is designed to run as a Delta Live Tables pipeline.

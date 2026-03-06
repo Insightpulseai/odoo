@@ -20,6 +20,9 @@ resources:
 
       # Gold layer marts are built via regular jobs, not DLT
       # This pipeline is a placeholder for future DLT gold tables
+      libraries:
+        - notebook:
+            path: ../../notebooks/gold/gold_placeholder.py
 
       configuration:
         "spark.databricks.delta.preview.enabled": "true"
@@ -28,4 +31,4 @@ resources:
         - email_recipients:
             - platform-alerts@insightpulseai.com
           alerts:
-            - on_failure
+            - on-update-failure

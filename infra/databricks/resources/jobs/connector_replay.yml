@@ -1,0 +1,46 @@
+# Connector Replay Job — manual trigger for backfill/recovery
+# Supports: cursor, time_range, full, dry_run modes
+
+resources:
+  jobs:
+    connector_replay:
+      name: "Connector Replay / Backfill"
+      description: >
+        Manual replay job for connector syncs. Use for recovery from
+        corrupt state, backfilling historical data, or dry-run validation.
+      tags:
+        layer: bronze
+        purpose: replay
+        team: platform
+        sdk: connector-sync
+
+      tasks:
+        - task_key: replay
+          description: "Run connector replay via ReplayEngine"
+          notebook_task:
+            notebook_path: ../../notebooks/bronze/connector_replay.py
+            base_parameters:
+              connector_id: ""
+              mode: "dry_run"
+              cursor_json: "{}"
+              start_time: ""
+              end_time: ""
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+            spark_env_vars:
+              DATABRICKS_CATALOG: "${var.catalog}"
+          libraries:
+            - pypi:
+                package: "psycopg2-binary>=2.9.0"
+          timeout_seconds: 7200
+          max_retries: 0
+
+      # No schedule — manual trigger only
+      max_concurrent_runs: 1
+
+      email_notifications:
+        on_failure:
+          - platform-alerts@insightpulseai.com

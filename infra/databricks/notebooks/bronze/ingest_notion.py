@@ -1,6 +1,9 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Notion Bronze Ingestion
+# MAGIC # Notion Bronze Ingestion (DEPRECATED)
+# MAGIC
+# MAGIC **DEPRECATED**: Use `notebooks/bronze/connector_sync.py` with `connector_id=notion` instead.
+# MAGIC This notebook is kept for backward compatibility. New syncs should use the Connector SDK.
 # MAGIC
 # MAGIC Syncs Notion databases to bronze layer Delta tables.
 

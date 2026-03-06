@@ -37,6 +37,20 @@ class Settings(BaseModel):
     azure_client_secret: str = Field(default="", description="Azure client secret")
     azure_tenant_id: str = Field(default="", description="Azure tenant ID")
 
+    # Odoo PostgreSQL (for OdooPgConnector)
+    odoo_pg_host: str = Field(default="localhost", description="Odoo PostgreSQL host")
+    odoo_pg_port: int = Field(default=5432, description="Odoo PostgreSQL port")
+    odoo_pg_database: str = Field(default="odoo", description="Odoo PostgreSQL database")
+    odoo_pg_user: str = Field(default="odoo", description="Odoo PostgreSQL user")
+    odoo_pg_password: str = Field(default="", description="Odoo PostgreSQL password")
+
+    # GitHub (for GitHubConnector)
+    github_token: str = Field(default="", description="GitHub personal access token")
+    github_org: str = Field(default="", description="GitHub organization name")
+
+    # Alerting
+    slack_webhook_url: str = Field(default="", description="Slack webhook URL for alerts")
+
     @classmethod
     def from_env(cls) -> Settings:
         """Load settings from environment variables."""
@@ -54,6 +68,14 @@ class Settings(BaseModel):
             azure_client_id=os.getenv("AZURE_CLIENT_ID", ""),
             azure_client_secret=os.getenv("AZURE_CLIENT_SECRET", ""),
             azure_tenant_id=os.getenv("AZURE_TENANT_ID", ""),
+            odoo_pg_host=os.getenv("ODOO_PG_HOST", "localhost"),
+            odoo_pg_port=int(os.getenv("ODOO_PG_PORT", "5432")),
+            odoo_pg_database=os.getenv("ODOO_PG_DATABASE", "odoo"),
+            odoo_pg_user=os.getenv("ODOO_PG_USER", "odoo"),
+            odoo_pg_password=os.getenv("ODOO_PG_PASSWORD", ""),
+            github_token=os.getenv("GITHUB_TOKEN", ""),
+            github_org=os.getenv("GITHUB_ORG", ""),
+            slack_webhook_url=os.getenv("SLACK_WEBHOOK_URL", ""),
         )
 
     def get_bronze_path(self, table: str) -> str:
