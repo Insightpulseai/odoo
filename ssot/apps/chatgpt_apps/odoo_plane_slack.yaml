@@ -1,0 +1,99 @@
+# schema: ssot.chatgpt_app.v1
+# ChatGPT App: Odoo-Plane-Slack Ops Assistant
+# Platform: OpenAI Apps SDK (MCP-first)
+# Owner: ops
+# Created: 2026-03-05
+
+version: 1
+
+app:
+  slug: odoo-plane-slack-assistant
+  display_name: "Ops Assistant"
+  platform: openai_apps_sdk
+  description: >
+    ChatGPT App that updates Odoo records, coordinates Plane work items,
+    and uses Slack for approvals. Built on the OpenAI Apps SDK with an
+    MCP server as the execution backend.
+  references:
+    apps_sdk_root: "https://developers.openai.com/apps-sdk/"
+    apps_sdk_quickstart: "https://developers.openai.com/apps-sdk/quickstart/"
+    apps_sdk_auth: "https://developers.openai.com/apps-sdk/build/auth/"
+    apps_sdk_mcp: "https://developers.openai.com/apps-sdk/build/mcp/"
+  spec_bundle: spec/chatgpt-ops-assistant/
+
+  mcp_server:
+    name: ops-assistant
+    transport: sse
+    deploy_target: supabase_edge_function  # alternative: do_droplet
+    health_endpoint: /health
+    tool_discovery: /tools
+
+  auth:
+    method: oauth2.1
+    grant_type: authorization_code
+    pkce: required
+    scopes:
+      - "odoo:read"
+      - "odoo:write"
+      - "plane:read"
+      - "plane:write"
+      - "slack:notify"
+    token_endpoint: /oauth/token
+    authorize_endpoint: /oauth/authorize
+
+  execution_policy:
+    deny_by_default: true
+    allowlist_path: ssot/integrations/chatgpt_app_tool_allowlist.yaml
+    audit_sink: supabase.ops.run_events
+    idempotency_keys: required
+    rate_limits:
+      per_minute: 60
+      burst: 10
+      backoff: exponential
+
+  tool_families:
+    - prefix: "odoo.*"
+      system: system_of_record
+      backend: xml-rpc
+      host_ref: ssot/runtime/prod_settings.yaml#odoo.url
+      write_capable: true
+      approval_required: true
+      approval_channel: slack
+      service_user_ref: odoo_chatgpt_rpc_user
+
+    - prefix: "plane.*"
+      system: system_of_work
+      backend: rest_api
+      host_ref: ssot/integrations/plane.yaml#api_base_url
+      write_capable: true
+      approval_required: false
+      rate_limit: 60/min
+      auth: bot_token
+
+    - prefix: "slack.*"
+      system: notification
+      backend: web_api
+      write_capable: true
+      approval_required: false
+
+  cross_system_linking:
+    table: ops.external_identities
+    schema: supabase
+    columns:
+      - entity_type     # e.g. "crm.lead", "plane.work_item"
+      - source_system   # e.g. "odoo", "plane"
+      - source_id       # ID in source system
+      - target_system   # e.g. "plane", "odoo"
+      - target_id       # ID in target system
+      - created_by      # "chatgpt_ops_assistant"
+      - created_at      # timestamp
+
+  environments:
+    stage:
+      mcp_url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-assistant-stage"
+      odoo_db: odoo_dev
+      approval_required: false
+    prod:
+      mcp_url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-assistant"
+      odoo_db: odoo
+      approval_required: true
