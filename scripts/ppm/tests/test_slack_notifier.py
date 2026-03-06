@@ -1,191 +1,116 @@
-"""
-Test Slack notification logic for PPM Clarity integration.
+# Copyright 2026 InsightPulseAI
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+"""Tests for Slack notification client."""
 
-Based on spec/ppm-clarity-plane-odoo/plan.md Slack integration:
-- Success notifications to #ppm-clarity-logs
-- Failure notifications to #ppm-clarity-alerts
-- Conflict notifications to #ppm-clarity-conflicts
-- Daily summary to #ppm-clarity-logs
-"""
+import unittest
+from unittest.mock import MagicMock, patch
 
-import pytest
-from unittest.mock import Mock, patch, call
+from scripts.ppm.slack_notifier import SlackNotifier
 
 
-class TestSlackNotifications:
+class TestSlackNotifier(unittest.TestCase):
     """Test Slack notification formatting and delivery."""
 
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_success_notification_format(self, mock_slack_client):
-        """Success notification has correct format."""
-        mock_slack = mock_slack_client.return_value
+    def setUp(self):
+        self.notifier = SlackNotifier(
+            webhook_url="https://hooks.slack.com/test",
+            channels={
+                "logs": "#test-logs",
+                "alerts": "#test-alerts",
+                "conflicts": "#test-conflicts",
+            },
+        )
 
-        event = {
-            "event_type": "plane_to_odoo",
-            "plane_issue_id": "PLANE-123",
+    @patch("scripts.ppm.slack_notifier.requests")
+    def test_sync_success_posts_to_logs(self, mock_requests):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_requests.post.return_value = mock_resp
+
+        self.notifier.notify_sync_success({
+            "plane_issue_id": "issue-123",
+            "title": "Feature X",
             "odoo_task_id": 456,
-            "status": "success",
-        }
-
-        send_success_notification(event)
-
-        # Verify Slack message posted
-        mock_slack.chat_postMessage.assert_called_once()
-        call_args = mock_slack.chat_postMessage.call_args[1]
-
-        assert call_args["channel"] == "#ppm-clarity-logs"
-        assert "✅" in call_args["text"]
-        assert "PLANE-123" in call_args["text"]
-        assert "456" in str(call_args["text"])
-
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_failure_notification_format(self, mock_slack_client):
-        """Failure notification has correct format."""
-        mock_slack = mock_slack_client.return_value
-
-        event = {
             "event_type": "plane_to_odoo",
-            "plane_issue_id": "PLANE-123",
-            "status": "failed",
-            "error": "Odoo connection timeout",
-        }
+            "fields_synced": ["title", "description"],
+            "duration_ms": 1200,
+        })
 
-        send_failure_notification(event)
+        mock_requests.post.assert_called_once()
+        call_args = mock_requests.post.call_args
+        payload = call_args[1]["json"] if "json" in call_args[1] else call_args[0][1]
+        self.assertEqual(payload["channel"], "#test-logs")
 
-        # Verify Slack message posted to alerts channel
-        mock_slack.chat_postMessage.assert_called_once()
-        call_args = mock_slack.chat_postMessage.call_args[1]
+    @patch("scripts.ppm.slack_notifier.requests")
+    def test_sync_failure_posts_to_alerts(self, mock_requests):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_requests.post.return_value = mock_resp
 
-        assert call_args["channel"] == "#ppm-clarity-alerts"
-        assert "❌" in call_args["text"]
-        assert "PLANE-123" in call_args["text"]
-        assert "Odoo connection timeout" in call_args["text"]
+        self.notifier.notify_sync_failure({
+            "plane_issue_id": "issue-789",
+            "error_message": "Connection timeout",
+            "retry_count": 2,
+            "event_id": "evt-001",
+        })
 
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_conflict_notification_format(self, mock_slack_client):
-        """Conflict notification has correct format with action buttons."""
-        mock_slack = mock_slack_client.return_value
+        mock_requests.post.assert_called_once()
+        call_args = mock_requests.post.call_args
+        payload = call_args[1]["json"] if "json" in call_args[1] else call_args[0][1]
+        self.assertEqual(payload["channel"], "#test-alerts")
 
-        conflict = {
-            "link_id": "link_123",
-            "field": "state",
-            "plane_value": "In Progress",
-            "odoo_value": "Done",
-            "plane_issue_id": "PLANE-123",
-            "odoo_task_id": 456,
-        }
+    @patch("scripts.ppm.slack_notifier.requests")
+    def test_conflict_posts_with_buttons(self, mock_requests):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_requests.post.return_value = mock_resp
 
-        send_conflict_notification(conflict)
+        self.notifier.notify_conflict({
+            "title": "Sprint Planning",
+            "field_name": "title",
+            "plane_value": "Sprint Q1",
+            "odoo_value": "Sprint Session",
+            "link_id": "link-001",
+            "last_sync_hours": 2,
+        })
 
-        # Verify Slack message posted to conflicts channel
-        mock_slack.chat_postMessage.assert_called_once()
-        call_args = mock_slack.chat_postMessage.call_args[1]
+        mock_requests.post.assert_called_once()
+        call_args = mock_requests.post.call_args
+        payload = call_args[1]["json"] if "json" in call_args[1] else call_args[0][1]
+        self.assertEqual(payload["channel"], "#test-conflicts")
+        # Should have blocks with action buttons
+        self.assertIn("blocks", payload)
+        action_block = [b for b in payload["blocks"] if b["type"] == "actions"]
+        self.assertEqual(len(action_block), 1)
+        self.assertEqual(len(action_block[0]["elements"]), 3)
 
-        assert call_args["channel"] == "#ppm-clarity-conflicts"
-        assert "⚠️" in call_args["text"] or "blocks" in call_args
-        assert "PLANE-123" in str(call_args)
-        assert "state" in str(call_args)
+    @patch("scripts.ppm.slack_notifier.requests")
+    def test_reconciliation_report(self, mock_requests):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_requests.post.return_value = mock_resp
 
-        # Verify action buttons present (if using blocks)
-        if "blocks" in call_args:
-            blocks = call_args["blocks"]
-            assert any("actions" in block for block in blocks)
+        self.notifier.notify_reconciliation_report({
+            "items_scanned": 1234,
+            "conflicts_resolved": 3,
+            "errors": 0,
+            "duration_ms": 45000,
+        })
 
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_daily_summary_format(self, mock_slack_client):
-        """Daily summary has correct metrics format."""
-        mock_slack = mock_slack_client.return_value
+        mock_requests.post.assert_called_once()
+        call_args = mock_requests.post.call_args
+        payload = call_args[1]["json"] if "json" in call_args[1] else call_args[0][1]
+        self.assertIn("1234", payload["text"])
 
-        summary = {
-            "date": "2024-03-05",
-            "total_syncs": 42,
-            "successful": 40,
-            "failed": 2,
-            "conflicts": 1,
-            "active_links": 35,
-        }
-
-        send_daily_summary(summary)
-
-        # Verify Slack message posted
-        mock_slack.chat_postMessage.assert_called_once()
-        call_args = mock_slack.chat_postMessage.call_args[1]
-
-        assert call_args["channel"] == "#ppm-clarity-logs"
-        assert "2024-03-05" in call_args["text"]
-        assert "42" in str(call_args["text"])  # Total syncs
-        assert "40" in str(call_args["text"])  # Successful
-        assert "2" in str(call_args["text"])  # Failed
-
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_slash_command_retry_response(self, mock_slack_client):
-        """Slash command /ppm-retry provides feedback."""
-        mock_slack = mock_slack_client.return_value
-
-        command_payload = {
-            "command": "/ppm-retry",
-            "text": "evt_123",
-            "response_url": "https://slack.com/response/webhook",
-        }
-
-        handle_slash_command_retry(command_payload)
-
-        # Verify response sent
-        # In real implementation, would use requests.post to response_url
-        # For testing, we verify the response structure
-        assert True  # Placeholder - actual implementation would verify HTTP POST
-
-    @patch("scripts.ppm.slack_notifier.SlackClient")
-    def test_slash_command_status_response(self, mock_slack_client):
-        """Slash command /ppm-status shows system health."""
-        mock_slack = mock_slack_client.return_value
-
-        command_payload = {
-            "command": "/ppm-status",
-            "text": "",
-            "response_url": "https://slack.com/response/webhook",
-        }
-
-        response = handle_slash_command_status(command_payload)
-
-        # Verify response includes health metrics
-        assert "total_links" in response
-        assert "healthy" in response
-        assert "conflicts" in response
-        assert "errors" in response
+    def test_no_webhook_skips_silently(self):
+        """When SLACK_WEBHOOK_URL is empty, notifications are skipped."""
+        notifier = SlackNotifier(webhook_url="")
+        # Should not raise
+        result = notifier.notify_sync_success({"plane_issue_id": "x", "title": "t",
+                                                "odoo_task_id": 1, "event_type": "test",
+                                                "fields_synced": [], "duration_ms": 0})
+        self.assertIsNone(result)
 
 
-# Mock Slack notification functions
-def send_success_notification(event: dict) -> None:
-    """Mock success notification."""
-    pass  # Would call Slack API
-
-
-def send_failure_notification(event: dict) -> None:
-    """Mock failure notification."""
-    pass  # Would call Slack API
-
-
-def send_conflict_notification(conflict: dict) -> None:
-    """Mock conflict notification."""
-    pass  # Would call Slack API
-
-
-def send_daily_summary(summary: dict) -> None:
-    """Mock daily summary notification."""
-    pass  # Would call Slack API
-
-
-def handle_slash_command_retry(command_payload: dict) -> dict:
-    """Mock /ppm-retry slash command handler."""
-    return {"response": "Retry initiated for event evt_123"}
-
-
-def handle_slash_command_status(command_payload: dict) -> dict:
-    """Mock /ppm-status slash command handler."""
-    return {
-        "total_links": 35,
-        "healthy": 33,
-        "conflicts": 1,
-        "errors": 1,
-    }
+if __name__ == "__main__":
+    unittest.main()
