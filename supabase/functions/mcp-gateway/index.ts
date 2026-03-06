@@ -1,5 +1,19 @@
 // Supabase Edge Function: MCP Gateway
 // Middleware layer for n8n MCP operations with auth, rate limiting, and routing
+//
+// Auth flow:
+//   1. x-api-key header → hash lookup in api_keys table
+//   2. Bearer token → try Supabase JWT (getUser), then external JWKS validation
+//   3. GET /auth/check → returns token claim summary (no secrets)
+//
+// Error codes (structured, deterministic):
+//   AUTH_MISSING       - No auth header or API key provided
+//   AUTH_KEY_INVALID   - x-api-key hash not found or inactive
+//   AUTH_TOKEN_INVALID - Bearer token failed all validation paths
+//   AUTH_JWKS_FAIL     - External JWKS fetch/validation failed
+//   ALLOWLIST_DENY     - Workflow ID not in allowlist for execute_workflow
+//   RATE_LIMIT         - Per-client rate limit exceeded
+//   UNKNOWN_ACTION     - Unrecognized MCP action
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -8,6 +22,9 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-mcp-action',
 }
+
+// Read-only actions that do NOT require allowlist gating
+const READ_ONLY_ACTIONS = new Set(['search_workflows', 'get_workflow_details'])
 
 interface MCPRequest {
   action: 'execute_workflow' | 'search_workflows' | 'get_workflow_details' | 'git_operation'
@@ -41,23 +58,54 @@ serve(async (req: Request) => {
   const requestId = crypto.randomUUID()
 
   try {
-    // 1. AUTH MIDDLEWARE
-    const authHeader = req.headers.get('authorization')
-    const apiKey = req.headers.get('x-api-key')
-
-    if (!authHeader && !apiKey) {
-      return errorResponse(401, 'Missing authentication', requestId)
-    }
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Validate API key or JWT
-    const clientId = await validateAuth(supabase, authHeader, apiKey)
-    if (!clientId) {
-      return errorResponse(403, 'Invalid authentication', requestId)
+    // 0. AUTH SELF-TEST ENDPOINT
+    const url = new URL(req.url)
+    if (url.pathname.endsWith('/auth/check')) {
+      return handleAuthCheck(req, supabase, requestId)
     }
+
+    // 1. AUTH MIDDLEWARE (deterministic error codes)
+    const authHeader = req.headers.get('authorization')
+    const apiKey = req.headers.get('x-api-key')
+    const hostHeader = req.headers.get('host') || ''
+
+    // Log auth attempt (no secrets)
+    console.log(JSON.stringify({
+      request_id: requestId,
+      path: url.pathname,
+      method: req.method,
+      host: hostHeader,
+      auth_scheme: apiKey ? 'x-api-key' : authHeader ? authHeader.split(' ')[0] : 'none',
+      timestamp: new Date().toISOString(),
+    }))
+
+    if (!authHeader && !apiKey) {
+      return errorResponse(401, 'Missing authentication', requestId, {}, 'AUTH_MISSING')
+    }
+
+    // Validate API key or JWT (with structured error codes)
+    const authResult = await validateAuth(supabase, authHeader, apiKey)
+    if (!authResult.ok) {
+      console.log(JSON.stringify({
+        request_id: requestId,
+        auth_result: 'denied',
+        error_code: authResult.error_code,
+        reason: authResult.reason,
+      }))
+      return errorResponse(
+        authResult.error_code === 'AUTH_KEY_INVALID' ? 403 : 401,
+        authResult.reason,
+        requestId,
+        {},
+        authResult.error_code
+      )
+    }
+
+    const clientId = authResult.client_id!
 
     // 2. RATE LIMIT MIDDLEWARE
     const body: MCPRequest = await req.json()
@@ -70,7 +118,7 @@ serve(async (req: Request) => {
         'X-RateLimit-Limit': limit.max.toString(),
         'X-RateLimit-Remaining': '0',
         'X-RateLimit-Reset': rateLimitResult.reset_at.toString()
-      })
+      }, 'RATE_LIMIT')
     }
 
     // 3. ROUTING MIDDLEWARE
@@ -114,7 +162,7 @@ serve(async (req: Request) => {
         break
 
       default:
-        return errorResponse(400, `Unknown action: ${body.action}`, requestId)
+        return errorResponse(400, `Unknown action: ${body.action}`, requestId, {}, 'UNKNOWN_ACTION')
     }
 
     // 4. QUEUE JOB (for async operations)
@@ -189,29 +237,201 @@ serve(async (req: Request) => {
 
   } catch (error) {
     console.error('MCP Gateway error:', error)
-    return errorResponse(500, error.message, requestId)
+    return errorResponse(500, error.message, requestId, {}, 'INTERNAL_ERROR')
   }
 })
 
 // Helper functions
-async function validateAuth(supabase: any, authHeader: string | null, apiKey: string | null): Promise<string | null> {
+
+interface AuthResult {
+  ok: boolean
+  client_id?: string
+  error_code?: string
+  reason?: string
+  claims?: Record<string, unknown>
+}
+
+async function validateAuth(supabase: any, authHeader: string | null, apiKey: string | null): Promise<AuthResult> {
+  // Path 1: API key authentication
   if (apiKey) {
-    const { data } = await supabase
-      .from('api_keys')
-      .select('client_id, active')
-      .eq('key_hash', await hashKey(apiKey))
-      .eq('active', true)
-      .single()
-    return data?.client_id || null
+    try {
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('client_id, active')
+        .eq('key_hash', await hashKey(apiKey))
+        .eq('active', true)
+        .single()
+
+      if (error || !data?.client_id) {
+        return { ok: false, error_code: 'AUTH_KEY_INVALID', reason: 'API key not found or inactive' }
+      }
+      return { ok: true, client_id: data.client_id }
+    } catch (e) {
+      return { ok: false, error_code: 'AUTH_KEY_INVALID', reason: `API key validation error: ${e.message}` }
+    }
   }
 
+  // Path 2: Bearer token authentication
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.substring(7)
-    const { data: { user } } = await supabase.auth.getUser(token)
-    return user?.id || null
+
+    // 2a: Try Supabase JWT first (native users)
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser(token)
+      if (user?.id) {
+        return { ok: true, client_id: user.id, claims: { sub: user.id, iss: 'supabase', email: user.email } }
+      }
+    } catch (_) {
+      // Not a Supabase JWT — try external validation
+    }
+
+    // 2b: Try external JWT validation (ChatGPT, other OAuth providers)
+    const jwksUrl = Deno.env.get('AUTH_JWKS_URL')
+    const expectedIssuer = Deno.env.get('AUTH_ISSUER')
+    const expectedAudience = Deno.env.get('AUTH_AUDIENCE')
+
+    if (jwksUrl) {
+      try {
+        const claims = await validateExternalJwt(token, jwksUrl, expectedIssuer, expectedAudience)
+        if (claims) {
+          return {
+            ok: true,
+            client_id: `external:${claims.sub || claims.client_id || 'unknown'}`,
+            claims,
+          }
+        }
+      } catch (e) {
+        return { ok: false, error_code: 'AUTH_JWKS_FAIL', reason: `JWKS validation failed: ${e.message}` }
+      }
+    }
+
+    // 2c: Try as opaque bearer token (lookup in api_keys table by token hash)
+    try {
+      const tokenHash = await hashKey(token)
+      const { data } = await supabase
+        .from('api_keys')
+        .select('client_id, active')
+        .eq('key_hash', tokenHash)
+        .eq('active', true)
+        .single()
+
+      if (data?.client_id) {
+        return { ok: true, client_id: data.client_id }
+      }
+    } catch (_) {
+      // Token not in api_keys table either
+    }
+
+    return {
+      ok: false,
+      error_code: 'AUTH_TOKEN_INVALID',
+      reason: 'Bearer token failed all validation paths (Supabase JWT, JWKS, opaque token)'
+    }
   }
 
-  return null
+  return { ok: false, error_code: 'AUTH_MISSING', reason: 'No recognized auth scheme' }
+}
+
+async function validateExternalJwt(
+  token: string,
+  jwksUrl: string,
+  expectedIssuer?: string,
+  expectedAudience?: string
+): Promise<Record<string, unknown> | null> {
+  // Decode JWT header to get kid
+  const parts = token.split('.')
+  if (parts.length !== 3) return null
+
+  const header = JSON.parse(atob(parts[0]))
+  const payload = JSON.parse(atob(parts[1]))
+
+  // Clock skew tolerance: 60 seconds
+  const now = Math.floor(Date.now() / 1000)
+  const skew = 60
+
+  if (payload.exp && payload.exp + skew < now) {
+    throw new Error(`Token expired at ${new Date(payload.exp * 1000).toISOString()}`)
+  }
+  if (payload.nbf && payload.nbf - skew > now) {
+    throw new Error(`Token not valid until ${new Date(payload.nbf * 1000).toISOString()}`)
+  }
+  if (expectedIssuer && payload.iss !== expectedIssuer) {
+    throw new Error(`Issuer mismatch: expected ${expectedIssuer}, got ${payload.iss}`)
+  }
+  if (expectedAudience && payload.aud !== expectedAudience && !payload.aud?.includes?.(expectedAudience)) {
+    throw new Error(`Audience mismatch: expected ${expectedAudience}, got ${payload.aud}`)
+  }
+
+  // Fetch JWKS and verify signature
+  const jwksResponse = await fetch(jwksUrl, {
+    headers: { 'Accept': 'application/json' },
+  })
+  if (!jwksResponse.ok) {
+    throw new Error(`JWKS fetch failed: ${jwksResponse.status}`)
+  }
+
+  const jwks = await jwksResponse.json()
+  const key = jwks.keys?.find((k: any) => k.kid === header.kid)
+  if (!key) {
+    throw new Error(`No matching key found for kid: ${header.kid}`)
+  }
+
+  // Import the JWK and verify signature
+  const cryptoKey = await crypto.subtle.importKey(
+    'jwk',
+    key,
+    { name: 'RSASSA-PKCS1-v1_5', hash: header.alg === 'RS256' ? 'SHA-256' : 'SHA-384' },
+    false,
+    ['verify']
+  )
+
+  const signatureBytes = Uint8Array.from(atob(parts[2].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))
+  const dataBytes = new TextEncoder().encode(`${parts[0]}.${parts[1]}`)
+
+  const valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', cryptoKey, signatureBytes, dataBytes)
+  if (!valid) {
+    throw new Error('JWT signature verification failed')
+  }
+
+  return payload
+}
+
+async function handleAuthCheck(req: Request, supabase: any, requestId: string): Promise<Response> {
+  const authHeader = req.headers.get('authorization')
+  const apiKey = req.headers.get('x-api-key')
+
+  if (!authHeader && !apiKey) {
+    return errorResponse(401, 'No auth provided', requestId, {}, 'AUTH_MISSING')
+  }
+
+  const result = await validateAuth(supabase, authHeader, apiKey)
+
+  if (!result.ok) {
+    return errorResponse(
+      401,
+      result.reason || 'Authentication failed',
+      requestId,
+      {},
+      result.error_code || 'AUTH_TOKEN_INVALID'
+    )
+  }
+
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      request_id: requestId,
+      client_id: result.client_id,
+      claims: result.claims || {},
+      auth_method: apiKey ? 'api_key' : 'bearer',
+    }),
+    {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'X-Request-ID': requestId,
+      }
+    }
+  )
 }
 
 async function hashKey(key: string): Promise<string> {
@@ -241,9 +461,14 @@ function checkRateLimit(clientId: string, action: string, limit: { max: number, 
   return { allowed: true, remaining: limit.max - entry.count, reset_at: entry.reset_at }
 }
 
-function errorResponse(status: number, message: string, requestId: string, extraHeaders?: Record<string, string>) {
+function errorResponse(status: number, message: string, requestId: string, extraHeaders?: Record<string, string>, errorCode?: string) {
   return new Response(
-    JSON.stringify({ success: false, error: message, request_id: requestId }),
+    JSON.stringify({
+      success: false,
+      error: message,
+      error_code: errorCode || 'UNKNOWN',
+      request_id: requestId,
+    }),
     {
       status,
       headers: {

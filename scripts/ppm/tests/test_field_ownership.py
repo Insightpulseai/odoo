@@ -1,142 +1,96 @@
-"""
-Test field ownership rules for PPM Clarity integration.
+# Copyright 2026 InsightPulseAI
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+"""Tests for field ownership contract enforcement."""
 
-Based on spec/ppm-clarity-plane-odoo/plan.md field ownership rules:
-- Plane owns: name, description, labels, estimate_point, priority, start_date, target_date
-- Odoo owns: stage_id, user_ids, date_deadline, planned_hours, effective_hours, progress
-- Shared: state (both can modify, last-modified wins)
-"""
+import unittest
 
-import pytest
+from scripts.ppm.odoo_client import OdooClient
+from scripts.ppm.plane_mcp_client import PlaneMCPClient
 
 
-class TestFieldOwnership:
-    """Test field ownership resolution logic."""
+class TestPlaneHash(unittest.TestCase):
+    """Plane hash must only include Plane-owned fields."""
 
-    PLANE_FIELDS = [
-        "name",
-        "description",
-        "labels",
-        "estimate_point",
-        "priority",
-        "start_date",
-        "target_date",
-    ]
+    def test_hash_includes_name(self):
+        issue_a = {"name": "Feature A", "description_html": "", "priority": "high",
+                    "labels": [], "cycle_id": "", "state_id": "s1"}
+        issue_b = {"name": "Feature B", "description_html": "", "priority": "high",
+                    "labels": [], "cycle_id": "", "state_id": "s1"}
+        self.assertNotEqual(
+            PlaneMCPClient.calculate_hash(issue_a),
+            PlaneMCPClient.calculate_hash(issue_b),
+        )
 
-    ODOO_FIELDS = [
-        "stage_id",
-        "user_ids",
-        "date_deadline",
-        "planned_hours",
-        "effective_hours",
-        "progress",
-    ]
+    def test_hash_ignores_odoo_fields(self):
+        """Plane hash must NOT change when non-owned fields change."""
+        issue = {"name": "X", "description_html": "", "priority": "none",
+                 "labels": [], "cycle_id": "", "state_id": "s1"}
+        # Add Odoo-owned fields — hash must stay the same
+        issue_with_odoo = {**issue, "assignees": ["user1"], "time_logged": 5.5}
+        self.assertEqual(
+            PlaneMCPClient.calculate_hash(issue),
+            PlaneMCPClient.calculate_hash(issue_with_odoo),
+        )
 
-    SHARED_FIELDS = ["state"]
+    def test_hash_deterministic(self):
+        issue = {"name": "X", "description_html": "desc", "priority": "high",
+                 "labels": ["l2", "l1"], "cycle_id": "c1", "state_id": "s1"}
+        h1 = PlaneMCPClient.calculate_hash(issue)
+        h2 = PlaneMCPClient.calculate_hash(issue)
+        self.assertEqual(h1, h2)
 
-    def test_plane_field_ownership(self):
-        """Plane-owned fields should resolve to Plane value."""
-        for field in self.PLANE_FIELDS:
-            conflict = {
-                "field": field,
-                "plane_value": "plane_val",
-                "odoo_value": "odoo_val",
-                "plane_modified": "2024-03-05T10:00:00Z",
-                "odoo_modified": "2024-03-05T09:00:00Z",
-            }
-
-            # Plane owns this field, so Plane value wins regardless of timestamp
-            resolution = resolve_field_conflict(conflict)
-            assert resolution["winner"] == "plane"
-            assert resolution["value"] == "plane_val"
-
-    def test_odoo_field_ownership(self):
-        """Odoo-owned fields should resolve to Odoo value."""
-        for field in self.ODOO_FIELDS:
-            conflict = {
-                "field": field,
-                "plane_value": "plane_val",
-                "odoo_value": "odoo_val",
-                "plane_modified": "2024-03-05T10:00:00Z",
-                "odoo_modified": "2024-03-05T09:00:00Z",
-            }
-
-            # Odoo owns this field, so Odoo value wins regardless of timestamp
-            resolution = resolve_field_conflict(conflict)
-            assert resolution["winner"] == "odoo"
-            assert resolution["value"] == "odoo_val"
-
-    def test_shared_field_last_modified_wins(self):
-        """Shared fields should use last-modified timestamp."""
-        # Plane modified more recently
-        conflict_plane_newer = {
-            "field": "state",
-            "plane_value": "In Progress",
-            "odoo_value": "Planned",
-            "plane_modified": "2024-03-05T10:00:00Z",
-            "odoo_modified": "2024-03-05T09:00:00Z",
-        }
-
-        resolution = resolve_field_conflict(conflict_plane_newer)
-        assert resolution["winner"] == "plane"
-        assert resolution["value"] == "In Progress"
-
-        # Odoo modified more recently
-        conflict_odoo_newer = {
-            "field": "state",
-            "plane_value": "In Progress",
-            "odoo_value": "Done",
-            "plane_modified": "2024-03-05T09:00:00Z",
-            "odoo_modified": "2024-03-05T10:00:00Z",
-        }
-
-        resolution = resolve_field_conflict(conflict_odoo_newer)
-        assert resolution["winner"] == "odoo"
-        assert resolution["value"] == "Done"
-
-    def test_unknown_field_raises_error(self):
-        """Unknown fields should raise an error."""
-        conflict = {
-            "field": "unknown_field",
-            "plane_value": "val1",
-            "odoo_value": "val2",
-            "plane_modified": "2024-03-05T10:00:00Z",
-            "odoo_modified": "2024-03-05T09:00:00Z",
-        }
-
-        with pytest.raises(ValueError, match="Unknown field"):
-            resolve_field_conflict(conflict)
+    def test_hash_label_order_insensitive(self):
+        issue_a = {"name": "X", "description_html": "", "priority": "none",
+                   "labels": ["l1", "l2"], "cycle_id": "", "state_id": "s1"}
+        issue_b = {"name": "X", "description_html": "", "priority": "none",
+                   "labels": ["l2", "l1"], "cycle_id": "", "state_id": "s1"}
+        self.assertEqual(
+            PlaneMCPClient.calculate_hash(issue_a),
+            PlaneMCPClient.calculate_hash(issue_b),
+        )
 
 
-def resolve_field_conflict(conflict: dict) -> dict:
-    """
-    Resolve field conflict using ownership rules.
+class TestOdooHash(unittest.TestCase):
+    """Odoo hash must only include Odoo-owned fields."""
 
-    Args:
-        conflict: Dict with field, plane_value, odoo_value, plane_modified, odoo_modified
+    def test_hash_includes_user_ids(self):
+        task_a = {"user_ids": [1, 2], "timesheet_ids": [], "stage_id": (1, "Done"),
+                  "kanban_state": "normal"}
+        task_b = {"user_ids": [3], "timesheet_ids": [], "stage_id": (1, "Done"),
+                  "kanban_state": "normal"}
+        self.assertNotEqual(
+            OdooClient.calculate_hash(task_a),
+            OdooClient.calculate_hash(task_b),
+        )
 
-    Returns:
-        Dict with winner ('plane' or 'odoo') and resolved value
-    """
-    field = conflict["field"]
+    def test_hash_ignores_plane_fields(self):
+        """Odoo hash must NOT change when Plane-owned fields change."""
+        task = {"user_ids": [1], "timesheet_ids": [], "stage_id": (1, "Done"),
+                "kanban_state": "normal"}
+        task_with_plane = {**task, "name": "Changed Title", "description": "new"}
+        self.assertEqual(
+            OdooClient.calculate_hash(task),
+            OdooClient.calculate_hash(task_with_plane),
+        )
 
-    # Plane-owned fields
-    if field in TestFieldOwnership.PLANE_FIELDS:
-        return {"winner": "plane", "value": conflict["plane_value"]}
+    def test_hash_deterministic(self):
+        task = {"user_ids": [2, 1], "timesheet_ids": [10, 20],
+                "stage_id": (5, "Review"), "kanban_state": "done"}
+        self.assertEqual(
+            OdooClient.calculate_hash(task),
+            OdooClient.calculate_hash(task),
+        )
 
-    # Odoo-owned fields
-    if field in TestFieldOwnership.ODOO_FIELDS:
-        return {"winner": "odoo", "value": conflict["odoo_value"]}
+    def test_hash_user_order_insensitive(self):
+        task_a = {"user_ids": [1, 2], "timesheet_ids": [], "stage_id": (1, "Done"),
+                  "kanban_state": "normal"}
+        task_b = {"user_ids": [2, 1], "timesheet_ids": [], "stage_id": (1, "Done"),
+                  "kanban_state": "normal"}
+        self.assertEqual(
+            OdooClient.calculate_hash(task_a),
+            OdooClient.calculate_hash(task_b),
+        )
 
-    # Shared fields - last modified wins
-    if field in TestFieldOwnership.SHARED_FIELDS:
-        plane_ts = conflict["plane_modified"]
-        odoo_ts = conflict["odoo_modified"]
 
-        if plane_ts > odoo_ts:
-            return {"winner": "plane", "value": conflict["plane_value"]}
-        else:
-            return {"winner": "odoo", "value": conflict["odoo_value"]}
-
-    # Unknown field
-    raise ValueError(f"Unknown field: {field}")
+if __name__ == "__main__":
+    unittest.main()
