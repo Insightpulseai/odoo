@@ -56,7 +56,15 @@
     "job_run_status": "FAILED - CLOUD_PROVIDER_RESOURCE_STOCKOUT: Standard_DS3_v2 unavailable in southeastasia",
     "deployed_jobs_count": 18,
     "bundle_summary_status": "error - placeholder host in databricks.yml prevents summary (non-blocking, deploy used azure-dev profile override)",
-    "commit_status": "pending"
+    "commit_status": "committed",
+    "sku_fix": {
+      "timestamp": "2026-03-07T15:00:00Z",
+      "action": "Changed node_type_id from Standard_DS3_v2 to Standard_D4s_v3 across all job/cluster configs",
+      "reason": "Azure VM capacity stockout for DS3_v2 in southeastasia (Microsoft Learn: try different VM size before region change)",
+      "new_sku": "Standard_D4s_v3",
+      "availability": "zones 2,3 in southeastasia (zone 1 restricted)",
+      "files_updated": 6
+    }
   },
   "deploy_command": "./scripts/deploy-connectors.sh dev",
   "deploy_and_run": "./scripts/deploy-connectors.sh dev --run github",

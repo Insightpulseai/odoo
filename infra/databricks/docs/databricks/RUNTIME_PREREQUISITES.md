@@ -64,7 +64,7 @@
 | Setting | Value |
 |---------|-------|
 | Spark Version | 14.3.x-scala2.12 or later |
-| Node Type | Standard_DS3_v2 (or equivalent) |
+| Node Type | Standard_D4s_v3 (or equivalent) |
 | Workers | 1 (connectors are single-threaded) |
 | Auto-termination | 30 minutes |
 

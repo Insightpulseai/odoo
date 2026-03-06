@@ -22,7 +22,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             spark_env_vars:
               NOTION_TOKEN: "{{secrets/notion-ppm/notion_token}}"
@@ -55,7 +55,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             spark_env_vars:
               AZURE_SUBSCRIPTION_ID: "{{secrets/notion-ppm/azure_subscription_id}}"
@@ -93,7 +93,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -108,7 +108,7 @@ resources:
             - task_key: transform_programs
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -123,7 +123,7 @@ resources:
             - task_key: transform_projects
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -138,7 +138,7 @@ resources:
             - task_key: transform_projects
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -167,7 +167,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 2
           timeout_seconds: 1800
 
@@ -180,7 +180,7 @@ resources:
             - task_key: budget_vs_actual
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 2
           timeout_seconds: 1800
 
@@ -191,7 +191,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -205,7 +205,7 @@ resources:
             - task_key: risk_summary
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
@@ -234,7 +234,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 1800
 
@@ -259,7 +259,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 600
 

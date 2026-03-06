@@ -28,7 +28,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
             spark_env_vars:
@@ -70,7 +70,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
             spark_env_vars:
@@ -115,7 +115,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
             spark_env_vars:
@@ -157,7 +157,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
             # instance_pool_id: "${var.job_pool_id}"  # Uncomment when pool is provisioned
             spark_env_vars:

@@ -23,7 +23,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 1800
 
@@ -36,7 +36,7 @@ resources:
             source: WORKSPACE
           new_cluster:
             spark_version: "14.3.x-scala2.12"
-            node_type_id: "Standard_DS3_v2"
+            node_type_id: "Standard_D4s_v3"
             num_workers: 1
           timeout_seconds: 900
 
