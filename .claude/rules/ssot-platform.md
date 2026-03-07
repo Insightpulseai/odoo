@@ -15,7 +15,7 @@
 5. **OCA path is `addons/oca/` (slash).** Never `addons-oca/` (hyphen). Docker mount: `/workspaces/odoo/addons/oca/*`.
 6. **Evidence is not SSOT.** `web/docs/evidence/20*/` bundles are derived proof, not source of truth.
 7. **Cross-domain changes need a contract doc.** DNS + email changes → `docs/contracts/DNS_EMAIL_CONTRACT.md`. New cross-domain contracts → register in `docs/contracts/PLATFORM_CONTRACTS_INDEX.md`.
-8. **Domain deprecations are permanent.** `insightpulseai.net` → `insightpulseai.com`. Mattermost → Slack. Mailgun → Zoho Mail. Never reintroduce deprecated items.
+8. **Domain deprecations are permanent.** `insightpulseai.net` → `insightpulseai.com`. Mattermost → Slack. Never reintroduce deprecated items.
 9. **Odoo is relying party, Supabase is IdP.** Never store primary passwords in Odoo for users with a Supabase counterpart.
 10. **No console-only infrastructure changes.** DigitalOcean, Cloudflare, Vercel — all changes must have a corresponding repo commit (IaC or YAML).
 
