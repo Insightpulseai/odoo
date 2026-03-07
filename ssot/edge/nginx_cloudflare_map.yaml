@@ -712,12 +712,12 @@ mail:
     - mx2.zoho.com (priority 20)
     - mx3.zoho.com (priority 50)
   zoho_dkim: zoho._domainkey TXT
-  deprecated_provider: mailgun
-  mailgun_state: deprecated_intent_but_operationally_live
+  transactional_provider: mailgun
+  mailgun_state: active
   mailgun_e2e_verified: "2026-02-26T18:22:24Z"
   mailgun_records_in_cloudflare:
     - email.mg CNAME → mailgun.org (tracking)
     - mg TXT (SPF)
     - mx._domainkey.mg TXT (DKIM)
     - _dmarc.mg TXT (DMARC)
-  cutover_gate: "Remove Mailgun DNS only after ipai_mail_bridge_zoho handles ALL send paths"
+  mail_architecture: "Mailgun = transactional outbound (mg.insightpulseai.com), Zoho = inbound MX + team mailboxes"

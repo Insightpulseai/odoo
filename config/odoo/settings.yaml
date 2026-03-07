@@ -27,7 +27,7 @@ config_parameters:
 
   # ---------------------------------------------------------------------------
   # Mail provider (SSOT: ssot/runtime/prod_settings.yaml email.smtp.provider)
-  # Deprecated: mailgun (removed 2026-02). Canonical: zoho.
+  # Dual mail: zoho (inbound MX + team) + mailgun (transactional outbound via mg.insightpulseai.com).
   # CI gate: scripts/ci/check_deprecated_provider_defaults.py
   # ---------------------------------------------------------------------------
   ipai.mail.provider: "zoho"
