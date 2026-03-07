@@ -143,6 +143,15 @@ Queries that retrieve, summarize, or explain data from grounded sources.
 | Tool success rate | > 95% |
 | Policy-compliant action rate | 100% |
 
+## External SSOT Dependencies
+
+| Artifact | Path | Purpose |
+|----------|------|---------|
+| Target State | `ssot/azure/target-state.yaml` | Canonical platform capability matrix |
+| Service Matrix | `ssot/azure/service-matrix.yaml` | Machine-readable service inventory |
+| DNS Migration | `ssot/azure/dns-migration-plan.yaml` | DNS record state machine |
+| Service Mapping | `docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml` | Azure→DO/Supabase equivalents |
+
 ## Cross-References
 
 - `spec/odoo-approval-inbox/` — unified approval queue (approval tools)
