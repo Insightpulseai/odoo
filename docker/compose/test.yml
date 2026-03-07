@@ -1,0 +1,40 @@
+# =============================================================================
+# Odoo CI Test Composition — Ephemeral Module Testing
+# =============================================================================
+# Usage:
+#   docker compose -f docker/compose/test.yml up --build --abort-on-container-exit
+#
+# Environment variables:
+#   TEST_MODULES  — comma-separated list of modules to test (default: base)
+#   DB_NAME       — test database name (default: odoo_test)
+# =============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  odoo-test:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.test
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+      DB_NAME: ${DB_NAME:-odoo_test}
+      TEST_MODULES: ${TEST_MODULES:-base}

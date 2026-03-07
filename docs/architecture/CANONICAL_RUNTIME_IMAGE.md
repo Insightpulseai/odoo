@@ -126,9 +126,47 @@ The runtime image is owned by this repository and must be built from this repo's
 | `docker-build-odoo.yml` | OIDC-authenticated build with Trivy scan and Cosign signing |
 | `cd-docr-deploy.yml` | Dual-registry push, SSH deploy to production, release creation |
 
+## CI Test Image (Separate from Production)
+
+The CI test image is a **separate, minimal image** used only for running targeted unit tests in GitHub Actions. It is never used for production deployment.
+
+| Property | Production Image | CI Test Image |
+|----------|-----------------|---------------|
+| Dockerfile | `docker/Dockerfile.unified` | `docker/Dockerfile.test` |
+| Base | `odoo:19` (full) | `python:3.12-slim` (multi-stage) |
+| Build strategy | Single stage | Multi-stage (builder + slim runtime) |
+| OCA modules | All flattened | Only changed module dependencies |
+| wkhtmltopdf | Yes | No (unless JS test profile) |
+| Database | Persistent | Ephemeral (tmpfs) |
+| Target size | ~1.5GB | ~300-400MB |
+| Purpose | Azure Container Apps / DO runtime | GitHub Actions CI |
+| Workflow | `odoo-azure-deploy.yml`, `cd-production.yml` | `odoo-test-image-ci.yml` |
+
+### CI Test Image Design Rules
+
+- **No production deploy workflow may reference `Dockerfile.test`**
+- **No CI test workflow may reference `Dockerfile.unified`**
+- Tests run with `--test-enable --stop-after-init --no-http`
+- PostgreSQL is always external (service container or compose)
+- Changed modules are detected via `scripts/ci/detect_changed_odoo_modules.py`
+- Test execution via `scripts/ci/run_odoo_module_tests.sh`
+- Compose for local testing: `docker/compose/test.yml`
+
+### CI Test Workflow
+
+The `odoo-test-image-ci.yml` workflow:
+
+1. **Detect** — `detect_changed_odoo_modules.py` identifies changed modules from `git diff`
+2. **Build** — `docker/Dockerfile.test` builds the minimal image with BuildKit caching
+3. **Test** — Container runs targeted tests against ephemeral PostgreSQL
+4. **Skip** — If no Odoo modules changed, all jobs are skipped cleanly
+
+Path scope: `addons/**`, `docker/Dockerfile.test`, `docker/compose/test.yml`, `scripts/ci/**`
+
 ## References
 
-- `docker/Dockerfile.unified` — canonical Dockerfile
+- `docker/Dockerfile.unified` — canonical production Dockerfile
+- `docker/Dockerfile.test` — CI test Dockerfile (not for production)
 - `docker/compose/prod.yml` — production compose
 - `docker/compose/stage.yml` — staging compose
 - `config/prod/odoo.conf` — production Odoo config

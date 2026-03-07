@@ -1,0 +1,133 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# IPAI Odoo CI Test Image — Minimal, Fast, Ephemeral
+# =============================================================================
+# Purpose: Run targeted unit tests for changed Odoo modules in CI
+# NOT for production use — see docker/Dockerfile.unified for production
+#
+# Design:
+#   - Multi-stage build for minimal final image
+#   - python:3.12-slim base (not full odoo:19 image)
+#   - No wkhtmltopdf (add BUILD_ARG INSTALL_WKHTMLTOPDF=1 if needed)
+#   - External PostgreSQL (via compose or service container)
+#   - Entrypoint runs --test-enable --stop-after-init
+#
+# Build:
+#   docker build -f docker/Dockerfile.test -t ipai-odoo-test:19 .
+#
+# Run:
+#   docker run --rm \
+#     -e DB_HOST=db -e DB_USER=odoo -e DB_PASSWORD=odoo -e DB_NAME=odoo_test \
+#     -e TEST_MODULES=ipai_finance_ppm \
+#     ipai-odoo-test:19
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Stage 1: Builder — compile Python wheels
+# ---------------------------------------------------------------------------
+FROM python:3.12 AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libsasl2-dev \
+    libldap2-dev \
+    libssl-dev \
+    libffi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build wheels for Odoo's requirements
+COPY odoo/requirements.txt /tmp/odoo-requirements.txt
+RUN pip wheel --no-cache-dir --wheel-dir=/wheels \
+    -r /tmp/odoo-requirements.txt
+
+# Build wheels for OCA REST framework deps (if testing OCA modules)
+COPY docker/requirements/oca_rest_framework.txt /tmp/oca-requirements.txt
+RUN pip wheel --no-cache-dir --wheel-dir=/wheels \
+    -r /tmp/oca-requirements.txt 2>/dev/null || true
+
+# ---------------------------------------------------------------------------
+# Stage 2: Runtime — slim test runner
+# ---------------------------------------------------------------------------
+FROM python:3.12-slim
+
+# Runtime-only system deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    libpq5 \
+    libxml2 \
+    libxslt1.1 \
+    libsasl2-2 \
+    libldap-2.5-0 \
+    libjpeg62-turbo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pre-built wheels from builder stage
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
+
+# Create odoo user
+RUN useradd -m -d /opt/odoo -s /bin/bash odoo
+
+# Copy Odoo source
+COPY odoo /opt/odoo/odoo-src
+RUN pip install --no-cache-dir -e /opt/odoo/odoo-src
+
+# Create addon directories
+RUN mkdir -p /opt/odoo/addons/ipai /opt/odoo/addons/oca
+
+# Copy test runner scripts
+COPY scripts/ci/run_odoo_module_tests.sh /opt/odoo/run_tests.sh
+RUN chmod +x /opt/odoo/run_tests.sh
+
+# Copy addons (CI layer — can be overridden by volume mount)
+COPY addons /opt/odoo/addons-src
+
+# Flatten IPAI modules
+RUN set -eux; \
+    # Direct ipai modules at addons root level
+    for mod in /opt/odoo/addons-src/ipai_*/; do \
+      [ -f "$mod/__manifest__.py" ] || continue; \
+      cp -a "$mod" "/opt/odoo/addons/ipai/$(basename $mod)"; \
+    done; \
+    # Nested ipai modules under addons/ipai/
+    for mod in /opt/odoo/addons-src/ipai/*/; do \
+      [ -f "$mod/__manifest__.py" ] || continue; \
+      mod_name=$(basename "$mod"); \
+      [ -d "/opt/odoo/addons/ipai/$mod_name" ] && continue; \
+      cp -a "$mod" "/opt/odoo/addons/ipai/$mod_name"; \
+    done; \
+    # OCA modules (flatten from repo structure)
+    if [ -d /opt/odoo/addons-src/oca ]; then \
+      for repo in /opt/odoo/addons-src/oca/*/; do \
+        [ -d "$repo" ] || continue; \
+        for mod in "$repo"*/; do \
+          [ -f "$mod/__manifest__.py" ] || continue; \
+          cp -a "$mod" "/opt/odoo/addons/oca/$(basename $mod)"; \
+        done; \
+      done; \
+    fi; \
+    rm -rf /opt/odoo/addons-src
+
+RUN chown -R odoo:odoo /opt/odoo
+
+USER odoo
+WORKDIR /opt/odoo
+
+# Environment
+ENV ODOO_ADDONS_PATH=/opt/odoo/odoo-src/addons,/opt/odoo/addons/oca,/opt/odoo/addons/ipai
+ENV DB_HOST=db \
+    DB_PORT=5432 \
+    DB_USER=odoo \
+    DB_PASSWORD=odoo \
+    DB_NAME=odoo_test \
+    TEST_MODULES=base
+
+HEALTHCHECK NONE
+
+ENTRYPOINT ["/opt/odoo/run_tests.sh"]
