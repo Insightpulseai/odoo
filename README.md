@@ -2,6 +2,18 @@
 
 [![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
+## Repo Metadata
+
+- **Status**: Active
+- **Class**: Runtime / Platform Core
+- **Tier**: Tier 0
+- **Workspace Role**: Canonical ERP runtime and deployment/governance anchor for InsightPulseAI
+- **Primary Owner Team**: `erp` + `platform-core`
+- **Lifecycle**: Production / Canonical
+- **Current Constraint**: Progressive decomposition required for non-ERP platform artifacts
+
+---
+
 This repository is a **production runtime wrapper** around:
 
 - **Odoo Community Edition (CE)** — base ERP runtime (official `odoo:19` Docker image)
@@ -26,6 +38,32 @@ Self-hosted **Odoo 19 CE** + **OCA** stack with InsightPulseAI bridges for:
 
 **Production URL:** https://erp.insightpulseai.com
 **Documentation:** https://insightpulseai.github.io/odoo/
+
+---
+
+## Repository Status
+
+This repository is **Active** and is the **canonical ERP runtime core** for InsightPulseAI.
+
+It is production-critical and currently owns the following primary responsibilities:
+
+- Odoo Community Edition runtime
+- OCA EE-parity addon layer
+- IPAI bridge modules for external integrations
+- ERP deployment and runtime contracts
+- ERP-specific SSOT, schema artifacts, and CI guardrails
+
+This repository is **not** the long-term home for every platform concern.
+
+Cross-domain artifacts currently present here should be progressively decomposed into their owning repositories, including where appropriate:
+
+- `infra` for cloud/network/platform infrastructure
+- `ops-platform` for Supabase control-plane concerns
+- `agents` for shared agent/skill/orchestration assets
+- `web` for non-ERP web surfaces
+- `lakehouse` for Databricks and broader analytics platform concerns
+
+Until that decomposition is complete, this repository remains the authoritative source of truth for the ERP runtime layer.
 
 ---
 
@@ -153,6 +191,12 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 - `../` — Parent workspace repository
 - `./` (this repo) — **Canonical Odoo SSOT**
 - `../work/` — Scratch repository (must NOT contain odoo roots)
+
+### SSOT Boundary
+
+This repository is the canonical SSOT for the **ERP runtime layer**.
+
+It may temporarily contain cross-domain platform artifacts, but those do not redefine this repository as the workspace root or global platform monorepo. The GitHub organization is the workspace root; this repo remains the canonical home for Odoo runtime and ERP delivery concerns.
 
 ---
 
@@ -292,6 +336,17 @@ spec/            # Spec Kit bundles (constitution, PRD, plan, tasks)
 .github/
   workflows/     # CI/CD guardrails + drift gates
 ```
+
+---
+
+## Decomposition Policy
+
+Non-ERP platform artifacts discovered in this repository should be evaluated against the following rule:
+
+- **keep here** if required to build, run, govern, test, or deploy the ERP runtime
+- **move out** if the artifact primarily belongs to shared infra, shared agents, shared analytics, or non-ERP product surfaces
+
+Decomposition must be incremental and must not break production runtime, CI contracts, or existing SSOT references.
 
 ---
 
