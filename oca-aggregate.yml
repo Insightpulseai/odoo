@@ -173,8 +173,16 @@
   # Modules: hr_timesheet_task_stage
 
 # ---------------------------------------------------------------------------
-# Tier 5 — Sales / Purchase / Contract
+# Tier 5 — Sales / Purchase / CRM / Contract
 # ---------------------------------------------------------------------------
+
+./addons/oca/crm:
+  remotes:
+    oca: https://github.com/OCA/crm.git
+  merges:
+    - oca 19.0
+  # Modules: crm_lead_code, crm_lead_currency, crm_lead_firstname,
+  #          crm_industry, crm_phonecall, crm_stage_probability
 
 ./addons/oca/sale-workflow:
   remotes:
