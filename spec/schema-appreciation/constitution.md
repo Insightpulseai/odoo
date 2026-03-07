@@ -27,3 +27,15 @@ No blind queries; no unlimited scanning. Probe budgets are mandatory.
 ## 7. PII Safety
 
 Agents MUST not select raw PII fields; schema-level metadata and masked sampling only.
+
+## 8. Schema Change Protocol
+
+Any DDL change (CREATE, ALTER, DROP) must be preceded by a migration file in the canonical migrations directory. Ad-hoc schema changes via interactive SQL sessions are forbidden.
+
+## 9. Query Scope Limits
+
+Agents must scope queries with explicit WHERE clauses and LIMIT. Unbounded SELECT statements against production tables are prohibited regardless of table size.
+
+## 10. Documentation Requirement
+
+Every new table or view must have a corresponding entry in `meta.dictionary` before it is considered production-ready. Undocumented tables are treated as internal/unstable.
