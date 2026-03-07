@@ -5,7 +5,7 @@
 # - DigitalOcean (compute, networking, storage)
 # - Supabase (database, auth, realtime, storage)
 # - Kubernetes (DOKS)
-# - Odoo CE 18 (ERP)
+# - Odoo CE 19 (ERP)
 # - n8n (workflow automation)
 # - Cloudflare (CDN, DNS, WAF)
 #
@@ -271,7 +271,7 @@ mappings:
   # ============================================================================
 
   azure.webapp_erp:
-    label: "Odoo CE 18"
+    label: "Odoo CE 19"
     description: "Enterprise Resource Planning"
     fillColor: "#714B67"
     strokeColor: "#5A3C52"

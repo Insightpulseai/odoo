@@ -1,293 +1,116 @@
-# =============================================================================
-# Azure Service Matrix — InsightPulse AI
-# =============================================================================
-#
-# Maps each product/service to its recommended Azure primitives.
-# Columns: product, azure service, why, keep vs replace, v1 vs later
-#
-# Last updated: 2026-03-07
-# =============================================================================
-
-schema_version: "1.0"
+version: "1.0"
 last_updated: "2026-03-07"
+parent: "ssot/azure/target-state.yaml"
+governance: "spec/azure-target-state/constitution.md"
 
-# =============================================================================
-# Product → Azure Service Mapping
-# =============================================================================
+services:
+  # Active Production Services
+  - id: svc_001
+    name: "Odoo CE 19"
+    category: erp
+    hosting: digitalocean
+    endpoint: "erp.insightpulseai.com"
+    ip: "178.128.112.214"
+    port: 8069
+    status: active
+    promotion_state: live
+    health_check: "https://erp.insightpulseai.com/web/health"
 
-products:
+  - id: svc_002
+    name: "n8n Automation"
+    category: automation
+    hosting: digitalocean
+    endpoint: "n8n.insightpulseai.com"
+    ip: "178.128.112.214"
+    status: active
+    promotion_state: live
 
-  odoo_erp:
-    description: "Odoo CE 19 ERP — system of record"
-    current_hosting: "DigitalOcean Droplet (178.128.112.214)"
-    azure_services:
-      - service: Container Apps
-        role: App runtime
-        phase: v1
-        notes: "Odoo in deterministic Docker image, blue-green deploys"
-      - service: Container Registry (ACR)
-        role: Image store
-        phase: v1
-        notes: "Build and store Odoo Docker images"
-      - service: PostgreSQL Flexible Server
-        role: Database
-        phase: v1
-        notes: "Replaces DO self-hosted PG 16"
-      - service: Key Vault
-        role: Secrets
-        phase: v1
-        notes: "Database credentials, SMTP, API keys"
-      - service: Front Door + WAF
-        role: Edge / ingress
-        phase: v1
-        notes: "Global edge, OWASP protection"
-      - service: Application Insights
-        role: APM
-        phase: v1
-        notes: "Request tracing, error tracking"
-      - service: Log Analytics
-        role: Log aggregation
-        phase: v1
-        notes: "Centralized Odoo logs"
-    action: "Migrate from DO to Azure Container Apps"
+  - id: svc_003
+    name: "Supabase"
+    category: database
+    hosting: supabase_cloud
+    project_ref: "spdtwktxdalcfigzeqrz"
+    status: active
+    promotion_state: live
 
-  supabase:
-    description: "Control plane — auth, Edge Functions, Vault, Realtime"
-    current_hosting: "Supabase Cloud (spdtwktxdalcfigzeqrz)"
-    azure_services:
-      - service: Container Apps
-        role: App runtime (if self-hosting)
-        phase: later
-        notes: "Only if migrating off Supabase Cloud"
-      - service: PostgreSQL Flexible Server
-        role: Database (if self-hosting)
-        phase: later
-        notes: "Only if externalizing Supabase DB"
-      - service: Key Vault
-        role: Secrets
-        phase: v1
-        notes: "Cross-platform secret references"
-    action: "Keep on Supabase Cloud for now. Key Vault for cross-platform secrets."
+  - id: svc_004
+    name: "OCR Service (PaddleOCR-VL)"
+    category: ai
+    hosting: digitalocean
+    endpoint: "ocr.insightpulseai.com"
+    ip: "178.128.112.214"
+    status: active
+    promotion_state: live
 
-  n8n:
-    description: "Workflow automation engine"
-    current_hosting: "DigitalOcean Droplet (178.128.112.214)"
-    azure_services:
-      - service: Container Apps
-        role: App runtime
-        phase: v1
-        notes: "n8n Docker image on Container Apps"
-      - service: Key Vault
-        role: Secrets
-        phase: v1
-        notes: "Workflow credentials"
-      - service: Front Door + WAF
-        role: Edge (if public)
-        phase: v1
-        notes: "WAF protection for webhook endpoints"
-      - service: Log Analytics
-        role: Logs
-        phase: v1
-        notes: "Workflow execution logs"
-    action: "Migrate from DO to Azure Container Apps"
+  - id: svc_005
+    name: "Apache Superset"
+    category: bi
+    hosting: digitalocean_app_platform
+    endpoint: "superset.insightpulseai.com"
+    status: active
+    promotion_state: live
 
-  plane:
-    description: "Workspace, execution tracking, wiki, approvals"
-    current_hosting: "Not yet deployed"
-    azure_services:
-      - service: Container Apps
-        role: App runtime
-        phase: v1
-        notes: "Plane self-hosted (Web, API, Worker, Beat, Live, Silo)"
-      - service: PostgreSQL Flexible Server
-        role: Database
-        phase: v1
-        notes: "Plane requires PostgreSQL"
-      - service: Key Vault
-        role: Secrets
-        phase: v1
-        notes: "Database credentials, integration tokens"
-      - service: Front Door + WAF
-        role: Edge
-        phase: v1
-        notes: "plane.insightpulseai.com"
-    action: "New deployment on Azure Container Apps"
+  # Azure Cloud Services (spec only)
+  - id: svc_010
+    name: "Foundry Agents Service"
+    category: agent_platform
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    spec: "spec/odoo-copilot-azure/"
 
-  shelf:
-    description: "Knowledge management / document library"
-    current_hosting: "Not yet deployed"
-    azure_services:
-      - service: Container Apps
-        role: App runtime
-        phase: later
-        notes: "Self-hosted Shelf"
-      - service: Storage Accounts
-        role: Document storage
-        phase: later
-        notes: "Blob storage for documents"
-    action: "Later-phase deployment"
+  - id: svc_011
+    name: "Azure Container Apps"
+    category: compute
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
 
-  crm:
-    description: "CRM / pipeline (Odoo CRM module or standalone)"
-    current_hosting: "Part of Odoo"
-    azure_services: []
-    action: "Handled as Odoo module — same infrastructure as odoo_erp"
+  - id: svc_012
+    name: "Azure API Management"
+    category: gateway
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
 
-  databricks:
-    description: "Lakehouse, analytics, AI/ML, Apps"
-    current_hosting: "Azure Databricks (dbw-ipai-dev)"
-    azure_services:
-      - service: Azure Databricks
-        role: Compute + workspace
-        phase: v1
-        notes: "Already deployed. Premium SKU, Unity Catalog."
-      - service: Storage Accounts (ADLS Gen2)
-        role: Lake storage
-        phase: v1
-        notes: "Medallion architecture containers (bronze/silver/gold/platinum)"
-      - service: Access Connector for Databricks
-        role: Identity bridge
-        phase: v1
-        notes: "Managed identity for storage access"
-    action: "Already on Azure. No migration needed."
+  # App Platform Services
+  - id: svc_020
+    name: "DevOps Engineer Agent"
+    category: agent
+    hosting: digitalocean_app_platform
+    endpoint: "devops-engineer-dzzf8.ondigitalocean.app"
+    status: active
+    promotion_state: live
 
-  azure_ai:
-    description: "AI services — LLMs, OCR, NLP, search"
-    current_hosting: "Azure (oai-ipai-dev, srch-ipai-dev)"
-    azure_services:
-      - service: Azure OpenAI
-        role: LLM inference
-        phase: v1
-        notes: "GPT-4o, embeddings"
-      - service: Document Intelligence
-        role: OCR / extraction
-        phase: v1
-        notes: "Invoice, receipt, document processing"
-      - service: Language
-        role: NLP
-        phase: v1
-        notes: "Entity extraction, sentiment, key phrases"
-      - service: AI Search
-        role: Vector search / RAG
-        phase: v1
-        notes: "Grounding for agents"
-      - service: Microsoft Foundry
-        role: Agent platform
-        phase: v1
-        notes: "Copilot orchestration, tool calling"
-    action: "Already partially deployed. Expand as needed."
+  - id: svc_021
+    name: "BI Architect Agent"
+    category: agent
+    hosting: digitalocean_app_platform
+    endpoint: "bi-architect-bu9rc.ondigitalocean.app"
+    status: active
+    promotion_state: live
 
-  cloudflare:
-    description: "DNS, CDN, edge security"
-    current_hosting: "Cloudflare"
-    azure_services: []
-    action: "Keep Cloudflare as authoritative DNS and public proxy edge. Do not replace with Azure DNS."
-    notes: "Cloudflare proxied records forward to Azure origins. Mail/auth records unchanged."
+  - id: svc_022
+    name: "Finance SSC Expert Agent"
+    category: agent
+    hosting: digitalocean_app_platform
+    endpoint: "finance-ssc-expert-3722k.ondigitalocean.app"
+    status: active
+    promotion_state: live
 
-# =============================================================================
-# Shared Azure Services (cross-product)
-# =============================================================================
-shared_services:
+  - id: svc_023
+    name: "MCP Coordinator"
+    category: orchestration
+    hosting: digitalocean_app_platform
+    endpoint: "mcp.insightpulseai.com"
+    status: active
+    promotion_state: live
 
-  identity:
-    - service: Entra ID
-      phase: v1
-      purpose: "SSO, user identity, conditional access"
-    - service: Managed Identities
-      phase: v1
-      purpose: "Service-to-service auth, secretless where possible"
-
-  networking:
-    - service: Virtual Network
-      phase: v1
-      purpose: "Private connectivity between services"
-    - service: Network Security Groups
-      phase: v1
-      purpose: "Network access control"
-    - service: Private Link
-      phase: v1
-      purpose: "Private PaaS connectivity"
-    - service: Bastion
-      phase: v1
-      purpose: "Secure admin access"
-    - service: NAT Gateway
-      phase: v1
-      purpose: "Deterministic egress IP"
-
-  governance:
-    - service: Azure Policy
-      phase: v1
-      purpose: "Guardrails and compliance"
-    - service: Cost Management
-      phase: v1
-      purpose: "Budget alerts"
-    - service: Defender for Cloud
-      phase: v1
-      purpose: "Security posture"
-    - service: Recovery Services Vault
-      phase: v1
-      purpose: "Backup"
-
-  observability:
-    - service: Azure Monitor
-      phase: v1
-      purpose: "Metrics and dashboards"
-    - service: Log Analytics
-      phase: v1
-      purpose: "Centralized logging"
-    - service: Application Insights
-      phase: v1
-      purpose: "APM and distributed tracing"
-    - service: Managed Grafana
-      phase: later
-      purpose: "Operational dashboards"
-    - service: Managed Prometheus
-      phase: later
-      purpose: "Container metrics"
-
-# =============================================================================
-# Services Explicitly NOT In Scope
-# =============================================================================
-not_in_scope:
-  - service: AKS
-    reason: "Container Apps is simpler for this scale"
-  - service: Synapse
-    reason: "Databricks fills this role"
-  - service: HDInsight
-    reason: "Databricks fills this role"
-  - service: Cosmos DB
-    reason: "PostgreSQL is standard"
-  - service: Service Fabric
-    reason: "Container Apps is preferred"
-  - service: Azure Boards / Azure DevOps / Azure Pipelines
-    reason: "GitHub is the engineering platform"
-  - service: Power BI Embedded
-    reason: "Databricks Apps is the analytics surface"
-  - service: Logic Apps
-    reason: "n8n is the workflow engine"
-  - service: Event Hubs / Service Bus
-    reason: "Not needed at current scale"
-  - service: IoT Hub
-    reason: "No IoT workload"
-  - service: Purview
-    reason: "Unity Catalog handles data governance"
-  - service: API Management
-    reason: "Container Apps has built-in ingress. APIM if needed later."
-
-# =============================================================================
-# Azure-Native Baseline (10 core services)
-# =============================================================================
-#
-# 1. Container Apps          — app runtime
-# 2. Container Registry      — image store
-# 3. PostgreSQL Flexible     — relational data
-# 4. Key Vault               — secrets
-# 5. Entra ID                — identity
-# 6. Front Door + WAF        — edge / security
-# 7. Application Insights    — APM
-# 8. Log Analytics           — logs
-# 9. Azure Databricks        — analytics / AI
-# 10. Storage Accounts       — lake / blob storage
-#
-# Everything else is Tier 2 or optional.
-# =============================================================================
+erp_positioning:
+  canonical_statement: "Odoo CE 19 is the system of record for all financial transactions, HR, CRM, approvals, and compliance data. It is self-hosted on DigitalOcean, NOT SaaS."
+  prohibited_terms:
+    - "Odoo SaaS"
+    - "Odoo.sh"
+    - "Odoo Enterprise"
+    - "Odoo Online"
+  required_qualifier: "self-hosted CE 19"

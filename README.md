@@ -2,6 +2,18 @@
 
 [![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
+## Repo Metadata
+
+- **Status**: Active
+- **Class**: Runtime / Platform Core
+- **Tier**: Tier 0
+- **Workspace Role**: Canonical ERP runtime and deployment/governance anchor for InsightPulseAI
+- **Primary Owner Team**: `erp` + `platform-core`
+- **Lifecycle**: Production / Canonical
+- **Current Constraint**: Progressive decomposition required for non-ERP platform artifacts
+
+---
+
 This repository is a **production runtime wrapper** around:
 
 - **Odoo Community Edition (CE)** — base ERP runtime (official `odoo:19` Docker image)
@@ -26,6 +38,57 @@ Self-hosted **Odoo 19 CE** + **OCA** stack with InsightPulseAI bridges for:
 
 **Production URL:** https://erp.insightpulseai.com
 **Documentation:** https://insightpulseai.github.io/odoo/
+
+---
+
+## Repository Status
+
+This repository is **Active** and is the **canonical ERP runtime core** for InsightPulseAI.
+
+It is production-critical and currently owns the following primary responsibilities:
+
+- Odoo Community Edition runtime
+- OCA EE-parity addon layer
+- IPAI bridge modules for external integrations
+- ERP deployment and runtime contracts
+- ERP-specific SSOT, schema artifacts, and CI guardrails
+
+This repository is **not** the long-term home for every platform concern.
+
+Cross-domain artifacts currently present here should be progressively decomposed into their owning repositories, including where appropriate:
+
+- `infra` for cloud/network/platform infrastructure
+- `ops-platform` for Supabase control-plane concerns
+- `agents` for shared agent/skill/orchestration assets
+- `web` for non-ERP web surfaces
+- `lakehouse` for Databricks and broader analytics platform concerns
+
+Until that decomposition is complete, this repository remains the authoritative source of truth for the ERP runtime layer.
+
+---
+
+## Canonical Runtime Strategy
+
+This repository targets a custom InsightPulseAI-managed runtime image built on Odoo CE 19.
+
+| Property | Value |
+|----------|-------|
+| Image | `ipai-odoo-runtime` |
+| Base | `odoo:19` (Odoo Community Edition) |
+| Dockerfile | [`docker/Dockerfile.unified`](docker/Dockerfile.unified) |
+| GHCR | `ghcr.io/insightpulseai/ipai-odoo-runtime` |
+| DOCR | `registry.digitalocean.com/insightpulseai/ipai-odoo-runtime` |
+
+The runtime contract is:
+
+- **CE 19 base** — official Odoo Community Edition Docker image
+- **OCA for parity** — EE-equivalent functionality via OCA modules (`addons/oca/`)
+- **`ipai_*` only where required** — integration bridges, external connectors, approved meta-bundles (`addons/ipai/`)
+- **Deterministic builds** — images tied to Git commit provenance, Cosign-signed, SBOM-tracked
+
+Marketplace VM images and third-party packaged Odoo distributions are not the canonical production runtime.
+
+Full specification: [`docs/architecture/CANONICAL_RUNTIME_IMAGE.md`](docs/architecture/CANONICAL_RUNTIME_IMAGE.md)
 
 ---
 
@@ -153,6 +216,12 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 - `../` — Parent workspace repository
 - `./` (this repo) — **Canonical Odoo SSOT**
 - `../work/` — Scratch repository (must NOT contain odoo roots)
+
+### SSOT Boundary
+
+This repository is the canonical SSOT for the **ERP runtime layer**.
+
+It may temporarily contain cross-domain platform artifacts, but those do not redefine this repository as the workspace root or global platform monorepo. The GitHub organization is the workspace root; this repo remains the canonical home for Odoo runtime and ERP delivery concerns.
 
 ---
 
@@ -292,6 +361,17 @@ spec/            # Spec Kit bundles (constitution, PRD, plan, tasks)
 .github/
   workflows/     # CI/CD guardrails + drift gates
 ```
+
+---
+
+## Decomposition Policy
+
+Non-ERP platform artifacts discovered in this repository should be evaluated against the following rule:
+
+- **keep here** if required to build, run, govern, test, or deploy the ERP runtime
+- **move out** if the artifact primarily belongs to shared infra, shared agents, shared analytics, or non-ERP product surfaces
+
+Decomposition must be incremental and must not break production runtime, CI contracts, or existing SSOT references.
 
 ---
 
