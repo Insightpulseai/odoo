@@ -1,0 +1,170 @@
+# =============================================================================
+# DNS Migration Plan — DigitalOcean → Azure
+# =============================================================================
+#
+# Plan for migrating app origins from DigitalOcean to Azure while keeping
+# Cloudflare as authoritative DNS and public edge.
+#
+# Principle: Same hostnames, same Cloudflare edge, different origin targets.
+# Last updated: 2026-03-07
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-07"
+authoritative_dns: Cloudflare
+domain: insightpulseai.com
+
+# =============================================================================
+# Records That Stay As-Is (mail, auth, external services)
+# =============================================================================
+keep_unchanged:
+
+  mail:
+    - record: "MX @ → mx.zoho.com / mx2 / mx3"
+      reason: Zoho Mail, unrelated to app hosting
+    - record: "TXT @ SPF"
+      reason: Email authentication
+    - record: "TXT zoho._domainkey"
+      reason: DKIM for Zoho
+    - record: "TXT _dmarc"
+      reason: DMARC policy
+
+  mailgun:
+    - record: "CNAME email.mg"
+      reason: Mailgun sending domain
+    - record: "TXT mg (SPF)"
+      reason: Mailgun SPF
+    - record: "TXT mx._domainkey.mg"
+      reason: Mailgun DKIM
+    - record: "TXT _dmarc.mg"
+      reason: Mailgun DMARC
+
+  vercel:
+    - record: "CNAME ops → cname.vercel-dns.com"
+      reason: Ops console on Vercel (stays)
+
+  digitalocean:
+    - record: "CNAME agent → wr2azp...agents.do-ai.run"
+      reason: DO AI agent (stays unless migrated)
+
+# =============================================================================
+# Records That Change (app origins move to Azure)
+# =============================================================================
+migrate_to_azure:
+
+  # Current: A → 178.128.112.214 (DO droplet)
+  # Target: CNAME → Azure ingress hostname (Container Apps or Front Door)
+
+  - subdomain: erp
+    current: "A → 178.128.112.214"
+    target_type: CNAME  # or A if Front Door provides static IP
+    target: "{container-app-fqdn}"
+    service: Odoo ERP
+    validation: "TXT _dnsauth.erp → {azure-validation-token}"
+
+  - subdomain: crm
+    current: "A → 178.128.112.214"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: Odoo CRM
+
+  - subdomain: auth
+    current: "A → 178.128.112.214"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: Authentication service
+
+  - subdomain: mcp
+    current: "CNAME → pulse-hub-web-an645.ondigitalocean.app"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: MCP coordinator
+
+  - subdomain: n8n
+    current: "A → 178.128.112.214"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: n8n automation
+
+  - subdomain: ocr
+    current: "A → 178.128.112.214"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: OCR / Document Intelligence
+
+  - subdomain: plane
+    current: "A → 178.128.112.214"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: Plane workspace
+
+  - subdomain: shelf
+    current: "pending"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: Knowledge management
+
+  - subdomain: superset
+    current: "CNAME → superset-nlavf.ondigitalocean.app"
+    target_type: CNAME
+    target: "{container-app-fqdn}"
+    service: Apache Superset BI
+
+  - subdomain: www
+    current: "varies"
+    target_type: CNAME
+    target: "{front-door-or-vercel-fqdn}"
+    service: Public website
+
+  - subdomain: "@"
+    current: "A → 178.128.112.214"
+    target_type: A  # apex requires A record
+    target: "{azure-static-ip}"
+    service: Apex domain
+    notes: "Apex domains cannot use CNAME. Need Azure Front Door or static IP."
+
+# =============================================================================
+# Special Cases
+# =============================================================================
+special_cases:
+
+  - subdomain: mail
+    current: "A → 178.128.112.214"
+    action: "Review — if not serving mail protocols, revisit"
+    notes: "Should be DNS-only if mail-related. If no longer needed, remove."
+
+# =============================================================================
+# Migration Strategy
+# =============================================================================
+strategy:
+
+  approach: "Parallel-run with Cloudflare traffic switching"
+
+  ingress_pattern: "Container Apps with custom domain binding"
+  # Alternative: Azure Front Door for global edge + WAF
+
+  steps:
+    - Deploy Azure Container Apps with all services
+    - Configure custom domain bindings with TXT validation
+    - Verify services via Azure hostnames
+    - Switch Cloudflare records from DO IP to Azure CNAME
+    - Monitor for 24h
+    - Decommission DO droplet
+
+  validation:
+    - "Each subdomain must respond with correct content after switch"
+    - "TLS must be valid (Cloudflare edge or Azure managed cert)"
+    - "Health checks must pass on Azure side before DNS cutover"
+    - "Rollback = revert Cloudflare records to DO IP"
+
+# =============================================================================
+# Key Architecture Decisions
+# =============================================================================
+#
+# 1. Cloudflare stays authoritative DNS — no migration to Azure DNS
+# 2. Cloudflare proxy stays in front of public web apps
+# 3. Mail records (Zoho, Mailgun) are unchanged
+# 4. Container Apps is preferred ingress (not App Service)
+# 5. Front Door is optional Tier 2 (global CDN + WAF)
+# 6. CNAME preferred over A records (except apex)
+# =============================================================================
