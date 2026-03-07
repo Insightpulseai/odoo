@@ -13,7 +13,7 @@
 | #    | Contract                                               | Source SSOT domain                          | Consumer domain                           | Status     | Validator                                  |
 | ---- | ------------------------------------------------------ | ------------------------------------------- | ----------------------------------------- | ---------- | ------------------------------------------ |
 | C-01 | [DNS & Email](DNS_EMAIL_CONTRACT.md)                   | Cloudflare DNS (`infra/dns/`)               | Zoho Mail, Vercel, Odoo                   | ✅ Active  | `dns-ssot-apply.yml`                       |
-| C-02 | [Outbound Mail Bridge](MAIL_BRIDGE_CONTRACT.md)        | Odoo `mail.mail`                            | Supabase Edge Function `zoho-mail-bridge` | ✅ Active  | `ipai-custom-modules-guard.yml`            |
+| C-02 | ~~[Outbound Mail Bridge](MAIL_BRIDGE_CONTRACT.md)~~    | Odoo `mail.mail`                            | ~~Supabase Edge Function `zoho-mail-bridge`~~ | ❌ Deprecated | Superseded by C-26 |
 | C-03 | [JWT Trust](JWT_TRUST_CONTRACT.md)                     | Supabase Auth                               | Odoo middleware, Vercel Edge              | 🔲 Pending | —                                          |
 | C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md)                   | n8n workflows                               | `ops.task_queue` (Supabase)               | 🔲 Pending | —                                          |
 | C-05 | [Design Tokens](DESIGN_TOKENS_CONTRACT.md)             | Figma                                       | `packages/design-tokens/tokens.json`      | 🔲 Pending | —                                          |
@@ -37,6 +37,7 @@
 | C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
 | C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
 | C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
+| C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
 
 ---
 
@@ -56,11 +57,16 @@
 
 ---
 
-## C-02 — Outbound Mail Bridge Contract
+## C-02 — Outbound Mail Bridge Contract (DEPRECATED)
 
-**File**: `docs/contracts/MAIL_BRIDGE_CONTRACT.md` _(this section is the canonical definition)_
-**SSOT**: `addons/ipai/ipai_mail_bridge_zoho/` (Odoo side) + `supabase/functions/zoho-mail-bridge/` (bridge side)
-**Consumer**: Any Odoo `mail.mail` record with `state=outgoing`
+> **DEPRECATED**: Superseded by C-26 (Mail Architecture Contract). Odoo outbound mail now uses
+> standard `ir.mail_server` → Mailgun SMTP directly. The `ipai_mail_bridge_zoho` module and
+> `zoho-mail-bridge` Edge Function are no longer the canonical path.
+> See `docs/contracts/MAIL_ARCHITECTURE_CONTRACT.md` for the current policy.
+
+**File**: `docs/contracts/MAIL_BRIDGE_CONTRACT.md` _(deprecated — kept for historical reference)_
+**SSOT**: ~~`addons/ipai/ipai_mail_bridge_zoho/`~~ + ~~`supabase/functions/zoho-mail-bridge/`~~
+**Consumer**: ~~Any Odoo `mail.mail` record with `state=outgoing`~~
 
 **Protocol**:
 
