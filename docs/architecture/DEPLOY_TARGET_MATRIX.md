@@ -45,6 +45,15 @@ Is it Odoo (ERP runtime)?
 | **DO App Platform** | **Deprecated** | DO NOT use. See `ssot/infra/digitalocean/policy.yaml` |
 | **Azure Container Apps** | Planned | Future Odoo runtime target |
 
+### Marketplace and ecosystem classification
+
+Marketplace and ecosystem evidence indicate two different maturity patterns:
+
+- SAP has a first-class Azure ecosystem shape, including deeper Microsoft integration surfaces and a productized Databricks-aligned data/AI path.
+- Odoo appears primarily as a broad application platform with partner-packaged hosting and integration options, not as a first-class Azure workload category.
+
+Therefore, the canonical Odoo deployment baseline must remain first-party Azure primitives plus repository-owned IaC and CI/CD, not Marketplace listings.
+
 ## Why This Split
 
 - **Odoo** needs persistent filesystem (filestore), long-running processes, and direct PostgreSQL access. Droplet is the only fit.
