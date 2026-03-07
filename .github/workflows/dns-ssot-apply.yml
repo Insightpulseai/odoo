@@ -30,7 +30,7 @@ jobs:
   apply-dns:
     name: Apply DNS SSOT to Cloudflare
     runs-on: ubuntu-latest
-    environment: production
+    environment: odoo-production
 
     steps:
       - name: Guard — CF credentials present

@@ -31,7 +31,7 @@ import uuid
 from odoo import http
 from odoo.http import request
 
-from ._bridge_helper import call_bridge, get_bridge_config
+from ._bridge_helper import call_azure_direct, call_bridge, get_bridge_config, has_azure_config
 
 _logger = logging.getLogger(__name__)
 
@@ -131,12 +131,6 @@ class IpaiAiProxyController(http.Controller):
 
         # ── Bridge config ────────────────────────────────────────────
         bridge_url, bridge_token = get_bridge_config(request.env)
-        if not bridge_url:
-            _logger.warning(
-                "ipai_ai_widget: BRIDGE_URL_NOT_CONFIGURED (trace=%s)", trace_id
-            )
-            _audit("bridge_url_not_configured", "BRIDGE_URL_NOT_CONFIGURED")
-            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
 
         # ── Thread context (multi-turn) ──────────────────────────────
         Thread = request.env["ipai.ai.thread"]
@@ -159,36 +153,49 @@ class IpaiAiProxyController(http.Controller):
         if thread:
             history = thread._get_messages(limit=20)
 
-        # ── Build payload ────────────────────────────────────────────
-        payload = {
-            "prompt": prompt_str,
-            "context": {
-                "record_model": record_model or None,
-                "record_id": int(record_id) if record_id else None,
-                "user_id": request.env.user.id,
-                "trace_id": trace_id,
-            },
-        }
-
-        if history:
-            payload["history"] = history
-
-        # ── Call bridge ──────────────────────────────────────────────
-        data, error_code = call_bridge(bridge_url, bridge_token, payload)
-
-        if error_code:
-            outcome_map = {
-                "BRIDGE_TIMEOUT": "bridge_timeout",
-                "AI_KEY_NOT_CONFIGURED": "ai_key_not_configured",
-                "BRIDGE_ERROR": "bridge_error",
+        if bridge_url:
+            # ── Primary: IPAI bridge ──────────────────────────────────
+            payload = {
+                "prompt": prompt_str,
+                "context": {
+                    "record_model": record_model or None,
+                    "record_id": int(record_id) if record_id else None,
+                    "user_id": request.env.user.id,
+                    "trace_id": trace_id,
+                },
             }
-            _audit(outcome_map.get(error_code, "bridge_error"), error_code)
-            status_map = {
-                "BRIDGE_TIMEOUT": 504,
-                "AI_KEY_NOT_CONFIGURED": 503,
-                "BRIDGE_ERROR": 500,
-            }
-            return {"error": error_code, "status": status_map.get(error_code, 500)}
+            if history:
+                payload["history"] = history
+
+            data, error_code = call_bridge(bridge_url, bridge_token, payload)
+
+            if error_code:
+                outcome_map = {
+                    "BRIDGE_TIMEOUT": "bridge_timeout",
+                    "AI_KEY_NOT_CONFIGURED": "ai_key_not_configured",
+                    "BRIDGE_ERROR": "bridge_error",
+                }
+                _audit(outcome_map.get(error_code, "bridge_error"), error_code)
+                status_map = {
+                    "BRIDGE_TIMEOUT": 504,
+                    "AI_KEY_NOT_CONFIGURED": 503,
+                    "BRIDGE_ERROR": 500,
+                }
+                return {"error": error_code, "status": status_map.get(error_code, 500)}
+
+        elif has_azure_config(request.env):
+            # ── Fallback: Azure OpenAI direct ─────────────────────────
+            data, error_code = call_azure_direct(prompt_str, request.env)
+            if error_code:
+                _audit("azure_error", error_code)
+                return {"error": error_code, "status": 500}
+
+        else:
+            _logger.warning(
+                "ipai_ai_widget: BRIDGE_URL_NOT_CONFIGURED (trace=%s)", trace_id
+            )
+            _audit("bridge_url_not_configured", "BRIDGE_URL_NOT_CONFIGURED")
+            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
 
         # ── Persist to thread ────────────────────────────────────────
         if thread:

@@ -179,7 +179,7 @@ See also:
 - ✅ **Python 3.12** + dev tools (black, flake8, pytest, pre-commit)
 - ✅ **Node.js LTS** + pnpm
 - ✅ **Docker-outside-of-Docker** (manage host containers)
-- ✅ **2 databases** pre-created (odoo_dev, odoo) — dev and prod names per CLAUDE.md
+- ✅ **3 databases** target: `odoo_dev`, `odoo_staging`, `odoo_prod` — canonical names per CLAUDE.md (current prod runtime name: `odoo`, target: `odoo_prod`)
 - ✅ **VS Code extensions** (Python, Docker, Git, AI tools)
 - ✅ **Spec Kit** integration
 - ✅ **Auto-reload** on code changes
