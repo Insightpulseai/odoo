@@ -1,6 +1,7 @@
 # Platform Runtime State
 
-> Canonical snapshot of runtime infrastructure state across all deployment targets.
+> Canonical view of runtime infrastructure state across all platform planes.
+> Updated: 2026-03-08
 
 ---
 
@@ -50,6 +51,7 @@ Azure capability is not the blocker. The subscription already contains the found
 ### Positioning
 
 SAP remains the ecosystem maturity benchmark on Azure, especially across data, analytics, AI, and Microsoft integration surfaces. Odoo is a broad business platform across Community and Enterprise editions, but unlike SAP it does not arrive with SAP-grade Azure ecosystem depth. The target state is therefore to engineer that workload posture explicitly through repo-owned architecture, IaC, CI/CD, observability, security, and governed integration layers.
+
 
 ---
 
