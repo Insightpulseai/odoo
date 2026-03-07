@@ -253,7 +253,9 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
 
-> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
+> **Claude Code on the Web**: Full CLI parity — same agent, same capabilities as local CLI, running on Anthropic cloud VMs. See [docs/ai/CLAUDE_CODE_WEB.md](./docs/ai/CLAUDE_CODE_WEB.md) for environment setup, `--remote` usage, Remote Control, and SessionStart hooks.
+>
+> **Remote Control**: Control your local Claude Code session from any browser or phone via [claude.ai/code](https://claude.ai/code). Start with `claude remote-control` or `/rc` inside a session.
 
 ### Common Commands
 
