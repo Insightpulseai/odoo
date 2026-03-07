@@ -1,0 +1,330 @@
+# =============================================================================
+# Azure Target State — InsightPulse AI
+# =============================================================================
+#
+# Machine-readable desired end state for Azure deployment.
+# Tiers: required_now (Day 1), required_later (Tier 2), not_in_scope (explicit exclusions).
+#
+# Naming convention: {type}-ipai-{env}
+# Region: southeastasia
+# Last updated: 2026-03-07
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-07"
+naming_convention: "{type}-ipai-{env}"
+default_region: southeastasia
+
+# =============================================================================
+# Tier 1 — Required Now (Day 1 footprint)
+# =============================================================================
+required_now:
+
+  identity:
+    - service: Microsoft Entra ID
+      type: Microsoft.AAD
+      purpose: SSO, identity governance
+    - service: Managed Identities
+      type: Microsoft.ManagedIdentity/userAssignedIdentities
+      purpose: Service-to-service auth (secretless)
+    - service: App Registrations
+      type: Microsoft.AAD/applications
+      purpose: Foundry, Databricks, API auth
+    - service: Key Vault
+      type: Microsoft.KeyVault/vaults
+      naming: kv-ipai-{env}
+      purpose: Runtime secrets, certificates
+
+  ai:
+    - service: Microsoft Foundry
+      type: Microsoft.MachineLearningServices
+      purpose: Agent platform, copilot orchestration
+    - service: Azure OpenAI
+      type: Microsoft.CognitiveServices/accounts (kind:OpenAI)
+      naming: oai-ipai-{env}
+      purpose: LLM inference, embeddings
+    - service: AI Search
+      type: Microsoft.Search/searchServices
+      naming: srch-ipai-{env}
+      purpose: RAG, vector search, grounding
+    - service: Document Intelligence
+      type: Microsoft.CognitiveServices/accounts (kind:FormRecognizer)
+      purpose: OCR, document extraction
+    - service: Language
+      type: Microsoft.CognitiveServices/accounts (kind:TextAnalytics)
+      purpose: NLP, entity extraction, sentiment
+
+  runtime:
+    - service: Container Apps
+      type: Microsoft.App/containerApps
+      purpose: Agent APIs, background workers, MCP servers
+    - service: Container Apps Environment
+      type: Microsoft.App/managedEnvironments
+      purpose: Shared environment for Container Apps
+    - service: Container App Jobs
+      type: Microsoft.App/jobs
+      purpose: Scheduled jobs, batch processing
+    - service: API Management
+      type: Microsoft.ApiManagement/service
+      naming: apim-ipai-{env}
+      purpose: API gateway, rate limiting, auth
+    - service: Function App
+      type: Microsoft.Web/sites (kind:functionapp)
+      purpose: Webhook receivers, lightweight triggers
+    - service: App Configuration
+      type: Microsoft.AppConfiguration/configurationStores
+      naming: appcs-ipai-{env}
+      purpose: Feature flags, runtime configuration
+    - service: Application Insights
+      type: Microsoft.Insights/components
+      naming: appi-ipai-{env}
+      purpose: APM, distributed tracing, telemetry
+
+  data:
+    - service: Azure Databricks
+      type: Microsoft.Databricks/workspaces
+      naming: dbw-ipai-{env}
+      purpose: Lakehouse, analytics, AI/ML, Apps
+
+  network:
+    - service: Virtual Networks
+      type: Microsoft.Network/virtualNetworks
+      naming: vnet-ipai-{purpose}
+      purpose: Private service connectivity
+    - service: Network Security Groups
+      type: Microsoft.Network/networkSecurityGroups
+      naming: nsg-{purpose}-ipai-{env}
+      purpose: Network access control
+    - service: Private Link
+      type: Microsoft.Network/privateEndpoints
+      purpose: Private connectivity to PaaS services
+    - service: Private DNS Zones
+      type: Microsoft.Network/privateDnsZones
+      purpose: Private endpoint DNS resolution
+    - service: Application Gateway
+      type: Microsoft.Network/applicationGateways
+      naming: agw-ipai-{env}
+      purpose: L7 load balancer, ingress
+    - service: Web Application Firewall
+      type: Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies
+      purpose: OWASP protection, bot mitigation
+    - service: Bastion
+      type: Microsoft.Network/bastionHosts
+      naming: bas-ipai-{env}
+      purpose: Secure admin access (no public SSH)
+    - service: NAT Gateway
+      type: Microsoft.Network/natGateways
+      naming: nat-ipai-{env}
+      purpose: Deterministic egress IP
+
+  governance:
+    - service: Azure Policy
+      type: Microsoft.Authorization/policyDefinitions
+      purpose: Compliance enforcement, guardrails
+    - service: Cost Management
+      type: Microsoft.CostManagement
+      purpose: Budget alerts, cost optimization
+    - service: Diagnostic Settings
+      type: Microsoft.Insights/diagnosticSettings
+      purpose: Resource-level log routing
+    - service: Monitor
+      type: Microsoft.Insights
+      purpose: Metrics, dashboards
+    - service: Alerts
+      type: Microsoft.Insights/metricAlerts
+      purpose: Threshold and anomaly alerting
+    - service: Log Analytics
+      type: Microsoft.OperationalInsights/workspaces
+      naming: log-ipai-{env}
+      purpose: Central log aggregation, KQL queries
+    - service: Activity Log
+      type: Microsoft.Insights/activityLogs
+      purpose: Control plane audit trail
+    - service: Service Health
+      type: Microsoft.ResourceHealth
+      purpose: Azure service incident awareness
+    - service: Defender for Cloud
+      type: Microsoft.Security
+      purpose: CSPM, threat detection
+    - service: Recovery Services Vault
+      type: Microsoft.RecoveryServices/vaults
+      naming: rsv-ipai-{env}
+      purpose: VM/disk/database backup
+    - service: Backup Vault
+      type: Microsoft.DataProtection/backupVaults
+      naming: bvault-ipai-{env}
+      purpose: Blob/disk backup (newer workloads)
+
+# =============================================================================
+# Tier 2 — Required Later (Strongly Recommended)
+# =============================================================================
+required_later:
+
+  edge:
+    - service: Front Door
+      type: Microsoft.Cdn/profiles (kind:frontdoor)
+      purpose: Global CDN, WAF, multi-region routing
+
+  observability:
+    - service: Azure Managed Grafana
+      type: Microsoft.Dashboard/grafana
+      purpose: Operational dashboards, Prometheus visualization
+    - service: Managed Prometheus
+      type: Microsoft.Monitor/accounts
+      purpose: Metrics collection from Container Apps
+
+  security:
+    - service: Microsoft Sentinel
+      type: Microsoft.SecurityInsights
+      purpose: SIEM, security orchestration
+
+  governance:
+    - service: Advisor
+      type: Microsoft.Advisor
+      purpose: Best practice recommendations
+
+  dev_platform:
+    - service: Azure Deployment Environments
+      type: Microsoft.DevCenter/projects
+      purpose: Templated dev/test environments
+    - service: DevTest Labs
+      type: Microsoft.DevTestLab/labs
+      purpose: Experimentation sandboxes
+
+# =============================================================================
+# Tier 3 — Optional (Use-Case-Driven)
+# =============================================================================
+optional:
+
+  ai:
+    - service: Speech Services
+      type: Microsoft.CognitiveServices/accounts (kind:SpeechServices)
+      purpose: Voice/multimodal (only if product scope includes voice)
+    - service: Computer Vision
+      type: Microsoft.CognitiveServices/accounts (kind:ComputerVision)
+      purpose: Image analysis (only if product scope includes image processing)
+
+  dev_platform:
+    - service: Playwright Testing
+      type: Microsoft.AzurePlaywrightService
+      purpose: E2E browser testing at scale
+    - service: Azure Load Testing
+      type: Microsoft.LoadTestService/loadTests
+      purpose: Performance/stress testing
+    - service: Microsoft Dev Box
+      type: Microsoft.DevCenter/devboxes
+      purpose: Cloud dev workstations
+
+  network:
+    - service: Azure Firewall
+      type: Microsoft.Network/azureFirewalls
+      purpose: Centralized network firewall (when compliance requires)
+    - service: DDoS Protection
+      type: Microsoft.Network/ddosProtectionPlans
+      purpose: Volumetric DDoS mitigation
+
+  runtime:
+    - service: Static Web Apps
+      type: Microsoft.Web/staticSites
+      purpose: Static marketing/docs sites
+    - service: App Service
+      type: Microsoft.Web/sites
+      purpose: Simpler web apps (if Container Apps is overkill)
+
+  data:
+    - service: Azure SQL
+      type: Microsoft.Sql/servers
+      purpose: Relational DB (only if PG doesn't fit a workload)
+    - service: Cosmos DB
+      type: Microsoft.DocumentDB/databaseAccounts
+      purpose: Global-scale NoSQL (specific workload requirement)
+    - service: Service Bus
+      type: Microsoft.ServiceBus/namespaces
+      purpose: Async messaging between services
+    - service: Event Grid
+      type: Microsoft.EventGrid
+      purpose: Event-driven architecture
+    - service: Event Hubs
+      type: Microsoft.EventHub/namespaces
+      purpose: High-throughput event ingestion
+    - service: Logic Apps
+      type: Microsoft.Logic/workflows
+      purpose: Low-code workflow orchestration
+
+# =============================================================================
+# Explicitly Not In Scope
+# =============================================================================
+# These Azure services should NOT be deployed as primaries because external
+# platforms already fill their roles.
+#
+# Do not deploy unless a specific product requirement demands it.
+# =============================================================================
+not_in_scope:
+
+  replaced_by_external:
+    - service: Azure Boards
+      reason: Plane is the execution workspace
+    - service: Azure DevOps
+      reason: GitHub is the engineering platform
+    - service: Azure Pipelines
+      reason: GitHub Actions is CI/CD
+    - service: Power BI Embedded
+      reason: Databricks Apps is the analytics surface
+    - service: Azure Synapse
+      reason: Databricks is the lakehouse
+    - service: Azure Database for PostgreSQL
+      reason: Supabase + DigitalOcean PG are canonical (except pending Odoo migration)
+      notes: pg-ipai-dev is pending for Odoo migration only
+
+  not_relevant:
+    - service: Bot Services
+      reason: Foundry agents replace Bot Framework
+    - service: HDInsight
+      reason: Databricks replaces Hadoop-style analytics
+    - service: Analysis Services
+      reason: Databricks replaces SSAS
+    - service: Quantum
+      reason: No quantum computing workload
+    - service: IoT Hub / IoT Central
+      reason: No IoT workload
+    - service: Azure Virtual Desktop
+      reason: No VDI requirement
+    - service: SAP HANA on Azure
+      reason: No SAP workload
+    - service: Lab Services
+      reason: DevTest Labs covers experimentation needs
+    - service: Chaos Studio
+      reason: Not Day 1 priority
+    - service: MySQL Flexible Server
+      reason: PostgreSQL is standard
+
+# =============================================================================
+# Architecture End State
+# =============================================================================
+#
+# Users
+#   │
+#   ▼
+# Microsoft 365 / Teams / Web / Internal tools
+#   │
+#   ▼
+# Azure Front Door / App Gateway / WAF
+#   │
+#   ▼
+# API Management
+#   │
+#   ├── Azure Foundry agents
+#   ├── Container Apps APIs
+#   ├── Function Apps / Jobs
+#   └── MCP / tool endpoints
+#   │
+#   ├────────► Odoo (ERP — system of record)
+#   ├────────► Supabase (control plane)
+#   ├────────► Databricks (intelligence)
+#   └────────► Plane (workspace / execution)
+#
+# Identity / Secrets:  Entra ID + Managed Identities + Key Vault
+# Observability:       Application Insights + Log Analytics + Monitor + Alerts
+# Security:            Defender for Cloud + Sentinel
+# Networking:          VNet + NSG + Private Link + Bastion + NAT
+# =============================================================================
