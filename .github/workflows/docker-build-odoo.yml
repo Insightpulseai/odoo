@@ -21,7 +21,7 @@ on:
 env:
   REGISTRY_GHCR: ghcr.io
   REGISTRY_DO: registry.digitalocean.com/insightpulseai
-  IMAGE_NAME: odoo-ipai
+  IMAGE_NAME: ipai-odoo-runtime
   ODOO_VERSION: "19.0"
 
 permissions:
@@ -129,8 +129,8 @@ jobs:
             type=ref,event=branch
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
-            org.opencontainers.image.title=Odoo IPAI
-            org.opencontainers.image.description=Odoo 19.0 CE with InsightPulse AI custom modules
+            org.opencontainers.image.title=IPAI Odoo Runtime
+            org.opencontainers.image.description=Odoo 19.0 CE + OCA + InsightPulse AI custom modules
             org.opencontainers.image.vendor=InsightPulse AI
             com.insightpulseai.odoo.version=${{ env.ODOO_VERSION }}
             com.insightpulseai.odoo.modules=ipai,oca
@@ -140,7 +140,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/odoo/Dockerfile
+          file: docker/Dockerfile.unified
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}

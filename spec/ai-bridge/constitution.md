@@ -1,5 +1,11 @@
 # AI Bridge — Constitution
 
+> **Version**: 1.0.0
+> **Spec**: `spec/ai-bridge/`
+> **Status**: Active
+
+---
+
 ## Non-Negotiable Rules
 
 1. **No Odoo IAP dependency.** All AI provider calls must route through the IPAI control plane, never via `odoo.com/iap`. Enforce: `grep -r "iap" addons/ipai/ipai_ai_widget/` must return 0 matches.
@@ -9,3 +15,10 @@
 5. **No API keys in Odoo.** The bridge URL is stored in `ir.config_parameter` (not a secret). API keys live in the provider bridge's environment (Vercel env vars / GitHub Actions Secrets), registered in `ssot/secrets/registry.yaml`.
 6. **Response shape is contractual.** Controllers must return `{ provider, text, model, trace_id }` or `{ error: string, status: int }`. No arbitrary shapes.
 7. **Bridge must be registered.** Every IPAI bridge referenced by `ipai_ai_widget` must have an entry in `ssot/bridges/catalog.yaml` and a contract doc in `docs/contracts/`.
+
+---
+
+## Governance
+
+- **Amendments**: Require PR with rationale; approved by repo maintainer.
+- **Enforcement**: CI gates validate no-IAP rule and bridge catalog registration.
