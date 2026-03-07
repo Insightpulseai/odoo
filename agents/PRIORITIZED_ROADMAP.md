@@ -44,7 +44,7 @@ Convert the InsightPulse Odoo CE + Supabase + n8n stack into a **self-improving,
 | Component | Status | Impact | Priority |
 |-----------|--------|--------|----------|
 | **MCP Servers** | 🔴 Missing | Can't expose Odoo/Supabase to agents | HIGH |
-| **Mattermost Integration** | 🔴 Missing | No chat-based agent interface | MEDIUM |
+| **Slack Integration** | 🔴 Missing | No chat-based agent interface | MEDIUM |
 | **Superset Dashboards** | 🔴 Missing | No analytics visibility | LOW |
 | **Kubernetes Manifests** | 🔴 Missing | Stuck on Docker Compose | MEDIUM |
 | **Auto-healing Automation** | 🔴 Missing | No self-recovery from failures | MEDIUM |
@@ -52,6 +52,41 @@ Convert the InsightPulse Odoo CE + Supabase + n8n stack into a **self-improving,
 ---
 
 ## 🗺️ Execution Phases
+
+## Wave 2+ Spec Bundles (2026)
+
+The following spec bundles were created in Wave 2 (March 2026) and define the next generation of platform capabilities. These are spec-only — no runtime code yet.
+
+### Finance Control Specs
+| Spec | Module | Purpose |
+|------|--------|---------|
+| `odoo-bir-filing-control` | `ipai_finance_bir_filing` | BIR filing lifecycle |
+| `odoo-tne-control` | `ipai_finance_tne_control` | Full Concur replacement |
+| `odoo-ap-invoice-control` | `ipai_finance_ap_control` | Vendor invoice three-way match |
+| `odoo-approval-inbox` | `ipai_platform_approval_inbox` | Unified approval queue |
+
+### Platform Specs
+| Spec | Purpose |
+|------|---------|
+| `integration-control-plane` | Supabase ctrl.* schema for cross-system sync |
+| `control-room-platform` | Enterprise governance and observability |
+| `odoo-copilot-azure` | Azure Foundry + Agent Framework copilot |
+
+### Architecture Docs
+| Doc | Purpose |
+|-----|---------|
+| `docs/architecture/CANONICAL_ENTITY_MAP.yaml` | Cross-system entity ownership |
+| `docs/architecture/INTEGRATION_BOUNDARY_MODEL.md` | System pair boundaries |
+| `docs/architecture/SUPABASE_CONTROL_PLANE.md` | Supabase ctrl.* schema |
+| `docs/architecture/CONTROL_ROOM_RUNTIME_STATE.md` | Bounded context activation status |
+
+### Finance Seed Data
+| File | Purpose |
+|------|---------|
+| `config/finance/month_end_tasks_v2.csv` | 36 canonical month-end tasks |
+| `config/finance/bir_filing_tasks_v2.csv` | 22 BIR filings + 4 process steps |
+| `config/finance/finance_odoo_import.csv` | 168 Odoo-importable task rows |
+| `config/finance/supabase_logframe_finance.csv` | 168 Supabase logframe rows |
 
 ### **Phase 0: Foundation (Week 1-2)** ⏳ CURRENT
 
@@ -247,33 +282,33 @@ Convert the InsightPulse Odoo CE + Supabase + n8n stack into a **self-improving,
 
 ---
 
-### **Phase 6: Mattermost + Chat Agent (Week 13-14)**
+### **Phase 6: Slack + Chat Agent (Week 13-14)**
 
-**Goal:** Deploy Mattermost with Claude-based chat agent
+**Goal:** Deploy Slack integration with Claude-based chat agent
 
 #### Components:
 
-1. **Mattermost Deployment**
-   - Deploy Mattermost on DigitalOcean
+1. **Slack Integration**
+   - Configure Slack workspace for InsightPulse AI
    - Integrate with Odoo SSO (optional)
    - Create channels: #ops, #finance, #alerts
 
 2. **Chat Agent**
-   - Claude Code CLI bot in Mattermost
+   - Claude Code CLI bot in Slack
    - Skills: query Odoo, trigger n8n, check OCR logs
    - Triggered by: @agent or /command
 
 3. **Alert Integration**
-   - n8n workflows send alerts to Mattermost
+   - n8n workflows send alerts to Slack
    - BIR deadlines, overdue tasks, OCR failures
 
 #### Agent Skills to Create:
-- `deploy_mattermost`
+- `deploy_slack_integration`
 - `create_chat_agent`
-- `integrate_mattermost_n8n`
+- `integrate_slack_n8n`
 
 #### Success Criteria:
-- Mattermost accessible at chat.insightpulseai.com
+- Slack workspace configured with agent integrations
 - Chat agent responds to queries
 - n8n alerts appear in #alerts channel
 
