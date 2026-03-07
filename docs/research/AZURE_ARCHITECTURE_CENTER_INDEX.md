@@ -514,6 +514,91 @@ Covers architectures for Microsoft Cloud for:
 
 ---
 
+## 11. Anti-Patterns Catalog
+
+### Performance Anti-Patterns
+
+**URL**: [learn.microsoft.com/en-us/azure/architecture/antipatterns/](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/)
+
+| Anti-Pattern | Problem | IPAI Relevance |
+|--------------|---------|----------------|
+| **Busy Database** | Offloading too much processing to the DB | High — PostgreSQL query optimization |
+| **Busy Front End** | Resource-intensive tasks on foreground threads | High — Move heavy work to n8n/workers |
+| **Chatty I/O** | Many small network requests with cumulative impact | High — Batch Odoo RPC calls |
+| **Extraneous Fetching** | Retrieving more data than needed | High — Odoo ORM field selection |
+| **Improper Instantiation** | Creating instances meant to be shared | Medium — Connection pooling |
+| **Monolithic Persistence** | Single data store for different usage patterns | Medium — PostgreSQL + Redis + MinIO |
+| **No Caching** | Repeatedly fetching same data | High — Nginx/Redis caching |
+| **Noisy Neighbor** | One workload degrading others on shared resources | High — Docker resource limits |
+| **Retry Storm** | Uncontrolled retry cascades | High — Exponential backoff |
+| **Synchronous I/O** | Blocking threads on I/O operations | Medium — Async with n8n/Celery |
+
+### Cloud Adoption Anti-Patterns (by Phase)
+
+| Phase | URL | Key Anti-Patterns |
+|-------|-----|-------------------|
+| **Strategy** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/strategy-antipatterns) | Adopting tech without clear strategy |
+| **Plan** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/plan-antipatterns) | Using preview services in production |
+| **Ready** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/ready-antipatterns) | Assuming high availability by default |
+| **Migrate** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/migrate-antipatterns) | Big-bang migrations without testing |
+| **Govern** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/govern-antipatterns) | IT becoming a gatekeeper |
+| **Manage** | [Link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/antipatterns/manage-antipatterns) | Applying on-premises management to cloud |
+
+---
+
+## 12. Ten Design Principles for Cloud Applications
+
+**URL**: [learn.microsoft.com/en-us/azure/architecture/guide/design-principles/](https://learn.microsoft.com/en-us/azure/architecture/guide/design-principles/)
+
+| # | Principle | Guidance | IPAI Application |
+|---|-----------|----------|-----------------|
+| 1 | **Design for self-healing** | Recover automatically from failures | Docker restart, health checks, auto-reconnect |
+| 2 | **Make all things redundant** | Avoid single points of failure | PostgreSQL replicas, backup strategy |
+| 3 | **Minimize coordination** | Reduce inter-service coordination | Async messaging via n8n/webhooks |
+| 4 | **Design to scale out** | Scale horizontally | Docker Compose replicas |
+| 5 | **Partition around limits** | Use partitioning for DB/network/compute | PostgreSQL table partitioning |
+| 6 | **Design for operations** | Give ops teams the tools they need | Superset dashboards, Slack alerts |
+| 7 | **Use managed services** | Prefer PaaS over IaaS | Self-hosted equivalent: Docker > bare metal |
+| 8 | **Use the best data store** | Polyglot persistence | PostgreSQL + Redis + MinIO + pgvector |
+| 9 | **Design for evolution** | Allow architectural changes over time | Modular ipai_* addons, MCP servers |
+| 10 | **Build for business needs** | Justify every design decision | Cost-minimized philosophy |
+
+---
+
+## 13. AI Agent Orchestration Patterns (New 2025)
+
+**URL**: [learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns)
+
+| Pattern | Description | IPAI Stack Mapping |
+|---------|-------------|-------------------|
+| **Sequential Orchestration** | Step-by-step with stage dependencies | Pulser pipeline: plan -> implement -> verify |
+| **Group Chat Orchestration** | Multi-agent collaborative decision-making (limit 3 agents) | Claude + Codex agents collaborating |
+| **Maker-Checker Loop** | One agent creates, another validates | implement -> verify agent workflow |
+
+### Framework Interconnection
+
+```
+Cloud Adoption Framework (CAF)        Well-Architected Framework (WAF)
+    Strategy -> Plan -> Ready              Reliability
+         -> Adopt (Migrate/                Security
+            Modernize/                     Cost Optimization
+            Cloud-Native)                  Operational Excellence
+         -> Govern/Secure/Manage           Performance Efficiency
+              |                                 |
+              v                                 v
+         Azure Architecture Center
+         +-- Architecture Styles (6)
+         +-- Design Patterns (42)
+         +-- Design Principles (10)
+         +-- Technology Choices (decision trees)
+         +-- Reference Architectures (by domain)
+         +-- Anti-Patterns (10 performance + CAF phase)
+         +-- Industry Solutions (5 industries)
+         +-- AI Agent Patterns (3 orchestration types)
+```
+
+---
+
 ## Quick Reference: Key URLs
 
 | Resource | URL |
