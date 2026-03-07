@@ -1052,13 +1052,11 @@ Examples:
 
 See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
 
-### PR Requirements
+### PR Discipline
 
 1. Small, focused commits with descriptive messages
-2. All CI gates must pass (green status)
+2. Run verification before pushing
 3. Update docs + tests alongside code changes
-4. Never push directly to main without verification
-5. Reference spec bundle in PR description when applicable
 
 ---
 
@@ -1577,22 +1575,18 @@ Build custom modules based on payment status and need:
 
 ## GitHub Integration
 
-### Recommended: GitHub Team ($4/user/mo)
+### GitHub Plan: Free (Solo Developer)
 
-Stay on GitHub Team - it provides everything needed:
+Solo developer — no paid GitHub plan needed. Security tooling is self-hosted and free:
 
-| Feature | Free | Team | Enterprise | Our Approach |
-|---------|------|------|------------|--------------|
-| Protected branches | ❌ | ✅ | ✅ | Use Team |
-| Required reviewers | ❌ | ✅ | ✅ | Use Team |
-| CODEOWNERS | ❌ | ✅ | ✅ | Use Team |
-| Draft PRs | ❌ | ✅ | ✅ | Use Team |
-| Actions minutes | 2,000 | 3,000 | 50,000 | Self-hosted runners |
-| Secret scanning | ❌ | ❌ | $19/user | GitLeaks (free) |
-| Code scanning | ❌ | ❌ | $30/user | Semgrep (free) |
-| SAML SSO | ❌ | ❌ | ✅ | Keycloak (free) |
-
-**Annual savings**: ~$6,600/year vs Enterprise + GHAS
+| Need | Solution | Cost |
+|------|----------|------|
+| Secret scanning | GitLeaks (self-hosted) | Free |
+| Code scanning (SAST) | Semgrep (self-hosted) | Free |
+| Dependency scanning | Trivy (self-hosted) | Free |
+| SSO | Keycloak (self-hosted) | Free |
+| CI minutes | Self-hosted runner on DO | Free |
+| Actions minutes | 2,000/mo (GitHub Free) | Free |
 
 ### GitHub App: pulser-hub
 
@@ -1637,18 +1631,6 @@ jobs:
         with:
           scan-type: 'fs'
           severity: 'CRITICAL,HIGH'
-```
-
-### Self-Hosted Runner Setup
-
-```bash
-# On DigitalOcean droplet (178.128.112.214)
-mkdir -p ~/actions-runner && cd ~/actions-runner
-curl -o actions-runner-linux-x64-2.321.0.tar.gz -L \
-  https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
-tar xzf ./actions-runner-linux-x64-2.321.0.tar.gz
-./config.sh --url https://github.com/jgtolentino/odoo-ce --token YOUR_TOKEN
-sudo ./svc.sh install && sudo ./svc.sh start
 ```
 
 ---
