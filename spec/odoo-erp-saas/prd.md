@@ -311,7 +311,37 @@ The platform must enforce OCA-first parity and restrict `ipai_*` modules to brid
 ### NFR-6 Portability
 - default reference deployment may target Azure or DigitalOcean, but product architecture must remain cloud-portable
 
-## 13. Product Packaging
+## 13. Runtime Image Policy
+
+The platform runtime must use a custom InsightPulseAI-managed Docker image. Marketplace VM images and third-party packaged Odoo distributions are not the canonical production runtime.
+
+### Base
+
+- Odoo Community Edition 19 (`odoo:19`)
+
+### Addon Layers
+
+- `addons/odoo` for CE core (read-only, upstream-controlled)
+- `addons/oca` for OCA parity modules (default path for EE-equivalent functionality)
+- `addons/ipai` only for thin integration bridges, external service connectors, or approved meta-bundles
+
+### Rules
+
+- OCA is the default path for EE-parity functionality
+- `ipai_*` must not be used to recreate Enterprise features that belong in CE/OCA
+- Image builds must be deterministic and tied to Git commit provenance
+- Runtime image tags must be environment-neutral and release-safe
+- Secrets and per-environment config must not be baked into the image
+- The same image is promoted across environments without rebuild
+
+### Image Identity
+
+- Canonical image name: `ipai-odoo-runtime`
+- Registries: GHCR (`ghcr.io/insightpulseai/ipai-odoo-runtime`) + DOCR
+- Dockerfile: `docker/Dockerfile.unified`
+- Full specification: `docs/architecture/CANONICAL_RUNTIME_IMAGE.md`
+
+## 14. Product Packaging
 
 ### Plan A — Starter
 - small team / single entity
@@ -342,7 +372,7 @@ The platform must enforce OCA-first parity and restrict `ipai_*` modules to brid
 - sandbox / staging environment
 - premium support
 
-## 14. Key User Flows
+## 15. Key User Flows
 
 ### Flow 1: New Tenant Launch
 Operator selects plan + region + app pack → system provisions tenant → baseline modules install → health checks pass → domain/TLS activate → tenant marked live.
@@ -356,7 +386,7 @@ Operator selects approved release target → preflight checks validate drift/bac
 ### Flow 4: Incident Restore
 Operator chooses restore point → recovery workflow executes → health validation completes → incident timeline and evidence retained.
 
-## 15. Success Metrics
+## 16. Success Metrics
 
 ### Business Metrics
 - time to first live tenant
@@ -379,7 +409,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - failed deploy rollback time
 - module compatibility pass rate
 
-## 16. Risks
+## 17. Risks
 
 - OCA parity gaps for some EE-adjacent capabilities
 - custom-module sprawl if bridge policy is not enforced
@@ -387,7 +417,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - billing/support complexity across plan tiers
 - HA architecture increasing operational cost and product complexity
 
-## 17. Open Questions
+## 18. Open Questions
 
 - single-db-per-tenant vs grouped tenancy strategy for lower tiers
 - canonical billing engine/provider
@@ -395,7 +425,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - operator console implementation surface: Odoo admin, external web app, or hybrid
 - whether customer-facing self-service provisioning is included in v1 or deferred
 
-## 18. Launch Recommendation
+## 19. Launch Recommendation
 
 ### Phase 1 — Internal Platform
 - single-tenant managed deployments
