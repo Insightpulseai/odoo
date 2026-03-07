@@ -1,145 +1,196 @@
-# Plan — Control Room Platform
+# Control Room Platform -- Implementation Plan
 
-> Implementation plan for the three-layer Control Room Platform.
-
----
-
-## Phase 0: Infrastructure (Week 1)
-
-### P0.1: Deploy Plane Self-Hosted
-
-- Deploy Plane on Azure Container Apps (or DigitalOcean if cost-constrained)
-- Services: Web, Admin, API, Worker, Beat, Live, Silo
-- Dependencies: PostgreSQL, Redis/Valkey
-- DNS: `plane.insightpulseai.com`
-- Auth: SSO via Microsoft Entra ID
-
-### P0.2: Configure Plane Workspace
-
-- Create workspace: "InsightPulseAI Control Room"
-- Configure work item types (Feature, Task, Bug, Research, Infrastructure, Spec)
-- Configure workflow states (Backlog → Ready → In Progress → Review → Blocked → Done)
-- Apply label taxonomy
-- Enable GitHub Silo integration
-- Enable Slack integration
-
-### P0.3: Plane MCP Server
-
-- Deploy Plane MCP server for agent integration
-- Configure tool permissions (create, read, update work items)
-- Register in agents repo MCP registry
+> **Version**: 1.0.0
+> **Status**: Active
+> **Last Updated**: 2026-03-07
+> **Current Phase**: Phase 0 (Repo-Only)
+> **Spec Bundle**: `spec/control-room-platform/`
 
 ---
 
-## Phase 1: Execution Layer (Week 2-3)
+## Phased Rollout
 
-### P1.1: Create Initiative Structure
+The Control Room Platform follows the constitutional promotion state machine:
+`repo-only --> configured --> deployed --> live`
 
-Create 4 initiatives with epics per the PRD workspace structure.
-
-### P1.2: Migrate Existing Planning Artifacts
-
-- Audit 73 existing planning artifacts across repos
-- Map each to the correct Plane initiative/epic
-- Create work items for open items
-- Archive or link legacy artifacts
-
-### P1.3: Spec Kit → Plane Mapping
-
-- Each spec bundle maps to a Plane epic
-- Create linking convention: Plane epic description links to `spec/<bundle>/`
-- Spec bundle `tasks.md` maps to Plane work items
+Each phase corresponds to a promotion state. All 7 bounded contexts are currently at `repo-only`.
 
 ---
 
-## Phase 2: Intelligence Layer (Week 3-4)
+## Phase 0: Repo-Only (Current)
 
-### P2.1: Lakehouse Ingestion Pipelines
+**Objective**: Specs, contracts, CI validators, and governance artifacts exist in the repository. No runtime services.
 
-Create Bronze → Silver → Gold pipelines for:
-- Plane API → delivery metrics
-- Odoo API → finance/ERP metrics
-- GitHub API → engineering metrics
-- Foundry telemetry → agent metrics
+**Duration**: Weeks 1-3 (started 2026-03-07)
 
-### P2.2: Databricks Control Room App
+**Deliverables**:
+1. Constitution, PRD, plan, and task files (this spec bundle)
+2. KPI contracts YAML (`platform/data/contracts/control_room_kpis.yaml`)
+3. Event contracts YAML (`platform/data/contracts/control_room_events.yaml`)
+4. Runtime state document (`docs/architecture/CONTROL_ROOM_RUNTIME_STATE.md`)
+5. Repository taxonomy (`docs/governance/repository_taxonomy.yaml`)
+6. Taxonomy JSON Schema (`docs/governance/repository_taxonomy.schema.json`)
+7. CI validators for contract YAML and state document
+8. Governance lint rules in pre-commit and GitHub Actions
 
-- Build Streamlit/Dash app on Databricks Apps
-- Implement 7 pages per PRD (executive summary through audit readiness)
-- Configure OAuth + Unity Catalog access
-- Deploy on Databricks serverless
+**Exit Criteria**:
+- All 9 files written and committed
+- CI validators pass on main branch
+- No overclaiming in any document
+- All 7 bounded contexts accurately represented at `repo-only`
 
-### P2.3: Data Contracts
-
-- Define schema contracts between source systems and Gold layer
-- Implement freshness SLA monitoring
-- Create anomaly detection pipeline
-
----
-
-## Phase 3: Agent Layer (Week 4-5)
-
-### P3.1: Foundry Agent Deployment
-
-Deploy 5 agents per PRD:
-1. Status Synthesis agent
-2. Blocker Triage agent
-3. Risk Summarizer agent
-4. Finance Close Assistant
-5. Control Room Q&A agent
-
-### P3.2: Agent ↔ Plane Integration
-
-- Connect agents to Plane via MCP server
-- Agents can create work items, update status, add comments
-- Weekly automated status reports
-
-### P3.3: Agent ↔ Databricks Integration
-
-- Agents query Gold/Platinum layers for intelligence
-- Q&A agent uses RAG over dashboard data
-- Risk agent monitors anomaly feed
+**Workstreams**: W1 (Spec & Governance), W2 (KPI Contracts), W3 (Event Contracts), W4 (CI Validators)
 
 ---
 
-## Phase 4: Strategy Layer (Week 5-6)
+## Phase 1: Environment Configuration
 
-### P4.1: Figma Roadmap Board
+**Objective**: Secrets, connections, and staging environments provisioned for each bounded context.
 
-- Create quarterly roadmap in Figma
-- Populate with current initiatives
-- Establish update cadence (monthly)
+**Duration**: Weeks 4-8
 
-### P4.2: End-to-End Flow Validation
+**Deliverables**:
+1. Environment variable manifest per bounded context
+2. Connection verification scripts per system
+3. Secrets provisioned in GitHub Actions, `.env` files, and n8n credentials
+4. Staging database schemas created (Supabase `ctrl.*`, Odoo `odoo_dev`)
+5. Databricks workspace configured with Unity Catalog
+6. Azure/Foundry project created with tool registrations
+7. Plane workspace configured with Control Room project
 
-- Verify: Figma item → Plane initiative → Spec bundle → GitHub implementation
-- Verify: Databricks App reflects live delivery/finance metrics
-- Verify: Foundry agents produce actionable summaries
+**Exit Criteria**:
+- Connection test scripts pass for all 7 contexts
+- Secrets are provisioned (verified by name, never value)
+- Staging schemas are created and migrated
+- All contexts promoted to `configured` with evidence
+
+**Workstreams**: W5 (Environment Setup)
 
 ---
 
-## Dependencies
+## Phase 2: Deployment
+
+**Objective**: Runtime services deployed to staging, health checks passing.
+
+**Duration**: Weeks 9-14
+
+**Deliverables**:
+1. Supabase `ctrl.*` schema deployed with RLS policies
+2. Odoo KPI extraction cron job deployed
+3. n8n workflows deployed for event routing
+4. Databricks DLT pipelines deployed for KPI ingestion
+5. Azure/Foundry copilot tools deployed
+6. GitHub Actions CI validators running on all PRs
+7. Control Room API deployed (references `spec/control-room-api/`)
+8. Health check endpoints active for all deployed services
+
+**Exit Criteria**:
+- Health check endpoints return 200 for all deployed services
+- Container logs show no startup errors
+- Database migrations applied successfully
+- All contexts promoted to `deployed` with evidence
+
+**Workstreams**: W6 (Odoo Integration), W7 (Supabase Integration), W8 (Databricks Integration), W9 (Dashboard & Observability)
+
+---
+
+## Phase 3: Live
+
+**Objective**: Production traffic flowing, monitoring active, alerting configured.
+
+**Duration**: Weeks 15-20
+
+**Deliverables**:
+1. Production Odoo syncing KPI data on schedule
+2. Supabase `ctrl.integration_events` receiving real events
+3. Databricks gold tables populated with KPI history
+4. Alerting configured for KPI threshold breaches
+5. Dashboard showing real-time platform state
+6. Weekly governance report auto-generated
+7. Runbook for each bounded context incident response
+
+**Exit Criteria**:
+- Real data flowing through all pipelines for 7 consecutive days
+- At least one KPI threshold breach detected and alerted
+- Governance report generated without manual intervention
+- All contexts promoted to `live` with evidence
+
+**Workstreams**: W9 (Dashboard & Observability), plus ongoing W6-W8
+
+---
+
+## Workstream Summary
+
+| ID | Workstream | Phase | Tasks | Owner |
+|----|-----------|-------|-------|-------|
+| W1 | Spec & Governance | 0 | 6 | Platform team |
+| W2 | KPI Contracts | 0 | 5 | Platform team |
+| W3 | Event Contracts | 0 | 5 | Platform team |
+| W4 | CI Validators | 0 | 6 | Platform team |
+| W5 | Environment Setup | 1 | 7 | DevOps |
+| W6 | Odoo Integration | 2 | 5 | Odoo team |
+| W7 | Supabase Integration | 2 | 5 | Platform team |
+| W8 | Databricks Integration | 2 | 4 | Data team |
+| W9 | Dashboard & Observability | 2-3 | 5 | Platform team |
+| | **Total** | | **48** | |
+
+---
+
+## Dependency Graph
 
 ```
-P0 (Infra)
-  ├── P1 (Execution) — needs Plane running
-  │     └── P2.1 (Ingestion) — needs Plane API data
-  └── P3.1 (Agents) — needs Plane MCP
-
-P2.1 (Ingestion)
-  └── P2.2 (Dashboard) — needs Gold layer data
-
-P1 + P2 + P3
-  └── P4 (Strategy) — needs all layers working
+W1 (Spec & Governance) ----+
+                            |
+W2 (KPI Contracts) --------+--> W4 (CI Validators)
+                            |         |
+W3 (Event Contracts) ------+         |
+                                      v
+                              W5 (Environment Setup)
+                                      |
+                        +-------------+-------------+
+                        |             |             |
+                        v             v             v
+                  W6 (Odoo)    W7 (Supabase)  W8 (Databricks)
+                        |             |             |
+                        +-------------+-------------+
+                                      |
+                                      v
+                            W9 (Dashboard & Observability)
 ```
+
+**Critical Path**: W1 --> W4 --> W5 --> W6+W7 --> W9
 
 ---
 
-## Risk Mitigation
+## Risk Register
 
-| Risk | Mitigation |
-|------|-----------|
-| Plane self-hosted complexity | Start with Docker Compose, migrate to k8s later |
-| Data pipeline delays | Start with GitHub + Plane APIs (simplest), add Odoo later |
-| Agent quality | Implement eval framework before production deployment |
-| Figma adoption | Keep roadmap simple, update monthly not weekly |
+| Risk | Impact | Probability | Mitigation |
+|------|--------|------------|------------|
+| Databricks workspace not provisioned | W8 blocked | Medium | Proceed with Supabase+Odoo first; Databricks is Phase 2 |
+| Azure/Foundry access not available | Copilot tools delayed | Medium | Agent tools can be added post-live as enhancement |
+| Plane API changes | Sync breaks | Low | Plane sync is unidirectional; can buffer in Supabase |
+| KPI data not available from Odoo | Dashboard incomplete | Medium | Use mock data in staging; real data in production only |
+| Overclaiming in legacy docs | Governance violations | High | CI lint catches overclaiming; systematic cleanup in W1 |
+
+---
+
+## Phase 0 Detailed Schedule
+
+Since Phase 0 is the current phase, here is a detailed breakdown:
+
+| Week | Tasks | Deliverable |
+|------|-------|-------------|
+| Week 1 | W1.1-W1.6, W2.1-W2.3 | Spec bundle written, KPI YAML drafted |
+| Week 2 | W2.4-W2.5, W3.1-W3.5 | KPI YAML finalized, event YAML written |
+| Week 3 | W4.1-W4.6 | CI validators implemented and passing |
+
+---
+
+## Cross-References
+
+- `spec/control-room-platform/constitution.md` -- Non-negotiable rules
+- `spec/control-room-platform/prd.md` -- Product requirements
+- `spec/control-room-platform/tasks.md` -- 48 tasks with status
+- `spec/control-room-api/plan.md` -- Control Room API implementation plan
+- `spec/integration-control-plane/plan.md` -- Supabase control plane plan
+- `spec/databricks-apps-control-room/plan.md` -- Databricks control room plan
