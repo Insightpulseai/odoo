@@ -51,3 +51,22 @@ Azure capability is not the blocker. The subscription already contains the found
 ### Positioning
 
 SAP remains the ecosystem maturity benchmark on Azure, especially across data, analytics, AI, and Microsoft integration surfaces. Odoo is a broad business platform across Community and Enterprise editions, but unlike SAP it does not arrive with SAP-grade Azure ecosystem depth. The target state is therefore to engineer that workload posture explicitly through repo-owned architecture, IaC, CI/CD, observability, security, and governed integration layers.
+
+
+---
+
+## DigitalOcean Runtime State
+
+See `DEPLOY_TARGET_MATRIX.md` and `PROD_RUNTIME_SNAPSHOT.md` for current DO droplet state.
+
+---
+
+## Supabase Runtime State
+
+See `SUPABASE_CONTROL_PLANE.md` for current Supabase project state.
+
+---
+
+## Vercel Runtime State
+
+See `VERCEL_CONTROL_PLANE_DEPLOYMENT.md` for current Vercel deployment state.

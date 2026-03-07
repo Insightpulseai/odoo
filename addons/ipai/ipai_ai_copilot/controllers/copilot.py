@@ -38,7 +38,11 @@ import requests
 from odoo import http
 from odoo.http import request
 
-from odoo.addons.ipai_ai_widget.controllers._bridge_helper import call_bridge
+from odoo.addons.ipai_ai_widget.controllers._bridge_helper import (
+    call_azure_direct,
+    call_bridge,
+    has_azure_config,
+)
 
 _logger = logging.getLogger(__name__)
 TIMEOUT = 30
@@ -67,41 +71,52 @@ class IpaiCopilotController(http.Controller):
         params = request.env["ir.config_parameter"].sudo()
         bridge_url = params.get_param("ipai_ai_copilot.bridge_url", default="")
         bridge_token = params.get_param("ipai_ai_copilot.bridge_token", default="")
-        if not bridge_url:
-            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
 
         # Load or create session
         Session = request.env["ipai.copilot.session"]
         session = Session._get_or_create(session_id)
 
-        # Get available tools (server-side only — not sent before AI evaluation)
-        tools = (
-            request.env["ipai.copilot.tool"]
-            .sudo()
-            .search([("active", "=", True)])
-        )
-        tool_declarations = [t._to_gemini_declaration() for t in tools]
-
         # Build context string
         ctx_str = _format_context(context or {})
+        msg_str = str(message).strip()
 
-        # Build payload for IPAI bridge
-        payload = {
-            "system_prompt": SYSTEM_PROMPT,
-            "context": ctx_str,
-            "history": session._get_history(),
-            "message": str(message).strip(),
-            "tools": tool_declarations,
-        }
+        if bridge_url:
+            # ── Primary path: IPAI bridge (Gemini with tool support) ──────
+            tools = (
+                request.env["ipai.copilot.tool"]
+                .sudo()
+                .search([("active", "=", True)])
+            )
+            tool_declarations = [t._to_gemini_declaration() for t in tools]
 
-        data, error_code = call_bridge(bridge_url, bridge_token, payload)
-        if error_code:
-            status_map = {
-                "BRIDGE_TIMEOUT": 504,
-                "AI_KEY_NOT_CONFIGURED": 503,
-                "BRIDGE_ERROR": 500,
+            payload = {
+                "system_prompt": SYSTEM_PROMPT,
+                "context": ctx_str,
+                "history": session._get_history(),
+                "message": msg_str,
+                "tools": tool_declarations,
             }
-            return {"error": error_code, "status": status_map.get(error_code, 500)}
+
+            data, error_code = call_bridge(bridge_url, bridge_token, payload)
+            if error_code:
+                status_map = {
+                    "BRIDGE_TIMEOUT": 504,
+                    "AI_KEY_NOT_CONFIGURED": 503,
+                    "BRIDGE_ERROR": 500,
+                }
+                return {"error": error_code, "status": status_map.get(error_code, 500)}
+
+        elif has_azure_config(request.env):
+            # ── Fallback: Azure OpenAI direct (chat-only, no tools) ───────
+            azure_prompt = f"{ctx_str}\n\nUser: {msg_str}" if ctx_str != "No record context" else msg_str
+            data, error_code = call_azure_direct(
+                azure_prompt, request.env, system_prompt=SYSTEM_PROMPT
+            )
+            if error_code:
+                return {"error": error_code, "status": 500}
+
+        else:
+            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
 
         # Handle tool calls — return to client for confirmation before execution
         if data.get("tool_calls"):

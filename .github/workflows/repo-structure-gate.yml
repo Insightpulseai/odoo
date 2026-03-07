@@ -2,6 +2,12 @@ name: Repo Structure Gate
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'addons/**'
+      - 'supabase/**'
+      - 'design/**'
+      - 'spec/**'
+      - '.github/workflows/repo-structure-gate.yml'
 
 
 permissions:
@@ -15,10 +21,14 @@ jobs:
       - name: Validate Odoo Addons Paths
         run: |
           if [ -d "addons" ]; then
-            for dir in addons/*; do
+            for dir in addons/*/; do
+              [ -d "$dir" ] || continue
               basename=$(basename "$dir")
-              if [[ "$basename" != "odoo" && "$basename" != "oca" && "$basename" != "ipai" ]]; then
-                echo "Error: Directory addons/$basename is not allowed. Only odoo, oca, and ipai are permitted."
+              # Allow: addons/odoo/, addons/oca/, addons/ipai/, addons/ipai_*/, addons/_deprecated/
+              if [[ "$basename" != "odoo" && "$basename" != "oca" && "$basename" != "ipai" \
+                    && "$basename" != ipai_* && "$basename" != _* ]]; then
+                echo "Error: Directory addons/$basename is not allowed."
+                echo "Allowed: odoo, oca, ipai, ipai_* (IPAI modules), _deprecated"
                 exit 1
               fi
             done

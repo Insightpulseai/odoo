@@ -136,6 +136,8 @@ const TOOL_ALLOWLIST = new Set([
   "list_cycles",
   "list_modules",
   "search_pages",
+  "add_comment",
+  "create_page",
 ]);
 
 // ---------------------------------------------------------------------------
@@ -267,6 +269,53 @@ const TOOLS: Tool[] = [
       required: ["project_id", "query"],
     },
   },
+  {
+    name: "add_comment",
+    description:
+      "Add a comment to an existing Plane issue. Requires idempotency_key to prevent duplicate comments on retry.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        project_id: { type: "string", description: "Plane project UUID" },
+        issue_id: { type: "string", description: "Plane issue UUID" },
+        comment_html: {
+          type: "string",
+          description: "Comment body (HTML supported)",
+        },
+        idempotency_key: {
+          type: "string",
+          description: "Unique key to prevent duplicate comments",
+        },
+      },
+      required: ["project_id", "issue_id", "comment_html", "idempotency_key"],
+    },
+  },
+  {
+    name: "create_page",
+    description:
+      "Create a new Plane page (wiki/doc) in a project. Requires idempotency_key to prevent duplicate creation.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        project_id: { type: "string", description: "Plane project UUID" },
+        title: { type: "string", description: "Page title" },
+        description_html: {
+          type: "string",
+          description: "Page content (HTML supported)",
+        },
+        access: {
+          type: "number",
+          enum: [0, 1],
+          description: "Access level: 0 = public (workspace), 1 = private",
+        },
+        idempotency_key: {
+          type: "string",
+          description: "Unique key to prevent duplicate page creation",
+        },
+      },
+      required: ["project_id", "title", "idempotency_key"],
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -371,6 +420,35 @@ async function handleTool(
       const { project_id, query } = args as { project_id: string; query: string };
       const qs = new URLSearchParams({ search: query }).toString();
       return planeRequest("GET", `/workspaces/${ws}/projects/${project_id}/pages/?${qs}`);
+    }
+
+    case "add_comment": {
+      const { project_id, issue_id, comment_html } = args as {
+        project_id: string;
+        issue_id: string;
+        comment_html: string;
+        idempotency_key: string;
+      };
+      return planeRequest(
+        "POST",
+        `/workspaces/${ws}/projects/${project_id}/issues/${issue_id}/comments/`,
+        { comment_html }
+      );
+    }
+
+    case "create_page": {
+      const { project_id, title, description_html, access } = args as {
+        project_id: string;
+        title: string;
+        description_html?: string;
+        access?: number;
+        idempotency_key: string;
+      };
+      return planeRequest("POST", `/workspaces/${ws}/projects/${project_id}/pages/`, {
+        name: title,
+        description_html: description_html ?? "",
+        access: access ?? 0,
+      });
     }
 
     default:
