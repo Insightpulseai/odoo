@@ -1575,18 +1575,23 @@ Build custom modules based on payment status and need:
 
 ## GitHub Integration
 
-### GitHub Plan: Free (Solo Developer)
+### GitHub Plan: Enterprise (Solo Developer)
 
-Solo developer — no paid GitHub plan needed. Security tooling is self-hosted and free:
+Solo developer on GitHub Enterprise. Full platform features available:
 
-| Need | Solution | Cost |
-|------|----------|------|
-| Secret scanning | GitLeaks (self-hosted) | Free |
-| Code scanning (SAST) | Semgrep (self-hosted) | Free |
-| Dependency scanning | Trivy (self-hosted) | Free |
-| SSO | Keycloak (self-hosted) | Free |
-| CI minutes | Self-hosted runner on DO | Free |
-| Actions minutes | 2,000/mo (GitHub Free) | Free |
+| Feature | Status |
+|---------|--------|
+| Protected branches | ✅ Available |
+| Required status checks | ✅ Available |
+| CODEOWNERS | ✅ Available |
+| Secret scanning (GHAS) | ✅ Native |
+| Code scanning (GHAS) | ✅ Native |
+| Dependency review | ✅ Native |
+| SAML SSO | ✅ Available (Keycloak) |
+| Actions minutes | 50,000/mo |
+| Audit log API | ✅ Available |
+
+Self-hosted security tooling (GitLeaks, Semgrep, Trivy) supplements GHAS as defense-in-depth.
 
 ### GitHub App: pulser-hub
 
