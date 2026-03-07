@@ -1,5 +1,9 @@
 # Plan: IPAI Copilot
 
+> **DEPRECATED**: This spec is superseded by `spec/odoo-copilot-azure/` (commit 3b53158a).
+> The new spec uses Microsoft Foundry + Agent Framework + MCP architecture.
+> This file is retained for historical reference only.
+
 ## Phase 1: Odoo Addon (`ipai_copilot`)
 - [ ] Scaffold addon structure
 - [ ] Implement `res.config.settings` for API URL/Key
