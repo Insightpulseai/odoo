@@ -1,0 +1,263 @@
+version: "1.0"
+last_updated: "2026-03-07"
+governance: "spec/azure-boards-structure/constitution.md"
+
+organization: insightpulseai
+
+projects:
+  erp-saas:
+    description: "Odoo ERP SaaS runtime, modules, integrations, and release engineering"
+    epic_groups:
+      - "ERP Runtime"
+      - "Tenant & Environment Management"
+      - "Business Modules"
+      - "Integration Layer"
+      - "Security & Compliance"
+      - "Release Engineering"
+      - "Observability & Support"
+    area_paths:
+      - Runtime
+      - Modules
+      - Integrations
+      - Security
+      - Release
+    primary_repos:
+      - odoo
+      - odoo-modules
+
+  lakehouse:
+    description: "Databricks lakehouse, data pipelines, customer 360, marketing intelligence, ML/AI"
+    epic_groups:
+      - "Data Foundation"
+      - "Ingestion & Pipelines"
+      - "Customer 360"
+      - "Marketing Intelligence"
+      - "AI / ML / Agents"
+      - "Serving & Activation"
+      - "Governance & Quality"
+    area_paths:
+      - Foundation
+      - Pipelines
+      - Customer360
+      - Marketing
+      - ML-AI
+      - Governance
+    primary_repos:
+      - lakehouse
+
+  platform:
+    description: "Control plane, Azure runtime, boards automation, agents, shared services"
+    epic_groups:
+      - "Control Plane"
+      - "Boards Automation"
+      - "Agent Platform"
+      - "Azure Runtime Platform"
+      - "Shared Services"
+      - "Developer Experience"
+      - "Observability & FinOps"
+    area_paths:
+      - ControlPlane
+      - BoardsAutomation
+      - Agents
+      - AzureRuntime
+      - SharedServices
+      - Observability
+    primary_repos:
+      - platform
+      - boards-automation
+      - agents
+      - infra
+      - web
+
+work_item_hierarchy:
+  - Epic
+  - Feature
+  - "User Story"
+  - Task
+
+board_config:
+  story_columns:
+    - New
+    - Ready
+    - "In Progress"
+    - Blocked
+    - "In Review"
+    - Done
+  task_columns:
+    - "To Do"
+    - Doing
+    - Review
+    - Done
+  swimlanes:
+    - Expedite
+    - Standard
+    - "Debt / Hardening"
+  wip_limits:
+    "In Progress": 5
+    "In Review": 3
+
+tags:
+  - odoo
+  - oca
+  - ipai
+  - azure
+  - databricks
+  - supabase
+  - agent
+  - security
+  - finops
+  - marketing
+  - customer360
+  - runtime
+  - deploy
+  - observability
+
+naming_conventions:
+  epic: "[DOMAIN] <Outcome>"
+  feature: "[DOMAIN] <Capability>"
+  story: "As a <role>, I need <capability>, so that <outcome>"
+  task: "<Verb> <specific deliverable>"
+
+custom_fields:
+  primary_repo:
+    type: single_select
+    values:
+      - odoo
+      - lakehouse
+      - platform
+      - boards-automation
+      - agents
+      - infra
+      - web
+    required_on:
+      - Feature
+      - "User Story"
+
+  deployment_surface:
+    type: single_select
+    values:
+      - none
+      - azure-runtime
+      - databricks
+      - odoo-runtime
+      - web
+      - shared-platform
+    required_on:
+      - Feature
+      - "User Story"
+
+  risk_level:
+    type: single_select
+    values:
+      - low
+      - medium
+      - high
+    required_on:
+      - Feature
+      - "User Story"
+
+  verification_required:
+    type: single_select
+    values:
+      - unit
+      - integration
+      - deploy
+      - manual-business-check
+    required_on:
+      - "User Story"
+      - Task
+
+github_repo_mapping:
+  erp-saas:
+    - odoo
+    - odoo-modules
+  lakehouse:
+    - lakehouse
+  platform:
+    - platform
+    - boards-automation
+    - agents
+    - infra
+    - web
+
+iteration_paths:
+  cadence: "2-week sprints"
+  structure: "2026 > Q1-Q4 > Sprint 01+"
+  rules:
+    epic: "quarter/half-year level"
+    feature: "1-3 sprints"
+    story: "within a sprint"
+    task: "1-3 days"
+
+prohibited_services:
+  - Repos
+  - Pipelines
+  - Artifacts
+  - "Test Plans"
+  - Wiki
+
+source_of_truth_boundaries:
+  azure_boards:
+    owns:
+      - work items
+      - backlogs
+      - sprints
+      - delivery plans
+      - agent triggers
+    does_not_own:
+      - code
+      - CI/CD
+      - deployments
+      - artifacts
+  github:
+    owns:
+      - repos
+      - PRs
+      - Actions
+      - packages
+      - releases
+      - code review
+    does_not_own:
+      - planning
+      - roadmap
+      - portfolio management
+  odoo:
+    owns:
+      - ERP records
+      - finance
+      - CRM
+      - HR
+      - approvals
+    does_not_own:
+      - code
+      - planning
+      - infrastructure
+  databricks:
+    owns:
+      - data pipelines
+      - ML
+      - analytics
+      - lakehouse
+    does_not_own:
+      - code delivery
+      - planning
+
+success_metrics:
+  - metric: "GitHub-linked work items"
+    target: "100% of code-triggering items"
+  - metric: "Zero Azure repos/pipelines"
+    target: "0 items in prohibited services"
+  - metric: "Agent-assisted PR creation"
+    target: "Operational for >= 1 pilot repo"
+  - metric: "Sprint velocity"
+    target: "Measurable across all 3 projects"
+  - metric: "Board compliance"
+    target: "100% constitution conformance"
+
+cross_references:
+  constitution: "spec/azure-boards-structure/constitution.md"
+  prd: "spec/azure-boards-structure/prd.md"
+  plan: "spec/azure-boards-structure/plan.md"
+  tasks: "spec/azure-boards-structure/tasks.md"
+  target_state: "ssot/azure/target-state.yaml"
+  service_matrix: "ssot/azure/service-matrix.yaml"

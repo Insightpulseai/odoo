@@ -3,6 +3,30 @@ last_updated: "2026-03-07"
 governance: "spec/azure-target-state/constitution.md"
 
 platforms:
+  azure_boards:
+    role: planning
+    status: active
+    organization: insightpulseai
+    projects:
+      - name: lakehouse
+        scope: [databricks, marketing-intelligence, customer-360, data-pipelines, ml-ai, bi-dashboards]
+        primary_repos: [lakehouse]
+      - name: erp-saas
+        scope: [odoo-runtime, oca-ipai-modules, tenant-release, erp-integrations, environment-hardening]
+        primary_repos: [odoo, odoo-modules]
+      - name: platform
+        scope: [supabase-control-plane, azure-runtime, boards-automation, agents, shared-services, observability]
+        primary_repos: [platform, boards-automation, agents, infra, web]
+    work_item_hierarchy: [Epic, Feature, "User Story", Task]
+    board_columns:
+      story: [New, Ready, "In Progress", Blocked, "In Review", Done]
+      task: [To Do, Doing, Review, Done]
+    swimlanes: [Expedite, Standard, "Debt / Hardening"]
+    capabilities:
+      boards: { status: active, service: "Azure Boards" }
+      delivery_plans: { status: active, service: "Azure Boards Delivery Plans" }
+    prohibited: [repos, pipelines, artifacts, test_plans, wiki]
+
   github:
     role: primary
     capabilities:
@@ -15,38 +39,39 @@ platforms:
       packages: { status: active, service: "npm (pnpm workspaces)" }
       security: { status: active, service: "Dependabot + CodeQL" }
 
-  azure_devops:
-    role: bounded
-    constraint: "Boards-only program overlay"
+  azure_runtime:
+    role: runtime_platform
+    constraint: "Container Apps + PostgreSQL Flexible for ERP + platform services"
     capabilities:
-      boards: { status: optional, service: "Azure Boards" }
-      executive_reporting: { status: optional, service: "Azure Dashboards" }
-    prohibited:
-      - repos
-      - pipelines
-      - artifacts
-      - test_plans
-      - wiki
+      container_apps: { status: planned, service: "Azure Container Apps" }
+      container_registry: { status: planned, service: "Azure Container Registry (ACR)" }
+      postgresql_flexible: { status: planned, service: "Azure Database for PostgreSQL Flexible Server" }
+      front_door: { status: planned, service: "Azure Front Door Premium" }
+      key_vault: { status: planned, service: "Azure Key Vault" }
+      managed_identity: { status: planned, service: "Azure Managed Identity (Entra ID)" }
+      monitor: { status: planned, service: "Azure Monitor + App Insights + Log Analytics" }
+      vnet: { status: planned, service: "Azure Virtual Network" }
+      storage: { status: planned, service: "Azure Storage Account" }
 
-  azure_cloud:
-    role: agent_platform
-    constraint: "Foundry + Container Apps for copilot runtime only"
+  databricks:
+    role: data_ai_plane
+    constraint: "Analytics, CDP, ML, AI assistants — separate from delivery pipeline"
+    NOT_in_delivery_path: true
     capabilities:
-      foundry_agents: { status: repo-only, service: "Foundry Agents Service", spec: "spec/odoo-copilot-azure/" }
-      container_apps: { status: repo-only, service: "Azure Container Apps" }
-      key_vault: { status: repo-only, service: "Azure Key Vault" }
-      api_management: { status: repo-only, service: "Azure API Management" }
-      monitor: { status: repo-only, service: "Azure Monitor / App Insights" }
+      lakehouse: { status: planned, service: "Databricks Lakehouse" }
+      unity_catalog: { status: planned, service: "Unity Catalog" }
+      ml_serving: { status: planned, service: "Model Serving Endpoints" }
 
   digitalocean:
-    role: primary_hosting
+    role: current_hosting
+    migration_target: azure_runtime
     capabilities:
       compute: { status: active, service: "DO Droplets", ip: "178.128.112.214" }
       apps: { status: active, service: "DO App Platform" }
       dns: { status: active, service: "Cloudflare (delegated)" }
       container_registry: { status: active, service: "DO Container Registry" }
 
-migration_direction: "azure_devops -> github (repos, pipelines, wiki)"
+migration_direction: "digitalocean -> azure_runtime (compute + database)"
 conflict_resolution: "github_authoritative"
 sync_direction: "github -> azure_devops (one-way, never reverse)"
 
@@ -57,3 +82,4 @@ cross_references:
   dns_plan: "ssot/azure/dns-migration-plan.yaml"
   copilot_spec: "spec/odoo-copilot-azure/"
   mapping: "docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml"
+  deploy_matrix: "docs/architecture/DEPLOY_TARGET_MATRIX.md"

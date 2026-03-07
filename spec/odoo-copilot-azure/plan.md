@@ -6,9 +6,9 @@
 
 | Service | Role |
 |---------|------|
-| Microsoft Foundry resource | Agent platform, tool catalog, publishing |
-| Foundry Agents Service | Managed agent hosting |
-| Foundry tool catalog | Private organizational tools + MCP endpoints |
+| Microsoft Agent Framework runtime | Agent orchestration, tool registry, publishing |
+| Agent Framework hosted on Container Apps or Durable Functions | Managed agent hosting |
+| Agent Framework tool registry | Private organizational tools + MCP endpoints |
 | Azure API Management | External API gateway |
 | Azure Container Apps | Custom runtime host for web/API shells and agent workloads |
 | Azure Key Vault | Secrets management (Odoo credentials, DB connections, API keys) |
@@ -42,7 +42,7 @@ addons/ipai/
 
 | Component | Hosting | Purpose |
 |-----------|---------|---------|
-| Foundry Hosted Agents | Foundry Agents Service | Managed agent hosting where appropriate |
+| Agent Framework Agents | Agent Framework on Container Apps or Durable Functions | Managed agent hosting where appropriate |
 | Container Apps | Azure Container Apps | Custom app/API shells and supporting services |
 | Agent Framework | Embedded in agents | Agent/workflow composition, MCP client, RAG |
 | MCP | Tool protocol layer | Tool federation across all backend systems |
@@ -76,16 +76,16 @@ addons/ipai/
 | Deep-link tools | Generate Odoo web client URLs for records | `tool-odoo` |
 | Expense/finance tools | Create expense, prepare close worklist | `tool-odoo` |
 | Close monitoring tools | List blockers, summarize close status | `tool-odoo` |
-| Role-aware auth checks | Map Foundry identity → Odoo user → check permissions | `ipai_copilot_gateway` |
+| Role-aware auth checks | Map Agent Framework identity → Odoo user → check permissions | `ipai_copilot_gateway` |
 
 **Odoo-side modules created in this phase:**
 - `ipai_copilot_gateway` — JSON-RPC/REST endpoints for tool access
 - `ipai_copilot_finance` — finance-specific tool endpoints
 - `ipai_copilot_compliance` — BIR/tax tool endpoints
 
-### Phase 2 — Foundry + Agent Framework Runtime
+### Phase 2 — Agent Framework Runtime
 
-**Goal**: Wire agents, workflows, MCP, and session handling.
+**Goal**: Wire agents, workflows, MCP, and session handling. Host Agent Framework runtime on Azure Container Apps (ASP.NET Core) or Durable Azure Functions for workflow orchestration.
 
 | Task | Description |
 |------|-------------|
@@ -104,7 +104,7 @@ addons/ipai/
 |------|-------------|--------|
 | Connect Plane docs/wiki | RAG over workspace documents | Plane API |
 | Connect Odoo attachments | RAG over approved document sources | Odoo `ir.attachment` |
-| Connect Databricks summarized marts | Pre-computed analytics, forecasts, anomalies | Databricks SQL |
+| Connect Databricks summarized marts (OPTIONAL — defer if not ready) | Pre-computed analytics, forecasts, anomalies | Databricks SQL |
 | Add citation engine | All informational answers include source citations | Agent Framework RAG |
 | Add grounding policy | Define what can/cannot be grounded | Constitution |
 
@@ -114,7 +114,7 @@ addons/ipai/
 
 | Task | Description |
 |------|-------------|
-| Publish agent in Foundry | Register in Foundry agent catalog |
+| Register agent in Agent Framework catalog | Register in Agent Framework agent catalog |
 | Prepare Microsoft 365 Copilot path | Configure publication for M365 Copilot |
 | Prepare Teams path | Configure bot/messaging integration |
 | Expose stable APIs | API Management facade for programmatic access |

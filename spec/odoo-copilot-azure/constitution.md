@@ -2,14 +2,14 @@
 
 ## Purpose
 
-Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot — a governed action layer and conversational interface that exposes business capabilities through Microsoft Foundry, Agent Framework, and MCP-based tool contracts.
+Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot — a governed action layer and conversational interface that exposes business capabilities through the Microsoft Agent Framework and MCP-based tool contracts.
 
 ## Platform Role
 
-- **Microsoft Foundry** is the agent/tool platform, not the ERP source of truth.
+- **Microsoft Agent Framework** is the agent/tool platform, not the ERP source of truth.
 - **Odoo** remains the transactional source of truth for ERP, finance, CRM, and approvals.
 - **Supabase** remains the control plane for identity mapping, sync state, integration metadata, and lightweight APIs.
-- **Databricks** remains the intelligence plane for analytics, forecasting, anomaly detection, and summarized writebacks.
+- **Databricks** is an optional intelligence plane for analytics, forecasting, anomaly detection, and summarized writebacks — not required for core copilot functionality.
 - **Plane** remains the workspace/docs/project coordination layer.
 
 ## Non-Negotiables
@@ -25,7 +25,9 @@ Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot —
 
 ### 2. Azure Architecture Rules
 
-- **Foundry Agents Service** is the default managed agent hosting target.
+- **Microsoft Agent Framework** is the default agent orchestration layer, hosted via ASP.NET Core or Durable Azure Functions.
+- **Agents** are open-ended, tool-using, context-aware processes that can reason about next steps.
+- **Workflows** are deterministic multi-step processes with defined inputs/outputs.
 - **MCP** is the standard tool protocol for external/internal tool connectivity.
 - **API Management** is the preferred gateway for externally consumable agent endpoints.
 - **Container Apps** is the default custom runtime host for supporting web/API components and custom agent workloads.
@@ -47,7 +49,7 @@ Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot —
 | Supabase | Identity map, sync state, integration events, lightweight APIs | Business logic, ERP data |
 | Databricks | Analytics marts, forecasts, anomaly signals | Transactional records, approval state |
 | Plane | Workspaces, docs, project coordination, SOPs | ERP data, financial records |
-| Foundry | Agent hosting, tool catalog, MCP routing, publication | Business data, computation |
+| Agent Framework | Agent orchestration, tool catalog, session state, middleware | Business data, computation |
 
 ### 5. Product Boundary
 
@@ -59,7 +61,7 @@ Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot —
 
 - **Odoo modules stay thin**: `ipai_copilot_*` modules expose API endpoints and tool contracts only.
 - **Agent logic lives outside Odoo**: in `agents/odoo-copilot/` and `packages/tool-*`.
-- **Foundry/Agent Framework own orchestration**: agent composition, workflow, session state.
+- **Agent Framework owns orchestration**: agent composition, workflow, session state, memory, middleware, tools.
 - **MCP/tool contracts own integration shape**: typed schemas, error taxonomy, retry semantics.
 
 ### 7. Naming Conventions
@@ -74,17 +76,17 @@ Define hard boundaries and non-negotiables for the Azure-native Odoo Copilot —
 ### In Scope
 
 - Governed transactional, navigational, and informational capabilities
-- Microsoft Foundry agent hosting and tool catalog
-- Agent Framework runtime (agents, workflows, MCP, structured output, RAG)
+- Microsoft Agent Framework agent orchestration and tool catalog
+- Agent Framework runtime (agents, workflows, MCP, structured output, RAG, memory, middleware)
 - MCP-based tool federation to Odoo, Supabase, Databricks, Plane
-- Publication paths: Foundry, Microsoft 365 Copilot, Teams
+- Publication paths: Agent Framework, Microsoft 365 Copilot, Teams
 - Thin Odoo modules for ERP tool exposure
 - Observability via Azure Monitor / App Insights / OpenTelemetry
 
 ### Out of Scope
 
 - Replacing Odoo UI wholesale
-- Moving ERP truth into Foundry
+- Moving ERP truth into Agent Framework
 - Duplicating Databricks marts into Odoo or Supabase
 - Building ad-hoc tool calls with no contract or approval model
 - Generic chatbot / chat-app boilerplate

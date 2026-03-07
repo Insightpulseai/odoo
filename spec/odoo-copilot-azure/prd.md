@@ -26,14 +26,14 @@ Deliver an Azure-native Odoo Copilot that exposes governed business capabilities
 | G1 | Provide transactional Odoo actions through explicit approved tools | Tool success rate > 95% |
 | G2 | Provide navigational assistance with deep links into Odoo, Plane, and related systems | Navigation hop reduction > 50% |
 | G3 | Provide informational answers grounded in Odoo records, documents, workspace knowledge, and summarized analytics | Grounding/citation coverage > 80% |
-| G4 | Use Microsoft Foundry and MCP as the standard agent/tool platform | 100% of tools registered in Foundry catalog |
+| G4 | Use Microsoft Agent Framework and MCP as the standard agent/tool platform | 100% of tools registered in Agent Framework tool catalog |
 | G5 | Preserve system-of-record boundaries across Odoo, Supabase, Databricks, and Plane | Zero SoR violations in audit |
 | G6 | Publishable architecture for Microsoft 365 Copilot / Teams without replatforming core logic | Publication path validated end-to-end |
 
 ## Non-Goals
 
 - Replace Odoo UI wholesale
-- Move ERP truth into Foundry
+- Move ERP truth into Agent Framework
 - Duplicate Databricks marts into Odoo or Supabase
 - Build ad-hoc tool calls with no contract or approval model
 
@@ -71,62 +71,54 @@ Queries that retrieve, summarize, or explain data from grounded sources.
 | Capability | Source Systems | Tool Contract |
 |-----------|---------------|---------------|
 | Summarize account status | Odoo + Databricks | `tool-odoo/account/summary` |
-| Summarize project exceptions | Odoo + Databricks | `tool-databricks/project/exceptions` |
+| Summarize project exceptions (optional/advanced) | Odoo + Databricks | `tool-databricks/project/exceptions` |
 | Answer policy questions | Plane docs | `tool-plane/knowledge/query` |
 | Explain workflow blocker | Odoo + Supabase | `tool-odoo/workflow/explain-blocker` |
-| Show approval turnaround metrics | Databricks | `tool-databricks/approvals/metrics` |
+| Show approval turnaround metrics (optional/advanced) | Databricks | `tool-databricks/approvals/metrics` |
 
 ## System Architecture
 
 ```
-                  ┌─────────────────────────────────┐
-                  │     Microsoft Foundry            │
-                  │  ┌─────────────────────────────┐ │
-                  │  │  Foundry Agents Service      │ │
-                  │  │  ┌─────────────────────────┐ │ │
-                  │  │  │   Agent Framework        │ │ │
-                  │  │  │   - Agents               │ │ │
-                  │  │  │   - Workflows            │ │ │
-                  │  │  │   - MCP Client           │ │ │
-                  │  │  │   - Session State        │ │ │
-                  │  │  │   - Structured Output    │ │ │
-                  │  │  │   - RAG/Context          │ │ │
-                  │  │  │   - Observability        │ │ │
-                  │  │  └────────┬────────────────┘ │ │
-                  │  │           │ MCP              │ │
-                  │  │  ┌───────┼────────────────┐  │ │
-                  │  │  │ Tool Catalog           │  │ │
-                  │  │  │ ┌──────┬──────┬──────┐ │  │ │
-                  │  │  │ │Odoo  │Supa  │D.brix│ │  │ │
-                  │  │  │ │Tools │Tools │Tools │ │  │ │
-                  │  │  │ └──┬───┴──┬───┴──┬───┘ │  │ │
-                  │  │  └────┼─────┼──────┼─────┘  │ │
-                  │  └───────┼─────┼──────┼────────┘ │
-                  └──────────┼─────┼──────┼──────────┘
-                             │     │      │
-              ┌──────────────┘     │      └──────────────┐
-              ▼                    ▼                      ▼
-     ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
-     │  Odoo CE 19    │  │   Supabase     │  │  Databricks    │
-     │  (ERP truth)   │  │ (Control Plane)│  │ (Intelligence) │
-     │                │  │                │  │                │
-     │ ipai_copilot_* │  │ ctrl.*         │  │ gold.*         │
-     │ (thin modules) │  │ identity_map   │  │ marts          │
-     └────────────────┘  │ sync_state     │  │ forecasts      │
-              ▲          └────────────────┘  └────────────────┘
-              │
-     ┌────────────────┐
-     │     Plane       │
-     │  (Workspace)    │
-     │  docs, SOPs     │
-     └────────────────┘
+                  ┌─────────────────────────────────────┐
+                  │     Microsoft Agent Framework        │
+                  │  ┌────────────────────────────────┐  │
+                  │  │  Agents / Workflows             │  │
+                  │  │  MCP Client                     │  │
+                  │  │  Session State / Memory          │  │
+                  │  │  Middleware / Tools              │  │
+                  │  │  Structured Output               │  │
+                  │  │  RAG / Context                   │  │
+                  │  │  Observability                   │  │
+                  │  └────────────┬───────────────────┘  │
+                  │               │ MCP                   │
+                  │  ┌────────────┼──────────────────┐   │
+                  │  │  Tool Registry                │   │
+                  │  │  ┌──────┬──────┬──────┬─────┐ │   │
+                  │  │  │Odoo  │Supa  │D.brix│Plane│ │   │
+                  │  │  │Tools │Tools │Tools │Tools│ │   │
+                  │  │  └──┬───┴──┬───┴──┬───┴──┬──┘ │   │
+                  │  └─────┼─────┼──────┼──────┼────┘   │
+                  └────────┼─────┼──────┼──────┼────────┘
+                           │     │      │      │
+            ┌──────────────┘     │      │      └──────────┐
+            ▼                    ▼      ▼                  ▼
+   ┌────────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+   │  Odoo CE 19    │  │  Supabase    │  │  Databricks  │  │    Plane     │
+   │  (ERP truth)   │  │ (Ctrl Plane) │  │ (Intel, opt) │  │ (Workspace)  │
+   │                │  │              │  │              │  │              │
+   │ ipai_copilot_* │  │ ctrl.*       │  │ gold.*       │  │ docs, SOPs   │
+   │ (thin modules) │  │ identity_map │  │ marts        │  │              │
+   └────────────────┘  │ sync_state   │  │ forecasts    │  └──────────────┘
+                       └──────────────┘  └──────────────┘
+
+  Hosting: ASP.NET Core (Container Apps) or Durable Azure Functions
 ```
 
 ## Publication Channels
 
 | Channel | Priority | Description |
 |---------|----------|-------------|
-| Foundry (direct) | P0 | Primary agent surface |
+| Agent Framework (direct) | P0 | Primary agent surface |
 | Web shell | P1 | Optional custom web UI |
 | Microsoft 365 Copilot | P2 | Enterprise copilot integration |
 | Teams | P2 | Chat-based access |

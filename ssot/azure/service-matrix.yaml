@@ -15,6 +15,7 @@ services:
     status: active
     promotion_state: live
     health_check: "https://erp.insightpulseai.com/web/health"
+    migration_target: azure_runtime
 
   - id: svc_002
     name: "n8n Automation"
@@ -24,6 +25,7 @@ services:
     ip: "178.128.112.214"
     status: active
     promotion_state: live
+    migration_target: azure_runtime
 
   - id: svc_003
     name: "Supabase"
@@ -105,6 +107,107 @@ services:
     endpoint: "mcp.insightpulseai.com"
     status: active
     promotion_state: live
+
+  # Azure Runtime Services (planned)
+  - id: svc_030
+    name: "Azure Container Apps"
+    category: compute
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+    spec: "spec/azure-target-state/"
+
+  - id: svc_031
+    name: "Azure Container Registry (ACR)"
+    category: registry
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+
+  - id: svc_032
+    name: "Azure Database for PostgreSQL Flexible Server"
+    category: database
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+    config:
+      version: "16"
+      ha: true
+
+  - id: svc_033
+    name: "Azure Front Door Premium"
+    category: edge
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+    features: [waf, ssl_termination, global_routing]
+
+  - id: svc_034
+    name: "Azure Key Vault"
+    category: secrets
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+
+  - id: svc_035
+    name: "Azure Managed Identity (Entra ID)"
+    category: identity
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+
+  - id: svc_036
+    name: "Azure Monitor + App Insights + Log Analytics"
+    category: observability
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+
+  - id: svc_037
+    name: "Azure Virtual Network"
+    category: networking
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+    features: [nsg, private_link, nat_gateway]
+
+  - id: svc_038
+    name: "Azure Storage Account"
+    category: storage
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: mandatory
+
+  - id: svc_040
+    name: "Databricks Lakehouse"
+    category: data_ai
+    hosting: azure
+    status: planned
+    promotion_state: repo-only
+    stack_classification: optional_data_ai
+    NOT_in_delivery_path: true
+    features: [unity_catalog, delta_lake, ml_serving]
+
+stack_classification:
+  mandatory:
+    description: "Required for ERP SaaS runtime"
+    services: [svc_030, svc_031, svc_032, svc_033, svc_034, svc_035, svc_036, svc_037, svc_038]
+  optional_strong:
+    description: "Recommended for production hardening"
+    services: []
+    candidates: ["Service Bus", "Event Grid", "Function App", "API Management", "NAT Gateway", "Azure Policy"]
+  optional_data_ai:
+    description: "Data/AI plane — separate from delivery"
+    services: [svc_040]
 
 erp_positioning:
   canonical_statement: "Odoo CE 19 is the system of record for all financial transactions, HR, CRM, approvals, and compliance data. It is self-hosted on DigitalOcean, NOT SaaS."
