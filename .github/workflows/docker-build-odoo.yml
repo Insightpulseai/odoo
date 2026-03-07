@@ -8,7 +8,6 @@ on:
       - 'addons/oca/**'
       - 'docker/odoo/**'
       - 'requirements.txt'
-  push:
     tags:
       - 'v*.*.*'
   workflow_dispatch:
