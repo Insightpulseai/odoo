@@ -98,6 +98,22 @@ tool_allowlist:
     reads_from: plane
     audit: required
 
+  - id: add_comment
+    description: "Add a comment to an existing Plane issue"
+    http_method: POST
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/issues/{issue_id}/comments/
+    writes_to: plane
+    audit: required
+    idempotency: required
+
+  - id: create_page
+    description: "Create a new Plane page (wiki/doc) in a project"
+    http_method: POST
+    api_path: /workspaces/{workspace_slug}/projects/{project_id}/pages/
+    writes_to: plane
+    audit: required
+    idempotency: required
+
 required_secrets:
   - plane_api_key        # X-API-Key header
   - plane_workspace_id   # workspace slug injected into all API paths
