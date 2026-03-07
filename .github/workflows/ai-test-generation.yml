@@ -252,38 +252,26 @@ jobs:
               test_file = test_dir / f"test_{unit_test['test_name']}.py"
 
               with open(test_file, 'w') as f:
-                  f.write(f'''# AI-Generated Unit Test
-  # Target: {unit_test.get('target_class', 'Unknown')}.{unit_test.get('target_method', 'Unknown')}
-
-  from odoo.tests.common import TransactionCase
-  from odoo.exceptions import ValidationError
-
-
-  class Test{unit_test['test_name'].title().replace('_', '')}(TransactionCase):
-      """
-      AI-Generated Unit Tests for {unit_test.get('target_class', 'Unknown')}.{unit_test.get('target_method', 'Unknown')}
-      """
-
-      def setUp(self):
-          super().setUp()
-          # Setup test data
-          self.model = self.env['{unit_test.get('target_class', 'unknown.model')}']
-
-  ''')
+                  f.write("# AI-Generated Unit Test\n")
+                  f.write(f"# Target: {unit_test.get('target_class', 'Unknown')}.{unit_test.get('target_method', 'Unknown')}\n\n")
+                  f.write("from odoo.tests.common import TransactionCase\n")
+                  f.write("from odoo.exceptions import ValidationError\n\n\n")
+                  f.write(f"class Test{unit_test['test_name'].title().replace('_', '')}(TransactionCase):\n")
+                  f.write(f'    """\n    AI-Generated Unit Tests for {unit_test.get("target_class", "Unknown")}.{unit_test.get("target_method", "Unknown")}\n    """\n\n')
+                  f.write("    def setUp(self):\n")
+                  f.write("        super().setUp()\n")
+                  f.write("        # Setup test data\n")
+                  f.write(f"        self.model = self.env['{unit_test.get('target_class', 'unknown.model')}']\n\n")
 
                   for i, test_case in enumerate(unit_test.get('test_cases', [])[:5]):  # Limit to 5 tests
-                      f.write(f'''
-      def test_{test_case.get('description', f'case_{i}').lower().replace(' ', '_')[:50]}(self):
-          """
-          {test_case.get('description', 'Test case')}
-
-          Expected: {test_case.get('expected_output', 'Success')}
-          """
-          # TODO: Implement test logic based on specification
-          # {test_case.get('setup', 'Setup')}
-          # Input: {test_case.get('input', 'None')}
-          self.assertTrue(True, "Test implementation required")
-  ''')
+                      method_name = test_case.get('description', f'case_{i}').lower().replace(' ', '_')[:50]
+                      f.write(f"\n    def test_{method_name}(self):\n")
+                      f.write(f'        """\n        {test_case.get("description", "Test case")}\n\n')
+                      f.write(f'        Expected: {test_case.get("expected_output", "Success")}\n        """\n')
+                      f.write(f"        # TODO: Implement test logic based on specification\n")
+                      f.write(f"        # {test_case.get('setup', 'Setup')}\n")
+                      f.write(f"        # Input: {test_case.get('input', 'None')}\n")
+                      f.write('        self.assertTrue(True, "Test implementation required")\n')
 
           print(f"✅ Generated {len(spec.get('unit_tests', []))} unit test files")
 
@@ -291,23 +279,16 @@ jobs:
           if spec.get('integration_tests'):
               integration_file = test_dir / "test_integration.py"
               with open(integration_file, 'w') as f:
-                  f.write(f'''# AI-Generated Integration Tests
-  # Module: {module_name}
-
-  from odoo.tests.common import HttpCase
-  import json
-
-
-  class TestIntegration(HttpCase):
-      """
-      AI-Generated Integration Tests for {module_name}
-      """
-
-      def test_api_endpoints(self):
-          """Test API endpoints are accessible"""
-          # TODO: Implement based on specification
-          self.assertTrue(True, "Integration test implementation required")
-  ''')
+                  f.write("# AI-Generated Integration Tests\n")
+                  f.write(f"# Module: {module_name}\n\n")
+                  f.write("from odoo.tests.common import HttpCase\n")
+                  f.write("import json\n\n\n")
+                  f.write("class TestIntegration(HttpCase):\n")
+                  f.write(f'    """\n    AI-Generated Integration Tests for {module_name}\n    """\n\n')
+                  f.write("    def test_api_endpoints(self):\n")
+                  f.write('        """Test API endpoints are accessible"""\n')
+                  f.write("        # TODO: Implement based on specification\n")
+                  f.write('        self.assertTrue(True, "Integration test implementation required")\n')
               print(f"✅ Generated integration test skeleton")
 
           PYTHON_EOF

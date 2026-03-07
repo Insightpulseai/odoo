@@ -152,23 +152,17 @@ jobs:
               f.write(f"production_count={production_count}\n")
 
           # Generate detailed report
-          report = f"""# EE Feature Parity Report
-
-**Generated**: {registry['meta']['last_assessed']}
-**Odoo Version**: {registry['meta']['odoo_version']}
-
-## Summary
-
-- **Average Parity**: {avg_parity:.1f}%
-- **Target**: {target}%
-- **Gap to Target**: {gap:.1f}%
-- **Production-Ready Features**: {production_count}/{len(features)}
-
-## Feature Breakdown
-
-| Feature | Status | Parity | Target | Gap |
-|---------|--------|--------|--------|-----|
-"""
+          report = "# EE Feature Parity Report\n\n"
+          report += f"**Generated**: {registry['meta']['last_assessed']}\n"
+          report += f"**Odoo Version**: {registry['meta']['odoo_version']}\n"
+          report += "\n## Summary\n\n"
+          report += f"- **Average Parity**: {avg_parity:.1f}%\n"
+          report += f"- **Target**: {target}%\n"
+          report += f"- **Gap to Target**: {gap:.1f}%\n"
+          report += f"- **Production-Ready Features**: {production_count}/{len(features)}\n"
+          report += "\n## Feature Breakdown\n\n"
+          report += "| Feature | Status | Parity | Target | Gap |\n"
+          report += "|---------|--------|--------|--------|-----|\n"
 
           for feature in features:
               name = feature['name']
@@ -332,32 +326,22 @@ jobs:
 
               # Create tracking issue
               title = f"EE Parity: Close gap for {feature['ee_feature']}"
-              body = f"""## Feature: {feature['ee_feature']}
-
-**Current Parity**: {feature['parity_percent']}%
-**Target**: {feature['target_parity']}%
-**Gap**: {feature['target_parity'] - feature['parity_percent']}%
-
-### Known Gaps
-
-"""
+              body = f"## Feature: {feature['ee_feature']}\n\n"
+              body += f"**Current Parity**: {feature['parity_percent']}%\n"
+              body += f"**Target**: {feature['target_parity']}%\n"
+              body += f"**Gap**: {feature['target_parity'] - feature['parity_percent']}%\n"
+              body += "\n### Known Gaps\n\n"
               for replacement in feature['replacements']:
                   for gap in replacement.get('gaps', []):
                       body += f"- [ ] {gap}\n"
 
-              body += f"""
-
-### Next Milestones
-
-"""
+              body += "\n### Next Milestones\n\n"
               for milestone in feature.get('next_milestones', []):
                   body += f"- [ ] {milestone['action']} (Target: {milestone['target_date']}, Impact: {milestone['parity_impact']})\n"
 
-              body += f"""
-
-**SSOT Reference**: `ssot/ee_parity/replacements.yaml`
-**Evidence**: `{feature['evidence'][0]['path']}`
-"""
+              body += "\n"
+              body += f"**SSOT Reference**: `ssot/ee_parity/replacements.yaml`\n"
+              body += f"**Evidence**: `{feature['evidence'][0]['path']}`\n"
 
               subprocess.run([
                   'gh', 'issue', 'create',
