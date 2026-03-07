@@ -19,7 +19,43 @@ This product is a **governed ERP SaaS platform**, not a marketplace VM image or 
 
 ---
 
-## 2. Architecture Boundaries (Never Violate)
+## 2. Product Decomposition (5 Planes)
+
+The product is NOT an Odoo runtime. It is a **managed ERP application platform** made of five planes:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Commercial Plane                                       │
+│  Plans, entitlements, billing hooks, SLA tiers          │
+├─────────────────────────────────────────────────────────┤
+│  Operations Plane (Day-2) ← THE REAL PRODUCT            │
+│  Backups, patching, SSL, health, upgrades, evidence     │
+├─────────────────────────────────────────────────────────┤
+│  Control Plane                                          │
+│  Tenant registry, plan catalog, module packs, audit     │
+├─────────────────────────────────────────────────────────┤
+│  Runtime Plane                                          │
+│  Odoo CE + OCA + ipai_* bridges in Docker containers    │
+├─────────────────────────────────────────────────────────┤
+│  Infrastructure Plane                                   │
+│  Azure Container Apps, PG Flexible, Key Vault, CDN      │
+└─────────────────────────────────────────────────────────┘
+```
+
+| Plane | What It Is | Owner |
+|-------|-----------|-------|
+| **Runtime** | Odoo CE + PG + Nginx + Docker | `odoo` repo |
+| **Control** | Tenant/plan/module registry, operator state | `ops-platform` repo (Supabase) |
+| **Operations** | Backup, patch, upgrade, health, cert, scaling | `infra` repo + CI workflows |
+| **Infrastructure** | Azure/DO hosting substrate | `infra` repo |
+| **Commercial** | Plan tiers, billing, SLA, add-ons | `ops-platform` repo |
+| **Extension** | OCA modules, ipai_* bridges, API integrations | `odoo` repo |
+
+**Critical insight**: The runtime is commodity. The **Operations + Control planes are the real product**. That is the difference between a marketplace VM image and a managed ERP SaaS.
+
+---
+
+## 3. Architecture Boundaries (Never Violate)
 
 ### ERP Core = Odoo CE
 
