@@ -1,0 +1,59 @@
+version: "1.0"
+last_updated: "2026-03-07"
+governance: "spec/azure-target-state/constitution.md"
+
+platforms:
+  github:
+    role: primary
+    capabilities:
+      source_control: { status: active, service: "GitHub Repos" }
+      ci_cd: { status: active, service: "GitHub Actions", workflow_count: 153 }
+      code_review: { status: active, service: "GitHub PRs" }
+      issue_tracking: { status: active, service: "GitHub Issues + Plane" }
+      documentation: { status: active, service: "In-repo spec kits" }
+      releases: { status: active, service: "GitHub Releases" }
+      packages: { status: active, service: "npm (pnpm workspaces)" }
+      security: { status: active, service: "Dependabot + CodeQL" }
+
+  azure_devops:
+    role: bounded
+    constraint: "Boards-only program overlay"
+    capabilities:
+      boards: { status: optional, service: "Azure Boards" }
+      executive_reporting: { status: optional, service: "Azure Dashboards" }
+    prohibited:
+      - repos
+      - pipelines
+      - artifacts
+      - test_plans
+      - wiki
+
+  azure_cloud:
+    role: agent_platform
+    constraint: "Foundry + Container Apps for copilot runtime only"
+    capabilities:
+      foundry_agents: { status: repo-only, service: "Foundry Agents Service", spec: "spec/odoo-copilot-azure/" }
+      container_apps: { status: repo-only, service: "Azure Container Apps" }
+      key_vault: { status: repo-only, service: "Azure Key Vault" }
+      api_management: { status: repo-only, service: "Azure API Management" }
+      monitor: { status: repo-only, service: "Azure Monitor / App Insights" }
+
+  digitalocean:
+    role: primary_hosting
+    capabilities:
+      compute: { status: active, service: "DO Droplets", ip: "178.128.112.214" }
+      apps: { status: active, service: "DO App Platform" }
+      dns: { status: active, service: "Cloudflare (delegated)" }
+      container_registry: { status: active, service: "DO Container Registry" }
+
+migration_direction: "azure_devops -> github (repos, pipelines, wiki)"
+conflict_resolution: "github_authoritative"
+sync_direction: "github -> azure_devops (one-way, never reverse)"
+
+cross_references:
+  constitution: "spec/azure-target-state/constitution.md"
+  prd: "spec/azure-target-state/prd.md"
+  service_matrix: "ssot/azure/service-matrix.yaml"
+  dns_plan: "ssot/azure/dns-migration-plan.yaml"
+  copilot_spec: "spec/odoo-copilot-azure/"
+  mapping: "docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml"

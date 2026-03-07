@@ -83,7 +83,7 @@ ls -d ipai_* tbwa_* 2>/dev/null | tr '\n' ','
 {
   "status": "success|failure|cancelled",
   "repo": "insightpulseai/odoo-ce",
-  "workflow": "Odoo SaaS Parity Tests",
+  "workflow": "Odoo CE Parity Tests",
   "job": "test-parity",
   "run_id": "1234567890",
   "run_number": "42",
@@ -295,7 +295,7 @@ n8n Workflow:
 Supabase ci_health table:
   | id | status  | workflow             | job        | branch                           | timestamp           |
   |----|---------|----------------------|------------|----------------------------------|---------------------|
-  | 42 | success | Odoo SaaS Parity ... | test-parity| feature/add-expense-equipment... | 2025-11-23 14:30:00 |
+  | 42 | success | Odoo CE Parity ...   | test-parity| feature/add-expense-equipment... | 2025-11-23 14:30:00 |
 ```
 
 ---

@@ -123,19 +123,19 @@ If something is environment-specific, **generate a script with TODO comments**, 
 
 ---
 
-## Odoo / Odoo.sh Rules
+## Odoo CE 19 Rules (Self-Hosted)
 
 ### Prefer
 
 * `addons/` modules + migrations
 * `scripts/odoo_*.sh` wrappers
-* `odoo.sh` / CI YAML for deploy
+* CI YAML for deploy (GitHub Actions)
 * `--stop-after-init` verification commands
 
 ### Avoid
 
 * Explaining how to click through Odoo UI for installs or upgrades
-* Manual Odoo.sh dashboard instructions
+* Any references to Odoo.sh, Odoo Online, or Odoo SaaS platforms
 * "Go to Settings → Technical → …" guides
 
 ### Task completion for Odoo

@@ -54,3 +54,12 @@ Mixed platform usage creates:
 - Zero active pipelines on Azure DevOps
 - Zero documentation on Azure Wiki
 - Azure DevOps cost reduced to Boards-only tier (if retained) or $0
+
+## External SSOT Dependencies
+
+| Artifact | Path | Purpose |
+|----------|------|---------|
+| Target State | `ssot/azure/target-state.yaml` | Canonical platform capability matrix |
+| Service Matrix | `ssot/azure/service-matrix.yaml` | Machine-readable service inventory |
+| DNS Migration | `ssot/azure/dns-migration-plan.yaml` | DNS record state machine |
+| Service Mapping | `docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml` | Azure→DO/Supabase equivalents |
