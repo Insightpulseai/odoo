@@ -193,7 +193,11 @@
     "fastlane",
     "mattermost",
     "runtime",
-    "ssot"
+    "ssot",
+    "Documents",
+    "datasets",
+    "eval",
+    "prompts"
   ],
   "notes": {
     "hidden_files": "Hidden files starting with . are allowed if listed above",
