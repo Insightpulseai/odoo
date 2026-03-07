@@ -22,9 +22,12 @@
 
 - **Core app is 100% free** — no login, no registration, no license required
 - Revenue comes from **Atlassian Marketplace** (Confluence + Jira integrations)
+- Atlassian marketplace published by **Seibert Group** (400+ employees, largest Atlassian partner)
 - draw.io is the **#1 rated diagramming app** on Atlassian Marketplace with more installs than all other native Confluence diagramming apps combined
 - Philosophy: "Provide free, high quality diagramming software for everyone" — disrupt the $1B+ diagramming market by eliminating artificial scarcity
 - No vendor lock-in: diagram files are open XML, always editable for free
+- Bootstrapped and profitable — no VC funding
+- License: Apache 2.0 (briefly modified Aug-Dec 2024 to restrict Atlassian competitors, then reverted)
 
 ### Sources
 - [About draw.io](https://www.drawio.com/about)
@@ -75,9 +78,14 @@ draw.io does **not** store your data — you choose where:
 
 ### Compliance
 - GDPR compliant (EU data residency via user-controlled storage)
-- SOC 2 compliance for Atlassian marketplace apps
+- Enables **ISO 27000, 27001, 27002** compliance (data never leaves your infra)
+- SOC 2 compliance posture for Atlassian marketplace apps
+- **Atlassian Cloud Fortified** — only diagramming app to achieve this
+- **draw.io Zero Egress** edition on Forge — zero data egress for maximum security
 - Data Center approved for Atlassian (enterprise security reviews available)
-- Advanced Edition on Atlassian offers: custom security reviews, enhanced data controls
+- Advanced Edition supports "lockdown" mode — disables all communication except browser-to-storage
+- Data Protection Officer appointed under UK GDPR / Data Protection Act 2018
+- IP + device info in access logs cyclically overwritten every 10 days
 
 ### AI Privacy Note
 - AI diagram generation (Generate tool) sends data to the selected LLM provider (OpenAI, Google, Anthropic)
@@ -103,13 +111,28 @@ draw.io does **not** store your data — you choose where:
 | **Notion** | Chrome extension | Embed/edit in Notion pages |
 | **Plane.so** | Native integration | `/draw` slash command in pages |
 
-### Tier 2 — Desktop & IDE
+### Tier 2 — Desktop, IDE & AI Agents
 
 | Platform | Type |
 |----------|------|
 | **Desktop app** | Windows, macOS, Linux (Electron) — offline capable |
 | **VS Code** | Extension (`.drawio` file editing in IDE) |
 | **github.dev / Codespaces** | VS Code web extension |
+| **MCP Server** | Official `@drawio/mcp` npm package (Feb 2026) |
+
+### MCP Server (Model Context Protocol)
+
+draw.io has an **official MCP server** — directly relevant for AI agent workflows:
+
+| Feature | Details |
+|---------|---------|
+| **Package** | `@drawio/mcp` on npm |
+| **Repository** | `github.com/jgraph/drawio-mcp` |
+| **Hosted endpoint** | `https://mcp.draw.io/mcp` |
+| **Modes** | MCP App Server (inline in chat), MCP Tool Server (stdio), Claude Code Skill, Project Instructions |
+| **Tools** | `open_drawio_xml`, `open_drawio_csv`, `open_drawio_mermaid` |
+
+This means Claude Code, Cursor, and other AI agents can **generate and open draw.io diagrams programmatically** — a direct integration point for the IPAI stack's AI agent architecture.
 
 ### Tier 3 — Community / Third-Party
 
