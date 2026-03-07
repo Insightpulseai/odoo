@@ -343,6 +343,22 @@ Q2: Where does it belong?
 
 ---
 
+## Runtime Build Ownership
+
+The runtime image is owned by this repository and must be built from this repo's contracts.
+
+External marketplace images (Websoft9, Bitnami, etc.) may be used for benchmarking or comparison only. They must not redefine:
+
+- Addon path order (`addons/odoo` -> `addons/oca` -> `addons/ipai`)
+- Module policy (OCA-first, ipai bridges only)
+- Release provenance (Git SHA-based tagging)
+- Deployment expectations (compose, Container Apps)
+- Database naming (`odoo_prod`, `odoo_stage`, `odoo_dev`)
+
+The canonical image definition is `docker/Dockerfile.unified`. See `docs/architecture/CANONICAL_RUNTIME_IMAGE.md` for the full runtime image contract.
+
+---
+
 ## References
 
 ### Constitution Cross-References

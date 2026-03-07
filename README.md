@@ -67,6 +67,31 @@ Until that decomposition is complete, this repository remains the authoritative 
 
 ---
 
+## Canonical Runtime Strategy
+
+This repository targets a custom InsightPulseAI-managed runtime image built on Odoo CE 19.
+
+| Property | Value |
+|----------|-------|
+| Image | `ipai-odoo-runtime` |
+| Base | `odoo:19` (Odoo Community Edition) |
+| Dockerfile | [`docker/Dockerfile.unified`](docker/Dockerfile.unified) |
+| GHCR | `ghcr.io/insightpulseai/ipai-odoo-runtime` |
+| DOCR | `registry.digitalocean.com/insightpulseai/ipai-odoo-runtime` |
+
+The runtime contract is:
+
+- **CE 19 base** — official Odoo Community Edition Docker image
+- **OCA for parity** — EE-equivalent functionality via OCA modules (`addons/oca/`)
+- **`ipai_*` only where required** — integration bridges, external connectors, approved meta-bundles (`addons/ipai/`)
+- **Deterministic builds** — images tied to Git commit provenance, Cosign-signed, SBOM-tracked
+
+Marketplace VM images and third-party packaged Odoo distributions are not the canonical production runtime.
+
+Full specification: [`docs/architecture/CANONICAL_RUNTIME_IMAGE.md`](docs/architecture/CANONICAL_RUNTIME_IMAGE.md)
+
+---
+
 ## Canonical URLs (SSOT)
 
 This repository uses a **single source of truth** for all service URLs.

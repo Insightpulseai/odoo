@@ -58,9 +58,9 @@ jobs:
             --registry ${{ env.ACR_NAME }} \
             --image odoo:${{ github.sha }} \
             --image odoo:latest \
-            --file docker/Dockerfile \
-            --build-arg ODOO_VERSION=19.0 \
-            --build-arg ENVIRONMENT=${ENV} \
+            --file docker/Dockerfile.unified \
+            --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+            --build-arg GIT_SHA=${{ github.sha }} \
             .
 
           echo "✅ Image pushed: ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }}"
