@@ -54,7 +54,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.mode == 'live') ||
       github.event_name == 'push'
     needs: mfa-schema
-    environment: production   # gates on production environment secrets
+    environment: odoo-production   # gates on odoo-production environment secrets
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
