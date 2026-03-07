@@ -5,9 +5,12 @@ check_deprecated_provider_defaults.py — Scan for deprecated provider defaults 
 Catches regressions where a deprecated provider is hardcoded as the default
 in Odoo model field definitions or param fallbacks.
 
-Forbidden patterns (tuples of regex pattern, human-readable reason):
-  - default="mailgun"   — Mailgun deprecated 2026-02, replaced by Zoho Mail
-  - "mailgun"           — as a get_param/set_param fallback
+Active mail providers (NOT deprecated):
+  - zoho     — inbound MX + team mailboxes (insightpulseai.com)
+  - mailgun  — transactional outbound email (mg.insightpulseai.com)
+
+Deprecated providers:
+  - mattermost  — replaced by Slack (2026-01-28)
 
 Exit codes:
   0  no violations found
@@ -27,18 +30,13 @@ ROOT = Path(__file__).resolve().parents[2]
 # ---------------------------------------------------------------------------
 FORBIDDEN: list[tuple[re.Pattern, str, str]] = [
     (
-        re.compile(r'default\s*=\s*["\']mailgun["\']'),
-        "deprecated provider default='mailgun' (replace with 'zoho')",
+        re.compile(r'default\s*=\s*["\']mattermost["\']'),
+        "deprecated provider default='mattermost' (replace with 'slack')",
         "**/*.py",
     ),
     (
-        re.compile(r'get_param\([^)]+,\s*["\']mailgun["\']'),
-        "deprecated get_param fallback 'mailgun' (replace with 'zoho')",
-        "**/*.py",
-    ),
-    (
-        re.compile(r'set_param\([^)]+\bor\s*["\']mailgun["\']'),
-        "deprecated set_param fallback 'mailgun' (replace with 'zoho')",
+        re.compile(r'get_param\([^)]+,\s*["\']mattermost["\']'),
+        "deprecated get_param fallback 'mattermost' (replace with 'slack')",
         "**/*.py",
     ),
 ]
@@ -55,7 +53,6 @@ EXCLUDE_PATTERNS = [
     ".git",
     "tests/fixtures",
     "docs/",
-    "config/MAILGUN_INTEGRATION_DEPLOYMENT.md",  # legacy doc — not code
     # Exclude this script itself (contains forbidden strings as documentation)
     "scripts/ci/check_deprecated_provider_defaults.py",
 ]
@@ -101,8 +98,8 @@ def main() -> int:
         print(f"    {text}", file=sys.stderr)
 
     print(
-        "\nFix: replace forbidden defaults with the canonical provider "
-        "(e.g., 'zoho' for mail). See ssot/runtime/prod_settings.yaml.",
+        "\nFix: replace forbidden defaults with the canonical provider. "
+        "See ssot/runtime/prod_settings.yaml.",
         file=sys.stderr,
     )
     return 1
