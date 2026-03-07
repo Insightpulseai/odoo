@@ -43,7 +43,7 @@ env:
 jobs:
   auto-install:
     runs-on: ubuntu-latest
-    environment: production
+    environment: odoo-production
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    environment: production
+    environment: odoo-production
     env:
       TF_IN_AUTOMATION: "true"
       TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
