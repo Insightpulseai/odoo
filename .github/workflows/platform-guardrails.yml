@@ -2,8 +2,17 @@ name: Platform Guardrails
 
 on:
   pull_request:
+    paths:
+      - 'ops/**'
+      - '.env'
+      - '**/.env'
+      - '**/*secrets*'
+      - '.github/workflows/platform-guardrails.yml'
   push:
     branches: [main]
+    paths:
+      - 'ops/**'
+      - '.env'
 
 permissions:
   contents: read
