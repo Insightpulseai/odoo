@@ -1,0 +1,27 @@
+task_code,bir_form,period,deadline,prep_date,review_date,approval_date,prep_days,review_days,approval_days,total_days,depends_on,is_metadata
+TAX_1601_C_COMPENSATION_001,1601-C (Compensation),Dec 2025,2026-01-15,2026-01-09,2026-01-13,2026-01-14,4,1,1,6,,false
+TAX_1601_C___0619_E_002,1601-C / 0619-E,Jan 2026,2026-02-10,2026-02-04,2026-02-06,2026-02-07,2,1,3,6,,false
+TAX_1601_C___0619_E_003,1601-C / 0619-E,Feb 2026,2026-03-10,2026-03-04,2026-03-06,2026-03-07,2,1,3,6,,false
+TAX_1601_C___0619_E_004,1601-C / 0619-E,Mar 2026,2026-04-10,2026-04-04,2026-04-08,2026-04-09,4,1,1,6,,false
+TAX_1601_C___0619_E_005,1601-C / 0619-E,Apr 2026,2026-05-10,2026-05-06,2026-05-08,2026-05-09,2,1,1,4,,false
+TAX_1601_C___0619_E_006,1601-C / 0619-E,May 2026,2026-06-10,2026-06-04,2026-06-06,2026-06-09,2,3,1,6,,false
+TAX_1601_C___0619_E_007,1601-C / 0619-E,Jun 2026,2026-07-10,2026-07-04,2026-07-08,2026-07-09,4,1,1,6,,false
+TAX_1601_C___0619_E_008,1601-C / 0619-E,Jul 2026,2026-08-10,2026-08-05,2026-08-07,2026-08-08,2,1,2,5,,false
+TAX_1601_C___0619_E_009,1601-C / 0619-E,Aug 2026,2026-09-10,2026-09-04,2026-09-08,2026-09-09,4,1,1,6,,false
+TAX_1601_C___0619_E_010,1601-C / 0619-E,Sep 2026,2026-10-12,2026-10-06,2026-10-08,2026-10-09,2,1,3,6,,false
+TAX_1601_C___0619_E_011,1601-C / 0619-E,Oct 2026,2026-11-10,2026-11-04,2026-11-06,2026-11-07,2,1,3,6,,false
+TAX_1601_C___0619_E_012,1601-C / 0619-E,Nov 2026,2026-12-10,2026-12-03,2026-12-05,2026-12-09,2,4,1,7,,false
+TAX_1601_EQ_QUARTERLY_EWT_013,1601-EQ (Quarterly EWT),Q4 2025,2026-01-30,2026-01-24,2026-01-28,2026-01-29,4,1,1,6,,false
+TAX_1702_RT_EX_INCOME_TAX_014,1702-RT/EX (Income Tax),Annual 2025,2026-04-15,2026-04-09,2026-04-11,2026-04-14,2,3,1,6,,false
+TAX_2550Q_VAT_015,2550Q (VAT),Q1 2026,2026-04-27,2026-04-21,2026-04-23,2026-04-24,2,1,3,6,,false
+TAX_1601_EQ_QUARTERLY_EWT_016,1601-EQ (Quarterly EWT),Q1 2026,2026-04-30,2026-04-24,2026-04-28,2026-04-29,4,1,1,6,,false
+TAX_2550Q_VAT_017,2550Q (VAT),Q2 2026,2026-07-27,2026-07-21,2026-07-23,2026-07-24,2,1,3,6,,false
+TAX_1702Q_QUARTERLY_INCOME_TAX_018,1702Q (Quarterly Income Tax),Q2 2026,2026-05-30,2026-05-26,2026-05-28,2026-05-29,2,1,1,4,,false
+TAX_1601_EQ_QUARTERLY_EWT_019,1601-EQ (Quarterly EWT),Q2 2026,2026-07-31,2026-07-25,2026-07-29,2026-07-30,4,1,1,6,,false
+TAX_2550Q_VAT_020,2550Q (VAT),Q3 2026,2026-10-26,2026-10-20,2026-10-22,2026-10-23,2,1,3,6,,false
+TAX_1702Q_QUARTERLY_INCOME_TAX_021,1702Q (Quarterly Income Tax),Q3 2026,2026-08-29,2026-08-25,2026-08-27,2026-08-28,2,1,1,4,,false
+TAX_1601_EQ_QUARTERLY_EWT_022,1601-EQ (Quarterly EWT),Q3 2026,2026-10-30,2026-10-24,2026-10-28,2026-10-29,4,1,1,6,,false
+TAX_STEP_023,1. Preparation,"Gather data, prepare the BIR Form, and draft the payment request (e.g., check voucher).",,,,,,,,,,true
+TAX_STEP_024,2. Report Approval,Senior Finance Manager (SFM) reviews and approves the report data for accuracy and compliance. (File Request is submitted to SFM.),,,,,,,,,,true
+TAX_STEP_025,3. Payment Approval,The approved report and payment request are routed. Finance Director (FD) reviews and approves the release of funds for remittance.,,,,,,,,,,true
+TAX_STEP_026,4. Filing & Payment,The approved form is Filed and the payment is Remitted (either electronically or over the counter).,,,,,,,,,,true
