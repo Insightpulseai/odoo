@@ -6,6 +6,12 @@ name: LLMs.txt Presence Gate
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'CLAUDE.md'
+      - 'addons/**'
+      - '.github/workflows/llms-txt-check.yml'
   push:
     branches: [main]
     paths:

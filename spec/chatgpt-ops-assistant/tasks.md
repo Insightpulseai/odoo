@@ -5,12 +5,12 @@
 
 ## Phase 1: MCP Server Scaffold
 
-- [ ] Create `supabase/functions/ops-assistant/index.ts` with Deno SSE handler
-- [ ] Implement MCP protocol handlers: `initialize`, `tools/list`, `tools/call`
-- [ ] Add `GET /health` endpoint returning `{ status: "ok", version: "1.0.0" }`
-- [ ] Implement allowlist loader (parse YAML from bundled config or vault)
-- [ ] Add tool router with deny-by-default enforcement
-- [ ] Add audit logger (writes to `ops.run_events`)
+- [x] Create `supabase/functions/ops-assistant/index.ts` with Deno SSE handler
+- [x] Implement MCP protocol handlers: `initialize`, `tools/list`, `tools/call`
+- [x] Add `GET /health` endpoint returning `{ status: "ok", version: "1.0.0" }`
+- [x] Implement allowlist loader (parse YAML from bundled config or vault)
+- [x] Add tool router with deny-by-default enforcement
+- [x] Add audit logger (writes to `ops.run_events`)
 - [ ] Create Supabase migration: `ops.run_events` table
 - [ ] Create Supabase migration: `ops.idempotency_keys` table
 - [ ] Add idempotency key checker middleware
@@ -32,13 +32,13 @@
 
 ## Phase 3: Plane Tools
 
-- [ ] Create `lib/plane-api.ts` — Plane REST API client wrapper
-- [ ] Implement token-bucket rate limiter (60 req/min)
-- [ ] Implement `plane.list_work_items` tool
-- [ ] Implement `plane.create_work_item` tool
-- [ ] Implement `plane.update_work_item` tool
-- [ ] Implement `plane.create_page` tool
-- [ ] Implement `plane.add_comment` tool
+- [x] Create `lib/plane-api.ts` — Plane REST API client wrapper
+- [x] Implement token-bucket rate limiter (60 req/min)
+- [x] Implement `plane.list_work_items` tool
+- [x] Implement `plane.create_work_item` tool
+- [x] Implement `plane.update_work_item` tool
+- [x] Implement `plane.create_page` tool
+- [x] Implement `plane.add_comment` tool
 - [ ] Add request batching for list operations
 - [ ] Write unit tests for rate limiter
 - [ ] Validate: create work item via MCP, verify in Plane UI

@@ -253,7 +253,9 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
 
-> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
+> **Claude Code on the Web**: Full CLI parity — same agent, same capabilities as local CLI, running on Anthropic cloud VMs. See [docs/ai/CLAUDE_CODE_WEB.md](./docs/ai/CLAUDE_CODE_WEB.md) for environment setup, `--remote` usage, Remote Control, and SessionStart hooks.
+>
+> **Remote Control**: Control your local Claude Code session from any browser or phone via [claude.ai/code](https://claude.ai/code). Start with `claude remote-control` or `/rc` inside a session.
 
 ### Common Commands
 
@@ -293,7 +295,7 @@ npm run dev:github-app                  # Run github-app
 | Problem | Old Setup | Canonical Setup |
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
-| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database (odoo) |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` (current prod runtime: `odoo`) |
 | Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
@@ -310,7 +312,7 @@ docker compose exec -T web odoo -d odoo -i base   # Install module
 **Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
 
 **Key Features**:
-- ✅ Single database target (`db_name = odoo`)
+- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`; current prod runtime: `odoo`)
 - ✅ No database selector (`list_db = False`)
 - ✅ File-based secrets (no hardcoded passwords)
 - ✅ Health checks (PostgreSQL guards web startup)
@@ -1050,13 +1052,11 @@ Examples:
 
 See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
 
-### PR Requirements
+### PR Discipline
 
 1. Small, focused commits with descriptive messages
-2. All CI gates must pass (green status)
+2. Run verification before pushing
 3. Update docs + tests alongside code changes
-4. Never push directly to main without verification
-5. Reference spec bundle in PR description when applicable
 
 ---
 
@@ -1575,22 +1575,29 @@ Build custom modules based on payment status and need:
 
 ## GitHub Integration
 
-### Recommended: GitHub Team ($4/user/mo)
+### GitHub Plan: Enterprise (Solo Developer — Owner/Admin/Member)
 
-Stay on GitHub Team - it provides everything needed:
+Single seat, all roles: owner + admin + billing manager + developer.
 
-| Feature | Free | Team | Enterprise | Our Approach |
-|---------|------|------|------------|--------------|
-| Protected branches | ❌ | ✅ | ✅ | Use Team |
-| Required reviewers | ❌ | ✅ | ✅ | Use Team |
-| CODEOWNERS | ❌ | ✅ | ✅ | Use Team |
-| Draft PRs | ❌ | ✅ | ✅ | Use Team |
-| Actions minutes | 2,000 | 3,000 | 50,000 | Self-hosted runners |
-| Secret scanning | ❌ | ❌ | $19/user | GitLeaks (free) |
-| Code scanning | ❌ | ❌ | $30/user | Semgrep (free) |
-| SAML SSO | ❌ | ❌ | ✅ | Keycloak (free) |
+| Feature | Status |
+|---------|--------|
+| Protected branches | ✅ |
+| Required status checks | ✅ |
+| CODEOWNERS | ✅ |
+| Secret scanning (GHAS) | ✅ |
+| Code scanning (GHAS) | ✅ |
+| Dependency review | ✅ |
+| SAML SSO | ✅ (Keycloak) |
+| Actions minutes | 50,000/mo |
+| Audit log API | ✅ |
+| **Copilot Enterprise (SWE agent)** | ✅ |
+| Copilot code completions | ✅ |
+| Copilot chat (IDE + github.com) | ✅ |
+| Copilot PR summaries | ✅ |
+| Copilot coding agent | ✅ |
+| Copilot knowledge bases | ✅ |
 
-**Annual savings**: ~$6,600/year vs Enterprise + GHAS
+Self-hosted security tooling (GitLeaks, Semgrep, Trivy) supplements GHAS as defense-in-depth.
 
 ### GitHub App: pulser-hub
 
@@ -1635,18 +1642,6 @@ jobs:
         with:
           scan-type: 'fs'
           severity: 'CRITICAL,HIGH'
-```
-
-### Self-Hosted Runner Setup
-
-```bash
-# On DigitalOcean droplet (178.128.112.214)
-mkdir -p ~/actions-runner && cd ~/actions-runner
-curl -o actions-runner-linux-x64-2.321.0.tar.gz -L \
-  https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
-tar xzf ./actions-runner-linux-x64-2.321.0.tar.gz
-./config.sh --url https://github.com/jgtolentino/odoo-ce --token YOUR_TOKEN
-sudo ./svc.sh install && sudo ./svc.sh start
 ```
 
 ---

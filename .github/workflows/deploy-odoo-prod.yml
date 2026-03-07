@@ -32,6 +32,9 @@ permissions:
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64]
+    environment:
+      name: odoo-production
+      url: https://erp.insightpulseai.com
     steps:
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.0.3
