@@ -127,9 +127,60 @@ Deliver an "Odoo.sh-next" style SaaS for Odoo CE + OCA, with:
 - minimal custom surface area
 - externalized AI/service bridges
 
-## 9. Product Scope
+## 9. Product Architecture Planes
 
-### 9.1 In Scope
+The product decomposes into five planes. The runtime stack (Odoo + PG + Docker) is **commodity**. The operations plane and control plane are **the real product**.
+
+### Product Flow
+
+```
+Commercial plan
+      │
+      ▼
+Tenant/runtime profile (Control Plane)
+      │
+      ▼
+Governed infrastructure (Infrastructure Plane)
+      │
+      ▼
+Odoo runtime (Runtime Plane)
+      │
+      ▼
+Ops automation (Operations Plane)
+```
+
+### Plane Responsibilities
+
+| Plane | Responsibilities | Azure Services |
+|-------|-----------------|----------------|
+| **Runtime** | Odoo CE + OCA + PG + Nginx + Docker | Container Apps, ACR |
+| **Control** | Tenant registry, plan catalog, module packs, deployment metadata, audit | Supabase (Edge Functions, Vault) |
+| **Operations** | Backups, patching, SSL, health checks, upgrades, scaling, evidence packs | Key Vault, Monitor, Log Analytics |
+| **Infrastructure** | Compute, storage, networking, ingress, secrets | Container Apps, PG Flexible, Front Door, VNet |
+| **Commercial** | Plan tiers, entitlements, billing events, SLA mapping, add-ons | Supabase + billing provider |
+
+### Competitive Positioning (Copy / Adapt / Skip)
+
+What to learn from the Websoft9/marketplace model — and what to surpass:
+
+| Capability | Marketplace Model (Websoft9) | Our Model | Decision |
+|------------|------------------------------|-----------|----------|
+| Runtime separation from ops | Yes — control panel over Docker | Yes — Supabase control plane | **Copy** the principle |
+| Governed operator model | Partial — cPanel-style | Full — CI/CD + evidence-backed | **Adapt** — make it deterministic |
+| Tiered plan packaging | Yes — startup/growth/enterprise | Yes — with add-on marketplace | **Copy** |
+| Automated backup/SSL/patching | Yes — as Day-2 ops | Yes — as first-class product features | **Copy** |
+| Custom module support | Yes — unrestricted | Yes — but governed (OCA-first + curated packs) | **Adapt** — add governance |
+| Multi-app expansion on shared infra | Yes — Websoft9 hosts many apps | No — Odoo-specific platform | **Skip** |
+| Full infrastructure control | Yes — root/SSH access | Yes — but through governed pipelines, not raw access | **Adapt** |
+| Marketplace image as identity | Yes — "deploy in 10 minutes" | No — SaaS operating model, not an image | **Skip** |
+| VM-first architecture | Yes — Azure VMs | No — Container Apps-first | **Skip** for end state |
+| Broad SLA/DR claims | Yes — in marketing | No — only what evidence actually supports | **Skip** |
+
+---
+
+## 10. Product Scope
+
+### 10.1 In Scope
 
 #### A. Tenant Provisioning
 - create tenant records
@@ -187,13 +238,13 @@ Deliver an "Odoo.sh-next" style SaaS for Odoo CE + OCA, with:
 - tenant limits by plan
 - support/SLA class mapping
 
-### 9.2 Out of Scope
+### 10.2 Out of Scope
 - free-form customer shell access by default
 - unmanaged plugin ecosystem
 - arbitrary per-tenant infra topology outside supported templates
 - replacing all external AI/document/voice services with native Odoo code
 
-## 10. Functional Requirements
+## 11. Functional Requirements
 
 ### FR-1 Tenant Lifecycle
 The system must support create, suspend, resume, upgrade-plan, downgrade-plan, archive, and delete lifecycle states for each tenant.
@@ -231,7 +282,7 @@ The platform must emit logs, metrics, deployment evidence, and backup evidence i
 ### FR-12 Extension Policy
 The platform must enforce OCA-first parity and restrict `ipai_*` modules to bridge/meta responsibilities.
 
-## 11. Non-Functional Requirements
+## 12. Non-Functional Requirements
 
 ### NFR-1 Availability
 - baseline target: 99.9% for production plans
@@ -260,7 +311,7 @@ The platform must enforce OCA-first parity and restrict `ipai_*` modules to brid
 ### NFR-6 Portability
 - default reference deployment may target Azure or DigitalOcean, but product architecture must remain cloud-portable
 
-## 12. Product Packaging
+## 13. Product Packaging
 
 ### Plan A — Starter
 - small team / single entity
@@ -291,7 +342,7 @@ The platform must enforce OCA-first parity and restrict `ipai_*` modules to brid
 - sandbox / staging environment
 - premium support
 
-## 13. Key User Flows
+## 14. Key User Flows
 
 ### Flow 1: New Tenant Launch
 Operator selects plan + region + app pack → system provisions tenant → baseline modules install → health checks pass → domain/TLS activate → tenant marked live.
@@ -305,7 +356,7 @@ Operator selects approved release target → preflight checks validate drift/bac
 ### Flow 4: Incident Restore
 Operator chooses restore point → recovery workflow executes → health validation completes → incident timeline and evidence retained.
 
-## 14. Success Metrics
+## 15. Success Metrics
 
 ### Business Metrics
 - time to first live tenant
@@ -328,7 +379,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - failed deploy rollback time
 - module compatibility pass rate
 
-## 15. Risks
+## 16. Risks
 
 - OCA parity gaps for some EE-adjacent capabilities
 - custom-module sprawl if bridge policy is not enforced
@@ -336,7 +387,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - billing/support complexity across plan tiers
 - HA architecture increasing operational cost and product complexity
 
-## 16. Open Questions
+## 17. Open Questions
 
 - single-db-per-tenant vs grouped tenancy strategy for lower tiers
 - canonical billing engine/provider
@@ -344,7 +395,7 @@ Operator chooses restore point → recovery workflow executes → health validat
 - operator console implementation surface: Odoo admin, external web app, or hybrid
 - whether customer-facing self-service provisioning is included in v1 or deferred
 
-## 17. Launch Recommendation
+## 18. Launch Recommendation
 
 ### Phase 1 — Internal Platform
 - single-tenant managed deployments
