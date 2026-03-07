@@ -1,0 +1,87 @@
+# Azure Developer CLI (azd) service mapping for InsightPulseAI platform.
+#
+# This file maps application services to Azure resources for azd-compatible
+# provisioning and deployment workflows.
+#
+# IMPORTANT: This file is an azd manifest, NOT the canonical resource inventory.
+# The SSOT for Azure resources is: ssot/azure/resources.yaml
+# This file defers to that SSOT for resource names, states, and existence.
+#
+# Usage:
+#   azd init    (already initialized — this file exists)
+#   azd up      (provision + deploy)
+#   azd deploy  (deploy only, resources must exist)
+#
+# Spec: spec/azure-target-state/
+# SSOT: ssot/azure/resources.yaml
+# Constitution: spec/azure-target-state/constitution.md
+
+name: insightpulseai-platform
+metadata:
+  template: insightpulseai/odoo@latest
+  owner: platform-engineering
+  purpose: azd service-to-resource mapping for InsightPulseAI Azure workloads
+  status: bootstrap-partial
+  prerequisite_phase: 0
+  ssot_spec: spec/azure-target-state/plan.md
+  notes: >
+    This manifest is not canonical inventory. Resource existence and state
+    are tracked in ssot/azure/resources.yaml. Services listed here are
+    gated by Phase 0 landing zone completion (RGs, Key Vault, Log Analytics).
+
+services:
+  # ── Odoo ERP (Container App) ─────────────────────────────────────────────
+  odoo:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: ./docker/Dockerfile
+      context: .
+    config:
+      port: 8069
+      targetPort: 8069
+    metadata:
+      phase: 1
+      depends_on:
+        - rg-ipai-agents-dev
+        - cae-ipai-dev
+        - cripaidev
+
+  # ── MCP Plane Server (Container App) ─────────────────────────────────────
+  mcp-plane:
+    project: ./mcp/servers/plane
+    language: ts
+    host: containerapp
+    config:
+      port: 3000
+    metadata:
+      phase: 1
+      depends_on:
+        - rg-ipai-agents-dev
+        - cae-ipai-dev
+        - cripaidev
+
+  # ── MCP Coordinator (Container App) ──────────────────────────────────────
+  mcp-coordinator:
+    project: ./mcp/servers/coordinator
+    language: ts
+    host: containerapp
+    config:
+      port: 3001
+    metadata:
+      phase: 1
+      depends_on:
+        - rg-ipai-agents-dev
+        - cae-ipai-dev
+        - cripaidev
+
+# ── Infrastructure ─────────────────────────────────────────────────────────
+infra:
+  provider: bicep
+  path: ./infra/azure
+  module: ./infra/azure/platform/main.bicep
+
+# ── CI/CD Pipeline ─────────────────────────────────────────────────────────
+pipeline:
+  provider: github
