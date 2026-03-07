@@ -1,6 +1,11 @@
 name: refactor-subagents
 on:
   pull_request:
+    paths:
+      - 'agents/**'
+      - 'mcp/**'
+      - 'packages/agent-core/**'
+      - '.github/workflows/refactor-subagents.yml'
   workflow_dispatch:
 
 permissions:

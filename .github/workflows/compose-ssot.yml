@@ -2,8 +2,22 @@ name: compose-ssot
 
 on:
   pull_request:
+    paths:
+      - 'docker-compose*.yml'
+      - '**/docker-compose*.yml'
+      - '**/compose.yaml'
+      - '**/compose.yml'
+      - '.devcontainer/**'
+      - 'scripts/ci/compose_ssot_check.sh'
+      - 'scripts/ci/devcontainer_ssot_check.sh'
+      - '.github/workflows/compose-ssot.yml'
   push:
     branches: [main]
+    paths:
+      - 'docker-compose*.yml'
+      - '**/docker-compose*.yml'
+      - '**/compose.yaml'
+      - '.devcontainer/**'
 
 permissions:
   contents: read
