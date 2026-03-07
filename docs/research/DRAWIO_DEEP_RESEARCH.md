@@ -157,16 +157,17 @@ draw.io does **not** store your data — you choose where:
 
 ### Import/Export Formats
 
-| Format | Import | Export |
-|--------|--------|--------|
-| `.drawio` / `.xml` | Yes | Yes |
-| `.vsdx` (Visio) | Yes | Yes |
-| `.svg` | Yes | Yes |
-| `.png` | Yes | Yes |
-| `.pdf` | — | Yes |
-| `.html` | Yes | Yes |
-| Gliffy | Yes | — |
-| Lucidchart | Yes | — |
+| Format | Import | Export | Notes |
+|--------|--------|--------|-------|
+| `.drawio` / `.xml` | Yes | Yes | Native format |
+| `.vsdx` (Visio) | Yes | **Removed v26.1** | Export removed March 2025 |
+| `.svg` | Yes | Yes | Can embed XML for round-trip |
+| `.png` | Yes | Yes | Can embed XML for round-trip |
+| `.pdf` | — | Yes | Multi-page with links |
+| `.html` | Yes | Yes | |
+| BPMN 2.0 XML | **No** | **No** | Frequently requested, not implemented |
+| Gliffy | Yes | — | |
+| Lucidchart | Yes | — | |
 | Mermaid | Yes | Yes |
 | PlantUML | Yes | — |
 | CSV/text | Yes | — |
@@ -544,6 +545,37 @@ SAP Signavio is **not appropriate** for this stack:
 - Enterprise licensing contradicts open-source-first approach
 
 If process mining is needed in the future, consider **PM4Py** (Python, free) or **Apromore** (self-hosted, community edition).
+
+### Critical Limitation: No BPMN 2.0 XML Export
+
+draw.io does **not** export native BPMN 2.0 XML — it treats BPMN shapes as generic drawing elements without semantic validation. This is a [frequently requested feature](https://github.com/jgraph/drawio/discussions/2829) that remains unimplemented. If executable BPMN 2.0 XML interoperability is required, use **bpmn.io** or **Camunda Modeler** instead.
+
+---
+
+## 13. Open-Source BPM Alternatives Landscape
+
+If executable BPM or native BPMN 2.0 compliance is needed beyond draw.io's visual diagramming:
+
+| Tool | Type | BPMN 2.0 | Execution Engine | License | Best For |
+|------|------|----------|------------------|---------|----------|
+| **draw.io** | General diagramming | Shapes only | No | Apache v2 | Quick visual diagrams |
+| **bpmn.io** | Embeddable JS library | Full standard | No (modeling) | Camunda-backed | Embedding BPMN editors in web apps |
+| **Camunda Modeler** | Desktop BPMN editor | Full + DMN | Exports to Camunda | Open source | Designing executable processes |
+| **Operaton** | BPM engine (Camunda 7 fork) | Full standard | Yes | Community-owned | Running BPMN processes, free |
+| **CIB seven** | BPM engine (Camunda 7 fork) | Full standard | Yes | OSS + commercial | Camunda 7 migration path |
+| **Flowable** | BPM platform | BPMN + CMMN + DMN | Yes | Open core | Low-code BPM |
+| **jBPM** | BPM engine | Full standard | Yes | Open source | Java-based automation |
+| **Activiti** | Lightweight BPM | BPMN 2.0 | Yes | Open source | Simple Java workflows |
+
+**Lineage**: Activiti (2010) -> Camunda fork (2013) -> Flowable fork (2017) -> Operaton fork (2024) -> CIB seven (2025)
+
+**For the Odoo CE stack**: bpmn.io or Camunda Modeler for BPMN modeling; Operaton or Flowable if executable BPM automation is needed alongside Odoo. draw.io remains the best choice for general-purpose diagramming at zero cost.
+
+### Sources (BPM Alternatives)
+- [bpmn.io](https://bpmn.io/)
+- [Operaton - Open Source BPM](https://operaton.org/)
+- [CIB seven](https://cibseven.org/en/)
+- [draw.io BPMN 2.0 XML export discussion](https://github.com/jgraph/drawio/discussions/2829)
 
 ---
 
