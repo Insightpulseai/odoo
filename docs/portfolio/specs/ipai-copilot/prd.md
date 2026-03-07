@@ -1,5 +1,9 @@
 # PRD: IPAI Copilot (Odoo CE)
 
+> **DEPRECATED**: This spec is superseded by `spec/odoo-copilot-azure/` (commit 3b53158a).
+> The new spec uses Microsoft Foundry + Agent Framework + MCP architecture.
+> This file is retained for historical reference only.
+
 **Product**: IPAI Copilot (Odoo CE)
 **Target**: v0.?.0
 **Status**: Planning

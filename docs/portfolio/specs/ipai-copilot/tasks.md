@@ -1,5 +1,9 @@
 # Tasks: IPAI Copilot
 
+> **DEPRECATED**: This spec is superseded by `spec/odoo-copilot-azure/` (commit 3b53158a).
+> The new spec uses Microsoft Foundry + Agent Framework + MCP architecture.
+> This file is retained for historical reference only.
+
 - [ ] Create `spec/ipai-copilot` bundle <!-- id: 100 -->
 - [ ] Scaffold `addons/ipai/ipai_copilot` <!-- id: 101 -->
 - [ ] Implement `models/res_config_settings.py` <!-- id: 102 -->

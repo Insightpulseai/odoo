@@ -20,8 +20,8 @@
 #   - Attestation: Supply chain provenance (SLSA)
 #
 # Registries:
-#   - ghcr.io/jgtolentino/odoo (GHCR)
-#   - registry.digitalocean.com/insightpulseai/odoo (DOCR)
+#   - ghcr.io/insightpulseai/ipai-odoo-runtime (GHCR)
+#   - registry.digitalocean.com/insightpulseai/ipai-odoo-runtime (DOCR)
 # =============================================================================
 
 name: Build IPAI Odoo Images
@@ -59,7 +59,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jgtolentino/odoo
+  IMAGE_NAME: insightpulseai/ipai-odoo-runtime
   DOCR_REGISTRY: registry.digitalocean.com/insightpulseai
 
 jobs:
@@ -268,7 +268,7 @@ jobs:
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DOCR_REGISTRY }}/odoo
+            ${{ env.DOCR_REGISTRY }}/ipai-odoo-runtime
           flavor: |
             suffix=-${{ matrix.profile }},onlatest=true
           tags: |
@@ -285,15 +285,15 @@ jobs:
             # Latest pointer (standard is canonical production)
             type=raw,value=latest,enable=${{ matrix.profile == 'standard' }}
 
-            # 18.0 channel
-            type=raw,value=18.0-${{ matrix.profile }}
+            # 19.0 channel
+            type=raw,value=19.0-${{ matrix.profile }}
 
           labels: |
-            org.opencontainers.image.title=IPAI Odoo CE (${{ matrix.profile }})
-            org.opencontainers.image.description=Odoo 18 CE + OCA + IPAI Modules
+            org.opencontainers.image.title=IPAI Odoo Runtime (${{ matrix.profile }})
+            org.opencontainers.image.description=Odoo 19 CE + OCA + IPAI Modules
             org.opencontainers.image.vendor=InsightPulse AI
             com.insightpulseai.profile=${{ matrix.profile }}
-            com.insightpulseai.odoo.version=18.0
+            com.insightpulseai.odoo.version=19.0
             com.insightpulseai.build.git-sha=${{ github.sha }}
 
       # -----------------------------------------------------------------------
@@ -380,7 +380,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registries:**" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\` (GHCR)" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ env.DOCR_REGISTRY }}/odoo\` (DOCR)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.DOCR_REGISTRY }}/ipai-odoo-runtime\` (DOCR)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Profile:** \`${{ matrix.profile }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

@@ -77,7 +77,7 @@ grep -R "enterprise\|web_studio\|documents\|iap" addons/ || echo "✅ Clean"
 ### 2. No odoo.com Links
 **Rule:** Replace odoo.com with InsightPulse or OCA links
 
-**Why:** Branding and independence from Odoo SaaS
+**Why:** Branding and independence from Odoo proprietary platforms (self-hosted Odoo CE 19)
 
 ### 3. OCA Conventions
 **Rule:** Follow OCA repository structure and best practices

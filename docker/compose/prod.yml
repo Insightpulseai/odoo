@@ -1,23 +1,38 @@
+# =============================================================================
+# Production Compose — IPAI Odoo Runtime
+# =============================================================================
+# Image: ipai-odoo-runtime (built from docker/Dockerfile.unified)
+# Addons are baked into the image; no host-mount overrides in prod.
+# Config is baked at build time; override via environment or mount.
+# =============================================================================
+
 services:
   odoo-prod:
-    image: insightpulseai/odoo:${RELEASE_TAG:-latest}
+    image: ${ODOO_IMAGE:-ghcr.io/insightpulseai/ipai-odoo-runtime}:${RELEASE_TAG:-latest}
     container_name: odoo_prod
     ports:
       - "80:8069"
+      - "8072:8072"
     volumes:
       - odoo-data-prod:/var/lib/odoo
-      - /opt/odoo/addons/selected:/mnt/extra-addons/selected:ro
-      - /opt/odoo/addons/ipai:/mnt/extra-addons/ipai:ro
-      - /etc/odoo/odoo.conf:/etc/odoo/odoo.conf:ro
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=odoo_prod
+      - HOST=${DB_HOST}
+      - PORT=${DB_PORT:-5432}
+      - USER=${DB_USER}
+      - PASSWORD=${DB_PASSWORD}
       - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
       - IPAI_ENV=prod
+    command: >
+      odoo
+      --config=/etc/odoo/odoo.conf
+      --database=odoo_prod
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
     logging:
       driver: "json-file"
       options:

@@ -1,0 +1,275 @@
+# Control Room KPI Contracts
+# Governance: spec/control-room-platform/constitution.md (Rule 4)
+# Validated by: scripts/ci/validate_kpi_contracts.sh
+# Last Updated: 2026-03-07
+
+version: "1.0"
+schema_ref: "spec/control-room-platform/prd.md#data-model"
+
+kpis:
+  # ---------------------------------------------------------------------------
+  # Finance & Approvals (Odoo ERP)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_001
+    name: "Approval Turnaround P50"
+    owner: odoo-erp
+    source: "ipai.approval.item (create_date, write_date WHERE state='approved')"
+    target: "< 24 hours"
+    threshold_warn: 24
+    threshold_critical: 72
+    unit: hours
+    frequency: daily
+    evidence: >
+      SQL query: SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY
+      EXTRACT(EPOCH FROM (write_date - create_date)) / 3600)
+      FROM ipai_approval_item WHERE state = 'approved'
+      AND write_date >= NOW() - INTERVAL '7 days';
+
+  - id: kpi_002
+    name: "Expense Processing Time P50"
+    owner: odoo-erp
+    source: "hr.expense.sheet (create_date, accounting_date)"
+    target: "< 48 hours"
+    threshold_warn: 48
+    threshold_critical: 120
+    unit: hours
+    frequency: daily
+    evidence: >
+      SQL query: SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY
+      EXTRACT(EPOCH FROM (accounting_date - create_date)) / 3600)
+      FROM hr_expense_sheet WHERE state = 'done'
+      AND accounting_date >= NOW() - INTERVAL '7 days';
+
+  - id: kpi_003
+    name: "Monthly Close Cycle Duration"
+    owner: odoo-erp
+    source: "ipai.ppm.close.task (close_start_date, close_end_date)"
+    target: "< 10 business days"
+    threshold_warn: 10
+    threshold_critical: 15
+    unit: business_days
+    frequency: monthly
+    evidence: >
+      SQL query: SELECT close_end_date - close_start_date AS cycle_days
+      FROM ipai_ppm_close_task
+      WHERE period = TO_CHAR(NOW() - INTERVAL '1 month', 'YYYY-MM')
+      AND state = 'done';
+
+  - id: kpi_004
+    name: "Approval Backlog Count"
+    owner: odoo-erp
+    source: "ipai.approval.item (state='pending')"
+    target: "< 20 items"
+    threshold_warn: 20
+    threshold_critical: 50
+    unit: count
+    frequency: daily
+    evidence: >
+      SQL query: SELECT COUNT(*) FROM ipai_approval_item
+      WHERE state = 'pending' AND create_date < NOW() - INTERVAL '24 hours';
+
+  # ---------------------------------------------------------------------------
+  # Tax & Compliance (Odoo ERP)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_005
+    name: "BIR Filing On-Time Rate"
+    owner: odoo-erp
+    source: "ipai.bir.filing (filing_date, deadline_date)"
+    target: ">= 100%"
+    threshold_warn: 95
+    threshold_critical: 90
+    unit: percent
+    frequency: monthly
+    evidence: >
+      SQL query: SELECT
+        COUNT(*) FILTER (WHERE filing_date <= deadline_date) * 100.0 / NULLIF(COUNT(*), 0)
+      FROM ipai_bir_filing
+      WHERE deadline_date >= DATE_TRUNC('month', NOW() - INTERVAL '1 month')
+      AND deadline_date < DATE_TRUNC('month', NOW());
+
+  - id: kpi_006
+    name: "Tax Reconciliation Variance"
+    owner: odoo-erp
+    source: "account.move.line (tax-tagged entries vs BIR declarations)"
+    target: "< 0.1%"
+    threshold_warn: 0.1
+    threshold_critical: 1.0
+    unit: percent
+    frequency: monthly
+    evidence: >
+      SQL query: Compare SUM(debit-credit) for tax-tagged journal entries
+      against declared BIR amounts in ipai_bir_filing for the same period.
+      Variance = ABS(odoo_total - bir_declared) / NULLIF(bir_declared, 0) * 100.
+
+  # ---------------------------------------------------------------------------
+  # Document Processing (Odoo ERP + n8n)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_007
+    name: "OCR Accuracy Rate"
+    owner: odoo-erp
+    source: "ipai.ocr.result (confidence_score, manual_correction_flag)"
+    target: ">= 95%"
+    threshold_warn: 95
+    threshold_critical: 85
+    unit: percent
+    frequency: daily
+    evidence: >
+      SQL query: SELECT
+        COUNT(*) FILTER (WHERE NOT manual_correction_flag) * 100.0 / NULLIF(COUNT(*), 0)
+      FROM ipai_ocr_result
+      WHERE create_date >= NOW() - INTERVAL '7 days';
+
+  - id: kpi_008
+    name: "Invoice Processing Throughput"
+    owner: odoo-erp
+    source: "account.move (move_type='in_invoice', state='posted')"
+    target: ">= 50 invoices/day"
+    threshold_warn: 50
+    threshold_critical: 20
+    unit: invoices_per_day
+    frequency: daily
+    evidence: >
+      SQL query: SELECT COUNT(*) / GREATEST(EXTRACT(DAY FROM NOW() - MIN(create_date)), 1)
+      FROM account_move
+      WHERE move_type = 'in_invoice' AND state = 'posted'
+      AND create_date >= NOW() - INTERVAL '7 days';
+
+  # ---------------------------------------------------------------------------
+  # Automation (n8n)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_009
+    name: "n8n Workflow Error Rate"
+    owner: n8n
+    source: "n8n execution API (/api/v1/executions)"
+    target: "< 5%"
+    threshold_warn: 5
+    threshold_critical: 15
+    unit: percent
+    frequency: daily
+    evidence: >
+      API query: GET n8n.insightpulseai.com/api/v1/executions?status=error
+      vs total executions in the past 24 hours. Error rate = errors / total * 100.
+
+  - id: kpi_010
+    name: "n8n Workflow Success Rate"
+    owner: n8n
+    source: "n8n execution API (/api/v1/executions)"
+    target: ">= 95%"
+    threshold_warn: 95
+    threshold_critical: 85
+    unit: percent
+    frequency: daily
+    evidence: >
+      API query: GET n8n.insightpulseai.com/api/v1/executions?status=success
+      vs total executions in the past 24 hours. Success rate = successes / total * 100.
+
+  - id: kpi_011
+    name: "Automation Coverage"
+    owner: n8n
+    source: "n8n workflow list vs documented manual processes"
+    target: ">= 80%"
+    threshold_warn: 80
+    threshold_critical: 60
+    unit: percent
+    frequency: monthly
+    evidence: >
+      Manual assessment: Count of documented business processes that have
+      corresponding n8n workflows vs total documented processes.
+
+  # ---------------------------------------------------------------------------
+  # Agent Platform (Azure/Foundry)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_012
+    name: "Agent Tool Success Rate"
+    owner: azure-foundry
+    source: "Azure AI Foundry tool execution logs"
+    target: ">= 90%"
+    threshold_warn: 90
+    threshold_critical: 75
+    unit: percent
+    frequency: daily
+    evidence: >
+      Azure Monitor query: Successful tool invocations / total tool invocations
+      over the past 24 hours.
+
+  - id: kpi_013
+    name: "Copilot Response Latency P95"
+    owner: azure-foundry
+    source: "Azure AI Foundry latency metrics"
+    target: "< 5 seconds"
+    threshold_warn: 5
+    threshold_critical: 15
+    unit: seconds
+    frequency: daily
+    evidence: >
+      Azure Monitor query: PERCENTILE_CONT(0.95) of response_time_ms
+      for copilot requests in the past 24 hours, converted to seconds.
+
+  # ---------------------------------------------------------------------------
+  # Integration (Supabase)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_014
+    name: "Identity Map Resolution Rate"
+    owner: supabase
+    source: "ctrl.identity_map (resolved vs unresolved lookups)"
+    target: ">= 99%"
+    threshold_warn: 99
+    threshold_critical: 95
+    unit: percent
+    frequency: daily
+    evidence: >
+      SQL query: SELECT
+        COUNT(*) FILTER (WHERE status = 'resolved') * 100.0 / NULLIF(COUNT(*), 0)
+      FROM ctrl.identity_map
+      WHERE updated_at >= NOW() - INTERVAL '7 days';
+
+  - id: kpi_015
+    name: "Sync Lag Maximum"
+    owner: supabase
+    source: "ctrl.sync_state (NOW() - last_sync_at per system pair)"
+    target: "< 15 minutes"
+    threshold_warn: 15
+    threshold_critical: 60
+    unit: minutes
+    frequency: hourly
+    evidence: >
+      SQL query: SELECT source_system, target_system,
+        EXTRACT(EPOCH FROM (NOW() - last_sync_at)) / 60 AS lag_minutes
+      FROM ctrl.sync_state
+      ORDER BY lag_minutes DESC LIMIT 1;
+
+  # ---------------------------------------------------------------------------
+  # Source Control & CI (GitHub)
+  # ---------------------------------------------------------------------------
+
+  - id: kpi_016
+    name: "Deployment Frequency"
+    owner: github-ci
+    source: "GitHub Actions deployment workflow runs"
+    target: ">= 2 per week"
+    threshold_warn: 2
+    threshold_critical: 0.5
+    unit: deployments_per_week
+    frequency: weekly
+    evidence: >
+      GitHub CLI: gh run list --workflow=deploy-production.yml --created=>7daysago
+      | wc -l
+
+  - id: kpi_017
+    name: "CI Green Rate"
+    owner: github-ci
+    source: "GitHub Actions workflow runs on main branch"
+    target: ">= 95%"
+    threshold_warn: 95
+    threshold_critical: 85
+    unit: percent
+    frequency: daily
+    evidence: >
+      GitHub CLI: gh run list --branch=main --limit=100 --json conclusion
+      | jq '[.[] | select(.conclusion=="success")] | length' / 100 * 100
