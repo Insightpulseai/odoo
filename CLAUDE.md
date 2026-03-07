@@ -1575,21 +1575,27 @@ Build custom modules based on payment status and need:
 
 ## GitHub Integration
 
-### GitHub Plan: Enterprise (Solo Developer)
+### GitHub Plan: Enterprise (Solo Developer — Owner/Admin/Member)
 
-Solo developer on GitHub Enterprise. Full platform features available:
+Single seat, all roles: owner + admin + billing manager + developer.
 
 | Feature | Status |
 |---------|--------|
-| Protected branches | ✅ Available |
-| Required status checks | ✅ Available |
-| CODEOWNERS | ✅ Available |
-| Secret scanning (GHAS) | ✅ Native |
-| Code scanning (GHAS) | ✅ Native |
-| Dependency review | ✅ Native |
-| SAML SSO | ✅ Available (Keycloak) |
+| Protected branches | ✅ |
+| Required status checks | ✅ |
+| CODEOWNERS | ✅ |
+| Secret scanning (GHAS) | ✅ |
+| Code scanning (GHAS) | ✅ |
+| Dependency review | ✅ |
+| SAML SSO | ✅ (Keycloak) |
 | Actions minutes | 50,000/mo |
-| Audit log API | ✅ Available |
+| Audit log API | ✅ |
+| **Copilot Enterprise (SWE agent)** | ✅ |
+| Copilot code completions | ✅ |
+| Copilot chat (IDE + github.com) | ✅ |
+| Copilot PR summaries | ✅ |
+| Copilot coding agent | ✅ |
+| Copilot knowledge bases | ✅ |
 
 Self-hosted security tooling (GitLeaks, Semgrep, Trivy) supplements GHAS as defense-in-depth.
 
