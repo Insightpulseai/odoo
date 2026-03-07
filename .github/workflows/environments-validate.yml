@@ -1,0 +1,145 @@
+name: environments-validate
+
+on:
+  push:
+    paths:
+      - 'ops/github/environments/**'
+      - 'scripts/github/apply_environments.sh'
+      - '.github/workflows/environments-validate.yml'
+  pull_request:
+    paths:
+      - 'ops/github/environments/**'
+      - 'scripts/github/apply_environments.sh'
+      - '.github/workflows/environments-validate.yml'
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Apply environment configuration (requires admin token)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Environment Config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate environments.json schema
+        run: |
+          echo "==> Validating ops/github/environments/environments.json"
+          if ! jq empty ops/github/environments/environments.json 2>/dev/null; then
+            echo "ERROR: Invalid JSON"
+            exit 1
+          fi
+
+          env_count=$(jq '.environments | length' ops/github/environments/environments.json)
+          echo "Found $env_count environments"
+
+          # Validate each environment has required fields
+          errors=0
+          for i in $(seq 0 $((env_count - 1))); do
+            name=$(jq -r ".environments[$i].name" ops/github/environments/environments.json)
+            if [[ -z "$name" || "$name" == "null" ]]; then
+              echo "ERROR: Environment at index $i missing name"
+              errors=$((errors + 1))
+              continue
+            fi
+            echo "  [$((i+1))] $name"
+
+            # Check protection_rules exists
+            if ! jq -e ".environments[$i].protection_rules" ops/github/environments/environments.json > /dev/null 2>&1; then
+              echo "    WARNING: No protection_rules defined"
+            fi
+
+            # Check secrets_required is array
+            if ! jq -e ".environments[$i].secrets_required | type == \"array\"" ops/github/environments/environments.json > /dev/null 2>&1; then
+              echo "    ERROR: secrets_required must be an array"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [[ $errors -gt 0 ]]; then
+            echo "FAILED: $errors validation errors"
+            exit 1
+          fi
+          echo "All environments valid"
+
+      - name: Validate secrets-inventory.json
+        run: |
+          echo "==> Validating ops/github/environments/secrets-inventory.json"
+          if ! jq empty ops/github/environments/secrets-inventory.json 2>/dev/null; then
+            echo "ERROR: Invalid JSON"
+            exit 1
+          fi
+          echo "Valid JSON"
+
+          # Cross-check: every env in environments.json should have an entry in secrets-inventory
+          env_names=$(jq -r '.environments[].name' ops/github/environments/environments.json)
+          inv_envs=$(jq -r '.environment_secrets | keys[]' ops/github/environments/secrets-inventory.json)
+
+          missing=0
+          while IFS= read -r env_name; do
+            if ! echo "$inv_envs" | grep -qF "$env_name"; then
+              echo "WARNING: '$env_name' in environments.json but missing from secrets-inventory"
+              missing=$((missing + 1))
+            fi
+          done <<< "$env_names"
+
+          if [[ $missing -gt 0 ]]; then
+            echo "$missing environments missing from secrets inventory (warnings only)"
+          else
+            echo "All environments have secrets inventory entries"
+          fi
+
+      - name: Check apply script is executable
+        run: |
+          if [[ -x scripts/github/apply_environments.sh ]]; then
+            echo "scripts/github/apply_environments.sh is executable"
+          else
+            echo "ERROR: scripts/github/apply_environments.sh is not executable"
+            exit 1
+          fi
+
+      - name: Cross-reference with workflows
+        run: |
+          echo "==> Cross-referencing environments with workflow usage"
+          env_names=$(jq -r '.environments[].name' ops/github/environments/environments.json)
+
+          while IFS= read -r env_name; do
+            # Search for environment references in workflows
+            count=$(grep -rl "environment:.*$env_name" .github/workflows/ 2>/dev/null | wc -l || echo 0)
+            if [[ "$count" -gt 0 ]]; then
+              echo "  $env_name: referenced in $count workflow(s)"
+            else
+              echo "  $env_name: not yet referenced in any workflow"
+            fi
+          done <<< "$env_names"
+
+  apply:
+    name: Apply Environment Config
+    runs-on: ubuntu-latest
+    needs: validate
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.apply == 'true'
+    environment: governance
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply environments
+        env:
+          GH_TOKEN: ${{ secrets.GOVERNANCE_TOKEN }}
+        run: |
+          if [[ -z "${GH_TOKEN:-}" ]]; then
+            echo "ERROR: GOVERNANCE_TOKEN not set in governance environment"
+            exit 1
+          fi
+          ./scripts/github/apply_environments.sh
