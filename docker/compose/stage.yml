@@ -1,26 +1,42 @@
+# =============================================================================
+# Staging Compose — IPAI Odoo Runtime
+# =============================================================================
+# Builds from docker/Dockerfile.unified (same image as prod, different config)
+# =============================================================================
+
 services:
   odoo-stage:
     build:
       context: ../..
-      dockerfile: docker/odoo/Dockerfile
-    image: insightpulseai/odoo:stage
+      dockerfile: docker/Dockerfile.unified
+      args:
+        PROFILE: standard
+    image: ${ODOO_IMAGE:-ghcr.io/insightpulseai/ipai-odoo-runtime}:stage
     container_name: odoo_stage
     ports:
       - "8069:8069"
+      - "8072:8072"
     volumes:
       - odoo-data-stage:/var/lib/odoo
-      - ../../addons/oca/selected:/mnt/extra-addons/selected:ro
-      - ../../addons/ipai:/mnt/extra-addons/ipai:ro
-      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+      - ../../config/stage/odoo.conf:/etc/odoo/odoo.conf:ro
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=odoo_stage
+      - HOST=${DB_HOST}
+      - PORT=${DB_PORT:-5432}
+      - USER=${DB_USER}
+      - PASSWORD=${DB_PASSWORD}
       - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
       - IPAI_ENV=stage
+    command: >
+      odoo
+      --config=/etc/odoo/odoo.conf
+      --database=odoo_stage
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
 
 volumes:
   odoo-data-stage:

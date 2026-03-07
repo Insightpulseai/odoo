@@ -1,159 +1,107 @@
 # syntax=docker/dockerfile:1.7
 # =============================================================================
-# Odoo 18 CE + OCA Monorepo - Production Image
+# Root Dockerfile — Delegates to docker/Dockerfile.unified
 # =============================================================================
-# OCA Structure:
-#   addons/ipai/     - 22 production IPAI modules
-#   external-src/    - 14 OCA repositories (source of truth)
-#   archive/addons/  - 10 deprecated modules (excluded from build)
+# The canonical production image definition lives at docker/Dockerfile.unified.
+# This root Dockerfile exists for convenience (docker build .) and backwards
+# compatibility. It produces the same image as:
 #
-# Build Examples:
-#   docker build -t erp-saas:2.0 .
-#   docker build --build-arg BASE_REF=odoo:18.0-20251208 -t erp-saas:2.0 .
+#   docker build -f docker/Dockerfile.unified .
 #
-# DHI Alternative: See docker/hardened/Dockerfile.dhi for Docker Hardened baseline
 # =============================================================================
 
-# Pin exact base image (supports digest pinning for reproducibility)
-ARG BASE_REF=odoo:18.0
+ARG ODOO_BASE=odoo:19
+FROM ${ODOO_BASE}
 
-FROM ${BASE_REF} AS base
+ARG PROFILE=standard
+ARG BUILD_DATE
+ARG GIT_SHA
 
 USER root
 
-# =============================================================================
 # System Dependencies
-# =============================================================================
-# Minimal dependencies for OCA modules (reporting, xmlsec, pandas)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
+    build-essential \
     curl \
-    python3-pandas \
-    python3-xlrd \
-    python3-xlsxwriter \
-    python3-xmlsec \
+    git \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libsasl2-dev \
+    libldap2-dev \
+    libssl-dev \
+    libffi-dev \
+    libjpeg-dev \
+    liblcms2-dev \
+    zlib1g-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# =============================================================================
-# Directory Structure (OCA Monorepo)
-# =============================================================================
-RUN mkdir -p /mnt/addons/ipai \
-    && mkdir -p /mnt/addons/oca \
-    && mkdir -p /mnt/addons/ce
+# Directory Structure
+RUN mkdir -p /opt/odoo/addons/oca \
+    && mkdir -p /opt/odoo/addons/ipai
 
-# =============================================================================
-# Copy OCA Modules (external-src → /mnt/addons/oca - FLATTENED)
-# =============================================================================
-# Source of truth: external-src/ (OCA git submodules)
-# Strategy: Flatten all OCA modules into single /mnt/addons/oca root
-# Benefit: Single addon path instead of 14+ enumerated paths
+# OCA Python Dependencies
+COPY docker/requirements/oca_rest_framework.txt /tmp/oca_rest_framework.txt
+RUN pip3 install --no-cache-dir --break-system-packages \
+    -r /tmp/oca_rest_framework.txt \
+    && rm /tmp/oca_rest_framework.txt
 
-# Copy vendor source to temporary location
-COPY ./external-src /tmp/external-src
+# OCA Modules — Flatten from addons/oca
+COPY ./addons/oca /tmp/oca-src
 
-# Flatten OCA modules with collision detection
 RUN set -eux; \
-  mkdir -p /mnt/addons/oca; \
-  echo "Flattening OCA modules from external-src..."; \
   module_count=0; \
-  for repo in /tmp/external-src/*; do \
+  for repo in /tmp/oca-src/*; do \
     [ -d "$repo" ] || continue; \
-    repo_name=$(basename "$repo"); \
-    echo "Processing repo: $repo_name"; \
     for mod in "$repo"/*; do \
       [ -d "$mod" ] || continue; \
       [ -f "$mod/__manifest__.py" ] || continue; \
       mod_name=$(basename "$mod"); \
-      if [ -d "/mnt/addons/oca/$mod_name" ]; then \
-        echo "ERROR: OCA module name collision: $mod_name"; \
-        echo "  Already exists in: /mnt/addons/oca/$mod_name"; \
-        echo "  Trying to copy from: $mod"; \
+      if [ -d "/opt/odoo/addons/oca/$mod_name" ]; then \
+        echo "ERROR: OCA module collision: $mod_name"; \
         exit 1; \
       fi; \
-      cp -a "$mod" "/mnt/addons/oca/$mod_name"; \
+      cp -a "$mod" "/opt/odoo/addons/oca/$mod_name"; \
       module_count=$((module_count + 1)); \
     done; \
   done; \
-  echo ""; \
-  echo "========================================"; \
-  echo "OCA Module Flatten Summary"; \
-  echo "========================================"; \
-  echo "Total modules flattened: $module_count"; \
-  find /mnt/addons/oca -maxdepth 1 -type d -name "*" ! -name "oca" | sort; \
-  echo "========================================"; \
-  rm -rf /tmp/external-src
+  echo "OCA modules flattened: $module_count"; \
+  rm -rf /tmp/oca-src
 
-# =============================================================================
-# Copy IPAI Production Modules (22 modules)
-# =============================================================================
-# New structure: addons/ipai/ contains all production modules
-# Archive modules (archive/addons/) are NOT copied (excluded from build)
-COPY ./addons/ipai /mnt/addons/ipai
+RUN find /opt/odoo/addons/oca -name "requirements.txt" \
+    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
 
-# =============================================================================
-# Copy Configuration
-# =============================================================================
-COPY ./deploy/odoo.conf /etc/odoo/odoo.conf
+# IPAI Custom Modules
+COPY ./addons/ipai /opt/odoo/addons/ipai
 
-# =============================================================================
-# Install Python Dependencies
-# =============================================================================
-# OCA module dependencies
-RUN find /mnt/addons/oca -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+RUN find /opt/odoo/addons/ipai -name "requirements.txt" \
+    -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
 
-# IPAI module dependencies
-RUN find /mnt/addons/ipai -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+# Configuration
+COPY ./config/prod/odoo.conf /etc/odoo/odoo.conf
 
-# =============================================================================
 # Permissions
-# =============================================================================
-RUN chown -R odoo:odoo /mnt/addons /etc/odoo/odoo.conf
+RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/odoo.conf
 
 USER odoo
 
-# =============================================================================
-# Environment Variables
-# =============================================================================
-# Database connection (overrideable via docker-compose)
-ENV HOST=db \
-    PORT=5432 \
-    USER=odoo \
-    PASSWORD=odoo \
-    DB=odoo
+# Runtime Environment
+ENV ODOO_RC=/etc/odoo/odoo.conf \
+    IPAI_PROFILE=${PROFILE}
 
-ENV ODOO_RC=/etc/odoo/odoo.conf
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/opt/odoo/addons/oca,/opt/odoo/addons/ipai
 
-# OCA Monorepo Addon Path (Aggregated)
-# Format: Odoo core → IPAI modules → OCA modules (flattened)
-# All OCA modules flattened into /mnt/addons/oca during build
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-pkgs/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
-
-# =============================================================================
 # Health Check
-# =============================================================================
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8069/web/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD curl -sf http://localhost:8069/web/health || exit 1
 
-# =============================================================================
-# OCI Labels (Self-Describing Image)
-# =============================================================================
-LABEL org.opencontainers.image.title="ERP SaaS - Odoo 18 CE + OCA Monorepo" \
-      org.opencontainers.image.description="Odoo 18 CE + 14 OCA repos + 22 IPAI production modules" \
+# OCI Labels
+LABEL org.opencontainers.image.source="https://github.com/Insightpulseai/odoo" \
+      org.opencontainers.image.title="IPAI Odoo Runtime" \
+      org.opencontainers.image.description="Odoo 19 CE + OCA + InsightPulse AI modules" \
       org.opencontainers.image.vendor="InsightPulse AI" \
-      org.opencontainers.image.version="2.0.0-alpha" \
-      org.opencontainers.image.base.name="${BASE_REF}" \
-      com.insightpulseai.odoo.version="18.0" \
-      com.insightpulseai.oca.repos="14" \
-      com.insightpulseai.ipai.modules="22"
+      com.insightpulseai.odoo.version="19.0" \
+      com.insightpulseai.profile="${PROFILE}"
 
-# =============================================================================
-# Production Ready
-# =============================================================================
-# Image contains:
-# - Odoo 18 CE base (official image or digest-pinned)
-# - 14 OCA repositories (account, project, HR, reporting, server tools)
-# - 22 IPAI production modules (Finance PPM, BIR compliance, core system)
-# - Health check for orchestration
-# - OCI labels for SBOM/provenance tracking
-# - Environment variables for database connection
-# =============================================================================
+EXPOSE 8069 8072

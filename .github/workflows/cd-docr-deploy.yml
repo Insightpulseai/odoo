@@ -8,7 +8,7 @@
 #   - Manual workflow dispatch
 #
 # Target: erp.insightpulseai.com (DigitalOcean Droplet)
-# Registries: ghcr.io/jgtolentino/odoo + registry.digitalocean.com/insightpulseai/odoo
+# Registries: ghcr.io/insightpulseai/ipai-odoo-runtime + registry.digitalocean.com/insightpulseai/ipai-odoo-runtime
 # =============================================================================
 
 name: CD DOCR Deploy
@@ -50,10 +50,10 @@ concurrency:
 
 env:
   GHCR_REGISTRY: ghcr.io
-  GHCR_IMAGE: jgtolentino/odoo
+  GHCR_IMAGE: insightpulseai/ipai-odoo-runtime
   DOCR_REGISTRY: registry.digitalocean.com/insightpulseai
-  DOCR_IMAGE: odoo
-  DEPLOY_COMPOSE: deploy/docker-compose.prod.yml
+  DOCR_IMAGE: ipai-odoo-runtime
+  DEPLOY_COMPOSE: docker/compose/prod.yml
 
 permissions:
   contents: read
@@ -342,15 +342,14 @@ jobs:
             doctl registry login --expiry-seconds 1200
 
             # Pull new image from DOCR
-            DOCR_IMAGE="registry.digitalocean.com/insightpulseai/odoo:${DOCR_TAG}"
+            DOCR_IMAGE="registry.digitalocean.com/insightpulseai/ipai-odoo-runtime:${DOCR_TAG}"
             echo "Pulling image: ${DOCR_IMAGE}"
             docker pull "${DOCR_IMAGE}"
-            docker tag "${DOCR_IMAGE}" "registry.digitalocean.com/insightpulseai/odoo:latest"
+            docker tag "${DOCR_IMAGE}" "registry.digitalocean.com/insightpulseai/ipai-odoo-runtime:latest"
 
             # Recreate containers
             echo "Recreating containers..."
-            cd deploy
-            docker compose -f docker-compose.prod.yml up -d --force-recreate
+            docker compose -f docker/compose/prod.yml up -d --force-recreate
 
             # Wait for Odoo to start
             echo "Waiting for Odoo to initialize..."
