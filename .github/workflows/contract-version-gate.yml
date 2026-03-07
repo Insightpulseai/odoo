@@ -16,8 +16,22 @@ name: contract-version-gate
 
 on:
   pull_request:
+    paths:
+      - 'docs/architecture/ODOO_SH_EQUIVALENT.md'
+      - 'docs/runbooks/SECRETS_SSOT.md'
+      - 'docs/runbooks/ODOO19_GO_LIVE_CHECKLIST.md'
+      - 'scripts/odoo_neutralize.py'
+      - 'scripts/check_no_plaintext_secrets.py'
+      - 'scripts/ci/check_contract_versions.py'
+      - 'ssot/go_live/**'
+      - '.github/workflows/contract-version-gate.yml'
   push:
     branches: [main]
+    paths:
+      - 'docs/architecture/ODOO_SH_EQUIVALENT.md'
+      - 'docs/runbooks/**'
+      - 'scripts/odoo_neutralize.py'
+      - 'ssot/go_live/**'
   merge_group:
 
 

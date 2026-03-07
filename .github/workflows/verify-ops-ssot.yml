@@ -1,8 +1,15 @@
 name: verify-ops-ssot
 on:
   pull_request:
+    paths:
+      - 'ops/**'
+      - 'ssot/**'
+      - '.github/workflows/verify-ops-ssot.yml'
   push:
     branches: [ main ]
+    paths:
+      - 'ops/**'
+      - 'ssot/**'
 
 permissions:
   contents: read
