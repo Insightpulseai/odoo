@@ -293,7 +293,7 @@ npm run dev:github-app                  # Run github-app
 | Problem | Old Setup | Canonical Setup |
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
-| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database (odoo) |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` (current prod runtime: `odoo`) |
 | Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
@@ -310,7 +310,7 @@ docker compose exec -T web odoo -d odoo -i base   # Install module
 **Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
 
 **Key Features**:
-- ✅ Single database target (`db_name = odoo`)
+- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`; current prod runtime: `odoo`)
 - ✅ No database selector (`list_db = False`)
 - ✅ File-based secrets (no hardcoded passwords)
 - ✅ Health checks (PostgreSQL guards web startup)
