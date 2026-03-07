@@ -51,3 +51,12 @@ Is it Odoo (ERP runtime)?
 - **Edge Functions** are stateless, event-driven, and benefit from Supabase's native integration (auth, database, storage).
 - **Web apps** are static/SSR builds that Vercel handles optimally (CDN, preview deploys, zero-config).
 - **DO App Platform** was deprecated because it adds cost and complexity without benefits over the Droplet + Vercel + Edge split.
+
+## Marketplace and ecosystem classification
+
+Marketplace and ecosystem evidence indicate two different maturity patterns:
+
+- SAP has a first-class Azure ecosystem shape, including deeper Microsoft integration surfaces and a productized Databricks-aligned data/AI path.
+- Odoo appears primarily as a broad application platform with partner-packaged hosting and integration options, not as a first-class Azure workload category.
+
+Therefore, the canonical Odoo deployment baseline must remain first-party Azure primitives plus repository-owned IaC and CI/CD, not Marketplace listings.
