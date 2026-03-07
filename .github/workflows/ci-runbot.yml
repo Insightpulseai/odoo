@@ -8,6 +8,12 @@ on:
     branches: [main, staging, develop]
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'addons/**'
+      - 'oca/**'
+      - 'external-src/**'
+      - 'requirements.txt'
+      - '.github/workflows/ci-runbot.yml'
   workflow_dispatch:
     inputs:
       test_modules:
