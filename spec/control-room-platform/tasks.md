@@ -1,78 +1,117 @@
-# Tasks — Control Room Platform
+# Control Room Platform -- Tasks
 
-> Work breakdown for the Control Room Platform implementation.
+> **Version**: 1.0.0
+> **Last Updated**: 2026-03-07
+> **Total Tasks**: 48
+> **Completed**: 6 (W1)
+> **Pending**: 42
 
 ---
 
-## Phase 0: Infrastructure
+## W1: Spec & Governance (Phase 0)
 
-- [ ] **P0.1.1** Research Plane self-hosted requirements (CPU, RAM, storage, PG, Redis)
-- [ ] **P0.1.2** Create Plane deployment manifests (Docker Compose or Container Apps Bicep)
-- [ ] **P0.1.3** Deploy Plane stack (Web, Admin, API, Worker, Beat, Live, Silo)
-- [ ] **P0.1.4** Configure DNS: `plane.insightpulseai.com`
-- [ ] **P0.1.5** Configure Entra ID SSO for Plane
-- [ ] **P0.2.1** Create workspace "InsightPulseAI Control Room"
-- [ ] **P0.2.2** Configure work item types and workflow states
-- [ ] **P0.2.3** Apply label taxonomy
-- [ ] **P0.2.4** Enable GitHub Silo integration
-- [ ] **P0.2.5** Enable Slack integration
-- [ ] **P0.3.1** Deploy Plane MCP server
-- [ ] **P0.3.2** Register MCP server in agents repo
+- [x] W1.1 -- Write `spec/control-room-platform/constitution.md` with 9 non-negotiable rules
+- [x] W1.2 -- Write `spec/control-room-platform/prd.md` with 5 use cases and data model
+- [x] W1.3 -- Write `spec/control-room-platform/plan.md` with 4-phase rollout and 9 workstreams
+- [x] W1.4 -- Write `spec/control-room-platform/tasks.md` (this file) with 48 tasks
+- [x] W1.5 -- Write `docs/architecture/CONTROL_ROOM_RUNTIME_STATE.md` with honest activation status
+- [x] W1.6 -- Write `docs/governance/repository_taxonomy.yaml` and `repository_taxonomy.schema.json`
 
-## Phase 1: Execution Layer
+---
 
-- [ ] **P1.1.1** Create initiative: AI Agent Platform (4 epics)
-- [ ] **P1.1.2** Create initiative: ERP Intelligence (4 epics)
-- [ ] **P1.1.3** Create initiative: Data Intelligence (4 epics)
-- [ ] **P1.1.4** Create initiative: Workspace & Knowledge (3 epics)
-- [ ] **P1.2.1** Audit existing planning artifacts (73 identified)
-- [ ] **P1.2.2** Map artifacts to Plane initiatives/epics
-- [ ] **P1.2.3** Create work items for open items
-- [ ] **P1.2.4** Archive legacy planning artifacts
-- [ ] **P1.3.1** Define spec bundle → Plane epic linking convention
-- [ ] **P1.3.2** Link existing spec bundles to Plane epics
+## W2: KPI Contracts (Phase 0)
 
-## Phase 2: Intelligence Layer
+- [x] W2.1 -- Define 17 KPIs in `platform/data/contracts/control_room_kpis.yaml`
+- [ ] W2.2 -- Validate each KPI has `source`, `target`, `threshold_warn`, `threshold_critical`
+- [ ] W2.3 -- Cross-reference KPIs with bounded context ownership in `CANONICAL_ENTITY_MAP.yaml`
+- [ ] W2.4 -- Add SQL/API evidence queries for each KPI (document in `evidence` field)
+- [ ] W2.5 -- Write KPI contract validation script (`scripts/ci/validate_kpi_contracts.sh`)
 
-- [ ] **P2.1.1** Create Plane API → Bronze ingestion pipeline
-- [ ] **P2.1.2** Create GitHub API → Bronze ingestion pipeline
-- [ ] **P2.1.3** Create Odoo API → Bronze ingestion pipeline
-- [ ] **P2.1.4** Create Foundry telemetry → Bronze ingestion pipeline
-- [ ] **P2.1.5** Build Silver/Gold transformations for delivery metrics
-- [ ] **P2.1.6** Build Silver/Gold transformations for engineering metrics
-- [ ] **P2.1.7** Build Silver/Gold transformations for finance metrics
-- [ ] **P2.2.1** Scaffold Databricks App (Streamlit)
-- [ ] **P2.2.2** Build Executive Summary page
-- [ ] **P2.2.3** Build Delivery Health page
-- [ ] **P2.2.4** Build Finance Ops Health page
-- [ ] **P2.2.5** Build Anomaly/Risk Feed page
-- [ ] **P2.2.6** Build Agent Runtime Metrics page
-- [ ] **P2.2.7** Build Source System Freshness page
-- [ ] **P2.2.8** Build Evidence/Audit Readiness page
-- [ ] **P2.2.9** Configure OAuth + Unity Catalog access
-- [ ] **P2.3.1** Define data contracts (schema + freshness SLA)
-- [ ] **P2.3.2** Implement freshness monitoring pipeline
-- [ ] **P2.3.3** Implement anomaly detection pipeline
+---
 
-## Phase 3: Agent Layer
+## W3: Event Contracts (Phase 0)
 
-- [ ] **P3.1.1** Build Status Synthesis agent (Foundry)
-- [ ] **P3.1.2** Build Blocker Triage agent (Foundry)
-- [ ] **P3.1.3** Build Risk Summarizer agent (Foundry)
-- [ ] **P3.1.4** Build Finance Close Assistant agent (Foundry)
-- [ ] **P3.1.5** Build Control Room Q&A agent (Foundry)
-- [ ] **P3.2.1** Connect agents to Plane MCP server
-- [ ] **P3.2.2** Implement automated weekly status reports
-- [ ] **P3.2.3** Implement work item creation from agent actions
-- [ ] **P3.3.1** Connect agents to Databricks Gold/Platinum layers
-- [ ] **P3.3.2** Implement RAG for Q&A agent over dashboard data
-- [ ] **P3.3.3** Connect Risk agent to anomaly feed
+- [x] W3.1 -- Define 11 events in `platform/data/contracts/control_room_events.yaml`
+- [ ] W3.2 -- Validate each event has JSON Schema and `kpi_linkage`
+- [ ] W3.3 -- Cross-reference events with existing `ctrl.integration_events` schema
+- [ ] W3.4 -- Verify event names follow dot-notation convention (`<domain>.<action>`)
+- [ ] W3.5 -- Write event contract validation script (`scripts/ci/validate_event_contracts.sh`)
 
-## Phase 4: Strategy Layer
+---
 
-- [ ] **P4.1.1** Create Figma roadmap template
-- [ ] **P4.1.2** Populate Q1-Q3 2026 roadmap
-- [ ] **P4.1.3** Establish monthly update cadence
-- [ ] **P4.2.1** End-to-end flow validation (Figma → Plane → Spec → GitHub)
-- [ ] **P4.2.2** Dashboard validation (live data flowing through all pages)
-- [ ] **P4.2.3** Agent validation (summaries are accurate and actionable)
+## W4: CI Validators (Phase 0)
+
+- [ ] W4.1 -- Create `scripts/ci/validate_kpi_contracts.sh` -- YAML lint + required fields check
+- [ ] W4.2 -- Create `scripts/ci/validate_event_contracts.sh` -- YAML lint + JSON Schema validation
+- [ ] W4.3 -- Create `scripts/ci/validate_runtime_state.sh` -- check no overclaiming vs evidence files
+- [ ] W4.4 -- Create `scripts/ci/validate_repository_taxonomy.sh` -- YAML against JSON Schema
+- [ ] W4.5 -- Add GitHub Actions workflow `.github/workflows/control-room-governance.yml`
+- [ ] W4.6 -- Add pre-commit hook for governance YAML linting
+
+---
+
+## W5: Environment Setup (Phase 1)
+
+- [ ] W5.1 -- Create environment variable manifest: list all required env vars per bounded context
+- [ ] W5.2 -- Provision Supabase `ctrl.*` schema in staging (extend `spec/integration-control-plane/`)
+- [ ] W5.3 -- Provision Odoo `odoo_dev` database with KPI extraction views
+- [ ] W5.4 -- Configure Databricks workspace with Unity Catalog schemas (bronze/silver/gold)
+- [ ] W5.5 -- Create Azure/Foundry project and register copilot tool definitions
+- [ ] W5.6 -- Configure Plane workspace with Control Room project and issue types
+- [ ] W5.7 -- Write connection verification script per context (`scripts/verify_connections.sh`)
+
+---
+
+## W6: Odoo Integration (Phase 2)
+
+- [ ] W6.1 -- Create Odoo SQL views for KPI extraction (approval turnaround, expense processing, etc.)
+- [ ] W6.2 -- Create `ipai_control_room_kpi` module with cron job for KPI collection
+- [ ] W6.3 -- Implement Odoo --> Supabase KPI push via n8n webhook
+- [ ] W6.4 -- Create Odoo health check endpoint at `/api/v1/health/control-room`
+- [ ] W6.5 -- Write integration test: Odoo KPI push --> Supabase `ctrl.integration_events`
+
+---
+
+## W7: Supabase Integration (Phase 2)
+
+- [ ] W7.1 -- Deploy `ctrl.integration_events` table with RLS and indexes
+- [ ] W7.2 -- Deploy `ctrl.kpi_snapshots` table for KPI history storage
+- [ ] W7.3 -- Create Edge Function `control-room-event-ingest` for event validation
+- [ ] W7.4 -- Create Edge Function `control-room-kpi-query` for KPI retrieval
+- [ ] W7.5 -- Write integration test: event ingest --> validation --> storage --> query
+
+---
+
+## W8: Databricks Integration (Phase 2)
+
+- [ ] W8.1 -- Create DLT pipeline: Supabase `ctrl.integration_events` --> bronze table
+- [ ] W8.2 -- Create silver table: cleaned and normalized events with entity resolution
+- [ ] W8.3 -- Create gold table: KPI aggregations (daily/weekly/monthly)
+- [ ] W8.4 -- Create Databricks SQL dashboard for KPI trend visualization
+
+---
+
+## W9: Dashboard & Observability (Phase 2-3)
+
+- [ ] W9.1 -- Design Control Room dashboard wireframe (bounded context inventory view)
+- [ ] W9.2 -- Implement dashboard data layer (reads from Supabase `ctrl.*` tables)
+- [ ] W9.3 -- Implement KPI threshold alerting (n8n workflow --> Slack notification)
+- [ ] W9.4 -- Implement weekly governance report generator (CI job or n8n schedule)
+- [ ] W9.5 -- Create runbook for each bounded context (incident response, rollback, escalation)
+
+---
+
+## Summary
+
+| Workstream | Total | Done | Pending | Phase |
+|-----------|-------|------|---------|-------|
+| W1: Spec & Governance | 6 | 6 | 0 | 0 |
+| W2: KPI Contracts | 5 | 1 | 4 | 0 |
+| W3: Event Contracts | 5 | 1 | 4 | 0 |
+| W4: CI Validators | 6 | 0 | 6 | 0 |
+| W5: Environment Setup | 7 | 0 | 7 | 1 |
+| W6: Odoo Integration | 5 | 0 | 5 | 2 |
+| W7: Supabase Integration | 5 | 0 | 5 | 2 |
+| W8: Databricks Integration | 4 | 0 | 4 | 2 |
+| W9: Dashboard & Observability | 5 | 0 | 5 | 2-3 |
+| **Total** | **48** | **8** | **40** | |

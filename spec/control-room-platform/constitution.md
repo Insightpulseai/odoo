@@ -1,83 +1,168 @@
-# Constitution — Control Room Platform
+# Control Room Platform -- Constitution
 
-> Non-negotiable rules and constraints for the Control Room Platform.
-
----
-
-## 1. Platform Boundaries (Never Violate)
-
-Each platform owns exactly one concern. No platform duplicates another's role.
-
-| Platform | Role | Boundary |
-|----------|------|----------|
-| **Plane** | Workspace, execution, knowledge | Initiatives, epics, work items, wiki, approvals, inbox |
-| **Databricks Apps** | Operational analytics | KPI dashboards, AI summaries, risk monitoring, forecasts |
-| **Azure Foundry** | Agent runtime | Copilots, tool orchestration, multi-step agents |
-| **Odoo** | System of record | Transactional truth, ERP operations |
-| **Supabase** | Control plane | Integration state, auth, Edge Functions, Vault |
-| **GitHub** | Engineering platform | Source code, CI/CD, spec-driven development |
-
-**Rule**: If a capability maps to a platform's role, it MUST live there. Never build analytics in Plane, never build project management in Databricks.
+> **Version**: 1.0.0
+> **Status**: Active
+> **Last Updated**: 2026-03-07
+> **Activation State**: repo-only (specs and contracts exist, no runtime deployment)
 
 ---
 
-## 2. Planning Hierarchy (Three Layers)
+## Purpose
+
+The Control Room Platform is the enterprise instrumentation and governance layer for InsightPulse AI. It provides observability, KPI tracking, and governance across 7 bounded contexts that collectively form the IPAI operational stack. This constitution defines the non-negotiable rules that govern all Control Room artifacts, integrations, and runtime behavior.
+
+---
+
+## Non-Negotiables
+
+### 1. Single Source of Truth Per Bounded Context
+
+Each bounded context has exactly ONE system of record. No data duplication across contexts for authoritative state.
+
+| Bounded Context | System of Record | Owns |
+|----------------|-----------------|------|
+| **Odoo ERP** | Odoo CE 19 + PostgreSQL 16 | Financial transactions, HR, CRM, approvals, expenses |
+| **Supabase** | Supabase (`spdtwktxdalcfigzeqrz`) | Identity map, sync state, integration events, entity links |
+| **Databricks** | Databricks Unity Catalog | Bronze/silver/gold tables, ML models, analytics |
+| **Plane** | Plane workspace | Projects, issues, cycles, coordination |
+| **n8n** | n8n self-hosted | Workflow definitions, execution history, credentials |
+| **Azure/Foundry** | Azure AI Foundry | Agent definitions, tool registrations, copilot configs |
+| **GitHub** | GitHub (`Insightpulseai` org) | Source code, CI/CD pipelines, issue tracking |
+
+**Violation**: Any system storing authoritative data that belongs to another context is a constitutional violation. Read-only replicas for analytics (Databricks) and integration metadata (Supabase `ctrl.*`) are permitted.
+
+---
+
+### 2. Promotion State Machine
+
+Every bounded context and every artifact has a promotion state. States are strictly ordered and transitions require evidence.
 
 ```
-Strategy:     Figma roadmap (executives, quarterly)
-Execution:    Plane workspace (teams, weekly)
-Engineering:  Spec Kit bundles (engineers, per-feature)
+repo-only --> configured --> deployed --> live
 ```
 
-Each layer flows down:
-- Figma roadmap item → Plane initiative/epic
-- Plane epic → Spec bundle
-- Spec bundle → GitHub implementation
+| State | Definition | Evidence Required |
+|-------|-----------|-------------------|
+| `repo-only` | Specs, contracts, and code exist in the repository | File paths in repo |
+| `configured` | Environment variables, secrets, and connections are provisioned | Config verification script output |
+| `deployed` | Runtime services are running in staging or production | Health check HTTP 200 + container logs |
+| `live` | Production traffic is flowing and monitored | Metrics showing real data flow + alerting active |
 
-**Rule**: No engineering work starts without a Plane epic. No Plane epic exists without a roadmap alignment.
-
----
-
-## 3. Source of Truth per Layer
-
-| Data | SSOT | Not SSOT |
-|------|------|----------|
-| Product roadmap | Figma board | Slides, docs, spreadsheets |
-| Delivery status | Plane workspace | GitHub issues, Slack threads |
-| Engineering contract | Spec bundle | PRDs in Google Docs, Notion |
-| Runtime metrics | Databricks Apps | Manual reports, spreadsheets |
-| Agent definitions | GitHub (agents repo) | Foundry console alone |
+**Non-negotiable**: No artifact, service, or integration may claim a state it has not achieved with evidence. Overclaiming is a governance violation.
 
 ---
 
-## 4. Integration Contracts
+### 3. Evidence Requirements
 
-### Plane ↔ GitHub
-- Plane Silo service handles GitHub integration
-- Work items link to GitHub PRs/issues
-- Status syncs bidirectionally
+Every state transition produces evidence stored in `docs/evidence/<YYYYMMDD-HHMM>/<scope>/`.
 
-### Plane ↔ Agents (via MCP)
-- Agents create/update work items via Plane MCP server
-- Agents summarize projects and generate updates
-- No agent writes directly to Plane DB — always via API/MCP
+| Transition | Required Evidence |
+|------------|-------------------|
+| repo-only --> configured | Secrets provisioned (names only, never values), connection test pass |
+| configured --> deployed | Container running, health endpoint 200, DB migration applied |
+| deployed --> live | Metrics flowing, alerting configured, first real transaction processed |
 
-### Databricks Apps ↔ Lakehouse
-- Apps read from Gold/Platinum layers only
-- No raw data access from apps
-- Unity Catalog governs all access
-
-### Foundry ↔ Tools
-- Agents access external systems via defined tools only
-- No direct database access from agents
-- Tool schemas are versioned in the agents repo
+**Format**: Evidence must include:
+- Timestamp (ISO 8601)
+- Actor (human or CI job)
+- Verification command and output
+- Pass/fail determination
 
 ---
 
-## 5. Non-Negotiable Rules
+### 4. KPI Contracts Are Machine-Readable
 
-1. **No shadow planning**: All planning artifacts converge into Plane. No parallel Trello/Notion/Sheets.
-2. **No console-only changes**: Every infrastructure/config change has a repo commit.
-3. **Secrets never cross boundaries in plaintext**: Vault/Key Vault only.
-4. **Agents are read-mostly**: Agents can query and summarize, but create/update actions require explicit tool authorization.
-5. **Dashboards are not data stores**: Databricks Apps display, they don't persist business state.
+All KPI definitions MUST be in YAML format at `platform/data/contracts/control_room_kpis.yaml`. Prose descriptions in PRDs or plans do not constitute a KPI contract.
+
+Each KPI contract MUST include:
+- `id`: Unique identifier (`kpi_NNN`)
+- `name`: Human-readable name
+- `owner`: Bounded context that produces the metric
+- `source`: Specific table, model, or API endpoint
+- `target`: Quantified target value with unit
+- `threshold_warn` and `threshold_critical`: Numeric thresholds
+- `unit`: Measurement unit
+- `frequency`: Collection frequency
+- `evidence`: How to verify the metric
+
+---
+
+### 5. Event Contracts Define Schema Before Implementation
+
+No cross-system event may be implemented without a contract in `platform/data/contracts/control_room_events.yaml`.
+
+Each event contract MUST include:
+- `id`: Unique identifier (`evt_NNN`)
+- `name`: Dot-notation event name
+- `source`: Producing bounded context
+- `schema`: JSON Schema for the event payload
+- `kpi_linkage`: Which KPIs this event feeds
+
+**Enforcement**: CI validators MUST reject PRs that add event handlers without a corresponding contract.
+
+---
+
+### 6. No Overclaiming
+
+This is the most critical rule. The Control Room governance layer exists precisely to prevent false status claims.
+
+**Prohibited phrases in any IPAI document**:
+- "deployed" when the state is `repo-only` or `configured`
+- "production-ready" without deployment evidence
+- "integrated" without a working sync pipeline
+- "monitoring active" without alerting configuration proof
+
+**Remediation**: Any document found to overclaim MUST be corrected within 24 hours of detection. CI lint rules enforce this where possible.
+
+---
+
+### 7. Governance Hierarchy
+
+```
+constitution.md (this file -- non-negotiable)
+    |
+    +--> prd.md (product requirements -- what to build)
+    |
+    +--> plan.md (phased rollout -- when to build)
+    |
+    +--> tasks.md (concrete tasks -- who does what)
+    |
+    +--> platform/data/contracts/ (machine-readable contracts)
+    |
+    +--> docs/architecture/CONTROL_ROOM_RUNTIME_STATE.md (honest status)
+    |
+    +--> docs/governance/ (taxonomy, schemas, policies)
+```
+
+---
+
+## Boundaries
+
+### 8. Bounded Context Independence
+
+Each bounded context:
+- Operates independently and can be promoted through states on its own schedule
+- Has its own health check endpoint (when deployed)
+- Has its own KPI set
+- Can be rolled back without affecting other contexts
+- Communicates with other contexts ONLY through defined event contracts
+
+---
+
+### 9. Financial Data Sovereignty
+
+All financial transactions, tax filings, and regulatory compliance data MUST remain in Odoo ERP (PostgreSQL 16). This is inherited from `docs/architecture/CANONICAL_ENTITY_MAP.yaml` and is non-negotiable.
+
+Databricks may hold read-only analytical copies in gold tables. No other system may hold authoritative financial records.
+
+---
+
+## Cross-References
+
+- `spec/integration-control-plane/constitution.md` -- Supabase `ctrl.*` schema rules
+- `spec/control-room-api/constitution.md` -- Control Room API orchestration rules
+- `spec/databricks-apps-control-room/prd.md` -- Databricks connector monitoring
+- `docs/architecture/CANONICAL_ENTITY_MAP.yaml` -- Cross-system ownership contract
+- `docs/architecture/INTEGRATION_BOUNDARY_MODEL.md` -- System boundary definitions
+- `spec/odoo-copilot-azure/constitution.md` -- Azure/Foundry agent platform rules
+- `spec/odoo-approval-inbox/constitution.md` -- Approval workflow governance
