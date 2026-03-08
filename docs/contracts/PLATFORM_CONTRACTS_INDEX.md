@@ -38,6 +38,7 @@
 | C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
 | C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
 | C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
+| C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
 
 ---
 

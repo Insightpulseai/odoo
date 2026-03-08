@@ -4,6 +4,8 @@
 # =============================================================================
 # Replaces: root Dockerfile (Odoo 18), docker/odoo/Dockerfile (thin wrapper)
 # Contract: Odoo 19 CE + OCA (flattened) + IPAI custom modules
+# Manifest: config/addons.manifest.yaml (curated repo + module list)
+# Validator: scripts/odoo/validate_addons_manifest.py
 #
 # Addon path order (SSOT invariant):
 #   /usr/lib/python3/dist-packages/odoo/addons  (Odoo CE core)
