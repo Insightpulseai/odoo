@@ -425,20 +425,31 @@ company. Independent subsidiaries must be modeled as separate companies, not bra
 
 ### 18.1 Unified Mapping
 
-The platform uses a three-tier entity hierarchy aligned to Odoo semantics:
+The platform uses a three-tier entity hierarchy aligned to Odoo semantics,
+built on top of the existing `core` and `saas` schemas:
 
 ```
-auth.users → tenant.organizations → erp.companies → erp.branches (optional)
+auth.users → core.app_user → core.tenant_membership
+                                    ↓
+                              core.tenant → saas.accounts (billing)
+                                    ↓
+                              erp.companies (legal/financial, maps to res.company)
+                                    ↓
+                              erp.branches (optional subdivision)
 ```
 
-| Platform Concept | Odoo Concept | Isolation Level |
-|------------------|-------------|-----------------|
-| **Organization** (SaaS tenant) | N/A — above Odoo | Billing, identity, data partition |
-| **Company** | `res.company` | Legal/financial boundary, accounting books |
-| **Branch** | `res.company` (child) | Operational subdivision under a company |
+| Platform Concept | Schema Table | Odoo Concept | Isolation Level |
+|------------------|-------------|-------------|-----------------|
+| **Tenant** (SaaS workspace) | `core.tenant` + `saas.accounts` | N/A — above Odoo | Billing, identity, data partition |
+| **Company** | `erp.companies` | `res.company` | Legal/financial boundary, accounting books |
+| **Branch** | `erp.branches` | `res.company` (child) | Operational subdivision under a company |
 
-**Critical rule**: SaaS tenant ≠ Odoo company. A single organization may contain
+**Critical rule**: SaaS tenant ≠ Odoo company. A single tenant may contain
 multiple companies (subsidiaries) and each company may have branches.
+
+**Schema reconciliation**: `erp.companies.tenant_id` → `core.tenant.id`,
+`erp.companies.core_company_id` → `core.company.id` (optional legal entity link).
+Memberships use `core.app_user.id` (not `auth.users` directly) for consistency.
 
 ### 18.2 Data Classification
 
@@ -450,7 +461,7 @@ Shared across all companies/branches unless explicitly restricted:
 - `catalog.products` / `product.template`
 - `core.tags`, `core.templates`, `core.taxonomies`
 
-Columns: `organization_id`, `company_id` (nullable), `branch_id` (nullable)
+Columns: `tenant_id`, `company_id` (nullable), `branch_id` (nullable)
 
 #### Company/Branch-Scoped Transactional Data
 
@@ -463,7 +474,7 @@ Must always carry company scope; branch is optional narrowing:
 - `erp.stock_moves` / `stock.move`
 - `erp.journal_entries` / `account.move.line`
 
-Columns: `organization_id` (NOT NULL), `company_id` (NOT NULL), `branch_id` (nullable)
+Columns: `tenant_id` (NOT NULL), `company_id` (NOT NULL), `branch_id` (nullable)
 
 ### 18.3 Active Session Context
 
@@ -471,7 +482,7 @@ The JWT/session must carry an active context that mirrors Odoo's company selecto
 
 ```json
 {
-  "org_id": "uuid",
+  "tenant_id": "uuid",
   "company_id": "uuid",
   "branch_id": "uuid | null",
   "role": "string"

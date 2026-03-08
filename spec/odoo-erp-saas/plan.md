@@ -61,18 +61,18 @@
 
 > Workstream: WS-ERP-ENTITY-01
 
-Define the Supabase-side entity model that mirrors Odoo's company/branch semantics.
+Extend the existing `core` + `saas` schemas with Odoo company/branch semantics.
+Does NOT create new tenant tables — uses `core.tenant` and `core.app_user` as foundation.
 
-- Supabase schema: `tenant` namespace for organizations, `erp` namespace for companies/branches
-- Tables:
-  - `tenant.organizations` — SaaS tenant (billing/identity boundary)
-  - `tenant.memberships` — user ↔ organization membership
-  - `erp.companies` — Odoo `res.company` mirror (legal/financial entity)
+- Uses existing: `core.tenant` (workspace), `core.app_user` (user identity), `saas.accounts` (billing)
+- New tables in `erp` schema:
+  - `erp.companies` — Odoo `res.company` mirror, FK to `core.tenant` + `core.company`
   - `erp.branches` — optional subdivision under a company
-  - `erp.company_memberships` — user ↔ company access
-  - `erp.branch_memberships` — user ↔ branch access
-- Every transactional table must carry `organization_id` + `company_id` (NOT NULL), `branch_id` (nullable)
-- Shared master data tables carry `organization_id`, with optional `company_id`/`branch_id`
+  - `erp.company_memberships` — user ↔ company access (FK to `core.app_user`)
+  - `erp.branch_memberships` — user ↔ branch access (FK to `core.app_user`)
+- `erp.v_entity_hierarchy` — unified view joining core.tenant + saas.accounts + erp.companies + erp.branches
+- Every transactional table must carry `tenant_id` + `company_id` (NOT NULL), `branch_id` (nullable)
+- Shared master data tables carry `tenant_id`, with optional `company_id`/`branch_id`
 - Classify all existing platform tables into shared vs scoped categories
 
 ### 1.7 Active Context & RLS (Company/Branch Scoping)
@@ -81,9 +81,9 @@ Define the Supabase-side entity model that mirrors Odoo's company/branch semanti
 
 Implement row-level security that respects Odoo's parent-company/branch narrowing.
 
-- JWT claims must include `org_id`, `company_id`, `branch_id`, `role`
+- JWT claims must include `tenant_id`, `company_id`, `branch_id`, `role`
 - Supabase `auth.jwt()` extraction for RLS policies
-- Company-level RLS: user can read/write when they have membership in `organization_id` + `company_id`
+- Company-level RLS: user can read/write when they have membership in `tenant_id` (via core.tenant_membership) + `company_id` (via erp.company_memberships)
 - Branch narrowing: if `branch_id` is populated on a row, user must either:
   - Have that branch in their `erp.branch_memberships`, OR
   - Have parent-company admin role (inherits all branch access)
