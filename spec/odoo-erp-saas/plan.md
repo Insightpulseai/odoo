@@ -57,6 +57,45 @@
 
 ---
 
+### 1.6 ERP Entity Model (Company / Branch)
+
+> Workstream: WS-ERP-ENTITY-01
+
+Extend the existing `core` + `saas` schemas with Odoo company/branch semantics.
+Does NOT create new tenant tables — uses `core.tenant` and `core.app_user` as foundation.
+
+- Uses existing: `core.tenant` (workspace), `core.app_user` (user identity), `saas.accounts` (billing)
+- New tables in `erp` schema:
+  - `erp.companies` — Odoo `res.company` mirror, FK to `core.tenant` + `core.company`
+  - `erp.branches` — optional subdivision under a company
+  - `erp.company_memberships` — user ↔ company access (FK to `core.app_user`)
+  - `erp.branch_memberships` — user ↔ branch access (FK to `core.app_user`)
+- `erp.v_entity_hierarchy` — unified view joining core.tenant + saas.accounts + erp.companies + erp.branches
+- Every transactional table must carry `tenant_id` + `company_id` (NOT NULL), `branch_id` (nullable)
+- Shared master data tables carry `tenant_id`, with optional `company_id`/`branch_id`
+- Classify all existing platform tables into shared vs scoped categories
+
+### 1.7 Active Context & RLS (Company/Branch Scoping)
+
+> Workstream: WS-RLS-CTX-01
+
+Implement row-level security that respects Odoo's parent-company/branch narrowing.
+
+- JWT claims must include `tenant_id`, `company_id`, `branch_id`, `role`
+- Supabase `auth.jwt()` extraction for RLS policies
+- Company-level RLS: user can read/write when they have membership in `tenant_id` (via core.tenant_membership) + `company_id` (via erp.company_memberships)
+- Branch narrowing: if `branch_id` is populated on a row, user must either:
+  - Have that branch in their `erp.branch_memberships`, OR
+  - Have parent-company admin role (inherits all branch access)
+- Selecting a company implies visibility of all its branches
+- Selecting a branch narrows scope to that branch only
+- Create reusable RLS policy templates for:
+  - `rls_org_company_branch_read` — standard read policy
+  - `rls_org_company_branch_write` — standard write policy
+  - `rls_shared_master_read` — for shared master data (org-wide)
+
+---
+
 ## Phase 2: Managed Multi-Tenant SaaS
 
 ### 2.1 Tenant Templates

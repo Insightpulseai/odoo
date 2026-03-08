@@ -48,6 +48,26 @@
 - [ ] **1.5.4** Build post-deploy evidence capture
 - [ ] **1.5.5** Document rollback procedure
 
+### ERP Entity Model (Company / Branch)
+- [x] **1.6.1** Create Supabase migration: `erp.companies` table (mirrors `res.company`, FK to `core.tenant` + `core.company`)
+- [x] **1.6.2** Create Supabase migration: `erp.branches` table (optional subdivision)
+- [x] **1.6.3** Create Supabase migration: `erp.company_memberships` table (FK to `core.app_user`)
+- [x] **1.6.4** Create Supabase migration: `erp.branch_memberships` table (FK to `core.app_user`)
+- [x] **1.6.5** Create `erp.v_entity_hierarchy` view (joins core.tenant + saas.accounts + erp.companies + erp.branches)
+- [ ] **1.6.6** Classify existing platform tables: shared master vs company-scoped
+- [ ] **1.6.7** Add `tenant_id`, `company_id`, `branch_id` columns to scoped tables
+- [ ] **1.6.8** Document entity model in `docs/architecture/TENANCY_MODEL.md`
+
+### Active Context & RLS
+- [x] **1.7.1** Define JWT active-context contract (`tenant_id`, `company_id`, `branch_id`, `role`)
+- [x] **1.7.2** Create `erp.check_access(tenant_id, company_id, branch_id)` reusable RLS function
+- [x] **1.7.3** Apply company-level RLS policies (tenant membership + company membership)
+- [x] **1.7.4** Apply branch-narrowing RLS (branch membership OR parent-company admin)
+- [ ] **1.7.5** Apply RLS templates to transactional tables as they are created
+- [ ] **1.7.7** Test: parent company sees all branch data
+- [ ] **1.7.8** Test: branch selection narrows scope to that branch only
+- [ ] **1.7.9** Test: subsidiaries as separate companies have isolated data
+
 ---
 
 ## Phase 2: Managed Multi-Tenant SaaS

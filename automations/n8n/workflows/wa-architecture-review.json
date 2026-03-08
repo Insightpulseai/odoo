@@ -1,0 +1,117 @@
+{
+  "name": "Well-Architected Architecture Review",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "wa-schedule",
+      "name": "Monthly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_BASE_URL }}/api/v1/executions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "note",
+              "value": "WA assessment started"
+            }
+          ]
+        }
+      },
+      "id": "wa-log-start",
+      "name": "Log Start",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// WA Automated Health Checks\nconst endpoints = [\n  { name: 'erp', url: 'https://erp.insightpulseai.com/web/health' },\n  { name: 'n8n', url: 'https://n8n.insightpulseai.com/healthz' },\n  { name: 'superset', url: 'https://superset.insightpulseai.com/health' },\n  { name: 'ocr', url: 'https://ocr.insightpulseai.com/health' },\n  { name: 'auth', url: 'https://auth.insightpulseai.com/health' },\n  { name: 'mcp', url: 'https://mcp.insightpulseai.com/health' },\n  { name: 'plane', url: 'https://plane.insightpulseai.com/api/health' },\n  { name: 'shelf', url: 'https://shelf.insightpulseai.com/health' },\n  { name: 'crm', url: 'https://crm.insightpulseai.com/health' },\n  { name: 'ops', url: 'https://ops.insightpulseai.com/health' },\n];\n\nconst results = [];\nfor (const ep of endpoints) {\n  try {\n    const resp = await fetch(ep.url, { signal: AbortSignal.timeout(10000) });\n    results.push({\n      name: ep.name,\n      status: resp.status,\n      healthy: resp.status === 200,\n      hsts: resp.headers.get('strict-transport-security') || 'missing',\n    });\n  } catch (e) {\n    results.push({\n      name: ep.name,\n      status: 0,\n      healthy: false,\n      hsts: 'unreachable',\n      error: e.message,\n    });\n  }\n}\n\nconst healthy_count = results.filter(r => r.healthy).length;\nconst hsts_count = results.filter(r => r.hsts !== 'missing' && r.hsts !== 'unreachable').length;\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    endpoints: results,\n    summary: {\n      total: endpoints.length,\n      healthy: healthy_count,\n      unhealthy: endpoints.length - healthy_count,\n      hsts_enabled: hsts_count,\n      health_score: Math.round((healthy_count / endpoints.length) * 5 * 10) / 10,\n      tls_score: Math.round((hsts_count / endpoints.length) * 5 * 10) / 10,\n    }\n  }\n}];"
+      },
+      "id": "wa-health-checks",
+      "name": "Health Checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst summary = data.summary;\n\n// Compute overall WA score (simplified - health + TLS only for auto)\nconst pillars = [\n  { name: 'Security (TLS/HSTS)', score: summary.tls_score, weight: 0.25 },\n  { name: 'Reliability (Health)', score: summary.health_score, weight: 0.20 },\n  { name: 'Operations', score: 3.0, weight: 0.20 },  // baseline pending full scorer\n  { name: 'DevOps (DORA)', score: 3.0, weight: 0.20 },  // baseline pending full scorer\n  { name: 'Governance', score: 3.0, weight: 0.15 },  // baseline pending full scorer\n];\n\nconst overall = pillars.reduce((sum, p) => sum + p.score * p.weight, 0) /\n  pillars.reduce((sum, p) => sum + p.weight, 0);\n\nconst unhealthy = data.endpoints.filter(e => !e.healthy);\nconst noHsts = data.endpoints.filter(e => e.hsts === 'missing');\n\nreturn [{\n  json: {\n    overall_score: Math.round(overall * 100) / 100,\n    pillars: pillars,\n    high_risk: unhealthy.map(e => `${e.name}: unreachable (status ${e.status})`),\n    warnings: noHsts.map(e => `${e.name}: HSTS missing`),\n    report_date: data.timestamp,\n  }\n}];"
+      },
+      "id": "wa-score-compute",
+      "name": "Compute Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"*Well-Architected Monthly Review*\\nOverall Score: {{ $json.overall_score }}/5.0\\n\\n*Pillars:*\\n{{ $json.pillars.map(p => `- ${p.name}: ${p.score}/5.0`).join('\\n') }}\\n\\n*HIGH_RISK:* {{ $json.high_risk.length > 0 ? $json.high_risk.join(', ') : 'None' }}\\n*Warnings:* {{ $json.warnings.length > 0 ? $json.warnings.join(', ') : 'None' }}\"\n}"
+      },
+      "id": "wa-slack-notify",
+      "name": "Slack Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    }
+  ],
+  "connections": {
+    "Monthly Schedule": {
+      "main": [
+        [{ "node": "Log Start", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Start": {
+      "main": [
+        [{ "node": "Health Checks", "type": "main", "index": 0 }]
+      ]
+    },
+    "Health Checks": {
+      "main": [
+        [{ "node": "Compute Score", "type": "main", "index": 0 }]
+      ]
+    },
+    "Compute Score": {
+      "main": [
+        [{ "node": "Slack Notify", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "architecture" },
+    { "name": "well-architected" },
+    { "name": "monitoring" }
+  ]
+}
