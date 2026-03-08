@@ -10,7 +10,7 @@
         <mxCell id="layer-core" value="Core Logic" parent="0" />
 
         <!-- Header -->
-        <mxCell id="title" value="Insightpulseai Odoo 19 CE — C4 Model: System Context &amp; Containers" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
+        <mxCell id="title" value="Insightpulseai Odoo 19 CE — Enterprise Architecture &amp; Azure AI Data Plane" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#2D3436;" vertex="1" parent="1">
           <mxGeometry x="50" y="20" width="1300" height="50" as="geometry" />
         </mxCell>
 
@@ -88,13 +88,83 @@
           <mxGeometry x="20" y="240" width="200" height="140" as="geometry" />
         </mxCell>
 
-        <!-- Edges -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#000000;curved=1;" edge="1" parent="1" source="repo-skills" target="ci-skill-check">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Azure AI Services (rg-ipai-ai-dev) -->
+        <!-- Azure Landing Zone (rg-ipai-platform-dev) -->
+        <mxCell id="rg-platform" value="Azure Landing Zone: rg-ipai-platform-dev" style="swimlane;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0078D4;strokeWidth=2;dashed=1;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="lane-platform">
+          <mxGeometry x="20" y="400" width="200" height="180" as="geometry" />
         </mxCell>
 
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;strokeColor=#27AE60;curved=1;" edge="1" parent="1" source="repo-sdk" target="pl-skill-layer">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="az-vnet" value="vnet-ipai-databricks&#xa;(10.10.0.0/16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-platform">
+          <mxGeometry x="10" y="40" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-kv" value="kv-ipai-dev&#xa;(Shared Secrets)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-platform">
+          <mxGeometry x="10" y="100" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Azure Agent Layer (rg-ipai-agents-dev) -->
+        <mxCell id="rg-agents" value="Agent Layer: rg-ipai-agents-dev" style="swimlane;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0078D4;strokeWidth=2;dashed=1;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="lane-platform">
+          <mxGeometry x="20" y="590" width="200" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-aca" value="cae-ipai-dev&#xa;(Container Apps)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-agents">
+          <mxGeometry x="10" y="40" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-health" value="ca-healthcheck-ipai-dev" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontSize=10;" vertex="1" parent="rg-agents">
+          <mxGeometry x="10" y="100" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-agent-job" value="caj-agent-ipai-dev" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontSize=10;" vertex="1" parent="rg-agents">
+          <mxGeometry x="10" y="140" width="180" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Azure AI/Data Plane (rg-ipai-ai-dev) -->
+        <mxCell id="rg-ai-plane" value="Data Plane: rg-ipai-ai-dev" style="swimlane;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0078D4;strokeWidth=2;dashed=1;fontSize=12;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="100" width="240" height="760" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-dbw" value="dbw-ipai-dev&#xa;(Databricks Premium)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="60" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-lake" value="stipaidevlake&#xa;(ADLS Gen2 / Lakehouse)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="180" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-medallion" value="Medallion: B -&gt; S -&gt; G -&gt; P" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#0078D4;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="310" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-openai" value="Azure OpenAI (oai-ipai-dev)&#xa;GPT-4o + Embeddings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="360" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-search" value="AI Search (srch-ipai-dev)&#xa;Vector Index / RAG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="460" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="az-foundry" value="Foundry Agent Service&#xa;(Phase 3: Orchestration)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0078D4;fontStyle=1;dashed=1;" vertex="1" parent="rg-ai-plane">
+          <mxGeometry x="20" y="560" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Edges Updates -->
+        <mxCell id="e-bridge" value="n8n Daily Export" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#E67E22;curved=1;fontSize=10;fontColor=#E67E22;" edge="1" parent="1" source="rt-pg" target="az-lake">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="700" />
+              <mxPoint x="730" y="880" />
+              <mxPoint x="1480" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e-skill-ai" value="AI Capability Proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#0078D4;curved=1;fontSize=10;fontColor=#0078D4;" edge="1" parent="1" source="pl-skill-layer" target="rg-ai-plane">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1280" y="500" />
+            </Array>
+          </mxGeometry>
         </mxCell>
 
       </root>
