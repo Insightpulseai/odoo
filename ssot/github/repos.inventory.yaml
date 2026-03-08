@@ -1,5 +1,5 @@
 version: 1
-generated_at: '2026-03-08T07:22:11.335389+00:00'
+generated_at: '2026-03-08T08:23:43.217072+00:00'
 org: Insightpulseai
 repos:
 - name: .github
@@ -9,7 +9,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 65
   updated_at: '2026-03-07T19:30:17Z'
 - name: agents
   visibility: public
@@ -18,7 +18,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 23
   updated_at: '2026-03-07T16:45:54Z'
 - name: design-system
   visibility: internal
@@ -27,7 +27,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 2
   updated_at: '2026-03-07T16:46:34Z'
 - name: infra
   visibility: private
@@ -36,7 +36,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 2
   updated_at: '2026-03-07T16:46:16Z'
 - name: lakehouse
   visibility: private
@@ -45,7 +45,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 2
   updated_at: '2026-03-07T16:46:21Z'
 - name: odoo
   visibility: public
@@ -55,7 +55,7 @@ repos:
   source_of_truth: true
   default_branch: main
   workflows: 0
-  updated_at: '2026-03-08T03:53:33Z'
+  updated_at: '2026-03-08T08:17:38Z'
 - name: ops-platform
   visibility: private
   status: active
@@ -63,7 +63,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 11
   updated_at: '2026-03-07T16:46:04Z'
 - name: templates
   visibility: private
@@ -72,7 +72,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 1
   updated_at: '2026-03-07T16:47:48Z'
 - name: web
   visibility: private
@@ -81,7 +81,7 @@ repos:
   canonical: true
   source_of_truth: true
   default_branch: main
-  workflows: 0
+  workflows: 2
   updated_at: '2026-03-07T16:46:28Z'
 - name: app-crm
   visibility: internal
@@ -108,7 +108,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: main
-  workflows: 0
+  workflows: 3
   updated_at: '2026-03-03T04:39:38Z'
 - name: dev-environment
   visibility: private
@@ -144,7 +144,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: main
-  workflows: 0
+  workflows: 16
   updated_at: '2026-03-07T02:40:59Z'
 - name: mcp-core
   visibility: internal
@@ -153,7 +153,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: main
-  workflows: 0
+  workflows: 5
   updated_at: '2026-03-07T03:14:33Z'
 - name: ops-console
   visibility: private
@@ -171,7 +171,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: feat/agents-plugin-scaffold
-  workflows: 0
+  workflows: 1
   updated_at: '2026-03-07T02:12:50Z'
 - name: plugin-marketplace
   visibility: private
@@ -180,7 +180,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: feat/marketplace-plugin-scaffold
-  workflows: 0
+  workflows: 1
   updated_at: '2026-03-07T02:12:37Z'
 - name: roadmap
   visibility: public
@@ -189,7 +189,7 @@ repos:
   canonical: false
   source_of_truth: false
   default_branch: main
-  workflows: 0
+  workflows: 1
   updated_at: '2026-03-07T02:12:56Z'
 - name: template-factory
   visibility: private

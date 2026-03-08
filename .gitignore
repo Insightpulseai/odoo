@@ -301,4 +301,6 @@ docs/supabase/machine_integrations_detected.json
 ssot/github/*.snapshot.json
 ssot/github/repo-details/
 ssot/vercel/*.snapshot.json
+ssot/databricks/*.snapshot.json
+ssot/supabase/*.snapshot.json
 ssot/evidence/snapshot-manifest.json
