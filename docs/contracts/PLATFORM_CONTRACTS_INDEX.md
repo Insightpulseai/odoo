@@ -4,7 +4,7 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-03-02 (C-23–C-24 added: Agent Workflows, Tool Permissions — MAF parity P0)
+> Last updated: 2026-03-08 (C-04, C-08 activated: Task Queue + Audit Events — integration backbone)
 
 ---
 
@@ -15,11 +15,11 @@
 | C-01 | [DNS & Email](DNS_EMAIL_CONTRACT.md)                   | Cloudflare DNS (`infra/dns/`)               | Zoho Mail, Vercel, Odoo                   | ✅ Active  | `dns-ssot-apply.yml`                       |
 | C-02 | [Outbound Mail Bridge](MAIL_BRIDGE_CONTRACT.md)        | Odoo `mail.mail`                            | Supabase Edge Function `zoho-mail-bridge` | ✅ Active  | `ipai-custom-modules-guard.yml`            |
 | C-03 | [JWT Trust](JWT_TRUST_CONTRACT.md)                     | Supabase Auth                               | Odoo middleware, Vercel Edge              | 🔲 Pending | —                                          |
-| C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md)                   | n8n workflows                               | `ops.task_queue` (Supabase)               | 🔲 Pending | —                                          |
+| C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md)                   | `@ipai/taskbus` + Edge Functions            | `ops.runs` (Supabase)                     | ✅ Active  | `integration-backbone-gate.yml`            |
 | C-05 | [Design Tokens](DESIGN_TOKENS_CONTRACT.md)             | Figma                                       | `packages/design-tokens/tokens.json`      | 🔲 Pending | —                                          |
 | C-06 | [Vercel Environment Variables](VERCEL_ENV_CONTRACT.md) | Vercel dashboard                            | Next.js apps                              | 🔲 Pending | `vercel-env-leak-guard.yml`                |
 | C-07 | [Supabase Vault Secrets](SUPABASE_VAULT_CONTRACT.md)   | Supabase Vault                              | Edge Functions, pg_cron                   | ✅ Active  | `20260221000001_vault_secret_registry.sql` |
-| C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md)      | All services                                | `ops.platform_events` (Supabase)          | 🔲 Pending | —                                          |
+| C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md)      | All services                                | `ops.v_events` (Supabase unified view)    | ✅ Active  | `integration-backbone-gate.yml`            |
 | C-09 | [GitHub Actions Secrets](GH_SECRETS_CONTRACT.md)       | GitHub org secrets                          | CI workflows                              | 🔲 Pending | `platform-guardrails.yml`                  |
 | C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md)   | Supabase Auth                               | Zoho SMTP (`smtppro.zoho.com`)            | ✅ Active  | `RB_SUPABASE_AUTH_SMTP_VERIFY.md`          |
 | C-11 | [Edge Functions](SUPABASE_EDGE_FUNCTIONS_CONTRACT.md)  | `supabase/functions/`                       | All integration bridges                   | ✅ Active  | `ssot-surface-guard.yml`                   |
@@ -37,6 +37,7 @@
 | C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
 | C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
 | C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
+| C-26 | [Plane FinOps Workspace](PLANE_FINOPS_WORKSPACE_CONTRACT.md) | `ssot/plane/projects/finops_workspace.yaml` | Plane CE (fin-ops workspace)              | ✅ Active | `validate_plane_ssot.py` + `plane-ssot-gate.yml` |
 
 ---
 
@@ -122,13 +123,14 @@ supabase secrets set --project-ref spdtwktxdalcfigzeqrz \
 
 ---
 
-## C-04 — Task Queue Contract [pending]
+## C-04 — Task Queue Contract
 
-**File**: `docs/contracts/TASK_QUEUE_CONTRACT.md` _(not yet created)_
+**File**: `docs/contracts/TASK_QUEUE_CONTRACT.md`
+**SSOT**: `ops.runs` table + `@ipai/taskbus` enqueue interface
+**Consumer**: Slack agent, Edge Function workers, n8n workflows
+**Validator**: `integration-backbone-gate.yml`
 
-**Purpose**: Define the schema of `ops.task_queue` (Supabase) and the n8n → queue → consumer flow.
-
-**Key fields**: `task_type`, `payload`, `status`, `created_at`, `processed_at`, `error`
+**Protocol**: All external events enter via `ops.runs` (SSOT ledger). Enqueue via `ops.start_run()` RPC or `@ipai/taskbus.enqueue()`. Correlation IDs propagate across all systems.
 
 ---
 
