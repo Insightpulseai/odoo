@@ -17,6 +17,7 @@
 When producing terminal output intended to be pasted into ChatGPT, ALWAYS format it exactly as:
 
 **[CONTEXT]**
+
 - repo: <git root absolute path OR "not a git repo">
 - branch: <git branch or "detached/unknown">
 - cwd: <pwd>
@@ -24,23 +25,28 @@ When producing terminal output intended to be pasted into ChatGPT, ALWAYS format
 - stamp: <ISO8601 timestamp with timezone>
 
 **[CHANGES]**
+
 - <path>: <one-line intent>
 - ...
 
 **[EVIDENCE]**
+
 - command: <cmd>
   result: <PASS/FAIL + 1-3 key lines>
   logs: <path to captured stdout/stderr artifact>
   outputs: <paths created/modified>
 
 **[DIFF SUMMARY]**
+
 - <path>: <why this changed>
 
 **[BLOCKERS]** (only if needed)
+
 - <what is blocked>
 - <deterministic remediation steps (no questions)>
 
 **[NEXT - DETERMINISTIC]**
+
 - step 1: <action>
 - step 2: <action>
 
@@ -94,22 +100,26 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 ### Hard Rules: No-UI + Deterministic Completions
 
 **NO-UI default**:
+
 - Do not include UI navigation steps (e.g., "Visit URL", "Click Settings") in NEXT steps
 - If a platform requires UI for a step, mark it explicitly as `[MANUAL_REQUIRED]` (see Completion Semantics)
 - UI-only steps appear **only** inside `[MANUAL_REQUIRED]` blocks, never in NEXT
 
 **No full command blocks by default**:
+
 - Do not embed "Ready to execute" command blocks in summaries unless the user explicitly asked for commands
 - If commands are necessary, move them to an Appendix section and label it: `APPENDIX: Commands (only if requested)`
 - Commands shown in EVIDENCE are acceptable (they document what was executed)
 
 **Evidence path contract**:
+
 - Canonical evidence lives under: `web/docs/evidence/<YYYYMMDD-HHMM+TZ>/<topic>/`
 - Evidence stamps **MUST** include timezone (e.g., `20260216-1754+0800`)
 - `sandbox/**` is **never** a canonical evidence location (transient development only)
 - Any evidence in sandbox paths must have a `MOVED.md` pointer to canonical location
 
 **MANUAL_REQUIRED blocks**:
+
 - Format:
   ```
   ## [MANUAL_REQUIRED]
@@ -122,6 +132,7 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 - Use when: first-time UI setup, external approvals, credentials generation (if no API), DNS changes requiring registrar
 
 **Status semantics**:
+
 - `STATUS=COMPLETE`: All automation finished, no manual steps remain, all evidence present
 - `STATUS=PARTIAL`: Automation completed up to a point, manual step(s) required before resuming
 - `STATUS=BLOCKED`: Cannot proceed due to missing dependency, broken service, or unresolved blocker
@@ -130,13 +141,13 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 
 ## Quick Reference
 
-| Item | Value |
-|------|-------|
-| **Stack** | Odoo CE 19.0 + OCA + PostgreSQL 16 |
-| **Domain** | `insightpulseai.com` (`.net` deprecated) |
-| **Python** | 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` |
-| **Repo** | `Insightpulseai/odoo` |
+| Item          | Value                                        |
+| ------------- | -------------------------------------------- |
+| **Stack**     | Odoo CE 19.0 + OCA + PostgreSQL 16           |
+| **Domain**    | `insightpulseai.com` (`.net` deprecated)     |
+| **Python**    | 3.12+ (Odoo 19)                              |
+| **Supabase**  | `spdtwktxdalcfigzeqrz`                       |
+| **Repo**      | `Insightpulseai/odoo`                        |
 | **Workspace** | `ipai` (Docker, DevContainer, all dev tools) |
 
 **Workspace Naming**: "ipai" is the canonical identifier across all platforms (Docker project, network, volumes, DevContainer). See `docs/ai/WORKSPACE_NAMING.md` for complete convention.
@@ -146,6 +157,7 @@ You are an execution agent. Take action, verify, commit. No guides, no tutorials
 ## Infrastructure SSOT
 
 **DNS Single Source of Truth:**
+
 - **SSOT File**: `infra/dns/subdomain-registry.yaml` (edit this, never edit generated files)
 - **Generator**: `scripts/generate-dns-artifacts.sh` (generates Terraform + JSON)
 - **CI Enforcement**: `.github/workflows/dns-sync-check.yml` (validates sync)
@@ -177,6 +189,7 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 **Canonical Reference**: `spec/agent/constitution.md`
 
 **Key Constraints for Claude Code Web**:
+
 - ❌ **Forbidden**: Docker/containers, apt/brew, systemctl, sudo (not available in Web environment)
 - ✅ **Allowed**: File edits, git operations, CI workflow generation, remote API calls
 - 📋 **Capabilities**: Only claim capabilities verified in `agents/capabilities/manifest.json`
@@ -193,17 +206,18 @@ See `infra/dns/README.md` for complete DNS SSOT workflow.
 explore -> plan -> implement -> verify -> commit
 ```
 
-| Command | Purpose |
-|---------|---------|
-| `/project:plan` | Create implementation plan |
-| `/project:implement` | Execute plan |
-| `/project:verify` | Run verification checks |
-| `/project:ship` | Full workflow end-to-end |
+| Command                     | Purpose                     |
+| --------------------------- | --------------------------- |
+| `/project:plan`             | Create implementation plan  |
+| `/project:implement`        | Execute plan                |
+| `/project:verify`           | Run verification checks     |
+| `/project:ship`             | Full workflow end-to-end    |
 | `/project:fix-github-issue` | Fix a specific GitHub issue |
 
 **Rules**: Never guess (read first). Simplicity first. Verify always. Minimal diffs. Docs + tests change with code.
 
 **Verify before commit**:
+
 ```bash
 ./scripts/repo_health.sh && ./scripts/spec_validate.sh && ./scripts/ci_local.sh
 ```
@@ -229,16 +243,16 @@ spec/<feature-slug>/
 
 ### Slash Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/speckit.constitution` | Create governance principles for a feature |
-| `/speckit.specify` | Define product requirements (PRD) |
-| `/speckit.clarify` | Resolve ambiguities before planning |
-| `/speckit.plan` | Create implementation plan from spec |
-| `/speckit.tasks` | Generate task breakdown from plan |
-| `/speckit.analyze` | Cross-artifact consistency check (read-only) |
-| `/speckit.checklist` | Generate quality validation checklist |
-| `/speckit.implement` | Execute implementation following tasks |
+| Command                 | Purpose                                      |
+| ----------------------- | -------------------------------------------- |
+| `/speckit.constitution` | Create governance principles for a feature   |
+| `/speckit.specify`      | Define product requirements (PRD)            |
+| `/speckit.clarify`      | Resolve ambiguities before planning          |
+| `/speckit.plan`         | Create implementation plan from spec         |
+| `/speckit.tasks`        | Generate task breakdown from plan            |
+| `/speckit.analyze`      | Cross-artifact consistency check (read-only) |
+| `/speckit.checklist`    | Generate quality validation checklist        |
+| `/speckit.implement`    | Execute implementation following tasks       |
 
 ### Workflow
 
@@ -250,12 +264,12 @@ spec/<feature-slug>/
 
 ### Key Files
 
-| Path | Purpose |
-|------|---------|
-| `.specify/templates/` | Scaffolding templates for spec artifacts |
-| `.specify/memory/` | Spec-kit state and context |
-| `scripts/speckit-scaffold.sh` | Create new spec bundles from CLI |
-| `scripts/check-spec-kit.sh` | Validate spec bundle completeness |
+| Path                          | Purpose                                  |
+| ----------------------------- | ---------------------------------------- |
+| `.specify/templates/`         | Scaffolding templates for spec artifacts |
+| `.specify/memory/`            | Spec-kit state and context               |
+| `scripts/speckit-scaffold.sh` | Create new spec bundles from CLI         |
+| `scripts/check-spec-kit.sh`   | Validate spec bundle completeness        |
 
 ---
 
@@ -266,6 +280,13 @@ spec/<feature-slug>/
 - Every Odoo task produces: (1) module changes, (2) install/update script, (3) health check
 - Databases: `odoo` (prod), `odoo_dev` (local) — only 2, nothing else
 - Canonical setup: `odoo19/` directory (`list_db=False`)
+
+### [NEW] Odoo 19 CE — Connector Guidance
+
+> [!NOTE] > **Validated for Odoo 19 CE**
+> Connector addons for Odoo 19 must use the modern ORM API only.
+> Do not use legacy patterns such as `osv`, `_cr`, `_uid`, or `_context`.
+> Odoo-side artifacts must follow Odoo 19 + OCA-first conventions.
 
 ---
 
@@ -289,13 +310,13 @@ Config -> OCA -> Delta (ipai_*)
 feat|fix|refactor|docs|test|chore(scope): description
 ```
 
-| Scope | When |
-|-------|------|
-| `chore(oca):` | OCA layer, submodules, locks |
-| `chore(repo):` | Repo-wide maintenance |
-| `chore(ci):` | Workflows, gating, pre-commit |
-| `chore(deps):` | Dependencies, toolchain |
-| `chore(deploy):` | Docker, nginx, infra |
+| Scope            | When                          |
+| ---------------- | ----------------------------- |
+| `chore(oca):`    | OCA layer, submodules, locks  |
+| `chore(repo):`   | Repo-wide maintenance         |
+| `chore(ci):`     | Workflows, gating, pre-commit |
+| `chore(deps):`   | Dependencies, toolchain       |
+| `chore(deploy):` | Docker, nginx, infra          |
 
 ---
 
@@ -306,21 +327,29 @@ feat|fix|refactor|docs|test|chore(scope): description
 3. **Supabase**: Only for n8n workflows, task bus, external integrations
 4. **CE Only**: No Enterprise modules, no odoo.com IAP
 5. **Specs Required**: Significant changes must reference a spec bundle
-6. **OCA First**: Prefer OCA over custom ipai_*
+6. **OCA First**: Prefer OCA over custom ipai\_\*
 
 ---
 
 ## Deprecated (Never Use)
 
-| Item | Replacement | Date |
-|------|-------------|------|
-| `insightpulseai.net` | `insightpulseai.com` | 2026-02 |
-| Mattermost (all) | Slack | 2026-01-28 |
-| Affine (all) | Removed | 2026-02-09 |
-| Appfine (all) | Removed | 2026-02 |
-| Mailgun / `ipai_mailgun_bridge` | Zoho Mail SMTP | 2026-02 |
-| `ipai_mattermost_connector` | `ipai_slack_connector` | 2026-01-28 |
+| Item                            | Replacement            | Date       |
+| ------------------------------- | ---------------------- | ---------- |
+| `insightpulseai.net`            | `insightpulseai.com`   | 2026-02    |
+| Mattermost (all)                | Slack                  | 2026-01-28 |
+| Affine (all)                    | Removed                | 2026-02-09 |
+| Appfine (all)                   | Removed                | 2026-02    |
+| Mailgun / `ipai_mailgun_bridge` | Zoho Mail SMTP         | 2026-02    |
+| `ipai_mattermost_connector`     | `ipai_slack_connector` | 2026-01-28 |
 
 ---
 
-*Detailed reference documentation lives in `docs/ai/` — this SSOT stays compact and focused.*
+---
+
+### [NEW] OCA AI Status
+
+> [!IMPORTANT] > **OCA AI modules** (oca/ai, oca/nlp-tools) are **optional Odoo-side enrichers only**.
+> Do not assume full 19.0 availability across `OCA/ai` repos.
+> Any derived AI artifacts (embeddings, classifications) MUST be replicated into Supabase `ai.*` to remain SSOT-compliant.
+
+_Detailed reference documentation lives in `docs/ai/` — this SSOT stays compact and focused._

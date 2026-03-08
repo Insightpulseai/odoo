@@ -223,6 +223,60 @@ standards:
   commit_convention: "feat|fix|refactor|docs|test|chore(scope): description"
 
 # =============================================================================
+# 5-Layer Org Model
+# =============================================================================
+org_layers:
+
+  - layer: 1_control_plane
+    description: "Governance, CI/CD, org-wide workflows, infrastructure"
+    repos: [.github, ops-platform, infra]
+
+  - layer: 2_core_runtime
+    description: "ERP, product surfaces, data/analytics"
+    repos: [odoo, web, lakehouse]
+
+  - layer: 3_shared_systems
+    description: "Design tokens, templates, agent framework"
+    repos: [design-system, templates, agents]
+
+  - layer: 4_planning_governance
+    description: "Planning tools, ADRs, contracts, environment policies"
+    systems: [GitHub Projects, ADRs, contracts, environment policies]
+    notes: "Not repos — cross-cutting governance surfaces"
+
+  - layer: 5_archived
+    description: "Archived repos hold no canonical logic"
+    rule: "Archived repos must not hold canonical logic; migrate content before archiving"
+    repos_ref: "archived_repos (see above)"
+
+# =============================================================================
+# Repo Metadata Requirements
+# =============================================================================
+repo_metadata_required:
+  fields:
+    - name: type
+      description: "Repo classification (product, platform, governance, shared, template)"
+      required: true
+    - name: lifecycle
+      description: "Current lifecycle stage (active, maintenance, deprecated, archived)"
+      required: true
+    - name: owner
+      description: "Team or individual responsible for the repo"
+      required: true
+    - name: purpose
+      description: "One-line purpose statement"
+      required: true
+    - name: README.md
+      description: "Repository overview document"
+      required: true
+    - name: CODEOWNERS
+      description: "GitHub CODEOWNERS file for review routing"
+      required: true
+    - name: branch_protection
+      description: "Main branch protection rules enabled"
+      required: true
+
+# =============================================================================
 # Cross-Platform Integration Map
 # =============================================================================
 platform_map:

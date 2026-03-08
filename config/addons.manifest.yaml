@@ -104,6 +104,7 @@ oca_repositories:
     purpose: Authentication extensions
     must_have:
       - auth_session_timeout
+      - password_security
 
   - repo: queue
     url: https://github.com/OCA/queue.git
@@ -139,6 +140,11 @@ oca_repositories:
       - web_ir_actions_act_multi
       - web_dialog_size
       - web_environment_ribbon
+      - web_advanced_search
+      - web_listview_range_select
+      - web_search_with_and
+      - web_pivot_computed_measure
+      - web_favicon
 
   # ---------------------------------------------------------------------------
   # Tier 2 — Reporting
@@ -160,6 +166,10 @@ oca_repositories:
     ref: "19.0"
     tier: 2
     purpose: Management Information System builder
+    must_have:
+      - mis_builder
+      - mis_builder_budget
+      - mis_builder_demo
 
   - repo: spreadsheet
     url: https://github.com/OCA/spreadsheet.git
@@ -182,6 +192,10 @@ oca_repositories:
       - account_lock_date_update
       - account_move_name_sequence
       - account_tax_balance
+      - account_journal_lock_date
+      - account_move_line_tax_editable
+      - account_usability
+      - currency_rate_update
 
   - repo: account-financial-reporting
     url: https://github.com/OCA/account-financial-reporting.git
@@ -198,6 +212,7 @@ oca_repositories:
     purpose: Bank reconciliation tools
     must_have:
       - account_reconcile_oca
+      - account_reconcile_model_oca
       - account_reconcile_oca_queue
       - account_statement_base
       - base_transaction_id
@@ -293,6 +308,11 @@ oca_repositories:
       - sale_order_archive
       - sale_delivery_block
       - sale_invoice_block
+      - sale_cancel_reason
+      - sale_delivery_state
+      - sale_order_line_price_history
+      - sale_order_line_input
+      - sale_commercial_partner
 
   - repo: sale-reporting
     url: https://github.com/OCA/sale-reporting.git
@@ -311,6 +331,9 @@ oca_repositories:
       - purchase_exception
       - purchase_request
       - purchase_blanket_order
+      - purchase_order_approved
+      - purchase_order_approval_block
+      - purchase_request_order_approved
 
   - repo: contract
     url: https://github.com/OCA/contract.git
@@ -341,6 +364,11 @@ oca_repositories:
     ref: "19.0"
     tier: 6
     purpose: Social/messaging integrations
+    must_have:
+      - mail_debrand
+      - mail_tracking
+      - base_search_mail_content
+      - mail_activity_plan
 
   # ---------------------------------------------------------------------------
   # Tier 7 — Project / Manufacturing
@@ -404,6 +432,7 @@ oca_repositories:
       - partner_contact_gender
       - partner_contact_job_position
       - partner_company_group
+      - partner_contact_access_link
 
 # =============================================================================
 # IPAI Custom Modules
@@ -426,3 +455,160 @@ deprecated_repos:
     reason: Not in oca-aggregate.yml; env management handled by Azure Key Vault
   - repo: bank-statement-import
     reason: Merged into account-reconcile in Odoo 19.0
+# =============================================================================
+# Installation Profiles — OCA Must-Have Baseline
+# =============================================================================
+# Profiles group modules by deployment purpose. Each module references its
+# source repo above. Provenance classification separates official OCA
+# must-have lists from InsightPulseAI-curated selections.
+#
+# Provenance:
+#   official_oca_must_have — Published on odoo-community.org as a must-have list
+#   curated_ipai           — Selected by InsightPulseAI from OCA repos
+#
+# Sources:
+#   Base:       https://odoo-community.org/list-of-must-have-oca-modules
+#   Accounting: https://odoo-community.org/list-of-must-have-oca-accounting-modules
+#   Sales:      https://odoo-community.org/list-of-must-have-sales-modules
+#   Purchases:  No official published list page (webinar-only reference)
+# =============================================================================
+
+profiles:
+
+  baseline_core:
+    provenance: official_oca_must_have
+    evidence: https://odoo-community.org/list-of-must-have-oca-modules
+    description: >
+      Core CE hardening, operator productivity, async jobs, and UX.
+      Every serious CE deployment should install these.
+    addons:
+      - queue_job              # server: queue
+      - report_xlsx            # server: reporting-engine
+      - auditlog               # server: server-tools
+      - password_security      # server: server-auth
+      - base_name_search_improved  # server: server-tools (if available on 19.0)
+      - date_range             # server: server-ux
+      - web_responsive         # server: web
+      - web_m2x_options        # server: web
+      - web_environment_ribbon # server: web
+      - mail_tracking          # server: social
+      - mail_activity_plan     # server: social
+
+  baseline_accounting:
+    provenance: official_oca_must_have
+    evidence: https://odoo-community.org/list-of-must-have-oca-accounting-modules
+    description: >
+      Accounting controls, reconciliation, reporting, and finance ops.
+      Required for accounting-heavy deployments.
+    addons:
+      - account_asset_management     # server: account-financial-tools
+      - account_reconcile_oca        # server: account-reconcile
+      - account_reconcile_model_oca  # server: account-reconcile
+      - account_financial_report     # server: account-financial-reporting
+      - mis_builder                  # server: mis-builder
+      - mis_builder_budget           # server: mis-builder
+      - partner_statement            # server: account-financial-reporting (if available)
+      - currency_rate_update         # server: account-financial-tools
+      - account_journal_lock_date    # server: account-financial-tools
+      - account_lock_date_update     # server: account-financial-tools
+
+  baseline_sales:
+    provenance: official_oca_must_have
+    evidence: https://odoo-community.org/list-of-must-have-sales-modules
+    description: >
+      Practical sales controls and order lifecycle usability.
+      Required for sales-driven deployments.
+    addons:
+      - sale_cancel_reason           # server: sale-workflow
+      - sale_delivery_state          # server: sale-workflow
+      - sale_fixed_discount          # server: sale-workflow
+      - sale_order_line_price_history  # server: sale-workflow
+      - sale_order_line_input        # server: sale-workflow
+      - sale_order_archive           # server: sale-workflow
+
+  baseline_purchase_controls:
+    provenance: curated_ipai
+    evidence: OCA/purchase-workflow repo + internal approval-control baseline
+    description: >
+      InsightPulseAI-curated purchase approval and requisition controls.
+      Not an official published OCA must-have category. Selected from
+      OCA/purchase-workflow for controlled purchasing workflows.
+    addons:
+      - purchase_request             # server: purchase-workflow
+      - purchase_order_approved      # server: purchase-workflow
+      - purchase_order_approval_block  # server: purchase-workflow
+      - purchase_request_order_approved  # server: purchase-workflow
+
+  baseline_optional_ux:
+    provenance: official_oca_must_have
+    evidence: https://odoo-community.org/list-of-must-have-oca-modules
+    description: >
+      Nice-to-have UX/admin enhancements from the OCA base must-have list.
+      Not required for production but improve operator experience.
+    addons:
+      - partner_contact_access_link  # server: partner-contact
+      - partner_firstname            # server: partner-contact
+      - disable_odoo_online          # server: server-tools (if available on 19.0)
+      - remove_odoo_enterprise       # server: server-tools (if available on 19.0)
+      - server_action_mass_edit      # server: server-tools (mass_editing)
+      - web_advanced_search          # server: web
+      - web_dialog_size              # server: web
+      - web_favicon                  # server: web
+      - web_listview_range_select    # server: web
+      - web_no_bubble                # server: web
+      - web_pivot_computed_measure   # server: web
+      - web_refresher                # server: web
+      - web_search_with_and          # server: web
+      - web_tree_many2one_clickable  # server: web
+      - mail_debrand                 # server: social
+      - document_url                 # server: knowledge
+      - base_search_mail_content     # server: social
+
+# =============================================================================
+# Bundles — Named installation sets
+# =============================================================================
+# Each bundle includes one or more profiles. Use bundles to define what gets
+# installed per deployment type.
+
+bundles:
+
+  ce_default:
+    description: Default CE baseline for most production environments
+    include_profiles:
+      - baseline_core
+      - baseline_accounting
+      - baseline_sales
+
+  ce_finance_heavy:
+    description: Finance-first baseline for accounting-led deployments
+    include_profiles:
+      - baseline_core
+      - baseline_accounting
+      - baseline_purchase_controls
+
+  ce_full_curated:
+    description: Full curated baseline including optional UX/admin modules
+    include_profiles:
+      - baseline_core
+      - baseline_accounting
+      - baseline_sales
+      - baseline_purchase_controls
+      - baseline_optional_ux
+
+# =============================================================================
+# Provenance Policy
+# =============================================================================
+# Rules for documentation and CI wording about OCA must-have status.
+
+provenance_policy:
+  official_oca_must_have_categories:
+    - base        # https://odoo-community.org/list-of-must-have-oca-modules
+    - accounting  # https://odoo-community.org/list-of-must-have-oca-accounting-modules
+    - sales       # https://odoo-community.org/list-of-must-have-sales-modules
+  curated_categories:
+    - purchase_controls
+    - optional_ux
+  rules:
+    - "Docs may call Base, Accounting, and Sales 'official OCA must-have' categories."
+    - "Purchases must be labeled 'curated/recommended' unless OCA publishes a must-have list page."
+    - "Optional UX modules must not be treated as required production baseline."
