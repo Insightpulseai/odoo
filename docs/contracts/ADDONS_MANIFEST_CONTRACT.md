@@ -150,10 +150,19 @@ Tiers determine installation priority but do not affect runtime addon path order
 
 ---
 
-## Deprecated Sources
+## Deprecations
+
+### `config/addons_manifest.oca_ipai.json`
+
+**Status**: Deprecated — retained temporarily for transition only.
+
+- Must not be used by CI, image build, or validation
+- `config/addons.manifest.yaml` is the only active SSOT for addon curation
+- Removal should happen in a follow-up cleanup PR after this contract is merged
+
+### Excluded OCA Repos
 
 | Source | Status | Replacement |
 |--------|--------|-------------|
-| `config/addons_manifest.oca_ipai.json` | Stale (Odoo 18) | `config/addons.manifest.yaml` |
-| `server-env` OCA repo | Excluded | Azure Key Vault |
+| `server-env` OCA repo | Excluded | Azure Key Vault handles env-dependent config |
 | `bank-statement-import` OCA repo | Excluded | Merged into `account-reconcile` in Odoo 19 |

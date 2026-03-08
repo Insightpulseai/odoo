@@ -8,6 +8,8 @@ on:
       - "addons/ipai/**"
       - "docker/Dockerfile.unified"
       - "scripts/odoo/validate_addons_manifest.py"
+      - "docs/contracts/ADDONS_MANIFEST_CONTRACT.md"
+      - "docs/contracts/PLATFORM_CONTRACTS_INDEX.md"
   push:
     branches: [main]
     paths:
@@ -16,6 +18,7 @@ on:
       - "addons/ipai/**"
       - "docker/Dockerfile.unified"
       - "scripts/odoo/validate_addons_manifest.py"
+  workflow_dispatch:
 
 permissions:
   contents: read
