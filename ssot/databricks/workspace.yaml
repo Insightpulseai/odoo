@@ -85,6 +85,52 @@ storage:
 # ---------------------------------------------------------------------------
 # Companion SSOT files
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Maturity Phases
+# ---------------------------------------------------------------------------
+maturity_phases:
+  current: phase_1
+  description: >
+    Progressive workspace maturity model. Transitions are triggered by
+    operational need, not calendar. Each phase adds isolation boundaries.
+  phases:
+    phase_1:
+      name: "Shared sandbox"
+      status: active
+      description: >
+        One governed shared workspace with Unity Catalog baseline.
+        All teams share a single workspace with catalog-level isolation.
+      prerequisites_met:
+        - "VNet injection with secure cluster connectivity"
+        - "Unity Catalog with dev/staging/prod catalogs"
+        - "User-assigned managed identity"
+        - "Key Vault integration"
+    phase_2:
+      name: "Dev/Prod split"
+      status: planned
+      trigger: "Production data boundaries harden or team scale increases"
+      description: >
+        Separate dev and prod workspaces. Dev workspace allows experimentation;
+        prod workspace enforces strict access controls and audit logging.
+      prerequisites:
+        - "Dedicated prod resource group"
+        - "Prod-specific managed identity"
+        - "Network isolation between dev and prod VNets"
+    phase_3:
+      name: "Full dev/stage/prod"
+      status: future
+      trigger: "Release promotion model required"
+      description: >
+        Three-tier workspace isolation with automated promotion pipelines
+        from dev to staging to prod. Required for regulated workloads.
+      prerequisites:
+        - "CI/CD pipeline for notebook/job promotion"
+        - "Environment-specific Unity Catalog metastores"
+        - "Automated testing in staging"
+
+# ---------------------------------------------------------------------------
+# Companion SSOT files
+# ---------------------------------------------------------------------------
 references:
   warehouse: "ssot/databricks/warehouse.yaml"
   agents: "ssot/databricks/agents.yaml"
