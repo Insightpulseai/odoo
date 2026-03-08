@@ -1,23 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "metadata": {
-    "generated_at": "2026-01-06T18:07:00Z",
-    "generator": "ReleaseBot",
-    "version": "1.0.0",
-    "repository": "jgtolentino/odoo-ce"
+    "generated_at": "2026-03-08T00:00:00Z",
+    "generator": "manual-audit",
+    "version": "2.0.0",
+    "repository": "Insightpulseai/odoo",
+    "note": "Manual update — release docs were stale since 2026-01-06 (61-day gap)"
   },
   "environment": "production",
   "target_url": "https://erp.insightpulseai.com",
   "current_state": {
-    "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
-    "tag": "prod-20260106-1741",
-    "docker_image": "ghcr.io/jgtolentino/odoo-ce:edge-standard",
-    "deployed_at": "2026-01-06T17:40:17Z"
+    "head_sha": "2ee9837",
+    "tag": "prod-20260302-0241",
+    "docker_image": "ghcr.io/insightpulseai/ipai-odoo-runtime:edge-standard",
+    "deployed_at": "2026-03-02T02:41:00Z"
   },
   "previous_state": {
-    "head_sha": "a42fc69f418ecb5744607749c5d544f88aae8a9d",
-    "tag": "prod-20260106-1643",
-    "deployed_at": "2026-01-06T16:41:48Z"
+    "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+    "tag": "prod-20260106-1741",
+    "deployed_at": "2026-01-06T17:40:17Z"
   },
   "deployments": [
     {

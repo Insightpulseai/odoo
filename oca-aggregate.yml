@@ -148,6 +148,13 @@
     - oca 19.0
   # Modules: account_banking_pain_base, account_banking_sepa_credit_transfer
 
+./addons/oca/account-closing:
+  remotes:
+    oca: https://github.com/OCA/account-closing.git
+  merges:
+    - oca 19.0
+  # Modules: account_cutoff_base, account_fiscal_year_closing
+
 # ---------------------------------------------------------------------------
 # Tier 4 — HR / People
 # ---------------------------------------------------------------------------
@@ -248,6 +255,13 @@
   merges:
     - oca 19.0
   # Modules: quality_control_oca, quality_control_stock_oca
+
+./addons/oca/helpdesk:
+  remotes:
+    oca: https://github.com/OCA/helpdesk.git
+  merges:
+    - oca 19.0
+  # Modules: helpdesk_mgmt, helpdesk_mgmt_timesheet
 
 # ---------------------------------------------------------------------------
 # Tier 8 — AI / Automation / REST
