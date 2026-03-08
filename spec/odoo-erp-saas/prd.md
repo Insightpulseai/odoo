@@ -417,7 +417,84 @@ Operator chooses restore point → recovery workflow executes → health validat
 - billing/support complexity across plan tiers
 - HA architecture increasing operational cost and product complexity
 
-## 18. Open Questions
+## 18. Odoo Company vs Branch Entity Model
+
+Odoo defines a **company** as an independent business entity with its own legal identity,
+financial records, and operational settings. **Branches** are subdivisions under a parent
+company. Independent subsidiaries must be modeled as separate companies, not branches.
+
+### 18.1 Unified Mapping
+
+The platform uses a three-tier entity hierarchy aligned to Odoo semantics:
+
+```
+auth.users → tenant.organizations → erp.companies → erp.branches (optional)
+```
+
+| Platform Concept | Odoo Concept | Isolation Level |
+|------------------|-------------|-----------------|
+| **Organization** (SaaS tenant) | N/A — above Odoo | Billing, identity, data partition |
+| **Company** | `res.company` | Legal/financial boundary, accounting books |
+| **Branch** | `res.company` (child) | Operational subdivision under a company |
+
+**Critical rule**: SaaS tenant ≠ Odoo company. A single organization may contain
+multiple companies (subsidiaries) and each company may have branches.
+
+### 18.2 Data Classification
+
+#### Shared Master Data (organization-wide by default)
+
+Shared across all companies/branches unless explicitly restricted:
+
+- `crm.contacts` / `res.partner`
+- `catalog.products` / `product.template`
+- `core.tags`, `core.templates`, `core.taxonomies`
+
+Columns: `organization_id`, `company_id` (nullable), `branch_id` (nullable)
+
+#### Company/Branch-Scoped Transactional Data
+
+Must always carry company scope; branch is optional narrowing:
+
+- `erp.quotations` / `sale.order`
+- `erp.invoices` / `account.move`
+- `erp.vendor_bills` / `account.move`
+- `erp.purchase_orders` / `purchase.order`
+- `erp.stock_moves` / `stock.move`
+- `erp.journal_entries` / `account.move.line`
+
+Columns: `organization_id` (NOT NULL), `company_id` (NOT NULL), `branch_id` (nullable)
+
+### 18.3 Active Session Context
+
+The JWT/session must carry an active context that mirrors Odoo's company selector:
+
+```json
+{
+  "org_id": "uuid",
+  "company_id": "uuid",
+  "branch_id": "uuid | null",
+  "role": "string"
+}
+```
+
+**Narrowing rules** (aligned to Odoo behavior):
+- Selecting a **company** implies access to all its branches
+- Selecting a **branch** narrows scope to that branch only
+- Parent-company admin can always see branch data
+
+### 18.4 When to Use Company vs Branch
+
+| Use Company | Use Branch |
+|------------|-----------|
+| Separate legal entity | Regional office |
+| Separate accounting books | Warehouse cluster |
+| Subsidiary | Department subdivision |
+| Brand requiring financial isolation | Operational reporting unit |
+
+**Subsidiaries must be companies, not branches.**
+
+## 19. Open Questions
 
 - single-db-per-tenant vs grouped tenancy strategy for lower tiers
 - canonical billing engine/provider
