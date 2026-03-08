@@ -1,0 +1,43 @@
+name: addons-manifest-guard
+
+on:
+  pull_request:
+    paths:
+      - "config/addons.manifest.yaml"
+      - "oca-aggregate.yml"
+      - "addons/ipai/**"
+      - "docker/Dockerfile.unified"
+      - "scripts/odoo/validate_addons_manifest.py"
+      - "docs/contracts/ADDONS_MANIFEST_CONTRACT.md"
+      - "docs/contracts/PLATFORM_CONTRACTS_INDEX.md"
+  push:
+    branches: [main]
+    paths:
+      - "config/addons.manifest.yaml"
+      - "oca-aggregate.yml"
+      - "addons/ipai/**"
+      - "docker/Dockerfile.unified"
+      - "scripts/odoo/validate_addons_manifest.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Addons manifest integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate addons manifest
+        run: python scripts/odoo/validate_addons_manifest.py -v

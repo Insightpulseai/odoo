@@ -1,133 +1,47 @@
 {
-  "name": "ipai-devcontainer",
-  // Docker context: uses whatever `docker context` is active on the host.
-  // No hardcoded dockerContext — works with Docker Desktop, Colima, or OrbStack.
-  // Run scripts/dev/docker_doctor.sh to verify connectivity before rebuild.
-  "initializeCommand": "bash scripts/dev/docker_doctor.sh ${DOCKER_CONTEXT_OVERRIDE:-default}",
-  // Compose SSOT + overlay(s). Later files override earlier ones.
-  "dockerComposeFile": [
-    "../docker-compose.yml",
-    "docker-compose.devcontainer.yml"
-  ],
-  // Must match the *service name* in docker-compose.yml, not the container_name.
-  "service": "odoo",
-  // Optional but recommended: explicitly start only what you need.
-  "runServices": [
-    "odoo",
-    "db",
-    "redis"
-  ],
-  // Set the folder VS Code opens inside the container.
-  "workspaceFolder": "/workspaces/odoo",
-  // For compose, tools default to stopping the compose set on close.
-  "shutdownAction": "stopCompose",
-  "overrideCommand": false,
+  "name": "InsightPulseAI Odoo 19 CE Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": true,
-      "installOhMyZsh": true,
-      "installOhMyZshConfig": true,
-      "upgradePackages": true,
-      "username": "devcontainer",
-      "userUid": "automatic",
-      "userGid": "automatic"
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "ppa": true,
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts",
-      "nodeGypDependencies": true
-    },
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-      "moby": true,
-      "dockerDashComposeVersion": "v2"
-    }
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },
-  // Always-forward ports (can also forward another service via "db:5432").
-  "forwardPorts": [
-    8069,
-    8072,
-    5678,
-    "db:5432"
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
+    "source=${localWorkspaceFolder}/addons,target=/mnt/extra-addons,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/oca_addons,target=/mnt/oca-addons,type=bind,consistency=cached"
   ],
-  "portsAttributes": {
-    "8069": {
-      "label": "Odoo HTTP",
-      "onAutoForward": "notify"
-    },
-    "8072": {
-      "label": "Odoo Longpoll",
-      "onAutoForward": "silent"
-    },
-    "5678": {
-      "label": "debugpy",
-      "onAutoForward": "silent"
-    },
-    "5432": {
-      "label": "PostgreSQL",
-      "onAutoForward": "silent"
-    },
-    "6379": {
-      "label": "Redis",
-      "onAutoForward": "silent"
-    }
-  },
   "containerEnv": {
-    "ODOO_DB": "${localEnv:ODOO_DB:odoo_dev}",
-    "ODOO_LOG_LEVEL": "${localEnv:ODOO_LOG_LEVEL:debug}",
-    "POSTGRES_USER": "odoo",
-    "POSTGRES_PASSWORD": "odoo"
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "DB_HOST": "db",
+    "DB_USER": "odoo",
+    "DB_PASSWORD": "odoo",
+    "ODOO_HOME": "/opt/odoo"
   },
-  "containerUser": "devcontainer",
-  "updateRemoteUserUID": true,
-  // Cache warming on Codespace creation (runs after clone, before postCreate).
-  // Installs Python deps + pre-compiles OCA/IPAI addons for fast startup.
-  "updateContentCommand": "bash -c 'pip install --quiet -r requirements.txt -r requirements-dev.txt -r requirements-oca.txt 2>/dev/null; python -m compileall -q addons/oca/ addons/ipai/ 2>/dev/null; npm install --prefer-offline --no-audit --ignore-scripts 2>/dev/null; true'",
-  "postCreateCommand": "chmod +x ./.devcontainer/scripts/post-create.sh && ./.devcontainer/scripts/post-create.sh",
-  "postStartCommand": "chmod +x ./.devcontainer/scripts/post-start.sh && ./.devcontainer/scripts/post-start.sh",
+  "containerUser": "vscode",
+  "remoteUser": "vscode",
+  "dockerComposeFile": "docker-compose.devcontainer.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/odoo",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/init-firewall.sh",
   "customizations": {
-    "codespaces": {
-      "openFiles": [],
-      "repositories": {
-        "Insightpulseai/odoo": {
-          "permissions": {
-            "contents": "read",
-            "packages": "write"
-          }
-        }
-      }
-    },
     "vscode": {
       "extensions": [
-        "mhutchie.git-graph",
-        "eamodio.gitlens",
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "redhat.vscode-xml",
         "ms-azuretools.vscode-docker",
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "openai.chatgpt",
-        "anthropic.claude-code"
+        "eamodio.gitlens",
+        "christian-kohler.path-intellisense"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.languageServer": "Pylance",
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "debug.javascript.autoAttachFilter": "disabled",
-        "git.autofetch": true,
-        "chat.promptFilesRecommendations": {
-          "speckit.constitution": true,
-          "speckit.specify": true,
-          "speckit.plan": true,
-          "speckit.tasks": true,
-          "speckit.implement": true
-        },
-        "chat.tools.terminal.autoApprove": {
-          ".specify/scripts/bash/": true,
-          ".specify/scripts/powershell/": true
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "editor.formatOnSave": true,
+        "files.watcherExclude": {
+          "**/oca_addons/**": true,
+          "**/.git/**": true
         }
       }
     }
