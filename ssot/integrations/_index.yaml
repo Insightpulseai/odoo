@@ -139,6 +139,12 @@ integrations:
   # ---------------------------------------------------------------------------
   # Unified platform inventory (all confirmed integrations)
   # ---------------------------------------------------------------------------
+  - id: integration_auth_stack
+    file: ssot/integrations/integration_auth_stack.yaml
+    status: active
+    category: auth_stack
+    vendor: internal
+
   - id: platform_inventory
     file: ssot/integrations/platform_inventory.yaml
     status: active
