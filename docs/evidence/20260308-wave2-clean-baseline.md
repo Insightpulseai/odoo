@@ -75,4 +75,13 @@ Note: categories overlap (a deprecated module may also be an OCA candidate).
 
 ---
 
+## Interpretation Rules
+
+- Metrics in this file are branch-local observations from `claude/wave2-clean`.
+- They are evidence snapshots, not canonical organization-wide SSOT counts.
+- Canonical parity status is tracked in `ssot/parity/ee_oca_verification_matrix.yaml`.
+- Candidate OCA repo decisions are tracked in `docs/architecture/OCA_REPO_INTAKE_MATRIX.md`.
+
+---
+
 *Snapshot evidence — not a live metric. Re-derive before citing in architecture docs.*
