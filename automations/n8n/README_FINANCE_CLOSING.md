@@ -23,14 +23,14 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 | Day 10, 08:00 AM | BIR Filing Alerts | Remind Tax Specialist of filing deadlines |
 
 **Requirements**:
-- Environment variables: `ODOO_ADMIN_PASSWORD`, `MATTERMOST_WEBHOOK_URL`
-- Odoo XML-RPC access to `odoo_core` database (port 8069)
-- Mattermost webhook configured
+- Environment variables: `ODOO_ADMIN_PASSWORD`, `SLACK_WEBHOOK_URL`
+- Odoo XML-RPC access to `odoo` database (port 8069)
+- Slack webhook configured
 
 **Nodes**:
 1. **Schedule Triggers** (4): Cron-based triggers for each automation
 2. **Odoo XML-RPC Calls** (4): Query/execute Odoo operations
-3. **Mattermost Notifications** (4): Send alerts to #finance-close channel
+3. **Slack Notifications** (4): Send alerts to #finance-close channel
 
 ### 2. `bir_deadline_reminder_workflow.json` (Existing)
 
@@ -51,7 +51,7 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 ```
 
 **Notifications**:
-- Mattermost message to #finance-close
+- Slack message to #finance-close
 - Email backup to responsible user
 
 ---
@@ -60,27 +60,27 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 
 ### Prerequisites
 
-1. **n8n Server**: https://ipa.insightpulseai.com
+1. **n8n Server**: https://n8n.insightpulseai.com
 2. **Credentials**:
    - n8n API Key (JWT token)
    - Odoo admin password
-   - Mattermost webhook URL
+   - Slack webhook URL
 
 3. **Environment Variables** (set in n8n):
    ```bash
    ODOO_ADMIN_PASSWORD=<odoo_admin_password>
-   MATTERMOST_WEBHOOK_URL=https://mattermost.insightpulseai.com/hooks/...
+   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
    ```
 
 ### Import Workflows
 
 **Option 1: n8n UI (Recommended)**
 
-1. **Login** to n8n: https://ipa.insightpulseai.com
+1. **Login** to n8n: https://n8n.insightpulseai.com
 2. **Navigate**: Workflows → Import from File
 3. **Upload**: `finance_closing_automation.json`
 4. **Configure**:
-   - Set credentials (Odoo XML-RPC, Mattermost)
+   - Set credentials (Odoo XML-RPC, Slack)
    - Verify environment variables
 5. **Activate**: Toggle workflow to active state
 
@@ -88,7 +88,7 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 
 ```bash
 # Set n8n API credentials
-export N8N_BASE_URL="https://ipa.insightpulseai.com"
+export N8N_BASE_URL="https://n8n.insightpulseai.com"
 export N8N_API_KEY="<jwt_token>"
 
 # Import workflow
@@ -114,7 +114,7 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 2. **Test Manual Execution**:
    - n8n UI → Workflows → "Finance Month-End Closing - Automation"
    - Click "Execute Workflow" on any trigger node
-   - Verify Mattermost notification received
+   - Verify Slack notification received
 
 3. **Verify Cron Schedules**:
    - Day 1 00:01: `1 0 1 * *` (Reverse Accruals)
@@ -128,10 +128,10 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 
 ### Odoo XML-RPC Connection
 
-**Endpoint**: `http://159.223.75.148:8069/xmlrpc/2/object`
+**Endpoint**: `http://178.128.112.214:8069/xmlrpc/2/object`
 
 **Authentication**:
-- Database: `odoo_core`
+- Database: `odoo`
 - UID: 2 (admin user)
 - Password: `{{ $env.ODOO_ADMIN_PASSWORD }}`
 
@@ -140,8 +140,8 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 python3 << 'EOF'
 import xmlrpc.client
 
-url = "http://159.223.75.148:8069"
-db = "odoo_core"
+url = "http://178.128.112.214:8069"
+db = "odoo"
 uid = 2
 password = "admin"  # Replace with actual password
 
@@ -160,7 +160,7 @@ for task in tasks:
 EOF
 ```
 
-### Mattermost Webhook
+### Slack Webhook
 
 **Channel**: #finance-close
 
@@ -168,7 +168,7 @@ EOF
 
 **Test Notification**:
 ```bash
-curl -X POST "${MATTERMOST_WEBHOOK_URL}" \
+curl -X POST "${SLACK_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "🧪 Test notification from Finance Closing automation",
@@ -189,12 +189,12 @@ Trigger: Day 1 of month at 00:01
 Query Odoo: Find accruals to reverse
   - Search: state=posted, auto_reverse=true, not yet reversed
 ↓
-Notify Mattermost: "X entries reversed"
+Notify Slack: "X entries reversed"
 ```
 
 **Odoo XML-RPC Call**:
 ```python
-models.execute_kw('odoo_core', 2, password,
+models.execute_kw('odoo', 2, password,
     'account.move', 'search_read',
     [[
         ('state', '=', 'posted'),
@@ -213,7 +213,7 @@ Trigger: Day 1 of month at 06:00
 Call Odoo: Update currency rates from BSP
   - Method: res.currency.cron_update_currency_rates
 ↓
-Notify Mattermost: "FX rates updated"
+Notify Slack: "FX rates updated"
 ```
 
 ### 3. Period Lock Reminder (Day 5, 09:00 AM)
@@ -224,7 +224,7 @@ Trigger: Day 5 of month at 09:00
 Query Odoo: Check incomplete month-end tasks
   - Filter: project.name ilike "Month-End Close", stage != Done
 ↓
-Notify Mattermost: "X incomplete tasks" + task list
+Notify Slack: "X incomplete tasks" + task list
   - cc: @finance-director
 ```
 
@@ -236,7 +236,7 @@ Trigger: Day 10 of month at 08:00
 Query Odoo: Check pending BIR tasks
   - Filter: name ilike "BIR", stage != Done
 ↓
-Notify Mattermost: "BIR forms due today" + task list
+Notify Slack: "BIR forms due today" + task list
   - cc: @tax-specialist @finance-director
 ```
 
@@ -258,7 +258,7 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
   | jq '.data[] | select(.workflowData.name | contains("Finance")) | {id, status, startedAt}'
 ```
 
-### Mattermost Alerts
+### Slack Alerts
 
 **Expected Notifications**:
 - Day 1, 00:01: "✅ Accrual Reversal Complete"
@@ -291,27 +291,27 @@ curl -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
 **Solution**:
 ```bash
 # Test Odoo reachability
-curl -s http://159.223.75.148:8069/web/database/selector | grep -q "odoo_core" && echo "Odoo accessible"
+curl -s http://178.128.112.214:8069/web/database/selector | grep -q "odoo" && echo "Odoo accessible"
 
 # Verify credentials
 python3 << 'EOF'
 import xmlrpc.client
-common = xmlrpc.client.ServerProxy("http://159.223.75.148:8069/xmlrpc/2/common")
-uid = common.authenticate("odoo_core", "admin", "admin", {})
+common = xmlrpc.client.ServerProxy("http://178.128.112.214:8069/xmlrpc/2/common")
+uid = common.authenticate("odoo", "admin", "admin", {})
 print(f"UID: {uid}" if uid else "Authentication failed")
 EOF
 ```
 
-### Problem: Mattermost Notifications Not Sent
+### Problem: Slack Notifications Not Sent
 
 **Check**:
-1. `MATTERMOST_WEBHOOK_URL` environment variable set in n8n
+1. `SLACK_WEBHOOK_URL` environment variable set in n8n
 2. Webhook URL is valid (test with curl)
-3. Mattermost channel exists (#finance-close)
+3. Slack channel exists (#finance-close)
 
 **Test Webhook**:
 ```bash
-curl -X POST "${MATTERMOST_WEBHOOK_URL}" \
+curl -X POST "${SLACK_WEBHOOK_URL}" \
   -H "Content-Type: application/json" \
   -d '{"text": "Test from n8n troubleshooting"}'
 ```
@@ -324,7 +324,7 @@ curl -X POST "${MATTERMOST_WEBHOOK_URL}" \
 
 1. **Review Execution Logs**: Check for failures in previous month
 2. **Update BIR Deadlines**: Verify Day 10/15/20/25 schedules match BIR calendar
-3. **Test Notifications**: Manually execute workflows to verify Mattermost alerts
+3. **Test Notifications**: Manually execute workflows to verify Slack alerts
 
 ### Quarterly Tasks
 
@@ -336,7 +336,7 @@ curl -X POST "${MATTERMOST_WEBHOOK_URL}" \
 
 ## Integration with Odoo Module
 
-**Module**: `ipai_finance_closing` (installed in odoo_core)
+**Module**: `ipai_finance_closing` (installed in odoo)
 
 **Dependencies**:
 - Project template: "Month-End Close Template" (ID: 15)
@@ -351,7 +351,7 @@ XML-RPC Query (search_read)
   ↓
 Process Results (filter, transform)
   ↓
-Mattermost Notification (formatted message)
+Slack Notification (formatted message)
 ```
 
 **Odoo → n8n Data Flow** (Future Enhancement):
