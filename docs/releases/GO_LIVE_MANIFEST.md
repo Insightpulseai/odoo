@@ -1,23 +1,23 @@
 # Go-Live Manifest
 
-> **Release:** prod-20260106-1741
+> **Release:** prod-20260302-0241
 > **Environment:** Production (erp.insightpulseai.com)
-> **Generated:** 2026-01-06T18:07:00Z
+> **Updated:** 2026-03-08 (manual — was stale since 2026-01-06)
 
 ---
 
-## Deployment Identifiers
+## Current Production Deployment
 
 | Identifier | Value |
 |------------|-------|
-| **Release Tag** | `prod-20260106-1741` |
-| **Commit SHA** | `782fea9a7a4656d6ba225fcbea132908978d1522` |
-| **Deploy Workflow** | Deploy to Production #166 |
-| **Deploy Time** | 2026-01-06T17:40:17Z |
+| **Release Tag** | `prod-20260302-0241` |
+| **Commit SHA** | `2ee9837` |
+| **Deploy Time** | 2026-03-02 |
 | **Environment URL** | https://erp.insightpulseai.com |
-| **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:edge-standard` |
-| **Previous Tag** | `prod-20260106-1643` |
-| **Previous SHA** | `a42fc69f418ecb5744607749c5d544f88aae8a9d` |
+| **Docker Image** | `ghcr.io/insightpulseai/ipai-odoo-runtime:edge-standard` |
+| **Key Change** | PR #460 — Settings parity page + CDN CNAME + SPF fix |
+| **Previous Tag** | `prod-20260106-1741` |
+| **Previous SHA** | `782fea9a7a4656d6ba225fcbea132908978d1522` |
 
 ---
 
