@@ -46,6 +46,7 @@ ENV_CLASS_MAP = {
     "development": "dev",
     "odoo-dev": "dev",
     "databricks-dev": "dev",
+    "sandbox": "dev",
     "staging": "staging",
     "odoo-staging": "staging",
     "databricks-staging": "staging",
@@ -54,6 +55,7 @@ ENV_CLASS_MAP = {
     "odoo-production": "prod",
     "databricks-production": "prod",
     "github-pages": "prod",
+    "audit": "prod",
 }
 
 
