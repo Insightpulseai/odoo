@@ -28,17 +28,17 @@ belong in the curated baseline.
 
 ## Candidate Repos
 
-| # | Repo | Research Reference | Current Need | Decision | Rationale |
-|---|------|--------------------|--------------|----------|-----------|
-| 1 | **OCA/payroll** | HR payroll (P0) | `ipai_hr_payroll_ph` depends on OCA payroll engine for base salary rules | **EVALUATE** | High priority. Check if 19.0 branch has `payroll`, `payroll_account`. ipai_hr_payroll_ph already exists as PH overlay. |
-| 2 | **OCA/field-service** | Field Service (P2) | No current ipai_* module for FSM | **DEFER** | P2 priority. No active FSM use case. Include when FSM feature is scoped. |
-| 3 | **OCA/hr-attendance** | Attendance tracking (P1) | `ipai_planning_attendance` is DEPRECATED | **EVALUATE** | OCA attendance modules could replace deprecated ipai module. Check 19.0 status. |
-| 4 | **OCA/hr-holidays** | Leave management (P1) | No current ipai_* for leave | **EVALUATE** | Standard HR need. Check if 19.0 branch has usable modules. |
-| 5 | **OCA/sign** | E-signature (P2) | `ipai_sign` is DEPRECATED | **DEFER** | P2 priority. `ipai_sign` already deprecated. OCA sign_oca may not have 19.0 port. |
-| 6 | **OCA/commission** | Sales commission (P3) | No current need | **REJECT** | P3 low priority. No active commission use case. |
-| 7 | **OCA/delivery-carrier** | Shipping (P3) | No current need | **REJECT** | P3 low priority. No active shipping/logistics use case. |
-| 8 | **OCA/stock-logistics-barcode** | Warehouse barcode (P3) | No current need | **REJECT** | P3 low priority. No warehouse operations. |
-| 9 | **OCA/stock-logistics-workflow** | Stock workflow (P3) | No current need | **REJECT** | P3 low priority. No warehouse operations. |
+| # | Repo | Target EE Gap | Odoo 19 Compat | Dependency Impact | Decision | Rationale |
+|---|------|---------------|----------------|-------------------|----------|-----------|
+| 1 | **OCA/payroll** | `hr_payroll` (P0) | Unknown — needs 19.0 branch check | `ipai_hr_payroll_ph` depends on OCA payroll engine | **EVALUATE** | High priority. Check `payroll`, `payroll_account` on 19.0. |
+| 2 | **OCA/field-service** | `industry_fsm` (P2) | Unknown | None — no ipai_* module exists | **DEFER** | P2. No active FSM use case. |
+| 3 | **OCA/hr-attendance** | `hr_attendance` (P1) | Unknown — needs 19.0 branch check | Replaces DEPRECATED `ipai_planning_attendance` | **EVALUATE** | OCA attendance replaces deprecated ipai module. |
+| 4 | **OCA/hr-holidays** | `hr_holidays` (P1) | Unknown — needs 19.0 branch check | No existing ipai_* — net new capability | **EVALUATE** | Standard HR need. Check 19.0 module availability. |
+| 5 | **OCA/sign** | `sign` (P2) | Likely no 19.0 port | `ipai_sign` already DEPRECATED | **DEFER** | P2. OCA sign_oca may not have 19.0 port. |
+| 6 | **OCA/commission** | None (P3) | N/A | None | **REJECT** | No active commission use case. |
+| 7 | **OCA/delivery-carrier** | None (P3) | N/A | None | **REJECT** | No active shipping/logistics use case. |
+| 8 | **OCA/stock-logistics-barcode** | None (P3) | N/A | None | **REJECT** | No warehouse operations. |
+| 9 | **OCA/stock-logistics-workflow** | None (P3) | N/A | None | **REJECT** | No warehouse operations. |
 
 ---
 
