@@ -76,15 +76,18 @@ cloud:
     domain: insightpulseai.com
     status: active
     services: [dns, proxy_waf]
-    record_count: 18
+    record_count: 22
     subdomains:
       - erp.insightpulseai.com      # Odoo ERP (A → 178.128.112.214)
       - n8n.insightpulseai.com      # n8n automation (A → 178.128.112.214)
-      - chat.insightpulseai.com     # Mattermost [deprecated] (A → 178.128.112.214)
+      - plane.insightpulseai.com    # Plane CE (A → 178.128.112.214)
+      - shelf.insightpulseai.com    # Shelf.nu (A → 178.128.112.214)
+      - crm.insightpulseai.com      # Atomic CRM (A → 178.128.112.214)
       - auth.insightpulseai.com     # Authentication (A → 178.128.112.214)
       - ocr.insightpulseai.com      # OCR service (A → 178.128.112.214)
-      - superset.insightpulseai.com # BI (CNAME → DO App Platform)
-      - mcp.insightpulseai.com      # MCP (CNAME → DO App Platform)
+      - superset.insightpulseai.com # BI (A → 178.128.112.214)
+      - mcp.insightpulseai.com      # MCP Hub (A → 178.128.112.214)
+      - ops.insightpulseai.com      # OdooOps Console (CNAME → Vercel)
       - agent.insightpulseai.com    # AI Agent (CNAME → DO AI agent)
     ssot_file: infra/dns/subdomain-registry.yaml
 

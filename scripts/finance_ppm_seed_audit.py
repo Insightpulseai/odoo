@@ -1,59 +1,44 @@
 #!/usr/bin/env python3
-"""Finance PPM Seed Audit — deterministic XML record counter.
+"""Finance PPM Seed Audit — deterministic CSV record counter.
 
-Reads umbrella module seed XMLs and emits canonical counts to
+Reads canonical seed CSVs from data/finance_seed/ and emits counts to
 artifacts/finance_ppm_seed_audit.json.  Used by CI tier-0 gate
 to enforce seed completeness without guesswork.
 """
 from __future__ import annotations
 
+import csv
 import json
 import sys
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-DATA = REPO / "addons" / "ipai_finance_ppm_umbrella" / "data"
+DATA = REPO / "data" / "finance_seed"
 
 FILES = {
-    "employees": "01_employees.xml",
-    "logframe": "02_logframe_complete.xml",
-    "bir": "03_bir_schedule.xml",
-    "tasks": "04_closing_tasks.xml",
-    "raci": "05_raci_assignments.xml",
+    "tags": "01_project.tags.csv",
+    "projects": "02_project.project.csv",
+    "month_end_tasks": "03_project.task.month_end.csv",
+    "bir_tax_tasks": "04_project.task.bir_tax.csv",
+    "expense_categories": "05_expense_categories.csv",
+    "approval_rules": "06_approval_thresholds.csv",
+}
+
+THRESHOLDS = {
+    "tags": 36,
+    "projects": 2,
+    "month_end_tasks": 36,
+    "bir_tax_tasks": 33,
+    "expense_categories": 18,
+    "approval_rules": 11,
 }
 
 
-def count_records(path: Path, model: str | None = None) -> int:
-    root = ET.parse(path).getroot()
-    n = 0
-    for rec in root.iter("record"):
-        if model is None or rec.attrib.get("model") == model:
-            n += 1
-    return n
-
-
-def unique_field_values(path: Path, model: str, field_name: str) -> list[str]:
-    root = ET.parse(path).getroot()
-    out: set[str] = set()
-    for rec in root.iter("record"):
-        if rec.attrib.get("model") != model:
-            continue
-        for f in rec.iter("field"):
-            if f.attrib.get("name") == field_name and (f.text or "").strip():
-                out.add((f.text or "").strip())
-    return sorted(out)
-
-
-def unique_record_ids(path: Path, model: str | None = None) -> list[str]:
-    root = ET.parse(path).getroot()
-    out: set[str] = set()
-    for rec in root.iter("record"):
-        if model is None or rec.attrib.get("model") == model:
-            rid = rec.attrib.get("id", "")
-            if rid:
-                out.add(rid)
-    return sorted(out)
+def count_csv_rows(path: Path) -> int:
+    """Count data rows in a CSV file (excludes header)."""
+    with open(path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        return sum(1 for _ in reader)
 
 
 def main() -> None:
@@ -67,38 +52,14 @@ def main() -> None:
 
     counts: dict[str, object] = {}
 
-    # Employees
-    emp_count = count_records(DATA / FILES["employees"], model="res.users")
-    emp_names = unique_field_values(
-        DATA / FILES["employees"], "res.users", "name"
-    )
-    counts["employees_count"] = emp_count
-    counts["employees_names"] = emp_names
+    for key, filename in FILES.items():
+        path = DATA / filename
+        row_count = count_csv_rows(path)
+        counts[f"{key}_count"] = row_count
 
-    # Logframe
-    counts["logframe_count"] = count_records(DATA / FILES["logframe"])
-
-    # BIR schedule
-    bir_count = count_records(DATA / FILES["bir"])
-    counts["bir_count"] = bir_count
-
-    # Closing tasks
-    task_count = count_records(DATA / FILES["tasks"], model="project.task")
-    counts["tasks_count"] = task_count
-
-    # RACI assignments
-    raci_count = count_records(DATA / FILES["raci"])
-    counts["raci_count"] = raci_count
-
-    # Sanity checks
-    if emp_count < 8:
-        errors.append(f"employees={emp_count}, expected >=8")
-    if bir_count < 20:
-        errors.append(f"bir_records={bir_count}, expected >=20")
-    if task_count < 30:
-        errors.append(f"tasks={task_count}, expected >=30")
-    if raci_count < 8:
-        errors.append(f"raci={raci_count}, expected >=8")
+        threshold = THRESHOLDS.get(key, 0)
+        if row_count < threshold:
+            errors.append(f"{key}={row_count}, expected >={threshold}")
 
     counts["errors"] = errors
     counts["pass"] = len(errors) == 0

@@ -4,42 +4,41 @@
 > Every contract has an owning SSOT, a consuming party, and a validation mechanism.
 > Contracts marked **[pending]** have no committed document yet.
 >
-> Last updated: 2026-03-08 (C-04, C-08 activated: Task Queue + Audit Events — integration backbone)
+> Last updated: 2026-03-02 (C-23–C-24 added: Agent Workflows, Tool Permissions — MAF parity P0)
 
 ---
 
 ## Index
 
-| #    | Contract                                                      | Source SSOT domain                                   | Consumer domain                                   | Status        | Validator                                           |
-| ---- | ------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- | ------------- | --------------------------------------------------- |
-| C-01 | [DNS & Email](DNS_EMAIL_CONTRACT.md)                          | Cloudflare DNS (`infra/dns/`)                        | Zoho Mail, Vercel, Odoo                           | ✅ Active     | `dns-ssot-apply.yml`                                |
-| C-02 | ~~[Outbound Mail Bridge](MAIL_BRIDGE_CONTRACT.md)~~           | Odoo `mail.mail`                                     | ~~Supabase Edge Function `zoho-mail-bridge`~~     | ❌ Deprecated | Superseded by C-26                                  |
-| C-03 | [JWT Trust](JWT_TRUST_CONTRACT.md)                            | Supabase Auth                                        | Odoo middleware, Vercel Edge                      | 🔲 Pending    | —                                                   |
-| C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md)                          | `@ipai/taskbus` + Edge Functions                     | `ops.runs` (Supabase)                             | ✅ Active     | `integration-backbone-gate.yml`                     |
-| C-05 | [Design Tokens](DESIGN_TOKENS_CONTRACT.md)                    | Figma                                                | `packages/design-tokens/tokens.json`              | 🔲 Pending    | —                                                   |
-| C-06 | [Vercel Environment Variables](VERCEL_ENV_CONTRACT.md)        | Vercel dashboard                                     | Next.js apps                                      | 🔲 Pending    | `vercel-env-leak-guard.yml`                         |
-| C-07 | [Supabase Vault Secrets](SUPABASE_VAULT_CONTRACT.md)          | Supabase Vault                                       | Edge Functions, pg_cron                           | ✅ Active     | `20260221000001_vault_secret_registry.sql`          |
-| C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md)             | All services                                         | `ops.v_events` (Supabase unified view)            | ✅ Active     | `integration-backbone-gate.yml`                     |
-| C-09 | [GitHub Actions Secrets](GH_SECRETS_CONTRACT.md)              | GitHub org secrets                                   | CI workflows                                      | 🔲 Pending    | `platform-guardrails.yml`                           |
-| C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md)          | Supabase Auth                                        | Zoho SMTP (`smtppro.zoho.com`)                    | ✅ Active     | `RB_SUPABASE_AUTH_SMTP_VERIFY.md`                   |
-| C-11 | [Edge Functions](SUPABASE_EDGE_FUNCTIONS_CONTRACT.md)         | `supabase/functions/`                                | All integration bridges                           | ✅ Active     | `ssot-surface-guard.yml`                            |
-| C-12 | [Supabase Cron](SUPABASE_CRON_CONTRACT.md)                    | `supabase/migrations/*_cron_*.sql`                   | pg_cron jobs                                      | ✅ Active     | `cron.job_run_details`                              |
-| C-13 | [Nightly Repo Hygiene](SUPABASE_CRON_REPO_HYGIENE.md)         | `automations/repo_hygiene/jobs/nightly.yml`          | `ops.repo_hygiene_*` (Supabase)                   | ✅ Active     | `ops.repo_hygiene_runs`                             |
-| C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md)                      | Supabase Postgres (CDC/WAL)                          | Analytics Buckets (Iceberg) / BigQuery            | ✅ Active     | `pg_stat_replication`                               |
-| C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md)                    | `config/odoo/settings.yaml`                          | Odoo `ir.config_parameter`                        | ✅ Active     | `apply_settings.py --verify-only`                   |
-| C-16 | Odoo Auth Providers                                           | `config/odoo/auth_providers.yaml`                    | Odoo `auth.oauth.provider`                        | ✅ Active     | `apply_auth_providers.py --enforce`                 |
-| C-17 | [AI Copilot Bridge](AI_COPILOT_CONTRACT.md)                   | `platform/ai/providers/gemini_tools.ts`              | `addons/ipai/ipai_ai_copilot/`                    | 🔲 Planned    | `check_parity_and_bridges_ssot.py`                  |
-| C-18 | [DigitalOcean API](C-DO-01-digitalocean-api.md)               | DigitalOcean v2 REST API                             | `ops.do_*` tables, ops-console UI                 | ✅ Active     | `ssot/providers/digitalocean/provider.yaml`         |
-| C-19 | [Odoo.sh Parity](C-ODOOS-01-parity.md)                        | ops-console platform                                 | All console modules                               | ✅ Active     | `spec/odooops-console/constitution.md`              |
-| C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)                     | Mailgun relay + `ops.mail_events`                    | ops-console Observability                         | 🔲 Planned    | CI gate (task 33)                                   |
-| C-21 | [Plane Work Items Webhooks](C-PLANE-02-workitems-webhooks.md) | `ssot/sources/plane/work_items.yaml`                 | `ops.work_items`, ops-console Boards view         | 🔲 Planned    | `apps/ops-console/app/api/webhooks/plane/route.ts`  |
-| C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml`                | `ops.work_items`, ops-console Boards view         | 🔲 Planned    | `apps/ops-console/app/api/webhooks/github/route.ts` |
-| C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`                  | All IPAI agent skills, executor runtimes          | ✅ Active     | `scripts/ci/validate_skills_registry.py`            |
-| C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`                           | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active     | `scripts/ci/validate_skills_registry.py`            |
-| C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                               | `ipai_ai_copilot` tool dispatch                   | ✅ Active     | `scripts/index_corpus_registry.py --check`          |
-| C-26 | [Plane FinOps Workspace](PLANE_FINOPS_WORKSPACE_CONTRACT.md)  | `ssot/plane/projects/finops_workspace.yaml`          | Plane CE (fin-ops workspace)                      | ✅ Active     | `validate_plane_ssot.py` + `plane-ssot-gate.yml`    |
-| C-27 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes         | ✅ Active     | `C-MAIL-01` CI gate                                 |
-| C-28 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)                | `config/addons.manifest.yaml`                        | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active     | `addons-manifest-guard.yml`                         |
+| #    | Contract                                               | Source SSOT domain                          | Consumer domain                           | Status     | Validator                                  |
+| ---- | ------------------------------------------------------ | ------------------------------------------- | ----------------------------------------- | ---------- | ------------------------------------------ |
+| C-01 | [DNS & Email](DNS_EMAIL_CONTRACT.md)                   | Cloudflare DNS (`infra/dns/`)               | Zoho Mail, Vercel, Odoo                   | ✅ Active  | `dns-ssot-apply.yml`                       |
+| C-02 | ~~[Outbound Mail Bridge](MAIL_BRIDGE_CONTRACT.md)~~    | Odoo `mail.mail`                            | ~~Supabase Edge Function `zoho-mail-bridge`~~ | ❌ Deprecated | Superseded by C-26 |
+| C-03 | [JWT Trust](JWT_TRUST_CONTRACT.md)                     | Supabase Auth                               | Odoo middleware, Vercel Edge              | 🔲 Pending | —                                          |
+| C-04 | [Task Queue](TASK_QUEUE_CONTRACT.md)                   | n8n workflows                               | `ops.task_queue` (Supabase)               | 🔲 Pending | —                                          |
+| C-05 | [Design Tokens](DESIGN_TOKENS_CONTRACT.md)             | Figma                                       | `packages/design-tokens/tokens.json`      | 🔲 Pending | —                                          |
+| C-06 | [Vercel Environment Variables](VERCEL_ENV_CONTRACT.md) | Vercel dashboard                            | Next.js apps                              | 🔲 Pending | `vercel-env-leak-guard.yml`                |
+| C-07 | [Supabase Vault Secrets](SUPABASE_VAULT_CONTRACT.md)   | Supabase Vault                              | Edge Functions, pg_cron                   | ✅ Active  | `20260221000001_vault_secret_registry.sql` |
+| C-08 | [Platform Audit Events](AUDIT_EVENTS_CONTRACT.md)      | All services                                | `ops.platform_events` (Supabase)          | 🔲 Pending | —                                          |
+| C-09 | [GitHub Actions Secrets](GH_SECRETS_CONTRACT.md)       | GitHub org secrets                          | CI workflows                              | 🔲 Pending | `platform-guardrails.yml`                  |
+| C-10 | [Supabase Auth SMTP](SUPABASE_AUTH_SMTP_CONTRACT.md)   | Supabase Auth                               | Zoho SMTP (`smtppro.zoho.com`)            | ✅ Active  | `RB_SUPABASE_AUTH_SMTP_VERIFY.md`          |
+| C-11 | [Edge Functions](SUPABASE_EDGE_FUNCTIONS_CONTRACT.md)  | `supabase/functions/`                       | All integration bridges                   | ✅ Active  | `ssot-surface-guard.yml`                   |
+| C-12 | [Supabase Cron](SUPABASE_CRON_CONTRACT.md)             | `supabase/migrations/*_cron_*.sql`          | pg_cron jobs                              | ✅ Active  | `cron.job_run_details`                     |
+| C-13 | [Nightly Repo Hygiene](SUPABASE_CRON_REPO_HYGIENE.md)  | `automations/repo_hygiene/jobs/nightly.yml` | `ops.repo_hygiene_*` (Supabase)           | ✅ Active  | `ops.repo_hygiene_runs`                    |
+| C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md)               | Supabase Postgres (CDC/WAL)                 | Analytics Buckets (Iceberg) / BigQuery    | ✅ Active  | `pg_stat_replication`                      |
+| C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md)             | `config/odoo/settings.yaml`                 | Odoo `ir.config_parameter`                | ✅ Active  | `apply_settings.py --verify-only`          |
+| C-16 | Odoo Auth Providers                                    | `config/odoo/auth_providers.yaml`           | Odoo `auth.oauth.provider`                | ✅ Active  | `apply_auth_providers.py --enforce`        |
+| C-17 | [AI Copilot Bridge](AI_COPILOT_CONTRACT.md)            | `platform/ai/providers/gemini_tools.ts`     | `addons/ipai/ipai_ai_copilot/`            | 🔲 Planned | `check_parity_and_bridges_ssot.py`         |
+| C-18 | [DigitalOcean API](C-DO-01-digitalocean-api.md)        | DigitalOcean v2 REST API                    | `ops.do_*` tables, ops-console UI         | ✅ Active  | `ssot/providers/digitalocean/provider.yaml` |
+| C-19 | [Odoo.sh Parity](C-ODOOS-01-parity.md)                 | ops-console platform                        | All console modules                       | ✅ Active  | `spec/odooops-console/constitution.md`     |
+| C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)              | Mailgun relay + `ops.mail_events`           | ops-console Observability                 | 🔲 Planned | CI gate (task 33)                          |
+| C-21 | [Plane Work Items Webhooks](C-PLANE-02-workitems-webhooks.md) | `ssot/sources/plane/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/plane/route.ts` |
+| C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/github/route.ts` |
+| C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
+| C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
+| C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
+| C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
+| C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
 
 ---
 
@@ -130,14 +129,13 @@ supabase secrets set --project-ref spdtwktxdalcfigzeqrz \
 
 ---
 
-## C-04 — Task Queue Contract
+## C-04 — Task Queue Contract [pending]
 
-**File**: `docs/contracts/TASK_QUEUE_CONTRACT.md`
-**SSOT**: `ops.runs` table + `@ipai/taskbus` enqueue interface
-**Consumer**: Slack agent, Edge Function workers, n8n workflows
-**Validator**: `integration-backbone-gate.yml`
+**File**: `docs/contracts/TASK_QUEUE_CONTRACT.md` _(not yet created)_
 
-**Protocol**: All external events enter via `ops.runs` (SSOT ledger). Enqueue via `ops.start_run()` RPC or `@ipai/taskbus.enqueue()`. Correlation IDs propagate across all systems.
+**Purpose**: Define the schema of `ops.task_queue` (Supabase) and the n8n → queue → consumer flow.
+
+**Key fields**: `task_type`, `payload`, `status`, `created_at`, `processed_at`, `error`
 
 ---
 
