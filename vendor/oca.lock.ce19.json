@@ -37,6 +37,30 @@
       "ee_parity": ["Approvals workflow"]
     },
     {
+      "name": "OCA/server-backend",
+      "url": "https://github.com/OCA/server-backend.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/queue",
+      "url": "https://github.com/OCA/queue.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/connector",
+      "url": "https://github.com/OCA/connector.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
       "name": "OCA/web",
       "url": "https://github.com/OCA/web.git",
       "ref": "19.0",
@@ -72,6 +96,14 @@
       "commit": "HEAD",
       "modules": ["report_xlsx", "report_xlsx_helper", "report_qweb_element_page_visibility"],
       "ee_parity": ["Advanced reporting"]
+    },
+    {
+      "name": "OCA/spreadsheet",
+      "url": "https://github.com/OCA/spreadsheet.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
     },
     {
       "name": "OCA/account-financial-tools",
@@ -119,12 +151,52 @@
       "ee_parity": []
     },
     {
+      "name": "OCA/account-payment",
+      "url": "https://github.com/OCA/account-payment.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/bank-payment",
+      "url": "https://github.com/OCA/bank-payment.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
       "name": "OCA/purchase-workflow",
       "url": "https://github.com/OCA/purchase-workflow.git",
       "ref": "19.0",
       "commit": "HEAD",
       "modules": ["purchase_request", "purchase_order_approved"],
       "ee_parity": ["Purchase approvals"]
+    },
+    {
+      "name": "OCA/crm",
+      "url": "https://github.com/OCA/crm.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/sale-workflow",
+      "url": "https://github.com/OCA/sale-workflow.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/sale-reporting",
+      "url": "https://github.com/OCA/sale-reporting.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
     },
     {
       "name": "OCA/hr-expense",
@@ -159,6 +231,14 @@
       "ee_parity": ["Subscription management"]
     },
     {
+      "name": "OCA/knowledge",
+      "url": "https://github.com/OCA/knowledge.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["knowledge"],
+      "ee_parity": ["Knowledge base"]
+    },
+    {
       "name": "OCA/dms",
       "url": "https://github.com/OCA/dms.git",
       "ref": "19.0",
@@ -167,12 +247,12 @@
       "ee_parity": ["Document management"]
     },
     {
-      "name": "OCA/knowledge",
-      "url": "https://github.com/OCA/knowledge.git",
+      "name": "OCA/social",
+      "url": "https://github.com/OCA/social.git",
       "ref": "19.0",
       "commit": "HEAD",
-      "modules": ["knowledge"],
-      "ee_parity": ["Knowledge base"]
+      "modules": [],
+      "ee_parity": []
     },
     {
       "name": "OCA/helpdesk",
@@ -183,11 +263,27 @@
       "ee_parity": ["Helpdesk"]
     },
     {
-      "name": "OCA/partner-contact",
-      "url": "https://github.com/OCA/partner-contact.git",
+      "name": "OCA/manufacture",
+      "url": "https://github.com/OCA/manufacture.git",
       "ref": "19.0",
       "commit": "HEAD",
-      "modules": ["partner_firstname", "partner_company_group"],
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/ai",
+      "url": "https://github.com/OCA/ai.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/automation",
+      "url": "https://github.com/OCA/automation.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
       "ee_parity": []
     },
     {
@@ -197,6 +293,22 @@
       "commit": "HEAD",
       "modules": ["base_rest", "base_rest_datamodel"],
       "ee_parity": ["API framework"]
+    },
+    {
+      "name": "OCA/storage",
+      "url": "https://github.com/OCA/storage.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/partner-contact",
+      "url": "https://github.com/OCA/partner-contact.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["partner_firstname", "partner_company_group"],
+      "ee_parity": []
     }
   ],
   "ee_parity_coverage": {
