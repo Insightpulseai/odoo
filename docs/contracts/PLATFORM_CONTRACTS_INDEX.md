@@ -39,6 +39,7 @@
 | C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
 | C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
 | C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
+| C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 
 ---
 
