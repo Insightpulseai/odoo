@@ -13,7 +13,7 @@ from pathlib import Path
 # CONFIGURATION
 # =============================================================================
 ODOO_URL = "https://erp.insightpulseai.com"
-DB_NAME = "odoo_core"
+DB_NAME = "odoo"
 
 # Get credentials from command line or prompt
 def get_credentials():
@@ -105,7 +105,7 @@ def main():
     # =========================================================================
     # STEP 1: Import Tags
     # =========================================================================
-    print("\n[1/4] Importing Tags...")
+    print("\n[1/6] Importing Tags...")
     tags_file = script_dir / "01_project.tags.csv"
     if tags_file.exists():
         tags = read_csv(tags_file)
@@ -117,7 +117,7 @@ def main():
     # =========================================================================
     # STEP 2: Import Projects
     # =========================================================================
-    print("\n[2/4] Importing Projects...")
+    print("\n[2/6] Importing Projects...")
     projects_file = script_dir / "02_project.project.csv"
     if projects_file.exists():
         projects = read_csv(projects_file)
@@ -129,7 +129,7 @@ def main():
     # =========================================================================
     # STEP 3: Import Month-End Close Tasks
     # =========================================================================
-    print("\n[3/4] Importing Month-End Close Tasks...")
+    print("\n[3/6] Importing Month-End Close Tasks...")
     me_tasks_file = script_dir / "03_project.task.month_end.csv"
     if me_tasks_file.exists():
         tasks = read_csv(me_tasks_file)
@@ -141,7 +141,7 @@ def main():
     # =========================================================================
     # STEP 4: Import BIR Tax Filing Tasks
     # =========================================================================
-    print("\n[4/4] Importing BIR Tax Filing Tasks...")
+    print("\n[4/6] Importing BIR Tax Filing Tasks...")
     bir_tasks_file = script_dir / "04_project.task.bir_tax.csv"
     if bir_tasks_file.exists():
         tasks = read_csv(bir_tasks_file)
@@ -149,6 +149,31 @@ def main():
         print(f"  Imported {len(ids)} BIR tax tasks")
     else:
         print(f"  SKIP: {bir_tasks_file} not found")
+
+    # =========================================================================
+    # STEP 5: Import Expense Categories (as product.product)
+    # =========================================================================
+    print("\n[5/6] Importing Expense Categories...")
+    exp_file = script_dir / "05_expense_categories.csv"
+    if exp_file.exists():
+        records = read_csv(exp_file)
+        ids = import_records(models, DB_NAME, uid, password, 'product.product', records)
+        print(f"  Imported {len(ids)} expense category products")
+    else:
+        print(f"  SKIP: {exp_file} not found")
+
+    # =========================================================================
+    # STEP 6: Import Approval Thresholds (reference data)
+    # =========================================================================
+    print("\n[6/6] Importing Approval Thresholds...")
+    approval_file = script_dir / "06_approval_thresholds.csv"
+    if approval_file.exists():
+        records = read_csv(approval_file)
+        print(f"  Loaded {len(records)} approval rules (reference CSV)")
+        print("  Note: Approval rules are reference data for ipai_finance_ppm import wizard")
+        print("  or future ipai_approvals module. No Odoo model import needed.")
+    else:
+        print(f"  SKIP: {approval_file} not found")
 
     # =========================================================================
     # VERIFICATION
