@@ -15,16 +15,16 @@ _logger = logging.getLogger(__name__)
 class ProjectTaskIntegration(models.Model):
     _inherit = 'project.task'
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override: Emit finance_task.created when BIR task is auto-created"""
-        task = super().create(vals)
+        tasks = super().create(vals_list)
 
         # Only emit for finance PPM tasks (linked to BIR schedule or logframe)
-        if task.bir_schedule_id or task.finance_logframe_id:
+        for task in tasks.filtered(lambda t: t.bir_schedule_id or t.finance_logframe_id):
             self._emit_finance_task_event(task, 'finance_task.created')
 
-        return task
+        return tasks
 
     def write(self, vals):
         """Override: Emit events when task state changes"""
