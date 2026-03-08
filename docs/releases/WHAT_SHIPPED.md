@@ -1,8 +1,7 @@
 # What Shipped - Production Release Inventory
 
-> **Generated:** 2026-01-06T18:07:00Z
-> **ReleaseBot Version:** 1.0.0
-> **Repository:** jgtolentino/odoo-ce
+> **Last Updated:** 2026-03-08 (manual update — release docs were stale since 2026-01-06)
+> **Repository:** Insightpulseai/odoo (renamed from jgtolentino/odoo-ce)
 
 ---
 
@@ -10,13 +9,28 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Successful Deploy** | Deploy to Production #166 |
-| **Production SHA** | `782fea9a7a4656d6ba225fcbea132908978d1522` |
-| **Production Tag** | `prod-20260106-1741` |
-| **Deploy Timestamp** | 2026-01-06T17:40:17Z |
-| **Previous Baseline** | `a42fc69f418ecb5744607749c5d544f88aae8a9d` |
-| **Previous Tag** | `prod-20260106-1643` |
+| **Last Successful Deploy** | `prod-20260302-0241` |
+| **Production SHA** | `2ee9837` |
+| **Production Tag** | `prod-20260302-0241` |
+| **Deploy Timestamp** | 2026-03-02 |
+| **Previous Tracked Baseline** | `prod-20260106-1741` (`782fea9`) |
+| **Commits Between Releases** | ~194 |
 | **Environment** | production (erp.insightpulseai.com) |
+| **Docker Image** | `ghcr.io/insightpulseai/ipai-odoo-runtime:edge-standard` |
+| **Key PR in Release** | #460 — Settings parity page + CDN CNAME + SPF fix |
+
+> **Gap**: Release docs were not updated between 2026-01-06 and 2026-03-08 (61-day gap).
+> Detailed per-PR changelog for the intervening period is available via `git log prod-20260106-1741..prod-20260302-0241`.
+
+---
+
+## Previous Release (Stale Reference)
+
+| Metric | Value |
+|--------|-------|
+| **Production Tag** | `prod-20260106-1741` |
+| **Production SHA** | `782fea9a7a4656d6ba225fcbea132908978d1522` |
+| **Deploy Timestamp** | 2026-01-06T17:40:17Z |
 | **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:edge-standard` |
 
 ---
