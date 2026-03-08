@@ -64,14 +64,41 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     && rm /tmp/oca_rest_framework.txt
 
 # =============================================================================
+# Manifest-Driven Build Gate
+# =============================================================================
+# Validates that the build context only contains OCA repos declared in the
+# curated manifest. Prevents ad-hoc addon directories from entering the image.
+# Contract: docs/contracts/ADDONS_MANIFEST_CONTRACT.md (C-27)
+RUN pip3 install --no-cache-dir --break-system-packages pyyaml 2>/dev/null \
+    || python3 -c "import yaml" 2>/dev/null \
+    || { echo "ERROR: Cannot install PyYAML for manifest validation"; exit 1; }
+COPY config/addons.manifest.yaml /tmp/addons.manifest.yaml
+
+# =============================================================================
 # OCA Modules — Flatten from addons/oca into /opt/odoo/addons/oca
 # =============================================================================
-# Source: addons/oca/ (git submodules, each is an OCA repo with multiple modules)
+# Source: addons/oca/ (git-aggregator checkouts, each is an OCA repo)
 # Strategy: Flatten all modules with __manifest__.py into single directory
 # Benefit: Single addon path; collision detection prevents silent overwrites
+# Guard: Only repos listed in addons.manifest.yaml are allowed
 COPY ./addons/oca /tmp/oca-src
 
 RUN set -eux; \
+  # --- Build gate: extract allowed repos from manifest --- \
+  allowed_repos=$(python3 -c "\
+import yaml; \
+m = yaml.safe_load(open('/tmp/addons.manifest.yaml')); \
+print(' '.join(r['repo'] for r in m.get('oca_repositories', [])))"); \
+  # --- Validate: reject undeclared repos --- \
+  for repo in /tmp/oca-src/*; do \
+    [ -d "$repo" ] || continue; \
+    repo_name=$(basename "$repo"); \
+    case " $allowed_repos " in \
+      *" $repo_name "*) ;; \
+      *) echo "ERROR: OCA repo '$repo_name' not declared in addons.manifest.yaml"; exit 1 ;; \
+    esac; \
+  done; \
+  # --- Flatten declared repos --- \
   module_count=0; \
   for repo in /tmp/oca-src/*; do \
     [ -d "$repo" ] || continue; \
@@ -89,7 +116,7 @@ RUN set -eux; \
     done; \
   done; \
   echo "OCA modules flattened: $module_count"; \
-  rm -rf /tmp/oca-src
+  rm -rf /tmp/oca-src /tmp/addons.manifest.yaml
 
 # Install OCA module Python dependencies
 RUN find /opt/odoo/addons/oca -name "requirements.txt" \
@@ -103,6 +130,23 @@ COPY ./addons/ipai /opt/odoo/addons/ipai
 # Install IPAI module Python dependencies
 RUN find /opt/odoo/addons/ipai -name "requirements.txt" \
     -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# =============================================================================
+# Final Addon Root Verification
+# =============================================================================
+# Ensure only the two declared addon roots exist under /opt/odoo/addons/
+# and no stray directories were introduced during the build.
+RUN set -eux; \
+  for dir in /opt/odoo/addons/*/; do \
+    dirname=$(basename "$dir"); \
+    case "$dirname" in \
+      oca|ipai) ;; \
+      *) echo "ERROR: Undeclared addon root: /opt/odoo/addons/$dirname"; exit 1 ;; \
+    esac; \
+  done; \
+  oca_count=$(find /opt/odoo/addons/oca -maxdepth 1 -mindepth 1 -type d | wc -l); \
+  ipai_count=$(find /opt/odoo/addons/ipai -maxdepth 1 -mindepth 1 -type d | wc -l); \
+  echo "Addon roots verified: oca=$oca_count modules, ipai=$ipai_count modules"
 
 # =============================================================================
 # Configuration
