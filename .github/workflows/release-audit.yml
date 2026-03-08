@@ -1,0 +1,38 @@
+name: Release Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      prod_tag:
+        description: 'Production release tag to audit (e.g., prod-20260302-0241)'
+        required: true
+      previous_prod_tag:
+        description: 'Previous production tag for comparison (e.g., prod-20260302-0211)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: "Audit Production Release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run release audit
+        run: |
+          chmod +x scripts/release/audit_prod_release.sh
+          ./scripts/release/audit_prod_release.sh \
+            "${{ github.event.inputs.prod_tag }}" \
+            "${{ github.event.inputs.previous_prod_tag }}" \
+            | tee /tmp/release-audit-report.md
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-audit-${{ github.event.inputs.prod_tag }}
+          path: /tmp/release-audit-report.md
+          retention-days: 90
