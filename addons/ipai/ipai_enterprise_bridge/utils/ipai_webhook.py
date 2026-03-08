@@ -13,7 +13,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def send_ipai_event(url: str, secret: str, event: dict, idempotency_key: str | None = None, timeout=10):
+def send_ipai_event(url: str, secret: str, event: dict, idempotency_key: str | None = None, timeout=10, correlation_id: str | None = None):
     """
     Send event to IPAI integration bus (Supabase Edge Function) with HMAC signature.
 
@@ -27,6 +27,7 @@ def send_ipai_event(url: str, secret: str, event: dict, idempotency_key: str | N
             - payload: dict (event-specific data)
         idempotency_key: Optional idempotency key (UUID generated if not provided)
         timeout: Request timeout in seconds
+        correlation_id: Optional correlation ID for end-to-end tracing (UUID generated if not provided)
 
     Returns:
         dict: Response JSON ({"ok": True} on success)
@@ -34,6 +35,9 @@ def send_ipai_event(url: str, secret: str, event: dict, idempotency_key: str | N
     Raises:
         requests.HTTPError: If request fails
     """
+    cid = correlation_id or str(uuid.uuid4())
+    event["correlation_id"] = cid
+
     ts = str(int(time.time() * 1000))
     raw = json.dumps(event, separators=(",", ":"), ensure_ascii=False)
     sig = hmac.new(secret.encode("utf-8"), f"{ts}.{raw}".encode("utf-8"), hashlib.sha256).hexdigest()
@@ -43,9 +47,10 @@ def send_ipai_event(url: str, secret: str, event: dict, idempotency_key: str | N
         "x-ipai-timestamp": ts,
         "x-ipai-signature": sig,
         "x-idempotency-key": idempotency_key or str(uuid.uuid4()),
+        "x-correlation-id": cid,
     }
 
-    _logger.info(f"Sending IPAI event: {event.get('event_type')} for {event.get('aggregate_type')}#{event.get('aggregate_id')}")
+    _logger.info(f"Sending IPAI event: {event.get('event_type')} for {event.get('aggregate_type')}#{event.get('aggregate_id')} [cid={cid[:8]}]")
 
     r = requests.post(url, data=raw.encode("utf-8"), headers=headers, timeout=timeout)
     r.raise_for_status()

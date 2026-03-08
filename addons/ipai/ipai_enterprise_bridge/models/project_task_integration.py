@@ -17,6 +17,7 @@ import hmac
 import json
 import logging
 import time
+import uuid
 
 import requests
 from odoo import api, fields, models
@@ -79,17 +80,20 @@ class ProjectTaskIntegration(models.Model):
             hashlib.sha256,
         ).hexdigest()
 
-    def _emit_integration_event(self, event_type, payload_extra=None):
+    def _emit_integration_event(self, event_type, payload_extra=None, correlation_id=None):
         """Emit an event to the Supabase integration bus.
 
         Args:
             event_type: Event type (e.g., 'finance_task.created')
             payload_extra: Additional payload data to merge
+            correlation_id: Optional correlation ID for tracing (generated if not provided)
         """
         config = self._get_integration_config()
         if not config["url"]:
             _logger.debug("Integration webhook URL not configured, skipping event")
             return
+
+        cid = correlation_id or str(uuid.uuid4())
 
         for task in self:
             if not task.is_finance_task:
@@ -107,6 +111,7 @@ class ProjectTaskIntegration(models.Model):
                     "aggregate_type": "finance_task",
                     "aggregate_id": f"project.task,{task.id}",
                     "idempotency_key": idempotency_key,
+                    "correlation_id": cid,
                     "payload": {
                         "task_id": task.id,
                         "name": task.name,
@@ -135,6 +140,7 @@ class ProjectTaskIntegration(models.Model):
                     "Content-Type": "application/json",
                     "X-Webhook-Signature": signature,
                     "X-Webhook-Timestamp": timestamp,
+                    "X-Correlation-Id": cid,
                 }
 
                 response = requests.post(
@@ -150,9 +156,10 @@ class ProjectTaskIntegration(models.Model):
                     "integration_last_event_at": fields.Datetime.now(),
                 })
                 _logger.info(
-                    "Emitted integration event %s for finance task %s",
+                    "Emitted integration event %s for finance task %s [cid=%s]",
                     event_type,
                     task.id,
+                    cid[:8],
                 )
 
             except requests.RequestException as e:
@@ -175,7 +182,8 @@ class ProjectTaskIntegration(models.Model):
         """Override to emit finance_task.created event."""
         tasks = super().create(vals_list)
         finance_tasks = tasks.filtered(lambda t: t.is_finance_task)
-        finance_tasks._emit_integration_event("finance_task.created")
+        cid = str(uuid.uuid4())
+        finance_tasks._emit_integration_event("finance_task.created", correlation_id=cid)
         return tasks
 
     def write(self, vals):
@@ -187,18 +195,20 @@ class ProjectTaskIntegration(models.Model):
         result = super().write(vals)
 
         if stage_changed:
+            # One correlation_id per write() transaction
+            cid = str(uuid.uuid4())
             for task in self.filtered(lambda t: t.is_finance_task):
                 new_stage = task.stage_id.name.lower() if task.stage_id else ""
 
                 # Map stage names to events
                 if "progress" in new_stage or "doing" in new_stage:
-                    task._emit_integration_event("finance_task.in_progress")
+                    task._emit_integration_event("finance_task.in_progress", correlation_id=cid)
                 elif "review" in new_stage or "submit" in new_stage:
-                    task._emit_integration_event("finance_task.submitted")
+                    task._emit_integration_event("finance_task.submitted", correlation_id=cid)
                 elif "approved" in new_stage or "done" in new_stage:
-                    task._emit_integration_event("finance_task.approved")
+                    task._emit_integration_event("finance_task.approved", correlation_id=cid)
                 elif "filed" in new_stage or "complete" in new_stage:
-                    task._emit_integration_event("finance_task.filed")
+                    task._emit_integration_event("finance_task.filed", correlation_id=cid)
 
         return result
 
