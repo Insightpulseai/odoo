@@ -296,3 +296,9 @@ design-tokens/figma-*.json
 
 # Machine-local audit output (contains local paths, never commit)
 docs/supabase/machine_integrations_detected.json
+
+# SSOT inventory snapshots (large, generated — CI artifacts only)
+ssot/github/*.snapshot.json
+ssot/github/repo-details/
+ssot/vercel/*.snapshot.json
+ssot/evidence/snapshot-manifest.json

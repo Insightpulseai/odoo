@@ -1,0 +1,63 @@
+version: 1
+generated_at: '2026-03-08T07:22:11.336300+00:00'
+environments:
+- provider: github
+  environment: databricks-dev
+  repo: odoo
+  class: dev
+  canonical: true
+- provider: github
+  environment: dev
+  repo: odoo
+  class: dev
+  canonical: true
+- provider: github
+  environment: odoo-dev
+  repo: odoo
+  class: dev
+  canonical: true
+- provider: github
+  environment: Preview – insightpulseai-web
+  repo: odoo
+  class: preview
+  canonical: true
+- provider: github
+  environment: Preview – odooops-console
+  repo: odoo
+  class: preview
+  canonical: true
+- provider: github
+  environment: databricks-production
+  repo: odoo
+  class: prod
+  canonical: true
+- provider: github
+  environment: github-pages
+  repo: odoo
+  class: prod
+  canonical: true
+- provider: github
+  environment: odoo-production
+  repo: odoo
+  class: prod
+  canonical: true
+- provider: github
+  environment: Production – insightpulseai-web
+  repo: odoo
+  class: prod
+  canonical: true
+- provider: github
+  environment: Production – odooops-console
+  repo: odoo
+  class: prod
+  canonical: true
+- provider: github
+  environment: databricks-staging
+  repo: odoo
+  class: staging
+  canonical: true
+- provider: github
+  environment: odoo-staging
+  repo: odoo
+  class: staging
+  canonical: true

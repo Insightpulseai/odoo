@@ -16,6 +16,7 @@ app_subdomains = [
 "n8n",
 "plane",
 "shelf",
+"crm",
 "ocr",
 "auth",
 "superset",

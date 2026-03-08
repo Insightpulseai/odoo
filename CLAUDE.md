@@ -410,38 +410,37 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (80+ modules)
-│   │   ├── ipai_dev_studio_base/
+│   ├── ipai/                  # IPAI custom modules (68 verified)
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
-│   │   ├── ipai_master_control/
-│   │   ├── ipai_ai_agents/
-│   │   ├── ipai_approvals/
-│   │   └── ...
-│   ├── OCA/                   # OCA community modules (12 repos)
-│   └── oca/                   # OCA submodules
+│   │   ├── ipai_ai_core/
+│   │   ├── ipai_enterprise_bridge/
+│   │   ├── ipai_helpdesk/
+│   │   └── ... (68 modules total)
+│   ├── ipai_*/                # 41 additional ipai modules at addons/ root (legacy location)
+│   ├── OCA/                   # OCA vendor directory (legacy refs)
+│   └── oca/                   # OCA modules (hydrated at runtime via gitaggregate, not tracked)
 │
-├── apps/                      # Applications (20 apps)
-│   ├── pulser-runner/         # Automation runner
-│   ├── control-room/          # Control plane UI
-│   ├── control-room-api/      # Control plane API
-│   ├── bi-architect/          # BI analytics
-│   ├── mcp-coordinator/       # MCP coordination
-│   ├── web/                   # Web frontend
-│   └── ...
+├── apps/                      # Applications (10 verified; 2 substantial)
+│   ├── ops-console/           # Operations console (182 TS files — substantial)
+│   ├── mcp-jobs/              # MCP jobs system (70 TS files — substantial)
+│   ├── colima-desktop-ui/     # Desktop UI (minimal)
+│   ├── odoo-mobile-ios/       # Mobile app
+│   ├── web/                   # Web frontend (stub)
+│   └── ... (5 more stubs)
 │
 ├── packages/                  # Shared packages (3 packages)
 │   ├── agent-core/            # Core agent framework
 │   ├── github-app/            # GitHub App integration
 │   └── ipai-design-tokens/    # Design system tokens
 │
-├── spec/                      # Spec bundles (32 feature specs)
+├── spec/                      # Spec bundles (75 total, 7 incomplete)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (160+ scripts)
+├── scripts/                   # Automation scripts (986 files in 86 categories)
 │   ├── ci/                    # CI-specific scripts
 │   ├── deploy-odoo-modules.sh
 │   ├── repo_health.sh
@@ -474,14 +473,8 @@ odoo-ce/
 │   └── ...
 │
 ├── mcp/                       # Model Context Protocol
-│   ├── coordinator/           # MCP routing & aggregation
 │   └── servers/               # MCP server implementations
-│       ├── odoo-erp-server/   # Odoo ERP integration
-│       ├── digitalocean-mcp-server/  # DO infrastructure
-│       ├── superset-mcp-server/      # BI platform
-│       ├── vercel-mcp-server/        # Deployments
-│       ├── pulser-mcp-server/        # Agent orchestration
-│       └── speckit-mcp-server/       # Spec enforcement
+│       └── plane/             # Plane.so integration (1 server — only one implemented)
 │
 ├── n8n/                       # n8n workflow templates
 │
@@ -492,7 +485,7 @@ odoo-ce/
 │   ├── mcp-servers.json       # MCP server configuration
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (47 workflows)
+├── .github/workflows/         # CI/CD pipelines (360 workflows)
 │
 ├── docker-compose.yml         # Main compose file
 ├── package.json               # Node.js monorepo config
@@ -519,18 +512,20 @@ All custom modules use the `ipai_` prefix organized by domain:
 | Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_slack_connector`, `ipai_superset_connector` |
 | PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
 
-### Key Module Hierarchy
+### Key Module Hierarchy (Verified 2026-03-08)
 
 ```
-ipai_dev_studio_base           # Base dependencies (install first)
-    └── ipai_workspace_core    # Core workspace functionality
-        └── ipai_ce_branding   # CE branding layer
-            ├── ipai_ai_core   # AI core framework
-            │   ├── ipai_ai_agents     # Agent system
-            │   └── ipai_ai_prompts    # Prompt management
-            ├── ipai_finance_ppm       # Finance PPM
-            │   └── ipai_finance_month_end
-            └── [other modules]
+ipai_foundation                # Foundation layer (Live)
+    └── ipai_workspace_core    # Core workspace functionality (Live)
+        ├── ipai_ai_core       # AI core framework (Live, has tests)
+        │   ├── ipai_agent     # Agent system (Live)
+        │   └── ipai_ai_tools  # AI tools (Live)
+        ├── ipai_finance_ppm   # Finance PPM (Live)
+        ├── ipai_enterprise_bridge  # EE parity bridge (Live, has tests)
+        └── ipai_helpdesk      # Helpdesk (Live)
+
+Note: ipai_dev_studio_base (previously documented as root) does not exist.
+```
 ```
 
 ---
@@ -547,7 +542,7 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (32)
+### Current Spec Bundles (75 total, 7 incomplete)
 
 - `pulser-master-control` - Master control plane
 - `close-orchestration` - Month-end close workflows
@@ -582,6 +577,8 @@ python .claude/query_memory.py all          # Everything
 ---
 
 ## CI/CD Pipelines
+
+> **360 total workflows** in `.github/workflows/` (audited 2026-03-08). Key workflows below.
 
 ### Core Pipelines
 
@@ -690,9 +687,11 @@ Config → OCA → Delta (ipai_*)
 
 ## Enterprise Parity Strategy
 
-**Goal**: Achieve ≥80% Odoo Enterprise Edition feature parity by **building custom replacements** using CE + OCA + ipai_* modules.
+**Target**: Achieve ≥80% Odoo Enterprise Edition feature parity by building custom replacements using CE + OCA + ipai_* modules.
 
-**Philosophy**: We do NOT deploy Odoo EE. We BUILD our own solutions that replicate and often exceed EE capabilities.
+**Current verified parity**: ~35-45% (audited 2026-03-08). 5 key modules listed below do not yet exist. Most implemented modules lack test coverage.
+
+**Philosophy**: We do NOT deploy Odoo EE. We BUILD our own solutions to replicate EE capabilities.
 
 ### Parity Formula
 
@@ -710,49 +709,52 @@ NEVER:
   - Deploy proprietary EE modules
 ```
 
-### EE Feature Mapping
+### EE Feature Mapping (Audited 2026-03-08)
 
-| Odoo EE Feature | EE Module | CE/OCA/IPAI Replacement | Parity |
-|-----------------|-----------|-------------------------|--------|
-| **Accounting** | | | |
-| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | 95% |
-| Financial Reports | `account_reports` | `account_financial_report` | 90% |
-| Asset Management | `account_asset` | `account_asset_management` | 90% |
-| Budget Management | `account_budget` | `ipai_finance_ppm` | 85% |
-| Consolidation | `account_consolidation` | `ipai_finance_consolidation` | 80% |
-| **HR & Payroll** | | | |
-| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | 100% |
-| Attendance | `hr_attendance` | `ipai_hr_attendance` | 95% |
-| Leave Management | `hr_holidays` | `ipai_hr_leave` | 95% |
-| Expense Management | `hr_expense` | `hr_expense` (OCA) | 90% |
-| Recruitment | `hr_recruitment` | `hr_recruitment` (OCA) | 85% |
-| Appraisals | `hr_appraisal` | `ipai_hr_appraisal` | 80% |
-| **Services** | | | |
-| Helpdesk | `helpdesk` | `ipai_helpdesk` | 90% |
-| Approvals | `approvals` | `ipai_approvals` | 95% |
-| Planning | `planning` | `ipai_planning` | 85% |
-| Timesheet Grid | `timesheet_grid` | `ipai_timesheet` | 85% |
-| Field Service | `industry_fsm` | `ipai_field_service` | 75% |
-| **Studio & Customization** | | | |
-| Studio | `studio` | `ipai_dev_studio_base` | 70% |
-| Spreadsheet | `spreadsheet` | `ipai_spreadsheet` + Superset | 80% |
-| Dashboards | `spreadsheet_dashboard` | Superset + `ipai_dashboard` | 85% |
-| **Documents & Knowledge** | | | |
-| Documents | `documents` | `ipai_connector_supabase` | 80% |
-| Knowledge | `knowledge` | `ipai_knowledge_base` | 75% |
-| Sign | `sign` | `ipai_digital_signature` | 70% |
-| **Marketing** | | | |
-| Marketing Automation | `marketing_automation` | n8n + `ipai_marketing` | 85% |
-| Social Marketing | `social` | `ipai_social_connector` | 70% |
-| Events | `event_sale` | `event` (CE) + `ipai_events` | 80% |
-| **Integrations** | | | |
-| IoT | `iot` | `ipai_iot_connector` | 60% |
-| VoIP | `voip` | `ipai_voip_connector` | 65% |
-| **BIR Compliance (PH-specific)** | | | |
-| 1601-C Generation | N/A | `ipai_bir_1601c` | 100% |
-| 2316 Certificates | N/A | `ipai_bir_2316` | 100% |
-| Alphalist Export | N/A | `ipai_bir_alphalist` | 100% |
-| VAT Reports | N/A | `ipai_bir_vat` | 100% |
+> Status: **Live** = code exists with models | **Scaffolded** = stub/minimal code | **OCA** = OCA module (not yet hydrated) | **Planned** = module does not exist yet
+
+| Odoo EE Feature | EE Module | CE/OCA/IPAI Replacement | Status | Parity | Tests |
+|-----------------|-----------|-------------------------|--------|--------|-------|
+| **Accounting** | | | | | |
+| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | OCA | TBD | N/A |
+| Financial Reports | `account_reports` | `account_financial_report` | OCA | TBD | N/A |
+| Asset Management | `account_asset` | `account_asset_management` | OCA | TBD | N/A |
+| Budget Management | `account_budget` | `ipai_finance_ppm` | Live | ~40% | No |
+| Consolidation | `account_consolidation` | `ipai_finance_consolidation` | Planned | 0% | — |
+| **HR & Payroll** | | | | | |
+| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | Live | ~70% | No |
+| Attendance | `hr_attendance` | `ipai_hr_attendance` | Planned | 0% | — |
+| Leave Management | `hr_holidays` | `ipai_hr_leave` | Planned | 0% | — |
+| Expense Management | `hr_expense` | `hr_expense` (OCA) | OCA | TBD | N/A |
+| Recruitment | `hr_recruitment` | `hr_recruitment` (OCA) | OCA | TBD | N/A |
+| Appraisals | `hr_appraisal` | `ipai_hr_appraisal` | Planned | 0% | — |
+| **Services** | | | | | |
+| Helpdesk | `helpdesk` | `ipai_helpdesk` | Live | ~40% | No |
+| Approvals | `approvals` | `ipai_approvals` | **Planned** | 0% | — |
+| Planning | `planning` | `ipai_planning` | **Planned** | 0% | — |
+| Timesheet Grid | `timesheet_grid` | `ipai_timesheet` | **Planned** | 0% | — |
+| Field Service | `industry_fsm` | `ipai_field_service` | Planned | 0% | — |
+| **Studio & Customization** | | | | | |
+| Studio | `studio` | `ipai_dev_studio_base` | **Planned** | 0% | — |
+| Spreadsheet | `spreadsheet` | Superset | Scaffolded | ~20% | No |
+| Dashboards | `spreadsheet_dashboard` | Superset | Scaffolded | ~30% | No |
+| **Documents & Knowledge** | | | | | |
+| Documents | `documents` | `ipai_documents_ai` | Live | ~30% | No |
+| Knowledge | `knowledge` | `ipai_knowledge_base` | **Planned** | 0% | — |
+| Sign | `sign` | `ipai_sign` | Live | ~20% | No |
+| **Marketing** | | | | | |
+| Marketing Automation | `marketing_automation` | n8n workflows | Scaffolded | ~30% | No |
+| Social Marketing | `social` | — | Planned | 0% | — |
+| Events | `event_sale` | `event` (CE) | CE only | ~50% | No |
+| **Integrations** | | | | | |
+| IoT | `iot` | — | Planned | 0% | — |
+| VoIP | `voip` | — | Planned | 0% | — |
+| **BIR Compliance (PH-specific)** | | | | | |
+| 1601-C / Tax | N/A | `ipai_bir_tax_compliance` | Live | ~60% | No |
+| Notifications | N/A | `ipai_bir_notifications` | Live | ~50% | No |
+| Plane Sync | N/A | `ipai_bir_plane_sync` | Live | ~50% | No |
+
+> **Bold Planned** = modules previously documented as implemented but confirmed missing on 2026-03-08 audit.
 
 ### Parity Validation
 
@@ -1171,30 +1173,16 @@ External MCPs       Custom MCPs
 | `@huggingface/mcp-server` | Models, datasets | `HF_TOKEN` |
 | `@anthropic/playwright-mcp-server` | Browser automation | (none) |
 
-**Custom MCP Servers (in `mcp/servers/`):**
+**Custom MCP Servers (in `mcp/servers/`) — Audited 2026-03-08:**
 
-| Server | Purpose | Location |
-|--------|---------|----------|
-| `odoo-erp-server` | Odoo CE accounting, BIR compliance | `mcp/servers/odoo-erp-server/` |
-| `digitalocean-mcp-server` | Droplets, apps, deployments | `mcp/servers/digitalocean-mcp-server/` |
-| `superset-mcp-server` | Dashboards, charts, datasets | `mcp/servers/superset-mcp-server/` |
-| `vercel-mcp-server` | Projects, deployments, logs | `mcp/servers/vercel-mcp-server/` |
-| `pulser-mcp-server` | Agent orchestration | `mcp/servers/pulser-mcp-server/` |
-| `speckit-mcp-server` | Spec bundle enforcement | `mcp/servers/speckit-mcp-server/` |
-| `mcp-jobs` | **Canonical Jobs & Observability Backend** | `mcp/servers/mcp-jobs/` |
+| Server | Purpose | Location | Status |
+|--------|---------|----------|--------|
+| `plane` | Plane.so project management integration | `mcp/servers/plane/` | **Live** |
 
-**Server Groups:**
-- `core`: supabase, github, dbhub, odoo-erp
-- `design`: figma, notion
-- `infra`: digitalocean, vercel
-- `automation`: pulser, speckit
-
-**Building Custom Servers:**
-```bash
-cd mcp/servers/<server-name>
-npm install
-npm run build
-```
+> **Previously documented servers not found in codebase** (confirmed missing 2026-03-08):
+> odoo-erp-server, digitalocean-mcp-server, superset-mcp-server, vercel-mcp-server,
+> pulser-mcp-server, speckit-mcp-server, mcp-jobs. These are **planned** but not yet implemented.
+> The `mcp-jobs` app exists in `apps/mcp-jobs/` as a Next.js app, not as an MCP server.
 
 ### Figma Dev Mode Access
 
