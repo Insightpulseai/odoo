@@ -194,6 +194,7 @@ def run_assessment(
     lens: dict,
     auto_only: bool = False,
     pillar_filter: Optional[str] = None,
+    quiet: bool = False,
 ) -> AssessmentResult:
     """Run full assessment."""
     risk_map = lens["scoring"]["risk_map"]
@@ -209,9 +210,10 @@ def run_assessment(
             sys.exit(1)
 
     for pillar in pillars:
-        print(f"\n{'='*60}")
-        print(f"  Pillar: {pillar['name']} (weight: {pillar['weight']*100:.0f}%)")
-        print(f"{'='*60}")
+        if not quiet:
+            print(f"\n{'='*60}")
+            print(f"  Pillar: {pillar['name']} (weight: {pillar['weight']*100:.0f}%)")
+            print(f"{'='*60}")
 
         pr = score_pillar(pillar, risk_map, auto_only=auto_only)
         assessment.pillar_results.append(pr)
@@ -323,6 +325,7 @@ def main():
         lens,
         auto_only=args.auto_only,
         pillar_filter=args.pillar,
+        quiet=args.json,
     )
 
     if args.json:
