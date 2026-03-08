@@ -141,7 +141,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.WORKING_DIR }}
-    environment: production
+    environment: odoo-production
 
     steps:
       - name: Checkout

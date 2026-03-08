@@ -2,8 +2,16 @@ name: odoo-qweb-lint
 
 on:
   pull_request:
+    paths:
+      - 'addons/**/*.xml'
+      - 'addons/**/*.py'
+      - 'scripts/ci/lint_odoo_xml.py'
+      - '.github/workflows/odoo-qweb-lint.yml'
   push:
     branches: [ main ]
+    paths:
+      - 'addons/**/*.xml'
+      - 'addons/**/*.py'
 
 permissions:
   contents: read

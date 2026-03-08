@@ -67,7 +67,7 @@ jobs:
 
     # Only run if we have SSH access configured
     # Remove this condition if running on self-hosted runner with Docker access
-    environment: production
+    environment: odoo-production
 
     steps:
       - uses: actions/checkout@v4

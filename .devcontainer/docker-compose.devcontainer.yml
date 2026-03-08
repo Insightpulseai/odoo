@@ -1,86 +1,53 @@
-# ==============================================================================
-# Docker Compose Dev Container Override
-# ==============================================================================
-# Dev-specific overrides for VS Code Dev Containers
-# This file extends the main docker-compose.yml with dev-friendly settings
-#
-# Used by: .devcontainer/devcontainer.json
-# Extends: ../docker-compose.yml
-#
-# Canonical dev root: /workspaces/odoo (repo root bind-mounted).
-# All addons-path entries reference /workspaces/odoo/addons/* so that edits
-# in the devcontainer are immediately visible to Odoo (hot-reload deterministic).
-# Do NOT add separate /mnt/extra-addons/* mounts in this overlay — they create
-# two-root ambiguity without adding value.
-# ==============================================================================
-
-version: '3.8'
+# Devcontainer compose — Odoo 19 CE + PostgreSQL 16
+name: insightpulse-devcontainer
 
 services:
-  # ===========================================================================
-  # Odoo — Dev Container Overrides
-  # ===========================================================================
-  odoo:
-    # Override to enable full dev mode
-    working_dir: /workspaces/odoo
-    environment:
-      - ODOO_DEV_MODE=all
-      - ODOO_LOG_LEVEL=debug
-      # debugpy — set IPAI_DEBUGPY=1 to attach VS Code debugger on port 5678.
-      # IPAI_DEBUGPY_WAIT=0 means Odoo starts immediately; attach when ready.
-      - IPAI_DEBUGPY=${IPAI_DEBUGPY:-0}
-      - IPAI_DEBUGPY_HOST=0.0.0.0
-      - IPAI_DEBUGPY_PORT=5678
-      - IPAI_DEBUGPY_WAIT=${IPAI_DEBUGPY_WAIT:-0}
-    ports:
-      # debugpy attach port — only active when IPAI_DEBUGPY=1
-      - "5678:5678"
-
-    # Dev-specific command routed through the debugpy entrypoint wrapper.
-    # All addons-path entries use /workspaces/odoo/* — single canonical root.
-    command: >
-      python3 /workspaces/odoo/scripts/odoo_debugpy_entrypoint.py --
-      odoo
-      --db_host=db
-      --db_port=5432
-      --db_user=${POSTGRES_USER:-odoo}
-      --db_password=${POSTGRES_PASSWORD:-odoo}
-      --database=${ODOO_DB:-odoo_dev}
-      --workers=0
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/workspaces/odoo/addons/oca/server-tools,/workspaces/odoo/addons/oca/server-ux,/workspaces/odoo/addons/oca/web,/workspaces/odoo/addons/oca/automation,/workspaces/odoo/addons/oca/account-financial-tools,/workspaces/odoo/addons/oca/account-financial-reporting,/workspaces/odoo/addons/oca/project,/workspaces/odoo/addons/oca/queue,/workspaces/odoo/addons/oca/reporting-engine,/workspaces/odoo/addons/oca/sale-workflow,/workspaces/odoo/addons/oca/purchase-workflow,/workspaces/odoo/addons/oca/server-backend,/workspaces/odoo/addons/oca/mis-builder,/workspaces/odoo/addons/oca/spreadsheet,/workspaces/odoo/addons/oca/knowledge,/workspaces/odoo/addons/oca/dms,/workspaces/odoo/addons/oca/rest-framework,/workspaces/odoo/addons/oca/social,/workspaces/odoo/addons/oca/account-reconcile,/workspaces/odoo/addons/oca/hr-expense,/workspaces/odoo/addons/oca/contract,/workspaces/odoo/addons/oca/timesheet,/workspaces/odoo/addons/oca/connector,/workspaces/odoo/addons/oca/storage,/workspaces/odoo/addons/oca/ai,/workspaces/odoo/addons/ipai
-      --log-level=debug
-      --dev=all
-      --log-handler=:DEBUG
-
-    # Single canonical root: /workspaces/odoo is the dev runtime root.
-    # Do NOT add separate addons/ipai or addons/oca mounts here — they are
-    # already accessible under /workspaces/odoo/addons/* via the repo mount.
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     volumes:
       - ../:/workspaces/odoo:cached
-      - odoo-web-data:/var/lib/odoo
-
-  # ===========================================================================
-  # PostgreSQL — Dev Container Overrides
-  # ===========================================================================
-  db:
-    # Expose port for direct database access from host
-    ports:
-      - "${POSTGRES_PORT:-5433}:5432"
-
-    # Dev-friendly PostgreSQL settings
+      - claude-code-config:/home/vscode/.claude
+      - commandhistory:/home/vscode/.commandhistory
+      - odoo-data:/var/lib/odoo
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-odoo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
-      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+      DB_HOST: db
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+    command: sleep infinity
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+    cap_add:
+      - NET_ADMIN   # for init-firewall.sh iptables
 
-  # ===========================================================================
-  # Redis — Dev Container Overrides
-  # ===========================================================================
-  redis:
-    # Expose port for inspection tools
-    ports:
-      - "6379:6379"
+  db:
+    image: postgres:16-alpine
+    container_name: odoo-devcontainer-db
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_dev
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+    networks:
+      - devnet
 
 volumes:
-  odoo-web-data:
-    name: odoo-devcontainer-data
+  claude-code-config:
+  commandhistory:
+  odoo-data:
+  dev-db-data:
+
+networks:
+  devnet:
+    driver: bridge

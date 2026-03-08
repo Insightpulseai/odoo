@@ -11,10 +11,10 @@ on:
   schedule:
     # Weekly parity assessment on Mondays at 8 AM UTC
     - cron: '0 8 * * 1'
-  pull_request:
+  push:
+    branches: [main]
     paths:
       - 'ssot/ee_parity/replacements.yaml'
-      - '.github/workflows/ee-parity-automation.yml'
   workflow_dispatch:
     inputs:
       generate_pr:
@@ -32,7 +32,6 @@ permissions:
 env:
   SSOT_REGISTRY: ssot/ee_parity/replacements.yaml
   REPORT_DIR: docs/ee-parity/reports
-  EVIDENCE_DIR: web/docs/evidence/$(date +%Y%m%d-%H%M+0800)/ee-parity-${{ github.run_id }}
 
 jobs:
   # Step 1: Validate SSOT Registry

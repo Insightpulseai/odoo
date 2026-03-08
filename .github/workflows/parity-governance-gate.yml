@@ -3,6 +3,14 @@ name: Parity Governance Gate
 # Enforce parity boundaries and prevent sandbox artifacts from being tracked
 on:
   pull_request:
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/oca/**'
+      - 'sandbox/**'
+      - 'scripts/ci/check_parity_boundaries.sh'
+      - 'scripts/ci/check_no_artifacts_tracked.sh'
+      - 'scripts/ci/baselines/parity_boundaries_baseline.json'
+      - '.github/workflows/parity-governance-gate.yml'
   push:
     branches: [main, master]
     paths:
