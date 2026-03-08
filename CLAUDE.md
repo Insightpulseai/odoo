@@ -410,13 +410,13 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (68 verified)
+│   ├── ipai/                  # IPAI custom modules (69 verified)
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
 │   │   ├── ipai_ai_core/
 │   │   ├── ipai_enterprise_bridge/
 │   │   ├── ipai_helpdesk/
-│   │   └── ... (68 modules total)
+│   │   └── ... (69 modules total)
 │   ├── ipai_*/                # 41 additional ipai modules at addons/ root (legacy location)
 │   ├── OCA/                   # OCA vendor directory (legacy refs)
 │   └── oca/                   # OCA modules (hydrated at runtime via gitaggregate, not tracked)
@@ -478,7 +478,7 @@ odoo-ce/
 │   └── servers/               # MCP server implementations
 │       └── plane/             # Plane.so integration (1 server — only one implemented)
 │
-├── n8n/                       # n8n workflow templates
+├── odoo19/                    # Canonical Odoo 19 setup (config, scripts, backups)
 │
 ├── .claude/                   # Claude Code configuration
 │   ├── project_memory.db      # SQLite config database
@@ -546,7 +546,7 @@ Deprecated (installable: False):
   ipai_ai_agents_ui            # Not installable (has tests)
 ```
 
-### Test Coverage (8 of 68 modules have tests)
+### Test Coverage (8 of 69 modules have tests)
 
 | Module | Test Files |
 |--------|-----------|
