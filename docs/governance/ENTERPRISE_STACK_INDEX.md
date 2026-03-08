@@ -28,6 +28,7 @@
 | `odoo-workspace-os` | Platform | `ipai_workspace_core` | Spec complete |
 | `azure-target-state` | Infra | — | Spec complete |
 | `databricks-apps-control-room` | Analytics | — | Spec complete |
+| `enterprise-target-state` | Governance | — (SSOT YAML) | Spec complete |
 | `expense-automation` | Finance | `ipai_expense_ocr` | Spec complete |
 | `ipai-copilot` | Agent | — | **Deprecated** → `odoo-copilot-azure` |
 
@@ -39,5 +40,6 @@
 | Repository taxonomy | `docs/governance/repository_taxonomy.yaml` | `docs/governance/repository_taxonomy.schema.json` |
 | KPI contracts | `platform/data/contracts/control_room_kpis.yaml` | — |
 | Event contracts | `platform/data/contracts/control_room_events.yaml` | — |
+| Enterprise OKRs | `ssot/governance/enterprise_okrs.yaml` | — |
 | Parity matrix | `docs/parity/PARITY_MATRIX.yaml` | — |
 | EE feature gap | `docs/ENTERPRISE_FEATURE_GAP.yaml` | — |
