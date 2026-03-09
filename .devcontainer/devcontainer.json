@@ -9,8 +9,9 @@
   },
   "mounts": [
     "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
-    "source=${localWorkspaceFolder}/addons,target=/mnt/extra-addons,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/oca_addons,target=/mnt/oca-addons,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder}/addons/ipai,target=/mnt/extra-addons/ipai,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca,target=/mnt/oca,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/local,target=/mnt/extra-addons/local,type=bind,consistency=cached"
   ],
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
