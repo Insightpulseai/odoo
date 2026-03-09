@@ -503,9 +503,10 @@ subdomains:
       claimed_at: "2026-03-02"
       claim_ref: "ssot:mailgun"
 
-  # DKIM status note: Mailgun reports only ONE DKIM (mx._domainkey.mg) for this domain.
-  # No second DKIM rotation key (krs2/pic) is configured in Mailgun dashboard.
-  # If Mailgun adds a second key in future, add entry with the actual value.
+  # DKIM status: Two DKIM keys configured for mg.insightpulseai.com:
+  #   - mx._domainkey.mg  (selector: mx)  — primary signing key
+  #   - pic._domainkey.mg (selector: pic) — rotation key
+  # Both added to Cloudflare records SSOT on 2026-03-09.
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)

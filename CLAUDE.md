@@ -410,37 +410,39 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (68 verified)
+│   ├── ipai/                  # IPAI custom modules (69 verified)
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
 │   │   ├── ipai_ai_core/
 │   │   ├── ipai_enterprise_bridge/
 │   │   ├── ipai_helpdesk/
-│   │   └── ... (68 modules total)
+│   │   └── ... (69 modules total)
 │   ├── ipai_*/                # 41 additional ipai modules at addons/ root (legacy location)
 │   ├── OCA/                   # OCA vendor directory (legacy refs)
 │   └── oca/                   # OCA modules (hydrated at runtime via gitaggregate, not tracked)
 │
-├── apps/                      # Applications (10 verified; 2 substantial)
-│   ├── ops-console/           # Operations console (182 TS files — substantial)
-│   ├── mcp-jobs/              # MCP jobs system (70 TS files — substantial)
+├── apps/                      # Applications (9 verified; 2 substantial)
+│   ├── ops-console/           # Operations console (substantial)
+│   ├── mcp-jobs/              # MCP jobs system (substantial)
 │   ├── colima-desktop-ui/     # Desktop UI (minimal)
 │   ├── odoo-mobile-ios/       # Mobile app
+│   ├── platform/              # Platform app
+│   ├── slack-agent/           # Slack agent
 │   ├── web/                   # Web frontend (stub)
-│   └── ... (5 more stubs)
+│   ├── workspace/             # Workspace app
+│   └── docs/                  # Docs app
 │
-├── packages/                  # Shared packages (3 packages)
-│   ├── agent-core/            # Core agent framework
-│   ├── github-app/            # GitHub App integration
-│   └── ipai-design-tokens/    # Design system tokens
+├── packages/                  # Shared packages (2 packages)
+│   ├── agents/                # Agent framework
+│   └── taskbus/               # Task bus system
 │
-├── spec/                      # Spec bundles (75 total, 7 incomplete)
+├── spec/                      # Spec bundles (76 total)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (986 files in 86 categories)
+├── scripts/                   # Automation scripts (1000 files in 86 categories)
 │   ├── ci/                    # CI-specific scripts
 │   ├── deploy-odoo-modules.sh
 │   ├── repo_health.sh
@@ -476,7 +478,7 @@ odoo-ce/
 │   └── servers/               # MCP server implementations
 │       └── plane/             # Plane.so integration (1 server — only one implemented)
 │
-├── n8n/                       # n8n workflow templates
+├── odoo19/                    # Canonical Odoo 19 setup (config, scripts, backups)
 │
 ├── .claude/                   # Claude Code configuration
 │   ├── project_memory.db      # SQLite config database
@@ -485,7 +487,7 @@ odoo-ce/
 │   ├── mcp-servers.json       # MCP server configuration
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (360 workflows)
+├── .github/workflows/         # CI/CD pipelines (355 workflows)
 │
 ├── docker-compose.yml         # Main compose file
 ├── package.json               # Node.js monorepo config
@@ -501,32 +503,61 @@ All custom modules use the `ipai_` prefix organized by domain:
 
 | Domain | Prefix Pattern | Examples |
 |--------|---------------|----------|
-| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
-| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_core`, `ipai_ai_copilot`, `ipai_agent`, `ipai_ai_widget` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_close_seed`, `ipai_finance_tax_return`, `ipai_finance_workflow` |
 | Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
 | Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
 | Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
 | Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
 | WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
 | Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
-| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_slack_connector`, `ipai_superset_connector` |
-| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
+| Integrations | `ipai_*_connector` | `ipai_slack_connector`, `ipai_superset_connector`, `ipai_ops_connector`, `ipai_pulser_connector` |
+| HR | `ipai_hr_*` | `ipai_hr_payroll_ph`, `ipai_hr_expense_liquidation` |
+| BIR Compliance | `ipai_bir_*` | `ipai_bir_tax_compliance`, `ipai_bir_notifications`, `ipai_bir_plane_sync` |
+| Mail | `ipai_mail_*`, `ipai_mailgun_*`, `ipai_zoho_*` | `ipai_mailgun_smtp`, `ipai_zoho_mail`, `ipai_mail_bridge_zoho` |
+| Design | `ipai_design_*` | `ipai_design_system`, `ipai_design_system_apps_sdk` |
+| LLM | `ipai_llm_*` | `ipai_llm_supabase_bridge` |
 
 ### Key Module Hierarchy (Verified 2026-03-08)
 
-```
-ipai_foundation                # Foundation layer (Live)
-    └── ipai_workspace_core    # Core workspace functionality (Live)
-        ├── ipai_ai_core       # AI core framework (Live, has tests)
-        │   ├── ipai_agent     # Agent system (Live)
-        │   └── ipai_ai_tools  # AI tools (Live)
-        ├── ipai_finance_ppm   # Finance PPM (Live)
-        ├── ipai_enterprise_bridge  # EE parity bridge (Live, has tests)
-        └── ipai_helpdesk      # Helpdesk (Live)
+Based on actual `__manifest__.py` dependency analysis:
 
-Note: ipai_dev_studio_base (previously documented as root) does not exist.
 ```
+Layer 0 — Independent (no IPAI deps, depend only on base Odoo):
+  ipai_foundation              # Foundation layer (Live)
+  ipai_ai_core                 # AI core framework (Live, has tests)
+  ipai_ai_widget               # AI widget (Live, has tests)
+  ipai_enterprise_bridge       # EE parity bridge (Live, has tests)
+  ipai_finance_ppm             # Finance PPM (Live)
+  ipai_helpdesk                # Helpdesk (Live)
+  ipai_hr_expense_liquidation  # HR expense liquidation (Live, has tests)
+  ipai_llm_supabase_bridge     # LLM Supabase bridge (Live, has tests)
+
+Layer 1 — Single IPAI dependency:
+  ipai_ai_copilot              # → ipai_ai_widget (Live)
+  ipai_agent                   # → ipai_hr_expense_liquidation (Live, has tests)
+
+Layer 2 — Multiple IPAI dependencies:
+  ipai_workspace_core          # → ipai_foundation + ipai_ai_copilot (Live, has tests, app=True)
+
+Deprecated (installable: False):
+  ipai_ai_agent_builder        # Migrated to ipai_enterprise_bridge
+  ipai_ai_tools                # Migrated to ipai_enterprise_bridge
+  ipai_ai_agents_ui            # Not installable (has tests)
 ```
+
+### Test Coverage (8 of 69 modules have tests)
+
+| Module | Test Files |
+|--------|-----------|
+| `ipai_ai_core` | `test_ai_core.py` |
+| `ipai_ai_widget` | `test_ai_widget.py` |
+| `ipai_agent` | `test_agent.py` |
+| `ipai_enterprise_bridge` | `test_enterprise_bridge.py` |
+| `ipai_hr_expense_liquidation` | `test_form_no.py`, `test_qweb.py` |
+| `ipai_llm_supabase_bridge` | `test_install_smoke.py` |
+| `ipai_workspace_core` | `test_workspace.py` |
+| `ipai_ai_agents_ui` | `test_ai_agents_controller.py` (not installable) |
 
 ---
 
@@ -542,7 +573,7 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (75 total, 7 incomplete)
+### Current Spec Bundles (76 total)
 
 - `pulser-master-control` - Master control plane
 - `close-orchestration` - Month-end close workflows
@@ -578,7 +609,7 @@ python .claude/query_memory.py all          # Everything
 
 ## CI/CD Pipelines
 
-> **360 total workflows** in `.github/workflows/` (audited 2026-03-08). Key workflows below.
+> **355 total workflows** in `.github/workflows/` (audited 2026-03-08). Key workflows below.
 
 ### Core Pipelines
 
@@ -1880,4 +1911,4 @@ gh pr create --title "$(jq -r .title /tmp/issue.json)" \
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-26*
+*Last updated: 2026-03-08*
