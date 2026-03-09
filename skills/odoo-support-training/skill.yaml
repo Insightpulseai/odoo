@@ -1,0 +1,100 @@
+# Odoo Support & Training Skill
+# User support, troubleshooting, and training material generation
+
+name: odoo_support_training
+version: 1.0.0
+key: odoo.support.training
+description: |
+  Provide Odoo support and training: troubleshoot issues, generate
+  user guides, create training materials, and document workflows.
+
+intents:
+  - odoo support
+  - troubleshoot odoo
+  - odoo training materials
+  - create odoo user guide
+  - odoo help documentation
+  - train odoo users
+
+guardrails:
+  - Never expose admin credentials or internal URLs
+  - Training materials must use CLI commands, not UI clickpaths
+  - Reference official Odoo CE documentation where applicable
+  - Support responses must include reproduction steps
+
+tools:
+  - key: support.diagnose
+    name: Diagnose Issue
+    target_model: ipai.support.runner
+    target_method: diagnose_issue
+    description: Analyze logs, errors, and system state to diagnose issues
+
+  - key: support.resolve
+    name: Resolve Issue
+    target_model: ipai.support.runner
+    target_method: resolve_issue
+    description: Apply fix or workaround for diagnosed issue
+
+  - key: support.guide
+    name: Generate User Guide
+    target_model: ipai.support.runner
+    target_method: generate_guide
+    description: Create step-by-step user documentation for a workflow
+
+  - key: support.training
+    name: Create Training Module
+    target_model: ipai.support.runner
+    target_method: create_training
+    description: Build training curriculum with exercises and assessments
+
+workflow:
+  - support.diagnose
+  - support.resolve
+  - support.guide
+  - support.training
+
+input_schema:
+  type: object
+  properties:
+    issue_type:
+      type: string
+      enum: [bug, performance, configuration, access, data, workflow]
+    module:
+      type: string
+      description: Affected Odoo module
+    error_message:
+      type: string
+    training_topic:
+      type: string
+      description: Topic for training material generation
+    audience:
+      type: string
+      enum: [end_user, power_user, admin, developer]
+
+output_schema:
+  type: object
+  properties:
+    diagnosis: { type: object }
+    resolution: { type: object }
+    guide_path: { type: string }
+    training_materials: { type: array, items: { type: string } }
+
+agentInstructions: |
+  When providing Odoo support:
+
+  1. **Diagnose**:
+     - Check container logs: docker compose logs -f odoo-core
+     - Review Odoo server logs for tracebacks
+     - Check PostgreSQL connectivity
+     - Verify module state in ir_module_module
+
+  2. **Resolve**:
+     - Apply fix via module update or configuration change
+     - Run: docker compose exec -T web odoo -d <db> -u <module> --stop-after-init
+     - Verify fix with health check
+
+  3. **Training Materials**:
+     - CLI-first approach (no UI screenshots)
+     - Include XML-RPC/JSON-RPC examples for API users
+     - Cover common workflows per audience level
+     - Provide exercises with expected outcomes
