@@ -92,6 +92,11 @@ subdomains:
     lifecycle: active
     status: active
     notes: "Root A record for insightpulseai.com → 178.128.112.214. Present in CF, was not tracked in SSOT."
+    azure_target:
+      front_door_origin_group: redirect
+      container_app: odoo-web
+      cutover_wave: 5
+      action: redirect-to-erp
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -111,6 +116,10 @@ subdomains:
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    azure_target:
+      front_door_origin_group: odoo-web
+      container_app: odoo-web
+      cutover_wave: 1
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -127,6 +136,10 @@ subdomains:
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    azure_target:
+      front_door_origin_group: n8n
+      container_app: n8n
+      cutover_wave: 2
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -143,6 +156,10 @@ subdomains:
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    azure_target:
+      front_door_origin_group: plane
+      container_app: plane
+      cutover_wave: 3
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -161,6 +178,10 @@ subdomains:
     lifecycle: active
     status: active
     notes: "Self-hosted Shelf.nu fork. Container shelf-webapp-1 on :3003. Deployed 2026-03-05."
+    azure_target:
+      front_door_origin_group: shelf
+      container_app: shelf
+      cutover_wave: 3
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -178,6 +199,10 @@ subdomains:
     lifecycle: active
     status: active
     notes: "Atomic CRM SPA (React/Vite). Container atomic-crm on 127.0.0.1:3004. Supabase backend (spdtwktxdalcfigzeqrz). Deployed 2026-03-05."
+    azure_target:
+      front_door_origin_group: crm
+      container_app: crm
+      cutover_wave: 3
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -195,6 +220,10 @@ subdomains:
     lifecycle: active
     status: active
     vhost_file: "infra/nginx/ocr.insightpulseai.com.conf"
+    azure_target:
+      front_door_origin_group: ocr
+      container_app: ocr
+      cutover_wave: 4
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -216,6 +245,10 @@ subdomains:
     status: active
     backing_status: partial
     notes: "DNS + nginx live. Express container healthy but no OIDC discovery yet. Supabase Auth IdP integration planned."
+    azure_target:
+      front_door_origin_group: auth
+      container_app: auth
+      cutover_wave: 4
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -233,6 +266,10 @@ subdomains:
     database: "DO managed PostgreSQL: odoo-db-sgp1/superset"
     lifecycle: active
     status: active
+    azure_target:
+      front_door_origin_group: superset
+      container_app: superset
+      cutover_wave: 3
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -253,6 +290,10 @@ subdomains:
     lifecycle: active
     status: active
     note: "MCP service runs on droplet at 127.0.0.1:8766 (confirmed 2026-03-04 via prod nginx -T). Previous CNAME→DO App Platform was stale; CF A record was correct all along."
+    azure_target:
+      front_door_origin_group: mcp-gateway
+      container_app: mcp-gateway
+      cutover_wave: 2
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -297,6 +338,11 @@ subdomains:
     tls_mode: "Full (strict)"
     lifecycle: active
     status: active
+    azure_target:
+      front_door_origin_group: redirect
+      container_app: odoo-web
+      cutover_wave: 5
+      action: redirect-to-erp
     provider_claim:
       provider: cloudflare
       status: claimed
@@ -487,7 +533,9 @@ subdomains:
   #   - Mailgun: transactional/automated email via mg.insightpulseai.com
   #   - Zoho Mail: inbound MX + team mailboxes via insightpulseai.com
   #
-  # Tracking CNAME (email click/open tracking) — CONFIRMED VALID 2026-03-02
+  # Tracking CNAME (email click/open tracking) — DEPRECATED with Mailgun (2026-02-01)
+  # Mailgun outbound mail deprecated in favour of Zoho Mail.
+  # Retain record only until Terraform removes it (see deprecated.mg.records_to_remove).
   - name: email.mg
     type: CNAME
     service: mailgun_tracking
@@ -690,13 +738,13 @@ deprecated:
     deprecated_date: "2026-01-28"
     replacement: "Slack"
     reason: "Mattermost deprecated; team communication now uses Slack workspace"
+    lifecycle: active
     dns_removed: true
     container_removed: false
     notes: >
-      chat.insightpulseai.com was an A record → 178.128.112.214 for Mattermost.
+      chat.insightpulseai.com A record marked for removal from Cloudflare 2026-03-09.
       Mattermost deprecated 2026-01-28, replaced by Slack. Docker containers
-      (odoo-mattermost-1, odoo-mattermost-postgres-1) may still exist on droplet.
-      Remove A record from Cloudflare and stop containers when ready.
+      (odoo-mattermost-1, odoo-mattermost-postgres-1) may still exist on droplet — clean up separately.
     records_to_remove:
       - type: A
         name: chat
