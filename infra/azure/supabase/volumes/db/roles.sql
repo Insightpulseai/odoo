@@ -81,3 +81,6 @@ GRANT supabase_admin TO authenticator;
 ALTER ROLE supabase_admin SET search_path TO public, extensions;
 ALTER ROLE supabase_auth_admin SET search_path TO auth, public, extensions;
 ALTER ROLE supabase_storage_admin SET search_path TO storage, public, extensions;
+
+-- n8n database (separate from Supabase)
+SELECT 'CREATE DATABASE n8n' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'n8n')\gexec

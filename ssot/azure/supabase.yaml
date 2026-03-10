@@ -11,9 +11,13 @@
 schema_version: "1.0"
 last_updated: "2026-03-10"
 replaces: "managed Supabase project spdtwktxdalcfigzeqrz"
-status: pending
+status: runtime-up
+status_detail: >
+  Deployed and externally reachable. DNS, TLS, and Front Door migration
+  are pending before production sign-off. Transition-phase hardening complete.
 classification: internal-platform-dependency
 target_url: "https://supabase.insightpulseai.com"
+vm_ip: "4.193.100.31"
 deployment_order: >
   This is NOT the first production milestone. Execution order:
   1. Odoo Azure runtime complete
@@ -22,12 +26,27 @@ deployment_order: >
   4. erp cutover
   5. Supabase migration (this track)
 
+target_architecture: >
+  Cloudflare DNS-only → Azure Front Door (TLS/WAF/routing) → Azure origin tier.
+  Current: Cloudflare proxied → nginx on VM → localhost containers (transition).
+  End state: Front Door replaces nginx, Container Apps replaces VM where feasible.
+
 network_posture: internal-origin
 network_notes: >
-  VM is internal origin. Studio + Postgres + Logflare bound to 127.0.0.1.
-  Kong (8000/8443) is the only externally exposed service.
-  TLS via Cloudflare proxy (DNS A record, proxied=true).
-  Azure Front Door optional if public exposure beyond Cloudflare is required.
+  VM is internal origin. All services bound to 127.0.0.1.
+  Kong (8000/8443), n8n (5678), Pooler (5432/6543) — all localhost-only.
+  Nginx reverse proxy routes supabase.insightpulseai.com → Kong,
+  n8n-azure.insightpulseai.com → n8n. NSG allows only SSH(22) + HTTP/S(80,443).
+  TLS via Cloudflare proxy (transition) → Azure Front Door (target).
+
+nsg_rules:
+  - name: default-allow-ssh
+    port: 22
+    access: Allow
+  - name: AllowHTTP-HTTPS
+    ports: [80, 443]
+    access: Allow
+  - note: "All other inbound denied by default"
 
 # ---------------------------------------------------------------------------
 # Deployment Model
@@ -118,111 +137,161 @@ resources:
 # ---------------------------------------------------------------------------
 key_vault:
   vault_name: kv-ipai-dev
-  secrets:
+  total_secrets: 28
+  secret_contract: >
+    Every runtime secret in /opt/supabase-deploy/.env has a corresponding
+    Key Vault entry. .env is the current runtime source; Key Vault is the
+    SSOT for secret values. Target: managed-identity injection replaces .env.
+  supabase_secrets:
     - name: supabase-postgres-password
-      description: PostgreSQL superuser password
+      env_var: POSTGRES_PASSWORD
     - name: supabase-jwt-secret
-      description: JWT signing secret (min 32 chars)
+      env_var: JWT_SECRET
     - name: supabase-anon-key
-      description: Public anonymous API key
+      env_var: ANON_KEY
     - name: supabase-service-role-key
-      description: Server-side service role key (bypasses RLS)
-    - name: supabase-dashboard-username
-      description: Studio dashboard basic auth username
+      env_var: SERVICE_ROLE_KEY
     - name: supabase-dashboard-password
-      description: Studio dashboard basic auth password
-    - name: supabase-smtp-password
-      description: Mailgun SMTP password for mg.insightpulseai.com
-    - name: supabase-realtime-enc-key
-      description: Realtime DB encryption key
-    - name: supabase-realtime-secret-base
-      description: Realtime Phoenix/Elixir secret key base
+      env_var: DASHBOARD_PASSWORD
+    - name: supabase-smtp-pass
+      env_var: SMTP_PASS
+    - name: supabase-realtime-db-enc-key
+      env_var: (legacy, see supabase-secret-key-base)
+    - name: supabase-realtime-secret-key-base
+      env_var: SECRET_KEY_BASE
+    - name: supabase-secret-key-base
+      env_var: SECRET_KEY_BASE
+    - name: supabase-vault-enc-key
+      env_var: VAULT_ENC_KEY
+    - name: supabase-pg-meta-crypto-key
+      env_var: PG_META_CRYPTO_KEY
     - name: supabase-logflare-api-key
-      description: Logflare analytics API key
+      env_var: (legacy)
+    - name: supabase-logflare-public-access-token
+      env_var: LOGFLARE_PUBLIC_ACCESS_TOKEN
+    - name: supabase-logflare-private-access-token
+      env_var: LOGFLARE_PRIVATE_ACCESS_TOKEN
+    - name: supabase-s3-protocol-access-key-id
+      env_var: S3_PROTOCOL_ACCESS_KEY_ID
+    - name: supabase-s3-protocol-access-key-secret
+      env_var: S3_PROTOCOL_ACCESS_KEY_SECRET
+  n8n_secrets:
+    - name: n8n-encryption-key
+      env_var: N8N_ENCRYPTION_KEY
+      critical: true
+      note: "Loss of this key makes all stored credentials unreadable"
+    - name: n8n-db-password
+      env_var: DB_POSTGRESDB_PASSWORD
 
 # ---------------------------------------------------------------------------
-# DNS (Cloudflare — to be added to subdomain-registry.yaml)
+# DNS (Cloudflare zone 73f587aee652fc24fd643aec00dcca81)
 # ---------------------------------------------------------------------------
 dns:
+  zone: insightpulseai.com
+  zone_id: "73f587aee652fc24fd643aec00dcca81"
+  status: pending-manual
+  note: >
+    Cloudflare API tokens are expired/invalid. Create these records
+    manually in the Cloudflare dashboard, then update status to active.
+    Target architecture: DNS-only (non-proxied) once Azure Front Door is live.
   records:
     - subdomain: supabase
       type: A
-      target: "<vm-public-ip>"
+      target: "4.193.100.31"
       proxied: true
-      notes: "Supabase API gateway (Kong port 8000 behind Cloudflare proxy)"
+      backend: "nginx → Kong :8000"
+      notes: "Supabase API gateway"
+    - subdomain: n8n-azure
+      type: A
+      target: "4.193.100.31"
+      proxied: true
+      backend: "nginx → n8n :5678"
+      notes: "n8n workflow automation (Azure)"
 
 # ---------------------------------------------------------------------------
-# Services (Docker Compose stack)
+# Services (actual deployed — official supabase/docker repo)
 # ---------------------------------------------------------------------------
 services:
-  - name: db
-    image: supabase/postgres:15.1.1.78
-    port_internal: 5432
-    port_external: 54322
-    healthcheck: pg_isready
-    data_volume: db-data
-    critical: true
+  compose_source: "github.com/supabase/supabase/docker (official)"
+  compose_path: "/opt/supabase-deploy/docker-compose.yml"
+  env_path: "/opt/supabase-deploy/.env"
+  reverse_proxy: "nginx on host (/etc/nginx/sites-available/supabase-proxy)"
+  all_ports_localhost: true
 
-  - name: kong
-    image: kong:2.8.1
-    port_internal: 8000
-    port_external: 8000
-    healthcheck: /kong health
-    critical: true
+  supabase:
+    - name: db
+      image: supabase/postgres:15.8.1.085
+      binding: localhost-only
+      healthcheck: pg_isready
+      data_volume: /opt/supabase-deploy/volumes/db/data
+      databases: [postgres, _supabase, n8n]
+      roles: [anon, authenticated, authenticator, service_role, supabase_admin,
+              supabase_auth_admin, supabase_storage_admin, supabase_functions_admin,
+              supabase_realtime_admin, supabase_replication_admin,
+              supabase_read_only_user, dashboard_user, n8n]
 
-  - name: auth
-    image: supabase/gotrue:v2.151.0
-    port_internal: 9999
-    healthcheck: /health
-    critical: true
+    - name: kong
+      container: supabase-kong
+      binding: 127.0.0.1:8000, 127.0.0.1:8443
+      healthcheck: healthy
 
-  - name: rest
-    image: postgrest/postgrest:v12.0.1
-    port_internal: 3000
-    healthcheck: /ready
-    critical: true
+    - name: auth (GoTrue)
+      container: supabase-auth
+      version: v2.186.0
+      healthcheck: healthy
 
-  - name: realtime
-    image: supabase/realtime:v2.28.32
-    port_internal: 4000
-    healthcheck: /api/health
+    - name: rest (PostgREST)
+      container: supabase-rest
+      healthcheck: via kong /rest/v1/
 
-  - name: storage
-    image: supabase/storage-api:v0.46.4
-    port_internal: 5000
-    healthcheck: /status
-    data_volume: storage-data
+    - name: realtime
+      container: realtime-dev.supabase-realtime
+      healthcheck: healthy
 
-  - name: studio
-    image: supabase/studio:20240422-5cf8f30
-    port_internal: 3000
-    port_external: 54323
-    healthcheck: /api/profile
+    - name: storage
+      container: supabase-storage
+      healthcheck: healthy
+      data_volume: /opt/supabase-deploy/volumes/storage
 
-  - name: meta
-    image: supabase/postgres-meta:v0.80.0
-    port_internal: 8080
-    healthcheck: /health
+    - name: studio
+      container: supabase-studio
+      healthcheck: healthy
 
-  - name: functions
-    image: supabase/edge-runtime:v1.45.2
-    port_internal: 54321
-    healthcheck: /functions/v1/_internal/health
+    - name: meta
+      container: supabase-meta
+      healthcheck: healthy
 
-  - name: analytics
-    image: supabase/logflare:1.4.0
-    port_internal: 4000
-    healthcheck: /health
+    - name: edge-functions
+      container: supabase-edge-functions
 
-  - name: imgproxy
-    image: darthsim/imgproxy:v3.8.0
-    port_internal: 8080
-    healthcheck: imgproxy health
+    - name: analytics
+      container: supabase-analytics
+      healthcheck: healthy
 
-  - name: vector
-    image: timberio/vector:0.34.0-alpine
-    port_internal: 9001
-    healthcheck: /health
+    - name: pooler (Supavisor)
+      container: supabase-pooler
+      binding: 127.0.0.1:5432, 127.0.0.1:6543
+      healthcheck: healthy
+
+    - name: vector
+      container: supabase-vector
+      healthcheck: healthy
+
+    - name: imgproxy
+      container: supabase-imgproxy
+      healthcheck: healthy
+
+  n8n:
+    - name: n8n
+      image: n8nio/n8n:latest
+      version: "2.11.2"
+      binding: 127.0.0.1:5678
+      restart: unless-stopped
+      memory_limit: 1g
+      data_volume: /opt/supabase-deploy/n8n-data
+      database: n8n (on supabase-db)
+      encryption_key: "Key Vault: n8n-encryption-key (CRITICAL)"
+      webhook_url: "https://n8n-azure.insightpulseai.com"
 
 # ---------------------------------------------------------------------------
 # Cost Estimate (monthly, southeastasia)
@@ -230,24 +299,22 @@ services:
 cost_estimate:
   currency: USD
   period: monthly
+  vm_size_actual: Standard_D4s_v5
   breakdown:
-    - resource: "VM Standard_B4ms (dev/prod)"
-      cost: 121.18
-      notes: "4 vCPU, 16 GiB RAM, Linux"
-    - resource: "Premium SSD 64 GiB (P6)"
+    - resource: "VM Standard_D4s_v5"
+      cost: 175.00
+      notes: "4 vCPU, 16 GiB RAM, Linux, consistent perf"
+    - resource: "OS Disk 64 GiB"
       cost: 10.21
     - resource: "Public IP (Standard)"
       cost: 3.65
     - resource: "Bandwidth (50 GB egress estimate)"
       cost: 4.32
-  total: 139.36
+  total: 193.18
   comparison: >
     Supabase Pro plan: $25/mo (limited compute, storage, bandwidth).
-    Self-hosted gives full control over extensions (pgvector, pgjwt, pg_graphql),
-    unlimited edge functions, no row/bandwidth limits.
-  production_estimate: >
-    Standard_D4s_v5 (4 vCPU, 16 GiB, consistent perf): ~$175/mo total.
-    Add Azure Backup vault: +$10-20/mo for daily snapshots.
+    Self-hosted gives full control over extensions, unlimited edge functions,
+    no row/bandwidth limits. Includes n8n on same VM.
 
 # ---------------------------------------------------------------------------
 # Migration Plan (from managed Supabase spdtwktxdalcfigzeqrz)
@@ -258,12 +325,17 @@ migration:
   steps:
     - phase: 1
       name: "Deploy empty stack"
-      status: pending
+      status: complete
+      completed: "2026-03-10"
       actions:
-        - "Provision Azure VM"
-        - "Deploy Docker Compose stack"
-        - "Run health checks"
-        - "Configure DNS"
+        - "Provision Azure VM (Standard_D4s_v5, 4.193.100.31) ✓"
+        - "Deploy Docker Compose stack (official supabase/docker) ✓"
+        - "14 containers healthy ✓"
+        - "n8n deployed with persistent encryption key ✓"
+        - "All services bound to localhost, nginx reverse proxy ✓"
+        - "NSG locked to SSH + HTTP/HTTPS only ✓"
+        - "28 secrets in Azure Key Vault ✓"
+        - "DNS records: pending manual creation in Cloudflare"
     - phase: 2
       name: "Migrate database schema"
       status: pending
