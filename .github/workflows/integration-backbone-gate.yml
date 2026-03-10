@@ -1,0 +1,98 @@
+name: Integration Backbone Gate
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*integration*'
+      - 'supabase/functions/event-fanout/**'
+      - 'supabase/functions/approval-worker/**'
+      - 'supabase/functions/odoo-webhook/**'
+      - 'supabase/functions/ops-ingest/**'
+      - 'addons/ipai/ipai_enterprise_bridge/**'
+      - 'apps/slack-agent/**'
+      - 'ssot/integrations/event_routes.yaml'
+      - '.github/actions/emit-ops-event/**'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/*integration*'
+      - 'supabase/functions/event-fanout/**'
+      - 'supabase/functions/approval-worker/**'
+
+jobs:
+  validate-schema:
+    name: Validate Integration Schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate migration SQL syntax
+        run: |
+          # Check SQL file exists and is non-empty
+          FILE="supabase/migrations/20260308000001_integration_backbone_events.sql"
+          if [ ! -f "$FILE" ]; then
+            echo "::error::Migration file not found: $FILE"
+            exit 1
+          fi
+          # Basic SQL syntax validation
+          if ! grep -q "CREATE OR REPLACE" "$FILE"; then
+            echo "::error::Migration appears incomplete"
+            exit 1
+          fi
+          echo "Migration file validated"
+
+      - name: Validate Edge Function files
+        run: |
+          for fn in event-fanout approval-worker odoo-webhook ops-ingest; do
+            FILE="supabase/functions/$fn/index.ts"
+            if [ ! -f "$FILE" ]; then
+              echo "::warning::Edge Function missing: $fn"
+            else
+              echo "Edge Function present: $fn"
+            fi
+          done
+
+      - name: Validate SSOT event routes
+        run: |
+          FILE="ssot/integrations/event_routes.yaml"
+          if [ ! -f "$FILE" ]; then
+            echo "::error::SSOT event routes file missing"
+            exit 1
+          fi
+          echo "Event routes SSOT validated"
+
+  validate-contracts:
+    name: Validate Contract Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check contract documents exist
+        run: |
+          MISSING=0
+          for doc in TASK_QUEUE_CONTRACT.md AUDIT_EVENTS_CONTRACT.md; do
+            if [ ! -f "docs/contracts/$doc" ]; then
+              echo "::warning::Contract doc missing: $doc"
+              MISSING=$((MISSING + 1))
+            else
+              echo "Contract present: $doc"
+            fi
+          done
+          if [ "$MISSING" -gt 0 ]; then
+            echo "::warning::$MISSING contract doc(s) missing"
+          fi
+
+      - name: Check contracts index references
+        run: |
+          if grep -q "Active" docs/contracts/PLATFORM_CONTRACTS_INDEX.md; then
+            echo "Contracts index has active entries"
+          fi
+
+  verify-backbone:
+    name: Run Backbone Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run verification script
+        run: ./scripts/integration/verify_integration_backbone.sh

@@ -253,7 +253,9 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 | **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
 | **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
 
-> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
+> **Claude Code on the Web**: Full CLI parity — same agent, same capabilities as local CLI, running on Anthropic cloud VMs. See [docs/ai/CLAUDE_CODE_WEB.md](./docs/ai/CLAUDE_CODE_WEB.md) for environment setup, `--remote` usage, Remote Control, and SessionStart hooks.
+>
+> **Remote Control**: Control your local Claude Code session from any browser or phone via [claude.ai/code](https://claude.ai/code). Start with `claude remote-control` or `/rc` inside a session.
 
 ### Common Commands
 
@@ -293,7 +295,7 @@ npm run dev:github-app                  # Run github-app
 | Problem | Old Setup | Canonical Setup |
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
-| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database (odoo) |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` (current prod runtime: `odoo`) |
 | Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
@@ -310,7 +312,7 @@ docker compose exec -T web odoo -d odoo -i base   # Install module
 **Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
 
 **Key Features**:
-- ✅ Single database target (`db_name = odoo`)
+- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`; current prod runtime: `odoo`)
 - ✅ No database selector (`list_db = False`)
 - ✅ File-based secrets (no hardcoded passwords)
 - ✅ Health checks (PostgreSQL guards web startup)
@@ -408,38 +410,39 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (80+ modules)
-│   │   ├── ipai_dev_studio_base/
+│   ├── ipai/                  # IPAI custom modules (69 verified)
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
-│   │   ├── ipai_master_control/
-│   │   ├── ipai_ai_agents/
-│   │   ├── ipai_approvals/
-│   │   └── ...
-│   ├── OCA/                   # OCA community modules (12 repos)
-│   └── oca/                   # OCA submodules
+│   │   ├── ipai_ai_core/
+│   │   ├── ipai_enterprise_bridge/
+│   │   ├── ipai_helpdesk/
+│   │   └── ... (69 modules total)
+│   ├── ipai_*/                # 41 additional ipai modules at addons/ root (legacy location)
+│   ├── OCA/                   # OCA vendor directory (legacy refs)
+│   └── oca/                   # OCA modules (hydrated at runtime via gitaggregate, not tracked)
 │
-├── apps/                      # Applications (20 apps)
-│   ├── pulser-runner/         # Automation runner
-│   ├── control-room/          # Control plane UI
-│   ├── control-room-api/      # Control plane API
-│   ├── bi-architect/          # BI analytics
-│   ├── mcp-coordinator/       # MCP coordination
-│   ├── web/                   # Web frontend
-│   └── ...
+├── apps/                      # Applications (9 verified; 2 substantial)
+│   ├── ops-console/           # Operations console (substantial)
+│   ├── mcp-jobs/              # MCP jobs system (substantial)
+│   ├── colima-desktop-ui/     # Desktop UI (minimal)
+│   ├── odoo-mobile-ios/       # Mobile app
+│   ├── platform/              # Platform app
+│   ├── slack-agent/           # Slack agent
+│   ├── web/                   # Web frontend (stub)
+│   ├── workspace/             # Workspace app
+│   └── docs/                  # Docs app
 │
-├── packages/                  # Shared packages (3 packages)
-│   ├── agent-core/            # Core agent framework
-│   ├── github-app/            # GitHub App integration
-│   └── ipai-design-tokens/    # Design system tokens
+├── packages/                  # Shared packages (2 packages)
+│   ├── agents/                # Agent framework
+│   └── taskbus/               # Task bus system
 │
-├── spec/                      # Spec bundles (32 feature specs)
+├── spec/                      # Spec bundles (76 total)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (160+ scripts)
+├── scripts/                   # Automation scripts (1000 files in 86 categories)
 │   ├── ci/                    # CI-specific scripts
 │   ├── deploy-odoo-modules.sh
 │   ├── repo_health.sh
@@ -472,16 +475,10 @@ odoo-ce/
 │   └── ...
 │
 ├── mcp/                       # Model Context Protocol
-│   ├── coordinator/           # MCP routing & aggregation
 │   └── servers/               # MCP server implementations
-│       ├── odoo-erp-server/   # Odoo ERP integration
-│       ├── digitalocean-mcp-server/  # DO infrastructure
-│       ├── superset-mcp-server/      # BI platform
-│       ├── vercel-mcp-server/        # Deployments
-│       ├── pulser-mcp-server/        # Agent orchestration
-│       └── speckit-mcp-server/       # Spec enforcement
+│       └── plane/             # Plane.so integration (1 server — only one implemented)
 │
-├── n8n/                       # n8n workflow templates
+├── odoo19/                    # Canonical Odoo 19 setup (config, scripts, backups)
 │
 ├── .claude/                   # Claude Code configuration
 │   ├── project_memory.db      # SQLite config database
@@ -490,7 +487,7 @@ odoo-ce/
 │   ├── mcp-servers.json       # MCP server configuration
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (47 workflows)
+├── .github/workflows/         # CI/CD pipelines (355 workflows)
 │
 ├── docker-compose.yml         # Main compose file
 ├── package.json               # Node.js monorepo config
@@ -506,30 +503,61 @@ All custom modules use the `ipai_` prefix organized by domain:
 
 | Domain | Prefix Pattern | Examples |
 |--------|---------------|----------|
-| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
-| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_core`, `ipai_ai_copilot`, `ipai_agent`, `ipai_ai_widget` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_close_seed`, `ipai_finance_tax_return`, `ipai_finance_workflow` |
 | Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
 | Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
 | Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
 | Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
 | WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
 | Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
-| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_slack_connector`, `ipai_superset_connector` |
-| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
+| Integrations | `ipai_*_connector` | `ipai_slack_connector`, `ipai_superset_connector`, `ipai_ops_connector`, `ipai_pulser_connector` |
+| HR | `ipai_hr_*` | `ipai_hr_payroll_ph`, `ipai_hr_expense_liquidation` |
+| BIR Compliance | `ipai_bir_*` | `ipai_bir_tax_compliance`, `ipai_bir_notifications`, `ipai_bir_plane_sync` |
+| Mail | `ipai_mail_*`, `ipai_mailgun_*`, `ipai_zoho_*` | `ipai_mailgun_smtp`, `ipai_zoho_mail`, `ipai_mail_bridge_zoho` |
+| Design | `ipai_design_*` | `ipai_design_system`, `ipai_design_system_apps_sdk` |
+| LLM | `ipai_llm_*` | `ipai_llm_supabase_bridge` |
 
-### Key Module Hierarchy
+### Key Module Hierarchy (Verified 2026-03-08)
+
+Based on actual `__manifest__.py` dependency analysis:
 
 ```
-ipai_dev_studio_base           # Base dependencies (install first)
-    └── ipai_workspace_core    # Core workspace functionality
-        └── ipai_ce_branding   # CE branding layer
-            ├── ipai_ai_core   # AI core framework
-            │   ├── ipai_ai_agents     # Agent system
-            │   └── ipai_ai_prompts    # Prompt management
-            ├── ipai_finance_ppm       # Finance PPM
-            │   └── ipai_finance_month_end
-            └── [other modules]
+Layer 0 — Independent (no IPAI deps, depend only on base Odoo):
+  ipai_foundation              # Foundation layer (Live)
+  ipai_ai_core                 # AI core framework (Live, has tests)
+  ipai_ai_widget               # AI widget (Live, has tests)
+  ipai_enterprise_bridge       # EE parity bridge (Live, has tests)
+  ipai_finance_ppm             # Finance PPM (Live)
+  ipai_helpdesk                # Helpdesk (Live)
+  ipai_hr_expense_liquidation  # HR expense liquidation (Live, has tests)
+  ipai_llm_supabase_bridge     # LLM Supabase bridge (Live, has tests)
+
+Layer 1 — Single IPAI dependency:
+  ipai_ai_copilot              # → ipai_ai_widget (Live)
+  ipai_agent                   # → ipai_hr_expense_liquidation (Live, has tests)
+
+Layer 2 — Multiple IPAI dependencies:
+  ipai_workspace_core          # → ipai_foundation + ipai_ai_copilot (Live, has tests, app=True)
+
+Deprecated (installable: False):
+  ipai_ai_agent_builder        # Migrated to ipai_enterprise_bridge
+  ipai_ai_tools                # Migrated to ipai_enterprise_bridge
+  ipai_ai_agents_ui            # Not installable (has tests)
 ```
+
+### Test Coverage (8 of 69 modules have tests)
+
+| Module | Test Files |
+|--------|-----------|
+| `ipai_ai_core` | `test_ai_core.py` |
+| `ipai_ai_widget` | `test_ai_widget.py` |
+| `ipai_agent` | `test_agent.py` |
+| `ipai_enterprise_bridge` | `test_enterprise_bridge.py` |
+| `ipai_hr_expense_liquidation` | `test_form_no.py`, `test_qweb.py` |
+| `ipai_llm_supabase_bridge` | `test_install_smoke.py` |
+| `ipai_workspace_core` | `test_workspace.py` |
+| `ipai_ai_agents_ui` | `test_ai_agents_controller.py` (not installable) |
 
 ---
 
@@ -545,7 +573,7 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (32)
+### Current Spec Bundles (76 total)
 
 - `pulser-master-control` - Master control plane
 - `close-orchestration` - Month-end close workflows
@@ -580,6 +608,8 @@ python .claude/query_memory.py all          # Everything
 ---
 
 ## CI/CD Pipelines
+
+> **355 total workflows** in `.github/workflows/` (audited 2026-03-08). Key workflows below.
 
 ### Core Pipelines
 
@@ -688,9 +718,11 @@ Config → OCA → Delta (ipai_*)
 
 ## Enterprise Parity Strategy
 
-**Goal**: Achieve ≥80% Odoo Enterprise Edition feature parity by **building custom replacements** using CE + OCA + ipai_* modules.
+**Target**: Achieve ≥80% Odoo Enterprise Edition feature parity by building custom replacements using CE + OCA + ipai_* modules.
 
-**Philosophy**: We do NOT deploy Odoo EE. We BUILD our own solutions that replicate and often exceed EE capabilities.
+**Current verified parity**: ~35-45% (audited 2026-03-08). 5 key modules listed below do not yet exist. Most implemented modules lack test coverage.
+
+**Philosophy**: We do NOT deploy Odoo EE. We BUILD our own solutions to replicate EE capabilities.
 
 ### Parity Formula
 
@@ -708,49 +740,52 @@ NEVER:
   - Deploy proprietary EE modules
 ```
 
-### EE Feature Mapping
+### EE Feature Mapping (Audited 2026-03-08)
 
-| Odoo EE Feature | EE Module | CE/OCA/IPAI Replacement | Parity |
-|-----------------|-----------|-------------------------|--------|
-| **Accounting** | | | |
-| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | 95% |
-| Financial Reports | `account_reports` | `account_financial_report` | 90% |
-| Asset Management | `account_asset` | `account_asset_management` | 90% |
-| Budget Management | `account_budget` | `ipai_finance_ppm` | 85% |
-| Consolidation | `account_consolidation` | `ipai_finance_consolidation` | 80% |
-| **HR & Payroll** | | | |
-| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | 100% |
-| Attendance | `hr_attendance` | `ipai_hr_attendance` | 95% |
-| Leave Management | `hr_holidays` | `ipai_hr_leave` | 95% |
-| Expense Management | `hr_expense` | `hr_expense` (OCA) | 90% |
-| Recruitment | `hr_recruitment` | `hr_recruitment` (OCA) | 85% |
-| Appraisals | `hr_appraisal` | `ipai_hr_appraisal` | 80% |
-| **Services** | | | |
-| Helpdesk | `helpdesk` | `ipai_helpdesk` | 90% |
-| Approvals | `approvals` | `ipai_approvals` | 95% |
-| Planning | `planning` | `ipai_planning` | 85% |
-| Timesheet Grid | `timesheet_grid` | `ipai_timesheet` | 85% |
-| Field Service | `industry_fsm` | `ipai_field_service` | 75% |
-| **Studio & Customization** | | | |
-| Studio | `studio` | `ipai_dev_studio_base` | 70% |
-| Spreadsheet | `spreadsheet` | `ipai_spreadsheet` + Superset | 80% |
-| Dashboards | `spreadsheet_dashboard` | Superset + `ipai_dashboard` | 85% |
-| **Documents & Knowledge** | | | |
-| Documents | `documents` | `ipai_connector_supabase` | 80% |
-| Knowledge | `knowledge` | `ipai_knowledge_base` | 75% |
-| Sign | `sign` | `ipai_digital_signature` | 70% |
-| **Marketing** | | | |
-| Marketing Automation | `marketing_automation` | n8n + `ipai_marketing` | 85% |
-| Social Marketing | `social` | `ipai_social_connector` | 70% |
-| Events | `event_sale` | `event` (CE) + `ipai_events` | 80% |
-| **Integrations** | | | |
-| IoT | `iot` | `ipai_iot_connector` | 60% |
-| VoIP | `voip` | `ipai_voip_connector` | 65% |
-| **BIR Compliance (PH-specific)** | | | |
-| 1601-C Generation | N/A | `ipai_bir_1601c` | 100% |
-| 2316 Certificates | N/A | `ipai_bir_2316` | 100% |
-| Alphalist Export | N/A | `ipai_bir_alphalist` | 100% |
-| VAT Reports | N/A | `ipai_bir_vat` | 100% |
+> Status: **Live** = code exists with models | **Scaffolded** = stub/minimal code | **OCA** = OCA module (not yet hydrated) | **Planned** = module does not exist yet
+
+| Odoo EE Feature | EE Module | CE/OCA/IPAI Replacement | Status | Parity | Tests |
+|-----------------|-----------|-------------------------|--------|--------|-------|
+| **Accounting** | | | | | |
+| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | OCA | TBD | N/A |
+| Financial Reports | `account_reports` | `account_financial_report` | OCA | TBD | N/A |
+| Asset Management | `account_asset` | `account_asset_management` | OCA | TBD | N/A |
+| Budget Management | `account_budget` | `ipai_finance_ppm` | Live | ~40% | No |
+| Consolidation | `account_consolidation` | `ipai_finance_consolidation` | Planned | 0% | — |
+| **HR & Payroll** | | | | | |
+| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | Live | ~70% | No |
+| Attendance | `hr_attendance` | `ipai_hr_attendance` | Planned | 0% | — |
+| Leave Management | `hr_holidays` | `ipai_hr_leave` | Planned | 0% | — |
+| Expense Management | `hr_expense` | `hr_expense` (OCA) | OCA | TBD | N/A |
+| Recruitment | `hr_recruitment` | `hr_recruitment` (OCA) | OCA | TBD | N/A |
+| Appraisals | `hr_appraisal` | `ipai_hr_appraisal` | Planned | 0% | — |
+| **Services** | | | | | |
+| Helpdesk | `helpdesk` | `ipai_helpdesk` | Live | ~40% | No |
+| Approvals | `approvals` | `ipai_approvals` | **Planned** | 0% | — |
+| Planning | `planning` | `ipai_planning` | **Planned** | 0% | — |
+| Timesheet Grid | `timesheet_grid` | `ipai_timesheet` | **Planned** | 0% | — |
+| Field Service | `industry_fsm` | `ipai_field_service` | Planned | 0% | — |
+| **Studio & Customization** | | | | | |
+| Studio | `studio` | `ipai_dev_studio_base` | **Planned** | 0% | — |
+| Spreadsheet | `spreadsheet` | Superset | Scaffolded | ~20% | No |
+| Dashboards | `spreadsheet_dashboard` | Superset | Scaffolded | ~30% | No |
+| **Documents & Knowledge** | | | | | |
+| Documents | `documents` | `ipai_documents_ai` | Live | ~30% | No |
+| Knowledge | `knowledge` | `ipai_knowledge_base` | **Planned** | 0% | — |
+| Sign | `sign` | `ipai_sign` | Live | ~20% | No |
+| **Marketing** | | | | | |
+| Marketing Automation | `marketing_automation` | n8n workflows | Scaffolded | ~30% | No |
+| Social Marketing | `social` | — | Planned | 0% | — |
+| Events | `event_sale` | `event` (CE) | CE only | ~50% | No |
+| **Integrations** | | | | | |
+| IoT | `iot` | — | Planned | 0% | — |
+| VoIP | `voip` | — | Planned | 0% | — |
+| **BIR Compliance (PH-specific)** | | | | | |
+| 1601-C / Tax | N/A | `ipai_bir_tax_compliance` | Live | ~60% | No |
+| Notifications | N/A | `ipai_bir_notifications` | Live | ~50% | No |
+| Plane Sync | N/A | `ipai_bir_plane_sync` | Live | ~50% | No |
+
+> **Bold Planned** = modules previously documented as implemented but confirmed missing on 2026-03-08 audit.
 
 ### Parity Validation
 
@@ -1050,13 +1085,11 @@ Examples:
 
 See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
 
-### PR Requirements
+### PR Discipline
 
 1. Small, focused commits with descriptive messages
-2. All CI gates must pass (green status)
+2. Run verification before pushing
 3. Update docs + tests alongside code changes
-4. Never push directly to main without verification
-5. Reference spec bundle in PR description when applicable
 
 ---
 
@@ -1171,30 +1204,16 @@ External MCPs       Custom MCPs
 | `@huggingface/mcp-server` | Models, datasets | `HF_TOKEN` |
 | `@anthropic/playwright-mcp-server` | Browser automation | (none) |
 
-**Custom MCP Servers (in `mcp/servers/`):**
+**Custom MCP Servers (in `mcp/servers/`) — Audited 2026-03-08:**
 
-| Server | Purpose | Location |
-|--------|---------|----------|
-| `odoo-erp-server` | Odoo CE accounting, BIR compliance | `mcp/servers/odoo-erp-server/` |
-| `digitalocean-mcp-server` | Droplets, apps, deployments | `mcp/servers/digitalocean-mcp-server/` |
-| `superset-mcp-server` | Dashboards, charts, datasets | `mcp/servers/superset-mcp-server/` |
-| `vercel-mcp-server` | Projects, deployments, logs | `mcp/servers/vercel-mcp-server/` |
-| `pulser-mcp-server` | Agent orchestration | `mcp/servers/pulser-mcp-server/` |
-| `speckit-mcp-server` | Spec bundle enforcement | `mcp/servers/speckit-mcp-server/` |
-| `mcp-jobs` | **Canonical Jobs & Observability Backend** | `mcp/servers/mcp-jobs/` |
+| Server | Purpose | Location | Status |
+|--------|---------|----------|--------|
+| `plane` | Plane.so project management integration | `mcp/servers/plane/` | **Live** |
 
-**Server Groups:**
-- `core`: supabase, github, dbhub, odoo-erp
-- `design`: figma, notion
-- `infra`: digitalocean, vercel
-- `automation`: pulser, speckit
-
-**Building Custom Servers:**
-```bash
-cd mcp/servers/<server-name>
-npm install
-npm run build
-```
+> **Previously documented servers not found in codebase** (confirmed missing 2026-03-08):
+> odoo-erp-server, digitalocean-mcp-server, superset-mcp-server, vercel-mcp-server,
+> pulser-mcp-server, speckit-mcp-server, mcp-jobs. These are **planned** but not yet implemented.
+> The `mcp-jobs` app exists in `apps/mcp-jobs/` as a Next.js app, not as an MCP server.
 
 ### Figma Dev Mode Access
 
@@ -1575,22 +1594,29 @@ Build custom modules based on payment status and need:
 
 ## GitHub Integration
 
-### Recommended: GitHub Team ($4/user/mo)
+### GitHub Plan: Enterprise (Solo Developer — Owner/Admin/Member)
 
-Stay on GitHub Team - it provides everything needed:
+Single seat, all roles: owner + admin + billing manager + developer.
 
-| Feature | Free | Team | Enterprise | Our Approach |
-|---------|------|------|------------|--------------|
-| Protected branches | ❌ | ✅ | ✅ | Use Team |
-| Required reviewers | ❌ | ✅ | ✅ | Use Team |
-| CODEOWNERS | ❌ | ✅ | ✅ | Use Team |
-| Draft PRs | ❌ | ✅ | ✅ | Use Team |
-| Actions minutes | 2,000 | 3,000 | 50,000 | Self-hosted runners |
-| Secret scanning | ❌ | ❌ | $19/user | GitLeaks (free) |
-| Code scanning | ❌ | ❌ | $30/user | Semgrep (free) |
-| SAML SSO | ❌ | ❌ | ✅ | Keycloak (free) |
+| Feature | Status |
+|---------|--------|
+| Protected branches | ✅ |
+| Required status checks | ✅ |
+| CODEOWNERS | ✅ |
+| Secret scanning (GHAS) | ✅ |
+| Code scanning (GHAS) | ✅ |
+| Dependency review | ✅ |
+| SAML SSO | ✅ (Keycloak) |
+| Actions minutes | 50,000/mo |
+| Audit log API | ✅ |
+| **Copilot Enterprise (SWE agent)** | ✅ |
+| Copilot code completions | ✅ |
+| Copilot chat (IDE + github.com) | ✅ |
+| Copilot PR summaries | ✅ |
+| Copilot coding agent | ✅ |
+| Copilot knowledge bases | ✅ |
 
-**Annual savings**: ~$6,600/year vs Enterprise + GHAS
+Self-hosted security tooling (GitLeaks, Semgrep, Trivy) supplements GHAS as defense-in-depth.
 
 ### GitHub App: pulser-hub
 
@@ -1635,18 +1661,6 @@ jobs:
         with:
           scan-type: 'fs'
           severity: 'CRITICAL,HIGH'
-```
-
-### Self-Hosted Runner Setup
-
-```bash
-# On DigitalOcean droplet (178.128.112.214)
-mkdir -p ~/actions-runner && cd ~/actions-runner
-curl -o actions-runner-linux-x64-2.321.0.tar.gz -L \
-  https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
-tar xzf ./actions-runner-linux-x64-2.321.0.tar.gz
-./config.sh --url https://github.com/jgtolentino/odoo-ce --token YOUR_TOKEN
-sudo ./svc.sh install && sudo ./svc.sh start
 ```
 
 ---
@@ -1897,4 +1911,4 @@ gh pr create --title "$(jq -r .title /tmp/issue.json)" \
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-26*
+*Last updated: 2026-03-08*

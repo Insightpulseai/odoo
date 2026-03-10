@@ -15,7 +15,7 @@
 5. **OCA path is `addons/oca/` (slash).** Never `addons-oca/` (hyphen). Docker mount: `/workspaces/odoo/addons/oca/*`.
 6. **Evidence is not SSOT.** `web/docs/evidence/20*/` bundles are derived proof, not source of truth.
 7. **Cross-domain changes need a contract doc.** DNS + email changes → `docs/contracts/DNS_EMAIL_CONTRACT.md`. New cross-domain contracts → register in `docs/contracts/PLATFORM_CONTRACTS_INDEX.md`.
-8. **Domain deprecations are permanent.** `insightpulseai.net` → `insightpulseai.com`. Mattermost → Slack. Mailgun → Zoho Mail. Never reintroduce deprecated items.
+8. **Domain deprecations are permanent.** `insightpulseai.net` → `insightpulseai.com`. Mattermost → Slack. Never reintroduce deprecated items.
 9. **Odoo is relying party, Supabase is IdP.** Never store primary passwords in Odoo for users with a Supabase counterpart.
 10. **No console-only infrastructure changes.** DigitalOcean, Cloudflare, Vercel — all changes must have a corresponding repo commit (IaC or YAML).
 
@@ -103,15 +103,18 @@ When generating or modifying n8n workflow JSON:
 
 ---
 
-## Rule 7: Odoo outbound email must route through the bridge when configured
+## Rule 7: Odoo outbound email uses Mailgun SMTP (not Zoho)
+
+Odoo outbound transactional mail routes through Mailgun on the `mg.insightpulseai.com` subdomain.
+Zoho handles root-domain human/business mailboxes only.
 
 When generating Odoo Python code that sends email:
 
-- Do not call `ir.mail_server` or `smtplib` directly
-- Use `mail.mail.create({...}).send()` — the `ipai_mail_bridge_zoho` override handles routing
-- If `ZOHO_MAIL_BRIDGE_URL` and `ZOHO_MAIL_BRIDGE_SECRET` are set, the bridge activates
-- If not set, standard SMTP is used (fallback)
-- Never suggest disabling the bridge override to "simplify" email sending
+- Use `mail.mail.create({...}).send()` — Odoo's standard `ir.mail_server` handles delivery via Mailgun SMTP
+- Sender addresses must use the `mg.insightpulseai.com` subdomain (e.g. `no-reply@mg.insightpulseai.com`)
+- Never configure Odoo to send from root-domain addresses (e.g. `business@insightpulseai.com`) — those are Zoho mailboxes
+- Never introduce a bridge module for mail routing — standard `ir.mail_server` with Mailgun SMTP credentials is the canonical path
+- See `docs/contracts/MAIL_ARCHITECTURE_CONTRACT.md` for the full provider split
 
 ---
 
