@@ -1,2 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import ai_rag
+# Part of IPAI. See LICENSE file for full copyright and licensing details.
+
+from . import ai_source
+from . import ai_chunk
+from . import ai_embedding
