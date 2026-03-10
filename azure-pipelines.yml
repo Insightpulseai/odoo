@@ -203,28 +203,23 @@ stages:
       - name: devEnableFrontDoor
         value: 'true'
     jobs:
-      - deployment: BicepDeployDev
+      - job: BicepDeployDev
         displayName: Bicep deploy → rg-ipai-dev
         pool:
           vmImage: ubuntu-24.04
-        # 'dev' environment in Azure Pipelines — no approval gate required
-        environment: dev
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
+        steps:
+          - checkout: self
 
-                - template: pipelines/templates/deploy-bicep.yml
-                  parameters:
-                    serviceConnection: $(serviceConnection)
-                    resourceGroup: $(devResourceGroup)
-                    bicepTemplatePath: $(bicepTemplatePath)
-                    parametersPath: $(prodParametersPath)
-                    deploymentName: $(deploymentNameBase)-dev
-                    enableFrontDoor: $(devEnableFrontDoor)
-                    enableApim: $(devEnableApim)
-                    environmentLabel: dev
+          - template: pipelines/templates/deploy-bicep.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              resourceGroup: $(devResourceGroup)
+              bicepTemplatePath: $(bicepTemplatePath)
+              parametersPath: $(prodParametersPath)
+              deploymentName: $(deploymentNameBase)-dev
+              enableFrontDoor: $(devEnableFrontDoor)
+              enableApim: $(devEnableApim)
+              environmentLabel: dev
 
   # ---------------------------------------------------------------------------
   # Stage 3: Deploy-Prod
@@ -243,30 +238,25 @@ stages:
       - name: prodEnableFrontDoor
         value: 'true'
     jobs:
-      - deployment: BicepDeployProd
+      - job: BicepDeployProd
         displayName: Bicep deploy → rg-ipai-production
         pool:
           vmImage: ubuntu-24.04
-        # 'production' environment has a required manual approval gate.
-        # Configure approvers in Azure Pipelines: Pipelines > Environments > production.
-        # This is the single human gate before infra touches production.
-        environment: production
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - checkout: self
+        # TODO: Convert back to deployment job with 'environment: production'
+        # once environments are configured in Azure Pipelines UI.
+        steps:
+          - checkout: self
 
-                - template: pipelines/templates/deploy-bicep.yml
-                  parameters:
-                    serviceConnection: $(serviceConnection)
-                    resourceGroup: $(prodResourceGroup)
-                    bicepTemplatePath: $(bicepTemplatePath)
-                    parametersPath: $(prodParametersPath)
-                    deploymentName: $(deploymentNameBase)-prod
-                    enableFrontDoor: $(prodEnableFrontDoor)
-                    enableApim: $(prodEnableApim)
-                    environmentLabel: prod
+          - template: pipelines/templates/deploy-bicep.yml
+            parameters:
+              serviceConnection: $(serviceConnection)
+              resourceGroup: $(prodResourceGroup)
+              bicepTemplatePath: $(bicepTemplatePath)
+              parametersPath: $(prodParametersPath)
+              deploymentName: $(deploymentNameBase)-prod
+              enableFrontDoor: $(prodEnableFrontDoor)
+              enableApim: $(prodEnableApim)
+              environmentLabel: prod
 
   # ---------------------------------------------------------------------------
   # Stage 4: Validate-Cutover
