@@ -24,6 +24,7 @@ ARG ODOO_BASE=odoo:19
 FROM ${ODOO_BASE}
 
 ARG PROFILE=standard
+ARG TARGET=do
 ARG BUILD_DATE
 ARG GIT_SHA
 
@@ -36,7 +37,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     git \
-    libpq-dev \
     libxml2-dev \
     libxslt1-dev \
     libsasl2-dev \
@@ -107,12 +107,19 @@ RUN find /opt/odoo/addons/ipai -name "requirements.txt" \
 # =============================================================================
 # Configuration
 # =============================================================================
-COPY ./config/prod/odoo.conf /etc/odoo/odoo.conf
+# Configuration: TARGET=azure uses Azure Container Apps config, TARGET=do uses DigitalOcean config
+COPY ./config/prod/odoo.conf /etc/odoo/odoo-do.conf
+COPY ./config/prod/odoo-azure.conf /etc/odoo/odoo-azure.conf
+RUN if [ "$TARGET" = "azure" ]; then \
+      cp /etc/odoo/odoo-azure.conf /etc/odoo/odoo.conf; \
+    else \
+      cp /etc/odoo/odoo-do.conf /etc/odoo/odoo.conf; \
+    fi
 
 # =============================================================================
 # Permissions
 # =============================================================================
-RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/odoo.conf
+RUN chown -R odoo:odoo /opt/odoo/addons /etc/odoo/
 
 USER odoo
 

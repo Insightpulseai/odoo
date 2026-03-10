@@ -1,12 +1,11 @@
 import os
-from odoo import api, SUPERUSER_ID
 
 def _env(name, default=None):
     v = os.getenv(name)
     return v if v not in (None, "") else default
 
-def post_init_hook(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+def post_init_hook(env):
+    """Odoo 19 post_init_hook receives env directly."""
 
     icp = env["ir.config_parameter"].sudo()
     MailServer = env["ir.mail_server"].sudo()
