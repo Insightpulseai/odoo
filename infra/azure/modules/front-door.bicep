@@ -236,18 +236,30 @@ resource afdOriginGroups 'Microsoft.Cdn/profiles/originGroups@2023-05-01' = [
   }
 ]
 
+// Flatten origins: [{ogIndex, origin, originIndex}] so every origin gets its own resource
+var flattenedOrigins = flatten([
+  for (og, ogIndex) in originGroups: [
+    for (origin, originIndex) in og.origins: {
+      ogIndex: ogIndex
+      ogName: og.name
+      origin: origin
+      originIndex: originIndex
+    }
+  ]
+])
+
 // Origins within each origin group
 resource afdOrigins 'Microsoft.Cdn/profiles/originGroups/origins@2023-05-01' = [
-  for (og, ogIndex) in originGroups: {
-    parent: afdOriginGroups[ogIndex]
-    name: '${og.name}-origin-0'
+  for (entry, i) in flattenedOrigins: {
+    parent: afdOriginGroups[entry.ogIndex]
+    name: '${entry.ogName}-origin-${entry.originIndex}'
     properties: {
-      hostName: og.origins[0].hostName
-      httpPort: og.origins[0].httpPort
-      httpsPort: og.origins[0].httpsPort
-      priority: og.origins[0].priority
-      weight: og.origins[0].weight
-      originHostHeader: og.origins[0].hostName
+      hostName: entry.origin.hostName
+      httpPort: entry.origin.httpPort
+      httpsPort: entry.origin.httpsPort
+      priority: entry.origin.priority
+      weight: entry.origin.weight
+      originHostHeader: entry.origin.hostName
       enabledState: 'Enabled'
       enforceCertificateNameCheck: true
     }

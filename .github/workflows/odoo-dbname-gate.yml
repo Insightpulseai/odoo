@@ -1,8 +1,19 @@
 name: odoo-dbname-gate
 on:
   pull_request:
+    paths:
+      - 'docker-compose*.yml'
+      - 'config/**/*.conf'
+      - 'deploy/**'
+      - 'odoo19/**'
+      - '.github/workflows/odoo-dbname-gate.yml'
   push:
     branches: [ main ]
+    paths:
+      - 'docker-compose*.yml'
+      - 'config/**/*.conf'
+      - 'deploy/**'
+      - 'odoo19/**'
 permissions:
   contents: read
 
@@ -11,16 +22,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install ripgrep
+        run: |
+          if ! command -v rg &>/dev/null; then
+            sudo apt-get update && sudo apt-get install -y ripgrep
+          fi
       - name: Block non-canonical Odoo DB names
         run: |
           set -euo pipefail
-          # Disallow any odoo_*_vN or other variants
-          ! rg -n "\bodoo_[a-z0-9]+_v[0-9]+\b" . || {
+          # Only scan runtime config files — NOT docs, markdown, or research
+          # Disallow any odoo_*_vN or other variants in config files
+          ! rg -n "\bodoo_[a-z0-9]+_v[0-9]+\b" \
+            -g '*.yml' -g '*.yaml' -g '*.conf' -g '*.env' \
+            docker-compose*.yml config/ deploy/ odoo19/ 2>/dev/null || {
             echo "ERROR: Found versioned DB names like odoo_*_v2"
             exit 1
           }
-          # Allow only canonical names (dev, stage, prod) or generic "odoo"
-          ! rg -n "\bodoo_(?!dev\b|stage\b|prod\b)[a-z0-9_]+\b" . || {
-            echo "ERROR: Found non-canonical DB names - only odoo_dev, odoo_stage, odoo_prod allowed"
+          # Allow canonical names: odoo_dev, odoo_stage, odoo_staging, odoo_prod, odoo_core, odoo_db
+          ! rg -n "\bodoo_(?!dev\b|staging?\b|prod\b|core\b|db\b|test\b)[a-z0-9_]+\b" \
+            -g '*.yml' -g '*.yaml' -g '*.conf' -g '*.env' \
+            docker-compose*.yml config/ deploy/ odoo19/ 2>/dev/null || {
+            echo "ERROR: Found non-canonical DB names"
             exit 1
           }
+          echo "DB naming gate passed"

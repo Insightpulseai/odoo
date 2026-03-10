@@ -68,6 +68,18 @@ export function resolveSlackAction(eventType: string): { jobType: string; agent:
 }
 
 /**
+ * Map a Slack interactive action_id to a run_type + agent.
+ * Used for button clicks from event-fanout approval messages.
+ */
+export function resolveInteraction(actionId: string): { jobType: string; agent: string } | null {
+  const routes: Record<string, { jobType: string; agent: string }> = {
+    approval_approve: { jobType: 'slack.approval.approve', agent: 'approval-agent' },
+    approval_reject: { jobType: 'slack.approval.reject', agent: 'approval-agent' },
+  }
+  return routes[actionId] ?? null
+}
+
+/**
  * Map a slash command to a run_type + agent.
  *
  * /pulser routes to pulser-intent-agent which enqueues into ops.taskbus_intents.

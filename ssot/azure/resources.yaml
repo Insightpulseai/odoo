@@ -19,7 +19,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-05"
+last_updated: "2026-03-09"
 naming_convention: "{type}-ipai-{env}"
 default_region: southeastasia
 default_environment: dev
@@ -31,8 +31,8 @@ resource_groups:
   - name: rg-ipai-dev
     environment: dev
     region: southeastasia
-    source: bicep
-    notes: Primary resource group for Databricks stack deployment
+    source: confirmed
+    notes: Primary resource group (legacy or fallback)
 
   - name: rg-ipai-shared-dev
     environment: dev
@@ -40,13 +40,21 @@ resource_groups:
     source: bicep
     notes: Shared services (Key Vault). Referenced in main.bicep line 349-354.
 
+  - name: rg-ipai-ai-dev
+    environment: dev
+    region: southeastasia
+    source: confirmed
+    notes: >
+      Main resource group for AI, Databricks, and Data Plane.
+      Confirmed via portal screenshot 2026-03-09.
+
   - name: rg-dbw-managed-ipai-dev
     environment: dev
     region: southeastasia
-    source: bicep
+    source: confirmed
     notes: >
-      Databricks-managed resource group. Created automatically by the
-      Databricks workspace. Contains managed disks, NICs, and NSGs.
+      Databricks-managed resource group (rg-dbw-managed-ipai-...).
+      Created automatically by the Databricks workspace.
 
 # -----------------------------------------------------------------------------
 # Compute
@@ -54,10 +62,10 @@ resource_groups:
 compute:
   - name: dbw-ipai-dev
     type: Microsoft.Databricks/workspaces
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
     sku: premium
-    source: bicep
+    source: confirmed
     bicep_var: resolvedWorkspaceName
     notes: >
       Databricks workspace with VNet injection and Secure Cluster Connectivity
@@ -69,11 +77,11 @@ compute:
 storage:
   - name: stipaidevlake
     type: Microsoft.Storage/storageAccounts
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
     kind: StorageV2
     sku: Standard_LRS
-    hns_enabled: true  # ADLS Gen2
+    hns_enabled: true # ADLS Gen2
     source: bicep
     bicep_var: resolvedStorageAccountName
     containers:
@@ -97,10 +105,10 @@ storage:
 network:
   - name: vnet-ipai-databricks
     type: Microsoft.Network/virtualNetworks
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
     address_space: "10.10.0.0/16"
-    source: bicep
+    source: confirmed
     bicep_var: vnetName
     subnets:
       - name: snet-dbw-public
@@ -115,9 +123,9 @@ network:
 
   - name: nsg-dbw-ipai-dev
     type: Microsoft.Network/networkSecurityGroups
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
-    source: bicep
+    source: confirmed
     bicep_var: databricksNsgName
     notes: >
       NSG required by Databricks VNet injection. Contains rules for
@@ -141,9 +149,21 @@ security:
 
   - name: id-ipai-databricks-dev
     type: Microsoft.ManagedIdentity/userAssignedIdentities
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
-    source: bicep
+    source: confirmed
+
+  - name: id-ipai-agents-dev
+    type: Microsoft.ManagedIdentity/userAssignedIdentities
+    resource_group: rg-ipai-shared-dev
+    region: southeastasia
+    source: confirmed
+
+  - name: unity-catalog-access-connector
+    type: Microsoft.Databricks/accessConnectors
+    resource_group: rg-dbw-managed-ipai-dev
+    region: southeastasia
+    source: confirmed
     bicep_var: managedIdentityName
     role_assignments:
       - role: Storage Blob Data Contributor
@@ -160,24 +180,36 @@ security:
 ai:
   - name: oai-ipai-dev
     type: "Microsoft.CognitiveServices/accounts (kind: OpenAI)"
-    resource_group: rg-ipai-dev
-    region: southeastasia
+    resource_group: rg-ipai-ai-dev
+    region: eastus
     source: confirmed
     notes: >
-      Azure OpenAI resource. Confirmed in Azure portal.
-      Not yet defined in Bicep IaC — should be added.
+      Azure OpenAI resource. Confirmed in portal (East US).
 
   - name: srch-ipai-dev
     type: Microsoft.Search/searchServices
-    resource_group: rg-ipai-dev
+    resource_group: rg-ipai-ai-dev
     region: southeastasia
     source: confirmed
-    needs_verification: true
-    notes: >
-      Azure AI Search. Name needs verification — may be "srch-ipai-dev"
-      or "search-ipai-sea". The -sea suffix convention is wrong per naming
-      rules, so srch-ipai-dev is the expected canonical name. Confirm via:
-        az search service list --resource-group rg-ipai-dev --query "[].name"
+    notes: Azure AI Search confirmed in rg-ipai-ai-dev.
+
+  - name: docai-ipai-dev
+    type: Microsoft.CognitiveServices/accounts (DocumentIntelligence)
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+
+  - name: lang-ipai-dev
+    type: Microsoft.CognitiveServices/accounts (TextAnalytics)
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
+
+  - name: vision-ipai-dev
+    type: Microsoft.CognitiveServices/accounts (ComputerVision)
+    resource_group: rg-ipai-ai-dev
+    region: southeastasia
+    source: confirmed
 
 # -----------------------------------------------------------------------------
 # Database (Pending)

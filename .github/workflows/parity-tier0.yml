@@ -2,8 +2,18 @@ name: parity-tier0
 
 on:
   pull_request:
+    paths:
+      - 'addons/**'
+      - 'docs/parity/**'
+      - 'config/parity/**'
+      - 'scripts/parity/**'
+      - '.github/workflows/parity-tier0.yml'
   push:
     branches: [main]
+    paths:
+      - 'addons/**'
+      - 'docs/parity/**'
+      - 'config/parity/**'
 
 permissions:
   contents: read

@@ -20,12 +20,19 @@ records:
     ttl: 3600
     mailgun_label: "Sending records / SPF"
 
-  # DKIM — cryptographic sender verification (single-line, do not wrap)
+  # DKIM #1 — cryptographic sender verification (selector: mx)
   - type: TXT
     name: mx._domainkey.mg
     value: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
     ttl: 3600
-    mailgun_label: "Sending records / DKIM"
+    mailgun_label: "Sending records / DKIM #1"
+
+  # DKIM #2 — rotation key (selector: pic)
+  - type: TXT
+    name: pic._domainkey.mg
+    value: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB"
+    ttl: 3600
+    mailgun_label: "Sending records / DKIM #2"
 
   # Tracking CNAME — enables open/click/unsubscribe tracking
   - type: CNAME

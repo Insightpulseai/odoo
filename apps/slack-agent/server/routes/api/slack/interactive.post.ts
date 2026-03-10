@@ -14,7 +14,7 @@ import { defineEventHandler, readRawBody, getHeader, setResponseStatus, send } f
 import { useRuntimeConfig } from 'nitropack/runtime'
 import { verifySlackSignature } from '../../../lib/verify'
 import { slackInteractionKey } from '../../../lib/idempotency'
-import { enqueueSlackRun } from '../../../lib/taskbus'
+import { enqueueSlackRun, resolveInteraction } from '../../../lib/taskbus'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
@@ -62,22 +62,55 @@ export default defineEventHandler(async (event) => {
   const supabaseUrl = (config.supabaseUrl as string) || process.env.SUPABASE_URL || ''
   const supabaseKey = (config.supabaseServiceRoleKey as string) || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
-  enqueueSlackRun({
-    jobType: `slack.interactive.${interactionType ?? 'unknown'}`,
-    agent: 'slack-copilot-agent',
-    idempotencyKey: slackInteractionKey(triggerId),
-    input: {
-      interaction_type: interactionType,
-      trigger_id: triggerId,
-      user: payload.user,
-      actions: payload.actions,
-      view: payload.view,
-      callback_id: (payload.view as Record<string, unknown> | undefined)?.callback_id
-        ?? (payload.actions as Array<Record<string, unknown>> | undefined)?.[0]?.action_id,
-    },
-    supabaseUrl,
-    supabaseServiceRoleKey: supabaseKey,
-  }).catch((err: unknown) => {
-    console.error('[slack-interactive] enqueue error:', err instanceof Error ? err.message : String(err))
-  })
+  // Check if this is an approval action (from event-fanout approval messages)
+  const actions = payload.actions as Array<Record<string, unknown>> | undefined
+  const firstActionId = actions?.[0]?.action_id as string | undefined
+  const approvalRoute = firstActionId ? resolveInteraction(firstActionId) : null
+
+  if (approvalRoute && actions?.[0]?.value) {
+    // Approval flow: parse value payload and enqueue with approval-specific routing
+    let approvalContext: Record<string, unknown> = {}
+    try {
+      approvalContext = JSON.parse(actions[0].value as string)
+    } catch { /* value not JSON — use as-is */ }
+
+    enqueueSlackRun({
+      jobType: approvalRoute.jobType,
+      agent: approvalRoute.agent,
+      idempotencyKey: slackInteractionKey(triggerId),
+      input: {
+        interaction_type: interactionType,
+        trigger_id: triggerId,
+        user: payload.user,
+        action: firstActionId === 'approval_approve' ? 'approve' : 'reject',
+        approval_context: approvalContext,
+        channel_id: (payload.channel as Record<string, unknown> | undefined)?.id,
+        message_ts: (payload.message as Record<string, unknown> | undefined)?.ts,
+      },
+      supabaseUrl,
+      supabaseServiceRoleKey: supabaseKey,
+    }).catch((err: unknown) => {
+      console.error('[slack-interactive] approval enqueue error:', err instanceof Error ? err.message : String(err))
+    })
+  } else {
+    // Default interactive handling
+    enqueueSlackRun({
+      jobType: `slack.interactive.${interactionType ?? 'unknown'}`,
+      agent: 'slack-copilot-agent',
+      idempotencyKey: slackInteractionKey(triggerId),
+      input: {
+        interaction_type: interactionType,
+        trigger_id: triggerId,
+        user: payload.user,
+        actions: payload.actions,
+        view: payload.view,
+        callback_id: (payload.view as Record<string, unknown> | undefined)?.callback_id
+          ?? firstActionId,
+      },
+      supabaseUrl,
+      supabaseServiceRoleKey: supabaseKey,
+    }).catch((err: unknown) => {
+      console.error('[slack-interactive] enqueue error:', err instanceof Error ? err.message : String(err))
+    })
+  }
 })

@@ -1,4 +1,13 @@
--- Finance Seed Data
+-- ==========================================================================
+-- DEPRECATED — 2026-03-09
+-- Canonical seed data has moved to: data/finance_seed/
+--   - Expense categories → 05_expense_categories.csv (product.product)
+--   - Approval rules     → 06_approval_thresholds.csv (reference CSV)
+-- This file is retained for Supabase-only backward compatibility.
+-- Do NOT use for new Odoo deployments.
+-- ==========================================================================
+
+-- Finance Seed Data (DEPRECATED — see header)
 -- Expense categories, approval rules, budgets, and sample tasks
 
 -- ============================================================================

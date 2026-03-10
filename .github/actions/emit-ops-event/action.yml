@@ -1,0 +1,81 @@
+name: 'Emit OPS Event'
+description: 'Send HMAC-signed event to ops-ingest Edge Function for observability'
+
+inputs:
+  topic:
+    description: 'Event topic (deployment, incident, workflow_run)'
+    required: true
+  payload:
+    description: 'JSON payload for the event'
+    required: true
+  supabase_url:
+    description: 'Supabase project URL'
+    required: true
+  ops_ingest_secret:
+    description: 'OPS_INGEST_HMAC_SECRET for signing'
+    required: true
+  correlation_id:
+    description: 'Correlation ID for tracing (auto-generated if empty)'
+    required: false
+    default: ''
+
+outputs:
+  event_id:
+    description: 'Generated event ID'
+    value: ${{ steps.emit.outputs.event_id }}
+  correlation_id:
+    description: 'Correlation ID used'
+    value: ${{ steps.emit.outputs.correlation_id }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Emit event to ops-ingest
+      id: emit
+      shell: bash
+      env:
+        TOPIC: ${{ inputs.topic }}
+        PAYLOAD: ${{ inputs.payload }}
+        SUPABASE_URL: ${{ inputs.supabase_url }}
+        OPS_INGEST_SECRET: ${{ inputs.ops_ingest_secret }}
+        INPUT_CORRELATION_ID: ${{ inputs.correlation_id }}
+      run: |
+        # Generate IDs
+        EVENT_ID=$(uuidgen 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())")
+        CID="${INPUT_CORRELATION_ID:-$(uuidgen 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())")}"
+
+        echo "event_id=$EVENT_ID" >> "$GITHUB_OUTPUT"
+        echo "correlation_id=$CID" >> "$GITHUB_OUTPUT"
+
+        # Build full payload with metadata
+        FULL_PAYLOAD=$(python3 -c "
+        import json, os
+        topic = os.environ['TOPIC']
+        payload = json.loads(os.environ['PAYLOAD'])
+        full = {
+            'topic': topic,
+            'event_id': '$EVENT_ID',
+            'action': 'ingest',
+            'actor': '${{ github.actor }}',
+            'correlation_id': '$CID',
+            topic: payload
+        }
+        print(json.dumps(full, separators=(',', ':')))
+        ")
+
+        # Compute HMAC-SHA256 signature
+        SIG=$(echo -n "$FULL_PAYLOAD" | openssl dgst -sha256 -hmac "$OPS_INGEST_SECRET" -binary | xxd -p | tr -d '\n')
+
+        # POST to ops-ingest
+        HTTP_CODE=$(curl -s -o /tmp/ops-event-response.json -w "%{http_code}" \
+          -X POST "${SUPABASE_URL}/functions/v1/ops-ingest" \
+          -H "Content-Type: application/json" \
+          -H "x-ops-signature: ${SIG}" \
+          -d "$FULL_PAYLOAD")
+
+        echo "OPS event emitted: topic=$TOPIC event_id=$EVENT_ID cid=${CID:0:8} http=$HTTP_CODE"
+
+        if [ "$HTTP_CODE" -ge 400 ]; then
+          echo "::warning::OPS event emission failed (HTTP $HTTP_CODE) — non-blocking"
+          cat /tmp/ops-event-response.json 2>/dev/null || true
+        fi
