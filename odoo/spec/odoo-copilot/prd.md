@@ -21,9 +21,11 @@ Harden CE with the OCA must-have layer before adding any AI modules:
 - **CE Cleanup**: `disable_odoo_online`, `remove_odoo_enterprise`, `mail_debrand` — remove EE upsell noise
 - **Search**: `base_name_search_improved` — better name_search across models
 
-All 13 modules are OCA community modules already declared in `config/addons.manifest.yaml` (tiers 0-6) and cloned via git-aggregator. No custom ipai_* modules needed.
+All 13 modules are OCA community modules declared in `config/addons.manifest.yaml` (tiers 0-6). No custom ipai_* modules needed.
 
-**Gate**: All 13 install cleanly via `--stop-after-init` on a disposable test DB.
+**Verification result (2026-03-11)**: 4/13 modules ported to 19.0 and installed successfully (`queue_job`, `disable_odoo_online`, `remove_odoo_enterprise`, `mail_debranding`). 9/13 remain on 18.0 manifests — blocked by OCA migration gap. `mail_debrand` was reclassified: actual module is `mail_debranding` in server-brand repo.
+
+**Gate**: Partial pass. 4 installed; 9 blocked pending OCA community port to 19.0.
 
 ### Batch 1: Official Odoo AI Foundation
 Achieve parity with the official Odoo 19 AI app structure:

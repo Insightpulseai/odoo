@@ -27,10 +27,11 @@ No phase begins until the prior gate passes.
 - **GATE**: Modules install; no regressions on baseline
 
 ### Phase B0.C: OCA AI Compatibility Layer
-- Verify `ai_oca_bridge` installs on Odoo 19 (source is 18.0 — requires port-and-verify)
-- Optionally verify `ai_oca_bridge_extra_parameters` for payload enrichment
-- This is a prerequisite for Batch 1 provider routing
-- **GATE**: `ai_oca_bridge` installs cleanly or failure classified as migration gap
+- Verified: all OCA AI modules (`ai_oca_bridge`, `ai_oca_bridge_extra_parameters`, etc.) are 18.0 only
+- **Classification**: migration gap — no 19.0 port exists in OCA/ai repo
+- **Mitigation**: Batch 1 uses `ipai_ai_core` + `ipai_ai_oca_bridge` (custom) for provider routing
+- OCA AI bridge remains in manifest must-have for tracking; will install when OCA ports to 19.0
+- **GATE**: FAIL (migration gap). Not blocking — Batch 1 proceeds via custom bridge.
 
 ### Batch 0 → Batch 1 Promotion
 - Promote verified Batch 0 modules to dev DB (`odoo_dev`)
