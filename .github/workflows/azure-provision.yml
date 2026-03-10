@@ -1,0 +1,145 @@
+name: azure-provision
+
+# Provisions Azure infrastructure via Bicep (manual trigger only)
+# Run once per environment to create ACR, Container Apps, PostgreSQL, Key Vault
+# SSOT: infra/azure/odoo-runtime.bicep
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        required: true
+      bicep_template:
+        description: "Bicep template to deploy"
+        type: choice
+        options:
+          - odoo-runtime
+          - platform/main
+          - main
+        default: odoo-runtime
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  provision:
+    name: "Provision Azure Resources (${{ inputs.environment }})"
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create Resource Group
+        run: |
+          RG="rg-ipai-${{ inputs.environment }}"
+          az group create \
+            --name "$RG" \
+            --location southeastasia \
+            --tags Environment=${{ inputs.environment }} Project=IPAI ManagedBy=Bicep
+
+      - name: Validate Bicep Template
+        run: |
+          TEMPLATE="infra/azure/${{ inputs.bicep_template }}.bicep"
+          PARAMS="infra/azure/parameters/odoo-${{ inputs.environment }}.parameters.json"
+          RG="rg-ipai-${{ inputs.environment }}"
+
+          echo "Validating: ${TEMPLATE}"
+          az deployment group validate \
+            --resource-group "$RG" \
+            --template-file "$TEMPLATE" \
+            --parameters "@$PARAMS" \
+            --parameters pgAdminPassword="${{ secrets.PG_ADMIN_PASSWORD }}"
+
+          echo "Validation passed"
+
+      - name: Deploy Bicep Template
+        run: |
+          TEMPLATE="infra/azure/${{ inputs.bicep_template }}.bicep"
+          PARAMS="infra/azure/parameters/odoo-${{ inputs.environment }}.parameters.json"
+          RG="rg-ipai-${{ inputs.environment }}"
+          DEPLOY_NAME="ipai-${{ inputs.bicep_template }}-$(date +%Y%m%d-%H%M%S)"
+
+          echo "Deploying: ${TEMPLATE} to ${RG}"
+          az deployment group create \
+            --resource-group "$RG" \
+            --template-file "$TEMPLATE" \
+            --parameters "@$PARAMS" \
+            --parameters pgAdminPassword="${{ secrets.PG_ADMIN_PASSWORD }}" \
+            --name "$DEPLOY_NAME" \
+            --query "properties.outputs" \
+            --output json
+
+      - name: Capture Deployment Outputs
+        if: success()
+        run: |
+          RG="rg-ipai-${{ inputs.environment }}"
+          DEPLOY_NAME=$(az deployment group list \
+            --resource-group "$RG" \
+            --query "[0].name" -o tsv)
+
+          echo "## Deployment Outputs"
+          az deployment group show \
+            --resource-group "$RG" \
+            --name "$DEPLOY_NAME" \
+            --query "properties.outputs" -o json
+
+          echo ""
+          echo "## Resources Created"
+          az resource list \
+            --resource-group "$RG" \
+            --query "[].{Name:name, Type:type, Location:location}" \
+            -o table
+
+      - name: Verify Key Resources
+        if: success()
+        run: |
+          RG="rg-ipai-${{ inputs.environment }}"
+
+          echo "Checking ACR..."
+          ACR=$(az acr list -g "$RG" --query "[0].loginServer" -o tsv 2>/dev/null || echo "not found")
+          echo "  ACR: ${ACR}"
+
+          echo "Checking Container Apps..."
+          APP=$(az containerapp list -g "$RG" --query "[0].properties.configuration.ingress.fqdn" -o tsv 2>/dev/null || echo "not found")
+          echo "  Container App FQDN: ${APP}"
+
+          echo "Checking PostgreSQL..."
+          PG=$(az postgres flexible-server list -g "$RG" --query "[0].fullyQualifiedDomainName" -o tsv 2>/dev/null || echo "not found")
+          echo "  PostgreSQL: ${PG}"
+
+          echo "Checking Key Vault..."
+          KV=$(az keyvault list -g "$RG" --query "[0].properties.vaultUri" -o tsv 2>/dev/null || echo "not found")
+          echo "  Key Vault: ${KV}"
+
+      - name: Post-Provision Summary
+        if: always()
+        run: |
+          echo "## Provision Summary"
+          echo ""
+          echo "- **Environment**: ${{ inputs.environment }}"
+          echo "- **Template**: ${{ inputs.bicep_template }}"
+          echo "- **Resource Group**: rg-ipai-${{ inputs.environment }}"
+          echo "- **Status**: ${{ job.status }}"
+          echo "- **Triggered by**: ${{ github.actor }}"
+          echo ""
+          echo "Next step: trigger odoo-azure-deploy workflow to build and deploy the Odoo image"

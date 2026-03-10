@@ -49,6 +49,25 @@ jobs:
           tenant-id: ${{ env.AZURE_TENANT_ID }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Verify Azure Resources
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          RG="rg-ipai-${ENV}"
+
+          # Check resource group exists
+          az group show -n "$RG" > /dev/null 2>&1 || {
+            echo "Resource group $RG not found. Run azure-provision workflow first."
+            exit 1
+          }
+
+          # Check ACR exists
+          az acr show -n ${{ env.ACR_NAME }} > /dev/null 2>&1 || {
+            echo "ACR ${{ env.ACR_NAME }} not found. Run azure-provision workflow first."
+            exit 1
+          }
+
+          echo "Azure resources verified"
+
       - name: Build and Push to ACR
         run: |
           ENV="${{ github.event.inputs.environment || 'dev' }}"
