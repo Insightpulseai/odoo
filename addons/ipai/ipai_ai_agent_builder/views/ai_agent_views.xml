@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AI Agent Views -->
+    <record id="view_ipai_ai_agent_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.tree</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <tree string="AI Agents">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="model"/>
+                <field name="style"/>
+                <field name="run_count"/>
+                <field name="active"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_agent_form" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.form</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_ipai_ai_run)d" type="action"
+                                class="oe_stat_button" icon="fa-history"
+                                context="{'search_default_agent_id': active_id}">
+                            <field name="run_count" widget="statinfo" string="Runs"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Agent Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="provider"/>
+                            <field name="model"/>
+                            <field name="style"/>
+                        </group>
+                        <group>
+                            <field name="temperature"/>
+                            <field name="max_tokens"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="System Prompt" name="system_prompt">
+                            <field name="system_prompt" placeholder="Enter the system prompt that defines the agent's behavior..."/>
+                        </page>
+                        <page string="Topics" name="topics">
+                            <field name="topic_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="tool_ids" widget="many2many_tags"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Sources" name="sources">
+                            <field name="source_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="source_type"/>
+                                    <field name="ingest_status"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_agent_search" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.search</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <search string="AI Agents">
+                <field name="name"/>
+                <field name="provider"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="OpenAI" name="openai" domain="[('provider', '=', 'openai')]"/>
+                <filter string="Google" name="google" domain="[('provider', '=', 'google')]"/>
+                <separator/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Provider" name="group_provider" context="{'group_by': 'provider'}"/>
+                    <filter string="Style" name="group_style" context="{'group_by': 'style'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- AI Topic Views -->
+    <record id="view_ipai_ai_topic_form" model="ir.ui.view">
+        <field name="name">ipai.ai.topic.form</field>
+        <field name="model">ipai.ai.topic</field>
+        <field name="arch" type="xml">
+            <form string="AI Topic">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="agent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="tool_ids" widget="many2many_tags"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Instructions">
+                        <field name="instructions" nolabel="1" placeholder="Enter instructions for this topic..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- AI Tool Views -->
+    <record id="view_ipai_ai_tool_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.tool.tree</field>
+        <field name="model">ipai.ai.tool</field>
+        <field name="arch" type="xml">
+            <tree string="AI Tools">
+                <field name="key"/>
+                <field name="name"/>
+                <field name="python_entrypoint"/>
+                <field name="dry_run_supported"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_tool_form" model="ir.ui.view">
+        <field name="name">ipai.ai.tool.form</field>
+        <field name="model">ipai.ai.tool</field>
+        <field name="arch" type="xml">
+            <form string="AI Tool">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="key"/>
+                            <field name="name"/>
+                            <field name="python_entrypoint"/>
+                        </group>
+                        <group>
+                            <field name="group_ids" widget="many2many_tags"/>
+                            <field name="dry_run_supported"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <group string="Parameters Schema (JSON)">
+                        <field name="parameters_schema" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- AI Run Views -->
+    <record id="view_ipai_ai_run_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.run.tree</field>
+        <field name="model">ipai.ai.run</field>
+        <field name="arch" type="xml">
+            <tree string="AI Runs" default_order="create_date desc">
+                <field name="create_date"/>
+                <field name="agent_id"/>
+                <field name="user_id"/>
+                <field name="input" optional="show"/>
+                <field name="provider"/>
+                <field name="model"/>
+                <field name="latency_ms"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_run_form" model="ir.ui.view">
+        <field name="name">ipai.ai.run.form</field>
+        <field name="model">ipai.ai.run</field>
+        <field name="arch" type="xml">
+            <form string="AI Run" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="user_id"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group>
+                            <field name="provider"/>
+                            <field name="model"/>
+                            <field name="latency_ms"/>
+                        </group>
+                    </group>
+                    <group string="Input">
+                        <field name="input" nolabel="1"/>
+                    </group>
+                    <group string="Output">
+                        <field name="output" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Events" name="events">
+                            <field name="event_ids">
+                                <tree>
+                                    <field name="create_date"/>
+                                    <field name="event_type"/>
+                                    <field name="payload"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Tool Calls" name="tool_calls">
+                            <field name="tool_call_ids">
+                                <tree>
+                                    <field name="create_date"/>
+                                    <field name="tool_key"/>
+                                    <field name="status"/>
+                                    <field name="execution_time_ms"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_run_search" model="ir.ui.view">
+        <field name="name">ipai.ai.run.search</field>
+        <field name="model">ipai.ai.run</field>
+        <field name="arch" type="xml">
+            <search string="AI Runs">
+                <field name="agent_id"/>
+                <field name="user_id"/>
+                <field name="input"/>
+                <filter string="Today" name="today" domain="[('create_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agent" name="group_agent" context="{'group_by': 'agent_id'}"/>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Provider" name="group_provider" context="{'group_by': 'provider'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_ipai_ai_agent" model="ir.actions.act_window">
+        <field name="name">AI Agents</field>
+        <field name="res_model">ipai.ai.agent</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ipai_ai_agent_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first AI Agent
+            </p>
+            <p>
+                AI Agents help automate tasks by combining LLM capabilities with business tools.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_ipai_ai_tool" model="ir.actions.act_window">
+        <field name="name">AI Tools</field>
+        <field name="res_model">ipai.ai.tool</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register AI Tools
+            </p>
+            <p>
+                Tools are callable actions that AI Agents can execute.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_ipai_ai_run" model="ir.actions.act_window">
+        <field name="name">AI Runs</field>
+        <field name="res_model">ipai.ai.run</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ipai_ai_run_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_ipai_ai_root"
+              name="AI Agents"
+              web_icon="ipai_ai_agent_builder,static/description/icon.png"
+              sequence="100"/>
+
+    <menuitem id="menu_ipai_ai_agents"
+              name="Agents"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_agent"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_ai_tools"
+              name="Tools"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_tool"
+              sequence="20"/>
+
+    <menuitem id="menu_ipai_ai_runs"
+              name="Run History"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_run"
+              sequence="30"/>
+
+    <menuitem id="menu_ipai_ai_config"
+              name="Configuration"
+              parent="menu_ipai_ai_root"
+              sequence="90"
+              groups="group_ipai_ai_admin"/>
+</odoo>
