@@ -24,7 +24,7 @@ last_reviewed: "2026-02-27"
 email:
   status: required
   provider: zoho_smtp
-  notes: "Zoho Mail SMTP is the production mail provider. Mailgun is deprecated."
+  notes: "Zoho Mail = inbound MX + team mailboxes. Mailgun = transactional outbound (mg.insightpulseai.com)."
   config:
     smtp_host: smtp.zoho.com
     smtp_port: 465

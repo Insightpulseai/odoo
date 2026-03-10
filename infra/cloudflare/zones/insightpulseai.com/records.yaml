@@ -146,7 +146,13 @@ records:
     name: mx._domainkey.mg
     content: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC59AXS0WKSDfH3HaKlpa1a3dusQWC7PECyywHd2mntae8jiwJ9++tHgu+YFNRVwXTmCFfUIsUdQpmxhYyVsYVLis/xagryklQ/wU3SF0E3Qso796fV9x1ShYb/W9rqpiW8jVD78LSppRquyYwTNLuP2+5hWFLxxVqPJYWZBHE2CQIDAQAB"
     ttl: 3600
-    comment: "DKIM key for mg subdomain (Mailgun)"
+    comment: "DKIM key #1 for mg subdomain (Mailgun, selector: mx)"
+
+  - type: TXT
+    name: pic._domainkey.mg
+    content: "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB"
+    ttl: 3600
+    comment: "DKIM key #2 for mg subdomain (Mailgun, selector: pic)"
 
   - type: TXT
     name: _dmarc.mg

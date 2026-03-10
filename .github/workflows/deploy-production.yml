@@ -164,6 +164,23 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Production is now running the latest version." >> $GITHUB_STEP_SUMMARY
 
+      - name: Emit deployment.completed event
+        if: success()
+        uses: ./.github/actions/emit-ops-event
+        with:
+          topic: deployment
+          payload: |
+            {
+              "system": "odoo",
+              "environment": "production",
+              "status": "completed",
+              "version": "${{ github.sha }}",
+              "artifact_ref": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.preflight.outputs.image_tag }}",
+              "metadata": {"actor": "${{ github.actor }}", "run_id": "${{ github.run_id }}"}
+            }
+          supabase_url: ${{ secrets.SUPABASE_URL }}
+          ops_ingest_secret: ${{ secrets.OPS_INGEST_HMAC_SECRET }}
+
       - name: Deploy notification - Failed
         if: failure()
         run: |
@@ -171,6 +188,22 @@ jobs:
           echo "## Deployment Failed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the logs above for details." >> $GITHUB_STEP_SUMMARY
+
+      - name: Emit deployment.failed event
+        if: failure()
+        uses: ./.github/actions/emit-ops-event
+        with:
+          topic: deployment
+          payload: |
+            {
+              "system": "odoo",
+              "environment": "production",
+              "status": "failed",
+              "version": "${{ github.sha }}",
+              "metadata": {"actor": "${{ github.actor }}", "run_id": "${{ github.run_id }}"}
+            }
+          supabase_url: ${{ secrets.SUPABASE_URL }}
+          ops_ingest_secret: ${{ secrets.OPS_INGEST_HMAC_SECRET }}
 
   # ===========================================================================
   # Post-deployment Smoke Test

@@ -1,0 +1,150 @@
+# =============================================================================
+# Enterprise OKR Framework — InsightPulse AI
+# =============================================================================
+#
+# Strategic objectives and OKR stack for the enterprise operating model.
+# Cross-references operational KPIs in:
+#   platform/data/contracts/control_room_kpis.yaml
+#
+# Spec bundle: spec/enterprise-target-state/
+# CI validator: scripts/ci/validate_enterprise_okrs.py
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-08"
+
+# =============================================================================
+# Strategic Objectives (A-E)
+# =============================================================================
+strategic_objectives:
+
+  - id: obj_A
+    name: "Delivery Speed"
+    description: >
+      Accelerate time-to-value for engineering and business outcomes through
+      governed automation, CI/CD maturity, and streamlined approval workflows.
+    key_results:
+      - kr: "Deployment frequency >= 2/week (kpi_016)"
+        kpi_ref: kpi_016
+      - kr: "Approval turnaround P50 < 24h (kpi_001)"
+        kpi_ref: kpi_001
+      - kr: "CI green rate >= 95% (kpi_017)"
+        kpi_ref: kpi_017
+
+  - id: obj_B
+    name: "Safety & Reliability"
+    description: >
+      Ensure production systems maintain high availability, data integrity,
+      and sync consistency across the integration backbone.
+    key_results:
+      - kr: "Sync lag < 15 min (kpi_015)"
+        kpi_ref: kpi_015
+      - kr: "Identity resolution >= 99% (kpi_014)"
+        kpi_ref: kpi_014
+      - kr: "n8n workflow success rate >= 95% (kpi_010)"
+        kpi_ref: kpi_010
+
+  - id: obj_C
+    name: "Infrastructure Efficiency"
+    description: >
+      Maximize ROI on self-hosted infrastructure through automation coverage,
+      document processing throughput, and agent tool reliability.
+    key_results:
+      - kr: "Automation coverage >= 80% (kpi_011)"
+        kpi_ref: kpi_011
+      - kr: "OCR accuracy >= 95% (kpi_007)"
+        kpi_ref: kpi_007
+      - kr: "Invoice throughput >= 50/day (kpi_008)"
+        kpi_ref: kpi_008
+
+  - id: obj_D
+    name: "Cost & Governance"
+    description: >
+      Maintain cost-minimized posture while enforcing governance controls
+      across finance operations, monthly close, and compliance.
+    key_results:
+      - kr: "Monthly close cycle < 10 business days (kpi_003)"
+        kpi_ref: kpi_003
+      - kr: "Expense processing P50 < 48h (kpi_002)"
+        kpi_ref: kpi_002
+      - kr: "Approval backlog < 20 items (kpi_004)"
+        kpi_ref: kpi_004
+
+  - id: obj_E
+    name: "Security & Compliance"
+    description: >
+      Achieve 100% on-time BIR filing, maintain tax reconciliation accuracy,
+      and ensure agent platform reliability for compliance workflows.
+    key_results:
+      - kr: "BIR filing on-time rate = 100% (kpi_005)"
+        kpi_ref: kpi_005
+      - kr: "Tax reconciliation variance < 0.1% (kpi_006)"
+        kpi_ref: kpi_006
+      - kr: "Agent tool success rate >= 90% (kpi_012)"
+        kpi_ref: kpi_012
+
+# =============================================================================
+# Canonical OKR Stack (O1-O3)
+# =============================================================================
+canonical_okrs:
+
+  - id: okr_O1
+    name: "Governed Engineering Control Plane"
+    description: >
+      Establish a fully governed engineering control plane where all repos,
+      CI/CD, infrastructure, and integrations are SSOT-managed, observable,
+      and audit-trailed.
+    parent_objectives: [obj_A, obj_B]
+    key_results:
+      - kr: "9 active repos classified by 5-layer model with CODEOWNERS"
+        measurement: "ssot/github/desired-end-state.yaml org_layers coverage"
+      - kr: "3 org-level GitHub Projects operational (Roadmap, Board, Backlog)"
+        measurement: "GitHub Projects API query"
+      - kr: "CI green rate sustained >= 95%"
+        kpi_ref: kpi_017
+      - kr: "All SSOT YAML files validated by CI on every push"
+        measurement: "Workflow pass rate for *-ssot-gate.yml"
+
+  - id: okr_O2
+    name: "Odoo as Governed Runtime"
+    description: >
+      Position Odoo CE 19 as the governed ERP runtime for finance, HR, and
+      approvals with CE + OCA + ipai_* achieving >= 80% EE parity.
+    parent_objectives: [obj_D, obj_E]
+    key_results:
+      - kr: "EE parity score >= 80% weighted"
+        measurement: "scripts/test_ee_parity.py output"
+      - kr: "BIR filing on-time rate = 100%"
+        kpi_ref: kpi_005
+      - kr: "Monthly close cycle < 10 business days"
+        kpi_ref: kpi_003
+      - kr: "All ipai_* modules pass CI gates"
+        measurement: "ci-odoo-ce.yml green on main"
+
+  - id: okr_O3
+    name: "Azure-Native AI/Data Maturity"
+    description: >
+      Progress Databricks workspace maturity through defined phases while
+      maintaining agent platform reliability and data governance.
+    parent_objectives: [obj_C, obj_E]
+    key_results:
+      - kr: "Databricks workspace at Phase 1 (shared sandbox) with Unity Catalog"
+        measurement: "ssot/databricks/workspace.yaml maturity_phases.current"
+      - kr: "Agent tool success rate >= 90%"
+        kpi_ref: kpi_012
+      - kr: "Copilot response latency P95 < 5s"
+        kpi_ref: kpi_013
+      - kr: "Medallion pipeline coverage for all finance data"
+        measurement: "Databricks catalog table count"
+
+# =============================================================================
+# KPI Cross-Reference Index
+# =============================================================================
+# Maps strategic objectives to operational KPIs defined in
+# platform/data/contracts/control_room_kpis.yaml
+kpi_index:
+  obj_A: [kpi_001, kpi_016, kpi_017]
+  obj_B: [kpi_010, kpi_014, kpi_015]
+  obj_C: [kpi_007, kpi_008, kpi_011]
+  obj_D: [kpi_002, kpi_003, kpi_004]
+  obj_E: [kpi_005, kpi_006, kpi_012]

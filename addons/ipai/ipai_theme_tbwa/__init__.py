@@ -1,1 +1,1 @@
-# IPAI Theme TBWA (Backend)
+# TBWA Backend Theme - No Python models needed

@@ -241,13 +241,14 @@ class IpaiAgentRun(models.Model):
 
     # ── Sequence / create ───────────────────────────────────────────────────
 
-    @api.model
-    def create(self, vals):
-        if vals.get("name", _("New")) == _("New"):
-            vals["name"] = self.env["ir.sequence"].next_by_code("ipai.agent.run") or _("New")
-        if not vals.get("idempotency_key"):
-            vals["idempotency_key"] = self._default_idempotency_key(vals)
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("name", _("New")) == _("New"):
+                vals["name"] = self.env["ir.sequence"].next_by_code("ipai.agent.run") or _("New")
+            if not vals.get("idempotency_key"):
+                vals["idempotency_key"] = self._default_idempotency_key(vals)
+        return super().create(vals_list)
 
     @api.model
     def _default_idempotency_key(self, vals):

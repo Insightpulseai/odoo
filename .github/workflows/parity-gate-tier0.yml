@@ -2,8 +2,18 @@ name: parity-gate-tier0
 
 on:
   pull_request:
+    paths:
+      - 'addons/ipai_finance_ppm*/**'
+      - 'addons/ipai_ocr_gateway/**'
+      - 'addons/ipai_ai_agent_builder/**'
+      - 'scripts/finance_ppm_seed_audit.py'
+      - '.github/workflows/parity-gate-tier0.yml'
   push:
     branches: [main]
+    paths:
+      - 'addons/ipai_finance_ppm*/**'
+      - 'addons/ipai_ocr_gateway/**'
+      - 'addons/ipai_ai_agent_builder/**'
   workflow_dispatch:
 
 permissions:

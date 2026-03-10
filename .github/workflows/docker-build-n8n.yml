@@ -6,7 +6,6 @@ on:
     paths:
       - 'automations/n8n/custom-nodes/**'
       - 'docker/n8n/**'
-  push:
     tags:
       - 'n8n-v*.*.*'
   workflow_dispatch:

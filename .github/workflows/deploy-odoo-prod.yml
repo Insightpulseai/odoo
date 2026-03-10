@@ -32,6 +32,9 @@ permissions:
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64]
+    environment:
+      name: odoo-production
+      url: https://erp.insightpulseai.com
     steps:
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -76,3 +79,43 @@ jobs:
             # Check for success/error signals in recent logs
             docker logs --tail=50 odoo-prod 2>&1 | grep -E "Initiating shutdown|Ready|loaded|Traceback|ERROR" || true
             echo "::endgroup::"
+
+      - name: Emit deployment.completed event
+        if: success()
+        uses: ./.github/actions/emit-ops-event
+        with:
+          topic: deployment
+          payload: |
+            {
+              "system": "odoo-modules",
+              "environment": "production",
+              "status": "completed",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "modules": "${{ github.event.inputs.modules || 'ipai_studio_ai' }}",
+                "action": "${{ github.event.inputs.action || 'upgrade' }}",
+                "actor": "${{ github.actor }}"
+              }
+            }
+          supabase_url: ${{ secrets.SUPABASE_URL }}
+          ops_ingest_secret: ${{ secrets.OPS_INGEST_HMAC_SECRET }}
+
+      - name: Emit deployment.failed event
+        if: failure()
+        uses: ./.github/actions/emit-ops-event
+        with:
+          topic: deployment
+          payload: |
+            {
+              "system": "odoo-modules",
+              "environment": "production",
+              "status": "failed",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "modules": "${{ github.event.inputs.modules || 'ipai_studio_ai' }}",
+                "action": "${{ github.event.inputs.action || 'upgrade' }}",
+                "actor": "${{ github.actor }}"
+              }
+            }
+          supabase_url: ${{ secrets.SUPABASE_URL }}
+          ops_ingest_secret: ${{ secrets.OPS_INGEST_HMAC_SECRET }}

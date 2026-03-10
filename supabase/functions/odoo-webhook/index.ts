@@ -54,6 +54,7 @@ Deno.serve(async (req) => {
   const aggregate_type = body.aggregate_type;
   const aggregate_id = body.aggregate_id;
   const payload = body.payload ?? body;
+  const correlation_id = req.headers.get("x-correlation-id") ?? body.correlation_id ?? null;
 
   if (!event_type || !aggregate_type || !aggregate_id) {
     return new Response("Missing fields", { status: 400 });
@@ -68,7 +69,8 @@ Deno.serve(async (req) => {
     p_aggregate_type: aggregate_type,
     p_aggregate_id: String(aggregate_id),
     p_payload: payload,
-    p_idempotency_key: idem
+    p_idempotency_key: idem,
+    p_correlation_id: correlation_id
   });
 
   if (e1) return new Response(`DB error: ${e1.message}`, { status: 500 });
@@ -79,8 +81,9 @@ Deno.serve(async (req) => {
     p_event_type: event_type,
     p_aggregate_type: aggregate_type,
     p_aggregate_id: String(aggregate_id),
-    p_payload: payload
+    p_payload: payload,
+    p_correlation_id: correlation_id
   });
 
-  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
+  return new Response(JSON.stringify({ ok: true, correlation_id }), { status: 200, headers: { "content-type": "application/json" } });
 });

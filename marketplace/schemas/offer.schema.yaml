@@ -1,0 +1,105 @@
+# Microsoft Marketplace Offer Schema
+# Mirrors Partner Center offer object model
+# Reference: https://learn.microsoft.com/en-us/partner-center/marketplace-offers/overview
+
+type: object
+required:
+  - offer_id
+  - offer_type
+  - name
+  - publisher
+  - status
+
+properties:
+  offer_id:
+    type: string
+    description: Unique offer identifier (slug format)
+    pattern: "^[a-z0-9-]+$"
+
+  offer_type:
+    type: string
+    enum:
+      - saas
+      - azure-application
+      - virtual-machine
+      - container
+      - professional-service
+      - managed-service
+    description: Microsoft Marketplace offer type
+
+  name:
+    type: string
+    description: Human-readable offer name
+
+  publisher:
+    type: object
+    properties:
+      name:
+        type: string
+      seller_id:
+        type: string
+      contact_email:
+        type: string
+        format: email
+
+  status:
+    type: string
+    enum:
+      - draft
+      - internal-review
+      - ready-for-publish
+      - published
+      - private-offer-only
+      - deprecated
+
+  product_family:
+    type: string
+    description: Product family grouping
+
+  runtime_repos:
+    type: array
+    items:
+      type: string
+    description: Links to runtime/product repos
+
+  categories:
+    type: array
+    items:
+      type: string
+    description: Marketplace category mappings
+
+  industries:
+    type: array
+    items:
+      type: string
+    description: Target industry verticals
+
+  commercial_channels:
+    type: array
+    items:
+      type: string
+      enum:
+        - marketplace-public
+        - private-offer
+        - multiparty-private-offer
+        - co-sell-attached
+
+  support_url:
+    type: string
+    format: uri
+
+  privacy_url:
+    type: string
+    format: uri
+
+  terms_url:
+    type: string
+    format: uri
+
+  created_at:
+    type: string
+    format: date
+
+  last_published_at:
+    type: string
+    format: date

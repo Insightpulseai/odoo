@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Skill Categories -->
+        <record id="skill_cat_odoo" model="ipai.skill.category">
+            <field name="name">Odoo Services</field>
+            <field name="code">odoo</field>
+            <field name="sequence">10</field>
+            <field name="description">Odoo consultation, implementation, customization, deployment, and support skills</field>
+        </record>
+
+        <record id="skill_cat_app" model="ipai.skill.category">
+            <field name="name">App Development</field>
+            <field name="code">app</field>
+            <field name="sequence">20</field>
+            <field name="description">Application strategy, custom development, mobile design, and maintenance skills</field>
+        </record>
+
+        <record id="skill_cat_web" model="ipai.skill.category">
+            <field name="name">Web Development</field>
+            <field name="code">web</field>
+            <field name="sequence">30</field>
+            <field name="description">Web development, backend solutions, e-commerce, and website maintenance skills</field>
+        </record>
+
+        <record id="skill_cat_design" model="ipai.skill.category">
+            <field name="name">Design</field>
+            <field name="code">design</field>
+            <field name="sequence">40</field>
+            <field name="description">UI/UX design, custom web design, and brand identity skills</field>
+        </record>
+
+        <!-- Odoo Services Skills -->
+        <record id="skill_odoo_consultation" model="ipai.skill.definition">
+            <field name="name">Odoo Consultation</field>
+            <field name="key">odoo.consultation</field>
+            <field name="category_id" ref="skill_cat_odoo"/>
+            <field name="sequence">1</field>
+            <field name="description">Discovery, gap analysis, module recommendations, EE parity assessment, and roadmap generation.</field>
+            <field name="intent_ids">["odoo consultation", "business analysis for odoo", "odoo gap analysis", "recommend odoo modules"]</field>
+        </record>
+
+        <record id="skill_odoo_implementation" model="ipai.skill.definition">
+            <field name="name">Odoo Implementation</field>
+            <field name="key">odoo.implementation</field>
+            <field name="category_id" ref="skill_cat_odoo"/>
+            <field name="sequence">2</field>
+            <field name="description">End-to-end Odoo CE deployment: environment setup, module installation, data migration, configuration, and go-live.</field>
+            <field name="intent_ids">["implement odoo", "deploy odoo modules", "install odoo", "configure odoo"]</field>
+        </record>
+
+        <record id="skill_odoo_customization" model="ipai.skill.definition">
+            <field name="name">Odoo Customization</field>
+            <field name="key">odoo.customization</field>
+            <field name="category_id" ref="skill_cat_odoo"/>
+            <field name="sequence">3</field>
+            <field name="description">Custom module development: model extensions, view customizations, workflow automation, reports, and API integrations.</field>
+            <field name="intent_ids">["customize odoo", "extend odoo module", "create custom field", "add odoo workflow"]</field>
+        </record>
+
+        <record id="skill_odoo_deployment" model="ipai.skill.definition">
+            <field name="name">Odoo Deployment</field>
+            <field name="key">odoo.deployment</field>
+            <field name="category_id" ref="skill_cat_odoo"/>
+            <field name="sequence">4</field>
+            <field name="description">Production deployment: Docker builds, reverse proxy, SSL, database backup, monitoring, and scaling.</field>
+            <field name="intent_ids">["deploy odoo", "odoo production setup", "odoo docker deploy"]</field>
+        </record>
+
+        <record id="skill_odoo_support" model="ipai.skill.definition">
+            <field name="name">Odoo Support &amp; Training</field>
+            <field name="key">odoo.support.training</field>
+            <field name="category_id" ref="skill_cat_odoo"/>
+            <field name="sequence">5</field>
+            <field name="description">User support, troubleshooting, user guides, and training material generation.</field>
+            <field name="intent_ids">["odoo support", "troubleshoot odoo", "odoo training materials"]</field>
+        </record>
+
+        <!-- App Development Skills -->
+        <record id="skill_app_development" model="ipai.skill.definition">
+            <field name="name">App Development</field>
+            <field name="key">app.development</field>
+            <field name="category_id" ref="skill_cat_app"/>
+            <field name="sequence">1</field>
+            <field name="description">Cross-platform application development orchestration and lifecycle management.</field>
+            <field name="intent_ids">["develop app", "app development", "build application"]</field>
+        </record>
+
+        <record id="skill_app_strategy" model="ipai.skill.definition">
+            <field name="name">App Strategy &amp; Consulting</field>
+            <field name="key">app.strategy</field>
+            <field name="category_id" ref="skill_cat_app"/>
+            <field name="sequence">2</field>
+            <field name="description">Technology assessment, architecture design, build-vs-buy analysis, and technical roadmaps.</field>
+            <field name="intent_ids">["app strategy", "technology consulting", "build vs buy decision"]</field>
+        </record>
+
+        <record id="skill_custom_app" model="ipai.skill.definition">
+            <field name="name">Custom App Development</field>
+            <field name="key">app.custom.development</field>
+            <field name="category_id" ref="skill_cat_app"/>
+            <field name="sequence">3</field>
+            <field name="description">Full-stack application development with Odoo integration.</field>
+            <field name="intent_ids">["build custom app", "develop application", "create new app"]</field>
+        </record>
+
+        <record id="skill_mobile_app" model="ipai.skill.definition">
+            <field name="name">Mobile App Design</field>
+            <field name="key">app.mobile.design</field>
+            <field name="category_id" ref="skill_cat_app"/>
+            <field name="sequence">4</field>
+            <field name="description">Mobile application design: wireframes, UI components, navigation flows, and offline support.</field>
+            <field name="intent_ids">["design mobile app", "mobile app development", "mobile ui design"]</field>
+        </record>
+
+        <record id="skill_app_maintenance" model="ipai.skill.definition">
+            <field name="name">App Maintenance &amp; Support</field>
+            <field name="key">app.maintenance</field>
+            <field name="category_id" ref="skill_cat_app"/>
+            <field name="sequence">5</field>
+            <field name="description">Dependency updates, security patches, performance monitoring, and bug fixes.</field>
+            <field name="intent_ids">["maintain app", "update dependencies", "app security patch"]</field>
+        </record>
+
+        <!-- Web Development Skills -->
+        <record id="skill_app_launch" model="ipai.skill.definition">
+            <field name="name">App Marketing &amp; Launch</field>
+            <field name="key">app.marketing.launch</field>
+            <field name="category_id" ref="skill_cat_web"/>
+            <field name="sequence">1</field>
+            <field name="description">Launch strategy, landing pages, analytics setup, and growth planning.</field>
+            <field name="intent_ids">["launch app", "app marketing strategy", "app store optimization"]</field>
+        </record>
+
+        <record id="skill_web_dev" model="ipai.skill.definition">
+            <field name="name">Web Development</field>
+            <field name="key">web.development</field>
+            <field name="category_id" ref="skill_cat_web"/>
+            <field name="sequence">2</field>
+            <field name="description">Full-stack web application development with modern frameworks.</field>
+            <field name="intent_ids">["build website", "web development", "create web app"]</field>
+        </record>
+
+        <record id="skill_web_design" model="ipai.skill.definition">
+            <field name="name">Custom Web Design</field>
+            <field name="key">web.custom.design</field>
+            <field name="category_id" ref="skill_cat_design"/>
+            <field name="sequence">1</field>
+            <field name="description">Brand identity, design systems, responsive layouts, and accessibility compliance.</field>
+            <field name="intent_ids">["custom web design", "design website", "brand identity web"]</field>
+        </record>
+
+        <record id="skill_web_backend" model="ipai.skill.definition">
+            <field name="name">Website Backend Solutions</field>
+            <field name="key">web.backend</field>
+            <field name="category_id" ref="skill_cat_web"/>
+            <field name="sequence">3</field>
+            <field name="description">REST/GraphQL APIs, authentication, database optimization, and server infrastructure.</field>
+            <field name="intent_ids">["build backend api", "backend architecture", "database optimization"]</field>
+        </record>
+
+        <record id="skill_ecommerce" model="ipai.skill.definition">
+            <field name="name">E-Commerce Solutions</field>
+            <field name="key">web.ecommerce</field>
+            <field name="category_id" ref="skill_cat_web"/>
+            <field name="sequence">4</field>
+            <field name="description">Online store development with Odoo: product catalog, payments, inventory sync.</field>
+            <field name="intent_ids">["build ecommerce", "online store", "payment integration"]</field>
+        </record>
+
+        <record id="skill_web_maint" model="ipai.skill.definition">
+            <field name="name">Website Maintenance &amp; Support</field>
+            <field name="key">web.maintenance</field>
+            <field name="category_id" ref="skill_cat_web"/>
+            <field name="sequence">5</field>
+            <field name="description">Performance optimization, security updates, SEO, and uptime monitoring.</field>
+            <field name="intent_ids">["maintain website", "website performance", "website security"]</field>
+        </record>
+
+        <!-- Design Skills -->
+        <record id="skill_ui_ux" model="ipai.skill.definition">
+            <field name="name">UI/UX Design</field>
+            <field name="key">design.ui.ux</field>
+            <field name="category_id" ref="skill_cat_design"/>
+            <field name="sequence">2</field>
+            <field name="description">User research, information architecture, wireframing, prototyping, design systems, and usability testing.</field>
+            <field name="intent_ids">["ui design", "ux design", "user research", "wireframe design", "create prototype"]</field>
+        </record>
+    </data>
+</odoo>

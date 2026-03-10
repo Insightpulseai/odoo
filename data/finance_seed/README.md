@@ -1,15 +1,15 @@
 # Finance Seed Data
 
-Production-ready seed data for **Month-End Close** and **BIR Tax Filing** projects.
+Production-ready seed data for **Month-End Close**, **BIR Tax Filing**, and **Expense Management** projects.
 
 ## Quick Start
 
 ```bash
-# Option 1: Run import script (recommended)
-./import_finance_seed.sh
+# Import all seed data via XML-RPC
+python3 import_all.py <username> <password>
 
-# Option 2: Install Odoo module (includes holidays)
-docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_close_seed
+# Or use the shell wrapper
+./import_finance_seed.sh
 ```
 
 ## Files
@@ -20,6 +20,8 @@ docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_close_seed
 | `02_project.project.csv` | project.project | 2 | Month-End Close + BIR Tax Filing projects |
 | `03_project.task.month_end.csv` | project.task | 36 | Month-end closing tasks organized by 4 phases |
 | `04_project.task.bir_tax.csv` | project.task | 33 | BIR tax filings for 2026 with deadlines |
+| `05_expense_categories.csv` | product.product | 18 | Expense categories (travel, meals, office, training, comms) |
+| `06_approval_thresholds.csv` | *(reference)* | 11 | Approval rules by amount threshold (for ipai_approvals) |
 | `update_tasks_after_import.py` | - | - | Post-import script to assign users |
 | `import_finance_seed.sh` | - | - | Shell script to run full import |
 
@@ -30,7 +32,8 @@ docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_close_seed
 2. Projects (Month-End Close, BIR Tax Filing)
 3. Month-End Close tasks (36 tasks in 4 phases)
 4. BIR Tax Filing tasks (33 tasks for 2026)
-5. (Optional) Update tasks with user assignments
+5. Expense Categories (18 products with can_be_expensed)
+6. Approval Thresholds (11 rules — reference data, no Odoo model)
 ```
 
 ## Month-End Close Task Phases
@@ -51,6 +54,17 @@ docker compose exec odoo-core odoo -d odoo_core -u ipai_finance_close_seed
 | 2550Q | Quarterly | 25 days after quarter end |
 | 1601-EQ | Quarterly | Last day of month after quarter |
 | 1702-RT | Annual | April 15 |
+
+## Expense Categories (from Supabase consolidation)
+
+| Group | Categories | GL Range |
+|-------|-----------|----------|
+| Travel | Airfare, Lodging, Ground Transport, Parking, Mileage | 6100-xx |
+| Meals | Client, Team, Individual | 6200-xx |
+| Office | Supplies, Computer, Software, Books | 6300-xx |
+| Training | Courses, Conferences, Memberships | 6400-xx |
+| Communications | Phone/Internet, Shipping | 6500-xx |
+| Other | Miscellaneous | 6900-00 |
 
 ## Post-Import: Assign Users
 
@@ -85,39 +99,19 @@ python3 update_tasks_after_import.py \
 | Phase IV | JLI/RMQB/JAP/JRMO | JPAL/LAS/RIM | CKVC |
 | BIR Tax | BOM | RIM | CKVC |
 
-## Alternative: SQL Direct Update
+## Audit
 
-For faster tag assignment without XML-RPC:
+Run the seed audit to validate completeness:
 
-```sql
--- Connect to database
-docker exec -i $(docker ps -q -f name=db) psql -U odoo -d odoo_core << 'SQL'
-
--- Assign Phase I tag to tasks with [I.
-UPDATE project_task SET tag_ids = array_append(tag_ids,
-  (SELECT id FROM project_tags WHERE name = 'Phase I: Initial & Compliance'))
-WHERE name LIKE '[I.%';
-
--- Repeat for Phase II, III, IV...
-SQL
+```bash
+python3 scripts/finance_ppm_seed_audit.py
 ```
 
-## Troubleshooting
-
-### "External ID not found"
-Import in correct order: tags -> projects -> tasks
-
-### Tags not appearing
-Check if tags were created:
-```sql
-SELECT name FROM project_tags WHERE name LIKE 'Phase%';
-```
-
-### Users not found
-Ensure users exist in Odoo with exact names. The update script uses `ilike` for partial matching.
+Expected thresholds: tags >= 36, projects >= 2, month-end tasks >= 36, BIR tasks >= 33, expense categories >= 18, approval rules >= 11.
 
 ## Related Files
 
-- Module: `addons/ipai/ipai_finance_close_seed/`
-- Original templates: `data/import_templates/`
-- Scripts: `scripts/seed_finance_close_from_xlsx.py`
+- Module: `addons/ipai/ipai_finance_ppm/`
+- Audit script: `scripts/finance_ppm_seed_audit.py`
+- Archive (deprecated): `archive/addons/omc_finance_ppm/`
+- Supabase seed (deprecated): `supabase/seeds/002_finance_seed.sql`

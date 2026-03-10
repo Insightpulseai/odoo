@@ -1,38 +1,42 @@
 # -*- coding: utf-8 -*-
+# Part of IPAI. See LICENSE file for full copyright and licensing details.
 {
-    "name": "DEPRECATED: AI RAG Pipeline",
-    "version": "19.0.1.0.0",
-    "category": "InsightPulse AI",
-    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
+    "name": "IPAI AI RAG",
+    "version": "18.0.1.0.0",
+    "category": "Productivity/AI",
+    "summary": "RAG (Retrieval-Augmented Generation) pipeline for AI agents",
     "description": """
-AI RAG Pipeline
-===============
+IPAI AI RAG
+===========
 
-RAG for document-based context retrieval
+This module provides the RAG (Retrieval-Augmented Generation) pipeline for AI agents:
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+- **Source Management**: Ingest files, URLs, and knowledge bases
+- **Chunking**: Deterministic text chunking with configurable size and overlap
+- **Embeddings**: Vector embeddings via OpenAI API
+- **Retrieval**: Cosine similarity search with stable tie-breaking
 
-**Features:**
-- Core functionality for ai rag pipeline
-- Integration with Odoo workflows
-- Audit logging and compliance
-
-**Configuration:**
-- Go to Settings > IPAI > AI RAG Pipeline
-
-**Credits:**
-- InsightPulse AI Team
+Features:
+- SHA-256 content hashing for deduplication
+- Token counting for accurate chunking
+- Batch embedding processing
+- Configurable retrieval parameters
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
-    "depends": ["ipai_ai_agent_builder"],
+    "depends": [
+        "ipai_ai_agent_builder",
+    ],
     "data": [
         "security/ir.model.access.csv",
-        "views/menu.xml",
+        "views/ai_source_views.xml",
     ],
     "demo": [],
-    "installable": False,
+    "installable": True,
     "application": False,
     "auto_install": False,
+    "external_dependencies": {
+        "python": ["tiktoken", "requests"],
+    },
 }

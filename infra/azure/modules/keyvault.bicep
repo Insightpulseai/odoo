@@ -1,9 +1,10 @@
-// Key Vault module for secret management
+// Azure Key Vault module
+// RBAC-authorized vault with soft delete and purge protection
 
 @description('Name of the Key Vault')
 param keyVaultName string
 
-@description('Azure region')
+@description('Azure region for the Key Vault')
 param location string
 
 @description('Resource tags')
@@ -19,12 +20,13 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
       name: 'standard'
     }
     tenantId: subscription().tenantId
-    enabledForDeployment: true
-    enabledForTemplateDeployment: true
-    enabledForDiskEncryption: false
     enableRbacAuthorization: true
     enableSoftDelete: true
     softDeleteRetentionInDays: 90
+    enablePurgeProtection: true
+    enabledForDeployment: false
+    enabledForDiskEncryption: false
+    enabledForTemplateDeployment: true
     publicNetworkAccess: 'Enabled'
     networkAcls: {
       defaultAction: 'Allow'
@@ -56,7 +58,5 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
     ]
   }
 }
-
 output keyVaultName string = keyVault.name
 output keyVaultUri string = keyVault.properties.vaultUri
-output keyVaultId string = keyVault.id

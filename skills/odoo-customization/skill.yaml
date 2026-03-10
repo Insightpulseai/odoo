@@ -1,0 +1,144 @@
+# Odoo Customization Skill
+# Custom module development and Odoo behavior extension
+
+name: odoo_customization
+version: 1.0.0
+key: odoo.customization
+description: |
+  Build custom Odoo modules: model extensions, view customizations,
+  workflow automation, report templates, and API integrations.
+
+intents:
+  - customize odoo
+  - extend odoo module
+  - create custom field
+  - add odoo workflow
+  - build odoo report
+  - odoo api integration
+
+guardrails:
+  - Follow IPAI module naming (ipai_* prefix)
+  - Use _inherit for extending existing models (never modify OCA source)
+  - OCA coding standards (pre-commit, black, isort, flake8)
+  - All customizations must be installable and uninstallable cleanly
+  - Include security CSV and tests
+
+tools:
+  - key: custom.analyze
+    name: Analyze Requirements
+    target_model: ipai.custom.runner
+    target_method: analyze_requirements
+    description: Analyze customization requirements against existing modules
+
+  - key: custom.scaffold
+    name: Scaffold Module
+    target_model: ipai.custom.runner
+    target_method: scaffold_module
+    description: Generate module structure following IPAI conventions
+
+  - key: custom.models
+    name: Build Models
+    target_model: ipai.custom.runner
+    target_method: build_models
+    description: Create or extend models with fields, constraints, computed fields
+
+  - key: custom.views
+    name: Build Views
+    target_model: ipai.custom.runner
+    target_method: build_views
+    description: Create form, list, kanban, search views and menu items
+
+  - key: custom.logic
+    name: Business Logic
+    target_model: ipai.custom.runner
+    target_method: build_logic
+    description: Implement server actions, automated actions, wizards
+
+  - key: custom.test
+    name: Test Module
+    target_model: ipai.custom.runner
+    target_method: run_tests
+    description: Run module tests and lint checks
+
+workflow:
+  - custom.analyze
+  - custom.scaffold
+  - custom.models
+  - custom.views
+  - custom.logic
+  - custom.test
+
+input_schema:
+  type: object
+  required:
+    - module_name
+    - customization_type
+  properties:
+    module_name:
+      type: string
+      description: Technical module name (ipai_ prefix applied automatically)
+    customization_type:
+      type: string
+      enum: [new_module, extend_model, add_views, add_workflow, add_report, api_integration]
+    target_model:
+      type: string
+      description: Odoo model to extend (e.g., sale.order)
+    fields:
+      type: array
+      items:
+        type: object
+        properties:
+          name: { type: string }
+          type: { type: string }
+          description: { type: string }
+    views:
+      type: array
+      items: { type: string, enum: [form, list, kanban, search, pivot, graph] }
+
+output_schema:
+  type: object
+  properties:
+    module_path: { type: string }
+    files_created: { type: array, items: { type: string } }
+    models_modified: { type: array, items: { type: string } }
+    test_results: { type: object }
+    lint_results: { type: object }
+
+agentInstructions: |
+  When customizing Odoo:
+
+  1. **Analyze First**:
+     - Read existing module code before modifying
+     - Check if OCA already provides the feature
+     - Follow Config → OCA → Delta philosophy
+     - Map _inherit chain for target model
+
+  2. **Module Structure** (addons/ipai/<module_name>/):
+     ```
+     ipai_<name>/
+     ├── __manifest__.py
+     ├── __init__.py
+     ├── models/
+     │   ├── __init__.py
+     │   └── <model>.py
+     ├── views/
+     │   └── <model>_views.xml
+     ├── security/
+     │   └── ir.model.access.csv
+     ├── data/
+     │   └── <seed_data>.xml
+     └── tests/
+         ├── __init__.py
+         └── test_<model>.py
+     ```
+
+  3. **Coding Standards**:
+     - Black formatting, isort imports
+     - Flake8 compliance
+     - OCA docstring conventions
+     - Security: ir.model.access.csv for every model
+
+  4. **Testing**:
+     - TransactionCase for unit tests
+     - HttpCase for controller tests
+     - Run: python3 -m py_compile on all .py files

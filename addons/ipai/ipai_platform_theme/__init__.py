@@ -1,3 +1,3 @@
-# -*- coding: utf-8 -*-
-# IPAI Platform Theme Tokens
-# This module provides design tokens and theme infrastructure
+# Part of IPAI. See LICENSE file for full copyright and licensing details.
+
+from . import models

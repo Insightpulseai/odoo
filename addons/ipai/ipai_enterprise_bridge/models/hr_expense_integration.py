@@ -4,6 +4,7 @@ HR Expense Integration - IPAI Event Emission
 Emit events to Supabase integration bus for expense lifecycle
 """
 
+import uuid
 from datetime import timedelta
 from odoo import models, api
 from odoo.addons.ipai_enterprise_bridge.utils.ipai_webhook import send_ipai_event
@@ -26,6 +27,9 @@ class HrExpenseIntegration(models.Model):
         if not webhook_url or not webhook_secret:
             _logger.warning("IPAI webhook not configured - skipping event emission")
             return res
+
+        # One correlation_id per submit operation
+        cid = str(uuid.uuid4())
 
         # Emit event for each expense
         for expense in self:
@@ -52,10 +56,10 @@ class HrExpenseIntegration(models.Model):
             idempotency_key = f"expense.submitted:{expense.id}:{expense.write_date.timestamp()}"
 
             try:
-                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
-                _logger.info(f"✅ Emitted expense.submitted event for expense #{expense.id}")
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key, correlation_id=cid)
+                _logger.info(f"Emitted expense.submitted event for expense #{expense.id} [cid={cid[:8]}]")
             except Exception as e:
-                _logger.error(f"❌ Failed to emit expense.submitted event: {e}")
+                _logger.error(f"Failed to emit expense.submitted event: {e}")
 
         return res
 
@@ -68,6 +72,8 @@ class HrExpenseIntegration(models.Model):
 
         if not webhook_url or not webhook_secret:
             return res
+
+        cid = str(uuid.uuid4())
 
         for expense in self:
             event = {
@@ -89,10 +95,10 @@ class HrExpenseIntegration(models.Model):
             idempotency_key = f"expense.approved:{expense.id}:{expense.write_date.timestamp()}"
 
             try:
-                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
-                _logger.info(f"✅ Emitted expense.approved event for expense #{expense.id}")
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key, correlation_id=cid)
+                _logger.info(f"Emitted expense.approved event for expense #{expense.id} [cid={cid[:8]}]")
             except Exception as e:
-                _logger.error(f"❌ Failed to emit expense.approved event: {e}")
+                _logger.error(f"Failed to emit expense.approved event: {e}")
 
         return res
 
@@ -105,6 +111,8 @@ class HrExpenseIntegration(models.Model):
 
         if not webhook_url or not webhook_secret:
             return res
+
+        cid = str(uuid.uuid4())
 
         for expense in self:
             event = {
@@ -127,10 +135,10 @@ class HrExpenseIntegration(models.Model):
             idempotency_key = f"expense.rejected:{expense.id}:{expense.write_date.timestamp()}"
 
             try:
-                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
-                _logger.info(f"✅ Emitted expense.rejected event for expense #{expense.id}")
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key, correlation_id=cid)
+                _logger.info(f"Emitted expense.rejected event for expense #{expense.id} [cid={cid[:8]}]")
             except Exception as e:
-                _logger.error(f"❌ Failed to emit expense.rejected event: {e}")
+                _logger.error(f"Failed to emit expense.rejected event: {e}")
 
         return res
 
@@ -155,6 +163,8 @@ class HrExpenseIntegration(models.Model):
             ('write_date', '>=', (self.env.cr.now() - timedelta(days=1)).isoformat())
         ])
 
+        cid = str(uuid.uuid4())
+
         for expense in recent_paid:
             event = {
                 "event_type": "expense.paid",
@@ -174,7 +184,7 @@ class HrExpenseIntegration(models.Model):
             idempotency_key = f"expense.paid:{expense.id}:{expense.write_date.timestamp()}"
 
             try:
-                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
-                _logger.info(f"✅ Emitted expense.paid event for expense #{expense.id}")
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key, correlation_id=cid)
+                _logger.info(f"Emitted expense.paid event for expense #{expense.id} [cid={cid[:8]}]")
             except Exception as e:
-                _logger.error(f"❌ Failed to emit expense.paid event: {e}")
+                _logger.error(f"Failed to emit expense.paid event: {e}")
