@@ -1,9 +1,10 @@
-// Storage Account module for data lake
+// Azure Data Lake Storage Gen2 (HNS-enabled storage account)
+// Medallion architecture containers: bronze, silver, gold, platinum, checkpoints
 
 @description('Name of the storage account')
 param storageAccountName string
 
-@description('Azure region')
+@description('Azure region for the storage account')
 param location string
 
 @description('Resource tags')
@@ -13,16 +14,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   tags: tags
+  kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
   }
-  kind: 'StorageV2'
   properties: {
-    accessTier: 'Hot'
-    supportsHttpsTrafficOnly: true
+    isHnsEnabled: true
     minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
     allowBlobPublicAccess: false
-    isHnsEnabled: true // Enable hierarchical namespace for Data Lake
+    accessTier: 'Hot'
     networkAcls: {
       defaultAction: 'Allow'
       bypass: 'AzureServices'
@@ -30,50 +31,27 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// Blob service configuration
 resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
   parent: storageAccount
   name: 'default'
-  properties: {
-    deleteRetentionPolicy: {
-      enabled: true
-      days: 30
+}
+
+var containerNames = [
+  'bronze'
+  'silver'
+  'gold'
+  'platinum'
+  'checkpoints'
+]
+
+resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = [
+  for name in containerNames: {
+    parent: blobService
+    name: name
+    properties: {
+      publicAccess: 'None'
     }
-    containerDeleteRetentionPolicy: {
-      enabled: true
-      days: 30
-    }
   }
-}
-
-// Bronze container
-resource bronzeContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  parent: blobService
-  name: 'bronze'
-  properties: {
-    publicAccess: 'None'
-  }
-}
-
-// Silver container
-resource silverContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  parent: blobService
-  name: 'silver'
-  properties: {
-    publicAccess: 'None'
-  }
-}
-
-// Gold container
-resource goldContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  parent: blobService
-  name: 'gold'
-  properties: {
-    publicAccess: 'None'
-  }
-}
+]
 
 output storageAccountName string = storageAccount.name
-output storageAccountId string = storageAccount.id
-output primaryBlobEndpoint string = storageAccount.properties.primaryEndpoints.blob
-output primaryDfsEndpoint string = storageAccount.properties.primaryEndpoints.dfs

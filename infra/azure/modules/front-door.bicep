@@ -236,28 +236,30 @@ resource afdOriginGroups 'Microsoft.Cdn/profiles/originGroups@2023-05-01' = [
   }
 ]
 
-// Origins within each origin group — flattened to materialize ALL origins.
-// Bicep does not support nested for-expressions in variables, so we build
-// the flat list with map() + flatten() instead.
-var originLists = [for (og, ogIndex) in originGroups: map(og.origins, (origin, oIdx) => {
-  ogIndex: ogIndex
-  ogName: og.name
-  originIndex: oIdx
-  origin: origin
-})]
-var flatOrigins = flatten(originLists)
+// Flatten origins: [{ogIndex, origin, originIndex}] so every origin gets its own resource
+var flattenedOrigins = flatten([
+  for (og, ogIndex) in originGroups: [
+    for (origin, originIndex) in og.origins: {
+      ogIndex: ogIndex
+      ogName: og.name
+      origin: origin
+      originIndex: originIndex
+    }
+  ]
+])
 
+// Origins within each origin group
 resource afdOrigins 'Microsoft.Cdn/profiles/originGroups/origins@2023-05-01' = [
-  for item in flatOrigins: {
-    parent: afdOriginGroups[item.ogIndex]
-    name: '${item.ogName}-origin-${item.originIndex}'
+  for (entry, i) in flattenedOrigins: {
+    parent: afdOriginGroups[entry.ogIndex]
+    name: '${entry.ogName}-origin-${entry.originIndex}'
     properties: {
-      hostName: item.origin.hostName
-      httpPort: item.origin.httpPort
-      httpsPort: item.origin.httpsPort
-      priority: item.origin.priority
-      weight: item.origin.weight
-      originHostHeader: item.origin.hostName
+      hostName: entry.origin.hostName
+      httpPort: entry.origin.httpPort
+      httpsPort: entry.origin.httpsPort
+      priority: entry.origin.priority
+      weight: entry.origin.weight
+      originHostHeader: entry.origin.hostName
       enabledState: 'Enabled'
       enforceCertificateNameCheck: true
     }

@@ -1,0 +1,71 @@
+name: OCA Aggregate Validate
+on:
+  pull_request:
+    paths:
+      - "oca-aggregate.yml"
+      - "vendor/oca.lock.ce19.json"
+  push:
+    branches: [main]
+    paths:
+      - "oca-aggregate.yml"
+      - "vendor/oca.lock.ce19.json"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate aggregate vs lock sync
+        id: validate
+        run: |
+          python3 scripts/oca/validate_aggregate.py --warn-only --json > /tmp/report.json 2>&1 || true
+          cat /tmp/report.json
+
+      - name: Check YAML syntax
+        run: python3 -c "import yaml; yaml.safe_load(open('oca-aggregate.yml'))"
+
+      - name: Check JSON syntax
+        run: python3 -c "import json; json.load(open('vendor/oca.lock.ce19.json'))"
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report;
+            try {
+              report = JSON.parse(fs.readFileSync('/tmp/report.json', 'utf8'));
+            } catch {
+              return;
+            }
+            let body = '## OCA Aggregate Validation\n\n';
+            body += `| Metric | Count |\n|--------|-------|\n`;
+            body += `| Aggregate repos | ${report.aggregate_count} |\n`;
+            body += `| Lock repos | ${report.lock_count} |\n`;
+            body += `| In both | ${report.in_both_count} |\n`;
+            body += `| Aggregate only | ${report.aggregate_only_count} |\n`;
+            body += `| Lock only | ${report.lock_only_count} |\n\n`;
+
+            if (report.in_sync) {
+              body += '**Status: IN SYNC**\n';
+            } else {
+              body += '**Status: DISCREPANCIES FOUND**\n\n';
+              if (report.aggregate_only.length > 0) {
+                body += `<details><summary>In aggregate only (${report.aggregate_only_count})</summary>\n\n`;
+                report.aggregate_only.forEach(r => body += `- \`${r}\`\n`);
+                body += '\n</details>\n\n';
+              }
+              if (report.lock_only.length > 0) {
+                body += `<details><summary>In lock only (${report.lock_only_count})</summary>\n\n`;
+                report.lock_only.forEach(r => body += `- \`${r}\`\n`);
+                body += '\n</details>\n\n';
+              }
+            }
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

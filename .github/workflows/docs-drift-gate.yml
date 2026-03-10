@@ -6,8 +6,16 @@ name: Docs & Evidence Drift Gate
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'addons/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - '.github/workflows/docs-drift-gate.yml'
   push:
     branches: [main, staging]
+    paths:
+      - 'addons/**'
+      - 'docs/**'
 
 permissions:
   contents: read

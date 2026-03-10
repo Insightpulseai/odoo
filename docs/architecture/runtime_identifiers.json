@@ -1,7 +1,7 @@
 {
   "domain": "insightpulseai.com",
-  "consolidation_date": "2026-03-03",
-  "generated_at": "2026-03-03T18:57:12Z",
+  "consolidation_date": "2026-03-08",
+  "generated_at": "2026-03-08T04:07:01Z",
   "generator": "scripts/generate-dns-artifacts.sh",
   "source": "infra/dns/subdomain-registry.yaml",
   "nameservers": [],
@@ -58,6 +58,32 @@
       "status": "active"
     }
 ,
+    "shelf": {
+      "fqdn": "shelf.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 3003,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Shelf.nu (self-hosted, ipai fork)",
+      "health_check": "/healthcheck",
+      "status": "active"
+    }
+,
+    "crm": {
+      "fqdn": "crm.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 3004,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Atomic CRM (marmelab/atomic-crm, Supabase-backed)",
+      "health_check": "/",
+      "status": "active"
+    }
+,
     "ocr": {
       "fqdn": "ocr.insightpulseai.com",
       "record_type": "A",
@@ -68,6 +94,19 @@
       "runtime_host": "odoo-production",
       "owner_system": "PaddleOCR microservice",
       "health_check": "/health",
+      "status": "active"
+    }
+,
+    "auth": {
+      "fqdn": "auth.insightpulseai.com",
+      "record_type": "A",
+      "target": "178.128.112.214",
+      "cloudflare_proxied": true,
+      "origin_port": 8080,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "odoo-production",
+      "owner_system": "Authentication service (Express)",
+      "health_check": "/",
       "status": "active"
     }
 ,
@@ -107,6 +146,19 @@
       "runtime_host": "odoo-production",
       "owner_system": "Redirect to apex",
       "health_check": "/",
+      "status": "active"
+    }
+,
+    "ops": {
+      "fqdn": "ops.insightpulseai.com",
+      "record_type": "CNAME",
+      "target": "cname.vercel-dns.com",
+      "cloudflare_proxied": false,
+      "origin_port": null,
+      "tls_mode": "Full (strict)",
+      "runtime_host": "DO App Platform",
+      "owner_system": "OdooOps Console (Next.js on Vercel)",
+      "health_check": "/api/health",
       "status": "active"
     }
 ,
@@ -164,15 +216,6 @@
       "deprecated_date": "2026-01-28",
       "replacement": null,
       "reason": "Mattermost deprecated; team communication now uses Slack workspace",
-      "dns_removed": true,
-      "container_removed": true
-    }
-,
-    "mg": {
-      "fqdn": "mg.insightpulseai.com",
-      "deprecated_date": "2026-02-01",
-      "replacement": null,
-      "reason": "Mailgun deprecated; outbound mail now routes through Zoho Mail SMTP bridge (ipai_zoho_mail_api)",
       "dns_removed": true,
       "container_removed": true
     }

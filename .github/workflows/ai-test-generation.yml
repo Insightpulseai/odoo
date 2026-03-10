@@ -4,10 +4,6 @@ name: AI-Powered Test Generation
 # Reference: docs/integrations/ODOO_AI_TESTING_AUTOMATION.md
 
 on:
-  pull_request:
-    paths:
-      - 'addons/ipai/**/models/*.py'
-      - 'addons/ipai/**/controllers/*.py'
   workflow_dispatch:
     inputs:
       module_name:

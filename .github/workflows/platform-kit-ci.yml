@@ -2,8 +2,17 @@ name: platform-kit-ci
 
 on:
   pull_request:
+    paths:
+      - 'spec/**'
+      - 'addons/**'
+      - 'platform/**'
+      - '.github/workflows/platform-kit-ci.yml'
   push:
     branches: [ main ]
+    paths:
+      - 'spec/**'
+      - 'addons/**'
+      - 'platform/**'
 
 permissions:
   contents: read

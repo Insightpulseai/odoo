@@ -5,8 +5,18 @@ name: Tier-0 Parity Gate
 
 on:
   pull_request:
+    paths:
+      - 'addons/**'
+      - 'scripts/gates/**'
+      - 'scripts/generate_seed_audit_artifact.py'
+      - 'requirements-dev.txt'
+      - 'requirements-docs.txt'
+      - '.github/workflows/tier0-parity-gate.yml'
   push:
     branches: [main]
+    paths:
+      - 'addons/**'
+      - 'scripts/gates/**'
   workflow_dispatch:
 
 permissions:

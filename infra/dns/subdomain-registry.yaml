@@ -528,20 +528,10 @@ subdomains:
   # ---------------------------------------------------------------------------
   # Mailgun Sending Domain Records (mg.insightpulseai.com)
   # ---------------------------------------------------------------------------
-  # NOTE: The mg subdomain was deprecated for outbound mail (2026-02-01) in favour
-  # of Zoho Mail SMTP.  The records below represent the REMAINING Mailgun DNS
-  # entries that are still present in Cloudflare as of 2026-02-27 (per the
-  # deprecated.mg section below) PLUS the tracking CNAME and second DKIM TXT
-  # that were never provisioned and are now confirmed missing.
-  #
-  # Action required:
-  #   1. Obtain exact values from the Mailgun dashboard (Sending → Domains →
-  #      mg.insightpulseai.com → DNS Records).
-  #   2. Replace all <PLACEHOLDER_*> tokens with real values.
-  #   3. Flip lifecycle=planned → lifecycle=active and set provider_claim.status=claimed.
-  #   4. Run scripts/dns/generate-dns-artifacts.sh and commit.
-  #   5. Remove the four records listed in deprecated.mg.records_to_remove via
-  #      Terraform apply (they are already tagged dns_removed=false there).
+  # Mailgun is ACTIVE for outbound transactional email (no-reply@mg.insightpulseai.com).
+  # Zoho Mail handles inbound MX routing. Both coexist:
+  #   - Mailgun: transactional/automated email via mg.insightpulseai.com
+  #   - Zoho Mail: inbound MX + team mailboxes via insightpulseai.com
   #
   # Tracking CNAME (email click/open tracking) — CONFIRMED VALID 2026-03-02
   - name: email.mg
@@ -552,16 +542,17 @@ subdomains:
     cloudflare_proxied: false
     lifecycle: active
     status: active
-    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid"
+    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun reinstated 2026-03-07."
     provider_claim:
       provider: mailgun
       status: claimed
-      expires_at: "2026-06-01"
+      claimed_at: "2026-03-02"
+      claim_ref: "ssot:mailgun"
 
-  # DKIM status note: Mailgun reports only ONE DKIM (mx._domainkey.mg) for this domain.
-  # No second DKIM rotation key (krs2/pic) is configured in Mailgun dashboard.
-  # Record removed from planned list — confirmed via Mailgun API 2026-03-02.
-  # If Mailgun adds a second key in future, re-add this entry with the actual value.
+  # DKIM status: Two DKIM keys configured for mg.insightpulseai.com:
+  #   - mx._domainkey.mg  (selector: mx)  — primary signing key
+  #   - pic._domainkey.mg (selector: pic) — rotation key
+  # Both added to Cloudflare records SSOT on 2026-03-09.
 
   # ---------------------------------------------------------------------------
   # Staging Environment (A Records → 178.128.112.214)
@@ -745,7 +736,7 @@ deprecated:
     deprecated_date: "2026-01-28"
     replacement: "Slack"
     reason: "Mattermost deprecated; team communication now uses Slack workspace"
-    lifecycle: removed
+    lifecycle: active
     dns_removed: true
     container_removed: false
     notes: >

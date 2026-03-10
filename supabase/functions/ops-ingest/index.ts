@@ -81,6 +81,7 @@ Deno.serve(async (req) => {
   const action = (payload.action as string) || "ingest";
   const actor = (payload.actor as string) || "worker";
   const eventId = String(payload.event_id || payload.id || "");
+  const correlationId = (payload.correlation_id as string) || null;
 
   if (!topic || typeof topic !== "string") {
     return bad("Missing topic", 400);
@@ -209,13 +210,22 @@ Deno.serve(async (req) => {
           snapshot: m.snapshot ?? {},
         });
       }
+    } else if (topic === "workflow_run") {
+      // CI/CD workflow run status event
+      const w = payload.workflow_run as Record<string, unknown>;
+      await sb.from("ops.run_events").insert({
+        event_id: eventId,
+        level: "info",
+        message: "workflow_run_ingested",
+        context: { topic, workflow: w?.name, status: w?.status, correlation_id: correlationId },
+      });
     } else {
       // Unknown topic: keep in audit only, but note it
       await sb.from("ops.run_events").insert({
         event_id: eventId,
         level: "warn",
         message: "unknown_topic_audited_only",
-        context: { topic },
+        context: { topic, correlation_id: correlationId },
       });
     }
 

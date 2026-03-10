@@ -113,32 +113,28 @@ filter_wave = sys.argv[3] if len(sys.argv) > 3 else ""
 with open(checklist_path) as f:
     data = yaml.safe_load(f)
 
-hostnames = []
-for wave in data.get("waves", []):
-    wave_name = wave.get("name", "")
-    for entry in wave.get("hostnames", []):
-        entry["wave"] = wave_name
-        hostnames.append(entry)
+waves = data.get("waves", [])
 
-for entry in hostnames:
-    hostname = entry.get("hostname", "")
-    wave = entry.get("wave", "")
-    health_path = entry.get("health_check_path", "/")
-    enabled = entry.get("enabled", True)
+for wave_entry in waves:
+    wave_name = wave_entry.get("name", "")
+    for entry in wave_entry.get("hostnames", []):
+        hostname = entry.get("hostname", "")
+        health_path = entry.get("health_check_path", "/")
+        enabled = entry.get("enabled", True)
 
-    if not enabled:
-        continue
-    if filter_hostname and hostname != filter_hostname:
-        continue
-    if filter_wave and wave != filter_wave:
-        continue
+        if not enabled:
+            continue
+        if filter_hostname and hostname != filter_hostname:
+            continue
+        if filter_wave and wave_name != filter_wave:
+            continue
 
-    print(json.dumps({
-        "hostname": hostname,
-        "wave": wave,
-        "health_path": health_path,
-        "expected_backend": entry.get("expected_backend", ""),
-    }))
+        print(json.dumps({
+            "hostname": hostname,
+            "wave": wave_name,
+            "health_path": health_path,
+            "expected_backend": entry.get("azure_target", ""),
+        }))
 PYEOF
 }
 
