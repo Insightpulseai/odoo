@@ -33,11 +33,15 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
-// Diagnostic settings for monitoring
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+// Diagnostic settings — only deployed when a Log Analytics workspace is provided
+@description('Log Analytics workspace resource ID (empty = skip diagnostics)')
+param logAnalyticsWorkspaceId string = ''
+
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = if (logAnalyticsWorkspaceId != '') {
   name: 'LogAnalytics'
   scope: keyVault
   properties: {
+    workspaceId: logAnalyticsWorkspaceId
     logs: [
       {
         categoryGroup: 'audit'
