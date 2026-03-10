@@ -170,7 +170,7 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
                 path: '/web/health'
                 port: 8069
               }
-              initialDelaySeconds: 90
+              initialDelaySeconds: 60
               periodSeconds: 30
               timeoutSeconds: 10
               failureThreshold: 3
