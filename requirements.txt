@@ -48,7 +48,7 @@ sphinx-rtd-theme==2.0.0
 # ===========================================
 
 # ----- Core Scripting -----
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 pydantic==2.9.2
 pydantic-settings==2.13.1
 requests==2.32.5
