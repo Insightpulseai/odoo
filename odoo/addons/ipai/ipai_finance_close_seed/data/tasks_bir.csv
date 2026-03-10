@@ -1,0 +1,28 @@
+task_code,task_id,bir_form,period,deadline,prep_date,review_date,approval_date
+TAX_1601_C_COMPENSATION_001,task_bir_01_1601_c_compensation_dec_2025,1601-C (Compensation),Dec 2025,2025-01-15,2025-01-09,2025-01-12,2025-01-13
+TAX_1601_C_0619_E_002,task_bir_02_1601_c_0619_e_jan_2026,1601-C / 0619-E,Jan 2026,2025-02-10,2025-02-04,2025-02-06,2025-02-09
+TAX_1601_C_0619_E_003,task_bir_03_1601_c_0619_e_feb_2026,1601-C / 0619-E,Feb 2026,2025-03-10,2025-03-04,2025-03-06,2025-03-09
+TAX_1601_C_0619_E_004,task_bir_04_1601_c_0619_e_mar_2026,1601-C / 0619-E,Mar 2026,2025-04-10,2025-04-06,2025-04-08,2025-04-09
+TAX_1601_C_0619_E_005,task_bir_05_1601_c_0619_e_apr_2026,1601-C / 0619-E,Apr 2026,2025-05-10,2025-05-06,2025-05-07,2025-05-08
+TAX_1601_C_0619_E_006,task_bir_06_1601_c_0619_e_may_2026,1601-C / 0619-E,May 2026,2025-06-10,2025-06-04,2025-06-08,2025-06-09
+TAX_1601_C_0619_E_007,task_bir_07_1601_c_0619_e_jun_2026,1601-C / 0619-E,Jun 2026,2025-07-10,2025-07-06,2025-07-08,2025-07-09
+TAX_1601_C_0619_E_008,task_bir_08_1601_c_0619_e_jul_2026,1601-C / 0619-E,Jul 2026,2025-08-10,2025-08-04,2025-08-06,2025-08-07
+TAX_1601_C_0619_E_009,task_bir_09_1601_c_0619_e_aug_2026,1601-C / 0619-E,Aug 2026,2025-09-10,2025-09-04,2025-09-08,2025-09-09
+TAX_1601_C_0619_E_010,task_bir_10_1601_c_0619_e_sep_2026,1601-C / 0619-E,Sep 2026,2026-10-12,2025-10-06,2025-10-08,2025-10-09
+TAX_1601_C_0619_E_011,task_bir_11_1601_c_0619_e_oct_2026,1601-C / 0619-E,Oct 2026,2025-11-10,2025-11-04,2025-11-06,2025-11-09
+TAX_1601_C_0619_E_012,task_bir_12_1601_c_0619_e_nov_2026,1601-C / 0619-E,Nov 2026,2025-12-10,2025-12-04,2025-12-08,2025-12-09
+TAX_1601_EQ_QUARTERLY_EWT_013,task_bir_13_1601_eq_quarterly_ewt_q4_2025,1601-EQ (Quarterly EWT),Q4 2025,2025-01-30,2025-01-26,2025-01-27,2025-01-28
+TAX_1702_RT_EX_INCOME_TAX_014,task_bir_14_1702_rt_ex_income_tax_annual_2025,1702-RT/EX (Income Tax),Annual 2025,2025-04-15,2025-04-09,2025-04-13,2025-04-14
+TAX_2550Q_VAT_015,task_bir_15_2550q_vat_q1_2026,2550Q (VAT),Q1 2026,2026-04-27,2025-04-21,2025-04-23,2025-04-24
+TAX_1601_EQ_QUARTERLY_EWT_016,task_bir_16_1601_eq_quarterly_ewt_q1_2026,1601-EQ (Quarterly EWT),Q1 2026,2025-04-30,2025-04-24,2025-04-28,2025-04-29
+TAX_2550Q_VAT_017,task_bir_17_2550q_vat_q2_2026,2550Q (VAT),Q2 2026,2026-07-27,2025-07-21,2025-07-23,2025-07-24
+TAX_1702Q_QUARTERLY_INCOME_TAX_018,task_bir_18_1702q_quarterly_income_tax_q2_2026,1702Q (Quarterly Income Tax),Q2 2026,2025-05-30,2025-05-26,2025-05-27,2025-05-28
+TAX_1601_EQ_QUARTERLY_EWT_019,task_bir_19_1601_eq_quarterly_ewt_q2_2026,1601-EQ (Quarterly EWT),Q2 2026,2025-07-31,2025-07-27,2025-07-29,2025-07-30
+TAX_2550Q_VAT_020,task_bir_20_2550q_vat_q3_2026,2550Q (VAT),Q3 2026,2026-10-26,2025-10-20,2025-10-22,2025-10-23
+TAX_1702Q_QUARTERLY_INCOME_TAX_021,task_bir_21_1702q_quarterly_income_tax_q3_2026,1702Q (Quarterly Income Tax),Q3 2026,2025-08-29,2025-08-25,2025-08-26,2025-08-27
+TAX_1601_EQ_QUARTERLY_EWT_022,task_bir_22_1601_eq_quarterly_ewt_q3_2026,1601-EQ (Quarterly EWT),Q3 2026,2025-10-30,2025-10-26,2025-10-28,2025-10-29
+TAX_STEP_023,task_bir_23_step_process_detail,Step,Process Detail,,,,
+TAX_1_PREPARATION_024,task_bir_24_1_preparation_gather_data_prepare_the_bir_form_and_draft_the_pay,1. Preparation,"Gather data, prepare the BIR Form, and draft the payment request (e.g., check voucher).",,,,
+TAX_2_REPORT_APPROVAL_025,task_bir_25_2_report_approval_senior_finance_manager_sfm_reviews_and_approves_th,2. Report Approval,Senior Finance Manager (SFM) reviews and approves the report data for accuracy and compliance. (File Request is submitted to SFM.),,,,
+TAX_3_PAYMENT_APPROVAL_026,task_bir_26_3_payment_approval_the_approved_report_and_payment_request_are_routed,3. Payment Approval,The approved report and payment request are routed. Finance Director (FD) reviews and approves the release of funds for remittance.,,,,
+TAX_4_FILING_PAYMENT_027,task_bir_27_4_filing_payment_the_approved_form_is_filed_and_the_payment_is_remi,4. Filing & Payment,The approved form is Filed and the payment is Remitted (either electronically or over the counter).,,,,

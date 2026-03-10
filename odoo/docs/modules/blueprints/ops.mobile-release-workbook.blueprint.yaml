@@ -1,0 +1,78 @@
+id: ops.mobile-release-workbook
+title: Mobile Release Readiness Workbook (Ops Advisor extension)
+category: ops-console
+sources:
+  - type: doc
+    url: https://developer.apple.com/app-store/review/guidelines/
+    catalog_id: apple-app-review-guidelines
+target:
+  app_dir: apps/ops-console/app/advisor/workbooks/mobile
+  ruleset: platform/advisor/rulesets/mobile-release-readiness.yaml
+  source: platform/advisor/sources/appstoreconnect.ts
+  ui_route: apps/ops-console/app/advisor/workbooks/mobile
+  api_route: apps/ops-console/app/api/advisor/workbooks/mobile
+variables:
+  - name: ASC_KEY_ID
+    required: false
+    description: App Store Connect API Key ID for evaluating ASC-based rules.
+  - name: ASC_ISSUER_ID
+    required: false
+    description: Issuer ID for the App Store Connect API key.
+  - name: ASC_KEY_CONTENT
+    required: false
+    description: Base64-encoded .p8 key content for App Store Connect API.
+  - name: ASC_APP_ID
+    required: false
+    description: Numeric app ID from App Store Connect for the Odoo mobile app.
+automation:
+  steps:
+    - name: create_ruleset
+      description: Create platform/advisor/rulesets/mobile-release-readiness.yaml
+      instruction: |
+        Create a 10-rule YAML ruleset covering: ios-ci-green, fastlane-match-configured,
+        keychain-usage-declared, ats-https-only, build-submitted, privacy-nutrition-labels-complete,
+        age-rating-set, screenshots-all-devices, testflight-external-group-exists, crash-free-rate-target-met.
+        Each rule has: id, pillar, severity, title, description, remediation, source, tags.
+    - name: create_asc_source
+      description: Create platform/advisor/sources/appstoreconnect.ts
+      instruction: |
+        Create App Store Connect API v1 source with JWT auth and check functions:
+        checkBuildSubmitted, checkPrivacyLabelsComplete, checkTestFlightGroupExists,
+        getCrashFreeRate, checkAgeRatingSet, checkScreenshotsExist.
+        All functions return boolean or null (null = not evaluatable).
+    - name: create_workbook_ui
+      description: Create apps/ops-console/app/advisor/workbooks/mobile/page.tsx
+      instruction: |
+        Create workbook UI showing: release readiness % bar, per-rule pass/fail/skip status,
+        remediation steps for failures, Export JSON button.
+        Fetches from GET /api/advisor/workbooks/mobile.
+    - name: create_api_route
+      description: Create apps/ops-console/app/api/advisor/workbooks/mobile/route.ts
+      instruction: |
+        Create GET route that evaluates all 10 rules: filesystem checks (fastlane match,
+        ATS), advisor run findings lookup, ASC API checks (skipped if not configured).
+        Returns { workbook_id, run_id, results[], pass_count, fail_count, skip_count, ready }.
+    - name: catalog_item_link
+      description: Add item to docs/catalog/mobile.catalog.json
+      instruction: |
+        Add mobile-release-workbook item to docs/catalog/mobile.catalog.json with
+        blueprint_id: ops.mobile-release-workbook.
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+    - build-gate
+  preview:
+    expectations:
+      - ruleset-yaml-exists
+      - workbook-page-exists
+      - workbook-api-route-exists
+      - asc-source-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - Set ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_CONTENT, ASC_APP_ID to enable ASC checks.
+    - Without ASC env vars, all appstoreconnect-source rules show as skipped.
+    - Crash-free rate check requires App Store Connect Analytics API — stub returns null until implemented.
+    - Add workbook to WORKBOOKS list in apps/ops-console/app/advisor/workbooks/page.tsx.

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Update default tools with proper entrypoints -->
+        <record id="ipai_ai_agent_builder.tool_crm_create_lead" model="ipai.ai.tool">
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.crm_tools:create_lead</field>
+            <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+        </record>
+
+        <record id="ipai_ai_agent_builder.tool_calendar_create_event" model="ipai.ai.tool">
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.calendar_tools:create_event</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <record id="ipai_ai_agent_builder.tool_sale_create_order" model="ipai.ai.tool">
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.sale_tools:create_order</field>
+            <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+        </record>
+
+        <!-- Additional tools -->
+        <record id="tool_crm_update_lead" model="ipai.ai.tool">
+            <field name="key">crm_update_lead</field>
+            <field name="name">Update CRM Lead</field>
+            <field name="description">Update an existing lead in the CRM system.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.crm_tools:update_lead</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "lead_id": {"type": "integer", "description": "ID of the lead to update"},
+        "name": {"type": "string", "description": "New lead name"},
+        "stage_id": {"type": "integer", "description": "Stage ID to move to"},
+        "expected_revenue": {"type": "number", "description": "Expected revenue"},
+        "probability": {"type": "number", "description": "Win probability (0-100)"},
+        "description": {"type": "string", "description": "Updated description"}
+    },
+    "required": ["lead_id"]
+}</field>
+            <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+            <field name="dry_run_supported" eval="True"/>
+        </record>
+
+        <record id="tool_crm_search_leads" model="ipai.ai.tool">
+            <field name="key">crm_search_leads</field>
+            <field name="name">Search CRM Leads</field>
+            <field name="description">Search for leads in the CRM system.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.crm_tools:search_leads</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "query": {"type": "string", "description": "Search query"},
+        "stage_id": {"type": "integer", "description": "Filter by stage"},
+        "user_id": {"type": "integer", "description": "Filter by salesperson"},
+        "limit": {"type": "integer", "description": "Maximum results (default 10)"}
+    }
+}</field>
+            <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+        </record>
+
+        <record id="tool_calendar_update_event" model="ipai.ai.tool">
+            <field name="key">calendar_update_event</field>
+            <field name="name">Update Calendar Event</field>
+            <field name="description">Update an existing calendar event.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.calendar_tools:update_event</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "event_id": {"type": "integer", "description": "ID of the event to update"},
+        "name": {"type": "string", "description": "New event name"},
+        "start": {"type": "string", "description": "New start datetime"},
+        "stop": {"type": "string", "description": "New stop datetime"},
+        "description": {"type": "string", "description": "Updated description"},
+        "location": {"type": "string", "description": "Updated location"}
+    },
+    "required": ["event_id"]
+}</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="dry_run_supported" eval="True"/>
+        </record>
+
+        <record id="tool_calendar_search_events" model="ipai.ai.tool">
+            <field name="key">calendar_search_events</field>
+            <field name="name">Search Calendar Events</field>
+            <field name="description">Search for calendar events.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.calendar_tools:search_events</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "query": {"type": "string", "description": "Search query"},
+        "start_from": {"type": "string", "description": "Events starting after this datetime"},
+        "start_until": {"type": "string", "description": "Events starting before this datetime"},
+        "limit": {"type": "integer", "description": "Maximum results (default 10)"}
+    }
+}</field>
+            <field name="group_ids" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+        <record id="tool_sale_search_orders" model="ipai.ai.tool">
+            <field name="key">sale_search_orders</field>
+            <field name="name">Search Sale Orders</field>
+            <field name="description">Search for sale orders.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.sale_tools:search_orders</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "query": {"type": "string", "description": "Search query"},
+        "partner_id": {"type": "integer", "description": "Filter by customer"},
+        "state": {"type": "string", "description": "Filter by state (draft, sent, sale, done, cancel)"},
+        "limit": {"type": "integer", "description": "Maximum results (default 10)"}
+    }
+}</field>
+            <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+        </record>
+    </data>
+</odoo>

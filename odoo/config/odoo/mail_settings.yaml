@@ -1,0 +1,56 @@
+# config/odoo/mail_settings.yaml
+# SSOT for Odoo outgoing mail transport configuration.
+# Contains ONLY non-secret transport settings and secret metadata.
+# Secret VALUES live in Azure Key Vault — never in this file.
+#
+# References:
+#   - Zoho SMTP: https://www.zoho.com/mail/help/zoho-smtp.html
+#   - Azure port 25 block: https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-network/troubleshoot-outbound-smtp-connectivity
+#   - SSOT rule: .claude/rules/ssot-platform.md §7
+
+mail:
+  provider: zoho
+  host: smtppro.zoho.com
+  port: 587
+  security: starttls
+  # smtppro.zoho.com is the canonical endpoint for paid org/custom-domain.
+  # smtp.zoho.com also works but Zoho admin recommends smtppro for orgs.
+  from_filter: insightpulseai.com
+  username_env: ZOHO_SMTP_USER
+  password_env: ZOHO_SMTP_PASSWORD
+
+# ---------------------------------------------------------------------------
+# Azure Key Vault — runtime secret source of truth
+# ---------------------------------------------------------------------------
+# Secrets are resolved at runtime via managed identity + Key Vault.
+# - App Service / Functions: use Key Vault references in app settings
+# - Custom container / VM: fetch at startup via Azure SDK
+#
+# No plaintext secret values belong in this file or any tracked config.
+azure_key_vault:
+  enabled: true
+  vault_name: kv-ipai-dev
+  secrets:
+    zoho_smtp_user:
+      env: ZOHO_SMTP_USER
+      secret_name: zoho-smtp-user
+    zoho_smtp_password:
+      env: ZOHO_SMTP_PASSWORD
+      secret_name: zoho-smtp-password
+
+# ---------------------------------------------------------------------------
+# Smoke test (run from the Odoo container or Azure host after secret injection)
+# ---------------------------------------------------------------------------
+# python3 -c "
+# import smtplib, os
+# s = smtplib.SMTP('smtp.zoho.com', 587)
+# s.starttls()
+# s.login(os.environ['ZOHO_SMTP_USER'], os.environ['ZOHO_SMTP_PASSWORD'])
+# s.sendmail(
+#     os.environ['ZOHO_SMTP_USER'],
+#     os.environ['ZOHO_SMTP_USER'],
+#     'Subject: SMTP smoke test\n\nOdoo mail works from Azure.'
+# )
+# s.quit()
+# print('OK')
+# "

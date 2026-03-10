@@ -1,0 +1,372 @@
+{
+  "timestamp": "2026-03-08T08:34:33.766959+00:00",
+  "overall_score": 1.42,
+  "high_risk_findings": 11,
+  "pillars": [
+    {
+      "id": "security",
+      "name": "Security & Compliance",
+      "weight": 0.25,
+      "score": 1.12,
+      "high_risk_count": 4,
+      "questions": [
+        {
+          "id": "sec-01",
+          "title": "TLS/HTTPS on all public endpoints",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "sec-02",
+          "title": "Database selector disabled (list_db=False)",
+          "score": 5,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "1"
+        },
+        {
+          "id": "sec-03",
+          "title": "No hardcoded secrets in workflow JSON exports",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "sec-04",
+          "title": "SSH key-only authentication",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "0"
+        },
+        {
+          "id": "sec-05",
+          "title": "Firewall (UFW) active with restrictive rules",
+          "score": 2,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "bash: line 1: ufw: command not found"
+        },
+        {
+          "id": "sec-06",
+          "title": "RBAC / access control in Odoo",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "sec-07",
+          "title": "Dependency vulnerability scanning",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "sec-08",
+          "title": "SSL certificate expiry > 14 days",
+          "score": 2,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "notAfter=May  8 10:39:25 2026 GMT"
+        }
+      ]
+    },
+    {
+      "id": "reliability",
+      "name": "Reliability & DR",
+      "weight": 0.2,
+      "score": 0.88,
+      "high_risk_count": 4,
+      "questions": [
+        {
+          "id": "rel-01",
+          "title": "Daily database backups exist",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "ls: cannot access '/opt/backups/odoo/': No such file or directory"
+        },
+        {
+          "id": "rel-02",
+          "title": "Backup restore tested",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "rel-03",
+          "title": "Health check endpoints respond",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "200"
+        },
+        {
+          "id": "rel-04",
+          "title": "DR runbook documented",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "rel-05",
+          "title": "PostgreSQL replication configured",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "Error response from daemon: No such container: odoo-db"
+        },
+        {
+          "id": "rel-06",
+          "title": "Service auto-restart on failure",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "rel-07",
+          "title": "Uptime monitoring configured",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "rel-08",
+          "title": "n8n error workflows configured",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "name": "Operational Excellence",
+      "weight": 0.2,
+      "score": 1.62,
+      "high_risk_count": 3,
+      "questions": [
+        {
+          "id": "ops-01",
+          "title": "CI/CD pipeline active",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "30"
+        },
+        {
+          "id": "ops-02",
+          "title": "Structured logging enabled",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "text"
+        },
+        {
+          "id": "ops-03",
+          "title": "Monitoring dashboards (Prometheus/Grafana)",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "ops-04",
+          "title": "n8n metrics enabled (N8N_METRICS=true)",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "ops-05",
+          "title": "Alerting configured (Slack/PagerDuty)",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "ops-06",
+          "title": "n8n execution data pruning enabled",
+          "score": 0,
+          "risk": "HIGH_RISK",
+          "method": "auto",
+          "evidence": "no output"
+        },
+        {
+          "id": "ops-07",
+          "title": "IaC for infrastructure changes",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "exists"
+        },
+        {
+          "id": "ops-08",
+          "title": "Runbook for common operations",
+          "score": 2,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "docs/releases/TBWA_FINOPS_V1_RUNBOOK.md\ndocs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md\ndocs/security/OPERATIONAL_RUNBOOK.md\ndocs/ipai/OPERATIONS_RUNBOOK.md\ndocs/DB_INIT_RUNBOOK.md"
+        }
+      ]
+    },
+    {
+      "id": "devops",
+      "name": "DevOps Maturity (DORA)",
+      "weight": 0.2,
+      "score": 1.5,
+      "high_risk_count": 0,
+      "questions": [
+        {
+          "id": "dora-01",
+          "title": "Deployment frequency",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "7"
+        },
+        {
+          "id": "dora-02",
+          "title": "Lead time for changes (commit to deploy)",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "2026-03-08T08:17:33Z\n2026-03-08T03:53:28Z\n2026-03-08T00:08:25Z\n2026-03-07T23:45:38Z\n2026-03-07T23:45:39Z\n2026-03-07T21:54:12Z\n2026-03-07T21:12:43Z\n2026-03-07T21:09:27Z\n2026-03-07T21:12:13Z\n2026-03-07T"
+        },
+        {
+          "id": "dora-03",
+          "title": "Change failure rate",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "dora-04",
+          "title": "Mean time to recover (MTTR)",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "dora-05",
+          "title": "Commit frequency (main branch)",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "16"
+        },
+        {
+          "id": "dora-06",
+          "title": "PR merge time (median)",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "[{\"createdAt\":\"2026-03-08T04:09:08Z\",\"mergedAt\":\"2026-03-08T08:17:33Z\"},{\"createdAt\":\"2026-03-08T00:41:16Z\",\"mergedAt\":\"2026-03-08T03:53:28Z\"},{\"createdAt\":\"2026-03-08T00:07:50Z\",\"mergedAt\":\"2026-03-0"
+        },
+        {
+          "id": "dora-07",
+          "title": "Automated rollback capability",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "dora-08",
+          "title": "Feature flags / progressive delivery",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        }
+      ]
+    },
+    {
+      "id": "governance",
+      "name": "Governance & Audit",
+      "weight": 0.15,
+      "score": 2.25,
+      "high_risk_count": 0,
+      "questions": [
+        {
+          "id": "gov-01",
+          "title": "SSOT files current (no drift)",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "177"
+        },
+        {
+          "id": "gov-02",
+          "title": "Module naming compliance (ipai_* convention)",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "18"
+        },
+        {
+          "id": "gov-03",
+          "title": "Audit logging enabled",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "30"
+        },
+        {
+          "id": "gov-04",
+          "title": "Spec bundles exist for active features",
+          "score": 4,
+          "risk": "NO_RISK",
+          "method": "auto",
+          "evidence": "69"
+        },
+        {
+          "id": "gov-05",
+          "title": "Deprecated items cleaned up",
+          "score": 3,
+          "risk": "MEDIUM_RISK",
+          "method": "auto",
+          "evidence": "0"
+        },
+        {
+          "id": "gov-06",
+          "title": "OCA-first module selection",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "gov-07",
+          "title": "Project management system unified",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        },
+        {
+          "id": "gov-08",
+          "title": "Access review cadence",
+          "score": 0,
+          "risk": "MEDIUM_RISK",
+          "method": "skipped",
+          "evidence": "manual question skipped in auto-only mode"
+        }
+      ]
+    }
+  ]
+}

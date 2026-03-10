@@ -1,0 +1,12 @@
+id,name,rule_type,min_amount,max_amount,approval_level,approver_type,auto_approve
+finance_seed.approval_auto_50,"Auto-approve under $50",expense,0,50,1,manager,True
+finance_seed.approval_mgr_500,"Manager approval $50-$500",expense,50,500,1,manager,False
+finance_seed.approval_dept_2000_l1,"Dept head approval $500-$2000",expense,500,2000,1,manager,False
+finance_seed.approval_dept_2000_l2,"Dept head approval $500-$2000 L2",expense,500,2000,2,department_head,False
+finance_seed.approval_fin_5000_l1,"Finance approval $2000-$5000",expense,2000,5000,1,manager,False
+finance_seed.approval_fin_5000_l2,"Finance approval $2000-$5000 L2",expense,2000,5000,2,department_head,False
+finance_seed.approval_fin_5000_l3,"Finance approval $2000-$5000 L3",expense,2000,5000,3,finance,False
+finance_seed.approval_exec_l1,"Executive approval $5000+",expense,5000,,1,manager,False
+finance_seed.approval_exec_l2,"Executive approval $5000+ L2",expense,5000,,2,department_head,False
+finance_seed.approval_exec_l3,"Executive approval $5000+ L3",expense,5000,,3,finance,False
+finance_seed.approval_exec_l4,"Executive approval $5000+ L4",expense,5000,,4,executive,False

@@ -1,0 +1,10 @@
+# requirements-oca.txt
+# Extra Python libraries required by installed OCA modules.
+# Most OCA addons are pure Odoo logic and need NO extra pip packages.
+# Only add a line here when a specific module's __manifest__.py or
+# imports require it.
+
+openpyxl          # reporting-engine, spreadsheet exports
+xlsxwriter        # reporting-engine, XLSX report generation
+requests          # queue, webhooks, external API calls
+python-dateutil   # date utilities used by several OCA modules

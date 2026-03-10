@@ -1,0 +1,23 @@
+name: contract
+
+on:
+  pull_request:
+    paths:
+      - 'docs/contracts/**'
+      - 'scripts/validate_repo_contract.sh'
+      - '.github/workflows/contract.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/contracts/**'
+      - 'scripts/validate_repo_contract.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/validate_repo_contract.sh

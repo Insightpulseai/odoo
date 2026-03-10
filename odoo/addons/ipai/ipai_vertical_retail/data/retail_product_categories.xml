@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Scout FMCG Product Categories -->
+    <record id="scout_pc_root" model="product.category">
+        <field name="name">Scout FMCG</field>
+    </record>
+
+    <record id="scout_pc_dairy" model="product.category">
+        <field name="name">Dairy</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_snacks" model="product.category">
+        <field name="name">Snacks</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_beverage" model="product.category">
+        <field name="name">Beverage</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_tobacco" model="product.category">
+        <field name="name">Tobacco</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_cleaning" model="product.category">
+        <field name="name">Home Cleaning</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_personal_care" model="product.category">
+        <field name="name">Personal Care</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_frozen" model="product.category">
+        <field name="name">Frozen Foods</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_canned" model="product.category">
+        <field name="name">Canned Goods</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_condiments" model="product.category">
+        <field name="name">Condiments &amp; Sauces</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_instant" model="product.category">
+        <field name="name">Instant Noodles &amp; Meals</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_baby" model="product.category">
+        <field name="name">Baby Products</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+
+    <record id="scout_pc_health" model="product.category">
+        <field name="name">Health &amp; Wellness</field>
+        <field name="parent_id" ref="scout_pc_root"/>
+    </record>
+</odoo>

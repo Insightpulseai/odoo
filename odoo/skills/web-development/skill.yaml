@@ -1,0 +1,95 @@
+# Web Development Skill
+# Full-stack web application development
+
+name: web_development
+version: 1.0.0
+key: web.development
+description: |
+  Build web applications: frontend frameworks, API development,
+  database design, authentication, and deployment.
+
+intents:
+  - build website
+  - web development
+  - create web app
+  - full stack web
+  - build api
+
+guardrails:
+  - TypeScript for all new web projects
+  - Secure by default (OWASP Top 10 compliance)
+  - Responsive design (mobile-first)
+  - Performance budget (Core Web Vitals)
+  - Self-hosted deployment preferred
+
+tools:
+  - key: web.design
+    name: Design System
+    target_model: ipai.web.runner
+    target_method: create_design_system
+    description: Create design tokens, component library, style guide
+
+  - key: web.frontend
+    name: Build Frontend
+    target_model: ipai.web.runner
+    target_method: build_frontend
+    description: Implement UI with modern framework (Next.js, React, Vue)
+
+  - key: web.backend
+    name: Build Backend
+    target_model: ipai.web.runner
+    target_method: build_backend
+    description: Implement API, middleware, and server-side logic
+
+  - key: web.database
+    name: Database Design
+    target_model: ipai.web.runner
+    target_method: design_database
+    description: Design schema, migrations, and data access layer
+
+  - key: web.deploy
+    name: Deploy
+    target_model: ipai.web.runner
+    target_method: deploy
+    description: Deploy to Vercel (frontend) or DigitalOcean (backend)
+
+workflow:
+  - web.design
+  - web.frontend
+  - web.backend
+  - web.database
+  - web.deploy
+
+input_schema:
+  type: object
+  required:
+    - project_name
+    - framework
+  properties:
+    project_name: { type: string }
+    framework:
+      type: string
+      enum: [nextjs, react, vue, svelte, astro]
+    features:
+      type: array
+      items: { type: string }
+    database:
+      type: string
+      enum: [postgresql, supabase, sqlite]
+
+output_schema:
+  type: object
+  properties:
+    project_path: { type: string }
+    pages: { type: array, items: { type: string } }
+    api_routes: { type: array, items: { type: string } }
+    deployment_url: { type: string }
+
+agentInstructions: |
+  When building web applications:
+
+  1. **Design System**: Tokens, typography, color palette, spacing
+  2. **Frontend**: Components, pages, routing, state management
+  3. **Backend**: API routes, auth middleware, data validation
+  4. **Database**: Schema design, migrations, indexes, RLS
+  5. **Deploy**: Vercel for SSR/static, DO for custom backends

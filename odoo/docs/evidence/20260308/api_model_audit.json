@@ -1,0 +1,77 @@
+{
+  "audit_date": "2026-03-08T10:48:59.849278",
+  "repo_root": "/Users/tbwa/odoo",
+  "files_scanned": 112,
+  "create_methods_found": 9,
+  "summary": {
+    "ALREADY_CORRECT": 9,
+    "SAFE_AUTO_FIX": 0,
+    "MANUAL_REVIEW": 0,
+    "PARSE_ERROR": 0
+  },
+  "results": [
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_agent/models/agent_run.py",
+      "line": 245,
+      "class": "IpaiAgentRun",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_ai_core/models/ai_provider.py",
+      "line": 81,
+      "class": "IpaiAiProvider",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_bir_plane_sync/models/bir_filing_deadline.py",
+      "line": 64,
+      "class": "BIRFilingDeadline",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_company_scope_omc/models/res_users.py",
+      "line": 81,
+      "class": "ResUsers",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_enterprise_bridge/models/project_task_integration.py",
+      "line": 174,
+      "class": "ProjectTaskIntegration",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_finance_ppm/models/project_task_integration.py",
+      "line": 19,
+      "class": "ProjectTaskIntegration",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_helpdesk/models/helpdesk_ticket.py",
+      "line": 160,
+      "class": "HelpdeskTicket",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_hr_expense_liquidation/models/hr_expense_liquidation.py",
+      "line": 307,
+      "class": "HrExpenseLiquidation",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    },
+    {
+      "file": "/Users/tbwa/odoo/addons/ipai/ipai_llm_supabase_bridge/models/llm_thread.py",
+      "line": 15,
+      "class": "LlmThread",
+      "classification": "ALREADY_CORRECT",
+      "reason": "Uses @api.model_create_multi with vals_list parameter"
+    }
+  ]
+}

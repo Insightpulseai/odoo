@@ -1,0 +1,37 @@
+<odoo>
+  <record id="view_ipai_ops_run_list" model="ir.ui.view">
+    <field name="name">ipai.ops.run.list</field>
+    <field name="model">ipai.ops.run</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="kind"/>
+        <field name="status"/>
+        <field name="external_run_id"/>
+        <field name="create_date"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_ipai_ops_run_form" model="ir.ui.view">
+    <field name="name">ipai.ops.run.form</field>
+    <field name="model">ipai.ops.run</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name" readonly="1"/>
+            <field name="kind"/>
+            <field name="status" readonly="1"/>
+            <field name="external_run_id" readonly="1"/>
+          </group>
+          <notebook>
+            <page string="Payload"><field name="payload_json" widget="text"/></page>
+            <page string="Result"><field name="result_json" widget="text" readonly="1"/></page>
+            <page string="Error"><field name="error" widget="text" readonly="1"/></page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+</odoo>

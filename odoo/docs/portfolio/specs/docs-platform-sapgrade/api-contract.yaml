@@ -1,0 +1,585 @@
+openapi: 3.1.0
+info:
+  title: SAP-Grade Docs Platform API
+  description: |
+    API for SAP-grade documentation platform with taxonomy browsing,
+    faceted search, learning journeys, and glossary integration.
+  version: 1.0.0
+  contact:
+    name: Platform Team
+
+servers:
+  - url: /v1/docs
+    description: Docs API base path
+
+paths:
+  /browse:
+    get:
+      operationId: browseTaxonomy
+      summary: Browse taxonomy tree
+      description: |
+        Returns hierarchical taxonomy tree with document counts.
+        Supports navigation from any node with configurable depth.
+      parameters:
+        - name: root
+          in: query
+          description: Taxonomy node ID to start from (omit for root nodes)
+          schema:
+            type: string
+            format: uuid
+        - name: depth
+          in: query
+          description: Number of levels to return (default 2, max 5)
+          schema:
+            type: integer
+            default: 2
+            minimum: 1
+            maximum: 5
+        - name: include_counts
+          in: query
+          description: Include document counts per node
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Taxonomy tree with document counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxonomyTree'
+        '404':
+          description: Root node not found
+
+  /search:
+    post:
+      operationId: facetedSearch
+      summary: Faceted hybrid search
+      description: |
+        Performs hybrid search (BM25 + vector) with faceted filtering.
+        Returns matching documents with snippets and facet counts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results with facets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Invalid search parameters
+
+  /journey:
+    get:
+      operationId: listJourneys
+      summary: List learning journeys
+      description: Returns available learning journeys filtered by product
+      parameters:
+        - name: product
+          in: query
+          description: Filter by product
+          schema:
+            type: string
+        - name: difficulty
+          in: query
+          description: Filter by difficulty level
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced, expert]
+        - name: featured
+          in: query
+          description: Only return featured journeys
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of journeys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JourneySummary'
+
+  /journey/{slug}:
+    get:
+      operationId: getJourney
+      summary: Get learning journey with steps
+      description: |
+        Returns journey details with ordered steps.
+        Includes user progress if authenticated.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Journey with steps and progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JourneyDetail'
+        '404':
+          description: Journey not found
+
+  /journey/{slug}/progress:
+    post:
+      operationId: updateJourneyProgress
+      summary: Mark journey step complete
+      description: Records completion of a journey step for the current user
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressUpdate'
+      responses:
+        '200':
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JourneyProgress'
+        '400':
+          description: Step is locked
+        '401':
+          description: Authentication required
+        '404':
+          description: Journey or step not found
+
+  /glossary:
+    get:
+      operationId: lookupGlossary
+      summary: Glossary term lookup
+      description: |
+        Searches glossary by term prefix.
+        Supports fuzzy matching for typo tolerance.
+      parameters:
+        - name: term
+          in: query
+          required: true
+          description: Search term (prefix match)
+          schema:
+            type: string
+            minLength: 1
+        - name: product
+          in: query
+          description: Filter by product context
+          schema:
+            type: string
+        - name: fuzzy
+          in: query
+          description: Enable fuzzy matching (slower)
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: Maximum results to return
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        '200':
+          description: Matching glossary terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GlossaryEntry'
+
+  /glossary/{id}:
+    get:
+      operationId: getGlossaryEntry
+      summary: Get glossary entry by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Glossary entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlossaryEntry'
+        '404':
+          description: Term not found
+
+  /related/{doc_id}:
+    get:
+      operationId: getRelatedDocs
+      summary: Get related documents
+      description: Returns documents related to the specified document
+      parameters:
+        - name: doc_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: relationship
+          in: query
+          description: Filter by relationship type
+          schema:
+            type: string
+            enum: [prerequisite, see_also, supersedes, example_of, implements, extends]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Related documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RelatedDoc'
+
+components:
+  schemas:
+    TaxonomyNode:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - depth
+      properties:
+        id:
+          type: string
+          format: uuid
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        depth:
+          type: integer
+        doc_count:
+          type: integer
+          description: Documents directly in this node
+        child_doc_count:
+          type: integer
+          description: Documents in this node and descendants
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxonomyNode'
+
+    TaxonomyTree:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxonomyNode'
+        total_docs:
+          type: integer
+
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 500
+        filters:
+          type: object
+          properties:
+            product:
+              type: array
+              items:
+                type: string
+            version:
+              type: array
+              items:
+                type: string
+            content_type:
+              type: array
+              items:
+                type: string
+                enum: [guide, reference, tutorial, api, faq, changelog, migration]
+            taxonomy:
+              type: array
+              items:
+                type: string
+                format: uuid
+            release_channel:
+              type: array
+              items:
+                type: string
+                enum: [edge, stable, lts]
+            include_deprecated:
+              type: boolean
+              default: false
+        hybrid_weight:
+          type: number
+          description: Weight for vector similarity (0-1). BM25 weight = 1 - this
+          default: 0.5
+          minimum: 0
+          maximum: 1
+        limit:
+          type: integer
+          default: 20
+          maximum: 100
+        offset:
+          type: integer
+          default: 0
+
+    SearchHit:
+      type: object
+      properties:
+        doc_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        snippet:
+          type: string
+          description: Highlighted text snippet with <mark> tags
+        score:
+          type: number
+        product:
+          type: string
+        content_type:
+          type: string
+        version:
+          type: string
+        release_channel:
+          type: string
+        is_deprecated:
+          type: boolean
+        taxonomy_path:
+          type: array
+          items:
+            type: string
+          description: Breadcrumb path from root to primary taxonomy
+
+    Facet:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Facet field name
+        values:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              count:
+                type: integer
+              selected:
+                type: boolean
+
+    SearchResponse:
+      type: object
+      properties:
+        hits:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+        total:
+          type: integer
+        facets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Facet'
+        query_time_ms:
+          type: integer
+
+    JourneySummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        product:
+          type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced, expert]
+        estimated_hours:
+          type: number
+        step_count:
+          type: integer
+        completed_steps:
+          type: integer
+          description: Only present if authenticated
+        is_complete:
+          type: boolean
+          description: Only present if authenticated
+        featured:
+          type: boolean
+
+    JourneyStep:
+      type: object
+      properties:
+        step_order:
+          type: integer
+        doc_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          description: title_override or document title
+        notes:
+          type: string
+        estimated_minutes:
+          type: integer
+        is_optional:
+          type: boolean
+        status:
+          type: string
+          enum: [locked, available, in_progress, completed]
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    JourneyDetail:
+      allOf:
+        - $ref: '#/components/schemas/JourneySummary'
+        - type: object
+          properties:
+            steps:
+              type: array
+              items:
+                $ref: '#/components/schemas/JourneyStep'
+            prerequisites:
+              type: array
+              items:
+                type: string
+              description: Journey slugs that should be completed first
+            certification_slug:
+              type: string
+              nullable: true
+
+    ProgressUpdate:
+      type: object
+      required:
+        - step_order
+      properties:
+        step_order:
+          type: integer
+        quiz_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        notes:
+          type: string
+
+    JourneyProgress:
+      type: object
+      properties:
+        journey_id:
+          type: string
+          format: uuid
+        completed_steps:
+          type: array
+          items:
+            type: integer
+        current_step:
+          type: integer
+          nullable: true
+        is_complete:
+          type: boolean
+        completion_percentage:
+          type: number
+
+    GlossaryEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        term:
+          type: string
+        product_context:
+          type: string
+        definition:
+          type: string
+        acronym_expansion:
+          type: string
+          nullable: true
+        doc_id:
+          type: string
+          format: uuid
+          nullable: true
+        anchor_id:
+          type: string
+          nullable: true
+        related_terms:
+          type: array
+          items:
+            type: string
+        example_usage:
+          type: string
+          nullable: true
+        similarity:
+          type: number
+          description: Only present for fuzzy searches
+
+    RelatedDoc:
+      type: object
+      properties:
+        doc_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        relationship:
+          type: string
+          enum: [prerequisite, see_also, supersedes, example_of, contradicts, implements, extends]
+        weight:
+          type: number
+        bidirectional:
+          type: boolean
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - {}  # Most endpoints are public
+  - bearerAuth: []  # Some features require auth

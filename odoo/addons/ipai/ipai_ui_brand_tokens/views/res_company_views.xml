@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Brand Tokens Tab in Company Form -->
+    <record id="view_company_brand_tokens_form" model="ir.ui.view">
+        <field name="name">res.company.form.brand.tokens</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Brand Tokens" name="brand_tokens">
+                    <group>
+                        <group string="Preset">
+                            <field name="brand_preset"/>
+                            <button name="action_reset_to_tbwa_defaults"
+                                    string="Reset to TBWA Defaults"
+                                    type="object"
+                                    class="btn-secondary"
+                                    icon="fa-refresh"/>
+                        </group>
+                        <group string="Icon Style">
+                            <field name="brand_icon_pack"/>
+                        </group>
+                    </group>
+
+                    <group string="Color Palette">
+                        <group>
+                            <field name="brand_primary" widget="color"/>
+                            <field name="brand_primary_hover" widget="color"/>
+                            <field name="brand_accent" widget="color"/>
+                            <field name="brand_accent_hover" widget="color"/>
+                        </group>
+                        <group>
+                            <field name="brand_success" widget="color"/>
+                            <field name="brand_warning" widget="color"/>
+                            <field name="brand_danger" widget="color"/>
+                            <field name="brand_info" widget="color"/>
+                        </group>
+                    </group>
+
+                    <group string="Surface Colors">
+                        <group>
+                            <field name="brand_bg" widget="color"/>
+                            <field name="brand_surface" widget="color"/>
+                        </group>
+                        <group>
+                            <field name="brand_surface_elevated" widget="color"/>
+                            <field name="brand_border" widget="color"/>
+                        </group>
+                    </group>
+
+                    <group string="Text Colors">
+                        <group>
+                            <field name="brand_text_primary" widget="color"/>
+                            <field name="brand_text_secondary" widget="color"/>
+                        </group>
+                        <group>
+                            <field name="brand_text_on_primary" widget="color"/>
+                            <field name="brand_text_on_accent" widget="color"/>
+                        </group>
+                    </group>
+
+                    <group string="Shape &amp; Typography">
+                        <group>
+                            <field name="brand_radius_sm"/>
+                            <field name="brand_radius_md"/>
+                            <field name="brand_radius_lg"/>
+                        </group>
+                        <group>
+                            <field name="brand_font_family"/>
+                        </group>
+                    </group>
+
+                    <group string="Shadows">
+                        <group>
+                            <field name="brand_shadow_sm"/>
+                        </group>
+                        <group>
+                            <field name="brand_shadow_md"/>
+                        </group>
+                        <group>
+                            <field name="brand_shadow_lg"/>
+                        </group>
+                    </group>
+
+                    <group string="Brand Assets">
+                        <group>
+                            <field name="brand_logo_svg" filename="brand_logo_svg_filename"/>
+                            <field name="brand_logo_svg_filename" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="API Endpoints">
+                        <div class="alert alert-info" role="alert">
+                            <strong>JSON API:</strong>
+                            <code>/ipai/ui/tokens.json?company_id=<field name="id" readonly="1"/></code>
+                            <br/>
+                            <strong>CSS API:</strong>
+                            <code>/ipai/ui/tokens.css?company_id=<field name="id" readonly="1"/></code>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
