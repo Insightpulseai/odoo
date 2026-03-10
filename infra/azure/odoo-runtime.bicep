@@ -95,30 +95,77 @@ module postgres 'modules/postgres-flexible.bicep' = {
   }
 }
 
-// Container Apps Environment + Odoo Container App
-module containerApps 'modules/container-apps.bicep' = {
-  name: 'odooContainerAppsDeployment'
+// Official Odoo 19 image from Docker Hub (public, no ACR auth needed)
+var odooImage = 'docker.io/library/odoo:19.0'
+
+// Container Apps — odoo-web (with ingress)
+module odooWeb 'modules/container-apps.bicep' = {
+  name: 'odooWebDeployment'
   params: {
     environmentName: '${resourcePrefix}-env'
-    appName: '${resourcePrefix}-app'
+    appName: '${resourcePrefix}-web'
     location: location
     tags: tags
-    acrLoginServer: acr.outputs.acrLoginServer
-    containerImage: 'odoo:latest'
+    containerImage: odooImage
+    role: 'web'
     cpu: containerCpu
     memory: containerMemory
     minReplicas: minReplicas
     maxReplicas: maxReplicas
+    dbHost: postgres.outputs.serverFqdn
+    dbUser: pgAdminLogin
+    dbPassword: pgAdminPassword
   }
 }
 
-// Grant Container App identity ACR pull access
+// Container Apps — odoo-worker (no ingress, background jobs)
+module odooWorker 'modules/container-apps.bicep' = {
+  name: 'odooWorkerDeployment'
+  dependsOn: [odooWeb]
+  params: {
+    environmentName: '${resourcePrefix}-env'
+    appName: '${resourcePrefix}-worker'
+    location: location
+    tags: tags
+    containerImage: odooImage
+    role: 'worker'
+    cpu: containerCpu
+    memory: containerMemory
+    minReplicas: 1
+    maxReplicas: 2
+    dbHost: postgres.outputs.serverFqdn
+    dbUser: pgAdminLogin
+    dbPassword: pgAdminPassword
+  }
+}
+
+// Container Apps — odoo-cron (no ingress, singleton)
+module odooCron 'modules/container-apps.bicep' = {
+  name: 'odooCronDeployment'
+  dependsOn: [odooWeb]
+  params: {
+    environmentName: '${resourcePrefix}-env'
+    appName: '${resourcePrefix}-cron'
+    location: location
+    tags: tags
+    containerImage: odooImage
+    role: 'cron'
+    cpu: '0.5'
+    memory: '1Gi'
+    dbHost: postgres.outputs.serverFqdn
+    dbUser: pgAdminLogin
+    dbPassword: pgAdminPassword
+  }
+}
+
+// ACR kept for future custom images (addon baking, etc.)
+// Grant web identity ACR pull access for when custom images are used
 resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(acr.outputs.acrId, containerApps.outputs.appPrincipalId, 'acrpull')
+  name: guid(resourceGroup().id, acrName, 'odoo-web-acrpull')
   scope: resourceGroup()
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-    principalId: containerApps.outputs.appPrincipalId
+    principalId: odooWeb.outputs.appPrincipalId
     principalType: 'ServicePrincipal'
   }
 }
@@ -126,8 +173,10 @@ resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 // Outputs
 output acrLoginServer string = acr.outputs.acrLoginServer
 output acrName string = acr.outputs.acrName
-output containerAppFqdn string = containerApps.outputs.appFqdn
-output containerAppName string = containerApps.outputs.appName
+output odooWebFqdn string = odooWeb.outputs.appFqdn
+output odooWebName string = odooWeb.outputs.appName
+output odooWorkerName string = odooWorker.outputs.appName
+output odooCronName string = odooCron.outputs.appName
 output postgresServerFqdn string = postgres.outputs.serverFqdn
 output postgresDatabaseName string = postgres.outputs.databaseName
 output keyVaultName string = keyVault.outputs.keyVaultName
