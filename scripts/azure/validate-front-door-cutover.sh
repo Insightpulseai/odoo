@@ -113,12 +113,17 @@ filter_wave = sys.argv[3] if len(sys.argv) > 3 else ""
 with open(checklist_path) as f:
     data = yaml.safe_load(f)
 
-hostnames = data.get("hostnames", [])
+hostnames = []
+for wave in data.get("waves", []):
+    wave_name = wave.get("name", "")
+    for entry in wave.get("hostnames", []):
+        entry["wave"] = wave_name
+        hostnames.append(entry)
 
 for entry in hostnames:
     hostname = entry.get("hostname", "")
     wave = entry.get("wave", "")
-    health_path = entry.get("health_path", "/")
+    health_path = entry.get("health_check_path", "/")
     enabled = entry.get("enabled", True)
 
     if not enabled:
