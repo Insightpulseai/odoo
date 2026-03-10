@@ -1,41 +1,44 @@
 name: odoo-azure-deploy
 
-# Azure-native Odoo deployment with OIDC authentication
-# Implements "Odoo.sh-like" automation following Azure Container Apps blue-green pattern
-# SSOT: docs/ops/AZURE_ODOO_AUTOMATION.md
+# Azure-native Odoo deployment using official odoo:19.0 image
+# Deploys web/worker/cron container apps via blue-green revisions
+# SSOT: infra/azure/odoo-runtime.bicep
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment (production requires approval)'
+        description: 'Deployment environment'
         type: choice
         options:
           - dev
           - staging
           - production
         required: true
+      image_tag:
+        description: 'Odoo image tag (default: 19.0)'
+        type: string
+        default: '19.0'
   push:
     branches: [main]
     paths:
-      - "docker/**"
+      - "infra/azure/**"
       - "config/**"
       - "addons/**"
 
 permissions:
-  id-token: write  # OIDC token exchange with Azure
+  id-token: write
   contents: read
 
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  ACR_NAME: ${{ secrets.ACR_NAME }}
-  CONTAINERAPP_NAME: ${{ secrets.CONTAINERAPP_NAME }}
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ODOO_IMAGE: docker.io/library/odoo:${{ github.event.inputs.image_tag || '19.0' }}
 
 jobs:
   deploy:
-    name: "🚀 Deploy to Azure Container Apps"
+    name: "Deploy Odoo to Azure Container Apps"
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
     steps:
@@ -53,80 +56,103 @@ jobs:
         run: |
           ENV="${{ github.event.inputs.environment || 'dev' }}"
           RG="rg-ipai-${ENV}"
+          BASE="ipai-odoo-${ENV}"
 
-          # Check resource group exists
           az group show -n "$RG" > /dev/null 2>&1 || {
             echo "Resource group $RG not found. Run azure-provision workflow first."
             exit 1
           }
 
-          # Check ACR exists
-          az acr show -n ${{ env.ACR_NAME }} > /dev/null 2>&1 || {
-            echo "ACR ${{ env.ACR_NAME }} not found. Run azure-provision workflow first."
+          az containerapp show -n "${BASE}-web" -g "$RG" > /dev/null 2>&1 || {
+            echo "Container app ${BASE}-web not found. Run azure-provision workflow first."
             exit 1
           }
 
           echo "Azure resources verified"
 
-      - name: Build and Push to ACR
+      - name: Deploy odoo-web revision
         run: |
           ENV="${{ github.event.inputs.environment || 'dev' }}"
-          echo "Building Odoo image for environment: ${ENV}"
-
-          az acr build \
-            --registry ${{ env.ACR_NAME }} \
-            --image odoo:${{ github.sha }} \
-            --image odoo:latest \
-            --file docker/Dockerfile.unified \
-            --build-arg BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
-            --build-arg GIT_SHA=${{ github.sha }} \
-            .
-
-          echo "✅ Image pushed: ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }}"
-
-      - name: Deploy Container App Revision
-        run: |
-          ENV="${{ github.event.inputs.environment || 'dev' }}"
-          RESOURCE_GROUP="rg-ipai-${ENV}"
+          RG="rg-ipai-${ENV}"
+          APP="ipai-odoo-${ENV}-web"
           SHA_SHORT="$(echo ${{ github.sha }} | cut -c1-7)"
 
-          echo "Deploying to Container App: ${{ env.CONTAINERAPP_NAME }}"
-          echo "Resource Group: ${RESOURCE_GROUP}"
-          echo "Revision suffix: sha-${SHA_SHORT}"
-
+          echo "Deploying ${APP} with image: ${ODOO_IMAGE}"
           az containerapp update \
-            --name ${{ env.CONTAINERAPP_NAME }} \
-            --resource-group ${RESOURCE_GROUP} \
-            --image ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }} \
-            --revision-suffix sha-${SHA_SHORT}
+            --name "$APP" \
+            --resource-group "$RG" \
+            --image "$ODOO_IMAGE" \
+            --revision-suffix "sha-${SHA_SHORT}"
 
-          echo "✅ Revision deployed with blue-green traffic switch"
+      - name: Deploy odoo-worker revision
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          RG="rg-ipai-${ENV}"
+          APP="ipai-odoo-${ENV}-worker"
+
+          az containerapp show -n "$APP" -g "$RG" > /dev/null 2>&1 && {
+            az containerapp update \
+              --name "$APP" \
+              --resource-group "$RG" \
+              --image "$ODOO_IMAGE"
+            echo "Worker updated"
+          } || echo "Worker app not found, skipping"
+
+      - name: Deploy odoo-cron revision
+        run: |
+          ENV="${{ github.event.inputs.environment || 'dev' }}"
+          RG="rg-ipai-${ENV}"
+          APP="ipai-odoo-${ENV}-cron"
+
+          az containerapp show -n "$APP" -g "$RG" > /dev/null 2>&1 && {
+            az containerapp update \
+              --name "$APP" \
+              --resource-group "$RG" \
+              --image "$ODOO_IMAGE"
+            echo "Cron updated"
+          } || echo "Cron app not found, skipping"
 
       - name: Verify Deployment
         run: |
           ENV="${{ github.event.inputs.environment || 'dev' }}"
-          RESOURCE_GROUP="rg-ipai-${ENV}"
+          RG="rg-ipai-${ENV}"
+          APP="ipai-odoo-${ENV}-web"
 
-          echo "Active revisions with traffic:"
+          echo "Active revisions:"
           az containerapp revision list \
-            --name ${{ env.CONTAINERAPP_NAME }} \
-            --resource-group ${RESOURCE_GROUP} \
+            --name "$APP" \
+            --resource-group "$RG" \
             --query "[?properties.trafficWeight > 0].{name:name,traffic:properties.trafficWeight,active:properties.active}" \
             -o table
 
-          # Verify at least one revision is active
+          FQDN=$(az containerapp show -n "$APP" -g "$RG" \
+            --query "properties.configuration.ingress.fqdn" -o tsv)
+          echo "FQDN: ${FQDN}"
+
           ACTIVE_COUNT=$(az containerapp revision list \
-            --name ${{ env.CONTAINERAPP_NAME }} \
-            --resource-group ${RESOURCE_GROUP} \
+            --name "$APP" \
+            --resource-group "$RG" \
             --query "[?properties.trafficWeight > 0 && properties.active] | length(@)" \
             -o tsv)
 
           if [ "$ACTIVE_COUNT" -eq "0" ]; then
-            echo "❌ ERROR: No active revisions with traffic"
+            echo "ERROR: No active revisions with traffic"
             exit 1
           fi
 
-          echo "✅ Deployment verified: ${ACTIVE_COUNT} active revision(s)"
+          echo "Deployment verified: ${ACTIVE_COUNT} active revision(s)"
+
+          # Check worker/cron exist and have no ingress
+          for ROLE in worker cron; do
+            ROLE_APP="ipai-odoo-${ENV}-${ROLE}"
+            INGRESS=$(az containerapp show -n "$ROLE_APP" -g "$RG" \
+              --query "properties.configuration.ingress" -o tsv 2>/dev/null || echo "")
+            if [ -z "$INGRESS" ] || [ "$INGRESS" = "None" ]; then
+              echo "${ROLE}: no ingress (correct)"
+            else
+              echo "WARNING: ${ROLE} has ingress configured"
+            fi
+          done
 
       - name: Post-Deployment Summary
         if: always()
@@ -135,7 +161,9 @@ jobs:
           echo "## Deployment Summary"
           echo ""
           echo "- **Environment**: ${ENV}"
-          echo "- **Image**: ${{ env.ACR_NAME }}.azurecr.io/odoo:${{ github.sha }}"
+          echo "- **Image**: ${ODOO_IMAGE}"
           echo "- **Commit**: ${{ github.sha }}"
           echo "- **Triggered by**: ${{ github.actor }}"
           echo "- **Status**: ${{ job.status }}"
+          echo ""
+          echo "Roles: odoo-web (ingress), odoo-worker (no ingress), odoo-cron (no ingress)"
