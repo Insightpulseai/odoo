@@ -73,6 +73,17 @@ services:
     status: planned
     promotion_state: repo-only
 
+  - id: svc_016
+    name: "Azure Dev Center"
+    category: developer_platform
+    hosting: azure
+    status: phase-2
+    promotion_state: repo-only
+    prerequisite: "Front Door cutover complete (Wave 1+)"
+    components:
+      - "Dev Box (cloud workstations)"
+      - "Deployment Environments (IaC catalogs)"
+
   # App Platform Services
   - id: svc_020
     name: "DevOps Engineer Agent"

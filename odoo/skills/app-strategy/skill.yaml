@@ -1,0 +1,99 @@
+# App Strategy & Consulting Skill
+# Application strategy, technology selection, and architecture planning
+
+name: app_strategy
+version: 1.0.0
+key: app.strategy
+description: |
+  Run application strategy workflows: technology assessment,
+  architecture design, build-vs-buy analysis, and technical roadmaps.
+
+intents:
+  - app strategy
+  - technology consulting
+  - build vs buy decision
+  - application architecture
+  - tech stack recommendation
+  - app feasibility study
+
+guardrails:
+  - Prefer self-hosted solutions over SaaS
+  - Cost analysis must include self-hosted vs managed comparisons
+  - Architecture decisions must reference existing stack (Odoo, n8n, Supabase)
+  - Never recommend vendor lock-in solutions
+
+tools:
+  - key: strategy.assess
+    name: Technology Assessment
+    target_model: ipai.strategy.runner
+    target_method: assess_technology
+    description: Evaluate technology options against requirements
+
+  - key: strategy.architecture
+    name: Architecture Design
+    target_model: ipai.strategy.runner
+    target_method: design_architecture
+    description: Design application architecture with component diagram
+
+  - key: strategy.cost
+    name: Cost Analysis
+    target_model: ipai.strategy.runner
+    target_method: analyze_costs
+    description: Compare build costs, hosting costs, and TCO
+
+  - key: strategy.roadmap
+    name: Technical Roadmap
+    target_model: ipai.strategy.runner
+    target_method: create_roadmap
+    description: Create phased technical delivery roadmap
+
+workflow:
+  - strategy.assess
+  - strategy.architecture
+  - strategy.cost
+  - strategy.roadmap
+
+input_schema:
+  type: object
+  required:
+    - project_name
+    - project_type
+  properties:
+    project_name: { type: string }
+    project_type:
+      type: string
+      enum: [web_app, mobile_app, saas, internal_tool, integration, ecommerce]
+    requirements:
+      type: array
+      items: { type: string }
+    constraints:
+      type: object
+      properties:
+        budget: { type: string }
+        timeline: { type: string }
+        team_size: { type: integer }
+
+output_schema:
+  type: object
+  properties:
+    tech_assessment: { type: object }
+    architecture_diagram: { type: string }
+    cost_comparison: { type: object }
+    roadmap: { type: object }
+
+agentInstructions: |
+  When consulting on app strategy:
+
+  1. **Assess**: Map requirements to technology capabilities.
+     Consider existing stack: Odoo (ERP), n8n (automation),
+     Supabase (external data), DigitalOcean (hosting).
+
+  2. **Architecture**: Design with clear separation of concerns.
+     Prefer monorepo patterns (pnpm workspaces).
+     Reference existing packages/ and apps/ structure.
+
+  3. **Cost**: Self-hosted on DO droplets vs SaaS alternatives.
+     Include hosting, maintenance, and development costs.
+
+  4. **Roadmap**: Phase deliverables by business value.
+     MVP first, then iterate based on user feedback.

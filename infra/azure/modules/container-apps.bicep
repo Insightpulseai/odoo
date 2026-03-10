@@ -247,9 +247,143 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   }
 }
 
+<<<<<<< HEAD
+// Determine image source: ACR-prefixed or direct Docker Hub
+var imageRef = acrLoginServer != '' ? '${acrLoginServer}/${containerImage}' : containerImage
+
+// Ingress only for web role
+var ingressConfig = role == 'web' ? {
+  external: true
+  targetPort: 8069
+  transport: 'http'
+  allowInsecure: false
+  traffic: [
+    {
+      latestRevision: true
+      weight: 100
+    }
+  ]
+} : null
+
+// Registry config only when using ACR
+var registryConfig = acrLoginServer != '' ? [
+  {
+    server: acrLoginServer
+    identity: acrIdentityId != '' ? acrIdentityId : 'system'
+  }
+] : []
+
+// Role-specific command overrides
+var commandOverride = role == 'worker' ? [
+  'odoo'
+  '--no-http'
+  '--workers=2'
+  '--db_host=${dbHost}'
+] : role == 'cron' ? [
+  'odoo'
+  '--no-http'
+  '--max-cron-threads=1'
+  '--workers=0'
+  '--db_host=${dbHost}'
+] : []
+
+// Odoo Container App
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
+  name: appName
+  location: location
+  tags: union(tags, { OdooRole: role })
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    managedEnvironmentId: environment.id
+    configuration: {
+      activeRevisionsMode: role == 'web' ? 'Multiple' : 'Single'
+      ingress: ingressConfig
+      registries: registryConfig
+      secrets: [
+        {
+          name: 'db-password'
+          value: dbPassword
+        }
+      ]
+    }
+    template: {
+      containers: [
+        {
+          name: 'odoo'
+          image: imageRef
+          command: !empty(commandOverride) ? commandOverride : null
+          resources: {
+            cpu: json(cpu)
+            memory: memory
+          }
+          env: [
+            {
+              name: 'HOST'
+              value: dbHost
+            }
+            {
+              name: 'PORT'
+              value: dbPort
+            }
+            {
+              name: 'USER'
+              value: dbUser
+            }
+            {
+              name: 'PASSWORD'
+              secretRef: 'db-password'
+            }
+          ]
+          probes: role == 'web' ? [
+            {
+              type: 'Liveness'
+              httpGet: {
+                path: '/web/health'
+                port: 8069
+              }
+              initialDelaySeconds: 60
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+            }
+            {
+              type: 'Readiness'
+              httpGet: {
+                path: '/web/health'
+                port: 8069
+              }
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+            }
+          ] : []
+        }
+      ]
+      scale: {
+        minReplicas: role == 'cron' ? 1 : minReplicas
+        maxReplicas: role == 'cron' ? 1 : maxReplicas
+        rules: role == 'web' ? [
+          {
+            name: 'http-scaling'
+            http: {
+              metadata: {
+                concurrentRequests: '50'
+              }
+            }
+          }
+        ] : []
+      }
+    }
+  }
+}
+=======
 // ---------------------------------------------------------------------------
 // Container Apps — 9 services
 // ---------------------------------------------------------------------------
+>>>>>>> origin/main
 
 resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [
   for svc in services: {
@@ -334,6 +468,12 @@ resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [
 
 @description('Container Apps Environment resource ID')
 output environmentId string = environment.id
+<<<<<<< HEAD
+output appName string = containerApp.name
+output appFqdn string = role == 'web' ? containerApp.properties.configuration.ingress.fqdn : ''
+output appId string = containerApp.id
+output appPrincipalId string = containerApp.identity.principalId
+=======
 
 @description('Container Apps Environment default domain (FQDN suffix)')
 output environmentDefaultDomain string = environment.properties.defaultDomain
@@ -357,3 +497,4 @@ output n8nFqdn string = containerApps[3].properties.configuration.ingress.fqdn
 
 @description('MCP Gateway app FQDN')
 output mcpGatewayFqdn string = containerApps[4].properties.configuration.ingress.fqdn
+>>>>>>> origin/main

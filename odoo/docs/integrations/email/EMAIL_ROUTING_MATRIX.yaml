@@ -1,0 +1,221 @@
+# TBWA Email Routing Matrix
+# Created: 2026-02-12
+# Portfolio Initiative: PORT-2026-011
+# Evidence: EVID-20260212-006
+
+# Mapping: sender domain → Odoo project → notification rules
+
+routing_rules:
+  # Client Communications
+  - sender_domain: jollibee.com.ph
+    project_id: 42
+    project_name: "Jollibee Marketing Campaign 2026"
+    assign_to:
+      - user_id: 5
+        user_name: "Maria Santos"
+        role: "Account Manager"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: true
+    priority: high
+    sla_hours: 4
+
+  - sender_domain: sanmiguel.com
+    project_id: 43
+    project_name: "San Miguel Brand Refresh"
+    assign_to:
+      - user_id: 6
+        user_name: "Juan dela Cruz"
+        role: "Creative Director"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: true
+    priority: high
+    sla_hours: 4
+
+  - sender_domain: ayala.com.ph
+    project_id: 44
+    project_name: "Ayala Corporate Communications"
+    assign_to:
+      - user_id: 7
+        user_name: "Isabel Reyes"
+        role: "Senior Account Executive"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: true
+    priority: medium
+    sla_hours: 8
+
+  # Internal Departments
+  - sender_domain: tbwa.com
+    department: HR
+    sender_pattern: "hr@|people@|recruiting@"
+    assign_to:
+      - user_id: 10
+        user_name: "HR Manager"
+        role: "Human Resources"
+    notification_rules:
+      email: true
+      slack: false
+      odoo_activity: true
+      create_task: false
+    priority: medium
+    sla_hours: 24
+
+  - sender_domain: tbwa.com
+    department: Finance
+    sender_pattern: "finance@|accounting@|ap@|ar@"
+    assign_to:
+      - user_id: 11
+        user_name: "Finance Manager"
+        role: "Accounting"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: true
+    priority: high
+    sla_hours: 8
+
+  - sender_domain: tbwa.com
+    department: IT
+    sender_pattern: "it@|helpdesk@|support@"
+    assign_to:
+      - user_id: 12
+        user_name: "IT Support"
+        role: "IT Department"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: true
+    priority: medium
+    sla_hours: 12
+
+  # Procurement & Vendors
+  - subject_pattern: "\\[INVOICE\\]|Invoice #|Bill #"
+    target_model: account.move
+    assign_to:
+      - user_id: 11
+        user_name: "Finance Manager"
+        role: "Accounts Payable"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: false
+      create_invoice: true
+    priority: high
+    sla_hours: 24
+
+  - subject_pattern: "\\[PO\\]|Purchase Order|P\\.O\\."
+    target_model: purchase.order
+    assign_to:
+      - user_id: 13
+        user_name: "Procurement Manager"
+        role: "Procurement"
+    notification_rules:
+      email: true
+      slack: true
+      odoo_activity: true
+      create_task: false
+      create_po: true
+    priority: medium
+    sla_hours: 48
+
+  - subject_pattern: "\\[RFQ\\]|Request for Quote|Quotation Request"
+    target_model: purchase.order
+    assign_to:
+      - user_id: 13
+        user_name: "Procurement Manager"
+        role: "Procurement"
+    notification_rules:
+      email: true
+      slack: false
+      odoo_activity: true
+      create_task: false
+      create_rfq: true
+    priority: low
+    sla_hours: 72
+
+# Email Aliases (projects+{alias}@insightpulseai.com)
+email_aliases:
+  - alias: jollibee
+    project_id: 42
+    forward_to:
+      - user_id: 5
+    create_task: true
+
+  - alias: sanmiguel
+    project_id: 43
+    forward_to:
+      - user_id: 6
+    create_task: true
+
+  - alias: ayala
+    project_id: 44
+    forward_to:
+      - user_id: 7
+    create_task: true
+
+  - alias: invoices
+    target_model: account.move
+    forward_to:
+      - user_id: 11
+    create_invoice: true
+
+  - alias: po
+    target_model: purchase.order
+    forward_to:
+      - user_id: 13
+    create_po: true
+
+# Attachment Handling Rules
+attachment_rules:
+  - file_extension: ".pdf"
+    subject_pattern: "\\[INVOICE\\]|Invoice"
+    action: ocr_invoice
+    storage_path: "tbwa/invoices/{year}/{month}/"
+    create_invoice: true
+
+  - file_extension: ".pdf"
+    subject_pattern: "\\[PO\\]|Purchase Order"
+    action: archive
+    storage_path: "tbwa/purchase-orders/{year}/{month}/"
+    create_po: true
+
+  - file_extension: ".pdf|.ppt|.pptx"
+    sender_domain: "jollibee.com.ph|sanmiguel.com|ayala.com.ph"
+    action: archive_deliverable
+    storage_path: "tbwa/client-deliverables/{client}/{year}/"
+    link_to_project: true
+
+  - file_extension: ".xlsx|.xls"
+    subject_pattern: "Report|Analysis"
+    action: archive
+    storage_path: "tbwa/reports/{year}/{month}/"
+    create_task: true
+
+# Spam & Security Rules
+spam_rules:
+  - sender_domain: "suspicious-domain.com"
+    action: block
+    reason: "Blacklisted domain"
+
+  - subject_pattern: "Urgent Action Required|Verify Your Account|Click Here Now"
+    action: quarantine
+    reason: "Phishing pattern detected"
+
+  - attachment_count: "> 10"
+    action: quarantine
+    reason: "Excessive attachments"
+
+  - attachment_size: "> 25MB"
+    action: warn
+    reason: "Large attachment - verify sender"

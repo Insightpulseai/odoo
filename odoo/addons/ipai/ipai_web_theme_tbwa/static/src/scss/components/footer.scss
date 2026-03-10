@@ -1,0 +1,109 @@
+/*
+ * TBWA Footer Styles
+ * ==================
+ * Footer from tbwa-smp.com
+ */
+
+// ============================================================================
+// FOOTER
+// ============================================================================
+.o_tbwa_footer {
+  background-color: var(--tbwa-bg-secondary, #f8f9fa);
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--tbwa-border);
+  margin-top: auto;
+
+  .row-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .row-parent {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    @media (max-width: 991px) {
+      flex-direction: column;
+      text-align: center !important;
+
+      .col-lg-6 {
+        width: 100%;
+        text-align: center !important;
+      }
+    }
+  }
+
+  // Left column - Logo and address
+  .text-left {
+    .tbwa-footer-logo {
+      max-width: 300px;
+      width: 100%;
+      padding: 12px 2px;
+    }
+
+    .footer-add {
+      color: var(--tbwa-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 1rem 0;
+    }
+
+    a {
+      color: var(--tbwa-primary);
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: 0.9rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // Right column - Social icons
+  .text-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+
+    @media (max-width: 991px) {
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .social-icon {
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--tbwa-primary);
+        color: var(--tbwa-text-on-primary);
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: var(--tbwa-accent);
+          transform: translateY(-2px);
+        }
+
+        i {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+// Ensure footer stays at bottom
+.o_action_manager {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  .o_content {
+    flex: 1;
+  }
+}

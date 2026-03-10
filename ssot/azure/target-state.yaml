@@ -30,13 +30,20 @@ platforms:
 
   azure_cloud:
     role: agent_platform
-    constraint: "Foundry + Container Apps for copilot runtime only"
+    constraint: "Foundry + Container Apps for copilot runtime; Dev Center for phase-2 engineering"
     capabilities:
       foundry_agents: { status: repo-only, service: "Foundry Agents Service", spec: "spec/odoo-copilot-azure/" }
       container_apps: { status: repo-only, service: "Azure Container Apps" }
       key_vault: { status: repo-only, service: "Azure Key Vault" }
       api_management: { status: repo-only, service: "Azure API Management" }
       monitor: { status: repo-only, service: "Azure Monitor / App Insights" }
+      dev_center:
+        status: phase-2
+        service: "Azure Dev Center"
+        prerequisite: "Front Door cutover complete (Wave 1+)"
+        components:
+          dev_box: { status: phase-2, service: "Microsoft Dev Box", note: "Cloud workstations for migration workstreams" }
+          deployment_environments: { status: phase-2, service: "Azure Deployment Environments", note: "Catalog-driven self-service IaC environments" }
 
   digitalocean:
     role: primary_hosting
@@ -57,3 +64,4 @@ cross_references:
   dns_plan: "ssot/azure/dns-migration-plan.yaml"
   copilot_spec: "spec/odoo-copilot-azure/"
   mapping: "docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml"
+  dev_center_analysis: "User analysis 2026-03-10 — Phase 2 only, not on critical path"

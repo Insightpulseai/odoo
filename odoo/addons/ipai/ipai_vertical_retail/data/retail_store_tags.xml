@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Scout Store Type Tags -->
+    <record id="scout_tag_sari_sari" model="res.partner.category">
+        <field name="name">Sari-sari</field>
+        <field name="color">1</field>
+    </record>
+
+    <record id="scout_tag_pharmacy" model="res.partner.category">
+        <field name="name">Pharmacy</field>
+        <field name="color">2</field>
+    </record>
+
+    <record id="scout_tag_grocery" model="res.partner.category">
+        <field name="name">Grocery</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="scout_tag_modern_trade" model="res.partner.category">
+        <field name="name">Modern Trade</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="scout_tag_horeca" model="res.partner.category">
+        <field name="name">HoReCa</field>
+        <field name="color">5</field>
+    </record>
+
+    <record id="scout_tag_distributor" model="res.partner.category">
+        <field name="name">Distributor</field>
+        <field name="color">6</field>
+    </record>
+
+    <record id="scout_tag_wholesaler" model="res.partner.category">
+        <field name="name">Wholesaler</field>
+        <field name="color">7</field>
+    </record>
+
+    <!-- Regional Tags -->
+    <record id="scout_tag_ncr" model="res.partner.category">
+        <field name="name">NCR</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="scout_tag_luzon" model="res.partner.category">
+        <field name="name">Luzon</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="scout_tag_visayas" model="res.partner.category">
+        <field name="name">Visayas</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="scout_tag_mindanao" model="res.partner.category">
+        <field name="name">Mindanao</field>
+        <field name="color">10</field>
+    </record>
+
+    <!-- Channel Tags -->
+    <record id="scout_tag_traditional_trade" model="res.partner.category">
+        <field name="name">Traditional Trade</field>
+        <field name="color">8</field>
+    </record>
+
+    <record id="scout_tag_ecommerce" model="res.partner.category">
+        <field name="name">E-commerce</field>
+        <field name="color">9</field>
+    </record>
+</odoo>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Enterprise Bridge Configurations -->
+
+        <record id="bridge_config_studio" model="ipai.enterprise.bridge.config">
+            <field name="name">Odoo Studio</field>
+            <field name="feature_code">studio</field>
+            <field name="oca_alternative">web_studio_community</field>
+            <field name="bridge_mode">stub</field>
+            <field name="notes">Studio features not available in CE. Use ipai_dev_studio_base for limited customization.</field>
+        </record>
+
+        <record id="bridge_config_planning" model="ipai.enterprise.bridge.config">
+            <field name="name">Planning</field>
+            <field name="feature_code">planning</field>
+            <field name="oca_alternative">project_timeline</field>
+            <field name="bridge_mode">oca</field>
+            <field name="notes">Use OCA project_timeline for Gantt-like views.</field>
+        </record>
+
+        <record id="bridge_config_documents" model="ipai.enterprise.bridge.config">
+            <field name="name">Documents</field>
+            <field name="feature_code">documents</field>
+            <field name="oca_alternative">dms</field>
+            <field name="bridge_mode">oca</field>
+            <field name="notes">Use OCA DMS (Document Management System) as alternative.</field>
+        </record>
+
+        <record id="bridge_config_spreadsheet" model="ipai.enterprise.bridge.config">
+            <field name="name">Spreadsheet</field>
+            <field name="feature_code">spreadsheet</field>
+            <field name="oca_alternative">spreadsheet_oca</field>
+            <field name="bridge_mode">oca</field>
+            <field name="notes">Use OCA spreadsheet module for CE.</field>
+        </record>
+
+        <record id="bridge_config_sign" model="ipai.enterprise.bridge.config">
+            <field name="name">Sign</field>
+            <field name="feature_code">sign</field>
+            <field name="oca_alternative"></field>
+            <field name="bridge_mode">disabled</field>
+            <field name="notes">No OCA alternative. Use external signing service integration.</field>
+        </record>
+
+        <record id="bridge_config_helpdesk" model="ipai.enterprise.bridge.config">
+            <field name="name">Helpdesk</field>
+            <field name="feature_code">helpdesk</field>
+            <field name="oca_alternative">helpdesk_mgmt</field>
+            <field name="bridge_mode">oca</field>
+            <field name="notes">Use OCA helpdesk_mgmt as alternative.</field>
+        </record>
+
+        <record id="bridge_config_quality" model="ipai.enterprise.bridge.config">
+            <field name="name">Quality</field>
+            <field name="feature_code">quality</field>
+            <field name="oca_alternative">mgmtsystem_quality</field>
+            <field name="bridge_mode">oca</field>
+            <field name="notes">Use OCA Management System Quality module.</field>
+        </record>
+
+        <record id="bridge_config_marketing_automation" model="ipai.enterprise.bridge.config">
+            <field name="name">Marketing Automation</field>
+            <field name="feature_code">marketing_automation</field>
+            <field name="oca_alternative"></field>
+            <field name="bridge_mode">custom</field>
+            <field name="notes">Custom implementation via n8n workflows.</field>
+        </record>
+
+    </data>
+</odoo>

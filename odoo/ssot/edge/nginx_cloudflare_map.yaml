@@ -1,0 +1,723 @@
+# =============================================================================
+# Edge SSOT Map: Nginx + Cloudflare Settings (Local + Prod)
+# =============================================================================
+# Single authoritative mapping of nginx configs, Cloudflare DNS/SSL, upstreams,
+# and failure modes per hostname. Agents and drift scripts consume this file.
+#
+# Upstream SSOT: infra/dns/subdomain-registry.yaml (DNS lifecycle)
+# This file adds: nginx config paths, upstream targets, proxy headers, TLS
+# expectations, websocket config, and failure-mode catalog per hostname.
+#
+# Version bumps:
+#   - Increment on hostname add/remove, upstream change, or failure mode update.
+#   - CI gate: .github/workflows/edge-drift-check.yml (planned)
+# =============================================================================
+
+version: 3  # Synced to prod reality 2026-03-04
+zone:
+  name: insightpulseai.com
+  provider: cloudflare
+  nameservers:
+    - edna.ns.cloudflare.com
+    - keanu.ns.cloudflare.com
+  origin_ip: 178.128.112.214
+
+# =============================================================================
+# Hostname Inventory
+# =============================================================================
+hostnames:
+
+  # ---------------------------------------------------------------------------
+  # insightpulseai.com (apex) — Odoo CE 19
+  # ---------------------------------------------------------------------------
+  - hostname: insightpulseai.com
+    aliases:
+      - www.insightpulseai.com
+      - erp.insightpulseai.com
+    service: odoo_ce_19
+    envs:
+      local:
+        compose_service: nginx
+        compose_file: docker-compose.yml
+        upstream: odoo:8069
+        longpoll_upstream: odoo:8072
+        config_paths:
+          - ipai-platform/nginx/nginx.conf
+          - ipai-platform/nginx/conf.d/default.conf
+        listen: "80"
+        server_name: localhost
+        tls: false
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:8069
+        longpoll_upstream: 127.0.0.1:8072
+        nginx_paths:
+          - /etc/nginx/sites-enabled/insightpulseai.com
+        repo_config: infra/deploy/nginx/insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/insightpulseai.com.access.log
+        log_error: /var/log/nginx/insightpulseai.com.error.log
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - X-Forwarded-Host
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+      - X-Real-IP
+      - Host
+    websocket:
+      enabled: true
+      path: /longpolling
+      upgrade_header: true
+      connection_upgrade: true
+      note: "Odoo bus/longpolling uses HTTP upgrade on /longpolling (prod) and /websocket (local)"
+    static_cache:
+      pattern: "/web/static/"
+      expires: "864000"
+      cache_control: "public, immutable"
+      proxy_cache_valid: "200 90m"
+    client_limits:
+      max_body_size: 100M
+      body_buffer_size: 128k
+    timeouts:
+      proxy_read: 720s
+      proxy_connect: 720s
+      proxy_send: 720s
+    security_headers:
+      - "X-Frame-Options: SAMEORIGIN"
+      - "X-Content-Type-Options: nosniff"
+      - "X-XSS-Protection: 1; mode=block"
+      - "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+    health_check:
+      path: /web/health
+      expected_status: 200
+
+  # ---------------------------------------------------------------------------
+  # ocr.insightpulseai.com — PaddleOCR microservice
+  # ---------------------------------------------------------------------------
+  - hostname: ocr.insightpulseai.com
+    service: paddleocr_microservice
+    envs:
+      local:
+        compose_service: null  # not in local compose; prod-only
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:8001
+        nginx_paths:
+          - /etc/nginx/sites-enabled/ocr.insightpulseai.com
+        repo_config: infra/nginx/ocr.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: ocr.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/ocr.insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/ocr.insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/ocr.insightpulseai.com.access.log
+        log_error: /var/log/nginx/ocr.insightpulseai.com.error.log
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    websocket:
+      enabled: false
+    client_limits:
+      max_body_size: 20M
+    timeouts:
+      proxy_read: 120s
+      proxy_connect: 10s
+      proxy_send: 120s
+    health_check:
+      path: /health
+      alt_path: /healthz
+      expected_status: 200
+      note: "/healthz remapped to /health in nginx — container only exposes /health"
+
+  # ---------------------------------------------------------------------------
+  # n8n.insightpulseai.com — n8n workflow automation
+  # ---------------------------------------------------------------------------
+  - hostname: n8n.insightpulseai.com
+    service: n8n_workflow_automation
+    envs:
+      local:
+        compose_service: n8n  # in docker-compose.dev.yml
+        compose_file: docker-compose.dev.yml
+        upstream: n8n:5678
+        config_paths: []  # no local nginx vhost; accessed directly on :5679
+        host_port: 5679
+        container_port: 5678
+        note: "Host port 5679 to avoid debugpy collision on 5678"
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:5678
+        nginx_paths:
+          - /etc/nginx/sites-enabled/n8n.insightpulseai.com
+        repo_config: infra/nginx/n8n.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: n8n.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/n8n.insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/n8n.insightpulseai.com/privkey.pem
+        proxy_buffering: "off"
+        security_headers:
+          - "X-Frame-Options: SAMEORIGIN"
+          - "X-Content-Type-Options: nosniff"
+          - "X-XSS-Protection: 1; mode=block"
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    websocket:
+      enabled: true
+      path: /
+      upgrade_header: true
+      connection_upgrade: true
+      note: "n8n uses WebSocket for real-time workflow execution"
+    client_limits:
+      max_body_size: 50M
+    timeouts:
+      proxy_read: 3600s
+      proxy_send: 3600s
+    health_check:
+      path: /healthz
+      expected_status: 200
+    drift:
+      - id: DRIFT-N8N-HTTPS
+        severity: HIGH
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "Prod already had HTTPS with LE cert (74 days valid). Repo synced to match prod."
+
+  # ---------------------------------------------------------------------------
+  # mcp.insightpulseai.com — MCP gateway
+  # ---------------------------------------------------------------------------
+  - hostname: mcp.insightpulseai.com
+    service: mcp_gateway
+    envs:
+      local:
+        compose_service: mcp_gateway  # in docker-compose.dev.yml
+        compose_file: docker-compose.dev.yml
+        upstream: mcp_gateway:3333
+        config_paths: []
+        host_port: 3333
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:8766  # Confirmed from prod nginx -T 2026-03-04
+        nginx_paths:
+          - /etc/nginx/sites-enabled/mcp.insightpulseai.com
+        repo_config: infra/nginx/mcp.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: mcp.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/mcp.insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/mcp.insightpulseai.com/privkey.pem
+        proxy_buffering: "off"
+        security_headers:
+          - "X-Frame-Options: SAMEORIGIN"
+          - "X-Content-Type-Options: nosniff"
+          - "X-XSS-Protection: 1; mode=block"
+    cloudflare:
+      dns_type: A  # Correct — MCP runs on droplet, not DO App Platform
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    websocket:
+      enabled: false  # Prod does not use WebSocket upgrade headers for MCP
+    timeouts:
+      proxy_read: 300s
+      proxy_send: 300s
+    health_check:
+      path: /healthz
+      expected_status: 200
+    drift:
+      - id: DRIFT-MCP-DNS-TYPE
+        severity: HIGH
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "CNAME→DO App Platform was stale. MCP runs on droplet. A record is correct. DNS SSOT updated to match."
+      - id: DRIFT-MCP-HTTPS
+        severity: HIGH
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "Prod already had HTTPS with LE cert (74 days valid). Repo synced to match prod."
+      - id: DRIFT-MCP-PORT
+        severity: MEDIUM
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "Port confirmed as 8766 from prod nginx -T. Repo updated."
+
+  # ---------------------------------------------------------------------------
+  # plane.insightpulseai.com — Plane CE project management
+  # ---------------------------------------------------------------------------
+  - hostname: plane.insightpulseai.com
+    service: plane_project_management
+    envs:
+      local:
+        compose_service: null
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:3002
+        upstream_name: plane_proxy  # Uses named upstream block
+        nginx_paths:
+          - /etc/nginx/conf.d/plane.conf  # Note: conf.d, not sites-enabled
+        repo_config: infra/nginx/plane.insightpulseai.com.conf
+        listen: "443 ssl"
+        server_name: plane.insightpulseai.com
+        tls: true
+        tls_provider: custom  # NOT Let's Encrypt — Cloudflare origin cert
+        cert_path: /etc/ssl/plane/fullchain.pem
+        key_path: /etc/ssl/plane/key.pem
+        note: "Cloudflare Full Strict: CF decrypts, re-encrypts to origin"
+    cloudflare:
+      dns_type: A
+      proxied: true  # Orange cloud — CF terminates client TLS
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    websocket:
+      enabled: true
+      path: /
+      upgrade_header: true
+      connection_upgrade: true
+      note: "Plane CE uses WS for real-time updates"
+    client_limits:
+      max_body_size: 50M
+    health_check:
+      path: /
+      expected_status: 200
+    drift:
+      - id: DRIFT-PLANE-VHOST
+        severity: HIGH
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "Prod already had vhost in conf.d/plane.conf with custom TLS. Repo synced to match."
+
+  # ---------------------------------------------------------------------------
+  # superset.insightpulseai.com — Apache Superset BI
+  # ---------------------------------------------------------------------------
+  - hostname: superset.insightpulseai.com
+    service: apache_superset_bi
+    envs:
+      local:
+        compose_service: superset  # in docker-compose.dev.yml
+        compose_file: docker-compose.dev.yml
+        upstream: superset:8088
+        host_port: 8088
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:8088
+        nginx_paths:
+          - /etc/nginx/sites-enabled/superset.insightpulseai.com
+        repo_config: infra/nginx/superset.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: superset.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem  # SAN cert (shared with apex)
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        note: "Uses main insightpulseai.com LE cert (SAN includes superset subdomain)"
+        stale_config: "/etc/nginx/conf.d/superset.conf uses deprecated .net domain — remove"
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    security_headers:
+      - "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+    timeouts:
+      proxy_read: 60s
+      proxy_connect: 60s
+    health_check:
+      path: /health
+      expected_status: 200
+    drift:
+      - id: DRIFT-SUPERSET-VHOST
+        severity: HIGH
+        status: resolved
+        resolved_date: "2026-03-04"
+        description: "Prod already had vhost in sites-enabled with SAN cert. Repo synced to match."
+      - id: DRIFT-SUPERSET-STALE-CONFD
+        severity: MEDIUM
+        status: open
+        description: "Stale /etc/nginx/conf.d/superset.conf on prod uses deprecated .net domain"
+        remediation: "SSH to prod: rm /etc/nginx/conf.d/superset.conf && nginx -t && systemctl reload nginx"
+
+  # ---------------------------------------------------------------------------
+  # shelf.insightpulseai.com — Shelf.nu asset management (self-hosted fork)
+  # ---------------------------------------------------------------------------
+  - hostname: shelf.insightpulseai.com
+    service: shelf_asset_management
+    envs:
+      local:
+        compose_service: null
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:3003
+        upstream_name: shelf
+        nginx_paths:
+          - /etc/nginx/sites-enabled/shelf.insightpulseai.com
+        repo_config: infra/deploy/nginx/shelf.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: shelf.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/shelf.insightpulseai.com.access.log
+        log_error: /var/log/nginx/shelf.insightpulseai.com.error.log
+        note: "Self-hosted Shelf.nu fork. Container shelf-webapp-1 :3003→8080."
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    client_limits:
+      max_body_size: 50M
+    health_check:
+      path: /login
+      expected_status: 200
+
+  # ---------------------------------------------------------------------------
+  # crm.insightpulseai.com — Atomic CRM (marmelab/atomic-crm)
+  # ---------------------------------------------------------------------------
+  - hostname: crm.insightpulseai.com
+    service: atomic_crm
+    envs:
+      local:
+        compose_service: null
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:3004
+        upstream_name: atomic_crm
+        nginx_paths:
+          - /etc/nginx/sites-enabled/crm.insightpulseai.com.conf
+        repo_config: infra/deploy/nginx/crm.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: crm.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/crm.insightpulseai.com.access.log
+        log_error: /var/log/nginx/crm.insightpulseai.com.error.log
+        note: "Atomic CRM SPA. Container atomic-crm :3004→80. Supabase backend."
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    client_limits:
+      max_body_size: 50M
+    health_check:
+      path: /
+      expected_status: 200
+
+  # ---------------------------------------------------------------------------
+  # auth.insightpulseai.com — Authentication service (Express)
+  # ---------------------------------------------------------------------------
+  - hostname: auth.insightpulseai.com
+    service: authentication_service
+    envs:
+      local:
+        compose_service: null
+        upstream: null
+        config_paths: []
+      prod:
+        edge_host: odoo-production
+        edge_ip: 178.128.112.214
+        upstream: 127.0.0.1:8080
+        upstream_name: auth
+        nginx_paths:
+          - /etc/nginx/sites-enabled/auth.insightpulseai.com.conf
+        repo_config: infra/deploy/nginx/auth.insightpulseai.com.conf
+        listen: "443 ssl http2"
+        server_name: auth.insightpulseai.com
+        tls: true
+        tls_provider: letsencrypt
+        cert_path: /etc/letsencrypt/live/insightpulseai.com/fullchain.pem
+        key_path: /etc/letsencrypt/live/insightpulseai.com/privkey.pem
+        log_access: /var/log/nginx/auth.insightpulseai.com.access.log
+        log_error: /var/log/nginx/auth.insightpulseai.com.error.log
+        note: "Auth service (Express). Container auth-prod :8080. OIDC discovery TBD."
+    cloudflare:
+      dns_type: A
+      proxied: true
+      ssl_mode: full_strict
+      origin_port: 443
+      http_redirect: true
+    proxy_headers:
+      - Host
+      - X-Real-IP
+      - X-Forwarded-For
+      - X-Forwarded-Proto
+    health_check:
+      path: /
+      expected_status: 404
+      notes: "Express returns 404 on / — this confirms the service is alive."
+
+# =============================================================================
+# Failure Mode Catalog
+# =============================================================================
+# Common edge/proxy failure modes with symptoms, log sources, and likely causes.
+# Agents use this for deterministic troubleshooting.
+# =============================================================================
+failure_modes:
+
+  - id: FM-NGINX-CSS-404
+    title: "CSS/JS assets return 404"
+    severity: HIGH
+    symptoms:
+      - "CSS not loading on page"
+      - "web.assets*.css returns 404"
+      - "web.assets*.js returns 404"
+      - "Unstyled/broken Odoo UI"
+    logs:
+      - "nginx access log (grep for /web/assets and status 404)"
+      - "nginx error log (upstream errors)"
+      - "odoo container logs (asset compilation)"
+      - "Cloudflare Ray ID from response headers"
+    likely_causes:
+      - "location /web/assets not proxied correctly"
+      - "gzip_types missing application/javascript or text/css"
+      - "proxy_cache serving stale 404 response"
+      - "Odoo asset bundle not compiled (restart Odoo or clear assets)"
+      - "Cloudflare cache serving stale response (purge cache)"
+    evidence_commands:
+      - "curl -sI http://localhost:8069/web/assets/web.assets_frontend.min.css"
+      - "curl -sI https://insightpulseai.com/web/assets/web.assets_frontend.min.css"
+      - "docker compose logs odoo 2>&1 | grep -i asset"
+
+  - id: FM-CF-SSL-LOOP
+    title: "Too many redirects (ERR_TOO_MANY_REDIRECTS)"
+    severity: CRITICAL
+    symptoms:
+      - "Browser shows ERR_TOO_MANY_REDIRECTS"
+      - "curl -L shows 301 chain"
+      - "Page never loads, infinite redirect"
+    logs:
+      - "nginx access log (look for 301 chains)"
+      - "curl -Iv https://hostname (inspect Location headers)"
+    likely_causes:
+      - "CF SSL mode set to 'Flexible' but nginx redirects HTTP→HTTPS (loop)"
+      - "nginx return 301 https:// but origin doesn't serve HTTPS"
+      - "X-Forwarded-Proto not passed; Odoo sees HTTP, sends redirect"
+      - "CF Always Use HTTPS + nginx HTTP→HTTPS redirect = double redirect"
+    evidence_commands:
+      - "curl -sIL https://insightpulseai.com 2>&1 | grep -E 'HTTP|Location'"
+      - "curl -sI http://insightpulseai.com 2>&1 | grep Location"
+
+  - id: FM-WEBSOCKET-BUS-BREAK
+    title: "Odoo bus/longpolling broken (notifications not real-time)"
+    severity: HIGH
+    symptoms:
+      - "Odoo chat not updating in real-time"
+      - "Discuss channel messages delayed or missing"
+      - "/longpolling returns 502 or connection reset"
+      - "Browser console: WebSocket connection failed"
+    logs:
+      - "nginx error log (upstream connection refused on 8072)"
+      - "odoo logs (bus/longpolling errors)"
+      - "browser Network tab (WS frames)"
+    likely_causes:
+      - "nginx missing proxy_http_version 1.1 for /longpolling"
+      - "nginx missing Upgrade/Connection headers for WebSocket"
+      - "Odoo gevent worker not running on port 8072"
+      - "Cloudflare WebSocket support not enabled (usually auto, but check)"
+      - "proxy_buffering on for longpoll location (must be off)"
+    evidence_commands:
+      - "curl -sI -H 'Upgrade: websocket' -H 'Connection: Upgrade' http://localhost:8072/"
+      - "curl -sI https://insightpulseai.com/longpolling/poll"
+
+  - id: FM-UPLOAD-413
+    title: "File upload rejected (413 Request Entity Too Large)"
+    severity: MEDIUM
+    symptoms:
+      - "File upload fails with 413 error"
+      - "Large attachment upload fails"
+      - "OCR image upload rejected"
+    logs:
+      - "nginx error log (client intended to send too large body)"
+      - "Cloudflare ray ID + status"
+    likely_causes:
+      - "nginx client_max_body_size too small (default 1M)"
+      - "Cloudflare upload limit (100MB on free plan, 500MB on pro)"
+      - "Odoo max_cron_threads or limit_memory not related but often confused"
+    evidence_commands:
+      - "curl -sI -X POST -d @largefile https://hostname/web/binary/upload"
+      - "grep client_max_body_size /etc/nginx/sites-enabled/*"
+
+  - id: FM-ORIGIN-502
+    title: "502 Bad Gateway from nginx"
+    severity: CRITICAL
+    symptoms:
+      - "Browser shows 502 Bad Gateway"
+      - "Cloudflare 502 page (if proxied)"
+      - "Intermittent 502 under load"
+    logs:
+      - "nginx error log (upstream connection refused/timeout)"
+      - "docker ps (is Odoo container running?)"
+      - "odoo container logs (OOM, crash, startup failure)"
+    likely_causes:
+      - "Odoo container not running or crashed"
+      - "Odoo port mismatch (nginx expects 8069 but container binds elsewhere)"
+      - "Odoo OOM killed (check dmesg or docker inspect)"
+      - "Too many workers; all busy (check Odoo --workers setting)"
+    evidence_commands:
+      - "docker compose ps"
+      - "curl -sI http://127.0.0.1:8069/web/health"
+      - "docker compose logs --tail=50 odoo"
+
+  - id: FM-NGINX-VHOST-MISSING
+    title: "Subdomain DNS exists but no nginx vhost"
+    severity: HIGH
+    symptoms:
+      - "Subdomain shows nginx default page or 404"
+      - "Subdomain shows wrong site content (default vhost catch-all)"
+    logs:
+      - "nginx access log (check which server block handled the request)"
+    likely_causes:
+      - "nginx vhost config not created for this subdomain"
+      - "vhost config exists but not symlinked to sites-enabled"
+      - "nginx not reloaded after adding config"
+    evidence_commands:
+      - "curl -sI https://hostname"
+      - "ls /etc/nginx/sites-enabled/"
+      - "nginx -T | grep server_name"
+
+  - id: FM-DNS-TYPE-DRIFT
+    title: "Cloudflare DNS type doesn't match SSOT"
+    severity: MEDIUM
+    symptoms:
+      - "SSOT says CNAME but Cloudflare has A record (or vice versa)"
+      - "Traffic routes to wrong origin"
+    logs:
+      - "dig +short hostname"
+      - "Cloudflare dashboard DNS tab"
+    likely_causes:
+      - "Manual CF edit bypassed Terraform"
+      - "Terraform apply not run after SSOT update"
+    evidence_commands:
+      - "dig +short mcp.insightpulseai.com"
+      - "scripts/edge/audit_nginx_cloudflare.sh"
+
+  - id: FM-MAIL-SPLIT-BRAIN
+    title: "Dual mail routing (Mailgun + Zoho coexistence)"
+    severity: MEDIUM
+    symptoms:
+      - "Some emails sent via Mailgun, others via Zoho"
+      - "SPF alignment failures in DMARC reports"
+      - "Email delivery inconsistent"
+    logs:
+      - "Odoo mail.mail records (outgoing_mail_server field)"
+      - "Mailgun dashboard → Sending → Logs"
+      - "Zoho Mail admin → Email Delivery"
+    likely_causes:
+      - "ipai_mail_bridge_zoho not active on all sending paths"
+      - "Odoo ir.mail_server still configured for Mailgun"
+      - "n8n workflows sending directly via Mailgun API"
+    evidence_commands:
+      - "docker compose exec odoo odoo shell -c \"print(self.env['ir.mail_server'].search([]).read(['name','smtp_host']))\""
+
+  - id: FM-GZIP-MISMATCH
+    title: "Gzip/Brotli encoding mismatch between CF and origin"
+    severity: LOW
+    symptoms:
+      - "Double-compressed responses (garbled content)"
+      - "Content-Encoding header shows unexpected value"
+    logs:
+      - "curl -sI -H 'Accept-Encoding: gzip' https://hostname"
+    likely_causes:
+      - "Both Cloudflare and nginx gzipping (CF should handle it when proxied)"
+      - "nginx gzip on + CF Brotli = potential conflict"
+      - "Content-Type not in gzip_types list"
+    evidence_commands:
+      - "curl -sI -H 'Accept-Encoding: gzip,br' https://insightpulseai.com/ | grep -i encoding"
+
+# =============================================================================
+# Mail Routing State (cross-reference with deprecated.mg in subdomain-registry)
+# =============================================================================
+mail:
+  primary_provider: zoho
+  zoho_mx:
+    - mx.zoho.com (priority 10)
+    - mx2.zoho.com (priority 20)
+    - mx3.zoho.com (priority 50)
+  zoho_dkim: zoho._domainkey TXT
+  transactional_provider: mailgun
+  mailgun_state: active
+  mailgun_e2e_verified: "2026-02-26T18:22:24Z"
+  mailgun_records_in_cloudflare:
+    - email.mg CNAME → mailgun.org (tracking)
+    - mg TXT (SPF)
+    - mx._domainkey.mg TXT (DKIM)
+    - _dmarc.mg TXT (DMARC)
+  mail_architecture: "Mailgun = transactional outbound (mg.insightpulseai.com), Zoho = inbound MX + team mailboxes"
