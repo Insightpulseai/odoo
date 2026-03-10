@@ -1,0 +1,293 @@
+# =============================================================================
+# Azure Resource Registry — Self-Hosted Supabase (SSOT)
+# =============================================================================
+# This file is the single source of truth for the Supabase self-hosted
+# deployment on Azure. It replaces managed Supabase project spdtwktxdalcfigzeqrz.
+#
+# Naming convention: {type}-ipai-{env}
+# Region: southeastasia
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-10"
+replaces: "managed Supabase project spdtwktxdalcfigzeqrz"
+status: pending
+classification: internal-platform-dependency
+target_url: "https://supabase.insightpulseai.com"
+deployment_order: >
+  This is NOT the first production milestone. Execution order:
+  1. Odoo Azure runtime complete
+  2. Front Door live
+  3. Wave 0 validation
+  4. erp cutover
+  5. Supabase migration (this track)
+
+network_posture: internal-origin
+network_notes: >
+  VM is internal origin. Studio + Postgres + Logflare bound to 127.0.0.1.
+  Kong (8000/8443) is the only externally exposed service.
+  TLS via Cloudflare proxy (DNS A record, proxied=true).
+  Azure Front Door optional if public exposure beyond Cloudflare is required.
+
+# ---------------------------------------------------------------------------
+# Deployment Model
+# ---------------------------------------------------------------------------
+deployment:
+  type: azure-vm-docker-compose
+  rationale: >
+    Cost-minimized self-hosted approach. Single VM running Docker Compose
+    matches the existing DigitalOcean pattern. Avoids Container Apps per-service
+    overhead for tightly coupled Supabase services.
+  compose_file: "infra/azure/supabase/docker-compose.supabase.yml"
+  env_template: "infra/azure/supabase/.env.supabase.example"
+  deploy_script: "infra/azure/supabase/deploy.sh"
+  ops_scripts:
+    backup: "infra/azure/supabase/scripts/backup.sh"
+    restore: "infra/azure/supabase/scripts/restore.sh"
+    health: "infra/azure/supabase/scripts/health.sh"
+
+# ---------------------------------------------------------------------------
+# Azure Resources
+# ---------------------------------------------------------------------------
+resources:
+  vm:
+    name: vm-ipai-supabase-dev
+    type: Microsoft.Compute/virtualMachines
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    size: Standard_B4ms
+    os: Ubuntu 22.04 LTS
+    source: pending
+    notes: >
+      4 vCPU, 16 GiB RAM. Kong idle ~2.5GB + Analytics ~525MB + Postgres ~350MB
+      = ~4GB baseline. B2ms (8GB) is too tight. B4ms is minimum viable for all envs.
+      Production may need Standard_D4s_v5 after load profiling.
+
+  public_ip:
+    name: pip-ipai-supabase-dev
+    type: Microsoft.Network/publicIPAddresses
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    sku: Standard
+    source: pending
+
+  nsg:
+    name: nsg-ipai-supabase-dev
+    type: Microsoft.Network/networkSecurityGroups
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    source: pending
+    inbound_rules:
+      - name: AllowSSH
+        priority: 1000
+        port: 22
+        source: "admin IP range"
+      - name: AllowHTTP
+        priority: 1100
+        port: 80
+        source: "*"
+      - name: AllowHTTPS
+        priority: 1101
+        port: 443
+        source: "*"
+      - name: AllowKong
+        priority: 1200
+        port: "8000,8443"
+        source: "*"
+      - name: DenyPostgresPublic
+        priority: 4000
+        port: 54322
+        source: "deny *"
+        notes: "Postgres must NOT be publicly accessible"
+
+  managed_disk:
+    name: disk-ipai-supabase-data-dev
+    type: Microsoft.Compute/disks
+    resource_group: rg-ipai-agents-dev
+    region: southeastasia
+    size_gb: 64
+    sku: Premium_LRS
+    source: pending
+    mount_path: /opt/supabase
+    notes: >
+      Separate data disk for Docker volumes (PostgreSQL data, Storage files).
+      Premium SSD for IOPS. Expand to 128 GB for production.
+
+# ---------------------------------------------------------------------------
+# Key Vault Secrets (names only, never values)
+# ---------------------------------------------------------------------------
+key_vault:
+  vault_name: kv-ipai-dev
+  secrets:
+    - name: supabase-postgres-password
+      description: PostgreSQL superuser password
+    - name: supabase-jwt-secret
+      description: JWT signing secret (min 32 chars)
+    - name: supabase-anon-key
+      description: Public anonymous API key
+    - name: supabase-service-role-key
+      description: Server-side service role key (bypasses RLS)
+    - name: supabase-dashboard-username
+      description: Studio dashboard basic auth username
+    - name: supabase-dashboard-password
+      description: Studio dashboard basic auth password
+    - name: supabase-smtp-password
+      description: Mailgun SMTP password for mg.insightpulseai.com
+    - name: supabase-realtime-enc-key
+      description: Realtime DB encryption key
+    - name: supabase-realtime-secret-base
+      description: Realtime Phoenix/Elixir secret key base
+    - name: supabase-logflare-api-key
+      description: Logflare analytics API key
+
+# ---------------------------------------------------------------------------
+# DNS (Cloudflare — to be added to subdomain-registry.yaml)
+# ---------------------------------------------------------------------------
+dns:
+  records:
+    - subdomain: supabase
+      type: A
+      target: "<vm-public-ip>"
+      proxied: true
+      notes: "Supabase API gateway (Kong port 8000 behind Cloudflare proxy)"
+
+# ---------------------------------------------------------------------------
+# Services (Docker Compose stack)
+# ---------------------------------------------------------------------------
+services:
+  - name: db
+    image: supabase/postgres:15.1.1.78
+    port_internal: 5432
+    port_external: 54322
+    healthcheck: pg_isready
+    data_volume: db-data
+    critical: true
+
+  - name: kong
+    image: kong:2.8.1
+    port_internal: 8000
+    port_external: 8000
+    healthcheck: /kong health
+    critical: true
+
+  - name: auth
+    image: supabase/gotrue:v2.151.0
+    port_internal: 9999
+    healthcheck: /health
+    critical: true
+
+  - name: rest
+    image: postgrest/postgrest:v12.0.1
+    port_internal: 3000
+    healthcheck: /ready
+    critical: true
+
+  - name: realtime
+    image: supabase/realtime:v2.28.32
+    port_internal: 4000
+    healthcheck: /api/health
+
+  - name: storage
+    image: supabase/storage-api:v0.46.4
+    port_internal: 5000
+    healthcheck: /status
+    data_volume: storage-data
+
+  - name: studio
+    image: supabase/studio:20240422-5cf8f30
+    port_internal: 3000
+    port_external: 54323
+    healthcheck: /api/profile
+
+  - name: meta
+    image: supabase/postgres-meta:v0.80.0
+    port_internal: 8080
+    healthcheck: /health
+
+  - name: functions
+    image: supabase/edge-runtime:v1.45.2
+    port_internal: 54321
+    healthcheck: /functions/v1/_internal/health
+
+  - name: analytics
+    image: supabase/logflare:1.4.0
+    port_internal: 4000
+    healthcheck: /health
+
+  - name: imgproxy
+    image: darthsim/imgproxy:v3.8.0
+    port_internal: 8080
+    healthcheck: imgproxy health
+
+  - name: vector
+    image: timberio/vector:0.34.0-alpine
+    port_internal: 9001
+    healthcheck: /health
+
+# ---------------------------------------------------------------------------
+# Cost Estimate (monthly, southeastasia)
+# ---------------------------------------------------------------------------
+cost_estimate:
+  currency: USD
+  period: monthly
+  breakdown:
+    - resource: "VM Standard_B4ms (dev/prod)"
+      cost: 121.18
+      notes: "4 vCPU, 16 GiB RAM, Linux"
+    - resource: "Premium SSD 64 GiB (P6)"
+      cost: 10.21
+    - resource: "Public IP (Standard)"
+      cost: 3.65
+    - resource: "Bandwidth (50 GB egress estimate)"
+      cost: 4.32
+  total: 139.36
+  comparison: >
+    Supabase Pro plan: $25/mo (limited compute, storage, bandwidth).
+    Self-hosted gives full control over extensions (pgvector, pgjwt, pg_graphql),
+    unlimited edge functions, no row/bandwidth limits.
+  production_estimate: >
+    Standard_D4s_v5 (4 vCPU, 16 GiB, consistent perf): ~$175/mo total.
+    Add Azure Backup vault: +$10-20/mo for daily snapshots.
+
+# ---------------------------------------------------------------------------
+# Migration Plan (from managed Supabase spdtwktxdalcfigzeqrz)
+# ---------------------------------------------------------------------------
+migration:
+  source: "managed Supabase project spdtwktxdalcfigzeqrz"
+  target: "self-hosted on Azure VM"
+  steps:
+    - phase: 1
+      name: "Deploy empty stack"
+      status: pending
+      actions:
+        - "Provision Azure VM"
+        - "Deploy Docker Compose stack"
+        - "Run health checks"
+        - "Configure DNS"
+    - phase: 2
+      name: "Migrate database schema"
+      status: pending
+      actions:
+        - "Export schema from managed Supabase"
+        - "Apply migrations to self-hosted PostgreSQL"
+        - "Verify extensions (pgvector, pgjwt, pg_graphql)"
+    - phase: 3
+      name: "Migrate data"
+      status: pending
+      actions:
+        - "pg_dump from managed instance"
+        - "pg_restore to self-hosted"
+        - "Verify row counts and RLS policies"
+    - phase: 4
+      name: "Migrate edge functions"
+      status: pending
+      actions:
+        - "Copy supabase/functions/ to volumes/functions/"
+        - "Test all function endpoints"
+    - phase: 5
+      name: "Cutover"
+      status: pending
+      actions:
+        - "Update SUPABASE_URL in all consumers (n8n, Odoo, apps)"
+        - "Update DNS records"
+        - "Decommission managed project after 30-day validation"
