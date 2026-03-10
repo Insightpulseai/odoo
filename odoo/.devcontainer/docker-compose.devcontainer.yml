@@ -1,0 +1,53 @@
+# Devcontainer compose — Odoo 19 CE + PostgreSQL 16
+name: insightpulse-devcontainer
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ../:/workspaces/odoo:cached
+      - claude-code-config:/home/vscode/.claude
+      - commandhistory:/home/vscode/.commandhistory
+      - odoo-data:/var/lib/odoo
+    environment:
+      DB_HOST: db
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+    command: sleep infinity
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+    cap_add:
+      - NET_ADMIN   # for init-firewall.sh iptables
+
+  db:
+    image: postgres:16-alpine
+    container_name: odoo-devcontainer-db
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_dev
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+    networks:
+      - devnet
+
+volumes:
+  claude-code-config:
+  commandhistory:
+  odoo-data:
+  dev-db-data:
+
+networks:
+  devnet:
+    driver: bridge

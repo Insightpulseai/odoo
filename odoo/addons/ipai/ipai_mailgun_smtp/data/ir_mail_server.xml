@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            Mailgun SMTP — authoritative prod outgoing mail server.
+            sequence=1 → absolute first priority (all other servers must have sequence > 1).
+            Port 2525: Mailgun alternate submission port; not blocked on DigitalOcean.
+            smtp_pass intentionally empty — injected at install time by post_install_hook
+            from ODOO_MAILGUN_SMTP_PASSWORD env var (never committed to git).
+            SSOT: ssot/odoo/mail.yaml
+        -->
+        <record id="mail_server_mailgun_smtp" model="ir.mail_server">
+            <field name="name">Mailgun SMTP (mg.insightpulseai.com)</field>
+            <field name="sequence">1</field>
+            <field name="smtp_host">smtp.mailgun.org</field>
+            <field name="smtp_port">2525</field>
+            <field name="smtp_encryption">starttls</field>
+            <field name="smtp_user">no-reply@mg.insightpulseai.com</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

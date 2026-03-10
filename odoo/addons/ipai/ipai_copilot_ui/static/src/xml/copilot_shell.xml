@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_copilot_ui.CopilotShell">
+        <div class="ipaiCopilotPage">
+
+            <!-- Sidebar Navigation -->
+            <aside class="ipaiCopilotSidebar">
+                <!-- Logo / Header -->
+                <div class="ipaiSidebarHeader">
+                    <div class="ipaiSidebarLogo">
+                        <div class="ipaiSidebarLogoIcon">
+                            <i class="fa fa-robot"/>
+                        </div>
+                        <span>IPAI Copilot</span>
+                    </div>
+                </div>
+
+                <!-- Main Navigation -->
+                <nav class="ipaiSidebarNav">
+                    <div t-attf-class="ipaiSidebarNavItem #{isNavActive('chat') ? 'active' : ''}"
+                         t-on-click="() => this.onNavClick('chat')">
+                        <span class="ipaiSidebarNavIcon"><i class="fa fa-comments"/></span>
+                        <span>Chat</span>
+                    </div>
+                    <div t-attf-class="ipaiSidebarNavItem #{isNavActive('library') ? 'active' : ''}"
+                         t-on-click="() => this.onNavClick('library')">
+                        <span class="ipaiSidebarNavIcon"><i class="fa fa-book"/></span>
+                        <span>Library</span>
+                    </div>
+                    <div t-attf-class="ipaiSidebarNavItem #{isNavActive('apps') ? 'active' : ''}"
+                         t-on-click="() => this.onNavClick('apps')">
+                        <span class="ipaiSidebarNavIcon"><i class="fa fa-th-large"/></span>
+                        <span>Apps</span>
+                    </div>
+                </nav>
+
+                <!-- Conversations Section -->
+                <div class="ipaiSidebarSection">
+                    <div class="ipaiSidebarSectionTitle">Recent</div>
+                    <div class="ipaiConversationList">
+                        <!-- New Conversation Button -->
+                        <div class="ipaiSidebarNavItem" t-on-click="onNewConversation">
+                            <span class="ipaiSidebarNavIcon"><i class="fa fa-plus"/></span>
+                            <span>New conversation</span>
+                        </div>
+
+                        <!-- Previous Conversations -->
+                        <t t-foreach="state.conversations" t-as="conv" t-key="conv.id">
+                            <div class="ipaiConversationItem"
+                                 t-on-click="() => this.onConversationClick(conv)">
+                                <i class="fa fa-message-o me-2"/>
+                                <span t-esc="conv.title"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="ipaiCopilotMain" t-ref="messagesContainer">
+
+                <!-- Welcome State (no messages) -->
+                <t t-if="!hasMessages">
+                    <!-- Welcome Header -->
+                    <div class="ipaiCopilotWelcome">
+                        <h1 class="ipaiCopilotTitle">Welcome, how can I help?</h1>
+                        <p class="ipaiCopilotSubtitle">
+                            I'm your AI assistant for Odoo. Ask me anything about your business.
+                        </p>
+                    </div>
+
+                    <!-- Prompt Shell -->
+                    <div class="ipaiPromptShell">
+                        <div class="ipaiPromptPlaceholder">
+                            <t t-esc="state.promptPlaceholder"/>
+                        </div>
+
+                        <div class="ipaiPromptInputWrapper">
+                            <textarea class="ipaiPromptInput"
+                                      t-ref="promptInput"
+                                      t-att-value="state.currentInput"
+                                      t-on-input="onInputChange"
+                                      t-on-keydown="onInputKeydown"
+                                      placeholder="Ask me anything..."
+                                      rows="1"/>
+                            <div class="ipaiPromptActions">
+                                <button class="ipaiPromptBtn" title="Attach file">
+                                    <i class="fa fa-paperclip"/>
+                                </button>
+                                <button class="ipaiPromptBtn" title="Voice input">
+                                    <i class="fa fa-microphone"/>
+                                </button>
+                                <button t-attf-class="ipaiPromptBtn ipaiPromptBtnPrimary"
+                                        t-att-disabled="!state.currentInput.trim() or state.isLoading"
+                                        t-on-click="onSend"
+                                        title="Send">
+                                    <i class="fa fa-paper-plane"/>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="ipaiQuickActions">
+                            <t t-foreach="state.quickActions" t-as="action" t-key="action_index">
+                                <button class="ipaiQuickActionBtn"
+                                        t-on-click="() => this.onQuickActionClick(action)">
+                                    <t t-esc="action"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Tools Section -->
+                    <section class="ipaiToolsSection">
+                        <h2 class="ipaiToolsSectionTitle">Tools</h2>
+                        <div class="ipaiToolCardGrid">
+                            <t t-foreach="state.tools" t-as="tool" t-key="tool.id">
+                                <div class="ipaiToolCard" t-on-click="() => this.onToolCardClick(tool)">
+                                    <div class="ipaiToolCardHeader">
+                                        <div t-attf-class="ipaiToolCardIcon #{tool.iconClass}">
+                                            <i t-attf-class="fa #{tool.icon}"/>
+                                        </div>
+                                        <div class="ipaiToolCardTitle" t-esc="tool.title"/>
+                                    </div>
+                                    <div class="ipaiToolCardDescription" t-esc="tool.subtitle"/>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+                </t>
+
+                <!-- Chat State (has messages) -->
+                <t t-else="">
+                    <!-- Chat Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="ipaiCopilotTitle" style="font-size: var(--ipai-text-xl);">
+                            Chat
+                        </h2>
+                        <button class="ipaiQuickActionBtn" t-on-click="onClearChat">
+                            <i class="fa fa-trash me-1"/> Clear
+                        </button>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="ipaiChatMessages">
+                        <t t-foreach="state.messages" t-as="message" t-key="message.id">
+                            <div t-attf-class="ipaiChatMessage #{message.role}">
+                                <t t-if="message.role === 'assistant'">
+                                    <div class="ipaiChatMessageAvatar">
+                                        <i class="fa fa-robot"/>
+                                    </div>
+                                </t>
+                                <div class="ipaiChatMessageContent">
+                                    <t t-if="message.role === 'assistant'">
+                                        <t t-out="formatMessageContent(message.content)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="message.content"/>
+                                    </t>
+                                </div>
+                                <t t-if="message.role === 'user'">
+                                    <div class="ipaiChatMessageAvatar">
+                                        <i class="fa fa-user"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Loading indicator -->
+                        <t t-if="state.isLoading">
+                            <div class="ipaiChatMessage">
+                                <div class="ipaiChatMessageAvatar">
+                                    <i class="fa fa-robot"/>
+                                </div>
+                                <div class="ipaiChatMessageContent">
+                                    <div class="ipaiLoadingDots">
+                                        <div class="ipaiLoadingDot"/>
+                                        <div class="ipaiLoadingDot"/>
+                                        <div class="ipaiLoadingDot"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Chat Input (fixed at bottom when in chat mode) -->
+                    <div class="ipaiPromptShell mt-auto">
+                        <div class="ipaiPromptInputWrapper">
+                            <textarea class="ipaiPromptInput"
+                                      t-ref="promptInput"
+                                      t-att-value="state.currentInput"
+                                      t-on-input="onInputChange"
+                                      t-on-keydown="onInputKeydown"
+                                      placeholder="Type your message..."
+                                      rows="1"/>
+                            <div class="ipaiPromptActions">
+                                <button class="ipaiPromptBtn" title="Attach file">
+                                    <i class="fa fa-paperclip"/>
+                                </button>
+                                <button t-attf-class="ipaiPromptBtn ipaiPromptBtnPrimary"
+                                        t-att-disabled="!state.currentInput.trim() or state.isLoading"
+                                        t-on-click="onSend"
+                                        title="Send">
+                                    <i class="fa fa-paper-plane"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+            </main>
+
+        </div>
+    </t>
+
+</templates>

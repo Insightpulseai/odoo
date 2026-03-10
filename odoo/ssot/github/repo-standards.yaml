@@ -1,0 +1,118 @@
+# InsightPulseAI GitHub Repo Standards — Per-Type Defaults
+# SSOT for required files, SSOT boundaries, and quality gates per repo type.
+# Read by: scripts/github/check_org_repos.sh
+
+repo_standards:
+  version: "1.0.0"
+
+  baseline:
+    required_files:
+      - README.md
+      - CLAUDE.md
+      - CONTRIBUTING.md
+      - .github/CODEOWNERS
+    ssot_boundaries:
+      spec: "Spec Kit (constitution.md, prd.md, plan.md, tasks.md)"
+      docs_architecture: "Long-lived architectural decisions"
+      ssot: "Machine-readable canonical state"
+      scripts: "Executable truth (automation, CI helpers)"
+      github_workflows: "CI/CD pipeline definitions"
+    commit_convention: "feat|fix|refactor|docs|test|chore(scope): description"
+
+  types:
+    github-meta:
+      description: "Org-wide GitHub configuration repo (.github)"
+      extra_required_files: []
+      quality_gates:
+        - "Labels seed file present (.github/labels.yml or labels.json)"
+        - "PR template present (.github/pull_request_template.md)"
+
+    odoo:
+      description: "Odoo CE repo with OCA addons and ipai_* custom modules"
+      extra_required_files:
+        - .github/workflows/ci.yml
+        - .github/pull_request_template.md
+        - ssot/odoo/oca-baseline.yaml
+      quality_gates:
+        - "OCA baseline manifest present (ssot/odoo/oca-baseline.yaml)"
+        - "Devcontainer config present (.devcontainer/)"
+        - "Odoo scripts present (scripts/odoo/)"
+        - "CE only — no Enterprise modules"
+      module_naming: "ipai_<domain>_<feature>"
+
+    web-app:
+      description: "Frontend/fullstack web application (Next.js, Vercel)"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Package manager lockfile present"
+        - "Build script defined in package.json"
+
+    lakehouse:
+      description: "Medallion-architecture data pipeline repo"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Medallion layers present (src/bronze/, src/silver/, src/gold/)"
+        - "Data contracts defined (contracts/)"
+
+    supabase-platform:
+      description: "Supabase control-plane with migrations and Edge Functions"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Supabase migrations dir present (supabase/migrations/)"
+        - "Edge Functions dir present (supabase/functions/)"
+
+    iac:
+      description: "Infrastructure-as-Code repo (Terraform, shell, DNS)"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Infra provider dirs present (infra/digitalocean/, infra/cloudflare/)"
+
+    design-system:
+      description: "Shared design tokens, components, and brand assets"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Tokens directory present (tokens/)"
+        - "Components directory present (components/)"
+
+    agents:
+      description: "Agent registry with personas, skills, runbooks, and MCP definitions"
+      extra_required_files:
+        - .github/workflows/ci.yml
+      quality_gates:
+        - "Agent registry present (agents/registry/)"
+        - "Agent personas present (agents/personas/)"
+
+    template:
+      description: "Repo/module templates and scaffolds"
+      extra_required_files: []
+      quality_gates:
+        - "At least one template directory present (templates/)"
+
+  ssot_boundary_map:
+    machine_readable_state:
+      path: "ssot/"
+      examples:
+        - "ssot/odoo/oca-baseline.yaml"
+        - "ssot/github/org-repos.yaml"
+      rule: "YAML or JSON, consumed by scripts/CI. No prose."
+    spec_kit:
+      path: "spec/<slug>/"
+      required_files:
+        - constitution.md
+        - prd.md
+        - plan.md
+        - tasks.md
+      rule: "4-file bundle per project/feature. Inherits from org constitution."
+    architecture_decisions:
+      path: "docs/architecture/"
+      rule: "Long-lived ADRs and design docs. Markdown."
+    executable_truth:
+      paths:
+        - "scripts/"
+        - ".github/workflows/"
+      rule: "If it runs, it lives here. Scripts are authoritative over docs."

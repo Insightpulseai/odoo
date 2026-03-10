@@ -1,0 +1,202 @@
+/*
+ * TBWA List View Styles
+ * =====================
+ * Styled table rows, selection, and interactions
+ */
+
+// ============================================================================
+// LIST VIEW CONTAINER
+// ============================================================================
+.o_list_view {
+  background-color: var(--tbwa-bg);
+
+  // Table
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  // Table header
+  thead {
+    th {
+      background-color: var(--tbwa-surface);
+      border-bottom: 2px solid var(--tbwa-border);
+      color: var(--tbwa-text-primary);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      white-space: nowrap;
+
+      // Sortable header
+      &.o_column_sortable {
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--tbwa-surface-elevated);
+        }
+
+        // Sort indicator
+        .o_sort_indicator {
+          color: var(--tbwa-accent);
+        }
+      }
+    }
+  }
+
+  // Table body
+  tbody {
+    tr {
+      background-color: var(--tbwa-surface-elevated);
+      border-bottom: 1px solid var(--tbwa-border);
+      transition: background-color 100ms ease;
+
+      &:hover {
+        background-color: var(--tbwa-surface);
+      }
+
+      // Selected row
+      &.o_data_row_selected,
+      &.o_selected_row {
+        background-color: rgba(251, 191, 36, 0.1);
+        border-left: 3px solid var(--tbwa-accent);
+      }
+
+      // Alternating rows (optional, uncomment if desired)
+      // &:nth-child(even) {
+      //   background-color: var(--tbwa-surface);
+      // }
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      color: var(--tbwa-text-primary);
+      vertical-align: middle;
+
+      // Checkbox cell
+      &.o_list_record_selector {
+        width: 40px;
+        text-align: center;
+      }
+
+      // Monetary fields
+      &.o_list_number {
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  }
+
+  // Footer
+  tfoot {
+    td {
+      background-color: var(--tbwa-surface);
+      border-top: 2px solid var(--tbwa-border);
+      font-weight: 600;
+    }
+  }
+}
+
+// ============================================================================
+// ROW CHECKBOXES
+// ============================================================================
+.o_list_record_selector {
+  input[type="checkbox"] {
+    accent-color: var(--tbwa-accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+}
+
+// ============================================================================
+// EDITABLE LIST CELLS
+// ============================================================================
+.o_list_editable {
+  .o_data_row.o_selected_row {
+    td {
+      background-color: rgba(251, 191, 36, 0.05);
+    }
+
+    .o_field_widget {
+      input,
+      select,
+      textarea {
+        border-color: var(--tbwa-accent);
+        box-shadow: 0 0 0 1px var(--tbwa-accent);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// EMPTY STATE
+// ============================================================================
+.o_view_nocontent {
+  .o_nocontent_help {
+    color: var(--tbwa-text-secondary);
+
+    p:first-child {
+      color: var(--tbwa-text-primary);
+      font-weight: 500;
+    }
+  }
+}
+
+// ============================================================================
+// LIST BUTTONS / ACTIONS
+// ============================================================================
+.o_list_buttons {
+  padding: 0.5rem 0;
+
+  .o_list_button_add {
+    background-color: var(--tbwa-primary);
+    border-color: var(--tbwa-primary);
+    color: var(--tbwa-text-on-primary);
+
+    &:hover {
+      background-color: var(--tbwa-primary-hover);
+    }
+  }
+}
+
+// ============================================================================
+// GROUP BY HEADERS
+// ============================================================================
+.o_group_header {
+  background-color: var(--tbwa-surface);
+  font-weight: 600;
+
+  .o_group_name {
+    color: var(--tbwa-text-primary);
+  }
+
+  .o_group_caret {
+    color: var(--tbwa-accent);
+  }
+}
+
+// ============================================================================
+// PAGER
+// ============================================================================
+.o_pager {
+  .o_pager_counter {
+    color: var(--tbwa-text-secondary);
+  }
+
+  .o_pager_value {
+    color: var(--tbwa-text-primary);
+    font-weight: 500;
+  }
+
+  button {
+    color: var(--tbwa-text-secondary);
+    border-radius: var(--tbwa-radius-sm);
+
+    &:hover:not(:disabled) {
+      background-color: var(--tbwa-surface);
+      color: var(--tbwa-text-primary);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+  }
+}
