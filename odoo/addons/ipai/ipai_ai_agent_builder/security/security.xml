@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="module_category_ipai_ai" model="ir.module.category">
+        <field name="name">IPAI AI</field>
+        <field name="description">IPAI AI Agent Builder</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="group_ipai_ai_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_ipai_ai"/>
+        <field name="comment">Can interact with AI agents and view run history</field>
+    </record>
+
+    <record id="group_ipai_ai_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_ipai_ai"/>
+        <field name="implied_ids" eval="[(4, ref('group_ipai_ai_user'))]"/>
+        <field name="comment">Can create and configure AI agents, topics, and sources</field>
+    </record>
+
+    <record id="group_ipai_ai_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_ipai_ai"/>
+        <field name="implied_ids" eval="[(4, ref('group_ipai_ai_manager'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Full access to AI Agent Builder including tools and settings</field>
+    </record>
+
+    <!-- Record Rules -->
+    <record id="rule_ipai_ai_agent_company" model="ir.rule">
+        <field name="name">AI Agent: Multi-company</field>
+        <field name="model_id" ref="model_ipai_ai_agent"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_ipai_ai_topic_company" model="ir.rule">
+        <field name="name">AI Topic: Multi-company</field>
+        <field name="model_id" ref="model_ipai_ai_topic"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_ipai_ai_run_company" model="ir.rule">
+        <field name="name">AI Run: Multi-company</field>
+        <field name="model_id" ref="model_ipai_ai_run"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_ipai_ai_run_user" model="ir.rule">
+        <field name="name">AI Run: Own runs only (users)</field>
+        <field name="model_id" ref="model_ipai_ai_run"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_ipai_ai_user'))]"/>
+    </record>
+
+    <record id="rule_ipai_ai_run_manager" model="ir.rule">
+        <field name="name">AI Run: All company runs (managers)</field>
+        <field name="model_id" ref="model_ipai_ai_run"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('group_ipai_ai_manager'))]"/>
+    </record>
+
+    <record id="rule_ipai_ai_tool_call_company" model="ir.rule">
+        <field name="name">AI Tool Call: Multi-company</field>
+        <field name="model_id" ref="model_ipai_ai_tool_call"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>

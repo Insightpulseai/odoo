@@ -1,0 +1,11 @@
+                                                                                     List of databases
+   Name    | Owner | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules | Access privileges |  Size   | Tablespace |                Description                 
+-----------+-------+----------+-----------------+------------+------------+------------+-----------+-------------------+---------+------------+--------------------------------------------
+ odoo      | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 7652 kB | pg_default | 
+ postgres  | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 7516 kB | pg_default | default administrative connection database
+ template0 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7361 kB | pg_default | unmodifiable empty database
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+ template1 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7580 kB | pg_default | default template for new databases
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+(4 rows)
+

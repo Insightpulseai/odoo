@@ -1,0 +1,88 @@
+{
+  "name": "Odoo Copilot — Channel Action Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "channel-action",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "name": "Action Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/resolve_channel_user",
+        "authentication": "headerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "p_platform", "value": "={{ $json.platform }}" },
+            { "name": "p_platform_user_id", "value": "={{ $json.platform_user_id }}" }
+          ]
+        },
+        "options": {
+          "headers": {
+            "apikey": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+          }
+        }
+      },
+      "name": "Resolve Actor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/functions/v1/action-card-builder",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "action_type", "value": "={{ $('Action Webhook').item.json.action_type }}" },
+            { "name": "record_name", "value": "={{ $('Action Webhook').item.json.record_name }}" },
+            { "name": "amount", "value": "={{ $('Action Webhook').item.json.amount }}" },
+            { "name": "target_platform", "value": "={{ $('Action Webhook').item.json.platform }}" }
+          ]
+        },
+        "options": {
+          "headers": {
+            "Authorization": "Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+          }
+        }
+      },
+      "name": "Build Action Card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Action Webhook').item.json.callback_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "blocks", "value": "={{ $json.blocks }}" },
+            { "name": "card", "value": "={{ $json.card }}" }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Interactive Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Action Webhook": { "main": [[{ "node": "Resolve Actor", "type": "main", "index": 0 }]] },
+    "Resolve Actor": { "main": [[{ "node": "Build Action Card", "type": "main", "index": 0 }]] },
+    "Build Action Card": { "main": [[{ "node": "Send Interactive Message", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": {
+    "description": "Receives business action notifications from Odoo, resolves actor identity, builds interactive message card, sends to Slack/Teams"
+  }
+}

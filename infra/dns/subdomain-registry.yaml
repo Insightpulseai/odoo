@@ -533,9 +533,7 @@ subdomains:
   #   - Mailgun: transactional/automated email via mg.insightpulseai.com
   #   - Zoho Mail: inbound MX + team mailboxes via insightpulseai.com
   #
-  # Tracking CNAME (email click/open tracking) — DEPRECATED with Mailgun (2026-02-01)
-  # Mailgun outbound mail deprecated in favour of Zoho Mail.
-  # Retain record only until Terraform removes it (see deprecated.mg.records_to_remove).
+  # Tracking CNAME (email click/open tracking) — CONFIRMED VALID 2026-03-02
   - name: email.mg
     type: CNAME
     service: mailgun_tracking

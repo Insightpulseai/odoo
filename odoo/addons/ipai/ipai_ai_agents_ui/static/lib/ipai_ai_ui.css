@@ -1,0 +1,16 @@
+/**
+ * IPAI AI Agents UI - Styles (Placeholder)
+ *
+ * This is a placeholder file. The actual styles should be built by running:
+ *
+ *   cd addons/ipai/ipai_ai_agents_ui/ui
+ *   npm install
+ *   npm run build
+ *
+ * The build process will generate the CSS and copy it here.
+ */
+
+.ipai-ai-react-container {
+  height: 100%;
+  width: 100%;
+}

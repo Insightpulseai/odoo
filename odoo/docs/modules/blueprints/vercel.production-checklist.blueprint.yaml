@@ -1,0 +1,51 @@
+id: vercel.production-checklist
+title: Vercel Production Checklist SSOT
+category: ops-console
+sources:
+  - type: doc
+    url: https://vercel.com/docs/deployments/environments
+    catalog_id: vercel-docs-home
+  - type: doc
+    url: https://vercel.com/docs/deployment-protection
+    catalog_id: vercel-docs-home
+target:
+  app_dir: docs/ops
+variables:
+  - name: NONE
+    required: false
+    description: No runtime variables required for this doc-only blueprint.
+automation:
+  steps:
+    - name: create_checklist_doc
+      description: Create docs/ops/VERCEL_PRODUCTION_CHECKLIST_SSOT.md
+      instruction: |
+        Create docs/ops/VERCEL_PRODUCTION_CHECKLIST_SSOT.md containing:
+        - Pre-deploy: env vars (all 3 environments), deployment protection, PR readiness
+        - Deploy: build validation, bundle size delta ≤ 20%
+        - Post-deploy: health checks, Core Web Vitals targets, error rate thresholds
+        - Rollback: vercel rollback command, recovery time, post-rollback checklist
+        No narrative. Checklist format only.
+    - name: cross_link_from_monorepo
+      description: Add cross-link to VERCEL_MONOREPO.md related runbooks table
+      instruction: |
+        In docs/ops/VERCEL_MONOREPO.md, add a row to the Related runbooks table:
+        | docs/ops/VERCEL_PRODUCTION_CHECKLIST_SSOT.md | Pre/post-deploy checklist |
+    - name: catalog_item_link
+      description: Ensure catalog item exists with blueprint_id=vercel.production-checklist
+      instruction: |
+        Ensure docs/catalog/vercel.examples.catalog.json contains an item with
+        id: vercel-production-checklist, blueprint_id: vercel.production-checklist,
+        and use_cases: [ops-console].
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+  preview:
+    expectations:
+      - docs-generated-no-drift
+      - vercel-production-checklist-ssot-md-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - None — doc-only blueprint; update health endpoint URL and Slack channel name after merge.
