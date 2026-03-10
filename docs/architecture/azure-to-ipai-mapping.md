@@ -21,7 +21,9 @@ This reference maps common Microsoft Azure products to their equivalents within 
 | :--------------------- | :-------------------------- | :--------------------------------------------- |
 | **Azure Pipelines**    | **GitHub Actions**          | CI/CD and automation.                          |
 | **Azure Boards**       | **GitHub Projects**         | Task tracking and team collaboration.          |
-| **Microsoft Dev Box**  | **GitHub Codespaces**       | Secure cloud-hosted development environments.  |
+| **Microsoft Dev Box**  | **GitHub Codespaces** (current) / **Azure Dev Box** (phase-2) | Cloud-hosted dev environments. Dev Box planned for migration workstreams. |
+| **Deployment Environments** | **GitHub Actions + Bicep** (current) / **ADE catalogs** (phase-2) | Self-service IaC environments via catalog-driven templates. |
+| **Dev Center**         | *N/A (phase-2 engineering control plane)* | Top-level container for Dev Box + Deployment Environments. |
 | **App Configuration**  | **GitHub Environments**     | Centralized secrets and environment variables. |
 | **DevTest Labs**       | **Template Repositories**   | Standardized project bootstrapping.            |
 | **Playwright Testing** | **Playwright + GH Actions** | E2E testing scale-out.                         |
