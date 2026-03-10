@@ -18,7 +18,7 @@ yamllint==1.38.0
 git-aggregator==4.1
 
 # ----- OCA Linting -----
-pylint>=3.0.0,<3.1.0
+pylint>=3.0.0,<4.1.0
 pylint-odoo==10.0.1
 
 # ----- Testing -----
