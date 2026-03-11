@@ -1,0 +1,11 @@
+# requirements-ai.txt
+# Python libraries for OCA/ai bridge modules and ipai_ai_* addons.
+# OCA/ai is on 18.0 — treat as port source for Odoo 19, not drop-in.
+
+httpx             # async HTTP client for AI API calls
+openai            # Azure OpenAI / OpenAI API client
+azure-identity    # Azure AD auth for AI Foundry / Azure OpenAI
+google-auth>=2.0  # Google ID token verification for GWS Add-ons
+
+# Uncomment only if using ai_oca_native_generate_ollama:
+# ollama          # local LLM via Ollama

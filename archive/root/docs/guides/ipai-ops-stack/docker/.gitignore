@@ -1,0 +1,8 @@
+# Environment file with secrets
+.env
+
+# Backup files
+*.tar.gz
+*.sql
+*.dump
+backups/

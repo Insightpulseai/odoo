@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2026 InsightPulseAI
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+    Default configuration parameters for Google Workspace Add-ons.
+-->
+<odoo>
+    <data noupdate="1">
+
+        <!-- GWS Add-on disabled by default -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>ipai_gws.enabled</value>
+            <value>False</value>
+        </function>
+
+        <!-- Project number placeholder — set in Settings after installation -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>ipai_gws.project_number</value>
+            <value></value>
+        </function>
+
+    </data>
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--
+            Seed tool: Liquidation — Validate and Pack Evidence
+            ═══════════════════════════════════════════════════
+            technical_name : expense_liquidation.validate_and_pack_evidence
+            provider       : supabase_edge
+            auth_mode      : hmac
+
+            This is the canonical first real tool for the ipai_agent /
+            ipai_hr_expense_liquidation integration. It triggers a Supabase
+            Edge Function that:
+
+              1. Validates all lines on an expense liquidation for BIR compliance
+                 (required fields, bucket totals, advance vs. expense reconciliation)
+              2. Packs structured evidence (receipts, OCR output, line totals) into
+                 a JSON bundle for audit / attachment
+              3. Returns the evidence bundle as output_json on the agent run
+
+            Behaviour:
+              - Read-only — never posts, approves, or settles the liquidation
+              - Requires approval (ipai.agent.policy should set require_approval=True
+                for hr.expense.liquidation in production)
+              - Only Agent Approver group may trigger runs (deny-by-default)
+
+            Configuration (set in ir.config_parameter):
+              - Endpoint : ipai.agent.endpoint.liquidation_validate
+              - Secret   : ipai.agent.hmac_secret  (shared with webhook callback)
+
+            noupdate="1" — created once on first install; safe to customise via UI
+            without risk of being overwritten on module upgrade.
+        -->
+        <record id="tool_liquidation_validate" model="ipai.agent.tool">
+            <field name="name">Liquidation: Validate and Pack Evidence</field>
+            <field name="technical_name">expense_liquidation.validate_and_pack_evidence</field>
+            <field name="provider">supabase_edge</field>
+            <field name="auth_mode">hmac</field>
+            <field name="endpoint_param">ipai.agent.endpoint.liquidation_validate</field>
+            <field name="secret_param">ipai.agent.hmac_secret</field>
+            <field name="description">
+Validates expense liquidation lines for BIR compliance and packs structured
+evidence for audit. Read-only — does not post, approve, or settle.
+
+Triggered from the Expense Liquidation form via the "Run IPAI Agent" button
+(visible in submitted/approved states to Agent User group members).
+            </field>
+            <field name="allowed_group_ids" eval="[(4, ref('group_ipai_agent_approver'))]"/>
+        </record>
+
+    </data>
+</odoo>

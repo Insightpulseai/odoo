@@ -1,0 +1,69 @@
+# Inventory — Informational Benchmark Scenarios
+
+scenarios:
+  - id: "BM-INV-I-001"
+    domain: inventory
+    capability_class: informational
+    persona: inv_operator
+    prompt: "How many units of SKU-A are in stock across all warehouses?"
+    setup:
+      seed_records:
+        - model: product.product
+          values: { name: "SKU-A", type: "product" }
+    expected_behavior:
+      type: aggregate
+      source_model: stock.quant
+      fields:
+        quantity: "sum where product_id.name = SKU-A and location_id.usage = internal"
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [inventory, stock-level, aggregate]
+
+  - id: "BM-INV-I-002"
+    domain: inventory
+    capability_class: informational
+    persona: inv_operator
+    prompt: "Which products are below their reorder point right now?"
+    expected_behavior:
+      type: search
+      source_model: stock.warehouse.orderpoint
+      fields: {}
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [inventory, reorder, low-stock]
+
+  - id: "BM-INV-I-003"
+    domain: inventory
+    capability_class: informational
+    persona: sales_mgr
+    prompt: "What is the current inventory valuation for the main warehouse?"
+    notes: "Cross-domain: sales manager asking about inventory. Permission check implicit."
+    expected_behavior:
+      type: aggregate
+      source_model: stock.valuation.layer
+      fields:
+        value: "sum where stock_move_id.warehouse_id = main warehouse"
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [inventory, valuation, aggregate, cross-domain]

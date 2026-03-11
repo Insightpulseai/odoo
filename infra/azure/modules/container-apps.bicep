@@ -1,165 +1,358 @@
-// Azure Container Apps Environment + Odoo Container App module
+// Azure Container Apps Environment + 9 service apps
+// Consumption plan, internal ingress (Front Door handles public traffic)
+// InsightPulse AI stack: Odoo (web/worker/cron), n8n, MCP, Superset, Plane, Shelf, CRM
 
-@description('Name of the Container Apps Environment')
-param environmentName string
+// ---------------------------------------------------------------------------
+// Parameters
+// ---------------------------------------------------------------------------
 
-@description('Name of the Container App')
-param appName string
-
-@description('Azure region')
-param location string
+@description('Azure region for resources')
+param location string = resourceGroup().location
 
 @description('Resource tags')
 param tags object
 
-@description('ACR login server (e.g. myacr.azurecr.io)')
-param acrLoginServer string
+@description('Name of the Container Apps Environment')
+param environmentName string
 
-@description('Container image (e.g. odoo:latest)')
-param containerImage string = 'odoo:latest'
+@description('Log Analytics workspace resource ID')
+param logAnalyticsWorkspaceId string
 
-@description('Log Analytics workspace ID for diagnostics')
-param logAnalyticsWorkspaceId string = ''
+@description('Container registry login server (e.g. myregistry.azurecr.io)')
+param containerRegistryServer string
 
-@description('Log Analytics shared key')
+@description('Container registry username')
 @secure()
-param logAnalyticsSharedKey string = ''
+param containerRegistryUsername string
 
-@description('Minimum replicas')
-param minReplicas int = 1
-
-@description('Maximum replicas')
-param maxReplicas int = 3
-
-@description('CPU cores per replica')
-param cpu string = '1.0'
-
-@description('Memory per replica')
-param memory string = '2Gi'
-
-@description('PostgreSQL connection string')
+@description('Container registry password')
 @secure()
-param dbConnectionString string = ''
+param containerRegistryPassword string
 
-@description('Managed Identity resource ID for ACR pull')
-param acrIdentityId string = ''
+@description('Odoo container image (use #{odooImage}# for CI/CD replacement)')
+param odooImage string
 
-// Container Apps Environment
-resource environment 'Microsoft.App/managedEnvironments@2023-05-01' = {
+@description('n8n container image')
+param n8nImage string
+
+@description('MCP Gateway container image')
+param mcpImage string
+
+@description('Superset container image')
+param supersetImage string
+
+@description('Plane container image')
+param planeImage string
+
+@description('Shelf container image')
+param shelfImage string
+
+@description('CRM container image')
+param crmImage string
+
+@description('PostgreSQL host (Key Vault reference or direct)')
+@secure()
+param databaseHost string
+
+@description('PostgreSQL database name')
+param databaseName string
+
+@description('PostgreSQL user')
+@secure()
+param databaseUser string
+
+@description('PostgreSQL password')
+@secure()
+param databasePassword string
+
+@description('Enable VNet integration for internal-only ingress')
+param vnetSubnetId string = ''
+
+// ---------------------------------------------------------------------------
+// Variables
+// ---------------------------------------------------------------------------
+
+var logAnalyticsCustomerId = reference(logAnalyticsWorkspaceId, '2023-09-01').customerId
+var logAnalyticsSharedKey = listKeys(logAnalyticsWorkspaceId, '2023-09-01').primarySharedKey
+
+var registryConfig = [
+  {
+    server: containerRegistryServer
+    username: containerRegistryUsername
+    passwordSecretRef: 'registry-password'
+  }
+]
+
+var sharedSecrets = [
+  { name: 'registry-password', value: containerRegistryPassword }
+  { name: 'db-host', value: databaseHost }
+  { name: 'db-user', value: databaseUser }
+  { name: 'db-password', value: databasePassword }
+]
+
+var sharedEnv = [
+  { name: 'DATABASE_HOST', secretRef: 'db-host' }
+  { name: 'DATABASE_NAME', value: databaseName }
+  { name: 'DATABASE_USER', secretRef: 'db-user' }
+  { name: 'DATABASE_PASSWORD', secretRef: 'db-password' }
+]
+
+// Service definitions — central config for all 9 apps
+var services = [
+  {
+    name: 'odoo-web'
+    image: odooImage
+    port: 8069
+    healthPath: '/web/health'
+    cpu: '1.0'
+    memory: '2Gi'
+    minReplicas: 1
+    maxReplicas: 3
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'odoo-worker'
+    image: odooImage
+    port: 8069
+    healthPath: '/web/health'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 2
+    command: [
+      'odoo'
+      '--no-http'
+      '--workers=2'
+    ]
+    extraEnv: []
+  }
+  {
+    name: 'odoo-cron'
+    image: odooImage
+    port: 8069
+    healthPath: '/web/health'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 1
+    command: [
+      'odoo'
+      '--no-http'
+      '--max-cron-threads=2'
+    ]
+    extraEnv: []
+  }
+  {
+    name: 'n8n'
+    image: n8nImage
+    port: 5678
+    healthPath: '/healthz'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 2
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'mcp-gateway'
+    image: mcpImage
+    port: 8766
+    healthPath: '/healthz'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 2
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'superset'
+    image: supersetImage
+    port: 8088
+    healthPath: '/health'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 2
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'plane'
+    image: planeImage
+    port: 3000
+    healthPath: '/'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 1
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'shelf'
+    image: shelfImage
+    port: 3000
+    healthPath: '/healthcheck'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 1
+    command: []
+    extraEnv: []
+  }
+  {
+    name: 'crm'
+    image: crmImage
+    port: 3000
+    healthPath: '/'
+    cpu: '0.5'
+    memory: '1Gi'
+    minReplicas: 1
+    maxReplicas: 1
+    command: []
+    extraEnv: []
+  }
+]
+
+// ---------------------------------------------------------------------------
+// Container Apps Environment — Consumption plan
+// ---------------------------------------------------------------------------
+
+resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
   location: location
   tags: tags
   properties: {
-    appLogsConfiguration: logAnalyticsWorkspaceId != '' ? {
+    appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: logAnalyticsWorkspaceId
+        customerId: logAnalyticsCustomerId
         sharedKey: logAnalyticsSharedKey
       }
-    } : {}
+    }
+    vnetConfiguration: vnetSubnetId != '' ? {
+      infrastructureSubnetId: vnetSubnetId
+      internal: true
+    } : null
     zoneRedundant: false
+    workloadProfiles: [
+      {
+        name: 'Consumption'
+        workloadProfileType: 'Consumption'
+      }
+    ]
   }
 }
 
-// Odoo Container App
-resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
-  name: appName
-  location: location
-  tags: tags
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    managedEnvironmentId: environment.id
-    configuration: {
-      activeRevisionsMode: 'Multiple'
-      ingress: {
-        external: true
-        targetPort: 8069
-        transport: 'http'
-        allowInsecure: false
-        traffic: [
-          {
-            latestRevision: true
-            weight: 100
-          }
-        ]
-      }
-      registries: [
-        {
-          server: acrLoginServer
-          identity: acrIdentityId != '' ? acrIdentityId : 'system'
-        }
-      ]
-      secrets: dbConnectionString != '' ? [
-        {
-          name: 'db-connection-string'
-          value: dbConnectionString
-        }
-      ] : []
-    }
-    template: {
-      containers: [
-        {
-          name: 'odoo'
-          image: '${acrLoginServer}/${containerImage}'
-          resources: {
-            cpu: json(cpu)
-            memory: memory
-          }
-          env: [
-            {
-              name: 'ODOO_RC'
-              value: '/etc/odoo/odoo.conf'
-            }
-          ]
-          probes: [
-            {
-              type: 'Liveness'
-              httpGet: {
-                path: '/web/health'
-                port: 8069
-              }
-              initialDelaySeconds: 90
-              periodSeconds: 30
-              timeoutSeconds: 10
-              failureThreshold: 3
-            }
-            {
-              type: 'Readiness'
-              httpGet: {
-                path: '/web/health'
-                port: 8069
-              }
-              initialDelaySeconds: 30
-              periodSeconds: 10
-              timeoutSeconds: 5
-              failureThreshold: 3
-            }
-          ]
-        }
-      ]
-      scale: {
-        minReplicas: minReplicas
-        maxReplicas: maxReplicas
-        rules: [
-          {
-            name: 'http-scaling'
-            http: {
-              metadata: {
-                concurrentRequests: '50'
-              }
-            }
-          }
-        ]
-      }
-    }
-  }
-}
+// ---------------------------------------------------------------------------
+// Container Apps — 9 services (loop-based deployment)
+// ---------------------------------------------------------------------------
 
-output environmentName string = environment.name
+resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [
+  for svc in services: {
+    name: svc.name
+    location: location
+    tags: tags
+    properties: {
+      environmentId: environment.id
+      workloadProfileName: 'Consumption'
+      configuration: {
+        activeRevisionsMode: 'Single'
+        ingress: {
+          external: false
+          targetPort: svc.port
+          transport: 'http'
+          allowInsecure: false
+        }
+        registries: registryConfig
+        secrets: sharedSecrets
+      }
+      template: {
+        containers: [
+          {
+            name: svc.name
+            image: svc.image
+            command: length(svc.command) > 0 ? svc.command : null
+            resources: {
+              cpu: json(svc.cpu)
+              memory: svc.memory
+            }
+            env: concat(sharedEnv, svc.extraEnv)
+            probes: [
+              {
+                type: 'Liveness'
+                httpGet: {
+                  path: svc.healthPath
+                  port: svc.port
+                  scheme: 'HTTP'
+                }
+                initialDelaySeconds: 30
+                periodSeconds: 30
+                failureThreshold: 3
+                timeoutSeconds: 5
+              }
+              {
+                type: 'Readiness'
+                httpGet: {
+                  path: svc.healthPath
+                  port: svc.port
+                  scheme: 'HTTP'
+                }
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                failureThreshold: 3
+                timeoutSeconds: 5
+              }
+            ]
+          }
+        ]
+        scale: {
+          minReplicas: svc.minReplicas
+          maxReplicas: svc.maxReplicas
+          rules: svc.maxReplicas > 1 ? [
+            {
+              name: 'http-scaling'
+              http: {
+                metadata: {
+                  concurrentRequests: '50'
+                }
+              }
+            }
+          ] : []
+        }
+      }
+    }
+  }
+]
+
+// ---------------------------------------------------------------------------
+// Outputs
+// ---------------------------------------------------------------------------
+
+@description('Container Apps Environment resource ID')
 output environmentId string = environment.id
-output appName string = containerApp.name
-output appFqdn string = containerApp.properties.configuration.ingress.fqdn
-output appId string = containerApp.id
-output appPrincipalId string = containerApp.identity.principalId
+@description('Container Apps Environment default domain (FQDN suffix)')
+output environmentDefaultDomain string = environment.properties.defaultDomain
+
+@description('Container Apps Environment static IP (for DNS / Front Door origin)')
+output environmentStaticIp string = environment.properties.staticIp
+
+@description('Individual app FQDNs keyed by service name')
+output appFqdns array = [
+  for (svc, i) in services: {
+    name: svc.name
+    fqdn: containerApps[i].properties.configuration.ingress.fqdn
+  }
+]
+
+@description('Odoo web app FQDN (primary origin for Front Door)')
+output odooWebFqdn string = containerApps[0].properties.configuration.ingress.fqdn
+
+@description('n8n app FQDN')
+output n8nFqdn string = containerApps[3].properties.configuration.ingress.fqdn
+
+@description('MCP Gateway app FQDN')
+output mcpGatewayFqdn string = containerApps[4].properties.configuration.ingress.fqdn
