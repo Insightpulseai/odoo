@@ -27,10 +27,10 @@ concurrency:
   cancel-in-progress: false  # Never cancel in-flight deploys
 
 env:
-  ACR_REGISTRY: ${{ vars.ACR_REGISTRY || 'ipaiacr.azurecr.io' }}
+  ACR_REGISTRY: ${{ vars.ACR_REGISTRY || 'cripaidev.azurecr.io' }}
   ACR_REPO: ipai-odoo
-  ACA_RESOURCE_GROUP: ${{ vars.ACA_RESOURCE_GROUP || 'rg-ipai-prod' }}
-  ACA_APP_NAME: ${{ vars.ACA_APP_NAME || 'ipai-odoo-web' }}
+  ACA_RESOURCE_GROUP: ${{ vars.ACA_RESOURCE_GROUP || 'rg-ipai-dev' }}
+  ACA_APP_NAME: ${{ vars.ACA_APP_NAME || 'ipai-odoo-dev-web' }}
   TARGET_ENV: ${{ github.event.inputs.environment || 'staging' }}
 
 jobs:
