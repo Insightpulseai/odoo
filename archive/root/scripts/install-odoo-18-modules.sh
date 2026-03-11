@@ -13,7 +13,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="${PROJECT_ROOT}/logs/module-install-$(date +%Y%m%d-%H%M%S).log"
-DB_NAME="${ODOO_DB_NAME:-odoo_core}"
+DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 
 # Colors
 RED='\033[0;31m'

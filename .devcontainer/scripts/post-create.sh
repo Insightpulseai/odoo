@@ -64,7 +64,7 @@ echo "✅ PostgreSQL is ready"
 
 # Create databases (dev, stage, prod)
 echo "📦 Creating databases..."
-for db_name in odoo_dev odoo_stage odoo_prod; do
+for db_name in odoo_dev odoo_staging odoo_prod; do
     if docker compose -f /workspaces/odoo/docker-compose.yml exec -T db psql -U odoo -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then
         echo "   Database $db_name already exists"
     else

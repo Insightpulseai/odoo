@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Configuration - override with environment variables
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_dev}"
 ODOO_URL="${ODOO_URL:-http://localhost:8069}"
 
 echo "=============================================="

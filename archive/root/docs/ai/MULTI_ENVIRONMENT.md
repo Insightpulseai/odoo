@@ -9,7 +9,7 @@
 Three database environments for the Odoo deployment lifecycle:
 
 1. **`odoo_dev`** — Local development
-2. **`odoo_stage`** — Staging/testing
+2. **`odoo_staging`** — Staging/testing
 3. **`odoo_prod`** — Production
 
 ---
@@ -21,7 +21,7 @@ Three database environments for the Odoo deployment lifecycle:
 | `.env` | Active config (gitignored) | ❌ No | Variable |
 | `.env.example` | Template | ✅ Yes | `odoo_dev` |
 | `.env.dev` | Development | ✅ Yes | `odoo_dev` |
-| `.env.stage` | Staging | ✅ Yes | `odoo_stage` |
+| `.env.stage` | Staging | ✅ Yes | `odoo_staging` |
 | `.env.prod` | Production | ✅ Yes | `odoo_prod` |
 
 ---
@@ -48,7 +48,7 @@ cp .env.stage .env
 docker compose -f docker-compose.yml -f infra/deploy/docker-compose.prod.yml up -d
 
 # Verify database
-docker compose exec db psql -U odoo -d odoo_stage -c "SELECT version();"
+docker compose exec db psql -U odoo -d odoo_staging -c "SELECT version();"
 ```
 
 ### Production
@@ -74,7 +74,7 @@ docker compose exec db psql -U odoo -d odoo_prod -c "SELECT version();"
 docker compose exec db createdb -U odoo odoo_dev
 
 # Staging
-docker compose exec db createdb -U odoo odoo_stage
+docker compose exec db createdb -U odoo odoo_staging
 
 # Production
 docker compose exec db createdb -U odoo odoo_prod
@@ -87,7 +87,7 @@ docker compose exec db createdb -U odoo odoo_prod
 docker compose --profile init up
 
 # Staging
-ODOO_DB=odoo_stage docker compose --profile init up
+ODOO_DB=odoo_staging docker compose --profile init up
 
 # Production
 ODOO_DB=odoo_prod docker compose --profile init up
@@ -100,7 +100,7 @@ ODOO_DB=odoo_prod docker compose --profile init up
 docker compose exec db pg_dump -U odoo odoo_dev > backups/odoo_dev_$(date +%Y%m%d).sql
 
 # Staging
-docker compose exec db pg_dump -U odoo odoo_stage > backups/odoo_stage_$(date +%Y%m%d).sql
+docker compose exec db pg_dump -U odoo odoo_staging > backups/odoo_staging_$(date +%Y%m%d).sql
 
 # Production
 docker compose exec db pg_dump -U odoo odoo_prod > backups/odoo_prod_$(date +%Y%m%d).sql
@@ -113,7 +113,7 @@ docker compose exec db pg_dump -U odoo odoo_prod > backups/odoo_prod_$(date +%Y%
 cat backups/odoo_dev_20260213.sql | docker compose exec -T db psql -U odoo odoo_dev
 
 # Staging
-cat backups/odoo_stage_20260213.sql | docker compose exec -T db psql -U odoo odoo_stage
+cat backups/odoo_staging_20260213.sql | docker compose exec -T db psql -U odoo odoo_staging
 
 # Production
 cat backups/odoo_prod_20260213.sql | docker compose exec -T db psql -U odoo odoo_prod
@@ -128,8 +128,8 @@ cat backups/odoo_prod_20260213.sql | docker compose exec -T db psql -U odoo odoo
 | Variable | Dev | Stage | Prod |
 |----------|-----|-------|------|
 | `COMPOSE_PROJECT_NAME` | `ipai` | `ipai` | `ipai` |
-| `POSTGRES_DB` | `odoo_dev` | `odoo_stage` | `odoo_prod` |
-| `ODOO_DB` | `odoo_dev` | `odoo_stage` | `odoo_prod` |
+| `POSTGRES_DB` | `odoo_dev` | `odoo_staging` | `odoo_prod` |
+| `ODOO_DB` | `odoo_dev` | `odoo_staging` | `odoo_prod` |
 | `POSTGRES_PASSWORD` | `odoo` | Vault | Vault |
 
 ### Optional
@@ -217,15 +217,15 @@ docker compose restart odoo
 
 ### Database Does Not Exist
 
-**Symptom**: `FATAL: database "odoo_stage" does not exist`
+**Symptom**: `FATAL: database "odoo_staging" does not exist`
 
 **Fix**:
 ```bash
 # Create database
-docker compose exec db createdb -U odoo odoo_stage
+docker compose exec db createdb -U odoo odoo_staging
 
 # Initialize
-ODOO_DB=odoo_stage docker compose --profile init up
+ODOO_DB=odoo_staging docker compose --profile init up
 ```
 
 ---

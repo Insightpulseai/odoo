@@ -386,7 +386,7 @@ health_checks:
 
 # Database Configuration
 database:
-  name: "odoo_core"
+  name: "odoo_dev"
   user: "odoo"
   host: "postgres"
   port: 5432

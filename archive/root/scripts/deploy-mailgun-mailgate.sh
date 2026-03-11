@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Configuration
 DEPLOY_BRANCH="${DEPLOY_BRANCH:-claude/deploy-odoo-enterprise-bridge-RbvGm}"
-ODOO_DATABASE="${ODOO_DATABASE:-odoo_core}"
+ODOO_DATABASE="${ODOO_DATABASE:-odoo_prod}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
 PRODUCTION_URL="${PRODUCTION_URL:-https://erp.insightpulseai.com}"
 LOG_FILE="/var/log/mailgun_mailgate_deployment_$(date +%Y%m%d_%H%M%S).log"

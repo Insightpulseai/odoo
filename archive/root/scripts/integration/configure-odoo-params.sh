@@ -19,7 +19,7 @@ if ! docker compose ps odoo-core | grep -q "Up"; then
 fi
 
 # Configure via Odoo shell
-docker compose exec -T odoo-core odoo shell -d odoo_core << EOF
+docker compose exec -T odoo-core odoo shell -d odoo_dev << EOF
 # Set webhook URL
 env['ir.config_parameter'].sudo().set_param('ipai.webhook.url', '${WEBHOOK_URL}')
 print("✅ Set ipai.webhook.url = ${WEBHOOK_URL}")

@@ -4,7 +4,7 @@
 #
 # Usage:
 #   ./scripts/odoo_install_modules.sh config/install_sets/ppm_parity_autogen.txt
-#   DB_NAME=odoo_core ./scripts/odoo_install_modules.sh config/install_sets/mega_parity_autogen.txt
+#   DB_NAME=odoo_dev ./scripts/odoo_install_modules.sh config/install_sets/mega_parity_autogen.txt
 #
 # Reads a .txt file (one module per line, comments allowed), builds a
 # comma-separated list, and runs odoo-bin -i with --stop-after-init.

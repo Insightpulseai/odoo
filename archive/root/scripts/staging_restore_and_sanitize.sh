@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-STAGE_DB="odoo_stage"
+STAGE_DB="odoo_staging"
 SOURCE_DB="odoo" # Or odoo_dev if prod backup not available locally
 DB_HOST="db"
 DB_USER="odoo"

@@ -12,7 +12,7 @@ References:
 
 Usage:
   # Dry-run (no DB writes — validates config, prints plan):
-  IPAI_ENV=stage DB_NAME=odoo_stage python3 scripts/odoo_neutralize.py --dry-run
+  IPAI_ENV=stage DB_NAME=odoo_staging python3 scripts/odoo_neutralize.py --dry-run
 
   # Live run (requires explicit confirmation):
   IPAI_ENV=stage IPAI_NEUTRALIZE_CONFIRM=YES python3 scripts/odoo_neutralize.py
@@ -58,7 +58,7 @@ log = logging.getLogger("odoo_neutralize")
 # This prevents accidentally neutralizing the wrong database.
 # ---------------------------------------------------------------------------
 ENV_DB_MAP = {
-    "stage": "odoo_stage",
+    "stage": "odoo_staging",
     "dev":   "odoo_dev",
     # dev/* variants (dev_tbwa, dev_uat, etc.) map to odoo_dev by default;
     # override with DB_NAME if a different naming convention is used.

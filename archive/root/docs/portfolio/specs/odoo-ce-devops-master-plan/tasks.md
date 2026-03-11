@@ -12,13 +12,13 @@
 
 | # | Task | Status | Owner | Evidence |
 |---|------|--------|-------|----------|
-| 0.1 | Create spec kit structure | ✅ | Claude | `spec/` exists |
+| 0.1 | Create spec kit structure | ✅ | Claude | `docs/spec/` exists |
 | 0.2 | Generate llms.txt | ✅ | Claude | 227 lines |
 | 0.3 | Generate llms-full.txt | ✅ | Claude | Full context |
 | 0.4 | Create llms-txt-check workflow | ✅ | Claude | `.github/workflows/llms-txt-check.yml` |
 | 0.5 | Create ci-runbot workflow | ✅ | Claude | `.github/workflows/ci-runbot.yml` |
 | 0.6 | Create docs-drift-gate workflow | ✅ | Claude | `.github/workflows/docs-drift-gate.yml` |
-| 0.7 | Create parity check script | ✅ | Claude | `scripts/check_odoosh_parity.py` |
+| 0.7 | Create parity check script | ✅ | Claude | `odoo/scripts/check_odoosh_parity.py` |
 | 0.8 | Update CLAUDE.md | ✅ | Claude | Current |
 | 0.9 | Run Phase 0 gate | ✅ | Claude | 11/11 passed |
 
@@ -33,8 +33,8 @@
 | 1.1 | Create root docker-compose.yml | ✅ | Claude | `docker-compose.yml` |
 | 1.2 | Verify prod compose | ✅ | Claude | `deploy/docker-compose.prod.yml` |
 | 1.3 | Verify Dockerfile | ✅ | Claude | `docker/Dockerfile.ce19` |
-| 1.4 | Create full_backup.sh | ✅ | Claude | `scripts/backup/full_backup.sh` |
-| 1.5 | Create restore_test.sh | ✅ | Claude | `scripts/backup/restore_test.sh` |
+| 1.4 | Create full_backup.sh | ✅ | Claude | `odoo/scripts/backup/full_backup.sh` |
+| 1.5 | Create restore_test.sh | ✅ | Claude | `odoo/scripts/backup/restore_test.sh` |
 | 1.6 | Create security configs | ✅ | Claude | `security/Caddyfile.shell` |
 | 1.7 | Create threat model | ✅ | Claude | `security/WEB_SHELL_THREAT_MODEL.md` |
 | 1.8 | Create DR runbook | ✅ | Claude | `docs/DR_RUNBOOK.md` |
@@ -85,7 +85,7 @@
 |---|------|--------|-------|----------|
 | 4.1 | GAP 1: Branch promotion | ✅ | Claude | `.github/workflows/branch-promotion.yml` |
 | 4.2 | GAP 2: Runbot dashboard | ✅ | Claude | `.github/workflows/ci-runbot.yml` |
-| 4.3 | GAP 3: Multi-DC backups | ✅ | Claude | `scripts/backup/`, `docs/DR_RUNBOOK.md` |
+| 4.3 | GAP 3: Multi-DC backups | ✅ | Claude | `odoo/scripts/backup/`, `docs/DR_RUNBOOK.md` |
 | 4.4 | GAP 4: Web shell | ✅ | Claude | `docker-compose.shell.yml` |
 | 4.5 | Run Phase 4 gate | 🔲 | Claude | Awaiting Phase 3 |
 

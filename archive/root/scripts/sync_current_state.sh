@@ -57,7 +57,7 @@ if [ -f scripts/ci/introspect_feature_inventory.py ]; then
     python3 scripts/ci/introspect_feature_inventory.py
   elif command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' | grep -qE '^odoo-core$'; then
     echo "Running introspection inside odoo-core container..."
-    cat scripts/ci/introspect_feature_inventory.py | docker exec -i odoo-core odoo shell -d odoo_core --no-http
+    cat scripts/ci/introspect_feature_inventory.py | docker exec -i odoo-core odoo shell -d odoo_dev --no-http
   else
     echo "SKIP: Odoo environment not accessible (not in container and odoo-core not running)"
   fi

@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
+# Part of IPAI. See LICENSE file for full copyright and licensing details.
 {
     "name": "DEPRECATED: AI Fields",
     "version": "19.0.1.0.0",
-    "category": "InsightPulse AI",
-    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
+    "category": "Productivity/AI",
+    "summary": "RAG (Retrieval-Augmented Generation) pipeline for AI agents",
     "description": """
 AI Fields
 =========
 
 AI-powered field population
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+- **Source Management**: Ingest files, URLs, and knowledge bases
+- **Chunking**: Deterministic text chunking with configurable size and overlap
+- **Embeddings**: Vector embeddings via OpenAI API
+- **Retrieval**: Cosine similarity search with stable tie-breaking
 
 **Features:**
 - Core functionality for ai fields
@@ -26,13 +30,18 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
-    "depends": ["ipai_ai_agent_builder"],
+    "depends": [
+        "ipai_ai_core",
+    ],
     "data": [
         "security/ir.model.access.csv",
-        "views/menu.xml",
+        "views/ai_source_views.xml",
     ],
     "demo": [],
-    "installable": False,
+    "installable": True,
     "application": False,
     "auto_install": False,
+    "external_dependencies": {
+        "python": ["tiktoken", "requests"],
+    },
 }

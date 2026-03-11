@@ -2,8 +2,8 @@
 
 ## M0 — Spec kit + CI
 
-- [x] Add spec kit files under spec/odoo-ee-parity-matrix/
-- [x] Add scripts/validate_spec_kit.sh
+- [x] Add spec kit files under docs/spec/odoo-ee-parity-matrix/
+- [x] Add odoo/scripts/validate_spec_kit.sh
 - [x] Add catalog schema + validator script
 - [x] Add GitHub Actions workflow gates
 

@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Configuration
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_dev}"
 
 echo "Running post-import verification..."
 echo ""
