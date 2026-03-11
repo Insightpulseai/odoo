@@ -8,7 +8,7 @@
 |---|---|---|---|---|---|
 | dev | (set in `config/dev/`) | preview deploys | `odoo_dev` | `*.dev.insightpulseai.com` | `#dev-alerts` |
 | staging | (set in `config/staging/`) | preview (staging) | `odoo_staging` | `*.staging.insightpulseai.com` | `#staging-alerts` |
-| prod | (set in `config/prod/`) | production | `odoo` | `*.insightpulseai.com` | `#prod-alerts` |
+| prod | (set in `config/prod/`) | production | `odoo_prod` | `*.insightpulseai.com` | `#prod-alerts` |
 
 ## Identifier Locations (Non-Secret)
 
@@ -79,7 +79,7 @@ Shared env vars allowed only for non-privileged values (or explicitly approved l
 |---|---|---|---|
 | dev | `odoo_dev` | `config/dev/odoo.conf` | docker compose (local) |
 | staging | `odoo_staging` | `config/staging/odoo.conf` | CI-triggered remote deploy |
-| prod | `odoo` | `config/prod/odoo.conf` | CI-triggered with approval gate |
+| prod | `odoo_prod` | `config/prod/odoo.conf` | CI-triggered with approval gate |
 
 ### Superset
 
@@ -87,7 +87,7 @@ Shared env vars allowed only for non-privileged values (or explicitly approved l
 |---|---|---|---|
 | dev | (set in `config/dev/`) | `odoo_dev` | safe seed data |
 | staging | (set in `config/staging/`) | `odoo_staging` | prod-like masking |
-| prod | (set in `config/prod/`) | `odoo` | strict access, read-only role |
+| prod | (set in `config/prod/`) | `odoo_prod` | strict access, read-only role |
 
 ---
 
