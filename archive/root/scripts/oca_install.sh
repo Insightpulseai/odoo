@@ -191,8 +191,8 @@ wave3_clone() {
 
     echo ""
     log "Wave 3 clone complete!"
-    warn "These affect accounting! Test on staging (ODOO_DB=odoo_stage) first!"
-    info "  1. Run: ODOO_DB=odoo_stage $0 wave3-install"
+    warn "These affect accounting! Test on staging (ODOO_DB=odoo_staging) first!"
+    info "  1. Run: ODOO_DB=odoo_staging $0 wave3-install"
     info "  2. Have Finance team (BOM/RIM) verify"
     info "  3. Then: ODOO_DB=odoo_prod $0 wave3-install"
 }
@@ -209,7 +209,7 @@ wave3_install() {
     if [ "${FORCE:-0}" != "1" ]; then
         err "Finance modules require explicit confirmation."
         err "Run with FORCE=1 to proceed:"
-        err "  FORCE=1 ODOO_DB=odoo_stage $0 wave3-install"
+        err "  FORCE=1 ODOO_DB=odoo_staging $0 wave3-install"
         exit 1
     fi
 

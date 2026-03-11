@@ -1,56 +1,56 @@
 # config/odoo/mail_settings.yaml
-# Single source of truth for Odoo mail server configuration (SMTP + IMAP).
-# Passwords are placeholders — supply via environment variables or Vault.
-# Used by: scripts/odoo/apply_mail_settings.py
+# SSOT for Odoo outgoing mail transport configuration.
+# Contains ONLY non-secret transport settings and secret metadata.
+# Secret VALUES live in Azure Key Vault — never in this file.
+#
+# References:
+#   - Zoho SMTP: https://www.zoho.com/mail/help/zoho-smtp.html
+#   - Azure port 25 block: https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-network/troubleshoot-outbound-smtp-connectivity
+#   - SSOT rule: .claude/rules/ssot-platform.md §7
 
-dev:
-  smtp:
-    name: "Zoho SMTP (Dev)"
-    host: "smtppro.zoho.com"
-    port: 587
-    encryption: "starttls"
-    user: "business@insightpulseai.com"
-    password: "${ZOHO_SMTP_APP_PASSWORD}"
-    from_filter: "@insightpulseai.com"
-    active: true
-    sequence: 1
+mail:
+  provider: zoho
+  host: smtppro.zoho.com
+  port: 587
+  security: starttls
+  # smtppro.zoho.com is the canonical endpoint for paid org/custom-domain.
+  # smtp.zoho.com also works but Zoho admin recommends smtppro for orgs.
+  from_filter: insightpulseai.com
+  username_env: ZOHO_SMTP_USER
+  password_env: ZOHO_SMTP_PASSWORD
 
-  imap:
-    name: "Zoho IMAP (Dev)"
-    host: "imappro.zoho.com"
-    port: 993
-    ssl: true
-    user: "catchall@insightpulseai.com"
-    password: "${ZOHO_IMAP_APP_PASSWORD}"
-    attach: true
-    original: true
-    active: false  # Disabled in dev to avoid processing real mail
+# ---------------------------------------------------------------------------
+# Azure Key Vault — runtime secret source of truth
+# ---------------------------------------------------------------------------
+# Secrets are resolved at runtime via managed identity + Key Vault.
+# - App Service / Functions: use Key Vault references in app settings
+# - Custom container / VM: fetch at startup via Azure SDK
+#
+# No plaintext secret values belong in this file or any tracked config.
+azure_key_vault:
+  enabled: true
+  vault_name: kv-ipai-dev
+  secrets:
+    zoho_smtp_user:
+      env: ZOHO_SMTP_USER
+      secret_name: zoho-smtp-user
+    zoho_smtp_password:
+      env: ZOHO_SMTP_PASSWORD
+      secret_name: zoho-smtp-password
 
-prod:
-  smtp:
-    name: "Zoho SMTP (Prod)"
-    host: "smtppro.zoho.com"
-    port: 587
-    encryption: "starttls"
-    user: "business@insightpulseai.com"
-    password: "${ZOHO_SMTP_APP_PASSWORD}"
-    from_filter: "@insightpulseai.com"
-    active: true
-    sequence: 1
-
-  imap:
-    name: "Zoho IMAP (Prod)"
-    host: "imappro.zoho.com"
-    port: 993
-    ssl: true
-    user: "catchall@insightpulseai.com"
-    password: "${ZOHO_IMAP_APP_PASSWORD}"
-    attach: true
-    original: true
-    active: true
-
-# Notes:
-# - smtppro.zoho.com / imappro.zoho.com = US datacenter (required for @insightpulseai.com)
-# - smtp.zoho.com / imap.zoho.com = global (wrong for this account, causes 535)
-# - Passwords must be Zoho App Passwords, NOT the Zoho account login password
-# - Generate at: https://accounts.zoho.com/u/h#security/app_password
+# ---------------------------------------------------------------------------
+# Smoke test (run from the Odoo container or Azure host after secret injection)
+# ---------------------------------------------------------------------------
+# python3 -c "
+# import smtplib, os
+# s = smtplib.SMTP('smtp.zoho.com', 587)
+# s.starttls()
+# s.login(os.environ['ZOHO_SMTP_USER'], os.environ['ZOHO_SMTP_PASSWORD'])
+# s.sendmail(
+#     os.environ['ZOHO_SMTP_USER'],
+#     os.environ['ZOHO_SMTP_USER'],
+#     'Subject: SMTP smoke test\n\nOdoo mail works from Azure.'
+# )
+# s.quit()
+# print('OK')
+# "

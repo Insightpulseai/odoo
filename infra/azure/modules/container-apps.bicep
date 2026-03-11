@@ -334,6 +334,7 @@ resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [
 
 @description('Container Apps Environment resource ID')
 output environmentId string = environment.id
+
 @description('Container Apps Environment default domain (FQDN suffix)')
 output environmentDefaultDomain string = environment.properties.defaultDomain
 

@@ -61,7 +61,7 @@ snapshots:
 # Variables
 vars:
   # Odoo database name
-  odoo_database: 'odoo_core'
+  odoo_database: 'odoo_prod'
   # Default company ID
   default_company_id: 1
   # Date spine start

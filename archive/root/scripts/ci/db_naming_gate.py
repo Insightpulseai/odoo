@@ -5,7 +5,7 @@ Database Naming Enforcement Gate
 
 Scans the repository for database name references and enforces the allowlist:
 - odoo_dev
-- odoo_stage
+- odoo_staging
 - odoo_prod
 
 Scans:
@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import List, Set, Tuple
 
 # Canonical database name allowlist
-ALLOWED_DB_NAMES = {"odoo_dev", "odoo_stage", "odoo_prod"}
+ALLOWED_DB_NAMES = {"odoo_dev", "odoo_staging", "odoo_prod"}
 
 # File patterns to scan
 SCAN_PATTERNS = [

@@ -14,7 +14,7 @@ STACK_MANIFEST="$REPO_ROOT/stack/odoo19_stack.yaml"
 
 # Configuration
 ODOO_BIN="${ODOO_BIN:-odoo}"
-DB_NAME="${ODOO_DB:-odoo_core}"
+DB_NAME="${ODOO_DB:-odoo_dev}"
 ODOO_CONFIG="${ODOO_CONFIG:-/etc/odoo/odoo.conf}"
 ADDONS_PATH="$REPO_ROOT/addons/oca,$REPO_ROOT/addons/ipai,$REPO_ROOT/addons"
 DOCKER_MODE="${DOCKER_MODE:-true}"

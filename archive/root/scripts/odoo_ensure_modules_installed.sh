@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Configuration (override via environment)
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-ODOO_DB="${ODOO_DB:-odoo_core}"
+ODOO_DB="${ODOO_DB:-odoo_dev}"
 ODOO_CONF="${ODOO_CONF:-/etc/odoo/odoo.conf}"
 DESIRED_FILE="${DESIRED_FILE:-config/odoo/desired_modules.yml}"
 
@@ -47,7 +47,7 @@ except ImportError:
 
 desired_file = os.environ.get("DESIRED_FILE", "config/odoo/desired_modules.yml")
 container = os.environ.get("ODOO_CONTAINER", "odoo-core")
-db = os.environ.get("ODOO_DB", "odoo_core")
+db = os.environ.get("ODOO_DB", "odoo_dev")
 conf = os.environ.get("ODOO_CONF", "/etc/odoo/odoo.conf")
 
 # Load desired modules

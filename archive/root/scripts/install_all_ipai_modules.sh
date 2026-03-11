@@ -6,7 +6,7 @@
 set -euo pipefail
 
 CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-DB="${ODOO_DB:-odoo_core}"
+DB="${ODOO_DB:-odoo_dev}"
 
 echo "================================================================================"
 echo "IPAI Custom Modules - Complete Installation"

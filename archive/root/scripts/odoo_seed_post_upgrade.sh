@@ -7,7 +7,7 @@ set -euo pipefail
 
 # Configuration (override via environment)
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-ODOO_DB="${ODOO_DB:-odoo_core}"
+ODOO_DB="${ODOO_DB:-odoo_dev}"
 ODOO_CONF="${ODOO_CONF:-/etc/odoo/odoo.conf}"
 
 # Seed marker key (versioned for re-runnability)

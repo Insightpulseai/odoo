@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 CONFIG_DIR="${1:-$REPO_ROOT/config/ipai_ai/agents}"
-DB_NAME="${2:-odoo_core}"
+DB_NAME="${2:-odoo_dev}"
 CONTAINER_NAME="${CONTAINER_NAME:-odoo-core}"
 
 echo "=== IPAI AI Agent Seed Script ==="

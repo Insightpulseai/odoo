@@ -21,7 +21,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ODOO_URL="${ODOO_URL:-http://localhost:8069}"
-ODOO_DB="${ODOO_DATABASE:-odoo_core}"
+ODOO_DB="${ODOO_DATABASE:-odoo_dev}"
 ODOO_USER="${ODOO_USER:-admin}"
 ODOO_PASSWORD="${ODOO_PASSWORD:-admin}"
 

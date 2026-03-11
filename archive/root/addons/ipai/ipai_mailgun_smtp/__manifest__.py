@@ -42,7 +42,7 @@ Sending domain: mg.insightpulseai.com (outbound-only, Zoho handles inbound).
         "data/ir_mail_server.xml",
     ],
     "post_install": "hooks.post_install_hook",
-    "installable": True,
+    "installable": False,  # DEPRECATED 2026-03-10: Mailgun → Zoho. Use ipai_zoho_mail.
     "auto_install": False,
     "application": False,
 }

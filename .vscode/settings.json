@@ -43,6 +43,8 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "docker.dockerPath": "/usr/local/bin/docker",
+  "dev.containers.dockerPath": "/usr/local/bin/docker",
   "search.exclude": {
     "**/.git": true,
     "**/.venv": true,

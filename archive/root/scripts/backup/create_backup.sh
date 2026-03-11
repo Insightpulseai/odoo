@@ -31,7 +31,7 @@ CUSTOM_TAG=""
 KEEP_BACKUPS=7
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR="${BACKUP_DIR:-/opt/backups/odoo}"
-SOURCE_DB="${ODOO_DB:-odoo_core}"
+SOURCE_DB="${ODOO_DB:-odoo_prod}"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do

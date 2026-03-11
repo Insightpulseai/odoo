@@ -2,7 +2,7 @@ import xmlrpc.client
 import ssl
 
 url = "https://erp.insightpulseai.com"
-db = "odoo_core"  # Trying likely candidate
+db = "odoo_prod"
 username = "admin"
 password = "UbQbX75Wi+P3R+bItzO/NapptGbL4n/9MvIDVw71Oww="  # As found in .env.production
 

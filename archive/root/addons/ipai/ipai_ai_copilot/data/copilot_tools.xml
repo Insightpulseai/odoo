@@ -60,6 +60,17 @@
       <field name="parameters_json">{"type":"object","properties":{}}</field>
     </record>
 
+    <!-- ── Knowledge / RAG Tools ────────────────────────────────────────── -->
+
+    <record id="tool_search_knowledge" model="ipai.copilot.tool">
+      <field name="name">search_knowledge</field>
+      <field name="display_name">Search Knowledge Base</field>
+      <field name="description">Search the company knowledge base using RAG (Retrieval-Augmented Generation). Returns citation-first results with source metadata. Readonly — no confirmation needed.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"query":{"type":"string","description":"Natural language question to search the knowledge base"},"source_filter":{"type":"string","description":"Optional source type filter (e.g. 'bir', 'policy', 'handbook')"},"max_results":{"type":"integer","description":"Maximum results to return","default":5}},"required":["query"]}</field>
+    </record>
+
     <!-- ── Write Tools (all require confirmation) ─────────────────────────── -->
 
     <record id="tool_create_record" model="ipai.copilot.tool">
@@ -134,6 +145,35 @@
       <field name="category">automation</field>
       <field name="requires_confirmation">True</field>
       <field name="parameters_json">{"type":"object","properties":{"workflow_id":{"type":"string","description":"n8n workflow ID from the allowlist (matches ir.config_parameter key suffix)"},"data":{"type":"object","description":"Data payload to pass to the n8n webhook"}},"required":["workflow_id"]}</field>
+    </record>
+
+    <!-- ── Copilot Tools (Odoo Copilot Phase 4+5) ──────────────────────────── -->
+
+    <record id="tool_bir_compliance_search" model="ipai.copilot.tool">
+      <field name="name">bir_compliance_search</field>
+      <field name="display_name">BIR Compliance Search</field>
+      <field name="description">Search BIR tax compliance documents (revenue regulations, memoranda, TRAIN law). Returns citation-first results with issuance numbers. Readonly — no confirmation needed.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"query":{"type":"string","description":"Tax compliance question (e.g. '1601-C filing deadline', 'TRAIN law tax brackets')"},"max_results":{"type":"integer","description":"Maximum results to return","default":5}},"required":["query"]}</field>
+    </record>
+
+    <record id="tool_list_pending_activities" model="ipai.copilot.tool">
+      <field name="name">list_pending_activities</field>
+      <field name="display_name">List Pending Activities</field>
+      <field name="description">List pending activities (todos, approvals) for the current user or a specified user.</field>
+      <field name="category">read</field>
+      <field name="requires_confirmation">False</field>
+      <field name="parameters_json">{"type":"object","properties":{"user_id":{"type":"integer","description":"Odoo user ID (defaults to current user if omitted)"},"limit":{"type":"integer","description":"Maximum activities to return","default":10}}}</field>
+    </record>
+
+    <record id="tool_execute_activity" model="ipai.copilot.tool">
+      <field name="name">execute_activity</field>
+      <field name="display_name">Execute Activity</field>
+      <field name="description">Mark a pending activity as done or execute its action. REQUIRES USER CONFIRMATION.</field>
+      <field name="category">write</field>
+      <field name="requires_confirmation">True</field>
+      <field name="parameters_json">{"type":"object","properties":{"activity_id":{"type":"integer","description":"ID of the mail.activity to execute"},"feedback":{"type":"string","description":"Optional feedback message"}},"required":["activity_id"]}</field>
     </record>
 
   </data>

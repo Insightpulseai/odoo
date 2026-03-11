@@ -6,7 +6,7 @@ set -euo pipefail
 
 COMPOSE_FILE="${COMPOSE_FILE:-deploy/docker-compose.prod.v0.10.0.yml}"
 BASE_URL="${BASE_URL:-https://erp.insightpulseai.com}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_prod}"
 
 echo "=== Odoo Production Health Verification ==="
 echo "Compose file: $COMPOSE_FILE"

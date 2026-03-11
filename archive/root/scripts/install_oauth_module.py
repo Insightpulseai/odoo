@@ -6,7 +6,7 @@ from odoo import api, SUPERUSER_ID
 import sys
 
 # Database connection
-db_name = "odoo_core"
+db_name = "odoo_dev"
 
 # Initialize Odoo registry
 registry = odoo.registry(db_name)

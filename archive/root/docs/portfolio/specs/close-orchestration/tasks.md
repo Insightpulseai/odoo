@@ -2,7 +2,7 @@
 
 ## Module Implementation
 
-- [x] Create module structure (`addons/ipai_close_orchestration/`)
+- [x] Create module structure (`odoo/addons/ipai_close_orchestration/`)
 - [x] Define `__manifest__.py` with dependencies
 - [x] Create `__init__.py` imports
 
@@ -30,9 +30,9 @@
 
 ## Data
 
-- [x] `data/close_task_categories.xml` - 21 category records
-- [x] `data/close_task_templates.xml` - 23 template records
-- [x] `data/ir_cron.xml` - 4 scheduled actions
+- [x] `supabase/data/close_task_categories.xml` - 21 category records
+- [x] `supabase/data/close_task_templates.xml` - 23 template records
+- [x] `supabase/data/ir_cron.xml` - 4 scheduled actions
 
 ## Features
 
@@ -47,10 +47,10 @@
 
 ## Documentation
 
-- [x] `spec/close-orchestration/constitution.md`
-- [x] `spec/close-orchestration/prd.md`
-- [x] `spec/close-orchestration/plan.md`
-- [x] `spec/close-orchestration/tasks.md`
+- [x] `docs/spec/close-orchestration/constitution.md`
+- [x] `docs/spec/close-orchestration/prd.md`
+- [x] `docs/spec/close-orchestration/plan.md`
+- [x] `docs/spec/close-orchestration/tasks.md`
 
 ## Testing
 

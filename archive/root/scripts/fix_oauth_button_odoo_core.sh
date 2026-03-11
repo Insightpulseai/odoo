@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# FIX MISSING "SIGN IN WITH GOOGLE" BUTTON - odoo_core database
+# FIX MISSING "SIGN IN WITH GOOGLE" BUTTON - odoo_prod database
 # ==============================================================================
 
 set -euo pipefail
 
 CONTAINER_NAME=$(docker ps --format "{{.Names}}" | grep odoo | head -n 1)
-DB_NAME="odoo_core"
+DB_NAME="odoo_prod"
 
 if [[ -z "$CONTAINER_NAME" ]]; then
     echo "❌ ERROR: No running Odoo container found"
@@ -36,9 +36,9 @@ import odoo
 from odoo import api, SUPERUSER_ID
 
 config = odoo.tools.config
-config['db_name'] = 'odoo_core'
+config['db_name'] = 'odoo_prod'
 odoo.service.server.load_server_wide_modules()
-registry = odoo.registry('odoo_core')
+registry = odoo.registry('odoo_prod')
 
 with registry.cursor() as cr:
     env = api.Environment(cr, SUPERUSER_ID, {})

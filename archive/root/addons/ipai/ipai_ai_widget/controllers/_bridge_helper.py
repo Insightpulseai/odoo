@@ -185,3 +185,254 @@ def call_bridge(bridge_url, bridge_token, payload, timeout=TIMEOUT_SECONDS):
         return None, "BRIDGE_ERROR"
 
     return data, None
+
+
+def get_default_provider(env):
+    """Return the default ipai.ai.provider record, or None."""
+    Provider = env["ipai.ai.provider"].sudo()
+    provider = Provider.search(
+        [("is_default", "=", True), ("active", "=", True)],
+        limit=1,
+    )
+    return provider or None
+
+
+def call_provider_direct(prompt, env, system_prompt=None):
+    """Call LLM provider directly using ipai.ai.provider config.
+
+    Supports OpenAI-compatible APIs (openai, anthropic, google, ollama).
+    API key is read from ir.config_parameter using provider.api_key_param,
+    or from environment variable of the same name.
+
+    Args:
+        prompt: User message string.
+        env: Odoo environment.
+        system_prompt: Override system prompt (optional).
+
+    Returns:
+        tuple: (data_dict, error_code_or_none)
+    """
+    import os
+
+    provider = get_default_provider(env)
+    if not provider:
+        return None, "NO_DEFAULT_PROVIDER"
+
+    # Resolve API key: try ir.config_parameter first, then env var
+    api_key = ""
+    if provider.api_key_param:
+        api_key = (
+            env["ir.config_parameter"]
+            .sudo()
+            .get_param(provider.api_key_param, default="")
+        )
+        if not api_key:
+            api_key = os.environ.get(provider.api_key_param, "")
+
+    if not api_key:
+        _logger.warning("Provider %s: no API key found (param: %s)", provider.name, provider.api_key_param)
+        return None, "PROVIDER_KEY_NOT_CONFIGURED"
+
+    base_url = (provider.base_url or "").rstrip("/")
+    model = provider.model_name or ""
+    if not base_url or not model:
+        return None, "PROVIDER_NOT_CONFIGURED"
+
+    sys_prompt = system_prompt or AZURE_SYSTEM_PROMPT
+
+    # Route by provider type
+    if provider.provider_type in ("openai", "ollama"):
+        return _call_openai_compat(base_url, api_key, model, prompt, sys_prompt, provider)
+    elif provider.provider_type == "anthropic":
+        return _call_anthropic(base_url, api_key, model, prompt, sys_prompt, provider)
+    elif provider.provider_type == "google":
+        return _call_google_gemini(base_url, api_key, model, prompt, sys_prompt, provider)
+    else:
+        # Supabase Edge or unknown — try OpenAI-compatible
+        return _call_openai_compat(base_url, api_key, model, prompt, sys_prompt, provider)
+
+
+def _call_openai_compat(base_url, api_key, model, prompt, system_prompt, provider):
+    """OpenAI-compatible /v1/chat/completions call."""
+    import time
+
+    url = f"{base_url}/v1/chat/completions"
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ],
+        "max_tokens": provider.max_tokens or 4096,
+        "temperature": provider.temperature if provider.temperature else 0.7,
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+
+    t0 = time.monotonic()
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=60)
+    except requests.Timeout:
+        return None, "PROVIDER_TIMEOUT"
+    except requests.RequestException as exc:
+        _logger.error("Provider %s error: %s", provider.name, exc)
+        return None, "PROVIDER_ERROR"
+
+    latency_ms = (time.monotonic() - t0) * 1000
+
+    if not resp.ok:
+        _logger.error("Provider %s HTTP %s: %s", provider.name, resp.status_code, resp.text[:500])
+        if resp.status_code == 401:
+            return None, "PROVIDER_AUTH_FAILED"
+        return None, "PROVIDER_ERROR"
+
+    try:
+        data = resp.json()
+    except ValueError:
+        return None, "PROVIDER_ERROR"
+
+    text = ""
+    tokens_used = 0
+    choices = data.get("choices", [])
+    if choices:
+        msg = choices[0].get("message", {})
+        text = msg.get("content", "")
+    usage = data.get("usage", {})
+    tokens_used = usage.get("total_tokens", 0)
+
+    # Update provider stats
+    try:
+        provider.sudo().update_stats(latency_ms, tokens_used)
+    except Exception:
+        pass
+
+    return {
+        "provider": provider.name,
+        "text": text.strip() or "No response returned.",
+        "model": model,
+        "trace_id": data.get("id", ""),
+    }, None
+
+
+def _call_anthropic(base_url, api_key, model, prompt, system_prompt, provider):
+    """Anthropic Messages API call."""
+    import time
+
+    url = f"{base_url}/v1/messages"
+    payload = {
+        "model": model,
+        "max_tokens": provider.max_tokens or 4096,
+        "system": system_prompt,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+    }
+
+    t0 = time.monotonic()
+    try:
+        resp = requests.post(url, json=payload, headers=headers, timeout=60)
+    except requests.Timeout:
+        return None, "PROVIDER_TIMEOUT"
+    except requests.RequestException as exc:
+        _logger.error("Provider %s error: %s", provider.name, exc)
+        return None, "PROVIDER_ERROR"
+
+    latency_ms = (time.monotonic() - t0) * 1000
+
+    if not resp.ok:
+        _logger.error("Provider %s HTTP %s: %s", provider.name, resp.status_code, resp.text[:500])
+        return None, "PROVIDER_ERROR"
+
+    try:
+        data = resp.json()
+    except ValueError:
+        return None, "PROVIDER_ERROR"
+
+    text = ""
+    tokens_used = 0
+    for block in data.get("content", []):
+        if block.get("type") == "text":
+            text += block.get("text", "")
+    usage = data.get("usage", {})
+    tokens_used = usage.get("input_tokens", 0) + usage.get("output_tokens", 0)
+
+    try:
+        provider.sudo().update_stats(latency_ms, tokens_used)
+    except Exception:
+        pass
+
+    return {
+        "provider": provider.name,
+        "text": text.strip() or "No response returned.",
+        "model": model,
+        "trace_id": data.get("id", ""),
+    }, None
+
+
+def _call_google_gemini(base_url, api_key, model, prompt, system_prompt, provider):
+    """Google Gemini generateContent API call."""
+    import time
+
+    url = f"{base_url}/v1beta/models/{model}:generateContent?key={api_key}"
+    payload = {
+        "system_instruction": {"parts": [{"text": system_prompt}]},
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "maxOutputTokens": provider.max_tokens or 4096,
+            "temperature": provider.temperature if provider.temperature else 0.7,
+        },
+    }
+
+    t0 = time.monotonic()
+    try:
+        resp = requests.post(
+            url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=60,
+        )
+    except requests.Timeout:
+        return None, "PROVIDER_TIMEOUT"
+    except requests.RequestException as exc:
+        _logger.error("Provider %s error: %s", provider.name, exc)
+        return None, "PROVIDER_ERROR"
+
+    latency_ms = (time.monotonic() - t0) * 1000
+
+    if not resp.ok:
+        _logger.error("Provider %s HTTP %s: %s", provider.name, resp.status_code, resp.text[:500])
+        return None, "PROVIDER_ERROR"
+
+    try:
+        data = resp.json()
+    except ValueError:
+        return None, "PROVIDER_ERROR"
+
+    text = ""
+    tokens_used = 0
+    candidates = data.get("candidates", [])
+    if candidates:
+        parts = candidates[0].get("content", {}).get("parts", [])
+        for part in parts:
+            text += part.get("text", "")
+    usage = data.get("usageMetadata", {})
+    tokens_used = usage.get("totalTokenCount", 0)
+
+    try:
+        provider.sudo().update_stats(latency_ms, tokens_used)
+    except Exception:
+        pass
+
+    return {
+        "provider": provider.name,
+        "text": text.strip() or "No response returned.",
+        "model": model,
+        "trace_id": "",
+    }, None

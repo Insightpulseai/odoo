@@ -28,7 +28,7 @@ NC='\033[0m'
 
 # Defaults
 ODOO_URL="${ODOO_URL:-http://localhost:8069}"
-DATABASE="${ODOO_DB:-odoo_core}"
+DATABASE="${ODOO_DB:-odoo_dev}"
 VERBOSE=false
 PASSED=0
 FAILED=0

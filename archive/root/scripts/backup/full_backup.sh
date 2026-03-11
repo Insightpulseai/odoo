@@ -36,7 +36,7 @@ ODOO_FILESTORE="${ODOO_FILESTORE:-${ODOO_DATA_DIR}/filestore}"
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
 DB_USER="${DB_USER:-odoo}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_prod}"
 
 # S3/Spaces configuration (multi-region)
 PRIMARY_BUCKET="${S3_PRIMARY_BUCKET:-odoo-backups-primary}"
@@ -163,7 +163,7 @@ Environment Variables:
     DB_HOST           Database host (default: localhost)
     DB_PORT           Database port (default: 5432)
     DB_USER           Database user (default: odoo)
-    DB_NAME           Database name (default: odoo_core)
+    DB_NAME           Database name (default: odoo_prod)
     PGPASSWORD        Database password (required)
 
     S3_PRIMARY_BUCKET     Primary S3/Spaces bucket

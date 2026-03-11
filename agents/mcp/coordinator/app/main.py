@@ -63,6 +63,12 @@ async def health_check():
     )
 
 
+@app.get("/healthz", response_model=HealthResponse)
+async def healthz_check():
+    """Alias endpoint for edge/lb health probes."""
+    return await health_check()
+
+
 @app.get("/status")
 async def get_status(authenticated: bool = Depends(verify_api_key)):
     """Detailed status with target health"""

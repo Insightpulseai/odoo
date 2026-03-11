@@ -41,7 +41,7 @@
 - [ ] Install `pos_restaurant` module
 - [ ] Install `repair` module
 - [ ] Install `data_recycle` module
-- [ ] Run `./scripts/odoo/verify-ce-apps.sh`
+- [ ] Run `./odoo/scripts/odoo/verify-ce-apps.sh`
 - [ ] Document any installation issues
 
 ## Phase 2: OCA Modules (Days 4-7)
@@ -74,7 +74,7 @@
 - [ ] Verify helpdesk ticket workflow
 
 ### Day 7: Integration Testing
-- [ ] Run `./scripts/odoo/verify-oca-modules.sh`
+- [ ] Run `./odoo/scripts/odoo/verify-oca-modules.sh`
 - [ ] Test cross-module workflows
 - [ ] Document OCA configuration
 - [ ] Create user acceptance test cases
@@ -189,11 +189,11 @@
 ## Verification Checkpoints
 
 ### After Phase 1
-- [ ] `./scripts/odoo/verify-ce-apps.sh` passes (38/38)
+- [ ] `./odoo/scripts/odoo/verify-ce-apps.sh` passes (38/38)
 - [ ] All CE modules show "Installed" in Odoo
 
 ### After Phase 2
-- [ ] `./scripts/odoo/verify-oca-modules.sh` passes (9/9)
+- [ ] `./odoo/scripts/odoo/verify-oca-modules.sh` passes (9/9)
 - [ ] OCA modules functional in Odoo
 
 ### After Phase 3

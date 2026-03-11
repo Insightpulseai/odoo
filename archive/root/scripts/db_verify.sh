@@ -176,15 +176,15 @@ case "$MODE" in
             echo "Attempting anyway..."
         fi
 
-        echo "$SQL_SCRIPT" | docker compose exec -T postgres psql -U odoo -d odoo_core 2>/dev/null || \
-        echo "$SQL_SCRIPT" | docker compose exec -T db psql -U odoo -d odoo_core 2>/dev/null || \
+        echo "$SQL_SCRIPT" | docker compose exec -T postgres psql -U odoo -d odoo_dev 2>/dev/null || \
+        echo "$SQL_SCRIPT" | docker compose exec -T db psql -U odoo -d odoo_dev 2>/dev/null || \
         {
             echo -e "${RED}Failed to connect to database${NC}"
             echo ""
             echo "Try one of these alternatives:"
             echo "  1. Ensure Docker stack is running: docker compose up -d"
             echo "  2. Get SQL to run manually: ./scripts/db_verify.sh --sql"
-            echo "  3. Run with custom psql: ./scripts/db_verify.sh --direct psql -U odoo -d odoo_core"
+            echo "  3. Run with custom psql: ./scripts/db_verify.sh --direct psql -U odoo -d odoo_dev"
             exit 1
         }
         ;;
@@ -199,7 +199,7 @@ case "$MODE" in
         echo "Examples:"
         echo "  ./scripts/db_verify.sh"
         echo "  ./scripts/db_verify.sh --sql > verify.sql"
-        echo "  ./scripts/db_verify.sh --direct 'psql -h localhost -U odoo -d odoo_core'"
+        echo "  ./scripts/db_verify.sh --direct 'psql -h localhost -U odoo -d odoo_dev'"
         exit 0
         ;;
 esac

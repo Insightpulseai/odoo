@@ -11,7 +11,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 EVIDENCE_DIR="$REPO_ROOT/docs/evidence/$(date +%Y%m%d-%H%M)"
 
 # Configuration
-DB_NAME="${ODOO_DB:-odoo_core}"
+DB_NAME="${ODOO_DB:-odoo_dev}"
 ODOO_URL="${ODOO_URL:-http://localhost:8069}"
 DOCKER_MODE="${DOCKER_MODE:-true}"
 CONTAINER_NAME="${ODOO_CONTAINER:-odoo-core}"

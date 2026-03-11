@@ -73,7 +73,7 @@ CREATE TABLE ops.stage_clones (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     run_id UUID REFERENCES ops.runs(id),
     source_db TEXT NOT NULL DEFAULT 'odoo_prod',
-    target_db TEXT NOT NULL DEFAULT 'odoo_stage',
+    target_db TEXT NOT NULL DEFAULT 'odoo_staging',
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','running','success','failed')),
     dump_size_bytes BIGINT,
     error_message TEXT,

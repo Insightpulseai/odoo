@@ -4,11 +4,11 @@
 Import mail.activity from CSV with external ID resolution.
 
 Usage:
-  docker exec -i odoo-core odoo shell -d odoo_core --no-http < scripts/import/import_activities.py
+  docker exec -i odoo-core odoo shell -d odoo_dev --no-http < scripts/import/import_activities.py
 
 Or with custom path:
   echo "ACTIVITY_CSV='/path/to/activities.csv'" | cat - scripts/import/import_activities.py | \
-    docker exec -i odoo-core odoo shell -d odoo_core --no-http
+    docker exec -i odoo-core odoo shell -d odoo_dev --no-http
 """
 
 import csv

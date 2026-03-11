@@ -13,7 +13,7 @@
 #   ODOO_CONF - Path to odoo.conf (required)
 #
 # Example:
-#   ODOO_DB=odoo_core ODOO_CONF=/etc/odoo/odoo.conf \
+#   ODOO_DB=odoo_dev ODOO_CONF=/etc/odoo/odoo.conf \
 #     scripts/expense_ocr_ingest.sh 42 123 /tmp/receipt.txt
 
 set -euo pipefail

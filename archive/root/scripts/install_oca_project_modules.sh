@@ -16,7 +16,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 OCA_DIR="${OCA_DIR:-${REPO_ROOT}/addons/oca}"
 BRANCH="${BRANCH:-18.0}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_dev}"
 
 # Color codes
 RED='\033[0;31m'
@@ -111,22 +111,22 @@ echo -e "${BLUE}=== Recommended Installation Order for Finance PPM ===${NC}"
 cat << 'EOF'
 
 TIER 1 - Core (Install First):
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     project_template,project_type,project_task_code \
     --stop-after-init
 
 TIER 2 - Stage Management:
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     project_stage_closed,project_task_default_stage \
     --stop-after-init
 
 TIER 3 - Timeline & Dependencies:
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     project_timeline,project_task_dependency \
     --stop-after-init
 
 TIER 4 - Templates & Recurring:
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     project_task_template,project_task_recurring \
     --stop-after-init
 
@@ -140,7 +140,7 @@ echo -e "${BLUE}=== Verification Commands ===${NC}"
 cat << 'EOF'
 
 Check installed modules:
-  docker compose exec odoo-core odoo shell -d odoo_core << PYTHON
+  docker compose exec odoo-core odoo shell -d odoo_dev << PYTHON
 env['ir.module.module'].search([
     ('name', 'ilike', 'project_%'),
     ('state', '=', 'installed')
@@ -148,7 +148,7 @@ env['ir.module.module'].search([
 PYTHON
 
 Verify stages created:
-  docker compose exec odoo-core odoo shell -d odoo_core << PYTHON
+  docker compose exec odoo-core odoo shell -d odoo_dev << PYTHON
 for stage in env['project.task.type'].search([]):
     print(f"{stage.sequence}: {stage.name} (fold={stage.fold})")
 PYTHON
@@ -166,12 +166,12 @@ echo -e "${BLUE}=== IPAI Finance PPM Module Installation ===${NC}"
 cat << 'EOF'
 
 Install IPAI Project Program module (includes OCA-compatible stages):
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     ipai_project_program \
     --stop-after-init
 
 Install complete Finance PPM stack:
-  docker compose exec odoo-core odoo -d odoo_core -i \
+  docker compose exec odoo-core odoo -d odoo_dev -i \
     ipai_project_program,ipai_finance_ppm \
     --stop-after-init
 

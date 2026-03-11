@@ -8,7 +8,7 @@ Uses standard Odoo XML-RPC API - works with any CE + OCA installation.
 
 Usage:
     export ODOO_URL="http://localhost:8069"
-    export ODOO_DB="odoo_core"
+    export ODOO_DB="odoo_dev"
     export ODOO_USER="admin"
     export ODOO_PASSWORD="admin"
 

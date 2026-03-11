@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 
 # --- CONFIG ---
-DEFAULT_DB = "odoo_core"
+DEFAULT_DB = "odoo_dev"
 SHEET_NAME_TASKS = "Sheet1"  # Default, will attempt to find better if needed
 
 

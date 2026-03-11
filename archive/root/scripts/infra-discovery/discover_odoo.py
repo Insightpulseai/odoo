@@ -170,7 +170,7 @@ def discover_odoo(orchestrator) -> Dict[str, Any]:
     """
     # Configuration
     odoo_url = os.environ.get("ODOO_URL", "http://localhost:8069")
-    odoo_db = os.environ.get("ODOO_DB", "odoo_core")
+    odoo_db = os.environ.get("ODOO_DB", "odoo_dev")
     odoo_user = os.environ.get("ODOO_USER")
     odoo_password = os.environ.get("ODOO_PASSWORD")
 

@@ -8,7 +8,7 @@
 
 set -e
 
-ODOO_DB="${ODOO_DB:-odoo_core}"
+ODOO_DB="${ODOO_DB:-odoo_dev}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
 
 echo "==========================================="

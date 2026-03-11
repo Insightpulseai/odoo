@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 OCA_DIR="${REPO_ROOT}/oca-parity"
 ODOO_VERSION="${ODOO_VERSION:-19.0}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_dev}"
 
 # Color output
 RED='\033[0;31m'

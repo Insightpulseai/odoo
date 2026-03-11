@@ -26,7 +26,7 @@ See: docs/ai/INTEGRATIONS.md (Slack section)
     "license": "LGPL-3",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
-    "depends": ["base"],
+    "depends": ["base", "web"],
     "data": [],
     "installable": True,
     "auto_install": False,

@@ -1,11 +1,16 @@
-# ===========================================
-# Odoo CE Development Dependencies
-# ===========================================
-# These are for LOCAL development and CI/CD
-# Odoo core dependencies are in the Docker image
+# requirements.txt
+# Layered Python dependencies for Odoo 19 + OCA + AI
+#
+# Structure:
+#   requirements-odoo.txt  — Odoo CE core (placeholder; baked into image)
+#   requirements-oca.txt   — extra libs needed by installed OCA modules
+#   requirements-ai.txt    — OCA/ai bridge + ipai_ai_* module deps
 #
 # Install: pip install -r requirements.txt
-# ===========================================
+
+-r requirements-odoo.txt
+-r requirements-oca.txt
+-r requirements-ai.txt
 
 # ----- Pre-commit & Quality Tools -----
 pre-commit==4.5.1

@@ -21,7 +21,7 @@
 ### Phase 0.1: Parity Agent Scaffolding ✅
 - [x] **M0.1.1**: Create spec bundle structure
   - Status: ✅ Done
-  - Files: `spec/platform-kit/{constitution,prd,plan,tasks}.md`
+  - Files: `docs/spec/platform-kit/{constitution,prd,plan,tasks}.md`
   - Acceptance: All 4 files present, valid markdown
 
 - [x] **M0.1.2**: Create capability schema
@@ -37,12 +37,12 @@
 ### Phase 0.2: Harness Runner ✅
 - [x] **M0.2.1**: Create harness runner scaffold
   - Status: ✅ Done
-  - Files: `harness/runners/parity_runner.py`
+  - Files: `infra/harness/runners/parity_runner.py`
   - Acceptance: Executes capability checks, outputs results
 
 - [x] **M0.2.2**: Create schema validator
   - Status: ✅ Done
-  - Files: `scripts/validate_parity_schema.py`
+  - Files: `odoo/scripts/validate_parity_schema.py`
   - Acceptance: Validates JSON against schema, reports errors
 
 ### Phase 0.3: CI Gates ✅
@@ -136,7 +136,7 @@
   - Status: ⏳ Backlog
   - Assignee: Security Engineer
   - Dependencies: None
-  - Files: `scripts/audit/check_function_security.sql`
+  - Files: `odoo/scripts/audit/check_function_security.sql`
   - Acceptance Criteria:
     - [ ] Detects SECURITY DEFINER functions with mutable search_path
     - [ ] Outputs function name, schema, owner, proconfig status
@@ -169,7 +169,7 @@
   - Status: ⏳ Backlog
   - Assignee: Backend Engineer
   - Dependencies: None
-  - Files: `scripts/audit/check_extensions_schema.sql`
+  - Files: `odoo/scripts/audit/check_extensions_schema.sql`
   - Acceptance Criteria:
     - [ ] Detects extensions in public schema
     - [ ] Outputs extension name, current schema
@@ -242,7 +242,7 @@
   - Files: `.github/workflows/spec-kit-enforce.yml`
   - Acceptance Criteria:
     - [ ] Runs on PR to main
-    - [ ] Checks for spec/ directory
+    - [ ] Checks for docs/spec/ directory
     - [ ] Validates constitution.md, prd.md, plan.md, tasks.md exist
     - [ ] Fails if spec bundle incomplete
 
@@ -250,7 +250,7 @@
   - Status: ⏳ Backlog
   - Assignee: Platform Engineer
   - Dependencies: M2.2.1
-  - Files: `scripts/validate_spec_bundle.py`
+  - Files: `odoo/scripts/validate_spec_bundle.py`
   - Acceptance Criteria:
     - [ ] Parses all 4 spec files
     - [ ] Checks for required sections

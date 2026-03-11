@@ -133,7 +133,7 @@ def build_project(prod_settings: dict | None, dns: dict | None) -> dict:
         "name": "insightpulseai",
         "domain": dns.get("domain", "insightpulseai.com") if dns else "insightpulseai.com",
         "prod_url": "https://erp.insightpulseai.com",
-        "db_names": {"prod": "odoo", "stage": "odoo_stage", "dev": "odoo_dev"},
+        "db_names": {"prod": "odoo_prod", "stage": "odoo_staging", "dev": "odoo_dev"},
         "urls": urls,
     }
 

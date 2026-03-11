@@ -5,7 +5,7 @@
 # Environment variables:
 #   ODOO_EE_PARITY_OCA_MODULES - Comma-separated list of OCA modules
 #   ODOO_EE_PARITY_IPAI_MODULES - Comma-separated list of IPAI modules
-#   ODOO_DB_NAME - Database name (default: odoo_core)
+#   ODOO_DB_NAME - Database name (default: odoo_dev)
 #   ODOO_CONTAINER - Container name (default: odoo-core)
 
 set -euo pipefail
@@ -21,7 +21,7 @@ if [[ -f "${REPO_ROOT}/.env" ]]; then
 fi
 
 # Defaults
-ODOO_DB_NAME="${ODOO_DB_NAME:-odoo_core}"
+ODOO_DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
 OUTPUT_FORMAT="${1:-text}"
 

@@ -4,7 +4,7 @@ Odoo 18 CE Project Introspection Script (READ-ONLY)
 Runs inside odoo-bin shell to extract Project schema information.
 
 Usage:
-  docker exec -i odoo-core odoo-bin shell -d odoo_core --no-http < scripts/introspect_project.py
+  docker exec -i odoo-core odoo-bin shell -d odoo_dev --no-http < scripts/introspect_project.py
 """
 
 import json

@@ -12,8 +12,8 @@ This module configures Odoo email settings for production use with Zoho Mail.
 
 Features:
 ---------
-* Outgoing SMTP server (smtp.zoho.com:587 STARTTLS)
-* Incoming IMAP server (imap.zoho.com:993 SSL)
+* Outgoing SMTP server (smtppro.zoho.com:587 STARTTLS)
+* Incoming IMAP server (imappro.zoho.com:993 SSL)
 * System parameters for catchall domain and base URL
 * Email aliases for sales, support, accounting
 * Per-user Zoho Mail address field
@@ -35,8 +35,8 @@ DNS Requirements:
 
 SMTP Delivery Note:
 -------------------
-DigitalOcean blocks outbound SMTP (ports 25, 465, 587) at the network level.
-Submit a support ticket to DO to unblock before testing email delivery.
+Azure does NOT block ports 465/587 — only port 25 is restricted.
+E2E verified 2026-03-10: smtppro.zoho.com:587/TLS, sender no-reply@insightpulseai.com.
     """,
     "version": "19.0.1.1.0",
     "category": "Mail",

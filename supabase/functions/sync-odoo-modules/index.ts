@@ -45,7 +45,7 @@ serve(async (req: Request) => {
     if (modules.length === 0 && body.odoo_url) {
       modules = await fetchOdooModules(
         body.odoo_url,
-        body.odoo_database || 'odoo_core',
+        body.odoo_database || 'odoo_prod',
         body.odoo_password || 'admin'
       )
     }

@@ -4,7 +4,7 @@
 #
 # Usage:
 #   ./scripts/run_odoo_shell.sh scripts/configure_smtp.py
-#   ODOO_DB=odoo_core ./scripts/run_odoo_shell.sh scripts/verify_smtp.py
+#   ODOO_DB=odoo_dev ./scripts/run_odoo_shell.sh scripts/verify_smtp.py
 
 set -euo pipefail
 
