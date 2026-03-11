@@ -11,6 +11,7 @@ class IpaiAiProvider(models.Model):
     provider_type = fields.Selection(
         [
             ("openai", "OpenAI"),
+            ("azure_openai", "Azure OpenAI"),
             ("anthropic", "Anthropic"),
             ("google", "Google"),
             ("ollama", "Ollama"),

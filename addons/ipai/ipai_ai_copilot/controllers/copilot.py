@@ -38,11 +38,7 @@ import requests
 from odoo import http
 from odoo.http import request
 
-from odoo.addons.ipai_ai_widget.controllers._bridge_helper import (
-    call_azure_direct,
-    call_bridge,
-    has_azure_config,
-)
+from odoo.addons.ipai_ai_copilot.services.provider_bridge import call_provider
 
 _logger = logging.getLogger(__name__)
 TIMEOUT = 30
@@ -64,13 +60,9 @@ class IpaiCopilotController(http.Controller):
         csrf=False,
     )
     def chat(self, message=None, session_id=None, context=None, **_kw):
-        """Main conversational endpoint. Routes message through IPAI bridge with tool support."""
+        """Main conversational endpoint. Routes message through provider bridge."""
         if not message or not str(message).strip():
             return {"error": "MESSAGE_REQUIRED", "status": 400}
-
-        params = request.env["ir.config_parameter"].sudo()
-        bridge_url = params.get_param("ipai_ai_copilot.bridge_url", default="")
-        bridge_token = params.get_param("ipai_ai_copilot.bridge_token", default="")
 
         # Load or create session
         Session = request.env["ipai.copilot.session"]
@@ -80,43 +72,32 @@ class IpaiCopilotController(http.Controller):
         ctx_str = _format_context(context or {})
         msg_str = str(message).strip()
 
-        if bridge_url:
-            # ── Primary path: IPAI bridge (Gemini with tool support) ──────
-            tools = (
-                request.env["ipai.copilot.tool"]
-                .sudo()
-                .search([("active", "=", True)])
-            )
-            tool_declarations = [t._to_gemini_declaration() for t in tools]
-
-            payload = {
-                "system_prompt": SYSTEM_PROMPT,
-                "context": ctx_str,
-                "history": session._get_history(),
-                "message": msg_str,
-                "tools": tool_declarations,
-            }
-
-            data, error_code = call_bridge(bridge_url, bridge_token, payload)
-            if error_code:
-                status_map = {
-                    "BRIDGE_TIMEOUT": 504,
-                    "AI_KEY_NOT_CONFIGURED": 503,
-                    "BRIDGE_ERROR": 500,
-                }
-                return {"error": error_code, "status": status_map.get(error_code, 500)}
-
-        elif has_azure_config(request.env):
-            # ── Fallback: Azure OpenAI direct (chat-only, no tools) ───────
-            azure_prompt = f"{ctx_str}\n\nUser: {msg_str}" if ctx_str != "No record context" else msg_str
-            data, error_code = call_azure_direct(
-                azure_prompt, request.env, system_prompt=SYSTEM_PROMPT
-            )
-            if error_code:
-                return {"error": error_code, "status": 500}
-
+        # Build prompt with context
+        if ctx_str != "No record context":
+            full_prompt = f"{ctx_str}\n\nUser: {msg_str}"
         else:
-            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
+            full_prompt = msg_str
+
+        # ── Route through unified provider bridge ────────────────────────
+        data, error_code = call_provider(
+            request.env, full_prompt, system_prompt=SYSTEM_PROMPT
+        )
+        if error_code:
+            status_map = {
+                "AZURE_NOT_CONFIGURED": 503,
+                "AZURE_DEPLOYMENT_MISSING": 503,
+                "AZURE_AUTH_FAILED": 401,
+                "AZURE_DEPLOYMENT_NOT_FOUND": 404,
+                "AZURE_ERROR": 500,
+                "NO_DEFAULT_PROVIDER": 503,
+                "PROVIDER_KEY_NOT_CONFIGURED": 503,
+                "PROVIDER_NOT_CONFIGURED": 503,
+                "PROVIDER_AUTH_FAILED": 401,
+                "PROVIDER_TIMEOUT": 504,
+                "PROVIDER_ERROR": 500,
+                "NO_PROVIDER_CONFIGURED": 503,
+            }
+            return {"error": error_code, "status": status_map.get(error_code, 500)}
 
         # Handle tool calls — return to client for confirmation before execution
         if data.get("tool_calls"):
@@ -327,6 +308,19 @@ def _dispatch_tool_preview(name, args):
         ),
         "check_stock": lambda a: (
             f"Check stock for product ID {a.get('product_id', '?')}"
+        ),
+        "search_knowledge": lambda a: (
+            f"Search knowledge base for: \"{a.get('query', '?')}\""
+            + (f" (filter: {a.get('source_filter')})" if a.get("source_filter") else "")
+        ),
+        "bir_compliance_search": lambda a: (
+            f"Search BIR compliance docs for: \"{a.get('query', '?')}\""
+        ),
+        "list_pending_activities": lambda a: (
+            f"List pending activities for user {a.get('user_id', 'current')}"
+        ),
+        "execute_activity": lambda a: (
+            f"Execute activity ID {a.get('activity_id', '?')}"
         ),
     }
     fn = preview_map.get(name, lambda a: f"Execute {name}({json.dumps(a)})")
@@ -551,6 +545,121 @@ def _execute_tool_confirmed(name, args):
 
         r = requests.post(webhook_url, data=body, headers=headers, timeout=15)
         return {"status": "triggered", "workflow_id": wf_id, "code": r.status_code}
+
+    elif name == "search_knowledge":
+        import os
+        query = args.get("query", "")
+        source_filter = args.get("source_filter", "")
+        max_results = min(int(args.get("max_results", 5)), 10)
+        supabase_url = os.environ.get("SUPABASE_URL", "")
+        supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+        if not supabase_url or not supabase_key:
+            return {"error": "SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured"}
+        try:
+            payload = {"query_text": query, "match_count": max_results}
+            if source_filter:
+                payload["source_filter"] = source_filter
+            resp = requests.post(
+                f"{supabase_url}/rest/v1/rpc/search_hybrid",
+                json=payload,
+                headers={
+                    "apikey": supabase_key,
+                    "Authorization": f"Bearer {supabase_key}",
+                    "Content-Type": "application/json",
+                },
+                timeout=15,
+            )
+            results = resp.json() if resp.ok else []
+            return {
+                "results": [
+                    {
+                        "content": r.get("content", ""),
+                        "title": r.get("metadata", {}).get("title", ""),
+                        "source_type": r.get("source_type", ""),
+                        "similarity": r.get("similarity", 0),
+                        "metadata": r.get("metadata", {}),
+                    }
+                    for r in (results if isinstance(results, list) else [])
+                ],
+                "query": query,
+            }
+        except requests.RequestException as exc:
+            return {"error": f"Knowledge search failed: {exc}"}
+
+    elif name == "bir_compliance_search":
+        import os
+        query = args.get("query", "")
+        max_results = min(int(args.get("max_results", 5)), 10)
+        supabase_url = os.environ.get("SUPABASE_URL", "")
+        supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+        if not supabase_url or not supabase_key:
+            return {"error": "SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured"}
+        try:
+            resp = requests.post(
+                f"{supabase_url}/rest/v1/rpc/search_hybrid",
+                json={
+                    "query_text": query,
+                    "source_filter": "bir",
+                    "match_count": max_results,
+                },
+                headers={
+                    "apikey": supabase_key,
+                    "Authorization": f"Bearer {supabase_key}",
+                    "Content-Type": "application/json",
+                },
+                timeout=15,
+            )
+            results = resp.json() if resp.ok else []
+            return {
+                "results": [
+                    {
+                        "content": r.get("content", ""),
+                        "issuance_number": r.get("metadata", {}).get("issuance_number", ""),
+                        "title": r.get("metadata", {}).get("title", ""),
+                        "effective_date": r.get("metadata", {}).get("effective_date", ""),
+                        "similarity": r.get("similarity", 0),
+                    }
+                    for r in (results if isinstance(results, list) else [])
+                ],
+                "query": query,
+                "source": "bir",
+            }
+        except requests.RequestException as exc:
+            return {"error": f"BIR RAG search failed: {exc}"}
+
+    elif name == "list_pending_activities":
+        user_id = int(args.get("user_id", 0)) or env.user.id
+        limit = min(int(args.get("limit", 10)), 20)
+        activities = env["mail.activity"].search(
+            [("user_id", "=", user_id)],
+            limit=limit,
+            order="date_deadline asc",
+        )
+        return {
+            "activities": [
+                {
+                    "id": act.id,
+                    "summary": act.summary or act.activity_type_id.name,
+                    "model": act.res_model,
+                    "record_id": act.res_id,
+                    "record_name": act.res_name,
+                    "date_deadline": act.date_deadline.isoformat() if act.date_deadline else None,
+                    "activity_type": act.activity_type_id.name if act.activity_type_id else "",
+                }
+                for act in activities
+            ]
+        }
+
+    elif name == "execute_activity":
+        activity_id = int(args.get("activity_id", 0))
+        feedback = args.get("feedback", "")
+        activity = env["mail.activity"].browse(activity_id)
+        if not activity.exists():
+            return {"error": "activity_not_found"}
+        if activity.user_id != env.user:
+            raise PermissionError("Cannot execute another user's activity")
+        activity.action_done(feedback=feedback)
+        return {"status": "done", "activity_id": activity_id}
 
     else:
         raise ValueError(f"Unknown tool: {name!r}")
