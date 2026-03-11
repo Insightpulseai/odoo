@@ -1,109 +1,43 @@
 # Odoo.sh-Equivalent Platform — Implementation Plan
 
-**Version**: 1.0.0
-**Status**: Draft
-**Last Updated**: 2026-03-11
+Version: 1.1.0  
+Status: Active  
+Last Updated: 2026-03-12
 
----
+## Phase 1: Foundation Contracts
+1. Finalize this spec bundle (constitution/prd/plan/tasks).
+2. Publish DB naming and schema contract into SSOT.
+3. Enforce runtime/control-plane DB separation in docs and deployment scripts.
 
-## Phased Implementation
+## Phase 2: Azure Runtime Completion
+1. Ensure Odoo environment DBs exist (`odoo_dev`, `odoo_staging`, `odoo_prod`).
+2. Align ACA env vars (`DB_NAME`) for stage/prod app sets when deployed.
+3. Confirm Front Door routes and hostname mapping per environment.
+4. Harden backup storage and retention policy (daily/weekly/monthly).
 
-### Phase 1: Doctrine & SSOT Artifacts (Week 1-2)
+## Phase 3: Supabase Control Plane
+1. Implement or validate required schemas: `ops`, `tenant`, `app`, `billing`, `portal`, `audit`, `integration`, `ai`, `cms`, `analytics`.
+2. Implement core tables (`ops.environments`, `ops.deployments`, `ops.backups`, `ops.runtime_events`, etc.).
+3. Apply tenant-aware RLS policies (`tenant_id` claim model).
+4. Expose control-plane APIs/edge hooks for deploy lifecycle events.
 
-**Objective**: Establish machine-readable persona definitions, capability matrix, and Odoo.sh equivalence mapping.
+## Phase 4: n8n Orchestration
+1. Enable queue mode with Redis-backed workers.
+2. Configure reverse-proxy-safe webhook URL settings.
+3. Implement canonical workflows:
+   - branch-open deploy
+   - staging clone + neutralize
+   - prod promotion + smoke + rollback trigger
+   - backup verify + restore drill
+   - notification/incident fanout
 
-**Deliverables**:
-1. `infra/ssot/platform/personas.yaml` — Canonical persona definitions with access scopes
-2. `infra/ssot/platform/capability_matrix.yaml` — Full capability taxonomy with persona permissions
-3. `infra/ssot/platform/odoosh_equivalent_capabilities.yaml` — Feature-by-feature Odoo.sh mapping
+## Phase 5: Promotion and Evidence
+1. Gate promotion with CI + backup + smoke + approval checks.
+2. Persist all deployment/backup events in Supabase ops tables.
+3. Store evidence artifacts in canonical evidence paths.
+4. Add rollback validation notes per release wave.
 
-**Technical Approach**:
-- YAML files are the SSOT; all other representations (docs, dashboards) are derived
-- CI validation ensures YAML schema compliance
-- Persona permission model is additive-only per constitution
-
-### Phase 2: Environment Lifecycle (Week 3-5)
-
-**Objective**: Implement branch-based environment creation and teardown on ACA.
-
-**Deliverables**:
-1. GitHub Actions workflow for environment provisioning on branch push
-2. ACA revision management scripts (`scripts/infra/aca_env_create.sh`, `aca_env_destroy.sh`)
-3. Ephemeral environment auto-cleanup (7-day idle TTL)
-4. PR-linked staging environment with database clone
-
-**Technical Approach**:
-- Each branch maps to an ACA revision with unique ingress
-- Database clone uses `pg_dump` from production snapshot (sanitized)
-- Cleanup cron via GitHub Actions scheduled workflow
-- Environment metadata tracked in `ops.platform_environments` table
-
-### Phase 3: Logs, Shell & Monitoring (Week 6-8)
-
-**Objective**: Implement runtime visibility capabilities for all personas.
-
-**Deliverables**:
-1. Log aggregation pipeline: ACA → Log Analytics → query API
-2. Shell/exec access via `az containerapp exec` wrapper scripts
-3. Health dashboard: port visibility, probe status, environment status
-4. Mail catcher (Mailpit) for dev/staging environments
-
-**Technical Approach**:
-- Log Analytics workspace per environment tier (shared for dev, dedicated for staging/prod)
-- Shell access gated by persona role (constitution rules)
-- Mailpit deployed as sidecar container in non-production environments
-- Health probes exposed via platform API endpoint
-
-### Phase 4: Promotion & Gates (Week 9-11)
-
-**Objective**: Implement the promotion pipeline with automated and manual gates.
-
-**Deliverables**:
-1. Promotion workflow: staging → production with configurable gates
-2. Gate integrations: CI tests, Azure maturity score, Odoo smoke test
-3. Manual approval steps for QA and PM personas
-4. Rollback mechanism with verification
-
-**Technical Approach**:
-- Promotion is a GitHub Actions workflow triggered by approval event
-- Gates are modular: each gate is a separate job in the workflow
-- Azure maturity score gate reads from `infra/ssot/azure/platform_maturity_benchmark.yaml`
-- Rollback triggers ACA revision swap (zero-downtime)
-
-### Phase 5: Backup, DNS & Hardening (Week 12-14)
-
-**Objective**: Complete the remaining capability packs (C5-C8).
-
-**Deliverables**:
-1. Automated backup pipeline with tested restore
-2. DNS/domain routing for branch environments (wildcard subdomain)
-3. Deployment history tracking and audit trail
-4. Developer UX tooling integration (Codespaces config, Claude Code hooks)
-
-**Technical Approach**:
-- Backup: Azure Backup for PostgreSQL + blob storage for filestore
-- DNS: Cloudflare wildcard `*.dev.insightpulseai.com` → ACA ingress
-- History: GitHub Actions run metadata + `ops.deployment_history` table
-- UX: `.devcontainer/` config + Claude Code SessionStart hooks
-
----
-
-## Risk Mitigations
-
-| Risk | Mitigation |
-|------|------------|
-| ACA cold start latency > 5min target | Pre-warm revisions; use minimum replica count of 1 for staging |
-| Database clone size for staging | Sanitize + compress; use pg_dump custom format with parallel jobs |
-| Mailpit security in shared infra | Network-isolated per environment; no external ingress |
-| Persona role enforcement gaps | CI gate validates capability_matrix.yaml against actual IAM bindings |
-
----
-
-## Integration Points
-
-| Consumer | What It Reads | Purpose |
-|----------|---------------|---------|
-| `odoo/` spec bundles | Capability matrix + promotion gates | Runtime implementation |
-| Azure maturity benchmark | Compute + Deployment domain evidence | Platform scoring |
-| OdooOps Platform (existing) | Environment lifecycle APIs | Migration from DO to Azure |
-| CI pipelines | Gate definitions + persona permissions | Access control enforcement |
+## Phase 6: Tenant Isolation Expansion (Optional)
+1. Introduce `odoo_tenant_<slug>_<env>` for isolated ERP tenants.
+2. Keep Supabase shared multi-tenant with `tenant_id` + RLS.
+3. Ensure n8n workflows include tenant context and audit scope.
