@@ -28,6 +28,18 @@ The benchmark covers Odoo Copilot's ability to handle three capability classes a
 - Performance benchmarking (latency/throughput are NFRs, not capability measures)
 - LLM model comparison (the benchmark measures the copilot system, not the underlying model)
 
+## Platform Assumptions
+
+This benchmark assumes the current InsightPulse AI platform target state, including:
+
+- Odoo 19 CE as System of Record (SOR)
+- Supabase as SSOT for platform state
+- Azure Databricks as intelligence layer
+- OCA-first module strategy
+- Thin `ipai_*` bridge doctrine
+
+Platform topology and infrastructure constraints are defined outside this benchmark spec in `infra/ssot/azure/PLATFORM_TARGET_STATE.md`.
+
 ## 3. Capability Model
 
 ### 3.1 Transactional
