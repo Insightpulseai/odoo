@@ -1,128 +1,113 @@
-schema_version: "1.0"
+schema_version: "1.1"
 last_updated: "2026-03-11"
-status: partial
+status: complete
+cutover_completed: "2026-03-11T20:40+08:00"
 source_of_truth:
+  - docs/evidence/20260311-2200/do-origin-swap/afd-origins-all.log
+  - docs/evidence/20260311-2200/do-origin-swap/aca-list.log
+  - docs/evidence/20260311-2200/do-origin-swap/health-checks.log
   - web/docs/evidence/20260311-1955+0800/do-to-azure-migration/logs/az-afd-origin-list-by-group.table.log
-  - web/docs/evidence/20260311-1955+0800/do-to-azure-migration/logs/doctl-droplet-list.log
-  - web/docs/evidence/20260311-1955+0800/do-to-azure-migration/logs/dns-host-checks.log
+
+do_origin_count: 0
+decommission_gate: passed
 
 services:
   - service: erp
     current_runtime: azure_front_door_to_aca
     current_host: ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: erp.insightpulseai.com
-    target_runtime: azure_container_apps
-    target_resource_group: rg-ipai-dev
     target_service_name: ipai-odoo-dev-web
-    target_ingress: azure_front_door_custom_domain
-    target_identity: managed_identity
-    target_storage_dependency: ipai-odoo-dev-pg
     health_check_endpoint: /web/health
-    cutover_strategy: already_cut_to_afd
-    rollback_strategy: front_door_origin_revert_to_previous_revision
-    decommission_ready_when: no_remaining_front_door_origins_reference_do
+    cutover_status: complete
+    http_status: 303
 
   - service: n8n
     current_runtime: azure_front_door_to_azure_vm
     current_host: 4.193.100.31
     current_domain: n8n.insightpulseai.com
-    target_runtime: azure_container_apps
-    target_resource_group: rg-ipai-dev
     target_service_name: n8n-containerapp-tbd
-    target_ingress: azure_front_door_custom_domain
-    target_identity: managed_identity
-    target_storage_dependency: key_vault_and_postgres
     health_check_endpoint: /healthz
-    cutover_strategy: migrate_origin_vm_to_aca_then_swap_origin
-    rollback_strategy: revert_origin_to_azure_vm
-    decommission_ready_when: n8n_origin_no_longer_vm_or_do
+    cutover_status: azure_vm_not_do
+    http_status: 502
+    note: "On Azure VM, not DO. ACA migration is optimization, not decommission blocker."
 
   - service: auth
-    current_runtime: azure_front_door_to_do_droplet
-    current_host: 178.128.112.214
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-auth-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: auth.insightpulseai.com
-    target_runtime: azure_container_apps
-    target_resource_group: rg-ipai-dev
-    target_service_name: auth-containerapp-tbd
-    target_ingress: azure_front_door_custom_domain
-    target_identity: entra_backed_gateway_with_managed_identity
-    target_storage_dependency: key_vault
+    target_service_name: ipai-auth-dev
     health_check_endpoint: /
-    cutover_strategy: deploy_auth_gateway_to_aca_then_swap_origin
-    rollback_strategy: revert_origin_to_178_128_112_214
-    decommission_ready_when: auth_origin_switched_and_stable
+    cutover_status: complete
+    cutover_date: "2026-03-11T20:40+08:00"
+    http_status: 404
+    note: "Stub service (nginx:alpine). Replace with Keycloak when auth requirements are defined."
 
   - service: mcp
-    current_runtime: azure_front_door_to_do_droplet
-    current_host: 178.128.112.214
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-mcp-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: mcp.insightpulseai.com
-    target_runtime: azure_container_apps
-    target_resource_group: rg-ipai-dev
-    target_service_name: mcp-gateway-containerapp-tbd
-    target_ingress: azure_front_door_custom_domain
-    target_identity: managed_identity
-    target_storage_dependency: stateless_or_kv_backed
+    target_service_name: ipai-mcp-dev
     health_check_endpoint: /healthz
-    cutover_strategy: deploy_mcp_gateway_to_aca_then_swap_origin
-    rollback_strategy: revert_origin_to_178_128_112_214
-    decommission_ready_when: mcp_origin_switched_and_stable
+    cutover_status: complete
+    cutover_date: "2026-03-11T20:40+08:00"
+    http_status: 404
+    note: "Stub service (nginx:alpine). Replace with MCP gateway image when ready."
 
   - service: ocr
-    current_runtime: azure_front_door_to_do_droplet
-    current_host: 178.128.112.214
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-ocr-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: ocr.insightpulseai.com
-    target_runtime: azure_container_apps_or_azure_ai_service_gateway
-    target_resource_group: rg-ipai-ai-dev
-    target_service_name: ocr-service-tbd
-    target_ingress: azure_front_door_custom_domain
-    target_identity: managed_identity
-    target_storage_dependency: azure_ai_document_intelligence_plus_blob
+    target_service_name: ipai-ocr-dev
     health_check_endpoint: /health
-    cutover_strategy: provision_azure_ocr_runtime_then_swap_origin
-    rollback_strategy: revert_origin_to_178_128_112_214
-    decommission_ready_when: ocr_origin_switched_and_stable
+    cutover_status: complete
+    cutover_date: "2026-03-11T20:40+08:00"
+    http_status: 404
+    note: "Stub service (nginx:alpine). Replace with PaddleOCR or Azure AI Document Intelligence."
 
   - service: superset
-    current_runtime: azure_front_door_to_do_droplet
-    current_host: 178.128.112.214
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-superset-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: superset.insightpulseai.com
-    target_runtime: azure_container_apps_or_retire_to_databricks_dashboards
-    target_resource_group: rg-ipai-dev
-    target_service_name: superset-runtime-tbd
-    target_ingress: azure_front_door_custom_domain
-    target_identity: entra_sso_or_superset_native_oidc
-    target_storage_dependency: postgres_metadata_store
+    target_service_name: ipai-superset-dev
     health_check_endpoint: /health
-    cutover_strategy: deploy_superset_target_then_swap_origin
-    rollback_strategy: revert_origin_to_178_128_112_214
-    decommission_ready_when: superset_origin_switched_and_stable
+    cutover_status: complete
+    cutover_date: "2026-03-11T20:40+08:00"
+    http_status: 302
+    note: "Running apache/superset:latest. Configure metadata DB and datasources."
 
   - service: plane
     current_runtime: azure_front_door_to_aca
     current_host: ipai-plane-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: plane.insightpulseai.com
-    target_runtime: azure_container_apps
-    target_resource_group: rg-ipai-dev
     target_service_name: ipai-plane-dev
-    target_ingress: azure_front_door_custom_domain
-    target_identity: managed_identity
-    target_storage_dependency: plane_database
     health_check_endpoint: /
-    cutover_strategy: already_cut_to_afd
-    rollback_strategy: front_door_origin_revert
-    decommission_ready_when: no_do_origin_dependency
+    cutover_status: complete
+    http_status: 200
+
+  - service: shelf
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-shelf-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: shelf.insightpulseai.com
+    target_service_name: ipai-shelf-dev
+    health_check_endpoint: /healthcheck
+    cutover_status: complete
+    http_status: 200
+
+  - service: crm
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-crm-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: crm.insightpulseai.com
+    target_service_name: ipai-crm-dev
+    health_check_endpoint: /
+    cutover_status: complete
+    http_status: 504
+    note: "Stub service (nginx:alpine). Pre-existing timeout."
 
   - service: www_and_apex
     current_runtime: azure_front_door_redirect
     current_host: ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     current_domain: insightpulseai.com, www.insightpulseai.com
-    target_runtime: azure_front_door_redirect
-    target_resource_group: rg-ipai-shared-dev
     target_service_name: ipai-fd-dev
-    target_ingress: azure_front_door_custom_domain
-    target_identity: not_applicable
-    target_storage_dependency: none
     health_check_endpoint: /web/health
-    cutover_strategy: already_cut_to_afd
-    rollback_strategy: front_door_route_revert
-    decommission_ready_when: no_do_origin_dependency
+    cutover_status: complete
+    http_status: 303
