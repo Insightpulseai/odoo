@@ -163,7 +163,7 @@ When working on `addons/oca/` submodules:
 | An Edge Function       | Supabase (`supabase/`)   | `supabase/functions/<name>/index.ts`    |
 | A Supabase secret name | Supabase Vault           | `infra/supabase/vault_secrets.tf`       |
 | An n8n workflow        | n8n (`automations/n8n/`) | `automations/n8n/workflows/<name>.json` |
-| A Vercel route         | Vercel (`vercel.json`)   | `vercel.json` in the app directory      |
+| A Vercel route         | **DEPRECATED**           | Vercel is no longer active — use Azure Container Apps |
 | A design token         | Figma → tokens           | Run `scripts/design/export_tokens.sh`   |
 | DO droplet stack       | DO infra                 | `deploy/odoo-prod.compose.yml`          |
 | A CI workflow          | GitHub                   | `.github/workflows/<name>.yml`          |
