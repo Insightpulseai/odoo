@@ -26,18 +26,18 @@ These two systems cover every operational need. A third physical database is add
 
 | Database | Environment | Lifecycle | Role | Type | Access | Consumer(s) | Rotation |
 |----------|-------------|-----------|------|------|--------|-------------|----------|
-| `odoo` | production | active | `doadmin` | admin / break-glass | full superuser | none (emergency only) | Annually; immediately on exposure |
-| `odoo` | production | active | `odoo_app` | application | readwrite on public schema | Odoo CE container | Quarterly |
-| `odoo` | production | active | `superset_ro` | readonly | SELECT on public schema | Apache Superset | Quarterly |
-| `odoo` | production | active | `n8n_rpc` | no DB role | XML-RPC only (port 8069) | n8n workflows | N/A |
+| `odoo_prod` | production | active | `doadmin` | admin / break-glass | full superuser | none (emergency only) | Annually; immediately on exposure |
+| `odoo_prod` | production | active | `odoo_app` | application | readwrite on public schema | Odoo CE container | Quarterly |
+| `odoo_prod` | production | active | `superset_ro` | readonly | SELECT on public schema | Apache Superset | Quarterly |
+| `odoo_prod` | production | active | `n8n_rpc` | no DB role | XML-RPC only (port 8069) | n8n workflows | N/A |
 | `odoo_dev` | development | active | `doadmin` | admin / break-glass | full superuser | none (emergency only) | Annually; immediately on exposure |
 | `odoo_dev` | development | active | `odoo_app` | application | readwrite on public schema | Odoo CE container (dev) | Quarterly |
-| `odoo_stage` | staging | **planned** | `odoo_app` | application | readwrite on public schema | Odoo CE container (stage) | Quarterly |
+| `odoo_staging` | staging | **planned** | `odoo_app` | application | readwrite on public schema | Odoo CE container (stage) | Quarterly |
 
 **Notes on provisioning status:**
 - `odoo_app` role does not yet exist as a distinct Postgres role. Odoo currently connects as `doadmin`. This is the primary hardening gap and must be remediated before first external audit.
 - `superset_ro` is not yet provisioned. Provision alongside Superset datasource configuration.
-- `odoo_stage` database is not yet created; will be provisioned when a staging droplet is stood up.
+- `odoo_staging` database is not yet created; will be provisioned when a staging ACA app is stood up.
 
 ### 2.2 Supabase SSOT — `spdtwktxdalcfigzeqrz`
 
@@ -93,7 +93,7 @@ All writes to Odoo business objects — `res.partner`, `account.move`, `sale.ord
 - Odoo JSON-RPC
 - Python model calls within the Odoo process
 
-Direct SQL writes to the `odoo` database are **forbidden** except for:
+Direct SQL writes to the Odoo database (`odoo_dev` / `odoo_staging` / `odoo_prod`) are **forbidden** except for:
 1. Break-glass emergency operations performed by `doadmin` under incident protocol
 2. Migration scripts executed by the Odoo migration framework (not raw SQL to ORM-managed tables)
 
@@ -122,7 +122,7 @@ Superset connects to `odoo-db-sgp1` exclusively via the `superset_ro` role, whic
 
 Apache Superset is the BI layer. Its data access is governed by these rules:
 
-1. **Primary source:** `odoo-db-sgp1` via `superset_ro` role (SELECT on `public` schema of `odoo` database only)
+1. **Primary source:** `odoo-db-sgp1` via `superset_ro` role (SELECT on `public` schema of `odoo_prod` database only)
 2. **Secondary source:** Supabase `postgres` database — Superset may connect via a read-only service account to query control-plane analytics schemas (e.g., task bus metrics, Edge Function execution logs)
 3. **Never write:** Superset MUST NOT have a writable connection to any database in this topology
 4. **No cross-database joins in Superset:** Joins between Odoo data and Supabase data must be materialised into Supabase tables via n8n or Edge Functions, then read from Supabase by Superset — not attempted as live cross-database joins
@@ -139,12 +139,12 @@ Add a new database only when one of these criteria is met:
 | New application with an independent data model (not an Odoo module) | Add a new database on `odoo-db-sgp1` (same cluster) or a new DO managed cluster |
 | Compliance requirement mandating data isolation (PCI-DSS, HIPAA, data residency) | Provision a dedicated cluster in the required region |
 | `odoo-db-sgp1` sustained CPU > 80% or total connections > 20 | Upgrade cluster tier OR add a read replica — do not add a new database |
-| Staging environment provisioned | Create `odoo_stage` on same cluster; add `odoo_app` role for staging |
+| Staging environment provisioned | Create `odoo_staging` on same cluster; add `odoo_app` role for staging |
 
 **Do NOT add a new database for:**
-- New Odoo modules — use `addons/` within the existing `odoo` database
+- New Odoo modules — use `addons/` within the existing Odoo database for that environment
 - New Supabase features — add a schema or table to the existing `postgres` database
-- BI/analytics views — use `superset_ro` on the existing `odoo` database or Supabase schemas
+- BI/analytics views — use `superset_ro` on the existing `odoo_prod` database or Supabase schemas
 - Caching — use Redis (already available) or Supabase Realtime
 
 ---
@@ -191,5 +191,5 @@ These gaps are known and tracked. The `odoo_app` role creation is the highest pr
 |-----|------|-------------|----------|
 | Odoo connects as `doadmin` instead of `odoo_app` | High — any bug in Odoo code runs with superuser privileges | Create `odoo_app` role, grant minimum privileges, update `ODOO_DB_PASSWORD` | P0 — before next external audit |
 | `superset_ro` role not yet provisioned | Medium — Superset datasource not configured; BI unavailable | Provision role, configure Superset datasource | P1 — when Superset goes live |
-| `odoo_stage` database not provisioned | Low — staging environment not yet stood up | Create when staging droplet is provisioned | P2 — next infrastructure sprint |
+| `odoo_staging` database not provisioned | Low — staging environment not yet stood up | Create when staging ACA is provisioned | P2 — next infrastructure sprint |
 | No automated credential rotation | Medium — manual rotation is error-prone | Implement rotation automation via GitHub Actions or DO API | P2 — security hardening sprint |
