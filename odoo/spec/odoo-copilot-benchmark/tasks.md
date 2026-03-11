@@ -11,7 +11,7 @@ Tasks organized by epic. Each epic ends with a hard verification gate.
 - [x] Define evidence envelope JSON schema (`scenarios/_evidence_schema.yaml`)
 - [x] Define scoring model with weighted dimensions (`benchmark.config.yaml`)
 - [x] Create scenario registry directory structure for all 9 domains
-- [x] Seed 3 example scenarios per capability class (9 total) in CRM domain
+- [x] Seed 9 CRM scenarios (3 transactional, 3 navigational, 3 informational)
 - [x] Implement scenario validator (`odoo/scripts/benchmark/validate_scenarios.py`)
 - [x] Implement runner skeleton with dry-run (`odoo/scripts/benchmark/run_benchmark.py`)
 
@@ -33,17 +33,21 @@ Tasks organized by epic. Each epic ends with a hard verification gate.
 - [ ] Sales scenarios: 3 transactional, 3 navigational, 3 informational
 - [ ] Accounting scenarios: 3 transactional, 3 navigational, 3 informational
 - [ ] Inventory scenarios: 3 transactional, 3 navigational, 3 informational
-- [ ] Persona assignments for all scenarios
+- [ ] Persona assignments for all 36 scenarios (5 of 7 personas used)
 - [ ] Expected behavior with concrete model/method references
+- [ ] Edge-case scenarios included:
+  - BM-SAL-T-003: permission-denied (exec_readonly cancels quotation)
+  - BM-SAL-I-003: ambiguity-handling (copilot must define conversion formula)
+  - BM-ACC-I-003: grounded evidence (P&L with explicit account group citations)
 
 ### Verification
-- [ ] All 36+ scenarios validate against schema
+- [ ] All 36 scenarios validate against schema (12 files, 0 errors)
 - [ ] Every scenario has a persona assignment
-- [ ] Every transactional scenario has confirmation + audit gates
+- [ ] Every transactional scenario has confirmation + audit + permission gates
 - [ ] Every informational scenario has a grounding gate
 - [ ] No scenario references Enterprise modules
 
-**GATE: Epic 2 — 36+ scenarios validated, persona-assigned, gate-complete**
+**GATE: Epic 2 — Scenario Catalog v1**
 
 ---
 

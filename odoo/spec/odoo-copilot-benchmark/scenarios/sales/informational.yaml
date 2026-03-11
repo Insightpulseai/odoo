@@ -1,0 +1,66 @@
+# Sales — Informational Benchmark Scenarios
+
+scenarios:
+  - id: "BM-SAL-I-001"
+    domain: sales
+    capability_class: informational
+    persona: sales_mgr
+    prompt: "What is the total confirmed sales revenue this month?"
+    expected_behavior:
+      type: aggregate
+      source_model: sale.order
+      fields:
+        amount_total: "sum where state=sale and date_order in current month"
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [sales, revenue, aggregate]
+
+  - id: "BM-SAL-I-002"
+    domain: sales
+    capability_class: informational
+    persona: sales_rep
+    prompt: "List the top 5 customers by sales volume this quarter"
+    expected_behavior:
+      type: aggregate
+      source_model: sale.order
+      fields:
+        partner_id: "top 5 by amount_total"
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [sales, ranking, customers]
+
+  - id: "BM-SAL-I-003"
+    domain: sales
+    capability_class: informational
+    persona: sales_mgr
+    prompt: "What is the conversion rate from quotation to confirmed order this month?"
+    notes: "Ambiguity-handling scenario: copilot must define conversion rate formula in response"
+    expected_behavior:
+      type: aggregate
+      source_model: sale.order
+      fields:
+        conversion_rate: "confirmed / (confirmed + draft + cancelled)"
+      citation_required: true
+    hard_gates:
+      capability: true
+      correctness: true
+      grounding: true
+    soft_scores:
+      completeness: { weight: 0.30 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 5000, weight: 0.10 }
+    tags: [sales, ambiguity, conversion, aggregate]

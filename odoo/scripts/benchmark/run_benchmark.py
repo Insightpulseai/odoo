@@ -6,6 +6,7 @@ captures evidence, computes scores, and generates reports.
 
 Usage:
     python scripts/benchmark/run_benchmark.py --url http://localhost:8069 --db odoo_dev
+    python scripts/benchmark/run_benchmark.py --domain crm --dry-run
     python scripts/benchmark/run_benchmark.py --domain crm --url http://localhost:8069 --db odoo_dev
 
 Prerequisites:
@@ -17,18 +18,29 @@ Prerequisites:
 from __future__ import annotations
 
 import argparse
-import json
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import yaml
+
+# Allow imports from this directory
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from runner import ScenarioRunner          # noqa: E402
+from evaluator import compute_overall_scores  # noqa: E402
+from reporter import generate_markdown_report  # noqa: E402
+from evidence import (                     # noqa: E402
+    get_evidence_dir,
+    write_envelopes,
+    write_scores,
+    write_report,
+    write_summary,
+)
 
 SPEC_ROOT = Path(__file__).resolve().parent.parent.parent / "spec" / "odoo-copilot-benchmark"
 SCENARIOS_DIR = SPEC_ROOT / "scenarios"
 CONFIG_PATH = SPEC_ROOT / "benchmark.config.yaml"
-EVIDENCE_ROOT = Path(__file__).resolve().parent.parent.parent / "docs" / "evidence"
 
 
 def load_config() -> dict:
@@ -55,98 +67,12 @@ def load_scenarios(domain: str | None = None) -> list[dict]:
     return scenarios
 
 
-def execute_scenario(scenario: dict, odoo_url: str, db: str, config: dict) -> dict:
-    """Execute a single benchmark scenario and return evidence envelope.
-
-    TODO: Implement JSON-RPC connection to Odoo, copilot invocation,
-    evidence capture, and gate evaluation. This is the Epic 3 deliverable.
-    """
-    now = datetime.now(timezone.utc)
-    sid = scenario["id"]
-    cap_class = scenario["capability_class"]
-
-    # Placeholder: return NOT_IMPLEMENTED envelope
-    envelope = {
-        "scenario_id": sid,
-        "timestamp": now.isoformat(),
-        "odoo_version": "19.0",
-        "copilot_version": "0.0.0",
-        "benchmark_version": config.get("benchmark", {}).get("version", "1.0.0"),
-        "persona": scenario.get("persona"),
-        "prompt": scenario.get("prompt"),
-        "response": None,
-        "action_trace": None,
-        "retrieved_sources": None,
-        "hard_gates": {
-            "capability": False,
-            "correctness": False,
-        },
-        "soft_scores": {},
-        "latency_ms": 0,
-        "weighted_score": 0.0,
-        "result": "NOT_IMPLEMENTED",
-        "notes": "Runner not yet connected to Odoo. Epic 3 pending.",
-    }
-
-    return envelope
-
-
-def compute_scores(envelopes: list[dict], config: dict) -> dict:
-    """Compute aggregate scores from evidence envelopes.
-
-    TODO: Implement domain/class/overall aggregation. Epic 4 deliverable.
-    """
-    total = len(envelopes)
-    passed = sum(1 for e in envelopes if e["result"] == "PASS")
-    failed = sum(1 for e in envelopes if e["result"] == "FAIL")
-    not_impl = sum(1 for e in envelopes if e["result"] == "NOT_IMPLEMENTED")
-    errors = sum(1 for e in envelopes if e["result"] == "ERROR")
-
-    return {
-        "total_scenarios": total,
-        "passed": passed,
-        "failed": failed,
-        "not_implemented": not_impl,
-        "errors": errors,
-        "pass_rate": passed / total if total > 0 else 0,
-    }
-
-
-def generate_report(envelopes: list[dict], scores: dict, config: dict) -> str:
-    """Generate Markdown summary report.
-
-    TODO: Full per-domain/per-class tables. Epic 6 deliverable.
-    """
-    now = datetime.now(timezone.utc)
-    lines = [
-        f"# Odoo Copilot Benchmark — Run {now.strftime('%Y-%m-%d %H:%M UTC')}",
-        "",
-        f"- Scenarios: {scores['total_scenarios']}",
-        f"- Passed: {scores['passed']}",
-        f"- Failed: {scores['failed']}",
-        f"- Not Implemented: {scores['not_implemented']}",
-        f"- Errors: {scores['errors']}",
-        f"- Pass Rate: {scores['pass_rate']:.0%}",
-        "",
-        "## Scenario Results",
-        "",
-        "| ID | Domain | Class | Persona | Result |",
-        "|---|---|---|---|---|",
-    ]
-    for e in envelopes:
-        lines.append(
-            f"| {e['scenario_id']} | {e.get('persona', '-')} | "
-            f"{e.get('result', '-')} | {e.get('result', '-')} | {e['result']} |"
-        )
-    return "\n".join(lines)
-
-
 def main():
     parser = argparse.ArgumentParser(description="Run Odoo Copilot Benchmark")
     parser.add_argument("--url", default="http://localhost:8069", help="Odoo URL")
     parser.add_argument("--db", default="odoo_dev", help="Odoo database")
     parser.add_argument("--domain", help="Run only this domain")
-    parser.add_argument("--dry-run", action="store_true", help="Validate scenarios without executing")
+    parser.add_argument("--dry-run", action="store_true", help="List scenarios without executing")
     args = parser.parse_args()
 
     config = load_config()
@@ -165,33 +91,40 @@ def main():
         sys.exit(0)
 
     # Execute scenarios
+    runner = ScenarioRunner(args.url, args.db, config)
     envelopes = []
     for scenario in scenarios:
-        print(f"  Running {scenario['id']}...", end=" ")
-        envelope = execute_scenario(scenario, args.url, args.db, config)
+        print(f"  Running {scenario['id']}...", end=" ", flush=True)
+        envelope = runner.execute(scenario)
         envelopes.append(envelope)
         print(envelope["result"])
 
     # Compute scores
-    scores = compute_scores(envelopes, config)
+    scores = compute_overall_scores(envelopes, config)
+
+    # Generate report
+    report_md = generate_markdown_report(envelopes, scores, config)
 
     # Write evidence
     timestamp = datetime.now().strftime("%Y%m%d-%H%M")
-    evidence_dir = EVIDENCE_ROOT / timestamp / "copilot-benchmark"
-    evidence_dir.mkdir(parents=True, exist_ok=True)
+    evidence_dir = get_evidence_dir(timestamp)
+    env_path = write_envelopes(evidence_dir, envelopes)
+    scores_path = write_scores(evidence_dir, scores)
+    report_path = write_report(evidence_dir, report_md)
+    summary_path = write_summary(evidence_dir, envelopes, scores)
 
-    evidence_path = evidence_dir / "results.json"
-    with open(evidence_path, "w") as f:
-        json.dump({"envelopes": envelopes, "scores": scores}, f, indent=2)
-
-    report_path = evidence_dir / "report.md"
-    report = generate_report(envelopes, scores, config)
-    with open(report_path, "w") as f:
-        f.write(report)
-
-    print(f"\nResults: {scores['passed']}/{scores['total_scenarios']} passed")
-    print(f"Evidence: {evidence_path}")
-    print(f"Report:   {report_path}")
+    # Print summary
+    print(f"\n{'=' * 60}")
+    print(f"Benchmark complete: {scores['passed']}/{scores['total']} passed")
+    print(f"  Pass rate:      {scores['pass_rate']:.0%}")
+    print(f"  Avg score:      {scores['avg_weighted_score']:.1%}")
+    print(f"  Certified:      {'YES' if scores['certified'] else 'NO'}")
+    print(f"  Evidence:       {evidence_dir}")
+    print(f"    envelopes:    {env_path.name}")
+    print(f"    scores:       {scores_path.name}")
+    print(f"    report:       {report_path.name}")
+    print(f"    summary:      {summary_path.name}")
+    print(f"{'=' * 60}")
 
 
 if __name__ == "__main__":
