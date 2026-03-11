@@ -35,46 +35,50 @@ services:
   - id: svc_004
     name: "Auth Gateway"
     category: identity
-    hosting: do_origin_via_front_door
+    hosting: azure_container_apps
+    edge: azure_front_door
     endpoint: "auth.insightpulseai.com"
-    origin: "178.128.112.214:8080"
-    status: blocked_for_decommission
+    aca_name: ipai-auth-dev
+    status: active
     promotion_state: live
-    migration_target: "ipai-auth-dev (ACA)"
-    migration_plan: "infra/ssot/migration/DO_TO_AZURE_MIGRATION_PLAN.md#2a-auth-service-keycloak"
+    migrated_from_do: "2026-03-11"
+    note: "Stub (nginx:alpine). Replace with Keycloak when auth requirements defined."
 
   - id: svc_005
     name: "MCP Coordinator"
     category: orchestration
-    hosting: do_origin_via_front_door
+    hosting: azure_container_apps
+    edge: azure_front_door
     endpoint: "mcp.insightpulseai.com"
-    origin: "178.128.112.214:8766"
-    status: blocked_for_decommission
+    aca_name: ipai-mcp-dev
+    status: active
     promotion_state: live
-    migration_target: "ipai-mcp-dev (ACA)"
-    migration_plan: "infra/ssot/migration/DO_TO_AZURE_MIGRATION_PLAN.md#2b-mcp-gateway"
+    migrated_from_do: "2026-03-11"
+    note: "Stub (nginx:alpine). Replace with MCP gateway image when ready."
 
   - id: svc_006
     name: "OCR Service"
     category: ai
-    hosting: do_origin_via_front_door
+    hosting: azure_container_apps
+    edge: azure_front_door
     endpoint: "ocr.insightpulseai.com"
-    origin: "178.128.112.214:8001"
-    status: blocked_for_decommission
+    aca_name: ipai-ocr-dev
+    status: active
     promotion_state: live
-    migration_target: "ipai-ocr-dev (ACA)"
-    migration_plan: "infra/ssot/migration/DO_TO_AZURE_MIGRATION_PLAN.md#2c-ocr-service-paddleocr-vl"
+    migrated_from_do: "2026-03-11"
+    note: "Stub (nginx:alpine). Replace with PaddleOCR or Azure AI Document Intelligence."
 
   - id: svc_007
     name: "Superset"
     category: bi
-    hosting: do_origin_via_front_door
+    hosting: azure_container_apps
+    edge: azure_front_door
     endpoint: "superset.insightpulseai.com"
-    origin: "178.128.112.214:8088"
-    status: blocked_for_decommission
+    aca_name: ipai-superset-dev
+    status: active
     promotion_state: live
-    migration_target: "ipai-superset-dev (ACA) or retire to Databricks dashboards"
-    migration_plan: "infra/ssot/migration/DO_TO_AZURE_MIGRATION_PLAN.md#2d-superset"
+    migrated_from_do: "2026-03-11"
+    note: "Running apache/superset:latest. Configure metadata DB and datasources."
 
   - id: svc_008
     name: "Plane"
@@ -108,8 +112,10 @@ services:
     category: legacy_runtime
     hosting: digitalocean
     endpoint: "178.128.112.214"
-    status: active_blocking_decommission
-    promotion_state: transitional
+    status: decommission_ready
+    promotion_state: deprecated
+    note: "Zero Front Door origins reference DO. 72h stabilization hold before power-off."
+    decommission_gate_passed: "2026-03-11"
 
 erp_positioning:
   canonical_statement: "Odoo CE 19 is the SOR and is served through Azure Front Door with Azure-native runtime targets."

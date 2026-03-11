@@ -1,8 +1,8 @@
 # DO → Azure Migration Plan
 
-> **Status**: PARTIAL (4/9 services migrated, 4 DO-backed, 1 Azure VM)
+> **Status**: ORIGIN CUTOVER COMPLETE — Zero DO origins in Front Door
 > **Owner**: Platform Engineering
-> **Last Updated**: 2026-03-11 (+08:00)
+> **Last Updated**: 2026-03-11T20:41+08:00
 > **SSOT**: `infra/ssot/migration/do-to-azure-service-mapping.yaml`
 > **Parent**: `infra/ssot/azure/PLATFORM_TARGET_STATE.md` (v1.5.0)
 > **Cutover checklist**: `infra/ssot/azure/hostname-cutover-checklist.yaml`
