@@ -1,15 +1,9 @@
-name: Vercel Environment Variable Leak Guard
+# DEPRECATED (2026-03-11): Vercel is no longer an active deployment surface.
+# Secret leak detection is handled by GHAS secret scanning.
+name: "[DEPRECATED] Vercel Environment Variable Leak Guard"
 
 on:
-  pull_request:
-    paths:
-      - 'web/ai-control-plane/**'
-      - '.env*'
-  push:
-    branches: [main, master]
-    paths:
-      - 'web/ai-control-plane/**'
-      - '.env*'
+  workflow_dispatch: # Manual-only — no longer auto-triggered
 
 permissions:
   contents: read

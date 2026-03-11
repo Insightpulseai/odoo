@@ -41,6 +41,9 @@ from odoo.http import request
 from odoo.addons.ipai_ai_widget.controllers._bridge_helper import (
     call_azure_direct,
     call_bridge,
+    call_provider_direct,
+    get_bridge_config,
+    get_default_provider,
     has_azure_config,
 )
 
@@ -71,6 +74,13 @@ class IpaiCopilotController(http.Controller):
         params = request.env["ir.config_parameter"].sudo()
         bridge_url = params.get_param("ipai_ai_copilot.bridge_url", default="")
         bridge_token = params.get_param("ipai_ai_copilot.bridge_token", default="")
+
+        # Fallback to widget bridge config if copilot-specific not set
+        if not bridge_url:
+            widget_url, widget_token = get_bridge_config(request.env)
+            if widget_url:
+                bridge_url = widget_url
+                bridge_token = bridge_token or widget_token
 
         # Load or create session
         Session = request.env["ipai.copilot.session"]
@@ -107,7 +117,7 @@ class IpaiCopilotController(http.Controller):
                 return {"error": error_code, "status": status_map.get(error_code, 500)}
 
         elif has_azure_config(request.env):
-            # ── Fallback: Azure OpenAI direct (chat-only, no tools) ───────
+            # ── Fallback 1: Azure OpenAI direct (chat-only, no tools) ─────
             azure_prompt = f"{ctx_str}\n\nUser: {msg_str}" if ctx_str != "No record context" else msg_str
             data, error_code = call_azure_direct(
                 azure_prompt, request.env, system_prompt=SYSTEM_PROMPT
@@ -115,8 +125,25 @@ class IpaiCopilotController(http.Controller):
             if error_code:
                 return {"error": error_code, "status": 500}
 
+        elif get_default_provider(request.env):
+            # ── Fallback 2: Provider-direct via ipai.ai.provider ──────────
+            provider_prompt = f"{ctx_str}\n\nUser: {msg_str}" if ctx_str != "No record context" else msg_str
+            data, error_code = call_provider_direct(
+                provider_prompt, request.env, system_prompt=SYSTEM_PROMPT
+            )
+            if error_code:
+                status_map = {
+                    "NO_DEFAULT_PROVIDER": 503,
+                    "PROVIDER_KEY_NOT_CONFIGURED": 503,
+                    "PROVIDER_NOT_CONFIGURED": 503,
+                    "PROVIDER_AUTH_FAILED": 401,
+                    "PROVIDER_TIMEOUT": 504,
+                    "PROVIDER_ERROR": 500,
+                }
+                return {"error": error_code, "status": status_map.get(error_code, 500)}
+
         else:
-            return {"error": "BRIDGE_URL_NOT_CONFIGURED", "status": 503}
+            return {"error": "NO_PROVIDER_CONFIGURED", "status": 503}
 
         # Handle tool calls — return to client for confirmation before execution
         if data.get("tool_calls"):

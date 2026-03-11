@@ -11,7 +11,7 @@ This document maps the four Supabase "Works With" partner integrations used in t
 | Integration | Category | SSOT Owner | Required Secrets | Allowed Egress | Write Boundaries |
 |---|---|---|---|---|---|
 | `cloudflare_workers` | edge_runtime | `ssot/integrations/cloudflare_workers.yaml` | `supabase_anon_key` (default); `supabase_service_role_key` (exception only) | `*.supabase.co` | Read-only via PostgREST unless explicitly privileged; no direct Postgres |
-| `vercel_hosting` | hosting | `ssot/integrations/vercel_hosting.yaml` | `supabase_anon_key`, `supabase_service_role_key` | `*.supabase.co`, `*.vercel.app` | Server-only for service role key; `NEXT_PUBLIC_` prefix only for anon key |
+| `azure_hosting` | hosting | `ssot/integrations/azure_hosting.yaml` | `supabase_anon_key`, `supabase_service_role_key` | `*.supabase.co`, `*.azurewebsites.net` | Server-only for service role key; `NEXT_PUBLIC_` prefix only for anon key |
 | `supabase_wrappers_stripe` | postgres_fdw | `ssot/integrations/supabase_wrappers_stripe.yaml` | `stripe_secret_key` (via Vault UUID) | `api.stripe.com` | stripe.* schema is read-only by default; no DML on FDW tables |
 | `n8n_automation` | automation_runner | `ssot/integrations/n8n.yaml` | `n8n_api_key`, `n8n_webhook_secret` | `*.n8n.io`, `n8n.insightpulseai.com` | n8n writes to ops.runs via Supabase PostgREST; no direct Odoo DB writes |
 
@@ -37,30 +37,24 @@ This document maps the four Supabase "Works With" partner integrations used in t
 
 ---
 
-### 2. Vercel Hosting (Next.js Apps)
+### 2. Azure Hosting (Edge/Runtime Apps)
 
-**Archetype**: Deployment fabric for all `apps/*` Next.js applications. Each app has a dedicated Vercel project. Env vars propagate Supabase credentials to deployed functions and browser clients.
+**Archetype**: Deployment fabric for all `web/*` applications. Each app has a dedicated Azure resource (App Service or Static Web App). Env vars propagate Supabase credentials to deployed functions and browser clients.
 
 **Boundary Rules**:
-- App source directories are `apps/*` — no monorepo root deployments.
-- `SUPABASE_URL` and `SUPABASE_ANON_KEY` are always Vercel env vars; never hardcoded.
-- `SUPABASE_SERVICE_ROLE_KEY` must be marked sensitive and server-only — never with `NEXT_PUBLIC_` prefix.
-- `vercel.json` may reference env var names but never values.
+- App source directories are `web/*` — no monorepo root deployments.
+- `SUPABASE_URL` and `SUPABASE_ANON_KEY` are always Azure App Settings; never hardcoded.
+- `SUPABASE_SERVICE_ROLE_KEY` must be marked sensitive and server-only — stored in Azure Key Vault.
 - `KEY_MISSING` behavior (when env var absent) must be tested in CI before merge to production.
 
 **Known Apps**:
 
-| App Path | Vercel Project | Notes |
+| App Path | Azure Resource | Notes |
 |---|---|---|
-| `apps/workspace/` | `ops-console` | Ops console or workspace |
-| `apps/ops-console/` | `odoo-ops-console` | Primary internal admin UI |
-| `apps/slack-agent/` | `slack-agent` | Nitro app (vercel preset) |
+| `web/workspace/` | `ops-console` | Ops console or workspace |
+| `web/ops-console/` | `odoo-ops-console` | Primary internal admin UI |
 
-**Key Risks**:
-- **Env var drift** (medium): Vars added/removed in Vercel dashboard without updating SSOT cause silent KEY_MISSING failures at runtime.
-- **Build secrets exposure** (low): `console.log(process.env...)` in build scripts can leak values to Vercel build logs.
-
-**Reference**: `ssot/integrations/vercel_hosting.yaml`
+**Reference**: `ssot/integrations/azure_hosting.yaml`
 
 ---
 
@@ -108,10 +102,10 @@ All secrets referenced by these integrations are registered in `ssot/secrets/reg
 
 | Secret Key | Registry Entry | Primary Consumers |
 |---|---|---|
-| `supabase_anon_key` | `registry.yaml#supabase_anon_key` | Cloudflare Workers (edge), Vercel apps (`NEXT_PUBLIC_SUPABASE_ANON_KEY`) |
-| `supabase_service_role_key` | `registry.yaml#supabase_service_role_key` | Vercel server-only, CI migrations (exception path for Workers) |
+| `supabase_anon_key` | `registry.yaml#supabase_anon_key` | Cloudflare Workers (edge), Azure apps (`NEXT_PUBLIC_SUPABASE_ANON_KEY`) |
+| `supabase_service_role_key` | `registry.yaml#supabase_service_role_key` | Azure server-only, CI migrations (exception path for Workers) |
 | `stripe_secret_key` | `registry.yaml#stripe_secret_key` | Supabase Vault → Stripe FDW `api_key_id` |
-| `vercel_token` | `registry.yaml#vercel_token` | GitHub Actions CI (programmatic deploys only; omit if push-to-deploy) |
+| `azure_deployment_token` | `registry.yaml#azure_deployment_token` | GitHub Actions CI (programmatic deploys only) |
 | `n8n_api_key` | `registry.yaml#n8n_api_key` | Supabase Vault, external workflow triggers |
 | `n8n_webhook_secret` | `registry.yaml#n8n_webhook_secret` | Supabase Vault, n8n webhook node auth |
 
@@ -122,7 +116,7 @@ All secrets referenced by these integrations are registered in `ssot/secrets/reg
 | Integration | File |
 |---|---|
 | Cloudflare Workers | `ssot/integrations/cloudflare_workers.yaml` |
-| Vercel Hosting | `ssot/integrations/vercel_hosting.yaml` |
+| Azure Hosting | `ssot/integrations/azure_hosting.yaml` |
 | Supabase Wrappers (Stripe) | `ssot/integrations/supabase_wrappers_stripe.yaml` |
 | n8n Automation | `ssot/integrations/n8n.yaml` |
 | Integration Index | `ssot/integrations/_index.yaml` |

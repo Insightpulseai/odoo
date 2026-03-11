@@ -13,13 +13,14 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "category": "Productivity",
-    "depends": ["mail", "web", "base", "ipai_ai_widget"],  # no enterprise deps
+    "depends": ["mail", "web", "base", "ipai_ai_widget", "ipai_ai_core"],  # no enterprise deps
     "data": [
         "security/ir.model.access.csv",
         "data/res_partner_bot.xml",
         "data/mail_channel_ai.xml",
         "data/copilot_tools.xml",
         "data/copilot_cron.xml",
+        "views/res_config_settings_views.xml",
     ],
     "assets": {
         "web.assets_backend": [

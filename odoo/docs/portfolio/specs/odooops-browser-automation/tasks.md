@@ -1,9 +1,9 @@
 # Tasks — OdooOps Browser Automation Pack
 
 ## T1: OdooOps API contract usage in CI
-- [ ] Implement scripts/odooops/env_create.sh
-- [ ] Implement scripts/odooops/env_wait_ready.sh
-- [ ] Implement scripts/odooops/env_destroy.sh
+- [ ] Implement odoo/scripts/odooops/env_create.sh
+- [ ] Implement odoo/scripts/odooops/env_wait_ready.sh
+- [ ] Implement odoo/scripts/odooops/env_destroy.sh
 
 ## T2: Playwright E2E harness
 - [ ] Add tests/e2e/playwright.config.ts
