@@ -17,7 +17,7 @@
 | KR1.1 | 0 Cloudflare DNS records not covered by `infra/dns/subdomain-registry.yaml` | CI drift gate passes |
 | KR1.2 | 0 n8n workflows not exported to `automations/n8n/workflows/` | Sweep script reports 0 stray |
 | KR1.3 | 0 Supabase schema changes outside migration files | `supabase db diff` clean on main |
-| KR1.4 | 0 Vercel project settings not reflected in `vercel.json` | Manual audit monthly |
+| KR1.4 | 0 Azure resource settings drift (Bicep vs Portal) | CI drift gate passes |
 
 ---
 
@@ -36,12 +36,12 @@
 
 ## O3: Domain Lock — *.insightpulseai.com Only
 
-**Objective**: All external-facing services resolve under `*.insightpulseai.com`. No `.net`, no `.vercel.app` in canonical references.
+**Objective**: All external-facing services resolve under `*.insightpulseai.com`. No `.net` in canonical references.
 
 | Key Result | Target | Measure |
 |-----------|--------|---------|
 | KR3.1 | 0 references to `insightpulseai.net` in non-archived files | `domain-lint.yml` CI gate |
-| KR3.2 | 0 `.vercel.app` URLs in `docs/`, `spec/`, `CLAUDE.md` | `domain-lint.yml` CI gate |
+| KR3.2 | 0 legacy hosting URLs in `docs/`, `spec/`, `CLAUDE.md` | `domain-lint.yml` CI gate |
 | KR3.3 | All subdomains listed in `ssot/domains/insightpulseai.com.yaml` | SSOT compliance check |
 | KR3.4 | Cloudflare Terraform plan shows no drift on merge to main | `cloudflare-dns-drift.yml` |
 
@@ -98,7 +98,7 @@ All external services MUST resolve under `*.insightpulseai.com`:
 | `auth` | Supabase Auth / Stack Auth | Supabase |
 | `n8n` | n8n automation | Self-hosted Docker / DO droplet |
 | `ocr` | PaddleOCR service | DO App Platform |
-| `ops` | Ops Console | Vercel (Next.js) |
+| `ops` | Ops Console | Azure (App Service / Static Web Apps) |
 | `api` | API gateway | TBD |
 | `docs` | Documentation | TBD |
 | `superset` | Apache Superset BI | DO App Platform (CNAME) |
@@ -107,7 +107,7 @@ All external services MUST resolve under `*.insightpulseai.com`:
 
 **Prohibited in canonical references**:
 - `*.insightpulseai.net` — deprecated domain
-- `*.vercel.app` — internal Vercel URLs; use custom subdomain instead
+- `*.azurewebsites.net` — internal Azure URLs; use custom subdomain instead
 - `*.ondigitalocean.app` — internal DO URLs; use custom subdomain instead
 
 ---

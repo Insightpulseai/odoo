@@ -7,7 +7,7 @@
 | Integration | Purpose | SSOT Paths | Secrets Live In | Envs |
 |---|---|---|---|---|
 | Supabase | Control plane, ops schema, Edge Functions | `supabase/` | Supabase Vault / Edge secrets | dev/staging/prod |
-| Vercel | Web apps (ops-console, marketing, docs) | `web/`, `infra/vercel/` | Vercel env vars (never git) | preview(staging)/prod |
+| Azure | Edge/runtime apps (ops-console, marketing, docs) | `infra/azure/`, `web/` | Azure Key Vault / App Settings | staging/prod |
 | DigitalOcean | Odoo runtime, managed PG, containers | `infra/digitalocean/`, `infra/deploy/` | DO env vars / secret manager | dev/staging/prod |
 | GitHub | CI/CD, policy gates, automation | `.github/` | GitHub Actions secrets (CI only) | per-environment |
 | Superset | BI / dashboards / analyst surface | `infra/superset/`, `docs/architecture/SUPERSET.md` | DO env vars / secret manager (never git) | dev/staging/prod |
@@ -30,16 +30,11 @@
 
 ---
 
-## Vercel
+## Azure
 
-- **SSOT**: `web/<app>/` for source, `infra/vercel/` for config contracts
-- **Generated**: `.vercel/` build artifacts (gitignored)
-- **Secrets**: Vercel env vars per environment (Preview = staging, Production = prod)
-- **Policy**:
-  - Templates allowed for bootstrapping `web/*` apps only
-  - No template-driven repo creation for `odoo/` runtime
-  - Vercel should not hold `service_role` unless explicitly justified
-  - Prefer Edge Function brokering for third-party API keys
+- **SSOT**: `infra/azure/` (Bicep/IaC), `web/<app>/` (source)
+- **Secrets**: Azure Key Vault + App Settings (never in Git)
+- **Policy**: Azure is the canonical edge/runtime surface. Vercel is retired.
 
 ---
 
@@ -110,7 +105,6 @@
 ## Non-Negotiable Rules
 
 1. **No secrets in git** — use `.env.example` patterns; real values in platform-native secret stores
-2. **Each platform owns its secrets** — Supabase Vault for Supabase, Vercel env for Vercel, GitHub secrets for CI
+2. **Each platform owns its secrets** — Supabase Vault for Supabase, Azure Key Vault for Azure, GitHub secrets for CI
 3. **No cross-pollination** — do not mirror secrets across platforms unless explicitly required
 4. **Env-scoped** — separate secret sets per environment (dev/staging/prod) in every platform
-5. **`service_role` in Vercel is a footgun** — prefer Edge Function brokering

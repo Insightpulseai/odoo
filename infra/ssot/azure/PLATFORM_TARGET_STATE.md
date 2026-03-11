@@ -1,6 +1,6 @@
 # Platform Target State
 
-> **Version**: 1.4.1
+> **Version**: 1.5.0
 > **Date**: 2026-03-11
 > **Scope**: Azure + DigitalOcean + Supabase + Databricks + Tableau Cloud consolidated target state
 > **Owner**: Platform Engineering / InsightPulse AI
@@ -18,6 +18,7 @@
 | 1.3.0   | 2026-03-10 | Full Azure resource inventory (55 resources across 6 RGs), CI/CD contract, 30-day sprint            |
 | 1.4.0   | 2026-03-11 | Tableau Cloud added as active analytics app surface; analytics surfaces section; SSO target updated  |
 | 1.4.1   | 2026-03-11 | Analytics: 4 surfaces (Superset, Databricks, Tableau connector, Power BI). Full DO→Azure migration mandate |
+| 1.5.0   | 2026-03-11 | Reconciled §2 with portal reality (57 confirmed resources). Separated current-state inventory into `resources.yaml`. Target-state aspirational resources moved to §2.3. Dual Odoo deployment exception recorded. |
 
 ---
 
@@ -108,9 +109,9 @@
 
 ---
 
-## 2. Azure Resource Inventory (55 Resources)
+## 2. Azure Resource Inventory
 
-### Subscription
+### 2.1 Subscription
 
 | Field           | Value                                  |
 | --------------- | -------------------------------------- |
@@ -120,90 +121,131 @@
 | Spending limit  | Off                                    |
 | Default region  | Southeast Asia (`southeastasia`)       |
 
-### Resource Group: `rg-ipai-dev` (Compute — 18 resources)
+### 2.2 Current State (57 Confirmed Resources)
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `ca-ipai-dev`                     | Container Apps Environment  | App hosting environment              | Active   |
-| `acr-ipai-dev` (`acripaidev`)     | Container Registry          | Docker image registry                | Active   |
-| `pg-ipai-dev`                     | PostgreSQL Flexible Server  | Shared database host                 | Active   |
-| `oai-ipai-dev`                    | Azure OpenAI                | GPT-4o, embeddings                   | Active   |
-| `srch-ipai-dev`                   | AI Search                   | Vector + semantic search             | Active   |
-| `log-ipai-dev`                    | Log Analytics Workspace     | Centralized logging                  | Active   |
-| `appi-ipai-dev`                   | Application Insights        | APM and telemetry                    | Active   |
-| `st-ipai-dev` (`stipaidev`)       | Storage Account             | Blobs, queues, tables                | Active   |
-| `plan-ipai-dev`                   | App Service Plan (B1)       | Legacy app hosting                   | Review   |
-| `app-ipai-health`                 | App Service                 | Health check endpoint                | Active   |
-| `insights-dashboard-*`           | Container App               | Dashboard app                        | Active   |
-| `scout-dashboard-*`              | Container App               | Scout analytics                      | Active   |
-| `juicer-dashboard-*`             | Container App               | Juicer analytics                     | Active   |
-| `retail-advisor-*`               | Container App               | Retail AI advisor                    | Active   |
-| `pulser-poc-*`                   | Container App               | Pulser proof-of-concept              | Review   |
-| `func-ipai-dev`                  | Function App                | Serverless functions                 | Active   |
-| `vnet-ipai-dev`                  | Virtual Network             | Network isolation                    | Active   |
-| `nsg-ipai-dev`                   | Network Security Group      | Firewall rules                       | Active   |
+> **Authoritative current-state inventory**: `infra/ssot/azure/resources.yaml`
+>
+> The YAML file is the SSOT for what exists today. This section provides a summary only.
 
-### Resource Group: `rg-ipai-shared` (Identity / Networking — 8 resources)
+**Resource Groups (8 owned + 2 managed)**:
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `kv-ipai-shared`                  | Key Vault                   | Secrets, keys, certificates          | Active   |
-| `id-ipai-shared`                  | Managed Identity            | Workload identity for apps           | Active   |
-| `fd-ipai-shared`                  | Front Door (Standard)       | Global CDN + WAF + routing           | Active   |
-| `waf-ipai-shared`                 | WAF Policy                  | Web application firewall             | Active   |
-| `dns-ipai-shared`                 | DNS Zone (Azure)            | Azure-managed DNS (secondary)        | Active   |
-| `pip-ipai-shared`                 | Public IP                   | Static IP for Front Door             | Active   |
-| `la-ipai-shared`                  | Log Analytics (shared)      | Cross-RG log aggregation             | Active   |
-| `diag-ipai-shared`               | Diagnostic Settings         | Platform diagnostics                 | Active   |
+| Resource Group | Owner Domain | Resource Count | Purpose |
+|---|---|---|---|
+| `rg-ipai-dev` | odoo | 12 | Canonical Odoo runtime (Deployment B): web/worker/cron + PG + ACR + KV |
+| `rg-ipai-shared-dev` | infra | 8 | Shared services: Front Door, WAF, Key Vault, App Insights, Log Analytics, ACR |
+| `rg-ipai-ai-dev` | ai | 13 | Databricks, OpenAI, AI Search, Document Intelligence, Language, Computer Vision |
+| `rg-ipai-agents-dev` | platform | 10 | Earlier Odoo deployment (A), Supabase VM, debug container |
+| `rg-ipai-data-dev` | lakehouse | 1 | Shared PG Flexible Server |
+| `rg-ipai-devops` | devops | 3 | Dev Center, Managed DevOps Pool |
+| `rg-data-intel-ph` | ai | 2 | Azure Foundry resource + project |
+| `rg-dbw-managed-ipai-dev` | lakehouse (managed) | 3 | Databricks-managed: identity, storage, access connector |
+| `NetworkWatcherRG` | infra (managed) | 1 | Azure platform auto-created |
+| `ai_appi-..._managed` | infra (managed) | 1 | Application Insights auto-created |
 
-### Resource Group: `rg-ipai-data` (Databricks — 12 resources)
+**Resource type distribution**:
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `dbw-ipai-dev`                    | Databricks Workspace        | Unity Catalog, notebooks, jobs       | Active   |
-| `dbw-ipai-dev-managed-rg`        | Managed Resource Group      | Databricks-managed infra             | Active   |
-| `st-dbw-ipai-dev`                | Storage Account             | DBFS root storage                    | Active   |
-| `st-ipai-lake-dev`               | Storage Account (ADLS Gen2) | Medallion lakehouse (bronze/silver/gold) | Active |
-| `adf-ipai-dev`                   | Data Factory                | ETL orchestration                    | Review   |
-| `evh-ipai-dev`                   | Event Hub Namespace         | Streaming ingestion                  | Review   |
-| `cosmos-ipai-dev`                | Cosmos DB                   | Document store (if needed)           | Review   |
-| `purview-ipai-dev`               | Microsoft Purview           | Data governance + catalog            | Planned  |
-| `synapse-ipai-dev`               | Synapse Analytics           | SQL analytics (evaluate vs Databricks SQL) | Review |
-| `ml-ipai-dev`                    | Machine Learning Workspace  | MLflow tracking, model registry      | Review   |
-| `st-ml-ipai-dev`                 | Storage Account             | ML workspace storage                 | Review   |
-| `cr-ml-ipai-dev`                 | Container Registry          | ML model containers                  | Review   |
+| Type | Count |
+|---|---|
+| Container Apps | 7 |
+| Container App Jobs | 3 |
+| Container Apps Environments | 2 |
+| Container Registries | 2 |
+| PG Flexible Servers | 2 |
+| Key Vaults | 2 |
+| Managed Identities | 4 |
+| NSGs | 4 |
+| Virtual Networks | 2 |
+| AI/Cognitive Services | 5 |
+| Storage Accounts | 2 |
+| Front Door + WAF | 2 |
+| Monitoring (App Insights, Log Analytics) | 4 |
+| VM + associated (disk, NIC, IP) | 4 |
+| DevOps (Dev Center, Pool, Org) | 4 |
+| Foundry | 2 |
+| Other (LB, DNS zone, Databricks, Network Watcher, etc.) | 6 |
 
-### Resource Group: `rg-ipai-network` (Networking — 6 resources)
+### 2.3 Exceptions
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `vnet-ipai-hub`                  | Virtual Network             | Hub network                          | Active   |
-| `vnet-ipai-spoke-dev`            | Virtual Network             | Spoke for dev workloads              | Active   |
-| `peer-hub-spoke-dev`             | VNet Peering                | Hub-spoke connectivity               | Active   |
-| `peer-spoke-dev-hub`             | VNet Peering (reverse)      | Spoke-hub connectivity               | Active   |
-| `bastion-ipai-dev`               | Azure Bastion               | Secure VM access                     | Review   |
-| `nsg-ipai-spoke-dev`             | Network Security Group      | Spoke firewall rules                 | Active   |
+| ID | Title | Risk | Status | Artifact |
+|---|---|---|---|---|
+| EXC-001 | Dual Odoo Container App Deployments | HIGH | Unresolved | `exceptions/dual-odoo-deployment.yaml` |
 
-### Resource Group: `rg-ipai-monitoring` (Observability — 6 resources)
+**EXC-001 Summary**: Two complete Odoo deployment surfaces exist:
+- **Deployment A** (`rg-ipai-agents-dev`): `odoo-web` + `odoo-init`, using shared `pg-ipai-dev` and `cripaidev`
+- **Deployment B** (`rg-ipai-dev`): `ipai-odoo-dev-web/worker/cron` + jobs, using dedicated `ipai-odoo-dev-pg`, `ipaiodoodevacr`, `ipai-odoo-dev-kv`
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `grafana-ipai-dev`               | Managed Grafana             | Dashboards + alerting                | Planned  |
-| `prom-ipai-dev`                  | Azure Monitor (Prometheus)  | Metrics collection                   | Planned  |
-| `ag-ipai-dev`                    | Action Group                | Alert routing (email, Slack, PagerDuty) | Active |
-| `alert-cpu-high`                 | Metric Alert                | CPU > 80% threshold                  | Active   |
-| `alert-error-rate`               | Metric Alert                | Error rate > 5% threshold            | Active   |
-| `alert-pg-connections`           | Metric Alert                | PG connections > 80% threshold       | Active   |
+Architectural signal points to Deployment B as the intended canonical surface (matches `odoo-runtime.yaml` 3-role spec), but canonical status is formally UNKNOWN until resolved.
 
-### Resource Group: `rg-ipai-backup` (DR — 5 resources)
+### 2.4 Naming Convention Deviations
 
-| Resource                          | Type                        | Purpose                              | State    |
-| --------------------------------- | --------------------------- | ------------------------------------ | -------- |
-| `rsv-ipai-dev`                   | Recovery Services Vault     | Backup vault                         | Active   |
-| `policy-daily-30d`               | Backup Policy               | Daily backups, 30-day retention      | Active   |
-| `policy-weekly-90d`              | Backup Policy               | Weekly backups, 90-day retention     | Active   |
-| `st-ipai-backup`                 | Storage Account (Cool)      | Long-term backup storage             | Active   |
-| `lock-ipai-backup`               | Resource Lock (CanNotDelete)| Prevent accidental deletion          | Active   |
+Target convention: `{type}-ipai-{env}` (e.g., `fd-ipai-dev`, `acr-ipai-dev`)
+
+| Actual Name | Expected Convention | Decision |
+|---|---|---|
+| `ipai-fd-dev` | `fd-ipai-dev` | Accepted (D-002) |
+| `ipaiDevWafPolicy` | `waf-ipai-dev` | Accepted (D-002) |
+| `cripaidev` | `acr-ipai-dev` | Accepted (D-002) |
+| `ipaiodoodevacr` | `acr-ipai-odoo-dev` | Accepted (D-002) |
+| Databricks-managed resources | N/A | Do not normalize (managed) |
+
+Rename is deferred to a future pass. Current names documented as-is in `resources.yaml`.
+
+### 2.5 Target-State Resources (Not Yet Deployed)
+
+These resources are planned but do **not exist** in the portal. They represent the target architecture.
+
+**Planned Resource Group: `rg-ipai-network`** (Hub-Spoke Networking)
+
+| Resource | Type | Purpose |
+|---|---|---|
+| `vnet-ipai-hub` | Virtual Network | Hub network |
+| `vnet-ipai-spoke-dev` | Virtual Network | Spoke for dev workloads |
+| `peer-hub-spoke-dev` / `peer-spoke-dev-hub` | VNet Peering | Hub-spoke connectivity |
+| `bastion-ipai-dev` | Azure Bastion | Secure VM access |
+| `nsg-ipai-spoke-dev` | NSG | Spoke firewall rules |
+
+**Planned Resource Group: `rg-ipai-monitoring`** (Observability)
+
+| Resource | Type | Purpose |
+|---|---|---|
+| `grafana-ipai-dev` | Managed Grafana | Dashboards + alerting |
+| `prom-ipai-dev` | Azure Monitor (Prometheus) | Metrics collection |
+| `ag-ipai-dev` | Action Group | Alert routing |
+| Metric alerts (CPU, error rate, PG connections) | Metric Alert | Threshold alerting |
+
+**Planned Resource Group: `rg-ipai-backup`** (DR)
+
+| Resource | Type | Purpose |
+|---|---|---|
+| `rsv-ipai-dev` | Recovery Services Vault | Backup vault |
+| `policy-daily-30d` / `policy-weekly-90d` | Backup Policy | Retention policies |
+| `st-ipai-backup` | Storage Account (Cool) | Long-term backup storage |
+| `lock-ipai-backup` | Resource Lock | Prevent accidental deletion |
+
+**Planned Data Platform Resources** (evaluate before provisioning)
+
+| Resource | Type | Status |
+|---|---|---|
+| `adf-ipai-dev` | Data Factory | Evaluate: ADF vs Databricks Autoloader for CDC |
+| `evh-ipai-dev` | Event Hub | Evaluate: needed for real-time CDC? |
+| `cosmos-ipai-dev` | Cosmos DB | Evaluate: needed, or PG JSONB sufficient? |
+| `synapse-ipai-dev` | Synapse Analytics | Evaluate: decommission if Databricks SQL covers use cases |
+| `ml-ipai-dev` | ML Workspace | Evaluate: consolidate MLflow to Databricks? |
+| `purview-ipai-dev` | Microsoft Purview | Planned: provision when Unity Catalog lineage ready |
+
+### 2.6 Reconciliation
+
+Full reconciliation report: `RESOURCE_RECONCILIATION_REPORT.md`
+
+| Metric | Count |
+|---|---|
+| Portal confirmed resources | 57 |
+| Previously documented (resources.yaml v1.0) | ~17 |
+| Newly documented | 40 |
+| Managed/auto-created | 8 |
+| Target-state aspirational (not deployed) | ~31 |
+| Naming deviations (non-managed) | 4 |
+| Unresolved exceptions | 1 |
 
 ---
 
@@ -587,17 +629,15 @@ All n8n workflows must use credential references, never literal values:
 
 | Resource                                       | Issue                                                          | Action Required                                                                                      | Priority |
 | ---------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------- |
-| `plan-ipai-dev` (App Service Plan)             | Legacy B1 plan, may be unused                                  | **Audit usage; delete if no active App Services depend on it**                                       | P1       |
-| `adf-ipai-dev` (Data Factory)                  | Created but may overlap with n8n + Databricks workflows        | **Evaluate: keep for PG CDC only, or replace with Databricks Autoloader**                            | P2       |
-| `evh-ipai-dev` (Event Hub)                     | Created but streaming use case unclear                         | **Evaluate: needed for real-time CDC, or Autoloader sufficient?**                                    | P2       |
-| `cosmos-ipai-dev` (Cosmos DB)                  | Created but document store use case not confirmed              | **Evaluate: needed, or PostgreSQL JSONB sufficient?**                                                | P3       |
-| `synapse-ipai-dev` (Synapse)                   | Overlaps with Databricks SQL                                   | **Evaluate: decommission if Databricks SQL covers all use cases**                                    | P2       |
-| `ml-ipai-dev` (ML Workspace)                   | Created but MLflow tracking may live in Databricks             | **Evaluate: consolidate MLflow to Databricks, decommission standalone ML workspace**                 | P2       |
-| `bastion-ipai-dev` (Bastion)                   | Expensive for dev environment                                  | **Evaluate: needed, or SSH via VPN sufficient?**                                                     | P3       |
-| `pulser-poc-*` (Container App)                 | POC status, may be stale                                       | **Audit: promote to production or delete**                                                           | P1       |
+| **EXC-001: Dual Odoo Deployment**              | Two Odoo surfaces across rg-ipai-agents-dev and rg-ipai-dev   | **Resolve canonical deployment before hostname cutover**                                             | P0       |
 | DO Droplet (178.128.112.214)                   | Legacy infrastructure, all services migrating to ACA           | **Phase 2 active: provision all 10 services on ACA, then decommission droplet**                      | P0       |
 | Supabase (`spdtwktxdalcfigzeqrz`)              | Control plane, 200+ functions with missing `search_path`       | **Run `search_path` fix; enable RLS on unprotected tables**                                          | P1       |
+| `debug-odoo-ep` (Container Instances)          | Ephemeral debug container in rg-ipai-agents-dev                | **Audit: delete if no longer needed for troubleshooting**                                            | P1       |
+| Dual PG Servers                                | `pg-ipai-dev` (shared) and `ipai-odoo-dev-pg` (dedicated)     | **Resolve as part of EXC-001; consolidate when canonical deployment is decided**                     | P1       |
+| Dual Container Registries                      | `cripaidev` (shared) and `ipaiodoodevacr` (dedicated)          | **Resolve as part of EXC-001; consolidate when canonical deployment is decided**                     | P2       |
+| Naming convention deviations                   | 4 non-managed resources deviate from `{type}-ipai-{env}`       | **Deferred: rename in a future pass after topology is locked**                                       | P3       |
 | `grafana-ipai-dev` / `prom-ipai-dev`           | Planned but not yet provisioned                                | **Provision when monitoring requirements are finalized**                                              | P3       |
+| Hub-spoke networking                           | Planned but not yet provisioned                                | **Provision when network isolation requirements are finalized**                                       | P3       |
 | `purview-ipai-dev` (Purview)                   | Planned for data governance                                    | **Provision when Unity Catalog lineage integration is ready**                                        | P3       |
 | Tableau Cloud (`insightpulseai`)               | Active BI surface, connector-only auth (decided)               | **Inventory workbooks, data sources, owners, refresh paths; document connector credentials**         | P2       |
 
@@ -693,7 +733,7 @@ Health check ──► Rollback if unhealthy
 7. **DNS changes are YAML-first** -- `subdomain-registry.yaml` → generator → Terraform
 8. **`insightpulseai.net` is permanently deprecated** -- never reintroduce
 9. **Mattermost is permanently deprecated** -- Slack only
-10. **Single PG server per environment** -- no database sprawl
+10. **Single PG server per environment** -- no database sprawl (**currently violated**: see EXC-001)
 11. **All services must support Entra ID SSO** -- no local-only auth in production
 
 ---
@@ -702,13 +742,14 @@ Health check ──► Rollback if unhealthy
 
 ### Azure Resources
 
-- [ ] All 55 resources exist in the correct resource groups
-- [ ] `id-ipai-shared` managed identity has required role assignments
-- [ ] `kv-ipai-shared` access policies are configured for managed identity
-- [ ] `acr-ipai-dev` is accessible from `ca-ipai-dev` Container Apps Environment
-- [ ] `pg-ipai-dev` has `odoo_dev`, `n8n_dev`, and `supabase` databases
-- [ ] `st-ipai-lake-dev` has `bronze`, `silver`, `gold`, `platinum` containers
-- [ ] Network peering between hub and spoke VNets is active
+- [ ] All 57 confirmed resources match `infra/ssot/azure/resources.yaml`
+- [ ] `id-ipai-agents-dev` managed identity has required role assignments
+- [ ] `kv-ipai-dev` access policies are configured for managed identities
+- [ ] `ipaiodoodevacr` / `cripaidev` are accessible from respective Container Apps Environments
+- [ ] `pg-ipai-dev` (rg-ipai-data-dev) hosts expected databases
+- [ ] `ipai-odoo-dev-pg` (rg-ipai-dev) hosts Odoo database for Deployment B
+- [ ] `stipaidevlake` has `bronze`, `silver`, `gold`, `platinum` containers
+- [ ] Dual Odoo deployment exception (EXC-001) is tracked and unresolved
 
 ### DNS
 
@@ -747,4 +788,4 @@ Health check ──► Rollback if unhealthy
 
 ---
 
-*Last updated: 2026-03-11 | Version 1.4.1*
+*Last updated: 2026-03-11 | Version 1.5.0*

@@ -1,7 +1,10 @@
-name: ship-on-deploy
+# DEPRECATED (2026-03-11): Was triggered by Vercel deployment_status events.
+# Vercel is no longer an active deployment surface. Azure-native deploy
+# workflows handle tagging and release creation.
+name: "[DEPRECATED] ship-on-deploy (Vercel)"
 
 on:
-  deployment_status:
+  workflow_dispatch: # Manual-only — no longer auto-triggered
 
 permissions:
   contents: write

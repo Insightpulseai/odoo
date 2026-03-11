@@ -1,0 +1,137 @@
+# =============================================================================
+# Exception: Dual Odoo Container App Deployments
+# =============================================================================
+# Two separate Odoo deployment surfaces exist across two resource groups.
+# This exception must be resolved before hostname cutover or topology lock.
+# =============================================================================
+
+exception_id: EXC-001
+title: Dual Odoo Container App Deployments
+detected: "2026-03-11"
+status: unresolved
+risk: high
+canonical_status: unknown
+action: hold_as_exception
+owner: architecture
+resolution_required_before: hostname cutover / topology lock
+
+# -----------------------------------------------------------------------------
+# Deployment A — rg-ipai-agents-dev (earlier, simpler split)
+# -----------------------------------------------------------------------------
+deployments:
+  deployment_a:
+    resource_group: rg-ipai-agents-dev
+    container_apps_env: cae-ipai-dev
+    compute:
+      - name: odoo-web
+        type: Container App
+        role: HTTP frontend
+      - name: odoo-init
+        type: Container App Job
+        role: Database init / module install
+    database:
+      name: pg-ipai-dev
+      resource_group: rg-ipai-data-dev
+      shared: true
+      notes: Shared PG Flexible Server (also used by n8n, Supabase)
+    registry:
+      name: cripaidev
+      resource_group: rg-ipai-shared-dev
+    identity:
+      name: id-ipai-aca-dev
+      resource_group: rg-ipai-agents-dev
+    notes: >
+      Earlier deployment. Simple 2-component split (web + init).
+      No dedicated worker or cron separation.
+      Uses shared PG server and shared container registry.
+
+  # ---------------------------------------------------------------------------
+  # Deployment B — rg-ipai-dev (newer, follows odoo-runtime.yaml 3-role spec)
+  # ---------------------------------------------------------------------------
+  deployment_b:
+    resource_group: rg-ipai-dev
+    container_apps_env: ipai-odoo-dev-env
+    compute:
+      - name: ipai-odoo-dev-web
+        type: Container App
+        role: HTTP frontend (target port 8069)
+      - name: ipai-odoo-dev-worker
+        type: Container App
+        role: Background queue processing (--no-http --workers=2)
+      - name: ipai-odoo-dev-cron
+        type: Container App
+        role: Scheduled cron actions (--no-http --max-cron-threads=2)
+      - name: ipai-odoo-install
+        type: Container App Job
+        role: Module install/upgrade (one-shot)
+      - name: ipai-odoo-dev-wave1
+        type: Container App Job
+        role: Wave 1 migration job
+    database:
+      name: ipai-odoo-dev-pg
+      resource_group: rg-ipai-dev
+      shared: false
+      notes: Dedicated PG Flexible Server for this deployment
+    registry:
+      name: ipaiodoodevacr
+      resource_group: rg-ipai-dev
+    key_vault:
+      name: ipai-odoo-dev-kv
+      resource_group: rg-ipai-dev
+    notes: >
+      Newer deployment. Follows odoo-runtime.yaml 3-role spec
+      (web + worker + cron). Has dedicated PG, ACR, and Key Vault.
+      Architecturally more complete than Deployment A.
+
+# -----------------------------------------------------------------------------
+# Additional compute in the same resource groups
+# -----------------------------------------------------------------------------
+additional_compute:
+  - name: ipai-crm-dev
+    type: Container App
+    resource_group: rg-ipai-dev
+    notes: CRM service
+
+  - name: ipai-plane-dev
+    type: Container App
+    resource_group: rg-ipai-dev
+    notes: Plane project management
+
+  - name: ipai-shelf-dev
+    type: Container App
+    resource_group: rg-ipai-dev
+    notes: Shelf asset management
+
+  - name: debug-odoo-ep
+    type: Container Instances
+    resource_group: rg-ipai-agents-dev
+    notes: Ephemeral debug container (experimental)
+
+# -----------------------------------------------------------------------------
+# Dual database exposure
+# -----------------------------------------------------------------------------
+dual_databases:
+  - name: pg-ipai-dev
+    resource_group: rg-ipai-data-dev
+    used_by: deployment_a
+    shared: true
+    notes: Shared PG server across Odoo, n8n, Supabase workloads
+
+  - name: ipai-odoo-dev-pg
+    resource_group: rg-ipai-dev
+    used_by: deployment_b
+    shared: false
+    notes: Dedicated Odoo PG server
+
+# -----------------------------------------------------------------------------
+# Architectural signal
+# -----------------------------------------------------------------------------
+signal: >
+  rg-ipai-dev (Deployment B) is the intended canonical Odoo runtime surface
+  based on alignment with odoo-runtime.yaml 3-role spec, dedicated infra,
+  and newer naming convention. rg-ipai-agents-dev (Deployment A) contains
+  earlier Odoo artifacts that are likely retire candidates.
+
+  However, canonical status remains UNKNOWN until explicitly resolved by
+  architecture team. Do not collapse, merge, or decommission either
+  deployment without formal resolution.
