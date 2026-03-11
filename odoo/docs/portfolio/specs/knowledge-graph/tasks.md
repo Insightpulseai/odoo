@@ -17,7 +17,7 @@
 
 ### 1.1 Schema
 
-- [ ] Create `db/migrations/20260109_KG.sql` with:
+- [ ] Create `supabase/db/migrations/20260109_KG.sql` with:
   - [ ] `kg_nodes` table (id, type, key, title, data, timestamps)
   - [ ] `kg_edges` table (id, src_id, dst_id, type, weight, data, timestamps)
   - [ ] `kg_docs` table (id, source, source_ref, title, body, meta, tsv, embedding, timestamps)

@@ -15,6 +15,6 @@
 
 ## Engine & CI
 
-- [ ] Implement `scripts/parity/parity_check.py`
+- [ ] Implement `odoo/scripts/parity/parity_check.py`
 - [ ] Add JSON report output + Markdown summary output
 - [ ] Add CI gate (Tier-0 hard fail; score threshold configurable)

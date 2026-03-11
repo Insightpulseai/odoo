@@ -17,7 +17,7 @@
 - [x] Create `kb/parity/` directory
 - [x] Create `kb/design_system/` directory
 - [x] Create `tools/parity/` directory
-- [x] Create `spec/erp-saas-clone-suite/` directory
+- [x] Create `docs/spec/erp-saas-clone-suite/` directory
 
 ### T0.2 Catalog Files
 
@@ -41,10 +41,10 @@
 
 ### T0.5 Platform Module Scaffolds
 
-- [x] Create `addons/ipai_platform_workflow/` scaffold
-- [x] Create `addons/ipai_platform_approvals/` scaffold
-- [x] Create `addons/ipai_platform_audit/` scaffold
-- [x] Create `addons/ipai_platform_theme/` scaffold
+- [x] Create `odoo/addons/ipai_platform_workflow/` scaffold
+- [x] Create `odoo/addons/ipai_platform_approvals/` scaffold
+- [x] Create `odoo/addons/ipai_platform_audit/` scaffold
+- [x] Create `odoo/addons/ipai_platform_theme/` scaffold
 - [x] Verify all modules pass syntax check
 
 ---

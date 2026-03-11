@@ -17,7 +17,7 @@
 
 | id  | title                                                                 | type    | epic                    | scope_notes                                                                                 | effort | priority |
 | --- | --------------------------------------------------------------------- | ------- | ----------------------- | ------------------------------------------------------------------------------------------- | ------ | -------- |
-| T1  | Init platform repo with Spec Kit and base folder layout               | chore   | EPIC-PLATFORM-BASE      | Create `spec/`, `api/`, `web/`, `infra/`, `n8n/` directories; add this Spec Kit as baseline | S      | P0       |
+| T1  | Init platform repo with Spec Kit and base folder layout               | chore   | EPIC-PLATFORM-BASE      | Create `docs/spec/`, `api/`, `web/`, `infra/`, `n8n/` directories; add this Spec Kit as baseline | S      | P0       |
 | T2  | Configure GitHub Actions CI pipeline                                  | infra   | EPIC-PLATFORM-BASE      | Lint, tests, Docker build for control plane; Odoo images built in separate workflow         | M      | P0       |
 | T3  | Define Tenant, Bundle, InfraTemplate, SSOConfig schemas               | feature | EPIC-TENANCY-CORE       | Add core models and migrations to backend API                                               | M      | P0       |
 | T4  | Implement `/api/tenants` CRUD and health endpoints                    | feature | EPIC-TENANCY-CORE       | As per PRD; include filters, pagination, health summary                                     | M      | P0       |
@@ -57,4 +57,4 @@
 
   * `P0`, `P1`, `P2`, `P3`.
 
-All new issues should reference an **Epic** and at least one **page_id or core entity** from `spec/prd.md`.
+All new issues should reference an **Epic** and at least one **page_id or core entity** from `docs/spec/prd.md`.

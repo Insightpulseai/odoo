@@ -1,0 +1,149 @@
+# Evidence Envelope Schema
+# Every benchmark scenario execution produces one evidence envelope.
+# Persisted to: docs/evidence/<YYYYMMDD-HHMM>/copilot-benchmark/
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Odoo Copilot Benchmark Evidence Envelope"
+description: "Machine-readable evidence for a single scenario execution"
+
+type: object
+required:
+  - scenario_id
+  - timestamp
+  - odoo_version
+  - copilot_version
+  - benchmark_version
+  - prompt
+  - hard_gates
+  - result
+
+properties:
+  scenario_id:
+    type: string
+    pattern: "^BM-[A-Z]+-[TNI]-[0-9]{3}$"
+
+  timestamp:
+    type: string
+    format: date-time
+
+  odoo_version:
+    type: string
+    pattern: "^19\\.0"
+
+  copilot_version:
+    type: string
+
+  benchmark_version:
+    type: string
+    description: "Benchmark framework version for cross-release comparison"
+
+  persona:
+    type: string
+
+  prompt:
+    type: string
+    description: "Exact prompt text sent to the copilot"
+
+  response:
+    type: object
+    properties:
+      text:
+        type: string
+        description: "Copilot response text"
+      action_taken:
+        type: string
+        description: "Summary of what the copilot did"
+      deep_link:
+        type: string
+        description: "Odoo deep link returned (navigational)"
+
+  action_trace:
+    type: object
+    description: "Captured ORM action trace (transactional scenarios)"
+    properties:
+      model:
+        type: string
+      method:
+        type: string
+      record_id:
+        type: integer
+      user_id:
+        type: integer
+      duration_ms:
+        type: integer
+      fields_written:
+        type: object
+
+  retrieved_sources:
+    type: array
+    description: "Sources cited in informational responses"
+    items:
+      type: object
+      properties:
+        title:
+          type: string
+        document_id:
+          type: string
+        section:
+          type: string
+        issuance_number:
+          type: string
+        effective_date:
+          type: string
+          format: date
+
+  hard_gates:
+    type: object
+    required: [capability, correctness]
+    properties:
+      capability:
+        type: boolean
+      correctness:
+        type: boolean
+      permission_check:
+        type: boolean
+      confirmation_required:
+        type: boolean
+      audit_trace:
+        type: boolean
+      grounding:
+        type: boolean
+
+  soft_scores:
+    type: object
+    properties:
+      completeness:
+        type: number
+        minimum: 0
+        maximum: 1
+      clarity:
+        type: number
+        minimum: 0
+        maximum: 1
+      latency:
+        type: number
+        minimum: 0
+        maximum: 1
+
+  latency_ms:
+    type: integer
+    description: "Total response time in milliseconds"
+
+  weighted_score:
+    type: number
+    minimum: 0
+    maximum: 1
+    description: "Computed weighted soft score (0 if any hard gate fails)"
+
+  result:
+    type: string
+    enum: [PASS, FAIL, NOT_IMPLEMENTED, ERROR]
+    description: "PASS=all hard gates pass. FAIL=hard gate failure. NOT_IMPLEMENTED=copilot lacks capability. ERROR=execution error."
+
+  error:
+    type: string
+    description: "Error message if result is ERROR"
+
+  notes:
+    type: string
+    description: "Evaluator notes"

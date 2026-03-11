@@ -118,10 +118,10 @@
 
 **Task 1.9: Create ipai_saas_billing Odoo module**
 - **Files:**
-  - `addons/ipai/ipai_saas_billing/__manifest__.py`
-  - `addons/ipai/ipai_saas_billing/models/__init__.py`
-  - `addons/ipai/ipai_saas_billing/controllers/__init__.py`
-  - `addons/ipai/ipai_saas_billing/security/ir.model.access.csv`
+  - `odoo/addons/ipai/ipai_saas_billing/__manifest__.py`
+  - `odoo/addons/ipai/ipai_saas_billing/models/__init__.py`
+  - `odoo/addons/ipai/ipai_saas_billing/controllers/__init__.py`
+  - `odoo/addons/ipai/ipai_saas_billing/security/ir.model.access.csv`
 - **Deliverables:**
   - OCA-compliant __manifest__.py (version, author, license, depends)
   - Depends: base, web, ipai_ops_connector
@@ -132,7 +132,7 @@
 - **Estimate:** 3 hours
 
 **Task 1.10: Create subscription model**
-- **File:** `addons/ipai/ipai_saas_billing/models/subscription.py`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/models/subscription.py`
 - **Deliverables:**
   - Read-only model (data from Supabase via ipai_ops_connector)
   - Fields: plan_name, status, current_period_start/end, stripe_subscription_id
@@ -142,7 +142,7 @@
 - **Estimate:** 4 hours
 
 **Task 1.11: Create usage_event model**
-- **File:** `addons/ipai/ipai_saas_billing/models/usage_event.py`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/models/usage_event.py`
 - **Deliverables:**
   - Read-only model (log view)
   - Fields: event_type, metadata (JSONB), created_at
@@ -154,7 +154,7 @@
 #### Billing Dashboard (Days 8-9)
 
 **Task 1.12: Create billing dashboard view**
-- **File:** `addons/ipai/ipai_saas_billing/views/billing_dashboard.xml`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/views/billing_dashboard.xml`
 - **Deliverables:**
   - Dashboard layout (current plan, usage meters, invoice history)
   - Current plan card (plan name, status, renewal date)
@@ -168,7 +168,7 @@
 - **Estimate:** 5 hours
 
 **Task 1.13: Create Stripe Checkout controller**
-- **File:** `addons/ipai/ipai_saas_billing/controllers/checkout.py`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/controllers/checkout.py`
 - **Deliverables:**
   - Route: `/billing/checkout`
   - Generate Stripe Checkout session (server-side)
@@ -180,7 +180,7 @@
 - **Estimate:** 4 hours
 
 **Task 1.14: Create webhook test controller (dev only)**
-- **File:** `addons/ipai/ipai_saas_billing/controllers/webhook_test.py`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/controllers/webhook_test.py`
 - **Deliverables:**
   - Route: `/billing/webhook-test` (dev environment only)
   - Simulate Stripe webhook events
@@ -193,7 +193,7 @@
 #### Testing & Validation (Day 10)
 
 **Task 1.15: Write integration test: Billing cycle**
-- **File:** `addons/ipai/ipai_saas_billing/tests/test_billing_cycle.py`
+- **File:** `odoo/addons/ipai/ipai_saas_billing/tests/test_billing_cycle.py`
 - **Deliverables:**
   - Test: User signs up → Free plan assigned
   - Test: User upgrades → Stripe Checkout → Webhook → Pro plan synced
@@ -328,10 +328,10 @@
 
 **Task 2.9: Create ipai_platform_cms Odoo module**
 - **Files:**
-  - `addons/ipai/ipai_platform_cms/__manifest__.py`
-  - `addons/ipai/ipai_platform_cms/models/__init__.py`
-  - `addons/ipai/ipai_platform_cms/controllers/__init__.py`
-  - `addons/ipai/ipai_platform_cms/security/ir.model.access.csv`
+  - `odoo/addons/ipai/ipai_platform_cms/__manifest__.py`
+  - `odoo/addons/ipai/ipai_platform_cms/models/__init__.py`
+  - `odoo/addons/ipai/ipai_platform_cms/controllers/__init__.py`
+  - `odoo/addons/ipai/ipai_platform_cms/security/ir.model.access.csv`
 - **Deliverables:**
   - OCA-compliant __manifest__.py
   - Depends: ipai_saas_billing, ipai_ops_connector
@@ -342,7 +342,7 @@
 - **Estimate:** 3 hours
 
 **Task 2.10: Create cms_page model**
-- **File:** `addons/ipai/ipai_platform_cms/models/cms_page.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/models/cms_page.py`
 - **Deliverables:**
   - Sync from Supabase via ipai_ops_connector
   - Fields: title, content_html, status, content_type, slug, metadata
@@ -353,7 +353,7 @@
 - **Estimate:** 4 hours
 
 **Task 2.11: Create cms_approval model**
-- **File:** `addons/ipai/ipai_platform_cms/models/cms_approval.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/models/cms_approval.py`
 - **Deliverables:**
   - Sync from Supabase
   - Fields: page_id, version_id, status, requested_by, reviewed_by, comments
@@ -364,7 +364,7 @@
 - **Estimate:** 4 hours
 
 **Task 2.12: Create cms_version model**
-- **File:** `addons/ipai/ipai_platform_cms/models/cms_version.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/models/cms_version.py`
 - **Deliverables:**
   - Read-only model (version history)
   - Fields: page_id, version_number, title, content_html, created_by, created_at
@@ -376,7 +376,7 @@
 #### CMS Editor Views (Days 18-19)
 
 **Task 2.13: Create content editor view**
-- **File:** `addons/ipai/ipai_platform_cms/views/cms_page_form.xml`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/views/cms_page_form.xml`
 - **Deliverables:**
   - Form view: title (char), content_html (HTML editor widget), status (statusbar)
   - Tabs: Content, Metadata (slug, meta_description, tags), Version History
@@ -389,7 +389,7 @@
 - **Estimate:** 5 hours
 
 **Task 2.14: Create approval queue views**
-- **File:** `addons/ipai/ipai_platform_cms/views/cms_approval_views.xml`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/views/cms_approval_views.xml`
 - **Deliverables:**
   - Kanban view: Cards grouped by status (pending, approved, rejected)
     - Card: Page title, requested_by, created_at
@@ -404,7 +404,7 @@
 - **Estimate:** 6 hours
 
 **Task 2.15: Create schedule publish action**
-- **File:** `addons/ipai/ipai_platform_cms/models/cms_page.py` (method)
+- **File:** `odoo/addons/ipai/ipai_platform_cms/models/cms_page.py` (method)
 - **Deliverables:**
   - Action: schedule_publish(scheduled_at)
   - Insert into cms_schedule table (via Supabase RPC)
@@ -416,7 +416,7 @@
 #### Realtime Notifications (Day 20)
 
 **Task 2.16: Subscribe to cms_approvals channel**
-- **File:** `addons/ipai/ipai_platform_cms/static/src/js/realtime_notifications.js`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/static/src/js/realtime_notifications.js`
 - **Deliverables:**
   - Supabase Realtime subscription: cms_approvals table
   - Filter: org_id = current user's org
@@ -428,7 +428,7 @@
 - **Estimate:** 4 hours
 
 **Task 2.17: Subscribe to cms_schedule channel**
-- **File:** `addons/ipai/ipai_platform_cms/static/src/js/realtime_notifications.js`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/static/src/js/realtime_notifications.js`
 - **Deliverables:**
   - Supabase Realtime subscription: cms_schedule table
   - Filter: org_id = current user's org, status = executed
@@ -444,10 +444,10 @@
 
 **Task 2.18: Create ipai_platform_admin Odoo module**
 - **Files:**
-  - `addons/ipai/ipai_platform_admin/__manifest__.py`
-  - `addons/ipai/ipai_platform_admin/models/__init__.py`
-  - `addons/ipai/ipai_platform_admin/controllers/__init__.py`
-  - `addons/ipai/ipai_platform_admin/security/ir.model.access.csv`
+  - `odoo/addons/ipai/ipai_platform_admin/__manifest__.py`
+  - `odoo/addons/ipai/ipai_platform_admin/models/__init__.py`
+  - `odoo/addons/ipai/ipai_platform_admin/controllers/__init__.py`
+  - `odoo/addons/ipai/ipai_platform_admin/security/ir.model.access.csv`
 - **Deliverables:**
   - OCA-compliant __manifest__.py
   - Depends: ipai_saas_billing, ipai_ops_connector
@@ -458,7 +458,7 @@
 - **Estimate:** 3 hours
 
 **Task 2.19: Create organization model**
-- **File:** `addons/ipai/ipai_platform_admin/models/organization.py`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/models/organization.py`
 - **Deliverables:**
   - Sync from Supabase
   - Fields: name, billing_email, timezone, created_at
@@ -470,7 +470,7 @@
 - **Estimate:** 3 hours
 
 **Task 2.20: Create team_member model**
-- **File:** `addons/ipai/ipai_platform_admin/models/team_member.py`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/models/team_member.py`
 - **Deliverables:**
   - Sync from Supabase (user_organizations table)
   - Fields: user_id, email, role, created_at
@@ -484,7 +484,7 @@
 #### Org Dashboard (Days 23-24)
 
 **Task 2.21: Create org dashboard view**
-- **File:** `addons/ipai/ipai_platform_admin/views/org_dashboard.xml`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/views/org_dashboard.xml`
 - **Deliverables:**
   - Dashboard layout:
     - Org details card (name, billing email, plan)
@@ -497,7 +497,7 @@
 - **Estimate:** 5 hours
 
 **Task 2.22: Create invite user controller**
-- **File:** `addons/ipai/ipai_platform_admin/controllers/invite_user.py`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/controllers/invite_user.py`
 - **Deliverables:**
   - Route: `/admin/invite-user`
   - Validation:
@@ -511,7 +511,7 @@
 - **Estimate:** 4 hours
 
 **Task 2.23: Create org settings view**
-- **File:** `addons/ipai/ipai_platform_admin/views/org_settings_form.xml`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/views/org_settings_form.xml`
 - **Deliverables:**
   - Form view: name, billing_email, timezone
   - Save button (calls Supabase RPC: update_organization)
@@ -521,7 +521,7 @@
 - **Estimate:** 3 hours
 
 **Task 2.24: Write integration tests: Team management**
-- **File:** `addons/ipai/ipai_platform_admin/tests/test_team_management.py`
+- **File:** `odoo/addons/ipai/ipai_platform_admin/tests/test_team_management.py`
 - **Deliverables:**
   - Test: Admin invites user → Email sent, user_organizations created
   - Test: Invite fails if user limit reached (entitlement check)
@@ -533,7 +533,7 @@
 #### Integration Testing (Day 25)
 
 **Task 2.25: Write integration test: CMS approval workflow**
-- **File:** `addons/ipai/ipai_platform_cms/tests/test_cms_workflow.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/tests/test_cms_workflow.py`
 - **Deliverables:**
   - Test: Editor creates page (status = draft)
   - Test: Editor requests approval → cms_approval created, status = pending
@@ -545,7 +545,7 @@
 - **Estimate:** 6 hours
 
 **Task 2.26: Write integration test: Scheduled publishing**
-- **File:** `addons/ipai/ipai_platform_cms/tests/test_scheduled_publishing.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/tests/test_scheduled_publishing.py`
 - **Deliverables:**
   - Test: Create scheduled publish (scheduled_at = NOW() + 2 minutes)
   - Test: Wait for pg_cron execution
@@ -556,7 +556,7 @@
 - **Estimate:** 4 hours
 
 **Task 2.27: Write integration test: Version history**
-- **File:** `addons/ipai/ipai_platform_cms/tests/test_version_history.py`
+- **File:** `odoo/addons/ipai/ipai_platform_cms/tests/test_version_history.py`
 - **Deliverables:**
   - Test: Page status change → Version snapshot created
   - Test: Version number increments
@@ -635,7 +635,7 @@
 #### E2E Tests (Day 28)
 
 **Task 3.5: Write E2E test: Billing flow**
-- **File:** `web/web/tests/e2e/billing.spec.ts` (Playwright)
+- **File:** `web/tests/e2e/billing.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login → Navigate to billing dashboard
   - Test: Dashboard displays current plan, usage meters
@@ -647,7 +647,7 @@
 - **Estimate:** 4 hours
 
 **Task 3.6: Write E2E test: CMS workflow**
-- **File:** `web/web/tests/e2e/cms_workflow.spec.ts` (Playwright)
+- **File:** `web/tests/e2e/cms_workflow.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login as Editor → Create new page (status = draft)
   - Test: Click "Request Approval" → Approval created
@@ -659,7 +659,7 @@
 - **Estimate:** 5 hours
 
 **Task 3.7: Write E2E test: Scheduled publishing**
-- **File:** `web/web/tests/e2e/scheduled_publishing.spec.ts` (Playwright)
+- **File:** `web/tests/e2e/scheduled_publishing.spec.ts` (Playwright)
 - **Deliverables:**
   - Test: Login as Editor → Create page → Request approval
   - Test: Login as Admin → Approve page

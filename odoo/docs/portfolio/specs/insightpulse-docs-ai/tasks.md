@@ -4,7 +4,7 @@
 
 ## 1. Spec & Foundations
 
-- [x] **T-001** – Create Spec Kit directory `spec/insightpulse-docs-ai/` in repo
+- [x] **T-001** – Create Spec Kit directory `docs/spec/insightpulse-docs-ai/` in repo
   - Status: done
   - Output: `constitution.md`, `prd.md`, `plan.md`, `tasks.md` checked in.
 

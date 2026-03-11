@@ -637,7 +637,7 @@ Description: |
   Execute Enterprise Edition parity test suite.
 
 Command:
-  python scripts/test_ee_parity.py \
+  python odoo/scripts/test_ee_parity.py \
     --odoo-url https://staging-19.erp.insightpulseai.com \
     --db odoo_staging \
     --report html \

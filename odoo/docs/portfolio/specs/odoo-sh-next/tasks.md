@@ -2,10 +2,10 @@
 
 ## A) Spec & Governance
 
-- [ ] Add `spec/odoo-sh-next/adr/0001-initial-architecture.md`
-- [ ] Add `spec/odoo-sh-next/security/threat-model.md`
-- [ ] Add `spec/odoo-sh-next/openapi.yaml` (API v1 stub)
-- [ ] Add `spec/odoo-sh-next/glossary.md`
+- [ ] Add `docs/spec/odoo-sh-next/adr/0001-initial-architecture.md`
+- [ ] Add `docs/spec/odoo-sh-next/security/threat-model.md`
+- [ ] Add `docs/spec/odoo-sh-next/openapi.yaml` (API v1 stub)
+- [ ] Add `docs/spec/odoo-sh-next/glossary.md`
 
 ## B) API v1 (M1)
 
@@ -62,15 +62,15 @@
 
 ## H) Browser Automation & E2E Testing (M7)
 
-**Reference**: See [`spec/odooops-browser-automation/`](../odooops-browser-automation/) for detailed tasks.
+**Reference**: See [`docs/spec/odooops-browser-automation/`](../odooops-browser-automation/) for detailed tasks.
 
 - [ ] **API Integration Scripts**:
-  - [ ] `scripts/odooops/env_create.sh` (create preview env via API)
-  - [ ] `scripts/odooops/env_wait_ready.sh` (poll readiness + get URL)
-  - [ ] `scripts/odooops/env_destroy.sh` (cleanup env)
+  - [ ] `odoo/scripts/odooops/env_create.sh` (create preview env via API)
+  - [ ] `odoo/scripts/odooops/env_wait_ready.sh` (poll readiness + get URL)
+  - [ ] `odoo/scripts/odooops/env_destroy.sh` (cleanup env)
 - [ ] **Playwright Harness**:
   - [ ] `tests/e2e/playwright.config.ts` (base config)
-  - [ ] `tests/e2e/specs/smoke.spec.ts` (health + login)
+  - [ ] `tests/e2e/docs/specs/smoke.spec.ts` (health + login)
   - [ ] Add module-specific E2E specs (as needed)
 - [ ] **CI Workflow**:
   - [ ] `.github/workflows/e2e-playwright.yml` (full lifecycle)

@@ -2,7 +2,7 @@
 
 ## Scaffold
 
-- [x] Create module structure under `addons/ipai/ipai_project_suite`
+- [x] Create module structure under `odoo/addons/ipai/ipai_project_suite`
 - [x] Add manifest + init
 - [x] Add settings toggles (config_parameter-backed)
 - [x] Add security groups + ACLs

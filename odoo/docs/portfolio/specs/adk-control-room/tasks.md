@@ -75,7 +75,7 @@
 
 ### Continue Headless Worker
 - [ ] Set up Continue headless service
-- [ ] Configure file watchers (`/spec/**/*.md`, `/docs/**/*.md`)
+- [ ] Configure file watchers (`/docs/spec/**/*.md`, `/docs/**/*.md`)
 - [ ] Implement spec change handler
 - [ ] Add spec validation agent
 - [ ] Implement PR generation agent
