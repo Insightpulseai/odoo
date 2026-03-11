@@ -14,7 +14,6 @@ on:
           - full
           - org-only
           - repo-only
-          - vercel-only
       single_repo:
         description: 'Single repo name (repo-only scope)'
         required: false
@@ -23,7 +22,6 @@ on:
 permissions:
   contents: write
   actions: read
-  administration: read
 
 env:
   GH_ORG: Insightpulseai
@@ -46,8 +44,8 @@ jobs:
 
       - name: Run snapshot
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_TOKEN: "DECOMMISSIONED"
+          VERCEL_TEAM_ID: "DECOMMISSIONED"
           MAX_WORKFLOW_RUNS: '50'
         run: |
           ARGS=""
@@ -56,15 +54,15 @@ jobs:
           case "${SCOPE}" in
             org-only)    ARGS="--org-only" ;;
             repo-only)   ARGS="--repo-only" ;;
-            vercel-only) ARGS="--vercel-only" ;;
+            github-only) ARGS="--github-only" ;;
           esac
 
           if [[ -n "${{ inputs.single_repo }}" ]]; then
             ARGS="${ARGS} --repo ${{ inputs.single_repo }}"
           fi
 
-          chmod +x scripts/ssot/snapshot_github_and_vercel.sh
-          bash scripts/ssot/snapshot_github_and_vercel.sh ${ARGS}
+          chmod +x scripts/ssot/snapshot_github.sh
+          bash scripts/ssot/snapshot_github.sh ${ARGS}
 
       - name: Upload snapshot artifacts
         uses: actions/upload-artifact@v4
@@ -73,7 +71,6 @@ jobs:
           path: |
             ssot/github/*.snapshot.json
             ssot/github/repo-details/
-            ssot/vercel/*.snapshot.json
             ssot/evidence/snapshot-manifest.json
           retention-days: 90
 
@@ -83,7 +80,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add ssot/github/ ssot/vercel/ ssot/evidence/snapshot-manifest.json
+          git add ssot/github/ ssot/evidence/snapshot-manifest.json
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else

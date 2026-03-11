@@ -35,7 +35,7 @@ jobs:
           python3 -m py_compile scripts/ssot/normalize_snapshot_inventory.py
 
       - name: Shell syntax
-        run: bash -n scripts/ssot/snapshot_github_and_vercel.sh
+        run: bash -n scripts/ssot/snapshot_github.sh
 
       - name: YAML syntax
         run: |
@@ -159,7 +159,7 @@ jobs:
           ERRORS=0
 
           # Check for raw snapshot JSON in tracked files
-          for pattern in "ssot/github/*.snapshot.json" "ssot/vercel/*.snapshot.json" "ssot/evidence/snapshot-manifest.json"; do
+          for pattern in "ssot/github/*.snapshot.json" "ssot/evidence/snapshot-manifest.json"; do
             if git ls-files --error-unmatch ${pattern} 2>/dev/null; then
               echo "ERROR: Raw snapshot file tracked in git: ${pattern}"
               ERRORS=$((ERRORS + 1))
