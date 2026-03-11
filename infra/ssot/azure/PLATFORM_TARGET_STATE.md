@@ -1,8 +1,8 @@
 # Platform Target State
 
-> **Version**: 1.5.0
+> **Version**: 1.5.1
 > **Date**: 2026-03-11
-> **Scope**: Azure + DigitalOcean + Supabase + Databricks + Tableau Cloud consolidated target state
+> **Scope**: Azure-native runtime + Supabase + Databricks + Tableau Cloud consolidated target state
 > **Owner**: Platform Engineering / InsightPulse AI
 > **Status**: Living document -- updated per sprint
 
@@ -19,6 +19,7 @@
 | 1.4.0   | 2026-03-11 | Tableau Cloud added as active analytics app surface; analytics surfaces section; SSO target updated  |
 | 1.4.1   | 2026-03-11 | Analytics: 4 surfaces (Superset, Databricks, Tableau connector, Power BI). Full DO→Azure migration mandate |
 | 1.5.0   | 2026-03-11 | Reconciled §2 with portal reality (57 confirmed resources). Separated current-state inventory into `resources.yaml`. Target-state aspirational resources moved to §2.3. Dual Odoo deployment exception recorded. |
+| 1.5.1   | 2026-03-11 | DO runtime decommission completed: Front Door origins moved to Azure runtimes, droplet deleted, DNS section updated to Front Door canonical routing. |
 
 ---
 
@@ -60,18 +61,17 @@
              ├──────────────────────────────────────────────────────┐
              │                                                      │
              ▼                                                      ▼
-      DigitalOcean Droplet                                   Supabase Cloud
-      178.128.112.214                                        spdtwktxdalcfigzeqrz
-      (DECOMMISSION — all                                    (Control Plane)
-       services → ACA)                                       ┌──────────────────┐
-      ┌─────────────────┐                                    │  Auth            │
-      │  Odoo 19 CE  ──►│─── migrate ──► ca-ipai-dev         │  Realtime        │
-      │  n8n         ──►│─── migrate ──► ca-ipai-dev         │  Edge Functions  │
-      │  Superset    ──►│─── migrate ──► ca-ipai-dev         │  Storage         │
-      │  Keycloak    ──►│─── migrate ──► Entra ID            │  Vault           │
-      │  Plane       ──►│─── migrate ──► ca-ipai-dev         │  pgvector        │
-      │  Shelf / CRM ──►│─── migrate ──► ca-ipai-dev         └──────────────────┘
-      └─────────────────┘
+      DigitalOcean Runtime                                   Supabase Cloud
+      (Decommissioned 2026-03-11)                            spdtwktxdalcfigzeqrz
+      (no active production runtime)                         (Control Plane)
+                                                             ┌──────────────────┐
+                                                             │  Auth            │
+                                                             │  Realtime        │
+                                                             │  Edge Functions  │
+                                                             │  Storage         │
+                                                             │  Vault           │
+                                                             │  pgvector        │
+                                                             └──────────────────┘
              │
              │         Downstream Analytics & AI Surfaces
              │
@@ -255,18 +255,18 @@ Full reconciliation report: `RESOURCE_RECONCILIATION_REPORT.md`
 
 | Subdomain       | Type  | Target                                  | Purpose                    | State    |
 | --------------- | ----- | --------------------------------------- | -------------------------- | -------- |
-| `@` (apex)      | A     | 178.128.112.214                         | Root domain                | Active   |
-| `www`           | CNAME | `insightpulseai.com`                    | WWW redirect               | Active   |
-| `erp`           | A     | 178.128.112.214                         | Odoo ERP                   | Active   |
-| `n8n`           | A     | 178.128.112.214                         | n8n automation             | Active   |
-| `auth`          | A     | 178.128.112.214                         | Keycloak SSO               | Active   |
-| `superset`      | A     | 178.128.112.214                         | Apache Superset            | Active   |
-| `mcp`           | A     | 178.128.112.214                         | MCP coordinator            | Active   |
-| `plane`         | A     | 178.128.112.214                         | Plane project mgmt         | Active   |
-| `shelf`         | A     | 178.128.112.214                         | Shelf service              | Active   |
-| `crm`           | A     | 178.128.112.214                         | CRM service                | Active   |
-| `ops`           | A     | 178.128.112.214                         | Ops console                | Active   |
-| `ocr`           | A     | 178.128.112.214                         | OCR service                | Active   |
+| `@` (apex)      | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Root domain                | Active   |
+| `www`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | WWW redirect               | Active   |
+| `erp`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Odoo ERP                   | Active   |
+| `n8n`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | n8n automation             | Active   |
+| `auth`          | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Auth service               | Active   |
+| `superset`      | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Apache Superset            | Active   |
+| `mcp`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | MCP coordinator            | Active   |
+| `plane`         | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Plane project mgmt         | Active   |
+| `shelf`         | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Shelf service              | Active   |
+| `crm`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | CRM service                | Active   |
+| `ops`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | Ops console                | Active   |
+| `ocr`           | CNAME | `ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net` | OCR service                | Active   |
 | `api`           | CNAME | `fd-ipai-shared.azurefd.net`            | API gateway (Front Door)   | Planned  |
 | `app`           | CNAME | `fd-ipai-shared.azurefd.net`            | App frontend (Front Door)  | Planned  |
 | `data`          | CNAME | `dbw-ipai-dev.azuredatabricks.net`      | Databricks workspace       | Planned  |
@@ -277,10 +277,9 @@ Full reconciliation report: `RESOURCE_RECONCILIATION_REPORT.md`
 ### DNS Migration Path
 
 ```
-Phase 1 (Done):     DNS cut to Azure Front Door (all 13 subdomains CNAME → AFD)
-Phase 2 (Current):  Provision all services on Azure Container Apps
-                    erp, n8n, superset, plane, shelf, crm, auth, mcp, ocr, ops
-Phase 3 (Final):    Decommission DO droplet (178.128.112.214), all traffic via Azure
+Phase 1 (Done):     DNS cut to Azure Front Door (canonical subdomains on AFD)
+Phase 2 (Done):     Remaining DO-backed origins moved to Azure runtimes
+Phase 3 (Done):     DO droplet decommissioned (snapshot complete, droplet deleted)
 ```
 
 ### Deprecated Domains (Never Use)
@@ -651,7 +650,7 @@ Azure-native infrastructure (Azure Container Apps, Azure Front Door, Azure PG) i
 | Resource                                       | Issue                                                          | Action Required                                                                                      | Priority |
 | ---------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------- |
 | **EXC-001: Dual Odoo Deployment**              | Two Odoo surfaces across rg-ipai-agents-dev and rg-ipai-dev   | **Resolve canonical deployment before hostname cutover**                                             | P0       |
-| DO Droplet (178.128.112.214)                   | Legacy infrastructure, all services migrating to ACA           | **Phase 2 active: provision all 10 services on ACA, then decommission droplet**                      | P0       |
+| DO Droplet (178.128.112.214)                   | Legacy runtime removed                                          | **Completed 2026-03-11: snapshot captured, droplet deleted**                                          | Closed   |
 | Supabase (`spdtwktxdalcfigzeqrz`)              | Control plane, 200+ functions with missing `search_path`       | **Run `search_path` fix; enable RLS on unprotected tables**                                          | P1       |
 | `debug-odoo-ep` (Container Instances)          | Ephemeral debug container in rg-ipai-agents-dev                | **Audit: delete if no longer needed for troubleshooting**                                            | P1       |
 | Dual PG Servers                                | `pg-ipai-dev` (shared) and `ipai-odoo-dev-pg` (dedicated)     | **Resolve as part of EXC-001; consolidate when canonical deployment is decided**                     | P1       |
@@ -763,7 +762,7 @@ Health check ──► Rollback if unhealthy
 
 ### Azure Resources
 
-- [ ] All 57 confirmed resources match `infra/ssot/azure/resources.yaml`
+- [ ] All 65 confirmed resources match `infra/ssot/azure/resources.yaml`
 - [ ] `id-ipai-agents-dev` managed identity has required role assignments
 - [ ] `kv-ipai-dev` access policies are configured for managed identities
 - [ ] `ipaiodoodevacr` / `cripaidev` are accessible from respective Container Apps Environments
