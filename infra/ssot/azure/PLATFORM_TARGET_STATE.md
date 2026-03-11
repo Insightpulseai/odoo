@@ -625,6 +625,27 @@ All n8n workflows must use credential references, never literal values:
 
 ---
 
+## 9b. Vercel Deprecation
+
+Vercel is no longer an active deployment target for this repository.
+
+Azure-native infrastructure (Azure Container Apps, Azure Front Door, Azure PG) is the canonical deployment surface. Any remaining Vercel integrations, preview checks, or deployment references are transitional residue and should be removed from CI contracts, documentation, and repository metadata.
+
+| Item                              | Status         | Action                                                |
+| --------------------------------- | -------------- | ----------------------------------------------------- |
+| `odoo/vercel.json`                | **Removed**    | Deleted — no root-level Vercel config                  |
+| `infra/ssot/integrations/vercel_hosting.yaml` | **Deprecated** | Status set to `deprecated`                  |
+| `infra/ssot/integrations/vercel_agent.yaml`   | **Deprecated** | Status set to `deprecated`                  |
+| `infra/ssot/integrations/vercel_ai_gateway.yaml` | **Deprecated** | Never activated; status set to `deprecated` |
+| `infra/ssot/vercel/projects.yaml` | **Deprecated** | Header updated with deprecation notice                |
+| `vercel-env-leak-guard.yml`       | **Disabled**   | Trigger changed to `workflow_dispatch` only            |
+| `ship-on-deploy.yml`             | **Disabled**   | Was Vercel deployment_status listener; now manual-only |
+| Vercel GitHub App                 | Out of scope   | May remain installed; not treated as authoritative     |
+
+**Rule**: Do not add new `vercel.json` files, Vercel project configurations, or workflows that depend on Vercel deployment events. Do not treat Vercel preview deployments as CI gates.
+
+---
+
 ## 10. Resources Requiring Action
 
 | Resource                                       | Issue                                                          | Action Required                                                                                      | Priority |
