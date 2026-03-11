@@ -118,14 +118,16 @@ When generating Odoo Python code that sends email:
 
 ---
 
-## Rule 8: Vercel env vars must stay in the dashboard, not in files
+## Rule 8: Vercel is deprecated — Azure-native deployment is canonical
 
-When configuring Vercel applications:
+Vercel is no longer an active deployment target for this repository.
+Azure Container Apps (`ca-ipai-dev`) is the canonical deployment surface.
 
-- `vercel.json` may reference env var names in `env:` and `build.env:` blocks
-- Actual values must never appear in `vercel.json` or any committed file
-- For local development, instruct the user to run `vercel env pull` (creates local `.env.local`)
-- `.env.local` must be in `.gitignore`
+- Do not add new `vercel.json` files or Vercel project configurations
+- Do not create workflows that depend on Vercel deployment status events
+- Do not treat Vercel preview deployments as CI gates
+- Any remaining Vercel integrations, preview checks, or deployment references are transitional residue and should be removed
+- SSOT integration files (`infra/ssot/integrations/vercel_*.yaml`) are marked `deprecated`
 
 ---
 
@@ -161,7 +163,7 @@ When working on `addons/oca/` submodules:
 | An Edge Function       | Supabase (`supabase/`)   | `supabase/functions/<name>/index.ts`    |
 | A Supabase secret name | Supabase Vault           | `infra/supabase/vault_secrets.tf`       |
 | An n8n workflow        | n8n (`automations/n8n/`) | `automations/n8n/workflows/<name>.json` |
-| A Vercel route         | Vercel (`vercel.json`)   | `vercel.json` in the app directory      |
+| A Vercel route         | **DEPRECATED**           | Vercel is no longer active — use Azure Container Apps |
 | A design token         | Figma → tokens           | Run `scripts/design/export_tokens.sh`   |
 | DO droplet stack       | DO infra                 | `deploy/odoo-prod.compose.yml`          |
 | A CI workflow          | GitHub                   | `.github/workflows/<name>.yml`          |

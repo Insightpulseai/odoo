@@ -13,20 +13,20 @@
 - [x] infra/monitoring/grafana/provisioning/dashboards/odoo-overview.json
 - [x] infra/monitoring/alerting/rules.yml
 - [x] infra/monitoring/docker-compose.monitoring.yml
-- [x] scripts/verify_monitoring.sh
+- [x] odoo/scripts/verify_monitoring.sh
 
 ## Phase C: CDN
 - [x] infra/cloudflare/cloudflare-cache-rules.json
-- [x] scripts/verify_cdn.sh
+- [x] odoo/scripts/verify_cdn.sh
 
 ## Phase D: Auth Hardening
-- [x] addons/ipai/ipai_auth_oidc/__manifest__.py
-- [x] addons/ipai/ipai_auth_oidc/__init__.py
-- [x] addons/ipai/ipai_auth_oidc/data/auth_provider_data.xml
-- [x] scripts/verify_auth.sh
+- [x] odoo/addons/ipai/ipai_auth_oidc/__manifest__.py
+- [x] odoo/addons/ipai/ipai_auth_oidc/__init__.py
+- [x] odoo/addons/ipai/ipai_auth_oidc/supabase/data/auth_provider_data.xml
+- [x] odoo/scripts/verify_auth.sh
 
 ## Phase E: Backup Verification
-- [x] scripts/backup_verify.sh
+- [x] odoo/scripts/backup_verify.sh
 
 ## Phase F: CI + Evidence
 - [x] .github/workflows/azure-waf-parity.yml

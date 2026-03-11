@@ -2,7 +2,7 @@
 
 ## M0 — Spec Kit + CI
 
-- [x] Add Spec Kit files under `spec/odoo-alternatives/`
+- [x] Add Spec Kit files under `docs/spec/odoo-alternatives/`
 - [x] Add CI: spec-kit validation
 - [x] Add CI: catalog validation
 - [ ] Add CI: lint/typecheck/build gates
@@ -11,7 +11,7 @@
 
 - [x] Create `catalog/schema.json`
 - [x] Create `catalog/alternatives.yaml` seed
-- [x] Add `scripts/validate_catalog.mjs`
+- [x] Add `odoo/scripts/validate_catalog.mjs`
 - [ ] Validate in CI
 
 ## M2 — UI Pages

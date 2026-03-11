@@ -53,8 +53,8 @@
 - [x] Create rollback_config RPC
 - [x] Create config-publish Edge Function
 - [x] Create consumer-heartbeat Edge Function
-- [x] Create design tokens SSOT (config/tokens/tokens.json)
-- [x] Create consumers registry (config/consumers/consumers.json)
+- [x] Create design tokens SSOT (odoo/config/tokens/tokens.json)
+- [x] Create consumers registry (odoo/config/consumers/consumers.json)
 - [x] Create config-publish CI workflow
 - [x] Create backlog_scan.py script
 - [x] Create backlog-coverage CI workflow

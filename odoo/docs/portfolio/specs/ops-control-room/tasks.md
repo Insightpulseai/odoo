@@ -1,6 +1,6 @@
 # Ops Control Room — Task Checklist
 
-**Spec Bundle**: `spec/ops-control-room/`
+**Spec Bundle**: `docs/spec/ops-control-room/`
 **Status**: Canonical
 **Last Updated**: 2026-01-08
 
@@ -629,7 +629,7 @@
 
 - [ ] **M3.1**: Create kind: `spec_kit_generate`
   - [ ] Input params: `{ feature: string, files: string[] }`
-  - [ ] Output: 4 markdown files in `spec/<feature>/`
+  - [ ] Output: 4 markdown files in `docs/spec/<feature>/`
 
 - [ ] **M3.2**: Implement constitution.md generator
   - [ ] Template with immutable rules
@@ -646,7 +646,7 @@
 
 - [ ] **M3.6**: Implement git commit automation
   ```typescript
-  await exec('git add spec/<feature>/*');
+  await exec('git add docs/spec/<feature>/*');
   await exec('git commit -m "feat(spec): add <feature> spec bundle"');
   await exec('git push origin main');
   ```
@@ -701,7 +701,7 @@
       - uses: actions/checkout@v3
       - name: Check spec bundles
         run: |
-          for dir in spec/*/; do
+          for dir in docs/spec/*/; do
             test -f "$dir/constitution.md" || exit 1
             test -f "$dir/prd.md" || exit 1
             test -f "$dir/plan.md" || exit 1
@@ -742,7 +742,7 @@
 
 - [ ] **M3.16**: End-to-end test: Spec Kit generation
   - [ ] Trigger via UI
-  - [ ] Verify 4 files created in `spec/<feature>/`
+  - [ ] Verify 4 files created in `docs/spec/<feature>/`
   - [ ] Verify files committed to git
   - [ ] Verify artifacts in Supabase Storage
 

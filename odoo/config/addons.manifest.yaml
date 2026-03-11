@@ -106,6 +106,16 @@ oca_repositories:
       - auth_session_timeout
       - password_security
 
+  - repo: server-brand
+    url: https://github.com/OCA/server-brand.git
+    ref: "19.0"
+    tier: 0
+    purpose: CE branding cleanup (remove EE prompts, Odoo.com links, mail branding)
+    must_have:
+      - disable_odoo_online
+      - remove_odoo_enterprise
+      - mail_debranding
+
   - repo: queue
     url: https://github.com/OCA/queue.git
     ref: "19.0"
@@ -371,10 +381,10 @@ oca_repositories:
     tier: 6
     purpose: Social/messaging integrations
     must_have:
-      - mail_debrand
       - mail_tracking
       - base_search_mail_content
       - mail_activity_plan
+    # NOTE: mail_debrand removed — actual module is mail_debranding in server-brand repo
 
   # ---------------------------------------------------------------------------
   # Tier 7 — Project / Manufacturing
@@ -563,8 +573,8 @@ profiles:
     addons:
       - partner_contact_access_link  # server: partner-contact
       - partner_firstname            # server: partner-contact
-      - disable_odoo_online          # server: server-tools (if available on 19.0)
-      - remove_odoo_enterprise       # server: server-tools (if available on 19.0)
+      - disable_odoo_online          # server: server-brand (19.0 ready)
+      - remove_odoo_enterprise       # server: server-brand (19.0 ready)
       - server_action_mass_edit      # server: server-tools (mass_editing)
       - web_advanced_search          # server: web
       - web_dialog_size              # server: web
@@ -575,7 +585,7 @@ profiles:
       - web_refresher                # server: web
       - web_search_with_and          # server: web
       - web_tree_many2one_clickable  # server: web
-      - mail_debrand                 # server: social
+      - mail_debranding               # server: server-brand (19.0 ready; replaces mail_debrand)
       - document_url                 # server: knowledge
       - base_search_mail_content     # server: social
 

@@ -7,9 +7,9 @@
 - [ ] Fix branding QWeb xmlid reuse:
   - ensure inherited templates have unique ids (e.g., `ipai_ce_branding_web_login_inherit`)
 - [ ] Resolve PR conflicts in:
-  - `addons/ipai_clarity_ppm_parity/*`
-  - `addons/ipai_finance_ppm/*`
-  - `addons/ipai_ppm_monthly_close/*`
+  - `odoo/addons/ipai_clarity_ppm_parity/*`
+  - `odoo/addons/ipai_finance_ppm/*`
+  - `odoo/addons/ipai_ppm_monthly_close/*`
   - `spec.md`
 - [ ] Make CI green:
   - guardrails

@@ -11,9 +11,9 @@
 ## Phase 1: Foundation
 
 ### Module Scaffolds
-- [x] Create `addons/ipai_ai_agent_builder/` directory structure
-- [x] Create `addons/ipai_ai_rag/` directory structure
-- [x] Create `addons/ipai_ai_tools/` directory structure
+- [x] Create `odoo/addons/ipai_ai_agent_builder/` directory structure
+- [x] Create `odoo/addons/ipai_ai_rag/` directory structure
+- [x] Create `odoo/addons/ipai_ai_tools/` directory structure
 - [x] Write `__manifest__.py` for all modules
 - [x] Write `__init__.py` files
 
@@ -126,12 +126,12 @@
 - [x] Define source schema
 
 ### Seed Script
-- [x] Create `scripts/ipai_ai_seed.sh`
+- [x] Create `odoo/scripts/ipai_ai_seed.sh`
 - [x] Implement idempotent loading
 - [x] Validation logic
 
 ### Default Configurations
-- [x] Create `config/ipai_ai/agents/default.yaml`
+- [x] Create `odoo/config/ipai_ai/agents/default.yaml`
 - [x] Create example agent configs
 
 ---
@@ -174,8 +174,8 @@
 - [ ] `flake8` passes
 
 ### CI Checks
-- [ ] `./scripts/repo_health.sh` passes
-- [ ] `./scripts/spec_validate.sh` passes
+- [ ] `./odoo/scripts/repo_health.sh` passes
+- [ ] `./odoo/scripts/spec_validate.sh` passes
 - [ ] Module install succeeds
 - [ ] All tests pass
 

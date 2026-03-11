@@ -4,10 +4,10 @@
 
 ### Spec Kit Bundle
 
-- [x] Create `spec/ipai-ai-platform/constitution.md`
-- [x] Create `spec/ipai-ai-platform/prd.md`
-- [x] Create `spec/ipai-ai-platform/plan.md`
-- [x] Create `spec/ipai-ai-platform/tasks.md`
+- [x] Create `docs/spec/ipai-ai-platform/constitution.md`
+- [x] Create `docs/spec/ipai-ai-platform/prd.md`
+- [x] Create `docs/spec/ipai-ai-platform/plan.md`
+- [x] Create `docs/spec/ipai-ai-platform/tasks.md`
 
 ### Architecture Documentation
 
@@ -208,11 +208,11 @@
 ### Documentation
 
 - [ ] Module READMEs
-  - [ ] `addons/ipai/ipai_ai_core/README.md`
-  - [ ] `addons/ipai/ipai_ai_agents_ui/README.md`
-  - [ ] `addons/ipai/ipai_ai_connectors/README.md`
-  - [ ] `addons/ipai/ipai_ai_sources_odoo/README.md`
-  - [ ] `addons/ipai/ipai_workspace_core/README.md`
+  - [ ] `odoo/addons/ipai/ipai_ai_core/README.md`
+  - [ ] `odoo/addons/ipai/ipai_ai_agents_ui/README.md`
+  - [ ] `odoo/addons/ipai/ipai_ai_connectors/README.md`
+  - [ ] `odoo/addons/ipai/ipai_ai_sources_odoo/README.md`
+  - [ ] `odoo/addons/ipai/ipai_workspace_core/README.md`
 - [ ] API Reference
   - [ ] Endpoint examples with curl
   - [ ] Response schemas
@@ -230,8 +230,8 @@
 
 ### Before Commit
 
-- [ ] `./scripts/repo_health.sh` passes
-- [ ] `./scripts/spec_validate.sh` passes
+- [ ] `./odoo/scripts/repo_health.sh` passes
+- [ ] `./odoo/scripts/spec_validate.sh` passes
 - [ ] Python linting passes
 - [ ] TypeScript compiles
 - [ ] All tests pass

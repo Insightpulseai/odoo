@@ -829,7 +829,7 @@ Tasks are organized by milestone (M0-M5) and categorized by component. Each task
 ### T5.4: Documentation
 
 #### T5.4.1: Architecture Documentation
-- ☐ Create architecture diagram (control/data/monitoring planes)
+- ☐ Create architecture diagram (control/supabase/data/monitoring planes)
 - ☐ Document component interactions
 - ☐ Write architecture overview
 - **Owner**: Technical Writer + Architect

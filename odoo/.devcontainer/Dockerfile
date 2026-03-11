@@ -1,13 +1,15 @@
 # =============================================================================
 # .devcontainer/Dockerfile — InsightPulseAI Odoo 19 CE Dev Container
-# For Claude Code --dangerously-skip-permissions safe usage
-# Based on official Anthropic devcontainer pattern
+# Thin image: Python 3.12 + Odoo CE 19.0 (pinned) + system deps
+# Runtime config mounted via Compose (config/dev/odoo.conf → /etc/odoo/odoo.conf)
 # =============================================================================
 FROM python:3.12-slim
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG ODOO_BRANCH=19.0
+ARG ODOO_COMMIT=3a6e478d483ac9b3ce323958d2b08ba0a37dbee7
 
 ENV LANG=C.UTF-8 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -25,8 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libldap2-dev libsasl2-dev libjpeg-dev \
     libffi-dev libssl-dev \
     postgresql-client \
-    iproute2 iptables \
-    dnsutils \
     nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,11 +41,10 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Clone Odoo 19.0 from GitHub — pinned to immutable commit
 # Override ODOO_COMMIT at build time: --build-arg ODOO_COMMIT=<sha>
 # ---------------------------------------------------------------------------
-ARG ODOO_BRANCH=19.0
-ARG ODOO_COMMIT=3a6e478d483ac9b3ce323958d2b08ba0a37dbee7
-RUN git clone --branch ${ODOO_BRANCH} --single-branch \
+RUN git clone --branch ${ODOO_BRANCH} --single-branch --depth 1 \
     https://github.com/odoo/odoo.git ${ODOO_HOME} \
-    && cd ${ODOO_HOME} && git checkout ${ODOO_COMMIT} \
+    && cd ${ODOO_HOME} && git fetch --depth 1 origin ${ODOO_COMMIT} \
+    && git checkout ${ODOO_COMMIT} \
     && git log --oneline -1 > /etc/odoo_version.txt
 
 # ---------------------------------------------------------------------------
@@ -58,14 +57,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 # ---------------------------------------------------------------------------
 # Dirs
 # ---------------------------------------------------------------------------
-RUN mkdir -p /mnt/extra-addons /mnt/oca-addons /var/lib/odoo /etc/odoo \
-    && chown -R $USERNAME:$USERNAME /mnt/extra-addons /mnt/oca-addons /var/lib/odoo
-
-# ---------------------------------------------------------------------------
-# Odoo test config pre-baked
-# ---------------------------------------------------------------------------
-COPY .devcontainer/odoo.devcontainer.conf /etc/odoo/odoo.conf
-RUN chown $USERNAME /etc/odoo/odoo.conf
+RUN mkdir -p /var/lib/odoo /etc/odoo \
+    && chown -R $USERNAME:$USERNAME /var/lib/odoo
 
 WORKDIR /workspaces/odoo
 USER $USERNAME

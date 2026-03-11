@@ -1,7 +1,7 @@
 # Tasks — Kapa-Reverse
 
 ## 0) Repo + Spec Kit
-- [x] Create `spec/kapa-reverse/{constitution,prd,plan,tasks}.md`
+- [x] Create `docs/spec/kapa-reverse/{constitution,prd,plan,tasks}.md`
 - [ ] Add CI gate: fail if Spec Kit bundle missing or malformed
 
 ## 1) Supabase (Schema + RLS)

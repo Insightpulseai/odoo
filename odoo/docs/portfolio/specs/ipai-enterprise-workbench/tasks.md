@@ -3,7 +3,7 @@
 ## M1 — Workspace (Odoo + Superset + optional n8n)
 - [ ] Add deterministic compose file for workbench dev stack (Odoo+Postgres+Superset [+n8n])
 - [ ] Ensure bind-mounted addons for fast iteration (Odoo reload pattern documented)
-- [ ] Add `scripts/doctor_workbench.sh` (checks ports, DB reachability, container health)
+- [ ] Add `odoo/scripts/doctor_workbench.sh` (checks ports, DB reachability, container health)
 - [ ] Add CI job to smoke-test `docker compose config` + service boot (headless)
 
 ## M2 — Finance PPM Canonicalization (Workbook → Seeds)
