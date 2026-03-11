@@ -8,12 +8,19 @@
 exception_id: EXC-001
 title: Dual Odoo Container App Deployments
 detected: "2026-03-11"
-status: unresolved
-risk: high
-canonical_status: unknown
-action: hold_as_exception
+resolved: "2026-03-11"
+status: resolved
+risk: mitigated
+canonical_status: deployment_b
+action: retire_deployment_a
 owner: architecture
 resolution_required_before: hostname cutover / topology lock
+resolution_notes: >
+  Deployment B (rg-ipai-dev) declared canonical based on:
+  (1) Front Door already routes erp.insightpulseai.com → ipai-odoo-dev-web (Deployment B),
+  (2) 3-role spec (web/worker/cron) matches odoo-runtime.yaml and aca-odoo-services.bicep,
+  (3) Dedicated PG, ACR, and Key Vault provide proper isolation.
+  Deployment A (rg-ipai-agents-dev) is a retire candidate.
 
 # -----------------------------------------------------------------------------
 # Deployment A — rg-ipai-agents-dev (earlier, simpler split)
