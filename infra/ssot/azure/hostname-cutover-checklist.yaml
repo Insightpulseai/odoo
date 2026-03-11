@@ -360,7 +360,7 @@ waves:
 excluded:
   - hostname: ops.insightpulseai.com
     current_target: "CNAME cname.vercel-dns.com"
-    reason: "Vercel deployment — separate decision; already on Vercel infrastructure"
+    reason: "DEPRECATED (2026-03-11) — Vercel is no longer an active deployment surface. Remove DNS record."
 
   - hostname: agent.insightpulseai.com
     current_target: "CNAME wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run"
@@ -368,7 +368,7 @@ excluded:
 
   - hostname: mail.insightpulseai.com
     current_target: "A 178.128.112.214 (DNS-only, unproxied)"
-    reason: "Email infrastructure — mail routing record, not applicable to Front Door"
+    reason: "Email infrastructure — mail routing record. Must be removed or re-pointed when DO droplet is decommissioned. Zoho handles MX directly."
 
   - hostname: "*.mg.insightpulseai.com"
     current_target: "Various Mailgun records"
@@ -380,7 +380,7 @@ excluded:
 
   - hostname: console.insightpulseai.com
     current_target: "CNAME cname.vercel-dns.com (planned)"
-    reason: "Vercel deployment — lifecycle=planned, separate decision"
+    reason: "DEPRECATED (2026-03-11) — Vercel is no longer an active deployment surface. Do not provision."
 
   - hostname: api.insightpulseai.com
     current_target: "A 178.128.112.214 (planned)"
