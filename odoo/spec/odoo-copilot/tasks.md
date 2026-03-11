@@ -7,8 +7,8 @@ Each phase ends with a hard verification gate.
 
 ## Batch 0 — Phase B0.A: Platform Baseline Install
 ### Build
-- [x] Verify all 13 OCA modules exist in `addons/oca/` (cloned via git-aggregator)
-- [x] Confirm modules declared in `config/addons.manifest.yaml` tiers 0-6
+- [x] Verify all 13 OCA modules exist in `odoo/addons/oca/` (cloned via git-aggregator)
+- [x] Confirm modules declared in `odoo/config/addons.manifest.yaml` tiers 0-6
 
 ### Verification
 - [x] `--stop-after-init` install — 4/13 modules are 19.0 ready, 9/13 are migration gap (18.0)
@@ -112,7 +112,7 @@ and handles provider routing without the OCA module.
 
 ## Batch 1 — Phase B1.2: Prompt Registry Module
 ### Build
-- [x] Create `addons/ipai/ipai_ai_prompts/` module scaffold
+- [x] Create `odoo/addons/ipai/ipai_ai_prompts/` module scaffold
 - [x] Model: `ipai.ai.prompt` with fields (name, sequence, active, when_users_need_to, instructions, button_prompt, target_context, agent_id, topic_id, company_id)
 - [x] Views: tree + form + search
 - [x] Menu: AI Agents > Configuration > Default Prompts

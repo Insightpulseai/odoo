@@ -3,7 +3,7 @@
 > **Version**: 1.0.0
 > **Status**: Active
 > **Last Updated**: 2026-03-08
-> **Spec Bundle**: `spec/lakehouse/`
+> **Spec Bundle**: `docs/spec/lakehouse/`
 
 ---
 
@@ -30,10 +30,10 @@
 - [x] Implement `PipelineConfig` loader in `src/lakehouse/config.py`
 - [x] Implement env var expansion (`${VAR}`, `${VAR:-default}`) in config
 - [x] Create `src/lakehouse/__init__.py` with public API exports
-- [x] Create `scripts/lakehouse/validate_contracts.py` (CI validator, exit codes)
-- [x] Create `scripts/lakehouse/create_delta_tables_trino.sql` (hand-written DDL)
-- [x] Create `scripts/lakehouse/coverage_audit.py` with text/JSON output
-- [x] Create `scripts/lakehouse/mirror_gold_to_supabase.py` with Trino and Supabase clients
+- [x] Create `odoo/scripts/lakehouse/validate_contracts.py` (CI validator, exit codes)
+- [x] Create `odoo/scripts/lakehouse/create_delta_tables_trino.sql` (hand-written DDL)
+- [x] Create `odoo/scripts/lakehouse/coverage_audit.py` with text/JSON output
+- [x] Create `odoo/scripts/lakehouse/mirror_gold_to_supabase.py` with Trino and Supabase clients
 - [ ] Restore 4 contract YAML files to `contracts/delta/`:
   - [ ] `bronze_raw_pages.yaml`
   - [ ] `silver_normalized_docs.yaml`
@@ -61,7 +61,7 @@
 - [ ] Create Supabase migration for `rag.embeddings` table with pgvector column
 - [ ] Test `mirror_gold_to_supabase.py` against live Trino instance
 - [ ] Test upsert conflict resolution on primary key
-- [ ] Create `config/pipeline.yaml` with mirror configuration
+- [ ] Create `odoo/config/pipeline.yaml` with mirror configuration
 - [ ] Schedule mirror job via n8n cron
 - [ ] Add mirror monitoring (row count, last sync, error rate)
 
@@ -86,11 +86,11 @@
 
 - [x] `infra/lakehouse/README.md` -- Stack overview and quick start
 - [x] `docs/lakehouse/DATABRICKS_PARITY_MATRIX.md` -- Parity matrix (stub, expanded)
-- [x] `docs/portfolio/specs/lakehouse-control-room/prd.md` -- Control Room PRD
-- [x] `docs/portfolio/specs/lakehouse-control-room/plan.md` -- Control Room plan
-- [x] `spec/lakehouse/constitution.md` -- Non-negotiable rules
-- [x] `spec/lakehouse/prd.md` -- Product requirements
-- [x] `spec/lakehouse/plan.md` -- Implementation phases
-- [x] `spec/lakehouse/tasks.md` -- This task checklist
+- [x] `docs/portfolio/docs/specs/lakehouse-control-room/prd.md` -- Control Room PRD
+- [x] `docs/portfolio/docs/specs/lakehouse-control-room/plan.md` -- Control Room plan
+- [x] `docs/spec/lakehouse/constitution.md` -- Non-negotiable rules
+- [x] `docs/spec/lakehouse/prd.md` -- Product requirements
+- [x] `docs/spec/lakehouse/plan.md` -- Implementation phases
+- [x] `docs/spec/lakehouse/tasks.md` -- This task checklist
 - [x] `docs/lakehouse/ARCHITECTURE.md` -- Architecture document
 - [x] `docs/lakehouse/CONTRACTS.md` -- Contract system documentation

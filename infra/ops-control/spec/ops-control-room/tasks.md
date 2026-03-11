@@ -10,9 +10,9 @@
 
 ## T0 — Spec Kit + CI ✅ COMPLETE
 
-- [x] T0.1 Create `spec/ops-control-room/{constitution,prd,plan,tasks}.md`
+- [x] T0.1 Create `docs/spec/ops-control-room/{constitution,prd,plan,tasks}.md`
 - [x] T0.2 Add CI workflow to enforce Spec Kit presence + minimal structure
-- [x] T0.3 Add validator script `scripts/validate_spec_kit.py`
+- [x] T0.3 Add validator script `odoo/scripts/validate_spec_kit.py`
 - [x] T0.4 Test CI workflow locally
 - [x] T0.5 Document Spec Kit structure in README
 

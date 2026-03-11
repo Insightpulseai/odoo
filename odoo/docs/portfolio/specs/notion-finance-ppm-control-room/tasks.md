@@ -169,10 +169,10 @@
 ## Phase 8: Verification & Documentation
 
 ### 8.1 Scripts
-- [x] Create scripts/notion-ppm/dev_up.sh
-- [x] Create scripts/notion-ppm/run_notion_sync.sh
-- [x] Create scripts/notion-ppm/dab_deploy.sh
-- [x] Create scripts/notion-ppm/health_check.sh
+- [x] Create odoo/scripts/notion-ppm/dev_up.sh
+- [x] Create odoo/scripts/notion-ppm/run_notion_sync.sh
+- [x] Create odoo/scripts/notion-ppm/dab_deploy.sh
+- [x] Create odoo/scripts/notion-ppm/health_check.sh
 
 ### 8.2 Documentation
 - [x] Create docs/notion-ppm/architecture.md
