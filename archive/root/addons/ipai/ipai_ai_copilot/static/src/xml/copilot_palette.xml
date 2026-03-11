@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+  <!-- ── Command Palette ────────────────────────────────────────────────────── -->
+  <t t-name="ipai_ai_copilot.CopilotPalette">
+    <t t-if="localState.open">
+      <!-- Overlay backdrop — click to close -->
+      <div class="ipai-copilot-palette-overlay" t-on-click="onOverlayClick">
+        <!-- Palette card -->
+        <div class="ipai-copilot-palette">
+          <!-- Input row -->
+          <div class="d-flex align-items-center gap-2 px-3 py-2">
+            <i class="fa fa-magic text-primary fa-lg flex-shrink-0"/>
+            <input
+              type="text"
+              class="form-control border-0 shadow-none"
+              placeholder="Ask IPAI Copilot anything…"
+              t-ref="input"
+              t-model="localState.query"
+              t-on-keydown="onKeydown"
+              autocomplete="off"
+              style="font-size:1.05rem;padding:8px 0"/>
+            <kbd class="flex-shrink-0" style="font-size:0.7rem;background:#f1f3f5;padding:2px 6px;border-radius:4px;border:1px solid #dee2e6">⏎</kbd>
+          </div>
+
+          <!-- Quick action hints -->
+          <div class="border-top px-3 py-2 d-flex flex-wrap gap-2" style="font-size:0.72rem;color:#6c757d">
+            <span>Examples:</span>
+            <button class="btn btn-link p-0" style="font-size:0.72rem"
+                    t-on-click="() => { localState.query = 'Create quotation for Acme Corp'; }">
+              Create quotation for Acme Corp
+            </button>
+            <span>·</span>
+            <button class="btn btn-link p-0" style="font-size:0.72rem"
+                    t-on-click="() => { localState.query = 'Show overdue invoices'; }">
+              Show overdue invoices
+            </button>
+            <span>·</span>
+            <button class="btn btn-link p-0" style="font-size:0.72rem"
+                    t-on-click="() => { localState.query = 'Check stock for Product X'; }">
+              Check stock for Product X
+            </button>
+          </div>
+
+          <!-- Keyboard hints -->
+          <div class="border-top px-3 py-1 d-flex justify-content-between" style="font-size:0.68rem;color:#adb5bd">
+            <span><kbd style="font-size:0.65rem;background:#f8f9fa;padding:1px 4px;border-radius:3px;border:1px solid #dee2e6">Esc</kbd> to close</span>
+            <span><kbd style="font-size:0.65rem;background:#f8f9fa;padding:1px 4px;border-radius:3px;border:1px solid #dee2e6">Ctrl+Space</kbd> to reopen</span>
+          </div>
+        </div>
+      </div>
+    </t>
+  </t>
+
+</templates>

@@ -1,0 +1,162 @@
+Project ee_parity_ssot {
+  database_type: "PostgreSQL"
+  Note: "Enterprise-parity SSOT: Odoo EE feature -> CE/OCA replacement mapping + install plan + verification"
+}
+
+Table parity_feature {
+  id uuid [pk]
+  code text [unique, not null] // e.g. "account_asset", "sign", "helpdesk_sla", "studio"
+  name text [not null]
+  domain text [not null] // "accounting", "hr", "projects", "docs", "automation", "sign", "iot", ...
+  ee_only boolean [not null, default: true]
+  description text
+  canonical_url text
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_requirement {
+  id uuid [pk]
+  feature_id uuid [not null, ref: > parity_feature.id]
+  req_code text [not null] // e.g. "workflow", "ui", "api", "reporting", "security", "perf"
+  title text [not null]
+  description text
+  priority int [not null, default: 2] // 0=must,1=should,2=could
+  acceptance_criteria text
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_solution {
+  id uuid [pk]
+  code text [unique, not null] // "oca_account_asset", "oca_document_page", "ipai_sign_bridge"
+  kind text [not null] // "oca_module" | "ce_core" | "ipai_bridge" | "external_service" | "config"
+  name text [not null]
+  repo_url text
+  module_name text // for odoo addons if applicable
+  version_range text // e.g. "18.0.*"
+  license text // "LGPL-3", "AGPL-3", ...
+  notes text
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_mapping {
+  id uuid [pk]
+  feature_id uuid [not null, ref: > parity_feature.id]
+  requirement_id uuid [ref: > parity_requirement.id] // optional: map at requirement granularity
+  solution_id uuid [not null, ref: > parity_solution.id]
+  coverage_level int [not null] // 0 none, 1 partial, 2 near parity, 3 full parity
+  delta_type text [not null] // "ui_delta"|"workflow_delta"|"perf_delta"|"security_delta"|"data_delta"|"none"
+  rationale text
+  risk_level int [not null, default: 2] // 0 low, 1 med, 2 high
+  status text [not null, default: "planned"] // planned|implemented|validated|blocked|deprecated
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (feature_id, solution_id) [unique]
+  }
+}
+
+Table parity_constraint {
+  id uuid [pk]
+  feature_id uuid [ref: > parity_feature.id]
+  solution_id uuid [ref: > parity_solution.id]
+  scope text [not null] // "runtime"|"hosting"|"licensing"|"security"|"upgrade"
+  title text [not null]
+  description text
+  severity text [not null] // info|warn|error
+  mitigations text
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_install_plan {
+  id uuid [pk]
+  name text [not null] // "Odoo 18 CE + OCA parity baseline"
+  odoo_major text [not null] // "18.0"
+  strategy text [not null] // "ce+oca+minimal_ipai"
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_install_step {
+  id uuid [pk]
+  plan_id uuid [not null, ref: > parity_install_plan.id]
+  seq int [not null]
+  solution_id uuid [not null, ref: > parity_solution.id]
+  depends_on_solution_id uuid [ref: > parity_solution.id]
+  install_mode text [not null] // "addons_path"|"submodule"|"pip"|"config"|"edge_function"
+  post_install_notes text
+  Indexes {
+    (plan_id, seq) [unique]
+  }
+}
+
+Table parity_verification_suite {
+  id uuid [pk]
+  code text [unique, not null] // "ee_parity_smoke", "accounting_close", "docs_signing"
+  name text [not null]
+  description text
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table parity_test_case {
+  id uuid [pk]
+  suite_id uuid [not null, ref: > parity_verification_suite.id]
+  feature_id uuid [ref: > parity_feature.id]
+  requirement_id uuid [ref: > parity_requirement.id]
+  code text [not null] // "TC-ACC-ASSET-001"
+  title text [not null]
+  type text [not null] // "odoo_pytest"|"odoo_js"|"http"|"xmlrpc"|"sql"|"manual_scripted"
+  steps text
+  expected text
+  tags text
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (suite_id, code) [unique]
+  }
+}
+
+Table parity_run {
+  id uuid [pk]
+  suite_id uuid [not null, ref: > parity_verification_suite.id]
+  environment text [not null] // dev|stage|prod
+  git_sha text
+  started_at timestamptz [not null, default: `now()`]
+  finished_at timestamptz
+  status text [not null, default: "running"] // running|passed|failed|skipped
+  notes text
+}
+
+Table parity_run_result {
+  id uuid [pk]
+  run_id uuid [not null, ref: > parity_run.id]
+  test_case_id uuid [not null, ref: > parity_test_case.id]
+  status text [not null] // passed|failed|skipped
+  evidence_url text
+  error text
+  duration_ms int
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (run_id, test_case_id) [unique]
+  }
+}
+
+Table parity_runtime_evidence {
+  id uuid [pk]
+  environment text [not null] // dev|stage|prod
+  collected_at timestamptz [not null, default: `now()`]
+  kind text [not null] // "modules"|"views"|"models"|"actions"|"crons"|"endpoints"|"db"
+  payload_json jsonb [not null]
+}
+
+Table parity_model_map {
+  id uuid [pk]
+  solution_id uuid [not null, ref: > parity_solution.id]
+  odoo_model text [not null] // e.g. "account.move", "hr.expense"
+  table_name text // if known; else null (odoo ORM derives)
+  notes text
+  Indexes {
+    (solution_id, odoo_model) [unique]
+  }
+}

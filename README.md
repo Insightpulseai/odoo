@@ -7,10 +7,10 @@
 - **Status**: Active
 - **Class**: Runtime / Platform Core
 - **Tier**: Tier 0
-- **Workspace Role**: Canonical ERP runtime and deployment/governance anchor for InsightPulseAI
+- **Workspace Role**: Canonical ERP runtime repository for InsightPulseAI
 - **Primary Owner Team**: `erp` + `platform-core`
 - **Lifecycle**: Production / Canonical
-- **Current Constraint**: Progressive decomposition required for non-ERP platform artifacts
+- **Current Constraint**: Repository contains transitional cross-domain artifacts pending decomposition into org-level owning repositories
 
 ---
 
@@ -219,9 +219,20 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ### SSOT Boundary
 
-This repository is the canonical SSOT for the **ERP runtime layer**.
+This repository is the canonical source of truth for the Odoo ERP runtime layer only.
 
-It may temporarily contain cross-domain platform artifacts, but those do not redefine this repository as the workspace root or global platform monorepo. The GitHub organization is the workspace root; this repo remains the canonical home for Odoo runtime and ERP delivery concerns.
+It may temporarily contain shared or cross-domain artifacts that were created during earlier platform consolidation phases. Those artifacts do not redefine this repository as the workspace root, organization root, or full platform monorepo.
+
+Authoritative ownership boundaries are:
+
+- ERP runtime, Odoo config, addon stacks, ERP deployment contracts: `odoo`
+- Supabase control plane and platform SSOT: `ops-platform`
+- Databricks/lakehouse analytics and intelligence: `lakehouse`
+- Shared infrastructure and edge: `infra`
+- Shared web surfaces and docs sites outside ERP: `web`
+- Shared agent/skills/orchestration assets: `agents`
+- Shared automation/runbooks: `automations`
+- Shared design tokens/components/assets: `design-system`
 
 ---
 
@@ -239,7 +250,7 @@ It may temporarily contain cross-domain platform artifacts, but those do not red
 | `addons/ipai/` | Integration bridge connectors only (thin adapters) | IPAI/Backend |
 | `supabase/` | Control plane SSOT, ops.* tables | Platform/DB |
 | `automations/` | n8n workflows, runbooks, audits | DevOps/Automations |
-| `infra/` | Cloudflare/DO/Vercel/IaC + drift detection | DevOps/Infra |
+| `infra/` | Cloudflare/DO/Azure/IaC + drift detection | DevOps/Infra |
 | `config/` | Odoo config per environment (dev/staging/prod) | DevOps |
 | `docker/` | Docker images, compose templates, entrypoints | DevOps |
 | `design/` | tokens.json SSOT + extracted assets | Design/Frontend |
@@ -392,6 +403,15 @@ Decomposition must be incremental and must not break production runtime, CI cont
 ---
 
 ## Module Architecture
+
+Canonical package classification is maintained in:
+
+- `ssot/odoo/package-classification.yaml`
+
+This file defines:
+- canonical install targets
+- optional domain packages
+- deprecation review policy for unclassified `ipai_*` modules
 
 ### Canonical Stack (Install These)
 
@@ -562,7 +582,6 @@ CI enforces:
 | `repo-structure.yml` | Repo tree consistency |
 | `spec-kit-enforce.yml` | Spec bundle validation |
 | `infra-validate.yml` | Infrastructure templates |
-| `auto-sitemap-tree.yml` | Auto-update SITEMAP.md/TREE.md |
 
 If CI fails, reproduce locally by running the same generator commands + `git diff --exit-code` checks above.
 

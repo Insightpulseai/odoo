@@ -1,0 +1,87 @@
+// TBWA Backend Theme for Odoo CE
+// Black chrome + yellow primary accent
+
+:root {
+    --tbwa-black: #0b0b0b;
+    --tbwa-yellow: #ffc400;       /* set to #f8d421 for exact screenshot match */
+    --tbwa-yellow-hover: #e5ae00;
+
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --border: #eaeaea;
+
+    --text: #111111;
+    --muted: #6b6b6b;
+
+    --ring: rgba(255, 196, 0, 0.45);
+}
+
+/* Odoo vars (best-effort) */
+$o-brand-primary: #0b0b0b !default; /* chrome */
+$o-brand-odoo: #ffc400 !default;    /* accent */
+
+.o_web_client,
+.o_action_manager,
+.o_content {
+    background: var(--bg) !important;
+    color: var(--text);
+}
+
+/* Top chrome */
+.o_main_navbar {
+    background: var(--tbwa-black) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.o_main_navbar,
+.o_main_navbar a,
+.o_main_navbar .dropdown-toggle,
+.o_main_navbar .o_menu_brand {
+    color: #fff !important;
+}
+
+.o_main_navbar .o_menu_systray .dropdown-toggle:hover,
+.o_main_navbar .o_menu_systray .dropdown-toggle:focus {
+    background: rgba(255, 196, 0, 0.10) !important;
+}
+
+/* Primary CTA */
+.btn-primary,
+.btn-primary:active,
+.btn-primary:focus {
+    background: var(--tbwa-yellow) !important;
+    border-color: var(--tbwa-yellow) !important;
+    color: var(--text) !important;
+}
+
+.btn-primary:hover {
+    background: var(--tbwa-yellow-hover) !important;
+    border-color: var(--tbwa-yellow-hover) !important;
+}
+
+/* Cards / surfaces */
+.o_kanban_record,
+.o_kanban_view .oe_kanban_card,
+.o_form_view,
+.o_list_view,
+.o_control_panel {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+}
+
+.o_kanban_record,
+.o_kanban_view .oe_kanban_card {
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Focus ring */
+:focus {
+    outline: none !important;
+}
+
+*:focus-visible {
+    box-shadow: 0 0 0 3px var(--ring) !important;
+    border-radius: 10px;
+}

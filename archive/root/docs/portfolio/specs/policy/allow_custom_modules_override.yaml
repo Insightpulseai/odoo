@@ -1,0 +1,30 @@
+# Override file for custom modules outside the standard allowlist
+#
+# Use this file to document and approve custom modules that don't fit
+# the standard categories but are still justified.
+#
+# Each override requires:
+# - Detailed justification
+# - Decision test validation (all 5 criteria)
+# - Architecture review board approval
+# - 6-month review date
+
+schema_version: "1.0.0"
+
+overrides: []
+  # Example override entry:
+  # - module_id: "ipai_special_integration"
+  #   category: "platform_glue"
+  #   justification: |
+  #     This module integrates with a legacy system that has no OCA equivalent.
+  #     It provides a thin adapter layer without business logic.
+  #   decision_test_satisfied:
+  #     no_new_domain_app: true
+  #     thin_adapter: true
+  #     upstream_ineligible: true
+  #     composable: true
+  #     auditable_deterministic: true
+  #   approved_by: "architecture_review_board"
+  #   approved_date: "2026-02-11"
+  #   review_date: "2026-08-11"
+  #   notes: "Review for deprecation when OCA releases equivalent module"

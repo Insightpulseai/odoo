@@ -1,4 +1,4 @@
-# spec/continue-orchestrator/tasks.md
+# docs/spec/continue-orchestrator/tasks.md
 
 ## Task conventions
 - IDs are stable.
@@ -10,7 +10,7 @@
 - Scope: repo scaffolding for spec bundle
 - Owner: platform
 - Deps: none
-- Acceptance: spec/continue-orchestrator/* exists and passes markdown lint
+- Acceptance: docs/spec/continue-orchestrator/* exists and passes markdown lint
 
 ### T-010 Run Ledger schema + storage
 - Scope: define tables/collections for runs/run_events/artifacts/approvals

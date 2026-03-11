@@ -1,0 +1,81 @@
+# Inventory — Transactional Benchmark Scenarios
+
+scenarios:
+  - id: "BM-INV-T-001"
+    domain: inventory
+    capability_class: transactional
+    persona: inv_operator
+    prompt: "Validate the incoming receipt WH/IN/00034"
+    setup:
+      seed_records:
+        - model: stock.picking
+          values: { name: "WH/IN/00034", picking_type_code: "incoming", state: "assigned" }
+    expected_behavior:
+      type: action
+      model: stock.picking
+      method: button_validate
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+      confirmation_required: true
+      audit_trace: true
+    soft_scores:
+      completeness: { weight: 0.40 }
+      clarity: { weight: 0.20 }
+      latency: { target_ms: 10000, weight: 0.10 }
+    tags: [inventory, receipt, validate]
+
+  - id: "BM-INV-T-002"
+    domain: inventory
+    capability_class: transactional
+    persona: inv_operator
+    prompt: "Create an inventory adjustment adding 50 units of SKU-A to WH/Stock"
+    setup:
+      seed_records:
+        - model: product.product
+          values: { name: "SKU-A", type: "product" }
+    expected_behavior:
+      type: create
+      model: stock.quant
+      method: action_apply_inventory
+      fields:
+        product_id: "SKU-A"
+        inventory_quantity: 50
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+      confirmation_required: true
+      audit_trace: true
+    soft_scores:
+      completeness: { weight: 0.40 }
+      clarity: { weight: 0.20 }
+      latency: { target_ms: 10000, weight: 0.10 }
+    tags: [inventory, adjustment, create]
+
+  - id: "BM-INV-T-003"
+    domain: inventory
+    capability_class: transactional
+    persona: inv_operator
+    prompt: "Create an internal transfer of 20 units of SKU-B from WH/Stock to WH/Packing"
+    setup:
+      seed_records:
+        - model: product.product
+          values: { name: "SKU-B", type: "product" }
+    expected_behavior:
+      type: create
+      model: stock.picking
+      fields:
+        picking_type_code: "internal"
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+      confirmation_required: true
+      audit_trace: true
+    soft_scores:
+      completeness: { weight: 0.40 }
+      clarity: { weight: 0.20 }
+      latency: { target_ms: 10000, weight: 0.10 }
+    tags: [inventory, internal-transfer, create]

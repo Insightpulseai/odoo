@@ -1,0 +1,112 @@
+// IPAI Neutral Theme Tokens
+// Professional gray/colorless design - no brand colors
+// Use: body.ipai-theme-neutral
+
+body.ipai-theme-neutral {
+  // ============================================================================
+  // PRIMARY COLORS (Neutral Gray)
+  // ============================================================================
+
+  --tbwa-yellow-500: #6B7280;     // Gray-500 (replaces yellow)
+  --tbwa-yellow-400: #9CA3AF;     // Gray-400
+  --tbwa-yellow-200: #F3F4F6;     // Gray-100
+  --tbwa-black: #111827;          // Gray-900
+  --tbwa-ink: #1F2937;            // Gray-800
+
+  // ============================================================================
+  // SURFACE COLORS
+  // ============================================================================
+
+  --tbwa-bg: #F9FAFB;             // Gray-50
+  --tbwa-surface: #FFFFFF;
+  --tbwa-surface-warm: #F3F4F6;   // Gray-100 (no yellow tint)
+  --tbwa-surface-soft: #E5E7EB;   // Gray-200
+
+  // ============================================================================
+  // BORDER COLORS
+  // ============================================================================
+
+  --tbwa-border: #E5E7EB;         // Gray-200
+  --tbwa-border-strong: #D1D5DB;  // Gray-300
+
+  // ============================================================================
+  // TEXT COLORS
+  // ============================================================================
+
+  --tbwa-text: #374151;           // Gray-700
+  --tbwa-text-muted: #6B7280;     // Gray-500
+  --tbwa-text-inverse: #FFFFFF;
+
+  // ============================================================================
+  // SIDEBAR (Light Gray Theme)
+  // ============================================================================
+
+  --tbwa-sidebar-bg: #1F2937;           // Gray-800
+  --tbwa-sidebar-surface: #374151;      // Gray-700
+  --tbwa-sidebar-text: #F9FAFB;         // Gray-50
+  --tbwa-sidebar-muted: #9CA3AF;        // Gray-400
+  --tbwa-sidebar-active-bg: #374151;    // Gray-700
+  --tbwa-sidebar-active-border: #6B7280; // Gray-500
+
+  // ============================================================================
+  // SEMANTIC COLORS (Keep for status indicators)
+  // ============================================================================
+
+  --tbwa-primary: #6B7280;        // Gray-500 (neutral primary)
+  --tbwa-primary-hover: #4B5563;  // Gray-600
+  --tbwa-primary-ink: #FFFFFF;
+  --tbwa-focus: #6B7280;
+
+  --tbwa-success: #10B981;        // Keep green
+  --tbwa-warning: #F59E0B;        // Keep amber
+  --tbwa-danger: #EF4444;         // Keep red
+
+  // ============================================================================
+  // ODOO OVERRIDES
+  // ============================================================================
+
+  --o-color-primary: var(--tbwa-primary);
+  --o-color-primary-light: var(--tbwa-yellow-400);
+  --o-brand-primary: var(--tbwa-primary);
+  --o-brand-odoo: var(--tbwa-primary);
+
+  // ============================================================================
+  // BUTTON TOKENS (Gray)
+  // ============================================================================
+
+  --tbwa-btn-primary-bg: var(--tbwa-primary);
+  --tbwa-btn-primary-text: var(--tbwa-primary-ink);
+  --tbwa-btn-primary-hover: var(--tbwa-primary-hover);
+
+  --tbwa-btn-secondary-bg: var(--tbwa-surface);
+  --tbwa-btn-secondary-text: var(--tbwa-ink);
+  --tbwa-btn-secondary-border: var(--tbwa-border-strong);
+  --tbwa-btn-secondary-hover-bg: var(--tbwa-surface-soft);
+
+  // ============================================================================
+  // CHART COLORS (Neutral palette)
+  // ============================================================================
+
+  --tbwa-chart-emphasis: var(--tbwa-primary);
+  --tbwa-chart-fill-soft: rgba(107, 114, 128, 0.18);
+
+  --tbwa-chart-category-1: #111827;
+  --tbwa-chart-category-2: #6B7280;
+  --tbwa-chart-category-3: #10B981;
+  --tbwa-chart-category-4: #EF4444;
+  --tbwa-chart-category-5: #3B82F6;
+
+  // ============================================================================
+  // NAV ITEM TOKENS
+  // ============================================================================
+
+  --tbwa-nav-item-hover: rgba(255, 255, 255, 0.1);
+  --tbwa-nav-item-active-bg: var(--tbwa-sidebar-active-bg);
+  --tbwa-nav-item-active-border: var(--tbwa-sidebar-active-border);
+
+  // ============================================================================
+  // SHADOW (Focus ring - gray)
+  // ============================================================================
+
+  --tbwa-shadow-focus: 0 0 0 3px rgba(107, 114, 128, 0.25);
+}

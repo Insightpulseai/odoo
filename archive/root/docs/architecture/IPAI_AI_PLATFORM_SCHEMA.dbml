@@ -1,0 +1,374 @@
+// IPAI AI Platform Schema - DBML
+// Generated: 2025-01-06
+// Purpose: Complete data model for IPAI AI Platform on Odoo CE/OCA 18
+//
+// Render at: https://dbdiagram.io/
+
+// =============================================================================
+// Odoo Core Tables (Reference)
+// =============================================================================
+
+Table res_company {
+  id integer [pk, increment]
+  name varchar [not null]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Odoo core company model'
+}
+
+Table res_users {
+  id integer [pk, increment]
+  name varchar [not null]
+  login varchar [not null, unique]
+  company_id integer [ref: > res_company.id]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Odoo core user model'
+}
+
+Table project_project {
+  id integer [pk, increment]
+  name varchar [not null]
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id]
+  user_id integer [ref: > res_users.id]
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Odoo Project model - linked to workspace'
+}
+
+Table project_task {
+  id integer [pk, increment]
+  name varchar [not null]
+  description text
+  project_id integer [ref: > project_project.id]
+  user_ids varchar // Many2many serialized
+  stage_id integer
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Odoo Task model - indexed to KB'
+}
+
+Table mail_channel {
+  id integer [pk, increment]
+  name varchar [not null]
+  channel_type varchar
+  create_date timestamp
+  write_date timestamp
+
+  Note: 'Odoo Discuss channel - linked to workspace'
+}
+
+Table mail_message {
+  id integer [pk, increment]
+  model varchar
+  res_id integer
+  body text
+  author_id integer [ref: > res_users.id]
+  create_date timestamp
+
+  Note: 'Odoo mail message - optionally indexed to KB'
+}
+
+// =============================================================================
+// IPAI AI Core Tables
+// =============================================================================
+
+Table ipai_ai_provider {
+  id integer [pk, increment]
+  name varchar [not null]
+  sequence integer [default: 10]
+  provider_type varchar [not null, note: 'kapa|openai|anthropic|ollama']
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id, not null]
+  is_default boolean [default: false]
+
+  // Configuration (stored in separate config model or ir.config_parameter)
+  // api_key, base_url, model_name are NOT stored here for security
+
+  // Statistics
+  total_requests integer [default: 0]
+  total_tokens integer [default: 0]
+  avg_latency_ms float [default: 0.0]
+
+  create_date timestamp
+  write_date timestamp
+
+  indexes {
+    (company_id, is_default) [name: 'idx_provider_company_default']
+  }
+
+  Note: 'AI Provider registry - one default per company'
+}
+
+Table ipai_ai_thread {
+  id integer [pk, increment]
+  name varchar [note: 'Computed from first user message']
+  provider_id integer [ref: > ipai_ai_provider.id, not null]
+  company_id integer [ref: > res_company.id, note: 'Related from provider']
+  external_thread_id varchar [note: 'External provider thread ID']
+  user_id integer [ref: > res_users.id, not null]
+  state varchar [default: 'active', note: 'active|closed']
+  message_count integer [default: 0, note: 'Computed']
+
+  create_date timestamp
+  write_date timestamp
+
+  indexes {
+    user_id [name: 'idx_thread_user']
+    provider_id [name: 'idx_thread_provider']
+    external_thread_id [name: 'idx_thread_external']
+  }
+
+  Note: 'AI conversation thread'
+}
+
+Table ipai_ai_message {
+  id integer [pk, increment]
+  thread_id integer [ref: > ipai_ai_thread.id, not null]
+  role varchar [not null, note: 'user|assistant|system']
+  content text [not null]
+
+  // Provider metadata
+  provider_latency_ms integer
+  provider_status varchar
+  confidence float [note: '0.0 to 1.0']
+  tokens_used integer
+
+  citation_count integer [default: 0, note: 'Computed']
+
+  create_date timestamp
+
+  indexes {
+    thread_id [name: 'idx_message_thread']
+    (thread_id, create_date) [name: 'idx_message_thread_date']
+  }
+
+  Note: 'Individual message in AI thread'
+}
+
+Table ipai_ai_citation {
+  id integer [pk, increment]
+  message_id integer [ref: > ipai_ai_message.id, not null]
+  rank integer [default: 1]
+
+  source_id varchar [note: 'External source identifier']
+  title varchar
+  url varchar
+  snippet text
+  score float [note: 'Relevance score from provider']
+
+  indexes {
+    message_id [name: 'idx_citation_message']
+    (message_id, rank) [name: 'idx_citation_message_rank']
+  }
+
+  Note: 'Source citation for AI message'
+}
+
+Table ipai_ai_prompt {
+  id integer [pk, increment]
+  name varchar [not null]
+  code varchar [unique, note: 'Unique identifier for lookup']
+  template text [not null]
+  variables_json text [note: 'JSON array of variable names']
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id]
+
+  create_date timestamp
+  write_date timestamp
+
+  indexes {
+    code [name: 'idx_prompt_code']
+  }
+
+  Note: 'Reusable prompt templates'
+}
+
+Table ipai_ai_audit {
+  id integer [pk, increment]
+  operation varchar [not null, note: 'ask|search|feedback']
+  provider_id integer [ref: > ipai_ai_provider.id]
+  user_id integer [ref: > res_users.id, not null]
+  thread_id integer [ref: > ipai_ai_thread.id]
+  message_id integer [ref: > ipai_ai_message.id]
+
+  request_json text
+  response_json text
+  latency_ms integer
+  status varchar [note: 'success|error|timeout']
+  error_message text
+
+  create_date timestamp
+
+  indexes {
+    user_id [name: 'idx_audit_user']
+    provider_id [name: 'idx_audit_provider']
+    create_date [name: 'idx_audit_date']
+    (operation, status) [name: 'idx_audit_op_status']
+  }
+
+  Note: 'AI operation audit log'
+}
+
+// =============================================================================
+// IPAI AI Connectors Tables
+// =============================================================================
+
+Table ipai_ai_event {
+  id integer [pk, increment]
+  source varchar [not null, note: 'n8n|github|slack|webhook']
+  event_type varchar [not null, note: 'e.g., issue.created, push']
+  ref varchar [note: 'External reference ID']
+  payload_json text [note: 'Full event payload']
+
+  processed boolean [default: false]
+  processed_date timestamp
+  processor_id integer [ref: > res_users.id]
+  notes text
+
+  create_date timestamp
+
+  indexes {
+    source [name: 'idx_event_source']
+    event_type [name: 'idx_event_type']
+    (processed, create_date) [name: 'idx_event_pending']
+  }
+
+  Note: 'Inbound integration event'
+}
+
+// =============================================================================
+// IPAI Workspace Tables
+// =============================================================================
+
+Table ipai_workspace {
+  id integer [pk, increment]
+  name varchar [not null]
+  description text
+  visibility varchar [not null, default: 'private', note: 'private|internal|public']
+  company_id integer [ref: > res_company.id, not null]
+
+  // Linked objects (created automatically)
+  project_id integer [ref: > project_project.id]
+  channel_id integer [ref: > mail_channel.id]
+
+  active boolean [default: true]
+
+  create_date timestamp
+  write_date timestamp
+  create_uid integer [ref: > res_users.id]
+
+  indexes {
+    company_id [name: 'idx_workspace_company']
+    visibility [name: 'idx_workspace_visibility']
+  }
+
+  Note: 'Workspace/Space container (Notion teamspace equivalent)'
+}
+
+Table ipai_workspace_member {
+  id integer [pk, increment]
+  workspace_id integer [ref: > ipai_workspace.id, not null]
+  user_id integer [ref: > res_users.id, not null]
+  role varchar [not null, default: 'member', note: 'member|admin|owner']
+
+  create_date timestamp
+  write_date timestamp
+
+  indexes {
+    (workspace_id, user_id) [unique, name: 'idx_member_unique']
+    user_id [name: 'idx_member_user']
+  }
+
+  Note: 'Workspace membership and role'
+}
+
+// =============================================================================
+// Supabase KB Tables (External - Reference Only)
+// =============================================================================
+
+Table kb_chunks {
+  id bigint [pk, increment]
+  tenant_ref varchar [not null, note: 'e.g., odoo_company:1']
+  source_type varchar [not null, note: 'odoo_task|odoo_kb|odoo_message|github|docs']
+  source_ref varchar [not null, note: 'e.g., project.task:123']
+
+  title varchar
+  url varchar
+  content text [not null]
+  embedding varchar [note: 'vector(1536) - pgvector type']
+
+  updated_at timestamp [default: `now()`]
+
+  indexes {
+    (tenant_ref, source_type, source_ref) [unique, name: 'kb_chunks_uq']
+    tenant_ref [name: 'idx_chunks_tenant']
+    embedding [note: 'ivfflat vector index']
+  }
+
+  Note: '''
+    Supabase KB chunks table (external)
+    - Stores indexed content for RAG retrieval
+    - Vector search via pgvector
+    - Upserted by ipai_ai_sources_odoo exporter
+  '''
+}
+
+// =============================================================================
+// Relationships Summary
+// =============================================================================
+
+// AI Core
+Ref: ipai_ai_thread.provider_id > ipai_ai_provider.id
+Ref: ipai_ai_thread.user_id > res_users.id
+Ref: ipai_ai_message.thread_id > ipai_ai_thread.id
+Ref: ipai_ai_citation.message_id > ipai_ai_message.id
+
+// Audit
+Ref: ipai_ai_audit.provider_id > ipai_ai_provider.id
+Ref: ipai_ai_audit.user_id > res_users.id
+Ref: ipai_ai_audit.thread_id > ipai_ai_thread.id
+Ref: ipai_ai_audit.message_id > ipai_ai_message.id
+
+// Workspace
+Ref: ipai_workspace.company_id > res_company.id
+Ref: ipai_workspace.project_id > project_project.id
+Ref: ipai_workspace.channel_id > mail_channel.id
+Ref: ipai_workspace_member.workspace_id > ipai_workspace.id
+Ref: ipai_workspace_member.user_id > res_users.id
+
+// =============================================================================
+// Notes
+// =============================================================================
+
+/*
+Data Flow:
+
+1. User asks question via AI Panel
+2. ipai_ai_thread created/updated
+3. ipai_ai_message (user) created
+4. Service calls Supabase KB for evidence
+5. Service calls LLM provider
+6. ipai_ai_message (assistant) created with citations
+7. ipai_ai_audit logs the operation
+
+KB Indexing Flow:
+
+1. Cron runs ipai_ai_sources_odoo exporter
+2. Recent project.task, document.page exported
+3. Content chunked and embedded
+4. Upserted to kb_chunks via Supabase REST API
+
+Workspace Flow:
+
+1. User creates workspace via wizard
+2. ipai_workspace created
+3. project_project, mail_channel created automatically
+4. ipai_workspace_member created for owner
+5. Record rules generated based on membership
+*/

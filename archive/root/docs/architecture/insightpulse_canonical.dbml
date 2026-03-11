@@ -1,0 +1,849 @@
+// ============================================================================
+// InsightPulse AI - Canonical Multi-Tenant ERP SaaS Schema
+// DBML (Database Markup Language) for ERD visualization
+// https://dbml.dbdiagram.io/
+// ============================================================================
+// 
+// Architecture: Each tenant gets their own PostgreSQL database
+// This schema defines the MASTER control plane + TENANT template
+//
+// ============================================================================
+
+// ============================================================================
+// CONTROL PLANE DATABASE (insightpulse_master)
+// Manages all tenants, subscriptions, and platform operations
+// ============================================================================
+
+Project InsightPulse_ControlPlane {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # InsightPulse AI Control Plane
+    
+    Master database for tenant management, billing, and platform operations.
+    Each tenant gets a separate database cloned from the template.
+    
+    ## Multi-Tenancy Model
+    - **Database-per-tenant**: Full isolation, separate PostgreSQL databases
+    - **Tenant can become Provider**: Recursive tenant hierarchy
+    - **Self-hosted option**: Clients can run their own instance
+  '''
+}
+
+// -----------------------------------------------------------------------------
+// TENANT & ORGANIZATION MANAGEMENT
+// -----------------------------------------------------------------------------
+
+Table tenants {
+  id uuid [pk, default: `gen_random_uuid()`]
+  code varchar(50) [unique, not null, note: 'URL-safe identifier (e.g., tbwa-smp)']
+  name varchar(255) [not null]
+  legal_name varchar(255) [note: 'Official registered business name']
+  
+  // Tenant Type
+  tenant_type tenant_type_enum [not null, default: 'client']
+  
+  // Hierarchy (for sub-tenants / white-label)
+  parent_tenant_id uuid [ref: > tenants.id, note: 'For sub-tenants/white-label']
+  
+  // Database Connection
+  db_host varchar(255) [not null]
+  db_port integer [default: 5432]
+  db_name varchar(100) [not null]
+  db_user varchar(100) [not null]
+  db_password_encrypted text [not null, note: 'AES-256 encrypted']
+  
+  // Status
+  status tenant_status_enum [not null, default: 'provisioning']
+  provisioned_at timestamptz
+  
+  // Subscription
+  plan_id uuid [ref: > subscription_plans.id]
+  subscription_status subscription_status_enum [default: 'trial']
+  trial_ends_at timestamptz
+  
+  // Feature Flags
+  features jsonb [default: '{}', note: 'Tenant-specific feature toggles']
+  
+  // Branding (for white-label)
+  branding jsonb [default: '{}', note: '{"logo_url", "primary_color", "domain"}']
+  custom_domain varchar(255) [note: 'Custom domain for white-label']
+  
+  // Metadata
+  settings jsonb [default: '{}']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  deleted_at timestamptz [note: 'Soft delete']
+  
+  indexes {
+    code [unique]
+    parent_tenant_id
+    status
+    (tenant_type, status)
+  }
+  
+  Note: '''
+    Core tenant record. Each tenant gets:
+    - Separate PostgreSQL database
+    - Separate Superset workspace (optional)
+    - Separate Odoo database
+  '''
+}
+
+Enum tenant_type_enum {
+  platform_owner [note: 'InsightPulse AI (you)']
+  provider [note: 'Reseller/white-label partner']
+  client [note: 'End customer']
+  internal [note: 'Internal testing/demo']
+}
+
+Enum tenant_status_enum {
+  provisioning [note: 'Database being created']
+  active
+  suspended [note: 'Payment issue or violation']
+  archived [note: 'Soft deleted, data retained']
+  deleted [note: 'Hard delete scheduled']
+}
+
+Enum subscription_status_enum {
+  trial
+  active
+  past_due
+  cancelled
+  expired
+}
+
+// -----------------------------------------------------------------------------
+// SUBSCRIPTION & BILLING
+// -----------------------------------------------------------------------------
+
+Table subscription_plans {
+  id uuid [pk, default: `gen_random_uuid()`]
+  code varchar(50) [unique, not null]
+  name varchar(100) [not null]
+  description text
+  
+  // Pricing
+  price_monthly decimal(10,2)
+  price_yearly decimal(10,2)
+  currency varchar(3) [default: 'PHP']
+  
+  // Limits
+  max_users integer [note: 'null = unlimited']
+  max_storage_gb integer
+  max_api_calls_monthly integer
+  
+  // Features
+  features jsonb [default: '[]', note: 'List of feature codes included']
+  
+  // Availability
+  is_public boolean [default: true]
+  is_active boolean [default: true]
+  
+  created_at timestamptz [default: `now()`]
+  
+  Note: 'Subscription tiers: starter, professional, enterprise, custom'
+}
+
+Table tenant_invoices {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > tenants.id, not null]
+  invoice_number varchar(50) [unique, not null]
+  
+  // Period
+  period_start date [not null]
+  period_end date [not null]
+  
+  // Amounts
+  subtotal decimal(12,2) [not null]
+  tax_amount decimal(12,2) [default: 0]
+  total decimal(12,2) [not null]
+  currency varchar(3) [default: 'PHP']
+  
+  // Status
+  status invoice_status_enum [default: 'draft']
+  due_date date
+  paid_at timestamptz
+  
+  // Line items stored as JSONB
+  line_items jsonb [not null, note: '[{description, quantity, unit_price, amount}]']
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    tenant_id
+    status
+    (tenant_id, period_start)
+  }
+}
+
+Enum invoice_status_enum {
+  draft
+  sent
+  paid
+  overdue
+  cancelled
+  refunded
+}
+
+// -----------------------------------------------------------------------------
+// USER & ACCESS MANAGEMENT (Platform Level)
+// -----------------------------------------------------------------------------
+
+Table platform_users {
+  id uuid [pk, default: `gen_random_uuid()`]
+  email varchar(255) [unique, not null]
+  password_hash varchar(255)
+  
+  // Profile
+  first_name varchar(100)
+  last_name varchar(100)
+  avatar_url text
+  
+  // Auth
+  auth_provider auth_provider_enum [default: 'email']
+  auth_provider_id varchar(255) [note: 'OAuth provider user ID']
+  email_verified_at timestamptz
+  
+  // Status
+  is_active boolean [default: true]
+  last_login_at timestamptz
+  
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  
+  indexes {
+    email [unique]
+    (auth_provider, auth_provider_id)
+  }
+  
+  Note: 'Platform-level users. Tenant-level users are in tenant databases.'
+}
+
+Enum auth_provider_enum {
+  email
+  google
+  microsoft
+  github
+  saml
+}
+
+Table tenant_user_assignments {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > tenants.id, not null]
+  user_id uuid [ref: > platform_users.id, not null]
+  
+  // Role in this tenant
+  role tenant_role_enum [not null, default: 'member']
+  
+  // Permissions override
+  permissions jsonb [default: '[]']
+  
+  is_primary_tenant boolean [default: false, note: 'Default tenant for this user']
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    (tenant_id, user_id) [unique]
+    user_id
+  }
+  
+  Note: 'Maps users to tenants with roles. Users can belong to multiple tenants.'
+}
+
+Enum tenant_role_enum {
+  owner [note: 'Full control, billing access']
+  admin [note: 'Full control, no billing']
+  manager [note: 'Manage users and settings']
+  member [note: 'Standard access']
+  viewer [note: 'Read-only']
+}
+
+// -----------------------------------------------------------------------------
+// PROVISIONING & AUTOMATION
+// -----------------------------------------------------------------------------
+
+Table provisioning_jobs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > tenants.id, not null]
+  
+  job_type provisioning_job_type_enum [not null]
+  status job_status_enum [default: 'pending']
+  
+  // Configuration
+  config jsonb [not null, note: 'Job-specific parameters']
+  
+  // Progress
+  started_at timestamptz
+  completed_at timestamptz
+  progress_pct integer [default: 0]
+  current_step varchar(100)
+  
+  // Results
+  result jsonb [note: 'Success details or error info']
+  error_message text
+  retry_count integer [default: 0]
+  
+  // Scheduling
+  scheduled_for timestamptz
+  created_by uuid [ref: > platform_users.id]
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    tenant_id
+    status
+    (job_type, status)
+  }
+  
+  Note: '''
+    Tracks all provisioning operations:
+    - Database creation
+    - Data migration
+    - Superset workspace setup
+    - Backup/restore
+  '''
+}
+
+Enum provisioning_job_type_enum {
+  create_database [note: 'New tenant DB from template']
+  clone_database [note: 'Copy existing tenant DB']
+  migrate_schema [note: 'Run schema migrations']
+  seed_data [note: 'Initial data population']
+  backup [note: 'Create backup']
+  restore [note: 'Restore from backup']
+  archive [note: 'Archive tenant data']
+  delete [note: 'Permanent deletion']
+  setup_superset [note: 'Create Superset workspace']
+  sync_odoo [note: 'Sync with Odoo database']
+}
+
+Enum job_status_enum {
+  pending
+  queued
+  running
+  completed
+  failed
+  cancelled
+}
+
+Table database_templates {
+  id uuid [pk, default: `gen_random_uuid()`]
+  code varchar(50) [unique, not null]
+  name varchar(100) [not null]
+  description text
+  
+  // Template Source
+  source_type template_source_enum [not null]
+  source_db_name varchar(100) [note: 'For pg_dump templates']
+  source_file_path text [note: 'For file-based templates']
+  
+  // Schema Version
+  schema_version varchar(20) [not null]
+  odoo_version varchar(10) [note: 'e.g., 18.0']
+  
+  // Modules included
+  included_modules jsonb [default: '[]', note: 'List of ipai_* modules']
+  
+  is_active boolean [default: true]
+  created_at timestamptz [default: `now()`]
+  
+  Note: 'Database templates for new tenant provisioning'
+}
+
+Enum template_source_enum {
+  live_database [note: 'pg_dump from running DB']
+  sql_file [note: 'Pre-built SQL dump']
+  migration_scripts [note: 'Run migrations from scratch']
+}
+
+// -----------------------------------------------------------------------------
+// AUDIT & MONITORING
+// -----------------------------------------------------------------------------
+
+Table audit_logs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  
+  // Actor
+  tenant_id uuid [ref: > tenants.id]
+  user_id uuid [ref: > platform_users.id]
+  
+  // Action
+  action varchar(100) [not null]
+  resource_type varchar(100) [not null]
+  resource_id varchar(255)
+  
+  // Details
+  old_values jsonb
+  new_values jsonb
+  metadata jsonb [default: '{}']
+  
+  // Context
+  ip_address inet
+  user_agent text
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    tenant_id
+    user_id
+    action
+    created_at
+    (resource_type, resource_id)
+  }
+  
+  Note: 'Platform-level audit trail. Tenant audit logs are in tenant DBs.'
+}
+
+Table tenant_metrics {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > tenants.id, not null]
+  
+  metric_date date [not null]
+  
+  // Usage Metrics
+  active_users integer [default: 0]
+  api_calls integer [default: 0]
+  storage_bytes bigint [default: 0]
+  
+  // Business Metrics
+  transactions_count integer [default: 0]
+  revenue decimal(15,2) [default: 0]
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    (tenant_id, metric_date) [unique]
+    metric_date
+  }
+  
+  Note: 'Daily aggregated metrics per tenant for billing and analytics'
+}
+
+// -----------------------------------------------------------------------------
+// SUPERSET INTEGRATION
+// -----------------------------------------------------------------------------
+
+Table superset_workspaces {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > tenants.id, not null]
+  
+  // Superset Connection
+  superset_url varchar(255) [not null]
+  workspace_id varchar(100) [note: 'Superset internal ID']
+  
+  // Database Connection in Superset
+  database_id integer [note: 'Superset database connection ID']
+  database_name varchar(100)
+  
+  // Dashboards
+  default_dashboards jsonb [default: '[]', note: 'Pre-configured dashboard IDs']
+  
+  // Status
+  status varchar(50) [default: 'pending']
+  provisioned_at timestamptz
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    tenant_id [unique]
+  }
+  
+  Note: 'Tracks Superset workspace per tenant for BI capabilities'
+}
+
+
+// ============================================================================
+// TENANT DATABASE TEMPLATE (insightpulse_template)
+// This schema is cloned for each new tenant
+// ============================================================================
+
+Project InsightPulse_TenantTemplate {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Tenant Database Template
+    
+    This schema is cloned for each new tenant.
+    Integrates with Odoo 18 CE tables (not shown here).
+    
+    ## Key Tables
+    - Extends Odoo with ipai_* custom tables
+    - Analytics views for Superset
+    - Audit and compliance
+  '''
+}
+
+// -----------------------------------------------------------------------------
+// TENANT CONFIGURATION
+// -----------------------------------------------------------------------------
+
+Table tenant_config {
+  key varchar(100) [pk]
+  value text
+  value_type varchar(20) [default: 'string', note: 'string, integer, boolean, json']
+  description text
+  is_secret boolean [default: false]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Tenant-specific configuration (similar to ir.config_parameter in Odoo)'
+}
+
+// -----------------------------------------------------------------------------
+// FINANCE SSC EXTENSIONS (ipai_finance)
+// -----------------------------------------------------------------------------
+
+Table ipai_journal_entries {
+  id serial [pk]
+  
+  // Links to Odoo
+  odoo_move_id integer [not null, note: 'References account.move']
+  
+  // Classification
+  entry_type journal_entry_type_enum [not null]
+  category varchar(100)
+  
+  // Enhanced metadata
+  cost_center varchar(50)
+  project_code varchar(50)
+  department varchar(100)
+  
+  // BIR Compliance
+  bir_form_type varchar(20) [note: '1601-C, 2550Q, etc.']
+  tax_period varchar(10) [note: 'YYYY-MM']
+  
+  // Approvals
+  prepared_by integer [note: 'res.users ID']
+  reviewed_by integer
+  approved_by integer
+  approved_at timestamptz
+  
+  // Audit
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  
+  indexes {
+    odoo_move_id [unique]
+    entry_type
+    (bir_form_type, tax_period)
+    cost_center
+  }
+}
+
+Enum journal_entry_type_enum {
+  standard
+  adjustment
+  accrual
+  reversal
+  closing
+  opening
+  intercompany
+}
+
+Table ipai_month_end_checklist {
+  id serial [pk]
+  
+  period varchar(7) [not null, note: 'YYYY-MM']
+  
+  // Checklist Items
+  item_code varchar(50) [not null]
+  item_name varchar(255) [not null]
+  sequence integer [default: 10]
+  
+  // Status
+  status checklist_status_enum [default: 'pending']
+  completed_by integer [note: 'res.users ID']
+  completed_at timestamptz
+  
+  // Evidence
+  notes text
+  attachment_ids jsonb [default: '[]', note: 'ir.attachment IDs']
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    (period, item_code) [unique]
+    status
+  }
+  
+  Note: 'Finance SSC month-end closing checklist'
+}
+
+Enum checklist_status_enum {
+  pending
+  in_progress
+  completed
+  not_applicable
+  blocked
+}
+
+// -----------------------------------------------------------------------------
+// DOCUMENT MANAGEMENT (ipai_dms)
+// -----------------------------------------------------------------------------
+
+Table ipai_documents {
+  id serial [pk]
+  
+  // Document Info
+  name varchar(255) [not null]
+  document_type document_type_enum [not null]
+  
+  // Storage
+  storage_type storage_type_enum [default: 'database']
+  file_path text [note: 'For S3/Spaces storage']
+  odoo_attachment_id integer [note: 'ir.attachment ID']
+  
+  // Classification
+  category varchar(100)
+  tags jsonb [default: '[]']
+  
+  // Versioning
+  version integer [default: 1]
+  parent_document_id integer [ref: > ipai_documents.id]
+  
+  // OCR/AI Processing
+  ocr_status varchar(50) [default: 'pending']
+  extracted_text text
+  extracted_data jsonb [note: 'Structured data from AI extraction']
+  
+  // Metadata
+  file_size bigint
+  mime_type varchar(100)
+  checksum varchar(64) [note: 'SHA-256']
+  
+  created_by integer [not null]
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  
+  indexes {
+    document_type
+    category
+    created_at
+  }
+}
+
+Enum document_type_enum {
+  invoice
+  receipt
+  contract
+  report
+  tax_form
+  bank_statement
+  payroll
+  other
+}
+
+Enum storage_type_enum {
+  database [note: 'Stored in Odoo ir.attachment']
+  s3 [note: 'AWS S3 or DigitalOcean Spaces']
+  local [note: 'Local filesystem']
+}
+
+// -----------------------------------------------------------------------------
+// AI FEATURES (ipai_ai)
+// -----------------------------------------------------------------------------
+
+Table ipai_ai_conversations {
+  id serial [pk]
+  
+  user_id integer [not null, note: 'res.users ID']
+  
+  // Conversation
+  title varchar(255)
+  context_type varchar(50) [note: 'global, finance, hr, etc.']
+  context_id varchar(100) [note: 'Related record ID if any']
+  
+  // Status
+  is_active boolean [default: true]
+  
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  
+  indexes {
+    user_id
+    created_at
+  }
+}
+
+Table ipai_ai_messages {
+  id serial [pk]
+  conversation_id integer [ref: > ipai_ai_conversations.id, not null]
+  
+  role ai_role_enum [not null]
+  content text [not null]
+  
+  // Tool Calls
+  tool_calls jsonb [note: 'Tools invoked by AI']
+  tool_results jsonb [note: 'Results from tool execution']
+  
+  // Metadata
+  model varchar(50) [note: 'claude-sonnet-4, gpt-4, etc.']
+  tokens_used integer
+  latency_ms integer
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    conversation_id
+    created_at
+  }
+}
+
+Enum ai_role_enum {
+  system
+  user
+  assistant
+  tool
+}
+
+Table ipai_ai_embeddings {
+  id serial [pk]
+  
+  // Source Document
+  source_type varchar(50) [not null, note: 'document, message, record']
+  source_id varchar(100) [not null]
+  
+  // Chunk Info
+  chunk_index integer [default: 0]
+  content text [not null]
+  
+  // Vector (using pgvector)
+  embedding vector(1536) [note: 'OpenAI ada-002 dimensions']
+  
+  // Metadata
+  metadata jsonb [default: '{}']
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    (source_type, source_id, chunk_index) [unique]
+  }
+  
+  Note: 'Vector embeddings for RAG semantic search'
+}
+
+// -----------------------------------------------------------------------------
+// ANALYTICS VIEWS (for Superset)
+// -----------------------------------------------------------------------------
+
+Table analytics_finance_summary {
+  id serial [pk]
+  
+  // Dimensions
+  period date [not null]
+  company_id integer [not null]
+  journal_id integer
+  account_id integer
+  
+  // Measures
+  debit_total decimal(15,2) [default: 0]
+  credit_total decimal(15,2) [default: 0]
+  balance decimal(15,2) [default: 0]
+  transaction_count integer [default: 0]
+  
+  // Metadata
+  last_updated timestamptz [default: `now()`]
+  
+  indexes {
+    (period, company_id, journal_id, account_id) [unique]
+    period
+    company_id
+  }
+  
+  Note: '''
+    Pre-aggregated finance data for fast Superset queries.
+    Updated by scheduled job (ir.cron).
+  '''
+}
+
+Table analytics_user_activity {
+  id serial [pk]
+  
+  activity_date date [not null]
+  user_id integer [not null]
+  
+  // Metrics
+  login_count integer [default: 0]
+  page_views integer [default: 0]
+  actions_performed integer [default: 0]
+  session_duration_minutes integer [default: 0]
+  
+  // Breakdown
+  actions_by_model jsonb [default: '{}', note: '{"sale.order": 10, "account.move": 5}']
+  
+  last_updated timestamptz [default: `now()`]
+  
+  indexes {
+    (activity_date, user_id) [unique]
+    activity_date
+  }
+}
+
+// -----------------------------------------------------------------------------
+// AUDIT TRAIL
+// -----------------------------------------------------------------------------
+
+Table ipai_audit_log {
+  id bigserial [pk]
+  
+  // Actor
+  user_id integer
+  user_name varchar(100)
+  
+  // Action
+  action audit_action_enum [not null]
+  model varchar(100) [not null]
+  record_id integer
+  
+  // Changes
+  old_values jsonb
+  new_values jsonb
+  
+  // Context
+  ip_address inet
+  user_agent text
+  session_id varchar(100)
+  
+  created_at timestamptz [default: `now()`]
+  
+  indexes {
+    model
+    record_id
+    user_id
+    created_at
+    (model, record_id)
+  }
+  
+  Note: 'Comprehensive audit trail for compliance (BIR 10-year retention)'
+}
+
+Enum audit_action_enum {
+  create
+  read
+  update
+  delete
+  export
+  import
+  login
+  logout
+}
+
+
+// ============================================================================
+// RELATIONSHIPS SUMMARY
+// ============================================================================
+
+// Control Plane Relationships
+Ref: tenants.parent_tenant_id > tenants.id
+Ref: tenants.plan_id > subscription_plans.id
+Ref: tenant_invoices.tenant_id > tenants.id
+Ref: tenant_user_assignments.tenant_id > tenants.id
+Ref: tenant_user_assignments.user_id > platform_users.id
+Ref: provisioning_jobs.tenant_id > tenants.id
+Ref: provisioning_jobs.created_by > platform_users.id
+Ref: audit_logs.tenant_id > tenants.id
+Ref: audit_logs.user_id > platform_users.id
+Ref: tenant_metrics.tenant_id > tenants.id
+Ref: superset_workspaces.tenant_id > tenants.id
+
+// Tenant Database Relationships
+Ref: ipai_ai_messages.conversation_id > ipai_ai_conversations.id
+Ref: ipai_documents.parent_document_id > ipai_documents.id

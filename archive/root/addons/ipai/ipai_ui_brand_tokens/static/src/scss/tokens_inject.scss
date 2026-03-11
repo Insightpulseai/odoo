@@ -1,0 +1,97 @@
+/*
+ * IPAI Brand Tokens - CSS Variable Injection
+ * ==========================================
+ * This file provides fallback CSS variables when JavaScript hasn't loaded yet.
+ * The actual values are set dynamically via tokens_boot.js from the company config.
+ *
+ * TBWA Brand: Black primary + Yellow accent
+ */
+
+:root {
+  /* ==========================================================================
+   * PALETTE - TBWA Defaults
+   * ========================================================================== */
+  --tbwa-primary: #000000;
+  --tbwa-primary-hover: #1A1A1A;
+  --tbwa-accent: #FBBF24;
+  --tbwa-accent-hover: #F59E0B;
+
+  /* Semantic */
+  --tbwa-success: #10B981;
+  --tbwa-warning: #F59E0B;
+  --tbwa-danger: #EF4444;
+  --tbwa-info: #3B82F6;
+
+  /* ==========================================================================
+   * SURFACES
+   * ========================================================================== */
+  --tbwa-bg: #FFFFFF;
+  --tbwa-surface: #F9FAFB;
+  --tbwa-surface-elevated: #FFFFFF;
+  --tbwa-border: #E5E7EB;
+
+  /* ==========================================================================
+   * TEXT
+   * ========================================================================== */
+  --tbwa-text-primary: #111827;
+  --tbwa-text-secondary: #6B7280;
+  --tbwa-text-on-primary: #FFFFFF;
+  --tbwa-text-on-accent: #000000;
+
+  /* ==========================================================================
+   * SHAPE
+   * ========================================================================== */
+  --tbwa-radius-sm: 4px;
+  --tbwa-radius-md: 8px;
+  --tbwa-radius-lg: 12px;
+
+  /* ==========================================================================
+   * SHADOWS
+   * ========================================================================== */
+  --tbwa-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --tbwa-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --tbwa-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* ==========================================================================
+   * TYPOGRAPHY
+   * ========================================================================== */
+  --tbwa-font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ==========================================================================
+ * DARK THEME OVERRIDES
+ * ========================================================================== */
+[data-theme="dark"],
+.o_dark_mode {
+  --tbwa-primary: #FFFFFF;
+  --tbwa-primary-hover: #E5E5E5;
+  --tbwa-accent: #FBBF24;
+  --tbwa-accent-hover: #FCD34D;
+
+  --tbwa-bg: #0F172A;
+  --tbwa-surface: #1E293B;
+  --tbwa-surface-elevated: #334155;
+  --tbwa-border: #475569;
+
+  --tbwa-text-primary: #F1F5F9;
+  --tbwa-text-secondary: #94A3B8;
+  --tbwa-text-on-primary: #000000;
+  --tbwa-text-on-accent: #000000;
+}
+
+/* ==========================================================================
+ * ALIAS MAPPINGS (for compatibility with existing IPAI tokens)
+ * ========================================================================== */
+:root {
+  /* Map to existing ipai- prefixed variables for backward compat */
+  --ipai-brand-primary: var(--tbwa-primary);
+  --ipai-brand-accent: var(--tbwa-accent);
+  --ipai-bg: var(--tbwa-bg);
+  --ipai-surface: var(--tbwa-surface);
+  --ipai-text: var(--tbwa-text-primary);
+  --ipai-text-muted: var(--tbwa-text-secondary);
+  --ipai-border: var(--tbwa-border);
+  --ipai-radius: var(--tbwa-radius-md);
+  --ipai-shadow: var(--tbwa-shadow-md);
+  --ipai-font: var(--tbwa-font-family);
+}

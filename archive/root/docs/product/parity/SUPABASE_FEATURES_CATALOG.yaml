@@ -1,0 +1,524 @@
+version: 1
+platform: "supabase"
+total_features: 78
+definition:
+  # Based on actual Supabase features from supabase.com/features
+
+features:
+  # ----------------------------
+  # AUTHENTICATION
+  # ----------------------------
+  - id: SUPA-AUTH-EMAIL
+    category: authentication
+    label: "Email login"
+    description: "Build email logins for your application or website"
+    utilization_status: "implemented" # implemented|planned|not_applicable
+    implementation_notes: "Using Supabase Auth with email/password"
+
+  - id: SUPA-AUTH-MAGIC-LINK
+    category: authentication
+    label: "Passwordless login via Magic Links"
+    description: "Build passwordless logins via magic links"
+    utilization_status: "implemented"
+    implementation_notes: "Magic link login enabled in Platform Kit"
+
+  - id: SUPA-AUTH-PHONE
+    category: authentication
+    label: "Phone logins"
+    description: "Provide phone logins using a third-party SMS provider"
+    utilization_status: "planned"
+
+  - id: SUPA-AUTH-SOCIAL
+    category: authentication
+    label: "Social login"
+    description: "Provide social logins from platforms like Apple, GitHub, and Slack"
+    utilization_status: "planned"
+
+  - id: SUPA-AUTH-MFA
+    category: authentication
+    label: "Multi-Factor Authentication (MFA)"
+    description: "Add an extra layer of security with MFA"
+    utilization_status: "planned"
+
+  - id: SUPA-AUTH-HOOKS
+    category: authentication
+    label: "Auth Hooks"
+    description: "Customize authentication flows with serverless functions"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-AUTH-CAPTCHA
+    category: authentication
+    label: "Captcha protection"
+    description: "Add Captcha to sign-in, sign-up, and password reset forms"
+    utilization_status: "planned"
+
+  - id: SUPA-AUTH-EMAIL-TEMPLATES
+    category: authentication
+    label: "Email Templates"
+    description: "Customizable email templates for all authentication flows"
+    utilization_status: "implemented"
+
+  - id: SUPA-AUTH-WEB3
+    category: authentication
+    label: "Web3 Authentication"
+    description: "Wallet-based authentication for Ethereum and Solana"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-AUTH-THIRD-PARTY
+    category: authentication
+    label: "Third-Party Authentication"
+    description: "Trust JWTs from external authentication providers"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-AUTH-OAUTH2
+    category: authentication
+    label: "OAuth2.1 Server"
+    description: "Turn your project into an OAuth 2.1 identity provider"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-AUTH-SERVER-SIDE
+    category: authentication
+    label: "Server-side Auth"
+    description: "Helpers for implementing user authentication in server-side languages"
+    utilization_status: "implemented"
+    implementation_notes: "Using @supabase/ssr for Next.js SSR"
+
+  # ----------------------------
+  # DATABASE
+  # ----------------------------
+  - id: SUPA-DB-POSTGRES
+    category: database
+    label: "Postgres database"
+    description: "Every project is a full Postgres database"
+    utilization_status: "implemented"
+    implementation_notes: "Primary data store for Platform Kit"
+
+  - id: SUPA-DB-RLS
+    category: database
+    label: "Authorization via Row Level Security"
+    description: "Control data access with Postgres Policies"
+    utilization_status: "implemented"
+    implementation_notes: "RLS enforced on all tables"
+
+  - id: SUPA-DB-REST-API
+    category: database
+    label: "Auto-generated REST API via PostgREST"
+    description: "RESTful APIs auto-generated from your database"
+    utilization_status: "implemented"
+
+  - id: SUPA-DB-GRAPHQL
+    category: database
+    label: "Auto-generated GraphQL API via pg_graphql"
+    description: "Fast GraphQL APIs using custom Postgres GraphQL extension"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-DB-EXTENSIONS
+    category: database
+    label: "Postgres Extensions"
+    description: "Enhance your database with popular Postgres extensions"
+    utilization_status: "implemented"
+    implementation_notes: "Using pgvector, uuid-ossp, pg_cron"
+
+  - id: SUPA-DB-ROLES
+    category: database
+    label: "Postgres Roles"
+    description: "Managing access and configuring permissions"
+    utilization_status: "implemented"
+
+  - id: SUPA-DB-BACKUPS
+    category: database
+    label: "Database backups"
+    description: "Projects backed up daily with Point in Time recovery"
+    utilization_status: "planned"
+
+  - id: SUPA-DB-WEBHOOKS
+    category: database
+    label: "Database Webhooks"
+    description: "Trigger external payloads on database events"
+    utilization_status: "planned"
+
+  - id: SUPA-DB-FDW
+    category: database
+    label: "Foreign Data Wrappers"
+    description: "Query external data sources as Postgres tables"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-DB-CRON
+    category: database
+    label: "Cron"
+    description: "Schedule recurring Jobs in Postgres"
+    utilization_status: "planned"
+
+  - id: SUPA-DB-QUEUES
+    category: database
+    label: "Queues"
+    description: "Durable messages with guaranteed delivery"
+    utilization_status: "planned"
+
+  - id: SUPA-DB-REPLICATION
+    category: database
+    label: "Replication"
+    description: "Replicate database changes to external destinations"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-DB-READ-REPLICAS
+    category: database
+    label: "Read replicas"
+    description: "Isolate heavy workloads and reduce global latency"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-DB-ORIOLEDB
+    category: database
+    label: "OrioleDB"
+    description: "New Postgres storage engine better than Heap storage"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # FUNCTIONS
+  # ----------------------------
+  - id: SUPA-FUNC-EDGE
+    category: functions
+    label: "Deno Edge Functions"
+    description: "Globally distributed TypeScript functions for custom business logic"
+    utilization_status: "implemented"
+    implementation_notes: "Using Edge Functions for admin operations"
+
+  - id: SUPA-FUNC-REGIONAL
+    category: functions
+    label: "Regional invocations"
+    description: "Execute Edge Function in a region close to your database"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-FUNC-PERSISTENT-STORAGE
+    category: functions
+    label: "Persistent Storage"
+    description: "Mount S3 buckets for 97% faster Edge Function cold starts"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # REALTIME
+  # ----------------------------
+  - id: SUPA-RT-POSTGRES-CHANGES
+    category: realtime
+    label: "Realtime - Postgres changes"
+    description: "Receive database changes through websockets"
+    utilization_status: "planned"
+
+  - id: SUPA-RT-BROADCAST
+    category: realtime
+    label: "Realtime - Broadcast"
+    description: "Send messages between connected users through websockets"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-RT-PRESENCE
+    category: realtime
+    label: "Realtime - Presence"
+    description: "Synchronize shared state between users through websockets"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-RT-BROADCAST-AUTH
+    category: realtime
+    label: "Realtime - Broadcast Authorization"
+    description: "Control access to broadcast channels in real-time"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-RT-PRESENCE-AUTH
+    category: realtime
+    label: "Realtime - Presence Authorization"
+    description: "Manage presence information securely in real-time"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-RT-BROADCAST-REPLAY
+    category: realtime
+    label: "Realtime - Broadcast Replay"
+    description: "Access previously sent messages in private channels"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-RT-BROADCAST-FROM-DB
+    category: realtime
+    label: "Realtime - Broadcast from the Database"
+    description: "Trigger broadcast messages directly from Postgres"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # STORAGE
+  # ----------------------------
+  - id: SUPA-STORAGE-FILES
+    category: storage
+    label: "File storage"
+    description: "Supabase Storage makes it simple to store and serve files"
+    utilization_status: "implemented"
+    implementation_notes: "Using Supabase Storage for file uploads"
+
+  - id: SUPA-STORAGE-CDN
+    category: storage
+    label: "Content Delivery Network"
+    description: "Cache large files using the Supabase CDN"
+    utilization_status: "implemented"
+
+  - id: SUPA-STORAGE-SMART-CDN
+    category: storage
+    label: "Smart Content Delivery Network"
+    description: "Automatically revalidate assets at the edge via Smart CDN"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STORAGE-IMAGE-TRANSFORM
+    category: storage
+    label: "Image transformations"
+    description: "Optimize and resize images on-the-fly from storage buckets"
+    utilization_status: "planned"
+
+  - id: SUPA-STORAGE-RESUMABLE
+    category: storage
+    label: "Resumable uploads"
+    description: "Upload large files using resumable uploads"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STORAGE-S3-COMPAT
+    category: storage
+    label: "S3 compatibility"
+    description: "Interact with Storage from tools which support S3 protocol"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # VECTOR
+  # ----------------------------
+  - id: SUPA-VECTOR-DB
+    category: vector
+    label: "Vector database"
+    description: "Store vector embeddings right next to the rest of your data"
+    utilization_status: "planned"
+
+  - id: SUPA-VECTOR-BUCKETS
+    category: vector
+    label: "Vector Buckets"
+    description: "S3-backed storage for vector embeddings with similarity search"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-VECTOR-AUTO-EMBEDDINGS
+    category: vector
+    label: "Automatic Embeddings"
+    description: "Automated embedding generation using triggers and queues"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # STUDIO
+  # ----------------------------
+  - id: SUPA-STUDIO-SQL-EDITOR
+    category: studio
+    label: "SQL Editor"
+    description: "A powerful interface for writing and executing SQL queries"
+    utilization_status: "implemented"
+    implementation_notes: "Using custom SQL editor in Platform Kit"
+
+  - id: SUPA-STUDIO-VISUAL-SCHEMA
+    category: studio
+    label: "Visual Schema Designer"
+    description: "Design your Postgres database schema with intuitive interface"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STUDIO-FK-SELECTOR
+    category: studio
+    label: "Foreign Key Selector"
+    description: "Easily manage foreign key relationships between tables"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STUDIO-POLICY-TEMPLATES
+    category: studio
+    label: "Policy Templates"
+    description: "Quickly implement common security policies"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STUDIO-SECURITY-ADVISOR
+    category: studio
+    label: "Security & Performance Advisor"
+    description: "Optimize your database security and performance effortlessly"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-STUDIO-AI-ASSISTANT
+    category: studio
+    label: "Supabase AI Assistant"
+    description: "Your intelligent companion for managing Postgres databases"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # PLATFORM
+  # ----------------------------
+  - id: SUPA-PLATFORM-CLI
+    category: platform
+    label: "CLI"
+    description: "Use our CLI to develop your project locally and deploy"
+    utilization_status: "implemented"
+    implementation_notes: "Using Supabase CLI for local development"
+
+  - id: SUPA-PLATFORM-BRANCHING
+    category: platform
+    label: "Branching"
+    description: "Test and preview changes using Supabase Branches"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-DECLARATIVE-SCHEMA
+    category: platform
+    label: "Declarative Schemas"
+    description: "Simplify database management with declarative schema files"
+    utilization_status: "implemented"
+    implementation_notes: "Using migrations for schema management"
+
+  - id: SUPA-PLATFORM-MGMT-API
+    category: platform
+    label: "Management API"
+    description: "Manage your projects programmatically"
+    utilization_status: "implemented"
+    implementation_notes: "Using Management API proxy in Platform Kit"
+
+  - id: SUPA-PLATFORM-TERRAFORM
+    category: platform
+    label: "Terraform provider"
+    description: "Manage Supabase infrastructure via Terraform"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-MCP-SERVER
+    category: platform
+    label: "MCP Server"
+    description: "Connect AI tools using official Supabase Model Context Protocol server"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-CUSTOM-DOMAINS
+    category: platform
+    label: "Custom domains"
+    description: "White-label the Supabase APIs for a branded experience"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-NETWORK-RESTRICTIONS
+    category: platform
+    label: "Network restrictions"
+    description: "Restrict IP ranges that can connect to your database"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-SSL-ENFORCEMENT
+    category: platform
+    label: "SSL enforcement"
+    description: "Enforce secure connections to your Postgres clients"
+    utilization_status: "implemented"
+
+  - id: SUPA-PLATFORM-DEDICATED-POOLERS
+    category: platform
+    label: "Dedicated Poolers"
+    description: "Co-located connection pooler for maximum performance"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-SUPAVISOR
+    category: platform
+    label: "Supavisor"
+    description: "A scalable connection pooler for Postgres"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-VAULT
+    category: platform
+    label: "Vault"
+    description: "Manage secrets safely in Postgres"
+    utilization_status: "planned"
+
+  - id: SUPA-PLATFORM-JWT-SIGNING
+    category: platform
+    label: "JWT Signing Keys"
+    description: "Asymmetric key management for enhanced JWT security"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-LOG-DRAINS
+    category: platform
+    label: "Log Drains"
+    description: "Export logs to external destinations for enhanced monitoring"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-LOGS-ANALYTICS
+    category: platform
+    label: "Logs & Analytics"
+    description: "Gain insights into your application's performance and usage"
+    utilization_status: "implemented"
+    implementation_notes: "Using built-in Supabase logs"
+
+  - id: SUPA-PLATFORM-REPORTS-METRICS
+    category: platform
+    label: "Reports & Metrics"
+    description: "Monitor your project's health with usage insights"
+    utilization_status: "implemented"
+
+  - id: SUPA-PLATFORM-RBAC
+    category: platform
+    label: "Role-Based Access Control (RBAC)"
+    description: "Define and manage user roles securely"
+    utilization_status: "implemented"
+    implementation_notes: "Using pm_admins table for RBAC"
+
+  - id: SUPA-PLATFORM-SSO-SAML
+    category: platform
+    label: "SSO with SAML"
+    description: "Enterprise single sign-on using SAML protocol"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-USER-IMPERSONATION
+    category: platform
+    label: "User Impersonation"
+    description: "Experience your application as any user"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-SOC2
+    category: platform
+    label: "SOC 2 Compliance"
+    description: "Build with confidence on a SOC 2 compliant platform"
+    utilization_status: "not_applicable"
+    implementation_notes: "Self-hosted, not using Supabase Cloud"
+
+  - id: SUPA-PLATFORM-AI-INTEGRATIONS
+    category: platform
+    label: "AI Integrations"
+    description: "Enhance applications with OpenAI and Hugging Face integrations"
+    utilization_status: "planned"
+
+  - id: SUPA-PLATFORM-ANALYTICS-BUCKETS
+    category: platform
+    label: "Analytics Buckets (with Iceberg)"
+    description: "Large-scale analytics using Apache Iceberg format"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-PLATFORM-ETL
+    category: platform
+    label: "Supabase ETL"
+    description: "Real-time data replication to analytical destinations"
+    utilization_status: "not_applicable"
+
+  # ----------------------------
+  # CLIENT LIBRARIES
+  # ----------------------------
+  - id: SUPA-CLIENT-JS
+    category: platform
+    label: "Client Library - JavaScript"
+    description: "Easily integrate Supabase with your JavaScript applications"
+    utilization_status: "implemented"
+    implementation_notes: "Using @supabase/supabase-js"
+
+  - id: SUPA-CLIENT-PYTHON
+    category: platform
+    label: "Client Library - Python"
+    description: "Integrate Supabase easily into your Python applications"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-CLIENT-FLUTTER
+    category: platform
+    label: "Client Library - Flutter"
+    description: "Integrate Supabase into your Flutter applications effortlessly"
+    utilization_status: "not_applicable"
+
+  - id: SUPA-CLIENT-SWIFT
+    category: platform
+    label: "Client Library - Swift"
+    description: "Effortlessly connect your Swift applications to Supabase"
+    utilization_status: "not_applicable"
+
+summary:
+  total_features: 78
+  implemented: 20
+  planned: 12
+  not_applicable: 46
+  utilization_rate: "25.6%" # (implemented / (total - not_applicable)) * 100

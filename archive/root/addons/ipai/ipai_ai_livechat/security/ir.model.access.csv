@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_livechat_user,ai_livechat.user,model_ipai_ai_livechat,base.group_user,1,0,0,0
+access_ai_livechat_manager,ai_livechat.manager,model_ipai_ai_livechat,base.group_system,1,1,1,1

@@ -1,9 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_bir_tax_table_user,ipai.bir.tax.table.user,model_ipai_bir_tax_table,base.group_user,1,0,0,0
-access_bir_tax_table_manager,ipai.bir.tax.table.manager,model_ipai_bir_tax_table,account.group_account_manager,1,1,1,1
-access_bir_tax_bracket_user,ipai.bir.tax.bracket.user,model_ipai_bir_tax_bracket,base.group_user,1,0,0,0
-access_bir_tax_bracket_manager,ipai.bir.tax.bracket.manager,model_ipai_bir_tax_bracket,account.group_account_manager,1,1,1,1
-access_bir_contribution_table_user,ipai.bir.contribution.table.user,model_ipai_bir_contribution_table,base.group_user,1,0,0,0
-access_bir_contribution_table_manager,ipai.bir.contribution.table.manager,model_ipai_bir_contribution_table,account.group_account_manager,1,1,1,1
-access_bir_contribution_line_user,ipai.bir.contribution.line.user,model_ipai_bir_contribution_line,base.group_user,1,0,0,0
-access_bir_contribution_line_manager,ipai.bir.contribution.line.manager,model_ipai_bir_contribution_line,account.group_account_manager,1,1,1,1

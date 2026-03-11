@@ -1,0 +1,61 @@
+# Accounting — Navigational Benchmark Scenarios
+
+scenarios:
+  - id: "BM-ACC-N-001"
+    domain: accounting
+    capability_class: navigational
+    persona: accountant
+    prompt: "Show me all unposted vendor bills"
+    expected_behavior:
+      type: navigate
+      model: account.move
+      view_type: list
+      domain_filter: [["move_type", "=", "in_invoice"], ["state", "=", "draft"]]
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [accounting, vendor-bills, filter]
+
+  - id: "BM-ACC-N-002"
+    domain: accounting
+    capability_class: navigational
+    persona: accountant
+    prompt: "Open the chart of accounts"
+    expected_behavior:
+      type: navigate
+      model: account.account
+      action_id: "account.action_account_form"
+      view_type: list
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [accounting, chart-of-accounts, configuration]
+
+  - id: "BM-ACC-N-003"
+    domain: accounting
+    capability_class: navigational
+    persona: accountant
+    prompt: "Go to the tax configuration page"
+    expected_behavior:
+      type: navigate
+      model: account.tax
+      view_type: list
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [accounting, taxes, configuration]

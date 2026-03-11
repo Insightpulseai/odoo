@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Tools -->
+        <record id="tool_crm_create_lead" model="ipai.ai.tool">
+            <field name="key">crm_create_lead</field>
+            <field name="name">Create CRM Lead</field>
+            <field name="description">Create a new lead in the CRM system with contact information and notes.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.crm_tools:create_lead</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "description": "Name of the lead/opportunity"},
+        "contact_name": {"type": "string", "description": "Contact person name"},
+        "email": {"type": "string", "description": "Email address"},
+        "phone": {"type": "string", "description": "Phone number"},
+        "description": {"type": "string", "description": "Notes or description"}
+    },
+    "required": ["name"]
+}</field>
+            <field name="dry_run_supported" eval="True"/>
+        </record>
+
+        <record id="tool_calendar_create_event" model="ipai.ai.tool">
+            <field name="key">calendar_create_event</field>
+            <field name="name">Create Calendar Event</field>
+            <field name="description">Schedule a new calendar event or meeting.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.calendar_tools:create_event</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "description": "Event title"},
+        "start": {"type": "string", "description": "Start datetime (ISO format)"},
+        "stop": {"type": "string", "description": "End datetime (ISO format)"},
+        "description": {"type": "string", "description": "Event description"},
+        "attendee_emails": {"type": "array", "items": {"type": "string"}, "description": "List of attendee emails"}
+    },
+    "required": ["name", "start", "stop"]
+}</field>
+            <field name="dry_run_supported" eval="True"/>
+        </record>
+
+        <record id="tool_sale_create_order" model="ipai.ai.tool">
+            <field name="key">sale_create_order</field>
+            <field name="name">Create Sale Order</field>
+            <field name="description">Create a new sale order for a customer.</field>
+            <field name="python_entrypoint">odoo.addons.ipai_ai_tools.tools.sale_tools:create_order</field>
+            <field name="parameters_schema">{
+    "type": "object",
+    "properties": {
+        "partner_id": {"type": "integer", "description": "Customer ID"},
+        "partner_name": {"type": "string", "description": "Customer name (for lookup if ID not provided)"},
+        "lines": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "product_id": {"type": "integer"},
+                    "product_name": {"type": "string"},
+                    "quantity": {"type": "number"}
+                }
+            },
+            "description": "Order lines with product and quantity"
+        }
+    },
+    "required": ["lines"]
+}</field>
+            <field name="dry_run_supported" eval="True"/>
+        </record>
+
+        <!-- Default Agent -->
+        <record id="agent_default_assistant" model="ipai.ai.agent">
+            <field name="name">Default Assistant</field>
+            <field name="system_prompt">You are a helpful assistant for the Odoo ERP system. You can help users with:
+- Creating and managing leads in the CRM
+- Scheduling calendar events and meetings
+- Creating sale orders
+
+Always be polite, professional, and helpful. When you need to perform an action, use the appropriate tool. Ask for clarification if the user's request is ambiguous.</field>
+            <field name="style">professional</field>
+            <field name="provider">openai</field>
+            <field name="model">gpt-4o</field>
+            <field name="temperature">0.7</field>
+            <field name="max_tokens">2048</field>
+        </record>
+
+        <!-- Default Topic -->
+        <record id="topic_general_assistance" model="ipai.ai.topic">
+            <field name="name">General Assistance</field>
+            <field name="agent_id" ref="agent_default_assistant"/>
+            <field name="sequence">10</field>
+            <field name="instructions">Help users with general queries about the Odoo system. When users want to create records or perform actions, use the available tools. Always confirm important details before executing actions.</field>
+            <field name="tool_ids" eval="[(6, 0, [ref('tool_crm_create_lead'), ref('tool_calendar_create_event'), ref('tool_sale_create_order')])]"/>
+        </record>
+    </data>
+</odoo>
