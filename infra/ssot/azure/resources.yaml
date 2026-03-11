@@ -21,7 +21,7 @@
 #   managed_by     — (optional) service that auto-created this resource
 #   notes          — context
 #
-# Reconciled: 2026-03-11 from Azure portal export (57 confirmed resources)
+# Reconciled: 2026-03-11 from Azure CLI export (65 confirmed resources)
 #
 # ERRATA — Names That Do NOT Exist:
 #   oai-ipai-sea       WRONG — correct name is oai-ipai-dev
@@ -36,7 +36,7 @@ last_updated: "2026-03-11"
 naming_convention: "{type}-ipai-{env}"
 default_region: southeastasia
 default_environment: dev
-total_confirmed: 57
+total_confirmed: 65
 
 # -----------------------------------------------------------------------------
 # Resource Groups (8 confirmed + 2 auto-managed)
@@ -206,6 +206,42 @@ container_apps:
     lifecycle: active
     owner_domain: platform
     notes: Shelf asset management Container App.
+
+  - name: ipai-auth-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Auth surface migrated from DO origin to ACA.
+
+  - name: ipai-mcp-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: MCP coordinator surface migrated from DO origin to ACA.
+
+  - name: ipai-ocr-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: ai
+    notes: OCR service migrated from DO origin to ACA.
+
+  - name: ipai-superset-dev
+    type: Microsoft.App/containerApps
+    resource_group: rg-ipai-dev
+    region: southeastasia
+    source: confirmed
+    lifecycle: active
+    owner_domain: platform
+    notes: Superset surface migrated from DO origin to ACA.
 
   # --- Deployment A: rg-ipai-agents-dev (earlier, simpler split) ---
   - name: odoo-web

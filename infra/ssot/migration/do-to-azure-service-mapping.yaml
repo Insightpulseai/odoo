@@ -1,15 +1,24 @@
-schema_version: "1.1"
+schema_version: "1.2"
 last_updated: "2026-03-11"
 status: complete
-cutover_completed: "2026-03-11T20:40+08:00"
+cutover_completed: "2026-03-11T23:34+08:00"
 source_of_truth:
-  - docs/evidence/20260311-2200/do-origin-swap/afd-origins-all.log
-  - docs/evidence/20260311-2200/do-origin-swap/aca-list.log
-  - docs/evidence/20260311-2200/do-origin-swap/health-checks.log
-  - web/docs/evidence/20260311-1955+0800/do-to-azure-migration/logs/az-afd-origin-list-by-group.table.log
+  - web/docs/evidence/20260311-2326+0800/do-to-azure-finalize/logs/afd-origins-all.log
+  - web/docs/evidence/20260311-2326+0800/do-to-azure-finalize/logs/public-health-checks.log
+  - web/docs/evidence/20260311-2326+0800/do-to-azure-finalize/logs/aca-direct-health.log
+  - web/docs/evidence/20260311-2326+0800/do-to-azure-finalize/logs/do-droplet-list-post-delete.log
+  - web/docs/evidence/20260311-2326+0800/do-to-azure-finalize/logs/do-snapshot-action-post-delete.log
 
 do_origin_count: 0
 decommission_gate: passed
+
+digitalocean_runtime:
+  droplet_id: "542793289"
+  droplet_name: odoo-erp-prod
+  public_ipv4: 178.128.112.214
+  snapshot_action_id: "3085280446"
+  snapshot_status: completed
+  droplet_status: deleted
 
 services:
   - service: erp
@@ -19,7 +28,44 @@ services:
     target_service_name: ipai-odoo-dev-web
     health_check_endpoint: /web/health
     cutover_status: complete
-    http_status: 303
+    http_status: 200
+
+  - service: auth
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-auth-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: auth.insightpulseai.com
+    target_service_name: ipai-auth-dev
+    health_check_endpoint: /
+    cutover_status: complete
+    http_status: 200
+    note: "Traffic migrated from DO to ACA. Runtime is placeholder app pending Keycloak parity."
+
+  - service: mcp
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-mcp-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: mcp.insightpulseai.com
+    target_service_name: ipai-mcp-dev
+    health_check_endpoint: /healthz
+    cutover_status: complete
+    http_status: 200
+
+  - service: ocr
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-ocr-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: ocr.insightpulseai.com
+    target_service_name: ipai-ocr-dev
+    health_check_endpoint: /health
+    cutover_status: complete
+    http_status: 200
+
+  - service: superset
+    current_runtime: azure_front_door_to_aca
+    current_host: ipai-superset-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_domain: superset.insightpulseai.com
+    target_service_name: ipai-superset-dev
+    health_check_endpoint: /health
+    cutover_status: complete
+    http_status: 200
 
   - service: n8n
     current_runtime: azure_front_door_to_azure_vm
@@ -29,51 +75,7 @@ services:
     health_check_endpoint: /healthz
     cutover_status: azure_vm_not_do
     http_status: 502
-    note: "On Azure VM, not DO. ACA migration is optimization, not decommission blocker."
-
-  - service: auth
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-auth-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: auth.insightpulseai.com
-    target_service_name: ipai-auth-dev
-    health_check_endpoint: /
-    cutover_status: complete
-    cutover_date: "2026-03-11T20:40+08:00"
-    http_status: 404
-    note: "Stub service (nginx:alpine). Replace with Keycloak when auth requirements are defined."
-
-  - service: mcp
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-mcp-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: mcp.insightpulseai.com
-    target_service_name: ipai-mcp-dev
-    health_check_endpoint: /healthz
-    cutover_status: complete
-    cutover_date: "2026-03-11T20:40+08:00"
-    http_status: 404
-    note: "Stub service (nginx:alpine). Replace with MCP gateway image when ready."
-
-  - service: ocr
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-ocr-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: ocr.insightpulseai.com
-    target_service_name: ipai-ocr-dev
-    health_check_endpoint: /health
-    cutover_status: complete
-    cutover_date: "2026-03-11T20:40+08:00"
-    http_status: 404
-    note: "Stub service (nginx:alpine). Replace with PaddleOCR or Azure AI Document Intelligence."
-
-  - service: superset
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-superset-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: superset.insightpulseai.com
-    target_service_name: ipai-superset-dev
-    health_check_endpoint: /health
-    cutover_status: complete
-    cutover_date: "2026-03-11T20:40+08:00"
-    http_status: 302
-    note: "Running apache/superset:latest. Configure metadata DB and datasources."
+    note: "Not on DO. Existing Azure VM health issue remains outside DO decommission scope."
 
   - service: plane
     current_runtime: azure_front_door_to_aca
@@ -84,28 +86,9 @@ services:
     cutover_status: complete
     http_status: 200
 
-  - service: shelf
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-shelf-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: shelf.insightpulseai.com
-    target_service_name: ipai-shelf-dev
-    health_check_endpoint: /healthcheck
-    cutover_status: complete
-    http_status: 200
-
-  - service: crm
-    current_runtime: azure_front_door_to_aca
-    current_host: ipai-crm-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
-    current_domain: crm.insightpulseai.com
-    target_service_name: ipai-crm-dev
-    health_check_endpoint: /
-    cutover_status: complete
-    http_status: 504
-    note: "Stub service (nginx:alpine). Pre-existing timeout."
-
   - service: www_and_apex
     current_runtime: azure_front_door_redirect
-    current_host: ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
+    current_host: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
     current_domain: insightpulseai.com, www.insightpulseai.com
     target_service_name: ipai-fd-dev
     health_check_endpoint: /web/health
