@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
 #
-# snapshot_github_and_vercel.sh
+# snapshot_github.sh
 #
-# Single idempotent pipeline that snapshots three layers:
+# Single idempotent pipeline that snapshots two layers:
 #   1. Org — metadata, teams, members, repos, branch protection
 #   2. Repo — workflows, workflow runs, deployments, releases, tags
-#   3. Runtime — Vercel projects, deployments, aliases
 #
 # Usage:
-#   ./scripts/ssot/snapshot_github_and_vercel.sh              # full snapshot
-#   ./scripts/ssot/snapshot_github_and_vercel.sh --org-only    # GitHub org layer only
-#   ./scripts/ssot/snapshot_github_and_vercel.sh --repo-only   # GitHub repo layer only
-#   ./scripts/ssot/snapshot_github_and_vercel.sh --vercel-only # Vercel layer only
-#   ./scripts/ssot/snapshot_github_and_vercel.sh --repo odoo   # single repo
+#   ./scripts/ssot/snapshot_github.sh              # full snapshot
+#   ./scripts/ssot/snapshot_github.sh --org-only    # GitHub org layer only
+#   ./scripts/ssot/snapshot_github.sh --repo-only   # GitHub repo layer only
+#   ./scripts/ssot/snapshot_github.sh --repo odoo   # single repo
 #
 # Required env vars:
 #   GITHUB_TOKEN or gh auth   — GitHub API access
-#   VERCEL_TOKEN              — Vercel REST API (optional, skips Vercel if missing)
 #
 # Output:
 #   ssot/github/org.snapshot.json
@@ -25,9 +22,6 @@
 #   ssot/github/repo-details/<repo>.workflows.json
 #   ssot/github/repo-details/<repo>.workflow-runs.json
 #   ssot/github/repo-details/<repo>.deployments.json
-#   ssot/vercel/projects.snapshot.json
-#   ssot/vercel/deployments.snapshot.json
-#   ssot/vercel/aliases.snapshot.json
 #   ssot/evidence/snapshot-manifest.json
 #
 set -euo pipefail
@@ -38,28 +32,25 @@ cd "${REPO_ROOT}"
 
 # ─── Config ───────────────────────────────────────────────────────────
 GH_ORG="${GH_ORG:-Insightpulseai}"
-VERCEL_TEAM_ID="${VERCEL_TEAM_ID:-}"
 MAX_WORKFLOW_RUNS="${MAX_WORKFLOW_RUNS:-50}"
 SNAPSHOT_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 # ─── Output dirs ──────────────────────────────────────────────────────
 GITHUB_DIR="ssot/github"
 REPO_DETAIL_DIR="${GITHUB_DIR}/repo-details"
-VERCEL_DIR="ssot/vercel"
 EVIDENCE_DIR="ssot/evidence"
-mkdir -p "${REPO_DETAIL_DIR}" "${VERCEL_DIR}" "${EVIDENCE_DIR}"
+mkdir -p "${REPO_DETAIL_DIR}" "${EVIDENCE_DIR}"
 
 # ─── Parse args ───────────────────────────────────────────────────────
 DO_ORG=true
 DO_REPO=true
-DO_VERCEL=true
 SINGLE_REPO=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --org-only)   DO_REPO=false; DO_VERCEL=false ;;
-    --repo-only)  DO_ORG=false; DO_VERCEL=false ;;
-    --vercel-only) DO_ORG=false; DO_REPO=false ;;
+    --org-only)   DO_REPO=false ;;
+    --repo-only)  DO_ORG=false ;;
+    --github-only) ;; # Legacy arg for compatibility
     --repo)       SINGLE_REPO="$2"; shift ;;
     *)            echo "Unknown arg: $1"; exit 1 ;;
   esac
@@ -85,25 +76,6 @@ gh_api() {
       log "  WARN: ${endpoint} returned error, wrote empty object"
     }
   fi
-}
-
-vercel_api() {
-  local endpoint="$1"
-  local output="$2"
-  local url="https://api.vercel.com${endpoint}"
-
-  if [[ -n "${VERCEL_TEAM_ID}" ]]; then
-    if [[ "${url}" == *"?"* ]]; then
-      url="${url}&teamId=${VERCEL_TEAM_ID}"
-    else
-      url="${url}?teamId=${VERCEL_TEAM_ID}"
-    fi
-  fi
-
-  curl -sS -H "Authorization: Bearer ${VERCEL_TOKEN}" "${url}" > "${output}" 2>/dev/null || {
-    echo "{}" > "${output}"
-    log "  WARN: Vercel ${endpoint} returned error"
-  }
 }
 
 # ─── Layer 1: Org Snapshot ────────────────────────────────────────────
@@ -200,52 +172,6 @@ snapshot_all_repos() {
   log "  Snapshotted ${count} repos"
 }
 
-# ─── Layer 3: Vercel Snapshot ─────────────────────────────────────────
-snapshot_vercel() {
-  if [[ -z "${VERCEL_TOKEN:-}" ]]; then
-    log "Layer 3: Vercel — SKIPPED (VERCEL_TOKEN not set)"
-    echo '{"skipped": true, "reason": "VERCEL_TOKEN not set"}' > "${VERCEL_DIR}/projects.snapshot.json"
-    echo '{"skipped": true, "reason": "VERCEL_TOKEN not set"}' > "${VERCEL_DIR}/deployments.snapshot.json"
-    echo '{"skipped": true, "reason": "VERCEL_TOKEN not set"}' > "${VERCEL_DIR}/aliases.snapshot.json"
-    return
-  fi
-
-  log "Layer 3: Vercel snapshot"
-
-  log "  projects..."
-  vercel_api "/v9/projects?limit=100" "${VERCEL_DIR}/projects.snapshot.json"
-
-  log "  deployments (last 100)..."
-  vercel_api "/v6/deployments?limit=100" "${VERCEL_DIR}/deployments.snapshot.json"
-
-  # per-project aliases
-  local project_ids
-  project_ids=$(jq -r '.projects[]?.id // empty' "${VERCEL_DIR}/projects.snapshot.json" 2>/dev/null || echo "")
-
-  if [[ -n "${project_ids}" ]]; then
-    local all_aliases="[]"
-    while IFS= read -r pid; do
-      [[ -z "${pid}" ]] && continue
-      local tmp
-      tmp=$(mktemp)
-      vercel_api "/v4/aliases?projectId=${pid}&limit=50" "${tmp}"
-      local aliases_chunk
-      aliases_chunk=$(jq '.aliases // []' "${tmp}" 2>/dev/null || echo "[]")
-      all_aliases=$(echo "${all_aliases}" | jq --argjson chunk "${aliases_chunk}" '. + $chunk')
-      rm -f "${tmp}"
-    done <<< "${project_ids}"
-    echo "${all_aliases}" | jq '.' > "${VERCEL_DIR}/aliases.snapshot.json"
-  else
-    echo "[]" > "${VERCEL_DIR}/aliases.snapshot.json"
-  fi
-
-  local proj_count
-  proj_count=$(jq '.projects | length' "${VERCEL_DIR}/projects.snapshot.json" 2>/dev/null || echo 0)
-  local deploy_count
-  deploy_count=$(jq '.deployments | length' "${VERCEL_DIR}/deployments.snapshot.json" 2>/dev/null || echo 0)
-  log "  Found ${proj_count} projects, ${deploy_count} deployments"
-}
-
 # ─── Build manifest ──────────────────────────────────────────────────
 build_manifest() {
   log "Building snapshot manifest..."
@@ -260,21 +186,13 @@ build_manifest() {
       jq '.workflows | length // 0' {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
   fi
 
-  local vercel_proj_count
-  vercel_proj_count=$(jq '.projects | length // 0' \
-    "${VERCEL_DIR}/projects.snapshot.json" 2>/dev/null || echo 0)
-
-  local vercel_deploy_count
-  vercel_deploy_count=$(jq '.deployments | length // 0' \
-    "${VERCEL_DIR}/deployments.snapshot.json" 2>/dev/null || echo 0)
-
   python3 "${SCRIPT_DIR}/build_snapshot_manifest.py" \
     --timestamp "${SNAPSHOT_TS}" \
     --org "${GH_ORG}" \
     --repo-count "${repo_count}" \
     --workflow-count "${workflow_count}" \
-    --vercel-projects "${vercel_proj_count}" \
-    --vercel-deployments "${vercel_deploy_count}" \
+    --vercel-projects "0" \
+    --vercel-deployments "0" \
     --output "${EVIDENCE_DIR}/snapshot-manifest.json"
 
   log "Manifest written to ${EVIDENCE_DIR}/snapshot-manifest.json"
@@ -282,7 +200,7 @@ build_manifest() {
 
 # ─── Main ─────────────────────────────────────────────────────────────
 main() {
-  log "=== SSOT Inventory Snapshot ==="
+  log "=== SSOT Inventory Snapshot (GitHub Only) ==="
   log "Org: ${GH_ORG} | Timestamp: ${SNAPSHOT_TS}"
   log ""
 
@@ -294,7 +212,6 @@ main() {
 
   [[ "${DO_ORG}" == "true" ]] && snapshot_org
   [[ "${DO_REPO}" == "true" ]] && snapshot_all_repos
-  [[ "${DO_VERCEL}" == "true" ]] && snapshot_vercel
 
   build_manifest
 
@@ -302,7 +219,6 @@ main() {
   log "=== Snapshot complete ==="
   log "Output:"
   log "  GitHub: ${GITHUB_DIR}/"
-  log "  Vercel: ${VERCEL_DIR}/"
   log "  Manifest: ${EVIDENCE_DIR}/snapshot-manifest.json"
 }
 
