@@ -318,21 +318,20 @@ The Supabase project `spdtwktxdalcfigzeqrz` is the authoritative control plane f
 
 ---
 
-## §9 — Vercel Edge: `vercel.json` + framework config is SSOT
+## §9 — Azure Edge: Bicep + framework config is SSOT
 
 | Concern | SSOT location | Notes |
 |---------|---------------|-------|
-| Route rewrites / headers | `vercel.json` (per app) | Never edit via dashboard |
-| Environment variable names | `vercel.json` `env` block (names only) | Values set via Vercel dashboard or CLI |
-| Environment variable values | Vercel dashboard / `vercel env pull` (local only) | Never in Git |
+| Route rewrites / headers | `web/<app>/next.config.js` | Applied via Azure deployment |
+| Environment variable names | `infra/azure/app_settings.bicep` | Values set via Azure Portal / Key Vault |
+| Environment variable values | Azure Key Vault / App Settings | Never in Git |
 | Build output config | `next.config.*` / framework file | Git (SSOT) |
-| Custom domains | `vercel.json` `alias` block | Mirrors Cloudflare CNAME |
+| Custom domains | `infra/dns/subdomain-registry.yaml` | CNAME pointed to Azure |
 
 **Rules:**
-- `vercel.json` is the SSOT for routing; dashboard overrides must be reverted.
-- Environment variable **values** must never appear in `vercel.json` or any committed file.
-- The `vercel-env-leak-guard.yml` CI workflow enforces this at PR time.
-- Domain assignments: Cloudflare DNS YAML is SSOT; `vercel.json` `alias` is derived.
+- Azure is the canonical edge/runtime surface.
+- Environment variable **values** must never appear in Git.
+- Domain assignments: Cloudflare DNS YAML is SSOT.
 
 ---
 
@@ -424,13 +423,13 @@ These objects cross SSOT boundaries and require explicit mirror contracts:
 
 | Object | Source SSOT | Consumer | Contract doc | Sync mechanism |
 |--------|------------|----------|-------------|----------------|
-| Supabase JWT | Supabase Auth | Odoo (middleware), Vercel (Edge middleware) | `docs/contracts/JWT_TRUST_CONTRACT.md` (pending) | JWT signing key published via JWKS endpoint |
+| Supabase JWT | Supabase Auth | Odoo (middleware), Azure (Edge middleware) | `docs/contracts/JWT_TRUST_CONTRACT.md` (pending) | JWT signing key published via JWKS endpoint |
 | Outbound email | `ipai_mail_bridge_zoho` (Odoo → bridge) | Zoho Mail API | `docs/contracts/DNS_EMAIL_CONTRACT.md` | HTTPS POST with `x-bridge-secret` |
 | DNS record set | `infra/dns/subdomain-registry.yaml` | Cloudflare, Vercel alias, Odoo `web.base.url` | `docs/contracts/DNS_EMAIL_CONTRACT.md` | Terraform apply |
 | n8n → Supabase task queue | n8n workflows | `ops.task_queue` (Supabase) | `docs/contracts/TASK_QUEUE_CONTRACT.md` (pending) | REST POST to Supabase Edge Function |
 | Odoo → Supabase audit events | Odoo (hooks) + Edge Functions | `ops.platform_events` | §1 this doc | Append-only INSERT |
 | Design tokens | Figma (canonical) | `packages/design-tokens/tokens.json`, Tailwind, MUI | `docs/contracts/DESIGN_TOKENS_CONTRACT.md` (pending) | `export_tokens.sh` |
-| Vercel env vars | Vercel dashboard | Next.js apps | `docs/contracts/VERCEL_ENV_CONTRACT.md` (pending) | `vercel env pull` (local only) |
+| Azure Key Vault | Azure Portal | Next.js apps | `infra/azure/keyvault.bicep` | App Service reference |
 
 **Invariants (never violate):**
 1. A secret value must not cross an SSOT boundary in plaintext via Git or logs.

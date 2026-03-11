@@ -250,7 +250,7 @@ Authoritative ownership boundaries are:
 | `addons/ipai/` | Integration bridge connectors only (thin adapters) | IPAI/Backend |
 | `supabase/` | Control plane SSOT, ops.* tables | Platform/DB |
 | `automations/` | n8n workflows, runbooks, audits | DevOps/Automations |
-| `infra/` | Cloudflare/DO/Vercel/IaC + drift detection | DevOps/Infra |
+| `infra/` | Cloudflare/DO/Azure/IaC + drift detection | DevOps/Infra |
 | `config/` | Odoo config per environment (dev/staging/prod) | DevOps |
 | `docker/` | Docker images, compose templates, entrypoints | DevOps |
 | `design/` | tokens.json SSOT + extracted assets | Design/Frontend |
@@ -582,7 +582,6 @@ CI enforces:
 | `repo-structure.yml` | Repo tree consistency |
 | `spec-kit-enforce.yml` | Spec bundle validation |
 | `infra-validate.yml` | Infrastructure templates |
-| `auto-sitemap-tree.yml` | Auto-update SITEMAP.md/TREE.md |
 
 If CI fails, reproduce locally by running the same generator commands + `git diff --exit-code` checks above.
 
