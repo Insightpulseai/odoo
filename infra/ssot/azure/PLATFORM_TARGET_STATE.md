@@ -1,6 +1,6 @@
 # Platform Target State
 
-> **Version**: 1.4.0
+> **Version**: 1.4.1
 > **Date**: 2026-03-11
 > **Scope**: Azure + DigitalOcean + Supabase + Databricks + Tableau Cloud consolidated target state
 > **Owner**: Platform Engineering / InsightPulse AI
@@ -17,6 +17,7 @@
 | 1.2.0   | 2026-03-09 | Added Odoo 19 CE conventions, end-to-end data flow, n8n integration                                 |
 | 1.3.0   | 2026-03-10 | Full Azure resource inventory (55 resources across 6 RGs), CI/CD contract, 30-day sprint            |
 | 1.4.0   | 2026-03-11 | Tableau Cloud added as active analytics app surface; analytics surfaces section; SSO target updated  |
+| 1.4.1   | 2026-03-11 | Analytics: 4 surfaces (Superset, Databricks, Tableau connector, Power BI). Full DO→Azure migration mandate |
 
 ---
 
@@ -60,15 +61,16 @@
              ▼                                                      ▼
       DigitalOcean Droplet                                   Supabase Cloud
       178.128.112.214                                        spdtwktxdalcfigzeqrz
-      (Legacy — migrate out)                                 (Control Plane)
-      ┌─────────────────┐                                    ┌──────────────────┐
-      │  Odoo 19 CE     │                                    │  Auth            │
-      │  n8n            │                                    │  Realtime        │
-      │  Superset       │                                    │  Edge Functions  │
-      │  Keycloak       │                                    │  Storage         │
-      │  Plane          │                                    │  Vault           │
-      │  Shelf / CRM    │                                    │  pgvector        │
-      └─────────────────┘                                    └──────────────────┘
+      (DECOMMISSION — all                                    (Control Plane)
+       services → ACA)                                       ┌──────────────────┐
+      ┌─────────────────┐                                    │  Auth            │
+      │  Odoo 19 CE  ──►│─── migrate ──► ca-ipai-dev         │  Realtime        │
+      │  n8n         ──►│─── migrate ──► ca-ipai-dev         │  Edge Functions  │
+      │  Superset    ──►│─── migrate ──► ca-ipai-dev         │  Storage         │
+      │  Keycloak    ──►│─── migrate ──► Entra ID            │  Vault           │
+      │  Plane       ──►│─── migrate ──► ca-ipai-dev         │  pgvector        │
+      │  Shelf / CRM ──►│─── migrate ──► ca-ipai-dev         └──────────────────┘
+      └─────────────────┘
              │
              │         Downstream Analytics & AI Surfaces
              │
@@ -233,11 +235,10 @@
 ### DNS Migration Path
 
 ```
-Phase 1 (Current):  All services → DO droplet (178.128.112.214)
-Phase 2 (Target):   api.*, app.* → Azure Front Door
-                    data.* → Databricks
-                    erp.*, n8n.* → Container Apps (via Front Door)
-Phase 3 (Final):    Decommission DO droplet, all traffic via Azure
+Phase 1 (Done):     DNS cut to Azure Front Door (all 13 subdomains CNAME → AFD)
+Phase 2 (Current):  Provision all services on Azure Container Apps
+                    erp, n8n, superset, plane, shelf, crm, auth, mcp, ocr, ops
+Phase 3 (Final):    Decommission DO droplet (178.128.112.214), all traffic via Azure
 ```
 
 ### Deprecated Domains (Never Use)
@@ -536,7 +537,8 @@ All n8n workflows must use credential references, never literal values:
 | ---------------------- | ------------------------ | ------------- | -------- | ------------------------------------------------------------ |
 | Databricks Dashboards  | Embedded BI              | Target        | No       | Unity Catalog-native; Genie for NL queries                   |
 | Tableau Cloud          | External BI platform     | **Active**    | No       | `insightpulseai` site on `10ax.online.tableau.com`           |
-| Superset               | Self-hosted BI           | Under review  | No       | On DO droplet; evaluate migrate vs decommission              |
+| Superset               | Self-hosted BI           | **Migrate**   | No       | Currently on DO droplet; migrate to Azure Container Apps     |
+| Power BI               | Azure-native BI          | **Active**    | No       | Connector to Databricks SQL Warehouse + Azure PG             |
 
 ### Tableau Cloud Classification
 
@@ -547,21 +549,36 @@ All n8n workflows must use credential references, never literal values:
 | Classification     | Analytics app / BI consumption surface                                    |
 | Offering           | Managed enterprise service (Tableau Cloud license)                        |
 | Data Integration   | Connectors (Databricks SQL Warehouse, Supabase PG, Odoo exports/extracts) |
-| Auth Model         | Tableau-native (connector credentials) — not SSO                          |
+| Auth Model         | Connector credentials only — not SSO, not Entra ID                        |
 | SOR                | No                                                                        |
 | SSOT               | No                                                                        |
 | Presentation Layer | Yes                                                                       |
 
 **Rule**: Tableau Cloud is a managed enterprise analytics application. It consumes data via connectors (Databricks SQL Warehouse, Supabase PG, Odoo file exports) — not via SSO or identity federation. It is a presentation/consumption surface only — never a system of record or source of truth. Workbook definitions and data-source metadata should be inventoried and versioned where possible, but the authoritative data always lives upstream in the lakehouse or operational databases.
 
+### Power BI Classification
+
+| Field              | Value                                                                     |
+| ------------------ | ------------------------------------------------------------------------- |
+| Type               | Azure-native BI / connector-based analytics                               |
+| Data Integration   | Connectors (Databricks SQL Warehouse, Azure PG Flexible Server)           |
+| Auth Model         | Entra ID (native Azure SSO)                                               |
+| SOR                | No                                                                        |
+| SSOT               | No                                                                        |
+| Presentation Layer | Yes                                                                       |
+
+**Rule**: Power BI is an Azure-native analytics surface. It connects to Databricks SQL Warehouse and Azure PG via built-in connectors. Unlike Tableau Cloud, Power BI authenticates via Entra ID natively. Like all analytics surfaces, it is a presentation/consumption layer only — never a system of record.
+
 ### Analytics Data Flow
 
 ```
-  Odoo (SOR)  ──►  Databricks Gold  ──►  Tableau Cloud (presentation)
+  Odoo (SOR)  ──►  Databricks Gold  ──►  Tableau Cloud (presentation, connector auth)
                         │
   Supabase    ──►───────┤──────────────►  Databricks Dashboards (presentation)
                         │
-  n8n exports ──►───────┘──────────────►  Superset (presentation, under review)
+  n8n exports ──►───────┤──────────────►  Superset (presentation, migrating to ACA)
+                        │
+  Azure PG    ──►───────┘──────────────►  Power BI (presentation, Entra ID auth)
 ```
 
 ---
@@ -578,11 +595,11 @@ All n8n workflows must use credential references, never literal values:
 | `ml-ipai-dev` (ML Workspace)                   | Created but MLflow tracking may live in Databricks             | **Evaluate: consolidate MLflow to Databricks, decommission standalone ML workspace**                 | P2       |
 | `bastion-ipai-dev` (Bastion)                   | Expensive for dev environment                                  | **Evaluate: needed, or SSH via VPN sufficient?**                                                     | P3       |
 | `pulser-poc-*` (Container App)                 | POC status, may be stale                                       | **Audit: promote to production or delete**                                                           | P1       |
-| DO Droplet (178.128.112.214)                   | Legacy infrastructure, all services to migrate                 | **Create migration runbook; target Phase 2 cutover**                                                 | P0       |
+| DO Droplet (178.128.112.214)                   | Legacy infrastructure, all services migrating to ACA           | **Phase 2 active: provision all 10 services on ACA, then decommission droplet**                      | P0       |
 | Supabase (`spdtwktxdalcfigzeqrz`)              | Control plane, 200+ functions with missing `search_path`       | **Run `search_path` fix; enable RLS on unprotected tables**                                          | P1       |
 | `grafana-ipai-dev` / `prom-ipai-dev`           | Planned but not yet provisioned                                | **Provision when monitoring requirements are finalized**                                              | P3       |
 | `purview-ipai-dev` (Purview)                   | Planned for data governance                                    | **Provision when Unity Catalog lineage integration is ready**                                        | P3       |
-| Tableau Cloud (`insightpulseai`)               | Active BI surface not yet classified in target-state governance | **Inventory workbooks, data sources, owners, refresh paths; classify retain vs migrate**             | P2       |
+| Tableau Cloud (`insightpulseai`)               | Active BI surface, connector-only auth (decided)               | **Inventory workbooks, data sources, owners, refresh paths; document connector credentials**         | P2       |
 
 ---
 
@@ -724,9 +741,10 @@ Health check ──► Rollback if unhealthy
 
 - [ ] Tableau Cloud `insightpulseai` site is accessible and workbooks inventoried
 - [ ] Tableau data sources are documented with upstream lineage
-- [ ] Superset status (retain/migrate/decommission) is decided
+- [ ] Superset status: **migrate to ACA** (currently on DO droplet, target: Azure Container Apps)
+- [ ] Power BI workspace created and connected to Databricks SQL Warehouse + Azure PG
 - [ ] Databricks Dashboards are connected to Gold layer tables
 
 ---
 
-*Last updated: 2026-03-11 | Version 1.4.0*
+*Last updated: 2026-03-11 | Version 1.4.1*

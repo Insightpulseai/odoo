@@ -1,7 +1,17 @@
 # Odoo 19 Baseline Policy
 
 > Platform target, module placement rules, OCA migration policy, and dev environment expectations.
-> This document is the SSOT for Odoo 19 development decisions.
+> This document is the Odoo-specific implementation policy, subordinate to the platform target state.
+
+## Authority and Scope
+
+This document is the Odoo-specific implementation policy for the platform.
+
+Higher-order platform architecture, resource ownership, DNS target state, identity model, SSOT/SOR doctrine, CI/CD contract, and hard constraints are defined in:
+
+- `infra/ssot/azure/PLATFORM_TARGET_STATE.md`
+
+If any rule in this document conflicts with the platform target-state document, the platform target-state document prevails.
 
 ---
 
