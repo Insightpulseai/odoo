@@ -1,0 +1,23 @@
+# SSOT — AI Tools
+# Bounded tool definitions for Foundry agent.
+# v1: no tools enabled. Definitions here are planned for v2.
+
+tools: []
+# Planned v2 tools (not yet active):
+#
+# - id: odoo-search-partner
+#   label: Search Partner
+#   description: Search Odoo partners by name or domain.
+#   scope: read-only
+#   target: res.partner
+#   requires_policy: read-first
+#   status: planned
+#
+# - id: odoo-create-draft-so
+#   label: Create Draft Sales Order
+#   description: Create a draft (not confirmed) sales order.
+#   scope: write-draft
+#   target: sale.order
+#   requires_policy: no-uncontrolled-writes
+#   requires_confirmation: true
+#   status: planned

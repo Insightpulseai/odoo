@@ -1,0 +1,22 @@
+# SSOT — AI Models
+# Deployment targets for Azure Foundry agents.
+
+models:
+  - id: gpt-4.1
+    provider: azure_openai
+    family: gpt-4.1
+    # Assumption: deployment name matches model family.
+    # Actual deployment name is configured via Odoo settings or env var.
+    azure_deployment_name_env: AZURE_OPENAI_DEPLOYMENT
+    api_version: "2025-04-01-preview"  # assumption: latest stable
+    capabilities:
+      - chat
+      - function_calling
+      - knowledge_grounding
+    context_window: 1048576
+    max_output_tokens: 32768
+    default_temperature: 0.7
+    supports_memory: true  # runtime capability; default disabled by policy
+    notes:
+      - "Azure deployment name must be configured; base model name alone is insufficient."
+      - "Managed identity is preferred auth; API key via Key Vault is fallback."

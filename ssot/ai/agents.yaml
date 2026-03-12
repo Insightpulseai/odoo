@@ -1,0 +1,83 @@
+# SSOT — AI Agents
+# One physical Azure Foundry agent, multiple logical modes.
+
+physical_agents:
+  - id: ipai-odoo-copilot-azure
+    name: IPAI Odoo Copilot (Azure Foundry)
+    platform: azure_foundry
+    project: data-intel-ph
+    model_id: gpt-4.1
+    memory_default: false
+    instructions_artifact: ssot/ai/foundry_instructions.md
+    auth_mode: managed_identity  # fallback: env vars from Key Vault
+    knowledge_source_id: azure-search-odoo-kb
+    deployment_status: planned  # planned | provisioned | active
+    logical_agents:
+      - ask
+      - authoring
+      - livechat
+      - transaction
+
+logical_agents:
+  - id: ask
+    label: Ask Agent
+    description: >
+      General-purpose Q&A mode. Answers questions using knowledge grounding.
+      Read-only. No writes. Citations required when retrieval is used.
+    physical_agent_id: ipai-odoo-copilot-azure
+    topic_ids:
+      - general-qa
+      - odoo-help
+    policy_ids:
+      - read-first
+      - cite-sources
+      - no-fabrication
+    tool_ids: []  # no tools in v1
+
+  - id: authoring
+    label: Authoring Agent
+    description: >
+      Draft-first content authoring mode. Generates drafts for review.
+      Never publishes directly. User must approve before commit.
+    physical_agent_id: ipai-odoo-copilot-azure
+    topic_ids:
+      - content-drafting
+      - email-drafting
+    policy_ids:
+      - draft-first
+      - cite-sources
+      - no-fabrication
+    tool_ids: []  # no tools in v1
+
+  - id: livechat
+    label: Livechat Agent
+    description: >
+      Customer-facing livechat mode. Grounded responses only.
+      Escalation to human when confidence is low or topic is out of scope.
+    physical_agent_id: ipai-odoo-copilot-azure
+    topic_ids:
+      - customer-support
+      - faq
+    policy_ids:
+      - read-first
+      - cite-sources
+      - no-fabrication
+      - escalate-on-uncertainty
+    tool_ids: []  # no tools in v1
+
+  - id: transaction
+    label: Transaction Agent
+    description: >
+      Bounded transaction assistance mode. Read-only in v1.
+      Future: tightly scoped write tools (e.g., create draft SO).
+      All writes require explicit user confirmation.
+    physical_agent_id: ipai-odoo-copilot-azure
+    topic_ids:
+      - sales-assist
+      - inventory-lookup
+    policy_ids:
+      - read-first
+      - no-uncontrolled-writes
+      - cite-sources
+      - no-fabrication
+    tool_ids: []  # no tools in v1; bounded tools planned for v2

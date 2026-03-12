@@ -1,0 +1,35 @@
+# SSOT — AI Topics
+# Interaction topic taxonomy for logical agent routing.
+
+topics:
+  - id: general-qa
+    label: General Q&A
+    description: General questions about the business, platform, or Odoo usage.
+
+  - id: odoo-help
+    label: Odoo Help
+    description: Odoo-specific operational help (navigation, features, configuration).
+
+  - id: content-drafting
+    label: Content Drafting
+    description: Drafting emails, reports, descriptions, and other text content.
+
+  - id: email-drafting
+    label: Email Drafting
+    description: Composing email drafts for review before sending.
+
+  - id: customer-support
+    label: Customer Support
+    description: Customer-facing support queries via livechat.
+
+  - id: faq
+    label: FAQ
+    description: Frequently asked questions with known answers.
+
+  - id: sales-assist
+    label: Sales Assistance
+    description: Sales workflow assistance (quotes, orders, customer lookup).
+
+  - id: inventory-lookup
+    label: Inventory Lookup
+    description: Stock level queries and product availability checks.

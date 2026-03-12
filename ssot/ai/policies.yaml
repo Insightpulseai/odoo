@@ -1,0 +1,57 @@
+# SSOT — AI Policies
+# Safety and posture policies for Foundry agent behavior.
+
+policies:
+  - id: read-first
+    label: Read-First Posture
+    description: >
+      Agent operates in read-only mode by default.
+      No writes unless explicit bounded tools are enabled and user confirms.
+    enforcement: runtime_instruction + odoo_config
+    odoo_config_key: ipai_odoo_copilot.readonly_mode
+
+  - id: draft-first
+    label: Draft-First Posture
+    description: >
+      Agent generates drafts only. Never publishes, sends, or commits
+      content directly. User must review and approve.
+    enforcement: runtime_instruction + odoo_config
+    odoo_config_key: ipai_odoo_copilot.draft_only_mode
+
+  - id: no-fabrication
+    label: No Fabricated Completions
+    description: >
+      Agent must ground responses in retrieved knowledge or clearly state
+      when information is uncertain or unavailable.
+      Never invent facts, statistics, or references.
+    enforcement: runtime_instruction
+
+  - id: cite-sources
+    label: Citation Required
+    description: >
+      When retrieval/knowledge grounding is used, agent must include
+      source citations in the response.
+    enforcement: runtime_instruction
+
+  - id: no-uncontrolled-writes
+    label: No Uncontrolled Writes
+    description: >
+      Agent must never perform write operations without explicit user
+      confirmation and bounded tool scope.
+    enforcement: runtime_instruction + odoo_config
+
+  - id: escalate-on-uncertainty
+    label: Escalate on Uncertainty
+    description: >
+      When confidence is low or topic is out of scope, agent must
+      escalate to a human operator rather than guessing.
+    enforcement: runtime_instruction
+
+  - id: memory-off-default
+    label: Memory Off by Default
+    description: >
+      Foundry conversation memory is disabled unless explicitly enabled
+      by admin in Odoo settings.
+    enforcement: foundry_config + odoo_config
+    odoo_config_key: ipai_odoo_copilot.memory_enabled
+    foundry_default: false

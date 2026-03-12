@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_foundry_copilot" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.copilot</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Azure Foundry Copilot" string="Azure Foundry Copilot">
+                    <block title="Azure Foundry Agent">
+                        <setting
+                            string="Enable Azure Foundry Copilot"
+                            help="Enable the Azure Foundry Copilot agent for this Odoo instance.">
+                            <field name="ipai_copilot_foundry_enabled"/>
+                        </setting>
+                        <setting
+                            invisible="not ipai_copilot_foundry_enabled"
+                            string="Foundry Endpoint"
+                            help="Azure Foundry endpoint URL. Do not store secrets here.">
+                            <field name="ipai_copilot_foundry_endpoint"/>
+                        </setting>
+                        <setting
+                            invisible="not ipai_copilot_foundry_enabled"
+                            string="Foundry Project"
+                            help="Azure Foundry project name.">
+                            <field name="ipai_copilot_foundry_project"/>
+                        </setting>
+                        <setting
+                            invisible="not ipai_copilot_foundry_enabled"
+                            string="Foundry Agent Name"
+                            help="Name of the physical Foundry agent.">
+                            <field name="ipai_copilot_foundry_agent_name"/>
+                        </setting>
+                        <setting
+                            invisible="not ipai_copilot_foundry_enabled"
+                            string="Model"
+                            help="Azure OpenAI model deployment target.">
+                            <field name="ipai_copilot_foundry_model"/>
+                        </setting>
+                    </block>
+                    <block title="Knowledge Grounding" invisible="not ipai_copilot_foundry_enabled">
+                        <setting
+                            string="Azure Search Connection"
+                            help="Azure AI Search connection name for knowledge grounding.">
+                            <field name="ipai_copilot_search_connection"/>
+                        </setting>
+                        <setting
+                            string="Azure Search Index"
+                            help="Azure AI Search index name for knowledge grounding.">
+                            <field name="ipai_copilot_search_index"/>
+                        </setting>
+                    </block>
+                    <block title="Behavior &amp; Safety" invisible="not ipai_copilot_foundry_enabled">
+                        <setting
+                            string="Enable Memory"
+                            help="Enable conversation memory in Azure Foundry. Off by default for safety.">
+                            <field name="ipai_copilot_memory_enabled"/>
+                        </setting>
+                        <setting
+                            string="Read-Only Mode"
+                            help="Copilot operates in read-only mode (no record writes).">
+                            <field name="ipai_copilot_readonly_mode"/>
+                        </setting>
+                        <setting
+                            string="Draft-Only Mode"
+                            help="Copilot generates drafts only (no direct publishing or sending).">
+                            <field name="ipai_copilot_draft_only_mode"/>
+                        </setting>
+                    </block>
+                    <block title="Actions" invisible="not ipai_copilot_foundry_enabled">
+                        <setting string="Connection &amp; Sync">
+                            <div>
+                                <button
+                                    name="action_test_foundry_connection"
+                                    type="object"
+                                    string="Test Connection"
+                                    class="btn-primary me-2"
+                                    icon="fa-plug"/>
+                                <button
+                                    name="action_ensure_foundry_agent"
+                                    type="object"
+                                    string="Ensure Agent"
+                                    class="btn-secondary me-2"
+                                    icon="fa-refresh"/>
+                                <button
+                                    name="action_open_foundry_portal"
+                                    type="object"
+                                    string="Open Foundry Portal"
+                                    class="btn-link"
+                                    icon="fa-external-link"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

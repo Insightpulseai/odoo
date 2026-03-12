@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bounded backend sync action -->
+    <record id="action_foundry_backend_sync" model="ir.actions.server">
+        <field name="name">Foundry Copilot: Backend Sync</field>
+        <field name="model_id" ref="base.model_ir_config_parameter"/>
+        <field name="state">code</field>
+        <field name="code">
+# Bounded backend sync action for Azure Foundry Copilot.
+# Validates config and logs sync intent. Does not call Azure APIs.
+service = env["ipai.foundry.service"]
+result = service.ensure_agent()
+if result.get("status") == "warning":
+    log("Foundry sync: %s" % result.get("message", ""), level="warning")
+else:
+    log("Foundry sync: %s" % result.get("message", ""), level="info")
+        </field>
+    </record>
+
+    <!-- Settings action to open Foundry Copilot config -->
+    <record id="action_foundry_copilot_settings" model="ir.actions.act_window">
+        <field name="name">Azure Foundry Copilot Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'ipai_odoo_copilot'}</field>
+    </record>
+</odoo>

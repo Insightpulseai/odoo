@@ -1,0 +1,19 @@
+# SSOT — AI Knowledge Sources
+# Knowledge grounding sources for Foundry agent retrieval.
+
+sources:
+  - id: azure-search-odoo-kb
+    label: Odoo Knowledge Base (Azure Search)
+    type: azure_ai_search
+    # Assumption: index name and connection are configured via Odoo settings
+    # and resolved at Foundry runtime.
+    connection_env: AZURE_SEARCH_CONNECTION
+    index_env: AZURE_SEARCH_INDEX
+    odoo_config_keys:
+      connection: ipai_odoo_copilot.search_connection
+      index: ipai_odoo_copilot.search_index
+    citation_behavior: required
+    notes:
+      - "Azure Search is the preferred retrieval path for knowledge grounding."
+      - "Index must be provisioned separately; Odoo only stores the reference."
+      - "Citation behavior is enforced by the cite-sources policy."
