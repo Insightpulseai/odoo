@@ -6,7 +6,10 @@ provider:
   id: digitalocean
   name: DigitalOcean
   type: cloud_infrastructure
-  status: active
+  status: decommissioned
+  decommissioned_date: "2026-03-11"
+  replacement: "Azure Container Apps"
+  reason: "Azure-native target state locked. DO droplet 178.128.112.214 deleted. All compute migrated to Azure ACA."
   reference_contract: docs/contracts/C-DO-01-digitalocean-api.md
 
   auth:
