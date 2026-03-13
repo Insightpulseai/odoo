@@ -1,7 +1,26 @@
 # Copyright 2026 InsightPulseAI
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
+import re
+
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
+
+
+# Regex for validating Foundry project endpoint shape:
+#   https://<resource>.services.ai.azure.com/api/projects/<project>
+# Also accepts resource-level:
+#   https://<resource>.services.ai.azure.com
+# And cognitiveservices (Document Intelligence):
+#   https://<resource>.cognitiveservices.azure.com
+_ENDPOINT_PATTERN = re.compile(
+    r"^https://[\w-]+\."
+    r"(services\.ai\.azure\.com(/api/projects/[\w-]+)?|"
+    r"openai\.azure\.com|"
+    r"cognitiveservices\.azure\.com|"
+    r"search\.windows\.net)"
+    r"/?$"
+)
 
 
 class FoundryProviderConfig(models.Model):
@@ -9,6 +28,14 @@ class FoundryProviderConfig(models.Model):
 
     Stores non-secret metadata only. API keys and credentials are resolved
     at runtime via environment variables or Azure Key Vault.
+
+    Endpoint URL families:
+      - Foundry project: https://<resource>.services.ai.azure.com/api/projects/<project>
+      - Azure OpenAI:    https://<resource>.openai.azure.com
+      - Doc Intelligence: https://<resource>.cognitiveservices.azure.com
+      - AI Search:       https://<service>.search.windows.net
+
+    Auth audiences vary by family -- see auth_audience field.
     """
 
     _name = "ipai.foundry.provider.config"
@@ -26,7 +53,12 @@ class FoundryProviderConfig(models.Model):
     endpoint = fields.Char(
         string="Endpoint URL",
         required=True,
-        help="Azure AI Foundry endpoint URL (no secrets).",
+        help="Azure AI endpoint URL. Expected shapes:\n"
+             "  Foundry project: https://<resource>.services.ai.azure.com/api/projects/<project>\n"
+             "  Foundry resource: https://<resource>.services.ai.azure.com\n"
+             "  Azure OpenAI: https://<resource>.openai.azure.com\n"
+             "  Doc Intelligence: https://<resource>.cognitiveservices.azure.com\n"
+             "No secrets -- credentials are resolved at runtime from env vars / Key Vault.",
     )
     project_name = fields.Char(
         string="Project Name",
@@ -48,6 +80,30 @@ class FoundryProviderConfig(models.Model):
         help="Authentication mode. Credentials are never stored here — "
              "they are resolved at runtime from env vars / Key Vault.",
     )
+    auth_audience = fields.Selection(
+        selection=[
+            (
+                "https://cognitiveservices.azure.com/.default",
+                "Cognitive Services (Azure OpenAI, Doc Intelligence)",
+            ),
+            (
+                "https://ai.azure.com/.default",
+                "AI Foundry (project-scoped APIs)",
+            ),
+            (
+                "https://search.azure.com/.default",
+                "Azure AI Search",
+            ),
+        ],
+        string="Auth Audience",
+        default="https://cognitiveservices.azure.com/.default",
+        required=True,
+        help="OAuth2 token audience for the target API family. "
+             "Foundry project APIs use ai.azure.com/.default. "
+             "Azure OpenAI and Document Intelligence use "
+             "cognitiveservices.azure.com/.default. "
+             "Azure AI Search uses search.azure.com/.default.",
+    )
     api_version = fields.Char(
         string="API Version",
         default="2024-12-01-preview",
@@ -62,6 +118,28 @@ class FoundryProviderConfig(models.Model):
     )
 
     # ------------------------------------------------------------------
+    # Constraints
+    # ------------------------------------------------------------------
+    @api.constrains("endpoint")
+    def _validate_endpoint_shape(self):
+        """Validate that the endpoint URL matches a known Azure AI family."""
+        for rec in self:
+            if not rec.endpoint:
+                continue
+            url = rec.endpoint.strip()
+            if not _ENDPOINT_PATTERN.match(url):
+                raise ValidationError(_(
+                    "Endpoint URL does not match a known Azure AI family.\n"
+                    "Expected one of:\n"
+                    "  https://<resource>.services.ai.azure.com/api/projects/<project>\n"
+                    "  https://<resource>.services.ai.azure.com\n"
+                    "  https://<resource>.openai.azure.com\n"
+                    "  https://<resource>.cognitiveservices.azure.com\n"
+                    "  https://<service>.search.windows.net\n"
+                    "Got: %s"
+                ) % url)
+
+    # ------------------------------------------------------------------
     # CRUD
     # ------------------------------------------------------------------
     @api.model_create_multi
@@ -74,6 +152,7 @@ class FoundryProviderConfig(models.Model):
     def _resolve_auth_headers(self):
         """Build auth headers based on configured auth_mode.
 
+        Uses the configured auth_audience for token scope.
         Returns (headers_dict, missing_hint_or_None).
         """
         import os  # noqa: PLC0415
@@ -86,13 +165,12 @@ class FoundryProviderConfig(models.Model):
 
         # managed_identity or oauth2 — both use Bearer token
         # Try azure-identity SDK first (managed_identity), then env var fallback
+        audience = self.auth_audience or "https://cognitiveservices.azure.com/.default"
         if self.auth_mode == "managed_identity":
             try:
                 from azure.identity import DefaultAzureCredential  # noqa: PLC0415
                 cred = DefaultAzureCredential()
-                token = cred.get_token(
-                    "https://cognitiveservices.azure.com/.default"
-                )
+                token = cred.get_token(audience)
                 return {"Authorization": "Bearer " + token.token}, None
             except Exception:
                 pass  # fall through to env var
@@ -113,8 +191,8 @@ class FoundryProviderConfig(models.Model):
 
         Azure AI Foundry project URLs look like:
           https://<resource>.services.ai.azure.com/api/projects/<project>
-        The OpenAI-compatible API lives at the resource level:
-          https://<resource>.services.ai.azure.com/openai/models
+        The resource-level base is:
+          https://<resource>.services.ai.azure.com
         """
         from urllib.parse import urlparse  # noqa: PLC0415
 
@@ -126,24 +204,61 @@ class FoundryProviderConfig(models.Model):
             path = path[:idx]
         return f"{parsed.scheme}://{parsed.netloc}{path}"
 
+    def _build_test_url(self):
+        """Build the correct test URL based on endpoint shape.
+
+        For Foundry project endpoints (/api/projects/<project>):
+          Test the project endpoint directly with a GET.
+        For resource-level endpoints (.services.ai.azure.com):
+          Test the resource root with a GET.
+        For Azure OpenAI endpoints (.openai.azure.com):
+          Test /openai/models.
+        For Document Intelligence (.cognitiveservices.azure.com):
+          Test /info.
+        """
+        endpoint = self.endpoint.rstrip("/")
+        if "/api/projects/" in endpoint:
+            # Foundry project endpoint -- test the project root directly
+            return endpoint
+        if ".services.ai.azure.com" in endpoint:
+            # Foundry resource-level -- test root
+            return endpoint
+        if ".openai.azure.com" in endpoint:
+            # Azure OpenAI -- test models listing
+            version = self.api_version or "2024-12-01-preview"
+            return "%s/openai/models?api-version=%s" % (endpoint, version)
+        if ".cognitiveservices.azure.com" in endpoint:
+            # Document Intelligence -- test info endpoint
+            return "%s/info" % endpoint
+        # Fallback: test the endpoint as-is
+        return endpoint
+
     def action_test_connection(self):
-        """Test connectivity to the configured Foundry endpoint."""
+        """Test connectivity to the configured endpoint.
+
+        Probes the correct URL based on the endpoint family:
+          - Foundry project: GET the project endpoint directly
+          - Azure OpenAI: GET /openai/models
+          - Document Intelligence: GET /info
+          - Other: GET the endpoint root
+        """
         self.ensure_one()
         import requests  # noqa: PLC0415
 
         headers, missing = self._resolve_auth_headers()
-        base = self._extract_resource_base(self.endpoint)
+        test_url = self._build_test_url()
 
         try:
             resp = requests.get(
-                base.rstrip("/") + "/openai/models",
-                params={"api-version": self.api_version or "2024-12-01-preview"},
+                test_url,
                 headers=headers,
                 timeout=10,
             )
             if resp.status_code < 400:
-                result = _("OK — HTTP %s (auth_mode=%s)") % (
-                    resp.status_code, self.auth_mode,
+                result = _("OK — HTTP %s (auth_mode=%s, audience=%s)") % (
+                    resp.status_code,
+                    self.auth_mode,
+                    self.auth_audience or "default",
                 )
             elif resp.status_code == 401 and missing:
                 result = _(

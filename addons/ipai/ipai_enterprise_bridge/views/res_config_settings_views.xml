@@ -69,7 +69,7 @@
                             <div class="row mt16">
                                 <label for="ipai_foundry_endpoint" class="col-lg-3"/>
                                 <field name="ipai_foundry_endpoint"
-                                       placeholder="https://your-foundry.azure.com"/>
+                                       placeholder="https://your-resource.services.ai.azure.com/api/projects/your-project"/>
                             </div>
                             <div class="row">
                                 <label for="ipai_foundry_project_name" class="col-lg-3"/>

@@ -120,7 +120,11 @@ class ResConfigSettings(models.TransientModel):
     ipai_foundry_endpoint = fields.Char(
         string="Foundry Endpoint",
         config_parameter="ipai.foundry.endpoint",
-        help="Azure AI Foundry endpoint URL (no secrets).",
+        help="Azure AI Foundry endpoint URL. Expected shape: "
+             "https://<resource>.services.ai.azure.com/api/projects/<project> "
+             "for project-scoped APIs, or "
+             "https://<resource>.services.ai.azure.com for resource-level APIs. "
+             "No secrets -- credentials resolved at runtime from env vars / Key Vault.",
     )
     ipai_foundry_project_name = fields.Char(
         string="Foundry Project",
