@@ -15,7 +15,7 @@ External MCPs       Custom MCPs
 (Supabase, GitHub)  (Odoo, DO, Superset)
 ```
 
-**Configuration:** `.claude/mcp-servers.json`
+**Configuration:** `.mcp.json` (repo root — canonical project-scoped config)
 
 ### External MCP Servers (install via npx)
 

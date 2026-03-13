@@ -484,7 +484,7 @@ odoo-ce/
 │   ├── project_memory.db      # SQLite config database
 │   ├── query_memory.py        # Memory query script
 │   ├── settings.json          # Allowed tools config
-│   ├── mcp-servers.json       # MCP server configuration
+│   ├── mcp-servers.legacy.json # Legacy MCP catalog (transitional reference)
 │   └── commands/              # Slash commands
 │
 ├── .github/workflows/         # CI/CD pipelines (355 workflows)
@@ -1189,7 +1189,7 @@ External MCPs       Custom MCPs
 (Supabase, GitHub)  (Odoo, DO, Superset)
 ```
 
-**Configuration:** `.claude/mcp-servers.json`
+**Configuration:** `.mcp.json` (repo root — canonical project-scoped config)
 
 **External MCP Servers (install via npx):**
 

@@ -193,7 +193,7 @@ data/source.xlsx
 !**/.env.example
 .devcontainer/devcontainer.env
 config/odoo.conf.local
-.mcp.json
+# .mcp.json is the canonical project-scoped MCP config — intentionally tracked
 # --- local compose overrides ---
 docker-compose.local.yml
 docker-compose.*.local.yml

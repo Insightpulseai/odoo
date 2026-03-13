@@ -15,7 +15,7 @@
   ],
   "mcp_configs": [
     {
-      "path": ".claude/mcp-servers.json",
+      "path": ".mcp.json",
       "servers_configured": [
         "supabase",
         "github",
