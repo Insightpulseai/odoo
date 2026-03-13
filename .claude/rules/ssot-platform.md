@@ -103,18 +103,28 @@ When generating or modifying n8n workflow JSON:
 
 ---
 
-## Rule 7: Odoo outbound email uses Mailgun SMTP (not Zoho)
+## Rule 7: Odoo outbound email uses Zoho SMTP (Mailgun is deprecated)
 
-Odoo outbound transactional mail routes through Mailgun on the `mg.insightpulseai.com` subdomain.
-Zoho handles root-domain human/business mailboxes only.
+Odoo outbound mail routes through Zoho SMTP on port 587/TLS.
+Mailgun (`mg.insightpulseai.com`) is deprecated — never reintroduce it.
+
+SMTP transport (SSOT: `config/odoo/mail_settings.yaml`):
+- Host: `smtp.zoho.com` (or `smtppro.zoho.com` for paid org mailboxes)
+- Port: `587` (STARTTLS) or `465` (SSL) — never port 25 (blocked by Azure)
+- Auth: required — credentials resolved at runtime via Azure Key Vault
+
+Secret source of truth: **Azure Key Vault** (`kv-ipai-dev`).
+- Secret names: `zoho-smtp-user`, `zoho-smtp-password`
+- Runtime binding: managed identity → Key Vault → env vars `ZOHO_SMTP_USER` / `ZOHO_SMTP_PASSWORD`
+- No plaintext credentials in tracked config files.
 
 When generating Odoo Python code that sends email:
 
-- Use `mail.mail.create({...}).send()` — Odoo's standard `ir.mail_server` handles delivery via Mailgun SMTP
-- Sender addresses must use the `mg.insightpulseai.com` subdomain (e.g. `no-reply@mg.insightpulseai.com`)
-- Never configure Odoo to send from root-domain addresses (e.g. `business@insightpulseai.com`) — those are Zoho mailboxes
-- Never introduce a bridge module for mail routing — standard `ir.mail_server` with Mailgun SMTP credentials is the canonical path
-- See `docs/contracts/MAIL_ARCHITECTURE_CONTRACT.md` for the full provider split
+- Use `mail.mail.create({...}).send()` — Odoo's standard `ir.mail_server` handles delivery via Zoho SMTP
+- Sender addresses must be authorized Zoho mailboxes on `insightpulseai.com`
+- Never use Mailgun endpoints, `mg.insightpulseai.com`, or port 25
+- Never introduce a bridge module for mail routing — standard `ir.mail_server` with Zoho SMTP credentials is the canonical path
+- Never place SMTP credentials in `odoo.conf`, `.env` files tracked in git, or any committed config
 
 ---
 

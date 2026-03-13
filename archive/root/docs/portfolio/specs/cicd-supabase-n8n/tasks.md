@@ -105,7 +105,7 @@
 
 ## Phase 4: Documentation
 
-- [x] Create spec bundle (`spec/cicd-supabase-n8n/`)
+- [x] Create spec bundle (`docs/spec/cicd-supabase-n8n/`)
 - [x] Write constitution.md
 - [x] Write prd.md
 - [x] Write plan.md

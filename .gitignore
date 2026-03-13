@@ -194,6 +194,7 @@ data/source.xlsx
 .devcontainer/devcontainer.env
 config/odoo.conf.local
 .mcp.json
+powerbi-databricks-connection.json
 # --- local compose overrides ---
 docker-compose.local.yml
 docker-compose.*.local.yml

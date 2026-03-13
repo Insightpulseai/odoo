@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
+# Part of IPAI. See LICENSE file for full copyright and licensing details.
 {
     "name": "DEPRECATED: WhatsApp Connector",
     "version": "19.0.1.0.0",
-    "category": "InsightPulse AI",
-    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
+    "category": "Productivity/AI",
+    "summary": "Build AI agents with topics, tools, and RAG capabilities",
     "description": """
 WhatsApp Connector
 ==================
 
 WhatsApp messaging integration
 
-This module provides Odoo 19 Enterprise Edition parity for CE deployments.
+- **Agents**: Configurable AI assistants with system prompts and response styles
+- **Topics**: Instruction bundles that assign specific tools to agents
+- **Tools**: Callable business actions with permission gating and audit trails
+- **Sources**: Knowledge bases for RAG (Retrieval-Augmented Generation)
 
 **Features:**
 - Core functionality for whatsapp connector
@@ -26,13 +30,23 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
-    "depends": ["mail"],
+    "depends": [
+        "base",
+        "web",
+        "mail",
+    ],
     "data": [
+        "security/security.xml",
         "security/ir.model.access.csv",
-        "views/menu.xml",
+        "data/ai_agent_data.xml",
+        "views/ai_agent_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     "demo": [],
-    "installable": False,
-    "application": False,
+    "installable": True,
+    "application": True,
     "auto_install": False,
+    "external_dependencies": {
+        "python": ["openai", "pyyaml"],
+    },
 }

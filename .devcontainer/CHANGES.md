@@ -117,7 +117,7 @@ For existing developers:
 - [ ] Workspace file loads correctly
 - [ ] Dev Container builds successfully
 - [ ] Services start (db, redis, odoo)
-- [ ] Three databases created (odoo_dev, odoo_stage, odoo_prod)
+- [ ] Three databases created (odoo_dev, odoo_staging, odoo_prod)
 - [ ] Odoo accessible at http://localhost:8069
 - [ ] PostgreSQL accessible (`psql -U odoo -d odoo_dev`)
 - [ ] Docker access works (`docker ps`)

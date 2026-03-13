@@ -1,0 +1,16 @@
+=== SETTINGS ===
+  enabled: False
+  endpoint: 
+  api_endpoint: https://data-intel-ph-resource.services.ai.azure.com
+  project: data-intel-ph
+  agent_name: ipai-odoo-copilot-azure
+  model: gpt-4.1
+  search_service: srch-ipai-dev
+  search_connection: 
+  search_index: 
+  memory_enabled: False
+  read_only_mode: True
+=== AUTH MODE === none
+=== CONNECTION TEST === ok=False, msg=Foundry copilot is disabled. Enable it in settings first.
+=== CRON === ['IPAI Foundry: Nightly Healthcheck']
+=== IR.MODEL === id=149, name=Azure Foundry Service Bridge

@@ -1,7 +1,7 @@
 # Tasks — Notion Clone Module (Executable Graph)
 
 ## A) Spec + Catalog
-- [x] Add `spec/workos-notion-clone/{constitution,prd,plan,tasks}.md`
+- [x] Add `docs/spec/workos-notion-clone/{constitution,prd,plan,tasks}.md`
 - [x] Update `catalog/best_of_breed.yaml` with Notion target + hero flows
 - [x] Add P0/P1 capability rows to `catalog/equivalence_matrix.csv`:
   - [x] `workos.pages.blocks` (P0)
@@ -15,13 +15,13 @@
   - [x] `workos.templates.page_db` (P1)
 
 ## B) Modules — Scaffolding
-- [x] Scaffold `addons/ipai_workos_core`
-- [x] Scaffold `addons/ipai_workos_blocks`
-- [x] Scaffold `addons/ipai_workos_db`
-- [x] Scaffold `addons/ipai_workos_views`
-- [x] Scaffold `addons/ipai_workos_templates`
-- [x] Scaffold `addons/ipai_workos_collab`
-- [x] Scaffold `addons/ipai_workos_search`
+- [x] Scaffold `odoo/addons/ipai_workos_core`
+- [x] Scaffold `odoo/addons/ipai_workos_blocks`
+- [x] Scaffold `odoo/addons/ipai_workos_db`
+- [x] Scaffold `odoo/addons/ipai_workos_views`
+- [x] Scaffold `odoo/addons/ipai_workos_templates`
+- [x] Scaffold `odoo/addons/ipai_workos_collab`
+- [x] Scaffold `odoo/addons/ipai_workos_search`
 - [x] Ensure manifests depend on correct Odoo modules (`web`, `mail`, `base`, etc.)
 
 ## C) Work OS Shell

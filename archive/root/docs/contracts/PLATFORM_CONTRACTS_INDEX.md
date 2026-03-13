@@ -40,7 +40,8 @@
 | C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
 | C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
-| C-29 | [ERP Surface Ownership](ERP_SURFACE_OWNERSHIP_CONTRACT.md)  | Org-level repo ownership model        | All repos in Insightpulseai org                    | ✅ Active | `repo-boundary-check.yml`                  |
+| C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
+| C-30 | [ERP Surface Ownership](ERP_SURFACE_OWNERSHIP_CONTRACT.md)  | Org-level repo ownership model        | All repos in Insightpulseai org                    | ✅ Active | `repo-boundary-check.yml`                  |
 
 ---
 

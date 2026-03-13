@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 configure_zoho_smtp.py - Configure Zoho SMTP for Odoo 18
-Run with: docker exec -i odoo-core odoo shell -d odoo_core < configure_zoho_smtp.py
+Run with: docker exec -i odoo-core odoo shell -d odoo_prod < configure_zoho_smtp.py
 
 Zoho Workplace Account: business@insightpulseai.com
 """

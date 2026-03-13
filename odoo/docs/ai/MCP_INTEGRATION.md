@@ -56,7 +56,7 @@
 
 ### Claude Desktop Config
 
-Location: `~/.claude/mcp-servers.json` (also in `.claude/mcp-servers.json`)
+Location: `.mcp.json` (repo root — canonical project-scoped config)
 
 ```json
 {

@@ -24,7 +24,7 @@ NC='\033[0m'
 
 # Configuration
 ODOO_URL="${ODOO_URL:-http://localhost:8069}"
-DB_NAME="${ODOO_DB_NAME:-odoo_core}"
+DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 
 echo ""
 echo "============================================================================="

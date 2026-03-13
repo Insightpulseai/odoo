@@ -24,10 +24,10 @@
             <field name="smtp_port">587</field>
             <field name="smtp_encryption">starttls</field>
             <field name="smtp_user">business@insightpulseai.com</field>
-            <!-- Password must be set manually after installation -->
+            <!-- Password injected at runtime via Azure Key Vault → ZOHO_SMTP_PASSWORD -->
             <field name="smtp_pass"></field>
             <field name="from_filter">@insightpulseai.com</field>
-            <!-- SMTP kept active as fallback (DO blocks 587, but env-var bridge takes precedence) -->
+            <!-- Primary outbound server. E2E verified 2026-03-10 on smtp.zoho.com + smtppro.zoho.com -->
             <field name="active" eval="True"/>
             <field name="sequence">1</field>
         </record>

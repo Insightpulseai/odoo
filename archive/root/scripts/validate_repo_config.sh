@@ -86,7 +86,7 @@ for PATTERN in "${DEPRECATED_PATTERNS[@]}"; do
   # Check docker-compose.yml and env files, excluding comment lines
   if grep -h "$PATTERN" docker-compose.yml ops/compose/*.env 2>/dev/null | grep -v "^#" | grep -q "$PATTERN"; then
     echo "  ⚠️  Found deprecated pattern: $PATTERN"
-    echo "     Should use: odoo-app, odoo-db, odoo_dev, odoo_stage, odoo_prod"
+    echo "     Should use: odoo-app, odoo-db, odoo_dev, odoo_staging, odoo_prod"
     ERRORS=$((ERRORS + 1))
   fi
 done

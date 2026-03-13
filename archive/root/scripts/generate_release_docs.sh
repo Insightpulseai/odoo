@@ -188,7 +188,7 @@ cat > "$RELEASE_DIR/GO_LIVE_MANIFEST.md" << EOF
 | **Release Tag** | \`$RELEASE_TAG\` |
 | **Commit SHA** | \`$COMMIT_SHA\` |
 | **Production URL** | https://erp.insightpulseai.com |
-| **Database** | \`odoo_core\` |
+| **Database** | \`odoo_prod\` |
 | **Docker Image** | \`ghcr.io/jgtolentino/odoo-ce:$RELEASE_TAG\` |
 
 ---
@@ -231,7 +231,7 @@ curl -sI https://erp.insightpulseai.com/web/health | head -5
 docker inspect ghcr.io/jgtolentino/odoo-ce:$RELEASE_TAG --format='{{.Id}}'
 
 # Check module state
-docker exec odoo-erp-prod odoo shell -d odoo_core -c "print(env['ir.module.module'].search([('state','=','installed')]).mapped('name'))"
+docker exec odoo-erp-prod odoo shell -d odoo_prod -c "print(env['ir.module.module'].search([('state','=','installed')]).mapped('name'))"
 \`\`\`
 
 ---
@@ -265,7 +265,7 @@ echo "# Docker Image Digest for $RELEASE_TAG
 DIGEST_PENDING" > "$PROOFS_DIR/docker_image_digest.txt"
 
 echo "# Odoo stop-after-init log for $RELEASE_TAG
-# Run: docker exec odoo-erp-prod odoo -d odoo_core --stop-after-init 2>&1 | tail -50
+# Run: docker exec odoo-erp-prod odoo -d odoo_prod --stop-after-init 2>&1 | tail -50
 # Paste output below:
 LOG_PENDING" > "$PROOFS_DIR/odoo_stop_after_init.log"
 

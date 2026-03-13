@@ -2,7 +2,7 @@
 # TBWA Backend Theme - Quick Install Script
 # Usage: ./install.sh [database_name] [container_name]
 
-DB_NAME="${1:-odoo_core}"
+DB_NAME="${1:-odoo_dev}"
 CONTAINER="${2:-odoo-web}"
 ADDONS_PATH="${3:-/opt/odoo/addons}"
 

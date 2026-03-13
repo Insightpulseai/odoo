@@ -13,7 +13,7 @@
 #   --file FILE   Path to backup file (.sql.gz)
 #   --tag TAG     Restore backup with specific tag
 #   --latest      Restore latest backup
-#   --target DB   Target database name (default: odoo_core)
+#   --target DB   Target database name (default: odoo_prod)
 #   --force       Drop existing database before restore
 # =============================================================================
 
@@ -33,7 +33,7 @@ NC='\033[0m'
 BACKUP_FILE=""
 TAG=""
 USE_LATEST=false
-TARGET_DB="${ODOO_DB:-odoo_core}"
+TARGET_DB="${ODOO_DB:-odoo_prod}"
 FORCE=false
 BACKUP_DIR="${BACKUP_DIR:-/opt/backups/odoo}"
 

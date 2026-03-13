@@ -34,7 +34,7 @@ if ! docker compose ps "$APP_SVC" | grep -q "Up"; then
 fi
 
 # Check if we're actually on staging database
-CURRENT_DB=$(docker compose exec -T "$APP_SVC" odoo shell -d odoo_stage --no-http <<'PY' 2>/dev/null || echo "FAILED"
+CURRENT_DB=$(docker compose exec -T "$APP_SVC" odoo shell -d odoo_staging --no-http <<'PY' 2>/dev/null || echo "FAILED"
 import os
 print(os.getenv('PGDATABASE', 'unknown'))
 PY
@@ -47,7 +47,7 @@ fi
 info "Removing system privileges from all users..."
 
 # Remove system group from all users
-docker compose exec -T "$APP_SVC" odoo shell -d odoo_stage --no-http <<'PY'
+docker compose exec -T "$APP_SVC" odoo shell -d odoo_staging --no-http <<'PY'
 # Remove system user privileges
 group = env.ref('base.group_system')
 users = env['res.users'].sudo().search([])
@@ -74,7 +74,7 @@ if [ $? -eq 0 ]; then
     info "Manual system changes are blocked"
     info ""
     info "To unlock (if needed):"
-    info "  docker compose exec -T $APP_SVC odoo shell -d odoo_stage"
+    info "  docker compose exec -T $APP_SVC odoo shell -d odoo_staging"
     info "  >>> admin = env.ref('base.user_admin')"
     info "  >>> group = env.ref('base.group_system')"
     info "  >>> admin.write({'groups_id': [(4, group.id)]})"

@@ -12,7 +12,7 @@ TEMPLATES_DIR="${PROJECT_ROOT}/data/import_templates"
 
 # Configuration
 ODOO_CONTAINER="${ODOO_CONTAINER:-odoo-core}"
-DB_NAME="${DB_NAME:-odoo_core}"
+DB_NAME="${DB_NAME:-odoo_dev}"
 
 echo "=============================================="
 echo "Odoo 18 CE Project Import Sequence"

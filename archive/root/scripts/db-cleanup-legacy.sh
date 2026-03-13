@@ -32,7 +32,7 @@ CANONICAL_DBS=(
     "defaultdb"
     "postgres"
     "odoo_dev"
-    "odoo_stage"
+    "odoo_staging"
     "_dodb"
     "template0"
     "template1"
@@ -134,6 +134,6 @@ fi
 
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo "1. Verify canonical databases: odoo_dev, odoo_stage"
+echo "1. Verify canonical databases: odoo_dev, odoo_staging"
 echo "2. Initialize odoo_dev: python3 odoo-bin -c odoo-tunnel.conf -d odoo_dev -i base --stop-after-init"
 echo "3. Create odoo_prod when ready for production"

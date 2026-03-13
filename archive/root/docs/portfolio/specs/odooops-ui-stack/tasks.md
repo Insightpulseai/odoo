@@ -884,7 +884,7 @@ pnpm list @supabase/platform-kit
 **Verification**:
 ```bash
 # Create test script
-# scripts/test-api.ts
+# odoo/scripts/test-api.ts
 import { getDeployments, getEnvironments } from '@/lib/odooops/api'
 
 async function test() {
@@ -898,7 +898,7 @@ async function test() {
 test()
 
 # Run test
-pnpm tsx scripts/test-api.ts
+pnpm tsx odoo/scripts/test-api.ts
 ```
 
 ---

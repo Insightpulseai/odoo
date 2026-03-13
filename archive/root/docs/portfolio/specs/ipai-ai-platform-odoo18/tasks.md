@@ -12,10 +12,10 @@
 ## 1. Spec Kit & Documentation
 
 ### 1.1 Spec Bundle
-- [x] Create `spec/ipai-ai-platform-odoo18/constitution.md`
-- [x] Create `spec/ipai-ai-platform-odoo18/prd.md`
-- [x] Create `spec/ipai-ai-platform-odoo18/plan.md`
-- [x] Create `spec/ipai-ai-platform-odoo18/tasks.md`
+- [x] Create `docs/spec/ipai-ai-platform-odoo18/constitution.md`
+- [x] Create `docs/spec/ipai-ai-platform-odoo18/prd.md`
+- [x] Create `docs/spec/ipai-ai-platform-odoo18/plan.md`
+- [x] Create `docs/spec/ipai-ai-platform-odoo18/tasks.md`
 
 ### 1.2 Architecture Documentation
 - [ ] Create `docs/arch/IPAI_AI_PLATFORM_ARCH.md`
@@ -45,7 +45,7 @@
 ## 2. Database & Schema
 
 ### 2.1 Supabase KB Schema
-- [ ] Create `db/migrations/YYYYMMDD_ipai_kb_chunks.sql`
+- [ ] Create `supabase/db/migrations/YYYYMMDD_ipai_kb_chunks.sql`
 - [ ] Add `kb.chunks` table with pgvector
 - [ ] Add unique constraint for upsert
 - [ ] Create `kb.search_chunks` RPC
@@ -57,8 +57,8 @@
 ## 3. Module: ipai_ai_agents_ui
 
 ### 3.1 Odoo Module Structure
-- [ ] Create `addons/ipai/ipai_ai_agents_ui/__manifest__.py`
-- [ ] Create `addons/ipai/ipai_ai_agents_ui/__init__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_agents_ui/__manifest__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_agents_ui/__init__.py`
 - [ ] Add security files (`ir.model.access.csv`)
 - [ ] Add menu and views XML
 
@@ -79,7 +79,7 @@
 - [ ] Implement loading and error states
 
 ### 3.4 Build & Integration
-- [ ] Create build script (`scripts/copy-dist.mjs`)
+- [ ] Create build script (`odoo/scripts/copy-dist.mjs`)
 - [ ] Build IIFE bundle
 - [ ] Commit `static/lib/ipai_ai_ui.iife.js`
 - [ ] Commit `static/lib/ipai_ai_ui.css`
@@ -90,8 +90,8 @@
 ## 4. Module: ipai_ai_connectors
 
 ### 4.1 Odoo Module Structure
-- [ ] Create `addons/ipai/ipai_ai_connectors/__manifest__.py`
-- [ ] Create `addons/ipai/ipai_ai_connectors/__init__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_connectors/__manifest__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_connectors/__init__.py`
 - [ ] Create models (`ipai.ai.event`)
 - [ ] Add security files
 - [ ] Add menu and views XML
@@ -112,8 +112,8 @@
 ## 5. Module: ipai_ai_sources_odoo
 
 ### 5.1 Odoo Module Structure
-- [ ] Create `addons/ipai/ipai_ai_sources_odoo/__manifest__.py`
-- [ ] Create `addons/ipai/ipai_ai_sources_odoo/__init__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_sources_odoo/__manifest__.py`
+- [ ] Create `odoo/addons/ipai/ipai_ai_sources_odoo/__init__.py`
 - [ ] Create exporter model (`ipai.kb.exporter`)
 - [ ] Add cron job definition
 

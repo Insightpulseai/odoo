@@ -17,7 +17,7 @@ NC='\033[0m'
 PROD_HOST="root@159.223.75.148"
 ODOO_CONTAINER="odoo-core"
 POSTGRES_CONTAINER="odoo-postgres"
-DB_NAME="odoo_core"
+DB_NAME="odoo_prod"
 
 echo -e "${GREEN}=== December 2025 BIR Task Deployment ===${NC}"
 echo ""
