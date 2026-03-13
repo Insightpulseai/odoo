@@ -89,7 +89,7 @@ Files to create (only if custom code needed):
 ### 3. Verification Commands
 ```bash
 # Install/upgrade modules
-docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+docker compose exec odoo odoo -d odoo_dev -u module_name --stop-after-init
 
 # Run tests
 ./scripts/ci/run_odoo_tests.sh module_name

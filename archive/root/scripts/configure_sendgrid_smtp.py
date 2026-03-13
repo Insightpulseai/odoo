@@ -7,7 +7,7 @@ SMTP port blocking (ports 25, 465, 587 are blocked by default).
 
 SendGrid is a DigitalOcean partner and provides 100 free emails/day.
 
-Run with: docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_sendgrid_smtp.py
+Run with: docker exec -i odoo-core odoo shell -d odoo_prod < scripts/configure_sendgrid_smtp.py
 
 For Mailgun, use configure_mailgun_smtp.py instead.
 """

@@ -160,9 +160,11 @@ RUN set -eux; \
   echo "Addon roots verified: oca=$oca_count modules, ipai=$ipai_count modules"
 
 # =============================================================================
-# Configuration
+# Configuration — Azure Container App (no hardcoded DB params)
+# DB connection injected via ACA env vars (HOST, PORT, USER, PASSWORD)
 # =============================================================================
-COPY ./config/prod/odoo.conf /etc/odoo/odoo.conf
+ARG ODOO_CONF=./config/azure/odoo.conf
+COPY ${ODOO_CONF} /etc/odoo/odoo.conf
 
 # =============================================================================
 # Permissions

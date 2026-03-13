@@ -32,7 +32,7 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR="${BACKUP_DIR:-/opt/backups/odoo}"
 TEST_BACKUP_NAME="backup_test_$TIMESTAMP"
 TEST_DB_NAME="odoo_test_restore_$TIMESTAMP"
-SOURCE_DB="${ODOO_DB:-odoo_core}"
+SOURCE_DB="${ODOO_DB:-odoo_prod}"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do

@@ -1,17 +1,13 @@
 {
   "name": "InsightPulseAI Odoo 19 CE Dev",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "dockerComposeFile": "docker-compose.devcontainer.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/odoo",
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },
   "mounts": [
-    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume",
-    "source=${localWorkspaceFolder}/addons/ipai,target=/mnt/extra-addons/ipai,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/oca,target=/mnt/oca,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/addons/local,target=/mnt/extra-addons/local,type=bind,consistency=cached"
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
   ],
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
@@ -22,11 +18,7 @@
   },
   "containerUser": "vscode",
   "remoteUser": "vscode",
-  "dockerComposeFile": "docker-compose.devcontainer.yml",
-  "service": "devcontainer",
-  "workspaceFolder": "/workspaces/odoo",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "postStartCommand": "bash .devcontainer/init-firewall.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -41,7 +33,7 @@
         "python.defaultInterpreterPath": "/usr/local/bin/python3",
         "editor.formatOnSave": true,
         "files.watcherExclude": {
-          "**/oca_addons/**": true,
+          "**/addons/oca/**": true,
           "**/.git/**": true
         }
       }

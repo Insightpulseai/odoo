@@ -5,7 +5,7 @@ Post-Import Verification Script (READ-ONLY)
 Verifies counts, dependencies, recurrence, and milestones after import.
 
 Usage:
-  docker exec -i odoo-core odoo shell -d odoo_core --no-http < scripts/import/verify_import.py
+  docker exec -i odoo-core odoo shell -d odoo_dev --no-http < scripts/import/verify_import.py
 """
 
 import sys

@@ -16,7 +16,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="${PROJECT_ROOT}/logs/odoo-install-$(date +%Y%m%d-%H%M%S).log"
-DB_NAME="${ODOO_DB_NAME:-odoo_core}"
+DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 DB_USER="${ODOO_DB_USER:-odoo}"
 DB_PASSWORD="${ODOO_DB_PASSWORD:-odoo}"
 DB_HOST="${ODOO_DB_HOST:-postgres}"

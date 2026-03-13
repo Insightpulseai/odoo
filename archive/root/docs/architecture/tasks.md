@@ -6,7 +6,7 @@ Status: Draft checklist aligned with plan.md
 
 ## Phase 0 – Repo & CI Skeleton
 
-- [x] Create base directories: `addons/`, `oca/`, `deploy/`, `.github/workflows/`.
+- [x] Create base directories: `odoo/addons/`, `oca/`, `deploy/`, `.github/workflows/`.
 - [ ] Add `spec.md`, `plan.md`, `tasks.md` to root.
 - [ ] Add `README.md` with high-level description and constraints.
 - [ ] Add `.gitignore` tuned for Odoo / Python / Docker.
@@ -22,7 +22,7 @@ Status: Draft checklist aligned with plan.md
 - [ ] Create `deploy/docker-compose.yml` with:
   - [ ] Odoo CE 18 service.
   - [ ] PostgreSQL service.
-  - [ ] Volumes for `addons/` and `oca/`.
+  - [ ] Volumes for `odoo/addons/` and `oca/`.
 - [ ] Add `deploy/odoo.conf` with correct `addons_path` and `dbfilter`.
 - [ ] Add `deploy/nginx.conf` (or equivalent) for `erp.insightpulseai.com`.
 - [ ] Set up SSL (Let's Encrypt or DO-managed cert).
@@ -35,7 +35,7 @@ Status: Draft checklist aligned with plan.md
 ## Phase 2 – Expense MVP (`ipai_expense`)
 
 - [ ] Add necessary OCA repos as git submodules (e.g. `oca/account-financial-tools`, `oca/hr`).
-- [ ] Scaffold `addons/ipai_expense`:
+- [ ] Scaffold `odoo/addons/ipai_expense`:
   - [ ] `__manifest__.py` with CE/OCA dependencies only.
   - [ ] Models for PH expense categories and travel requests.
   - [ ] Views: form, tree, and kanban for expenses and reports.
@@ -52,7 +52,7 @@ Status: Draft checklist aligned with plan.md
 ## Phase 3 – Equipment MVP (`ipai_equipment`)
 
 - [ ] Add/mount OCA stock/maintenance repos.
-- [ ] Scaffold `addons/ipai_equipment`:
+- [ ] Scaffold `odoo/addons/ipai_equipment`:
   - [ ] `__manifest__.py`.
   - [ ] Models: asset, booking, incident.
   - [ ] Views: catalog, bookings calendar, incident reports.
@@ -68,7 +68,7 @@ Status: Draft checklist aligned with plan.md
 
 ## Phase 4 – CE Cleaner & Branding (`ipai_ce_cleaner`)
 
-- [ ] Scaffold `addons/ipai_ce_cleaner`:
+- [ ] Scaffold `odoo/addons/ipai_ce_cleaner`:
   - [ ] XML overrides to hide Enterprise banners.
   - [ ] Removal/override of IAP menus.
   - [ ] Replace `odoo.com` links with InsightPulse or OCA docs.

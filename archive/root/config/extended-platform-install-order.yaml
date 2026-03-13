@@ -480,11 +480,11 @@ docker_init_profile:
 
   init_command: |
     # Install in phases with verification
-    docker exec -it odoo-core odoo -d odoo_core -i base_view_inheritance_extension,auditlog,date_range --stop-after-init
-    docker exec -it odoo-core odoo -d odoo_core -i web_responsive,queue_job --stop-after-init
-    docker exec -it odoo-core odoo -d odoo_core -i report_xlsx,mis_builder,account_financial_report --stop-after-init
-    docker exec -it odoo-core odoo -d odoo_core -i spreadsheet_oca,base_rest,mail_activity_board --stop-after-init
-    docker exec -it odoo-core odoo -d odoo_core -i ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_dev -i base_view_inheritance_extension,auditlog,date_range --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_dev -i web_responsive,queue_job --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_dev -i report_xlsx,mis_builder,account_financial_report --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_dev -i spreadsheet_oca,base_rest,mail_activity_board --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_dev -i ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center --stop-after-init
 
 # =============================================================================
 # VERIFICATION CHECKLIST

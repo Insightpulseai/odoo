@@ -96,7 +96,7 @@
 - [ ] Set up uptime monitoring on `/health`
 - [ ] Create runbook: `docs/runbooks/OPS_ASSISTANT_RUNBOOK.md`
 - [ ] Validate: team member uses app in ChatGPT for real operation
-- [ ] Document: update `ssot/integrations/_index.yaml` with app entry
+- [ ] Document: update `infra/ssot/integrations/_index.yaml` with app entry
 
 ## Acceptance Criteria
 

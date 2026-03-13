@@ -34,10 +34,10 @@
             <value>bounce</value>
         </function>
 
-        <!-- Default From Email -->
+        <!-- Default From Email (E2E verified 2026-03-10) -->
         <function model="ir.config_parameter" name="set_param">
             <value>mail.default.from</value>
-            <value>noreply@insightpulseai.com</value>
+            <value>no-reply</value>
         </function>
 
         <!-- Base URL for Email Links -->

@@ -13,19 +13,19 @@
 ## Phase 1: Foundation
 
 ### Spec Infrastructure
-- [x] Create spec/odoo-decoupled-platform/ directory structure
+- [x] Create docs/spec/odoo-decoupled-platform/ directory structure
 - [x] Write constitution.md with non-negotiables
 - [x] Write prd.md with product requirements
 - [x] Write plan.md with implementation plan
 - [x] Write tasks.md (this file)
 
 ### Auth Specs
-- [x] Create spec/auth/roles.yaml
+- [x] Create docs/spec/auth/roles.yaml
 - [ ] Add permission matrix to roles.yaml
-- [ ] Document SSO configuration in spec/auth/sso.md
+- [ ] Document SSO configuration in docs/spec/auth/sso.md
 
 ### Schema Specs
-- [x] Create spec/schema/entities.yaml
+- [x] Create docs/spec/schema/entities.yaml
 - [ ] Add field-level documentation
 - [ ] Generate DBML artifact
 

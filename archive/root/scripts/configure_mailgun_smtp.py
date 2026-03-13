@@ -5,7 +5,7 @@ configure_mailgun_smtp.py - Configure Mailgun SMTP for Odoo 18 on DigitalOcean
 This script configures Mailgun SMTP using PORT 2525, which bypasses DigitalOcean's
 SMTP port blocking (ports 25, 465, 587 are blocked by default).
 
-Run with: docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py
+Run with: docker exec -i odoo-core odoo shell -d odoo_prod < scripts/configure_mailgun_smtp.py
 
 For SendGrid, use configure_sendgrid_smtp.py instead.
 """

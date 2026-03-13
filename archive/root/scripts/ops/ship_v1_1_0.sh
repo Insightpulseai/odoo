@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-: "${ODOO_DB:=odoo_core}"
+: "${ODOO_DB:=odoo_prod}"
 : "${BASE_URL:=https://erp.insightpulseai.com}"
 : "${COMPOSE_FILE:=docker-compose.prod.yml}"
 

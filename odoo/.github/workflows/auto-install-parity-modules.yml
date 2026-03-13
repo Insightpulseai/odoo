@@ -122,7 +122,7 @@ jobs:
 
             # Dry-run: confirm odoo-bin starts with base
             DB="${{ secrets.ODOO_PROD_DB }}"
-            DB="${DB:-odoo_core}"
+            DB="${DB:-odoo_prod}"
             echo ">>> Preflight dry-run: odoo-bin -u base on DB=$DB"
             docker exec ${{ env.ODOO_CONTAINER }} \
               odoo -c ${{ env.ODOO_CONF }} -d "$DB" \
@@ -146,7 +146,7 @@ jobs:
 
             MODULES="${{ steps.config.outputs.modules }}"
             DB="${{ secrets.ODOO_PROD_DB }}"
-            DB="${DB:-odoo_core}"
+            DB="${DB:-odoo_prod}"
 
             # Step 1: Install missing modules (-i tolerates already-installed)
             echo ">>> Step 1: Installing modules (idempotent)..."
@@ -194,7 +194,7 @@ jobs:
           script: |
             set -euo pipefail
             DB="${{ secrets.ODOO_PROD_DB }}"
-            DB="${DB:-odoo_core}"
+            DB="${DB:-odoo_prod}"
 
             echo "=== Installed IPAI modules ==="
             docker exec ${{ env.ODOO_CONTAINER }} \

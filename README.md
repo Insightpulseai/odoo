@@ -1,24 +1,34 @@
-# InsightPulseAI Odoo Runtime (CE + OCA + Bridges)
+# InsightPulseAI Odoo Monorepo
 
 [![odoo-ci](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml/badge.svg)](https://github.com/Insightpulseai/odoo/actions/workflows/ci-odoo.yml)
 
 ## Repo Metadata
 
-- **Status**: Active
-- **Class**: Runtime / Platform Core
-- **Tier**: Tier 0
-- **Workspace Role**: Canonical ERP runtime repository for InsightPulseAI
-- **Primary Owner Team**: `erp` + `platform-core`
-- **Lifecycle**: Production / Canonical
-- **Current Constraint**: Repository contains transitional cross-domain artifacts pending decomposition into org-level owning repositories
+- **Status:** Active
+- **Class:** Transitional Odoo-led platform monorepo
+- **Tier:** Tier 0 / production-critical
+- **Primary Role:** Canonical repository for the Odoo ERP runtime layer, while still temporarily hosting cross-domain platform artifacts pending decomposition
+- **Primary Owner Team:** erp + platform-core
+- **Lifecycle:** Production / Canonical
+- **Current Constraint:** Repository still contains shared platform, infra, automation, agent, and web artifacts that are planned to move to their owning repositories over time
 
 ---
 
-This repository is a **production runtime wrapper** around:
+## Actual Current State
 
-- **Odoo Community Edition (CE)** — base ERP runtime (official `odoo:19` Docker image)
-- **OCA addons** — community EE-parity modules (vendored under `addons/oca/`)
-- **IPAI integration bridges** — thin connectors to external services only (under `addons/ipai/`)
+This repository currently contains:
+
+- Odoo CE/OCA/IPAI runtime artifacts
+- ERP deployment/config/runtime contracts
+- shared infra and deployment assets
+- Supabase/control-plane artifacts
+- agent/runbook/registry assets
+- automation assets
+- platform app artifacts
+- web/public surface artifacts
+- design assets
+
+This means the repository is **currently broader than a pure ERP runtime repo**.
 
 > **This is intentionally NOT structured like upstream `odoo/odoo`.**
 > Upstream places CE addons directly under `/addons/`. We separate three addon stacks
@@ -30,46 +40,46 @@ This repository is a **production runtime wrapper** around:
 If it talks to something **outside Odoo** (daemon, cloud API, hardware, queue) → it is a bridge (`addons/ipai/`).
 If it extends **Odoo business logic** or replaces EE features → it must be CE or OCA (`addons/oca/`).
 
-Self-hosted **Odoo 19 CE** + **OCA** stack with InsightPulseAI bridges for:
-- PH expense & travel management
-- Equipment booking & inventory
-- Finance month-end close and PH BIR tax filing task automation (Finance PPM)
-- Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
-
 **Production URL:** https://erp.insightpulseai.com
 **Documentation:** https://insightpulseai.github.io/odoo/
 
 ---
 
-## Repository Status
+## Target State
 
-This repository is **Active** and is the **canonical ERP runtime core** for InsightPulseAI.
+The intended end state is:
 
-It is production-critical and currently owns the following primary responsibilities:
+- `odoo` repo owns ERP runtime, addons, Odoo config, ERP deployment contracts, ERP SSOT
+- `platform` repo owns OdooOps console and platform admin/control-plane apps
+- `infra` repo owns cloud/network/edge/IaC
+- `web` repo owns apex/public marketing surfaces
+- `agents` repo owns shared agent/skill/runbook assets
+- `automations` repo owns shared workflow assets
+- `design-system` repo owns shared design assets/tokens
 
-- Odoo Community Edition runtime
-- OCA EE-parity addon layer
-- IPAI bridge modules for external integrations
-- ERP deployment and runtime contracts
-- ERP-specific SSOT, schema artifacts, and CI guardrails
-
-This repository is **not** the long-term home for every platform concern.
-
-Cross-domain artifacts currently present here should be progressively decomposed into their owning repositories, including where appropriate:
-
-- `infra` for cloud/network/platform infrastructure
-- `ops-platform` for Supabase control-plane concerns
-- `agents` for shared agent/skill/orchestration assets
-- `web` for non-ERP web surfaces
-- `lakehouse` for Databricks and broader analytics platform concerns
-
-Until that decomposition is complete, this repository remains the authoritative source of truth for the ERP runtime layer.
+Until decomposition is completed, this repository remains the authoritative source of truth for the ERP runtime layer.
 
 ---
 
-## Canonical Runtime Strategy
+## Canonical runtime contract
 
-This repository targets a custom InsightPulseAI-managed runtime image built on Odoo CE 19.
+### Local runtime
+- **Compose file:** `docker-compose.yml`
+- **Docker context:** `colima-odoo`
+- **Database:** `odoo_dev`
+- **Config:** `config/dev/odoo.conf`
+
+### Staging runtime
+- **Runtime surface:** Azure Container Apps
+- **Database:** `odoo_staging`
+- **Config:** `config/staging/odoo.conf`
+
+### Production runtime
+- **Runtime surface:** Azure Container Apps
+- **Database:** `odoo_prod`
+- **Config:** `config/prod/odoo.conf`
+
+### Runtime image
 
 | Property | Value |
 |----------|-------|
@@ -77,7 +87,6 @@ This repository targets a custom InsightPulseAI-managed runtime image built on O
 | Base | `odoo:19` (Odoo Community Edition) |
 | Dockerfile | [`docker/Dockerfile.unified`](docker/Dockerfile.unified) |
 | GHCR | `ghcr.io/insightpulseai/ipai-odoo-runtime` |
-| DOCR | `registry.digitalocean.com/insightpulseai/ipai-odoo-runtime` |
 
 The runtime contract is:
 
@@ -86,45 +95,51 @@ The runtime contract is:
 - **`ipai_*` only where required** — integration bridges, external connectors, approved meta-bundles (`addons/ipai/`)
 - **Deterministic builds** — images tied to Git commit provenance, Cosign-signed, SBOM-tracked
 
-Marketplace VM images and third-party packaged Odoo distributions are not the canonical production runtime.
+### Canonical addon layers
+- `addons/oca/`
+- `addons/ipai/`
+- `addons/local/` (minimal only where truly needed)
+
+Historical references such as `odoo_core`, `odoo_stage`, or bare `odoo` as the canonical production database are non-canonical and should be treated as legacy references only.
 
 Full specification: [`docs/architecture/CANONICAL_RUNTIME_IMAGE.md`](docs/architecture/CANONICAL_RUNTIME_IMAGE.md)
 
 ---
 
-## Canonical URLs (SSOT)
+## Canonical service surfaces
 
-This repository uses a **single source of truth** for all service URLs.
+### Current production-critical ERP surface
 
-**Authoritative reference:**
-[`docs/architecture/CANONICAL_URLS.md`](docs/architecture/CANONICAL_URLS.md)
+| Service  | URL                                 | Edge | Success Criteria |
+|----------|-------------------------------------|------|------------------|
+| ERP      | https://erp.insightpulseai.com      | Azure Front Door | HTTP 200, Odoo login visible |
 
-### Production
+### Current platform/public surfaces (transitional)
 
-| Service  | URL                                 | Success Criteria |
-|----------|-------------------------------------|------------------|
-| ERP      | https://erp.insightpulseai.com      | HTTP 200, Odoo login visible |
-| n8n      | https://n8n.insightpulseai.com      | HTTP 200, n8n UI loads |
-| MCP      | https://mcp.insightpulseai.com      | `/health` → `{ "status": "ok" }` |
-| Superset | https://superset.insightpulseai.com | HTTP 200, login page |
-| OCR      | https://ocr.insightpulseai.com      | `/healthz` returns OK |
-| Auth     | https://auth.insightpulseai.com     | Supabase auth reachable |
-| Web      | https://www.insightpulseai.com      | HTTP 200, marketing site |
-| Apex     | https://insightpulseai.com          | Redirects or serves root |
+These are hosted in this repo temporarily. They may move to owning repos during decomposition.
 
-### Staging
+| Service  | URL                                 | Edge | Notes |
+|----------|-------------------------------------|------|-------|
+| Apex     | https://insightpulseai.com          | Azure Front Door | Standalone site, NOT a redirect to ERP |
+| Web      | https://www.insightpulseai.com      | Azure Front Door | Redirect to apex or same site |
+| n8n      | https://n8n.insightpulseai.com      | Azure Front Door | Automation |
+| MCP      | https://mcp.insightpulseai.com      | Azure Front Door | MCP coordination |
+| Superset | https://superset.insightpulseai.com | Azure Front Door | BI dashboards |
+| OCR      | https://ocr.insightpulseai.com      | Azure Front Door | Document processing |
+| Auth     | https://auth.insightpulseai.com     | Azure Front Door | Authentication |
+| Ops      | https://ops.insightpulseai.com      | Azure Front Door (target) | Currently Vercel — to be repointed |
+| Plane    | https://plane.insightpulseai.com    | Azure Front Door | Project management |
+| Shelf    | https://shelf.insightpulseai.com    | Azure Front Door | Asset management |
+| CRM      | https://crm.insightpulseai.com      | Azure Front Door | CRM |
 
-| Service  | URL                                     |
-|----------|-----------------------------------------|
-| ERP      | https://stage-erp.insightpulseai.com    |
-| n8n      | https://stage-n8n.insightpulseai.com    |
-| MCP      | https://stage-mcp.insightpulseai.com    |
-| Superset | https://stage-superset.insightpulseai.com |
-| API      | https://stage-api.insightpulseai.com    |
-| Auth     | https://stage-auth.insightpulseai.com   |
-| OCR      | https://stage-ocr.insightpulseai.com    |
+### Environment-specific hostnames (target)
 
-### Local Development
+| Service  | Staging | Dev |
+|----------|---------|-----|
+| ERP      | `erp-staging.insightpulseai.com` | `erp-dev.insightpulseai.com` |
+| Auth     | `auth-staging.insightpulseai.com` | `auth-dev.insightpulseai.com` |
+
+### Local development
 
 | Service  | URL |
 |----------|-----|
@@ -133,73 +148,64 @@ This repository uses a **single source of truth** for all service URLs.
 | MCP      | http://localhost:8766 |
 | Supabase | http://localhost:54321 |
 
+### Edge model
+
+- **Cloudflare** = authoritative DNS only (DNS-only mode for Front Door-backed records)
+- **Azure Front Door** = public application edge for all app surfaces
+- **ACA / Azure origins** = backend runtimes
+- **Zoho** = mail (MX, SPF, DKIM, DMARC)
+
 ### Rules
 
+- Do not assume that every listed hostname is owned by the Odoo runtime layer. Only ERP-specific runtime surfaces are canonical to this repository.
 - **Do not hardcode URLs** outside `CANONICAL_URLS.md`
 - `.net` domains are deprecated — `.com` only
 - Any new subdomain **must be added to SSOT first**
-- CI and audits rely on this mapping
 
 See also:
+- [`docs/architecture/CANONICAL_URLS.md`](docs/architecture/CANONICAL_URLS.md) — authoritative URL reference
 - `reports/url_inventory.json` — machine-readable inventory
 - `docs/architecture/INTEGRATIONS_SURFACE.md`
-- `spec/insightpulseai-com/` — Spec Kit bundle
 
 ---
 
 ## Quick Start
 
-### Option 1: Dev Container (Recommended for Development)
+## Local development
 
-**Fastest way to get started with a fully configured environment:**
+### Canonical local runtime
 
-1. **Prerequisites**:
-   - [VS Code](https://code.visualstudio.com/) + [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-   - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-2. **Open in Container**:
-   ```bash
-   # Open workspace
-   code odoo.code-workspace
-
-   # Command Palette (Cmd+Shift+P / Ctrl+Shift+P)
-   # Select: "Dev Containers: Reopen in Container"
-
-   # Wait for setup (~3-5 minutes first time)
-   ```
-
-3. **Verify**:
-   - Odoo: http://localhost:8069
-   - PostgreSQL: `psql -U odoo -d odoo_dev`
-   - Docker access: `docker ps`
-
-**📖 Full Guide**: See [docs/development/DEV_CONTAINER_GUIDE.md](./docs/development/DEV_CONTAINER_GUIDE.md) for features, troubleshooting, and advanced usage.
-
-**What You Get**:
-- ✅ **Python 3.12** + dev tools (black, flake8, pytest, pre-commit)
-- ✅ **Node.js LTS** + pnpm
-- ✅ **Docker-outside-of-Docker** (manage host containers)
-- ✅ **3 databases** target: `odoo_dev`, `odoo_staging`, `odoo_prod` — canonical names per CLAUDE.md (current prod runtime name: `odoo`, target: `odoo_prod`)
-- ✅ **VS Code extensions** (Python, Docker, Git, AI tools)
-- ✅ **Spec Kit** integration
-- ✅ **Auto-reload** on code changes
-
-### Option 2: Local Docker Compose
-
-**Manual setup for direct Docker Compose control:**
+- **File:** `docker-compose.yml`
+- **Docker context:** `colima-odoo`
+- **Database:** `odoo_dev`
 
 ```bash
-# Local dev sandbox (default)
-cd sandbox/dev && docker compose up -d
-
-# Prod-connection sandbox (DO Managed Postgres)
-cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .env.production up -d
-
-# Production deploy (droplet only)
-cd deploy && docker compose -f docker-compose.prod.yml up -d
+docker compose up -d
+docker compose logs -f odoo
 ```
 
-**📖 Full Guide**: See [SANDBOX.md](./SANDBOX.md) for complete documentation.
+### Canonical devcontainer
+
+- **File:** `.devcontainer/docker-compose.devcontainer.yml`
+- **Purpose:** editor/tooling shell only
+- **Not the runtime contract**
+
+To use: Open in VS Code → Command Palette → "Dev Containers: Reopen in Container"
+
+### Canonical persistent runtime volumes
+
+- `ipai-pgdata`
+- `ipai-redisdata`
+- `ipai-web-data`
+
+### Canonical bind-mounted runtime inputs
+
+- `config/dev/odoo.conf`
+- `addons/oca`
+- `addons/ipai`
+- `addons/local`
+
+**📖 Full Guide**: See [docs/development/DEV_CONTAINER_GUIDE.md](./docs/development/DEV_CONTAINER_GUIDE.md) for features, troubleshooting, and advanced usage.
 
 ---
 
@@ -219,14 +225,12 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ### SSOT Boundary
 
-This repository is the canonical source of truth for the Odoo ERP runtime layer only.
+This repository is the canonical source of truth for the Odoo ERP runtime layer. It currently also contains cross-domain artifacts from earlier platform consolidation phases — see [Actual Current State](#actual-current-state) and [Target State](#target-state) above.
 
-It may temporarily contain shared or cross-domain artifacts that were created during earlier platform consolidation phases. Those artifacts do not redefine this repository as the workspace root, organization root, or full platform monorepo.
-
-Authoritative ownership boundaries are:
+Target ownership boundaries (decomposition in progress):
 
 - ERP runtime, Odoo config, addon stacks, ERP deployment contracts: `odoo`
-- Supabase control plane and platform SSOT: `ops-platform`
+- Supabase control plane and platform SSOT: `ops-platform` or `platform`
 - Databricks/lakehouse analytics and intelligence: `lakehouse`
 - Shared infrastructure and edge: `infra`
 - Shared web surfaces and docs sites outside ERP: `web`
@@ -240,24 +244,28 @@ Authoritative ownership boundaries are:
 
 **Full governance contract:** [`docs/architecture/MONOREPO_CONTRACT.md`](./docs/architecture/MONOREPO_CONTRACT.md)
 **Addons boundary rules:** [`docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md`](./docs/architecture/ADDONS_STRUCTURE_BOUNDARY.md)
+**Actual vs target state:** [`docs/architecture/REPO_ACTUAL_VS_TARGET_STATE.md`](./docs/architecture/REPO_ACTUAL_VS_TARGET_STATE.md)
 
-**Top-level directory guide:**
+### Top-level directories: actual vs target ownership
 
-| Directory | Purpose | Owner Team |
-|-----------|---------|------------|
-| `addons/odoo/` | CE core addons (upstream mirror, read-only) | Upstream |
-| `addons/oca/` | OCA EE-parity addons (vendored via gitaggregate) | OCA/Backend |
-| `addons/ipai/` | Integration bridge connectors only (thin adapters) | IPAI/Backend |
-| `supabase/` | Control plane SSOT, ops.* tables | Platform/DB |
-| `automations/` | n8n workflows, runbooks, audits | DevOps/Automations |
-| `infra/` | Cloudflare/DO/Azure/IaC + drift detection | DevOps/Infra |
-| `config/` | Odoo config per environment (dev/staging/prod) | DevOps |
-| `docker/` | Docker images, compose templates, entrypoints | DevOps |
-| `design/` | tokens.json SSOT + extracted assets | Design/Frontend |
-| `agents/` | Agent registry + skills + runbooks | AI/Platform |
-| `docs/` | Architecture + contracts + runbooks | All |
-| `scripts/` | Repo-wide tooling | All |
-| `spec/` | Spec Kit bundles (constitution, prd, plan, tasks) | Architecture/Product |
+| Directory | Actual current state | Target owning repo |
+|---|---|---|
+| `addons/` | Canonical Odoo addon stacks | `odoo` |
+| `config/` | Canonical Odoo runtime config | `odoo` |
+| `docker/` | Canonical Odoo image/runtime assets | `odoo` |
+| `docs/` | Mixed ERP + platform docs | split over time; ERP docs stay in `odoo` |
+| `scripts/` | Mixed ERP + platform scripts | split over time; ERP scripts stay in `odoo` |
+| `ssot/` | Mixed ERP + platform SSOT | split over time; ERP SSOT stays in `odoo` |
+| `spec/` | Spec Kit bundles (mixed ERP + platform) | split over time; ERP specs stay in `odoo` |
+| `infra/` | Present here temporarily | `infra` |
+| `platform/` | Present here temporarily | `platform` |
+| `web/` | Present here temporarily | `web` |
+| `agents/` | Present here temporarily | `agents` |
+| `automations/` | Present here temporarily | `automations` |
+| `design/` | Present here temporarily | `design-system` |
+| `supabase/` | Present here temporarily | `platform` or control-plane repo |
+| `lakehouse/` | Present here temporarily | `lakehouse` |
+| `odoo/` | Runtime-specific sub-tree present | should be rationalized; avoid duplicated root/runtime ambiguity |
 
 ### OCA Addons (Hydrated)
 
@@ -312,7 +320,7 @@ See [MONOREPO_CONTRACT.md](./docs/architecture/MONOREPO_CONTRACT.md) for:
 
 - ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
 - ✅ **No odoo.com upsells** (branding/links rewired)
-- ✅ **Self-hosted** via Docker/Kubernetes (DigitalOcean supported)
+- ✅ **Self-hosted** via Docker/Azure Container Apps (Azure-native target)
 - ✅ **Deterministic docs + seeds** (generated artifacts are versioned + drift-checked)
 
 ---
@@ -462,24 +470,16 @@ Modules that are no longer maintained should be moved to `addons/_deprecated/` a
 
 ---
 
-## Quick Start (Production - DigitalOcean)
+## Quick Start (Production)
 
-Recommended for fresh Ubuntu 22.04/24.04 droplet.
+Production runtime targets Azure Container Apps behind Azure Front Door.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/Insightpulseai/odoo/main/deploy_m1.sh.template -o deploy_m1.sh
-chmod +x deploy_m1.sh
-sudo ./deploy_m1.sh
-```
+- **Production URL:** https://erp.insightpulseai.com/web
+- **Runtime:** Azure Container Apps (`ca-ipai-dev`)
+- **Database:** `odoo_prod`
+- **Edge:** Azure Front Door
 
-Access:
-- https://erp.insightpulseai.com/web
-- Secrets:
-
-```bash
-cat /opt/odoo/deploy/.env
-tail -f /var/log/odoo_deploy.log
-```
+> Legacy DigitalOcean droplet deployment scripts (`deploy_m1.sh`) are transitional and will be removed as Azure migration completes.
 
 ---
 

@@ -109,7 +109,9 @@ var services = [
     minReplicas: 1
     maxReplicas: 3
     command: []
-    extraEnv: []
+    extraEnv: [
+      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
+    ]
   }
   {
     name: 'odoo-worker'
@@ -125,7 +127,9 @@ var services = [
       '--no-http'
       '--workers=2'
     ]
-    extraEnv: []
+    extraEnv: [
+      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
+    ]
   }
   {
     name: 'odoo-cron'
@@ -141,7 +145,9 @@ var services = [
       '--no-http'
       '--max-cron-threads=2'
     ]
-    extraEnv: []
+    extraEnv: [
+      { name: 'ODOO_RC', value: '/etc/odoo/odoo.conf' }
+    ]
   }
   {
     name: 'n8n'
@@ -334,6 +340,7 @@ resource containerApps 'Microsoft.App/containerApps@2024-03-01' = [
 
 @description('Container Apps Environment resource ID')
 output environmentId string = environment.id
+
 @description('Container Apps Environment default domain (FQDN suffix)')
 output environmentDefaultDomain string = environment.properties.defaultDomain
 

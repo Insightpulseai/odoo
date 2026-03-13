@@ -11,7 +11,7 @@ Usage:
 Example:
     python scripts/audit_oca_modules.py \
         --url https://erp.insightpulseai.com \
-        --db odoo_core \
+        --db odoo_prod \
         --user admin \
         --password your_password
 
@@ -40,7 +40,7 @@ MODULES_TO_AUDIT = {
         "web_advanced_search",
         "web_dialog_size",
         "web_environment_ribbon",
-        "web_favicon",
+        # "web_favicon",  # INCOMPATIBLE: OCA 18.0 only, not ported to 19.0 (2026-03-11)
         "web_listview_range_select",
         "web_m2x_options",
         "web_no_bubble",

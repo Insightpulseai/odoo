@@ -69,7 +69,7 @@ packs:
   web_ux:
     - web_dialog_size
     - web_environment_ribbon
-    - web_favicon
+    # - web_favicon  # INCOMPATIBLE: OCA 18.0 only (2026-03-11)
     - web_ir_actions_act_window_message
     - web_remember_tree_column_width
     - web_responsive

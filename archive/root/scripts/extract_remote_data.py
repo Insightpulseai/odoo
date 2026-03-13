@@ -14,7 +14,7 @@ import argparse
 # NO HARDCODED CREDS allowed.
 # We default DB only for convenience if not provided, but never user/pass.
 
-DEFAULT_DB = "odoo_core"
+DEFAULT_DB = "odoo_prod"
 
 
 def get_env_or_fail(key):

@@ -84,7 +84,7 @@ echo ""
 echo "--- Database Checks ---"
 check_result "PostgreSQL connection" "docker compose exec -T db pg_isready -U odoo"
 check_result "Database odoo_dev exists" "docker compose exec -T db psql -U odoo -lqt | cut -d \\| -f 1 | grep -qw odoo_dev"
-check_result "Database odoo_stage exists" "docker compose exec -T db psql -U odoo -lqt | cut -d \\| -f 1 | grep -qw odoo_stage"
+check_result "Database odoo_staging exists" "docker compose exec -T db psql -U odoo -lqt | cut -d \\| -f 1 | grep -qw odoo_staging"
 check_result "Database odoo_prod exists" "docker compose exec -T db psql -U odoo -lqt | cut -d \\| -f 1 | grep -qw odoo_prod"
 echo ""
 
