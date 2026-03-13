@@ -193,7 +193,8 @@ data/source.xlsx
 !**/.env.example
 .devcontainer/devcontainer.env
 config/odoo.conf.local
-# .mcp.json is the canonical project-scoped MCP config — intentionally tracked
+.mcp.json
+powerbi-databricks-connection.json
 # --- local compose overrides ---
 docker-compose.local.yml
 docker-compose.*.local.yml
