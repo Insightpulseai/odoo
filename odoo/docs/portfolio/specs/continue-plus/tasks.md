@@ -1,20 +1,20 @@
 # Continue+ Tasks
 
 ## Spec Reference
-`spec/continue-plus/`
+`docs/spec/continue-plus/`
 
 ---
 
 ## Phase 1: Spec-Kit Structure
 
-- [x] Create `spec/continue-plus/constitution.md` - Invariant rules
-- [x] Create `spec/continue-plus/prd.md` - Product requirements
-- [x] Create `spec/continue-plus/plan.md` - Implementation plan
-- [x] Create `spec/continue-plus/tasks.md` - This checklist
+- [x] Create `docs/spec/continue-plus/constitution.md` - Invariant rules
+- [x] Create `docs/spec/continue-plus/prd.md` - Product requirements
+- [x] Create `docs/spec/continue-plus/plan.md` - Implementation plan
+- [x] Create `docs/spec/continue-plus/tasks.md` - This checklist
 
 ## Phase 2: Enforcement Tooling
 
-- [x] Create `scripts/spec-kit-enforce.py` - Validation script
+- [x] Create `odoo/scripts/spec-kit-enforce.py` - Validation script
   - [x] Check spec bundle presence
   - [x] Detect placeholders (TODO/TBD/LOREM)
   - [x] Enforce minimum content (≥100 words)

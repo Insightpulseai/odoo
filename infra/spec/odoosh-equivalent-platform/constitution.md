@@ -1,76 +1,45 @@
 # Odoo.sh-Equivalent Platform — Constitution
 
-**Version**: 1.0.0
-**Status**: Draft
-**Last Updated**: 2026-03-11
-**Owner**: InsightPulse AI Platform Team
-
----
+Version: 1.1.0  
+Status: Active  
+Last Updated: 2026-03-12
 
 ## Purpose
+Define non-negotiable operating rules for an Odoo.sh-equivalent model on Azure + self-hosted Supabase + self-hosted n8n.
 
-This spec defines the **non-negotiable rules and capability boundaries** for a self-hosted platform that replaces Odoo.sh functionality. It governs personas, capability taxonomy, environment promotion, and governance boundaries for platform operations.
-
-### What This Is
-
-- A **platform capability doctrine** for Odoo.sh-equivalent operations
-- A **persona-based governance model** defining who can do what
-- A **capability taxonomy** consumed by implementation specs in `odoo/`
-
-### What This Is Not
-
-- Not the Odoo runtime implementation (that lives in `odoo/` spec bundles)
-- Not a clone of Odoo.sh UI or UX (adapted for self-hosted + CLI-first)
-- Not an Azure-specific benchmark (that lives in `azure-platform-maturity-benchmark/`)
-
----
+## Core Doctrine
+- Azure hosts Odoo runtime plane: app runtime, ingress, Odoo PostgreSQL, Redis, secrets, monitoring, backups.
+- Self-hosted Supabase hosts control plane: SSOT metadata, APIs, auth, storage, realtime, edge functions.
+- Self-hosted n8n hosts orchestration plane: deploy/clone/neutralize/backup-verify/alerts.
+- Git + CI/CD replace Odoo.sh UI workflows for branch/build/promotion.
 
 ## Non-Negotiables
+1. Reproduce Odoo.sh behavior, not Odoo.sh infrastructure.
+2. Runtime and control-plane databases are separated.
+3. Odoo transactional runtime never depends on Supabase database lifecycle.
+4. Staging must be production-clone + neutralization before testing.
+5. Production deploys are backup-first and rollback-capable.
+6. Control-plane truth must live in repo + Supabase ops tables; n8n is executor, not SSOT.
+7. No secrets in git-tracked config; secret references only.
+8. All operations must be CLI/API executable; UI is convenience only.
 
-### 1. Platform Doctrine Owns Capabilities, Odoo Consumes Them
+## Environment Tiers
+- `prod`: protected, promotion-only, strongest controls.
+- `staging`: restored from prod clone, side effects neutralized.
+- `dev`: fresh/shared development data for build/test loops.
+- `preview/<branch>`: optional ephemeral branch environments.
 
-This spec defines **what capabilities must exist**. The `odoo/` spec bundles define **how they are implemented** in the Odoo runtime. This boundary is permanent.
+## Database Contract
+- Odoo runtime DB names (required): `odoo_prod`, `odoo_staging`, `odoo_dev`.
+- Tenant-isolated Odoo pattern (optional): `odoo_tenant_<slug>_<env>`.
+- Supabase control-plane DB names: `platform_prod`, `platform_staging`, `platform_dev`.
+- n8n metadata DB names: `n8n_prod`, `n8n_staging`, `n8n_dev`.
 
-### 2. Four Canonical Personas
-
-The platform recognizes exactly four operator personas. All capability packs are scoped to these personas. New personas require a constitution amendment.
-
-| Persona | Primary Concern | Governance Scope |
-|---------|----------------|-----------------|
-| Developer | Ship features fast with confidence | Code, branches, feature envs, logs, shell |
-| Tester (QA) | Validate behavior matches spec | Staging access, test execution, diff review |
-| Project Manager | Track readiness and release gates | Dashboards, deployment history, promotion visibility |
-| System Administrator | Maintain platform health and security | Full access, backups, DNS, monitoring, secrets |
-
-### 3. Environment Tiers Are Fixed
-
-| Tier | Git Trigger | Persistence | Access |
-|------|------------|-------------|--------|
-| Development | Feature branch push | Ephemeral (auto-cleanup after 7d idle) | Developer, Tester |
-| Staging | PR to main | Semi-persistent (lives with PR) | All personas |
-| Production | Merge to main + promotion gate | Permanent | SysAdmin (write), all (read) |
-
-### 4. CLI/API-First, UI-Second
-
-Every platform operation must be executable via CLI or API. A web UI may exist for convenience but must never be the only path to any operation.
-
-### 5. No Odoo.sh Vendor Lock-in
-
-The platform must run on any container-capable infrastructure. Current target: Azure ACA + Cloudflare + GitHub Actions. Previous target: DigitalOcean. The architecture must not hard-depend on a single cloud provider.
-
-### 6. Capability Packs Are Additive
-
-New capabilities may be added to persona packs. Existing capabilities may not be removed without a constitution amendment. Capability deprecation requires a 30-day notice period.
-
-### 7. Secrets Never in Platform Config
-
-Platform configuration files (YAML, JSON, Terraform) may reference secret **names** but never secret **values**. Runtime secret injection only.
-
----
+## Supabase Multi-Tenant Contract
+- Shared database, shared schemas, `tenant_id` + RLS enforcement.
+- Schema-per-domain, not schema-per-tenant.
+- Required domain schemas: `ops`, `tenant`, `app`, `billing`, `portal`, `audit`, `integration`, `ai`, `cms`, `analytics`.
 
 ## Governance
-
-- Owned by `infra/` as upstream platform doctrine
-- Consumed by `odoo/` for ERP-specific implementation
-- Changes require constitution amendment PR with explicit rationale
-- Persona definitions are frozen until v2.0
+- Changes to plane boundaries, DB separation, or tier behaviors require constitution amendment.
+- Spec artifacts in this bundle are authoritative for Odoo.sh-equivalent operating model.

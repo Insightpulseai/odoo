@@ -145,7 +145,7 @@ Whenever an Odoo task is requested, generate:
 1. The module / config changes
 2. The CLI/CI script to install/update modules:
    ```bash
-   docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+   docker compose exec odoo odoo -d odoo_dev -u module_name --stop-after-init
    ```
 3. A verification command:
    ```bash
@@ -295,7 +295,7 @@ npm run dev:github-app                  # Run github-app
 | Problem | Old Setup | Canonical Setup |
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
-| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` (current prod runtime: `odoo`) |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) -- **all deprecated** | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` |
 | Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
@@ -305,14 +305,14 @@ npm run dev:github-app                  # Run github-app
 ```bash
 cd odoo19
 docker compose up -d                              # Start stack
-docker compose exec -T web odoo -d odoo -i base   # Install module
+docker compose exec -T web odoo -d odoo_dev -i base   # Install module
 ./scripts/backup_db.sh                            # Backup database
 ```
 
 **Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
 
 **Key Features**:
-- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`; current prod runtime: `odoo`)
+- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`)
 - ✅ No database selector (`list_db = False`)
 - ✅ File-based secrets (no hardcoded passwords)
 - ✅ Health checks (PostgreSQL guards web startup)
@@ -793,7 +793,7 @@ Run EE parity tests before any major release:
 
 ```bash
 # Run parity test suite
-python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
+python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_dev
 
 # Generate HTML report
 python scripts/test_ee_parity.py --report html --output docs/evidence/parity_report.html
@@ -906,7 +906,7 @@ jobs:
 
 ```bash
 # Run full parity test suite
-python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
+python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_dev
 
 # Test specific module parity
 python scripts/test_ee_parity.py --module ipai_finance_ppm
@@ -1109,17 +1109,17 @@ docker compose --profile init up       # Install IPAI modules
 docker compose logs -f odoo-core
 
 # Restart service
-docker compose restart odoo-core
+docker compose restart odoo
 ```
 
 ### Database Access
 
 ```bash
 # Connect to PostgreSQL
-docker compose exec postgres psql -U odoo -d odoo_core
+docker compose exec db psql -U odoo -d odoo_dev
 
 # Backup database
-docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
+docker compose exec db pg_dump -U odoo odoo_dev > backup.sql
 ```
 
 ---
@@ -1507,10 +1507,10 @@ For **Execution Board** (`Sprint` field):
 **Module not found**
 ```bash
 # Ensure module is in addons path
-docker compose exec odoo-core ls /mnt/extra-addons/ipai/
+docker compose exec odoo ls /mnt/extra-addons/ipai/
 
 # Update module list
-docker compose exec odoo-core odoo -d odoo_core -u base
+docker compose exec odoo odoo -d odoo_dev -u base
 ```
 
 **Database connection issues**

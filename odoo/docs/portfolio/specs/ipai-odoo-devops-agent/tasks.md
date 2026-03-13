@@ -23,7 +23,7 @@
 ### T0.1 - Create Spec Kit Directory
 **Status**: ✅ Complete
 **Owner**: Claude
-**Description**: Create `spec/ipai-odoo-devops-agent/` with all four files
+**Description**: Create `docs/spec/ipai-odoo-devops-agent/` with all four files
 
 **Files**:
 - [x] constitution.md
@@ -33,7 +33,7 @@
 
 **Acceptance**:
 - All spec files present and valid markdown
-- Spec Kit listed in root `spec/` directory
+- Spec Kit listed in root `docs/spec/` directory
 
 ### T0.2 - Ensure CLAUDE.md Present
 **Status**: ✅ Complete
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate Spec Kit
         run: |
-          ./scripts/validate_spec_kits.sh
+          ./odoo/scripts/validate_spec_kits.sh
 ```
 
 **Acceptance**:
@@ -86,12 +86,12 @@ jobs:
 **Description**: Confirm manifests are valid JSON
 
 **Files**:
-- [x] config/addons_manifest.oca_ipai.json (19 repos, 80+ modules)
+- [x] odoo/config/addons_manifest.oca_ipai.json (19 repos, 80+ modules)
 - [x] addons.manifest.json (active mounts)
 
 **Verification**:
 ```bash
-jq '.' config/addons_manifest.oca_ipai.json > /dev/null
+jq '.' odoo/config/addons_manifest.oca_ipai.json > /dev/null
 jq '.' addons.manifest.json > /dev/null
 ```
 
@@ -101,15 +101,15 @@ jq '.' addons.manifest.json > /dev/null
 **Description**: Confirm executable scripts present
 
 **Scripts**:
-- [x] scripts/clone_missing_oca_repos.sh
-- [x] scripts/verify_oca_ipai_layout.sh
-- [x] scripts/verify-addons-mounts.sh
+- [x] odoo/scripts/clone_missing_oca_repos.sh
+- [x] odoo/scripts/verify_oca_ipai_layout.sh
+- [x] odoo/scripts/verify-addons-mounts.sh
 
 **Verification**:
 ```bash
-test -x scripts/clone_missing_oca_repos.sh
-test -x scripts/verify_oca_ipai_layout.sh
-test -x scripts/verify-addons-mounts.sh
+test -x odoo/scripts/clone_missing_oca_repos.sh
+test -x odoo/scripts/verify_oca_ipai_layout.sh
+test -x odoo/scripts/verify-addons-mounts.sh
 ```
 
 ### T1.3 - Create Manifest Verification Workflow
@@ -120,8 +120,8 @@ test -x scripts/verify-addons-mounts.sh
 
 **Workflow**: `.github/workflows/verify-oca-ipai-manifest.yml`
 **Steps**:
-1. Run `./scripts/verify_oca_ipai_layout.sh`
-2. Run `./scripts/verify-addons-mounts.sh --verbose`
+1. Run `./odoo/scripts/verify_oca_ipai_layout.sh`
+2. Run `./odoo/scripts/verify-addons-mounts.sh --verbose`
 3. Fail CI if verification fails
 
 **Acceptance**:
@@ -137,14 +137,14 @@ test -x scripts/verify-addons-mounts.sh
 
 **Implementation**:
 ```python
-# scripts/generate_manifest_evidence.py
+# odoo/scripts/generate_manifest_evidence.py
 def generate_evidence():
     timestamp = datetime.now().strftime('%Y%m%d-%H%M')
     evidence_dir = f"docs/evidence/{timestamp}/oca-ipai-manifest/"
     os.makedirs(evidence_dir, exist_ok=True)
 
     # Run verification
-    result = subprocess.run(['./scripts/verify_oca_ipai_layout.sh'])
+    result = subprocess.run(['./odoo/scripts/verify_oca_ipai_layout.sh'])
 
     # Write evidence
     with open(f"{evidence_dir}/VERIFICATION.md", 'w') as f:
@@ -230,7 +230,7 @@ def generate_evidence():
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
-**Location**: `scripts/deploy_do_prod.sh`
+**Location**: `odoo/scripts/deploy_do_prod.sh`
 
 **Implementation**:
 ```bash
@@ -256,13 +256,13 @@ docker-compose -f deploy/docker-compose.yml up -d
 
 # 5. Health checks
 echo "🏥 Running health checks..."
-./scripts/verify_production.sh
+./odoo/scripts/verify_production.sh
 
 echo "✅ Deployment complete"
 ```
 
 **Acceptance**:
-- Single-command deploy: `./scripts/deploy_do_prod.sh`
+- Single-command deploy: `./odoo/scripts/deploy_do_prod.sh`
 - Fails fast on errors
 - Runs health checks before declaring success
 
@@ -270,7 +270,7 @@ echo "✅ Deployment complete"
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
-**Location**: `scripts/setup_ssl.sh`
+**Location**: `odoo/scripts/setup_ssl.sh`
 
 **Implementation**:
 ```bash
@@ -302,7 +302,7 @@ echo "✅ SSL setup complete for $DOMAIN"
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
-**Location**: `scripts/verify_production.sh`
+**Location**: `odoo/scripts/verify_production.sh`
 
 **Implementation**:
 ```bash
@@ -342,7 +342,7 @@ echo "✅ All health checks passed"
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
-**Location**: `scripts/rollback_to_sha.sh`
+**Location**: `odoo/scripts/rollback_to_sha.sh`
 
 **Implementation**:
 ```bash
@@ -360,7 +360,7 @@ git rev-parse --verify "$TARGET_SHA" > /dev/null || { echo "❌ Invalid SHA"; ex
 git checkout "$TARGET_SHA"
 
 # Rebuild and deploy
-./scripts/deploy_do_prod.sh
+./odoo/scripts/deploy_do_prod.sh
 
 echo "✅ Rollback complete to $TARGET_SHA"
 ```
@@ -398,14 +398,14 @@ echo "✅ Rollback complete to $TARGET_SHA"
 **Status**: ⏳ Spec
 **Owner**: TBD
 **PR**: #TBD
-**Location**: `scripts/health/check_all_services.sh`
+**Location**: `odoo/scripts/health/check_all_services.sh`
 
 **Implementation**:
 ```bash
 #!/bin/bash
 # Wrapper that calls verify_production.sh + additional checks
 
-./scripts/verify_production.sh
+./odoo/scripts/verify_production.sh
 
 # Additional checks
 echo "📊 Checking metrics..."
@@ -431,8 +431,8 @@ ssh root@178.128.112.214 "docker ps --format 'table {{.Names}}\t{{.Status}}'"
 **Owner**: TBD
 **PR**: #TBD
 **Locations**:
-- `scripts/backup/backup_db.sh`
-- `scripts/backup/restore_db.sh`
+- `odoo/scripts/backup/backup_db.sh`
+- `odoo/scripts/backup/restore_db.sh`
 
 **backup_db.sh**:
 ```bash
@@ -477,7 +477,7 @@ smtp_password = ${MAILGUN_SMTP_PASSWORD}
 email_from = devtest@mg.insightpulseai.com
 ```
 
-**Inspection Script**: `scripts/mail/inspect_caught_mail.sh`
+**Inspection Script**: `odoo/scripts/mail/inspect_caught_mail.sh`
 ```bash
 #!/bin/bash
 # Query Mailgun API for recent caught emails
@@ -566,7 +566,7 @@ server = MCPServer("devops-agent")
 def ciGuard(repo: str, branch: str):
     """Run CI checks"""
     result = subprocess.run([
-        './scripts/ci/run_checks.sh',
+        './odoo/scripts/ci/run_checks.sh',
         '--repo', repo,
         '--branch', branch
     ], capture_output=True, text=True)
@@ -580,7 +580,7 @@ def ciGuard(repo: str, branch: str):
 @server.tool()
 def manifestSteward():
     """Verify OCA/ipai layout"""
-    subprocess.run(['./scripts/verify_oca_ipai_layout.sh'], check=True)
+    subprocess.run(['./odoo/scripts/verify_oca_ipai_layout.sh'], check=True)
     return {'status': 'verified'}
 
 # ... other tool implementations
@@ -663,14 +663,14 @@ timeout $TIMEOUT <command> || {
 **Checks**:
 ```bash
 # No secrets in logs
-grep -r "sk-" scripts/ && exit 1
-grep -r "ghp_" scripts/ && exit 1
+grep -r "sk-" odoo/scripts/ && exit 1
+grep -r "ghp_" odoo/scripts/ && exit 1
 
 # No hardcoded secrets
-grep -r "OPENAI_API_KEY=" scripts/ | grep -v '\$' && exit 1
+grep -r "OPENAI_API_KEY=" odoo/scripts/ | grep -v '\$' && exit 1
 
 # No token prompts
-grep -ri "enter your token" scripts/ && exit 1
+grep -ri "enter your token" odoo/scripts/ && exit 1
 ```
 
 **Acceptance**:
@@ -690,7 +690,7 @@ grep -ri "enter your token" scripts/ && exit 1
 triggers:
   - cron: "0 8 * * *"  # Daily at 8 AM SGT
 steps:
-  - run: ./scripts/verify_oca_ipai_layout.sh
+  - run: ./odoo/scripts/verify_oca_ipai_layout.sh
   - if: failed
     query: SELECT last_success FROM manifest_checks WHERE id = 1
     if: (NOW() - last_success) > INTERVAL '24 hours'

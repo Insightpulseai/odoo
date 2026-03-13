@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_copilot" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.ipai.copilot</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='general_settings']" position="inside">
+                <block title="AI Copilot — Azure OpenAI" name="ipai_ai_copilot_azure">
+                    <setting string="Azure OpenAI Base URL"
+                             help="Azure endpoint URL. Auto-seeded from AZURE_OPENAI_BASE_URL env var on first install.">
+                        <field name="ipai_azure_openai_base_url"
+                               placeholder="https://your-resource.openai.azure.com"/>
+                    </setting>
+                    <setting string="Azure OpenAI API Key"
+                             help="API key for Azure OpenAI. Auto-seeded from AZURE_OPENAI_API_KEY env var.">
+                        <field name="ipai_azure_openai_api_key" password="True"
+                               placeholder="(seeded from env or Key Vault)"/>
+                    </setting>
+                    <setting string="Azure OpenAI Deployment"
+                             help="Azure deployment name (NOT the base model name like 'gpt-4o'). Must match your Azure resource.">
+                        <field name="ipai_azure_openai_deployment"
+                               placeholder="my-gpt4o-deployment"/>
+                    </setting>
+                    <setting string="Azure API Mode"
+                             help="Responses API (newer) or Chat Completions (standard).">
+                        <field name="ipai_azure_openai_api_mode"/>
+                    </setting>
+                </block>
+                <block title="AI Copilot — Bridge (Optional)" name="ipai_ai_copilot_bridge">
+                    <setting string="Copilot Bridge URL"
+                             help="External bridge endpoint (Supabase Edge Function). Only needed if not using Azure direct.">
+                        <field name="ipai_copilot_bridge_url"
+                               placeholder="https://your-project.supabase.co/functions/v1/copilot-chat"/>
+                    </setting>
+                    <setting string="Copilot Bridge Token"
+                             help="Server-to-server bearer token (never exposed to browser).">
+                        <field name="ipai_copilot_bridge_token" password="True"
+                               placeholder="(optional)"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

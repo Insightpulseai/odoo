@@ -542,7 +542,7 @@ subdomains:
     cloudflare_proxied: false
     lifecycle: active
     status: active
-    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun reinstated 2026-03-07."
+    notes: "Confirmed valid 2026-03-02 via Mailgun Management API — valid:valid. Mailgun sender deprecated again as of 2026-03-11; tracking CNAME retained temporarily for legacy flows."
     provider_claim:
       provider: mailgun
       status: claimed

@@ -3,7 +3,7 @@
 ## Backlog (ordered)
 
 ### 1) Data Layer
-- [x] Create `spec/kapa-plus/{constitution,prd,plan,tasks}.md`
+- [x] Create `docs/spec/kapa-plus/{constitution,prd,plan,tasks}.md`
 - [ ] Implement chunk store schema (source, version, hash, ACL, provenance)
 - [ ] Add RLS policies for tenant isolation
 
