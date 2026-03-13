@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "profileName": {
-      "value": "ipai-fd-dev"
+      "value": "ipai-prod-fd"
     },
     "wafPolicyName": {
-      "value": "ipaiDevWafPolicy"
+      "value": "ipaiProdWafPolicy"
     },
     "enableWaf": {
       "value": true
@@ -17,7 +17,8 @@
           "name": "odoo-web",
           "origins": [
             {
-              "hostName": "ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io",
+              "hostName": "odoo-web.internal.insightpulseai.com",
+              "originHostHeader": "erp.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -30,11 +31,9 @@
         },
         {
           "name": "n8n",
-          "_comment": "Azure VM origin — n8n running on vm-ipai-supabase-dev",
           "origins": [
             {
-              "hostName": "4.193.100.31",
-              "originHostHeader": "n8n-azure.insightpulseai.com",
+              "hostName": "n8n.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -47,11 +46,9 @@
         },
         {
           "name": "mcp-gateway",
-          "_comment": "Interim: DO origin via nginx reverse proxy until mcp deployed to ACA",
           "origins": [
             {
-              "hostName": "178.128.112.214",
-              "originHostHeader": "mcp.insightpulseai.com",
+              "hostName": "mcp-gateway.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -66,7 +63,7 @@
           "name": "plane",
           "origins": [
             {
-              "hostName": "ipai-plane-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io",
+              "hostName": "plane.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -81,14 +78,14 @@
           "name": "shelf",
           "origins": [
             {
-              "hostName": "ipai-shelf-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io",
+              "hostName": "shelf.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
               "weight": 1000
             }
           ],
-          "healthProbePath": "/",
+          "healthProbePath": "/healthcheck",
           "healthProbeProtocol": "Https",
           "healthProbeIntervalInSeconds": 60
         },
@@ -96,7 +93,7 @@
           "name": "crm",
           "origins": [
             {
-              "hostName": "ipai-crm-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io",
+              "hostName": "crm.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -109,11 +106,9 @@
         },
         {
           "name": "superset",
-          "_comment": "Interim: DO origin — evaluate retire in favor of Databricks Dashboards",
           "origins": [
             {
-              "hostName": "178.128.112.214",
-              "originHostHeader": "superset.insightpulseai.com",
+              "hostName": "superset.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -126,11 +121,9 @@
         },
         {
           "name": "ocr",
-          "_comment": "Interim: DO origin — target is docai-ipai-dev (Azure Document Intelligence)",
           "origins": [
             {
-              "hostName": "178.128.112.214",
-              "originHostHeader": "ocr.insightpulseai.com",
+              "hostName": "ocr.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -143,11 +136,9 @@
         },
         {
           "name": "auth",
-          "_comment": "Interim: DO origin — target is Entra ID gateway on ACA",
           "origins": [
             {
-              "hostName": "178.128.112.214",
-              "originHostHeader": "auth.insightpulseai.com",
+              "hostName": "auth.internal.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
@@ -162,7 +153,8 @@
           "name": "redirect",
           "origins": [
             {
-              "hostName": "ipai-odoo-dev-web.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io",
+              "hostName": "odoo-web.internal.insightpulseai.com",
+              "originHostHeader": "erp.insightpulseai.com",
               "httpPort": 80,
               "httpsPort": 443,
               "priority": 1,
