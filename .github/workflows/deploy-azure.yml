@@ -1,0 +1,181 @@
+# .github/workflows/deploy-azure.yml
+# Canonical Azure-native deployment workflow.
+# Stages: build → push ACR → deploy ACA → health check → summary
+name: Deploy Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+permissions:
+  contents: read
+  id-token: write  # OIDC for Azure login
+
+concurrency:
+  group: deploy-azure-${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false  # Never cancel in-flight deploys
+
+env:
+  ACR_REGISTRY: ${{ vars.ACR_REGISTRY || 'cripaidev.azurecr.io' }}
+  ACR_REPO: ipai-odoo
+  ACA_RESOURCE_GROUP: ${{ vars.ACA_RESOURCE_GROUP || 'rg-ipai-dev' }}
+  ACA_APP_NAME: ${{ vars.ACA_APP_NAME || 'ipai-odoo-dev-web' }}
+  TARGET_ENV: ${{ github.event.inputs.environment || 'staging' }}
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Stage 1: Build
+  # ──────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute image metadata
+        id: meta
+        run: |
+          SHA="${GITHUB_SHA::8}"
+          TAG="${ACR_REGISTRY}/${ACR_REPO}:${SHA}"
+          echo "tags=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "Image tag: ${TAG}"
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: ACR Login
+        run: az acr login --name "${ACR_REGISTRY%%.*}"
+
+      - name: Build and push image
+        id: build
+        run: |
+          docker build \
+            -f docker/Dockerfile.unified \
+            -t "${{ steps.meta.outputs.tags }}" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --label "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+            .
+          docker push "${{ steps.meta.outputs.tags }}"
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "${{ steps.meta.outputs.tags }}" | cut -d@ -f2)
+          echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
+          echo "Pushed with digest: ${DIGEST}"
+
+  # ──────────────────────────────────────────────
+  # Stage 2: Deploy to ACA
+  # ──────────────────────────────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Container Apps
+        run: |
+          echo "Deploying ${{ needs.build.outputs.image_tag }} to ${ACA_APP_NAME} (${TARGET_ENV})"
+          az containerapp update \
+            --name "${ACA_APP_NAME}" \
+            --resource-group "${ACA_RESOURCE_GROUP}" \
+            --image "${{ needs.build.outputs.image_tag }}" \
+            --set-env-vars "DEPLOY_SHA=${GITHUB_SHA}" \
+            --output table
+
+      - name: Wait for revision to be ready
+        run: |
+          echo "Waiting for ACA revision to become active..."
+          for i in $(seq 1 30); do
+            STATUS=$(az containerapp revision list \
+              --name "${ACA_APP_NAME}" \
+              --resource-group "${ACA_RESOURCE_GROUP}" \
+              --query "[0].properties.runningState" -o tsv 2>/dev/null || echo "unknown")
+            echo "  Attempt $i: $STATUS"
+            if [ "$STATUS" = "Running" ]; then
+              echo "Revision is running."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Revision did not become ready in 300s"
+          exit 1
+
+  # ──────────────────────────────────────────────
+  # Stage 3: Health check
+  # ──────────────────────────────────────────────
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: deploy
+    steps:
+      - name: Smoke test /web/health
+        run: |
+          FQDN=$(echo "${ACA_APP_NAME}" | sed 's/-web$//')
+          # Try known endpoints
+          ENDPOINTS=(
+            "https://erp.insightpulseai.com/web/health"
+          )
+          fail=0
+          for url in "${ENDPOINTS[@]}"; do
+            CODE=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
+            echo "  $url → HTTP $CODE"
+            if [ "$CODE" -lt 200 ] || [ "$CODE" -ge 400 ]; then
+              echo "::warning::Health check returned $CODE for $url"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::warning::Some health checks failed — review deployment"
+          fi
+
+  # ──────────────────────────────────────────────
+  # Stage 4: Summary
+  # ──────────────────────────────────────────────
+  deploy-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [build, deploy, health-check]
+    if: always()
+    steps:
+      - name: Deploy report
+        run: |
+          echo "## Deploy Summary"
+          echo "- **Image**: ${{ needs.build.outputs.image_tag }}"
+          echo "- **Digest**: ${{ needs.build.outputs.image_digest }}"
+          echo "- **Environment**: ${TARGET_ENV}"
+          echo "- **Build**: ${{ needs.build.result }}"
+          echo "- **Deploy**: ${{ needs.deploy.result }}"
+          echo "- **Health**: ${{ needs.health-check.result }}"
+          echo "- **SHA**: ${GITHUB_SHA}"
+
+      - name: Fail if deploy failed
+        if: needs.deploy.result == 'failure'
+        run: |
+          echo "::error::Deployment failed — see deploy job logs"
+          echo "Rollback: az containerapp revision list --name ${ACA_APP_NAME} --resource-group ${ACA_RESOURCE_GROUP}"
+          exit 1
