@@ -188,6 +188,45 @@ Example columns:
 - current implementation
 - required migration action
 
+---
+
+## Required outputs
+
+The agent must produce all of the following artifacts in one branch:
+
+1. `ssot/integrations/odoo-n8n-supabase.yaml`
+   - Canonical machine-readable inventory of all active and planned integrations.
+   - Must validate against `ssot/integrations/odoo-n8n-supabase.schema.json`.
+   - Every integration flow must be classified with exactly one `engine_type`:
+     - `n8n`
+     - `supabase_etl`
+     - `direct`
+   - Every flow must include:
+     - `id`
+     - `name`
+     - `source_system`
+     - `target_system`
+     - `direction`
+     - `engine_type`
+     - `trigger_type`
+     - `data_owner`
+     - `execution_owner`
+     - `state`
+     - `criticality`
+     - `evidence_ref`
+
+2. `docs/architecture/odoo-n8n-supabase-decision-matrix.md`
+   - Human-readable rationale for engine selection.
+   - Must include decision rules and exception cases.
+
+3. `docs/evidence/integrations/`
+   - Verification evidence for each active connection and sample end-to-end run.
+   - Must contain a dated index file.
+
+The agent must not leave architecture decisions only inside prose prompts. Repo artifacts are the source of truth.
+
+---
+
 ## Constraints
 
 - No manual UI guidance
