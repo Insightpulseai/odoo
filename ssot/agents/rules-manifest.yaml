@@ -1,0 +1,109 @@
+# =============================================================================
+# Agent Rules Manifest — Machine-Readable Registry
+# =============================================================================
+# Maps agent governance rules to their canonical sources and local projections.
+# Consumed by: CI validators, agent bootstrap, documentation generators.
+#
+# Principle: Repo artifacts are SSOT. Local files are projections.
+# If a local rule contradicts a repo artifact, the repo artifact wins.
+# =============================================================================
+
+version: 1
+last_updated: "2026-03-13"
+
+# ---------------------------------------------------------------------------
+# Repo-owned skills (committed, CI-gatable)
+# ---------------------------------------------------------------------------
+skills:
+  - id: odoo-module-development
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-module-development/SKILL.md
+    category: backend
+    priority: critical
+
+  - id: odoo-orm-patterns
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-orm-patterns/SKILL.md
+    category: backend
+    priority: critical
+
+  - id: odoo-views-and-actions
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-views-and-actions/SKILL.md
+    category: backend
+    priority: high
+
+  - id: odoo-testing
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-testing/SKILL.md
+    category: qa
+    priority: high
+
+  - id: odoo-frontend
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-frontend/SKILL.md
+    category: frontend
+    priority: high
+
+  - id: odoo-api-integration
+    owner: repo
+    repo_source: docs/kb/agent-skills/odoo-api-integration/SKILL.md
+    category: integration
+    priority: high
+
+  - id: oca-module-porting
+    owner: repo
+    repo_source: docs/kb/agent-skills/oca-module-porting/SKILL.md
+    category: devops
+    priority: medium
+
+  - id: ipai-module-conventions
+    owner: repo
+    repo_source: docs/kb/agent-skills/ipai-module-conventions/SKILL.md
+    category: platform
+    priority: critical
+
+# ---------------------------------------------------------------------------
+# Local rule projections (not committed, per-developer)
+# ---------------------------------------------------------------------------
+local_rules:
+  - id: odoo19-coding
+    owner: local
+    local_projection: ~/.claude/rules/odoo19-coding.md
+    repo_source: null  # Derived from upstream Odoo 19 docs, not a repo file
+    upstream: https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html
+    sync_expectation: manual
+    description: Odoo 19 coding conventions — model order, naming, ORM rules, breaking changes
+
+  - id: oca-governance
+    owner: local
+    local_projection: ~/.claude/rules/oca-governance.md
+    repo_source: config/addons.manifest.yaml  # Derived from manifest data
+    upstream: https://odoo-community.org/list-of-must-have-oca-modules
+    sync_expectation: manual
+    description: OCA module maturity gates, quality checklist, adoption thresholds
+
+# ---------------------------------------------------------------------------
+# Repo-owned governance data
+# ---------------------------------------------------------------------------
+governance_data:
+  - id: addons-manifest
+    owner: repo
+    repo_source: config/addons.manifest.yaml
+    validator: scripts/odoo/validate_addons_manifest.py
+    ci_gate: .github/workflows/addons-manifest-guard.yml
+    description: Curated OCA module manifest — 35 repos, tiered, with must-have lists
+
+  - id: devops-skills
+    owner: repo
+    repo_source: docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md
+    validator: null
+    ci_gate: null
+    description: Cloud DevOps skill catalog for AI agents
+
+  - id: canonical-map
+    owner: repo
+    repo_source: docs/agents/AGENT_RULES_CANONICAL_MAP.md
+    validator: null
+    ci_gate: null
+    description: Bridge doc explaining repo vs local rule ownership
