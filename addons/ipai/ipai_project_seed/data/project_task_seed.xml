@@ -1,0 +1,26 @@
+<odoo>
+    <record id="task_discovery" model="project.task">
+        <field name="name">Discovery Workshop</field>
+        <field name="project_id" ref="ipai_project_seed.project_client_onboarding"/>
+        <field name="stage_id" ref="ipai_project_seed.stage_backlog"/>
+        <field name="milestone_id" ref="ipai_project_seed.milestone_scope_signed_off"/>
+        <field name="priority">1</field>
+    </record>
+
+    <record id="task_solution_design" model="project.task">
+        <field name="name">Solution Design</field>
+        <field name="project_id" ref="ipai_project_seed.project_client_onboarding"/>
+        <field name="stage_id" ref="ipai_project_seed.stage_backlog"/>
+        <field name="milestone_id" ref="ipai_project_seed.milestone_scope_signed_off"/>
+        <field name="priority">1</field>
+        <field name="depend_on_ids" eval="[(4, ref('ipai_project_seed.task_discovery'))]"/>
+    </record>
+
+    <record id="task_launch" model="project.task">
+        <field name="name">Launch Readiness</field>
+        <field name="project_id" ref="ipai_project_seed.project_client_onboarding"/>
+        <field name="stage_id" ref="ipai_project_seed.stage_backlog"/>
+        <field name="milestone_id" ref="ipai_project_seed.milestone_go_live"/>
+        <field name="depend_on_ids" eval="[(4, ref('ipai_project_seed.task_solution_design'))]"/>
+    </record>
+</odoo>
