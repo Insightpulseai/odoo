@@ -1,0 +1,71 @@
+# SSOT: AI Agents Registry
+# Physical Foundry agents and their logical modes.
+# Cross-referenced by: models.yaml, policies.yaml, prompts.yaml
+
+agents:
+  # --- Physical Agent (Azure Foundry) ---
+  ipai-odoo-copilot-azure:
+    type: physical
+    runtime: azure-foundry
+    project: data-intel-ph
+    resource: data-intel-ph-resource
+    resource_group: rg-data-intel-ph
+    region: eastus2
+    version: 1
+    model_ref: gpt-4.1            # → models.yaml
+    auth_mode: managed-identity    # target; v1 uses env var fallback
+    api_endpoint_pattern: "https://{resource}.services.ai.azure.com"
+    agents_api: "GET /openai/assistants?api-version=2024-12-01-preview"
+    memory_default: false
+    read_only_default: true
+    instruction_artifact: ssot/ai/foundry_instructions.md
+    logical_agents:
+      - ask-agent
+      - authoring-agent
+      - livechat-agent
+      - transaction-agent
+
+  # --- Logical Agents (modes of the physical agent) ---
+  ask-agent:
+    type: logical
+    physical_agent_ref: ipai-odoo-copilot-azure
+    purpose: Answer questions about Odoo data and processes
+    policy_ref: policy-read-only       # → policies.yaml
+    prompt_ref: prompt-ask-agent       # → prompts.yaml
+    tools: []
+    write_access: none
+    source_refs:
+      - source-odoo-knowledge          # → sources.yaml
+
+  authoring-agent:
+    type: logical
+    physical_agent_ref: ipai-odoo-copilot-azure
+    purpose: Draft documents, reports, and emails
+    policy_ref: policy-draft-only      # → policies.yaml
+    prompt_ref: prompt-authoring-agent # → prompts.yaml
+    tools: []
+    write_access: draft-only
+    source_refs:
+      - source-odoo-knowledge
+
+  livechat-agent:
+    type: logical
+    physical_agent_ref: ipai-odoo-copilot-azure
+    purpose: Handle website visitor questions
+    policy_ref: policy-read-only       # → policies.yaml
+    prompt_ref: prompt-livechat-agent  # → prompts.yaml
+    tools: []
+    write_access: none
+    source_refs:
+      - source-odoo-knowledge
+
+  transaction-agent:
+    type: logical
+    physical_agent_ref: ipai-odoo-copilot-azure
+    purpose: Assist with bounded CRUD operations
+    policy_ref: policy-bounded-write   # → policies.yaml
+    prompt_ref: prompt-transaction-agent # → prompts.yaml
+    tools: []                          # v1: no tools; future: bounded CRUD
+    write_access: draft-then-approve   # v1: stubbed
+    source_refs:
+      - source-odoo-knowledge
