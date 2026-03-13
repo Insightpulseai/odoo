@@ -31,8 +31,12 @@ _PROBE_TIMEOUT = 10
 _AGENTS_API_VERSION = "2024-12-01-preview"
 
 
-class FoundryService(models.AbstractModel):
+class FoundryService(models.Model):
     """Thin bridge service for Azure Foundry agent operations.
+
+    Uses _auto = False so no database table is created, but the model
+    is registered in ir.model (required for ir.cron and ir.actions.server
+    references).
 
     Auth precedence:
       1. Managed identity (Azure IMDS) — preferred, zero-secret
@@ -49,6 +53,7 @@ class FoundryService(models.AbstractModel):
 
     _name = "ipai.foundry.service"
     _description = "Azure Foundry Service Bridge"
+    _auto = False
 
     # ------------------------------------------------------------------
     # Helpers
