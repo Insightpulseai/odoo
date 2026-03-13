@@ -1,13 +1,20 @@
-version: "1.0"
-last_updated: "2026-03-07"
+version: "2.0"
+last_updated: "2026-03-13"
 governance: "spec/azure-target-state/constitution.md"
+
+# -- Runtime plane policy --
+# Azure-native is the only approved runtime plane.
+# External SaaS exceptions: Tableau Cloud (analytics presentation only).
+# Email exception: Zoho/Mailgun (messaging infrastructure, not app runtime).
+# Temporary transition exception: Vercel only if explicitly time-bounded.
+# DigitalOcean: decommissioned 2026-03-11. Never reintroduce.
 
 platforms:
   github:
     role: primary
     capabilities:
       source_control: { status: active, service: "GitHub Repos" }
-      ci_cd: { status: active, service: "GitHub Actions", workflow_count: 153 }
+      ci_cd: { status: active, service: "GitHub Actions" }
       code_review: { status: active, service: "GitHub PRs" }
       issue_tracking: { status: active, service: "GitHub Issues + Plane" }
       documentation: { status: active, service: "In-repo spec kits" }
@@ -29,39 +36,99 @@ platforms:
       - wiki
 
   azure_cloud:
-    role: agent_platform
-    constraint: "Foundry + Container Apps for copilot runtime; Dev Center for phase-2 engineering"
+    role: primary_runtime
+    constraint: "All first-party runtimes on Azure. No other cloud compute."
     capabilities:
-      foundry_agents: { status: repo-only, service: "Foundry Agents Service", spec: "spec/odoo-copilot-azure/" }
-      container_apps: { status: repo-only, service: "Azure Container Apps" }
-      key_vault: { status: repo-only, service: "Azure Key Vault" }
-      api_management: { status: repo-only, service: "Azure API Management" }
-      monitor: { status: repo-only, service: "Azure Monitor / App Insights" }
+      container_apps: { status: active, service: "Azure Container Apps" }
+      front_door: { status: active, service: "Azure Front Door Standard/Premium" }
+      key_vault: { status: active, service: "Azure Key Vault" }
+      postgresql: { status: active, service: "Azure PG Flexible Server" }
+      container_registry: { status: active, service: "Azure Container Registry" }
+      foundry_agents: { status: active, service: "Microsoft Foundry Agents Service" }
+      openai: { status: active, service: "Azure OpenAI" }
+      databricks: { status: active, service: "Azure Databricks" }
+      monitor: { status: active, service: "Azure Monitor / App Insights" }
       dev_center:
         status: phase-2
         service: "Azure Dev Center"
         prerequisite: "Front Door cutover complete (Wave 1+)"
-        components:
-          dev_box: { status: phase-2, service: "Microsoft Dev Box", note: "Cloud workstations for migration workstreams" }
-          deployment_environments: { status: phase-2, service: "Azure Deployment Environments", note: "Catalog-driven self-service IaC environments" }
 
-  digitalocean:
-    role: primary_hosting
-    capabilities:
-      compute: { status: active, service: "DO Droplets", ip: "178.128.112.214" }
-      apps: { status: active, service: "DO App Platform" }
-      dns: { status: active, service: "Cloudflare (delegated)" }
-      container_registry: { status: active, service: "DO Container Registry" }
+  external_saas:
+    tableau_cloud:
+      role: analytics_presentation
+      constraint: "Presentation/consumption surface only. Never SSOT or SOR."
+      site: "insightpulseai on 10ax.online.tableau.com"
+      primary_connector: "Azure Databricks"
+      secondary_connectors: ["Azure SQL", "Azure Synapse"]
+      conditional_connectors: ["ADLS Gen2"]
+      auth: "Azure AD OAuth (Entra ID)"
+      contract: "lakehouse/contracts/bi/tableau.yaml"
+
+  email:
+    role: messaging_infrastructure
+    constraint: "DNS-only. Not app runtime. Not routed through Front Door."
+    providers:
+      zoho: { status: active, scope: "Human/business mailboxes on root domain" }
+      mailgun: { status: active, scope: "Transactional mail via mg.insightpulseai.com" }
+
+  deprecated:
+    digitalocean:
+      role: decommissioned
+      decommissioned_date: "2026-03-11"
+      note: "Droplet deleted, snapshot complete. Never reintroduce."
+    vercel:
+      role: deprecated
+      note: "No new deployments. Transitional residue only."
+
+dns:
+  authority: Cloudflare
+  mail_policy: DNS-only
+  app_edge: Azure Front Door Standard/Premium
+  apex_note: "Cloudflare CNAME flattening for @. Monitor AFD certificate revalidation."
+
+  public_hostnames_via_frontdoor:
+    - "@"
+    - www
+    - erp
+    - auth
+    - crm
+    - mcp
+    - n8n
+    - ocr
+    - plane
+    - shelf
+    - superset
+    - ops
+
+  mail_records_dns_only:
+    - MX
+    - SPF
+    - DKIM
+    - DMARC
+    - mail
+    - email.mg
+
+identity:
+  workforce: Entra ID
+  tableau_auth: "Azure AD OAuth (connector credentials)"
+  secrets: "Azure Key Vault + Supabase Vault"
+
+repo_ownership:
+  infra: "dns, edge, frontdoor, iac, cloud topology"
+  lakehouse: "databricks, bi-serving, tableau contracts, medallion"
+  odoo: "erp runtime only"
+  ops-platform: "ssot, control-plane, secrets, supabase"
+  agents: "agent registry, skills, orchestration"
 
 migration_direction: "azure_devops -> github (repos, pipelines, wiki)"
 conflict_resolution: "github_authoritative"
 sync_direction: "github -> azure_devops (one-way, never reverse)"
 
 cross_references:
+  platform_target_state: "infra/ssot/azure/PLATFORM_TARGET_STATE.md"
   constitution: "spec/azure-target-state/constitution.md"
-  prd: "spec/azure-target-state/prd.md"
   service_matrix: "ssot/azure/service-matrix.yaml"
   dns_plan: "ssot/azure/dns-migration-plan.yaml"
-  copilot_spec: "spec/odoo-copilot-azure/"
-  mapping: "docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml"
-  dev_center_analysis: "User analysis 2026-03-10 — Phase 2 only, not on critical path"
+  resources_inventory: "artifacts/azure/resources.inventory.json"
+  foundry_targets: "artifacts/azure/foundry.targets.json"
+  tableau_contract: "lakehouse/contracts/bi/tableau.yaml"

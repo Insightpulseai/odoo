@@ -1,0 +1,73 @@
+---
+# Tableau Cloud Connector Contract
+# Owner: lakehouse repo
+# Referenced by: infra/ssot/azure/target-state.yaml
+# Last updated: 2026-03-13
+
+metadata:
+  version: "1.0"
+  owner: lakehouse
+  classification: "External SaaS — analytics presentation surface"
+  hard_boundary: "Tableau Cloud never becomes SSOT or SOR. Presentation/consumption only."
+
+site:
+  name: insightpulseai
+  url: "https://10ax.online.tableau.com"
+  admin_identity: "jgtolentino.rn@gmail.com"
+  admin_note: "Workspace/admin identity only. Not the data-plane credential model."
+
+connectors:
+  primary:
+    type: "Azure Databricks"
+    target: "dbw-ipai-dev"
+    serving_layer: "SQL Warehouse / Gold tables"
+    auth: "Azure AD OAuth (Entra ID)"
+    rationale: "Aligns with Databricks-first intelligence layer. BI reads from curated gold layer."
+
+  secondary:
+    - type: "Azure SQL"
+      auth: "Azure AD OAuth"
+      use_when: "Workload is intentionally modeled in Azure SQL for BI serving"
+    - type: "Azure Synapse"
+      auth: "Azure AD OAuth"
+      use_when: "Workload is intentionally modeled in Synapse for BI serving"
+
+  conditional:
+    - type: "ADLS Gen2"
+      auth: "Azure AD OAuth"
+      use_when: "Explicitly designed file/object-backed analytics access"
+
+  prohibited:
+    - type: "Direct PostgreSQL (pg-ipai-dev)"
+      reason: "Operational DB. BI reads from lakehouse gold layer, not from operational stores."
+    - type: "Supabase direct"
+      reason: "Control-plane DB. Not a BI serving surface."
+
+auth:
+  target_model: "Azure AD / Entra OAuth"
+  current_state: "Tableau Identity (connector credentials)"
+  migration_path: "Configure Entra OAuth for Databricks connector. Service credentials in Azure Key Vault."
+  anti_pattern: "Do not embed database passwords in Tableau credential store when OAuth is available."
+
+private_connectivity:
+  note: "Tableau Data Connect is EOL for new deployments (September 2025)."
+  approved_alternatives:
+    - "Tableau Private Connect"
+    - "Tableau Bridge"
+  use_when: "Tableau Cloud needs access to data not publicly reachable."
+
+data_flow:
+  canonical_path: "Odoo (SOR) → Databricks Bronze → Silver → Gold → Tableau Cloud (presentation)"
+  alternative_path: "Supabase ai.* schema → Databricks Bronze → Gold → Tableau Cloud"
+  anti_pattern: "Tableau reading directly from operational databases or raw bronze tables"
+
+inventory:
+  workbooks: "TBD — pending Tableau workbook/data-source inventory (Sprint item #13)"
+  data_sources: "TBD"
+  refresh_schedules: "TBD"
+  owners: "TBD"
+
+governance:
+  workbook_versioning: "Inventory and version workbook definitions where possible"
+  data_freshness: "Defined by upstream refresh cadence (Databricks jobs / medallion pipeline SLA)"
+  access_control: "Tableau site roles + Entra group mapping"
