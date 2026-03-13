@@ -71,19 +71,85 @@ class FoundryProviderConfig(models.Model):
     # ------------------------------------------------------------------
     # Actions
     # ------------------------------------------------------------------
+    def _resolve_auth_headers(self):
+        """Build auth headers based on configured auth_mode.
+
+        Returns (headers_dict, missing_hint_or_None).
+        """
+        import os  # noqa: PLC0415
+
+        if self.auth_mode == "api_key":
+            key = os.getenv("AZURE_AI_FOUNDRY_API_KEY")
+            if key:
+                return {"api-key": key}, None
+            return {}, "AZURE_AI_FOUNDRY_API_KEY"
+
+        # managed_identity or oauth2 — both use Bearer token
+        # Try azure-identity SDK first (managed_identity), then env var fallback
+        if self.auth_mode == "managed_identity":
+            try:
+                from azure.identity import DefaultAzureCredential  # noqa: PLC0415
+                cred = DefaultAzureCredential()
+                token = cred.get_token(
+                    "https://cognitiveservices.azure.com/.default"
+                )
+                return {"Authorization": "Bearer " + token.token}, None
+            except Exception:
+                pass  # fall through to env var
+
+        bearer = os.getenv("AZURE_AI_FOUNDRY_BEARER_TOKEN")
+        if bearer:
+            return {"Authorization": "Bearer " + bearer}, None
+        env_hint = (
+            "azure-identity SDK or AZURE_AI_FOUNDRY_BEARER_TOKEN"
+            if self.auth_mode == "managed_identity"
+            else "AZURE_AI_FOUNDRY_BEARER_TOKEN"
+        )
+        return {}, env_hint
+
+    @staticmethod
+    def _extract_resource_base(endpoint):
+        """Extract the resource-level base URL from a Foundry project URL.
+
+        Azure AI Foundry project URLs look like:
+          https://<resource>.services.ai.azure.com/api/projects/<project>
+        The OpenAI-compatible API lives at the resource level:
+          https://<resource>.services.ai.azure.com/openai/models
+        """
+        from urllib.parse import urlparse  # noqa: PLC0415
+
+        parsed = urlparse(endpoint.rstrip("/"))
+        # Strip /api/projects/<name> suffix if present
+        path = parsed.path
+        idx = path.find("/api/projects")
+        if idx >= 0:
+            path = path[:idx]
+        return f"{parsed.scheme}://{parsed.netloc}{path}"
+
     def action_test_connection(self):
         """Test connectivity to the configured Foundry endpoint."""
         self.ensure_one()
-        import requests  # noqa: PLC0415 — deferred import
+        import requests  # noqa: PLC0415
+
+        headers, missing = self._resolve_auth_headers()
+        base = self._extract_resource_base(self.endpoint)
 
         try:
             resp = requests.get(
-                self.endpoint.rstrip("/") + "/openai/models",
+                base.rstrip("/") + "/openai/models",
                 params={"api-version": self.api_version or "2024-12-01-preview"},
+                headers=headers,
                 timeout=10,
             )
             if resp.status_code < 400:
-                result = _("OK — HTTP %s") % resp.status_code
+                result = _("OK — HTTP %s (auth_mode=%s)") % (
+                    resp.status_code, self.auth_mode,
+                )
+            elif resp.status_code == 401 and missing:
+                result = _(
+                    "HTTP 401 — auth_mode=%s but credentials not found. "
+                    "Set %s in the container env."
+                ) % (self.auth_mode, missing)
             else:
                 result = _("Error — HTTP %s: %s") % (
                     resp.status_code,
