@@ -117,7 +117,7 @@
         <field name="name">IPAI Copilot Settings</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
-        <field name="target">inline</field>
+        <field name="target">main</field>
         <field name="context">{'module': 'ipai_odoo_copilot'}</field>
     </record>
 
