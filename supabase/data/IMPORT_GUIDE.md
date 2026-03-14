@@ -13,7 +13,7 @@ This directory contains seed data for 37 month-end closing tasks to be imported 
 ### 1. Finance PPM Module Installed
 ```bash
 ssh root@159.223.75.148
-docker exec -it odoo-core odoo -d odoo_core -u ipai_finance_ppm --stop-after-init
+docker exec -it odoo-core odoo -d odoo_dev -u ipai_finance_ppm --stop-after-init
 ```
 
 ### 2. Project Created
@@ -93,12 +93,12 @@ scp data/month_end_closing_tasks.sql root@159.223.75.148:/tmp/
 ### Step 2: Execute SQL via Docker
 ```bash
 ssh root@159.223.75.148
-docker exec -i odoo-postgres psql -U odoo -d odoo_core < /tmp/month_end_closing_tasks.sql
+docker exec -i odoo-postgres psql -U odoo -d odoo_dev < /tmp/month_end_closing_tasks.sql
 ```
 
 ### Step 3: Verify Import
 ```bash
-docker exec odoo-postgres psql -U odoo -d odoo_core -c \
+docker exec odoo-postgres psql -U odoo -d odoo_dev -c \
   "SELECT COUNT(*) FROM project_task WHERE is_finance_ppm = TRUE AND finance_category IS NOT NULL;"
 ```
 
@@ -152,7 +152,7 @@ All tasks follow 3-stage workflow:
 ### Error: Field 'finance_code' does not exist
 **Solution**: Ensure Finance PPM module is upgraded successfully:
 ```bash
-docker exec -it odoo-core odoo -d odoo_core -u ipai_finance_ppm --stop-after-init
+docker exec -it odoo-core odoo -d odoo_dev -u ipai_finance_ppm --stop-after-init
 ```
 
 ### Import shows 0 records created

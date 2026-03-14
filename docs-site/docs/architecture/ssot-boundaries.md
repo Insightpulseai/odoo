@@ -15,7 +15,7 @@ Every domain in the platform has exactly one single source of truth (SSOT). When
 | **Mail configuration** | `config/odoo/mail_settings.yaml` | Odoo `ir.mail_server` / `fetchmail.server` | Applied idempotently by `apply_mail_settings.py`. YAML is truth; DB row is a cache. |
 | **DNS records** | `infra/dns/subdomain-registry.yaml` | Cloudflare | Via Terraform. Never edit Cloudflare dashboard directly. |
 | **Secrets** | Azure Key Vault + Supabase Vault | Odoo conf, Edge Functions, container env vars | Never committed to Git. Names only in `infra/supabase/vault_secrets.tf`. |
-| **ERP data** | Odoo PostgreSQL (`odoo_prod`) | Supabase (read-only projections), ADLS (bronze copies) | Bridge functions only. Supabase replicas are non-authoritative for transactions. |
+| **ERP data** | Odoo PostgreSQL (`odoo`) | Supabase (read-only projections), ADLS (bronze copies) | Bridge functions only. Supabase replicas are non-authoritative for transactions. |
 | **Automation workflows** | n8n (live instance) + `automations/n8n/` JSON | Supabase task queue | Deployed via `deploy_n8n_all.py`. Credentials are env references, never literal values. |
 | **Module code** | `addons/ipai/` (OCA-style) | Odoo runtime | Installed via `odoo -i <module>`. Never modify OCA source -- use `_inherit` overrides. |
 | **Specs and contracts** | `spec/<feature>/` (spec-kit) | CI, agent instructions | Enforced by `spec_validate.sh`. |
