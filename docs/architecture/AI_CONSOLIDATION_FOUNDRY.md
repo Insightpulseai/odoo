@@ -118,6 +118,83 @@ Consolidate all AI capabilities through **Microsoft Foundry** (`data-intel-ph` p
 | Monthly `api-version` params | `v1` stable routes (`/openai/v1/`) |
 | Hub + Azure OpenAI resource | Single Foundry resource |
 
+## Agent Workflows (Phase 5)
+
+Two authoring paths for multi-agent workflows:
+
+| Path | Tool | Best For |
+|------|------|----------|
+| **Declarative (low-code)** | YAML in Foundry portal or VS Code for Web | Simple sequential flows, non-developers |
+| **Pro-code (hosted)** | Python/C# with Agent Framework SDK | Complex orchestration, custom logic, OTel tracing |
+
+**Low-code → Pro-code bridge**: GitHub Copilot can convert YAML workflows to Agent Framework code (`Generate Code` button in VS Code). This lets you prototype in YAML, then customize in Python.
+
+## Pro-Code Hosted Workflows
+
+Multi-agent ERP workflows built with the Agent Framework SDK, deployed as hosted agents to Foundry.
+
+### Setup
+
+```bash
+# Python — hosted agent framework package
+pip install azure-ai-agentserver-agentframework
+
+# VS Code extension (required for visualization + deployment)
+# Install: TeamsDevApp.vscode-ai-foundry
+```
+
+### Project Structure
+
+```
+erp-workflow/
+├── .env                    # AZURE_AI_PROJECT_ENDPOINT + MODEL_DEPLOYMENT_NAME
+├── workflow.py             # Orchestration logic + agent definitions
+├── container.py            # Containerized deployment entry point
+├── main.py                 # Local dev entry point
+└── requirements.txt        # azure-ai-agentserver-agentframework
+```
+
+### Observability (OpenTelemetry)
+
+```python
+from agent_framework.observability import setup_observability
+setup_observability(vs_code_extension_port=4319)  # traces to VS Code visualizer
+```
+
+### Deployment Stages
+
+| Stage | Command | Purpose |
+|-------|---------|---------|
+| Local interactive | F5 in VS Code | Dev + debug with breakpoints |
+| Local container | `Microsoft Foundry: Open Container Agent Playground Locally` | Test containerized |
+| Cloud deploy | `Microsoft Foundry: Deploy Hosted Agent` | Production in Foundry workspace |
+
+### ERP Workflow Examples
+
+**Expense Approval (Human-in-the-Loop):**
+```
+[Expense Agent] → classify expense → [Manager Agent] → approve/reject → [Finance Agent] → post to GL
+         ↑                                    ↑
+    human input                          human approval
+```
+
+**Month-End Close (Sequential):**
+```
+[GL Agent] → reconcile → [AP Agent] → match invoices → [AR Agent] → age receivables → [Tax Agent] → compute
+```
+
+**Sales Inquiry (Group Chat):**
+```
+[CRM Agent] ←→ [Inventory Agent] ←→ [Pricing Agent]
+     dynamic handoff based on customer question
+```
+
+### Auth Requirements
+
+- `Azure AI User` role on Foundry project
+- `AcrPull` role for container deployment
+- `DefaultAzureCredential` (az login or managed identity)
+
 ## Module Consolidation
 
 ### Canonical (keep)
