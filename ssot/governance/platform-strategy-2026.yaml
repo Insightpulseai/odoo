@@ -1,0 +1,652 @@
+# =============================================================================
+# VMOKRAPI-SPATRES Platform Strategy — InsightPulse AI
+# =============================================================================
+#
+# Full strategic operating model covering vision, mission, KRAs, objectives,
+# OKRs, KPIs, strategies, programs, activities, tasks, resources, evidence
+# policy, risks, and SPATRES analysis.
+#
+# Scope: Enterprise-wide platform strategy for 2026.
+# Complementary to: enterprise_okrs.yaml (operational OKR stack + KPI cross-refs)
+#
+# Schema: platform-strategy.schema.json
+# CI validator: scripts/ci/validate_platform_strategy.py
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-14"
+
+strategy:
+  id: ipai-platform-2026
+  name: InsightPulseAI Platform Strategic Operating Model
+  version: 1.0.0
+  status: active
+  review_cycle: monthly
+  reporting_cycle: monthly
+  planning_horizon:
+    start: 2026-03-01
+    end: 2026-12-31
+
+vision: >
+  Build a self-hosted, governed, repo-first enterprise platform where Odoo is the ERP
+  system of record, Azure Databricks is the data intelligence backbone, Azure AI Foundry
+  is the agent control plane, and all execution is validated through machine-readable SSOT,
+  CI gates, and evidence-backed operations.
+
+mission: >
+  Deliver an integrated operating platform for finance, operations, AI copilots, analytics,
+  and compliance using deterministic ownership, measurable outcomes, minimal architecture
+  drift, and automation-first delivery.
+
+platform_doctrine:
+  source_control: github
+  primary_pr_surface: github
+  erp_system_of_record: odoo
+  agent_control_plane: azure_ai_foundry
+  data_intelligence_backbone: azure_databricks
+  secrets_control_plane: ops_platform
+  infrastructure_mode: infrastructure_as_code
+  preferred_runtime_pattern: self_hosted_except_tableau_cloud
+  governance_model: ssot_plus_ci_plus_evidence
+
+current_context:
+  active_repositories:
+    - agents
+    - odoo
+    - ops-platform
+    - .github
+    - web
+    - infra
+    - automations
+    - templates
+    - design-system
+    - lakehouse
+  foundry:
+    project_name: data-intel-ph
+    resource_name: data-intel-ph-resource
+    project_endpoint: https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph
+    observed_agent: ipai-odoo-copilot-azure
+    model_deployments:
+      - gpt-4.1
+      - text-embedding-3-small
+    observed_tools:
+      - srchipaidev8tlstu
+    guardrails_present: true
+    workflows_present: false
+    evaluations_present: false
+    fine_tunes_present: false
+  databricks:
+    workspace_name: dbw-ipai-dev
+    role: governed_data_intelligence_layer
+
+# =============================================================================
+# Key Result Areas (KRAs)
+# =============================================================================
+kras:
+  - id: KRA-ARCH
+    name: Architecture and boundary discipline
+    owner: platform-governance
+  - id: KRA-GOV
+    name: Governance and control-plane discipline
+    owner: platform-governance
+  - id: KRA-ERP
+    name: ERP runtime and Odoo integration
+    owner: odoo-engineering
+  - id: KRA-AI
+    name: Agent platform and model governance
+    owner: ai-platform
+  - id: KRA-DATA
+    name: Data intelligence and analytics
+    owner: lakehouse
+  - id: KRA-DELIVERY
+    name: Delivery automation and CI quality
+    owner: devops-platform
+
+# =============================================================================
+# Strategic Objectives
+# =============================================================================
+objectives:
+  - id: OBJ-001
+    name: Codify canonical platform ownership and governance boundaries
+    description: >
+      Define and enforce repo, runtime, infrastructure, and control-plane ownership
+      across the active platform repositories and Azure resources.
+    owner: platform-governance
+    kra_ref:
+      - KRA-ARCH
+      - KRA-GOV
+      - KRA-DELIVERY
+    target_date: 2026-04-30
+    status: not_started
+
+  - id: OBJ-002
+    name: Make the Odoo copilot repo-backed, governed, and evaluation-ready
+    description: >
+      Move the current Azure AI Foundry Odoo copilot from partial portal-state dependence
+      to a repo-backed lifecycle with manifests, prompts, inventories, evaluations, and
+      bridge alignment.
+    owner: ai-platform
+    kra_ref:
+      - KRA-AI
+      - KRA-ERP
+      - KRA-GOV
+    target_date: 2026-05-31
+    status: not_started
+
+  - id: OBJ-003
+    name: Formalize Databricks-to-Foundry governed AI data contracts
+    description: >
+      Define and codify the structured governed data products that the agent layer may
+      consume without moving prompt-agent ownership into the lakehouse layer.
+    owner: lakehouse
+    kra_ref:
+      - KRA-DATA
+      - KRA-AI
+      - KRA-ARCH
+    target_date: 2026-06-15
+    status: not_started
+
+  - id: OBJ-004
+    name: Establish evidence-backed delivery and operational reporting
+    description: >
+      Ensure each strategic result has mapped evidence, validation, and reporting inputs
+      so status is based on artifacts, not narrative only.
+    owner: devops-platform
+    kra_ref:
+      - KRA-GOV
+      - KRA-DELIVERY
+    target_date: 2026-06-30
+    status: not_started
+
+# =============================================================================
+# OKRs — Platform Strategy Layer
+# =============================================================================
+# NOTE: These OKRs (OKR-001 through OKR-004) cover platform governance scope.
+# See also: enterprise_okrs.yaml for operational OKRs (O1-O3) covering
+# engineering control plane, Odoo runtime, and AI/data maturity.
+# =============================================================================
+okrs:
+  - id: OKR-001
+    objective_ref: OBJ-001
+    title: Canonical ownership is source-controlled and enforced
+    owner: platform-governance
+    horizon_end: 2026-04-30
+    key_results:
+      - id: KR-001-1
+        description: All active repos have explicit ownership and non-ownership boundaries in SSOT
+        target: 100
+        measure: percentage
+      - id: KR-001-2
+        description: CI validates repo-boundary and SSOT drift on every PR to main
+        target: true
+        measure: boolean
+      - id: KR-001-3
+        description: Azure resource inventory is mapped to repo ownership for core platform resources
+        target: 100
+        measure: percentage
+
+  - id: OKR-002
+    objective_ref: OBJ-002
+    title: Odoo copilot is repo-backed and testable
+    owner: ai-platform
+    horizon_end: 2026-05-31
+    key_results:
+      - id: KR-002-1
+        description: Foundry agent manifest, prompt, and inventory records exist in repo
+        target: true
+        measure: boolean
+      - id: KR-002-2
+        description: Automatic, human, and red-team evaluation scaffolds exist for the agent
+        target: 3
+        measure: count
+      - id: KR-002-3
+        description: Odoo bridge config validates correct Foundry project endpoint and model/tool references
+        target: true
+        measure: boolean
+      - id: KR-002-4
+        description: Current portal-state assets are mirrored into repo-backed inventory without inventing unsupported features
+        target: 100
+        measure: percentage
+
+  - id: OKR-003
+    objective_ref: OBJ-003
+    title: Databricks serves governed AI-facing contracts without owning prompt agents
+    owner: lakehouse
+    horizon_end: 2026-06-15
+    key_results:
+      - id: KR-003-1
+        description: AI-facing curated contracts are defined and source-controlled in lakehouse
+        target: 5
+        measure: count
+      - id: KR-003-2
+        description: Repo validators explicitly prevent prompt-agent ownership from drifting into lakehouse
+        target: true
+        measure: boolean
+      - id: KR-003-3
+        description: Foundry-to-Databricks separation-of-concerns doctrine is documented and linked from inventories
+        target: true
+        measure: boolean
+
+  - id: OKR-004
+    objective_ref: OBJ-004
+    title: Strategy reporting is evidence-backed and machine-verifiable
+    owner: devops-platform
+    horizon_end: 2026-06-30
+    key_results:
+      - id: KR-004-1
+        description: Every key result has at least one evidence mapping
+        target: 100
+        measure: percentage
+      - id: KR-004-2
+        description: Governance-critical workflows have CI coverage or explicit runtime validation plans
+        target: 100
+        measure: percentage
+      - id: KR-004-3
+        description: Monthly reporting can be generated from SSOT plus evidence index without manual status rewriting
+        target: true
+        measure: boolean
+
+# =============================================================================
+# KPIs
+# =============================================================================
+kpis:
+  - id: KPI-001
+    name: Repo ownership codification coverage
+    description: Percentage of active repos with codified boundaries
+    formula: coded_repos / active_repos * 100
+    target: 100
+    unit: percent
+
+  - id: KPI-002
+    name: Governance CI enforcement
+    description: Whether governance CI checks run on all relevant PRs
+    formula: ci_check_enabled
+    target: true
+    unit: boolean
+
+  - id: KPI-003
+    name: Azure resource ownership mapping coverage
+    description: Percentage of core Azure resources mapped to an owning repo/domain
+    formula: mapped_resources / core_resources * 100
+    target: 100
+    unit: percent
+
+  - id: KPI-004
+    name: Foundry agent repo mirror existence
+    description: Whether the active agent has repo-backed manifest and prompt
+    formula: repo_backed_agent_exists
+    target: true
+    unit: boolean
+
+  - id: KPI-005
+    name: Evaluation artifact coverage
+    description: Count of required evaluation categories scaffolded
+    formula: count(eval_categories_present)
+    target: 3
+    unit: count
+
+  - id: KPI-006
+    name: Odoo bridge Foundry alignment
+    description: Whether Odoo bridge config validates correct Foundry endpoint taxonomy
+    formula: bridge_alignment_pass
+    target: true
+    unit: boolean
+
+  - id: KPI-007
+    name: Foundry mirror completeness
+    description: Percentage of observed portal assets mirrored into inventory
+    formula: mirrored_foundry_assets / observed_foundry_assets * 100
+    target: 100
+    unit: percent
+
+  - id: KPI-008
+    name: Curated AI data contract count
+    description: Count of approved Databricks AI-facing data contracts
+    formula: count(curated_ai_contracts)
+    target: 5
+    unit: count
+
+  - id: KPI-009
+    name: Boundary-protection rule presence
+    description: Whether validators explicitly block prompt-agent ownership in lakehouse
+    formula: boundary_rule_exists
+    target: true
+    unit: boolean
+
+  - id: KPI-010
+    name: Foundry-Databricks doctrine documentation coverage
+    description: Whether the separation-of-concerns doctrine is documented and linked
+    formula: doctrine_docs_present
+    target: true
+    unit: boolean
+
+  - id: KPI-011
+    name: Evidence mapping coverage
+    description: Percentage of key results with at least one evidence mapping
+    formula: key_results_with_evidence / total_key_results * 100
+    target: 100
+    unit: percent
+
+  - id: KPI-012
+    name: Validation coverage for governance-critical workflows
+    description: Percentage of governance-critical workflows with CI or runtime validation
+    formula: validated_workflows / governance_critical_workflows * 100
+    target: 100
+    unit: percent
+
+  - id: KPI-013
+    name: Machine-generated reporting readiness
+    description: Whether status reporting can be derived from SSOT plus evidence
+    formula: reporting_pipeline_ready
+    target: true
+    unit: boolean
+
+# =============================================================================
+# Strategies
+# =============================================================================
+strategies:
+  - id: STR-001
+    name: SSOT-first governance
+    description: >
+      Platform ownership, inventories, state, and boundaries are codified as machine-readable
+      source-of-truth artifacts before platform sprawl expands further.
+    supports_objectives:
+      - OBJ-001
+      - OBJ-004
+
+  - id: STR-002
+    name: Repo-backed Foundry lifecycle
+    description: >
+      Treat Azure AI Foundry portal state as managed runtime surface, but maintain manifests,
+      prompts, inventories, evaluation scaffolds, and knowledge references in repos.
+    supports_objectives:
+      - OBJ-002
+      - OBJ-004
+
+  - id: STR-003
+    name: Databricks-prepares, Foundry-reasons, Odoo-executes
+    description: >
+      Databricks owns governed data preparation and analytics contracts, Foundry owns agent
+      behavior and governance, and Odoo owns ERP-side execution and user interaction.
+    supports_objectives:
+      - OBJ-002
+      - OBJ-003
+
+  - id: STR-004
+    name: Evidence-backed delivery
+    description: >
+      Strategic status must be derived from PRs, CI runs, inventories, tests, traces, and
+      runtime evidence rather than narrative-only reporting.
+    supports_objectives:
+      - OBJ-004
+
+# =============================================================================
+# Programs
+# =============================================================================
+programs:
+  - id: PRG-001
+    name: Platform Governance Codification
+    strategies:
+      - STR-001
+      - STR-004
+    owner: platform-governance
+
+  - id: PRG-002
+    name: Odoo Copilot Governance and Evaluation
+    strategies:
+      - STR-002
+      - STR-003
+      - STR-004
+    owner: ai-platform
+
+  - id: PRG-003
+    name: Governed AI Data Contracts
+    strategies:
+      - STR-003
+      - STR-004
+    owner: lakehouse
+
+# =============================================================================
+# Activities
+# =============================================================================
+activities:
+  - id: ACT-001
+    program_ref: PRG-001
+    name: Codify repo ownership and non-ownership boundaries
+    owner: platform-governance
+
+  - id: ACT-002
+    program_ref: PRG-001
+    name: Map core Azure resources to ownership domains
+    owner: platform-governance
+
+  - id: ACT-003
+    program_ref: PRG-002
+    name: Mirror current Foundry agent state into repo-backed assets
+    owner: ai-platform
+
+  - id: ACT-004
+    program_ref: PRG-002
+    name: Codify Foundry inventories and guardrail/tool/model references
+    owner: ops-platform
+
+  - id: ACT-005
+    program_ref: PRG-002
+    name: Scaffold agent evaluations and workflow structure
+    owner: ai-platform
+
+  - id: ACT-006
+    program_ref: PRG-002
+    name: Align Odoo bridge to Foundry endpoint taxonomy
+    owner: odoo-engineering
+
+  - id: ACT-007
+    program_ref: PRG-003
+    name: Define governed Databricks AI-facing contracts
+    owner: lakehouse
+
+  - id: ACT-008
+    program_ref: PRG-001
+    name: Add CI and tests for strategic and boundary validation
+    owner: devops-platform
+
+# =============================================================================
+# Tasks
+# =============================================================================
+tasks:
+  - id: TASK-001
+    activity_ref: ACT-001
+    name: Define boundaries for agents, odoo, ops-platform, infra, lakehouse, web, automations, templates, design-system, and .github
+    owner: platform-governance
+    due: 2026-03-31
+    status: not_started
+    priority: critical
+
+  - id: TASK-002
+    activity_ref: ACT-002
+    name: Map Foundry, Search, Databricks, Odoo, Key Vault, Front Door, and CI resources to repo ownership domains
+    owner: platform-governance
+    due: 2026-04-05
+    status: not_started
+    priority: high
+
+  - id: TASK-003
+    activity_ref: ACT-003
+    name: Add manifest and source-controlled prompt for ipai-odoo-copilot-azure
+    owner: ai-platform
+    due: 2026-03-31
+    status: not_started
+    priority: critical
+
+  - id: TASK-004
+    activity_ref: ACT-004
+    name: Populate Foundry inventories from observed portal state
+    owner: ops-platform
+    due: 2026-04-03
+    status: not_started
+    priority: critical
+
+  - id: TASK-005
+    activity_ref: ACT-005
+    name: Create automatic, human, and red-team evaluation scaffolds
+    owner: ai-platform
+    due: 2026-04-10
+    status: not_started
+    priority: high
+
+  - id: TASK-006
+    activity_ref: ACT-006
+    name: Validate Odoo bridge uses Foundry project endpoint for project-scoped features
+    owner: odoo-engineering
+    due: 2026-04-07
+    status: not_started
+    priority: high
+
+  - id: TASK-007
+    activity_ref: ACT-007
+    name: Define first five AI-facing Databricks contracts for finance, compliance, taxonomy, entity reference, and KPI serving
+    owner: lakehouse
+    due: 2026-05-15
+    status: not_started
+    priority: high
+
+  - id: TASK-008
+    activity_ref: ACT-008
+    name: Add CI validation for SSOT integrity and ownership drift
+    owner: devops-platform
+    due: 2026-04-15
+    status: not_started
+    priority: critical
+
+# =============================================================================
+# Resources
+# =============================================================================
+resources:
+  people:
+    - role: platform-governance
+      owner: Jake Tolentino
+      capacity_fraction: 0.25
+    - role: ai-platform
+      owner: Jake Tolentino
+      capacity_fraction: 0.25
+    - role: odoo-engineering
+      owner: Jake Tolentino
+      capacity_fraction: 0.20
+    - role: lakehouse
+      owner: Jake Tolentino
+      capacity_fraction: 0.15
+    - role: devops-platform
+      owner: Jake Tolentino
+      capacity_fraction: 0.15
+
+  systems:
+    - github
+    - github_actions
+    - azure_ai_foundry
+    - azure_databricks
+    - azure_ai_search
+    - azure_key_vault
+    - azure_front_door
+    - odoo
+    - ops_platform_ssot
+
+  repositories:
+    - name: agents
+      role: agent_manifests_prompts_workflows_evals
+    - name: odoo
+      role: erp_runtime_and_bridge
+    - name: ops-platform
+      role: control_plane_ssot_and_inventories
+    - name: infra
+      role: infrastructure_as_code
+    - name: lakehouse
+      role: databricks_pipelines_and_ai_data_contracts
+    - name: .github
+      role: org_governance_and_ci
+
+  infrastructure:
+    - name: data-intel-ph-resource
+      role: foundry_resource
+    - name: data-intel-ph
+      role: foundry_project
+    - name: srchipaidev8tlstu
+      role: azure_ai_search_tool
+    - name: dbw-ipai-dev
+      role: databricks_workspace
+
+# =============================================================================
+# Evidence Policy
+# =============================================================================
+evidence_policy:
+  required_types:
+    - pull_request
+    - ci_pass
+    - repository_file
+    - test_output
+    - runtime_screenshot
+    - portal_inventory_snapshot
+    - validation_log
+  rule: >
+    No key result may be marked complete without at least one evidence mapping.
+
+# =============================================================================
+# Risks
+# =============================================================================
+risks:
+  - id: RISK-001
+    description: Foundry state can diverge from repos if not mirrored
+    likelihood: high
+    impact: high
+    mitigation: Maintain repo-backed inventories and manifests
+
+  - id: RISK-002
+    description: Capabilities may drift into the wrong repo or layer
+    likelihood: high
+    impact: high
+    mitigation: Enforce ownership boundaries through SSOT and CI
+
+  - id: RISK-003
+    description: Status may be overstated without artifact-backed evidence
+    likelihood: medium
+    impact: medium
+    mitigation: Require evidence index mapping for key results
+
+  - id: RISK-004
+    description: Advanced features may be added before grounding and evaluation maturity
+    likelihood: medium
+    impact: medium
+    mitigation: Gate advanced features behind evaluation and contract readiness
+
+# =============================================================================
+# SPATRES Analysis
+# =============================================================================
+spatres:
+  scope:
+    - 10 active repositories with defined boundaries
+    - Azure AI Foundry project with agent, models, tools, guardrails
+    - Azure Databricks workspace for governed data intelligence
+    - Odoo CE 19 as ERP system of record
+  people:
+    - Solo developer covering 5 roles at fractional capacity
+    - Platform governance and AI platform as primary focus areas
+  artifacts:
+    - SSOT YAML files for ownership, inventories, and strategy
+    - Repo-backed agent manifests and evaluation scaffolds
+    - CI validators for governance drift detection
+  timeline:
+    - "Q2 2026: Ownership codification and Foundry repo-backing"
+    - "Q2/Q3 2026: Databricks AI contracts and evidence-backed reporting"
+  risks:
+    - Portal-only drift if Foundry state is not mirrored
+    - Ownership ambiguity without enforced boundaries
+    - Narrative-only reporting without evidence backing
+    - Premature expansion before evaluation maturity
+  environments:
+    - GitHub (source control, CI/CD)
+    - Azure (Foundry, Databricks, ACA, Front Door, Key Vault)
+    - Self-hosted Odoo CE 19
+  success:
+    - All repos have codified boundaries enforced by CI
+    - Foundry state fully mirrored in repo-backed inventories
+    - Databricks AI contracts source-controlled with clear ownership
+    - Strategy status derived from evidence, not narrative
