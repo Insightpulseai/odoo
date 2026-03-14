@@ -7,7 +7,7 @@
     </record>
     <record id="param_foundry_api_endpoint" model="ir.config_parameter">
         <field name="key">ipai_odoo_copilot.foundry_api_endpoint</field>
-        <field name="value">https://data-intel-ph-resource.services.ai.azure.com</field>
+        <field name="value">https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph</field>
     </record>
     <record id="param_foundry_project" model="ir.config_parameter">
         <field name="key">ipai_odoo_copilot.foundry_project</field>

@@ -96,7 +96,7 @@ class FoundryProviderConfig(models.Model):
             ),
         ],
         string="Auth Audience",
-        default="https://cognitiveservices.azure.com/.default",
+        default="https://ai.azure.com/.default",
         required=True,
         help="OAuth2 token audience for the target API family. "
              "Foundry project APIs use ai.azure.com/.default. "

@@ -24,11 +24,12 @@ class ResConfigSettings(models.TransientModel):
         help="Azure AI Foundry portal URL (e.g. https://ai.azure.com)",
     )
     ipai_foundry_api_endpoint = fields.Char(
-        string="Foundry API Endpoint",
+        string="Foundry Project API Endpoint",
         config_parameter=f"{PARAM_PREFIX}.foundry_api_endpoint",
-        default="https://data-intel-ph-resource.services.ai.azure.com",
-        help="Azure AI services endpoint for API calls "
-             "(e.g. https://<resource>.services.ai.azure.com)",
+        default="https://data-intel-ph-resource.services.ai.azure.com"
+                "/api/projects/data-intel-ph",
+        help="Full Foundry project API endpoint including /api/projects/ path. "
+             "Shape: https://<resource>.services.ai.azure.com/api/projects/<project>",
     )
     ipai_foundry_project = fields.Char(
         string="Foundry Project",
