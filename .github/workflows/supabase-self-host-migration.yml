@@ -1,0 +1,494 @@
+name: Supabase Self-Host Migration
+
+# ── Trigger ────────────────────────────────────────────────────────────────
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: "Migration phase to execute"
+        required: true
+        type: choice
+        options:
+          - inventory        # Phase 1: Audit cloud project state
+          - schema           # Phase 2: Export and compare schema
+          - data             # Phase 3: Migrate data rows
+          - functions        # Phase 4: Deploy edge functions to VM
+          - cutover          # Phase 5: Rewire consumers + verify
+          - verify-only      # Run verification checks without changes
+
+      mode:
+        description: "Execution mode"
+        required: true
+        type: choice
+        options:
+          - dry-run          # Print actions; no mutations
+          - execute          # Apply changes
+
+      target_function:
+        description: "Single edge function name to deploy (functions phase only; leave blank for all 39)"
+        required: false
+        type: string
+        default: ""
+
+# ── Concurrency guard ──────────────────────────────────────────────────────
+# Only one migration run at a time. Cancels any in-progress run on new trigger.
+concurrency:
+  group: supabase-migration-${{ github.ref }}
+  cancel-in-progress: false  # Never cancel — migrations must complete or fail clean
+
+# ── Environment (shared across jobs) ──────────────────────────────────────
+env:
+  VM_HOST: "4.193.100.31"
+  VM_USER: "azureuser"
+  COMPOSE_DIR: "/opt/supabase-deploy"
+  SELF_HOSTED_URL: "https://supabase.insightpulseai.com"
+  CLOUD_PROJECT_ID: "spdtwktxdalcfigzeqrz"
+  EVIDENCE_DIR: "docs/evidence/${{ github.run_id }}"
+  RESOURCE_GROUP: "rg-ipai-dev"
+  KEY_VAULT: "kv-ipai-dev"
+
+# ── Jobs ───────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── Job: inventory ────────────────────────────────────────────────────────
+  inventory:
+    name: "Phase 1 — Inventory"
+    if: ${{ inputs.phase == 'inventory' || inputs.phase == 'schema' || inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    runs-on: ubuntu-latest
+    outputs:
+      inventory_passed: ${{ steps.inventory.outputs.passed }}
+      evidence_path: ${{ steps.inventory.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "SUPABASE_ANON_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-anon-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-service-role-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_DB_PASSWORD=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-db-password --query value -o tsv)" >> $GITHUB_ENV
+        # Mask secrets immediately — they should not appear in logs
+
+      - name: Mask secrets in log output
+        run: |
+          echo "::add-mask::$SUPABASE_ANON_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+          echo "::add-mask::$SUPABASE_DB_PASSWORD"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install -r ops-platform/supabase/scripts/requirements.txt
+
+      - name: Run inventory
+        id: inventory
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/inventory
+          python ops-platform/supabase/scripts/supabase_cloud_inventory.py \
+            --project-id ${{ env.CLOUD_PROJECT_ID }} \
+            --mode ${{ inputs.mode }} \
+            --output ${{ env.EVIDENCE_DIR }}/inventory \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/inventory/inventory.log
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/inventory" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+          CLOUD_URL: "https://${{ env.CLOUD_PROJECT_ID }}.supabase.co"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-inventory-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/inventory/
+          retention-days: 30
+
+  # ── Job: schema ───────────────────────────────────────────────────────────
+  schema:
+    name: "Phase 2 — Schema Export & Parity"
+    if: ${{ inputs.phase == 'schema' || inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    needs: [inventory]
+    runs-on: ubuntu-latest
+    outputs:
+      schema_passed: ${{ steps.schema.outputs.passed }}
+      evidence_path: ${{ steps.schema.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "SUPABASE_DB_URL=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-db-url --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-service-role-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "VM_SSH_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name vm-ssh-private-key --query value -o tsv)" >> $GITHUB_ENV
+
+      - name: Mask secrets
+        run: |
+          echo "::add-mask::$SUPABASE_DB_URL"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+          echo "::add-mask::$VM_SSH_KEY"
+
+      - name: Write SSH key
+        run: |
+          echo "$VM_SSH_KEY" > /tmp/vm_key
+          chmod 600 /tmp/vm_key
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz | tar xz
+          sudo mv supabase /usr/local/bin/
+
+      - name: Run schema export
+        id: schema
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/schema
+          bash ops-platform/supabase/scripts/supabase_schema_export.sh \
+            --mode ${{ inputs.mode }} \
+            --cloud-project ${{ env.CLOUD_PROJECT_ID }} \
+            --vm-host ${{ env.VM_HOST }} \
+            --vm-user ${{ env.VM_USER }} \
+            --ssh-key /tmp/vm_key \
+            --output ${{ env.EVIDENCE_DIR }}/schema \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/schema/schema.log
+          # Gate: parity report must show 0 missing tables
+          if grep -q "SCHEMA_PARITY: FAIL" ${{ env.EVIDENCE_DIR }}/schema/schema.log; then
+            echo "Schema parity check FAILED — review schema.log"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/schema" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-schema-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/schema/
+          retention-days: 30
+
+  # ── Job: data ─────────────────────────────────────────────────────────────
+  data:
+    name: "Phase 3 — Data Migration"
+    if: ${{ inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    needs: [schema]
+    runs-on: ubuntu-latest
+    outputs:
+      data_passed: ${{ steps.data.outputs.passed }}
+      evidence_path: ${{ steps.data.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "SUPABASE_DB_URL=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-db-url --query value -o tsv)" >> $GITHUB_ENV
+          echo "TARGET_DB_URL=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-self-hosted-db-url --query value -o tsv)" >> $GITHUB_ENV
+          echo "VM_SSH_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name vm-ssh-private-key --query value -o tsv)" >> $GITHUB_ENV
+
+      - name: Mask secrets
+        run: |
+          echo "::add-mask::$SUPABASE_DB_URL"
+          echo "::add-mask::$TARGET_DB_URL"
+          echo "::add-mask::$VM_SSH_KEY"
+
+      - name: Write SSH key
+        run: |
+          echo "$VM_SSH_KEY" > /tmp/vm_key
+          chmod 600 /tmp/vm_key
+
+      - name: Run data migration
+        id: data
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/data
+          bash ops-platform/supabase/scripts/supabase_data_migrate.sh \
+            --mode ${{ inputs.mode }} \
+            --source-db "$SUPABASE_DB_URL" \
+            --target-db "$TARGET_DB_URL" \
+            --vm-host ${{ env.VM_HOST }} \
+            --vm-user ${{ env.VM_USER }} \
+            --ssh-key /tmp/vm_key \
+            --output ${{ env.EVIDENCE_DIR }}/data \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/data/data.log
+          # Gate: row count parity must be within 1% tolerance
+          if grep -q "DATA_PARITY: FAIL" ${{ env.EVIDENCE_DIR }}/data/data.log; then
+            echo "Data parity check FAILED — review data.log"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/data" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
+          TARGET_DB_URL: ${{ env.TARGET_DB_URL }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-data-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/data/
+          retention-days: 30
+
+  # ── Job: functions ────────────────────────────────────────────────────────
+  functions:
+    name: "Phase 4 — Edge Functions Deploy"
+    if: ${{ inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    needs: [data]
+    runs-on: ubuntu-latest
+    outputs:
+      functions_passed: ${{ steps.functions.outputs.passed }}
+      healthy_count: ${{ steps.functions.outputs.healthy_count }}
+      evidence_path: ${{ steps.functions.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "VM_SSH_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name vm-ssh-private-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-service-role-key --query value -o tsv)" >> $GITHUB_ENV
+
+      - name: Mask secrets
+        run: |
+          echo "::add-mask::$VM_SSH_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Write SSH key
+        run: |
+          echo "$VM_SSH_KEY" > /tmp/vm_key
+          chmod 600 /tmp/vm_key
+
+      - name: Deploy edge functions
+        id: functions
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/functions
+          TARGET_FUNCTION="${{ inputs.target_function }}"
+          bash ops-platform/supabase/scripts/supabase_edge_functions_sync.sh \
+            --mode ${{ inputs.mode }} \
+            --vm-host ${{ env.VM_HOST }} \
+            --vm-user ${{ env.VM_USER }} \
+            --ssh-key /tmp/vm_key \
+            --compose-dir ${{ env.COMPOSE_DIR }} \
+            --self-hosted-url ${{ env.SELF_HOSTED_URL }} \
+            --manifest ops-platform/supabase/edge-functions/deploy/manifest.yaml \
+            ${TARGET_FUNCTION:+--function "$TARGET_FUNCTION"} \
+            --output ${{ env.EVIDENCE_DIR }}/functions \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/functions/functions.log
+          # Gate: all 12 critical functions must be healthy
+          HEALTHY=$(grep "HEALTHY:" ${{ env.EVIDENCE_DIR }}/functions/functions.log | wc -l | tr -d ' ')
+          CRITICAL_FAIL=$(grep "CRITICAL_FAIL:" ${{ env.EVIDENCE_DIR }}/functions/functions.log | wc -l | tr -d ' ')
+          echo "healthy_count=$HEALTHY" >> $GITHUB_OUTPUT
+          if [ "$CRITICAL_FAIL" -gt "0" ]; then
+            echo "Critical function smoke test FAILED — $CRITICAL_FAIL critical functions unhealthy"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/functions" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-functions-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/functions/
+          retention-days: 30
+
+  # ── Job: cutover ──────────────────────────────────────────────────────────
+  cutover:
+    name: "Phase 5 — Consumer Rewire + Cutover Verify"
+    if: ${{ inputs.phase == 'cutover' }}
+    needs: [functions]
+    runs-on: ubuntu-latest
+    outputs:
+      cutover_passed: ${{ steps.cutover.outputs.passed }}
+      evidence_path: ${{ steps.cutover.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "VM_SSH_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name vm-ssh-private-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_ANON_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-anon-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-service-role-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "CF_API_TOKEN=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name cloudflare-api-token --query value -o tsv)" >> $GITHUB_ENV
+          echo "GH_TOKEN=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name github-pat-actions --query value -o tsv)" >> $GITHUB_ENV
+
+      - name: Mask secrets
+        run: |
+          echo "::add-mask::$VM_SSH_KEY"
+          echo "::add-mask::$SUPABASE_ANON_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+          echo "::add-mask::$CF_API_TOKEN"
+          echo "::add-mask::$GH_TOKEN"
+
+      - name: Write SSH key
+        run: |
+          echo "$VM_SSH_KEY" > /tmp/vm_key
+          chmod 600 /tmp/vm_key
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install -r ops-platform/supabase/scripts/requirements.txt
+
+      - name: Rewire consumers
+        id: rewire
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/cutover
+          python ops-platform/supabase/scripts/supabase_consumer_rewire.py \
+            --mode ${{ inputs.mode }} \
+            --manifest ops-platform/supabase/cutover/consumers.yaml \
+            --self-hosted-url ${{ env.SELF_HOSTED_URL }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --vm-host ${{ env.VM_HOST }} \
+            --vm-user ${{ env.VM_USER }} \
+            --ssh-key /tmp/vm_key \
+            --compose-dir ${{ env.COMPOSE_DIR }} \
+            --output ${{ env.EVIDENCE_DIR }}/cutover \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/cutover/rewire.log
+        env:
+          SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+          CF_API_TOKEN: ${{ env.CF_API_TOKEN }}
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+
+      - name: Run cutover verification
+        id: cutover
+        run: |
+          bash ops-platform/supabase/scripts/supabase_cutover_verify.sh \
+            --self-hosted-url ${{ env.SELF_HOSTED_URL }} \
+            --manifest ops-platform/supabase/cutover/consumers.yaml \
+            --output ${{ env.EVIDENCE_DIR }}/cutover \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/cutover/verify.log
+          if grep -q "CUTOVER_VERIFY: FAIL" ${{ env.EVIDENCE_DIR }}/cutover/verify.log; then
+            echo "Cutover verification FAILED — see verify.log"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/cutover" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-cutover-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/cutover/
+          retention-days: 30
+
+  # ── Job: verify (standalone) ──────────────────────────────────────────────
+  verify:
+    name: "Verify Only — Health Checks"
+    # Runs for verify-only phase OR as a summary after all phases complete
+    if: ${{ inputs.phase == 'verify-only' }}
+    runs-on: ubuntu-latest
+    outputs:
+      verify_passed: ${{ steps.verify.outputs.passed }}
+      evidence_path: ${{ steps.verify.outputs.evidence_path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve secrets from Key Vault
+        run: |
+          echo "SUPABASE_ANON_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-anon-key --query value -o tsv)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(az keyvault secret show --vault-name ${{ env.KEY_VAULT }} --name supabase-service-role-key --query value -o tsv)" >> $GITHUB_ENV
+
+      - name: Mask secrets
+        run: |
+          echo "::add-mask::$SUPABASE_ANON_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Run verification
+        id: verify
+        run: |
+          mkdir -p ${{ env.EVIDENCE_DIR }}/verify
+          bash ops-platform/supabase/scripts/supabase_cutover_verify.sh \
+            --self-hosted-url ${{ env.SELF_HOSTED_URL }} \
+            --manifest ops-platform/supabase/cutover/consumers.yaml \
+            --output ${{ env.EVIDENCE_DIR }}/verify \
+            2>&1 | tee ${{ env.EVIDENCE_DIR }}/verify/verify.log
+          if grep -q "CUTOVER_VERIFY: FAIL" ${{ env.EVIDENCE_DIR }}/verify/verify.log; then
+            echo "Verification FAILED — see verify.log"
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "evidence_path=${{ env.EVIDENCE_DIR }}/verify" >> $GITHUB_OUTPUT
+        env:
+          SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-verify-${{ github.run_id }}
+          path: ${{ env.EVIDENCE_DIR }}/verify/
+          retention-days: 30
