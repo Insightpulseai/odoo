@@ -76,7 +76,7 @@ Until decomposition is completed, this repository remains the authoritative sour
 
 ### Production runtime
 - **Runtime surface:** Azure Container Apps
-- **Database:** `odoo_prod`
+- **Database:** `odoo`
 - **Config:** `config/prod/odoo.conf`
 
 ### Runtime image
@@ -100,7 +100,7 @@ The runtime contract is:
 - `addons/ipai/`
 - `addons/local/` (minimal only where truly needed)
 
-Historical references such as `odoo_core`, `odoo_stage`, or bare `odoo` as the canonical production database are non-canonical and should be treated as legacy references only.
+Historical references such as `odoo_core`, `odoo_stage`, or `odoo_prod` are non-canonical and should be treated as legacy references only. The canonical names are `odoo_dev`, `odoo_staging`, and `odoo` (production).
 
 Full specification: [`docs/architecture/CANONICAL_RUNTIME_IMAGE.md`](docs/architecture/CANONICAL_RUNTIME_IMAGE.md)
 
@@ -476,7 +476,7 @@ Production runtime targets Azure Container Apps behind Azure Front Door.
 
 - **Production URL:** https://erp.insightpulseai.com/web
 - **Runtime:** Azure Container Apps (`ca-ipai-dev`)
-- **Database:** `odoo_prod`
+- **Database:** `odoo`
 - **Edge:** Azure Front Door
 
 > Legacy DigitalOcean droplet deployment scripts (`deploy_m1.sh`) are transitional and will be removed as Azure migration completes.
