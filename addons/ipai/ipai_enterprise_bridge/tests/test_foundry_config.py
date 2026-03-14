@@ -16,11 +16,21 @@ class TestFoundryProviderConfig(TransactionCase):
     def test_create_default(self):
         """Test creating a Foundry config with defaults."""
         config = self.FoundryConfig.create(
-            {"name": "Test Foundry", "endpoint": "https://test.azure.com"}
+            {
+                "name": "Test Foundry",
+                "endpoint": "https://test-resource.services.ai.azure.com",
+            }
         )
         self.assertEqual(config.name, "Test Foundry")
-        self.assertEqual(config.endpoint, "https://test.azure.com")
+        self.assertEqual(
+            config.endpoint,
+            "https://test-resource.services.ai.azure.com",
+        )
         self.assertEqual(config.auth_mode, "managed_identity")
+        self.assertEqual(
+            config.auth_audience,
+            "https://cognitiveservices.azure.com/.default",
+        )
         self.assertEqual(config.api_version, "2024-12-01-preview")
 
     def test_create_with_all_fields(self):
@@ -28,21 +38,28 @@ class TestFoundryProviderConfig(TransactionCase):
         config = self.FoundryConfig.create(
             {
                 "name": "Full Config",
-                "endpoint": "https://foundry.azure.com",
+                "endpoint": "https://foundry-res.services.ai.azure.com/api/projects/ipai-project",
                 "project_name": "ipai-project",
                 "model_deployment": "gpt-4o",
                 "auth_mode": "api_key",
+                "auth_audience": "https://ai.azure.com/.default",
                 "api_version": "2025-01-01",
             }
         )
         self.assertEqual(config.project_name, "ipai-project")
         self.assertEqual(config.model_deployment, "gpt-4o")
         self.assertEqual(config.auth_mode, "api_key")
+        self.assertEqual(
+            config.auth_audience, "https://ai.azure.com/.default"
+        )
 
     def test_action_test_connection_success(self):
         """Test connection test with successful HTTP response."""
         config = self.FoundryConfig.create(
-            {"name": "Test", "endpoint": "https://test.azure.com"}
+            {
+                "name": "Test",
+                "endpoint": "https://test-res.services.ai.azure.com/api/projects/proj",
+            }
         )
         mock_resp = MagicMock()
         mock_resp.status_code = 200
@@ -52,7 +69,9 @@ class TestFoundryProviderConfig(TransactionCase):
             result = config.action_test_connection()
             mock_get.assert_called_once()
             call_url = mock_get.call_args[0][0]
-            self.assertIn("/openai/models", call_url)
+            # Should test the project endpoint directly, not /openai/models
+            self.assertIn("/api/projects/proj", call_url)
+            self.assertNotIn("/openai/models", call_url)
 
         self.assertEqual(result["type"], "ir.actions.client")
         self.assertEqual(result["tag"], "display_notification")
@@ -62,7 +81,10 @@ class TestFoundryProviderConfig(TransactionCase):
     def test_action_test_connection_http_error(self):
         """Test connection test with HTTP error response."""
         config = self.FoundryConfig.create(
-            {"name": "Test", "endpoint": "https://test.azure.com"}
+            {
+                "name": "Test",
+                "endpoint": "https://test-res.services.ai.azure.com",
+            }
         )
         mock_resp = MagicMock()
         mock_resp.status_code = 401
@@ -79,7 +101,10 @@ class TestFoundryProviderConfig(TransactionCase):
         import requests
 
         config = self.FoundryConfig.create(
-            {"name": "Test", "endpoint": "https://unreachable.invalid"}
+            {
+                "name": "Test",
+                "endpoint": "https://unreachable-res.services.ai.azure.com",
+            }
         )
 
         with patch(
@@ -93,7 +118,10 @@ class TestFoundryProviderConfig(TransactionCase):
     def test_endpoint_trailing_slash_stripped(self):
         """Test that trailing slashes in endpoint are handled."""
         config = self.FoundryConfig.create(
-            {"name": "Test", "endpoint": "https://test.azure.com/"}
+            {
+                "name": "Test",
+                "endpoint": "https://test-res.services.ai.azure.com/",
+            }
         )
         mock_resp = MagicMock()
         mock_resp.status_code = 200
@@ -102,7 +130,56 @@ class TestFoundryProviderConfig(TransactionCase):
         with patch("requests.get", return_value=mock_resp) as mock_get:
             config.action_test_connection()
             call_url = mock_get.call_args[0][0]
+            # Should not have double slashes
             self.assertNotIn("//openai", call_url)
+
+    def test_endpoint_validation_rejects_invalid(self):
+        """Test that invalid endpoint URLs are rejected."""
+        from odoo.exceptions import ValidationError as OdooValidationError
+
+        with self.assertRaises(OdooValidationError):
+            self.FoundryConfig.create(
+                {
+                    "name": "Bad",
+                    "endpoint": "https://random-site.example.com",
+                }
+            )
+
+    def test_endpoint_validation_accepts_foundry_project(self):
+        """Test that Foundry project URLs are accepted."""
+        config = self.FoundryConfig.create(
+            {
+                "name": "Project",
+                "endpoint": "https://my-res.services.ai.azure.com/api/projects/my-proj",
+            }
+        )
+        self.assertTrue(config.exists())
+
+    def test_endpoint_validation_accepts_openai(self):
+        """Test that Azure OpenAI URLs are accepted."""
+        config = self.FoundryConfig.create(
+            {
+                "name": "OpenAI",
+                "endpoint": "https://my-res.openai.azure.com",
+            }
+        )
+        self.assertTrue(config.exists())
+
+    def test_openai_endpoint_tests_models(self):
+        """Test that Azure OpenAI endpoints test /openai/models."""
+        config = self.FoundryConfig.create(
+            {
+                "name": "OpenAI",
+                "endpoint": "https://my-res.openai.azure.com",
+            }
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = "OK"
+
+        with patch("requests.get", return_value=mock_resp) as mock_get:
+            config.action_test_connection()
+            call_url = mock_get.call_args[0][0]
             self.assertIn("/openai/models", call_url)
 
 

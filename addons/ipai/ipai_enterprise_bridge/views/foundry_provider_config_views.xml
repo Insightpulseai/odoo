@@ -9,12 +9,14 @@
                     <group>
                         <group string="Connection">
                             <field name="name"/>
-                            <field name="endpoint" placeholder="https://your-foundry.azure.com"/>
+                            <field name="endpoint"
+                                   placeholder="https://your-resource.services.ai.azure.com/api/projects/your-project"/>
                             <field name="project_name"/>
                             <field name="model_deployment"/>
                         </group>
                         <group string="Authentication">
                             <field name="auth_mode"/>
+                            <field name="auth_audience"/>
                             <field name="api_version"/>
                         </group>
                     </group>

@@ -42,6 +42,8 @@
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 | C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
 | C-30 | [Copilot Runtime Selection](COPILOT_RUNTIME_CONTRACT.md)     | Azure AI Foundry (`data-intel-ph`)    | `addons/ipai/ipai_odoo_copilot/`                   | ✅ Active | `scripts/ci/validate_ssot_ai.py`           |
+| C-31 | [API Route Ownership](API_ROUTE_OWNERSHIP.md)                | `ssot/api/unified-api-gateway.yaml`   | Azure APIM policies, all API consumers              | ✅ Active | `validate_unified_api_gateway_ssot.py`     |
+| C-32 | [API Security & Identity](API_SECURITY_AND_IDENTITY.md)      | Azure Entra ID, Key Vault             | APIM auth policies, all route groups                | ✅ Active | `unified-api-gateway-ssot-check.yml`       |
 
 ---
 

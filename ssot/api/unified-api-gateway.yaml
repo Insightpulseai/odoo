@@ -14,6 +14,20 @@ gateway:
   tls: front_door_managed
   waf: enabled
 
+rate_limit_tiers:
+  strict:
+    requests_per_minute: 30
+    description: Webhook triggers and sync endpoints
+  standard:
+    requests_per_minute: 100
+    description: Default tier for ERP and control plane routes
+  elevated:
+    requests_per_minute: 200
+    description: Agent runtime (higher due to streaming patterns)
+  relaxed:
+    requests_per_minute: 300
+    description: Read-only documentation and spec endpoints
+
 route_groups:
   - id: erp
     prefix: /api/v1/erp
@@ -52,13 +66,14 @@ route_groups:
     prefix: /api/v1/agents
     backing_system: foundry
     authority_type: runtime
-    owner: foundry
-    internal_origin: TBD  # Foundry Agent Service endpoint
+    owner: ai-platform
+    internal_origin: TBD
     allowed_methods: [GET, POST]
     auth_required: true
     audit_required: true
     rate_limit_tier: elevated
-    status: planned
+    status: blocked
+    blocker: Foundry Agent Service endpoint and auth pattern not yet finalized
     examples:
       - /api/v1/agents/conversations
       - /api/v1/agents/sessions
@@ -67,14 +82,15 @@ route_groups:
   - id: docs
     prefix: /api/v1/docs
     backing_system: plane
-    authority_type: read_replica
-    owner: plane
+    authority_type: read_only_summary
+    owner: docs-platform
     internal_origin: ipai-plane-dev.thankfulbush-191bdcb0.southeastasia.azurecontainerapps.io
     allowed_methods: [GET]
     auth_required: true
-    audit_required: false
+    audit_required: true
     rate_limit_tier: relaxed
-    status: planned
+    status: blocked
+    blocker: Plane API backend not routed through proxy; /api/v1/* returns SPA HTML
     examples:
       - /api/v1/docs/specs
       - /api/v1/docs/runbooks
