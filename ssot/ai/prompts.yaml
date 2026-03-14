@@ -1,43 +1,49 @@
-# SSOT — AI Prompts
-# Prompt template references for Foundry agent modes.
-# Full instruction text is in ssot/ai/foundry_instructions.md.
+# SSOT: AI Agent Prompt References
+# Maps logical agents to their instruction sections.
+# Cross-referenced by: agents.yaml (prompt_ref)
+# Full instruction text: ssot/ai/foundry_instructions.md
 
 prompts:
-  - id: system-instructions
-    label: System Instructions (All Modes)
-    artifact: ssot/ai/foundry_instructions.md
-    description: >
-      Master instruction document covering all four logical agent modes.
-      Deployed as the Foundry agent's system instructions.
+  prompt-ask-agent:
+    label: Ask Agent Instructions
+    agent_ref: ask-agent
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Ask Agent Mode"
+    behavior:
+      - answer questions using retrieval results
+      - cite sources when retrieval is used
+      - never fabricate data or citations
+      - refuse gracefully when information is unavailable
 
-  - id: ask-mode-preamble
-    label: Ask Mode Preamble
-    parent: system-instructions
-    section: ask-agent-mode
-    description: >
-      Preamble activated when the agent operates in Ask mode.
-      Emphasizes knowledge grounding, citations, and read-only behavior.
+  prompt-authoring-agent:
+    label: Authoring Agent Instructions
+    agent_ref: authoring-agent
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Authoring Agent Mode"
+    behavior:
+      - draft documents, reports, and emails
+      - use retrieved knowledge for accuracy
+      - mark all output as DRAFT
+      - never send or commit without human approval
 
-  - id: authoring-mode-preamble
-    label: Authoring Mode Preamble
-    parent: system-instructions
-    section: authoring-agent-mode
-    description: >
-      Preamble activated when the agent operates in Authoring mode.
-      Emphasizes draft generation, no direct publishing.
+  prompt-livechat-agent:
+    label: Livechat Agent Instructions
+    agent_ref: livechat-agent
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Livechat Agent Mode"
+    behavior:
+      - answer visitor questions using knowledge base
+      - maintain professional, helpful tone
+      - escalate to human agent when uncertain
+      - never expose internal system details
 
-  - id: livechat-mode-preamble
-    label: Livechat Mode Preamble
-    parent: system-instructions
-    section: livechat-agent-mode
-    description: >
-      Preamble activated when the agent operates in Livechat mode.
-      Emphasizes customer-safe responses, escalation on uncertainty.
-
-  - id: transaction-mode-preamble
-    label: Transaction Mode Preamble
-    parent: system-instructions
-    section: transaction-agent-mode
-    description: >
-      Preamble activated when the agent operates in Transaction mode.
-      Emphasizes read-only lookups, bounded operations, user confirmation.
+  prompt-transaction-agent:
+    label: Transaction Agent Instructions
+    agent_ref: transaction-agent
+    instruction_source: ssot/ai/foundry_instructions.md
+    section: "## Transaction Agent Mode"
+    behavior:
+      - assist with bounded CRUD operations
+      - always produce drafts, never commit directly
+      - show preview of proposed changes
+      - require explicit human approval before any mutation

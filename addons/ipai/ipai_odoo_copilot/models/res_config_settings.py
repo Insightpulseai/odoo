@@ -1,129 +1,140 @@
+# -*- coding: utf-8 -*-
+
 import logging
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
-# ir.config_parameter keys — non-secret config only
-_PARAM_PREFIX = "ipai_odoo_copilot"
-_PARAMS = {
-    "foundry_enabled": f"{_PARAM_PREFIX}.foundry_enabled",
-    "foundry_endpoint": f"{_PARAM_PREFIX}.foundry_endpoint",
-    "foundry_project": f"{_PARAM_PREFIX}.foundry_project",
-    "foundry_agent_name": f"{_PARAM_PREFIX}.foundry_agent_name",
-    "foundry_model": f"{_PARAM_PREFIX}.foundry_model",
-    "search_connection": f"{_PARAM_PREFIX}.search_connection",
-    "search_index": f"{_PARAM_PREFIX}.search_index",
-    "memory_enabled": f"{_PARAM_PREFIX}.memory_enabled",
-    "readonly_mode": f"{_PARAM_PREFIX}.readonly_mode",
-    "draft_only_mode": f"{_PARAM_PREFIX}.draft_only_mode",
-}
+PARAM_PREFIX = "ipai_odoo_copilot"
 
 
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    # --- Azure Foundry Copilot settings ---
-
-    ipai_copilot_foundry_enabled = fields.Boolean(
-        string="Enable Azure Foundry Copilot",
-        config_parameter=_PARAMS["foundry_enabled"],
+    # --- Azure Foundry connection ---
+    ipai_foundry_enabled = fields.Boolean(
+        string="Enable Foundry Copilot",
+        config_parameter=f"{PARAM_PREFIX}.foundry_enabled",
         default=False,
     )
-    ipai_copilot_foundry_endpoint = fields.Char(
-        string="Foundry Endpoint",
-        config_parameter=_PARAMS["foundry_endpoint"],
-        help="Azure Foundry endpoint URL. Secrets must not be stored here.",
+    ipai_foundry_endpoint = fields.Char(
+        string="Foundry Portal URL",
+        config_parameter=f"{PARAM_PREFIX}.foundry_endpoint",
+        help="Azure AI Foundry portal URL (e.g. https://ai.azure.com)",
     )
-    ipai_copilot_foundry_project = fields.Char(
+    ipai_foundry_api_endpoint = fields.Char(
+        string="Foundry API Endpoint",
+        config_parameter=f"{PARAM_PREFIX}.foundry_api_endpoint",
+        default="https://data-intel-ph-resource.services.ai.azure.com",
+        help="Azure AI services endpoint for API calls "
+             "(e.g. https://<resource>.services.ai.azure.com)",
+    )
+    ipai_foundry_project = fields.Char(
         string="Foundry Project",
-        config_parameter=_PARAMS["foundry_project"],
+        config_parameter=f"{PARAM_PREFIX}.foundry_project",
         default="data-intel-ph",
+        help="Azure Foundry project name",
     )
-    ipai_copilot_foundry_agent_name = fields.Char(
+    ipai_foundry_agent_name = fields.Char(
         string="Foundry Agent Name",
-        config_parameter=_PARAMS["foundry_agent_name"],
+        config_parameter=f"{PARAM_PREFIX}.foundry_agent_name",
         default="ipai-odoo-copilot-azure",
     )
-    ipai_copilot_foundry_model = fields.Char(
-        string="Model",
-        config_parameter=_PARAMS["foundry_model"],
+    ipai_foundry_model = fields.Char(
+        string="Model Deployment",
+        config_parameter=f"{PARAM_PREFIX}.foundry_model",
         default="gpt-4.1",
+        help="Model deployment name in Azure Foundry",
     )
-    ipai_copilot_search_connection = fields.Char(
-        string="Azure Search Connection",
-        config_parameter=_PARAMS["search_connection"],
-        help="Azure AI Search connection name for knowledge grounding.",
+
+    # --- Knowledge / Search ---
+    ipai_foundry_search_connection = fields.Char(
+        string="Search Connection",
+        config_parameter=f"{PARAM_PREFIX}.foundry_search_connection",
+        help="Azure AI Search connection name for knowledge grounding",
     )
-    ipai_copilot_search_index = fields.Char(
-        string="Azure Search Index",
-        config_parameter=_PARAMS["search_index"],
-        help="Azure AI Search index name for knowledge grounding.",
+    ipai_foundry_search_service = fields.Char(
+        string="Search Service",
+        config_parameter=f"{PARAM_PREFIX}.foundry_search_service",
+        default="srch-ipai-dev",
+        help="Azure AI Search service name",
     )
-    ipai_copilot_memory_enabled = fields.Boolean(
-        string="Enable Foundry Memory",
-        config_parameter=_PARAMS["memory_enabled"],
+    ipai_foundry_search_index = fields.Char(
+        string="Search Index",
+        config_parameter=f"{PARAM_PREFIX}.foundry_search_index",
+        help="Azure AI Search index name",
+    )
+
+    # --- Safety posture ---
+    ipai_foundry_memory_enabled = fields.Boolean(
+        string="Enable Agent Memory",
+        config_parameter=f"{PARAM_PREFIX}.foundry_memory_enabled",
         default=False,
-        help="Enable conversation memory in Azure Foundry. Off by default.",
+        help="Allow Foundry agent to retain conversation memory. "
+             "Off by default for privacy.",
     )
-    ipai_copilot_readonly_mode = fields.Boolean(
-        string="Read-Only Mode",
-        config_parameter=_PARAMS["readonly_mode"],
+    ipai_foundry_read_only_mode = fields.Boolean(
+        string="Read-Only / Draft-Only Mode",
+        config_parameter=f"{PARAM_PREFIX}.foundry_read_only_mode",
         default=True,
-        help="When enabled, copilot operates in read-only mode (no writes).",
-    )
-    ipai_copilot_draft_only_mode = fields.Boolean(
-        string="Draft-Only Mode",
-        config_parameter=_PARAMS["draft_only_mode"],
-        default=True,
-        help="When enabled, copilot generates drafts only (no direct publishing).",
+        help="When enabled, the agent cannot execute write operations. "
+             "All mutations are surfaced as drafts for human approval.",
     )
 
     # --- Actions ---
 
     def action_test_foundry_connection(self):
-        """Validate Foundry config shape and report bounded status."""
-        self.ensure_one()
+        """Validate Foundry connectivity via real health probe."""
         service = self.env["ipai.foundry.service"]
-        result = service.test_connection()
+        ok, message = service.test_connection()
+        notif_type = "success" if ok else "warning"
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "title": "Foundry Connection Test",
-                "message": result.get("message", "Unknown result"),
-                "type": result.get("status", "warning"),
+                "message": message,
+                "type": notif_type,
                 "sticky": False,
             },
         }
 
     def action_ensure_foundry_agent(self):
-        """Bounded sync stub — logs intent, does not create resources."""
-        self.ensure_one()
+        """Verify the configured agent exists in Foundry (read-only)."""
         service = self.env["ipai.foundry.service"]
-        result = service.ensure_agent()
+        ok, message = service.ensure_agent()
+        notif_type = "success" if ok else "warning"
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": "Foundry Agent Sync",
-                "message": result.get("message", "Unknown result"),
-                "type": result.get("status", "info"),
+                "title": "Foundry Agent Verification",
+                "message": message,
+                "type": notif_type,
                 "sticky": False,
             },
         }
 
     def action_open_foundry_portal(self):
-        """Open Azure Foundry portal for the configured project."""
-        self.ensure_one()
-        icp = self.env["ir.config_parameter"].sudo()
-        project = icp.get_param(
-            _PARAMS["foundry_project"], "data-intel-ph"
+        """Open the Foundry portal URL in a new browser tab."""
+        ICP = self.env["ir.config_parameter"].sudo()
+        endpoint = ICP.get_param(
+            f"{PARAM_PREFIX}.foundry_endpoint", ""
         )
-        # Assumption: Azure AI Foundry portal URL pattern
-        url = f"https://ai.azure.com/project/{project}"
+        if not endpoint:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Foundry Portal",
+                    "message": "No Foundry portal URL configured.",
+                    "type": "warning",
+                    "sticky": False,
+                },
+            }
         return {
             "type": "ir.actions.act_url",
-            "url": url,
+            "url": endpoint,
             "target": "new",
         }

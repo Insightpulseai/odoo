@@ -1,57 +1,59 @@
-# SSOT — AI Policies
-# Safety and posture policies for Foundry agent behavior.
+# SSOT: AI Agent Policies
+# Behavioral policies governing agent modes.
+# Cross-referenced by: agents.yaml (policy_ref)
 
 policies:
-  - id: read-first
-    label: Read-First Posture
+  policy-read-only:
+    label: Read-Only
     description: >
-      Agent operates in read-only mode by default.
-      No writes unless explicit bounded tools are enabled and user confirms.
-    enforcement: runtime_instruction + odoo_config
-    odoo_config_key: ipai_odoo_copilot.readonly_mode
+      Agent can only read and respond. No writes, no drafts,
+      no tool calls that mutate state.
+    write_access: none
+    tool_access: none
+    memory: inherit          # inherits from physical agent default (false)
+    citation_required: true  # must cite sources when using retrieval
+    grounding_required: true # must use knowledge grounding, no fabrication
+    failure_behavior: >
+      If retrieval returns no results or tools are unavailable,
+      state clearly that the information is not available.
+      Never fabricate an answer.
 
-  - id: draft-first
-    label: Draft-First Posture
+  policy-draft-only:
+    label: Draft-Only
     description: >
-      Agent generates drafts only. Never publishes, sends, or commits
-      content directly. User must review and approve.
-    enforcement: runtime_instruction + odoo_config
-    odoo_config_key: ipai_odoo_copilot.draft_only_mode
+      Agent can produce draft content (documents, emails, reports)
+      but cannot commit or send. Human approval required.
+    write_access: draft-only
+    tool_access: none
+    memory: inherit
+    citation_required: true
+    grounding_required: true
+    failure_behavior: >
+      If unable to draft, explain what information is missing.
+      Never produce content with fabricated data.
 
-  - id: no-fabrication
-    label: No Fabricated Completions
+  policy-bounded-write:
+    label: Bounded Write (Future)
     description: >
-      Agent must ground responses in retrieved knowledge or clearly state
-      when information is uncertain or unavailable.
-      Never invent facts, statistics, or references.
-    enforcement: runtime_instruction
-
-  - id: cite-sources
-    label: Citation Required
-    description: >
-      When retrieval/knowledge grounding is used, agent must include
-      source citations in the response.
-    enforcement: runtime_instruction
-
-  - id: no-uncontrolled-writes
-    label: No Uncontrolled Writes
-    description: >
-      Agent must never perform write operations without explicit user
-      confirmation and bounded tool scope.
-    enforcement: runtime_instruction + odoo_config
-
-  - id: escalate-on-uncertainty
-    label: Escalate on Uncertainty
-    description: >
-      When confidence is low or topic is out of scope, agent must
-      escalate to a human operator rather than guessing.
-    enforcement: runtime_instruction
-
-  - id: memory-off-default
-    label: Memory Off by Default
-    description: >
-      Foundry conversation memory is disabled unless explicitly enabled
-      by admin in Odoo settings.
-    enforcement: foundry_config + odoo_config
-    odoo_config_key: ipai_odoo_copilot.memory_enabled
-    foundry_default: false
+      Agent can propose bounded CRUD operations on an allowlist
+      of models. All proposals require human approval before commit.
+      v1: this policy is defined but not active (no tools wired).
+    write_access: draft-then-approve
+    tool_access: bounded
+    memory: inherit
+    citation_required: true
+    grounding_required: true
+    allowed_models:          # future: when tools are wired
+      - res.partner
+      - sale.order
+      - purchase.order
+      - account.move
+    blocked_models:
+      - ir.model
+      - ir.model.fields
+      - ir.rule
+      - ir.config_parameter
+      - res.users
+    failure_behavior: >
+      If a requested operation is outside the allowed model set
+      or requires elevated permissions, refuse and explain why.

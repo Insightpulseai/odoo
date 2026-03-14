@@ -1,116 +1,14 @@
-# Odoo Copilot on Azure Foundry — Constitution
+# Constitution — ipai-odoo-copilot-azure
 
-## 1. Purpose
+## Non-Negotiable Rules
 
-Define the governance contract for the Odoo Copilot configuration layer
-that manages one physical Azure Foundry agent (`ipai-odoo-copilot-azure`)
-from within the Odoo control plane.
-
-Odoo owns configuration, policy, and audit boundaries.
-Azure Foundry owns model runtime, instructions execution, knowledge/retrieval,
-traces, monitoring, and evaluation surfaces.
-
----
-
-## 2. Scope
-
-In scope:
-
-- one physical Azure Foundry agent in project `data-intel-ph`
-- four logical agent modes: Ask, Authoring, Livechat, Transaction
-- Odoo-side admin configuration and policy enforcement
-- SSOT AI manifests for agents, models, topics, tools, policies, sources, prompts
-- bounded sync/test actions from Odoo to Foundry
-- Foundry instruction artifact tracked in repo
-
-Out of scope:
-
-- multi-provider routing
-- non-Odoo chat surfaces for v1
-- deep Foundry SDK integration (stubbed for v1)
-- autonomous agent writes (v1 is read-first / draft-first)
-
----
-
-## 3. Architecture
-
-```
-Browser → erp.insightpulseai.com → Odoo (config/policy/audit)
-                                        ↓
-                              Azure Foundry Runtime
-                              ├── Agent: ipai-odoo-copilot-azure
-                              ├── Model: gpt-4.1
-                              ├── Knowledge: Azure Search index
-                              └── Memory: disabled by default
-```
-
-One physical Foundry agent. Logical behavior (Ask, Authoring, Livechat,
-Transaction) is modeled via instructions and topic routing, not separate
-Foundry deployments.
-
----
-
-## 4. Ownership boundaries
-
-### Odoo
-
-- admin configuration UI
-- policy boundary (read-only/draft-only posture, memory toggle)
-- audit boundary (sync intent logging, action tracking)
-- bounded sync/test actions (connection test, agent ensure stub)
-
-### Azure Foundry
-
-- model runtime (gpt-4.1 deployment)
-- instructions execution
-- knowledge grounding (Azure Search)
-- traces / monitor / evaluation surfaces
-- memory runtime (when enabled)
-
----
-
-## 5. Non-negotiable rules
-
-1. **One physical agent.** Never create multiple Foundry agent deployments for logical modes.
-2. **Memory off by default.** Foundry memory must be explicitly enabled via Odoo config.
-3. **Read-first / draft-first.** No uncontrolled writes in v1.
-4. **No secrets in repo.** Azure credentials use managed identity or env vars from Key Vault.
-5. **OCA-first.** Use OCA modules as baseline; `ipai_*` addons are thin glue only.
-6. **Odoo is control plane.** Foundry runtime config is authoritative only when synced from Odoo-managed policy.
-7. **Evaluations required.** v1 acceptance requires Foundry evaluation runs.
-8. **Citations required.** Retrieval-backed responses must include source citations.
-9. **Bounded tools only.** If tools are present in v1, they must be tightly scoped and read-only.
-10. **No fabricated completions.** Agent must ground responses or clearly state uncertainty.
-
----
-
-## 6. OCA baseline assumptions
-
-The following OCA modules form the assumed operational baseline:
-
-- `disable_odoo_online`
-- `remove_odoo_enterprise`
-- `mail_debrand`
-- `auditlog`
-- `password_security`
-- `queue_job`
-
-Recommended UX/admin baseline:
-
-- `base_name_search_improved`
-- `web_environment_ribbon`
-- `web_responsive`
-
----
-
-## 7. Success doctrine
-
-This work succeeds when:
-
-- Odoo admin can configure the Foundry copilot from Settings
-- connection test validates config shape
-- agent ensure action is a bounded sync stub
-- memory defaults to off
-- read-only/draft-only posture is explicit in both Odoo config and Foundry instructions
-- SSOT AI manifests are coherent and cross-validated
-- no repo-root scaffolding is introduced
+1. **One physical Foundry agent**: `ipai-odoo-copilot-azure` in project `data-intel-ph` (East US 2). No second agent.
+2. **Odoo is the policy boundary**: All configuration, access control, and audit happen in Odoo. Foundry executes.
+3. **No secrets in Odoo DB**: Azure auth via environment variable (`AZURE_FOUNDRY_API_KEY`) or managed identity (`id-ipai-aca-dev`). Never `ir.config_parameter`.
+4. **Read-first / draft-first posture**: The agent does not perform uncontrolled writes. All mutations surface as drafts for human approval.
+5. **Memory off by default**: Foundry thread memory is disabled unless explicitly enabled by admin.
+6. **Knowledge grounding preferred**: Use Azure AI Search for retrieval. Cite sources when retrieval is used. Never fabricate citations.
+7. **CE + OCA first**: The addon depends only on `base`. OCA baseline modules (disable_odoo_online, remove_odoo_enterprise, mail_debrand, auditlog, password_security) are recommended but not hard dependencies.
+8. **No uncontrolled resource creation**: `ensure_agent()` is a bounded stub in v1. It logs intent but does not create Azure resources.
+9. **Evaluations required**: v1 acceptance requires Foundry evaluation runs demonstrating grounded, citation-backed responses.
+10. **No repo-root scaffolding**: All code lives under `addons/ipai/ipai_odoo_copilot/`, spec under `spec/ipai-odoo-copilot-azure/`, SSOT under `ssot/ai/`.

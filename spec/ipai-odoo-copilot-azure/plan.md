@@ -1,85 +1,52 @@
-# Plan — Odoo Copilot on Azure Foundry
+# Plan — ipai-odoo-copilot-azure
 
-## 1. Strategy
+## Phase 1: Configuration Surface + Live Agent Verification (v1 — current)
 
-Implement the smallest coherent brownfield patch:
+1. Create `addons/ipai/ipai_odoo_copilot/` Odoo addon
+   - `res.config.settings` with Foundry connection fields
+   - `ipai.foundry.service` AbstractModel for bounded operations
+   - Settings view with test/sync/portal actions
+   - Default config parameters for known Foundry coordinates
+   - Nightly healthcheck cron
+   - No hard OCA dependencies beyond `base`
 
-1. Create SSOT AI manifests modeling one physical Foundry agent with logical modes
-2. Create Foundry instructions artifact
-3. Create thin Odoo addon for configuration/policy/audit
-4. Add minimal validation for SSOT integrity and addon smoke tests
-5. No repo-root scaffolding
+2. Two distinct endpoints configured:
+   - **Portal URL** (`foundry_endpoint`): for "Open Foundry Portal" button
+   - **API Endpoint** (`foundry_api_endpoint`): for health probe and agent resolution
+     (e.g. `https://data-intel-ph-resource.services.ai.azure.com`)
 
----
+3. `test_connection()` is a **real non-mutating health probe**
+   - Validates: enabled → config shape → auth availability → API endpoint reachability
+   - Auth precedence: managed identity (IMDS with cognitiveservices scope) → env-key → clear failure
+   - Reports HTTP status, auth mode, and knowledge/search binding state
+   - Never mutates Foundry state — read-only GET only
 
-## 2. Deliverables
+4. `ensure_agent()` is a **real read-only agent resolution**
+   - Runs `test_connection()` first
+   - Lists agents via `GET /openai/assistants?api-version=...`
+   - Searches for the configured agent name in the response
+   - Reports: agent found (with id + model) or agent not found (with available agents list)
+   - **Never creates, updates, or deletes agents**
 
-### SSOT AI Manifests
-- `ssot/ai/agents.yaml` — physical + logical agent definitions
-- `ssot/ai/models.yaml` — gpt-4.1 deployment target
-- `ssot/ai/topics.yaml` — interaction topic taxonomy
-- `ssot/ai/tools.yaml` — bounded tool definitions (v1 minimal)
-- `ssot/ai/policies.yaml` — safety/posture policies
-- `ssot/ai/sources.yaml` — knowledge source definitions
-- `ssot/ai/prompts.yaml` — prompt template references
+5. Create spec kit, SSOT AI manifests, Foundry instruction artifact, SSOT validator
 
-### Foundry Instructions
-- `ssot/ai/foundry_instructions.md` — production instruction text
+## Phase 2: Knowledge Grounding (future)
 
-### Odoo Addon
-- `addons/ipai/ipai_odoo_copilot/` — thin configuration addon
+- Provision Azure AI Search index (`srch-ipai-dev`) with Odoo knowledge base content
+- Wire search connection/index fields to actual retrieval
+- Add citation rendering in Odoo UI
+- Run Foundry evaluations for grounded response quality
 
-### Validation
-- `tests/ssot/test_ai_manifests.py` — cross-manifest integrity checks
+## Phase 3: Bounded Tools (future)
 
----
+- Define tool schemas for Transaction Agent mode
+- Implement Odoo-side tool endpoints (bounded CRUD)
+- Add approval workflow for draft → commit
+- Wire read-only mode toggle to tool availability
 
-## 3. Architecture decisions
+## Phase 4: Production Hardening (future)
 
-### One physical agent
-All logical behavior (Ask, Authoring, Livechat, Transaction) is routed
-through a single Foundry agent via instructions and topic selection.
-No separate Foundry deployments per mode.
-
-### Odoo as control plane
-Foundry runtime config is considered authoritative only when it matches
-Odoo-managed policy. Odoo settings are the source of truth for:
-- enabled/disabled state
-- memory toggle
-- read-only/draft-only posture
-- model selection
-- knowledge source configuration
-
-### Stub pattern for Azure SDK
-v1 does not require the Azure Foundry SDK in the Odoo runtime.
-Sync actions (connection test, agent ensure) validate config shape
-and log intent. Full SDK integration is a future slice.
-
----
-
-## 4. Validation phases
-
-### Phase 1 — Static
-- SSOT manifests pass cross-reference validation
-- Odoo addon imports without error
-- XML/action references resolve
-
-### Phase 2 — Functional
-- Settings UI renders
-- Config persists to ir.config_parameter
-- Actions execute without error
-
-### Phase 3 — Integration (future)
-- Foundry agent responds to grounded queries
-- Evaluations pass acceptance thresholds
-
----
-
-## 5. Open points
-
-- Exact Azure Foundry project endpoint URL pattern (assumed standard)
-- Managed identity availability in current ACA deployment
-- Azure Search index name for knowledge grounding
-- Evaluation threshold criteria
-
-These are marked as assumptions in code/docs rather than invented facts.
+- Managed identity as primary auth (probe logic exists, needs ACA role assignment)
+- Add Odoo-side audit logging for Foundry interactions
+- Integrate with `queue_job` for async operations
+- Add Foundry trace/evaluation dashboard in Odoo

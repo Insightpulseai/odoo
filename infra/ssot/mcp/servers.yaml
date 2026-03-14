@@ -1,10 +1,11 @@
 # schema: ssot.mcp.servers.v1
-# SSOT for MCP server inventory — .claude/mcp-servers.json must match this registry.
+# SSOT for MCP server inventory — .mcp.json (root) is the canonical project config.
+# Legacy catalog: .claude/mcp-servers.legacy.json (transitional reference only)
 # CI enforced by: .github/workflows/mcp-ssot-guard.yml
 # Validator: scripts/ci/validate_mcp_ssot.py
 #
 # Fields:
-#   id:       Key in .claude/mcp-servers.json → mcpServers.<id>
+#   id:       Key in .mcp.json → mcpServers.<id>
 #   category: Logical grouping (microsoft, cloudflare, platform, custom, reference)
 #   auth:     Authentication type (oauth, token, none, env)
 #   risk:     Risk tier (low, medium, high, critical)

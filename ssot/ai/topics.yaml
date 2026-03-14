@@ -1,35 +1,49 @@
-# SSOT — AI Topics
-# Interaction topic taxonomy for logical agent routing.
+# SSOT: AI Agent Topic Domains
+# Knowledge domains the agents can address.
+# Cross-referenced by: sources.yaml, prompts.yaml
 
 topics:
-  - id: general-qa
-    label: General Q&A
-    description: General questions about the business, platform, or Odoo usage.
+  odoo-erp:
+    label: Odoo ERP Operations
+    description: >
+      General Odoo CE operations: modules, settings, workflows,
+      records, reports, and administration.
+    agents:
+      - ask-agent
+      - authoring-agent
+      - transaction-agent
 
-  - id: odoo-help
-    label: Odoo Help
-    description: Odoo-specific operational help (navigation, features, configuration).
+  finance:
+    label: Finance & Accounting
+    description: >
+      Chart of accounts, journal entries, invoicing, BIR compliance,
+      payroll, month-end close, financial reports.
+    agents:
+      - ask-agent
+      - authoring-agent
+      - transaction-agent
 
-  - id: content-drafting
-    label: Content Drafting
-    description: Drafting emails, reports, descriptions, and other text content.
+  hr:
+    label: Human Resources
+    description: >
+      Employee records, leave management, attendance, expense
+      liquidation, payroll computation.
+    agents:
+      - ask-agent
+      - authoring-agent
 
-  - id: email-drafting
-    label: Email Drafting
-    description: Composing email drafts for review before sending.
+  helpdesk:
+    label: Helpdesk & Support
+    description: >
+      Ticket management, SLA tracking, customer support workflows.
+    agents:
+      - ask-agent
+      - livechat-agent
 
-  - id: customer-support
-    label: Customer Support
-    description: Customer-facing support queries via livechat.
-
-  - id: faq
-    label: FAQ
-    description: Frequently asked questions with known answers.
-
-  - id: sales-assist
-    label: Sales Assistance
-    description: Sales workflow assistance (quotes, orders, customer lookup).
-
-  - id: inventory-lookup
-    label: Inventory Lookup
-    description: Stock level queries and product availability checks.
+  website:
+    label: Website & Public
+    description: >
+      Public-facing website questions, product information,
+      company policies.
+    agents:
+      - livechat-agent

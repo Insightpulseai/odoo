@@ -45,10 +45,21 @@ def scan_mcp_servers():
     return servers
 
 def scan_mcp_configs():
-    """Find .claude/mcp-servers.json and similar configs."""
+    """Find .mcp.json (canonical) and legacy .claude/mcp-servers.legacy.json."""
     configs = []
 
-    for name in ["mcp-servers.json", "mcp.json"]:
+    # Canonical project config at repo root
+    root_mcp = REPO_ROOT / ".mcp.json"
+    if root_mcp.exists():
+        try:
+            data = json.loads(root_mcp.read_text())
+            server_names = list(data.get("mcpServers", {}).keys())
+            configs.append({"path": str(root_mcp), "servers": server_names, "scope": "project"})
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # Legacy catalog (transitional reference)
+    for name in ["mcp-servers.legacy.json", "mcp-servers.json"]:
         p = REPO_ROOT / ".claude" / name
         if p.exists():
             try:
