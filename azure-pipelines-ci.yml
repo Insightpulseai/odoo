@@ -48,7 +48,7 @@ stages:
       - job: BoundaryCheck
         displayName: Repo boundary + structure check
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-build-pool
         steps:
           - checkout: self
             fetchDepth: 0
@@ -153,16 +153,12 @@ stages:
       - job: LintAndValidate
         displayName: flake8 + black + isort + py_compile
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-build-pool
         steps:
           - checkout: self
 
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: $(pythonVersion)
-
           - script: |
-              pip install flake8 black isort pyyaml
+              pip3 install flake8 black isort pyyaml
             displayName: Install Python lint tools
 
           # ----------------------------------------------------------------
@@ -291,16 +287,12 @@ stages:
       - job: ValidateSSOT
         displayName: SSOT YAML syntax + schema
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-build-pool
         steps:
           - checkout: self
 
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: $(pythonVersion)
-
           - script: |
-              pip install pyyaml
+              pip3 install pyyaml
             displayName: Install PyYAML
 
           # ----------------------------------------------------------------
@@ -395,7 +387,7 @@ stages:
       - job: DevcontainerDrift
         displayName: Devcontainer drift guard
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-build-pool
         steps:
           - checkout: self
 
@@ -471,7 +463,7 @@ stages:
       - job: Gate
         displayName: All gates summary
         pool:
-          vmImage: ubuntu-latest
+          name: ipai-build-pool
         steps:
           - script: |
               echo "=== CI Pipeline Summary ==="
