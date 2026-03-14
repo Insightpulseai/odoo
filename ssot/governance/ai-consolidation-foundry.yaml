@@ -1,22 +1,38 @@
 # AI Capability Consolidation — Microsoft Foundry Gateway
 # All AI capabilities route through a single Foundry agent.
 # Human doc: docs/architecture/AI_CONSOLIDATION_FOUNDRY.md
+#
+# Rebrand: Azure AI Foundry → Microsoft Foundry (2025-11)
+# API: Assistants API → Responses API (Agents v2)
+# SDK: azure-ai-projects 2.x + OpenAI() against one project endpoint
+# Terminology: Threads→Conversations, Messages→Items, Runs→Responses
 
-version: "1.0"
-schema: ssot.governance.ai-consolidation-foundry.v1
+version: "2.0"
+schema: ssot.governance.ai-consolidation-foundry.v2
 updated_at: "2026-03-15"
 
 # ---------------------------------------------------------------------------
-# Foundry Coordinates
+# Foundry Coordinates (Microsoft Foundry — formerly Azure AI Foundry)
 # ---------------------------------------------------------------------------
 foundry:
+  brand: "Microsoft Foundry"
+  portal: "https://ai.azure.com"
   resource: data-intel-ph-resource.services.ai.azure.com
   project: data-intel-ph
   agent: ipai-odoo-copilot-azure
   agent_versions: 7
   agent_type: prompt
   model_deployment: gpt-4.1
-  api_version: "2024-12-01-preview"
+  api:
+    surface: "Responses API (Agents v2)"
+    version: "v1 stable routes (/openai/v1/)"
+    sdk: "azure-ai-projects 2.x"
+    client: "OpenAI()"
+  terminology:
+    session: conversation        # was: thread
+    message: item                # was: message
+    execution: response          # was: run
+    agent_def: agent_version     # was: assistant
   search_service: srch-ipai-dev
   auth:
     primary: managed_identity
@@ -27,13 +43,14 @@ foundry:
 # Consolidation Doctrine
 # ---------------------------------------------------------------------------
 doctrine: >
-  One Foundry agent. One Odoo bridge module. Four capability modes.
+  One Foundry agent. One Odoo bridge module. Five capability modes.
   All AI surface area routes through Microsoft Foundry as the single
   inference gateway. No direct OpenAI, Gemini, or Supabase LLM calls
   from Odoo modules. The Foundry agent is the only AI endpoint.
+  Agent tools connect via MCP, OpenAPI, or A2A protocols.
 
 # ---------------------------------------------------------------------------
-# Capability Modes (single agent, multiple modes)
+# Capability Modes (single agent, five modes)
 # ---------------------------------------------------------------------------
 capability_modes:
   ask:
@@ -47,6 +64,8 @@ capability_modes:
       - search_records
       - read_record
       - search_knowledge
+      - web_search                   # NEW: Foundry built-in web search
+    foundry_memory: user_profile     # NEW: recall user preferences
     status: active
 
   authoring:
@@ -60,6 +79,9 @@ capability_modes:
       - read_record
       - create_draft
       - search_knowledge
+      - code_interpreter             # NEW: data analysis, chart gen
+      - file_search                  # NEW: search uploaded docs
+    foundry_memory: chat_summary     # NEW: continue draft sessions
     status: active
 
   livechat:
@@ -72,6 +94,8 @@ capability_modes:
       - search_records
       - read_record
       - search_knowledge
+      - web_search
+    foundry_memory: user_profile
     status: active
 
   transaction:
@@ -86,8 +110,76 @@ capability_modes:
       - create_record
       - update_record
       - execute_action
+    foundry_memory: chat_summary
     status: planned
     gate: "Requires explicit approval per model/action"
+
+  creative:
+    description: "Generate images, campaign copy, email templates"
+    replaces:
+      - ipai_marketing_agency_pack (archive)
+    write_access: draft_only
+    foundry_tools:
+      - image_generation             # DALL-E 3 via Foundry built-in
+      - code_interpreter             # data viz, chart generation
+      - search_knowledge             # brand guidelines RAG
+      - file_search                  # uploaded brand assets
+      - web_search                   # trend/competitor research
+    foundry_memory: user_profile
+    status: planned
+    note: "Requires ipai_creative_studio module (port from 18.0 archive)"
+
+# ---------------------------------------------------------------------------
+# Foundry Platform Capabilities (new in Microsoft Foundry)
+# ---------------------------------------------------------------------------
+platform_capabilities:
+  tool_catalog:
+    total_tools: 1400+
+    tool_types:
+      built_in:
+        - web_search                 # GA — real-time web grounding
+        - code_interpreter           # GA — sandboxed Python
+        - file_search                # GA — vector search on uploads
+        - function_calling           # GA — custom function execution
+        - azure_ai_search            # GA — search index grounding
+        - image_generation           # Preview — DALL-E via Foundry
+        - browser_automation         # Preview — natural language browser tasks
+        - computer_use               # Preview — UI interaction
+        - fabric                     # Preview — Microsoft Fabric data agent
+        - sharepoint                 # Preview — chat with SharePoint docs
+      custom:
+        - mcp                        # GA — Model Context Protocol servers
+        - openapi                    # GA — any OpenAPI 3.0/3.1 spec
+        - agent_to_agent             # Preview — A2A cross-agent calls
+
+  memory:
+    types:
+      - user_profile: "Static user preferences (name, dietary, lang)"
+      - chat_summary: "Distilled topic summaries across sessions"
+    phases: [extraction, consolidation, retrieval]
+    quotas:
+      max_scopes_per_store: 100
+      max_memories_per_scope: 10000
+      search_rpm: 1000
+      update_rpm: 1000
+    status: preview
+
+  workflows:
+    patterns:
+      - sequential: "Agent-to-agent pipeline"
+      - group_chat: "Dynamic context-based handoff"
+      - human_in_the_loop: "Approval / clarification gates"
+    expression_engine: power_fx
+    versioning: immutable_per_save
+    status: ga
+
+  agent_publishing:
+    targets:
+      - microsoft_365
+      - teams
+      - bizchat
+      - containerized_deployment
+    status: ga
 
 # ---------------------------------------------------------------------------
 # Module Consolidation Map
@@ -241,6 +333,14 @@ safety:
   model_allowlist:
     - gpt-4.1
     - gpt-4.1-mini
+  mcp_auth:
+    preferred: managed_identity    # Entra token rotation, no secret mgmt
+    supported:
+      - key_based                  # API key via project connection
+      - entra_identity             # managed identity
+      - oauth_passthrough          # per-user consent
+  content_safety: azure_ai_content_safety
+  prompt_injection_detection: true
 
 # ---------------------------------------------------------------------------
 # Migration Path
@@ -275,3 +375,16 @@ migration:
     name: "Cleanup deprecated modules"
     status: planned
     action: "Set installable=False on all deprecated modules, update dependency chain"
+
+  phase_5:
+    name: "Microsoft Foundry native capabilities"
+    status: planned
+    capabilities:
+      - "Migrate to Responses API (Agents v2) — drop Assistants API calls"
+      - "Adopt azure-ai-projects 2.x SDK (replace multiple SDK packages)"
+      - "Enable Foundry Memory (user_profile + chat_summary)"
+      - "Register Odoo tools in Foundry Tool Catalog via MCP"
+      - "Add creative mode (image_generation + code_interpreter)"
+      - "Enable workflow orchestration for multi-step ERP tasks"
+      - "Publish copilot to Teams/BizChat via Foundry publishing"
+    prerequisite: "Phases 1-4 complete; Foundry resource upgraded from Azure OpenAI"
