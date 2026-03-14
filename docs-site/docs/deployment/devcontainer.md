@@ -51,7 +51,7 @@ scripts/odoo/test_module.sh ipai_finance_ppm
 ```
 
 !!! warning "Test database policy"
-    - **Never** use `odoo_dev` or `odoo_prod` for tests.
+    - **Never** use `odoo_dev` or `odoo` for tests.
     - Each test run creates a fresh `test_<module>` database.
     - Disposable databases are dropped after the test completes.
 
