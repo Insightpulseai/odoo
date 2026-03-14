@@ -1,14 +1,18 @@
 {
-    "name": "IPAI AI Copilot",
-    "version": "19.0.1.0.0",
-    "summary": "M365 Copilot / SAP Joule-class AI for Odoo 19 CE",
+    "name": "IPAI AI Copilot (DEPRECATED)",
+    "version": "19.0.2.0.0",
+    "summary": "DEPRECATED — replaced by ipai_odoo_copilot (Azure Foundry). Do not extend.",
     "description": """
-        Pervasive AI copilot for Odoo 19 CE. Surpasses Odoo EE AI Agents with:
-        - Gemini function calling (AI can execute Odoo actions)
-        - Persistent sidebar on every screen
-        - Cross-module awareness and proactive insights
-        - Supabase RAG for external knowledge
-        - n8n automation bridge for cross-system workflows
+        DEPRECATED as of 2026-03-13.
+        Replaced by: ipai_odoo_copilot (Azure AI Foundry — ipai-odoo-copilot-azure).
+        See: docs/contracts/COPILOT_RUNTIME_CONTRACT.md (C-30).
+
+        This module remains installable only because ipai_workspace_core and
+        ipai_ai_channel_actions still depend on it. No new features, tools, or
+        integrations should target this module. Migration path: dependents must
+        migrate to ipai_odoo_copilot before this module can be removed.
+
+        Legacy stack: Gemini via Vercel bridge → Supabase pgvector RAG.
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",

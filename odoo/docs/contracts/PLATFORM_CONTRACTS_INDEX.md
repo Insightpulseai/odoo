@@ -28,7 +28,7 @@
 | C-14 | [Supabase ETL](SUPABASE_ETL_CONTRACT.md)               | Supabase Postgres (CDC/WAL)                 | Analytics Buckets (Iceberg) / BigQuery    | ✅ Active  | `pg_stat_replication`                      |
 | C-15 | [Odoo Settings](ODOO_SETTINGS_CONTRACT.md)             | `config/odoo/settings.yaml`                 | Odoo `ir.config_parameter`                | ✅ Active  | `apply_settings.py --verify-only`          |
 | C-16 | Odoo Auth Providers                                    | `config/odoo/auth_providers.yaml`           | Odoo `auth.oauth.provider`                | ✅ Active  | `apply_auth_providers.py --enforce`        |
-| C-17 | [AI Copilot Bridge](AI_COPILOT_CONTRACT.md)            | `platform/ai/providers/gemini_tools.ts`     | `addons/ipai/ipai_ai_copilot/`            | 🔲 Planned | `check_parity_and_bridges_ssot.py`         |
+| C-17 | ~~[AI Copilot Bridge](AI_COPILOT_CONTRACT.md)~~         | ~~`platform/ai/providers/gemini_tools.ts`~~ | ~~`addons/ipai/ipai_ai_copilot/`~~        | ❌ Deprecated | Superseded by C-30 (single copilot: `ipai_odoo_copilot`) |
 | C-18 | [DigitalOcean API](C-DO-01-digitalocean-api.md)        | DigitalOcean v2 REST API                    | `ops.do_*` tables, ops-console UI         | ✅ Active  | `ssot/providers/digitalocean/provider.yaml` |
 | C-19 | [Odoo.sh Parity](C-ODOOS-01-parity.md)                 | ops-console platform                        | All console modules                       | ✅ Active  | `spec/odooops-console/constitution.md`     |
 | C-20 | [Mail Catcher](C-MAIL-01-mail-catcher.md)              | Mailgun relay + `ops.mail_events`           | ops-console Observability                 | 🔲 Planned | CI gate (task 33)                          |
@@ -36,11 +36,12 @@
 | C-22 | [GitHub Issues Webhooks](C-GH-02-workitems-webhooks.md)       | `ssot/sources/github/work_items.yaml` | `ops.work_items`, ops-console Boards view | 🔲 Planned | `apps/ops-console/app/api/webhooks/github/route.ts` |
 | C-23 | [Agent Workflows](C-AGENT-WORKFLOWS-01.md)                    | `ssot/agents/interface_schema.yaml`   | All IPAI agent skills, executor runtimes  | ✅ Active  | `scripts/ci/validate_skills_registry.py` |
 | C-24 | [Tool Permissions](C-TOOLS-PERMISSIONS-01.md)                 | `ssot/tools/registry.yaml`            | All IPAI agent skills (`ssot/agents/skills.yaml`) | ✅ Active | `scripts/ci/validate_skills_registry.py` |
-| C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_ai_copilot` tool dispatch                   | ✅ Active | `scripts/index_corpus_registry.py --check` |
+| C-25 | [Governed Tool Specs](../contracts/tools/)                    | `contracts/tools/*.md`                | `ipai_odoo_copilot` tool dispatch (was `ipai_ai_copilot`) | ✅ Active | `scripts/index_corpus_registry.py --check` |
 | C-26 | [Mail Architecture](MAIL_ARCHITECTURE_CONTRACT.md)            | Mailgun SMTP (`mg.insightpulseai.com`) + Zoho (root) | Odoo `ir.mail_server`, business mailboxes | ✅ Active | `C-MAIL-01` CI gate |
 | C-27 | [Addons Manifest](ADDONS_MANIFEST_CONTRACT.md)               | `config/addons.manifest.yaml`         | `docker/Dockerfile.unified`, `oca-aggregate.yml`  | ✅ Active | `addons-manifest-guard.yml`                |
 | C-28 | [Auth Architecture](../architecture/AUTH_ARCHITECTURE.md)    | Supabase Auth (IdP)                   | Odoo, web apps, mobile, n8n, MCP, Keycloak        | ✅ Active | `spec/platform-auth/constitution.md`       |
 | C-29 | [Azure Bot Service](AZURE_BOT_SERVICE_CONTRACT.md)           | Azure Bot Service (F0)                | n8n webhook, Supabase identity, Odoo XML-RPC      | ✅ Active | `scripts/azure/deploy-bot-service.sh`      |
+| C-30 | [Copilot Runtime Selection](../../docs/contracts/COPILOT_RUNTIME_CONTRACT.md) | Azure AI Foundry (`ipai-odoo-copilot-azure`) | `addons/ipai/ipai_odoo_copilot/` | ✅ Active | `scripts/ci/validate_ssot_ai.py` |
 
 ---
 

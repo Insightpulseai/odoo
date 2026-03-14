@@ -16,7 +16,7 @@ Part of the Odoo Copilot stack (spec/odoo-copilot/).
     "website": "https://insightpulseai.com",
     "category": "Productivity/AI",
     "license": "LGPL-3",
-    "depends": ["base", "mail", "ipai_ai_copilot"],
+    "depends": ["base", "mail", "ipai_ai_copilot"],  # DEPRECATED — migrate to ipai_odoo_copilot (C-30)
     "data": [
         "security/ir.model.access.csv",
     ],

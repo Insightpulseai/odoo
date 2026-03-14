@@ -1,11 +1,12 @@
 # Copilot Runtime Selection Contract (C-30)
 
-Version: 1.0.0 | Status: Active | Created: 2026-03-13
+Version: 2.0.0 | Status: Active | Created: 2026-03-13 | Updated: 2026-03-14
 
 ## Purpose
 
-Declares which copilot module is the canonical runtime for the InsightPulse AI
-Odoo platform, and formally deprecates the legacy Gemini/Supabase bridge path.
+Declares `ipai-odoo-copilot-azure` as the **sole copilot** for the InsightPulse AI
+Odoo platform. No other copilot runtime is permitted. The legacy Gemini/Supabase
+bridge path (`ipai_ai_copilot`) is formally deprecated and frozen.
 
 ---
 
@@ -74,8 +75,23 @@ ipai_ai_copilot (deprecated)
 
 ---
 
+## Non-Negotiable: Single Copilot Rule
+
+There is exactly **one** copilot agent for the entire platform:
+
+- **Physical agent**: `ipai-odoo-copilot-azure` (Azure AI Foundry, project `data-intel-ph`)
+- **Odoo module**: `ipai_odoo_copilot` (thin control surface)
+- **Confirmed live**: v6, gpt-4.1, Preview mode (verified 2026-03-14)
+
+Any new copilot features, tools, integrations, or knowledge sources **must** target
+`ipai_odoo_copilot` / `ipai-odoo-copilot-azure`. Creating or extending any other
+copilot module is prohibited.
+
+---
+
 ## Change Log
 
 | Date | Version | Change |
 |------|---------|--------|
+| 2026-03-14 | 2.0.0 | Enforce single-copilot rule; confirmed live in Azure Foundry v6 |
 | 2026-03-13 | 1.0.0 | Initial contract: `ipai_odoo_copilot` canonical, `ipai_ai_copilot` deprecated |

@@ -1,12 +1,17 @@
-# AI Copilot Contract — ipai_ai_copilot
+# AI Copilot Contract — ipai_ai_copilot (DEPRECATED)
 
-Version: 1.0.0 | Status: planned | Created: 2026-02-27
+Version: 1.0.1 | Status: **DEPRECATED** | Created: 2026-02-27 | Deprecated: 2026-03-14
+
+> **DEPRECATED**: This contract (C-17) is superseded by C-30 (Copilot Runtime Selection).
+> The sole copilot is now `ipai-odoo-copilot-azure` via Azure AI Foundry.
+> Module: `ipai_odoo_copilot`. See `docs/contracts/COPILOT_RUNTIME_CONTRACT.md`.
+> No new features, tools, or integrations should target `ipai_ai_copilot`.
 
 ## Identity
 
-- Bridge: `ipai_ai_copilot`
-- Replaces: Odoo EE AI Agents + M365 Copilot + SAP Joule
-- Status: planned → active on deployment
+- Bridge: `ipai_ai_copilot` **(DEPRECATED)**
+- Replaced by: `ipai_odoo_copilot` (Azure AI Foundry — `ipai-odoo-copilot-azure`)
+- Status: **DEPRECATED** — frozen, no new development
 - Spec: `spec/ai-copilot/` (constitution, prd, plan, tasks)
 
 ---
@@ -196,4 +201,5 @@ All tools with `requires_confirmation = True` in `ipai.copilot.tool` MUST:
 
 | Date | Version | Change |
 |------|---------|--------|
+| 2026-03-14 | 1.0.1 | DEPRECATED — superseded by C-30 (`ipai_odoo_copilot` / `ipai-odoo-copilot-azure`) |
 | 2026-02-27 | 1.0.0 | Initial contract created |
