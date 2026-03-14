@@ -95,12 +95,13 @@
 
 ## Integration Surface Plan
 
-| Consumer | Integration Mode | Phase |
-|----------|-----------------|-------|
-| `ipai_odoo_copilot` (bridge) | SDK Direct | 1 |
-| Foundry evaluation runner | SDK Direct | 2 |
-| n8n automation workflows | REST Direct | 4 |
-| Third-party API consumers | APIM Gateway | 5 |
+| Consumer | Ingress Path | Phase |
+|----------|-------------|-------|
+| `ipai_odoo_copilot` (bridge) | Foundry Project Client + OpenAI-compatible client | 1 |
+| Foundry evaluation runner | OpenAI-compatible client | 2 |
+| n8n automation workflows | Direct REST (with APIM or service auth) | 4 |
+| All production clients | APIM AI gateway (required) | 5 |
+| Builders/operators (dev only) | Foundry Playgrounds (non-production) | 1+ |
 
 ## Risk Mitigation
 
@@ -160,5 +161,6 @@ Foundry safety evaluations are helpful but not sufficient alone; they are not co
 
 - Teams/BizChat publishing (future, depends on M365 Agents SDK maturity)
 - GitHub Copilot SDK integration (Technical Preview, evaluate only)
-- APIM gateway setup (Phase 5 stretch goal, not blocking)
 - Declarative YAML workflows (start with pro-code, convert later)
+
+Note: APIM gateway is **in scope** (required production front door, Phase 5).

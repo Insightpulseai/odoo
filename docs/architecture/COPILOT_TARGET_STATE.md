@@ -129,6 +129,10 @@
 
 Packs are **not agents**. They are tool sets + prompt segments attached inside existing agents.
 
+**"Light" attachment**: Pack provides prompt context and domain knowledge only — no dedicated tool invocations. The agent can reference the pack's knowledge without executing pack-specific actions.
+
+**"Yes" for Advisory/Ops on fal**: Read-only preview access. Advisory/Ops can describe and reference fal-generated content but cannot trigger generation (that requires Actions agent).
+
 ---
 
 ## Plane Split

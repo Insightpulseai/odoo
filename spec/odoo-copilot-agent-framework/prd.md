@@ -78,7 +78,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | `search_records`, `read_record`, `search_knowledge`, `web_search` |
 | **Memory** | `user_profile` (personalization) |
 | **Replaces modes** | Ask, Livechat |
-| **Capability packs** | Databricks Intelligence, Marketing Strategy |
+| **Capability packs** | Databricks Intelligence, Marketing Strategy & Insight, fal Creative (read-only) |
 | **Evaluation** | Groundedness ≥ 0.8, Relevance ≥ 0.85, Citation accuracy ≥ 0.9 |
 | **Guardrails** | No PII in responses, no financial advice disclaimers, cite sources |
 
@@ -91,7 +91,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | `search_records`, `read_record`, `search_knowledge`, `code_interpreter`, `file_search` |
 | **Memory** | `chat_summary` (session continuity) |
 | **Replaces modes** | Authoring (read/analysis portion) |
-| **Capability packs** | Databricks Intelligence |
+| **Capability packs** | Databricks Intelligence, Marketing Strategy & Insight, fal Creative (read-only) |
 | **Evaluation** | Groundedness ≥ 0.85, Coherence ≥ 0.9, Data accuracy ≥ 0.95 |
 | **Guardrails** | No external data leakage, internal-only context, audit all queries |
 
@@ -104,7 +104,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | All read tools + `create_draft`, `create_record`, `update_record`, `execute_action`, `image_generation`, `code_interpreter` |
 | **Memory** | `chat_summary` (multi-step transaction continuity) |
 | **Replaces modes** | Authoring (draft creation), Transaction, Creative |
-| **Capability packs** | fal Creative Production |
+| **Capability packs** | Databricks Intelligence, fal Creative Production, Marketing Strategy & Insight (light) |
 | **Evaluation** | Action correctness ≥ 0.95, Safety (no unauthorized writes) = 1.0 |
 | **Guardrails** | Approval gates, undo support, draft-first default, model/field allowlists |
 
@@ -141,18 +141,19 @@ Routes requests to the correct agent without LLM inference:
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Advisory, Ops |
+| **Attaches to** | Advisory (read), Ops (read), Actions (job triggers), Router (routing context) |
 | **Tools** | `databricks_sql_query`, `databricks_unity_search`, `databricks_dashboard_embed` |
 | **Credentials** | `DATABRICKS_HOST`, `DATABRICKS_TOKEN` (Key Vault) |
-| **Degrades** | Pack disabled if credentials absent; agents still work |
+| **Degrades** | Pack disabled if credentials absent; agents still work without Databricks tools |
 | **Source refs** | Databricks SQL Connector, Unity Catalog, Genie, Lakeview |
 
 ### fal Creative Production Pack
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Actions |
+| **Attaches to** | Advisory (read/preview), Ops (read/preview), Actions (write/generate), Router (routing context) |
 | **Tools** | `fal_image_generate`, `fal_video_generate`, `fal_style_transfer` |
+| **Write tools** | Only available in Actions agent; Advisory/Ops get read-only preview access |
 | **Credentials** | `FAL_KEY` (Key Vault) |
 | **Degrades** | Falls back to Foundry built-in `image_generation` (DALL-E 3) |
 | **Source refs** | fal.ai model catalog, UGC generation patterns |
@@ -161,19 +162,31 @@ Routes requests to the correct agent without LLM inference:
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Advisory |
+| **Attaches to** | Advisory (full), Ops (full), Actions (light — prompt context only, no dedicated tools) |
 | **Tools** | `web_search` (existing), `search_knowledge` (brand guidelines RAG) |
+| **Light attachment** | On Actions, provides brand/campaign context in prompt but no Marketing-specific tool invocations |
 | **Credentials** | None (uses existing Foundry built-ins) |
 | **Degrades** | N/A (no external credentials needed) |
 | **Source refs** | Smartly (creative automation), Quilt.AI (cultural intelligence), LIONS Marketing Assistant (effectiveness), Data Intelligence (analytics) |
 
-## Integration Modes
+## Ingress Paths
 
-| Mode | Surface | Auth | When |
-|------|---------|------|------|
-| **SDK Direct** | `azure-ai-projects` 2.x + `OpenAI()` | `DefaultAzureCredential` | Internal services (Odoo bridge, MCP server) |
-| **REST Direct** | `POST /openai/v1/responses` | API key via project connection | n8n workflows, lightweight adapters |
-| **APIM Gateway** | `apim-ipai-dev` → Foundry | OAuth2 / subscription key | Third-party callers, enterprise ingress |
+| Path | Purpose | Who | Governance |
+|------|---------|-----|-----------|
+| **Foundry Project Client** | config, connections, tracing, Foundry-native ops | internal control-plane services | Foundry RBAC + project scope |
+| **OpenAI-compatible client** | agents, evals, responses, model calls | advisory, ops, actions runtime | project scope + deployment policy |
+| **Direct REST** | adapters, n8n/webhooks, lightweight bridges | automation bridges, service adapters | APIM or service auth |
+| **APIM AI gateway** | **required production front door** | **all production clients** | auth, quotas, throttling, telemetry |
+| **Foundry Playgrounds** | rapid prototyping, validation | builders/operators only | **non-production only** |
+
+## Ingress ownership by component
+
+| Component | Primary ingress | Secondary ingress | Notes |
+|---|---|---|---|
+| Advisory | APIM → Foundry/OpenAI-compatible client | Playground during prototyping | main enterprise chat/API surface |
+| Ops | internal APIM route → Agent Framework runtime | project client for setup/tracing | internal-only |
+| Actions | internal APIM route → Agent Framework runtime | none | approval-gated only |
+| Router | internal service ingress only | none | not user-facing |
 
 ## Endpoints
 
@@ -181,7 +194,7 @@ Routes requests to the correct agent without LLM inference:
 |----------|-------------|--------|
 | Project | `https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph` | AIProjectClient |
 | OpenAI-compatible | `https://data-intel-ph-resource.openai.azure.com/openai/v1/` | OpenAI() |
-| APIM (future) | `https://apim-ipai-dev.azure-api.net/foundry/v1/` | Any HTTP client |
+| APIM (required) | `https://apim-ipai-dev.azure-api.net/foundry/v1/` | Any HTTP client |
 
 ## Acceptance Criteria
 
