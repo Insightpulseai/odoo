@@ -49,6 +49,24 @@ Split the single agent into **three logical agents + one deterministic router**,
     └────────────┘          └──────────────────┘     └───────────────┘
 ```
 
+## Target top-level components
+
+| Component | Form | Purpose |
+|---|---|---|
+| `ipai-odoo-copilot-advisory` | Foundry prompt agent | user-facing grounded Q&A, guidance, strategy |
+| `ipai-odoo-copilot-ops` | Agent Framework agent | internal diagnostics, read-only operational inspection |
+| `ipai-odoo-copilot-actions` | Agent Framework agent | controlled execution and bounded writes |
+| `ipai-odoo-copilot-router` | Agent Framework workflow | deterministic routing, approvals, checkpoints, handoffs |
+
+## Agent matrix
+
+| Component | Primary responsibility | Core tools / packs | Allowed actions | Hard blocks | Required evaluations |
+|---|---|---|---|---|---|
+| `ipai-odoo-copilot-advisory` | user-facing Q&A, grounded explanation, strategy guidance | Azure AI Search / Foundry knowledge, Marketing Strategy & Insight Pack, Databricks Intelligence Pack | explain, summarize, recommend, compare, hand off | no writes, no admin/security changes, no direct publish/export, no finance execution | Task Completion, Task Adherence, Intent Resolution, Relevance, Groundedness where applicable |
+| `ipai-odoo-copilot-ops` | internal diagnostics, read-only operational inspection | read-only Odoo tools, Databricks monitoring/health, infra/runtime reads | inspect, diagnose, compare state, summarize incidents, propose remediation | no record mutation, no secret changes, no role changes, no uncontrolled job execution | Task Completion, Task Adherence, Tool Selection, Tool Call Success, Tool Output Utilization |
+| `ipai-odoo-copilot-actions` | controlled execution and bounded writes | approved Odoo write tools, approved Databricks job/app actions, fal Creative Production Pack actions | create/update allowed records, trigger approved jobs, launch approved creative runs, prepare exports, write evidence | no unrestricted writes, no destructive ops, no policy bypass, no silent batch execution | Tool Selection, Tool Input Accuracy, Tool Call Success, approval compliance, unauthorized-action refusal |
+| `ipai-odoo-copilot-router` | deterministic routing, approvals, handoffs, checkpointing | workflow graph, approval steps, evidence correlation | route, pause for approval, resume, hand off, checkpoint, collect trace context | no free-form business reasoning, no broad vendor logic, no direct domain mutation | routing correctness, handoff success, approval compliance, end-to-end task completion |
+
 ## Three Agents
 
 ### 1. Advisory Agent (User-Facing, Read-Only)
@@ -103,7 +121,21 @@ Routes requests to the correct agent without LLM inference:
 | Model in write_allowlist | — | — | Yes |
 | Explicit mode override | Honored | Honored | Honored |
 
-## Capability Packs
+## Capability packs (cross-agent attachment)
+
+| Capability pack | Advisory | Ops | Actions | Router |
+|---|---:|---:|---:|---:|
+| Databricks Intelligence Pack | Yes | Yes | Yes | Yes |
+| fal Creative Production Pack | Yes | Yes | Yes | Yes |
+| Marketing Strategy & Insight Pack | Yes | Yes | Light | No |
+
+## Foundry + Agent Framework split
+
+- Foundry is the control plane for prompt agents, datasets, evaluations, tracing, and project-scoped resources.
+- Agent Framework is the execution plane for graph workflows, checkpointing, middleware, and multi-agent orchestration.
+- Do not add more than 3 agents + 1 workflow until eval coverage and tracing are stable.
+
+## Capability Packs (Detail)
 
 ### Databricks Intelligence Pack
 

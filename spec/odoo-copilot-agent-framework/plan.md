@@ -112,6 +112,50 @@
 | Evaluation threshold too strict | Start with proposed thresholds; adjust based on first eval run data |
 | Foundry Memory (preview) instability | Memory is enhancement, not dependency; agents work without it |
 
+## Ingress matrix
+
+| Ingress path | Use it for | Backing endpoint / client | Who should use it | Governance layer |
+|---|---|---|---|---|
+| Foundry Project Client | project config, connections, tracing, Foundry-native ops | `AIProjectClient` on `https://<resource>.services.ai.azure.com/api/projects/<project>` | internal control-plane services | Foundry RBAC + project scope |
+| OpenAI-compatible client from project | agents, evaluations, responses, model calls in project context | `project.get_openai_client(...)` / `/openai` route | advisory, ops, actions runtime calls | Foundry project scope + model deployment policy |
+| Direct REST | adapters, n8n/webhooks, lightweight bridges | `/openai/v1` or compatible route | automation bridges, service adapters | APIM or service auth in front |
+| API Management AI gateway | enterprise front door for models, agents, tools, MCP/A2A APIs | APIM AI gateway | all production ingress | auth, quotas, throttling, routing, observability |
+| Foundry Playgrounds | rapid prototyping and validation | model / agents playground | builders and operators only | non-production sandbox |
+
+## Ingress ownership by component
+
+| Component | Primary ingress | Secondary ingress | Notes |
+|---|---|---|---|
+| Advisory | APIM → Foundry/OpenAI-compatible client | Playground during prototyping | main enterprise chat/API surface |
+| Ops | internal APIM route → Agent Framework runtime | project client for setup/tracing | internal-only |
+| Actions | internal APIM route → Agent Framework runtime | none | approval-gated only |
+| Router | internal service ingress only | none | not user-facing |
+
+## Evaluation model
+
+### System evaluations
+- Task Completion
+- Task Adherence
+- Intent Resolution
+- Relevance / Groundedness where applicable
+
+### Process evaluations
+- Tool Selection
+- Tool Call Success
+- Tool Output Utilization
+- Tool Input Accuracy
+- Task Navigation Efficiency for workflow paths with ground truth
+
+### Safety evaluations
+- advisory: content risk + jailbreak screening + sampled human review
+- ops: leakage/refusal + internal red-team scenarios
+- actions: policy tests, approval-path tests, human review before production enablement
+- router: approval compliance and routing correctness
+
+## Safety caveat
+
+Foundry safety evaluations are helpful but not sufficient alone; they are not comprehensive, can produce false positives/negatives, and should be combined with human review and domain-specific policy tests before production release.
+
 ## Not In Scope
 
 - Teams/BizChat publishing (future, depends on M365 Agents SDK maturity)

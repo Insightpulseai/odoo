@@ -57,6 +57,21 @@
 - [ ] **5.9** (Stretch) Register APIM gateway `apim-ipai-dev` as enterprise front door
 - [ ] **5.10** (Stretch) Convert expense YAML workflow to Agent Framework code via GitHub Copilot
 
+## Workstream — Agent matrix, ingress matrix, evals, tracing
+
+- [ ] **M.1** Add agent matrix to PRD
+- [ ] **M.2** Add capability-pack matrix to PRD
+- [ ] **M.3** Add ingress matrix to plan
+- [ ] **M.4** Add component ingress ownership table to plan
+- [ ] **M.5** Add Foundry vs Agent Framework split section
+- [ ] **M.6** Add evaluation model section
+- [ ] **M.7** Add safety-evaluation caveat section
+- [ ] **M.8** Create `infra/ssot/platform/agent_ingress_matrix.yaml`
+- [ ] **M.9** Create `infra/ssot/agents/agent_capability_matrix.yaml`
+- [ ] **M.10** Create eval dataset manifests for advisory / ops / actions / router
+- [ ] **M.11** Wire App Insights + Foundry tracing correlation IDs
+- [ ] **M.12** Add APIM AI gateway as required production ingress
+
 ## Cross-Cutting
 
 - [ ] **X.1** Ensure all agent invocations produce App Insights telemetry (user, mode, tools, tokens, latency, safety)
