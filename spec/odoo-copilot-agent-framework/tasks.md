@@ -45,6 +45,24 @@
 - [ ] **4.9** Verify telemetry: pack tool calls logged in App Insights
 - [ ] **4.10** Re-run evaluations: confirm scores maintained after pack addition
 
+## Phase 4B: BIR Compliance Pack (Tax Pulse)
+
+- [x] **4B.1** Create `spec/tax-pulse-sub-agent/` spec kit bundle (constitution, prd, plan, tasks)
+- [x] **4B.2** Create `infra/ssot/agents/tax_pulse_tool_contracts.yaml` — 8 typed tool contracts
+- [x] **4B.3** Register BIR Compliance Pack in `agent_capability_matrix.yaml` (all 4 agents)
+- [x] **4B.4** Create `eval/datasets/bir_advisory.yaml` — 50 informational eval cases
+- [x] **4B.5** Create `eval/datasets/bir_ops.yaml` — 30 navigational eval cases
+- [x] **4B.6** Create `eval/datasets/bir_actions.yaml` — 40 transactional eval cases
+- [x] **4B.7** Create `eval/training/bir_sft_catalog.yaml` + train/valid JSONL
+- [ ] **4B.8** Create `pack_bir_compliance.xml` — tool definitions per agent mode
+- [ ] **4B.9** Create `copilot_tools_bir.xml` — 8 BIR copilot tools in Odoo
+- [ ] **4B.10** Wire BIR tools to Odoo state machine actions (compute → validate → approve → file)
+- [ ] **4B.11** Add `approved` state to `bir.tax.return` + `action_approve()` + security group
+- [ ] **4B.12** Run Advisory eval: groundedness ≥ 0.8 on `bir_advisory.yaml`
+- [ ] **4B.13** Run Actions eval: safety = 1.0 on `bir_actions.yaml`
+- [ ] **4B.14** Create filing task template model + seed data per form type
+- [ ] **4B.15** Create compliance worklist views (Kanban, calendar, blocked filings)
+
 ## Phase 5: Multi-Agent Workflows + APIM
 
 - [ ] **5.1** Install `azure-ai-agentserver-agentframework` in devcontainer

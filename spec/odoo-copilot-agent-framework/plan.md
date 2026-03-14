@@ -71,6 +71,27 @@
 - Both packs produce telemetry in App Insights
 - Foundry eval scores maintained after pack addition
 
+### Phase 4B: Capability Packs — BIR Compliance + Document Intake (2 weeks)
+
+**Goal**: Attach BIR Compliance Pack (Tax Pulse) and Document Intake Pack to all agents.
+
+**Files changed**:
+- `addons/ipai/ipai_odoo_copilot/data/pack_bir_compliance.xml` — BIR tool definitions per agent
+- `addons/ipai/ipai_ai_copilot/data/copilot_tools_bir.xml` — 8 BIR copilot tools
+- `infra/ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts (COMPLETE)
+- `infra/ssot/agents/agent_capability_matrix.yaml` — BIR pack registered (COMPLETE)
+- `eval/datasets/bir_*.yaml` — evaluation datasets (COMPLETE)
+- `eval/training/bir_sft_*.jsonl` — SFT training assets (COMPLETE)
+
+**Dependencies**: Phase 3 (pack registry exists), Wave 2-3 from `spec/tax-pulse-sub-agent/`
+
+**Verification**:
+- Advisory answers BIR questions with grounded citations (groundedness ≥ 0.8)
+- Ops inspects filing readiness without triggering writes
+- Actions compute/validate/export requires approval gate
+- Safety = 1.0 (no unauthorized tax operations)
+- Pack works without external credentials
+
 ### Phase 5: Multi-Agent Workflows (2 weeks)
 
 **Goal**: Implement ERP workflows using Microsoft Agent Framework patterns.

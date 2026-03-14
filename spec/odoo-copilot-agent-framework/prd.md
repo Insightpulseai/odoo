@@ -128,6 +128,8 @@ Routes requests to the correct agent without LLM inference:
 | Databricks Intelligence Pack | Yes | Yes | Yes | Yes |
 | fal Creative Production Pack | Yes | Yes | Yes | Yes |
 | Marketing Strategy & Insight Pack | Yes | Yes | Light | No |
+| BIR Compliance Pack | Yes | Read-only | Write (approval) | Context |
+| Document Intake & Extraction Pack | — | — | Yes | — |
 
 ## Foundry + Agent Framework split
 
@@ -168,6 +170,31 @@ Routes requests to the correct agent without LLM inference:
 | **Credentials** | None (uses existing Foundry built-ins) |
 | **Degrades** | N/A (no external credentials needed) |
 | **Source refs** | Smartly (creative automation), Quilt.AI (cultural intelligence), LIONS Marketing Assistant (effectiveness), Data Intelligence (analytics) |
+
+### BIR Compliance Pack (Tax Pulse)
+
+| Attribute | Value |
+|-----------|-------|
+| **Attaches to** | Advisory (full — informational), Ops (read-only — inspection), Actions (write — approval-gated), Router (context) |
+| **Tools** | `bir_compliance_search`, `check_overdue_filings`, `compute_bir_vat_return`, `compute_bir_withholding_return`, `validate_bir_return`, `generate_alphalist`, `generate_efps_xml`, `generate_bir_pdf` |
+| **Write tools** | Only available in Actions agent with `group_ipai_bir_approver` approval |
+| **Credentials** | None (uses Odoo MCP + local rules engine) |
+| **Degrades** | N/A (no external credentials needed) |
+| **Knowledge** | `ph_rates_2025.json`, `vat.rules.yaml`, `ewt.rules.yaml`, BIR regulation knowledge store |
+| **Workflow** | Odoo-native stages (Draft → Computed → Validated → Approved → Filed → Confirmed), Activities, task templates |
+| **Spec** | `spec/tax-pulse-sub-agent/` |
+| **Source refs** | TaxPulse-PH-Pack (ported), BIR Revenue Regulations, TRAIN Law |
+
+### Document Intake & Extraction Pack
+
+| Attribute | Value |
+|-----------|-------|
+| **Attaches to** | Actions (write — extraction + linking) |
+| **Tools** | `document_extract`, `document_classify`, `document_link_record` |
+| **Credentials** | `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT`, `AZURE_DOCUMENT_INTELLIGENCE_KEY` |
+| **Degrades** | Pack disabled when credentials absent |
+| **Status** | Planned |
+| **Source refs** | Azure AI Document Intelligence (invoices, receipts, BIR attachments) |
 
 ## Ingress Paths
 

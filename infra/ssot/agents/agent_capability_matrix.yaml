@@ -21,6 +21,7 @@ components:
       - databricks_intelligence
       - fal_creative_production        # read-only preview access
       - marketing_strategy_and_insight # full attachment
+      - bir_compliance                 # full — informational grounding + search
     tools:
       - search_records                 # Odoo MCP
       - read_record                    # Odoo MCP
@@ -57,6 +58,7 @@ components:
       - databricks_intelligence
       - fal_creative_production        # read-only preview access
       - marketing_strategy_and_insight # full attachment
+      - bir_compliance                 # read-only — filing inspection + diagnostics
     tools:
       - search_records                 # Odoo MCP
       - read_record                    # Odoo MCP
@@ -96,6 +98,7 @@ components:
       - databricks_intelligence
       - fal_creative_production        # write/generate access
       - marketing_strategy_and_insight # light — prompt context only, no dedicated tools
+      - bir_compliance                 # write — compute, validate, export (approval-gated)
     tools:
       - search_records                 # Odoo MCP (read)
       - read_record                    # Odoo MCP (read)
@@ -141,6 +144,7 @@ components:
     capability_packs:
       - databricks_intelligence          # routing context
       - fal_creative_production          # routing context
+      - bir_compliance                   # routing context for BIR intent classification
     tools:
       - workflow_graph
       - approval_steps
@@ -163,6 +167,68 @@ components:
         - approval_compliance
       system:
         - end_to_end_task_completion
+
+# --- Capability Pack Definitions ---
+
+capability_packs:
+  - name: databricks_intelligence
+    description: Databricks SQL, Unity Catalog, Lakeview dashboards
+    tools: [databricks_sql_query, databricks_unity_search, databricks_dashboard_embed]
+    credentials: [DATABRICKS_HOST, DATABRICKS_TOKEN]
+    degrades: pack_disabled_if_credentials_absent
+
+  - name: fal_creative_production
+    description: Image/video generation, style transfer via fal.ai
+    tools: [fal_image_generate, fal_video_generate, fal_style_transfer]
+    credentials: [FAL_KEY]
+    degrades: falls_back_to_foundry_image_generation
+
+  - name: marketing_strategy_and_insight
+    description: Brand guidelines, campaign context, marketing strategy
+    tools: [web_search, search_knowledge]
+    credentials: []
+    degrades: not_applicable
+
+  - name: bir_compliance
+    description: BIR tax compliance — rates, rules, computation, filing, knowledge
+    spec_ref: spec/tax-pulse-sub-agent/
+    tool_contracts: infra/ssot/agents/tax_pulse_tool_contracts.yaml
+    tools:
+      - bir_compliance_search          # Advisory, Ops
+      - check_overdue_filings          # Ops
+      - compute_bir_vat_return         # Actions (approval-gated)
+      - compute_bir_withholding_return # Actions (approval-gated)
+      - validate_bir_return            # Actions (approval-gated)
+      - generate_alphalist             # Actions (approval-gated)
+      - generate_efps_xml              # Actions (approval-gated)
+      - generate_bir_pdf               # Actions (approval-gated)
+    credentials: []
+    degrades: pack_works_without_external_credentials
+    knowledge_sources:
+      - data/rates/ph_rates_2025.json
+      - data/rules/vat.rules.yaml
+      - data/rules/ewt.rules.yaml
+    eval_datasets:
+      - eval/datasets/bir_advisory.yaml
+      - eval/datasets/bir_ops.yaml
+      - eval/datasets/bir_actions.yaml
+    sft_assets:
+      - eval/training/bir_sft_catalog.yaml
+      - eval/training/bir_sft_train.jsonl
+      - eval/training/bir_sft_valid.jsonl
+    attachment_by_agent:
+      advisory: full              # informational grounding + search
+      ops: read_only              # filing inspection + diagnostics
+      actions: write              # compute, validate, export (approval-gated)
+      router: routing_context     # BIR intent classification
+
+  - name: document_intake_and_extraction
+    description: Document Intelligence for invoices, receipts, BIR attachments
+    spec_ref: spec/copilot-target-state/prd.md
+    tools: [document_extract, document_classify, document_link_record]
+    credentials: [AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT, AZURE_DOCUMENT_INTELLIGENCE_KEY]
+    degrades: pack_disabled_if_credentials_absent
+    status: planned
 
 # Safety caveat (applies to all components):
 # Foundry safety evaluations are helpful but not sufficient alone.
