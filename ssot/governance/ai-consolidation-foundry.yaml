@@ -418,7 +418,8 @@ agent_stack:
     repo: "github.com/microsoft/agent-framework"
     purpose: "Multi-agent workflows, graph-based orchestration, OpenTelemetry"
     sdks:
-      python: "pip install agent-framework --pre"
+      python_standalone: "pip install agent-framework --pre"
+      python_hosted: "pip install azure-ai-agentserver-agentframework"
       dotnet: "dotnet add package Microsoft.Agents.AI"
     patterns:
       - sequential: "Agent pipeline (A → B → C)"
@@ -430,10 +431,39 @@ agent_stack:
       - time_travel_debugging
       - opentelemetry_distributed_tracing
       - middleware_pipelines
+    declarative_workflow:
+      description: "Low-code YAML workflows — prototype in portal, edit in VS Code for Web"
+      authoring:
+        - "Foundry portal → Build → Workflows (visual builder)"
+        - "VS Code for Web → YAML editor + visual graph side-by-side"
+      conversion: "GitHub Copilot converts YAML → Agent Framework code (Python/C#)"
+      testing: "Remote Agent Playground in VS Code extension"
+      deployment: "Deploy from ellipsis menu → saves back to Foundry"
+      prerequisite: "GitHub Copilot subscription (for YAML → code conversion)"
+    hosted_workflow:
+      description: "Pro-code hosted agent workflows deployed to Foundry workspace"
+      vs_code_extension: "TeamsDevApp.vscode-ai-foundry"
+      project_structure:
+        - ".env (AZURE_AI_PROJECT_ENDPOINT, AZURE_AI_MODEL_DEPLOYMENT_NAME)"
+        - "workflow.py (orchestration logic + agent definitions)"
+        - "container.py (containerized deployment entry point)"
+        - "main.py (local dev entry point)"
+      observability: |
+        from agent_framework.observability import setup_observability
+        setup_observability(vs_code_extension_port=4319)
+      deployment:
+        local: "F5 in VS Code (Debug Local Workflow HTTP Server)"
+        container: "Microsoft Foundry: Open Container Agent Playground Locally"
+        cloud: "Microsoft Foundry: Deploy Hosted Agent"
+      auth: "DefaultAzureCredential (az login / managed identity)"
+      rbac_required:
+        - "Azure AI User"
+        - "AcrPull (for container deployment)"
     our_usage:
       - "Foundry workflow orchestration for multi-step ERP tasks"
       - "Expense approval: Agent → Manager Approval → Finance Review"
       - "Month-end close: Sequential agent pipeline across GL/AP/AR"
+      - "PO workflow: Draft → Review → Approve → Send (human-in-the-loop)"
     status: planned
 
   channel:
