@@ -81,7 +81,7 @@ docker-compose exec db psql -U odoo -d odoo_dev -c "\df public.unaccent_immutabl
 # .github/workflows/deploy.yml
 - name: Apply DB hardening
   run: |
-    docker-compose exec -T db psql -U odoo -d odoo_prod -f /sql/apply_unaccent_immutable.sql
+    docker-compose exec -T db psql -U odoo -d odoo -f /sql/apply_unaccent_immutable.sql
 ```
 
 ## IMMUTABLE Wrapper Context

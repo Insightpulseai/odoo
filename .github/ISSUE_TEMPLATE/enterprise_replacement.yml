@@ -76,5 +76,5 @@ body:
       description: CLI commands to verify completion
       placeholder: |
         ```bash
-        docker compose exec -T odoo odoo shell -d odoo_prod -c "..."
+        docker compose exec -T odoo odoo shell -d odoo -c "..."
         ```

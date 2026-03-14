@@ -36,13 +36,13 @@ odoo -d $DB --csv-file=auditlog_rule.csv --model=auditlog.rule
 
 ```bash
 # Copy templates to container
-docker cp db/import-templates/extended-platform/ odoo-core:/tmp/import/
+docker cp db/import-templates/extended-platform/ web:/tmp/import/
 
 # Import via container
-docker exec -it odoo-core bash -c '
+docker exec -it web bash -c '
   cd /tmp/import/extended-platform
-  odoo -d odoo_core --csv-file=date_range_type.csv --model=date.range.type --stop-after-init
-  odoo -d odoo_core --csv-file=date_range.csv --model=date.range --stop-after-init
+  odoo -d odoo_dev --csv-file=date_range_type.csv --model=date.range.type --stop-after-init
+  odoo -d odoo_dev --csv-file=date_range.csv --model=date.range --stop-after-init
   # ... continue with other files
 '
 ```

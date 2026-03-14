@@ -136,7 +136,7 @@ vercel env add ODOO_PASSWORD
 ssh root@your-odoo-server
 
 # Create API user via odoo shell
-docker compose exec odoo-core odoo shell -d odoo_core <<EOF
+docker compose exec odoo-core odoo shell -d odoo <<EOF
 user = env['res.users'].create({
     'name': 'API User',
     'login': 'api@insightpulseai.com',
@@ -178,7 +178,7 @@ curl -X POST https://your-domain.vercel.app/api/webhooks/paddle \
 ```bash
 # Run smoke test
 ODOO_BASE_URL=https://erp.insightpulseai.com \
-ODOO_DB=odoo_core \
+ODOO_DB=odoo \
 ODOO_USER=api@insightpulseai.com \
 ODOO_PASSWORD=your-password \
 node scripts/smoke_odoo_partner_create.mjs
