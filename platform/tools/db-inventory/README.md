@@ -128,10 +128,10 @@ python3 tools/db-inventory/inventory.py --exclude-dirs archive,legacy,old
       "instance_name": "odoo",
       "host": "db.example.com",
       "port": "5432",
-      "database": "odoo_prod",
+      "database": "odoo",
       "user": "odoo_user",
       "ssl_mode": "require",
-      "url_redacted": "postgres://odoo_user:***REDACTED***@db.example.com:5432/odoo_prod",
+      "url_redacted": "postgres://odoo_user:***REDACTED***@db.example.com:5432/odoo",
       "secrets_present": true,
       "secret_fields": ["password"],
       "source": {

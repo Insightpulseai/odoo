@@ -93,7 +93,7 @@ docker compose exec -T web odoo -d odoo_dev -i ipai_workspace_core --stop-after-
 ```
 
 !!! warning "Test database isolation"
-    Tests use a disposable database (`test_<module_name>`). Never test against `odoo_dev` or `odoo_prod`.
+    Tests use a disposable database (`test_<module_name>`). Never test against `odoo_dev` or `odoo`.
 
 ## Next steps
 
