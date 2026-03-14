@@ -351,6 +351,34 @@ Three complementary layers power the Foundry agent ecosystem. We consume these a
 
 ---
 
+## Target State: 3 Agents + 1 Router
+
+> Full diagram: [`docs/architecture/COPILOT_TARGET_STATE.md`](COPILOT_TARGET_STATE.md)
+
+The five capability modes consolidate into three logical agents + one deterministic router:
+
+| Component | Form | Plane | Write | Replaces |
+|-----------|------|-------|-------|----------|
+| `ipai-odoo-copilot-advisory` | Foundry prompt agent | Control | None | Ask + Livechat modes |
+| `ipai-odoo-copilot-ops` | Agent Framework agent | Execution | None | Authoring (read/analysis) |
+| `ipai-odoo-copilot-actions` | Agent Framework agent | Execution | Bounded CRUD | Authoring (drafts) + Transaction + Creative |
+| `ipai-odoo-copilot-router` | Agent Framework workflow | Execution | None | Mode selection logic |
+
+**Key constraints:**
+- All four are logical modes of the single physical agent `ipai-odoo-copilot-azure`
+- Capability packs (Databricks, fal, Marketing) attach inside agents — never as standalone agents
+- APIM AI gateway is the required production front door
+- Safety evals must pair with policy tests + human review
+- Router is deterministic code, not LLM inference
+
+**SSOT matrices:**
+- Agent capabilities: `infra/ssot/agents/agent_capability_matrix.yaml`
+- Ingress paths: `infra/ssot/platform/agent_ingress_matrix.yaml`
+- Spec kit: `spec/odoo-copilot-agent-framework/`
+
+---
+
 *SSOT: `ssot/governance/ai-consolidation-foundry.yaml`*
 *Agent policy: `infra/ssot/agents/prod_policy.yaml`*
+*Target state: `docs/architecture/COPILOT_TARGET_STATE.md`*
 *Last updated: 2026-03-15*
