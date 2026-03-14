@@ -26,8 +26,27 @@ foundry:
   api:
     surface: "Responses API (Agents v2)"
     version: "v1 stable routes (/openai/v1/)"
-    sdk: "azure-ai-projects 2.x"
+    sdk: "azure-ai-projects>=2.0.0"
     client: "OpenAI()"
+    project_endpoint: "https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph"
+    openai_endpoint: "https://data-intel-ph-resource.openai.azure.com/openai/v1/"
+    auth_scope: "https://ai.azure.com/.default"
+  sdk_install:
+    python: "pip install azure-ai-projects>=2.0.0 azure-identity openai"
+    node: "npm install @azure/ai-projects@beta @azure/identity dotenv"
+    dotnet: "dotnet add package Azure.AI.Projects --prerelease && dotnet add package Azure.AI.Projects.OpenAI --prerelease"
+  sdk_usage: |
+    # Python — dual client pattern (project + OpenAI-compatible)
+    from azure.identity import DefaultAzureCredential
+    from azure.ai.projects import AIProjectClient
+    project = AIProjectClient(endpoint=PROJECT_ENDPOINT, credential=DefaultAzureCredential())
+    openai = project.get_openai_client()
+    response = openai.responses.create(model="gpt-4.1", input="...")
+  sdk_notes:
+    - "2.x SDK targets Foundry (new) portal; 1.x targets Foundry classic"
+    - "Project client for Foundry-native ops (connections, tracing, eval)"
+    - "OpenAI client for agents, models, fine-tuning (Responses API)"
+    - "DefaultAzureCredential handles auth; api_key fallback on /openai/v1"
   terminology:
     session: conversation        # was: thread
     message: item                # was: message
