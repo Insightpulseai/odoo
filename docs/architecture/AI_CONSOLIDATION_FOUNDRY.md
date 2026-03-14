@@ -195,6 +195,59 @@ Consolidate all AI capabilities through **Microsoft Foundry** (`data-intel-ph` p
 | 4 | Set `installable=False` on all deprecated modules | Planned |
 | 5 | Microsoft Foundry native (Responses API v2, Memory, MCP catalog, Workflows) | Planned |
 
+## Microsoft Agent Stack (Upstream Repos)
+
+Three complementary layers power the Foundry agent ecosystem. We consume these as SDK dependencies — never fork.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  Microsoft Agent Stack                   │
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │ CHANNEL LAYER (microsoft/Agents)                │    │
+│  │ M365 Agents SDK — deploy to Teams, BizChat, web │    │
+│  │ SDKs: C#, JavaScript, Python                    │    │
+│  └──────────────────────┬──────────────────────────┘    │
+│                         │                                │
+│  ┌──────────────────────┴──────────────────────────┐    │
+│  │ ORCHESTRATION LAYER (microsoft/agent-framework) │    │
+│  │ Multi-agent workflows, graph-based, OTel        │    │
+│  │ SDKs: Python, .NET                              │    │
+│  └──────────────────────┬──────────────────────────┘    │
+│                         │                                │
+│  ┌──────────────────────┴──────────────────────────┐    │
+│  │ FOUNDRY PLATFORM (Microsoft Foundry)            │    │
+│  │ Agent runtime, tools, memory, publishing        │    │
+│  │ SDK: azure-ai-projects 2.x + OpenAI()          │    │
+│  └─────────────────────────────────────────────────┘    │
+│                                                          │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │ DEV TOOLING (github/copilot-sdk)                │    │
+│  │ Copilot CLI engine, JSON-RPC, auto-planning     │    │
+│  │ SDKs: Node, Python, Go, .NET (Preview)          │    │
+│  └─────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### How Each Layer Maps to Our Platform
+
+| Layer | Repo | Our Usage | Status |
+|-------|------|-----------|--------|
+| **Orchestration** | `microsoft/agent-framework` | Foundry workflow orchestration for multi-step ERP tasks (expense approval, month-end close, sequential GL/AP/AR) | Planned |
+| **Channel** | `microsoft/Agents` | Publish `ipai-odoo-copilot-azure` to Teams, surface ERP in BizChat, web channel for livechat | Planned |
+| **Dev Tooling** | `github/copilot-sdk` | Internal: module scaffolding, CI auto-fix, code review gates | Evaluate (Preview) |
+
+### Agent Framework Workflow Patterns for ERP
+
+| Pattern | Agent Framework Feature | ERP Application |
+|---------|------------------------|-----------------|
+| Sequential | Graph-based pipeline | Month-end close: GL → AP → AR → Tax → Consolidation |
+| Human-in-the-Loop | Checkpoint + approval | Expense: Agent draft → Manager approve → Finance review |
+| Group Chat | Dynamic handoff | Sales inquiry: CRM agent → Inventory agent → Pricing agent |
+| Streaming | Real-time progress | Live dashboard of close progress across all entities |
+| Time-travel Debug | Checkpoint replay | Audit trail: replay agent decisions for compliance |
+
 ## Foundry Coordinates
 
 | Setting | Value |
@@ -210,6 +263,14 @@ Consolidate all AI capabilities through **Microsoft Foundry** (`data-intel-ph` p
 | Search | `srch-ipai-dev` |
 | Auth | Managed Identity (primary), API Key (fallback) |
 | Secrets | Azure Key Vault (`kv-ipai-dev`) |
+
+## Upstream Repos
+
+| Repo | Install | Purpose |
+|------|---------|---------|
+| [`microsoft/agent-framework`](https://github.com/microsoft/agent-framework) | `pip install agent-framework --pre` | Multi-agent orchestration |
+| [`microsoft/Agents`](https://github.com/microsoft/Agents) | Language-specific (C#/JS/Python) | M365 channel deployment |
+| [`github/copilot-sdk`](https://github.com/github/copilot-sdk) | `pip install github-copilot-sdk` | Dev tooling (Preview) |
 
 ---
 
