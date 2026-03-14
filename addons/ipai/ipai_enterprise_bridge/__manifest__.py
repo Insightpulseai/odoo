@@ -18,6 +18,7 @@
         "hr_expense",
         "maintenance",
         "project",
+        "purchase",
     ],
     "external_dependencies": {
         "python": [
@@ -37,9 +38,9 @@
         "views/res_config_settings_views.xml",
         "views/foundry_provider_config_views.xml",
         "views/doc_digitization_config_views.xml",
+        "views/ipai_policy_views.xml",
         "views/iot_device_views.xml",
         "views/ipai_close_views.xml",
-        "views/ipai_policy_views.xml",
         "views/product_views.xml",
         "views/enterprise_bridge_views.xml",
     ],
