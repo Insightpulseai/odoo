@@ -3,72 +3,97 @@
 ## Current State
 
 - 1 Foundry prompt agent: `ipai-odoo-copilot-azure`
-- BIR module has: `draft → computed → validated → filed → confirmed` state machine
+- BIR module: `draft → computed → validated → filed → confirmed` (missing `approved`)
 - `mail.activity.mixin` inherited (activities work)
-- No explicit Approved stage between validated and filed
-- No recurring task templates
-- No document ingestion pipeline
-- Copilot has 18 tools, 1 BIR tool (read-only `bir_compliance_search`)
+- Copilot: 18 tools, 1 BIR tool (read-only `bir_compliance_search`)
+- Tax Pulse: spec kit complete, rates/rules/engine ported (67 tests), tool contracts defined
+- Agent framework: 3-agent + 1-workflow model specced, capability matrix with BIR pack
+- Odoo Project: available with recurring tasks, dependencies, milestones, roles, activities
+- No PLM-style approval gates yet
+- No company-scoped compliance project templates
 
-## Implementation Order
+## Implementation Waves
 
-### Phase 2A — Odoo-native workflow enhancement (immediate)
+### Wave 1 — Lock the assistant surface
 
-**Add Approved stage** to `bir.tax.return` state machine:
-- `draft → computed → validated → approved → filed → confirmed`
-- `action_approve()` requires `group_ipai_bir_approver` security group
-- Approval creates `mail.activity` for export/file step
-- Blocked state if validation fails
+**Goal**: Stabilize the front-door agent with knowledge, evals, tracing, and document extraction.
 
-**Add BIR filing task template model** (`bir.filing.task.template`):
-- Template-based recurring task generation
-- Maps to `project.task` if project module installed, else standalone
-- Cadence: monthly/quarterly/annual per form type
-- Auto-generate tasks N days before deadline
-- Milestone checkpoints: compute → validate → approve → export → file → confirm
+**Deliverables**:
+- Foundry IQ knowledge store: BIR regulations, form guides, TRAIN law references
+- Eval datasets: `bir_advisory.yaml` (50 cases), `bir_ops.yaml` (30), `bir_actions.yaml` (40)
+- Guardrails: no ungrounded tax advice, no unauthorized writes
+- App Insights tracing enabled
+- Document extraction pipeline (Azure Document Intelligence) for invoices/receipts/BIR attachments
 
-**Add compliance worklist reporting**:
-- Kanban view grouped by stage
-- Calendar view with filing deadlines
-- "Blocked filings" filter (missing data, failed validation)
+**Exit gate**: Advisory answers BIR questions with grounded citations, traces visible.
 
-### Phase 2B — Copilot tools as Odoo action triggers
+### Wave 2 — Build hidden backend roles
 
-8 copilot tools that call Odoo's own state machine:
-1. `compute_bir_vat_return` → `action_compute()` on `bir.vat.return`
-2. `compute_bir_withholding_return` → `action_compute()` on `bir.withholding.return`
-3. `validate_bir_return` → `action_validate()` on `bir.tax.return`
-4. `check_overdue_filings` → query `bir.filing.deadline` state=overdue
-5. `generate_alphalist` → `action_generate_alphalist()` on `bir.alphalist`
-6. `generate_efps_xml` → export stub (Phase 3)
-7. `generate_bir_pdf` → report action
-8. `bir_compliance_search` → exists (read-only)
+**Goal**: Router + Ops + Actions behind the Advisory front door.
 
-### Phase 3 — Document Intake & Extraction Pack
+**Deliverables**:
+- `copilot_router.py` — deterministic intent classification (channel + model + role + intent)
+- Ops runtime — read-only Odoo queries for filing readiness, overdue detection, blocker diagnosis
+- Actions runtime — approval-gated compute, validate, export via Odoo state machine
+- 8 BIR copilot tools wired to Odoo actions
+- `approved` state added to `bir.tax.return`
+- `group_ipai_bir_approver` security group
 
-- Azure AI Document Intelligence for invoice/receipt/BIR attachment ingestion
-- OCR → structured extraction → normalized evidence
-- Document-to-record linking on `bir.tax.return`
+**Exit gate**: Router classifies 95%+ correctly, approval gate blocks all unauthorized writes.
 
-### Phase 4 — Router + Ops + Actions backend
+### Wave 3 — Operationalize Odoo Project
 
-- Agent Framework runtimes behind Advisory
-- Router: deterministic request classification
-- Ops: read-only diagnostics
-- Actions: approval-gated execution
+**Goal**: Company-scoped compliance projects with recurring tasks, dependencies, and milestones.
 
-### Phase 5 — APIM + production hardening
+**Deliverables**:
+- `bir.filing.task.template` model — seed templates for all 24 form types
+- Month-end closing workbook normalized into Odoo seed XML
+- Recurring task generation cron (N days before deadline)
+- Task dependency chains: reconcile → compute → validate → approve → export → file → confirm
+- Milestones: books ready, tax computed, validated, approved, filed, paid, closed
+- Project roles: preparer, reviewer, approver, payer, compliance owner
+- Company-scoped project template (multi-company ready)
+- Kanban + calendar views for compliance worklist
 
-- APIM AI Gateway as ingress
-- Eval datasets and gates
-- Simulation mode for Actions
+**Exit gate**: Tasks auto-generate per cadence, dependency chains enforce order, milestones track progress.
 
-## Exit Gates
+### Wave 4 — Add approval semantics
 
-| Phase | Gate |
+**Goal**: PLM-style approval gates on stage transitions.
+
+**Deliverables**:
+- Approval model extension on `bir.tax.return` (required/optional/comments-only)
+- Stage transition rules:
+  - For review → approved for export (required approval by `group_ipai_bir_approver`)
+  - Approved for export → filed (required approval by `group_ipai_finance_manager`)
+  - Filed/paid → confirmed (required approval by compliance owner)
+- Activity auto-creation for approval requests
+- Blocked state when required approval missing
+- Audit trail on all approvals
+
+**Exit gate**: Required approvals block transitions, audit trail captures all decisions.
+
+### Wave 5 — Bind artifacts and evidence
+
+**Goal**: Every tax task links to its full evidence chain.
+
+**Deliverables**:
+- BIR return ↔ project task linking
+- Export artifacts (eFPS XML, PDF, alphalist) attached to task
+- Proof of filing attachment field
+- Proof of payment attachment field
+- Approver evidence (who approved, when, what comments)
+- Evidence completeness check before period close
+- APIM production ingress wired
+
+**Exit gate**: Full audit chain from task → return → artifact → proof → approval for any filing.
+
+## Risk Mitigation
+
+| Risk | Mitigation |
 |---|---|
-| 2A | Approved stage works, task templates generate, worklist renders |
-| 2B | All 8 copilot tools trigger correct Odoo actions |
-| 3 | Document extraction returns structured data, links to records |
-| 4 | Router correctly classifies and routes 95%+ of requests |
-| 5 | APIM fronts all traffic, traces visible, evals passing |
+| Odoo Project doesn't have PLM-style approvals natively | Model as `ipai_*` extension using `mail.activity` + required flag + blocked state |
+| Recurring task cadence mismatch with BIR deadlines | Use form-type-specific lead days in task templates |
+| Multi-company project scoping complexity | Use Odoo's native `company_id` field + multi-company rules |
+| Agent Framework SDK pre-release | Phase 2 is last to need it; fallback: sequential Responses API calls |
+| Foundry IQ knowledge lag on new BIR regulations | Manual knowledge update process; flag stale citations |
