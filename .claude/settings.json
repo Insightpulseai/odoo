@@ -1,7 +1,18 @@
 {
   "env": {
     "GH_HOST": "github.com",
-    "DOCKER_CONTEXT": "colima"
+    "DOCKER_CONTEXT": "colima",
+    "CLAUDE_CODE_USE_FOUNDRY": "1",
+    "ANTHROPIC_FOUNDRY_RESOURCE": "data-intel-ph-resource",
+    "IPAI_AZURE_AI_HUB": "aifoundry-ipai-dev",
+    "IPAI_AZURE_AI_PROJECT": "data-intel-ph",
+    "IPAI_AZURE_DOC_INTELLIGENCE_RESOURCE": "docai-ipai-dev",
+    "IPAI_AZURE_KEY_VAULT": "aifoundrkeyvault67125c7c",
+    "IPAI_AZURE_APP_INSIGHTS": "appi-ipai-dev",
+    "IPAI_AZURE_CONTAINERAPPS_ENV": "cae-ipai-dev",
+    "IPAI_AZURE_ACR": "cripaidev",
+    "IPAI_AZURE_BUILD_POOL": "ipai-build-pool",
+    "IPAI_AZURE_DEVOPS_ORG": "insightpulseai"
   },
   "permissions": {
     "allow": [
@@ -29,7 +40,11 @@
       "Bash(./scripts/*)"
     ],
     "deny": [
-      "Bash(docker context use *)"
+      "Bash(docker context use *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./ssot/secrets/**)"
     ]
   },
   "agentCommands": {

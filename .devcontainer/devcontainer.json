@@ -5,13 +5,27 @@
   "workspaceFolder": "/workspaces/odoo",
   "initializeCommand": "bash -lc 'ctx=$(docker context show 2>/dev/null || true); test \"$ctx\" = \"colima-odoo\" || { echo \"Expected docker context colima-odoo, got: ${ctx:-<none>}\"; exit 1; }'",
   "features": {
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {}
   },
   "mounts": [
-    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.azure,target=/home/vscode/.azure,type=bind,consistency=cached"
   ],
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "CLAUDE_CODE_USE_FOUNDRY": "1",
+    "ANTHROPIC_FOUNDRY_RESOURCE": "data-intel-ph-resource",
+    "IPAI_AZURE_AI_HUB": "aifoundry-ipai-dev",
+    "IPAI_AZURE_AI_PROJECT": "data-intel-ph",
+    "IPAI_AZURE_DOC_INTELLIGENCE_RESOURCE": "docai-ipai-dev",
+    "IPAI_AZURE_KEY_VAULT": "aifoundrkeyvault67125c7c",
+    "IPAI_AZURE_APP_INSIGHTS": "appi-ipai-dev",
+    "IPAI_AZURE_CONTAINERAPPS_ENV": "cae-ipai-dev",
+    "IPAI_AZURE_ACR": "cripaidev",
+    "IPAI_AZURE_BUILD_POOL": "ipai-build-pool",
+    "IPAI_AZURE_DEVOPS_ORG": "insightpulseai",
     "DB_HOST": "db",
     "DB_USER": "odoo",
     "DB_PASSWORD": "odoo",

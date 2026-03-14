@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ANTHROPIC_FOUNDRY_API_KEY": "<set-locally-only-or-omit-if-using-azure-cli-credentials>",
+    "AZURE_SUBSCRIPTION_ID": "<set-locally>",
+    "AZURE_TENANT_ID": "<set-locally-if-required>"
+  }
+}

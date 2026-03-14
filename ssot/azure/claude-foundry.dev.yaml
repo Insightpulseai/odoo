@@ -1,0 +1,29 @@
+mode: foundry
+
+claude:
+  provider:
+    use_foundry: true
+    foundry_resource: data-intel-ph-resource
+    ai_hub: aifoundry-ipai-dev
+    project: data-intel-ph
+
+azure:
+  key_vault: aifoundrkeyvault67125c7c
+  document_intelligence: docai-ipai-dev
+  application_insights: appi-ipai-dev
+  container_apps_environment: cae-ipai-dev
+  acr: cripaidev
+  devops_org: insightpulseai
+  build_pool: ipai-build-pool
+
+identities:
+  local_preferred_auth: azure_cli
+  managed_identity_candidates:
+    - id-ipai-aca-dev
+    - id-ipai-agents-dev
+    - id-ipai-databricks-dev
+
+runtime:
+  container_debug_target: debug-odoo-ep
+  auth_app: ipai-auth-dev
+  crm_app: ipai-crm-dev

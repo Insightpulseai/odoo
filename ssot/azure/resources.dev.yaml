@@ -1,0 +1,150 @@
+subscription:
+  name: Azure subscription 1
+
+resource_groups:
+  ai: rg-ipai-ai-dev
+  shared: rg-ipai-shared-dev
+  agents: rg-ipai-agents-dev
+  dev: rg-ipai-dev
+  devops: rg-ipai-devops
+  foundry: rg-data-intel-ph
+  databricks_managed: rg-dbw-managed-ipai-dev
+
+regions:
+  primary: southeastasia
+  foundry: eastus2
+  global: global
+
+resources:
+  key_vault:
+    name: aifoundrkeyvault67125c7c
+    type: key_vault
+    rg: rg-ipai-ai-dev
+    region: eastus2
+
+  foundry_storage:
+    name: aifoundrstorage6ff030454
+    type: storage_account
+    rg: rg-ipai-ai-dev
+    region: eastus2
+
+  ai_hub:
+    name: aifoundry-ipai-dev
+    type: azure_ai_hub
+    rg: rg-ipai-ai-dev
+    region: eastus2
+
+  application_insights:
+    name: appi-ipai-dev
+    type: application_insights
+    rg: rg-ipai-shared-dev
+    region: southeastasia
+
+  appi_smart_detection:
+    name: Application Insights Smart Detection
+    type: action_group
+    rg: rg-ipai-shared-dev
+    region: global
+
+  container_apps_environment:
+    name: cae-ipai-dev
+    type: container_apps_environment
+    rg: rg-ipai-agents-dev
+    region: southeastasia
+
+  container_apps_lb:
+    name: capp-svc-lb
+    type: load_balancer
+    rg: ME_cae-ipai-dev_rg-ipai-agents-dev_southeastasia
+    region: southeastasia
+
+  acr:
+    name: cripaidev
+    type: container_registry
+    rg: rg-ipai-shared-dev
+    region: southeastasia
+
+  foundry_resource:
+    name: data-intel-ph-resource
+    type: foundry
+    rg: rg-data-intel-ph
+    region: eastus2
+
+  foundry_project:
+    name: data-intel-ph
+    type: foundry_project
+    parent: data-intel-ph-resource
+    rg: rg-data-intel-ph
+    region: eastus2
+
+  databricks_managed_identity:
+    name: dbmanagedidentity
+    type: managed_identity
+    rg: rg-dbw-managed-ipai-dev
+    region: southeastasia
+
+  databricks_storage:
+    name: dbstoragew6tn3uhg4bluy
+    type: storage_account
+    rg: rg-dbw-managed-ipai-dev
+    region: southeastasia
+
+  databricks_workspace:
+    name: dbw-ipai-dev
+    type: azure_databricks
+    rg: rg-ipai-ai-dev
+    region: southeastasia
+
+  debug_container_instance:
+    name: debug-odoo-ep
+    type: container_instance
+    rg: rg-ipai-agents-dev
+    region: southeastasia
+
+  document_intelligence:
+    name: docai-ipai-dev
+    type: document_intelligence
+    rg: rg-ipai-ai-dev
+    region: southeastasia
+
+  aca_managed_identity:
+    name: id-ipai-aca-dev
+    type: managed_identity
+    rg: rg-ipai-agents-dev
+    region: southeastasia
+
+  shared_agents_managed_identity:
+    name: id-ipai-agents-dev
+    type: managed_identity
+    rg: rg-ipai-shared-dev
+    region: southeastasia
+
+  databricks_managed_identity_user:
+    name: id-ipai-databricks-dev
+    type: managed_identity
+    rg: rg-ipai-ai-dev
+    region: southeastasia
+
+  azure_devops_org:
+    name: insightpulseai
+    type: azure_devops_organization
+    rg: VisualStudioOnline-134775A814F94B7B85605E3D11276127
+    region: southeastasia
+
+  auth_container_app:
+    name: ipai-auth-dev
+    type: container_app
+    rg: rg-ipai-dev
+    region: southeastasia
+
+  devops_pool:
+    name: ipai-build-pool
+    type: managed_devops_pool
+    rg: rg-ipai-devops
+    region: southeastasia
+
+  crm_container_app:
+    name: ipai-crm-dev
+    type: container_app
+    rg: rg-ipai-dev
+    region: southeastasia
