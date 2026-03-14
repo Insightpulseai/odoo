@@ -58,13 +58,13 @@ Only programmatic API access consolidates behind the gateway.
 
 ## 3. Route Taxonomy
 
-| Route Group    | Prefix               | Backing System | Purpose                          | Examples                                      | Auth            | Methods                    |
-|----------------|-----------------------|----------------|----------------------------------|-----------------------------------------------|-----------------|----------------------------|
-| ERP            | `/api/v1/erp`        | Odoo CE 19     | Business data CRUD               | `/erp/invoices`, `/erp/projects`, `/erp/tasks` | OAuth2 / JWT    | GET, POST, PUT, PATCH, DELETE |
-| Control Plane  | `/api/v1/control`    | Supabase       | Platform config, agent registry  | `/control/config`, `/control/agent-registry`   | OAuth2 / JWT    | GET, POST, PATCH           |
-| Agents         | `/api/v1/agents`     | Azure Foundry  | Agent conversations, sessions    | `/agents/conversations`, `/agents/evaluations` | OAuth2 / JWT    | GET, POST                  |
-| Docs           | `/api/v1/docs`       | Plane          | Specs, runbooks (read-only)      | `/docs/specs`, `/docs/runbooks`                | API Key / JWT   | GET                        |
-| Integrations   | `/api/v1/integrations`| n8n           | Webhooks, sync triggers          | `/integrations/webhooks`, `/integrations/sync` | API Key / JWT   | POST                       |
+| Route Group    | Prefix               | Backing System | Purpose                          | Examples                                      | Auth            | Methods                     | Status  |
+|----------------|-----------------------|----------------|----------------------------------|-----------------------------------------------|-----------------|-----------------------------|---------|
+| ERP            | `/api/v1/erp`        | Odoo CE 19     | Business data CRUD               | `/erp/invoices`, `/erp/projects`, `/erp/tasks` | OAuth2 / JWT    | GET, POST, PUT, PATCH, DELETE | Planned |
+| Control Plane  | `/api/v1/control`    | Supabase       | Platform config, agent registry  | `/control/config`, `/control/agent-registry`   | OAuth2 / JWT    | GET, POST, PATCH            | Planned |
+| Agents         | `/api/v1/agents`     | Azure Foundry  | Agent conversations, sessions    | `/agents/conversations`, `/agents/evaluations` | OAuth2 / JWT    | GET, POST                   | **Blocked** — Foundry endpoint TBD |
+| Docs           | `/api/v1/docs`       | Plane          | Specs, runbooks (read-only)      | `/docs/specs`, `/docs/runbooks`                | API Key / JWT   | GET                         | **Blocked** — Plane API returns SPA HTML |
+| Integrations   | `/api/v1/integrations`| n8n           | Webhooks, sync triggers          | `/integrations/webhooks`, `/integrations/sync` | API Key / HMAC  | POST                        | Planned |
 
 ---
 
@@ -139,10 +139,10 @@ becomes the source of truth -- it is a routing, policy, and observability layer.
 
 ### Rate limiting
 
-- **Standard tier**: 100 req/min per consumer (ERP, Control, Docs)
-- **Elevated tier**: 200 req/min per consumer (Agents -- higher due to streaming)
 - **Strict tier**: 30 req/min per consumer (Integrations -- webhook triggers)
-- **Relaxed tier**: 300 req/min per consumer (Docs read-only)
+- **Standard tier**: 100 req/min per consumer (ERP, Control)
+- **Elevated tier**: 200 req/min per consumer (Agents -- higher due to streaming)
+- **Relaxed tier**: 300 req/min per consumer (Docs -- read-only)
 - Metrics exported per consumer identity
 
 ### Health endpoints
@@ -162,14 +162,14 @@ becomes the source of truth -- it is a routing, policy, and observability layer.
 
 | Current Hostname               | Current Role              | Target State                              | Notes                                     |
 |--------------------------------|---------------------------|-------------------------------------------|-------------------------------------------|
-| `erp.insightpulseai.com`       | Odoo UI + JSON-RPC API    | UI surface only; API via gateway           | JSON-RPC passthrough or REST adapter TBD  |
+| `erp.insightpulseai.com`       | Odoo UI + JSON-RPC API    | UI surface only; API via gateway           | JSON-2 first, adapter-backed. See ADR.    |
 | `auth.insightpulseai.com`      | Keycloak SSO              | Identity provider; not routed via gateway  | Tokens validated by APIM, not proxied     |
 | `mcp.insightpulseai.com`       | MCP runtime               | Evaluate: gateway inclusion or separate    | MCP protocol may need dedicated transport |
 | `n8n.insightpulseai.com`       | n8n UI + webhooks         | UI stays; webhooks via `/integrations/*`   | Internal orchestration preserved          |
-| `plane.insightpulseai.com`     | Plane UI                  | UI surface only; docs API via gateway      | Read-only summaries through gateway       |
+| `plane.insightpulseai.com`     | Plane UI                  | UI surface only; docs API via gateway      | **BLOCKED**: API backend not routed       |
 | Supabase (hosted)              | Control plane + Edge Fns  | Internal; control API via gateway          | PostgREST subset exposed, not full access |
 | `ops.insightpulseai.com`       | Internal admin console    | Not exposed via API gateway                | Internal-only, no external consumers      |
-| `crm.insightpulseai.com`       | CRM (alias for ERP)       | Evaluate deprecation                       | Redundant with `erp` subdomain            |
+| `crm.insightpulseai.com`       | CRM (alias for ERP)       | **Deprecated alias** → `erp.*`             | No distinct CRM service. 90-day sunset.   |
 | `superset.insightpulseai.com`  | BI dashboards             | UI surface only; not exposed via gateway   | Embed tokens handled separately           |
 | `ocr.insightpulseai.com`       | Document OCR service      | Evaluate: gateway inclusion for API calls  | May become `/api/v1/erp/documents/ocr`    |
 
@@ -195,8 +195,11 @@ becomes the source of truth -- it is a routing, policy, and observability layer.
 
 - `mcp.insightpulseai.com` -- MCP uses a distinct protocol (stdio/SSE). Separate transport
   may be more appropriate than HTTP API gateway subpath.
-- `crm.insightpulseai.com` -- Currently an alias for ERP. If no distinct CRM service exists,
-  deprecate in favor of `erp.insightpulseai.com`.
+
+### Deprecated aliases
+
+- `crm.insightpulseai.com` -- Deprecated alias for `erp.insightpulseai.com`. No distinct CRM
+  service exists. Subdomain retained as redirect to ERP until sunset (90-day notice).
 
 ### Deprecate for programmatic access
 
@@ -208,16 +211,16 @@ service-to-service traffic may continue to use direct origins.
 
 ## 10. Open Decisions
 
-| # | Decision                                        | Options                                             | Impact   |
-|---|-------------------------------------------------|------------------------------------------------------|----------|
-| 1 | Azure APIM tier                                 | Consumption (pay-per-call) vs Standard v2 (reserved) | Cost, SLA |
-| 2 | MCP traffic routing                             | Subpath of unified API vs separate MCP endpoint      | Protocol compatibility |
-| 3 | Plane docs exposure                             | Proxy live Plane API vs serve static summaries        | Freshness vs complexity |
-| 4 | Odoo API transport                              | JSON-RPC passthrough vs thin REST adapter             | Developer experience |
-| 5 | Foundry agent access                            | Direct proxy vs mediated control service              | Security boundary |
-| 6 | Supabase PostgREST exposure                     | Expose curated subset vs wrap entirely in Edge Fns    | Attack surface |
-| 7 | OCR service placement                           | Standalone route group vs ERP subpath                 | Authority clarity |
-| 8 | Rate limit enforcement                          | APIM-only vs APIM + per-backend limits                | Defense in depth |
+| # | Decision                                        | Status | Resolution / Options                                |
+|---|-------------------------------------------------|--------|------------------------------------------------------|
+| 1 | Azure APIM tier                                 | Open   | Consumption (pay-per-call) vs Standard v2 (reserved). See Cost Note in plan. |
+| 2 | MCP traffic routing                             | Open   | Subpath of unified API vs separate MCP endpoint      |
+| 3 | Plane docs exposure                             | **Blocked** | Blocked on Plane API routing fix. Cannot evaluate until `/api/v1/*` returns JSON. |
+| 4 | Odoo API transport                              | **Resolved** | JSON-2 first, adapter-backed for gaps. Raw JSON-RPC not exposed. See `docs/architecture/API_ODOO_ROUTE_DECISION.md`. |
+| 5 | Foundry agent access                            | **Blocked** | Blocked on Foundry endpoint availability. |
+| 6 | Supabase PostgREST exposure                     | Open   | Expose curated subset vs wrap entirely in Edge Fns    |
+| 7 | OCR service placement                           | Open   | Standalone route group vs ERP subpath                 |
+| 8 | Rate limit enforcement                          | Open   | APIM-only vs APIM + per-backend limits                |
 
 Each decision will be resolved as a numbered ADR in `docs/architecture/decisions/`
 before implementation of the corresponding migration phase.

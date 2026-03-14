@@ -33,12 +33,12 @@
 
 - [ ] Design APIM API definition for `/api/v1/erp` (Odoo JSON-RPC proxy)
 - [ ] Design APIM API definition for `/api/v1/control` (Supabase PostgREST + Edge Functions)
-- [ ] Design APIM API definition for `/api/v1/agents` (Foundry Agent Service)
-- [ ] Design APIM API definition for `/api/v1/docs` (Plane API)
+- [ ] Design APIM API definition for `/api/v1/agents` (Foundry Agent Service) **[BLOCKED: Foundry endpoint TBD]**
+- [ ] Design APIM API definition for `/api/v1/docs` (Plane API) **[BLOCKED: Plane API routing]**
 - [ ] Design APIM API definition for `/api/v1/integrations` (n8n webhooks)
 - [ ] Define backend pool mappings (APIM backend -> ACA internal FQDN)
 - [ ] Design inbound auth policies (OAuth2, JWT, managed identity, API key, HMAC)
-- [ ] Design rate limiting tiers (free: 100/min, standard: 1000/min, internal: 10000/min)
+- [ ] Design rate limiting tiers (strict: 30/min, standard: 100/min, elevated: 200/min, relaxed: 300/min)
 - [ ] Design correlation ID propagation policy (`X-Request-ID` header)
 - [ ] Write APIM policy XML templates to `infra/azure/apim/policies/`
 

@@ -103,8 +103,8 @@ Reads may cross boundaries via explicit APIM policies.
 - Define backend pool mappings (APIM backend entity -> ACA internal FQDN)
 - Design inbound auth policies: OAuth2 validation, Supabase JWT validation,
   managed identity passthrough, API key validation, HMAC verification
-- Design rate limiting tiers: free (100 req/min), standard (1000 req/min),
-  internal (10000 req/min)
+- Design rate limiting tiers: strict (30 req/min), standard (100 req/min),
+  elevated (200 req/min), relaxed (300 req/min)
 - Design request/response transformation policies (header injection,
   correlation ID propagation, response envelope)
 - Produce APIM policy XML templates in `infra/azure/apim/policies/`
@@ -170,6 +170,16 @@ Reads may cross boundaries via explicit APIM policies.
 
 ---
 
+## Blockers
+
+| Blocker | Owner | Unblock Condition | Phase Dependency |
+|---------|-------|-------------------|-----------------|
+| Plane API routing | Infrastructure | Plane proxy routes `/api/*` to API backend (port 8000) | Phase 3 (docs route), Phase 5 |
+| Foundry Agent Service endpoint | AI Platform / Azure Integration | Canonical endpoint URL and auth pattern confirmed | Phase 3 (agents route) |
+| Odoo REST adapter design | ERP Platform | ADR approved: `docs/architecture/API_ODOO_ROUTE_DECISION.md` | Phase 3 (erp route) |
+
+---
+
 ## Risk Register
 
 | Risk                                         | Mitigation                                        |
@@ -190,3 +200,13 @@ Reads may cross boundaries via explicit APIM policies.
 4. Sub-500ms P95 gateway overhead (APIM processing time)
 5. Full request audit trail in Application Insights
 6. Published OpenAPI specs for all five route groups
+
+---
+
+## Cost Note
+
+Initial rollout assumes low-to-moderate call volume and prioritizes correctness,
+governance, and route ownership over cost optimization. Azure APIM Consumption tier
+is acceptable for initial phases. Must be re-evaluated before high-volume agent or
+CI pipeline traffic is enabled. Standard v2 migration triggered by sustained usage
+above ~1M calls/month or cold-start latency becoming unacceptable for agent workloads.
