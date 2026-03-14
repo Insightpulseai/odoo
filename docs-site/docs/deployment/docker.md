@@ -30,7 +30,7 @@ The Odoo instance runs from the `odoo19/` directory with `list_db=False`. Each e
 |-------------|----------|
 | Development | `odoo_dev` |
 | Staging | `odoo_staging` |
-| Production | `odoo_prod` |
+| Production | `odoo` |
 
 !!! warning "Database policy"
     Never create additional databases. Use only the canonical database for the target environment.
