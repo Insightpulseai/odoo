@@ -1,0 +1,277 @@
+# AI Capability Consolidation — Microsoft Foundry Gateway
+# All AI capabilities route through a single Foundry agent.
+# Human doc: docs/architecture/AI_CONSOLIDATION_FOUNDRY.md
+
+version: "1.0"
+schema: ssot.governance.ai-consolidation-foundry.v1
+updated_at: "2026-03-15"
+
+# ---------------------------------------------------------------------------
+# Foundry Coordinates
+# ---------------------------------------------------------------------------
+foundry:
+  resource: data-intel-ph-resource.services.ai.azure.com
+  project: data-intel-ph
+  agent: ipai-odoo-copilot-azure
+  agent_versions: 7
+  agent_type: prompt
+  model_deployment: gpt-4.1
+  api_version: "2024-12-01-preview"
+  search_service: srch-ipai-dev
+  auth:
+    primary: managed_identity
+    fallback: api_key
+    source: azure_key_vault
+
+# ---------------------------------------------------------------------------
+# Consolidation Doctrine
+# ---------------------------------------------------------------------------
+doctrine: >
+  One Foundry agent. One Odoo bridge module. Four capability modes.
+  All AI surface area routes through Microsoft Foundry as the single
+  inference gateway. No direct OpenAI, Gemini, or Supabase LLM calls
+  from Odoo modules. The Foundry agent is the only AI endpoint.
+
+# ---------------------------------------------------------------------------
+# Capability Modes (single agent, multiple modes)
+# ---------------------------------------------------------------------------
+capability_modes:
+  ask:
+    description: "Answer questions using RAG retrieval, no side effects"
+    replaces:
+      - ipai_ai_widget
+      - ipai_ask_ai_azure
+      - ipai_ai_core (provider routing)
+    write_access: none
+    foundry_tools:
+      - search_records
+      - read_record
+      - search_knowledge
+    status: active
+
+  authoring:
+    description: "Draft documents, reports, emails — write to draft only"
+    replaces:
+      - ipai_ai_copilot (deprecated Gemini/Supabase)
+      - ipai_ai_prompts (prompt registry)
+    write_access: draft_only
+    foundry_tools:
+      - search_records
+      - read_record
+      - create_draft
+      - search_knowledge
+    status: active
+
+  livechat:
+    description: "Handle website visitor questions via chat"
+    replaces:
+      - ipai_ai_channel_actions
+      - ipai_ai_livechat (deprecated)
+    write_access: none
+    foundry_tools:
+      - search_records
+      - read_record
+      - search_knowledge
+    status: active
+
+  transaction:
+    description: "Assist with bounded CRUD operations (draft → approve)"
+    replaces:
+      - ipai_ai_tools (CRM/Calendar/Sale)
+      - ipai_ai_automations (deprecated)
+    write_access: bounded_crud
+    foundry_tools:
+      - search_records
+      - read_record
+      - create_record
+      - update_record
+      - execute_action
+    status: planned
+    gate: "Requires explicit approval per model/action"
+
+# ---------------------------------------------------------------------------
+# Module Consolidation Map
+# ---------------------------------------------------------------------------
+module_map:
+  canonical:
+    - module: ipai_odoo_copilot
+      role: "Odoo-side bridge to Foundry (single entry point)"
+      status: active
+      foundry_integrated: true
+
+    - module: ipai_enterprise_bridge
+      role: "Foundry provider config + EE stub redirections"
+      status: active
+      foundry_integrated: true
+
+  retained_infrastructure:
+    - module: ipai_ai_core
+      role: "Provider registry model (used by bridge, not directly by users)"
+      status: retained
+      note: "Kept as internal model layer; all user-facing AI routes through Foundry"
+
+    - module: ipai_ai_agent_builder
+      role: "Agent/topic/tool builder (Odoo 19 parity)"
+      status: retained
+      note: "Agent definitions sync to Foundry; builder UI stays in Odoo"
+
+    - module: ipai_ai_rag
+      role: "RAG pipeline for knowledge indexing"
+      status: retained
+      note: "Feeds Foundry search index (srch-ipai-dev)"
+
+    - module: ipai_agent_skills
+      role: "Skill registry for agent capabilities"
+      status: retained
+      note: "Skill definitions consumed by Foundry agent instructions"
+
+  deprecated_by_foundry:
+    - module: ipai_ai_widget
+      replacement: "Foundry ask mode via ipai_odoo_copilot"
+      status: deprecated
+      action: "Set installable=False, add deprecation notice"
+
+    - module: ipai_ask_ai_azure
+      replacement: "Foundry ask mode via ipai_odoo_copilot"
+      status: deprecated
+      action: "Set installable=False, add deprecation notice"
+
+    - module: ipai_ai_copilot
+      replacement: "Foundry authoring mode via ipai_odoo_copilot"
+      status: already_deprecated
+      note: "Already superseded; kept installable only for ipai_workspace_core dep"
+
+    - module: ipai_ai_channel_actions
+      replacement: "Foundry livechat mode via ipai_odoo_copilot"
+      status: deprecated
+      action: "Set installable=False after livechat mode verified"
+
+    - module: ipai_ai_tools
+      replacement: "Foundry transaction mode via ipai_odoo_copilot"
+      status: deprecated
+      action: "Set installable=False after transaction mode verified"
+
+    - module: ipai_ai_platform
+      replacement: "Foundry API replaces Supabase Edge Function calls"
+      status: deprecated
+      action: "Set installable=False"
+
+    - module: ipai_llm_supabase_bridge
+      replacement: "Foundry is the single LLM gateway"
+      status: deprecated
+      action: "Set installable=False"
+
+    - module: ipai_ai_oca_bridge
+      replacement: "Foundry replaces OCA AI provider routing"
+      status: deprecated
+      action: "Set installable=False"
+
+    - module: ipai_copilot_ui
+      replacement: "ipai_design_system_apps_sdk"
+      status: already_deprecated
+
+    - module: ipai_ai_livechat
+      replacement: "ipai_enterprise_bridge"
+      status: already_deprecated
+
+    - module: ipai_ai_automations
+      replacement: "ipai_enterprise_bridge"
+      status: already_deprecated
+
+    - module: ipai_ai_fields
+      replacement: "N/A"
+      status: already_deprecated
+
+# ---------------------------------------------------------------------------
+# Foundry Tools (Odoo-side executors)
+# ---------------------------------------------------------------------------
+foundry_tools:
+  read_only:
+    - id: search_records
+      description: "Search Odoo records by model + domain"
+      odoo_method: "env[model].search_read(domain, fields, limit)"
+      write: false
+
+    - id: read_record
+      description: "Read specific record by ID"
+      odoo_method: "env[model].browse(id).read(fields)"
+      write: false
+
+    - id: search_knowledge
+      description: "Search knowledge base / RAG index"
+      odoo_method: "Foundry search index (srch-ipai-dev)"
+      write: false
+
+  write_bounded:
+    - id: create_draft
+      description: "Create record in draft state only"
+      odoo_method: "env[model].create(vals)"
+      write: true
+      constraint: "state must be 'draft'"
+
+    - id: create_record
+      description: "Create record (transaction mode only)"
+      odoo_method: "env[model].create(vals)"
+      write: true
+      constraint: "allowed_models whitelist"
+
+    - id: update_record
+      description: "Update record fields (transaction mode only)"
+      odoo_method: "env[model].browse(id).write(vals)"
+      write: true
+      constraint: "allowed_models + allowed_fields whitelist"
+
+    - id: execute_action
+      description: "Execute server action (transaction mode only)"
+      odoo_method: "env[model].browse(id).action_*()"
+      write: true
+      constraint: "allowed_actions whitelist + approval gate"
+
+# ---------------------------------------------------------------------------
+# Safety Controls
+# ---------------------------------------------------------------------------
+safety:
+  read_only_default: true
+  write_requires_approval: true
+  audit_all_tool_calls: true
+  telemetry: azure_app_insights
+  rate_limit: "60 requests/minute per user"
+  max_tokens_per_request: 4096
+  pii_redaction: true
+  model_allowlist:
+    - gpt-4.1
+    - gpt-4.1-mini
+
+# ---------------------------------------------------------------------------
+# Migration Path
+# ---------------------------------------------------------------------------
+migration:
+  phase_1:
+    name: "Foundry ask + authoring modes"
+    status: active
+    modules_deprecated: []
+    note: "ipai_odoo_copilot already handles ask + authoring"
+
+  phase_2:
+    name: "Deprecate direct-call AI modules"
+    status: planned
+    modules_deprecated:
+      - ipai_ai_widget
+      - ipai_ask_ai_azure
+      - ipai_ai_platform
+      - ipai_llm_supabase_bridge
+      - ipai_ai_oca_bridge
+    prerequisite: "Verify all Ask AI use cases work through Foundry"
+
+  phase_3:
+    name: "Livechat + transaction modes"
+    status: planned
+    modules_deprecated:
+      - ipai_ai_channel_actions
+      - ipai_ai_tools
+    prerequisite: "Foundry livechat and transaction modes verified in staging"
+
+  phase_4:
+    name: "Cleanup deprecated modules"
+    status: planned
+    action: "Set installable=False on all deprecated modules, update dependency chain"

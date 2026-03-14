@@ -108,6 +108,26 @@ agents:
       - send_slack_notification
     forbidden_paths: []
 
+  foundry_copilot:
+    # Microsoft Foundry copilot agent (ipai-odoo-copilot-azure)
+    # Single AI gateway for all Odoo AI capabilities
+    # Modes: ask (read-only), authoring (draft), livechat (read-only), transaction (bounded)
+    default_mode: read_only
+    allowed_kinds:
+      - read_ops_tables
+      - read_odoo_records       # search_records, read_record tools
+      - read_knowledge_index    # search_knowledge tool (srch-ipai-dev)
+      - write_draft_records     # create_draft tool (authoring mode only)
+      - write_ops_runs          # audit trail for all AI interactions
+    forbidden_actions:
+      - direct_sql_ddl
+      - drop_database_table
+      - push_to_main_branch
+      - access_vault_secrets
+    rate_limit: "60/min per user"
+    telemetry: azure_app_insights
+    reference: ssot/governance/ai-consolidation-foundry.yaml
+
 # ── Evidence requirements ─────────────────────────────────────────────────────
 evidence:
   # Every agent run MUST write a row before starting any side effects
