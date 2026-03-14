@@ -385,6 +385,78 @@ migration:
       - "Enable Foundry Memory (user_profile + chat_summary)"
       - "Register Odoo tools in Foundry Tool Catalog via MCP"
       - "Add creative mode (image_generation + code_interpreter)"
-      - "Enable workflow orchestration for multi-step ERP tasks"
-      - "Publish copilot to Teams/BizChat via Foundry publishing"
+      - "Enable workflow orchestration via Microsoft Agent Framework"
+      - "Publish copilot to Teams/BizChat via M365 Agents SDK"
     prerequisite: "Phases 1-4 complete; Foundry resource upgraded from Azure OpenAI"
+
+# ---------------------------------------------------------------------------
+# Microsoft Agent Stack (upstream repos)
+# ---------------------------------------------------------------------------
+# Three complementary layers that power Foundry agent capabilities.
+# These are the canonical upstream repos — never fork, only consume as SDK.
+agent_stack:
+  orchestration:
+    repo: "github.com/microsoft/agent-framework"
+    purpose: "Multi-agent workflows, graph-based orchestration, OpenTelemetry"
+    sdks:
+      python: "pip install agent-framework --pre"
+      dotnet: "dotnet add package Microsoft.Agents.AI"
+    patterns:
+      - sequential: "Agent pipeline (A → B → C)"
+      - group_chat: "Dynamic context-based handoff"
+      - human_in_the_loop: "Approval / clarification gates"
+    features:
+      - graph_based_workflows
+      - streaming_and_checkpointing
+      - time_travel_debugging
+      - opentelemetry_distributed_tracing
+      - middleware_pipelines
+    our_usage:
+      - "Foundry workflow orchestration for multi-step ERP tasks"
+      - "Expense approval: Agent → Manager Approval → Finance Review"
+      - "Month-end close: Sequential agent pipeline across GL/AP/AR"
+    status: planned
+
+  channel:
+    repo: "github.com/microsoft/Agents"
+    purpose: "M365 Agents SDK — deploy agents to Teams, M365 Copilot, web"
+    sdks:
+      csharp: "github.com/microsoft/Agents-for-net"
+      javascript: "github.com/microsoft/Agents-for-js"
+      python: "github.com/microsoft/Agents-for-python"
+    targets:
+      - microsoft_365_copilot
+      - microsoft_teams
+      - web_applications
+      - custom_apps
+    features:
+      - state_and_storage_management
+      - activity_and_event_handling
+      - channel_customization
+      - ai_agnostic_architecture
+    our_usage:
+      - "Publish ipai-odoo-copilot-azure to Teams for internal chat"
+      - "Surface ERP data in M365 Copilot (BizChat) responses"
+      - "Web channel for customer-facing livechat mode"
+    note: "M365 Copilot subscription NOT required for Teams/web channels"
+    status: planned
+
+  developer_tooling:
+    repo: "github.com/github/copilot-sdk"
+    purpose: "Programmatic access to Copilot CLI engine (JSON-RPC)"
+    sdks:
+      node: "npm install @github/copilot-sdk"
+      python: "pip install github-copilot-sdk"
+      go: "go get github.com/github/copilot-sdk/go"
+      dotnet: "dotnet add package GitHub.Copilot.SDK"
+    features:
+      - planning_and_tool_invocation
+      - file_editing_automation
+      - custom_agents_skills_tools
+      - multiple_auth_methods
+    our_usage:
+      - "Internal dev tooling: automate Odoo module scaffolding"
+      - "CI agent: auto-fix lint/test failures via Copilot engine"
+      - "Code review agent: module quality gate automation"
+    note: "Technical Preview — not production-ready yet"
+    status: evaluate
