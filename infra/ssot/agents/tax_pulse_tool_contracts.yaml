@@ -201,3 +201,54 @@ tools:
     odoo_model: bir.tax.return
     odoo_action: action_generate_pdf
     state_requirement: "approved"
+
+# --- Agent-Level Metadata (AFC Parity Merge) ---
+
+agent: tax-pulse
+runtime: azure-ai-foundry
+capability_class: capability_pack  # Not a standalone runtime stack
+
+# Tax truth is externalized, not embedded in agent prompts
+knowledge_sources:
+  - type: azure_ai_search
+    index: ipai-ph-tax-knowledge
+    content: [odoo_19_docs, bir_forms_catalog, bir_deadlines, internal_sops]
+  - type: file_search
+    content: [bir_revenue_regulations, compliance_procedures]
+  - type: ssot_yaml
+    path: infra/ssot/tax/compliance_check_catalog.yaml
+
+# Tool surface summary (narrow bridge via OpenAPI)
+tool_surface:
+  read:
+    - getComplianceFindings
+    - getComplianceTasks
+    - getCompliancePeriods
+    - getInvoices
+    - getTaxSummary
+    - getWithholdingLines
+    - getReport2550Q
+    - getReportSAWT
+    - getReportSLSP
+    - getReportBIR2307
+  write_phase1:  # Minimal initial write surface
+    - updateComplianceTask  # state, assignee, completion_note
+    - createComplianceFinding
+    - postChatterNote
+  write_deferred:  # Not in Phase 1
+    - uploadAttachment
+    - genericRecordMutation
+    - directFilingFlags
+
+# Module ownership mapping
+module_mapping:
+  compliance_checks: ipai_bir_tax_compliance
+  compliance_notifications: ipai_bir_notifications
+  close_orchestration: ipai_finance_ppm
+  copilot_runtime: ipai_odoo_copilot
+
+# Confirmation requirement
+write_policy: all_writes_require_adaptive_card_confirmation
+confirmation_card: agents/contracts/ui/confirm_action_card.json
+audit_trail: odoo_mail_thread_chatter
+bridge_openapi: agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml

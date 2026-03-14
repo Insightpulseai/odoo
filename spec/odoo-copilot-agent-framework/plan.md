@@ -185,3 +185,58 @@ Foundry safety evaluations are helpful but not sufficient alone; they are not co
 - Declarative YAML workflows (start with pro-code, convert later)
 
 Note: APIM gateway is **in scope** (required production front door, Phase 5).
+
+---
+
+## AFC Parity — Cross-Cutting Artifacts
+
+The following artifacts were created as part of the AFC parity merge and are referenced by both the copilot framework and Tax Pulse capability pack.
+
+### New Canonical Files
+
+| File | Purpose | Referenced By |
+|---|---|---|
+| `agents/contracts/ui/confirm_action_card.json` | Adaptive Card JSON for write confirmation | Actions agent, Tax Pulse, all write operations |
+| `agents/contracts/ui/adaptive_cards_index.yaml` | Index of all Adaptive Cards across surfaces | Teams integration, Odoo widget, agent responses |
+| `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml` | Narrow OpenAPI spec for agent-to-Odoo bridge | All agents via APIM, Tax Pulse tools |
+| `infra/ssot/tax/compliance_check_catalog.yaml` | Machine-readable compliance check registry (12 checks) | Tax Pulse agent, `ipai_bir_tax_compliance` |
+| `infra/ssot/agents/tax_pulse_tool_contracts.yaml` | Tool contracts + agent metadata (updated) | Tax Pulse capability pack, bridge API |
+
+### Capability Class Integration
+
+Every agent response must be classified into one of four capability classes:
+- **Informational**: explain, summarize (Advisory)
+- **Navigational**: locate, deep-link (Advisory, Ops)
+- **Transactional**: create, update, trigger (Actions, confirmation required)
+- **Compliance Intelligence**: cross-check, flag, surface findings (Ops read, Actions write)
+
+This classification drives routing, card selection, and audit trail behavior.
+
+### Confirmation Flow (All Write Operations)
+
+```
+User request → Router → Actions agent → ConfirmActionCard → User confirms → Bridge API → Odoo write → Chatter audit note
+                                          ↓ (cancel)
+                                     No action taken
+```
+
+The `ConfirmActionCard` is mandatory for all write operations regardless of surface (Teams, Odoo Widget, or programmatic API with human-in-the-loop).
+
+## n8n orchestration boundary
+
+n8n is the asynchronous connector and automation layer, not the primary assistant runtime and not the source of tax/compliance truth.
+
+Use n8n for:
+- delayed or scheduled automations
+- external notifications
+- connector-heavy fan-out/fan-in flows
+- document/package delivery
+- webhook-triggered side effects
+- human approval relay plumbing where Teams/email/chat integrations are needed
+
+Do not use n8n for:
+- canonical workflow state
+- tax-rule truth
+- compliance decision authority
+- primary conversational routing
+- durable accounting/business object ownership

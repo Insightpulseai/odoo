@@ -233,3 +233,44 @@ Routes requests to the correct agent without LLM inference:
 6. All agent invocations produce App Insights telemetry with user, mode, tools, tokens, latency
 7. Multi-agent workflow (expense approval) completes end-to-end with OTel trace
 8. No additional Foundry agents created — all modes use `ipai-odoo-copilot-azure`
+
+---
+
+## AFC Parity — Capability Class Mapping
+
+Aligned with SAP Joule benchmark capability classes. Every agent response is classified:
+
+| Capability Class | Description | Agent | Write Access | Confirmation Required |
+|---|---|---|---|---|
+| **Informational** | Explain rules, deadlines, statuses, penalties, rates | Advisory | None | No |
+| **Navigational** | Locate records, deep-link to Odoo screens, surface blockers | Advisory, Ops | None | No |
+| **Transactional** | Create/update records, trigger state transitions, generate artifacts | Actions | Bounded CRUD | Yes (Adaptive Card) |
+| **Compliance Intelligence** | Cross-check data quality, surface findings, flag gaps | Ops (read), Actions (write) | Findings only | Yes for writes |
+
+### Channel-Surface Rules
+
+| Channel | Default Agent | Allowed Capability Classes | Card Surfaces |
+|---|---|---|---|
+| Teams (user DM) | Advisory | Informational, Navigational | NavigationCard, DeadlineAlertCard |
+| Teams (#tax-compliance) | Ops | Informational, Navigational, Compliance Intelligence (read) | ComplianceBriefingCard, FindingCard |
+| Odoo Widget | Actions (gated) | All | ConfirmActionCard, TaskCard, FindingCard |
+| APIM (programmatic) | Router decides | All | JSON responses (no cards) |
+
+### Confirmation Card Requirement
+
+All write operations surfaced to users through Teams or Odoo Widget MUST present a `ConfirmActionCard` (Adaptive Card v1.4) before execution. The card displays:
+- Action description
+- Target record (model + ID)
+- Payload summary
+- Yes/No buttons
+
+Card JSON: `agents/contracts/ui/confirm_action_card.json`
+Card index: `agents/contracts/ui/adaptive_cards_index.yaml`
+
+### Bridge API Boundary
+
+Agent-to-Odoo communication uses a narrow OpenAPI bridge, NOT direct JSON-RPC:
+- OpenAPI spec: `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml`
+- Gateway: Azure APIM (`apim-ipai-dev.azure-api.net/odoo`)
+- Auth: `X-IPAI-Key` header (API key via Azure Key Vault)
+- Backend: Azure Function or FastAPI, translates to Odoo JSON-RPC internally

@@ -81,3 +81,64 @@
 - [ ] **7.4** Enable App Insights tracing for BIR domain
 - [ ] **7.5** Test graceful degradation when BIR knowledge store unavailable
 - [ ] **7.6** End-to-end: BIR request → APIM → Router → Advisory/Actions → Odoo
+
+## AFC Parity — Bridge & Contract Tasks
+
+### Wave 3A: Bridge OpenAPI Contract
+- [x] **3A.1** Create `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml` with narrow endpoint spec
+- [ ] **3A.2** Implement Azure Function / FastAPI bridge for read endpoints
+- [ ] **3A.3** Configure APIM policy for `apim-ipai-dev.azure-api.net/odoo/*`
+- [ ] **3A.4** Implement `getComplianceFindings` bridge endpoint
+- [ ] **3A.5** Implement `getComplianceTasks` bridge endpoint
+- [ ] **3A.6** Implement `getCompliancePeriods` bridge endpoint
+- [ ] **3A.7** Test: bridge returns correct data, APIM auth enforced
+
+### Wave 3B: Compliance Check Registry
+- [x] **3B.1** Create `infra/ssot/tax/compliance_check_catalog.yaml` with 12 checks (CI-001 to CI-012)
+- [ ] **3B.2** Implement check execution method on `tax.compliance.period`
+- [ ] **3B.3** Wire each check to its `query_source` Odoo model
+- [ ] **3B.4** Persist findings as `tax.compliance.finding` records
+- [ ] **3B.5** Test: all 12 checks execute and produce correct findings
+
+### Wave 3C: Narrow Write Operations
+- [x] **3C.1** Create `agents/contracts/ui/confirm_action_card.json` (Adaptive Card v1.4)
+- [ ] **3C.2** Implement `updateComplianceTask` write endpoint in bridge
+- [ ] **3C.3** Implement `createComplianceFinding` write endpoint in bridge
+- [ ] **3C.4** Implement `postChatterNote` write endpoint in bridge
+- [ ] **3C.5** Wire confirmation card presentation before all writes
+- [ ] **3C.6** Test: write blocked without confirmation, chatter note posted on every write
+
+### Wave 5A: Teams Card Surfaces
+- [x] **5A.1** Create `agents/contracts/ui/adaptive_cards_index.yaml` with 6 card definitions
+- [ ] **5A.2** Implement ComplianceBriefingCard rendering in agent
+- [ ] **5A.3** Implement FindingCard with Create Finding + View buttons
+- [ ] **5A.4** Implement TaskCard with Mark Complete + Reassign buttons
+- [ ] **5A.5** Implement DeadlineAlertCard proactive DM
+- [ ] **5A.6** Configure Teams channel integration for #tax-compliance
+- [ ] **5A.7** Test: cards render correctly, button actions route through bridge
+
+### Wave 5B: Odoo Widget Integration
+- [ ] **5B.1** Add BIR compliance panel to `ipai_ai_copilot` OWL widget
+- [ ] **5B.2** Render Adaptive Cards in Odoo web client context
+- [ ] **5B.3** Test: same card JSON works in both Teams and Odoo
+
+### Prompt & Knowledge Refactor
+- [ ] **P.1** Refactor Tax Pulse agent instructions to reference externalized knowledge sources
+- [ ] **P.2** Remove any hardcoded tax rules from prompt templates
+- [ ] **P.3** Add `compliance_check_catalog.yaml` as SSOT reference in agent instructions
+- [ ] **P.4** Validate grounding: agent cites AI Search sources, not embedded knowledge
+
+### Existing Module Mapping
+- [x] **M.1** Update `infra/ssot/agents/tax_pulse_tool_contracts.yaml` with agent metadata and module mapping
+- [ ] **M.2** Verify `ipai_bir_tax_compliance` owns compliance checks and findings
+- [ ] **M.3** Verify `ipai_bir_notifications` owns deadline alerts and proactive notifications
+- [ ] **M.4** Verify `ipai_finance_ppm` owns close orchestration tasks
+- [ ] **M.5** Verify `ipai_odoo_copilot` owns copilot runtime and card dispatch
+
+## Workstream — n8n alignment
+
+- [ ] N.1 Document which current Odoo interactions can use the native n8n Odoo node
+- [ ] N.2 Identify gaps that require HTTP Request/custom bridge instead of native Odoo node
+- [ ] N.3 Define approved async automations for Tax Pulse (alerts, reminders, package delivery, escalation)
+- [ ] N.4 Define which write actions remain approval-gated via Foundry/Odoo instead of direct n8n mutation
+- [ ] N.5 Add n8n webhook/event patterns for task-state-driven notifications

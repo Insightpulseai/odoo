@@ -122,3 +122,138 @@
 | eFPS XML schema undocumented | Reverse-engineer from BIR sample files; validate incrementally |
 | Knowledge store lag on new regulations | Manual knowledge update process; flag stale citations |
 | Approval workflow complexity | Use Odoo's native `mail.activity` first; escalate to Agent Framework only if needed |
+
+---
+
+## AFC Parity — Additional Phases
+
+The following phases extend the original 7-wave plan with AFC parity requirements from the copilot agent framework analysis.
+
+### Wave 1A: Knowledge Grounding (Azure AI Search)
+
+**Goal**: Externalize all BIR tax knowledge into Azure AI Search for RAG grounding.
+
+**Files**:
+- Azure AI Search index `ipai-ph-tax-knowledge` with content:
+  - Odoo 19 accounting docs
+  - BIR forms catalog (all form types, requirements, deadlines)
+  - BIR Revenue Regulations (full text)
+  - Internal SOPs and compliance procedures
+
+**Dependencies**: Wave 1 (knowledge ingestion creates raw content)
+
+**Verification**:
+- Advisory agent answers BIR questions with grounded citations from AI Search
+- Knowledge freshness: index rebuild on RR/RMO updates
+
+### Wave 3A: Read-Only Bridge API
+
+**Goal**: Implement the narrow OpenAPI bridge between Foundry agents and Odoo.
+
+**Files**:
+- `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml` — OpenAPI spec (COMPLETE)
+- Azure Function / FastAPI implementation for bridge endpoints
+- APIM policy for `apim-ipai-dev.azure-api.net/odoo/*` routes
+
+**Endpoints (read)**:
+- `GET /compliance_findings` — retrieve findings by period/state
+- `GET /compliance_tasks` — retrieve tasks
+- `GET /compliance_periods` — retrieve periods
+- Read endpoints for invoices, tax summaries, withholding lines, reports
+
+**Dependencies**: Wave 3 (Odoo models must exist)
+
+**Verification**:
+- Bridge returns correct data for each endpoint
+- APIM auth enforced (X-IPAI-Key required)
+- No direct JSON-RPC calls from agent
+
+### Wave 3B: Compliance Check Execution
+
+**Goal**: Agent runs compliance checks from the check catalog against live Odoo data.
+
+**Files**:
+- `infra/ssot/tax/compliance_check_catalog.yaml` — check registry (COMPLETE)
+- Bridge endpoint for check execution
+- Odoo method on `tax.compliance.period` to run checks
+
+**Verification**:
+- Each of 12 checks (CI-001 through CI-012) executes and returns findings
+- Findings are persisted as `tax.compliance.finding` records in Odoo
+- High/critical severity findings trigger notification
+
+### Wave 3C: Narrow Write Operations
+
+**Goal**: Enable Phase 1 write surface through the bridge with confirmation.
+
+**Endpoints (write)**:
+- `PATCH /compliance_tasks/{id}` — update state, assignee, completion note
+- `POST /compliance_findings` — create new finding
+- `POST /chatter/{model}/{id}` — post audit note
+
+**Confirmation requirement**: All writes present `ConfirmActionCard` to user before execution.
+
+**Files**:
+- `agents/contracts/ui/confirm_action_card.json` — Adaptive Card JSON (COMPLETE)
+- Bridge write endpoint implementations
+- Chatter note posting for audit trail
+
+**Dependencies**: Wave 3A (bridge exists), Wave 3 (Odoo models exist)
+
+**Verification**:
+- Write blocked without confirmation
+- Chatter note posted on every write
+- Audit trail visible in Odoo mail thread
+
+### Wave 5A: Teams Card Surfaces
+
+**Goal**: Surface compliance data in Microsoft Teams via Adaptive Cards.
+
+**Files**:
+- `agents/contracts/ui/adaptive_cards_index.yaml` — card index (COMPLETE)
+- Teams channel integration for `#tax-compliance`
+- Proactive DM for deadline alerts
+
+**Cards**:
+- `ComplianceBriefingCard` — period summary posted to channel
+- `FindingCard` — individual finding with Create/View buttons
+- `TaskCard` — task with Mark Complete/Reassign buttons
+- `DeadlineAlertCard` — proactive countdown DM
+
+**Dependencies**: Wave 5 (task orchestration), Wave 3C (write bridge)
+
+**Verification**:
+- Cards render correctly in Teams
+- Button actions route through bridge with confirmation
+- Proactive alerts fire on schedule
+
+### Wave 5B: Odoo Widget Integration
+
+**Goal**: Surface Tax Pulse capabilities in the Odoo web client via `ipai_ai_copilot` widget.
+
+**Files**:
+- Widget integration in `ipai_ai_copilot` for BIR-specific panels
+- Card rendering in Odoo OWL components
+
+**Dependencies**: Wave 5A (card definitions exist)
+
+**Verification**:
+- Compliance briefing renders in Odoo widget
+- Confirmation cards work in Odoo context
+- Same card JSON used across Teams and Odoo
+
+### Wave 7A: Production Hardening
+
+**Goal**: Full production readiness for Tax Pulse capability pack.
+
+**Checklist**:
+- APIM rate limiting configured for bridge endpoints
+- App Insights custom dimensions for BIR domain (check_id, form_code, severity)
+- Graceful degradation when AI Search index unavailable
+- Prompt versioning for Tax Pulse instructions
+- Compliance check catalog schema validation in CI
+
+**Verification**:
+- Load test: 100 concurrent compliance check requests
+- Failover: AI Search down -> agent responds with cached knowledge
+- Tracing: end-to-end trace from Teams message to Odoo write

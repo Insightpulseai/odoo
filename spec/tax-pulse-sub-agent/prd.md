@@ -125,3 +125,72 @@ Modeled after Odoo 19 PLM approval patterns:
 - Hardcode rates in Python (use externalized JSON)
 - Generate tax advice without grounding citations
 - Allow Advisory to trigger compute/file operations
+
+---
+
+## AFC Parity — Compliance Check Catalog
+
+Tax Pulse compliance intelligence is driven by a machine-readable check catalog, not hardcoded prompt logic.
+
+**SSOT**: `infra/ssot/tax/compliance_check_catalog.yaml`
+
+The catalog defines 12 checks (CI-001 through CI-012) covering:
+- Missing EWT on vendor bills (CI-001)
+- Output/Input VAT vs SLSP gaps (CI-002, CI-003)
+- Compensation WHT remittance (CI-004)
+- Ungenerated BIR 2307 certificates (CI-005)
+- ATC code completeness (CI-006)
+- Filing deadline countdown (CI-007)
+- Overdue compliance tasks (CI-008)
+- DST on applicable documents (CI-009)
+- QAP/SAWT completeness (CI-010, CI-011)
+- Period completion status (CI-012)
+
+Each check specifies: `check_id`, `severity`, `trigger_type`, `query_source` (Odoo model), `capability_class`, and `requires_human_review`.
+
+## BIR Tool Inventory via Odoo Bridge
+
+Agent tools do NOT call Odoo JSON-RPC directly. All tool calls route through a narrow OpenAPI bridge:
+
+```
+Foundry Agent -> APIM Gateway -> Bridge API -> Odoo JSON-RPC
+```
+
+**Bridge OpenAPI spec**: `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml`
+
+Phase 1 write surface is intentionally narrow:
+- `updateComplianceTask` — state, assignee, completion_note
+- `createComplianceFinding` — new finding from compliance check
+- `postChatterNote` — audit trail on any Odoo record
+
+Deferred (not Phase 1): `uploadAttachment`, `genericRecordMutation`, `directFilingFlags`
+
+## Externalized Tax Truth
+
+Tax computation rules, rates, and BIR regulations are NOT embedded in agent prompts or instructions. They are externalized to:
+
+| Source | Type | Content |
+|---|---|---|
+| `data/rates/ph_rates_2025.json` | Versioned JSON | TRAIN brackets, EWT, FWT, corporate, VAT rates |
+| `data/rules/vat.rules.yaml` | JSONLogic | 8 VAT computation rules |
+| `data/rules/ewt.rules.yaml` | JSONLogic | 11 EWT computation rules |
+| `infra/ssot/tax/compliance_check_catalog.yaml` | SSOT YAML | 12 compliance intelligence checks |
+| Azure AI Search index `ipai-ph-tax-knowledge` | RAG | BIR regulations, form guides, SOPs |
+
+This ensures the agent can be updated without redeploying prompts, and tax truth is auditable and version-controlled.
+
+## Module Ownership
+
+| Concern | Owning Module |
+|---|---|
+| Compliance checks, findings, periods | `ipai_bir_tax_compliance` |
+| Deadline alerts, proactive notifications | `ipai_bir_notifications` |
+| Month-end close orchestration | `ipai_finance_ppm` |
+| Copilot runtime, tool dispatch, cards | `ipai_odoo_copilot` |
+
+## Execution surfaces
+
+- Odoo: canonical compliance objects, tasks, findings, approvals, evidence
+- Foundry / Agent Framework: reasoning, guidance, routing, bounded action planning
+- n8n: asynchronous automation, notification relays, connector workflows, package movement
+- Databricks: analytical marts, monitoring signals, forecasting, status intelligence
