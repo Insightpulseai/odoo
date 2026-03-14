@@ -62,11 +62,52 @@ foundry:
 # Consolidation Doctrine
 # ---------------------------------------------------------------------------
 doctrine: >
-  One Foundry agent. One Odoo bridge module. Five capability modes.
+  One Foundry agent. One Odoo bridge module. Three logical agents + one router workflow.
+  Foundry is the control plane (prompt agent, datasets, evaluations, tracing).
+  Agent Framework is the execution plane (ops agent, actions agent, router workflow).
+  APIM is the production front door. Capability packs (Databricks, fal, Marketing)
+  attach inside agents — they are never standalone agents.
   All AI surface area routes through Microsoft Foundry as the single
-  inference gateway. No direct OpenAI, Gemini, or Supabase LLM calls
-  from Odoo modules. The Foundry agent is the only AI endpoint.
+  inference gateway. No direct OpenAI, Gemini, or Supabase LLM calls.
   Agent tools connect via MCP, OpenAPI, or A2A protocols.
+
+# ---------------------------------------------------------------------------
+# Target State (3 agents + 1 workflow)
+# ---------------------------------------------------------------------------
+# Canonical doc: docs/architecture/COPILOT_TARGET_STATE.md
+# SSOT matrices: infra/ssot/agents/agent_capability_matrix.yaml
+#                infra/ssot/platform/agent_ingress_matrix.yaml
+# Spec kit:      spec/odoo-copilot-agent-framework/
+target_state:
+  components:
+    - name: ipai-odoo-copilot-advisory
+      form: foundry_prompt_agent
+      plane: control
+      write_access: none
+      packs: [databricks_intelligence, fal_creative_production, marketing_strategy]
+
+    - name: ipai-odoo-copilot-ops
+      form: agent_framework_agent
+      plane: execution
+      write_access: none
+      packs: [databricks_intelligence, fal_creative_production, marketing_strategy]
+
+    - name: ipai-odoo-copilot-actions
+      form: agent_framework_agent
+      plane: execution
+      write_access: bounded_crud
+      packs: [databricks_intelligence, fal_creative_production]
+
+    - name: ipai-odoo-copilot-router
+      form: agent_framework_workflow
+      plane: execution
+      write_access: none
+      packs: [databricks_intelligence, fal_creative_production]
+
+  production_ingress: apim_ai_gateway
+  physical_agents: 1
+  logical_agents: 3
+  workflows: 1
 
 # ---------------------------------------------------------------------------
 # Capability Modes (single agent, five modes)

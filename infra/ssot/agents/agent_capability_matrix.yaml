@@ -1,0 +1,120 @@
+version: 1.0.0
+system: odoo_copilot_foundry
+components:
+  - name: ipai-odoo-copilot-advisory
+    form: foundry_prompt_agent
+    purpose: user_facing_grounded_qa
+    capability_packs:
+      - marketing_strategy_and_insight
+      - databricks_intelligence
+    tools:
+      - azure_ai_search
+      - foundry_knowledge
+    allowed_actions:
+      - explain
+      - summarize
+      - recommend
+      - compare
+      - handoff
+    blocked_actions:
+      - writes
+      - admin_security_changes
+      - finance_execution
+      - direct_publish_export
+    evals:
+      system:
+        - task_completion
+        - task_adherence
+        - intent_resolution
+        - relevance
+        - groundedness_optional
+
+  - name: ipai-odoo-copilot-ops
+    form: agent_framework_agent
+    purpose: internal_read_only_diagnostics
+    capability_packs:
+      - databricks_intelligence
+      - marketing_strategy_and_insight
+    tools:
+      - odoo_read_only_ops
+      - databricks_monitoring_read
+      - infra_runtime_read
+    allowed_actions:
+      - inspect
+      - diagnose
+      - compare_state
+      - summarize_incidents
+      - recommend_remediation
+    blocked_actions:
+      - record_mutation
+      - secret_changes
+      - role_changes
+      - uncontrolled_job_execution
+    evals:
+      system:
+        - task_completion
+        - task_adherence
+      process:
+        - tool_selection
+        - tool_call_success
+        - tool_output_utilization
+
+  - name: ipai-odoo-copilot-actions
+    form: agent_framework_agent
+    purpose: controlled_execution_and_bounded_writes
+    capability_packs:
+      - databricks_intelligence
+      - fal_creative_production
+    tools:
+      - odoo_approved_write_tools
+      - databricks_approved_job_actions
+      - fal_approved_generation_actions
+      - evidence_writer
+    allowed_actions:
+      - create_update_allowed_records
+      - trigger_approved_jobs
+      - launch_approved_creative_runs
+      - prepare_exports
+      - write_evidence
+    blocked_actions:
+      - unrestricted_writes
+      - destructive_ops
+      - policy_bypass
+      - silent_batch_execution
+    evals:
+      process:
+        - tool_selection
+        - tool_input_accuracy
+        - tool_call_success
+      safety:
+        - approval_compliance
+        - unauthorized_action_refusal
+
+  - name: ipai-odoo-copilot-router
+    form: agent_framework_workflow
+    purpose: deterministic_routing_approvals_handoffs
+    capability_packs:
+      - databricks_intelligence
+      - fal_creative_production
+    tools:
+      - workflow_graph
+      - approval_steps
+      - evidence_correlation
+    allowed_actions:
+      - route
+      - pause_for_approval
+      - resume
+      - handoff
+      - checkpoint
+      - collect_trace_context
+    blocked_actions:
+      - free_form_reasoning
+      - broad_vendor_logic
+      - direct_domain_mutation
+    evals:
+      process:
+        - routing_correctness
+        - handoff_success
+        - approval_compliance
+      system:
+        - end_to_end_task_completion
