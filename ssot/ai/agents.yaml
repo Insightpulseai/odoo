@@ -3,7 +3,7 @@
 # Cross-referenced by: models.yaml, policies.yaml, prompts.yaml
 
 agents:
-  # --- Physical Agent (Azure Foundry) ---
+  # --- Physical Agent (Azure Foundry) — THE ONLY COPILOT ---
   ipai-odoo-copilot-azure:
     type: physical
     runtime: azure-foundry
@@ -69,3 +69,18 @@ agents:
     write_access: draft-then-approve   # v1: stubbed
     source_refs:
       - source-odoo-knowledge
+
+  # --- DEPRECATED Agent (Legacy — DO NOT EXTEND) ---
+  ipai-ai-copilot-legacy:
+    type: physical
+    runtime: gemini-vercel-bridge   # DEPRECATED runtime
+    status: deprecated
+    deprecated_date: "2026-03-13"
+    replaced_by: ipai-odoo-copilot-azure
+    contract_ref: C-30              # Copilot Runtime Selection Contract
+    odoo_module: ipai_ai_copilot    # installable: True (frozen, dependency-only)
+    note: >
+      Legacy copilot using Gemini via Vercel bridge + Supabase pgvector.
+      Frozen — no new features, tools, or integrations.
+      Remains installable only because ipai_workspace_core and
+      ipai_ai_channel_actions depend on it.

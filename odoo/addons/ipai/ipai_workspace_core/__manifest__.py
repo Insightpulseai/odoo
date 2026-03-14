@@ -13,7 +13,7 @@
         "base",
         "mail",
         "ipai_foundation",
-        "ipai_ai_copilot",
+        "ipai_ai_copilot",  # DEPRECATED — migrate to ipai_odoo_copilot (C-30)
     ],
     "data": [
         "security/security.xml",
