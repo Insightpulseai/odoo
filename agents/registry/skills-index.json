@@ -1,5 +1,5 @@
 {
-  "version": "1.2",
+  "version": "1.3",
   "updated": "2026-03-15",
   "description": "Machine-readable skill index. Agents query this first, then lazy-load full skill MD. Sync to ops.skills in Supabase for control plane discovery.",
   "skills": [
@@ -208,6 +208,16 @@
       "tags": ["marketplace", "saas", "macc", "co-sell", "pricing", "metering", "private-offers"],
       "source_url": "https://learn.microsoft.com/partner-center/marketplace-offers",
       "applies_to": ["web", "ops-platform", "infra", ".github"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "odoo-services-ee-parity",
+      "name": "Odoo 19 Services — EE Parity",
+      "domain": "odoo_ce",
+      "path": "skills/odoo-services-ee-parity/SKILL.md",
+      "tags": ["odoo", "ee-parity", "helpdesk", "planning", "timesheets", "field-service", "project"],
+      "source_url": "https://www.odoo.com/documentation/19.0/applications/services.html",
+      "applies_to": ["odoo", "lakehouse", "agents"],
       "last_validated": "2026-03-15"
     }
   ],
