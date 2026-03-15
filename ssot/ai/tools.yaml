@@ -29,3 +29,10 @@ tools:
 
 # v1 status: zero tools by design.
 # All agent modes operate via instructions + knowledge grounding only.
+
+# --- Copilot tool contracts (business-schema layer) ---
+# Finance/expense copilot tools are defined in:
+#   ssot/odoo/odoo_copilot_finance_tools.yaml
+# Entity contracts backing those tools:
+#   ssot/odoo/odoo_finance_entities.yaml
+#   ssot/odoo/odoo_expense_entities.yaml
