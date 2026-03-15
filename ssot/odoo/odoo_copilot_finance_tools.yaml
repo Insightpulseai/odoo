@@ -1,0 +1,235 @@
+version: 1
+namespace: odoo.copilot.finance_tools
+source:
+  kind: tool_contract
+  entity_contracts:
+    - ssot/odoo/odoo_finance_entities.yaml
+    - ssot/odoo/odoo_expense_entities.yaml
+description: >
+  Copilot tool definitions for Odoo 19 finance and expense workflows.
+  Each tool maps to one or more business entities from the finance/expense
+  entity contracts and defines the copilot's actionable surface area.
+
+tools:
+  # --- Invoice tools ---
+  get_invoice:
+    label: Get Invoice
+    description: Retrieve a customer invoice by ID or number.
+    entity: invoice
+    operation: read
+    inputs:
+      - { name: invoice_id, type: string, required: false }
+      - { name: invoice_number, type: string, required: false }
+    outputs:
+      - { name: invoice, type: object, entity_ref: invoice }
+    constraints:
+      - "At least one of invoice_id or invoice_number must be provided."
+
+  list_invoices:
+    label: List Invoices
+    description: List customer invoices with optional filters.
+    entity: invoice
+    operation: search
+    inputs:
+      - { name: partner_id, type: string, required: false }
+      - { name: state, type: enum, enum_ref: document_state, required: false }
+      - { name: payment_state, type: enum, enum_ref: payment_state, required: false }
+      - { name: date_from, type: date, required: false }
+      - { name: date_to, type: date, required: false }
+      - { name: limit, type: integer, required: false, default: 20 }
+    outputs:
+      - { name: invoices, type: "array[object]", entity_ref: invoice }
+
+  create_invoice:
+    label: Create Invoice
+    description: Create a new customer invoice draft.
+    entity: invoice
+    operation: create
+    inputs:
+      - { name: partner_id, type: string, required: true }
+      - { name: invoice_date, type: date, required: true }
+      - { name: journal_id, type: string, required: false }
+      - { name: currency_id, type: string, required: false }
+      - { name: payment_terms_id, type: string, required: false }
+      - { name: lines, type: "array[object]", required: true }
+    outputs:
+      - { name: invoice_id, type: string }
+    constraints:
+      - "Creates in draft state only. Posting requires explicit confirm action."
+
+  # --- Vendor bill tools ---
+  get_vendor_bill:
+    label: Get Vendor Bill
+    description: Retrieve a vendor bill by ID or number.
+    entity: vendor_bill
+    operation: read
+    inputs:
+      - { name: bill_id, type: string, required: false }
+      - { name: bill_number, type: string, required: false }
+    outputs:
+      - { name: bill, type: object, entity_ref: vendor_bill }
+
+  list_vendor_bills:
+    label: List Vendor Bills
+    description: List vendor bills with optional filters.
+    entity: vendor_bill
+    operation: search
+    inputs:
+      - { name: vendor_id, type: string, required: false }
+      - { name: state, type: enum, enum_ref: document_state, required: false }
+      - { name: date_from, type: date, required: false }
+      - { name: date_to, type: date, required: false }
+      - { name: limit, type: integer, required: false, default: 20 }
+    outputs:
+      - { name: bills, type: "array[object]", entity_ref: vendor_bill }
+
+  # --- Payment tools ---
+  register_payment:
+    label: Register Payment
+    description: Register a payment against an invoice or vendor bill.
+    entity: payment
+    operation: create
+    inputs:
+      - { name: journal_id, type: string, required: true }
+      - { name: payment_amount, type: number, required: true }
+      - { name: payment_date, type: date, required: false }
+      - { name: payment_method, type: string, required: false }
+      - { name: partner_id, type: string, required: false }
+      - { name: memo, type: string, required: false }
+    outputs:
+      - { name: payment_id, type: string }
+    constraints:
+      - "Respects Odoo ACLs and approval workflows."
+
+  # --- Bank reconciliation tools ---
+  list_unreconciled_transactions:
+    label: List Unreconciled Transactions
+    description: List bank transactions that have not yet been reconciled.
+    entity: bank_transaction
+    operation: search
+    inputs:
+      - { name: journal_id, type: string, required: false }
+      - { name: date_from, type: date, required: false }
+      - { name: date_to, type: date, required: false }
+      - { name: limit, type: integer, required: false, default: 50 }
+    outputs:
+      - { name: transactions, type: "array[object]", entity_ref: bank_transaction }
+    constraints:
+      - "Only returns transactions where is_reconciled = false."
+
+  suggest_reconciliation:
+    label: Suggest Reconciliation Match
+    description: Suggest matching documents for a bank transaction.
+    entity: bank_transaction
+    operation: suggest
+    inputs:
+      - { name: transaction_id, type: string, required: true }
+    outputs:
+      - { name: suggestions, type: "array[object]" }
+    constraints:
+      - "Returns ranked candidates. Does not auto-reconcile."
+
+  # --- Expense tools ---
+  create_expense:
+    label: Create Expense
+    description: Log an individual expense line for an employee.
+    entity: expense
+    operation: create
+    inputs:
+      - { name: category_id, type: string, required: true }
+      - { name: employee_id, type: string, required: true }
+      - { name: paid_by, type: enum, enum_ref: paid_by, required: true }
+      - { name: expense_date, type: date, required: true }
+      - { name: total, type: number, required: true }
+      - { name: quantity, type: number, required: false }
+      - { name: notes, type: string, required: false }
+    outputs:
+      - { name: expense_id, type: string }
+
+  list_expenses:
+    label: List Expenses
+    description: List expenses with optional filters.
+    entity: expense
+    operation: search
+    inputs:
+      - { name: employee_id, type: string, required: false }
+      - { name: status, type: enum, enum_ref: expense_status, required: false }
+      - { name: date_from, type: date, required: false }
+      - { name: date_to, type: date, required: false }
+      - { name: limit, type: integer, required: false, default: 20 }
+    outputs:
+      - { name: expenses, type: "array[object]", entity_ref: expense }
+
+  create_expense_report:
+    label: Create Expense Report
+    description: Group expenses into a report for submission and approval.
+    entity: expense_report
+    operation: create
+    inputs:
+      - { name: summary, type: string, required: true }
+      - { name: employee_id, type: string, required: true }
+      - { name: expense_line_ids, type: "array[string]", required: true }
+    outputs:
+      - { name: report_id, type: string }
+    constraints:
+      - "Creates in draft state. Submission requires explicit submit action."
+
+  submit_expense_report:
+    label: Submit Expense Report
+    description: Submit a draft expense report for manager approval.
+    entity: expense_report
+    operation: action
+    inputs:
+      - { name: report_id, type: string, required: true }
+    outputs:
+      - { name: state, type: enum, enum_ref: expense_status }
+    constraints:
+      - "Only draft reports can be submitted."
+
+  get_expense_report:
+    label: Get Expense Report
+    description: Retrieve an expense report with its lines and status.
+    entity: expense_report
+    operation: read
+    inputs:
+      - { name: report_id, type: string, required: true }
+    outputs:
+      - { name: report, type: object, entity_ref: expense_report }
+      - { name: expenses, type: "array[object]", entity_ref: expense }
+
+  # --- Analytic tools ---
+  list_analytic_accounts:
+    label: List Analytic Accounts
+    description: List analytic accounts for cost tracking and reporting.
+    entity: analytic_account
+    operation: search
+    inputs:
+      - { name: plan_id, type: string, required: false }
+      - { name: customer_id, type: string, required: false }
+      - { name: limit, type: integer, required: false, default: 50 }
+    outputs:
+      - { name: accounts, type: "array[object]", entity_ref: analytic_account }
+
+  # --- Account / journal lookup tools ---
+  list_accounts:
+    label: List Chart of Accounts
+    description: List general ledger accounts from the chart of accounts.
+    entity: account
+    operation: search
+    inputs:
+      - { name: account_type, type: string, required: false }
+      - { name: is_active, type: boolean, required: false, default: true }
+      - { name: limit, type: integer, required: false, default: 100 }
+    outputs:
+      - { name: accounts, type: "array[object]", entity_ref: account }
+
+  list_journals:
+    label: List Journals
+    description: List accounting journals.
+    entity: journal
+    operation: search
+    inputs:
+      - { name: journal_type, type: string, required: false }
+      - { name: limit, type: integer, required: false, default: 20 }
+    outputs:
+      - { name: journals, type: "array[object]", entity_ref: journal }

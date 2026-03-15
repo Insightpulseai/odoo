@@ -1,0 +1,232 @@
+version: 1
+namespace: odoo.finance
+source:
+  kind: user_docs_contract
+  docs:
+    - https://www.odoo.com/documentation/19.0/applications/finance/accounting.html
+description: >
+  Canonical business-entity contract for Odoo 19 finance/accounting user-facing
+  objects. This is a business/schema contract for integrations, analytics,
+  copilots, and workflow modeling. It is not a claim of exact ORM/database parity.
+
+enums:
+  document_state:
+    values: [draft, submitted, approved, posted, paid, cancelled]
+  payment_state:
+    values: [not_paid, partial, in_payment, paid, reversed, legacy]
+  paid_by:
+    values: [employee, company]
+  move_type:
+    values: [out_invoice, out_refund, in_invoice, in_refund, entry]
+
+entities:
+  account:
+    label: Account
+    description: General ledger account from chart of accounts.
+    primary_key: id
+    fields:
+      - name: id
+        type: string
+        required: true
+      - name: code
+        type: string
+        required: true
+      - name: name
+        type: string
+        required: true
+      - name: account_type
+        type: string
+        required: true
+      - name: company_id
+        type: string
+        required: true
+      - name: currency_id
+        type: string
+        required: false
+      - name: is_active
+        type: boolean
+        required: true
+        default: true
+
+  journal:
+    label: Journal
+    description: Accounting journal used for invoices, bills, payments, and entries.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: name, type: string, required: true }
+      - { name: code, type: string, required: true }
+      - { name: journal_type, type: string, required: true }
+      - { name: company_id, type: string, required: true }
+      - { name: currency_id, type: string, required: false }
+      - { name: default_account_id, type: string, required: false }
+      - { name: status, type: string, required: false }
+
+  tax:
+    label: Tax
+    description: Tax configuration applied to invoice, bill, and expense lines.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: name, type: string, required: true }
+      - { name: rate, type: number, required: true }
+      - { name: tax_type, type: string, required: true }
+      - { name: company_id, type: string, required: true }
+      - { name: account_id, type: string, required: false }
+      - { name: included_in_price, type: boolean, required: true, default: false }
+      - { name: country_id, type: string, required: false }
+      - { name: is_withholding, type: boolean, required: true, default: false }
+
+  analytic_account:
+    label: Analytic Account
+    description: Analytic/project/cost-tracking account used for reporting and allocation.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: name, type: string, required: true }
+      - { name: customer_id, type: string, required: false }
+      - { name: reference, type: string, required: false }
+      - { name: plan_id, type: string, required: false }
+      - { name: company_id, type: string, required: true }
+      - { name: currency_id, type: string, required: false }
+      - { name: budget_amount, type: number, required: false }
+
+  invoice:
+    label: Customer Invoice
+    description: Outgoing invoice or credit note header.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: move_type, type: enum, enum_ref: move_type, required: true }
+      - { name: invoice_number, type: string, required: false }
+      - { name: partner_id, type: string, required: true }
+      - { name: invoice_date, type: date, required: true }
+      - { name: due_date, type: date, required: false }
+      - { name: currency_id, type: string, required: true }
+      - { name: company_id, type: string, required: true }
+      - { name: journal_id, type: string, required: true }
+      - { name: payment_terms_id, type: string, required: false }
+      - { name: payment_reference, type: string, required: false }
+      - { name: amount_untaxed, type: number, required: true }
+      - { name: amount_tax, type: number, required: true }
+      - { name: amount_total, type: number, required: true }
+      - { name: residual_amount, type: number, required: false }
+      - { name: state, type: enum, enum_ref: document_state, required: true }
+      - { name: payment_state, type: enum, enum_ref: payment_state, required: false }
+
+  invoice_line:
+    label: Customer Invoice Line
+    description: Line item within a customer invoice or refund.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: invoice_id, type: string, required: true }
+      - { name: product_id, type: string, required: false }
+      - { name: description, type: string, required: true }
+      - { name: quantity, type: number, required: true }
+      - { name: unit_price, type: number, required: true }
+      - { name: tax_ids, type: "array[string]", required: false }
+      - { name: account_id, type: string, required: false }
+      - { name: analytic_account_id, type: string, required: false }
+      - { name: line_total, type: number, required: true }
+
+  vendor_bill:
+    label: Vendor Bill
+    description: Incoming vendor bill or vendor credit note header.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: vendor_id, type: string, required: true }
+      - { name: move_type, type: enum, enum_ref: move_type, required: true }
+      - { name: bill_number, type: string, required: false }
+      - { name: bill_date, type: date, required: true }
+      - { name: due_date, type: date, required: false }
+      - { name: company_id, type: string, required: true }
+      - { name: journal_id, type: string, required: true }
+      - { name: currency_id, type: string, required: true }
+      - { name: payment_reference, type: string, required: false }
+      - { name: amount_untaxed, type: number, required: false }
+      - { name: amount_tax, type: number, required: false }
+      - { name: amount_total, type: number, required: true }
+      - { name: residual_amount, type: number, required: false }
+      - { name: state, type: enum, enum_ref: document_state, required: true }
+      - { name: payment_state, type: enum, enum_ref: payment_state, required: false }
+
+  vendor_bill_line:
+    label: Vendor Bill Line
+    description: Line item within a vendor bill or refund.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: bill_id, type: string, required: true }
+      - { name: product_id, type: string, required: false }
+      - { name: description, type: string, required: true }
+      - { name: quantity, type: number, required: true }
+      - { name: unit_price, type: number, required: true }
+      - { name: tax_ids, type: "array[string]", required: false }
+      - { name: account_id, type: string, required: true }
+      - { name: analytic_account_id, type: string, required: false }
+      - { name: line_total, type: number, required: true }
+
+  payment:
+    label: Payment
+    description: Payment or reimbursement settlement record linked to invoices, bills, or expense reports.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: journal_id, type: string, required: true }
+      - { name: payment_date, type: date, required: true }
+      - { name: payment_amount, type: number, required: true }
+      - { name: payment_currency_id, type: string, required: true }
+      - { name: payment_method, type: string, required: false }
+      - { name: memo, type: string, required: false }
+      - { name: partner_id, type: string, required: false }
+      - { name: employee_id, type: string, required: false }
+      - { name: state, type: enum, enum_ref: document_state, required: false }
+
+  bank_transaction:
+    label: Bank Transaction
+    description: Imported or manually created bank/cash line used in reconciliation.
+    primary_key: id
+    fields:
+      - { name: id, type: string, required: true }
+      - { name: journal_id, type: string, required: true }
+      - { name: transaction_date, type: date, required: true }
+      - { name: label, type: string, required: true }
+      - { name: partner_id, type: string, required: false }
+      - { name: amount, type: number, required: true }
+      - { name: currency_id, type: string, required: true }
+      - { name: is_reconciled, type: boolean, required: true, default: false }
+      - { name: matched_document_ids, type: "array[string]", required: false }
+      - { name: writeoff_account_id, type: string, required: false }
+      - { name: reconciliation_model_id, type: string, required: false }
+
+relationships:
+  - from: invoice
+    to: invoice_line
+    type: one_to_many
+    via: invoice_id
+  - from: vendor_bill
+    to: vendor_bill_line
+    type: one_to_many
+    via: bill_id
+  - from: journal
+    to: invoice
+    type: one_to_many
+    via: journal_id
+  - from: journal
+    to: vendor_bill
+    type: one_to_many
+    via: journal_id
+  - from: journal
+    to: bank_transaction
+    type: one_to_many
+    via: journal_id
+  - from: analytic_account
+    to: invoice_line
+    type: one_to_many
+    via: analytic_account_id
+  - from: analytic_account
+    to: vendor_bill_line
+    type: one_to_many
+    via: analytic_account_id
