@@ -1,5 +1,5 @@
 {
-  "version": "1.3",
+  "version": "1.4",
   "updated": "2026-03-15",
   "description": "Machine-readable skill index. Agents query this first, then lazy-load full skill MD. Sync to ops.skills in Supabase for control plane discovery.",
   "skills": [
@@ -218,6 +218,15 @@
       "tags": ["odoo", "ee-parity", "helpdesk", "planning", "timesheets", "field-service", "project"],
       "source_url": "https://www.odoo.com/documentation/19.0/applications/services.html",
       "applies_to": ["odoo", "lakehouse", "agents"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "agent-orchestration-taskbus",
+      "name": "Agent-to-Agent Orchestration & Task Bus",
+      "domain": "orchestration",
+      "path": "skills/agent-orchestration-taskbus/SKILL.md",
+      "tags": ["orchestration", "taskbus", "mcp-jobs", "a2a", "pulser", "realtime", "multi-agent"],
+      "applies_to": ["agents", "automations", "odoo", "web"],
       "last_validated": "2026-03-15"
     }
   ],
