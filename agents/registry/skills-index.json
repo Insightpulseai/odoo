@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
+  "version": "1.6",
   "updated": "2026-03-15",
   "description": "Machine-readable skill index. Agents query this first, then lazy-load full skill MD. Sync to ops.skills in Supabase for control plane discovery.",
   "skills": [
@@ -228,6 +228,16 @@
       "tags": ["foundry", "azure", "agents", "mcp", "a2a", "tool-catalog", "workflows", "responses-api"],
       "source_url": "https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry",
       "applies_to": ["agents", "infra", "automations"],
+      "last_validated": "2026-03-15"
+    },
+    {
+      "id": "databricks-tableau-connect",
+      "name": "Databricks + Tableau BI Connection",
+      "domain": "lakehouse",
+      "path": "skills/platform/databricks-tableau-connect/SKILL.md",
+      "tags": ["tableau", "databricks", "bi", "partner-connect", "unity-catalog", "odbc"],
+      "source_url": "https://learn.microsoft.com/en-us/azure/databricks/partners/bi/tableau",
+      "applies_to": ["lakehouse", "agents"],
       "last_validated": "2026-03-15"
     },
     {
