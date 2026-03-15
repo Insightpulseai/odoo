@@ -1,0 +1,246 @@
+version: 1
+namespace: odoo.integrations.databricks
+last_reviewed: "2026-03-15"
+source:
+  kind: integration_contract
+  knowledge_base: lakehouse/ssot/benchmark/databricks_apps_lakebase_kb.yaml
+  skill_contract: ssot/ai/agent_skills_databricks.yaml
+description: >
+  Integration patterns between Odoo CE/Copilot and Azure Databricks,
+  grounded in the Databricks Apps + Lakebase architecture guide.
+  Defines how Odoo operational data flows to/from the lakehouse and
+  how Odoo Copilot agents leverage Databricks capabilities.
+
+# ─────────────────────────────────────────────
+# 1. Data Flow Patterns
+# ─────────────────────────────────────────────
+data_flows:
+  odoo_to_lakehouse:
+    label: Odoo -> Lakehouse (Analytical Ingestion)
+    description: >
+      Replicate Odoo operational data into Unity Catalog Delta tables
+      for analytics, ML, and reporting. This is the forward ETL path.
+    method: n8n_cdc_or_batch
+    source: Odoo PostgreSQL (self-hosted)
+    destination: Unity Catalog Delta tables
+    pattern:
+      - n8n triggers on Odoo webhook or schedule
+      - Extracts records via Odoo XML-RPC or JSON-RPC
+      - Writes to ADLS Gen2 staging area
+      - Databricks Auto Loader or DLT ingests into Bronze/Silver/Gold
+    entities_to_replicate:
+      priority_1:
+        - account.move (invoices, bills, entries)
+        - account.move.line (journal items)
+        - account.payment
+        - hr.expense
+        - hr.expense.sheet (expense reports)
+        - account.bank.statement.line (bank transactions)
+      priority_2:
+        - account.account (chart of accounts)
+        - account.journal
+        - account.analytic.account
+        - account.tax
+        - res.partner
+        - hr.employee
+    refresh_cadence:
+      operational: every 15 minutes
+      analytical: daily
+      compliance: real-time for tax-sensitive entities
+
+  lakehouse_to_odoo:
+    label: Lakehouse -> Odoo (Reverse ETL / Insights Delivery)
+    description: >
+      Deliver analytical insights, ML predictions, and aggregated
+      metrics back into Odoo operational workflows via Lakebase.
+    method: lakebase_synced_tables
+    source: Unity Catalog Delta tables (Gold layer)
+    destination: Lakebase synced tables -> Odoo Copilot queries
+    pattern:
+      - Gold tables computed in Databricks (aggregations, predictions, features)
+      - Synced to Lakebase via managed sync pipeline
+      - Odoo Copilot agents query Lakebase for operational context
+      - No custom ETL pipeline needed
+    sync_mode_by_use_case:
+      expense_anomaly_scores: triggered
+      reconciliation_suggestions: continuous
+      financial_kpis: snapshot
+      compliance_risk_flags: continuous
+      vendor_payment_predictions: triggered
+
+  bidirectional_state:
+    label: Bidirectional State (Copilot Actions)
+    description: >
+      Odoo Copilot agents read from Lakebase (analytical context) and
+      write to Lakebase (action state), creating a closed loop between
+      analytics and operations.
+    read_path:
+      source: Lakebase synced tables
+      use: Grounding agent responses with analytical context
+      examples:
+        - "What is the reconciliation match rate this month?"
+        - "Show me expense anomalies flagged by the ML model"
+        - "What is the predicted cash position for next week?"
+    write_path:
+      destination: Lakebase app state tables
+      use: Recording agent actions and user decisions
+      examples:
+        - Agent records expense approval decision
+        - Agent logs reconciliation match acceptance
+        - Agent persists investigation thread state
+
+# ─────────────────────────────────────────────
+# 2. Agent Architecture Patterns
+# ─────────────────────────────────────────────
+agent_patterns:
+  stateful_finance_agent:
+    label: Stateful Finance Copilot Agent
+    description: >
+      Odoo Copilot agent that uses Lakebase for conversational memory
+      and analytical grounding, following the Databricks LangGraph
+      checkpointing pattern.
+    components:
+      llm: Azure OpenAI (via Odoo copilot-provider.yaml)
+      tools:
+        - Odoo XML-RPC actions (create, update, read)
+        - Unity Catalog functions (analytical queries)
+        - Lakebase queries (operational context)
+      memory: Lakebase via langgraph-checkpoint-postgres
+      orchestration: LangGraph
+      deployment: Odoo module + Databricks AI Agent Framework
+    workflow_example:
+      name: Month-end close investigation
+      steps:
+        - Agent receives "Review outstanding reconciliation items"
+        - Queries Lakebase synced table for unreconciled transactions
+        - Retrieves ML-predicted match suggestions from Gold table
+        - Presents ranked suggestions to user
+        - User approves/rejects matches
+        - Agent records decisions in Lakebase state table
+        - Agent executes approved reconciliations in Odoo
+        - Checkpoint saved; investigation resumable tomorrow
+
+  governed_tool_agent:
+    label: Governed Tool Agent (UC Functions as Odoo Tools)
+    description: >
+      Pattern for exposing Odoo data as Unity Catalog SQL functions
+      that agents can invoke with full governance, lineage, and audit.
+    pattern:
+      - Define SQL functions in Unity Catalog that query Odoo-replicated data
+      - Register functions as agent tools via unitycatalog-langchain
+      - Agent invokes tools with automatic permission checks
+      - Lineage tracked through Unity Catalog
+    example_functions:
+      - name: get_vendor_payment_history
+        description: Returns payment history for a vendor over N months
+        input: vendor_id STRING, months INTEGER
+        source: Gold table aggregating account.payment records
+      - name: get_expense_anomaly_score
+        description: Returns ML anomaly score for an expense report
+        input: expense_report_id STRING
+        source: ML inference output table
+      - name: get_close_task_status
+        description: Returns current status of month-end close tasks
+        input: period STRING
+        source: Odoo project.task replicated to Delta
+
+# ─────────────────────────────────────────────
+# 3. Security Model
+# ─────────────────────────────────────────────
+security:
+  auth_chain:
+    - layer: Odoo
+      method: Session-based auth + ACL/record rules
+      scope: Odoo UI and API access
+    - layer: n8n
+      method: API key or OAuth for Odoo XML-RPC
+      scope: Data replication triggers
+    - layer: Databricks
+      method: OAuth M2M via service principal
+      scope: Unity Catalog, Lakebase, Model Serving
+    - layer: Lakebase
+      method: OAuth token as Postgres password
+      scope: Table-level GRANT permissions
+      token_refresh: Automatic via WorkspaceClient (15-min cycle)
+
+  governance_alignment:
+    description: >
+      Unity Catalog governance aligns with Odoo ACL model. Data replicated
+      from Odoo inherits both Odoo-level permissions (at replication time)
+      and Unity Catalog permissions (at query time).
+    rules:
+      - Synced tables are read-only; agents cannot write to analytical data
+      - App state tables require explicit GRANT per service principal
+      - UC function permissions are separate from table permissions
+      - Audit trail covers both Odoo actions and Databricks queries
+
+# ─────────────────────────────────────────────
+# 4. Deployment Model
+# ─────────────────────────────────────────────
+deployment:
+  odoo_side:
+    components:
+      - ipai_ai_copilot module (Odoo agent UI)
+      - ipai_ai_core module (LLM provider abstraction)
+      - n8n workflows (data replication)
+    config:
+      - copilot-provider.yaml (Azure OpenAI settings)
+      - agent_skills_databricks.yaml (skill definitions)
+
+  databricks_side:
+    components:
+      - Lakebase instance (managed Postgres)
+      - Synced tables (analytical data -> Postgres)
+      - App state tables (agent memory + action state)
+      - Unity Catalog functions (governed tools)
+      - Model serving endpoint (if using Databricks-hosted LLM)
+    deployment_method: Databricks Asset Bundles (DABs)
+    bundle_structure:
+      - databricks.yml (targets: dev, staging, production)
+      - resources/database.yml (Lakebase instance + synced tables)
+      - resources/functions.yml (UC function definitions)
+      - agent/ (agent source code)
+
+  azure_infrastructure:
+    - Azure Databricks workspace
+    - ADLS Gen2 (lakehouse storage)
+    - Azure Key Vault (secrets for service principals)
+    - Odoo CE on Azure VM/AKS (self-hosted)
+    - n8n on Azure VM/AKS (self-hosted)
+
+# ─────────────────────────────────────────────
+# 5. Implementation Priority
+# ─────────────────────────────────────────────
+implementation_priority:
+  phase_1:
+    label: Analytical Grounding
+    description: Odoo data replicated to lakehouse, Gold tables queryable via Copilot
+    deliverables:
+      - n8n replication workflows for priority_1 entities
+      - Bronze/Silver/Gold Delta tables in Unity Catalog
+      - Lakebase synced tables for Gold layer
+      - query_lakebase_synced skill operational in Copilot
+
+  phase_2:
+    label: Governed Tools
+    description: UC functions expose analytical context as agent-callable tools
+    deliverables:
+      - 3-5 UC functions for finance context
+      - invoke_uc_function skill operational
+      - Lineage and audit visible in Unity Catalog
+
+  phase_3:
+    label: Stateful Agents
+    description: Copilot agents persist memory across sessions
+    deliverables:
+      - Lakebase checkpoint tables for LangGraph
+      - checkpoint_save and checkpoint_resume skills operational
+      - Multi-session finance workflows demonstrable
+
+  phase_4:
+    label: Closed Loop
+    description: Agents write action state back to Lakebase
+    deliverables:
+      - App state tables for agent decisions
+      - write_lakebase_state skill operational
+      - Bidirectional flow verified end-to-end
