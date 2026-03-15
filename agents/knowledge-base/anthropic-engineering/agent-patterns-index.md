@@ -265,6 +265,58 @@ This pattern maps directly to:
 
 ---
 
+---
+
+## Additional Anthropic Developer Resources
+
+### Claude Code Documentation
+
+Source: https://code.claude.com/docs
+
+| Section | Key Content | IPAI Use |
+|---------|-------------|----------|
+| **Quickstart** | Install, first task, codebase exploration | Dev onboarding |
+| **Memory** | CLAUDE.md, auto-memory, rules files | Already using extensively |
+| **Skills** | Custom commands (`/review-pr`, `/deploy-staging`) | Our 40+ skills |
+| **Hooks** | Shell commands before/after actions | Pre-commit hooks |
+| **Sub-agents** | Spawn parallel agents, lead coordinates | Agent teams |
+| **Agent SDK** | Build custom agents with Claude Code tools | Factory agent builder |
+| **MCP** | Model Context Protocol integration | 5+ MCP servers configured |
+| **GitHub Actions** | Automate PR reviews, issue triage | `claude-code.yml`, `claude-pr-review.yml` |
+| **Remote Control** | Continue sessions from phone/browser | Cross-device workflow |
+
+### Claude Cookbooks (35K stars)
+
+Source: https://github.com/anthropics/claude-cookbooks
+
+| Category | Recipes | IPAI Relevance |
+|----------|---------|----------------|
+| **Patterns/Agents** | Agent architecture patterns | **High** — factory design input |
+| **Claude Agent SDK** | Custom agent building | **High** — custom agent development |
+| **Tool Use** | Customer service agent, calculator, SQL | **High** — tool design patterns |
+| **Tool Evaluation** | Tool quality assessment | **High** — eval framework |
+| **RAG** | Retrieval augmented generation | **High** — Foundry IQ patterns |
+| **Skills** | Reusable skill patterns | **High** — skill pack design |
+| **Extended Thinking** | Chain-of-thought, reasoning | **Medium** — complex agent tasks |
+| **Multimodal** | Vision, charts, forms extraction | **Medium** — document processing |
+| **Observability** | Tracing, monitoring | **Medium** — agent observability |
+| **Classification** | Text/data classification | **Medium** — routing agents |
+| **Summarization** | Text summarization | **Medium** — report generation |
+| **Fine-tuning** | Model customization | **Low** — not using fine-tuning yet |
+| **Third-party** | Pinecone, Wikipedia, VoyageAI | **Low** — using Azure AI Search instead |
+
+### SWE-bench Verified (Benchmark Reference)
+
+Source: https://www.anthropic.com/engineering/swe-bench-sonnet
+
+Key benchmark for coding agent quality:
+- Tests ability to resolve real GitHub issues
+- Claude achieved state-of-the-art after tool description refinements
+- IPAI use: benchmark our coding-agent-from-issue workflow against SWE-bench patterns
+- Tool design quality directly impacts benchmark scores
+
+---
+
 ## Sources
 
 - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
