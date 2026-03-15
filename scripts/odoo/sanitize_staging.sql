@@ -95,3 +95,59 @@ BEGIN
     RAISE NOTICE '  Mail servers disabled: %', mail_count;
     RAISE NOTICE '  Cron jobs disabled: %', cron_count;
 END $$;
+
+-- ============================================================================
+-- ADDITIONAL ODOOSH-EQUIVALENT DEACTIVATIONS (Gap closure)
+-- ============================================================================
+
+-- 8. Remove payment processor credentials (Stripe, PayPal, etc.)
+UPDATE payment_provider
+SET state = 'disabled'
+WHERE state != 'disabled';
+
+-- 9. Remove calendar/drive sync tokens
+DELETE FROM ir_config_parameter WHERE key LIKE '%google%token%';
+DELETE FROM ir_config_parameter WHERE key LIKE '%microsoft%token%';
+DELETE FROM ir_config_parameter WHERE key LIKE '%calendar%token%';
+
+-- 10. Disable social integrations
+UPDATE ir_config_parameter
+SET value = ''
+WHERE key IN (
+    'social.facebook_app_id',
+    'social.linkedin_app_id',
+    'social.twitter_api_key',
+    'social.instagram_app_id',
+    'push_notification.firebase_api_key'
+);
+
+-- 11. Remove IAP account tokens (CE doesn't use IAP, but guard anyway)
+UPDATE ir_config_parameter
+SET value = ''
+WHERE key LIKE 'iap.%token%' OR key LIKE 'iap.%key%';
+
+-- 12. Disable /robots.txt for staging (prevent SEO penalty)
+INSERT INTO ir_config_parameter (key, value, create_uid, create_date, write_uid, write_date)
+VALUES ('website.robots_txt_disabled', 'true', 1, NOW(), 1, NOW())
+ON CONFLICT (key) DO UPDATE SET value = 'true', write_date = NOW();
+
+-- 13. Set ODOO_VERSION parameter
+INSERT INTO ir_config_parameter (key, value, create_uid, create_date, write_uid, write_date)
+VALUES ('ipai.odoo_version', '19.0', 1, NOW(), 1, NOW())
+ON CONFLICT (key) DO UPDATE SET value = '19.0', write_date = NOW();
+
+-- 14. Report additional sanitization counts
+DO $$
+DECLARE
+    payment_count INTEGER;
+    token_count INTEGER;
+BEGIN
+    SELECT count(*) INTO payment_count FROM payment_provider WHERE state = 'disabled';
+    SELECT count(*) INTO token_count FROM ir_config_parameter WHERE value = '' AND key LIKE '%token%';
+
+    RAISE NOTICE 'Additional sanitization:';
+    RAISE NOTICE '  Payment providers disabled: %', payment_count;
+    RAISE NOTICE '  Integration tokens cleared: %', token_count;
+    RAISE NOTICE '  Robots.txt disabled: true';
+    RAISE NOTICE '  ODOO_STAGE set to: staging';
+END $$;
