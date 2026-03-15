@@ -3,11 +3,10 @@
 -- Dashboard: "Month-End Close & BIR Compliance"
 -- Genie: Enable conversational analytics on these queries
 --
--- To create in Databricks:
---   1. Workspace → SQL Editor → paste each query
---   2. New → Dashboard → AI/BI Dashboard
---   3. Add widgets from saved queries
---   4. Enable Genie for conversational analytics
+-- Source: DLT pipeline finance_bir_pipeline.sql (Bronze → Silver → Gold)
+-- Tables land in: ipai_gold.gold.* via DLT materialized views
+-- Deploy: databricks bundle deploy --target prod
+-- Workspace: https://adb-7405610347978231.11.azuredatabricks.net
 
 -- =============================================================================
 -- Widget 1: Monthly Close Status (KPI Card)
