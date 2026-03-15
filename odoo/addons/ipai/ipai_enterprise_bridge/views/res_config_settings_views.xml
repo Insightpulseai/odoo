@@ -49,6 +49,102 @@
                             </div>
                         </div>
                     </setting>
+                    <setting string="API Keys" help="Manage API keys for external integrations and service users">
+                        <div class="mt8">
+                            <button name="action_open_api_keys"
+                                    type="object"
+                                    string="Manage API Keys"
+                                    class="btn-link"
+                                    icon="fa-key"/>
+                        </div>
+                    </setting>
+                </block>
+
+                <!-- ===== AI / Integrations ===== -->
+                <block title="AI / Integrations" name="ipai_ai_integrations_settings">
+                    <setting string="Microsoft Foundry"
+                             help="Connect to Azure AI Foundry for LLM and AI model inference">
+                        <field name="ipai_foundry_enabled"/>
+                        <div class="content-group" invisible="not ipai_foundry_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_foundry_endpoint" class="col-lg-3"/>
+                                <field name="ipai_foundry_endpoint"
+                                       placeholder="https://your-foundry.azure.com"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_project_name" class="col-lg-3"/>
+                                <field name="ipai_foundry_project_name"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_model_deployment" class="col-lg-3"/>
+                                <field name="ipai_foundry_model_deployment"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_auth_mode" class="col-lg-3"/>
+                                <field name="ipai_foundry_auth_mode"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_foundry_api_version" class="col-lg-3"/>
+                                <field name="ipai_foundry_api_version"/>
+                            </div>
+                            <div class="mt8">
+                                <button name="action_open_foundry_provider"
+                                        type="object"
+                                        string="Configure"
+                                        class="btn-link"
+                                        icon="fa-cog"/>
+                                <button name="action_test_foundry_connection"
+                                        type="object"
+                                        string="Test Connection"
+                                        class="btn-link ms-3"
+                                        icon="fa-plug"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Document Digitization / OCR"
+                             help="Extract data from invoices, receipts and documents using AI-powered OCR">
+                        <field name="ipai_doc_ai_enabled"/>
+                        <div class="content-group" invisible="not ipai_doc_ai_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_doc_ai_provider" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_provider"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_endpoint" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_endpoint"
+                                       placeholder="https://your-doc-ai.cognitiveservices.azure.com"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_model" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_model"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_storage_mode" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_storage_mode"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_async_enabled" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_async_enabled"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_doc_ai_min_file_size" class="col-lg-3"/>
+                                <field name="ipai_doc_ai_min_file_size"/>
+                            </div>
+                            <div class="mt8">
+                                <button name="action_open_doc_digitization_provider"
+                                        type="object"
+                                        string="Configure"
+                                        class="btn-link"
+                                        icon="fa-cog"/>
+                                <button name="action_test_doc_digitization_connection"
+                                        type="object"
+                                        string="Test Connection"
+                                        class="btn-link ms-3"
+                                        icon="fa-plug"/>
+                            </div>
+                        </div>
+                    </setting>
                 </block>
             </xpath>
         </field>
