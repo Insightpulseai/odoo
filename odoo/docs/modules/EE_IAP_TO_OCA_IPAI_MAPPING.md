@@ -490,7 +490,7 @@ class IpaiSignRequest(models.Model):
 ```bash
 # Install OCA helpdesk
 pip install odoo-addon-helpdesk_mgmt
-odoo-bin -u helpdesk_mgmt -d odoo_core --stop-after-init
+odoo-bin -u helpdesk_mgmt -d odoo_dev --stop-after-init
 ```
 
 **Parity Notes:**
