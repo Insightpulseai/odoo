@@ -62,6 +62,8 @@ targets:
           name: "[DEV] Finance & BIR Compliance"
           development: true
       jobs:
+        odoo_jdbc_extract:
+          name: "[DEV] Odoo JDBC Extract"
         notion_sync_bronze:
           name: "[DEV] Notion Sync Bronze"
         notion_transform_silver:

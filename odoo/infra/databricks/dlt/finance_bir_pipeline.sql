@@ -1,23 +1,26 @@
 -- =============================================================================
 -- Delta Live Tables (DLT) Pipeline: Finance & BIR Compliance
 -- Declarative ETL for the Odoo finance data cascade:
---   Bronze (CDC from Iceberg) -> Silver (cleaned) -> Gold (compliance marts)
+--   Bronze (JDBC extract) -> Silver (cleaned) -> Gold (compliance marts)
 --
--- Source: Odoo PG → Supabase ETL CDC → Apache Iceberg → ADLS Bronze
+-- Source: Odoo PG → JDBC Extract Job → Parquet on ADLS → DLT Auto Loader
+-- Ingestion: notebooks/bronze/jdbc_odoo_extract.py (incremental, watermarked)
 -- Deploy via Databricks Asset Bundles (databricks.yml).
 -- Workspace: https://adb-7405610347978231.11.azuredatabricks.net
 --
--- Reference: gold_finance_bir.sql (original view definitions)
+-- Note: Supabase ETL CDC was evaluated but is Private Alpha / self-hosted N/A.
+--       Using Databricks-native JDBC extract + Auto Loader instead.
 -- =============================================================================
 
 -- =============================================================================
--- BRONZE LAYER: CDC ingestion from Iceberg (Supabase ETL output)
+-- BRONZE LAYER: Auto Loader ingestion from JDBC extract output
 -- Source: abfss://bronze@stipaidev.dfs.core.windows.net/odoo_finance/
+-- Fed by: jdbc_odoo_extract.py (scheduled Databricks job, every 15 min)
 -- =============================================================================
 
 -- Bronze: Account Moves (Journal Entries)
 CREATE OR REFRESH STREAMING TABLE bronze_account_move
-COMMENT 'DLT Bronze: Odoo journal entries via CDC from Iceberg'
+COMMENT 'DLT Bronze: Odoo journal entries via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -30,7 +33,7 @@ FROM STREAM read_files(
 
 -- Bronze: Account Move Lines (Journal Items)
 CREATE OR REFRESH STREAMING TABLE bronze_account_move_line
-COMMENT 'DLT Bronze: Odoo journal items via CDC'
+COMMENT 'DLT Bronze: Odoo journal items via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -43,7 +46,7 @@ FROM STREAM read_files(
 
 -- Bronze: Chart of Accounts
 CREATE OR REFRESH STREAMING TABLE bronze_account_account
-COMMENT 'DLT Bronze: Odoo chart of accounts via CDC'
+COMMENT 'DLT Bronze: Odoo chart of accounts via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -56,7 +59,7 @@ FROM STREAM read_files(
 
 -- Bronze: Tax Definitions
 CREATE OR REFRESH STREAMING TABLE bronze_account_tax
-COMMENT 'DLT Bronze: Odoo tax definitions via CDC'
+COMMENT 'DLT Bronze: Odoo tax definitions via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -69,7 +72,7 @@ FROM STREAM read_files(
 
 -- Bronze: Partners (Customers/Vendors)
 CREATE OR REFRESH STREAMING TABLE bronze_res_partner
-COMMENT 'DLT Bronze: Odoo partners (customers, vendors) via CDC'
+COMMENT 'DLT Bronze: Odoo partners (customers, vendors) via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -82,7 +85,7 @@ FROM STREAM read_files(
 
 -- Bronze: HR Expenses
 CREATE OR REFRESH STREAMING TABLE bronze_hr_expense
-COMMENT 'DLT Bronze: Odoo HR expenses via CDC'
+COMMENT 'DLT Bronze: Odoo HR expenses via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -95,7 +98,7 @@ FROM STREAM read_files(
 
 -- Bronze: Projects
 CREATE OR REFRESH STREAMING TABLE bronze_project_project
-COMMENT 'DLT Bronze: Odoo projects via CDC'
+COMMENT 'DLT Bronze: Odoo projects via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -108,7 +111,7 @@ FROM STREAM read_files(
 
 -- Bronze: Sale Order Lines
 CREATE OR REFRESH STREAMING TABLE bronze_sale_order_line
-COMMENT 'DLT Bronze: Odoo sale order lines via CDC'
+COMMENT 'DLT Bronze: Odoo sale order lines via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -121,7 +124,7 @@ FROM STREAM read_files(
 
 -- Bronze: Analytic Lines (Timesheets)
 CREATE OR REFRESH STREAMING TABLE bronze_account_analytic_line
-COMMENT 'DLT Bronze: Odoo timesheet/analytic lines via CDC'
+COMMENT 'DLT Bronze: Odoo timesheet/analytic lines via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,
@@ -134,7 +137,7 @@ FROM STREAM read_files(
 
 -- Bronze: HR Employees
 CREATE OR REFRESH STREAMING TABLE bronze_hr_employee
-COMMENT 'DLT Bronze: Odoo employees via CDC'
+COMMENT 'DLT Bronze: Odoo employees via JDBC extract'
 TBLPROPERTIES ('quality' = 'bronze', 'pipelines.autoOptimize.managed' = 'true')
 AS SELECT
     *,

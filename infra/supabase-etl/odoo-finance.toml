@@ -1,21 +1,14 @@
+# DEPRECATED: Supabase ETL is Private Alpha, self-hosted: N/A (as of 2026-03-15)
+# Replaced by: odoo/infra/databricks/notebooks/bronze/jdbc_odoo_extract.py
+#   (Databricks-native JDBC incremental extract → ADLS Parquet → DLT Auto Loader)
+#
+# This file is retained for reference only. Do not deploy.
+#
+# --- Original description ---
 # Supabase ETL — Odoo Finance CDC Publication
 # Streams INSERT/UPDATE/DELETE from Odoo Postgres to Apache Iceberg.
 # Covers: account.move, account.move.line, account.account, account.tax,
 #         res.partner, project.project, sale.order.line, account.analytic.line
-#
-# Required env vars: same as odoo-expense.toml
-#   ODOO_PG_CDC_URL, ICEBERG_CATALOG_URI, ICEBERG_WAREHOUSE,
-#   ICEBERG_NAMESPACE, ICEBERG_S3_ENDPOINT, ICEBERG_REGION,
-#   ICEBERG_ACCESS_KEY_ID, ICEBERG_SECRET_ACCESS_KEY, ICEBERG_S3_PATH_STYLE
-#
-# Prereqs on Odoo Postgres (run once):
-#   GRANT SELECT ON account_move, account_move_line, account_account,
-#     account_tax, res_partner, project_project, sale_order_line,
-#     account_analytic_line, hr_employee TO odoo_cdc;
-#   CREATE PUBLICATION odoo_finance_pub FOR TABLE
-#     account_move, account_move_line, account_account, account_tax,
-#     res_partner, project_project, sale_order_line, account_analytic_line,
-#     hr_employee;
 
 [source]
 type               = "postgres"
