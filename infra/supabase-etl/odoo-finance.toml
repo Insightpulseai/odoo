@@ -1,0 +1,79 @@
+# Supabase ETL — Odoo Finance CDC Publication
+# Streams INSERT/UPDATE/DELETE from Odoo Postgres to Apache Iceberg.
+# Covers: account.move, account.move.line, account.account, account.tax,
+#         res.partner, project.project, sale.order.line, account.analytic.line
+#
+# Required env vars: same as odoo-expense.toml
+#   ODOO_PG_CDC_URL, ICEBERG_CATALOG_URI, ICEBERG_WAREHOUSE,
+#   ICEBERG_NAMESPACE, ICEBERG_S3_ENDPOINT, ICEBERG_REGION,
+#   ICEBERG_ACCESS_KEY_ID, ICEBERG_SECRET_ACCESS_KEY, ICEBERG_S3_PATH_STYLE
+#
+# Prereqs on Odoo Postgres (run once):
+#   GRANT SELECT ON account_move, account_move_line, account_account,
+#     account_tax, res_partner, project_project, sale_order_line,
+#     account_analytic_line, hr_employee TO odoo_cdc;
+#   CREATE PUBLICATION odoo_finance_pub FOR TABLE
+#     account_move, account_move_line, account_account, account_tax,
+#     res_partner, project_project, sale_order_line, account_analytic_line,
+#     hr_employee;
+
+[source]
+type               = "postgres"
+connection_string  = "${ODOO_PG_CDC_URL}"
+slot_name          = "odoo_finance_etl_slot"
+publication        = "odoo_finance_pub"
+
+[destination]
+type               = "iceberg"
+catalog_uri        = "${ICEBERG_CATALOG_URI}"
+warehouse          = "${ICEBERG_WAREHOUSE}"
+namespace          = "${ICEBERG_NAMESPACE}"
+s3_endpoint        = "${ICEBERG_S3_ENDPOINT}"
+region             = "${ICEBERG_REGION}"
+access_key_id      = "${ICEBERG_ACCESS_KEY_ID}"
+secret_access_key  = "${ICEBERG_SECRET_ACCESS_KEY}"
+s3_path_style      = "${ICEBERG_S3_PATH_STYLE}"
+
+# -- Core Accounting --
+
+[[table]]
+source      = "account_move"
+destination = "account_move"
+
+[[table]]
+source      = "account_move_line"
+destination = "account_move_line"
+
+[[table]]
+source      = "account_account"
+destination = "account_account"
+
+[[table]]
+source      = "account_tax"
+destination = "account_tax"
+
+# -- Partners (customers/vendors for AR/AP aging) --
+
+[[table]]
+source      = "res_partner"
+destination = "res_partner"
+
+# -- Projects & Timesheets --
+
+[[table]]
+source      = "project_project"
+destination = "project_project"
+
+[[table]]
+source      = "sale_order_line"
+destination = "sale_order_line"
+
+[[table]]
+source      = "account_analytic_line"
+destination = "account_analytic_line"
+
+# -- HR (for timesheet utilization) --
+
+[[table]]
+source      = "hr_employee"
+destination = "hr_employee"
