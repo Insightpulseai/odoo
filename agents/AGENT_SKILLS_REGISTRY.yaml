@@ -23,6 +23,7 @@ domains:
   - orchestration        # Control Room job orchestration + lineage
   - diagrams             # Diagram export + visual regression
   - sdlc                 # Agentic SDLC: spec → code → quality → deploy → observe
+  - azure_foundry        # Azure AI Foundry: agent service, tools, identity, observability, IQ
 
 # ============================================================================
 # SKILLS - Atomic capabilities the agent can execute
