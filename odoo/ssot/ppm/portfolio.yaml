@@ -56,3 +56,68 @@ initiatives:
     github_label: ios
     start_date: "2026-02-15"
     target_date: "2026-04-30"
+
+  # --- Platform Portfolio Initiatives (2026-03-16) ---
+
+  - id: INIT-010
+    name: "Platform Foundation — Azure Landing Zone"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: platform-foundation
+    start_date: "2026-03-16"
+    target_date: "2026-06-30"
+
+  - id: INIT-011
+    name: "Odoo Runtime — ACA + Managed PG"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: odoo-runtime
+    start_date: "2026-03-16"
+    target_date: "2026-06-30"
+
+  - id: INIT-012
+    name: "Agent Platform — Foundry + Copilot"
+    owner: tbwa
+    status: active
+    spec_slug: ipai-odoo-copilot-azure
+    github_label: agent-platform
+    start_date: "2026-03-16"
+    target_date: "2026-06-30"
+
+  - id: INIT-013
+    name: "Data Intelligence — Databricks + Lakehouse"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: data-intelligence
+    start_date: "2026-03-16"
+    target_date: "2026-09-30"
+
+  - id: INIT-014
+    name: "Web/Admin — Ops Console + Docs"
+    owner: tbwa
+    status: active
+    spec_slug: odooops-console
+    github_label: web-admin
+    start_date: "2026-03-16"
+    target_date: "2026-06-30"
+
+  - id: INIT-015
+    name: "Automations — n8n + GitHub + Slack"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: automations
+    start_date: "2026-03-16"
+    target_date: "2026-06-30"
+
+  - id: INIT-016
+    name: "TBWA/SMP Packaging — Client Offering"
+    owner: tbwa
+    status: active
+    spec_slug: null
+    github_label: tbwa-smp
+    start_date: "2026-03-16"
+    target_date: "2026-09-30"

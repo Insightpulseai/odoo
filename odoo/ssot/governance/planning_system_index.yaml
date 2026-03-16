@@ -11,8 +11,22 @@
 # CI validator: scripts/ci/validate_planning_index.py (planned)
 # =============================================================================
 
-schema_version: "1.0"
-last_updated: "2026-03-14"
+schema_version: "1.1"
+last_updated: "2026-03-17"
+
+# -----------------------------------------------------------------------------
+# Canonical Strategy (unified entry point)
+# -----------------------------------------------------------------------------
+canonical_strategy:
+  primary_file: ssot/governance/unified_strategy.yaml
+  supersedes_parallel_reading:
+    - ssot/governance/platform-strategy-2026.yaml
+    - ssot/governance/enterprise_okrs.yaml
+  note: >
+    unified_strategy.yaml consolidates both strategy stacks into one file.
+    platform-strategy-2026.yaml remains the primary time-bound objective source.
+    enterprise_okrs.yaml remains the supporting thematic KPI/OKR layer.
+    Neither is deprecated; both are read by the unified file.
 
 # -----------------------------------------------------------------------------
 # Planning Layer Model
