@@ -1,0 +1,60 @@
+# =============================================================================
+# File Taxonomy — Canonical naming and placement rules
+# =============================================================================
+# CI validator: scripts/ci/validate_file_taxonomy_ssot.py
+# Policy doc:   docs/governance/FILE_TAXONOMY_AND_NAMING_POLICY.md
+# =============================================================================
+
+version: 1
+last_updated: "2026-03-17"
+
+canonical_names:
+  repos:
+    data-intelligence:
+      forbidden_aliases: ["lakehouse"]
+    platform:
+      forbidden_aliases: ["ops-platform"]
+    design:
+      forbidden_aliases: ["design-system"]
+  paths:
+    addons/oca:
+      forbidden_aliases: ["addons/OCA"]
+  databases:
+    canonical: ["odoo_dev", "odoo_staging", "odoo"]
+    forbidden: ["odoo_core", "odoo_prod", "odoo_db", "odoo_stage"]
+
+fixed_files:
+  spec_bundle:
+    required_names:
+      - constitution.md
+      - prd.md
+      - plan.md
+      - tasks.md
+
+placement_rules:
+  docs:
+    allowed_extensions: [".md", ".drawio", ".mmd", ".puml", ".png", ".svg"]
+    forbidden_extensions: [".py", ".ts", ".tsx", ".sql", ".tf", ".bicep"]
+  ssot:
+    allowed_extensions: [".yaml", ".yml", ".json", ".schema.json"]
+    forbidden_extensions: [".md", ".py", ".ts", ".tsx", ".sh"]
+  addons:
+    allowed_extensions: [".py", ".xml", ".csv", ".js", ".scss", ".po", ".pot"]
+  infra:
+    allowed_extensions: [".tf", ".bicep", ".json", ".yaml", ".yml", ".sh"]
+
+historical_name_policy:
+  allowed_contexts:
+    - reconciliation_notes
+    - migration_notes
+    - audit_trail
+  forbidden_contexts:
+    - active_ci
+    - active_ssot
+    - active_runtime_docs
+    - readme_contracts
+  bypass_patterns:
+    - "*RECONCILIATION*"
+    - "*MIGRATION*"
+    - "*AUDIT*"
+    - "archive/*"

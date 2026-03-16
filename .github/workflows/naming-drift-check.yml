@@ -1,0 +1,23 @@
+name: Naming Drift Check
+on:
+  pull_request:
+    paths-ignore:
+      - "archive/**"
+  push:
+    branches: [main]
+    paths-ignore:
+      - "archive/**"
+
+jobs:
+  check-naming:
+    name: Check forbidden aliases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check naming drift (warn-only)
+        run: python scripts/ci/check_naming_drift.py
+        # Phase 1: warn-only. Change to --strict for Phase 2.
+        # run: python scripts/ci/check_naming_drift.py --strict

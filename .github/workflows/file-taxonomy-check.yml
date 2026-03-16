@@ -1,0 +1,38 @@
+name: File Taxonomy Check
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "ssot/**"
+      - "addons/**"
+      - "infra/**"
+  push:
+    branches: [main]
+    paths:
+      - "ssot/governance/file_taxonomy.yaml"
+
+jobs:
+  validate-ssot:
+    name: Validate file_taxonomy.yaml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Validate SSOT schema
+        run: python scripts/ci/validate_file_taxonomy_ssot.py
+
+  check-placement:
+    name: Check extension placement
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check placement rules (warn-only)
+        run: python scripts/ci/check_file_taxonomy.py
+        # Phase 1: warn-only. Change to --strict for Phase 2.
+        # run: python scripts/ci/check_file_taxonomy.py --strict
