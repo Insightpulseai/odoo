@@ -6,7 +6,7 @@ This Epic tracks the top 10 actionable insights and immediate next steps derived
 ---
 
 ## 🏗️ Phase 0: Foundations & DevUx
-- [ ] **1. Lock the Control Plane:** Mandate Azure DevOps as the absolute single source of truth for planning (Boards) and CI/CD (Pipelines). Transition away from fragmented issue tracking.
+- [x] **1. Lock the Control Plane:** Mandate Azure DevOps as the absolute single source of truth for planning (Boards) and CI/CD (Pipelines). Transition away from fragmented issue tracking.
 - [x] **2. Standardize the Dev Loop:** Publish `.devcontainer` definitions for both Odoo development and Azure Infrastructure development to guarantee AI agent and human developer determinism.
 - [ ] **3. Deploy the Landing Zone:** Execute the foundational Azure Landing Zone (ALZ) Bicep/Terraform code to establish VNets, Entra ID, and Log Analytics.
 

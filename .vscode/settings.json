@@ -69,5 +69,6 @@
     "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
     "https://json.schemastore.org/github-action.json": ".github/action.yml"
   },
-  "python.languageServer": "None"
+  "python.languageServer": "None",
+  "git.ignoreLimitWarning": true
 }

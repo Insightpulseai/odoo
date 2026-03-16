@@ -3,8 +3,8 @@
 ## Phase 0: Foundations & DevUx
 - [x] Define `.devcontainer/infra` (Terraform, Azure CLI, azd, PostgreSQL client).
 - [x] Define `.devcontainer/erp` (Odoo 18+, Python 3.12+, PostgreSQL client).
-- [ ] Decide source-control model: GitHub + ADO Pipelines, or full ADO Repos migration.
-- [ ] Initialize Azure DevOps project and configure branch policies for `main`.
+- [x] Decide source-control model: GitHub + ADO Pipelines, or full ADO Repos migration. (Decided: GitHub + ADO Pipelines)
+- [x] Initialize Azure DevOps project and configure branch policies for `main`.
 - [ ] Create base Terraform modules for RG, VNet, subnets, NAT Gateway, Log Analytics, diagnostics.
 - [ ] Set up remote Terraform state and env structure (`dev`, `staging`, `prod`).
 
