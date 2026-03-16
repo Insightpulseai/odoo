@@ -21,11 +21,52 @@ foundry:
 identity:
   name: ipai-odoo-copilot
   description: >
-    Philippine finance and tax compliance AI copilot for Odoo 19 CE.
-    Answers policy questions, navigates Odoo records, provides BIR compliance
-    intelligence, and assists with expense/invoice processing.
+    Workspace-native AI copilot for Odoo 19 CE. Benchmarked against
+    Notion 3.0 at the behavior layer: context-aware, action-oriented,
+    structured outputs, memory/instructions, workflow completion.
+    Not a chatbot — an ERP operator agent.
   owner_repo: agents
   owner_team: "@Insightpulseai/platform"
+
+benchmark:
+  reference: "Notion 3.0 Agent (behavior layer, not visual style)"
+  source: "https://www.notion.com/blog/introducing-notion-3-0"
+  principles:
+    - id: native_not_bolted_on
+      description: "Agent is part of the core workspace, not a disconnected widget"
+      status: done  # Systray + side panel shipped
+    - id: action_first
+      description: "Agent finishes real work (drafts, summaries, tool execution)"
+      status: partial  # 13 read-only tools, no write tools yet
+    - id: structured_outputs
+      description: "Returns structured artifacts, not just markdown in a chat bubble"
+      status: planned  # Currently returns text + citations
+    - id: personalization_memory
+      description: "User/company-scoped instructions, role behavior, preferences"
+      status: planned
+    - id: multi_agent_future
+      description: "Specialist agents (finance, procurement, helpdesk, compliance)"
+      status: future
+
+  tiers:
+    tier_1_now:
+      - systray_entry
+      - side_panel
+      - current_record_context
+      - response_with_citations
+      - audit_safe_behavior
+      - disabled_error_states
+    tier_2_next:
+      - saved_instructions_memory
+      - structured_response_blocks
+      - multi_step_tool_summaries
+      - completion_notifications
+      - reusable_prompt_presets
+    tier_3_future:
+      - custom_specialist_agents
+      - scheduled_triggered_agents
+      - broader_mcp_connectors
+      - role_specific_agent_ux
 
 model:
   alias: chat_default
