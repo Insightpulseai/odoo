@@ -203,6 +203,29 @@ agent-platform/
 
 ---
 
+## Canonical Source Mapping (Per Repo)
+
+| Repo | Primary Benchmarks |
+|------|-------------------|
+| `.github` | `actions/starter-workflows`, GH org workflow templates, reusable workflows, secure use reference |
+| `templates` | `github/spec-kit`, `microsoft/App-Templates`, `Azure-Samples/azd-template-artifacts`, `azd-ai-starter-basic` |
+| `infra` | CAF tools/templates, Azure Landing Zone deploy guidance, Azure Architecture Center |
+| `control-plane` | CAF planning/operating model, `azd-deployment-environments`, GH reusable workflows |
+| `odoo` | Odoo 19 official docs, OCA development standards, OdooSH behavioral contract |
+| `agent-platform` | `microsoft/agent-framework`, `azd-ai-starter-basic`, `Deploy-Your-AI-Application-In-Production`, `Microsoft-AI-Decision-Framework` |
+| `data-intelligence` | Databricks docs, Lakeflow, Unity Catalog, Databricks Financial Services solution sheet |
+| `web` | Fluent 2 design system, `microsoft/fluentui` (consumption patterns), azd full-stack templates |
+| `automations` | n8n self-hosted patterns, Azure Functions, Logic Apps connectors |
+| `design-system` | `microsoft/fluentui` (primary benchmark — tokens/themes/components/specs/starter-templates), Fluent 2 |
+
+### Explicit Exclusions
+
+- `foundry-rs/*` — Ethereum/Solidity toolchain, NOT Microsoft Foundry (naming collision)
+- Viva Goals — retired December 31, 2025; keep OKR layer tool-agnostic
+- Generic "awesome" repos — use for discovery only, not as canonical standards
+
+---
+
 ## Short Version
 
 > InsightPulseAI will complete its migration by operating Odoo as the Azure-hosted ERP core on standardized Azure landing zones, with clear separation between platform and workload services, automated and governed infrastructure, and a product-oriented operating model with measurable business outcomes.
