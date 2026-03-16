@@ -1,8 +1,8 @@
 # Tasks: Wholesale SaaS ERP on Azure
 
 ## Phase 0: Foundations & DevUx
-- [ ] Define `.devcontainer/infra` (Terraform, Azure CLI, azd, PostgreSQL client).
-- [ ] Define `.devcontainer/erp` (Odoo 18+, Python 3.12+, PostgreSQL client).
+- [x] Define `.devcontainer/infra` (Terraform, Azure CLI, azd, PostgreSQL client).
+- [x] Define `.devcontainer/erp` (Odoo 18+, Python 3.12+, PostgreSQL client).
 - [ ] Decide source-control model: GitHub + ADO Pipelines, or full ADO Repos migration.
 - [ ] Initialize Azure DevOps project and configure branch policies for `main`.
 - [ ] Create base Terraform modules for RG, VNet, subnets, NAT Gateway, Log Analytics, diagnostics.
