@@ -1,0 +1,559 @@
+# AFC Closing Tasks
+# 32 tasks mapped from TBWA Finance SOP, SAP AFC naming convention
+
+tasks:
+  # ============================================================
+  # PHASE I: Initial & Compliance (Days -6 to -3)
+  # ============================================================
+
+  - id: afc_task_001
+    template_id: tmpl_month_end
+    code: AFC_I_PAYROLL
+    name: Process Payroll, Final Pay, SL Conversions
+    category: PAYROLL
+    phase: I
+    sequence: 1
+    due_offset_days: -4  # 4 days before period end
+    prep_offset: -6
+    review_offset: -5
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_PAYROLL_PROCESS
+
+  - id: afc_task_002
+    template_id: tmpl_month_end
+    code: AFC_I_TAX_PROVISION
+    name: Calculate Tax Provision & PPB Provision
+    category: TAX
+    phase: I
+    sequence: 2
+    due_offset_days: -4
+    prep_offset: -6
+    review_offset: -5
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_TAX_PROVISION
+
+  - id: afc_task_003
+    template_id: tmpl_month_end
+    code: AFC_I_VAT_REPORT
+    name: Compile and Record Monthly VAT Report
+    category: TAX
+    phase: I
+    sequence: 3
+    due_offset_days: -4
+    prep_offset: -6
+    review_offset: -5
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_VAT_COMPILE
+
+  - id: afc_task_004
+    template_id: tmpl_month_end
+    code: AFC_I_INPUT_VAT
+    name: Record Input VAT & Cumulative VAT Summary
+    category: TAX
+    phase: I
+    sequence: 4
+    due_offset_days: -3
+    prep_offset: -5
+    review_offset: -4
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_INPUT_VAT
+
+  - id: afc_task_005
+    template_id: tmpl_month_end
+    code: AFC_I_CA_PROJECT
+    name: Process CA Liquidations (Project-Related)
+    category: EXPENSE
+    phase: I
+    sequence: 5
+    due_offset_days: -3
+    prep_offset: -5
+    review_offset: -4
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_CA_PROJECT
+
+  - id: afc_task_006
+    template_id: tmpl_month_end
+    code: AFC_I_CA_EMPLOYEE
+    name: Process CA Liquidations (Employee Submitted)
+    category: EXPENSE
+    phase: I
+    sequence: 6
+    due_offset_days: -3
+    prep_offset: -5
+    review_offset: -4
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: false
+    sap_reference: AFC_CA_EMPLOYEE
+
+  # ============================================================
+  # PHASE II: Accruals & Amortization (Days -5 to -2)
+  # ============================================================
+
+  - id: afc_task_007
+    template_id: tmpl_month_end
+    code: AFC_II_CONSULTANCY
+    name: Record Consultancy Fees & General Expense Accruals
+    category: ACCRUAL
+    phase: II
+    sequence: 7
+    due_offset_days: -3
+    prep_offset: -5
+    review_offset: -4
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_CONSULTANCY_ACCRUAL
+
+  - id: afc_task_008
+    template_id: tmpl_month_end
+    code: AFC_II_MGMT_ROYALTY
+    name: Accrue Management & Royalty Fees
+    category: ACCRUAL
+    phase: II
+    sequence: 8
+    due_offset_days: -3
+    prep_offset: -5
+    review_offset: -4
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_MGMT_ROYALTY
+
+  - id: afc_task_009
+    template_id: tmpl_month_end
+    code: AFC_II_REVENUE
+    name: Recognize Revenue & Billable Costs
+    category: REVENUE
+    phase: II
+    sequence: 9
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_REVENUE_RECOGNITION
+
+  - id: afc_task_010
+    template_id: tmpl_month_end
+    code: AFC_II_RECURRING
+    name: Accrue Recurring Expenses (Non-Fixed Assets)
+    category: ACCRUAL
+    phase: II
+    sequence: 10
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: false
+    sap_reference: AFC_RECURRING_EXPENSE
+
+  - id: afc_task_011
+    template_id: tmpl_month_end
+    code: AFC_II_PREPAID
+    name: Amortize Prepaid Expenses
+    category: AMORTIZATION
+    phase: II
+    sequence: 11
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_PREPAID_AMORT
+
+  - id: afc_task_012
+    template_id: tmpl_month_end
+    code: AFC_II_INSURANCE
+    name: Amortize Insurance & Bonds
+    category: AMORTIZATION
+    phase: II
+    sequence: 12
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_INSURANCE_AMORT
+
+  - id: afc_task_013
+    template_id: tmpl_month_end
+    code: AFC_II_RENT
+    name: Amortize Rent & Security Deposits
+    category: AMORTIZATION
+    phase: II
+    sequence: 13
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_RENT_AMORT
+
+  - id: afc_task_014
+    template_id: tmpl_month_end
+    code: AFC_II_LEASEHOLD
+    name: Amortize Leasehold Improvements
+    category: AMORTIZATION
+    phase: II
+    sequence: 14
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_LEASEHOLD_AMORT
+
+  - id: afc_task_015
+    template_id: tmpl_month_end
+    code: AFC_II_DEPRECIATION
+    name: Record Depreciation & Technology License Amortization
+    category: DEPRECIATION
+    phase: II
+    sequence: 15
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_DEPRECIATION
+
+  - id: afc_task_016
+    template_id: tmpl_month_end
+    code: AFC_II_IC_EXPENSES
+    name: Record Intercompany Expenses (Incurred for Client)
+    category: INTERCOMPANY
+    phase: II
+    sequence: 16
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_IC_EXPENSE
+
+  - id: afc_task_017
+    template_id: tmpl_month_end
+    code: AFC_II_IC_RATECARD
+    name: Record Intercompany Rate Card Charges
+    category: INTERCOMPANY
+    phase: II
+    sequence: 17
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_IC_RATECARD
+
+  - id: afc_task_018
+    template_id: tmpl_month_end
+    code: AFC_II_IC_PASSTHROUGH
+    name: Record Intercompany Pass-through Costs
+    category: INTERCOMPANY
+    phase: II
+    sequence: 18
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_IC_PASSTHROUGH
+
+  - id: afc_task_019
+    template_id: tmpl_month_end
+    code: AFC_II_IC_REVENUE
+    name: Record Intercompany Revenue
+    category: INTERCOMPANY
+    phase: II
+    sequence: 19
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_IC_REVENUE
+
+  - id: afc_task_020
+    template_id: tmpl_month_end
+    code: AFC_II_IC_RECON
+    name: Prepare Intercompany Reconciliation
+    category: INTERCOMPANY
+    phase: II
+    sequence: 20
+    due_offset_days: -2
+    prep_offset: -4
+    review_offset: -3
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_IC_RECON
+
+  - id: afc_task_021
+    template_id: tmpl_month_end
+    code: AFC_II_FX_REVAL
+    name: Revalue Intercompany Balances (FX)
+    category: FX
+    phase: II
+    sequence: 21
+    due_offset_days: -1
+    prep_offset: -3
+    review_offset: -2
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_FX_REVAL
+
+  - id: afc_task_022
+    template_id: tmpl_month_end
+    code: AFC_II_BANK_CHARGES
+    name: Record Bank Charges & Forex Gains/Losses
+    category: BANK
+    phase: II
+    sequence: 22
+    due_offset_days: -1
+    prep_offset: -3
+    review_offset: -2
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_BANK_CHARGES
+
+  # ============================================================
+  # PHASE III: WIP & Reclassification (Days -3 to -1)
+  # ============================================================
+
+  - id: afc_task_023
+    template_id: tmpl_month_end
+    code: AFC_III_WIP_RECLASS
+    name: Reclassify OOP to WIP / WIP to OOP
+    category: WIP
+    phase: III
+    sequence: 23
+    due_offset_days: -1
+    prep_offset: -3
+    review_offset: -2
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_WIP_RECLASS
+
+  - id: afc_task_024
+    template_id: tmpl_month_end
+    code: AFC_III_WIP_SCHEDULE
+    name: Prepare WIP Schedule Summary per Job#
+    category: WIP
+    phase: III
+    sequence: 24
+    due_offset_days: -1
+    prep_offset: -3
+    review_offset: -2
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_WIP_SCHEDULE
+
+  # ============================================================
+  # PHASE IV: Final Adjustments & Close (Days -2 to 0)
+  # ============================================================
+
+  - id: afc_task_025
+    template_id: tmpl_month_end
+    code: AFC_IV_REVERSALS
+    name: Reverse Prior Month Temporary JEs
+    category: ADJUSTMENT
+    phase: IV
+    sequence: 25
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_REVERSALS
+
+  - id: afc_task_026
+    template_id: tmpl_month_end
+    code: AFC_IV_ADJUSTMENTS
+    name: Record Month-End Adjusting Entries
+    category: ADJUSTMENT
+    phase: IV
+    sequence: 26
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_ADJUSTMENTS
+
+  - id: afc_task_027
+    template_id: tmpl_month_end
+    code: AFC_IV_FLASH_REPORTS
+    name: Prepare Flash, Wins & Losses, Revenue Reports
+    category: REPORTING
+    phase: IV
+    sequence: 27
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_FLASH_REPORT
+
+  - id: afc_task_028
+    template_id: tmpl_month_end
+    code: AFC_IV_AR_AGING
+    name: Prepare Working Capital Report (AR)
+    category: REPORTING
+    phase: IV
+    sequence: 28
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_AR_AGING
+
+  - id: afc_task_029
+    template_id: tmpl_month_end
+    code: AFC_IV_AP_AGING
+    name: Prepare AP Aging Report
+    category: REPORTING
+    phase: IV
+    sequence: 29
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_AP_AGING
+
+  - id: afc_task_030
+    template_id: tmpl_month_end
+    code: AFC_IV_BANK_RECON
+    name: Complete Bank Reconciliation
+    category: BANK
+    phase: IV
+    sequence: 30
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_BANK_RECON
+
+  - id: afc_task_031
+    template_id: tmpl_month_end
+    code: AFC_IV_BALANCE_SHEET
+    name: Review Balance Sheet Schedules
+    category: REPORTING
+    phase: IV
+    sequence: 31
+    due_offset_days: 0
+    prep_offset: -2
+    review_offset: -1
+    owner_role: RIM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_BS_REVIEW
+
+  - id: afc_task_032
+    template_id: tmpl_month_end
+    code: AFC_IV_FINAL_TB
+    name: Final TB Review
+    category: CLOSE
+    phase: IV
+    sequence: 32
+    due_offset_days: 0
+    prep_offset: -1
+    review_offset: -1
+    owner_role: BOM
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_TB_REVIEW
+
+  - id: afc_task_033
+    template_id: tmpl_month_end
+    code: AFC_IV_TB_SIGNOFF
+    name: Final TB Sign-off & Filing
+    category: CLOSE
+    phase: IV
+    sequence: 33
+    due_offset_days: 0
+    prep_offset: 0
+    review_offset: 0
+    owner_role: FD
+    requires_approval: true
+    evidence_required: true
+    sap_reference: AFC_SIGNOFF
+
+# Task categories (for filtering and grouping)
+categories:
+  - code: PAYROLL
+    name: Payroll Processing
+    color: "#4CAF50"
+  - code: TAX
+    name: Tax & VAT
+    color: "#F44336"
+  - code: EXPENSE
+    name: Expense Processing
+    color: "#2196F3"
+  - code: ACCRUAL
+    name: Accruals
+    color: "#9C27B0"
+  - code: AMORTIZATION
+    name: Amortization
+    color: "#FF9800"
+  - code: DEPRECIATION
+    name: Depreciation
+    color: "#795548"
+  - code: INTERCOMPANY
+    name: Intercompany
+    color: "#00BCD4"
+  - code: FX
+    name: Foreign Exchange
+    color: "#E91E63"
+  - code: BANK
+    name: Banking
+    color: "#3F51B5"
+  - code: WIP
+    name: Work in Progress
+    color: "#CDDC39"
+  - code: REVENUE
+    name: Revenue Recognition
+    color: "#8BC34A"
+  - code: ADJUSTMENT
+    name: Adjustments
+    color: "#FF5722"
+  - code: REPORTING
+    name: Reporting
+    color: "#607D8B"
+  - code: CLOSE
+    name: Period Close
+    color: "#9E9E9E"

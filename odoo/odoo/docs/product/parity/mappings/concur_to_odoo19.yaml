@@ -1,0 +1,345 @@
+mapping:
+  source: sap_concur
+  target: odoo_19_ce_oca_ipai
+  version: "2026-02"
+  scope: spend_management_parity
+
+# Tier 0: Platform Capabilities
+tier0_platform:
+  CONCUR-T0-SECURITY:
+    odoo_core:
+      - model: res.users
+        capability: "Multi-company user management + access rights"
+      - model: res.groups
+        capability: "Role-based access control (RBAC)"
+    oca_modules:
+      - auth_saml
+        repo: server-auth
+        capability: "SAML/SSO authentication"
+      - auth_totp
+        repo: server-auth
+        capability: "MFA (TOTP-based)"
+    ipai_glue:
+      - goal: "Audit trail for admin actions"
+        approach: "Use auditlog module (OCA) + custom logging for policy changes"
+
+  CONCUR-T0-INTEGRATIONS:
+    odoo_core:
+      - model: ir.cron
+        capability: "Scheduled jobs for sync"
+      - model: ir.attachment
+        capability: "Document storage + retrieval"
+    oca_modules:
+      - base_rest
+        repo: rest-framework
+        capability: "REST API framework"
+      - queue_job
+        repo: queue
+        capability: "Async job processing + retry logic"
+    ipai_glue:
+      - goal: "Idempotent import/export pipelines"
+        approach: "Custom ETL scripts with deduplication keys + queue_job for reliability"
+
+  CONCUR-T0_COMPLIANCE:
+    odoo_core:
+      - model: approval.request
+        capability: "Approval workflows (Odoo 19 native)"
+      - model: mail.activity
+        capability: "Activity tracking + escalation"
+    oca_modules:
+      - auditlog
+        repo: server-tools
+        capability: "Change tracking + audit trail"
+    ipai_glue:
+      - goal: "Policy engine for expense/invoice rules"
+        approach: "Custom policy model with rule evaluation + approval routing"
+
+# Tier 1: Business Capabilities
+tier1_business:
+  CONCUR-T1-EXPENSE:
+    odoo_core:
+      - model: hr.expense
+        capability: "Employee expense entry + multi-currency"
+      - model: hr.expense.sheet
+        capability: "Expense report grouping + submission"
+      - model: account.payment
+        capability: "Reimbursement payment processing"
+    oca_modules:
+      - hr_expense_invoice
+        repo: hr-expense
+        capability: "Link expenses to vendor invoices"
+      - hr_expense_sequence
+        repo: hr-expense
+        capability: "Sequential numbering for expense reports"
+    ipai_glue:
+      - goal: "Receipt OCR + auto-populate expense lines"
+        approach: "OCR microservice (existing) → hr.expense via API"
+      - goal: "Policy checks (per diem, category limits, approval routing)"
+        approach: "Custom policy engine + computed fields on hr.expense"
+      - goal: "Export to payroll/accounting"
+        approach: "CSV/API export to ERP or direct posting to account.move"
+
+  CONCUR-T1-INVOICE_AP:
+    odoo_core:
+      - model: account.move
+        capability: "Vendor bill entry + GL coding"
+      - model: account.payment
+        capability: "Payment processing"
+      - model: res.partner
+        capability: "Vendor master data"
+    oca_modules:
+      - account_invoice_import
+        repo: edi
+        capability: "Invoice import from PDF/XML"
+      - account_invoice_import_invoice2data
+        repo: edi
+        capability: "OCR-based invoice parsing"
+      - account_payment_mode
+        repo: bank-payment
+        capability: "Payment methods + batch processing"
+    ipai_glue:
+      - goal: "Email → invoice intake pipeline"
+        approach: "Mailgun/IMAP → account_invoice_import + OCR service"
+      - goal: "3-way match (PO → Receipt → Invoice)"
+        approach: "Use purchase.order + stock.picking + account.move reconciliation"
+      - goal: "Approval workflow for invoices >threshold"
+        approach: "approval.request integration + policy rules"
+
+  CONCUR-T1-TRAVEL:
+    odoo_core:
+      - model: hr.employee
+        capability: "Employee master data"
+    oca_modules:
+      - hr_expense_advance_clearing
+        repo: hr-expense
+        capability: "Travel advance + clearing"
+    ipai_glue:
+      - goal: "Travel booking integration (external)"
+        approach: "API integration with travel booking platforms (e.g., TravelPerk, Amadeus)"
+      - goal: "Trip itinerary + expense link-back"
+        approach: "Custom travel.trip model linked to hr.expense.sheet"
+      - goal: "Policy-based booking approvals"
+        approach: "approval.request + policy engine for travel requests"
+    notes:
+      - "Odoo CE does not have native travel booking; use external platform + integration"
+
+  CONCUR-T1-REQUEST:
+    odoo_core:
+      - model: approval.request
+        capability: "Pre-spend authorization workflow"
+      - model: approval.category
+        capability: "Request types (travel, expense, purchase)"
+    oca_modules:
+      - purchase_request
+        repo: purchase-workflow
+        capability: "Purchase request → PO workflow"
+    ipai_glue:
+      - goal: "Budget guardrails (check available budget before approval)"
+        approach: "Custom budget model + validation on approval.request"
+      - goal: "Link request → expense/invoice for reconciliation"
+        approach: "Custom reference fields on hr.expense and account.move"
+
+# Tier 2: Experience
+tier2_experience:
+  CONCUR-T2_MOBILE:
+    odoo_core:
+      - capability: "Odoo mobile app (iOS/Android)"
+        notes: "Native expense entry + approval via mobile app"
+    ipai_glue:
+      - goal: "Receipt snap + OCR"
+        approach: "Mobile app → upload to ir.attachment → OCR service → hr.expense"
+      - goal: "Offline-friendly UX"
+        approach: "Use Odoo mobile app offline mode (limited; requires sync)"
+    notes:
+      - "Odoo mobile app supports expense entry + approvals"
+      - "OCR integration requires custom API endpoint"
+
+  CONCUR-T2_ANALYTICS:
+    odoo_core:
+      - model: hr.expense.report
+        capability: "Standard expense reports"
+      - model: account.report
+        capability: "Financial reports (AP aging, spend analysis)"
+    oca_modules:
+      - mis_builder
+        repo: mis-builder
+        capability: "Custom financial reports + KPIs"
+      - bi_sql_editor
+        repo: reporting-engine
+        capability: "SQL-based custom reports"
+    ipai_glue:
+      - goal: "Spend visibility dashboards"
+        approach: "Superset integration (existing) + custom datasets"
+      - goal: "Custom slices by dept/project/vendor"
+        approach: "Analytic accounts + tags + Superset dashboards"
+
+# Philippines Tax Overlay
+philippines_tax_overlay:
+  PH-TAX-VAT:
+    odoo_core:
+      - model: account.tax
+        capability: "VAT tax configuration (12% standard rate)"
+      - model: res.partner
+        capability: "Vendor VAT registration tracking"
+    oca_modules:
+      - l10n_ph
+        repo: l10n-philippines
+        capability: "Philippines localization (if available)"
+    ipai_glue:
+      - goal: "VAT/non-VAT treatment rules per policy"
+        approach: "Custom policy engine + tax mapping on hr.expense and account.move"
+      - goal: "Capture VAT registration info"
+        approach: "Custom fields on res.partner for TIN/VAT registration"
+
+  PH-TAX-WHT:
+    odoo_core:
+      - model: account.tax
+        capability: "Withholding tax configuration"
+    oca_modules:
+      - account_withholding
+        repo: account-financial-tools
+        capability: "Withholding tax computation + reporting"
+    ipai_glue:
+      - goal: "Tag/compute withholding on AP invoices"
+        approach: "Use account_withholding module + custom policy rules"
+      - goal: "Export fields for BIR Form 1601-C"
+        approach: "TaxPulse-PH-Pack integration (existing)"
+
+  PH-AUDIT-EVIDENCE:
+    odoo_core:
+      - model: ir.attachment
+        capability: "Immutable document storage"
+      - model: mail.message
+        capability: "Approval + change history"
+    oca_modules:
+      - auditlog
+        repo: server-tools
+        capability: "Change tracking + audit trail"
+    ipai_glue:
+      - goal: "Immutable evidence link (receipt/invoice)"
+        approach: "ir.attachment with checksum + no-delete policy"
+      - goal: "Approval + change history retained"
+        approach: "auditlog module + mail.message tracking"
+
+# Implementation Priorities
+implementation_priorities:
+  phase_1_mvp:
+    - CONCUR-T1-EXPENSE
+      scope: "Basic expense entry + approval + reimbursement"
+      modules:
+        - hr_expense (core)
+        - approval (core)
+        - hr_expense_sequence (OCA)
+      glue:
+        - "OCR integration for receipt parsing"
+        - "Policy engine for approval routing"
+    - CONCUR-T1-INVOICE_AP
+      scope: "Invoice intake + approval + posting"
+      modules:
+        - account_move (core)
+        - account_invoice_import (OCA)
+        - account_invoice_import_invoice2data (OCA)
+      glue:
+        - "Email → invoice pipeline"
+        - "3-way match logic"
+    - PH-TAX-VAT
+      scope: "VAT compliance for expenses + invoices"
+      modules:
+        - account_tax (core)
+        - l10n_ph (OCA, if available)
+      glue:
+        - "VAT policy rules"
+        - "TIN tracking on vendors"
+
+  phase_2_enhanced:
+    - CONCUR-T1-REQUEST
+      scope: "Pre-spend authorization + budget guardrails"
+      modules:
+        - approval.request (core)
+        - purchase_request (OCA)
+      glue:
+        - "Budget validation"
+        - "Request → expense/invoice linking"
+    - CONCUR-T2_ANALYTICS
+      scope: "Spend dashboards + custom reports"
+      modules:
+        - mis_builder (OCA)
+        - bi_sql_editor (OCA)
+      glue:
+        - "Superset integration"
+        - "Custom datasets"
+    - PH-TAX-WHT
+      scope: "Withholding tax computation + export"
+      modules:
+        - account_withholding (OCA)
+      glue:
+        - "TaxPulse-PH-Pack integration"
+
+  phase_3_advanced:
+    - CONCUR-T1-TRAVEL
+      scope: "Travel booking integration + trip management"
+      modules:
+        - hr_expense_advance_clearing (OCA)
+      glue:
+        - "External travel platform API"
+        - "Custom travel.trip model"
+    - CONCUR-T2_MOBILE
+      scope: "Mobile app enhancements + offline mode"
+      modules:
+        - Odoo mobile app (core)
+      glue:
+        - "OCR API endpoint"
+        - "Offline sync improvements"
+    - CONCUR-T0-INTEGRATIONS
+      scope: "Robust ERP/HR integrations"
+      modules:
+        - base_rest (OCA)
+        - queue_job (OCA)
+      glue:
+        - "Idempotent ETL pipelines"
+        - "Webhook handlers"
+
+# Gap Analysis
+gaps:
+  odoo_vs_concur:
+    - gap: "Native travel booking"
+      concur: "Integrated travel booking with policy enforcement"
+      odoo: "No native travel booking; requires external integration"
+      mitigation: "Integrate with TravelPerk, Amadeus, or similar platform"
+
+    - gap: "Advanced OCR + auto-coding"
+      concur: "Built-in OCR with auto-populate + GL coding suggestions"
+      odoo: "Requires OCA account_invoice_import + custom OCR service"
+      mitigation: "Use existing OCR microservice + custom mapping logic"
+
+    - gap: "Mobile offline mode"
+      concur: "Robust offline expense entry + sync"
+      odoo: "Limited offline support in mobile app"
+      mitigation: "Accept limitation or enhance mobile app (custom development)"
+
+    - gap: "Policy engine complexity"
+      concur: "Sophisticated policy rules (per diem, category limits, approval matrices)"
+      odoo: "Basic approval workflows; requires custom policy engine"
+      mitigation: "Build custom policy model + rule evaluation engine"
+
+# Success Metrics
+success_metrics:
+  - metric: "Expense report cycle time"
+    target: "<3 days from submission to reimbursement"
+    measurement: "hr.expense.sheet.date_approve - hr.expense.sheet.create_date"
+
+  - metric: "Invoice processing time"
+    target: "<5 days from receipt to posting"
+    measurement: "account.move.date - account.move.invoice_date"
+
+  - metric: "Policy compliance rate"
+    target: ">95% of expenses/invoices comply with policy on first submission"
+    measurement: "Count of exceptions / total submissions"
+
+  - metric: "OCR accuracy"
+    target: ">90% field accuracy (vendor, amount, date)"
+    measurement: "Manual review sample (100 invoices/month)"
+
+  - metric: "User adoption (mobile)"
+    target: ">70% of expense submissions via mobile app"
+    measurement: "Count of mobile submissions / total submissions"

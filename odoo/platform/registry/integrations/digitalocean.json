@@ -1,0 +1,21 @@
+{
+  "id": "digitalocean",
+  "name": "DigitalOcean",
+  "summary": "Self-hosted infrastructure. Droplets, apps, and deployments for cost-minimized hosting.",
+  "category": "dev-tools",
+  "type": "connectable",
+  "capabilities": ["droplets", "apps", "spaces", "databases", "load-balancers"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_digitalocean.sh",
+    "scopes": ["droplet", "app", "database"],
+    "env_vars": ["DIGITALOCEAN_TOKEN"],
+    "auto_configure": false
+  },
+  "links": {
+    "docs": "https://docs.digitalocean.com/",
+    "vendor": "https://digitalocean.com",
+    "api": "https://docs.digitalocean.com/reference/api/"
+  },
+  "mcp_server": "digitalocean-mcp-server",
+  "status": "active"
+}

@@ -1,0 +1,181 @@
+# STC Odoo CE18 Mapping
+# Maps SAP STC concepts to Odoo models
+
+mappings:
+  # Core model mappings
+  - id: map_stc_worklist
+    target_system: odoo_ce18
+    source_code: STC_WORKLIST
+    target_model: compliance.check
+    target_field: null
+    transform: null
+    notes: Compliance check model handles worklist items
+
+  - id: map_stc_scenario
+    target_system: odoo_ce18
+    source_code: STC_SCENARIO
+    target_model: finance.task
+    target_field: task_type
+    transform: "value='compliance'"
+    notes: Scenarios become finance.task with type=compliance
+
+  - id: map_stc_bir_form
+    target_system: odoo_ce18
+    source_code: STC_BIR_FORM
+    target_model: bir.return
+    target_field: null
+    transform: null
+
+  # Partner/Vendor mappings
+  - id: map_stc_tin
+    target_system: odoo_ce18
+    source_code: PARTNER_TIN
+    target_model: res.partner
+    target_field: vat
+    transform: null
+    notes: TIN stored in standard VAT field with PH format validation
+
+  - id: map_stc_vendor_rank
+    target_system: odoo_ce18
+    source_code: IS_VENDOR
+    target_model: res.partner
+    target_field: supplier_rank
+    transform: "value > 0"
+
+  # Invoice mappings
+  - id: map_stc_invoice
+    target_system: odoo_ce18
+    source_code: INVOICE
+    target_model: account.move
+    target_field: move_type
+    transform: "in_invoice | out_invoice"
+
+  - id: map_stc_invoice_tax
+    target_system: odoo_ce18
+    source_code: INVOICE_TAX
+    target_model: account.move.line
+    target_field: tax_ids
+    transform: null
+
+  - id: map_stc_invoice_amount
+    target_system: odoo_ce18
+    source_code: INVOICE_AMOUNT
+    target_model: account.move
+    target_field: amount_total
+    transform: null
+
+  # Tax mappings
+  - id: map_stc_vat_output
+    target_system: odoo_ce18
+    source_code: VAT_OUTPUT
+    target_model: account.tax
+    target_field: null
+    transform: "type_tax_use='sale' and amount=12"
+    notes: 12% VAT on sales
+
+  - id: map_stc_vat_input
+    target_system: odoo_ce18
+    source_code: VAT_INPUT
+    target_model: account.tax
+    target_field: null
+    transform: "type_tax_use='purchase' and amount=12"
+    notes: 12% VAT on purchases
+
+  - id: map_stc_wht
+    target_system: odoo_ce18
+    source_code: WHT
+    target_model: account.tax
+    target_field: null
+    transform: "is_withholding=True"
+    notes: Withholding tax codes
+
+  # Check result mappings
+  - id: map_stc_check_status
+    target_system: odoo_ce18
+    source_code: CHECK_STATUS
+    target_model: compliance.check
+    target_field: status
+    transform: |
+      SAP_PASSED -> passed
+      SAP_WARNING -> warning
+      SAP_ERROR -> failed
+
+# Odoo field extensions needed
+field_extensions:
+  - model: res.partner
+    field: tin
+    type: char
+    size: 15
+    help: "Philippine TIN (XXX-XXX-XXX-XXX)"
+    module: ipai_tbwa_finance
+
+  - model: account.tax
+    field: atc_code
+    type: char
+    size: 10
+    help: "BIR Alphanumeric Tax Code"
+    module: ipai_tbwa_finance
+
+  - model: account.tax
+    field: is_withholding
+    type: boolean
+    default: false
+    help: "Is this a withholding tax?"
+    module: ipai_tbwa_finance
+
+  - model: account.move
+    field: has_withholding
+    type: boolean
+    compute: true
+    help: "Invoice has withholding tax applied"
+    module: ipai_tbwa_finance
+
+# OCA module dependencies for STC
+oca_modules:
+  - name: l10n_ph
+    repo: l10n-philippines
+    version: "18.0"
+    purpose: Philippine localization base
+    status: planned
+
+  - name: account_tax_balance
+    repo: account-financial-reporting
+    version: "18.0"
+    purpose: Tax balance reporting
+
+  - name: partner_identification
+    repo: partner-contact
+    version: "18.0"
+    purpose: Partner ID types (TIN, etc.)
+
+# View mappings
+view_mappings:
+  - source: STC_WORKLIST_VIEW
+    target: compliance_check_tree_view
+    notes: List of compliance issues
+
+  - source: STC_SCENARIO_VIEW
+    target: finance_task_kanban_view
+    filter: "task_type='compliance'"
+    notes: Compliance tasks in Kanban
+
+  - source: STC_BIR_CALENDAR
+    target: bir_return_calendar_view
+    notes: BIR filing deadlines
+
+# Report mappings
+report_mappings:
+  - source: STC_EXCEPTION_REPORT
+    target: compliance_check_report
+    format: xlsx
+    notes: Export compliance exceptions
+
+  - source: STC_VAT_SUMMARY
+    target: account_tax_report
+    format: xlsx
+    notes: VAT summary from account module
+
+  - source: STC_ALPHALIST
+    target: bir_alphalist_export
+    format: dat
+    notes: Custom export for BIR DAT format

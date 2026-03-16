@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Demo Sari-sari Stores -->
+    <record id="scout_store_sample_001" model="res.partner">
+        <field name="name">Aling Nena's Sari-sari Store</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_sari_sari')), (4, ref('ipai_vertical_retail.scout_tag_ncr'))]"/>
+        <field name="is_retail_outlet">True</field>
+        <field name="scout_store_code">SSS-NCR-0001</field>
+        <field name="scout_store_type">sari_sari</field>
+        <field name="scout_region_code">NCR</field>
+        <field name="scout_province">Metro Manila</field>
+        <field name="scout_channel">traditional</field>
+        <field name="scout_visit_frequency">weekly</field>
+        <field name="scout_active">True</field>
+    </record>
+
+    <record id="scout_store_sample_002" model="res.partner">
+        <field name="name">Mang Juan's Store</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_sari_sari')), (4, ref('ipai_vertical_retail.scout_tag_luzon'))]"/>
+        <field name="is_retail_outlet">True</field>
+        <field name="scout_store_code">SSS-R03-0001</field>
+        <field name="scout_store_type">sari_sari</field>
+        <field name="scout_region_code">Region III</field>
+        <field name="scout_province">Bulacan</field>
+        <field name="scout_channel">traditional</field>
+        <field name="scout_visit_frequency">biweekly</field>
+        <field name="scout_active">True</field>
+    </record>
+
+    <!-- Demo Grocery Store -->
+    <record id="scout_store_sample_003" model="res.partner">
+        <field name="name">Super 8 Grocery Mart</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_grocery')), (4, ref('ipai_vertical_retail.scout_tag_ncr'))]"/>
+        <field name="is_retail_outlet">True</field>
+        <field name="scout_store_code">GRC-NCR-0001</field>
+        <field name="scout_store_type">grocery</field>
+        <field name="scout_region_code">NCR</field>
+        <field name="scout_province">Metro Manila</field>
+        <field name="scout_channel">traditional</field>
+        <field name="scout_visit_frequency">weekly</field>
+        <field name="scout_active">True</field>
+    </record>
+
+    <!-- Demo Modern Trade -->
+    <record id="scout_store_sample_004" model="res.partner">
+        <field name="name">SaveMore Market - Quezon Ave</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_modern_trade')), (4, ref('ipai_vertical_retail.scout_tag_ncr'))]"/>
+        <field name="is_retail_outlet">True</field>
+        <field name="scout_store_code">MTR-NCR-0001</field>
+        <field name="scout_store_type">modern_trade</field>
+        <field name="scout_banner">SaveMore</field>
+        <field name="scout_region_code">NCR</field>
+        <field name="scout_province">Metro Manila</field>
+        <field name="scout_channel">modern</field>
+        <field name="scout_visit_frequency">weekly</field>
+        <field name="scout_active">True</field>
+    </record>
+
+    <!-- Demo Pharmacy -->
+    <record id="scout_store_sample_005" model="res.partner">
+        <field name="name">Mercury Drug - Makati</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_pharmacy')), (4, ref('ipai_vertical_retail.scout_tag_ncr'))]"/>
+        <field name="is_retail_outlet">True</field>
+        <field name="scout_store_code">PHR-NCR-0001</field>
+        <field name="scout_store_type">pharmacy</field>
+        <field name="scout_banner">Mercury Drug</field>
+        <field name="scout_region_code">NCR</field>
+        <field name="scout_province">Metro Manila</field>
+        <field name="scout_channel">modern</field>
+        <field name="scout_visit_frequency">weekly</field>
+        <field name="scout_active">True</field>
+    </record>
+
+    <!-- Demo Distributor -->
+    <record id="scout_store_sample_006" model="res.partner">
+        <field name="name">ABC Distribution Corp</field>
+        <field name="company_type">company</field>
+        <field name="category_id" eval="[(4, ref('ipai_vertical_retail.scout_tag_distributor')), (4, ref('ipai_vertical_retail.scout_tag_luzon'))]"/>
+        <field name="is_retail_outlet">False</field>
+        <field name="scout_store_code">DST-R03-0001</field>
+        <field name="scout_store_type">distributor</field>
+        <field name="scout_region_code">Region III</field>
+        <field name="scout_province">Pampanga</field>
+        <field name="scout_channel">traditional</field>
+        <field name="scout_visit_frequency">monthly</field>
+        <field name="scout_active">True</field>
+    </record>
+</odoo>

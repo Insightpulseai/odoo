@@ -1,0 +1,80 @@
+# Copilot Advisory Copy — Product Template
+# Version: 1.0.0
+# Status: Draft — requires product review before publish
+# Owner: web repo
+
+hero:
+  headline: "Your AI-Powered Business Advisor"
+  subheadline: "Get instant, accurate guidance on Odoo ERP workflows, Philippine tax compliance, and business operations"
+  cta_primary:
+    text: "Request Demo"
+    url: "/contact?source=copilot&action=demo"
+  cta_secondary:
+    text: "Learn More"
+    url: "/copilot/features"
+
+capabilities:
+  - title: "Odoo ERP Guidance"
+    description: "Step-by-step advisory on sales, accounting, inventory, HR, and all Odoo CE 19.0 modules"
+    icon: "erp"
+  - title: "Philippine Tax Compliance"
+    description: "BIR filing deadlines, VAT rules, withholding tax setup, and 1601-C/2316 guidance"
+    icon: "tax"
+  - title: "Finance Operations"
+    description: "Month-end close procedures, bank reconciliation, and financial reporting workflows"
+    icon: "finance"
+  - title: "Business Intelligence"
+    description: "Dashboard interpretation, KPI definitions, and reporting best practices"
+    icon: "analytics"
+
+disclaimers:
+  advisory_mode: "The Copilot operates in advisory mode. It provides guidance and recommendations but does not execute actions in your Odoo system."
+  tax_disclaimer: "Tax guidance is for informational purposes only. Always consult with a licensed tax professional for compliance decisions."
+  data_disclaimer: "The Copilot does not access your live business data. It provides general guidance based on Odoo best practices and Philippine regulations."
+  accuracy_disclaimer: "While we strive for accuracy, AI-generated responses should be verified against official BIR circulars and Odoo documentation."
+
+faq:
+  - question: "Can the Copilot create or modify records in my Odoo system?"
+    answer: "Not in advisory mode. The Copilot provides step-by-step guidance that you execute yourself. Action mode (coming soon) will support supervised record creation."
+  - question: "Is my data shared with the AI model?"
+    answer: "No. The Copilot does not access your live Odoo data. Conversations are logged for quality and audit purposes only."
+  - question: "How accurate is the tax compliance guidance?"
+    answer: "The Copilot is trained on current BIR regulations and Odoo tax module configuration. However, always verify with your accountant or tax advisor for compliance decisions."
+  - question: "What Odoo modules are covered?"
+    answer: "All core CE 19.0 modules: Accounting, Sales, Purchase, Inventory, Manufacturing, HR, CRM, Project, and more."
+
+cta_matrix:
+  # Maps user intent to correct CTA behavior
+  trial_request:
+    action: "redirect"
+    url: "/contact?source=copilot&action=trial"
+    text: "Request a free trial"
+  pricing_inquiry:
+    action: "redirect"
+    url: "/contact?source=copilot&action=pricing"
+    text: "Contact us for pricing"
+  demo_request:
+    action: "redirect"
+    url: "/contact?source=copilot&action=demo"
+    text: "Schedule a demo"
+  support_request:
+    action: "redirect"
+    url: "/support"
+    text: "Contact support"
+  feature_request:
+    action: "log"
+    text: "Thanks for the suggestion! Feature requests are reviewed by our product team."
+
+publish_checklist:
+  - item: "Product copy reviewed by marketing"
+    status: "pending"
+  - item: "Legal disclaimer approved"
+    status: "pending"
+  - item: "CTA URLs validated"
+    status: "pending"
+  - item: "No unsupported claims of live capability"
+    status: "pending"
+  - item: "Advisory mode clearly communicated"
+    status: "pending"
+  - item: "Accessibility review (WCAG 2.2 AA)"
+    status: "pending"

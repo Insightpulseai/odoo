@@ -1,0 +1,607 @@
+// =============================================================================
+// OCA Docs Brain — Canonical Database Schema (DBML)
+// =============================================================================
+// Version: 1.0.0
+// Generated: 2025-12-20
+//
+// Schemas:
+//   - core: Platform infrastructure (tenants, users, audit)
+//   - sources: Source registry, crawlers, raw items
+//   - docs: Documents, chunks, embeddings, citations
+//   - kg: Knowledge graph (entities, edges, module registry)
+//   - control: Policies, routing, connectors, skills
+//   - runtime: Sessions, queries, answers, feedback
+//   - rag: Hybrid search, embeddings, ACLs
+// =============================================================================
+
+Project oca_docs_brain {
+  database_type: 'PostgreSQL'
+  Note: 'Kapa-like Knowledge Base for Odoo CE + OCA 18'
+}
+
+// =============================================================================
+// CORE SCHEMA
+// =============================================================================
+
+Table core.tenants {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name text [not null]
+  slug text [unique, not null]
+  settings jsonb [default: '{}']
+  status text [default: 'active']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+
+  Note: 'Multi-tenant isolation root'
+}
+
+Table core.users {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id]
+  email text [unique, not null]
+  name text
+  avatar_url text
+  roles text[]
+  attributes jsonb [default: '{}']
+  last_login_at timestamptz
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (tenant_id, email) [unique]
+  }
+}
+
+Table core.audit_log {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id]
+  actor_id uuid [ref: > core.users.id]
+  action text [not null]
+  resource_type text
+  resource_id uuid
+  before_state jsonb
+  after_state jsonb
+  metadata jsonb [default: '{}']
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    created_at
+    (tenant_id, action)
+  }
+
+  Note: 'Immutable audit trail'
+}
+
+// =============================================================================
+// SOURCES SCHEMA
+// =============================================================================
+
+Table sources.sources {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  source_type text [not null, note: 'web, git, notion, confluence, pdf, odoo_docs, oca_repo']
+  name text [not null]
+  description text
+  base_url text
+  repo_url text
+  branch text [default: 'main']
+  path_filter text
+  auth_type text [note: 'none, token, oauth, api_key']
+  auth_ref text [note: 'vault:sources/github/...']
+  crawl_policy jsonb [default: '{}']
+  chunk_policy jsonb [default: '{}']
+  embedding_model_key text [ref: > rag.embedding_models.key]
+  tags text[]
+  status text [default: 'active']
+  is_public boolean [default: false]
+  item_count int [default: 0]
+  document_count int [default: 0]
+  chunk_count int [default: 0]
+  last_crawl_at timestamptz
+  last_success_at timestamptz
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+
+  indexes {
+    tenant_id
+    source_type
+    (tenant_id, name) [unique]
+  }
+
+  Note: 'Source registry for docs, repos, knowledge bases'
+}
+
+Table sources.crawl_runs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  source_id uuid [ref: > sources.sources.id, not null]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  run_type text [default: 'incremental', note: 'full, incremental, reembed']
+  triggered_by text [default: 'schedule']
+  triggered_by_user uuid [ref: > core.users.id]
+  status text [default: 'pending']
+  started_at timestamptz
+  completed_at timestamptz
+  progress_pct int [default: 0]
+  items_fetched int [default: 0]
+  items_created int [default: 0]
+  items_updated int [default: 0]
+  chunks_created int [default: 0]
+  error_count int [default: 0]
+  errors jsonb [default: '[]']
+  change_summary jsonb [default: '{}']
+  duration_seconds decimal
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (source_id, created_at)
+    status
+  }
+}
+
+Table sources.source_items {
+  id uuid [pk, default: `gen_random_uuid()`]
+  source_id uuid [ref: > sources.sources.id, not null]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  canonical_url text [not null]
+  relative_path text
+  raw_content text
+  content_hash text [not null]
+  content_type text
+  title text
+  language text [default: 'en']
+  metadata jsonb [default: '{}']
+  fetched_at timestamptz [default: `now()`]
+  parse_status text [default: 'pending']
+  parsed_at timestamptz
+  previous_content_hash text
+  changed_at timestamptz
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    source_id
+    content_hash
+    (source_id, canonical_url) [unique]
+    changed_at
+  }
+
+  Note: 'Raw fetched items with change detection'
+}
+
+// =============================================================================
+// DOCS SCHEMA
+// =============================================================================
+
+Table docs.documents {
+  id uuid [pk, default: `gen_random_uuid()`]
+  source_item_id uuid [ref: > sources.source_items.id, not null]
+  source_id uuid [ref: > sources.sources.id, not null]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  canonical_url text [not null]
+  title text [not null]
+  slug text
+  content_markdown text
+  content_plain text
+  language text [default: 'en']
+  doc_type text [note: 'guide, reference, tutorial, changelog, readme']
+  version text [note: '18.0, 18.0.1.0.0']
+  module_name text
+  model_names text[]
+  feature_tags text[]
+  published_at timestamptz
+  last_modified_at timestamptz
+  heading_tree jsonb
+  toc jsonb
+  word_count int
+  freshness_score decimal
+  status text [default: 'active']
+  tsv tsvector
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+
+  indexes {
+    source_id
+    tenant_id
+    module_name
+    version
+    doc_type
+    (tenant_id, canonical_url) [unique]
+  }
+
+  Note: 'Parsed documents with Odoo/OCA metadata'
+}
+
+Table docs.chunks {
+  id uuid [pk, default: `gen_random_uuid()`]
+  document_id uuid [ref: > docs.documents.id, not null]
+  source_id uuid [ref: > sources.sources.id, not null]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  chunk_index int [not null]
+  char_start int
+  char_end int
+  content text [not null]
+  content_hash text [not null]
+  heading_path text [note: 'Finance > Month-End > Closing']
+  heading_level int
+  section_title text
+  token_count int
+  embedding_model_key text [ref: > rag.embedding_models.key]
+  embedding vector
+  anchor_id text [note: 'HTML anchor for citations']
+  line_start int
+  line_end int
+  chunk_type text [default: 'text', note: 'text, code, table, list']
+  language text
+  tsv tsvector
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (document_id, chunk_index) [unique]
+    source_id
+    tenant_id
+    content_hash
+    heading_path
+  }
+
+  Note: 'Document chunks with embeddings and stable anchors'
+}
+
+Table docs.citations {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  chunk_id uuid [ref: > docs.chunks.id, not null]
+  document_id uuid [ref: > docs.documents.id, not null]
+  answer_id uuid [ref: > runtime.answers.id]
+  query_id uuid [ref: > runtime.queries.id]
+  relevance_score decimal
+  rank int
+  snippet text
+  was_used boolean [default: false]
+  was_shown boolean [default: false]
+  was_clicked boolean [default: false]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    chunk_id
+    answer_id
+    query_id
+  }
+
+  Note: 'Answer-to-chunk citation links'
+}
+
+// =============================================================================
+// RAG SCHEMA
+// =============================================================================
+
+Table rag.embedding_models {
+  id uuid [pk, default: `gen_random_uuid()`]
+  key text [unique, not null, note: 'text-embedding-3-small']
+  name text [not null]
+  provider text [not null, note: 'openai, cohere, huggingface']
+  dimensions int [not null]
+  version text
+  max_tokens int
+  properties jsonb [default: '{}']
+  is_default boolean [default: false]
+  is_active boolean [default: true]
+  created_at timestamptz [default: `now()`]
+
+  Note: 'Embedding model registry'
+}
+
+Table rag.document_acls {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  document_id uuid [not null]
+  principal_type text [not null, note: 'role, user, team']
+  principal_id uuid [not null]
+  permission text [default: 'read']
+  allow boolean [default: true]
+  granted_by uuid
+  granted_at timestamptz [default: `now()`]
+  expires_at timestamptz
+
+  indexes {
+    document_id
+    (principal_type, principal_id)
+  }
+
+  Note: 'Document-level access control'
+}
+
+// =============================================================================
+// KNOWLEDGE GRAPH SCHEMA
+// =============================================================================
+
+Table kg.entities {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  entity_type text [not null, note: 'module, model, feature, config_key, version']
+  name text [not null]
+  normalized_key text [not null]
+  display_name text
+  description text
+  attributes jsonb [default: '{}']
+  odoo_version text
+  module_name text
+  is_oca boolean [default: false]
+  is_enterprise_feature boolean [default: false]
+  primary_chunk_id uuid [ref: > docs.chunks.id]
+  evidence_chunk_ids uuid[]
+  embedding vector
+  embedding_model_key text [ref: > rag.embedding_models.key]
+  mention_count int [default: 0]
+  edge_count int [default: 0]
+  status text [default: 'active']
+  deprecated_by uuid [ref: > kg.entities.id]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    tenant_id
+    entity_type
+    normalized_key
+    module_name
+    (tenant_id, entity_type, normalized_key) [unique]
+  }
+
+  Note: 'Knowledge graph entities'
+}
+
+Table kg.edges {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  from_entity_id uuid [ref: > kg.entities.id, not null]
+  to_entity_id uuid [ref: > kg.entities.id, not null]
+  edge_type text [not null, note: 'depends_on, implements, extends, replaces']
+  is_bidirectional boolean [default: false]
+  evidence_chunk_id uuid [ref: > docs.chunks.id]
+  evidence_text text
+  confidence decimal [default: 1.0]
+  extraction_method text
+  attributes jsonb [default: '{}']
+  weight decimal [default: 1.0]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    from_entity_id
+    to_entity_id
+    edge_type
+    (from_entity_id, to_entity_id, edge_type) [unique]
+  }
+
+  Note: 'Knowledge graph relationships'
+}
+
+Table kg.module_registry {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  technical_name text [not null]
+  display_name text
+  summary text
+  description text
+  source_type text [not null, note: 'odoo_core, oca, custom']
+  repo_url text
+  repo_path text
+  odoo_version text [not null]
+  module_version text
+  manifest jsonb [not null]
+  depends text[]
+  external_dependencies jsonb
+  category text
+  application boolean [default: false]
+  installable boolean [default: true]
+  auto_install boolean [default: false]
+  enterprise_equivalent text
+  parity_level text [note: 'full, partial, alternative, none']
+  parity_notes text
+  entity_id uuid [ref: > kg.entities.id]
+  primary_doc_id uuid [ref: > docs.documents.id]
+  install_order int
+  dependent_count int [default: 0]
+  status text [default: 'active']
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    tenant_id
+    technical_name
+    odoo_version
+    (tenant_id, technical_name, odoo_version) [unique]
+    enterprise_equivalent
+  }
+
+  Note: 'OCA/Odoo module registry with dependencies'
+}
+
+// =============================================================================
+// CONTROL SCHEMA
+// =============================================================================
+
+Table control.routing_policies {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  policy_key text [not null]
+  name text [not null]
+  description text
+  provider_chain jsonb [not null, default: '[]']
+  budgets jsonb [not null, default: '{}']
+  provider_allowlist text[]
+  tool_allowlist text[]
+  redaction_rules jsonb [default: '[]']
+  retention_days jsonb [default: '{}']
+  version int [default: 1]
+  version_hash text
+  is_active boolean [default: true]
+  priority int [default: 100]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    tenant_id
+    (tenant_id, policy_key) [unique]
+  }
+
+  Note: 'Model routing with budgets and allowlists'
+}
+
+Table control.skills {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id]
+  skill_key text [not null]
+  name text [not null]
+  description text
+  category text
+  owner_id uuid
+  is_active boolean [default: true]
+  created_at timestamptz [default: `now()`]
+
+  Note: 'Skill registry'
+}
+
+Table control.skill_versions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  skill_id uuid [ref: > control.skills.id, not null]
+  version text [not null]
+  version_number int [not null]
+  input_schema jsonb [not null]
+  output_schema jsonb
+  implementation_type text [not null, note: 'function, workflow, agent']
+  implementation_ref text
+  config jsonb [default: '{}']
+  status text [default: 'draft']
+  published_at timestamptz
+  changelog text
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (skill_id, version) [unique]
+  }
+}
+
+// =============================================================================
+// RUNTIME SCHEMA
+// =============================================================================
+
+Table runtime.sessions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  user_id uuid [ref: > core.users.id]
+  anonymous_id text
+  channel text [not null, note: 'docs_portal, ide, api, chat']
+  started_at timestamptz [default: `now()`]
+  ended_at timestamptz
+  context jsonb [default: '{}']
+  query_count int [default: 0]
+  routing_policy_id uuid [ref: > control.routing_policies.id]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (tenant_id, started_at)
+    user_id
+    channel
+  }
+
+  Note: 'User sessions across channels'
+}
+
+Table runtime.queries {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  session_id uuid [ref: > runtime.sessions.id, not null]
+  query_text text [not null]
+  query_embedding vector
+  embedding_model_key text [ref: > rag.embedding_models.key]
+  response_text text
+  response_model text
+  response_provider text
+  started_at timestamptz [default: `now()`]
+  completed_at timestamptz
+  latency_ms int
+  prompt_tokens int
+  completion_tokens int
+  total_tokens int
+  cost_usd decimal
+  confidence_score decimal
+  citations_count int [default: 0]
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    session_id
+    (tenant_id, created_at)
+  }
+
+  Note: 'Individual queries with metrics'
+}
+
+Table runtime.answers {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  query_id uuid [ref: > runtime.queries.id, not null]
+  session_id uuid [ref: > runtime.sessions.id]
+  answer_text text [not null]
+  answer_markdown text
+  model text [not null]
+  provider text
+  citation_count int [default: 0]
+  citations jsonb
+  confidence_score decimal
+  oldest_source_date timestamptz
+  newest_source_date timestamptz
+  avg_source_freshness decimal
+  prompt_tokens int
+  completion_tokens int
+  latency_ms int
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    query_id
+    session_id
+  }
+
+  Note: 'Generated answers with citation metadata'
+}
+
+Table runtime.feedback {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  query_id uuid [ref: > runtime.queries.id]
+  session_id uuid [ref: > runtime.sessions.id]
+  user_id uuid [ref: > core.users.id]
+  rating int [note: '-1 = bad, 0 = neutral, 1 = good']
+  feedback_type text [note: 'helpful, not_helpful, incorrect, missing_info']
+  notes text
+  labels text[]
+  requires_review boolean [default: false]
+  reviewed_at timestamptz
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    query_id
+    (tenant_id, created_at)
+  }
+
+  Note: 'User feedback with review workflow'
+}
+
+Table runtime.evidence_packets {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tenant_id uuid [ref: > core.tenants.id, not null]
+  query_id uuid [ref: > runtime.queries.id]
+  session_id uuid [ref: > runtime.sessions.id]
+  packet_type text [default: 'query_trace']
+  evidence jsonb [not null]
+  content_hash text [not null]
+  exported_at timestamptz [default: `now()`]
+  exported_by uuid [ref: > core.users.id]
+  storage_url text
+  created_at timestamptz [default: `now()`]
+
+  Note: 'Exportable evidence bundles for audit'
+}
+
+// =============================================================================
+// RELATIONSHIPS SUMMARY
+// =============================================================================
+
+// sources.sources -> docs.documents -> docs.chunks -> docs.citations
+// kg.entities <-> kg.edges (graph)
+// kg.module_registry -> kg.entities, docs.documents
+// runtime.sessions -> runtime.queries -> runtime.answers -> docs.citations
+// All tables -> core.tenants (RLS)

@@ -1,0 +1,268 @@
+# =============================================================================
+# Kong Declarative Configuration — Supabase API Gateway
+# =============================================================================
+# Routes all Supabase services through Kong (port 8000/8443).
+# Environment variables are interpolated at container startup via entrypoint.
+#
+# Reference: github.com/supabase/supabase/docker/volumes/api/kong.yml
+# =============================================================================
+
+_format_version: "2.1"
+_transform: true
+
+###
+### Consumers / Credentials
+###
+consumers:
+  - username: DASHBOARD
+  - username: anon
+    keyauth_credentials:
+      - key: ${SUPABASE_ANON_KEY}
+  - username: service_role
+    keyauth_credentials:
+      - key: ${SUPABASE_SERVICE_KEY}
+
+###
+### Access Control Lists
+###
+acls:
+  - consumer: anon
+    group: anon
+  - consumer: service_role
+    group: admin
+
+###
+### API Routes
+###
+
+services:
+  # --- Auth (GoTrue) ---------------------------------------------------------
+  - name: auth-v1-open
+    url: http://auth:9999/verify
+    routes:
+      - name: auth-v1-open
+        strip_path: true
+        paths:
+          - /auth/v1/verify
+    plugins:
+      - name: cors
+
+  - name: auth-v1-open-callback
+    url: http://auth:9999/callback
+    routes:
+      - name: auth-v1-open-callback
+        strip_path: true
+        paths:
+          - /auth/v1/callback
+    plugins:
+      - name: cors
+
+  - name: auth-v1-open-authorize
+    url: http://auth:9999/authorize
+    routes:
+      - name: auth-v1-open-authorize
+        strip_path: true
+        paths:
+          - /auth/v1/authorize
+    plugins:
+      - name: cors
+
+  - name: auth-v1
+    _comment: "GoTrue: /auth/v1/* (requires API key)"
+    url: http://auth:9999/
+    routes:
+      - name: auth-v1
+        strip_path: true
+        paths:
+          - /auth/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  # --- PostgREST (REST API) --------------------------------------------------
+  - name: rest-v1
+    _comment: "PostgREST: /rest/v1/* (requires API key)"
+    url: http://rest:3000/
+    routes:
+      - name: rest-v1
+        strip_path: true
+        paths:
+          - /rest/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  # --- Realtime ---------------------------------------------------------------
+  - name: realtime-v1
+    _comment: "Realtime: /realtime/v1/* (requires API key)"
+    url: http://realtime:4000/socket/
+    routes:
+      - name: realtime-v1
+        strip_path: true
+        paths:
+          - /realtime/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  - name: realtime-v1-ws
+    _comment: "Realtime Websocket"
+    url: http://realtime:4000/socket/
+    routes:
+      - name: realtime-v1-ws
+        strip_path: true
+        paths:
+          - /realtime/v1/
+        protocols:
+          - ws
+          - wss
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  # --- Storage ----------------------------------------------------------------
+  - name: storage-v1
+    _comment: "Storage: /storage/v1/* (requires API key)"
+    url: http://storage:5000/
+    routes:
+      - name: storage-v1
+        strip_path: true
+        paths:
+          - /storage/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  # --- Storage (public objects — no auth) ------------------------------------
+  - name: storage-v1-s3
+    _comment: "Storage S3: /storage/v1/s3/* (open)"
+    url: http://storage:5000/s3
+    routes:
+      - name: storage-v1-s3
+        strip_path: true
+        paths:
+          - /storage/v1/s3
+    plugins:
+      - name: cors
+
+  - name: storage-v1-object-public
+    _comment: "Storage public objects: /storage/v1/object/public/* (open)"
+    url: http://storage:5000/object/public
+    routes:
+      - name: storage-v1-object-public
+        strip_path: true
+        paths:
+          - /storage/v1/object/public
+    plugins:
+      - name: cors
+
+  - name: storage-v1-render-public
+    _comment: "Storage render public: /storage/v1/render/image/public/* (open)"
+    url: http://storage:5000/render/image/public
+    routes:
+      - name: storage-v1-render-public
+        strip_path: true
+        paths:
+          - /storage/v1/render/image/public
+    plugins:
+      - name: cors
+
+  # --- Edge Functions ---------------------------------------------------------
+  - name: functions-v1
+    _comment: "Edge Functions: /functions/v1/* (requires API key)"
+    url: http://functions:54321/functions/v1/
+    routes:
+      - name: functions-v1
+        strip_path: true
+        paths:
+          - /functions/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+            - anon
+
+  # --- Postgres Meta (Studio) -------------------------------------------------
+  - name: meta
+    _comment: "pg-meta: /pg/* (admin only, basic auth)"
+    url: http://meta:8080/
+    routes:
+      - name: meta
+        strip_path: true
+        paths:
+          - /pg/
+    plugins:
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin
+
+  # --- Analytics / Logflare ---------------------------------------------------
+  - name: analytics-v1
+    _comment: "Analytics: /analytics/v1/* (admin only)"
+    url: http://analytics:4000/
+    routes:
+      - name: analytics-v1
+        strip_path: true
+        paths:
+          - /analytics/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: false
+      - name: acl
+        config:
+          hide_groups_header: true
+          allow:
+            - admin

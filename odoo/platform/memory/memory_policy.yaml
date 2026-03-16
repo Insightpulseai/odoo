@@ -1,0 +1,78 @@
+version: 1
+description: |
+  Memory separation policy for LLM packs vs Supabase operational memory.
+  LLM packs are prompt-optimized, curated, and versioned in Git.
+  Supabase memory is operational, queryable, and auditable.
+
+principles:
+  llm_packs_are_prompt_optimized: true
+  supabase_memory_is_operational: true
+  no_raw_event_stream_in_llm_packs: true
+  only_distilled_summaries_cross_boundary: true
+  packs_are_code_reviewed: true
+  no_secrets_in_packs: true
+
+inputs:
+  supabase:
+    schema: ops
+    allowed:
+      - run_summaries      # Distilled run outcomes
+      - verified_facts     # Confirmed discoveries
+      - final_artifacts_index  # Completed artifacts
+      - error_patterns     # Common failure modes
+    denied:
+      - raw_logs           # Too verbose, not prompt-optimized
+      - secrets            # Never in packs
+      - full_transcripts   # Privacy + noise concerns
+      - intermediate_states  # Only final states
+
+  github:
+    allowed:
+      - issue_summaries    # Current work items
+      - pr_descriptions    # Recent changes
+      - workflow_status    # CI health
+    denied:
+      - full_diffs         # Too large
+      - comments_threads   # Noise
+
+outputs:
+  llm_packs:
+    location: memory/packs/
+    format: markdown
+    max_tokens_guideline:
+      chatgpt: 6000
+      claude: 12000
+      common: 3000
+    sections_required:
+      - operating_principles  # 00_constitution.md
+      - repo_map             # 10_repo_map.md
+      - workflows            # 20_workflows.md
+      - current_focus        # 30_current_focus.md
+    sections_optional:
+      - error_recovery       # 40_error_recovery.md (Claude only)
+      - recent_changes       # 90_recent_changes.md (distilled)
+
+distillation:
+  schedule: "23 3 * * *"  # Daily at 03:23 UTC
+  triggers:
+    - push_to_main
+    - manual_dispatch
+  sources:
+    - supabase.ops.v_job_latest
+    - supabase.ops.v_dashboard_summary
+    - supabase.marketplace.v_integration_health
+    - github.issues (open, labeled:priority)
+    - github.pulls (merged, last 7 days)
+  output_files:
+    - memory/packs/common/90_recent_changes.md
+    - memory/packs/chatgpt/90_recent_changes.md
+    - memory/packs/claude/90_recent_changes.md
+
+validation:
+  pre_commit:
+    - no_secrets_scan
+    - max_file_size: 50KB
+    - valid_markdown_lint
+  ci:
+    - pack_token_count_check
+    - required_sections_present

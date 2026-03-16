@@ -1,0 +1,173 @@
+// ============================================================================
+// TBWA Backend Theme - Primary Variables
+// ============================================================================
+// This file is loaded in web._assets_primary_variables bundle
+// BEFORE Bootstrap and Odoo compile their SCSS
+// ============================================================================
+
+// =============================================================================
+// TBWA Brand Palette
+// =============================================================================
+
+$tbwa-yellow: #FFD800;
+$tbwa-yellow-hover: #FFDD2D;
+$tbwa-yellow-light: #FFF8E3;
+$tbwa-black: #000000;
+$tbwa-ink: #111827;
+$tbwa-gray-900: #1F2937;
+$tbwa-gray-700: #374151;
+$tbwa-gray-500: #6B7280;
+$tbwa-gray-300: #D1D5DB;
+$tbwa-gray-100: #F3F4F6;
+$tbwa-bg: #F7F9FC;
+$tbwa-card: #FFFFFF;
+$tbwa-border: #E5E7EB;
+
+// Status colors (consistent with InsightPulse)
+$tbwa-success: #10B981;
+$tbwa-info: #3B82F6;
+$tbwa-warning: #F59E0B;
+$tbwa-danger: #EF4444;
+
+// =============================================================================
+// Odoo Brand Variables (the main hooks)
+// =============================================================================
+
+$o-brand-odoo: $tbwa-yellow !default;
+$o-brand-primary: $tbwa-yellow !default;
+$o-brand-secondary: $tbwa-ink !default;
+
+$o-community-color: $tbwa-yellow;
+$o-enterprise-color: $tbwa-yellow;
+$o-enterprise-action-color: $tbwa-yellow;
+
+// =============================================================================
+// Navbar / Sidebar
+// =============================================================================
+
+$o-navbar-background: $tbwa-black;
+$o-navbar-inverse-link-color: rgba(255, 255, 255, 0.86);
+$o-navbar-inverse-link-hover-bg: rgba(255, 255, 255, 0.08);
+$o-navbar-inverse-link-active-bg: rgba(255, 216, 0, 0.14);
+$o-navbar-border-color: rgba(255, 255, 255, 0.08);
+
+// =============================================================================
+// Main Colors
+// =============================================================================
+
+$o-main-text-color: $tbwa-ink;
+$o-main-color-muted: $tbwa-gray-500;
+$o-main-link-color: $tbwa-ink;
+$o-main-favorite-color: $tbwa-yellow;
+$o-main-components-bg-color: $tbwa-bg;
+$o-main-background-color: $tbwa-bg;
+$o-view-background-color: $tbwa-card;
+
+// =============================================================================
+// Form / List Views
+// =============================================================================
+
+$o-form-lightsecondary: $tbwa-border;
+$o-list-footer-bg-color: $tbwa-bg;
+
+// =============================================================================
+// Status Colors (Odoo hooks)
+// =============================================================================
+
+$o-success: $tbwa-success;
+$o-info: $tbwa-info;
+$o-warning: $tbwa-warning;
+$o-danger: $tbwa-danger;
+
+// =============================================================================
+// Bootstrap Variable Overrides
+// =============================================================================
+
+// Core colors
+$primary: $tbwa-yellow;
+$secondary: $tbwa-gray-700;
+$success: $tbwa-success;
+$info: $tbwa-info;
+$warning: $tbwa-warning;
+$danger: $tbwa-danger;
+$light: $tbwa-gray-100;
+$dark: $tbwa-ink;
+
+// Body
+$body-bg: $tbwa-bg;
+$body-color: $tbwa-ink;
+
+// Links
+$link-color: $tbwa-ink;
+$link-hover-color: $tbwa-black;
+
+// Borders
+$border-color: $tbwa-border;
+
+// Border radius (Scout/InsightPulse style - rounded)
+$border-radius: 0.875rem;      // 14px
+$border-radius-sm: 0.625rem;   // 10px
+$border-radius-lg: 1rem;       // 16px
+$border-radius-xl: 1.25rem;    // 20px
+$border-radius-pill: 50rem;
+
+// Cards
+$card-border-radius: $border-radius-lg;
+$card-border-color: $tbwa-border;
+$card-bg: $tbwa-card;
+
+// Inputs
+$input-border-color: $tbwa-border;
+$input-focus-border-color: $tbwa-yellow;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba(255, 216, 0, 0.25);
+
+// Buttons
+$btn-border-radius: $border-radius;
+$btn-border-radius-sm: $border-radius-sm;
+$btn-border-radius-lg: $border-radius-lg;
+
+// =============================================================================
+// Typography - IBM Plex Sans
+// =============================================================================
+
+$o-font-family-sans-serif: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-sans-serif: $o-font-family-sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+// =============================================================================
+// MuK Theme Integration (if installed)
+// These variables are used by muk_web_* modules
+// =============================================================================
+
+$mk_color_brand: $tbwa-yellow;
+$mk_color_primary: $tbwa-yellow;
+$mk_color_success: $tbwa-success;
+$mk_color_info: $tbwa-info;
+$mk_color_warning: $tbwa-warning;
+$mk_color_danger: $tbwa-danger;
+
+$mk_color_appsmenu_text: rgba(255, 255, 255, 0.95);
+$mk_color_appbar_text: rgba(255, 255, 255, 0.86);
+$mk_color_appbar_active: rgba(255, 216, 0, 0.14);
+$mk_color_appbar_background: $tbwa-black;
+
+// MuK sidebar variables
+$mk-appsmenu-color: $mk_color_appsmenu_text;
+$mk-appbar-color: $mk_color_appbar_text;
+$mk-appbar-active: $mk_color_appbar_active;
+$mk-appbar-background: $mk_color_appbar_background;
+
+// =============================================================================
+// Theme Text Colors Map (used by Odoo for badges, etc.)
+// =============================================================================
+
+$o-theme-text-colors: (
+    "primary": $tbwa-yellow,
+    "secondary": $tbwa-gray-700,
+    "success": $tbwa-success,
+    "info": $tbwa-info,
+    "warning": $tbwa-warning,
+    "danger": $tbwa-danger,
+    "light": $tbwa-gray-100,
+    "dark": $tbwa-ink,
+);

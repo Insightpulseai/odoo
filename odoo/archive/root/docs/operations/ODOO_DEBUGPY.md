@@ -1,0 +1,271 @@
+# Odoo debugpy Runbook
+
+> Deterministic step-debugging for Odoo CE 19 across three modes.
+> Toggle: `IPAI_DEBUGPY=1` env var.  Port: `5678`.
+
+---
+
+## How it works
+
+`scripts/odoo_debugpy_entrypoint.py` is a thin wrapper that reads `IPAI_DEBUGPY`.
+When set to a truthy value (`1`, `true`, `yes`), it calls `debugpy.listen()` before
+`os.execvp`-ing into Odoo.  When `IPAI_DEBUGPY=0` (the default), the wrapper is a
+zero-overhead pass-through.
+
+```
+IPAI_DEBUGPY=0  →  entrypoint → os.execvp("odoo", args)  (no output, no overhead)
+IPAI_DEBUGPY=1  →  entrypoint → debugpy.listen(:5678) → os.execvp("odoo", args)
+```
+
+**Startup log line** — when enabled, the wrapper prints a greppable JSON summary
+before starting debugpy:
+```
+{"ipai_debugpy": true, "port": 5678, "wait": false}
+```
+Grep this in CI/logs: `docker logs odoo-core | grep ipai_debugpy`
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | Odoo exited cleanly (`os.execvp` replaces the wrapper process) |
+| 2 | `IPAI_DEBUGPY=1` but `debugpy` not installed — rebuild with dev image |
+
+`IPAI_DEBUGPY_WAIT=1` blocks Odoo startup until VS Code attaches (useful for
+debugging early initialisation — models, registry loading, etc.).
+
+**`workers` must be 0** — debugpy cannot follow forked worker processes.
+`config/dev/odoo.conf` already sets `workers = 0`.
+
+---
+
+## Mode 1 — Launch local (inside DevContainer)
+
+VS Code starts the Odoo process directly via the debugpy launch adapter.
+No `IPAI_DEBUGPY` toggle needed — debugpy is the runner.
+
+**Steps:**
+
+1. Open the repo in VS Code and **Reopen in Container**.
+2. Select **Run and Debug** → `Odoo (Launch local)`.
+3. VS Code starts `/usr/bin/odoo` under debugpy; breakpoints work immediately.
+
+**Config used:** `.vscode/launch.json` → `"Odoo (Launch local)"`
+
+```json
+"program": "/usr/bin/odoo",
+"args": ["--config=${workspaceFolder}/config/dev/odoo.conf", "--workers=0", ...]
+```
+
+---
+
+## Mode 2 — Attach (DevContainer, running via compose)
+
+Odoo runs inside the devcontainer as a compose service. VS Code attaches.
+
+**Steps:**
+
+1. Set `IPAI_DEBUGPY=1` in your host shell (or add to `.env`):
+   ```bash
+   export IPAI_DEBUGPY=1
+   ```
+2. Open the repo in VS Code and **Reopen in Container**.
+   The compose overlay (`.devcontainer/docker-compose.devcontainer.yml`) starts
+   Odoo via the entrypoint wrapper with `IPAI_DEBUGPY=1` and exposes port `5678`.
+3. Wait for Odoo log line: `[debugpy] listening on 0.0.0.0:5678`
+4. Select **Run and Debug** → `Odoo (Attach — DevContainer / debugpy :5678)`.
+5. Set breakpoints — they bind immediately.
+
+**To block startup until you attach** (debug early init):
+```bash
+export IPAI_DEBUGPY=1 IPAI_DEBUGPY_WAIT=1
+```
+
+**Config used:** `.vscode/launch.json` → `"Odoo (Attach — DevContainer / debugpy :5678)"`
+
+```json
+"pathMappings": [
+  { "localRoot": "${workspaceFolder}", "remoteRoot": "/workspaces/odoo" }
+]
+```
+
+---
+
+## Mode 3 — Attach (plain Docker Compose, no DevContainer)
+
+Odoo runs as a plain `docker compose` stack. Expose port 5678 and attach.
+
+**Steps:**
+
+1. Expose port 5678 in `docker-compose.yml` odoo service:
+   ```yaml
+   ports:
+     - "${ODOO_PORT:-8069}:8069"
+     - "${ODOO_LONGPOLL_PORT:-8072}:8072"
+     - "5678:5678"   # add this line
+   ```
+2. Start compose with the toggle:
+   ```bash
+   IPAI_DEBUGPY=1 docker compose up -d
+   ```
+3. Wait for: `[debugpy] listening on 0.0.0.0:5678`
+4. Select **Run and Debug** → `Odoo (Attach — Docker CE19 image / debugpy :5678)`.
+
+**Config used:** `.vscode/launch.json` → `"Odoo (Attach — Docker CE19 image / debugpy :5678)"`
+
+```json
+"pathMappings": [
+  { "localRoot": "${workspaceFolder}/addons/ipai", "remoteRoot": "/mnt/extra-addons/ipai" },
+  { "localRoot": "${workspaceFolder}/addons/oca",  "remoteRoot": "/mnt/oca" }
+]
+```
+
+---
+
+## Port conflict: n8n in docker-compose.dev.yml
+
+`docker-compose.dev.yml` originally mapped n8n to host port `5678`.
+It has been remapped to `5679:5678` so the dev overlay does not conflict with debugpy.
+
+| Service | Container port | Host port |
+|---------|---------------|-----------|
+| Odoo debugpy | 5678 | 5678 |
+| n8n (dev.yml) | 5678 | 5679 |
+
+The DevContainer does **not** load `docker-compose.dev.yml` (only `docker-compose.yml` +
+`.devcontainer/docker-compose.devcontainer.yml`), so there is no conflict in Mode 2.
+
+---
+
+## Failure symptoms
+
+| Symptom | Likely cause | Fix |
+|---------|-------------|-----|
+| Breakpoints show "unverified" | `justMyCode: true` | Set `"justMyCode": false` in launch.json |
+| Breakpoints never hit | Wrong `pathMappings` | Verify container mount paths vs. `remoteRoot` values |
+| `Connection refused` on attach | debugpy not listening | Check `IPAI_DEBUGPY=1` is set; check `docker logs odoo-core` for `[debugpy]` line |
+| Odoo hangs on startup | `IPAI_DEBUGPY_WAIT=1` but no client attached | Attach VS Code immediately, or set `IPAI_DEBUGPY_WAIT=0` |
+| Port 5678 already in use | n8n dev.yml not updated | Confirm `docker-compose.dev.yml` maps n8n to `5679:5678` |
+| Entrypoint exits with code 2 | `IPAI_DEBUGPY=1` but debugpy not installed (prod/stage image) | Run `docker compose build --no-cache odoo` to rebuild dev image; check for `DEBUGPY_MISSING` in stderr |
+| `ModuleNotFoundError: debugpy` | Import error variant of the above | Same fix: rebuild dev image |
+| Workers > 0 warning | Requests split across processes | `workers = 0` in `config/dev/odoo.conf`; `--workers=0` in compose command |
+
+---
+
+## debugpy version pin
+
+`docker/dev/Dockerfile` installs a pinned version (`debugpy==1.8.14`).
+
+**Why pinned:** debugpy uses a binary wire protocol to talk to VS Code's Python
+extension. Silent protocol drift between a floating `debugpy` install and a newer
+VS Code release can cause breakpoints to stop hitting without any obvious error.
+Pinning and bumping deliberately (with a build test) keeps this deterministic.
+
+To upgrade: bump the version in `docker/dev/Dockerfile` and rebuild:
+```bash
+docker compose build --no-cache odoo
+```
+Then re-run the contract gate to confirm the new version still satisfies the
+contracts:
+```bash
+bash scripts/ci/check_debugpy_contract.sh
+```
+
+---
+
+## CI contract gate
+
+`scripts/ci/check_debugpy_contract.sh` verifies two contracts without Docker or Odoo:
+
+| Contract | Test |
+|----------|------|
+| **silent-off** | `IPAI_DEBUGPY=0` → no wrapper stdout before exec |
+| **fail-fast** | `IPAI_DEBUGPY=1` + debugpy absent → exit **2** + `DEBUGPY_MISSING` on stderr |
+
+Workflow: `.github/workflows/debugpy-contract.yml` (runs on PR, path-filtered).
+
+### Determinism invariants
+
+| Invariant | Value | Reason |
+|-----------|-------|--------|
+| **Triggers** | `pull_request` + `push` + `merge_group` | Gate runs during merge-queue evaluation, not only on PR open/update |
+| **Python version** | `"3.11"` (pinned) | Repo standard (85 CI workflow uses); eliminates `3.x` patch-level drift |
+| **Path filters** | All 9 debugpy-surface files + workflow itself | A port remap in `docker-compose.dev.yml` or a devcontainer change also triggers the gate |
+
+---
+
+## When to debug vs when to write a test
+
+Use this decision tree before reaching for the debugger.
+
+### Default workflow
+
+```
+Unexpected behaviour observed
+    ↓
+Can you reproduce it reliably?
+    ├─ No  → add logging/assertions to narrow it down first
+    └─ Yes → Does a regression test already exist?
+                 ├─ Yes → run it; if it passes, the bug is environmental → debug
+                 └─ No  → WRITE THE TEST FIRST, then debug to make it pass
+```
+
+### Criteria: reach for the debugger when…
+
+| Situation | Why debugger helps |
+|-----------|-------------------|
+| Root cause is unknown and logging is insufficient | Step through state changes interactively |
+| Bug only occurs under Odoo framework lifecycle (registry, compute triggers, ORM events) | Need to inspect real model instances |
+| Performance regression with no obvious hotspot | Profile with `IPAI_DEBUGPY_WAIT=1` to attach before load |
+| Exception raised deep in OCA/Odoo internals | Inspect live traceback and locals |
+| Race condition or timing-sensitive issue | Single-threaded `workers=0` debugpy is the only viable tool |
+
+### Criteria: write a test instead when…
+
+| Situation | Why a test is better |
+|-----------|---------------------|
+| You already understand the expected vs actual behaviour | Test captures the contract permanently |
+| The bug is in your own `ipai_*` code | You control the inputs; mock the rest |
+| You want to prevent regression | Debugger session is ephemeral; test is CI-enforced |
+| The scenario is a known edge case (missing attachment, blank config) | Unit test covers it in milliseconds |
+| You just debugged and found the root cause | Write the regression test **before** you write the fix |
+
+### The rule: debug to discover, test to prevent
+
+```
+1. Reproduce the failure
+2. Debug to find root cause   (debugpy or print-debugging)
+3. Write a regression test    (pytest or Odoo TransactionCase)
+4. Fix the code
+5. Verify: test must turn green, CI must pass
+```
+
+A fix without a test is a fix that will break again.
+
+### Test layer quick reference
+
+| What you're testing | Layer | Run command |
+|--------------------|-------|-------------|
+| `fetch_image_text()` network I/O | Pure pytest | `pytest addons/ipai/ipai_expense_ocr/tests/test_ocr_client.py -v` |
+| `parse_text()` / `normalize_amount()` | Pure pytest | `pytest addons/ipai/ipai_expense_ocr/tests/test_ocr_extract.py -v` |
+| `action_digitize_receipt()` end-to-end | Odoo TransactionCase | `python odoo-bin --test-enable --test-tags ipai_expense_ocr -d odoo_dev` |
+| Entrypoint silent-off + fail-fast | Bash contract gate | `bash scripts/ci/check_debugpy_contract.sh` |
+
+See `docs/architecture/ODOO_TEST_STRATEGY.md` for the full testing strategy matrix.
+
+---
+
+## Related files
+
+| File | Role |
+|------|------|
+| `scripts/odoo_debugpy_entrypoint.py` | Wrapper: conditional debugpy.listen → execvp |
+| `scripts/ci/check_debugpy_contract.sh` | Contract gate (exit-2 + silent-off) |
+| `.github/workflows/debugpy-contract.yml` | CI workflow for the contract gate |
+| `docker/dev/Dockerfile` | Bakes `debugpy==1.8.14` (pinned) into the dev image |
+| `config/dev/odoo.conf` | Sets `workers = 0` |
+| `.devcontainer/docker-compose.devcontainer.yml` | IPAI_DEBUGPY env + port 5678 + wrapper command |
+| `.devcontainer/devcontainer.json` | Forwards port 5678 to host |
+| `docker-compose.yml` | IPAI_DEBUGPY env passthrough (odoo service) |
+| `docker-compose.dev.yml` | n8n remapped to 5679 to free 5678 |
+| `.vscode/launch.json` | Three VS Code debug configurations |

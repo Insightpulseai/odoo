@@ -1,0 +1,225 @@
+# Canonical Metadata Schema for Documents and Chunks
+# Schema: ssot.docs.metadata.v1
+# Version: 1.0
+# Updated: 2026-03-15
+# Referenced by: docs/contracts/ORG_DOC_PLATFORM_CONTRACT.md
+
+version: "1.0"
+schema: ssot.docs.metadata.v1
+
+# ============================================================================
+# DOCUMENT METADATA
+# ============================================================================
+# Identifies a document within the corpus. One document = one file on disk
+# or one web page.
+
+document_metadata:
+  doc_id:
+    type: string
+    format: "{source}:{branch}:{path}:{content_hash}"
+    description: >
+      Deterministic document identifier. Composed of source type,
+      git branch (or 'web' for web sources), file path relative to
+      repo root, and SHA-256 hash of content (first 12 chars).
+    required: true
+    example: "repo:main:docs/architecture/AUTH_ARCHITECTURE.md:a1b2c3d4e5f6"
+
+  path:
+    type: string
+    description: File path relative to repo root (for repo sources) or URL (for web sources)
+    required: true
+    example: "docs/architecture/AUTH_ARCHITECTURE.md"
+
+  source:
+    type: string
+    enum: [repo, web, external]
+    description: >
+      Source type.
+      repo = file in this git repository.
+      web = fetched from external URL.
+      external = reference-only (not fetched, just pointed to).
+    required: true
+
+  doc_type:
+    type: string
+    enum:
+      - architecture
+      - contract
+      - spec
+      - runbook
+      - config
+      - reference
+      - evidence
+      - data-model
+      - guide
+      - policy
+    description: Document classification
+    required: true
+
+  owner:
+    type: string
+    description: Team or role responsible for this document
+    required: true
+    examples:
+      - platform_team
+      - erp_team
+      - ai_team
+      - infra_team
+      - data_team
+      - product_team
+      - cto
+      - sre_ops
+      - release_manager
+      - security_team
+      - design_team
+
+  sensitivity:
+    type: string
+    enum: [public, internal, restricted]
+    default: internal
+    description: Access control level
+    required: true
+
+  freshness:
+    type: string
+    enum: [active, stale, deprecated]
+    description: >
+      Content freshness status.
+      active = maintained and current.
+      stale = not updated in >90 days, may be outdated.
+      deprecated = superseded, should not be referenced.
+    required: true
+
+  last_modified:
+    type: datetime
+    format: ISO 8601
+    description: Last modification timestamp (from git log or HTTP Last-Modified)
+    required: true
+
+  commit_sha:
+    type: string
+    description: Git commit SHA of last modification (null for web sources)
+    required: false
+
+  title:
+    type: string
+    description: >
+      Document title. Derived from first h1 heading, front-matter title,
+      or filename if no heading found.
+    required: true
+
+  indexing_priority:
+    type: string
+    enum: [P0, P1, P2, P3]
+    description: >
+      Indexing priority.
+      P0 = must index (contracts, architecture, SSOT, specs, config).
+      P1 = should index (guides, modules, governance, integrations).
+      P2 = nice to have (KB articles, design, product, portfolio).
+      P3 = skip (evidence, archive, node_modules).
+    required: true
+
+# ============================================================================
+# CHUNK METADATA
+# ============================================================================
+# Identifies a chunk within a document. One document produces N chunks.
+
+chunk_metadata:
+  chunk_id:
+    type: string
+    format: "{doc_id}:{heading_chain}:{ordinal}:{content_hash_8}"
+    description: >
+      Deterministic chunk identifier. Composed of parent doc_id,
+      heading chain (breadcrumb path separated by ' > '),
+      ordinal position within the heading section,
+      and first 8 chars of SHA-256 hash of chunk content.
+    required: true
+    example: "repo:main:docs/architecture/AUTH_ARCHITECTURE.md:a1b2c3d4e5f6:Authentication > OAuth2 > Token Flow:0:9f8e7d6c"
+
+  doc_id:
+    type: string
+    description: Parent document identifier (references document_metadata.doc_id)
+    required: true
+
+  heading_chain:
+    type: string
+    description: >
+      Breadcrumb path of headings leading to this chunk.
+      Separated by ' > '. Example: "Accounting > Invoicing > Tax Configuration"
+    required: true
+
+  ordinal:
+    type: integer
+    description: >
+      Zero-based position of this chunk within its heading section.
+      If a heading section produces multiple chunks (due to max_chunk_size),
+      ordinal increments for each.
+    required: true
+
+  char_count:
+    type: integer
+    description: Number of characters in the chunk content
+    required: true
+
+  source:
+    type: string
+    enum: [repo, web, external]
+    description: Inherited from parent document
+    required: true
+
+  path:
+    type: string
+    description: Inherited from parent document
+    required: true
+
+# ============================================================================
+# AZURE AI SEARCH INDEX FIELD MAPPING
+# ============================================================================
+# Maps metadata fields to Azure AI Search index fields.
+
+azure_search_mapping:
+  key_field: chunk_id
+  searchable_fields:
+    - name: content
+      type: Edm.String
+      searchable: true
+      retrievable: true
+    - name: title
+      type: Edm.String
+      searchable: true
+      retrievable: true
+    - name: heading_chain
+      type: Edm.String
+      searchable: true
+      retrievable: true
+  filterable_fields:
+    - name: source
+      type: Edm.String
+      filterable: true
+    - name: doc_type
+      type: Edm.String
+      filterable: true
+    - name: sensitivity
+      type: Edm.String
+      filterable: true
+    - name: freshness
+      type: Edm.String
+      filterable: true
+    - name: owner
+      type: Edm.String
+      filterable: true
+    - name: indexing_priority
+      type: Edm.String
+      filterable: true
+  sortable_fields:
+    - name: last_modified
+      type: Edm.DateTimeOffset
+      sortable: true
+    - name: char_count
+      type: Edm.Int32
+      sortable: true
+  vector_fields:
+    - name: content_vector
+      type: Collection(Edm.Single)
+      dimensions: 1536
+      vector_search_profile: default-vector-profile

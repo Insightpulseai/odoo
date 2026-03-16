@@ -1,0 +1,72 @@
+/* Shared design tokens (CSS vars) - sync with Next.js Tailwind theme */
+:root {
+  --odooops-primary: #3b82f6;
+  --odooops-bg: #ffffff;
+  --odooops-text: #1f2937;
+  --odooops-border: #e5e7eb;
+  --odooops-nav-height: 56px;
+}
+
+.odooops-shell {
+  margin: 0;
+  padding: 0;
+  height: calc(100vh - 80px); /* account for Odoo header */
+  display: flex;
+  flex-direction: column;
+}
+
+.odooops-nav {
+  height: var(--odooops-nav-height);
+  background: var(--odooops-bg);
+  border-bottom: 1px solid var(--odooops-border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 24px;
+}
+
+.odooops-nav-brand {
+  font-size: 18px;
+  color: var(--odooops-primary);
+}
+
+.odooops-nav-links {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.odooops-nav-link {
+  color: var(--odooops-text);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.odooops-nav-link:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.odooops-nav-link.active {
+  background: var(--odooops-primary);
+  color: white;
+}
+
+.odooops-nav-user {
+  margin-left: auto;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.odooops-embed {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.odooops-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

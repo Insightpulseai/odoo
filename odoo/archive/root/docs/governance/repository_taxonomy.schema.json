@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insightpulseai.com/schemas/repository-taxonomy/v1",
+  "title": "Repository Taxonomy",
+  "description": "JSON Schema for validating the InsightPulse AI repository taxonomy YAML. Governance: spec/control-room-platform/constitution.md",
+  "type": "object",
+  "required": ["version", "repositories"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "repositories": {
+      "type": "array",
+      "description": "List of repositories in the organization",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Repository"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Repository": {
+      "type": "object",
+      "required": ["name", "slug", "type", "primary_language", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Short repository name",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "slug": {
+          "type": "string",
+          "description": "GitHub org/repo slug (e.g., Insightpulseai/odoo)",
+          "pattern": "^[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+$"
+        },
+        "type": {
+          "type": "string",
+          "description": "Repository type classification",
+          "enum": ["monorepo", "service", "library", "documentation", "infrastructure", "application"]
+        },
+        "primary_language": {
+          "type": "string",
+          "description": "Primary programming language",
+          "minLength": 1
+        },
+        "bounded_contexts": {
+          "type": "array",
+          "description": "Bounded contexts this repository participates in",
+          "items": {
+            "type": "string",
+            "enum": [
+              "odoo-erp",
+              "supabase",
+              "databricks",
+              "plane",
+              "n8n",
+              "azure-foundry",
+              "github-ci"
+            ]
+          },
+          "default": []
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the repository purpose"
+        },
+        "spec_bundles": {
+          "type": "integer",
+          "description": "Number of spec bundles in the repository",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "description": "Current repository lifecycle status",
+          "enum": ["active", "deprecated", "archived"]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

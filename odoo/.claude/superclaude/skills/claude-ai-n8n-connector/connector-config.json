@@ -1,0 +1,285 @@
+{
+  "name": "InsightPulse n8n MCP",
+  "description": "Query Odoo System of Record and trigger n8n automation workflows via SSE transport",
+  "transport": {
+    "type": "sse",
+    "url": "https://n8n.insightpulseai.com/webhook/mcp-insightpulse/sse",
+    "authentication": {
+      "type": "bearer"
+    }
+  },
+  "tools": [
+    {
+      "name": "odoo_query",
+      "description": "Query Odoo System of Record for business data (invoices, partners, products, etc.)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Odoo model name (e.g., 'account.move', 'res.partner', 'product.product')",
+            "enum": [
+              "account.move",
+              "res.partner",
+              "product.product",
+              "sale.order",
+              "purchase.order",
+              "stock.picking",
+              "account.payment",
+              "hr.employee"
+            ]
+          },
+          "domain": {
+            "type": "string",
+            "description": "Search filter in Odoo domain format (JSON string). Example: \"[['state', '=', 'posted']]\""
+          },
+          "fields": {
+            "type": "array",
+            "description": "List of fields to retrieve",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of records to return (default: 100, max: 1000)",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000
+          }
+        },
+        "required": ["model"]
+      }
+    },
+    {
+      "name": "supabase_ops",
+      "description": "Execute SQL queries or call stored procedures on Supabase PostgreSQL database",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "description": "Type of operation to perform",
+            "enum": ["sql", "rpc"]
+          },
+          "query": {
+            "type": "string",
+            "description": "SQL SELECT query (required if operation=sql). Only read operations allowed."
+          },
+          "function_name": {
+            "type": "string",
+            "description": "RPC function name (required if operation=rpc)"
+          },
+          "params": {
+            "type": "object",
+            "description": "Parameters for RPC function call (JSON object)"
+          }
+        },
+        "required": ["operation"]
+      }
+    },
+    {
+      "name": "finance_summary",
+      "description": "Generate finance reports (AR aging, AP aging, cash flow, reconciliation) from Odoo SOR",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "report_type": {
+            "type": "string",
+            "description": "Type of financial report to generate",
+            "enum": ["ar_aging", "ap_aging", "cash_flow", "reconciliation", "trial_balance"]
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Report start date in YYYY-MM-DD format",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "end_date": {
+            "type": "string",
+            "description": "Report end date in YYYY-MM-DD format",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (default: PHP)",
+            "default": "PHP",
+            "enum": ["PHP", "USD", "EUR"]
+          }
+        },
+        "required": ["report_type"]
+      }
+    },
+    {
+      "name": "infra_health",
+      "description": "Check infrastructure health status (DigitalOcean droplets, services, disk usage, network)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "check_type": {
+            "type": "string",
+            "description": "Type of health check to perform",
+            "enum": ["droplet", "service", "disk", "network", "all"]
+          },
+          "droplet_id": {
+            "type": "string",
+            "description": "Specific droplet identifier (default: primary production droplet)",
+            "default": "odoo-production"
+          }
+        },
+        "required": ["check_type"]
+      }
+    },
+    {
+      "name": "workflow_monitor",
+      "description": "Monitor n8n workflow executions, success rates, and recent activity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Monitoring action to perform",
+            "enum": ["list", "status", "stats", "errors"]
+          },
+          "workflow_id": {
+            "type": "string",
+            "description": "Specific workflow ID to monitor (optional)"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of executions to return (default: 20)",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": ["action"]
+      }
+    },
+    {
+      "name": "sync_trigger",
+      "description": "Trigger SSOT/SOR data synchronization between Supabase (SSOT) and Odoo (SOR)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sync_type": {
+            "type": "string",
+            "description": "Type of synchronization to perform",
+            "enum": ["full", "incremental", "specific_model"]
+          },
+          "model": {
+            "type": "string",
+            "description": "Odoo model to sync (required if sync_type=specific_model)"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Sync direction",
+            "enum": ["ssot_to_sor", "sor_to_ssot", "bidirectional"],
+            "default": "ssot_to_sor"
+          }
+        },
+        "required": ["sync_type"]
+      }
+    },
+    {
+      "name": "workflow_manager",
+      "description": "[ADMIN ONLY] Deploy, update, or delete n8n workflows via API",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Workflow management action",
+            "enum": ["create", "update", "delete", "activate", "deactivate"]
+          },
+          "workflow_id": {
+            "type": "string",
+            "description": "Workflow ID (required for update/delete/activate/deactivate)"
+          },
+          "workflow_json": {
+            "type": "object",
+            "description": "Workflow definition in n8n JSON format (required for create/update)"
+          }
+        },
+        "required": ["action"]
+      }
+    },
+    {
+      "name": "github_ops",
+      "description": "[ADMIN ONLY] Create GitHub issues, pull requests, and commits programmatically",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "description": "GitHub operation to perform",
+            "enum": ["create_issue", "create_pr", "commit", "merge_pr"]
+          },
+          "repo": {
+            "type": "string",
+            "description": "Repository name in 'owner/repo' format (e.g., 'Insightpulseai/odoo')"
+          },
+          "title": {
+            "type": "string",
+            "description": "Issue or PR title"
+          },
+          "body": {
+            "type": "string",
+            "description": "Issue or PR body (supports Markdown)"
+          },
+          "files": {
+            "type": "array",
+            "description": "Files to commit (for commit operation)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path relative to repository root"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "File content (base64 encoded for binary files)"
+                }
+              },
+              "required": ["path", "content"]
+            }
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch name (for commit and PR operations)"
+          }
+        },
+        "required": ["operation", "repo"]
+      }
+    },
+    {
+      "name": "artifact_deployer",
+      "description": "[ADMIN ONLY] Deploy artifacts to DigitalOcean App Platform",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "app_id": {
+            "type": "string",
+            "description": "DigitalOcean app identifier"
+          },
+          "artifact_url": {
+            "type": "string",
+            "description": "URL to deployment artifact (Docker image registry URL or git reference)"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Deployment environment",
+            "enum": ["production", "staging", "development"],
+            "default": "staging"
+          },
+          "force_rebuild": {
+            "type": "boolean",
+            "description": "Force rebuild from source (default: false)",
+            "default": false
+          }
+        },
+        "required": ["app_id", "artifact_url"]
+      }
+    }
+  ]
+}

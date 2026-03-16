@@ -1,0 +1,119 @@
+schema_version: "1.0"
+updated_at: "2026-03-15"
+
+# 6 duplicate groups from seed inventory analysis
+# Reference: docs/architecture/SEED_DATA_INVENTORY.md
+# Remediation plan: spec/seed-dedup-remediation/plan.md
+duplicate_groups:
+
+  - id: finance_stages
+    domain: finance
+    canonical:
+      module: ipai_finance_workflow
+      file: data/finance_task_stages.xml
+      records: 5
+      xml_id_prefix: fin_stage_
+    deprecated:
+      - module: ipai_finance_close_seed
+        file: data/01_stages.xml
+        records: 6
+        action: remove_from_manifest
+    enforcement: block_deprecated_install
+    business_key: stage_code
+    validation_query: >
+      SELECT COUNT(*) FROM project_task_type WHERE name LIKE 'Finance%'
+
+  - id: finance_projects
+    domain: finance
+    canonical:
+      module: ipai_finance_workflow
+      file: data/finance_projects.xml
+      records: 2
+      xml_id_prefix: fin_project_
+    deprecated:
+      - module: ipai_finance_close_seed
+        file: data/04_projects.xml
+        records: 2
+        action: remove_from_manifest
+    enforcement: block_deprecated_install
+    business_key: project_name
+    validation_query: >
+      SELECT COUNT(*) FROM project_project WHERE name IN ('Month-End Close', 'BIR Returns')
+
+  - id: finance_tasks_month_end
+    domain: finance
+    canonical:
+      module: ipai_finance_workflow
+      file: data/finance_ppm_tasks.xml
+      records: 20
+      xml_id_prefix: fin_ppm_me_
+    deprecated:
+      - module: ipai_finance_close_seed
+        file: data/06_tasks_month_end.xml
+        records: 39
+        action: remove_from_manifest
+      - module: ipai_finance_close_seed
+        file: data/tasks_month_end.xml
+        records: 36
+        action: remove_from_manifest
+    enforcement: block_deprecated_install
+    business_key: task_reference
+    validation_query: >
+      SELECT COUNT(*) FROM project_task WHERE project_id IN (SELECT id FROM project_project WHERE name = 'Month-End Close')
+
+  - id: bir_tasks
+    domain: finance_bir
+    canonical:
+      module: ipai_finance_close_seed
+      file: data/07_tasks_bir_tax.xml
+      records: 33
+      xml_id_prefix: task_bir_
+    deprecated:
+      - module: ipai_finance_close_seed
+        file: data/tasks_bir.xml
+        records: 27
+        action: delete_file
+    enforcement: delete_duplicate_file
+    business_key: task_name
+    validation_query: >
+      SELECT COUNT(*) FROM project_task WHERE project_id IN (SELECT id FROM project_project WHERE name = 'BIR Returns')
+
+  - id: mail_server
+    domain: mail
+    canonical:
+      module: ipai_zoho_mail
+      file: data/mail_server.xml
+      records: 1
+      xml_id_prefix: zoho_smtp_
+    deprecated:
+      - module: ipai_mailgun_smtp
+        file: data/ir_mail_server.xml
+        records: 1
+        action: delete_module
+      - module: ipai_enterprise_bridge
+        file: data/mail_server.xml
+        records: 1
+        action: remove_record
+    enforcement: block_deprecated_install
+    business_key: smtp_host
+    validation_query: >
+      SELECT COUNT(*) FROM ir_mail_server WHERE smtp_host LIKE '%zoho%' AND sequence = 1
+
+  - id: mirror_copies
+    domain: ops
+    canonical:
+      location: supabase/seeds/
+      files:
+        - 001_hr_seed.sql
+        - 002_finance_seed.sql
+        - 003_odoo_dict_seed.sql
+    deprecated:
+      - location: ops-platform/supabase/seeds/
+        action: delete_directory
+      - location: ops-platform/supabase/seed/
+        action: delete_directory
+      - location: odoo/supabase/seeds/
+        action: delete_file
+      - location: odoo/ipai_finance_closing_seed.json
+        action: delete_file
+    validation: diff_identical

@@ -1,0 +1,267 @@
+# ssot/odoo/settings_catalog.yaml
+#
+# Odoo 19 CE res.config.settings field catalog — runtime-derived SSOT.
+#
+# Schema: ssot.odoo.settings_catalog.v1
+# Validator: scripts/ci/check_settings_catalog.py
+# Generator: scripts/odoo/extract_settings_catalog.py
+#
+# DO NOT EDIT DIRECTLY — regenerate from a running Odoo 19 CE instance.
+#
+schema: ssot.odoo.settings_catalog.v1
+version: '1.0'
+odoo_version: '19.0'
+edition: CE
+source_of_truth: live_instance
+generation:
+  tool: scripts/odoo/extract_settings_catalog.py
+  mode: source_scan
+  authoritative: false
+  notes: >
+    This catalog is authoritative only when extracted from a live Odoo 19 CE
+    instance (method=xmlrpc). Source-scan mode is best-effort and incomplete.
+    Do not treat as a complete Odoo 19 CE settings reference when
+    extraction.method=source_scan.
+extraction:
+  method: source_scan
+  extracted_at: '2026-02-27T22:05:31Z'
+  runtime_identity: null
+  odoo_git_ref: null
+  field_count: 44
+  module_count: 8
+modules:
+- module: ipai_account_settings_compat
+  fields:
+  - name: anglo_saxon_accounting
+    ttype: boolean
+    string: Use Anglo-Saxon Accounting
+    mechanism: related
+    related: company_id.anglo_saxon_accounting
+- module: ipai_ai_agent_builder
+  fields:
+  - name: ipai_ai_chunk_overlap
+    ttype: integer
+    string: Chunk Overlap
+    mechanism: config_parameter
+    config_parameter: ipai.ai.chunk_overlap
+  - name: ipai_ai_chunk_size
+    ttype: integer
+    string: Chunk Size
+    mechanism: config_parameter
+    config_parameter: ipai.ai.chunk_size
+  - name: ipai_ai_default_provider
+    ttype: selection
+    string: Default Provider
+    mechanism: config_parameter
+    config_parameter: ipai.ai.default_provider
+  - name: ipai_ai_embedding_model
+    ttype: char
+    string: Embedding Model
+    mechanism: config_parameter
+    config_parameter: ipai.ai.embedding_model
+  - name: ipai_ai_google_api_key
+    ttype: char
+    string: Google API Key
+    mechanism: config_parameter
+    config_parameter: ipai.ai.google_api_key
+  - name: ipai_ai_openai_api_key
+    ttype: char
+    string: OpenAI API Key
+    mechanism: config_parameter
+    config_parameter: ipai.ai.openai_api_key
+  - name: ipai_ai_retrieval_top_k
+    ttype: integer
+    string: Retrieval Top K
+    mechanism: config_parameter
+    config_parameter: ipai.ai.retrieval_top_k
+- module: ipai_ai_widget
+  fields:
+  - name: ipai_ai_bridge_token
+    ttype: char
+    string: AI Bridge Token
+    mechanism: config_parameter
+    config_parameter: ipai_ai_widget.bridge_token
+  - name: ipai_ai_bridge_url
+    ttype: char
+    string: AI Bridge URL
+    mechanism: config_parameter
+    config_parameter: ipai_ai_widget.bridge_url
+- module: ipai_ask_ai
+  fields:
+  - name: ai_chatgpt_key
+    ttype: char
+    string: ChatGPT API Key
+    mechanism: config_parameter
+    config_parameter: ipai_ask_ai.chatgpt_key
+  - name: ai_gemini_key
+    ttype: char
+    string: Google Gemini API Key
+    mechanism: config_parameter
+    config_parameter: ipai_ask_ai.gemini_key
+  - name: ai_use_chatgpt
+    ttype: boolean
+    string: Use your own ChatGPT account
+    mechanism: config_parameter
+    config_parameter: ipai_ask_ai.chatgpt_enabled
+  - name: ai_use_gemini
+    ttype: boolean
+    string: Use your own Google Gemini account
+    mechanism: config_parameter
+    config_parameter: ipai_ask_ai.gemini_enabled
+  - name: ipai_copilot_api_key
+    ttype: char
+    string: Copilot API Key
+    mechanism: config_parameter
+    config_parameter: ipai_copilot.api_key
+  - name: ipai_copilot_api_url
+    ttype: char
+    string: Copilot API URL
+    mechanism: config_parameter
+    config_parameter: ipai_copilot.api_url
+  - name: ipai_gemini_api_key
+    ttype: char
+    string: Gemini API Key (IPAI Service)
+    mechanism: config_parameter
+    config_parameter: ipai_gemini.api_key
+  - name: ipai_gemini_model
+    ttype: char
+    string: Gemini Model
+    mechanism: config_parameter
+    config_parameter: ipai_gemini.model
+- module: ipai_enterprise_bridge
+  fields:
+  - name: ipai_iot_enabled
+    ttype: boolean
+    string: IoT Bridge Enabled
+    mechanism: config_parameter
+    config_parameter: ipai.iot.enabled
+  - name: ipai_iot_mqtt_broker
+    ttype: char
+    string: MQTT Broker Host
+    mechanism: config_parameter
+    config_parameter: ipai.iot.mqtt.broker
+  - name: ipai_iot_mqtt_port
+    ttype: integer
+    string: MQTT Broker Port
+    mechanism: config_parameter
+    config_parameter: ipai.iot.mqtt.port
+  - name: ipai_mail_catchall_domain
+    ttype: char
+    string: Catchall Domain
+    mechanism: config_parameter
+    config_parameter: mail.catchall.domain
+  - name: ipai_mail_provider
+    ttype: selection
+    string: Mail Provider
+    mechanism: config_parameter
+    config_parameter: ipai.mail.provider
+  - name: ipai_mailgun_api_key
+    ttype: char
+    string: Mailgun API Key
+    mechanism: config_parameter
+    config_parameter: ipai.mailgun.api_key
+  - name: ipai_mailgun_domain
+    ttype: char
+    string: Mailgun Domain
+    mechanism: config_parameter
+    config_parameter: ipai.mailgun.domain
+  - name: ipai_oauth_azure_enabled
+    ttype: boolean
+    string: Azure AD OAuth Enabled
+    mechanism: config_parameter
+    config_parameter: ipai.oauth.azure.enabled
+  - name: ipai_oauth_google_enabled
+    ttype: boolean
+    string: Google OAuth Enabled
+    mechanism: config_parameter
+    config_parameter: ipai.oauth.google.enabled
+  - name: pos_self_ordering_image_home_ids
+    ttype: many2many
+    string: Self-Ordering Home Images
+    mechanism: computed
+  - name: pos_self_ordering_mode
+    ttype: selection
+    string: Self-Ordering Mode
+    mechanism: config_parameter
+    config_parameter: ipai_bridge.pos_self_ordering_mode
+  - name: pos_self_ordering_pay_after
+    ttype: selection
+    string: Self-Ordering Payment
+    mechanism: config_parameter
+    config_parameter: ipai_bridge.pos_self_ordering_pay_after
+  - name: pos_self_ordering_service_mode
+    ttype: selection
+    string: Self-Ordering Service Mode
+    mechanism: config_parameter
+    config_parameter: ipai_bridge.pos_self_ordering_service_mode
+- module: ipai_platform_theme
+  fields:
+  - name: ipai_theme_variant
+    ttype: selection
+    string: Theme Variant
+    mechanism: related
+    related: company_id.ipai_theme_variant
+- module: ipai_superset_connector
+  fields:
+  - name: superset_auto_sync
+    ttype: boolean
+    string: Enable Auto-Sync
+    mechanism: config_parameter
+    config_parameter: ipai_superset_connector.auto_sync
+  - name: superset_connection_id
+    ttype: many2one
+    string: Default Superset Connection
+    mechanism: config_parameter
+    config_parameter: ipai_superset_connector.default_connection_id
+  - name: superset_create_analytics_views
+    ttype: boolean
+    string: Create Pre-built Analytics Views
+    mechanism: config_parameter
+    config_parameter: ipai_superset_connector.create_analytics_views
+  - name: superset_enable_rls
+    ttype: boolean
+    string: Enable Row-Level Security
+    mechanism: config_parameter
+    config_parameter: ipai_superset_connector.enable_rls
+  - name: superset_sync_interval
+    ttype: selection
+    string: Sync Interval
+    mechanism: config_parameter
+    config_parameter: ipai_superset_connector.sync_interval
+- module: ipai_zoho_mail
+  fields:
+  - name: zoho_from_domain
+    ttype: char
+    string: From Domain
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.from_domain
+  - name: zoho_imap_host
+    ttype: char
+    string: IMAP Host
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.imap_host
+  - name: zoho_imap_port
+    ttype: integer
+    string: IMAP Port
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.imap_port
+  - name: zoho_imap_user
+    ttype: char
+    string: IMAP User (Catchall)
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.imap_user
+  - name: zoho_smtp_host
+    ttype: char
+    string: SMTP Host
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.smtp_host
+  - name: zoho_smtp_port
+    ttype: integer
+    string: SMTP Port
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.smtp_port
+  - name: zoho_smtp_user
+    ttype: char
+    string: SMTP User (From)
+    mechanism: config_parameter
+    config_parameter: ipai_zoho_mail.smtp_user

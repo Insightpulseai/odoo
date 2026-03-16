@@ -1,0 +1,4 @@
+--- a/n8n/workflows/chatops-hotfix.json
++++ b/automations/n8n/workflows/chatops-hotfix.json
+@@ Move stray workflow to canonical location @@
+# git mv 'n8n/workflows/chatops-hotfix.json' 'automations/n8n/workflows/chatops-hotfix.json'

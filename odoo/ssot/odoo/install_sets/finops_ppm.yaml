@@ -1,0 +1,64 @@
+# schema: ssot.odoo.install_set.v1
+
+schema: ssot.odoo.install_set.v1
+version: 1
+install_set_id: finops_ppm
+name: Finance PPM
+updated: "2026-03-06"
+
+constraints:
+  odoo_version: "19.0"
+  edition: ce
+  oca_lock_ref: ssot/odoo/oca_lock.yaml
+
+targets:
+  databases:
+    - dev
+    - stage
+    - prod
+  apply_policy: ci_verify_only
+
+module_tiers:
+  core:
+    - base_technical_features
+    - web_responsive
+    - queue_job
+  oca:
+    - date_range
+    - account_financial_report
+    - mis_builder
+    - dms
+  ipai:
+    - ipai_finance_ppm
+    - ipai_finance_close_seed
+    - ipai_bir_tax_compliance
+    - ipai_bir_notifications
+    - ipai_bir_plane_sync
+    - ipai_slack_connector
+    - ipai_pulser_connector
+  meta:
+    - ipai_meta_finops_ppm
+
+policy:
+  install_order:
+    - core
+    - oca
+    - ipai
+    - meta
+  core_dep_allowlist:
+    - base
+    - web
+    - mail
+    - contacts
+    - account
+    - project
+    - hr
+    - analytic
+    - calendar
+    - uom
+    - web_tour
+    - base_sparse_field
+    - board
+    - http_routing
+    - onboarding
+    - portal

@@ -1,0 +1,44 @@
+name: parity-tier0
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'docs/parity/**'
+      - 'config/parity/**'
+      - 'scripts/parity/**'
+      - '.github/workflows/parity-tier0.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'docs/parity/**'
+      - 'config/parity/**'
+
+permissions:
+  contents: read
+
+jobs:
+  parity-tier0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Run parity check (Tier-0 strict)
+        run: |
+          set -euo pipefail
+          ./scripts/parity/parity_check.py \
+            --catalog docs/parity/EE_SURFACE_CATALOG.yaml \
+            --goals   config/parity/PARITY_GOALS.yaml \
+            --probes  config/parity/TIER0_PROBES.yaml \
+            --strict-tier0

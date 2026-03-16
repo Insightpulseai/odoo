@@ -1,0 +1,27 @@
+# Free Plan — OdooOps Control Plane
+# DRAFT — requires commercial validation (limits, features)
+
+plan_id: free
+name: Free
+description: Community edition with core ERP capabilities and basic AI features.
+
+audience: public
+billing_model: free
+
+trial:
+  enabled: false
+
+features:
+  - Odoo CE 19 core modules
+  - Basic AI copilot (50 queries/month)
+  - Community support
+  - Single company
+  - Up to 5 users
+
+limits:
+  max_users: 5
+  max_companies: 1
+  ai_queries_per_month: 50
+  storage_gb: 5
+
+status: draft

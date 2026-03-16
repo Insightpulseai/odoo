@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report Definition -->
+    <record id="report_golive_director_signoff" model="ir.actions.report">
+        <field name="name">Director Go-Live Sign-Off</field>
+        <field name="model">ipai.finance.ppm.golive.checklist</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ipai_finance_ppm_golive.report_director_signoff_template</field>
+        <field name="report_file">ipai_finance_ppm_golive.report_director_signoff_template</field>
+        <field name="binding_model_id" ref="model_ipai_finance_ppm_golive_checklist"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- QWeb Template -->
+    <template id="report_director_signoff_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2>FINANCE PPM GO-LIVE SIGN-OFF</h2>
+                            <h3 class="text-muted">Production Deployment Authorization</h3>
+                            <p><strong>Document Version:</strong> <t t-esc="doc.version"/></p>
+                            <p><strong>Generated:</strong> <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                        </div>
+
+                        <!-- Executive Summary -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4>Executive Summary</h4>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td width="30%"><strong>Checklist Name</strong></td>
+                                        <td><t t-esc="doc.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status</strong></td>
+                                        <td>
+                                            <t t-if="doc.state == 'approved'">
+                                                <span class="badge badge-success">✅ APPROVED FOR GO-LIVE</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-warning"><t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/></span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Completion</strong></td>
+                                        <td>
+                                            <strong><t t-esc="'%.1f' % doc.completion_pct"/>%</strong>
+                                            (<t t-esc="doc.completed_items"/> / <t t-esc="doc.total_items"/> items)
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Section Breakdown -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4>Section Breakdown</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr class="table-active">
+                                            <th width="5%">#</th>
+                                            <th width="35%">Section</th>
+                                            <th width="15%">Type</th>
+                                            <th width="15%">Progress</th>
+                                            <th width="15%">Items</th>
+                                            <th width="15%">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="section_num" t-value="0"/>
+                                        <t t-foreach="doc.section_ids.sorted(key=lambda s: s.sequence)" t-as="section">
+                                            <t t-set="section_num" t-value="section_num + 1"/>
+                                            <tr>
+                                                <td><t t-esc="section_num"/></td>
+                                                <td><t t-esc="section.name"/></td>
+                                                <td><small><t t-esc="dict(section._fields['section_type'].selection).get(section.section_type)"/></small></td>
+                                                <td>
+                                                    <t t-if="section.completion_pct == 100">
+                                                        <strong class="text-success"><t t-esc="'%.0f' % section.completion_pct"/>%</strong>
+                                                    </t>
+                                                    <t t-elif="section.completion_pct >= 80">
+                                                        <strong class="text-warning"><t t-esc="'%.0f' % section.completion_pct"/>%</strong>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <strong class="text-danger"><t t-esc="'%.0f' % section.completion_pct"/>%</strong>
+                                                    </t>
+                                                </td>
+                                                <td><t t-esc="section.completed_items"/> / <t t-esc="section.total_items"/></td>
+                                                <td>
+                                                    <t t-if="section.completion_pct == 100">
+                                                        <span class="badge badge-success">✓</span>
+                                                    </t>
+                                                    <t t-elif="section.completion_pct >= 80">
+                                                        <span class="badge badge-warning">⚠</span>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span class="badge badge-danger">✗</span>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Approval Chain -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4>Approval Chain</h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr class="table-active">
+                                            <th>Role</th>
+                                            <th>Approver</th>
+                                            <th>Date</th>
+                                            <th>Signature</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Finance Supervisor</strong></td>
+                                            <td><t t-esc="doc.supervisor_id.name if doc.supervisor_id else 'Not assigned'"/></td>
+                                            <td>
+                                                <t t-if="doc.supervisor_review_date">
+                                                    <t t-esc="doc.supervisor_review_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td style="height: 50px;">
+                                                <t t-if="doc.supervisor_review_date">
+                                                    <strong>Approved</strong>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Senior Supervisor Finance</strong></td>
+                                            <td><t t-esc="doc.senior_supervisor_id.name if doc.senior_supervisor_id else 'Not assigned'"/></td>
+                                            <td>
+                                                <t t-if="doc.senior_supervisor_review_date">
+                                                    <t t-esc="doc.senior_supervisor_review_date.strftime('%Y-%m-%d %H:%M')"/>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td style="height: 50px;">
+                                                <t t-if="doc.senior_supervisor_review_date">
+                                                    <strong>Approved</strong>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <td><strong>Finance Director</strong></td>
+                                            <td><t t-esc="doc.director_id.name if doc.director_id else 'Not assigned'"/></td>
+                                            <td>
+                                                <t t-if="doc.director_signoff_date">
+                                                    <strong><t t-esc="doc.director_signoff_date.strftime('%Y-%m-%d %H:%M')"/></strong>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td style="height: 70px;">
+                                                <t t-if="doc.director_signoff_date">
+                                                    <strong class="text-success">OFFICIAL SIGN-OFF</strong>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Director Notes -->
+                        <t t-if="doc.director_notes">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h4>Director Sign-Off Notes</h4>
+                                    <div class="border p-3">
+                                        <t t-esc="doc.director_notes"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Footer -->
+                        <div class="row mt-5">
+                            <div class="col-12 text-center text-muted">
+                                <p>
+                                    <strong>This document authorizes production deployment of Finance PPM system.</strong><br/>
+                                    Generated from Odoo Finance PPM Go-Live Checklist Module<br/>
+                                    InsightPulse AI / TBWA Philippines
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

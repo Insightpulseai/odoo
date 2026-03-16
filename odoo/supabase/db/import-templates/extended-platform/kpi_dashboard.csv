@@ -1,0 +1,5 @@
+id,name,active,number_of_columns,company_id/id
+__import__.kpi_dashboard_finance,Finance KPIs,True,4,base.main_company
+__import__.kpi_dashboard_sales,Sales Performance,True,4,base.main_company
+__import__.kpi_dashboard_operations,Operations Overview,True,3,base.main_company
+__import__.kpi_dashboard_hr,HR Metrics,True,4,base.main_company

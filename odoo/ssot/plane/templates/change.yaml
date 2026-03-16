@@ -1,0 +1,44 @@
+schema: ssot.plane.template.v1
+type: change
+updated: "2026-03-16"
+
+template:
+  name: Change Template
+  description_structure: |
+    ## Current State
+    What exists today?
+
+    ## Desired State
+    What should exist after the change?
+
+    ## Blast Radius
+    What systems, services, or users are affected?
+
+    ## Rollback Plan
+    How to revert if the change fails?
+
+    ## Deployment Gate
+    What approval or condition must be met before applying?
+
+  required_fields:
+    - title
+    - description
+    - assignee
+    - priority
+    - state
+
+  label_convention:
+    - "Type/Change"
+    - "Module/<module>"
+    - "Wave/<delivery-wave>"
+
+  module_assignment_rule: >
+    Assign to the module being changed.
+
+  cycle_assignment_rule: >
+    Assign to the delivery wave containing the cutover window.
+
+  done_rule: >
+    Change applied.
+    Desired state verified with evidence.
+    Rollback plan confirmed unnecessary (or executed and resolved).

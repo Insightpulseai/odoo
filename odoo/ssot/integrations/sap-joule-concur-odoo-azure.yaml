@@ -1,0 +1,120 @@
+# SAP Joule + SAP Concur + Odoo on Azure — Integration SSOT
+# Spec: spec/sap-joule-concur-odoo-azure/
+# Contract: docs/contracts/SAP_JOULE_CONCUR_ODOO_AZURE_CONTRACT.md
+
+version: "1.0"
+schema: ssot.integrations.v1
+updated_at: "2026-03-13"
+
+systems:
+  sap_joule:
+    role: conversational_surface
+    owner: sap
+    description: "AI copilot/agent in SAP ecosystem with Microsoft 365 Copilot interop"
+
+  sap_concur:
+    role: expense_travel_source
+    owner: sap
+    description: "Spend management — expense reports, travel bookings, invoices"
+
+  odoo:
+    role: erp_system_of_record
+    owner: insightpulseai
+    runtime: azure_container_apps
+    instance: ipai-odoo-dev-web
+    description: "Accounting, project, approval, posting, operational control"
+
+  azure:
+    role: integration_runtime
+    owner: microsoft
+    services:
+      identity: "Microsoft Entra ID"
+      secrets: "Azure Key Vault (kv-ipai-dev)"
+      observability: "Azure Monitor / Application Insights"
+      ai: "Azure AI Foundry (aifoundry-ipai-dev)"
+      compute: "Azure Container Apps (cae-ipai-dev)"
+
+flows:
+  - id: concur_expense_to_odoo_draft
+    type: document_exchange
+    source: sap_concur
+    target: odoo
+    mediation: azure
+    write_mode: draft_only
+    idempotency_key: concur_report_id
+    target_model: account.move
+    target_field: ref
+    audit_required: true
+    retry_policy:
+      max_attempts: 5
+      backoff: exponential
+      dead_letter: true
+
+  - id: joule_query_odoo_operational_context
+    type: event_orchestration
+    source: sap_joule
+    target: odoo
+    mediation: azure
+    write_mode: read_only
+    endpoints:
+      - /api/v1/projects/summary
+      - /api/v1/expenses/status/{report_id}
+      - /api/v1/approvals/pending
+      - /api/v1/budget/analytic/{account_id}
+    audit_required: true
+
+  - id: joule_bounded_action
+    type: event_orchestration
+    source: sap_joule
+    target: odoo
+    mediation: azure
+    write_mode: bounded_write
+    allowed_actions:
+      - request_approval
+      - query_status
+    audit_required: true
+
+  - id: entra_sso_for_concur
+    type: identity_access
+    source: azure
+    target: sap_concur
+    mediation: none
+    protocol: saml_oidc
+    audit_required: true
+
+  - id: entra_sso_for_odoo
+    type: identity_access
+    source: azure
+    target: odoo
+    mediation: none
+    protocol: oidc
+    audit_required: true
+
+  - id: employee_master_sync
+    type: master_data_sync
+    source: odoo
+    target: sap_concur
+    mediation: azure
+    write_mode: reference
+    source_model: hr.employee
+    audit_required: true
+
+  - id: vendor_master_sync
+    type: master_data_sync
+    source: odoo
+    target: sap_concur
+    mediation: azure
+    write_mode: reference
+    source_model: res.partner
+    filter: "supplier=True"
+    audit_required: true
+
+data_ownership:
+  expense_reports: sap_concur
+  travel_bookings: sap_concur
+  journal_entries: odoo
+  employee_master: odoo
+  vendor_master: odoo
+  project_budget: odoo
+  user_identity: azure
+  secrets: azure

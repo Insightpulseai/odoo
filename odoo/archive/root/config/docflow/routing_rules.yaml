@@ -1,0 +1,38 @@
+version: 1
+rules:
+  - name: "AP Invoices → Company A Purchases"
+    active: true
+    sequence: 10
+    doc_type: "invoice"
+    source: "viber"
+    company: "Company A" # res.company.name
+    journal: "Vendor Bills" # account.journal.name (type=purchase)
+    currency: "PHP" # res.currency.name
+    min_confidence: 0.70
+    vendor_name_contains: null
+    bank_account_contains: null
+    assign_user: null # res.users.login or name
+    assign_group: "DocFlow Reviewer" # res.groups.name
+
+  - name: "Bank Statements → Company A Bank Journal"
+    active: true
+    sequence: 5
+    doc_type: "bank_statement"
+    source: "viber"
+    company: "Company A"
+    journal: "BPI - Main" # account.journal.name (type=bank)
+    currency: "PHP"
+    min_confidence: 0.60
+    bank_account_contains: "1234" # substring hint from extraction
+    assign_group: "DocFlow Reviewer"
+
+  - name: "Expenses → Company B"
+    active: true
+    sequence: 20
+    doc_type: "expense"
+    source: "viber"
+    company: "Company B"
+    journal: null
+    currency: "PHP"
+    min_confidence: 0.75
+    assign_user: "finance.reviewer@companyb.tld" # login preferred

@@ -1,0 +1,37 @@
+id,name,project_id/id,date_deadline,sequence
+finance_seed.task_me_i1,"[I.1] Payroll & Personnel",finance_seed.project_month_end_close,,1
+finance_seed.task_me_i2,"[I.2] Tax & Provisions",finance_seed.project_month_end_close,,2
+finance_seed.task_me_i3,"[I.3] Rent & Leases",finance_seed.project_month_end_close,,3
+finance_seed.task_me_i4,"[I.4] Accruals & Expenses — Operational",finance_seed.project_month_end_close,,4
+finance_seed.task_me_i5,"[I.5] Accruals & Expenses — Review",finance_seed.project_month_end_close,,5
+finance_seed.task_me_i6,"[I.6] Prior Period Review",finance_seed.project_month_end_close,,6
+finance_seed.task_me_ii1,"[II.1] Amortization & Corporate",finance_seed.project_month_end_close,,7
+finance_seed.task_me_ii2,"[II.2] Corporate Accruals",finance_seed.project_month_end_close,,8
+finance_seed.task_me_ii3,"[II.3] Insurance",finance_seed.project_month_end_close,,9
+finance_seed.task_me_ii4,"[II.4] Treasury & Other",finance_seed.project_month_end_close,,10
+finance_seed.task_me_ii5,"[II.5] Prior Period Review",finance_seed.project_month_end_close,,11
+finance_seed.task_me_ii6,"[II.6] Regional Reporting",finance_seed.project_month_end_close,,12
+finance_seed.task_me_iii1,"[III.1] Client Billings",finance_seed.project_month_end_close,,13
+finance_seed.task_me_iii2,"[III.2] WIP/OOP Management",finance_seed.project_month_end_close,,14
+finance_seed.task_me_iii3,"[III.3] Amortization & Corporate — Client Jobs",finance_seed.project_month_end_close,,15
+finance_seed.task_me_iii4,"[III.4] Amortization & Corporate — Overhead",finance_seed.project_month_end_close,,16
+finance_seed.task_me_iii5,"[III.5] Amortization & Corporate — Prepayments",finance_seed.project_month_end_close,,17
+finance_seed.task_me_iii6,"[III.6] Amortization & Corporate — Deferrals",finance_seed.project_month_end_close,,18
+finance_seed.task_me_iii7,"[III.7] AR Aging - WC",finance_seed.project_month_end_close,,19
+finance_seed.task_me_iii8,"[III.8] CA Liquidations",finance_seed.project_month_end_close,,20
+finance_seed.task_me_iii9,"[III.9] AP Aging - WC",finance_seed.project_month_end_close,,21
+finance_seed.task_me_iii10,"[III.10] OOP",finance_seed.project_month_end_close,,22
+finance_seed.task_me_iii11,"[III.11] Asset & Lease Entries",finance_seed.project_month_end_close,,23
+finance_seed.task_me_iii12,"[III.12] Reclassifications",finance_seed.project_month_end_close,,24
+finance_seed.task_me_iv1,"[IV.1] VAT & Taxes",finance_seed.project_month_end_close,,25
+finance_seed.task_me_iv2,"[IV.2] Accruals & Assets — Review",finance_seed.project_month_end_close,,26
+finance_seed.task_me_iv3,"[IV.3] Accruals & Assets — Adjustments",finance_seed.project_month_end_close,,27
+finance_seed.task_me_iv4,"[IV.4] AP Aging",finance_seed.project_month_end_close,,28
+finance_seed.task_me_iv5,"[IV.5] CA Liquidations",finance_seed.project_month_end_close,,29
+finance_seed.task_me_iv6,"[IV.6] Accruals & Assets — Final",finance_seed.project_month_end_close,,30
+finance_seed.task_me_iv7,"[IV.7] Expense Reclassification",finance_seed.project_month_end_close,,31
+finance_seed.task_me_iv8,"[IV.8] VAT Reporting",finance_seed.project_month_end_close,,32
+finance_seed.task_me_iv9,"[IV.9] Job Transfers — Inbound",finance_seed.project_month_end_close,,33
+finance_seed.task_me_iv10,"[IV.10] Job Transfers — Outbound",finance_seed.project_month_end_close,,34
+finance_seed.task_me_iv11,"[IV.11] Accruals",finance_seed.project_month_end_close,,35
+finance_seed.task_me_iv12,"[IV.12] WIP",finance_seed.project_month_end_close,,36

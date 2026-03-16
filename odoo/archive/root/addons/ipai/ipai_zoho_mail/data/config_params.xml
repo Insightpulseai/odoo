@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright 2026 InsightPulseAI
+    License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+
+    System Parameters for Email Configuration
+    =========================================
+    - Catchall domain: insightpulseai.com
+    - Catchall alias: catchall
+    - Bounce alias: bounce
+    - Default from: noreply@insightpulseai.com
+    - Base URL: https://erp.insightpulseai.com
+
+    Uses set_param() to upsert — safe even if keys already exist.
+-->
+<odoo>
+    <data noupdate="1">
+
+        <!-- Email Catchall Domain -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.catchall.domain</value>
+            <value>insightpulseai.com</value>
+        </function>
+
+        <!-- Email Catchall Alias -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.catchall.alias</value>
+            <value>catchall</value>
+        </function>
+
+        <!-- Email Bounce Alias -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.bounce.alias</value>
+            <value>bounce</value>
+        </function>
+
+        <!-- Default From Email (E2E verified 2026-03-10) -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>mail.default.from</value>
+            <value>no-reply</value>
+        </function>
+
+        <!-- Base URL for Email Links -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>web.base.url</value>
+            <value>https://erp.insightpulseai.com</value>
+        </function>
+
+        <!-- Freeze Base URL (prevent auto-detection override) -->
+        <function model="ir.config_parameter" name="set_param">
+            <value>web.base.url.freeze</value>
+            <value>True</value>
+        </function>
+
+    </data>
+</odoo>

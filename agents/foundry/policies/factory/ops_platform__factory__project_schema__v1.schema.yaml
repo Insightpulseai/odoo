@@ -1,0 +1,89 @@
+version: 1
+namespace: ipai.ops_platform.factory.project_schema.v1
+artifact_type: schema
+repo_key: ops_platform
+domain: factory
+subject: project_schema
+
+# ============================================================================
+# FACTORY PROJECT SCHEMA — Layer 1 Output
+# ============================================================================
+# Every factory run produces a project workspace.
+# Inspired by OpenAI Academy Projects concept.
+# ============================================================================
+
+fields:
+  project_id:
+    type: string
+    format: uuid
+    required: true
+
+  title:
+    type: string
+    required: true
+
+  description:
+    type: string
+    required: true
+
+  owner:
+    type: object
+    required: true
+    properties:
+      team: { type: string, required: true }
+      user: { type: string }
+
+  collaborators:
+    type: array
+    items: { type: string }
+
+  status:
+    type: string
+    required: true
+    enum: [draft, active, review, archived]
+
+  context:
+    type: object
+    properties:
+      spec_bundle_ref: { type: string }
+      constitution_ref: { type: string }
+      upstream_template_ref: { type: string }
+      knowledge_base_refs: { type: array, items: { type: string } }
+
+  instructions:
+    type: string
+    required: true
+    description: "Natural language instructions for the project scope and goals"
+
+  files:
+    type: array
+    items:
+      type: object
+      properties:
+        path: { type: string }
+        purpose: { type: string }
+        ssot_ref: { type: string }
+
+  skill_pack_ref:
+    type: string
+    description: "Reference to the skill pack attached to this project"
+
+  artifact_refs:
+    type: array
+    items: { type: string }
+    description: "References to deployable artifacts produced by this project"
+
+  eval_dataset_ref:
+    type: string
+
+  release_ref:
+    type: string
+    description: "Reference to release ladder entry (R0-R7)"
+
+  created_at:
+    type: string
+    format: datetime
+
+  updated_at:
+    type: string
+    format: datetime

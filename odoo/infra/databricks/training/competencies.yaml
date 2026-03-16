@@ -1,0 +1,275 @@
+# Databricks Agent Competency Specification
+# ------------------------------------------
+# This file defines the skill curriculum for Databricks-focused AI agents.
+# Use this to generate synthetic training data; DO NOT use Databricks course
+# materials directly as training corpora (see docs/infra/DATABRICKS_TRAINING_GUIDELINES.md).
+#
+# Reference: Databricks Training Terms (https://www.databricks.com/learn/training/terms-and-conditions)
+
+version: "1.0"
+generated_from: "Databricks Academy course list (competency extraction only)"
+
+competencies:
+  # ============================================================================
+  # LAKEHOUSE FUNDAMENTALS
+  # ============================================================================
+  - name: lakehouse_fundamentals
+    description: Core Lakehouse architecture, Unity Catalog, and Delta Lake concepts
+    domain: fundamentals
+    tasks:
+      - understand_medallion_architecture
+      - navigate_workspace_ui
+      - manage_workspace_objects
+      - use_dbfs_and_volumes
+    validators:
+      - workspace_access_verified
+      - object_listing_works
+
+  # ============================================================================
+  # UNITY CATALOG GOVERNANCE
+  # ============================================================================
+  - name: unity_catalog_governance
+    description: UC security, data governance, lineage, and access control
+    domain: governance
+    tasks:
+      - create_catalog
+      - create_schema
+      - manage_grants
+      - configure_external_locations
+      - trace_data_lineage
+      - apply_row_level_security
+      - configure_column_masking
+    validators:
+      - grants_audit_passes
+      - lineage_traced
+      - rls_enforced
+    sql_patterns:
+      - "CREATE CATALOG IF NOT EXISTS {catalog}"
+      - "CREATE SCHEMA IF NOT EXISTS {catalog}.{schema}"
+      - "GRANT {permission} ON {object_type} {object_name} TO `{principal}`"
+      - "CREATE EXTERNAL LOCATION {name} URL '{url}' WITH (STORAGE CREDENTIAL {credential})"
+
+  # ============================================================================
+  # ASSET BUNDLES & CI/CD
+  # ============================================================================
+  - name: asset_bundles_ci_cd
+    description: Databricks Asset Bundles deployment and rollback workflows
+    domain: devops
+    tasks:
+      - validate_bundle
+      - deploy_bundle_dev
+      - deploy_bundle_staging
+      - deploy_bundle_prod
+      - rollback_bundle
+      - configure_bundle_variables
+      - manage_bundle_permissions
+    validators:
+      - bundle_validate_passes
+      - deploy_status_check
+      - rollback_verified
+    cli_patterns:
+      - "databricks bundle validate"
+      - "databricks bundle deploy --target {target}"
+      - "databricks bundle destroy --target {target}"
+
+  # ============================================================================
+  # LAKEFLOW PIPELINES (DLT)
+  # ============================================================================
+  - name: lakeflow_pipelines
+    description: Delta Live Tables and Spark Declarative Pipelines
+    domain: data_engineering
+    tasks:
+      - build_declarative_pipeline
+      - define_bronze_tables
+      - define_silver_transformations
+      - define_gold_aggregations
+      - add_data_quality_expectations
+      - debug_pipeline_failure
+      - configure_pipeline_clusters
+    validators:
+      - pipeline_compiles
+      - expectations_defined
+      - pipeline_runs_successfully
+    patterns:
+      bronze:
+        - "@dlt.table(name='{table_name}')"
+        - "spark.readStream.format('cloudFiles')"
+      silver:
+        - "dlt.read_stream('{source_table}')"
+        - ".withColumn('processed_at', F.current_timestamp())"
+      gold:
+        - ".groupBy('{dimension}').agg(F.sum('{metric}'))"
+
+  # ============================================================================
+  # LAKEFLOW CONNECT (MANAGED CONNECTORS)
+  # ============================================================================
+  - name: lakeflow_connect
+    description: Fully-managed ingestion connectors
+    domain: data_engineering
+    tasks:
+      - configure_salesforce_connector
+      - configure_workday_connector
+      - configure_sap_connector
+      - configure_snowflake_connector
+      - monitor_ingestion_status
+      - handle_schema_evolution
+    validators:
+      - connector_health_check
+      - ingestion_rows_verified
+
+  # ============================================================================
+  # LAKEFLOW JOBS (ORCHESTRATION)
+  # ============================================================================
+  - name: lakeflow_jobs
+    description: Job orchestration and scheduling
+    domain: orchestration
+    tasks:
+      - create_job
+      - configure_job_cluster
+      - add_job_tasks
+      - configure_task_dependencies
+      - set_job_schedule
+      - configure_job_alerts
+      - debug_job_failure
+    validators:
+      - job_definition_valid
+      - job_runs_successfully
+      - alerts_configured
+    yaml_patterns:
+      - |
+        resources:
+          jobs:
+            {job_name}:
+              name: "{job_name}"
+              tasks:
+                - task_key: "{task_key}"
+                  notebook_task:
+                    notebook_path: "{path}"
+
+  # ============================================================================
+  # DATABRICKS APPS
+  # ============================================================================
+  - name: databricks_apps
+    description: Databricks Apps development and deployment
+    domain: apps
+    tasks:
+      - scaffold_app
+      - configure_app_permissions
+      - configure_app_authorization
+      - add_user_auth
+      - query_uc_tables_from_app
+      - deploy_app_via_bundle
+      - monitor_app_health
+    validators:
+      - app_health_check
+      - auth_flow_works
+      - uc_query_succeeds
+    cli_patterns:
+      - "databricks bundle init --template databricks-apps"
+      - "databricks apps deploy"
+
+  # ============================================================================
+  # AI AGENTS
+  # ============================================================================
+  - name: ai_agents
+    description: AI agent development on Databricks
+    domain: ai
+    tasks:
+      - design_agent_tools
+      - implement_tool_calling
+      - configure_retrieval_grounding
+      - enforce_safety_constraints
+      - register_agent_with_mlflow
+      - deploy_agent_endpoint
+      - monitor_agent_performance
+    validators:
+      - tool_contract_valid
+      - safety_constraints_enforced
+      - endpoint_health_check
+    patterns:
+      - mlflow.pyfunc.log_model
+      - mlflow.deployments.get_deploy_client
+
+  # ============================================================================
+  # MCP SERVER (OPENAPI)
+  # ============================================================================
+  - name: mcp_openapi_server
+    description: MCP server wrapping REST APIs as agent tools
+    domain: integrations
+    tasks:
+      - create_openapi_spec
+      - validate_openapi_spec
+      - deploy_mcp_server
+      - register_tools_from_spec
+      - configure_mcp_auth
+    validators:
+      - openapi_spec_valid
+      - mcp_server_health
+      - tools_registered
+
+  # ============================================================================
+  # SECURITY & PRIVACY
+  # ============================================================================
+  - name: security_privacy
+    description: AI security fundamentals and data privacy
+    domain: security
+    tasks:
+      - configure_secret_scopes
+      - manage_service_principals
+      - configure_ip_access_lists
+      - audit_access_logs
+      - implement_data_masking
+    validators:
+      - secrets_accessible
+      - audit_logs_enabled
+      - masking_applied
+
+  # ============================================================================
+  # STREAMING
+  # ============================================================================
+  - name: streaming
+    description: Spark Structured Streaming patterns
+    domain: data_engineering
+    tasks:
+      - configure_kafka_source
+      - configure_eventhub_source
+      - configure_autoloader
+      - manage_checkpoints
+      - handle_late_data
+      - configure_watermarks
+    validators:
+      - stream_starts_successfully
+      - checkpoints_valid
+
+# ============================================================================
+# TASK TEMPLATES FOR SYNTHETIC DATA GENERATION
+# ============================================================================
+task_templates:
+  bundle_repair:
+    instruction: "Fix a Databricks Asset Bundle deploy failure caused by {error_type}."
+    error_types:
+      - missing_variable: "Variable '{var_name}' referenced but not defined"
+      - invalid_yaml: "YAML syntax error at line {line_num}"
+      - missing_resource: "Resource '{resource_name}' not found"
+      - permission_denied: "Permission denied for workspace path '{path}'"
+
+  uc_grant:
+    instruction: "Configure Unity Catalog grants for {use_case}."
+    use_cases:
+      - data_engineering_team: "Grant data engineering team access to bronze and silver schemas"
+      - analytics_team: "Grant analytics team read access to gold schema"
+      - ml_team: "Grant ML team access to feature store tables"
+
+  pipeline_debug:
+    instruction: "Debug a DLT pipeline failure: {failure_type}."
+    failure_types:
+      - expectation_failed: "Data quality expectation '{expectation}' failed"
+      - schema_mismatch: "Schema mismatch between source and target"
+      - cluster_timeout: "Cluster failed to start within timeout"
+
+  app_auth:
+    instruction: "Configure {auth_pattern} for a Databricks App."
+    auth_patterns:
+      - user_oauth: "User-based OAuth 2.0 authentication"
+      - service_principal: "Service principal authentication for backend operations"
+      - combined: "Combined user + service principal authorization model"

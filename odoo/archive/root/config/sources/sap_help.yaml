@@ -1,0 +1,145 @@
+# =============================================================================
+# Source Manifest: SAP Help Portal
+# =============================================================================
+# SAP documentation for capability comparison and parity mapping.
+# Focus on Concur, Ariba, SuccessFactors for gap analysis.
+# =============================================================================
+
+source: sap_help
+display_name: "SAP Help Portal"
+version: "latest"
+priority: 3
+
+# Domain allowlist
+domains:
+  - help.sap.com
+  - www.sap.com
+
+# Crawl roots - focused on areas relevant to Odoo parity
+roots:
+  # SAP Concur (Expense/Travel)
+  - space: sap/concur/expense
+    url: "https://help.sap.com/docs/SAP_CONCUR/expense"
+    depth: 4
+    description: "Concur Expense Management"
+
+  - space: sap/concur/travel
+    url: "https://help.sap.com/docs/SAP_CONCUR/travel"
+    depth: 4
+    description: "Concur Travel & Booking"
+
+  - space: sap/concur/invoice
+    url: "https://help.sap.com/docs/SAP_CONCUR/invoice"
+    depth: 4
+    description: "Concur Invoice Processing"
+
+  # SAP Ariba (Procurement)
+  - space: sap/ariba/sourcing
+    url: "https://help.sap.com/docs/ARIBA_SOURCING"
+    depth: 4
+    description: "Ariba Sourcing"
+
+  - space: sap/ariba/procurement
+    url: "https://help.sap.com/docs/ARIBA_PROCUREMENT"
+    depth: 4
+    description: "Ariba Procurement"
+
+  - space: sap/ariba/contracts
+    url: "https://help.sap.com/docs/ARIBA_CONTRACTS"
+    depth: 4
+    description: "Ariba Contract Management"
+
+  # SAP SuccessFactors (HR)
+  - space: sap/successfactors/employee_central
+    url: "https://help.sap.com/docs/SAP_SUCCESSFACTORS_EMPLOYEE_CENTRAL"
+    depth: 4
+    description: "SuccessFactors Employee Central"
+
+  - space: sap/successfactors/recruiting
+    url: "https://help.sap.com/docs/SAP_SUCCESSFACTORS_RECRUITING"
+    depth: 4
+    description: "SuccessFactors Recruiting"
+
+  - space: sap/successfactors/learning
+    url: "https://help.sap.com/docs/SAP_SUCCESSFACTORS_LEARNING"
+    depth: 4
+    description: "SuccessFactors Learning"
+
+  # SAP S/4HANA (ERP Core)
+  - space: sap/s4hana/finance
+    url: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/finance"
+    depth: 3
+    description: "S/4HANA Finance"
+
+  - space: sap/s4hana/procurement
+    url: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/sourcing-procurement"
+    depth: 3
+    description: "S/4HANA Procurement"
+
+# URL patterns
+include:
+  - "^https://help\\.sap\\.com/docs/.*"
+  - "^https://help\\.sap\\.com/viewer/.*"
+
+exclude:
+  # Non-English content
+  - "/docs/.*/[a-z]{2}-[A-Z]{2}/"
+  - "locale="
+  # Downloads and videos
+  - "/download/"
+  - "/video/"
+  - "/webinar/"
+  # Old versions (focus on latest)
+  - "version=1\\."
+  - "version=2\\.[0-5]"
+
+# Language preference
+language:
+  preferred: "en-US"
+  fallback: "en"
+
+# Crawl behavior (SAP is aggressive about rate limiting)
+crawl:
+  rate_limit_ms: 2000  # 2 second delay
+  timeout_s: 45
+  retries: 5
+  respect_robots_txt: true
+  user_agent: "KnowledgeHub/1.0 (SAP Documentation Indexer for Parity Analysis)"
+
+# Content extraction
+extraction:
+  content_selectors:
+    - "div.content-container"
+    - "article.documentation"
+    - "div.topic-content"
+  exclude_selectors:
+    - "nav"
+    - "aside"
+    - "footer"
+    - ".feedback"
+    - ".related-links"
+  metadata_selectors:
+    title: "h1.title"
+    product: "meta[name='product']"
+    version: "meta[name='version']"
+
+# Pipeline configuration
+pipeline:
+  chunk_strategy: "semantic"
+  chunk_size_tokens: 512
+  chunk_overlap_tokens: 64
+  embedding_model: "text-embedding-3-small"
+  embedding_dims: 1536
+  # Tag with capability mapping
+  enrich_with_capability: true
+
+# Purpose: Parity analysis
+parity:
+  enabled: true
+  map_to: "odoo_ce"  # Compare against Odoo capabilities
+  gap_threshold: 0.7  # Similarity threshold for "covered"
+
+# Refresh schedule (less frequent - SAP docs change slowly)
+schedule:
+  cron: "0 5 1 * *"  # Monthly on 1st at 5 AM
+  full_recrawl_days: 90  # Full recrawl every 90 days

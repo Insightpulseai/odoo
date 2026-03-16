@@ -1,0 +1,4 @@
+id,name,active,sequence,partner_id/id,company_id/id,user_id/id,date_start,date,privacy_visibility,analytic_account_id/id,allow_subtasks,allow_recurring_tasks,allow_task_dependencies,allow_milestones,allow_timesheets,clarity_id,health_status,baseline_start,baseline_finish,is_program,parent_id/id,program_type
+ipai_project.program_master,Master Program 2026,true,10,,base.main_company,,2026-01-01,2026-12-31,employees,,true,true,true,true,true,CLAR-PRG-001,green,2026-01-01,2026-12-31,true,,finance_ppm
+ipai_project.project_q1_close,Q1 Month-End Close,true,20,,base.main_company,,2026-01-01,2026-03-31,employees,,true,true,true,true,true,CLAR-IM-001,green,2026-01-01,2026-03-31,false,ipai_project.program_master,finance_ppm
+ipai_project.project_bir_compliance,BIR Compliance 2026,true,30,,base.main_company,,2026-01-01,2026-12-31,employees,,true,true,true,true,true,CLAR-IM-002,green,2026-01-01,2026-12-31,false,ipai_project.program_master,bir

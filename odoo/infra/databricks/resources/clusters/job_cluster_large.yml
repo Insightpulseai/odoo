@@ -1,0 +1,31 @@
+# Large Job Cluster Configuration
+# For heavy ETL tasks, aggregations, and mart building
+
+resources:
+  clusters:
+    job_cluster_large:
+      cluster_name: "ppm-job-large"
+      spark_version: "14.3.x-scala2.12"
+      node_type_id: "Standard_DS4_v2"
+      num_workers: 4
+
+      autoscale:
+        min_workers: 2
+        max_workers: 8
+
+      autotermination_minutes: 30
+      enable_elastic_disk: true
+
+      spark_conf:
+        "spark.databricks.delta.preview.enabled": "true"
+        "spark.databricks.delta.optimizeWrite.enabled": "true"
+        "spark.databricks.delta.autoCompact.enabled": "true"
+        "spark.sql.shuffle.partitions": "200"
+
+      custom_tags:
+        team: platform
+        cost_center: ppm
+        environment: "${bundle.target}"
+
+      spark_env_vars:
+        DATABRICKS_CATALOG: "${var.catalog}"

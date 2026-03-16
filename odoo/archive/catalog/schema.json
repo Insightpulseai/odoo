@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Odoo Alternatives Catalog",
+  "type": "object",
+  "required": ["version", "baseline", "items"],
+  "properties": {
+    "version": { "type": "string" },
+    "baseline": {
+      "type": "object",
+      "required": ["odoo_ce_major"],
+      "properties": {
+        "odoo_ce_major": { "type": "integer", "minimum": 16, "maximum": 21 },
+        "oca_series": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "ee_feature", "category", "replacements", "install_order", "verification", "rollback", "maturity", "risk"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "ee_feature": { "type": "string", "minLength": 3 },
+          "category": { "type": "string" },
+          "replacements": {
+            "type": "object",
+            "required": ["ce", "oca"],
+            "properties": {
+              "ce": { "type": "array", "items": { "type": "string" } },
+              "oca": { "type": "array", "items": { "type": "string" } },
+              "ipai": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "install_order": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "constraints": { "type": "array", "items": { "type": "string" } },
+          "verification": {
+            "type": "object",
+            "required": ["commands", "expected_signals"],
+            "properties": {
+              "commands": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+              "expected_signals": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+            },
+            "additionalProperties": false
+          },
+          "rollback": {
+            "type": "object",
+            "required": ["commands"],
+            "properties": {
+              "commands": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+            },
+            "additionalProperties": false
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "odoo": { "type": "string" },
+              "oca": { "type": "array", "items": { "type": "string" } },
+              "notes": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "maturity": { "type": "string", "enum": ["alpha", "beta", "stable"] },
+          "risk": { "type": "string", "enum": ["low", "med", "high"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,57 @@
+# Constitution — {{ cap.title }}
+
+> **SAP ID**: {{ cap.sap_id }}
+> **Slug**: {{ cap.slug }}
+{% if cap.sap_doc %}> **Reference**: [SAP Documentation]({{ cap.sap_doc }}){% endif %}
+
+## Purpose
+
+This specification defines the non-negotiable rules and constraints for implementing {{ cap.title }} functionality in the IPAI platform for Odoo CE {{ odoo_series }}.
+
+## Non-Negotiables
+
+### 1. Data Integrity
+
+- All data mutations must be auditable via `mail.thread`
+- Multi-company isolation must be enforced at the ORM level
+- No direct SQL that bypasses access controls
+
+### 2. Security
+
+- All endpoints require authentication
+- Record rules enforce company/user isolation
+- Sensitive data must be encrypted at rest
+
+### 3. API Contract
+
+- Public APIs must maintain backward compatibility within major version
+- Breaking changes require deprecation cycle
+- All responses include standard error envelope
+
+### 4. Performance
+
+- No N+1 queries in list views
+- Batch operations for bulk data
+- Caching for static/reference data
+
+## Constraints
+
+{% if odoo.module %}
+### Module: `{{ odoo.module }}`
+
+- Layer: {{ odoo.layer | default('ipai') }}
+- Dependencies: {{ odoo.depends | default(['base']) | join(', ') }}
+{% endif %}
+
+### Odoo CE Compatibility
+
+- Must work on Odoo CE {{ odoo_series }} without Enterprise modules
+- OCA modules may be used as dependencies
+- No proprietary license contamination
+
+## Quality Gates
+
+- [ ] All models have security rules
+- [ ] Unit tests cover core flows
+- [ ] Documentation complete
+- [ ] CI pipeline passes

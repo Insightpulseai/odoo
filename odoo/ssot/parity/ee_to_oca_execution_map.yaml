@@ -1,0 +1,126 @@
+# schema: ssot.parity.ee_to_oca_execution_map.v1
+# Derived normalization of ee_to_oca_proof_matrix.yaml grouped by execution route.
+# DO NOT EDIT DIRECTLY — regenerate from proof matrix.
+#
+# Source: ssot/parity/ee_to_oca_proof_matrix.yaml
+
+version: 1
+meta:
+  owner: platform
+  purpose: "Derived execution map grouping EE parity entries by route for engineering action"
+  derived_from: "ssot/parity/ee_to_oca_proof_matrix.yaml"
+  created: "2026-03-03"
+  last_reviewed: "2026-03-03"
+
+routes:
+
+  port_then_adopt:
+    description: "OCA module exists but needs 19.0 port. File OCA port issue or initiate via oca-port CLI."
+    action: "Use oca-port CLI to initiate port; pin in .gitmodules when ready"
+    skill_ref: ".claude/skills/oca-module-porter/SKILL.md"
+    entries:
+      - feature_id: PRODUCTIVITY.SPREADSHEET
+        oca_repo: OCA/spreadsheet
+        oca_modules: [spreadsheet_oca]
+        owner: platform
+        milestone: M2_next
+      - feature_id: PRODUCTIVITY.DOCUMENTS
+        oca_repo: OCA/dms
+        oca_modules: [dms]
+        owner: platform
+        milestone: M2_next
+      - feature_id: PRODUCTIVITY.SIGN
+        oca_repo: OCA/sign
+        oca_modules: [sign]
+        owner: platform
+        milestone: backlog
+      - feature_id: FINANCE.ACCOUNTING_ADVANCED
+        oca_repo: OCA/account-financial-tools
+        oca_modules: [account_move_line_search_all, account_lock_date_update]
+        owner: finance
+        milestone: M1_launch
+      - feature_id: FINANCE.EXPENSE_ADVANCE
+        oca_repo: OCA/hr-expense
+        oca_modules: [hr_expense_advance_clearing]
+        owner: finance
+        milestone: M1_launch
+      - feature_id: SERVICES.HELPDESK
+        oca_repo: OCA/helpdesk
+        oca_modules: [helpdesk]
+        owner: platform
+        milestone: M2_next
+
+  bridge:
+    description: "Already bridged via ipai_* connector to external service. Ensure tool spec contract exists."
+    action: "Verify tool spec in contracts/tools/; ensure bridge entry in ssot/bridges/catalog.yaml"
+    entries:
+      - feature_id: FINANCE.VENDOR_BILL_OCR
+        ipai_module: ipai_expense_ocr
+        external_service: "PaddleOCR-VL (DO droplet)"
+        owner: finance
+        milestone: M1_launch
+      - feature_id: PLATFORM.AI_TOOLS
+        ipai_module: ipai_ai_copilot
+        external_service: "IPAI AI Bridge (Gemini)"
+        owner: ai
+        milestone: M1_launch
+      - feature_id: PLATFORM.ASK_AI
+        ipai_module: ipai_ai_copilot
+        external_service: "IPAI AI Bridge (Gemini) + OCA/ai"
+        owner: ai
+        milestone: M1_launch
+
+  accept_gap:
+    description: "Gap accepted — platform service or out-of-scope feature. No implementation needed."
+    action: "Document waiver rationale; no implementation required"
+    entries:
+      - feature_id: PLATFORM.STUDIO
+        waiver_reason: "Drag-drop builder waived; custom ipai_* overrides used instead"
+      - feature_id: PLATFORM.ODOO_SH
+        waiver_reason: "Self-hosted on DigitalOcean with CI/CD pipelines"
+      - feature_id: PLATFORM.IAP
+        waiver_reason: "Self-hosted services replace IAP credit model"
+      - feature_id: SERVICES.SOCIAL_MARKETING
+        waiver_reason: "Not in business scope"
+      - feature_id: SERVICES.LOYALTY
+        waiver_reason: "Not applicable to current business model"
+
+# ── Milestone summary ─────────────────────────────────────────────────────────
+
+milestones:
+  M1_launch:
+    target: "2026-Q2"
+    description: "Ship-blocking parity features for production launch"
+    features:
+      - FINANCE.ACCOUNTING_ADVANCED
+      - FINANCE.VENDOR_BILL_OCR
+      - FINANCE.EXPENSE_ADVANCE
+      - PLATFORM.AI_TOOLS
+      - PLATFORM.ASK_AI
+    count: 5
+
+  M2_next:
+    target: "2026-Q3"
+    description: "Next-sprint parity features"
+    features:
+      - PRODUCTIVITY.SPREADSHEET
+      - PRODUCTIVITY.DOCUMENTS
+      - SERVICES.HELPDESK
+    count: 3
+
+  backlog:
+    target: "TBD"
+    description: "Lower priority parity features"
+    features:
+      - PRODUCTIVITY.SIGN
+    count: 1
+
+  n_a:
+    description: "Accepted gaps — no implementation planned"
+    features:
+      - PLATFORM.STUDIO
+      - PLATFORM.ODOO_SH
+      - PLATFORM.IAP
+      - SERVICES.SOCIAL_MARKETING
+      - SERVICES.LOYALTY
+    count: 5

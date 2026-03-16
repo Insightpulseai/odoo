@@ -1,0 +1,75 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="110" y="130" width="980" height="600" rx="16" fill="black" fill-opacity="0.08"/>
+<rect x="100" y="100" width="980" height="600" rx="16" fill="white" stroke="black" stroke-opacity="0.1"/>
+
+<rect x="101" y="101" width="978" height="64" rx="16" fill="black"/>
+<circle cx="140" cy="133" r="8" fill="#FFD400"/>
+<rect x="160" y="129" width="120" height="8" rx="4" fill="white" fill-opacity="0.8"/>
+
+<g transform="translate(140, 200)">
+    <rect x="0" y="0" width="300" height="400" rx="16" fill="#F5F5F5" stroke="black" stroke-opacity="0.1"/>
+    <rect x="20" y="20" width="80" height="8" rx="4" fill="#6B7280"/>
+    <g transform="translate(20, 60)">
+        <rect x="0" y="0" width="260" height="48" rx="8" fill="white"/>
+        <rect x="16" y="16" width="120" height="8" rx="4" fill="#F5F5F5"/>
+        <circle cx="236" cy="24" r="10" fill="#FFD400"/>
+        <path d="M231 24L234.5 27.5L241 20.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(20, 120)">
+        <rect x="0" y="0" width="260" height="48" rx="8" fill="white"/>
+        <rect x="16" y="16" width="100" height="8" rx="4" fill="#F5F5F5"/>
+        <circle cx="236" cy="24" r="10" fill="#F5F5F5"/>
+        <path d="M231 24L234.5 27.5L241 20.5" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(20, 180)">
+        <rect x="0" y="0" width="260" height="48" rx="8" fill="white"/>
+        <rect x="16" y="16" width="140" height="8" rx="4" fill="#F5F5F5"/>
+        <circle cx="236" cy="24" r="10" fill="#F5F5F5"/>
+        <path d="M231 24L234.5 27.5L241 20.5" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <rect x="20" y="320" width="260" height="48" rx="24" fill="#FFD400"/>
+    <rect x="100" y="338" width="60" height="12" rx="6" fill="black"/>
+
+    <g transform="translate(320, 0)">
+        <rect x="0" y="0" width="300" height="400" rx="16" fill="white" stroke="black" stroke-opacity="0.1"/>
+        <rect x="20" y="20" width="100" height="8" rx="4" fill="#6B7280"/>
+        <g transform="translate(150, 180)">
+            <circle cx="0" cy="4" r="100" fill="black" fill-opacity="0.04"/>
+            <circle cx="0" cy="0" r="90" stroke="#F5F5F5" stroke-width="20"/>
+            <circle cx="0" cy="0" r="90" stroke="#FFD400" stroke-width="20" stroke-dasharray="408 565" transform="rotate(-90)"/>
+        </g>
+        <g transform="translate(50, 320)">
+            <circle cx="0" cy="4" r="6" fill="#FFD400"/>
+            <rect x="16" y="0" width="60" height="8" rx="4" fill="#6B7280"/>
+        </g>
+        <g transform="translate(180, 320)">
+            <circle cx="0" cy="4" r="6" fill="#F5F5F5"/>
+            <rect x="16" y="0" width="60" height="8" rx="4" fill="#6B7280"/>
+        </g>
+    </g>
+
+    <g transform="translate(640, 0)">
+        <rect x="0" y="0" width="300" height="400" rx="16" fill="white" stroke="black" stroke-opacity="0.1"/>
+        <rect x="20" y="20" width="80" height="8" rx="4" fill="#6B7280"/>
+        <g transform="translate(20, 60)">
+            <circle cx="20" cy="20" r="20" fill="#F5F5F5"/>
+            <rect x="50" y="10" width="210" height="40" rx="8" fill="#F5F5F5"/>
+            <rect x="66" y="20" width="140" height="8" rx="4" fill="#6B7280" fill-opacity="0.5"/>
+            <rect x="66" y="32" width="80" height="8" rx="4" fill="#6B7280" fill-opacity="0.3"/>
+        </g>
+        <g transform="translate(20, 120)">
+            <circle cx="20" cy="20" r="20" fill="#FFD400" fill-opacity="0.2"/>
+            <rect x="50" y="10" width="210" height="40" rx="8" fill="white" stroke="#FFD400" stroke-width="1"/>
+            <rect x="66" y="20" width="160" height="8" rx="4" fill="#6B7280" fill-opacity="0.5"/>
+        </g>
+        <g transform="translate(20, 180)">
+            <circle cx="20" cy="20" r="20" fill="#F5F5F5"/>
+            <rect x="50" y="10" width="210" height="60" rx="8" fill="#F5F5F5"/>
+            <rect x="66" y="20" width="170" height="8" rx="4" fill="#6B7280" fill-opacity="0.5"/>
+            <rect x="66" y="32" width="120" height="8" rx="4" fill="#6B7280" fill-opacity="0.3"/>
+            <rect x="66" y="44" width="140" height="8" rx="4" fill="#6B7280" fill-opacity="0.3"/>
+        </g>
+        <rect x="20" y="330" width="260" height="40" rx="20" fill="#F5F5F5" stroke="black" stroke-opacity="0.1"/>
+    </g>
+</g>
+</svg>

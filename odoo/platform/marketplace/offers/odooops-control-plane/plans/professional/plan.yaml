@@ -1,0 +1,38 @@
+# Professional Plan — OdooOps Control Plane
+# DRAFT — requires commercial validation (pricing, limits, features)
+
+plan_id: professional
+name: Professional
+description: Full ERP with enterprise parity, AI copilot, and BIR compliance modules.
+
+audience: public
+billing_model: per-user-monthly
+
+pricing:
+  currency: USD
+  monthly_price: 29.00
+  annual_price: 290.00
+
+trial:
+  enabled: true
+  duration_days: 14
+
+features:
+  - All Free features
+  - Enterprise parity modules (80%+ EE coverage)
+  - Full AI copilot (unlimited queries)
+  - BIR compliance suite (Philippines)
+  - OCR document processing
+  - n8n automation workflows
+  - Multi-company support
+  - Up to 50 users
+  - Email support (24h SLA)
+
+limits:
+  max_users: 50
+  max_companies: 5
+  ai_queries_per_month: -1  # unlimited
+  storage_gb: 50
+  ocr_pages_per_month: 1000
+
+status: draft

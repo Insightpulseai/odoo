@@ -1,0 +1,587 @@
+version: 1
+kind: ee_parity_ui_taxonomy
+id: minimum_ee_parity_surfaces
+title: "Minimum UI Surfaces for EE-Parity Perception"
+description: "Lowest set of UX surfaces that removes 'missing Enterprise' friction for end users"
+
+metadata:
+  priority_model: ruthless_minimum
+  target_users: [finance, ops, admins, power_users]
+  acceptance_threshold: 80_percent_coverage
+
+surfaces:
+  # ============================================================================
+  # TIER 0: RUTHLESS MINIMUM (ship these first)
+  # ============================================================================
+
+  - id: studio_customization_ui
+    tier: 0
+    priority: critical
+    title: "Studio-Equivalent Customization UI"
+    description: "#1 Enterprise-feel driver: model/view editor without code"
+    user_roles: [admin, power_user, business_analyst]
+
+    capabilities:
+      - id: model_view_editor
+        title: "Model/View Editor"
+        features:
+          - "Add/reorder fields on forms, lists, kanban"
+          - "Hide/show fields with UI toggle"
+          - "Required/readonly rules without code"
+          - "Field properties editor (labels, help text, placeholder)"
+        acceptance_criteria:
+          - "Admin can add custom field to invoice form without Python"
+          - "Admin can reorder fields via drag-drop"
+          - "Admin can set field required based on status"
+
+      - id: smart_defaults_ui
+        title: "Smart Defaults UI"
+        features:
+          - "Default values per company/team/role"
+          - "Context-based defaults (e.g., 'if sales team X, default warehouse Y')"
+        acceptance_criteria:
+          - "Admin can set default payment term per customer segment"
+          - "Defaults apply automatically on record creation"
+
+      - id: conditional_visibility
+        title: "Conditional Visibility UI"
+        features:
+          - "Domain-like rules without code"
+          - "Show/hide fields based on other field values"
+          - "Show/hide buttons/actions based on state"
+        acceptance_criteria:
+          - "Admin can hide 'Approve' button when status != 'draft'"
+          - "Rules apply in real-time without page refresh"
+
+      - id: menu_action_editor
+        title: "Menu/Action Editor UI"
+        features:
+          - "Add menus without XML"
+          - "Create actions (window, server, report)"
+          - "Reorder menu items"
+        acceptance_criteria:
+          - "Admin can add 'My Pending Approvals' menu item"
+          - "Menu appears immediately for assigned groups"
+
+    oca_candidates:
+      - "web_studio_community (if exists)"
+      - "base_view_inheritance_extension"
+      - "web_widget_*"
+    odoo_ce: ["base", "web"]
+    ipai_glue:
+      - "ipai_studio_lite (view editor + field customizer)"
+      - "ipai_smart_defaults (default value rules engine)"
+
+    evidence_required: ["screenshot", "user_acceptance_test"]
+    weight: 0.25
+
+  - id: documents_workspace
+    tier: 0
+    priority: critical
+    title: "Document-First Experience"
+    description: "Central document workspace with sharing and access control"
+    user_roles: [all_users]
+
+    capabilities:
+      - id: central_workspace
+        title: "Central Document Workspace"
+        features:
+          - "Folders, tags, search, recent, trash"
+          - "Drag-drop upload"
+          - "Preview (PDF, images, office docs)"
+        acceptance_criteria:
+          - "User can create folder structure for tax filings"
+          - "User can search documents by name/tag/content"
+          - "User can restore from trash"
+
+      - id: share_access_ui
+        title: "Share + Access Rights UI"
+        features:
+          - "Viewer/editor roles"
+          - "Internal vs link-based access"
+          - "Expiry dates for shared links"
+        acceptance_criteria:
+          - "User can share folder with 'view-only' access"
+          - "External user can access via link without login"
+
+      - id: record_document_linking
+        title: "Record ↔ Document Linking"
+        features:
+          - "Drag-drop attachments to records"
+          - "Automatic classification (e.g., invoice → Invoices folder)"
+          - "Bidirectional navigation (record → docs, doc → record)"
+        acceptance_criteria:
+          - "User drags receipt to expense, auto-files in Expenses folder"
+          - "User clicks document, sees linked expense record"
+
+    oca_candidates:
+      - "dms (Document Management System)"
+      - "attachment_*"
+      - "knowledge (if used for docs)"
+    odoo_ce: ["base", "mail"]
+    ipai_glue:
+      - "ipai_documents_lite (folder structure + sharing)"
+      - "ipai_docflow_classifier (auto-classification)"
+
+    evidence_required: ["screenshot", "user_acceptance_test"]
+    weight: 0.20
+
+  - id: approvals_workflow_ux
+    tier: 0
+    priority: critical
+    title: "Workflow & Approvals UX"
+    description: "Configurable approval steps with inbox and audit trail"
+    user_roles: [finance, ops, managers]
+
+    capabilities:
+      - id: configurable_approval_steps
+        title: "Configurable Approval Steps"
+        features:
+          - "Multi-step approvals (draft → review → approve → done)"
+          - "Role-based approvers"
+          - "Amount thresholds (e.g., >10k requires CFO)"
+        acceptance_criteria:
+          - "Admin can configure 3-stage approval for expenses >10k"
+          - "System routes to correct approver based on amount"
+
+      - id: approver_inbox
+        title: "Assignee/Approver Inbox"
+        features:
+          - "'My approvals' view"
+          - "'Waiting on me' filter"
+          - "Bulk approve/reject"
+        acceptance_criteria:
+          - "User sees all pending approvals in one view"
+          - "User can approve multiple items at once"
+
+      - id: audit_trail_inline
+        title: "Audit Trail Per Decision"
+        features:
+          - "Who/when/why visible on record"
+          - "Approval history timeline"
+          - "Rejection reasons captured"
+        acceptance_criteria:
+          - "User sees 'Approved by John Doe on 2026-02-11 10:30 AM'"
+          - "Rejection reason displayed inline"
+
+    oca_candidates:
+      - "approvals (OCA)"
+      - "base_tier_validation"
+      - "auditlog"
+    odoo_ce: ["base", "mail"]
+    ipai_glue:
+      - "ipai_approvals_engine (approval routing + inbox)"
+      - "ipai_audit_trail (inline audit display)"
+
+    evidence_required: ["screenshot", "user_acceptance_test", "audit_log"]
+    weight: 0.20
+
+  - id: reporting_ux_enterprise
+    tier: 0
+    priority: critical
+    title: "Reporting UX (Enterprise Expectations)"
+    description: "Pivot/graph views, dashboards, export, scheduled delivery"
+    user_roles: [finance, ops, managers]
+
+    capabilities:
+      - id: pivot_graph_views
+        title: "Pivot + Graph Views"
+        features:
+          - "Saveable favorites"
+          - "Drill-down"
+          - "Multiple chart types (bar, line, pie)"
+        acceptance_criteria:
+          - "User can create pivot of expenses by category/month"
+          - "User can save as favorite and share with team"
+
+      - id: dashboard_board_ui
+        title: "Dashboard/Board UI"
+        features:
+          - "Compose KPIs + charts"
+          - "Drag-drop layout"
+          - "Refresh on demand"
+        acceptance_criteria:
+          - "User can create dashboard with 4 KPI tiles + 2 charts"
+          - "Dashboard auto-refreshes on page load"
+
+      - id: export_ux
+        title: "Export UX"
+        features:
+          - "CSV/XLSX/PDF export"
+          - "Consistent formatting"
+          - "Export current view or all records"
+        acceptance_criteria:
+          - "User can export filtered list to Excel"
+          - "Export preserves column order and formatting"
+
+      - id: scheduled_report_delivery
+        title: "Scheduled Report Delivery UI"
+        features:
+          - "Email schedules (daily, weekly, monthly)"
+          - "Recipient list management"
+          - "Report format selection"
+        acceptance_criteria:
+          - "Admin can schedule monthly P&L email to CFO"
+          - "Report delivered automatically on schedule"
+
+    oca_candidates:
+      - "mis_builder"
+      - "account_financial_report"
+      - "report_xlsx"
+      - "base_report_to_printer"
+    odoo_ce: ["web", "base"]
+    ipai_glue:
+      - "ipai_dashboard_composer (KPI + chart builder)"
+      - "ipai_scheduled_reports (email delivery)"
+
+    evidence_required: ["screenshot", "exported_report", "email_proof"]
+    weight: 0.15
+
+  - id: chatter_activities
+    tier: 0
+    priority: critical
+    title: "Chatter + Activity UX"
+    description: "Work execution layer: timeline, activities, mentions, followers"
+    user_roles: [all_users]
+
+    capabilities:
+      - id: inline_timeline
+        title: "Inline Timeline"
+        features:
+          - "Messages, notes, attachments, system events"
+          - "Chronological display"
+          - "Filter by type (messages, notes, activities)"
+        acceptance_criteria:
+          - "User sees all activity on invoice in timeline"
+          - "System events (status changes) appear automatically"
+
+      - id: activities_reminders
+        title: "Activities + Reminders"
+        features:
+          - "Todo, call, email activities"
+          - "Due dates + reminders"
+          - "Activity summary widget"
+        acceptance_criteria:
+          - "User can schedule 'Call customer' activity for tomorrow"
+          - "User receives reminder on due date"
+
+      - id: mentions_followers
+        title: "@Mentions + Followers"
+        features:
+          - "@mention users in messages"
+          - "Follower-based notifications"
+          - "Subscribe/unsubscribe from records"
+        acceptance_criteria:
+          - "User @mentions colleague, colleague gets notification"
+          - "Followers receive updates on record changes"
+
+    oca_candidates:
+      - "mail_* (various OCA mail enhancements)"
+      - "base_user_role"
+    odoo_ce: ["mail", "base"]
+    ipai_glue: []
+
+    evidence_required: ["screenshot", "notification_proof"]
+    weight: 0.10
+
+  # ============================================================================
+  # TIER 1: HIGH PRIORITY (ship after ruthless minimum)
+  # ============================================================================
+
+  - id: spreadsheet_in_loop
+    tier: 1
+    priority: high
+    title: "Spreadsheet-in-the-Loop"
+    description: "Spreadsheet UI that references business objects and refreshes data"
+    user_roles: [finance, ops, analysts]
+
+    capabilities:
+      - id: business_object_references
+        title: "Reference Business Objects"
+        features:
+          - "Reference accounts, invoices, analytic lines"
+          - "Formula-based data pull"
+          - "Refresh data on demand"
+        acceptance_criteria:
+          - "User can reference account.move in spreadsheet"
+          - "User can refresh to get latest data"
+
+      - id: share_access_control
+        title: "Share with Access Control"
+        features:
+          - "Viewer/editor roles"
+          - "Share with groups"
+        acceptance_criteria:
+          - "User can share spreadsheet with finance team"
+          - "Viewers cannot edit formulas"
+
+    oca_candidates:
+      - "spreadsheet_* (if exists)"
+      - "web_widget_spreadsheet"
+    odoo_ce: ["web"]
+    ipai_glue:
+      - "ipai_spreadsheet_lite (object references + refresh)"
+
+    evidence_required: ["screenshot", "user_acceptance_test"]
+    weight: 0.10
+
+  - id: role_based_navigation
+    tier: 1
+    priority: high
+    title: "Role-Based Navigation & Search"
+    description: "Global search, saved filters, favorites, recent items"
+    user_roles: [all_users]
+
+    capabilities:
+      - id: global_search
+        title: "Global Search"
+        features:
+          - "Search records + docs across all apps"
+          - "Fuzzy matching"
+          - "Recent searches"
+        acceptance_criteria:
+          - "User can search 'INV/2026/001' and find invoice"
+          - "Search includes documents and records"
+
+      - id: saved_filters_favorites
+        title: "Saved Filters + Favorites"
+        features:
+          - "Save custom filters"
+          - "Favorite views"
+          - "Share filters with team"
+        acceptance_criteria:
+          - "User can save 'Unpaid invoices >30 days' filter"
+          - "Filter appears in favorites menu"
+
+      - id: recent_quick_switch
+        title: "Recent Items + Quick Switch"
+        features:
+          - "Recent items list"
+          - "Quick switch between apps"
+          - "Keyboard shortcuts (optional)"
+        acceptance_criteria:
+          - "User sees last 10 accessed records"
+          - "User can switch apps with keyboard shortcut"
+
+    oca_candidates:
+      - "web_search_*"
+      - "web_favorite_*"
+    odoo_ce: ["web", "base"]
+    ipai_glue:
+      - "ipai_global_search (unified search)"
+
+    evidence_required: ["screenshot"]
+    weight: 0.08
+
+  - id: security_ux_admin
+    tier: 1
+    priority: high
+    title: "Security UX (Admin-Grade)"
+    description: "Group/role editor, record rules visibility, access rights matrix, audit log"
+    user_roles: [admin, security_admin]
+
+    capabilities:
+      - id: group_role_editor
+        title: "Group/Role Editor"
+        features:
+          - "Create/edit groups"
+          - "Implied groups UI"
+          - "User assignment"
+        acceptance_criteria:
+          - "Admin can create 'Finance Approver' group"
+          - "Admin can assign users to group"
+
+      - id: record_rules_visibility
+        title: "Record Rules Visibility"
+        features:
+          - "'Why can/can't I see this?' explanation"
+          - "Record rule debugger"
+        acceptance_criteria:
+          - "User sees 'Hidden by record rule: Finance/Own Documents Only'"
+
+      - id: access_rights_matrix
+        title: "Access Rights Matrix View"
+        features:
+          - "Grid view of model × group permissions"
+          - "Bulk edit permissions"
+        acceptance_criteria:
+          - "Admin sees matrix of all models and group permissions"
+          - "Admin can toggle read/write/create/delete in grid"
+
+      - id: audit_log_viewer
+        title: "Audit Log Viewer"
+        features:
+          - "View changes to finance-critical models"
+          - "Filter by user/date/model"
+          - "Export audit log"
+        acceptance_criteria:
+          - "Admin can see all changes to account.move in last 30 days"
+          - "Audit log shows old/new values"
+
+    oca_candidates:
+      - "auditlog"
+      - "base_user_role"
+      - "web_access_rule_buttons"
+    odoo_ce: ["base"]
+    ipai_glue:
+      - "ipai_security_ui (access matrix + rule debugger)"
+
+    evidence_required: ["screenshot", "audit_log"]
+    weight: 0.07
+
+  - id: localization_compliance_ux
+    tier: 1
+    priority: high
+    title: "Localization & Compliance UX"
+    description: "Tax config, withholding, e-invoicing, statutory reports, period close"
+    user_roles: [finance, tax_admin]
+
+    capabilities:
+      - id: tax_configuration_ui
+        title: "Tax Configuration UI"
+        features:
+          - "Rates, tags, fiscal positions"
+          - "Tax report mapping"
+          - "Withholding tax setup"
+        acceptance_criteria:
+          - "Admin can configure PH VAT 12% with output/input tags"
+          - "Admin can map tax to BIR form line"
+
+      - id: statutory_reports_ui
+        title: "Statutory Reports UI"
+        features:
+          - "E-invoicing configuration"
+          - "Statutory report generation"
+          - "Export to regulatory format"
+        acceptance_criteria:
+          - "User can generate BIR 2550M from UI"
+          - "Report exports to BIR-compliant format"
+
+      - id: period_close_ui
+        title: "Period Close UI"
+        features:
+          - "Lock dates"
+          - "Close checklist status"
+          - "Open items panels"
+        acceptance_criteria:
+          - "Admin can lock period 2026-01"
+          - "User sees checklist: bank rec (done), accruals (pending)"
+
+    oca_candidates:
+      - "account_lock_date_update"
+      - "l10n_ph_* (if exists)"
+      - "account_financial_report"
+    odoo_ce: ["account", "l10n_ph"]
+    ipai_glue:
+      - "ipai_bir_tax_compliance (PH-specific)"
+      - "ipai_close_checklist (period close UI)"
+
+    evidence_required: ["screenshot", "generated_report"]
+    weight: 0.07
+
+  - id: integration_ux
+    tier: 1
+    priority: medium
+    title: "Integration UX (Minimal)"
+    description: "Webhook/API key management, email/SMS provider, import wizard"
+    user_roles: [admin, integration_admin]
+
+    capabilities:
+      - id: webhook_api_key_mgmt
+        title: "Webhook/API Key Management UI"
+        features:
+          - "Create/revoke API keys"
+          - "Webhook endpoint configuration"
+          - "Test webhook delivery"
+        acceptance_criteria:
+          - "Admin can create API key for external app"
+          - "Admin can test webhook with sample payload"
+
+      - id: email_sms_provider_ui
+        title: "Email/SMS Provider UI"
+        features:
+          - "SMTP/SendGrid/Twilio credentials"
+          - "Test send"
+          - "Delivery logs"
+        acceptance_criteria:
+          - "Admin can configure SendGrid API key"
+          - "Admin can send test email"
+
+      - id: import_wizard_ux
+        title: "Import Wizard UX"
+        features:
+          - "CSV mapping"
+          - "Validation preview"
+          - "Retry failed imports"
+        acceptance_criteria:
+          - "User can import 100 invoices from CSV"
+          - "User sees validation errors before import"
+
+    oca_candidates:
+      - "base_import_*"
+      - "queue_job"
+      - "mail_*"
+    odoo_ce: ["base_import", "mail"]
+    ipai_glue:
+      - "ipai_import_wizard (enhanced CSV import)"
+
+    evidence_required: ["screenshot", "import_log"]
+    weight: 0.05
+
+# ============================================================================
+# SCORING & ACCEPTANCE
+# ============================================================================
+
+scoring:
+  total_weight: 1.00
+  tier_0_weight: 0.90 # Ruthless minimum = 90% of total
+  tier_1_weight: 0.10
+
+  acceptance_criteria:
+    tier_0_threshold: 0.80 # 80% of tier 0 surfaces must be implemented
+    tier_1_threshold: 0.50 # 50% of tier 1 surfaces (nice-to-have)
+    overall_threshold: 0.75 # 75% overall coverage
+
+  calculation: |
+    tier_0_score = (implemented_tier_0_weight / total_tier_0_weight)
+    tier_1_score = (implemented_tier_1_weight / total_tier_1_weight)
+    overall_score = (tier_0_score * 0.90) + (tier_1_score * 0.10)
+
+    acceptance = (
+      tier_0_score >= 0.80 AND
+      tier_1_score >= 0.50 AND
+      overall_score >= 0.75
+    )
+
+# ============================================================================
+# IMPLEMENTATION NOTES
+# ============================================================================
+
+implementation_notes:
+  - "Tier 0 surfaces are the 'ruthless minimum' for EE-parity perception"
+  - "Ship tier 0 first; tier 1 can follow without breaking perception"
+  - "Each surface has OCA candidates + minimal IPAI glue strategy"
+  - "Evidence required for each surface (screenshots, UAT, audit logs)"
+  - "Weights reflect user impact (Studio = 25%, Documents = 20%, etc.)"
+  - "This taxonomy integrates with agent router for capability-based routing"
+
+agent_routing_hints:
+  - capability: studio_customization_ui
+    primary_agent: odoo_customization
+    secondary_agents: [uiux_designer, odoo_consultation]
+
+  - capability: documents_workspace
+    primary_agent: odoo_implementation
+    secondary_agents: [web_fullstack_engineer, uiux_designer]
+
+  - capability: approvals_workflow_ux
+    primary_agent: odoo_customization
+    secondary_agents: [finance_close_specialist, evidence_architect]
+
+  - capability: reporting_ux_enterprise
+    primary_agent: odoo_consultation
+    secondary_agents: [uiux_designer]
+
+  - capability: localization_compliance_ux
+    primary_agent: finance_close_specialist
+    secondary_agents: [odoo_customization, evidence_architect]

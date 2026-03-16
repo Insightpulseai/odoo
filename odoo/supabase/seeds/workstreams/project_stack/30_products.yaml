@@ -1,0 +1,136 @@
+# Service Products (for time billing)
+# Model: product.product
+# Import order: 3 (after analytic accounts, before projects)
+
+products:
+  # ============================================================
+  # BILLABLE SERVICE PRODUCTS
+  # ============================================================
+
+  - id: ipai_prod_consulting
+    name: Consulting Hours
+    default_code: SVC-CONSULT
+    type: service
+    list_price: 2500.00
+    standard_price: 0.00
+    uom_id: Hour
+    invoice_policy: delivery  # Delivered quantities
+    service_type: timesheet
+    active: true
+    sale_ok: true
+    purchase_ok: false
+    description_sale: "Professional consulting services billed hourly"
+
+  - id: ipai_prod_development
+    name: Development Hours
+    default_code: SVC-DEV
+    type: service
+    list_price: 2000.00
+    standard_price: 0.00
+    uom_id: Hour
+    invoice_policy: delivery
+    service_type: timesheet
+    active: true
+    sale_ok: true
+    purchase_ok: false
+    description_sale: "Software development services billed hourly"
+
+  - id: ipai_prod_design
+    name: Design Hours
+    default_code: SVC-DESIGN
+    type: service
+    list_price: 1800.00
+    standard_price: 0.00
+    uom_id: Hour
+    invoice_policy: delivery
+    service_type: timesheet
+    active: true
+    sale_ok: true
+    purchase_ok: false
+    description_sale: "Creative design services billed hourly"
+
+  - id: ipai_prod_pm
+    name: Project Management
+    default_code: SVC-PM
+    type: service
+    list_price: 2200.00
+    standard_price: 0.00
+    uom_id: Hour
+    invoice_policy: delivery
+    service_type: timesheet
+    active: true
+    sale_ok: true
+    purchase_ok: false
+    description_sale: "Project management services billed hourly"
+
+  # ============================================================
+  # FIXED-FEE PRODUCTS
+  # ============================================================
+
+  - id: ipai_prod_milestone_delivery
+    name: Milestone Delivery
+    default_code: SVC-MILESTONE
+    type: service
+    list_price: 50000.00
+    standard_price: 0.00
+    uom_id: Unit
+    invoice_policy: order  # Ordered quantities (fixed fee)
+    service_type: manual
+    active: true
+    sale_ok: true
+    purchase_ok: false
+    description_sale: "Fixed-fee milestone delivery"
+
+# Odoo import field mapping
+odoo_import:
+  model: product.product
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: default_code
+      column: Internal Reference
+
+    - name: type
+      column: Product Type
+      allowed_values: [consu, service, product]
+      notes: "Use 'service' for time-based products"
+
+    - name: list_price
+      column: Sales Price
+      type: float
+
+    - name: standard_price
+      column: Cost
+      type: float
+
+    - name: uom_id
+      column: Unit of Measure
+      type: many2one
+      relation: uom.uom
+
+    - name: invoice_policy
+      column: Invoicing Policy
+      allowed_values: [order, delivery]
+      notes: "'delivery' = Delivered quantities, 'order' = Ordered quantities"
+
+    - name: service_type
+      column: Track Service
+      allowed_values: [manual, timesheet]
+      notes: "'timesheet' links to hr_timesheet"
+
+    - name: active
+      column: Active
+      type: boolean
+
+    - name: sale_ok
+      column: Can be Sold
+      type: boolean
+
+    - name: description_sale
+      column: Sales Description

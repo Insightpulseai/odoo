@@ -1,0 +1,89 @@
+# Automation Ownership Matrix — InsightPulse AI Platform
+# SSOT for: which automation surface owns which responsibility
+# Referenced by: docs/architecture/SSOT_BOUNDARIES.md
+# Last updated: 2026-03-16
+
+version: "1.0"
+
+ownership:
+  source_code_quality_gates:
+    owner: github-actions
+    not: [n8n, azure-pipelines]
+    workflows: [ci-odoo.yml, secrets-audit.yml, codeql.yml, all-green-gates.yml]
+    notes: Pre-commit, lint, SAST, test, parity gates
+
+  infrastructure_deployment:
+    owner: azure-pipelines
+    not: [github-actions]
+    pipelines: [azure-infra-deploy]
+    notes: Bicep-only. what-if validation → apply on approval.
+
+  container_build_and_app_deploy:
+    owner: github-actions
+    not: [azure-pipelines]
+    workflows: [docker-build-odoo.yml, deploy-azure.yml]
+    notes: Docker build, ACR push, ACA revision deploy
+
+  event_driven_integration:
+    owner: n8n
+    not: [supabase-edge-functions, github-actions]
+    categories: [github-event-routing, slack-integration, scheduled-sync, agent-orchestration]
+    notes: All cross-system event routing flows through n8n
+
+  scheduled_data_jobs:
+    owner: databricks
+    not: [n8n, odoo-cron]
+    notes: DLT pipelines, Bronze/Silver/Gold refresh, metric export
+
+  erp_scheduled_actions:
+    owner: odoo-cron
+    not: [n8n, databricks]
+    notes: BIR deadlines, finance close, Odoo-internal sync jobs
+
+  edge_api_functions:
+    owner: supabase-edge-functions
+    not: [n8n]
+    notes: Stateless external API adapters only
+
+  cross_system_job_queue:
+    owner: mcp-jobs
+    not: [odoo-cron, n8n]
+    notes: Supabase mcp_jobs schema, cross-system orchestration
+
+  ssot_consistency_validation:
+    owner: github-actions
+    not: [n8n]
+    workflows: [ssot-validate.yml, environments-validate.yml, odoo-runtime-contract.yml]
+    notes: SSOT surface guard, DNS sync, env consistency
+
+  dns_management:
+    owner: terraform
+    not: [github-actions]
+    notes: Cloudflare DNS only. YAML-first workflow via subdomain-registry.yaml
+
+consolidation_targets:
+  github_actions:
+    current: 58
+    target: 28
+    tiers:
+      T0_gate: [ci-odoo.yml, secrets-audit.yml, codeql.yml, all-green-gates.yml]
+      T1_build: [docker-build-odoo.yml, deploy-azure.yml, pr-preview.yml]
+      T2_validate: [ssot-validate.yml, environments-validate.yml, odoo-runtime-contract.yml]
+      T3_specialized: [databricks-dab-ci.yml, infra-cloudflare-dns.yml, ee-parity-automation.yml]
+      T4_monitoring: [odoo-docs-kb-refresh.yml, org-docs-refresh.yml]
+
+  n8n:
+    current: 153
+    target: 20
+    categories:
+      github_event_routing: 3
+      slack_integration: 3
+      scheduled_sync: 4
+      data_pipeline_triggers: 3
+      compliance: 3
+      agent_orchestration: 4
+
+  supabase_edge_functions:
+    current: 87
+    target: 40
+    notes: Consolidate overlapping adapters, remove deprecated endpoints

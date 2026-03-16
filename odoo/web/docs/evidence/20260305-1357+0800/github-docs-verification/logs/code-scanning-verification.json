@@ -1,0 +1,26 @@
+{
+  "source": "https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning",
+  "verified_at": "2026-03-05T13:57:00+08:00",
+  "verification_type": "code_scanning",
+  "findings": {
+    "availability": {
+      "public_repos": {
+        "claimed": "[implicit: available]",
+        "official": "Available for public repositories on GitHub.com",
+        "status": "CORRECT"
+      },
+      "private_repos": {
+        "claimed": "[implicit: requires GHAS in enterprise context]",
+        "official": "If you want to use code scanning on private repositories, you need a GitHub Code Security license",
+        "status": "CORRECT"
+      }
+    },
+    "codeql": {
+      "claimed": "Security analysis for TypeScript MCP servers, Python security checks for Odoo modules",
+      "official": "GitHub's primary analysis engine",
+      "status": "CORRECT"
+    }
+  },
+  "verdict": "ACCURATE",
+  "note": "Document does not explicitly state GHAS requirement, but enterprise context makes it clear"
+}

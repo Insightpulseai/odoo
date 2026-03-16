@@ -1,0 +1,156 @@
+{
+  "folders": [
+    {
+      "name": "Odoo (Root)",
+      "path": "."
+    },
+    {
+      "name": "IPAI Modules",
+      "path": "addons/ipai"
+    },
+    {
+      "name": "OCA Modules",
+      "path": "addons/oca"
+    },
+    {
+      "name": "Infrastructure",
+      "path": "infra"
+    },
+    {
+      "name": "Scripts",
+      "path": "scripts"
+    },
+    {
+      "name": "Documentation",
+      "path": "docs"
+    },
+    {
+      "name": "Specs",
+      "path": "spec"
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/.pytest_cache": true,
+      "**/.DS_Store": true,
+      "**/.venv": true,
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.turbo": true
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/node_modules": true,
+      "**/.venv": true,
+      "**/dist": true,
+      "**/build": true
+    },
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+      }
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "terminal.integrated.defaultProfile.linux": "bash"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-python.black-formatter",
+      "ms-azuretools.vscode-docker",
+      "eamodio.gitlens",
+      "mhutchie.git-graph",
+      "GitHub.copilot",
+      "GitHub.copilot-chat",
+      "anthropic.claude-code",
+      "redhat.vscode-yaml",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Odoo: Debug",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/odoo-bin",
+        "console": "integratedTerminal",
+        "args": [
+          "--database=odoo_dev",
+          "--dev=all",
+          "--log-level=debug"
+        ]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Odoo: Start Dev",
+        "type": "shell",
+        "command": "docker compose up -d",
+        "problemMatcher": [],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        }
+      },
+      {
+        "label": "Odoo: Logs",
+        "type": "shell",
+        "command": "docker compose logs -f odoo",
+        "problemMatcher": []
+      },
+      {
+        "label": "Odoo: Restart",
+        "type": "shell",
+        "command": "docker compose restart odoo",
+        "problemMatcher": []
+      },
+      {
+        "label": "Lint: Python (Black + Flake8)",
+        "type": "shell",
+        "command": "black --check . && flake8 .",
+        "problemMatcher": []
+      },
+      {
+        "label": "Test: Run All",
+        "type": "shell",
+        "command": "pytest",
+        "problemMatcher": []
+      }
+    ]
+  }
+}

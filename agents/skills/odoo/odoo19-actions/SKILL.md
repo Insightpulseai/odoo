@@ -635,7 +635,6 @@ Automatically triggered actions on a predefined frequency.
             <field name="model_id" ref="model_my_model"/>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
             <field name="code">model._cron_cleanup()</field>
         </record>
 
@@ -645,7 +644,6 @@ Automatically triggered actions on a predefined frequency.
             <field name="model_id" ref="model_my_model"/>
             <field name="interval_number">15</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
             <field name="code">model._cron_sync_external()</field>
             <field name="priority">5</field>
         </record>
@@ -656,7 +654,6 @@ Automatically triggered actions on a predefined frequency.
             <field name="model_id" ref="model_my_model"/>
             <field name="interval_number">1</field>
             <field name="interval_type">weeks</field>
-            <field name="numbercall">-1</field>
             <field name="code">model._cron_weekly_summary()</field>
         </record>
     </data>

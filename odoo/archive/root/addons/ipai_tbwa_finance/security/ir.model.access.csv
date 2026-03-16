@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ph_holiday_user,ph.holiday.user,model_ph_holiday,account.group_account_user,1,0,0,0
+access_ph_holiday_manager,ph.holiday.manager,model_ph_holiday,account.group_account_manager,1,1,1,1
+access_finance_task_template_user,finance.task.template.user,model_finance_task_template,account.group_account_user,1,0,0,0
+access_finance_task_template_manager,finance.task.template.manager,model_finance_task_template,account.group_account_manager,1,1,1,1
+access_closing_period_user,closing.period.user,model_closing_period,account.group_account_user,1,1,1,0
+access_closing_period_manager,closing.period.manager,model_closing_period,account.group_account_manager,1,1,1,1
+access_finance_task_user,finance.task.user,model_finance_task,account.group_account_user,1,1,0,0
+access_finance_task_manager,finance.task.manager,model_finance_task,account.group_account_manager,1,1,1,1
+access_bir_return_user,bir.return.user,model_bir_return,account.group_account_user,1,1,1,0
+access_bir_return_manager,bir.return.manager,model_bir_return,account.group_account_manager,1,1,1,1
+access_bir_return_line_user,bir.return.line.user,model_bir_return_line,account.group_account_user,1,1,1,0
+access_bir_return_line_manager,bir.return.line.manager,model_bir_return_line,account.group_account_manager,1,1,1,1
+access_compliance_check_user,compliance.check.user,model_compliance_check,account.group_account_user,1,0,0,0
+access_compliance_check_manager,compliance.check.manager,model_compliance_check,account.group_account_manager,1,1,1,1

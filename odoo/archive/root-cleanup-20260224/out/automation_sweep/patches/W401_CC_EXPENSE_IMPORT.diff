@@ -1,0 +1,4 @@
+--- a/notion-n8n-monthly-close/workflows/odoo/W401_CC_EXPENSE_IMPORT.json
++++ b/automations/n8n/workflows/W401_CC_EXPENSE_IMPORT.json
+@@ Move stray workflow to canonical location @@
+# git mv 'notion-n8n-monthly-close/workflows/odoo/W401_CC_EXPENSE_IMPORT.json' 'automations/n8n/workflows/W401_CC_EXPENSE_IMPORT.json'

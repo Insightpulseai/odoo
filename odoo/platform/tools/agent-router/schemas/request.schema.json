@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentRouterRequest",
+  "type": "object",
+  "required": ["capability", "goal"],
+  "properties": {
+    "capability": { "type": "string", "minLength": 1 },
+    "goal": { "type": "string", "minLength": 1 },
+    "context": { "type": ["object", "string", "null"] },
+    "constraints": { "type": ["string", "null"] },
+    "preferred_agents": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "exclude_agents": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["primary_only", "primary_plus_support", "full_relay"],
+      "default": "full_relay"
+    }
+  },
+  "additionalProperties": true
+}

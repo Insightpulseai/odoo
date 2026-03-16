@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="model_x_finance_todo" model="ir.model">
+        <field name="name">Finance To-Do Item</field>
+        <field name="model">x_finance.todo</field>
+    </record>
+
+    <record id="field_todo_name" model="ir.model.fields">
+        <field name="model_id" ref="model_x_finance_todo" />
+        <field name="name">x_name</field>
+        <field name="field_description">Description</field>
+        <field name="ttype">char</field>
+        <field name="required">True</field>
+    </record>
+
+    <record id="field_todo_is_done" model="ir.model.fields">
+        <field name="model_id" ref="model_x_finance_todo" />
+        <field name="name">x_is_done</field>
+        <field name="field_description">Done</field>
+        <field name="ttype">boolean</field>
+    </record>
+
+    <record id="field_todo_assignee" model="ir.model.fields">
+        <field name="model_id" ref="model_x_finance_todo" />
+        <field name="name">x_user_id</field>
+        <field name="field_description">Assignee</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">res.users</field>
+    </record>
+
+    <record id="field_todo_task_id" model="ir.model.fields">
+        <field name="model_id" ref="model_x_finance_todo" />
+        <field name="name">x_task_id</field>
+        <field name="field_description">Parent Task</field>
+        <field name="ttype">many2one</field>
+        <field name="relation">project.task</field>
+        <field name="ondelete">cascade</field>
+    </record>
+</odoo>

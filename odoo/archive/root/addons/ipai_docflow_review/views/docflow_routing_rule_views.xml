@@ -1,0 +1,103 @@
+<odoo>
+  <!-- SEARCH -->
+  <record id="view_docflow_routing_rule_search" model="ir.ui.view">
+    <field name="name">docflow.routing.rule.search</field>
+    <field name="model">docflow.routing.rule</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="doc_type"/>
+        <field name="company_id"/>
+        <field name="journal_id"/>
+        <field name="assign_user_id"/>
+        <field name="assign_group_id"/>
+        <filter string="Active" name="active" domain="[('active','=',True)]"/>
+        <group>
+          <filter string="Doc Type" name="group_by_doc_type" context="{'group_by':'doc_type'}"/>
+          <filter string="Company" name="group_by_company" context="{'group_by':'company_id'}"/>
+          <filter string="Journal" name="group_by_journal" context="{'group_by':'journal_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <!-- LIST (Odoo 19 uses <list>) -->
+  <record id="view_docflow_routing_rule_list" model="ir.ui.view">
+    <field name="name">docflow.routing.rule.list</field>
+    <field name="model">docflow.routing.rule</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="sequence"/>
+        <field name="active"/>
+        <field name="name"/>
+        <field name="doc_type"/>
+        <field name="source"/>
+        <field name="company_id"/>
+        <field name="journal_id"/>
+        <field name="currency_id"/>
+        <field name="vendor_name_contains"/>
+        <field name="bank_account_contains"/>
+        <field name="min_confidence"/>
+        <field name="assign_user_id"/>
+        <field name="assign_group_id"/>
+      </list>
+    </field>
+  </record>
+
+  <!-- FORM -->
+  <record id="view_docflow_routing_rule_form" model="ir.ui.view">
+    <field name="name">docflow.routing.rule.form</field>
+    <field name="model">docflow.routing.rule</field>
+    <field name="arch" type="xml">
+      <form string="DocFlow Routing Rule">
+        <sheet>
+          <group>
+            <group>
+              <field name="name"/>
+              <field name="active"/>
+              <field name="sequence"/>
+              <field name="doc_type"/>
+              <field name="source"/>
+              <field name="min_confidence"/>
+            </group>
+            <group>
+              <field name="company_id"/>
+              <field name="journal_id"/>
+              <field name="currency_id"/>
+            </group>
+          </group>
+
+          <group string="Matching Hints">
+            <group>
+              <field name="vendor_name_contains" placeholder="e.g. MERALCO"/>
+            </group>
+            <group>
+              <field name="bank_account_contains" placeholder="e.g. 0123-456-789"/>
+            </group>
+          </group>
+
+          <group string="Assignment">
+            <group>
+              <field name="assign_user_id"/>
+            </group>
+            <group>
+              <field name="assign_group_id"/>
+            </group>
+          </group>
+
+          <group string="Notes">
+            <div class="o_form_label">Rules match by AND across fields. vendor_name_contains/bank_account_contains are substring checks.</div>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- ACTION -->
+  <record id="action_docflow_routing_rule" model="ir.actions.act_window">
+    <field name="name">Routing Rules</field>
+    <field name="res_model">docflow.routing.rule</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_docflow_routing_rule_search"/>
+  </record>
+</odoo>

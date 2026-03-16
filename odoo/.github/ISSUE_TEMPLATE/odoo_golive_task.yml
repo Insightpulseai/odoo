@@ -1,0 +1,91 @@
+name: Odoo Go-Live Task
+description: General task for the Odoo CE Go-Live project
+title: "[Go-Live] "
+labels: ["odoo-golive"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for general Go-Live tasks including:
+        - Multi-company setup
+        - Email/OAuth configuration
+        - Programmatic configs and seeds
+        - Validation and health checks
+        - Documentation updates
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What area does this task belong to?
+      options:
+        - Companies / Multi-Company
+        - Email / SMTP
+        - OAuth (Gmail/Outlook)
+        - IoT Bridge
+        - Cloud Storage
+        - Integrations (Unsplash, Geolocation, Translate)
+        - SMS Gateway
+        - OCR Gateway
+        - CI/CD Pipeline
+        - Documentation
+        - Validation / Testing
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Detailed description of what needs to be done
+      placeholder: |
+        Describe the task in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What conditions must be met for this task to be complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-files
+    attributes:
+      label: Related Files
+      description: List any files that will be created or modified
+      placeholder: |
+        - addons/ipai/ipai_example/
+        - docs/EXAMPLE.md
+        - scripts/example.sh
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this task?
+      options:
+        - P0 - Critical (blocks go-live)
+        - P1 - High (required for go-live)
+        - P2 - Medium (nice to have)
+        - P3 - Low (post go-live)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: pre-checks
+    attributes:
+      label: Pre-Implementation Checks
+      description: Confirm before starting work
+      options:
+        - label: I have read the CLAUDE.md operating contract
+        - label: I understand this must be code-first (no UI guides)
+        - label: I will update docs alongside code changes

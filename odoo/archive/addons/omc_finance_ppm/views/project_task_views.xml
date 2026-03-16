@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form_omc_clarity" model="ir.ui.view">
+        <field name="name">project.task.form.omc.clarity</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="tag_ids" position="after">
+                <field name="is_phase" widget="boolean_toggle"/>
+            </field>
+            <xpath expr="//notebook" position="inside">
+                <page string="To-Do Items (Clarity)" name="clarity_todos">
+                    <field name="todo_ids" context="{'default_task_id': id}">
+                        <list editable="bottom">
+                            <field name="is_done"/>
+                            <field name="name"/>
+                            <field name="assignee_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

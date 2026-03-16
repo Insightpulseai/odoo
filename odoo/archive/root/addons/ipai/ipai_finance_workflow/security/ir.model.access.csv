@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_finance_role_user,ipai.finance.role.user,model_ipai_finance_role,group_finance_user,1,0,0,0
+access_finance_role_reviewer,ipai.finance.role.reviewer,model_ipai_finance_role,group_finance_reviewer,1,1,0,0
+access_finance_role_manager,ipai.finance.role.manager,model_ipai_finance_role,group_finance_manager,1,1,1,1

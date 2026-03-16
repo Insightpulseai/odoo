@@ -1,0 +1,4 @@
+--- a/workflows/finance_ppm/monthly_report.json
++++ b/automations/n8n/workflows/monthly_report.json
+@@ Move stray workflow to canonical location @@
+# git mv 'workflows/finance_ppm/monthly_report.json' 'automations/n8n/workflows/monthly_report.json'

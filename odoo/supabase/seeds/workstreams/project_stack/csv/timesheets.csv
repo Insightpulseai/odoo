@@ -1,0 +1,15 @@
+External ID,Date,Employee,Project,Task,Description,Hours,Analytic Account
+ipai_ts_alpha_001,2026-01-08,,ipai_proj_alpha,ipai_task_alpha_001,Kickoff meeting preparation and call,2.0,ipai_aa_acme_alpha
+ipai_ts_alpha_002,2026-01-10,,ipai_proj_alpha,ipai_task_alpha_002,Stakeholder interviews - day 1,4.0,ipai_aa_acme_alpha
+ipai_ts_alpha_003,2026-01-11,,ipai_proj_alpha,ipai_task_alpha_002,Stakeholder interviews - day 2,4.0,ipai_aa_acme_alpha
+ipai_ts_alpha_004,2026-01-13,,ipai_proj_alpha,ipai_task_alpha_002,Requirements documentation - draft,6.0,ipai_aa_acme_alpha
+ipai_ts_alpha_005,2026-01-17,,ipai_proj_alpha,ipai_task_alpha_003,Requirements document - v1 completion,8.0,ipai_aa_acme_alpha
+ipai_ts_alpha_006,2026-01-21,,ipai_proj_alpha,ipai_task_alpha_005,UI component development - forms,6.0,ipai_aa_acme_alpha
+ipai_ts_alpha_007,2026-01-22,,ipai_proj_alpha,ipai_task_alpha_005,UI component development - tables,4.0,ipai_aa_acme_alpha
+ipai_ts_beta_001,2026-02-01,,ipai_proj_beta,ipai_task_beta_001,Platform evaluation - Shopify,4.0,ipai_aa_acme_beta
+ipai_ts_beta_002,2026-02-03,,ipai_proj_beta,ipai_task_beta_001,Platform evaluation - WooCommerce,4.0,ipai_aa_acme_beta
+ipai_ts_beta_003,2026-02-05,,ipai_proj_beta,ipai_task_beta_001,Comparison matrix and recommendation draft,4.0,ipai_aa_acme_beta
+ipai_ts_gamma_001,2026-01-15,,ipai_proj_gamma,ipai_task_gamma_001,Discovery workshop - day 1,4.0,ipai_aa_globex_gamma
+ipai_ts_gamma_002,2026-01-16,,ipai_proj_gamma,ipai_task_gamma_001,Discovery workshop - day 2,4.0,ipai_aa_globex_gamma
+ipai_ts_gamma_003,2026-01-21,,ipai_proj_gamma,ipai_task_gamma_002,Finance process mapping,6.0,ipai_aa_globex_gamma
+ipai_ts_internal_001,2026-01-15,,ipai_proj_internal_dev,ipai_task_internal_001,Infrastructure planning,4.0,ipai_aa_tbwa_internal

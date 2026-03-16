@@ -1,0 +1,43 @@
+# agents__runtime__odoo_close_assistant__v1.manifest.yaml
+apiVersion: ipai.agent/v1
+kind: AgentManifest
+metadata:
+  name: odoo-close-assistant
+  version: "0.1.0"
+  description: "Assists with month-end close checklist and reconciliation tasks"
+  owner: finance-team
+  promotion_state: draft
+  last_updated: "2026-03-16"
+
+spec:
+  runtime: foundry_agent_service
+  model_alias: reasoning_default
+  system_prompt: |
+    You are a month-end close assistant. You help the finance team with:
+    - Reviewing open journal entries
+    - Identifying unreconciled items
+    - Checking for missing vendor bills
+    - Validating BIR compliance checklist items
+    - Generating close status reports
+
+    Rules:
+    - Never auto-post journal entries — always require human approval
+    - Report all discrepancies, even small ones
+    - Track close progress against the standard checklist
+    - Escalate blockers to Slack immediately
+
+  tools:
+    - odoo_get_journal_entries
+    - odoo_update_move_state
+    - odoo_search_partner
+    - slack_send_message
+
+  guardrails:
+    max_tool_calls_per_turn: 10
+    require_confirmation_for: [odoo_update_move_state]
+    prohibited_actions: ["auto-post entries", "delete journal entries"]
+
+  observability:
+    trace_provider: opentelemetry
+    log_level: info
+    metrics: [close_tasks_completed, blockers_identified, time_to_close]

@@ -1,0 +1,43 @@
+PROD DISCUSS FIX — NO CONSOLE ERRORS CHECK
+stamp: 2026-02-24T10:00+0800
+container: odoo-prod
+database: odoo_prod
+
+[CHECK 1] Absence of mobileTopbar / Record.one / TypeError errors
+command: docker logs odoo-prod 2>&1 | grep -cE '(mobileTopbar|Record\.one|Missing parent template)'
+result: 0 — PASS
+
+[CHECK 2] Active database is odoo_prod
+command: docker logs odoo-prod 2>&1 | grep -oE 'INFO (odoo_prod|odoo) ' | sort | uniq -c
+result:
+  20081 INFO odoo_prod  ← active
+   1314 INFO odoo       ← historical (pre-fix)
+verdict: PASS
+
+[CHECK 3] Module load count
+Before fix: 203 modules (OCA path missing from odoo.conf)
+After fix:  342 modules (all OCA subdirs added to addons_path)
+verdict: PASS
+
+[PATCHES APPLIED — mail_tracking OCA source]
+1. /opt/odoo/repo/addons/OCA/mail/mail_tracking/static/src/services/store_service_patch.esm.js
+   - Removed: import {Record} from "@mail/core/common/record"
+   - Removed: setup() { super.setup(...arguments); this.failed = Record.one("Thread"); }
+   - Retained: onStarted() with plain object assignment only
+
+2. /opt/odoo/repo/addons/OCA/mail/mail_tracking/static/src/core/discuss/discuss_sidebar_mailboxes.xml
+   - Removed: mail_tracking.Mailbox.main template (targeted //span[@t-esc='mailbox.counter'] removed in Odoo 19)
+   - Fixed:    t-inherit="mail.Discuss.mobileTopbar" → t-inherit="mail.DiscussContent.mobileTopbar"
+
+[ODOO.CONF FIXES — /opt/odoo/repo/deploy/odoo.conf]
+1. addons_path: added all /mnt/oca/* subdirectories (36 paths)
+   → mail_tracking now loads as part of 342 modules
+2. db_name: odoo → odoo_prod
+3. dbfilter: ^odoo$ → ^odoo_prod$
+   → old 'odoo' sessions rejected; new logins go to odoo_prod
+
+[RESTART]
+command: docker-compose -f odoo-prod.compose.yml restart odoo
+result: Container odoo-prod Started — PASS
+
+STATUS=COMPLETE

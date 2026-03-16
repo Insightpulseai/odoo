@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://insightpulseai.com/schemas/n8n_event.schema.json",
+  "title": "n8n_event",
+  "description": "Canonical event payload for all automation triggers (Supabase DB Webhooks, Ops Console, GitHub Actions, manual n8n runs).",
+  "type": "object",
+  "required": ["event_type", "env", "correlation_id", "payload"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "description": "Dot-namespaced event identifier, e.g. 'deploy.requested', 'approval.created', 'ops.anomaly'.",
+      "examples": ["deploy.requested", "approval.created", "ops.anomaly", "module.install"]
+    },
+    "env": {
+      "type": "string",
+      "enum": ["dev", "stage", "prod"],
+      "description": "Target environment for the event."
+    },
+    "actor": {
+      "type": "string",
+      "description": "GitHub username or service account that initiated the event. Optional but recommended for audit trails."
+    },
+    "correlation_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4 that correlates this event across systems (Supabase row, n8n execution, GitHub run)."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific data. Schema is defined per event_type by the emitting service.",
+      "additionalProperties": true
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp with timezone (Asia/Manila = UTC+08:00). Optional; emitters should include it."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_finance_controller_dashboard.dashboard_template">
+
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <title>TBWA Finance Controller Dashboard - <t t-esc="employee_code"/></title>
+
+            <!-- ECharts CDN -->
+            <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+            <!-- Dashboard Styles -->
+            <link rel="stylesheet" href="/ipai_finance_controller_dashboard/static/src/css/dashboard_styles.css"/>
+        </head>
+        <body>
+            <div class="dashboard-container">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">TBWA Finance Controller Dashboard</h1>
+                        <p class="dashboard-subtitle">
+                            Employee: <strong><t t-esc="employee_code"/></strong> |
+                            Last Updated: <span id="last-updated"><t t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/></span>
+                        </p>
+                    </div>
+                    <div class="btn-container">
+                        <!-- Employee Filter Dropdown -->
+                        <select id="employee-filter" class="employee-filter">
+                            <option value="RIM" t-att-selected="'selected' if employee_code == 'RIM' else None">RIM - Finance Manager</option>
+                            <option value="CKVC" t-att-selected="'selected' if employee_code == 'CKVC' else None">CKVC - Finance Supervisor</option>
+                            <option value="BOM" t-att-selected="'selected' if employee_code == 'BOM' else None">BOM - Senior Finance Manager</option>
+                            <option value="JPAL" t-att-selected="'selected' if employee_code == 'JPAL' else None">JPAL - Finance Director</option>
+                            <option value="JLI" t-att-selected="'selected' if employee_code == 'JLI' else None">JLI - AP Specialist</option>
+                            <option value="JAP" t-att-selected="'selected' if employee_code == 'JAP' else None">JAP - AR Specialist</option>
+                            <option value="LAS" t-att-selected="'selected' if employee_code == 'LAS' else None">LAS - Payroll Specialist</option>
+                            <option value="RMQB" t-att-selected="'selected' if employee_code == 'RMQB' else None">RMQB - Tax Specialist</option>
+                        </select>
+
+                        <!-- Refresh Button -->
+                        <button id="btn-refresh" class="btn btn-secondary">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Refresh Data
+                        </button>
+
+                        <!-- Print Button -->
+                        <button id="btn-print-report" class="btn btn-primary">
+                            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            Print Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid with All 6 Visualizations -->
+                <div class="dashboard-grid">
+                    <!-- 1. KPI Gauges + Operational Velocity (Full Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.kpi_gauges"/>
+
+                    <!-- 2. Calendar Heatmap (Full Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.calendar_heatmap"/>
+
+                    <!-- 3. WBS Tree (Half Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.wbs_tree"/>
+
+                    <!-- 4. Gantt Chart (Half Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.gantt_chart"/>
+
+                    <!-- 5. RACI Sunburst (Half Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.raci_sunburst"/>
+
+                    <!-- 6. Dependency Graph (Full Width) -->
+                    <t t-call="ipai_finance_controller_dashboard.dependency_graph"/>
+                </div>
+            </div>
+
+            <!-- Dashboard Control Scripts -->
+            <script type="text/javascript">
+                (function() {
+                    // Print Report button handler
+                    document.getElementById('btn-print-report').addEventListener('click', function() {
+                        window.print();
+                    });
+
+                    // Employee filter dropdown handler
+                    document.getElementById('employee-filter').addEventListener('change', function() {
+                        const selectedEmployee = this.value;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('employee_code', selectedEmployee);
+                        window.location.href = url.toString();
+                    });
+
+                    // Refresh button handler
+                    document.getElementById('btn-refresh').addEventListener('click', function() {
+                        const btn = this;
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="loading-spinner"></span> Refreshing...';
+
+                        // Reload page after brief delay
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 500);
+                    });
+
+                    // Update last updated timestamp
+                    function updateTimestamp() {
+                        const now = new Date();
+                        const formatted = now.getFullYear() + '-' +
+                            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                            String(now.getDate()).padStart(2, '0') + ' ' +
+                            String(now.getHours()).padStart(2, '0') + ':' +
+                            String(now.getMinutes()).padStart(2, '0') + ':' +
+                            String(now.getSeconds()).padStart(2, '0');
+                        document.getElementById('last-updated').textContent = formatted;
+                    }
+
+                    // Update timestamp every second
+                    setInterval(updateTimestamp, 1000);
+                })();
+            </script>
+        </body>
+        </html>
+    </t>
+</templates>

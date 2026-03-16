@@ -27,9 +27,10 @@
             "ipai_ai_widget/static/src/scss/ai_composer.scss",
         ],
     },
-    "installable": True,
+    "installable": False,
     "auto_install": False,
     "application": False,
-    # Explicit: no odoo.com/iap dependency
+    # DEPRECATED: Replaced by Foundry ask mode via ipai_odoo_copilot (2026-03-15)
+    # See: ssot/governance/ai-consolidation-foundry.yaml
     "external_dependencies": {"python": ["requests"]},
 }

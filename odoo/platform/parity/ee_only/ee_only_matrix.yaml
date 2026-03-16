@@ -1,0 +1,102 @@
+# Odoo Enterprise vs Community Parity Matrix
+# Authoritative Source of Truth
+#
+# Schema:
+# - id: unique_slug (e.g. accounting_reports)
+#   name: Human Readable Name
+#   category: Bucket (A-G)
+#   ee_status: "Enterprise" (always)
+#   ce_status: "Missing" | "Partial" | "Available"
+#   replacement:
+#     strategy: "OCA" | "IPAI" | "External"
+#     modules: [list, of, modules]
+#     external_service: "Name" (optional)
+#   confidence: 0-5 (5=verified parity)
+#   evidence_url: "url to odoo.com/editions or docs"
+
+- id: studio_customization
+  name: Studio (No-Code Customization)
+  category: A
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: IPAI
+    modules: ["ipai_parity_studio_like"]
+    notes: "Strictly governed XML overlay + View inheritance tools. NOT full drag-and-drop."
+  confidence: 3
+  evidence_url: "https://www.odoo.com/app/studio"
+
+- id: accounting_full
+  name: Full Accounting (Reports, AI, Banks)
+  category: F
+  ee_status: Enterprise
+  ce_status: Partial
+  replacement:
+    strategy: OCA
+    modules:
+      [
+        "account_financial_report",
+        "account_asset_management",
+        "account_payment_order",
+      ]
+  confidence: 5
+  evidence_url: "https://www.odoo.com/app/accounting"
+
+- id: documents_dms
+  name: Documents / DMS
+  category: B
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: OCA
+    modules: ["dms", "attachment_preview"]
+  confidence: 4
+  evidence_url: "https://www.odoo.com/app/documents"
+
+- id: esignature
+  name: eSignature (Sign)
+  category: C
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: External
+    external_service: "LibreSign / DocuSeal"
+    modules: ["ipai_parity_esign"]
+  confidence: 2
+  evidence_url: "https://www.odoo.com/app/sign"
+
+- id: voip
+  name: VoIP Integration
+  category: E
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: External
+    external_service: "Asterisk / 3CX"
+    modules: ["ipai_parity_voip"]
+  confidence: 2
+  evidence_url: "https://www.odoo.com/app/voip"
+
+- id: web_mobile
+  name: Mobile App (Native)
+  category: G
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: IPAI
+    modules: ["web_responsive"]
+    notes: "PWA approach via web_responsive provides 90% utility."
+  confidence: 5
+  evidence_url: "https://www.odoo.com/page/editions"
+
+- id: approvals
+  name: Approvals
+  category: F
+  ee_status: Enterprise
+  ce_status: Missing
+  replacement:
+    strategy: OCA
+    modules:
+      ["base_tier_validation", "hr_tier_validation", "purchase_tier_validation"]
+  confidence: 5
+  evidence_url: "https://www.odoo.com/app/approvals"

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Odoo Email Configuration
+  Domain: insightpulseai.com
+  Provider: Mailgun (outbound) + Zoho (inbound)
+
+  Import via: odoo shell -d <database> < config/odoo/email_settings.xml
+  Or use: Settings → Technical → Sequences & Identifiers → External Data → Import
+-->
+<odoo>
+    <data noupdate="0">
+
+        <!-- =================================================================
+             Outgoing Mail Server - Mailgun
+             ================================================================= -->
+        <record id="mailgun_smtp_server" model="ir.mail_server">
+            <field name="name">Mailgun - insightpulseai.com</field>
+            <field name="smtp_host">smtp.mailgun.org</field>
+            <field name="smtp_port">587</field>
+            <field name="smtp_encryption">starttls</field>
+            <field name="smtp_user">no-reply@mg.insightpulseai.com</field>
+            <!-- Password set via environment variable or manual config -->
+            <field name="smtp_pass"></field>
+            <field name="sequence">1</field>
+            <field name="from_filter">insightpulseai.com</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- =================================================================
+             System Parameters - Email Configuration
+             ================================================================= -->
+
+        <!-- Catchall Domain -->
+        <record id="mail_catchall_domain" model="ir.config_parameter">
+            <field name="key">mail.catchall.domain</field>
+            <field name="value">insightpulseai.com</field>
+        </record>
+
+        <!-- Catchall Alias -->
+        <record id="mail_catchall_alias" model="ir.config_parameter">
+            <field name="key">mail.catchall.alias</field>
+            <field name="value">catchall</field>
+        </record>
+
+        <!-- Default From -->
+        <record id="mail_default_from" model="ir.config_parameter">
+            <field name="key">mail.default.from</field>
+            <field name="value">notifications</field>
+        </record>
+
+        <!-- Bounce Alias -->
+        <record id="mail_bounce_alias" model="ir.config_parameter">
+            <field name="key">mail.bounce.alias</field>
+            <field name="value">bounce</field>
+        </record>
+
+        <!-- Web Base URL -->
+        <record id="web_base_url" model="ir.config_parameter">
+            <field name="key">web.base.url</field>
+            <field name="value">https://erp.insightpulseai.com</field>
+        </record>
+
+        <!-- =================================================================
+             Email Aliases - Common Business Aliases
+             ================================================================= -->
+
+        <!-- Sales Alias → CRM Leads -->
+        <record id="mail_alias_sales" model="mail.alias">
+            <field name="alias_name">sales</field>
+            <field name="alias_model_id" ref="crm.model_crm_lead"/>
+            <field name="alias_contact">everyone</field>
+        </record>
+
+        <!-- Support Alias → Helpdesk Tickets (if helpdesk installed) -->
+        <!-- Uncomment if using helpdesk module
+        <record id="mail_alias_support" model="mail.alias">
+            <field name="alias_name">support</field>
+            <field name="alias_model_id" ref="helpdesk.model_helpdesk_ticket"/>
+            <field name="alias_contact">everyone</field>
+        </record>
+        -->
+
+        <!-- Jobs Alias → HR Applications -->
+        <record id="mail_alias_jobs" model="mail.alias">
+            <field name="alias_name">jobs</field>
+            <field name="alias_model_id" ref="hr_recruitment.model_hr_applicant"/>
+            <field name="alias_contact">everyone</field>
+        </record>
+
+        <!-- Projects Alias → Project Tasks -->
+        <record id="mail_alias_projects" model="mail.alias">
+            <field name="alias_name">projects</field>
+            <field name="alias_model_id" ref="project.model_project_task"/>
+            <field name="alias_contact">followers</field>
+        </record>
+
+    </data>
+</odoo>

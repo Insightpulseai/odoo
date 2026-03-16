@@ -1,0 +1,22 @@
+# Development Environment Configuration
+# Supabase control plane for dev/sandbox
+
+environment            = "dev"
+production_project_ref = "spdtwktxdalcfigzeqrz"  # TODO: Replace with dev project ref
+
+# Secrets - set via environment variables:
+# export TF_VAR_supabase_access_token="sbp_..."
+# export TF_VAR_supabase_org_id="..."
+
+# API Configuration (relaxed for development)
+api_max_rows = 5000
+
+# Auth Configuration (localhost for dev)
+site_url = "http://localhost:8069"
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "http://localhost:5173/**",
+  "http://localhost:8069/**",
+  "http://localhost:8070/**",
+  "http://localhost:8071/**"
+]

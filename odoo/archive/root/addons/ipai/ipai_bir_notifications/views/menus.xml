@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add to BIR Tax Compliance menu (from ipai_bir_tax_compliance) -->
+    <menuitem
+        id="menu_bir_alert_history"
+        name="Alert History"
+        parent="ipai_bir_tax_compliance.menu_bir_tax_compliance"
+        action="action_bir_alert"
+        sequence="50"/>
+</odoo>

@@ -1,0 +1,55 @@
+catalog:
+  vendor: sap
+  product: concur
+  version_target: "2026"
+  scope: spend_management
+  tiers:
+    tier0_platform: # outcomes that are service/platform-level
+      - id: CONCUR-T0-SECURITY
+        goal: "Enterprise-grade identity + policy enforcement"
+        outcomes:
+          - "SSO/SAML + MFA supported"
+          - "Role-based admin controls and auditability"
+      - id: CONCUR-T0-INTEGRATIONS
+        goal: "Reliable ERP/HR/finance integrations"
+        outcomes:
+          - "Inbound/outbound integrations for employees, cost centers, vendors, GL"
+          - "Stable APIs/webhooks + retry/idempotency"
+      - id: CONCUR-T0_COMPLIANCE
+        goal: "Configurable controls for tax/regulatory and corporate policy"
+        outcomes:
+          - "Policy rules, approvals, exception handling, audit trail"
+    tier1_business_capabilities:
+      - id: CONCUR-T1-EXPENSE
+        goal: "End-to-end employee expense capture → approve → reimburse"
+        outcomes:
+          - "Multi-currency expense entry + receipt attachment"
+          - "Approval workflow + policy checks"
+          - "Reimbursement export / payout integration"
+      - id: CONCUR-T1-INVOICE_AP
+        goal: "AP invoice intake → match/approve → post/export"
+        outcomes:
+          - "Invoice capture (email/PDF/scan) + vendor mapping"
+          - "Approval workflow + GL coding"
+          - "Export to ERP"
+      - id: CONCUR-T1-TRAVEL
+        goal: "Travel booking + policy + itinerary + reconciliation"
+        outcomes:
+          - "Booking channels + approvals"
+          - "Trip plans + expense link-back"
+      - id: CONCUR-T1-REQUEST
+        goal: "Pre-spend request/authorization (travel or spend request)"
+        outcomes:
+          - "Request creation + workflow"
+          - "Budget / policy guardrails"
+    tier2_experience:
+      - id: CONCUR-T2_MOBILE
+        goal: "Mobile-first capture and approvals"
+        outcomes:
+          - "Receipt snap + OCR"
+          - "Offline-friendly UX where possible"
+      - id: CONCUR-T2_ANALYTICS
+        goal: "Spend visibility dashboards + exports"
+        outcomes:
+          - "Standard reports"
+          - "Custom slices by dept/project/vendor"

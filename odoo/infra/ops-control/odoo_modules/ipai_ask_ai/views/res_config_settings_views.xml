@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ask_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ask_ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="AI Copilot" string="AI Copilot" name="ask_ai" groups="ipai_ask_ai.group_ask_ai_admin">
+                    <block title="General Settings">
+                        <setting id="ask_ai_enabled_setting" string="Enable AI Copilot"
+                                 help="Allow users to access the AI Copilot assistant">
+                            <field name="ask_ai_enabled"/>
+                        </setting>
+                        <setting id="ask_ai_streaming_setting" string="Streaming Responses"
+                                 help="Stream AI responses token by token for better user experience">
+                            <field name="ask_ai_streaming"/>
+                        </setting>
+                        <setting id="ask_ai_auto_context_setting" string="Auto-capture Context"
+                                 help="Automatically include current record and view information in AI prompts">
+                            <field name="ask_ai_auto_context"/>
+                        </setting>
+                    </block>
+
+                    <block title="AI Backend">
+                        <setting id="ask_ai_endpoint_setting" string="API Endpoint"
+                                 help="URL of the AI backend service">
+                            <field name="ask_ai_endpoint" placeholder="https://api.example.com/ask"/>
+                        </setting>
+                        <setting id="ask_ai_api_key_setting" string="API Key"
+                                 help="Authentication key for the AI service">
+                            <field name="ask_ai_api_key" password="True"/>
+                        </setting>
+                        <setting id="ask_ai_model_setting" string="AI Model"
+                                 help="Select which AI model to use">
+                            <field name="ask_ai_model"/>
+                        </setting>
+                    </block>
+
+                    <block title="Safety &amp; Permissions">
+                        <setting id="ask_ai_confirmation_setting" string="Require Confirmation"
+                                 help="Show preview and require user confirmation before executing write operations">
+                            <field name="ask_ai_require_confirmation"/>
+                        </setting>
+                        <setting id="ask_ai_allowed_models_setting" string="Allowed Models"
+                                 help="Models that AI can create/update (comma-separated). Leave empty for all.">
+                            <field name="ask_ai_allowed_models" widget="text"
+                                   placeholder="sale.order,purchase.order,account.move"/>
+                        </setting>
+                        <setting id="ask_ai_blocked_models_setting" string="Blocked Models"
+                                 help="Models that AI cannot create/update (comma-separated)">
+                            <field name="ask_ai_blocked_models" widget="text"/>
+                        </setting>
+                    </block>
+
+                    <block title="User Interface">
+                        <setting id="ask_ai_panel_position_setting" string="Panel Position"
+                                 help="Where to display the AI Copilot panel">
+                            <field name="ask_ai_panel_position" widget="radio"
+                                   options="{'horizontal': true}"/>
+                        </setting>
+                        <setting id="ask_ai_hotkey_setting" string="Keyboard Shortcut"
+                                 help="Keyboard shortcut to open the AI Copilot">
+                            <field name="ask_ai_hotkey" placeholder="Ctrl+Shift+A"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_finance_controller_dashboard.gantt_chart">
+        <!-- Gantt Chart: Task execution timeline -->
+        <div class="viz-card viz-half">
+            <h3 class="viz-card-title">Gantt Chart - Task Execution Timeline</h3>
+            <div id="chart-gantt" class="chart-container-large"></div>
+        </div>
+
+        <script type="text/javascript">
+            (function() {
+                function loadGantt(employeeCode) {
+                    fetch('/ipai/finance/controller/api/gantt', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'call',
+                            params: { employee_code: employeeCode || 'RIM' }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const ganttData = data.result;
+                        renderGantt(ganttData);
+                    })
+                    .catch(error => console.error('Error loading Gantt data:', error));
+                }
+
+                function renderGantt(ganttData) {
+                    const chart = echarts.init(document.getElementById('chart-gantt'));
+
+                    // Prepare data for custom rendering
+                    const taskNames = ganttData.map(g => g.name);
+                    const categories = [...new Set(ganttData.map(g => g.phase))];
+
+                    // Color map for phases
+                    const phaseColors = {
+                        'Phase 1': '#5470C6',
+                        'Phase 2': '#91CC75',
+                        'Phase 3': '#FAC858',
+                        'Phase 4': '#EE6666',
+                        'Phase 5': '#73C0DE',
+                        'Uncategorized': '#9E9E9E'
+                    };
+
+                    // Custom render function for Gantt bars
+                    function renderGanttItem(params, api) {
+                        const categoryIndex = api.value(0);
+                        const start = api.coord([api.value(1), categoryIndex]);
+                        const end = api.coord([api.value(2), categoryIndex]);
+                        const height = api.size([0, 1])[1] * 0.6;
+
+                        const rectShape = echarts.graphic.clipRectByRect(
+                            {
+                                x: start[0],
+                                y: start[1] - height / 2,
+                                width: end[0] - start[0],
+                                height: height
+                            },
+                            {
+                                x: params.coordSys.x,
+                                y: params.coordSys.y,
+                                width: params.coordSys.width,
+                                height: params.coordSys.height
+                            }
+                        );
+
+                        return (
+                            rectShape &amp;&amp; {
+                                type: 'rect',
+                                transition: ['shape'],
+                                shape: rectShape,
+                                style: api.style({
+                                    fill: phaseColors[api.value(3)] || '#5470C6'
+                                })
+                            }
+                        );
+                    }
+
+                    // Prepare series data: [categoryIndex, startDate, endDate, phase, taskName]
+                    const seriesData = ganttData.map((g, idx) => {
+                        return [
+                            idx,
+                            new Date(g.start).getTime(),
+                            new Date(g.end).getTime(),
+                            g.phase,
+                            g.name
+                        ];
+                    });
+
+                    chart.setOption({
+                        title: {
+                            text: 'Task Execution Timeline',
+                            left: 'center',
+                            textStyle: { fontSize: 16, fontWeight: 'bold' }
+                        },
+                        tooltip: {
+                            formatter: function(params) {
+                                const data = params.data;
+                                const startDate = new Date(data[1]).toLocaleDateString();
+                                const endDate = new Date(data[2]).toLocaleDateString();
+                                return data[4] + '<br/>' +
+                                       'Phase: ' + data[3] + '<br/>' +
+                                       'Start: ' + startDate + '<br/>' +
+                                       'End: ' + endDate;
+                            }
+                        },
+                        grid: {
+                            left: '15%',
+                            right: '5%',
+                            top: 60,
+                            bottom: 50,
+                            containLabel: false
+                        },
+                        xAxis: {
+                            type: 'time',
+                            position: 'top',
+                            axisLabel: {
+                                formatter: function(val) {
+                                    const date = new Date(val);
+                                    return (date.getMonth() + 1) + '/' + date.getDate();
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: taskNames,
+                            axisLabel: {
+                                fontSize: 10,
+                                formatter: function(value) {
+                                    return value.length > 30 ? value.substring(0, 27) + '...' : value;
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                type: 'custom',
+                                renderItem: renderGanttItem,
+                                encode: {
+                                    x: [1, 2],
+                                    y: 0
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    });
+
+                    window.addEventListener('resize', () => chart.resize());
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const employeeCode = urlParams.get('employee_code') || 'RIM';
+                    loadGantt(employeeCode);
+                });
+            })();
+        </script>
+    </t>
+</templates>

@@ -1,0 +1,18 @@
+id,name,type_id/id,date_start,date_end,active,company_id/id
+__import__.date_range_fy2026,FY 2026,__import__.date_range_type_fiscal_year,2026-01-01,2026-12-31,True,base.main_company
+__import__.date_range_fy2026_q1,FY2026 Q1,__import__.date_range_type_quarter,2026-01-01,2026-03-31,True,base.main_company
+__import__.date_range_fy2026_q2,FY2026 Q2,__import__.date_range_type_quarter,2026-04-01,2026-06-30,True,base.main_company
+__import__.date_range_fy2026_q3,FY2026 Q3,__import__.date_range_type_quarter,2026-07-01,2026-09-30,True,base.main_company
+__import__.date_range_fy2026_q4,FY2026 Q4,__import__.date_range_type_quarter,2026-10-01,2026-12-31,True,base.main_company
+__import__.date_range_fy2026_jan,January 2026,__import__.date_range_type_month,2026-01-01,2026-01-31,True,base.main_company
+__import__.date_range_fy2026_feb,February 2026,__import__.date_range_type_month,2026-02-01,2026-02-28,True,base.main_company
+__import__.date_range_fy2026_mar,March 2026,__import__.date_range_type_month,2026-03-01,2026-03-31,True,base.main_company
+__import__.date_range_fy2026_apr,April 2026,__import__.date_range_type_month,2026-04-01,2026-04-30,True,base.main_company
+__import__.date_range_fy2026_may,May 2026,__import__.date_range_type_month,2026-05-01,2026-05-31,True,base.main_company
+__import__.date_range_fy2026_jun,June 2026,__import__.date_range_type_month,2026-06-01,2026-06-30,True,base.main_company
+__import__.date_range_fy2026_jul,July 2026,__import__.date_range_type_month,2026-07-01,2026-07-31,True,base.main_company
+__import__.date_range_fy2026_aug,August 2026,__import__.date_range_type_month,2026-08-01,2026-08-31,True,base.main_company
+__import__.date_range_fy2026_sep,September 2026,__import__.date_range_type_month,2026-09-01,2026-09-30,True,base.main_company
+__import__.date_range_fy2026_oct,October 2026,__import__.date_range_type_month,2026-10-01,2026-10-31,True,base.main_company
+__import__.date_range_fy2026_nov,November 2026,__import__.date_range_type_month,2026-11-01,2026-11-30,True,base.main_company
+__import__.date_range_fy2026_dec,December 2026,__import__.date_range_type_month,2026-12-01,2026-12-31,True,base.main_company

@@ -1,0 +1,300 @@
+version: 1
+namespace: ipai.ops_platform.contracts.connection_registry.v1
+artifact_type: registry
+repo_key: ops_platform
+domain: contracts
+subject: connection_registry
+
+integration_states:
+  - declared       # exists in Git as a contract
+  - provisioned    # backing resource exists
+  - resolved       # DNS / endpoint resolves
+  - authenticated  # identity method works
+  - authorized     # least-privilege access works
+  - routable       # network path open only where intended
+  - healthy        # real API/DB/app probe succeeds
+  - observable     # logs, metrics, alert target, owner exist
+
+required_fields:
+  - id
+  - domain
+  - source.system
+  - target.system
+  - target.type
+  - transport.protocol
+  - auth.mode
+  - healthcheck.kind
+  - observability.logs_required
+  - observability.metrics_required
+  - owner.team
+  - owner.service
+
+connections:
+
+  # =========================================================================
+  # ODOO ↔ POSTGRES
+  # =========================================================================
+  - id: odoo-app-to-odoo-postgres
+    domain: odoo
+    source:
+      system: odoo-runtime
+      type: application
+    target:
+      system: azure-postgresql
+      type: postgres
+      resource_id_ref: ipai-odoo-dev-pg
+      database_ref: odoo_dev
+    transport:
+      protocol: postgres
+      host_ref: ipai-odoo-dev-pg.postgres.database.azure.com
+      port: 5432
+      tls_required: true
+      private_only: false  # target: true
+    auth:
+      mode: postgresql_password
+      target_mode: managed_identity_or_entra
+      fallback_allowed: false
+    healthcheck:
+      kind: sql
+      query: "SELECT 1"
+      timeout_seconds: 5
+    observability:
+      logs_required: true
+      metrics_required: true
+      alert_policy_ref: db-prod-critical
+    owner:
+      team: platform
+      service: odoo
+    state: declared
+    status: noncompliant
+    findings:
+      - "Auth mode is postgresql_password, target is managed_identity"
+      - "Private endpoint not yet configured"
+      - "Public access still enabled"
+
+  # =========================================================================
+  # SUPABASE VM (CURRENT STATE)
+  # =========================================================================
+  - id: supabase-runtime-hosting
+    domain: platform
+    source:
+      system: azure
+      type: vm
+    target:
+      system: vm-ipai-supabase-dev
+      type: vm_runtime
+    transport:
+      protocol: ssh_and_https
+      tls_required: true
+    auth:
+      mode: ssh_key
+    healthcheck:
+      kind: https
+      path: /health
+      timeout_seconds: 10
+    observability:
+      logs_required: true
+      metrics_required: true
+      alert_policy_ref: supabase-health
+    owner:
+      team: platform
+      service: supabase
+    state: observed
+    status: incomplete
+    findings:
+      - "No declared connection contracts for secret source"
+      - "No declared backup policy"
+      - "No observability sink proven"
+
+  # =========================================================================
+  # N8N ↔ ODOO (XML-RPC)
+  # =========================================================================
+  - id: n8n-to-odoo-xmlrpc
+    domain: automations
+    source:
+      system: n8n
+      type: workflow_engine
+    target:
+      system: odoo-runtime
+      type: xmlrpc_api
+      endpoint_ref: https://erp.insightpulseai.com/xmlrpc/2/object
+    transport:
+      protocol: https
+      tls_required: true
+    auth:
+      mode: credential_reference
+      credential_ref: "$credentials.OdooAPI"
+    healthcheck:
+      kind: xmlrpc
+      method: "execute_kw"
+      timeout_seconds: 10
+    observability:
+      logs_required: true
+      metrics_required: true
+    owner:
+      team: platform
+      service: n8n
+    state: declared
+    status: compliant
+
+  # =========================================================================
+  # N8N ↔ SUPABASE (REST API)
+  # =========================================================================
+  - id: n8n-to-supabase-rest
+    domain: automations
+    source:
+      system: n8n
+      type: workflow_engine
+    target:
+      system: supabase
+      type: rest_api
+    transport:
+      protocol: https
+      tls_required: true
+    auth:
+      mode: credential_reference
+      credential_ref: "$credentials.SupabaseIPAI"
+    healthcheck:
+      kind: https
+      path: /rest/v1/
+      expected_status: 200
+      timeout_seconds: 5
+    observability:
+      logs_required: true
+      metrics_required: true
+    owner:
+      team: platform
+      service: n8n
+    state: declared
+    status: compliant
+
+  # =========================================================================
+  # FOUNDRY ↔ DOCUMENT INTELLIGENCE
+  # =========================================================================
+  - id: foundry-to-document-intelligence
+    domain: ai
+    source:
+      system: foundry-agent-runtime
+      type: agent
+    target:
+      system: azure-document-intelligence
+      type: api
+      resource_id_ref: docai-ipai-dev
+    transport:
+      protocol: https
+      tls_required: true
+    auth:
+      mode: managed_identity
+      fallback_allowed: false
+    healthcheck:
+      kind: https
+      path: /formrecognizer/v2.1/readResults
+      expected_status: 200
+      timeout_seconds: 10
+    observability:
+      logs_required: true
+      metrics_required: true
+      alert_policy_ref: ai-docintel
+    owner:
+      team: ai-platform
+      service: foundry
+    state: declared
+    status: pending_provisioning
+
+  # =========================================================================
+  # ODOO ↔ KEY VAULT
+  # =========================================================================
+  - id: odoo-to-keyvault
+    domain: security
+    source:
+      system: odoo-runtime
+      type: application
+    target:
+      system: azure-key-vault
+      type: secret_store
+      resource_id_ref: kv-ipai-dev
+    transport:
+      protocol: https
+      tls_required: true
+    auth:
+      mode: managed_identity
+    healthcheck:
+      kind: https
+      path: /secrets
+      expected_status: 200
+      timeout_seconds: 5
+    observability:
+      logs_required: true
+      metrics_required: true
+    owner:
+      team: platform
+      service: odoo
+    state: declared
+    status: compliant
+
+  # =========================================================================
+  # CLOUDFLARE ↔ AZURE FRONT DOOR
+  # =========================================================================
+  - id: cloudflare-to-azure-frontdoor
+    domain: networking
+    source:
+      system: cloudflare
+      type: dns
+    target:
+      system: azure-front-door
+      type: edge
+      resource_id_ref: ipai-fd-dev
+    transport:
+      protocol: https
+      tls_required: true
+    auth:
+      mode: dns_validation
+    healthcheck:
+      kind: dns
+      query: "erp.insightpulseai.com"
+      timeout_seconds: 5
+    observability:
+      logs_required: true
+      metrics_required: true
+    owner:
+      team: platform
+      service: networking
+    state: declared
+    status: compliant
+
+  # =========================================================================
+  # PENDING / MISSING CONTRACTS
+  # =========================================================================
+  - id: supabase-to-observability
+    domain: platform
+    source:
+      system: vm-ipai-supabase-dev
+      type: vm_runtime
+    target:
+      system: monitoring-stack
+      type: metrics_logs
+    state: missing
+    status: noncompliant
+
+  - id: supabase-to-secret-source
+    domain: security
+    source:
+      system: vm-ipai-supabase-dev
+      type: vm_runtime
+    target:
+      system: secret-store
+      type: secret_injection
+    state: missing
+    status: noncompliant
+
+  - id: databricks-to-adls
+    domain: lakehouse
+    source:
+      system: databricks
+      type: workspace
+    target:
+      system: adls-gen2
+      type: storage
+    state: missing
+    status: noncompliant
+    note: "Workspace not yet provisioned"

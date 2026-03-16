@@ -1,0 +1,59 @@
+# SSOT: AI Agent Policies
+# Behavioral policies governing agent modes.
+# Cross-referenced by: agents.yaml (policy_ref)
+
+policies:
+  policy-read-only:
+    label: Read-Only
+    description: >
+      Agent can only read and respond. No writes, no drafts,
+      no tool calls that mutate state.
+    write_access: none
+    tool_access: none
+    memory: inherit          # inherits from physical agent default (false)
+    citation_required: true  # must cite sources when using retrieval
+    grounding_required: true # must use knowledge grounding, no fabrication
+    failure_behavior: >
+      If retrieval returns no results or tools are unavailable,
+      state clearly that the information is not available.
+      Never fabricate an answer.
+
+  policy-draft-only:
+    label: Draft-Only
+    description: >
+      Agent can produce draft content (documents, emails, reports)
+      but cannot commit or send. Human approval required.
+    write_access: draft-only
+    tool_access: none
+    memory: inherit
+    citation_required: true
+    grounding_required: true
+    failure_behavior: >
+      If unable to draft, explain what information is missing.
+      Never produce content with fabricated data.
+
+  policy-bounded-write:
+    label: Bounded Write (Future)
+    description: >
+      Agent can propose bounded CRUD operations on an allowlist
+      of models. All proposals require human approval before commit.
+      v1: this policy is defined but not active (no tools wired).
+    write_access: draft-then-approve
+    tool_access: bounded
+    memory: inherit
+    citation_required: true
+    grounding_required: true
+    allowed_models:          # future: when tools are wired
+      - res.partner
+      - sale.order
+      - purchase.order
+      - account.move
+    blocked_models:
+      - ir.model
+      - ir.model.fields
+      - ir.rule
+      - ir.config_parameter
+      - res.users
+    failure_behavior: >
+      If a requested operation is outside the allowed model set
+      or requires elevated permissions, refuse and explain why.

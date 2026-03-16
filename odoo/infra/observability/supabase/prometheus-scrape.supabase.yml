@@ -1,0 +1,55 @@
+# Supabase Metrics API — Prometheus scrape configuration template
+#
+# Usage:
+#   1. Copy this file to your Prometheus/Grafana Agent config directory.
+#   2. Replace <project-ref> with your Supabase project reference ID.
+#      (Non-secret: same as NEXT_PUBLIC_SUPABASE_PROJECT_REF env var)
+#   3. Inject the password from your secrets store at runtime.
+#      NEVER commit the real sb_secret_... key in this file.
+#
+# Docs: docs/ops/SUPABASE_METRICS.md
+# Supabase reference: https://supabase.com/docs/guides/telemetry/metrics/vendor-agnostic
+
+scrape_configs:
+  - job_name: supabase
+    scrape_interval: 60s        # Supabase recommended scrape interval (max cadence)
+    scrape_timeout: 30s
+    metrics_path: /customer/v1/privileged/metrics
+    scheme: https
+
+    # HTTP Basic Auth
+    # username: service_role (always this literal string)
+    # password: sb_secret_...  (inject from secrets store; see below)
+    basic_auth:
+      username: service_role
+      password_file: /etc/prometheus/secrets/supabase_metrics_password
+      # Alternatively, use password_env or Prometheus secret provider integration.
+      # For Grafana Agent, set via agent's secrets/credentials block.
+      # For Grafana Cloud, configure via the datasource UI (password stored as secret).
+
+    static_configs:
+      - targets:
+          - <project-ref>.supabase.co:443
+        labels:
+          project: insightpulseai
+          env: prod
+
+    # TLS config: no client cert needed; standard HTTPS
+    tls_config:
+      insecure_skip_verify: false
+
+---
+# Grafana Agent alternative (grafana-agent.river or YAML)
+# metrics:
+#   configs:
+#     - name: supabase
+#       scrape_configs:
+#         - job_name: supabase
+#           scrape_interval: 60s
+#           metrics_path: /customer/v1/privileged/metrics
+#           scheme: https
+#           basic_auth:
+#             username: service_role
+#             password: <inject from vault>
+#           static_configs:
+#             - targets: [<project-ref>.supabase.co:443]

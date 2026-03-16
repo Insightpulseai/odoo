@@ -1,0 +1,201 @@
+{
+  "name": "BIR Compliance Reminders",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bir-compliance",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "API Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "bir-compliance"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 5,10,15,20,25 * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "BIR Calendar Days",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine BIR form based on day of month\nconst input = $input.first().json;\nconst data = input.body || input;\n\nconst now = new Date();\nconst day = now.getDate();\nconst month = now.getMonth() + 1;\nconst year = now.getFullYear();\nconst quarter = Math.ceil(month / 3);\n\n// BIR Calendar\nconst birForms = {\n  5: {\n    form: '1601-C',\n    name: 'Monthly Withholding Tax - Compensation',\n    due_day: 10,\n    reminder_type: 'upcoming',\n    period: `${year}-${String(month - 1 || 12).padStart(2, '0')}`\n  },\n  10: {\n    form: '1601-C',\n    name: 'Monthly Withholding Tax - Compensation',\n    due_day: 10,\n    reminder_type: 'due_today',\n    period: `${year}-${String(month - 1 || 12).padStart(2, '0')}`\n  },\n  15: {\n    form: '1601-EQ',\n    name: 'Quarterly Expanded Withholding Tax',\n    due_day: 15,\n    reminder_type: quarter % 1 === 0 ? 'due_today' : 'upcoming',\n    period: `Q${quarter} ${year}`\n  },\n  20: {\n    form: '2550M',\n    name: 'Monthly VAT Declaration',\n    due_day: 20,\n    reminder_type: 'due_today',\n    period: `${year}-${String(month - 1 || 12).padStart(2, '0')}`\n  },\n  25: {\n    form: '2550Q',\n    name: 'Quarterly VAT Return',\n    due_day: 25,\n    reminder_type: quarter % 1 === 0 ? 'due_today' : 'upcoming',\n    period: `Q${quarter} ${year}`\n  }\n};\n\n// Manual override from API\nlet formInfo = birForms[day] || null;\n\nif (data.action === 'check') {\n  // Return all upcoming deadlines\n  formInfo = {\n    action: 'check',\n    upcoming: Object.entries(birForms).map(([d, f]) => ({\n      day: parseInt(d),\n      ...f,\n      due_date: `${year}-${String(month).padStart(2, '0')}-${String(f.due_day).padStart(2, '0')}`\n    }))\n  };\n} else if (data.form) {\n  // Specific form requested\n  formInfo = {\n    action: 'generate',\n    form: data.form,\n    period: data.period || `${year}-${String(month - 1 || 12).padStart(2, '0')}`\n  };\n}\n\nreturn {\n  json: {\n    ...formInfo,\n    current_date: now.toISOString().split('T')[0],\n    triggered_by: data.triggered_by || (day in birForms ? 'scheduled' : 'manual')\n  }\n};"
+      },
+      "id": "parse-bir",
+      "name": "Parse BIR Calendar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-form",
+              "leftValue": "={{ $json.form }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-form",
+      "name": "Has BIR Form?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [400, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"#finance\",\n  \"username\": \"BIR Compliance Bot\",\n  \"icon_emoji\": \"{{ $json.reminder_type === 'due_today' ? ':rotating_light:' : ':calendar:' }}\",\n  \"attachments\": [{\n    \"color\": \"{{ $json.reminder_type === 'due_today' ? 'danger' : 'warning' }}\",\n    \"title\": \"{{ $json.reminder_type === 'due_today' ? '🔴 DUE TODAY' : '📅 Upcoming Deadline' }}: {{ $json.form }}\",\n    \"text\": \"{{ $json.name }}\",\n    \"fields\": [\n      {\n        \"title\": \"Period\",\n        \"value\": \"{{ $json.period }}\",\n        \"short\": true\n      },\n      {\n        \"title\": \"Due Date\",\n        \"value\": \"Day {{ $json.due_day }}\",\n        \"short\": true\n      }\n    ],\n    \"footer\": \"BIR Compliance | InsightPulse AI\",\n    \"ts\": {{ Math.floor(Date.now() / 1000) }}\n  }]\n}",
+        "options": {}
+      },
+      "id": "notify-slack",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://159.223.75.148:8069/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB || 'odoo_core' }}\",\n      {{ $env.ODOO_UID || 2 }},\n      \"{{ $env.ODOO_API_KEY }}\",\n      \"project.task\",\n      \"create\",\n      [{\n        \"name\": \"{{ $json.form }} - {{ $json.period }}\",\n        \"project_id\": 1,\n        \"description\": \"BIR Form {{ $json.form }} - {{ $json.name }}\\nPeriod: {{ $json.period }}\\nDue: Day {{ $json.due_day }}\",\n        \"date_deadline\": \"{{ $json.current_date.substring(0, 8) }}{{ String($json.due_day).padStart(2, '0') }}\",\n        \"tag_ids\": [[6, 0, [1]]]\n      }]\n    ]\n  },\n  \"id\": {{ Date.now() }}\n}",
+        "options": {}
+      },
+      "id": "create-task",
+      "name": "Create Odoo Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 450]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build response\nconst input = $('Parse BIR Calendar').first().json;\n\nif (input.action === 'check') {\n  return {\n    json: {\n      success: true,\n      action: 'check',\n      message: 'BIR Compliance Calendar',\n      current_date: input.current_date,\n      upcoming_deadlines: input.upcoming\n    }\n  };\n}\n\nreturn {\n  json: {\n    success: true,\n    action: 'remind',\n    form: input.form,\n    name: input.name,\n    period: input.period,\n    due_day: input.due_day,\n    reminder_type: input.reminder_type,\n    notifications_sent: ['slack', 'odoo_task']\n  }\n};"
+      },
+      "id": "build-response",
+      "name": "Build Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1100, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// No form scheduled for today\nconst input = $('Parse BIR Calendar').first().json;\n\nreturn {\n  json: {\n    success: true,\n    action: input.action || 'check',\n    message: input.action === 'check' ? 'BIR Compliance Calendar' : 'No BIR form due today',\n    current_date: input.current_date,\n    upcoming_deadlines: input.upcoming || [],\n    next_deadline: 'Check /bir-compliance?action=check for full calendar'\n  }\n};"
+      },
+      "id": "no-form",
+      "name": "No Form Today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [650, 600]
+    }
+  ],
+  "connections": {
+    "API Trigger": {
+      "main": [
+        [{ "node": "Parse BIR Calendar", "type": "main", "index": 0 }]
+      ]
+    },
+    "BIR Calendar Days": {
+      "main": [
+        [{ "node": "Parse BIR Calendar", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse BIR Calendar": {
+      "main": [
+        [{ "node": "Has BIR Form?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Has BIR Form?": {
+      "main": [
+        [
+          { "node": "Notify Slack", "type": "main", "index": 0 },
+          { "node": "Create Odoo Task", "type": "main", "index": 0 }
+        ],
+        [{ "node": "No Form Today", "type": "main", "index": 0 }]
+      ]
+    },
+    "Notify Slack": {
+      "main": [
+        [{ "node": "Build Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Odoo Task": {
+      "main": [
+        [{ "node": "Build Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Response": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "No Form Today": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Manila"
+  },
+  "tags": [
+    { "name": "bir" },
+    { "name": "compliance" },
+    { "name": "tax" }
+  ]
+}

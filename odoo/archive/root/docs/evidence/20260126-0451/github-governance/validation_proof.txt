@@ -1,0 +1,15 @@
+Validation Output:
+==> Validating GitHub governance configuration
+    Repo root: /home/user/odoo-ce
+
+--- Custom Properties Schema ---
+✓ Valid JSON: /home/user/odoo-ce/ops/github/custom-properties/schema.json (6 properties)
+
+--- Repository Rulesets ---
+✓ Valid JSON: /home/user/odoo-ce/ops/github/rulesets/org-repo-ruleset.json (name: ipai-org-default-protection, 3 rules)
+
+--- Teams Configuration ---
+✓ Valid JSON: /home/user/odoo-ce/ops/github/teams/teams.json (5 teams)
+
+==> Validation complete
+✓ All governance configuration files are valid

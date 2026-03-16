@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Category for IPAI Bridge -->
+    <record id="module_category_ipai_bridge" model="ir.module.category">
+        <field name="name">IPAI Bridge</field>
+        <field name="description">Enterprise Bridge for CE+OCA parity</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- Update group categories -->
+    <record id="group_ipai_bridge_user" model="res.groups">
+        <field name="category_id" ref="module_category_ipai_bridge"/>
+    </record>
+
+    <record id="group_ipai_bridge_manager" model="res.groups">
+        <field name="category_id" ref="module_category_ipai_bridge"/>
+    </record>
+</odoo>

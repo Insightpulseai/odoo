@@ -1,0 +1,176 @@
+bugbot:
+  version: "1.0"
+
+  review_focus:
+    correctness:
+      enabled: true
+      severity_threshold: P0
+      checks:
+        - logic_errors
+        - null_undefined_handling
+        - race_conditions
+        - edge_cases
+        - off_by_one_errors
+
+    security:
+      enabled: true
+      severity_threshold: P0
+      checks:
+        - sql_injection         # Odoo cr.execute() raw SQL
+        - xss_vulnerabilities
+        - auth_gaps
+        - secrets_exposure
+        - rls_policy_gaps       # Supabase RLS policies
+        - unsafe_eval
+        - path_traversal
+
+    performance:
+      enabled: true
+      severity_threshold: P1
+      checks:
+        - n_plus_one_queries    # Odoo ORM .search() in loops
+        - heavy_loop_operations
+        - missing_indexes
+        - blocking_calls_async
+        - inefficient_orm_usage
+
+    reliability:
+      enabled: true
+      severity_threshold: P1
+      checks:
+        - idempotency
+        - retry_logic
+        - error_handling
+        - transaction_boundaries
+        - resource_cleanup
+
+    maintainability:
+      enabled: true
+      severity_threshold: P2
+      checks:
+        - test_coverage_gaps
+        - code_duplication
+        - unclear_naming
+        - complex_functions
+
+  blocking:
+    p0_blocks_merge: false  # Phase 1: Opt-in (will be true in Week 4)
+    p1_blocks_merge: false
+    p2_blocks_merge: false
+
+  override:
+    allow_maintainer_override: true
+    skip_label: "skip-bugbot"
+
+  exclusions:
+    paths:
+      - "docs/**"
+      - "*.md"
+      - "spec/**"
+      - "*.json"
+      - "*.yml"
+      - "*.yaml"
+      - ".github/**"
+      - "scripts/cleanup/**"
+      - "scripts/deployment/**"
+
+    extensions:
+      - ".json"
+      - ".yml"
+      - ".yaml"
+      - ".txt"
+      - ".csv"
+
+  prompts:
+    python:
+      template: |
+        Review this Odoo/Python code for:
+
+        **Critical Issues (P0 - Blocks Merge)**:
+        - Logic errors and edge cases (empty recordsets, division by zero)
+        - SQL injection via cr.execute() with unsanitized input
+        - Authentication/authorization bypass
+        - Secrets hardcoded in code
+
+        **Important Issues (P1 - Warning)**:
+        - N+1 queries: .search() called inside loops
+        - Heavy operations in compute methods (no @api.depends)
+        - Missing database indexes on frequently queried fields
+        - Blocking calls in async contexts
+        - Improper transaction boundaries (cr.commit in wrong places)
+
+        **Advisory Issues (P2 - Info)**:
+        - Missing test coverage for new code
+        - Code duplication (DRY violations)
+        - Complex functions (>50 lines or cyclomatic complexity >10)
+
+        **Stack Context**: Odoo CE 19.0 + OCA modules, PostgreSQL 16, Python 3.12
+
+        **Odoo-Specific Patterns to Check**:
+        - Recordset operations: Use `if record` not `if record.exists()`
+        - ORM usage: Prefer `.mapped()`, `.filtered()` over manual loops
+        - Security: Check `@api.model` vs `@api.model_create_multi` permissions
+        - Performance: Compute methods must have `@api.depends()` decorator
+        - Transactions: Never use `cr.commit()` except in CLI scripts
+
+        Return: Prioritized findings (P0/P1/P2) with file:line numbers and suggested patches.
+
+    javascript:
+      template: |
+        Review this JavaScript/TypeScript code for:
+
+        **Critical Issues (P0)**:
+        - Logic errors and edge cases
+        - XSS vulnerabilities (unescaped user input)
+        - Authentication/authorization gaps
+        - Secrets in code
+
+        **Important Issues (P1)**:
+        - Performance bottlenecks (heavy operations in render loops)
+        - Missing error handling
+        - Race conditions
+        - Memory leaks (event listeners not cleaned up)
+
+        **Advisory Issues (P2)**:
+        - Missing test coverage
+        - Code duplication
+        - Complex functions
+
+        **Stack Context**: Next.js 14 App Router, TypeScript, Supabase SSR
+
+        Return: Prioritized findings (P0/P1/P2) with file:line numbers and patches.
+
+    xml:
+      template: |
+        Review this Odoo XML (views/data/security) for:
+
+        **Critical Issues (P0)**:
+        - Security rule gaps (ir.rule with wrong domain)
+        - Access rights errors (ir.model.access missing required permissions)
+        - Invalid XML syntax
+
+        **Important Issues (P1)**:
+        - View inheritance errors (wrong xpath)
+        - Data import issues (wrong model references)
+        - Performance: Missing indexes on tree views
+
+        **Advisory Issues (P2)**:
+        - UI/UX issues (confusing form layouts)
+        - Missing field labels
+
+        **Stack Context**: Odoo CE 19.0
+
+        Return: Prioritized findings with file:line numbers.
+
+  examples:
+    - issue: "P0: SQL injection in custom query"
+      code: "cr.execute('SELECT * FROM res_users WHERE login = %s' % login)"
+      fix: "cr.execute('SELECT * FROM res_users WHERE login = %s', (login,))"
+
+    - issue: "P1: N+1 query in loop"
+      code: "for partner in partners:\n    invoices = self.env['account.move'].search([('partner_id', '=', partner.id)])"
+      fix: "invoice_data = self.env['account.move'].read_group([('partner_id', 'in', partners.ids)], ...)"
+
+    - issue: "P0: Hardcoded secret"
+      code: "API_KEY = 'sk_live_abc123'"
+      fix: "API_KEY = os.environ.get('API_KEY')"

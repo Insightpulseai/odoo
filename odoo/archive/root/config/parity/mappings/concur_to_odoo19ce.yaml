@@ -1,0 +1,218 @@
+version: 1
+id: concur_to_odoo19ce
+title: "Concur → Odoo 19 CE + OCA + minimal IPAI glue"
+principle: "Goal-based parity: measure outcomes with deterministic probes; avoid module-name parity."
+scope:
+  source_platform:
+    name: "SAP Concur"
+    domains:
+      - travel_request
+      - travel_booking
+      - expense_capture
+      - expense_audit
+      - invoice_ap_automation
+      - payments
+      - policy_controls
+      - analytics
+      - integrations
+      - security_sso
+  target_stack:
+    odoo:
+      edition: community
+      version: "19.0"
+    oca:
+      policy: "OCA-first; add IPAI glue only where CE+OCA cannot meet the outcome."
+    ipai_glue:
+      allowed:
+        - "file ingestion (email/Viber/drive watchers)"
+        - "OCR + extraction service (PaddleOCR/DocFlow)"
+        - "policy engine overlays (YAML-driven)"
+        - "connectors (queue-less where Odoo.sh constraints apply)"
+        - "evidence logging for parity engine"
+capability_map:
+  - capability_id: concur.expense.capture
+    concur_outcomes:
+      - "Users submit expenses with receipts (mobile/web)"
+      - "Receipts attached + searchable"
+    odoo_core_candidates:
+      - hr_expense
+      - mail
+      - base
+    oca_candidates:
+      - "document-management stack (DMS) if you need folder/tag semantics"
+    ipai_glue:
+      - id: ipai_docflow_receipt_ingest
+        description: "Ingest receipts from email/chat/drive; attach to expense; extract fields."
+        interfaces:
+          - "HTTP webhook → Odoo XML-RPC/JSON-RPC create(expense) + create(attachment)"
+          - "Optional Supabase Storage for raw artifacts + signed URLs"
+    probes:
+      tier0:
+        - id: probe.expense.can_create
+          type: odoo_rpc_smoke
+          goal: "Create an expense record + attachment via API"
+        - id: probe.receipt.evidence_saved
+          type: repo_artifact_written
+          path_pattern: "oca-parity/evidence/expenses/*.json"
+
+  - capability_id: concur.expense.ocr
+    concur_outcomes:
+      - "Auto-extract merchant/date/amount/tax from receipt"
+      - "Field-level confidence + human correction"
+    odoo_core_candidates: []
+    oca_candidates: []
+    ipai_glue:
+      - id: ipai_ocr_service
+        description: "External OCR/extraction (PaddleOCR) with deterministic JSON output; no IAP dependency."
+        outputs:
+          - receipt_text
+          - line_items
+          - totals
+          - confidence_scores
+    notes:
+      - "Avoid Odoo IAP invoice/receipt digitization dependencies; keep OCR external + auditable."
+
+  - capability_id: concur.expense.policy
+    concur_outcomes:
+      - "Policy rules enforced pre-submit (limits, categories, required fields)"
+      - "Violations flagged with reasons"
+    odoo_core_candidates:
+      - base_automation
+      - mail_activity
+    oca_candidates:
+      - "server-tools for rule execution patterns (optional)"
+    ipai_glue:
+      - id: ipai_policy_rules
+        description: "YAML-driven policy engine (shared with parity goals)."
+        inputs:
+          - expense_payload
+          - locale_overlay_ref
+        outputs:
+          - allow_or_block
+          - violations[]
+    probes:
+      tier0:
+        - id: probe.policy.rules_eval
+          type: deterministic_ruleset
+          fixture: "fixtures/expenses/policy_cases.json"
+
+  - capability_id: concur.expense.approvals
+    concur_outcomes:
+      - "Multi-step approvals with audit trail"
+      - "Escalations + delegation"
+    odoo_core_candidates:
+      - mail
+      - mail_activity
+      - base
+    oca_candidates:
+      - "approval workflow addons (TBD: pick one repo + pin versions)"
+    ipai_glue:
+      - id: ipai_min_approvals
+        description: "If CE lacks a clean approvals app for your exact flows, implement minimal approvals on top of mail.activity + server actions."
+    probes:
+      tier0:
+        - id: probe.approvals.audit_trail
+          type: odoo_model_audit
+          goal: "Every state transition produces a log entry with actor+timestamp"
+
+  - capability_id: concur.invoice.ap_automation
+    concur_outcomes:
+      - "Capture vendor invoices; match PO/receipts; route for approval"
+      - "Create vendor bill + payables lifecycle"
+    odoo_core_candidates:
+      - account
+      - purchase
+      - stock
+    oca_candidates:
+      - "vendor bill import helpers (TBD, depending on ingestion format)"
+      - "EDI helpers if needed"
+    ipai_glue:
+      - id: ipai_vendor_bill_ingest
+        description: "Document ingest + extraction → create vendor bill lines; optionally match to PO."
+    probes:
+      tier0:
+        - id: probe.vendor_bill.create
+          type: odoo_rpc_smoke
+          goal: "Create vendor bill from extracted payload"
+
+  - capability_id: concur.payments
+    concur_outcomes:
+      - "Pay reimbursements + vendor bills; status + reconciliation"
+    odoo_core_candidates:
+      - account
+      - account_payment
+    oca_candidates: []
+    ipai_glue:
+      - id: ipai_payment_export
+        description: "Bank/payment file exports and posting callbacks, if your bank formats need custom output."
+    probes:
+      tier0:
+        - id: probe.payment.post_and_reconcile
+          type: accounting_flow_probe
+          goal: "Post payment and reconcile against payable/expense"
+
+  - capability_id: concur.audit_compliance
+    concur_outcomes:
+      - "Immutable audit log for expense edits/approvals"
+      - "Evidence export for audits"
+    odoo_core_candidates:
+      - mail
+    oca_candidates:
+      - "auditlog (OCA) or equivalent logging addon (pin exact module in your stack lockfile)"
+    ipai_glue:
+      - id: ipai_evidence_packager
+        description: "Package evidence (JSON+CSV+attachments manifest) into /oca-parity/evidence for parity engine."
+    probes:
+      tier0:
+        - id: probe.audit.export_bundle
+          type: repo_artifact_written
+          path_pattern: "oca-parity/evidence/audit/*.zip"
+
+  - capability_id: concur.security.sso
+    concur_outcomes:
+      - "SSO with SAML/OIDC; RBAC; account lifecycle"
+    odoo_core_candidates:
+      - auth_oauth
+    oca_candidates:
+      - "OIDC/SAML addons if required (pin exact repo+module after selection)"
+    ipai_glue:
+      - id: ipai_identity_bridge
+        description: "If you centralize identity outside Odoo (e.g., Supabase/Auth), bridge roles→Odoo groups via API."
+    probes:
+      tier0:
+        - id: probe.auth.can_login_via_oauth
+          type: auth_smoke
+
+  - capability_id: concur.analytics
+    concur_outcomes:
+      - "Spend dashboards; policy violations; cycle time"
+    odoo_core_candidates:
+      - base
+    oca_candidates:
+      - "BI connectors (optional)"
+    ipai_glue:
+      - id: ipai_metrics_mart
+        description: "ETL to analytics store (Supabase/Postgres) + dashboard (Superset/Metabase)."
+
+locale_overlays:
+  - ref: config/parity/locales/philippines_tax.yaml
+    affects_capabilities:
+      - concur.invoice.ap_automation
+      - concur.payments
+      - concur.audit_compliance
+      - concur.analytics
+
+constraints:
+  odoo_sh_constraints_summary:
+    - "No system package installs; no long-running daemons; Port 25 blocked; long-lived connections discouraged; DB tables+sequences limit; some async patterns not supported."
+    - "Avoid queue_job and websocket/longpoll overload patterns on Odoo.sh."
+  citations:
+    - "Odoo.sh container restrictions + port 25 closed + table/sequence limit."
+
+evidence:
+  root: oca-parity/evidence
+  required_artifacts:
+    - parity_report.json
+    - parity_report.md
+    - "expenses/*.json"
+    - "audit/*.zip"

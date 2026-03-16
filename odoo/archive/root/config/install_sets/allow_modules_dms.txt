@@ -1,0 +1,27 @@
+# DMS (Document Management System) parity modules
+# Covers: document workspace, knowledge pages, spreadsheet
+# Source: EE Documents + EE Knowledge + EE Spreadsheet
+
+# OCA: DMS core
+dms
+dms_field
+
+# OCA: Knowledge / Document pages
+document_page
+document_page_approval
+
+# OCA: Spreadsheet (CE alternative to EE Spreadsheet)
+spreadsheet_oca
+spreadsheet_dashboard_oca
+
+# OCA: Foundation deps
+queue_job
+date_range
+base_view_inheritance_extension
+
+# OCA: Web UX
+web_responsive
+
+# IPAI: Documents AI
+ipai_documents_ai
+ipai_enterprise_bridge

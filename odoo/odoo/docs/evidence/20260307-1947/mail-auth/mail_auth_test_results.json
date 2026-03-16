@@ -1,0 +1,318 @@
+{
+  "test_suite": "mail_and_auth",
+  "timestamp": "2026-03-07T19:47:37.849127+00:00",
+  "total": 44,
+  "passed": 33,
+  "failed": 11,
+  "pass_rate": "75.0%",
+  "results": [
+    {
+      "name": "mail_settings.yaml prod SMTP host",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "host=smtppro.zoho.com",
+      "timestamp": "2026-03-07T19:47:37.692127+00:00"
+    },
+    {
+      "name": "mail_settings.yaml prod SMTP port",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "port=587",
+      "timestamp": "2026-03-07T19:47:37.692180+00:00"
+    },
+    {
+      "name": "mailgun.yaml status=active",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "status=active",
+      "timestamp": "2026-03-07T19:47:37.694317+00:00"
+    },
+    {
+      "name": "mailgun.yaml domain=mg.insightpulseai.com",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "domain=mg.insightpulseai.com",
+      "timestamp": "2026-03-07T19:47:37.694355+00:00"
+    },
+    {
+      "name": "mailgun.yaml port_25_forbidden",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "port_25_forbidden=True",
+      "timestamp": "2026-03-07T19:47:37.694390+00:00"
+    },
+    {
+      "name": "prod_settings.yaml references dual mail",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "Both Zoho and Mailgun mentioned",
+      "timestamp": "2026-03-07T19:47:37.700681+00:00"
+    },
+    {
+      "name": "settings.yaml no 'deprecated' for mailgun",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "Mailgun should not be marked deprecated",
+      "timestamp": "2026-03-07T19:47:37.703083+00:00"
+    },
+    {
+      "name": "platform_inventory mailgun=active",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "mailgun status=active",
+      "timestamp": "2026-03-07T19:47:37.711308+00:00"
+    },
+    {
+      "name": "platform_inventory zoho=active",
+      "category": "mail-ssot",
+      "passed": true,
+      "detail": "zoho status=active",
+      "timestamp": "2026-03-07T19:47:37.711365+00:00"
+    },
+    {
+      "name": "insightpulseai.com MX \u2192 Zoho",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No MX records found (dig unavailable or DNS failure)",
+      "timestamp": "2026-03-07T19:47:37.715687+00:00"
+    },
+    {
+      "name": "insightpulseai.com SPF includes zohomail",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No SPF record found",
+      "timestamp": "2026-03-07T19:47:37.719533+00:00"
+    },
+    {
+      "name": "mg.insightpulseai.com SPF includes mailgun",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No SPF record found for mg subdomain",
+      "timestamp": "2026-03-07T19:47:37.723631+00:00"
+    },
+    {
+      "name": "Zoho DKIM record present",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No DKIM record for zoho._domainkey",
+      "timestamp": "2026-03-07T19:47:37.729013+00:00"
+    },
+    {
+      "name": "Mailgun DKIM record present",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No DKIM record for mg subdomain",
+      "timestamp": "2026-03-07T19:47:37.736856+00:00"
+    },
+    {
+      "name": "insightpulseai.com DMARC present",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No DMARC record",
+      "timestamp": "2026-03-07T19:47:37.741222+00:00"
+    },
+    {
+      "name": "Mailgun tracking CNAME (email.mg)",
+      "category": "mail-dns",
+      "passed": false,
+      "detail": "No CNAME for email.mg",
+      "timestamp": "2026-03-07T19:47:37.746669+00:00"
+    },
+    {
+      "name": "Module ipai_mail_bridge_zoho",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "HTTPS bridge for Zoho Mail API",
+      "timestamp": "2026-03-07T19:47:37.746952+00:00"
+    },
+    {
+      "name": "Module ipai_zoho_mail",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "Zoho SMTP server record",
+      "timestamp": "2026-03-07T19:47:37.747121+00:00"
+    },
+    {
+      "name": "Module ipai_zoho_mail_api",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "Zoho REST API transport",
+      "timestamp": "2026-03-07T19:47:37.747323+00:00"
+    },
+    {
+      "name": "Module ipai_mailgun_smtp",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "Mailgun SMTP server record",
+      "timestamp": "2026-03-07T19:47:37.747431+00:00"
+    },
+    {
+      "name": "Module ipai_enterprise_bridge",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "Mailgun webhook controller",
+      "timestamp": "2026-03-07T19:47:37.747572+00:00"
+    },
+    {
+      "name": "Mailgun XML uses port 2525",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "Port 2525 confirmed",
+      "timestamp": "2026-03-07T19:47:37.747841+00:00"
+    },
+    {
+      "name": "Zoho bridge overrides mail.mail",
+      "category": "mail-modules",
+      "passed": true,
+      "detail": "mail.mail _inherit found",
+      "timestamp": "2026-03-07T19:47:37.748101+00:00"
+    },
+    {
+      "name": "CI: scripts/ci/check_deprecated_provider_defaults.py",
+      "category": "mail-ci",
+      "passed": true,
+      "detail": "Deprecated provider check",
+      "timestamp": "2026-03-07T19:47:37.748246+00:00"
+    },
+    {
+      "name": "CI: scripts/ci/check_prod_mail_live.py",
+      "category": "mail-ci",
+      "passed": true,
+      "detail": "Live prod mail provider check",
+      "timestamp": "2026-03-07T19:47:37.748338+00:00"
+    },
+    {
+      "name": "Deprecated check doesn't flag mailgun",
+      "category": "mail-ci",
+      "passed": true,
+      "detail": "Mailgun not in FORBIDDEN list",
+      "timestamp": "2026-03-07T19:47:37.748555+00:00"
+    },
+    {
+      "name": "auth.insightpulseai.com DNS",
+      "category": "auth-dns",
+      "passed": false,
+      "detail": "No A record found",
+      "timestamp": "2026-03-07T19:47:37.752171+00:00"
+    },
+    {
+      "name": "erp.insightpulseai.com DNS",
+      "category": "auth-dns",
+      "passed": false,
+      "detail": "No A record found",
+      "timestamp": "2026-03-07T19:47:37.755656+00:00"
+    },
+    {
+      "name": "n8n.insightpulseai.com DNS",
+      "category": "auth-dns",
+      "passed": false,
+      "detail": "No A record found",
+      "timestamp": "2026-03-07T19:47:37.759350+00:00"
+    },
+    {
+      "name": "Module ipai_auth_oidc",
+      "category": "auth-modules",
+      "passed": true,
+      "detail": "OIDC + MFA integration",
+      "timestamp": "2026-03-07T19:47:37.759592+00:00"
+    },
+    {
+      "name": "OIDC: Keycloak provider template",
+      "category": "auth-modules",
+      "passed": true,
+      "detail": "Keycloak endpoint configured",
+      "timestamp": "2026-03-07T19:47:37.759874+00:00"
+    },
+    {
+      "name": "OIDC: Google provider template",
+      "category": "auth-modules",
+      "passed": true,
+      "detail": "Google OIDC endpoint configured",
+      "timestamp": "2026-03-07T19:47:37.759895+00:00"
+    },
+    {
+      "name": "GitHub auth: Zero-PAT policy",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "Policy: Zero-PAT GitHub Auth Surface",
+      "timestamp": "2026-03-07T19:47:37.767230+00:00"
+    },
+    {
+      "name": "GitHub auth: PATs deprecated",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "Classic PATs deprecated",
+      "timestamp": "2026-03-07T19:47:37.767305+00:00"
+    },
+    {
+      "name": "Nginx: auth.insightpulseai.com.conf",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "Present",
+      "timestamp": "2026-03-07T19:47:37.767580+00:00"
+    },
+    {
+      "name": "Nginx auth: TLS configured",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "SSL certs referenced",
+      "timestamp": "2026-03-07T19:47:37.767867+00:00"
+    },
+    {
+      "name": "Nginx auth: HSTS header",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "HSTS present",
+      "timestamp": "2026-03-07T19:47:37.767897+00:00"
+    },
+    {
+      "name": "Supabase auth in platform inventory",
+      "category": "auth-ssot",
+      "passed": true,
+      "detail": "Services: ['postgres', 'rls', 'edge_functions', 'realtime', 'storage', 'vault', 'auth', 'pgvector']",
+      "timestamp": "2026-03-07T19:47:37.776317+00:00"
+    },
+    {
+      "name": "Nginx auth.insightpulseai.com.conf: security headers",
+      "category": "auth-nginx",
+      "passed": true,
+      "detail": "All present",
+      "timestamp": "2026-03-07T19:47:37.777244+00:00"
+    },
+    {
+      "name": "Nginx crm.insightpulseai.com.conf: security headers",
+      "category": "auth-nginx",
+      "passed": true,
+      "detail": "All present",
+      "timestamp": "2026-03-07T19:47:37.777477+00:00"
+    },
+    {
+      "name": "Nginx erp.insightpulseai.com.conf: security headers",
+      "category": "auth-nginx",
+      "passed": true,
+      "detail": "All present",
+      "timestamp": "2026-03-07T19:47:37.777712+00:00"
+    },
+    {
+      "name": "Nginx shelf.insightpulseai.com.conf: security headers",
+      "category": "auth-nginx",
+      "passed": true,
+      "detail": "All present",
+      "timestamp": "2026-03-07T19:47:37.778304+00:00"
+    },
+    {
+      "name": "No hardcoded secrets in config/ssot YAML",
+      "category": "secrets",
+      "passed": false,
+      "detail": "Potential secrets: ['ssot/integrations/mailgun.yaml:42', 'ssot/integrations/mailgun.yaml:42', 'ssot/maintenance/schedules.yaml:116', 'ssot/odoo/mail.yaml:35', 'ssot/odoo/mail.yaml:35']",
+      "timestamp": "2026-03-07T19:47:37.848644+00:00"
+    },
+    {
+      "name": ".env in .gitignore",
+      "category": "secrets",
+      "passed": true,
+      "detail": "Present",
+      "timestamp": "2026-03-07T19:47:37.848902+00:00"
+    }
+  ]
+}

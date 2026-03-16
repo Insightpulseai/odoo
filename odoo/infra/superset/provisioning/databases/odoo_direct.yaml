@@ -1,0 +1,39 @@
+# =============================================================================
+# Superset Database Connection — Odoo PostgreSQL (Read-Only)
+# =============================================================================
+# File-based provisioning for Apache Superset.
+# Deploy via: superset import-datasources -p databases/odoo_direct.yaml
+#
+# OR use the setup script (preferred):
+#   scripts/superset/setup_odoo_superset.sh
+#
+# Required environment variables:
+#   ODOO_PG_HOST   — host of Odoo's PostgreSQL
+#   ODOO_PG_PORT   — port (default 5432)
+#   ODOO_SUPERSET_RO_PASS — password for superset_ro user
+# =============================================================================
+
+databases:
+  - database_name: "Odoo Direct (Read-Only)"
+    # sqlalchemy_uri uses env var substitution — set actual values in Superset UI
+    # or via setup script. Never hardcode credentials here.
+    sqlalchemy_uri: "postgresql+psycopg2://superset_ro:REPLACE_WITH_SECRET@REPLACE_WITH_HOST:5432/odoo"
+    expose_in_sqllab: true
+    allow_ctas: false
+    allow_cvas: false
+    allow_dml: false
+    allow_run_async: true
+    cache_timeout: 300
+    extra: |
+      {
+        "engine_params": {
+          "connect_args": {
+            "sslmode": "prefer"
+          }
+        },
+        "schema_cache_timeout": 600,
+        "metadata_params": {}
+      }
+    # Stable UUID — do not change (used as foreign key in dataset definitions)
+    uuid: "7c8d9e01-0f11-4a12-b134-0000000001db"
+    _note: "Read-only access via superset_ro role. Run scripts/superset/setup_odoo_superset.sh to create role."

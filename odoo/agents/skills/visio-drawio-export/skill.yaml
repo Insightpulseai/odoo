@@ -1,0 +1,212 @@
+# Visio-DrawIO Export Skill
+# Converts Visio diagrams to DrawIO format with PNG/SVG export and visual regression
+
+name: visio_drawio_export_skill
+version: 1.0.0
+description: |
+  Export Visio diagrams (.vsdx) to DrawIO format with PNG/SVG previews.
+  Includes validation, visual regression testing, and Control Room integration.
+
+mcpServer: visio-drawio-exporter
+
+tools:
+  - name: import_visio
+    description: Import .vsdx or .vsd Visio files and parse structure
+    parameters:
+      input_path:
+        type: string
+        description: Path to Visio file
+        required: true
+
+  - name: parse_visio_shapes
+    description: Extract shapes, connections, and metadata from imported Visio
+    parameters:
+      document_id:
+        type: string
+        description: Document ID from import step
+        required: true
+
+  - name: convert_to_drawio
+    description: Convert parsed Visio to DrawIO XML format
+    parameters:
+      document_id:
+        type: string
+        description: Document ID from parse step
+        required: true
+      preserve_layers:
+        type: boolean
+        description: Preserve layer structure
+        default: true
+      preserve_styles:
+        type: boolean
+        description: Preserve styling (colors, fonts, etc.)
+        default: true
+
+  - name: export_drawio
+    description: Save DrawIO XML to file
+    parameters:
+      document_id:
+        type: string
+        description: Document ID from convert step
+        required: true
+      output_path:
+        type: string
+        description: Output .drawio file path
+        required: true
+
+  - name: generate_png_preview
+    description: Generate PNG preview from DrawIO file (headless)
+    parameters:
+      input_path:
+        type: string
+        description: Path to .drawio file
+        required: true
+      output_path:
+        type: string
+        description: Output PNG path
+        required: true
+      scale:
+        type: number
+        description: Scale factor (1.0 = original size)
+        default: 2.0
+      page:
+        type: number
+        description: Page number to export (0-indexed)
+        default: 0
+
+  - name: generate_svg_preview
+    description: Generate SVG preview from DrawIO file
+    parameters:
+      input_path:
+        type: string
+        description: Path to .drawio file
+        required: true
+      output_path:
+        type: string
+        description: Output SVG path
+        required: true
+      page:
+        type: number
+        description: Page number to export
+        default: 0
+
+  - name: validate_drawio
+    description: Validate DrawIO file structure and content
+    parameters:
+      input_path:
+        type: string
+        description: Path to .drawio file
+        required: true
+      strict:
+        type: boolean
+        description: Enable strict validation
+        default: false
+    returns:
+      valid: boolean
+      errors: array
+      warnings: array
+      shape_count: number
+      connector_count: number
+
+  - name: visual_diff
+    description: Compare two images for visual regression
+    parameters:
+      baseline_path:
+        type: string
+        description: Path to baseline image
+        required: true
+      current_path:
+        type: string
+        description: Path to current image
+        required: true
+      diff_output_path:
+        type: string
+        description: Path to save diff image
+        required: false
+      threshold:
+        type: number
+        description: Diff threshold (0-1, lower is stricter)
+        default: 0.003
+    returns:
+      match: boolean
+      diff_percentage: number
+      diff_pixels: number
+
+defaultOutputDir: docs/diagrams/visio-exports
+manifestPath: docs/diagrams/visio-exports/manifest.json
+
+supportedFormats:
+  input:
+    - vsdx
+    - vsd
+    - drawio
+  output:
+    - drawio
+    - png
+    - svg
+
+cli:
+  entrypoint: visio-drawio-export
+  examples:
+    - command: visio-drawio-export --input diagram.vsdx --outdir artifacts/diagrams --formats png,svg
+      description: Convert Visio to DrawIO with PNG and SVG exports
+    - command: visio-drawio-export --input-glob "docs/**/*.vsdx" --outdir artifacts/diagrams --validate strict
+      description: Batch convert all Visio files with strict validation
+    - command: visio-drawio-export --diff --baseline baselines/ --current current/ --diff-threshold 0.003
+      description: Run visual regression comparison
+
+docker:
+  image: visio-drawio-export:latest
+  buildContext: ./docker
+  platforms:
+    - linux/amd64
+    - linux/arm64
+
+controlRoomIntegration:
+  jobType: diagram_export
+  specExample:
+    text: Export architecture diagrams to PNG/SVG
+    inputs:
+      source_glob: "docs/**/*.vsdx"
+      output_dir: "artifacts/diagrams"
+      formats: ["png", "svg"]
+      validate: true
+
+metadata:
+  drawioVersion: "24.0.0"
+  dependencies:
+    - drawio-desktop (headless mode)
+    - pixelmatch (visual diff)
+    - sharp (image processing)
+  references:
+    - https://github.com/jgraph/drawio
+    - https://www.drawio.com/doc/
+    - https://github.com/nickvdyck/drawio-cli
+
+agentInstructions: |
+  When the user asks to convert Visio diagrams or export DrawIO:
+
+  1. **Import Phase**:
+     - Use import_visio to load the .vsdx file
+     - Use parse_visio_shapes to extract the structure
+
+  2. **Conversion Phase**:
+     - Use convert_to_drawio to transform to DrawIO format
+     - Use export_drawio to save the .drawio file
+
+  3. **Export Phase**:
+     - Use generate_png_preview for PNG output
+     - Use generate_svg_preview for SVG output
+
+  4. **Validation Phase** (optional but recommended):
+     - Use validate_drawio to check the output
+     - Report any errors or warnings
+
+  5. **Visual Regression** (for CI/PR checks):
+     - Use visual_diff to compare against baselines
+     - Only fail if diff exceeds threshold (default 0.3%)
+
+  6. **Control Room Integration**:
+     - Submit as job_type: diagram_export
+     - Include artifacts in run output
+     - Update lineage with source → output relationships

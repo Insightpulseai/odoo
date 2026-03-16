@@ -1,0 +1,13 @@
+role,track,expected_level,core_competencies
+Junior Accountant,month_end_close,L1,"MEC-01;MEC-02;MEC-03;MEC-04"
+Senior Accountant,month_end_close,L2,"MEC-01;MEC-02;MEC-03;MEC-04;MEC-05"
+Accounting Manager,month_end_close,L3,"MEC-01;MEC-02;MEC-03;MEC-04;MEC-05"
+Tax Preparer,tax_compliance,L1,"TAX-01;TAX-02;TAX-03"
+Tax Reviewer,tax_compliance,L2,"TAX-01;TAX-02;TAX-03;TAX-04"
+Tax Lead,tax_compliance,L3,"TAX-01;TAX-02;TAX-03;TAX-04;TAX-05"
+BIR Form Preparer,philippines_tax,L1,"PH-TAX-01;PH-TAX-02;PH-TAX-04"
+BIR Compliance Reviewer,philippines_tax,L2,"PH-TAX-01;PH-TAX-02;PH-TAX-03;PH-TAX-04;PH-TAX-05"
+Tax Manager (Philippines),philippines_tax,L3,"PH-TAX-01;PH-TAX-02;PH-TAX-03;PH-TAX-04;PH-TAX-05;PH-TAX-06"
+Controller (Client),month_end_close,L3,"MEC-01;MEC-03;MEC-05"
+Partner/Director,tax_compliance,L3,"TAX-04;TAX-05"
+Partner/Director (PH Tax),philippines_tax,L3,"PH-TAX-03;PH-TAX-05;PH-TAX-06"

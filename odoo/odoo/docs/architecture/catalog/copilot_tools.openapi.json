@@ -1,0 +1,260 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "IPAI Copilot Tools API",
+    "description": "Tool definitions for ipai_ask_ai copilot integration with Unity Catalog",
+    "version": "1.0.0"
+  },
+  "components": {
+    "schemas": {
+      "CopilotRequest": {
+        "type": "object",
+        "required": ["context", "intent"],
+        "properties": {
+          "context": {
+            "type": "object",
+            "required": ["company_id", "user_id"],
+            "properties": {
+              "model": { "type": "string", "description": "Current Odoo model" },
+              "res_id": { "type": "integer", "description": "Current record ID" },
+              "res_ids": { "type": "array", "items": { "type": "integer" }, "description": "Selected record IDs" },
+              "view_type": { "type": "string", "enum": ["form", "list", "kanban", "calendar", "pivot", "graph"] },
+              "company_id": { "type": "integer" },
+              "user_id": { "type": "integer" },
+              "user_role": { "type": "string", "description": "Odoo group XML ID" },
+              "lang": { "type": "string", "default": "en_US" }
+            }
+          },
+          "intent": {
+            "type": "object",
+            "required": ["mode", "message"],
+            "properties": {
+              "mode": { "type": "string", "enum": ["ask", "do_preview", "apply"] },
+              "message": { "type": "string", "description": "User's natural language query" },
+              "tool_hint": { "type": "string", "description": "Optional tool_key hint" }
+            }
+          },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "assets": { "type": "array", "items": { "type": "string" }, "description": "FQDN list" },
+              "time_range": {
+                "type": "object",
+                "properties": {
+                  "start": { "type": "string", "format": "date" },
+                  "end": { "type": "string", "format": "date" }
+                }
+              },
+              "org_scope": { "type": "string", "enum": ["company", "global"] }
+            }
+          }
+        }
+      },
+      "CopilotResponse": {
+        "type": "object",
+        "required": ["messages", "citations", "actions", "run_id"],
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role", "content"],
+              "properties": {
+                "role": { "type": "string", "enum": ["assistant", "system"] },
+                "content": { "type": "string", "description": "Markdown-formatted response" }
+              }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["fqdn", "title"],
+              "properties": {
+                "fqdn": { "type": "string" },
+                "uri": { "type": "string", "format": "uri" },
+                "title": { "type": "string" },
+                "snippet": { "type": "string" }
+              }
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["tool_key", "name", "args", "requires_confirm", "status"],
+              "properties": {
+                "tool_key": { "type": "string" },
+                "name": { "type": "string" },
+                "args": { "type": "object" },
+                "preview_diff": {
+                  "type": "object",
+                  "properties": {
+                    "before": { "type": "object" },
+                    "after": { "type": "object" }
+                  }
+                },
+                "requires_confirm": { "type": "boolean" },
+                "status": { "type": "string", "enum": ["pending", "approved", "executed", "failed"] }
+              }
+            }
+          },
+          "run_id": { "type": "string", "format": "uuid" },
+          "model_used": { "type": "string" },
+          "tokens_used": { "type": "integer" }
+        }
+      },
+      "ToolDefinition": {
+        "type": "object",
+        "required": ["tool_key", "tool_type", "name", "description", "parameters"],
+        "properties": {
+          "tool_key": { "type": "string", "description": "Unique identifier" },
+          "tool_type": { "type": "string", "enum": ["query", "action", "rpc", "edge_function", "n8n_workflow", "mcp_tool"] },
+          "name": { "type": "string" },
+          "description": { "type": "string", "description": "Used for LLM tool selection" },
+          "parameters": { "$ref": "#/components/schemas/JSONSchema" },
+          "returns": { "$ref": "#/components/schemas/JSONSchema" },
+          "requires_confirmation": { "type": "boolean", "default": true },
+          "allowed_roles": { "type": "array", "items": { "type": "string" } },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "JSONSchema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "properties": { "type": "object" },
+          "required": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "required": ["fqdn", "asset_type", "system", "title"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "fqdn": { "type": "string", "description": "Fully Qualified Domain Name" },
+          "asset_type": {
+            "type": "string",
+            "enum": ["table", "view", "file", "model", "function", "dashboard", "odoo_model", "odoo_action", "odoo_menu", "odoo_view", "odoo_report", "scout_layer", "ai_prompt", "ai_agent", "notebook", "pipeline"]
+          },
+          "system": {
+            "type": "string",
+            "enum": ["odoo", "supabase", "databricks", "scout", "files", "n8n", "mcp", "external"]
+          },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "owner": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "uri": { "type": "string", "format": "uri" },
+          "metadata": { "type": "object" },
+          "status": { "type": "string", "enum": ["active", "deprecated", "archived", "draft"] }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/ipai/ask_ai/query": {
+      "post": {
+        "summary": "Send a query to the AI copilot",
+        "operationId": "askAI",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CopilotRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CopilotResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ipai/catalog/search": {
+      "post": {
+        "summary": "Search catalog assets",
+        "operationId": "searchCatalog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" },
+                  "asset_type": { "type": "string" },
+                  "system": { "type": "string" },
+                  "tags": { "type": "array", "items": { "type": "string" } },
+                  "limit": { "type": "integer", "default": 20 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "assets": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Asset" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ipai/catalog/tools": {
+      "post": {
+        "summary": "Get tool definitions for copilot",
+        "operationId": "getTools",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool definitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "tools": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/ToolDefinition" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

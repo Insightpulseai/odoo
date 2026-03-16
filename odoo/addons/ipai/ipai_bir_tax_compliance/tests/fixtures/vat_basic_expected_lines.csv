@@ -1,0 +1,23 @@
+line_id,line_label,expected_value,calculation_notes
+17,Sale of Goods/Properties,350000.00,VAT-inclusive sales: 392000 / 1.12 = 350000
+18,Sale of Services and Use of Properties,0.00,All sales classified as goods/properties in this scenario
+19,Total Sales/Receipts,350000.00,Line 17 + Line 18 = 350000 + 0
+20,Output Tax,42000.00,Line 19 x 0.12 = 350000 x 0.12
+21,Exempt Sales,0.00,No exempt transactions in this dataset
+22,Zero-Rated Sales - Exports,392000.00,TXN006 (224000) + TXN012 (168000)
+23,Zero-Rated Sales - Others,0.00,No other zero-rated transactions
+24,Total Exempt and Zero-Rated,392000.00,Line 21 + Line 22 + Line 23
+25A,Input Tax on Domestic Purchases,11160.00,VAT-inclusive purchases: 104160 / 1.12 x 0.12 = 11160
+25B,Input Tax on Importation,0.00,No import transactions
+25C,Transitional Input Tax,0.00,No transitional input tax
+25D,Presumptive Input Tax,0.00,No presumptive input tax
+26,Total Input Tax,11160.00,Line 25A + 25B + 25C + 25D
+27,Output Tax (from line 20),42000.00,Equals line 20
+28,Less: Input Tax (from line 26),11160.00,Equals line 26
+29,VAT Payable/(Overpayment),30840.00,Line 27 - Line 28 = 42000 - 11160
+30,Add: Tax Credit from Previous Period,0.00,No prior period credit
+31,VAT Still Payable/(Overpayment),30840.00,Line 29 + Line 30 = 30840 + 0
+32,Add: Penalties,0.00,No late filing penalties
+33,Total Amount Still Payable/(Overpayment),30840.00,Line 31 + Line 32 = 30840 + 0
+34,Tax to be Paid,30840.00,MAX(line 33; 0) = 30840
+35,Tax Credit to be Carried Over,0.00,ABS(MIN(line 33; 0)) = 0

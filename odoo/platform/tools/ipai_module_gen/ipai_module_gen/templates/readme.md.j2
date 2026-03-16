@@ -1,0 +1,52 @@
+# {{ module }}
+
+{{ summary }}
+
+## SAP Reference
+
+- **SAP ID**: {{ sap_id }}
+{% if sap_doc %}- **Documentation**: [{{ sap_doc }}]({{ sap_doc }}){% endif %}
+
+## Overview
+
+This module provides {{ summary | lower }} functionality for Odoo CE {{ odoo_series }}.
+
+## Models
+
+{% for model in models %}
+### {{ model.name }}
+
+{{ model.description | default('No description provided.') }}
+
+{% endfor %}
+
+## Dependencies
+
+{% for dep in depends %}
+- `{{ dep }}`
+{% endfor %}
+
+## Installation
+
+1. Add this module to your addons path
+2. Update the apps list
+3. Install "{{ summary }}"
+
+## Configuration
+
+1. Go to Settings → Technical → Security → Groups
+2. Assign users to {{ module }} / User or Manager groups
+
+## Usage
+
+See the menu items created by this module to access functionality.
+
+## Technical Notes
+
+- Namespace: `{{ namespace }}`
+- Layer: {{ 'Delta' if 'delta' in module else 'IPAI Core' }}
+- Odoo Series: {{ odoo_series }}
+
+## License
+
+LGPL-3

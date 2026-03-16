@@ -1,0 +1,200 @@
+# Workflow: SRE Feedback Loop
+# Closes the SDLC loop: telemetry → incident → spec → coding agent → PR → deploy
+# This is the Day-2 operations loop from the Microsoft Agentic SDLC pattern.
+
+id: sre-to-issue-to-agent
+name: SRE Feedback Loop
+version: 1.0.0
+domain: sdlc
+source: Microsoft Agentic SDLC (Phase 5)
+created: 2026-03-15
+
+trigger:
+  type: webhook
+  source: azure_monitor_alert
+  # Also: supabase.ops.platform_events INSERT trigger
+
+input_schema:
+  required:
+    - alert_type
+    - service
+    - message
+  properties:
+    alert_type:
+      type: string
+      enum: [error, warning, metric_threshold, health_check]
+    service:
+      type: string
+      description: "Affected service name (e.g., ipai-odoo-dev-web)"
+    message:
+      type: string
+    severity_hint:
+      type: string
+      enum: [critical, high, medium, low]
+    telemetry_payload:
+      type: object
+      description: Raw alert payload from Azure Monitor
+
+steps:
+  - id: dedup_check
+    name: Check for Duplicate Incident
+    action: supabase.query
+    inputs:
+      table: ops.incidents
+      filters:
+        title: "{{ input.message | truncate(200) }}"
+        status:
+          in: [open, investigating, mitigating]
+        detected_at:
+          gte: "{{ now() | subtract('30m') }}"
+    outputs:
+      - existing_incident
+
+  - id: skip_if_duplicate
+    name: Skip if Duplicate
+    condition: "{{ steps.dedup_check.outputs.existing_incident | length > 0 }}"
+    action: noop
+    on_match: exit_success
+
+  - id: classify_severity
+    name: Classify Severity (Triage Sub-Agent)
+    action: agent.classify
+    inputs:
+      context:
+        service: "{{ input.service }}"
+        alert_type: "{{ input.alert_type }}"
+        message: "{{ input.message }}"
+        telemetry: "{{ input.telemetry_payload }}"
+    outputs:
+      - severity      # critical | high | medium | low
+      - blast_radius  # single_service | multi_service | platform_wide
+      - category      # container_crash | db_issue | cron_failure | edge_fn_error | cert_expiry
+
+  - id: create_incident
+    name: Record Incident in Supabase
+    action: supabase.insert
+    inputs:
+      table: ops.incidents
+      row:
+        title: "{{ input.message | truncate(200) }}"
+        description: "{{ input.message }}"
+        severity: "{{ steps.classify_severity.outputs.severity }}"
+        status: open
+        source: sre_agent
+        telemetry_context:
+          service: "{{ input.service }}"
+          alert_type: "{{ input.alert_type }}"
+          blast_radius: "{{ steps.classify_severity.outputs.blast_radius }}"
+          category: "{{ steps.classify_severity.outputs.category }}"
+          raw: "{{ input.telemetry_payload }}"
+    outputs:
+      - incident_id
+
+  - id: match_runbook
+    name: Match Runbook (Runbook Sub-Agent)
+    action: agent.match
+    inputs:
+      category: "{{ steps.classify_severity.outputs.category }}"
+      runbook_directory: agents/runbooks/
+    outputs:
+      - runbook_path   # null if no match
+      - auto_fixable   # boolean
+
+  - id: decide_action
+    name: Route by Severity + Auto-fixability
+    action: router
+    routes:
+      - condition: "{{ steps.classify_severity.outputs.severity == 'critical' }}"
+        goto: escalate_critical
+      - condition: "{{ steps.match_runbook.outputs.auto_fixable == true && steps.classify_severity.outputs.severity in ['medium', 'low'] }}"
+        goto: auto_fix
+      - default:
+        goto: create_issue_for_human
+
+  # --- Route: Critical (human-only) ---
+  - id: escalate_critical
+    name: Escalate Critical Incident
+    action: slack.post
+    inputs:
+      channel: "#ops-alerts"
+      text: |
+        :rotating_light: *CRITICAL INCIDENT* — {{ input.service }}
+        {{ input.message }}
+        Severity: {{ steps.classify_severity.outputs.severity }}
+        Blast radius: {{ steps.classify_severity.outputs.blast_radius }}
+        Incident: {{ steps.create_incident.outputs.incident_id }}
+    next: create_issue_for_human
+
+  # --- Route: Auto-fix via coding agent ---
+  - id: auto_fix
+    name: Trigger Coding Agent for Auto-Fix
+    action: workflow.trigger
+    inputs:
+      workflow: coding-agent-from-issue
+      inputs:
+        repo: Insightpulseai/odoo
+        issue_number: "{{ steps.create_github_issue.outputs.issue_number }}"
+    depends_on: create_github_issue
+
+  # --- Route: Create issue for human ---
+  - id: create_github_issue
+    name: Create GitHub Issue
+    action: github.create_issue
+    inputs:
+      repo: Insightpulseai/odoo
+      title: "[SRE] {{ steps.classify_severity.outputs.category }}: {{ input.message | truncate(100) }}"
+      body: |
+        ## Incident
+
+        | Field | Value |
+        |-------|-------|
+        | **Service** | {{ input.service }} |
+        | **Severity** | {{ steps.classify_severity.outputs.severity }} |
+        | **Blast Radius** | {{ steps.classify_severity.outputs.blast_radius }} |
+        | **Category** | {{ steps.classify_severity.outputs.category }} |
+        | **Detected** | {{ now() }} |
+        | **Incident ID** | {{ steps.create_incident.outputs.incident_id }} |
+
+        ## Telemetry Context
+        ```json
+        {{ input.telemetry_payload | json }}
+        ```
+
+        ## Runbook
+        {{ steps.match_runbook.outputs.runbook_path || 'No matching runbook found.' }}
+
+        ---
+        Generated by sre-to-issue-to-agent workflow
+      labels:
+        - "type:bug"
+        - "priority:{{ steps.classify_severity.outputs.severity }}"
+        - "agent:coding"
+    outputs:
+      - issue_number
+
+  - id: update_incident_issue
+    name: Link Issue to Incident
+    action: supabase.update
+    inputs:
+      table: ops.incidents
+      match:
+        id: "{{ steps.create_incident.outputs.incident_id }}"
+      set:
+        github_issue_number: "{{ steps.create_github_issue.outputs.issue_number }}"
+        status: investigating
+
+  - id: notify_slack
+    name: Notify Slack
+    action: slack.post
+    inputs:
+      channel: "#ops-alerts"
+      text: |
+        SRE agent created issue #{{ steps.create_github_issue.outputs.issue_number }} for {{ input.service }}
+        Severity: {{ steps.classify_severity.outputs.severity }}
+        Auto-fix: {{ steps.match_runbook.outputs.auto_fixable || false }}
+
+on_failure:
+  - action: slack.post
+    inputs:
+      channel: "#ops-alerts"
+      text: "SRE workflow failed: {{ error.message }}. Manual investigation required for {{ input.service }}."

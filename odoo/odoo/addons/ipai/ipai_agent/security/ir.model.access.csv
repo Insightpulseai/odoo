@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_agent_run_user,ipai.agent.run user,model_ipai_agent_run,group_ipai_agent_user,1,0,1,0
+access_ipai_agent_run_approver,ipai.agent.run approver,model_ipai_agent_run,group_ipai_agent_approver,1,1,1,0
+access_ipai_agent_run_admin,ipai.agent.run admin,model_ipai_agent_run,group_ipai_agent_admin,1,1,1,1
+access_ipai_agent_tool_user,ipai.agent.tool user,model_ipai_agent_tool,group_ipai_agent_user,1,0,0,0
+access_ipai_agent_tool_admin,ipai.agent.tool admin,model_ipai_agent_tool,group_ipai_agent_admin,1,1,1,1
+access_ipai_agent_policy_user,ipai.agent.policy user,model_ipai_agent_policy,group_ipai_agent_user,1,0,0,0
+access_ipai_agent_policy_admin,ipai.agent.policy admin,model_ipai_agent_policy,group_ipai_agent_admin,1,1,1,1

@@ -1,0 +1,178 @@
+[
+  {
+    "trace_id": "5dc1da3a-cfe6-46a9-90df-b47dc0b7f35e",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297750+00:00",
+    "tool_name": "search_records",
+    "tool_args": {
+      "prompt": "Find all sale orders for partner Acme Corp"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "93f35274-da4e-4b7a-b49c-151ab1e0fdcd",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297881+00:00",
+    "tool_name": "search_records",
+    "tool_args": {
+      "prompt": "Search for overdue invoices from last month"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "d03e31a1-8da0-495e-9943-eb04cfa61e61",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297893+00:00",
+    "tool_name": "search_records",
+    "tool_args": {
+      "prompt": "Find contacts in the Philippines"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "702ac9bc-16c7-49d3-bd23-15a31fa0709e",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297907+00:00",
+    "tool_name": "navigate_to",
+    "tool_args": {
+      "prompt": "Go to the invoicing dashboard"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "207cecb0-ca64-4c12-b76e-e08f2ca590dd",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297916+00:00",
+    "tool_name": "navigate_to",
+    "tool_args": {
+      "prompt": "Open sale order SO001"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "24980e1e-821a-435a-97f2-c12b6b64ed25",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297927+00:00",
+    "tool_name": "create_record",
+    "tool_args": {
+      "prompt": "Create a new quotation for partner Acme Corp with product Widget A qty 10"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "3ac50e31-406a-4abb-ae7c-aea744c2451f",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297936+00:00",
+    "tool_name": "create_record",
+    "tool_args": {
+      "prompt": "Create a contact named John Doe, email john@example.com"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "e1ede194-007b-4090-9939-d62fe517ba19",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297950+00:00",
+    "tool_name": "create_record",
+    "tool_args": {
+      "prompt": "Add a new product called Premium Service, price 500"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "216a4d3f-1871-4f56-8bbe-46bc2e7979a6",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297960+00:00",
+    "tool_name": "create_record",
+    "tool_args": {
+      "prompt": "Create a record but user clicks Cancel"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "61ec5c49-d73a-4d46-94b0-99f0c1bd95ad",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297970+00:00",
+    "tool_name": "send_chatter_message",
+    "tool_args": {
+      "prompt": "Post a note on SO001 saying 'Shipment delayed by 2 days'"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "15d6f4b1-6870-4a3e-8082-1e422cbc7946",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297978+00:00",
+    "tool_name": "send_chatter_message",
+    "tool_args": {
+      "prompt": "Send a message to the accounting team on INV/2026/001"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "bcd0e311-8ce7-4de8-9a40-b259fe2902ac",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297986+00:00",
+    "tool_name": "trigger_workflow",
+    "tool_args": {
+      "prompt": "Trigger the expense report sync workflow"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "d2fa6ea7-7650-4fff-8e3f-df7a8ec9a127",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.297994+00:00",
+    "tool_name": "trigger_workflow",
+    "tool_args": {
+      "prompt": "Run the daily invoice reminder automation"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "56dfaa97-a09d-4e10-86ca-4c2f761f405f",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.298001+00:00",
+    "tool_name": "trigger_workflow",
+    "tool_args": {
+      "prompt": "Trigger a non-allowlisted workflow"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "983e6a7f-38f2-4ceb-b636-6b709a38297e",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.298008+00:00",
+    "tool_name": "create_record",
+    "tool_args": {
+      "prompt": "Create an invoice (user has no accounting access)"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  },
+  {
+    "trace_id": "eed90858-13e9-408f-a7ed-40ad306f8c38",
+    "user_id": 2,
+    "timestamp": "2026-03-03T00:19:48.298016+00:00",
+    "tool_name": "search_records",
+    "tool_args": {
+      "prompt": "Search for any record"
+    },
+    "result_status": "success",
+    "duration_ms": 50
+  }
+]

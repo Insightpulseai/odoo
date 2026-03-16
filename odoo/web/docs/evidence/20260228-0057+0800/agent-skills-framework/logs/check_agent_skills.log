@@ -1,0 +1,19 @@
+Checking skill: git_docs
+  SKIP (legacy L0 — no v1 contract, migrate with _template)
+Checking skill: github_docs
+  SKIP (legacy L0 — no v1 contract, migrate with _template)
+Checking skill: internal_repo_ssot
+  SKIP (legacy L0 — no v1 contract, migrate with _template)
+Checking skill: ocr.bridge.configure
+  PASS (L3) — 4 verification checks, 0 secret refs
+Checking skill: odoo.mail.configure
+  PASS (L3) — 5 verification checks, 3 secret refs
+
+============================================================
+Skills checked: 5
+Legacy skipped: 3
+V1 contracts validated: 2
+Structure errors: 0
+Cross-ref errors: 0
+Secret scan hits: 0
+Result: PASS

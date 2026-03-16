@@ -1,0 +1,209 @@
+version: 1
+ssot_reference: docs/architecture/ODOO_EDITIONS_SSOT.md
+
+# Machine-checkable CE/EE edition policy for this repository.
+# Enforced by: scripts/policy/check_edition_policy.py
+# CI gate:     .github/workflows/policy-gates.yml (Gate 6)
+#
+# Usage: set ODOO_INSTALL_MODULES=comma,separated,list before running the
+# validator in installer jobs or release pipelines. Empty → advisory skip.
+#
+# Note: Odoo marketing pages say "Start now – it's free" but that does NOT mean
+# "Community self-host installable." This policy reflects actual CE vs EE
+# availability per Odoo forums and official edition docs.
+
+# ---------------------------------------------------------------------------
+# Alias normalization
+# ---------------------------------------------------------------------------
+# Prevents drift between marketing labels, Odoo module slugs, and OCA repo names.
+# Applied before deny and known_targets checks (lowercase, trim, collapse spaces).
+# Keys are normalised variants; values are canonical install target names.
+aliases:
+  # field_service variants
+  field-service: field_service
+  fieldservice: field_service
+  field service: field_service
+  industry_fsm: field_service
+  # helpdesk variants
+  help desk: helpdesk
+  help-desk: helpdesk
+  # subscription variants
+  subscription: subscriptions
+  subscription_management: subscriptions
+  # rental variants
+  rents: rental
+  # planning variants
+  schedule: planning
+  # social marketing variants
+  social marketing: social_marketing
+  social-marketing: social_marketing
+
+# ---------------------------------------------------------------------------
+# Strict mode (optional)
+# ---------------------------------------------------------------------------
+# When known_targets_enforced is true, fail CI if ODOO_INSTALL_MODULES contains
+# any target not in known_targets (after alias normalization).
+# Default: false — enable once install manifests stabilise.
+# Can also be enabled per-run via env: EDITION_POLICY_ENFORCE_KNOWN_TARGETS=1
+strict:
+  known_targets_enforced: false
+
+# ---------------------------------------------------------------------------
+# Known targets allowlist
+# ---------------------------------------------------------------------------
+# Seed list of approved CE + OCA module names.
+# EE-only denied names are included so deny messaging fires (not "unknown").
+# Extend this list as you add CE/OCA modules to your install manifests.
+known_targets:
+  # CE core
+  - base
+  - web
+  - mail
+  - contacts
+  - crm
+  - sale
+  - sale_management
+  - purchase
+  - stock
+  - mrp
+  - project
+  - hr
+  - hr_holidays
+  - hr_recruitment
+  - hr_timesheet
+  - account
+  - account_accountant
+  - website
+  - ecommerce
+  - inventory
+  - manufacturing
+  - maintenance
+  - quality
+  - pos_restaurant
+  - point_of_sale
+  - livechat
+  - survey
+  - email_marketing
+  - sms_marketing
+  - events
+  # EE-only denied names (must be present so deny check fires before unknown check)
+  - documents
+  - sign
+  - spreadsheet
+  - studio
+  - helpdesk
+  - planning
+  - field_service
+  - rental
+  - subscriptions
+  # OCA common
+  - helpdesk_mgmt
+  - helpdesk_type
+  - dms
+  - dms_company
+  - dms_field
+  - dms_mail
+  - spreadsheet_oca
+  - sale_rental
+  - fieldservice
+  - subscription_management
+  - hr_employee_calendar_planning
+  - social_marketing
+
+# ---------------------------------------------------------------------------
+# Deny list — EE-only apps blocked from install targets
+# ---------------------------------------------------------------------------
+deny:
+  - name: documents
+    reason: "EE-only app (Odoo Editions page); replace with OCA DMS"
+    replace_with:
+      oca_repo: dms
+      modules: [dms, dms_company, dms_field, dms_mail]
+
+  - name: sign
+    reason: "EE-only app; replace with OCA sign"
+    replace_with:
+      oca_repo: sign
+      modules: [sign]
+
+  - name: spreadsheet
+    reason: "EE-only spreadsheet app; replace with OCA spreadsheet_oca"
+    replace_with:
+      oca_repo: spreadsheet
+      modules: [spreadsheet_oca]
+
+  - name: studio
+    reason: "EE-only customization tool; use module dev + config-as-code instead"
+    replace_with:
+      oca_repo: null
+      modules: []
+
+  # Apps shown in Odoo marketing tiles but not available in Community without EE access
+  - name: helpdesk
+    reason: "Helpdesk is Enterprise-only in Odoo Community (ref: Odoo forum #251013)"
+    replace_with:
+      oca_repo: helpdesk
+      modules: [helpdesk_mgmt, helpdesk_type]
+
+  - name: planning
+    reason: "Planning is an Enterprise app; Community should use OCA/3rd-party alternatives"
+    replace_with:
+      oca_repo: hr
+      modules: [hr_employee_calendar_planning]
+
+  - name: field_service
+    reason: "Field Service management is an Enterprise app; use OCA field-service suite"
+    replace_with:
+      oca_repo: field-service
+      modules: [fieldservice]
+
+  - name: rental
+    reason: "Rental is an Enterprise-only release; Community must use OCA/3rd-party equivalents"
+    replace_with:
+      oca_repo: sale-workflow
+      modules: [sale_rental]
+
+  - name: subscriptions
+    reason: "Subscription management is Enterprise; Community uses OCA/3rd-party equivalents"
+    replace_with:
+      oca_repo: subscription
+      modules: [subscription_management]
+
+# ---------------------------------------------------------------------------
+# Require OCA — surfaces where OCA is mandatory but not blocked
+# ---------------------------------------------------------------------------
+require_oca:
+  - surface: social_marketing
+    oca_repo: social
+    modules_hint: []
+
+  - surface: rental
+    oca_repo: sale-workflow
+    modules_hint: [sale_rental]
+
+  - surface: field_service
+    oca_repo: field-service
+    modules_hint: [fieldservice]
+
+  - surface: planning
+    oca_repo: hr
+    modules_hint: [hr_employee_calendar_planning]
+
+  - surface: subscriptions
+    oca_repo: subscription
+    modules_hint: [subscription_management]
+
+# ---------------------------------------------------------------------------
+# Mapping from catalog — human-readable marketing label → policy decision
+# ---------------------------------------------------------------------------
+mapping_from_catalog:
+  Documents:        { decision: deny,        replace: dms }
+  Sign:             { decision: deny,        replace: sign }
+  Spreadsheets:     { decision: deny,        replace: spreadsheet }
+  Studio:           { decision: deny,        replace: none }
+  Helpdesk:         { decision: deny,        replace: helpdesk_mgmt }
+  Planning:         { decision: deny,        replace: hr_employee_calendar_planning }
+  Field Service:    { decision: deny,        replace: fieldservice }
+  Rental:           { decision: deny,        replace: sale_rental }
+  Subscriptions:    { decision: deny,        replace: subscription_management }
+  Social Marketing: { decision: require_oca, repo: social }

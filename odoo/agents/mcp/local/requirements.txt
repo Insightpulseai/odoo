@@ -1,0 +1,24 @@
+# FastAPI + ASGI server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# SQLite async support
+aiosqlite==0.19.0
+
+# Embeddings & vector operations
+sentence-transformers==2.3.1
+numpy==1.26.3
+
+# Git operations for commit embedding
+GitPython==3.1.41
+
+# HTTP client for Odoo XML-RPC
+httpx==0.26.0
+
+# Environment & config
+python-dotenv==1.0.1
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# Utilities
+python-multipart==0.0.6

@@ -1,0 +1,177 @@
+# Microsoft Foundry — Developer Reference (Compiled)
+# Source: learn.microsoft.com/en-us/azure/foundry/ (fetched 2026-03-15)
+
+name: foundry-developer-reference
+description: Compiled developer reference for Microsoft Foundry — SDK, CLI, Claude Code config, templates, playgrounds, agent workflows
+
+# ─── SDK & CLI Installation (macOS/Python) ───────────────────────────────
+
+dev_environment:
+  python: "3.10+"  # minimum 3.9
+  azure_cli:
+    install: "brew update && brew install azure-cli"
+    login: "az login"
+  azure_developer_cli:
+    install: "https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd"
+    purpose: "Deploy AI solution templates via azd"
+  foundry_vs_code_extension:
+    marketplace_id: "TeamsDevApp.vscode-ai-foundry"
+    capabilities:
+      - Deploy models from catalog
+      - Model playground (chat, compare, code export)
+      - Agent playground (tools, knowledge, tracing)
+      - Hosted agent workflows (create, test, deploy)
+      - Open in VS Code for the Web
+  rbac_roles:
+    project_manager: "Azure AI Project Manager"  # create/manage projects
+    user: "Azure AI User"  # least-privilege for development
+    owner: "Owner"  # full permissions (subscription-level)
+
+# ─── Claude Code on Foundry ──────────────────────────────────────────────
+
+claude_code_foundry:
+  description: >
+    Run Claude Code CLI/VS Code extension on Azure Foundry infrastructure.
+    Enterprise-grade: private networking, RBAC, cost management, compliance boundary.
+
+  environment_variables:
+    required:
+      CLAUDE_CODE_USE_FOUNDRY: "1"
+      ANTHROPIC_FOUNDRY_RESOURCE: "<your-resource-name>"
+      # OR: ANTHROPIC_FOUNDRY_BASE_URL: "https://<resource>.services.ai.azure.com"
+    optional:
+      ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"  # primary coding
+      ANTHROPIC_DEFAULT_HAIKU_MODEL: "claude-haiku-4-5"    # fast operations
+      ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"      # complex reasoning
+      ANTHROPIC_MAX_TOKENS: "100000"  # token limit per request
+
+  authentication:
+    recommended: "Microsoft Entra ID (az login)"
+    alternative: "API key (ANTHROPIC_FOUNDRY_API_KEY)"
+    entra_flow: "az login → Claude Code auto-detects Azure CLI session"
+    note: "/login and /logout disabled when using Foundry"
+
+  model_deployments:
+    primary: "claude-sonnet-4-6"       # general coding
+    fast: "claude-haiku-4-5"           # file reads, small edits
+    extended_thinking: "claude-opus-4-6"  # complex reasoning (optional)
+    regions: ["East US 2", "Sweden Central"]
+    deployment_type: "Global Standard (pay-per-token)"
+
+  vs_code_extension:
+    settings_json: |
+      {
+        "Claude Code: Environment Variables": {
+          "CLAUDE_CODE_USE_FOUNDRY": "1",
+          "ANTHROPIC_FOUNDRY_RESOURCE": "<your-resource-name>"
+        }
+      }
+
+  github_actions:
+    action: "anthropics/claude-code-action@v1"
+    env_vars:
+      CLAUDE_CODE_USE_FOUNDRY: "${{ secrets.AZURE_FOUNDRY_RESOURCE }}"
+      ANTHROPIC_FOUNDRY_RESOURCE: "${{ secrets.AZURE_FOUNDRY_RESOURCE }}"
+      ANTHROPIC_FOUNDRY_API_KEY: "${{ secrets.AZURE_FOUNDRY_API_KEY }}"
+
+  validation:
+    command: "claude → /status"
+    expected:
+      api_provider: "Microsoft Foundry"
+      foundry_resource: "<your-resource-name>"
+
+  install:
+    native: "curl -fsSL https://claude.ai/install.sh | bash"
+    homebrew: "brew install --cask claude-code"
+    note: "npm install deprecated — use native or Homebrew"
+
+# ─── AI Solution Templates ───────────────────────────────────────────────
+
+templates:
+  description: >
+    Prebuilt, task-specific templates with customizable code, preintegrated Azure services,
+    and GitHub-hosted quickstarts. Deploy via azd.
+  catalog:
+    - name: "Get started with AI chat"
+      repo: "Azure-Samples/get-started-with-ai-chat"
+      use_case: "Interactive chat applications"
+    - name: "Get started with AI agents"
+      repo: "Azure-Samples/get-started-with-ai-agents"
+      use_case: "Autonomous AI agents"
+    - name: "Agentic apps for unified data"
+      repo: "microsoft/agentic-applications-for-unified-data-foundation-solution-accelerator"
+      use_case: "Sales performance, customer insights, NL analysis on structured data"
+    - name: "Multi-agent release manager"
+      repo: "Azure-Samples/openai/tree/main/Agent_Based_Samples/release_manager"
+      use_case: "Cross-system release coordination"
+    - name: "Call center voice agent"
+      repo: "Azure-Samples/call-center-voice-agent-accelerator"
+      use_case: "Customer support voice agents"
+    - name: "Conversation knowledge mining"
+      repo: "microsoft/Conversation-Knowledge-Mining-Solution-Accelerator"
+      use_case: "Extract knowledge from conversations"
+    - name: "Multi-agent workflow automation"
+      repo: "microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator"
+      use_case: "Complex workflow automation"
+    - name: "Multi-modal content processing"
+      repo: "microsoft/content-processing-solution-accelerator"
+      use_case: "Diverse content type processing"
+    - name: "Document generation"
+      repo: "microsoft/document-generation-solution-accelerator"
+      use_case: "Generate documents from data"
+    - name: "Code modernization"
+      repo: "microsoft/Modernize-your-code-solution-accelerator"
+      use_case: "Update legacy code"
+
+# ─── Playgrounds ─────────────────────────────────────────────────────────
+
+playgrounds:
+  types:
+    model:
+      description: "Prompt engineering, model comparison, parameter tuning"
+      capabilities:
+        - Compare up to 3 models side-by-side
+        - System prompts and tools (web search, file search, code interpreter)
+        - Safety guardrails
+        - Code export (multilingual)
+        - Open in VS Code for the Web
+    agents:
+      description: "Multi-turn agent prototyping with tools and knowledge"
+      capabilities:
+        - Tool configuration (code interpreter, file search, web search)
+        - Knowledge sources for grounding
+        - Memory
+        - Tracing and evaluation (AgentOps)
+        - Save and iterate configurations
+    video:
+      description: "Generative video (Sora-2)"
+      status: preview
+    images:
+      description: "Image generation (gpt-image-1, DALL-E 3, Stable Diffusion, FLUX)"
+
+# ─── Hosted Agent Workflows (VS Code) ───────────────────────────────────
+
+hosted_agents:
+  description: >
+    Multiple agents collaborate in sequence, each with own model, tools, and instructions.
+    Create, test locally, visualize execution, deploy to Foundry workspace.
+
+  python:
+    package: "azure-ai-agentserver-agentframework"
+    auth: "DefaultAzureCredential (az login)"
+    env_vars:
+      AZURE_AI_PROJECT_ENDPOINT: "https://<resource>.services.ai.azure.com/api/projects/<project>"
+      AZURE_AI_MODEL_DEPLOYMENT_NAME: "<deployment>"
+    observability: |
+      from agent_framework.observability import setup_observability
+      setup_observability(vs_code_extension_port=4319)
+    run_modes:
+      - interactive (F5 in VS Code)
+      - container (containerized hosted agent)
+    deploy: "VS Code Command Palette → Microsoft Foundry: Deploy Hosted Agent"
+
+  vs_code_commands:
+    - "Microsoft Foundry: Create a New Hosted Agent"
+    - "Microsoft Foundry: Open Container Agent Playground Locally"
+    - "Microsoft Foundry: Open Visualizer for Hosted Agents"
+    - "Microsoft Foundry: Deploy Hosted Agent"

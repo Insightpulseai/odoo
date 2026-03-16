@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Message List View -->
+    <record id="view_copilot_message_list" model="ir.ui.view">
+        <field name="name">fluent.copilot.message.list</field>
+        <field name="model">fluent.copilot.message</field>
+        <field name="arch" type="xml">
+            <list create="1" edit="1"
+                decoration-info="role == 'user'"
+                decoration-success="role == 'assistant'"
+                decoration-muted="role == 'system'">
+                <field name="session_id"/>
+                <field name="role"/>
+                <field name="message_type"/>
+                <field name="body" widget="text"/>
+                <field name="create_date"/>
+                <field name="intent_id" optional="show"/>
+                <field name="mock_confidence" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Message Form View -->
+    <record id="view_copilot_message_form" model="ir.ui.view">
+        <field name="name">fluent.copilot.message.form</field>
+        <field name="model">fluent.copilot.message</field>
+        <field name="arch" type="xml">
+            <form string="Copilot Message">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="session_id" readonly="1"
+                                invisible="context.get('default_session_id')"/>
+                            <field name="role"/>
+                            <field name="message_type"/>
+                            <field name="intent_id"/>
+                        </group>
+                        <group>
+                            <field name="icon" readonly="1"/>
+                            <field name="css_class" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="body" widget="text" nolabel="1"
+                            placeholder="Type your message here..."/>
+                    </group>
+                    <group string="Mock/Debug Info" groups="base.group_no_one">
+                        <field name="mock_confidence"/>
+                        <field name="mock_latency_ms"/>
+                        <field name="mock_tokens"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Message Action -->
+    <record id="action_copilot_message" model="ir.actions.act_window">
+        <field name="name">Copilot Messages</field>
+        <field name="res_model">fluent.copilot.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No messages yet
+            </p>
+            <p>
+                Messages are created during Copilot conversations.
+            </p>
+        </field>
+    </record>
+</odoo>

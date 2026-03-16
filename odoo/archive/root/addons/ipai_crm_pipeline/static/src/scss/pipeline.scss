@@ -1,0 +1,248 @@
+// IPAI CRM Pipeline Styles
+// Extends the base theme with CRM-specific enhancements
+
+// ============================================================================
+// PIPELINE KANBAN ENHANCEMENTS
+// ============================================================================
+
+.ipai-crm-pipeline {
+  // Stage header styling
+  .o_kanban_group_header {
+    background: linear-gradient(135deg, var(--ipai-neutral-100) 0%, var(--ipai-neutral-50) 100%);
+    border-radius: var(--ipai-radius-base) var(--ipai-radius-base) 0 0;
+    padding: var(--ipai-space-3);
+
+    .o_column_title {
+      font-weight: var(--ipai-font-semibold);
+      font-size: var(--ipai-text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Kanban column
+  .o_kanban_group {
+    background: var(--ipai-neutral-50);
+    border-radius: var(--ipai-radius-base);
+    margin: 0 var(--ipai-space-2);
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  // Kanban cards
+  .o_kanban_record {
+    background: white;
+    border: var(--ipai-border-thin) solid var(--ipai-neutral-200);
+    border-radius: var(--ipai-kanban-card-radius);
+    padding: var(--ipai-kanban-card-padding);
+    margin: var(--ipai-space-2);
+    transition: all var(--ipai-duration-fast) var(--ipai-ease-out);
+
+    &:hover {
+      border-color: var(--ipai-primary-light);
+      box-shadow: var(--ipai-shadow-md);
+      transform: translateY(-2px);
+    }
+
+    // Card title
+    .o_kanban_record_title {
+      font-weight: var(--ipai-font-semibold);
+      color: var(--ipai-neutral-900);
+      font-size: var(--ipai-text-sm);
+      line-height: var(--ipai-leading-tight);
+      margin-bottom: var(--ipai-space-1);
+    }
+
+    // Card details
+    .o_kanban_record_body {
+      font-size: var(--ipai-text-xs);
+      color: var(--ipai-neutral-600);
+    }
+
+    // Expected revenue
+    .o_kanban_record_bottom {
+      margin-top: var(--ipai-space-2);
+      padding-top: var(--ipai-space-2);
+      border-top: var(--ipai-border-thin) solid var(--ipai-neutral-100);
+    }
+  }
+
+  // Stage rule indicator
+  .ipai-stage-rule-indicator {
+    margin-top: var(--ipai-space-2);
+
+    .ipai-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+  }
+
+  // Quick actions panel
+  .ipai-quick-actions {
+    display: flex;
+    gap: var(--ipai-space-1);
+    margin-top: var(--ipai-space-2);
+    padding-top: var(--ipai-space-2);
+    border-top: var(--ipai-border-thin) solid var(--ipai-neutral-200);
+    opacity: 0;
+    transition: opacity var(--ipai-duration-fast) var(--ipai-ease-out);
+  }
+
+  .o_kanban_record:hover .ipai-quick-actions {
+    opacity: 1;
+  }
+
+  .ipai-quick-action {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--ipai-space-1) var(--ipai-space-2);
+    font-size: var(--ipai-text-xs);
+    font-weight: var(--ipai-font-medium);
+    border-radius: var(--ipai-radius-sm);
+    background: var(--ipai-neutral-100);
+    color: var(--ipai-neutral-700);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--ipai-duration-fast) var(--ipai-ease-out);
+    border: none;
+
+    &:hover {
+      background: var(--ipai-primary);
+      color: white;
+      text-decoration: none;
+    }
+
+    .fa {
+      margin-right: var(--ipai-space-1);
+      font-size: 10px;
+    }
+  }
+}
+
+// ============================================================================
+// PIPELINE FORM ENHANCEMENTS
+// ============================================================================
+
+.ipai-form {
+  // Stage requirement banner
+  .alert-warning {
+    background: rgba(245, 159, 0, 0.1);
+    border: var(--ipai-border-thin) solid var(--ipai-warning);
+    border-radius: var(--ipai-radius-base);
+    color: var(--ipai-warning-dark);
+
+    strong {
+      font-weight: var(--ipai-font-semibold);
+    }
+  }
+
+  // Pipeline metrics group
+  .o_group[name="ipai_pipeline_metrics"] {
+    background: var(--ipai-neutral-50);
+    border-radius: var(--ipai-radius-base);
+    padding: var(--ipai-space-3);
+    margin-top: var(--ipai-space-4);
+
+    .o_group_label {
+      font-weight: var(--ipai-font-semibold);
+      color: var(--ipai-neutral-700);
+      text-transform: uppercase;
+      font-size: var(--ipai-text-xs);
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Quick action buttons in header
+  header {
+    .btn-secondary {
+      background: var(--ipai-neutral-100);
+      border-color: var(--ipai-neutral-300);
+      color: var(--ipai-neutral-700);
+
+      &:hover {
+        background: var(--ipai-primary);
+        border-color: var(--ipai-primary);
+        color: white;
+      }
+
+      .fa {
+        margin-right: var(--ipai-space-1);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// PIPELINE DASHBOARD WIDGETS
+// ============================================================================
+
+.ipai-pipeline-dashboard {
+  .ipai-pipeline-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--ipai-space-4);
+    margin-bottom: var(--ipai-space-6);
+  }
+
+  .ipai-pipeline-card {
+    background: white;
+    border-radius: var(--ipai-card-radius);
+    box-shadow: var(--ipai-card-shadow);
+    padding: var(--ipai-card-padding);
+    text-align: center;
+
+    .ipai-card-value {
+      font-size: var(--ipai-text-3xl);
+      font-weight: var(--ipai-font-bold);
+      color: var(--ipai-neutral-900);
+      line-height: var(--ipai-leading-tight);
+    }
+
+    .ipai-card-label {
+      font-size: var(--ipai-text-sm);
+      color: var(--ipai-neutral-500);
+      margin-top: var(--ipai-space-1);
+    }
+
+    &.success .ipai-card-value {
+      color: var(--ipai-success);
+    }
+
+    &.warning .ipai-card-value {
+      color: var(--ipai-warning);
+    }
+
+    &.primary .ipai-card-value {
+      color: var(--ipai-primary);
+    }
+  }
+}
+
+// ============================================================================
+// ACTIVITY TIMELINE IN CRM
+// ============================================================================
+
+.ipai-crm-pipeline {
+  .o_Activity {
+    background: white;
+    border-radius: var(--ipai-radius-base);
+    padding: var(--ipai-space-3);
+    margin-bottom: var(--ipai-space-2);
+    border-left: 3px solid var(--ipai-primary);
+
+    &.o_Activity_done {
+      border-left-color: var(--ipai-success);
+      opacity: 0.7;
+    }
+
+    &.o_Activity_overdue {
+      border-left-color: var(--ipai-error);
+    }
+  }
+}

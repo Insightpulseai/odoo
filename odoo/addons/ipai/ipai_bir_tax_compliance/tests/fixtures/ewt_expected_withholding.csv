@@ -1,0 +1,9 @@
+txn_id,doc_type,partner_name,atc_code,gross_amount,expected_ewt_rate,expected_ewt_amount,bucket_output,notes
+TXN003,bill,Professional Services Co,W020,11200.00,0.10,1120.00,EWT_PROF_W020,10% on professional fees (juridical)
+TXN004,bill,Office Supplies Ltd,W157,5600.00,0.01,56.00,EWT_SUPPLIER_W157,1% on goods purchases
+TXN005,bill,Rental Properties Inc,W169,28000.00,0.05,1400.00,EWT_RENT_W169,5% on real property rent
+TXN007,bill,IT Services Corp,W020,16800.00,0.10,1680.00,EWT_PROF_W020,10% on professional fees (juridical)
+TXN009,bill,Utilities Co,W158,8960.00,0.02,179.20,EWT_SUPPLIER_W158,2% on services
+TXN011,bill,Legal Services LLP,W040,22400.00,0.10,2240.00,EWT_PROF_W040,10% on legal fees
+TXN013,bill,Contractor Inc,W158,11200.00,0.02,224.00,EWT_SUPPLIER_W158,2% on contract services
+TOTAL,,,,,EWT_TOTAL,6899.20,,Sum of all EWT amounts

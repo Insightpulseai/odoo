@@ -1,0 +1,34 @@
+# Co-sell configuration
+# Reference: https://learn.microsoft.com/en-us/partner-center/referrals/co-sell-requirements
+
+solution_name: OdooOps Control Plane
+solution_type: ip-co-sell
+
+target_audience:
+  - cfo
+  - cio
+  - finance-director
+  - operations-manager
+
+use_cases:
+  - enterprise-resource-planning
+  - finance-automation
+  - compliance-management
+  - ai-operations
+
+competitive_differentiators:
+  - No Odoo Enterprise licensing cost
+  - Philippine BIR compliance built-in
+  - AI-native with agentic workflows
+  - Self-hosted cost-minimized infrastructure
+
+azure_consumption_commitment:
+  eligible: true
+  services_used:
+    - azure-app-service  # optional hosting path
+    - azure-entra-id     # SSO integration
+    - azure-ai-foundry   # agent runtime
+
+partner_incentives:
+  co-sell_ready: false  # requires IP co-sell designation
+  target_designation: ip-co-sell

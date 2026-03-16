@@ -1,0 +1,10 @@
+{
+  "name": "odoo-mobile-ios",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Odoo Mobile iOS — Swift package (see Package.swift). This package.json satisfies the apps/ layout contract.",
+  "scripts": {
+    "build": "swift build",
+    "test": "swift test"
+  }
+}

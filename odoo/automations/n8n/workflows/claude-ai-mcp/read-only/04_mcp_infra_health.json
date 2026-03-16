@@ -1,0 +1,107 @@
+{
+  "name": "MCP Tool: Infrastructure Health",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mcp-insightpulse",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "id": "mcp-trigger-004",
+      "name": "MCP Server Trigger",
+      "type": "n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "name": "infra_health",
+        "description": "Check InsightPulseAI infrastructure health. Services: droplet (DigitalOcean 178.128.112.214 SGP1), database (DO managed PG16), odoo (erp.insightpulseai.com), supabase (spdtwktxdalcfigzeqrz), n8n (n8n.insightpulseai.com), superset (superset.insightpulseai.com). Use check='all' for full status.",
+        "workflowId": "={{ $workflow.id }}",
+        "fields": {
+          "values": [
+            {
+              "name": "check",
+              "description": "Service to check: all, droplet, database, odoo, supabase, n8n, superset",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      },
+      "id": "tool-infra",
+      "name": "Infra Health Tool",
+      "type": "n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine which checks to run\nconst check = $input.first().json.check || 'all';\nconst checks = check === 'all' \n  ? ['odoo', 'supabase', 'n8n', 'superset']\n  : [check];\n\n// Output list of checks to run\nreturn checks.map(c => ({ json: { service: c } }));"
+      },
+      "id": "code-router",
+      "name": "Route Checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ {\n  'odoo': $env.ODOO_URL + '/web/webclient/version_info',\n  'supabase': $env.SUPABASE_URL + '/rest/v1/',\n  'n8n': 'https://n8n.insightpulseai.com/healthz',\n  'superset': 'https://superset.insightpulseai.com/health',\n  'droplet': 'https://api.digitalocean.com/v2/droplets/' + ($env.DO_DROPLET_ID || ''),\n  'database': $env.SUPABASE_URL + '/rest/v1/'\n}[$json.service] || $env.SUPABASE_URL + '/rest/v1/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.service === 'supabase' || $json.service === 'database' ? $env.SUPABASE_ANON_KEY : '' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000,
+          "allowUnauthorizedCerts": false,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "http-health",
+      "name": "Health Check HTTP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compile health check results\nconst results = $input.all();\nconst routedChecks = $('Route Checks').all();\n\nconst healthReport = {\n  status: 'success',\n  timestamp: new Date().toISOString(),\n  infrastructure: {\n    instance: 'insightpulseai',\n    region: 'SGP1',\n    droplet_ip: '178.128.112.214'\n  },\n  services: {}\n};\n\nresults.forEach((result, i) => {\n  const service = routedChecks[i]?.json?.service || `service_${i}`;\n  const statusCode = result.json?.statusCode || result.json?.status || 200;\n  const isUp = statusCode >= 200 && statusCode < 400;\n  \n  healthReport.services[service] = {\n    status: isUp ? 'healthy' : 'degraded',\n    status_code: statusCode,\n    response_received: true,\n    url: {\n      'odoo': 'https://erp.insightpulseai.com',\n      'supabase': 'https://spdtwktxdalcfigzeqrz.supabase.co',\n      'n8n': 'https://n8n.insightpulseai.com',\n      'superset': 'https://superset.insightpulseai.com',\n      'droplet': '178.128.112.214',\n      'database': 'odoo-db-sgp1 (PG16)'\n    }[service] || 'unknown'\n  };\n});\n\n// Overall status\nconst allHealthy = Object.values(healthReport.services).every(s => s.status === 'healthy');\nhealthReport.overall = allHealthy ? 'all_systems_operational' : 'some_services_degraded';\n\nreturn [{ json: healthReport }];"
+      },
+      "id": "code-compile",
+      "name": "Compile Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "main": [[{"node": "Infra Health Tool", "type": "main", "index": 0}]]
+    },
+    "Infra Health Tool": {
+      "main": [[{"node": "Route Checks", "type": "main", "index": 0}]]
+    },
+    "Route Checks": {
+      "main": [[{"node": "Health Check HTTP", "type": "main", "index": 0}]]
+    },
+    "Health Check HTTP": {
+      "main": [[{"node": "Compile Report", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1", "saveManualExecutions": true},
+  "tags": [{"name": "mcp"}, {"name": "infra"}],
+  "meta": {"instanceId": "insightpulseai-n8n"}
+}

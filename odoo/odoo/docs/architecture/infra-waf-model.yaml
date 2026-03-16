@@ -1,0 +1,149 @@
+version: "1.0"
+description: "Infrastructure Well-Architected Framework Assessment Model (DO/Docker/CF)"
+
+pillars:
+  reliability:
+    name: "Reliability"
+    weight: 0.25
+    description: "recover from failures and continue to function"
+    domains:
+      container_resilience:
+        checks:
+          - id: docker_restart_policy
+            description: "Services must have restart policies (always/unless-stopped)"
+            critical: true
+            maturity_criteria:
+              0: "No restart policy"
+              4: "Restart policy defined"
+          - id: docker_healthchecks
+            description: "Exposed services must have healthchecks"
+            critical: false
+            maturity_criteria:
+              0: "No healthcheck"
+              4: "Healthcheck defined with retries"
+      data_backup:
+        checks:
+          - id: db_backup_configured
+            description: "Database (DO Managed) must have backups"
+            critical: true
+            maturity_criteria:
+              0: "Manual/No backup"
+              4: "Automated daily backups (DO)"
+
+  security:
+    name: "Security"
+    weight: 0.25
+    description: "protect applications and data from threats"
+    domains:
+      secrets:
+        checks:
+          - id: no_hardcoded_secrets_compose
+            description: "No hardcoded secrets in docker-compose"
+            critical: true
+            maturity_criteria:
+              0: "Secrets found"
+              4: "Env vars used"
+      network:
+        checks:
+          - id: cloudflare_proxy_enabled
+            description: "DNS records must be proxied via Cloudflare"
+            critical: false
+            maturity_criteria:
+              0: "DNS only"
+              4: "Proxied (Orange cloud)"
+
+  cost_optimization:
+    name: "Cost Optimization"
+    weight: 0.20
+    description: "manage costs to maximize value"
+    domains:
+      compute:
+        checks:
+          - id: resource_limits_defined
+            description: "Containers should have resource limits (optional)"
+            critical: false
+            maturity_criteria:
+              0: "No limits"
+              4: "Limits defined"
+
+  operational_excellence:
+    name: "Operational Excellence"
+    weight: 0.15
+    description: "operations processes that keep a system running"
+    domains:
+      logging:
+        checks:
+          - id: logging_driver_configured
+            description: "Containers must use json-file with limits"
+            critical: false
+            maturity_criteria:
+              0: "Default logging"
+              4: "json-file with max-size/max-file"
+      deployment:
+        checks:
+          - id: image_tags_pinned
+            description: "Images must use specific tags (not latest)"
+            critical: true
+            maturity_criteria:
+              0: "Uses :latest"
+              4: "Specific tag used"
+
+  performance_efficiency:
+    name: "Performance Efficiency"
+    weight: 0.15
+    description: "ability to adapt to changes in load"
+    domains:
+      storage:
+        checks:
+          - id: volumes_configured
+            description: "Persistent data uses named volumes"
+            critical: false
+            maturity_criteria:
+              0: "Host binds for data"
+              4: "Named volumes for data"
+
+  integration:
+    name: "Integration Ecosystem"
+    weight: 0.20
+    description: "ensure 3rd party integrations are configured correctly"
+    domains:
+      supabase:
+        checks:
+          - id: supabase_config_valid
+            description: "Supabase config.toml must be valid and secure"
+            critical: true
+            maturity_criteria:
+              0: "Missing/Invalid"
+              4: "Valid config with API enabled"
+      vercel:
+        checks:
+          - id: vercel_config_valid
+            description: "Vercel.json must exist"
+            critical: false
+            maturity_criteria:
+              0: "Missing"
+              4: "Present"
+      n8n:
+        checks:
+          - id: n8n_workflows_valid
+            description: "n8n Workflows must be valid JSON"
+            critical: false
+            maturity_criteria:
+              0: "Invalid JSON"
+              4: "All workflows valid"
+      figma:
+        checks:
+          - id: figma_automation_configured
+            description: "Figma automation scripts must depend on token"
+            critical: false
+            maturity_criteria:
+              0: "No scripts/token"
+              4: "Scripts and Token Env Var present"
+      slack:
+        checks:
+          - id: slack_token_configured
+            description: "Slack Bot Token must be present in env"
+            critical: true
+            maturity_criteria:
+              0: "Missing"
+              4: "Present (SLACK_BOT_TOKEN)"

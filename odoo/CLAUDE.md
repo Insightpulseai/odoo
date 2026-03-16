@@ -33,7 +33,7 @@ Assume you have access to:
 
 * Git (commit/push)
 * CI workflows (GitHub Actions)
-* Remote execution via SSH (DigitalOcean droplet)
+* Azure Container Apps (canonical compute)
 * Container runtime (Docker)
 * Supabase CLI or SQL execution surface (migrations/functions)
   If multiple surfaces exist, choose the fastest deterministic path that yields verifiable proofs.
@@ -201,7 +201,7 @@ Assume secrets live in ONE of these layers:
 - `.env` / `.env.local` / `.env.prod` (gitignored)
 
 **CI/CD**:
-- GitHub Actions secrets, n8n credentials, DigitalOcean secrets, Codespaces secrets
+- GitHub Actions secrets, n8n credentials, Azure Key Vault, Codespaces secrets
 
 **Runtime**:
 - Environment variables injected by Docker / Compose / Supabase / DO / n8n
@@ -246,11 +246,12 @@ Security guidance should be **implicit in design** (env vars, secrets) and **sho
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 18.0 → 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
+| **Stack** | Odoo CE 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
 | **Node** | >= 18.0.0 (pnpm workspaces) |
-| **Python** | 3.10+ (Odoo 18), 3.12+ (Odoo 19) |
-| **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
-| **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
+| **Python** | 3.12+ (Odoo 19) |
+| **Supabase** | `spdtwktxdalcfigzeqrz` — self-hosted on Azure VM (`vm-ipai-supabase-dev`) |
+| **Hosting** | Azure-first (ACA + AFD + managed PG). Supabase on Azure VM is exception. |
+| **Identity** | Keycloak (transitional) → Microsoft Entra ID (target) |
 | **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
 
 > **Claude Code on the Web**: Full CLI parity — same agent, same capabilities as local CLI, running on Anthropic cloud VMs. See [docs/ai/CLAUDE_CODE_WEB.md](./docs/ai/CLAUDE_CODE_WEB.md) for environment setup, `--remote` usage, Remote Control, and SessionStart hooks.
@@ -295,7 +296,7 @@ npm run dev:github-app                  # Run github-app
 | Problem | Old Setup | Canonical Setup |
 |---------|-----------|----------------|
 | AI Agent Commands | 36 possible combinations | 1 deterministic command |
-| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) -- **all deprecated** | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo_prod` |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) -- **all deprecated** | 1 database per env: `odoo_dev`, `odoo_staging`, `odoo` |
 | Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
 | Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
 | Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
@@ -312,7 +313,7 @@ docker compose exec -T web odoo -d odoo_dev -i base   # Install module
 **Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
 
 **Key Features**:
-- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo_prod`)
+- ✅ Single database target per environment (`db_name = odoo_dev` / `odoo_staging` / `odoo`)
 - ✅ No database selector (`list_db = False`)
 - ✅ File-based secrets (no hardcoded passwords)
 - ✅ Health checks (PostgreSQL guards web startup)
@@ -337,33 +338,40 @@ docker compose exec -T web odoo -d odoo_dev -i base   # Install module
 │       └───────────────────────► AI Agents (Pulser, Claude, Codex)   │
 │                                                                      │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Superset (BI)  │  Keycloak (SSO)  │  DigitalOcean (Hosting)        │
+│  Superset (BI)  │  Keycloak (SSO)  │  Azure (Hosting)               │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Cost-Minimized Self-Hosted Philosophy
+### Azure-First Hosting
 
-**We BUILD everything ourselves to minimize costs:**
-- NO Azure, AWS, GCP managed services
-- NO expensive SaaS subscriptions
-- NO per-seat enterprise licensing
+**Cloud runtime is Azure-native. Not every component is fully managed.**
 
-**Self-hosted stack:**
-- **Hosting**: DigitalOcean droplets (~$50-100/mo vs $1000s cloud)
-- **Database**: PostgreSQL 16 (self-managed, not RDS)
-- **BI**: Apache Superset (free, self-hosted)
-- **SSO**: Keycloak (free, self-hosted)
-- **Automation**: n8n (self-hosted, not cloud)
-- **Chat**: Slack (SaaS - replaces deprecated Mattermost)
+- **Edge/TLS**: Azure Front Door + WAF (`ipai-fd-dev`) — sole public edge
+- **DNS**: Cloudflare (authoritative DNS only, no proxy/CDN)
+- **Compute**: Azure Container Apps (`cae-ipai-dev`, region: `southeastasia`)
+- **Database**: Azure Database for PostgreSQL Flexible Server (`ipai-odoo-dev-pg`)
+- **BI**: Apache Superset (Azure Container App)
+- **SSO**: Keycloak (Azure Container App, transitional — Entra ID is target)
+- **Automation**: n8n (Azure Container App)
+- **Supabase**: Self-hosted on Azure VM (`vm-ipai-supabase-dev`) — exception to managed
+- **Chat**: Slack (SaaS)
 
-### Docker Architecture
+### Local Dev
 
-**Development Stack** (sandbox/dev):
-- **Odoo CE 19**: Single container with EE parity (port 8069)
-- **PostgreSQL 16**: Database backend (port 5433 external, 5432 internal)
-- **Optional Tools**: pgAdmin (5050), Mailpit (8025) via `--profile tools`
+- **Odoo CE 19**: Native Mac runtime (`vendor/odoo/odoo-bin`)
+- **PostgreSQL 15**: Homebrew native (`localhost:5432`, user: `tbwa`)
+- **DB**: `odoo_dev` (local dev only — never use `odoo` locally)
+- **No Docker required** for inner-loop development
 
-**Production Stack** may include additional specialized containers per deployment environment.
+### Database Naming (Strict)
+
+| Name | Environment | Notes |
+|------|------------|-------|
+| `odoo_dev` | Local dev | Native Postgres on Mac |
+| `odoo_staging` | Staging | Azure PostgreSQL Flexible Server |
+| `odoo` | Production | Azure PostgreSQL Flexible Server |
+
+Never blur `odoo` and `odoo_dev`. Test DBs: `test_<module>` (disposable).
 
 ---
 
@@ -458,10 +466,10 @@ odoo-ce/
 │   ├── docker-compose.yml     # Production compose
 │   └── nginx/
 │
-├── infra/                     # Infrastructure templates (self-hosted)
-│   ├── doctl/                 # DigitalOcean CLI templates
+├── infra/                     # Infrastructure templates (Azure)
+│   ├── azure/                 # Azure Container Apps configs
 │   ├── superset/              # Apache Superset configs
-│   └── terraform/             # Self-hosted infra IaC
+│   └── terraform/             # Azure infra IaC
 │
 ├── db/                        # Database management
 │   ├── schema/                # Schema definitions
@@ -703,6 +711,9 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 - Any `odoo.com` Enterprise module references
 - **Mattermost** - Use Slack instead (2026-01-28)
 - `ipai_mattermost_connector` - Use `ipai_slack_connector` instead
+- **DigitalOcean** (all) - Migrated to Azure (2026-03-15)
+- **Public nginx edge** - Azure Front Door is canonical public edge (2026-03-15). Nginx may still exist for internal/special-case proxy needs.
+- **Self-hosted runners** - Use GitHub-hosted runners or Azure DevOps pool (2026-03-15)
 
 ### Module Philosophy
 
@@ -819,13 +830,13 @@ python scripts/test_ee_parity.py --report html --output docs/evidence/parity_rep
 
 ### Self-Hosted ipai_* Modules (Built In-House)
 
-We BUILD everything ourselves using open-source tools on self-hosted infrastructure:
+We BUILD everything ourselves using open-source tools on Azure infrastructure:
 
 | ipai_* Module | Replaces EE Feature | Self-Hosted Stack |
 |---------------|---------------------|-------------------|
 | `ipai_finance_reports` | EE Financial Reports | PostgreSQL + Superset |
 | `ipai_finance_consolidation` | EE Consolidation | Custom Python + PostgreSQL views |
-| `ipai_finance_forecast` | EE Forecasting | scikit-learn on DO droplet |
+| `ipai_finance_forecast` | EE Forecasting | Azure Container App |
 | `ipai_expense_intelligence` | EE Expense approval | Custom Python rules engine |
 | `ipai_bir_validator` | (no EE equivalent) | Custom compliance pipelines |
 | `ipai_approvals` | EE Approvals | Custom workflow engine |
@@ -895,10 +906,10 @@ jobs:
 | **Workflow Automation** | n8n workflows + `ipai_platform_workflow` |
 | **Document Management** | Supabase Storage + `ipai_documents` |
 | **Approval Workflows** | Custom state machine in `ipai_approvals` |
-| **AI/ML Features** | scikit-learn + Hugging Face on DO droplet |
+| **AI/ML Features** | Azure Container Apps + Hugging Face |
 | **Real-time Sync** | Supabase Realtime + webhooks |
 | **SSO/Auth** | Keycloak + `ipai_auth_keycloak` |
-| **BI/Analytics** | Apache Superset (self-hosted) |
+| **BI/Analytics** | Apache Superset (Azure-hosted) |
 | **Scheduling** | n8n cron + `ipai_scheduler` |
 | **Notifications** | Slack + `ipai_notifications` |
 
@@ -1576,7 +1587,7 @@ Build custom modules based on payment status and need:
 │                                                                     │
 │  ❌ NOT PAYING + WORKS AS-IS → No module needed                     │
 │     └── Supabase free tier → Just use SDK/API directly              │
-│     └── n8n self-hosted → Just webhooks, no module                  │
+│     └── n8n Azure-hosted → Just webhooks, no module                  │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -1641,13 +1652,13 @@ name: Security Scan
 on: [push, pull_request]
 jobs:
   secrets:
-    runs-on: self-hosted  # Your DO droplet = unlimited minutes
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: gitleaks/gitleaks-action@v2
 
   sast:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: returntocorp/semgrep-action@v1
@@ -1655,7 +1666,7 @@ jobs:
           config: p/owasp-top-ten p/python
 
   deps:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: aquasecurity/trivy-action@master
         with:

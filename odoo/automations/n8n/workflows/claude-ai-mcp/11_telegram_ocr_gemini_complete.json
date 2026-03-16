@@ -1,0 +1,290 @@
+{
+  "name": "Extract text from images with Telegram Bot & Gemini 2.5 Flash OCR",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "fa672106-597a-43d6-b3c8-d7d73e9ad499",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [720, 304],
+      "webhookId": "9b8e55dc-1389-435a-95b3-030d7e30ebce",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "UDyeOyTtUH7cXNOZ",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8cd1608-2326-401d-9c47-79a6a72f5fc7",
+              "name": "chatID",
+              "type": "number",
+              "value": "={{ $json.message.chat.id }}"
+            },
+            {
+              "id": "0f1a41cb-8630-4e10-b445-f6bbbcf91d33",
+              "name": "Image",
+              "type": "string",
+              "value": "={{ $json[\"message\"][\"photo\"][$json[\"message\"][\"photo\"].length - 1][\"file_id\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "552d5953-2b1e-48ff-a39b-112cae330f32",
+      "name": "Clean Input Data",
+      "type": "n8n-nodes-base.set",
+      "position": [928, 304],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.Image.replace(/\\n/g, '') }}",
+        "additionalFields": {}
+      },
+      "id": "4127fe82-7700-4292-b4fc-6fc27aa9e27c",
+      "name": "get file",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1152, 304],
+      "webhookId": "b812a0c8-e5f5-4969-9fad-a7b5b6e72dd9",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "UDyeOyTtUH7cXNOZ",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "id": "2990b76a-536e-48b4-8202-21b82ead2ef1",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [1392, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "={{$env.GEMINI_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"generationConfig\": {\n    \"temperature\": 0.1,\n    \"maxOutputTokens\": 2048\n  },\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \"You are an OCR + receipt parser. Return ONLY valid minified JSON (no markdown, no backticks, no commentary). If you are unsure, use nulls.\\n\\nSchema:\\n{\\n  \\\"doc_type\\\": \\\"receipt\\\"|\\\"invoice\\\"|\\\"id\\\"|\\\"business_card\\\"|\\\"other\\\",\\n  \\\"merchant\\\": {\\\"name\\\": string|null, \\\"tax_id\\\": string|null, \\\"address\\\": string|null, \\\"phone\\\": string|null},\\n  \\\"transaction\\\": {\\\"date\\\": string|null, \\\"time\\\": string|null, \\\"currency\\\": string|null, \\\"total\\\": number|null, \\\"subtotal\\\": number|null, \\\"tax\\\": number|null, \\\"service\\\": number|null, \\\"discount\\\": number|null},\\n  \\\"payment\\\": {\\\"method\\\": string|null, \\\"card_last4\\\": string|null, \\\"auth_code\\\": string|null},\\n  \\\"items\\\": [{\\\"name\\\": string|null, \\\"qty\\\": number|null, \\\"unit_price\\\": number|null, \\\"amount\\\": number|null}],\\n  \\\"raw_text\\\": string,\\n  \\\"confidence\\\": number\\n}\\n\\nRules:\\n- raw_text MUST include the full OCR text you see.\\n- confidence is 0..1 estimate.\\n- Numbers must be numbers (no currency symbols).\\n- date format: YYYY-MM-DD if possible.\\n- currency: ISO 4217 if possible (PHP, USD, etc.).\\n\"\n        },\n        {\n          \"inline_data\": {\n            \"mime_type\": \"image/jpeg\",\n            \"data\": \"{{ $json.data }}\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "ecb87468-671d-484c-9baf-01d40e6f5de6",
+      "name": "Gemini OCR",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [720, 560],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $json?.candidates?.[0]?.content?.parts?.[0]?.text;\nif (!s) {\n  return [{ json: { ok: false, error: 'Missing Gemini text output', raw: $json } }];\n}\ntry {\n  const parsed = JSON.parse(s);\n  return [{ json: { ok: true, ...parsed } }];\n} catch (e) {\n  return [{ json: { ok: false, error: 'JSON parse failed', text: s, raw: $json } }];\n}\n"
+      },
+      "id": "0a9bb9d8-06e2-4f5a-8d98-5d2cb0dbd54f",
+      "name": "Parse Gemini JSON",
+      "type": "n8n-nodes-base.code",
+      "position": [960, 560],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.SUPABASE_URL}}/rest/v1/rpc/log_ocr_event",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY ?? $env.SUPABASE_ANON_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{'Bearer ' + ($env.SUPABASE_SERVICE_ROLE_KEY ?? $env.SUPABASE_ANON_KEY)}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source\": \"telegram\",\n  \"chat_id\": \"{{ $('Clean Input Data').item.json.chatID + '' }}\",\n  \"file_id\": \"{{ $('Clean Input Data').item.json.Image }}\",\n  \"doc_type\": \"{{ $json.doc_type ?? ($json.ok ? 'other' : 'parse_error') }}\",\n  \"payload\": {{ JSON.stringify($json) }}\n}",
+        "options": {}
+      },
+      "id": "7cc3e11f-72b8-4ee4-b0b7-0703eb2ec5f1",
+      "name": "Supabase Log OCR Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1200, 560],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Clean Input Data').item.json.chatID }}",
+        "text": "={{ $json.ok ? (`✅ Parsed\\nMerchant: ${$json.merchant?.name ?? 'n/a'}\\nTotal: ${$json.transaction?.total ?? 'n/a'} ${$json.transaction?.currency ?? ''}\\nDate: ${$json.transaction?.date ?? 'n/a'}\\n\\nJSON:\\n${JSON.stringify($json)}`) : (`❌ Parse failed\\n${$json.error}\\n\\nRaw:\\n${$json.text ?? JSON.stringify($json.raw ?? $json)}`) }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cdee68db-f387-48d6-8b1c-2f1de0fbefea",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1440, 560],
+      "webhookId": "8219e2f1-2393-40ee-9c84-88666b10d946",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "UDyeOyTtUH7cXNOZ",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Image Reader",
+        "height": 620,
+        "width": 920,
+        "color": 4
+      },
+      "id": "d9ef5251-9fb1-4810-aa78-4a393f4355e7",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [640, 240],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Gemini 2.5 Flash OCR with Structured JSON Output\n\n**Model**: gemini-2.5-flash\n**Authentication**: Header-based (x-goog-api-key)\n**Output**: Strict JSON schema for receipt parsing\n\n**Environment Variables Required**:\n- GEMINI_API_KEY\n- SUPABASE_URL\n- SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY)\n\n**Flow**:\n1. Telegram photo → Extract binary\n2. Gemini OCR → Parse JSON\n3. Log to Supabase ops.ocr_events\n4. Reply with parsed fields",
+        "height": 460,
+        "width": 400
+      },
+      "id": "71b92a9e-8393-4f00-a99d-123ea4f3ed19",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [368, 240],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "get file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini OCR": {
+      "main": [
+        [
+          {
+            "node": "Parse Gemini JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Gemini JSON": {
+      "main": [
+        [
+          {
+            "node": "Supabase Log OCR Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Log OCR Event": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Input Data": {
+      "main": [
+        [
+          {
+            "node": "get file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Clean Input Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Gemini OCR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "beba461d-b739-4a17-9394-780610fa5702",
+  "meta": {
+    "templateId": "5864",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e6307c9b2e1cc3c28873b214516c61b4959b57e565f96969f69ac92cf171f4ec"
+  },
+  "id": "vd0taYOMD2w9t0DxsOKsU",
+  "tags": []
+}

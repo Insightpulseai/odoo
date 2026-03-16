@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "supabase",
+    "type": "ui",
+    "base_url": "https://supabase.com/ui"
+  },
+  "items": [
+    {
+      "id": "supabase-ui-library",
+      "title": "Supabase UI Library (shadcn/ui-based components)",
+      "url": "https://supabase.com/blog/supabase-ui-library",
+      "tags": ["supabase", "ui-library", "shadcn-ui", "components", "admin"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "DataTable component — tabular data with sort/filter/pagination",
+        "StatusBadge — health/state indicators with consistent color semantics",
+        "AlertBanner — platform-level warnings and info blocks",
+        "CodeBlock — monospace code display with copy button",
+        "CopyButton — clipboard helper with visual feedback"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "supabase-ui-platform-kit",
+      "title": "Supabase UI Platform Kit (Management API surfaces)",
+      "url": "https://supabase.com/blog/supabase-ui-platform-kit",
+      "tags": ["supabase", "platform-kit", "management-api", "admin", "ops-console"],
+      "use_cases": ["platform-kit", "ops-console"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "ProjectHealthCard — GET /v1/projects/{ref}/health (DB/Auth/Storage/Edge)",
+        "BranchList — GET /v1/projects/{ref}/branches (DEV branch lifecycle)",
+        "LogQueryPanel — POST analytics/endpoints/logs.all (structured log queries)",
+        "SecurityAdvisorWidget — GET /v1/projects/{ref}/advisors/security (RLS gaps)",
+        "MigrationRunner — apply migrations to DEV branch before merge to prod"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "supabase-ui-auth-components",
+      "title": "Supabase UI Auth Components",
+      "url": "https://supabase.com/ui",
+      "tags": ["supabase", "auth", "ui-library", "signin", "signup"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "<Auth> component — sign-in / sign-up / magic link / OAuth UI",
+        "User avatar + account menu pattern",
+        "Session expiry banner"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    }
+  ]
+}

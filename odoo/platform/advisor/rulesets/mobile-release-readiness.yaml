@@ -1,0 +1,138 @@
+id: mobile-release-readiness
+title: Mobile Release Readiness
+description: >
+  10-rule checklist evaluating iOS app readiness for App Store submission.
+  Rules cover CI/CD, code signing, security, privacy, and QA quality gates.
+version: "1.0"
+pillar: operational_excellence
+tags: [ios, app-store, fastlane, mobile]
+
+rules:
+  - id: ios-ci-green
+    pillar: operational_excellence
+    severity: critical
+    title: iOS CI workflow must be passing
+    description: >
+      The .github/workflows/ios-appstore.yml test job must have passed on the current
+      HEAD commit. A failing CI indicates build or test regressions.
+    remediation: >
+      Fix failing tests or build errors in apps/odoo-mobile-ios/. Run
+      `bundle exec fastlane ios test` locally to reproduce.
+    source: github
+    tags: [ci, ios]
+
+  - id: fastlane-match-configured
+    pillar: operational_excellence
+    severity: high
+    title: Fastlane match must be configured
+    description: >
+      fastlane/Matchfile must contain a valid MATCH_GIT_URL environment variable
+      reference. Without match, code signing certificates cannot be fetched in CI.
+    remediation: >
+      Set MATCH_GIT_URL secret in GitHub Actions. Run `bundle exec fastlane match init`
+      to create the certificate repo if not already done.
+    source: filesystem
+    tags: [fastlane, code-signing]
+
+  - id: keychain-usage-declared
+    pillar: security
+    severity: high
+    title: Keychain usage must be declared in entitlements
+    description: >
+      The app uses Keychain to store OAuth tokens. The keychain-access-groups entitlement
+      or appropriate keychain sharing configuration must be declared.
+    remediation: >
+      Add keychain-access-groups entitlement to OdooMobile.entitlements. Ensure
+      kSecAttrAccessible is set to kSecAttrAccessibleAfterFirstUnlock.
+    source: filesystem
+    tags: [security, keychain]
+
+  - id: ats-https-only
+    pillar: security
+    severity: high
+    title: App Transport Security must enforce HTTPS
+    description: >
+      Info.plist must not contain NSAllowsArbitraryLoads = true. All network calls
+      must use HTTPS. ATS exceptions require App Review justification.
+    remediation: >
+      Remove NSAllowsArbitraryLoads from Info.plist. Ensure OdooBaseURL uses https://.
+      If a specific domain requires an exception, use NSExceptionDomains with justification.
+    source: filesystem
+    tags: [security, ats, https]
+
+  - id: build-submitted
+    pillar: operational_excellence
+    severity: critical
+    title: A build must be submitted to App Store Connect
+    description: >
+      At least one build must be uploaded to App Store Connect and processed successfully.
+      This confirms the Fastlane build_testflight lane works end-to-end.
+    remediation: >
+      Run `bundle exec fastlane ios build_testflight` or push to main to trigger CI.
+      Check App Store Connect → TestFlight for build processing status.
+    source: appstoreconnect
+    tags: [app-store, build]
+
+  - id: privacy-nutrition-labels-complete
+    pillar: security
+    severity: high
+    title: Privacy Nutrition Labels must be complete
+    description: >
+      App Store Connect requires all data categories to be declared before submission.
+      Missing or incorrect labels result in App Review rejection.
+    remediation: >
+      Complete Privacy Nutrition Labels in App Store Connect → App Privacy.
+      Declare: Authentication data (email), Usage data (app activity), Diagnostics.
+    source: appstoreconnect
+    tags: [privacy, app-store]
+
+  - id: age-rating-set
+    pillar: operational_excellence
+    severity: medium
+    title: Age rating must be configured
+    description: >
+      The app's age rating must be set in App Store Connect using the questionnaire.
+      Missing age rating blocks App Store submission.
+    remediation: >
+      Complete age rating questionnaire in App Store Connect → App Information.
+    source: appstoreconnect
+    tags: [app-store, age-rating]
+
+  - id: screenshots-all-devices
+    pillar: operational_excellence
+    severity: medium
+    title: Screenshots required for all mandatory device sizes
+    description: >
+      App Store requires screenshots for 6.7" (iPhone 15 Pro Max) and 5.5"
+      (iPhone 8 Plus) at minimum. Missing screenshots block submission.
+    remediation: >
+      Generate screenshots using Fastlane snapshot or Xcode Simulator.
+      Required sizes: 6.7" (1290×2796) and 5.5" (1242×2208).
+    source: appstoreconnect
+    tags: [screenshots, app-store]
+
+  - id: testflight-external-group-exists
+    pillar: operational_excellence
+    severity: medium
+    title: At least one TestFlight external group must exist
+    description: >
+      An external TestFlight group indicates the app has been reviewed by real users
+      beyond the internal team. Required before public App Store submission.
+    remediation: >
+      Create an external TestFlight group in App Store Connect → TestFlight → External Groups.
+      Submit build for external testing (requires basic App Review approval).
+    source: appstoreconnect
+    tags: [testflight, beta-testing]
+
+  - id: crash-free-rate-target-met
+    pillar: reliability
+    severity: high
+    title: Crash-free rate must be >= 99.5%
+    description: >
+      TestFlight session data must show crash-free rate >= 99.5% across at least
+      100 sessions before App Store submission. Apple monitors crash rates post-launch.
+    remediation: >
+      Review crash reports in Xcode Organizer → Crashes. Fix all critical and common
+      crash paths. Ensure at least 100 TestFlight sessions have been recorded.
+    source: appstoreconnect
+    tags: [reliability, crashes, testflight]

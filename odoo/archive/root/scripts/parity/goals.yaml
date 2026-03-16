@@ -1,0 +1,52 @@
+version: 1
+
+# Goal-based parity: score capabilities, not module strings.
+# Each goal can be satisfied by one or more "providers" (OCA module(s) and/or ipai_* glue),
+# but the probe must validate the capability via DB evidence or runnable checks.
+
+goals:
+  ACC-001-bank-reconciliation:
+    weight: 3
+    description: "Bank statement import + reconciliation workflow available."
+    providers:
+      - type: oca
+        module: account_reconcile_oca
+    probes:
+      - type: sql_any
+        name: "reconciliation models exist"
+        sql: |
+          select 1
+          from information_schema.tables
+          where table_schema = 'public'
+            and table_name in ('account_bank_statement_line','account_move_line')
+          limit 1;
+
+  ACC-002-asset-management:
+    weight: 2
+    description: "Asset creation, depreciation schedules, and postings."
+    providers:
+      - type: oca
+        module: account_asset_management
+    probes:
+      - type: odoo_model_exists
+        model: "account.asset"
+
+  HR-001-payroll:
+    weight: 2
+    description: "Payroll run workflow exists (payslips generation)."
+    providers:
+      - type: oca
+        module: hr_payroll
+    probes:
+      - type: odoo_model_exists
+        model: "hr.payslip"
+
+  SRV-001-helpdesk:
+    weight: 2
+    description: "Ticketing workflow exists."
+    providers:
+      - type: oca
+        module: helpdesk_mgmt
+    probes:
+      - type: odoo_model_exists
+        model: "helpdesk.ticket"

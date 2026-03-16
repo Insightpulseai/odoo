@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu Item under Accounting -->
+    <menuitem id="menu_ap_aging_root"
+              name="AP Aging"
+              parent="account.menu_finance_payables"
+              sequence="20"/>
+
+    <!-- Heatmap Submenu -->
+    <menuitem id="menu_ap_aging_heatmap"
+              name="Aging Heatmap"
+              parent="menu_ap_aging_root"
+              action="action_ap_aging_heatmap"
+              sequence="10"/>
+
+    <!-- Month-End Close Integration (Link to existing monthly closing tasks) -->
+    <menuitem id="menu_ap_aging_monthly_close_link"
+              name="Month-End Close Tasks"
+              parent="menu_ap_aging_root"
+              action="ipai_finance_monthly_closing.action_project_task_month_end"
+              sequence="20"
+              groups="account.group_account_manager"/>
+</odoo>

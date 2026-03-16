@@ -1,0 +1,18 @@
+{
+  "capability_id": "string (stable)",
+  "domain": "finance|sales|inventory|mfg|hr|helpdesk|projects|dms|sign|iot|bi|automation|auth|audit",
+  "name": "string",
+  "description": "string",
+  "ee_reference": {
+    "product": "odoo|other",
+    "module": "string",
+    "version": "string",
+    "source_refs": ["string"]
+  },
+  "contracts": {
+    "data": [{"name":"string","type":"schema|constraints|rls","ref":"string"}],
+    "api": [{"name":"string","type":"rest|rpc|webhook","ref":"string"}],
+    "events": [{"name":"string","semantics":"at-least-once|exactly-once|best-effort"}],
+    "behavior": [{"name":"string","assertion":"string"}]
+  }
+}

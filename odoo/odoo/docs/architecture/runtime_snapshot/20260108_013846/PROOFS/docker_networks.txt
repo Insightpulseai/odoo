@@ -1,0 +1,13 @@
+NETWORK ID     NAME                            DRIVER    SCOPE
+f52bc6df7a39   bridge                          bridge    local
+fa28528193ce   deploy_odoo_backend             bridge    local
+dc1bcbe6b37c   host                            host      local
+408a4ccea501   n8n_n8n                         bridge    local
+0198e024633e   none                            null      local
+b94f15755021   ocr-adapter_default             bridge    local
+95174ffbfc21   odoo-ce_odoo-network            bridge    local
+db7a059a2798   odoo-ce_odoo_network            bridge    local
+5d074f7dd7fc   odoo_app_network                bridge    local
+009e87cc1552   odoo_insightpulse-network       bridge    local
+fe646e557cfb   services_services-network       bridge    local
+3d68ef12bd46   tax-rules-service_tax_network   bridge    local

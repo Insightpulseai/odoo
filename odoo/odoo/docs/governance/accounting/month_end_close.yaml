@@ -1,0 +1,103 @@
+version: "1.0"
+domain: "accounting"
+track: "month_end_close"
+levels:
+  L1: "Assisted executor (task-level)"
+  L2: "Independent owner (process-level)"
+  L3: "Close lead (controls + optimization)"
+competencies:
+  - code: MEC-01
+    name: "Close calendar & workload planning"
+    why_it_matters: "Predictable close cadence; fewer late adjustments; clearer client expectations."
+    behaviors:
+      L1: ["Follows a close checklist; updates task status daily."]
+      L2:
+        [
+          "Builds/maintains a close calendar; sequences dependencies across teams.",
+        ]
+      L3:
+        [
+          "Leads close with SLAs; runs post-close retros and implements improvements.",
+        ]
+    evidence:
+      - "Close calendar with owners + due dates"
+      - "Checklist completion logs"
+      - "Post-close retro notes + action items"
+    tool_enablers:
+      - "Project/Tasks for close checklist"
+      - "Approvals for high-risk steps (optional)"
+
+  - code: MEC-02
+    name: "Bank & cash reconciliation"
+    why_it_matters: "Cash accuracy is the backbone of financial statements and tax filings."
+    behaviors:
+      L1: ["Matches bank lines to invoices/bills; flags exceptions."]
+      L2:
+        [
+          "Owns reconciliation rules; resolves unreconciled items; documents rationale.",
+        ]
+      L3:
+        [
+          "Optimizes reconciliation throughput; monitors exception rates and root causes.",
+        ]
+    evidence:
+      - "Reconciliation exception log"
+      - "Rule set / matching logic notes"
+      - "Aging of unreconciled items"
+    tool_enablers:
+      - "Bank synchronization / statement import"
+      - "Reconciliation rules and matching"
+    notes:
+      - "Odoo positions reconciliation as a core capability (including smart reconciliation & bank connectivity claims)."
+
+  - code: MEC-03
+    name: "Accruals, deferrals, and closing entries"
+    why_it_matters: "Ensures period accuracy and auditability (revenue/expense matching)."
+    behaviors:
+      L1: ["Prepares accrual support schedules; posts with supervision."]
+      L2:
+        [
+          "Independently posts recurring/adjusting entries; maintains support packages.",
+        ]
+      L3: ["Designs recurring-entry controls; reviews materiality thresholds."]
+    evidence:
+      - "Accrual schedules"
+      - "JE support pack (source docs + rationale)"
+      - "Materiality policy"
+    tool_enablers:
+      - "Journal entries"
+      - "Recurring entries (if applicable)"
+
+  - code: MEC-04
+    name: "AP/AR subledger integrity"
+    why_it_matters: "Subledger tie-outs reduce surprises and client escalations."
+    behaviors:
+      L1: ["Runs AR/AP aging; follows up on discrepancies."]
+      L2: ["Performs subledger-to-GL tie-out; resolves root causes."]
+      L3:
+        [
+          "Implements preventative controls (cutoff, duplicate checks, posting rules).",
+        ]
+    evidence:
+      - "Tie-out workpaper"
+      - "Aging analysis and adjustments"
+      - "Control checklist"
+    tool_enablers:
+      - "Aged receivables/payables reporting"
+
+  - code: MEC-05
+    name: "Period locking & close governance"
+    why_it_matters: "Prevents back-dated changes and protects finalized periods."
+    behaviors:
+      L1: ["Understands lock rules; requests changes via documented approvals."]
+      L2: ["Enforces locking schedule; manages exceptions."]
+      L3:
+        [
+          "Designs lock policy aligned to audit/tax deadlines; monitors breaches.",
+        ]
+    evidence:
+      - "Lock schedule"
+      - "Exception approvals with justification"
+      - "Breach log / audit trail"
+    tool_enablers:
+      - "Lock/closing-date controls"

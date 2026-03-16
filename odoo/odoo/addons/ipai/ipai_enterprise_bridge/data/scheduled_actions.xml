@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled action to process pending jobs -->
+    <record id="ir_cron_process_ipai_jobs" model="ir.cron">
+        <field name="name">IPAI Bridge: Process Pending Jobs</field>
+        <field name="model_id" ref="model_ipai_job"/>
+        <field name="state">code</field>
+        <field name="code">model.process_pending_jobs()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

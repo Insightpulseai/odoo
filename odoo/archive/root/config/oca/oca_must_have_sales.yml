@@ -1,0 +1,33 @@
+# OCA Must-Have Sales (Odoo 19) - SSOT manifest
+# NOTE: module names are commonly used OCA technical names.
+# CI will validate module availability for 19.0.
+
+meta:
+  odoo_version: "19.0"
+  purpose: "OCA Must-Have Sales modules for every Odoo instance"
+  install_order:
+    - "sale-workflow"
+    - "sale-reporting"
+
+repositories:
+  # TODO: pin to exact git SHAs in oca.lock.json
+  - name: "OCA/sale-workflow"
+    branch: "19.0"
+  - name: "OCA/sale-reporting"
+    branch: "19.0"
+
+modules:
+  # --- sale-workflow (sales order workflows) ---
+  - sale_order_type
+  - sale_order_line_sequence
+  - sale_exception
+  - sale_order_revision
+  - sale_elaboration
+
+  # --- sale-reporting (sales analytics) ---
+  - sale_report_advanced
+
+policy:
+  require_all_modules_installed: true
+  fail_if_missing_repo: true
+  fail_if_module_not_found: true

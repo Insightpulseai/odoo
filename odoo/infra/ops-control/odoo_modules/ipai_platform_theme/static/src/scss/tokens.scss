@@ -1,0 +1,370 @@
+// ============================================================================
+// IPAI Platform Theme - Design Tokens
+// Material 3 Expressive + Fluent Design System
+// ============================================================================
+
+:root {
+  // ==========================================================================
+  // COLOR SYSTEM - Material 3 Semantic Roles
+  // ==========================================================================
+
+  // Primary palette (Claude-inspired purple/indigo)
+  --ipai-primary: #6366f1;
+  --ipai-primary-light: #818cf8;
+  --ipai-primary-dark: #4f46e5;
+  --ipai-primary-container: #e0e7ff;
+  --ipai-on-primary: #ffffff;
+  --ipai-on-primary-container: #312e81;
+
+  // Secondary palette (warm accent)
+  --ipai-secondary: #f59e0b;
+  --ipai-secondary-light: #fbbf24;
+  --ipai-secondary-dark: #d97706;
+  --ipai-secondary-container: #fef3c7;
+  --ipai-on-secondary: #ffffff;
+  --ipai-on-secondary-container: #78350f;
+
+  // Tertiary palette (success/action)
+  --ipai-tertiary: #10b981;
+  --ipai-tertiary-light: #34d399;
+  --ipai-tertiary-dark: #059669;
+  --ipai-tertiary-container: #d1fae5;
+  --ipai-on-tertiary: #ffffff;
+  --ipai-on-tertiary-container: #064e3b;
+
+  // Error palette
+  --ipai-error: #ef4444;
+  --ipai-error-light: #f87171;
+  --ipai-error-dark: #dc2626;
+  --ipai-error-container: #fee2e2;
+  --ipai-on-error: #ffffff;
+  --ipai-on-error-container: #7f1d1d;
+
+  // Warning palette
+  --ipai-warning: #f59e0b;
+  --ipai-warning-container: #fef3c7;
+  --ipai-on-warning: #ffffff;
+  --ipai-on-warning-container: #78350f;
+
+  // ==========================================================================
+  // SURFACE SYSTEM - Fluent-inspired neutrals
+  // ==========================================================================
+
+  // Background hierarchy
+  --ipai-background: #fafafa;
+  --ipai-background-elevated: #ffffff;
+  --ipai-background-sunken: #f4f4f5;
+
+  // Surface levels (Material 3 elevation)
+  --ipai-surface: #ffffff;
+  --ipai-surface-dim: #f9fafb;
+  --ipai-surface-bright: #ffffff;
+  --ipai-surface-container-lowest: #ffffff;
+  --ipai-surface-container-low: #f9fafb;
+  --ipai-surface-container: #f4f4f5;
+  --ipai-surface-container-high: #e5e7eb;
+  --ipai-surface-container-highest: #d1d5db;
+
+  // On surface colors
+  --ipai-on-surface: #18181b;
+  --ipai-on-surface-variant: #52525b;
+  --ipai-on-surface-muted: #71717a;
+  --ipai-on-surface-disabled: #a1a1aa;
+
+  // Outline system
+  --ipai-outline: #d4d4d8;
+  --ipai-outline-variant: #e4e4e7;
+  --ipai-outline-focus: var(--ipai-primary);
+
+  // ==========================================================================
+  // COPILOT-SPECIFIC COLORS
+  // ==========================================================================
+
+  // Assistant message bubble
+  --ipai-assistant-bg: #f8fafc;
+  --ipai-assistant-border: #e2e8f0;
+  --ipai-assistant-text: #1e293b;
+
+  // User message bubble
+  --ipai-user-bg: var(--ipai-primary);
+  --ipai-user-border: var(--ipai-primary-dark);
+  --ipai-user-text: #ffffff;
+
+  // System message
+  --ipai-system-bg: #fef9c3;
+  --ipai-system-border: #fde047;
+  --ipai-system-text: #713f12;
+
+  // Action chip colors
+  --ipai-chip-default-bg: #f4f4f5;
+  --ipai-chip-default-text: #3f3f46;
+  --ipai-chip-primary-bg: var(--ipai-primary-container);
+  --ipai-chip-primary-text: var(--ipai-on-primary-container);
+  --ipai-chip-success-bg: var(--ipai-tertiary-container);
+  --ipai-chip-success-text: var(--ipai-on-tertiary-container);
+  --ipai-chip-warning-bg: var(--ipai-warning-container);
+  --ipai-chip-warning-text: var(--ipai-on-warning-container);
+  --ipai-chip-danger-bg: var(--ipai-error-container);
+  --ipai-chip-danger-text: var(--ipai-on-error-container);
+
+  // Citation link
+  --ipai-citation-bg: #eff6ff;
+  --ipai-citation-text: #1d4ed8;
+  --ipai-citation-hover-bg: #dbeafe;
+
+  // Diff colors
+  --ipai-diff-add-bg: #dcfce7;
+  --ipai-diff-add-text: #166534;
+  --ipai-diff-remove-bg: #fee2e2;
+  --ipai-diff-remove-text: #991b1b;
+  --ipai-diff-change-bg: #fef3c7;
+  --ipai-diff-change-text: #92400e;
+
+  // ==========================================================================
+  // TYPOGRAPHY SCALE
+  // ==========================================================================
+
+  // Font families
+  --ipai-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ipai-font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+  // Font sizes (fluid scale)
+  --ipai-text-xs: 0.75rem;      // 12px
+  --ipai-text-sm: 0.8125rem;    // 13px
+  --ipai-text-base: 0.875rem;   // 14px (Odoo default)
+  --ipai-text-md: 0.9375rem;    // 15px
+  --ipai-text-lg: 1rem;         // 16px
+  --ipai-text-xl: 1.125rem;     // 18px
+  --ipai-text-2xl: 1.25rem;     // 20px
+  --ipai-text-3xl: 1.5rem;      // 24px
+  --ipai-text-4xl: 1.875rem;    // 30px
+
+  // Line heights
+  --ipai-leading-none: 1;
+  --ipai-leading-tight: 1.25;
+  --ipai-leading-snug: 1.375;
+  --ipai-leading-normal: 1.5;
+  --ipai-leading-relaxed: 1.625;
+  --ipai-leading-loose: 2;
+
+  // Font weights
+  --ipai-font-normal: 400;
+  --ipai-font-medium: 500;
+  --ipai-font-semibold: 600;
+  --ipai-font-bold: 700;
+
+  // Letter spacing
+  --ipai-tracking-tighter: -0.02em;
+  --ipai-tracking-tight: -0.01em;
+  --ipai-tracking-normal: 0;
+  --ipai-tracking-wide: 0.01em;
+  --ipai-tracking-wider: 0.02em;
+
+  // ==========================================================================
+  // SPACING SCALE (4px base unit)
+  // ==========================================================================
+
+  --ipai-space-0: 0;
+  --ipai-space-px: 1px;
+  --ipai-space-0-5: 0.125rem;   // 2px
+  --ipai-space-1: 0.25rem;      // 4px
+  --ipai-space-1-5: 0.375rem;   // 6px
+  --ipai-space-2: 0.5rem;       // 8px
+  --ipai-space-2-5: 0.625rem;   // 10px
+  --ipai-space-3: 0.75rem;      // 12px
+  --ipai-space-3-5: 0.875rem;   // 14px
+  --ipai-space-4: 1rem;         // 16px
+  --ipai-space-5: 1.25rem;      // 20px
+  --ipai-space-6: 1.5rem;       // 24px
+  --ipai-space-7: 1.75rem;      // 28px
+  --ipai-space-8: 2rem;         // 32px
+  --ipai-space-9: 2.25rem;      // 36px
+  --ipai-space-10: 2.5rem;      // 40px
+  --ipai-space-12: 3rem;        // 48px
+  --ipai-space-14: 3.5rem;      // 56px
+  --ipai-space-16: 4rem;        // 64px
+  --ipai-space-20: 5rem;        // 80px
+
+  // ==========================================================================
+  // BORDER RADIUS (Material 3 shape system)
+  // ==========================================================================
+
+  --ipai-radius-none: 0;
+  --ipai-radius-sm: 0.25rem;    // 4px - Small elements
+  --ipai-radius-md: 0.375rem;   // 6px - Buttons, inputs
+  --ipai-radius-lg: 0.5rem;     // 8px - Cards, panels
+  --ipai-radius-xl: 0.75rem;    // 12px - Modals, large surfaces
+  --ipai-radius-2xl: 1rem;      // 16px - FABs, emphasis
+  --ipai-radius-3xl: 1.5rem;    // 24px - Extra large
+  --ipai-radius-full: 9999px;   // Pills, avatars
+
+  // ==========================================================================
+  // SHADOWS (Fluent depth system)
+  // ==========================================================================
+
+  --ipai-shadow-none: none;
+  --ipai-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --ipai-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --ipai-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --ipai-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --ipai-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --ipai-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  // Focus ring
+  --ipai-ring-width: 2px;
+  --ipai-ring-offset: 2px;
+  --ipai-ring-color: var(--ipai-primary);
+
+  // ==========================================================================
+  // TRANSITIONS & MOTION
+  // ==========================================================================
+
+  // Durations (Material motion)
+  --ipai-duration-instant: 0ms;
+  --ipai-duration-fast: 100ms;
+  --ipai-duration-normal: 200ms;
+  --ipai-duration-slow: 300ms;
+  --ipai-duration-slower: 400ms;
+  --ipai-duration-slowest: 500ms;
+
+  // Easings (Material 3 expressive)
+  --ipai-ease-linear: linear;
+  --ipai-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ipai-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ipai-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ipai-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ipai-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  // ==========================================================================
+  // Z-INDEX SCALE
+  // ==========================================================================
+
+  --ipai-z-dropdown: 1000;
+  --ipai-z-sticky: 1020;
+  --ipai-z-fixed: 1030;
+  --ipai-z-modal-backdrop: 1040;
+  --ipai-z-modal: 1050;
+  --ipai-z-popover: 1060;
+  --ipai-z-tooltip: 1070;
+  --ipai-z-copilot: 1080;
+  --ipai-z-toast: 1090;
+
+  // ==========================================================================
+  // COMPONENT-SPECIFIC TOKENS
+  // ==========================================================================
+
+  // Panel dimensions
+  --ipai-panel-width: 420px;
+  --ipai-panel-max-width: 520px;
+  --ipai-panel-min-width: 320px;
+
+  // Header height
+  --ipai-header-height: 48px;
+
+  // Composer height
+  --ipai-composer-min-height: 48px;
+  --ipai-composer-max-height: 200px;
+
+  // Message spacing
+  --ipai-message-gap: var(--ipai-space-4);
+  --ipai-message-padding: var(--ipai-space-4);
+}
+
+// ==========================================================================
+// DARK MODE TOKENS
+// ==========================================================================
+
+:root[data-theme="dark"],
+.o_dark,
+[data-color-scheme="dark"] {
+  // Primary (brighter for dark)
+  --ipai-primary: #818cf8;
+  --ipai-primary-light: #a5b4fc;
+  --ipai-primary-dark: #6366f1;
+  --ipai-primary-container: #3730a3;
+  --ipai-on-primary: #1e1b4b;
+  --ipai-on-primary-container: #e0e7ff;
+
+  // Surfaces
+  --ipai-background: #09090b;
+  --ipai-background-elevated: #18181b;
+  --ipai-background-sunken: #000000;
+
+  --ipai-surface: #18181b;
+  --ipai-surface-dim: #09090b;
+  --ipai-surface-bright: #27272a;
+  --ipai-surface-container-lowest: #09090b;
+  --ipai-surface-container-low: #18181b;
+  --ipai-surface-container: #27272a;
+  --ipai-surface-container-high: #3f3f46;
+  --ipai-surface-container-highest: #52525b;
+
+  // On surface
+  --ipai-on-surface: #fafafa;
+  --ipai-on-surface-variant: #a1a1aa;
+  --ipai-on-surface-muted: #71717a;
+  --ipai-on-surface-disabled: #52525b;
+
+  // Outline
+  --ipai-outline: #3f3f46;
+  --ipai-outline-variant: #27272a;
+
+  // Copilot specific
+  --ipai-assistant-bg: #1e1e21;
+  --ipai-assistant-border: #2d2d30;
+  --ipai-assistant-text: #e4e4e7;
+
+  --ipai-user-bg: #4f46e5;
+  --ipai-user-border: #4338ca;
+  --ipai-user-text: #ffffff;
+
+  --ipai-system-bg: #422006;
+  --ipai-system-border: #854d0e;
+  --ipai-system-text: #fef3c7;
+
+  // Chips
+  --ipai-chip-default-bg: #27272a;
+  --ipai-chip-default-text: #d4d4d8;
+  --ipai-chip-primary-bg: #3730a3;
+  --ipai-chip-primary-text: #c7d2fe;
+
+  // Citation
+  --ipai-citation-bg: #1e3a5f;
+  --ipai-citation-text: #93c5fd;
+  --ipai-citation-hover-bg: #1e40af;
+
+  // Diff
+  --ipai-diff-add-bg: #14532d;
+  --ipai-diff-add-text: #86efac;
+  --ipai-diff-remove-bg: #7f1d1d;
+  --ipai-diff-remove-text: #fca5a5;
+  --ipai-diff-change-bg: #78350f;
+  --ipai-diff-change-text: #fcd34d;
+
+  // Shadows (darker, more subtle)
+  --ipai-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --ipai-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --ipai-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+}
+
+// ==========================================================================
+// ODOO VARIABLE MAPPING
+// ==========================================================================
+
+// Map IPAI tokens to Odoo's existing CSS variables for compatibility
+:root {
+  // Bootstrap/Odoo primary
+  --primary: var(--ipai-primary);
+  --primary-btn-bg: var(--ipai-primary);
+
+  // Body background
+  --o-main-bg-color: var(--ipai-background);
+  --o-webclient-background-color: var(--ipai-background);
+
+  // Form view
+  --o-form-lightsecondary: var(--ipai-surface-container-low);
+
+  // Card styling
+  --o-card-bg: var(--ipai-surface);
+  --o-card-border-color: var(--ipai-outline);
+}

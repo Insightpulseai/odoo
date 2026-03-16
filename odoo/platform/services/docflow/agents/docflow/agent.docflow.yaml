@@ -1,0 +1,155 @@
+version: "1.0"
+kind: "odoo_ai_agent"
+
+metadata:
+  id: "docflow.agent"
+  name: "DocFlow Agent"
+  description: "OCR → LLM → Validation → Intelligence → Odoo ingest (Odoo 19)"
+  owner: "finance"
+  tags: ["docflow", "ap-automation", "ocr", "reconciliation", "sla"]
+
+runtime:
+  mode: "external-daemon"
+  odoo:
+    base_url: "${ODOO_BASE_URL}"
+    ingest_endpoint: "/docflow/ingest"
+    auth:
+      type: "shared_token"
+      header: "X-DocFlow-Token"
+      token_env: "DOCFLOW_INGEST_TOKEN"
+
+inputs:
+  sources:
+    - name: "viber_desktop"
+      type: "filesystem_watcher"
+      watch_path_env: "VIBER_WATCH_PATH"
+      file_types: ["pdf", "jpg", "jpeg", "png", "csv"]
+      stability_ms: 2000
+      dedupe:
+        method: "sha256"
+        id_prefix: "df"
+  document_types:
+    - invoice
+    - expense
+    - bank_statement
+
+pipeline:
+  stages:
+    - id: "ocr"
+      type: "local_ocr"
+      config:
+        engine: "tesseract_or_equivalent"
+        languages: ["eng"]
+        outputs: ["text"]
+        no_third_party_api: true
+
+    - id: "classify"
+      type: "llm_json"
+      config:
+        provider: "${LLM_PROVIDER}"         # openai|anthropic|gemini
+        model: "${LLM_MODEL_CLASSIFY}"
+        temperature: 0.0
+        max_tokens: 600
+        prompt_ref: "prompts/classification_v1.txt"
+        output_schema: "schemas/classification.json"
+
+    - id: "extract"
+      type: "llm_json"
+      when:
+        any:
+          - equals: { "classify.document_type": "invoice" }
+          - equals: { "classify.document_type": "expense" }
+          - equals: { "classify.document_type": "bank_statement" }
+      config:
+        provider: "${LLM_PROVIDER}"
+        model: "${LLM_MODEL_EXTRACT}"
+        temperature: 0.0
+        max_tokens: 4000
+        prompt_ref_map:
+          invoice: "prompts/extract_invoice_v1.txt"
+          expense: "prompts/extract_expense_v1.txt"
+          bank_statement: "prompts/extract_bank_statement_v1.txt"
+        output_schema_map:
+          invoice: "schemas/invoice_extraction.json"
+          expense: "schemas/expense_extraction.json"
+          bank_statement: "schemas/bank_statement_extraction.json"
+
+    - id: "validate"
+      type: "deterministic_validation"
+      config:
+        invoice_rules_ref: "rules/invoice_rules.yaml"
+        expense_rules_ref: "rules/expense_rules.yaml"
+        statement_rules_ref: "rules/statement_rules.yaml"
+
+    - id: "intelligence"
+      type: "python_module"
+      config:
+        vendor_match:
+          enabled: true
+          fuzzy_min: 0.85
+          exact_min: 0.95
+          library: "rapidfuzz"
+        duplicate_detection:
+          enabled: true
+          dupe_block_threshold: 0.85
+
+    - id: "route"
+      type: "odoo_server_side"
+      config:
+        action: "docflow.document.action_route"
+        note: "Multi-company routing via docflow.routing.rule"
+
+    - id: "ingest"
+      type: "odoo_ingest"
+      config:
+        payload:
+          include_fields:
+            - filename
+            - file_b64
+            - document_id
+            - source
+            - doc_type
+            - confidence
+            - ocr_text
+            - classification_json
+            - extraction_json
+            - validation_json
+            - confidence_breakdown_json
+          state_policy:
+            if_dupe_risk_gte: 0.85
+            then_state: "needs_review"
+            else_if_confidence_gte: 0.80
+            then_state: "extracted"
+            default_state: "needs_review"
+
+    - id: "autodraft"
+      type: "odoo_action"
+      when:
+        all:
+          - gte: { "confidence": 0.80 }
+          - lt:  { "dupe_risk": 0.85 }
+      config:
+        action: "docflow.autodraft"
+        modes:
+          invoice: "account.move"
+          expense: "hr.expense"
+
+sla:
+  enabled: true
+  default_hours: 24
+  breach_escalation:
+    enabled: true
+    manager_user_id_env: "DOCFLOW_SLA_MANAGER_USER_ID"
+    cron_minutes: 15
+
+observability:
+  logs:
+    level: "INFO"
+    redactions: ["file_b64"]
+  metrics:
+    enabled: true
+    counters:
+      - "documents_processed"
+      - "documents_needs_review"
+      - "documents_autodrafted"
+      - "sla_breaches"

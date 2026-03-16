@@ -1,0 +1,225 @@
+# Auth Roles Specification
+# Defines roles and permissions for the decoupled Odoo platform
+version: 1
+
+# Role Definitions
+roles:
+  - id: org_owner
+    name: Organization Owner
+    description: Full control over organization settings and billing
+    inherits: [org_admin]
+    can:
+      - org:manage
+      - org:delete
+      - billing:manage
+      - billing:view
+      - members:invite
+      - members:remove
+      - members:promote
+      - odoo:sync
+      - odoo:configure
+
+  - id: org_admin
+    name: Organization Admin
+    description: Manage organization resources and members
+    inherits: [member]
+    can:
+      - org:manage
+      - org:read
+      - members:invite
+      - members:remove
+      - projects:manage
+      - projects:create
+      - projects:delete
+      - tasks:manage
+      - odoo:sync
+
+  - id: member
+    name: Member
+    description: Standard organization member
+    can:
+      - org:read
+      - projects:read
+      - projects:create
+      - tasks:read
+      - tasks:create
+      - tasks:update_own
+
+  - id: viewer
+    name: Viewer
+    description: Read-only access to organization resources
+    can:
+      - org:read
+      - projects:read
+      - tasks:read
+
+  - id: service
+    name: Service Account
+    description: Machine-to-machine integration account
+    can:
+      - odoo:sync
+      - odoo:webhook
+      - internal:admin
+
+# Permission Definitions
+permissions:
+  # Organization
+  org:manage:
+    description: Update organization settings
+    resource: app.orgs
+    actions: [update]
+
+  org:delete:
+    description: Delete organization
+    resource: app.orgs
+    actions: [delete]
+
+  org:read:
+    description: View organization details
+    resource: app.orgs
+    actions: [select]
+
+  # Billing
+  billing:manage:
+    description: Manage billing and subscriptions
+    resource: app.billing
+    actions: [select, insert, update, delete]
+
+  billing:view:
+    description: View billing information
+    resource: app.billing
+    actions: [select]
+
+  # Members
+  members:invite:
+    description: Invite new members to organization
+    resource: app.org_members
+    actions: [insert]
+
+  members:remove:
+    description: Remove members from organization
+    resource: app.org_members
+    actions: [delete]
+
+  members:promote:
+    description: Change member roles
+    resource: app.org_members
+    actions: [update]
+
+  # Projects
+  projects:manage:
+    description: Full project management
+    resource: app.projects
+    actions: [select, insert, update, delete]
+
+  projects:create:
+    description: Create new projects
+    resource: app.projects
+    actions: [insert]
+
+  projects:read:
+    description: View projects
+    resource: app.projects
+    actions: [select]
+
+  projects:delete:
+    description: Delete projects
+    resource: app.projects
+    actions: [delete]
+
+  # Tasks
+  tasks:manage:
+    description: Full task management
+    resource: app.tasks
+    actions: [select, insert, update, delete]
+
+  tasks:create:
+    description: Create new tasks
+    resource: app.tasks
+    actions: [insert]
+
+  tasks:read:
+    description: View tasks
+    resource: app.tasks
+    actions: [select]
+
+  tasks:update_own:
+    description: Update own tasks
+    resource: app.tasks
+    actions: [update]
+    condition: "user_id = auth.uid()"
+
+  # Odoo Integration
+  odoo:sync:
+    description: Trigger Odoo synchronization
+    resource: odoo.*
+    actions: [select, insert, update]
+
+  odoo:configure:
+    description: Configure Odoo instances
+    resource: odoo.instances
+    actions: [insert, update, delete]
+
+  odoo:webhook:
+    description: Receive Odoo webhooks
+    resource: odoo.webhook_events
+    actions: [insert]
+
+  # Internal
+  internal:admin:
+    description: Internal admin operations
+    resource: ops.*
+    actions: [select, insert, update]
+
+# RLS Policy Mapping
+rls_policies:
+  app.orgs:
+    - name: orgs_select_member
+      for: select
+      using: |
+        exists (
+          select 1 from app.org_members m
+          where m.org_id = app.orgs.id
+            and m.user_id = auth.uid()
+        )
+
+  app.org_members:
+    - name: members_select_self_org
+      for: select
+      using: |
+        exists (
+          select 1 from app.org_members m
+          where m.org_id = app.org_members.org_id
+            and m.user_id = auth.uid()
+        )
+
+    - name: members_insert_admin
+      for: insert
+      with_check: |
+        exists (
+          select 1 from app.org_members m
+          where m.org_id = app.org_members.org_id
+            and m.user_id = auth.uid()
+            and m.role in ('org_owner', 'org_admin')
+        )
+
+  app.projects:
+    - name: projects_select_org_member
+      for: select
+      using: |
+        exists (
+          select 1 from app.org_members m
+          where m.org_id = app.projects.org_id
+            and m.user_id = auth.uid()
+        )
+
+  app.tasks:
+    - name: tasks_select_project_member
+      for: select
+      using: |
+        exists (
+          select 1 from app.projects p
+          join app.org_members m on m.org_id = p.org_id
+          where p.id = app.tasks.project_id
+            and m.user_id = auth.uid()
+        )

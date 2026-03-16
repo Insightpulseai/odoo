@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Template Form Extension for Scout Retail Fields -->
+    <record id="product_template_view_form_ipai_bridge" model="ir.ui.view">
+        <field name="name">product.template.view.form.ipai.bridge</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='inventory']" position="after">
+                <page string="Scout Retail" name="scout_retail"
+                      groups="ipai_enterprise_bridge.group_ipai_bridge_user">
+                    <group>
+                        <group string="Retail Classification">
+                            <field name="ipai_is_grocery"/>
+                            <field name="ipai_expiry_required"/>
+                        </group>
+                        <group string="Store Layout">
+                            <field name="ipai_shelf_code"/>
+                            <field name="ipai_substitution_group_id"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Substitution Group Tree View -->
+    <record id="ipai_substitution_group_view_tree" model="ir.ui.view">
+        <field name="name">ipai.substitution.group.view.tree</field>
+        <field name="model">ipai.substitution.group</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Substitution Group Form View -->
+    <record id="ipai_substitution_group_view_form" model="ir.ui.view">
+        <field name="name">ipai.substitution.group.view.form</field>
+        <field name="model">ipai.substitution.group</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Group Name"/></h1>
+                    </div>
+                    <group>
+                        <field name="active" invisible="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Products" name="products">
+                            <field name="product_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="default_code"/>
+                                    <field name="list_price"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Priority Order" name="priority">
+                            <field name="priority_order" placeholder='["product_id_1", "product_id_2", ...]'/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="ipai_substitution_group_action" model="ir.actions.act_window">
+        <field name="name">Substitution Groups</field>
+        <field name="res_model">ipai.substitution.group</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_bridge_retail"
+              name="Retail (Scout)"
+              parent="menu_ipai_bridge_root"
+              sequence="30"/>
+
+    <menuitem id="menu_ipai_substitution_group"
+              name="Substitution Groups"
+              parent="menu_ipai_bridge_retail"
+              action="ipai_substitution_group_action"
+              sequence="10"/>
+</odoo>

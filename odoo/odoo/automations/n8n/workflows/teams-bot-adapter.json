@@ -1,0 +1,66 @@
+{
+  "name": "Odoo Copilot — Teams Bot Adapter",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teams-bot-activity",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Teams Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate Bot Framework JWT token\nconst authHeader = $input.first().json.headers?.authorization || '';\nif (!authHeader.startsWith('Bearer ')) {\n  throw new Error('Missing or invalid Authorization header');\n}\n\nconst activity = $input.first().json.body;\nconst token = authHeader.replace('Bearer ', '');\n\n// Extract activity details\nreturn [{\n  json: {\n    text: activity.text || '',\n    aadObjectId: activity.from?.aadObjectId || '',\n    conversationId: activity.conversation?.id || '',\n    activityId: activity.id || '',\n    serviceUrl: activity.serviceUrl || '',\n    channelId: activity.channelId || 'msteams',\n    replyToId: activity.replyToId || '',\n    token: token\n  }\n}];"
+      },
+      "name": "Extract Activity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL }}/webhook/ai-agent-router",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "platform", "value": "teams" },
+            { "name": "platform_user_id", "value": "={{ $json.aadObjectId }}" },
+            { "name": "message", "value": "={{ $json.text }}" },
+            { "name": "callback_url", "value": "={{ $json.serviceUrl }}/v3/conversations/{{ $json.conversationId }}/activities" }
+          ]
+        },
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "name": "Forward to Agent Router",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ type: 'message', text: $json.response || 'Processing your request...' }) }}"
+      },
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Teams Webhook": { "main": [[{ "node": "Extract Activity", "type": "main", "index": 0 }]] },
+    "Extract Activity": { "main": [[{ "node": "Forward to Agent Router", "type": "main", "index": 0 }]] },
+    "Forward to Agent Router": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": {
+    "description": "Receives Microsoft Teams bot activities, extracts message + user identity, forwards to AI Agent Router"
+  }
+}

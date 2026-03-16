@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Supabase Configuration -->
+    <record id="param_supabase_url" model="ir.config_parameter">
+        <field name="key">ipai.supabase.url</field>
+        <field name="value">https://spdtwktxdalcfigzeqrz.supabase.co</field>
+    </record>
+
+    <record id="param_supabase_service_role_key" model="ir.config_parameter">
+        <field name="key">ipai.supabase.service_role_key</field>
+        <field name="value">REPLACE_WITH_SERVICE_ROLE_KEY</field>
+    </record>
+
+    <record id="param_org_id" model="ir.config_parameter">
+        <field name="key">ipai.org.id</field>
+        <field name="value">REPLACE_WITH_ORG_UUID</field>
+    </record>
+
+    <!-- OpenAI Fallback Configuration -->
+    <record id="param_openai_api_key" model="ir.config_parameter">
+        <field name="key">ipai.openai.api_key</field>
+        <field name="value">REPLACE_WITH_OPENAI_KEY</field>
+    </record>
+</odoo>

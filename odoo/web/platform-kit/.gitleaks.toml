@@ -1,0 +1,66 @@
+# Gitleaks configuration for Platform Kit
+# https://github.com/gitleaks/gitleaks
+
+title = "platform-kit gitleaks config"
+
+[extend]
+# Use default gitleaks rules as base
+useDefault = true
+
+# Custom rules
+[[rules]]
+id = "supabase-service-role-key"
+description = "Supabase service role key"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
+tags = ["key", "supabase"]
+
+[[rules]]
+id = "generic-api-key-assignment"
+description = "Generic API key pattern in assignment"
+regex = '''(?i)(api[_-]?key|service[_-]?role[_-]?key|secret[_-]?key|auth[_-]?token)\s*[:=]\s*["']?[A-Za-z0-9_\-]{20,}["']?'''
+tags = ["key", "token"]
+
+[[rules]]
+id = "slack-token"
+description = "Slack Bot or User Token"
+regex = '''xox[baprs]-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*'''
+tags = ["key", "slack"]
+
+[[rules]]
+id = "mailgun-api-key"
+description = "Mailgun API Key"
+regex = '''key-[a-zA-Z0-9]{32}'''
+tags = ["key", "mailgun"]
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[A-Za-z0-9_]{36,}'''
+tags = ["key", "github"]
+
+[[rules]]
+id = "github-fine-grained-pat"
+description = "GitHub Fine-Grained Personal Access Token"
+regex = '''github_pat_[A-Za-z0-9_]{22,}'''
+tags = ["key", "github"]
+
+# Allowlist patterns (false positives)
+[allowlist]
+description = "Allowlisted patterns"
+
+paths = [
+  '''\.env\.example$''',
+  '''secrets\.schema\.json$''',
+  '''\.gitleaks\.toml$''',
+  '''package-lock\.json$''',
+  '''pnpm-lock\.yaml$''',
+]
+
+regexes = [
+  '''SUPABASE_URL=''',
+  '''SUPABASE_SERVICE_ROLE_KEY=''',
+  '''GITHUB_TOKEN=''',
+  '''placeholder''',
+  '''example\.com''',
+  '''your-.*-here''',
+]

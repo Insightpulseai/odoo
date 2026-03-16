@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.Composer">
+        <div t-att-class="composerClass">
+            <textarea
+                t-ref="textarea"
+                class="ipai-composer-input"
+                t-att-placeholder="props.placeholder || 'Type a message...'"
+                t-att-value="state.value"
+                t-att-disabled="props.isLoading"
+                t-on-input="onInput"
+                t-on-keydown="onKeyDown"
+                t-on-focus="onFocus"
+                t-on-blur="onBlur"
+                rows="1"
+            />
+
+            <div class="ipai-composer-toolbar">
+                <div class="ipai-composer-actions">
+                    <!-- Attachment button (future) -->
+                    <button class="ipai-btn ipai-btn--icon ipai-btn--sm"
+                            title="Attach file"
+                            disabled="true">
+                        <i class="fa fa-paperclip"/>
+                    </button>
+
+                    <!-- Context indicator -->
+                    <button class="ipai-btn ipai-btn--icon ipai-btn--sm"
+                            title="View context">
+                        <i class="fa fa-crosshairs"/>
+                    </button>
+                </div>
+
+                <div class="ipai-composer-submit">
+                    <!-- Character hint -->
+                    <span class="ipai-caption ipai-text-muted" t-if="state.value.length > 0">
+                        Press Enter to send
+                    </span>
+
+                    <!-- Send button -->
+                    <button
+                        class="ipai-btn ipai-btn--filled ipai-btn--sm"
+                        t-att-disabled="!canSend"
+                        t-on-click="send"
+                    >
+                        <t t-if="props.isLoading">
+                            <span class="ipai-spinner ipai-spinner--sm"/>
+                        </t>
+                        <t t-else="">
+                            <i class="fa fa-paper-plane"/>
+                            <span>Send</span>
+                        </t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

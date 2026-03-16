@@ -1,0 +1,140 @@
+version: 1
+namespace: ipai.odoo.finance.ocr_destination_mapping.v1
+artifact_type: mapping
+repo_key: odoo
+domain: finance
+subject: ocr_destination_mapping
+
+# odoo__finance__ocr_destination_mapping__v1.mapping.yaml
+# Maps Document Intelligence extraction output to Odoo model fields
+apiVersion: ipai.mapping/v1
+kind: OCRDestinationMapping
+metadata:
+  name: finance-ocr-destination-mapping
+  version: "1.0.0"
+  owner: finance-team
+  last_updated: "2026-03-16"
+
+mappings:
+  vendor_bill:
+    odoo_model: account.move
+    odoo_move_type: in_invoice
+    field_map:
+      VendorName:
+        odoo_field: partner_id
+        resolve: search_partner_by_name_or_vat
+        fallback: flag_for_review
+      InvoiceId:
+        odoo_field: ref
+        type: char
+      InvoiceDate:
+        odoo_field: invoice_date
+        type: date
+        format: "%Y-%m-%d"
+      DueDate:
+        odoo_field: invoice_date_due
+        type: date
+      InvoiceTotal:
+        odoo_field: null
+        note: "Computed from lines — used for validation only"
+        validation: compare_with_line_sum
+      Items:
+        odoo_field: invoice_line_ids
+        type: one2many
+        line_map:
+          Description:
+            odoo_field: name
+          Quantity:
+            odoo_field: quantity
+            type: float
+            default: 1.0
+          UnitPrice:
+            odoo_field: price_unit
+            type: float
+          Amount:
+            odoo_field: null
+            note: "Computed by Odoo from quantity * price_unit"
+          Tax:
+            odoo_field: tax_ids
+            resolve: match_tax_by_rate
+            fallback: default_vat_12
+      TaxDetails:
+        odoo_field: null
+        note: "Used to validate tax_ids on lines"
+      Currency:
+        odoo_field: currency_id
+        resolve: search_currency_by_code
+        default: PHP
+
+  receipt:
+    odoo_model: hr.expense
+    field_map:
+      MerchantName:
+        odoo_field: name
+        type: char
+        prefix: "Receipt: "
+      TransactionDate:
+        odoo_field: date
+        type: date
+      Total:
+        odoo_field: total_amount
+        type: float
+      Subtotal:
+        odoo_field: null
+        note: "Used for tax validation"
+      TotalTax:
+        odoo_field: tax_ids
+        resolve: match_tax_by_amount
+      Items:
+        odoo_field: null
+        note: "Expenses are single-line — use first item or total"
+
+  bank_statement:
+    odoo_model: account.bank.statement
+    field_map:
+      BankName:
+        odoo_field: null
+        resolve: match_journal_by_bank_name
+        target_field: journal_id
+      AccountNumber:
+        odoo_field: null
+        resolve: match_journal_by_account_number
+        target_field: journal_id
+      StatementDate:
+        odoo_field: date
+        type: date
+      OpeningBalance:
+        odoo_field: balance_start
+        type: float
+      ClosingBalance:
+        odoo_field: balance_end_real
+        type: float
+      Transactions:
+        odoo_field: line_ids
+        type: one2many
+        line_map:
+          Date:
+            odoo_field: date
+          Description:
+            odoo_field: payment_ref
+          Amount:
+            odoo_field: amount
+            type: float
+
+resolve_functions:
+  search_partner_by_name_or_vat:
+    description: "Search res.partner by name (ilike) or VAT exact match"
+    odoo_method: "self.env['res.partner'].search([('vat', '=', vat)], limit=1) or search([('name', 'ilike', name)], limit=1)"
+    on_multiple: "Use highest-scoring match by name similarity"
+    on_none: "Set partner_id = False, flag review_required = True"
+
+  match_tax_by_rate:
+    description: "Match account.tax by percentage rate"
+    default_tax: "VAT 12% (Philippines standard)"
+
+  match_journal_by_bank_name:
+    description: "Match account.journal where bank_id.name ilike bank_name"
+
+  search_currency_by_code:
+    description: "Match res.currency by ISO code"
+    default: PHP

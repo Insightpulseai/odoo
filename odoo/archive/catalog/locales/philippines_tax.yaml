@@ -1,0 +1,25 @@
+overlay:
+  locale: PH
+  domain: tax_compliance
+  applies_to:
+    - CONCUR-T1-EXPENSE
+    - CONCUR-T1-INVOICE_AP
+    - CONCUR-T0_COMPLIANCE
+  additions:
+    - id: PH-TAX-VAT
+      goal: "VAT-compliant expense/invoice evidence & coding"
+      outcomes:
+        - "Capture VAT registration info where needed"
+        - "Support VAT/non-VAT treatment rules per policy"
+    - id: PH-TAX-WHT
+      goal: "Withholding tax awareness for AP invoices"
+      outcomes:
+        - "Tag/compute withholding where applicable (policy-driven)"
+        - "Export fields for ERP posting (actual BIR filing handled in ERP)"
+    - id: PH-AUDIT-EVIDENCE
+      goal: "Audit-ready attachments & trail"
+      outcomes:
+        - "Immutable evidence link (receipt/invoice)"
+        - "Approval + change history retained"
+  non_goals:
+    - "Direct BIR e-filing inside the expense tool (handled in ERP/accounting stack)"

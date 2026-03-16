@@ -6,6 +6,9 @@
 # Cross-references operational KPIs in:
 #   platform/data/contracts/control_room_kpis.yaml
 #
+# See also: platform-strategy-2026.yaml (VMOKRAPI-SPATRES full model)
+# Planning index: planning_system_index.yaml (layer: operational_okrs)
+#
 # Spec bundle: spec/enterprise-target-state/
 # CI validator: scripts/ci/validate_enterprise_okrs.py
 # =============================================================================
