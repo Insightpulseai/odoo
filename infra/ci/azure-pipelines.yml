@@ -10,7 +10,7 @@
 # Stage order:
 #   1. Validate      — lint + what-if (all branches)
 #   2. Deploy-Dev    — deploy to rg-ipai-dev (main only)
-#   3. Deploy-Prod   — deploy to rg-ipai-production (manual approval)
+#   3. Deploy-Prod   — deploy to rg-ipai-shared-prod (manual approval)
 #   4. Validate-Cutover — run Front Door cutover validation script
 # =============================================================================
 
@@ -52,7 +52,7 @@ variables:
   - name: devResourceGroup
     value: rg-ipai-dev
   - name: prodResourceGroup
-    value: rg-ipai-production
+    value: rg-ipai-shared-prod
   - name: deploymentNameBase
     # Unique per pipeline run; avoids collision on concurrent deployments
     value: ipai-bicep-$(Build.BuildNumber)
@@ -68,7 +68,7 @@ stages:
       - job: LintAndWhatIf
         displayName: Lint, What-If, YAML check
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         steps:
           - checkout: self
             fetchDepth: 0  # Full history for accurate diff in PR context
@@ -206,7 +206,7 @@ stages:
       - job: BicepDeployDev
         displayName: Bicep deploy → rg-ipai-dev
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         steps:
           - checkout: self
 
@@ -225,7 +225,7 @@ stages:
   # Stage 3: Deploy-Prod
   # ---------------------------------------------------------------------------
   - stage: DeployProd
-    displayName: Deploy to Production (rg-ipai-production)
+    displayName: Deploy to Production (rg-ipai-shared-prod)
     dependsOn: DeployDev
     condition: |
       and(
@@ -239,9 +239,9 @@ stages:
         value: 'true'
     jobs:
       - job: BicepDeployProd
-        displayName: Bicep deploy → rg-ipai-production
+        displayName: Bicep deploy → rg-ipai-shared-prod
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         # TODO: Convert back to deployment job with 'environment: production'
         # once environments are configured in Azure Pipelines UI.
         steps:
@@ -269,7 +269,7 @@ stages:
       - job: CutoverValidation
         displayName: Run cutover validation script
         pool:
-          name: ipai-build-pool
+          vmImage: ubuntu-latest
         variables:
           # VALIDATE_LIVE is set to 'true' only via a manual pipeline run
           # (Queue pipeline → Variables → VALIDATE_LIVE=true).
