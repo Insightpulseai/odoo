@@ -1,0 +1,6 @@
+<odoo>
+    <menuitem id="menu_ipai_finance_ppm_root"
+              name="Finance PPM"
+              parent="project.menu_main_pm"
+              sequence="40"/>
+</odoo>

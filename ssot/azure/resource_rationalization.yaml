@@ -1,0 +1,306 @@
+# =============================================================================
+# Azure Resource Rationalization Matrix
+# =============================================================================
+#
+# Classification of all 82 Azure resources by keep/review/retire status.
+# Based on ARM REST API inventory (2026-03-17) + target architecture alignment.
+# Landing zone ref: ssot/azure/landing_zone.yaml
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-17"
+total_resources: 82
+status: active
+
+# =============================================================================
+# KEEP — aligned with target architecture
+# =============================================================================
+keep:
+
+  rg-ipai-dev:
+    purpose: Primary Odoo/application dev runtime
+    resources:
+      - name: ipai-odoo-dev-web
+        type: containerApp
+        role: Odoo ERP web
+      - name: ipai-odoo-dev-worker
+        type: containerApp
+        role: Odoo background jobs
+      - name: ipai-odoo-dev-cron
+        type: containerApp
+        role: Odoo scheduled jobs
+      - name: ipai-auth-dev
+        type: containerApp
+        role: Keycloak SSO (transitional to Entra)
+      - name: ipai-crm-dev
+        type: containerApp
+        role: CRM service
+      - name: ipai-mcp-dev
+        type: containerApp
+        role: MCP coordination
+      - name: ipai-ocr-dev
+        type: containerApp
+        role: Document OCR
+      - name: ipai-plane-dev
+        type: containerApp
+        role: Plane project mgmt
+      - name: ipai-shelf-dev
+        type: containerApp
+        role: Shelf service
+      - name: ipai-superset-dev
+        type: containerApp
+        role: Apache Superset BI
+      - name: ipai-website-dev
+        type: containerApp
+        role: Website
+      - name: ipai-odoo-dev-env
+        type: managedEnvironment
+        role: Container Apps environment
+      - name: ipai-odoo-dev-pg
+        type: postgresFlexibleServer
+        role: Primary Odoo database
+      - name: ipai-odoo-dev-kv
+        type: keyVault
+        role: Odoo-specific secrets
+      - name: ipaiodoodevacr
+        type: containerRegistry
+        role: Odoo container images
+
+  rg-ipai-shared-dev:
+    purpose: Shared edge / secrets / observability
+    resources:
+      - name: ipai-fd-dev
+        type: frontDoor
+        role: Public edge + TLS + WAF
+      - name: ipai-fd-dev-ep
+        type: afdEndpoint
+        role: Front Door endpoint
+      - name: ipaiDevWafPolicy
+        type: wafPolicy
+        role: Web application firewall
+      - name: kv-ipai-dev
+        type: keyVault
+        role: Dev shared secrets
+      - name: law-ipai-dev
+        type: logAnalytics
+        role: Log Analytics workspace
+      - name: appi-ipai-dev
+        type: appInsights
+        role: Application Insights
+      - name: mi-ipai-odoo-dev
+        type: managedIdentity
+        role: Odoo managed identity
+      - name: mi-ipai-platform-dev
+        type: managedIdentity
+        role: Platform managed identity
+      - name: mi-ipai-lakehouse-dev
+        type: managedIdentity
+        role: Data intelligence managed identity
+
+  rg-ipai-shared-staging:
+    purpose: Staging shared services
+    resources:
+      - name: kv-ipai-staging
+        type: keyVault
+        role: Staging secrets
+      - name: mi-ipai-odoo-staging
+        type: managedIdentity
+      - name: mi-ipai-platform-staging
+        type: managedIdentity
+      - name: mi-ipai-lakehouse-staging
+        type: managedIdentity
+
+  rg-ipai-shared-prod:
+    purpose: Prod shared services
+    resources:
+      - name: kv-ipai-prod
+        type: keyVault
+        role: Production secrets
+      - name: mi-ipai-odoo-prod
+        type: managedIdentity
+      - name: mi-ipai-platform-prod
+        type: managedIdentity
+      - name: mi-ipai-lakehouse-prod
+        type: managedIdentity
+
+  rg-ipai-ai-dev:
+    purpose: AI / Foundry / Databricks
+    resources:
+      - name: dbw-ipai-dev
+        type: databricksWorkspace
+        role: Data intelligence workspace
+      - name: oai-ipai-dev
+        type: openAI
+        role: Azure OpenAI
+      - name: srch-ipai-dev
+        type: searchService
+        role: Azure AI Search
+      - name: docai-ipai-dev
+        type: documentIntelligence
+        role: Document Intelligence
+      - name: vision-ipai-dev
+        type: computerVision
+        role: Computer Vision
+      - name: lang-ipai-dev
+        type: language
+        role: Language service
+      - name: stipaidevlake
+        type: storageAccount
+        role: Lakehouse storage
+      - name: aifoundry-ipai-dev
+        type: mlWorkspace
+        role: Foundry AI Hub
+      - name: proj-ipai-claude
+        type: mlWorkspace
+        role: Foundry project (Claude)
+
+  rg-dbw-managed-ipai-dev:
+    purpose: Databricks managed resources
+    resources:
+      - name: dbstoragew6tn3uhg4bluy
+        type: storageAccount
+      - name: dbmanagedidentity
+        type: managedIdentity
+      - name: unity-catalog-access-connector
+        type: accessConnector
+
+# =============================================================================
+# REVIEW — validate usage before keeping or retiring
+# =============================================================================
+review:
+
+  rg-ipai-agents-dev:
+    purpose: Legacy agents + Supabase VM
+    concern: Contains duplicate Odoo runtime pieces alongside the canonical rg-ipai-dev
+    resources:
+      - name: odoo-web
+        type: containerApp
+        status: retire_candidate
+        reason: Duplicate of ipai-odoo-dev-web in rg-ipai-dev
+      - name: odoo-init
+        type: containerAppJob
+        status: retire_candidate
+        reason: One-time init job, likely no longer needed
+      - name: cae-ipai-dev
+        type: managedEnvironment
+        status: review
+        reason: Second ACA environment — may still host Supabase sidecar
+      - name: debug-odoo-ep
+        type: containerGroup
+        status: retire_candidate
+        reason: Debug-only container instance
+      - name: vm-ipai-supabase-dev
+        type: virtualMachine
+        status: keep_exception
+        reason: Self-hosted Supabase requires full VM (documented exception)
+      - name: id-ipai-aca-dev
+        type: managedIdentity
+        status: review
+      - name: vm networking (NIC, NSG, PublicIP, VNet)
+        status: keep_if_vm_stays
+
+  rg-ipai-data-dev:
+    purpose: Platform database
+    concern: Second PostgreSQL server alongside ipai-odoo-dev-pg
+    resources:
+      - name: pg-ipai-dev
+        type: postgresFlexibleServer
+        status: review
+        reason: Validate which apps connect here vs ipai-odoo-dev-pg
+        action: Check connection logs. If only Supabase/platform uses it, keep. If unused, retire.
+
+  rg-data-intel-ph:
+    purpose: Separate Foundry project
+    concern: Second Foundry estate alongside aifoundry-ipai-dev
+    resources:
+      - name: data-intel-ph-resource
+        type: cognitiveServices
+        status: review
+        reason: This is the active Foundry project endpoint used by ipai_odoo_copilot
+        action: Decide canonical Foundry estate. If this is primary, keep. If proj-ipai-claude is primary, consolidate.
+      - name: data-intel-ph-resource/data-intel-ph
+        type: cognitiveServicesProject
+        status: review
+
+  rg-ipai-devops:
+    purpose: Azure DevOps infrastructure
+    concern: Only needed if Dev Center / managed pools are actively used
+    resources:
+      - name: ipai-devcenter
+        type: devCenter
+        status: review
+        action: Validate active usage. If no dev boxes in use, consider retiring.
+      - name: ipai-devcenter-project
+        type: devCenterProject
+        status: review
+      - name: ipai-build-pool
+        type: managedDevOpsPool
+        status: keep_if_azdo_active
+
+# =============================================================================
+# CONSOLIDATE — likely over-provisioned
+# =============================================================================
+consolidate:
+
+  container_registries:
+    current_count: 3
+    target_count: 1-2
+    resources:
+      - name: ipaiodoodevacr
+        rg: rg-ipai-dev
+        recommendation: keep (Odoo images)
+      - name: ipaiwebacr
+        rg: rg-ipai-dev
+        recommendation: merge_into_cripaidev
+      - name: cripaidev
+        rg: rg-ipai-shared-dev
+        recommendation: keep_as_shared
+    action: Consolidate to ipaiodoodevacr (Odoo) + cripaidev (shared). Retire ipaiwebacr.
+
+  foundry_estates:
+    current_count: 2
+    target_count: 1
+    resources:
+      - name: aifoundry-ipai-dev + proj-ipai-claude
+        rg: rg-ipai-ai-dev
+        recommendation: review
+      - name: data-intel-ph-resource + data-intel-ph
+        rg: rg-data-intel-ph
+        recommendation: review
+    action: Pick one as canonical. The copilot module currently uses data-intel-ph.
+
+  postgres_servers:
+    current_count: 2
+    target_count: 1-2
+    resources:
+      - name: ipai-odoo-dev-pg
+        rg: rg-ipai-dev
+        recommendation: keep (canonical Odoo DB)
+      - name: pg-ipai-dev
+        rg: rg-ipai-data-dev
+        recommendation: review (platform/Supabase DB?)
+    action: Validate connection usage. Keep both only if serving different planes.
+
+# =============================================================================
+# Gaps — under-provisioned for target state
+# =============================================================================
+gaps:
+  - area: Staging application runtime
+    status: missing
+    note: Only shared services (KV + identities) exist for staging. No ACA apps, no PG, no Front Door route.
+
+  - area: Prod application runtime
+    status: missing
+    note: Same as staging — only shared services exist. No production workloads deployed.
+
+  - area: Redis
+    status: missing
+    note: Odoo production needs Redis for session store, bus polling, and caching. Not provisioned in any RG.
+
+  - area: Defender for Cloud
+    status: not_verified
+    note: OBJ-007 target. Need to verify activation status.
+
+  - area: Azure Monitor alerts
+    status: not_verified
+    note: OBJ-007 target. Log Analytics exists but alerting rules not verified.

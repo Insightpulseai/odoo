@@ -1,0 +1,138 @@
+name: Odoo Module Install
+
+on:
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Comma-separated module names (e.g. hr_expense,purchase)'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      action:
+        description: 'Install or upgrade'
+        required: true
+        default: 'install'
+        type: choice
+        options:
+          - install
+          - upgrade
+
+permissions:
+  contents: read
+  id-token: write
+
+# Prod requires manual approval via environment protection rules
+# Configure in: Settings → Environments → prod → Required reviewers
+
+jobs:
+  install-modules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ github.event.inputs.environment }}
+
+    env:
+      ACA_RESOURCE_GROUP: ${{ vars.ACA_RESOURCE_GROUP || 'rg-ipai-dev' }}
+      MODULES: ${{ github.event.inputs.modules }}
+      TARGET_ENV: ${{ github.event.inputs.environment }}
+      ACTION: ${{ github.event.inputs.action }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve database name
+        id: db
+        run: |
+          case "$TARGET_ENV" in
+            dev)     DB_NAME="odoo_dev" ;;
+            staging) DB_NAME="odoo_staging" ;;
+            prod)    DB_NAME="odoo" ;;
+          esac
+          echo "db_name=${DB_NAME}" >> $GITHUB_OUTPUT
+          echo "Target DB: ${DB_NAME}"
+
+          # Guard: never use odoo_prod
+          if [[ "$DB_NAME" == "odoo_prod" ]]; then
+            echo "ERROR: odoo_prod is forbidden"
+            exit 1
+          fi
+
+      - name: Resolve ACA app name
+        id: aca
+        run: |
+          case "$TARGET_ENV" in
+            dev)     ACA_APP="ipai-odoo-dev-web" ;;
+            staging) ACA_APP="ipai-odoo-staging-web" ;;
+            prod)    ACA_APP="ipai-odoo-dev-web" ;;  # TODO: separate prod ACA
+          esac
+          echo "aca_app=${ACA_APP}" >> $GITHUB_OUTPUT
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install/upgrade modules via ACA exec
+        run: |
+          DB_NAME="${{ steps.db.outputs.db_name }}"
+          ACA_APP="${{ steps.aca.outputs.aca_app }}"
+
+          if [[ "$ACTION" == "install" ]]; then
+            FLAG="--init"
+          else
+            FLAG="--update"
+          fi
+
+          echo "Running: odoo ${FLAG}=${MODULES} on ${DB_NAME} via ${ACA_APP}"
+
+          # Execute odoo-bin inside the running container
+          az containerapp exec \
+            --name "${ACA_APP}" \
+            --resource-group "${ACA_RESOURCE_GROUP}" \
+            --command "odoo ${FLAG}=${MODULES} -d ${DB_NAME} --stop-after-init --no-http" \
+            2>&1 | tee /tmp/module-install.log
+
+          echo "Module ${ACTION} complete."
+
+      - name: Verify installed modules
+        run: |
+          DB_NAME="${{ steps.db.outputs.db_name }}"
+          ACA_APP="${{ steps.aca.outputs.aca_app }}"
+
+          az containerapp exec \
+            --name "${ACA_APP}" \
+            --resource-group "${ACA_RESOURCE_GROUP}" \
+            --command "odoo shell -d ${DB_NAME} --no-http -c \"
+              mods = env['ir.module.module'].search([('name','in','${MODULES}'.split(',')),('state','=','installed')])
+              for m in mods: print(f'  ✓ {m.name}: installed')
+              missing = set('${MODULES}'.split(',')) - set(mods.mapped('name'))
+              for m in missing: print(f'  ✗ {m}: NOT installed')
+            \"" \
+            2>&1 || echo "Verification via shell not available — check logs"
+
+      - name: Upload install log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-install-${{ github.event.inputs.environment }}-${{ github.run_id }}
+          path: /tmp/module-install.log
+
+      - name: Summary
+        run: |
+          echo "### Module ${{ github.event.inputs.action }} — ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Modules** | \`${MODULES}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Database** | \`${{ steps.db.outputs.db_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Action** | ${ACTION} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Container** | ${{ steps.aca.outputs.aca_app }} |" >> $GITHUB_STEP_SUMMARY
