@@ -16,7 +16,7 @@ last_updated: "2026-03-10"
 front_door_profile:
   name: ipai-fd-premium
   sku: Premium_AzureFrontDoor
-  resource_group: rg-ipai-production
+  resource_group: rg-ipai-shared-prod
   endpoint_name: ipai-prod
   # Front Door endpoint FQDN: ipai-prod.z01.azurefd.net
 
