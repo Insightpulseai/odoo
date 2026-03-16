@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Expense Liquidation Tree View -->
+    <record id="view_expense_liquidation_tree" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.tree</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="arch" type="xml">
+            <list string="Expense Liquidations"
+                  decoration-info="state=='draft'"
+                  decoration-warning="state in ('submitted','manager_approved')"
+                  decoration-success="state in ('closed','liquidated')"
+                  decoration-muted="state in ('cancelled','rejected')">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="employee_id"/>
+                <field name="liquidation_type"/>
+                <field name="advance_amount" optional="show" sum="Total Advances"/>
+                <field name="total_expenses" sum="Total Expenses"/>
+                <field name="settlement_amount" optional="hide"/>
+                <field name="settlement_status" optional="hide"/>
+                <field name="policy_exception_count" string="Violations" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state=='draft'"
+                       decoration-warning="state in ('submitted','manager_approved','finance_approved')"
+                       decoration-success="state in ('released','in_liquidation','liquidated','closed')"
+                       decoration-danger="state in ('rejected','cancelled')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Expense Liquidation Form View -->
+    <record id="view_expense_liquidation_form" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.form</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="arch" type="xml">
+            <form string="Expense Liquidation">
+                <header>
+                    <!-- Draft actions -->
+                    <button name="action_submit" string="Submit" type="object"
+                            states="draft" class="btn-primary"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            states="draft" class="btn-secondary"/>
+
+                    <!-- Manager approval -->
+                    <button name="action_manager_approve" string="Manager Approve" type="object"
+                            states="submitted" class="btn-primary"
+                            groups="hr.group_hr_manager"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            states="submitted" class="btn-danger"
+                            groups="hr.group_hr_manager"/>
+
+                    <!-- Finance approval -->
+                    <button name="action_finance_approve" string="Finance Approve" type="object"
+                            states="manager_approved" class="btn-primary"
+                            groups="account.group_account_manager"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            states="manager_approved" class="btn-danger"
+                            groups="account.group_account_manager"/>
+
+                    <!-- Release -->
+                    <button name="action_release" string="Release Funds" type="object"
+                            states="finance_approved" class="btn-primary"
+                            groups="account.group_account_manager"/>
+
+                    <!-- Liquidation flow -->
+                    <button name="action_start_liquidation" string="Start Liquidation" type="object"
+                            states="released" class="btn-primary"/>
+                    <button name="action_check_policy" string="Check Policy" type="object"
+                            states="in_liquidation" class="btn-secondary"/>
+                    <button name="action_liquidate" string="Post Liquidation" type="object"
+                            states="in_liquidation" class="btn-primary"
+                            groups="account.group_account_user"/>
+
+                    <!-- Close -->
+                    <button name="action_close" string="Close" type="object"
+                            states="liquidated" class="btn-primary"
+                            groups="account.group_account_manager"/>
+
+                    <!-- Cancel from submitted -->
+                    <button name="action_cancel" string="Cancel" type="object"
+                            states="submitted" class="btn-secondary"/>
+
+                    <!-- Reset to draft -->
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            attrs="{'invisible': [('state', 'not in', ('rejected', 'cancelled'))]}"
+                            class="btn-secondary"/>
+
+                    <!-- Agent integration -->
+                    <button name="action_trigger_agent_run" string="Run IPAI Agent" type="object"
+                            class="btn-secondary"
+                            attrs="{'invisible': [('state', 'not in', ('submitted', 'manager_approved', 'in_liquidation'))]}"
+                            groups="ipai_agent.group_ipai_agent_user"
+                            help="Trigger an IPAI agent run on this liquidation record."/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,manager_approved,finance_approved,released,in_liquidation,liquidated,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lines" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="line_count" widget="statinfo" string="Lines"/>
+                        </button>
+                        <button name="action_view_policy_violations" type="object"
+                                class="oe_stat_button" icon="fa-exclamation-triangle"
+                                attrs="{'invisible': [('policy_exception_count', '=', 0)]}">
+                            <field name="policy_exception_count" widget="statinfo" string="Violations"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="main_info">
+                            <field name="liquidation_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="employee_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="department_id"/>
+                            <field name="date"/>
+                        </group>
+                        <group name="dates_currency">
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="liquidation_report_date"/>
+                            <field name="currency_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+
+                    <group name="cash_advance" string="Cash Advance Details" attrs="{'invisible': [('liquidation_type', '!=', 'cash_advance')]}">
+                        <field name="advance_amount"/>
+                        <field name="advance_reference"/>
+                        <field name="advance_date"/>
+                    </group>
+
+                    <group name="description">
+                        <field name="description" placeholder="Purpose of expenses..."/>
+                    </group>
+
+                    <notebook>
+                        <page string="Expense Lines" name="lines">
+                            <field name="line_ids" widget="one2many_list" mode="tree,kanban">
+                                <list string="Expense Lines" editable="bottom">
+                                    <field name="date"/>
+                                    <field name="description"/>
+                                    <field name="bucket"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="reference" optional="hide"/>
+                                    <field name="receipt_count" string="Receipts"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Bucket Totals" name="totals">
+                            <group>
+                                <group string="Expense Buckets">
+                                    <field name="total_meals" widget="monetary" readonly="1"/>
+                                    <field name="total_transportation" widget="monetary" readonly="1"/>
+                                    <field name="total_miscellaneous" widget="monetary" readonly="1"/>
+                                </group>
+                                <group string="Totals">
+                                    <field name="total_expenses" widget="monetary" readonly="1" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Settlement" name="settlement" attrs="{'invisible': [('liquidation_type', '!=', 'cash_advance')]}">
+                            <group>
+                                <group string="Settlement Calculation">
+                                    <field name="advance_amount" readonly="1"/>
+                                    <field name="total_expenses" readonly="1"/>
+                                    <field name="settlement_amount" readonly="1" widget="monetary"/>
+                                    <field name="settlement_status" readonly="1"/>
+                                </group>
+                                <group string="Info">
+                                    <div class="alert alert-info" role="alert" attrs="{'invisible': [('settlement_status', '=', 'balanced')]}">
+                                        <strong attrs="{'invisible': [('settlement_status', '!=', 'return')]}">Return to Company:</strong>
+                                        <strong attrs="{'invisible': [('settlement_status', '!=', 'reimburse')]}">Additional Reimbursement:</strong>
+                                        <field name="settlement_amount" widget="monetary" readonly="1" nolabel="1" attrs="{'invisible': [('settlement_status', '=', 'balanced')]}"/>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Policy Violations" name="violations"
+                              attrs="{'invisible': [('policy_exception_count', '=', 0)]}">
+                            <field name="policy_exception_ids">
+                                <list string="Policy Violations" editable="bottom"
+                                      decoration-warning="severity=='warning' and not resolved"
+                                      decoration-danger="severity=='block' and not resolved"
+                                      decoration-muted="resolved">
+                                    <field name="rule_code"/>
+                                    <field name="severity" widget="badge"/>
+                                    <field name="description"/>
+                                    <field name="resolved"/>
+                                    <field name="resolved_by"/>
+                                    <field name="resolved_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Accounting" name="accounting"
+                              attrs="{'invisible': [('liquidation_type', '!=', 'cash_advance')]}">
+                            <group>
+                                <group string="Journal Entries">
+                                    <field name="release_move_id" readonly="1"/>
+                                    <field name="liquidation_move_id" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Approval" name="approval">
+                            <group>
+                                <group string="Manager Approval">
+                                    <field name="approver_id" readonly="1"/>
+                                    <field name="approval_date" readonly="1"/>
+                                </group>
+                                <group string="Finance Approval">
+                                    <field name="finance_approver_id" readonly="1"/>
+                                    <field name="finance_approval_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Expense Liquidation Search View -->
+    <record id="view_expense_liquidation_search" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.search</field>
+        <field name="model">hr.expense.liquidation</field>
+        <field name="arch" type="xml">
+            <search string="Expense Liquidations">
+                <field name="name" string="Reference"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="liquidation_type"/>
+                <filter string="My Liquidations" name="my_liquidations" domain="[('employee_id.user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Submitted" name="submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter string="Manager Approved" name="manager_approved" domain="[('state', '=', 'manager_approved')]"/>
+                <filter string="Finance Approved" name="finance_approved" domain="[('state', '=', 'finance_approved')]"/>
+                <filter string="Released" name="released" domain="[('state', '=', 'released')]"/>
+                <filter string="In Liquidation" name="in_liquidation" domain="[('state', '=', 'in_liquidation')]"/>
+                <filter string="Liquidated" name="liquidated" domain="[('state', '=', 'liquidated')]"/>
+                <filter string="Closed" name="closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="Pending Approval" name="pending_approval"
+                        domain="[('state', 'in', ('submitted', 'manager_approved', 'finance_approved'))]"/>
+                <filter string="Overdue (Released)" name="overdue"
+                        domain="[('state', '=', 'released')]"/>
+                <filter string="Has Violations" name="has_violations"
+                        domain="[('policy_exception_count', '>', 0)]"/>
+                <separator/>
+                <filter string="Cash Advance" name="cash_advance" domain="[('liquidation_type', '=', 'cash_advance')]"/>
+                <filter string="Reimbursement" name="reimbursement" domain="[('liquidation_type', '=', 'reimbursement')]"/>
+                <filter string="Petty Cash" name="petty_cash" domain="[('liquidation_type', '=', 'petty_cash')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="group_employee" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'liquidation_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'state'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Expense Liquidation Line Form View -->
+    <record id="view_expense_liquidation_line_form" model="ir.ui.view">
+        <field name="name">hr.expense.liquidation.line.form</field>
+        <field name="model">hr.expense.liquidation.line</field>
+        <field name="arch" type="xml">
+            <form string="Expense Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="description"/>
+                            <field name="bucket"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="reference"/>
+                            <field name="liquidation_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Receipts">
+                        <field name="receipt_ids" widget="many2many_binary" string="Attach Receipts"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_expense_liquidation" model="ir.actions.act_window">
+        <field name="name">Expense Liquidations</field>
+        <field name="res_model">hr.expense.liquidation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_expense_liquidation_search"/>
+        <field name="context">{'search_default_my_liquidations': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first expense liquidation
+            </p>
+            <p>
+                Submit itemized expenses for cash advances, reimbursements, or petty cash.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_expense_liquidation_my" model="ir.actions.act_window">
+        <field name="name">My Liquidations</field>
+        <field name="res_model">hr.expense.liquidation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_expense_liquidation_search"/>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'default_employee_id': uid}</field>
+    </record>
+
+    <record id="action_expense_liquidation_to_approve" model="ir.actions.act_window">
+        <field name="name">To Approve</field>
+        <field name="res_model">hr.expense.liquidation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_expense_liquidation_search"/>
+        <field name="domain">[('state', 'in', ('submitted', 'manager_approved', 'finance_approved'))]</field>
+        <field name="context">{'search_default_pending_approval': 1}</field>
+    </record>
+
+</odoo>

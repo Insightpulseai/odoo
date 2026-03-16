@@ -1,0 +1,178 @@
+# Benchmark Scenario Schema
+# All scenario YAML files must conform to this structure.
+# Validate with: python scripts/benchmark/validate_scenarios.py
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Odoo Copilot Benchmark Scenario"
+description: "Schema for benchmark scenarios evaluating Odoo Copilot capabilities"
+
+type: object
+required:
+  - scenarios
+
+properties:
+  scenarios:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required:
+        - id
+        - domain
+        - capability_class
+        - persona
+        - prompt
+        - expected_behavior
+        - hard_gates
+      properties:
+        id:
+          type: string
+          pattern: "^BM-[A-Z]+-[TNI]-[0-9]{3}$"
+          description: "Unique scenario ID. Format: BM-<DOMAIN>-<T|N|I>-<NNN>"
+
+        domain:
+          type: string
+          enum:
+            - crm
+            - sales
+            - purchase
+            - accounting
+            - inventory
+            - project-helpdesk
+            - settings-admin
+            - knowledge-sop
+            - documents
+
+        capability_class:
+          type: string
+          enum:
+            - transactional
+            - navigational
+            - informational
+
+        persona:
+          type: string
+          enum:
+            - sales_rep
+            - sales_mgr
+            - accountant
+            - inv_operator
+            - project_mgr
+            - admin
+            - exec_readonly
+
+        prompt:
+          type: string
+          minLength: 10
+          description: "The natural-language prompt sent to the copilot"
+
+        setup:
+          type: object
+          description: "Optional pre-conditions to establish before running the scenario"
+          properties:
+            seed_records:
+              type: array
+              items:
+                type: object
+                required: [model, values]
+                properties:
+                  model:
+                    type: string
+                  values:
+                    type: object
+            require_modules:
+              type: array
+              items:
+                type: string
+
+        expected_behavior:
+          type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum:
+                - create
+                - write
+                - unlink
+                - action
+                - navigate
+                - search
+                - aggregate
+                - rag_retrieve
+            model:
+              type: string
+              description: "Odoo model name (e.g. crm.lead)"
+            method:
+              type: string
+              description: "ORM method or action name"
+            fields:
+              type: object
+              description: "Expected field values in the result"
+            action_id:
+              type: string
+              description: "Expected Odoo action XML ID for navigational scenarios"
+            view_type:
+              type: string
+              enum: [list, form, kanban, pivot, graph, calendar, gantt]
+            domain_filter:
+              type: array
+              description: "Expected Odoo domain filter"
+            source_model:
+              type: string
+              description: "For informational: model queried"
+            citation_required:
+              type: boolean
+              description: "For informational: must cite source"
+
+        hard_gates:
+          type: object
+          required: [capability, correctness]
+          properties:
+            capability:
+              type: boolean
+              default: true
+              description: "Can the copilot perform this action?"
+            correctness:
+              type: boolean
+              default: true
+              description: "Is the result factually accurate?"
+            permission_check:
+              type: boolean
+              description: "Must verify ORM access control"
+            confirmation_required:
+              type: boolean
+              description: "Must request user confirmation before writes"
+            audit_trace:
+              type: boolean
+              description: "Must log action trace with user_id, model, method, record_id, timestamp"
+            grounding:
+              type: boolean
+              description: "Must cite verifiable sources (informational only)"
+
+        soft_scores:
+          type: object
+          properties:
+            completeness:
+              type: object
+              properties:
+                weight: { type: number, minimum: 0, maximum: 1 }
+            clarity:
+              type: object
+              properties:
+                weight: { type: number, minimum: 0, maximum: 1 }
+            latency:
+              type: object
+              properties:
+                target_ms: { type: integer, minimum: 0 }
+                weight: { type: number, minimum: 0, maximum: 1 }
+
+        tags:
+          type: array
+          items:
+            type: string
+          description: "Optional tags for filtering (e.g. 'bir', 'oca', 'governance')"
+
+        notes:
+          type: string
+          description: "Implementation notes or known limitations"

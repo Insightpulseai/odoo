@@ -1,0 +1,271 @@
+name: nightly-maintenance
+
+on:
+  schedule:
+    # Run at 2 AM UTC daily
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to run'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - health-check
+          - plane-sync
+          - cleanup
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+jobs:
+  integration-audit:
+    name: Integration Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.inputs.action == 'full' || github.event_name == 'schedule'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dnsutils
+        run: sudo apt-get update && sudo apt-get install -y dnsutils
+
+      - name: Run integration audit
+        env:
+          ROOT_DOMAIN: insightpulseai.com
+          EXPECTED_MG_DOMAIN: mg.insightpulseai.com
+          MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+        run: |
+          chmod +x scripts/audit/run_integration_audit.sh
+          ./scripts/audit/run_integration_audit.sh 2>&1 | tee /tmp/audit.log || true
+
+          # Parse results
+          if grep -q "FAIL.*policy\|FAIL.*domain" /tmp/audit.log; then
+            echo "::error::Domain policy check failed"
+            exit 1
+          fi
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-results
+          path: .audit/results/
+          retention-days: 30
+
+  health-check:
+    name: System Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [integration-audit]
+    if: always() && (github.event.inputs.action == 'full' || github.event.inputs.action == 'health-check' || github.event_name == 'schedule')
+
+    steps:
+      - name: Run health check
+        id: health
+        run: |
+          RESPONSE=$(curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/health-check?action=full" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120 || echo '{"success": false, "error": "Request failed"}')
+
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+          echo "Health check response: $RESPONSE"
+
+          # Check if successful
+          SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
+          if [ "$SUCCESS" != "true" ]; then
+            echo "::warning::Health check reported issues"
+          fi
+
+      - name: Parse health results
+        run: |
+          RESPONSE='${{ steps.health.outputs.response }}'
+
+          HEALTHY=$(echo "$RESPONSE" | jq -r '.health.healthy // 0')
+          DEGRADED=$(echo "$RESPONSE" | jq -r '.health.degraded // 0')
+          UNHEALTHY=$(echo "$RESPONSE" | jq -r '.health.unhealthy // 0')
+
+          echo "### Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Healthy | $HEALTHY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Degraded | $DEGRADED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unhealthy | $UNHEALTHY |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$UNHEALTHY" -gt 0 ]; then
+            echo "::error::$UNHEALTHY unhealthy components detected"
+            exit 1
+          fi
+
+  cleanup-expired-claims:
+    name: Cleanup Expired Queue Claims
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event.inputs.action == 'full' || github.event.inputs.action == 'cleanup' || github.event_name == 'schedule'
+
+    steps:
+      - name: Cleanup expired claims
+        run: |
+          RESPONSE=$(curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/ops-executor?action=cleanup" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 || echo '{"success": false, "error": "Request failed"}')
+
+          echo "Cleanup response: $RESPONSE"
+
+          CLEANED=$(echo "$RESPONSE" | jq -r '.cleaned // 0')
+          echo "### Cleanup Results" >> $GITHUB_STEP_SUMMARY
+          echo "Expired claims cleaned: $CLEANED" >> $GITHUB_STEP_SUMMARY
+
+  plane-sync:
+    name: Sync Issues to Plane
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [health-check]
+    if: always() && (github.event.inputs.action == 'full' || github.event.inputs.action == 'plane-sync' || github.event_name == 'schedule')
+
+    steps:
+      - name: Sync failures and alerts to Plane
+        id: sync
+        run: |
+          RESPONSE=$(curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/plane-sync?action=sync_all" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120 || echo '{"success": false, "error": "Request failed"}')
+
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+          echo "Plane sync response: $RESPONSE"
+
+      - name: Parse sync results
+        run: |
+          RESPONSE='${{ steps.sync.outputs.response }}'
+
+          CREATED=$(echo "$RESPONSE" | jq -r '.issues_created // 0')
+          ERRORS=$(echo "$RESPONSE" | jq -r '.errors | length // 0')
+
+          echo "### Plane Sync Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Issues Created | $CREATED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Errors | $ERRORS |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::warning::$ERRORS errors during Plane sync"
+          fi
+
+  stale-data-audit:
+    name: Stale Data Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [health-check]
+    if: always() && (github.event.inputs.action == 'full' || github.event_name == 'schedule')
+
+    steps:
+      - name: Check for stale data
+        run: |
+          # Query for stale sync states (not synced in 24h)
+          STALE_QUERY='SELECT target_id, entity_type, last_sync_at FROM connectors.sync_state WHERE last_sync_at < now() - interval '\''24 hours'\'''
+
+          # This would require direct DB access or an RPC
+          # For now, we log the intent
+          echo "### Stale Data Audit" >> $GITHUB_STEP_SUMMARY
+          echo "Checking for connectors not synced in 24 hours..." >> $GITHUB_STEP_SUMMARY
+
+          # Trigger health check which includes staleness
+          curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/health-check?action=mirror" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            --max-time 60 || echo "Mirror check skipped"
+
+  drift-detection:
+    name: Configuration Drift Detection
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [health-check]
+    if: always() && (github.event.inputs.action == 'full' || github.event_name == 'schedule')
+
+    steps:
+      - name: Check for configuration drift
+        run: |
+          RESPONSE=$(curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/drift-detection" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 120 || echo '{"success": false, "error": "Request failed"}')
+
+          echo "Drift detection response: $RESPONSE"
+
+          SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
+          DRIFT_COUNT=$(echo "$RESPONSE" | jq -r '.drift_detected // 0')
+
+          echo "### Drift Detection Results" >> $GITHUB_STEP_SUMMARY
+          echo "Drift instances detected: $DRIFT_COUNT" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$DRIFT_COUNT" -gt 0 ]; then
+            echo "::warning::Configuration drift detected in $DRIFT_COUNT items"
+          fi
+
+  process-pending-jobs:
+    name: Process Pending Queue Jobs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [cleanup-expired-claims]
+    if: always() && (github.event.inputs.action == 'full' || github.event_name == 'schedule')
+
+    steps:
+      - name: Process up to 10 pending jobs
+        run: |
+          RESPONSE=$(curl -sSf "${{ env.SUPABASE_URL }}/functions/v1/ops-executor?action=process&max=10" \
+            -H "Authorization: Bearer ${{ env.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 300 || echo '{"success": false, "error": "Request failed"}')
+
+          echo "Job processing response: $RESPONSE"
+
+          PROCESSED=$(echo "$RESPONSE" | jq -r '.processed // 0')
+          echo "### Queue Processing Results" >> $GITHUB_STEP_SUMMARY
+          echo "Jobs processed: $PROCESSED" >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    name: Generate Nightly Summary
+    runs-on: ubuntu-latest
+    needs: [integration-audit, health-check, cleanup-expired-claims, plane-sync, stale-data-audit, drift-detection, process-pending-jobs]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Nightly Maintenance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Job Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Integration Audit | ${{ needs.integration-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Health Check | ${{ needs.health-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Cleanup | ${{ needs.cleanup-expired-claims.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Plane Sync | ${{ needs.plane-sync.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Stale Audit | ${{ needs.stale-data-audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Drift Detection | ${{ needs.drift-detection.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Queue Processing | ${{ needs.process-pending-jobs.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Nightly maintenance had failures. Check individual job logs."
+          # If SLACK_WEBHOOK_URL is configured, send alert
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
+              -H "Content-Type: application/json" \
+              -d '{"text": "Nightly maintenance failed. Check GitHub Actions for details.", "username": "Platform Kit", "icon_emoji": ":warning:"}'
+          fi

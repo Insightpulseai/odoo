@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Finance Workflow Projects -->
+    <!-- Both projects share the same normalized stage set -->
+
+    <!-- Project 1: Month-End Close (IM1) -->
+    <record id="project_month_end_close" model="project.project">
+        <field name="name">FIN - Month-End Close</field>
+        <field name="label_tasks">Close Task</field>
+        <field name="allow_subtasks">True</field>
+        <field name="allow_timesheets">True</field>
+        <field name="description">
+Monthly closing workflow for TBWA\SMP and OMC Finance team.
+
+Tasks include:
+- Payroll &amp; Personnel
+- Tax &amp; Provisions
+- Rent &amp; Leases
+- WIPDO Management
+- Accruals &amp; Amortization
+- Trial Balance
+- Final Reconciliations
+
+Stage Flow: Preparation → Review → Approval → Execute → Close
+        </field>
+        <field name="type_ids" eval="[
+            (4, ref('ipai_finance_workflow.fin_stage_prep')),
+            (4, ref('ipai_finance_workflow.fin_stage_review')),
+            (4, ref('ipai_finance_workflow.fin_stage_approve')),
+            (4, ref('ipai_finance_workflow.fin_stage_execute')),
+            (4, ref('ipai_finance_workflow.fin_stage_close'))
+        ]"/>
+    </record>
+
+    <!-- Project 2: BIR Returns (IM2) -->
+    <record id="project_bir_returns" model="project.project">
+        <field name="name">FIN - BIR Returns</field>
+        <field name="label_tasks">Return</field>
+        <field name="allow_subtasks">True</field>
+        <field name="allow_timesheets">True</field>
+        <field name="description">
+BIR (Bureau of Internal Revenue) tax filing compliance workflow.
+
+Forms include:
+- 1601-C (Monthly Withholding Tax)
+- 0619-E (Expanded Withholding Tax)
+- 2550M (Monthly VAT)
+- 2550Q (Quarterly VAT)
+- 1702Q (Quarterly Income Tax)
+- 1601-EQ (Quarterly Withholding)
+- 1604-E (Annual Info Return)
+
+Stage Flow: Preparation → Review → Approval → Execute/File/Pay → Close
+
+Process Steps:
+1. Preparation – Finance Supervisor (BOM)
+2. Report Approval – Senior Finance Manager (RIM)
+3. Payment Approval – Finance Director (CKVC)
+4. Filing &amp; Payment – Finance Supervisor (BOM)
+        </field>
+        <field name="type_ids" eval="[
+            (4, ref('ipai_finance_workflow.fin_stage_prep')),
+            (4, ref('ipai_finance_workflow.fin_stage_review')),
+            (4, ref('ipai_finance_workflow.fin_stage_approve')),
+            (4, ref('ipai_finance_workflow.fin_stage_execute')),
+            (4, ref('ipai_finance_workflow.fin_stage_close'))
+        ]"/>
+    </record>
+</odoo>

@@ -1,0 +1,35 @@
+<odoo>
+  <template id="shell" name="OdooOps Shell (Hybrid)">
+    <t t-call="website.layout">
+      <div class="odooops-shell">
+        <!-- Top Nav: Odoo-native, QWeb-rendered, server-stable -->
+        <nav class="odooops-nav">
+          <div class="odooops-nav-brand">
+            <strong>OdooOps</strong>
+          </div>
+          <div class="odooops-nav-links">
+            <a href="/odooops" class="odooops-nav-link active">Dashboard</a>
+            <a href="/odooops/projects" class="odooops-nav-link">Projects</a>
+            <a href="/odooops/observability" class="odooops-nav-link">Observability</a>
+            <a href="/odooops/waf" class="odooops-nav-link">WAF</a>
+            <a href="/odooops/advisor" class="odooops-nav-link">Advisor</a>
+            <a href="/odooops/cms" class="odooops-nav-link">CMS</a>
+          </div>
+          <div class="odooops-nav-user">
+            <span><t t-esc="request.env.user.name"/></span>
+          </div>
+        </nav>
+
+        <!-- Embed Next.js dashboard via iframe (auth passed via token or shared session) -->
+        <div class="odooops-embed">
+          <iframe
+            id="odooops-dashboard"
+            t-att-src="nextjs_url"
+            frameborder="0"
+            class="odooops-iframe">
+          </iframe>
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>

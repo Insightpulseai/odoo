@@ -1,0 +1,65 @@
+id: vercel.integrations-diff
+title: Vercel Integrations Drift Detector
+category: ops-console
+sources:
+  - type: doc
+    url: https://vercel.com/docs/integrations
+    catalog_id: vercel-docs-home
+target:
+  app_dir: platform/vercel-integrations
+variables:
+  - name: VERCEL_API_TOKEN
+    required: true
+    description: Vercel API token scoped to the team(s) being monitored.
+  - name: SUPABASE_SERVICE_ROLE_KEY
+    required: true
+    description: Supabase service role key for reading ops.integrations_snapshots.
+  - name: GH_TOKEN
+    required: true
+    description: GitHub token with issues:write scope for drift issue management.
+  - name: SLACK_WEBHOOK_URL
+    required: false
+    description: Optional Slack incoming webhook URL for drift notifications.
+  - name: VERCEL_TEAM_IDS
+    required: true
+    description: Comma-separated Vercel team IDs to monitor for integration drift.
+automation:
+  steps:
+    - name: create_diff_engine
+      description: Create platform/vercel-integrations/ with diff, github_issues, slack_notify, run TypeScript files
+      instruction: |
+        Create platform/vercel-integrations/diff.ts — fetch + compare snapshot pairs.
+        Create platform/vercel-integrations/github_issues.ts — idempotent GitHub Issue per team.
+        Create platform/vercel-integrations/slack_notify.ts — Slack webhook for drift events.
+        Create platform/vercel-integrations/run.ts — entry point orchestrating all the above.
+    - name: create_ci_workflow
+      description: Create .github/workflows/vercel-integrations-diff.yml
+      instruction: |
+        Create a scheduled workflow (daily cron 0 8 * * *) that runs
+        tsx platform/vercel-integrations/run.ts with required secrets.
+        Include workflow_dispatch for manual triggering.
+    - name: create_runbook
+      description: Create docs/ops/VERCEL_INTEGRATIONS_DIFF.md
+      instruction: |
+        Create a runbook documenting what the diff engine checks, how GitHub Issues
+        work, how to suppress false positives, and required env var configuration.
+    - name: catalog_item_link
+      description: Ensure catalog item exists with blueprint_id=vercel.integrations-diff
+      instruction: |
+        Ensure docs/catalog/vercel.examples.catalog.json contains an item with
+        id: vercel-integrations-diff, blueprint_id: vercel.integrations-diff.
+verification:
+  required_checks:
+    - catalog-gate
+    - blueprint-gate
+  preview:
+    expectations:
+      - diff-ts-exists
+      - github-issues-ts-exists
+      - ci-workflow-exists
+rollback:
+  strategy: revert_pr
+notes:
+  minor_customization:
+    - Set VERCEL_TEAM_IDS secret in GitHub Actions before first run.
+    - Apply ops.integrations_snapshots migration if table does not exist.

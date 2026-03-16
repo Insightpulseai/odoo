@@ -1,0 +1,264 @@
+# Schema Entities Specification
+# Defines entity ownership and schema contracts for the decoupled Odoo platform
+version: 1
+
+# Schema Definitions
+schemas:
+  app:
+    description: Application-owned entities
+    owner: application
+    exposed_to_api: true
+    rls_required: true
+
+  odoo:
+    description: Odoo synchronization tables
+    owner: sync
+    exposed_to_api: false
+    rls_required: false
+
+  ops:
+    description: Operations and observability
+    owner: platform
+    exposed_to_api: false
+    rls_required: false
+
+  auth:
+    description: Supabase Auth (managed by Supabase)
+    owner: supabase
+    exposed_to_api: false
+    rls_required: false
+
+# Entity Definitions
+entities:
+  # App Schema Entities
+  app.orgs:
+    owner: application
+    description: Organizations (tenants)
+    primary_key: id
+    sync_to_odoo: true
+    odoo_model: res.company
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+      - name: name
+        type: text
+        required: true
+      - name: slug
+        type: text
+        required: true
+        unique: true
+      - name: settings
+        type: jsonb
+        default: '{}'
+
+  app.org_members:
+    owner: application
+    description: Organization membership
+    primary_key: [org_id, user_id]
+    sync_to_odoo: false
+    fields:
+      - name: org_id
+        type: uuid
+        required: true
+        references: app.orgs(id)
+      - name: user_id
+        type: uuid
+        required: true
+        references: auth.users(id)
+      - name: role
+        type: text
+        required: true
+        default: member
+        enum: [org_owner, org_admin, member, viewer]
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+
+  app.projects:
+    owner: application
+    description: Projects within organizations
+    primary_key: id
+    sync_to_odoo: true
+    odoo_model: project.project
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: org_id
+        type: uuid
+        required: true
+        references: app.orgs(id)
+      - name: name
+        type: text
+        required: true
+      - name: description
+        type: text
+      - name: status
+        type: text
+        default: active
+        enum: [active, archived, completed]
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+      - name: updated_at
+        type: timestamptz
+        required: true
+        default: now()
+
+  app.tasks:
+    owner: application
+    description: Tasks within projects
+    primary_key: id
+    sync_to_odoo: true
+    odoo_model: project.task
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: project_id
+        type: uuid
+        required: true
+        references: app.projects(id)
+      - name: title
+        type: text
+        required: true
+      - name: description
+        type: text
+      - name: status
+        type: text
+        default: todo
+        enum: [todo, in_progress, done, cancelled]
+      - name: assignee_id
+        type: uuid
+        references: auth.users(id)
+      - name: due_date
+        type: date
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+      - name: updated_at
+        type: timestamptz
+        required: true
+        default: now()
+
+  # Odoo Schema Entities
+  odoo.instances:
+    owner: sync
+    description: Registered Odoo instances
+    primary_key: id
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+      - name: name
+        type: text
+        required: true
+      - name: base_url
+        type: text
+        required: true
+      - name: database
+        type: text
+        required: true
+      - name: active
+        type: boolean
+        required: true
+        default: true
+      - name: config
+        type: jsonb
+        default: '{}'
+
+  odoo.sync_cursors:
+    owner: sync
+    description: Sync progress tracking
+    primary_key: id
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: instance_id
+        type: uuid
+        required: true
+        references: odoo.instances(id)
+      - name: entity
+        type: text
+        required: true
+      - name: cursor
+        type: text
+      - name: last_sync_at
+        type: timestamptz
+      - name: updated_at
+        type: timestamptz
+        required: true
+        default: now()
+
+  odoo.entity_mappings:
+    owner: sync
+    description: ID mappings between Supabase and Odoo
+    primary_key: id
+    fields:
+      - name: id
+        type: uuid
+        required: true
+        default: gen_random_uuid()
+      - name: instance_id
+        type: uuid
+        required: true
+        references: odoo.instances(id)
+      - name: supabase_schema
+        type: text
+        required: true
+      - name: supabase_table
+        type: text
+        required: true
+      - name: supabase_id
+        type: uuid
+        required: true
+      - name: odoo_model
+        type: text
+        required: true
+      - name: odoo_id
+        type: integer
+        required: true
+      - name: created_at
+        type: timestamptz
+        required: true
+        default: now()
+
+# Sync Rules
+sync_rules:
+  app.orgs -> odoo.res_company:
+    direction: bidirectional
+    priority: supabase
+    fields:
+      name: name
+      slug: x_slug
+
+  app.projects -> odoo.project_project:
+    direction: supabase_to_odoo
+    fields:
+      name: name
+      description: description
+
+  app.tasks -> odoo.project_task:
+    direction: supabase_to_odoo
+    fields:
+      title: name
+      description: description
+      status: stage_id  # requires mapping

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odoo Copilot Use Cases</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F5F1E8;
+            padding: 60px 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 28px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 280px;
+            background: #F8F9FA;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .card-content {
+            padding: 28px;
+        }
+
+        .card-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: #1A1A1A;
+            line-height: 1.3;
+            margin-bottom: 14px;
+            min-height: 68px;
+        }
+
+        .card-description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        /* Odoo-style mockups */
+        .odoo-window {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .odoo-titlebar {
+            background: linear-gradient(180deg, #875A7B 0%, #7C4C6F 100%);
+            color: white;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .odoo-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .dot.red { background: #FF5F57; }
+        .dot.yellow { background: #FFBD2E; }
+        .dot.green { background: #28CA42; }
+
+        .odoo-body {
+            padding: 16px;
+            background: #F8F9FA;
+        }
+
+        .odoo-table {
+            width: 100%;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            font-size: 11px;
+        }
+
+        .odoo-table thead {
+            background: #F1F3F4;
+            font-weight: 600;
+            color: #5F6368;
+        }
+
+        .odoo-table th,
+        .odoo-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #E8EAED;
+        }
+
+        .odoo-table tbody tr:hover {
+            background: #F8F9FA;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .status-success { background: #E6F4EA; color: #137333; }
+        .status-warning { background: #FEF7E0; color: #E37400; }
+        .status-info { background: #E8F0FE; color: #1967D2; }
+
+        .odoo-form {
+            background: white;
+            border-radius: 6px;
+            padding: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .form-field {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            color: #5F6368;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .form-value {
+            font-size: 13px;
+            color: #202124;
+            font-weight: 500;
+        }
+
+        .odoo-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #202124;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: #5F6368;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-change {
+            font-size: 10px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .metric-up { color: #137333; }
+        .metric-down { color: #C5221F; }
+
+        .file-list {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid #F1F3F4;
+            font-size: 11px;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #875A7B 0%, #7C4C6F 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 2px;
+        }
+
+        .file-meta {
+            font-size: 10px;
+            color: #5F6368;
+        }
+
+        .kanban-board {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .kanban-column {
+            min-width: 140px;
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .kanban-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #5F6368;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kanban-card {
+            background: #F8F9FA;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 10px;
+            border-left: 3px solid #875A7B;
+        }
+
+        .kanban-title {
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 4px;
+        }
+
+        .kanban-meta {
+            color: #5F6368;
+            font-size: 9px;
+        }
+
+        .spreadsheet {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 10px;
+        }
+
+        .sheet-toolbar {
+            background: #F1F3F4;
+            padding: 6px 10px;
+            border-bottom: 1px solid #E8EAED;
+            font-size: 11px;
+            color: #5F6368;
+            font-weight: 600;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .sheet-cell {
+            padding: 6px 8px;
+            border-right: 1px solid #E8EAED;
+            border-bottom: 1px solid #E8EAED;
+        }
+
+        .sheet-header {
+            background: #F8F9FA;
+            font-weight: 700;
+            color: #5F6368;
+        }
+
+        .highlight {
+            background: #FEF7E0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+
+            <!-- Card 1: Sales Pipeline -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>CRM Pipeline - High Value Opportunities</span>
+                        </div>
+                        <div class="odoo-body">
+                            <table class="odoo-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Value</th>
+                                        <th>Stage</th>
+                                        <th>Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Acme Corp</strong></td>
+                                        <td>$87,500</td>
+                                        <td><span class="status-badge status-warning">Proposal</span></td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TechStart</strong></td>
+                                        <td>$124,000</td>
+                                        <td><span class="status-badge status-info">Qualified</span></td>
+                                        <td>21</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>GlobalCo</strong></td>
+                                        <td>$56,200</td>
+                                        <td><span class="status-badge status-warning">Negotiation</span></td>
+                                        <td>14</td>
+                                    </tr>
+                                    <tr style="background: #FEF7E0;">
+                                        <td><strong>⚠️ 3 deals</strong></td>
+                                        <td><strong>$267,700</strong></td>
+                                        <td colspan="2"><strong>Need follow-up this week</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Surface at-risk deals from your pipeline</h2>
+                    <p class="card-description">Ask "Which opportunities over $50K haven't been touched in 2 weeks?" Get a prioritized list with full context and suggested next actions to keep your pipeline healthy.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>📊 Sales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Invoice Processing -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>Vendor Bills / January 2024</span>
+                        </div>
+                        <div class="odoo-body">
+                            <div class="file-list">
+                                <div class="file-item">
+                                    <div class="file-icon">PDF</div>
+                                    <div class="file-info">
+                                        <div class="file-name">Invoice_4782.pdf</div>
+                                        <div class="file-meta">$4,250 • Matched PO-423 • <span style="color: #137333;">✓ Ready</span></div>
+                                    </div>
+                                </div>
+                                <div class="file-item">
+                                    <div class="file-icon">IMG</div>
+                                    <div class="file-info">
+                                        <div class="file-name">Receipt_Office.jpg</div>
+                                        <div class="file-meta">$127.50 • No PO • <span style="color: #137333;">✓ Ready</span></div>
+                                    </div>
+                                </div>
+                                <div class="file-item" style="background: #FEF7E0;">
+                                    <div class="file-icon">PDF</div>
+                                    <div class="file-info">
+                                        <div class="file-name">Statement_B.pdf</div>
+                                        <div class="file-meta">$12,890 • 15 items • <span style="color: #E37400;">⚠ Review</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px; text-align: center; font-size: 11px; font-weight: 600;">
+                                23 bills processed • 21 ready • 2 need review
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Prep scattered invoices for month-end close</h2>
+                    <p class="card-description">Upload a folder of vendor bills—PDFs, photos, email attachments. The copilot reads each one, creates draft bills in Odoo, matches to POs when possible, and routes for approval.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💼 Accounting</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Manufacturing Dashboard -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>Cost Scenario: Steel +15% / Labor -8%</span>
+                        </div>
+                        <div class="odoo-body">
+                            <div class="odoo-dashboard">
+                                <div class="metric-card">
+                                    <div class="metric-label">Product A-100</div>
+                                    <div class="metric-value">$89.40</div>
+                                    <div class="metric-change metric-down">+$12.40 (+16%)</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Product B-200</div>
+                                    <div class="metric-value">$124.80</div>
+                                    <div class="metric-change metric-up">-$8.20 (-6%)</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Product C-300</div>
+                                    <div class="metric-value">$156.90</div>
+                                    <div class="metric-change metric-down">+$18.90 (+14%)</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Gross Margin</div>
+                                    <div class="metric-value">18.2%</div>
+                                    <div class="metric-change metric-down">-3.8% ⚠️</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 4px; font-size: 10px; color: #E37400; border-left: 3px solid #E37400;">
+                                <strong>⚠️ Impact:</strong> 2 products unprofitable at current pricing
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Stress-test production costs across scenarios</h2>
+                    <p class="card-description">Ask "What if steel prices increase 15% and labor costs drop 8%?" The copilot recalculates your BOMs, shows the new cost per unit, and highlights which products become unprofitable.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>🏭 Manufacturing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Project Kanban -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>Tasks - Generated from Meeting Notes</span>
+                        </div>
+                        <div class="odoo-body">
+                            <div class="kanban-board">
+                                <div class="kanban-column">
+                                    <div class="kanban-header">To Do</div>
+                                    <div class="kanban-card">
+                                        <div class="kanban-title">Update API docs</div>
+                                        <div class="kanban-meta">Alex • High</div>
+                                    </div>
+                                    <div class="kanban-card">
+                                        <div class="kanban-title">Review designs</div>
+                                        <div class="kanban-meta">Sarah • Medium</div>
+                                    </div>
+                                </div>
+                                <div class="kanban-column">
+                                    <div class="kanban-header">In Progress</div>
+                                    <div class="kanban-card">
+                                        <div class="kanban-title">Fix bug #234</div>
+                                        <div class="kanban-meta">Mike • High</div>
+                                    </div>
+                                </div>
+                                <div class="kanban-column">
+                                    <div class="kanban-header">Done</div>
+                                    <div class="kanban-card">
+                                        <div class="kanban-title">Deploy staging</div>
+                                        <div class="kanban-meta">Dev Team • Done</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Organize tasks from scattered meeting notes</h2>
+                    <p class="card-description">Feed the copilot your project standup notes from Slack, Google Docs, and email. It creates tasks in Odoo, assigns owners based on discussion context, and sets realistic due dates.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>📋 Projects</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Sales Quote -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>Quotation SO-2024-0156</span>
+                        </div>
+                        <div class="odoo-body">
+                            <div class="odoo-form">
+                                <div class="form-field">
+                                    <div class="form-label">CUSTOMER</div>
+                                    <div class="form-value">Acme Corporation</div>
+                                </div>
+                                <div class="form-field">
+                                    <div class="form-label">PAYMENT TERMS</div>
+                                    <div class="form-value">30 Days Net</div>
+                                </div>
+                                <table class="odoo-table" style="margin-top: 10px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Product X - Enterprise</td>
+                                            <td>50</td>
+                                            <td>$89.50</td>
+                                            <td><strong>$4,475.00</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="margin-top: 8px; text-align: right; font-size: 10px; color: #137333; font-weight: 600;">
+                                    ✓ Email sent to customer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Generate quotes while on customer calls</h2>
+                    <p class="card-description">Your team speaks naturally: "Create quote for Acme Corp, 50 units Product X at enterprise pricing." The copilot creates the quotation, applies the right price list and payment terms, and emails it instantly.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💼 Sales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Financial Spreadsheet -->
+            <div class="card">
+                <div class="card-image">
+                    <div class="odoo-window">
+                        <div class="odoo-titlebar">
+                            <div class="odoo-dots">
+                                <div class="dot red"></div>
+                                <div class="dot yellow"></div>
+                                <div class="dot green"></div>
+                            </div>
+                            <span>Invoice Reconciliation Report</span>
+                        </div>
+                        <div class="odoo-body">
+                            <div class="spreadsheet">
+                                <div class="sheet-toolbar">Q1 2024 Variance Analysis</div>
+                                <div class="sheet-grid">
+                                    <div class="sheet-cell sheet-header">Vendor</div>
+                                    <div class="sheet-cell sheet-header">PO Amount</div>
+                                    <div class="sheet-cell sheet-header">Bill Amount</div>
+                                    <div class="sheet-cell sheet-header">Variance</div>
+
+                                    <div class="sheet-cell">Vendor A</div>
+                                    <div class="sheet-cell">$8,200.00</div>
+                                    <div class="sheet-cell">$8,750.00</div>
+                                    <div class="sheet-cell highlight">+$550</div>
+
+                                    <div class="sheet-cell">Vendor B</div>
+                                    <div class="sheet-cell">$4,500.00</div>
+                                    <div class="sheet-cell">$4,500.00</div>
+                                    <div class="sheet-cell">$0</div>
+
+                                    <div class="sheet-cell">Vendor C</div>
+                                    <div class="sheet-cell">$12,100.00</div>
+                                    <div class="sheet-cell">$12,450.00</div>
+                                    <div class="sheet-cell highlight">+$350</div>
+
+                                    <div class="sheet-cell sheet-header">Total</div>
+                                    <div class="sheet-cell sheet-header">$24,800</div>
+                                    <div class="sheet-cell sheet-header">$25,700</div>
+                                    <div class="sheet-cell sheet-header highlight">+$900</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Reconcile invoices and catch overcharges</h2>
+                    <p class="card-description">Hand the copilot your vendor invoices and purchase orders. It matches line items across sources, flags discrepancies over your threshold, and creates variance reports—highlighting $900 in overcharges.</p>
+                    <div class="card-tags">
+                        <div class="tag">
+                            <span>🤖 Odoo Copilot</span>
+                        </div>
+                        <div class="tag">
+                            <span>💰 Finance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

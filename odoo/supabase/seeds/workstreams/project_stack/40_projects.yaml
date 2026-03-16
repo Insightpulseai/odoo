@@ -1,0 +1,162 @@
+# Projects
+# Model: project.project
+# Import order: 4 (after products, before tags/stages)
+
+projects:
+  # ============================================================
+  # CUSTOMER PROJECTS (Billable)
+  # ============================================================
+
+  - id: ipai_proj_alpha
+    name: Project Alpha
+    partner_id: ipai_partner_acme
+    analytic_account_id: ipai_aa_acme_alpha
+    allow_timesheets: true
+    allow_billable: true
+    timesheet_product_id: ipai_prod_consulting
+    privacy_visibility: followers  # followers, employees, portal
+    active: true
+    description: |
+      ACME Foods Digital Transformation Initiative
+      - Phase 1: Requirements and Discovery
+      - Phase 2: Core Development
+      - Phase 3: UAT and Go-Live
+    date_start: "2026-01-08"
+    date: "2026-03-31"  # End date
+    color: 1
+
+  - id: ipai_proj_beta
+    name: Project Beta
+    partner_id: ipai_partner_acme
+    analytic_account_id: ipai_aa_acme_beta
+    allow_timesheets: true
+    allow_billable: true
+    timesheet_product_id: ipai_prod_development
+    privacy_visibility: followers
+    active: true
+    description: |
+      ACME Foods E-Commerce Platform
+      - Phase 1: Platform Selection
+      - Phase 2: Integration
+      - Phase 3: Launch
+    date_start: "2026-02-01"
+    date: "2026-05-31"
+    color: 2
+
+  - id: ipai_proj_gamma
+    name: Project Gamma
+    partner_id: ipai_partner_globex
+    analytic_account_id: ipai_aa_globex_gamma
+    allow_timesheets: true
+    allow_billable: true
+    timesheet_product_id: ipai_prod_pm
+    privacy_visibility: portal  # Client can view
+    active: true
+    description: |
+      Globex ERP Implementation
+      - Discovery and Planning
+      - Configuration and Customization
+      - Training and Support
+    date_start: "2026-01-15"
+    date: "2026-06-30"
+    color: 3
+
+  # ============================================================
+  # INTERNAL PROJECTS (Non-Billable)
+  # ============================================================
+
+  - id: ipai_proj_internal_dev
+    name: Internal - Platform Development
+    partner_id: ipai_partner_tbwa
+    analytic_account_id: ipai_aa_tbwa_internal
+    allow_timesheets: true
+    allow_billable: false
+    timesheet_product_id: null
+    privacy_visibility: employees
+    active: true
+    description: |
+      Internal InsightPulse platform development
+      - Feature development
+      - Bug fixes
+      - Infrastructure
+    date_start: "2026-01-01"
+    date: "2026-12-31"
+    color: 4
+
+  - id: ipai_proj_internal_training
+    name: Internal - Training & Development
+    partner_id: ipai_partner_tbwa
+    analytic_account_id: ipai_aa_overhead_training
+    allow_timesheets: true
+    allow_billable: false
+    timesheet_product_id: null
+    privacy_visibility: employees
+    active: true
+    description: |
+      Staff training and professional development
+      - Certifications
+      - Skill building
+      - Knowledge transfer
+    date_start: "2026-01-01"
+    date: "2026-12-31"
+    color: 5
+
+# Odoo import field mapping
+odoo_import:
+  model: project.project
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: partner_id
+      column: Customer
+      type: many2one
+      relation: res.partner
+
+    - name: analytic_account_id
+      column: Analytic Account
+      type: many2one
+      relation: account.analytic.account
+
+    - name: allow_timesheets
+      column: Allow Timesheets
+      type: boolean
+
+    - name: allow_billable
+      column: Billable
+      type: boolean
+      notes: "Requires sale_timesheet module"
+
+    - name: timesheet_product_id
+      column: Timesheet Product
+      type: many2one
+      relation: product.product
+      notes: "Service product for time billing"
+
+    - name: privacy_visibility
+      column: Privacy
+      allowed_values: [followers, employees, portal]
+
+    - name: active
+      column: Active
+      type: boolean
+
+    - name: description
+      column: Description
+
+    - name: date_start
+      column: Start Date
+      type: date
+
+    - name: date
+      column: End Date
+      type: date
+
+    - name: color
+      column: Color
+      type: integer

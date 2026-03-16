@@ -1,0 +1,13 @@
+{
+  "id": "bir-compliance",
+  "name": "BIR Tax Compliance",
+  "summary": "Philippine Bureau of Internal Revenue compliance: 1601-C, 2316, Alphalist, VAT reports with TRAIN Law calculations.",
+  "tags": ["finance", "compliance", "tax", "philippines", "bir"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "runbook": "docs/runbooks/bir-compliance.md"
+  },
+  "related_assets": ["finance-ppm", "payroll-ph"],
+  "ipai_module": "ipai_finance_bir_compliance"
+}

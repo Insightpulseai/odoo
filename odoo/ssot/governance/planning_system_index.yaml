@@ -1,0 +1,208 @@
+# =============================================================================
+# Planning System Index — InsightPulse AI
+# =============================================================================
+#
+# Canonical index of all planning, strategy, OKR, KPI, and roadmap artifacts.
+# Approach: A+C (index + cross-references, NOT content consolidation).
+#
+# Each planning layer has a distinct ownership scope and cadence.
+# Files listed here are the SSOT for their respective layers.
+#
+# CI validator: scripts/ci/validate_planning_index.py (planned)
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-14"
+
+# -----------------------------------------------------------------------------
+# Planning Layer Model
+# -----------------------------------------------------------------------------
+# Strategy → Operational OKRs → Product Roadmap → Capability Targets
+#   → Target State → Implementation Specs
+#
+# Each layer has:
+#   - canonical_file: the SSOT file for that layer
+#   - owner: who maintains it
+#   - cadence: how often it changes
+#   - join_keys: how it cross-references other layers
+
+layers:
+
+  - id: strategy
+    name: "Platform Strategy (VMOKRAPI-SPATRES)"
+    canonical_file: ssot/governance/platform-strategy-2026.yaml
+    schema: ssot/governance/platform-strategy.schema.json
+    validator: scripts/ci/validate_platform_strategy.py
+    ci_gate: .github/workflows/platform-strategy-ssot-check.yml
+    owner: platform-lead
+    cadence: quarterly
+    join_keys:
+      - field: objectives[].id
+        joins_to: operational_okrs.okrs[].objective_ref
+      - field: kras[].id
+        joins_to: strategy.objectives[].kra_ref
+      - field: activities[].id
+        joins_to: strategy.tasks[].activity_ref
+    contains:
+      - vision
+      - mission
+      - platform_doctrine
+      - kras (6)
+      - objectives (7 SMART)
+      - okrs (7 with 22 key results)
+      - kpis (13)
+      - strategies (5)
+      - programs (4 quarterly)
+      - activities (8)
+      - tasks (16)
+      - resources
+      - evidence_policy
+      - risks (6)
+      - spatres (7 dimensions)
+
+  - id: operational_okrs
+    name: "Enterprise OKR Stack"
+    canonical_file: ssot/governance/enterprise_okrs.yaml
+    validator: scripts/ci/validate_enterprise_okrs.py
+    owner: engineering-lead
+    cadence: quarterly
+    join_keys:
+      - field: strategic_objectives[].id
+        joins_to: strategy.objectives[].id
+      - field: canonical_okrs[].parent_objectives[]
+        joins_to: operational_okrs.strategic_objectives[].id
+      - field: "*.kpi_ref"
+        joins_to: kpi_registry (platform/data/contracts/control_room_kpis.yaml)
+    contains:
+      - strategic_objectives (A-E)
+      - canonical_okrs (O1-O3)
+      - kpi_index
+
+  - id: product_roadmap
+    name: "Product Roadmap"
+    canonical_file: ssot/roadmap/product_roadmap.yaml
+    owner: product-lead
+    cadence: monthly
+    status: not_on_branch  # exists on refactor branch (e3c2013d6f), not yet on main
+    join_keys:
+      - field: initiatives[].okr_ref
+        joins_to: operational_okrs.canonical_okrs[].id
+      - field: initiatives[].objective_ref
+        joins_to: strategy.objectives[].id
+    note: >
+      This file exists on the refactor branch but has not been merged to main.
+      Cross-references to this layer are deferred until the file lands on main.
+
+  - id: capability_targets
+    name: "Parity & Capability Targets"
+    canonical_file: ssot/parity_targets.yaml
+    owner: engineering-lead
+    cadence: quarterly
+    status: not_on_branch  # exists on ssot/parity branch (450a691590), not yet on main
+    join_keys:
+      - field: targets[].okr_ref
+        joins_to: operational_okrs.canonical_okrs[].id
+      - field: targets[].module_ref
+        joins_to: addons/ipai/*/
+    note: >
+      This file exists on the ssot/parity branch but has not been merged to main.
+      Cross-references to this layer are deferred until the file lands on main.
+
+  - id: target_state
+    name: "Platform Target State"
+    canonical_file: ssot/azure/PLATFORM_TARGET_STATE.md
+    owner: platform-lead
+    cadence: quarterly
+    status: on_main
+    join_keys:
+      - field: objectives (prose)
+        joins_to: strategy.objectives[].id
+    note: >
+      Markdown format. Contains the revised target-state statement with
+      7 SMART objectives. Cross-referenced by platform-strategy-2026.yaml.
+
+  - id: implementation_specs
+    name: "Implementation Spec Bundles"
+    canonical_file: spec/*/
+    owner: implementing-engineer
+    cadence: per-feature
+    join_keys:
+      - field: spec/*/prd.md (objective references)
+        joins_to: strategy.objectives[].id
+      - field: spec/*/tasks.md (task references)
+        joins_to: strategy.tasks[].id
+    contains:
+      - 76 spec bundles (constitution, prd, plan, tasks per feature)
+
+# -----------------------------------------------------------------------------
+# Crosswalks (explicit join paths between layers)
+# -----------------------------------------------------------------------------
+crosswalks:
+
+  - from: strategy.objectives[].id
+    to: operational_okrs.strategic_objectives[].id
+    relationship: "strategy objectives map to operational strategic objectives"
+    mapping_type: many_to_many
+    note: >
+      Strategy OBJ-001..007 are SMART quarterly objectives.
+      Operational obj_A..E are thematic groupings.
+      They complement each other, not 1:1.
+
+  - from: operational_okrs.kpi_index
+    to: platform/data/contracts/control_room_kpis.yaml
+    relationship: "OKR key results reference operational KPIs"
+    mapping_type: foreign_key
+
+  - from: strategy.kpis[].id
+    to: operational_okrs."*.kpi_ref"
+    relationship: "strategy KPIs overlap with operational KPI references"
+    mapping_type: shared_namespace
+    note: >
+      Both files reference kpi_001..kpi_017.
+      The KPI definition SSOT is control_room_kpis.yaml.
+
+# -----------------------------------------------------------------------------
+# Governance
+# -----------------------------------------------------------------------------
+governance:
+
+  canonical_rules:
+    - "Each layer has exactly one canonical file (no forks)"
+    - "Cross-references use explicit join keys, not implicit naming"
+    - "Content consolidation (merging files) requires ADR approval"
+    - "Deprecated files must be listed in deprecations[] with replacement"
+
+  deprecation_policy: >
+    Files superseded by a canonical layer file must be:
+    1. Marked deprecated with a pointer to the replacement
+    2. Retained for 1 quarter after replacement is on main
+    3. Deleted after the retention period
+
+  deprecations: []
+    # None currently — product_roadmap and parity_targets are not yet on main
+
+# -----------------------------------------------------------------------------
+# Additional Planning Artifacts (non-canonical, reference only)
+# -----------------------------------------------------------------------------
+related_artifacts:
+
+  - file: ssot/governance/azdo-project-repo-alignment.yaml
+    purpose: "Azure DevOps project-to-repo alignment mapping"
+    layer: implementation_specs
+
+  - file: ssot/governance/repo-azure-alignment.yaml
+    purpose: "Repository-to-Azure resource alignment"
+    layer: implementation_specs
+
+  - file: ssot/azure/platform_maturity_benchmark.yaml
+    purpose: "Platform maturity benchmark scores"
+    layer: capability_targets
+    status: on_main
+
+  - file: infra/docs/architecture/CANONICAL_REFERENCE_STACK.md
+    purpose: "4-layer reference stack (Foundry SDK, azd, Databricks, SAP Joule)"
+    layer: strategy
+
+  - file: platform/data/contracts/control_room_kpis.yaml
+    purpose: "Operational KPI definitions (kpi_001..kpi_017)"
+    layer: operational_okrs

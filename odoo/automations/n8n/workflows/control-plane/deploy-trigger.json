@@ -1,0 +1,245 @@
+{
+  "name": "Control Plane: Deploy Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deploy-request",
+        "responseMode": "responseNode",
+        "options": {
+          "responseData": "allEntries"
+        }
+      },
+      "id": "webhook_deploy",
+      "name": "Webhook: Deploy Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "deploy-request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize and validate deploy request\nconst input = $input.first().json;\nconst correlationId = input.correlation_id || `deploy-${Date.now()}`;\n\nconst normalized = {\n  source: input.source || 'webhook',\n  event_type: 'deploy.requested',\n  correlation_id: correlationId,\n  payload: {\n    target: input.target || 'production',\n    service: input.service || 'odoo-core',\n    commit_sha: input.commit_sha || 'HEAD',\n    triggered_by: input.triggered_by || 'manual',\n    timestamp: new Date().toISOString()\n  }\n};\n\n// Validate required fields\nif (!['staging', 'production'].includes(normalized.payload.target)) {\n  throw new Error(`Invalid target: ${normalized.payload.target}`);\n}\n\nreturn normalized;"
+      },
+      "id": "normalize",
+      "name": "Normalize Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"{{ $json.source }}\",\n  \"p_job_type\": \"{{ $json.event_type }}\",\n  \"p_payload\": {{ JSON.stringify($json.payload) }},\n  \"p_context\": { \"correlation_id\": \"{{ $json.correlation_id }}\" },\n  \"p_priority\": 8\n}",
+        "options": {}
+      },
+      "id": "record_event",
+      "name": "Record Event (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Normalize Request').item.json.payload.target }}",
+              "operation": "equals",
+              "value2": "production"
+            }
+          ]
+        }
+      },
+      "id": "check_target",
+      "name": "Is Production?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd /opt/odoo-oca && git fetch origin && git checkout {{ $('Normalize Request').item.json.payload.commit_sha }} && docker compose pull && docker compose up -d --remove-orphans && sleep 10 && curl -fsS http://127.0.0.1:8069/web/health"
+      },
+      "id": "deploy_prod",
+      "name": "Deploy (Production)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "command": "=cd /opt/odoo-staging && git fetch origin && git checkout {{ $('Normalize Request').item.json.payload.commit_sha }} && docker compose pull && docker compose up -d --remove-orphans"
+      },
+      "id": "deploy_staging",
+      "name": "Deploy (Staging)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1050, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/complete_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_job_id\": \"{{ $('Record Event (Supabase)').item.json }}\",\n  \"p_result\": {\n    \"stdout\": \"{{ $json.stdout }}\",\n    \"exit_code\": 0,\n    \"deployed_at\": \"{{ new Date().toISOString() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "complete_job",
+      "name": "Mark Complete",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/fail_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_job_id\": \"{{ $('Record Event (Supabase)').item.json }}\",\n  \"p_error\": {\n    \"message\": \"{{ $json.error.message || 'Deploy failed' }}\",\n    \"stderr\": \"{{ $json.stderr || '' }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "fail_job",
+      "name": "Mark Failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"ok\": true,\n  \"job_id\": \"{{ $('Record Event (Supabase)').item.json }}\",\n  \"correlation_id\": \"{{ $('Normalize Request').item.json.correlation_id }}\",\n  \"status\": \"queued\"\n}"
+      },
+      "id": "respond_success",
+      "name": "Respond: Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [850, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"ok\": false,\n  \"error\": \"{{ $json.error.message }}\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond_error",
+      "name": "Respond: Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [650, 500]
+    }
+  ],
+  "connections": {
+    "Webhook: Deploy Request": {
+      "main": [
+        [
+          {
+            "node": "Normalize Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Request": {
+      "main": [
+        [
+          {
+            "node": "Record Event (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Event (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Respond: Accepted",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Production?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Production?": {
+      "main": [
+        [
+          {
+            "node": "Deploy (Production)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Deploy (Staging)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deploy (Production)": {
+      "main": [
+        [
+          {
+            "node": "Mark Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deploy (Staging)": {
+      "main": [
+        [
+          {
+            "node": "Mark Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["control-plane", "deploy", "production"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T00:00:00.000Z",
+  "versionId": "1"
+}

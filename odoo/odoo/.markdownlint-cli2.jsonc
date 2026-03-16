@@ -1,0 +1,44 @@
+// =============================================================================
+// markdownlint configuration (repo-wide SSOT)
+// =============================================================================
+// Pragmatic defaults for a large Odoo/OCA monorepo with generated docs.
+// Referenced by: scripts/lint_all.sh, CI workflows.
+// =============================================================================
+{
+  "config": {
+    // Disable line length — many docs have tables, URLs, generated content
+    "MD013": false,
+
+    // Allow multiple top-level headings (common in spec bundles, changelogs)
+    "MD025": false,
+
+    // Allow inline HTML (used in spec.md markers, badges, etc.)
+    "MD033": false,
+
+    // Allow bare URLs (common in docs)
+    "MD034": false,
+
+    // Disable first-line-heading rule (not all md files are docs)
+    "MD041": false,
+
+    // Allow duplicate headings in different sections
+    "MD024": {
+      "siblings_only": true
+    },
+
+    // Allow trailing punctuation in headings (colons common in this repo)
+    "MD026": {
+      "punctuation": ".,;!"
+    }
+  },
+
+  // Only lint markdown files, skip generated/vendored content
+  "globs": [
+    "**/*.md",
+    "!node_modules/**",
+    "!external-src/**",
+    "!addons/oca/**",
+    "!vendor/**",
+    "!**/CHANGELOG.md"
+  ]
+}

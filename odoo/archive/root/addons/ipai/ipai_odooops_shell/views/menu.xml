@@ -1,0 +1,7 @@
+<odoo>
+  <record id="menu_odooops" model="website.menu">
+    <field name="name">OdooOps</field>
+    <field name="url">/odooops</field>
+    <field name="sequence">90</field>
+  </record>
+</odoo>

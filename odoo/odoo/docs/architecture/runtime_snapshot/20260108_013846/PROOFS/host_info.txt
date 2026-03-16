@@ -1,0 +1,89 @@
+=== Host Info ===
+Linux odoo-erp-prod 5.15.0-161-generic #171-Ubuntu SMP Sat Oct 11 08:17:01 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+
+=== OS Release ===
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+
+=== Uptime ===
+ 01:38:46 up 56 days, 14:59,  0 users,  load average: 0.24, 0.45, 0.62
+
+=== Disk ===
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           392M  2.7M  389M   1% /run
+/dev/vda1        78G   50G   29G  64% /
+tmpfs           2.0G     0  2.0G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+/dev/vda15      105M  6.1M   99M   6% /boot/efi
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/bdc7c5f3fb0b999250d70b4b665b704c159dc3f0c8c04f20fc8f1295f17eee17
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/a37902d2608077870525c62fd792c75b99a5eefc3b6fe526aebb70e72d4a80c7
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/b501313bca9fda60b1dce3433b6ec421c9f04e45396b2da1e9b6cfb7dc67830b
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/dda3188a9db9a48312a9fecdca95571cac97060a5235942f772a378ebb2df795
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/d035a0c092d8d44cc0bd10663ba93630038f8ed02cc2669806eb586597de4e74
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/b238c51bcba1e6825554a2f0cfbe20da80e026f9839f92aa5861363469a63719
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/8ed116efcf80edf83422f06139ecee3b894df0446877412612a2c92f2033c01b
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/7215bbac87b0b0f988c78dc04a717d6018ec365c1c5c8feb8c3dc294f4cfe28a
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/066f805a201379d3046f0d1e1bbc3f9cdf1973ac67f33201dd1fd4496c7ebc16
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/c79355ac12ac0a719be23b0efc7a838d707de7f5f87a5d714556a85e16de67b1
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/2f060d8970724ba6616c936190ad0b229a6c79f78272d12fd847ce3cf92a7f1b
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/d9a78cbc668a608480ef1d6f43a8bee3c436b2849e792314792a57296b12a82d
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/9826b1c008a8b8a4504b3abbdd0842eeeb21a0eb4426587d48cf5c95a9cab0f7
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/c526365415a47230fe8d301f6076a3e065836a6436a2fc555186169e974d13a7
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/9eddaacfc2ddd0b18c2b6a3dcbb7fbc9d7cc9138b31ddbf6b8236d0a4e74c369
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/449f1a73098778729dbb27b7c1dfcf4a4290997a5b7b5688fd7efaf4d50f8a8b
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/decdd9b28a5d57210f48d788c10c8e4e87271d85426ccff60298b51f6a122236
+overlay          78G   50G   29G  64% /var/lib/docker/rootfs/overlayfs/d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e
+tmpfs           392M  4.0K  392M   1% /run/user/0
+
+=== Memory ===
+               total        used        free      shared  buff/cache   available
+Mem:           3.8Gi       2.2Gi       198Mi       185Mi       1.5Gi       1.2Gi
+Swap:          4.0Gi       452Mi       3.6Gi
+
+=== Docker Service ===
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2026-01-07 20:30:11 UTC; 5h 8min ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 640445 (dockerd)
+      Tasks: 140
+     Memory: 309.0M
+        CPU: 4min 12.596s
+     CGroup: /system.slice/docker.service
+             ├─ 640445 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+             ├─ 641252 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 5678 -container-ip 172.22.0.2 -container-port 5678 -use-listen-fd
+             ├─ 641582 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8000 -container-ip 172.23.0.2 -container-port 8000 -use-listen-fd
+             ├─ 641593 /usr/bin/docker-proxy -proto tcp -host-ip :: -host-port 8000 -container-ip 172.23.0.2 -container-port 8000 -use-listen-fd
+             ├─ 641649 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8071 -container-ip 172.26.0.2 -container-port 8069 -use-listen-fd
+             ├─ 641674 /usr/bin/docker-proxy -proto tcp -host-ip :: -host-port 8071 -container-ip 172.26.0.2 -container-port 8069 -use-listen-fd
+             ├─ 641821 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 6379 -container-ip 172.18.0.2 -container-port 6379 -use-listen-fd
+             ├─ 642044 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8070 -container-ip 172.26.0.4 -container-port 8069 -use-listen-fd
+             ├─ 642065 /usr/bin/docker-proxy -proto tcp -host-ip :: -host-port 8070 -container-ip 172.26.0.4 -container-port 8069 -use-listen-fd
+             ├─ 642170 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 8002 -container-ip 172.24.0.2 -container-port 8001 -use-listen-fd
+             ├─ 642209 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8080 -container-ip 172.18.0.6 -container-port 8080 -use-listen-fd
+             ├─ 642214 /usr/bin/docker-proxy -proto tcp -host-ip :: -host-port 8080 -container-ip 172.18.0.6 -container-port 8080 -use-listen-fd
+             ├─ 642265 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8065 -container-ip 172.18.0.7 -container-port 8065 -use-listen-fd
+             ├─ 642270 /usr/bin/docker-proxy -proto tcp -host-ip :: -host-port 8065 -container-ip 172.18.0.7 -container-port 8065 -use-listen-fd
+             └─1080118 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 8069 -container-ip 172.27.0.3 -container-port 8069 -use-listen-fd
+
+Jan 08 01:36:01 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:01.784603187Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:36:32 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:32.412749095Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:36:48 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:48.590073567Z" level=info msg="ignoring event" container=decdd9b28a5d57210f48d788c10c8e4e87271d85426ccff60298b51f6a122236 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:36:48 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:48.609914003Z" level=warning msg="ShouldRestart failed, container will not be restarted" container=decdd9b28a5d57210f48d788c10c8e4e87271d85426ccff60298b51f6a122236 daemonShuttingDown=false error="restart canceled" execDuration=6m4.78934372s exitStatus="{0 2026-01-08 01:36:48.570154432 +0000 UTC}" hasBeenManuallyStopped=true restartCount=0
+Jan 08 01:36:49 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:49.294774263Z" level=info msg="sbJoin: gwep4 ''->'aebcd7132a42', gwep6 ''->''" eid=aebcd7132a42 ep=odoo-ce net=odoo-ce_odoo-network nid=95174ffbfc21 spanID=7e415201d284d5a3 traceID=da810931d7b942468bcdaf52702b48f3
+Jan 08 01:36:49 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:36:49.406294293Z" level=info msg="sbJoin: gwep4 'aebcd7132a42'->'7c3889320917', gwep6 ''->''" eid=7c3889320917 ep=odoo-ce net=deploy_odoo_backend nid=fa28528193ce spanID=7e415201d284d5a3 traceID=da810931d7b942468bcdaf52702b48f3
+Jan 08 01:37:02 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:37:02.916049841Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:37:33 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:37:33.459903646Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:38:03 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:38:03.918913300Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jan 08 01:38:34 odoo-erp-prod dockerd[640445]: time="2026-01-08T01:38:34.400772157Z" level=info msg="ignoring event" container=d74365ced0455c72d96e04849727f5bf292fa17404a614b02b21d4abf68a7e2e module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"

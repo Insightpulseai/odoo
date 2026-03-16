@@ -1,0 +1,28 @@
+PR #387 POST-MERGE VERIFICATION
+stamp: 2026-02-24T01:20+0800
+merge_commit: 16a8158af
+branch: main
+
+[PARITY SSOT]
+capabilities: 69
+delivery_mode field: PASS
+criticality field: PASS
+
+[EDITION POLICY]
+ODOO_INSTALL_MODULES="" → exit 0 (skip, advisory) PASS
+ODOO_INSTALL_MODULES="documents,crm" → exit 1 (EE violation detected) PASS
+ODOO_INSTALL_MODULES="crm,sale,account" → exit 0 (clean) PASS
+
+[DISCUSS/MAIL XML FIX]
+discuss_sidebar_mailboxes.xml: references mail.DiscussContent.mobileTopbar (corrected)
+mobileTopbar xpath: REMOVED broken mail.Discuss.mobileTopbar reference
+mailbox.counter xpath: REMOVED (span removed in Odoo 19)
+store_service_patch.esm.js: Record.one() dropped, plain object in onStarted()
+
+[VENDOR PATCH CI WORKFLOW]
+.github/workflows/vendor-patch-verify.yml: PRESENT
+runtime/patches/odoo-test-helper/0001-odoo19-metamodel-module_to_models.patch: PRESENT
+runtime/scripts/apply_vendor_patches.sh: PRESENT
+NOTE: Dockerfile.ce19 on main retains find|sed approach (working-tree hardening stashed, needs follow-on commit)
+
+STATUS=COMPLETE (with one follow-on: Dockerfile.ce19 hardening commit pending)

@@ -1,0 +1,145 @@
+# OdooOps Capabilities — Machine-Readable SSOT
+# Human doc: docs/architecture/AZURE_ODOOSH_EQUIVALENT_TARGET_STATE.md
+
+version: 1
+last_updated: "2026-03-15"
+platform_contract: azure_odoo_sh_equivalent
+benchmark_model: odoo_sh_capability_model
+
+canonical_naming:
+  databases:
+    dev: odoo_dev
+    dev_demo: odoo_dev_demo
+    staging: odoo_staging
+    production: odoo
+  environments:
+    dev: odoo-dev
+    staging: odoo-staging
+    production: odoo-production
+  rule: >
+    Database names use underscores (canonical, never renamed).
+    Environment/infra labels use hyphens (Azure resource naming only).
+
+ownership:
+  infra:
+    - platform_target_state
+    - promotion_model
+    - staging_refresh_model
+    - dns_identity_monitoring
+    - backup_restore_doctrine
+  odoo:
+    - runtime_contract
+    - addon_dependency_contract
+    - requirements_contract
+    - application_smoke_checks
+    - runtime_evidence
+  agents:
+    - foundry_runtime_contracts
+  web:
+    - public_experience_surfaces
+
+capabilities:
+  build_from_git_revision:
+    required: true
+    owner: infra
+    status: partial
+
+  pr_validation_before_promotion:
+    required: true
+    owner: odoo
+    status: partial
+
+  dev_environment:
+    required: true
+    owner: infra
+    database: odoo_dev
+    status: partial
+
+  staging_environment:
+    required: true
+    owner: infra
+    database: odoo_staging
+    status: planned
+
+  production_environment:
+    required: true
+    owner: infra
+    database: odoo
+    status: partial
+
+  staging_from_neutralized_production_data:
+    required: true
+    owner: infra
+    status: planned
+
+  non_prod_mail_suppression:
+    required: true
+    owner: infra
+    status: planned
+
+  non_prod_cron_control:
+    required: true
+    owner: odoo
+    status: planned
+
+  runtime_logs:
+    required: true
+    owner: infra
+    status: partial
+
+  runtime_shell_access:
+    required: true
+    owner: infra
+    status: partial
+
+  runtime_monitoring:
+    required: true
+    owner: infra
+    status: partial
+
+  backup_and_restore:
+    required: true
+    owner: infra
+    status: partial
+
+  restore_rehearsal_evidence:
+    required: true
+    owner: infra
+    status: planned
+
+  python_requirements_contract:
+    required: true
+    owner: odoo
+    status: implemented
+
+  addon_submodule_contract:
+    required: true
+    owner: odoo
+    status: implemented
+
+  release_evidence_pack:
+    required: true
+    owner: infra
+    status: partial
+
+  staged_production_promotion:
+    required: true
+    owner: infra
+    status: planned
+
+policy:
+  direct_feature_to_production: false
+  direct_prod_mutation_without_emergency_approval: false
+  staging_must_be_neutralized: true
+  non_prod_real_email_default: false
+  non_prod_real_payment_default: false
+
+evidence_requirements:
+  - commit_sha
+  - pipeline_run_id
+  - environment
+  - dependency_summary
+  - addon_inventory
+  - smoke_result
+  - rollback_reference
+  - operator_identity

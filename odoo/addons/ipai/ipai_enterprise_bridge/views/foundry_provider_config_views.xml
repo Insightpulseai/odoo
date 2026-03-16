@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ipai_foundry_provider_config_view_form" model="ir.ui.view">
+        <field name="name">ipai.foundry.provider.config.form</field>
+        <field name="model">ipai.foundry.provider.config</field>
+        <field name="arch" type="xml">
+            <form string="Foundry Configuration">
+                <sheet>
+                    <group>
+                        <group string="Connection">
+                            <field name="name"/>
+                            <field name="endpoint" placeholder="https://your-foundry.azure.com"/>
+                            <field name="project_name"/>
+                            <field name="model_deployment"/>
+                        </group>
+                        <group string="Authentication">
+                            <field name="auth_mode"/>
+                            <field name="api_version"/>
+                        </group>
+                    </group>
+                    <group string="Test Results">
+                        <group>
+                            <field name="last_test_date"/>
+                            <field name="last_test_result"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_test_connection"
+                            type="object"
+                            string="Test Connection"
+                            class="btn-primary"
+                            icon="fa-plug"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

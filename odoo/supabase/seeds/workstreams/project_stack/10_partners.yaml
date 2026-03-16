@@ -1,0 +1,143 @@
+# Partners / Customers / Stakeholders
+# Model: res.partner
+# Import order: 1 (first - other models reference this)
+
+partners:
+  # ============================================================
+  # CUSTOMERS (Company type)
+  # ============================================================
+
+  - id: ipai_partner_acme
+    name: ACME Foods Inc
+    company_type: company
+    is_company: true
+    email: ops@acme.com
+    phone: "+63 2 8123 4567"
+    street: "Unit 1501, RCBC Plaza"
+    city: Makati City
+    zip: "1200"
+    country: Philippines
+    customer_rank: 1
+    supplier_rank: 0
+    ref: ipai_partner_acme
+    comment: "Demo customer for Project Alpha"
+
+  - id: ipai_partner_tbwa
+    name: TBWA SMP
+    company_type: company
+    is_company: true
+    email: business@insightpulseai.com
+    phone: "+63 2 8000 0000"
+    street: "Level 10, Uptown Tower"
+    city: Taguig City
+    zip: "1630"
+    country: Philippines
+    customer_rank: 1
+    supplier_rank: 0
+    ref: ipai_partner_tbwa
+    comment: "TBWA internal projects"
+
+  - id: ipai_partner_globex
+    name: Globex Corporation
+    company_type: company
+    is_company: true
+    email: procurement@globex.com
+    phone: "+63 2 8555 1234"
+    street: "Ayala Avenue cor. Paseo de Roxas"
+    city: Makati City
+    zip: "1226"
+    country: Philippines
+    customer_rank: 1
+    supplier_rank: 0
+    ref: ipai_partner_globex
+    comment: "Demo customer for Project Beta"
+
+  # ============================================================
+  # CONTACTS (Person type - portal stakeholders)
+  # ============================================================
+
+  - id: ipai_contact_acme_pm
+    name: Maria Santos
+    company_type: person
+    is_company: false
+    parent_id: ipai_partner_acme
+    email: maria.santos@acme.com
+    phone: "+63 917 123 4567"
+    function: Project Manager
+    customer_rank: 0
+    ref: ipai_contact_acme_pm
+    comment: "ACME project stakeholder - portal access candidate"
+
+  - id: ipai_contact_globex_cfo
+    name: Juan Dela Cruz
+    company_type: person
+    is_company: false
+    parent_id: ipai_partner_globex
+    email: juan.delacruz@globex.com
+    phone: "+63 918 987 6543"
+    function: CFO
+    customer_rank: 0
+    ref: ipai_contact_globex_cfo
+    comment: "Globex executive sponsor - portal access candidate"
+
+# Odoo import field mapping
+odoo_import:
+  model: res.partner
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: company_type
+      column: Company Type
+      allowed_values: [company, person]
+
+    - name: is_company
+      column: Is a Company
+      type: boolean
+
+    - name: parent_id
+      column: Parent Company
+      type: many2one
+      relation: res.partner
+
+    - name: email
+      column: Email
+
+    - name: phone
+      column: Phone
+
+    - name: street
+      column: Street
+
+    - name: city
+      column: City
+
+    - name: zip
+      column: Zip
+
+    - name: country_id
+      column: Country
+      type: many2one
+      relation: res.country
+
+    - name: customer_rank
+      column: Is a Customer
+      type: integer
+
+    - name: supplier_rank
+      column: Is a Vendor
+      type: integer
+
+    - name: ref
+      column: Internal Reference
+
+    - name: function
+      column: Job Position
+
+    - name: comment
+      column: Notes

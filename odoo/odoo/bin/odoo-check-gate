@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Resolve the directory of the script to find the repo root
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$(dirname "$DIR")"
+
+python3 "$REPO_ROOT/scripts/check_go_live_manifest.py" "$@"

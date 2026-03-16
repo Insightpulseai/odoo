@@ -1,0 +1,64 @@
+version: 1
+policy:
+  no_ui_steps: true
+  prefer_oca_first: true
+  prefer_data_files_over_models: true
+  structured_outputs: true
+agents:
+  - id: odoo_consultation
+    prompt: prompts/agents/odoo_consultation.md
+    tags: [odoo, consulting]
+  - id: odoo_implementation
+    prompt: prompts/agents/odoo_implementation.md
+    tags: [odoo, implementation]
+  - id: odoo_customization
+    prompt: prompts/agents/odoo_customization.md
+    tags: [odoo, customization]
+  - id: finance_close_specialist
+    prompt: prompts/agents/finance_close_specialist.md
+    tags: [finance, close, tax]
+  - id: evidence_architect
+    prompt: prompts/agents/evidence_architect.md
+    tags: [evidence, audit, compliance]
+  - id: app_strategy_consulting
+    prompt: prompts/agents/app_strategy_consulting.md
+    tags: [app, strategy]
+  - id: app_mobile_engineer
+    prompt: prompts/agents/app_mobile_engineer.md
+    tags: [app, mobile, supabase]
+  - id: web_fullstack_engineer
+    prompt: prompts/agents/web_fullstack_engineer.md
+    tags: [web, backend]
+  - id: uiux_designer
+    prompt: prompts/agents/uiux_designer.md
+    tags: [uiux, design]
+routing:
+  - match_any:
+      [
+        "month end",
+        "month-end",
+        "close",
+        "closing",
+        "tax compliance",
+        "bir",
+        "vat",
+        "withholding",
+      ]
+    primary: finance_close_specialist
+    secondary: [evidence_architect, odoo_consultation]
+  - match_any:
+      ["odoo deployment", "docker", "nginx", "reverse proxy", "ssl", "certbot"]
+    primary: odoo_implementation
+    secondary: [odoo_consultation]
+  - match_any: ["customize", "fields", "models", "views", "xml", "csv import"]
+    primary: odoo_customization
+    secondary: [odoo_consultation]
+  - match_any: ["supabase_flutter", "flutter", "mobile"]
+    primary: app_mobile_engineer
+    secondary: [app_strategy_consulting]
+  - match_any: ["website", "web app", "api", "backend"]
+    primary: web_fullstack_engineer
+    secondary: [uiux_designer]
+defaults:
+  primary: odoo_consultation
+  secondary: [uiux_designer]

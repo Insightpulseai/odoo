@@ -1,0 +1,155 @@
+# schema: ssot.github.enterprise.v1
+# GitHub Enterprise Cloud governance — Track A (personal accounts)
+# Codifies desired-state controls for the insightpulseai org.
+# CI validator: scripts/ci/check_github_enterprise_ssot.py
+
+enterprise:
+  type: personal_accounts
+  org: insightpulseai
+  plan: github_enterprise_cloud
+
+policy:
+  sso:
+    enabled: true
+    mode: saml
+    enforcement_target: org
+    # When enforcement_target=org, all org members must authenticate via SAML
+    # before accessing org resources. Non-SAML sessions are blocked.
+    idp_hint: "Configure IdP (e.g. Okta, Azure AD) in GitHub Org SSO settings"
+
+  auth:
+    require_2fa: true
+    restrict_third_party_oauth_apps: true
+    # restrict_third_party_oauth_apps: members cannot authorize OAuth apps
+    # unless an org owner approves them. Reduces supply-chain OAuth risk.
+
+  repo_rulesets:
+    # Rulesets replace legacy branch protection rules (GitHub Enterprise Cloud 2023+)
+    # Applied at org level; individual repos may add stricter rulesets.
+    default_branch_protection:
+      require_pull_request: true
+      required_approving_reviews: 1
+      dismiss_stale_reviews_on_push: true
+      require_status_checks: true
+      require_linear_history: true
+      # require_linear_history: enforces rebase/squash merge strategy; no merge commits.
+      # This keeps git history bisectable and audit-friendly.
+
+  security:
+    dependabot_alerts: true
+    dependabot_security_updates: true
+    secret_scanning: true
+    push_protection: true
+    # Note: secret_scanning and push_protection availability varies by plan.
+    # On GHEC free or Team tiers these may require GHAS add-on.
+    # Treat all entries in this block as desired-state; verify current plan entitlements.
+
+audit:
+  source: github_enterprise_audit_log
+  # GitHub Enterprise Cloud surfaces audit events at:
+  #   https://github.com/organizations/<org>/settings/audit-log
+  # Events include: member joins/leaves, repo visibility changes, SAML session events,
+  #   ruleset bypass attempts, secret scanning alerts.
+  ingestion: optional
+  # optional: if an audit ingest pipeline exists, stream to ops.audit_events
+  # (see docs/architecture/GITHUB_ENTERPRISE_CONTRACT.md §Audit Log).
+  ingest_target_table: ops.audit_events
+  ingest_format: json_stream
+  note: |
+    Ingestion is not required for base governance. Enable streaming when a
+    SIEM or Supabase ops.audit_events pipeline is operational.
+
+# ── GitHub Enterprise Cloud vs Server ────────────────────────────────────────
+
+deployment_model:
+  choice: github_enterprise_cloud     # GHEC (hosted by GitHub) — NOT self-hosted
+  rationale: >
+    GHEC: GitHub hosts infra (no ops overhead); fastest new feature access
+    (especially Copilot / AI devex); managed security posture.
+    Enterprise plan entitles both GHEC + GHES (GitHub Enterprise Server) simultaneously;
+    GHES is available as fallback for isolated/regulated workloads if needed.
+
+  ghec_benefits:
+    - "No infrastructure to operate (GitHub handles uptime, scaling, backups)"
+    - "Fastest access to new platform features (AI, Copilot, Advanced Security)"
+    - "Enterprise audit log surface (org-level + enterprise-level events)"
+    - "Org-level centralized policy enforcement via rulesets"
+    - "Optional: GHEC with data residency for stricter geo-control"
+
+  ghes_status: not_adopted
+  ghes_trigger: >
+    Adopt GHES only if: (a) network isolation requirement enforced by contract,
+    or (b) data sovereignty cannot be met by GHEC data residency option.
+    Record decision in docs/architecture/GITHUB_ENTERPRISE_CONTRACT.md.
+
+# ── Advanced Security Capability Map ─────────────────────────────────────────
+
+advanced_security:
+  # GitHub splits Advanced Security into two product families:
+  # 1. Secret Protection (secret scanning + push protection + validity checking)
+  # 2. Code Security    (code scanning + Dependabot premium + dependency review +
+  #                      security overview + Copilot Autofix)
+  # Both are available on GHEC (and Team) — plan and add-on entitlement determines access.
+
+  desired_state:
+    # Secret Protection
+    secret_scanning:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC (may require GHAS add-on depending on tier)"
+
+    push_protection:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC (may require GHAS add-on depending on tier)"
+
+    secret_validity_checking:
+      desired: true
+      product: "GitHub Secret Protection"
+      plan_gate: "GHEC with Secret Protection add-on"
+
+    # Code Security
+    code_scanning:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "GHEC (may require GHAS add-on or Code Security tier)"
+
+    dependabot_alerts:
+      desired: true
+      product: "GitHub Code Security (Dependabot)"
+      plan_gate: "Available on all plans (free for public repos)"
+
+    dependabot_security_updates:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "Available on GHEC"
+
+    dependency_review:
+      desired: true
+      product: "GitHub Code Security"
+      plan_gate: "GHEC with Code Security"
+
+    copilot_autofix:
+      desired: false     # deferred — review when Copilot plan is active
+      product: "GitHub Code Security (Copilot Autofix)"
+      plan_gate: "Requires Copilot license"
+
+  verification_note: >
+    Desired-state entries are intent; CI validates keys + structure only.
+    Verify actual enablement against GitHub Org Settings → Code security and analysis.
+    Features gated by plan/add-on are NOT automatically enforced by SSOT alone.
+
+notes: |
+  secret_scanning and push_protection availability varies by GitHub plan:
+  - GitHub Free / Team: not available
+  - GitHub Enterprise Cloud (GHEC): available with GHAS add-on, or included
+    in some GHEC tiers. Always verify current entitlements against the org
+    billing page before treating these as enforced controls.
+  All entries in this file represent desired-state. CI validates structural
+  invariants (keys present, values correct) but cannot check live GitHub API
+  state. Human review against the GitHub Org Settings UI is required to confirm
+  actual enforcement.
+
+  GitHub Enterprise plan entitles use of both GHEC (cloud) and GHES (self-hosted)
+  under the same user license count. Adoption of GHES is not planned; see
+  deployment_model.ghes_status above.

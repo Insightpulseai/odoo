@@ -1,0 +1,251 @@
+// IPAI AI Platform - Entity Relationship Diagram
+// Format: DBML (Database Markup Language)
+// View at: https://dbdiagram.io
+
+// ============================================================================
+// Odoo Core Tables (Reference)
+// ============================================================================
+
+Table res_company {
+  id integer [pk]
+  name varchar [not null]
+  active boolean [default: true]
+}
+
+Table res_users {
+  id integer [pk]
+  name varchar [not null]
+  login varchar [not null, unique]
+  company_id integer [ref: > res_company.id]
+  active boolean [default: true]
+}
+
+Table project_project {
+  id integer [pk]
+  name varchar [not null]
+  company_id integer [ref: > res_company.id]
+  active boolean [default: true]
+}
+
+Table project_task {
+  id integer [pk]
+  name varchar [not null]
+  project_id integer [ref: > project_project.id]
+  stage_id integer
+  description text
+  company_id integer [ref: > res_company.id]
+  write_date datetime
+}
+
+// ============================================================================
+// IPAI AI Core Tables (ipai_ai_core module)
+// ============================================================================
+
+Table ipai_ai_provider {
+  id integer [pk]
+  name varchar [not null]
+  sequence integer [default: 10]
+  provider_type varchar [not null, note: 'kapa|openai|anthropic|ollama']
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id, not null]
+  is_default boolean [default: false]
+  total_requests integer [default: 0]
+  total_tokens integer [default: 0]
+  avg_latency_ms float [default: 0.0]
+
+  indexes {
+    (company_id, is_default) [name: 'provider_company_default_idx']
+  }
+}
+
+Table ipai_ai_thread {
+  id integer [pk]
+  name varchar [note: 'Computed from first message']
+  provider_id integer [ref: > ipai_ai_provider.id, not null]
+  company_id integer [ref: > res_company.id, note: 'Related from provider']
+  external_thread_id varchar [note: 'External provider thread ID']
+  user_id integer [ref: > res_users.id, not null]
+  message_count integer [default: 0, note: 'Computed']
+  state varchar [not null, default: 'active', note: 'active|closed']
+  create_date datetime [not null]
+
+  indexes {
+    user_id [name: 'thread_user_idx']
+    provider_id [name: 'thread_provider_idx']
+  }
+}
+
+Table ipai_ai_message {
+  id integer [pk]
+  thread_id integer [ref: > ipai_ai_thread.id, not null]
+  role varchar [not null, note: 'user|assistant|system']
+  content text [not null]
+  provider_latency_ms integer
+  provider_status varchar
+  confidence float [note: '0.0 - 1.0']
+  tokens_used integer
+  citation_count integer [default: 0, note: 'Computed']
+  create_date datetime [not null]
+
+  indexes {
+    thread_id [name: 'message_thread_idx']
+  }
+}
+
+Table ipai_ai_citation {
+  id integer [pk]
+  message_id integer [ref: > ipai_ai_message.id, not null]
+  rank integer [default: 1]
+  source_id varchar [note: 'External source identifier']
+  title varchar
+  url varchar
+  snippet text
+  score float
+
+  indexes {
+    message_id [name: 'citation_message_idx']
+  }
+}
+
+// ============================================================================
+// IPAI Agent Core Tables (ipai_agent_core module)
+// ============================================================================
+
+Table ipai_agent_skill {
+  id integer [pk]
+  name varchar [not null]
+  description text
+  intent_patterns text [note: 'JSON array of patterns']
+  workflow_json text [note: 'Workflow definition']
+  active boolean [default: true]
+}
+
+Table ipai_agent_tool {
+  id integer [pk]
+  name varchar [not null]
+  technical_name varchar [not null, unique]
+  description text
+  method_path varchar [note: 'Dotted path to Odoo method']
+  parameters_json text [note: 'Parameter schema']
+  active boolean [default: true]
+}
+
+Table ipai_agent_knowledge_source {
+  id integer [pk]
+  name varchar [not null]
+  source_type varchar [not null, note: 'document|url|model']
+  reference varchar [note: 'Document ID, URL, or model name']
+  active boolean [default: true]
+}
+
+Table ipai_agent_run {
+  id integer [pk]
+  skill_id integer [ref: > ipai_agent_skill.id]
+  user_id integer [ref: > res_users.id]
+  state varchar [not null, note: 'pending|running|success|failed']
+  input_text text
+  output_text text
+  started_at datetime
+  completed_at datetime
+  error_message text
+}
+
+// ============================================================================
+// IPAI AI Connectors Tables (ipai_ai_connectors module)
+// ============================================================================
+
+Table ipai_ai_event {
+  id integer [pk]
+  source varchar [not null, note: 'n8n|github|slack|custom']
+  event_type varchar [not null]
+  ref varchar [note: 'External reference ID']
+  payload_json text [note: 'JSON payload']
+  state varchar [not null, default: 'received', note: 'received|processing|processed|failed|ignored']
+  processed_date datetime
+  error_message text
+  notes text
+  company_id integer [ref: > res_company.id, not null]
+  create_date datetime [not null]
+
+  indexes {
+    (source, event_type) [name: 'event_source_type_idx']
+    state [name: 'event_state_idx']
+    company_id [name: 'event_company_idx']
+  }
+}
+
+// ============================================================================
+// IPAI AI Sources Tables (ipai_ai_sources_odoo module)
+// ============================================================================
+
+Table ipai_kb_export_run {
+  id integer [pk]
+  company_id integer [ref: > res_company.id, not null]
+  state varchar [not null, default: 'running', note: 'running|success|failed']
+  chunks_count integer
+  started_at datetime [not null]
+  completed_at datetime
+  duration_seconds float [note: 'Computed']
+  error_message text
+
+  indexes {
+    state [name: 'export_run_state_idx']
+    company_id [name: 'export_run_company_idx']
+  }
+}
+
+// ============================================================================
+// Supabase KB Tables (External - Supabase)
+// ============================================================================
+
+Table kb_chunks {
+  id bigint [pk, increment]
+  tenant_ref varchar [not null, note: 'e.g., odoo_company:1']
+  source_type varchar [not null, note: 'odoo_task|odoo_kb|github|docs']
+  source_ref varchar [not null, note: 'e.g., project.task:123']
+  title varchar
+  url varchar
+  content text [not null]
+  embedding "vector(1536)" [note: 'OpenAI embedding']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+
+  indexes {
+    (tenant_ref, source_type, source_ref) [unique, name: 'kb_chunks_uq']
+    tenant_ref [name: 'kb_chunks_tenant_idx']
+    source_type [name: 'kb_chunks_source_type_idx']
+  }
+
+  Note: 'External Supabase table with pgvector'
+}
+
+// ============================================================================
+// Relationships Summary
+// ============================================================================
+
+// Provider → Threads (1:N)
+Ref: ipai_ai_provider.id < ipai_ai_thread.provider_id
+
+// Thread → Messages (1:N)
+Ref: ipai_ai_thread.id < ipai_ai_message.thread_id
+
+// Message → Citations (1:N)
+Ref: ipai_ai_message.id < ipai_ai_citation.message_id
+
+// User → Threads (1:N)
+Ref: res_users.id < ipai_ai_thread.user_id
+
+// Company → Providers (1:N)
+Ref: res_company.id < ipai_ai_provider.company_id
+
+// Company → Events (1:N)
+Ref: res_company.id < ipai_ai_event.company_id
+
+// Company → Export Runs (1:N)
+Ref: res_company.id < ipai_kb_export_run.company_id
+
+// Skill → Runs (1:N)
+Ref: ipai_agent_skill.id < ipai_agent_run.skill_id
+
+// User → Runs (1:N)
+Ref: res_users.id < ipai_agent_run.user_id

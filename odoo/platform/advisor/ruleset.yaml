@@ -1,0 +1,136 @@
+# Ops Advisor Ruleset
+# One rule per check. Scorer evaluates each rule against live platform sources.
+# Severity: critical > high > medium > low > info
+# Pillar: cost | security | reliability | operational_excellence | performance
+
+rules:
+  # ─── Security ──────────────────────────────────────────────────────────────
+  - id: preview-protection-enabled
+    pillar: security
+    severity: high
+    title: "Vercel deployment protection is disabled"
+    description: "Preview deployments are publicly accessible without authentication."
+    remediation: "Enable Deployment Protection in Vercel Project Settings → General."
+    source: vercel
+    check: project.passwordProtection == null && project.ssoProtection == null
+
+  - id: env-vars-server-only-secrets
+    pillar: security
+    severity: critical
+    title: "Secret env vars exposed as NEXT_PUBLIC_*"
+    description: "Service role keys or management tokens are exposed to the client bundle."
+    remediation: "Remove NEXT_PUBLIC_ prefix from SUPABASE_SERVICE_ROLE_KEY and SUPABASE_MANAGEMENT_API_TOKEN."
+    source: vercel
+    check: no env var named NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_MANAGEMENT_API_TOKEN
+
+  - id: supabase-rls-enabled
+    pillar: security
+    severity: high
+    title: "Supabase tables without RLS"
+    description: "One or more tables in the ops schema have RLS disabled."
+    remediation: "Run ALTER TABLE ops.<table> ENABLE ROW LEVEL SECURITY; for all ops schema tables."
+    source: supabase
+    check: all ops.* tables have rls_enabled = true
+
+  # ─── Reliability ───────────────────────────────────────────────────────────
+  - id: env-vars-all-environments-set
+    pillar: reliability
+    severity: high
+    title: "Required env vars missing for one or more Vercel environments"
+    description: "SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set for Production, Preview, or Development."
+    remediation: "Set all required env vars in Vercel Project Settings → Environment Variables for all 3 environments."
+    source: vercel
+    check: required env vars present in all 3 environments (production, preview, development)
+
+  - id: deployment-frequency-healthy
+    pillar: reliability
+    severity: medium
+    title: "No deployments in the last 30 days"
+    description: "Stale deployment cadence may indicate an abandoned project or blocked CI."
+    remediation: "Check CI pipeline health and ensure ops-console deployments are not blocked."
+    source: vercel
+    check: at least 1 successful deployment in last 30 days
+
+  - id: do-droplet-reachable
+    pillar: reliability
+    severity: critical
+    title: "DigitalOcean production droplet is unreachable"
+    description: "The primary droplet (178.128.112.214) is not responding to health checks."
+    remediation: "SSH to droplet and verify Docker services are running: docker ps --filter status=running."
+    source: digitalocean
+    check: droplet status == "active" and health monitor passing
+
+  # ─── Cost ──────────────────────────────────────────────────────────────────
+  - id: bundle-size-within-budget
+    pillar: cost
+    severity: medium
+    title: "ops-console bundle size exceeds 2 MB"
+    description: "Large bundle increases CDN egress costs and degrades Time to Interactive."
+    remediation: "Run 'npm run build' and check bundle analyzer output. Remove unused imports."
+    source: vercel
+    check: total bundle size <= 2048 KB
+
+  - id: do-bandwidth-within-budget
+    pillar: cost
+    severity: low
+    title: "DigitalOcean monthly bandwidth approaching limit"
+    description: "Droplet bandwidth usage is above 80% of monthly allocation."
+    remediation: "Review heavy consumers (OCR uploads, n8n webhooks). Consider DO Spaces CDN offload."
+    source: digitalocean
+    check: monthly bandwidth usage <= 80% of limit
+
+  # ─── Operational Excellence ────────────────────────────────────────────────
+  - id: ci-gates-configured
+    pillar: operational_excellence
+    severity: medium
+    title: "ops-console CI gates not all green"
+    description: "ESLint, TypeScript, Playwright, or bundle-size workflow is failing."
+    remediation: "Run 'npm run build' locally and fix failing checks. See VERCEL_MONOREPO.md."
+    source: vercel
+    check: all 3 CI workflows (ops-console-check, ops-console-playwright, ops-console-bundle-size) passing
+
+  - id: supabase-project-healthy
+    pillar: operational_excellence
+    severity: high
+    title: "Supabase project health check failing"
+    description: "The Supabase project reports degraded status via Management API."
+    remediation: "Check Supabase status page and project health in Supabase dashboard."
+    source: supabase
+    check: project status == "ACTIVE_HEALTHY"
+
+  - id: vercel-team-integrations-stable
+    pillar: operational_excellence
+    severity: low
+    title: "Vercel team integrations have pending drift"
+    description: "The integrations diff engine detected unreviewed changes."
+    remediation: "Review the open GitHub Issue created by vercel-integrations-diff.yml."
+    source: vercel
+    check: no open vercel-integrations-drift GitHub issue
+
+  # ─── Performance ───────────────────────────────────────────────────────────
+  - id: lcp-within-target
+    pillar: performance
+    severity: medium
+    title: "Largest Contentful Paint exceeds 2.5 s"
+    description: "LCP is above the 'Good' Core Web Vitals threshold for ops-console."
+    remediation: "Use Next.js Image component, preload critical fonts, reduce server response time."
+    source: vercel
+    check: p75 LCP <= 2500ms (last 7 days Vercel Analytics)
+
+  - id: error-rate-below-threshold
+    pillar: performance
+    severity: high
+    title: "ops-console function error rate > 1%"
+    description: "Server-side function errors are elevated, indicating a runtime issue."
+    remediation: "Review Vercel Functions logs. Check for uncaught promise rejections in API routes."
+    source: vercel
+    check: function error rate <= 1% (last 24h)
+
+  - id: supabase-connection-pool-healthy
+    pillar: performance
+    severity: medium
+    title: "Supabase connection pool near capacity"
+    description: "Active connections are above 80% of the project pool size."
+    remediation: "Use Supabase pooler (port 6543) instead of direct connection. Review query patterns."
+    source: supabase
+    check: active_connections / max_connections <= 0.8

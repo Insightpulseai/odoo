@@ -1,0 +1,242 @@
+{
+  "name": "Control Plane: Health Check Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/services?select=id,name,endpoint,health_endpoint,port",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "id": "get_services",
+      "name": "Get Services",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split_services",
+      "name": "Split Into Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build health check URL\nconst service = $input.first().json;\nlet healthUrl;\n\nif (service.health_endpoint) {\n  if (service.endpoint.startsWith('http')) {\n    healthUrl = service.endpoint.replace(/\\/$/, '') + service.health_endpoint;\n  } else {\n    const proto = service.port === 443 ? 'https' : 'http';\n    healthUrl = `${proto}://${service.endpoint}:${service.port}${service.health_endpoint}`;\n  }\n} else {\n  healthUrl = service.endpoint;\n}\n\nreturn {\n  service_id: service.id,\n  service_name: service.name,\n  health_url: healthUrl,\n  check_started: new Date().toISOString()\n};"
+      },
+      "id": "build_url",
+      "name": "Build Health URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.health_url }}",
+        "options": {
+          "timeout": 10000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": true,
+              "maxRedirects": 3
+            }
+          }
+        }
+      },
+      "id": "check_health",
+      "name": "HTTP Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine health status from response\nconst input = $input.first();\nconst prevData = $('Build Health URL').item.json;\nconst startTime = new Date(prevData.check_started).getTime();\nconst responseTime = Date.now() - startTime;\n\nlet status, statusCode, errorMessage;\n\nif (input.error) {\n  status = 'offline';\n  statusCode = 0;\n  errorMessage = input.error.message || 'Connection failed';\n} else {\n  statusCode = input.json.$response?.statusCode || 200;\n  \n  if (statusCode >= 200 && statusCode < 300) {\n    status = responseTime < 2000 ? 'healthy' : 'degraded';\n  } else if (statusCode >= 500) {\n    status = 'unhealthy';\n  } else {\n    status = 'degraded';\n  }\n}\n\nreturn {\n  service_id: prevData.service_id,\n  service_name: prevData.service_name,\n  status: status,\n  response_time_ms: responseTime,\n  status_code: statusCode,\n  error_message: errorMessage || null,\n  checked_at: new Date().toISOString()\n};"
+      },
+      "id": "evaluate_health",
+      "name": "Evaluate Health",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/record_health",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_service_id\": \"{{ $json.service_id }}\",\n  \"p_status\": \"{{ $json.status }}\",\n  \"p_response_time_ms\": {{ $json.response_time_ms }},\n  \"p_status_code\": {{ $json.status_code || 'null' }},\n  \"p_error_message\": {{ $json.error_message ? '\"' + $json.error_message + '\"' : 'null' }}\n}",
+        "options": {}
+      },
+      "id": "record_health",
+      "name": "Record Health (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "operation": "equals",
+              "value2": "unhealthy"
+            }
+          ]
+        }
+      },
+      "id": "check_unhealthy",
+      "name": "Is Unhealthy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"health-check\",\n  \"p_job_type\": \"alert.service_unhealthy\",\n  \"p_payload\": {\n    \"service_id\": \"{{ $('Evaluate Health').item.json.service_id }}\",\n    \"service_name\": \"{{ $('Evaluate Health').item.json.service_name }}\",\n    \"status\": \"{{ $('Evaluate Health').item.json.status }}\",\n    \"error\": \"{{ $('Evaluate Health').item.json.error_message }}\"\n  },\n  \"p_priority\": 9\n}",
+        "options": {}
+      },
+      "id": "create_alert",
+      "name": "Create Alert Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1850, 200]
+    }
+  ],
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Services",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Services": {
+      "main": [
+        [
+          {
+            "node": "Split Into Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Items": {
+      "main": [
+        [
+          {
+            "node": "Build Health URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Health URL": {
+      "main": [
+        [
+          {
+            "node": "HTTP Health Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Health Check": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate Health": {
+      "main": [
+        [
+          {
+            "node": "Record Health (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Health (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Is Unhealthy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Unhealthy?": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Job",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["control-plane", "health", "monitoring"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,31 @@
+# SSOT: AI Agent Tool Definitions
+# Tools available to Foundry agents.
+# Cross-referenced by: agents.yaml (tools), policies.yaml
+
+tools:
+  # v1: No tools are active. All entries below are future-planned.
+  # Tools will be enabled incrementally with bounded scope.
+
+  # --- Future: Transaction Agent tools ---
+  # odoo-record-read:
+  #   type: function
+  #   description: Read a single Odoo record by model and ID
+  #   scope: read-only
+  #   bounded: true
+  #   allowed_models:
+  #     - res.partner
+  #     - sale.order
+  #     - purchase.order
+  #     - account.move
+  #   status: planned
+
+  # odoo-record-draft:
+  #   type: function
+  #   description: Create a draft record (not committed until approved)
+  #   scope: draft-only
+  #   bounded: true
+  #   requires_approval: true
+  #   status: planned
+
+# v1 status: zero tools by design.
+# All agent modes operate via instructions + knowledge grounding only.

@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "source": {
+    "provider": "supabase",
+    "type": "examples",
+    "base_url": "https://github.com/supabase/supabase/tree/master/examples"
+  },
+  "items": [
+    {
+      "id": "nextjs-with-supabase",
+      "title": "Next.js + Supabase (SSR Auth, server components)",
+      "url": "https://github.com/supabase/supabase/tree/master/examples/auth/nextjs",
+      "tags": ["nextjs", "supabase", "auth", "ssr", "server-components", "cookies"],
+      "use_cases": ["ops-console", "platform-kit"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "middleware.ts — @supabase/ssr updateSession() pattern",
+        "lib/supabase/server.ts — createServerClient with Next.js cookies()",
+        "lib/supabase/client.ts — createBrowserClient (singleton pattern)",
+        "app/(auth)/login/page.tsx — server action login flow"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "storage-image-upload",
+      "title": "Supabase Storage — image upload + transform",
+      "url": "https://github.com/supabase/supabase/tree/master/examples/storage",
+      "tags": ["supabase", "storage", "upload", "image-transform", "nextjs"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "lib/storage.ts — upload helper (bucket → signed URL → public URL pattern)",
+        "Upload route handler (multipart/form-data → supabase.storage.from().upload())",
+        "Image transform URL construction (width/height/format params)"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "edge-functions-hello",
+      "title": "Supabase Edge Functions — invocation patterns",
+      "url": "https://github.com/supabase/supabase/tree/master/examples/edge-functions",
+      "tags": ["supabase", "edge-functions", "deno", "invoke"],
+      "use_cases": ["ops-console", "ai-ops-agent"],
+      "adoption_level": "harvest",
+      "what_to_lift": [
+        "supabase.functions.invoke() client call pattern",
+        "Authorization header pass-through (user JWT → function)",
+        "Error handling wrapper for invoke()"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "realtime-subscriptions",
+      "title": "Supabase Realtime — channel subscriptions",
+      "url": "https://github.com/supabase/supabase/tree/master/examples/realtime",
+      "tags": ["supabase", "realtime", "websocket", "postgres-changes", "broadcast"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "useRealtime hook — channel setup + cleanup on unmount",
+        "postgres_changes subscription pattern (table + filter)",
+        "Broadcast pattern for collaborative UI"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "mfa-totp",
+      "title": "Supabase MFA with TOTP",
+      "url": "https://github.com/supabase/supabase/tree/master/examples/auth/nextjs-server-side-mfa",
+      "tags": ["supabase", "auth", "mfa", "totp", "2fa", "security"],
+      "use_cases": ["ops-console"],
+      "adoption_level": "reference",
+      "what_to_lift": [
+        "MFA enrollment flow (enroll → QR code → verify TOTP)",
+        "Assurance level check middleware (AAL2 required for sensitive routes)",
+        "Challenge + verify pattern"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "candidate",
+      "last_reviewed": "2026-02-22"
+    },
+    {
+      "id": "database-create-migration-prompt",
+      "title": "Supabase agent prompt: create migration",
+      "url": "https://github.com/supabase/supabase/blob/master/examples/prompts/database-create-migration.md",
+      "tags": ["supabase", "migrations", "agent-prompts", "cli"],
+      "use_cases": ["ops-console", "platform-kit"],
+      "adoption_level": "adopt",
+      "what_to_lift": [
+        "Repurpose as CLAUDE.md instruction pattern for DB migrations",
+        "Supabase CLI migration creation: supabase migration new + supabase db push"
+      ],
+      "risk": "low",
+      "license_notes": "Apache-2.0",
+      "owner": "platform-team",
+      "status": "approved",
+      "last_reviewed": "2026-02-22"
+    }
+  ]
+}
