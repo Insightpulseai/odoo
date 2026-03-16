@@ -1,0 +1,165 @@
+site_name: InsightPulse AI Documentation
+site_description: AI-first ERP platform documentation — Odoo CE 19 + OCA + Azure
+site_url: https://docs.insightpulseai.com
+repo_url: https://github.com/Insightpulseai/odoo
+repo_name: Insightpulseai/odoo
+edit_uri: edit/main/docs-site/docs/
+
+theme:
+  name: material
+  custom_dir: docs-site/overrides
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/robot-outline
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+
+docs_dir: docs-site/docs
+site_dir: docs-site/site
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      use_pygments: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search
+  - tags
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Insightpulseai/odoo
+  generator: false
+  status:
+    new: Recently added
+    deprecated: Deprecated
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home:
+    - index.md
+    - Platform overview: overview.md
+    - Quick start: quickstart.md
+
+  - Architecture:
+    - architecture/index.md
+    - System topology: architecture/system-topology.md
+    - Authority model: architecture/authority-model.md
+    - Data flows: architecture/data-flows.md
+    - Target end state: architecture/target-end-state.md
+    - SSOT boundaries: architecture/ssot-boundaries.md
+    - Module hierarchy: architecture/module-hierarchy.md
+
+  - AI-First Development:
+    - ai-first/index.md
+    - Agent workflow: ai-first/agent-workflow.md
+    - Spec-kit methodology: ai-first/spec-kit.md
+    - Claude Code integration: ai-first/claude-code.md
+    - MCP servers: ai-first/mcp-servers.md
+    - AI modules: ai-first/ai-modules.md
+
+  - Odoo Modules:
+    - modules/index.md
+    - Module philosophy: modules/philosophy.md
+    - Finance unified: modules/finance.md
+    - BIR tax compliance: modules/bir-compliance.md
+    - HR & payroll: modules/hr-payroll.md
+    - Enterprise parity: modules/ee-parity.md
+    - OCA workflow: modules/oca-workflow.md
+
+  - Deployment:
+    - deployment/index.md
+    - Azure Container Apps: deployment/azure-container-apps.md
+    - Docker setup: deployment/docker.md
+    - CI/CD pipelines: deployment/ci-cd.md
+    - Devcontainer: deployment/devcontainer.md
+    - DNS & routing: deployment/dns-routing.md
+
+  - Integrations:
+    - integrations/index.md
+    - Supabase (SSOT): integrations/supabase.md
+    - ADLS ETL pipeline: integrations/adls-etl.md
+    - SAP Concur & Joule: integrations/sap-integration.md
+    - Slack & n8n: integrations/slack-n8n.md
+    - Azure AI Foundry: integrations/azure-ai.md
+
+  - Contracts:
+    - contracts/index.md
+    - Data authority: contracts/data-authority.md
+    - Reverse ETL guardrails: contracts/reverse-etl.md
+    - SAP integration: contracts/sap-contract.md
+
+  - Contributing:
+    - contributing/index.md
+    - Content guidelines: contributing/content-guidelines.md
+    - Commit conventions: contributing/commits.md
+    - Spec bundle structure: contributing/spec-bundles.md

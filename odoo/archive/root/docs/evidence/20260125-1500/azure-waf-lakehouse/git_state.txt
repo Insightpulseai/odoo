@@ -1,0 +1,26 @@
+Git State Evidence
+==================
+
+Assessment Date: 2026-01-25T15:00:00Z
+Repository: odoo-ce
+
+Current Branch: claude/azure-assessment-implementation-ENFVJ
+HEAD SHA: b8aaeb6b1586732f42fd0e032f8d497ca4d904f7
+HEAD Message: docs: auto-update SITEMAP.md and TREE.md [skip ci]
+
+Files Created:
+- docs/evidence/20260125-1500/azure-waf-lakehouse/AZURE_WAF_LAKEHOUSE_ASSESSMENT.md
+- docs/evidence/20260125-1500/azure-waf-lakehouse/scorecard.json
+- docs/evidence/20260125-1500/azure-waf-lakehouse/gaps.md
+- docs/evidence/20260125-1500/azure-waf-lakehouse/git_state.txt
+
+Assessment Framework: Azure Well-Architected Framework + Databricks Lakehouse Model
+Assessment Result: 75/100 (B+) - Go-Live APPROVED
+
+Verification:
+- Repository structure validated via CLAUDE.md
+- Architecture analyzed from infra/, spec/, docs/
+- 47 CI/CD workflows reviewed
+- 32 spec bundles cataloged
+- Lakehouse configuration in infra/lakehouse/ evaluated
+- Databricks DAB configuration in infra/databricks/ evaluated

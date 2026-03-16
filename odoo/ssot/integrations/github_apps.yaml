@@ -1,0 +1,109 @@
+# schema: ssot.integrations.v1
+# GitHub App integration — single ingress model.
+#
+# Architecture:
+#   GitHub → ipai-integrations App webhook → ops-github-webhook-ingest (Supabase)
+#                                                      │
+#                                          ┌────────────┼────────────┐
+#                                          ▼            ▼            ▼
+#                                 github_deliveries  work_items   work_queue
+#                                      (ledger)       (upsert)    (async)
+#                                          │
+#                                 ┌────────┴──────────┐
+#                                 ▼                   ▼
+#                          n8n fan-out          Plane API fan-out
+#
+# Supabase is the ONLY webhook ingress boundary. Neither n8n nor Plane
+# receive GitHub webhooks directly.
+#
+# Companion files:
+#   ssot/github/app-manifest.yaml       — pulser-hub (platform automation identity, kept separate)
+#   infra/github/apps/ipai-integrations/manifest.json
+#   supabase/functions/ops-github-webhook-ingest/index.ts
+#   ssot/secrets/registry.yaml          — all secret_refs below
+#
+# CI guard: .github/workflows/github-apps-ssot-guard.yml
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: github_apps
+display_name: "GitHub App Integrations"
+status: not_provisioned    # planned | not_provisioned | active | deprecated
+
+apps:
+  - id: ipai-integrations
+    kind: github_app
+    status: not_provisioned
+    platform: github.com
+    owner_org: Insightpulseai
+    repository_selection: all    # install on all org repos (can scope to selected later)
+
+    # ── App identity (non-secret) ──────────────────────────────────────────────
+    # Populated after first App creation via manifest conversion.
+    # app_id: <fill after creation>      # numeric
+    # client_id: <fill after creation>   # alphanumeric; preferred for JWT iss
+
+    # ── Webhook (single ingress) ───────────────────────────────────────────────
+    webhook:
+      url: "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/ops-github-webhook-ingest"
+      secret_ref: github_app_webhook_secret    # ssot/secrets/registry.yaml; env: GITHUB_APP_WEBHOOK_SECRET
+      active: true
+
+    # ── Minimal permissions ────────────────────────────────────────────────────
+    permissions:
+      metadata: read
+      pull_requests: read
+      issues: read
+
+    # ── Subscribed events ──────────────────────────────────────────────────────
+    events:
+      - pull_request       # PR opened/merged/closed → ops.work_items upsert
+      - issues             # issue opened/closed/edited → ops.work_items upsert
+      - issue_comment      # comment activity → n8n fan-out for notifications
+      - push               # push events → n8n fan-out for CI triggers
+
+    # ── Downstream fan-out ────────────────────────────────────────────────────
+    # Both targets are best-effort. The delivery ledger (ops.github_webhook_deliveries)
+    # is durable regardless of fan-out success.
+    downstream:
+      n8n:
+        description: "Forward all events to n8n for workflow automation"
+        url_ref: n8n_webhook_github_url          # env: N8N_WEBHOOK_GITHUB_URL
+        signature_secret_ref: n8n_webhook_secret # env: N8N_WEBHOOK_SECRET (optional HMAC guard)
+
+      plane:
+        description: "Upsert issues/PRs into Plane work items via Plane REST API"
+        api_base_url: "https://plane.insightpulseai.com/api/v1"
+        api_key_ref: plane_api_key               # env: PLANE_API_KEY
+
+    # ── Canonical ledger tables ────────────────────────────────────────────────
+    # Migration: supabase/migrations/20260301000065_ops_workitems_webhooks.sql
+    ledger:
+      deliveries_table: ops.github_webhook_deliveries    # dedupe by delivery_id PK
+      work_items_table: ops.work_items                   # upsert by work_item_ref UNIQUE
+      work_queue_table: ops.work_queue                   # async processing queue
+
+    # ── All secret_refs (must exist in ssot/secrets/registry.yaml) ───────────
+    secrets:
+      - github_app_webhook_secret
+      - plane_api_key
+      - n8n_webhook_github_url    # URL is tracked as config in secrets registry
+      - n8n_webhook_secret
+
+# ── One-time provisioning ──────────────────────────────────────────────────────
+provisioning:
+  step_1: >
+    scripts/github/create-app-from-manifest.sh ipai-integrations
+    → reads infra/github/apps/ipai-integrations/manifest.json
+    → GitHub Manifest Conversion API returns app_id + PEM private key
+  step_2: >
+    supabase secrets set GITHUB_APP_WEBHOOK_SECRET=<webhook_secret_from_creation>
+    supabase secrets set GITHUB_APP_ID=<numeric_app_id>
+    supabase secrets set GITHUB_PRIVATE_KEY=<pem_key_base64>
+    supabase secrets set N8N_WEBHOOK_GITHUB_URL=https://n8n.insightpulseai.com/webhook/<uuid>
+    (plane_api_key assumed already provisioned from ssot/integrations/plane.yaml)
+  step_3: >
+    Fill app_id + client_id into this file under apps[0] (non-secrets, from GitHub App settings page).
+    Flip status: active.
+  step_4: >
+    CI guard (github-apps-ssot-guard.yml) enforces no further drift after this point.

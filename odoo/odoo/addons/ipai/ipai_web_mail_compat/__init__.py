@@ -1,0 +1,5 @@
+# Copyright 2026 InsightPulse AI
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+from . import hooks, models
+from .hooks import post_init_hook  # must be in module namespace for __manifest__

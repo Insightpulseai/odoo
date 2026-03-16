@@ -1,0 +1,150 @@
+# AFC RACI Matrix
+# Role assignments and responsibilities
+
+roles:
+  - code: RIM
+    name: Revenue & Inventory Management
+    description: Finance staff responsible for daily operations
+    responsibilities:
+      - Prepare journal entries
+      - Compile reports and schedules
+      - Gather supporting documentation
+      - Initial data entry and validation
+    default_raci: R  # Responsible
+
+  - code: BOM
+    name: Business Operations Manager
+    description: Finance manager responsible for accuracy and compliance
+    responsibilities:
+      - Review prepared work
+      - Validate calculations
+      - Check compliance requirements
+      - Approve for next stage
+    default_raci: A  # Accountable
+
+  - code: CKVC
+    name: Controller/VP Controller
+    description: Senior finance leadership for complex matters
+    responsibilities:
+      - Provide guidance on complex issues
+      - Review significant estimates
+      - Approve major adjustments
+      - Technical consultation
+    default_raci: C  # Consulted
+
+  - code: FD
+    name: Finance Director
+    description: Executive responsible for final sign-off
+    responsibilities:
+      - Final approval of close
+      - Sign-off on financials
+      - Escalation point
+      - External stakeholder communication
+    default_raci: I  # Informed (but A for final sign-off)
+
+  - code: IT
+    name: IT Support
+    description: Technical support for system issues
+    responsibilities:
+      - System access management
+      - Technical troubleshooting
+      - Report generation support
+    default_raci: C  # Consulted
+
+# RACI matrix by task category
+raci_matrix:
+  PAYROLL:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  TAX:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  EXPENSE:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  ACCRUAL:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  AMORTIZATION:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  DEPRECIATION:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  INTERCOMPANY:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  FX:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  BANK:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  WIP:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  REVENUE:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  ADJUSTMENT:
+    R: RIM
+    A: BOM
+    C: [CKVC]
+    I: [FD]
+
+  REPORTING:
+    R: RIM
+    A: BOM
+    C: []
+    I: [FD]
+
+  CLOSE:
+    R: BOM
+    A: FD
+    C: [CKVC]
+    I: []
+
+# Escalation policies
+escalation:
+  overdue_1_day:
+    notify: [BOM]
+    action: reminder_email
+  overdue_2_days:
+    notify: [BOM, CKVC]
+    action: escalation_email
+  overdue_3_days:
+    notify: [BOM, CKVC, FD]
+    action: urgent_escalation

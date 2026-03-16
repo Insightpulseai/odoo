@@ -1,0 +1,210 @@
+# schema: ssot.advisor.rulepack.v1
+# ---------------------------------------------------------------------------
+# Rulepack: do_monitoring_posture
+# Name:     DigitalOcean monitoring posture
+# Source:   ssot/infra/digitalocean/monitoring.yaml
+#           https://docs.digitalocean.com/products/monitoring/
+# Pillar:   reliability
+# Version:  1.0.0
+# Reviewed: 2026-03-01
+#
+# Purpose:
+#   Verifies that all always-on DigitalOcean droplets in the InsightPulse AI
+#   infrastructure have the do-agent installed, disk/memory/CPU alert policies
+#   configured at SSOT thresholds, and that the OCR droplet is within its
+#   disk saturation bounds.
+#
+# Adapter:  digitalocean (uses DO API v2)
+#   - GET /v2/droplets                  — droplet inventory
+#   - GET /v2/monitoring/alert_policies — alert policy registry
+#   - GET /v2/monitoring/metrics/...    — current metric values
+#
+# Droplet inventory SSOT: ssot/infra/digitalocean/policy.yaml
+#
+# CI validator: scripts/ci/validate_advisor_rulepacks.py (planned)
+# ---------------------------------------------------------------------------
+
+id: do_monitoring_posture
+name: "DigitalOcean monitoring posture"
+source: ssot/infra/digitalocean/monitoring.yaml
+pillar: reliability
+version: "1.0.0"
+last_reviewed: "2026-03-01"
+
+# Always-on droplets that must be fully monitored
+# Source of truth: ssot/infra/digitalocean/policy.yaml
+monitored_droplets:
+  - odoo-production       # Odoo ERP, n8n, OCR, Agent services (178.128.112.214)
+
+# Alert thresholds matching ssot/infra/digitalocean/monitoring.yaml
+thresholds:
+  disk_warn_pct: 75
+  disk_crit_pct: 90
+  memory_warn_pct: 80
+  memory_crit_pct: 95
+  cpu_warn_pct: 85
+  cpu_crit_pct: 95
+
+rules:
+
+  - id: do_agent_installed
+    title: "do-agent installed on all always-on droplets"
+    severity: high
+    check: >
+      For each droplet listed in ssot/infra/digitalocean/policy.yaml under
+      always_on_droplets, verify that metrics are flowing into DO Monitoring
+      (i.e., the do-agent is installed and reporting). Detected via:
+        - Presence of active alert policies referencing the droplet
+        - Optionally: GET /v2/monitoring/metrics/droplet/cpu (non-empty series)
+    citation_url: "https://docs.digitalocean.com/products/monitoring/"
+    finding_template: >
+      do-agent not confirmed on {droplet}: metrics are not flowing into
+      DigitalOcean Monitoring for this always-on droplet.
+    remediation: >
+      SSH into the droplet and run:
+        curl -sSL https://repos.insights.digitalocean.com/install.sh | sudo bash
+      Then verify with: sudo systemctl status do-agent
+    evidence_fields:
+      - droplet
+      - droplet_id
+      - metrics_flowing
+      - last_metric_timestamp
+
+  - id: disk_alert_policy
+    title: "Disk utilization alert policy exists per droplet"
+    severity: medium
+    check: >
+      Each always-on droplet must have a disk_utilization alert policy with:
+        - threshold >= warn level defined in this rulepack (75%)
+        - comparison: GreaterThan
+        - window: 5m (or less)
+      Check via: GET /v2/monitoring/alert_policies
+      Filter: type=v1/insights/droplet/disk_utilization_percent AND entities include droplet_id
+    citation_url: "https://docs.digitalocean.com/products/monitoring/details/features/"
+    finding_template: >
+      Missing disk alert policy on {droplet}: no disk_utilization alert policy
+      found at the {threshold}% warn threshold.
+    remediation: >
+      Create a disk utilization alert policy in the DO console or via API:
+        POST /v2/monitoring/alert_policies
+        {
+          "type": "v1/insights/droplet/disk_utilization_percent",
+          "threshold": 75,
+          "comparison": "GreaterThan",
+          "window": "5m",
+          "entities": ["{droplet_id}"]
+        }
+      The SSOT alert policy definitions live in ssot/infra/digitalocean/monitoring.yaml.
+    evidence_fields:
+      - droplet
+      - droplet_id
+      - policy_exists
+      - policy_threshold
+      - policy_window
+
+  - id: memory_alert_policy
+    title: "Memory utilization alert policy exists per droplet"
+    severity: medium
+    check: >
+      Each always-on droplet must have a memory_utilization alert policy with:
+        - threshold >= warn level defined in this rulepack (80%)
+        - comparison: GreaterThan
+        - window: 5m (or less)
+      Check via: GET /v2/monitoring/alert_policies
+      Filter: type=v1/insights/droplet/memory_utilization_percent AND entities include droplet_id
+    citation_url: "https://docs.digitalocean.com/products/monitoring/details/features/"
+    finding_template: >
+      Missing memory alert policy on {droplet}: no memory_utilization alert
+      policy found at the {threshold}% warn threshold.
+    remediation: >
+      Create a memory utilization alert policy in the DO console or via API:
+        POST /v2/monitoring/alert_policies
+        {
+          "type": "v1/insights/droplet/memory_utilization_percent",
+          "threshold": 80,
+          "comparison": "GreaterThan",
+          "window": "5m",
+          "entities": ["{droplet_id}"]
+        }
+    evidence_fields:
+      - droplet
+      - droplet_id
+      - policy_exists
+      - policy_threshold
+
+  - id: cpu_alert_policy
+    title: "CPU utilization alert policy exists per droplet"
+    severity: low
+    check: >
+      Each always-on droplet must have a cpu alert policy with:
+        - threshold >= warn level defined in this rulepack (85%)
+        - comparison: GreaterThan
+        - window: 5m (or less)
+    citation_url: "https://docs.digitalocean.com/products/monitoring/details/features/"
+    finding_template: >
+      Missing CPU alert policy on {droplet}: no cpu_utilization alert policy
+      found at the {threshold}% warn threshold.
+    remediation: >
+      Create a CPU alert policy in the DO console or via API:
+        POST /v2/monitoring/alert_policies
+        {
+          "type": "v1/insights/droplet/cpu",
+          "threshold": 85,
+          "comparison": "GreaterThan",
+          "window": "5m",
+          "entities": ["{droplet_id}"]
+        }
+    evidence_fields:
+      - droplet
+      - droplet_id
+      - policy_exists
+      - policy_threshold
+
+  - id: ocr_disk_saturation
+    title: "OCR droplet disk utilization within bounds"
+    severity: high
+    check: >
+      The odoo-production droplet (which hosts the OCR service alongside Odoo ERP,
+      n8n, and the Agent service) must have disk utilization < 75% (warn threshold).
+      Check via:
+        GET /v2/monitoring/metrics/droplet/disk_utilization_percent
+        params: host_id={droplet_id}, start={now-1h}, end={now}
+      Evaluate the most recent data point.
+    citation_url: "https://docs.digitalocean.com/products/monitoring/"
+    finding_template: >
+      OCR droplet (odoo-production) disk saturation: currently at {pct}%.
+      Warn threshold: 75%. Critical threshold: 90%.
+    remediation: >
+      Follow workbook: ocr_disk_saturation_remediation
+      (ssot/advisor/workbooks/ocr_disk_saturation.yaml)
+    remediation_workbook: ocr_disk_saturation_remediation
+    evidence_fields:
+      - droplet
+      - droplet_id
+      - current_disk_pct
+      - warn_threshold
+      - crit_threshold
+      - measurement_timestamp
+
+  - id: alert_notification_destination
+    title: "Alert policies have a notification destination configured"
+    severity: medium
+    check: >
+      At least one alert notification destination must be configured for the
+      organization (email, Slack, or PagerDuty). Alert policies with no
+      notification destination silently fire with no human notification.
+      Check via: GET /v2/monitoring/alert_policies — inspect notifications field
+    citation_url: "https://docs.digitalocean.com/products/monitoring/details/features/"
+    finding_template: >
+      Alert policy {policy_id} has no notification destination: alerts will
+      fire internally but no human will be notified.
+    remediation: >
+      Update the alert policy to include at least one notification channel:
+        PATCH /v2/monitoring/alert_policies/{alert_uuid}
+        { "notifications": { "email": ["ops@insightpulseai.com"] } }
+      Or configure a Slack webhook destination in DO Monitoring settings.
+    evidence_fields:
+      - policy_id
+      - policy_type
+      - has_email_notification
+      - has_slack_notification

@@ -1,20 +1,18 @@
-# =============================================================================
-# .dockerignore — Keep build context small for ACR builds
-# Only addons/ipai, addons/oca, config/, docker/, and requirements are needed.
-# =============================================================================
-
 # Exclude everything by default
 *
 
 # Include only what Dockerfile.unified needs
-!addons/ipai/
 !addons/oca/
-!config/
-!docker/
-!requirements*.txt
-!.devcontainer/
+!addons/ipai/
+!config/prod/
+!docker/requirements/
 
-# Exclude pycache inside included dirs
-**/__pycache__
-**/*.pyc
-**/*.pyo
+# Exclude .git inside OCA repos (not needed in image)
+addons/oca/*/.git
+addons/oca/*/.github
+addons/oca/*/setup
+addons/oca/*/.pre-commit-config.yaml
+addons/oca/*/.pylintrc
+addons/oca/*/.pylintrc-mandatory
+addons/oca/*/CONTRIBUTING.md
+addons/oca/*/HISTORY.rst

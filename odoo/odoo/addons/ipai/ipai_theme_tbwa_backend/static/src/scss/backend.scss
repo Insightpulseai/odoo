@@ -1,0 +1,444 @@
+// ============================================================================
+// TBWA Backend Theme - Component Overrides
+// ============================================================================
+// This file contains component-level styling for the TBWA skin.
+// All styles should reference --ipai-* tokens from ipai_platform_theme.
+// Loaded in web.assets_backend bundle AFTER token overrides.
+// ============================================================================
+
+// =============================================================================
+// NAVBAR (Black Chrome)
+// =============================================================================
+
+.o_main_navbar {
+  background-color: var(--ipai-brand-ink) !important;
+  border-bottom: none !important;
+
+  // App switcher button
+  .o_navbar_apps_menu .dropdown-toggle {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  // Menu sections
+  .o_menu_sections {
+    .dropdown-toggle,
+    .o_nav_entry {
+      color: var(--ipai-text-inverse) !important;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      &.active,
+      &:active {
+        background-color: var(--ipai-brand-primary) !important;
+        color: var(--ipai-brand-ink) !important;
+      }
+    }
+
+    .dropdown-item {
+      &.active,
+      &:active {
+        background-color: rgba(var(--ipai-brand-primary-rgb), 0.14) !important;
+        color: var(--ipai-text-inverse) !important;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+      }
+    }
+  }
+
+  // Current app name
+  .o_menu_brand {
+    color: var(--ipai-text-inverse) !important;
+    font-weight: 600;
+  }
+
+  // Systray (user menu, etc)
+  .o_menu_systray {
+    .dropdown-toggle,
+    a {
+      color: var(--ipai-text-inverse) !important;
+
+      &:hover {
+        color: var(--ipai-brand-primary) !important;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// SIDEBAR (Black + Yellow Active - Scout Analytics Style)
+// =============================================================================
+
+.o_apps_sidebar,
+.mk_apps_sidebar_panel,
+[class*="sidebar"]:not(.o_content *) {
+  background-color: var(--ipai-brand-ink) !important;
+
+  .nav-link,
+  a:not(.btn) {
+    color: var(--ipai-text-inverse) !important;
+    border-radius: var(--ipai-radius-sm) !important;
+    transition: all 150ms ease-out;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    // Active state: Yellow background with black text
+    &.active {
+      background-color: var(--ipai-brand-primary) !important;
+      color: var(--ipai-brand-ink) !important;
+      font-weight: 600;
+    }
+  }
+}
+
+// MuK Apps Sidebar compatibility
+.mk_apps_sidebar_panel {
+  .mk_apps_sidebar_menu {
+    > li {
+      &.active > a,
+      &:hover > a {
+        background-color: rgba(var(--ipai-brand-primary-rgb), 0.14) !important;
+        border-left: 3px solid var(--ipai-brand-primary) !important;
+      }
+
+      > a {
+        border-left: 3px solid transparent;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// PRIMARY BUTTONS (Yellow + Black Text)
+// =============================================================================
+
+.btn-primary,
+.o_btn_primary,
+.btn-fill-primary,
+.btn-primary.o_form_button_save,
+.o_statusbar_buttons .btn-primary {
+  background-color: var(--ipai-brand-primary) !important;
+  border-color: var(--ipai-brand-primary) !important;
+  color: var(--ipai-brand-ink) !important;
+  font-weight: 600;
+  border-radius: var(--ipai-radius) !important;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--ipai-brand-primary-hover) !important;
+    border-color: var(--ipai-brand-primary-hover) !important;
+    color: var(--ipai-brand-ink) !important;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    color: var(--ipai-brand-ink) !important;
+  }
+}
+
+// Secondary/outline buttons
+.btn-outline-primary {
+  color: var(--ipai-text-primary) !important;
+  border-color: var(--ipai-brand-primary) !important;
+  background: transparent !important;
+
+  &:hover {
+    color: var(--ipai-brand-ink) !important;
+    background-color: var(--ipai-brand-primary) !important;
+  }
+}
+
+// =============================================================================
+// APPS GRID CARDS (Scout Dashboard Style)
+// =============================================================================
+
+.o_apps {
+  .o_kanban_record.o_app,
+  .o_app {
+    background-color: var(--ipai-surface-card) !important;
+    border-radius: 16px !important;
+    border: 1px solid var(--ipai-border-subtle) !important;
+    transition: all 200ms ease-out;
+
+    &:hover {
+      box-shadow: var(--ipai-shadow-md) !important;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// =============================================================================
+// KANBAN CARDS
+// =============================================================================
+
+.o_kanban_view {
+  .o_kanban_record {
+    border-radius: 16px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    border: 1px solid var(--ipai-border-subtle) !important;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+  }
+
+  .o_kanban_group {
+    .o_kanban_header {
+      background-color: transparent !important;
+
+      .o_column_title {
+        font-weight: 600;
+        color: var(--ipai-text-primary) !important;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// FORM VIEWS
+// =============================================================================
+
+.o_form_view {
+  .o_form_sheet_bg {
+    background-color: var(--ipai-surface-canvas) !important;
+  }
+
+  .o_form_sheet {
+    border-radius: 16px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    border: 1px solid var(--ipai-border-subtle) !important;
+  }
+
+  // Field focus state
+  .o_field_widget {
+    .o_input:focus {
+      border-color: var(--ipai-brand-primary) !important;
+      box-shadow: 0 0 0 3px rgba(var(--ipai-brand-primary-rgb), 0.15) !important;
+    }
+  }
+
+  // Required fields
+  .o_required_modifier .o_input {
+    border-color: var(--ipai-border-strong) !important;
+
+    &:focus {
+      border-color: var(--ipai-brand-primary) !important;
+    }
+  }
+}
+
+// =============================================================================
+// STATUS BAR
+// =============================================================================
+
+.o_statusbar_status {
+  .o_arrow_button {
+    &.o_arrow_button_current {
+      background-color: var(--ipai-brand-primary) !important;
+      color: var(--ipai-brand-ink) !important;
+      font-weight: 600;
+    }
+
+    &:hover:not(.o_arrow_button_current):not(.disabled) {
+      background-color: var(--ipai-brand-primary-light) !important;
+    }
+  }
+}
+
+// =============================================================================
+// CONTROL PANEL / SEARCH
+// =============================================================================
+
+.o_control_panel {
+  background-color: var(--ipai-surface-card) !important;
+  border-bottom: 1px solid var(--ipai-border-subtle) !important;
+
+  .o_searchview {
+    border-radius: var(--ipai-radius-sm) !important;
+    border: 1px solid var(--ipai-border-subtle) !important;
+
+    &:focus-within {
+      border-color: var(--ipai-brand-primary) !important;
+      box-shadow: 0 0 0 3px rgba(var(--ipai-brand-primary-rgb), 0.15) !important;
+    }
+  }
+}
+
+// =============================================================================
+// BADGES & TAGS (Semantic colors, NOT brand yellow)
+// =============================================================================
+
+.badge-primary,
+.o_tag.o_tag_color_0 {
+  background-color: var(--ipai-brand-primary) !important;
+  color: var(--ipai-brand-ink) !important;
+}
+
+// Status badges use semantic colors
+.badge-success,
+.o_tag_success {
+  background-color: var(--ipai-semantic-success) !important;
+  color: var(--ipai-text-inverse) !important;
+}
+
+.badge-warning,
+.o_tag_warning {
+  background-color: var(--ipai-semantic-warn) !important;
+  color: var(--ipai-brand-ink) !important;
+}
+
+.badge-danger,
+.o_tag_danger {
+  background-color: var(--ipai-semantic-error) !important;
+  color: var(--ipai-text-inverse) !important;
+}
+
+.badge-info,
+.o_tag_info {
+  background-color: var(--ipai-semantic-info) !important;
+  color: var(--ipai-text-inverse) !important;
+}
+
+// =============================================================================
+// LISTS & TABLES
+// =============================================================================
+
+.o_list_view {
+  .o_list_table {
+    thead th {
+      background-color: var(--ipai-surface-canvas) !important;
+      font-weight: 600;
+      color: var(--ipai-text-primary) !important;
+    }
+
+    tbody tr {
+      &:hover td {
+        background-color: rgba(var(--ipai-brand-primary-rgb), 0.05) !important;
+      }
+
+      &.o_data_row_selected td {
+        background-color: rgba(var(--ipai-brand-primary-rgb), 0.14) !important;
+      }
+    }
+  }
+}
+
+// =============================================================================
+// CHATTER
+// =============================================================================
+
+.o-mail-Chatter {
+  .o-mail-Chatter-top {
+    border-bottom: 1px solid var(--ipai-border-subtle) !important;
+  }
+
+  .o-mail-Message {
+    border-radius: 12px !important;
+  }
+}
+
+// =============================================================================
+// DIALOGS / MODALS
+// =============================================================================
+
+.modal-content {
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--ipai-border-subtle) !important;
+
+  .modal-title {
+    font-weight: 600;
+    color: var(--ipai-text-primary) !important;
+  }
+}
+
+// =============================================================================
+// CALENDAR
+// =============================================================================
+
+.o_calendar_view {
+  .fc-event-main {
+    background-color: var(--ipai-brand-primary) !important;
+    color: var(--ipai-brand-ink) !important;
+    border: none !important;
+    border-radius: 6px !important;
+  }
+}
+
+// =============================================================================
+// DASHBOARD / REPORTS
+// =============================================================================
+
+.o_graph_view,
+.o_pivot_view {
+  .o_graph_canvas_container,
+  .o_pivot_table {
+    border-radius: 12px !important;
+    background: var(--ipai-surface-card) !important;
+    padding: 16px;
+  }
+}
+
+// =============================================================================
+// LOADING INDICATOR
+// =============================================================================
+
+.o_loading_indicator {
+  background-color: var(--ipai-brand-primary) !important;
+  color: var(--ipai-brand-ink) !important;
+}
+
+// =============================================================================
+// SCROLLBARS (WebKit)
+// =============================================================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ipai-surface-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ipai-border-strong);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--ipai-text-muted);
+  }
+}
+
+// =============================================================================
+// APPS MENU (MuK Theme compatible)
+// =============================================================================
+
+.mk_app_menu.dropdown-menu {
+  .o_app {
+    > a {
+      .o_caption {
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-weight: 500;
+      }
+
+      &:hover {
+        .mk_app_icon {
+          box-shadow: 0 4px 12px rgba(var(--ipai-brand-primary-rgb), 0.3) !important;
+        }
+      }
+    }
+  }
+}

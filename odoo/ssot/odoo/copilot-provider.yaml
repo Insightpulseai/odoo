@@ -1,0 +1,19 @@
+provider: azure_openai
+mode: responses
+base_url_env: AZURE_OPENAI_BASE_URL
+api_key_env: AZURE_OPENAI_API_KEY
+deployment_env: AZURE_OPENAI_DEPLOYMENT
+api_mode_env: AZURE_OPENAI_API_MODE
+timeout_seconds: 60
+requires_auth: true
+requires_persona_context: true
+ir_config_parameter_keys:
+  base_url: ipai_ask_ai_azure.base_url
+  api_key: ipai_ask_ai_azure.api_key
+  deployment: ipai_ask_ai_azure.model
+  api_mode: ipai_ask_ai_azure.api_mode
+notes:
+  - "Azure deployment name is required; do not assume base model family name is sufficient."
+  - "No live secrets may be committed in repo files."
+  - "Env vars are seeded into ir.config_parameter at module init; DB values take precedence."
+  - "Supported API modes: responses (default), chat_completions."

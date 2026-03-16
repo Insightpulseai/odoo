@@ -1,0 +1,101 @@
+On branch refactor/naming-20260214-181713
+Your branch is ahead of 'origin/refactor/naming-20260214-181713' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	renamed:    agent-library/Makefile -> agents/library/Makefile
+	renamed:    agent-library/README.md -> agents/library/README.md
+	renamed:    agent-library/_shared/agent_prompt_template.md -> agents/library/_shared/agent_prompt_template.md
+	renamed:    agent-library/app/fullstack_engineer.md -> agents/library/app/fullstack_engineer.md
+	renamed:    agent-library/ci/requirements.txt -> agents/library/ci/requirements.txt
+	renamed:    agent-library/odoo/odoo_backend_engineer.md -> agents/library/odoo/odoo_backend_engineer.md
+	renamed:    agent-library/odoo/odoo_implementation_lead.md -> agents/library/odoo/odoo_implementation_lead.md
+	renamed:    agent-library/odoo/odoo_solution_architect.md -> agents/library/odoo/odoo_solution_architect.md
+	renamed:    agent-library-pack/README.md -> agents/library/packs/README.md
+	renamed:    agent-library-pack/prompts/agents/app_mobile_engineer.md -> agents/library/packs/prompts/agents/app_mobile_engineer.md
+	renamed:    agent-library-pack/prompts/agents/app_strategy_consulting.md -> agents/library/packs/prompts/agents/app_strategy_consulting.md
+	renamed:    agent-library-pack/prompts/agents/doc_portal_uiux_auditor_19_steps.md -> agents/library/packs/prompts/agents/doc_portal_uiux_auditor_19_steps.md
+	renamed:    agent-library-pack/prompts/agents/evidence_architect.md -> agents/library/packs/prompts/agents/evidence_architect.md
+	renamed:    agent-library-pack/prompts/agents/finance_close_specialist.md -> agents/library/packs/prompts/agents/finance_close_specialist.md
+	renamed:    agent-library-pack/prompts/agents/odoo_consultation.md -> agents/library/packs/prompts/agents/odoo_consultation.md
+	renamed:    agent-library-pack/prompts/agents/odoo_customization.md -> agents/library/packs/prompts/agents/odoo_customization.md
+	renamed:    agent-library-pack/prompts/agents/odoo_implementation.md -> agents/library/packs/prompts/agents/odoo_implementation.md
+	renamed:    agent-library-pack/prompts/agents/product_feature_uiux_auditor_22_steps.md -> agents/library/packs/prompts/agents/product_feature_uiux_auditor_22_steps.md
+	renamed:    agent-library-pack/prompts/agents/uiux_designer.md -> agents/library/packs/prompts/agents/uiux_designer.md
+	renamed:    agent-library-pack/prompts/agents/web_fullstack_engineer.md -> agents/library/packs/prompts/agents/web_fullstack_engineer.md
+	renamed:    agent-library-pack/prompts/router/router.md -> agents/library/packs/prompts/router/router.md
+	renamed:    agent-library-pack/router/agent_router.yaml -> agents/library/packs/router/agent_router.yaml
+	renamed:    agent-library-pack/router/router.ts -> agents/library/packs/router/router.ts
+	renamed:    agent-library-pack/schemas/evidence/form_evidence_bundle.schema.json -> agents/library/packs/schemas/evidence/form_evidence_bundle.schema.json
+	renamed:    agent-library-pack/schemas/mapping/concur_to_odoo19_ce_oca_ipai.yaml -> agents/library/packs/schemas/mapping/concur_to_odoo19_ce_oca_ipai.yaml
+	renamed:    agent-library-pack/schemas/taxonomy/accounting_competency_framework.yaml -> agents/library/packs/schemas/taxonomy/accounting_competency_framework.yaml
+	renamed:    agent-library-pack/schemas/taxonomy/core_taxonomy.yaml -> agents/library/packs/schemas/taxonomy/core_taxonomy.yaml
+	renamed:    agent-library-pack/schemas/taxonomy/philippines_tax.yaml -> agents/library/packs/schemas/taxonomy/philippines_tax.yaml
+	renamed:    agent-library-pack/scripts/verify.sh -> agents/library/packs/scripts/verify.sh
+	renamed:    agent-library/prompts/erp/concur-to-odoo-mapper.md -> agents/library/prompts/erp/concur-to-odoo-mapper.md
+	renamed:    agent-library/prompts/erp/oca-ai-repo-auditor.md -> agents/library/prompts/erp/oca-ai-repo-auditor.md
+	renamed:    agent-library/prompts/finance/ph-close-tax-pack.md -> agents/library/prompts/finance/ph-close-tax-pack.md
+	renamed:    agent-library/prompts/mobile/supabase-flutter-starter.md -> agents/library/prompts/mobile/supabase-flutter-starter.md
+	renamed:    agent-library/prompts/platform/odoo-sh-constraints-guard.md -> agents/library/prompts/platform/odoo-sh-constraints-guard.md
+	renamed:    agent-library/schemas/capability_atoms.schema.json -> agents/library/schemas/capability_atoms.schema.json
+	renamed:    agent-library/schemas/locale_overlay.schema.json -> agents/library/schemas/locale_overlay.schema.json
+	renamed:    agent-library/schemas/product_mapping.schema.json -> agents/library/schemas/product_mapping.schema.json
+	renamed:    agent-library/schemas/ux_patterns.schema.json -> agents/library/schemas/ux_patterns.schema.json
+	renamed:    agent-library/scripts/distill.py -> agents/library/scripts/distill.py
+	renamed:    agent-library/scripts/run_catalog.py -> agents/library/scripts/run_catalog.py
+	renamed:    agent-library/scripts/run_crawl.py -> agents/library/scripts/run_crawl.py
+	renamed:    agent-library/scripts/validate_outputs.py -> agents/library/scripts/validate_outputs.py
+	renamed:    agent-library/templates/sources.yaml -> agents/library/templates/sources.yaml
+	renamed:    agent-library/uiux/ui_designer.md -> agents/library/uiux/ui_designer.md
+	renamed:    agent-library/web/backend_architect.md -> agents/library/web/backend_architect.md
+	renamed:    contains-studio-agents/README.md -> agents/studio/README.md
+	renamed:    contains-studio-agents/design/brand-guardian.md -> agents/studio/design/brand-guardian.md
+	renamed:    contains-studio-agents/design/ui-designer.md -> agents/studio/design/ui-designer.md
+	renamed:    contains-studio-agents/design/ux-researcher.md -> agents/studio/design/ux-researcher.md
+	renamed:    contains-studio-agents/design/visual-storyteller.md -> agents/studio/design/visual-storyteller.md
+	renamed:    contains-studio-agents/design/whimsy-injector.md -> agents/studio/design/whimsy-injector.md
+	renamed:    contains-studio-agents/engineering/ai-engineer.md -> agents/studio/engineering/ai-engineer.md
+	renamed:    contains-studio-agents/engineering/backend-architect.md -> agents/studio/engineering/backend-architect.md
+	renamed:    contains-studio-agents/engineering/devops-automator.md -> agents/studio/engineering/devops-automator.md
+	renamed:    contains-studio-agents/engineering/frontend-developer.md -> agents/studio/engineering/frontend-developer.md
+	renamed:    contains-studio-agents/engineering/mobile-app-builder.md -> agents/studio/engineering/mobile-app-builder.md
+	renamed:    contains-studio-agents/engineering/rapid-prototyper.md -> agents/studio/engineering/rapid-prototyper.md
+	renamed:    contains-studio-agents/engineering/test-writer-fixer.md -> agents/studio/engineering/test-writer-fixer.md
+	renamed:    contains-studio-agents/marketing/app-store-optimizer.md -> agents/studio/marketing/app-store-optimizer.md
+	renamed:    contains-studio-agents/marketing/content-creator.md -> agents/studio/marketing/content-creator.md
+	renamed:    contains-studio-agents/marketing/growth-hacker.md -> agents/studio/marketing/growth-hacker.md
+	renamed:    contains-studio-agents/marketing/instagram-curator.md -> agents/studio/marketing/instagram-curator.md
+	renamed:    contains-studio-agents/marketing/reddit-community-builder.md -> agents/studio/marketing/reddit-community-builder.md
+	renamed:    contains-studio-agents/marketing/tiktok-strategist.md -> agents/studio/marketing/tiktok-strategist.md
+	renamed:    contains-studio-agents/marketing/twitter-engager.md -> agents/studio/marketing/twitter-engager.md
+	renamed:    contains-studio-agents/product/feedback-synthesizer.md -> agents/studio/product/feedback-synthesizer.md
+	renamed:    contains-studio-agents/product/sprint-prioritizer.md -> agents/studio/product/sprint-prioritizer.md
+	renamed:    contains-studio-agents/product/trend-researcher.md -> agents/studio/product/trend-researcher.md
+	renamed:    contains-studio-agents/project-management/experiment-tracker.md -> agents/studio/project-management/experiment-tracker.md
+	renamed:    contains-studio-agents/project-management/project-shipper.md -> agents/studio/project-management/project-shipper.md
+	renamed:    contains-studio-agents/project-management/studio-producer.md -> agents/studio/project-management/studio-producer.md
+	renamed:    contains-studio-agents/studio-operations/analytics-reporter.md -> agents/studio/studio-operations/analytics-reporter.md
+	renamed:    contains-studio-agents/studio-operations/finance-tracker.md -> agents/studio/studio-operations/finance-tracker.md
+	renamed:    contains-studio-agents/studio-operations/infrastructure-maintainer.md -> agents/studio/studio-operations/infrastructure-maintainer.md
+	renamed:    contains-studio-agents/studio-operations/legal-compliance-checker.md -> agents/studio/studio-operations/legal-compliance-checker.md
+	renamed:    contains-studio-agents/studio-operations/support-responder.md -> agents/studio/studio-operations/support-responder.md
+	renamed:    contains-studio-agents/testing/api-tester.md -> agents/studio/testing/api-tester.md
+	renamed:    contains-studio-agents/testing/performance-benchmarker.md -> agents/studio/testing/performance-benchmarker.md
+	renamed:    contains-studio-agents/testing/test-results-analyzer.md -> agents/studio/testing/test-results-analyzer.md
+	renamed:    contains-studio-agents/testing/tool-evaluator.md -> agents/studio/testing/tool-evaluator.md
+	renamed:    contains-studio-agents/testing/workflow-optimizer.md -> agents/studio/testing/workflow-optimizer.md
+	renamed:    catalogs/locales/philippines_tax.yaml -> catalog/locales/philippines_tax.yaml
+	renamed:    catalogs/sap_concur_surface_catalog.yaml -> catalog/sap_concur_surface_catalog.yaml
+	renamed:    dev/odoo-addons/.gitkeep -> sandbox/dev/odoo-addons/.gitkeep
+	renamed:    dev/postgres-init/00-init.sql -> sandbox/dev/postgres-init/00-init.sql
+	renamed:    dev/superset/superset_config.py -> sandbox/dev/superset/superset_config.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .github/workflows/agent-library-validate.yml
+	modified:   agents/library/Makefile
+	modified:   tools/agent-router/README.md
+	modified:   tools/agent-router/src/router.ts
+

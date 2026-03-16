@@ -1,0 +1,155 @@
+# AFC Odoo CE18 Mapping
+# Maps SAP AFC concepts to Odoo models
+
+mappings:
+  # Core model mappings
+  - id: map_afc_task
+    target_system: odoo_ce18
+    source_code: AFC_TASK
+    target_model: finance.task
+    target_field: null
+    transform: null
+    notes: Unified finance task model
+
+  - id: map_afc_template
+    target_system: odoo_ce18
+    source_code: AFC_TEMPLATE
+    target_model: finance.task.template
+    target_field: null
+    transform: null
+
+  - id: map_afc_period
+    target_system: odoo_ce18
+    source_code: AFC_PERIOD
+    target_model: closing.period
+    target_field: null
+    transform: null
+
+  # Category to Odoo model mappings
+  - id: map_cat_payroll
+    target_system: odoo_ce18
+    source_code: PAYROLL
+    target_model: hr.payslip
+    target_field: null
+    transform: null
+    oca_module: hr_payroll_account
+
+  - id: map_cat_tax
+    target_system: odoo_ce18
+    source_code: TAX
+    target_model: account.tax.report
+    target_field: null
+    transform: null
+    oca_module: l10n_ph_tax
+
+  - id: map_cat_expense
+    target_system: odoo_ce18
+    source_code: EXPENSE
+    target_model: hr.expense.sheet
+    target_field: null
+    transform: null
+    oca_module: hr_expense_advance_clearing
+
+  - id: map_cat_accrual
+    target_system: odoo_ce18
+    source_code: ACCRUAL
+    target_model: account.move
+    target_field: null
+    transform: null
+    oca_module: account_cutoff_accrual_order_base
+
+  - id: map_cat_depreciation
+    target_system: odoo_ce18
+    source_code: DEPRECIATION
+    target_model: account.asset
+    target_field: null
+    transform: null
+    oca_module: account_asset_management
+
+  - id: map_cat_fx
+    target_system: odoo_ce18
+    source_code: FX
+    target_model: account.move
+    target_field: null
+    transform: null
+    oca_module: account_multicurrency_revaluation
+
+  - id: map_cat_bank
+    target_system: odoo_ce18
+    source_code: BANK
+    target_model: account.bank.statement
+    target_field: null
+    transform: null
+    oca_module: account_reconcile_oca
+
+  - id: map_cat_reporting
+    target_system: odoo_ce18
+    source_code: REPORTING
+    target_model: account.report
+    target_field: null
+    transform: null
+    oca_module: account_financial_report
+
+  - id: map_cat_close
+    target_system: odoo_ce18
+    source_code: CLOSE
+    target_model: account.fiscal.year
+    target_field: null
+    transform: null
+    oca_module: account_fiscal_year_closing
+
+# OCA module dependencies
+oca_modules:
+  - name: hr_payroll_account
+    repo: hr
+    version: "18.0"
+    purpose: Payroll accounting integration
+
+  - name: account_asset_management
+    repo: account-financial-tools
+    version: "18.0"
+    purpose: Fixed asset depreciation
+
+  - name: account_cutoff_accrual_order_base
+    repo: account-closing
+    version: "18.0"
+    purpose: Expense accruals from orders
+
+  - name: account_multicurrency_revaluation
+    repo: account-closing
+    version: "18.0"
+    purpose: FX revaluation
+
+  - name: account_reconcile_oca
+    repo: account-reconcile
+    version: "18.0"
+    purpose: Bank reconciliation
+
+  - name: account_financial_report
+    repo: account-financial-reporting
+    version: "18.0"
+    purpose: Financial reporting (TB, BS, PL)
+
+  - name: account_fiscal_year_closing
+    repo: account-closing
+    version: "18.0"
+    purpose: Period close operations
+
+  - name: hr_expense_advance_clearing
+    repo: hr-expense
+    version: "18.0"
+    purpose: Cash advance liquidation
+
+# View mappings
+view_mappings:
+  - source: AFC_KANBAN
+    target: finance_task_kanban_view
+    notes: Task Kanban board
+
+  - source: AFC_CALENDAR
+    target: finance_task_calendar_view
+    notes: Due date calendar
+
+  - source: AFC_DASHBOARD
+    target: action_finance_dashboard
+    notes: Unified dashboard action

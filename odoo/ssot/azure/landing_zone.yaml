@@ -1,0 +1,255 @@
+# =============================================================================
+# Odoo-on-Azure Landing Zone — SSOT
+# =============================================================================
+#
+# Machine-readable landing zone architecture adapted from SAP-on-Azure LZA.
+# Human doc: docs/architecture/ODOO_ON_AZURE_LANDING_ZONE.md
+# Source pattern: CAF SAP-on-Azure Landing Zone Accelerator
+# =============================================================================
+
+schema_version: "1.0"
+last_updated: "2026-03-17"
+status: active
+subscription_id: "536d8cf6-89e1-4815-aef3-d5f2c5f4d070"
+region: southeastasia
+
+design_areas:
+
+  identity:
+    current: keycloak_transitional
+    target: entra_id
+    objective_ref: OBJ-001
+    managed_identities:
+      dev:
+        - mi-ipai-odoo-dev
+        - mi-ipai-platform-dev
+        - mi-ipai-lakehouse-dev
+        - id-ipai-aca-dev
+        - id-ipai-agents-dev
+        - id-ipai-databricks-dev
+      staging:
+        - mi-ipai-odoo-staging
+        - mi-ipai-platform-staging
+        - mi-ipai-lakehouse-staging
+      prod:
+        - mi-ipai-odoo-prod
+        - mi-ipai-platform-prod
+        - mi-ipai-lakehouse-prod
+
+  networking:
+    edge:
+      name: ipai-fd-dev
+      type: front_door
+      endpoint: ipai-fd-dev-ep
+      waf_policy: ipaiDevWafPolicy
+    dns:
+      provider: cloudflare
+      mode: authoritative_dns_only
+      domain: insightpulseai.com
+    vnets:
+      - name: vnet-ipai-databricks
+        rg: rg-ipai-ai-dev
+    nsgs:
+      - nsg-dbw-ipai-dev
+      - nsg-cae-ipai-dev
+      - nsg-pg-ipai-dev
+    private_dns_zones:
+      - privatelink.postgres.database.azure.com
+
+  compute:
+    container_apps_environment:
+      primary:
+        name: ipai-odoo-dev-env
+        rg: rg-ipai-dev
+      legacy:
+        name: cae-ipai-dev
+        rg: rg-ipai-agents-dev
+        note: "Contains legacy odoo-web; retire candidate"
+    apps:
+      - name: ipai-odoo-dev-web
+        role: odoo_erp_web
+        ingress: public
+      - name: ipai-odoo-dev-worker
+        role: odoo_background_jobs
+        ingress: none
+      - name: ipai-odoo-dev-cron
+        role: odoo_scheduled_jobs
+        ingress: none
+      - name: ipai-auth-dev
+        role: keycloak_sso
+        ingress: public
+      - name: ipai-mcp-dev
+        role: mcp_coordination
+        ingress: public
+      - name: ipai-ocr-dev
+        role: document_ocr
+        ingress: public
+      - name: ipai-superset-dev
+        role: apache_superset_bi
+        ingress: public
+      - name: ipai-plane-dev
+        role: plane_project_mgmt
+        ingress: public
+      - name: ipai-shelf-dev
+        role: shelf_service
+        ingress: public
+      - name: ipai-crm-dev
+        role: crm_service
+        ingress: public
+      - name: ipai-website-dev
+        role: website
+        ingress: public
+      - name: odoo-web
+        role: legacy_retire_candidate
+        ingress: internal
+        rg: rg-ipai-agents-dev
+    registries:
+      - name: ipaiodoodevacr
+        rg: rg-ipai-dev
+        purpose: odoo_images
+      - name: ipaiwebacr
+        rg: rg-ipai-dev
+        purpose: web_images
+      - name: cripaidev
+        rg: rg-ipai-shared-dev
+        purpose: shared_images
+
+  database:
+    primary:
+      name: ipai-odoo-dev-pg
+      type: postgresql_flexible_server
+      rg: rg-ipai-dev
+      role: odoo_erp_database
+    platform:
+      name: pg-ipai-dev
+      type: postgresql_flexible_server
+      rg: rg-ipai-data-dev
+      role: platform_data
+
+  ai:
+    foundry_hub:
+      name: aifoundry-ipai-dev
+      rg: rg-ipai-ai-dev
+      region: eastus2
+    projects:
+      - name: proj-ipai-claude
+        rg: rg-ipai-ai-dev
+      - name: data-intel-ph
+        rg: rg-data-intel-ph
+        resource: data-intel-ph-resource
+    cognitive_services:
+      - name: oai-ipai-dev
+        kind: openai
+        region: eastus
+      - name: docai-ipai-dev
+        kind: document_intelligence
+      - name: vision-ipai-dev
+        kind: computer_vision
+      - name: lang-ipai-dev
+        kind: language
+    search:
+      name: srch-ipai-dev
+      rg: rg-ipai-ai-dev
+
+  data:
+    databricks:
+      name: dbw-ipai-dev
+      rg: rg-ipai-ai-dev
+      managed_rg: rg-dbw-managed-ipai-dev
+    storage:
+      - name: stipaidevlake
+        rg: rg-ipai-ai-dev
+        purpose: lakehouse_storage
+      - name: dbstoragew6tn3uhg4bluy
+        rg: rg-dbw-managed-ipai-dev
+        purpose: databricks_managed
+      - name: aifoundrstorage6ff030454
+        rg: rg-ipai-ai-dev
+        purpose: foundry_storage
+
+  observability:
+    app_insights:
+      name: appi-ipai-dev
+      rg: rg-ipai-shared-dev
+    log_analytics:
+      name: law-ipai-dev
+      rg: rg-ipai-shared-dev
+    objective_ref: OBJ-007
+
+  security:
+    key_vaults:
+      - name: kv-ipai-dev
+        rg: rg-ipai-shared-dev
+        env: dev
+      - name: kv-ipai-staging
+        rg: rg-ipai-shared-staging
+        env: staging
+      - name: kv-ipai-prod
+        rg: rg-ipai-shared-prod
+        env: prod
+      - name: ipai-odoo-dev-kv
+        rg: rg-ipai-dev
+        env: dev
+        purpose: odoo_specific
+      - name: aifoundrkeyvault67125c7c
+        rg: rg-ipai-ai-dev
+        env: dev
+        purpose: foundry_managed
+    waf_policy: ipaiDevWafPolicy
+    defender_target: true
+
+  devops:
+    dev_center:
+      name: ipai-devcenter
+      rg: rg-ipai-devops
+      project: ipai-devcenter-project
+    build_pool:
+      name: ipai-build-pool
+      rg: rg-ipai-devops
+      type: self_hosted
+    pipelines:
+      primary: github_actions
+      infrastructure: azure_devops
+    azdo_org: insightpulseai
+
+exceptions:
+  - resource: vm-ipai-supabase-dev
+    type: virtual_machine
+    rg: rg-ipai-agents-dev
+    reason: "Self-hosted Supabase requires full VM (PG + GoTrue + PostgREST + Realtime)"
+  - resource: odoo-web
+    type: container_app
+    rg: rg-ipai-agents-dev
+    reason: "Legacy deployment; retire candidate"
+
+resource_groups:
+  - name: rg-ipai-dev
+    purpose: primary_workload
+    resource_count: 18
+  - name: rg-ipai-agents-dev
+    purpose: legacy_agents_and_supabase
+    resource_count: 10
+  - name: rg-ipai-ai-dev
+    purpose: ai_ml_services
+    resource_count: 20
+  - name: rg-ipai-data-dev
+    purpose: platform_database
+    resource_count: 1
+  - name: rg-ipai-shared-dev
+    purpose: shared_services_dev
+    resource_count: 12
+  - name: rg-ipai-shared-staging
+    purpose: shared_services_staging
+    resource_count: 4
+  - name: rg-ipai-shared-prod
+    purpose: shared_services_prod
+    resource_count: 4
+  - name: rg-ipai-devops
+    purpose: devops_infrastructure
+    resource_count: 3
+  - name: rg-data-intel-ph
+    purpose: foundry_project
+    resource_count: 2
+  - name: rg-dbw-managed-ipai-dev
+    purpose: databricks_managed
+    resource_count: 3

@@ -1,0 +1,27 @@
+<odoo noupdate="0">
+
+  <record id="project_monthend_close" model="project.project">
+    <field name="name">Month-End Close</field>
+    <field name="active">1</field>
+  </record>
+
+  <record id="stage_preparation_monthend" model="project.task.type">
+    <field name="name">Preparation</field>
+    <field name="sequence">10</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_monthend_close'))]"/>
+  </record>
+
+  <record id="stage_review_monthend" model="project.task.type">
+    <field name="name">Review</field>
+    <field name="sequence">20</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_monthend_close'))]"/>
+  </record>
+
+  <record id="stage_done_monthend" model="project.task.type">
+    <field name="name">Done</field>
+    <field name="sequence">99</field>
+    <field name="fold">1</field>
+    <field name="project_ids" eval="[(4, ref('ipai_bir_data.project_monthend_close'))]"/>
+  </record>
+
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="group_{{ module }}_user" model="res.groups">
+        <field name="name">{{ summary }} / User</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+    <record id="group_{{ module }}_manager" model="res.groups">
+        <field name="name">{{ summary }} / Manager</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('group_{{ module }}_user'))]"/>
+    </record>
+
+    <!-- Record Rules -->
+    {% for model in models %}
+    <record id="rule_{{ model.name | replace('.', '_') }}_company" model="ir.rule">
+        <field name="name">{{ model.name }} company rule</field>
+        <field name="model_id" ref="{{ module }}.model_{{ model.name | replace('.', '_') }}"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    {% endfor %}
+</odoo>

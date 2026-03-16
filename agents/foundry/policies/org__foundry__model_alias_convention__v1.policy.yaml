@@ -1,0 +1,58 @@
+version: 1
+namespace: ipai.org.foundry.model_alias_convention.v1
+artifact_type: policy
+repo_key: org
+domain: foundry
+subject: model_alias_convention
+
+# ============================================================================
+# MODEL ALIAS CONVENTION
+# ============================================================================
+# Application code calls aliases, not raw model IDs.
+# Aliases are stable identifiers that map to deployments.
+# Deployments can change underlying models without breaking app code.
+# ============================================================================
+
+alias_classes:
+  - chat_default
+  - chat_fast
+  - reasoning_default
+  - reasoning_fast
+  - coding_default
+  - coding_fast
+  - vision_extract_default
+  - embedding_default
+  - rerank_default
+  - router_balanced
+  - router_quality
+  - router_cost
+
+rules:
+  alias_must_be_stable: true
+  alias_must_not_include_vendor_or_version: true
+  one_primary_owner_per_alias: true
+  app_repos_must_reference_alias_only: true
+
+# ============================================================================
+# FORBIDDEN IN APP CODE
+# ============================================================================
+# These raw model names must NEVER appear in web/, odoo/, automations/, lakehouse/
+# They may only appear in infra/ deployment configs and ops-platform/ registry.
+# ============================================================================
+
+forbidden_in_app_code:
+  - gpt-4o
+  - gpt-4.1
+  - gpt-4.1-mini
+  - gpt-5
+  - gpt-5-mini
+  - claude-opus-4-6
+  - claude-sonnet-4-6
+  - claude-haiku-4-5
+  - DeepSeek-V3
+  - DeepSeek-R1
+  - Llama-4-Scout
+  - Phi-4
+  - Phi-4-mini
+  - Mistral-medium
+  - Codestral

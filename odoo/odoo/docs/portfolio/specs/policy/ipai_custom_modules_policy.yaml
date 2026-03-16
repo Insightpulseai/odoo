@@ -1,0 +1,246 @@
+schema_version: "1.0.0"
+policy_id: "ipai-custom-modules-allowlist"
+scope:
+  product: "odoo"
+  target_version: "19.0"
+  edition: "community+oca+minimal_glue"
+  intent: "enforce thin-glue-only custom modules under 100% EE parity via OCA assumption"
+
+policy_statement: |
+  If we assume 100% Odoo EE → (CE core + OCA) functional coverage, then the ONLY
+  defensible ipai_* addons are THIN GLUE: integration, policy/controls, data overlays,
+  and UX/tokens—never "replacement business apps."
+
+decision_test:
+  description: "A proposed ipai_* module is valid only if it satisfies ALL criteria"
+  criteria:
+    - id: "no_new_domain_app"
+      statement: "No new domain app (no competing business models unless purely overlay fields on core models)"
+      rationale: "OCA/CE already provides business domain apps"
+
+    - id: "thin_adapter"
+      statement: "Thin adapter to external systems OR jurisdiction/policy overlay"
+      rationale: "Custom modules exist only for integration or locale-specific compliance"
+
+    - id: "upstream_ineligible"
+      statement: "Too org-specific to belong in OCA"
+      rationale: "If it's reusable, it should be contributed to OCA instead"
+
+    - id: "composable"
+      statement: "Can be removed without breaking core accounting/projects/etc."
+      rationale: "Custom modules must be optional overlays, not core dependencies"
+
+    - id: "auditable_deterministic"
+      statement: "Events, signatures, idempotency where needed"
+      rationale: "Integration and compliance modules must be traceable and reliable"
+
+allowed_categories:
+  platform_glue:
+    description: "Integration-only, no domain logic. Connect Odoo to external platform stack."
+    modules:
+      - id: "ipai_platform_core"
+        purpose: "Common utils, service discovery, feature flags, environment (dev/stage/prod), tenant/org scoping"
+        justification: "Cross-cutting platform concerns not specific to any business domain"
+
+      - id: "ipai_auth_bridge"
+        purpose: "External SSO/OIDC/SAML bridge patterns without re-implementing Odoo auth (just adapters)"
+        justification: "Integration with external identity providers (Supabase Auth, WorkOS, etc.)"
+
+      - id: "ipai_webhook_bus"
+        purpose: "Deterministic webhook outbox/inbox, retries, signature verification, idempotency keys"
+        justification: "Reliable event delivery to external systems (n8n, agents, etc.)"
+
+      - id: "ipai_job_bridge"
+        purpose: "Queue adapter layer (map Odoo jobs → external runners) when you can't/shouldn't run long daemons in Odoo"
+        justification: "Odoo.sh-style constraints require offloading long-running jobs"
+
+      - id: "ipai_storage_bridge"
+        purpose: "Supabase Storage / S3-compatible object storage adapters; attachment offloading; signed URL helpers"
+        justification: "External object storage integration for scalability and cost"
+
+      - id: "ipai_observability"
+        purpose: "Structured logging, trace/correlation IDs, health endpoints, error reporting hooks"
+        justification: "Platform-wide observability and debugging infrastructure"
+
+    rule: "Zero business meaning—only plumbing"
+
+  ai_surface:
+    description: "UI + tool wiring only. AI inference never lives in Odoo."
+    modules:
+      - id: "ipai_copilot_hub"
+        purpose: "Side-panel chat UI, action runner, command palette; policy gates"
+        justification: "UI surface for external AI agents; no AI logic in Odoo"
+
+      - id: "ipai_ai_tools_registry"
+        purpose: "Tool descriptors, schemas, allowlists; maps Odoo models/actions → tool calls"
+        justification: "Contract layer between Odoo and external AI agents"
+
+      - id: "ipai_ai_audit"
+        purpose: "Audit trail for AI-proposed actions + approvals (who/what/when), not AI logic"
+        justification: "Compliance and governance for AI-assisted operations"
+
+    rule: "AI inference never lives in Odoo; Odoo stores prompts/events/results + enforces access"
+
+  compliance_local_overlays:
+    description: "Country/company overlays not general-purpose enough for OCA upstream"
+    modules:
+      - id: "ipai_l10n_ph_overlay"
+        purpose: "PH-specific: BIR forms mappings, withholding matrices, month-close evidence packs, PH chart-of-accounts overlays, filing calendars"
+        justification: "Philippines-specific tax compliance requirements (BIR 2550M, 1601C, etc.)"
+        implementation: "Data + rules + reports, not new business models"
+
+      - id: "ipai_policy_controls"
+        purpose: "Segregation of duties overlays, approval matrices, control attestations, evidence bundling"
+        justification: "Organization-specific governance and compliance controls"
+        implementation: "Policy rules and audit trails, not business workflow replacement"
+
+    rule: "Only what's specific to your entity/jurisdiction/policy and not suitable as a reusable OCA module"
+
+  design_system:
+    description: "Theme/branding parity. EE parity doesn't cover your brand/UI system."
+    modules:
+      - id: "ipai_design_tokens"
+        purpose: "CSS/SCSS variables, icons, layout primitives, accessibility defaults"
+        justification: "TBWA brand identity and design system"
+
+      - id: "ipai_ui_shell"
+        purpose: "Global UI extensions: navigation tweaks, command palette integration points, consistent component styling"
+        justification: "UX enhancements and brand consistency"
+
+    rule: "No business objects; only presentation and UX scaffolding"
+
+  data_contracts:
+    description: "Interfaces, not features. Deterministic export schemas and event models for BI, RAG, and audit."
+    modules:
+      - id: "ipai_data_contracts"
+        purpose: "Stable views, JSON schemas, 'gold' export tables (e.g., *_export_v1), change logs"
+        justification: "Stable data contracts for downstream consumers (Superset, RAG, analytics)"
+
+      - id: "ipai_event_sourcing"
+        purpose: "Canonical event stream/outbox table (append-only) for downstream consumers"
+        justification: "Event-driven architecture integration with external systems"
+
+    rule: "Never a substitute for OCA apps; it's interop and governance"
+
+disallowed_patterns:
+  description: "Invalid ipai_* modules if OCA equivalents exist"
+  patterns:
+    - pattern: "ipai_*_accounting_app"
+      reason: "OCA provides account_* modules; use those instead"
+      oca_alternatives: ["account", "account_financial_report", "mis_builder"]
+
+    - pattern: "ipai_*_hr_app"
+      reason: "OCA provides hr_* modules; use those instead"
+      oca_alternatives: ["hr", "hr_expense", "hr_timesheet"]
+
+    - pattern: "ipai_*_projects_app"
+      reason: "OCA provides project_* modules; use those instead"
+      oca_alternatives: ["project", "project_task_*", "project_timeline"]
+
+    - pattern: "ipai_*_helpdesk_app"
+      reason: "OCA provides helpdesk modules; use those instead"
+      oca_alternatives: ["helpdesk_mgmt", "helpdesk_*"]
+
+    - pattern: "ipai_*_dms_app"
+      reason: "OCA provides dms (Document Management System); use that instead"
+      oca_alternatives: ["dms", "attachment_*"]
+
+    - pattern: "ipai_*_expenses_app"
+      reason: "OCA provides hr_expense_* modules; use those instead"
+      oca_alternatives: ["hr_expense", "hr_expense_*"]
+
+    - pattern: "ipai_*_inventory_app"
+      reason: "OCA provides stock_* modules; use those instead"
+      oca_alternatives: ["stock", "stock_*"]
+
+    - pattern: "ipai_*_portfolio_app"
+      reason: "New parallel portfolio/project/OKR domain when OCA/CE already provides it"
+      oca_alternatives: ["project", "project_portfolio", "project_*"]
+
+    - pattern: "ipai_*_workflow_fork"
+      reason: "Forking business workflow instead of configuring/extending existing models"
+      oca_alternatives:
+        ["Use view inheritance, computed fields, and automation rules"]
+
+enforcement:
+  ci_gate:
+    enabled: true
+    script: "scripts/policy/check_custom_modules.py"
+    on_violation: "fail"
+    allow_override: true
+    override_file: "spec/policy/allow_custom_modules_override.yaml"
+
+  validation_rules:
+    - rule: "new_ipai_module_must_be_in_allowlist"
+      description: "Any new addons/ipai_* must match an allowed category"
+      severity: "error"
+
+    - rule: "no_business_models_in_glue"
+      description: "Platform glue modules cannot define business models (res.partner, account.move, etc.)"
+      severity: "error"
+
+    - rule: "no_workflow_replacement"
+      description: "Custom modules cannot replace core workflows (use inheritance/extension)"
+      severity: "error"
+
+    - rule: "must_have_justification"
+      description: "New custom module PR must include justification in spec/policy/allow_custom_modules_override.yaml"
+      severity: "warning"
+
+override_process:
+  description: "How to add a new custom module outside the allowlist"
+  steps:
+    - step: 1
+      action: "Create PR with new module in addons/ipai_*"
+
+    - step: 2
+      action: "Add entry to spec/policy/allow_custom_modules_override.yaml with justification"
+      format: |
+        overrides:
+          - module_id: "ipai_new_module"
+            category: "platform_glue"  # or ai_surface, compliance_local_overlays, etc.
+            justification: "Detailed explanation of why this is needed and why OCA doesn't cover it"
+            decision_test_satisfied:
+              no_new_domain_app: true
+              thin_adapter: true
+              upstream_ineligible: true
+              composable: true
+              auditable_deterministic: true
+            approved_by: "architecture_review_board"
+            approved_date: "2026-02-11"
+            review_date: "2026-08-11"  # 6 months from approval
+
+    - step: 3
+      action: "CI gate validates justification and decision test"
+
+    - step: 4
+      action: "Architecture review board approves override"
+
+    - step: 5
+      action: "Merge PR; module is now allowed"
+
+metrics:
+  track:
+    - metric: "custom_module_count"
+      description: "Total number of ipai_* modules"
+      target: "< 15"
+
+    - metric: "custom_module_loc"
+      description: "Total lines of code in ipai_* modules"
+      target: "< 5000"
+
+    - metric: "oca_coverage_ratio"
+      description: "Ratio of OCA modules to custom modules"
+      target: "> 5:1"
+
+    - metric: "override_count"
+      description: "Number of modules requiring override approval"
+      target: "< 3"
+
+review_schedule:
+  frequency: "quarterly"
+  actions:
+    - "Review all custom modules for potential OCA contribution"
+    - "Identify modules that can be deprecated in favor of new OCA releases"
+    - "Update allowlist based on OCA roadmap"
+    - "Renew or revoke override approvals"

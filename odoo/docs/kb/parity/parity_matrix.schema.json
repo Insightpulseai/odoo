@@ -1,0 +1,15 @@
+{
+  "capability_id": "string",
+  "parity_target": "full|near_full|partial|none",
+  "parity_path": "oca|upstream|external_service|bridge|custom",
+  "implementation": {
+    "repos": [{"name":"string","ref":"string"}],
+    "modules": [{"name":"string","version":"string"}],
+    "services": [{"name":"supabase|n8n|mattermost|superset|other","ref":"string"}]
+  },
+  "evidence": {
+    "tests": [{"name":"string","run_id":"string","result":"pass|fail","artifact":"string"}],
+    "notes": ["string"]
+  },
+  "status": "planned|in_progress|blocked|validated"
+}

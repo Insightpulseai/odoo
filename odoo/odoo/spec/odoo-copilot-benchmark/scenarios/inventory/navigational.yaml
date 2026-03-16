@@ -1,0 +1,64 @@
+# Inventory — Navigational Benchmark Scenarios
+
+scenarios:
+  - id: "BM-INV-N-001"
+    domain: inventory
+    capability_class: navigational
+    persona: inv_operator
+    prompt: "Show me all incoming receipts waiting to be processed"
+    expected_behavior:
+      type: navigate
+      model: stock.picking
+      view_type: list
+      domain_filter: [["picking_type_code", "=", "incoming"], ["state", "=", "assigned"]]
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [inventory, receipts, ready]
+
+  - id: "BM-INV-N-002"
+    domain: inventory
+    capability_class: navigational
+    persona: inv_operator
+    prompt: "Open the product form for SKU-A"
+    setup:
+      seed_records:
+        - model: product.product
+          values: { name: "SKU-A", type: "product" }
+    expected_behavior:
+      type: navigate
+      model: product.product
+      view_type: form
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [inventory, product, record-lookup]
+
+  - id: "BM-INV-N-003"
+    domain: inventory
+    capability_class: navigational
+    persona: inv_operator
+    prompt: "Go to the warehouse configuration"
+    expected_behavior:
+      type: navigate
+      model: stock.warehouse
+      view_type: list
+    hard_gates:
+      capability: true
+      correctness: true
+      permission_check: true
+    soft_scores:
+      completeness: { weight: 0.35 }
+      clarity: { weight: 0.25 }
+      latency: { target_ms: 3000, weight: 0.10 }
+    tags: [inventory, warehouse, configuration]

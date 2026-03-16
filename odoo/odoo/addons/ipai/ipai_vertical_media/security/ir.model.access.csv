@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_project_ces_user,project.project.ces.user,project.model_project_project,base.group_user,1,1,1,0
+access_project_project_ces_manager,project.project.ces.manager,project.model_project_project,project.group_project_manager,1,1,1,1
+access_sale_order_ces_user,sale.order.ces.user,sale.model_sale_order,base.group_user,1,1,1,0
+access_sale_order_ces_manager,sale.order.ces.manager,sale.model_sale_order,sales_team.group_sale_manager,1,1,1,1
+access_crm_lead_ces_user,crm.lead.ces.user,crm.model_crm_lead,base.group_user,1,1,1,0
+access_crm_lead_ces_manager,crm.lead.ces.manager,crm.model_crm_lead,sales_team.group_sale_manager,1,1,1,1
+access_ces_media_channel_user,ces.media.channel.user,model_ces_media_channel,base.group_user,1,0,0,0
+access_ces_media_channel_manager,ces.media.channel.manager,model_ces_media_channel,project.group_project_manager,1,1,1,1

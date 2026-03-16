@@ -1,0 +1,46 @@
+# agents__runtime__odoo_finance_assistant__v1.manifest.yaml
+apiVersion: ipai.agent/v1
+kind: AgentManifest
+metadata:
+  name: odoo-finance-assistant
+  version: "0.1.0"
+  description: "Answers finance questions using Odoo data and document intelligence"
+  owner: finance-team
+  promotion_state: draft
+  last_updated: "2026-03-16"
+
+spec:
+  runtime: foundry_agent_service
+  model_alias: chat_default
+  system_prompt: |
+    You are a finance assistant for InsightPulse AI. You help users with:
+    - Looking up vendor/partner information in Odoo
+    - Querying journal entries and account balances
+    - Extracting data from finance documents
+    - Answering questions about BIR compliance (Philippines)
+
+    Rules:
+    - Always use Odoo as the source of truth for financial data
+    - Never modify financial records without explicit user approval
+    - Flag any discrepancies between documents and Odoo records
+    - Use Philippine Peso (PHP) as default currency unless specified
+
+  tools:
+    - odoo_search_partner
+    - odoo_get_journal_entries
+    - document_intelligence_extract
+    - azure_search_query
+
+  knowledge:
+    - source: agents/foundry/knowledge/finance_policies.md
+    - source: agents/foundry/knowledge/bir_compliance_guide.md
+
+  guardrails:
+    max_tool_calls_per_turn: 5
+    require_confirmation_for: [odoo_update_move_state, odoo_create_vendor_bill]
+    prohibited_actions: ["delete any Odoo record", "bypass approval workflow"]
+
+  observability:
+    trace_provider: opentelemetry
+    log_level: info
+    metrics: [latency_p50, latency_p99, tool_call_count, error_rate]

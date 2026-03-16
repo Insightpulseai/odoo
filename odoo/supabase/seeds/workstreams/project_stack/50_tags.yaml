@@ -1,0 +1,107 @@
+# Task Tags
+# Model: project.tags
+# Import order: 5 (before tasks)
+
+tags:
+  # ============================================================
+  # PRIORITY / STATUS TAGS
+  # ============================================================
+
+  - id: ipai_tag_blocked
+    name: Blocked
+    color: 1  # Red
+    notes: "Task is blocked by external dependency"
+
+  - id: ipai_tag_urgent
+    name: Urgent
+    color: 4  # Orange
+    notes: "High priority, needs immediate attention"
+
+  - id: ipai_tag_on_hold
+    name: On Hold
+    color: 5  # Purple
+    notes: "Temporarily paused"
+
+  # ============================================================
+  # TYPE TAGS
+  # ============================================================
+
+  - id: ipai_tag_milestone
+    name: Milestone
+    color: 2  # Green
+    notes: "Major project milestone"
+
+  - id: ipai_tag_deliverable
+    name: Deliverable
+    color: 3  # Yellow
+    notes: "Client-facing deliverable"
+
+  - id: ipai_tag_client_review
+    name: Client Review
+    color: 6  # Pink
+    notes: "Requires client review/approval"
+
+  # ============================================================
+  # WORK TYPE TAGS
+  # ============================================================
+
+  - id: ipai_tag_meeting
+    name: Meeting
+    color: 7  # Light blue
+    notes: "Meeting or call"
+
+  - id: ipai_tag_documentation
+    name: Documentation
+    color: 8  # Teal
+    notes: "Documentation task"
+
+  - id: ipai_tag_development
+    name: Development
+    color: 9  # Dark blue
+    notes: "Development/coding task"
+
+  - id: ipai_tag_design
+    name: Design
+    color: 10  # Cyan
+    notes: "Design task"
+
+  - id: ipai_tag_testing
+    name: Testing
+    color: 11  # Green variant
+    notes: "QA/Testing task"
+
+  # ============================================================
+  # BILLING TAGS
+  # ============================================================
+
+  - id: ipai_tag_billable
+    name: Billable
+    color: 2  # Green
+    notes: "Time is billable to client"
+
+  - id: ipai_tag_non_billable
+    name: Non-Billable
+    color: 5  # Purple
+    notes: "Time is not billable"
+
+  - id: ipai_tag_fixed_fee
+    name: Fixed Fee
+    color: 4  # Orange
+    notes: "Part of fixed-fee agreement"
+
+# Odoo import field mapping
+odoo_import:
+  model: project.tags
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: color
+      column: Color
+      type: integer
+      notes: "Color index (0-11)"

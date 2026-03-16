@@ -1,0 +1,207 @@
+/* ── IPAI Copilot Sidebar ──────────────────────────────────────────────────── */
+
+.ipai-copilot-sidebar {
+    position: fixed;
+    right: 0;
+    top: 46px; /* below Odoo top navbar */
+    bottom: 0;
+    width: 360px;
+    background: #ffffff;
+    border-left: 1px solid #dee2e6;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.875rem;
+    font-family: inherit;
+}
+
+/* Header */
+.ipai-copilot-header {
+    flex-shrink: 0;
+    background: #fff;
+}
+
+/* Messages area */
+.ipai-copilot-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 8px;
+    scroll-behavior: smooth;
+}
+
+/* Individual messages */
+.ipai-copilot-message {
+    display: flex;
+    flex-direction: column;
+}
+
+.ipai-copilot-message.user {
+    align-items: flex-end;
+}
+
+.ipai-copilot-message.assistant {
+    align-items: flex-start;
+}
+
+.ipai-copilot-message.user .message-bubble {
+    background: #dbeafe; /* blue-100 */
+    color: #1e3a5f;
+    max-width: 85%;
+    margin-left: 2rem;
+    border-bottom-right-radius: 4px !important;
+    font-size: 0.83rem;
+    line-height: 1.45;
+}
+
+.ipai-copilot-message.assistant .message-bubble {
+    background: #f8f9fa;
+    color: #212529;
+    max-width: 90%;
+    margin-right: 2rem;
+    border-bottom-left-radius: 4px !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.83rem;
+    line-height: 1.45;
+}
+
+/* Input area */
+.ipai-copilot-input {
+    flex-shrink: 0;
+    background: #fff;
+}
+
+.ipai-copilot-input textarea {
+    resize: none;
+    font-size: 0.83rem;
+    border-radius: 6px;
+    border-color: #ced4da;
+}
+
+.ipai-copilot-input textarea:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* ── Typing Indicator ─────────────────────────────────────────────────────── */
+
+.ipai-typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 16px;
+}
+
+.ipai-typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background: #9ca3af;
+    border-radius: 50%;
+    animation: ipai-bounce 1.4s ease-in-out infinite;
+}
+
+.ipai-typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.ipai-typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes ipai-bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    30% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+/* ── Command Palette ──────────────────────────────────────────────────────── */
+
+.ipai-copilot-palette-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 14vh;
+    animation: ipai-overlay-in 120ms ease-out;
+}
+
+@keyframes ipai-overlay-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.ipai-copilot-palette {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    width: 620px;
+    max-width: 90vw;
+    overflow: hidden;
+    animation: ipai-palette-in 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: top center;
+}
+
+@keyframes ipai-palette-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ── Systray Toggle Button ────────────────────────────────────────────────── */
+
+.ipai-copilot-toggle {
+    font-size: 0.78rem;
+    border-radius: 6px;
+    padding: 3px 10px;
+    border-color: #dee2e6;
+    color: #495057;
+    transition: background 120ms, color 120ms;
+}
+
+.ipai-copilot-toggle:hover {
+    background: #e8f0fe;
+    color: #1a56db;
+    border-color: #c7d2fe;
+}
+
+/* ── Responsive adjustments ───────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .ipai-copilot-sidebar {
+        width: 100%;
+        top: 0;
+        border-left: none;
+        border-top: 1px solid #dee2e6;
+        z-index: 1050;
+    }
+}
+
+/* Push main content when sidebar is open (optional enhancement) */
+/* Uncomment to shift content instead of overlay:
+.o_web_client:has(.ipai-copilot-sidebar) .o_action_manager {
+    margin-right: 360px;
+    transition: margin-right 200ms ease;
+}
+*/

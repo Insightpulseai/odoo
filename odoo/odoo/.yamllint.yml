@@ -1,0 +1,37 @@
+# =============================================================================
+# yamllint configuration (repo-wide SSOT)
+# =============================================================================
+# Relaxed defaults suitable for Odoo/OCA/CI workflow YAML files.
+# Referenced by: .pre-commit-config.yaml, scripts/lint_all.sh, CI workflows.
+# =============================================================================
+
+extends: relaxed
+
+rules:
+  # Allow long lines in workflow files (common with GH Actions expressions)
+  line-length:
+    max: 200
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  # Require consistent indentation
+  indentation:
+    spaces: 2
+    indent-sequences: whatever
+
+  # Allow both styles of comments
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 1
+
+  # Don't enforce document markers
+  document-start: disable
+  document-end: disable
+
+  # Allow empty values (common in YAML configs)
+  empty-values: disable
+
+  # Truthy values — allow common GH Actions patterns like `on: push`
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: false

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- AIUX Chat Widget Templates (stub v0) -->
+
+    <!-- Pill (minimize mode) -->
+    <t t-name="ipai_aiux_chat.Pill">
+        <div class="aiux-chat-pill"
+             t-att-class="{ 'aiux-chat-pill--active': state.hasUnread }"
+             t-on-click="onPillClick"
+             title="Ask AI">
+            <span class="aiux-chat-pill__icon">💬</span>
+        </div>
+    </t>
+
+    <!-- Popup container -->
+    <t t-name="ipai_aiux_chat.Popup">
+        <div class="aiux-chat-popup"
+             t-att-class="{ 'aiux-chat-popup--visible': props.visible }">
+            <div class="aiux-chat-popup__header">
+                <span class="aiux-chat-popup__title">Ask AI</span>
+                <div class="aiux-chat-popup__actions">
+                    <button t-on-click="() => props.onModeChange('sidepanel')" title="Expand to sidepanel">⬛</button>
+                    <button t-on-click="() => props.onModeChange('minimize')" title="Minimize">➖</button>
+                </div>
+            </div>
+            <div class="aiux-chat-popup__body">
+                <!-- Chat messages will render here -->
+                <p class="aiux-chat-popup__placeholder">Chat widget (stub v0)</p>
+            </div>
+            <div class="aiux-chat-popup__footer">
+                <input type="text" placeholder="Ask anything..." class="aiux-chat-popup__input"/>
+                <button class="aiux-chat-popup__send">Send</button>
+            </div>
+        </div>
+    </t>
+
+    <!-- Sidepanel container (NOT fullscreen) -->
+    <t t-name="ipai_aiux_chat.Sidepanel">
+        <div class="aiux-chat-sidepanel"
+             t-att-class="{ 'aiux-chat-sidepanel--visible': props.visible }">
+            <div class="aiux-chat-sidepanel__header">
+                <span class="aiux-chat-sidepanel__title">Ask AI</span>
+                <div class="aiux-chat-sidepanel__actions">
+                    <button t-on-click="() => props.onModeChange('popup')" title="Collapse to popup">🗗</button>
+                    <button t-on-click="() => props.onModeChange('minimize')" title="Minimize">➖</button>
+                </div>
+            </div>
+            <div class="aiux-chat-sidepanel__body">
+                <!-- Chat messages will render here -->
+                <p class="aiux-chat-sidepanel__placeholder">Sidepanel mode (stub v0)</p>
+            </div>
+            <div class="aiux-chat-sidepanel__footer">
+                <textarea placeholder="Ask anything..." class="aiux-chat-sidepanel__input"></textarea>
+                <button class="aiux-chat-sidepanel__send">Send</button>
+            </div>
+        </div>
+    </t>
+
+    <!-- Main container that switches between modes -->
+    <t t-name="ipai_aiux_chat.Container">
+        <div class="aiux-chat-container" t-att-data-mode="state.mode">
+            <t t-if="state.mode === 'minimize'">
+                <t t-call="ipai_aiux_chat.Pill"/>
+            </t>
+            <t t-elif="state.mode === 'popup'">
+                <t t-call="ipai_aiux_chat.Popup">
+                    <t t-set="visible" t-value="true"/>
+                    <t t-set="onModeChange" t-value="setMode"/>
+                </t>
+            </t>
+            <t t-elif="state.mode === 'sidepanel'">
+                <t t-call="ipai_aiux_chat.Sidepanel">
+                    <t t-set="visible" t-value="true"/>
+                    <t t-set="onModeChange" t-value="setMode"/>
+                </t>
+            </t>
+        </div>
+    </t>
+
+</templates>

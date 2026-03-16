@@ -1,0 +1,129 @@
+version: 1
+kind: capability_mapping
+mapping_id: concur_to_odoo19ce_oca
+metadata:
+  title: "SAP Concur → Odoo 19 CE + OCA + minimal IPAI glue"
+  principle: "Prefer config+data importers; minimal custom code; OCA-first; avoid long-lived daemons (Odoo.sh-safe)."
+
+source_product:
+  name: "SAP Concur"
+  domains:
+    - travel
+    - expense
+    - invoice
+    - audit
+    - policy
+    - mobile
+
+target_stack:
+  odoo_ce:
+    version: "19"
+    core_modules:
+      - account
+      - purchase
+      - hr
+      - hr_expense
+      - mail
+      - web
+      # optional depending on your stack:
+      - documents
+  oca_candidates:
+    # NOTE: exact module selection should be validated against your chosen OCA branch/version.
+    # Repos commonly used for expense/role/policy:
+    - repo: "OCA/hr-expense"
+      purpose: "expense enhancements; workflows; sheets; approvals"
+    - repo: "OCA/server-auth"
+      purpose: "role/policy hooks; auth integration patterns"
+    - repo: "OCA/server-tools"
+      purpose: "audit/logging utilities; server-side helpers"
+    - repo: "OCA/account-financial-tools"
+      purpose: "accounting utilities that complement core accounting"
+    - repo: "OCA/ai"
+      purpose: "LLM integration base; provider adapters (Ollama, OpenAI); prompt management"
+
+glue_layer:
+  name: "IPAI minimal glue"
+  patterns:
+    - "Edge Functions / external workers for heavy OCR + ingestion"
+    - "Idempotent importers (CSV/XML-RPC) instead of new models"
+    - "Attachment normalization + evidence bundling"
+
+capabilities:
+  - id: concur.receipt_capture
+    source: "Receipt capture (mobile + email ingestion + OCR)"
+    target:
+      odoo:
+        - "hr_expense (expense records + attachments)"
+        - "documents (optional evidence library)"
+      oca:
+        - "hr-expense addons for approval/validation UX"
+      ipai_glue:
+        - "OCR service (external) → structured payload → create expense + attach evidence"
+    notes:
+      - "Avoid long-lived workers inside Odoo; run OCR out-of-process."
+
+  - id: concur.expense_policy
+    source: "Policy rules, per diem, spend limits, exceptions"
+    target:
+      odoo:
+        - "hr_expense + company policy configuration"
+      oca:
+        - "role/policy enforcement utilities as needed"
+      ipai_glue:
+        - "Policy-as-config (YAML) → runtime checks + user-facing reasons"
+
+  - id: concur.approvals
+    source: "Multi-step approvals (manager, finance, audit)"
+    target:
+      odoo:
+        - "mail (chatter + activities)"
+        - "hr (org structure)"
+      oca:
+        - "approval-style addons if needed (OCA) for structured routes"
+      ipai_glue:
+        - "SoD checkpoints and audit log emitters"
+
+  - id: concur.invoice
+    source: "Invoice capture + matching + payment readiness"
+    target:
+      odoo:
+        - "account (vendor bills, payments)"
+        - "purchase (PO linkage where applicable)"
+      oca:
+        - "account-financial-tools helpers"
+      ipai_glue:
+        - "3-way match assistant prompts + evidence pack generation"
+
+  - id: concur.audit
+    source: "Audit rules, sampling, exception queues, immutable trail"
+    target:
+      odoo:
+        - "mail + logging"
+      oca:
+        - "server-tools/audit utilities (where available)"
+      ipai_glue:
+        - "Evidence bundle export + close pack artifacts"
+
+  - id: concur.mobile
+    source: "Mobile-first UX for capture + status"
+    target:
+      odoo:
+        - "responsive web + portal patterns"
+      ipai_glue:
+        - "supabase_flutter mobile shell (optional) for capture workflow → Odoo API"
+
+  - id: concur.ai_assist
+    source: "AI-powered expense categorization, policy suggestions, anomaly detection"
+    target:
+      odoo:
+        - "base AI infrastructure"
+      oca:
+        - "OCA/ai base modules + provider adapters"
+      ipai_glue:
+        - "LLM prompt templates for expense classification"
+        - "Policy violation detection with explanations"
+        - "Anomaly scoring for audit sampling"
+
+non_goals:
+  - "Recreating Concur's entire travel booking ecosystem inside Odoo"
+  - "Running any daemonized connectors inside Odoo.sh containers"
