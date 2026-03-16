@@ -95,6 +95,114 @@ All delivered through standardized Azure landing zones and a product-oriented op
 | Business value | New AI/data capabilities enabled, ERP uptime |
 | Operating model | Quarterly review cadence, team OKR completion |
 
+## Repo Rename Plan
+
+| Current Name | Target Name | Why |
+|-------------|-------------|-----|
+| `ops-platform` | **`control-plane`** | Clearer — this repo IS the control plane (registry, orchestration, catalog) |
+| `agents` | **`agent-platform`** | Broader than "agents" — contains runtime, tools, policies, evals, middleware |
+| `lakehouse` | **`data-intelligence`** | Broader than storage — includes Databricks Apps, domain products, streaming, AI/BI |
+
+### Repos That Keep Their Names
+
+`.github`, `infra`, `odoo`, `web`, `automations`, `design-system`, `templates`
+
+### Repos to Delete (After Salvage)
+
+`template-factory`, `plugin-marketplace`, `plugin-agents`, `learn`, `mcp-core`
+
+---
+
+## Language Policy
+
+| Repo | Python | .NET | TypeScript | Why |
+|------|--------|------|-----------|-----|
+| **`agent-platform`** | ✓ Primary | **✓ Mandatory** | — | Aligned to microsoft/agent-framework dual-language design |
+| **`control-plane`** | ✓ Primary | Optional | Optional | Default Python; .NET for Azure-native services if needed |
+| **`automations`** | ✓ Primary | Optional | Optional | Default Python; .NET for durable workers if needed |
+| `odoo` | ✓ Only | — | — | Odoo is Python-only |
+| `data-intelligence` | ✓ Primary | — | — | Databricks is Python/SQL/Scala |
+| `web` | — | — | ✓ Primary | Next.js/React is TypeScript |
+| `infra` | ✓ Scripts | — | — | Bicep/Terraform + Python scripts |
+
+### .NET Required Files (Where Mandatory/Optional)
+
+```
+global.json
+NuGet.config
+Directory.Build.props
+Directory.Packages.props
+<RepoName>.slnx
+```
+
+---
+
+## agent-platform Target Structure (Aligned to microsoft/agent-framework)
+
+```
+agent-platform/
+├── docs/
+│   ├── architecture/
+│   ├── runbooks/
+│   └── agents/
+├── spec/
+│   └── agent-platform/
+├── schemas/
+│   ├── tool.schema.json
+│   ├── agent.schema.json
+│   └── workflow.schema.json
+├── python/
+│   ├── agents/
+│   ├── workflows/
+│   ├── tools/
+│   ├── middleware/
+│   ├── evals/
+│   └── tests/
+├── dotnet/
+│   ├── src/
+│   │   ├── AgentPlatform.Agents/
+│   │   ├── AgentPlatform.Workflows/
+│   │   ├── AgentPlatform.Tools/
+│   │   ├── AgentPlatform.Middleware/
+│   │   └── AgentPlatform.Runtime/
+│   ├── tests/
+│   └── samples/
+├── agent-samples/
+├── workflow-samples/
+├── runtimes/
+│   ├── foundry/
+│   └── local/
+├── policies/
+│   ├── action-guards/
+│   └── data-access/
+├── adapters/
+│   ├── mcp/
+│   └── http/
+├── apps/
+│   └── copilot/
+├── AgentPlatform.slnx
+├── global.json
+├── NuGet.config
+├── Directory.Build.props
+├── Directory.Packages.props
+├── pyproject.toml
+└── .github/
+    └── workflows/
+        ├── ci.yml
+        ├── dotnet-ci.yml
+        └── python-ci.yml
+```
+
+### Design Rationale
+
+- `python/` and `dotnet/` at top level mirrors microsoft/agent-framework layout
+- `schemas/` shared across both languages (contracts are language-agnostic)
+- `agent-samples/` and `workflow-samples/` at top level for discoverability
+- `runtimes/` separates Foundry-hosted from local execution
+- `policies/` and `adapters/` are runtime-independent
+
+---
+
 ## Short Version
 
 > InsightPulseAI will complete its migration by operating Odoo as the Azure-hosted ERP core on standardized Azure landing zones, with clear separation between platform and workload services, automated and governed infrastructure, and a product-oriented operating model with measurable business outcomes.
