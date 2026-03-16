@@ -18,15 +18,15 @@
 **Objective**: Offload analytical workloads to Azure Databricks.
 1. Deploy Azure Databricks Workspace via Terraform.
 2. Configure Azure Service Bus or Event Hubs to stream transactional state changes from Odoo.
-3. Build the Medallion ingestion pipeline (Odoo Bronze -> Silver).
+3. Build the Lakeflow Spark Declarative Pipelines (SDP) ingestion pipeline (Odoo Bronze -> Silver).
 4. Verify reporting queries execute against the Lakehouse, not PostgreSQL.
 
 ## Phase 3: Copilots and Document Workflows
-**Objective**: Introduce the System of Agency via Microsoft Foundry.
-1. Initialize Microsoft Foundry workspace side-by-side with Azure OpenAI.
+**Objective**: Introduce the System of Agency via Azure AI Foundry.
+1. Initialize Azure AI Foundry workspace side-by-side with Azure OpenAI.
 2. Route inbound vendor emails to Azure AI Document Intelligence for OCR parsing.
 3. author Anthropic Agent tools inside Foundry to securely read/write Odoo POs via REST API.
-4. Establish Foundry Tracing to monitor AI hallucinations or execution failures.
+4. Establish Foundry Tracing to monitor AI hallucinations or tool execution failures.
 
 ## Phase 4: Enterprise Hardening
 **Objective**: Prepare for production SaaS scale.

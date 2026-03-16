@@ -1,41 +1,42 @@
 # Tasks: Wholesale SaaS ERP on Azure
 
 ## Phase 0: Foundations & DevUx
-
-- [ ] Define `.devcontainer` for `infra` (Terraform, Azure CLI).
-- [ ] Define `.devcontainer` for `erp` (Odoo 18+, Python 3.12+, PostgreSQL client).
-- [ ] Initialize Azure DevOps project and configure Branch Policies (main must pass PR).
-- [ ] Create base Terraform modules for Azure VNet, NAT Gateway, and Log Analytics.
-- [ ] Configure GitHub-to-Azure DevOps sync (if needed) or migrate completely to ADO Repos.
+- [ ] Define `.devcontainer/infra` (Terraform, Azure CLI, azd, PostgreSQL client).
+- [ ] Define `.devcontainer/erp` (Odoo 18+, Python 3.12+, PostgreSQL client).
+- [ ] Decide source-control model: GitHub + ADO Pipelines, or full ADO Repos migration.
+- [ ] Initialize Azure DevOps project and configure branch policies for `main`.
+- [ ] Create base Terraform modules for RG, VNet, subnets, NAT Gateway, Log Analytics, diagnostics.
+- [ ] Set up remote Terraform state and env structure (`dev`, `staging`, `prod`).
 
 ## Phase 1: MVP Transactional Core
-
 - [ ] Deploy Azure Database for PostgreSQL Flexible Server via Terraform.
+- [ ] Deploy Azure Container Registry via Terraform.
+- [ ] Build/push custom Odoo image to ACR.
 - [ ] Deploy Azure Container Apps Environment via Terraform.
-- [ ] Push Odoo custom `Dockerfile` to Azure Container Registry.
-- [ ] Deploy Odoo standard container (web) and worker container (background jobs).
-- [ ] Mount Azure Files to Odoo ACA for persistent filestore.
+- [ ] Deploy Odoo web and worker container apps.
+- [ ] Provision Azure Files and mount it for persistent Odoo filestore.
 - [ ] Configure Entra ID App Registration for Odoo SSO.
-- [ ] Validate Odoo multi-company row-level security mapping.
+- [ ] Validate Odoo multi-company security mapping and persistence behavior.
 
 ## Phase 2: Intelligence Layer
-
 - [ ] Deploy Azure Databricks workspace via Terraform.
-- [ ] Provision ADLS Gen2 for the Databricks Lakehouse.
-- [ ] Create Azure Service Bus namespace and topics for Odoo event emission.
-- [ ] Write Odoo server action/webhook to broadcast `sale.order` confirmation to Service Bus.
-- [ ] Build Databricks Delta Live Table (DLT) pipeline to ingest from Service Bus (Bronze).
+- [ ] Provision ADLS Gen2 for the Lakehouse.
+- [ ] Create Azure Service Bus namespace, topics, and subscriptions.
+- [ ] Write Odoo event publisher for `sale.order` confirmation.
+- [ ] Build Databricks Lakeflow Spark Declarative Pipelines (SDP) Bronze ingestion pipeline.
+- [ ] Validate event replay, idempotency, and dead-letter handling.
 
 ## Phase 3: System of Agency
-
-- [ ] Provision Microsoft Foundry (Azure AI Foundry) workspace.
+- [ ] Provision Azure AI Foundry workspace.
 - [ ] Deploy Azure AI Document Intelligence resource.
-- [ ] Build Odoo API integration layer in APIM (securing Odoo endpoints).
-- [ ] Create Python tool for Foundry: `create_vendor_bill(ocr_data)`.
-- [ ] Test Anthropic Copilot Agent invoking `create_vendor_bill` through Foundry tracing.
+- [ ] Build APIM-secured Odoo integration layer.
+- [ ] Create Python tool `create_vendor_bill(ocr_data)`.
+- [ ] Add tracing/observability for the Foundry tool path.
+- [ ] Test end-to-end OCR-to-vendor-bill flow via agent invocation.
 
 ## Phase 4: Enterprise Hardening
-
-- [ ] Run load tests on Odoo ACA instances to validate auto-scaling behavior.
-- [ ] Execute a manual failover drill for Azure PostgreSQL Flexible.
-- [ ] Implement Azure Policy to restrict manual resource creation outside of Azure DevOps.
+- [ ] Run load tests against ACA Odoo services and validate scale rules.
+- [ ] Execute PostgreSQL Flexible Server failover drill.
+- [ ] Implement Azure Policy to prevent unmanaged/manual resource creation.
+- [ ] Add backup/restore and DR validation for DB + filestore.
+- [ ] Finalize monitoring, alerts, and release promotion controls.
