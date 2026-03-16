@@ -20,6 +20,7 @@
 | Azure-Samples | 0.6 | Implementation starters and accelerators (selectively mined) | Canonical architecture |
 | A2A (Google/Linux Foundation) | 0.5 | External agent-to-agent interop boundary | Internal repo/team design |
 | SuperClaude Framework | 0.4 | Command packs, persona design inspiration | Canonical doctrine (not Anthropic-endorsed) |
+| Foundry vs Databricks unified approach (MS Tech Community) | 1.0 | Foundry=agents/genAI, Databricks=data/ML/governance. Sequential, not competing. | Repo topology (already decided) |
 | SAP-on-Azure Landing Zone Accelerator | 0.85 | Landing zone design areas adapted for Odoo-on-Azure | SAP-specific components (HANA, BW, Fiori) |
 | Viva Goals | 0.0 | **RETIRED Dec 2025 — do not use** | Everything |
 
