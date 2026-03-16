@@ -6,7 +6,7 @@
 ## 1. Core Platform Boundaries
 - **Transactional System of Record**: Odoo running on Azure Container Apps (ACA) with Azure Database for PostgreSQL Flexible Server. Odoo exclusively handles immediate business logic (Sales, Inventory, Purchasing) and is the ultimate truth for active transactions.
 - **Intelligence System**: Azure Databricks with Unity Catalog. Analytical workloads, forecasting, and lakehouse storage must never execute within the Odoo PostgreSQL instance. Data must be replicated asynchronously to the Lakehouse.
-- **Agentic System**: Microsoft Foundry. All non-deterministic LLM operations, complex reasoning loops, and prompt evaluations belong in Foundry. AI agents must operate as independent microservices consuming Odoo via APIs; they must never directly mutate Odoo transactional data without strict API guardrails.
+- **Agentic System**: Azure AI Foundry. All non-deterministic LLM operations, complex reasoning loops, and prompt evaluations belong in Foundry. AI agents must operate as independent microservices consuming Odoo via APIs; they must never directly mutate Odoo transactional data without strict API guardrails.
 
 ## 2. Engineering & Developer Experience
 - **Reproducibility**: All local engineering (human and AI agent) must occur inside VS Code `.devcontainer` environments. This guarantees identical toolchains (Azure CLI, Databricks CLI, Terraform).

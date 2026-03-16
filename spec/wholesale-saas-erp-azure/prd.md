@@ -14,13 +14,13 @@ The **InsightPulse Wholesale SaaS ERP** is an Azure-native, AI-augmented, multi-
 - Strict isolation from AI/Analytical compute constraints.
 
 ### 3.2 Automated Intelligence (Lakehouse)
-- Medallion architecture inside Azure Databricks (Bronze/Silver/Gold).
+- Lakeflow Spark Declarative Pipelines (SDP) inside Azure Databricks.
 - Unified metrics for historical sales forecasting, inventory aging, and financial consolidation.
 - Direct BI reporting from the Gold layer.
 
 ### 3.3 Azure-Native AI Capability
 - Integration with Azure AI Document Intelligence for real-time extraction of emailed Purchase Orders and Vendor Bills.
-- Copilot chat and reasoning agents executed via Microsoft Foundry using Anthropic models.
+- Copilot chat and reasoning agents executed via Azure AI Foundry using Anthropic models.
 - Agents act identically to human users via API, complete with RBAC constraints.
 
 ### 3.4 Multi-Tenant Row-Level Security

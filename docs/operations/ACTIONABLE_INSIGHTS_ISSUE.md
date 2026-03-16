@@ -17,9 +17,9 @@ This Epic tracks the top 10 actionable insights and immediate next steps derived
 
 ## 🧠 Phase 2 & 3: Intelligence & Agency
 - [ ] **7. Decouple Events:** Set up Azure Service Bus to listen for Odoo state changes (e.g., "Order Confirmed") to asynchronously trigger downstream data updates without blocking the ERP.
-- [ ] **8. Initialize the Agent Factory:** Provision a Microsoft Foundry workspace to act as the centralized registry for Anthropic models and custom tool schemas.
+- [ ] **8. Initialize the Agent Factory:** Provision an Azure AI Foundry workspace to act as the centralized registry for Anthropic models and custom tool schemas.
 - [ ] **9. Build the First Tool Boundary:** Create the first Foundry-hosted Python tool that allows Claude to safely query (read-only) the Odoo API through APIM.
-- [ ] **10. Phase 2 Intelligence Initialization:** Initialize the Azure Databricks workspace and begin replicating Odoo's raw Postgres tables into a Bronze Data Lake layer for reporting.
+- [ ] **10. Phase 2 Intelligence Initialization:** Initialize the Azure Databricks workspace and begin building a Lakeflow Spark Declarative Pipelines (SDP) workflow to sync Odoo events.
 
 ---
 
