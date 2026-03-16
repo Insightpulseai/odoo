@@ -78,7 +78,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | `search_records`, `read_record`, `search_knowledge`, `web_search` |
 | **Memory** | `user_profile` (personalization) |
 | **Replaces modes** | Ask, Livechat |
-| **Capability packs** | Databricks Intelligence, Marketing Strategy |
+| **Capability packs** | Databricks Intelligence, Marketing Strategy & Insight, fal Creative (read-only) |
 | **Evaluation** | Groundedness ≥ 0.8, Relevance ≥ 0.85, Citation accuracy ≥ 0.9 |
 | **Guardrails** | No PII in responses, no financial advice disclaimers, cite sources |
 
@@ -91,7 +91,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | `search_records`, `read_record`, `search_knowledge`, `code_interpreter`, `file_search` |
 | **Memory** | `chat_summary` (session continuity) |
 | **Replaces modes** | Authoring (read/analysis portion) |
-| **Capability packs** | Databricks Intelligence |
+| **Capability packs** | Databricks Intelligence, Marketing Strategy & Insight, fal Creative (read-only) |
 | **Evaluation** | Groundedness ≥ 0.85, Coherence ≥ 0.9, Data accuracy ≥ 0.95 |
 | **Guardrails** | No external data leakage, internal-only context, audit all queries |
 
@@ -104,7 +104,7 @@ Split the single agent into **three logical agents + one deterministic router**,
 | **Foundry tools** | All read tools + `create_draft`, `create_record`, `update_record`, `execute_action`, `image_generation`, `code_interpreter` |
 | **Memory** | `chat_summary` (multi-step transaction continuity) |
 | **Replaces modes** | Authoring (draft creation), Transaction, Creative |
-| **Capability packs** | fal Creative Production |
+| **Capability packs** | Databricks Intelligence, fal Creative Production, Marketing Strategy & Insight (light) |
 | **Evaluation** | Action correctness ≥ 0.95, Safety (no unauthorized writes) = 1.0 |
 | **Guardrails** | Approval gates, undo support, draft-first default, model/field allowlists |
 
@@ -128,6 +128,8 @@ Routes requests to the correct agent without LLM inference:
 | Databricks Intelligence Pack | Yes | Yes | Yes | Yes |
 | fal Creative Production Pack | Yes | Yes | Yes | Yes |
 | Marketing Strategy & Insight Pack | Yes | Yes | Light | No |
+| BIR Compliance Pack | Yes | Read-only | Write (approval) | Context |
+| Document Intake & Extraction Pack | — | — | Yes | — |
 
 ## Foundry + Agent Framework split
 
@@ -141,18 +143,19 @@ Routes requests to the correct agent without LLM inference:
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Advisory, Ops |
+| **Attaches to** | Advisory (read), Ops (read), Actions (job triggers), Router (routing context) |
 | **Tools** | `databricks_sql_query`, `databricks_unity_search`, `databricks_dashboard_embed` |
 | **Credentials** | `DATABRICKS_HOST`, `DATABRICKS_TOKEN` (Key Vault) |
-| **Degrades** | Pack disabled if credentials absent; agents still work |
+| **Degrades** | Pack disabled if credentials absent; agents still work without Databricks tools |
 | **Source refs** | Databricks SQL Connector, Unity Catalog, Genie, Lakeview |
 
 ### fal Creative Production Pack
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Actions |
+| **Attaches to** | Advisory (read/preview), Ops (read/preview), Actions (write/generate), Router (routing context) |
 | **Tools** | `fal_image_generate`, `fal_video_generate`, `fal_style_transfer` |
+| **Write tools** | Only available in Actions agent; Advisory/Ops get read-only preview access |
 | **Credentials** | `FAL_KEY` (Key Vault) |
 | **Degrades** | Falls back to Foundry built-in `image_generation` (DALL-E 3) |
 | **Source refs** | fal.ai model catalog, UGC generation patterns |
@@ -161,19 +164,56 @@ Routes requests to the correct agent without LLM inference:
 
 | Attribute | Value |
 |-----------|-------|
-| **Attaches to** | Advisory |
+| **Attaches to** | Advisory (full), Ops (full), Actions (light — prompt context only, no dedicated tools) |
 | **Tools** | `web_search` (existing), `search_knowledge` (brand guidelines RAG) |
+| **Light attachment** | On Actions, provides brand/campaign context in prompt but no Marketing-specific tool invocations |
 | **Credentials** | None (uses existing Foundry built-ins) |
 | **Degrades** | N/A (no external credentials needed) |
 | **Source refs** | Smartly (creative automation), Quilt.AI (cultural intelligence), LIONS Marketing Assistant (effectiveness), Data Intelligence (analytics) |
 
-## Integration Modes
+### BIR Compliance Pack (Tax Pulse)
 
-| Mode | Surface | Auth | When |
-|------|---------|------|------|
-| **SDK Direct** | `azure-ai-projects` 2.x + `OpenAI()` | `DefaultAzureCredential` | Internal services (Odoo bridge, MCP server) |
-| **REST Direct** | `POST /openai/v1/responses` | API key via project connection | n8n workflows, lightweight adapters |
-| **APIM Gateway** | `apim-ipai-dev` → Foundry | OAuth2 / subscription key | Third-party callers, enterprise ingress |
+| Attribute | Value |
+|-----------|-------|
+| **Attaches to** | Advisory (full — informational), Ops (read-only — inspection), Actions (write — approval-gated), Router (context) |
+| **Tools** | `bir_compliance_search`, `check_overdue_filings`, `compute_bir_vat_return`, `compute_bir_withholding_return`, `validate_bir_return`, `generate_alphalist`, `generate_efps_xml`, `generate_bir_pdf` |
+| **Write tools** | Only available in Actions agent with `group_ipai_bir_approver` approval |
+| **Credentials** | None (uses Odoo MCP + local rules engine) |
+| **Degrades** | N/A (no external credentials needed) |
+| **Knowledge** | `ph_rates_2025.json`, `vat.rules.yaml`, `ewt.rules.yaml`, BIR regulation knowledge store |
+| **Workflow** | Odoo-native stages (Draft → Computed → Validated → Approved → Filed → Confirmed), Activities, task templates |
+| **Spec** | `spec/tax-pulse-sub-agent/` |
+| **Source refs** | TaxPulse-PH-Pack (ported), BIR Revenue Regulations, TRAIN Law |
+
+### Document Intake & Extraction Pack
+
+| Attribute | Value |
+|-----------|-------|
+| **Attaches to** | Actions (write — extraction + linking) |
+| **Tools** | `document_extract`, `document_classify`, `document_link_record` |
+| **Credentials** | `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT`, `AZURE_DOCUMENT_INTELLIGENCE_KEY` |
+| **Degrades** | Pack disabled when credentials absent |
+| **Status** | Planned |
+| **Source refs** | Azure AI Document Intelligence (invoices, receipts, BIR attachments) |
+
+## Ingress Paths
+
+| Path | Purpose | Who | Governance |
+|------|---------|-----|-----------|
+| **Foundry Project Client** | config, connections, tracing, Foundry-native ops | internal control-plane services | Foundry RBAC + project scope |
+| **OpenAI-compatible client** | agents, evals, responses, model calls | advisory, ops, actions runtime | project scope + deployment policy |
+| **Direct REST** | adapters, n8n/webhooks, lightweight bridges | automation bridges, service adapters | APIM or service auth |
+| **APIM AI gateway** | **required production front door** | **all production clients** | auth, quotas, throttling, telemetry |
+| **Foundry Playgrounds** | rapid prototyping, validation | builders/operators only | **non-production only** |
+
+## Ingress ownership by component
+
+| Component | Primary ingress | Secondary ingress | Notes |
+|---|---|---|---|
+| Advisory | APIM → Foundry/OpenAI-compatible client | Playground during prototyping | main enterprise chat/API surface |
+| Ops | internal APIM route → Agent Framework runtime | project client for setup/tracing | internal-only |
+| Actions | internal APIM route → Agent Framework runtime | none | approval-gated only |
+| Router | internal service ingress only | none | not user-facing |
 
 ## Endpoints
 
@@ -181,7 +221,7 @@ Routes requests to the correct agent without LLM inference:
 |----------|-------------|--------|
 | Project | `https://data-intel-ph-resource.services.ai.azure.com/api/projects/data-intel-ph` | AIProjectClient |
 | OpenAI-compatible | `https://data-intel-ph-resource.openai.azure.com/openai/v1/` | OpenAI() |
-| APIM (future) | `https://apim-ipai-dev.azure-api.net/foundry/v1/` | Any HTTP client |
+| APIM (required) | `https://apim-ipai-dev.azure-api.net/foundry/v1/` | Any HTTP client |
 
 ## Acceptance Criteria
 
@@ -193,3 +233,44 @@ Routes requests to the correct agent without LLM inference:
 6. All agent invocations produce App Insights telemetry with user, mode, tools, tokens, latency
 7. Multi-agent workflow (expense approval) completes end-to-end with OTel trace
 8. No additional Foundry agents created — all modes use `ipai-odoo-copilot-azure`
+
+---
+
+## AFC Parity — Capability Class Mapping
+
+Aligned with SAP Joule benchmark capability classes. Every agent response is classified:
+
+| Capability Class | Description | Agent | Write Access | Confirmation Required |
+|---|---|---|---|---|
+| **Informational** | Explain rules, deadlines, statuses, penalties, rates | Advisory | None | No |
+| **Navigational** | Locate records, deep-link to Odoo screens, surface blockers | Advisory, Ops | None | No |
+| **Transactional** | Create/update records, trigger state transitions, generate artifacts | Actions | Bounded CRUD | Yes (Adaptive Card) |
+| **Compliance Intelligence** | Cross-check data quality, surface findings, flag gaps | Ops (read), Actions (write) | Findings only | Yes for writes |
+
+### Channel-Surface Rules
+
+| Channel | Default Agent | Allowed Capability Classes | Card Surfaces |
+|---|---|---|---|
+| Teams (user DM) | Advisory | Informational, Navigational | NavigationCard, DeadlineAlertCard |
+| Teams (#tax-compliance) | Ops | Informational, Navigational, Compliance Intelligence (read) | ComplianceBriefingCard, FindingCard |
+| Odoo Widget | Actions (gated) | All | ConfirmActionCard, TaskCard, FindingCard |
+| APIM (programmatic) | Router decides | All | JSON responses (no cards) |
+
+### Confirmation Card Requirement
+
+All write operations surfaced to users through Teams or Odoo Widget MUST present a `ConfirmActionCard` (Adaptive Card v1.4) before execution. The card displays:
+- Action description
+- Target record (model + ID)
+- Payload summary
+- Yes/No buttons
+
+Card JSON: `agents/contracts/ui/confirm_action_card.json`
+Card index: `agents/contracts/ui/adaptive_cards_index.yaml`
+
+### Bridge API Boundary
+
+Agent-to-Odoo communication uses a narrow OpenAPI bridge, NOT direct JSON-RPC:
+- OpenAPI spec: `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml`
+- Gateway: Azure APIM (`apim-ipai-dev.azure-api.net/odoo`)
+- Auth: `X-IPAI-Key` header (API key via Azure Key Vault)
+- Backend: Azure Function or FastAPI, translates to Odoo JSON-RPC internally

@@ -110,84 +110,21 @@ target_state:
   workflows: 1
 
 # ---------------------------------------------------------------------------
-# Capability Modes (single agent, five modes)
+# Legacy Capability Modes (DEPRECATED — replaced by target_state above)
 # ---------------------------------------------------------------------------
-capability_modes:
-  ask:
-    description: "Answer questions using RAG retrieval, no side effects"
-    replaces:
-      - ipai_ai_widget
-      - ipai_ask_ai_azure
-      - ipai_ai_core (provider routing)
-    write_access: none
-    foundry_tools:
-      - search_records
-      - read_record
-      - search_knowledge
-      - web_search                   # NEW: Foundry built-in web search
-    foundry_memory: user_profile     # NEW: recall user preferences
-    status: active
-
-  authoring:
-    description: "Draft documents, reports, emails — write to draft only"
-    replaces:
-      - ipai_ai_copilot (deprecated Gemini/Supabase)
-      - ipai_ai_prompts (prompt registry)
-    write_access: draft_only
-    foundry_tools:
-      - search_records
-      - read_record
-      - create_draft
-      - search_knowledge
-      - code_interpreter             # NEW: data analysis, chart gen
-      - file_search                  # NEW: search uploaded docs
-    foundry_memory: chat_summary     # NEW: continue draft sessions
-    status: active
-
-  livechat:
-    description: "Handle website visitor questions via chat"
-    replaces:
-      - ipai_ai_channel_actions
-      - ipai_ai_livechat (deprecated)
-    write_access: none
-    foundry_tools:
-      - search_records
-      - read_record
-      - search_knowledge
-      - web_search
-    foundry_memory: user_profile
-    status: active
-
-  transaction:
-    description: "Assist with bounded CRUD operations (draft → approve)"
-    replaces:
-      - ipai_ai_tools (CRM/Calendar/Sale)
-      - ipai_ai_automations (deprecated)
-    write_access: bounded_crud
-    foundry_tools:
-      - search_records
-      - read_record
-      - create_record
-      - update_record
-      - execute_action
-    foundry_memory: chat_summary
-    status: planned
-    gate: "Requires explicit approval per model/action"
-
-  creative:
-    description: "Generate images, campaign copy, email templates"
-    replaces:
-      - ipai_marketing_agency_pack (archive)
-    write_access: draft_only
-    foundry_tools:
-      - image_generation             # DALL-E 3 via Foundry built-in
-      - code_interpreter             # data viz, chart generation
-      - search_knowledge             # brand guidelines RAG
-      - file_search                  # uploaded brand assets
-      - web_search                   # trend/competitor research
-    foundry_memory: user_profile
-    status: planned
-    note: "Requires ipai_creative_studio module (port from 18.0 archive)"
+# The five-mode model (ask, authoring, livechat, transaction, creative) is
+# superseded by the three-agent + one-router model defined in target_state.
+# Retained here as migration reference only — do not extend.
+legacy_capability_modes:
+  _deprecated: true
+  _replaced_by: target_state
+  _migration_map:
+    ask: advisory           # ask → advisory agent (read-only, user-facing)
+    livechat: advisory      # livechat → advisory agent (read-only, user-facing)
+    authoring_read: ops     # authoring read/analysis → ops agent (internal)
+    authoring_write: actions # authoring draft creation → actions agent (bounded writes)
+    transaction: actions    # transaction → actions agent (bounded writes)
+    creative: actions       # creative → actions agent (bounded writes, fal pack)
 
 # ---------------------------------------------------------------------------
 # Foundry Platform Capabilities (new in Microsoft Foundry)

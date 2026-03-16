@@ -1,6 +1,6 @@
 # AI Consolidation — Microsoft Foundry Gateway
 
-> One Foundry agent. One Odoo bridge module. Five capability modes.
+> One Foundry agent. One Odoo bridge module. Three agents + one router workflow.
 > SSOT: `ssot/governance/ai-consolidation-foundry.yaml`
 >
 > **Rebrand**: Azure AI Studio → Azure AI Foundry → **Microsoft Foundry** (2025-11)
@@ -71,15 +71,27 @@ Consolidate all AI capabilities through **Microsoft Foundry** (`data-intel-ph` p
                     └────────────────────────────────────────┘
 ```
 
-## Five Capability Modes
+## Three Agents + One Router (Target State)
 
-| Mode | Purpose | Write Access | Foundry Built-ins | Replaces |
-|------|---------|-------------|-------------------|----------|
-| **Ask** | Answer questions, search records, RAG | None (read-only) | Web Search, Memory (user_profile) | `ipai_ai_widget`, `ipai_ask_ai_azure` |
-| **Authoring** | Draft documents, reports, emails | Draft only | Code Interpreter, File Search, Memory (chat_summary) | `ipai_ai_copilot`, `ipai_ai_prompts` |
-| **Livechat** | Website visitor Q&A via chat | None (read-only) | Web Search, Memory (user_profile) | `ipai_ai_channel_actions`, `ipai_ai_livechat` |
-| **Transaction** | Bounded CRUD with approval gates | Whitelisted models | Memory (chat_summary) | `ipai_ai_tools`, `ipai_ai_automations` |
-| **Creative** | Image gen, campaign copy, email templates | Draft only | Image Generation, Code Interpreter, File Search | `ipai_marketing_agency_pack` |
+> Full diagram: [`COPILOT_TARGET_STATE.md`](COPILOT_TARGET_STATE.md)
+
+| Component | Form | Plane | Write | Packs |
+|-----------|------|-------|-------|-------|
+| `ipai-odoo-copilot-advisory` | Foundry prompt agent | Control | None | Databricks, Marketing, fal (read) |
+| `ipai-odoo-copilot-ops` | Agent Framework agent | Execution | None | Databricks, Marketing, fal (read) |
+| `ipai-odoo-copilot-actions` | Agent Framework agent | Execution | Bounded CRUD | Databricks, fal Creative, Marketing (light) |
+| `ipai-odoo-copilot-router` | Agent Framework workflow | Execution | None | Databricks, fal (routing context) |
+
+### Legacy Mode Migration Map
+
+| Legacy Mode | Target Agent | Notes |
+|-------------|-------------|-------|
+| Ask | Advisory | Read-only, user-facing |
+| Livechat | Advisory | Read-only, user-facing |
+| Authoring (read) | Ops | Internal analysis |
+| Authoring (write) | Actions | Draft creation |
+| Transaction | Actions | Bounded CRUD |
+| Creative | Actions | fal pack + Foundry image_generation |
 
 ## Foundry Platform Capabilities
 
