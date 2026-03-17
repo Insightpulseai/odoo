@@ -65,7 +65,30 @@ This document establishes a **deterministic engineering cockpit** where local VS
 - [ ] The ADO pipeline successfully executes the exact same `make lint` target used locally.
 - [ ] Merging to `main` triggers `cd-deployment.yml` and successfully pauses at the `staging` environment approval gate.
 
-## 9. Risks and Assumptions
+## 9. Azure Pipelines Role
+
+> **Ref**: [Azure Pipelines](https://azure.microsoft.com/en-us/products/devops/pipelines/)
+
+Azure Pipelines is the governed CI/CD and release-execution plane. It owns build,
+test, packaging, deployment stages, approvals, and deployment evidence.
+
+| Capability | Detail |
+|-----------|--------|
+| Cross-platform agents | Linux, macOS, Windows (Microsoft-hosted or self-hosted) |
+| Container-native jobs | Build and test inside container images for environment consistency |
+| Stages, gates, approvals | Multi-stage YAML with environment approval gates per promotion |
+| Deployment targets | Azure (ACA, Functions, Databricks) and non-Azure targets |
+| GitHub integration | PR checks/statuses reported back to GitHub; AB# traceability |
+| Parallel execution | Parallel jobs and test splitting for faster feedback |
+
+**Authority boundaries remain unchanged**:
+
+- GitHub = source control and PR truth
+- Azure Boards = planning and execution coordination
+- Azure Pipelines = CI/CD and release execution
+- Repo docs/SSOT = architecture, governance, contracts, runtime truth
+
+## 10. Risks and Assumptions
 - **Assumption**: Microsoft-hosted Ubuntu agents in Azure DevOps have sufficient CPU/RAM to compile Odoo dependencies.
 - **Risk**: GitHub and Azure DevOps synchronization limits. If the Azure Boards app loses connection, traceability breaks.
 - **Risk**: Environment variables mismatch. Secrets management must strictly rely on Azure Key Vault rather than `.env` files for remote execution.

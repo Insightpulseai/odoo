@@ -1,35 +1,29 @@
 version: 1
-generated_at: '2026-03-08T08:23:43.204442+00:00'
+generated_at: '2026-03-17T00:00:00+00:00'
 org: Insightpulseai
 counts:
-  total_repos: 22
-  active_repos: 9
-  archived_repos: 13
+  total_repos: 17
+  active_repos: 12
+  archived_repos: 5
   teams: 1
   members: 1
 active_repos:
 - .github
 - agents
-- design-system
+- automations
+- data-intelligence
+- design
+- docs
 - infra
-- lakehouse
 - odoo
-- ops-platform
+- platform
 - templates
 - web
 archived_repos:
-- app-crm
-- app-landing
-- demo-repository
-- dev-environment
-- fin-ops
-- fluent-owl
 - learn
 - mcp-core
-- ops-console
 - plugin-agents
 - plugin-marketplace
-- roadmap
 - template-factory
 teams:
 - Admins

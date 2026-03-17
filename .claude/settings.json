@@ -112,6 +112,30 @@
       "/Users/tbwa/Documents/GitHub/Insightpulseai/ssot/odoo"
     ]
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/pretool_policy.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/posttool_evidence.py"
+          }
+        ]
+      }
+    ]
+  },
   "agentCommands": {
     "plan": ".claude/commands/plan.md",
     "implement": ".claude/commands/implement.md",

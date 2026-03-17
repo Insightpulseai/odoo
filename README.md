@@ -160,14 +160,13 @@ These are hosted in this repo temporarily. They may move to owning repos during 
 ### Rules
 
 - Do not assume that every listed hostname is owned by the Odoo runtime layer. Only ERP-specific runtime surfaces are canonical to this repository.
-- **Do not hardcode URLs** outside `CANONICAL_URLS.md`
+- **Do not hardcode URLs** — use `infra/dns/subdomain-registry.yaml` as SSOT
 - `.net` domains are deprecated — `.com` only
 - Any new subdomain **must be added to SSOT first**
 
 See also:
-- [`docs/architecture/CANONICAL_URLS.md`](docs/architecture/CANONICAL_URLS.md) — authoritative URL reference
+- `infra/dns/subdomain-registry.yaml` — authoritative DNS SSOT
 - `reports/url_inventory.json` — machine-readable inventory
-- `docs/architecture/INTEGRATIONS_SURFACE.md`
 
 ---
 

@@ -142,8 +142,26 @@ Feature branch → PR (CI gates) → main → Dev deploy (auto)
 
 ---
 
+## 6. Identity Registration Rule
+
+Each major app surface must have its own Entra app registration / enterprise app.
+No shared "god app" registration for unrelated surfaces.
+
+| Surface | Registration | Rationale |
+|---------|-------------|-----------|
+| Odoo ERP | `ipai-odoo` | Independent SSO, roles, consent, audit |
+| Ops Console | `ipai-ops` | Separate admin privilege boundary |
+| Plane | `ipai-plane` | Separate project-management access |
+| MCP / Agent | `ipai-mcp` | Agent-specific scopes and controls |
+| Superset | `ipai-superset` | BI read-access boundary |
+
+See [identity_and_secrets.md](identity_and_secrets.md) § 3 for full app registration rules.
+
+---
+
 ## Cross-References
 
+- [identity_and_secrets.md](identity_and_secrets.md) — identity, sign-in, app isolation
 - [release_management_model.md](release_management_model.md) — progressive exposure, rings, bake time
 - [quality_engineering_model.md](quality_engineering_model.md) — release readiness, rollback criteria
 - [reliability_operating_model.md](reliability_operating_model.md) — SLOs, backup/DR

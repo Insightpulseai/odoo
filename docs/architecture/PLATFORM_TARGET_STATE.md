@@ -172,7 +172,7 @@
 
 ```
 Cloudflare DNS
-├── Legacy origin: 178.128.112.214 (DigitalOcean — all remaining apps)
+├── Legacy origin: 178.128.112.214 (DigitalOcean — DEPRECATED 2026-03-15)
 └── Azure origin:  4.193.100.31   (Azure VM — supabase, n8n-azure)
 ```
 
@@ -188,19 +188,20 @@ Cloudflare DNS (authoritative, DNS-only for mail)
 
 |Hostname                          |Current               |Action                           |Target Origin                |Priority|
 |----------------------------------|----------------------|---------------------------------|-----------------------------|--------|
-|`erp`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-odoo-dev-web`    |P1      |
-|`mcp`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → MCP Container App      |P1      |
-|`auth`                            |`178.128.112.214` DO  |**Migrate**                      |AFD → Entra ID gateway       |P1      |
-|`n8n`                             |`178.128.112.214` DO  |**Migrate + retire DO**          |AFD → n8n Container App      |P1      |
+|`erp`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-odoo-dev-web`    |P1      |
+|`mcp`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → MCP Container App      |P1      |
+|`auth`                            |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → Entra ID gateway       |P1      |
+|`n8n`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → n8n Container App      |P1      |
 |`supabase`                        |`4.193.100.31` Azure  |**Wire to AFD**                  |AFD → `vm-ipai-supabase-dev` |P2      |
 |`n8n-azure`                       |`4.193.100.31` Azure  |**Rename to `n8n`** post-migration|Merge with n8n above         |P2      |
-|`plane`                           |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-plane-dev`       |P2      |
-|`crm`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `ipai-crm-dev`         |P2      |
-|`ocr`                             |`178.128.112.214` DO  |**Migrate**                      |AFD → `docai-ipai-dev`       |P2      |
-|`www` / `@`                       |`178.128.112.214` DO  |**Migrate**                      |AFD → landing page           |P2      |
-|`shelf`                           |`178.128.112.214` DO  |**Keep Vercel**                  |`shelfnu-two.vercel.app`     |P3      |
-|`superset`                        |`178.128.112.214` DO  |**Evaluate retire**              |Databricks Dashboards + Genie|P3      |
-|`mail`, `mg`, MX, SPF, DKIM, DMARC|Zoho/Mailgun          |**Keep DNS-only — never touch**  |No change                    |—       |
+|`plane`                           |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-plane-dev`       |P2      |
+|`crm`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `ipai-crm-dev`         |P2      |
+|`ocr`                             |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → `docai-ipai-dev`       |P2      |
+|`www` / `@`                       |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |AFD → landing page           |P2      |
+|`shelf`                           |`178.128.112.214` DO  |Retire — deprecated 2026-03-11   |AFD → `ipai-shelf-dev`       |P3      |
+|`superset`                        |`178.128.112.214` DO  |DEPRECATED (2026-03-15)          |Databricks Dashboards + Genie|P3      |
+|`mail`, MX, SPF, DKIM, DMARC     |Zoho SMTP              |**Keep DNS-only — never touch**  |No change                    |—       |
+|`mg` (`mg.insightpulseai.com`)    |Mailgun                |Deprecated — Zoho SMTP canonical |No change (remove when safe) |—       |
 
 -----
 
@@ -339,7 +340,7 @@ Finance Copilot · BIR Compliance · MCP Agents · Ops Console
 
 **Source control:** GitHub — `InsightPulseAI/odoo`, `InsightPulseAI/databricks-pipelines`
 **Runner:** Azure DevOps (`insightpulseai` org) via `ipai-build-pool` Managed DevOps Pool
-**Targets:** `ipai-odoo-dev-env` (Container Apps), `dbw-ipai-dev` (Databricks), Vercel (Shelf/BuildOps)
+**Targets:** `ipai-odoo-dev-env` (Container Apps), `dbw-ipai-dev` (Databricks). Vercel is deprecated (2026-03-11) — not an active deployment surface.
 
 ```
 PR → Lint (sqlfluff · ruff · markdownlint · odoo-xml-lint [<tree> banned]) →
