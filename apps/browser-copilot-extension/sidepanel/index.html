@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPAI Copilot</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .msg {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+    .msg.user { background: #1a3a5c; align-self: flex-end; }
+    .msg.system { background: #1a1a2e; align-self: flex-start; }
+    .msg.capture {
+      background: #1a2e1a;
+      align-self: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .capture-icon { font-size: 18px; }
+    #input-row {
+      padding: 12px 16px;
+      border-top: 1px solid #2a2a2a;
+      display: flex;
+      gap: 8px;
+    }
+    #cmd {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #e0e0e0;
+      padding: 8px 12px;
+      font-size: 13px;
+      outline: none;
+    }
+    #cmd:focus { border-color: #4a9eff; }
+    #cmd::placeholder { color: #666; }
+    #send {
+      background: #4a9eff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #send:hover { background: #3a8eef; }
+    .hint { color: #666; font-size: 11px; padding: 4px 16px; }
+  </style>
+</head>
+<body>
+  <div id="header">IPAI Copilot</div>
+  <div id="chat"></div>
+  <div class="hint">ss = screenshot window &middot; sstab = tab &middot; ssscreen = full screen</div>
+  <div id="input-row">
+    <input id="cmd" type="text" placeholder="Type a command... (ss, sstab, ssscreen)" autocomplete="off" />
+    <button id="send">Send</button>
+  </div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

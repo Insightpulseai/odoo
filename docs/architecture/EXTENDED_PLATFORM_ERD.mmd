@@ -1,0 +1,375 @@
+---
+title: Extended Platform ERD - Odoo 18 CE + OCA
+---
+erDiagram
+    %% ==========================================================================
+    %% TIER 2: BACKGROUND PROCESSING (queue_job)
+    %% ==========================================================================
+
+    queue_job {
+        int id PK
+        varchar uuid UK "Unique job identifier"
+        varchar name "Job description"
+        text func_string "Function to execute"
+        varchar channel "root|high|medium|low"
+        varchar state "pending|enqueued|started|done|failed"
+        int priority "Lower = higher priority"
+        timestamp date_created
+        timestamp date_started
+        timestamp date_done
+        timestamp eta "Earliest execution time"
+        int max_retries
+        int retry
+        text result "JSON result"
+        text exc_info "Error traceback"
+        int company_id FK
+        int user_id FK
+    }
+
+    queue_job_channel {
+        int id PK
+        varchar name UK "Channel path"
+        int parent_id FK
+        varchar complete_name
+        int capacity "Max concurrent jobs"
+    }
+
+    queue_job_channel ||--o{ queue_job_channel : "parent"
+    queue_job }o--|| queue_job_channel : "channel"
+
+    %% ==========================================================================
+    %% TIER 0: DATE RANGES
+    %% ==========================================================================
+
+    date_range_type {
+        int id PK
+        varchar name
+        boolean allow_overlap
+        boolean active
+        int company_id FK
+    }
+
+    date_range {
+        int id PK
+        varchar name "Period name"
+        int type_id FK
+        date date_start
+        date date_end
+        boolean active
+        int company_id FK
+    }
+
+    date_range_type ||--o{ date_range : "has periods"
+
+    %% ==========================================================================
+    %% TIER 4: MIS BUILDER
+    %% ==========================================================================
+
+    mis_report {
+        int id PK
+        varchar name
+        text description
+        int style_id FK
+        varchar move_lines_source
+    }
+
+    mis_report_kpi {
+        int id PK
+        int report_id FK
+        varchar name "KPI technical name"
+        varchar description "Display name"
+        text expression "Python/AEP formula"
+        varchar type "num|pct|str"
+        int sequence
+        int dp "Decimal places"
+        int style_id FK
+    }
+
+    mis_report_instance {
+        int id PK
+        varchar name
+        int report_id FK
+        int company_id FK
+        varchar target_move "posted|all"
+    }
+
+    mis_report_instance_period {
+        int id PK
+        int report_instance_id FK
+        varchar name
+        int sequence
+        varchar mode "fix|relative"
+        date date_from
+        date date_to
+        int date_range_type_id FK
+        int date_range_id FK
+    }
+
+    mis_report_style {
+        int id PK
+        varchar name
+        varchar font_style
+        varchar font_weight
+        varchar color
+        varchar background_color
+    }
+
+    mis_report ||--o{ mis_report_kpi : "has KPIs"
+    mis_report ||--o{ mis_report_instance : "instances"
+    mis_report_instance ||--o{ mis_report_instance_period : "periods"
+    mis_report_style ||--o{ mis_report : "styles"
+    mis_report_style ||--o{ mis_report_kpi : "styles"
+    date_range_type ||--o{ mis_report_instance_period : "date range type"
+    date_range ||--o{ mis_report_instance_period : "specific range"
+
+    %% ==========================================================================
+    %% TIER 4: KPI DASHBOARD
+    %% ==========================================================================
+
+    kpi_dashboard {
+        int id PK
+        varchar name
+        boolean active
+        int number_of_columns
+        int company_id FK
+    }
+
+    kpi_dashboard_tile {
+        int id PK
+        int dashboard_id FK
+        varchar name
+        int sequence
+        varchar widget "number|graph|count"
+        int model_id FK
+        text domain "JSON filter"
+        varchar color
+        varchar icon
+        float goal_value
+    }
+
+    kpi_dashboard ||--o{ kpi_dashboard_tile : "has tiles"
+
+    %% ==========================================================================
+    %% TIER 5: SPREADSHEET
+    %% ==========================================================================
+
+    spreadsheet_spreadsheet {
+        int id PK
+        varchar name
+        jsonb data "Full spreadsheet JSON"
+        bytea thumbnail
+        boolean active
+        int company_id FK
+    }
+
+    spreadsheet_dashboard {
+        int id PK
+        varchar name
+        int spreadsheet_id FK
+        boolean active
+        boolean publish_dashboard
+    }
+
+    spreadsheet_spreadsheet ||--o{ spreadsheet_dashboard : "dashboards"
+
+    %% ==========================================================================
+    %% TIER 6: KNOWLEDGE (document_page)
+    %% ==========================================================================
+
+    document_page {
+        int id PK
+        varchar name
+        int parent_id FK
+        text content "HTML content"
+        varchar display_name
+        int sequence
+        varchar type "content|category"
+        boolean active
+        int company_id FK
+    }
+
+    document_page_history {
+        int id PK
+        int page_id FK
+        text content
+        varchar summary "Change summary"
+        timestamp create_date
+        int create_uid FK
+    }
+
+    document_page ||--o{ document_page : "children"
+    document_page ||--o{ document_page_history : "history"
+
+    %% ==========================================================================
+    %% TIER 6: DMS
+    %% ==========================================================================
+
+    dms_storage {
+        int id PK
+        varchar name
+        varchar save_type "database|attachment|file"
+        varchar external_root
+        int company_id FK
+    }
+
+    dms_directory {
+        int id PK
+        varchar name
+        int parent_id FK
+        varchar complete_name
+        int storage_id FK
+        int company_id FK
+    }
+
+    dms_category {
+        int id PK
+        varchar name
+        int parent_id FK
+        varchar complete_name
+    }
+
+    dms_tag {
+        int id PK
+        varchar name
+        int color
+        int category_id FK
+    }
+
+    dms_file {
+        int id PK
+        varchar name
+        int directory_id FK
+        bytea content
+        varchar mimetype
+        varchar extension
+        int size
+        int category_id FK
+        int locked_by FK
+    }
+
+    dms_storage ||--o{ dms_directory : "directories"
+    dms_directory ||--o{ dms_directory : "children"
+    dms_directory ||--o{ dms_file : "files"
+    dms_category ||--o{ dms_category : "children"
+    dms_category ||--o{ dms_file : "categorizes"
+    dms_category ||--o{ dms_tag : "tags"
+
+    %% ==========================================================================
+    %% TIER 8: AUDIT LOG
+    %% ==========================================================================
+
+    auditlog_rule {
+        int id PK
+        varchar name
+        int model_id FK UK
+        boolean log_read
+        boolean log_create
+        boolean log_write
+        boolean log_unlink
+        varchar state "draft|subscribed"
+    }
+
+    auditlog_log {
+        int id PK
+        int model_id FK
+        int res_id "Record ID"
+        varchar method "create|write|unlink|read"
+        int user_id FK
+        timestamp create_date
+    }
+
+    auditlog_log_line {
+        int id PK
+        int log_id FK
+        int field_id FK
+        text old_value
+        text old_value_text
+        text new_value
+        text new_value_text
+    }
+
+    auditlog_rule ||--o{ auditlog_log : "generates"
+    auditlog_log ||--o{ auditlog_log_line : "changes"
+
+    %% ==========================================================================
+    %% TIER 9: FISCAL YEAR
+    %% ==========================================================================
+
+    account_fiscal_year {
+        int id PK
+        varchar name
+        date date_from
+        date date_to
+        int company_id FK
+    }
+
+    %% ==========================================================================
+    %% IPAI PLATFORM
+    %% ==========================================================================
+
+    ipai_command_center_run {
+        int id PK
+        varchar name
+        varchar run_type "ai_query|batch_job|report"
+        varchar state "pending|running|done|failed"
+        timestamp date_start
+        timestamp date_end
+        float duration
+        int job_id FK
+        jsonb result
+        text error_message
+        int user_id FK
+        int company_id FK
+    }
+
+    ipai_ai_request {
+        int id PK
+        text prompt
+        text response
+        varchar model "AI model"
+        int tokens_input
+        int tokens_output
+        int latency_ms
+        varchar context_model
+        int context_res_id
+        int user_id FK
+        timestamp create_date
+    }
+
+    queue_job ||--o| ipai_command_center_run : "executes"
+
+    %% ==========================================================================
+    %% CORE ODOO (Referenced)
+    %% ==========================================================================
+
+    res_company {
+        int id PK
+        varchar name
+    }
+
+    res_users {
+        int id PK
+        varchar login
+    }
+
+    ir_model {
+        int id PK
+        varchar name
+        varchar model UK
+    }
+
+    ir_model_fields {
+        int id PK
+        int model_id FK
+        varchar name
+        varchar ttype
+    }
+
+    res_company ||--o{ queue_job : "company"
+    res_company ||--o{ date_range_type : "company"
+    res_company ||--o{ kpi_dashboard : "company"
+    res_users ||--o{ queue_job : "created by"
+    res_users ||--o{ auditlog_log : "performed by"
+    ir_model ||--o{ auditlog_rule : "audits"
+    ir_model ||--o{ kpi_dashboard_tile : "source"
+    ir_model_fields ||--o{ auditlog_log_line : "field"

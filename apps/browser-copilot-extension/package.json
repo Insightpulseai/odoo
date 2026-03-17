@@ -1,0 +1,21 @@
+{
+  "name": "@ipai/browser-copilot-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension: AI copilot with screenshot capture",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && cp -r sidepanel dist/ && cp manifest.json dist/",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@ipai/browser-agent-contract": "workspace:*"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@types/chrome": "^0.0.280",
+    "typescript": "^5.4.0"
+  },
+  "license": "LGPL-3.0"
+}

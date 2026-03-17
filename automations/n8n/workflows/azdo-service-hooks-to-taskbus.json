@@ -1,0 +1,182 @@
+{
+  "name": "AzDO Service Hooks → Supabase Task Bus",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "azdo-service-hook",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "azdo-webhook-trigger",
+      "name": "AzDO Service Hook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "azdo-service-hook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "event-type-workitem",
+              "leftValue": "={{ $json.eventType }}",
+              "rightValue": "workitem.",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ]
+        }
+      },
+      "id": "route-event-type",
+      "name": "Route by Event Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [250, 0],
+      "outputs": ["Work Item", "Pipeline", "Other"]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract work item data from AzDO service hook payload\nconst payload = $input.first().json;\nconst resource = payload.resource || {};\nconst fields = resource.fields || resource.revision?.fields || {};\n\nreturn [{\n  json: {\n    source: 'azure-devops',\n    event_type: payload.eventType,\n    job_type: 'azdo_workitem_sync',\n    priority: 5,\n    payload: {\n      work_item_id: resource.id,\n      work_item_type: resource.workItemType || fields['System.WorkItemType'],\n      title: fields['System.Title'] || resource.title,\n      state: fields['System.State'] || resource.state,\n      assigned_to: fields['System.AssignedTo']?.displayName || null,\n      area_path: fields['System.AreaPath'] || null,\n      iteration_path: fields['System.IterationPath'] || null,\n      changed_by: payload.resource?.revisedBy?.displayName || payload.createdBy?.displayName,\n      changed_date: payload.createdDate,\n      project: payload.resourceContainers?.project?.id,\n      organization: payload.resourceContainers?.account?.id\n    }\n  }\n}];"
+      },
+      "id": "transform-workitem",
+      "name": "Transform Work Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract pipeline/build data from AzDO service hook payload\nconst payload = $input.first().json;\nconst resource = payload.resource || {};\n\nreturn [{\n  json: {\n    source: 'azure-devops',\n    event_type: payload.eventType,\n    job_type: 'azdo_pipeline_event',\n    priority: 3,\n    payload: {\n      build_id: resource.id,\n      build_number: resource.buildNumber,\n      status: resource.status,\n      result: resource.result,\n      definition_name: resource.definition?.name,\n      source_branch: resource.sourceBranch,\n      requested_by: resource.requestedBy?.displayName,\n      finish_time: resource.finishTime,\n      project: payload.resourceContainers?.project?.id\n    }\n  }\n}];"
+      },
+      "id": "transform-pipeline",
+      "name": "Transform Pipeline Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 100]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.supabaseApi.serviceRoleKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "p_source", "value": "={{ $json.source }}" },
+            { "name": "p_job_type", "value": "={{ $json.job_type }}" },
+            { "name": "p_payload", "value": "={{ JSON.stringify($json.payload) }}" },
+            { "name": "p_priority", "value": "={{ $json.priority }}" }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "enqueue-to-taskbus",
+      "name": "Enqueue to Supabase Task Bus",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_OPS_CHANNEL || '#ops-alerts' }}",
+        "text": "=:azure: *AzDO Event*: {{ $json.event_type }}\n*Work Item*: {{ $json.payload.title || $json.payload.definition_name }}\n*State*: {{ $json.payload.state || $json.payload.result }}\n*By*: {{ $json.payload.changed_by || $json.payload.requested_by }}",
+        "otherOptions": {}
+      },
+      "id": "slack-notify",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1000, 0],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-ops",
+          "name": "Slack Ops"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, event: $json.event_type, queued: true }) }}"
+      },
+      "id": "respond-ok",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1250, 0]
+    }
+  ],
+  "connections": {
+    "AzDO Service Hook": {
+      "main": [
+        [{ "node": "Route by Event Type", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by Event Type": {
+      "main": [
+        [{ "node": "Transform Work Item", "type": "main", "index": 0 }],
+        [{ "node": "Transform Pipeline Event", "type": "main", "index": 0 }],
+        [{ "node": "Respond OK", "type": "main", "index": 0 }]
+      ]
+    },
+    "Transform Work Item": {
+      "main": [
+        [{ "node": "Enqueue to Supabase Task Bus", "type": "main", "index": 0 }]
+      ]
+    },
+    "Transform Pipeline Event": {
+      "main": [
+        [{ "node": "Enqueue to Supabase Task Bus", "type": "main", "index": 0 }]
+      ]
+    },
+    "Enqueue to Supabase Task Bus": {
+      "main": [
+        [{ "node": "Slack Notification", "type": "main", "index": 0 }],
+        [{ "node": "Slack Notification", "type": "main", "index": 0 }]
+      ]
+    },
+    "Slack Notification": {
+      "main": [
+        [{ "node": "Respond OK", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "azure-devops" },
+    { "name": "service-hooks" },
+    { "name": "task-bus" }
+  ]
+}

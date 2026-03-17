@@ -6,13 +6,19 @@
       "value": "prod"
     },
     "baseName": {
-      "value": "notion-ppm"
+      "value": "ipai"
     },
     "databricksTier": {
       "value": "premium"
     },
     "appServiceSku": {
       "value": "P1v2"
+    },
+    "enableLogAnalytics": {
+      "value": true
+    },
+    "logAnalyticsRetentionDays": {
+      "value": 90
     }
   }
 }

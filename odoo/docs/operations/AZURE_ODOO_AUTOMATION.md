@@ -180,18 +180,18 @@ az role assignment create \
 # List revisions
 az containerapp revision list \
   --name ca-odoo-ipai-production \
-  --resource-group rg-ipai-production
+  --resource-group rg-ipai-shared-prod
 
 # Activate previous revision
 az containerapp revision activate \
   --name ca-odoo-ipai-production \
-  --resource-group rg-ipai-production \
+  --resource-group rg-ipai-shared-prod \
   --revision {previous-revision-name}
 
 # Deactivate bad revision
 az containerapp revision deactivate \
   --name ca-odoo-ipai-production \
-  --resource-group rg-ipai-production \
+  --resource-group rg-ipai-shared-prod \
   --revision {bad-revision-name}
 ```
 
@@ -218,19 +218,19 @@ Evidence in `web/docs/evidence/{stamp}/odoo-upgrade/logs/` will show:
 # Container App status
 az containerapp show \
   --name ca-odoo-ipai-production \
-  --resource-group rg-ipai-production \
+  --resource-group rg-ipai-shared-prod \
   --query "properties.{status:runningStatus,replicas:replicaCount}"
 
 # Recent revisions
 az containerapp revision list \
   --name ca-odoo-ipai-production \
-  --resource-group rg-ipai-production \
+  --resource-group rg-ipai-shared-prod \
   --query "[?properties.trafficWeight > 0].{name:name,traffic:properties.trafficWeight,active:properties.active}"
 
 # Database connectivity
 az postgres flexible-server show \
   --name psql-ipai-production \
-  --resource-group rg-ipai-production \
+  --resource-group rg-ipai-shared-prod \
   --query "state"
 ```
 

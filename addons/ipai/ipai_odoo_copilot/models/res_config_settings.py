@@ -31,10 +31,10 @@ class ResConfigSettings(models.TransientModel):
              "(e.g. https://<resource>.services.ai.azure.com)",
     )
     ipai_foundry_project = fields.Char(
-        string="Foundry Project",
+        string="Copilot Project",
         config_parameter=f"{PARAM_PREFIX}.foundry_project",
         default="data-intel-ph",
-        help="Azure Foundry project name",
+        help="Azure Foundry project name for the copilot agent",
     )
     ipai_foundry_agent_name = fields.Char(
         string="Foundry Agent Name",
@@ -42,10 +42,10 @@ class ResConfigSettings(models.TransientModel):
         default="ipai-odoo-copilot-azure",
     )
     ipai_foundry_model = fields.Char(
-        string="Model Deployment",
+        string="Copilot Model",
         config_parameter=f"{PARAM_PREFIX}.foundry_model",
         default="gpt-4.1",
-        help="Model deployment name in Azure Foundry",
+        help="Model deployment name for copilot in Azure Foundry",
     )
 
     # --- Knowledge / Search ---

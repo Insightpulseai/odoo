@@ -1,0 +1,262 @@
+# Capability Registry: SAP → Odoo CE/OCA 18
+# Machine-readable mapping of enterprise capabilities
+
+version: "1.0.0"
+last_updated: "2024-12-20"
+
+capabilities:
+  # ============================================================================
+  # Ticketing / ITSM
+  # ============================================================================
+  - id: CAP-ITSM-001
+    name: Ticketing / Work Intake
+    sap:
+      products:
+        - ServiceNow (common integration)
+        - SAP Service Cloud
+        - SAP Cloud ALM
+      capabilities:
+        - Intake and triage
+        - SLA management
+        - Routing and assignment
+        - Knowledge base
+    odoo_ce:
+      core:
+        - project.task (as work items)
+        - mail (notifications)
+      oca:
+        - helpdesk (OCA helpdesk suite)
+        - project_task_code
+      notes: |
+        Use Project tasks for "work items" pattern. Swap in OCA Helpdesk
+        when dedicated ticket UX is needed.
+
+  # ============================================================================
+  # HR / Onboarding / Offboarding
+  # ============================================================================
+  - id: CAP-HR-001
+    name: Onboarding / Offboarding
+    sap:
+      products:
+        - SAP SuccessFactors
+      capabilities:
+        - Hire-to-retire lifecycle
+        - Onboarding workflows
+        - Offboarding checklists
+        - Document collection
+    odoo_ce:
+      core:
+        - hr.employee
+        - hr.department
+        - hr_recruitment (if available)
+      oca:
+        - hr_contract
+        - hr_employee_document
+        - Various payroll-local modules
+      custom:
+        - ipai_master_control (event emitter)
+      notes: |
+        Treat onboarding/offboarding as a process runtime, not just HR screens.
+        Use Master Control for cross-lane orchestration (HR→IT→Finance).
+
+  # ============================================================================
+  # Spend Management
+  # ============================================================================
+  - id: CAP-SPEND-001
+    name: Travel & Expense Management
+    sap:
+      products:
+        - SAP Concur
+      capabilities:
+        - Travel booking
+        - Expense reporting
+        - Invoice workflows
+        - Policy compliance
+    odoo_ce:
+      core:
+        - account.move (invoices)
+        - purchase.order
+        - hr.expense (if available)
+      oca:
+        - base_tier_validation (approvals)
+        - Various expense modules
+      custom:
+        - ipai_expense
+        - ipai_ocr_expense
+      notes: |
+        Concur is explicitly travel/expense/invoicing focused.
+        Use tier validation for approval chains.
+
+  # ============================================================================
+  # Procurement / SRM
+  # ============================================================================
+  - id: CAP-PROC-001
+    name: Procurement & Supplier Management
+    sap:
+      products:
+        - SAP SRM (legacy, maintenance mode)
+        - SAP Ariba
+        - SAP S/4HANA Procurement
+      capabilities:
+        - Sourcing
+        - Supplier qualification
+        - Purchase approvals
+        - Contract management
+    odoo_ce:
+      core:
+        - purchase.order
+        - stock (inventory)
+        - res.partner (suppliers)
+      oca:
+        - base_tier_validation
+        - purchase_requisition
+        - vendor rating modules
+      notes: |
+        SRM has defined maintenance timelines. Map to Ariba/S/4 patterns.
+        Use tier validation for procurement approvals.
+
+  # ============================================================================
+  # Process Modeling
+  # ============================================================================
+  - id: CAP-BPM-001
+    name: Process Modeling & Governance
+    sap:
+      products:
+        - SAP Signavio
+      capabilities:
+        - BPMN modeling
+        - Process mining
+        - Governance workflows
+        - Collaboration
+    odoo_ce:
+      core: null  # No native equivalent
+      oca: null
+      custom:
+        - Master Control Process Runtime
+      notes: |
+        Store BPMN as source-of-truth. Generate work items + SOP + controls.
+        Implement subset of BPMN (tasks, gateways, swimlanes).
+
+  # ============================================================================
+  # Integration / Orchestration
+  # ============================================================================
+  - id: CAP-INT-001
+    name: Integration & Orchestration
+    sap:
+      products:
+        - SAP PI/PO
+        - SAP BTP Integration Suite
+      capabilities:
+        - iFlows
+        - Adapters
+        - Message routing
+        - API management
+    odoo_ce:
+      core: null  # No native equivalent
+      oca: null
+      external:
+        - n8n (workflow automation)
+        - webhook endpoints
+        - queue systems (Redis/RabbitMQ)
+      notes: |
+        n8n becomes "BTP-lite" for CE stack.
+        Use for cross-system orchestration.
+
+  # ============================================================================
+  # Analytics / BI
+  # ============================================================================
+  - id: CAP-BI-001
+    name: Analytics & Dashboards
+    sap:
+      products:
+        - SAP Analytics Cloud (SAC)
+        - SAP Datasphere
+      capabilities:
+        - Semantic layer
+        - Dashboard building
+        - Planning
+        - Predictive
+    odoo_ce:
+      core:
+        - Built-in reporting (limited)
+      oca:
+        - Various reporting modules
+      external:
+        - Apache Superset
+        - Metabase
+      notes: |
+        Superset provides SAC-equivalent dashboards.
+        Connect directly to Odoo PostgreSQL.
+
+  # ============================================================================
+  # Data Pipelines
+  # ============================================================================
+  - id: CAP-DATA-001
+    name: Data Pipelines & Lineage
+    sap:
+      products:
+        - Databricks (partnership)
+        - SAP Datasphere
+      capabilities:
+        - Declarative pipelines (DLT)
+        - Data quality
+        - Lineage tracking
+        - ML integration
+    odoo_ce:
+      core: null  # No native equivalent
+      external:
+        - Apache Airflow
+        - Dagster
+        - dbt (transforms)
+        - OpenLineage (lineage)
+        - Marquez (metadata)
+      notes: |
+        Replicate Databricks pattern using open-source stack.
+        Focus on DAG + quality + lineage, not Databricks UI.
+
+# ============================================================================
+# Mapping Summary
+# ============================================================================
+mapping_summary:
+  total_capabilities: 8
+  with_odoo_core: 5
+  with_oca: 5
+  requires_custom: 3
+  requires_external: 4
+
+# ============================================================================
+# Module Inventory (KEEP vs DROP)
+# ============================================================================
+module_inventory:
+  keep:
+    - ipai_finance_ppm
+    - ipai_ppm_monthly_close
+    - ipai_finance_ppm_closing
+    - ipai_finance_ppm_dashboard
+    - ipai_bir_compliance
+    - ipai_expense
+    - ipai_ocr_expense
+    - ipai_equipment
+    - ipai_master_control  # New: event emitter
+
+  drop:
+    - ipai_ce_cleaner
+    - ipai_accounting_firm_pack
+    - ipai_marketing_agency_pack
+    - ipai_partner_pack
+    - ipai_docs
+    - ipai_docs_project
+    - ipai_finance_ap_aging
+    - ipai_finance_controller_dashboard
+    - ipai_finance_monthly_closing
+    - ipai_finance_ppm_tdi
+    - ipai_clarity_ppm_parity
+    - ipai_idp
+    - ipai_portal_fix
+    - tbwa_spectra_integration
+
+  oca_required:
+    - base_tier_validation
+    - helpdesk (optional)
+    - hr_contract
+    - hr_employee_document

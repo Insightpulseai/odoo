@@ -1,13 +1,13 @@
 # Databricks Asset Bundle Configuration
-# For Notion x Finance PPM Control Room
+# For Notion x Finance PPM Control Room + Finance & BIR Compliance
 
 bundle:
-  name: notion-finance-ppm
+  name: ipai-lakehouse
 
 variables:
   catalog:
     description: Unity Catalog name
-    default: ppm
+    default: ipai_gold
   schema_bronze:
     description: Bronze schema name
     default: bronze
@@ -19,10 +19,16 @@ variables:
     default: gold
   warehouse_id:
     description: SQL warehouse ID for queries
-  notion_token:
-    description: Notion integration token
+  databricks_host:
+    description: Databricks workspace URL
+    default: https://adb-7405610347978231.11.azuredatabricks.net
   databricks_token:
     description: Databricks token for API calls
+  notion_token:
+    description: Notion integration token
+  bronze_storage_path:
+    description: ADLS Bronze zone base path
+    default: abfss://bronze@stipaidev.dfs.core.windows.net
 
 workspace:
   host: ${var.databricks_host}
@@ -46,11 +52,18 @@ targets:
     mode: development
     default: true
     variables:
-      catalog: dev_ppm
+      catalog: dev_ipai
+      bronze_storage_path: abfss://bronze@stipaidev.dfs.core.windows.net
     workspace:
-      root_path: /Workspace/Users/${workspace.current_user.userName}/notion-finance-ppm-dev
+      root_path: /Workspace/Users/${workspace.current_user.userName}/ipai-lakehouse-dev
     resources:
+      pipelines:
+        finance_bir_pipeline:
+          name: "[DEV] Finance & BIR Compliance"
+          development: true
       jobs:
+        odoo_jdbc_extract:
+          name: "[DEV] Odoo JDBC Extract"
         notion_sync_bronze:
           name: "[DEV] Notion Sync Bronze"
         notion_transform_silver:
@@ -67,18 +80,31 @@ targets:
   staging:
     mode: development
     variables:
-      catalog: staging_ppm
+      catalog: staging_ipai
+      bronze_storage_path: abfss://bronze@stipaistaging.dfs.core.windows.net
     workspace:
-      root_path: /Workspace/Shared/notion-finance-ppm-staging
+      root_path: /Workspace/Shared/ipai-lakehouse-staging
+    resources:
+      pipelines:
+        finance_bir_pipeline:
+          name: "[STAGING] Finance & BIR Compliance"
+          development: true
 
   prod:
     mode: production
     variables:
-      catalog: ppm
+      catalog: ipai_gold
+      bronze_storage_path: abfss://bronze@stipaiprod.dfs.core.windows.net
     workspace:
-      root_path: /Workspace/Shared/notion-finance-ppm
+      root_path: /Workspace/Shared/ipai-lakehouse
+    resources:
+      pipelines:
+        finance_bir_pipeline:
+          name: "Finance & BIR Compliance"
+          development: false
+          continuous: false
     run_as:
-      service_principal_name: notion-ppm-service-principal
+      service_principal_name: ipai-lakehouse-service-principal
     permissions:
       - level: CAN_VIEW
         group_name: data-engineers

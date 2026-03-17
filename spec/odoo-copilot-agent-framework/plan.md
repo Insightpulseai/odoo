@@ -71,6 +71,27 @@
 - Both packs produce telemetry in App Insights
 - Foundry eval scores maintained after pack addition
 
+### Phase 4B: Capability Packs — BIR Compliance + Document Intake (2 weeks)
+
+**Goal**: Attach BIR Compliance Pack (Tax Pulse) and Document Intake Pack to all agents.
+
+**Files changed**:
+- `addons/ipai/ipai_odoo_copilot/data/pack_bir_compliance.xml` — BIR tool definitions per agent
+- `addons/ipai/ipai_ai_copilot/data/copilot_tools_bir.xml` — 8 BIR copilot tools
+- `ssot/agents/tax_pulse_tool_contracts.yaml` — typed tool contracts (COMPLETE)
+- `ssot/agents/agent_capability_matrix.yaml` — BIR pack registered (COMPLETE)
+- `eval/datasets/bir_*.yaml` — evaluation datasets (COMPLETE)
+- `eval/training/bir_sft_*.jsonl` — SFT training assets (COMPLETE)
+
+**Dependencies**: Phase 3 (pack registry exists), Wave 2-3 from `spec/tax-pulse-sub-agent/`
+
+**Verification**:
+- Advisory answers BIR questions with grounded citations (groundedness ≥ 0.8)
+- Ops inspects filing readiness without triggering writes
+- Actions compute/validate/export requires approval gate
+- Safety = 1.0 (no unauthorized tax operations)
+- Pack works without external credentials
+
 ### Phase 5: Multi-Agent Workflows (2 weeks)
 
 **Goal**: Implement ERP workflows using Microsoft Agent Framework patterns.
@@ -95,12 +116,13 @@
 
 ## Integration Surface Plan
 
-| Consumer | Integration Mode | Phase |
-|----------|-----------------|-------|
-| `ipai_odoo_copilot` (bridge) | SDK Direct | 1 |
-| Foundry evaluation runner | SDK Direct | 2 |
-| n8n automation workflows | REST Direct | 4 |
-| Third-party API consumers | APIM Gateway | 5 |
+| Consumer | Ingress Path | Phase |
+|----------|-------------|-------|
+| `ipai_odoo_copilot` (bridge) | Foundry Project Client + OpenAI-compatible client | 1 |
+| Foundry evaluation runner | OpenAI-compatible client | 2 |
+| n8n automation workflows | Direct REST (with APIM or service auth) | 4 |
+| All production clients | APIM AI gateway (required) | 5 |
+| Builders/operators (dev only) | Foundry Playgrounds (non-production) | 1+ |
 
 ## Risk Mitigation
 
@@ -160,5 +182,61 @@ Foundry safety evaluations are helpful but not sufficient alone; they are not co
 
 - Teams/BizChat publishing (future, depends on M365 Agents SDK maturity)
 - GitHub Copilot SDK integration (Technical Preview, evaluate only)
-- APIM gateway setup (Phase 5 stretch goal, not blocking)
 - Declarative YAML workflows (start with pro-code, convert later)
+
+Note: APIM gateway is **in scope** (required production front door, Phase 5).
+
+---
+
+## AFC Parity — Cross-Cutting Artifacts
+
+The following artifacts were created as part of the AFC parity merge and are referenced by both the copilot framework and Tax Pulse capability pack.
+
+### New Canonical Files
+
+| File | Purpose | Referenced By |
+|---|---|---|
+| `agents/contracts/ui/confirm_action_card.json` | Adaptive Card JSON for write confirmation | Actions agent, Tax Pulse, all write operations |
+| `agents/contracts/ui/adaptive_cards_index.yaml` | Index of all Adaptive Cards across surfaces | Teams integration, Odoo widget, agent responses |
+| `agents/contracts/openapi/ipai_odoo_bridge.openapi.yaml` | Narrow OpenAPI spec for agent-to-Odoo bridge | All agents via APIM, Tax Pulse tools |
+| `ssot/tax/compliance_check_catalog.yaml` | Machine-readable compliance check registry (12 checks) | Tax Pulse agent, `ipai_bir_tax_compliance` |
+| `ssot/agents/tax_pulse_tool_contracts.yaml` | Tool contracts + agent metadata (updated) | Tax Pulse capability pack, bridge API |
+
+### Capability Class Integration
+
+Every agent response must be classified into one of four capability classes:
+- **Informational**: explain, summarize (Advisory)
+- **Navigational**: locate, deep-link (Advisory, Ops)
+- **Transactional**: create, update, trigger (Actions, confirmation required)
+- **Compliance Intelligence**: cross-check, flag, surface findings (Ops read, Actions write)
+
+This classification drives routing, card selection, and audit trail behavior.
+
+### Confirmation Flow (All Write Operations)
+
+```
+User request → Router → Actions agent → ConfirmActionCard → User confirms → Bridge API → Odoo write → Chatter audit note
+                                          ↓ (cancel)
+                                     No action taken
+```
+
+The `ConfirmActionCard` is mandatory for all write operations regardless of surface (Teams, Odoo Widget, or programmatic API with human-in-the-loop).
+
+## n8n orchestration boundary
+
+n8n is the asynchronous connector and automation layer, not the primary assistant runtime and not the source of tax/compliance truth.
+
+Use n8n for:
+- delayed or scheduled automations
+- external notifications
+- connector-heavy fan-out/fan-in flows
+- document/package delivery
+- webhook-triggered side effects
+- human approval relay plumbing where Teams/email/chat integrations are needed
+
+Do not use n8n for:
+- canonical workflow state
+- tax-rule truth
+- compliance decision authority
+- primary conversational routing
+- durable accounting/business object ownership

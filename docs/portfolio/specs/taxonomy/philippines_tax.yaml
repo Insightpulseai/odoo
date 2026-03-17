@@ -1,0 +1,156 @@
+version: 1
+kind: locale_overlay
+overlay_id: ph_tax
+locale:
+  country: PH
+  language: en
+extends:
+  - core_taxonomy_v1
+
+metadata:
+  title: "Philippines Tax + Month-End Close Overlay"
+  owner: "finance@insightpulseai.com"
+  description: >
+    Locale overlay for PH statutory tax compliance and close operations.
+    Keeps the core taxonomy reusable by isolating PH-specific obligations,
+    forms, agencies, and competency expectations.
+
+regulatory_bodies:
+  - id: bir
+    name: "Bureau of Internal Revenue (BIR)"
+    scope: ["tax_admin", "withholding", "vat", "income_tax", "alphalist"]
+  - id: sec
+    name: "Securities and Exchange Commission (SEC)"
+    scope: ["corporate_reporting", "gis", "financial_statements"]
+  - id: prc_boa
+    name: "PRC - Board of Accountancy (BOA)"
+    scope: ["cpa_profession", "licensing", "ethics"]
+  - id: picpa
+    name: "Philippine Institute of Certified Public Accountants (PICPA)"
+    scope: ["practice_guidance", "cpd", "standards_awareness"]
+  - id: bsp
+    name: "Bangko Sentral ng Pilipinas (BSP)"
+    scope: ["payments", "fx", "regulated_reporting_optional"]
+
+competency_boards:
+  # "competency accounting boards" interpreted as a competency framework + oversight anchors
+  framework:
+    id: ph_finance_close_tax_competency_v1
+    domains:
+      - close_operations
+      - vat_compliance
+      - withholding_compliance
+      - income_tax_compliance
+      - audit_readiness
+      - controls_and_governance
+      - documentation_and_evidence
+      - tooling_and_automation
+
+skills:
+  close_operations:
+    description: "Monthly/quarterly/year-end close execution and reconciliation discipline."
+    capabilities:
+      - code: close.calendar.manage
+        name: "Close calendar & cut-off management"
+      - code: close.subledger.reconcile
+        name: "AP/AR/Inventory/FA subledger reconciliation"
+      - code: close.gl.reconcile
+        name: "Balance sheet account reconciliations"
+      - code: close.accruals
+        name: "Accruals/deferrals preparation and posting"
+      - code: close.fx
+        name: "FX remeasurement (if applicable)"
+      - code: close.pack.prepare
+        name: "Close pack generation (P&L, BS, cashflow, variance notes)"
+
+  vat_compliance:
+    description: "VAT compliance operations (return prep, SLSP support, evidence)."
+    obligations:
+      - form: "BIR 2550M"
+        cadence: monthly
+        notes: ["VAT return", "supporting schedules/evidence"]
+      - form: "BIR 2550Q"
+        cadence: quarterly
+        notes: ["if applicable per registration"]
+    capabilities:
+      - code: vat.output_input.match
+        name: "Output vs input VAT matching and exception handling"
+      - code: vat.slsp.prepare
+        name: "SLSP-ready sales/purchase listing preparation"
+      - code: vat.credit_management
+        name: "VAT credits tracking and aging"
+
+  withholding_compliance:
+    description: "Withholding tax computation, remittance support, and vendor/employee evidence."
+    obligations:
+      - form: "BIR 0619E"
+        cadence: monthly
+        notes: ["expanded withholding payment form"]
+      - form: "BIR 1601EQ"
+        cadence: quarterly
+        notes: ["expanded withholding quarterly return"]
+      - form: "BIR 1601C"
+        cadence: monthly
+        notes: ["compensation withholding return"]
+    capabilities:
+      - code: wht.rate.apply
+        name: "Rate application by supplier classification / nature of payment"
+      - code: wht.schedules.generate
+        name: "Schedules & alphalist-ready extracts (where applicable)"
+      - code: wht.recon.gl
+        name: "WHT payable reconciliation to GL"
+
+  income_tax_compliance:
+    description: "Income tax provisioning and annual/quarterly compliance packaging."
+    obligations:
+      - form: "BIR 1701Q"
+        cadence: quarterly
+        notes: ["if applicable based on taxpayer type"]
+      - form: "BIR 1701 / 1702"
+        cadence: annual
+        notes: ["depending on entity classification"]
+    capabilities:
+      - code: tax.provision.current
+        name: "Current tax provision computation support"
+      - code: tax.provision.deferred
+        name: "Deferred tax support (if maintained)"
+      - code: tax.workpapers
+        name: "Workpaper packaging & traceability"
+
+  audit_readiness:
+    description: "Evidence, trails, and explainability for audit and statutory review."
+    capabilities:
+      - code: audit.trail.document_flow
+        name: "Document flow completeness (PO→Bill→Payment / SO→Invoice→Receipt)"
+      - code: audit.supporting_docs
+        name: "Attachment/evidence completeness checks"
+      - code: audit.explaining_variances
+        name: "Variance narratives for material movements"
+
+  controls_and_governance:
+    description: "Approvals, SoD, and policy enforcement aligned to finance ops."
+    capabilities:
+      - code: controls.approvals
+        name: "Approval routing for expenses, bills, payments"
+      - code: controls.sod
+        name: "Segregation of Duties validation points"
+      - code: controls.audit_log
+        name: "Immutable log / change tracking expectations"
+
+process_templates:
+  - id: ph_month_end_close_v1
+    name: "PH Month-End Close"
+    steps:
+      - "Freeze period window; enforce cutoffs"
+      - "Reconcile AP/AR; clear aged exceptions"
+      - "Post accruals/deferrals; validate reversals"
+      - "Reconcile cash & bank statements"
+      - "Prepare VAT + WHT schedules; tie-out to GL"
+      - "Generate close pack; reviewer sign-off"
+      - "Archive evidence bundle; lock period"
+
+integration_expectations:
+  odoo:
+    notes:
+      - "Overlay is taxonomy-only; implementation maps to Odoo 19 CE + OCA modules."
+      - "Keep PH specifics in data/config (YAML/XML) unless a statutory computation truly requires code."

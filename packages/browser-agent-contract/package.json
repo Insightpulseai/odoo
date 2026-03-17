@@ -1,0 +1,16 @@
+{
+  "name": "@ipai/browser-agent-contract",
+  "version": "0.1.0",
+  "description": "Shared command and capture contracts for browser copilot",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "LGPL-3.0",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,317 @@
+{
+  "total_count": 4,
+  "jobs": [
+    {
+      "id": 59600757761,
+      "run_id": 20756736863,
+      "workflow_name": "Deploy to Production",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20756736863",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQZSsBs8AAAAN4HtkAQ",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/jobs/59600757761",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863/job/59600757761",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-01-06T17:40:17Z",
+      "started_at": "2026-01-06T17:40:31Z",
+      "completed_at": "2026-01-06T17:40:36Z",
+      "name": "Pre-flight Checks",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-01-06T17:40:31Z",
+          "completed_at": "2026-01-06T17:40:32Z"
+        },
+        {
+          "name": "Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-01-06T17:40:32Z",
+          "completed_at": "2026-01-06T17:40:33Z"
+        },
+        {
+          "name": "Determine deployment parameters",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-01-06T17:40:33Z",
+          "completed_at": "2026-01-06T17:40:33Z"
+        },
+        {
+          "name": "Verify image exists",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-01-06T17:40:33Z",
+          "completed_at": "2026-01-06T17:40:33Z"
+        },
+        {
+          "name": "Post Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-01-06T17:40:33Z",
+          "completed_at": "2026-01-06T17:40:33Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-01-06T17:40:33Z",
+          "completed_at": "2026-01-06T17:40:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-runs/59600757761",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000095525,
+      "runner_name": "GitHub Actions 1000095525",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 59600785629,
+      "run_id": 20756736863,
+      "workflow_name": "Deploy to Production",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20756736863",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQZSsBs8AAAAN4HvQ3Q",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/jobs/59600785629",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863/job/59600785629",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-01-06T17:40:36Z",
+      "started_at": "2026-01-06T17:40:41Z",
+      "completed_at": "2026-01-06T17:40:48Z",
+      "name": "Deploy to Production",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-01-06T17:40:42Z",
+          "completed_at": "2026-01-06T17:40:43Z"
+        },
+        {
+          "name": "Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-01-06T17:40:43Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Deploy notification - Starting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Deploy to production server",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Verify deployment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Deploy notification - Complete",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Deploy notification - Failed",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Post Checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-01-06T17:40:44Z",
+          "completed_at": "2026-01-06T17:40:44Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-runs/59600785629",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000095540,
+      "runner_name": "GitHub Actions 1000095540",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 59600803959,
+      "run_id": 20756736863,
+      "workflow_name": "Deploy to Production",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20756736863",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQZSsBs8AAAAN4HwYdw",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/jobs/59600803959",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863/job/59600803959",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-01-06T17:40:48Z",
+      "started_at": "2026-01-06T17:40:51Z",
+      "completed_at": "2026-01-06T17:41:54Z",
+      "name": "Production Smoke Test",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-01-06T17:40:51Z",
+          "completed_at": "2026-01-06T17:40:52Z"
+        },
+        {
+          "name": "Wait for service stability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-01-06T17:40:52Z",
+          "completed_at": "2026-01-06T17:41:52Z"
+        },
+        {
+          "name": "Health check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-01-06T17:41:52Z",
+          "completed_at": "2026-01-06T17:41:52Z"
+        },
+        {
+          "name": "Report status",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-01-06T17:41:52Z",
+          "completed_at": "2026-01-06T17:41:52Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-01-06T17:41:52Z",
+          "completed_at": "2026-01-06T17:41:52Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-runs/59600803959",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000095543,
+      "runner_name": "GitHub Actions 1000095543",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 59600904640,
+      "run_id": 20756736863,
+      "workflow_name": "Deploy to Production",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/runs/20756736863",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQZSsBs8AAAAN4H2hwA",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "url": "https://api.github.com/repos/jgtolentino/odoo-ce/actions/jobs/59600904640",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863/job/59600904640",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-01-06T17:41:54Z",
+      "started_at": "2026-01-06T17:41:56Z",
+      "completed_at": "2026-01-06T17:42:04Z",
+      "name": "Auto-Tag Release",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-01-06T17:41:57Z",
+          "completed_at": "2026-01-06T17:41:58Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-01-06T17:41:58Z",
+          "completed_at": "2026-01-06T17:41:59Z"
+        },
+        {
+          "name": "Create Release Tag",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-01-06T17:41:59Z",
+          "completed_at": "2026-01-06T17:42:03Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-01-06T17:42:03Z",
+          "completed_at": "2026-01-06T17:42:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-01-06T17:42:03Z",
+          "completed_at": "2026-01-06T17:42:03Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jgtolentino/odoo-ce/check-runs/59600904640",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000095577,
+      "runner_name": "GitHub Actions 1000095577",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

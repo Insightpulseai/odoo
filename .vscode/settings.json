@@ -1,8 +1,9 @@
 {
   // Ensure Copilot Chat reads .github/copilot-instructions.md
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "editor.wordWrap": "on",
   "editor.minimap.enabled": false,
   "files.trimTrailingWhitespace": true,
@@ -12,7 +13,10 @@
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "ruff.enable": true,
-  "ruff.format.args": ["--config", "pyproject.toml"],
+  "ruff.format.args": [
+    "--config",
+    "pyproject.toml"
+  ],
   // Preferred: repo-local venv (portable across machines and CI).
   // Create it with: python -m venv .venv && .venv/bin/pip install -e .
   // When .venv/bin/python exists, VS Code picks it up automatically.
@@ -25,11 +29,10 @@
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoSearchPaths": true,
   "python.analysis.extraPaths": [
-    "odoo",
-    "addons",
-    "addons/ipai",
-    "addons/OCA",
-    "addons/oca"
+    "${workspaceFolder}/odoo",
+    "${workspaceFolder}/addons",
+    "${workspaceFolder}/addons/oca",
+    "${workspaceFolder}/addons/ipai"
   ],
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
@@ -44,7 +47,11 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "docker.dockerPath": "/usr/local/bin/docker",
+  "docker.environment": {
+    "DOCKER_CONTEXT": "colima-odoo"
+  },
   "dev.containers.dockerPath": "/usr/local/bin/docker",
+  "dev.containers.dockerComposePath": "/usr/local/bin/docker compose",
   "search.exclude": {
     "**/.git": true,
     "**/.venv": true,
@@ -64,5 +71,17 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
     "https://json.schemastore.org/github-action.json": ".github/action.yml"
+  },
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/.next": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.venv": true,
+    "**/node_modules": true
   }
 }

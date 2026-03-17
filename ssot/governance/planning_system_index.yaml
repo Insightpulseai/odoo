@@ -11,8 +11,22 @@
 # CI validator: scripts/ci/validate_planning_index.py (planned)
 # =============================================================================
 
-schema_version: "1.0"
-last_updated: "2026-03-14"
+schema_version: "1.1"
+last_updated: "2026-03-18"
+
+# -----------------------------------------------------------------------------
+# Canonical Strategy (unified entry point)
+# -----------------------------------------------------------------------------
+canonical_strategy:
+  primary_file: ssot/governance/unified_strategy.yaml
+  supersedes_parallel_reading:
+    - ssot/governance/platform-strategy-2026.yaml
+    - ssot/governance/enterprise_okrs.yaml
+  note: >
+    unified_strategy.yaml consolidates both strategy stacks into one file.
+    platform-strategy-2026.yaml remains the primary time-bound objective source.
+    enterprise_okrs.yaml remains the supporting thematic KPI/OKR layer.
+    Neither is deprecated; both are read by the unified file.
 
 # -----------------------------------------------------------------------------
 # Planning Layer Model
@@ -27,6 +41,44 @@ last_updated: "2026-03-14"
 #   - join_keys: how it cross-references other layers
 
 layers:
+
+  - id: portfolio
+    name: "Portfolio SoR (Azure DevOps Boards)"
+    canonical_file: null  # Azure Boards is external — not a repo file
+    external_system: "Azure DevOps"
+    organization: "insightpulseai"
+    project: "ipai-platform"
+    owner: platform-lead
+    cadence: continuous
+    status: planned
+    join_keys:
+      - field: "epics[].id (AB#)"
+        joins_to: strategy.objectives[].id
+      - field: "features[].epic_ref"
+        joins_to: portfolio.epics[].id
+    integrations:
+      github:
+        mechanism: "AB# linking in commits/PRs"
+        repos:
+          - "Insightpulseai/odoo"
+          - "Insightpulseai/agents"
+          - "Insightpulseai/infra"
+          - "Insightpulseai/web"
+      n8n:
+        mechanism: "Service hooks → n8n webhook → Supabase task bus"
+        workflow: "automations/n8n/workflows/azdo-service-hooks-to-taskbus.json"
+        webhook_path: "/webhook/azdo-service-hook"
+      plane:
+        mechanism: "Read-only projection from Azure Boards"
+        direction: "azdo → plane (one-way)"
+      supabase:
+        mechanism: "Read model via n8n enqueue_job RPC"
+        direction: "azdo → n8n → supabase (one-way)"
+    note: >
+      Azure Boards is the portfolio System of Record for strategic objectives,
+      epics, and features. GitHub remains code/PR truth. Plane is a projected
+      workflow surface. Supabase is a read-only mirror for dashboards.
+      Spec: spec/azdo-boards-integration/
 
   - id: strategy
     name: "Platform Strategy (VMOKRAPI-SPATRES)"
@@ -110,7 +162,7 @@ layers:
 
   - id: target_state
     name: "Platform Target State"
-    canonical_file: infra/ssot/azure/PLATFORM_TARGET_STATE.md
+    canonical_file: ssot/azure/PLATFORM_TARGET_STATE.md
     owner: platform-lead
     cadence: quarterly
     status: on_main
@@ -138,6 +190,22 @@ layers:
 # Crosswalks (explicit join paths between layers)
 # -----------------------------------------------------------------------------
 crosswalks:
+
+  - from: portfolio.epics[].id
+    to: strategy.objectives[].id
+    relationship: "Azure Boards epics map 1:1 to SMART strategic objectives OBJ-001..007"
+    mapping_type: one_to_one
+    note: >
+      Each Azure Boards epic corresponds to one SMART objective.
+      AB# references in GitHub PRs link code changes to portfolio epics.
+
+  - from: portfolio.features[].id
+    to: implementation_specs
+    relationship: "Azure Boards features reference spec bundles"
+    mapping_type: one_to_many
+    note: >
+      Features in Azure Boards correspond to spec bundle directories.
+      The spec bundle is the implementation truth; the feature is the planning truth.
 
   - from: strategy.objectives[].id
     to: operational_okrs.strategic_objectives[].id
@@ -194,7 +262,7 @@ related_artifacts:
     purpose: "Repository-to-Azure resource alignment"
     layer: implementation_specs
 
-  - file: infra/ssot/azure/platform_maturity_benchmark.yaml
+  - file: ssot/azure/platform_maturity_benchmark.yaml
     purpose: "Platform maturity benchmark scores"
     layer: capability_targets
     status: on_main
@@ -206,3 +274,11 @@ related_artifacts:
   - file: platform/data/contracts/control_room_kpis.yaml
     purpose: "Operational KPI definitions (kpi_001..kpi_017)"
     layer: operational_okrs
+
+  - file: spec/azdo-boards-integration/
+    purpose: "Azure DevOps Boards integration spec bundle — portfolio SoR design"
+    layer: portfolio
+
+  - file: automations/n8n/workflows/azdo-service-hooks-to-taskbus.json
+    purpose: "n8n workflow: AzDO service hooks → Supabase task bus"
+    layer: portfolio

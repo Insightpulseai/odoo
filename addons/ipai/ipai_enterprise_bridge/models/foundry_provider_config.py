@@ -50,7 +50,7 @@ class FoundryProviderConfig(models.Model):
     )
     api_version = fields.Char(
         string="API Version",
-        default="2024-12-01-preview",
+        default="2025-03-01-preview",
     )
     last_test_date = fields.Datetime(
         string="Last Test Date",
@@ -137,7 +137,7 @@ class FoundryProviderConfig(models.Model):
         try:
             resp = requests.get(
                 base.rstrip("/") + "/openai/models",
-                params={"api-version": self.api_version or "2024-12-01-preview"},
+                params={"api-version": self.api_version or "2025-03-01-preview"},
                 headers=headers,
                 timeout=10,
             )

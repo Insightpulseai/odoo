@@ -1,0 +1,236 @@
+// =============================================================================
+// IPAI Finance OKR Governance DBML Schema
+// =============================================================================
+// OKR + PMBOK + WBS Governance Data Model for Finance Month-End Close & Tax
+// For use with dbdiagram.io
+// Generated: 2026-01-12
+// =============================================================================
+
+Project ipai_finance_okr {
+  database_type: 'PostgreSQL'
+  Note: 'IPAI Finance OKR Governance - OKR + PMBOK + WBS Data Model'
+}
+
+// =============================================================================
+// OKR OBJECTIVE
+// =============================================================================
+
+Table okr_objective {
+  id integer [pk, increment]
+  name varchar [not null, note: 'Short label for the strategic objective']
+  description text [note: 'Qualitative objective statement']
+  company_id integer [not null, ref: > res_company.id]
+  owner_id integer [not null, ref: > res_users.id]
+  period_start date [not null, note: 'Start of OKR period (e.g., Q1 start)']
+  period_end date [not null, note: 'End of OKR period (e.g., Q1 end)']
+  portfolio_id integer [ref: > project_project.id, note: 'Optional PPM portfolio link']
+  state varchar [default: 'draft', note: 'draft, active, closed, cancelled']
+  overall_score numeric(3,2) [note: 'Average score (0.0-1.0) of all Key Results']
+  confidence integer [note: 'Confidence level (0-100%)']
+
+  // PMBOK Alignment Notes
+  scope_notes text [note: 'PMBOK scope considerations']
+  schedule_notes text [note: 'PMBOK schedule considerations']
+  cost_notes text [note: 'PMBOK cost considerations']
+  quality_notes text [note: 'PMBOK quality considerations']
+  stakeholder_notes text [note: 'Key stakeholders and communication approach']
+  communication_cadence varchar [note: 'Review frequency (e.g., weekly dashboard)']
+
+  // Audit
+  create_date timestamp [default: `now()`]
+  write_date timestamp
+  create_uid integer [ref: > res_users.id]
+  write_uid integer [ref: > res_users.id]
+
+  indexes {
+    (company_id, period_start, period_end)
+    owner_id
+    state
+  }
+}
+
+// =============================================================================
+// OKR KEY RESULT
+// =============================================================================
+
+Table okr_key_result {
+  id integer [pk, increment]
+  objective_id integer [not null, ref: > okr_objective.id]
+  sequence integer [default: 10, note: 'Order within objective']
+  name varchar [not null, note: 'Short label (e.g., KR1 - Close by Day-3)']
+  metric_description text [note: 'SMART metric definition']
+
+  // Metrics
+  baseline_value numeric(12,2) [note: 'Starting value']
+  target_value numeric(12,2) [note: 'Target value to achieve']
+  current_value numeric(12,2) [note: 'Current measured value']
+  unit varchar [note: 'Unit of measurement (%, count, PHP, etc.)']
+  deadline date [note: 'Target date to achieve']
+
+  // Ownership
+  owner_id integer [not null, ref: > res_users.id]
+
+  // Scoring
+  status_score numeric(3,2) [default: 0.0, note: '0.0 = not started, 0.7 = good, 1.0 = achieved']
+  confidence integer [default: 50, note: '0-100. <40% triggers risk flag']
+  risk_level varchar [note: 'low, medium, high, critical']
+  direction varchar [default: 'increase', note: 'increase, decrease, maintain']
+
+  // Audit
+  create_date timestamp [default: `now()`]
+  write_date timestamp
+  create_uid integer [ref: > res_users.id]
+  write_uid integer [ref: > res_users.id]
+
+  indexes {
+    (objective_id, sequence)
+    owner_id
+    risk_level
+    deadline
+  }
+}
+
+// =============================================================================
+// KR SCORE SNAPSHOT (Time Series)
+// =============================================================================
+
+Table okr_kr_score_snapshot {
+  id integer [pk, increment]
+  key_result_id integer [not null, ref: > okr_key_result.id]
+  date date [not null, note: 'Snapshot date']
+  score numeric(3,2) [not null, note: 'Score at this point (0.0-1.0)']
+  confidence integer [note: 'Confidence at this point (0-100)']
+  current_value numeric(12,2) [note: 'Actual measured value at this point']
+  comment text [note: 'Notes on the score or blockers']
+  recorded_by_id integer [ref: > res_users.id]
+
+  indexes {
+    (key_result_id, date)
+    date
+  }
+}
+
+// =============================================================================
+// OKR RISK REGISTER
+// =============================================================================
+
+Table okr_risk {
+  id integer [pk, increment]
+  key_result_id integer [ref: > okr_key_result.id, note: 'Optional link to affected KR']
+  name varchar [not null, note: 'Risk name']
+  description text [note: 'Risk description']
+
+  // Assessment
+  probability varchar [default: 'medium', note: 'low, medium, high']
+  impact varchar [default: 'medium', note: 'low, medium, high, critical']
+  priority varchar [note: 'Computed: 0=low, 1=normal, 2=high, 3=critical']
+  response_strategy varchar [default: 'mitigate', note: 'accept, mitigate, avoid, transfer']
+  mitigation_plan text [note: 'Specific actions to mitigate']
+
+  // Ownership
+  owner_id integer [ref: > res_users.id]
+  company_id integer [ref: > res_company.id]
+
+  // Status
+  status varchar [default: 'open', note: 'open, in_progress, mitigated, closed']
+  escalated boolean [default: false, note: 'Escalated to leadership']
+
+  // Dates
+  date_identified date
+  date_target_resolution date
+  date_resolved date
+
+  // Audit
+  create_date timestamp [default: `now()`]
+  write_date timestamp
+  create_uid integer [ref: > res_users.id]
+  write_uid integer [ref: > res_users.id]
+
+  indexes {
+    key_result_id
+    status
+    priority
+    owner_id
+    escalated
+  }
+}
+
+// =============================================================================
+// KR TASK LINK (WBS Integration)
+// =============================================================================
+
+Table okr_kr_task_link {
+  id integer [pk, increment]
+  key_result_id integer [not null, ref: > okr_key_result.id]
+  task_model varchar [not null, note: 'e.g., project.task, ipai.finance.task.template']
+  task_id integer [not null, note: 'ID of the linked task record']
+  role varchar [default: 'contributor', note: 'preparer, reviewer, approver, contributor']
+
+  indexes {
+    (key_result_id, task_model, task_id)
+    task_model
+  }
+}
+
+// =============================================================================
+// KR MILESTONE
+// =============================================================================
+
+Table okr_kr_milestone {
+  id integer [pk, increment]
+  key_result_id integer [not null, ref: > okr_key_result.id]
+  name varchar [not null, note: 'e.g., Month-End Closed - Day-3']
+  description text
+  date_planned date [note: 'Target date']
+  date_reached date [note: 'Actual date reached']
+  status varchar [default: 'not_reached', note: 'not_reached, reached, late']
+  project_id integer [ref: > project_project.id, note: 'Optional project link']
+
+  // Audit
+  create_date timestamp [default: `now()`]
+  write_date timestamp
+  create_uid integer [ref: > res_users.id]
+  write_uid integer [ref: > res_users.id]
+
+  indexes {
+    (key_result_id, date_planned)
+    status
+    date_planned
+  }
+}
+
+// =============================================================================
+// CORE ODOO TABLES (Referenced)
+// =============================================================================
+
+Table res_company {
+  id integer [pk, increment]
+  name varchar [not null]
+}
+
+Table res_users {
+  id integer [pk, increment]
+  login varchar [not null]
+  partner_id integer
+}
+
+Table project_project {
+  id integer [pk, increment]
+  name varchar [not null]
+  company_id integer [ref: > res_company.id]
+}
+
+// =============================================================================
+// RELATIONSHIPS
+// =============================================================================
+
+// OKR hierarchy
+Ref: okr_key_result.objective_id > okr_objective.id
+Ref: okr_kr_score_snapshot.key_result_id > okr_key_result.id
+Ref: okr_risk.key_result_id > okr_key_result.id
+Ref: okr_kr_task_link.key_result_id > okr_key_result.id
+Ref: okr_kr_milestone.key_result_id > okr_key_result.id
+
+// PPM/Project integration
+Ref: okr_objective.portfolio_id > project_project.id
+Ref: okr_kr_milestone.project_id > project_project.id
