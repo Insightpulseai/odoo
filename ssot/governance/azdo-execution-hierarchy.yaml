@@ -443,8 +443,12 @@ epics:
           - "Azure Monitor alerts configured for critical paths"
           - "Defender for Cloud enabled for active estate"
           - "Smoke/health checks defined for every production workload"
+          - "Rollout strategy defined (progressive exposure via ACA revision management)"
+          - "Rollback path documented (ACA revision shift)"
+          - "Working-hours deployment and bake-time monitoring evidence captured"
         links:
           - infra/ssot/azure/resources.yaml
+          - docs/architecture/release_management_model.md
 
   # ===========================================================================
   # OBJ-002: Enterprise Parity Achievement
@@ -484,6 +488,9 @@ epics:
           - "Zero critical runtime errors in production"
           - "All 126 installed modules pass health check"
           - "Container restart count < 1/week"
+          - "Ring/flag exposure path defined for module updates"
+          - "Bake-time requirement documented (24h for cron/worker changes)"
+          - "Hotfix path documented for P1/P2 Odoo runtime failures"
 
       - id: FEAT-002-02
         title: "[FEAT] ipai_enterprise_bridge cleanup"
@@ -694,8 +701,11 @@ epics:
           - "docker-compose.yml and devcontainer compose documented"
           - "Mount paths, service names, and port mappings canonical"
           - "Preflight script validates runtime before boot"
+          - "Same deployment tooling across dev/staging/prod (platform delivery contract)"
+          - "Deployment automation is the default; manual steps are documented exceptions"
         links:
           - odoo/.claude/rules/path-contract.md
+          - docs/architecture/platform_delivery_contract.md
 
       - id: FEAT-005-02
         title: "[FEAT] VS Code dev environment optimization"
