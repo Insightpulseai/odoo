@@ -6,12 +6,18 @@
 # This file seeds Azure Boards when ADR-GSR-001 graduation gates pass.
 #
 # Native hierarchy (Basic process): Epic → Issue → Task
+#   - Epic = strategic objective / thematic grouping
+#   - Issue = scoped requirement or workstream (NOT "Feature" — Basic process
+#     uses "Issue" as the middle tier, equivalent to Feature in Agile/Scrum)
+#   - Task = concrete deliverable unit
+#
 # Planning/coordination layer: Delivery Plans + Area Paths + Iteration Paths
 #                              + Dashboards + Dependency Links
 #
 # Azure Boards is the execution coordination system of record for strategic
-# objectives, scoped workstreams, concrete tasks, dependency links, iteration
-# cadence, area ownership, and timeline/reporting views. Detailed specs,
+# objectives, scoped workstreams, concrete tasks, team ownership, iteration
+# cadence, area ownership, dependency visibility, Delivery Plans, portfolio
+# rollups, dashboards/reporting, and timeline views. Detailed specs,
 # architecture doctrine, SSOT files, and runtime evidence remain in the repo.
 #
 # Constraint: Boards hold the goal record, execution hierarchy, accountable
@@ -28,6 +34,8 @@
 # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/define-features-epics
 # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/backlogs-overview
 # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/?view=azure-devops
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/github/features-timeline
+# Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
 # =============================================================================
 
 schema_version: "1.0"
@@ -40,7 +48,7 @@ project: ipai-platform
 # -----------------------------------------------------------------------------
 # Work Item Field Contract
 # -----------------------------------------------------------------------------
-# Every Epic/Feature must have:
+# Every Epic/Issue must have:
 #   title:                Deterministic name ([OBJ-NNN] or [FEAT])
 #   description:          Purpose, Scope, Out of scope, Why this matters
 #   acceptance_criteria:  Measurable completion rules only
@@ -218,6 +226,137 @@ planning_layer:
           - "Recently completed"
           - "Items missing acceptance criteria"
           - "Stale items (no update >14 days)"
+
+# -----------------------------------------------------------------------------
+# Team Topology & Operating Model
+# -----------------------------------------------------------------------------
+# Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/agile-culture
+
+team_topology:
+  principle: "Scale with teams, not projects"
+  description: >
+    Prefer vertical (value-stream) teams aligned to area paths over
+    horizontal (functional) teams. Each team owns a slice of the product
+    from backlog to production. Teams are the unit of scale — when work
+    exceeds capacity, add a team rather than expanding an existing one.
+
+  team_shape:
+    preferred: vertical-value-stream
+    size: "6-9 people per team (current: 1 — solo operator model)"
+    note: >
+      Current operating model is single-developer. Team topology guidance
+      is documented now so the structure scales correctly when headcount
+      grows. Solo-operator maps to all area paths with platform-lead role.
+
+  management_coordination_lane:
+    description: >
+      A lightweight management/program coordination lane provides portfolio
+      views, cross-team dependency resolution, and stakeholder reporting
+      without owning delivery. In the solo-operator model, this is the
+      same person wearing a different hat during sprint boundaries.
+    responsibilities:
+      - "Portfolio backlog grooming (Epic-level prioritization)"
+      - "Cross-area dependency resolution"
+      - "Stakeholder reporting (Leadership Dashboard)"
+      - "Iteration cadence governance (sprint start/end ceremonies)"
+      - "Risk and blocker escalation"
+
+cadence_and_communications:
+  description: >
+    Shared sprint cadence and communication rituals ensure alignment
+    across area paths without heavyweight process overhead.
+  # Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+
+  shared_sprint_cadence:
+    length: 14_days
+    alignment: "All area paths share the same sprint boundaries"
+    rationale: >
+      Shared cadence simplifies cross-area dependency management and
+      enables organization-wide sprint reviews. Teams (or the solo
+      operator) plan and demo on the same rhythm.
+
+  ceremonies:
+    - name: "Sprint Planning"
+      frequency: "Every 14 days (sprint start)"
+      purpose: "Select Issues/Tasks for the sprint from the backlog"
+      attendees: "Team members (or solo operator)"
+      duration: "1 hour"
+
+    - name: "Sprint Demo / Showcase"
+      frequency: "Every 14 days (sprint end)"
+      purpose: "Demonstrate completed work, gather feedback"
+      attendees: "Team + stakeholders"
+      duration: "30 minutes"
+      note: "Record evidence in docs/evidence/<stamp>/"
+
+    - name: "Retrospective"
+      frequency: "Every 14 days (sprint end)"
+      purpose: "Process improvement, blocker review"
+      attendees: "Team members"
+      duration: "30 minutes"
+
+    - name: "Coordination Meeting"
+      frequency: "Weekly (mid-sprint)"
+      purpose: "Cross-area risks, dependencies, and blockers"
+      attendees: "Management coordination lane"
+      duration: "15 minutes"
+      note: >
+        In solo-operator model, this is a structured self-review of the
+        dependency graph and blocker list.
+
+cross_team_visibility:
+  description: >
+    Cross-team visibility is achieved through Delivery Plans (portfolio
+    backlogs across area paths), dashboards, and dependency links —
+    not through status meetings or status reports.
+  # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/visibility-across-teams
+
+  mechanisms:
+    - tool: "Delivery Plans"
+      purpose: "Timeline view of Issues across all area paths and iterations"
+      audience: "Management coordination lane, stakeholders"
+
+    - tool: "Portfolio Backlogs"
+      purpose: "Epic-level rollup of Issue completion across teams"
+      audience: "Leadership"
+
+    - tool: "Dashboards"
+      purpose: "Real-time widget-based views (see dashboards section above)"
+      audience: "All roles"
+
+    - tool: "Dependency Links"
+      purpose: "Predecessor/Successor links surface cross-area blockers"
+      audience: "Teams, coordination lane"
+
+quality_risk_contract:
+  description: >
+    Lightweight quality and risk communication contract. Ensures risks
+    and quality issues surface early without bureaucratic overhead.
+
+  risk_communication:
+    - trigger: "Item blocked for >3 days"
+      action: "Escalate to coordination lane (add Blocked By link + comment)"
+    - trigger: "Acceptance criteria unclear or missing"
+      action: "Flag in Operational Dashboard (stale items widget)"
+    - trigger: "Cross-area dependency at risk"
+      action: "Raise in weekly coordination meeting"
+    - trigger: "Sprint goal at risk (>30% incomplete at mid-sprint)"
+      action: "Scope negotiation in coordination meeting"
+
+  quality_gates:
+    - gate: "Issue completion"
+      criteria: "All acceptance criteria met + evidence captured"
+    - gate: "Epic completion"
+      criteria: "All child Issues complete + acceptance criteria met"
+    - gate: "Sprint completion"
+      criteria: "Demo delivered + retrospective held + dashboard updated"
+
+  definition_of_done:
+    - "Acceptance criteria verified with evidence"
+    - "Links to PRs, specs, or evidence docs present"
+    - "No open Blocked By links"
+    - "Dashboard widgets reflect current state"
 
 # -----------------------------------------------------------------------------
 # Execution Hierarchy
@@ -732,6 +871,9 @@ objective_mapping:
 # -----------------------------------------------------------------------------
 summary:
   epics: 7
-  features: 24
+  features: 25
   task_pattern: "5 per feature (design, build, validate, deploy, evidence capture)"
-  estimated_tasks: 120
+  estimated_tasks: 125
+  planning_overlays: "Delivery Plans, Area Paths, Iteration Paths, Dashboards, Dependencies"
+  team_model: "Vertical value-stream teams; scale with teams, not projects"
+  github_linkage: "Branches, PRs, merge commits, builds, state transitions linked to work items"

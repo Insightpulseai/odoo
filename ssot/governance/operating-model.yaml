@@ -10,6 +10,8 @@
 #   - repo-azure-alignment.yaml (repo → Azure resource mapping)
 #   - ADR-GSR-001 (goals SoR decision)
 #   - .claude/rules/github-governance.md (GitHub Apps, PR discipline)
+#   - https://learn.microsoft.com/en-us/azure/devops/boards/github/features-timeline
+#   - https://learn.microsoft.com/en-us/devops/plan/scaling-agile
 # =============================================================================
 
 schema_version: "1.0"
@@ -29,11 +31,15 @@ tool_authority:
     role: selective-execution-surface
     owns:
       - id: azdo-goals
-        domain: "Execution Coordination"
+        domain: "Execution Coordination & GitHub Traceability"
         description: >
-          Azure Boards is the execution coordination system of record for
-          strategic objectives, scoped workstreams, concrete tasks, dependency
-          links, iteration cadence, area ownership, and timeline/reporting views.
+          Azure Boards is the execution coordination and GitHub traceability
+          system of record for strategic objectives, scoped workstreams,
+          concrete tasks, dependency links, cadence, team ownership, and
+          implementation linkage across branches, pull requests, merge commits,
+          builds, and work-item state transitions.
+          In the Basic process: Epics = strategic objectives, Issues = scoped
+          requirement/workstream items, Tasks = concrete execution items.
           Currently transitional — YAML in ssot/governance/ is canonical until
           5 graduation gates pass (per ADR-GSR-001). Once graduated, AzDo Boards
           becomes the authoritative write surface for objectives, OKRs, and
@@ -107,6 +113,111 @@ tool_authority:
       - "Goal/OKR tracking (AzDo Boards, per ADR-GSR-001)"
       - "Azure resource deployment (AzDo Pipelines)"
       - "Build agent management (AzDo agent pools)"
+
+# -----------------------------------------------------------------------------
+# Team Topology
+# -----------------------------------------------------------------------------
+# Ref: https://learn.microsoft.com/en-us/devops/plan/scaling-agile
+
+team_topology:
+  principle: "Scale with teams, not projects"
+  preferred_shape: vertical-value-stream
+  size_guidance: "6-9 people per team"
+  current_model: "Solo operator — one person covers all area paths"
+  scaling_rule: >
+    When work exceeds capacity, add a team aligned to an area path
+    rather than expanding an existing team. Each team owns a slice
+    of the product from backlog to production.
+
+  management_coordination_lane:
+    description: >
+      Lightweight program coordination for portfolio views,
+      cross-area dependency resolution, and stakeholder reporting.
+      Does not own delivery. In solo-operator model, this is
+      the same person at sprint boundaries.
+    owns:
+      - "Portfolio backlog grooming (Epic-level prioritization)"
+      - "Cross-area dependency resolution"
+      - "Stakeholder reporting (Leadership Dashboard)"
+      - "Iteration cadence governance"
+      - "Risk and blocker escalation"
+
+# -----------------------------------------------------------------------------
+# Cadence & Communications
+# -----------------------------------------------------------------------------
+
+cadence:
+  sprint_length: 14_days
+  alignment: "All area paths share the same sprint boundaries"
+  ceremonies:
+    - name: "Sprint Planning"
+      frequency: "Every 14 days (sprint start)"
+      duration: "1 hour"
+    - name: "Sprint Demo / Showcase"
+      frequency: "Every 14 days (sprint end)"
+      duration: "30 minutes"
+    - name: "Retrospective"
+      frequency: "Every 14 days (sprint end)"
+      duration: "30 minutes"
+    - name: "Coordination Meeting"
+      frequency: "Weekly (mid-sprint)"
+      duration: "15 minutes"
+      purpose: "Cross-area risks, dependencies, blockers"
+
+# -----------------------------------------------------------------------------
+# Quality & Risk Communication Contract
+# -----------------------------------------------------------------------------
+
+quality_risk_contract:
+  risk_triggers:
+    - trigger: "Item blocked >3 days"
+      action: "Escalate with Blocked By link + comment"
+    - trigger: "Acceptance criteria missing"
+      action: "Flag in Operational Dashboard"
+    - trigger: "Cross-area dependency at risk"
+      action: "Raise in coordination meeting"
+    - trigger: "Sprint goal at risk (>30% incomplete at mid-sprint)"
+      action: "Scope negotiation"
+  definition_of_done:
+    - "Acceptance criteria verified with evidence"
+    - "Links to PRs, specs, or evidence docs present"
+    - "No open Blocked By links"
+    - "Dashboard widgets reflect current state"
+
+# -----------------------------------------------------------------------------
+# GitHub Execution Traceability Layer
+# -----------------------------------------------------------------------------
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/github/features-timeline
+
+github_execution_linkage:
+  description: >
+    Azure Boards is not only the place for objectives, workstreams, and tasks.
+    It is also the GitHub-linked execution traceability surface for branches,
+    pull requests, merge commits, builds, and work-item state transitions.
+  capabilities:
+    - "Create/link GitHub branches from work items"
+    - "Create draft PRs from work items (GitHub Copilot integration)"
+    - "Link PRs, merge commits, and builds back to work items"
+    - "Deterministic work-item state transitions from GitHub PR keywords"
+    - "YAML build status visible on linked work items"
+    - "PR state and review visibility from Boards"
+    - "Azure DevOps MCP capabilities for agent-assisted execution"
+  traceability_rules:
+    - "Every implementation PR must link back to its Azure Boards work item"
+    - "Merge commits remain visible from the work item"
+    - "Branch/PR/work-item associations are part of delivery evidence"
+    - "State transitions use deterministic keywords (AB#ID, Fixes AB#ID)"
+  mcp_execution:
+    local_server: "Azure DevOps local MCP Server bridges AI assistants to AzDo resources"
+    remote_server:
+      status: roadmap
+      note: "Hosted remote MCP Server in development — not yet canonical"
+  roadmap_signals:
+    status: "Direction signals only — not canonical until verified in tenant"
+    items:
+      - "Custom agents for the Coding Agent"
+      - "Hosted remote MCP Server"
+      - "Connected GitHub repositories limit increase (1,000 → 2,000)"
 
 # -----------------------------------------------------------------------------
 # Boundary Rules
