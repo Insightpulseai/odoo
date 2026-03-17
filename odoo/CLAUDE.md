@@ -35,7 +35,7 @@ If you cannot execute due to missing credentials/tooling/access, say exactly wha
 | **Node** | >= 18.0.0 (pnpm workspaces, Turborepo) |
 | **Python** | 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` — Edge Functions, Vault, Auth, Realtime, pgvector |
-| **Web/CMS** | Hybrid: Next.js on Vercel (public), Odoo website (internal) |
+| **Web/CMS** | Azure Container Apps (public + internal), Odoo website |
 | **EE Parity** | Target >=80% via `CE + OCA + ipai_*` (current: ~35-45%, audited 2026-03-08) |
 | **Repo** | `Insightpulseai/odoo` (renamed from `odoo-ce`) |
 
