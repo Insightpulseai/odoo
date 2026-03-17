@@ -25,11 +25,15 @@ A benchmark becomes an integration only when an explicit integration contract is
 
 **What we benchmark against:**
 
-- Hub/non-prod/prod/DR environment separation
-- Secure, high-performing, resilient workload topology
-- Azure landing-zone patterns for ERP workloads
-- Network isolation and identity posture
-- Operational discipline for enterprise ERP hosting
+- Environment separation and landing-zone discipline (dev / non-prod / prod / DR)
+- HA/DR topology and resilience patterns (Pacemaker clusters, zone-redundant storage, cross-region DR)
+- Storage architecture quality (tiered storage, workload-appropriate choices)
+- Network isolation and ingress posture (delegated subnets, NSGs, WAF/Front Door)
+- Identity integration with Microsoft Entra ID (managed identities, SSO, fence agent auth)
+- IaC automation discipline (Terraform + Ansible via SAP Deployment Automation Framework)
+- Platform observability and monitoring (Azure Monitor for SAP solutions — OS, DBMS, application stack)
+
+**Source:** [SAP on Azure workload documentation](https://learn.microsoft.com/en-us/azure/sap/workloads/get-started)
 
 **Our canonical implementation:** Odoo CE 19 on Azure Container Apps.
 
@@ -64,6 +68,8 @@ A benchmark becomes an integration only when an explicit integration contract is
 **Note:** Azure Marketplace AvaTax offer has no plan available for market PH. Do not design around Marketplace procurement as the only path. If AvaTax is later adopted as an integration, use the direct REST API / commercial path.
 
 ## Canonical runtime target
+
+SAP on Azure is the benchmark for enterprise ERP landscape shape and operating discipline; Odoo on Azure remains the implementation target.
 
 Odoo on Azure remains the actual implementation target for ERP, finance, project, and compliance workloads. Benchmarks inform architecture quality but do not replace the canonical stack.
 
