@@ -62,7 +62,7 @@
 version: "2.0"
 schema: ssot.dns.v2
 domain: insightpulseai.com
-last_reviewed: "2026-03-12"
+last_reviewed: "2026-03-17"
 
 # Canonical ingress endpoint — all CNAME records for platform apps resolve here.
 front_door_endpoint: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
@@ -457,25 +457,71 @@ subdomains:
       expires_at: "2026-06-01"
 
   # ---------------------------------------------------------------------------
-  # Supabase — review-required
+  # Azure VM Direct — temporary exception records (not behind Front Door)
+  # ---------------------------------------------------------------------------
+  - name: n8n-azure
+    type: A
+    target: "4.193.100.31"
+    service: n8n_workflow_automation
+    owner_system: "n8n on Azure VM (vm-ipai-supabase-dev, shared with Supabase)"
+    cloudflare_proxied: true
+    lifecycle: active
+    status: active
+    notes: >
+      Direct A record to Azure VM running n8n alongside self-hosted Supabase.
+      Temporary exception — target is to move n8n to ACA behind Front Door
+      (see n8n subdomain entry). This record coexists with the Front Door-backed
+      n8n entry as a migration bridge.
+    provider_claim:
+      provider: azure
+      status: claimed
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-vm"
+
+  - name: erp-azure
+    type: CNAME
+    target: ipai-fd-dev-ep-fnh4e8d6gtdhc8ax.z03.azurefd.net
+    service: odoo_ce_19
+    owner_system: "Odoo CE 19.0 (Azure-specific alias)"
+    cloudflare_proxied: true
+    tls_mode: "Full (strict)"
+    lifecycle: active
+    status: active
+    notes: >
+      Azure-specific ERP alias pointing to Front Door. Created during
+      DigitalOcean-to-Azure migration so erp.insightpulseai.com could be
+      cutover independently. Both erp and erp-azure resolve to the same
+      Front Door origin group. May be consolidated to erp-only later.
+    azure_target:
+      front_door_origin_group: odoo-web
+      container_app: odoo-web
+    provider_claim:
+      provider: azure
+      status: claimed
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-front-door"
+
+  # ---------------------------------------------------------------------------
+  # Supabase — self-hosted on Azure VM
   # ---------------------------------------------------------------------------
   - name: supabase
-    type: CNAME
-    target: spdtwktxdalcfigzeqrz.supabase.co
+    type: A
+    target: "4.193.100.31"
     service: supabase_platform
-    owner_system: "Supabase project spdtwktxdalcfigzeqrz"
-    cloudflare_proxied: false
+    owner_system: "Self-hosted Supabase on Azure VM (vm-ipai-supabase-dev, rg-ipai-agents-dev)"
+    cloudflare_proxied: true
     lifecycle: active
-    status: review-required
+    status: active
     notes: >
-      Supabase custom domain. Review whether this should remain a direct CNAME
-      to Supabase or route through Front Door. Supabase Auth is now downstream
-      of Keycloak (app-level only). DNS record may need adjustment.
+      Self-hosted Supabase instance on Azure VM. Migrated from Supabase-hosted
+      (spdtwktxdalcfigzeqrz.supabase.co) to self-hosted on Azure VM 4.193.100.31.
+      Cloudflare proxied for TLS termination and WAF.
+      This is an intentional exception to the ACA-only model (VM, not container).
     provider_claim:
-      provider: other
+      provider: azure
       status: claimed
-      claimed_at: "2026-03-12"
-      claim_ref: "ssot:supabase"
+      claimed_at: "2026-03-17"
+      claim_ref: "ssot:azure-vm"
 
   # ---------------------------------------------------------------------------
   # Inventory-Only Subdomains (referenced in code/docs, no DNS provisioned)
