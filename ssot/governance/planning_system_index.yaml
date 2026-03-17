@@ -231,3 +231,8 @@ related_artifacts:
     purpose: "Formal project charter — scope, stakeholders, constraints, success criteria"
     layer: governance
     status: on_main
+
+  - file: ssot/governance/azdo-execution-hierarchy.yaml
+    purpose: "Azure Boards seed data: Epic (objective) → Feature (workstream) → Task hierarchy"
+    layer: operational_okrs
+    status: on_main
