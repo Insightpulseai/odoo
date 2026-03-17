@@ -1,0 +1,170 @@
+# =============================================================================
+# Operating Model — InsightPulse AI
+# =============================================================================
+#
+# Defines tool authority boundaries between Azure DevOps and GitHub.
+# Answers: "Which tool owns what?" for planning, code, CI/CD, and deployment.
+#
+# Cross-references:
+#   - azdo-project-repo-alignment.yaml (AzDo project → repo mapping)
+#   - repo-azure-alignment.yaml (repo → Azure resource mapping)
+#   - ADR-GSR-001 (goals SoR decision)
+#   - .claude/rules/github-governance.md (GitHub Apps, PR discipline)
+# =============================================================================
+
+schema_version: "1.0"
+schema: ssot.governance.operating-model.v1
+last_updated: "2026-03-17"
+
+organization: insightpulseai
+
+# -----------------------------------------------------------------------------
+# Tool Authority Matrix
+# -----------------------------------------------------------------------------
+# Each tool has exactly one primary role. No overlap in authority.
+
+tool_authority:
+
+  azure_devops:
+    role: selective-execution-surface
+    owns:
+      - id: azdo-goals
+        domain: "Goals & Work Items"
+        description: >
+          Azure Boards is the target goals system of record (per ADR-GSR-001).
+          Currently transitional — YAML in ssot/governance/ is canonical until
+          5 graduation gates pass. Once graduated, AzDo Boards becomes the
+          authoritative write surface for objectives, OKRs, and work items.
+        status: transitional
+        graduation_ref: "ADR-GSR-001 §Phase 2"
+
+      - id: azdo-pipelines
+        domain: "Azure Deployments"
+        description: >
+          Azure Pipelines owns deployment to Azure resources (Container Apps,
+          Functions, Databricks). Triggered by repo events (push, tag, PR merge).
+          Service connections use workload identity federation (no long-lived secrets).
+        status: active
+
+      - id: azdo-agent-pools
+        domain: "Build Agents"
+        description: >
+          Self-hosted agent pool (ipai-build-pool) in rg-ipai-devops.
+          Shared across ipai-platform and lakehouse projects.
+        status: active
+
+    does_not_own:
+      - "Code reviews (GitHub PRs only)"
+      - "CI gates (GitHub Actions only)"
+      - "Issue triage (GitHub Issues only)"
+      - "Secret scanning (GHAS)"
+
+  github:
+    role: primary-development-surface
+    owns:
+      - id: gh-code
+        domain: "Source Code & PRs"
+        description: >
+          GitHub is the canonical source control and code review surface.
+          All repos live in the Insightpulseai GitHub org. PRs are the
+          only mechanism for code changes to reach main.
+        status: active
+
+      - id: gh-ci
+        domain: "CI Gates & Validation"
+        description: >
+          GitHub Actions runs all CI validators (SSOT checks, linting,
+          tests, spec validation). CI gates are required status checks
+          on protected branches.
+        status: active
+
+      - id: gh-security
+        domain: "Security Scanning"
+        description: >
+          GHAS (secret scanning, code scanning, dependency review) plus
+          self-hosted defense-in-depth (GitLeaks, Semgrep, Trivy).
+        status: active
+
+      - id: gh-issues
+        domain: "Issue Tracking & Triage"
+        description: >
+          GitHub Issues for bug reports, feature requests, and triage.
+          Org-wide labels: priority:{critical,high,medium,low},
+          type:{bug,feature,chore,docs}, agent:{claude,copilot,gemini}.
+        status: active
+
+    does_not_own:
+      - "Goal/OKR tracking (AzDo Boards, per ADR-GSR-001)"
+      - "Azure resource deployment (AzDo Pipelines)"
+      - "Build agent management (AzDo agent pools)"
+
+# -----------------------------------------------------------------------------
+# Boundary Rules
+# -----------------------------------------------------------------------------
+boundary_rules:
+
+  - id: BR-001
+    rule: "No goal edits in GitHub Issues"
+    description: >
+      Strategic objectives, OKRs, and KPIs are managed in ssot/governance/
+      YAML files (current) or AzDo Boards (target). GitHub Issues are for
+      tactical bugs and feature requests, not goal tracking.
+
+  - id: BR-002
+    rule: "No code reviews in Azure DevOps"
+    description: >
+      All code changes flow through GitHub PRs. AzDo Repos are not used.
+      AzDo Pipelines consume code from GitHub repos via service connections.
+
+  - id: BR-003
+    rule: "Pipelines trigger from repo events"
+    description: >
+      AzDo Pipelines trigger on GitHub push/tag/PR events via service
+      connections. No manual pipeline runs in steady state. GitHub Actions
+      handles CI; AzDo Pipelines handles Azure CD.
+
+  - id: BR-004
+    rule: "Secrets flow through Key Vault only"
+    description: >
+      AzDo variable groups reference Azure Key Vault (kv-ipai-dev).
+      GitHub Actions uses GitHub secrets. Neither tool stores plaintext
+      secrets in pipeline definitions or workflow files.
+
+# -----------------------------------------------------------------------------
+# Sync Contracts
+# -----------------------------------------------------------------------------
+sync_contracts:
+
+  - id: SYNC-001
+    name: "AzDo work items ↔ GitHub PRs"
+    mechanism: "AB# convention in PR titles and commit messages"
+    direction: bidirectional
+    description: >
+      AzDo work item IDs (AB#1234) in GitHub PR titles create automatic
+      links. PR merge updates work item state. This is the primary
+      traceability mechanism between goals and code.
+
+  - id: SYNC-002
+    name: "GitHub Actions → AzDo pipeline trigger"
+    mechanism: "Webhook or service connection event"
+    direction: github_to_azdo
+    description: >
+      Successful GitHub Actions CI gates can trigger AzDo Pipelines for
+      Azure deployment. The CI-passes-then-CD-deploys flow ensures code
+      quality before infrastructure changes.
+
+  - id: SYNC-003
+    name: "YAML goals → AzDo Boards (future)"
+    mechanism: "Scripted sync (deferred)"
+    direction: repo_to_azdo
+    status: planned
+    description: >
+      Per ADR-GSR-001, once graduation gates pass, ssot/governance/ YAML
+      goals will seed AzDo Boards. Until then, YAML is canonical.
+
+# -----------------------------------------------------------------------------
+# Project Structure Reference
+# -----------------------------------------------------------------------------
+project_structure_ref: ssot/governance/azdo-project-repo-alignment.yaml
+resource_alignment_ref: ssot/governance/repo-azure-alignment.yaml
+goals_authority_ref: "ADR-GSR-001"

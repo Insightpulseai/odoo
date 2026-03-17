@@ -216,3 +216,18 @@ related_artifacts:
     purpose: "ADR-GSR-001: Goals System of Record — YAML now, AzDo later"
     layer: governance
     status: on_main
+
+  - file: ssot/governance/platform-constitution.yaml
+    purpose: "Platform-level non-negotiable rules and amendment process"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/operating-model.yaml
+    purpose: "AzDo + GitHub tool authority boundaries and sync contracts"
+    layer: governance
+    status: on_main
+
+  - file: ssot/governance/project-charter.yaml
+    purpose: "Formal project charter — scope, stakeholders, constraints, success criteria"
+    layer: governance
+    status: on_main
