@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 name: Supabase Self-Host Migration
 
 # ── Trigger ────────────────────────────────────────────────────────────────
@@ -53,7 +55,7 @@ jobs:
   # ── Job: inventory ────────────────────────────────────────────────────────
   inventory:
     name: "Phase 1 — Inventory"
-    if: ${{ inputs.phase == 'inventory' || inputs.phase == 'schema' || inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    if: false
     runs-on: ubuntu-latest
     outputs:
       inventory_passed: ${{ steps.inventory.outputs.passed }}
@@ -118,7 +120,7 @@ jobs:
   # ── Job: schema ───────────────────────────────────────────────────────────
   schema:
     name: "Phase 2 — Schema Export & Parity"
-    if: ${{ inputs.phase == 'schema' || inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    if: false
     needs: [inventory]
     runs-on: ubuntu-latest
     outputs:
@@ -193,7 +195,7 @@ jobs:
   # ── Job: data ─────────────────────────────────────────────────────────────
   data:
     name: "Phase 3 — Data Migration"
-    if: ${{ inputs.phase == 'data' || inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    if: false
     needs: [schema]
     runs-on: ubuntu-latest
     outputs:
@@ -264,7 +266,7 @@ jobs:
   # ── Job: functions ────────────────────────────────────────────────────────
   functions:
     name: "Phase 4 — Edge Functions Deploy"
-    if: ${{ inputs.phase == 'functions' || inputs.phase == 'cutover' }}
+    if: false
     needs: [data]
     runs-on: ubuntu-latest
     outputs:
@@ -339,7 +341,7 @@ jobs:
   # ── Job: cutover ──────────────────────────────────────────────────────────
   cutover:
     name: "Phase 5 — Consumer Rewire + Cutover Verify"
-    if: ${{ inputs.phase == 'cutover' }}
+    if: false
     needs: [functions]
     runs-on: ubuntu-latest
     outputs:
@@ -437,8 +439,7 @@ jobs:
   # ── Job: verify (standalone) ──────────────────────────────────────────────
   verify:
     name: "Verify Only — Health Checks"
-    # Runs for verify-only phase OR as a summary after all phases complete
-    if: ${{ inputs.phase == 'verify-only' }}
+    if: false
     runs-on: ubuntu-latest
     outputs:
       verify_passed: ${{ steps.verify.outputs.passed }}

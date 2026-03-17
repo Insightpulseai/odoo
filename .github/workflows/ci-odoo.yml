@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 # .github/workflows/ci-odoo.yml
 # Canonical fast gate for every PR/push.
 # Stages: repo sanity → Python/Odoo validation → schema/spec → benchmark dry-run → summary
@@ -20,6 +22,7 @@ jobs:
   # Stage 1: Repo sanity
   # ──────────────────────────────────────────────
   repo-sanity:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -51,6 +54,7 @@ jobs:
   # Stage 2: Python / Odoo validation
   # ──────────────────────────────────────────────
   python-lint:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: repo-sanity
@@ -78,6 +82,7 @@ jobs:
         run: isort --check --diff addons/ipai/ || true
 
   odoo-module-validate:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: repo-sanity
@@ -122,6 +127,7 @@ jobs:
   # Stage 3: Schema / spec validation
   # ──────────────────────────────────────────────
   schema-spec:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: repo-sanity
@@ -168,10 +174,10 @@ jobs:
   # Stage 4: Summary
   # ──────────────────────────────────────────────
   ci-summary:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 2
     needs: [python-lint, odoo-module-validate, schema-spec]
-    if: always()
     steps:
       - name: Check upstream results
         run: |

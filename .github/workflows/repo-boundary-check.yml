@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 # .github/workflows/repo-boundary-check.yml
 # Stops repo sprawl: blocked dirs, unknown top-level dirs, provisional dirs.
 name: Repo Boundary Check
@@ -16,6 +18,7 @@ concurrency:
 
 jobs:
   boundary-check:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

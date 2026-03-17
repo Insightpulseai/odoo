@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 # .github/workflows/deploy-azure.yml
 # Canonical Azure-native deployment workflow.
 # Stages: build → push ACR → deploy ACA → health check → summary
@@ -38,6 +40,7 @@ jobs:
   # Stage 1: Build
   # ──────────────────────────────────────────────
   build:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -83,6 +86,7 @@ jobs:
   # Stage 2: Deploy to ACA
   # ──────────────────────────────────────────────
   deploy:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build
@@ -129,6 +133,7 @@ jobs:
   # Stage 3: Health check
   # ──────────────────────────────────────────────
   health-check:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: deploy
@@ -157,10 +162,10 @@ jobs:
   # Stage 4: Summary
   # ──────────────────────────────────────────────
   deploy-summary:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 2
     needs: [build, deploy, health-check]
-    if: always()
     steps:
       - name: Deploy report
         run: |

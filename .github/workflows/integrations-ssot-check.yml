@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 name: Integrations SSOT Check
 
 on:
@@ -19,6 +21,7 @@ permissions:
 jobs:
   validate:
     name: Validate integrations SSOT
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

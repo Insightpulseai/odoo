@@ -1,3 +1,5 @@
+# DISABLED: GHA runners non-functional (billing). CI migrating to Azure DevOps Pipelines.
+# To re-enable: remove `if: false` from jobs.
 name: Odoo Module Install
 
 on:
@@ -34,6 +36,7 @@ permissions:
 
 jobs:
   install-modules:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: ${{ github.event.inputs.environment }}
