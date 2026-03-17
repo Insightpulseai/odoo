@@ -1,0 +1,31 @@
+id: noisy-neighbor-mitigation
+version: 1
+status: active
+classification: capability_uplift
+persona: multitenancy-architect
+updated_at: "2026-03-17"
+
+purpose: >
+  Mitigate noisy neighbor effects across tenants sharing infrastructure
+  by implementing rate limiting, resource quotas, and anomaly detection.
+
+inputs:
+  - shared_resources: "List of shared resources (compute, database, queue, storage)"
+  - tenant_tiers: "Tier definitions with expected resource usage profiles"
+  - slo_targets: "Performance SLOs per tier"
+  - baseline_metrics: "Normal usage patterns per tenant"
+
+outputs:
+  - rate_limiting_design: "Per-tenant rate limits at API gateway"
+  - resource_quota_design: "Per-tenant resource quotas (CPU, memory, connections)"
+  - queue_isolation: "Queue partitioning or priority strategy"
+  - connection_pooling: "Database connection pool sizing per tenant"
+  - anomaly_detection: "Rules and thresholds for automatic throttling"
+
+guardrails:
+  - "Rate limits must be per-tenant, not per-user"
+  - "Throttling must be graceful (429 with Retry-After, not 503)"
+  - "Resource quotas must be enforceable, not advisory"
+  - "Anomaly detection must not produce false positives on normal tier upgrades"
+
+benchmark_source: "Azure Multitenancy Checklist - Reliability Pillar"
