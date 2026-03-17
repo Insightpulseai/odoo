@@ -8,11 +8,14 @@
 # Each planning layer has a distinct ownership scope and cadence.
 # Files listed here are the SSOT for their respective layers.
 #
-# CI validator: scripts/ci/validate_planning_index.py (planned)
+# CI validator: scripts/ci/validate_planning_index.py
+# CI gate: .github/workflows/planning-index-ssot-check.yml
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-14"
+last_updated: "2026-03-17"
+validator: scripts/ci/validate_planning_index.py
+ci_gate: .github/workflows/planning-index-ssot-check.yml
 
 # -----------------------------------------------------------------------------
 # Planning Layer Model
@@ -63,7 +66,9 @@ layers:
   - id: operational_okrs
     name: "Enterprise OKR Stack"
     canonical_file: ssot/governance/enterprise_okrs.yaml
+    schema: ssot/governance/enterprise_okrs.schema.json
     validator: scripts/ci/validate_enterprise_okrs.py
+    ci_gate: .github/workflows/enterprise-okrs-ssot-check.yml
     owner: engineering-lead
     cadence: quarterly
     join_keys:
@@ -206,3 +211,8 @@ related_artifacts:
   - file: platform/data/contracts/control_room_kpis.yaml
     purpose: "Operational KPI definitions (kpi_001..kpi_017)"
     layer: operational_okrs
+
+  - file: odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md
+    purpose: "ADR-GSR-001: Goals System of Record — YAML now, AzDo later"
+    layer: governance
+    status: on_main
