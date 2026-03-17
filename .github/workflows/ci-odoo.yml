@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Verify CLAUDE.md exists
         run: test -f CLAUDE.md
@@ -55,7 +55,7 @@ jobs:
     timeout-minutes: 10
     needs: repo-sanity
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:
@@ -82,7 +82,7 @@ jobs:
     timeout-minutes: 10
     needs: repo-sanity
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:
@@ -126,7 +126,7 @@ jobs:
     timeout-minutes: 5
     needs: repo-sanity
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:

@@ -45,7 +45,7 @@ jobs:
       ACTION: ${{ github.event.inputs.action }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Resolve database name
         id: db
