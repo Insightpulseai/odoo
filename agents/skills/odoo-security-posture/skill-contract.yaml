@@ -1,0 +1,75 @@
+version: 1
+type: delivery_skill
+family: odoo_sh_delivery
+skill:
+  name: odoo-security-posture
+  status: draft
+  owner: odoo-platform-admin
+  purpose: >
+    Validate security baseline for the Odoo CE 19 platform on Azure.
+    Verify managed identity posture, Key Vault access policies, WAF rules,
+    network security, and access control configuration.
+
+  triggers:
+    - pre-deployment security readiness check
+    - periodic security posture audit
+    - new Container App or service provisioned
+    - access control change request
+    - vulnerability scan results review
+
+  inputs:
+    - Container App managed identity configuration
+    - Key Vault access policies and RBAC roles
+    - Azure Front Door WAF rules
+    - network security group rules
+    - GHAS security alerts (secret scanning, code scanning, Dependabot)
+    - Odoo user access roles and groups
+
+  steps:
+    - verify managed identity is enabled on all Container Apps
+    - confirm Key Vault access uses managed identity (no connection strings)
+    - validate Key Vault RBAC roles are least-privilege
+    - check Azure Front Door WAF rules are active and not bypassed
+    - verify container registry pull uses managed identity
+    - review GHAS security alerts (secret scanning, code scanning, Dependabot)
+    - check Odoo user roles follow least-privilege principle
+    - verify TLS certificates are valid and not expiring within 30 days
+    - validate no secrets in environment variables (all via Key Vault secretref)
+    - produce security posture report
+
+  outputs:
+    - security_status
+    - managed_identity_status
+    - key_vault_compliance
+    - waf_status
+    - ghas_alerts
+    - tls_status
+    - findings
+    - blockers
+    - evidence
+
+  guardrails:
+    - never disable managed identity on any Container App
+    - never suggest connection string auth as alternative to managed identity
+    - never expose secret values in security assessment output
+    - never disable WAF rules without documented justification
+    - never grant overly permissive Key Vault access
+    - read-only assessment — never modify security configuration without explicit request
+    - bind to Azure security services, not Odoo.sh security
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-delivery/odoo-security-posture/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+      policy_adherence: 0.95
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-sh-persona-model.md
+  - agents/personas/odoo-platform-admin.md
+  - .claude/rules/security-baseline.md
+  - .claude/rules/infrastructure.md
