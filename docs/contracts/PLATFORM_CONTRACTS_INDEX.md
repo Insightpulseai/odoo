@@ -47,6 +47,7 @@
 | C-33 | [Pipeline to Odoo.sh](pipeline-to-odoo-sh-contract.md)       | Azure Pipelines / GitHub Actions      | Azure Container Apps / Odoo.sh                       | ✅ Active | Deploy stage smoke checks                  |
 | C-34 | [Eval Gate](eval-gate-contract.md)                           | `foundry/evals/<slug>/thresholds.yaml`| Production promotion gate                            | ✅ Active | Eval_Gate pipeline stage                   |
 | C-35 | [Foundry/VS Code Auth](foundry-vscode-auth-contract.md)      | Entra ID app registration             | VS Code, Foundry, MCP servers, Azure Pipelines       | ⚠️ Partial | Auth completion checklist                  |
+| C-36 | [Azure Resource Graph](azure-resource-graph-contract.md)     | Azure Resource Graph (KQL)            | SSOT reconciliation, drift detection, governance      | ✅ Active | `scripts/azure/resource_graph/run_query.sh` |
 
 ---
 
