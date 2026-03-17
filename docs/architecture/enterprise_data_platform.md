@@ -228,4 +228,73 @@ R = Responsible, A = Accountable, C = Consulted, I = Informed
 
 ---
 
+## 8. Databricks Marketing Accelerator References
+
+These are **external reference patterns** — pre-built notebook accelerators from Databricks.
+They are starting points for the marketing/ad-tech lane, **not** canonical product architecture.
+Canonical authority remains: Odoo (SoR), platform (SSOT), Databricks (data-intelligence),
+Foundry (agents), Azure Boards (execution coordination).
+
+| Accelerator | Use Case | Maps To |
+|-------------|----------|---------|
+| [Media Mix Modeling (MMM)](https://www.databricks.com/solutions/accelerators/media-mix-modeling) | Channel-level spend optimization, scenario simulation, cross-channel unification | FEAT-004-03 Campaign measurement cloud |
+| [Multi-Touch Attribution (MTA)](https://www.databricks.com/solutions/accelerators/multi-touch-attribution) | Journey/channel attribution, real-time dashboarding | FEAT-004-03 Campaign measurement cloud |
+| [Customer Lifetime Value (CLV)](https://www.databricks.com/solutions/accelerators/customer-lifetime-value) | Retention, acquisition prioritization, high-value customer modeling | FEAT-004-02 Customer 360 intelligence fabric |
+| [Sales Forecasting and Attribution](https://www.databricks.com/solutions/accelerators/sales-forecasting) | Linking ad metrics and sales data, batch/streaming ad+sales fusion | FEAT-004-03 Campaign measurement cloud |
+| [Meta Conversions API](https://www.databricks.com/blog/activate-first-party-data-meta-conversions-api-databricks) | First-party activation from lakehouse to Meta ad platform | FEAT-007-03 TBWA/SMP packaging |
+
+**Recommended sequencing** (measure → attribute → forecast → segment → activate):
+
+1. MMM — channel-level measurement baseline
+2. MTA — granular journey attribution
+3. Sales Forecasting + Attribution — connecting ad spend to revenue
+4. CLV — customer segmentation and retention modeling
+5. Meta CAPI — governed activation back to ad platforms
+
+**Integration with medallion architecture**:
+- Bronze: ad platform data (Meta, Google Ads, etc.) via n8n or connector
+- Silver: conformed marketing fact tables (impressions, clicks, conversions, spend)
+- Gold: attribution models, CLV scores, MMM outputs → Tableau Cloud / Superset
+
+See [marketing_analytics_reference_model.md](marketing_analytics_reference_model.md) for
+detailed accelerator evaluation and adoption criteria.
+
+---
+
+## 9. Databricks Production-Readiness Benchmark
+
+Databricks "production ready" is a benchmark for production discipline, not a blanket trust label. A Databricks capability is production-grade in our doctrine only when:
+
+- release maturity is acceptable (GA or Public Preview with stable interface/SLA/support)
+- deployment path is codified (IaC, CI/CD, bundle)
+- observability/evaluation exists
+- rollback/recovery expectations are defined
+
+### Production-readiness lanes
+
+| Lane | Benchmark surface | Assessor skill |
+|------|-------------------|----------------|
+| Data pipelines | Spark Declarative Pipelines, Jobs/Workflows | `databricks-pipeline-production-readiness` |
+| Internal data/AI apps | Databricks Apps (serverless) | `databricks-app-production-readiness` |
+| Agents | Agent Framework, Genie | `databricks-agent-production-readiness` |
+| Model serving | Model Serving, Unity Catalog models | `databricks-model-serving-production-readiness` |
+
+### Release maturity classification
+
+| Classification | Production use | Doctrine treatment |
+|---------------|---------------|-------------------|
+| **GA** | Fully supported, production-ready | Canonical baseline |
+| **Public Preview** | Allowed with stable interface/SLA/support | Acceptable with conditions |
+| **Beta** | Limited support, interface may change | Not acceptable as canonical production baseline |
+| **Private Preview** | Invitation-only, no SLA | Not acceptable |
+| **Experimental** | No guarantees | Not acceptable |
+
+### Cross-cutting judge
+
+`databricks-production-readiness-judge` validates whether a proposed Databricks surface is mature enough for the canonical stack. It classifies: production-ready, preview-acceptable, or not-production-grade.
+
+See `agents/skills/databricks-*/` and `agent-platform/ssot/learning/databricks_production_ready_skill_map.yaml`.
+
+---
+
 *Last updated: 2026-03-17*
