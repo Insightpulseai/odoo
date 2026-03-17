@@ -88,7 +88,7 @@ jobs:
           echo "Preview URL: https://${FQDN}"
 
       - name: Comment preview URL on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const body = `### 🚀 Preview Environment
