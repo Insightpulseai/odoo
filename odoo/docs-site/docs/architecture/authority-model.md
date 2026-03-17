@@ -42,7 +42,7 @@ These invariants must never be violated:
 
     4. **Draft-first for external writes.** Any system that creates records in Odoo (SAP Concur expenses, n8n-triggered tasks) must create them in `draft` state. Only Odoo users or approved automation rules may post/confirm.
 
-    5. **Every cross-system flow needs an SSOT YAML entry.** Before implementing a new data flow between systems, add it to `ssot/azure/service-matrix.yaml`.
+    5. **Every cross-system flow needs an SSOT YAML entry.** Before implementing a new data flow between systems, add it to `infra/ssot/azure/service-matrix.yaml`.
 
 ## Mirroring policy
 

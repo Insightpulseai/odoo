@@ -1,0 +1,583 @@
+# =============================================================================
+# Azure Front Door Routing Rules — SSOT
+# =============================================================================
+# Consumed by front-door.bicep parameters to provision Azure Front Door
+# Premium profile with origin groups, routes, caching, WAF, and WebSocket.
+#
+# Source hostnames: infra/dns/subdomain-registry.yaml
+# Cutover plan: ssot/azure/hostname-cutover-checklist.yaml
+# Governance: ssot/azure/target-state.yaml
+# =============================================================================
+
+version: "1.0"
+description: "Azure Front Door routing rules — consumed by front-door.bicep parameters"
+last_updated: "2026-03-10"
+
+front_door_profile:
+  name: ipai-fd-premium
+  sku: Premium_AzureFrontDoor
+  resource_group: rg-ipai-shared-prod
+  endpoint_name: ipai-prod
+  # Front Door endpoint FQDN: ipai-prod.z01.azurefd.net
+
+# =============================================================================
+# Origin Groups — one per backend Container App
+# =============================================================================
+origin_groups:
+  - name: odoo-web
+    origins:
+      - container_app: odoo-web
+        http_port: 80
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /web/health
+      protocol: Https
+      interval_seconds: 30
+      timeout_seconds: 10
+
+  - name: n8n
+    origins:
+      - container_app: n8n
+        http_port: 5678
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /healthz
+      protocol: Https
+      interval_seconds: 30
+      timeout_seconds: 10
+
+  - name: mcp-gateway
+    origins:
+      - container_app: mcp-gateway
+        http_port: 8766
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /healthz
+      protocol: Https
+      interval_seconds: 30
+      timeout_seconds: 10
+
+  - name: plane
+    origins:
+      - container_app: plane
+        http_port: 3002
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: shelf
+    origins:
+      - container_app: shelf
+        http_port: 3003
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /healthcheck
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: crm
+    origins:
+      - container_app: crm
+        http_port: 3004
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: superset
+    origins:
+      - container_app: superset
+        http_port: 8088
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /health
+      protocol: Https
+      interval_seconds: 30
+      timeout_seconds: 10
+
+  - name: ocr
+    origins:
+      - container_app: ocr
+        http_port: 8001
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /health
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: auth
+    origins:
+      - container_app: auth
+        http_port: 8080
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+  - name: redirect
+    description: "Root domain redirect group — forwards to odoo-web for 301 redirect"
+    origins:
+      - container_app: odoo-web
+        http_port: 80
+        https_port: 443
+        priority: 1
+        weight: 1000
+    health_probe:
+      path: /web/health
+      protocol: Https
+      interval_seconds: 60
+      timeout_seconds: 10
+
+# =============================================================================
+# Route Groups — hostname → origin group mapping with per-path routing
+# =============================================================================
+route_groups:
+  # ---------------------------------------------------------------------------
+  # ERP (Odoo) — most complex routing: static cache, websocket, RPC bypass
+  # ---------------------------------------------------------------------------
+  - name: erp
+    hostnames:
+      - erp.insightpulseai.com
+    origin_group: odoo-web
+    routes:
+      - name: odoo-static
+        patterns:
+          - "/web/static/*"
+        cache:
+          enabled: true
+          duration: P30D
+          query_string_behavior: IncludeAll
+        forwarding_protocol: HttpsOnly
+
+      - name: odoo-content
+        patterns:
+          - "/web/image/*"
+          - "/web/content/*"
+        cache:
+          enabled: true
+          duration: P7D
+          query_string_behavior: IncludeAll
+          vary_headers:
+            - Cookie
+        forwarding_protocol: HttpsOnly
+
+      - name: odoo-websocket
+        patterns:
+          - "/websocket"
+          - "/longpolling/*"
+        cache:
+          enabled: false
+        websocket: true
+        forwarding_protocol: HttpsOnly
+
+      - name: odoo-rpc
+        patterns:
+          - "/xmlrpc/*"
+          - "/jsonrpc"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+      - name: odoo-nocache
+        patterns:
+          - "/web/login"
+          - "/web/session/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+      - name: odoo-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # n8n — webhook + websocket support
+  # ---------------------------------------------------------------------------
+  - name: automation-n8n
+    hostnames:
+      - n8n.insightpulseai.com
+    origin_group: n8n
+    routes:
+      - name: n8n-websocket
+        patterns:
+          - "/ws/*"
+          - "/webhook-test/*"
+        cache:
+          enabled: false
+        websocket: true
+        forwarding_protocol: HttpsOnly
+
+      - name: n8n-webhook
+        patterns:
+          - "/webhook/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+      - name: n8n-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # MCP Gateway — agent coordination, no caching
+  # ---------------------------------------------------------------------------
+  - name: automation-mcp
+    hostnames:
+      - mcp.insightpulseai.com
+    origin_group: mcp-gateway
+    routes:
+      - name: mcp-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # Plane — project management
+  # ---------------------------------------------------------------------------
+  - name: apps-plane
+    hostnames:
+      - plane.insightpulseai.com
+    origin_group: plane
+    routes:
+      - name: plane-static
+        patterns:
+          - "/_next/static/*"
+          - "/static/*"
+        cache:
+          enabled: true
+          duration: P7D
+          query_string_behavior: IgnoreAll
+        forwarding_protocol: HttpsOnly
+
+      - name: plane-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # Shelf — asset management
+  # ---------------------------------------------------------------------------
+  - name: apps-shelf
+    hostnames:
+      - shelf.insightpulseai.com
+    origin_group: shelf
+    routes:
+      - name: shelf-static
+        patterns:
+          - "/build/*"
+          - "/static/*"
+        cache:
+          enabled: true
+          duration: P7D
+          query_string_behavior: IgnoreAll
+        forwarding_protocol: HttpsOnly
+
+      - name: shelf-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # CRM — Atomic CRM (React SPA, Supabase backend)
+  # ---------------------------------------------------------------------------
+  - name: apps-crm
+    hostnames:
+      - crm.insightpulseai.com
+    origin_group: crm
+    routes:
+      - name: crm-assets
+        patterns:
+          - "/assets/*"
+        cache:
+          enabled: true
+          duration: P30D
+          query_string_behavior: IgnoreAll
+        forwarding_protocol: HttpsOnly
+
+      - name: crm-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # Superset — BI dashboards
+  # ---------------------------------------------------------------------------
+  - name: apps-superset
+    hostnames:
+      - superset.insightpulseai.com
+    origin_group: superset
+    routes:
+      - name: superset-static
+        patterns:
+          - "/static/*"
+        cache:
+          enabled: true
+          duration: P7D
+          query_string_behavior: IgnoreAll
+        forwarding_protocol: HttpsOnly
+
+      - name: superset-api
+        patterns:
+          - "/api/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+      - name: superset-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # OCR — PaddleOCR microservice
+  # ---------------------------------------------------------------------------
+  - name: services-ocr
+    hostnames:
+      - ocr.insightpulseai.com
+    origin_group: ocr
+    routes:
+      - name: ocr-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # Auth — authentication service
+  # ---------------------------------------------------------------------------
+  - name: services-auth
+    hostnames:
+      - auth.insightpulseai.com
+    origin_group: auth
+    routes:
+      - name: auth-well-known
+        patterns:
+          - "/.well-known/*"
+        cache:
+          enabled: true
+          duration: PT1H
+          query_string_behavior: IgnoreAll
+        forwarding_protocol: HttpsOnly
+
+      - name: auth-default
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        forwarding_protocol: HttpsOnly
+
+  # ---------------------------------------------------------------------------
+  # Root domain redirect — apex + www → erp
+  # ---------------------------------------------------------------------------
+  - name: root-redirect
+    hostnames:
+      - insightpulseai.com
+      - www.insightpulseai.com
+    origin_group: redirect
+    routes:
+      - name: root-to-erp
+        patterns:
+          - "/*"
+        cache:
+          enabled: false
+        redirect:
+          type: Found
+          protocol: Https
+          destination_hostname: erp.insightpulseai.com
+          preserve_path: true
+          preserve_query_string: true
+        forwarding_protocol: HttpsOnly
+
+# =============================================================================
+# WAF Policy — Azure Front Door Premium WAF
+# =============================================================================
+waf_policy:
+  name: ipai-fd-waf
+  sku: Premium_AzureFrontDoor
+  mode: Prevention
+  managed_rule_sets:
+    - type: Microsoft_DefaultRuleSet
+      version: "2.1"
+    - type: Microsoft_BotManagerRuleSet
+      version: "1.0"
+
+waf_overrides:
+  - route_group: erp
+    rules:
+      - name: xmlrpc-rate-limit
+        paths:
+          - "/xmlrpc/*"
+          - "/jsonrpc"
+        action: rate_limit
+        rate: 60/minute/ip
+        description: "Rate limit Odoo XML-RPC and JSON-RPC endpoints"
+
+      - name: health-bypass
+        paths:
+          - "/web/health"
+        action: allow
+        description: "Allow health check probes without WAF inspection"
+
+      - name: odoo-login-rate-limit
+        paths:
+          - "/web/login"
+        action: rate_limit
+        rate: 20/minute/ip
+        description: "Rate limit login attempts to prevent brute force"
+
+  - route_group: automation-n8n
+    rules:
+      - name: webhook-allow
+        paths:
+          - "/webhook/*"
+        action: allow
+        description: "Allow inbound webhook traffic without strict WAF"
+
+      - name: n8n-ui-rate-limit
+        paths:
+          - "/rest/*"
+        action: rate_limit
+        rate: 120/minute/ip
+        description: "Rate limit n8n REST API"
+
+  - route_group: services-ocr
+    rules:
+      - name: ocr-upload-size
+        paths:
+          - "/predict"
+          - "/ocr"
+        action: allow
+        description: "Allow large file uploads for OCR processing"
+        custom_body_size_limit_mb: 50
+
+# =============================================================================
+# Cache Rules — global cache policy
+# =============================================================================
+cache_rules:
+  - name: static-immutable
+    match:
+      - "/web/static/*"
+    edge_ttl: P30D
+    browser_ttl: P30D
+    cache: true
+    description: "Fingerprinted Odoo assets — immutable, long-lived cache"
+
+  - name: content-images
+    match:
+      - "/web/image/*"
+      - "/web/content/*"
+    edge_ttl: P7D
+    browser_ttl: P1D
+    cache: true
+    vary_on: Cookie
+    skip_if_cookie: session_id
+    description: "User content — moderate cache, skip if authenticated session"
+
+  - name: spa-static-assets
+    match:
+      - "/_next/static/*"
+      - "/assets/*"
+      - "/build/*"
+      - "/static/*"
+    edge_ttl: P7D
+    browser_ttl: P7D
+    cache: true
+    description: "SPA framework static assets — fingerprinted, cacheable"
+
+  - name: well-known-endpoints
+    match:
+      - "/.well-known/*"
+    edge_ttl: PT1H
+    browser_ttl: PT1H
+    cache: true
+    description: "OIDC discovery and other well-known endpoints — short cache"
+
+  - name: dynamic-bypass
+    match:
+      - "/web/login"
+      - "/web/session/*"
+      - "/xmlrpc/*"
+      - "/jsonrpc"
+      - "/longpolling/*"
+      - "/websocket"
+      - "/webhook/*"
+      - "/webhook-test/*"
+      - "/ws/*"
+      - "/api/*"
+      - "/rest/*"
+    edge_ttl: null
+    cache: false
+    description: "Dynamic/real-time/API routes — never cache"
+
+# =============================================================================
+# TLS Configuration
+# =============================================================================
+tls:
+  minimum_version: TLS1_2
+  certificate_type: ManagedCertificate
+  custom_domains:
+    - erp.insightpulseai.com
+    - n8n.insightpulseai.com
+    - mcp.insightpulseai.com
+    - plane.insightpulseai.com
+    - shelf.insightpulseai.com
+    - crm.insightpulseai.com
+    - superset.insightpulseai.com
+    - ocr.insightpulseai.com
+    - auth.insightpulseai.com
+    - insightpulseai.com
+    - www.insightpulseai.com
+
+# =============================================================================
+# Diagnostics & Logging
+# =============================================================================
+diagnostics:
+  log_analytics_workspace: ipai-law-prod
+  access_log: true
+  health_probe_log: true
+  waf_log: true
+  retention_days: 90

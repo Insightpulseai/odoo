@@ -1,0 +1,28 @@
+{
+  "description": "Happy path: configure Zoho SMTP for production environment",
+  "inputs": {
+    "provider": "zoho",
+    "environment": "prod"
+  },
+  "expected_state": {
+    "smtp_host": "smtppro.zoho.com",
+    "smtp_port": 587,
+    "smtp_encryption": "starttls",
+    "smtp_user": "business@insightpulseai.com",
+    "from_filter": "@insightpulseai.com",
+    "imap_host": "imappro.zoho.com",
+    "imap_port": 993,
+    "imap_active": true
+  },
+  "expected_outputs": [
+    "config/odoo/mail_settings.yaml",
+    "ssot/runtime/prod_settings.yaml"
+  ],
+  "verification_results": {
+    "prod_settings_schema": "pass",
+    "secrets_registry_crossref": "pass",
+    "smtp_connectivity": "pass (STARTTLS banner received)",
+    "mail_settings_valid": "pass"
+  },
+  "notes": "Production uses smtppro.zoho.com (US datacenter), NOT smtp.zoho.com (global). IMAP is active in prod for fetchmail."
+}

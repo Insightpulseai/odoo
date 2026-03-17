@@ -1,0 +1,179 @@
+{
+  "screen": "m365_planner",
+  "source": "Microsoft 365 Planner reference",
+  "viewport": { "width": 2048, "height": 1280 },
+  "nodes": [
+    {
+      "id": "shell",
+      "type": "AppShell",
+      "frame": { "x": 0, "y": 0, "w": 2048, "h": 1280 },
+      "props": { "layout": "sidebar+topbar" },
+      "children": ["topbar", "sidebar", "content"]
+    },
+
+    {
+      "id": "topbar",
+      "type": "Header",
+      "frame": { "x": 0, "y": 0, "w": 2048, "h": 64 },
+      "props": { "brand": "INSIGHTPULSE", "app": "Planner" },
+      "children": ["topbar.waffle", "topbar.brand", "topbar.search", "topbar.actions", "topbar.copilot", "topbar.user"]
+    },
+    {
+      "id": "topbar.waffle",
+      "type": "Button",
+      "frame": { "x": 12, "y": 12, "w": 40, "h": 40 },
+      "props": { "variant": "transparent", "icon": "waffle" }
+    },
+    {
+      "id": "topbar.brand",
+      "type": "Text",
+      "frame": { "x": 64, "y": 18, "w": 140, "h": 28 },
+      "props": { "variant": "brand", "text": "Planner" }
+    },
+    {
+      "id": "topbar.search",
+      "type": "Input",
+      "frame": { "x": 220, "y": 14, "w": 520, "h": 36 },
+      "props": { "placeholder": "Search", "icon": "search" }
+    },
+    {
+      "id": "topbar.actions",
+      "type": "Toolbar",
+      "frame": { "x": 1600, "y": 10, "w": 200, "h": 44 },
+      "props": { "items": ["settings", "help", "notifications"] }
+    },
+    {
+      "id": "topbar.copilot",
+      "type": "Copilot",
+      "frame": { "x": 1820, "y": 12, "w": 100, "h": 40 },
+      "props": { "variant": "compact", "label": "Copilot" }
+    },
+    {
+      "id": "topbar.user",
+      "type": "Avatar",
+      "frame": { "x": 1965, "y": 12, "w": 40, "h": 40 },
+      "props": { "initials": "JT", "presence": "available" }
+    },
+
+    {
+      "id": "sidebar",
+      "type": "Sidebar",
+      "frame": { "x": 0, "y": 64, "w": 240, "h": 1216 },
+      "props": { "collapsible": true, "collapsed": false },
+      "children": ["sidebar.nav"]
+    },
+    {
+      "id": "sidebar.nav",
+      "type": "NavList",
+      "frame": { "x": 0, "y": 64, "w": 240, "h": 1216 },
+      "props": { "variant": "icon+label", "density": "comfortable" },
+      "children": ["nav.myday", "nav.mytasks", "nav.myplans", "nav.pinned"]
+    },
+    {
+      "id": "nav.myday",
+      "type": "NavItem",
+      "frame": { "x": 8, "y": 72, "w": 224, "h": 40 },
+      "props": { "icon": "sun", "label": "My Day", "selected": false }
+    },
+    {
+      "id": "nav.mytasks",
+      "type": "NavItem",
+      "frame": { "x": 8, "y": 116, "w": 224, "h": 40 },
+      "props": { "icon": "tasks", "label": "My Tasks", "selected": true }
+    },
+    {
+      "id": "nav.myplans",
+      "type": "NavItem",
+      "frame": { "x": 8, "y": 160, "w": 224, "h": 40 },
+      "props": { "icon": "plan", "label": "My plans", "expanded": true },
+      "children": ["nav.plan.finance", "nav.plan.close", "nav.plan.bir"]
+    },
+    {
+      "id": "nav.plan.finance",
+      "type": "NavItem",
+      "frame": { "x": 32, "y": 200, "w": 200, "h": 36 },
+      "props": { "label": "Finance PPM", "indent": 1 }
+    },
+    {
+      "id": "nav.plan.close",
+      "type": "NavItem",
+      "frame": { "x": 32, "y": 236, "w": 200, "h": 36 },
+      "props": { "label": "Month-End Close", "indent": 1 }
+    },
+    {
+      "id": "nav.plan.bir",
+      "type": "NavItem",
+      "frame": { "x": 32, "y": 272, "w": 200, "h": 36 },
+      "props": { "label": "BIR Tax Filing", "indent": 1 }
+    },
+    {
+      "id": "nav.pinned",
+      "type": "NavItem",
+      "frame": { "x": 8, "y": 320, "w": 224, "h": 40 },
+      "props": { "icon": "pin", "label": "Pinned plans", "selected": false }
+    },
+
+    {
+      "id": "content",
+      "type": "Content",
+      "frame": { "x": 240, "y": 64, "w": 1808, "h": 1216 },
+      "props": { "view": "list" },
+      "children": ["content.header", "content.toolbar", "content.body"]
+    },
+    {
+      "id": "content.header",
+      "type": "Toolbar",
+      "frame": { "x": 240, "y": 64, "w": 1808, "h": 48 },
+      "props": { "title": "My Tasks", "actions": ["newTask", "more"] }
+    },
+    {
+      "id": "content.toolbar",
+      "type": "Tabs",
+      "frame": { "x": 240, "y": 112, "w": 1808, "h": 48 },
+      "props": {},
+      "children": ["tab.grid", "tab.board", "tab.schedule", "tab.charts", "toolbar.filters"]
+    },
+    {
+      "id": "tab.grid",
+      "type": "Button",
+      "frame": { "x": 256, "y": 120, "w": 60, "h": 32 },
+      "props": { "variant": "tab", "label": "Grid", "selected": true }
+    },
+    {
+      "id": "tab.board",
+      "type": "Button",
+      "frame": { "x": 324, "y": 120, "w": 60, "h": 32 },
+      "props": { "variant": "tab", "label": "Board", "selected": false }
+    },
+    {
+      "id": "tab.schedule",
+      "type": "Button",
+      "frame": { "x": 392, "y": 120, "w": 80, "h": 32 },
+      "props": { "variant": "tab", "label": "Schedule", "selected": false }
+    },
+    {
+      "id": "tab.charts",
+      "type": "Button",
+      "frame": { "x": 480, "y": 120, "w": 60, "h": 32 },
+      "props": { "variant": "tab", "label": "Charts", "selected": false }
+    },
+    {
+      "id": "toolbar.filters",
+      "type": "Toolbar",
+      "frame": { "x": 1800, "y": 120, "w": 240, "h": 32 },
+      "props": { "items": ["filter", "groupBy", "sort"] }
+    },
+
+    {
+      "id": "content.body",
+      "type": "EmptyState",
+      "frame": { "x": 240, "y": 160, "w": 1808, "h": 1056 },
+      "props": {
+        "icon": "tasks-empty",
+        "title": "What do you want to focus on?",
+        "description": "Add tasks to start organizing your work",
+        "cta": { "label": "Add new task", "variant": "primary" }
+      }
+    }
+  ]
+}

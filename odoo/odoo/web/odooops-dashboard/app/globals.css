@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Shared design tokens - sync with Odoo shell.css */
+:root {
+  --odooops-primary: #3b82f6;
+  --odooops-bg: #ffffff;
+  --odooops-text: #1f2937;
+  --odooops-border: #e5e7eb;
+}
+
+body {
+  color: var(--odooops-text);
+  background: var(--odooops-bg);
+}

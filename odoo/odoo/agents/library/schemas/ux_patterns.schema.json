@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ux_patterns.schema.json",
+  "type": "object",
+  "required": ["version", "patterns"],
+  "properties": {
+    "version": { "type": "string" },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "recipe", "evidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "intent": { "type": "string" },
+          "recipe": {
+            "type": "object",
+            "required": ["components", "layout", "a11y_notes"],
+            "properties": {
+              "components": { "type": "array", "items": { "type": "string" } },
+              "layout": { "type": "string" },
+              "a11y_notes": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["ref"],
+              "properties": {
+                "ref": { "type": "string" },
+                "hint": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

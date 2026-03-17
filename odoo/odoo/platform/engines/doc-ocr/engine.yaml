@@ -1,0 +1,185 @@
+engine:
+  slug: doc-ocr
+  name: Document OCR & Handwriting Engine
+  version: 0.7.0
+  owner_team: platform
+  status: active
+  domain: shared
+  description: >
+    Shared document understanding engine that ingests images/PDFs, runs OCR
+    and handwriting recognition, parses structured fields, and returns normalized
+    JSON suitable for TE-Cheq, Retail-Intel, and Finance pipelines.
+
+  tags:
+    - ocr
+    - handwriting
+    - shared
+    - receipts
+    - invoices
+
+data:
+  primary_db: supabase
+  schemas:
+    - schema_name: doc
+      role: log
+  tables:
+    - name: doc.raw_documents
+      role: log
+      description: One row per uploaded file (binary stored in object storage, metadata here).
+      primary_key: [id]
+      natural_keys: [tenant_id, source_hash]
+      partition_by: month
+      retention: 730d
+    - name: doc.parsed_documents
+      role: fact
+      description: Parsed output (JSON), detection model, confidence, status.
+      primary_key: [id]
+      natural_keys: [tenant_id, raw_document_id, parser_profile]
+      partition_by: month
+      retention: 730d
+    - name: doc.user_corrections
+      role: log
+      description: User-submitted corrections for active learning.
+      primary_key: [id]
+      natural_keys: [tenant_id, parsed_document_id, field_name]
+      partition_by: month
+      retention: 730d
+  indexes:
+    - table: doc.raw_documents
+      type: btree
+      columns: [tenant_id, created_at]
+      where: null
+      usage: >
+        Tenant-scoped document history queries and cleanup jobs.
+    - table: doc.parsed_documents
+      type: btree
+      columns: [tenant_id, doc_type, status]
+      where: null
+      usage: >
+        Downstream engines quickly fetch parsed docs by type/status.
+    - table: doc.user_corrections
+      type: btree
+      columns: [tenant_id, field_name, created_at]
+      where: null
+      usage: >
+        Train/eval loop sampling for problematic fields.
+
+interfaces:
+  api:
+    http:
+      - name: upload-document
+        method: POST
+        path: /api/doc-ocr/upload
+        supabase_function: doc_ocr_upload
+        auth: bearer_jwt
+        rate_limit_rpm: 300
+      - name: get-parsed-document
+        method: GET
+        path: /api/doc-ocr/documents/{id}
+        supabase_function: doc_ocr_get_parsed
+        auth: bearer_jwt
+        rate_limit_rpm: 600
+      - name: submit-correction
+        method: POST
+        path: /api/doc-ocr/documents/{id}/corrections
+        supabase_function: doc_ocr_submit_correction
+        auth: bearer_jwt
+        rate_limit_rpm: 600
+    events:
+      - name: doc_ocr.document_parsed
+        direction: out
+        payload_contract: schemas/events/doc_ocr.document_parsed.json
+      - name: doc_ocr.document_failed
+        direction: out
+        payload_contract: schemas/events/doc_ocr.document_failed.json
+  mcp_tools:
+    - name: doc_ocr_parse
+      description: >
+        Generic parsing tool: input is file reference + doc_type; output is normalized JSON
+        (e.g. receipt, invoice, id_card).
+      input_contract: schemas/tools/doc_ocr_parse.input.json
+      output_contract: schemas/tools/doc_ocr_parse.output.json
+    - name: doc_ocr_learn_from_correction
+      description: >
+        Records a user correction for continuous improvement and can trigger retraining jobs.
+      input_contract: schemas/tools/doc_ocr_learn_from_correction.input.json
+      output_contract: schemas/tools/doc_ocr_learn_from_correction.output.json
+
+agents:
+  primary_agent:
+    id: doc-ocr-resolver
+    description: >
+      Responsible for selecting OCR/handwriting models and post-processing
+      parsed fields into normalized schemas.
+    model: claude-3.5-sonnet
+    tools:
+      - doc_ocr_parse
+      - doc_ocr_learn_from_correction
+  supporting_agents:
+    - id: doc-ocr-evaluator
+      role: compare_model_outputs
+    - id: doc-ocr-schema-mapper
+      role: map_parsed_fields_to_engine_specific_schemas
+
+memory:
+  short_term:
+    description: >
+      Per-document pipeline state: which models were tried, intermediate JSON,
+      and correction suggestions.
+    sources:
+      - pipeline_context
+  long_term:
+    vector:
+      collections:
+        - doc_ocr_templates
+    sql:
+      tables:
+        - doc.raw_documents
+        - doc.parsed_documents
+        - doc.user_corrections
+  stored:
+    logs_table: logs.doc_ocr_pipeline_events
+    retention: 365d
+
+security:
+  tenants:
+    model: row_level_security
+    tenant_key: tenant_id
+  roles:
+    - name: engine_consumer
+      permissions:
+        - upload_documents
+        - read_own_tenant_docs
+    - name: doc_ocr_admin
+      permissions:
+        - read_all
+        - manage_models
+  rls_policies_doc: docs/rls/doc-ocr.md
+
+observability:
+  dashboards:
+    - name: Doc-OCR Engine Health
+      type: superset
+      path: dashboards/doc-ocr-health.json
+  logs:
+    sink: supabase
+    table: logs.doc_ocr_engine_events
+  alerts:
+    - name: doc-ocr-error-rate-spike
+      channel: mattermost
+      rule_ref: alerts/doc-ocr-error-rate.yml
+    - name: doc-ocr-latency-high
+      channel: mattermost
+      rule_ref: alerts/doc-ocr-latency.yml
+
+rollout:
+  environments:
+    - name: dev
+      supabase_project: dev-doc-ocr
+    - name: prod
+      supabase_project: spdtwktxdalcfigzeqrz
+  feature_flags:
+    - name: doc_ocr_enable_handwriting_adaptation
+      service: supabase
+    - name: doc_ocr_enable_brand_specific_templates
+      service: supabase

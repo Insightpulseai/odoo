@@ -9,7 +9,7 @@
 # Authorized Overlays (MUST use include:):
 #   docker-compose.dev.yml            # Dev tools (Superset, n8n, MCP)
 #   .devcontainer/docker-compose.devcontainer.yml  # VS Code DevContainer
-#   ipai-platform/compose.yaml        # Platform services (optional Supabase)
+#   ipai-platform/compose.yaml        # Platform services (nginx, optional Supabase)
 #
 # Usage:
 #   docker compose up -d                      # Odoo + PG + Redis
@@ -63,6 +63,8 @@ services:
       - "log_min_duration_statement=1000"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+      - ./db/sql:/sql:ro
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     healthcheck:
@@ -93,8 +95,8 @@ services:
   # ===========================================================================
   odoo:
     build:
-      context: ..
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/dev/Dockerfile
     image: odoo-dev:19
     container_name: odoo-core
     restart: unless-stopped
@@ -118,11 +120,11 @@ services:
       # Odoo data persistence (filestore + sessions)
       - odoo-web-data:/var/lib/odoo
       # Custom addons — IPAI modules (read-only mount)
-      - ../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
       # OCA modules (writable mount for git-aggregator)
-      - ../addons/oca:/mnt/oca:rw
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
-      - ../config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     ports:
       - "${ODOO_PORT:-8069}:8069"
       - "${ODOO_LONGPOLL_PORT:-8072}:8072"
@@ -135,6 +137,25 @@ services:
       timeout: 10s
       retries: 5
       start_period: 90s
+
+  # ===========================================================================
+  # Nginx — Reverse Proxy (canonical SSOT; was previously orphaned)
+  # Config: ipai-platform/nginx/nginx.conf + conf.d/
+  # ===========================================================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ipai-nginx
+    restart: unless-stopped
+    depends_on:
+      odoo:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./ipai-platform/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ipai-platform/nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - default
 
   # ===========================================================================
   # pgAdmin 4 — Database Admin (profile: tools)
@@ -185,10 +206,10 @@ services:
       PASSWORD: ${POSTGRES_PASSWORD:-odoo}
     volumes:
       - odoo-web-data:/var/lib/odoo
-      - ../addons/ipai:/mnt/extra-addons/ipai:ro
-      - ../addons/oca:/mnt/oca:rw
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
-      - ../config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
       odoo
       --config=/etc/odoo/odoo.conf
@@ -213,10 +234,10 @@ services:
       PASSWORD: ${POSTGRES_PASSWORD:-odoo}
     volumes:
       - odoo-web-data:/var/lib/odoo
-      - ../addons/ipai:/mnt/extra-addons/ipai:ro
-      - ../addons/oca:/mnt/oca:rw
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/oca:rw
       # Environment-specific configuration (SSOT)
-      - ../config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./config/${ODOO_ENV:-dev}/odoo.conf:/etc/odoo/odoo.conf:ro
     command: >
       odoo
       --config=/etc/odoo/odoo.conf

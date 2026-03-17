@@ -1,0 +1,138 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="LIB v1.0 Architecture" id="lib-arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="LIB (Local Intelligence Brain) v1.0 Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="320" y="20" width="560" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Agent Layer -->
+        <mxCell id="agent-layer" value="Agent Layer (Claude Code / MCP Client)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="1000" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- MCP Server -->
+        <mxCell id="mcp-server" value="LIB MCP Server (FastAPI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="1000" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- MCP Tools -->
+        <mxCell id="tool1" value="lib_search_files" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="100" y="260" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tool2" value="lib_get_file_info" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="300" y="260" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tool3" value="lib_scan_directory" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="500" y="260" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tool4" value="lib_query_runs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="700" y="260" width="180" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tool5" value="lib_fts_search" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="900" y="260" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Core Modules -->
+        <mxCell id="scanner" value="Scanner Module&#xa;(lib_scan.py)&#xa;&#xa;• Filesystem traversal&#xa;• SHA256 hashing&#xa;• Content extraction&#xa;• Soft delete&#xa;• Gitignore filtering" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="database" value="Database Layer&#xa;(lib_db.py)&#xa;&#xa;• Schema management&#xa;• WAL mode setup&#xa;• Query helpers&#xa;• FTS5 integration&#xa;• Scan run tracking" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="340" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="config" value="Configuration&#xa;(.lib/lib.config.json)&#xa;&#xa;• Database path&#xa;• Scan roots&#xa;• Auto-scan settings&#xa;• FTS5 config&#xa;• Content extraction" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="340" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="init" value="Initialization&#xa;(lib_init.sh)&#xa;&#xa;• DB creation&#xa;• Schema setup&#xa;• Default config&#xa;• .gitignore update" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="860" y="340" width="220" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- SQLite Database -->
+        <mxCell id="sqlite" value="SQLite Database (.lib/lib.db)&#xa;WAL Mode | NORMAL Synchronous | 64MB Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="520" width="1000" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Database Tables -->
+        <mxCell id="table1" value="lib_files&#xa;(File Registry)&#xa;&#xa;• path, sha256&#xa;• bytes, mtime_unix&#xa;• ext, mime&#xa;• content&#xa;• deleted_at&#xa;• 6 indexes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="table2" value="lib_runs&#xa;(Scan History)&#xa;&#xa;• started_at, finished_at&#xa;• scan_roots&#xa;• files_scanned/new/updated/deleted&#xa;• status, duration_sec" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="600" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="table3" value="lib_files_fts&#xa;(FTS5 Virtual Table)&#xa;&#xa;• path, ext, mime&#xa;• content (full-text)&#xa;• Auto-synced via triggers&#xa;• Snippet generation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="780" y="600" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="agent-layer" target="mcp-server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mcp-server" target="tool1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="tool1" target="scanner">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="tool2" target="database">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="scanner" target="sqlite">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="database" target="sqlite">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqlite" target="table1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqlite" target="table2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="sqlite" target="table3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="760" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1" value="Agent Interface" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend2" value="MCP Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend3" value="MCP Tools" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend4" value="Core Modules" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend5" value="Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend6" value="Tables" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="790" width="140" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

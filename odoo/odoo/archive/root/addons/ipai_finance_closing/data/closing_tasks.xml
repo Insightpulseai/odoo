@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+    SAP AFC-style Month-End Closing Template for Odoo
+    License: AGPL-3 (OCA-compatible)
+    Based on SAP Advanced Financial Closing best practices
+    
+    Install: Copy to addons folder, update apps list, install
+    -->
+
+    <!-- ============================================ -->
+    <!-- PROJECT STAGES -->
+    <!-- ============================================ -->
+    
+    <record id="stage_backlog" model="project.task.type">
+        <field name="name">Backlog</field>
+        <field name="sequence">1</field>
+        <field name="fold">False</field>
+    </record>
+    
+    <record id="stage_in_progress" model="project.task.type">
+        <field name="name">In Progress</field>
+        <field name="sequence">2</field>
+        <field name="fold">False</field>
+    </record>
+    
+    <record id="stage_pending_approval" model="project.task.type">
+        <field name="name">Pending Approval</field>
+        <field name="sequence">3</field>
+        <field name="fold">False</field>
+    </record>
+    
+    <record id="stage_completed" model="project.task.type">
+        <field name="name">Completed</field>
+        <field name="sequence">4</field>
+        <field name="fold">True</field>
+    </record>
+    
+    <record id="stage_blocked" model="project.task.type">
+        <field name="name">Blocked</field>
+        <field name="sequence">5</field>
+        <field name="fold">True</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PROJECT TAGS (Functional Areas) -->
+    <!-- ============================================ -->
+    
+    <record id="tag_gl" model="project.tags">
+        <field name="name">GL</field>
+        <field name="color">4</field> <!-- Blue -->
+    </record>
+    
+    <record id="tag_ap" model="project.tags">
+        <field name="name">AP</field>
+        <field name="color">10</field> <!-- Green -->
+    </record>
+    
+    <record id="tag_ar" model="project.tags">
+        <field name="name">AR</field>
+        <field name="color">3</field> <!-- Yellow -->
+    </record>
+    
+    <record id="tag_aa" model="project.tags">
+        <field name="name">Assets</field>
+        <field name="color">2</field> <!-- Orange -->
+    </record>
+    
+    <record id="tag_tax" model="project.tags">
+        <field name="name">Tax</field>
+        <field name="color">1</field> <!-- Red -->
+    </record>
+    
+    <record id="tag_report" model="project.tags">
+        <field name="name">Reporting</field>
+        <field name="color">8</field> <!-- Purple -->
+    </record>
+    
+    <record id="tag_auto" model="project.tags">
+        <field name="name">Automated</field>
+        <field name="color">7</field> <!-- Gray -->
+    </record>
+
+    <!-- ============================================ -->
+    <!-- MONTH-END CLOSE PROJECT TEMPLATE -->
+    <!-- ============================================ -->
+    
+    <record id="project_month_end_template" model="project.project">
+        <field name="name">Month-End Close Template</field>
+        <field name="description">SAP AFC-style financial closing template. 
+Covers: Subledgers (AP/AR/Assets), General Ledger, Tax Compliance (BIR), Reporting.
+Based on SAP S/4HANA Cloud for Advanced Financial Closing best practices.</field>
+        <field name="type_ids" eval="[(6, 0, [
+            ref('stage_backlog'),
+            ref('stage_in_progress'),
+            ref('stage_pending_approval'),
+            ref('stage_completed'),
+            ref('stage_blocked')
+        ])]"/>
+        <field name="allow_task_dependencies">True</field>
+        <field name="privacy_visibility">employees</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 1: PRE-CLOSING TASKS -->
+    <!-- ============================================ -->
+    
+    <record id="task_open_period" model="project.task">
+        <field name="name">1.1 Open New Posting Period</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Unlock new accounting period for transactions.
+
+## SAP Equivalent
+T-Code: OB52 - Open/Close Posting Periods
+
+## Odoo Action
+Settings → Accounting → Lock Dates
+- Verify new period is accessible
+- Confirm prior period locked for non-advisers
+
+## Checklist
+- [ ] New month period open for posting
+- [ ] Prior month locked for regular users
+- [ ] Exception users list verified
+        </field>
+        <field name="sequence">10</field>
+    </record>
+    
+    <record id="task_master_data_review" model="project.task">
+        <field name="name">1.2 Master Data Changes Review</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+        <field name="description">
+## Objective
+Review and validate master data changes made during the period.
+
+## SAP Equivalent
+Various master data reports
+
+## Checklist
+- [ ] New vendors created - verify tax IDs, bank accounts
+- [ ] New customers created - verify credit terms
+- [ ] Chart of accounts changes - verify proper authorization
+- [ ] Bank account modifications - verify approvals
+- [ ] Employee master changes - verify payroll impact
+
+## OCA Module Required
+auditlog - for change tracking
+        </field>
+        <field name="sequence">20</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_open_period')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 2: SUBLEDGER CLOSING - AP -->
+    <!-- ============================================ -->
+    
+    <record id="task_process_vendor_bills" model="project.task">
+        <field name="name">2.1 Process Pending Vendor Bills</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ap')])]"/>
+        <field name="description">
+## Objective
+Ensure all vendor invoices for the period are posted.
+
+## SAP Equivalent
+T-Code: MIRO - Enter Incoming Invoice
+
+## Odoo Path
+Accounting → Vendors → Bills
+
+## Checklist
+- [ ] Review all draft bills
+- [ ] Validate 3-way match (PO → Receipt → Invoice)
+- [ ] Post approved bills
+- [ ] Flag discrepancies for resolution
+- [ ] Document any blocked invoices
+
+## Cut-off Rule
+Only post invoices with goods/services received by period end.
+        </field>
+        <field name="sequence">100</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_open_period')])]"/>
+    </record>
+    
+    <record id="task_grir_clearing" model="project.task">
+        <field name="name">2.2 GR/IR Clearing and Accruals</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ap')])]"/>
+        <field name="description">
+## Objective
+Clear Goods Receipt/Invoice Receipt account and post accruals.
+
+## SAP Equivalent
+T-Code: MR11 - GR/IR Clearing
+T-Code: F.13 - Automatic Clearing
+
+## Checklist
+- [ ] Run GR/IR reconciliation report
+- [ ] Clear matched items
+- [ ] Post accrual for uninvoiced receipts
+- [ ] Document residual balances
+
+## Accrual Entry Template
+Dr: Expense Account (based on PO)
+Cr: Accrued Liabilities
+
+## OCA Module
+account_cutoff_accrual_picking - automates this process
+        </field>
+        <field name="sequence">110</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_process_vendor_bills')])]"/>
+    </record>
+    
+    <record id="task_vendor_payment_run" model="project.task">
+        <field name="name">2.3 Vendor Payment Run</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ap')])]"/>
+        <field name="description">
+## Objective
+Execute scheduled vendor payments.
+
+## SAP Equivalent
+T-Code: F110 - Automatic Payment Program
+
+## Odoo Path
+Accounting → Vendors → Payments → Register Payment (Batch)
+
+## Checklist
+- [ ] Review payment proposal
+- [ ] Verify bank balance sufficiency
+- [ ] Confirm payment terms honored
+- [ ] Execute payment batch
+- [ ] Generate bank file (if applicable)
+- [ ] Confirm transmission to bank
+
+## Approval Required
+Finance Manager must approve before execution.
+
+## BIR Compliance
+Ensure EWT deducted per vendor tax codes (BIR 2307 generation).
+        </field>
+        <field name="sequence">120</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_process_vendor_bills')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 2: SUBLEDGER CLOSING - AR -->
+    <!-- ============================================ -->
+    
+    <record id="task_post_customer_invoices" model="project.task">
+        <field name="name">2.4 Post Customer Invoices</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ar')])]"/>
+        <field name="description">
+## Objective
+Ensure all customer invoices for the period are posted.
+
+## SAP Equivalent
+T-Code: VF01 - Create Billing Document
+
+## Odoo Path
+Accounting → Customers → Invoices
+
+## Checklist
+- [ ] Review all draft invoices
+- [ ] Verify delivery documentation attached
+- [ ] Confirm pricing and terms
+- [ ] Post approved invoices
+- [ ] Send invoices to customers
+
+## Cut-off Rule
+Invoice all goods shipped/services rendered by period end.
+        </field>
+        <field name="sequence">200</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_open_period')])]"/>
+    </record>
+    
+    <record id="task_revenue_cutoff" model="project.task">
+        <field name="name">2.5 Revenue Cut-off Review</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ar')])]"/>
+        <field name="description">
+## Objective
+Verify proper revenue recognition timing.
+
+## SAP Equivalent
+T-Code: VF44 - Maintain Billing Due List
+
+## Checklist
+- [ ] Verify all shipments invoiced
+- [ ] Review deferred revenue balances
+- [ ] Check revenue recognition schedules
+- [ ] Post revenue accruals if needed
+- [ ] Document any timing adjustments
+
+## OCA Module
+account_revenue_recognition_computation
+        </field>
+        <field name="sequence">210</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_post_customer_invoices')])]"/>
+    </record>
+    
+    <record id="task_dunning_run" model="project.task">
+        <field name="name">2.6 Dunning / Collections Run</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ar'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Send payment reminders for overdue invoices.
+
+## SAP Equivalent
+T-Code: F150 - Dunning Run
+
+## Odoo Path
+Accounting → Customers → Follow-up Reports
+
+## Checklist
+- [ ] Review aged receivables
+- [ ] Verify dunning levels correct
+- [ ] Execute dunning run
+- [ ] Review generated letters/emails
+- [ ] Approve and send reminders
+
+## OCA Module
+account_credit_control - enhanced dunning automation
+        </field>
+        <field name="sequence">220</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_post_customer_invoices')])]"/>
+    </record>
+    
+    <record id="task_bad_debt_review" model="project.task">
+        <field name="name">2.7 Bad Debt Provision Review</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_ar')])]"/>
+        <field name="description">
+## Objective
+Assess and adjust allowance for doubtful accounts.
+
+## SAP Equivalent
+T-Code: F.28 - Value Adjustment
+
+## Checklist
+- [ ] Review aging report (90+ days)
+- [ ] Assess collectibility of aged items
+- [ ] Calculate required provision
+- [ ] Post provision adjustment
+- [ ] Document rationale for write-offs
+
+## Journal Entry
+Dr: Bad Debt Expense
+Cr: Allowance for Doubtful Accounts
+        </field>
+        <field name="sequence">230</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_dunning_run')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 2: SUBLEDGER CLOSING - ASSETS -->
+    <!-- ============================================ -->
+    
+    <record id="task_asset_capitalizations" model="project.task">
+        <field name="name">2.8 Asset Capitalizations</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_aa')])]"/>
+        <field name="description">
+## Objective
+Capitalize assets in service and close AUC (Assets Under Construction).
+
+## SAP Equivalent
+T-Code: AIAB - Post AUC to Final Asset
+T-Code: AS01 - Create Asset Master
+
+## Odoo Path
+Accounting → Assets → Assets
+
+## Checklist
+- [ ] Review pending asset acquisitions
+- [ ] Verify asset categorization
+- [ ] Set in-service dates
+- [ ] Close completed AUC projects
+- [ ] Post capitalization entries
+
+## Approval Required
+Fixed asset capitalizations over threshold require approval.
+        </field>
+        <field name="sequence">300</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_open_period')])]"/>
+    </record>
+    
+    <record id="task_depreciation_run" model="project.task">
+        <field name="name">2.9 Depreciation Posting Run</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_aa'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Calculate and post monthly depreciation for all fixed assets.
+
+## SAP Equivalent
+T-Code: AFAB - Post Depreciation
+
+## Odoo Path
+Accounting → Assets → Compute Depreciation
+
+## Pre-requisites
+- All asset acquisitions entered
+- Asset disposals processed
+- Depreciation methods verified
+
+## Checklist
+- [ ] Preview depreciation calculation
+- [ ] Verify no errors in computation
+- [ ] Post depreciation entries
+- [ ] Confirm entries in GL
+
+## Note
+Run after all capitalizations and disposals are complete.
+        </field>
+        <field name="sequence">310</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_asset_capitalizations')])]"/>
+    </record>
+    
+    <record id="task_asset_retirements" model="project.task">
+        <field name="name">2.10 Asset Retirements/Disposals</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_aa')])]"/>
+        <field name="description">
+## Objective
+Process asset disposals and record gains/losses.
+
+## SAP Equivalent
+T-Code: ABAON - Asset Sale Without Customer
+
+## Odoo Path
+Accounting → Assets → [Select Asset] → Sell or Dispose
+
+## Checklist
+- [ ] Identify assets to retire
+- [ ] Verify disposal authorization
+- [ ] Record sale proceeds (if any)
+- [ ] Post disposal entries
+- [ ] Calculate and record gain/loss
+
+## Must complete BEFORE depreciation run.
+        </field>
+        <field name="sequence">305</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_asset_capitalizations')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 3: GENERAL LEDGER CLOSING -->
+    <!-- ============================================ -->
+    
+    <record id="task_reverse_prior_accruals" model="project.task">
+        <field name="name">3.1 Reverse Prior Month Accruals</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Automatically reverse prior month accrual entries.
+
+## SAP Equivalent
+T-Code: F.81 - Reverse Accrual/Deferral Entries
+
+## Odoo Implementation
+Use "Auto-Reverse" flag on original accrual entries.
+
+## Checklist
+- [ ] Verify auto-reversals posted
+- [ ] Check reversal dates correct (Day 1)
+- [ ] Investigate any missing reversals
+
+## Note
+This should be fully automated via entry settings.
+        </field>
+        <field name="sequence">400</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_open_period')])]"/>
+    </record>
+    
+    <record id="task_post_manual_accruals" model="project.task">
+        <field name="name">3.2 Post Manual Accruals</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+        <field name="description">
+## Objective
+Post period-end accrual entries for expenses incurred but not invoiced.
+
+## SAP Equivalent
+T-Code: FBS1 - Enter Accrual/Deferral Document
+
+## Common Accruals
+- Payroll and benefits
+- Rent and utilities
+- Professional services
+- Interest expense
+- Bonuses and commissions
+
+## Checklist
+- [ ] Calculate accrual amounts
+- [ ] Prepare journal entry workpapers
+- [ ] Post accrual entries
+- [ ] Set auto-reverse flag
+- [ ] File supporting documentation
+
+## OCA Module
+account_move_template - for recurring entry templates
+        </field>
+        <field name="sequence">410</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_reverse_prior_accruals')])]"/>
+    </record>
+    
+    <record id="task_prepaid_amortization" model="project.task">
+        <field name="name">3.3 Prepaid Expense Amortization</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+        <field name="description">
+## Objective
+Amortize prepaid expenses to expense accounts.
+
+## SAP Equivalent
+T-Code: FBS1 - Accrual/Deferral
+
+## Common Prepaids
+- Insurance premiums
+- Annual software licenses
+- Prepaid rent
+- Retainers
+
+## Checklist
+- [ ] Review prepaid schedule
+- [ ] Calculate monthly amortization
+- [ ] Post amortization entries
+- [ ] Verify remaining prepaid balances
+
+## OCA Module
+account_cutoff_prepaid - automates this process
+        </field>
+        <field name="sequence">420</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_post_manual_accruals')])]"/>
+    </record>
+    
+    <record id="task_update_fx_rates" model="project.task">
+        <field name="name">3.4 Update Foreign Exchange Rates</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Update currency exchange rates to period-end rates.
+
+## SAP Equivalent
+T-Code: OB08 - Maintain Exchange Rates
+
+## Odoo Path
+Accounting → Configuration → Currencies
+
+## Data Source
+BSP (Bangko Sentral ng Pilipinas) for PHP rates
+
+## Checklist
+- [ ] Fetch latest BSP rates
+- [ ] Update USD, EUR, other currencies
+- [ ] Verify rates applied correctly
+- [ ] Document rate source
+
+## OCA Module
+currency_rate_update - auto-fetches from BSP
+        </field>
+        <field name="sequence">430</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_prepaid_amortization')])]"/>
+    </record>
+    
+    <record id="task_fx_revaluation" model="project.task">
+        <field name="name">3.5 Foreign Currency Revaluation</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+        <field name="description">
+## Objective
+Revalue foreign currency monetary items at period-end rates.
+
+## SAP Equivalent
+T-Code: FAGL_FC_VAL - Foreign Currency Valuation
+
+## Items to Revalue
+- Foreign currency bank accounts
+- Foreign currency receivables
+- Foreign currency payables
+- Intercompany balances
+
+## Checklist
+- [ ] Verify FX rates updated
+- [ ] Run revaluation report (preview)
+- [ ] Review unrealized gains/losses
+- [ ] Post revaluation entries
+- [ ] Document significant FX impacts
+
+## Entry
+Dr/Cr: Asset/Liability (adjustment)
+Cr/Dr: Unrealized FX Gain/Loss
+        </field>
+        <field name="sequence">440</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_update_fx_rates')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 4: TAX & COMPLIANCE (BIR) -->
+    <!-- ============================================ -->
+    
+    <record id="task_bir_1601c" model="project.task">
+        <field name="name">4.1 Prepare BIR 1601-C (Withholding Tax - Compensation)</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_tax')])]"/>
+        <field name="description">
+## Objective
+Prepare and file monthly withholding tax return for compensation.
+
+## BIR Form
+1601-C - Monthly Remittance Return of Income Taxes Withheld on Compensation
+
+## Due Date
+10th of the following month
+
+## Checklist
+- [ ] Run payroll withholding tax report
+- [ ] Reconcile to payroll register
+- [ ] Generate BIR 1601-C data
+- [ ] Upload to eBIRForms
+- [ ] Pay via authorized agent bank
+- [ ] File confirmation receipt
+
+## Penalty for Late Filing
+25% surcharge + 12% interest p.a.
+        </field>
+        <field name="sequence">500</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_vendor_payment_run')])]"/>
+    </record>
+    
+    <record id="task_bir_1601eq" model="project.task">
+        <field name="name">4.2 Prepare BIR 1601-EQ (Expanded Withholding Tax)</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_tax')])]"/>
+        <field name="description">
+## Objective
+Prepare and file quarterly expanded withholding tax return.
+
+## BIR Form
+1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+## Due Date
+Last day of the month following the quarter
+
+## Checklist
+- [ ] Run EWT summary by tax code
+- [ ] Verify vendor TINs complete
+- [ ] Reconcile to AP payments
+- [ ] Generate BIR 2307 certificates
+- [ ] Upload to eBIRForms
+- [ ] Pay via authorized agent bank
+- [ ] Distribute BIR 2307 to vendors
+
+## BIR 2307 Generation
+Certificate of Creditable Tax Withheld at Source
+- Generate for each vendor
+- Provide to vendors by 20th of following month
+        </field>
+        <field name="sequence">510</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_vendor_payment_run')])]"/>
+    </record>
+    
+    <record id="task_bir_2550" model="project.task">
+        <field name="name">4.3 Prepare BIR 2550M/2550Q (VAT Return)</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_tax')])]"/>
+        <field name="description">
+## Objective
+Prepare and file VAT return.
+
+## BIR Forms
+- 2550M - Monthly VAT Declaration (if filing monthly)
+- 2550Q - Quarterly VAT Return
+
+## Due Dates
+- Monthly: 20th of following month
+- Quarterly: 25th of month following quarter
+
+## Checklist
+- [ ] Run Output VAT summary
+- [ ] Run Input VAT summary
+- [ ] Reconcile VAT accounts
+- [ ] Calculate VAT payable/creditable
+- [ ] Generate sales/purchase registers
+- [ ] Upload to eBIRForms
+- [ ] Pay VAT due via bank
+- [ ] File Summary Lists of Sales/Purchases (SLSP)
+
+## Key Reconciliation
+Output VAT (Sales) - Input VAT (Purchases) = VAT Payable
+        </field>
+        <field name="sequence">520</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_post_customer_invoices'), ref('task_process_vendor_bills')])]"/>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- PHASE 5: REPORTING & REVIEW -->
+    <!-- ============================================ -->
+    
+    <record id="task_bank_reconciliation" model="project.task">
+        <field name="name">5.1 Bank Reconciliation</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_report')])]"/>
+        <field name="description">
+## Objective
+Reconcile all bank accounts to bank statements.
+
+## SAP Equivalent
+T-Code: FF67 - Manual Bank Statement
+
+## Odoo Path
+Accounting → Banks → Reconcile
+
+## Checklist
+- [ ] Import bank statements
+- [ ] Match transactions automatically
+- [ ] Investigate unmatched items
+- [ ] Post bank charges/interest
+- [ ] Clear outstanding items
+- [ ] Document reconciling items
+- [ ] Approve reconciliation
+
+## OCA Module
+account_reconcile_oca - enhanced reconciliation UI
+        </field>
+        <field name="sequence">600</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_vendor_payment_run')])]"/>
+    </record>
+    
+    <record id="task_trial_balance" model="project.task">
+        <field name="name">5.2 Run Trial Balance</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_report')])]"/>
+        <field name="description">
+## Objective
+Generate trial balance and verify debits equal credits.
+
+## SAP Equivalent
+T-Code: S_ALR_87012277 - G/L Account Balances
+
+## Odoo Path
+Accounting → Reporting → Trial Balance
+
+## Checklist
+- [ ] Run trial balance report
+- [ ] Verify total debits = total credits
+- [ ] Review significant balance changes
+- [ ] Compare to prior month
+- [ ] Investigate unusual items
+- [ ] Export to Excel for workpapers
+
+## OCA Module
+account_financial_report - enhanced TB with comparatives
+        </field>
+        <field name="sequence">610</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_fx_revaluation'), ref('task_depreciation_run')])]"/>
+    </record>
+    
+    <record id="task_financial_statements" model="project.task">
+        <field name="name">5.3 Generate Financial Statements</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_report')])]"/>
+        <field name="description">
+## Objective
+Generate monthly financial statements package.
+
+## SAP Equivalent
+T-Code: S_ALR_87012284 - Financial Statements
+
+## Reports to Generate
+1. Balance Sheet
+2. Profit &amp; Loss Statement
+3. Cash Flow Statement (indirect method)
+4. Statement of Changes in Equity (if required)
+
+## Checklist
+- [ ] Generate Balance Sheet
+- [ ] Generate P&amp;L
+- [ ] Generate Cash Flow
+- [ ] Compare to prior month/budget
+- [ ] Prepare variance explanations
+- [ ] Format for management review
+- [ ] Compile financial package
+
+## OCA Modules
+- account_financial_report
+- report_xlsx (Excel export)
+- mis_builder (custom layouts)
+        </field>
+        <field name="sequence">620</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_trial_balance')])]"/>
+    </record>
+    
+    <record id="task_subledger_reconciliation" model="project.task">
+        <field name="name">5.4 Subledger to GL Reconciliation</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_report')])]"/>
+        <field name="description">
+## Objective
+Verify subledgers tie to general ledger control accounts.
+
+## SAP Equivalent
+Various reconciliation reports
+
+## Reconciliations Required
+1. AP Subledger → Accounts Payable GL
+2. AR Subledger → Accounts Receivable GL
+3. Asset Register → Fixed Assets GL
+4. Inventory Subledger → Inventory GL
+
+## Checklist
+- [ ] Run AP aging vs GL balance
+- [ ] Run AR aging vs GL balance
+- [ ] Run Asset register vs GL balance
+- [ ] Run Inventory valuation vs GL
+- [ ] Investigate and resolve differences
+- [ ] Document reconciling items
+
+## Note
+In Odoo, these should always match (real-time posting).
+Discrepancies indicate configuration issues.
+        </field>
+        <field name="sequence">630</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_trial_balance')])]"/>
+    </record>
+    
+    <record id="task_management_review" model="project.task">
+        <field name="name">5.5 Management Review and Sign-off</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_report')])]"/>
+        <field name="description">
+## Objective
+Obtain management approval for monthly close.
+
+## SAP Equivalent
+AFC: Approve Closing Tasks app
+
+## Review Package Contents
+1. Financial Statements (BS, P&amp;L, CF)
+2. Trial Balance
+3. Reconciliation summaries
+4. Variance analysis
+5. Key metrics/KPIs
+6. Management commentary
+
+## Checklist
+- [ ] Prepare review package
+- [ ] Schedule review meeting
+- [ ] Present financials to management
+- [ ] Address questions/concerns
+- [ ] Document decisions
+- [ ] Obtain sign-off approval
+
+## Approval Required
+Finance Director and/or CFO signature
+        </field>
+        <field name="sequence">640</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_financial_statements'), ref('task_subledger_reconciliation')])]"/>
+    </record>
+    
+    <record id="task_close_period" model="project.task">
+        <field name="name">5.6 Close Accounting Period</field>
+        <field name="project_id" ref="project_month_end_template"/>
+        <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_auto')])]"/>
+        <field name="description">
+## Objective
+Lock the accounting period to prevent further changes.
+
+## SAP Equivalent
+T-Code: OB52 - Close Posting Period
+
+## Odoo Path
+Settings → Accounting → Lock Dates
+
+## Actions
+1. Set Lock Date for All Users
+2. Archive closing workpapers
+3. Notify team of close completion
+
+## Checklist
+- [ ] All tasks completed
+- [ ] Management sign-off obtained
+- [ ] Set lock date in system
+- [ ] Send close completion notification
+- [ ] Archive closing package
+
+## Post-Close
+No further postings allowed without period unlock (audit trail).
+        </field>
+        <field name="sequence">650</field>
+        <field name="depend_on_ids" eval="[(6, 0, [ref('task_management_review')])]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ==========================================
+         SECURITY GROUPS
+         ========================================== -->
+
+    <!-- Category for Grid View module -->
+    <record id="module_category_grid_view" model="ir.module.category">
+        <field name="name">Grid View</field>
+        <field name="description">Access rights for Grid View configuration</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- User group: Can use grid views -->
+    <record id="group_grid_view_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_grid_view"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can use grid views and saved filters</field>
+    </record>
+
+    <!-- Manager group: Can configure grid views -->
+    <record id="group_grid_view_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_grid_view"/>
+        <field name="implied_ids" eval="[(4, ref('group_grid_view_user'))]"/>
+        <field name="comment">Can create and configure grid views, columns, and global filters</field>
+    </record>
+
+    <!-- ==========================================
+         RECORD RULES
+         ========================================== -->
+
+    <!-- Users can only see their own filters (unless global) -->
+    <record id="rule_grid_filter_user" model="ir.rule">
+        <field name="name">Grid Filter: Users see own or global filters</field>
+        <field name="model_id" ref="model_ipai_grid_filter"/>
+        <field name="domain_force">[
+            '|',
+            ('is_global', '=', True),
+            ('user_id', '=', user.id)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_grid_view_user'))]"/>
+    </record>
+
+    <!-- Managers can see all filters -->
+    <record id="rule_grid_filter_manager" model="ir.rule">
+        <field name="name">Grid Filter: Managers see all</field>
+        <field name="model_id" ref="model_ipai_grid_filter"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_grid_view_manager'))]"/>
+    </record>
+
+    <!-- Users can read all grid views -->
+    <record id="rule_grid_view_read" model="ir.rule">
+        <field name="name">Grid View: Users can read all</field>
+        <field name="model_id" ref="model_ipai_grid_view"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_grid_view_user'))]"/>
+        <field name="perm_read">True</field>
+        <field name="perm_write">False</field>
+        <field name="perm_create">False</field>
+        <field name="perm_unlink">False</field>
+    </record>
+
+    <!-- Managers can modify grid views -->
+    <record id="rule_grid_view_manager" model="ir.rule">
+        <field name="name">Grid View: Managers can modify</field>
+        <field name="model_id" ref="model_ipai_grid_view"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_grid_view_manager'))]"/>
+    </record>
+
+</odoo>

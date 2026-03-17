@@ -1,0 +1,257 @@
+# IPAI Odoo Copilot — Tool Policy Matrix
+# Version: 1.0.0
+# Last updated: 2026-03-14
+# Parent: runtime-contract.md (C-30)
+# Reference: infra/docs/architecture/CONTEXT_AND_RBAC_MODEL.md
+
+# App roles that map to copilot capabilities
+app_roles:
+  copilot.advisory:
+    description: Advisory-only copilot access (read, search, explain)
+    mode: [PROD-ADVISORY]
+    tools: [read_record, search_records, search_docs, get_report, view_campaign_perf]
+    retrieval_scope: [general-kb]
+
+  copilot.action:
+    description: Action-capable copilot access (draft, create, confirm)
+    mode: [PROD-ADVISORY, PROD-ACTION]
+    tools: [read_record, search_records, search_docs, get_report, view_campaign_perf,
+            create_draft_invoice, create_draft_order, create_task]
+    retrieval_scope: [general-kb]
+
+  finance.close.operator:
+    description: Execute closing tasks
+    additional_tools: [read_finance_close, create_close_task_draft]
+    additional_retrieval: [finance-close-kb, bir-compliance]
+
+  finance.close.approver:
+    description: Approve closing tasks
+    additional_tools: [read_finance_close, create_close_task_draft, approve_close_task]
+    additional_retrieval: [finance-close-kb, bir-compliance, audit-evidence]
+
+  finance.viewer:
+    description: View finance data (read-only)
+    additional_tools: [read_finance_close]
+    additional_retrieval: [finance-close-kb]
+
+  marketing.manager:
+    description: Full marketing operations
+    additional_tools: [view_campaign_perf]
+    additional_retrieval: [marketing-playbooks]
+
+  marketing.viewer:
+    description: View campaign performance
+    additional_tools: [view_campaign_perf]
+    additional_retrieval: [marketing-playbooks]
+
+  analytics.viewer:
+    description: View dashboards and reports
+    additional_tools: [view_dashboard]
+    additional_retrieval: [analytics-kb]
+
+  analytics.admin:
+    description: Configure analytics
+    additional_tools: [view_dashboard, configure_dashboard]
+    additional_retrieval: [analytics-kb]
+
+  ops.admin:
+    description: Platform operations admin
+    additional_tools: [change_operational_state]
+    additional_retrieval: [ops-kb, infrastructure-kb]
+
+  ops.viewer:
+    description: View operational status
+    additional_tools: []
+    additional_retrieval: [ops-kb]
+
+# Tool definitions with scope checks
+tools:
+  # --- Read tools (Stage 1 — Current) ---
+  read_record:
+    stage: 1
+    description: Read field values from an Odoo record
+    odoo_model: any
+    permission: user ACL
+    scope_check: company + entity
+    advisory: true
+    action: true
+
+  search_records:
+    stage: 1
+    description: Search records by domain filter
+    odoo_model: any
+    permission: user ACL
+    scope_check: company + entity
+    advisory: true
+    action: true
+
+  search_docs:
+    stage: 1
+    description: Search knowledge base articles
+    odoo_model: knowledge.article
+    permission: public
+    scope_check: retrieval_scope filter
+    advisory: true
+    action: true
+
+  get_report:
+    stage: 1
+    description: Generate and return PDF report
+    odoo_model: ir.actions.report
+    permission: user ACL
+    scope_check: company + entity
+    advisory: true
+    action: true
+
+  read_finance_close:
+    stage: 1
+    description: Read finance closing task status and details
+    odoo_model: account.fiscal.year.closing
+    permission: finance role
+    scope_check: company + entity
+    advisory: true
+    action: true
+
+  view_campaign_perf:
+    stage: 1
+    description: View campaign performance metrics
+    odoo_model: marketing.campaign
+    permission: marketing role
+    scope_check: BU/brand scope
+    advisory: true
+    action: true
+
+  view_dashboard:
+    stage: 1
+    description: View analytics dashboard
+    odoo_model: analytics.dashboard
+    permission: analytics role
+    scope_check: company + entity
+    advisory: true
+    action: true
+
+  search_strategy_docs:
+    stage: 1
+    description: Search strategy and playbook documents
+    odoo_model: knowledge.article
+    permission: app role
+    scope_check: retrieval_scope filter
+    advisory: true
+    action: true
+
+  # --- Draft tools (Stage 2 — Planned) ---
+  create_draft_invoice:
+    stage: 2
+    description: Create invoice in draft state
+    odoo_model: account.move
+    permission: accountant role
+    scope_check: company + entity + finance role
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+
+  create_draft_order:
+    stage: 2
+    description: Create sales order in draft
+    odoo_model: sale.order
+    permission: sales user
+    scope_check: company + entity + sales role
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+
+  create_task:
+    stage: 2
+    description: Create project task
+    odoo_model: project.task
+    permission: project user
+    scope_check: company + entity + project role
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+
+  create_close_task_draft:
+    stage: 2
+    description: Create finance closing task draft
+    odoo_model: account.fiscal.year.closing.task
+    permission: finance.close.operator
+    scope_check: company + entity + finance role
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+
+  # --- Action tools (Stage 3 — Future) ---
+  approve_close_task:
+    stage: 3
+    description: Approve a finance closing task
+    odoo_model: account.fiscal.year.closing.task
+    permission: finance.close.approver
+    scope_check: company + entity + approver role + assigned entities only
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+    requires_audit: true
+
+  confirm_order:
+    stage: 3
+    description: Confirm a draft sales order
+    odoo_model: sale.order
+    permission: sales manager
+    scope_check: company + entity + manager role
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+    requires_audit: true
+
+  configure_dashboard:
+    stage: 3
+    description: Configure analytics dashboard
+    odoo_model: analytics.dashboard
+    permission: analytics.admin
+    scope_check: company
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+
+  change_operational_state:
+    stage: 3
+    description: Change operational state of a platform resource
+    odoo_model: ops.resource
+    permission: ops.admin
+    scope_check: confirmed + audited
+    mode_required: PROD-ACTION
+    advisory: false
+    action: true
+    requires_confirmation: true
+    requires_audit: true
+
+# Permitted tools computation
+computation:
+  description: |
+    The backend computes permitted_tools as:
+    1. Start with base copilot role tools (advisory or action)
+    2. Add additional_tools from each app role the user holds
+    3. Filter by mode (PROD-ADVISORY removes action-only tools)
+    4. Filter by entity scope (remove tools for unassigned entities)
+    5. Result is the permitted_tools list in the context envelope
+
+  example: |
+    User has roles: [copilot.advisory, finance.close.operator]
+    Mode: PROD-ADVISORY
+    Result: [read_record, search_records, search_docs, get_report,
+             view_campaign_perf, read_finance_close]
+    (create_close_task_draft excluded because mode is PROD-ADVISORY)
+
+# Current state
+current_stage: 1
+current_tools_wired: 0
+note: |
+  No tools are currently wired in the Foundry agent.
+  Chat completion uses RAG/knowledge grounding only.
+  Tool wiring is planned for Stage 2 after evaluation evidence exists.

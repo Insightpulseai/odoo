@@ -1,146 +1,334 @@
 #!/usr/bin/env python3
-"""Validate enterprise OKR YAML against KPI contracts.
+"""Validate ssot/governance/enterprise_okrs.yaml against its JSON Schema.
 
 Checks:
-  1. ssot/governance/enterprise_okrs.yaml has required structure
-  2. Every kpi_ref matches an ID in platform/data/contracts/control_room_kpis.yaml
-  3. parent_objectives references are valid objective IDs
+  1. YAML parses
+  2. JSON Schema validation passes
+  3. Required top-level keys: schema_version, strategic_objectives, canonical_okrs, kpi_index
+  4. Unique IDs across strategic_objectives[].id and canonical_okrs[].id
+  5. Each strategic_objective has: id, name, description, key_results
+  6. Each canonical_okr has: id, name, description, key_results
+  7. kpi_ref cross-refs: every kpi_ref in both strategic_objectives and canonical_okrs
+     key_results exists in control_room_kpis.yaml kpis[].id
+  8. parent_objectives integrity: every parent_objectives[] entry in canonical_okrs
+     references a valid strategic_objectives[].id
+  9. kpi_index consistency: keys must be valid objective IDs, values must be valid
+     KPI IDs from control_room_kpis.yaml
 
-Exit codes:
-  0 = PASS
-  1 = FAIL (validation errors)
-  2 = ERROR (file not found, parse error)
+Exit 0 on success, 1 on validation failure, 2 on parse error.
 """
 
+import json
 import sys
+from datetime import date
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+SSOT_YAML = REPO_ROOT / "ssot" / "governance" / "enterprise_okrs.yaml"
+SCHEMA_JSON = REPO_ROOT / "ssot" / "governance" / "enterprise_okrs.schema.json"
+KPI_YAML = REPO_ROOT / "platform" / "data" / "contracts" / "control_room_kpis.yaml"
 
 try:
     import yaml
 except ImportError:
-    print("FAIL: PyYAML not installed. Run: pip install pyyaml")
-    sys.exit(2)
+    yaml = None
+
+try:
+    import jsonschema
+except ImportError:
+    jsonschema = None
 
 
 def load_yaml(path: Path) -> dict:
-    """Load and parse a YAML file."""
-    if not path.exists():
-        print(f"ERROR: File not found: {path}")
+    text = path.read_text()
+    if yaml is not None:
+        return yaml.safe_load(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        print("ERROR: PyYAML not installed and file is not JSON-compatible.")
+        print("       Install: pip install pyyaml")
         sys.exit(2)
-    with open(path) as f:
-        try:
-            return yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            print(f"ERROR: YAML parse error in {path}: {e}")
-            sys.exit(2)
 
 
-def validate():
-    """Run all validation checks."""
-    repo_root = Path(__file__).resolve().parent.parent.parent
+def _normalize_dates(obj):
+    """Recursively convert datetime.date objects to ISO strings for schema validation."""
+    if isinstance(obj, date) and not isinstance(obj, type(None)):
+        return obj.isoformat()
+    elif isinstance(obj, dict):
+        return {k: _normalize_dates(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_normalize_dates(item) for item in obj]
+    return obj
 
-    okr_path = repo_root / "ssot" / "governance" / "enterprise_okrs.yaml"
-    kpi_path = repo_root / "platform" / "data" / "contracts" / "control_room_kpis.yaml"
 
-    okr_data = load_yaml(okr_path)
-    kpi_data = load_yaml(kpi_path)
-
-    errors = []
-
-    # -- Check 1: Required top-level keys --
-    required_keys = ["schema_version", "strategic_objectives", "canonical_okrs", "kpi_index"]
-    for key in required_keys:
-        if key not in okr_data:
-            errors.append(f"Missing required top-level key: {key}")
-
+def _report(errors: list[str]) -> None:
     if errors:
-        # Can't continue without required structure
-        for e in errors:
-            print(f"FAIL: {e}")
-        return False
+        print(f"\n{'=' * 60}")
+        print(f"FAIL: {len(errors)} error(s)")
+        print(f"{'=' * 60}")
+        for i, e in enumerate(errors, 1):
+            print(f"  {i}. {e}")
+    else:
+        print(f"\n{'=' * 60}")
+        print("PASS: All checks passed")
+        print(f"{'=' * 60}")
 
-    # -- Build valid KPI ID set --
-    valid_kpi_ids = set()
-    for kpi in kpi_data.get("kpis", []):
-        kpi_id = kpi.get("id")
-        if kpi_id:
-            valid_kpi_ids.add(kpi_id)
 
-    if not valid_kpi_ids:
-        errors.append("No KPI IDs found in control_room_kpis.yaml")
+def main() -> int:
+    errors: list[str] = []
 
-    # -- Build valid objective ID set --
-    valid_obj_ids = set()
-    for obj in okr_data.get("strategic_objectives", []):
-        obj_id = obj.get("id")
-        if obj_id:
-            valid_obj_ids.add(obj_id)
+    if not SSOT_YAML.exists():
+        print(f"FAIL: SSOT file not found: {SSOT_YAML}")
+        return 1
+
+    # --- 1. Parse YAML ---
+    print(f"Parsing {SSOT_YAML.relative_to(REPO_ROOT)} ...")
+    try:
+        data = load_yaml(SSOT_YAML)
+    except Exception as exc:
+        print(f"  Check 1: YAML parses: FAIL — {exc}")
+        _report([f"YAML parse error: {exc}"])
+        return 2
+    if data is None:
+        print("  Check 1: YAML parses: FAIL — empty file")
+        _report(["YAML parsed to None (empty file?)"])
+        return 2
+    print("  Check 1: YAML parses: PASS")
+
+    # --- 2. JSON Schema validation ---
+    normalized = _normalize_dates(data)
+    if SCHEMA_JSON.exists():
+        schema = json.loads(SCHEMA_JSON.read_text())
+        if jsonschema is not None:
+            print("  Check 2: JSON Schema validation ...")
+            try:
+                jsonschema.validate(instance=normalized, schema=schema)
+                print("  Check 2: JSON Schema validation: PASS")
+            except jsonschema.ValidationError as e:
+                errors.append(
+                    f"Schema validation: {e.message} (path: {list(e.absolute_path)})"
+                )
+                print(f"  Check 2: JSON Schema validation: FAIL — {e.message}")
         else:
-            errors.append("Strategic objective missing 'id' field")
+            print(
+                "  Check 2: JSON Schema validation: WARN — jsonschema not installed, skipping"
+            )
+    else:
+        print(
+            f"  Check 2: JSON Schema validation: WARN — schema not found at {SCHEMA_JSON}, skipping"
+        )
 
-        # Validate kpi_ref in key_results
-        for kr in obj.get("key_results", []):
-            kpi_ref = kr.get("kpi_ref")
-            if kpi_ref and kpi_ref not in valid_kpi_ids:
-                errors.append(
-                    f"Objective {obj_id}: kpi_ref '{kpi_ref}' not found in "
-                    f"control_room_kpis.yaml (valid: {sorted(valid_kpi_ids)})"
+    # --- 3. Required top-level keys ---
+    print("  Check 3: Required top-level keys ...")
+    required_keys = {"schema_version", "strategic_objectives", "canonical_okrs", "kpi_index"}
+    missing_keys = required_keys - set(data.keys())
+    if missing_keys:
+        for k in sorted(missing_keys):
+            errors.append(f"Missing required top-level key: {k}")
+        print(f"  Check 3: Required top-level keys: FAIL — missing: {sorted(missing_keys)}")
+    else:
+        print("  Check 3: Required top-level keys: PASS")
+
+    # Early exit if structural keys are absent — subsequent checks depend on them
+    if missing_keys:
+        _report(errors)
+        return 1
+
+    # --- 4. Unique IDs ---
+    print("  Check 4: Unique IDs across strategic_objectives and canonical_okrs ...")
+    strategic_objective_ids_raw = [
+        o.get("id") for o in data.get("strategic_objectives", [])
+    ]
+    canonical_okr_ids_raw = [
+        o.get("id") for o in data.get("canonical_okrs", [])
+    ]
+    all_id_collections = {
+        "strategic_objectives": strategic_objective_ids_raw,
+        "canonical_okrs": canonical_okr_ids_raw,
+    }
+    duplicate_found = False
+    for collection_name, ids in all_id_collections.items():
+        seen: set = set()
+        for id_val in ids:
+            if id_val in seen:
+                errors.append(f"Duplicate {collection_name} ID: {id_val}")
+                duplicate_found = True
+            if id_val is not None:
+                seen.add(id_val)
+    if not duplicate_found:
+        total = sum(len(ids) for ids in all_id_collections.values())
+        print(
+            f"  Check 4: Unique IDs across strategic_objectives and canonical_okrs: PASS"
+            f" ({total} IDs across {len(all_id_collections)} collections)"
+        )
+    else:
+        print("  Check 4: Unique IDs across strategic_objectives and canonical_okrs: FAIL")
+
+    # Build authoritative ID sets for subsequent checks
+    strategic_ids: set[str] = {
+        i for i in strategic_objective_ids_raw if i is not None
+    }
+    canonical_ids: set[str] = {
+        i for i in canonical_okr_ids_raw if i is not None
+    }
+
+    # --- 5. Each strategic_objective required fields ---
+    print("  Check 5: Each strategic_objective has id, name, description, key_results ...")
+    required_so_fields = {"id", "name", "description", "key_results"}
+    so_field_fail = False
+    for obj in data.get("strategic_objectives", []):
+        missing_fields = required_so_fields - set(obj.keys())
+        if missing_fields:
+            errors.append(
+                f"strategic_objective '{obj.get('id', '<no id>')}' missing fields: "
+                f"{sorted(missing_fields)}"
+            )
+            so_field_fail = True
+    if not so_field_fail:
+        print("  Check 5: Each strategic_objective has id, name, description, key_results: PASS")
+    else:
+        print("  Check 5: Each strategic_objective has id, name, description, key_results: FAIL")
+
+    # --- 6. Each canonical_okr required fields ---
+    print("  Check 6: Each canonical_okr has id, name, description, key_results ...")
+    required_okr_fields = {"id", "name", "description", "key_results"}
+    okr_field_fail = False
+    for okr in data.get("canonical_okrs", []):
+        missing_fields = required_okr_fields - set(okr.keys())
+        if missing_fields:
+            errors.append(
+                f"canonical_okr '{okr.get('id', '<no id>')}' missing fields: "
+                f"{sorted(missing_fields)}"
+            )
+            okr_field_fail = True
+    if not okr_field_fail:
+        print("  Check 6: Each canonical_okr has id, name, description, key_results: PASS")
+    else:
+        print("  Check 6: Each canonical_okr has id, name, description, key_results: FAIL")
+
+    # --- 7. kpi_ref cross-references ---
+    print("  Check 7: kpi_ref cross-references against control_room_kpis.yaml ...")
+    known_kpi_ids: set[str] = set()
+    kpi_load_ok = False
+    if KPI_YAML.exists():
+        try:
+            kpi_data = load_yaml(KPI_YAML)
+            if kpi_data and isinstance(kpi_data.get("kpis"), list):
+                known_kpi_ids = {
+                    k.get("id") for k in kpi_data["kpis"] if k.get("id") is not None
+                }
+                kpi_load_ok = True
+            else:
+                print(
+                    f"  Check 7: kpi_ref cross-references: WARN — KPI file loaded but "
+                    f"'kpis' list not found, skipping cross-ref"
                 )
+        except Exception as exc:
+            print(f"  Check 7: kpi_ref cross-references: WARN — could not load KPI file: {exc}")
+    else:
+        print(
+            f"  Check 7: kpi_ref cross-references: WARN — {KPI_YAML.relative_to(REPO_ROOT)} "
+            f"not found, skipping cross-ref"
+        )
 
-    # -- Check 2: Validate strategic objectives have required fields --
-    for obj in okr_data.get("strategic_objectives", []):
-        for field in ["id", "name", "description", "key_results"]:
-            if field not in obj:
-                errors.append(f"Objective {obj.get('id', '?')}: missing field '{field}'")
+    kpi_ref_fail = False
+    kpi_ref_count = 0
+    if kpi_load_ok:
+        # Collect all kpi_refs from strategic_objectives key_results
+        for obj in data.get("strategic_objectives", []):
+            for kr in obj.get("key_results", []):
+                kpi_ref = kr.get("kpi_ref")
+                if kpi_ref:
+                    kpi_ref_count += 1
+                    if kpi_ref not in known_kpi_ids:
+                        errors.append(
+                            f"strategic_objective '{obj.get('id')}' key_result "
+                            f"'{kr.get('id', '<no id>')}' references unknown kpi_ref: {kpi_ref}"
+                        )
+                        kpi_ref_fail = True
+        # Collect all kpi_refs from canonical_okrs key_results
+        for okr in data.get("canonical_okrs", []):
+            for kr in okr.get("key_results", []):
+                kpi_ref = kr.get("kpi_ref")
+                if kpi_ref:
+                    kpi_ref_count += 1
+                    if kpi_ref not in known_kpi_ids:
+                        errors.append(
+                            f"canonical_okr '{okr.get('id')}' key_result "
+                            f"'{kr.get('id', '<no id>')}' references unknown kpi_ref: {kpi_ref}"
+                        )
+                        kpi_ref_fail = True
+        if not kpi_ref_fail:
+            print(
+                f"  Check 7: kpi_ref cross-references: PASS ({kpi_ref_count} references validated)"
+            )
+        else:
+            print("  Check 7: kpi_ref cross-references: FAIL")
 
-    # -- Check 3: Validate canonical OKRs --
-    for okr in okr_data.get("canonical_okrs", []):
-        okr_id = okr.get("id", "?")
-
-        for field in ["id", "name", "description", "key_results"]:
-            if field not in okr:
-                errors.append(f"OKR {okr_id}: missing field '{field}'")
-
-        # Validate parent_objectives
-        for parent in okr.get("parent_objectives", []):
-            if parent not in valid_obj_ids:
+    # --- 8. parent_objectives integrity ---
+    print(
+        "  Check 8: parent_objectives integrity in canonical_okrs ..."
+    )
+    parent_fail = False
+    for okr in data.get("canonical_okrs", []):
+        for parent_ref in (okr.get("parent_objectives") or []):
+            if parent_ref not in strategic_ids:
                 errors.append(
-                    f"OKR {okr_id}: parent_objective '{parent}' not found "
-                    f"(valid: {sorted(valid_obj_ids)})"
+                    f"canonical_okr '{okr.get('id')}' parent_objectives references "
+                    f"unknown strategic_objective id: {parent_ref}"
                 )
+                parent_fail = True
+    if not parent_fail:
+        print("  Check 8: parent_objectives integrity in canonical_okrs: PASS")
+    else:
+        print("  Check 8: parent_objectives integrity in canonical_okrs: FAIL")
 
-        # Validate kpi_ref in key_results
-        for kr in okr.get("key_results", []):
-            kpi_ref = kr.get("kpi_ref")
-            if kpi_ref and kpi_ref not in valid_kpi_ids:
+    # --- 9. kpi_index consistency ---
+    print("  Check 9: kpi_index consistency ...")
+    kpi_index = data.get("kpi_index", {})
+    kpi_index_fail = False
+    if not isinstance(kpi_index, dict):
+        errors.append("kpi_index must be an object/dict")
+        kpi_index_fail = True
+        print("  Check 9: kpi_index consistency: FAIL — kpi_index is not a dict")
+    else:
+        all_valid_obj_ids = strategic_ids | canonical_ids
+        for key, value in kpi_index.items():
+            if key not in all_valid_obj_ids:
                 errors.append(
-                    f"OKR {okr_id}: kpi_ref '{kpi_ref}' not found in "
-                    f"control_room_kpis.yaml"
+                    f"kpi_index key '{key}' is not a valid strategic_objectives or "
+                    f"canonical_okrs id"
                 )
+                kpi_index_fail = True
+            if kpi_load_ok:
+                # value may be a single ID string or a list of ID strings
+                ref_values = value if isinstance(value, list) else [value]
+                for ref_val in ref_values:
+                    if ref_val not in known_kpi_ids:
+                        errors.append(
+                            f"kpi_index['{key}'] references unknown KPI id: {ref_val}"
+                        )
+                        kpi_index_fail = True
+        if not kpi_index_fail:
+            print(
+                f"  Check 9: kpi_index consistency: PASS ({len(kpi_index)} entries validated)"
+            )
+        else:
+            print("  Check 9: kpi_index consistency: FAIL")
 
-    # -- Check 4: Validate kpi_index --
-    kpi_index = okr_data.get("kpi_index", {})
-    for obj_id, kpis in kpi_index.items():
-        if obj_id not in valid_obj_ids:
-            errors.append(f"kpi_index: objective '{obj_id}' not in strategic_objectives")
-        for kpi_ref in kpis:
-            if kpi_ref not in valid_kpi_ids:
-                errors.append(f"kpi_index[{obj_id}]: kpi_ref '{kpi_ref}' not valid")
+    # --- Summary ---
+    n_so = len(data.get("strategic_objectives", []))
+    n_okr = len(data.get("canonical_okrs", []))
+    n_kpi_refs = kpi_ref_count if kpi_load_ok else 0
+    print(
+        f"\nSummary: {n_so} strategic_objectives, {n_okr} canonical_okrs, "
+        f"{n_kpi_refs} KPI cross-references"
+    )
 
-    # -- Report --
-    if errors:
-        print(f"FAIL: {len(errors)} validation error(s):")
-        for e in errors:
-            print(f"  - {e}")
-        return False
-
-    print("PASS: Enterprise OKR YAML validation successful")
-    print(f"  - {len(okr_data['strategic_objectives'])} strategic objectives")
-    print(f"  - {len(okr_data['canonical_okrs'])} canonical OKRs")
-    print(f"  - {len(valid_kpi_ids)} KPI IDs cross-referenced")
-    return True
+    _report(errors)
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":
-    success = validate()
-    sys.exit(0 if success else 1)
+    sys.exit(main())

@@ -132,7 +132,7 @@ Modeled after Odoo 19 PLM approval patterns:
 
 Tax Pulse compliance intelligence is driven by a machine-readable check catalog, not hardcoded prompt logic.
 
-**SSOT**: `ssot/tax/compliance_check_catalog.yaml`
+**SSOT**: `infra/ssot/tax/compliance_check_catalog.yaml`
 
 The catalog defines 12 checks (CI-001 through CI-012) covering:
 - Missing EWT on vendor bills (CI-001)
@@ -174,7 +174,7 @@ Tax computation rules, rates, and BIR regulations are NOT embedded in agent prom
 | `data/rates/ph_rates_2025.json` | Versioned JSON | TRAIN brackets, EWT, FWT, corporate, VAT rates |
 | `data/rules/vat.rules.yaml` | JSONLogic | 8 VAT computation rules |
 | `data/rules/ewt.rules.yaml` | JSONLogic | 11 EWT computation rules |
-| `ssot/tax/compliance_check_catalog.yaml` | SSOT YAML | 12 compliance intelligence checks |
+| `infra/ssot/tax/compliance_check_catalog.yaml` | SSOT YAML | 12 compliance intelligence checks |
 | Azure AI Search index `ipai-ph-tax-knowledge` | RAG | BIR regulations, form guides, SOPs |
 
 This ensures the agent can be updated without redeploying prompts, and tax truth is auditable and version-controlled.

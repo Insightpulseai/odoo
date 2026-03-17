@@ -1,0 +1,16 @@
+# Docker Compose SSOT Allowlist
+# Canonical files authorized for existence in repository
+# Any compose file not listed here will trigger CI failure
+
+# Canonical SSOT
+docker-compose.yml
+
+# Authorized Delegators (MUST use include:)
+docker-compose.dev.yml
+.devcontainer/docker-compose.devcontainer.yml
+ipai-platform/compose.yaml
+
+# Authorized Independent Stacks (special cases)
+infra/deploy/docker-compose.prod.yml
+infra/do-oca-stack/docker-compose.yml
+sandbox/workbench/docker-compose.workbench.yml

@@ -1,0 +1,72 @@
+# schema: ssot.integrations.v1
+id: m365_copilot
+name: "Microsoft 365 Copilot — Declarative Agent Integration"
+vendor: microsoft
+category: ai_interaction_plane
+status: planned
+reviewed: "2026-03-01"
+version: "1.0.0"
+
+description: >
+  M365 Copilot serves as the primary interaction plane for knowledge workers
+  accessing IPAI Ops data. The integration uses a declarative agent registered
+  in Microsoft 365 that routes relevant queries to the IPAI Supabase Edge
+  Function broker. No Microsoft Graph sync is used — all data access is
+  federated via the MCP-compatible broker pattern.
+
+integration_pattern: declarative_agent_with_federated_connector
+
+agent:
+  id: insightpulseai_ops_advisor
+  display_name: "InsightPulse AI — Ops Advisor"
+  description: "Access IPAI operational data, advisor findings, and Odoo KPIs from M365 Copilot"
+  manifest_source: "ssot/m365/agents/insightpulseai_ops_advisor/"
+  manifest_generated: "dist/m365/agents/insightpulseai_ops_advisor/manifest.json"
+  generator_script: "scripts/m365/generate_actions_manifest.py"
+  drift_check: "scripts/ci/check_m365_manifest_drift.py"
+
+broker:
+  type: supabase_edge_function
+  function_name: m365-copilot-broker
+  planned_path: "supabase/functions/m365-copilot-broker/index.ts"
+  implemented: false
+  rpc_operations:
+    - name: query_advisor_findings
+      type: query
+      description: "Return open Advisor findings filtered by pillar and severity"
+    - name: query_ops_runs
+      type: query
+      description: "Return recent agentic coding run audit entries"
+    - name: trigger_advisor_scan
+      type: action
+      description: "Trigger a full Advisor scan (async, returns job_id)"
+    - name: acknowledge_finding
+      type: action
+      description: "Acknowledge or dismiss an Advisor finding with justification"
+
+audit:
+  all_calls_logged: true
+  log_table: "ops.runs"
+  log_event_table: "ops.run_events"
+  compliance_note: >
+    All M365 Copilot -> IPAI broker calls are logged with caller identity,
+    operation name, parameters (sanitized), and outcome. Required for SOC 2 readiness.
+
+secrets_required:
+  - name: M365_COPILOT_TENANT_ID
+    purpose: "Microsoft 365 tenant ID for manifest registration"
+    store: github_actions_secrets
+    required: true
+  - name: M365_COPILOT_CLIENT_ID
+    purpose: "Azure AD app client ID for Copilot agent auth"
+    store: github_actions_secrets
+    required: true
+  - name: M365_COPILOT_CLIENT_SECRET
+    purpose: "Azure AD app client secret"
+    store: supabase_vault
+    vault_key: M365_COPILOT_CLIENT_SECRET
+    required: true
+
+documentation:
+  integration_doc: "docs/architecture/M365_COPILOT_INTEGRATION.md"
+  manifest_doc: "docs/architecture/M365_DECLARATIVE_AGENT_MANIFEST.md"

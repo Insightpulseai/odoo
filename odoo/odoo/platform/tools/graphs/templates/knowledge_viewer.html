@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odoo Knowledge Graph Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+    #controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    #controls h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-right: auto;
+    }
+    .btn-group {
+      display: flex;
+      gap: 4px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    button:hover { background: #f0f0f0; }
+    button.active { background: #007bff; color: white; }
+    .btn-group button { border-right: 1px solid #ddd; }
+    .btn-group button:last-child { border-right: none; }
+    #search {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 250px;
+    }
+    #svg-container {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 40px;
+      overflow: hidden;
+      background: white;
+    }
+    #svg-container svg {
+      cursor: grab;
+      width: 100%;
+      height: 100%;
+    }
+    #legend {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #ddd;
+      padding: 8px 16px;
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+    .info {
+      position: fixed;
+      bottom: 48px;
+      right: 16px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 12px;
+      color: #666;
+    }
+    .highlight {
+      fill: #ffeb3b !important;
+      stroke: #ff9800 !important;
+      stroke-width: 3px !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <h1>Knowledge Graph</h1>
+
+    <div class="btn-group">
+      <button id="btn-all" class="active" onclick="filterNodes('all')">All Nodes</button>
+      <button id="btn-repo" onclick="filterNodes('Repo')">Repo</button>
+      <button id="btn-spec" onclick="filterNodes('SpecBundle')">Specs</button>
+      <button id="btn-module" onclick="filterNodes('Module')">Modules</button>
+      <button id="btn-workflow" onclick="filterNodes('Workflow')">Workflows</button>
+    </div>
+
+    <input type="text" id="search" placeholder="Search nodes..." oninput="searchNodes(this.value)">
+
+    <div class="btn-group">
+      <button onclick="zoomIn()">+</button>
+      <button onclick="zoomOut()">−</button>
+      <button onclick="resetZoom()">Reset</button>
+    </div>
+  </div>
+
+  <div id="svg-container">
+    <!-- SVG will be injected here -->
+  </div>
+
+  <div id="legend">
+    <div class="legend-item">
+      <div class="legend-color" style="background: #e3f2fd;"></div>
+      <span>Repo</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #fff3e0;"></div>
+      <span>SpecBundle</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #f3e5f5;"></div>
+      <span>Module</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #e8f5e9;"></div>
+      <span>Workflow</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #fce4ec;"></div>
+      <span>Script</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #f1f8e9;"></div>
+      <span>Doc</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #e0f2f1;"></div>
+      <span>Service</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: #fff9c4;"></div>
+      <span>Integration</span>
+    </div>
+  </div>
+
+  <div class="info">
+    <span id="node-count"></span> nodes |
+    Mouse wheel: zoom | Drag: pan
+  </div>
+
+  <script>
+    // SVG Pan & Zoom Controller
+    class SVGPanZoom {
+      constructor(svgElement) {
+        this.svg = svgElement;
+        this.viewBox = { x: 0, y: 0, width: 1000, height: 1000 };
+        this.isPanning = false;
+        this.startPoint = { x: 0, y: 0 };
+        this.scale = 1;
+        this.init();
+      }
+
+      init() {
+        const vb = this.svg.getAttribute('viewBox');
+        if (vb) {
+          const [x, y, w, h] = vb.split(' ').map(Number);
+          this.viewBox = { x, y, width: w, height: h };
+          this.svg.setAttribute('data-original-viewbox', vb);
+        }
+
+        this.svg.addEventListener('mousedown', this.onMouseDown.bind(this));
+        this.svg.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.svg.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.svg.addEventListener('mouseleave', this.onMouseUp.bind(this));
+        this.svg.addEventListener('wheel', this.onWheel.bind(this));
+      }
+
+      onMouseDown(e) {
+        this.isPanning = true;
+        this.startPoint = { x: e.clientX, y: e.clientY };
+        this.svg.style.cursor = 'grabbing';
+      }
+
+      onMouseMove(e) {
+        if (!this.isPanning) return;
+        const dx = (e.clientX - this.startPoint.x) * (this.viewBox.width / this.svg.clientWidth);
+        const dy = (e.clientY - this.startPoint.y) * (this.viewBox.height / this.svg.clientHeight);
+        this.viewBox.x -= dx;
+        this.viewBox.y -= dy;
+        this.updateViewBox();
+        this.startPoint = { x: e.clientX, y: e.clientY };
+      }
+
+      onMouseUp() {
+        this.isPanning = false;
+        this.svg.style.cursor = 'grab';
+      }
+
+      onWheel(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 1.2 : 0.8;
+        this.zoom(delta, e.clientX, e.clientY);
+      }
+
+      zoom(factor, centerX, centerY) {
+        const newScale = this.scale * factor;
+        if (newScale < 0.1 || newScale > 10) return;
+
+        const rect = this.svg.getBoundingClientRect();
+        const offsetX = (centerX - rect.left) / rect.width;
+        const offsetY = (centerY - rect.top) / rect.height;
+
+        const oldWidth = this.viewBox.width;
+        const oldHeight = this.viewBox.height;
+
+        this.viewBox.width /= factor;
+        this.viewBox.height /= factor;
+
+        this.viewBox.x += (oldWidth - this.viewBox.width) * offsetX;
+        this.viewBox.y += (oldHeight - this.viewBox.height) * offsetY;
+
+        this.scale = newScale;
+        this.updateViewBox();
+      }
+
+      updateViewBox() {
+        this.svg.setAttribute('viewBox',
+          `${this.viewBox.x} ${this.viewBox.y} ${this.viewBox.width} ${this.viewBox.height}`
+        );
+      }
+
+      reset() {
+        const vb = this.svg.getAttribute('data-original-viewbox');
+        if (vb) {
+          const [x, y, w, h] = vb.split(' ').map(Number);
+          this.viewBox = { x, y, width: w, height: h };
+          this.scale = 1;
+          this.updateViewBox();
+        }
+      }
+    }
+
+    let controller;
+    let currentFilter = 'all';
+
+    // Load SVG
+    fetch('__SVG_FILE__')
+      .then(r => r.text())
+      .then(svg => {
+        document.getElementById('svg-container').innerHTML = svg;
+        const svgEl = document.querySelector('#svg-container svg');
+        controller = new SVGPanZoom(svgEl);
+        updateNodeCount();
+      });
+
+    function filterNodes(kind) {
+      currentFilter = kind;
+      document.querySelectorAll('#controls .btn-group button').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-' + (kind === 'all' ? 'all' : kind.toLowerCase())).classList.add('active');
+
+      const svg = document.querySelector('#svg-container svg');
+      const clusters = svg.querySelectorAll('g[id^="cluster_"]');
+
+      clusters.forEach(cluster => {
+        const clusterId = cluster.id.replace('cluster_', '');
+        if (kind === 'all' || clusterId === kind) {
+          cluster.style.display = '';
+        } else {
+          cluster.style.display = 'none';
+        }
+      });
+
+      updateNodeCount();
+    }
+
+    function searchNodes(query) {
+      const svg = document.querySelector('#svg-container svg');
+      const nodes = svg.querySelectorAll('g.node');
+      const lowerQuery = query.toLowerCase();
+
+      nodes.forEach(node => {
+        node.classList.remove('highlight');
+        const text = node.textContent.toLowerCase();
+        if (lowerQuery && text.includes(lowerQuery)) {
+          node.classList.add('highlight');
+        }
+      });
+    }
+
+    function zoomIn() { controller.zoom(0.8); }
+    function zoomOut() { controller.zoom(1.2); }
+    function resetZoom() { controller.reset(); }
+
+    function updateNodeCount() {
+      const svg = document.querySelector('#svg-container svg');
+      if (!svg) return;
+      const visible = Array.from(svg.querySelectorAll('g.node'))
+        .filter(n => {
+          const cluster = n.closest('g[id^="cluster_"]');
+          return !cluster || cluster.style.display !== 'none';
+        });
+      document.getElementById('node-count').textContent = visible.length;
+    }
+  </script>
+</body>
+</html>

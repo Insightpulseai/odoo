@@ -1,0 +1,66 @@
+version: "1.0"
+schema: ssot.governance.azdo-alignment.v1
+updated_at: "2026-03-14"
+
+organization: insightpulseai
+
+projects:
+  - name: ipai-platform
+    purpose: platform-control-runtime
+    repos:
+      - odoo
+      - infra
+      - ops-platform
+      - agents
+      - .github
+      - automations
+      - web
+    service_connections:
+      - sc-azure-dev-platform
+    agent_pools:
+      - ipai-build-pool
+    variable_groups:
+      - name: vg-ipai-platform-secrets
+        key_vault: kv-ipai-dev
+        open_to_all_pipelines: false
+
+  - name: lakehouse
+    purpose: databricks-analytics
+    repos:
+      - lakehouse
+    service_connections:
+      - sc-azure-dev-lakehouse
+    agent_pools:
+      - ipai-build-pool
+    variable_groups:
+      - name: vg-ipai-lakehouse-secrets
+        key_vault: kv-ipai-dev
+        open_to_all_pipelines: false
+    databricks_workspace: dbw-ipai-dev
+
+github_primary: true
+azure_devops_role: selective-execution-surface
+
+agent_pools:
+  - name: ipai-build-pool
+    resource_group: rg-ipai-devops
+    type: self-hosted
+    shared_across_projects: true
+
+dev_center:
+  name: ipai-devcenter
+  resource_group: rg-ipai-devops
+
+service_connection_policy:
+  auth_mechanism: workload-identity-federation
+  long_lived_secrets: false
+  cross_project_sharing: false
+  protected_resource: true
+  require_approvals: true
+
+secret_management:
+  backend: azure-key-vault
+  vault: kv-ipai-dev
+  secrets_in_git: false
+  secrets_in_yaml: false
+  secrets_in_logs: false

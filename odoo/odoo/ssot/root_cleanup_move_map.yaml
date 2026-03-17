@@ -1,0 +1,261 @@
+# Root Cleanup Move Map — SSOT
+# Defines safe moves, merges, and archives for root boundary cleanup.
+#
+# Phases:
+#   1 — Low-risk, no CI/path refs expected
+#   2 — Medium-risk, requires doc/link updates
+#   3 — High-risk, requires CI workflow changes (deferred until validated)
+#
+# Risk: low = no known references; medium = doc references possible; high = CI/workflow refs confirmed
+
+version: 1
+generated: "2026-02-24"
+
+moves:
+  # ── Phase 1: Low-risk moves ─────────────────────────────────────────
+
+  - id: mcp-readme-to-agents
+    source: mcp/README.md
+    target: agents/mcp/README.md
+    action: merge
+    risk: low
+    requires_path_updates: true
+    validation_checks:
+      - "Verify agents/mcp/README.md exists (target dir confirmed present)"
+      - "grep -r 'mcp/README' to confirm no references"
+      - "Delete mcp/ directory after merge"
+      - "SEPARATE FIX NEEDED: scripts reference mcp/servers/odoo-erp-server at root-relative paths but actual servers live at agents/mcp/servers/ — those refs are already broken and need a dedicated path-fix commit"
+    rollback_strategy: "git checkout -- mcp/"
+    phase: 1
+    status: approved
+    notes: >
+      Path audit: root mcp/ is a README-only stub; agents/mcp/ is canonical with 4 subdirs.
+      Scripts reference mcp/servers/* at root but those paths are already broken (actual location: agents/mcp/servers/).
+      Moving the README is safe. Script path refs require a separate fix (not blocking this move).
+
+  - id: n8n-readme-to-infra
+    source: n8n/README.md
+    target: infra/n8n/README.md
+    action: merge
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "Verify infra/n8n/ exists (confirmed: contains workflows/)"
+      - "grep -r 'n8n/README' to confirm no references"
+      - "Delete n8n/ directory after merge"
+      - "Path audit confirmed: scripts/integration/deploy-supabase.sh refs n8n/workflows/integration/ but those paths don't exist at root (already broken). Real n8n data is in automations/n8n/ and infra/n8n/."
+    rollback_strategy: "git checkout -- n8n/"
+    phase: 1
+    status: approved
+    notes: >
+      Path audit: root n8n/ is README-only. Script refs to n8n/workflows/integration/ are already broken
+      (real data in automations/n8n/ and infra/n8n/). Safe to move README. LOW RISK confirmed.
+
+  - id: vercel-readme-cleanup
+    source: vercel/README.md
+    target: null
+    action: delete_after_verification
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "Verify vercel.json at root covers Vercel config"
+      - "grep -r 'vercel/README' to confirm no references"
+      - "Delete vercel/ directory"
+    rollback_strategy: "git checkout -- vercel/"
+    phase: 1
+    status: approved
+    notes: "vercel.json at root + web/ apps are canonical. This README adds no value."
+
+  - id: archive-scratch
+    source: scratch/
+    target: archive/root-cleanup-20260224/scratch/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "Verify no active processes reference scratch/ (check for PID files)"
+      - "grep -r 'scratch/' --include='*.yml' --include='*.yaml' .github/"
+    rollback_strategy: "mv archive/root-cleanup-20260224/scratch/ scratch/"
+    phase: 1
+    status: approved
+    notes: "Contains odoo.pid, out/, spec-migration-plan.csv. Transient artifacts."
+
+  - id: archive-out
+    source: out/
+    target: archive/root-cleanup-20260224/out/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "grep -r '\"out/' --include='*.yml' --include='*.yaml' .github/ to check CI refs"
+      - "Verify automation_sweep output is not referenced by active workflows"
+    rollback_strategy: "mv archive/root-cleanup-20260224/out/ out/"
+    phase: 1
+    status: approved
+    notes: "20 items of sweep/demo output. Not referenced by CI."
+
+  - id: archive-sandbox
+    source: sandbox/
+    target: archive/root-cleanup-20260224/sandbox/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "CLAUDE.md confirms sandbox is never canonical evidence"
+      - "grep -r 'sandbox/' --include='*.yml' --include='*.yaml' .github/"
+    rollback_strategy: "mv archive/root-cleanup-20260224/sandbox/ sandbox/"
+    phase: 1
+    status: approved
+    notes: "Dev sandbox. CLAUDE.md explicitly says sandbox is never a canonical evidence location."
+
+  - id: archive-odoo-local
+    source: odoo_local/
+    target: archive/root-cleanup-20260224/odoo_local/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "grep -r 'odoo_local/' to check references"
+      - "Verify seed data is duplicated in data/finance_seed/"
+    rollback_strategy: "mv archive/root-cleanup-20260224/odoo_local/ odoo_local/"
+    phase: 1
+    status: approved
+    notes: "Local Odoo seed + integration map. Data likely duplicated in data/."
+
+  - id: archive-mattermost
+    source: mattermost/
+    target: archive/root-cleanup-20260224/mattermost/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "CLAUDE.md confirms Mattermost deprecated 2026-01-28"
+      - "grep -r 'mattermost/' --include='*.yml' --include='*.yaml' .github/"
+    rollback_strategy: "mv archive/root-cleanup-20260224/mattermost/ mattermost/"
+    phase: 1
+    status: approved
+    notes: "Deprecated per CLAUDE.md. Replaced by Slack."
+
+  - id: archive-prototypes
+    source: prototypes/
+    target: archive/root-cleanup-20260224/prototypes/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "grep -r 'prototypes/' --include='*.yml' --include='*.yaml' .github/"
+      - "Verify no active development references these"
+    rollback_strategy: "mv archive/root-cleanup-20260224/prototypes/ prototypes/"
+    phase: 1
+    status: approved
+    notes: "3 prototype Odoo themes/chat modules + README. Experimental, not production."
+
+  - id: archive-frontend-fluent
+    source: frontend-fluent/
+    target: archive/root-cleanup-20260224/frontend-fluent/
+    action: archive
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "Verify only contains .env.example (1 file)"
+      - "grep -r 'frontend-fluent/' to check references"
+    rollback_strategy: "mv archive/root-cleanup-20260224/frontend-fluent/ frontend-fluent/"
+    phase: 1
+    status: approved
+    notes: "Dead prototype. Single .env.example file."
+
+  # ── Phase 2: Medium-risk moves ──────────────────────────────────────
+
+  - id: specs-to-spec-legacy
+    source: specs/
+    target: spec/legacy-prds/
+    action: move
+    risk: medium
+    requires_path_updates: true
+    validation_checks:
+      - "BLOCKING: scripts/full_deploy_sanity.sh:16 has 'test -f specs/003-odoo-custom-image.prd.md' — must update before move"
+      - "grep -rn 'specs/' docs/ to find doc links (3 other refs are string literals, not real paths)"
+      - "Update scripts/full_deploy_sanity.sh to use spec/legacy-prds/ path"
+      - "Update any docs that link to specs/"
+    rollback_strategy: "mv spec/legacy-prds/ specs/"
+    phase: 2
+    status: deferred
+    notes: >
+      Path audit: ONE real CI reference in scripts/full_deploy_sanity.sh line 16:
+      'test -f specs/003-odoo-custom-image.prd.md'. This is a blocking reference.
+      Other 3 refs are string literals (not real paths). Deferred until script is updated.
+      Loose PRD files (not spec-kit format). Target: spec/legacy-prds/ to preserve but differentiate.
+
+  - id: catalogs-merge-into-catalog
+    source: catalogs/
+    target: catalog/
+    action: merge
+    risk: low
+    requires_path_updates: false
+    validation_checks:
+      - "Path audit confirmed: no CI workflow or script references to catalogs/ found"
+      - "Move catalogs/locales/ to catalog/locales/"
+      - "Move catalogs/sap_concur_surface_catalog.yaml to catalog/"
+      - "Check for naming conflicts in target"
+    rollback_strategy: "git checkout -- catalogs/ catalog/"
+    phase: 1
+    status: approved
+    notes: >
+      Path audit: no CI workflow or script references found. Downgraded from medium to LOW RISK.
+      Moved from phase 2 to phase 1. Merge locales/ subdir + sap_concur catalog into canonical catalog/ dir.
+
+  - id: generate-automations-to-scripts
+    source: generate_automations_inventory.py
+    target: scripts/automations/generate_automations_inventory.py
+    action: move
+    risk: medium
+    requires_path_updates: true
+    validation_checks:
+      - "grep -rn 'generate_automations_inventory' .github/ Makefile"
+      - "Update any CI or Makefile references"
+    rollback_strategy: "mv scripts/automations/generate_automations_inventory.py generate_automations_inventory.py"
+    phase: 2
+    status: approved
+    notes: "Root-level script. Canonical location is scripts/automations/."
+
+  # ── Phase 3: High-risk / deferred ──────────────────────────────────
+
+  - id: root-dockerfile-to-docker
+    source: Dockerfile
+    target: docker/images/Dockerfile.ce19
+    action: move
+    risk: high
+    requires_path_updates: true
+    validation_checks:
+      - "insightpulse-cicd.yml triggers on 'Dockerfile*' at root"
+      - "compose-ssot-gate.yml may reference root Dockerfile"
+      - "All CI workflows using root Dockerfile must be updated"
+      - "docker/Dockerfile.ce19 and docker/Dockerfile.unified already exist — resolve which is canonical"
+    rollback_strategy: "mv docker/images/Dockerfile.ce19 Dockerfile"
+    phase: 3
+    status: deferred
+    notes: >
+      Root Dockerfile header says 'Odoo 18 CE' but repo is Odoo 19.
+      CI workflows insightpulse-cicd.yml triggers on 'Dockerfile*' at root.
+      Must audit all CI refs before moving. Deferred until CI audit complete.
+
+  - id: secrets-security-review
+    source: secrets/
+    target: archive/root-cleanup-20260224/secrets/
+    action: archive
+    risk: high
+    requires_path_updates: false
+    validation_checks:
+      - "Verify secrets/ is in .gitignore (confirmed: line 104)"
+      - "Verify contents are not committed to git history"
+      - "Check git log for any commits that included secrets/"
+      - "Security review: ensure odoo_pg_pass is not a live production credential"
+      - "After archive, scrub from git history if ever committed"
+    rollback_strategy: "mv archive/root-cleanup-20260224/secrets/ secrets/"
+    phase: 3
+    status: deferred
+    notes: >
+      Contains odoo_pg_pass. Already in .gitignore (line 104).
+      Needs security review to confirm it was never committed to git history.
+      If committed, requires git filter-branch or BFG to scrub.
+      Flagged for security team review before any action.

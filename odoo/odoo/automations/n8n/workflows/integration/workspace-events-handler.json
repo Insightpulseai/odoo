@@ -1,0 +1,477 @@
+{
+  "name": "Google Workspace Events Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "workspace-webhook",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "workspace-webhook",
+      "name": "Workspace Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "workspace-events-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse and categorize Workspace event\nconst payload = $input.first().json;\nconst headers = $input.first().headers;\n\n// Determine event source and type\nlet eventSource = 'unknown';\nlet eventType = 'unknown';\nlet eventData = {};\n\n// Google Drive changes\nif (payload.kind === 'drive#change' || payload.kind === 'drive#changes') {\n  eventSource = 'google_drive';\n  eventType = payload.type || 'change';\n  eventData = {\n    fileId: payload.fileId,\n    time: payload.time,\n    removed: payload.removed || false,\n    file: payload.file || null\n  };\n}\n// Google Docs edits (via Apps Script webhook)\nelse if (payload.documentId || payload.source === 'google_docs') {\n  eventSource = 'google_docs';\n  eventType = payload.eventType || 'edit';\n  eventData = {\n    documentId: payload.documentId,\n    documentTitle: payload.documentTitle,\n    editedBy: payload.editedBy,\n    changeType: payload.changeType\n  };\n}\n// Gmail new email (via Gmail API push notification)\nelse if (payload.emailAddress || payload.historyId) {\n  eventSource = 'gmail';\n  eventType = 'new_message';\n  eventData = {\n    emailAddress: payload.emailAddress,\n    historyId: payload.historyId\n  };\n}\n// Google Sheets changes\nelse if (payload.spreadsheetId || payload.source === 'google_sheets') {\n  eventSource = 'google_sheets';\n  eventType = payload.eventType || 'edit';\n  eventData = {\n    spreadsheetId: payload.spreadsheetId,\n    sheetName: payload.sheetName,\n    range: payload.range,\n    editedBy: payload.editedBy\n  };\n}\n\nreturn {\n  json: {\n    eventSource,\n    eventType,\n    eventData,\n    rawPayload: payload,\n    receivedAt: new Date().toISOString()\n  }\n};"
+      },
+      "id": "parse-event",
+      "name": "Parse Workspace Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/log_webhook_event",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"{{ $json.eventSource }}\",\n  \"p_event_type\": \"{{ $json.eventType }}\",\n  \"p_event_id\": \"{{ $json.eventData.fileId || $json.eventData.documentId || $json.eventData.spreadsheetId || $json.eventData.historyId || '' }}-{{ Date.now() }}\",\n  \"p_payload\": {{ JSON.stringify($json.rawPayload) }}\n}"
+      },
+      "id": "log-event",
+      "name": "Log Event to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [680, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-key",
+          "name": "Supabase Service Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "value": "google_drive",
+              "outputIndex": 0
+            },
+            {
+              "value": "google_docs",
+              "outputIndex": 1
+            },
+            {
+              "value": "gmail",
+              "outputIndex": 2
+            },
+            {
+              "value": "google_sheets",
+              "outputIndex": 3
+            }
+          ]
+        },
+        "fallbackOutput": "none",
+        "field": "={{ $('Parse Workspace Event').item.json.eventSource }}"
+      },
+      "id": "route-event",
+      "name": "Route by Source",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle Google Drive file changes\nconst event = $('Parse Workspace Event').item.json;\nconst eventData = event.eventData;\n\n// Skip if file was removed\nif (eventData.removed) {\n  return {\n    json: {\n      action: 'skip',\n      reason: 'File was removed'\n    }\n  };\n}\n\n// Check if file matches sync rules (e.g., specs, PRDs)\nconst syncPatterns = [\n  { pattern: /spec/i, destination: 'github', path: 'spec/' },\n  { pattern: /prd/i, destination: 'github', path: 'spec/' },\n  { pattern: /report/i, destination: 's3', path: 'reports/' },\n  { pattern: /artifact/i, destination: 's3', path: 'artifacts/' }\n];\n\nconst fileName = eventData.file?.name || '';\nlet matchedRule = null;\n\nfor (const rule of syncPatterns) {\n  if (rule.pattern.test(fileName)) {\n    matchedRule = rule;\n    break;\n  }\n}\n\nif (!matchedRule) {\n  return {\n    json: {\n      action: 'skip',\n      reason: 'No matching sync rule for file: ' + fileName\n    }\n  };\n}\n\nreturn {\n  json: {\n    action: 'sync',\n    fileId: eventData.fileId,\n    fileName: fileName,\n    mimeType: eventData.file?.mimeType,\n    destination: matchedRule.destination,\n    destinationPath: matchedRule.path + fileName,\n    modifiedTime: eventData.file?.modifiedTime\n  }\n};"
+      },
+      "id": "handle-drive",
+      "name": "Handle Drive Change",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle Google Docs changes (spec/PRD updates)\nconst event = $('Parse Workspace Event').item.json;\nconst eventData = event.eventData;\n\n// Check if document is a spec or PRD that should be synced\nconst docTitle = eventData.documentTitle || '';\n\nconst isSpec = /spec|prd|constitution|plan|requirements/i.test(docTitle);\n\nif (!isSpec) {\n  return {\n    json: {\n      action: 'skip',\n      reason: 'Document is not a spec/PRD: ' + docTitle\n    }\n  };\n}\n\n// Determine destination path based on document title\nlet destinationPath = 'spec/';\nif (/constitution/i.test(docTitle)) {\n  destinationPath += 'constitution.md';\n} else if (/prd/i.test(docTitle)) {\n  destinationPath += 'prd.md';\n} else if (/plan/i.test(docTitle)) {\n  destinationPath += 'plan.md';\n} else {\n  destinationPath += docTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.md';\n}\n\nreturn {\n  json: {\n    action: 'export_and_sync',\n    documentId: eventData.documentId,\n    documentTitle: docTitle,\n    destinationPath: destinationPath,\n    editedBy: eventData.editedBy,\n    exportFormat: 'text/markdown'\n  }\n};"
+      },
+      "id": "handle-docs",
+      "name": "Handle Docs Change",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 250]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle Gmail notifications (convert emails to tasks/tickets)\nconst event = $('Parse Workspace Event').item.json;\nconst eventData = event.eventData;\n\n// This would typically fetch the actual email content\n// and create a task/ticket based on labels/content\n\nreturn {\n  json: {\n    action: 'process_email',\n    emailAddress: eventData.emailAddress,\n    historyId: eventData.historyId,\n    note: 'Fetch email details and create task if matching criteria'\n  }\n};"
+      },
+      "id": "handle-gmail",
+      "name": "Handle Gmail Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle Google Sheets changes\nconst event = $('Parse Workspace Event').item.json;\nconst eventData = event.eventData;\n\n// Check if sheet should trigger data sync\nconst sheetName = eventData.sheetName || '';\n\nconst dataSyncSheets = ['Sales', 'Inventory', 'Transactions', 'Metrics'];\nconst shouldSync = dataSyncSheets.some(s => sheetName.includes(s));\n\nif (!shouldSync) {\n  return {\n    json: {\n      action: 'skip',\n      reason: 'Sheet not configured for sync: ' + sheetName\n    }\n  };\n}\n\nreturn {\n  json: {\n    action: 'sync_data',\n    spreadsheetId: eventData.spreadsheetId,\n    sheetName: sheetName,\n    range: eventData.range,\n    editedBy: eventData.editedBy\n  }\n};"
+      },
+      "id": "handle-sheets",
+      "name": "Handle Sheets Change",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 550]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.action }}",
+              "value2": "skip",
+              "operation": "notEqual"
+            }
+          ]
+        }
+      },
+      "id": "check-drive-action",
+      "name": "Should Sync Drive?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.action }}",
+              "value2": "skip",
+              "operation": "notEqual"
+            }
+          ]
+        }
+      },
+      "id": "check-docs-action",
+      "name": "Should Sync Docs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 250]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Handle Drive Change').item.json.fileId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "download-drive-file",
+      "name": "Download Drive File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1560, 50],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "google-drive-oauth",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "export",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Handle Docs Change').item.json.documentId }}",
+          "mode": "id"
+        },
+        "mimeType": "text/plain",
+        "options": {}
+      },
+      "id": "export-docs",
+      "name": "Export Docs as Text",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [1560, 200],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "google-docs-oauth",
+          "name": "Google Docs OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/create_artifact_sync",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source_provider\": \"google_drive\",\n  \"p_source_path\": \"{{ $('Handle Drive Change').item.json.fileId }}\",\n  \"p_source_ref\": \"{{ $('Handle Drive Change').item.json.modifiedTime }}\",\n  \"p_destination_provider\": \"{{ $('Handle Drive Change').item.json.destination }}\",\n  \"p_destination_path\": \"{{ $('Handle Drive Change').item.json.destinationPath }}\",\n  \"p_artifact_type\": \"{{ $('Handle Drive Change').item.json.mimeType?.split('/')[1] || 'binary' }}\",\n  \"p_artifact_name\": \"{{ $('Handle Drive Change').item.json.fileName }}\",\n  \"p_triggered_by\": \"n8n\",\n  \"p_metadata\": {\n    \"source\": \"google_drive_webhook\",\n    \"original_mime_type\": \"{{ $('Handle Drive Change').item.json.mimeType }}\"\n  }\n}"
+      },
+      "id": "log-drive-sync",
+      "name": "Log Drive Sync",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1780, 50],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-key",
+          "name": "Supabase Service Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/create_artifact_sync",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source_provider\": \"google_docs\",\n  \"p_source_path\": \"{{ $('Handle Docs Change').item.json.documentId }}\",\n  \"p_source_ref\": \"{{ new Date().toISOString() }}\",\n  \"p_destination_provider\": \"github\",\n  \"p_destination_path\": \"{{ $('Handle Docs Change').item.json.destinationPath }}\",\n  \"p_artifact_type\": \"markdown\",\n  \"p_artifact_name\": \"{{ $('Handle Docs Change').item.json.documentTitle }}\",\n  \"p_triggered_by\": \"n8n\",\n  \"p_metadata\": {\n    \"source\": \"google_docs_webhook\",\n    \"edited_by\": \"{{ $('Handle Docs Change').item.json.editedBy }}\"\n  }\n}"
+      },
+      "id": "log-docs-sync",
+      "name": "Log Docs Sync",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1780, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-key",
+          "name": "Supabase Service Key"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "skip-drive",
+      "name": "Skip Drive",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1560, 150]
+    },
+    {
+      "parameters": {},
+      "id": "skip-docs",
+      "name": "Skip Docs",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Workspace Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Workspace Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Workspace Event": {
+      "main": [
+        [
+          {
+            "node": "Log Event to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Event to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Route by Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Source": {
+      "main": [
+        [
+          {
+            "node": "Handle Drive Change",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Docs Change",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Gmail Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Sheets Change",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Drive Change": {
+      "main": [
+        [
+          {
+            "node": "Should Sync Drive?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Docs Change": {
+      "main": [
+        [
+          {
+            "node": "Should Sync Docs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Sync Drive?": {
+      "main": [
+        [
+          {
+            "node": "Download Drive File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Sync Docs?": {
+      "main": [
+        [
+          {
+            "node": "Export Docs as Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Drive File": {
+      "main": [
+        [
+          {
+            "node": "Log Drive Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export Docs as Text": {
+      "main": [
+        [
+          {
+            "node": "Log Docs Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "integration",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    },
+    {
+      "name": "workspace",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    },
+    {
+      "name": "google",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T12:00:00.000Z",
+  "versionId": "1"
+}

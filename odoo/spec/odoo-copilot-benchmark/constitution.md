@@ -38,7 +38,7 @@ This benchmark assumes the current InsightPulse AI platform target state, includ
 - OCA-first module strategy
 - Thin `ipai_*` bridge doctrine
 
-Platform topology and infrastructure constraints are defined outside this benchmark spec in `ssot/azure/PLATFORM_TARGET_STATE.md`.
+Platform topology and infrastructure constraints are defined outside this benchmark spec in `infra/ssot/azure/PLATFORM_TARGET_STATE.md`.
 
 ## 3. Capability Model
 

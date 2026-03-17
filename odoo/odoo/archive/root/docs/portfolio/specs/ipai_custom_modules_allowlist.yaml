@@ -1,0 +1,30 @@
+version: 1
+addons_root: addons
+
+allowlist:
+  platform_glue:
+    - ipai_platform_core
+    - ipai_auth_bridge
+    - ipai_webhook_bus
+    - ipai_job_bridge
+    - ipai_storage_bridge
+    - ipai_observability
+  ai_surface:
+    - ipai_copilot_hub
+    - ipai_ai_tools_registry
+    - ipai_ai_audit
+  compliance_local_overlays:
+    - ipai_l10n_ph_overlay
+    - ipai_policy_controls
+  design_system:
+    - ipai_design_tokens
+    - ipai_ui_shell
+  data_contracts:
+    - ipai_data_contracts
+    - ipai_event_sourcing
+
+# Modules that are allowed even if not in the above categories (kept empty by default)
+extra_allow: []
+
+# If you want to allow ALL ipai_* temporarily (discouraged), set true (default false)
+allow_all_ipai: false

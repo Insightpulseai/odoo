@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Client Brand Tree View -->
+    <record id="view_client_brand_tree" model="ir.ui.view">
+        <field name="name">ipai.client.brand.tree</field>
+        <field name="model">ipai.client.brand</field>
+        <field name="arch" type="xml">
+            <list string="Client Brands">
+                <field name="partner_id"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="campaign_count"/>
+                <field name="asset_count"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Client Brand Form View -->
+    <record id="view_client_brand_form" model="ir.ui.view">
+        <field name="name">ipai.client.brand.form</field>
+        <field name="model">ipai.client.brand</field>
+        <field name="arch" type="xml">
+            <form string="Client Brand">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="logo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Brand Name..."/></h1>
+                    </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_campaigns" icon="fa-bullhorn">
+                            <field name="campaign_count" widget="statinfo" string="Campaigns"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_assets" icon="fa-image">
+                            <field name="asset_count" widget="statinfo" string="Assets"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Client Information">
+                            <field name="partner_id"/>
+                            <field name="code"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Brand Colors">
+                            <field name="primary_color" widget="color"/>
+                            <field name="secondary_color" widget="color"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Brand Guidelines">
+                            <field name="brand_guidelines_url" widget="url"/>
+                            <field name="tone_tags"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Target Audience" name="audience">
+                            <field name="target_audience"/>
+                        </page>
+                        <page string="Brand Voice" name="voice">
+                            <field name="brand_voice"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Client Brand Kanban View -->
+    <record id="view_client_brand_kanban" model="ir.ui.view">
+        <field name="name">ipai.client.brand.kanban</field>
+        <field name="model">ipai.client.brand</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="logo"/>
+                <field name="campaign_count"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="logo" widget="image" class="o_kanban_image me-3"/>
+                            <div class="flex-grow-1">
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted"><field name="partner_id"/></div>
+                                <div class="mt-2">
+                                    <span class="badge bg-primary"><field name="campaign_count"/> Campaigns</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Client Brand Search View -->
+    <record id="view_client_brand_search" model="ir.ui.view">
+        <field name="name">ipai.client.brand.search</field>
+        <field name="model">ipai.client.brand</field>
+        <field name="arch" type="xml">
+            <search string="Search Brands">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Client" name="group_client" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Client Brand Action -->
+    <record id="action_client_brand" model="ir.actions.act_window">
+        <field name="name">Client Brands</field>
+        <field name="res_model">ipai.client.brand</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first client brand
+            </p>
+            <p>
+                Client brands store brand guidelines, tone, colors,
+                and serve as the foundation for campaigns and assets.
+            </p>
+        </field>
+    </record>
+</odoo>

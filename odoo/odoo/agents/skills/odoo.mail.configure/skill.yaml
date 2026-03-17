@@ -1,0 +1,75 @@
+# Agent Skill Contract: odoo.mail.configure
+#
+# Configure outbound email for Odoo using SSOT secrets (Zoho).
+# Reads config/odoo/mail_settings.yaml and validates against prod_settings.
+#
+# Schema: agents/skills/schema/skill.schema.json
+# Validator: scripts/ci/check_agent_skills.py
+
+id: odoo.mail.configure
+version: 1
+description: "Configure outbound email for Odoo using SSOT-declared Zoho SMTP/IMAP settings and secrets"
+maturity: L3
+
+inputs:
+  provider:
+    type: string
+    enum: [zoho]
+    description: "Email provider to configure (only Zoho supported — Mailgun is deprecated)"
+    default: zoho
+  environment:
+    type: string
+    enum: [dev, prod]
+    description: "Target environment for email configuration"
+
+requires:
+  secrets:
+    - zoho_client_id
+    - zoho_client_secret
+    - zoho_refresh_token
+  ssot_files:
+    - ssot/runtime/prod_settings.yaml
+    - config/odoo/mail_settings.yaml
+    - ssot/secrets/registry.yaml
+
+outputs:
+  artifacts:
+    - config/odoo/mail_settings.yaml
+    - ssot/runtime/prod_settings.yaml
+  evidence: "web/docs/evidence/<stamp>/mail_config/"
+
+policies:
+  no_plaintext_secrets: true
+  must_pass_ci:
+    - scripts/ci/check_prod_settings_ssot.py
+    - scripts/ci/check_secrets_ssot.py
+  idempotent: true
+  rollback_supported: false
+
+verification:
+  checks:
+    - name: prod_settings_schema
+      type: ci_script
+      target: scripts/ci/check_prod_settings_ssot.py
+      expected: "exit 0"
+      notes: "Validates email section structure, secret refs cross-reference, and URL presence"
+    - name: secrets_registry_crossref
+      type: ci_script
+      target: scripts/ci/check_secrets_ssot.py
+      expected: "exit 0"
+      notes: "Validates all secret names exist in ssot/secrets/registry.yaml"
+    - name: smtp_connectivity
+      type: smtp_connect
+      target: "smtppro.zoho.com:587"
+      expected: "STARTTLS banner"
+      notes: "Live check — requires network. CI gate is schema-only."
+    - name: mail_settings_valid
+      type: yaml_valid
+      target: config/odoo/mail_settings.yaml
+      expected: "YAML parses without error"
+      notes: "Ensures mail settings file is valid YAML after any modifications"
+    - name: odoo_mail_queue
+      type: odoo_rpc
+      method: mail.mail.search_count
+      expected: "no stuck outbound mail"
+      notes: "Live check — requires running Odoo. Verifies mail queue is healthy."

@@ -1,0 +1,104 @@
+schema: ipai.mapping.product_to_stack.v1
+mapping_id: concur_to_odoo19_ce_oca_ipai
+source_product:
+  name: SAP Concur
+  domains:
+    - expense
+    - invoice_ap
+    - corporate_card
+    - approvals
+    - audit_compliance
+
+target_stack:
+  erp: "Odoo 19 Community Edition"
+  community: "OCA (19.0 where available)"
+  glue: "Minimal IPAI modules + Supabase (optional) for queues/artifacts"
+
+evidence:
+  concur_invoice_capture:
+    notes: "Invoice Capture: OCR extraction, approval routing, exceptions, audit trail."
+  concur_pcard:
+    notes: "P-card integration: auto capture/categorize transactions; reconciliation; centrally billed support."
+
+capability_map:
+  - concur: "Mobile receipt capture + attachment-to-expense"
+    odoo_ce:
+      - module: "hr_expense"
+        fit: "native"
+    ipai_glue:
+      - module: "ipai_docflow_receipts"
+        fit: "replace/augment"
+        notes: "Use DocFlow + OCR service to generate drafts + enforce attachment policies."
+    gaps:
+      - "Policy-grade receipt validation rules (custom)"
+      - "Better exception handling UX (custom)"
+
+  - concur: "Invoice OCR capture (supplier, invoice #, PO #, line items) + AP workflow"
+    odoo_ce:
+      - module: "account"
+        fit: "native"
+      - module: "purchase"
+        fit: "native"
+    oca:
+      - module: "invoice_ocr_*"
+        fit: "optional"
+        notes: "If OCA 19.0 OCR modules exist; otherwise use IPAI DocFlow ingestion."
+    ipai_glue:
+      - module: "ipai_ap_inbox"
+        fit: "recommended"
+        notes: "Email/drive/watch-folder ingestion + OCR + draft vendor bill creation + exceptions queue."
+    gaps:
+      - "Concur-style end-to-end invoice capture productization (compose from components)"
+
+  - concur: "Approval routing (expense reports + invoices) with exceptions"
+    odoo_ce:
+      - module: "approvals"
+        fit: "native/near-native"
+    oca:
+      - module: "approval_workflow_*"
+        fit: "optional"
+    ipai_glue:
+      - module: "ipai_policy_rules"
+        fit: "recommended"
+        notes: "Declarative spend policies; enforce thresholds; maker-checker; audit logs."
+
+  - concur: "P-card / corporate card transaction ingestion + reconciliation"
+    odoo_ce:
+      - module: "account"
+        fit: "partial"
+    oca:
+      - module: "bank_statement_import_*"
+        fit: "recommended"
+        notes: "Use statement imports for card feeds if supported by your bank/provider."
+    ipai_glue:
+      - module: "ipai_card_feed_adapter"
+        fit: "recommended"
+        notes: "Normalize card feeds; map MCC/category; attach receipts; auto-match to expenses/bills."
+
+  - concur: "Audit trail + visibility (who approved what, when, why)"
+    odoo_ce:
+      - module: "mail"
+        fit: "partial"
+    oca:
+      - module: "auditlog"
+        fit: "recommended"
+        notes: "If available for 19.0; otherwise implement minimal IPAI audit trail on critical objects."
+    ipai_glue:
+      - module: "ipai_audit_trail"
+        fit: "recommended"
+
+implementation_blueprint:
+  minimal_viable_parity:
+    - "hr_expense + attachment enforcement + approvals"
+    - "account/purchase vendor bills + DocFlow invoice inbox"
+    - "bank/card statement imports (or IPAI adapter) + matching rules"
+    - "tax pack overlays per locale (see philippines_tax.yaml)"
+  supabase_optional:
+    rationale: "Queueing + artifact storage + run logs across agents"
+    components:
+      - "ops.runs / ops.run_events / ops.artifacts"
+      - "realtime for status updates"
+
+notes:
+  - "Treat OCA module names as TODO until validated against 19.0 repos in your addons path."
+  - "Keep IPAI glue small: adapters + rules + ingestion + schedules; avoid heavy new models unless unavoidable."

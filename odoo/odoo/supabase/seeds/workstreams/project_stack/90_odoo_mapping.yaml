@@ -1,0 +1,298 @@
+# Project Stack Odoo CE18 + OCA Mapping
+# Maps seed data concepts to Odoo models and OCA modules
+
+mappings:
+  # ============================================================
+  # CORE MODEL MAPPINGS
+  # ============================================================
+
+  - id: map_project_partner
+    target_system: odoo_ce18
+    source_code: PARTNER
+    target_model: res.partner
+    target_field: null
+    transform: null
+    notes: "Customers and stakeholders"
+
+  - id: map_project_analytic
+    target_system: odoo_ce18
+    source_code: ANALYTIC_ACCOUNT
+    target_model: account.analytic.account
+    target_field: null
+    transform: null
+    notes: "Project cost/revenue tracking"
+
+  - id: map_project_product
+    target_system: odoo_ce18
+    source_code: SERVICE_PRODUCT
+    target_model: product.product
+    target_field: null
+    transform: null
+    notes: "Billable service products"
+
+  - id: map_project_project
+    target_system: odoo_ce18
+    source_code: PROJECT
+    target_model: project.project
+    target_field: null
+    transform: null
+    notes: "Core project entity"
+
+  - id: map_project_tags
+    target_system: odoo_ce18
+    source_code: TAG
+    target_model: project.tags
+    target_field: null
+    transform: null
+    notes: "Task categorization tags"
+
+  - id: map_project_stages
+    target_system: odoo_ce18
+    source_code: STAGE
+    target_model: project.task.type
+    target_field: null
+    transform: null
+    notes: "Kanban stages"
+
+  - id: map_project_task
+    target_system: odoo_ce18
+    source_code: TASK
+    target_model: project.task
+    target_field: null
+    transform: null
+    notes: "Tasks and subtasks"
+
+  - id: map_project_timesheet
+    target_system: odoo_ce18
+    source_code: TIMESHEET
+    target_model: account.analytic.line
+    target_field: null
+    transform: null
+    notes: "Time entries"
+
+  # ============================================================
+  # OCA MODULE MAPPINGS
+  # ============================================================
+
+  - id: map_task_dependency
+    target_system: odoo_ce18
+    source_code: TASK_DEPENDENCY
+    target_model: project.task
+    target_field: depend_on_ids
+    transform: null
+    oca_module: project_task_dependency
+    notes: "Task-to-task dependencies"
+
+  - id: map_task_recurring
+    target_system: odoo_ce18
+    source_code: RECURRING_TASK
+    target_model: project.task
+    target_field: recurring
+    transform: null
+    oca_module: project_task_recurring
+    notes: "Recurring task patterns"
+
+  - id: map_project_wbs
+    target_system: odoo_ce18
+    source_code: WBS
+    target_model: project.project
+    target_field: wbs_enabled
+    transform: null
+    oca_module: project_wbs
+    notes: "Work breakdown structure"
+
+  - id: map_timesheet_sheet
+    target_system: odoo_ce18
+    source_code: TIMESHEET_SHEET
+    target_model: hr_timesheet.sheet
+    target_field: null
+    transform: null
+    oca_module: hr_timesheet_sheet
+    notes: "Timesheet approval workflow"
+
+# OCA module dependencies for full Project stack
+oca_modules:
+  # Project enhancements
+  - name: project_task_dependency
+    repo: project
+    version: "18.0"
+    purpose: "Task-to-task dependencies"
+    required: true
+
+  - name: project_task_recurring
+    repo: project
+    version: "18.0"
+    purpose: "Recurring task automation"
+    required: false
+
+  - name: project_wbs
+    repo: project
+    version: "18.0"
+    purpose: "Work breakdown structure"
+    required: false
+
+  - name: project_template
+    repo: project
+    version: "18.0"
+    purpose: "Project templates"
+    required: false
+
+  - name: project_task_template
+    repo: project
+    version: "18.0"
+    purpose: "Task templates"
+    required: false
+
+  - name: project_stage_closed
+    repo: project
+    version: "18.0"
+    purpose: "Mark stages as closed/done"
+    required: true
+
+  - name: project_timeline
+    repo: project
+    version: "18.0"
+    purpose: "Timeline view (Gantt alternative)"
+    required: false
+
+  # Timesheet enhancements
+  - name: hr_timesheet_sheet
+    repo: timesheet
+    version: "18.0"
+    purpose: "Timesheet sheets with approval"
+    required: false
+
+  - name: hr_timesheet_task_required
+    repo: timesheet
+    version: "18.0"
+    purpose: "Require task on timesheet entries"
+    required: true
+
+  # DMS for documents
+  - name: dms
+    repo: dms
+    version: "18.0"
+    purpose: "Document management system"
+    required: false
+
+  # Reporting
+  - name: mis_builder
+    repo: mis-builder
+    version: "18.0"
+    purpose: "MIS reports for profitability"
+    required: false
+
+# View mappings
+view_mappings:
+  - source: PROJECT_KANBAN
+    target: project.project_kanban_view
+    notes: "Project kanban board"
+
+  - source: TASK_KANBAN
+    target: project.task_kanban_view
+    notes: "Task kanban board"
+
+  - source: TASK_CALENDAR
+    target: project.view_task_calendar
+    notes: "Task calendar view"
+
+  - source: TIMESHEET_TREE
+    target: hr_timesheet.hr_timesheet_line_tree
+    notes: "Timesheet list view"
+
+  - source: PROJECT_TIMELINE
+    target: project.view_project_timeline
+    notes: "Timeline view (OCA)"
+    oca_module: project_timeline
+
+# Field mapping reference
+field_mappings:
+  project.project:
+    - odoo_field: name
+      csv_column: Name
+      required: true
+
+    - odoo_field: partner_id
+      csv_column: Customer
+      type: many2one
+      notes: "Match by Name or External ID"
+
+    - odoo_field: analytic_account_id
+      csv_column: Analytic Account
+      type: many2one
+
+    - odoo_field: allow_timesheets
+      csv_column: Allow Timesheets
+      type: boolean
+
+    - odoo_field: allow_billable
+      csv_column: Billable
+      type: boolean
+      notes: "Requires sale_timesheet module"
+
+    - odoo_field: privacy_visibility
+      csv_column: Privacy
+      allowed: [followers, employees, portal]
+
+  project.task:
+    - odoo_field: name
+      csv_column: Name
+      required: true
+
+    - odoo_field: project_id
+      csv_column: Project
+      type: many2one
+      required: true
+
+    - odoo_field: stage_id
+      csv_column: Stage
+      type: many2one
+
+    - odoo_field: tag_ids
+      csv_column: Tags
+      type: many2many
+      notes: "Comma-separated names or External IDs"
+
+    - odoo_field: parent_id
+      csv_column: Parent Task
+      type: many2one
+
+    - odoo_field: depend_on_ids
+      csv_column: Depends on
+      type: many2many
+      oca_module: project_task_dependency
+
+    - odoo_field: planned_hours
+      csv_column: Planned Hours
+      type: float
+
+    - odoo_field: date_deadline
+      csv_column: Deadline
+      type: date
+
+    - odoo_field: priority
+      csv_column: Priority
+      allowed: ["0", "1", "2", "3"]
+
+  account.analytic.line:
+    - odoo_field: date
+      csv_column: Date
+      type: date
+      required: true
+
+    - odoo_field: project_id
+      csv_column: Project
+      type: many2one
+
+    - odoo_field: task_id
+      csv_column: Task
+      type: many2one
+
+    - odoo_field: name
+      csv_column: Description
+      required: true
+
+    - odoo_field: unit_amount
+      csv_column: Hours
+      type: float
+      required: true

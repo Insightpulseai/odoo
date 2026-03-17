@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_ocr_provider_user,ipai.ocr.provider.user,model_ipai_ocr_provider,base.group_user,1,0,0,0
+access_ipai_ocr_provider_manager,ipai.ocr.provider.manager,model_ipai_ocr_provider,base.group_system,1,1,1,1
+access_ipai_ocr_job_user,ipai.ocr.job.user,model_ipai_ocr_job,base.group_user,1,1,1,0
+access_ipai_ocr_job_manager,ipai.ocr.job.manager,model_ipai_ocr_job,base.group_system,1,1,1,1
