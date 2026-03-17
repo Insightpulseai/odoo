@@ -1,0 +1,69 @@
+version: 1
+type: review_skill
+family: odoo_coding_guidelines
+skill:
+  name: odoo-code-review-judge
+  status: draft
+  owner: agents
+  purpose: >
+    Review generated Odoo code against official coding guidelines. This is the
+    primary quality gate for all Odoo module code — new modules, inherited
+    extensions, migration patches, and implementation skill outputs.
+
+  triggers:
+    - code review request for Odoo module
+    - pull request containing Odoo Python, XML, JS, or SCSS
+    - module audit request
+    - implementation skill output review (post-generation quality gate)
+
+  inputs:
+    - module directory or file paths under review
+    - diff or full source of changed files
+    - module manifest (__manifest__.py)
+
+  steps:
+    - check module structure and file naming against conventions
+    - check Python style — import ordering, idiomatic patterns, readability
+    - check XML structure — record formatting, XML ID naming, file organization
+    - check transaction safety — no unjustified cr.commit()
+    - check extendability — methods small, no hardcoded blocking logic
+    - check exception handling — specific catches, minimal scope
+    - check CSS/SCSS — proper o_<module>_ prefixing, no bare classes
+    - check JS/OWL — proper conventions, correct asset registration
+    - generate pass/fail verdict with violation list
+
+  outputs:
+    - verdict (pass/fail)
+    - violations_list (with file, line, rule, severity)
+    - risk_level (low/medium/high/critical)
+    - required_fixes (actionable list)
+    - evidence_lines (exact code references)
+    - upgrade_safety_note (Odoo 19 specific — tree→list, groups_id→group_ids)
+
+  guardrails:
+    - never approve code that uses cr.commit() without explicit justification
+    - never approve broad exception catches (bare except or except Exception without re-raise)
+    - never approve direct core patching — require _inherit extension
+    - prefer inherited extension over core patching
+    - methods should remain small and single-responsibility
+    - do not hardcode logic that blocks extension by submodules
+    - catch only specific exceptions
+    - follow Odoo file, XML, and import conventions
+    - flag deprecated patterns (tree views, groups_id) as violations
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/odoo-review/code-review-judge/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.98
+      safety: 0.99
+      policy_adherence: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/odoo-coding-guidelines.md
+  - agents/knowledge/benchmarks/odoo-developer-howtos.md
+  - ~/.claude/rules/odoo19-coding.md
+  - ~/.claude/rules/oca-governance.md
