@@ -109,7 +109,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-inventory-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/inventory/
@@ -184,7 +184,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-schema-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/schema/
@@ -255,7 +255,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-data-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/data/
@@ -330,7 +330,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-functions-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/functions/
@@ -428,7 +428,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-cutover-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/cutover/
@@ -487,7 +487,7 @@ jobs:
 
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: evidence-verify-${{ github.run_id }}
           path: ${{ env.EVIDENCE_DIR }}/verify/

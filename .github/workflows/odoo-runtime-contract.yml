@@ -123,7 +123,7 @@ jobs:
           } > artifacts/odoo-runtime-contract-evidence.txt
 
       - name: Upload evidence artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: odoo-runtime-contract-evidence
           path: artifacts/odoo-runtime-contract-evidence.txt
