@@ -1,0 +1,53 @@
+version: 1
+type: governance_skill
+family: oca_community_governance
+skill:
+  name: odoo-core-backport-assessment
+  status: draft
+  owner: odoo-developer
+  purpose: >
+    Assess whether a change belongs in extension code (ipai_*) or
+    community-core backport (OCB) — decision gate for patch vs extension.
+
+  triggers:
+    - bug fix needed in core behavior
+    - upstream fix available but not in current version
+    - community patch proposed
+
+  inputs:
+    - description of core behavior being changed
+    - upstream fix reference (commit/PR if available)
+    - OCB branch status for current version
+
+  steps:
+    - identify the core behavior being changed
+    - check if OCB already has the backport
+    - assess if change is generic (OCB-appropriate) or project-specific (ipai_*)
+    - check upstream fix status
+    - recommend path (wait for upstream / apply OCB backport / create ipai_* override)
+
+  outputs:
+    - backport_assessment
+    - recommendation
+    - risk_analysis
+    - upstream_status
+
+  guardrails:
+    - never modify vendor/odoo/ directly
+    - prefer OCB backport over local patch
+    - prefer ipai_* override for project-specific changes
+    - never copy OCA files into addons/ipai/
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/oca-governance/odoo-core-backport-assessment/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/knowledge/benchmarks/oca-community-governance.md
+  - agent-platform/ssot/learning/oca_skill_persona_map.yaml
