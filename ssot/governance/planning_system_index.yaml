@@ -13,7 +13,7 @@
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-17"
+last_updated: "2026-03-18"
 validator: scripts/ci/validate_planning_index.py
 ci_gate: .github/workflows/planning-index-ssot-check.yml
 
@@ -85,18 +85,18 @@ layers:
 
   - id: product_roadmap
     name: "Product Roadmap"
-    canonical_file: ssot/roadmap/product_roadmap.yaml
+    canonical_file: infra/ssot/roadmap/product_roadmap.yaml
     owner: product-lead
     cadence: monthly
-    status: not_on_branch  # exists on refactor branch (e3c2013d6f), not yet on main
+    status: on_main
     join_keys:
-      - field: initiatives[].okr_ref
-        joins_to: operational_okrs.canonical_okrs[].id
-      - field: initiatives[].objective_ref
-        joins_to: strategy.objectives[].id
+      - field: quarters[].epics[].id
+        joins_to: azure_boards.epics (via title convention)
+      - field: quarters[].epics[].ssot_ref
+        joins_to: spec bundles or ssot files
     note: >
-      This file exists on the refactor branch but has not been merged to main.
-      Cross-references to this layer are deferred until the file lands on main.
+      Product roadmap with quarterly milestones and epic definitions.
+      Epic ID format: E-<DOMAIN>-<SEQ>.
 
   - id: capability_targets
     name: "Parity & Capability Targets"

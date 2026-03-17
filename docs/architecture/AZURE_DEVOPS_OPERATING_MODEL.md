@@ -28,11 +28,11 @@ This document establishes a **deterministic engineering cockpit** where local VS
 - **`Makefile`**: Universal execution wrapper bridging local terminal and Azure Pipelines.
 
 ## 4. Azure DevOps Setup Specification
-- **Project**: `InsightPulseAI` (Visibility: Private)
+- **Project**: `ipai-platform` (Visibility: Private, ID: `b4267980-f678-4fcb-b8b4-3d81d9153445`)
 - **Boards Structure**: Agile template (Epic -> Feature -> User Story -> Task).
 - **GitHub Integration**: Azure Boards GitHub app installed to automatically link `AB#123` mentions in commits/PRs to work items.
-- **Pipelines Strategy**: YAML-based pipelines stored in the GitHub repo under `.azure/pipelines/`. Default to Microsoft-hosted `ubuntu-latest` agent pools to reduce maintenance overhead.
-- **Environments**: Registered in ADO as `insightpulseai-dev`, `insightpulseai-staging`, and `insightpulseai-prod`. 
+- **Pipelines Strategy**: Single multi-stage YAML pipeline (`.azure/pipelines/ci-cd.yml`) stored in the GitHub repo. Stages: Lint → Build → Infra_Dev → Deploy_Dev → Deploy_Staging. Uses `ipai-build-pool` (self-hosted) with `ubuntu-latest` fallback.
+- **Environments**: Registered in ADO as `insightpulseai-dev`, `insightpulseai-staging`, and `insightpulseai-prod`.
 - **Service Connections**: Workload Identity Federation (OIDC) between Azure DevOps and Azure Resource Manager to eliminate long-lived secrets.
 
 ## 5. VS Code / DevContainer Local Setup Specification
@@ -54,16 +54,15 @@ This document establishes a **deterministic engineering cockpit** where local VS
 2. **`.vscode/tasks.json`**: Add deterministic execution commands.
 3. **`.vscode/launch.json`**: Add Odoo Python debugging.
 4. **`Makefile`**: Universal bridge for `lint`, `test`, `plan`, `apply`.
-5. **`.azure/pipelines/pr-validation.yml`**: CI pipeline triggered by GitHub PRs.
-6. **`.azure/pipelines/cd-deployment.yml`**: Multi-stage CD pipeline triggered by `main` merges.
+5. **`.azure/pipelines/ci-cd.yml`**: Unified multi-stage CI/CD pipeline (Lint → Build → Infra → Deploy_Dev → Deploy_Staging). Replaces the previously planned separate `pr-validation.yml` and `cd-deployment.yml`.
 
 ## 8. Validation Checklist
 - [ ] DevContainers build and launch correctly in VS Code.
 - [ ] VS Code `tasks.json` can execute `make lint` without errors.
 - [ ] Azure Boards can successfully link to a GitHub PR via the `AB#<id>` syntax.
-- [ ] Opening a GitHub PR triggers the ADO `pr-validation.yml` pipeline.
+- [ ] Opening a GitHub PR or merging to `main` triggers the ADO `ci-cd.yml` pipeline.
 - [ ] The ADO pipeline successfully executes the exact same `make lint` target used locally.
-- [ ] Merging to `main` triggers `cd-deployment.yml` and successfully pauses at the `staging` environment approval gate.
+- [ ] The `ci-cd.yml` pipeline successfully pauses at the `staging` environment approval gate.
 
 ## 9. Risks and Assumptions
 - **Assumption**: Microsoft-hosted Ubuntu agents in Azure DevOps have sufficient CPU/RAM to compile Odoo dependencies.
