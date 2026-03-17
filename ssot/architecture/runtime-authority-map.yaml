@@ -1,0 +1,40 @@
+version: 1
+status: active
+id: runtime_authority_map
+
+truth_planes:
+  planned_truth:
+    system: azure_boards
+
+  code_truth:
+    system: github
+
+  release_truth:
+    system: azure_pipelines
+
+  live_azure_inventory_truth:
+    system: azure_resource_graph
+
+  intended_state_truth:
+    system: repo_ssot
+
+  agent_runtime_eval_truth:
+    system: foundry
+
+  transactional_truth:
+    system: odoo
+
+  analytical_truth:
+    systems:
+      - databricks
+      - fabric_semantic_outputs
+
+  document_extraction_truth:
+    systems:
+      - azure_document_intelligence
+      - downstream_validated_outputs
+
+rules:
+  - no_plane_may_silently_replace_another_truth_plane
+  - cross_plane_changes_require_explicit_contracts
+  - production_bound_changes_require_release_evidence
