@@ -1,0 +1,43 @@
+version: 1
+name: claude-foundry-runtime-integration
+description: "Integrate Claude as a model provider in Azure AI Foundry with catalog deployment and runtime configuration"
+type: benchmark_skill
+skill_classification: capability_uplift
+owner_persona: claude-runtime-integrator
+source_family: anthropic_skill_authoring
+status: active
+
+triggers:
+  - "Claude on Foundry"
+  - "Foundry model integration for Claude"
+  - "deploy Claude in Azure AI"
+
+inputs:
+  - foundry_project: "Azure AI Foundry project"
+  - use_case: "What Claude will be used for"
+  - governance_requirements: "Model governance, cost tracking, audit needs"
+
+steps:
+  - id: assess_fit
+    action: "Determine if Foundry-hosted or direct API is better fit"
+  - id: deploy_model
+    action: "Deploy Claude via Foundry model catalog"
+  - id: configure_runtime
+    action: "Set up runtime parameters, rate limits, cost controls"
+  - id: integrate_tools
+    action: "Connect MCP tools if needed"
+  - id: validate
+    action: "End-to-end test: Foundry → Claude → tools → response"
+
+outputs:
+  - deployment_config: "Foundry deployment details"
+  - runtime_config: "Parameters, limits, controls"
+  - integration_path: "Direct API vs. Foundry-hosted decision"
+
+guardrails:
+  - "Direct API is valid — Foundry is not mandatory"
+  - "Cost tracking must be configured"
+  - "Rate limits must be set"
+  - "Model version pinning for reproducibility"
+
+benchmark_source: "https://platform.claude.com/docs/en/home"
