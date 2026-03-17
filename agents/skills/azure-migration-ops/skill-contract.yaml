@@ -1,0 +1,65 @@
+version: 1
+type: ops_skill
+family: azure_copilot_ops
+skill:
+  name: azure-migration-ops
+  status: draft
+  owner: agents
+  purpose: >
+    Validate platform migration patterns — DigitalOcean to Azure,
+    Vercel to ACA, nginx to Front Door, Mailgun to Zoho SMTP.
+    Ensures deprecated resources are confirmed inactive before cleanup.
+
+  triggers:
+    - migration PR targeting deprecated resource replacement
+    - deprecated resource detected in configuration or code
+    - new Azure resource provisioned to replace non-Azure resource
+    - DNS cutover between providers
+
+  inputs:
+    - source resource (deprecated provider/service)
+    - target resource (Azure replacement)
+    - DNS records affected
+    - secrets requiring migration to Key Vault
+
+  steps:
+    - verify source resource is listed in deprecated inventory
+    - confirm target Azure resource is provisioned and healthy
+    - check DNS records point to new target (Cloudflare CNAME to Front Door)
+    - validate secrets migrated from old provider to Azure Key Vault
+    - verify TLS certificate on new endpoint is valid
+    - confirm old resource is no longer receiving traffic (zero request count)
+    - check for residual references in codebase (config files, workflows, docs)
+    - verify rollback path documented before source teardown
+    - produce migration evidence with before/after comparison
+
+  outputs:
+    - validation_result
+    - migration_status
+    - dns_cutover_status
+    - residual_references
+    - blockers
+    - evidence
+
+  guardrails:
+    - never delete source resource before target is verified healthy
+    - require evidence of both endpoints responding before DNS cutover
+    - flag incomplete DNS transitions as blockers
+    - never remove deprecated item from inventory until migration is complete
+    - require rollback documentation before any teardown
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/azure-ops/migration/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - docs/contracts/azure-resource-graph-contract.md
+  - ssot/runtime/resource-graph-query-catalog.yaml
+  - docs/architecture/reference-benchmarks.md
+  - .claude/rules/infrastructure.md
