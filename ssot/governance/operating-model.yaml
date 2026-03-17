@@ -29,14 +29,24 @@ tool_authority:
     role: selective-execution-surface
     owns:
       - id: azdo-goals
-        domain: "Goals & Work Items"
+        domain: "Execution Coordination"
         description: >
-          Azure Boards is the target goals system of record (per ADR-GSR-001).
+          Azure Boards is the execution coordination system of record for
+          strategic objectives, scoped workstreams, concrete tasks, dependency
+          links, iteration cadence, area ownership, and timeline/reporting views.
           Currently transitional — YAML in ssot/governance/ is canonical until
-          5 graduation gates pass. Once graduated, AzDo Boards becomes the
-          authoritative write surface for objectives, OKRs, and work items.
+          5 graduation gates pass (per ADR-GSR-001). Once graduated, AzDo Boards
+          becomes the authoritative write surface for objectives, OKRs, and
+          work items. Detailed specs, architecture doctrine, SSOT files, and
+          runtime evidence remain in the repo.
         status: transitional
         graduation_ref: "ADR-GSR-001 §Phase 2"
+        planning_layer:
+          delivery_plans: "Timeline coordination across Issues and iterations"
+          area_paths: "Ownership/lane boundaries per workstream"
+          iteration_paths: "Sprint/release cadence (14-day sprints)"
+          dependency_links: "Sequencing and cross-workstream visibility"
+          dashboards: "Leadership, program, and team reporting views"
 
       - id: azdo-pipelines
         domain: "Azure Deployments"

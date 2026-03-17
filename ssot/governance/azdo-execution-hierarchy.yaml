@@ -5,8 +5,14 @@
 # Repo-side SSOT for the Azure Boards work item hierarchy.
 # This file seeds Azure Boards when ADR-GSR-001 graduation gates pass.
 #
-# Hierarchy: Epic (objective) → Feature (workstream) → Task (execution)
-# Process: Basic (Epic → Issue → Task) or Agile (Epic → Feature → Story → Task)
+# Native hierarchy (Basic process): Epic → Issue → Task
+# Planning/coordination layer: Delivery Plans + Area Paths + Iteration Paths
+#                              + Dashboards + Dependency Links
+#
+# Azure Boards is the execution coordination system of record for strategic
+# objectives, scoped workstreams, concrete tasks, dependency links, iteration
+# cadence, area ownership, and timeline/reporting views. Detailed specs,
+# architecture doctrine, SSOT files, and runtime evidence remain in the repo.
 #
 # Constraint: Boards hold the goal record, execution hierarchy, accountable
 # owner, measurable acceptance, and links. Full PRDs, architecture doctrine,
@@ -21,6 +27,7 @@
 #
 # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/define-features-epics
 # Ref: https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/backlogs-overview
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/?view=azure-devops
 # =============================================================================
 
 schema_version: "1.0"
@@ -74,6 +81,143 @@ stable_tags:
   - databricks
   - security
   - devex
+
+# -----------------------------------------------------------------------------
+# Planning & Coordination Layer
+# -----------------------------------------------------------------------------
+# The hierarchy (Epic → Issue → Task) is the native work-item tree.
+# The planning layer sits ON TOP of the hierarchy for cross-team
+# coordination, timeline visibility, and reporting.
+# Ref: https://learn.microsoft.com/en-us/azure/devops/boards/plans/
+
+planning_layer:
+
+  area_paths:
+    description: >
+      Area Paths define ownership/lane boundaries. Each Epic maps to a
+      top-level area; Features inherit or narrow to sub-areas.
+    structure:
+      - path: "ipai-platform"
+        description: "Root area — platform-wide items"
+      - path: "ipai-platform\\Infrastructure"
+        epics: [OBJ-001]
+        owner: platform-lead
+      - path: "ipai-platform\\Enterprise-Parity"
+        epics: [OBJ-002]
+        owner: engineering-lead
+      - path: "ipai-platform\\AI-Agents"
+        epics: [OBJ-003]
+        owner: engineering-lead
+      - path: "ipai-platform\\Data-Intelligence"
+        epics: [OBJ-004]
+        owner: engineering-lead
+      - path: "ipai-platform\\Developer-Experience"
+        epics: [OBJ-005]
+        owner: platform-lead
+      - path: "ipai-platform\\Security-Compliance"
+        epics: [OBJ-006]
+        owner: platform-lead
+      - path: "ipai-platform\\Revenue-Portfolio"
+        epics: [OBJ-007]
+        owner: product-lead
+
+  iteration_paths:
+    description: >
+      Iteration Paths define delivery cadence. Sprints are 14-day cycles
+      nested under quarterly milestones for portfolio-level reporting.
+    cadence: 14_days
+    structure:
+      - path: "ipai-platform\\2026-Q2"
+        start: "2026-04-01"
+        end: "2026-06-30"
+        sprints:
+          - name: "Sprint 1"
+            start: "2026-04-01"
+            end: "2026-04-14"
+          - name: "Sprint 2"
+            start: "2026-04-15"
+            end: "2026-04-28"
+          - name: "Sprint 3"
+            start: "2026-04-29"
+            end: "2026-05-12"
+          - name: "Sprint 4"
+            start: "2026-05-13"
+            end: "2026-05-26"
+          - name: "Sprint 5"
+            start: "2026-05-27"
+            end: "2026-06-09"
+          - name: "Sprint 6"
+            start: "2026-06-10"
+            end: "2026-06-23"
+      - path: "ipai-platform\\2026-Q3"
+        start: "2026-07-01"
+        end: "2026-09-30"
+        note: "Sprint dates generated at quarter start"
+
+  delivery_plans:
+    description: >
+      Delivery Plans provide timeline coordination across Issues and
+      iterations. Each plan shows a cross-workstream view of scheduled
+      work, dependencies, and milestones.
+    plans:
+      - name: "Platform Delivery Plan"
+        scope: "All 7 Epics across all area paths"
+        view: "Timeline of Issues by iteration"
+        purpose: "Portfolio-level progress and dependency visibility"
+      - name: "Q2 Sprint Plan"
+        scope: "Current quarter Issues and Tasks"
+        view: "Sprint-by-sprint breakdown"
+        purpose: "Operational sprint planning"
+
+  dependency_links:
+    description: >
+      Dependency links express sequencing and cross-workstream blocking
+      relationships. Used in Delivery Plans for critical-path visibility.
+    rules:
+      - "Use Predecessor/Successor link type for sequencing"
+      - "Use Related link type for cross-reference (non-blocking)"
+      - "Every cross-Epic dependency must have an explicit link"
+      - "Blocked items must have a Blocked By link to the blocking item"
+    known_dependencies:
+      - predecessor: "FEAT-001-01 (Identity baseline)"
+        successor: "FEAT-001-02 (AzDo operationalization)"
+        reason: "AzDo service connections require Entra identity baseline"
+      - predecessor: "FEAT-001-02 (AzDo operationalization)"
+        successor: "FEAT-003-01 (Foundry Agent Service integration)"
+        reason: "Foundry deploy pipeline requires AzDo pipeline infrastructure"
+      - predecessor: "FEAT-004-01 (Databricks workspace activation)"
+        successor: "FEAT-004-02 (Customer 360 intelligence fabric)"
+        reason: "Customer 360 requires active Databricks workspace"
+      - predecessor: "FEAT-002-05 (ipai_document_intelligence_bridge)"
+        successor: "FEAT-002-04 (ipai_ap_expense_capture)"
+        reason: "Expense capture depends on Document Intelligence OCR bridge"
+
+  dashboards:
+    description: >
+      Dashboards provide reporting views for different audiences.
+      Built using Azure Boards dashboard widgets.
+    views:
+      - name: "Leadership Dashboard"
+        audience: "Platform lead, stakeholders"
+        widgets:
+          - "Epic burndown (7 objectives)"
+          - "Issue completion by area path"
+          - "Velocity trend (Issues completed per sprint)"
+          - "Blocked items count"
+      - name: "Program Dashboard"
+        audience: "Engineering lead, product lead"
+        widgets:
+          - "Sprint burndown (current iteration)"
+          - "Issue cycle time"
+          - "Dependency graph"
+          - "Upcoming milestones"
+      - name: "Operational Dashboard"
+        audience: "Engineering lead (day-to-day)"
+        widgets:
+          - "My assigned items"
+          - "Recently completed"
+          - "Items missing acceptance criteria"
+          - "Stale items (no update >14 days)"
 
 # -----------------------------------------------------------------------------
 # Execution Hierarchy
