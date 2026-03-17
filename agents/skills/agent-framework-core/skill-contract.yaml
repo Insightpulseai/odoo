@@ -1,0 +1,70 @@
+version: 1
+type: framework_skill
+family: agent_sdk_stack
+skill:
+  name: agent-framework-core
+  status: draft
+  owner: agents
+  purpose: >
+    Design and validate agent/workflow logic using Microsoft Agent Framework
+    patterns — graph orchestration, middleware, telemetry, checkpoint/resume.
+    This is the core orchestration layer, distinct from channel delivery,
+    developer assistance, and external integration.
+
+  triggers:
+    - new agent design requiring multi-step workflow
+    - workflow refactor or restructuring
+    - multi-agent orchestration design
+    - observability review for agent telemetry
+    - human-in-the-loop gate design or audit
+    - checkpoint strategy for long-running workflows
+
+  inputs:
+    - workflow requirements (steps, conditions, parallelism)
+    - agent capability definitions
+    - middleware requirements (auth, logging, content safety)
+    - telemetry collection endpoint and sampling policy
+    - checkpoint storage backend configuration
+    - human-in-the-loop gate definitions
+
+  steps:
+    - define agent graph structure (nodes, edges, conditions, parallel paths)
+    - configure middleware pipeline (auth, logging, rate limiting, content filtering)
+    - set up checkpointing strategy (frequency, storage backend, recovery semantics)
+    - enable OpenTelemetry traces (span naming convention: agent.<workflow>.<step>)
+    - validate human-in-the-loop gates (approval steps block until resolved)
+    - configure multi-provider support if needed (Azure OpenAI, Anthropic, etc.)
+    - test workflow end-to-end with DevUI visualization
+    - produce validation report with evidence
+
+  outputs:
+    - workflow_graph_definition
+    - middleware_config
+    - telemetry_setup
+    - checkpoint_strategy
+    - human_in_the_loop_gates
+    - test_results
+    - evidence
+
+  guardrails:
+    - do not conflate orchestration with channel delivery — this skill owns workflow logic only
+    - require OpenTelemetry instrumentation on all production workflows
+    - require checkpoint/resume for any workflow expected to run longer than 30 seconds
+    - never bypass human-in-the-loop gates — approval steps must block
+    - never hardcode LLM provider selection — use provider abstraction
+    - never expose internal orchestration state to channel layer
+
+  evidence:
+    required: true
+    format: "docs/evidence/{stamp}/agent-framework/workflow/"
+
+  evals:
+    dimensions: [accuracy, completeness, safety, policy_adherence, evidence_quality]
+    thresholds:
+      accuracy: 0.95
+      safety: 0.99
+
+cross_references:
+  - agents/personas/agent-orchestrator.md
+  - agents/knowledge/benchmarks/microsoft-agent-framework.md
+  - agent-platform/ssot/learning/agent_sdk_stack_map.yaml
