@@ -46,6 +46,7 @@
 | C-32 | [Spec to Pipeline](spec-to-pipeline-contract.md)             | `spec/<slug>/` bundle                 | `.azuredevops/pipelines/odoo-module.yml`             | ✅ Active | Pipeline param validation stage            |
 | C-33 | [Pipeline to Odoo.sh](pipeline-to-odoo-sh-contract.md)       | Azure Pipelines / GitHub Actions      | Azure Container Apps / Odoo.sh                       | ✅ Active | Deploy stage smoke checks                  |
 | C-34 | [Eval Gate](eval-gate-contract.md)                           | `foundry/evals/<slug>/thresholds.yaml`| Production promotion gate                            | ✅ Active | Eval_Gate pipeline stage                   |
+| C-35 | [Foundry/VS Code Auth](foundry-vscode-auth-contract.md)      | Entra ID app registration             | VS Code, Foundry, MCP servers, Azure Pipelines       | ⚠️ Partial | Auth completion checklist                  |
 
 ---
 
