@@ -1,0 +1,49 @@
+version: 1
+type: ops_skill
+family: azure_sample_azd
+skill:
+  name: azure-load-testing-cli-patterns
+  status: draft
+  owner: azure-cli-admin
+  purpose: >
+    Configure and execute Azure Load Testing via CLI. Covers test creation,
+    JMeter integration, CI/CD integration, and results analysis. Ensures
+    load tests follow safe practices and never target production without
+    explicit approval.
+
+  triggers:
+    - performance baseline needed for a service
+    - load test before production deployment
+    - CI/CD pipeline needs load testing gate
+    - capacity planning exercise
+
+  inputs:
+    - target service URL or endpoint
+    - test scenario (JMeter JMX file or quick test)
+    - load profile (virtual users, ramp-up, duration)
+    - success criteria (response time, error rate, throughput)
+    - environment (dev, staging — never prod without approval)
+
+  steps:
+    - create Azure Load Testing resource (if not exists)
+    - create or upload test plan (JMeter JMX or quick test)
+    - configure load profile (virtual users, ramp-up, duration)
+    - define pass/fail criteria
+    - execute test
+    - collect and analyze results
+    - generate report with recommendations
+
+  outputs:
+    - test execution results (response time, error rate, throughput)
+    - pass/fail assessment against criteria
+    - performance baseline documentation
+    - recommendations for optimization
+    - CI/CD integration configuration (if requested)
+
+  guardrails:
+    - never target production without explicit approval and traffic controls
+    - load tests must use bounded duration and virtual user limits
+    - test results must be captured as evidence
+    - CI/CD gates must have reasonable pass/fail thresholds
+    - test data must not contain real user data or PII
+    - clean up test resources after completion
