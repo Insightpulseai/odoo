@@ -1,0 +1,211 @@
+# =============================================================================
+# InsightPulse AI — Platform Apps Manifest
+# =============================================================================
+# Machine-readable registry of all platform applications, their routes,
+# icons, access tiers, and shell configuration.
+#
+# Consumed by:
+#   - BrandBar component (brand config)
+#   - AppLauncher component (app grid)
+#   - ActivityLogDrawer (log sources)
+#   - Public site navbar (launcher preview)
+#   - Internal ops-console (full shell)
+#
+# Last updated: 2026-03-18
+# =============================================================================
+
+brand:
+  name: "InsightPulse AI"
+  short_name: "IPAI"
+  tagline: "Azure-Native Enterprise Platform"
+  logo:
+    type: svg_inline
+    # Lightning bolt in brand-colored rounded square
+    viewBox: "0 0 24 24"
+    path: "M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+    fill: "none"
+    stroke: "white"
+    stroke_width: 2.5
+    bg_class: "bg-brand rounded-md"
+  domain: "insightpulseai.com"
+  support_email: "hello@insightpulseai.com"
+
+# ---------------------------------------------------------------------------
+# App Launcher — grouped by section
+# ---------------------------------------------------------------------------
+launcher:
+  sections:
+    - name: "Business Systems"
+      apps:
+        - id: erp
+          name: "ERP"
+          description: "Odoo CE 19 — Accounting, Sales, Inventory, HR"
+          url: "https://erp.insightpulseai.com"
+          icon: grid
+          color: "#0078D4"  # Fluent blue
+          tier: [community, professional, enterprise]
+          status: active
+
+        - id: crm
+          name: "CRM"
+          description: "Customer relationship management"
+          url: "https://crm.insightpulseai.com"
+          icon: users
+          color: "#00B7C3"
+          tier: [professional, enterprise]
+          status: active
+
+    - name: "Data & Intelligence"
+      apps:
+        - id: superset
+          name: "Analytics"
+          description: "Apache Superset BI dashboards"
+          url: "https://superset.insightpulseai.com"
+          icon: bar-chart
+          color: "#F25022"  # Superset orange
+          tier: [community, professional, enterprise]
+          status: active
+
+        - id: databricks
+          name: "Databricks"
+          description: "Azure Databricks lakehouse"
+          url: "https://adb-ipai-dev.azuredatabricks.net"
+          icon: database
+          color: "#FF3621"
+          tier: [enterprise]
+          status: active
+
+    - name: "Automation & AI"
+      apps:
+        - id: n8n
+          name: "Workflows"
+          description: "n8n visual workflow automation"
+          url: "https://n8n.insightpulseai.com"
+          icon: git-branch
+          color: "#FF6D5A"
+          tier: [community, professional, enterprise]
+          status: active
+
+        - id: copilot
+          name: "AI Copilot"
+          description: "Natural language ERP assistant"
+          url: "https://erp.insightpulseai.com/web#action=ipai_odoo_copilot"
+          icon: sparkles
+          color: "#7B61FF"
+          tier: [community, professional, enterprise]
+          status: active
+
+        - id: mcp
+          name: "MCP Gateway"
+          description: "Model Context Protocol coordination"
+          url: "https://mcp.insightpulseai.com"
+          icon: cpu
+          color: "#9B59B6"
+          tier: [enterprise]
+          status: active
+
+    - name: "Operations"
+      apps:
+        - id: plane
+          name: "Projects"
+          description: "Plane project management"
+          url: "https://plane.insightpulseai.com"
+          icon: layout
+          color: "#3F51B5"
+          tier: [professional, enterprise]
+          status: active
+
+        - id: shelf
+          name: "Knowledge"
+          description: "Shelf knowledge base"
+          url: "https://shelf.insightpulseai.com"
+          icon: book-open
+          color: "#2ECC71"
+          tier: [professional, enterprise]
+          status: active
+
+        - id: ops-console
+          name: "Ops Console"
+          description: "Platform operations dashboard"
+          url: "https://ops.insightpulseai.com"
+          icon: terminal
+          color: "#34495E"
+          tier: [enterprise]
+          status: active
+
+    - name: "Identity & Security"
+      apps:
+        - id: auth
+          name: "Identity"
+          description: "Microsoft Entra ID (SSO)"
+          url: "https://auth.insightpulseai.com"
+          icon: shield
+          color: "#00A4EF"
+          tier: [professional, enterprise]
+          status: transitional  # Keycloak → Entra
+
+        - id: ocr
+          name: "Document AI"
+          description: "Azure Document Intelligence OCR"
+          url: "https://ocr.insightpulseai.com"
+          icon: file-text
+          color: "#E67E22"
+          tier: [enterprise]
+          status: active
+
+# ---------------------------------------------------------------------------
+# Activity Log — sources and display config
+# ---------------------------------------------------------------------------
+activity_log:
+  enabled: true
+  max_items: 50
+  poll_interval_seconds: 30
+  sources:
+    - id: erp_events
+      name: "ERP Activity"
+      endpoint: "https://erp.insightpulseai.com/api/v1/activity"
+      icon: grid
+      color: "#0078D4"
+
+    - id: workflow_runs
+      name: "Workflow Runs"
+      endpoint: "https://n8n.insightpulseai.com/api/v1/executions"
+      icon: git-branch
+      color: "#FF6D5A"
+
+    - id: ci_events
+      name: "CI/CD"
+      endpoint: "https://api.github.com/repos/Insightpulseai/odoo/actions/runs"
+      icon: check-circle
+      color: "#2ECC71"
+
+    - id: alerts
+      name: "Alerts"
+      endpoint: "https://ops.insightpulseai.com/api/v1/alerts"
+      icon: bell
+      color: "#E74C3C"
+
+# ---------------------------------------------------------------------------
+# Shell configuration — which surfaces show which components
+# ---------------------------------------------------------------------------
+shell:
+  public:
+    # Public site (insightpulseai.com): logo + launcher only
+    brand_bar: true
+    app_launcher: true
+    activity_log: false
+    theme: dark
+
+  internal:
+    # Internal apps (erp, superset, ops-console): full shell
+    brand_bar: true
+    app_launcher: true
+    activity_log: true
+    theme: system  # Respects user preference
+
+  minimal:
+    # Auth pages, error pages: logo only
+    brand_bar: true
+    app_launcher: false
+    activity_log: false
+    theme: dark

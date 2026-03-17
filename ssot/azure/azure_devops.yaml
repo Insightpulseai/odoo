@@ -3,7 +3,8 @@ target_state: azure_devops_config
 description: Canonical SSOT for Azure DevOps Project, Boards, and Pipeline environments.
 
 project:
-  name: InsightPulseAI
+  name: ipai-platform
+  id: b4267980-f678-4fcb-b8b4-3d81d9153445
   visibility: private
   source_control: github
   repositories:
