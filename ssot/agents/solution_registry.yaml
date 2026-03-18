@@ -1,0 +1,223 @@
+# =============================================================================
+# SSOT: Solution Bundle Registry
+# =============================================================================
+# Generated: 2026-03-18
+# Source: docs/security/AGENT_CAPABILITY_AUDIT.md
+# Cross-reference: ssot/platform/apps.manifest.yaml
+# =============================================================================
+
+version: "1.0"
+updated_at: "2026-03-18"
+
+solutions:
+  # ---------------------------------------------------------------------------
+  # Core ERP Platform
+  # ---------------------------------------------------------------------------
+  - id: erp-platform
+    name: "Odoo CE 19 ERP"
+    type: erp
+    url: "https://erp.insightpulseai.com"
+    components:
+      - ipai_odoo_copilot
+      - ipai_enterprise_bridge
+      - ipai_workspace_core
+      - ipai_finance_ppm
+      - ipai_hr_expense_liquidation
+      - ipai_finance_close_seed
+      - ipai_project_seed
+    runtime: odoo-web-prod
+    database: pg-odoo-prod
+    auth: keycloak  # transitional to Entra
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # AI Copilot Platform
+  # ---------------------------------------------------------------------------
+  - id: ai-copilot
+    name: "AI Copilot (Microsoft Foundry)"
+    type: ai_platform
+    url: "https://erp.insightpulseai.com/web#action=ipai_odoo_copilot"
+    components:
+      - ipai_odoo_copilot
+      - foundry_agent: ipai-odoo-copilot-azure
+      - model: gpt-4.1
+      - knowledge: azure_ai_search (srch-ipai-dev)
+    logical_agents:
+      - ask-agent (read-only Q&A)
+      - authoring-agent (draft documents)
+      - livechat-agent (website visitor chat)
+      - transaction-agent (bounded CRUD, planned)
+    governance:
+      - ssot/ai/agents.yaml
+      - ssot/ai/policies.yaml
+      - ssot/governance/ai-consolidation-foundry.yaml
+    canonicality: canonical
+    criticality: core_runtime
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Operations Console
+  # ---------------------------------------------------------------------------
+  - id: ops-console
+    name: "Operations Console"
+    type: dashboard
+    url: "https://ops.insightpulseai.com"
+    path: web/apps/ops-console/
+    stack: next.js-15
+    components:
+      - ops dashboard
+      - platform app launcher
+      - activity log
+    canonicality: canonical
+    criticality: important
+    status: active
+    issues:
+      - "Stale Vercel deps (@vercel/analytics, @vercel/speed-insights)"
+      - "Stale AI deps (@ai-sdk/google, @google/generative-ai)"
+
+  # ---------------------------------------------------------------------------
+  # Automation Platform
+  # ---------------------------------------------------------------------------
+  - id: automation-platform
+    name: "n8n Workflow Automation"
+    type: automation
+    url: "https://n8n.insightpulseai.com"
+    components:
+      - n8n self-hosted instance
+      - 70+ workflow definitions (automations/n8n/)
+      - n8n API bridge MCP
+      - Claude AI MCP bridge workflows
+    workflow_categories:
+      - finance: 8 workflows
+      - github_ops: 5 workflows
+      - claude_mcp: 10 workflows
+      - control_plane: 3 workflows
+      - integration: 6 workflows
+      - ppm_clarity: 4 workflows
+      - legacy_notion: 7 workflows (deprecated)
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # MCP Gateway
+  # ---------------------------------------------------------------------------
+  - id: mcp-gateway
+    name: "MCP Coordination Gateway"
+    type: api_gateway
+    url: "https://mcp.insightpulseai.com"
+    path: agents/mcp/coordinator/
+    components:
+      - FastAPI coordinator (port 8766)
+      - A2A context propagation
+      - Multi-target routing (odoo_prod, odoo_lab, agent_coordination)
+      - GitHub App integration
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Document Intelligence
+  # ---------------------------------------------------------------------------
+  - id: document-intelligence
+    name: "Document OCR/AI"
+    type: ai_service
+    url: "https://ocr.insightpulseai.com"
+    path: platform/services/ocr/
+    components:
+      - OCR extraction pipeline (Tesseract/PaddleOCR)
+      - Azure Document Intelligence (docai-ipai-dev)
+      - Receipt extraction endpoint (/extract)
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Knowledge & Docs
+  # ---------------------------------------------------------------------------
+  - id: docs-assistant
+    name: "Docs Assistant (RAG)"
+    type: knowledge_system
+    path: agents/docs-assistant/
+    components:
+      - FastAPI answer engine
+      - Supabase pgvector storage
+      - Anthropic Claude generation
+      - OpenAI embeddings
+    canonicality: transitional
+    criticality: experimental
+    status: dev_only
+    migration_target: ai-copilot
+    issues:
+      - "Uses direct Anthropic/OpenAI. Should migrate to Foundry."
+      - "CORS allow all origins."
+
+  # ---------------------------------------------------------------------------
+  # BI & Analytics
+  # ---------------------------------------------------------------------------
+  - id: analytics
+    name: "Apache Superset BI"
+    type: analytics
+    url: "https://superset.insightpulseai.com"
+    path: infra/superset/
+    runtime: superset-bi
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Project Management
+  # ---------------------------------------------------------------------------
+  - id: project-management
+    name: "Plane Project Management"
+    type: project_management
+    url: "https://plane.insightpulseai.com"
+    components:
+      - Plane self-hosted instance
+      - MCP server (mcp/servers/plane/)
+      - API client (agents/scripts/plane/lib/plane_api.py)
+      - PPM Clarity n8n sync workflows
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # Agent Skills Platform
+  # ---------------------------------------------------------------------------
+  - id: agent-skills
+    name: "Agent Skills Library"
+    type: skill_library
+    path: agents/skills/
+    components:
+      - 16 Odoo 19 reference skills
+      - 3 CLI-safe wrappers
+      - 5+ business process skills
+      - OdooOps platform skills (reference only)
+      - Marketplace skills (reference only)
+      - Skill template system
+    total_skills: ~80
+    canonicality: canonical
+    criticality: important
+    status: active
+
+  # ---------------------------------------------------------------------------
+  # SuperClaude Framework (user-local)
+  # ---------------------------------------------------------------------------
+  - id: superclaude
+    name: "SuperClaude Agent Framework"
+    type: agent_framework
+    path: ~/.claude/
+    components:
+      - 17 agent persona definitions
+      - 20+ slash commands
+      - 7 operating modes
+      - Agent registry (AGENT_REGISTRY.md)
+      - Design System Agent
+      - Universal Design Platform agents (10, reference only)
+    canonicality: canonical
+    criticality: optional
+    status: active
+    scope: local_only
+    note: "User-local framework. Not tracked in repo SSOT."
