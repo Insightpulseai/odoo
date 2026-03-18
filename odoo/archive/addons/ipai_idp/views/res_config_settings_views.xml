@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- IDP Configuration Settings View -->
+    <record id="res_config_settings_view_form_idp" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.idp</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="50"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="IDP" string="IDP" name="ipai_idp" groups="ipai_idp.group_idp_admin">
+                    <block title="OCR Configuration" name="idp_ocr_settings">
+                        <setting id="idp_ocr_enabled" string="OCR Processing" help="Enable OCR processing for uploaded documents">
+                            <field name="idp_ocr_enabled"/>
+                        </setting>
+                        <setting id="idp_ocr_provider" string="OCR Provider" invisible="not idp_ocr_enabled">
+                            <field name="idp_ocr_provider"/>
+                        </setting>
+                        <setting id="idp_ocr_api_url" string="OCR API URL" invisible="not idp_ocr_enabled">
+                            <field name="idp_ocr_api_url" placeholder="https://api.example.com/ocr"/>
+                        </setting>
+                        <setting id="idp_ocr_api_key" string="OCR API Key" invisible="not idp_ocr_enabled">
+                            <field name="idp_ocr_api_key" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="LLM Configuration" name="idp_llm_settings">
+                        <setting id="idp_llm_enabled" string="LLM Extraction" help="Enable LLM-based data extraction">
+                            <field name="idp_llm_enabled"/>
+                        </setting>
+                        <setting id="idp_llm_provider" string="LLM Provider" invisible="not idp_llm_enabled">
+                            <field name="idp_llm_provider"/>
+                        </setting>
+                        <setting id="idp_llm_api_url" string="LLM API URL" invisible="not idp_llm_enabled">
+                            <field name="idp_llm_api_url" placeholder="https://api.anthropic.com/v1/messages"/>
+                        </setting>
+                        <setting id="idp_llm_api_key" string="LLM API Key" invisible="not idp_llm_enabled">
+                            <field name="idp_llm_api_key" password="True"/>
+                        </setting>
+                        <setting id="idp_llm_model" string="Default LLM Model" invisible="not idp_llm_enabled">
+                            <field name="idp_llm_model"/>
+                        </setting>
+                    </block>
+                    <block title="Auto-Approval Settings" name="idp_approval_settings">
+                        <setting id="idp_auto_approve_enabled" string="Auto-Approval" help="Automatically approve high-confidence extractions">
+                            <field name="idp_auto_approve_enabled"/>
+                        </setting>
+                        <setting id="idp_auto_approve_confidence" string="Confidence Threshold" invisible="not idp_auto_approve_enabled">
+                            <field name="idp_auto_approve_confidence"/>
+                            <span class="text-muted"> (0.0 - 1.0)</span>
+                        </setting>
+                    </block>
+                    <block title="Processing Options" name="idp_processing_settings">
+                        <setting id="idp_async_processing" string="Async Processing" help="Process documents asynchronously (requires queue_job)">
+                            <field name="idp_async_processing"/>
+                        </setting>
+                        <setting id="idp_max_retries" string="Max Retries">
+                            <field name="idp_max_retries"/>
+                        </setting>
+                        <setting id="idp_processing_timeout" string="Processing Timeout">
+                            <field name="idp_processing_timeout"/>
+                            <span class="text-muted"> seconds</span>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_ipai_theme" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.theme</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="IPAI Theme" string="IPAI Theme" name="ipai_platform_theme" groups="base.group_system">
+                    <block title="Theme Settings" name="ipai_theme_settings">
+                        <setting string="Theme Variant" help="Choose the visual style for the IPAI platform">
+                            <field name="ipai_theme_variant" widget="radio" class="o_light_label"/>
+                            <div class="text-muted mt-2">
+                                <p><strong>TBWA:</strong> Yellow accent + Black sidebar (Scout Analytics style)</p>
+                                <p><strong>Neutral:</strong> Gray/colorless professional theme</p>
+                                <p><strong>Dark Mode:</strong> Dark surfaces with light text</p>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

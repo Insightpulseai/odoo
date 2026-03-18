@@ -1,0 +1,318 @@
+# Tasks
+# Model: project.task
+# Import order: 7 (after projects, tags, stages)
+
+tasks:
+  # ============================================================
+  # PROJECT ALPHA TASKS
+  # ============================================================
+
+  # Phase 1: Discovery
+  - id: ipai_task_alpha_001
+    name: Kickoff meeting
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_done
+    user_ids: []  # Assigned to (leave empty to assign later)
+    tag_ids:
+      - ipai_tag_meeting
+      - ipai_tag_milestone
+    parent_id: null
+    description: "Align scope and timeline with ACME stakeholders"
+    planned_hours: 2.0
+    date_deadline: "2026-01-10"
+    date_start: "2026-01-08"
+    priority: "1"  # 0=low, 1=medium, 2=high, 3=urgent
+    sequence: 10
+
+  - id: ipai_task_alpha_002
+    name: Requirements gathering
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_done
+    tag_ids:
+      - ipai_tag_documentation
+      - ipai_tag_billable
+    parent_id: null
+    description: "Document functional and technical requirements"
+    planned_hours: 16.0
+    date_deadline: "2026-01-17"
+    date_start: "2026-01-10"
+    priority: "2"
+    sequence: 20
+
+  - id: ipai_task_alpha_003
+    name: Requirements document v1
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_review
+    tag_ids:
+      - ipai_tag_milestone
+      - ipai_tag_deliverable
+      - ipai_tag_client_review
+    parent_id: ipai_task_alpha_002
+    depends_on:
+      - ipai_task_alpha_002
+    description: "First complete version of requirements document"
+    planned_hours: 8.0
+    date_deadline: "2026-01-20"
+    date_start: "2026-01-17"
+    priority: "2"
+    sequence: 30
+
+  # Phase 2: Development
+  - id: ipai_task_alpha_004
+    name: Sprint 1 - Core flows
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_in_progress
+    tag_ids:
+      - ipai_tag_development
+      - ipai_tag_billable
+    parent_id: null
+    depends_on:
+      - ipai_task_alpha_003
+    description: "Implement core business flows"
+    planned_hours: 40.0
+    date_deadline: "2026-02-07"
+    date_start: "2026-01-21"
+    priority: "2"
+    sequence: 40
+
+  - id: ipai_task_alpha_005
+    name: Sprint 1 - UI components
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_in_progress
+    tag_ids:
+      - ipai_tag_design
+      - ipai_tag_development
+      - ipai_tag_billable
+    parent_id: ipai_task_alpha_004
+    description: "Build UI components for core flows"
+    planned_hours: 24.0
+    date_deadline: "2026-02-03"
+    date_start: "2026-01-21"
+    priority: "1"
+    sequence: 45
+
+  - id: ipai_task_alpha_006
+    name: Sprint 1 - Backend APIs
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_todo
+    tag_ids:
+      - ipai_tag_development
+      - ipai_tag_billable
+    parent_id: ipai_task_alpha_004
+    description: "Implement backend API endpoints"
+    planned_hours: 32.0
+    date_deadline: "2026-02-05"
+    date_start: "2026-01-23"
+    priority: "1"
+    sequence: 46
+
+  - id: ipai_task_alpha_007
+    name: UI review - Sprint 1
+    project_id: ipai_proj_alpha
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_backlog
+    tag_ids:
+      - ipai_tag_client_review
+      - ipai_tag_meeting
+    parent_id: null
+    depends_on:
+      - ipai_task_alpha_005
+    description: "Review Sprint 1 UI with ACME stakeholders"
+    planned_hours: 4.0
+    date_deadline: "2026-02-10"
+    date_start: "2026-02-07"
+    priority: "1"
+    sequence: 50
+
+  # ============================================================
+  # PROJECT BETA TASKS
+  # ============================================================
+
+  - id: ipai_task_beta_001
+    name: Platform evaluation
+    project_id: ipai_proj_beta
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_done
+    tag_ids:
+      - ipai_tag_documentation
+    parent_id: null
+    description: "Evaluate e-commerce platform options"
+    planned_hours: 12.0
+    date_deadline: "2026-02-10"
+    date_start: "2026-02-01"
+    priority: "1"
+    sequence: 10
+
+  - id: ipai_task_beta_002
+    name: Platform selection decision
+    project_id: ipai_proj_beta
+    partner_id: ipai_partner_acme
+    stage_id: ipai_stage_review
+    tag_ids:
+      - ipai_tag_milestone
+      - ipai_tag_deliverable
+    parent_id: null
+    depends_on:
+      - ipai_task_beta_001
+    description: "Final platform recommendation and approval"
+    planned_hours: 4.0
+    date_deadline: "2026-02-14"
+    date_start: "2026-02-10"
+    priority: "2"
+    sequence: 20
+
+  # ============================================================
+  # PROJECT GAMMA TASKS
+  # ============================================================
+
+  - id: ipai_task_gamma_001
+    name: Discovery workshop
+    project_id: ipai_proj_gamma
+    partner_id: ipai_partner_globex
+    stage_id: ipai_stage_done
+    tag_ids:
+      - ipai_tag_meeting
+      - ipai_tag_milestone
+    parent_id: null
+    description: "Initial discovery workshop with Globex team"
+    planned_hours: 8.0
+    date_deadline: "2026-01-20"
+    date_start: "2026-01-15"
+    priority: "2"
+    sequence: 10
+
+  - id: ipai_task_gamma_002
+    name: Process mapping
+    project_id: ipai_proj_gamma
+    partner_id: ipai_partner_globex
+    stage_id: ipai_stage_in_progress
+    tag_ids:
+      - ipai_tag_documentation
+      - ipai_tag_billable
+    parent_id: null
+    depends_on:
+      - ipai_task_gamma_001
+    description: "Map current business processes"
+    planned_hours: 24.0
+    date_deadline: "2026-02-07"
+    date_start: "2026-01-21"
+    priority: "1"
+    sequence: 20
+
+  # ============================================================
+  # INTERNAL PROJECT TASKS
+  # ============================================================
+
+  - id: ipai_task_internal_001
+    name: Infrastructure upgrade
+    project_id: ipai_proj_internal_dev
+    partner_id: ipai_partner_tbwa
+    stage_id: ipai_stage_todo
+    tag_ids:
+      - ipai_tag_development
+      - ipai_tag_non_billable
+    parent_id: null
+    description: "Upgrade production infrastructure"
+    planned_hours: 16.0
+    date_deadline: "2026-01-31"
+    date_start: "2026-01-15"
+    priority: "1"
+    sequence: 10
+
+# Task dependencies (for project_task_dependency OCA module)
+# Maps task -> depends_on tasks
+dependencies:
+  - task_id: ipai_task_alpha_003
+    depends_on: [ipai_task_alpha_002]
+
+  - task_id: ipai_task_alpha_004
+    depends_on: [ipai_task_alpha_003]
+
+  - task_id: ipai_task_alpha_007
+    depends_on: [ipai_task_alpha_005]
+
+  - task_id: ipai_task_beta_002
+    depends_on: [ipai_task_beta_001]
+
+  - task_id: ipai_task_gamma_002
+    depends_on: [ipai_task_gamma_001]
+
+# Odoo import field mapping
+odoo_import:
+  model: project.task
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: name
+      column: Name
+      required: true
+
+    - name: project_id
+      column: Project
+      type: many2one
+      relation: project.project
+      required: true
+
+    - name: partner_id
+      column: Customer
+      type: many2one
+      relation: res.partner
+
+    - name: stage_id
+      column: Stage
+      type: many2one
+      relation: project.task.type
+
+    - name: user_ids
+      column: Assigned to
+      type: many2many
+      relation: res.users
+
+    - name: tag_ids
+      column: Tags
+      type: many2many
+      relation: project.tags
+
+    - name: parent_id
+      column: Parent Task
+      type: many2one
+      relation: project.task
+      notes: "For subtasks"
+
+    - name: depend_on_ids
+      column: Depends on
+      type: many2many
+      relation: project.task
+      notes: "Requires project_task_dependency OCA module"
+
+    - name: description
+      column: Description
+
+    - name: planned_hours
+      column: Planned Hours
+      type: float
+
+    - name: date_deadline
+      column: Deadline
+      type: date
+
+    - name: date_start
+      column: Start Date
+      type: date
+      notes: "Odoo 18 field name may vary"
+
+    - name: priority
+      column: Priority
+      allowed_values: ["0", "1", "2", "3"]
+
+    - name: sequence
+      column: Sequence
+      type: integer

@@ -1,0 +1,81 @@
+# App Maintenance & Support Skill
+# Application monitoring, updates, and ongoing maintenance
+
+name: app_maintenance
+version: 1.0.0
+key: app.maintenance
+description: |
+  Maintain applications: dependency updates, security patches,
+  performance monitoring, bug fixes, and SLA management.
+
+intents:
+  - maintain app
+  - update dependencies
+  - app security patch
+  - monitor app performance
+  - fix app bug
+  - app health check
+
+guardrails:
+  - Test all dependency updates before deploying
+  - Security patches take priority over feature work
+  - Never skip CI checks for maintenance changes
+  - Document all breaking changes in CHANGELOG
+
+tools:
+  - key: maint.audit
+    name: Dependency Audit
+    target_model: ipai.maint.runner
+    target_method: audit_dependencies
+    description: Scan for vulnerable or outdated dependencies
+
+  - key: maint.update
+    name: Apply Updates
+    target_model: ipai.maint.runner
+    target_method: apply_updates
+    description: Update dependencies with compatibility testing
+
+  - key: maint.monitor
+    name: Monitor Health
+    target_model: ipai.maint.runner
+    target_method: monitor_health
+    description: Check application health metrics and alerts
+
+  - key: maint.fix
+    name: Bug Fix
+    target_model: ipai.maint.runner
+    target_method: fix_bug
+    description: Diagnose and fix application bugs
+
+workflow:
+  - maint.audit
+  - maint.update
+  - maint.monitor
+  - maint.fix
+
+input_schema:
+  type: object
+  properties:
+    app_name: { type: string }
+    maintenance_type:
+      type: string
+      enum: [dependency_update, security_patch, bug_fix, performance, monitoring]
+    severity:
+      type: string
+      enum: [critical, high, medium, low]
+
+output_schema:
+  type: object
+  properties:
+    audit_results: { type: object }
+    updates_applied: { type: array, items: { type: string } }
+    health_status: { type: object }
+    bugs_fixed: { type: array, items: { type: string } }
+
+agentInstructions: |
+  When maintaining apps:
+
+  1. **Audit**: Run npm audit / pip-audit, check CVE databases
+  2. **Update**: Bump versions, run tests, verify builds
+  3. **Monitor**: Check Vercel analytics, error rates, latency
+  4. **Fix**: Reproduce bug, write test, fix, verify

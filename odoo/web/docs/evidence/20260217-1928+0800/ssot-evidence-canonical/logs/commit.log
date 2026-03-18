@@ -1,0 +1,11 @@
+🔒 Checking for protected Finance PPM seed file edits...
+✅ No protected file edits detected
+[_git_aggregated 139b86b18] fix(agents): canonicalize evidence root to web/docs/evidence/
+ 13 files changed, 1168 insertions(+), 7 deletions(-)
+ create mode 100644 docs/evidence/MOVED.md
+ create mode 100644 web/docs/evidence/20260216-1754+0800/n8n-setup/ADMIN_SETUP_REFERENCE.md
+ create mode 100644 web/docs/evidence/20260216-1754+0800/n8n-setup/AI_INTEGRATION_REFERENCE.md
+ create mode 100644 web/docs/evidence/20260216-1754+0800/n8n-setup/IMPLEMENTATION_SUMMARY.md
+ create mode 100644 web/docs/evidence/20260216-1754+0800/n8n-setup/ODOO_INTEGRATION_REFERENCE.md
+ create mode 100644 web/docs/evidence/20260217-1928+0800/ssot-evidence-canonical/logs/drift-check.log
+ create mode 100644 web/docs/evidence/20260217-1928+0800/ssot-evidence-canonical/logs/sync.log

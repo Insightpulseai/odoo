@@ -1,0 +1,93 @@
+# schema: ssot.integrations.v1
+# Cloudflare Workers integration register.
+# Declares components, SSOT boundary rules, and risk flags for
+# Cloudflare Workers calling Supabase over HTTP (PostgREST).
+#
+# Integration model: Cloudflare Workers are edge runtime functions.
+#   - Workers call Supabase via PostgREST HTTP — no direct DB connection
+#   - Anon key is the default (RLS enforced at all times)
+#   - Service role: only for explicitly privileged backend workers
+#     (requires per-worker SSOT exception entry)
+#   - Secrets injected via Cloudflare env vars, never in source
+#
+# Boundary doctrine: docs/architecture/SOW_BOUNDARY.md
+# Supabase "Works With" partner: https://supabase.com/partners/integrations/cloudflare
+
+version: "1.0.0"
+schema: ssot.integrations.v1
+name: cloudflare_workers
+display_name: "Cloudflare Workers (Edge Runtime)"
+status: planned              # planned | porting | active | deprecated
+last_reviewed: "2026-03-01"
+
+provider:
+  platform: cloudflare
+  runtime: cloudflare_workers
+  framework: workers           # Cloudflare Workers runtime (V8 isolates)
+  template: "cloudflare-workers-supabase"
+
+components:
+  edge_function_runtime:
+    description: >
+      Cloudflare Workers V8 isolate executing edge logic and proxying
+      Supabase PostgREST HTTP calls. No persistent DB connections.
+    path: "apps/*/workers/"
+    notes: "Workers must be deployed via Cloudflare dashboard or Wrangler CLI (wrangler.toml)"
+
+  supabase_http_client:
+    description: >
+      HTTP client (fetch) calling Supabase PostgREST REST API.
+      Uses anon key by default (RLS enforced). Service role requires
+      a per-worker SSOT exception entry in this file.
+    key_type_default: anon_key
+    endpoint_pattern: "https://<project-ref>.supabase.co/rest/v1/<table>"
+    notes: >
+      No direct Postgres connection (port 5432) — Workers runtime does not
+      support TCP connections to Postgres. All DB access is via PostgREST HTTP.
+
+ssot_boundary_rules:
+  - "Workers MUST use anon key by default — RLS is the primary access control layer"
+  - "Service role may only be used if the worker is explicitly a privileged backend; exception MUST be recorded in this SSOT file under service_role_exceptions"
+  - "No direct Postgres connection — use PostgREST HTTP API only (Workers runtime lacks TCP)"
+  - "Secrets (anon key, service role key) MUST be injected via Cloudflare env vars (wrangler.toml [vars] or dashboard); never hardcoded in source"
+  - "Worker source files must not contain any secret values — only env var names"
+
+service_role_exceptions: []
+  # Format:
+  # - worker_id: "my-privileged-worker"
+  #   path: "apps/<name>/workers/privileged.ts"
+  #   justification: "Needs to bypass RLS for system-level batch job"
+  #   approved_by: "<reviewer>"
+  #   approved_date: "YYYY-MM-DD"
+
+required_secrets:
+  - supabase_anon_key      # Default key — see ssot/secrets/registry.yaml
+  # Optional (requires exception above):
+  # - supabase_service_role_key
+
+allowed_egress:
+  - "*.supabase.co"        # Supabase PostgREST + Auth + Storage APIs
+  - "supabase.co"
+
+risk_flags:
+  - id: service_role_misuse
+    severity: medium
+    description: >
+      A Worker inadvertently configured with the service role key bypasses all
+      RLS policies, exposing data to unauthorized callers who can trigger the Worker.
+    mitigation: >
+      Default to anon key (RLS enforced). Any service role usage requires an entry
+      in service_role_exceptions above and a code review gate.
+      CI lint: grep wrangler.toml + worker source for SERVICE_ROLE patterns without
+      a corresponding exception entry.
+
+  - id: env_var_drift
+    severity: low
+    description: >
+      Cloudflare env vars set via dashboard are not tracked in source.
+      Wrangler.toml [vars] tracks names but not values, making drift hard to detect.
+    mitigation: >
+      Document expected env var names in this SSOT file (required_secrets above).
+      Verify wrangler.toml [vars] includes all names. Values live in Cloudflare dashboard
+      or are pushed via `wrangler secret put`. CI can compare declared names vs
+      ssot/secrets/registry.yaml consumers list.

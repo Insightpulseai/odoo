@@ -1,281 +1,201 @@
-# Wholesale SaaS ERP on Azure — Odoo SoR, Databricks Intelligence, Foundry Agent Runtime
+# Wholesale SaaS ERP on Azure: Target Architecture Study
 
-> Architecture study for a wholesale SaaS ERP built on Azure with Odoo, Databricks,
-> Foundry Agent Service, Azure DevOps, VS Code devcontainers, and Anthropic agent patterns.
->
-> **Status**: Canonicalized 2026-03-17.
-> **Origin**: ChatGPT deep research synthesis; citations replaced with inline references.
-> **Binding decisions extracted to**: `docs/architecture/ADR_ERP_PLATFORM_ROLE_SPLIT.md`,
-> `docs/architecture/ADR_VSCODE_ENGINEERING_COCKPIT.md`
+**Date**: March 2026
+**Status**: Adopted
+**Scope**: Target architecture, operating model, and execution roadmap for a wholesale SaaS ERP built on Azure, using Databricks, Foundry, Azure DevOps, VS Code, and Anthropic.
 
 ---
 
-## Executive summary
+## 1. Executive Summary
 
-The target state is a **three-plane architecture**:
+### Recommendation
+The target state for the Wholesale SaaS ERP must be a **Composited Azure-Native Platform** implementing a strict separation of concerns:
+1. **System of Record (ERP Core)**: Containerized transactional Odoo runtime on Azure Container Apps (ACA) with Azure Database for PostgreSQL (Flexible Server).
+2. **System of Intelligence (Data)**: Azure Databricks Lakehouse acting as the governed, read-optimized semantic layer and reporting engine, entirely decoupled from the transactional schema.
+3. **System of Agency (AI)**: Microsoft Foundry acting as the control plane for Anthropic Claude agents, handling tool orchestration, evaluations, and runtime telemetry.
 
-| Plane | Platform | Role |
-|-------|----------|------|
-| **System of Record (SoR)** | Odoo CE 19 | Transactional ERP — orders, invoices, inventory, purchasing, accounting, master data |
-| **System of Intelligence (SoI)** | Azure Databricks + Unity Catalog | Governed lakehouse — medallion layers, data products, analytics, AI context datasets |
-| **Agent Runtime** | Microsoft Foundry Agent Service | Production agent hosting, tracing, evaluation, publish promotion, monitoring |
+### Why this Architecture Wins
+- **Isolation of Risk**: Transactional integrity is protected from analytical and AI workloads. Databricks handles heavy reads; Foundry handles non-deterministic AI execution.
+- **Enterprise Governance**: Azure DevOps provides a rigid structure for planning, CI/CD, and release management, heavily reducing the compliance burden on a lean team.
+- **Lean Feasibility**: By leveraging fully managed PaaS/Serverless (ACA, Databricks Serverless, Foundry), a solo developer augmented with AI agents can manage the platform without drowning in Kubernetes cluster administration or raw infrastructure ops.
 
-Microsoft Foundry Agent Service is the production agent runtime and operations plane;
-Microsoft Foundry more broadly is the model/agent development and governance surface.
-See [Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/foundry/agents/overview).
-
-Anthropic capabilities (Claude models, Agent SDK, MCP tool connectivity) are consumed
-through well-defined standards — not embedded ad-hoc into ERP logic.
-
-### One-page decision memo
-
-**Adopt**: Odoo (transactional) + Azure Database for PostgreSQL Flexible Server (durable, HA-ready)
-+ Azure Databricks + Unity Catalog (governed lakehouse) + Microsoft Foundry Agent Service
-(agent runtime + tracing/evals/monitoring) + Azure API Management (tool gateway for agents
-and external API governance) + Azure DevOps Boards + GitHub repos (portfolio + code + CI/CD)
-+ VS Code devcontainers (deterministic engineering cockpit).
-
-**Why this wins**: Cleanly separates SoR / SoI / agent factory responsibilities, matches
-vendor guidance for governance and multitenancy, and optimizes for a lean operator by
-pushing complexity into managed services and repeatable devcontainers.
-
-**Major tradeoffs**: Early investment required in (1) tenant provisioning automation,
-(2) data ingestion discipline, and (3) agent evaluation/observability to avoid brittle
-"AI glued into ERP" failure modes.
+### Major Tradeoffs
+- **Complexity of Integration**: Requires strong eventing (Azure Event Grid/Service Bus) to synchronize the ERP transactional state with Databricks.
+- **Cost Floor**: Establishing Azure Databricks, Foundry, and Azure Container Apps establishes a higher baseline consumption cost than a monolithic VM deployment.
 
 ---
 
-## Source references
+## 2. Source Map
 
-Primary sources (official / first-party):
-
-| Vendor | Topic | Reference |
-|--------|-------|-----------|
-| Anthropic | Agent SDK, MCP, tool use, production practices | [Claude Agent SDK docs](https://docs.anthropic.com/en/docs/agents-and-tools/agent-sdk), [MCP spec](https://modelcontextprotocol.io/) |
-| Microsoft Foundry | Agent factory, runtime, tracing, evaluation, monitoring | [Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/foundry/agents/overview) |
-| Azure | Landing zones, WAF, subscription governance | [Azure landing zone architecture](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/) |
-| Odoo | Multi-db hosting, dbfilter, Python/PG requirements | [Odoo 19 source install](https://www.odoo.com/documentation/19.0/administration/on_premise/source.html), [Odoo deploy docs](https://www.odoo.com/documentation/19.0/administration/on_premise/deploy.html) |
-| Databricks | Medallion architecture, Unity Catalog governance | [Medallion architecture](https://www.databricks.com/glossary/medallion-architecture), [Unity Catalog](https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/) |
-| Azure DevOps | Boards-GitHub integration, Pipelines, approvals | [Azure Boards-GitHub integration](https://learn.microsoft.com/en-us/azure/devops/boards/github/) |
-| VS Code | Devcontainers, workspace settings | [Dev Containers spec](https://containers.dev/), [VS Code settings](https://code.visualstudio.com/docs/getstarted/settings) |
+### Official Docs Used
+- **Anthropic Official Docs**: `Claude Context Engineering`, `Agent SDK Overview`, `Tool Use Patterns`. *Used for structuring the non-deterministic reasoning boundaries.*
+- **Azure Architecture Center**: `SaaS Tenancy Models`, `Microservices on Azure Container Apps`. *Used for computing the multitenant isolation model.*
+- **Microsoft Learn / Well-Architected Framework**: `Reliability`, `Security`, `Cost Optimization`. *Used to validate the PaaS-first approach over raw VMs.*
+- **Microsoft Foundry Documentation**: `Project Endpoints`, `Hosted Agents`, `Tracing & Evals`. *Used to define the AI capability layer.*
+- **Databricks Architecture Guidance**: `Medallion Architecture`, `Serverless SQL`, `Unity Catalog`. *Used to define the governed data intelligence boundaries.*
+- **Azure DevOps Official Docs**: `Release Pipelines`, `Boards vs GitHub Issues`, `Environments`. *Used to define the enterprise SDLC control plane.*
 
 ---
 
-## Target-state architecture
+## 3. Domain Synthesis
 
-### System boundary framing
+### Anthropic
+Anthropic's Claude 3.5/3.7 models require careful context engineering and safe tool boundaries. The Anthropic SDK is ideal for building deterministic agent loops. In an enterprise system, agents must not be embedded deep inside the ERP code; they should exist as distinct microservices calling the ERP via APIs.
 
-**System of Record (SoR): Odoo**
+### Azure Platform
+Azure Container Apps (ACA) is the optimal PaaS for containerized workloads like Odoo, providing the scalability of K8s without the operational overhead. Azure Database for PostgreSQL Flexible Server guarantees transactional ACID compliance. Azure Entra ID and Managed Identities eliminate the need for hardcoded secrets.
 
-Odoo's architecture supports multi-tenant hosting at the multi-database level, with
-hostname-based database routing via `dbfilter`. Database-per-tenant is the recommended
-SaaS isolation model for this architecture because it aligns well with Odoo's multi-database
-hosting pattern and hostname-based database routing via `dbfilter`.
+### Microsoft Foundry
+Foundry is a unified platform for AI model management, agent orchestration, and evaluation. It should sit parallel to the ERP, not inside it. It provides the SDKs and monitoring (tracing, evals) necessary to treat AI prompts as deployable code artifacts.
 
-Multi-company inside a tenant database handles the "one tenant = many legal entities" pattern.
+### Azure Databricks
+Databricks is the intelligence layer. Operating the ERP database as a reporting engine leads to resource starvation. The Medallion architecture (Bronze -> Silver -> Gold) isolates ERP raw data, standardizes it, and serves it as governed business semantic models via Unity Catalog.
 
-Odoo 19 source install requires Python ≥3.10 and PostgreSQL ≥13 — hard constraints for
-both runtime and devcontainer images. Current repo standard: Python 3.11.
-See [Odoo 19 source install](https://www.odoo.com/documentation/19.0/administration/on_premise/source.html).
+### VS Code / Engineering Workflow
+The local developer loop should rely on VS Code with DevContainers. This guarantees that human and AI agents share the exact same reproducible runtime environment, eliminating "works on my machine" anti-patterns.
 
-**System of Intelligence (SoI): Azure Databricks lakehouse**
+### Azure DevOps
+Azure DevOps Boards, Repos, and Pipelines provide a unified chain of custody from Strategy -> Epic -> PR -> Release. For an enterprise SaaS ERP, Azure DevOps is superior to GitHub for strict release governance, environment approvals, and Azure-native integration. GitHub can remain the source for open-source syncs, but ADO manages the enterprise delivery.
 
-Databricks owns analytics, AI-ready data products, and governed context datasets.
-Medallion/lakehouse approach (bronze → silver → gold) is documented for Azure Databricks
-and widely used for quality staging and incremental refinement.
-
-Unity Catalog is the cross-workspace governance plane for data assets (permissions, auditing,
-lineage, quality monitoring, discovery) — the security boundary for data products.
-See [Data preparation cheat sheet](https://learn.microsoft.com/en-us/azure/databricks/cheat-sheet/bi-serving-data-prep).
-
-**Agent Runtime: Microsoft Foundry Agent Service**
-
-Foundry Agent Service is the lifecycle control plane for agents: create → test → trace →
-evaluate → publish → monitor. Built-in agent observability captures tool usage, latencies,
-and costs, with monitoring dashboards and metrics in Azure Monitor.
-
-The broader Foundry platform (formerly Azure AI Studio) provides model catalog access
-including models from multiple providers (including Claude), enabling a governed multi-model
-strategy without rewriting the agent factory.
-See [Foundry Agent Service overview](https://learn.microsoft.com/en-us/azure/foundry/agents/overview).
-
-**System of Engagement: web + API gateway + channels**
-
-For wholesale ERP, engagement includes: internal ERP UI, customer/self-service portals,
-partner APIs, EDI-like integrations, and internal admin tooling. Azure API Management
-centralizes API publication and policy enforcement, and serves as the "tool gateway" for
-agent-to-service calls.
-
-### Control plane vs workload planes
-
-Use Azure landing zone guidance to separate foundational platform controls (identity,
-network, management) from workload subscriptions/environments.
-
-Pragmatic subscription layout:
-
-- **Platform subscription(s)**: shared networking, central logging/monitoring, key management,
-  shared CI/CD agent infrastructure
-- **Workload subscriptions per environment** (dev/test/prod): Odoo runtime, Postgres,
-  integration services, Foundry resources, Databricks workspaces/metastore, customer endpoints
-
-Decide early and keep modular — subscription refactoring later is painful.
-
-### Tenancy strategy for SaaS ERP
-
-Database-per-tenant is the recommended SaaS isolation model for this architecture because
-it aligns well with Odoo's multi-database hosting pattern and hostname-based database
-routing via `dbfilter`.
-
-| Pattern | Description | Strengths | Weaknesses | Use case |
-|---------|-------------|-----------|------------|----------|
-| Shared runtime + DB-per-tenant | One Odoo farm, many tenant DBs; `dbfilter` routes by hostname | Natural fit to Odoo multi-db; simpler ops; strong data isolation at DB boundary | Requires provisioning automation; noisy-neighbor compute risk; must harden dbfilter | Default for SMB/mid-market |
-| Deployment-per-tenant ("stamp") | Dedicated Odoo + Postgres per tenant | Strong isolation; per-tenant upgrades/SLAs; blast radius reduction | Higher ops cost; slower onboarding without automation | Enterprise tier / regulated |
-| Hybrid (tiered) | Shared for standard; stamped for top tier | Balances cost vs isolation; migration path as tenant grows | Requires tenant tiering + migration playbooks | Best overall growth model |
-
-### Reference deployment architecture
-
-**Edge + routing**: Azure Front Door (global routing, L7, fast failover) + WAF policy.
-
-**App workloads**: Odoo on Azure Container Apps (serverless containers, reduced infra
-overhead). AKS if full Kubernetes control needed — Container Apps default for lean team.
-
-**Data plane**:
-- Azure Database for PostgreSQL Flexible Server (Odoo databases, HA-capable)
-- Azure Data Lake Storage Gen2 (lakehouse storage substrate)
-- Azure Databricks + Unity Catalog (governance)
-
-**Integration/eventing**:
-- Azure Service Bus: durable enterprise messaging (queues + topics/subscriptions)
-- Azure Event Grid: reactive event fan-out (near-real-time)
-
-**Secrets/identity/observability**:
-- Managed identities (token-based, no embedded credentials)
-- Azure Key Vault (secret storage, encryption at rest)
-- Application Insights + OpenTelemetry (standardized telemetry)
-
-**Document intelligence**: Azure Document Intelligence (Foundry tool) for wholesale
-document workflows (invoices, POs, BOLs, receipts).
+### SaaS ERP / Wholesale Domain
+Wholesale requires heavy domains: Inventory, Purchasing, Sales Orders, Pricing Rules, AR/AP, and Warehouse routing. High transaction volumes mean the ERP must optimize for write-latency, entirely offloading complex margin analysis and forecasting to Databricks.
 
 ---
 
-## Role boundaries and decision matrix
+## 4. Target-State Architecture
 
-### Clear ownership
+### Topology
+- **Control Plane**: Azure DevOps (CI/CD, Planning), Azure Entra ID (Identity), Azure Policy (Governance).
+- **Data Plane / Transactional**: Azure Container Apps (Odoo web/worker containers), Azure PostgreSQL Flexible.
+- **Intelligence Plane**: Azure Databricks (Medallion Lakehouse), Azure Data Lake Storage Gen2.
+- **Agency Plane**: Microsoft Foundry (Agent endpoints), Azure OpenAI / Anthropic models.
 
-| Platform | Owns | Must NOT own |
-|----------|------|--------------|
-| **Odoo** | Orders, invoices, inventory, purchasing, accounting, master data; multi-company/warehouse/currency | Analytics lake, agent orchestration, agent governance |
-| **Azure Databricks** | Lakehouse, medallion layers, data products, context datasets, cross-domain analytics | ERP transactions (medallion = analytics, not transactional core) |
-| **Microsoft Foundry** | Agent runtime, lifecycle (trace/eval/publish/monitor), agent observability | Data engineering (Databricks), ERP transaction semantics (Odoo) |
-| **Anthropic** | Model behavior, Agent SDK, MCP tool connectivity standard, tool quality practices | Tenant isolation, enterprise policy, data governance |
+### Boundaries
+- **System of Record**: Odoo holds truth for Quotes, Orders, Inventory moves.
+- **System of Intelligence**: Databricks holds truth for Financial Consolidation, Sales Forecasting, and historical trend analysis.
+- **System of Engagement**: Dedicated Copilot UIs or Odoo native views powered by Foundry API calls.
+- **Integration Layer**: Azure API Management (APIM) acting as the gateway for tenant routing; Azure Service Bus for async decoupling.
 
-### Foundry vs Databricks vs Anthropic
-
-| Platform | Best for | Should not own | Interoperation |
-|----------|----------|----------------|----------------|
-| Foundry Agent Service | Agent runtime + lifecycle: trace/evaluate/publish/monitor | Lakehouse; SoR | Agents call tools via APIs (often through APIM); traces/evals feed CI gates |
-| Azure Databricks | Lakehouse + governed analytics + medallion + Unity Catalog | ERP transactions; agent orchestration | Produces curated context products (gold datasets) for agents; Unity Catalog enforces governance |
-| Anthropic Agent SDK + MCP | Agent implementation patterns, tool use, MCP connectivity | Enterprise governance, tenant isolation | MCP servers implement tool surfaces; Foundry hosts agents; APIM enforces auth/policy |
-
-### Wholesale capability ownership
-
-- **Order-to-cash**: Odoo SoR → Databricks analytics → agents handle exceptions (not direct posting)
-- **Procure-to-pay**: Odoo SoR → Databricks supplier analytics → agents assist with Document Intelligence
-- **Inventory & warehousing**: Odoo SoR → Databricks intelligence/forecasting → agents recommend replenishment
-- **Finance**: Odoo SoR → Databricks finance intelligence → agents assist narrative/anomaly triage (not ledger posting)
+### Tenant Isolation Strategy
+**Shared-DB, Separate-Schema (Row-level security + Schema boundaries).**
+For a lean team, database-per-tenant is economically and operationally prohibitive. Using Odoo's native row-level multi-company isolation, backed by strict Entra ID claims, provides the highest density at the lowest operational overhead.
 
 ---
 
-## Developer experience and SDLC model
+## 5. Comparative Decision Matrix
 
-### Azure DevOps + GitHub coexistence
-
-| System | Role | Owns |
-|--------|------|------|
-| **Azure DevOps Boards** | Portfolio / control SoR | Epics, features, stories, dashboards, audit narrative |
-| **GitHub** | Source-control and PR truth | Monorepo, branches, PRs, code review, lightweight CI (Actions) |
-| **Azure Pipelines** | Governed deployment / release path | Environment approvals/checks, release gates, infra deployment |
-
-This matches the documented Azure Boards-GitHub integration patterns including `AB#` linking.
-See [Azure Boards-GitHub integration](https://learn.microsoft.com/en-us/azure/devops/boards/github/).
-
-**Runner/agent policy**:
-- Microsoft-hosted agents default (reimaged per run, no cross-contamination)
-- Self-hosted agents only for private-network access or specialized deps
-- GitHub self-hosted runners when inside-VNet execution needed
-
-### VS Code devcontainer-first cockpit
-
-The devcontainer is the runtime and tooling contract. The repo's `devcontainer.json` is
-the source of truth for a consistent tool/runtime stack.
-See [Dev Containers spec](https://containers.dev/).
-
-**Settings model**:
-
-| Location | What belongs there | Why |
-|----------|-------------------|-----|
-| User settings | Personal UX only (font, UI layout) | Avoid per-developer drift on runtime/debug |
-| Root `.vscode/settings.json` | Repo-wide exclusions, formatters, YAML/JSON schemas, tooling toggles | Portable, applies across subprojects |
-| `odoo/.vscode/settings.json` | Python interpreter (inside devcontainer), Odoo lint paths, debug defaults | Stricter constraints tied to Odoo 19 requirements |
-| Nested frontend `.vscode/` | TypeScript/Node version, formatter/linter | Isolates frontend from Python/Odoo |
-| **Avoid entirely** | Hardcoded local interpreter paths, machine-specific paths, "disable core IDE features" | Breaks portability, causes hidden failures |
-
-**Rules**:
-- Repo-scoped settings own correctness
-- User settings own personal UX only
-- Devcontainer is the runtime/tooling contract
-- No hardcoded local interpreter paths in tracked settings
-
-### Target VS Code capability matrix
-
-| Capability | Implementation | Workspace scope |
-|-----------|---------------|-----------------|
-| Deterministic Odoo runtime | Devcontainer image pinned; Python ≥3.10; Postgres ≥13 service | `odoo/` devcontainer |
-| Addon import resolution | `addons-path` in launch/debug tasks; lint paths match addon roots | `odoo/.vscode/` |
-| Ruff formatting/linting | Odoo PEP8 exceptions mapped into Ruff config | repo root config |
-| YAML/JSON schema support | Workspace schema associations | root `.vscode/settings.json` |
-| Prompt/eval authoring | Versioned files; Foundry eval runs in CI gates | `agent-platform/` |
-| MCP-aware development | Tool surfaces as MCP servers; Agent SDK integration | `agent-platform/` |
-| Devcontainer features reuse | Reusable Features from spec/official repos | root + subfolders |
-| Monorepo performance | `files.watcherExclude` / `search.exclude` in workspace settings | root `.vscode/settings.json` |
-| Debug/test tasks | VS Code tasks/launch configs in repo | root + `odoo/` |
-| Pipeline authoring | Repo-scoped schemas; Azure Pipelines approvals for prod | root |
+| Option | Strengths | Weaknesses | Risks | Recommended Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Azure-Native Platform with Databricks + Foundry (Chosen)** | Strict boundaries; prevents ERP DB saturation; enterprise AI lifecycle; lean ops | Highest integration complexity; event-driven state sync required | Drift between ERP and Lakehouse schemas if CI/CD fails | Wholesale SaaS at scale with deep AI usage |
+| **2. Monolithic ERP with Embedded Anthropic Agents** | Easy to build; zero integration latency | Transactional DB crushed by AI analytics; no trace/eval capabilities | AI hallucinations directly mutating transactional state | Rapid prototyping or internal tooling only |
+| **3. Container-per-Tenant ERP + GitHub Actions** | Perfect data isolation; easy tenant deletion | Infrastructure bloat; deployment storms; expensive | Costs scale linearly with tenants; lean team will drown in ops | Highly regulated industries with data residency mandates |
 
 ---
 
-## Risks, anti-patterns, and failure modes
+## 6. Recommended Reference Architecture
 
-| Risk | Mitigation |
-|------|-----------|
-| Misconfigured multi-db routing | Strict hostname → db mapping via `dbfilter`; disable database list/manager surfaces |
-| Lakehouse treated as transactional core | Keep transaction authoring in Odoo/Postgres; medallion is analytics |
-| Agent sprawl without observability | Require trace + eval gates before publishing agents (Foundry lifecycle) |
-| Tool/prompt fragility | Version tools, build eval suites, keep MCP tool contracts stable |
-| Governance too heavy for lean team | Start with minimal gates; expand as tenant count grows |
-| VS Code drift | Repo-scoped devcontainer + workspace settings for correctness; no user-scope runtime config |
-
----
-
-## Phased roadmap
-
-| Phase | Focus | Key deliverables |
-|-------|-------|-----------------|
-| **P0 Foundations** | Landing zone, identity, secrets, observability, devcontainer cockpit | Subscription layout, Key Vault, managed identity, monitoring baseline, `devcontainer.json` |
-| **P1 MVP ERP** | Odoo 19 DB-per-tenant + dbfilter, customer portal, API gateway | Tenant provisioning, APIM setup, portal MVP, `dbfilter` enforcement |
-| **P2 Analytics** | Databricks lakehouse + Unity Catalog, medallion from Odoo | Bronze ingestion, silver validation, gold KPIs, Unity Catalog governance |
-| **P3 Copilots** | Foundry agents with trace/eval/monitor, Document Intelligence | Agent runtime, eval harness, document processing workflows |
-| **P4 Multi-tenant hardening** | Hybrid tenancy, approval gates, SLOs, self-hosted where needed | Stamp factory, release governance, runbooks |
-
-### Build now / Defer / Avoid
-
-| Build now | Defer | Avoid entirely |
-|-----------|-------|----------------|
-| Odoo 19 SoR with DB-per-tenant + dbfilter | Per-tenant stamps until revenue justifies | Databricks as transactional core |
-| Deterministic devcontainers | Advanced multi-region stamping | ERP posting via agents without guardrails |
-| Baseline CI/CD with approvals for prod | Broad agent marketplace | Untracked VS Code user-setting dependencies |
-| Databricks + Unity Catalog foundation | Cross-tenant benchmarking products | Agents without trace/eval gates |
-| Foundry tracing/evals for first agents | | |
+- **Identity**: Azure Entra ID multi-tenant app registrations; Managed Identity (UMI) exclusively for resource-to-resource auth.
+- **Networking**: Azure Virtual Network (VNet) injection for ACA and Databricks.
+- **Edge**: Azure Front Door (WAF + CDN + Global Routing).
+- **App Hosting**: Azure Container Apps (scale-to-zero for workers, dedicated profiles for heavy compute).
+- **Database**: Azure Database for PostgreSQL Flexible Server.
+- **Integration**: Azure Service Bus for ERP -> Databricks ETL and ERP -> Agent triggers.
+- **Observability**: Azure Monitor + Application Insights + Foundry Tracing.
+- **Secrets**: Azure Key Vault via Managed Identity.
+- **CI/CD**: Azure DevOps YAML Pipelines using Bicep/Terraform for infrastructure.
+- **Agent Runtime**: Microsoft Foundry Hosted Agents using Python SDK.
+- **Document Intelligence**: Azure AI Document Intelligence for wholesale OCR (Invoices, POs).
 
 ---
 
-*Canonicalized 2026-03-17. Origin: ChatGPT deep research synthesis.*
+## 7. Wholesale SaaS ERP Capability Map
+
+| Capability | System Boundary | Data Ownership | AI / Agent Opportunity |
+| :--- | :--- | :--- | :--- |
+| **Sales Order Mgmt** | Odoo | Odoo (SoR) | Chat-to-cart, margin negotiation Copilots |
+| **Inventory & Fulfillment** | Odoo | Odoo (SoR) | Optimal pick-path routing, predictive restock |
+| **Procurement** | Odoo | Odoo (SoR) | Automated PO generation based on Min/Max rules |
+| **Document Workflows** | Azure AI DocIntel | Odoo/Blob | Vendor bill OCR, inbound PO extraction |
+| **BI & Analytics** | Databricks | Lakehouse | Natural language querying over sales history |
+| **Copilot Operations** | Foundry | Foundry (State) | Cross-module reasoning, exception handling |
+
+---
+
+## 8. Foundry vs Databricks vs Anthropic Role Clarification
+
+| Platform | Best For | Must Avoid | Interoperation |
+| :--- | :--- | :--- | :--- |
+| **Anthropic (Model)** | Complex reasoning, document parsing, coding. | Storing data, raw DB execution. | Hosted in Azure / called via API. |
+| **Microsoft Foundry** | Orchestrating models, prompt management, tracing, enterprise RBAC. | Executing heavy data transformations. | Orchestrates Anthropic models; provides API to Odoo. |
+| **Azure Databricks** | Massive analytical processing, ML training, unified SQL/governance. | Transactional state mutation (OLTP). | Feeds analytics context to Foundry agents. |
+
+---
+
+## 9. Azure DevOps and VS Code Operating Model
+
+- **Planning**: Azure Boards (Epics -> Features -> PBIs/Tasks).
+- **Repo Strategy**: Monorepo or strictly bounded multi-repo (e.g., `infra`, `erp`, `intelligence`, `agents`).
+- **Environments**: Dev -> UAT -> Prod. Gated by ADO Environment Approvals.
+- **Dev Workflow**: VS Code + `.devcontainer`. The container installs tooling (az cli, databricks cli, terraform, odoo reqs).
+- **Agentic Engineering**: AI Agents operate locally inside the devcontainer, or via GitHub/ADO Pull Requests to review code against the Constitution.
+
+---
+
+## 10. Risks, Anti-patterns, and Failure Modes
+
+- **Anti-pattern**: Over-centralizing AI inside the transactional ERP. Causes compute saturation and makes upgrading the ERP impossible.
+- **Anti-pattern**: Using Databricks as the transactional core. Parquet/Delta lakes are not meant for single-row ACID OLTP updates.
+- **Risk**: Tool sprawl. Trying to use GitHub Projects, Azure Boards, and physical whiteboards simultaneously. *Mitigation: Azure Boards is the absolute SSOT.*
+- **Risk**: Governance too heavy. Trying to implement full ITIL change-management. *Mitigation: Automate controls inside Azure DevOps YAML pipelines.*
+
+---
+
+## 11. Phased Roadmap
+
+### Phase 0: Foundations
+- **Objective**: Establish Azure Landing Zones, Entra ID, Azure DevOps, and VS Code DevContainers.
+- **Exit Criteria**: Fully automated ALZ deployment via CI/CD.
+
+### Phase 1: MVP Transactional ERP
+- **Objective**: Deploy Odoo to ACA with PostgreSQL.
+- **Exit Criteria**: Wholesalers can create inventory, sales orders, and invoices securely backing to a shared-schema DB.
+
+### Phase 2: Intelligence & Analytics
+- **Objective**: Establish Databricks Lakehouse. Set up ETL from Odoo Postgres -> Bronze -> Silver -> Gold.
+- **Exit Criteria**: Dashboards operational with unified governed metrics.
+
+### Phase 3: Copilots and AI Factory
+- **Objective**: Deploy Microsoft Foundry. Integrate Document Intelligence for OCR and Anthropic agents for complex workflows.
+- **Exit Criteria**: Odoo users can parse inbound PDFs into POs via AI pipelines.
+
+### Phase 4: Enterprise Scale
+- **Objective**: Multi-tenant hardening, global edge replication, DR testing.
+- **Exit Criteria**: Platform is resilient to regional failure and compliant with enterprise SLA.
+
+---
+
+## 12. Final Recommendation & Action List
+
+### Recommendation
+Adopt the **Composited Azure-Native Platform**. Keep Odoo strictly bounded to OLTP, Databricks strictly bounded to OLAP, and Foundry strictly bounded to AI Orchestration. Drive all engineering via Azure DevOps + VS Code DevContainers.
+
+### Build Now / Defer / Avoid
+| Category | Decision | Justification |
+| :--- | :--- | :--- |
+| **Azure DevContainers** | BUILD NOW | Prevents environment drift for the solo developer + agents. |
+| **Azure DevOps Pipelines** | BUILD NOW | CI/CD automation is life support for a lean team. |
+| **Databricks Lakehouse** | DEFER | Build the transactional ERP first. Lakehouse requires active data gravity. |
+| **Database-per-Tenant** | AVOID | Will crush a solo developer with operational and migration complexity. |
+| **Embedded Custom LLM code** | AVOID | Push all AI integration through Foundry SDKs. |
+
+### Top 10 Action List
+1. Lock Azure DevOps as the SSOT for planning and CI/CD.
+2. Publish DevContainer definitions for Odoo and Infra development.
+3. Deploy Azure Landing Zone foundational Bicep/Terraform.
+4. Establish Azure API Management as the perimeter gateway.
+5. Deploy Odoo onto Azure Container Apps.
+6. Configure Azure PostgreSQL Flexible with connection pooling.
+7. Setup Azure Service Bus for decoupling outbound ERP events.
+8. Initialize Azure Databricks workspace (deferred to Phase 2).
+9. Initialize Microsoft Foundry workspace.
+10. Map out Entra ID App Roles for multi-tenant isolation.

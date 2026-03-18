@@ -8,11 +8,14 @@
 # Each planning layer has a distinct ownership scope and cadence.
 # Files listed here are the SSOT for their respective layers.
 #
-# CI validator: scripts/ci/validate_planning_index.py (planned)
+# CI validator: scripts/ci/validate_planning_index.py
+# CI gate: .github/workflows/planning-index-ssot-check.yml
 # =============================================================================
 
 schema_version: "1.0"
-last_updated: "2026-03-14"
+last_updated: "2026-03-18"
+validator: scripts/ci/validate_planning_index.py
+ci_gate: .github/workflows/planning-index-ssot-check.yml
 
 # -----------------------------------------------------------------------------
 # Planning Layer Model
@@ -63,7 +66,9 @@ layers:
   - id: operational_okrs
     name: "Enterprise OKR Stack"
     canonical_file: ssot/governance/enterprise_okrs.yaml
+    schema: ssot/governance/enterprise_okrs.schema.json
     validator: scripts/ci/validate_enterprise_okrs.py
+    ci_gate: .github/workflows/enterprise-okrs-ssot-check.yml
     owner: engineering-lead
     cadence: quarterly
     join_keys:
@@ -80,18 +85,18 @@ layers:
 
   - id: product_roadmap
     name: "Product Roadmap"
-    canonical_file: ssot/roadmap/product_roadmap.yaml
+    canonical_file: infra/ssot/roadmap/product_roadmap.yaml
     owner: product-lead
     cadence: monthly
-    status: not_on_branch  # exists on refactor branch (e3c2013d6f), not yet on main
+    status: on_main
     join_keys:
-      - field: initiatives[].okr_ref
-        joins_to: operational_okrs.canonical_okrs[].id
-      - field: initiatives[].objective_ref
-        joins_to: strategy.objectives[].id
+      - field: quarters[].epics[].id
+        joins_to: azure_boards.epics (via title convention)
+      - field: quarters[].epics[].ssot_ref
+        joins_to: spec bundles or ssot files
     note: >
-      This file exists on the refactor branch but has not been merged to main.
-      Cross-references to this layer are deferred until the file lands on main.
+      Product roadmap with quarterly milestones and epic definitions.
+      Epic ID format: E-<DOMAIN>-<SEQ>.
 
   - id: capability_targets
     name: "Parity & Capability Targets"
@@ -206,3 +211,8 @@ related_artifacts:
   - file: platform/data/contracts/control_room_kpis.yaml
     purpose: "Operational KPI definitions (kpi_001..kpi_017)"
     layer: operational_okrs
+
+  - file: odoo/docs/architecture/GOALS_SYSTEM_OF_RECORD_DECISION.md
+    purpose: "ADR-GSR-001: Goals System of Record — YAML now, AzDo later"
+    layer: governance
+    status: on_main

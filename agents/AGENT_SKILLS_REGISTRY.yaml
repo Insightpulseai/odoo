@@ -22,6 +22,8 @@ domains:
   - mobile               # Mobile client development
   - orchestration        # Control Room job orchestration + lineage
   - diagrams             # Diagram export + visual regression
+  - sdlc                 # Agentic SDLC: spec → code → quality → deploy → observe
+  - azure_foundry        # Azure AI Foundry: agent service, tools, identity, observability, IQ
 
 # ============================================================================
 # SKILLS - Atomic capabilities the agent can execute
@@ -1045,3 +1047,64 @@ personas:
       - odoo_studio_usage
       - iap_services
       - proprietary_modules
+
+  # --- SDLC Skills (added 2026-03-15) ---
+  - id: agentic_sdlc_msft_pattern
+    name: "Agentic SDLC — Microsoft Pattern"
+    domain: sdlc
+    description: "5-phase closed loop: Spec → Code → Quality → Deploy → Observe. Extracted from Microsoft TechCommunity + agent-framework repo."
+    inputs:
+      - intent
+      - spec_bundle
+    outputs:
+      - github_issues
+      - pull_requests
+      - deployment_revision
+    tools:
+      - speckit
+      - github
+      - azure_container_apps
+    knowledge_refs:
+      - agentic_sdlc_msft_reference
+      - agent_framework_repo
+    source: "https://techcommunity.microsoft.com/blog/appsonazureblog/an-ai-led-sdlc-building-an-end-to-end-agentic-software-development-lifecycle-wit/4491896"
+
+  - id: spec_driven_development
+    name: "Spec-Driven Development"
+    domain: sdlc
+    description: "Structured specification → constitution validation → task decomposition → scoped GitHub issues"
+    inputs:
+      - natural_language_intent
+      - constitution_path
+    outputs:
+      - spec_bundle
+      - github_issues
+    tools:
+      - speckit
+      - github
+    knowledge_refs:
+      - agentic_sdlc_msft_reference
+    preconditions:
+      - constitution_file_exists
+
+  - id: sre_feedback_loop
+    name: "SRE Feedback Loop"
+    domain: sdlc
+    description: "Day-2 ops loop: telemetry → incident classification → runbook match → auto-fix or escalate → closed-loop SDLC"
+    inputs:
+      - alert_payload
+      - service_name
+    outputs:
+      - incident_record
+      - github_issue
+      - auto_fix_pr
+    tools:
+      - azure_monitor
+      - supabase
+      - github
+      - slack
+    knowledge_refs:
+      - agentic_sdlc_msft_reference
+    preconditions:
+      - ops_incidents_table_exists
+      - runbook_directory_exists

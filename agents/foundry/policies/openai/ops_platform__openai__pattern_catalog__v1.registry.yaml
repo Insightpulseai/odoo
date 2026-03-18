@@ -1,0 +1,93 @@
+version: 1
+namespace: ipai.ops_platform.openai.pattern_catalog.v1
+artifact_type: registry
+repo_key: ops_platform
+domain: openai
+subject: pattern_catalog
+
+# ============================================================================
+# OPENAI PATTERN CATALOG
+# ============================================================================
+# Normalized references to OpenAI developer resources.
+# These are design inputs for the factory, not source-of-truth code.
+# ============================================================================
+
+sources:
+  cookbooks:
+    url: https://cookbook.openai.com/
+    patterns:
+      - id: agents_cookbook
+        title: Building AI Agents
+        topics: [agent_architecture, tool_use, multi_step_reasoning]
+        ipai_relevance: high
+        maps_to: [agents/foundry/, agents/skills/sdlc/]
+
+      - id: structured_outputs
+        title: Structured Outputs
+        topics: [json_schema, pydantic, typed_extraction]
+        ipai_relevance: high
+        maps_to: [agents/skills/inference/landing-ai-ade/]
+
+      - id: evals_cookbook
+        title: Evaluations
+        topics: [custom_evals, benchmark_design, scoring]
+        ipai_relevance: high
+        maps_to: [agents/foundry/policies/agents__policy__agent_publish_rules__v1.policy.yaml]
+
+      - id: tools_cookbook
+        title: Function Calling & Tools
+        topics: [function_definitions, tool_routing, mcp]
+        ipai_relevance: high
+        maps_to: [agents/foundry/policies/agents__policy__tool_allowlist__v1.policy.yaml]
+
+      - id: rag_cookbook
+        title: RAG Patterns
+        topics: [retrieval, embedding, chunking, reranking]
+        ipai_relevance: high
+        maps_to: [agents/skills/azure-foundry/foundry-iq/]
+
+  academy:
+    url: https://academy.openai.com/
+    patterns:
+      - id: projects_concept
+        title: Academy Projects
+        description: "Shared workspaces with context, files, instructions, and collaboration"
+        factory_layer: 1_work_container
+        ipai_maps_to: ops_platform__openai__project_model__v1
+
+      - id: skills_concept
+        title: Academy Skills
+        description: "Reusable process, tool, and convention patterns"
+        factory_layer: 2_reusable_intelligence
+        ipai_maps_to: ops_platform__openai__skill_model__v1
+        examples:
+          - design_doc_to_plan
+          - jira_sprint_planner_from_notes
+          - pr_description_and_changelog_style
+
+  starter_apps:
+    url: https://platform.openai.com/docs/overview
+    patterns:
+      - id: chatkit_starter
+        title: ChatKit Starter App
+        description: "Reference chat UI implementation"
+        ipai_relevance: medium
+        maps_to: [web/]
+
+      - id: apps_sdk_examples
+        title: Apps SDK Examples
+        description: "OpenAI SDK usage patterns"
+        ipai_relevance: medium
+        maps_to: [agents/skills/azure-foundry/sdk-quickstart/]
+
+      - id: responses_starter
+        title: Responses Starter App
+        description: "Responses API implementation pattern"
+        ipai_relevance: high
+        maps_to: [agents/foundry/agents/]
+
+usage_rules:
+  openai_resources_are_design_inputs: true
+  openai_resources_are_not_ssot: true
+  extract_patterns_not_code: true
+  normalize_into_ipai_convention: true

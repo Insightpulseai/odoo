@@ -1,8 +1,9 @@
 {
   // Ensure Copilot Chat reads .github/copilot-instructions.md
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "editor.wordWrap": "on",
   "editor.minimap.enabled": false,
   "files.trimTrailingWhitespace": true,
@@ -12,7 +13,10 @@
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "ruff.enable": true,
-  "ruff.format.args": ["--config", "pyproject.toml"],
+  "ruff.format.args": [
+    "--config",
+    "pyproject.toml"
+  ],
   // Preferred: repo-local venv (portable across machines and CI).
   // Create it with: python -m venv .venv && .venv/bin/pip install -e .
   // When .venv/bin/python exists, VS Code picks it up automatically.
@@ -64,5 +68,7 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
     "https://json.schemastore.org/github-action.json": ".github/action.yml"
-  }
+  },
+  "python.languageServer": "None",
+  "git.ignoreLimitWarning": true
 }

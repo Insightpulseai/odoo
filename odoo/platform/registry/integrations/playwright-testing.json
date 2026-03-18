@@ -1,0 +1,20 @@
+{
+  "id": "playwright-testing",
+  "name": "Playwright Testing",
+  "summary": "E2E browser tests; CI-triggered checks and gating for catalog and product repos.",
+  "category": "testing",
+  "type": "native",
+  "capabilities": ["e2e-tests", "release-gates", "reporting", "visual-regression"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_playwright_ci.sh",
+    "scopes": [],
+    "env_vars": [],
+    "auto_configure": true
+  },
+  "links": {
+    "docs": "https://playwright.dev/",
+    "repo": "https://github.com/microsoft/playwright"
+  },
+  "mcp_server": "@anthropic/playwright-mcp-server",
+  "status": "active"
+}

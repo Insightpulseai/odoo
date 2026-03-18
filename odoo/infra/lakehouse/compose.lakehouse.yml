@@ -1,0 +1,247 @@
+# =============================================================================
+# OSS LAKEHOUSE STACK (Self-Hosted "Databricks-like")
+# =============================================================================
+# This replaces Databricks CE with fully self-hosted OSS components:
+#   - Spark: Distributed compute engine
+#   - Delta Lake: ACID tables + medallion architecture (via Spark)
+#   - MLflow: Model/embeddings registry
+#   - Trino: SQL warehouse (Databricks SQL equivalent)
+#   - MinIO: S3-compatible object storage
+#   - n8n: Workflow orchestration
+#   - PostgreSQL: Metadata + RAG serving (Supabase-compatible)
+#
+# Usage:
+#   cd infra/lakehouse
+#   cp .env.example .env  # Configure secrets
+#   docker compose up -d
+#
+# Ports:
+#   5432  - PostgreSQL
+#   5678  - n8n UI
+#   5000  - MLflow UI
+#   7077  - Spark Master
+#   8080  - Spark Master UI
+#   8082  - Trino UI
+#   9000  - MinIO S3 API
+#   9001  - MinIO Console
+#   8000  - FastAPI (backend)
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # ===========================================================================
+  # STORAGE LAYER
+  # ===========================================================================
+  postgres:
+    image: postgres:15
+    container_name: lakehouse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_DB: ${POSTGRES_DB:-lakehouse}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: lakehouse-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?error}
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # COMPUTE LAYER (Spark)
+  # ===========================================================================
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: lakehouse-spark-master
+    restart: unless-stopped
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "7077:7077"  # Spark Master port
+      - "8080:8080"  # Spark Master UI
+    volumes:
+      - spark_data:/opt/bitnami/spark/data
+      - ./jars:/opt/bitnami/spark/jars/custom:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    container_name: lakehouse-spark-worker
+    restart: unless-stopped
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    volumes:
+      - spark_worker_data:/opt/bitnami/spark/data
+      - ./jars:/opt/bitnami/spark/jars/custom:ro
+    depends_on:
+      spark-master:
+        condition: service_healthy
+
+  # ===========================================================================
+  # SQL WAREHOUSE (Trino)
+  # ===========================================================================
+  trino:
+    image: trinodb/trino:latest
+    container_name: lakehouse-trino
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./trino/catalog:/etc/trino/catalog:ro
+      - ./trino/config:/etc/trino:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # ML LAYER (MLflow)
+  # ===========================================================================
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: lakehouse-mlflow
+    restart: unless-stopped
+    environment:
+      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/mlflow
+      MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://mlflow/
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/mlflow
+      --default-artifact-root s3://mlflow/
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # ORCHESTRATION (n8n)
+  # ===========================================================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: lakehouse-n8n
+    restart: unless-stopped
+    environment:
+      - N8N_DB_TYPE=postgresdb
+      - N8N_DB_POSTGRESDB_HOST=postgres
+      - N8N_DB_POSTGRESDB_PORT=5432
+      - N8N_DB_POSTGRESDB_DATABASE=n8n
+      - N8N_DB_POSTGRESDB_USER=${POSTGRES_USER:-postgres}
+      - N8N_DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-admin}
+      - WEBHOOK_URL=http://localhost:5678/
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # API LAYER (FastAPI)
+  # ===========================================================================
+  # Uncomment when backend is ready
+  # api:
+  #   build:
+  #     context: ../../backend
+  #     dockerfile: Dockerfile
+  #   container_name: lakehouse-api
+  #   restart: unless-stopped
+  #   environment:
+  #     DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-lakehouse}
+  #     TRINO_URL: http://trino:8080
+  #     SPARK_MASTER: spark://spark-master:7077
+  #     MLFLOW_TRACKING_URI: http://mlflow:5000
+  #     S3_ENDPOINT: http://minio:9000
+  #     S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+  #     S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
+  #     - trino
+  #     - spark-master
+  #     - mlflow
+  #     - n8n
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  postgres_data:
+  minio_data:
+  spark_data:
+  spark_worker_data:
+  n8n_data:
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  default:
+    name: lakehouse

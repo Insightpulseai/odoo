@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_bir_tax_return_tree" model="ir.ui.view">
+        <field name="name">bir.tax.return.tree</field>
+        <field name="model">bir.tax.return</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue" decoration-success="state == 'confirmed'">
+                <field name="name"/>
+                <field name="form_type"/>
+                <field name="tax_category" optional="hide"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="due_date"/>
+                <field name="days_until_due" decoration-danger="days_until_due &lt; 0"/>
+                <field name="tax_payable" sum="Total Payable"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'computed'"
+                       decoration-primary="state == 'validated'"
+                       decoration-success="state in ['filed', 'confirmed']"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="is_overdue" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_bir_tax_return_form" model="ir.ui.view">
+        <field name="name">bir.tax.return.form</field>
+        <field name="model">bir.tax.return</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" string="Compute"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_validate" string="Validate"
+                            type="object" class="oe_highlight"
+                            invisible="state not in ['draft', 'computed']"/>
+                    <button name="action_mark_filed" string="Mark as Filed"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'validated'"/>
+                    <button name="action_confirm" string="Confirm (BIR Reference)"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'filed'"/>
+                    <button name="action_cancel" string="Cancel"
+                            type="object"
+                            invisible="state in ['confirmed', 'cancelled']"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object"
+                            invisible="state in ['confirmed', 'cancelled']"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,computed,validated,filed,confirmed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Overdue" bg_color="text-bg-danger" invisible="not is_overdue"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Form Details">
+                            <field name="form_type"/>
+                            <field name="tax_category"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Period">
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="frequency"/>
+                            <field name="due_date"/>
+                            <field name="days_until_due" decoration-danger="days_until_due &lt; 0"/>
+                        </group>
+                    </group>
+                    <group string="Tax Computation">
+                        <group>
+                            <field name="tax_base"/>
+                            <field name="tax_due"/>
+                            <field name="tax_credits"/>
+                        </group>
+                        <group>
+                            <field name="tax_payable"/>
+                            <field name="penalty"/>
+                            <field name="interest"/>
+                            <field name="total_amount_due"/>
+                        </group>
+                    </group>
+                    <group string="Filing Information" invisible="state not in ['filed', 'confirmed']">
+                        <group>
+                            <field name="filed_date"/>
+                            <field name="filed_by"/>
+                        </group>
+                        <group>
+                            <field name="bir_reference"/>
+                            <field name="payment_date"/>
+                            <field name="payment_reference"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Line Items" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="description"/>
+                                    <field name="partner_id"/>
+                                    <field name="tin"/>
+                                    <field name="move_id"/>
+                                    <field name="tax_base"/>
+                                    <field name="tax_rate"/>
+                                    <field name="tax_amount"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_bir_tax_return_search" model="ir.ui.view">
+        <field name="name">bir.tax.return.search</field>
+        <field name="model">bir.tax.return</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="form_type"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="pending" string="Pending Filing" domain="[('state', 'in', ['computed', 'validated'])]"/>
+                <filter name="filed" string="Filed" domain="[('state', 'in', ['filed', 'confirmed'])]"/>
+                <separator/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter name="due_soon" string="Due Within 5 Days" domain="[('days_until_due', '&lt;=', 5), ('days_until_due', '&gt;=', 0)]"/>
+                <separator/>
+                <filter name="vat" string="VAT" domain="[('tax_category', '=', 'vat')]"/>
+                <filter name="withholding" string="Withholding" domain="[('tax_category', '=', 'withholding')]"/>
+                <filter name="income" string="Income Tax" domain="[('tax_category', '=', 'income')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_form" string="Form Type" context="{'group_by': 'form_type'}"/>
+                    <filter name="group_category" string="Category" context="{'group_by': 'tax_category'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_period" string="Period" context="{'group_by': 'period_end:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_tax_return" model="ir.actions.act_window">
+        <field name="name">BIR Tax Returns</field>
+        <field name="res_model">bir.tax.return</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a BIR Tax Return
+            </p>
+            <p>
+                Generate and file BIR tax returns (VAT, Withholding, Income Tax, etc.)
+            </p>
+        </field>
+    </record>
+</odoo>

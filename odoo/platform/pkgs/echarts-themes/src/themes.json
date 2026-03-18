@@ -1,0 +1,66 @@
+{
+  "themes": [
+    {
+      "id": "infographic",
+      "name": "Infographic",
+      "file": "infographic.js",
+      "description": "Bright, colorful theme perfect for presentations and reports",
+      "colors": ["#C1232B", "#27727B", "#FCCE10", "#E87C25", "#B5C334", "#FE8463", "#9BCA63", "#FAD860", "#F3A43B", "#60C0DD"],
+      "category": "colorful",
+      "darkMode": false
+    },
+    {
+      "id": "vintage",
+      "name": "Vintage",
+      "file": "vintage.js",
+      "description": "Retro, muted colors with a warm cream background",
+      "colors": ["#d87c7c", "#919e8b", "#d7ab82", "#6e7074", "#61a0a8", "#efa18d", "#787464", "#cc7e63", "#724e58", "#4b565b"],
+      "backgroundColor": "#fef8ef",
+      "category": "light",
+      "darkMode": false
+    },
+    {
+      "id": "dark",
+      "name": "Dark",
+      "file": "dark.js",
+      "description": "Modern dark mode with vibrant accent colors",
+      "colors": ["#4992ff", "#7cffb2", "#fddd60", "#ff6e76", "#58d9f9", "#05c091", "#ff8a45", "#8d48e3", "#dd79ff"],
+      "backgroundColor": "#100C2A",
+      "category": "dark",
+      "darkMode": true
+    },
+    {
+      "id": "roma",
+      "name": "Roma",
+      "file": "roma.js",
+      "description": "Elegant theme with sophisticated pink, navy, and sage tones",
+      "colors": ["#E01F54", "#001852", "#f5e8c8", "#b8d2c7", "#c6b38e", "#a4d8c2", "#f3d999", "#d3758f", "#dcc392", "#2e4783"],
+      "category": "colorful",
+      "darkMode": false
+    },
+    {
+      "id": "shine",
+      "name": "Shine",
+      "file": "shine.js",
+      "description": "Clean, professional theme with blue dominance",
+      "colors": ["#c12e34", "#e6b600", "#0098d9", "#2b821d", "#005eaa", "#339ca8", "#cda819", "#32a487"],
+      "category": "light",
+      "darkMode": false
+    },
+    {
+      "id": "macarons",
+      "name": "Macarons",
+      "file": "macarons.js",
+      "description": "Playful pastel colors for approachable, friendly dashboards",
+      "colors": ["#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3", "#e5cf0d", "#97b552", "#95706d", "#dc69aa"],
+      "category": "colorful",
+      "darkMode": false
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "source": "Apache ECharts Official Themes",
+    "license": "Apache-2.0",
+    "lastUpdated": "2026-02-11"
+  }
+}

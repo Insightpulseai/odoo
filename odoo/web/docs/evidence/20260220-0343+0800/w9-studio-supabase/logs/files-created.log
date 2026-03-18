@@ -1,0 +1,12 @@
+sandbox/dev/.artifacts/rotor-kinetic/src/lib/:
+Permissions Size User Date Modified Name
+drwxr-xr-x@    - tbwa 20 Feb 03:39  .
+drwxr-xr-x@    - tbwa 20 Feb 03:39  ..
+.rw-r--r--@ 1.1k tbwa 20 Feb 04:08  bookings.ts
+.rw-r--r--@  389 tbwa 20 Feb 04:07  supabase.ts
+
+sandbox/dev/.artifacts/rotor-kinetic/supabase/migrations/:
+Permissions Size User Date Modified Name
+drwxr-xr-x@    - tbwa 20 Feb 03:39  .
+drwxr-xr-x@    - tbwa 20 Feb 03:39  ..
+.rw-r--r--@ 3.0k tbwa 20 Feb 04:10  20260220_create_bookings.sql

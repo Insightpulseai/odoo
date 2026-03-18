@@ -1,0 +1,1737 @@
+{
+  "count": 288,
+  "sources": [
+    "third_party/oca",
+    "addons/oca"
+  ],
+  "addons": [
+    {
+      "name": "account_invoice_start_end_dates",
+      "path": "third_party/oca/account-closing/account_invoice_start_end_dates",
+      "repo": "account-closing",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_financial_report",
+      "path": "third_party/oca/account-financial-reporting/account_financial_report",
+      "repo": "account-financial-reporting",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_tax_balance",
+      "path": "third_party/oca/account-financial-reporting/account_tax_balance",
+      "repo": "account-financial-reporting",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_statement",
+      "path": "third_party/oca/account-financial-reporting/partner_statement",
+      "repo": "account-financial-reporting",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_account_tag_code",
+      "path": "third_party/oca/account-financial-tools/account_account_tag_code",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_journal_restrict_mode",
+      "path": "third_party/oca/account-financial-tools/account_journal_restrict_mode",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_move_name_sequence",
+      "path": "third_party/oca/account-financial-tools/account_move_name_sequence",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_move_post_date_user",
+      "path": "third_party/oca/account-financial-tools/account_move_post_date_user",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_move_print",
+      "path": "third_party/oca/account-financial-tools/account_move_print",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_usability",
+      "path": "third_party/oca/account-financial-tools/account_usability",
+      "repo": "account-financial-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_billing",
+      "path": "addons/oca/account-invoicing/account_billing",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_global_discount",
+      "path": "addons/oca/account-invoicing/account_global_discount",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_auto_send_by_email",
+      "path": "addons/oca/account-invoicing/account_invoice_auto_send_by_email",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_check_total",
+      "path": "addons/oca/account-invoicing/account_invoice_check_total",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_crm_tag",
+      "path": "addons/oca/account-invoicing/account_invoice_crm_tag",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_date_due",
+      "path": "addons/oca/account-invoicing/account_invoice_date_due",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_fiscal_position_update",
+      "path": "addons/oca/account-invoicing/account_invoice_fiscal_position_update",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_fixed_discount",
+      "path": "third_party/oca/account-invoicing/account_invoice_fixed_discount",
+      "repo": "account-invoicing",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_invoice_payment_term_date_due",
+      "path": "addons/oca/account-invoicing/account_invoice_payment_term_date_due",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_pricelist",
+      "path": "third_party/oca/account-invoicing/account_invoice_pricelist",
+      "repo": "account-invoicing",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "account_invoice_pricelist_sale",
+      "path": "addons/oca/account-invoicing/account_invoice_pricelist_sale",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_refund_link",
+      "path": "addons/oca/account-invoicing/account_invoice_refund_link",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_refund_reason",
+      "path": "addons/oca/account-invoicing/account_invoice_refund_reason",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_section_sale_order",
+      "path": "addons/oca/account-invoicing/account_invoice_section_sale_order",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_show_currency_rate",
+      "path": "addons/oca/account-invoicing/account_invoice_show_currency_rate",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_supplier_ref_unique",
+      "path": "addons/oca/account-invoicing/account_invoice_supplier_ref_unique",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_supplierinfo_update",
+      "path": "addons/oca/account-invoicing/account_invoice_supplierinfo_update",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_tax_required",
+      "path": "addons/oca/account-invoicing/account_invoice_tax_required",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_transmit_method",
+      "path": "addons/oca/account-invoicing/account_invoice_transmit_method",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_transmit_method_substitution_rule",
+      "path": "addons/oca/account-invoicing/account_invoice_transmit_method_substitution_rule",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_tree_currency",
+      "path": "addons/oca/account-invoicing/account_invoice_tree_currency",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_triple_discount",
+      "path": "addons/oca/account-invoicing/account_invoice_triple_discount",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_invoice_warn_message",
+      "path": "addons/oca/account-invoicing/account_invoice_warn_message",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_mail_autosubscribe",
+      "path": "addons/oca/account-invoicing/account_mail_autosubscribe",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_manual_currency",
+      "path": "addons/oca/account-invoicing/account_manual_currency",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_auto_post_ref",
+      "path": "addons/oca/account-invoicing/account_move_auto_post_ref",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_cancel_confirm",
+      "path": "addons/oca/account-invoicing/account_move_cancel_confirm",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_tier_validation",
+      "path": "addons/oca/account-invoicing/account_move_tier_validation",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_tier_validation_approver",
+      "path": "addons/oca/account-invoicing/account_move_tier_validation_approver",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_receipt_journal",
+      "path": "addons/oca/account-invoicing/account_receipt_journal",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_tax_group_widget_base_amount",
+      "path": "addons/oca/account-invoicing/account_tax_group_widget_base_amount",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_tax_legal_notes_translate",
+      "path": "addons/oca/account-invoicing/account_tax_legal_notes_translate",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_warn_option",
+      "path": "addons/oca/account-invoicing/account_warn_option",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "partner_invoicing_mode",
+      "path": "addons/oca/account-invoicing/partner_invoicing_mode",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "partner_invoicing_mode_at_shipping",
+      "path": "addons/oca/account-invoicing/partner_invoicing_mode_at_shipping",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "partner_invoicing_mode_monthly",
+      "path": "addons/oca/account-invoicing/partner_invoicing_mode_monthly",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "portal_account_personal_data_only",
+      "path": "addons/oca/account-invoicing/portal_account_personal_data_only",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_customerinfo_invoice",
+      "path": "addons/oca/account-invoicing/product_customerinfo_invoice",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_form_account_move_line_link",
+      "path": "addons/oca/account-invoicing/product_form_account_move_line_link",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_stock_picking_return_invoicing",
+      "path": "addons/oca/account-invoicing/purchase_stock_picking_return_invoicing",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_credit_note_reversal",
+      "path": "addons/oca/account-invoicing/sale_credit_note_reversal",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_line_refund_to_invoice_qty",
+      "path": "addons/oca/account-invoicing/sale_line_refund_to_invoice_qty",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_order_invoicing_grouping_criteria",
+      "path": "addons/oca/account-invoicing/sale_order_invoicing_grouping_criteria",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_order_invoicing_qty_percentage",
+      "path": "addons/oca/account-invoicing/sale_order_invoicing_qty_percentage",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_stock_picking_invoicing",
+      "path": "addons/oca/account-invoicing/sale_stock_picking_invoicing",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "stock_account_move_reset_to_draft",
+      "path": "addons/oca/account-invoicing/stock_account_move_reset_to_draft",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "stock_picking_invoicing",
+      "path": "addons/oca/account-invoicing/stock_picking_invoicing",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "stock_picking_return_refund_option",
+      "path": "addons/oca/account-invoicing/stock_picking_return_refund_option",
+      "repo": "account-invoicing",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_in_payment",
+      "path": "addons/oca/account-reconcile/account_in_payment",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_base_import",
+      "path": "addons/oca/account-reconcile/account_move_base_import",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_move_reconcile_forbid_cancel",
+      "path": "addons/oca/account-reconcile/account_move_reconcile_forbid_cancel",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_partner_reconcile",
+      "path": "addons/oca/account-reconcile/account_partner_reconcile",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_reconcile_analytic_tag",
+      "path": "addons/oca/account-reconcile/account_reconcile_analytic_tag",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_reconcile_model_oca",
+      "path": "addons/oca/account-reconcile/account_reconcile_model_oca",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_reconcile_oca",
+      "path": "addons/oca/account-reconcile/account_reconcile_oca",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_reconcile_oca_add_default_filters",
+      "path": "addons/oca/account-reconcile/account_reconcile_oca_add_default_filters",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_reconcile_oca_queue",
+      "path": "addons/oca/account-reconcile/account_reconcile_oca_queue",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_base",
+      "path": "third_party/oca/account-reconcile/account_statement_base",
+      "repo": "account-reconcile",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_transaction_id",
+      "path": "addons/oca/account-reconcile/base_transaction_id",
+      "repo": "account-reconcile",
+      "source": "addons/oca"
+    },
+    {
+      "name": "ai_oca_bridge",
+      "path": "addons/oca/ai/ai_oca_bridge",
+      "repo": "ai",
+      "source": "addons/oca"
+    },
+    {
+      "name": "ai_oca_bridge_chatter",
+      "path": "addons/oca/ai/ai_oca_bridge_chatter",
+      "repo": "ai",
+      "source": "addons/oca"
+    },
+    {
+      "name": "ai_oca_bridge_document_page",
+      "path": "addons/oca/ai/ai_oca_bridge_document_page",
+      "repo": "ai",
+      "source": "addons/oca"
+    },
+    {
+      "name": "ai_oca_bridge_extra_parameters",
+      "path": "addons/oca/ai/ai_oca_bridge_extra_parameters",
+      "repo": "ai",
+      "source": "addons/oca"
+    },
+    {
+      "name": "ai_oca_native_generate_ollama",
+      "path": "addons/oca/ai/ai_oca_native_generate_ollama",
+      "repo": "ai",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_base",
+      "path": "addons/oca/bank-statement-import/account_statement_import_base",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_camt",
+      "path": "addons/oca/bank-statement-import/account_statement_import_camt",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_camt54",
+      "path": "addons/oca/bank-statement-import/account_statement_import_camt54",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_file",
+      "path": "addons/oca/bank-statement-import/account_statement_import_file",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_file_reconcile_oca",
+      "path": "addons/oca/bank-statement-import/account_statement_import_file_reconcile_oca",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_move_line",
+      "path": "addons/oca/bank-statement-import/account_statement_import_move_line",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_ofx",
+      "path": "addons/oca/bank-statement-import/account_statement_import_ofx",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online_gocardless",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online_gocardless",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online_paypal",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online_paypal",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online_plaid",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online_plaid",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online_ponto",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online_ponto",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_online_stripe",
+      "path": "addons/oca/bank-statement-import/account_statement_import_online_stripe",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "account_statement_import_sheet_file",
+      "path": "addons/oca/bank-statement-import/account_statement_import_sheet_file",
+      "repo": "bank-statement-import",
+      "source": "addons/oca"
+    },
+    {
+      "name": "component",
+      "path": "addons/oca/connector/component",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "component_event",
+      "path": "addons/oca/connector/component_event",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "connector",
+      "path": "addons/oca/connector/connector",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "connector_base_product",
+      "path": "addons/oca/connector/connector_base_product",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "test_component",
+      "path": "addons/oca/connector/test_component",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "test_connector",
+      "path": "addons/oca/connector/test_connector",
+      "repo": "connector",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_claim",
+      "path": "addons/oca/crm/crm_claim",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_date_deadline_required",
+      "path": "addons/oca/crm/crm_date_deadline_required",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_industry",
+      "path": "addons/oca/crm/crm_industry",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_code",
+      "path": "addons/oca/crm/crm_lead_code",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_currency",
+      "path": "addons/oca/crm/crm_lead_currency",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_firstname",
+      "path": "addons/oca/crm/crm_lead_firstname",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_product",
+      "path": "addons/oca/crm/crm_lead_product",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_to_task",
+      "path": "addons/oca/crm/crm_lead_to_task",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_lead_vat",
+      "path": "addons/oca/crm/crm_lead_vat",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_location",
+      "path": "addons/oca/crm/crm_location",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_partner_assign",
+      "path": "addons/oca/crm/crm_partner_assign",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_partner_capital",
+      "path": "addons/oca/crm/crm_partner_capital",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_partner_employee_quantity",
+      "path": "addons/oca/crm/crm_partner_employee_quantity",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_partner_required",
+      "path": "addons/oca/crm/crm_partner_required",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_phonecall",
+      "path": "addons/oca/crm/crm_phonecall",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_phonecall_planner",
+      "path": "addons/oca/crm/crm_phonecall_planner",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_phonecall_result",
+      "path": "addons/oca/crm/crm_phonecall_result",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_phonecall_summary_predefined",
+      "path": "addons/oca/crm/crm_phonecall_summary_predefined",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_project_create",
+      "path": "addons/oca/crm/crm_project_create",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_project_task",
+      "path": "addons/oca/crm/crm_project_task",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_salesperson_planner",
+      "path": "addons/oca/crm/crm_salesperson_planner",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_security_group",
+      "path": "addons/oca/crm/crm_security_group",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_stage_mail",
+      "path": "addons/oca/crm/crm_stage_mail",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_stage_multi_team",
+      "path": "addons/oca/crm/crm_stage_multi_team",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_stage_probability",
+      "path": "addons/oca/crm/crm_stage_probability",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_team_parent",
+      "path": "addons/oca/crm/crm_team_parent",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "crm_won_restrict_per_stage",
+      "path": "addons/oca/crm/crm_won_restrict_per_stage",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "marketing_crm_partner",
+      "path": "addons/oca/crm/marketing_crm_partner",
+      "repo": "crm",
+      "source": "addons/oca"
+    },
+    {
+      "name": "hr_employee_firstname",
+      "path": "third_party/oca/hr/hr_employee_firstname",
+      "repo": "hr",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "hr_employee_second_lastname",
+      "path": "third_party/oca/hr/hr_employee_second_lastname",
+      "repo": "hr",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "document_url",
+      "path": "third_party/oca/knowledge/document_url",
+      "repo": "knowledge",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "mis_builder",
+      "path": "third_party/oca/mis-builder/mis_builder",
+      "repo": "mis-builder",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "mis_builder_budget",
+      "path": "third_party/oca/mis-builder/mis_builder_budget",
+      "repo": "mis-builder",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "mis_builder_demo",
+      "path": "third_party/oca/mis-builder/mis_builder_demo",
+      "repo": "mis-builder",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_country_state_translatable",
+      "path": "third_party/oca/partner-contact/base_country_state_translatable",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_location",
+      "path": "third_party/oca/partner-contact/base_location",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_location_geonames_import",
+      "path": "third_party/oca/partner-contact/base_location_geonames_import",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_partner_company_group",
+      "path": "third_party/oca/partner-contact/base_partner_company_group",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_partner_sequence",
+      "path": "third_party/oca/partner-contact/base_partner_sequence",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_affiliate",
+      "path": "third_party/oca/partner-contact/partner_affiliate",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_access_link",
+      "path": "third_party/oca/partner-contact/partner_contact_access_link",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_address_default",
+      "path": "third_party/oca/partner-contact/partner_contact_address_default",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_birthplace",
+      "path": "third_party/oca/partner-contact/partner_contact_birthplace",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_department",
+      "path": "third_party/oca/partner-contact/partner_contact_department",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_job_position",
+      "path": "third_party/oca/partner-contact/partner_contact_job_position",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_contact_personal_information_page",
+      "path": "third_party/oca/partner-contact/partner_contact_personal_information_page",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_fax",
+      "path": "third_party/oca/partner-contact/partner_fax",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_identification",
+      "path": "third_party/oca/partner-contact/partner_identification",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_manual_rank",
+      "path": "third_party/oca/partner-contact/partner_manual_rank",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_mobile",
+      "path": "third_party/oca/partner-contact/partner_mobile",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_ref_unique",
+      "path": "third_party/oca/partner-contact/partner_ref_unique",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_supplier_ref",
+      "path": "third_party/oca/partner-contact/partner_supplier_ref",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_title",
+      "path": "third_party/oca/partner-contact/partner_title",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_vat_unique",
+      "path": "third_party/oca/partner-contact/partner_vat_unique",
+      "repo": "partner-contact",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "project_task_default_stage",
+      "path": "third_party/oca/project/project_task_default_stage",
+      "repo": "project",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "project_task_pull_request",
+      "path": "third_party/oca/project/project_task_pull_request",
+      "repo": "project",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "project_task_stage_mgmt",
+      "path": "third_party/oca/project/project_task_stage_mgmt",
+      "repo": "project",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "project_task_stage_state",
+      "path": "third_party/oca/project/project_task_stage_state",
+      "repo": "project",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "partner_supplierinfo_smartbutton",
+      "path": "addons/oca/purchase-workflow/partner_supplierinfo_smartbutton",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "procurement_purchase_no_grouping",
+      "path": "addons/oca/purchase-workflow/procurement_purchase_no_grouping",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_main_seller",
+      "path": "addons/oca/purchase-workflow/product_main_seller",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_supplier_code_purchase",
+      "path": "third_party/oca/purchase-workflow/product_supplier_code_purchase",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "product_supplierinfo_purchase_contact",
+      "path": "addons/oca/purchase-workflow/product_supplierinfo_purchase_contact",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_supplierinfo_qty_multiplier",
+      "path": "addons/oca/purchase-workflow/product_supplierinfo_qty_multiplier",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "product_supplierinfo_update_price",
+      "path": "addons/oca/purchase-workflow/product_supplierinfo_update_price",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_advance_payment",
+      "path": "addons/oca/purchase-workflow/purchase_advance_payment",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_all_shipments",
+      "path": "addons/oca/purchase-workflow/purchase_all_shipments",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_allowed_product",
+      "path": "third_party/oca/purchase-workflow/purchase_allowed_product",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "purchase_analytic_global",
+      "path": "addons/oca/purchase-workflow/purchase_analytic_global",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_blanket_order",
+      "path": "addons/oca/purchase-workflow/purchase_blanket_order",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_cancel_reason",
+      "path": "addons/oca/purchase-workflow/purchase_cancel_reason",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_commercial_partner",
+      "path": "addons/oca/purchase-workflow/purchase_commercial_partner",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_container",
+      "path": "addons/oca/purchase-workflow/purchase_container",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_default_terms_conditions",
+      "path": "addons/oca/purchase-workflow/purchase_default_terms_conditions",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_delivery_split_date",
+      "path": "addons/oca/purchase-workflow/purchase_delivery_split_date",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_deposit",
+      "path": "addons/oca/purchase-workflow/purchase_deposit",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_exception",
+      "path": "addons/oca/purchase-workflow/purchase_exception",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_fop_shipping",
+      "path": "addons/oca/purchase-workflow/purchase_fop_shipping",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_force_invoiced",
+      "path": "addons/oca/purchase-workflow/purchase_force_invoiced",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_force_invoiced_quantity",
+      "path": "addons/oca/purchase-workflow/purchase_force_invoiced_quantity",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_invoice_method",
+      "path": "addons/oca/purchase-workflow/purchase_invoice_method",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_invoice_plan",
+      "path": "addons/oca/purchase-workflow/purchase_invoice_plan",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_invoice_status_line",
+      "path": "addons/oca/purchase-workflow/purchase_invoice_status_line",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_last_price_info",
+      "path": "addons/oca/purchase-workflow/purchase_last_price_info",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_line_procurement_group",
+      "path": "addons/oca/purchase-workflow/purchase_line_procurement_group",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_line_reassign",
+      "path": "addons/oca/purchase-workflow/purchase_line_reassign",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_location_by_line",
+      "path": "addons/oca/purchase-workflow/purchase_location_by_line",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_lot",
+      "path": "addons/oca/purchase-workflow/purchase_lot",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_manual_currency",
+      "path": "addons/oca/purchase-workflow/purchase_manual_currency",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_manual_delivery",
+      "path": "addons/oca/purchase-workflow/purchase_manual_delivery",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_no_rfq",
+      "path": "addons/oca/purchase-workflow/purchase_no_rfq",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_open_qty",
+      "path": "addons/oca/purchase-workflow/purchase_open_qty",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_approval_block",
+      "path": "addons/oca/purchase-workflow/purchase_order_approval_block",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_archive",
+      "path": "addons/oca/purchase-workflow/purchase_order_archive",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_general_discount",
+      "path": "addons/oca/purchase-workflow/purchase_order_general_discount",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_line_menu",
+      "path": "addons/oca/purchase-workflow/purchase_order_line_menu",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_line_original_date",
+      "path": "addons/oca/purchase-workflow/purchase_order_line_original_date",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_line_sequence",
+      "path": "addons/oca/purchase-workflow/purchase_order_line_sequence",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_line_stock_available",
+      "path": "addons/oca/purchase-workflow/purchase_order_line_stock_available",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_owner",
+      "path": "third_party/oca/purchase-workflow/purchase_order_owner",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "purchase_order_product_recommendation",
+      "path": "addons/oca/purchase-workflow/purchase_order_product_recommendation",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_product_recommendation_brand",
+      "path": "addons/oca/purchase-workflow/purchase_order_product_recommendation_brand",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_product_recommendation_xlsx",
+      "path": "addons/oca/purchase-workflow/purchase_order_product_recommendation_xlsx",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_qty_change_no_recompute",
+      "path": "addons/oca/purchase-workflow/purchase_order_qty_change_no_recompute",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_secondary_unit",
+      "path": "addons/oca/purchase-workflow/purchase_order_secondary_unit",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_supplier_return",
+      "path": "addons/oca/purchase-workflow/purchase_order_supplier_return",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_supplierinfo_update",
+      "path": "addons/oca/purchase-workflow/purchase_order_supplierinfo_update",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_type",
+      "path": "third_party/oca/purchase-workflow/purchase_order_type",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "purchase_order_type_dashboard",
+      "path": "addons/oca/purchase-workflow/purchase_order_type_dashboard",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_uninvoiced_amount",
+      "path": "addons/oca/purchase-workflow/purchase_order_uninvoiced_amount",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_uninvoiced_amount_line",
+      "path": "addons/oca/purchase-workflow/purchase_order_uninvoiced_amount_line",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_order_weight_volume",
+      "path": "third_party/oca/purchase-workflow/purchase_order_weight_volume",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "purchase_partner_incoterm",
+      "path": "addons/oca/purchase-workflow/purchase_partner_incoterm",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_partner_selectable_option",
+      "path": "addons/oca/purchase-workflow/purchase_partner_selectable_option",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_receipt_expectation",
+      "path": "addons/oca/purchase-workflow/purchase_receipt_expectation",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_reception_notify",
+      "path": "addons/oca/purchase-workflow/purchase_reception_notify",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_reception_status",
+      "path": "addons/oca/purchase-workflow/purchase_reception_status",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_reception_status_line",
+      "path": "addons/oca/purchase-workflow/purchase_reception_status_line",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_representative",
+      "path": "addons/oca/purchase-workflow/purchase_representative",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request",
+      "path": "addons/oca/purchase-workflow/purchase_request",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_cancel_confirm",
+      "path": "addons/oca/purchase-workflow/purchase_request_cancel_confirm",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_department",
+      "path": "addons/oca/purchase-workflow/purchase_request_department",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_exception",
+      "path": "addons/oca/purchase-workflow/purchase_request_exception",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_substate",
+      "path": "addons/oca/purchase-workflow/purchase_request_substate",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_tier_validation",
+      "path": "addons/oca/purchase-workflow/purchase_request_tier_validation",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_to_requisition",
+      "path": "addons/oca/purchase-workflow/purchase_request_to_requisition",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_request_type",
+      "path": "addons/oca/purchase-workflow/purchase_request_type",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_requisition_line_description",
+      "path": "addons/oca/purchase-workflow/purchase_requisition_line_description",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_sale_link_by_origin",
+      "path": "addons/oca/purchase-workflow/purchase_sale_link_by_origin",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_security",
+      "path": "addons/oca/purchase-workflow/purchase_security",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_stock_manual_currency",
+      "path": "addons/oca/purchase-workflow/purchase_stock_manual_currency",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_stock_packaging",
+      "path": "addons/oca/purchase-workflow/purchase_stock_packaging",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_stock_price_unit_sync",
+      "path": "third_party/oca/purchase-workflow/purchase_stock_price_unit_sync",
+      "repo": "purchase-workflow",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "purchase_stock_reception_status",
+      "path": "addons/oca/purchase-workflow/purchase_stock_reception_status",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_substate",
+      "path": "addons/oca/purchase-workflow/purchase_substate",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_tag",
+      "path": "addons/oca/purchase-workflow/purchase_tag",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_tier_validation",
+      "path": "addons/oca/purchase-workflow/purchase_tier_validation",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_triple_discount",
+      "path": "addons/oca/purchase-workflow/purchase_triple_discount",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_uninvoiced_amount_force_invoiced_line",
+      "path": "addons/oca/purchase-workflow/purchase_uninvoiced_amount_force_invoiced_line",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_warn_message",
+      "path": "addons/oca/purchase-workflow/purchase_warn_message",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_warn_option",
+      "path": "addons/oca/purchase-workflow/purchase_warn_option",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_work_acceptance",
+      "path": "addons/oca/purchase-workflow/purchase_work_acceptance",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "purchase_work_acceptance_invoice_plan",
+      "path": "addons/oca/purchase-workflow/purchase_work_acceptance_invoice_plan",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "sale_purchase_force_vendor",
+      "path": "addons/oca/purchase-workflow/sale_purchase_force_vendor",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "supplier_calendar",
+      "path": "addons/oca/purchase-workflow/supplier_calendar",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "vendor_transport_lead_time",
+      "path": "addons/oca/purchase-workflow/vendor_transport_lead_time",
+      "repo": "purchase-workflow",
+      "source": "addons/oca"
+    },
+    {
+      "name": "report_qweb_element_page_visibility",
+      "path": "third_party/oca/reporting-engine/report_qweb_element_page_visibility",
+      "repo": "reporting-engine",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "report_xlsx",
+      "path": "third_party/oca/reporting-engine/report_xlsx",
+      "repo": "reporting-engine",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "report_xlsx_helper",
+      "path": "third_party/oca/reporting-engine/report_xlsx_helper",
+      "repo": "reporting-engine",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "report_xml",
+      "path": "third_party/oca/reporting-engine/report_xml",
+      "repo": "reporting-engine",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_rest",
+      "path": "third_party/oca/rest-framework/base_rest",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_rest_auth_api_key",
+      "path": "third_party/oca/rest-framework/base_rest_auth_api_key",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_rest_pydantic",
+      "path": "third_party/oca/rest-framework/base_rest_pydantic",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "extendable",
+      "path": "third_party/oca/rest-framework/extendable",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "extendable_fastapi",
+      "path": "addons/oca/rest-framework/extendable_fastapi",
+      "repo": "rest-framework",
+      "source": "addons/oca"
+    },
+    {
+      "name": "fastapi",
+      "path": "third_party/oca/rest-framework/fastapi",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "fastapi_auth_api_key",
+      "path": "addons/oca/rest-framework/fastapi_auth_api_key",
+      "repo": "rest-framework",
+      "source": "addons/oca"
+    },
+    {
+      "name": "fastapi_auth_jwt",
+      "path": "addons/oca/rest-framework/fastapi_auth_jwt",
+      "repo": "rest-framework",
+      "source": "addons/oca"
+    },
+    {
+      "name": "pydantic",
+      "path": "third_party/oca/rest-framework/pydantic",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "rest_log",
+      "path": "third_party/oca/rest-framework/rest_log",
+      "repo": "rest-framework",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "auth_session_timeout",
+      "path": "third_party/oca/server-auth/auth_session_timeout",
+      "repo": "server-auth",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "auth_user_case_insensitive",
+      "path": "third_party/oca/server-auth/auth_user_case_insensitive",
+      "repo": "server-auth",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "impersonate_login",
+      "path": "third_party/oca/server-auth/impersonate_login",
+      "repo": "server-auth",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "data_encryption",
+      "path": "addons/oca/server-env/data_encryption",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "mail_environment",
+      "path": "addons/oca/server-env/mail_environment",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "mail_environment_google_gmail",
+      "path": "addons/oca/server-env/mail_environment_google_gmail",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "server_environment",
+      "path": "addons/oca/server-env/server_environment",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "server_environment_data_encryption",
+      "path": "addons/oca/server-env/server_environment_data_encryption",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "server_environment_ir_config_parameter",
+      "path": "addons/oca/server-env/server_environment_ir_config_parameter",
+      "repo": "server-env",
+      "source": "addons/oca"
+    },
+    {
+      "name": "auditlog",
+      "path": "third_party/oca/server-tools/auditlog",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_exception",
+      "path": "third_party/oca/server-tools/base_exception",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_technical_user",
+      "path": "third_party/oca/server-tools/base_technical_user",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_view_inheritance_extension",
+      "path": "third_party/oca/server-tools/base_view_inheritance_extension",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "bus_alt_connection",
+      "path": "third_party/oca/server-tools/bus_alt_connection",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "database_cleanup",
+      "path": "third_party/oca/server-tools/database_cleanup",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "field_vector",
+      "path": "third_party/oca/server-tools/field_vector",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "module_change_auto_install",
+      "path": "third_party/oca/server-tools/module_change_auto_install",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "session_db",
+      "path": "third_party/oca/server-tools/session_db",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "test_auditlog",
+      "path": "third_party/oca/server-tools/test_auditlog",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "upgrade_analysis",
+      "path": "third_party/oca/server-tools/upgrade_analysis",
+      "repo": "server-tools",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_cancel_confirm",
+      "path": "third_party/oca/server-ux/base_cancel_confirm",
+      "repo": "server-ux",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_substate",
+      "path": "third_party/oca/server-ux/base_substate",
+      "repo": "server-ux",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "base_technical_features",
+      "path": "third_party/oca/server-ux/base_technical_features",
+      "repo": "server-ux",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "date_range",
+      "path": "third_party/oca/server-ux/date_range",
+      "repo": "server-ux",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "hr_timesheet_task_stage",
+      "path": "third_party/oca/timesheet/hr_timesheet_task_stage",
+      "repo": "timesheet",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "hr_timesheet_time_control",
+      "path": "third_party/oca/timesheet/hr_timesheet_time_control",
+      "repo": "timesheet",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "sale_order_update_timesheet_price",
+      "path": "third_party/oca/timesheet/sale_order_update_timesheet_price",
+      "repo": "timesheet",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_dialog_size",
+      "path": "third_party/oca/web/web_dialog_size",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_environment_ribbon",
+      "path": "third_party/oca/web/web_environment_ribbon",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_favicon",
+      "path": "third_party/oca/web/web_favicon",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_ir_actions_act_window_message",
+      "path": "third_party/oca/web/web_ir_actions_act_window_message",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_remember_tree_column_width",
+      "path": "third_party/oca/web/web_remember_tree_column_width",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_responsive",
+      "path": "third_party/oca/web/web_responsive",
+      "repo": "web",
+      "source": "third_party/oca"
+    },
+    {
+      "name": "web_search_with_and",
+      "path": "third_party/oca/web/web_search_with_and",
+      "repo": "web",
+      "source": "third_party/oca"
+    }
+  ]
+}

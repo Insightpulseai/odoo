@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hire-to-Retire BPMN 2.0 | TBWA\SMP | DOLE Statutory + Internal SLA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .header .logo {
+            font-weight: 800;
+            color: #ffcc00;
+        }
+
+        /* Disclaimer Box */
+        .disclaimer {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border: 2px solid #f9a825;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            font-size: 0.85rem;
+            color: #5d4037;
+        }
+
+        .disclaimer strong {
+            color: #e65100;
+        }
+
+        /* Process Ownership Box */
+        .process-ownership {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .process-ownership h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .ownership-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ownership-level {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .ownership-box {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .ownership-box.executive {
+            background: linear-gradient(135deg, #424242 0%, #212121 100%);
+            color: white;
+            border: 2px dashed #ffcc00;
+            font-size: 0.8rem;
+        }
+
+        .ownership-box.executive small {
+            display: block;
+            font-weight: 400;
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+
+        .ownership-box.primary {
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+            color: white;
+            border: 3px solid #ffcc00;
+        }
+
+        .ownership-box.primary::before {
+            content: '★ ';
+            color: #ffcc00;
+        }
+
+        .ownership-box.coowner {
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .ownership-box.lead {
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            min-width: 140px;
+            font-size: 0.8rem;
+        }
+
+        .ownership-box.team {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ccc;
+            min-width: 120px;
+            font-size: 0.8rem;
+        }
+
+        .ownership-connector {
+            width: 2px;
+            height: 15px;
+            background: #ccc;
+        }
+
+        .ownership-note {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .ownership-note strong {
+            color: #1565c0;
+        }
+
+        /* SLA Legend Boxes */
+        .sla-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sla-box {
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid;
+        }
+
+        .sla-box.statutory {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left-color: #2e7d32;
+        }
+
+        .sla-box.internal {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left-color: #ef6c00;
+        }
+
+        .sla-box h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .sla-box.statutory h3 {
+            color: #1b5e20;
+        }
+
+        .sla-box.internal h3 {
+            color: #e65100;
+        }
+
+        .sla-box .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.statutory {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .badge.internal {
+            background: #ef6c00;
+            color: white;
+        }
+
+        .sla-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .sla-box li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .sla-box li:last-child {
+            border-bottom: none;
+        }
+
+        .sla-box .icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .sla-box .rule {
+            flex-grow: 1;
+        }
+
+        .sla-box .rule strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .sla-box .rule .source {
+            font-size: 0.8rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* BPMN Pool */
+        .bpmn-pool {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .pool-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pool-header .tbwa-logo {
+            color: #ffcc00;
+            font-weight: 800;
+        }
+
+        .pool-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Swimlanes */
+        .swimlane {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            min-height: 100px;
+        }
+
+        .swimlane:last-child {
+            border-bottom: none;
+        }
+
+        .lane-header {
+            width: 160px;
+            min-width: 160px;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-right: 2px solid;
+        }
+
+        .lane-header .role-title {
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .lane-header .role-dept {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .lane-header.executive {
+            background: linear-gradient(135deg, #424242 0%, #212121 100%);
+            border-right-color: #ffcc00;
+            color: white;
+        }
+
+        .lane-header.cost-center {
+            background: #e8eaf6;
+            border-right-color: #3f51b5;
+            color: #283593;
+        }
+
+        .lane-header.hr {
+            background: #e3f2fd;
+            border-right-color: #1976d2;
+            color: #1565c0;
+        }
+
+        .lane-header.fss {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-right-color: #1565c0;
+            color: #0d47a1;
+            border-right-width: 4px;
+        }
+
+        .lane-header.it {
+            background: #fce4ec;
+            border-right-color: #e91e63;
+            color: #c2185b;
+        }
+
+        .lane-header.admin {
+            background: #fff3e0;
+            border-right-color: #ff9800;
+            color: #e65100;
+        }
+
+        .lane-header.employee {
+            background: #f5f5f5;
+            border-right-color: #757575;
+            color: #424242;
+        }
+
+        .lane-content {
+            flex-grow: 1;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        /* BPMN Elements */
+        .bpmn-element {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .event.start {
+            border: 2px solid #1976d2;
+            background: #e3f2fd;
+        }
+
+        .event.end {
+            border: 3px solid #c62828;
+            background: #ffebee;
+        }
+
+        .event.milestone {
+            border: 3px solid #2e7d32;
+            background: #e8f5e9;
+        }
+
+        .event.timer {
+            border: 2px solid #ef6c00;
+            background: #fff3e0;
+        }
+
+        .event.error {
+            border: 2px solid #c62828;
+            background: #ffebee;
+        }
+
+        .task {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            text-align: center;
+            min-width: 100px;
+            max-width: 150px;
+            border: 2px solid;
+            background: white;
+        }
+
+        .task.hr {
+            border-color: #1976d2;
+        }
+
+        .task.fss {
+            border-color: #1565c0;
+        }
+
+        .task.it {
+            border-color: #e91e63;
+        }
+
+        .task.cost-center {
+            border-color: #3f51b5;
+        }
+
+        .task.admin {
+            border-color: #ff9800;
+        }
+
+        .task.executive {
+            border-color: #ffcc00;
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .task.statutory {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-color: #2e7d32;
+            border-width: 3px;
+        }
+
+        .task.internal-sla {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-color: #ef6c00;
+            border-width: 3px;
+        }
+
+        .gateway {
+            width: 35px;
+            height: 35px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 2px solid #f9a825;
+            background: #fff8e1;
+        }
+
+        .gateway span {
+            transform: rotate(-45deg);
+        }
+
+        .gateway.parallel {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .element-label {
+            font-size: 0.7rem;
+            text-align: center;
+            max-width: 100px;
+            color: #666;
+        }
+
+        .element-label.statutory-label {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .element-label.internal-label {
+            color: #ef6c00;
+            font-weight: 600;
+        }
+
+        /* Arrow */
+        .arrow {
+            width: 30px;
+            height: 2px;
+            background: #666;
+            position: relative;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left-color: #666;
+        }
+
+        /* Phase Sections */
+        .phase-headers {
+            display: grid;
+            grid-template-columns: 160px repeat(5, 1fr);
+            gap: 0;
+            margin-bottom: 10px;
+        }
+
+        .phase-label {
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            margin: 0 5px;
+        }
+
+        .phase-label.hiring {
+            background: #1976d2;
+            color: white;
+        }
+
+        .phase-label.first-pay {
+            background: #f9a825;
+            color: white;
+        }
+
+        .phase-label.active {
+            background: #757575;
+            color: white;
+        }
+
+        .phase-label.clearance {
+            background: #e91e63;
+            color: white;
+        }
+
+        .phase-label.last-pay {
+            background: #c62828;
+            color: white;
+        }
+
+        /* SLA Countdown Box */
+        .sla-countdown {
+            border: 2px dashed;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sla-countdown.statutory {
+            border-color: #2e7d32;
+            background: rgba(200, 230, 201, 0.3);
+        }
+
+        .sla-countdown.internal {
+            border-color: #ef6c00;
+            background: rgba(255, 224, 178, 0.3);
+        }
+
+        .sla-countdown-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .sla-countdown.statutory .sla-countdown-header {
+            color: #2e7d32;
+        }
+
+        .sla-countdown.internal .sla-countdown-header {
+            color: #ef6c00;
+        }
+
+        /* Final Pay Components */
+        .final-pay-components {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .final-pay-components h3 {
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .component-item {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .component-item.add {
+            background: #e8f5e9;
+            border-color: #a5d6a7;
+        }
+
+        .component-item.deduct {
+            background: #ffebee;
+            border-color: #ef9a9a;
+        }
+
+        .component-item.highlight {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #2e7d32;
+        }
+
+        .component-item .label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .component-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .component-item.add .value {
+            color: #2e7d32;
+        }
+
+        .component-item.add .value::before {
+            content: '+';
+        }
+
+        .component-item.deduct .value {
+            color: #c62828;
+        }
+
+        .component-item.deduct .value::before {
+            content: '−';
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #1a1a1a;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background: #e8f4fd;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tag.statutory {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .tag.internal {
+            background: #ef6c00;
+            color: white;
+        }
+
+        /* Checklists */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .checklist-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .checklist-header {
+            padding: 15px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .checklist-header.hr {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        }
+
+        .checklist-header.fss {
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+        }
+
+        .checklist-header.it {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        }
+
+        .checklist-body {
+            padding: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: flex-start;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checklist-item .text {
+            flex-grow: 1;
+            font-size: 0.85rem;
+        }
+
+        .checklist-item .timing {
+            font-size: 0.75rem;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .checklist-item.statutory-item {
+            background: #e8f5e9;
+            margin: 0 -15px;
+            padding: 10px 15px;
+        }
+
+        .checklist-item.internal-item {
+            background: #fff3e0;
+            margin: 0 -15px;
+            padding: 10px 15px;
+        }
+
+        /* Sub-process box */
+        .subprocess {
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+            position: relative;
+        }
+
+        .subprocess::after {
+            content: '+';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .subprocess-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.85rem;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+
+        .footer .tbwa {
+            font-weight: 800;
+            color: #000;
+        }
+
+        /* DOLE Reference Box */
+        .dole-reference {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #2e7d32;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .dole-reference h3 {
+            color: #1b5e20;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dole-reference blockquote {
+            background: white;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .dole-reference cite {
+            display: block;
+            text-align: right;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sla-legend {
+                grid-template-columns: 1fr;
+            }
+
+            .checklist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Hire-to-Retire Process</h1>
+            <div class="subtitle">
+                <span class="logo">TBWA\SMP</span> | BPMN 2.0 | DOLE Statutory + Internal SLA
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <strong>Note:</strong> This Hire-to-Retire / Finance workflow is a <strong>draft demonstration model</strong>. Role names, approval thresholds, and timelines are illustrative only. Final, binding rules must be defined in the company's official <strong>HR & Finance policies / SOPs</strong> and, where applicable, aligned with <strong>DOLE/BWC and internal governance documents</strong>.
+        </div>
+
+        <!-- Process Ownership Structure -->
+        <div class="process-ownership">
+            <h3>Process Ownership - Hire-to-Retire (Finance & Payroll)</h3>
+            <div class="ownership-chart">
+                <!-- Executive Sponsor (Escalation Only) -->
+                <div class="ownership-level">
+                    <div class="ownership-box executive">
+                        Executive Sponsor (COO / MD)
+                        <small>Escalation only - SLA breach / high-value approvals</small>
+                    </div>
+                </div>
+
+                <div class="ownership-connector"></div>
+
+                <!-- Process Owners -->
+                <div class="ownership-level">
+                    <div class="ownership-box primary">
+                        Process Owner<br>
+                        Finance Shared Services / Controlling<br>
+                        <small style="opacity: 0.9;">(incl. Payroll, GL, Final Pay)</small>
+                    </div>
+                    <div class="ownership-box coowner">
+                        Co-Owner<br>
+                        HR Director / HRBP Lead<br>
+                        <small style="opacity: 0.9;">(Hire, Employee Master, Clearance, COE)</small>
+                    </div>
+                </div>
+
+                <div class="ownership-connector"></div>
+
+                <!-- Process Leads -->
+                <div class="ownership-level">
+                    <div class="ownership-box lead">Hire-to-Retire<br>Process Manager (PPM)</div>
+                    <div class="ownership-box lead">Payroll Lead<br>(FSS)</div>
+                    <div class="ownership-box lead">HR Ops Lead</div>
+                    <div class="ownership-box lead">IT & Access<br>Lead</div>
+                    <div class="ownership-box lead">Admin /<br>Facilities Lead</div>
+                </div>
+
+                <div class="ownership-connector"></div>
+
+                <!-- Execution Teams -->
+                <div class="ownership-level">
+                    <div class="ownership-box team">Payroll Team<br>(Finance SSC)</div>
+                    <div class="ownership-box team">HR Team</div>
+                    <div class="ownership-box team">IT / Security</div>
+                    <div class="ownership-box team">Admin /<br>Facilities</div>
+                </div>
+            </div>
+
+            <div class="ownership-note">
+                <strong>Process Ownership:</strong> Finance Shared Services (primary) + HR (co-owner). <strong>COO/MD</strong> is escalation only (SLA / risk / exposure thresholds).<br>
+                Payroll sits under <strong>Finance Shared Services / Controlling</strong>.
+            </div>
+        </div>
+
+        <!-- SLA Legend -->
+        <div class="sla-legend">
+            <!-- Statutory Box -->
+            <div class="sla-box statutory">
+                <h3>
+                    <span class="badge statutory">STATUTORY</span>
+                    DOLE / BWC Legal Requirements
+                </h3>
+                <ul>
+                    <li>
+                        <span class="icon">📋</span>
+                        <div class="rule">
+                            <strong>Final Pay: ≤30 days from separation</strong>
+                            <span class="source">Labor Advisory No. 06-20, Series of 2020</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon">📄</span>
+                        <div class="rule">
+                            <strong>COE: ≤3 days from employee request</strong>
+                            <span class="source">Labor Advisory No. 06-20, Series of 2020</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon">💰</span>
+                        <div class="rule">
+                            <strong>Pay Frequency: at least 2x per month (interval ≤16 days)</strong>
+                            <span class="source">Labor Code of the Philippines, Omnibus Rules</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon">🏖️</span>
+                        <div class="rule">
+                            <strong>Unused Leave Credit Conversion: Required in final pay</strong>
+                            <span class="source">Company Policy (VL/SL balance converted to cash)</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Internal SLA Box -->
+            <div class="sla-box internal">
+                <h3>
+                    <span class="badge internal">INTERNAL SLA</span>
+                    TBWA\SMP Company Policy
+                </h3>
+                <ul>
+                    <li>
+                        <span class="icon">🎯</span>
+                        <div class="rule">
+                            <strong>Last Pay: Within 7 days after "Clearance Completed"</strong>
+                            <span class="source">TBWA\SMP SLA - Champion-level service standard</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon">🎯</span>
+                        <div class="rule">
+                            <strong>First Pay: ≥7 days worked before payout cutoff</strong>
+                            <span class="source">TBWA\SMP Policy - Semi-monthly payroll (15th/30th)</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon">🎯</span>
+                        <div class="rule">
+                            <strong>Clearance: Complete within 5 business days of LWD</strong>
+                            <span class="source">TBWA\SMP SLA - Internal target</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- DOLE Reference -->
+        <div class="dole-reference">
+            <h3>Official DOLE Guidance</h3>
+            <blockquote>
+                "The final pay shall be released within <strong>thirty (30) days</strong> from the date of separation or termination of employment, unless a more favorable company policy, individual/collective agreement, or company practice exists."
+                <cite>- DOLE Labor Advisory No. 06-20, Series of 2020</cite>
+            </blockquote>
+            <p style="margin-top: 15px; color: #2e7d32;">
+                <strong>Note:</strong> TBWA\SMP's internal 7-day SLA qualifies as a "more favorable company practice" and exceeds the statutory requirement.
+            </p>
+        </div>
+
+        <!-- Final Pay Components -->
+        <div class="final-pay-components">
+            <h3>Final Pay Components (Last Pay Calculation)</h3>
+            <div class="component-grid">
+                <div class="component-item add">
+                    <div class="label">Pro-rated Basic Salary</div>
+                    <div class="value">Up to Last Working Day</div>
+                </div>
+                <div class="component-item add highlight">
+                    <div class="label"><strong>UNUSED LEAVE CREDIT CONVERSION</strong></div>
+                    <div class="value">VL/SL Balance x Daily Rate</div>
+                    <div style="font-size: 0.75rem; color: #2e7d32; margin-top: 5px;">
+                        Formula: (Basic Salary / 22 work days) x Leave Balance
+                    </div>
+                </div>
+                <div class="component-item add">
+                    <div class="label">13th Month Pay (Pro-rated)</div>
+                    <div class="value">If applicable for period</div>
+                </div>
+                <div class="component-item add">
+                    <div class="label">Approved Reimbursements</div>
+                    <div class="value">Pending expense claims</div>
+                </div>
+                <div class="component-item add">
+                    <div class="label">Other Benefits Due</div>
+                    <div class="value">Allowances, incentives, etc.</div>
+                </div>
+                <div class="component-item deduct">
+                    <div class="label">Outstanding Cash Advances</div>
+                    <div class="value">Salary loans, CA balance</div>
+                </div>
+                <div class="component-item deduct">
+                    <div class="label">Unreturned Assets (Value)</div>
+                    <div class="value">Laptop, phone, etc.</div>
+                </div>
+                <div class="component-item deduct">
+                    <div class="label">Tax Adjustments</div>
+                    <div class="value">BIR withholding</div>
+                </div>
+                <div class="component-item deduct">
+                    <div class="label">Government Deductions</div>
+                    <div class="value">SSS/PhilHealth/Pag-IBIG</div>
+                </div>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.85rem; color: #666; text-align: center;">
+                <strong>Formula:</strong> Final Pay = (Pro-rated Salary + <span style="color: #2e7d32; font-weight: 600;">Leave Conversion</span> + 13th Month + Reimbursements) - (Advances + Asset Charges + Taxes + Deductions)
+            </p>
+        </div>
+
+        <!-- SLA Comparison Table -->
+        <h2 style="margin: 30px 0 15px; color: #1a1a1a;">SLA Comparison: Statutory vs Internal</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Requirement</th>
+                    <th>Type</th>
+                    <th>Deadline</th>
+                    <th>Trigger Point</th>
+                    <th>Process Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Final Pay Release</strong></td>
+                    <td><span class="tag statutory">STATUTORY</span></td>
+                    <td>≤30 calendar days</td>
+                    <td>Date of separation</td>
+                    <td>FSS Director (Primary)</td>
+                </tr>
+                <tr>
+                    <td><strong>Final Pay Release</strong></td>
+                    <td><span class="tag internal">INTERNAL</span></td>
+                    <td>≤7 calendar days</td>
+                    <td>Clearance Completed date</td>
+                    <td>FSS -> COO/MD (escalation)</td>
+                </tr>
+                <tr style="background: #e8f5e9 !important;">
+                    <td><strong>Unused Leave Credit Conversion</strong></td>
+                    <td><span class="tag statutory">STATUTORY</span></td>
+                    <td>Included in final pay</td>
+                    <td>Part of last pay computation</td>
+                    <td>Payroll Lead (FSS)</td>
+                </tr>
+                <tr>
+                    <td><strong>Certificate of Employment</strong></td>
+                    <td><span class="tag statutory">STATUTORY</span></td>
+                    <td>≤3 calendar days</td>
+                    <td>Employee's request</td>
+                    <td>HR Ops Lead (Co-Owner)</td>
+                </tr>
+                <tr>
+                    <td><strong>Pay Interval</strong></td>
+                    <td><span class="tag statutory">STATUTORY</span></td>
+                    <td>≤16 days between pays</td>
+                    <td>Regular payroll cycle</td>
+                    <td>Payroll Lead (FSS)</td>
+                </tr>
+                <tr>
+                    <td><strong>First Pay Eligibility</strong></td>
+                    <td><span class="tag internal">INTERNAL</span></td>
+                    <td>≥7 days worked before cutoff</td>
+                    <td>Semi-monthly cutoff (15th/30th)</td>
+                    <td>Payroll Lead (FSS)</td>
+                </tr>
+                <tr>
+                    <td><strong>Budget Approval</strong></td>
+                    <td><span class="tag internal">INTERNAL</span></td>
+                    <td>Before job posting</td>
+                    <td>Hiring requisition</td>
+                    <td>FSS Director -> COO/MD (if > threshold)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Leave Conversion Details -->
+        <div class="final-pay-components" style="margin-top: 30px; border: 2px solid #2e7d32;">
+            <h3 style="color: #2e7d32;">Unused Leave Credit Conversion Formula</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div>
+                    <h4 style="margin-bottom: 10px;">Vacation Leave (VL)</h4>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace;">
+                        VL Conversion = VL Balance x Daily Rate<br>
+                        Daily Rate = Monthly Basic / 22 work days
+                    </div>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                        Example: 5 VL days x (P50,000 / 22) = <strong>P11,363.64</strong>
+                    </p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 10px;">Sick Leave (SL)</h4>
+                    <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace;">
+                        SL Conversion = SL Balance x Daily Rate<br>
+                        (If company policy allows SL conversion)
+                    </div>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+                        Example: 3 SL days x (P50,000 / 22) = <strong>P6,818.18</strong>
+                    </p>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                <strong>Total Leave Conversion (Example):</strong><br>
+                VL (P11,363.64) + SL (P6,818.18) = <strong style="color: #2e7d32; font-size: 1.2rem;">P18,181.82</strong>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Hire-to-Retire Process Model</strong> | BPMN 2.0 Compliant | SAP-Style Finance / Controlling Workflow</p>
+            <p style="font-size: 0.8rem; color: #999; margin: 10px 0;">
+                This is a draft demonstration model for design purposes. The authoritative details on roles, approval limits, and compliance requirements must be taken from the company's approved HR & Finance policies, SOPs, and DOLE/BWC guidance.
+            </p>
+            <p>DOLE References: <a href="https://laborlaw.ph" target="_blank">Labor Advisory No. 06-20, Series of 2020</a></p>
+            <p>© <span class="tbwa">TBWA\SMP</span> | Finance Shared Services</p>
+        </div>
+
+    </div>
+</body>
+</html>

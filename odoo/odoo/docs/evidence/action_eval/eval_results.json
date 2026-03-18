@@ -1,0 +1,311 @@
+{
+  "run_timestamp": "2026-03-03T00:19:48.298367+00:00",
+  "eval_file": "eval/action_eval.yaml",
+  "total_cases": 16,
+  "passed": 16,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "threshold": 1.0,
+  "threshold_met": true,
+  "audit_emit_wired": true,
+  "governed_tools_summary": {
+    "search_records": {
+      "in_registry": true,
+      "has_preview": true,
+      "has_execute": true,
+      "has_spec": true
+    },
+    "navigate_to": {
+      "in_registry": true,
+      "has_preview": true,
+      "has_execute": true,
+      "has_spec": true
+    },
+    "create_record": {
+      "in_registry": true,
+      "has_preview": true,
+      "has_execute": true,
+      "has_spec": true
+    },
+    "send_chatter_message": {
+      "in_registry": true,
+      "has_preview": true,
+      "has_execute": true,
+      "has_spec": true
+    },
+    "trigger_workflow": {
+      "in_registry": true,
+      "has_preview": true,
+      "has_execute": true,
+      "has_spec": true
+    }
+  },
+  "cases": [
+    {
+      "id": "AEVAL-001",
+      "tool": "search_records",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-002",
+      "tool": "search_records",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-003",
+      "tool": "search_records",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-004",
+      "tool": "navigate_to",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-005",
+      "tool": "navigate_to",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-006",
+      "tool": "create_record",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-007",
+      "tool": "create_record",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-008",
+      "tool": "create_record",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-009",
+      "tool": "create_record",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-010",
+      "tool": "send_chatter_message",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-011",
+      "tool": "send_chatter_message",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-012",
+      "tool": "trigger_workflow",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-013",
+      "tool": "trigger_workflow",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "preview_shown": true,
+        "approval_required": true,
+        "audit_envelope_valid": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-014",
+      "tool": "trigger_workflow",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-015",
+      "tool": "create_record",
+      "requires_confirmation": true,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "access_enforced": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    },
+    {
+      "id": "AEVAL-016",
+      "tool": "search_records",
+      "requires_confirmation": false,
+      "checks": {
+        "tool_in_registry": true,
+        "confirmation_match": true,
+        "preview_function_exists": true,
+        "execute_function_exists": true,
+        "tool_spec_exists": true,
+        "audit_envelope_valid": true,
+        "envelope_completeness": true,
+        "audit_emit_wired": true
+      },
+      "passed": true
+    }
+  ]
+}

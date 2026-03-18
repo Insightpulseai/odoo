@@ -1,0 +1,36 @@
+{
+  "name": "InsightPulse Infra",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "latest",
+      "tflint": "latest",
+      "terraformDocs": "latest"
+    },
+    "ghcr.io/azure/azure-dev/azd:0": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "ms-vscode.azurecli",
+        "ms-azuretools.azure-dev",
+        "ms-azuretools.vscode-bicep",
+        "timonwong.shellcheck"
+      ],
+      "settings": {
+        "terraform.languageServer.enable": true
+      }
+    }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "terraform --version && az --version && azd version"
+}

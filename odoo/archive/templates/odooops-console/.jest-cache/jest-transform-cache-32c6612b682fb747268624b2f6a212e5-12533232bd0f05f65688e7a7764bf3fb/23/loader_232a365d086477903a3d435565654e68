@@ -1,0 +1,86 @@
+0a6ba6dbe56f635040d1dc3737423b4f
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "getDocPage", {
+    enumerable: true,
+    get: function() {
+        return getDocPage;
+    }
+});
+const _fs = /*#__PURE__*/ _interop_require_default(require("fs"));
+const _path = /*#__PURE__*/ _interop_require_default(require("path"));
+const _graymatter = /*#__PURE__*/ _interop_require_default(require("gray-matter"));
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
+    };
+}
+// Paths
+const REPO_ROOT = _path.default.resolve(process.cwd(), "../.."); // Assuming running from templates/odooops-console
+const OVERRIDES_DIR = _path.default.join(process.cwd(), "src/content/docs/upstream_overrides");
+const DEPLOYED_DIR = _path.default.join(process.cwd(), "src/content/docs/stack");
+const UPSTREAM_DIR = _path.default.resolve(REPO_ROOT, "docs/kb/odoo19/upstream");
+async function getDocPage(slugParts) {
+    const slugPath = slugParts.join("/");
+    // 1. Check Overrides (Highest Priority)
+    // Logic: Overrides mirror upstream structure.
+    const overridePath = _path.default.join(OVERRIDES_DIR, `${slugPath}.md`);
+    if (_fs.default.existsSync(overridePath)) {
+        return loadFile(overridePath, slugPath, "override");
+    } else {
+        // Check for index file in directory
+        const overrideIndexPath = _path.default.join(OVERRIDES_DIR, slugPath, "index.md");
+        if (_fs.default.existsSync(overrideIndexPath)) {
+            return loadFile(overrideIndexPath, slugPath, "override");
+        }
+    }
+    // 2. Check Deployed Stack (Middle Priority)
+    // Logic: 'stack' prefix usually maps to deployed/ folder, but user said "deployed > upstream"
+    // If the slug matches a file in src/content/docs/stack, serve it.
+    // Note: Stack docs usually have their own namespace, e.g., /docs/stack/runtime.
+    // The resolver usually handles "if path exists in multiple, who wins?"
+    // We assume 'stack' docs might collide if we flatten namespaces, but usually they are distinct.
+    // However, strict precedence means we check here.
+    const deployedPath = _path.default.join(DEPLOYED_DIR, `${slugPath}.md`);
+    if (_fs.default.existsSync(deployedPath)) {
+        return loadFile(deployedPath, slugPath, "deployed");
+    }
+    // 3. Check Upstream (Lowest Priority)
+    // Upstream docs are likely RST and located in `content/` subdirectory based on `find` output.
+    const upstreamContentDir = _path.default.join(UPSTREAM_DIR, "content");
+    // Check for MD/MDX first (in case of conversion)
+    let upstreamPath = _path.default.join(upstreamContentDir, `${slugPath}.md`);
+    if (_fs.default.existsSync(upstreamPath)) {
+        return loadFile(upstreamPath, slugPath, "upstream");
+    }
+    // Check for RST
+    upstreamPath = _path.default.join(upstreamContentDir, `${slugPath}.rst`);
+    if (_fs.default.existsSync(upstreamPath)) {
+        return loadFile(upstreamPath, slugPath, "upstream");
+    }
+    // Check for index (MD then RST)
+    const upstreamIndexMd = _path.default.join(upstreamContentDir, slugPath, "index.md");
+    if (_fs.default.existsSync(upstreamIndexMd)) {
+        return loadFile(upstreamIndexMd, slugPath, "upstream");
+    }
+    const upstreamIndexRst = _path.default.join(upstreamContentDir, slugPath, "index.rst");
+    if (_fs.default.existsSync(upstreamIndexRst)) {
+        return loadFile(upstreamIndexRst, slugPath, "upstream");
+    }
+    return null;
+}
+function loadFile(filePath, slug, layer) {
+    const fileContent = _fs.default.readFileSync(filePath, "utf8");
+    const { data, content } = (0, _graymatter.default)(fileContent);
+    return {
+        slug,
+        title: data.title || slug.split("/").pop() || "Untitled",
+        content,
+        sourceLayer: layer,
+        meta: data
+    };
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy90YndhL0RvY3VtZW50cy9HaXRIdWIvSW5zaWdodHB1bHNlYWkvb2Rvby90ZW1wbGF0ZXMvb2Rvb29wcy1jb25zb2xlL3NyYy9saWIvZG9jcy9sb2FkZXIudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGZzIGZyb20gXCJmc1wiO1xuaW1wb3J0IHBhdGggZnJvbSBcInBhdGhcIjtcbmltcG9ydCBtYXR0ZXIgZnJvbSBcImdyYXktbWF0dGVyXCI7XG5cbi8vIFBhdGhzXG5jb25zdCBSRVBPX1JPT1QgPSBwYXRoLnJlc29sdmUocHJvY2Vzcy5jd2QoKSwgXCIuLi8uLlwiKTsgLy8gQXNzdW1pbmcgcnVubmluZyBmcm9tIHRlbXBsYXRlcy9vZG9vb3BzLWNvbnNvbGVcbmNvbnN0IE9WRVJSSURFU19ESVIgPSBwYXRoLmpvaW4oXG4gIHByb2Nlc3MuY3dkKCksXG4gIFwic3JjL2NvbnRlbnQvZG9jcy91cHN0cmVhbV9vdmVycmlkZXNcIixcbik7XG5jb25zdCBERVBMT1lFRF9ESVIgPSBwYXRoLmpvaW4ocHJvY2Vzcy5jd2QoKSwgXCJzcmMvY29udGVudC9kb2NzL3N0YWNrXCIpO1xuY29uc3QgVVBTVFJFQU1fRElSID0gcGF0aC5yZXNvbHZlKFJFUE9fUk9PVCwgXCJkb2NzL2tiL29kb28xOS91cHN0cmVhbVwiKTtcblxuZXhwb3J0IGludGVyZmFjZSBEb2NQYWdlIHtcbiAgc2x1Zzogc3RyaW5nO1xuICB0aXRsZTogc3RyaW5nO1xuICBjb250ZW50OiBzdHJpbmc7XG4gIHNvdXJjZUxheWVyOiBcIm92ZXJyaWRlXCIgfCBcImRlcGxveWVkXCIgfCBcInVwc3RyZWFtXCI7XG4gIG1ldGE6IFJlY29yZDxzdHJpbmcsIGFueT47XG59XG5cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiBnZXREb2NQYWdlKHNsdWdQYXJ0czogc3RyaW5nW10pOiBQcm9taXNlPERvY1BhZ2UgfCBudWxsPiB7XG4gIGNvbnN0IHNsdWdQYXRoID0gc2x1Z1BhcnRzLmpvaW4oXCIvXCIpO1xuXG4gIC8vIDEuIENoZWNrIE92ZXJyaWRlcyAoSGlnaGVzdCBQcmlvcml0eSlcbiAgLy8gTG9naWM6IE92ZXJyaWRlcyBtaXJyb3IgdXBzdHJlYW0gc3RydWN0dXJlLlxuICBjb25zdCBvdmVycmlkZVBhdGggPSBwYXRoLmpvaW4oT1ZFUlJJREVTX0RJUiwgYCR7c2x1Z1BhdGh9Lm1kYCk7XG4gIGlmIChmcy5leGlzdHNTeW5jKG92ZXJyaWRlUGF0aCkpIHtcbiAgICByZXR1cm4gbG9hZEZpbGUob3ZlcnJpZGVQYXRoLCBzbHVnUGF0aCwgXCJvdmVycmlkZVwiKTtcbiAgfSBlbHNlIHtcbiAgICAvLyBDaGVjayBmb3IgaW5kZXggZmlsZSBpbiBkaXJlY3RvcnlcbiAgICBjb25zdCBvdmVycmlkZUluZGV4UGF0aCA9IHBhdGguam9pbihPVkVSUklERVNfRElSLCBzbHVnUGF0aCwgXCJpbmRleC5tZFwiKTtcbiAgICBpZiAoZnMuZXhpc3RzU3luYyhvdmVycmlkZUluZGV4UGF0aCkpIHtcbiAgICAgIHJldHVybiBsb2FkRmlsZShvdmVycmlkZUluZGV4UGF0aCwgc2x1Z1BhdGgsIFwib3ZlcnJpZGVcIik7XG4gICAgfVxuICB9XG5cbiAgLy8gMi4gQ2hlY2sgRGVwbG95ZWQgU3RhY2sgKE1pZGRsZSBQcmlvcml0eSlcbiAgLy8gTG9naWM6ICdzdGFjaycgcHJlZml4IHVzdWFsbHkgbWFwcyB0byBkZXBsb3llZC8gZm9sZGVyLCBidXQgdXNlciBzYWlkIFwiZGVwbG95ZWQgPiB1cHN0cmVhbVwiXG4gIC8vIElmIHRoZSBzbHVnIG1hdGNoZXMgYSBmaWxlIGluIHNyYy9jb250ZW50L2RvY3Mvc3RhY2ssIHNlcnZlIGl0LlxuICAvLyBOb3RlOiBTdGFjayBkb2NzIHVzdWFsbHkgaGF2ZSB0aGVpciBvd24gbmFtZXNwYWNlLCBlLmcuLCAvZG9jcy9zdGFjay9ydW50aW1lLlxuICAvLyBUaGUgcmVzb2x2ZXIgdXN1YWxseSBoYW5kbGVzIFwiaWYgcGF0aCBleGlzdHMgaW4gbXVsdGlwbGUsIHdobyB3aW5zP1wiXG5cbiAgLy8gV2UgYXNzdW1lICdzdGFjaycgZG9jcyBtaWdodCBjb2xsaWRlIGlmIHdlIGZsYXR0ZW4gbmFtZXNwYWNlcywgYnV0IHVzdWFsbHkgdGhleSBhcmUgZGlzdGluY3QuXG4gIC8vIEhvd2V2ZXIsIHN0cmljdCBwcmVjZWRlbmNlIG1lYW5zIHdlIGNoZWNrIGhlcmUuXG4gIGNvbnN0IGRlcGxveWVkUGF0aCA9IHBhdGguam9pbihERVBMT1lFRF9ESVIsIGAke3NsdWdQYXRofS5tZGApO1xuICBpZiAoZnMuZXhpc3RzU3luYyhkZXBsb3llZFBhdGgpKSB7XG4gICAgcmV0dXJuIGxvYWRGaWxlKGRlcGxveWVkUGF0aCwgc2x1Z1BhdGgsIFwiZGVwbG95ZWRcIik7XG4gIH1cblxuICAvLyAzLiBDaGVjayBVcHN0cmVhbSAoTG93ZXN0IFByaW9yaXR5KVxuICAvLyBVcHN0cmVhbSBkb2NzIGFyZSBsaWtlbHkgUlNUIGFuZCBsb2NhdGVkIGluIGBjb250ZW50L2Agc3ViZGlyZWN0b3J5IGJhc2VkIG9uIGBmaW5kYCBvdXRwdXQuXG4gIGNvbnN0IHVwc3RyZWFtQ29udGVudERpciA9IHBhdGguam9pbihVUFNUUkVBTV9ESVIsIFwiY29udGVudFwiKTtcblxuICAvLyBDaGVjayBmb3IgTUQvTURYIGZpcnN0IChpbiBjYXNlIG9mIGNvbnZlcnNpb24pXG4gIGxldCB1cHN0cmVhbVBhdGggPSBwYXRoLmpvaW4odXBzdHJlYW1Db250ZW50RGlyLCBgJHtzbHVnUGF0aH0ubWRgKTtcbiAgaWYgKGZzLmV4aXN0c1N5bmModXBzdHJlYW1QYXRoKSkge1xuICAgIHJldHVybiBsb2FkRmlsZSh1cHN0cmVhbVBhdGgsIHNsdWdQYXRoLCBcInVwc3RyZWFtXCIpO1xuICB9XG5cbiAgLy8gQ2hlY2sgZm9yIFJTVFxuICB1cHN0cmVhbVBhdGggPSBwYXRoLmpvaW4odXBzdHJlYW1Db250ZW50RGlyLCBgJHtzbHVnUGF0aH0ucnN0YCk7XG4gIGlmIChmcy5leGlzdHNTeW5jKHVwc3RyZWFtUGF0aCkpIHtcbiAgICByZXR1cm4gbG9hZEZpbGUodXBzdHJlYW1QYXRoLCBzbHVnUGF0aCwgXCJ1cHN0cmVhbVwiKTtcbiAgfVxuXG4gIC8vIENoZWNrIGZvciBpbmRleCAoTUQgdGhlbiBSU1QpXG4gIGNvbnN0IHVwc3RyZWFtSW5kZXhNZCA9IHBhdGguam9pbih1cHN0cmVhbUNvbnRlbnREaXIsIHNsdWdQYXRoLCBcImluZGV4Lm1kXCIpO1xuICBpZiAoZnMuZXhpc3RzU3luYyh1cHN0cmVhbUluZGV4TWQpKSB7XG4gICAgcmV0dXJuIGxvYWRGaWxlKHVwc3RyZWFtSW5kZXhNZCwgc2x1Z1BhdGgsIFwidXBzdHJlYW1cIik7XG4gIH1cbiAgY29uc3QgdXBzdHJlYW1JbmRleFJzdCA9IHBhdGguam9pbih1cHN0cmVhbUNvbnRlbnREaXIsIHNsdWdQYXRoLCBcImluZGV4LnJzdFwiKTtcbiAgaWYgKGZzLmV4aXN0c1N5bmModXBzdHJlYW1JbmRleFJzdCkpIHtcbiAgICByZXR1cm4gbG9hZEZpbGUodXBzdHJlYW1JbmRleFJzdCwgc2x1Z1BhdGgsIFwidXBzdHJlYW1cIik7XG4gIH1cblxuICByZXR1cm4gbnVsbDtcbn1cblxuZnVuY3Rpb24gbG9hZEZpbGUoXG4gIGZpbGVQYXRoOiBzdHJpbmcsXG4gIHNsdWc6IHN0cmluZyxcbiAgbGF5ZXI6IFwib3ZlcnJpZGVcIiB8IFwiZGVwbG95ZWRcIiB8IFwidXBzdHJlYW1cIixcbik6IERvY1BhZ2Uge1xuICBjb25zdCBmaWxlQ29udGVudCA9IGZzLnJlYWRGaWxlU3luYyhmaWxlUGF0aCwgXCJ1dGY4XCIpO1xuICBjb25zdCB7IGRhdGEsIGNvbnRlbnQgfSA9IG1hdHRlcihmaWxlQ29udGVudCk7XG5cbiAgcmV0dXJuIHtcbiAgICBzbHVnLFxuICAgIHRpdGxlOiBkYXRhLnRpdGxlIHx8IHNsdWcuc3BsaXQoXCIvXCIpLnBvcCgpIHx8IFwiVW50aXRsZWRcIixcbiAgICBjb250ZW50LFxuICAgIHNvdXJjZUxheWVyOiBsYXllcixcbiAgICBtZXRhOiBkYXRhLFxuICB9O1xufVxuIl0sIm5hbWVzIjpbImdldERvY1BhZ2UiLCJSRVBPX1JPT1QiLCJwYXRoIiwicmVzb2x2ZSIsInByb2Nlc3MiLCJjd2QiLCJPVkVSUklERVNfRElSIiwiam9pbiIsIkRFUExPWUVEX0RJUiIsIlVQU1RSRUFNX0RJUiIsInNsdWdQYXJ0cyIsInNsdWdQYXRoIiwib3ZlcnJpZGVQYXRoIiwiZnMiLCJleGlzdHNTeW5jIiwibG9hZEZpbGUiLCJvdmVycmlkZUluZGV4UGF0aCIsImRlcGxveWVkUGF0aCIsInVwc3RyZWFtQ29udGVudERpciIsInVwc3RyZWFtUGF0aCIsInVwc3RyZWFtSW5kZXhNZCIsInVwc3RyZWFtSW5kZXhSc3QiLCJmaWxlUGF0aCIsInNsdWciLCJsYXllciIsImZpbGVDb250ZW50IiwicmVhZEZpbGVTeW5jIiwiZGF0YSIsImNvbnRlbnQiLCJtYXR0ZXIiLCJ0aXRsZSIsInNwbGl0IiwicG9wIiwic291cmNlTGF5ZXIiLCJtZXRhIl0sIm1hcHBpbmdzIjoiOzs7OytCQXFCc0JBOzs7ZUFBQUE7OzsyREFyQlA7NkRBQ0U7bUVBQ0U7Ozs7OztBQUVuQixRQUFRO0FBQ1IsTUFBTUMsWUFBWUMsYUFBSSxDQUFDQyxPQUFPLENBQUNDLFFBQVFDLEdBQUcsSUFBSSxVQUFVLGtEQUFrRDtBQUMxRyxNQUFNQyxnQkFBZ0JKLGFBQUksQ0FBQ0ssSUFBSSxDQUM3QkgsUUFBUUMsR0FBRyxJQUNYO0FBRUYsTUFBTUcsZUFBZU4sYUFBSSxDQUFDSyxJQUFJLENBQUNILFFBQVFDLEdBQUcsSUFBSTtBQUM5QyxNQUFNSSxlQUFlUCxhQUFJLENBQUNDLE9BQU8sQ0FBQ0YsV0FBVztBQVV0QyxlQUFlRCxXQUFXVSxTQUFtQjtJQUNsRCxNQUFNQyxXQUFXRCxVQUFVSCxJQUFJLENBQUM7SUFFaEMsd0NBQXdDO0lBQ3hDLDhDQUE4QztJQUM5QyxNQUFNSyxlQUFlVixhQUFJLENBQUNLLElBQUksQ0FBQ0QsZUFBZSxHQUFHSyxTQUFTLEdBQUcsQ0FBQztJQUM5RCxJQUFJRSxXQUFFLENBQUNDLFVBQVUsQ0FBQ0YsZUFBZTtRQUMvQixPQUFPRyxTQUFTSCxjQUFjRCxVQUFVO0lBQzFDLE9BQU87UUFDTCxvQ0FBb0M7UUFDcEMsTUFBTUssb0JBQW9CZCxhQUFJLENBQUNLLElBQUksQ0FBQ0QsZUFBZUssVUFBVTtRQUM3RCxJQUFJRSxXQUFFLENBQUNDLFVBQVUsQ0FBQ0Usb0JBQW9CO1lBQ3BDLE9BQU9ELFNBQVNDLG1CQUFtQkwsVUFBVTtRQUMvQztJQUNGO0lBRUEsNENBQTRDO0lBQzVDLDhGQUE4RjtJQUM5RixrRUFBa0U7SUFDbEUsZ0ZBQWdGO0lBQ2hGLHVFQUF1RTtJQUV2RSxnR0FBZ0c7SUFDaEcsa0RBQWtEO0lBQ2xELE1BQU1NLGVBQWVmLGFBQUksQ0FBQ0ssSUFBSSxDQUFDQyxjQUFjLEdBQUdHLFNBQVMsR0FBRyxDQUFDO0lBQzdELElBQUlFLFdBQUUsQ0FBQ0MsVUFBVSxDQUFDRyxlQUFlO1FBQy9CLE9BQU9GLFNBQVNFLGNBQWNOLFVBQVU7SUFDMUM7SUFFQSxzQ0FBc0M7SUFDdEMsOEZBQThGO0lBQzlGLE1BQU1PLHFCQUFxQmhCLGFBQUksQ0FBQ0ssSUFBSSxDQUFDRSxjQUFjO0lBRW5ELGlEQUFpRDtJQUNqRCxJQUFJVSxlQUFlakIsYUFBSSxDQUFDSyxJQUFJLENBQUNXLG9CQUFvQixHQUFHUCxTQUFTLEdBQUcsQ0FBQztJQUNqRSxJQUFJRSxXQUFFLENBQUNDLFVBQVUsQ0FBQ0ssZUFBZTtRQUMvQixPQUFPSixTQUFTSSxjQUFjUixVQUFVO0lBQzFDO0lBRUEsZ0JBQWdCO0lBQ2hCUSxlQUFlakIsYUFBSSxDQUFDSyxJQUFJLENBQUNXLG9CQUFvQixHQUFHUCxTQUFTLElBQUksQ0FBQztJQUM5RCxJQUFJRSxXQUFFLENBQUNDLFVBQVUsQ0FBQ0ssZUFBZTtRQUMvQixPQUFPSixTQUFTSSxjQUFjUixVQUFVO0lBQzFDO0lBRUEsZ0NBQWdDO0lBQ2hDLE1BQU1TLGtCQUFrQmxCLGFBQUksQ0FBQ0ssSUFBSSxDQUFDVyxvQkFBb0JQLFVBQVU7SUFDaEUsSUFBSUUsV0FBRSxDQUFDQyxVQUFVLENBQUNNLGtCQUFrQjtRQUNsQyxPQUFPTCxTQUFTSyxpQkFBaUJULFVBQVU7SUFDN0M7SUFDQSxNQUFNVSxtQkFBbUJuQixhQUFJLENBQUNLLElBQUksQ0FBQ1csb0JBQW9CUCxVQUFVO0lBQ2pFLElBQUlFLFdBQUUsQ0FBQ0MsVUFBVSxDQUFDTyxtQkFBbUI7UUFDbkMsT0FBT04sU0FBU00sa0JBQWtCVixVQUFVO0lBQzlDO0lBRUEsT0FBTztBQUNUO0FBRUEsU0FBU0ksU0FDUE8sUUFBZ0IsRUFDaEJDLElBQVksRUFDWkMsS0FBMkM7SUFFM0MsTUFBTUMsY0FBY1osV0FBRSxDQUFDYSxZQUFZLENBQUNKLFVBQVU7SUFDOUMsTUFBTSxFQUFFSyxJQUFJLEVBQUVDLE9BQU8sRUFBRSxHQUFHQyxJQUFBQSxtQkFBTSxFQUFDSjtJQUVqQyxPQUFPO1FBQ0xGO1FBQ0FPLE9BQU9ILEtBQUtHLEtBQUssSUFBSVAsS0FBS1EsS0FBSyxDQUFDLEtBQUtDLEdBQUcsTUFBTTtRQUM5Q0o7UUFDQUssYUFBYVQ7UUFDYlUsTUFBTVA7SUFDUjtBQUNGIn0=

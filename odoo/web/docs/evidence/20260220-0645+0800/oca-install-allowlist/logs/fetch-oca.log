@@ -1,0 +1,61 @@
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;34m   OCA Fetch and Pin (Odoo 19)[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;32mLockfile:[0m /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/vendor/oca.lock.ce19.json
+[0;32mOdoo Version:[0m 19.0
+[0;32mRepositories:[0m 22
+[0;32mTarget:[0m /Users/tbwa/Documents/GitHub/Insightpulseai/odoo/third_party/oca
+
+[1;33mProcessing:[0m OCA/server-auth (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/server-tools (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/server-ux (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/web (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/project (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/mis-builder (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/reporting-engine (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/account-financial-tools (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/account-financial-reporting (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/account-reconcile (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/account-closing (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/account-invoicing (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/purchase-workflow (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/hr-expense (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/hr (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/timesheet (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/contract (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/dms (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/knowledge (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/helpdesk (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/partner-contact (19.0)
+  [0;32m✓[0m Already exists, skipping
+[1;33mProcessing:[0m OCA/rest-framework (19.0)
+  [0;32m✓[0m Already exists, skipping
+
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;34m   Summary[0m
+[0;34m═══════════════════════════════════════════════════════════[0m
+[0;32mCloned:[0m  0
+[1;33mSkipped:[0m 0
+[0;31mFailed:[0m  0
+
+[0;32mDone. Run ./scripts/oca/generate_inventory.sh to update inventory.[0m

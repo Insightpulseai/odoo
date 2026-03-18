@@ -1,0 +1,32 @@
+# Adaptive Cards Index — IPAI Copilot Surfaces
+# Used by: Azure AI Foundry agent, Teams integration, Odoo widget
+cards:
+  - id: NavigationCard
+    purpose: Deep link to Odoo screen with "Open in Odoo" button
+    surface: Teams, Odoo Widget
+    file: null  # Inline in agent response
+
+  - id: ComplianceBriefingCard
+    purpose: Period summary with findings count, task completion %, overdue tasks, deadlines
+    surface: Teams channel (#tax-compliance)
+    file: null
+
+  - id: FindingCard
+    purpose: Single compliance finding with details, top 5 items, Create Finding + View buttons
+    surface: Teams, Odoo Widget
+    file: null
+
+  - id: TaskCard
+    purpose: Task details with due date, assignee, status, Mark Complete + Reassign buttons
+    surface: Teams, Odoo Widget
+    file: null
+
+  - id: ConfirmActionCard
+    purpose: Write action confirmation dialog (Yes/No)
+    surface: Teams, Odoo Widget
+    file: confirm_action_card.json
+
+  - id: DeadlineAlertCard
+    purpose: BIR deadline countdown with form name, due date, View Period button
+    surface: Teams DM (proactive)
+    file: null

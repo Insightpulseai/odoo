@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- workspace.evidence.pack: form view                            -->
+    <!-- ============================================================ -->
+    <record id="view_workspace_evidence_pack_form" model="ir.ui.view">
+        <field name="name">workspace.evidence.pack.form</field>
+        <field name="model">workspace.evidence.pack</field>
+        <field name="arch" type="xml">
+            <form string="Evidence Pack">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sealed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Evidence Pack Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Attachments" name="attachments">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+                        <page string="Linked Records" name="records">
+                            <field name="record_refs" widget="ace"
+                                   options="{'mode': 'json'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- workspace.evidence.pack: list view                            -->
+    <!-- ============================================================ -->
+    <record id="view_workspace_evidence_pack_list" model="ir.ui.view">
+        <field name="name">workspace.evidence.pack.list</field>
+        <field name="model">workspace.evidence.pack</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="owner_id"/>
+                <field name="state" decoration-success="state == 'sealed'"
+                       decoration-info="state == 'draft'" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- workspace.evidence.pack: action                               -->
+    <!-- ============================================================ -->
+    <record id="action_workspace_evidence_pack" model="ir.actions.act_window">
+        <field name="name">Evidence Packs</field>
+        <field name="res_model">workspace.evidence.pack</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first evidence pack
+            </p>
+            <p>Evidence packs bundle attachments and record references for audit trails.</p>
+        </field>
+    </record>
+
+</odoo>

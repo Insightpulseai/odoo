@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Skill Definition Form View -->
+    <record id="view_skill_definition_form" model="ir.ui.view">
+        <field name="name">ipai.skill.definition.form</field>
+        <field name="model">ipai.skill.definition</field>
+        <field name="arch" type="xml">
+            <form string="Skill Definition">
+                <header/>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Skill Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="key"/>
+                            <field name="version"/>
+                            <field name="category_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="execution_count"/>
+                            <field name="last_execution_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Skill description..."/>
+                        </page>
+                        <page string="Intents" name="intents">
+                            <field name="intent_ids" widget="text" placeholder='["intent phrase 1", "intent phrase 2"]'/>
+                        </page>
+                        <page string="Guardrails" name="guardrails">
+                            <field name="guardrails" widget="text" placeholder='["guardrail 1", "guardrail 2"]'/>
+                        </page>
+                        <page string="Tools &amp; Workflow" name="tools">
+                            <group string="Tools">
+                                <field name="tool_ids" widget="text" placeholder='[{"key": "tool.key", "name": "Tool Name", "target_model": "model.name", "target_method": "method_name"}]'/>
+                            </group>
+                            <group string="Workflow">
+                                <field name="workflow" widget="text" placeholder='["tool.key.1", "tool.key.2"]'/>
+                            </group>
+                        </page>
+                        <page string="Schemas" name="schemas">
+                            <group string="Input Schema">
+                                <field name="input_schema" widget="text"/>
+                            </group>
+                            <group string="Output Schema">
+                                <field name="output_schema" widget="text"/>
+                            </group>
+                        </page>
+                        <page string="Agent Instructions" name="instructions">
+                            <field name="agent_instructions" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Skill Definition List View -->
+    <record id="view_skill_definition_list" model="ir.ui.view">
+        <field name="name">ipai.skill.definition.list</field>
+        <field name="model">ipai.skill.definition</field>
+        <field name="arch" type="xml">
+            <list string="Skills">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="key"/>
+                <field name="category_id"/>
+                <field name="version"/>
+                <field name="execution_count"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Skill Definition Search View -->
+    <record id="view_skill_definition_search" model="ir.ui.view">
+        <field name="name">ipai.skill.definition.search</field>
+        <field name="model">ipai.skill.definition</field>
+        <field name="arch" type="xml">
+            <search string="Search Skills">
+                <field name="name"/>
+                <field name="key"/>
+                <field name="category_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Skill Category List View -->
+    <record id="view_skill_category_list" model="ir.ui.view">
+        <field name="name">ipai.skill.category.list</field>
+        <field name="model">ipai.skill.category</field>
+        <field name="arch" type="xml">
+            <list string="Skill Categories">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="skill_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="menu_agent_skills_root"
+        name="Agent Skills"
+        web_icon="ipai_agent_skills,static/description/icon.png"
+        sequence="100"/>
+
+    <menuitem
+        id="menu_skills"
+        name="Skills"
+        parent="menu_agent_skills_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_skill_definitions"
+        name="Skill Definitions"
+        parent="menu_skills"
+        action="action_skill_definition"/>
+
+    <menuitem
+        id="menu_skill_categories"
+        name="Categories"
+        parent="menu_skills"
+        action="action_skill_category"/>
+
+    <!-- Actions -->
+    <record id="action_skill_definition" model="ir.actions.act_window">
+        <field name="name">Skill Definitions</field>
+        <field name="res_model">ipai.skill.definition</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1, 'search_default_group_category': 1}</field>
+    </record>
+
+    <record id="action_skill_category" model="ir.actions.act_window">
+        <field name="name">Skill Categories</field>
+        <field name="res_model">ipai.skill.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

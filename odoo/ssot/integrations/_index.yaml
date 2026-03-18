@@ -150,3 +150,10 @@ integrations:
     status: active
     category: platform_inventory
     vendor: internal
+
+  - id: odoo_n8n_supabase
+    file: ssot/integrations/odoo-n8n-supabase.yaml
+    schema: ssot/integrations/odoo-n8n-supabase.schema.json
+    status: active
+    category: integration_architecture
+    vendor: internal

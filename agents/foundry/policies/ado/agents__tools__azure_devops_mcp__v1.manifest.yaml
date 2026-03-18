@@ -1,0 +1,61 @@
+version: 1
+namespace: ipai.agents.tools.azure_devops_mcp.v1
+artifact_type: manifest
+repo_key: agents
+domain: tools
+subject: azure_devops_mcp
+
+# ============================================================================
+# AZURE DEVOPS MCP SERVER TOOL MANIFEST
+# ============================================================================
+# Source: https://github.com/microsoft/azure-devops-mcp
+# TypeScript MCP server exposing ADO tasks to agents.
+# ============================================================================
+
+tool:
+  tool_id: azure_devops_mcp
+  class: remote_mcp
+  source: microsoft
+  repo: https://github.com/microsoft/azure-devops-mcp
+  auth_mode: entra
+  approval_mode: always
+
+  supported_domains:
+    - core           # Projects, teams
+    - work           # Boards, sprints, iterations
+    - work-items     # Create, read, update, query work items
+    - repositories   # Repos, branches, PRs, commits
+    - pipelines      # Builds, releases, runs
+    - test-plans     # Test plans, suites, cases
+    - wiki           # Wiki pages
+    - search         # Code/work item search
+    - advanced-security  # Security alerts
+
+  default_enabled_domains:
+    - core
+    - work
+    - work-items
+    - pipelines
+    - wiki
+
+policy:
+  approved_for:
+    - release_agents
+    - planning_agents
+    - sre_agents
+    - compliance_agents
+    - factory_agents
+
+  use_cases:
+    - create_work_items_from_spec_bundles
+    - link_prs_to_work_items
+    - update_release_state_automatically
+    - attach_evidence_to_work_items
+    - generate_wiki_pages_from_delivery_evidence
+    - query_pipeline_status_for_release_readiness
+    - read_test_plan_results_for_signoff
+
+  forbidden_actions:
+    - create_repos_in_ado  # GitHub is primary SCM
+    - delete_work_items_without_approval
+    - modify_pipeline_definitions_without_review

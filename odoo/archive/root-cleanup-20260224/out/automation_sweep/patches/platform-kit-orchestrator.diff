@@ -1,0 +1,4 @@
+--- a/docs/evidence/20260127-0630/platform-kit-merge/workflows/platform-kit-orchestrator.json
++++ b/automations/n8n/workflows/platform-kit-orchestrator.json
+@@ Move stray workflow to canonical location @@
+# git mv 'docs/evidence/20260127-0630/platform-kit-merge/workflows/platform-kit-orchestrator.json' 'automations/n8n/workflows/platform-kit-orchestrator.json'

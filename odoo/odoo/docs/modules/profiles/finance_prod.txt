@@ -1,0 +1,23 @@
+# Finance Production Profile - Corrected Module Names
+# Total: 11 modules (validated against actual repo)
+# Last updated: 2025-01-09
+
+# Platform (2 modules)
+ipai_platform_theme
+ipai_approvals
+
+# Finance Core (4 modules)
+ipai_finance_ppm
+ipai_ppm_monthly_close
+ipai_finance_ppm_closing
+ipai_finance_bir_compliance
+
+# Integrations (2 modules)
+ipai_superset_connector
+ipai_ocr_expense
+
+# AI (1 module)
+ipai_ask_ai
+
+# Theme (2 modules - platform_theme already counted above)
+ipai_theme_tbwa_backend

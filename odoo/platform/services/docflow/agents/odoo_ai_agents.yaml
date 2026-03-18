@@ -1,0 +1,76 @@
+version: 1
+name: docflow-agentic-finance
+principles:
+  - "No third-party Document AI/OCR APIs"
+  - "OCR is local; LLM is reasoning only on OCR text"
+  - "Draft-only writes to Odoo unless policy explicitly allows posting"
+  - "Idempotent creation using document_id reference"
+  - "Persist audit artifacts for every run"
+
+llm:
+  provider: ${LLM_PROVIDER}     # openai | anthropic | gemini
+  model: ${LLM_MODEL}
+  temperature: 0
+  response_format: json_object
+
+odoo:
+  base_url: ${ODOO_BASE_URL}
+  db: ${ODOO_DB}
+  login: ${ODOO_LOGIN}
+  api_key_env: ODOO_API_KEY
+  write_policy: draft_only
+
+agents:
+  - id: finance_doc_classifier
+    role: "Classify OCR text into invoice/expense/unknown"
+    prompt_template_file: "src/docflow/prompts.py"
+    prompt_symbol: "CLASSIFICATION_PROMPT"
+    input_contract:
+      fields:
+        - ocr_text
+    output_contract:
+      json_schema:
+        document_type: "invoice|expense|unknown"
+        confidence: "0..1"
+        reason: "string"
+
+  - id: invoice_extractor
+    role: "Extract invoice fields from OCR text, strict schema JSON"
+    prompt_template_file: "src/docflow/prompts.py"
+    prompt_symbol: "INVOICE_EXTRACTION_PROMPT"
+    input_contract:
+      fields:
+        - ocr_text
+    output_contract:
+      json_schema_ref: "InvoiceExtraction"
+
+  - id: expense_extractor
+    role: "Extract expense fields from OCR text, strict schema JSON"
+    prompt_template_file: "src/docflow/prompts.py"
+    prompt_symbol: "EXPENSE_EXTRACTION_PROMPT"
+    input_contract:
+      fields:
+        - ocr_text
+    output_contract:
+      json_schema_ref: "ExpenseExtraction"
+
+policies:
+  confidence_auto_draft: ${CONFIDENCE_AUTO_DRAFT}
+  forbid_image_to_llm: ${NO_IMAGE_TO_LLM}
+  artifact_dir: artifacts/
+  inbox_dir: data/inbox
+  archive_dir: data/archive
+
+mappings:
+  expense:
+    model: hr.expense
+    reference_prefix: "DocFlow:"
+    required_env:
+      - ODOO_EXPENSE_PRODUCT_ID
+  vendor_bill:
+    model: account.move
+    move_type: in_invoice
+    reference_prefix: "DocFlow:"
+    required_env:
+      - ODOO_PURCHASE_JOURNAL_ID
+      - ODOO_DEFAULT_VENDOR_PARTNER_ID

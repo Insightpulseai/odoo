@@ -1,0 +1,51 @@
+# Devcontainer compose — Odoo 19 CE + PostgreSQL 16
+name: odoo-devcontainer
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ../:/workspaces/odoo:cached
+      - ../config/dev/odoo.conf:/etc/odoo/odoo.conf:ro
+      - claude-code-config:/home/vscode/.claude
+      - commandhistory:/home/vscode/.commandhistory
+      - odoo-data:/var/lib/odoo
+    environment:
+      DB_HOST: db
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+    command: sleep infinity
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo_dev
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+    networks:
+      - devnet
+
+volumes:
+  claude-code-config:
+  commandhistory:
+  odoo-data:
+  dev-db-data:
+
+networks:
+  devnet:
+    driver: bridge

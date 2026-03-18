@@ -1,0 +1,437 @@
+// =============================================================================
+// Backend UI Overrides (/web)
+// =============================================================================
+// Styles the Odoo backend interface to match ChatGPT App SDK design language.
+// Uses CSS custom properties from tokens.scss for consistency.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Global reset / typography
+// ---------------------------------------------------------------------------
+.o_web_client {
+  font-family: var(--ipai-font-sans);
+  color: var(--ipai-fg);
+  background: var(--ipai-bg);
+}
+
+// ---------------------------------------------------------------------------
+// Action Manager / Content Area
+// ---------------------------------------------------------------------------
+.o_action_manager,
+.o_content {
+  background: var(--ipai-bg);
+}
+
+// ---------------------------------------------------------------------------
+// Control Panel (top bar with breadcrumbs, search, buttons)
+// ---------------------------------------------------------------------------
+.o_control_panel {
+  background: var(--ipai-bg);
+  border-bottom: 1px solid var(--ipai-border);
+
+  .o_cp_top_left,
+  .o_cp_bottom_left {
+    .breadcrumb {
+      margin-bottom: 0;
+
+      .breadcrumb-item {
+        font-weight: var(--ipai-font-weight-medium);
+
+        a {
+          color: var(--ipai-fg-muted);
+          text-decoration: none;
+
+          &:hover {
+            color: var(--ipai-fg);
+          }
+        }
+
+        &.active {
+          color: var(--ipai-fg);
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Search View
+// ---------------------------------------------------------------------------
+.o_searchview {
+  border-radius: var(--ipai-radius-sm);
+  border: 1px solid var(--ipai-input-border);
+  background: var(--ipai-input-bg);
+  transition: border-color var(--ipai-transition), box-shadow var(--ipai-transition);
+
+  &:focus-within {
+    border-color: var(--ipai-input-border-focus);
+    box-shadow: var(--ipai-focus-ring);
+  }
+
+  .o_searchview_input_container {
+    input {
+      color: var(--ipai-fg);
+
+      &::placeholder {
+        color: var(--ipai-input-placeholder);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Form View
+// ---------------------------------------------------------------------------
+.o_form_view {
+  background: var(--ipai-bg);
+}
+
+.o_form_sheet_bg {
+  background: var(--ipai-bg-subtle);
+
+  .o_form_sheet {
+    background: var(--ipai-card-bg);
+    border: 1px solid var(--ipai-border);
+    border-radius: var(--ipai-radius);
+    box-shadow: var(--ipai-shadow-sm);
+  }
+}
+
+// Form field labels
+.o_form_view .o_form_label {
+  color: var(--ipai-fg-muted);
+  font-weight: var(--ipai-font-weight-medium);
+}
+
+// Form field inputs
+.o_form_view .o_field_widget {
+  input.o_input,
+  textarea.o_input,
+  select.o_input {
+    border-radius: var(--ipai-radius-sm);
+    border: 1px solid var(--ipai-input-border);
+    background: var(--ipai-input-bg);
+    color: var(--ipai-fg);
+    transition: border-color var(--ipai-transition), box-shadow var(--ipai-transition);
+
+    &:hover {
+      border-color: var(--ipai-input-border-hover);
+    }
+
+    &:focus {
+      border-color: var(--ipai-input-border-focus);
+      box-shadow: var(--ipai-focus-ring);
+      outline: none;
+    }
+
+    &::placeholder {
+      color: var(--ipai-input-placeholder);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// List View
+// ---------------------------------------------------------------------------
+.o_list_view {
+  table {
+    border-radius: var(--ipai-radius);
+    overflow: hidden;
+    border: 1px solid var(--ipai-border);
+    background: var(--ipai-card-bg);
+
+    thead {
+      background: var(--ipai-bg-subtle);
+
+      th {
+        color: var(--ipai-fg-muted);
+        font-weight: var(--ipai-font-weight-semibold);
+        border-bottom: 1px solid var(--ipai-border);
+      }
+    }
+
+    tbody {
+      tr {
+        transition: background-color var(--ipai-transition);
+
+        &:hover {
+          background: var(--ipai-bg-hover);
+        }
+
+        td {
+          border-bottom: 1px solid var(--ipai-border-muted);
+          color: var(--ipai-fg);
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Kanban View
+// ---------------------------------------------------------------------------
+.o_kanban_view {
+  background: var(--ipai-bg-subtle);
+
+  .o_kanban_record {
+    background: var(--ipai-card-bg);
+    border: 1px solid var(--ipai-border);
+    border-radius: var(--ipai-radius);
+    box-shadow: var(--ipai-shadow-xs);
+    transition: box-shadow var(--ipai-transition), transform var(--ipai-transition);
+
+    &:hover {
+      box-shadow: var(--ipai-shadow-sm);
+    }
+  }
+
+  .o_kanban_group {
+    .o_kanban_header {
+      background: transparent;
+
+      .o_kanban_header_title {
+        color: var(--ipai-fg);
+        font-weight: var(--ipai-font-weight-semibold);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main Navbar
+// ---------------------------------------------------------------------------
+.o_main_navbar {
+  border-bottom: 1px solid var(--ipai-border);
+
+  .o_menu_brand {
+    font-weight: var(--ipai-font-weight-semibold);
+  }
+
+  .o_menu_sections {
+    .o_nav_entry {
+      border-radius: var(--ipai-radius-sm);
+      transition: background-color var(--ipai-transition);
+
+      &:hover {
+        background: var(--ipai-bg-hover);
+      }
+
+      &.active {
+        background: var(--ipai-bg-active);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Buttons (using tokens)
+// ---------------------------------------------------------------------------
+.btn {
+  border-radius: var(--ipai-radius-sm);
+  font-weight: var(--ipai-font-weight-medium);
+  transition: all var(--ipai-transition);
+
+  &:focus-visible {
+    box-shadow: var(--ipai-focus-ring);
+  }
+}
+
+.btn-primary {
+  background: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+  color: var(--ipai-primary-fg);
+
+  &:hover {
+    background: var(--ipai-primary-hover);
+    border-color: var(--ipai-primary-hover);
+  }
+
+  &:active,
+  &.active {
+    background: var(--ipai-primary-active);
+    border-color: var(--ipai-primary-active);
+  }
+}
+
+.btn-secondary {
+  background: var(--ipai-secondary);
+  border-color: var(--ipai-secondary);
+  color: var(--ipai-secondary-fg);
+
+  &:hover {
+    background: var(--ipai-secondary-hover);
+    border-color: var(--ipai-secondary-hover);
+  }
+}
+
+.btn-outline-primary {
+  color: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+
+  &:hover {
+    background: var(--ipai-primary);
+    color: var(--ipai-primary-fg);
+  }
+}
+
+.btn-outline-secondary {
+  color: var(--ipai-secondary);
+  border-color: var(--ipai-border-strong);
+
+  &:hover {
+    background: var(--ipai-bg-hover);
+    color: var(--ipai-fg);
+    border-color: var(--ipai-border-strong);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cards (generic)
+// ---------------------------------------------------------------------------
+.card {
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  background: var(--ipai-card-bg);
+  box-shadow: var(--ipai-shadow-xs);
+
+  .card-header {
+    background: var(--ipai-bg-subtle);
+    border-bottom: 1px solid var(--ipai-border);
+  }
+
+  .card-footer {
+    background: var(--ipai-bg-subtle);
+    border-top: 1px solid var(--ipai-border);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modals
+// ---------------------------------------------------------------------------
+.modal-content {
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  box-shadow: var(--ipai-shadow-lg);
+
+  .modal-header {
+    border-bottom: 1px solid var(--ipai-border);
+  }
+
+  .modal-footer {
+    border-top: 1px solid var(--ipai-border);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dropdowns
+// ---------------------------------------------------------------------------
+.dropdown-menu {
+  border-radius: var(--ipai-radius);
+  border: 1px solid var(--ipai-border);
+  box-shadow: var(--ipai-shadow-lg);
+  background: var(--ipai-card-bg);
+
+  .dropdown-item {
+    border-radius: calc(var(--ipai-radius-sm) - 4px);
+    margin: 2px 4px;
+    width: calc(100% - 8px);
+    transition: background-color var(--ipai-transition);
+
+    &:hover {
+      background: var(--ipai-bg-hover);
+    }
+
+    &.active,
+    &:active {
+      background: var(--ipai-primary);
+      color: var(--ipai-primary-fg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Alerts
+// ---------------------------------------------------------------------------
+.alert {
+  border-radius: var(--ipai-radius);
+  border: none;
+}
+
+.alert-success {
+  background: var(--ipai-success-bg);
+  color: var(--ipai-success);
+}
+
+.alert-warning {
+  background: var(--ipai-warning-bg);
+  color: var(--ipai-warning);
+}
+
+.alert-danger {
+  background: var(--ipai-danger-bg);
+  color: var(--ipai-danger);
+}
+
+.alert-info {
+  background: var(--ipai-info-bg);
+  color: var(--ipai-info);
+}
+
+// ---------------------------------------------------------------------------
+// Badges
+// ---------------------------------------------------------------------------
+.badge {
+  border-radius: 6px;
+  font-weight: var(--ipai-font-weight-medium);
+}
+
+// ---------------------------------------------------------------------------
+// Chatter / Mail
+// ---------------------------------------------------------------------------
+.o_Chatter {
+  background: var(--ipai-bg-subtle);
+
+  .o_Message {
+    background: var(--ipai-card-bg);
+    border-radius: var(--ipai-radius-sm);
+    border: 1px solid var(--ipai-border-muted);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Status bar
+// ---------------------------------------------------------------------------
+.o_statusbar_status {
+  .o_arrow_button {
+    &.o_arrow_button_current {
+      background: var(--ipai-primary);
+      color: var(--ipai-primary-fg);
+    }
+  }
+}
+
+// =============================================================================
+// TBWA Brand Navbar Overrides
+// =============================================================================
+
+.o_main_navbar {
+  background: var(--tbwa-black) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+
+  &, a, .dropdown-toggle, .o_menu_brand {
+    color: #fff !important;
+  }
+
+  .o_menu_systray .dropdown-toggle {
+    &:hover, &:focus {
+      background: rgba(255,196,0,0.10) !important;
+    }
+  }
+}
+
+.o_kanban_record,
+.o_kanban_view .oe_kanban_card {
+  border: 1px solid var(--ipai-border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+}

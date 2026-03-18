@@ -1,0 +1,15 @@
+schema: ipai.blueprint.skill.v1
+id: ""
+name: ""
+purpose: ""
+skill_md_path: ""         # path to SKILL.md
+tools: []
+inputs: []
+outputs: []
+dependencies: []
+eval_hooks:
+  validation: []
+promotion_criteria:
+  - "SKILL.md exists and is complete"
+  - "At least one test scenario passes"
+  - "No tool calls outside declared tool list"
